@@ -86,7 +86,7 @@ class Locale
      *
      * @param string $localeIdentifier A valid locale identifier according to UTS#35
      * @throws \InvalidArgumentException When argument is not a string
-     * @throws \TYPO3\Flow\I18n\Exception\InvalidLocaleIdentifierException If the locale identifier is not valid
+     * @throws Exception\InvalidLocaleIdentifierException If the locale identifier is not valid
      * @api
      */
     public function __construct($localeIdentifier)
@@ -95,7 +95,7 @@ class Locale
             throw new \InvalidArgumentException('A locale identifier must be of type string, ' . gettype($localeIdentifier) . ' given.', 1221216120);
         }
         if (preg_match(self::PATTERN_MATCH_LOCALEIDENTIFIER, $localeIdentifier, $matches) !== 1) {
-            throw new \TYPO3\Flow\I18n\Exception\InvalidLocaleIdentifierException('"' . $localeIdentifier . '" is not a valid locale identifier.', 1221137814);
+            throw new Exception\InvalidLocaleIdentifierException('"' . $localeIdentifier . '" is not a valid locale identifier.', 1221137814);
         }
 
         $this->language = strtolower($matches['language']);

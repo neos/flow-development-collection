@@ -12,6 +12,7 @@ namespace TYPO3\Flow\Persistence\Generic\Aspect;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Aop\JoinPointInterface;
 
 /**
  * Adds the aspect of lazy loading to relevant objects
@@ -42,11 +43,11 @@ class LazyLoadingObjectAspect
      * to be a Closure that populates the object. That variable is unset after
      * initializing the object!
      *
-     * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint The current join point
+     * @param JoinPointInterface $joinPoint The current join point
      * @return void
      * @Flow\Before("TYPO3\Flow\Persistence\Generic\Aspect\LazyLoadingObjectAspect->needsLazyLoadingObjectAspect && !method(.*->__construct())")
      */
-    public function initialize(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint)
+    public function initialize(JoinPointInterface $joinPoint)
     {
         $proxy = $joinPoint->getProxy();
         if (property_exists($proxy, 'Flow_Persistence_LazyLoadingObject_thawProperties') && $proxy->Flow_Persistence_LazyLoadingObject_thawProperties instanceof \Closure) {

@@ -18,7 +18,7 @@ use TYPO3\Flow\Http\Request;
 use TYPO3\Flow\Mvc\Routing\Exception\InvalidControllerException;
 use TYPO3\Flow\Mvc\Routing\Route;
 use TYPO3\Flow\Mvc\Routing\Router;
-use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 
 /**
  * Command controller for tasks related to routing
@@ -110,13 +110,13 @@ class RoutingCommandController extends CommandController
         $package = $packageParts[0];
         $subpackage = isset($packageParts[1]) ? $packageParts[1] : null;
 
-        $routeValues = array(
+        $routeValues = [
             '@package' => $package,
             '@subpackage' => $subpackage,
             '@controller' => $controller,
             '@action' => $action,
             '@format' => $format
-        );
+        ];
 
         $this->outputLine('<b>Resolving:</b>');
         $this->outputLine('  Package: ' . $routeValues['@package']);
@@ -126,7 +126,7 @@ class RoutingCommandController extends CommandController
         $this->outputLine('  Format: ' . $routeValues['@format']);
 
         $controllerObjectName = null;
-        /** @var $route \TYPO3\Flow\Mvc\Routing\Route */
+        /** @var $route Route */
         foreach ($this->router->getRoutes() as $route) {
             try {
                 $resolves = $route->resolves($routeValues);
@@ -168,11 +168,11 @@ class RoutingCommandController extends CommandController
      */
     public function routePathCommand($path, $method = 'GET')
     {
-        $server = array(
+        $server = [
             'REQUEST_URI' => $path,
             'REQUEST_METHOD' => $method
-        );
-        $httpRequest = new Request(array(), array(), array(), $server);
+        ];
+        $httpRequest = new Request([], [], [], $server);
 
         /** @var Route $route */
         foreach ($this->router->getRoutes() as $route) {

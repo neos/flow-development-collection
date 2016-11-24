@@ -12,11 +12,13 @@ namespace TYPO3\Flow\Cli;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Cli\Command;
+use TYPO3\Flow\Cli\CommandController;
 use TYPO3\Flow\Core\Bootstrap;
 use TYPO3\Flow\Mvc\Exception\AmbiguousCommandIdentifierException;
 use TYPO3\Flow\Mvc\Exception\CommandException;
 use TYPO3\Flow\Mvc\Exception\NoSuchCommandException;
-use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 use TYPO3\Flow\Reflection\ReflectionService;
 
 /**
@@ -59,7 +61,7 @@ class CommandManager
      * @param Bootstrap $bootstrap
      * @return void
      */
-    public function injectBootstrap(\TYPO3\Flow\Core\Bootstrap $bootstrap)
+    public function injectBootstrap(Bootstrap $bootstrap)
     {
         $this->bootstrap = $bootstrap;
     }
@@ -122,7 +124,7 @@ class CommandManager
      * If no Command could be found, an empty array is returned
      *
      * @param string $commandIdentifier command identifier in the format foo:bar:baz
-     * @return array<\TYPO3\Flow\Mvc\Cli\Command>
+     * @return array<Command>
      * @api
      */
     public function getCommandsByIdentifier($commandIdentifier)

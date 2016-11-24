@@ -58,26 +58,6 @@ class TranslationHelper implements ProtectedContextAwareInterface
     }
 
     /**
-     * Fetches a translation by its id.
-     *
-     * Examples::
-     *
-     *     Translation.translateById('some.title', 'Acme.Site') == 'Acme Inc.'
-     *
-     *     Translation.translateById('str1407180613', 'Acme.Site', 'Ui') == 'Login'
-     *
-     * @param string $id The ID to translate
-     * @param string $packageKey The package key where to find the translation file
-     * @param string $sourceName The source name, defaults to "Main"
-     * @return mixed
-     * @deprecated use the translate method instead.
-     */
-    public function translateById($id, $packageKey, $sourceName = 'Main')
-    {
-        return $this->translateByExplicitlyPassedOrderedArguments($id, null, [], $sourceName, $packageKey);
-    }
-
-    /**
      * Start collection of parameters for translation by id
      *
      * @param string $id Id to use for finding translation (trans-unit id in XLIFF)

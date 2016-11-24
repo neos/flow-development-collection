@@ -11,6 +11,8 @@ namespace TYPO3\Flow\Property;
  * source code.
  */
 
+use TYPO3\Flow\Error\Error;
+
 /**
  * Interface for type converters, which can convert from a simple type to an object or another simple type.
  *
@@ -43,7 +45,7 @@ interface TypeConverterInterface
      *
      * @param mixed $source the source data
      * @param string $originalTargetType the type we originally want to convert to
-     * @param \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration
+     * @param PropertyMappingConfigurationInterface $configuration
      * @return string
      * @api
      */
@@ -83,11 +85,11 @@ interface TypeConverterInterface
      *
      * @param string $targetType
      * @param string $propertyName
-     * @param \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration
+     * @param PropertyMappingConfigurationInterface $configuration
      * @return string the type of $propertyName in $targetType
      * @api
      */
-    public function getTypeOfChildProperty($targetType, $propertyName, \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration);
+    public function getTypeOfChildProperty($targetType, $propertyName, PropertyMappingConfigurationInterface $configuration);
 
     /**
      * Actually convert from $source to $targetType, taking into account the fully
@@ -103,10 +105,10 @@ interface TypeConverterInterface
      * @param mixed $source
      * @param string $targetType
      * @param array $convertedChildProperties
-     * @param \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration
-     * @return mixed|\TYPO3\Flow\Error\Error the target type, or an error object if a user-error occurred
-     * @throws \TYPO3\Flow\Property\Exception\TypeConverterException thrown in case a developer error occurred
+     * @param PropertyMappingConfigurationInterface $configuration
+     * @return mixed|Error the target type, or an error object if a user-error occurred
+     * @throws Exception\TypeConverterException thrown in case a developer error occurred
      * @api
      */
-    public function convertFrom($source, $targetType, array $convertedChildProperties = array(), \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration = null);
+    public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null);
 }

@@ -15,7 +15,7 @@ use TYPO3\Flow\Error\Debugger;
 use TYPO3\Flow\Exception;
 use TYPO3\Flow\Http\HttpRequestHandlerInterface;
 use TYPO3\Flow\Log\Exception\NoSuchBackendException;
-use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 
 /**
  * The default logger of the Flow framework
@@ -117,7 +117,7 @@ class Logger implements SystemLoggerInterface, ThrowableLoggerInterface, Securit
      * @return void
      * @api
      */
-    public function logException(\Exception $exception, array $additionalData = array())
+    public function logException(\Exception $exception, array $additionalData = [])
     {
         $this->logError($exception, $additionalData);
     }
@@ -128,7 +128,7 @@ class Logger implements SystemLoggerInterface, ThrowableLoggerInterface, Securit
      * @return void
      * @api
      */
-    public function logThrowable(\Throwable $throwable, array $additionalData = array())
+    public function logThrowable(\Throwable $throwable, array $additionalData = [])
     {
         $this->logError($throwable, $additionalData);
     }
@@ -140,7 +140,7 @@ class Logger implements SystemLoggerInterface, ThrowableLoggerInterface, Securit
      * @param array $additionalData Additional data to log
      * @return void
      */
-    protected function logError($error, array $additionalData = array())
+    protected function logError($error, array $additionalData = [])
     {
         $backTrace = $error->getTrace();
         $className = isset($backTrace[0]['class']) ? $backTrace[0]['class'] : '?';
@@ -164,7 +164,7 @@ class Logger implements SystemLoggerInterface, ThrowableLoggerInterface, Securit
             file_put_contents($errorDumpPathAndFilename, $this->renderErrorInfo($error));
             $message .= ' - See also: ' . basename($errorDumpPathAndFilename);
         } else {
-            $this->log(sprintf('Could not write exception backtrace into %s because the directory could not be created or is not writable.', FLOW_PATH_DATA . 'Logs/Exceptions/'), LOG_WARNING, array(), 'Flow', __CLASS__, __FUNCTION__);
+            $this->log(sprintf('Could not write exception backtrace into %s because the directory could not be created or is not writable.', FLOW_PATH_DATA . 'Logs/Exceptions/'), LOG_WARNING, [], 'Flow', __CLASS__, __FUNCTION__);
         }
 
         $this->log($message, LOG_CRIT, $additionalData, $packageKey, $className, $methodName);
@@ -233,7 +233,7 @@ class Logger implements SystemLoggerInterface, ThrowableLoggerInterface, Securit
     {
         $output = '';
         if (Bootstrap::$staticObjectManager instanceof ObjectManagerInterface) {
-            $bootstrap = Bootstrap::$staticObjectManager->get(\TYPO3\Flow\Core\Bootstrap::class);
+            $bootstrap = Bootstrap::$staticObjectManager->get(Bootstrap::class);
             /* @var Bootstrap $bootstrap */
             $requestHandler = $bootstrap->getActiveRequestHandler();
             if ($requestHandler instanceof HttpRequestHandlerInterface) {

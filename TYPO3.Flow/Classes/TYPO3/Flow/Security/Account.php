@@ -13,13 +13,12 @@ namespace TYPO3\Flow\Security;
 
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 use TYPO3\Flow\Security\Authentication\TokenInterface;
 use TYPO3\Flow\Security\Exception\InvalidAuthenticationStatusException;
 use TYPO3\Flow\Security\Policy\PolicyService;
 use TYPO3\Flow\Security\Policy\Role;
 use TYPO3\Flow\Utility\Now;
-use TYPO3\Flow\Security\Exception as SecurityException;
 
 /**
  * An account model
@@ -73,7 +72,6 @@ class Account
      */
     protected $failedAuthenticationCount;
 
-
     /**
      * @var array of strings
      * @ORM\Column(type="simple_array", nullable=true)
@@ -122,7 +120,7 @@ class Account
         if ($this->roles !== null) {
             return;
         }
-        $this->roles = array();
+        $this->roles = [];
         foreach ($this->roleIdentifiers as $key => $roleIdentifier) {
             // check for and clean up roles no longer available
             if ($this->policyService->hasRole($roleIdentifier)) {
@@ -203,46 +201,6 @@ class Account
     }
 
     /**
-     * Returns the party object this account corresponds to
-     *
-     * @return \TYPO3\Party\Domain\Model\AbstractParty The party object
-     * @deprecated since 3.0 something like a party is not attached to the account directly anymore. Fetch your user/party/organization etc. instance on your own using Domain Services or Repositories (see https://jira.typo3.org/browse/FLOW-5)
-     * @throws SecurityException
-     */
-    public function getParty()
-    {
-        if ($this->accountIdentifier === null || $this->accountIdentifier === '') {
-            throw new SecurityException('The account identifier for the account where the party is tried to be got is not yet set. Make sure that you set the account identifier prior to calling getParty().', 1397747246);
-        }
-        if (!$this->objectManager->isRegistered(\TYPO3\Party\Domain\Service\PartyService::class)) {
-            throw new SecurityException('The \TYPO3\Party\Domain\Service\PartyService is not available. When using the obsolete method \TYPO3\Flow\Security\Account::getParty, make sure the package TYPO3.Party is installed.', 1397747288);
-        }
-        /** @var \TYPO3\Party\Domain\Service\PartyService $partyService */
-        $partyService = $this->objectManager->get(\TYPO3\Party\Domain\Service\PartyService::class);
-        return $partyService->getAssignedPartyOfAccount($this);
-    }
-
-    /**
-     * Sets the corresponding party for this account
-     *
-     * @param \TYPO3\Party\Domain\Model\AbstractParty $party The party object
-     * @deprecated since 3.0 something like a party is not attached to the account directly anymore. Fetch your user/party/organization etc. instance on your own using Domain Services or Repositories (see https://jira.typo3.org/browse/FLOW-5)
-     * @throws SecurityException
-     */
-    public function setParty($party)
-    {
-        if ($this->accountIdentifier === null || $this->accountIdentifier === '') {
-            throw new SecurityException('The account identifier for the account where the party is tried to be set is not yet set. Make sure that you set the account identifier prior to calling setParty().', 1397745354);
-        }
-        if (!$this->objectManager->isRegistered(\TYPO3\Party\Domain\Service\PartyService::class)) {
-            throw new SecurityException('The \TYPO3\Party\Domain\Service\PartyService is not available. When using the obsolete method \TYPO3\Flow\Security\Account::getParty, make sure the package TYPO3.Party is installed.', 1397747413);
-        }
-        /** @var \TYPO3\Party\Domain\Service\PartyService $partyService */
-        $partyService = $this->objectManager->get(\TYPO3\Party\Domain\Service\PartyService::class);
-        $partyService->assignAccountToParty($this, $party);
-    }
-
-    /**
      * Returns the roles this account has assigned
      *
      * @return array<Role> The assigned roles, indexed by role identifier
@@ -257,18 +215,18 @@ class Account
     /**
      * Sets the roles for this account
      *
-     * @param array<Role> $roles An array of \TYPO3\Flow\Security\Policy\Role objects
+     * @param array<Role> $roles An array of Policy\Role objects
      * @return void
      * @throws \InvalidArgumentException
      * @api
      */
     public function setRoles(array $roles)
     {
-        $this->roleIdentifiers = array();
-        $this->roles = array();
+        $this->roleIdentifiers = [];
+        $this->roles = [];
         foreach ($roles as $role) {
             if (!$role instanceof Role) {
-                throw new \InvalidArgumentException(sprintf('setRoles() only accepts an array of \TYPO3\Flow\Security\Policy\Role instances, given: "%s"', gettype($role)), 1397125997);
+                throw new \InvalidArgumentException(sprintf('setRoles() only accepts an array of %s instances, given: "%s"', Role::class, gettype($role)), 1397125997);
             }
             $this->addRole($role);
         }

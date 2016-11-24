@@ -10,11 +10,14 @@ namespace TYPO3\Flow\Tests\Functional\Mvc\ViewsConfiguration;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use TYPO3\Flow\Package\PackageManagerInterface;
+
+use TYPO3\Flow\Tests\FunctionalTestCase;
 
 /**
  * Functional tests for the ActionController
  */
-class ViewsConfigurationTest extends \TYPO3\Flow\Tests\FunctionalTestCase
+class ViewsConfigurationTest extends FunctionalTestCase
 {
     /**
      * @var boolean
@@ -33,28 +36,29 @@ class ViewsConfigurationTest extends \TYPO3\Flow\Tests\FunctionalTestCase
     {
         parent::setUp();
 
-        $this->registerRoute('viewsconfigurationa', 'test/mvc/viewsconfigurationa(/{@action})', array(
+        $this->registerRoute('viewsconfigurationa', 'test/mvc/viewsconfigurationa(/{@action})', [
             '@package' => 'TYPO3.Flow',
             '@subpackage' => 'Tests\Functional\Mvc\ViewsConfiguration\Fixtures',
             '@controller' => 'ViewsConfigurationTestA',
+            '@action' => 'first',
             '@format' => 'html'
-        ));
+        ]);
 
-        $this->registerRoute('viewsconfigurationb', 'test/mvc/viewsconfigurationb(/{@action})', array(
+        $this->registerRoute('viewsconfigurationb', 'test/mvc/viewsconfigurationb(/{@action})', [
             '@package' => 'TYPO3.Flow',
             '@subpackage' => 'Tests\Functional\Mvc\ViewsConfiguration\Fixtures',
             '@controller' => 'ViewsConfigurationTestB',
             '@action' => 'first',
             '@format' => 'html'
-        ));
+        ]);
 
-        $this->registerRoute('viewsconfigurationc', 'test/mvc/viewsconfigurationc(/{@action})', array(
+        $this->registerRoute('viewsconfigurationc', 'test/mvc/viewsconfigurationc(/{@action})', [
             '@package' => 'TYPO3.Flow',
             '@subpackage' => 'Tests\Functional\Mvc\ViewsConfiguration\Fixtures',
             '@controller' => 'ViewsConfigurationTestC',
             '@action' => 'index',
             '@format' => 'html'
-        ));
+        ]);
     }
 
     /**
@@ -78,7 +82,7 @@ class ViewsConfigurationTest extends \TYPO3\Flow\Tests\FunctionalTestCase
     public function viewObjectNameChanged()
     {
         $response = $this->browser->request('http://localhost/test/mvc/viewsconfigurationc/index');
-        $this->assertEquals(\TYPO3\Flow\Tests\Functional\Mvc\ViewsConfiguration\Fixtures\TemplateView::class, $response->getContent());
+        $this->assertEquals(Fixtures\TemplateView::class, $response->getContent());
     }
 
     /**
@@ -86,7 +90,11 @@ class ViewsConfigurationTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function changeTemplatePathAndFilenameForWidget()
     {
+        if ($this->objectManager->get(PackageManagerInterface::class)->isPackageActive('Neos.FluidAdaptor') === false) {
+            $this->markTestSkipped('No Fluid adaptor installed');
+        }
+
         $response = $this->browser->request('http://localhost/test/mvc/viewsconfigurationa/widget');
-        $this->assertEquals('Changed on Package Level', $response->getContent());
+        $this->assertEquals('Changed on Package Level', trim($response->getContent()));
     }
 }

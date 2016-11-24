@@ -11,7 +11,10 @@ namespace TYPO3\Flow\Session\Aspect;
  * source code.
  */
 
-use TYPO3\Flow\Object\Configuration\Configuration as ObjectConfiguration;
+use TYPO3\Flow\Aop\Builder\ClassNameIndex;
+use TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface;
+use TYPO3\Flow\ObjectManagement\CompileTimeObjectManager;
+use TYPO3\Flow\ObjectManagement\Configuration\Configuration as ObjectConfiguration;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
@@ -19,18 +22,18 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * @Flow\Scope("singleton")
  */
-class SessionObjectMethodsPointcutFilter implements \TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface
+class SessionObjectMethodsPointcutFilter implements PointcutFilterInterface
 {
     /**
-     * @var \TYPO3\Flow\Object\ObjectManagerInterface
+     * @var \TYPO3\Flow\ObjectManagement\ObjectManagerInterface
      */
     protected $objectManager;
 
     /**
-     * @param \TYPO3\Flow\Object\CompileTimeObjectManager $objectManager
+     * @param CompileTimeObjectManager $objectManager
      * @return void
      */
-    public function injectObjectManager(\TYPO3\Flow\Object\CompileTimeObjectManager $objectManager)
+    public function injectObjectManager(CompileTimeObjectManager $objectManager)
     {
         $this->objectManager = $objectManager;
     }
@@ -83,18 +86,18 @@ class SessionObjectMethodsPointcutFilter implements \TYPO3\Flow\Aop\Pointcut\Poi
      */
     public function getRuntimeEvaluationsDefinition()
     {
-        return array();
+        return [];
     }
 
     /**
      * This method is used to optimize the matching process.
      *
-     * @param \TYPO3\Flow\Aop\Builder\ClassNameIndex $classNameIndex
-     * @return \TYPO3\Flow\Aop\Builder\ClassNameIndex
+     * @param ClassNameIndex $classNameIndex
+     * @return ClassNameIndex
      */
-    public function reduceTargetClassNames(\TYPO3\Flow\Aop\Builder\ClassNameIndex $classNameIndex)
+    public function reduceTargetClassNames(ClassNameIndex $classNameIndex)
     {
-        $sessionClasses = new \TYPO3\Flow\Aop\Builder\ClassNameIndex();
+        $sessionClasses = new ClassNameIndex();
         $sessionClasses->setClassNames($this->objectManager->getClassNamesByScope(ObjectConfiguration::SCOPE_SESSION));
         return $classNameIndex->intersect($sessionClasses);
     }

@@ -12,6 +12,7 @@ namespace TYPO3\Flow\Security\Authentication\Token;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Mvc\ActionRequest;
 
 /**
  * An authentication token used for functional tests
@@ -21,10 +22,10 @@ class TestingToken extends AbstractToken implements SessionlessTokenInterface
     /**
      * Simply sets the authentication status to AUTHENTICATION_NEEDED
      *
-     * @param \TYPO3\Flow\Mvc\ActionRequest $actionRequest The current action request instance
+     * @param ActionRequest $actionRequest The current action request instance
      * @return void
      */
-    public function updateCredentials(\TYPO3\Flow\Mvc\ActionRequest $actionRequest)
+    public function updateCredentials(ActionRequest $actionRequest)
     {
         $this->authenticationStatus = self::AUTHENTICATION_NEEDED;
     }

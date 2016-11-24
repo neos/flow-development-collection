@@ -12,8 +12,6 @@ namespace TYPO3\Flow\Session\Exception;
  */
 
 /**
- * A "\TYPO3\Flow\Session\Exception\SessionNotStartedException" Exception
- *
  * @api
  */
 class SessionNotStartedException extends \TYPO3\Flow\Session\Exception

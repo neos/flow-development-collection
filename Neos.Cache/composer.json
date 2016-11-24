@@ -1,0 +1,41 @@
+{
+    "name": "neos/cache",
+    "description": "Neos Flow Cache Framework",
+    "type": "library",
+    "homepage": "http://flow.neos.io",
+    "license": ["MIT"],
+    "require": {
+        "php": ">=5.5.0",
+        "neos/utility-files": "*",
+        "neos/utility-pdo": "*",
+        "neos/utility-lock": "*",
+        "neos/utility-opcodecache": "*"
+    },
+    "require-dev": {
+        "mikey179/vfsstream": "~1.6",
+        "phpunit/phpunit": "~4.8 || ~5.0"
+    },
+    "autoload": {
+        "psr-0": {
+            "TYPO3\\Flow\\Cache": "Classes"
+        },
+        "psr-4": {
+            "Neos\\Cache\\": "Classes"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "TYPO3\\Flow\\Cache\\Tests\\": "Tests"
+        }
+    },
+    "extra": {
+        "neos": {
+            "package-key": "Neos.Cache"
+        }
+    },
+    "suggest": {
+        "ext-memcache": "If you have a memcache server and want to use it for caching.",
+        "ext-memcached": "Alternative, if you have a memcache server and want to use it for caching.",
+        "ext-redis": "If you have a redis server and want to use it for caching."
+    }
+}

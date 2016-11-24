@@ -17,13 +17,15 @@ use TYPO3\Flow\Cache\Backend\FreezableBackendInterface;
 use TYPO3\Flow\Cache\CacheManager;
 use TYPO3\Flow\Cache\Frontend\PhpFrontend;
 use TYPO3\Flow\Cache\Frontend\VariableFrontend;
+use TYPO3\Flow\Cli\Command;
 use TYPO3\Flow\Cli\CommandController;
+use TYPO3\Flow\Cli\CommandManager;
 use TYPO3\Flow\Cli\RequestBuilder;
 use TYPO3\Flow\Cli\Response;
 use TYPO3\Flow\Core\Bootstrap;
 use TYPO3\Flow\Mvc\Dispatcher;
-use TYPO3\Flow\Object\DependencyInjection\ProxyClassBuilder;
-use TYPO3\Flow\Object\Proxy\Compiler;
+use TYPO3\Flow\ObjectManagement\DependencyInjection\ProxyClassBuilder;
+use TYPO3\Flow\ObjectManagement\Proxy\Compiler;
 use TYPO3\Flow\SignalSlot\Dispatcher as SignalSlotDispatcher;
 use TYPO3\Flow\Utility\Environment;
 use TYPO3\Flow\Utility\Files;
@@ -277,11 +279,11 @@ class CoreCommandController extends CommandController
             $this->quit(1);
         }
         $subProcess = false;
-        $pipes = array();
+        $pipes = [];
 
         $historyPathAndFilename = getenv('HOME') . '/.flow_' . md5(FLOW_PATH_ROOT);
         readline_read_history($historyPathAndFilename);
-        readline_completion_function(array($this, 'autocomplete'));
+        readline_completion_function([$this, 'autocomplete']);
 
         echo "Flow Interactive Shell\n\n";
 
@@ -351,7 +353,7 @@ class CoreCommandController extends CommandController
      */
     protected function emitFinishedCompilationRun($classCount)
     {
-        $this->signalSlotDispatcher->dispatch(__CLASS__, 'finishedCompilationRun', array($classCount));
+        $this->signalSlotDispatcher->dispatch(__CLASS__, 'finishedCompilationRun', [$classCount]);
     }
 
     /**
@@ -363,13 +365,13 @@ class CoreCommandController extends CommandController
     protected function launchSubProcess()
     {
         $systemCommand = 'FLOW_ROOTPATH=' . FLOW_PATH_ROOT . ' FLOW_PATH_TEMPORARY_BASE=' . FLOW_PATH_TEMPORARY_BASE . ' ' . 'FLOW_CONTEXT=' . $this->bootstrap->getContext() . ' ' . PHP_BINDIR . '/php -c ' . php_ini_loaded_file() . ' ' . FLOW_PATH_FLOW . 'Scripts/flow.php' . ' --start-slave';
-        $descriptorSpecification = array(array('pipe', 'r'), array('pipe', 'w'), array('pipe', 'a'));
+        $descriptorSpecification = [['pipe', 'r'], ['pipe', 'w'], ['pipe', 'a']];
         $subProcess = proc_open($systemCommand, $descriptorSpecification, $pipes);
         if (!is_resource($subProcess)) {
             throw new \RuntimeException('Could not execute sub process.');
         }
 
-        $read = array($pipes[1]);
+        $read = [$pipes[1]];
         $write = null;
         $except = null;
         $readTimeout = 30;
@@ -377,7 +379,7 @@ class CoreCommandController extends CommandController
         stream_select($read, $write, $except, $readTimeout);
 
         $subProcessStatus = proc_get_status($subProcess);
-        return ($subProcessStatus['running'] === true) ? array($subProcess, $pipes) : false;
+        return ($subProcessStatus['running'] === true) ? [$subProcess, $pipes] : false;
     }
 
     /**
@@ -425,13 +427,13 @@ class CoreCommandController extends CommandController
         // @TODO Add more functionality by parsing the current buffer with readline_info()
         // @TODO Filter file system elements (if possible at all)
 
-        $suggestions = array();
+        $suggestions = [];
 
         $availableCommands = $this->bootstrap->getObjectManager()
-            ->get(\TYPO3\Flow\Cli\CommandManager::class)
+            ->get(CommandManager::class)
             ->getAvailableCommands();
 
-        /** @var $command \TYPO3\Flow\Cli\Command */
+        /** @var $command Command */
         foreach ($availableCommands as $command) {
             if ($command->isInternal() === false) {
                 $suggestions[] = $command->getCommandIdentifier();

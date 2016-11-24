@@ -10,11 +10,12 @@ namespace TYPO3\Flow\Tests\Functional\Security\Policy;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use TYPO3\Flow\Tests\FunctionalTestCase;
 
 /**
  * Testcase for the security policy behavior
  */
-class PolicyTest extends \TYPO3\Flow\Tests\FunctionalTestCase
+class PolicyTest extends FunctionalTestCase
 {
     /**
      * @var boolean

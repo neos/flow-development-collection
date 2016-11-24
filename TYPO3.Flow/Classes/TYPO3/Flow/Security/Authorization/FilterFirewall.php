@@ -12,33 +12,38 @@ namespace TYPO3\Flow\Security\Authorization;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Mvc\ActionRequest;
+use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
+use TYPO3\Flow\Security\Exception\AccessDeniedException;
+use TYPO3\Flow\Security\RequestPatternInterface;
+use TYPO3\Flow\Security\RequestPatternResolver;
 
 /**
  * Default Firewall which analyzes the request with a RequestFilter chain.
  *
  * @Flow\Scope("singleton")
  */
-class FilterFirewall implements \TYPO3\Flow\Security\Authorization\FirewallInterface
+class FilterFirewall implements FirewallInterface
 {
     /**
-     * @var \TYPO3\Flow\Object\ObjectManagerInterface
+     * @var ObjectManagerInterface
      */
     protected $objectManager = null;
 
     /**
-     * @var \TYPO3\Flow\Security\RequestPatternResolver
+     * @var RequestPatternResolver
      */
     protected $requestPatternResolver = null;
 
     /**
-     * @var \TYPO3\Flow\Security\Authorization\InterceptorResolver
+     * @var InterceptorResolver
      */
     protected $interceptorResolver = null;
 
     /**
-     * @var array of \TYPO3\Flow\Security\Authorization\RequestFilter instances
+     * @var array<RequestFilter>
      */
-    protected $filters = array();
+    protected $filters = [];
 
     /**
      * If set to TRUE the firewall will reject any request except the ones explicitly
@@ -50,13 +55,13 @@ class FilterFirewall implements \TYPO3\Flow\Security\Authorization\FirewallInter
     /**
      * Constructor.
      *
-     * @param \TYPO3\Flow\Object\ObjectManagerInterface $objectManager The object manager
-     * @param \TYPO3\Flow\Security\RequestPatternResolver $requestPatternResolver The request pattern resolver
-     * @param \TYPO3\Flow\Security\Authorization\InterceptorResolver $interceptorResolver The interceptor resolver
+     * @param ObjectManagerInterface $objectManager The object manager
+     * @param RequestPatternResolver $requestPatternResolver The request pattern resolver
+     * @param InterceptorResolver $interceptorResolver The interceptor resolver
      */
-    public function __construct(\TYPO3\Flow\Object\ObjectManagerInterface $objectManager,
-            \TYPO3\Flow\Security\RequestPatternResolver $requestPatternResolver,
-            \TYPO3\Flow\Security\Authorization\InterceptorResolver $interceptorResolver)
+    public function __construct(ObjectManagerInterface $objectManager,
+                                RequestPatternResolver $requestPatternResolver,
+                                InterceptorResolver $interceptorResolver)
     {
         $this->objectManager = $objectManager;
         $this->requestPatternResolver = $requestPatternResolver;
@@ -79,11 +84,11 @@ class FilterFirewall implements \TYPO3\Flow\Security\Authorization\FirewallInter
      * Analyzes a request against the configured firewall rules and blocks
      * any illegal request.
      *
-     * @param \TYPO3\Flow\Mvc\ActionRequest $request The request to be analyzed
+     * @param ActionRequest $request The request to be analyzed
      * @return void
-     * @throws \TYPO3\Flow\Security\Exception\AccessDeniedException if the
+     * @throws AccessDeniedException if the
      */
-    public function blockIllegalRequests(\TYPO3\Flow\Mvc\ActionRequest $request)
+    public function blockIllegalRequests(ActionRequest $request)
     {
         $filterMatched = false;
         /** @var $filter RequestFilter */
@@ -93,7 +98,7 @@ class FilterFirewall implements \TYPO3\Flow\Security\Authorization\FirewallInter
             }
         }
         if ($this->rejectAll && !$filterMatched) {
-            throw new \TYPO3\Flow\Security\Exception\AccessDeniedException('The request was blocked, because no request filter explicitly allowed it.', 1216923741);
+            throw new AccessDeniedException('The request was blocked, because no request filter explicitly allowed it.', 1216923741);
         }
     }
 
@@ -110,7 +115,7 @@ class FilterFirewall implements \TYPO3\Flow\Security\Authorization\FirewallInter
             $patternClassName = $this->requestPatternResolver->resolveRequestPatternClass($patternType);
 
             $patternOptions = isset($singleFilterSettings['patternOptions']) ? $singleFilterSettings['patternOptions'] : [];
-            /** @var $requestPattern \TYPO3\Flow\Security\RequestPatternInterface */
+            /** @var $requestPattern RequestPatternInterface */
             $requestPattern = $this->objectManager->get($patternClassName, $patternOptions);
 
             // The following check needed for backwards compatibility:

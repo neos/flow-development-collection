@@ -11,8 +11,11 @@ namespace TYPO3\Flow\Mvc;
  * source code.
  */
 
+use TYPO3\Eel\CompilingEvaluator;
 use TYPO3\Eel\Context;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Cache\Frontend\VariableFrontend;
+use TYPO3\Flow\Configuration\ConfigurationManager;
 use TYPO3\Flow\Utility\Arrays;
 
 /**
@@ -27,19 +30,19 @@ use TYPO3\Flow\Utility\Arrays;
 class ViewConfigurationManager
 {
     /**
-     * @var \TYPO3\Flow\Cache\Frontend\VariableFrontend
+     * @var VariableFrontend
      */
     protected $cache;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Configuration\ConfigurationManager
+     * @var ConfigurationManager
      */
     protected $configurationManager;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Eel\CompilingEvaluator
+     * @var CompilingEvaluator
      */
     protected $eelEvaluator;
 
@@ -50,7 +53,7 @@ class ViewConfigurationManager
      * a different class that will be used to create the view and
      * an array of options that will be set on the view object.
      *
-     * @param \TYPO3\Flow\Mvc\ActionRequest $request
+     * @param ActionRequest $request
      * @return array
      */
     public function getViewConfiguration(ActionRequest $request)
@@ -63,29 +66,24 @@ class ViewConfigurationManager
 
             $requestMatcher = new RequestMatcher($request);
             $context = new Context($requestMatcher);
-            $matchingConfigurations = array();
+
+            $viewConfiguration = [];
+            $highestWeight = -1;
             foreach ($configurations as $order => $configuration) {
                 $requestMatcher->resetWeight();
                 if (!isset($configuration['requestFilter'])) {
-                    $matchingConfigurations[$order]['configuration'] = $configuration;
-                    $matchingConfigurations[$order]['weight'] = $order;
+                    $weight = $order;
                 } else {
                     $result = $this->eelEvaluator->evaluate($configuration['requestFilter'], $context);
                     if ($result === false) {
                         continue;
                     }
-                    $matchingConfigurations[$order]['configuration'] = $configuration;
-                    $matchingConfigurations[$order]['weight'] = $requestMatcher->getWeight() + $order;
+                    $weight = $requestMatcher->getWeight() + $order;
                 }
-            }
-
-            usort($matchingConfigurations, function ($configuration1, $configuration2) {
-                return $configuration1['weight'] > $configuration2['weight'];
-            });
-
-            $viewConfiguration = array();
-            foreach ($matchingConfigurations as $key => $matchingConfiguration) {
-                $viewConfiguration = Arrays::arrayMergeRecursiveOverrule($viewConfiguration, $matchingConfiguration['configuration']);
+                if ($weight > $highestWeight) {
+                    $viewConfiguration = $configuration;
+                    $highestWeight = $weight;
+                }
             }
             $this->cache->set($cacheIdentifier, $viewConfiguration);
         }
@@ -97,12 +95,12 @@ class ViewConfigurationManager
      * Create a complete cache identifier for the given
      * request that conforms to cache identifier syntax
      *
-     * @param \TYPO3\Flow\Mvc\RequestInterface $request
+     * @param RequestInterface $request
      * @return string
      */
     protected function createCacheIdentifier($request)
     {
-        $cacheIdentifiersParts = array();
+        $cacheIdentifiersParts = [];
         do {
             $cacheIdentifiersParts[] = $request->getControllerPackageKey();
             $cacheIdentifiersParts[] = $request->getControllerSubpackageKey();

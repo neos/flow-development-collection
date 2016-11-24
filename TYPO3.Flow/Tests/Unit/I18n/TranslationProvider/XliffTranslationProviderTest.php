@@ -11,11 +11,13 @@ namespace TYPO3\Flow\Tests\Unit\I18n\TranslationProvider;
  * source code.
  */
 
+use TYPO3\Flow\I18n;
+use TYPO3\Flow\Tests\UnitTestCase;
+
 /**
  * Testcase for the XliffTranslationProvider
- *
  */
-class XliffTranslationProviderTest extends \TYPO3\Flow\Tests\UnitTestCase
+class XliffTranslationProviderTest extends UnitTestCase
 {
     /**
      * @var string
@@ -28,12 +30,12 @@ class XliffTranslationProviderTest extends \TYPO3\Flow\Tests\UnitTestCase
     protected $samplePackageKey;
 
     /**
-     * @var \TYPO3\Flow\I18n\Locale
+     * @var I18n\Locale
      */
     protected $sampleLocale;
 
     /**
-     * @var \TYPO3\Flow\I18n\Cldr\Reader\PluralsReader
+     * @var I18n\Cldr\Reader\PluralsReader
      */
     protected $mockPluralsReader;
 
@@ -44,9 +46,9 @@ class XliffTranslationProviderTest extends \TYPO3\Flow\Tests\UnitTestCase
     {
         $this->sampleSourceName = 'foo';
         $this->samplePackageKey = 'TYPO3.Flow';
-        $this->sampleLocale = new \TYPO3\Flow\I18n\Locale('en_GB');
+        $this->sampleLocale = new I18n\Locale('en_GB');
 
-        $this->mockPluralsReader = $this->createMock(\TYPO3\Flow\I18n\Cldr\Reader\PluralsReader::class);
+        $this->mockPluralsReader = $this->createMock(I18n\Cldr\Reader\PluralsReader::class);
     }
 
     /**
@@ -54,16 +56,16 @@ class XliffTranslationProviderTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function returnsTranslatedLabelWhenOriginalLabelProvided()
     {
-        $mockModel = $this->createMock(\TYPO3\Flow\I18n\Xliff\XliffModel::class, array(), array('foo', $this->sampleLocale));
+        $mockModel = $this->createMock(I18n\Xliff\XliffModel::class, [], ['foo', $this->sampleLocale]);
         $mockModel->expects($this->once())->method('getTargetBySource')->with('bar', 0)->will($this->returnValue('baz'));
 
-        $this->mockPluralsReader->expects($this->once())->method('getPluralForms')->with($this->sampleLocale)->will($this->returnValue(array(\TYPO3\Flow\I18n\Cldr\Reader\PluralsReader::RULE_ONE, \TYPO3\Flow\I18n\Cldr\Reader\PluralsReader::RULE_OTHER)));
+        $this->mockPluralsReader->expects($this->once())->method('getPluralForms')->with($this->sampleLocale)->will($this->returnValue([I18n\Cldr\Reader\PluralsReader::RULE_ONE, I18n\Cldr\Reader\PluralsReader::RULE_OTHER]));
 
-        $translationProvider = $this->getAccessibleMock(\TYPO3\Flow\I18n\TranslationProvider\XliffTranslationProvider::class, array('getModel'));
+        $translationProvider = $this->getAccessibleMock(I18n\TranslationProvider\XliffTranslationProvider::class, ['getModel']);
         $translationProvider->injectPluralsReader($this->mockPluralsReader);
         $translationProvider->expects($this->once())->method('getModel')->with($this->samplePackageKey, $this->sampleSourceName, $this->sampleLocale)->will($this->returnValue($mockModel));
 
-        $result = $translationProvider->getTranslationByOriginalLabel('bar', $this->sampleLocale, \TYPO3\Flow\I18n\Cldr\Reader\PluralsReader::RULE_ONE, $this->sampleSourceName, $this->samplePackageKey);
+        $result = $translationProvider->getTranslationByOriginalLabel('bar', $this->sampleLocale, I18n\Cldr\Reader\PluralsReader::RULE_ONE, $this->sampleSourceName, $this->samplePackageKey);
         $this->assertEquals('baz', $result);
     }
 
@@ -72,16 +74,16 @@ class XliffTranslationProviderTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function returnsTranslatedLabelWhenLabelIdProvided()
     {
-        $mockModel = $this->createMock(\TYPO3\Flow\I18n\Xliff\XliffModel::class, array(), array('foo', $this->sampleLocale));
+        $mockModel = $this->createMock(I18n\Xliff\XliffModel::class, [], ['foo', $this->sampleLocale]);
         $mockModel->expects($this->once())->method('getTargetByTransUnitId')->with('bar', 1)->will($this->returnValue('baz'));
 
-        $this->mockPluralsReader->expects($this->any())->method('getPluralForms')->with($this->sampleLocale)->will($this->returnValue(array(\TYPO3\Flow\I18n\Cldr\Reader\PluralsReader::RULE_ONE, \TYPO3\Flow\I18n\Cldr\Reader\PluralsReader::RULE_OTHER)));
+        $this->mockPluralsReader->expects($this->any())->method('getPluralForms')->with($this->sampleLocale)->will($this->returnValue([I18n\Cldr\Reader\PluralsReader::RULE_ONE, I18n\Cldr\Reader\PluralsReader::RULE_OTHER]));
 
-        $translationProvider = $this->getAccessibleMock(\TYPO3\Flow\I18n\TranslationProvider\XliffTranslationProvider::class, array('getModel'));
+        $translationProvider = $this->getAccessibleMock(I18n\TranslationProvider\XliffTranslationProvider::class, ['getModel']);
         $translationProvider->injectPluralsReader($this->mockPluralsReader);
         $translationProvider->expects($this->once())->method('getModel')->with($this->samplePackageKey, $this->sampleSourceName, $this->sampleLocale)->will($this->returnValue($mockModel));
 
-        $result = $translationProvider->getTranslationById('bar', $this->sampleLocale, \TYPO3\Flow\I18n\Cldr\Reader\PluralsReader::RULE_OTHER, $this->sampleSourceName, $this->samplePackageKey);
+        $result = $translationProvider->getTranslationById('bar', $this->sampleLocale, I18n\Cldr\Reader\PluralsReader::RULE_OTHER, $this->sampleSourceName, $this->samplePackageKey);
         $this->assertEquals('baz', $result);
     }
 
@@ -91,12 +93,12 @@ class XliffTranslationProviderTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function getTranslationByOriginalLabelThrowsExceptionWhenInvalidPluralFormProvided()
     {
-        $this->mockPluralsReader->expects($this->any())->method('getPluralForms')->with($this->sampleLocale)->will($this->returnValue(array(\TYPO3\Flow\I18n\Cldr\Reader\PluralsReader::RULE_ONE, \TYPO3\Flow\I18n\Cldr\Reader\PluralsReader::RULE_OTHER)));
+        $this->mockPluralsReader->expects($this->any())->method('getPluralForms')->with($this->sampleLocale)->will($this->returnValue([I18n\Cldr\Reader\PluralsReader::RULE_ONE, I18n\Cldr\Reader\PluralsReader::RULE_OTHER]));
 
-        $translationProvider = $this->getMockBuilder(\TYPO3\Flow\I18n\TranslationProvider\XliffTranslationProvider::class)->setMethods(array('getModel'))->getMock();
+        $translationProvider = $this->getMockBuilder(I18n\TranslationProvider\XliffTranslationProvider::class)->setMethods(['getModel'])->getMock();
         $translationProvider->injectPluralsReader($this->mockPluralsReader);
 
-        $translationProvider->getTranslationByOriginalLabel('bar', $this->sampleLocale, \TYPO3\Flow\I18n\Cldr\Reader\PluralsReader::RULE_FEW, $this->sampleSourceName, $this->samplePackageKey);
+        $translationProvider->getTranslationByOriginalLabel('bar', $this->sampleLocale, I18n\Cldr\Reader\PluralsReader::RULE_FEW, $this->sampleSourceName, $this->samplePackageKey);
     }
 
     /**
@@ -105,12 +107,12 @@ class XliffTranslationProviderTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function getTranslationByIdThrowsExceptionWhenInvalidPluralFormProvided()
     {
-        $this->mockPluralsReader->expects($this->any())->method('getPluralForms')->with($this->sampleLocale)->will($this->returnValue(array(\TYPO3\Flow\I18n\Cldr\Reader\PluralsReader::RULE_ONE, \TYPO3\Flow\I18n\Cldr\Reader\PluralsReader::RULE_OTHER)));
+        $this->mockPluralsReader->expects($this->any())->method('getPluralForms')->with($this->sampleLocale)->will($this->returnValue([I18n\Cldr\Reader\PluralsReader::RULE_ONE, I18n\Cldr\Reader\PluralsReader::RULE_OTHER]));
 
-        $translationProvider = $this->getMockBuilder(\TYPO3\Flow\I18n\TranslationProvider\XliffTranslationProvider::class)->setMethods(array('getModel'))->getMock();
+        $translationProvider = $this->getMockBuilder(I18n\TranslationProvider\XliffTranslationProvider::class)->setMethods(['getModel'])->getMock();
         $translationProvider->injectPluralsReader($this->mockPluralsReader);
 
-        $translationProvider->getTranslationById('bar', $this->sampleLocale, \TYPO3\Flow\I18n\Cldr\Reader\PluralsReader::RULE_FEW, $this->sampleSourceName, $this->samplePackageKey);
+        $translationProvider->getTranslationById('bar', $this->sampleLocale, I18n\Cldr\Reader\PluralsReader::RULE_FEW, $this->sampleSourceName, $this->samplePackageKey);
     }
 
     /**
@@ -119,12 +121,12 @@ class XliffTranslationProviderTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function getModelSetsCorrectLocaleInModel()
     {
         $expectedSourcePath = 'expectedSourcePath';
-        $expectedLocale = new \TYPO3\Flow\I18n\Locale('za');
+        $expectedLocale = new I18n\Locale('za');
 
-        $mockLocalizationService = $this->createMock(\TYPO3\Flow\I18n\Service::class);
-        $mockLocalizationService->expects($this->once())->method('getXliffFilenameAndPath')->will($this->returnValue(array($expectedSourcePath, $expectedLocale)));
+        $mockLocalizationService = $this->createMock(I18n\Service::class);
+        $mockLocalizationService->expects($this->once())->method('getXliffFilenameAndPath')->will($this->returnValue([$expectedSourcePath, $expectedLocale]));
 
-        $translationProvider = $this->getAccessibleMock(\TYPO3\Flow\I18n\TranslationProvider\XliffTranslationProvider::class, array('dummy'));
+        $translationProvider = $this->getAccessibleMock(I18n\TranslationProvider\XliffTranslationProvider::class, ['dummy']);
         $translationProvider->injectLocalizationService($mockLocalizationService);
 
         $model = $translationProvider->_call('getModel', $this->samplePackageKey, $this->sampleSourceName, $this->sampleLocale);

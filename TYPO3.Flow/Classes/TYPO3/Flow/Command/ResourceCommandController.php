@@ -15,16 +15,20 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cli\CommandController;
 use TYPO3\Flow\Error\Message;
 use TYPO3\Flow\Exception;
-use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 use TYPO3\Flow\Package\PackageManagerInterface;
 use TYPO3\Flow\Persistence\PersistenceManagerInterface;
-use TYPO3\Flow\Resource\CollectionInterface;
-use TYPO3\Flow\Resource\Publishing\MessageCollector;
-use TYPO3\Flow\Resource\ResourceManager;
-use TYPO3\Flow\Resource\ResourceRepository;
+use TYPO3\Flow\ResourceManagement\CollectionInterface;
+use TYPO3\Flow\ResourceManagement\Publishing\MessageCollector;
+use TYPO3\Flow\ResourceManagement\PersistentResource;
+use TYPO3\Flow\ResourceManagement\ResourceManager;
+use TYPO3\Flow\ResourceManagement\ResourceRepository;
+use TYPO3\Media\Domain\Repository\AssetRepository;
+
+use TYPO3\Media\Domain\Repository\ThumbnailRepository;
 
 /**
- * Resource command controller for the TYPO3.Flow package
+ * PersistentResource command controller for the TYPO3.Flow package
  *
  * @Flow\Scope("singleton")
  */
@@ -81,17 +85,17 @@ class ResourceCommandController extends CommandController
             if ($collection === null) {
                 $collections = $this->resourceManager->getCollections();
             } else {
-                $collections = array();
+                $collections = [];
                 $collections[$collection] = $this->resourceManager->getCollection($collection);
                 if ($collections[$collection] === null) {
-                    $this->outputLine('Collection "%s" does not exist.', array($collection));
+                    $this->outputLine('Collection "%s" does not exist.', [$collection]);
                     $this->quit(1);
                 }
             }
 
             foreach ($collections as $collection) {
                 /** @var CollectionInterface $collection */
-                $this->outputLine('Publishing resources of collection "%s"', array($collection->getName()));
+                $this->outputLine('Publishing resources of collection "%s"', [$collection->getName()]);
                 $target = $collection->getTarget();
                 $target->publishCollection($collection, function ($iteration) {
                     $this->clearState($iteration);
@@ -108,7 +112,7 @@ class ResourceCommandController extends CommandController
         } catch (Exception $exception) {
             $this->outputLine();
             $this->outputLine('An error occurred while publishing resources (see full description below). You can check and probably fix the integrity of the resource registry by using the resource:clean command.');
-            $this->outputLine('%s (Exception code: %s)', array(get_class($exception), $exception->getCode()));
+            $this->outputLine('%s (Exception code: %s)', [get_class($exception), $exception->getCode()]);
             $this->outputLine($exception->getMessage());
             $this->quit(1);
         }
@@ -121,7 +125,7 @@ class ResourceCommandController extends CommandController
      * The target storage must be empty and must not be identical to the current storage of the collection.
      *
      * This command merely copies the binary data from one storage to another, it does not change the related
-     * Resource objects in the database in any way. Since the Resource objects in the database refer to a
+     * PersistentResource objects in the database in any way. Since the PersistentResource objects in the database refer to a
      * collection name, you can use this command for migrating from one storage to another my configuring
      * the new storage with the name of the old storage collection after the resources have been copied.
      *
@@ -157,7 +161,7 @@ class ResourceCommandController extends CommandController
 
         $this->output->progressStart(count($sourceObjects));
         foreach ($sourceCollection->getObjects() as $resource) {
-            /** @var \TYPO3\Flow\Resource\Storage\Object $resource */
+            /** @var \TYPO3\Flow\ResourceManagement\Storage\StorageObject $resource */
             $this->output->progressAdvance();
             $targetCollection->importResource($resource->getStream());
         }
@@ -178,7 +182,7 @@ class ResourceCommandController extends CommandController
      *
      * This command checks the resource registry (that is the database tables) for orphaned resource objects which don't
      * seem to have any corresponding data anymore (for example: the file in Data/Persistent/Resources has been deleted
-     * without removing the related Resource object).
+     * without removing the related PersistentResource object).
      *
      * If the TYPO3.Media package is active, this command will also detect any assets referring to broken resources
      * and will remove the respective Asset object from the database when the broken resource is removed.
@@ -197,7 +201,7 @@ class ResourceCommandController extends CommandController
         $resourcesCount = $this->resourceRepository->countAll();
         $this->output->progressStart($resourcesCount);
 
-        $brokenResources = array();
+        $brokenResources = [];
         $relatedAssets = new \SplObjectStorage();
         $relatedThumbnails = new \SplObjectStorage();
         $iterator = $this->resourceRepository->findAllIterator();
@@ -205,7 +209,7 @@ class ResourceCommandController extends CommandController
             $this->clearState($iteration);
         }) as $resource) {
             $this->output->progressAdvance(1);
-            /* @var \TYPO3\Flow\Resource\Resource $resource */
+            /* @var PersistentResource $resource */
             $stream = $resource->getStream();
             if (!is_resource($stream)) {
                 $brokenResources[] = $resource->getSha1();
@@ -216,10 +220,10 @@ class ResourceCommandController extends CommandController
         $this->outputLine();
 
         if ($mediaPackagePresent && count($brokenResources) > 0) {
-            /* @var \TYPO3\Media\Domain\Repository\AssetRepository $assetRepository */
-            $assetRepository = $this->objectManager->get(\TYPO3\Media\Domain\Repository\AssetRepository::class);
-            /* @var \TYPO3\Media\Domain\Repository\ThumbnailRepository $thumbnailRepository */
-            $thumbnailRepository = $this->objectManager->get(\TYPO3\Media\Domain\Repository\ThumbnailRepository::class);
+            /* @var AssetRepository $assetRepository */
+            $assetRepository = $this->objectManager->get(AssetRepository::class);
+            /* @var ThumbnailRepository $thumbnailRepository */
+            $thumbnailRepository = $this->objectManager->get(ThumbnailRepository::class);
 
             foreach ($brokenResources as $key => $resourceSha1) {
                 $resource = $this->resourceRepository->findOneBySha1($resourceSha1);
@@ -236,19 +240,19 @@ class ResourceCommandController extends CommandController
         }
 
         if (count($brokenResources) > 0) {
-            $this->outputLine('<b>Found %s broken resource(s):</b>', array(count($brokenResources)));
+            $this->outputLine('<b>Found %s broken resource(s):</b>', [count($brokenResources)]);
             $this->outputLine();
 
             foreach ($brokenResources as $resource) {
-                $this->outputLine('%s (%s) from "%s" collection', array($resource->getFilename(), $resource->getSha1(), $resource->getCollectionName()));
+                $this->outputLine('%s (%s) from "%s" collection', [$resource->getFilename(), $resource->getSha1(), $resource->getCollectionName()]);
                 if (isset($relatedAssets[$resource])) {
                     foreach ($relatedAssets[$resource] as $asset) {
-                        $this->outputLine(' -> %s (%s)', array(get_class($asset), $asset->getIdentifier()));
+                        $this->outputLine(' -> %s (%s)', [get_class($asset), $asset->getIdentifier()]);
                     }
                 }
             }
             $response = null;
-            while (!in_array($response, array('y', 'n', 'c'))) {
+            while (!in_array($response, ['y', 'n', 'c'])) {
                 $response = $this->output->ask('<comment>Do you want to remove all broken resource objects and related assets from the database? (y/n/c) </comment>');
             }
 

@@ -12,10 +12,10 @@ namespace Neos\Utility\Unicode\Tests\Unit;
  */
 
 use TYPO3\Flow\Utility\Unicode\TextIterator;
+use TYPO3\Flow\Utility\Unicode;
 
 /**
  * Testcase for the TextIterator port
- *
  */
 class TextIteratorTest extends \PHPUnit_Framework_TestCase
 {
@@ -86,7 +86,7 @@ class TextIteratorTest extends \PHPUnit_Framework_TestCase
         try {
             new TextIterator('Some string', 948);
             $this->fail('Constructor did not reject invalid TextIterator type.');
-        } catch (\TYPO3\Flow\Utility\Unicode\Exception $exception) {
+        } catch (Unicode\Exception $exception) {
             $this->assertContains('Invalid iterator type in TextIterator constructor', $exception->getMessage(), 'Wrong error message.');
         }
     }
@@ -236,7 +236,7 @@ class TextIteratorTest extends \PHPUnit_Framework_TestCase
     {
         $iterator = new TextIterator('This is a test string.', TextIterator::WORD);
 
-        $expectedResult = array(
+        $expectedResult = [
             0 => 'This',
             1 => ' ',
             2 => 'is',
@@ -247,7 +247,7 @@ class TextIteratorTest extends \PHPUnit_Framework_TestCase
             7 => ' ',
             8 => 'string',
             9 => '.',
-        );
+        ];
 
         $this->assertEquals($iterator->getAll(), $expectedResult, 'Wrong element returned by getAll().');
     }

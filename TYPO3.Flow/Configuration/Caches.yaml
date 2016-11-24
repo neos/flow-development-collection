@@ -15,7 +15,7 @@
 # will be taken to create the cache.
 Default:
   frontend: TYPO3\Flow\Cache\Frontend\VariableFrontend
-  backend: TYPO3\Flow\Cache\Backend\FileBackend
+  backend: Neos\Cache\Backend\FileBackend
   backendOptions:
     defaultLifetime: 0
   persistent: false
@@ -31,7 +31,7 @@ Flow_Cache_ResourceFiles: []
 # about Doctrine proxy class building.
 Flow_Core:
   frontend: TYPO3\Flow\Cache\Frontend\StringFrontend
-  backend: TYPO3\Flow\Cache\Backend\SimpleFileBackend
+  backend: Neos\Cache\Backend\SimpleFileBackend
 
 # Flow_I18n_*
 #
@@ -46,18 +46,18 @@ Flow_I18n_Cldr_Reader_PluralsReaderCache: []
 
 # Flow_Monitor
 Flow_Monitor:
-  backend: TYPO3\Flow\Cache\Backend\SimpleFileBackend
   frontend: TYPO3\Flow\Cache\Frontend\StringFrontend
+  backend: Neos\Cache\Backend\SimpleFileBackend
 
 # Flow_Mvc_Routing_*
 #
 # These caches contain request patterns and their matches and the opposite direction –
 # action request patterns and their resolved URL.
 Flow_Mvc_Routing_Route:
-  backend: TYPO3\Flow\Cache\Backend\FileBackend
+  backend: Neos\Cache\Backend\FileBackend
 Flow_Mvc_Routing_Resolve:
   frontend: TYPO3\Flow\Cache\Frontend\StringFrontend
-  backend: TYPO3\Flow\Cache\Backend\FileBackend
+  backend: Neos\Cache\Backend\FileBackend
 
 ##
 # Cache for RequestFiltered ViewConfigurations
@@ -70,7 +70,7 @@ Flow_Mvc_ViewConfigurations: []
 # classes built by AOP and the Dependency Injection builder.
 Flow_Object_Classes:
   frontend: TYPO3\Flow\Cache\Frontend\PhpFrontend
-  backend: TYPO3\Flow\Cache\Backend\SimpleFileBackend
+  backend: Neos\Cache\Backend\SimpleFileBackend
 
 # Flow_Object_Configuration
 #
@@ -78,26 +78,28 @@ Flow_Object_Classes:
 # of Flow. It states if certain code caches are up to date and stores previously
 # built object configurations.
 Flow_Object_Configuration:
-  backend: TYPO3\Flow\Cache\Backend\SimpleFileBackend
+  backend: Neos\Cache\Backend\SimpleFileBackend
 
 # Flow_Persistence_Doctrine
 #
 # This cache contains meta data for the Doctrine ORM.
 Flow_Persistence_Doctrine:
-  backend: TYPO3\Flow\Cache\Backend\SimpleFileBackend
+  backend: Neos\Cache\Backend\SimpleFileBackend
 Flow_Persistence_Doctrine_Results:
-  backend: TYPO3\Flow\Cache\Backend\FileBackend
+  backend: Neos\Cache\Backend\FileBackend
   backendOptions:
     defaultLifetime: 60
+Flow_Persistence_Doctrine_SecondLevel:
+  backend: TYPO3\Flow\Cache\Backend\SimpleFileBackend
 
 # Flow_Reflection*
 #
 #
 Flow_Reflection_Status:
   frontend: TYPO3\Flow\Cache\Frontend\StringFrontend
-  backend: TYPO3\Flow\Cache\Backend\SimpleFileBackend
+  backend: Neos\Cache\Backend\SimpleFileBackend
 Flow_Reflection_CompiletimeData:
-  backend: TYPO3\Flow\Cache\Backend\SimpleFileBackend
+  backend: Neos\Cache\Backend\SimpleFileBackend
 Flow_Reflection_RuntimeData: []
 Flow_Reflection_RuntimeClassSchemata: []
 
@@ -114,22 +116,22 @@ Flow_Security_Cryptography_RSAWallet:
     defaultLifetime: 30
 Flow_Security_Cryptography_HashService:
   frontend: TYPO3\Flow\Cache\Frontend\StringFrontend
-  backend: TYPO3\Flow\Cache\Backend\SimpleFileBackend
+  backend: Neos\Cache\Backend\SimpleFileBackend
   persistent: true
 
 
 # Flow_Session_*
 Flow_Session_MetaData:
-  backend: TYPO3\Flow\Cache\Backend\FileBackend
+  backend: Neos\Cache\Backend\FileBackend
 Flow_Session_Storage:
-  backend: TYPO3\Flow\Cache\Backend\FileBackend
+  backend: Neos\Cache\Backend\FileBackend
 
 #  Aop filter expressions that need to be evaluated at runtime.
 Flow_Aop_RuntimeExpressions:
   frontend: TYPO3\Flow\Cache\Frontend\PhpFrontend
-  backend: TYPO3\Flow\Cache\Backend\SimpleFileBackend
+  backend: Neos\Cache\Backend\SimpleFileBackend
 
 # Caches the map of possible PropertyMappers for source and target types
 Flow_PropertyMapper:
   frontend: TYPO3\Flow\Cache\Frontend\VariableFrontend
-  backend: TYPO3\Flow\Cache\Backend\SimpleFileBackend
+  backend: Neos\Cache\Backend\SimpleFileBackend

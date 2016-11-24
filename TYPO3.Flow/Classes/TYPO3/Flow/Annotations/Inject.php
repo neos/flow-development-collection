@@ -31,39 +31,12 @@ final class Inject
     public $lazy = true;
 
     /**
-     * Path of a setting (without the package key) which should be injected into the property.
-     * Example: session.name
-     *
-     * @var string
-     * @deprecated since 3.0. Use the InjectConfiguration annotation instead.
-     */
-    public $setting;
-
-    /**
-     * Defines the package to be used for retrieving a setting specified via the "setting" parameter. If no package
-     * is specified, we'll assume the package to be the same which contains the class where the Inject annotation is
-     * used.
-     *
-     * Example: TYPO3.Flow
-     *
-     * @var string
-     * @deprecated since 3.0. Use the InjectConfiguration annotation instead.
-     */
-    public $package;
-
-    /**
      * @param array $values
      */
     public function __construct(array $values)
     {
         if (isset($values['lazy'])) {
             $this->lazy = (boolean)$values['lazy'];
-        }
-        if (isset($values['setting'])) {
-            $this->setting = (string)$values['setting'];
-        }
-        if (isset($values['package'])) {
-            $this->package = (string)$values['package'];
         }
     }
 }

@@ -12,6 +12,8 @@ namespace TYPO3\Eel\FlowQuery;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
+use TYPO3\Flow\Reflection\ReflectionService;
 
 /**
  * FlowQuery Operation Resolver
@@ -21,13 +23,13 @@ use TYPO3\Flow\Annotations as Flow;
 class OperationResolver implements OperationResolverInterface
 {
     /**
-     * @var \TYPO3\Flow\Object\ObjectManagerInterface
+     * @var ObjectManagerInterface
      * @Flow\Inject
      */
     protected $objectManager;
 
     /**
-     * @var \TYPO3\Flow\Reflection\ReflectionService
+     * @var ReflectionService
      * @Flow\Inject
      */
     protected $reflectionService;
@@ -38,7 +40,7 @@ class OperationResolver implements OperationResolverInterface
      *
      * @var array
      */
-    protected $operations = array();
+    protected $operations = [];
 
     /**
      * associative array of registered final operations:
@@ -46,7 +48,7 @@ class OperationResolver implements OperationResolverInterface
      *
      * @var array
      */
-    protected $finalOperationNames = array();
+    protected $finalOperationNames = [];
 
     /**
      * Initializer, building up $this->operations and $this->finalOperationNames
@@ -59,18 +61,18 @@ class OperationResolver implements OperationResolverInterface
     }
 
     /**
-     * @param \TYPO3\Flow\Object\ObjectManagerInterface $objectManager
+     * @param ObjectManagerInterface $objectManager
      * @return array Array of sorted operations and array of final operation names
+     * @throws FlowQueryException
      * @Flow\CompileStatic
-     * @throws \TYPO3\Eel\FlowQuery\FlowQueryException
      */
     public static function buildOperationsAndFinalOperationNames($objectManager)
     {
-        $operations = array();
-        $finalOperationNames = array();
+        $operations = [];
+        $finalOperationNames = [];
 
-        $reflectionService = $objectManager->get(\TYPO3\Flow\Reflection\ReflectionService::class);
-        $operationClassNames = $reflectionService->getAllImplementationClassNamesForInterface(\TYPO3\Eel\FlowQuery\OperationInterface::class);
+        $reflectionService = $objectManager->get(ReflectionService::class);
+        $operationClassNames = $reflectionService->getAllImplementationClassNamesForInterface(OperationInterface::class);
         /** @var $operationClassName OperationInterface */
         foreach ($operationClassNames as $operationClassName) {
             $shortOperationName = $operationClassName::getShortName();
@@ -78,7 +80,7 @@ class OperationResolver implements OperationResolverInterface
             $isFinalOperation = $operationClassName::isFinal();
 
             if (!isset($operations[$shortOperationName])) {
-                $operations[$shortOperationName] = array();
+                $operations[$shortOperationName] = [];
             }
 
             if (isset($operations[$shortOperationName][$operationPriority])) {
@@ -95,7 +97,7 @@ class OperationResolver implements OperationResolverInterface
             krsort($operation, SORT_NUMERIC);
         }
 
-        return array($operations, $finalOperationNames);
+        return [$operations, $finalOperationNames];
     }
 
     /**
@@ -122,6 +124,7 @@ class OperationResolver implements OperationResolverInterface
         }
 
         foreach ($this->operations[$operationName] as $operationClassName) {
+            /** @var OperationInterface $operation */
             $operation = $this->objectManager->get($operationClassName);
             if ($operation->canEvaluate($context)) {
                 return $operation;

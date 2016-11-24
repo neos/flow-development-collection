@@ -15,7 +15,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 use TYPO3\Flow\Tests\Functional\Persistence\Fixtures\SubEntity as ImportedSubEntity;
 
 /**
@@ -63,9 +63,14 @@ class TestEntity
     protected $description = 'This is some text';
 
     /**
+     * @var TestEmbeddedValueObject
+     */
+    protected $embeddedValueObject;
+
+    /**
      * @var array
      */
-    protected $arrayProperty = array();
+    protected $arrayProperty = [];
 
     /**
      * @var TestEmbeddable
@@ -80,6 +85,7 @@ class TestEntity
     {
         $this->subEntities = new ArrayCollection();
         $this->embedded = new TestEmbeddable('');
+        $this->embeddedValueObject = new TestEmbeddedValueObject();
     }
 
     /**
@@ -222,5 +228,22 @@ class TestEntity
     public function setEmbedded($embedded)
     {
         $this->embedded = $embedded;
+    }
+
+    /**
+     * @param TestEmbeddedValueObject $embeddedValueObject
+     * @return void
+     */
+    public function setEmbeddedValueObject($embeddedValueObject)
+    {
+        $this->embeddedValueObject = $embeddedValueObject;
+    }
+
+    /**
+     * @return TestEmbeddedValueObject
+     */
+    public function getEmbeddedValueObject()
+    {
+        return $this->embeddedValueObject;
     }
 }

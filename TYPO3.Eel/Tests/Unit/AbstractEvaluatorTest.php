@@ -13,13 +13,14 @@ namespace TYPO3\Eel\Tests\Unit;
 
 use TYPO3\Eel\Context;
 use TYPO3\Eel\EelEvaluatorInterface;
+use TYPO3\Flow\Tests\UnitTestCase;
 
 /**
  * Abstract evaluator test
  *
  * Is used to test both the compiling and interpreting Eel evaluators.
  */
-abstract class AbstractEvaluatorTest extends \TYPO3\Flow\Tests\UnitTestCase
+abstract class AbstractEvaluatorTest extends UnitTestCase
 {
     /**
      * @return array
@@ -27,16 +28,16 @@ abstract class AbstractEvaluatorTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function integerLiterals()
     {
         $c = new Context();
-        return array(
+        return [
             // So simple, so true
-            array('1', $c, 1),
+            ['1', $c, 1],
             // It all starts with zero
-            array('0', $c, 0),
+            ['0', $c, 0],
             // Very large number!
-            array('2147483600', $c, 2147483600),
+            ['2147483600', $c, 2147483600],
             // Don't be so negative
-            array('-100', $c, -100),
-        );
+            ['-100', $c, -100],
+        ];
     }
 
     /**
@@ -45,11 +46,11 @@ abstract class AbstractEvaluatorTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function floatLiterals()
     {
         $c = new Context();
-        return array(
-            array('1.0', $c, 1.0),
-            array('3.141', $c, 3.141),
-            array('-17.4', $c, -17.4),
-        );
+        return [
+            ['1.0', $c, 1.0],
+            ['3.141', $c, 3.141],
+            ['-17.4', $c, -17.4],
+        ];
     }
 
     /**
@@ -58,20 +59,20 @@ abstract class AbstractEvaluatorTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function stringLiterals()
     {
         $c = new Context();
-        return array(
+        return [
             // An empty string
-            array('""', $c, ''),
+            ['""', $c, ''],
             // Very basic
-            array('"Hello world"', $c, 'Hello world'),
+            ['"Hello world"', $c, 'Hello world'],
             // Escape not possible
-            array('"Foo \"Bar\""', $c, 'Foo "Bar"'),
+            ['"Foo \"Bar\""', $c, 'Foo "Bar"'],
             // Single quotes ftw
-            array('\'\'', $c, ''),
+            ['\'\'', $c, ''],
             // Single quotes ftw
-            array('\'Foo\'', $c, 'Foo'),
+            ['\'Foo\'', $c, 'Foo'],
             // Mixed quote salad
-            array('\'"Foo" Bar\'', $c, '"Foo" Bar'),
-        );
+            ['\'"Foo" Bar\'', $c, '"Foo" Bar'],
+        ];
     }
 
     /**
@@ -79,17 +80,17 @@ abstract class AbstractEvaluatorTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function stringConcatenations()
     {
-        $c = new Context(array('foo' => 'bar'));
-        return array(
+        $c = new Context(['foo' => 'bar']);
+        return [
             // Just concatenate two strings
-            array('"a" + "b"', $c, 'ab'),
+            ['"a" + "b"', $c, 'ab'],
             // Concatenate a string and an integer
-            array('2 + "b"', $c, '2b'),
+            ['2 + "b"', $c, '2b'],
             // Concatenate a wrapped element and a string
-            array('foo + "b"', $c, 'barb'),
+            ['foo + "b"', $c, 'barb'],
             // Concatenate three elements
-            array('foo + " x " + foo', $c, 'bar x bar')
-        );
+            ['foo + " x " + foo', $c, 'bar x bar']
+        ];
     }
 
     /**
@@ -98,16 +99,16 @@ abstract class AbstractEvaluatorTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function notExpressions()
     {
         $c = new Context();
-        return array(
+        return [
             // Not one is false
-            array('!1', $c, false),
+            ['!1', $c, false],
             // Not an empty string is true
-            array('!""', $c, true),
+            ['!""', $c, true],
             // Some whitespace allowed
-            array('!0', $c, true),
+            ['!0', $c, true],
             // A not can be a word
-            array('not 0', $c, true),
-        );
+            ['not 0', $c, true],
+        ];
     }
 
     /**
@@ -115,34 +116,34 @@ abstract class AbstractEvaluatorTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function comparisonExpressions()
     {
-        $c = new Context(array(
+        $c = new Context([
             'answer' => 42
-        ));
-        return array(
-            array('1==0', $c, false),
-            array('1==1', $c, true),
-            array('0 == 0', $c, true),
+        ]);
+        return [
+            ['1==0', $c, false],
+            ['1==1', $c, true],
+            ['0 == 0', $c, true],
             // It's strict
-            array('0==""', $c, false),
+            ['0==""', $c, false],
             // Quoting doesn't matter
-            array('"Foo"==\'Foo\'', $c, true),
+            ['"Foo"==\'Foo\'', $c, true],
             // Whitespace okay!
-            array('1> 0', $c, true),
+            ['1> 0', $c, true],
             // Whitespace okay!
-            array('1 <0', $c, false),
+            ['1 <0', $c, false],
             // Parenthesed comparisons
-            array('(0 > 1) < (0 < 1)', $c, true),
+            ['(0 > 1) < (0 < 1)', $c, true],
             // Comparisons and variables
-            array('answer > 1', $c, true),
-            array('answer==  42', $c, true),
+            ['answer > 1', $c, true],
+            ['answer==  42', $c, true],
             // Less than equal and greater than equal
-            array('1<= 0', $c, false),
-            array('1 >=1', $c, true),
+            ['1<= 0', $c, false],
+            ['1 >=1', $c, true],
             // Inequality
-            array('1!=1', $c, false),
-            array('1!=true', $c, true),
-            array('answer != 7', $c, true),
-        );
+            ['1!=1', $c, false],
+            ['1!=true', $c, true],
+            ['answer != 7', $c, true],
+        ];
     }
 
     /**
@@ -150,27 +151,27 @@ abstract class AbstractEvaluatorTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function calculationExpressions()
     {
-        $c = new Context(array(
+        $c = new Context([
             'answer' => 42,
-            'deeply' => array(
-                'nested' => array(
+            'deeply' => [
+                'nested' => [
                     'value' => 2
-                )
-            )
-        ));
-        return array(
+                ]
+            ]
+        ]);
+        return [
             // Very basic
-            array('1 + 1', $c, 2),
-            array('1 - 1', $c, 0),
-            array('2*2', $c, 4),
+            ['1 + 1', $c, 2],
+            ['1 - 1', $c, 0],
+            ['2*2', $c, 4],
             // Multiple calc with precedence
-            array('1 + 2 * 3 + 4 / 2 + 2', $c, 11),
-            array('(1 + 2) * 3 + 4 / (2 + 2)', $c, 10),
+            ['1 + 2 * 3 + 4 / 2 + 2', $c, 11],
+            ['(1 + 2) * 3 + 4 / (2 + 2)', $c, 10],
             // Calculation with variables
-            array('2* answer', $c, 84),
+            ['2* answer', $c, 84],
             // Calculation with nested context
-            array('deeply.nested.value - 1', $c, 1),
-        );
+            ['deeply.nested.value - 1', $c, 1],
+        ];
     }
 
     /**
@@ -179,14 +180,14 @@ abstract class AbstractEvaluatorTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function combinedExpressions()
     {
         $c = new Context();
-        return array(
+        return [
             // Calculations before comparisons
-            array('1 + 2 > 3', $c, false),
+            ['1 + 2 > 3', $c, false],
             // Calculations before comparisons
-            array('2 * 1 == 3 - 1', $c, true),
+            ['2 * 1 == 3 - 1', $c, true],
             // Comparison on left side work too
-            array('1 < 1 + 1', $c, true),
-        );
+            ['1 < 1 + 1', $c, true],
+        ];
     }
 
     /**
@@ -194,37 +195,37 @@ abstract class AbstractEvaluatorTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function booleanExpressions()
     {
-        $c = new Context(array(
+        $c = new Context([
             'trueVar' => true,
             'falseVar' => false
-        ));
-        return array(
+        ]);
+        return [
             // Boolean literals work
-            array('false', $c, false),
-            array('TRUE', $c, true),
+            ['false', $c, false],
+            ['TRUE', $c, true],
             // Conjunction before Disjunction
-            array('TRUE && TRUE || FALSE && FALSE', $c, true),
-            array('TRUE && FALSE || FALSE && TRUE', $c, false),
-            array('1 < 2 && 2 > 1', $c, true),
-            array('!1 < 2', $c, true),
-            array('!(1 < 2)', $c, false),
+            ['TRUE && TRUE || FALSE && FALSE', $c, true],
+            ['TRUE && FALSE || FALSE && TRUE', $c, false],
+            ['1 < 2 && 2 > 1', $c, true],
+            ['!1 < 2', $c, true],
+            ['!(1 < 2)', $c, false],
             // Named and symbolic operators can be mixed
-            array('TRUE && true and FALSE or false', $c, false),
+            ['TRUE && true and FALSE or false', $c, false],
             // Using variables and literals
-            array('trueVar || FALSE', $c, true),
-            array('trueVar && TRUE', $c, true),
-            array('falseVar || FALSE', $c, false),
-            array('falseVar && TRUE', $c, false),
+            ['trueVar || FALSE', $c, true],
+            ['trueVar && TRUE', $c, true],
+            ['falseVar || FALSE', $c, false],
+            ['falseVar && TRUE', $c, false],
             // JavaScript semantics of boolean operators
-            array('null || "foo"', $c, 'foo'),
-            array('0 || "foo"', $c, 'foo'),
-            array('0 || ""', $c, ''),
-            array('"bar" || "foo"', $c, 'bar'),
-            array('"foo" && "bar"', $c, 'bar'),
-            array('"" && false', $c, ''),
-            array('"Bar" && 0', $c, 0),
-            array('0 && ""', $c, 0),
-        );
+            ['null || "foo"', $c, 'foo'],
+            ['0 || "foo"', $c, 'foo'],
+            ['0 || ""', $c, ''],
+            ['"bar" || "foo"', $c, 'bar'],
+            ['"foo" && "bar"', $c, 'bar'],
+            ['"" && false', $c, ''],
+            ['"Bar" && 0', $c, 0],
+            ['0 && ""', $c, 0],
+        ];
     }
 
     /**
@@ -233,34 +234,34 @@ abstract class AbstractEvaluatorTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function objectPathOnArrayExpressions()
     {
         // Wrap a value inside a context
-        $c = new Context(array(
+        $c = new Context([
             'foo' => 42,
-            'bar' => array(
+            'bar' => [
                 'baz' => 'Hello',
-                'a1' => array(
+                'a1' => [
                     'b2' => 'Nested'
-                )
-            ),
-            'another' => array(
+                ]
+            ],
+            'another' => [
                 'path' => 'b2'
-            ),
-            'numeric' => array('a', 'b', 'c')
-        ));
-        return array(
+            ],
+            'numeric' => ['a', 'b', 'c']
+        ]);
+        return [
             // Undefined variables are NULL with the default context
-            array('unknwn', $c, null),
+            ['unknwn', $c, null],
             // Simple variable statement
-            array('foo', $c, 42),
+            ['foo', $c, 42],
             // Simple object path
-            array('bar.baz', $c, 'Hello'),
+            ['bar.baz', $c, 'Hello'],
             // Dynamic array like access of properties by another object path (awesome!!!)
-            array('bar.a1[another.path]', $c, 'Nested'),
+            ['bar.a1[another.path]', $c, 'Nested'],
             // Offset access with invalid path is NULL
-            array('bar.a1[unknwn.path]', $c, null),
+            ['bar.a1[unknwn.path]', $c, null],
             // Offset access with integers
-            array('numeric[1]', $c, 'b'),
-            array('numeric[0]', $c, 'a'),
-        );
+            ['numeric[1]', $c, 'b'],
+            ['numeric[0]', $c, 'a'],
+        ];
     }
 
     /**
@@ -273,18 +274,18 @@ abstract class AbstractEvaluatorTest extends \TYPO3\Flow\Tests\UnitTestCase
         $nested = new Fixtures\TestObject();
         $nested->setProperty($obj);
         // Wrap an object inside a context
-        $c = new Context(array(
+        $c = new Context([
             'obj' => $obj,
             'nested' => $nested
-        ));
-        return array(
+        ]);
+        return [
             // Access object properties by getter
-            array('obj.property', $c, 'Test'),
+            ['obj.property', $c, 'Test'],
             // Access nested objects
-            array('nested.property.property', $c, 'Test'),
+            ['nested.property.property', $c, 'Test'],
             // Call a method on an object
-            array('obj.callMe("Foo")', $c, 'Hello, Foo!'),
-        );
+            ['obj.callMe("Foo")', $c, 'Hello, Foo!'],
+        ];
     }
 
     /**
@@ -293,51 +294,51 @@ abstract class AbstractEvaluatorTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function methodCallExpressions()
     {
         // Wrap an array with functions inside a context
-        $contextArray = array(
+        $contextArray = [
             'count' => function ($array) {
                 return count($array);
             },
             'pow' => function ($base, $exp) {
                 return pow($base, $exp);
             },
-            'funcs' => array(
+            'funcs' => [
                 'dup' => function ($array) {
                     return array_map(function ($item) {
                         return $item * 2;
                     }, $array);
                 }
-            ),
+            ],
             'foo' => function () {
-                return array('a' => 'a1', 'b' => 'b1');
+                return ['a' => 'a1', 'b' => 'b1'];
             },
 
-            'arr' => array('a' => 1, 'b' => 2, 'c' => 3),
+            'arr' => ['a' => 1, 'b' => 2, 'c' => 3],
             'someVariable' => 'b'
-        );
+        ];
         $c = new Context($contextArray);
 
         $protectedContext = new \TYPO3\Eel\ProtectedContext($contextArray);
         $protectedContext->whitelist('*');
-        return array(
+        return [
             // Call first-level method
-            array('count(arr)', $c, 3),
+            ['count(arr)', $c, 3],
             // Method with multiple arguments
-            array('pow(2, 8)', $c, 256),
+            ['pow(2, 8)', $c, 256],
             // Combine method call and operation
-            array('count(arr) + 1', $c, 4),
+            ['count(arr) + 1', $c, 4],
             // Nested method call and operation inside an method call
-            array('pow(2, count(arr) + 1)', $c, 16),
+            ['pow(2, count(arr) + 1)', $c, 16],
             // Nest method calls and object paths
-            array('funcs.dup(arr).b', $c, 4),
+            ['funcs.dup(arr).b', $c, 4],
 
             // Nest method calls and array access
-            array('funcs.dup(arr)[someVariable]', $c, 4),
-            array('foo()[someVariable]', $c, 'b1'),
+            ['funcs.dup(arr)[someVariable]', $c, 4],
+            ['foo()[someVariable]', $c, 'b1'],
             // Nest method calls and array access with protected context
-            array('foo()[someVariable]', $protectedContext, 'b1'),
+            ['foo()[someVariable]', $protectedContext, 'b1'],
             // Method call on NULL value returns NULL
-            array('unknwn.func()', $c, null),
-        );
+            ['unknwn.func()', $c, null],
+        ];
     }
 
     /**
@@ -345,25 +346,25 @@ abstract class AbstractEvaluatorTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function arrayLiteralExpressions()
     {
-        $c = new Context(array(
+        $c = new Context([
             'test' => function ($string) {
                 return 'test|' . $string . '|';
             },
-            'foo' => array(
+            'foo' => [
                 'baz' => 'Hello'
-            ),
+            ],
             'bar' => 'baz'
-        ));
-        return array(
+        ]);
+        return [
             // Empty array
-            array('[]', $c, array()),
+            ['[]', $c, []],
             // Simple array with integer literals
-            array('[1, 2, 3]', $c, array(1, 2, 3)),
+            ['[1, 2, 3]', $c, [1, 2, 3]],
             // Nested array literals
-            array('[[1, 2], 3, 4]', $c, array(array(1, 2), 3, 4)),
+            ['[[1, 2], 3, 4]', $c, [[1, 2], 3, 4]],
             // Nested expressions in array literal
-            array('[[foo[bar], 2], test("a"), 4]', $c, array(array('Hello', 2), 'test|a|', 4)),
-        );
+            ['[[foo[bar], 2], test("a"), 4]', $c, [['Hello', 2], 'test|a|', 4]],
+        ];
     }
 
     /**
@@ -371,18 +372,18 @@ abstract class AbstractEvaluatorTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function objectLiteralExpressions()
     {
-        $c = new Context(array(
-        ));
-        return array(
+        $c = new Context([
+        ]);
+        return [
             // Empty object
-            array('{}', $c, array()),
+            ['{}', $c, []],
             // Simple object literal with unquoted key
-            array('{foo: "bar", bar: "baz"}', $c, array('foo' => 'bar', 'bar' => 'baz')),
+            ['{foo: "bar", bar: "baz"}', $c, ['foo' => 'bar', 'bar' => 'baz']],
             // Simple object literal with differently quoted keys
-            array('{"foo": "bar", \'bar\': "baz"}', $c, array('foo' => 'bar', 'bar' => 'baz')),
+            ['{"foo": "bar", \'bar\': "baz"}', $c, ['foo' => 'bar', 'bar' => 'baz']],
             // Nested object literals with unquoted key
-            array('{foo: "bar", bar: {baz: "quux"}}', $c, array('foo' => 'bar', 'bar' => array('baz' => 'quux'))),
-        );
+            ['{foo: "bar", bar: {baz: "quux"}}', $c, ['foo' => 'bar', 'bar' => ['baz' => 'quux']]],
+        ];
     }
 
     /**
@@ -390,23 +391,23 @@ abstract class AbstractEvaluatorTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function conditionalOperatorExpressions()
     {
-        $c = new Context(array(
+        $c = new Context([
             'answer' => 42,
             'trueVar' => true,
             'a' => 5,
             'b' => 10
-        ));
-        return array(
+        ]);
+        return [
             // Simple ternary operator expression (condition)
-            array('TRUE ? 1 : 2', $c, 1),
+            ['TRUE ? 1 : 2', $c, 1],
             // Ternary operator using variables
-            array('trueVar ? answer : FALSE', $c, 42),
-            array('!trueVar ? FALSE : answer', $c, 42),
-            array('a < b ? 1 : 2', $c, 1),
+            ['trueVar ? answer : FALSE', $c, 42],
+            ['!trueVar ? FALSE : answer', $c, 42],
+            ['a < b ? 1 : 2', $c, 1],
             // Ternary operator with nested expressions
-            array('a < b ? 1 + a : 2 + b', $c, 6),
-            array('a > b ? 1 + a : 2 + b', $c, 12),
-        );
+            ['a < b ? 1 + a : 2 + b', $c, 6],
+            ['a > b ? 1 + a : 2 + b', $c, 12],
+        ];
     }
 
     /**
@@ -414,7 +415,7 @@ abstract class AbstractEvaluatorTest extends \TYPO3\Flow\Tests\UnitTestCase
      * @dataProvider integerLiterals
      *
      * @param string $expression
-     * @param \TYPO3\Eel\Context $context
+     * @param Context $context
      * @param mixed $result
      */
     public function integerLiteralsCanBeParsed($expression, $context, $result)
@@ -427,7 +428,7 @@ abstract class AbstractEvaluatorTest extends \TYPO3\Flow\Tests\UnitTestCase
      * @dataProvider floatLiterals
      *
      * @param string $expression
-     * @param \TYPO3\Eel\Context $context
+     * @param Context $context
      * @param mixed $result
      */
     public function floatLiteralsCanBeParsed($expression, $context, $result)
@@ -440,7 +441,7 @@ abstract class AbstractEvaluatorTest extends \TYPO3\Flow\Tests\UnitTestCase
      * @dataProvider stringLiterals
      *
      * @param string $expression
-     * @param \TYPO3\Eel\Context $context
+     * @param Context $context
      * @param mixed $result
      */
     public function stringLiteralsCanBeParsed($expression, $context, $result)
@@ -453,7 +454,7 @@ abstract class AbstractEvaluatorTest extends \TYPO3\Flow\Tests\UnitTestCase
      * @dataProvider stringConcatenations
      *
      * @param string $expression
-     * @param \TYPO3\Eel\Context $context
+     * @param Context $context
      * @param mixed $result
      */
     public function stringConcatenationsCanBeParsed($expression, $context, $result)
@@ -466,7 +467,7 @@ abstract class AbstractEvaluatorTest extends \TYPO3\Flow\Tests\UnitTestCase
      * @dataProvider notExpressions
      *
      * @param string $expression
-     * @param \TYPO3\Eel\Context $context
+     * @param Context $context
      * @param mixed $result
      */
     public function notExpressionsCanBeParsed($expression, $context, $result)
@@ -479,7 +480,7 @@ abstract class AbstractEvaluatorTest extends \TYPO3\Flow\Tests\UnitTestCase
      * @dataProvider comparisonExpressions
      *
      * @param string $expression
-     * @param \TYPO3\Eel\Context $context
+     * @param Context $context
      * @param mixed $result
      */
     public function comparisonExpressionsCanBeParsed($expression, $context, $result)
@@ -492,7 +493,7 @@ abstract class AbstractEvaluatorTest extends \TYPO3\Flow\Tests\UnitTestCase
      * @dataProvider calculationExpressions
      *
      * @param string $expression
-     * @param \TYPO3\Eel\Context $context
+     * @param Context $context
      * @param mixed $result
      */
     public function calculationExpressionsCanBeParsed($expression, $context, $result)
@@ -505,7 +506,7 @@ abstract class AbstractEvaluatorTest extends \TYPO3\Flow\Tests\UnitTestCase
      * @dataProvider combinedExpressions
      *
      * @param string $expression
-     * @param \TYPO3\Eel\Context $context
+     * @param Context $context
      * @param mixed $result
      */
     public function combinedExpressionsCanBeParsed($expression, $context, $result)
@@ -518,7 +519,7 @@ abstract class AbstractEvaluatorTest extends \TYPO3\Flow\Tests\UnitTestCase
      * @dataProvider objectPathOnArrayExpressions
      *
      * @param string $expression
-     * @param \TYPO3\Eel\Context $context
+     * @param Context $context
      * @param mixed $result
      */
     public function objectPathOnArrayExpressionsCanBeParsed($expression, $context, $result)
@@ -531,7 +532,7 @@ abstract class AbstractEvaluatorTest extends \TYPO3\Flow\Tests\UnitTestCase
      * @dataProvider objectPathOnObjectExpressions
      *
      * @param string $expression
-     * @param \TYPO3\Eel\Context $context
+     * @param Context $context
      * @param mixed $result
      */
     public function objectPathOnObjectExpressionsCanBeParsed($expression, $context, $result)
@@ -544,7 +545,7 @@ abstract class AbstractEvaluatorTest extends \TYPO3\Flow\Tests\UnitTestCase
      * @dataProvider methodCallExpressions
      *
      * @param string $expression
-     * @param \TYPO3\Eel\Context $context
+     * @param Context $context
      * @param mixed $result
      */
     public function methodCallExpressionsCanBeParsed($expression, $context, $result)
@@ -558,13 +559,13 @@ abstract class AbstractEvaluatorTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function methodCallOfUndefinedFunctionThrowsException()
     {
-        $c = new Context(array(
-            'arr' => array(
+        $c = new Context([
+            'arr' => [
                 'func' => function ($arg) {
                     return 42;
                 }
-            )
-        ));
+            ]
+        ]);
         $this->assertEvaluated(null, 'arr.funk("title")', $c);
     }
 
@@ -576,9 +577,9 @@ abstract class AbstractEvaluatorTest extends \TYPO3\Flow\Tests\UnitTestCase
     {
         $o = new \TYPO3\Eel\Tests\Unit\Fixtures\TestObject();
 
-        $c = new Context(array(
+        $c = new Context([
             'context' => $o
-        ));
+        ]);
         $this->assertEvaluated(null, 'context.callYou("title")', $c);
     }
 
@@ -587,7 +588,7 @@ abstract class AbstractEvaluatorTest extends \TYPO3\Flow\Tests\UnitTestCase
      * @dataProvider booleanExpressions
      *
      * @param string $expression
-     * @param \TYPO3\Eel\Context $context
+     * @param Context $context
      * @param mixed $result
      */
     public function booleanExpressionsCanBeParsed($expression, $context, $result)
@@ -600,7 +601,7 @@ abstract class AbstractEvaluatorTest extends \TYPO3\Flow\Tests\UnitTestCase
      * @dataProvider arrayLiteralExpressions
      *
      * @param string $expression
-     * @param \TYPO3\Eel\Context $context
+     * @param Context $context
      * @param mixed $result
      */
     public function arrayLiteralsCanBeParsed($expression, $context, $result)
@@ -613,7 +614,7 @@ abstract class AbstractEvaluatorTest extends \TYPO3\Flow\Tests\UnitTestCase
      * @dataProvider objectLiteralExpressions
      *
      * @param string $expression
-     * @param \TYPO3\Eel\Context $context
+     * @param Context $context
      * @param mixed $result
      */
     public function objectLiteralsCanBeParsed($expression, $context, $result)
@@ -626,7 +627,7 @@ abstract class AbstractEvaluatorTest extends \TYPO3\Flow\Tests\UnitTestCase
      * @dataProvider conditionalOperatorExpressions
      *
      * @param string $expression
-     * @param \TYPO3\Eel\Context $context
+     * @param Context $context
      * @param mixed $result
      */
     public function conditionalOperatorsCanBeParsed($expression, $context, $result)
@@ -639,17 +640,17 @@ abstract class AbstractEvaluatorTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function invalidExpressions()
     {
-        return array(
+        return [
             // Completely insane expression
-            array('NULL ---invalid---'),
+            ['NULL ---invalid---'],
             // Wrong parens
-            array('a * (5 + a))'),
-            array('(a * 5 + b'),
+            ['a * (5 + a))'],
+            ['(a * 5 + b'],
             // Incomplete object path
-            array('a.b. < 1'),
+            ['a.b. < 1'],
             // Invalid quoted strings
-            array('"a "super\" \'thing\'"'),
-        );
+            ['"a "super\" \'thing\'"'],
+        ];
     }
 
     /**
@@ -667,7 +668,7 @@ abstract class AbstractEvaluatorTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function expressionStartingWithWhitespaceWorkAsExpected()
     {
-        $context = new Context(array('variable' => 1));
+        $context = new Context(['variable' => 1]);
         $this->assertEvaluated(1, ' variable', $context);
     }
 
@@ -676,7 +677,7 @@ abstract class AbstractEvaluatorTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function expressionEndingWithWhitespaceWorkAsExpected()
     {
-        $context = new Context(array('variable' => 1));
+        $context = new Context(['variable' => 1]);
         $this->assertEvaluated(1, 'variable ', $context);
     }
 
@@ -687,7 +688,7 @@ abstract class AbstractEvaluatorTest extends \TYPO3\Flow\Tests\UnitTestCase
      *
      * @param mixed $expected
      * @param string $expression
-     * @param \TYPO3\Eel\Context $context
+     * @param Context $context
      */
     protected function assertEvaluated($expected, $expression, $context)
     {

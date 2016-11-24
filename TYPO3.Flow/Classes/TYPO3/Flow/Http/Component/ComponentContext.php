@@ -21,7 +21,10 @@ use TYPO3\Flow\Http\Response;
  * An instance of this class will be passed to each component of the chain allowing them to read/write parameters to/from it.
  * Besides handling of the chain is interrupted as soon as the "cancelled" flag is set.
  *
+ * The instance will be created before the bootstrap, so AOP/DI proxying is not possible.
+ *
  * @api
+ * @Flow\Proxy(false)
  */
 class ComponentContext
 {
@@ -45,7 +48,7 @@ class ComponentContext
      *
      * @var array
      */
-    protected $parameters = array();
+    protected $parameters = [];
 
     /**
      * @param Request $httpRequest
@@ -115,7 +118,7 @@ class ComponentContext
     public function setParameter($componentClassName, $parameterName, $value)
     {
         if (!isset($this->parameters[$componentClassName])) {
-            $this->parameters[$componentClassName] = array();
+            $this->parameters[$componentClassName] = [];
         }
         $this->parameters[$componentClassName][$parameterName] = $value;
     }

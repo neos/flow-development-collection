@@ -15,7 +15,7 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Http\Component\ComponentContext;
 use TYPO3\Flow\Http\Component\ComponentInterface;
 use TYPO3\Flow\Http\Request as HttpRequest;
-use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 use TYPO3\Flow\Property\PropertyMapper;
 use TYPO3\Flow\Property\PropertyMappingConfiguration;
 use TYPO3\Flow\Property\TypeConverter\MediaTypeConverterInterface;
@@ -61,7 +61,7 @@ class DispatchComponent implements ComponentInterface
     /**
      * @param array $options
      */
-    public function __construct(array $options = array())
+    public function __construct(array $options = [])
     {
         $this->options = $options;
     }

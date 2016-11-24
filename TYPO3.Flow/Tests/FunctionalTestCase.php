@@ -14,6 +14,7 @@ namespace TYPO3\Flow\Tests;
 use TYPO3\Flow\Configuration\ConfigurationManager;
 use TYPO3\Flow\Core\Bootstrap;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Http\Component\ComponentContext;
 use TYPO3\Flow\Http\Request;
 use TYPO3\Flow\Mvc\ActionRequest;
 use TYPO3\Flow\Mvc\Routing\Route;
@@ -33,7 +34,7 @@ abstract class FunctionalTestCase extends \TYPO3\Flow\Tests\BaseTestCase
     /**
      * A functional instance of the Object Manager, for use in concrete test cases.
      *
-     * @var \TYPO3\Flow\Object\ObjectManagerInterface
+     * @var \TYPO3\Flow\ObjectManagement\ObjectManagerInterface
      * @api
      */
     protected $objectManager;
@@ -135,7 +136,7 @@ abstract class FunctionalTestCase extends \TYPO3\Flow\Tests\BaseTestCase
         $this->objectManager = self::$bootstrap->getObjectManager();
 
         $this->cleanupPersistentResourcesDirectory();
-        self::$bootstrap->getObjectManager()->forgetInstance(\TYPO3\Flow\Resource\ResourceManager::class);
+        self::$bootstrap->getObjectManager()->forgetInstance(\TYPO3\Flow\ResourceManagement\ResourceManager::class);
         $session = $this->objectManager->get(\TYPO3\Flow\Session\SessionInterface::class);
         if ($session->isStarted()) {
             $session->destroy(sprintf('assure that session is fresh, in setUp() method of functional test %s.', get_class($this) . '::' . $this->getName()));
@@ -252,9 +253,9 @@ abstract class FunctionalTestCase extends \TYPO3\Flow\Tests\BaseTestCase
 
         self::$bootstrap->getObjectManager()->forgetInstance(\TYPO3\Flow\Http\Client\InternalRequestEngine::class);
         self::$bootstrap->getObjectManager()->forgetInstance(\TYPO3\Flow\Persistence\Aspect\PersistenceMagicAspect::class);
-        $this->inject(self::$bootstrap->getObjectManager()->get(\TYPO3\Flow\Resource\ResourceRepository::class), 'addedResources', new \SplObjectStorage());
-        $this->inject(self::$bootstrap->getObjectManager()->get(\TYPO3\Flow\Resource\ResourceRepository::class), 'removedResources', new \SplObjectStorage());
-        $this->inject(self::$bootstrap->getObjectManager()->get(\TYPO3\Flow\Resource\ResourceTypeConverter::class), 'convertedResources', array());
+        $this->inject(self::$bootstrap->getObjectManager()->get(\TYPO3\Flow\ResourceManagement\ResourceRepository::class), 'addedResources', new \SplObjectStorage());
+        $this->inject(self::$bootstrap->getObjectManager()->get(\TYPO3\Flow\ResourceManagement\ResourceRepository::class), 'removedResources', new \SplObjectStorage());
+        $this->inject(self::$bootstrap->getObjectManager()->get(\TYPO3\Flow\ResourceManagement\ResourceTypeConverter::class), 'convertedResources', array());
 
         $this->cleanupPersistentResourcesDirectory();
         $this->emitFunctionalTestTearDown();
@@ -386,7 +387,7 @@ abstract class FunctionalTestCase extends \TYPO3\Flow\Tests\BaseTestCase
             'HTTP_CONNECTION' => 'keep-alive',
             'PATH' => '/usr/bin:/bin:/usr/sbin:/sbin',
             'SERVER_SIGNATURE' => '',
-            'SERVER_SOFTWARE' => 'Apache/2.2.21 (Unix) mod_ssl/2.2.21 OpenSSL/1.0.0e DAV/2 PHP/5.5.1',
+            'SERVER_SOFTWARE' => 'Apache/2.2.21 (Unix) mod_ssl/2.2.21 OpenSSL/1.0.0e DAV/2 PHP/7.0.12',
             'SERVER_NAME' => 'localhost',
             'SERVER_ADDR' => '127.0.0.1',
             'SERVER_PORT' => '80',
@@ -419,10 +420,12 @@ abstract class FunctionalTestCase extends \TYPO3\Flow\Tests\BaseTestCase
         $this->browser = new \TYPO3\Flow\Http\Client\Browser();
         $this->browser->setRequestEngine(new \TYPO3\Flow\Http\Client\InternalRequestEngine());
         $this->router = $this->browser->getRequestEngine()->getRouter();
+        $this->router->setRoutesConfiguration(null);
 
         $requestHandler = self::$bootstrap->getActiveRequestHandler();
-        $requestHandler->setHttpRequest(Request::create(new \TYPO3\Flow\Http\Uri('http://localhost/typo3/flow/test')));
-        $requestHandler->setHttpResponse(new \TYPO3\Flow\Http\Response());
+        $request = Request::create(new \TYPO3\Flow\Http\Uri('http://localhost/typo3/flow/test'));
+        $componentContext = new ComponentContext($request, new \TYPO3\Flow\Http\Response());
+        $requestHandler->setComponentContext($componentContext);
     }
 
     /**

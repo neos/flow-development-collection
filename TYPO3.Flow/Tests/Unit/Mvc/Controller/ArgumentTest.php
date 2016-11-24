@@ -11,20 +11,25 @@ namespace TYPO3\Flow\Tests\Unit\Mvc\Controller;
  * source code.
  */
 
+use TYPO3\Flow\Property\PropertyMapper;
+use TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter;
+use TYPO3\Flow\Tests\UnitTestCase;
+use TYPO3\Flow\Mvc;
+use TYPO3\Flow\Validation\Validator\ValidatorInterface;
+use TYPO3\Flow\Error as FLowError;
+
 /**
  * Testcase for the MVC Controller Argument
- *
- * @covers \TYPO3\Flow\Mvc\Controller\Argument
  */
-class ArgumentTest extends \TYPO3\Flow\Tests\UnitTestCase
+class ArgumentTest extends UnitTestCase
 {
     /**
-     * @var \TYPO3\Flow\Mvc\Controller\Argument
+     * @var Mvc\Controller\Argument
      */
     protected $simpleValueArgument;
 
     /**
-     * @var \TYPO3\Flow\Mvc\Controller\Argument
+     * @var Mvc\Controller\Argument
      */
     protected $objectArgument;
 
@@ -36,14 +41,14 @@ class ArgumentTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function setUp()
     {
-        $this->simpleValueArgument = new \TYPO3\Flow\Mvc\Controller\Argument('someName', 'string');
-        $this->objectArgument = new \TYPO3\Flow\Mvc\Controller\Argument('someName', 'DateTime');
+        $this->simpleValueArgument = new Mvc\Controller\Argument('someName', 'string');
+        $this->objectArgument = new Mvc\Controller\Argument('someName', 'DateTime');
 
-        $this->mockPropertyMapper = $this->createMock(\TYPO3\Flow\Property\PropertyMapper::class);
+        $this->mockPropertyMapper = $this->createMock(PropertyMapper::class);
         $this->inject($this->simpleValueArgument, 'propertyMapper', $this->mockPropertyMapper);
         $this->inject($this->objectArgument, 'propertyMapper', $this->mockPropertyMapper);
 
-        $this->mockConfiguration = new \TYPO3\Flow\Mvc\Controller\MvcPropertyMappingConfiguration();
+        $this->mockConfiguration = new Mvc\Controller\MvcPropertyMappingConfiguration();
 
         $this->inject($this->simpleValueArgument, 'propertyMappingConfiguration', $this->mockConfiguration);
         $this->inject($this->objectArgument, 'propertyMappingConfiguration', $this->mockConfiguration);
@@ -55,7 +60,7 @@ class ArgumentTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function constructingArgumentWithoutNameThrowsException()
     {
-        new \TYPO3\Flow\Mvc\Controller\Argument('', 'Text');
+        new Mvc\Controller\Argument('', 'Text');
     }
 
     /**
@@ -64,7 +69,7 @@ class ArgumentTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function constructingArgumentWithInvalidNameThrowsException()
     {
-        new \TYPO3\Flow\Mvc\Controller\Argument(new \ArrayObject(), 'Text');
+        new Mvc\Controller\Argument(new \ArrayObject(), 'Text');
     }
 
     /**
@@ -79,66 +84,11 @@ class ArgumentTest extends \TYPO3\Flow\Tests\UnitTestCase
     /**
      * @test
      */
-    public function setShortNameProvidesFluentInterface()
-    {
-        $returnedArgument = $this->simpleValueArgument->setShortName('x');
-        $this->assertSame($this->simpleValueArgument, $returnedArgument, 'The returned argument is not the original argument.');
-    }
-
-    public function invalidShortNames()
-    {
-        return array(
-            array(''),
-            array('as'),
-            array(5)
-        );
-    }
-    /**
-     * @test
-     * @dataProvider invalidShortNames
-     * @expectedException \InvalidArgumentException
-     */
-    public function shortNameShouldThrowExceptionIfInvalid($invalidShortName)
-    {
-        $this->simpleValueArgument->setShortName($invalidShortName);
-    }
-
-    /**
-     * @test
-     */
-    public function shortNameCanBeRetrievedAgain()
-    {
-        $this->simpleValueArgument->setShortName('x');
-        $this->assertEquals('x', $this->simpleValueArgument->getShortName());
-    }
-
-    /**
-     * @test
-     */
     public function setRequiredShouldProvideFluentInterfaceAndReallySetRequiredState()
     {
         $returnedArgument = $this->simpleValueArgument->setRequired(true);
         $this->assertSame($this->simpleValueArgument, $returnedArgument, 'The returned argument is not the original argument.');
         $this->assertTrue($this->simpleValueArgument->isRequired());
-    }
-
-    /**
-     * @test
-     */
-    public function setShortHelpMessageShouldProvideFluentInterfaceAndReallySetShortHelpMessage()
-    {
-        $returnedArgument = $this->simpleValueArgument->setShortHelpMessage('Some Help Message');
-        $this->assertSame($this->simpleValueArgument, $returnedArgument, 'The returned argument is not the original argument.');
-        $this->assertSame('Some Help Message', $this->simpleValueArgument->getShortHelpMessage());
-    }
-
-    /**
-     * @test
-     * @expectedException \InvalidArgumentException
-     */
-    public function setShortHelpMessageShouldThrowExceptionIfMessageIsNoString()
-    {
-        $this->simpleValueArgument->setShortHelpMessage(null);
     }
 
     /**
@@ -156,7 +106,7 @@ class ArgumentTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function setValidatorShouldProvideFluentInterfaceAndReallySetValidator()
     {
-        $mockValidator = $this->createMock(\TYPO3\Flow\Validation\Validator\ValidatorInterface::class);
+        $mockValidator = $this->createMock(ValidatorInterface::class);
         $returnedArgument = $this->simpleValueArgument->setValidator($mockValidator);
         $this->assertSame($this->simpleValueArgument, $returnedArgument, 'The returned argument is not the original argument.');
         $this->assertSame($mockValidator, $this->simpleValueArgument->getValidator());
@@ -177,7 +127,7 @@ class ArgumentTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function setValueUsesNullAsIs()
     {
-        $this->simpleValueArgument = new \TYPO3\Flow\Mvc\Controller\Argument('dummy', 'string');
+        $this->simpleValueArgument = new Mvc\Controller\Argument('dummy', 'string');
         $this->simpleValueArgument->setValue(null);
         $this->assertNull($this->simpleValueArgument->getValue());
     }
@@ -194,7 +144,7 @@ class ArgumentTest extends \TYPO3\Flow\Tests\UnitTestCase
     protected function setupPropertyMapperAndSetValue()
     {
         $this->mockPropertyMapper->expects($this->once())->method('convert')->with('someRawValue', 'string', $this->mockConfiguration)->will($this->returnValue('convertedValue'));
-        $this->mockPropertyMapper->expects($this->once())->method('getMessages')->will($this->returnValue(new \TYPO3\Flow\Error\Result()));
+        $this->mockPropertyMapper->expects($this->once())->method('getMessages')->will($this->returnValue(new FLowError\Result()));
         return $this->simpleValueArgument->setValue('someRawValue');
     }
 
@@ -221,17 +171,17 @@ class ArgumentTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function setValueShouldSetValidationErrorsIfValidatorIsSetAndValidationFailed()
     {
-        $error = new \TYPO3\Flow\Error\Error('Some Error', 1234);
+        $error = new FLowError\Error('Some Error', 1234);
 
-        $mockValidator = $this->createMock(\TYPO3\Flow\Validation\Validator\ValidatorInterface::class);
-        $validationMessages = new \TYPO3\Flow\Error\Result();
+        $mockValidator = $this->createMock(ValidatorInterface::class);
+        $validationMessages = new FLowError\Result();
         $validationMessages->addError($error);
         $mockValidator->expects($this->once())->method('validate')->with('convertedValue')->will($this->returnValue($validationMessages));
 
         $this->simpleValueArgument->setValidator($mockValidator);
         $this->setupPropertyMapperAndSetValue();
         $this->assertFalse($this->simpleValueArgument->isValid());
-        $this->assertEquals(array($error), $this->simpleValueArgument->getValidationResults()->getErrors());
+        $this->assertEquals([$error], $this->simpleValueArgument->getValidationResults()->getErrors());
     }
 
     /**
@@ -239,17 +189,7 @@ class ArgumentTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function defaultPropertyMappingConfigurationDoesNotAllowCreationOrModificationOfObjects()
     {
-        $this->assertNull($this->simpleValueArgument->getPropertyMappingConfiguration()->getConfigurationValue(\TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::class, \TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED));
-        $this->assertNull($this->simpleValueArgument->getPropertyMappingConfiguration()->getConfigurationValue(\TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::class, \TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED));
-    }
-
-    /**
-     * @test
-     */
-    public function setDataTypeProvidesFluentInterfaceAndReallySetsDataType()
-    {
-        $returnedArgument = $this->simpleValueArgument->setDataType('integer');
-        $this->assertSame($this->simpleValueArgument, $returnedArgument, 'The returned argument is not the original argument.');
-        $this->assertSame('integer', $this->simpleValueArgument->getDataType(), 'The got dataType is not the set dataType.');
+        $this->assertNull($this->simpleValueArgument->getPropertyMappingConfiguration()->getConfigurationValue(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED));
+        $this->assertNull($this->simpleValueArgument->getPropertyMappingConfiguration()->getConfigurationValue(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED));
     }
 }

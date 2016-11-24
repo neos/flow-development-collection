@@ -11,6 +11,8 @@ namespace TYPO3\Flow\Persistence\Generic;
  * source code.
  */
 
+use TYPO3\Flow\Persistence\QueryInterface;
+
 /**
  * A persistence query factory interface
  *
@@ -22,7 +24,7 @@ interface QueryFactoryInterface
      * Creates a query object working on the given class name
      *
      * @param string $className
-     * @return \TYPO3\Flow\Persistence\QueryInterface
+     * @return QueryInterface
      * @api
      */
     public function create($className);

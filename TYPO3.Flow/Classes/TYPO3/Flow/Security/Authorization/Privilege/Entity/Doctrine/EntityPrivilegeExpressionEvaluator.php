@@ -48,7 +48,7 @@ class EntityPrivilegeExpressionEvaluator extends CompilingEvaluator
 
         $result = $functionName($context)->unwrap();
         $entityType = $context->unwrap()->getEntityType();
-        return array('entityType' => $entityType, 'conditionGenerator' => $result);
+        return ['entityType' => $entityType, 'conditionGenerator' => $result];
     }
 
     /**

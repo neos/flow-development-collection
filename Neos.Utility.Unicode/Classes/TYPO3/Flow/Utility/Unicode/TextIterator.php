@@ -11,6 +11,8 @@ namespace TYPO3\Flow\Utility\Unicode;
  * source code.
  */
 
+use TYPO3\Flow\Utility\Unicode;
+
 /**
  * A UTF8-aware TextIterator
  *
@@ -256,7 +258,7 @@ class TextIterator implements \Iterator
     public function getAll()
     {
         $this->rewind();
-        $allValues = array();
+        $allValues = [];
         while ($this->valid()) {
             $allValues[] = $this->getCurrentElement()->getValue();
             $this->next();
@@ -357,7 +359,7 @@ class TextIterator implements \Iterator
         $i = 0;
         $isFirstIteration = true;
         foreach (explode(' ', $this->subject) as $currentWord) {
-            $delimitersMatches = array();
+            $delimitersMatches = [];
             $haveProcessedCurrentWord = false;
 
             if (preg_match_all('/' . self::REGEXP_SENTENCE_DELIMITERS . '/', $currentWord, $delimitersMatches)) {
@@ -367,8 +369,8 @@ class TextIterator implements \Iterator
                 $splittedWord = preg_split('/' . self::REGEXP_SENTENCE_DELIMITERS . '/', $currentWord);
                 foreach ($splittedWord as $currentPart) {
                     if ($currentPart != '') {
-                        $this->iteratorCache->append(new TextIteratorElement($currentPart, $i, Functions::strlen($currentPart), false));
-                        $i += Functions::strlen($currentPart);
+                        $this->iteratorCache->append(new TextIteratorElement($currentPart, $i, Unicode\Functions::strlen($currentPart), false));
+                        $i += Unicode\Functions::strlen($currentPart);
                     }
                     if ($j < count($delimitersMatches[0])) {
                         $this->iteratorCache->append(new TextIteratorElement($delimitersMatches[0][$j], $i, 1, true));
@@ -387,8 +389,8 @@ class TextIterator implements \Iterator
             }
 
             if (!$haveProcessedCurrentWord) {
-                $this->iteratorCache->append(new TextIteratorElement($currentWord, $i, Functions::strlen($currentWord), false));
-                $i += Functions::strlen($currentWord);
+                $this->iteratorCache->append(new TextIteratorElement($currentWord, $i, Unicode\Functions::strlen($currentWord), false));
+                $i += Unicode\Functions::strlen($currentWord);
             }
 
             unset($delimitersMatches);
@@ -408,8 +410,8 @@ class TextIterator implements \Iterator
         $j = 0;
         $lines = explode("\n", $this->subject);
         foreach ($lines as $currentLine) {
-            $this->iteratorCache->append(new TextIteratorElement($currentLine, $i, Functions::strlen($currentLine), false));
-            $i += Functions::strlen($currentLine);
+            $this->iteratorCache->append(new TextIteratorElement($currentLine, $i, Unicode\Functions::strlen($currentLine), false));
+            $i += Unicode\Functions::strlen($currentLine);
 
             if (count($lines) - 1 > $j) {
                 $this->iteratorCache->append(new TextIteratorElement("\n", $i, 1, true));
@@ -431,12 +433,12 @@ class TextIterator implements \Iterator
         $i = 0;
         $j = 0;
         $count = 0;
-        $delimitersMatches = array();
+        $delimitersMatches = [];
         preg_match_all('/' . self::REGEXP_SENTENCE_DELIMITERS . '/', $this->subject, $delimitersMatches);
         $splittedSentence = preg_split('/' . self::REGEXP_SENTENCE_DELIMITERS . '/', $this->subject);
 
         if (count($splittedSentence) == 1) {
-            $this->iteratorCache->append(new TextIteratorElement($splittedSentence[0], 0, Functions::strlen($splittedSentence[0]), false));
+            $this->iteratorCache->append(new TextIteratorElement($splittedSentence[0], 0, Unicode\Functions::strlen($splittedSentence[0]), false));
             return;
         }
 
@@ -453,8 +455,8 @@ class TextIterator implements \Iterator
             $i += $count;
 
             if ($currentPart != '' && $j < count($delimitersMatches[0])) {
-                $this->iteratorCache->append(new TextIteratorElement($currentPart . $delimitersMatches[0][$j], $i, Functions::strlen($currentPart . $delimitersMatches[0][$j]), false));
-                $i += Functions::strlen($currentPart . $delimitersMatches[0][$j]);
+                $this->iteratorCache->append(new TextIteratorElement($currentPart . $delimitersMatches[0][$j], $i, Unicode\Functions::strlen($currentPart . $delimitersMatches[0][$j]), false));
+                $i += Unicode\Functions::strlen($currentPart . $delimitersMatches[0][$j]);
                 $j++;
             } elseif ($j < count($delimitersMatches[0])) {
                 $this->iteratorCache->append(new TextIteratorElement($delimitersMatches[0][$j], $i, 1, true));

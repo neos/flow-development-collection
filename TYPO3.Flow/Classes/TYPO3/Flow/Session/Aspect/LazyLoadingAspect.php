@@ -12,6 +12,10 @@ namespace TYPO3\Flow\Session\Aspect;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Aop\JoinPointInterface;
+use TYPO3\Flow\Log\SystemLoggerInterface;
+use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
+use TYPO3\Flow\Session\SessionInterface;
 
 /**
  * Adds the aspect of lazy loading to objects with scope session.
@@ -24,26 +28,26 @@ class LazyLoadingAspect
 {
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Object\ObjectManagerInterface
+     * @var ObjectManagerInterface
      */
     protected $objectManager;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Session\SessionInterface
+     * @var SessionInterface
      */
     protected $session;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Log\SystemLoggerInterface
+     * @var SystemLoggerInterface
      */
     protected $systemLogger;
 
     /**
      * @var array
      */
-    protected $sessionOriginalInstances = array();
+    protected $sessionOriginalInstances = [];
 
     /**
      * Registers an object of scope session.
@@ -51,7 +55,7 @@ class LazyLoadingAspect
      * @param string $objectName
      * @param object $object
      * @return void
-     * @see \TYPO3\Flow\Object\ObjectManager
+     * @see \TYPO3\Flow\ObjectManagement\ObjectManager
      */
     public function registerSessionInstance($objectName, $object)
     {
@@ -63,12 +67,12 @@ class LazyLoadingAspect
      * Those methods will trigger a session initialization if a session does not exist
      * yet.
      *
-     * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint The current join point
+     * @param JoinPointInterface $joinPoint The current join point
      * @return void
      * @fixme The pointcut expression below does not consider the options of the session annotation ‚Äì¬†needs adjustments in the AOP framework
      * @Flow\Before("methodAnnotatedWith(TYPO3\Flow\Annotations\Session)")
      */
-    public function initializeSession(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint)
+    public function initializeSession(JoinPointInterface $joinPoint)
     {
         if ($this->session->isStarted() === true) {
             return;
@@ -85,11 +89,11 @@ class LazyLoadingAspect
      * Around advice, wrapping every method of a scope session object. It redirects
      * all method calls to the session object once there is one.
      *
-     * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint The current join point
+     * @param JoinPointInterface $joinPoint The current join point
      * @return mixed
      * @Flow\Around("filter(TYPO3\Flow\Session\Aspect\SessionObjectMethodsPointcutFilter)")
      */
-    public function callMethodOnOriginalSessionObject(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint)
+    public function callMethodOnOriginalSessionObject(JoinPointInterface $joinPoint)
     {
         $objectName = $this->objectManager->getObjectNameByClassName(get_class($joinPoint->getProxy()));
         $methodName = $joinPoint->getMethodName();
@@ -102,7 +106,7 @@ class LazyLoadingAspect
         if ($this->sessionOriginalInstances[$objectName] === $proxy) {
             return $joinPoint->getAdviceChain()->proceed($joinPoint);
         } else {
-            return call_user_func_array(array($this->sessionOriginalInstances[$objectName], $methodName), $joinPoint->getMethodArguments());
+            return call_user_func_array([$this->sessionOriginalInstances[$objectName], $methodName], $joinPoint->getMethodArguments());
         }
     }
 }

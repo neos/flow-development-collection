@@ -16,7 +16,7 @@ namespace TYPO3\Flow\Log\Backend;
  *
  * @api
  */
-abstract class AbstractBackend implements \TYPO3\Flow\Log\Backend\BackendInterface
+abstract class AbstractBackend implements BackendInterface
 {
     /**
      * One of the LOG_* constants. Anything below that will be filtered out.
@@ -36,7 +36,7 @@ abstract class AbstractBackend implements \TYPO3\Flow\Log\Backend\BackendInterfa
      * @param mixed $options Configuration options - depends on the actual backend
      * @api
      */
-    public function __construct($options = array())
+    public function __construct($options = [])
     {
         if (is_array($options) || $options instanceof \ArrayAccess) {
             foreach ($options as $optionKey => $optionValue) {

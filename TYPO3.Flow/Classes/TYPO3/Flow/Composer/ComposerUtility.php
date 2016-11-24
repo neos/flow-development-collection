@@ -161,7 +161,8 @@ class ComposerUtility
         }
 
         if (!isset($manifest['autoload'])) {
-            $manifest['autoload'] = array('psr-0' => array(str_replace('.', '\\', $packageKey) => PackageInterface::DIRECTORY_CLASSES));
+            $namespace = str_replace('.', '\\', $packageKey) . '\\';
+            $manifest['autoload'] = array('psr-4' => array($namespace => PackageInterface::DIRECTORY_CLASSES));
         }
 
         $manifest['extra']['neos']['package-key'] = $packageKey;

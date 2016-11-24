@@ -12,7 +12,7 @@ namespace TYPO3\Flow\Http\Component;
  */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 use TYPO3\Flow\Utility\PositionalArraySorter;
 
 /**
@@ -41,9 +41,9 @@ class ComponentChainFactory
         $arraySorter = new PositionalArraySorter($chainConfiguration);
         $sortedChainConfiguration = $arraySorter->toArray();
 
-        $chainComponents = array();
+        $chainComponents = [];
         foreach ($sortedChainConfiguration as $componentName => $configuration) {
-            $componentOptions = isset($configuration['componentOptions']) ? $configuration['componentOptions'] : array();
+            $componentOptions = isset($configuration['componentOptions']) ? $configuration['componentOptions'] : [];
             if (isset($configuration['chain'])) {
                 $component = $this->create($configuration['chain']);
             } else {
@@ -58,6 +58,6 @@ class ComponentChainFactory
             $chainComponents[] = $component;
         }
 
-        return new ComponentChain(array('components' => $chainComponents));
+        return new ComponentChain(['components' => $chainComponents]);
     }
 }

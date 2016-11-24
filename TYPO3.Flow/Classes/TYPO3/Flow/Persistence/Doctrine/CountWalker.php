@@ -42,11 +42,11 @@ class CountWalker extends \Doctrine\ORM\Query\TreeWalkerAdapter
         );
         $pathExpression->type = PathExpression::TYPE_STATE_FIELD;
 
-        $AST->selectClause->selectExpressions = array(
+        $AST->selectClause->selectExpressions = [
             new \Doctrine\ORM\Query\AST\SelectExpression(
                 new \Doctrine\ORM\Query\AST\AggregateExpression('count', $pathExpression, true), null
             )
-        );
+        ];
 
         // ORDER BY is not needed, only increases query execution through unnecessary sorting.
         $AST->orderByClause = null;

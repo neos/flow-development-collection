@@ -17,8 +17,8 @@ use TYPO3\Flow\Cli\CommandController;
 use TYPO3\Flow\Cli\Response;
 use TYPO3\Flow\Core\Bootstrap;
 use TYPO3\Flow\Core\LockManager;
-use TYPO3\Flow\Object\ObjectManager;
-use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\ObjectManagement\ObjectManager;
+use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 use TYPO3\Flow\Package\PackageManagerInterface;
 use TYPO3\Flow\Utility\Environment;
 
@@ -148,21 +148,21 @@ class CacheCommandController extends CommandController
             $this->lockManager->unlockSite();
         }
 
-        $frozenPackages = array();
+        $frozenPackages = [];
         foreach (array_keys($this->packageManager->getActivePackages()) as $packageKey) {
             if ($this->packageManager->isPackageFrozen($packageKey)) {
                 $frozenPackages[] = $packageKey;
             }
         }
-        if ($frozenPackages !== array()) {
+        if ($frozenPackages !== []) {
             $this->outputFormatted(PHP_EOL . 'Please note that the following package' . (count($frozenPackages) === 1 ? ' is' : 's are') . ' currently frozen: ' . PHP_EOL);
-            $this->outputFormatted(implode(PHP_EOL, $frozenPackages) . PHP_EOL, array(), 2);
+            $this->outputFormatted(implode(PHP_EOL, $frozenPackages) . PHP_EOL, [], 2);
 
             $message = 'As code and configuration changes in these packages are not detected, the application may respond ';
             $message .= 'unexpectedly if modifications were done anyway or the remaining code relies on these changes.' . PHP_EOL . PHP_EOL;
             $message .= 'You may call <b>package:refreeze all</b> in order to refresh frozen packages or use the <b>--force</b> ';
             $message .= 'option of this <b>cache:flush</b> command to flush caches if Flow becomes unresponsive.' . PHP_EOL;
-            $this->outputFormatted($message, array($frozenPackages));
+            $this->outputFormatted($message, [$frozenPackages]);
         }
 
         $this->sendAndExit(0);
@@ -187,7 +187,7 @@ class CacheCommandController extends CommandController
     public function flushOneCommand($identifier)
     {
         if (!$this->cacheManager->hasCache($identifier)) {
-            $this->outputLine('The cache "%s" does not exist.', array($identifier));
+            $this->outputLine('The cache "%s" does not exist.', [$identifier]);
 
             $cacheConfigurations = $this->cacheManager->getCacheConfigurations();
             $shortestDistance = -1;
@@ -200,13 +200,13 @@ class CacheCommandController extends CommandController
             }
 
             if (isset($closestIdentifier)) {
-                $this->outputLine('Did you mean "%s"?', array($closestIdentifier));
+                $this->outputLine('Did you mean "%s"?', [$closestIdentifier]);
             }
 
             $this->quit(1);
         }
         $this->cacheManager->getCache($identifier)->flush();
-        $this->outputLine('Flushed "%s" cache for "%s" context.', array($identifier, $this->bootstrap->getContext()));
+        $this->outputLine('Flushed "%s" cache for "%s" context.', [$identifier, $this->bootstrap->getContext()]);
         $this->sendAndExit(0);
     }
 

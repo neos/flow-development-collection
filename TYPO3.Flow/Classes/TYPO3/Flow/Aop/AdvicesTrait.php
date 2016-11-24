@@ -31,8 +31,8 @@ trait AdvicesTrait
         } else {
             if (isset($this->Flow_Aop_Proxy_targetMethodsAndGroupedAdvices[$methodName])) {
                 $groupedAdvices = $this->Flow_Aop_Proxy_targetMethodsAndGroupedAdvices[$methodName];
-                if (isset($groupedAdvices['TYPO3\Flow\Aop\Advice\AroundAdvice'])) {
-                    $this->Flow_Aop_Proxy_groupedAdviceChains[$methodName]['TYPO3\Flow\Aop\Advice\AroundAdvice'] = new \TYPO3\Flow\Aop\Advice\AdviceChain($groupedAdvices['TYPO3\Flow\Aop\Advice\AroundAdvice']);
+                if (isset($groupedAdvices[\TYPO3\Flow\Aop\Advice\AroundAdvice::class])) {
+                    $this->Flow_Aop_Proxy_groupedAdviceChains[$methodName][\TYPO3\Flow\Aop\Advice\AroundAdvice::class] = new \TYPO3\Flow\Aop\Advice\AdviceChain($groupedAdvices[\TYPO3\Flow\Aop\Advice\AroundAdvice::class]);
                     $adviceChains = $this->Flow_Aop_Proxy_groupedAdviceChains[$methodName];
                 }
             }

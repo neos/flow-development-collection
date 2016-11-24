@@ -22,10 +22,10 @@ class ClassMetadataFactory extends \Doctrine\ORM\Mapping\ClassMetadataFactory
      * Creates a new ClassMetadata instance for the given class name.
      *
      * @param string $className
-     * @return \TYPO3\Flow\Persistence\Doctrine\Mapping\ClassMetadata
+     * @return ClassMetadata
      */
     protected function newClassMetadataInstance($className)
     {
-        return new \TYPO3\Flow\Persistence\Doctrine\Mapping\ClassMetadata($className);
+        return new ClassMetadata($className);
     }
 }

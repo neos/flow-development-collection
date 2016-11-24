@@ -12,7 +12,7 @@ namespace TYPO3\Flow\Security\Authorization\Privilege;
  */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 use TYPO3\Flow\Security\Exception as SecurityException;
 
 /**
@@ -51,7 +51,7 @@ class PrivilegeTarget
      * @param string $matcher
      * @param Parameter\PrivilegeParameterDefinition[] $parameterDefinitions
      */
-    public function __construct($identifier, $privilegeClassName, $matcher, array $parameterDefinitions = array())
+    public function __construct($identifier, $privilegeClassName, $matcher, array $parameterDefinitions = [])
     {
         $this->identifier = $identifier;
         $this->privilegeClassName = $privilegeClassName;
@@ -108,7 +108,7 @@ class PrivilegeTarget
      */
     public function hasParameters()
     {
-        return $this->parameterDefinitions !== array();
+        return $this->parameterDefinitions !== [];
     }
 
     /**
@@ -117,14 +117,14 @@ class PrivilegeTarget
      * @return PrivilegeInterface
      * @throws SecurityException
      */
-    public function createPrivilege($permission, array $parameters = array())
+    public function createPrivilege($permission, array $parameters = [])
     {
         $permission = strtolower($permission);
         if ($permission !== PrivilegeInterface::GRANT && $permission !== PrivilegeInterface::DENY && $permission !== PrivilegeInterface::ABSTAIN) {
             throw new SecurityException(sprintf('permission must be either "GRANT", "DENY" or "ABSTAIN", given: "%s"', $permission), 1401878462);
         }
 
-        $privilegeParameters = array();
+        $privilegeParameters = [];
         foreach ($this->parameterDefinitions as $parameterDefinition) {
             $parameterName = $parameterDefinition->getName();
             if (!isset($parameters[$parameterName])) {

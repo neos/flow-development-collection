@@ -12,9 +12,10 @@ namespace TYPO3\Flow\Cli;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Command\HelpCommandController;
 use TYPO3\Flow\Mvc\Controller\Argument;
-use TYPO3\Flow\Mvc\Controller\Arguments;
 use TYPO3\Flow\Mvc\Controller\ControllerInterface;
+use TYPO3\Flow\Mvc\Controller\Arguments;
 use TYPO3\Flow\Mvc\Exception\CommandException;
 use TYPO3\Flow\Mvc\Exception\InvalidArgumentTypeException;
 use TYPO3\Flow\Mvc\Exception\NoSuchCommandException;
@@ -22,7 +23,7 @@ use TYPO3\Flow\Mvc\Exception\StopActionException;
 use TYPO3\Flow\Mvc\Exception\UnsupportedRequestTypeException;
 use TYPO3\Flow\Mvc\RequestInterface;
 use TYPO3\Flow\Mvc\ResponseInterface;
-use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 
 /**
  * A controller which processes requests from the command line
@@ -197,7 +198,7 @@ class CommandController implements ControllerInterface
 
             if ($argumentValue === null) {
                 $exception = new CommandException(sprintf('Required argument "%s" is not set.', $argumentName), 1306755520);
-                $this->forward('error', \TYPO3\Flow\Command\HelpCommandController::class, ['exception' => $exception]);
+                $this->forward('error', HelpCommandController::class, ['exception' => $exception]);
             }
             $argument->setValue($argumentValue);
         }
@@ -257,10 +258,7 @@ class CommandController implements ControllerInterface
                     implode(', ', $relatedCommandIdentifiers)
                 );
             }
-            $this->outputLine('<b>Warning:</b> This command is <b>DEPRECATED</b>%s%s', [
-                $suggestedCommandMessage,
-                PHP_EOL
-            ]);
+            $this->outputLine('<b>Warning:</b> This command is <b>DEPRECATED</b>%s%s', [$suggestedCommandMessage, PHP_EOL]);
         }
 
         $commandResult = call_user_func_array([$this, $this->commandMethodName], $preparedArguments);
@@ -340,7 +338,7 @@ class CommandController implements ControllerInterface
      * shutdown (such as the persistence framework), you must use quit() instead of exit().
      *
      * @param integer $exitCode Exit code to return on exit (see http://www.php.net/exit)
-     * @throws \TYPO3\Flow\Mvc\Exception\StopActionException
+     * @throws StopActionException
      * @return void
      */
     protected function quit($exitCode = 0)

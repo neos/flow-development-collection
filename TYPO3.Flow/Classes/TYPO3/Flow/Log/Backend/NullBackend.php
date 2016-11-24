@@ -17,7 +17,7 @@ namespace TYPO3\Flow\Log\Backend;
  *
  * @api
  */
-class NullBackend extends \TYPO3\Flow\Log\Backend\AbstractBackend
+class NullBackend extends AbstractBackend
 {
     /**
      * Does nothing

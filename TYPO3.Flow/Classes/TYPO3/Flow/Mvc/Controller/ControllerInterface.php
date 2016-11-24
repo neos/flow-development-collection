@@ -11,6 +11,10 @@ namespace TYPO3\Flow\Mvc\Controller;
  * source code.
  */
 
+use TYPO3\Flow\Mvc\Exception\UnsupportedRequestTypeException;
+use TYPO3\Flow\Mvc\RequestInterface;
+use TYPO3\Flow\Mvc\ResponseInterface;
+
 /**
  * Generic interface for controllers
  *
@@ -27,11 +31,11 @@ interface ControllerInterface
     /**
      * Processes a general request. The result can be returned by altering the given response.
      *
-     * @param \TYPO3\Flow\Mvc\RequestInterface $request The request object
-     * @param \TYPO3\Flow\Mvc\ResponseInterface $response The response, modified by the controller
+     * @param RequestInterface $request The request object
+     * @param ResponseInterface $response The response, modified by the controller
      * @return void
-     * @throws \TYPO3\Flow\Mvc\Exception\UnsupportedRequestTypeException if the controller doesn't support the current request type
+     * @throws UnsupportedRequestTypeException if the controller doesn't support the current request type
      * @api
      */
-    public function processRequest(\TYPO3\Flow\Mvc\RequestInterface $request, \TYPO3\Flow\Mvc\ResponseInterface $response);
+    public function processRequest(RequestInterface $request, ResponseInterface $response);
 }

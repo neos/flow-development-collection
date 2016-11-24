@@ -125,7 +125,7 @@ Resources
 
   Public
     Contains public resources for the package. All files in this directory
-    will be mirrored into Flow's *Web* directory by the Resource Manager
+    will be mirrored into Flow's *Web* directory by the ResourceManager
     (and therefore become accessible from the web). They will be delivered to
     the client directly without further processing.
 
@@ -171,11 +171,37 @@ and maintained by the Neos and Flow core teams start with ``TYPO3.*`` (for histo
 reasons) or ``Neos.*``. In your company we suggest that you use your company name as vendor
 namespace.
 
+To define the package key for your package we recommend you set the "extra.neos.package-key"
+option in your composer.json as in the following example:
+
+*composer.json*::
+
+ "extra": {
+     "neos": {
+         "package-key": "Vendor.PackageKey"
+     }
+ }
+
+
 Loading Order
 =============
 
 The loading order of packages follows the dependency chain as defined in the composer
-manifests involved.
+manifests involved, solely taking the "require" part into consideration.
+Additionally you can configure packages that should be loaded before by adding an array
+of composer package names to "extra.neos.loading-order.after" as in this example:
+
+*composer.json*::
+
+ "extra": {
+     "neos": {
+         "loading-order": {
+             "after": [
+                  "some/package"
+             ]
+         }
+     }
+ }
 
 Activating and Deactivating Packages
 ====================================
@@ -303,7 +329,7 @@ it does not need to exist.
 			$bootstrap->registerRequestHandler(new \Acme\Demo\Quux\RequestHandler($bootstrap));
 
 			$dispatcher = $bootstrap->getSignalSlotDispatcher();
-			$dispatcher->connect('TYPO3\Flow\Mvc\Dispatcher', 'afterControllerInvocation', 'Acme\Demo\Baz', 'fooBar');
+			$dispatcher->connect(\TYPO3\Flow\Mvc\Dispatcher::class, 'afterControllerInvocation', \Acme\Demo\Baz::class, 'fooBar');
 		}
 	}
 	?>

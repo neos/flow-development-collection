@@ -14,8 +14,10 @@ namespace TYPO3\Flow\Http;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Core\Bootstrap;
 use TYPO3\Flow\Configuration\ConfigurationManager;
+use TYPO3\Flow\Http\Component\ComponentChain;
 use TYPO3\Flow\Http\Component\ComponentContext;
 use TYPO3\Flow\Package\Package;
+use TYPO3\Flow\Package\PackageManagerInterface;
 
 /**
  * A request handler which can handle HTTP requests.
@@ -31,19 +33,14 @@ class RequestHandler implements HttpRequestHandlerInterface
     protected $bootstrap;
 
     /**
-     * @var Request
-     */
-    protected $request;
-
-    /**
-     * @var Response
-     */
-    protected $response;
-
-    /**
      * @var Component\ComponentChain
      */
     protected $baseComponentChain;
+
+    /**
+     * @var Component\ComponentContext
+     */
+    protected $componentContext;
 
     /**
      * The "http" settings
@@ -100,22 +97,22 @@ class RequestHandler implements HttpRequestHandlerInterface
      */
     public function handleRequest()
     {
-        // Create the request very early so the Resource Management has a chance to grab it:
-        $this->request = Request::createFromEnvironment();
-        $this->response = new Response();
+        // Create the request very early so the ResourceManagement has a chance to grab it:
+        $request = Request::createFromEnvironment();
+        $response = new Response();
+        $this->componentContext = new ComponentContext($request, $response);
 
         $this->boot();
         $this->resolveDependencies();
-        $this->addPoweredByHeader($this->response);
+        $this->addPoweredByHeader($response);
         if (isset($this->settings['http']['baseUri'])) {
-            $this->request->setBaseUri(new Uri($this->settings['http']['baseUri']));
+            $request->setBaseUri(new Uri($this->settings['http']['baseUri']));
         }
 
-        $componentContext = new ComponentContext($this->request, $this->response);
-        $this->baseComponentChain->handle($componentContext);
-        $this->response = $this->baseComponentChain->getResponse();
+        $this->baseComponentChain->handle($this->componentContext);
+        $response = $this->baseComponentChain->getResponse();
 
-        $this->response->send();
+        $response->send();
 
         $this->bootstrap->shutdown(Bootstrap::RUNLEVEL_RUNTIME);
         $this->exit->__invoke();
@@ -129,7 +126,7 @@ class RequestHandler implements HttpRequestHandlerInterface
      */
     public function getHttpRequest()
     {
-        return $this->request;
+        return $this->componentContext->getHttpRequest();
     }
 
     /**
@@ -140,7 +137,7 @@ class RequestHandler implements HttpRequestHandlerInterface
      */
     public function getHttpResponse()
     {
-        return $this->response;
+        return $this->componentContext->getHttpResponse();
     }
 
     /**
@@ -164,9 +161,9 @@ class RequestHandler implements HttpRequestHandlerInterface
     protected function resolveDependencies()
     {
         $objectManager = $this->bootstrap->getObjectManager();
-        $this->baseComponentChain = $objectManager->get(\TYPO3\Flow\Http\Component\ComponentChain::class);
+        $this->baseComponentChain = $objectManager->get(ComponentChain::class);
 
-        $configurationManager = $objectManager->get(\TYPO3\Flow\Configuration\ConfigurationManager::class);
+        $configurationManager = $objectManager->get(ConfigurationManager::class);
         $this->settings = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'TYPO3.Flow');
     }
 
@@ -194,8 +191,8 @@ class RequestHandler implements HttpRequestHandlerInterface
 
         /** @var Package $applicationPackage */
         /** @var Package $flowPackage */
-        $flowPackage = $this->bootstrap->getEarlyInstance('TYPO3\Flow\Package\PackageManagerInterface')->getPackage('TYPO3.Flow');
-        $applicationPackage = $this->bootstrap->getEarlyInstance('TYPO3\Flow\Package\PackageManagerInterface')->getPackage($this->settings['core']['applicationPackageKey']);
+        $flowPackage = $this->bootstrap->getEarlyInstance(PackageManagerInterface::class)->getPackage('TYPO3.Flow');
+        $applicationPackage = $this->bootstrap->getEarlyInstance(PackageManagerInterface::class)->getPackage($this->settings['core']['applicationPackageKey']);
 
         if ($this->settings['http']['applicationToken'] === 'MajorVersion') {
             $flowVersion = $this->renderMajorVersion($flowPackage->getInstalledVersion());

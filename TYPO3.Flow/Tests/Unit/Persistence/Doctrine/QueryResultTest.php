@@ -13,12 +13,13 @@ namespace TYPO3\Flow\Tests\Unit\Persistence\Doctrine;
 
 use TYPO3\Flow\Persistence\Doctrine\QueryResult;
 use TYPO3\Flow\Persistence\Doctrine\Query;
+use TYPO3\Flow\Persistence\QueryInterface;
+use TYPO3\Flow\Tests\UnitTestCase;
 
 /**
  * Testcase for \TYPO3\Flow\Persistence\QueryResult
- *
  */
-class QueryResultTest extends \TYPO3\Flow\Tests\UnitTestCase
+class QueryResultTest extends UnitTestCase
 {
     /**
      * @var QueryResult
@@ -37,7 +38,7 @@ class QueryResultTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function setUp()
     {
         $this->query = $this->getMockBuilder(Query::class)->disableOriginalConstructor()->disableOriginalClone()->getMock();
-        $this->query->expects($this->any())->method('getResult')->will($this->returnValue(array('First result', 'second result', 'third result')));
+        $this->query->expects($this->any())->method('getResult')->will($this->returnValue(['First result', 'second result', 'third result']));
         $this->queryResult = new QueryResult($this->query);
     }
 
@@ -46,7 +47,7 @@ class QueryResultTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function getQueryReturnsQueryObject()
     {
-        $this->assertInstanceOf(\TYPO3\Flow\Persistence\QueryInterface::class, $this->queryResult->getQuery());
+        $this->assertInstanceOf(QueryInterface::class, $this->queryResult->getQuery());
     }
 
     /**

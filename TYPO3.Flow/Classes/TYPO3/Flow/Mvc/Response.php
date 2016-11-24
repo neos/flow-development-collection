@@ -17,7 +17,7 @@ namespace TYPO3\Flow\Mvc;
  *
  * @api
  */
-class Response implements \TYPO3\Flow\Mvc\ResponseInterface
+class Response implements ResponseInterface
 {
     /**
      * @var string
