@@ -62,15 +62,6 @@ interface PackageInterface
     public function getComposerName();
 
     /**
-     * Returns the PHP namespace of classes in this package.
-     *
-     * @return string
-     * @api
-     * @deprecated Use getNamespaces() - To be removed in Flow 4.0
-     */
-    public function getNamespace();
-
-    /**
      * Returns an array of all namespaces declared for this package.
      *
      * @return array

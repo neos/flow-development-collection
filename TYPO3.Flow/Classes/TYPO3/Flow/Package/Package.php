@@ -192,20 +192,6 @@ class Package implements PackageInterface
     }
 
     /**
-     * Returns the PHP namespace of classes in this package.
-     *
-     * @return string
-     * @api
-     * @deprecated see getNamespaces()
-     */
-    public function getNamespace()
-    {
-        $allNamespaces = $this->getNamespaces();
-
-        return reset($allNamespaces);
-    }
-
-    /**
      * @return string[]
      */
     public function getAutoloadTypes()
@@ -215,24 +201,6 @@ class Package implements PackageInterface
         }
 
         return $this->autoloadTypes;
-    }
-
-    /**
-     * PSR autoloading type
-     *
-     * @return string see self::AUTOLOADER_TYPE_* - NULL in case it is not defined or unknown
-     * @deprecated see getAutoloadTypes()
-     */
-    public function getAutoloadType()
-    {
-        $autoloadConfigurations = $this->getFlattenedAutoloadConfiguration();
-        $firstAutoload = reset($autoloadConfigurations);
-
-        if ($firstAutoload === false) {
-            return null;
-        }
-
-        return $firstAutoload['mappingType'];
     }
 
     /**
