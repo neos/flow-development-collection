@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Flow\Core\Migrations;
+namespace Neos\Flow\Core\Migrations;
 
 /*
  * This file is part of the Neos.FluidAdaptor package.
@@ -11,9 +11,9 @@ namespace TYPO3\Flow\Core\Migrations;
  * source code.
  */
 
-use TYPO3\Flow\Reflection\ObjectAccess;
-use TYPO3\Flow\Utility\Files;
-use TYPO3\Flow\Utility\PhpAnalyzer;
+use Neos\Utility\ObjectAccess;
+use Neos\Utility\Files;
+use Neos\Flow\Utility\PhpAnalyzer;
 
 /**
  * Add "escapeOutput" property to existing ViewHelpers to ensure backwards-compatibility
@@ -22,6 +22,12 @@ use TYPO3\Flow\Utility\PhpAnalyzer;
  */
 class Version20150214130800 extends AbstractMigration
 {
+
+    public function getIdentifier()
+    {
+        return 'TYPO3.Fluid-20150214130800';
+    }
+
     /**
      * @return void
      */

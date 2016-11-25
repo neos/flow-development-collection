@@ -12,9 +12,9 @@ namespace Neos\FluidAdaptor\View;
  */
 
 use Neos\FluidAdaptor\Exception;
-use TYPO3\Flow\Mvc\ActionRequest;
-use TYPO3\Flow\Mvc\Controller\ControllerContext;
-use TYPO3\Flow\Mvc\View\ViewInterface;
+use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\Controller\ControllerContext;
+use Neos\Flow\Mvc\View\ViewInterface;
 use Neos\FluidAdaptor\Core\Rendering\RenderingContext;
 
 /**
@@ -284,12 +284,12 @@ abstract class AbstractTemplateView extends \TYPO3Fluid\Fluid\View\AbstractTempl
      *
      * @param string $optionName
      * @return mixed
-     * @throws \TYPO3\Flow\Mvc\Exception
+     * @throws \Neos\Flow\Mvc\Exception
      */
     public function getOption($optionName)
     {
         if (!array_key_exists($optionName, $this->supportedOptions)) {
-            throw new \TYPO3\Flow\Mvc\Exception(sprintf('The view option "%s" you\'re trying to get doesn\'t exist in class "%s".', $optionName, get_class($this)), 1359625876);
+            throw new \Neos\Flow\Mvc\Exception(sprintf('The view option "%s" you\'re trying to get doesn\'t exist in class "%s".', $optionName, get_class($this)), 1359625876);
         }
 
         return $this->options[$optionName];
@@ -301,12 +301,12 @@ abstract class AbstractTemplateView extends \TYPO3Fluid\Fluid\View\AbstractTempl
      * @param string $optionName
      * @param mixed $value
      * @return void
-     * @throws \TYPO3\Flow\Mvc\Exception
+     * @throws \Neos\Flow\Mvc\Exception
      */
     public function setOption($optionName, $value)
     {
         if (!array_key_exists($optionName, $this->supportedOptions)) {
-            throw new \TYPO3\Flow\Mvc\Exception(sprintf('The view option "%s" you\'re trying to set doesn\'t exist in class "%s".', $optionName, get_class($this)), 1359625876);
+            throw new \Neos\Flow\Mvc\Exception(sprintf('The view option "%s" you\'re trying to set doesn\'t exist in class "%s".', $optionName, get_class($this)), 1359625876);
         }
 
         $this->options[$optionName] = $value;

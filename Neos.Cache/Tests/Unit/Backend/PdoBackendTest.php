@@ -36,7 +36,7 @@ class PdoBackendTest extends BaseTestCase
 
     /**
      * @test
-     * @expectedException \TYPO3\Flow\Cache\Exception
+     * @expectedException \Neos\Cache\Exception
      */
     public function setThrowsExceptionIfNoFrontEndHasBeenSet()
     {
@@ -196,12 +196,12 @@ class PdoBackendTest extends BaseTestCase
      */
     public function flushRemovesOnlyOwnEntries()
     {
-        $thisCache = $this->getMockBuilder(\TYPO3\Flow\Cache\Frontend\FrontendInterface::class)->disableOriginalConstructor()->getMock();
+        $thisCache = $this->getMockBuilder(\Neos\Cache\Frontend\FrontendInterface::class)->disableOriginalConstructor()->getMock();
         $thisCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('thisCache'));
         $thisBackend = $this->setUpBackend();
         $thisBackend->setCache($thisCache);
 
-        $thatCache = $this->getMockBuilder(\TYPO3\Flow\Cache\Frontend\FrontendInterface::class)->disableOriginalConstructor()->getMock();
+        $thatCache = $this->getMockBuilder(\Neos\Cache\Frontend\FrontendInterface::class)->disableOriginalConstructor()->getMock();
         $thatCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('thatCache'));
         $thatBackend = $this->setUpBackend();
         $thatBackend->setCache($thatCache);
@@ -222,7 +222,7 @@ class PdoBackendTest extends BaseTestCase
     protected function setUpBackend()
     {
 
-        $mockCache = $this->getMockBuilder(\TYPO3\Flow\Cache\Frontend\FrontendInterface::class)->disableOriginalConstructor()->getMock();
+        $mockCache = $this->getMockBuilder(\Neos\Cache\Frontend\FrontendInterface::class)->disableOriginalConstructor()->getMock();
         $mockCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('TestCache'));
 
         $mockEnvironmentConfiguration = $this->getMockBuilder(\Neos\Cache\EnvironmentConfiguration::class)->setConstructorArgs([

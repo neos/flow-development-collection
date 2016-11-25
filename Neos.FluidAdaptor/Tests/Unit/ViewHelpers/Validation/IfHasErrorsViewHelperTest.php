@@ -11,8 +11,8 @@ namespace Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Security;
  * source code.
  */
 
-use TYPO3\Flow\Error\Error;
-use TYPO3\Flow\Error\Result;
+use Neos\Error\Messages\Error;
+use Neos\Error\Messages\Result;
 use Neos\FluidAdaptor\ViewHelpers\Validation\IfHasErrorsViewHelper;
 use Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase;
 
@@ -67,7 +67,7 @@ class IfHasErrorsViewHelperTest extends ViewHelperBaseTestcase
      */
     public function queriesResultForPropertyIfPropertyPathIsGiven()
     {
-        $resultMock = $this->createMock(\TYPO3\Flow\Error\Result::class);
+        $resultMock = $this->createMock(\Neos\Error\Messages\Result::class);
         $resultMock->expects($this->once())->method('forProperty')->with('foo.bar.baz')->will($this->returnValue(new Result()));
 
         /** @var $requestMock \PHPUnit_Framework_MockObject_MockObject */

@@ -11,7 +11,7 @@ namespace Neos\FluidAdaptor\Core\Parser\SyntaxTree;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * This interface should be implemented by proxy objects which want to return

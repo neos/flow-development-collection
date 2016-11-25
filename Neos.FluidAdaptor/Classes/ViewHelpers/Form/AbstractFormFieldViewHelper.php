@@ -11,9 +11,9 @@ namespace Neos\FluidAdaptor\ViewHelpers\Form;
  * source code.
  */
 
-use TYPO3\Flow\Error\Result;
-use TYPO3\Flow\Mvc\ActionRequest;
-use TYPO3\Flow\Reflection\ObjectAccess;
+use Neos\Error\Messages\Result;
+use Neos\Flow\Mvc\ActionRequest;
+use Neos\Utility\ObjectAccess;
 
 /**
  * Abstract Form View Helper. Bundles functionality related to direct property access of objects in other Form ViewHelpers.

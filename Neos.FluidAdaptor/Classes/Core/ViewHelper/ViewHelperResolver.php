@@ -11,10 +11,10 @@ namespace Neos\FluidAdaptor\Core\ViewHelper;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
-use TYPO3\Flow\Package\Package;
-use TYPO3\Flow\Package\PackageManagerInterface;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\ObjectManagement\ObjectManagerInterface;
+use Neos\Flow\Package\Package;
+use Neos\Flow\Package\PackageManagerInterface;
 
 /**
  * Class ViewHelperResolver

@@ -12,7 +12,7 @@ namespace Neos\FluidAdaptor\ViewHelpers\Format;
  */
 
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
-use TYPO3\Flow\Utility\Unicode\Functions as UnicodeUtilityFunctions;
+use Neos\Utility\Unicode\Functions as UnicodeUtilityFunctions;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 
 /**

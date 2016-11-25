@@ -11,9 +11,9 @@ namespace Neos\FluidAdaptor\ViewHelpers\Format;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\I18n\Exception as I18nException;
-use TYPO3\Flow\I18n\Formatter\NumberFormatter;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\I18n\Exception as I18nException;
+use Neos\Flow\I18n\Formatter\NumberFormatter;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractLocaleAwareViewHelper;
 use Neos\FluidAdaptor\Core\ViewHelper\Exception\InvalidVariableException;
 use Neos\FluidAdaptor\Core\ViewHelper\Exception as ViewHelperException;

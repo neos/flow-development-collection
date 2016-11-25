@@ -11,11 +11,11 @@ namespace Neos\FluidAdaptor\ViewHelpers\Uri;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\I18n\Service;
-use TYPO3\Flow\ResourceManagement\Exception;
-use TYPO3\Flow\ResourceManagement\ResourceManager;
-use TYPO3\Flow\ResourceManagement\PersistentResource;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\I18n\Service;
+use Neos\Flow\ResourceManagement\Exception;
+use Neos\Flow\ResourceManagement\ResourceManager;
+use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use Neos\FluidAdaptor\Core\ViewHelper\Exception\InvalidVariableException;
 

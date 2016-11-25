@@ -1,0 +1,25 @@
+{namespace k=Neos\Kickstarter\ViewHelpers}<![CDATA[<f:layout name="Default" />
+
+<f:section name="Title">]]>A list of {modelName -> k:inflect.pluralize() -> k:inflect.humanizeCamelCase(lowercase: true)}<![CDATA[</f:section>
+
+<f:section name="Content">]]>
+    <![CDATA[<f:if condition="{]]>{modelName -> k:inflect.pluralize()}<![CDATA[}">
+        <f:then>
+            <ul>
+                <f:for each="{]]>{modelName -> k:inflect.pluralize()}<![CDATA[}" as="]]>{modelName}<![CDATA[">
+                    <li>
+                        <f:link.action action="show" arguments="{]]>{modelName}: {modelName}<![CDATA[}">{]]>{modelName}<![CDATA[.name}</f:link.action>
+                        <f:link.action action="edit" arguments="{]]>{modelName}: {modelName}<![CDATA[}">Edit</f:link.action>
+                        <f:form action="delete" arguments="{]]>{modelName}: {modelName}<![CDATA[}">
+                            <f:form.submit value="Delete" />
+                        </f:form>
+                    </li>
+                </f:for>
+            </ul>
+        </f:then>
+        <f:else>
+            ]]><p>No {modelName -> k:inflect.pluralize() -> k:inflect.humanizeCamelCase(lowercase: true)}<![CDATA[ created yet.</p>
+        </f:else>
+    </f:if>
+    <p><f:link.action action="new">Create a new ]]>{modelName -> k:inflect.humanizeCamelCase(lowercase: true)}<![CDATA[</f:link.action></p>]]>
+<![CDATA[</f:section>]]>

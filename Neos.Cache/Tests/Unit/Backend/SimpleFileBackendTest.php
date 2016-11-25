@@ -17,8 +17,8 @@ use Neos\Cache\Backend\SimpleFileBackend;
 use Neos\Cache\EnvironmentConfiguration;
 use Neos\Cache\Tests\BaseTestCase;
 use org\bovigo\vfs\vfsStream;
-use TYPO3\Flow\Cache\Frontend\FrontendInterface;
-use TYPO3\Flow\Cache\Frontend\PhpFrontend;
+use Neos\Cache\Frontend\FrontendInterface;
+use Neos\Cache\Frontend\PhpFrontend;
 
 /**
  * Test case for the SimpleFileBackend
@@ -75,7 +75,7 @@ class SimpleFileBackendTest extends BaseTestCase
 
     /**
      * @test
-     * @expectedException \TYPO3\Flow\Cache\Exception
+     * @expectedException \Neos\Cache\Exception
      */
     public function setCacheThrowsExceptionOnNonWritableDirectory()
     {
@@ -96,7 +96,7 @@ class SimpleFileBackendTest extends BaseTestCase
 
     /**
      * @test
-     * @expectedException \TYPO3\Flow\Cache\Exception
+     * @expectedException \Neos\Cache\Exception
      * @expectedExceptionCode 1248710426
      */
     public function setThrowsExceptionIfCachePathLengthExceedsMaximumPathLength()
@@ -153,7 +153,7 @@ class SimpleFileBackendTest extends BaseTestCase
     public function aDedicatedCacheDirectoryIsUsedForCodeCaches()
     {
         /** @var PhpFrontend|\PHPUnit_Framework_MockObject_MockObject $mockPhpCacheFrontend */
-        $mockPhpCacheFrontend = $this->getMockBuilder(\TYPO3\Flow\Cache\Frontend\PhpFrontend::class)->disableOriginalConstructor()->getMock();
+        $mockPhpCacheFrontend = $this->getMockBuilder(\Neos\Cache\Frontend\PhpFrontend::class)->disableOriginalConstructor()->getMock();
         $mockPhpCacheFrontend->expects($this->any())->method('getIdentifier')->will($this->returnValue('SomePhpCache'));
 
         // We need to create the directory here because vfs doesn't support touch() which is used by
@@ -166,7 +166,7 @@ class SimpleFileBackendTest extends BaseTestCase
 
     /**
      * @test
-     * @expectedException \TYPO3\Flow\Cache\Exception\InvalidDataException
+     * @expectedException \Neos\Cache\Exception\InvalidDataException
      */
     public function setThrowsExceptionIfDataIsNotAString()
     {

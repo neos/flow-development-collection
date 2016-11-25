@@ -14,7 +14,7 @@ namespace Neos\FluidAdaptor\ViewHelpers;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 
 /**
- * View helper that outputs its child nodes with \TYPO3\Flow\var_dump()
+ * View helper that outputs its child nodes with \Neos\Flow\var_dump()
  *
  * = Examples =
  *
@@ -56,7 +56,7 @@ class DebugViewHelper extends AbstractViewHelper
     protected $escapeOutput = false;
 
     /**
-     * Wrapper for \TYPO3\Flow\var_dump()
+     * Wrapper for \Neos\Flow\var_dump()
      *
      * @param string $title
      * @param boolean $typeOnly Whether only the type should be returned instead of the whole chain.
@@ -70,7 +70,7 @@ class DebugViewHelper extends AbstractViewHelper
         }
 
         ob_start();
-        \TYPO3\Flow\var_dump($expressionToExamine, $title);
+        \Neos\Flow\var_dump($expressionToExamine, $title);
         $output = ob_get_contents();
         ob_end_clean();
         return $output;

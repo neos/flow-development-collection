@@ -12,10 +12,10 @@ namespace Neos\FluidAdaptor\ViewHelpers\Security;
  */
 
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Security\Account;
-use TYPO3\Flow\Security\Context;
-use TYPO3\Flow\Security\Policy\PolicyService;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Security\Account;
+use Neos\Flow\Security\Context;
+use Neos\Flow\Security\Policy\PolicyService;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractConditionViewHelper;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 

@@ -11,8 +11,8 @@ namespace Neos\FluidAdaptor\Tests\Unit\ViewHelpers;
  * source code.
  */
 
-use TYPO3\Flow\Http\Request;
-use TYPO3\Flow\Http\Uri;
+use Neos\Flow\Http\Request;
+use Neos\Flow\Http\Uri;
 use Neos\FluidAdaptor\ViewHelpers\BaseViewHelper;
 use Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase;
 

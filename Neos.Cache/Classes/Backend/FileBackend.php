@@ -11,15 +11,12 @@ namespace Neos\Cache\Backend;
  * source code.
  */
 
-use TYPO3\Flow\Cache\Backend\FreezableBackendInterface;
-use TYPO3\Flow\Cache\Backend\PhpCapableBackendInterface;
-use TYPO3\Flow\Cache\Backend\TaggableBackendInterface;
-use TYPO3\Flow\Cache\Exception;
-use TYPO3\Flow\Cache\Exception\InvalidDataException;
-use TYPO3\Flow\Cache\Frontend\FrontendInterface;
-use TYPO3\Flow\Utility\Files;
-use TYPO3\Flow\Utility\Lock\Lock;
-use TYPO3\Flow\Utility\OpcodeCacheHelper;
+use Neos\Cache\Exception;
+use Neos\Cache\Exception\InvalidDataException;
+use Neos\Cache\Frontend\FrontendInterface;
+use Neos\Utility\Files;
+use Neos\Utility\Lock\Lock;
+use Neos\Utility\OpcodeCacheHelper;
 
 /**
  * A caching backend which stores cache entries in files

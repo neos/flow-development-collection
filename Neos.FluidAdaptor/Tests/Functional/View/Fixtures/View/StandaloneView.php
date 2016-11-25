@@ -21,11 +21,11 @@ class StandaloneView extends \Neos\FluidAdaptor\View\StandaloneView
     /**
      * Constructor
      *
-     * @param \TYPO3\Flow\Mvc\ActionRequest $request The current action request. If none is specified it will be created from the environment.
+     * @param \Neos\Flow\Mvc\ActionRequest $request The current action request. If none is specified it will be created from the environment.
      * @param string $fileIdentifierPrefix
      * @param array $options
      */
-    public function __construct(\TYPO3\Flow\Mvc\ActionRequest $request = null, $fileIdentifierPrefix = '', array $options = [])
+    public function __construct(\Neos\Flow\Mvc\ActionRequest $request = null, $fileIdentifierPrefix = '', array $options = [])
     {
         $this->fileIdentifierPrefix = $fileIdentifierPrefix;
         parent::__construct($request, $options);

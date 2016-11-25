@@ -1,6 +1,6 @@
 {
     "name": "neos/cache",
-    "description": "Neos Flow Cache Framework",
+    "description": "Neos Cache Framework",
     "type": "library",
     "homepage": "http://flow.neos.io",
     "license": ["MIT"],
@@ -16,16 +16,13 @@
         "phpunit/phpunit": "~4.8 || ~5.0"
     },
     "autoload": {
-        "psr-0": {
-            "TYPO3\\Flow\\Cache": "Classes"
-        },
         "psr-4": {
             "Neos\\Cache\\": "Classes"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "TYPO3\\Flow\\Cache\\Tests\\": "Tests"
+            "Neos\\Cache\\Tests\\": "Tests"
         }
     },
     "extra": {

@@ -11,12 +11,12 @@ namespace Neos\FluidAdaptor;
  * source code.
  */
 
-use TYPO3\Flow\Cache\CacheManager;
-use TYPO3\Flow\Core\Booting\Sequence;
-use TYPO3\Flow\Core\Bootstrap;
-use TYPO3\Flow\Monitor\FileMonitor;
-use TYPO3\Flow\Package\Package as BasePackage;
-use TYPO3\Flow\Package\PackageManagerInterface;
+use Neos\Flow\Cache\CacheManager;
+use Neos\Flow\Core\Booting\Sequence;
+use Neos\Flow\Core\Bootstrap;
+use Neos\Flow\Monitor\FileMonitor;
+use Neos\Flow\Package\Package as BasePackage;
+use Neos\Flow\Package\PackageManagerInterface;
 
 /**
  * The Fluid Package
@@ -42,7 +42,7 @@ class Package extends BasePackage
         $context = $bootstrap->getContext();
         if (!$context->isProduction()) {
             $dispatcher->connect(Sequence::class, 'afterInvokeStep', function ($step) use ($bootstrap, $dispatcher) {
-                if ($step->getIdentifier() === 'typo3.flow:systemfilemonitor') {
+                if ($step->getIdentifier() === 'neos.flow:systemfilemonitor') {
                     $templateFileMonitor = FileMonitor::createFileMonitorAtBoot('Fluid_TemplateFiles', $bootstrap);
                     $packageManager = $bootstrap->getEarlyInstance(PackageManagerInterface::class);
                     foreach ($packageManager->getActivePackages() as $packageKey => $package) {

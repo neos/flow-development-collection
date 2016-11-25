@@ -11,8 +11,8 @@ namespace Neos\FluidAdaptor\Service;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Reflection\ClassReflection;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Reflection\ClassReflection;
 use Neos\FluidAdaptor\Core\ViewHelper\ArgumentDefinition;
 
 /**
@@ -22,7 +22,7 @@ use Neos\FluidAdaptor\Core\ViewHelper\ArgumentDefinition;
 class XsdGenerator extends AbstractGenerator
 {
     /**
-     * @var \TYPO3\Flow\ObjectManagement\ObjectManagerInterface
+     * @var \Neos\Flow\ObjectManagement\ObjectManagerInterface
      * @Flow\Inject
      */
     protected $objectManager;

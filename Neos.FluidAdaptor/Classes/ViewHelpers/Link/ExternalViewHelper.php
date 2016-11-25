@@ -19,17 +19,17 @@ use Neos\FluidAdaptor\Core\ViewHelper\AbstractTagBasedViewHelper;
  * = Examples =
  *
  * <code>
- * <f:link.external uri="http://www.typo3.org" target="_blank">external link</f:link.external>
+ * <f:link.external uri="https://www.neos.io" target="_blank">external link</f:link.external>
  * </code>
  * <output>
- * <a href="http://www.typo3.org" target="_blank">external link</a>
+ * <a href="https://www.neos.io" target="_blank">external link</a>
  * </output>
  *
  * <code title="custom default scheme">
- * <f:link.external uri="typo3.org" defaultScheme="ftp">external ftp link</f:link.external>
+ * <f:link.external uri="neos.io" defaultScheme="sftp">external ftp link</f:link.external>
  * </code>
  * <output>
- * <a href="ftp://typo3.org">external ftp link</a>
+ * <a href="sftp://neos.io">external ftp link</a>
  * </output>
  *
  * @api

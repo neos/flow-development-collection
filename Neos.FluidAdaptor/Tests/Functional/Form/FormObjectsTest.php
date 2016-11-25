@@ -16,7 +16,7 @@ namespace Neos\FluidAdaptor\Tests\Functional\Form;
  *
  * @group large
  */
-class FormObjectsTest extends \TYPO3\Flow\Tests\FunctionalTestCase
+class FormObjectsTest extends \Neos\Flow\Tests\FunctionalTestCase
 {
     /**
      * @var boolean
@@ -24,7 +24,7 @@ class FormObjectsTest extends \TYPO3\Flow\Tests\FunctionalTestCase
     protected static $testablePersistenceEnabled = true;
 
     /**
-     * @var \TYPO3\Flow\Http\Client\Browser
+     * @var \Neos\Flow\Http\Client\Browser
      */
     protected $browser;
 
@@ -35,7 +35,7 @@ class FormObjectsTest extends \TYPO3\Flow\Tests\FunctionalTestCase
     {
         parent::setUp();
 
-        $route = new \TYPO3\Flow\Mvc\Routing\Route();
+        $route = new \Neos\Flow\Mvc\Routing\Route();
         $route->setUriPattern('test/fluid/formobjects(/{@action})');
         $route->setDefaults(array(
             '@package' => 'Neos.FluidAdaptor',
@@ -56,11 +56,11 @@ class FormObjectsTest extends \TYPO3\Flow\Tests\FunctionalTestCase
         $this->browser->request('http://localhost/test/fluid/formobjects');
         $form = $this->browser->getForm();
 
-        $form['post']['name']->setValue('Egon Olsen');
-        $form['post']['author']['emailAddress']->setValue('test@typo3.org');
+        $form['post']['name']->setValue('Neos Team');
+        $form['post']['author']['emailAddress']->setValue('hello@neos.io');
 
         $response = $this->browser->submit($form);
-        $this->assertSame('Egon Olsen|test@typo3.org', $response->getContent());
+        $this->assertSame('Neos Team|hello@neos.io', $response->getContent());
     }
 
     /**
@@ -96,19 +96,19 @@ class FormObjectsTest extends \TYPO3\Flow\Tests\FunctionalTestCase
         $this->browser->request('http://localhost/test/fluid/formobjects');
         $form = $this->browser->getForm();
 
-        $form['post']['name']->setValue('Egon Olsen');
+        $form['post']['name']->setValue('Neos Team');
         $form['post']['author']['emailAddress']->setValue('test_noValidEmail');
 
         $this->browser->submit($form);
         $form = $this->browser->getForm();
-        $this->assertSame('Egon Olsen', $form['post']['name']->getValue());
+        $this->assertSame('Neos Team', $form['post']['name']->getValue());
         $this->assertSame('test_noValidEmail', $form['post']['author']['emailAddress']->getValue());
         $this->assertSame('f3-form-error', $this->browser->getCrawler()->filterXPath('//*[@id="email"]')->attr('class'));
 
         $form['post']['author']['emailAddress']->setValue('another@email.org');
 
         $response = $this->browser->submit($form);
-        $this->assertSame('Egon Olsen|another@email.org', $response->getContent());
+        $this->assertSame('Neos Team|another@email.org', $response->getContent());
     }
 
     /**

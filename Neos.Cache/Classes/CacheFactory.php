@@ -11,10 +11,10 @@ namespace Neos\Cache;
  * source code.
  */
 
-use TYPO3\Flow\Cache\Backend\BackendInterface;
-use TYPO3\Flow\Cache\Exception\InvalidBackendException;
-use TYPO3\Flow\Cache\Exception\InvalidCacheException;
-use TYPO3\Flow\Cache\Frontend\FrontendInterface;
+use Neos\Cache\Backend\BackendInterface;
+use Neos\Cache\Exception\InvalidBackendException;
+use Neos\Cache\Exception\InvalidCacheException;
+use Neos\Cache\Frontend\FrontendInterface;
 
 /**
  * This cache factory takes care of instantiating a cache frontend and injecting
@@ -72,7 +72,7 @@ class CacheFactory implements CacheFactoryInterface
     {
         $backend = new $backendObjectName($this->environmentConfiguration, $backendOptions);
         if (!$backend instanceof BackendInterface) {
-            throw new InvalidBackendException('"' . $backendObjectName . '" is not a valid cache backend object.', 1216304301);
+            throw new InvalidBackendException('"' . $backendObjectName . '" is not a valid cache backend object.', 1216304302);
         }
 
         return $backend;

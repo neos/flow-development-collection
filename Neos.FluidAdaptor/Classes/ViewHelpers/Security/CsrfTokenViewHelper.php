@@ -11,8 +11,8 @@ namespace Neos\FluidAdaptor\ViewHelpers\Security;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Security\Context;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Security\Context;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 
 /**

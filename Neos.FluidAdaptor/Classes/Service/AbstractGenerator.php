@@ -11,8 +11,8 @@ namespace Neos\FluidAdaptor\Service;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Reflection\ClassReflection;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Reflection\ClassReflection;
 use Neos\FluidAdaptor\Fluid;
 
 /**
@@ -30,13 +30,13 @@ abstract class AbstractGenerator
     /**
      * The doc comment parser.
      *
-     * @var \TYPO3\Flow\Reflection\DocCommentParser
+     * @var \Neos\Flow\Reflection\DocCommentParser
      * @Flow\Inject
      */
     protected $docCommentParser;
 
     /**
-     * @var \TYPO3\Flow\Reflection\ReflectionService
+     * @var \Neos\Flow\Reflection\ReflectionService
      * @Flow\Inject
      */
     protected $reflectionService;

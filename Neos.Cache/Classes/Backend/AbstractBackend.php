@@ -12,20 +12,21 @@ namespace Neos\Cache\Backend;
  */
 
 use Neos\Cache\EnvironmentConfiguration;
+use Neos\Cache\Frontend\FrontendInterface;
 
 /**
  * An abstract caching backend
  *
  * @api
  */
-abstract class AbstractBackend implements \TYPO3\Flow\Cache\Backend\BackendInterface
+abstract class AbstractBackend implements BackendInterface
 {
     const DATETIME_EXPIRYTIME_UNLIMITED = '9999-12-31T23:59:59+0000';
     const UNLIMITED_LIFETIME = 0;
 
     /**
      * Reference to the cache frontend which uses this backend
-     * @var \TYPO3\Flow\Cache\Frontend\FrontendInterface
+     * @var FrontendInterface
      */
     protected $cache;
 
@@ -100,11 +101,11 @@ abstract class AbstractBackend implements \TYPO3\Flow\Cache\Backend\BackendInter
     /**
      * Sets a reference to the cache frontend which uses this backend
      *
-     * @param \TYPO3\Flow\Cache\Frontend\FrontendInterface $cache The frontend for this backend
+     * @param FrontendInterface $cache The frontend for this backend
      * @return void
      * @api
      */
-    public function setCache(\TYPO3\Flow\Cache\Frontend\FrontendInterface $cache)
+    public function setCache(FrontendInterface $cache)
     {
         $this->cache = $cache;
         $this->cacheIdentifier = $this->cache->getIdentifier();

@@ -1,0 +1,3 @@
+Eel_Expression_Code:
+  frontend: Neos\Cache\Frontend\PhpFrontend
+  backend: Neos\Cache\Backend\SimpleFileBackend

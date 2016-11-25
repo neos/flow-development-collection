@@ -12,10 +12,9 @@ namespace Neos\Cache\Backend;
  */
 
 use Neos\Cache\Backend\AbstractBackend as IndependentAbstractBackend;
-use TYPO3\Flow\Cache\Backend\TaggableBackendInterface;
-use TYPO3\Flow\Cache\Exception;
-use TYPO3\Flow\Cache\Exception\InvalidDataException;
-use TYPO3\Flow\Cache\Frontend\FrontendInterface;
+use Neos\Cache\Exception;
+use Neos\Cache\Exception\InvalidDataException;
+use Neos\Cache\Frontend\FrontendInterface;
 
 /**
  * A caching backend which stores cache entries during one script run.

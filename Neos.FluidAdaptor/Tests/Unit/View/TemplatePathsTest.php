@@ -2,12 +2,12 @@
 namespace Neos\FluidAdaptor\Tests\Unit\View;
 
 use org\bovigo\vfs\vfsStreamWrapper;
-use TYPO3\Flow\Http\Request;
-use TYPO3\Flow\Http\Uri;
-use TYPO3\Flow\Mvc\ActionRequest;
-use TYPO3\Flow\Mvc\Controller\ControllerContext;
-use TYPO3\Flow\Tests\Functional\Mvc\ViewsConfiguration\Fixtures\TemplateView;
-use TYPO3\Flow\Tests\UnitTestCase;
+use Neos\Flow\Http\Request;
+use Neos\Flow\Http\Uri;
+use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\Controller\ControllerContext;
+use Neos\Flow\Tests\Functional\Mvc\ViewsConfiguration\Fixtures\TemplateView;
+use Neos\Flow\Tests\UnitTestCase;
 use Neos\FluidAdaptor\View\TemplatePaths;
 
 /**
