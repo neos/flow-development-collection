@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Flow\Tests\Unit\Utility;
+namespace Neos\Utility\MediaTypes\Tests\Unit;
 
 /*
- * This file is part of the TYPO3.Flow package.
+ * This file is part of the Neos.Utility.MediaTypes package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -11,9 +11,9 @@ namespace TYPO3\Flow\Tests\Unit\Utility;
  * source code.
  */
 
-use TYPO3\Flow\Http\Request;
-use TYPO3\Flow\Tests\UnitTestCase;
-use TYPO3\Flow\Utility\MediaTypes;
+use Neos\Flow\Http\Request;
+use Neos\Flow\Tests\UnitTestCase;
+use Neos\Utility\MediaTypes;
 
 /**
  * Testcase for the Utility Media Types class
@@ -45,6 +45,29 @@ class MediaTypesTest extends UnitTestCase
     public function getMediaTypeFromFilenameMapsFilenameOrExtensionToMediaType($filename, $expectedMediaType)
     {
         $this->assertSame($expectedMediaType, MediaTypes::getMediaTypeFromFilename($filename));
+    }
+
+    /**
+     * Data Provider
+     */
+    public function filesAndMediaTypes()
+    {
+        return [
+            ['', 'application/octet-stream'],
+            ['Text.txt', 'text/plain'],
+            ['Neos.png', 'image/png'],
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider filesAndMediaTypes
+     */
+    public function getMediaTypeFromFilename($filename, $expectedMediaType)
+    {
+        $filePath = __DIR__ . '/Fixtures/' . $filename;
+        $fileContent = file_exists($filePath) ? file_get_contents($filePath) : '';
+        $this->assertSame($expectedMediaType, MediaTypes::getMediaTypeFromFileContent($fileContent));
     }
 
     /**

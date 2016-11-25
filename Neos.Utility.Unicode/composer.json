@@ -2,7 +2,7 @@
   "name": "neos/utility-unicode",
   "description": "Flow Unicode Utilities",
   "type": "library",
-  "homepage": "http://flow.typo3.org",
+  "homepage": "http://flow.neos.io",
   "license": "MIT",
   "config": {
     "bin-dir": "bin"
@@ -16,8 +16,8 @@
     "phpunit/phpunit": "~4.8 || ~5.2.0"
   },
   "autoload": {
-    "psr-0": {
-      "TYPO3\\Flow\\Utility\\Unicode": "Classes"
+    "psr-4": {
+      "Neos\\Utility\\Unicode\\": "Classes"
     }
   },
   "autoload-dev": {

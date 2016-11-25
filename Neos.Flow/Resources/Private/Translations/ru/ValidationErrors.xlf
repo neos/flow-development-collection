@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file original="" product-name="Neos.Flow" source-language="en" datatype="plaintext" target-language="ru">
+    <body>
+      <!-- AlphanumericValidator -->
+      <trans-unit id="1221551320" xml:space="preserve" approved="yes">
+				<source>Only regular characters (a to z, umlauts, ...) and numbers are allowed.</source>
+			<target xml:lang="ru">Разрешены только латинские(a до z, умлауты, ...) малые буквы и цифры.</target></trans-unit>
+      <!-- BooleanValueValidator -->
+      <trans-unit id="1361044943" xml:space="preserve" approved="yes">
+				<source>The given value is expected to be {0}.</source>
+			<target xml:lang="ru">Заданное значение должно быть {0}.</target><alt-trans><target xml:lang="ru">Заданное значение будет {0}.</target></alt-trans></trans-unit>
+      <!-- CollectionValidator -->
+      <trans-unit id="1317204797" xml:space="preserve" approved="yes">
+				<source>The given subject is not a collection</source>
+			<target xml:lang="ru">Содержимое не является коллекцией</target></trans-unit>
+      <!-- CountValidator -->
+      <trans-unit id="1253718666" xml:space="preserve" approved="yes">
+				<source>The given subject is not countable</source>
+			<target xml:lang="ru">Содержимое не является исчислимым</target></trans-unit>
+      <trans-unit id="1253718831" xml:space="preserve" approved="yes">
+				<source>The count must be between {0,number} and {1,number}</source>
+			<target xml:lang="ru">Число должно быть между {0,number} и {1,number}</target></trans-unit>
+      <!-- DateTimeRangeValidator -->
+      <trans-unit id="1324314378" xml:space="preserve" approved="yes">
+				<source>The given value is not a valid date</source>
+			<target xml:lang="ru">Заданное значение не является годной датой</target></trans-unit>
+      <trans-unit id="1325615630" xml:space="preserve" approved="yes">
+				<source>The given date must be between {0} and {1}</source>
+			<target xml:lang="ru">Заданная дата должна быть между {0} и {1}</target></trans-unit>
+      <trans-unit id="1324315107" xml:space="preserve" approved="yes">
+				<source>The given date must be after {0}</source>
+			<target xml:lang="ru">Заданная дата должна быть позже {0}</target></trans-unit>
+      <trans-unit id="1324315115" xml:space="preserve" approved="yes">
+				<source>The given date must be before {0}</source>
+			<target xml:lang="ru">Заданная дата должна быть раньше {0}</target></trans-unit>
+      <!-- DateTimeValidator -->
+      <trans-unit id="1281454676" xml:space="preserve" approved="yes">
+				<source>The "locale" option can be only set to string identifier, or Locale object</source>
+			<target xml:lang="ru">Опция "locale" принимает тольло "string identifier" или "Locale object" как значение</target></trans-unit>
+      <trans-unit id="1281454830" xml:space="preserve" approved="yes">
+				<source>A valid time is expected</source>
+			<target xml:lang="ru">Ожидается годное время</target></trans-unit>
+      <trans-unit id="1281454831" xml:space="preserve" approved="yes">
+				<source>A valid date and time is expected</source>
+			<target xml:lang="ru">Ожидаются годные дата и время</target></trans-unit>
+      <trans-unit id="1281454832" xml:space="preserve" approved="yes">
+				<source>A valid date is expected</source>
+			<target xml:lang="ru">Ожидается годная дата</target></trans-unit>
+      <!-- EmailAddressValidator -->
+      <trans-unit id="1221559976" xml:space="preserve" approved="yes">
+				<source>Please specify a valid email address</source>
+			<target xml:lang="ru">Укажите годный адрес электронной почты</target><alt-trans><target xml:lang="ru">Укажите адрес электронной почты</target></alt-trans></trans-unit>
+      <!-- FloatValidator -->
+      <trans-unit id="1221560288" xml:space="preserve" approved="yes">
+				<source>A valid float number is expected</source>
+			<target xml:lang="ru">Ожидается вещественное число</target><alt-trans><target xml:lang="ru">Ожидается десятичная дробь</target></alt-trans></trans-unit>
+      <trans-unit id="1332934124" xml:space="preserve" approved="yes">
+				<source>"{0}" cannot be converted to a float value</source>
+			<target xml:lang="ru">{0} не может быть преобразовано в вещественное число</target><alt-trans><target xml:lang="ru">{0} не может быть преобразовано в десятичную дробь</target></alt-trans></trans-unit>
+      <!-- GenericObjectValidator -->
+      <trans-unit id="1241099149" xml:space="preserve" approved="yes">
+				<source>Object expected, {0} given</source>
+			<target xml:lang="ru">Ожидалось содержимое но получено {0}</target></trans-unit>
+      <!-- IntegerValidator -->
+      <trans-unit id="1221560494" xml:space="preserve" approved="yes">
+				<source>A valid integer number is expected</source>
+			<target xml:lang="ru">Ожидается целое число</target></trans-unit>
+      <trans-unit id="1332933658" xml:space="preserve" approved="yes">
+				<source>"{0}" is no integer.</source>
+			<target xml:lang="ru">"{0}" не целое число.</target></trans-unit>
+      <!-- LabelValidator -->
+      <trans-unit id="1272298003" xml:space="preserve" approved="yes">
+				<source>Only letters, numbers, spaces and certain punctuation marks are expected</source>
+			<target xml:lang="ru">Ожидаются только буквы, цифры, пробелы и определенные знаки пунктуации</target><alt-trans><target xml:lang="ru">Ожидаются только числа, пробелы и знаки припинания</target></alt-trans></trans-unit>
+      <!-- LocaleIdentifierValidator -->
+      <trans-unit id="1327090892" xml:space="preserve" approved="yes">
+				<source>Value is no valid I18n locale identifier</source>
+			<target xml:lang="ru">Значение не является годным I18n locale идентификатором</target></trans-unit>
+      <!-- NotEmptyValidator -->
+      <trans-unit id="1221560910" xml:space="preserve" approved="yes">
+				<source>This property is required</source>
+			<target xml:lang="ru">Это поле обязательно</target></trans-unit>
+      <trans-unit id="1221560718" xml:space="preserve" approved="yes">
+				<source>This property is required</source>
+			<target xml:lang="ru">Это поле обязательно</target></trans-unit>
+      <!-- NumberRangeValidator -->
+      <trans-unit id="1221563685" xml:space="preserve" approved="yes">
+				<source>A valid number is expected</source>
+			<target xml:lang="ru">Ожидается годное число</target></trans-unit>
+      <trans-unit id="1221561046" xml:space="preserve" approved="yes">
+				<source>Please enter a valid number between {0,number} and {1,number}</source>
+			<target xml:lang="ru">Укажите число между {0,number} и {1,number}</target></trans-unit>
+      <!-- NumberValidator -->
+      <trans-unit id="1281286579" xml:space="preserve" approved="yes">
+				<source>The "locale" option can be only set to string identifier, or Locale object</source>
+			<target xml:lang="ru">Опция "locale" принимает тольло "string identifier" или "Locale object" как значение</target></trans-unit>
+      <trans-unit id="1281452093" xml:space="preserve" approved="yes">
+				<source>A valid percent number is expected</source>
+			<target xml:lang="ru">Ожидается процентное число</target></trans-unit>
+      <trans-unit id="1281452094" xml:space="preserve" approved="yes">
+				<source>A valid decimal number is expected</source>
+			<target xml:lang="ru">Ожидается вещественное число</target><alt-trans><target xml:lang="ru">Ожидается десятичная дробь</target></alt-trans></trans-unit>
+      <!-- RegularExpressionValidator -->
+      <trans-unit id="1221565130" xml:space="preserve" approved="yes">
+				<source>The given subject did not match the pattern. Got: {0}</source>
+			<target xml:lang="ru">Содержимое не соответсвует шаблону. Вышло: {0}</target></trans-unit>
+      <!-- StringLengthValidator -->
+      <trans-unit id="1238110957" xml:space="preserve" approved="yes">
+				<source>The given object could not be converted to a string</source>
+			<target xml:lang="ru">Содержимое не получилось приобразовать в строковый тип</target></trans-unit>
+      <trans-unit id="1269883975" xml:space="preserve" approved="yes">
+				<source>The given value is not a valid string</source>
+			<target xml:lang="ru">Данное значение не является допустимой строкой</target></trans-unit>
+      <trans-unit id="1238108067" xml:space="preserve" approved="yes">
+				<source>The length of this text must be between {0,number} and {1,number} characters</source>
+			<target xml:lang="ru">Длинна текста должа быть между {0,number} и {1,number} символами</target></trans-unit>
+      <group id="1238108068" restype="x-gettext-plurals">
+        <trans-unit id="1238108068[0]" approved="yes">
+          <source>This field must contain at least {0,number} character</source>
+          <target xml:lang="ru">Это поле должно содержать по крайней мере {0,number} символ</target>
+        </trans-unit>
+        <trans-unit id="1238108068[1]" approved="yes">
+          <source>This field must contain at least {0,number} characters</source>
+          <target xml:lang="ru">Это поле должно содержать по крайней мере {0,number} символа</target>
+        </trans-unit>
+        <trans-unit id="1238108068[2]" approved="yes">
+          <source>This field must contain at least {0,number} characters</source>
+          <target xml:lang="ru">Это поле должно содержать по крайней мере {0,number} символов</target>
+        </trans-unit>
+      </group>
+      <group id="1238108069" restype="x-gettext-plurals">
+        <trans-unit id="1238108069[0]" approved="yes">
+          <source>This text may not exceed {0,number} character</source>
+          <target xml:lang="ru">Длинна этого текста не может превышать {0,number} символ</target>
+        </trans-unit>
+        <trans-unit id="1238108069[1]" approved="yes">
+          <source>This text may not exceed {0,number} characters</source>
+          <target xml:lang="ru">Длинна этого текста не может превышать {0,number} символа</target>
+        </trans-unit>
+        <trans-unit id="1238108069[2]" approved="yes">
+          <source>This text may not exceed {0,number} characters</source>
+          <target xml:lang="ru">Длинна этого текста не может превышать {0,number} символов</target>
+        </trans-unit>
+      </group>
+      <!-- StringValidator -->
+      <trans-unit id="1238108070" xml:space="preserve" approved="yes">
+				<source>A valid string is expected</source>
+			<target xml:lang="ru">Ожидается строковый тип</target></trans-unit>
+      <!-- TextValidator -->
+      <trans-unit id="1221565786" xml:space="preserve" approved="yes">
+				<source>Valid text without any XML tags is expected</source>
+			<target xml:lang="ru">Ожидается текст без XML-тэгов</target></trans-unit>
+      <!-- UuidValidator -->
+      <trans-unit id="1221565853" xml:space="preserve" approved="yes">
+				<source>The given subject is not a valid UUID</source>
+			<target xml:lang="ru">Содержимое не является годным UUID</target></trans-unit>
+      <!-- ElectronicAddressValidator -->
+      <trans-unit id="1268676030" xml:space="preserve" approved="yes">
+				<source>No validator found for electronic address of type "{0}"</source>
+			<target xml:lang="ru">Валидатор для типа электронной почты "{0}" не найден</target></trans-unit>
+      <!-- PersonNameValidator -->
+      <trans-unit id="1268676765" xml:space="preserve" approved="yes">
+				<source>The person name cannot be empty</source>
+			<target xml:lang="ru">Поле для ФИО не может быть пустым</target></trans-unit>
+      <!-- Package "Neos.Media" -->
+      <!-- ImageTypeValidator -->
+      <trans-unit id="1327947256" xml:space="preserve" approved="yes">
+				<source>The given value is not a Image instance</source>
+			<target xml:lang="ru">Данное значение не является изображением</target></trans-unit>
+      <trans-unit id="1327947647" xml:space="preserve" approved="yes">
+				<source>The image type "{0}" is not allowed</source>
+			<target xml:lang="ru">Формат изображения "{0}" не допускается</target></trans-unit>
+      <trans-unit id="1328030664" xml:space="preserve" approved="yes">
+				<source>The uploaded file is no valid image</source>
+			<target xml:lang="ru">Загруженный файл не является годным изображением</target><alt-trans><target xml:lang="ru">Загружаемый файл не является годным изображением</target></alt-trans></trans-unit>
+      <!-- ImageSizeValidator -->
+      <trans-unit id="1327943859" xml:space="preserve" approved="yes">
+				<source>The given value is not a Image instance</source>
+			<target xml:lang="ru">Данное значение не является изображением</target></trans-unit>
+      <trans-unit id="1319801362" xml:space="preserve" approved="yes">
+				<source>The actual image width of {0,number} is lower than the allowed minimum width of {1,number}</source>
+			<target xml:lang="ru">Ширина {0,number} данного изображения меньше, чем допустимая минимальная ширина {1,number}</target></trans-unit>
+      <trans-unit id="1319801859" xml:space="preserve" approved="yes">
+				<source>The actual image width of {0,number} is higher than the allowed maximum width of {1,number}</source>
+			<target xml:lang="ru">Ширина {0,number} данного изображения выше, чем допустимая максимальная ширина {1,number}</target></trans-unit>
+      <trans-unit id="1319801925" xml:space="preserve" approved="yes">
+				<source>The actual image height of {0,number} is lower than the allowed minimum height of {1,number}</source>
+			<target xml:lang="ru">Высота {0,number} данного изображения меньше, чем допустимая минимальная высота {1,number}</target></trans-unit>
+      <trans-unit id="1319801929" xml:space="preserve" approved="yes">
+				<source>The actual image height of {0,number} is higher than the allowed maximum height of {1,number}</source>
+			<target xml:lang="ru">Высота {0,number} данного изображения выше, чем допустимая максимальная высота {1,number}</target></trans-unit>
+      <trans-unit id="1319813336" xml:space="preserve" approved="yes">
+				<source>The given image size of {0,number} x {1,number} is too low for the required minimum resolution of {2,number}</source>
+			<target xml:lang="ru">Размер {0,number} x {1,number} данного изображения слишком мал для требуемого минимального разрешения {2,number}</target></trans-unit>
+      <trans-unit id="1319813355" xml:space="preserve" approved="yes">
+				<source>The given image size of {0,number} x {1,number} is too high for the required maximum resolution of {2,number}</source>
+			<target xml:lang="ru">Размер {0,number} x {1,number} данного изображения слишком велик для требуемого максимального разрешения {2,number}</target><alt-trans><target xml:lang="ru">Размер {0,number} x {1,number} данного изображения слишком велик для требуемого махимального разрешения {2,number}</target></alt-trans></trans-unit>
+      <!-- ImageOrientationValidator -->
+      <trans-unit id="1328028604" xml:space="preserve" approved="yes">
+				<source>The given value is not a Image instance</source>
+			<target xml:lang="ru">Данное значение не является изображением</target></trans-unit>
+      <trans-unit id="1328029406" xml:space="preserve" approved="yes">
+				<source>The image orientation must be "{0}"</source>
+			<target xml:lang="ru">Ориентация изображения должна быть "{0}"</target></trans-unit>
+      <trans-unit id="1328029362" xml:space="preserve" approved="yes">
+				<source>The image orientation "{0}" is not allowed</source>
+			<target xml:lang="ru">Ориентация изображения "{0}" не допускается</target></trans-unit>
+    </body>
+  </file>
+</xliff>

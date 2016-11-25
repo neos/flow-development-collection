@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file original="" product-name="Neos.Flow" source-language="en" datatype="plaintext" target-language="km">
+    <body>
+      <trans-unit id="authentication.required" xml:space="preserve">
+				<source>Authentication required</source>
+			<target xml:lang="km" state="translated">ត្រូវការសិទ្ធ</target></trans-unit>
+      <trans-unit id="authentication.username" xml:space="preserve">
+				<source>Username</source>
+			<target xml:lang="km" state="translated">ឈ្មោះ​គណនី</target></trans-unit>
+      <trans-unit id="authentication.password" xml:space="preserve">
+				<source>Password</source>
+			<target xml:lang="km" state="translated">ពាក្យ​សម្ងាត់</target></trans-unit>
+      <trans-unit id="authentication.new-password" xml:space="preserve">
+				<source>New password</source>
+			<target xml:lang="km" state="translated">ពាក្យសម្ងាត់​ថ្មី</target></trans-unit>
+      <trans-unit id="authentication.login" xml:space="preserve">
+				<source>Login</source>
+			<target xml:lang="km" state="translated">ចុះឈ្មោះចូល</target></trans-unit>
+      <trans-unit id="authentication.logout" xml:space="preserve">
+				<source>Logout</source>
+			<target xml:lang="km" state="translated">ចាកចេញ</target></trans-unit>
+      <trans-unit id="update" xml:space="preserve">
+				<source>Update</source>
+			<target xml:lang="km" state="translated">ទំនើបកម្ម</target><alt-trans><target xml:lang="km">ធ្វើឲ្យទាន់សម័យ</target></alt-trans></trans-unit>
+      <trans-unit id="submit" xml:space="preserve">
+				<source>Submit</source>
+			<target xml:lang="km" state="translated">ដាក់ស្នើ</target></trans-unit>
+    </body>
+  </file>
+</xliff>

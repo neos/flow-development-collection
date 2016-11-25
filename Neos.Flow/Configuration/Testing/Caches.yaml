@@ -1,0 +1,11 @@
+#                                                                        #
+# Special caches configuration for testing context                       #
+#                                                                        #
+
+# Flow_Persistence_Doctrine
+#
+# This cache contains meta data for the Doctrine ORM.
+Flow_Persistence_Doctrine:
+  backend: Neos\Cache\Backend\TransientMemoryBackend
+Flow_Persistence_Doctrine_Results:
+  backend: Neos\Cache\Backend\TransientMemoryBackend

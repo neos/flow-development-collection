@@ -1,0 +1,1 @@
+<neos.fluidadaptor:format.raw>foobar</neos.fluidadaptor:format.raw>

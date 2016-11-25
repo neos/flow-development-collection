@@ -1,0 +1,65 @@
+# first level are package keys
+type: dictionary
+additionalProperties:
+  # second level are fully qualified class names
+  type: dictionary
+  additionalProperties:
+    # third level are actual class options
+    type: dictionary
+    additionalProperties: FALSE
+    properties:
+      'scope': {type: string, enum: ['singleton', 'prototype', 'session']}
+      'factoryObjectName': {type: string, format: class-name}
+      'factoryMethodName': {type: string}
+      'autowiring': {type: [boolean, string], enum: [TRUE, FALSE, 'on', 'off']}
+      'className': {type: string, format: class-name}
+      'arguments':
+        type: array
+        items:
+          type: dictionary
+          additionalProperties: FALSE
+          properties:
+            'value': {type: any}
+            'setting': {type: string}
+            'object':
+              type: [dictionary, string]
+              # if string, require string to be a class name
+              format: class-name
+              additionalProperties: FALSE
+              properties:
+                'factoryObjectName': {type: string, format: class-name}
+                'factoryMethodName': {type: string}
+                'arguments':
+                  type: array
+                  items:
+                    type: dictionary
+                    additionalProperties: FALSE
+                    properties:
+                      'value': {type: string}
+                      'setting': {type: string}
+
+      'properties':
+        type: dictionary
+        additionalProperties:
+          type: dictionary
+          additionalProperties: FALSE
+          properties:
+            'setting': {type: string}
+            'value': {type: any}
+            'object':
+              type: [dictionary, string]
+              # if string, require string to be a class name
+              format: class-name
+              additionalProperties: FALSE
+              properties:
+                'factoryObjectName': {type: string, format: class-name}
+                'factoryMethodName': {type: string}
+                'arguments':
+                  type: array
+                  items:
+                    type: dictionary
+                    additionalProperties: FALSE
+                    properties:
+                      'value': {type: string}
+                      'setting': {type: string}
+

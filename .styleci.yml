@@ -4,8 +4,8 @@ finder:
   path:
     - "TYPO3.Eel/Classes"
     - "TYPO3.Eel/Tests"
-    - "TYPO3.Fluid/Classes"
-    - "TYPO3.Fluid/Tests"
+    - "Neos.FluidAdaptor/Classes"
+    - "Neos.FluidAdaptor/Tests"
     - "TYPO3.Flow/Classes"
     - "TYPO3.Flow/Tests"
     - "TYPO3.Kickstart/Classes"

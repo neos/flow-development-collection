@@ -1,0 +1,36 @@
+# A change using almost all available filters
+-
+  requestFilter: 'isPackage("Neos.Flow") && isController("ViewsConfigurationTestA") && isAction("first") && isFormat("html")'
+  options:
+    templatePathAndFilename: resource://Neos.Flow/Private/Templates/Tests/Functional/Mvc/Fixtures/ViewsConfigurationTest/ChangedOnPackageLevel.html
+
+# A change filtered on Package and SubPackage level
+-
+  requestFilter: 'isPackage("Neos.Flow") && isSubPackage("Tests\Functional\Mvc\ViewsConfiguration\Fixtures")'
+  options:
+    templatePathAndFilename: resource://Neos.Flow/Private/Templates/Tests/Functional/Mvc/Fixtures/ViewsConfigurationTest/ChangedOnControllerLevel.html
+
+# Completely change the viewObjectName, the mainRequest is added to add specifity for not being overwritten from
+# the following filters
+-
+  requestFilter: 'mainRequest.isPackage("Neos.Flow") && isController("ViewsConfigurationTestC")'
+  viewObjectName: '\Neos\Flow\Tests\Functional\Mvc\ViewsConfiguration\Fixtures\TemplateView'
+
+# Reset Widget Template because it's changed by the second change
+-
+  requestFilter: 'isPackage("Neos.Flow") && isSubPackage("Tests\Functional\Mvc\ViewsConfiguration\Fixtures") && isAction("widget")'
+  options:
+    templatePathAndFilename: resource://Neos.Flow/Private/Templates/Tests/Functional/Mvc/Fixtures/ViewsConfigurationTest/Widget.html
+
+# Set a custom Template for a Widget, but only if it's executed inside Neos.Flow
+-
+  requestFilter: 'parentRequest.isPackage("Neos.Flow") && isPackage("Neos.FluidAdaptor") && isSubPackage("Tests\Functional\Core\Fixtures\ViewHelpers")'
+  options:
+    templatePathAndFilename: resource://Neos.Flow/Private/Templates/Tests/Functional/Mvc/Fixtures/ViewsConfigurationTest/ChangedOnPackageLevel.html
+
+# The configuration above should take precedence, because parentRequest adds way more specifity
+# than all matchers for the current request combined
+-
+  requestFilter: 'isPackage("Neos.Flow") && isSubPackage("Tests\Functional\Mvc\ViewsConfiguration\Fixtures") && isAction("index") && isFormat("html")'
+  options:
+    templatePathAndFilename: resource://Neos.Flow/Private/Templates/Tests/Functional/Mvc/Fixtures/ViewsConfigurationTest/Wrong.html

@@ -1,0 +1,12 @@
+Neos\FluidAdaptor\Core\Cache\CacheAdaptor:
+  properties:
+    flowCache:
+      object:
+        factoryObjectName: Neos\Flow\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: Fluid_TemplateCache
+
+TYPO3Fluid\Fluid\Core\ViewHelper\TagBuilder:
+  scope: prototype

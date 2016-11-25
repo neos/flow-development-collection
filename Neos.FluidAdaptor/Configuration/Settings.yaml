@@ -1,0 +1,18 @@
+Neos:
+  Flow:
+    http:
+      chain:
+        'process':
+          chain:
+            'ajaxWidget':
+              position: 'before routing'
+              component: 'Neos\FluidAdaptor\Core\Widget\AjaxWidgetComponent'
+    mvc:
+      view:
+        defaultImplementation: 'Neos\FluidAdaptor\View\TemplateView'
+
+    error:
+      exceptionHandler:
+        # default options for all rendering groups (see below). Options can be overridden in the respective rendering group
+        defaultRenderingOptions:
+          viewClassName: Neos\FluidAdaptor\View\StandaloneView

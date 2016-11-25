@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the TYPO3.Flow package.
+ * This file is part of the Neos.Utility.MediaTypes package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -18,7 +18,7 @@
  * by Flow users.
  */
 
-$mediaTypesClassPathAndFilename = __DIR__ . '/../Classes/TYPO3/Flow/Utility/MediaTypes.php';
+$mediaTypesClassPathAndFilename = __DIR__ . '/../Classes/MediaTypes.php';
 
 $rawList = file_get_contents('http://svn.apache.org/viewvc/httpd/httpd/branches/2.4.x/docs/conf/mime.types?revision=HEAD&view=co');
 
@@ -37,7 +37,7 @@ $mediaTypesToFileExtensionsCode = '';
 $fileExtensionsAndMediaType = array();
 
 foreach ($mediaTypesAndFileExtensions as $mediaType => $fileExtensions) {
-    $mediaTypesToFileExtensionsCode .= "        '$mediaType' => array('" . implode("', '", $fileExtensions) . "'),\n";
+    $mediaTypesToFileExtensionsCode .= "        '$mediaType' => ['" . implode("', '", $fileExtensions) . "'],\n";
     foreach ($fileExtensions as $fileExtension) {
         $fileExtensionsAndMediaType[$fileExtension] = $mediaType;
     }
@@ -51,6 +51,6 @@ foreach ($fileExtensionsAndMediaType as $fileExtension => $mediaType) {
 }
 
 $classCode = file_get_contents($mediaTypesClassPathAndFilename);
-$classCode = preg_replace('/(extensionToMediaType = array\(\n)([^\)]+)(\t\);)/', '$1' . $fileExtensionsToMediaTypeCode . "    );", $classCode);
-$classCode = preg_replace('/(mediaTypeToFileExtension = array\(\n)([^\;]+)(;)/', '$1' . $mediaTypesToFileExtensionsCode . "    );", $classCode);
+$classCode = preg_replace('/(extensionToMediaType = \[\n)([^\)]+)(\t\];)/', '$1' . $fileExtensionsToMediaTypeCode . "    ];", $classCode);
+$classCode = preg_replace('/(mediaTypeToFileExtension = \[\n)([^\;]+)(;)/', '$1' . $mediaTypesToFileExtensionsCode . "    ];", $classCode);
 file_put_contents($mediaTypesClassPathAndFilename, $classCode);

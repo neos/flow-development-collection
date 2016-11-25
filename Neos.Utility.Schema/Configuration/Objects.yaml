@@ -1,5 +1,5 @@
-TYPO3\Flow\Utility\SchemaGenerator:
+Neos\Utility\SchemaGenerator:
   scope: singleton
 
-TYPO3\Flow\Utility\SchemaValidator:
+Neos\Utility\SchemaValidator:
   scope: singleton

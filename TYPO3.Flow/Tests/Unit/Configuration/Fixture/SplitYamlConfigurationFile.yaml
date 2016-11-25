@@ -1,5 +1,0 @@
-configurationFileHasBeenLoaded: TRUE
-TYPO3:
-  Flow:
-    default: 'test'
-    toBeOverwritten: 1

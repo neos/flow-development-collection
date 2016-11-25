@@ -1,0 +1,3 @@
+Fluid_TemplateCache:
+  frontend: Neos\Cache\Frontend\PhpFrontend
+  backend: Neos\Cache\Backend\FileBackend

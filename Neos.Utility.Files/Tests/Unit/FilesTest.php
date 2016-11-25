@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Flow\Tests\Unit\Utility;
+namespace Neos\Flow\Tests\Unit\Utility;
 
 /*
- * This file is part of the TYPO3.Flow package.
+ * This file is part of the Neos.Utility.Files package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -12,7 +12,7 @@ namespace TYPO3\Flow\Tests\Unit\Utility;
  */
 
 use org\bovigo\vfs\vfsStream;
-use TYPO3\Flow\Utility\Files;
+use Neos\Utility\Files;
 
 /**
  * Testcase for the Utility Files class
@@ -247,7 +247,7 @@ class FilesTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @expectedException \TYPO3\Flow\Utility\Exception
+     * @expectedException \Neos\Utility\Exception\FilesException
      */
     public function emptyDirectoryRecursivelyThrowsExceptionIfSpecifiedPathDoesNotExist()
     {
@@ -256,7 +256,7 @@ class FilesTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @expectedException \TYPO3\Flow\Utility\Exception
+     * @expectedException \Neos\Utility\Exception\FilesException
      */
     public function removeDirectoryRecursivelyThrowsExceptionIfSpecifiedPathDoesNotExist()
     {
@@ -327,7 +327,7 @@ class FilesTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @expectedException \TYPO3\Flow\Utility\Exception
+     * @expectedException \Neos\Utility\Exception\FilesException
      */
     public function removeEmptyDirectoriesOnPathThrowsExceptionIfBasePathIsNotParentOfPath()
     {
@@ -376,9 +376,9 @@ class FilesTest extends \PHPUnit_Framework_TestCase
      * @outputBuffering enabled
      *     ... because the chmod call in ResourceManager emits a warning making this fail in strict mode
      */
-    public function unlinkReturnsFalseIfSpecifiedPathDoesNotExist()
+    public function unlinkReturnsTrueIfSpecifiedPathDoesNotExist()
     {
-        $this->assertFalse(Files::unlink('NonExistingPath'));
+        $this->assertTrue(Files::unlink('NonExistingPath'));
     }
 
     /**
@@ -635,7 +635,7 @@ class FilesTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @expectedException \TYPO3\Flow\Utility\Exception
+     * @expectedException \Neos\Utility\Exception\FilesException
      */
     public function sizeStringThrowsExceptionIfTheSpecifiedUnitIsUnknown()
     {
