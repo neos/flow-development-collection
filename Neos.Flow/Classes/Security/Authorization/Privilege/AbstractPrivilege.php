@@ -163,7 +163,7 @@ abstract class AbstractPrivilege implements PrivilegeInterface
     }
 
     /**
-     * Unique identifier for the related privilege target (e.g. "TYPO3.Flow:PublicMethods")
+     * Unique identifier for the related privilege target (e.g. "Neos.Flow:PublicMethods")
      *
      * @return string
      */

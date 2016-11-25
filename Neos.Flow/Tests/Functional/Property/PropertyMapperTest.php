@@ -390,10 +390,10 @@ class PropertyMapperTest extends FunctionalTestCase
             'accountIdentifier' => 'someAccountIdentifier',
             'credentialsSource' => 'someEncryptedStuff',
             'authenticationProviderName' => 'DefaultProvider',
-            'roles' => ['TYPO3.Flow:Customer', 'TYPO3.Flow:Administrator']
+            'roles' => ['Neos.Flow:Customer', 'Neos.Flow:Administrator']
         ];
 
-        $expectedRoleIdentifiers = ['TYPO3.Flow:Customer', 'TYPO3.Flow:Administrator'];
+        $expectedRoleIdentifiers = ['Neos.Flow:Customer', 'Neos.Flow:Administrator'];
 
         $configuration = $this->objectManager->get(PropertyMappingConfigurationBuilder::class)->build();
         $configuration->forProperty('roles.*')->allowProperties();

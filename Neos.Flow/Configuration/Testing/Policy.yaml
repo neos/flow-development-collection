@@ -52,7 +52,7 @@ privilegeTargets:
 
 roles:
 
-  'TYPO3.Flow:Customer':
+  'Neos.Flow:Customer':
     privileges:
       -
         privilegeTarget: 'Neos.Flow:Tests.RestrictedController.customerAction'
@@ -66,7 +66,7 @@ roles:
         privilegeTarget: 'Neos.Flow:Tests.Functional.Security.Fixtures.RestrictableEntity.AllEntities'
         permission: GRANT
 
-  'TYPO3.Flow:Administrator':
+  'Neos.Flow:Administrator':
     privileges:
       -
         privilegeTarget: 'Neos.Flow:Tests.RestrictedController.customerAction'

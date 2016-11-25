@@ -160,7 +160,7 @@ class SecurityCommandController extends CommandController
      */
     public function showEffectivePolicyCommand($privilegeType, $roles = '')
     {
-        $systemRoleIdentifiers = ['TYPO3.Flow:Everybody', 'TYPO3.Flow:Anonymous', 'TYPO3.Flow:AuthenticatedUser'];
+        $systemRoleIdentifiers = ['Neos.Flow:Everybody', 'Neos.Flow:Anonymous', 'Neos.Flow:AuthenticatedUser'];
 
         if (strpos($privilegeType, '\\') === false) {
             $privilegeType = sprintf('\Neos\Flow\Security\Authorization\Privilege\%s\%sPrivilegeInterface', ucfirst($privilegeType), ucfirst($privilegeType));
@@ -193,11 +193,11 @@ class SecurityCommandController extends CommandController
             }
         }
         if (count($requestedRoles) > 0) {
-            $requestedRoles['TYPO3.Flow:AuthenticatedUser'] = $this->policyService->getRole('TYPO3.Flow:AuthenticatedUser');
+            $requestedRoles['Neos.Flow:AuthenticatedUser'] = $this->policyService->getRole('Neos.Flow:AuthenticatedUser');
         } else {
-            $requestedRoles['TYPO3.Flow:Anonymous'] = $this->policyService->getRole('TYPO3.Flow:Anonymous');
+            $requestedRoles['Neos.Flow:Anonymous'] = $this->policyService->getRole('Neos.Flow:Anonymous');
         }
-        $requestedRoles['TYPO3.Flow:Everybody'] = $this->policyService->getRole('TYPO3.Flow:Everybody');
+        $requestedRoles['Neos.Flow:Everybody'] = $this->policyService->getRole('Neos.Flow:Everybody');
 
         $this->outputLine('Effective Permissions for the roles <b>%s</b> ', [implode(', ', $requestedRoles)]);
         $this->outputLine(str_repeat('-', $this->output->getMaximumLineLength()));

@@ -99,7 +99,7 @@ class PolicyEnforcement implements InterceptorInterface
         } catch (EntityNotFoundException $exception) {
             throw new AuthenticationRequiredException('Could not authenticate. Looks like a broken session.', 1358971444, $exception);
         } catch (NoTokensAuthenticatedException $noTokensAuthenticatedException) {
-            // We still need to check if the privilege is available to "TYPO3.Flow:Everybody".
+            // We still need to check if the privilege is available to "Neos.Flow:Everybody".
             if ($this->privilegeManager->isGranted(MethodPrivilegeInterface::class, $privilegeSubject, $reason) === false) {
                 throw new NoTokensAuthenticatedException($noTokensAuthenticatedException->getMessage() . chr(10) . $reason, $noTokensAuthenticatedException->getCode());
             }

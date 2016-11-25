@@ -44,17 +44,17 @@ class AccountTest extends UnitTestCase
      */
     public function setUp()
     {
-        $administratorRole = new Role('TYPO3.Flow:Administrator');
+        $administratorRole = new Role('Neos.Flow:Administrator');
         $this->administratorRole = $administratorRole;
-        $customerRole = new Role('TYPO3.Flow:Customer');
+        $customerRole = new Role('Neos.Flow:Customer');
         $this->customerRole = $customerRole;
 
         $mockPolicyService = $this->createMock(PolicyService::class);
         $mockPolicyService->expects($this->any())->method('getRole')->will($this->returnCallback(function ($roleIdentifier) use ($administratorRole, $customerRole) {
             switch ($roleIdentifier) {
-                case 'TYPO3.Flow:Administrator':
+                case 'Neos.Flow:Administrator':
                     return $administratorRole;
-                case 'TYPO3.Flow:Customer':
+                case 'Neos.Flow:Customer':
                     return $customerRole;
                 default:
                     throw new NoSuchRoleException();
@@ -62,8 +62,8 @@ class AccountTest extends UnitTestCase
         }));
         $mockPolicyService->expects($this->any())->method('hasRole')->will($this->returnCallback(function ($roleIdentifier) use ($administratorRole, $customerRole) {
             switch ($roleIdentifier) {
-                case 'TYPO3.Flow:Administrator':
-                case 'TYPO3.Flow:Customer':
+                case 'Neos.Flow:Administrator':
+                case 'Neos.Flow:Customer':
                     return true;
                 default:
                     return false;

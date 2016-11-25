@@ -20,16 +20,16 @@ Feature: Method policy enforcement
             matcher: 'method(Neos\Flow\Tests\Functional\Security\Fixtures\Controller\RestrictedController->argumentsAction(argument1 == current.testContext.nameOfTheWeek))'
 
       roles:
-        'TYPO3.Flow:Everybody':
+        'Neos.Flow:Everybody':
           privileges: []
 
-        'TYPO3.Flow:Anonymous':
+        'Neos.Flow:Anonymous':
           privileges: []
 
-        'TYPO3.Flow:AuthenticatedUser':
+        'Neos.Flow:AuthenticatedUser':
           privileges: []
 
-        'TYPO3.Flow:Customer':
+        'Neos.Flow:Customer':
           privileges:
             -
               privilegeTarget: 'Neos.Flow:Tests.RestrictedController.customerAction'
@@ -38,7 +38,7 @@ Feature: Method policy enforcement
               privilegeTarget: 'Neos.Flow:Tests.RestrictedController.adminAction'
               permission: DENY
 
-        'TYPO3.Flow:Administrator':
+        'Neos.Flow:Administrator':
           privileges:
             -
               privilegeTarget: 'Neos.Flow:Tests.RestrictedController.customerAction'
@@ -64,12 +64,12 @@ Feature: Method policy enforcement
 
   @Isolated
   Scenario: public action is granted for customer
-    Given I am authenticated with role "TYPO3.Flow:Customer"
+    Given I am authenticated with role "Neos.Flow:Customer"
     Then I can call the method "publicAction" of class "Neos\Flow\Tests\Functional\Security\Fixtures\Controller\RestrictedController"
 
   @Isolated
   Scenario: public action is granted for administrator
-    Given I am authenticated with role "TYPO3.Flow:Administrator"
+    Given I am authenticated with role "Neos.Flow:Administrator"
     Then I can call the method "publicAction" of class "Neos\Flow\Tests\Functional\Security\Fixtures\Controller\RestrictedController"
 
   @Isolated
@@ -79,12 +79,12 @@ Feature: Method policy enforcement
 
   @Isolated
   Scenario: customer action is granted for customer
-    Given I am authenticated with role "TYPO3.Flow:Customer"
+    Given I am authenticated with role "Neos.Flow:Customer"
     Then I can call the method "customerAction" of class "Neos\Flow\Tests\Functional\Security\Fixtures\Controller\RestrictedController"
 
   @Isolated @fixtures
   Scenario: customer action is granted for administrator (deny permission is overridden, due to a second equivalent privilege definition in the same role)
-    Given I am authenticated with role "TYPO3.Flow:Administrator"
+    Given I am authenticated with role "Neos.Flow:Administrator"
     Then I can call the method "customerAction" of class "Neos\Flow\Tests\Functional\Security\Fixtures\Controller\RestrictedController"
 
   @Isolated
@@ -94,12 +94,12 @@ Feature: Method policy enforcement
 
   @Isolated
   Scenario: admin action is denied for customer
-    Given I am authenticated with role "TYPO3.Flow:Customer"
+    Given I am authenticated with role "Neos.Flow:Customer"
     Then I can not call the method "adminAction" of class "Neos\Flow\Tests\Functional\Security\Fixtures\Controller\RestrictedController"
 
   @Isolated
   Scenario: admin action is granted for administrator
-    Given I am authenticated with role "TYPO3.Flow:Administrator"
+    Given I am authenticated with role "Neos.Flow:Administrator"
     Then I can call the method "adminAction" of class "Neos\Flow\Tests\Functional\Security\Fixtures\Controller\RestrictedController"
 
   @Isolated
@@ -114,10 +114,10 @@ Feature: Method policy enforcement
 
   @Isolated
   Scenario: arguments action with specified arguments is denied for customer
-    Given I am authenticated with role "TYPO3.Flow:Customer"
+    Given I am authenticated with role "Neos.Flow:Customer"
     Then I can not call the method "argumentsAction" of class "Neos\Flow\Tests\Functional\Security\Fixtures\Controller\RestrictedController" with arguments "Robbie"
 
   @Isolated
   Scenario: arguments action with specified arguments is granted for administrator
-    Given I am authenticated with role "TYPO3.Flow:Administrator"
+    Given I am authenticated with role "Neos.Flow:Administrator"
     Then I can call the method "argumentsAction" of class "Neos\Flow\Tests\Functional\Security\Fixtures\Controller\RestrictedController" with arguments "Robbie"

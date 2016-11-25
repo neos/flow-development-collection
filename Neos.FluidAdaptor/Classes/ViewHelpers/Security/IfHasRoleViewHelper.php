@@ -125,7 +125,7 @@ class IfHasRoleViewHelper extends AbstractConditionViewHelper
             $roleIdentifier = $role;
 
             if (in_array($roleIdentifier, ['Everybody', 'Anonymous', 'AuthenticatedUser'])) {
-                $roleIdentifier = 'TYPO3.Flow:' . $roleIdentifier;
+                $roleIdentifier = 'Neos.Flow:' . $roleIdentifier;
             }
 
             if (strpos($roleIdentifier, '.') === false && strpos($roleIdentifier, ':') === false) {

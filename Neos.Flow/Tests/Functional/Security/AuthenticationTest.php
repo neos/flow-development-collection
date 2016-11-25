@@ -43,11 +43,11 @@ class AuthenticationTest extends FunctionalTestCase
         $accountRepository = $this->objectManager->get(AccountRepository::class);
         $accountFactory = $this->objectManager->get(AccountFactory::class);
 
-        $account = $accountFactory->createAccountWithPassword('functional_test_account', 'a_very_secure_long_password', ['TYPO3.Flow:Administrator'], 'TestingProvider');
+        $account = $accountFactory->createAccountWithPassword('functional_test_account', 'a_very_secure_long_password', ['Neos.Flow:Administrator'], 'TestingProvider');
         $accountRepository->add($account);
-        $account2 = $accountFactory->createAccountWithPassword('functional_test_account', 'a_very_secure_long_password', ['TYPO3.Flow:Administrator'], 'HttpBasicTestingProvider');
+        $account2 = $accountFactory->createAccountWithPassword('functional_test_account', 'a_very_secure_long_password', ['Neos.Flow:Administrator'], 'HttpBasicTestingProvider');
         $accountRepository->add($account2);
-        $account3 = $accountFactory->createAccountWithPassword('functional_test_account', 'a_very_secure_long_password', ['TYPO3.Flow:Administrator'], 'UsernamePasswordTestingProvider');
+        $account3 = $accountFactory->createAccountWithPassword('functional_test_account', 'a_very_secure_long_password', ['Neos.Flow:Administrator'], 'UsernamePasswordTestingProvider');
         $accountRepository->add($account3);
         $this->persistenceManager->persistAll();
 
@@ -135,7 +135,7 @@ class AuthenticationTest extends FunctionalTestCase
         $request = Request::create($uri);
         $request->setHeader('Authorization', 'Basic ' . base64_encode('functional_test_account:a_very_secure_long_password'));
         $response = $this->browser->sendRequest($request);
-        $this->assertSame($response->getContent(), 'HttpBasicTestController success!' . chr(10) . 'TYPO3.Flow:Everybody' . chr(10) . 'TYPO3.Flow:AuthenticatedUser' . chr(10) . 'TYPO3.Flow:Administrator' . chr(10));
+        $this->assertSame($response->getContent(), 'HttpBasicTestController success!' . chr(10) . 'Neos.Flow:Everybody' . chr(10) . 'Neos.Flow:AuthenticatedUser' . chr(10) . 'Neos.Flow:Administrator' . chr(10));
     }
 
     /**
@@ -148,7 +148,7 @@ class AuthenticationTest extends FunctionalTestCase
         $arguments['__authentication']['TYPO3']['Flow']['Security']['Authentication']['Token']['UsernamePassword']['password'] = 'a_very_secure_long_password';
 
         $response = $this->browser->request('http://localhost/test/security/authentication/usernamepassword', 'POST', $arguments);
-        $this->assertSame($response->getContent(), 'UsernamePasswordTestController success!' . chr(10) . 'TYPO3.Flow:Everybody' . chr(10) . 'TYPO3.Flow:AuthenticatedUser' . chr(10) . 'TYPO3.Flow:Administrator' . chr(10));
+        $this->assertSame($response->getContent(), 'UsernamePasswordTestController success!' . chr(10) . 'Neos.Flow:Everybody' . chr(10) . 'Neos.Flow:AuthenticatedUser' . chr(10) . 'Neos.Flow:Administrator' . chr(10));
     }
 
     /**

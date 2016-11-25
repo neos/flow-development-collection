@@ -51,7 +51,7 @@ class SecurityHelper implements ProtectedContextAwareInterface
      */
     public function hasRole($roleIdentifier)
     {
-        if ($roleIdentifier === 'TYPO3.Flow:Everybody') {
+        if ($roleIdentifier === 'Neos.Flow:Everybody') {
             return true;
         }
 

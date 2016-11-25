@@ -7,13 +7,13 @@
 # directory instead.                                                     #
 
 roles:
-  'TYPO3.Flow:Everybody':
+  'Neos.Flow:Everybody':
     abstract: TRUE
 
-  'TYPO3.Flow:Anonymous':
+  'Neos.Flow:Anonymous':
     abstract: TRUE
 
-  'TYPO3.Flow:AuthenticatedUser':
+  'Neos.Flow:AuthenticatedUser':
     abstract: TRUE
 
 privilegeTargets: []

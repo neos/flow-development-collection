@@ -838,11 +838,11 @@ The role ``Acme.MyPackage:PrivilegedCustomer`` is configured as a sub role of
 ``Acme.MyPackage:Customer``, for example it will inherit the privileges from the
 ``Acme.MyPackage:Customer`` role.
 
-Flow will always add the magic ``TYPO3.Flow:Everybody`` role, which you don't have to
+Flow will always add the magic ``Neos.Flow:Everybody`` role, which you don't have to
 configure yourself. This role will also be present, if no account is authenticated.
 
-Likewise, the magic role ``TYPO3.Flow:Anonymous`` is added to the security context if no user
-is authenticated and ``TYPO3.Flow:AuthenticatedUser`` if there is an authenticated user.
+Likewise, the magic role ``Neos.Flow:Anonymous`` is added to the security context if no user
+is authenticated and ``Neos.Flow:AuthenticatedUser`` if there is an authenticated user.
 
 *Defining Privileges and Permissions*
 

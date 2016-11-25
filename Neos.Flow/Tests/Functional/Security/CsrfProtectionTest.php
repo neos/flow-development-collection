@@ -44,7 +44,7 @@ class CsrfProtectionTest extends FunctionalTestCase
         $accountRepository = $this->objectManager->get(AccountRepository::class);
         $accountFactory = $this->objectManager->get(AccountFactory::class);
 
-        $account = $accountFactory->createAccountWithPassword('admin', 'password', ['TYPO3.Flow:Administrator'], 'UsernamePasswordTestingProvider');
+        $account = $accountFactory->createAccountWithPassword('admin', 'password', ['Neos.Flow:Administrator'], 'UsernamePasswordTestingProvider');
         $accountRepository->add($account);
         $this->persistenceManager->persistAll();
 

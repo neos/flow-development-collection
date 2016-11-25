@@ -47,7 +47,7 @@ class SecurityHelperTest extends \Neos\Flow\Tests\UnitTestCase
     public function hasRoleReturnsTrueForEverybodyRole()
     {
         $helper = new SecurityHelper();
-        $this->assertTrue($helper->hasRole('TYPO3.Flow:Everybody'));
+        $this->assertTrue($helper->hasRole('Neos.Flow:Everybody'));
     }
 
     /**

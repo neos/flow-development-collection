@@ -39,12 +39,12 @@ class AccountFactoryTest extends FunctionalTestCase
     {
         $factory = new AccountFactory();
 
-        $actualAccount = $factory->createAccountWithPassword('username', 'password', ['TYPO3.Flow:Administrator', 'TYPO3.Flow:Customer'], 'OtherProvider');
+        $actualAccount = $factory->createAccountWithPassword('username', 'password', ['Neos.Flow:Administrator', 'Neos.Flow:Customer'], 'OtherProvider');
 
         $this->assertEquals('username', $actualAccount->getAccountIdentifier());
         $this->assertEquals('OtherProvider', $actualAccount->getAuthenticationProviderName());
 
-        $this->assertTrue($actualAccount->hasRole($this->policyService->getRole('TYPO3.Flow:Administrator')));
-        $this->assertTrue($actualAccount->hasRole($this->policyService->getRole('TYPO3.Flow:Customer')));
+        $this->assertTrue($actualAccount->hasRole($this->policyService->getRole('Neos.Flow:Administrator')));
+        $this->assertTrue($actualAccount->hasRole($this->policyService->getRole('Neos.Flow:Customer')));
     }
 }

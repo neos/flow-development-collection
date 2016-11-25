@@ -151,7 +151,7 @@ class PolicyServiceTest extends UnitTestCase
             ],
         ];
         $roles = $this->policyService->getRoles(true);
-        $this->assertSame(['Some.Package:SomeRole', 'Some.Package:SomeOtherRole', 'TYPO3.Flow:Everybody'], array_keys($roles));
+        $this->assertSame(['Some.Package:SomeRole', 'Some.Package:SomeOtherRole', 'Neos.Flow:Everybody'], array_keys($roles));
     }
 
     /**
@@ -256,7 +256,7 @@ class PolicyServiceTest extends UnitTestCase
             ],
         ];
 
-        $everybodyRole = $this->policyService->getRole('TYPO3.Flow:Everybody');
+        $everybodyRole = $this->policyService->getRole('Neos.Flow:Everybody');
         $this->assertCount(2, $everybodyRole->getPrivileges());
         $this->assertTrue($everybodyRole->getPrivilegeForTarget('Some.PrivilegeTarget:Identifier')->isAbstained());
         $this->assertTrue($everybodyRole->getPrivilegeForTarget('Some.OtherPrivilegeTarget:Identifier')->isAbstained());
@@ -280,7 +280,7 @@ class PolicyServiceTest extends UnitTestCase
                 ],
             ],
             'roles' => [
-                'TYPO3.Flow:Everybody' => [
+                'Neos.Flow:Everybody' => [
                     'privileges' => [
                         [
                             'privilegeTarget' => 'Some.PrivilegeTarget:Identifier',
@@ -299,7 +299,7 @@ class PolicyServiceTest extends UnitTestCase
             ],
         ];
 
-        $everybodyRole = $this->policyService->getRole('TYPO3.Flow:Everybody');
+        $everybodyRole = $this->policyService->getRole('Neos.Flow:Everybody');
         $this->assertTrue($everybodyRole->getPrivilegeForTarget('Some.PrivilegeTarget:Identifier')->isGranted());
     }
 
@@ -321,7 +321,7 @@ class PolicyServiceTest extends UnitTestCase
                 ],
             ],
             'roles' => [
-                'TYPO3.Flow:Everybody' => [
+                'Neos.Flow:Everybody' => [
                     'privileges' => [
                         [
                             'privilegeTarget' => 'Some.PrivilegeTarget:Identifier',
@@ -340,7 +340,7 @@ class PolicyServiceTest extends UnitTestCase
             ],
         ];
 
-        $everybodyRole = $this->policyService->getRole('TYPO3.Flow:Everybody');
+        $everybodyRole = $this->policyService->getRole('Neos.Flow:Everybody');
         $this->assertTrue($everybodyRole->getPrivilegeForTarget('Some.PrivilegeTarget:Identifier')->isDenied());
     }
 }

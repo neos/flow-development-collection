@@ -27,7 +27,7 @@ class RoleTest extends UnitTestCase
     public function roleIdentifiersAndPackageKeysAndNames()
     {
         return [
-            ['TYPO3.Flow:Everybody', 'Everybody', 'TYPO3.Flow'],
+            ['Neos.Flow:Everybody', 'Everybody', 'TYPO3.Flow'],
             ['Acme.Demo:Test', 'Test', 'Acme.Demo'],
             ['Acme.Demo.Sub:Test', 'Test', 'Acme.Demo.Sub']
         ];

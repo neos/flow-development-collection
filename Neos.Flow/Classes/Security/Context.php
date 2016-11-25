@@ -31,7 +31,7 @@ class Context
 {
     /**
      * Authenticate as many tokens as possible but do not require
-     * an authenticated token (e.g. for guest users with role TYPO3.Flow:Everybody).
+     * an authenticated token (e.g. for guest users with role Neos.Flow:Everybody).
      */
     const AUTHENTICATE_ANY_TOKEN = 1;
 
@@ -400,7 +400,7 @@ class Context
      *
      * If no authenticated roles could be found the "Anonymous" role is returned.
      *
-     * The "TYPO3.Flow:Everybody" roles is always returned.
+     * The "Neos.Flow:Everybody" roles is always returned.
      *
      * @return Role[]
      */
@@ -411,12 +411,12 @@ class Context
         }
 
         if ($this->roles === null) {
-            $this->roles = ['TYPO3.Flow:Everybody' => $this->policyService->getRole('TYPO3.Flow:Everybody')];
+            $this->roles = ['Neos.Flow:Everybody' => $this->policyService->getRole('Neos.Flow:Everybody')];
 
             if ($this->authenticationManager->isAuthenticated() === false) {
-                $this->roles['TYPO3.Flow:Anonymous'] = $this->policyService->getRole('TYPO3.Flow:Anonymous');
+                $this->roles['Neos.Flow:Anonymous'] = $this->policyService->getRole('Neos.Flow:Anonymous');
             } else {
-                $this->roles['TYPO3.Flow:AuthenticatedUser'] = $this->policyService->getRole('TYPO3.Flow:AuthenticatedUser');
+                $this->roles['Neos.Flow:AuthenticatedUser'] = $this->policyService->getRole('Neos.Flow:AuthenticatedUser');
                 /** @var $token TokenInterface */
                 foreach ($this->getAuthenticationTokens() as $token) {
                     if ($token->isAuthenticated() !== true) {
@@ -457,13 +457,13 @@ class Context
      */
     public function hasRole($roleIdentifier)
     {
-        if ($roleIdentifier === 'TYPO3.Flow:Everybody') {
+        if ($roleIdentifier === 'Neos.Flow:Everybody') {
             return true;
         }
-        if ($roleIdentifier === 'TYPO3.Flow:Anonymous') {
+        if ($roleIdentifier === 'Neos.Flow:Anonymous') {
             return (!$this->authenticationManager->isAuthenticated());
         }
-        if ($roleIdentifier === 'TYPO3.Flow:AuthenticatedUser') {
+        if ($roleIdentifier === 'Neos.Flow:AuthenticatedUser') {
             return ($this->authenticationManager->isAuthenticated());
         }
 

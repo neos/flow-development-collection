@@ -192,7 +192,7 @@ class Version20141113121400 extends AbstractMigration
             return $roleIdentifier;
         }
         if (in_array($roleIdentifier, array('Everybody', 'Anonymous', 'AuthenticatedUser'))) {
-            return 'TYPO3.Flow:' . $roleIdentifier;
+            return 'Neos.Flow:' . $roleIdentifier;
         }
         return $this->targetPackageData['packageKey'] . ':' . $roleIdentifier;
     }
