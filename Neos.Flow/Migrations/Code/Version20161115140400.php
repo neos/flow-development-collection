@@ -26,7 +26,7 @@ class Version20161115140400 extends AbstractMigration
      */
     public function up()
     {
-        $this->searchAndReplace('Neos\Flow\Resource', 'Neos\Flow\ResourceManagement');
+        $this->searchAndReplace('TYPO3\Flow\Resource', 'TYPO3\Flow\ResourceManagement');
         $this->searchAndReplaceRegex('/ResourceManagement\\\\Resource(?![a-zA-Z])/', 'ResourceManagement\\PersistentResource');
         $this->searchAndReplaceRegex('/(?<![a-zA-Z])Resource::class/', 'PersistentResource::class');
 

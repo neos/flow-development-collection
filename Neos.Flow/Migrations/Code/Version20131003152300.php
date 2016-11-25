@@ -35,8 +35,8 @@ class Version20131003152300 extends AbstractMigration
     public function up()
     {
         $this->searchAndReplace(
-            'Neos\Flow\Persistence\Doctrine\DatabaseConnectionException',
-            'Neos\Flow\Persistence\Doctrine\Exception\DatabaseConnectionException'
+            'TYPO3\Flow\Persistence\Doctrine\DatabaseConnectionException',
+            'TYPO3\Flow\Persistence\Doctrine\Exception\DatabaseConnectionException'
         );
     }
 }

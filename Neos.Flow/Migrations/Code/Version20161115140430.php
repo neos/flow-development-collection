@@ -27,6 +27,6 @@ class Version20161115140430 extends AbstractMigration
      */
     public function up()
     {
-        $this->searchAndReplace('Neos\Flow\Object\\', 'Neos\Flow\ObjectManagement\\');
+        $this->searchAndReplace('TYPO3\Flow\Object\\', 'TYPO3\Flow\ObjectManagement\\');
     }
 }
