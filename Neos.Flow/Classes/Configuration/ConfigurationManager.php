@@ -189,6 +189,11 @@ class ConfigurationManager
     protected $temporaryDirectoryPath;
 
     /**
+     * @var array
+     */
+    protected $unprocessedConfiguration = [];
+
+    /**
      * Constructs the configuration manager
      *
      * @param ApplicationContext $context The application context to fetch configuration for
@@ -545,6 +550,7 @@ class ConfigurationManager
                 throw new Exception\InvalidConfigurationTypeException('Configuration type "' . $configurationType . '" cannot be loaded with loadConfiguration().', 1251450613);
         }
 
+        $this->unprocessedConfiguration[$configurationType] = $this->configurations[$configurationType];
         $this->postProcessConfiguration($this->configurations[$configurationType]);
     }
 
@@ -608,13 +614,15 @@ class ConfigurationManager
             Files::createDirectoryRecursively(dirname($cachePathAndFilename));
         }
 
-        file_put_contents($cachePathAndFilename, '<?php return ' . var_export($this->configurations, true) . ';');
+        file_put_contents($cachePathAndFilename, '<?php return ' . $this->replaceVariablesInPhpString(var_export($this->unprocessedConfiguration, true)) . ';');
         OpcodeCacheHelper::clearAllActive($cachePathAndFilename);
     }
 
     /**
      * Post processes the given configuration array by replacing constants with their
      * actual value.
+     *
+     * This is for processing a freshly loaded configuration for immediate use.
      *
      * @param array &$configurations The configuration to post process. The results are stored directly in the given array
      * @return void
@@ -635,6 +643,8 @@ class ConfigurationManager
     /**
      * Replaces variables (in the format %CONSTANT% or %ENV::ENVIRONMENT_VARIABLE)
      * in the given (configuration) value string.
+     *
+     * This is for processing a freshly loaded configuration for immediate use.
      *
      * @param string $value
      * @return mixed
@@ -676,6 +686,51 @@ class ConfigurationManager
         }
 
         return str_replace(array_keys($replacements), $replacements, $value);
+    }
+
+    /**
+     * Replaces variables (in the format %CONSTANT% or %env:ENVIRONMENT_VARIABLE%)
+     * in the given php exported configuration string.
+     *
+     * This is applied before caching to alllow runtime evaluation of constants and environment variables.
+     *
+     * @param string $phpString
+     * @return mixed
+     */
+    protected function replaceVariablesInPhpString($phpString)
+    {
+        $phpString = preg_replace_callback('/
+            (?<startString>\s\')?      # optionally starting a string
+            (?P<fullMatch>%            # an expression is indicated by %
+            (?P<expression>
+            (?:(?:\\\?[\d\w_\\\]+\:\:)    # either a class name followed by ::
+            |                          # or
+            (?:(?P<prefix>[a-z]+)\:)   # a prefix followed by : (like "env:")
+            )?
+            (?P<name>[A-Z_0-9]+))      # the actual variable name in all upper
+            %)                         # concluded by %
+            (?<endString>\',\n)?       # optionally concluding a string
+        /mx', function ($matchGroup) {
+            $replacement = " ";
+            if (!isset($matchGroup['startString'])) {
+                $replacement .= "' . ";
+            }
+            if (isset($matchGroup['prefix']) && $matchGroup['prefix'] === 'env') {
+                $replacement .= "getenv('" . $matchGroup['name'] . "')";
+            }
+            if (defined($matchGroup['expression'])) {
+                $replacement .= "constant('" . $matchGroup['expression'] . "')";
+            }
+            if (isset($matchGroup['endString'])) {
+                $replacement .= ",\n";
+            } else {
+                $replacement .= " . '";
+            }
+
+            return $replacement;
+        }, $phpString);
+
+        return $phpString;
     }
 
     /**

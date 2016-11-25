@@ -669,6 +669,7 @@ EOD;
         $configurationManager->setTemporaryDirectoryPath($temporaryDirectoryPath);
         $configurationManager->expects($this->any())->method('constructConfigurationCachePath')->willReturn($cachedConfigurationsPathAndFilename);
         $configurationManager->_set('configurations', $mockConfigurations);
+        $configurationManager->_set('unprocessedConfiguration', $mockConfigurations);
         $configurationManager->_set('configurationTypes', [
             ConfigurationManager::CONFIGURATION_TYPE_ROUTES => array(
                 'processingType' => ConfigurationManager::CONFIGURATION_PROCESSING_TYPE_ROUTES,
