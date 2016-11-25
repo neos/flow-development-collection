@@ -142,7 +142,7 @@ class CacheManager
      * @param FrontendInterface $cache The cache frontend to be registered
      * @param bool $persistent
      * @return void
-     * @throws Exception\DuplicateIdentifierException if a cache with the given identifier has already been registered.
+     * @throws DuplicateIdentifierException if a cache with the given identifier has already been registered.
      * @api
      */
     public function registerCache(FrontendInterface $cache, $persistent = false)
