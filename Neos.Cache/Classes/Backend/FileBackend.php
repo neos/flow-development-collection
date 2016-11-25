@@ -15,7 +15,6 @@ use Neos\Cache\Exception;
 use Neos\Cache\Exception\InvalidDataException;
 use Neos\Cache\Frontend\FrontendInterface;
 use Neos\Utility\Files;
-use Neos\Utility\Lock\Lock;
 use Neos\Utility\OpcodeCacheHelper;
 
 /**
@@ -168,7 +167,6 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
         $metaData = implode(' ', $tags) . str_pad($expiryTime, self::EXPIRYTIME_LENGTH) . str_pad(strlen($data), self::DATASIZE_DIGITS);
 
         $result = $this->writeCacheFile($cacheEntryPathAndFilename, $data . $metaData);
-
         if ($result !== false) {
             if ($this->cacheEntryFileExtension === '.php') {
                 OpcodeCacheHelper::clearAllActive($cacheEntryPathAndFilename);
@@ -224,24 +222,11 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
      */
     public function remove($entryIdentifier)
     {
-        if ($entryIdentifier !== basename($entryIdentifier)) {
-            throw new \InvalidArgumentException('The specified entry identifier must not contain a path segment.', 1282073035);
-        }
-        if ($entryIdentifier === '') {
-            throw new \InvalidArgumentException('The specified entry identifier must not be empty.', 1298114279);
-        }
         if ($this->frozen === true) {
             throw new \RuntimeException(sprintf('Cannot remove cache entry because the backend of cache "%s" is frozen.', $this->cacheIdentifier), 1323344193);
         }
 
-        $pathAndFilename = $this->cacheDirectory . $entryIdentifier . $this->cacheEntryFileExtension;
-        if (is_file($pathAndFilename) === false) {
-            return false;
-        }
-        if (unlink($pathAndFilename) === false) {
-            return false;
-        }
-        return true;
+        return parent::remove($entryIdentifier);
     }
 
     /**
@@ -265,13 +250,12 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
             $cacheEntryPathAndFilename = $directoryIterator->getPathname();
             $fileSize = filesize($cacheEntryPathAndFilename);
             $index = (integer)$this->readCacheFile($cacheEntryPathAndFilename, $fileSize - self::DATASIZE_DIGITS, self::DATASIZE_DIGITS);
-            $metaData = $this->readCacheFile($cacheEntryPathAndFilename, $index, $fileSize - $index);
-
+            $metaData = $this->readCacheFile($cacheEntryPathAndFilename, $index, $fileSize - $index - self::DATASIZE_DIGITS);
             $expiryTime = (integer)substr($metaData, -self::EXPIRYTIME_LENGTH, self::EXPIRYTIME_LENGTH);
             if ($expiryTime !== 0 && $expiryTime < $now) {
                 continue;
             }
-            if (in_array($searchedTag, explode(' ', substr($metaData, 0, -(self::EXPIRYTIME_LENGTH + self::DATASIZE_DIGITS))))) {
+            if (in_array($searchedTag, explode(' ', substr($metaData, 0, -self::EXPIRYTIME_LENGTH)))) {
                 if ($cacheEntryFileExtensionLength > 0) {
                     $entryIdentifiers[] = substr($directoryIterator->getFilename(), 0, -$cacheEntryFileExtensionLength);
                 } else {
@@ -332,7 +316,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
             return true;
         }
 
-        $expiryTimeOffset = filesize($cacheEntryPathAndFilename) - self::EXPIRYTIME_LENGTH - self::DATASIZE_DIGITS;
+        $expiryTimeOffset = filesize($cacheEntryPathAndFilename) - self::DATASIZE_DIGITS - self::EXPIRYTIME_LENGTH;
         if ($acquireLock) {
             $expiryTime = (integer)$this->readCacheFile($cacheEntryPathAndFilename, $expiryTimeOffset, self::EXPIRYTIME_LENGTH);
         } else {
