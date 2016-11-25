@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file original="" product-name="TYPO3.Flow" source-language="en" datatype="plaintext" target-language="la-LA">
+    <body>
+      <trans-unit id="authentication.required" xml:space="preserve">
+				<source>Authentication required</source>
+			<target xml:lang="la-LA">crwdns790:0crwdne790:0</target></trans-unit>
+      <trans-unit id="authentication.username" xml:space="preserve">
+				<source>Username</source>
+			<target xml:lang="la-LA">crwdns791:0crwdne791:0</target></trans-unit>
+      <trans-unit id="authentication.password" xml:space="preserve">
+				<source>Password</source>
+			<target xml:lang="la-LA">crwdns792:0crwdne792:0</target></trans-unit>
+      <trans-unit id="authentication.new-password" xml:space="preserve">
+				<source>New password</source>
+			<target xml:lang="la-LA">crwdns793:0crwdne793:0</target></trans-unit>
+      <trans-unit id="authentication.login" xml:space="preserve">
+				<source>Login</source>
+			<target xml:lang="la-LA">crwdns794:0crwdne794:0</target></trans-unit>
+      <trans-unit id="authentication.logout" xml:space="preserve">
+				<source>Logout</source>
+			<target xml:lang="la-LA">crwdns795:0crwdne795:0</target></trans-unit>
+      <trans-unit id="update" xml:space="preserve">
+				<source>Update</source>
+			<target xml:lang="la-LA">crwdns796:0crwdne796:0</target></trans-unit>
+      <trans-unit id="submit" xml:space="preserve">
+				<source>Submit</source>
+			<target xml:lang="la-LA">crwdns797:0crwdne797:0</target></trans-unit>
+    </body>
+  </file>
+</xliff>
