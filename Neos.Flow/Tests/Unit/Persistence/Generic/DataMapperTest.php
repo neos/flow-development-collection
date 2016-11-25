@@ -188,7 +188,7 @@ class DataMapperTest extends UnitTestCase
 
         $objectData = [
             'identifier' => '1234',
-            'classname' => 'TYPO3\Post',
+            'classname' => 'Neos\Post',
             'properties' => [
                 'firstProperty' => [
                     'type' => 'array',
@@ -206,18 +206,18 @@ class DataMapperTest extends UnitTestCase
                     'value' => 'theUnixtime'
                 ],
                 'fourthProperty' => [
-                    'type' => '\TYPO3\Some\Domain\Model',
+                    'type' => \Neos\Some\Domain\Model::class,
                     'multivalue' => false,
                     'value' => ['identifier' => 'theMappedObjectIdentifier']
                 ]
             ]
         ];
 
-        $classSchema = new ClassSchema('TYPO3\Post');
+        $classSchema = new ClassSchema('Neos\Post');
         $classSchema->addProperty('firstProperty', 'array');
         $classSchema->addProperty('secondProperty', 'SplObjectStorage');
         $classSchema->addProperty('thirdProperty', 'DateTime');
-        $classSchema->addProperty('fourthProperty', \TYPO3\Some\Domain\Model::class);
+        $classSchema->addProperty('fourthProperty', \Neos\Some\Domain\Model::class);
 
         $mockReflectionService = $this->createMock(ReflectionService::class);
         $mockReflectionService->expects($this->once())->method('getClassSchema')->will($this->returnValue($classSchema));

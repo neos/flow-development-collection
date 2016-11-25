@@ -23,7 +23,7 @@ use Neos\Utility\Arrays;
 use Neos\Utility\SchemaGenerator;
 
 /**
- * Configuration command controller for the TYPO3.Flow package
+ * Configuration command controller for the Neos.Flow package
  *
  * @Flow\Scope("singleton")
  */
@@ -53,10 +53,10 @@ class ConfigurationCommandController extends CommandController
      * The command shows the configuration of the current context as it is used by Flow itself.
      * You can specify the configuration type and path if you want to show parts of the configuration.
      *
-     * ./flow configuration:show --type Settings --path TYPO3.Flow.persistence
+     * ./flow configuration:show --type Settings --path Neos.Flow.persistence
      *
      * @param string $type Configuration type to show
-     * @param string $path path to subconfiguration separated by "." like "TYPO3.Flow"
+     * @param string $path path to subconfiguration separated by "." like "Neos.Flow"
      * @return void
      */
     public function showCommand($type = null, $path = null)
@@ -112,13 +112,13 @@ class ConfigurationCommandController extends CommandController
      * ./flow configuration:validate
      *
      * <b>Validate configuration at a certain subtype</b>
-     * ./flow configuration:validate --type Settings --path TYPO3.Flow.persistence
+     * ./flow configuration:validate --type Settings --path Neos.Flow.persistence
      *
      * You can retrieve the available configuration types with:
      * ./flow configuration:listtypes
      *
      * @param string $type Configuration type to validate
-     * @param string $path path to the subconfiguration separated by "." like "TYPO3.Flow"
+     * @param string $path path to the subconfiguration separated by "." like "Neos.Flow"
      * @param boolean $verbose if TRUE, output more verbose information on the schema files which were used
      * @return void
      */
@@ -178,12 +178,12 @@ class ConfigurationCommandController extends CommandController
     /**
      * Generate a schema for the given configuration or YAML file.
      *
-     * ./flow configuration:generateschema --type Settings --path TYPO3.Flow.persistence
+     * ./flow configuration:generateschema --type Settings --path Neos.Flow.persistence
      *
      * The schema will be output to standard output.
      *
      * @param string $type Configuration type to create a schema for
-     * @param string $path path to the subconfiguration separated by "." like "TYPO3.Flow"
+     * @param string $path path to the subconfiguration separated by "." like "Neos.Flow"
      * @param string $yaml YAML file to create a schema for
      * @return void
      */

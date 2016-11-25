@@ -6,11 +6,11 @@
 #
 # Make sure to set the webserver group name to the one used by your system.
 
-echo TYPO3 Flow File Permission Script
+echo Neos Flow File Permission Script
 echo
 
 if [ ! -d "Web" -o ! -d "Packages" -o ! -d "Configuration" ]; then
-	echo Make sure you run this from the TYPO3 Flow root directory!
+	echo Make sure you run this from the Flow root directory!
 	echo
 	exit 1
 fi

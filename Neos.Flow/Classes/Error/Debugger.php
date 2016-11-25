@@ -469,7 +469,7 @@ class Debugger
     }
 
     /**
-     * Tries to load the 'TYPO3.Flow.error.debugger.ignoredClasses' setting
+     * Tries to load the 'Neos.Flow.error.debugger.ignoredClasses' setting
      * to build a regular expression that can be used to filter ignored class names
      * If settings can't be loaded it uses self::$ignoredClassesFallback.
      *

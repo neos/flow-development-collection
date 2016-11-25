@@ -1,8 +1,8 @@
 <?php
-namespace Neos\Flow\Tests\Unit\Utility;
+namespace Neos\Utility\MediaTypes\Tests\Unit;
 
 /*
- * This file is part of the TYPO3.Flow package.
+ * This file is part of the Neos.Utility.MediaTypes package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *

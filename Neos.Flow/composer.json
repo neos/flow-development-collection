@@ -46,7 +46,7 @@
     "suggest": {
         "ext-curl": "To use the \\Neos\\Flow\\Http\\Client\\CurlEngine",
         "doctrine/data-fixtures": "To manage and execute the loading of data fixtures for the Doctrine ORM or ODM",
-        "typo3/party": "To make use of basic user handling",
+        "neos/party": "To make use of basic user handling",
         "php-uuid": "For fast generation of UUIDs used in the persistence."
     },
     "autoload": {

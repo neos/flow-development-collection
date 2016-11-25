@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the TYPO3.Flow package.
+ * This file is part of the Neos.Utility.MediaTypes package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -18,7 +18,7 @@
  * by Flow users.
  */
 
-$mediaTypesClassPathAndFilename = __DIR__ . '/../Classes/TYPO3/Flow/Utility/MediaTypes.php';
+$mediaTypesClassPathAndFilename = __DIR__ . '/../Classes/MediaTypes.php';
 
 $rawList = file_get_contents('http://svn.apache.org/viewvc/httpd/httpd/branches/2.4.x/docs/conf/mime.types?revision=HEAD&view=co');
 

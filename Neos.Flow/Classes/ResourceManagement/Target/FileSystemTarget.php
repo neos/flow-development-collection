@@ -60,10 +60,10 @@ class FileSystemTarget implements TargetInterface
     protected $baseUri = '';
 
     /**
-     * The configured TYPO3.Flow.http.baseUri to use as fallback if no absolute baseUri is configured
+     * The configured Neos.Flow.http.baseUri to use as fallback if no absolute baseUri is configured
      * and if it can't be determined from the current request (e.g. in CLI mode)
      *
-     * @Flow\InjectConfiguration(package="TYPO3.Flow", path="http.baseUri")
+     * @Flow\InjectConfiguration(package="Neos.Flow", path="http.baseUri")
      * @var string
      */
     protected $httpBaseUri;

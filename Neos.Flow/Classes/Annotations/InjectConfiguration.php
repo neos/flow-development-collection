@@ -42,7 +42,7 @@ final class InjectConfiguration
      *
      * Note: This property is only supported for type "Settings"
      *
-     * Example: TYPO3.Flow
+     * Example: Neos.Flow
      *
      * @var string
      */

@@ -249,7 +249,7 @@ class Route
      * \Neos\Flow\Mvc\Routing\DynamicRoutePartInterface.
      *
      * Usage: setRoutePartsConfiguration(array('@controller' =>
-     *            array('handler' => \TYPO3\Package\Subpackage\MyRoutePartHandler::class)));
+     *            array('handler' => \Neos\Package\Subpackage\MyRoutePartHandler::class)));
      *
      * @param array $routePartsConfiguration Route Parts configuration options
      * @return void

@@ -28,9 +28,9 @@ use Neos\Utility\Files;
  * active packages. The schema-filenames must match the pattern
  * [type].[path].schema.yaml. The type and/or the path can also be
  * expressed as subdirectories of Resources/Private/Schema. So
- * Settings/TYPO3/Flow.persistence.schema.yaml will match the same paths
- * like Settings.TYPO3.Flow.persistence.schema.yaml or
- * Settings/TYPO3.Flow/persistence.schema.yaml
+ * Settings/Neos/Flow.persistence.schema.yaml will match the same paths
+ * like Settings.Neos.Flow.persistence.schema.yaml or
+ * Settings/Neos.Flow/persistence.schema.yaml
  *
  * @Flow\Scope("singleton")
  */

@@ -146,7 +146,7 @@ class PersistenceMagicAspect
      * Mark object as cloned after cloning.
      *
      * Note: this is not used by anything in the Flow base distribution,
-     * but might be needed by custom backends (like TYPO3.CouchDB).
+     * but might be needed by custom backends (like Neos.CouchDB).
      *
      * @param JoinPointInterface $joinPoint
      * @return void

@@ -407,7 +407,7 @@ class DoctrineCommandController extends CommandController
      * would only create a migration touching tables starting with "acme_com".
      *
      * Note: A filter-expression will overrule any filter configured through the
-     * TYPO3.Flow.persistence.doctrine.migrations.ignoredTables setting
+     * Neos.Flow.persistence.doctrine.migrations.ignoredTables setting
      *
      * @param boolean $diffAgainstCurrent Whether to base the migration on the current schema structure
      * @param string $filterExpression Only include tables/sequences matching the filter expression regexp

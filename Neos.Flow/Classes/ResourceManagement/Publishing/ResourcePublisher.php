@@ -70,7 +70,7 @@ class ResourcePublisher
      *
      * Make sure to refactor your client code to use the new resource management API instead. There is no direct
      * replacement for this method in the new API, but if you are dealing with static resources, use the resource stream
-     * wrapper instead (through URLs like "resource://TYPO3.Flow/Public/Error/Debugger.css") or use
+     * wrapper instead (through URLs like "resource://Neos.Flow/Public/Error/Debugger.css") or use
      * ResourceManager->getPublicPackageResourceUri() if you know the package key and relative path.
      *
      * Don't use this method. Ne pas utiliser cette méthode. No utilice este método. Finger weg!

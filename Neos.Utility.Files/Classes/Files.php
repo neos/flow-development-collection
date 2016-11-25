@@ -2,7 +2,7 @@
 namespace Neos\Utility;
 
 /*
- * This file is part of the TYPO3.Flow package.
+ * This file is part of the Neos.Utility.Files package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *

@@ -173,7 +173,7 @@
 				<source>The person name cannot be empty</source>
 			</trans-unit>
 
-			<!-- Package "TYPO3.Media" -->
+			<!-- Package "Neos.Media" -->
 			<!-- ImageTypeValidator -->
 			<trans-unit id="1327947256" xml:space="preserve">
 				<source>The given value is not a Image instance</source>

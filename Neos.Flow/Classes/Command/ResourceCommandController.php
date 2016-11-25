@@ -28,7 +28,7 @@ use TYPO3\Media\Domain\Repository\AssetRepository;
 use TYPO3\Media\Domain\Repository\ThumbnailRepository;
 
 /**
- * PersistentResource command controller for the TYPO3.Flow package
+ * PersistentResource command controller for the Neos.Flow package
  *
  * @Flow\Scope("singleton")
  */
@@ -184,7 +184,7 @@ class ResourceCommandController extends CommandController
      * seem to have any corresponding data anymore (for example: the file in Data/Persistent/Resources has been deleted
      * without removing the related PersistentResource object).
      *
-     * If the TYPO3.Media package is active, this command will also detect any assets referring to broken resources
+     * If the Neos.Media package is active, this command will also detect any assets referring to broken resources
      * and will remove the respective Asset object from the database when the broken resource is removed.
      *
      * This command will ask you interactively what to do before deleting anything.
@@ -196,7 +196,7 @@ class ResourceCommandController extends CommandController
         $this->outputLine('Checking if resource data exists for all known resource objects ...');
         $this->outputLine();
 
-        $mediaPackagePresent = $this->packageManager->isPackageActive('TYPO3.Media');
+        $mediaPackagePresent = $this->packageManager->isPackageActive('Neos.Media');
 
         $resourcesCount = $this->resourceRepository->countAll();
         $this->output->progressStart($resourcesCount);

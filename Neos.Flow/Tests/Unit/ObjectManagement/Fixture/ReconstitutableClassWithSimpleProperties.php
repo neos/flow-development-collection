@@ -1,5 +1,5 @@
 <?php
-namespace Neos\Flow\Tests\Object\Fixture;
+namespace Neos\Flow\Tests\Unit\ObjectManagement\Fixture;
 
 use Neos\Flow\Aop\JoinPointInterface;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;

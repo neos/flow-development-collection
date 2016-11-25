@@ -106,7 +106,7 @@ class ConfigurationManager
 
     /**
      * Similar to CONFIGURATION_PROCESSING_TYPE_DEFAULT, but for every active package an empty array is initialized.
-     * Besides this sets "TYPO3.Flow.core.context" to the current context
+     * Besides this sets "Neos.Flow.core.context" to the current context
      *
      * @var string
      */
@@ -771,7 +771,7 @@ class ConfigurationManager
     }
 
     /**
-     * Merges routes from TYPO3.Flow.mvc.routes settings into $routeDefinitions
+     * Merges routes from Neos.Flow.mvc.routes settings into $routeDefinitions
      * NOTE: Routes from settings will always be appended to existing route definitions from the main Routes configuration!
      *
      * @param array $routeDefinitions

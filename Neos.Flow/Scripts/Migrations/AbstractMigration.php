@@ -84,7 +84,7 @@ abstract class AbstractMigration
     }
 
     /**
-     * Returns the identifier of this migration, e.g. 'TYPO3.Flow-20120126163610'.
+     * Returns the identifier of this migration, e.g. 'Neos.Flow-20120126163610'.
      *
      * @return string
      */

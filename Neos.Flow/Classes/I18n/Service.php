@@ -253,7 +253,7 @@ class Service
 
     /**
      * Returns a regex pattern including enclosing characters, that matches any of the configured
-     * blacklist paths inside "TYPO3.Flow.i18n.scan.excludePatterns".
+     * blacklist paths inside "Neos.Flow.i18n.scan.excludePatterns".
      *
      * @return string The regex pattern matching the configured blacklist
      */

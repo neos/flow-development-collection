@@ -31,7 +31,7 @@ class ConfigurationHelper implements ProtectedContextAwareInterface
      *
      * Examples::
      *
-     *     Configuration.setting('TYPO3.Flow.core.context') == 'Production'
+     *     Configuration.setting('Neos.Flow.core.context') == 'Production'
      *
      *     Configuration.setting('Acme.Demo.speedMode') == 'light speed'
      *

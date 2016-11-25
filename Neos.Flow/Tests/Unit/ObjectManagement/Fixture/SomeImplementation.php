@@ -1,5 +1,5 @@
 <?php
-namespace Neos\Flow\Tests\Object\Fixture;
+namespace Neos\Flow\Tests\Unit\ObjectManagement\Fixture;
 
 class SomeImplementation implements SomeInterface
 {

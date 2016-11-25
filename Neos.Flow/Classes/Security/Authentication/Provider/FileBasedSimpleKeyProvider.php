@@ -32,7 +32,7 @@ use Neos\Flow\Security\Policy\PolicyService;
  *
  * = Example =
  *
- * TYPO3:
+ * Neos:
  *   Flow:
  *     security:
  *       authentication:

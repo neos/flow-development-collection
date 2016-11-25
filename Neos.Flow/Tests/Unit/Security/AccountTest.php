@@ -17,7 +17,7 @@ use Neos\Flow\Security\Exception\NoSuchRoleException;
 use Neos\Flow\Security\Policy\PolicyService;
 use Neos\Flow\Security\Policy\Role;
 use Neos\Flow\Tests\UnitTestCase;
-use TYPO3\Party\Domain\Service\PartyService;
+use Neos\Party\Domain\Service\PartyService;
 
 /**
  * Test case for the account

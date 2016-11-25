@@ -69,7 +69,7 @@ class ResourceTypeConverter extends AbstractTypeConverter
     const CONFIGURATION_IDENTITY_CREATION_ALLOWED = 1;
 
     /**
-     * Sets the default resource collection name (see Settings: TYPO3.Flow.resource.collections) to use for this resource,
+     * Sets the default resource collection name (see Settings: Neos.Flow.resource.collections) to use for this resource,
      * will fallback to ResourceManager::DEFAULT_PERSISTENT_COLLECTION_NAME
      *
      * @var string

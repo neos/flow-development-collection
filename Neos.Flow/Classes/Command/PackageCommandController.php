@@ -78,7 +78,7 @@ class PackageCommandController extends CommandController
      * @param string $packageKey The package key of the package to create
      * @param string $packageType The package type of the package to create
      * @return string
-     * @see typo3.kickstart:kickstart:package
+     * @see neos.kickstarter:kickstart:package
      */
     public function createCommand($packageKey, $packageType = PackageInterface::DEFAULT_COMPOSER_TYPE)
     {

@@ -24,7 +24,7 @@ use Neos\Utility\Files;
 class Package implements PackageInterface
 {
     /**
-     * Unique key of this package. Example for the Flow package: "TYPO3.Flow"
+     * Unique key of this package. Example for the Flow package: "Neos.Flow"
      *
      * @var string
      */

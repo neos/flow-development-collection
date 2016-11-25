@@ -138,7 +138,7 @@ class ClassLoaderTest extends UnitTestCase
 
     /**
      * Checks if the package autoloader loads classes from packages that match a
-     * substring of another package (e.g. TYPO3CR vs TYPO3).
+     * substring of another package (e.g. Media vs. Neos).
      *
      * @test
      */
