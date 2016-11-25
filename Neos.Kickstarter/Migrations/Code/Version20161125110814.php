@@ -14,12 +14,12 @@ namespace Neos\Flow\Core\Migrations;
 /**
  * Adjusts code to Kickstarter Renaming
  */
-class Version20161124230102 extends AbstractMigration
+class Version20161125110814 extends AbstractMigration
 {
 
     public function getIdentifier()
     {
-        return 'Neos.Kickstart-20161124230102';
+        return 'Neos.Kickstarter-20161125110814';
     }
 
     /**
@@ -27,7 +27,7 @@ class Version20161124230102 extends AbstractMigration
      */
     public function up()
     {
-        $this->searchAndReplace('TYPO3\Kickstart', 'Neos\Kickstart');
-        $this->searchAndReplace('TYPO3.Kickstart', 'Neos.Kickstart');
+        $this->searchAndReplace('Neos\Kickstart', 'Neos\Kickstarter');
+        $this->searchAndReplace('Neos.Kickstart', 'Neos.Kickstarter');
     }
 }
