@@ -122,6 +122,7 @@ class ClassLoaderTest extends UnitTestCase
         mkdir('vfs://Test/Packages/Application/Acme.MyApp/Tests/Functional/Essentials', 0770, true);
         file_put_contents('vfs://Test/Packages/Application/Acme.MyApp/Tests/Functional/Essentials/LawnMowerTest.php', '<?php ' . __CLASS__ . '::$testClassWasLoaded = TRUE; ?>');
 
+        $this->classLoader->setConsiderTestsNamespace(true);
         $this->classLoader->setPackages($this->mockPackages);
 
         $this->classLoader->loadClass('Acme\MyApp\Tests\Functional\Essentials\LawnMowerTest');

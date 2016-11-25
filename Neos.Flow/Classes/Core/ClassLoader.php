@@ -58,6 +58,11 @@ class ClassLoader
     protected $packageNamespaces = [];
 
     /**
+     * @var boolean
+     */
+    protected $considerTestsNamespace = false;
+
+    /**
      * @var array
      */
     protected $ignoredClassNames = [
@@ -227,7 +232,7 @@ class ClassLoader
     {
         /** @var Package $package */
         foreach ($activePackages as $packageKey => $package) {
-            foreach ($package->getFlattenedAutoloadConfiguration() as $configuration) {
+            foreach ($package->getFlattenedAutoloadConfiguration($this->considerTestsNamespace) as $configuration) {
                 $this->createNamespaceMapEntry($configuration['namespace'], $configuration['classPath'], $configuration['mappingType']);
             }
         }
@@ -357,6 +362,18 @@ class ClassLoader
         if ($proxyClasses !== false) {
             $this->availableProxyClasses = $proxyClasses;
         }
+    }
+
+    /**
+     * Sets the flag which enables or disables autoloading support for functional
+     * test files.
+     *
+     * @param boolean $flag
+     * @return void
+     */
+    public function setConsiderTestsNamespace($flag)
+    {
+        $this->considerTestsNamespace = $flag;
     }
 
     /**

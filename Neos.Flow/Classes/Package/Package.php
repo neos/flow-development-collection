@@ -304,12 +304,13 @@ class Package implements PackageInterface
     /**
      * Get a flattened array of autoload configurations that have a predictable pattern (PSR-0, PSR-4)
      *
+     * @param bool $considerTestsNamespaces
      * @return array Keys: "namespace", "classPath", "mappingType"
      */
-    public function getFlattenedAutoloadConfiguration()
+    public function getFlattenedAutoloadConfiguration($considerTestsNamespaces = false)
     {
         if ($this->flattenedAutoloadConfiguration === null) {
-            $this->explodeAutoloadConfiguration();
+            $this->explodeAutoloadConfiguration($considerTestsNamespaces);
         }
 
         return $this->flattenedAutoloadConfiguration;
@@ -418,14 +419,21 @@ class Package implements PackageInterface
     /**
      * Brings the composer autoload configuration into an easy to use format for various parts of Flow.
      *
+     * @param bool $considerTestsNamespaces
      * @return void
      */
-    protected function explodeAutoloadConfiguration()
+    protected function explodeAutoloadConfiguration($considerTestsNamespaces = false)
     {
         $this->namespaces = [];
         $this->autoloadTypes = [];
         $this->flattenedAutoloadConfiguration = [];
+
         $allAutoloadConfiguration = $this->autoloadConfiguration;
+        if ($considerTestsNamespaces) {
+            $autoloadDevConfigurations = $this->getComposerManifest('autoload-dev') ?: [];
+            $allAutoloadConfiguration = array_merge_recursive($allAutoloadConfiguration, $autoloadDevConfigurations);
+        }
+
         foreach ($allAutoloadConfiguration as $autoloadType => $autoloadConfiguration) {
             $this->autoloadTypes[] = $autoloadType;
             if (ClassLoader::isAutoloadTypeWithPredictableClassPath($autoloadType)) {
