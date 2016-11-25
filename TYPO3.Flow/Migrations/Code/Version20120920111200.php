@@ -36,6 +36,11 @@ class Version20120920111200 extends AbstractMigration
      */
     public function up()
     {
+        if (file_exists(Files::concatenatePaths([$this->targetPackageData['path'], 'composer.json']))) {
+            $this->showNote('Skipping moving of classes to PSR-0 layout since composer.json already exists.');
+            return;
+        }
+
         $packageKeyAsDirectory = str_replace('.', '/', $this->targetPackageData['packageKey']);
         if (!is_dir(Files::concatenatePaths(array($this->targetPackageData['path'], 'Classes', $packageKeyAsDirectory)))) {
             $this->moveFile('Classes/*', 'Classes/' . $packageKeyAsDirectory . '/');
