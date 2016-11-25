@@ -407,7 +407,7 @@ abstract class AbstractMigration
                     if ($filter !== array() && (!isset($pathInfo['extension']) || !in_array($pathInfo['extension'], $filter, true))) {
                         continue;
                     }
-                } elseif ($pathAndFilename !== $filter) {
+                } elseif (substr($pathAndFilename, -strlen($filter)) !== $filter) {
                     continue;
                 }
                 Tools::searchAndReplace($search, $replacement, $pathAndFilename, $regularExpression);
