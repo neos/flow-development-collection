@@ -165,9 +165,6 @@ trait SecurityOperationsTrait
      */
     protected function authenticateRoles(array $roleNames)
     {
-        // FIXME this is currently needed in order to correctly import the roles. Otherwise RepositoryInterface::isConnected() returns FALSE and importing is skipped in PolicyService::initializeRolesFromPolicy()
-        $this->objectManager->get(Security\AccountRepository::class)->countAll();
-
         $account = new Security\Account();
         $account->setAccountIdentifier('TestAccount');
         $roles = [];
