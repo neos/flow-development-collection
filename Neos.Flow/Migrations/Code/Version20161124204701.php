@@ -61,7 +61,7 @@ class Version20161124204701 extends AbstractMigration
         $this->searchAndReplace('Neos\Flow\Utility\SchemaGenerator', 'Neos\Utility\SchemaGenerator');
         $this->searchAndReplace('Neos\Flow\Utility\SchemaValidator', 'Neos\Utility\SchemaValidator');
 
-        // Unicode
+        // Unicode -- WRONG - is fixed in a later core migration
         $this->searchAndReplace('Neos\Flow\Error\Unicode', 'Neos\Utility\Unicode');
 
         // Error
