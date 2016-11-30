@@ -234,15 +234,18 @@ class ResponseTest extends UnitTestCase
     public function multipleHeadersCanBeSetAsArray()
     {
         $response = new Response();
+        $response->setStatus(123, 'Custom Status');
         $response->setHeader('MyHeader', ['MyValue-1','MyValue-2','MyValue-3']);
 
         $expectedHeaders = [
-            'HTTP/1.1 200 OK',
+            'HTTP/1.1 123 Custom Status',
+            'X-Flow-Powered: Flow/' . FLOW_VERSION_BRANCH,
             'Content-Type: text/html; charset=UTF-8',
             'MyHeader: MyValue-1',
             'MyHeader: MyValue-2',
             'MyHeader: MyValue-3',
         ];
+
         $this->assertEquals($expectedHeaders, $response->renderHeaders());
     }
 
