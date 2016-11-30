@@ -23,7 +23,6 @@ use Neos\Utility\PositionalArraySorter;
  * A general purpose configuration manager
  *
  * @Flow\Scope("singleton")
- * @Flow\Proxy(FALSE)
  * @api
  */
 class ConfigurationManager
@@ -149,7 +148,7 @@ class ConfigurationManager
     protected $orderedListOfContextNames = [];
 
     /**
-     * @var Source\YamlSource
+     * @var Source\YamlSourceInterface
      */
     protected $configurationSource;
 
@@ -189,6 +188,11 @@ class ConfigurationManager
     protected $temporaryDirectoryPath;
 
     /**
+     * @var array
+     */
+    protected $configurationPostProcessors;
+
+    /**
      * Constructs the configuration manager
      *
      * @param ApplicationContext $context The application context to fetch configuration for
@@ -208,12 +212,23 @@ class ConfigurationManager
     /**
      * Injects the configuration source
      *
-     * @param Source\YamlSource $configurationSource
+     * @param Source\YamlSourceInterface $configurationSource
      * @return void
      */
-    public function injectConfigurationSource(Source\YamlSource $configurationSource)
+    public function injectConfigurationSource(Source\YamlSourceInterface $configurationSource)
     {
         $this->configurationSource = $configurationSource;
+    }
+
+    /**
+     * Injects the configuration post processors
+     *
+     * @param array $configurationPostProcessors
+     * @return void
+     */
+    public function injectConfigurationPostProcessors(array $configurationPostProcessors)
+    {
+        $this->configurationPostProcessors = $configurationPostProcessors;
     }
 
     /**
@@ -546,6 +561,17 @@ class ConfigurationManager
         }
 
         $this->postProcessConfiguration($this->configurations[$configurationType]);
+
+        if (is_array($this->configurationPostProcessors) && count($this->configurationPostProcessors)>0) {
+            foreach ($this->configurationPostProcessors as $postProcessorTypes => $configurationPostProcessors) {
+                if ($postProcessorTypes==$configurationType) {
+                    foreach ($configurationPostProcessors as $configurationPostProcessor) {
+                        $postprocessor = new $configurationPostProcessor();
+                        $postprocessor->process($this->configurations[$configurationType]);
+                    }
+                }
+            }
+        }
     }
 
     /**

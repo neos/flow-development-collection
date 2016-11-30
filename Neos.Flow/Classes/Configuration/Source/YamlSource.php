@@ -15,7 +15,7 @@ use Symfony\Component\Yaml\Yaml;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Configuration\Exception\ParseErrorException;
 use Neos\Flow\Error\Exception;
-use Neos\Utility\Arrays;
+use Neos\Flow\Utility\Arrays;
 
 /**
  * Configuration source based on YAML files
@@ -24,7 +24,7 @@ use Neos\Utility\Arrays;
  * @Flow\Proxy(FALSE)
  * @api
  */
-class YamlSource
+class YamlSource implements YamlSourceInterface
 {
     /**
      * Will be set if the PHP YAML Extension is installed.
