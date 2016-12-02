@@ -15,7 +15,7 @@ use Symfony\Component\Yaml\Yaml;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Configuration\Exception\ParseErrorException;
 use Neos\Flow\Error\Exception;
-use Neos\Flow\Utility\Arrays;
+use Neos\Utility\Arrays;
 
 /**
  * Configuration source based on YAML files
