@@ -23,9 +23,9 @@ use Neos\Flow\ResourceManagement\Publishing\MessageCollector;
 use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Flow\ResourceManagement\ResourceRepository;
-use TYPO3\Media\Domain\Repository\AssetRepository;
+use Neos\Media\Domain\Repository\AssetRepository;
 
-use TYPO3\Media\Domain\Repository\ThumbnailRepository;
+use Neos\Media\Domain\Repository\ThumbnailRepository;
 
 /**
  * PersistentResource command controller for the Neos.Flow package
