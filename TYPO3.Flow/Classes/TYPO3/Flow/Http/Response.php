@@ -585,7 +585,7 @@ class Response extends AbstractMessage implements ResponseInterface
             return;
         }
         foreach ($this->renderHeaders() as $header) {
-            header($header);
+            header($header, false);
         }
         foreach ($this->headers->getCookies() as $cookie) {
             header('Set-Cookie: ' . $cookie, false);
