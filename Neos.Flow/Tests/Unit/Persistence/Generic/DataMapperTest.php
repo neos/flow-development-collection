@@ -385,7 +385,7 @@ class DataMapperTest extends UnitTestCase
     {
         $expected = new \DateTime();
         $dataMapper = $this->getAccessibleMock(Persistence\Generic\DataMapper::class, ['dummy']);
-        $this->assertEquals($dataMapper->_call('mapDateTime', $expected->getTimestamp()), $expected);
+        $this->assertEquals($dataMapper->_call('mapDateTime', $expected->getTimestamp())->format(\DateTime::W3C), $expected->format(\DateTime::W3C));
     }
 
     /**
