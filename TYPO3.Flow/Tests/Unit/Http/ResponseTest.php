@@ -239,7 +239,6 @@ class ResponseTest extends UnitTestCase
 
         $expectedHeaders = [
             'HTTP/1.1 123 Custom Status',
-            'X-Flow-Powered: Flow/' . FLOW_VERSION_BRANCH,
             'Content-Type: text/html; charset=UTF-8',
             'MyHeader: MyValue-1',
             'MyHeader: MyValue-2',
