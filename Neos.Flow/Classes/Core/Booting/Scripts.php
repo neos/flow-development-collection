@@ -61,7 +61,7 @@ class Scripts
      */
     public static function initializeClassLoader(Bootstrap $bootstrap)
     {
-//        require_once(FLOW_PATH_FLOW . 'Classes/Core/ClassLoader.php');
+        require_once(FLOW_PATH_FLOW . 'Classes/Core/ClassLoader.php');
 
         $initialClassLoaderMappings = [
             [
@@ -203,40 +203,29 @@ class Scripts
     public static function initializeConfiguration(Bootstrap $bootstrap)
     {
         $context = $bootstrap->getContext();
+        $environment = new Environment($context);
+        $environment->setTemporaryDirectoryBase(FLOW_PATH_TEMPORARY_BASE);
+        $bootstrap->setEarlyInstance(Environment::class, $environment);
+
         $packageManager = $bootstrap->getEarlyInstance(PackageManagerInterface::class);
 
         $configurationManager = new ConfigurationManager($context);
+        $configurationManager->setTemporaryDirectoryPath($environment->getPathToTemporaryDirectory());
         $configurationManager->injectConfigurationSource(new YamlSource());
-        $configurationManager->loadConfigurationCache();
         $configurationManager->setPackages($packageManager->getActivePackages());
+        $configurationManager->loadConfigurationCache();
 
         $settings = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.Flow');
-
-        $environment = new Environment($context);
-        if (isset($settings['utility']['environment']['temporaryDirectoryBase'])) {
-            $defaultTemporaryDirectoryBase = FLOW_PATH_DATA . '/Temporary';
-            if (FLOW_PATH_TEMPORARY_BASE !== $defaultTemporaryDirectoryBase) {
-                throw new FlowException(sprintf('It seems like the PHP default temporary base path has been changed from "%s" to "%s" via the FLOW_PATH_TEMPORARY_BASE environment variable. If that variable is present, the Neos.Flow.utility.environment.temporaryDirectoryBase setting must not be specified!', $defaultTemporaryDirectoryBase, FLOW_PATH_TEMPORARY_BASE), 1447707261);
-            }
-            $environment->setTemporaryDirectoryBase($settings['utility']['environment']['temporaryDirectoryBase']);
-        } else {
-            $environment->setTemporaryDirectoryBase(FLOW_PATH_TEMPORARY_BASE);
-        }
-
-        $configurationManager->setTemporaryDirectoryPath($environment->getPathToTemporaryDirectory());
 
         $lockManager = new LockManager($settings['utility']['lockStrategyClassName'], ['lockDirectory' => Files::concatenatePaths([
             $environment->getPathToTemporaryDirectory(),
             'Lock'
         ])]);
         Lock::setLockManager($lockManager);
-
         $packageManager->injectSettings($settings);
 
         $bootstrap->getSignalSlotDispatcher()->dispatch(ConfigurationManager::class, 'configurationManagerReady', [$configurationManager]);
-
         $bootstrap->setEarlyInstance(ConfigurationManager::class, $configurationManager);
-        $bootstrap->setEarlyInstance(Environment::class, $environment);
     }
 
     /**
