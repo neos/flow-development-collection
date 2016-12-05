@@ -158,7 +158,7 @@ class ProxyClassBuilder
             $wakeupMethod->addPreParentCallCode($this->buildSetInstanceCode($objectConfiguration));
             $wakeupMethod->addPreParentCallCode($setRelatedEntitiesCode);
             $wakeupMethod->addPostParentCallCode($this->buildLifecycleInitializationCode($objectConfiguration, ObjectManagerInterface::INITIALIZATIONCAUSE_RECREATED));
-            $wakeupMethod->addPostParentCallCode($this->buildLifecycleShutdownCode($objectConfiguration));
+            $wakeupMethod->addPostParentCallCode($this->buildLifecycleShutdownCode($objectConfiguration, ObjectManagerInterface::INITIALIZATIONCAUSE_RECREATED));
 
             $injectPropertiesCode = $this->buildPropertyInjectionCode($objectConfiguration);
             if ($injectPropertiesCode !== '') {
@@ -173,7 +173,7 @@ class ProxyClassBuilder
             }
 
             $constructorPostCode .= $this->buildLifecycleInitializationCode($objectConfiguration, ObjectManagerInterface::INITIALIZATIONCAUSE_CREATED);
-            $constructorPostCode .= $this->buildLifecycleShutdownCode($objectConfiguration);
+            $constructorPostCode .= $this->buildLifecycleShutdownCode($objectConfiguration, ObjectManagerInterface::INITIALIZATIONCAUSE_CREATED);
 
             $constructor = $proxyClass->getConstructor();
             $constructor->addPreParentCallCode($constructorPreCode);
@@ -248,11 +248,11 @@ class ProxyClassBuilder
      */
     protected function buildConstructorInjectionCode(Configuration $objectConfiguration)
     {
-        $assignments = array();
+        $assignments = [];
 
         $argumentConfigurations = $objectConfiguration->getArguments();
         $constructorParameterInfo = $this->reflectionService->getMethodParameters($objectConfiguration->getClassName(), '__construct');
-        $argumentNumberToOptionalInfo = array();
+        $argumentNumberToOptionalInfo = [];
         foreach ($constructorParameterInfo as $parameterInfo) {
             $argumentNumberToOptionalInfo[($parameterInfo['position'] + 1)] = $parameterInfo['optional'];
         }
@@ -343,8 +343,8 @@ class ProxyClassBuilder
      */
     protected function buildPropertyInjectionCode(Configuration $objectConfiguration)
     {
-        $commands = array();
-        $injectedProperties = array();
+        $commands = [];
+        $injectedProperties = [];
         foreach ($objectConfiguration->getProperties() as $propertyName => $propertyConfiguration) {
             /* @var $propertyConfiguration ConfigurationProperty */
             if ($propertyConfiguration->getAutowiring() === Configuration::AUTOWIRING_MODE_OFF) {
@@ -554,7 +554,7 @@ class ProxyClassBuilder
      * Builds code which calls the lifecycle initialization method, if any.
      *
      * @param Configuration $objectConfiguration
-     * @param integer $cause a \TYPO3\Flow\Object\ObjectManagerInterface::INITIALIZATIONCAUSE_* constant which is the cause of the initialization command being called.
+     * @param int $cause a ObjectManagerInterface::INITIALIZATIONCAUSE_* constant which is the cause of the initialization command being called.
      * @return string
      */
     protected function buildLifecycleInitializationCode(Configuration $objectConfiguration, $cause)
@@ -564,7 +564,15 @@ class ProxyClassBuilder
             return '';
         }
         $className = $objectConfiguration->getClassName();
-        $code = "\n" . '        if (get_class($this) === \'' . $className . '\') {' . "\n";
+        $code = "\n" . '        $isSameClass = get_class($this) === \'' . $className . '\';';
+        if ($cause === ObjectManagerInterface::INITIALIZATIONCAUSE_RECREATED) {
+            $code .= "\n" . '        $classParents = class_parents($this);';
+            $code .= "\n" . '        $classImplements = class_implements($this);';
+            $code .= "\n" . '        $isClassProxy = array_search(\'' . $className . '\', $classParents) !== FALSE && array_search(\'Doctrine\ORM\Proxy\Proxy\', $classImplements) !== FALSE;' . "\n";
+            $code .= "\n" . '        if ($isSameClass || $isClassProxy) {' . "\n";
+        } else {
+            $code .= "\n" . '        if ($isSameClass) {' . "\n";
+        }
         $code .= '            $this->' . $lifecycleInitializationMethodName . '(' . $cause . ');' . "\n";
         $code .= '        }' . "\n";
         return $code;
@@ -574,18 +582,28 @@ class ProxyClassBuilder
      * Builds code which registers the lifecycle shutdown method, if any.
      *
      * @param Configuration $objectConfiguration
+     * @param int $cause a ObjectManagerInterface::INITIALIZATIONCAUSE_* constant which is the cause of the initialization command being called.
      * @return string
      */
-    protected function buildLifecycleShutdownCode(Configuration $objectConfiguration)
+    protected function buildLifecycleShutdownCode(Configuration $objectConfiguration, $cause)
     {
         $lifecycleShutdownMethodName = $objectConfiguration->getLifecycleShutdownMethodName();
         if (!$this->reflectionService->hasMethod($objectConfiguration->getClassName(), $lifecycleShutdownMethodName)) {
             return '';
         }
         $className = $objectConfiguration->getClassName();
-        $code = "\n" . '        if (get_class($this) === \'' . $className . '\') {' . "\n";
-        $code .= '        \TYPO3\Flow\Core\Bootstrap::$staticObjectManager->registerShutdownObject($this, \'' . $lifecycleShutdownMethodName . '\');' . PHP_EOL;
+        $code = "\n" . '        $isSameClass = get_class($this) === \'' . $className . '\';';
+        if ($cause === ObjectManagerInterface::INITIALIZATIONCAUSE_RECREATED) {
+            $code .= "\n" . '        $classParents = class_parents($this);';
+            $code .= "\n" . '        $classImplements = class_implements($this);';
+            $code .= "\n" . '        $isClassProxy = array_search(\'' . $className . '\', $classParents) !== FALSE && array_search(\'Doctrine\ORM\Proxy\Proxy\', $classImplements) !== FALSE;' . "\n";
+            $code .= "\n" . '        if ($isSameClass || $isClassProxy) {' . "\n";
+        } else {
+            $code .= "\n" . '        if ($isSameClass) {' . "\n";
+        }
+        $code .= '            \TYPO3\Flow\Core\Bootstrap::$staticObjectManager->registerShutdownObject($this, \'' . $lifecycleShutdownMethodName . '\');' . PHP_EOL;
         $code .= '        }' . "\n";
+
         return $code;
     }
 
@@ -597,7 +615,7 @@ class ProxyClassBuilder
      */
     protected function buildMethodParametersCode(array $argumentConfigurations)
     {
-        $preparedArguments = array();
+        $preparedArguments = [];
 
         foreach ($argumentConfigurations as $argument) {
             if ($argument === null) {
@@ -670,7 +688,7 @@ class ProxyClassBuilder
             if ($this->reflectionService->isMethodStatic($className, $methodName) && $this->reflectionService->isMethodAnnotatedWith($className, $methodName, Flow\CompileStatic::class)) {
                 $compiledMethod = $proxyClass->getMethod($methodName);
 
-                $value = call_user_func(array($className, $methodName), $this->objectManager);
+                $value = call_user_func([$className, $methodName], $this->objectManager);
                 $compiledResult = var_export($value, true);
                 $compiledMethod->setMethodBody('return ' . $compiledResult . ';');
             }
