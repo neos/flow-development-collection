@@ -28,6 +28,12 @@ class Image
     protected $data;
 
     /**
+     * @Flow\Transient
+     * @var CleanupObject
+     */
+    protected $relatedObject;
+
+    /**
      * @return string
      */
     public function getData()
@@ -42,5 +48,28 @@ class Image
     public function setData($data)
     {
         $this->data = $data;
+    }
+
+    /**
+     * @return CleanupObject
+     */
+    public function getRelatedObject()
+    {
+        return $this->relatedObject;
+    }
+
+    /**
+     * @param CleanupObject $relatedObject
+     */
+    public function setRelatedObject(CleanupObject $relatedObject = null)
+    {
+        $this->relatedObject = $relatedObject;
+    }
+
+    public function shutdownObject()
+    {
+        if ($this->relatedObject instanceof CleanupObject) {
+            $this->relatedObject->toggleState();
+        }
     }
 }
