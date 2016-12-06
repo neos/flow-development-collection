@@ -776,7 +776,7 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
                         'allocationSize' => $seqGeneratorAnnotation->allocationSize,
                         'initialValue' => $seqGeneratorAnnotation->initialValue
                     ]);
-                } elseif ($this->reader->getPropertyAnnotation($property, TableGenerator::class) !== null) {
+                } elseif ($this->reader->getPropertyAnnotation($property, ORM\TableGenerator::class) !== null) {
                     throw ORM\MappingException::tableIdGeneratorNotImplemented($className);
                 } elseif ($customGeneratorAnnotation = $this->reader->getPropertyAnnotation($property, ORM\CustomIdGenerator::class)) {
                     $metadata->setCustomGeneratorDefinition([
