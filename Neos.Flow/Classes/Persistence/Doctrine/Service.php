@@ -201,7 +201,7 @@ class Service
         }
 
         $configuration = new Configuration($connection, $outputWriter);
-        $configuration->setMigrationsNamespace(\Neos\Flow\Persistence\Doctrine\Migrations::class);
+        $configuration->setMigrationsNamespace(Migrations::class);
         $configuration->setMigrationsDirectory(Files::concatenatePaths([FLOW_PATH_DATA, 'DoctrineMigrations']));
         $configuration->setMigrationsTableName(self::DOCTRINE_MIGRATIONSTABLENAME);
 

@@ -16,6 +16,7 @@ use Doctrine\Common\Annotations\IndexedReader;
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use Doctrine\Common\Persistence\Mapping\Driver\MappingDriver as DoctrineMappingDriverInterface;
 use Doctrine\Common\Persistence\ObjectManager as DoctrineObjectManager;
+use Doctrine\DBAL\Id\TableGenerator;
 use Doctrine\ORM\Events;
 use Doctrine\ORM\Mapping\Builder\EntityListenerBuilder;
 use Doctrine\ORM\Mapping as ORM;
@@ -775,7 +776,7 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
                         'allocationSize' => $seqGeneratorAnnotation->allocationSize,
                         'initialValue' => $seqGeneratorAnnotation->initialValue
                     ]);
-                } elseif ($this->reader->getPropertyAnnotation($property, ORM\TableGenerator::class) !== null) {
+                } elseif ($this->reader->getPropertyAnnotation($property, TableGenerator::class) !== null) {
                     throw ORM\MappingException::tableIdGeneratorNotImplemented($className);
                 } elseif ($customGeneratorAnnotation = $this->reader->getPropertyAnnotation($property, ORM\CustomIdGenerator::class)) {
                     $metadata->setCustomGeneratorDefinition([
