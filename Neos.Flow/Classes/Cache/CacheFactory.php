@@ -132,7 +132,7 @@ class CacheFactory extends \Neos\Cache\CacheFactory implements CacheFactoryInter
      * @param string $backendObjectName
      * @param array $backendOptions
      * @param boolean $persistent
-     * @return FlowAbstractBackend|BackendInterface;
+     * @return FlowAbstractBackend|BackendInterface
      * @throws InvalidBackendException
      */
     protected function instantiateBackend($backendObjectName, $backendOptions, $persistent = false)
