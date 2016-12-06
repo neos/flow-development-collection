@@ -30,7 +30,7 @@ to produce clean code in no time.
 .. note::
 	If you're stuck at some point or stumble over some weirdnesses during the
 	tutorial, please let us know! We appreciate any feedback in our `forum <https://discuss.neos.io/>`_, as
-	a ticket in our `issue tracker <https://jira.neos.io/browse/FLOW>`_ or via `Slack <http://slack.neos.io/>`_.
+	a ticket in our `issue tracker <https://github.com/neos/flow-development-collection/issues>`_ or via `Slack <http://slack.neos.io/>`_.
 
 .. tip::
 	This tutorial goes best with a Caffè Latte or, if it's afternoon or late night
