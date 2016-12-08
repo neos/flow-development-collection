@@ -155,7 +155,6 @@ class ArgumentTest extends UnitTestCase
     {
         $this->setupPropertyMapperAndSetValue();
         $this->assertSame('convertedValue', $this->simpleValueArgument->getValue());
-        $this->assertTrue($this->simpleValueArgument->isValid());
     }
 
     /**
@@ -180,7 +179,6 @@ class ArgumentTest extends UnitTestCase
 
         $this->simpleValueArgument->setValidator($mockValidator);
         $this->setupPropertyMapperAndSetValue();
-        $this->assertFalse($this->simpleValueArgument->isValid());
         $this->assertEquals([$error], $this->simpleValueArgument->getValidationResults()->getErrors());
     }
 
