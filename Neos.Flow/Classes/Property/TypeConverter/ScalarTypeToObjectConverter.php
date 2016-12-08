@@ -37,9 +37,9 @@ class ScalarTypeToObjectConverter extends AbstractTypeConverter
     protected $targetType = 'object';
 
     /**
-     * @var integer
+     * @var int
      */
-    protected $priority = 1;
+    protected $priority = 10;
 
     /**
      * @Flow\Inject
