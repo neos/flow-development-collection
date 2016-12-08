@@ -15,6 +15,8 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Utility\Arrays;
 use Neos\Utility\MediaTypes;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\UploadedFileInterface;
 
 /**
  * Represents an HTTP request
@@ -22,23 +24,8 @@ use Neos\Utility\MediaTypes;
  * @api
  * @Flow\Proxy(false)
  */
-class Request extends AbstractMessage
+class Request extends BaseRequest implements ServerRequestInterface
 {
-    /**
-     * @var string
-     */
-    protected $method = 'GET';
-
-    /**
-     * @var Uri
-     */
-    protected $uri;
-
-    /**
-     * @var Uri
-     */
-    protected $baseUri;
-
     /**
      * @var array
      */
@@ -64,6 +51,28 @@ class Request extends AbstractMessage
      * @var array
      */
     protected $attributes = [];
+
+    /**
+     * PSR-7
+     *
+     * @var array
+     */
+    protected $queryParams = [];
+
+    /**
+     * PSR-7
+     *
+     * @var array|object|null
+     */
+    protected $parsedBody;
+
+    /**
+     * PSR-7
+     *
+     * @var array
+     */
+    protected $uploadedFiles = [];
+
 
     /**
      * PSR-7 Attribute containing the resolved trusted client IP address as string
@@ -114,6 +123,7 @@ class Request extends AbstractMessage
             $this->uri->setPort($server['SERVER_PORT']);
         }
 
+        $this->queryParams = $get;
         $this->server = $server;
         $this->arguments = $this->buildUnifiedArguments($get, $post, $files);
     }
@@ -198,14 +208,14 @@ class Request extends AbstractMessage
     }
 
     /**
-     * Returns the request URI
+     * Returns the port used for this request
      *
-     * @return Uri
+     * @return integer
      * @api
      */
-    public function getUri()
+    public function getPort()
     {
-        return $this->uri;
+        return $this->uri->getPort();
     }
 
     /**
@@ -347,38 +357,6 @@ class Request extends AbstractMessage
         }
 
         parent::setContent($content);
-    }
-
-    /**
-     * Returns the content of the request body
-     *
-     * If the request body has not been set with setContent() previously, this method
-     * will try to retrieve it from the input stream. If $asResource was set to TRUE,
-     * the stream resource will be returned instead of a string.
-     *
-     * If the content which has been set by setContent() originally was a stream
-     * resource, that resource will be returned, no matter if $asResource is set.
-     *
-     *
-     * @param boolean $asResource If set, the content is returned as a resource pointing to PHP's input stream
-     * @return string|resource
-     * @api
-     * @throws Exception
-     */
-    public function getContent($asResource = false)
-    {
-        if ($asResource === true) {
-            if ($this->content !== null) {
-                throw new Exception('Cannot return request content as resource because it has already been retrieved.', 1332942478);
-            }
-            $this->content = '';
-            return fopen($this->inputStreamUri, 'rb');
-        }
-
-        if ($this->content === null) {
-            $this->content = file_get_contents($this->inputStreamUri);
-        }
-        return $this->content;
     }
 
     /**
@@ -685,7 +663,9 @@ class Request extends AbstractMessage
     {
         $arguments = $getArguments;
         $arguments = Arrays::arrayMergeRecursiveOverrule($arguments, $postArguments);
-        $arguments = Arrays::arrayMergeRecursiveOverrule($arguments, $this->untangleFilesArray($uploadArguments));
+        $files = static::normalizeFiles($uploadArguments);
+        $this->uploadedFiles = $files;
+        $arguments = Arrays::arrayMergeRecursiveOverrule($arguments, $files);
         return $arguments;
     }
 
@@ -796,25 +776,6 @@ class Request extends AbstractMessage
     }
 
     /**
-     * Renders the HTTP headers - including the status header - of this request
-     *
-     * @return string The HTTP headers, one per line, separated by \r\n as required by RFC 2616 sec 5
-     * @api
-     */
-    public function renderHeaders()
-    {
-        $headers = $this->getRequestLine();
-
-        foreach ($this->headers->getAll() as $name => $values) {
-            foreach ($values as $value) {
-                $headers .= sprintf("%s: %s\r\n", $name, $value);
-            }
-        }
-
-        return $headers;
-    }
-
-    /**
      * Cast the request to a string: return the content part of this response
      *
      * @return string The same as getContent()
@@ -823,5 +784,252 @@ class Request extends AbstractMessage
     public function __toString()
     {
         return $this->renderHeaders() . "\r\n" . $this->getContent();
+    }
+
+    /**
+     * Parses a RFC 2616 Media Type and returns its parts in an associative array.
+     * @see MediaTypes::parseMediaType()
+     *
+     * @param string $rawMediaType The raw media type, for example "application/json; charset=UTF-8"
+     * @return array An associative array with parsed information
+     * @deprecated since Flow 2.1. Use \Neos\Utility\MediaTypes::parseMediaType() instead
+     */
+    public static function parseMediaType($rawMediaType)
+    {
+        return MediaTypes::parseMediaType($rawMediaType);
+    }
+
+    /**
+     * Checks if the given media range and the media type match.
+     * @see MediaTypes::mediaRangeMatches()
+     *
+     * @param string $mediaRange The media range, for example "text/*"
+     * @param string $mediaType The media type to match against, for example "text/html"
+     * @return boolean TRUE if both match, FALSE if they don't match or either of them is invalid
+     * @deprecated since Flow 2.1. Use \Neos\Utility\MediaTypes::mediaRangeMatches() instead
+     */
+    public static function mediaRangeMatches($mediaRange, $mediaType)
+    {
+        return MediaTypes::mediaRangeMatches($mediaRange, $mediaType);
+    }
+
+    /**
+     * Strips off any parameters from the given media type and returns just the type
+     * and subtype in the format "type/subtype".
+     * @see \Neos\Utility\MediaTypes::trimMediaType()
+     *
+     * @param string $rawMediaType The full media type, for example "application/json; charset=UTF-8"
+     * @return string Just the type and subtype, for example "application/json"
+     * @deprecated since Flow 2.1. Use \Neos\Utility\MediaTypes::trimMediaType() instead
+     */
+    public static function trimMediaType($rawMediaType)
+    {
+        return MediaTypes::trimMediaType($rawMediaType);
+    }
+
+    /**
+     * Retrieve cookies.
+     *
+     * Retrieves cookies sent by the client to the server.
+     *
+     * The data MUST be compatible with the structure of the $_COOKIE
+     * superglobal.
+     *
+     * @return array
+     */
+    public function getCookieParams()
+    {
+        $cookies = [];
+        foreach ($this->headers->getCookies() as $cookie) {
+            $cookies[$cookie->getName()] = $cookie->getValue();
+        };
+        return $cookies;
+    }
+
+    /**
+     * Return an instance with the specified cookies.
+     *
+     * The data IS NOT REQUIRED to come from the $_COOKIE superglobal, but MUST
+     * be compatible with the structure of $_COOKIE. Typically, this data will
+     * be injected at instantiation.
+     *
+     * This method MUST NOT update the related Cookie header of the request
+     * instance, nor related values in the server params.
+     *
+     * This method MUST be implemented in such a way as to retain the
+     * immutability of the message, and MUST return an instance that has the
+     * updated cookie values.
+     *
+     * @param array $cookies Array of key/value pairs representing cookies.
+     * @return static
+     */
+    public function withCookieParams(array $cookies)
+    {
+        $newRequest = clone $this;
+        foreach ($cookies as $name => $value) {
+            $newRequest->headers->setCookie(new Cookie($name, $value));
+        }
+        return $newRequest;
+    }
+
+    /**
+     * Retrieve query string arguments.
+     *
+     * Retrieves the deserialized query string arguments, if any.
+     *
+     * Note: the query params might not be in sync with the URI or server
+     * params. If you need to ensure you are only getting the original
+     * values, you may need to parse the query string from `getUri()->getQuery()`
+     * or from the `QUERY_STRING` server param.
+     *
+     * @return array
+     */
+    public function getQueryParams()
+    {
+        return $this->queryParams;
+    }
+
+    /**
+     * Return an instance with the specified query string arguments.
+     *
+     * These values SHOULD remain immutable over the course of the incoming
+     * request. They MAY be injected during instantiation, such as from PHP's
+     * $_GET superglobal, or MAY be derived from some other value such as the
+     * URI. In cases where the arguments are parsed from the URI, the data
+     * MUST be compatible with what PHP's parse_str() would return for
+     * purposes of how duplicate query parameters are handled, and how nested
+     * sets are handled.
+     *
+     * Setting query string arguments MUST NOT change the URI stored by the
+     * request, nor the values in the server params.
+     *
+     * This method MUST be implemented in such a way as to retain the
+     * immutability of the message, and MUST return an instance that has the
+     * updated query string arguments.
+     *
+     * @param array $query Array of query string arguments, typically from $_GET.
+     * @return static
+     */
+    public function withQueryParams(array $query)
+    {
+        $newRequest = clone $this;
+        $newRequest->queryParams = $query;
+        return $newRequest;
+    }
+
+    /**
+     * @return array
+     */
+    public function getUploadedFiles()
+    {
+        $this->uploadedFiles;
+    }
+
+    /**
+     * @param array $uploadedFiles
+     * @return ServerRequestInterface
+     */
+    public function withUploadedFiles(array $uploadedFiles)
+    {
+        $newRequest = clone $this;
+        $newRequest->uploadedFiles = $uploadedFiles;
+        return $newRequest;
+    }
+
+    /**
+     * @return array|null|object
+     */
+    public function getParsedBody()
+    {
+        isset($this->parsedBody) ? $this->parsedBody : $_POST;
+    }
+
+    /**
+     * @param array|null|object $data
+     * @return ServerRequestInterface
+     */
+    public function withParsedBody($data)
+    {
+        $newRequest = clone $this;
+        $newRequest->parsedBody = $data;
+        return $newRequest;
+    }
+
+    /**
+     * Return an UploadedFile instance array.
+     *
+     * @param array $files A array which respect $_FILES structure
+     * @throws InvalidArgumentException for unrecognized values
+     * @return array
+     */
+    public static function normalizeFiles(array $files)
+    {
+        $normalized = [];
+
+        foreach ($files as $key => $value) {
+            if ($value instanceof UploadedFileInterface) {
+                $normalized[$key] = $value;
+            } elseif (is_array($value) && isset($value['tmp_name'])) {
+                $normalized[$key] = self::createUploadedFileFromSpec($value);
+            } elseif (is_array($value)) {
+                $normalized[$key] = self::normalizeFiles($value);
+                continue;
+            } else {
+                throw new InvalidArgumentException('Invalid value in files specification');
+            }
+        }
+
+        return $normalized;
+    }
+
+    /**
+     * Create and return an UploadedFile instance from a $_FILES specification.
+     *
+     * If the specification represents an array of values, this method will
+     * delegate to normalizeNestedFileSpec() and return that return value.
+     *
+     * @param array $value $_FILES struct
+     * @return array|UploadedFileInterface
+     */
+    private static function createUploadedFileFromSpec(array $value)
+    {
+        if (is_array($value['tmp_name'])) {
+            return self::normalizeNestedFileSpec($value);
+        }
+
+        return new UploadedFile(
+            $value['tmp_name'],
+            (int)$value['size'],
+            (int)$value['error'],
+            $value['name'],
+            $value['type']
+        );
+    }
+
+    /**
+     * Normalize an array of file specifications.
+     *
+     * Loops through all nested files and returns a normalized array of
+     * UploadedFileInterface instances.
+     *
+     * @param array $files
+     * @return UploadedFileInterface[]
+     */
+    private static function normalizeNestedFileSpec(array $files = [])
+    {
+        $normalizedFiles = [];
+
+        foreach (array_keys($files['tmp_name']) as $key) {
+            $spec = [
+                'tmp_name' => $files['tmp_name'][$key],
+                'size' => $files['size'][$key],
+                'error' => $files['error'][$key],
+                'name' => $files['name'][$key],
+                'type' => $files['type'][$key],
+            ];
+            $normalizedFiles[$key] = self::createUploadedFileFromSpec($spec);
+        }
+
+        return $normalizedFiles;
     }
 }

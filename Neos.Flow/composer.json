@@ -25,8 +25,9 @@
         "neos/error-messages": "*",
         "neos/fluid-adaptor": "*",
         "neos/cache": "*",
-
         "neos/eel": "*",
+
+        "psr/http-message": "~1.0.0",
 
         "ramsey/uuid": "^3.0.0",
 

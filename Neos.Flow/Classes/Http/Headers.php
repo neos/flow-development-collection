@@ -115,6 +115,14 @@ class Headers
         }
 
         switch ($name) {
+            case 'Host':
+                if (count($values) !== 1) {
+                    throw new \InvalidArgumentException('The "Host" header must be unique and thus only one field value may be specified.', 1478206019);
+                }
+                // Ensure Host is the first header.
+                // See: http://tools.ietf.org/html/rfc7230#section-5.4
+                $this->fields = ['Host' => $values] + $this->fields;
+            break;
             case 'Cache-Control':
                 if (count($values) !== 1) {
                     throw new \InvalidArgumentException('The "Cache-Control" header must be unique and thus only one field value may be specified.', 1337849415);
@@ -238,7 +246,7 @@ class Headers
     /**
      * Returns all cookies
      *
-     * @return array
+     * @return Cookie[]
      * @api
      */
     public function getCookies()
