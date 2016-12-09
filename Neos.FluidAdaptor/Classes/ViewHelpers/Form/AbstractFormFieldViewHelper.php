@@ -162,15 +162,6 @@ abstract class AbstractFormFieldViewHelper extends AbstractFormViewHelper
     }
 
     /**
-     * @return boolean TRUE if a mapping error occurred, FALSE otherwise
-     * @deprecated since 2.1 Use hasMappingErrorOccurred() instead
-     */
-    protected function hasMappingErrorOccured()
-    {
-        return $this->hasMappingErrorOccurred();
-    }
-
-    /**
      * Checks if a property mapping error has occurred in the last request.
      *
      * @return boolean TRUE if a mapping error occurred, FALSE otherwise
