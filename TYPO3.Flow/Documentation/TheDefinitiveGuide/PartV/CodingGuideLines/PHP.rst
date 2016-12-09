@@ -238,8 +238,8 @@ characters.
 All interface names are written in ``UpperCamelCase``. Interface names must be adjectives
 or nouns and have the Interface suffix. A few examples follow:
 
-* ``\TYPO3\Flow\Object\ObjectInterface``
-* ``\TYPO3\Flow\Object\ObjectManagerInterface``
+* ``\Neos\Flow\ObjectManagement\ObjectInterface``
+* ``\Neos\Flow\ObjectManagement\ObjectManagerInterface``
 * ``\MyCompany\MyPackage\MyObject\MySubObjectInterface``
 * ``\MyCompany\MyPackage\MyObject\MyHtmlParserInterface``
 
@@ -251,8 +251,8 @@ types of exceptions: generic exceptions and specific exceptions. Generic excepti
 be named "Exception" preceded by their namespace. Specific exceptions should reside in
 their own sub-namespace end with the word ``Exception``.
 
-* ``\TYPO3\Flow\Object\Exception``
-* ``\TYPO3\Flow\Object\Exception\InvalidClassNameException``
+* ``\Neos\Flow\ObjectManagement\Exception``
+* ``\Neos\Flow\ObjectManagement\Exception\InvalidClassNameException``
 * ``\MyCompany\MyPackage\MyObject\Exception``
 * ``\MyCompany\MyPackage\MyObject\Exception\OutOfCoffeeException``
 
@@ -772,9 +772,9 @@ exception). This all works because we have the following hierarchy:
 
 .. code-block:: text
 
- + \TYPO3\Flow\Exception
- + \TYPO3\Flow\Object\Exception
- + \TYPO3\Flow\Object\Exception\InvalidObjectNameException
+ + \Neos\Flow\Exception
+ + \Neos\Flow\ObjectManagement\Exception
+ + \Neos\Flow\ObjectManagement\Exception\InvalidObjectNameException
 
 Throwing an exception
 ---------------------
@@ -798,7 +798,7 @@ Cross Platform Coding
 ---------------------
 
 * When concatenating paths, always use
-  ``\TYPO3\Flow\Utility\Files::concatenatePaths()`` to avoid trouble.
+  ``\Neos\Utility\Files::concatenatePaths()`` to avoid trouble.
 
 PHP in General
 --------------
