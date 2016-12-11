@@ -198,19 +198,6 @@ class Request extends AbstractMessage
     }
 
     /**
-     * Creates a new Action Request request as a sub request to this HTTP request.
-     * Maps the arguments of this request to the new Action Request.
-     *
-     * @return ActionRequest
-     * @deprecated since Flow 2.3. Create the ActionRequest manually instead: $actionRequest = new ActionRequest($httpRequest)
-     */
-    public function createActionRequest()
-    {
-        $actionRequest = new ActionRequest($this);
-        return $actionRequest;
-    }
-
-    /**
      * Returns the request URI
      *
      * @return Uri
