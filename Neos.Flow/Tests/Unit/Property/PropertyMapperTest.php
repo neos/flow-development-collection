@@ -17,7 +17,6 @@ use Neos\Flow\Property\Exception\InvalidTargetException;
 use Neos\Flow\Property\Exception\TypeConverterException;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Property\PropertyMappingConfiguration;
-use Neos\Flow\Property\PropertyMappingConfigurationBuilder;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Flow\Property\TypeConverterInterface;
 use Neos\Flow\Security\Exception;
@@ -31,8 +30,6 @@ require_once(__DIR__ . '/../Fixtures/ClassWithSetters.php');
  */
 class PropertyMapperTest extends UnitTestCase
 {
-    protected $mockConfigurationBuilder;
-
     protected $mockConfiguration;
 
     /**
@@ -42,7 +39,6 @@ class PropertyMapperTest extends UnitTestCase
      */
     public function setUp()
     {
-        $this->mockConfigurationBuilder = $this->createMock(PropertyMappingConfigurationBuilder::class);
         $this->mockConfiguration = $this->createMock(PropertyMappingConfigurationInterface::class);
     }
 
