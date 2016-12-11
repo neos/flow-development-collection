@@ -122,7 +122,7 @@ class PersistenceManager extends AbstractPersistenceManager
      * @return void
      * @throws MissingBackendException
      */
-    public function initialize()
+    public function initializeObject()
     {
         if (!$this->backend instanceof Backend\BackendInterface) {
             throw new MissingBackendException('A persistence backend must be set prior to initializing the persistence manager.', 1215508456);
