@@ -244,9 +244,9 @@ Creating an ActionRequest
 In order to dispatch a request to a controller, you need an ``ActionRequest``.
 Such a request is always bound to an ``Http\Request``::
 
-    use Neos\Flow\Core\Bootstrap;
-    use Neos\Flow\Http\HttpRequestHandlerInterface;
-    use Neos\Flow\Mvc\ActionRequest;
+    use TYPO3\Flow\Core\Bootstrap;
+    use TYPO3\Flow\Http\HttpRequestHandlerInterface;
+    use TYPO3\Flow\Mvc\ActionRequest;
 
     // ...
 
