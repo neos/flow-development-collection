@@ -3,7 +3,7 @@ namespace Neos\Flow\Http;
 
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\UriInterface;
-use Neos\Flow\Utility\MediaTypes;
+use Neos\Utility\MediaTypes;
 
 /**
  *

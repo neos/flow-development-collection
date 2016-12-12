@@ -208,17 +208,6 @@ class Request extends BaseRequest implements ServerRequestInterface
     }
 
     /**
-     * Returns the port used for this request
-     *
-     * @return integer
-     * @api
-     */
-    public function getPort()
-    {
-        return $this->uri->getPort();
-    }
-
-    /**
      * Returns the detected base URI
      *
      * @return Uri

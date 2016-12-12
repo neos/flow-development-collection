@@ -13,7 +13,7 @@ namespace Neos\Flow\ResourceManagement;
 
 use Psr\Http\Message\UploadedFileInterface;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Error\Error as FlowError;
+use Neos\Error\Messages as FlowError;
 use Neos\Flow\Http\FlowUploadedFile;
 use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
@@ -181,10 +181,10 @@ class ResourceTypeConverter extends AbstractTypeConverter
                 case \UPLOAD_ERR_INI_SIZE:
                 case \UPLOAD_ERR_FORM_SIZE:
                 case \UPLOAD_ERR_PARTIAL:
-                    return new FlowError(Files::getUploadErrorMessage($source['error']), 1264440823);
+                    return new FlowError\Error(Files::getUploadErrorMessage($source['error']), 1264440823);
                 default:
                     $this->systemLogger->log(sprintf('A server error occurred while converting an uploaded resource: "%s"', Files::getUploadErrorMessage($source['error'])), LOG_ERR);
-                    return new FlowError('An error occurred while uploading. Please try again or contact the administrator if the problem remains', 1340193849);
+                    return new FlowError\Error('An error occurred while uploading. Please try again or contact the administrator if the problem remains', 1340193849);
             }
         }
 
@@ -199,7 +199,7 @@ class ResourceTypeConverter extends AbstractTypeConverter
         } catch (\Exception $exception) {
             $this->systemLogger->log('Could not import an uploaded file', LOG_WARNING);
             $this->systemLogger->logException($exception);
-            return new FlowError('During import of an uploaded file an error occurred. See log for more details.', 1264517906);
+            return new FlowError\Error('During import of an uploaded file an error occurred. See log for more details.', 1264517906);
         }
     }
 
@@ -274,11 +274,11 @@ class ResourceTypeConverter extends AbstractTypeConverter
             case \UPLOAD_ERR_INI_SIZE:
             case \UPLOAD_ERR_FORM_SIZE:
             case \UPLOAD_ERR_PARTIAL:
-                return new FlowError(Files::getUploadErrorMessage($source->getError()), 1264440823);
+                return new FlowError\Error(Files::getUploadErrorMessage($source->getError()), 1264440823);
             default:
                 $this->systemLogger->log(sprintf('A server error occurred while converting an uploaded resource: "%s"', Files::getUploadErrorMessage($source['error'])), LOG_ERR);
 
-                return new FlowError('An error occurred while uploading. Please try again or contact the administrator if the problem remains', 1340193849);
+                return new FlowError\Error('An error occurred while uploading. Please try again or contact the administrator if the problem remains', 1340193849);
         }
 
         if (isset($this->convertedResources[spl_object_hash($source)])) {

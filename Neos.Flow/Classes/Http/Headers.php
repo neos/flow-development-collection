@@ -116,7 +116,7 @@ class Headers
 
         switch ($name) {
             case 'Host':
-                if (count($values) !== 1) {
+                if (count($values) > 1) {
                     throw new \InvalidArgumentException('The "Host" header must be unique and thus only one field value may be specified.', 1478206019);
                 }
                 // Ensure Host is the first header.
