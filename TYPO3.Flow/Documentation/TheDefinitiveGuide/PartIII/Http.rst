@@ -244,19 +244,25 @@ Creating an ActionRequest
 In order to dispatch a request to a controller, you need an ``ActionRequest``.
 Such a request is always bound to an ``Http\Request``::
 
-	/**
-	 * @var Bootstrap
-	 * @Flow\Inject
-	 */
-	protected $bootstrap;
+    use Neos\Flow\Core\Bootstrap;
+    use Neos\Flow\Http\HttpRequestHandlerInterface;
+    use Neos\Flow\Mvc\ActionRequest;
 
-	...
-
-  $requestHandler = $this->bootstrap->getActiveRequestHandler();
-  if ($requestHandler instanceof HttpRequestHandlerInterface) {
-    $actionRequest = new ActionRequest($requestHandler->getHttpRequest());
     // ...
-  }
+
+    /**
+     * @var Bootstrap
+     * @Flow\Inject
+     */
+    protected $bootstrap;
+
+    // ...
+
+    $requestHandler = $this->bootstrap->getActiveRequestHandler();
+    if ($requestHandler instanceof HttpRequestHandlerInterface) {
+        $actionRequest = new ActionRequest($requestHandler->getHttpRequest());
+        // ...
+    }
 
 Arguments
 ~~~~~~~~~
