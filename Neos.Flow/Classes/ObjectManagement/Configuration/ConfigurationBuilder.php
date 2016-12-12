@@ -142,7 +142,7 @@ class ConfigurationBuilder
 
         // If an implementation class could be determined for an interface object configuration, set the scope for the
         // interface object configuration to the scope found in the implementation class configuration, but
-        // only if the interface doesn't have a specifically configured scope (eg. is prototype so far)
+        // only if the interface doesn't have a specifically configured scope (i.e. is prototype so far)
         foreach (array_keys($interfaceNames) as $interfaceName) {
             $implementationClassName = $objectConfigurations[$interfaceName]->getClassName();
             if ($implementationClassName !== '' && isset($objectConfigurations[$implementationClassName]) && $objectConfigurations[$interfaceName]->getScope() === Configuration::SCOPE_PROTOTYPE) {
