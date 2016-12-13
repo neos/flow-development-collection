@@ -267,6 +267,7 @@ class ConfigurationManager
         if (!isset($this->configurationTypes[$configurationType])) {
             throw new Exception\InvalidConfigurationTypeException('Configuration type "' . $configurationType . '" is not registered. You can Register it by calling $configurationManager->registerConfigurationType($configurationType).', 1339166495);
         }
+
         return $this->configurationTypes[$configurationType]['processingType'];
     }
 
@@ -282,6 +283,7 @@ class ConfigurationManager
         if (!isset($this->configurationTypes[$configurationType])) {
             throw new Exception\InvalidConfigurationTypeException('Configuration type "' . $configurationType . '" is not registered. You can Register it by calling $configurationManager->registerConfigurationType($configurationType).', 1359998400);
         }
+
         return $this->configurationTypes[$configurationType]['allowSplitSource'];
     }
 
@@ -551,7 +553,6 @@ class ConfigurationManager
         }
 
         $this->unprocessedConfiguration[$configurationType] = $this->configurations[$configurationType];
-        $this->postProcessConfiguration($this->configurations[$configurationType]);
     }
 
     /**
@@ -564,8 +565,10 @@ class ConfigurationManager
         $cachePathAndFilename = $this->constructConfigurationCachePath();
         if (is_file($cachePathAndFilename)) {
             $this->configurations = require($cachePathAndFilename);
+
             return true;
         }
+
         return false;
     }
 
@@ -602,7 +605,9 @@ class ConfigurationManager
     {
         // Make sure that all configuration types are loaded before writing configuration caches.
         foreach (array_keys($this->configurationTypes) as $configurationType) {
-            $this->getConfiguration($configurationType);
+            if (!isset($this->configurations[$configurationType]) || !is_array($this->configurations[$configurationType])) {
+                $this->loadConfiguration($configurationType, $this->packages);
+            }
         }
 
         if ($this->temporaryDirectoryPath === null) {
@@ -616,76 +621,17 @@ class ConfigurationManager
 
         file_put_contents($cachePathAndFilename, '<?php return ' . $this->replaceVariablesInPhpString(var_export($this->unprocessedConfiguration, true)) . ';');
         OpcodeCacheHelper::clearAllActive($cachePathAndFilename);
+        $this->cacheNeedsUpdate = false;
     }
 
     /**
-     * Post processes the given configuration array by replacing constants with their
-     * actual value.
-     *
-     * This is for processing a freshly loaded configuration for immediate use.
-     *
-     * @param array &$configurations The configuration to post process. The results are stored directly in the given array
      * @return void
      */
-    protected function postProcessConfiguration(array &$configurations)
+    public function refreshConfiguration()
     {
-        foreach ($configurations as $key => $configuration) {
-            if (is_array($configuration)) {
-                $this->postProcessConfiguration($configurations[$key]);
-            }
-            if (!is_string($configuration)) {
-                continue;
-            }
-            $configurations[$key] = $this->replaceVariablesInValue($configuration);
-        }
-    }
-
-    /**
-     * Replaces variables (in the format %CONSTANT% or %ENV::ENVIRONMENT_VARIABLE)
-     * in the given (configuration) value string.
-     *
-     * This is for processing a freshly loaded configuration for immediate use.
-     *
-     * @param string $value
-     * @return mixed
-     */
-    protected function replaceVariablesInValue($value)
-    {
-        $matches = [];
-        $replacements = [];
-
-        preg_match_all('/
-            (?P<fullMatch>%             # an expression is indicated by %
-            (?P<expression>
-            (?:(?:\\\?[\d\w_\\\]+\:\:)  # either a class name followed by ::
-            |                           # or
-            (?:(?P<prefix>[a-z]+)\:)    # a prefix followed by : (like "env:")
-            )?
-            (?P<name>[A-Z_0-9]+))       # the actual variable name in all upper
-            %)                          # concluded by %
-        /mx', $value, $matches, PREG_SET_ORDER);
-
-        foreach ($matches as $matchGroup) {
-            if (isset($matchGroup['prefix']) && $matchGroup['prefix'] === 'env') {
-                $replacements[$matchGroup['fullMatch']] = getenv($matchGroup['name']);
-            }
-
-            if (defined($matchGroup['expression'])) {
-                $replacements[$matchGroup['fullMatch']] = constant($matchGroup['expression']);
-            }
-        }
-
-        $replacementCount = count($replacements);
-        if ($replacementCount === 0) {
-            return $value;
-        }
-
-        if ($replacementCount === 1 && array_keys($replacements)[0] === $value) {
-            // the replacement spans the complete directive, assign directly to keep CONSTANT/ENV variable type
-            return reset($replacements);
-        }
-
-        return str_replace(array_keys($replacements), $replacements, $value);
+        $this->flushConfigurationCache();
+        $this->saveConfigurationCache();
+        $this->loadConfigurationCache();
     }
 
     /**
@@ -711,15 +657,15 @@ class ConfigurationManager
             %)                         # concluded by %
             (?<endString>\',\n)?       # optionally concluding a string
         /mx', function ($matchGroup) {
-            $replacement = " ";
-            if (!isset($matchGroup['startString'])) {
+            $replacement = "";
+            if (empty($matchGroup['startString'])) {
                 $replacement .= "' . ";
             }
             if (isset($matchGroup['prefix']) && $matchGroup['prefix'] === 'env') {
                 $replacement .= "getenv('" . $matchGroup['name'] . "')";
             }
-            if (defined($matchGroup['expression'])) {
-                $replacement .= "constant('" . $matchGroup['expression'] . "')";
+            if (isset($matchGroup['expression'])) {
+                $replacement .= "(defined('" . $matchGroup['expression'] . "') ? constant('" . $matchGroup['expression'] . "') : null)";
             }
             if (isset($matchGroup['endString'])) {
                 $replacement .= ",\n";
