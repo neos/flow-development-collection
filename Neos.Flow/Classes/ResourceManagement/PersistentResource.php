@@ -360,7 +360,7 @@ class PersistentResource implements ResourceMetaDataInterface, CacheAwareInterfa
             $temporaryPathAndFilename = $this->environment->getPathToTemporaryDirectory() . 'ResourceFiles/';
             try {
                 Utility\Files::createDirectoryRecursively($temporaryPathAndFilename);
-            } catch (Utility\Exception $e) {
+            } catch (Utility\Exception\FilesException $e) {
                 throw new ResourceException(sprintf('Could not create the temporary directory %s while trying to create a temporary local copy of resource %s (%s).', $temporaryPathAndFilename, $this->sha1, $this->filename), 1416221864);
             }
 
