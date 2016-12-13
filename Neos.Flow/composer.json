@@ -63,6 +63,9 @@
     "extra": {
         "neos": {
             "package-key": "Neos.Flow"
-        }
+        },
+        "applied-flow-migrations": [
+            "Neos.Media-20161124233100"
+        ]
     }
 }

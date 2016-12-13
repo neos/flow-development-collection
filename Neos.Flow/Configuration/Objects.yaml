@@ -229,8 +229,6 @@ Doctrine\Common\Persistence\ObjectManager:
 
 Neos\Flow\Persistence\PersistenceManagerInterface:
   className: Neos\Flow\Persistence\Doctrine\PersistenceManager
-  factoryObjectName: Neos\Flow\Core\Bootstrap
-  factoryMethodName: initializePersistenceManager
 
 Neos\Flow\Persistence\Doctrine\Logging\SqlLogger:
   properties:

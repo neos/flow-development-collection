@@ -19,16 +19,6 @@ namespace Neos\Cache\Frontend;
 interface FrontendInterface
 {
     /**
-     * "Magic" tag for class-related entries
-     */
-    const TAG_CLASS = '%CLASS%';
-
-    /**
-     * "Magic" tag for package-related entries
-     */
-    const TAG_PACKAGE = '%PACKAGE%';
-
-    /**
      * Pattern an entry identifier must match.
      */
     const PATTERN_ENTRYIDENTIFIER = '/^[a-zA-Z0-9_%\-&]{1,250}$/';

@@ -16,7 +16,7 @@ use Doctrine\Common\Util\Debug;
 use Doctrine\DBAL\Migrations\MigrationException;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
-use Neos\Error\Messages\Debugger;
+use Neos\Flow\Error\Debugger;
 use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\Package;
 use Neos\Flow\Package\PackageManagerInterface;

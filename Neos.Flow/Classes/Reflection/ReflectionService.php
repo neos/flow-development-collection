@@ -356,10 +356,6 @@ class ReflectionService
 
         $this->annotationReader = new AnnotationReader();
         foreach ($this->settings['reflection']['ignoredTags'] as $tagName => $ignoreFlag) {
-            // Make this setting backwards compatible with old array schema (deprecated since 3.0)
-            if (is_numeric($tagName) && is_string($ignoreFlag)) {
-                AnnotationReader::addGlobalIgnoredName($ignoreFlag);
-            }
             if ($ignoreFlag === true) {
                 AnnotationReader::addGlobalIgnoredName($tagName);
             }

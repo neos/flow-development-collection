@@ -198,19 +198,6 @@ class Request extends AbstractMessage
     }
 
     /**
-     * Creates a new Action Request request as a sub request to this HTTP request.
-     * Maps the arguments of this request to the new Action Request.
-     *
-     * @return ActionRequest
-     * @deprecated since Flow 2.3. Create the ActionRequest manually instead: $actionRequest = new ActionRequest($httpRequest)
-     */
-    public function createActionRequest()
-    {
-        $actionRequest = new ActionRequest($this);
-        return $actionRequest;
-    }
-
-    /**
      * Returns the request URI
      *
      * @return Uri
@@ -836,46 +823,5 @@ class Request extends AbstractMessage
     public function __toString()
     {
         return $this->renderHeaders() . "\r\n" . $this->getContent();
-    }
-
-    /**
-     * Parses a RFC 2616 Media Type and returns its parts in an associative array.
-     * @see MediaTypes::parseMediaType()
-     *
-     * @param string $rawMediaType The raw media type, for example "application/json; charset=UTF-8"
-     * @return array An associative array with parsed information
-     * @deprecated since Flow 2.1. Use \Neos\Utility\MediaTypes::parseMediaType() instead
-     */
-    public static function parseMediaType($rawMediaType)
-    {
-        return MediaTypes::parseMediaType($rawMediaType);
-    }
-
-    /**
-     * Checks if the given media range and the media type match.
-     * @see MediaTypes::mediaRangeMatches()
-     *
-     * @param string $mediaRange The media range, for example "text/*"
-     * @param string $mediaType The media type to match against, for example "text/html"
-     * @return boolean TRUE if both match, FALSE if they don't match or either of them is invalid
-     * @deprecated since Flow 2.1. Use \Neos\Utility\MediaTypes::mediaRangeMatches() instead
-     */
-    public static function mediaRangeMatches($mediaRange, $mediaType)
-    {
-        return MediaTypes::mediaRangeMatches($mediaRange, $mediaType);
-    }
-
-    /**
-     * Strips off any parameters from the given media type and returns just the type
-     * and subtype in the format "type/subtype".
-     * @see \Neos\Utility\MediaTypes::trimMediaType()
-     *
-     * @param string $rawMediaType The full media type, for example "application/json; charset=UTF-8"
-     * @return string Just the type and subtype, for example "application/json"
-     * @deprecated since Flow 2.1. Use \Neos\Utility\MediaTypes::trimMediaType() instead
-     */
-    public static function trimMediaType($rawMediaType)
-    {
-        return MediaTypes::trimMediaType($rawMediaType);
     }
 }

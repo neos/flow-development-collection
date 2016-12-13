@@ -13,7 +13,6 @@ namespace Neos\Flow\Tests\Functional\Property;
 
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Property\PropertyMappingConfiguration;
-use Neos\Flow\Property\PropertyMappingConfigurationBuilder;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Flow\Property\TypeConverter\ObjectConverter;
 use Neos\Flow\Property\TypeConverter\PersistentObjectConverter;
@@ -151,7 +150,7 @@ class PropertyMapperTest extends FunctionalTestCase
             'age' => '42'
         ];
 
-        $configuration = $this->objectManager->get(PropertyMappingConfigurationBuilder::class)->build();
+        $configuration = $this->propertyMapper->buildPropertyMappingConfiguration();
         $configuration->setTypeConverterOption(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED, true);
 
         $result = $this->propertyMapper->convert($source, Fixtures\TestEntity::class, $configuration);
@@ -169,7 +168,7 @@ class PropertyMapperTest extends FunctionalTestCase
             'name' => 'A horse'
         ];
 
-        $configuration = $this->objectManager->get(PropertyMappingConfigurationBuilder::class)->build();
+        $configuration = $this->propertyMapper->buildPropertyMappingConfiguration();
         $configuration->setTypeConverterOption(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED, true);
 
         $this->propertyMapper->convert($source, Fixtures\TestEntity::class, $configuration);
@@ -185,7 +184,7 @@ class PropertyMapperTest extends FunctionalTestCase
             'name' => 'Tower of Pisa'
         ];
 
-        $configuration = $this->objectManager->get(PropertyMappingConfigurationBuilder::class)->build();
+        $configuration = $this->propertyMapper->buildPropertyMappingConfiguration();
         $configuration->setTypeConverterOption(ObjectConverter::class, ObjectConverter::CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED, true);
 
         $result = $this->propertyMapper->convert($source, Fixtures\TestClass::class, $configuration);
@@ -203,7 +202,7 @@ class PropertyMapperTest extends FunctionalTestCase
             'name' => 'A horse'
         ];
 
-        $configuration = $this->objectManager->get(PropertyMappingConfigurationBuilder::class)->build();
+        $configuration = $this->propertyMapper->buildPropertyMappingConfiguration();
         $configuration->setTypeConverterOption(ObjectConverter::class, ObjectConverter::CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED, true);
 
         $this->propertyMapper->convert($source, Fixtures\TestClass::class, $configuration);
@@ -321,7 +320,7 @@ class PropertyMapperTest extends FunctionalTestCase
             'testField' => 'A horse'
         ];
 
-        $configuration = $this->objectManager->get(PropertyMappingConfigurationBuilder::class)->build();
+        $configuration = $this->propertyMapper->buildPropertyMappingConfiguration();
         $configuration->setTypeConverterOption(PersistentObjectConverter::class, ObjectConverter::CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED, true);
 
         $theHorse = $this->propertyMapper->convert($source, Fixtures\TestEntity::class, $configuration);
@@ -373,7 +372,7 @@ class PropertyMapperTest extends FunctionalTestCase
             'testField' => 'A horse'
         ];
 
-        $configuration = $this->objectManager->get(PropertyMappingConfigurationBuilder::class)->build();
+        $configuration = $this->propertyMapper->buildPropertyMappingConfiguration();
         $configuration->setTypeConverterOption(PersistentObjectConverter::class, ObjectConverter::CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED, true);
 
         $this->propertyMapper->convert($source, Fixtures\TestEntity::class, $configuration);
@@ -395,7 +394,7 @@ class PropertyMapperTest extends FunctionalTestCase
 
         $expectedRoleIdentifiers = ['Neos.Flow:Customer', 'Neos.Flow:Administrator'];
 
-        $configuration = $this->objectManager->get(PropertyMappingConfigurationBuilder::class)->build();
+        $configuration = $this->propertyMapper->buildPropertyMappingConfiguration();
         $configuration->forProperty('roles.*')->allowProperties();
 
         $account = $this->propertyMapper->convert($source, Account::class, $configuration);

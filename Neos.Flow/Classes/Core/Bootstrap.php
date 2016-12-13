@@ -398,24 +398,6 @@ class Bootstrap
     }
 
     /**
-     * @return PersistenceManagerInterface
-     * @throws FlowException
-     * @internal This method is a workaround for not creating an additional factory until PersistenceManagerInterface::initialize is no longer supported.
-     * TODO: Remove when PersistenceManagerInterface::initialize is not supported anymore.
-     */
-    public function initializePersistenceManager()
-    {
-        $persistenceManagerImplementation = $this->getObjectManager()->getClassNameByObjectName(PersistenceManagerInterface::class);
-        /** @var PersistenceManagerInterface $persistenceManager */
-        $persistenceManager = new $persistenceManagerImplementation();
-        if (is_callable([$persistenceManager, 'initialize'])) {
-            $persistenceManager->initialize();
-        }
-
-        return $persistenceManager;
-    }
-
-    /**
      * Iterates over the registered request handlers and determines which one fits best.
      *
      * @return RequestHandlerInterface A request handler

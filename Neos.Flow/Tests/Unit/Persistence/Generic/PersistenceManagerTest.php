@@ -29,21 +29,6 @@ class PersistenceManagerTest extends UnitTestCase
     /**
      * @test
      */
-    public function initializeInitializesBackendWithBackendOptions()
-    {
-        $mockBackend = $this->createMock(Generic\Backend\BackendInterface::class);
-        $mockBackend->expects($this->once())->method('initialize')->with(['Foo' => 'Bar']);
-
-        $manager = new Generic\PersistenceManager();
-        $manager->injectBackend($mockBackend);
-
-        $manager->injectSettings(['persistence' => ['backendOptions' => ['Foo' => 'Bar']]]);
-        $manager->initialize();
-    }
-
-    /**
-     * @test
-     */
     public function persistAllPassesAddedObjectsToBackend()
     {
         $entity2 = new Fixture\Model\Entity2();

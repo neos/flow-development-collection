@@ -19,7 +19,6 @@ use Neos\Cache\Exception\InvalidDataException;
 use Neos\Cache\Frontend\PhpFrontend;
 use Neos\Cache\Frontend\FrontendInterface;
 use Neos\Utility\Exception\FilesException;
-use Neos\Utility\Lock\Lock;
 use Neos\Utility\OpcodeCacheHelper;
 
 /**
@@ -189,11 +188,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
             return false;
         }
 
-        $lock = new Lock($pathAndFilename, false);
-        $result = file_get_contents($pathAndFilename);
-        $lock->release();
-
-        return $result;
+        return $this->readCacheFile($pathAndFilename);
     }
 
     /**
@@ -229,17 +224,35 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
         if ($entryIdentifier === '') {
             throw new \InvalidArgumentException('The specified entry identifier must not be empty.', 1334756961);
         }
+        $cacheEntryPathAndFilename = $this->cacheDirectory . $entryIdentifier . $this->cacheEntryFileExtension;
+        for ($i = 0; $i < 3; $i++) {
+            $result = false;
+            try {
+                if (strncasecmp(PHP_OS, 'WIN', 3) == 0) {
+                    // On Windows, unlinking a locked/opened file will not work, so we just attempt the delete straight away.
+                    // In the worst case, the unlink will just fail due to concurrent access and the caller needs to deal with that.
+                    $result = unlink($cacheEntryPathAndFilename);
+                } else {
+                    $file = fopen($cacheEntryPathAndFilename, 'rb');
+                    if ($file === false) {
+                        continue;
+                    }
+                    if (flock($file, LOCK_EX) !== false) {
+                        $result = unlink($cacheEntryPathAndFilename);
+                        flock($file, LOCK_UN);
+                    }
+                    fclose($file);
+                }
 
-        $pathAndFilename = $this->cacheDirectory . $entryIdentifier . $this->cacheEntryFileExtension;
-
-        try {
-            $lock = new Lock($pathAndFilename);
-            unlink($pathAndFilename);
-            $lock->release();
-        } catch (\Exception $exception) {
-            return false;
+                if ($result === true) {
+                    clearstatcache(true, $cacheEntryPathAndFilename);
+                    return $result;
+                }
+            } catch (\Exception $e) {}
+            usleep(rand(10, 500));
         }
-        return true;
+
+        return $result;
     }
 
     /**
@@ -325,11 +338,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
         }
 
         $pathAndFilename = $this->cacheFilesIterator->getPathname();
-
-        $lock = new Lock($pathAndFilename, false);
-        $result = file_get_contents($pathAndFilename);
-        $lock->release();
-        return $result;
+        return $this->readCacheFile($pathAndFilename);
     }
 
     /**
@@ -408,22 +417,6 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
     }
 
     /**
-     * Writes the cache data into the given cache file, using locking.
-     *
-     * @param string $cacheEntryPathAndFilename
-     * @param string $data
-     * @return boolean|integer Return value of file_put_contents
-     */
-    protected function writeCacheFile($cacheEntryPathAndFilename, $data)
-    {
-        $lock = new Lock($cacheEntryPathAndFilename);
-        $result = file_put_contents($cacheEntryPathAndFilename, $data);
-        $lock->release();
-
-        return $result;
-    }
-
-    /**
      * @return string
      */
     public function getBaseDirectory()
@@ -466,5 +459,75 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
         }
 
         $this->cacheDirectory = $cacheDirectory;
+    }
+
+    /**
+     * Reads the cache data from the given cache file, using locking.
+     *
+     * @param string $cacheEntryPathAndFilename
+     * @param int|null $offset
+     * @param int|null $maxlen
+     * @return boolean|string The contents of the cache file or FALSE on error
+     */
+    protected function readCacheFile($cacheEntryPathAndFilename, $offset = null, $maxlen = null)
+    {
+        for ($i = 0; $i < 3; $i++) {
+            $data = false;
+            try {
+                $file = fopen($cacheEntryPathAndFilename, 'rb');
+                if ($file === false) {
+                    continue;
+                }
+                if (flock($file, LOCK_SH) !== false) {
+                    if ($offset !== null) {
+                        fseek($file, $offset);
+                    }
+                    $data = fread($file, $maxlen !== null ? $maxlen : filesize($cacheEntryPathAndFilename) - (int)$offset);
+                    flock($file, LOCK_UN);
+                }
+                fclose($file);
+            } catch (\Exception $e) {}
+
+            if ($data !== false) {
+                return $data;
+            }
+            usleep(rand(10, 500));
+        }
+
+        return $data;
+    }
+
+    /**
+     * Writes the cache data into the given cache file, using locking.
+     *
+     * @param string $cacheEntryPathAndFilename
+     * @param string $data
+     * @return boolean|integer Return value of file_put_contents
+     */
+    protected function writeCacheFile($cacheEntryPathAndFilename, $data)
+    {
+        for ($i = 0; $i < 3; $i++) {
+            // This can be replaced by a simple file_put_contents($cacheEntryPathAndFilename, $data, LOCK_EX) once vfs
+            // is fixed for file_put_contents with LOCK_EX, see https://github.com/mikey179/vfsStream/wiki/Known-Issues
+            $result = false;
+            try {
+                $file = fopen($cacheEntryPathAndFilename, 'wb');
+                if ($file === false) {
+                    continue;
+                }
+                if (flock($file, LOCK_EX) !== false) {
+                    $result = fwrite($file, $data);
+                    flock($file, LOCK_UN);
+                }
+                fclose($file);
+            } catch (\Exception $e) {}
+            if ($result !== false) {
+                clearstatcache(true, $cacheEntryPathAndFilename);
+                return $result;
+            }
+            usleep(rand(10, 500));
+        }
+
+        return false;
     }
 }

@@ -20,7 +20,7 @@ use Neos\Flow\Property\Exception\InvalidTargetException;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Utility\ObjectAccess;
 use Neos\Flow\Reflection\ReflectionService;
-use Neos\Flow\Utility\Exception\InvalidTypeException;
+use Neos\Utility\Exception\InvalidTypeException;
 use Neos\Utility\TypeHandling;
 
 /**
