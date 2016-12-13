@@ -243,16 +243,6 @@ class Argument
     }
 
     /**
-     * @return boolean TRUE if the argument is valid, FALSE otherwise
-     * @api
-     * @deprecated Will be removed for next major Flow version.
-     */
-    public function isValid()
-    {
-        return !$this->validationResults->hasErrors();
-    }
-
-    /**
      * @return array<Neos\Error\Messages\Result> Validation errors which have occured.
      * @api
      */

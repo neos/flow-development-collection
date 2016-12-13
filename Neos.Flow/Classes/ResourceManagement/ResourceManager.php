@@ -636,18 +636,4 @@ class ResourceManager
             'filename' => $pathInfo['basename']
         ];
     }
-
-    /**
-     * Creates a resource from the given binary content as a persistent resource.
-     *
-     * @param string $content The binary content to import
-     * @param string $filename The filename to use for the newly generated resource
-     * @return PersistentResource A resource object representing the created resource or FALSE if an error occurred.
-     * @deprecated use importResourceFromContent() instead
-     * @see importResourceFromContent()
-     */
-    public function createResourceFromContent($content, $filename)
-    {
-        return $this->importResourceFromContent($content, $filename);
-    }
 }

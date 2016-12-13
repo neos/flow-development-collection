@@ -13,7 +13,7 @@ namespace Neos\Flow\Command;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Aop\Builder\ProxyClassBuilder as AopProxyClassBuilder;
-use Neos\Flow\Cache\Backend\FreezableBackendInterface;
+use Neos\Cache\Backend\FreezableBackendInterface;
 use Neos\Flow\Cache\CacheManager;
 use Neos\Cache\Frontend\PhpFrontend;
 use Neos\Cache\Frontend\VariableFrontend;

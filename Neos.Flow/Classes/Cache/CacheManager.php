@@ -418,24 +418,6 @@ class CacheManager
     }
 
     /**
-     * Renders a tag which can be used to mark a cache entry as "depends on this class".
-     * Whenever the specified class is modified, all cache entries tagged with the
-     * class are flushed.
-     *
-     * If an empty string is specified as class name, the returned tag means
-     * "this cache entry becomes invalid if any of the known classes changes".
-     *
-     * @param string $className The class name
-     * @return string Class Tag
-     * @api
-     * @deprecated Unused and described functionality does not exist.
-     */
-    public static function getClassTag($className = '')
-    {
-        return ($className === '') ? FrontendInterface::TAG_CLASS : FrontendInterface::TAG_CLASS . str_replace('\\', '_', $className);
-    }
-
-    /**
      * Instantiates all registered caches.
      *
      * @return void

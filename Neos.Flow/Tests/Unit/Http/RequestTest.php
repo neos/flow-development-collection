@@ -252,7 +252,7 @@ class RequestTest extends UnitTestCase
         $uri = new Uri('http://flow.typo3.org');
         $request = Request::create($uri);
 
-        $subRequest = $request->createActionRequest();
+        $subRequest = new ActionRequest($request);
         $this->assertInstanceOf(ActionRequest::class, $subRequest);
         $this->assertSame($request, $subRequest->getParentRequest());
     }

@@ -14,6 +14,7 @@ namespace Neos\Flow\Session\Aspect;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Aop\JoinPointInterface;
 use Neos\Flow\Log\SystemLoggerInterface;
+use Neos\Flow\Session\SessionInterface;
 
 /**
  * An aspect which centralizes the logging of important session actions.
@@ -133,8 +134,9 @@ class LoggingAspect
     protected function getClassName(JoinPointInterface $joinPoint)
     {
         $className = $joinPoint->getClassName();
-        if (strpos($className, \Neos\Flow\Session::class) === 0) {
-            $className = trim(substr($className, strlen(\Neos\Flow\Session::class)), '\\');
+        $sessionNamespace = substr(SessionInterface::class, 0, -strrpos(SessionInterface::class, '\\') + 1);
+        if (strpos($className, $sessionNamespace) === 0) {
+            $className = substr($className, strlen($sessionNamespace));
         }
         return $className;
     }

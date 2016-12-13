@@ -751,8 +751,7 @@ class SessionTest extends UnitTestCase
         $this->inject($session, 'metaDataCache', $metaDataCache);
         $this->inject($session, 'storageCache', $storageCache);
         $session->initializeObject();
-
-        $session->resume();
+        $this->assertNotNull($session->resume(), 'The session was not properly resumed.');
 
         $this->assertEquals(['SampleTag', 'AnotherTag'], $session->getTags());
     }

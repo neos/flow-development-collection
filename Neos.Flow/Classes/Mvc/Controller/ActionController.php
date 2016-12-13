@@ -11,6 +11,7 @@ namespace Neos\Flow\Mvc\Controller;
  * source code.
  */
 
+use Neos\Error\Messages\Result;
 use Neos\Flow\Annotations as Flow;
 use Neos\Error\Messages as Error;
 use Neos\Flow\Log\SystemLoggerInterface;

@@ -295,31 +295,6 @@ class PersistentResource implements ResourceMetaDataInterface, CacheAwareInterfa
     }
 
     /**
-     * Returns the sha1 hash of the content of this resource
-     *
-     * @return string The sha1 hash
-     * @api
-     * @deprecated Since version 3.0, please use getSha1() instead
-     */
-    public function getHash()
-    {
-        return $this->sha1;
-    }
-
-    /**
-     * Sets the SHA1 hash of the content of this resource
-     *
-     * @param string $hash The sha1 hash
-     * @return void
-     * @api
-     * @deprecated Since version 3.0, please use setSha1() instead
-     */
-    public function setHash($hash)
-    {
-        $this->setSha1($hash);
-    }
-
-    /**
      * Returns the SHA1 hash of the content of this resource
      *
      * @return string The sha1 hash
@@ -385,7 +360,7 @@ class PersistentResource implements ResourceMetaDataInterface, CacheAwareInterfa
             $temporaryPathAndFilename = $this->environment->getPathToTemporaryDirectory() . 'ResourceFiles/';
             try {
                 Utility\Files::createDirectoryRecursively($temporaryPathAndFilename);
-            } catch (Utility\Exception $e) {
+            } catch (Utility\Exception\FilesException $e) {
                 throw new ResourceException(sprintf('Could not create the temporary directory %s while trying to create a temporary local copy of resource %s (%s).', $temporaryPathAndFilename, $this->sha1, $this->filename), 1416221864);
             }
 
@@ -414,48 +389,6 @@ class PersistentResource implements ResourceMetaDataInterface, CacheAwareInterfa
         }
 
         return $this->temporaryLocalCopyPathAndFilename;
-    }
-
-    /**
-     * Sets the resource pointer
-     *
-     * Deprecated – use setSha1() instead!
-     *
-     * @param ResourcePointer $resourcePointer
-     * @return void
-     * @deprecated Since version 3.0, use setSha1() to set the raw hash of the resourcePointer
-     * @see setSha1()
-     */
-    public function setResourcePointer(ResourcePointer $resourcePointer)
-    {
-        $this->throwExceptionIfProtected();
-        $this->sha1 = $resourcePointer->getHash();
-    }
-
-    /**
-     * Returns the resource pointer
-     *
-     * Deprecated – use getSha1() instead!
-     *
-     * @return ResourcePointer $resourcePointer
-     * @api
-     * @deprecated Since version 3.0, use getSha1() which is the same value
-     * @see getSha1()
-     */
-    public function getResourcePointer()
-    {
-        return new ResourcePointer($this->sha1);
-    }
-
-    /**
-     * Returns the SHA1 of the content this PersistentResource is related to
-     *
-     * @return string
-     * @deprecated Since version 3.0. Use getSha1() to get a textual representation
-     */
-    public function __toString()
-    {
-        return $this->sha1;
     }
 
     /**
