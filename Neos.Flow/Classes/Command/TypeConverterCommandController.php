@@ -38,16 +38,16 @@ class TypeConverterCommandController extends CommandController
      */
     public function listCommand()
     {
-        foreach ($this->propertyMapper->getTypeConverters() as $sourceType => $targetTypePriorityAndInstance) {
+        foreach ($this->propertyMapper->getTypeConverters() as $sourceType => $targetTypePriorityAndClassName) {
             $this->outputLine();
             $this->outputLine('<b>Source type "%s":</b>', [$sourceType]);
 
-            foreach ($targetTypePriorityAndInstance as $targetType => $priorityAndInstance) {
+            foreach ($targetTypePriorityAndClassName as $targetType => $priorityAndClassName) {
                 $this->outputFormatted('<b>Target type "%s":</b>', [$targetType], 4);
 
-                krsort($priorityAndInstance);
-                foreach ($priorityAndInstance as $priority => $instance) {
-                    $this->outputFormatted('%3s: %s', [$priority, get_class($instance)], 8);
+                krsort($priorityAndClassName);
+                foreach ($priorityAndClassName as $priority => $className) {
+                    $this->outputFormatted('%3s: %s', [$priority, $className], 8);
                 }
                 $this->outputLine();
             }
