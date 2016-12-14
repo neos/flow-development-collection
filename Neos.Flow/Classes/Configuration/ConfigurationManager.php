@@ -646,32 +646,38 @@ class ConfigurationManager
     protected function replaceVariablesInPhpString($phpString)
     {
         $phpString = preg_replace_callback('/
-            (?<startString>\s\')?      # optionally starting a string
-            (?P<fullMatch>%            # an expression is indicated by %
+            (?<startString>=>\s\'.*)?      # optionally assignment operator and starting a string
+            (?P<fullMatch>%                # an expression is indicated by %
             (?P<expression>
-            (?:(?:\\\?[\d\w_\\\]+\:\:)    # either a class name followed by ::
-            |                          # or
-            (?:(?P<prefix>[a-z]+)\:)   # a prefix followed by : (like "env:")
+            (?:(?:\\\?[\d\w_\\\]+\:\:)     # either a class name followed by ::
+            |                              # or
+            (?:(?P<prefix>[a-z]+)\:)       # a prefix followed by : (like "env:")
             )?
-            (?P<name>[A-Z_0-9]+))      # the actual variable name in all upper
-            %)                         # concluded by %
-            (?<endString>\',\n)?       # optionally concluding a string
+            (?P<name>[A-Z_0-9]+))          # the actual variable name in all upper
+            %)                             # concluded by %
+            (?<endString>.*\',\n)?         # optionally concluding a string
         /mx', function ($matchGroup) {
             $replacement = "";
-            if (empty($matchGroup['startString'])) {
-                $replacement .= "' . ";
+            $constantDoesNotStartAsBeginning = false;
+            if ($matchGroup['startString'] !== "=> '") {
+                $constantDoesNotStartAsBeginning = true;
             }
+            $replacement .= ($constantDoesNotStartAsBeginning ? $matchGroup['startString'] . "' . " : '=> ');
+
             if (isset($matchGroup['prefix']) && $matchGroup['prefix'] === 'env') {
                 $replacement .= "getenv('" . $matchGroup['name'] . "')";
-            }
-            if (isset($matchGroup['expression'])) {
+            } elseif (isset($matchGroup['expression'])) {
                 $replacement .= "(defined('" . $matchGroup['expression'] . "') ? constant('" . $matchGroup['expression'] . "') : null)";
             }
-            if (isset($matchGroup['endString'])) {
-                $replacement .= ",\n";
-            } else {
-                $replacement .= " . '";
+
+            $constantUntilEndOfLine = false;
+            if (!isset($matchGroup['endString'])) {
+                $matchGroup['endString'] = "',\n";
             }
+            if ($matchGroup['endString'] === "',\n") {
+                $constantUntilEndOfLine = true;
+            }
+            $replacement .= ($constantUntilEndOfLine ? ",\n" :  " . '" . $matchGroup['endString']);
 
             return $replacement;
         }, $phpString);
