@@ -37,7 +37,7 @@ Converter which transforms simple types to a boolean.
 
 For boolean this is a no-op, integer and float are simply typecast to boolean.
 
-Strings are converted to TRUE unless they are empry or match one of 'off', 'n', 'no', 'false' (case-insensitive).
+Strings are converted to TRUE unless they are empty or match one of 'off', 'n', 'no', 'false' (case-insensitive).
 
 :Priority: 1
 :Target type: boolean
