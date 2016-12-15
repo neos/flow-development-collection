@@ -213,7 +213,9 @@ class Scripts
         $configurationManager->setTemporaryDirectoryPath($environment->getPathToTemporaryDirectory());
         $configurationManager->injectConfigurationSource(new YamlSource());
         $configurationManager->setPackages($packageManager->getActivePackages());
-        $configurationManager->loadConfigurationCache();
+        if ($configurationManager->loadConfigurationCache() === false) {
+            $configurationManager->refreshConfiguration();
+        }
 
         $settings = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.Flow');
 
