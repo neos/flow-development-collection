@@ -24,7 +24,7 @@ use Neos\Utility\Arrays;
  * @Flow\Proxy(FALSE)
  * @api
  */
-class YamlSource
+class YamlSource implements YamlSourceInterface
 {
     /**
      * Will be set if the PHP YAML Extension is installed.

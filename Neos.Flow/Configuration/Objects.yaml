@@ -385,6 +385,11 @@ Neos\Flow\Session\SessionManager:
           1:
             value: Flow_Session_MetaData
 
+Neos\Flow\Configuration\ConfigurationManager:
+  properties:
+    configurationSource:
+      object: 'Neos\Flow\Configuration\Source\YamlSource'
+
 #                                                                          #
 # Utility                                                                  #
 #                                                                          #
