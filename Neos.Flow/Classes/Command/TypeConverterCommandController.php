@@ -28,7 +28,7 @@ class TypeConverterCommandController extends CommandController
      */
     protected $propertyMapper;
 
-   /**
+    /**
      * Lists all currently active and registered type converters
      *
      * All active converters are listed with ordered by priority and grouped by
