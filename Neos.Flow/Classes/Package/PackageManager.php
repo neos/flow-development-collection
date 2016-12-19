@@ -350,12 +350,14 @@ class PackageManager implements PackageManagerInterface
         if ($this->isPackageAvailable($packageKey)) {
             throw new Exception\PackageKeyAlreadyExistsException('The package key "' . $packageKey . '" already exists', 1220722873);
         }
+        if (!isset($manifest['type'])) {
+            $manifest['type'] = PackageInterface::DEFAULT_COMPOSER_TYPE;
+        }
 
         if ($packagesPath === null) {
             $packagesPath = 'Application';
-            $packageType = isset($manifest['type']) ? $manifest['type'] : PackageInterface::DEFAULT_COMPOSER_TYPE;
-            if (is_array($this->settings['package']['packagesPathByType']) && isset($this->settings['package']['packagesPathByType'][$packageType])) {
-                $packagesPath = $this->settings['package']['packagesPathByType'][$packageType];
+            if (is_array($this->settings['package']['packagesPathByType']) && isset($this->settings['package']['packagesPathByType'][$manifest['type']])) {
+                $packagesPath = $this->settings['package']['packagesPathByType'][$manifest['type']];
             }
 
             $packagesPath = Files::getUnixStylePath(Files::concatenatePaths([$this->packagesBasePath, $packagesPath]));

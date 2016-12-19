@@ -347,6 +347,20 @@ class PackageManagerTest extends UnitTestCase
         $this->assertEquals('flow-custom-package', $composerManifest->type);
     }
 
+
+    /**
+     * @test
+     */
+    public function createPackageAlwaysSetsThePackageType()
+    {
+        $package = $this->packageManager->createPackage('Acme.YetAnotherTestPackage2');
+
+        $json = file_get_contents($package->getPackagePath() . '/composer.json');
+        $composerManifest = json_decode($json);
+
+        $this->assertEquals('neos-package', $composerManifest->type);
+    }
+
     /**
      * Checks if createPackage() creates the folders for classes, configuration, documentation, resources and tests.
      *
