@@ -61,6 +61,7 @@ class CacheFactoryTest extends UnitTestCase
         $this->mockCacheManager->expects($this->any())->method('isCachePersistent')->will($this->returnValue(false));
 
         $this->mockEnvironmentConfiguration = $this->getMockBuilder(EnvironmentConfiguration::class)
+            ->setMethods(null)
             ->setConstructorArgs([
                 __DIR__ . '~Testing',
                 'vfs://Foo/',
