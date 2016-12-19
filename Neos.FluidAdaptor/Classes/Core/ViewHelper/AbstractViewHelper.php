@@ -210,10 +210,9 @@ abstract class AbstractViewHelper extends FluidAbstractViewHelper
         $i = 0;
         foreach ($methodParameters as $parameterName => $parameterInfo) {
             $dataType = null;
-            if (isset($parameterInfo['type'])) {
+            $dataType = 'mixed';
+            if (isset($parameterInfo['type']) && strpos($parameterInfo['type'], '|') === false) {
                 $dataType = isset($parameterInfo['array']) && (bool)$parameterInfo['array'] ? 'array' : $parameterInfo['type'];
-            } else {
-                throw new \Neos\FluidAdaptor\Core\Exception('Could not determine type of argument "' . $parameterName . '" of the render-method in ViewHelper "' . static::class . '". Either the methods docComment is invalid or some PHP optimizer strips off comments.', 1242292003);
             }
 
             $description = '';
