@@ -47,8 +47,7 @@ class IfHasRoleViewHelperTest extends ViewHelperBaseTestcase
         parent::setUp();
         $this->mockViewHelper = $this->getMockBuilder(\Neos\FluidAdaptor\ViewHelpers\Security\IfHasRoleViewHelper::class)->setMethods([
             'renderThenChild',
-            'renderElseChild',
-            'hasAccessToPrivilege'
+            'renderElseChild'
         ])->getMock();
 
         $this->mockSecurityContext = $this->getMockBuilder(\Neos\Flow\Security\Context::class)->disableOriginalConstructor()->getMock();
