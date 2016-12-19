@@ -565,7 +565,6 @@ class ConfigurationManager
         $cachePathAndFilename = $this->constructConfigurationCachePath();
         if (is_file($cachePathAndFilename)) {
             $this->configurations = require($cachePathAndFilename);
-
             return true;
         }
 
@@ -574,9 +573,12 @@ class ConfigurationManager
 
     /**
      * If a cache file with previously saved configuration exists, it is removed.
+     * Internal: After this the configuration manager is left without any configuration,
+     * use refreshConfiguration if you want to reread the configuration.
      *
      * @return void
      * @throws Exception
+     * @see refreshConfiguration
      */
     public function flushConfigurationCache()
     {

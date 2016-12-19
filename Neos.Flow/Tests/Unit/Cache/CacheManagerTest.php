@@ -227,7 +227,7 @@ class CacheManagerTest extends UnitTestCase
         $this->registerCache('Flow_Object_Classes');
         $this->registerCache('Flow_Object_Configuration');
 
-        $this->mockConfigurationManager->expects($this->once())->method('flushConfigurationCache');
+        $this->mockConfigurationManager->expects($this->once())->method('refreshConfiguration');
 
         $this->cacheManager->flushSystemCachesByChangedFiles('Flow_ConfigurationFiles', []);
     }
