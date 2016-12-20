@@ -115,7 +115,7 @@ class Manager
      * - the package needs the migration
      * - is a clean git working copy
      *
-     * @param string $packageKey key of the package to migrate, or NULL to migrate all packages
+     * @param string $packageKey key of the package to migrate
      * @param string $versionNumber version of the migration to execute (e.g. "20120126163610"), or NULL to execute all migrations
      * @param boolean $force if TRUE migrations will be applied even if the corresponding package is not a git working copy or contains local changes
      * @return void
