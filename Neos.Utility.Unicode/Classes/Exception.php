@@ -16,5 +16,4 @@ namespace Neos\Utility\Unicode;
  */
 class Exception extends \Exception
 {
-
 }

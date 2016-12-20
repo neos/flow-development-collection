@@ -221,7 +221,6 @@ class PdoBackendTest extends BaseTestCase
      */
     protected function setUpBackend()
     {
-
         $mockCache = $this->getMockBuilder(\Neos\Cache\Frontend\FrontendInterface::class)->disableOriginalConstructor()->getMock();
         $mockCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('TestCache'));
 

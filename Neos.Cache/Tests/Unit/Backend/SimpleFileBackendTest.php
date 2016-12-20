@@ -79,7 +79,6 @@ class SimpleFileBackendTest extends BaseTestCase
      */
     public function setCacheThrowsExceptionOnNonWritableDirectory()
     {
-
         $mockEnvironmentConfiguration = $this->getMockBuilder(EnvironmentConfiguration::class)
             ->setMethods(null)
             ->setConstructorArgs([

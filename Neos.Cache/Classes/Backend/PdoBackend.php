@@ -169,7 +169,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
         // because it is not allowed to store null bytes in PostgreSQL.
         if ($fetchedColumn !== false && $this->pdoDriver === 'pgsql') {
             $fetchedColumn = hex2bin($fetchedColumn);
-    }
+        }
 
         return $fetchedColumn;
     }

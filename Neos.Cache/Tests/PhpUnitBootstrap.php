@@ -10,4 +10,3 @@ if (is_file('Packages/Libraries/autoload.php')) {
 if (is_file('vendor/autoload.php')) {
     include_once('vendor/autoload.php');
 }
-
