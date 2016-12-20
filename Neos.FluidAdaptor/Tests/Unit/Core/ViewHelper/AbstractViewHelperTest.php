@@ -12,6 +12,8 @@ namespace Neos\FluidAdaptor\Tests\Unit\Core\ViewHelper;
  */
 
 use Neos\Flow\Mvc\Controller\ControllerContext;
+use Neos\Flow\ObjectManagement\ObjectManagerInterface;
+use Neos\Flow\Reflection\ReflectionService;
 use Neos\FluidAdaptor\Core\ViewHelper\TemplateVariableContainer;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use Neos\FluidAdaptor\View\TemplateView;
@@ -307,5 +309,22 @@ class AbstractViewHelperTest extends \Neos\Flow\Tests\UnitTestCase
         $this->assertSame($viewHelper->_get('templateVariableContainer'), $templateVariableContainer);
         $this->assertSame($viewHelper->_get('viewHelperVariableContainer'), $viewHelperVariableContainer);
         $this->assertSame($viewHelper->_get('controllerContext'), $controllerContext);
+    }
+
+    /**
+     * @test
+     */
+    public function renderMethodParametersWithMultipleTypesAreRegisteredAsMixed()
+    {
+        $this->mockReflectionService->expects(self::any())->method('getMethodTagsValues')->willReturn([]);
+        $this->mockReflectionService->expects(self::any())->method('getMethodParameters')->willReturn(['someArgument' => [
+            'type' => 'array|\Iterator',
+            'optional' => false
+        ]]);
+
+        $argumentDefinitions = AbstractViewHelper::getRenderMethodArgumentDefinitions($this->mockObjectManager);
+        $this->assertCount(1, $argumentDefinitions);
+        $this->assertArrayHasKey('someArgument', $argumentDefinitions);
+        $this->assertEquals('mixed', $argumentDefinitions['someArgument'][1]);
     }
 }
