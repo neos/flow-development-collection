@@ -248,7 +248,8 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
                     clearstatcache(true, $cacheEntryPathAndFilename);
                     return $result;
                 }
-            } catch (\Exception $e) {}
+            } catch (\Exception $e) {
+            }
             usleep(rand(10, 500));
         }
 
@@ -486,7 +487,8 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
                     flock($file, LOCK_UN);
                 }
                 fclose($file);
-            } catch (\Exception $e) {}
+            } catch (\Exception $e) {
+            }
 
             if ($data !== false) {
                 return $data;
@@ -520,7 +522,8 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
                     flock($file, LOCK_UN);
                 }
                 fclose($file);
-            } catch (\Exception $e) {}
+            } catch (\Exception $e) {
+            }
             if ($result !== false) {
                 clearstatcache(true, $cacheEntryPathAndFilename);
                 return $result;
