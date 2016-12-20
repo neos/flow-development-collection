@@ -4,7 +4,7 @@
 }
 
 body {
-    background-color: #34363C;
+    background-color: #e6e6e6;
     font-family: 'Work Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 13px;
     padding: 20px;
@@ -14,8 +14,16 @@ pre {
     font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
 }
 
+ol > li {
+  color: #ffffff;
+}
+
+h1, h2, h3 {
+  font-weight: normal;
+}
+
 .color-muted {
-    color: #656a71;
+    color: #ffffff;
 }
 
 .color-highlight {
@@ -23,14 +31,14 @@ pre {
 }
 
 .color-text-inverted {
-    color: #34363C;
+    color: #00ADEE;
 }
 
 .ExceptionSubject {
     font-size: 18px;
     line-height: 150%;
     margin: 0 0 15px 0;
-    color: #D75200;
+    color: #00ADEE;
 }
 
 .ExceptionBody {
@@ -47,7 +55,7 @@ pre {
     margin: 0;
     font-size: 11px;
     color: #656a71;
-    background-color: #000000;
+    background-color: #ffffff;
     padding-left: 30px;
 }
 
@@ -86,21 +94,21 @@ pre {
 }
 
 .Flow-Debug-Backtrace-Step-Function {
-    color: #D75200;
-    background-color: #fff;
+    color: #ffffff;
+    background-color: #26224C;
     padding: 5px;
 }
 
 .Flow-Debug-CodeSnippet {
     font-weight: normal;
-    background: #000000;
+    background: #ffffff;
     padding: 5px 0;
 }
 
 .Flow-Debug-CodeSnippet-File {
     padding: 5px 0 5px 30px;
     font-size: 11px;
-    color: #ccc;
+    color: #999999;
 }
 
 .Flow-Debug-CodeSnippet-Code-Highlighted {
