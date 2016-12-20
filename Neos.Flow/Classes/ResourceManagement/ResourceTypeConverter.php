@@ -229,7 +229,7 @@ class ResourceTypeConverter extends AbstractTypeConverter
             $resource = $this->resourceManager->getResourceBySha1($hash);
         }
         if ($resource === null) {
-            $collectionName = $this->getCollectionName($source, $configuration);
+            $collectionName = isset($source['collectionName']) ? $source['collectionName'] : $this->getCollectionName($source, $configuration);
             if (isset($source['data'])) {
                 $resource = $this->resourceManager->importResourceFromContent(base64_decode($source['data']), $source['filename'], $collectionName, $givenResourceIdentity);
             } elseif ($hash !== null) {
@@ -238,6 +238,9 @@ class ResourceTypeConverter extends AbstractTypeConverter
                 if (is_array($source) && isset($source['filename'])) {
                     $resource->setFilename($source['filename']);
                 }
+            }
+            if ($hash !== null && $resource->getSha1() !== $hash) {
+                throw new InvalidResourceDataException('The source SHA1 did not match the SHA1 of the imported resource.', 1482248149);
             }
         }
 
