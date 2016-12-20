@@ -86,11 +86,11 @@ class Manager
     /**
      * Returns the migration status for all packages.
      *
-     * @param string $packageKey key of the package to migrate, or NULL to migrate all packages
+     * @param string $packageKey key of the package to fetch the migration status for
      * @param string $versionNumber version of the migration to fetch the status for (e.g. "20120126163610"), or NULL to consider all migrations
      * @return array in the format [<versionNumber> => ['migration' => <AbstractMigration>, 'state' => <STATE_*>], [...]]
      */
-    public function getStatus($packageKey = null, $versionNumber = null)
+    public function getStatus($packageKey, $versionNumber = null)
     {
         $status = array();
         $migrations = $this->getMigrations($versionNumber);
@@ -122,9 +122,6 @@ class Manager
      */
     public function migrate($packageKey, $versionNumber = null, $force = false)
     {
-        if (!$packageKey) {
-            throw new \RuntimeException('A package key needs to be specified when calling "migrate"');
-        }
         $packagesData = $this->getPackagesData($packageKey);
         foreach ($this->getMigrations($versionNumber) as $migration) {
             $this->triggerEvent(self::EVENT_MIGRATION_START, array($migration));
@@ -413,17 +410,14 @@ class Manager
 
 
     /**
-     * @param string $packageKey if specified, only the package data for the given key is returned
+     * @param string $packageKey the package key to return migration data for
      * @return array in the format ['<packageKey' => ['packageKey' => '<packageKey>', 'category' => <Application/Framework/...>, 'path' => '<packagePath>', 'meta' => '<packageMetadata>', 'composerManifest' => '<composerData>'], [...]]
      * @throws \InvalidArgumentException
      */
-    protected function getPackagesData($packageKey = null)
+    protected function getPackagesData($packageKey)
     {
         $this->initialize();
 
-        if ($packageKey === null) {
-            return $this->packagesData;
-        }
         if (!isset($this->packagesData[$packageKey])) {
             throw new \InvalidArgumentException(sprintf('Package "%s" was not found', $packageKey), 1421667044);
         }

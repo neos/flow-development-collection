@@ -46,12 +46,18 @@ if (\Neos\Flow\Core\Migrations\Git::isGitAvailable() === false) {
 
 $migrationsManager = new Manager();
 
-$packageKey = getFlagValue('package-key');
+if (!isset($GLOBALS['argv'][0]) || substr($GLOBALS['argv'][0], 0, 2) === '--') {
+    outputLine('EXCEPTION: No package key specified.', [], 0, STYLE_ERROR);
+    outputLine('  That package key has to be specified as first argument like "./flow flow:core:migrate Foo.Bar:MyPackage"', [], 0, STYLE_ERROR);
+
+    exit(255);
+}
+$packageKey = $GLOBALS['argv'][0];
 
 $versionNumber = null;
 if (flagIsSet('version')) {
     if (preg_match('/[0-9]{12,14}/', getFlagValue('version'), $matches) !== 1) {
-        outputLine('EXCEPTION: invalid version "%s" specified, please provide the 12 or 14 digit timestamp of the version you want to target.', array(getFlagValue('version')), 0, STYLE_ERROR);
+        outputLine('EXCEPTION: invalid version "%s" specified, please provide the 12 or 14 digit timestamp of the version you want to target.', [getFlagValue('version')], 0, STYLE_ERROR);
         exit(255);
     }
     $versionNumber = $matches[0];
@@ -63,17 +69,15 @@ if (flagIsSet('version')) {
 $verbose = flagIsSet('verbose');
 
 if (flagIsSet('status')) {
-    outputLine('Fetching migration status...');
+    outputHeadline('Migration status for package "%s"', 1, [$packageKey]);
     try {
         $status = $migrationsManager->getStatus($packageKey, $versionNumber);
     } catch (\Exception $exception) {
-        outputLine('EXCEPTION: %s', array($exception->getMessage()), 0, STYLE_ERROR);
+        outputLine('EXCEPTION: %s', [$exception->getMessage()], 0, STYLE_ERROR);
         exit(255);
     }
 
-    outputHeadline('Migration status', 1);
     foreach ($status as $packageKey => $migrationsStatus) {
-        outputHeadline('for package "%s"', 2, array($packageKey));
         foreach ($migrationsStatus as $migrationVersionNumber => $migrationStatus) {
             if ($versionNumber !== null && $versionNumber != $migrationVersionNumber) {
                 continue;
@@ -83,11 +87,11 @@ if (flagIsSet('status')) {
             $status = $migrationStatus['state'] === Manager::STATE_MIGRATED ? 'migrated' : 'not migrated/skipped';
 
             $migrationTitle = sprintf('%s (%s)', formatVersion($migrationVersionNumber), $migration->getIdentifier());
-            outputLine('>> %s %s', array(str_pad($migrationTitle, MAXIMUM_LINE_LENGTH - 24), $status), MAXIMUM_LINE_LENGTH - 16);
+            outputLine('>> %s %s', [str_pad($migrationTitle, MAXIMUM_LINE_LENGTH - 24), $status], MAXIMUM_LINE_LENGTH - 16);
             if ($verbose) {
                 $description = $migration->getDescription();
                 if ($description !== null) {
-                    outputLine('     %s', array($migration->getDescription()), 5);
+                    outputLine('     %s', [$migration->getDescription()], 5);
                     outputLine();
                 }
             }
@@ -113,33 +117,29 @@ $migrationsManager->on(Manager::EVENT_MIGRATION_DONE, function (AbstractMigratio
         outputSeparator();
     }
     if ($verbose) {
-        outputLine('Done with %s', array($migration->getIdentifier()));
+        outputLine('Done with %s', [$migration->getIdentifier()]);
         outputLine();
     }
 });
 
 $migrationsManager->on(Manager::EVENT_MIGRATION_SKIPPED, function (AbstractMigration $migration, $reason) use ($migrationsManager) {
     outputMigrationHeadline($migration);
-    outputLine('  Skipping %s: %s', array($migrationsManager->getCurrentPackageKey(), $reason), 0, STYLE_WARNING);
+    outputLine('  Skipping: %s', [$reason], 0, STYLE_ERROR);
     outputLine();
+    exit(255);
 });
 
 if ($verbose) {
     $migrationsManager->on(Manager::EVENT_MIGRATION_ALREADY_APPLIED, function (AbstractMigration $migration, $reason) use ($migrationsManager) {
         outputMigrationHeadline($migration);
-        outputLine('  Skipping %s: %s', array($migrationsManager->getCurrentPackageKey(), $reason));
+        outputLine('  Skipping: %s', [$reason]);
         outputLine();
     });
 }
 
-$migrationsManager->on(Manager::EVENT_MIGRATION_EXECUTED, function (AbstractMigration $migration) use ($migrationsManager) {
-    outputMigrationHeadline($migration);
-    outputLine('  Migrated %s', array($migrationsManager->getCurrentPackageKey()), 0, STYLE_SUCCESS);
-});
-
 if ($verbose) {
     $migrationsManager->on(Manager::EVENT_MIGRATION_COMMIT_SKIPPED, function (AbstractMigration $migration, $reason) {
-        outputLine('  Skipping commit: %s', array($reason), 0, STYLE_WARNING);
+        outputLine('  Skipping commit: %s', [$reason], 0, STYLE_WARNING);
     });
 }
 
@@ -151,7 +151,7 @@ $migrationsManager->on(Manager::EVENT_MIGRATION_COMMITTED, function (AbstractMig
 
 $migrationsManager->on(Manager::EVENT_MIGRATION_LOG_IMPORTED, function (AbstractMigration $migration, $importResult) {
     outputMigrationHeadline($migration);
-    outputLine('  Import migration log from Git history', array(), 0, STYLE_SUCCESS);
+    outputLine('  Import migration log from Git history', [], 0, STYLE_SUCCESS);
     outputLine('  Commit result:');
     outputLine($importResult);
 });
@@ -161,7 +161,7 @@ function outputMigrationHeadline(AbstractMigration $migration)
 {
     global $lastMigration;
     if ($migration !== $lastMigration) {
-        outputHeadline('Migration %s (%s)', 1, array($migration->getIdentifier(), formatVersion($migration->getVersionNumber())));
+        outputHeadline('Migration %s (%s)', 2, [$migration->getIdentifier(), formatVersion($migration->getVersionNumber())]);
         $description = $migration->getDescription();
         if ($description !== null) {
             outputLine($description);
@@ -171,21 +171,14 @@ function outputMigrationHeadline(AbstractMigration $migration)
     }
 }
 
-if (!$packageKey) {
-    outputLine('EXCEPTION: No package key specified.', array(), 0, STYLE_ERROR);
-    outputLine('  Please specify one using "--package-key Foo.Bar:MyPackage"', array(), 0, STYLE_ERROR);
-
-    exit(255);
-}
-
-outputLine('Migrating...');
+outputHeadline('Migrating package "%s"', 1, [$packageKey]);
 try {
     $migrationsManager->migrate($packageKey, $versionNumber, flagIsSet('force'));
 } catch (\Exception $exception) {
-    outputLine('EXCEPTION: %s', array($exception->getMessage()), 0, STYLE_ERROR);
+    outputLine('EXCEPTION: %s', [$exception->getMessage()], 0, STYLE_ERROR);
     exit(255);
 }
-outputLine('Done.');
+outputLine('Done.', [], 0, STYLE_SUCCESS);
 
 /**
  * Check if the given flag is in $GLOBALS['argv'].
@@ -201,7 +194,7 @@ function flagIsSet($flag)
 /**
  * Get the value of the given flag from $GLOBALS['argv'].
  *
- * @param $flag
+ * @param string $flag
  * @return mixed
  */
 function getFlagValue($flag)
@@ -237,9 +230,9 @@ function formatVersion($timestamp)
  * @param integer $style one of the STYLE_* constants
  * @return void
  */
-function outputLine($text = '', array $arguments = array(), $indention = 0, $style = STYLE_DEFAULT)
+function outputLine($text = '', array $arguments = [], $indention = 0, $style = STYLE_DEFAULT)
 {
-    if ($arguments !== array()) {
+    if ($arguments !== []) {
         $text = vsprintf($text, $arguments);
     }
     if ($style !== STYLE_DEFAULT && hasColorSupport()) {
@@ -272,10 +265,10 @@ function hasColorSupport()
  * @param array $arguments Optional arguments to use for sprintf
  * @return void
  */
-function outputHeadline($headline, $level = 1, array $arguments = array())
+function outputHeadline($headline, $level = 1, array $arguments = [])
 {
     outputLine();
-    $separatorCharacters = array('=', '-', '=', '-');
+    $separatorCharacters = ['=', '-', '=', '-'];
     $separatorCharacter = isset($separatorCharacters[$level - 1]) ? $separatorCharacters[$level - 1] : $separatorCharacters[0];
     if ($level === 1) {
         outputSeparator($separatorCharacter);
@@ -302,6 +295,6 @@ function outputSeparator($character = '-')
 function outputBulletList(array $items, $style = STYLE_DEFAULT)
 {
     foreach ($items as $item) {
-        outputLine('  * ' . $item, array(), 4, $style);
+        outputLine('  * ' . $item, [], 4, $style);
     }
 }
