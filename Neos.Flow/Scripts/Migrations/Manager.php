@@ -39,11 +39,6 @@ class Manager
     /**
      * @var array
      */
-    protected $ignoredPackageCategories = array('Framework', 'Libraries');
-
-    /**
-     * @var array
-     */
     protected $packagesData = null;
 
     /**
@@ -91,11 +86,11 @@ class Manager
     /**
      * Returns the migration status for all packages.
      *
-     * @param string $packageKey key of the package to migrate, or NULL to migrate all packages
+     * @param string $packageKey key of the package to fetch the migration status for
      * @param string $versionNumber version of the migration to fetch the status for (e.g. "20120126163610"), or NULL to consider all migrations
      * @return array in the format [<versionNumber> => ['migration' => <AbstractMigration>, 'state' => <STATE_*>], [...]]
      */
-    public function getStatus($packageKey = null, $versionNumber = null)
+    public function getStatus($packageKey, $versionNumber = null)
     {
         $status = array();
         $migrations = $this->getMigrations($versionNumber);
@@ -120,43 +115,21 @@ class Manager
      * - the package needs the migration
      * - is a clean git working copy
      *
-     * @param string $packageKey key of the package to migrate, or NULL to migrate all packages
+     * @param string $packageKey key of the package to migrate
      * @param string $versionNumber version of the migration to execute (e.g. "20120126163610"), or NULL to execute all migrations
      * @param boolean $force if TRUE migrations will be applied even if the corresponding package is not a git working copy or contains local changes
      * @return void
      */
-    public function migrate($packageKey = null, $versionNumber = null, $force = false)
+    public function migrate($packageKey, $versionNumber = null, $force = false)
     {
         $packagesData = $this->getPackagesData($packageKey);
         foreach ($this->getMigrations($versionNumber) as $migration) {
             $this->triggerEvent(self::EVENT_MIGRATION_START, array($migration));
             foreach ($packagesData as &$this->currentPackageData) {
-                if ($packageKey === null && $this->shouldPackageBeSkippedByDefault()) {
-                    continue;
-                }
                 $this->migratePackage($migration, $force);
             }
             $this->triggerEvent(self::EVENT_MIGRATION_DONE, array($migration));
         }
-    }
-
-    /**
-     * By default we skip "TYPO3.*" and "Neos.*" packages and all packages of the ignored categories (@see ignoredPackageCategories)
-     *
-     * @return boolean
-     */
-    protected function shouldPackageBeSkippedByDefault()
-    {
-        if (strpos($this->currentPackageData['packageKey'], 'TYPO3.') === 0) {
-            return true;
-        }
-        if (strpos($this->currentPackageData['packageKey'], 'Neos.') === 0) {
-            return true;
-        }
-        if (in_array($this->currentPackageData['category'], $this->ignoredPackageCategories)) {
-            return true;
-        }
-        return false;
     }
 
     /**
@@ -437,17 +410,14 @@ class Manager
 
 
     /**
-     * @param string $packageKey if specified, only the package data for the given key is returned
+     * @param string $packageKey the package key to return migration data for
      * @return array in the format ['<packageKey' => ['packageKey' => '<packageKey>', 'category' => <Application/Framework/...>, 'path' => '<packagePath>', 'meta' => '<packageMetadata>', 'composerManifest' => '<composerData>'], [...]]
      * @throws \InvalidArgumentException
      */
-    protected function getPackagesData($packageKey = null)
+    protected function getPackagesData($packageKey)
     {
         $this->initialize();
 
-        if ($packageKey === null) {
-            return $this->packagesData;
-        }
         if (!isset($this->packagesData[$packageKey])) {
             throw new \InvalidArgumentException(sprintf('Package "%s" was not found', $packageKey), 1421667044);
         }
