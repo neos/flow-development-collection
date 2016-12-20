@@ -47,6 +47,7 @@ if (\Neos\Flow\Core\Migrations\Git::isGitAvailable() === false) {
 $migrationsManager = new Manager();
 
 $packageKey = getFlagValue('package-key');
+
 $versionNumber = null;
 if (flagIsSet('version')) {
     if (preg_match('/[0-9]{12,14}/', getFlagValue('version'), $matches) !== 1) {
@@ -168,6 +169,13 @@ function outputMigrationHeadline(AbstractMigration $migration)
         }
         $lastMigration = $migration;
     }
+}
+
+if (!$packageKey) {
+    outputLine('EXCEPTION: No package key specified.', array(), 0, STYLE_ERROR);
+    outputLine('  Please specify one using "--package-key Foo.Bar:MyPackage"', array(), 0, STYLE_ERROR);
+
+    exit(255);
 }
 
 outputLine('Migrating...');

@@ -39,11 +39,6 @@ class Manager
     /**
      * @var array
      */
-    protected $ignoredPackageCategories = array('Framework', 'Libraries');
-
-    /**
-     * @var array
-     */
     protected $packagesData = null;
 
     /**
@@ -125,38 +120,19 @@ class Manager
      * @param boolean $force if TRUE migrations will be applied even if the corresponding package is not a git working copy or contains local changes
      * @return void
      */
-    public function migrate($packageKey = null, $versionNumber = null, $force = false)
+    public function migrate($packageKey, $versionNumber = null, $force = false)
     {
+        if (!$packageKey) {
+            throw new \RuntimeException('A package key needs to be specified when calling "migrate"');
+        }
         $packagesData = $this->getPackagesData($packageKey);
         foreach ($this->getMigrations($versionNumber) as $migration) {
             $this->triggerEvent(self::EVENT_MIGRATION_START, array($migration));
             foreach ($packagesData as &$this->currentPackageData) {
-                if ($packageKey === null && $this->shouldPackageBeSkippedByDefault()) {
-                    continue;
-                }
                 $this->migratePackage($migration, $force);
             }
             $this->triggerEvent(self::EVENT_MIGRATION_DONE, array($migration));
         }
-    }
-
-    /**
-     * By default we skip "TYPO3.*" and "Neos.*" packages and all packages of the ignored categories (@see ignoredPackageCategories)
-     *
-     * @return boolean
-     */
-    protected function shouldPackageBeSkippedByDefault()
-    {
-        if (strpos($this->currentPackageData['packageKey'], 'TYPO3.') === 0) {
-            return true;
-        }
-        if (strpos($this->currentPackageData['packageKey'], 'Neos.') === 0) {
-            return true;
-        }
-        if (in_array($this->currentPackageData['category'], $this->ignoredPackageCategories)) {
-            return true;
-        }
-        return false;
     }
 
     /**
