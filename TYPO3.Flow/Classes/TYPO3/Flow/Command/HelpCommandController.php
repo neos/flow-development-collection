@@ -50,6 +50,7 @@ class HelpCommandController extends CommandController
 
     /**
      * @param Bootstrap $bootstrap
+     * @return void
      */
     public function injectBootstrap(Bootstrap $bootstrap)
     {
@@ -58,6 +59,7 @@ class HelpCommandController extends CommandController
 
     /**
      * @param PackageManagerInterface $packageManager
+     * @return void
      */
     public function injectPackageManager(PackageManagerInterface $packageManager)
     {
@@ -66,6 +68,7 @@ class HelpCommandController extends CommandController
 
     /**
      * @param array $settings
+     * @return void
      */
     public function injectSettings(array $settings)
     {
@@ -74,6 +77,7 @@ class HelpCommandController extends CommandController
 
     /**
      * @param CommandManager $commandManager
+     * @return void
      */
     public function injectCommandManager(CommandManager $commandManager)
     {
