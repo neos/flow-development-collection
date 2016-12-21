@@ -23,10 +23,10 @@
         "neos/utility-schema": "*",
         "neos/utility-unicode": "*",
         "neos/error-messages": "*",
-        "neos/fluid-adaptor": "*",
-        "neos/cache": "*",
+        "neos/fluid-adaptor": "~4.0.0",
+        "neos/cache": "~4.0.0",
 
-        "neos/eel": "*",
+        "neos/eel": "~4.0.0",
 
         "ramsey/uuid": "^3.0.0",
 
