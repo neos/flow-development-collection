@@ -29,28 +29,60 @@ use TYPO3\Flow\Package\PackageManagerInterface;
 class HelpCommandController extends CommandController
 {
     /**
-     * @Flow\Inject
      * @var PackageManagerInterface
      */
     protected $packageManager;
 
     /**
-     * @Flow\Inject
      * @var Bootstrap
      */
     protected $bootstrap;
 
     /**
-     * @Flow\InjectConfiguration(path = "core.applicationPackageKey")
      * @var string
      */
     protected $applicationPackageKey;
 
     /**
-     * @Flow\Inject
      * @var CommandManager
      */
     protected $commandManager;
+
+    /**
+     * @param Bootstrap $bootstrap
+     * @return void
+     */
+    public function injectBootstrap(Bootstrap $bootstrap)
+    {
+        $this->bootstrap = $bootstrap;
+    }
+
+    /**
+     * @param PackageManagerInterface $packageManager
+     * @return void
+     */
+    public function injectPackageManager(PackageManagerInterface $packageManager)
+    {
+        $this->packageManager = $packageManager;
+    }
+
+    /**
+     * @param array $settings
+     * @return void
+     */
+    public function injectSettings(array $settings)
+    {
+        $this->applicationPackageKey = $settings['core']['applicationPackageKey'];
+    }
+
+    /**
+     * @param CommandManager $commandManager
+     * @return void
+     */
+    public function injectCommandManager(CommandManager $commandManager)
+    {
+        $this->commandManager = $commandManager;
+    }
 
     /**
      * Displays a short, general help message
