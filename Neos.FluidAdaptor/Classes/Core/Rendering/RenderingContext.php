@@ -74,6 +74,11 @@ class RenderingContext extends FluidRenderingContext implements FlowAwareRenderi
     protected $cache;
 
     /**
+     * @var Configuration
+     */
+    protected $parserConfiguration;
+
+    /**
      * RenderingContext constructor.
      *
      * @param ViewInterface $view
@@ -149,10 +154,12 @@ class RenderingContext extends FluidRenderingContext implements FlowAwareRenderi
      */
     public function buildParserConfiguration()
     {
-        $parserConfiguration = parent::buildParserConfiguration();
-        $parserConfiguration->addInterceptor(new ResourceInterceptor());
+        if ($this->parserConfiguration === null) {
+            $this->parserConfiguration = parent::buildParserConfiguration();
+            $this->parserConfiguration->addInterceptor(new ResourceInterceptor());
+        }
 
-        return $parserConfiguration;
+        return $this->parserConfiguration;
     }
 
     /**
