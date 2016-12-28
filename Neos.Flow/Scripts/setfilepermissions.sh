@@ -32,6 +32,17 @@ COMMANDLINE_USER="$1"
 WEBSERVER_USER="$2"
 WEBSERVER_GROUP="$3"
 
+# Check that command line user is a member of the webserver group
+
+if id -nG "$COMMANDLINE_USER" | grep -qw "$WEBSERVER_GROUP"; then
+  echo "User is a member of the webserver group $WEBSERVER_GROUP, continuing"
+else
+  echo "User is not a member of the webserver group $WEBSERVER_GROUP, exiting"
+  echo
+  exit 1;
+fi
+
+
 echo "Checking permissions from here upwards."
 
 unset PARENT_PATH
