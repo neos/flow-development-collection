@@ -160,7 +160,7 @@ class MemcachedBackend extends IndependentAbstractBackend implements TaggableBac
     {
         parent::setCache($cache);
 
-        $pathHash = substr(md5($this->environmentConfiguration->getApplicationIdentifier() . $this->environmentConfiguration->getApplicationContext() . $cache->getIdentifier()), 0, 12);
+        $pathHash = substr(md5($this->environmentConfiguration->getApplicationIdentifier() . $cache->getIdentifier()), 0, 12);
         $this->identifierPrefix = 'Flow_' . $pathHash . '_';
     }
 
