@@ -408,7 +408,7 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
      *
      * Leave this empty if you want to connect to a socket
      *
-     * @param string $port Port of the Redis server
+     * @param integer $port Port of the Redis server
      * @api
      */
     public function setPort($port)
