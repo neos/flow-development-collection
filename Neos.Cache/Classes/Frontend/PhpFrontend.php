@@ -22,6 +22,11 @@ use Neos\Cache\Exception\InvalidDataException;
 class PhpFrontend extends StringFrontend
 {
     /**
+     * @var PhpCapableBackendInterface
+     */
+    protected $backend;
+
+    /**
      * Constructs the cache
      *
      * @param string $identifier A identifier which describes this cache
@@ -36,7 +41,7 @@ class PhpFrontend extends StringFrontend
      * Finds and returns the original code from the cache.
      *
      * @param string $entryIdentifier Identifier of the cache entry to fetch
-     * @return string The value
+     * @return string|bool The value
      * @throws \InvalidArgumentException
      * @api
      */
