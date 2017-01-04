@@ -124,15 +124,14 @@ class VariableFrontend extends AbstractFrontend
     /**
      * Returns an iterator over the entries of this cache
      *
-     * @param integer $chunkSize Determines the number of entries fetched by the backend at once (not supported yet, for future use)
      * @return \Neos\Cache\Frontend\CacheEntryIterator
      * @throws NotSupportedByBackendException
      */
-    public function getIterator($chunkSize = null)
+    public function getIterator()
     {
         if (!$this->backend instanceof IterableBackendInterface) {
-            throw new NotSupportedByBackendException('The cache backend (%s) configured for cach "%s" does cannot be used as an iterator. Please choose a different cache backend or adjust the code using this cache.', 1371463860);
+            throw new NotSupportedByBackendException('The cache backend (%s) configured for cache "%s" cannot be used as an iterator. Please choose a different cache backend or adjust the code using this cache.', 1371463860);
         }
-        return new CacheEntryIterator($this, $this->backend, $chunkSize);
+        return new CacheEntryIterator($this, $this->backend);
     }
 }
