@@ -11,7 +11,9 @@ namespace Neos\Cache\Frontend;
  * source code.
  */
 
+use Neos\Cache\Backend\TaggableBackendInterface;
 use Neos\Cache\Exception\InvalidDataException;
+use Neos\Cache\Exception\NotSupportedByBackendException;
 
 /**
  * A cache frontend for strings. Nothing else.
@@ -71,11 +73,15 @@ class StringFrontend extends AbstractFrontend
      *
      * @param string $tag The tag to search for
      * @return array An array with the identifier (key) and content (value) of all matching entries. An empty array if no entries matched
+     * @throws NotSupportedByBackendException
      * @throws \InvalidArgumentException
      * @api
      */
     public function getByTag($tag)
     {
+        if (!$this->backend instanceof TaggableBackendInterface) {
+            throw new NotSupportedByBackendException('The backend must implement TaggableBackendInterface. Please choose a different cache backend or adjust the code using this cache.', 1483487409);
+        }
         if (!$this->isValidTag($tag)) {
             throw new \InvalidArgumentException('"' . $tag . '" is not a valid tag for a cache entry.', 1233057772);
         }
