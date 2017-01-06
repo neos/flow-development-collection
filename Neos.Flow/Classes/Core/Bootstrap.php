@@ -295,7 +295,7 @@ class Bootstrap
      */
     public function buildCompiletimeSequence()
     {
-        $sequence = $this->buildEssentialsSequence('compiletime');
+        $sequence = $this->buildEssentialsSequence(self::RUNLEVEL_COMPILETIME);
 
         $sequence->addStep(new Step('neos.flow:cachemanagement:forceflush', [Scripts::class, 'forceFlushCachesIfNecessary']), 'neos.flow:systemlogger');
         $sequence->addStep(new Step('neos.flow:objectmanagement:compiletime:create', [Scripts::class, 'initializeObjectManagerCompileTimeCreate']), 'neos.flow:systemlogger');
@@ -314,7 +314,7 @@ class Bootstrap
      */
     public function buildRuntimeSequence()
     {
-        $sequence = $this->buildEssentialsSequence('runtime');
+        $sequence = $this->buildEssentialsSequence(self::RUNLEVEL_RUNTIME);
         $sequence->addStep(new Step('neos.flow:objectmanagement:proxyclasses', [Scripts::class, 'initializeProxyClasses']), 'neos.flow:systemlogger');
         $sequence->addStep(new Step('neos.flow:classloader:cache', [Scripts::class, 'initializeClassLoaderClassesCache']), 'neos.flow:objectmanagement:proxyclasses');
         $sequence->addStep(new Step('neos.flow:objectmanagement:runtime', [Scripts::class, 'initializeObjectManager']), 'neos.flow:classloader:cache');
