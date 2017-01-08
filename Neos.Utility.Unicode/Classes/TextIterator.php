@@ -195,11 +195,11 @@ class TextIterator implements \Iterator
     }
 
     /**
-     * Returns the next elment following the character of the original string
+     * Returns the next element following the character of the original string
      * given by its offset
      *
      * @param integer $offset The offset of the character
-     * @return string The element following this character
+     * @return integer The element following this character
      */
     public function following($offset)
     {
@@ -218,7 +218,7 @@ class TextIterator implements \Iterator
      * Returns the element preceding the character of the original string given by its offset
      *
      * @param integer $offset The offset of the character
-     * @return string The element preceding this character
+     * @return integer The element preceding this character
      */
     public function preceding($offset)
     {
