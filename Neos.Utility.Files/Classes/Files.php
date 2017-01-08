@@ -11,7 +11,6 @@ namespace Neos\Utility;
  * source code.
  */
 
-use Neos\Error\Messages\Exception as ErrorException;
 use Neos\Utility\Exception\FilesException;
 
 /**
@@ -313,14 +312,10 @@ abstract class Files
         if ($flags === true) {
             $flags = FILE_USE_INCLUDE_PATH;
         }
-        try {
-            if ($maximumLength > -1) {
-                $content = file_get_contents($pathAndFilename, $flags, $context, $offset, $maximumLength);
-            } else {
-                $content = file_get_contents($pathAndFilename, $flags, $context, $offset);
-            }
-        } catch (ErrorException $ignoredException) {
-            $content = false;
+        if ($maximumLength > -1) {
+            $content = file_get_contents($pathAndFilename, $flags, $context, $offset, $maximumLength);
+        } else {
+            $content = file_get_contents($pathAndFilename, $flags, $context, $offset);
         }
         return $content;
     }
