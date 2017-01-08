@@ -61,7 +61,7 @@ The exception handler to be used can be configured through an entry in Settings.
         error:
           exceptionHandler:
             # Defines the global, last-resort exception handler.
-            # The specified class must implement \Neos\Error\Messages\ExceptionHandlerInterface
+            # The specified class must implement \Neos\Flow\Error\ExceptionHandlerInterface
             className: 'Neos\Error\Messages\ProductionExceptionHandler'
 
 Reference Code
