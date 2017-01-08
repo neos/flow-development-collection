@@ -83,17 +83,17 @@ class TextIterator implements \Iterator
      * Constructs the TextIterator
      *
      * @param string $subject
-     * @param integer $iteratorType The type of iterator
+     * @param int $iteratorType The type of iterator
      * @throws Exception
      */
-    public function __construct($subject, $iteratorType = self::CHARACTER)
+    public function __construct(string $subject, int $iteratorType = self::CHARACTER)
     {
         if ($iteratorType < 1 || $iteratorType > 6) {
             throw new Exception('Fatal error: Invalid iterator type in TextIterator constructor', 1210849014);
         }
 
         $this->iteratorType = $iteratorType;
-        $this->subject = (string)$subject;
+        $this->subject = $subject;
         $this->currentPosition = 0;
         $this->iteratorCache = new \ArrayObject();
         $this->iteratorCacheIterator = $this->iteratorCache->getIterator();
