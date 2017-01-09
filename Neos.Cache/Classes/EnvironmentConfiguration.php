@@ -40,7 +40,7 @@ class EnvironmentConfiguration
      *
      * @var integer
      */
-    protected $maximumPathLength = PHP_MAXPATHLEN;
+    protected $maximumPathLength;
 
     /**
      * EnvironmentConfiguration constructor.
@@ -49,7 +49,7 @@ class EnvironmentConfiguration
      * @param string $fileCacheBasePath
      * @param integer $maximumPathLength
      */
-    public function __construct($applicationIdentifier, $fileCacheBasePath, $maximumPathLength)
+    public function __construct($applicationIdentifier, $fileCacheBasePath, $maximumPathLength = PHP_MAXPATHLEN)
     {
         $this->applicationIdentifier = $applicationIdentifier;
         $this->fileCacheBasePath = $fileCacheBasePath;
