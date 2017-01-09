@@ -13,9 +13,11 @@ include_once(__DIR__ . '/../../BaseTestCase.php');
  * source code.
  */
 use Neos\Cache\Backend\AbstractBackend;
-use Neos\Cache\Tests\BaseTestCase;
+use Neos\Cache\Backend\NullBackend;
 use Neos\Cache\Backend\TaggableBackendInterface;
+use Neos\Cache\Exception\NotSupportedByBackendException;
 use Neos\Cache\Frontend\StringFrontend;
+use Neos\Cache\Tests\BaseTestCase;
 
 /**
  * Testcase for the string cache frontend
@@ -131,13 +133,24 @@ class StringFrontendTest extends BaseTestCase
 
     /**
      * @test
+     * @expectedException \Neos\Cache\Exception\NotSupportedByBackendException
+     */
+    public function getByTagThrowAnExceptionWithoutTaggableBackend()
+    {
+        $backend = $this->prepareDefaultBackend();
+        $cache = new StringFrontend('VariableFrontend', $backend);
+        $cache->getByTag('foo');
+    }
+
+    /**
+     * @test
      */
     public function getByTagCallsBackendAndReturnsIdentifiersAndValuesOfEntries()
     {
         $tag = 'sometag';
         $identifiers = ['one', 'two'];
         $entries = ['one' => 'one value', 'two' => 'two value'];
-        $backend = $this->prepareDefaultBackend();
+        $backend = $this->prepareTaggableBackend();
 
         $backend->expects($this->once())->method('findIdentifiersByTag')->with($this->equalTo($tag))->will($this->returnValue($identifiers));
         $backend->expects($this->exactly(2))->method('get')->will($this->onConsecutiveCalls('one value', 'two value'));
@@ -153,6 +166,18 @@ class StringFrontendTest extends BaseTestCase
     protected function prepareDefaultBackend(array $methods = ['get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'])
     {
         return $this->getMockBuilder(AbstractBackend::class)
+            ->setMethods($methods)
+            ->disableOriginalConstructor()
+            ->getMock();
+    }
+
+    /**
+     * @param array $methods
+     * @return AbstractBackend|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function prepareTaggableBackend(array $methods = ['get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'])
+    {
+        return $this->getMockBuilder(NullBackend::class)
             ->setMethods($methods)
             ->disableOriginalConstructor()
             ->getMock();
