@@ -90,8 +90,7 @@ class CacheFactory extends \Neos\Cache\CacheFactory implements CacheFactoryInter
 
         $environmentConfiguration = new EnvironmentConfiguration(
             FLOW_PATH_ROOT . '~' . (string)$environment->getContext(),
-            $environment->getPathToTemporaryDirectory(),
-            PHP_MAXPATHLEN
+            $environment->getPathToTemporaryDirectory()
         );
 
         parent::__construct($environmentConfiguration);
