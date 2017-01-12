@@ -11,6 +11,7 @@ namespace TYPO3\Flow\Core\Booting;
  * source code.
  */
 
+use Tideways\Profiler;
 use TYPO3\Flow\Core\Bootstrap;
 use TYPO3\Flow\Exception as FlowException;
 
@@ -65,6 +66,7 @@ class Sequence
     {
         $removedOccurrences = 0;
         foreach ($this->steps as $previousStepIdentifier => $steps) {
+            /** @var Step $step */
             foreach ($steps as $step) {
                 if ($step->getIdentifier() === $stepIdentifier) {
                     unset($this->steps[$previousStepIdentifier][$stepIdentifier]);
@@ -86,8 +88,19 @@ class Sequence
     public function invoke(Bootstrap $bootstrap)
     {
         if (isset($this->steps['start'])) {
+            if (class_exists(Profiler::class)) {
+                $span = Profiler::createSpan('sequence-' . $this->identifier);
+                $span->startTimer();
+                $span->annotate(['title' => 'Sequence(' . $this->identifier . ')']);
+            }
+
+            /** @var Step $step */
             foreach ($this->steps['start'] as $step) {
                 $this->invokeStep($step, $bootstrap);
+            }
+
+            if (class_exists(Profiler::class)) {
+                $span->stopTimer();
             }
         }
     }
@@ -103,9 +116,21 @@ class Sequence
     protected function invokeStep(Step $step, Bootstrap $bootstrap)
     {
         $bootstrap->getSignalSlotDispatcher()->dispatch(__CLASS__, 'beforeInvokeStep', [$step, $this->identifier]);
-        $identifier = $step->getIdentifier();
+
+        if (class_exists(Profiler::class)) {
+            $span = Profiler::createSpan('step-' . $step->getIdentifier());
+            $span->startTimer();
+            $span->annotate(['title' => 'Step(' . $step->getIdentifier() . ')']);
+        }
+
         $step($bootstrap);
+
+        if (class_exists(Profiler::class)) {
+            $span->stopTimer();
+        }
+
         $bootstrap->getSignalSlotDispatcher()->dispatch(__CLASS__, 'afterInvokeStep', [$step, $this->identifier]);
+        $identifier = $step->getIdentifier();
         if (isset($this->steps[$identifier])) {
             foreach ($this->steps[$identifier] as $followingStep) {
                 $this->invokeStep($followingStep, $bootstrap);

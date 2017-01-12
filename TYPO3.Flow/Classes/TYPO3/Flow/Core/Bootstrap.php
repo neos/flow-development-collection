@@ -14,6 +14,7 @@ namespace TYPO3\Flow\Core;
 // Load the composer autoloader first
 require_once(__DIR__ . '/../../../../../../Libraries/autoload.php');
 
+use Tideways\Profiler;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Core\Booting\Step;
 use TYPO3\Flow\Core\Booting\Sequence;
@@ -101,6 +102,10 @@ class Bootstrap
      */
     public function run()
     {
+        if (class_exists(Profiler::class)) {
+            Profiler::start();
+        }
+
         Scripts::initializeClassLoader($this);
         Scripts::initializeSignalSlot($this);
         Scripts::initializePackageManagement($this);

@@ -11,6 +11,7 @@ namespace TYPO3\Flow\Monitor;
  * source code.
  */
 
+use Tideways\Profiler;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cache\CacheManager;
 use TYPO3\Flow\Cache\Frontend\StringFrontend;
@@ -249,6 +250,12 @@ class FileMonitor
      */
     public function detectChanges()
     {
+        if (class_exists(Profiler::class)) {
+            $span = Profiler::createSpan('filemonitor');
+            $span->startTimer();
+            $span->annotate(['title' => 'FileMonitor::detectChanges()']);
+        }
+
         if ($this->changedFiles === null || $this->changedPaths === null) {
             $this->loadDetectedDirectoriesAndFiles();
             $changesDetected = false;
@@ -276,6 +283,10 @@ class FileMonitor
         }
         if ($changedFileCount > 0 || $changedPathCount) {
             $this->systemLogger->log(sprintf('File Monitor "%s" detected %s changed files and %s changed directories.', $this->identifier, $changedFileCount, $changedPathCount), LOG_INFO);
+        }
+
+        if (class_exists(Profiler::class)) {
+            $span->stopTimer();
         }
     }
 

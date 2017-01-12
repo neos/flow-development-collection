@@ -12,6 +12,7 @@ namespace TYPO3\Flow\Core\Booting;
  */
 
 use Doctrine\Common\Annotations\AnnotationRegistry;
+use Tideways\Profiler;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cache\CacheFactory;
 use TYPO3\Flow\Cache\CacheManager;
@@ -60,6 +61,12 @@ class Scripts
      */
     public static function initializeClassLoader(Bootstrap $bootstrap)
     {
+        if (class_exists(Profiler::class)) {
+            $span = Profiler::createSpan(__METHOD__);
+            $span->startTimer();
+            $span->annotate(['title' => __METHOD__]);
+        }
+
         require_once(FLOW_PATH_FLOW . 'Classes/TYPO3/Flow/Core/ClassLoader.php');
 
         $initialClassLoaderMappings = [
@@ -86,6 +93,10 @@ class Scripts
             $classLoader->setConsiderTestsNamespace(true);
             require_once(FLOW_PATH_FLOW . 'Tests/BaseTestCase.php');
             require_once(FLOW_PATH_FLOW . 'Tests/FunctionalTestCase.php');
+        }
+
+        if (class_exists(Profiler::class)) {
+            $span->stopTimer();
         }
     }
 
@@ -168,7 +179,17 @@ class Scripts
      */
     public static function initializeSignalSlot(Bootstrap $bootstrap)
     {
+        if (class_exists(Profiler::class)) {
+            $span = Profiler::createSpan(__METHOD__);
+            $span->startTimer();
+            $span->annotate(['title' => __METHOD__]);
+        }
+
         $bootstrap->setEarlyInstance(Dispatcher::class, new Dispatcher());
+
+        if (class_exists(Profiler::class)) {
+            $span->stopTimer();
+        }
     }
 
     /**
@@ -180,6 +201,12 @@ class Scripts
      */
     public static function initializePackageManagement(Bootstrap $bootstrap)
     {
+        if (class_exists(Profiler::class)) {
+            $span = Profiler::createSpan(__METHOD__);
+            $span->startTimer();
+            $span->annotate(['title' => __METHOD__]);
+        }
+
         $packageManager = new PackageManager();
         $bootstrap->setEarlyInstance(PackageManagerInterface::class, $packageManager);
 
@@ -190,6 +217,10 @@ class Scripts
 
         $packageManager->initialize($bootstrap);
         $bootstrap->getEarlyInstance(ClassLoader::class)->setPackages($packageManager->getActivePackages());
+
+        if (class_exists(Profiler::class)) {
+            $span->stopTimer();
+        }
     }
 
     /**
@@ -271,6 +302,7 @@ class Scripts
 
         $errorHandler = new ErrorHandler();
         $errorHandler->setExceptionalErrors($settings['error']['errorHandler']['exceptionalErrors']);
+        /** @var \TYPO3\Flow\Error\AbstractExceptionHandler $exceptionHandler */
         $exceptionHandler = new $settings['error']['exceptionHandler']['className'];
         $exceptionHandler->injectSystemLogger($bootstrap->getEarlyInstance(SystemLoggerInterface::class));
         $exceptionHandler->setOptions($settings['error']['exceptionHandler']);
@@ -387,6 +419,7 @@ class Scripts
      */
     public static function initializeObjectManagerCompileTimeFinalize(Bootstrap $bootstrap)
     {
+        /** @var CompileTimeObjectManager $objectManager */
         $objectManager = $bootstrap->getObjectManager();
         $configurationManager = $bootstrap->getEarlyInstance(ConfigurationManager::class);
         $reflectionService = $objectManager->get(ReflectionService::class);
