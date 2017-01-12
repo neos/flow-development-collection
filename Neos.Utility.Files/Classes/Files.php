@@ -306,6 +306,7 @@ abstract class Files
      * @param integer $offset (optional) Offset where reading of the file starts.
      * @param integer $maximumLength (optional) Maximum length to read. Default is -1 (no limit)
      * @return mixed The file content as a string or FALSE if the file could not be opened.
+     * @throws FilesException
      * @api
      */
     public static function getFileContents($pathAndFilename, $flags = 0, $context = null, $offset = -1, $maximumLength = -1)
@@ -314,12 +315,13 @@ abstract class Files
             $flags = FILE_USE_INCLUDE_PATH;
         }
         try {
+            $offset = $offset === -1 ? null : $offset;
             if ($maximumLength > -1) {
                 $content = file_get_contents($pathAndFilename, $flags, $context, $offset, $maximumLength);
             } else {
                 $content = file_get_contents($pathAndFilename, $flags, $context, $offset);
             }
-        } catch (ErrorException $ignoredException) {
+        } catch (FilesException $ignoredException) {
             $content = false;
         }
         return $content;
