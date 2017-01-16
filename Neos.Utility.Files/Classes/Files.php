@@ -98,12 +98,12 @@ abstract class Files
      * @param boolean $returnRealPath
      * @param boolean $returnDotFiles
      * @return \Generator
-     * @throws Exception
+     * @throws FilesException
      */
     public static function getRecursiveDirectoryGenerator($path, $suffix = null, $returnRealPath = false, $returnDotFiles = false)
     {
         if (!is_dir($path)) {
-            throw new Exception('"' . $path . '" is no directory.', 1207253462);
+            throw new FilesException('"' . $path . '" is no directory.', 1207253462);
         }
 
         $directories = array(self::getNormalizedPath($path));
@@ -156,7 +156,7 @@ abstract class Files
             foreach ($directoryIterator as $fileInfo) {
                 if (!$fileInfo->isDir()) {
                     if (self::unlink($fileInfo->getPathname()) !== true) {
-                        throw new Exception('Could not unlink file "' . $fileInfo->getPathname() . '".', 1169047619);
+                        throw new FilesException('Could not unlink file "' . $fileInfo->getPathname() . '".', 1169047619);
                     }
                 } elseif (!$directoryIterator->isDot()) {
                     self::removeDirectoryRecursively($fileInfo->getPathname());
