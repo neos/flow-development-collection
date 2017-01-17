@@ -369,7 +369,6 @@ class Scripts
     {
         $objectManager = new CompileTimeObjectManager($bootstrap->getContext());
         $bootstrap->setEarlyInstance(ObjectManagerInterface::class, $objectManager);
-        Bootstrap::$staticObjectManager = $objectManager;
 
         $signalSlotDispatcher = $bootstrap->getEarlyInstance(Dispatcher::class);
         $signalSlotDispatcher->injectObjectManager($objectManager);
@@ -377,6 +376,8 @@ class Scripts
         foreach ($bootstrap->getEarlyInstances() as $objectName => $instance) {
             $objectManager->setInstance($objectName, $instance);
         }
+
+        Bootstrap::$staticObjectManager = $objectManager;
     }
 
     /**
@@ -420,7 +421,6 @@ class Scripts
         $objectConfigurationCache = $bootstrap->getEarlyInstance(CacheManager::class)->getCache('Flow_Object_Configuration');
 
         $objectManager = new ObjectManager($bootstrap->getContext());
-        Bootstrap::$staticObjectManager = $objectManager;
 
         $objectManager->injectAllSettings($configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS));
         $objectManager->setObjects($objectConfigurationCache->get('objects'));
@@ -432,6 +432,8 @@ class Scripts
         $objectManager->get(Dispatcher::class)->injectObjectManager($objectManager);
         Debugger::injectObjectManager($objectManager);
         $bootstrap->setEarlyInstance(ObjectManagerInterface::class, $objectManager);
+
+        Bootstrap::$staticObjectManager = $objectManager;
     }
 
     /**
