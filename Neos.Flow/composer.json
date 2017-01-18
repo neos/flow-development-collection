@@ -6,27 +6,26 @@
     "license": ["MIT"],
 
     "require": {
-        "php": ">=7.0.0",
+        "php": "~7.0",
 
         "ext-zlib": "*",
         "ext-SPL": "*",
         "ext-json": ">=1.2.0",
         "ext-reflection": "*",
 
-        "neos/utility-lock": "*",
-        "neos/utility-objecthandling": "*",
-        "neos/utility-arrays": "*",
-        "neos/utility-files": "*",
-        "neos/utility-mediatypes": "*",
-        "neos/utility-opcodecache": "*",
-        "neos/utility-pdo": "*",
-        "neos/utility-schema": "*",
-        "neos/utility-unicode": "*",
-        "neos/error-messages": "*",
-        "neos/fluid-adaptor": "~4.0.0",
         "neos/cache": "~4.0.0",
-
         "neos/eel": "~4.0.0",
+        "neos/error-messages": "~4.0.0",
+        "neos/utility-arrays": "~4.0.0",
+        "neos/utility-files": "~4.0.0",
+        "neos/utility-lock": "~4.0.0",
+        "neos/utility-mediatypes": "~4.0.0",
+        "neos/utility-objecthandling": "~4.0.0",
+        "neos/utility-opcodecache": "~4.0.0",
+        "neos/utility-pdo": "~4.0.0",
+        "neos/utility-schema": "~4.0.0",
+        "neos/utility-unicode": "~4.0.0",
+        "neos/fluid-adaptor": "~4.0.0",
 
         "ramsey/uuid": "^3.0.0",
 
