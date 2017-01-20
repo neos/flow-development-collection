@@ -11,15 +11,16 @@ namespace TYPO3\Flow\Tests\Unit\Validation\Validator;
  * source code.
  */
 
+use TYPO3\Flow\Validation\Validator\NumberRangeValidator;
+
 require_once('AbstractValidatorTestcase.php');
 
 /**
  * Testcase for the number range validator
- *
  */
-class NumberRangeValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Validator\AbstractValidatorTestcase
+class NumberRangeValidatorTest extends AbstractValidatorTestcase
 {
-    protected $validatorClassName = \TYPO3\Flow\Validation\Validator\NumberRangeValidator::class;
+    protected $validatorClassName = NumberRangeValidator::class;
 
     /**
      * @test
@@ -42,7 +43,7 @@ class NumberRangeValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Validat
      */
     public function numberRangeValidatorReturnsNoErrorForASimpleIntegerInRange()
     {
-        $this->validatorOptions(array('minimum' => 0, 'maximum' => 1000));
+        $this->validatorOptions(['minimum' => 0, 'maximum' => 1000]);
 
         $this->assertFalse($this->validator->validate(10.5)->hasErrors());
     }
@@ -52,7 +53,7 @@ class NumberRangeValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Validat
      */
     public function numberRangeValidatorReturnsErrorForANumberOutOfRange()
     {
-        $this->validatorOptions(array('minimum' => 0, 'maximum' => 1000));
+        $this->validatorOptions(['minimum' => 0, 'maximum' => 1000]);
         $this->assertTrue($this->validator->validate(1000.1)->hasErrors());
     }
 
@@ -61,7 +62,7 @@ class NumberRangeValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Validat
      */
     public function numberRangeValidatorReturnsNoErrorForANumberInReversedRange()
     {
-        $this->validatorOptions(array('minimum' => 1000, 'maximum' => 0));
+        $this->validatorOptions(['minimum' => 1000, 'maximum' => 0]);
         $this->assertFalse($this->validator->validate(100)->hasErrors());
     }
 
@@ -70,7 +71,7 @@ class NumberRangeValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Validat
      */
     public function numberRangeValidatorReturnsErrorForAString()
     {
-        $this->validatorOptions(array('minimum' => 0, 'maximum' => 1000));
+        $this->validatorOptions(['minimum' => 0, 'maximum' => 1000]);
         $this->assertTrue($this->validator->validate('not a number')->hasErrors());
     }
 }

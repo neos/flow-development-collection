@@ -49,7 +49,7 @@ class MemcachedBackendTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function setThrowsExceptionIfNoFrontEndHasBeenSet()
     {
-        $backendOptions = array('servers' => array('localhost:11211'));
+        $backendOptions = ['servers' => ['localhost:11211']];
         $backend = new \TYPO3\Flow\Cache\Backend\MemcachedBackend(new ApplicationContext('Testing'), $backendOptions);
         $backend->injectEnvironment($this->mockEnvironment);
         $backend->initializeObject();
@@ -74,7 +74,7 @@ class MemcachedBackendTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function setThrowsExceptionIfConfiguredServersAreUnreachable()
     {
-        $backend = $this->setUpBackend(array('servers' => array('localhost:11212')));
+        $backend = $this->setUpBackend(['servers' => ['localhost:11212']]);
         $data = 'Somedata';
         $identifier = 'MyIdentifier' . md5(uniqid(mt_rand(), true));
         $backend->set($identifier, $data);
@@ -144,7 +144,7 @@ class MemcachedBackendTest extends \TYPO3\Flow\Tests\UnitTestCase
 
         $data = 'Some data';
         $identifier = 'MyIdentifier' . md5(uniqid(mt_rand(), true));
-        $backend->set($identifier, $data, array('UnitTestTag%tag1', 'UnitTestTag%tag2'));
+        $backend->set($identifier, $data, ['UnitTestTag%tag1', 'UnitTestTag%tag2']);
 
         $retrieved = $backend->findIdentifiersByTag('UnitTestTag%tag1');
         $this->assertEquals($identifier, $retrieved[0], 'Could not retrieve expected entry by tag.');
@@ -162,11 +162,11 @@ class MemcachedBackendTest extends \TYPO3\Flow\Tests\UnitTestCase
 
         $data = 'Some data';
         $identifier = 'MyIdentifier' . md5(uniqid(mt_rand(), true));
-        $backend->set($identifier, $data, array('UnitTestTag%tag1', 'UnitTestTag%tagX'));
-        $backend->set($identifier, $data, array('UnitTestTag%tag3'));
+        $backend->set($identifier, $data, ['UnitTestTag%tag1', 'UnitTestTag%tagX']);
+        $backend->set($identifier, $data, ['UnitTestTag%tag3']);
 
         $retrieved = $backend->findIdentifiersByTag('UnitTestTag%tagX');
-        $this->assertEquals(array(), $retrieved, 'Found entry which should no longer exist.');
+        $this->assertEquals([], $retrieved, 'Found entry which should no longer exist.');
     }
 
     /**
@@ -199,9 +199,9 @@ class MemcachedBackendTest extends \TYPO3\Flow\Tests\UnitTestCase
         $backend = $this->setUpBackend();
 
         $data = 'some data' . microtime();
-        $backend->set('BackendMemcacheTest1', $data, array('UnitTestTag%test', 'UnitTestTag%boring'));
-        $backend->set('BackendMemcacheTest2', $data, array('UnitTestTag%test', 'UnitTestTag%special'));
-        $backend->set('BackendMemcacheTest3', $data, array('UnitTestTag%test'));
+        $backend->set('BackendMemcacheTest1', $data, ['UnitTestTag%test', 'UnitTestTag%boring']);
+        $backend->set('BackendMemcacheTest2', $data, ['UnitTestTag%test', 'UnitTestTag%special']);
+        $backend->set('BackendMemcacheTest3', $data, ['UnitTestTag%test']);
 
         $backend->flushByTag('UnitTestTag%special');
 
@@ -234,7 +234,7 @@ class MemcachedBackendTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function flushRemovesOnlyOwnEntries()
     {
-        $backendOptions = array('servers' => array('localhost:11211'));
+        $backendOptions = ['servers' => ['localhost:11211']];
 
         $thisCache = $this->getMockBuilder(\TYPO3\Flow\Cache\Frontend\AbstractFrontend::class)->disableOriginalConstructor()->getMock();
         $thisCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('thisCache'));
@@ -281,11 +281,11 @@ class MemcachedBackendTest extends \TYPO3\Flow\Tests\UnitTestCase
      * @param array $backendOptions Options for the memcache backend
      * @return \TYPO3\Flow\Cache\Backend\MemcachedBackend
      */
-    protected function setUpBackend(array $backendOptions = array())
+    protected function setUpBackend(array $backendOptions = [])
     {
-        $cache = $this->createMock(\TYPO3\Flow\Cache\Frontend\FrontendInterface::class);
-        if ($backendOptions == array()) {
-            $backendOptions = array('servers' => array('localhost:11211'));
+        $cache = $this->getMockBuilder(\TYPO3\Flow\Cache\Frontend\FrontendInterface::class)->disableOriginalConstructor()->getMock();
+        if ($backendOptions == []) {
+            $backendOptions = ['servers' => ['localhost:11211']];
         }
         $backend = new \TYPO3\Flow\Cache\Backend\MemcachedBackend(new ApplicationContext('Testing'), $backendOptions);
         $backend->injectEnvironment($this->mockEnvironment);

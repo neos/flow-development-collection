@@ -30,15 +30,15 @@ class CompilingEvaluatorBenchmarkTest extends \TYPO3\Flow\Tests\UnitTestCase
 
         $evaluator = new CompilingEvaluator();
         $expression = 'foo.bar=="Test"||foo.baz=="Test"||reverse(foo).bar=="Test"';
-        $context = new Context(array(
-            'foo' => array(
+        $context = new Context([
+            'foo' => [
                 'bar' => 'Test1',
                 'baz' => 'Test2'
-            ),
+            ],
             'reverse' => function ($array) {
                 return array_reverse($array, true);
             }
-        ));
+        ]);
         for ($i = 0; $i < 10000; $i++) {
             $evaluator->evaluate($expression, $context);
         }

@@ -13,8 +13,12 @@ namespace TYPO3\Flow\Tests\Unit\Mvc\Controller;
 
 use TYPO3\Flow\Cli\CommandController;
 use TYPO3\Flow\Cli\CommandManager;
+use TYPO3\Flow\Cli\ConsoleOutput;
+use TYPO3\Flow\Cli\Request;
 use TYPO3\Flow\Mvc\Controller\Arguments;
+use TYPO3\Flow\Reflection\ReflectionService;
 use TYPO3\Flow\Tests\UnitTestCase;
+use TYPO3\Flow\Mvc;
 
 /**
  * Testcase for the Command Controller
@@ -27,24 +31,29 @@ class CommandControllerTest extends UnitTestCase
     protected $commandController;
 
     /**
+     * @var ReflectionService|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $mockReflectionService;
+
+    /**
      * @var CommandManager|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $mockCommandManager;
 
     /**
-     * @var \TYPO3\Flow\Cli\ConsoleOutput|\PHPUnit_Framework_MockObject_MockObject
+     * @var ConsoleOutput|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $mockConsoleOutput;
 
     public function setUp()
     {
-        $this->commandController = $this->getAccessibleMock(\TYPO3\Flow\Cli\CommandController::class, array('resolveCommandMethodName', 'callCommandMethod'));
+        $this->commandController = $this->getAccessibleMock(CommandController::class, ['resolveCommandMethodName', 'callCommandMethod']);
 
         $this->mockCommandManager = $this->getMockBuilder(CommandManager::class)->disableOriginalConstructor()->getMock();
         $this->mockCommandManager->expects($this->any())->method('getCommandMethodParameters')->will($this->returnValue(array()));
         $this->inject($this->commandController, 'commandManager', $this->mockCommandManager);
 
-        $this->mockConsoleOutput = $this->getMockBuilder(\TYPO3\Flow\Cli\ConsoleOutput::class)->disableOriginalConstructor()->getMock();
+        $this->mockConsoleOutput = $this->getMockBuilder(ConsoleOutput::class)->disableOriginalConstructor()->getMock();
         $this->inject($this->commandController, 'output', $this->mockConsoleOutput);
     }
 
@@ -55,8 +64,8 @@ class CommandControllerTest extends UnitTestCase
      */
     public function processRequestThrowsExceptionIfGivenRequestIsNoCliRequest()
     {
-        $mockRequest = $this->createMock(\TYPO3\Flow\Mvc\RequestInterface::class);
-        $mockResponse = $this->createMock(\TYPO3\Flow\Mvc\ResponseInterface::class);
+        $mockRequest = $this->createMock(Mvc\RequestInterface::class);
+        $mockResponse = $this->createMock(Mvc\ResponseInterface::class);
 
         $this->commandController->processRequest($mockRequest, $mockResponse);
     }
@@ -66,8 +75,8 @@ class CommandControllerTest extends UnitTestCase
      */
     public function processRequestMarksRequestDispatched()
     {
-        $mockRequest = $this->getMockBuilder(\TYPO3\Flow\Cli\Request::class)->disableOriginalConstructor()->getMock();
-        $mockResponse = $this->createMock(\TYPO3\Flow\Mvc\ResponseInterface::class);
+        $mockRequest = $this->getMockBuilder(Request::class)->disableOriginalConstructor()->getMock();
+        $mockResponse = $this->getMockBuilder(Mvc\ResponseInterface::class)->getMock();
 
         $mockRequest->expects($this->once())->method('setDispatched')->with(true);
 
@@ -79,8 +88,8 @@ class CommandControllerTest extends UnitTestCase
      */
     public function processRequestResetsCommandMethodArguments()
     {
-        $mockRequest = $this->getMockBuilder(\TYPO3\Flow\Cli\Request::class)->disableOriginalConstructor()->getMock();
-        $mockResponse = $this->createMock(\TYPO3\Flow\Mvc\ResponseInterface::class);
+        $mockRequest = $this->getMockBuilder(Request::class)->disableOriginalConstructor()->getMock();
+        $mockResponse = $this->getMockBuilder(Mvc\ResponseInterface::class)->getMock();
 
         $mockArguments = new Arguments();
         $mockArguments->addNewArgument('foo');
@@ -105,7 +114,7 @@ class CommandControllerTest extends UnitTestCase
      */
     public function outputReplacesArgumentsInGivenString()
     {
-        $this->mockConsoleOutput->expects($this->once())->method('output')->with('%2$s %1$s', array('text', 'some'));
-        $this->commandController->_call('output', '%2$s %1$s', array('text', 'some'));
+        $this->mockConsoleOutput->expects($this->once())->method('output')->with('%2$s %1$s', ['text', 'some']);
+        $this->commandController->_call('output', '%2$s %1$s', ['text', 'some']);
     }
 }

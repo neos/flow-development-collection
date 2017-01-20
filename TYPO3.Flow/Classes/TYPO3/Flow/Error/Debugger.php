@@ -13,7 +13,10 @@ namespace TYPO3\Flow\Error;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Configuration\ConfigurationManager;
+use TYPO3\Flow\Object\Configuration\Configuration;
 use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\Object\Proxy\ProxyInterface;
+use TYPO3\Flow\Reflection\Exception\PropertyNotAccessibleException;
 use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Flow\Utility\Arrays;
 
@@ -33,14 +36,14 @@ class Debugger
      *
      * @var array
      */
-    protected static $renderedObjects = array();
+    protected static $renderedObjects = [];
 
     /**
      * Hardcoded list of Flow class names (regex) which should not be displayed during debugging.
      * This is a fallback in case the classes could not be fetched from the configuration
      * @var array
      */
-    protected static $ignoredClassesFallback = array(
+    protected static $ignoredClassesFallback = [
         'TYPO3\\\\Flow\\\\Aop.*' => true,
         'TYPO3\\\\Flow\\\\Cac.*' => true,
         'TYPO3\\\\Flow\\\\Core\\\\.*' => true,
@@ -60,7 +63,7 @@ class Debugger
         'TYPO3\\\\Fluid\\\\.*' => true,
         '.+Service$' => true,
         '.+Repository$' => true,
-        'PHPUnit_Framework_MockObject_InvocationMocker' => true);
+        'PHPUnit_Framework_MockObject_InvocationMocker' => true];
 
     /**
      * @var string
@@ -83,10 +86,10 @@ class Debugger
     /**
      * Injects the Object Manager
      *
-     * @param \TYPO3\Flow\Object\ObjectManagerInterface $objectManager
+     * @param ObjectManagerInterface $objectManager
      * @return void
      */
-    public static function injectObjectManager(\TYPO3\Flow\Object\ObjectManagerInterface $objectManager)
+    public static function injectObjectManager(ObjectManagerInterface $objectManager)
     {
         self::$objectManager = $objectManager;
     }
@@ -98,7 +101,7 @@ class Debugger
      */
     public static function clearState()
     {
-        self::$renderedObjects = array();
+        self::$renderedObjects = [];
         self::$ignoredClassesRegex = '';
     }
 
@@ -182,7 +185,7 @@ class Debugger
         // Objects returned from Doctrine's Debug::export function are stdClass with special properties:
         try {
             $objectIdentifier = ObjectAccess::getProperty($object, 'Persistence_Object_Identifier', true);
-        } catch (\TYPO3\Flow\Reflection\Exception\PropertyNotAccessibleException $exception) {
+        } catch (PropertyNotAccessibleException $exception) {
             $objectIdentifier = spl_object_hash($object);
         }
         $className = ($object instanceof \stdClass && isset($object->__CLASS__)) ? $object->__CLASS__ : get_class($object);
@@ -195,13 +198,13 @@ class Debugger
             $objectName = self::$objectManager->getObjectNameByClassName(get_class($object));
             if ($objectName !== false) {
                 switch (self::$objectManager->getScope($objectName)) {
-                    case \TYPO3\Flow\Object\Configuration\Configuration::SCOPE_PROTOTYPE:
+                    case Configuration::SCOPE_PROTOTYPE:
                         $scope = 'prototype';
                         break;
-                    case \TYPO3\Flow\Object\Configuration\Configuration::SCOPE_SINGLETON:
+                    case Configuration::SCOPE_SINGLETON:
                         $scope = 'singleton';
                         break;
-                    case \TYPO3\Flow\Object\Configuration\Configuration::SCOPE_SESSION:
+                    case Configuration::SCOPE_SESSION:
                         $scope = 'session';
                         break;
                 }
@@ -242,7 +245,7 @@ class Debugger
             $dump .= '<span class="debug-ptype" title="' . $persistenceIdentifier . '">' . $persistenceType . '</span>';
         }
 
-        if ($object instanceof \TYPO3\Flow\Object\Proxy\ProxyInterface || (property_exists($object, '__IS_PROXY__') && $object->__IS_PROXY__ === true)) {
+        if ($object instanceof ProxyInterface || (property_exists($object, '__IS_PROXY__') && $object->__IS_PROXY__ === true)) {
             if ($plaintext) {
                 $dump .= ' ' . self::ansiEscapeWrap('proxy', '41;37', $ansiColors);
             } else {
@@ -479,10 +482,10 @@ class Debugger
         }
 
         $ignoredClassesConfiguration = self::$ignoredClassesFallback;
-        $ignoredClasses = array();
+        $ignoredClasses = [];
 
         if (self::$objectManager instanceof ObjectManagerInterface) {
-            $configurationManager = self::$objectManager->get(\TYPO3\Flow\Configuration\ConfigurationManager::class);
+            $configurationManager = self::$objectManager->get(ConfigurationManager::class);
             if ($configurationManager instanceof ConfigurationManager) {
                 $ignoredClassesFromSettings = $configurationManager->getConfiguration('Settings', 'TYPO3.Flow.error.debugger.ignoredClasses');
                 if (is_array($ignoredClassesFromSettings)) {
@@ -503,6 +506,8 @@ class Debugger
 }
 
 namespace TYPO3\Flow;
+
+use TYPO3\Flow\Error\Debugger;
 
 /**
  * A var_dump function optimized for Flow's object structures
@@ -529,15 +534,15 @@ function var_dump($variable, $title = null, $return = false, $plaintext = null)
     if ($ansiColors) {
         $title = "\x1B[1m" . $title . "\x1B[0m";
     }
-    \TYPO3\Flow\Error\Debugger::clearState();
+    Debugger::clearState();
 
-    if (!$plaintext && \TYPO3\Flow\Error\Debugger::$stylesheetEchoed === false) {
+    if (!$plaintext && Debugger::$stylesheetEchoed === false) {
         echo '<style type="text/css">' . file_get_contents('resource://TYPO3.Flow/Public/Error/Debugger.css') . '</style>';
-        \TYPO3\Flow\Error\Debugger::$stylesheetEchoed = true;
+        Debugger::$stylesheetEchoed = true;
     }
 
     if ($plaintext) {
-        $output = $title . chr(10) . \TYPO3\Flow\Error\Debugger::renderDump($variable, 0, true, $ansiColors) . chr(10) . chr(10);
+        $output = $title . chr(10) . Debugger::renderDump($variable, 0, true, $ansiColors) . chr(10) . chr(10);
     } else {
         $output = '
 			<div class="Flow-Error-Debugger-VarDump ' . ($return ? 'Flow-Error-Debugger-VarDump-Inline' : 'Flow-Error-Debugger-VarDump-Floating') . '">
@@ -545,7 +550,7 @@ function var_dump($variable, $title = null, $return = false, $plaintext = null)
 					' . htmlspecialchars($title) . '
 				</div>
 				<div class="Flow-Error-Debugger-VarDump-Center">
-					<pre dir="ltr">' . \TYPO3\Flow\Error\Debugger::renderDump($variable, 0, false, false) . '</pre>
+					<pre dir="ltr">' . Debugger::renderDump($variable, 0, false, false) . '</pre>
 				</div>
 			</div>
 		';

@@ -80,27 +80,35 @@ class PersistedUsernamePasswordProvider extends AbstractProvider
         $account = null;
         $credentials = $authenticationToken->getCredentials();
 
-        if (is_array($credentials) && isset($credentials['username'])) {
-            $providerName = $this->name;
-            $accountRepository = $this->accountRepository;
-            $this->securityContext->withoutAuthorizationChecks(function () use ($credentials, $providerName, $accountRepository, &$account) {
-                $account = $accountRepository->findActiveByAccountIdentifierAndAuthenticationProviderName($credentials['username'], $providerName);
-            });
-        }
-
-        if (is_object($account)) {
-            if ($this->hashService->validatePassword($credentials['password'], $account->getCredentialsSource())) {
-                $account->authenticationAttempted(TokenInterface::AUTHENTICATION_SUCCESSFUL);
-                $authenticationToken->setAuthenticationStatus(TokenInterface::AUTHENTICATION_SUCCESSFUL);
-                $authenticationToken->setAccount($account);
-            } else {
-                $account->authenticationAttempted(TokenInterface::WRONG_CREDENTIALS);
-                $authenticationToken->setAuthenticationStatus(TokenInterface::WRONG_CREDENTIALS);
-            }
-            $this->accountRepository->update($account);
-            $this->persistenceManager->whitelistObject($account);
-        } elseif ($authenticationToken->getAuthenticationStatus() !== TokenInterface::AUTHENTICATION_SUCCESSFUL) {
+        if ($authenticationToken->getAuthenticationStatus() !== TokenInterface::AUTHENTICATION_SUCCESSFUL) {
             $authenticationToken->setAuthenticationStatus(TokenInterface::NO_CREDENTIALS_GIVEN);
         }
+
+        if (!is_array($credentials) || !isset($credentials['username']) || !isset($credentials['password'])) {
+            return;
+        }
+
+        $providerName = $this->name;
+        $accountRepository = $this->accountRepository;
+        $this->securityContext->withoutAuthorizationChecks(function () use ($credentials, $providerName, $accountRepository, &$account) {
+            $account = $accountRepository->findActiveByAccountIdentifierAndAuthenticationProviderName($credentials['username'], $providerName);
+        });
+
+        $authenticationToken->setAuthenticationStatus(TokenInterface::WRONG_CREDENTIALS);
+
+        if ($account === null) {
+            $this->hashService->validatePassword($credentials['password'], 'bcrypt=>$2a$14$DummySaltToPreventTim,.ingAttacksOnThisProvider');
+            return;
+        }
+
+        if ($this->hashService->validatePassword($credentials['password'], $account->getCredentialsSource())) {
+            $account->authenticationAttempted(TokenInterface::AUTHENTICATION_SUCCESSFUL);
+            $authenticationToken->setAuthenticationStatus(TokenInterface::AUTHENTICATION_SUCCESSFUL);
+            $authenticationToken->setAccount($account);
+        } else {
+            $account->authenticationAttempted(TokenInterface::WRONG_CREDENTIALS);
+        }
+        $this->accountRepository->update($account);
+        $this->persistenceManager->whitelistObject($account);
     }
 }

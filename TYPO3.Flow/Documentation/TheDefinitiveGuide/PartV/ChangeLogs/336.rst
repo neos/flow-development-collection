@@ -1,0 +1,112 @@
+`3.3.6 (2016-12-05) <https://github.com/neos/flow-development-collection/releases/tag/3.3.6>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Enable flow to send multiple http-headers of the same type <https://github.com/neos/flow-development-collection/pull/745>`_
+------------------------------------------------------------------------------------------------------------------------------------
+
+The method setHeader accepts a value or an array of values, but until now if an arrays of values was given the renderHeaders method correctly rendered a seperate header for each value but during sending the ``header`` php-method overwrote the previously send headers because the replace argument was not given and defaults to ``true``.
+
+* Packages: ``Flow``
+
+`FEATURE: added missing "schema“-definition for the "token"-property of "authentication"-providers <https://github.com/neos/flow-development-collection/pull/708>`_
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+resolves #700
+
+* Packages: ``Flow``
+
+`BUGFIX: Fix calling shutdownObject() on doctrine proxy <https://github.com/neos/flow-development-collection/pull/731>`_
+------------------------------------------------------------------------------------------------------------------------
+
+This change fixes #613 by creating the code to also call `shutdownObject()` on Doctrine Proxies. The proxy generation did not took into account that in `__wakeup()` the current Object can be an Instance of a Doctrine Proxy and therefore did not registered the `shutdownObject()` method on the ObjectManager.
+
+As stated in #613 the temporary files from `Resource::createTemporaryLocalCopy()` where not removed, but with this fix they will be removed as expected.
+
+Thanks to @monofone and @hlubek for support in finding the bug and implementing the solution and tests.
+
+
+* Packages: ``Flow``
+
+`TASK: de-corruptify old PSR-0 core migration <https://github.com/neos/flow-development-collection/pull/736>`_
+--------------------------------------------------------------------------------------------------------------
+
+This changes the old core migration 20120920111200 to not
+cause any trouble with newer code using PSR-4.
+
+* Packages: ``Flow``
+
+`TASK: Testing checkout must not be git repository <https://github.com/neos/flow-development-collection/pull/715>`_
+-------------------------------------------------------------------------------------------------------------------
+
+`TASK: Use ComposerManifestUpdater in TravisCI builds <https://github.com/neos/flow-development-collection/pull/714>`_
+----------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Files``
+
+`TASK: Use the correct distribution branch in travis <https://github.com/neos/flow-development-collection/pull/713>`_
+---------------------------------------------------------------------------------------------------------------------
+
+`BUGFIX: Redis backend should prevent iteration of duplicate entries <https://github.com/neos/flow-development-collection/pull/709>`_
+-------------------------------------------------------------------------------------------------------------------------------------
+
+When setting or flushing by tag the list of entries is not correctly
+updated. This could also occur if an entry is expired.
+
+This change fixes the flush by tag behaviour to correctly remove
+entries and adds a check into the iteration of cache entries to check
+for existing entries.
+
+* Packages: ``Flow``
+
+`BUGFIX: Do not throw exception when concurrently unlinking files <https://github.com/neos/flow-development-collection/pull/471>`_
+----------------------------------------------------------------------------------------------------------------------------------
+
+Fixes a race condition where concurrent emptying of a directory causes
+errors because files were already unlinked by another process.
+
+FLOW-283 #close
+FLOW-345 #close
+
+* Packages: ``Flow``
+
+`TASK: Allow configuration of doctrine second level cache <https://github.com/neos/flow-development-collection/pull/452>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+This change introduces the configuration settings `TYPO3.Flow.persistence.doctrine.secondLevelCache`
+which allows configuring the second level cache that is available since Doctrine ORM 2.5
+Currently, this allows for enabling the second level cache, setting default lifetime and region specific
+lifetimes.
+The used cache can be configured as `Flow_Persistence_Doctrine_SecondLevel`.
+
+* Packages: ``Flow``
+
+`TASK: Adjust commit subject prefix for core migrations <https://github.com/neos/flow-development-collection/pull/707>`_
+------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Flow``
+
+`BUGFIX: Adjust media types updater (and update media types) <https://github.com/neos/flow-development-collection/pull/697>`_
+-----------------------------------------------------------------------------------------------------------------------------
+
+This adjusts the media types updater script to work with the new
+array syntax as otherwise nothing would have been changed.
+
+Additionally updates the media types list to add "m4a".
+
+* Packages: ``MediaTypes``
+
+`BUGFIX: Adapt the core migration manager for the new package manager <https://github.com/neos/flow-development-collection/pull/689>`_
+--------------------------------------------------------------------------------------------------------------------------------------
+
+Without this change PHP can print a warning message in the CLI output: PHP Warning:  Attempt to assign property of non-object in Manager.php on line 265.
+
+This change fix access to currentPackageData['composerManifest']['extra'] to use the array
+syntax and not the stdClass, used by the previous package manager. 
+
+* Packages: ``Flow``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/3.3.5...3.3.6>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

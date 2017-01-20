@@ -12,12 +12,13 @@ namespace TYPO3\Flow\Tests\Unit\Property\TypeConverter;
  */
 
 use TYPO3\Flow\Property\TypeConverter\ArrayFromObjectConverter;
+use TYPO3\Flow\Tests\UnitTestCase;
 
 /**
  * Testcase for the ArrayFromObject converter
  *
  */
-class ArrayFromObjectConverterTest extends \TYPO3\Flow\Tests\UnitTestCase
+class ArrayFromObjectConverterTest extends UnitTestCase
 {
     /**
      * @var ArrayFromObjectConverter
@@ -34,7 +35,7 @@ class ArrayFromObjectConverterTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function checkMetadata()
     {
-        $this->assertEquals(array('object'), $this->converter->getSupportedSourceTypes(), 'Source types do not match');
+        $this->assertEquals(['object'], $this->converter->getSupportedSourceTypes(), 'Source types do not match');
         $this->assertEquals('array', $this->converter->getSupportedTargetType(), 'Target type does not match');
         $this->assertEquals(1, $this->converter->getPriority(), 'Priority does not match');
     }
@@ -47,16 +48,16 @@ class ArrayFromObjectConverterTest extends \TYPO3\Flow\Tests\UnitTestCase
         $source = new \stdClass();
         $source->first = 'Foo';
         $source->second = new \stdClass();
-        $this->assertEquals(array('second' => new \stdClass()), $this->converter->getSourceChildPropertiesToBeConverted($source));
+        $this->assertEquals(['second' => new \stdClass()], $this->converter->getSourceChildPropertiesToBeConverted($source));
     }
 
     public function objectToArrayDataProvider()
     {
-        return array(
-            array(array('foo' => 'Foo', 'bar' => 'Bar', 'baz' => 'Baz'), array('foo' => 'Foo', 'bar' => 'Bar', 'baz' => 'Baz', '__type' => 'stdClass' )),
-            array(array('foo' => 'Foo', 'bar' => array( 'bar' => 'Bar', 'baz' => 'Baz' )), array('foo' => 'Foo', 'bar' => array( 'bar' => 'Bar', 'baz' => 'Baz', '__type' => 'stdClass' ), '__type' => 'stdClass' )),
-            array(new \stdClass(), array( '__type' => 'stdClass' ))
-        );
+        return [
+            [['foo' => 'Foo', 'bar' => 'Bar', 'baz' => 'Baz'], ['foo' => 'Foo', 'bar' => 'Bar', 'baz' => 'Baz', '__type' => 'stdClass']],
+            [['foo' => 'Foo', 'bar' => ['bar' => 'Bar', 'baz' => 'Baz']], ['foo' => 'Foo', 'bar' => ['bar' => 'Bar', 'baz' => 'Baz', '__type' => 'stdClass'], '__type' => 'stdClass']],
+            [new \stdClass(), ['__type' => 'stdClass']]
+        ];
     }
 
     /**
@@ -70,7 +71,7 @@ class ArrayFromObjectConverterTest extends \TYPO3\Flow\Tests\UnitTestCase
         }
 
         $convertedChildProperties = array_map(function ($value) {
-            return $this->converter->convertFrom($value, 'array', array(), null);
+            return $this->converter->convertFrom($value, 'array', [], null);
         }, $this->converter->getSourceChildPropertiesToBeConverted($source));
         $this->assertEquals($expectedResult, $this->converter->convertFrom($source, 'array', $convertedChildProperties, null));
     }

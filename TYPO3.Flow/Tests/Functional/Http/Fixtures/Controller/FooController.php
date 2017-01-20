@@ -11,16 +11,20 @@ namespace TYPO3\Flow\Tests\Functional\Http\Fixtures\Controller;
  * source code.
  */
 
-class FooController extends \TYPO3\Flow\Mvc\Controller\AbstractController
+use TYPO3\Flow\Mvc\Controller\AbstractController;
+use TYPO3\Flow\Mvc\RequestInterface;
+use TYPO3\Flow\Mvc\ResponseInterface;
+
+class FooController extends AbstractController
 {
     /**
      * Process Request
      *
-     * @param \TYPO3\Flow\Mvc\RequestInterface $request
-     * @param \TYPO3\Flow\Mvc\ResponseInterface $response
+     * @param RequestInterface $request
+     * @param ResponseInterface $response
      * @return void
      */
-    public function processRequest(\TYPO3\Flow\Mvc\RequestInterface $request, \TYPO3\Flow\Mvc\ResponseInterface $response)
+    public function processRequest(RequestInterface $request, ResponseInterface $response)
     {
         $this->initializeController($request, $response);
         $response->appendContent('FooController responded');

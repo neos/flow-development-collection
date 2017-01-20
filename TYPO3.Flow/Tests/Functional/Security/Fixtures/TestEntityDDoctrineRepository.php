@@ -11,16 +11,17 @@ namespace TYPO3\Flow\Tests\Functional\Security\Fixtures;
  * source code.
  */
 
-use Doctrine\ORM\Query;
+use TYPO3\Flow\Tests\Functional\Security\Fixtures;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Persistence\Doctrine\Repository;
 
 /**
  * @Flow\Scope("singleton")
  */
-class TestEntityDDoctrineRepository extends \TYPO3\Flow\Persistence\Doctrine\Repository
+class TestEntityDDoctrineRepository extends Repository
 {
     /**
      * @var string
      */
-    const ENTITY_CLASSNAME = \TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityD::class;
+    const ENTITY_CLASSNAME = TestEntityD::class;
 }

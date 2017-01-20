@@ -14,6 +14,7 @@ namespace TYPO3\Flow\Http;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Core\Bootstrap;
 use TYPO3\Flow\Configuration\ConfigurationManager;
+use TYPO3\Flow\Http\Component\ComponentChain;
 use TYPO3\Flow\Http\Component\ComponentContext;
 use TYPO3\Flow\Package\Package;
 
@@ -44,6 +45,11 @@ class RequestHandler implements HttpRequestHandlerInterface
      * @var Component\ComponentChain
      */
     protected $baseComponentChain;
+
+    /**
+     * @var Component\ComponentContext
+     */
+    protected $componentContext;
 
     /**
      * The "http" settings
@@ -103,6 +109,7 @@ class RequestHandler implements HttpRequestHandlerInterface
         // Create the request very early so the Resource Management has a chance to grab it:
         $this->request = Request::createFromEnvironment();
         $this->response = new Response();
+        $this->componentContext = new ComponentContext($this->request, $this->response);
 
         $this->boot();
         $this->resolveDependencies();
@@ -111,8 +118,7 @@ class RequestHandler implements HttpRequestHandlerInterface
             $this->request->setBaseUri(new Uri($this->settings['http']['baseUri']));
         }
 
-        $componentContext = new ComponentContext($this->request, $this->response);
-        $this->baseComponentChain->handle($componentContext);
+        $this->baseComponentChain->handle($this->componentContext);
         $this->response = $this->baseComponentChain->getResponse();
 
         $this->response->send();
@@ -129,7 +135,7 @@ class RequestHandler implements HttpRequestHandlerInterface
      */
     public function getHttpRequest()
     {
-        return $this->request;
+        return $this->componentContext->getHttpRequest();
     }
 
     /**
@@ -140,7 +146,7 @@ class RequestHandler implements HttpRequestHandlerInterface
      */
     public function getHttpResponse()
     {
-        return $this->response;
+        return $this->componentContext->getHttpResponse();
     }
 
     /**
@@ -164,9 +170,9 @@ class RequestHandler implements HttpRequestHandlerInterface
     protected function resolveDependencies()
     {
         $objectManager = $this->bootstrap->getObjectManager();
-        $this->baseComponentChain = $objectManager->get(\TYPO3\Flow\Http\Component\ComponentChain::class);
+        $this->baseComponentChain = $objectManager->get(ComponentChain::class);
 
-        $configurationManager = $objectManager->get(\TYPO3\Flow\Configuration\ConfigurationManager::class);
+        $configurationManager = $objectManager->get(ConfigurationManager::class);
         $this->settings = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'TYPO3.Flow');
     }
 

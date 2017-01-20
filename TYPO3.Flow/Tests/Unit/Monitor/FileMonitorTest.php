@@ -11,14 +11,18 @@ namespace TYPO3\Flow\Tests\Unit\Monitor;
  * source code.
  */
 
+use TYPO3\Flow\Log\SystemLoggerInterface;
 use TYPO3\Flow\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface;
 use org\bovigo\vfs\vfsStream;
+use TYPO3\Flow\Monitor\FileMonitor;
+use TYPO3\Flow\Tests\UnitTestCase;
 use TYPO3\Flow\Utility\Files;
+use TYPO3\Flow\Cache;
 
 /**
  * Testcase for the File Monitor class
  */
-class FileMonitorTest extends \TYPO3\Flow\Tests\UnitTestCase
+class FileMonitorTest extends UnitTestCase
 {
     /**
      * @var string
@@ -48,9 +52,9 @@ class FileMonitorTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function monitorFileRegistersAFileForMonitoring()
     {
-        $monitor = new \TYPO3\Flow\Monitor\FileMonitor('Flow_Test');
+        $monitor = new FileMonitor('Flow_Test');
         $monitor->monitorFile(__FILE__);
-        $this->assertSame(array($this->unixStylePathAndFilename), $monitor->getMonitoredFiles());
+        $this->assertSame([$this->unixStylePathAndFilename], $monitor->getMonitoredFiles());
     }
 
     /**
@@ -58,10 +62,10 @@ class FileMonitorTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function aFileAppearsOnlyOnceInTheListOfMonitoredFiles()
     {
-        $monitor = new \TYPO3\Flow\Monitor\FileMonitor('Flow_Test');
+        $monitor = new FileMonitor('Flow_Test');
         $monitor->monitorFile(__FILE__);
         $monitor->monitorFile(__FILE__);
-        $this->assertSame(array($this->unixStylePathAndFilename), $monitor->getMonitoredFiles());
+        $this->assertSame([$this->unixStylePathAndFilename], $monitor->getMonitoredFiles());
     }
 
     /**
@@ -69,9 +73,9 @@ class FileMonitorTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function monitorDirectoryRegistersAWholeDirectoryForMonitoring()
     {
-        $monitor = new \TYPO3\Flow\Monitor\FileMonitor('Flow_Test');
+        $monitor = new FileMonitor('Flow_Test');
         $monitor->monitorDirectory(__DIR__);
-        $this->assertSame(array(Files::getNormalizedPath($this->unixStylePath)), $monitor->getMonitoredDirectories());
+        $this->assertSame([Files::getNormalizedPath($this->unixStylePath)], $monitor->getMonitoredDirectories());
     }
 
     /**
@@ -79,10 +83,10 @@ class FileMonitorTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function aDirectoryAppearsOnlyOnceInTheListOfMonitoredDirectories()
     {
-        $monitor = new \TYPO3\Flow\Monitor\FileMonitor('Flow_Test');
+        $monitor = new FileMonitor('Flow_Test');
         $monitor->monitorDirectory(__DIR__);
         $monitor->monitorDirectory(__DIR__ . '/');
-        $this->assertSame(array(Files::getNormalizedPath($this->unixStylePath)), $monitor->getMonitoredDirectories());
+        $this->assertSame([Files::getNormalizedPath($this->unixStylePath)], $monitor->getMonitoredDirectories());
     }
 
     /**
@@ -90,10 +94,10 @@ class FileMonitorTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function detectChangesDetectsChangesInMonitoredFiles()
     {
-        $mockSystemLogger = $this->createMock(\TYPO3\Flow\Log\SystemLoggerInterface::class);
+        $mockSystemLogger = $this->createMock(SystemLoggerInterface::class);
 
-        $mockMonitor = $this->getMockBuilder(\TYPO3\Flow\Monitor\FileMonitor::class)->setMethods(array('loadDetectedDirectoriesAndFiles', 'detectChangedFiles'))->setConstructorArgs(array('Flow_Test'))->getMock();
-        $mockMonitor->expects($this->once())->method('detectChangedFiles')->with(array($this->unixStylePathAndFilename))->will($this->returnValue(array()));
+        $mockMonitor = $this->getMockBuilder(FileMonitor::class)->setMethods(['loadDetectedDirectoriesAndFiles', 'detectChangedFiles'])->setConstructorArgs(['Flow_Test'])->getMock();
+        $mockMonitor->expects($this->once())->method('detectChangedFiles')->with([$this->unixStylePathAndFilename])->will($this->returnValue([]));
 
         $mockMonitor->injectSystemLogger($mockSystemLogger);
         $mockMonitor->monitorFile(__FILE__);
@@ -106,17 +110,18 @@ class FileMonitorTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function detectChangesEmitsFilesHaveChangedSignalIfFilesHaveChanged()
     {
-        $mockSystemLogger = $this->createMock(\TYPO3\Flow\Log\SystemLoggerInterface::class);
+        $mockSystemLogger = $this->createMock(SystemLoggerInterface::class);
 
-        $monitoredFiles = array(__FILE__ . '1', __FILE__ . '2', __FILE__ . '3');
+        $monitoredFiles = [__FILE__ . '1', __FILE__ . '2', __FILE__ . '3'];
 
-        $expectedChangedFiles = array();
+        $expectedChangedFiles = [];
         $expectedChangedFiles[$this->unixStylePathAndFilename . '1'] = ChangeDetectionStrategyInterface::STATUS_CREATED;
         $expectedChangedFiles[$this->unixStylePathAndFilename . '3'] = ChangeDetectionStrategyInterface::STATUS_DELETED;
 
-        $mockMonitor = $this->getAccessibleMock(\TYPO3\Flow\Monitor\FileMonitor::class, array('loadDetectedDirectoriesAndFiles', 'detectChangedFiles', 'emitFilesHaveChanged'), array('Flow_Test'), '', true, true);
+        $mockMonitor = $this->getAccessibleMock(FileMonitor::class, ['loadDetectedDirectoriesAndFiles', 'detectChangedFiles', 'emitFilesHaveChanged'], ['Flow_Test'], '', true, true);
         $mockMonitor->expects($this->once())->method('detectChangedFiles')->with($monitoredFiles)->will($this->returnValue($expectedChangedFiles));
         $mockMonitor->expects($this->once())->method('emitFilesHaveChanged')->with('Flow_Test', $expectedChangedFiles);
+
 
         $mockMonitor->injectSystemLogger($mockSystemLogger);
         $mockMonitor->_set('monitoredFiles', $monitoredFiles);
@@ -129,14 +134,14 @@ class FileMonitorTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function detectChangedFilesFetchesTheStatusOfGivenFilesAndReturnsAListOfChangeFilesAndTheirStatus()
     {
-        $mockStrategy = $this->createMock(\TYPO3\Flow\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface::class);
+        $mockStrategy = $this->createMock('TYPO3\Flow\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface');
         $mockStrategy->expects($this->exactly(2))->method('getFileStatus')->will($this->onConsecutiveCalls(ChangeDetectionStrategyInterface::STATUS_CREATED, ChangeDetectionStrategyInterface::STATUS_UNCHANGED));
 
-        $mockMonitor = $this->getAccessibleMock(\TYPO3\Flow\Monitor\FileMonitor::class, array('dummy'), array('Flow_Test'), '', true, true);
+        $mockMonitor = $this->getAccessibleMock(FileMonitor::class, ['dummy'], ['Flow_Test'], '', true, true);
         $mockMonitor->injectChangeDetectionStrategy($mockStrategy);
-        $result = $mockMonitor->_call('detectChangedFiles', array(__FILE__ . '1', __FILE__ . '2'));
+        $result = $mockMonitor->_call('detectChangedFiles', [__FILE__ . '1', __FILE__ . '2']);
 
-        $this->assertEquals(array(__FILE__ . '1' => ChangeDetectionStrategyInterface::STATUS_CREATED), $result);
+        $this->assertEquals([__FILE__ . '1' => ChangeDetectionStrategyInterface::STATUS_CREATED], $result);
     }
 
     /**
@@ -147,23 +152,23 @@ class FileMonitorTest extends \TYPO3\Flow\Tests\UnitTestCase
         $testPath = vfsStream::url('testDirectory');
 
         // Initially known files per path
-        $knownDirectoriesAndFiles = array(
-            Files::getNormalizedPath($testPath) => array(
+        $knownDirectoriesAndFiles = [
+            Files::getNormalizedPath($testPath) => [
                 $testPath . '/NodeTypes.foo.yaml' => 1
-            )
-        );
+            ]
+        ];
 
         file_put_contents($testPath . '/NodeTypes.foo.yaml', '');
 
         // Outcome of the change dection per file
-        $changeDetectionResult = array(
+        $changeDetectionResult = [
             $testPath . '/NodeTypes.foo.yaml' => ChangeDetectionStrategyInterface::STATUS_CHANGED
-        );
+        ];
 
         // Expected emitted changes for files
-        $expectedEmittedChanges = array(
+        $expectedEmittedChanges = [
             $testPath . '/NodeTypes.foo.yaml' => ChangeDetectionStrategyInterface::STATUS_CHANGED
-        );
+        ];
 
         $fileMonitor = $this->setUpFileMonitorForDetection($changeDetectionResult, $expectedEmittedChanges, $knownDirectoriesAndFiles);
         $fileMonitor->monitorDirectory($testPath, 'NodeTypes(\..+)?\.yaml');
@@ -178,27 +183,27 @@ class FileMonitorTest extends \TYPO3\Flow\Tests\UnitTestCase
         $testPath = vfsStream::url('testDirectory');
 
         // Initially known files per path
-        $knownDirectoriesAndFiles = array(
-            Files::getNormalizedPath($testPath) => array(
+        $knownDirectoriesAndFiles = [
+            Files::getNormalizedPath($testPath) => [
                 $testPath . '/NodeTypes.foo.yaml' => 1
-            )
-        );
+            ]
+        ];
 
         // Create some new files
         file_put_contents($testPath . '/test.txt', '');
         file_put_contents($testPath . '/NodeTypes.yaml', '');
 
         // Outcome of the change dection per file
-        $changeDetectionResult = array(
+        $changeDetectionResult = [
             $testPath . '/test.txt' => ChangeDetectionStrategyInterface::STATUS_CREATED,
             $testPath . '/NodeTypes.yaml' => ChangeDetectionStrategyInterface::STATUS_CREATED
-        );
+        ];
 
         // Expected emitted changes for files
-        $expectedEmittedChanges = array(
+        $expectedEmittedChanges = [
             $testPath . '/NodeTypes.yaml' => ChangeDetectionStrategyInterface::STATUS_CREATED,
             $testPath . '/NodeTypes.foo.yaml' => ChangeDetectionStrategyInterface::STATUS_DELETED
-        );
+        ];
 
         $fileMonitor = $this->setUpFileMonitorForDetection($changeDetectionResult, $expectedEmittedChanges, $knownDirectoriesAndFiles);
         $fileMonitor->monitorDirectory($testPath, 'NodeTypes(\..+)?\.yaml');
@@ -213,21 +218,21 @@ class FileMonitorTest extends \TYPO3\Flow\Tests\UnitTestCase
         $testPath = vfsStream::url('testDirectory');
 
         // Initially known files per path
-        $knownDirectoriesAndFiles = array(
-            Files::getNormalizedPath($testPath) => array(
+        $knownDirectoriesAndFiles = [
+            Files::getNormalizedPath($testPath) => [
                 $testPath . '/NodeTypes.foo.yaml' => 1
-            )
-        );
+            ]
+        ];
 
         // Outcome of the change dection per file
-        $changeDetectionResult = array(
+        $changeDetectionResult = [
             $testPath . '/NodeTypes.foo.yaml' => ChangeDetectionStrategyInterface::STATUS_DELETED
-        );
+        ];
 
         // Expected emitted changes for files
-        $expectedEmittedChanges = array(
+        $expectedEmittedChanges = [
             $testPath . '/NodeTypes.foo.yaml' => ChangeDetectionStrategyInterface::STATUS_DELETED
-        );
+        ];
 
         $fileMonitor = $this->setUpFileMonitorForDetection($changeDetectionResult, $expectedEmittedChanges, $knownDirectoriesAndFiles);
         $fileMonitor->monitorDirectory($testPath, 'NodeTypes(\..+)?\.yaml');
@@ -242,29 +247,29 @@ class FileMonitorTest extends \TYPO3\Flow\Tests\UnitTestCase
         $testPath = vfsStream::url('testDirectory');
 
         // Initially known files per path
-        $knownDirectoriesAndFiles = array(
-        );
+        $knownDirectoriesAndFiles = [
+        ];
 
         // Create a new file
         file_put_contents($testPath . '/test.txt', '');
 
         // Outcome of the change dection per file
-        $changeDetectionResult = array(
+        $changeDetectionResult = [
             $testPath . '/test.txt' => ChangeDetectionStrategyInterface::STATUS_CREATED
-        );
+        ];
 
         // Expected emitted changes for files
-        $expectedEmittedChanges = array(
+        $expectedEmittedChanges = [
             $testPath . '/test.txt' => ChangeDetectionStrategyInterface::STATUS_CREATED
-        );
+        ];
 
         $fileMonitor = $this->setUpFileMonitorForDetection($changeDetectionResult, $expectedEmittedChanges, $knownDirectoriesAndFiles);
         $fileMonitor->monitorDirectory($testPath);
         $fileMonitor->detectChanges();
 
-        $this->assertEquals(array(
+        $this->assertEquals([
             $testPath . '/test.txt' => ChangeDetectionStrategyInterface::STATUS_CREATED
-        ), $fileMonitor->_get('changedFiles'));
+        ], $fileMonitor->_get('changedFiles'));
         $this->assertCount(1, $fileMonitor->_get('changedPaths'));
     }
 
@@ -272,11 +277,11 @@ class FileMonitorTest extends \TYPO3\Flow\Tests\UnitTestCase
      * @param array $changeDetectionResult
      * @param array $expectedEmittedChanges
      * @param array $knownDirectoriesAndFiles
-     * @return \TYPO3\Flow\Monitor\FileMonitor
+     * @return FileMonitor
      */
     protected function setUpFileMonitorForDetection(array $changeDetectionResult, array $expectedEmittedChanges, array $knownDirectoriesAndFiles)
     {
-        $mockChangeDetectionStrategy = $this->createMock(\TYPO3\Flow\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface::class);
+        $mockChangeDetectionStrategy = $this->createMock(ChangeDetectionStrategyInterface::class);
         $mockChangeDetectionStrategy->expects($this->any())->method('getFileStatus')->will($this->returnCallback(function ($pathAndFilename) use ($changeDetectionResult) {
             if (isset($changeDetectionResult[$pathAndFilename])) {
                 return $changeDetectionResult[$pathAndFilename];
@@ -285,14 +290,14 @@ class FileMonitorTest extends \TYPO3\Flow\Tests\UnitTestCase
             }
         }));
 
-        $fileMonitor = $this->getAccessibleMock(\TYPO3\Flow\Monitor\FileMonitor::class, array('emitFilesHaveChanged', 'emitDirectoriesHaveChanged'), array('Flow_Test'), '', true, true);
+        $fileMonitor = $this->getAccessibleMock(FileMonitor::class, ['emitFilesHaveChanged', 'emitDirectoriesHaveChanged'], ['Flow_Test'], '', true, true);
         $this->inject($fileMonitor, 'changeDetectionStrategy', $mockChangeDetectionStrategy);
         $fileMonitor->expects($this->once())->method('emitFilesHaveChanged')->with('Flow_Test', $expectedEmittedChanges);
 
-        $mockSystemLogger = $this->createMock(\TYPO3\Flow\Log\SystemLoggerInterface::class);
+        $mockSystemLogger = $this->createMock(SystemLoggerInterface::class);
         $fileMonitor->injectSystemLogger($mockSystemLogger);
 
-        $mockCache = $this->getMockBuilder(\TYPO3\Flow\Cache\Frontend\StringFrontend::class)->disableOriginalConstructor()->getMock();
+        $mockCache = $this->getMockBuilder(Cache\Frontend\StringFrontend::class)->disableOriginalConstructor()->getMock();
         $mockCache->expects($this->once())->method('get')->will($this->returnValue(json_encode($knownDirectoriesAndFiles)));
         $fileMonitor->injectCache($mockCache);
 

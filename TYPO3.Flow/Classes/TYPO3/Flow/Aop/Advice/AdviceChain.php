@@ -10,7 +10,7 @@ namespace TYPO3\Flow\Aop\Advice;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use TYPO3\Flow\Aop\JoinPointInterface;
 
 /**
  * The advice chain holds a number of subsequent advices that
@@ -20,7 +20,7 @@ namespace TYPO3\Flow\Aop\Advice;
 class AdviceChain
 {
     /**
-     * An array of \TYPO3\Flow\Aop\Advice objects which form the advice chain
+     * An array of Advice objects which form the advice chain
      * @var array
      */
     protected $advices;
@@ -34,7 +34,7 @@ class AdviceChain
     /**
      * Initializes the advice chain
      *
-     * @param array $advices An array of \TYPO3\Flow\Aop\Advice\AdviceInterface compatible objects which form the chain of advices
+     * @param array $advices An array of AdviceInterface compatible objects which form the chain of advices
      */
     public function __construct($advices)
     {
@@ -47,10 +47,10 @@ class AdviceChain
      * left in the chain, the proxy classes' method invokeJoinpoint() will finally
      * be called.
      *
-     * @param  \TYPO3\Flow\Aop\JoinPointInterface $joinPoint The current join point (ie. the context)
+     * @param  JoinPointInterface $joinPoint The current join point (ie. the context)
      * @return mixed Result of the advice or the original method of the target class
      */
-    public function proceed(\TYPO3\Flow\Aop\JoinPointInterface &$joinPoint)
+    public function proceed(JoinPointInterface &$joinPoint)
     {
         $this->adviceIndex++;
         if ($this->adviceIndex < count($this->advices)) {

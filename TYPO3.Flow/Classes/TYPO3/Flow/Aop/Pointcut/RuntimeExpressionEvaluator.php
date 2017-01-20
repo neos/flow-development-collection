@@ -15,6 +15,7 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Aop\JoinPointInterface;
 use TYPO3\Flow\Cache\CacheManager;
 use TYPO3\Flow\Cache\Frontend\PhpFrontend;
+use TYPO3\Flow\Exception;
 use TYPO3\Flow\Object\ObjectManagerInterface;
 
 /**
@@ -41,14 +42,14 @@ class RuntimeExpressionEvaluator
      *
      * @var array
      */
-    protected $runtimeExpressions = array();
+    protected $runtimeExpressions = [];
 
     /**
      * Newly added expressions.
      *
      * @var array
      */
-    protected $newExpressions = array();
+    protected $newExpressions = [];
 
     /**
      * This object is created very early and is part of the blacklisted "TYPO3\Flow\Aop" namespace so we can't rely on AOP for the property injection.
@@ -61,7 +62,7 @@ class RuntimeExpressionEvaluator
         if ($this->objectManager === null) {
             $this->objectManager = $objectManager;
             /** @var CacheManager $cacheManager */
-            $cacheManager = $this->objectManager->get(\TYPO3\Flow\Cache\CacheManager::class);
+            $cacheManager = $this->objectManager->get(CacheManager::class);
             $this->runtimeExpressionsCache = $cacheManager->getCache('Flow_Aop_RuntimeExpressions');
             $this->runtimeExpressions = $this->runtimeExpressionsCache->requireOnce('Flow_Aop_RuntimeExpressions');
         }
@@ -74,7 +75,7 @@ class RuntimeExpressionEvaluator
      */
     public function saveRuntimeExpressions()
     {
-        if ($this->newExpressions === array()) {
+        if ($this->newExpressions === []) {
             return;
         }
 
@@ -93,14 +94,14 @@ class RuntimeExpressionEvaluator
      * @param string $privilegeIdentifier MD5 hash that identifies a privilege
      * @param JoinPointInterface $joinPoint
      * @return mixed
-     * @throws \TYPO3\Flow\Exception
+     * @throws Exception
      */
     public function evaluate($privilegeIdentifier, JoinPointInterface $joinPoint)
     {
         $functionName = $this->generateExpressionFunctionName($privilegeIdentifier);
 
         if (!$this->runtimeExpressions[$functionName] instanceof \Closure) {
-            throw new \TYPO3\Flow\Exception('Runtime expression "' . $functionName . '" does not exist.', 1428694144);
+            throw new Exception('Runtime expression "' . $functionName . '" does not exist.', 1428694144);
         }
 
         return $this->runtimeExpressions[$functionName]->__invoke($joinPoint, $this->objectManager);

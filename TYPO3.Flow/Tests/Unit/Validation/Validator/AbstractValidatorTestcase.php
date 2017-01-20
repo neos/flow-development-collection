@@ -11,17 +11,19 @@ namespace TYPO3\Flow\Tests\Unit\Validation\Validator;
  * source code.
  */
 
+use TYPO3\Flow\Tests\UnitTestCase;
+use TYPO3\Flow\Validation\Validator\ValidatorInterface;
+
 /**
  * Testcase for the Abstract Validator
- *
  */
-abstract class AbstractValidatorTestcase extends \TYPO3\Flow\Tests\UnitTestCase
+abstract class AbstractValidatorTestcase extends UnitTestCase
 {
     protected $validatorClassName;
 
     /**
      *
-     * @var \TYPO3\Flow\Validation\Validator\ValidatorInterface
+     * @var ValidatorInterface
      */
     protected $validator;
 
@@ -30,9 +32,9 @@ abstract class AbstractValidatorTestcase extends \TYPO3\Flow\Tests\UnitTestCase
         $this->validator = $this->getValidator();
     }
 
-    protected function getValidator($options = array())
+    protected function getValidator($options = [])
     {
-        return $this->getAccessibleMock($this->validatorClassName, array('dummy'), array($options), '', true);
+        return $this->getAccessibleMock($this->validatorClassName, ['dummy'], [$options], '', true);
     }
 
     protected function validatorOptions($options)

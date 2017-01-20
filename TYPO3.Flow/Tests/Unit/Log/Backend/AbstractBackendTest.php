@@ -11,14 +11,16 @@ namespace TYPO3\Flow\Tests\Unit\Log\Backend;
  * source code.
  */
 
+use TYPO3\Flow\Log\Backend\AbstractBackend;
+use TYPO3\Flow\Tests\UnitTestCase;
+
 /**
  * Testcase for the abstract log backend
- *
  */
-class AbstractBackendTest extends \TYPO3\Flow\Tests\UnitTestCase
+class AbstractBackendTest extends UnitTestCase
 {
     /**
-     * @var \TYPO3\Flow\Log\Backend\AbstractBackend
+     * @var AbstractBackend
      */
     protected $backendClassName;
 
@@ -49,7 +51,7 @@ class AbstractBackendTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function theConstructorCallsSetterMethodsForAllSpecifiedOptions()
     {
         $className = $this->backendClassName;
-        $backend = new $className(array('someOption' => 'someValue'));
+        $backend = new $className(['someOption' => 'someValue']);
         $this->assertSame('someValue', $backend->getSomeOption());
     }
 }

@@ -17,9 +17,11 @@ require_once(FLOW_PATH_PACKAGES . '/Framework/TYPO3.Flow/Tests/Behavior/Features
 use TYPO3\Flow\Tests\Behavior\Features\Bootstrap\IsolatedBehatStepsTrait;
 use TYPO3\Flow\Tests\Behavior\Features\Bootstrap\SecurityOperationsTrait;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Cli\CommandController;
 use TYPO3\Flow\Core\Bootstrap;
 use TYPO3\Flow\Mvc\ActionRequest;
 use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\Property\PropertyMapper;
 use TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface;
 use TYPO3\Flow\Security\Authentication\Provider\TestingProvider;
 use TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface;
@@ -92,7 +94,7 @@ class BehatTestHelper
      */
     public function initializeObject()
     {
-        self::$bootstrap = Bootstrap::$staticObjectManager->get(\TYPO3\Flow\Core\Bootstrap::class);
+        self::$bootstrap = Bootstrap::$staticObjectManager->get(Bootstrap::class);
         $this->isolated = false;
     }
 

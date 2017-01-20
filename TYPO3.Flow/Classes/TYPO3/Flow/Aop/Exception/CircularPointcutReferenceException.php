@@ -10,12 +10,13 @@ namespace TYPO3\Flow\Aop\Exception;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use TYPO3\Flow\Aop\Exception;
 
 /**
  * A "Circular PointcutReference" Exception
  *
  * @api
  */
-class CircularPointcutReferenceException extends \TYPO3\Flow\Aop\Exception
+class CircularPointcutReferenceException extends Exception
 {
 }

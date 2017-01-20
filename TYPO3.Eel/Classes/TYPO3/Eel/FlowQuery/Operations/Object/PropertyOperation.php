@@ -11,7 +11,11 @@ namespace TYPO3\Eel\FlowQuery\Operations\Object;
  * source code.
  */
 
+use TYPO3\Eel\FlowQuery\FlowQuery;
+use TYPO3\Eel\FlowQuery\FlowQueryException;
+use TYPO3\Eel\FlowQuery\Operations\AbstractOperation;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Reflection\ObjectAccess;
 
 /**
  * Access properties of an object using ObjectAccess.
@@ -20,7 +24,7 @@ use TYPO3\Flow\Annotations as Flow;
  * is returned. Otherwise the value of the property on the first context
  * element is returned.
  */
-class PropertyOperation extends \TYPO3\Eel\FlowQuery\Operations\AbstractOperation
+class PropertyOperation extends AbstractOperation
 {
     /**
      * {@inheritdoc}
@@ -39,14 +43,14 @@ class PropertyOperation extends \TYPO3\Eel\FlowQuery\Operations\AbstractOperatio
     /**
      * {@inheritdoc}
      *
-     * @param \TYPO3\Eel\FlowQuery\FlowQuery $flowQuery the FlowQuery object
+     * @param FlowQuery $flowQuery the FlowQuery object
      * @param array $arguments the property path to use (in index 0)
      * @return mixed
      */
-    public function evaluate(\TYPO3\Eel\FlowQuery\FlowQuery $flowQuery, array $arguments)
+    public function evaluate(FlowQuery $flowQuery, array $arguments)
     {
         if (!isset($arguments[0]) || empty($arguments[0])) {
-            throw new \TYPO3\Eel\FlowQuery\FlowQueryException('property() must be given an attribute name when used on objects, fetching all attributes is not supported.', 1332492263);
+            throw new FlowQueryException('property() must be given an attribute name when used on objects, fetching all attributes is not supported.', 1332492263);
         } else {
             $context = $flowQuery->getContext();
             if (!isset($context[0])) {
@@ -55,7 +59,7 @@ class PropertyOperation extends \TYPO3\Eel\FlowQuery\Operations\AbstractOperatio
 
             $element = $context[0];
             $propertyPath = $arguments[0];
-            return \TYPO3\Flow\Reflection\ObjectAccess::getPropertyPath($element, $propertyPath);
+            return ObjectAccess::getPropertyPath($element, $propertyPath);
         }
     }
 }

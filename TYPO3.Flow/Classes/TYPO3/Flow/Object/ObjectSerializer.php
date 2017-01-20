@@ -13,6 +13,10 @@ namespace TYPO3\Flow\Object;
 
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Object\Configuration\Configuration;
+use TYPO3\Flow\Persistence\PersistenceManagerInterface;
+use TYPO3\Flow\Reflection\PropertyReflection;
+use TYPO3\Flow\Reflection\ReflectionService;
 
 /**
  * The object serializer. This serializer traverses an object tree and transforms
@@ -34,12 +38,12 @@ class ObjectSerializer
      * Objects stored as an array of properties
      * @var array
      */
-    protected $objectsAsArray = array();
+    protected $objectsAsArray = [];
 
     /**
      * @var array
      */
-    protected $reconstitutedObjects = array();
+    protected $reconstitutedObjects = [];
 
     /**
      * @var \SplObjectStorage
@@ -48,29 +52,29 @@ class ObjectSerializer
 
     /**
      * The object manager
-     * @var \TYPO3\Flow\Object\ObjectManagerInterface
+     * @var ObjectManagerInterface
      */
     protected $objectManager;
 
     /**
      * The reflection service
-     * @var \TYPO3\Flow\Reflection\ReflectionService
+     * @var ReflectionService
      */
     protected $reflectionService;
 
     /**
      * The persistence manager
-     * @var \TYPO3\Flow\Persistence\PersistenceManagerInterface
+     * @var PersistenceManagerInterface
      */
     protected $persistenceManager;
 
     /**
      * Injects the object manager
      *
-     * @param \TYPO3\Flow\Object\ObjectManagerInterface $objectManager The object manager
+     * @param ObjectManagerInterface $objectManager The object manager
      * @return void
      */
-    public function injectObjectManager(\TYPO3\Flow\Object\ObjectManagerInterface $objectManager)
+    public function injectObjectManager(ObjectManagerInterface $objectManager)
     {
         $this->objectManager = $objectManager;
     }
@@ -78,10 +82,10 @@ class ObjectSerializer
     /**
      * Injects the reflection service
      *
-     * @param \TYPO3\Flow\Reflection\ReflectionService $reflectionService The reflection service
+     * @param ReflectionService $reflectionService The reflection service
      * @return void
      */
-    public function injectReflectionService(\TYPO3\Flow\Reflection\ReflectionService $reflectionService)
+    public function injectReflectionService(ReflectionService $reflectionService)
     {
         $this->reflectionService = $reflectionService;
     }
@@ -89,10 +93,10 @@ class ObjectSerializer
     /**
      * Inject the persistence manager
      *
-     * @param \TYPO3\Flow\Persistence\PersistenceManagerInterface $persistenceManager The persistence manager
+     * @param PersistenceManagerInterface $persistenceManager The persistence manager
      * @return void
      */
-    public function injectPersistenceManager(\TYPO3\Flow\Persistence\PersistenceManagerInterface $persistenceManager)
+    public function injectPersistenceManager(PersistenceManagerInterface $persistenceManager)
     {
         $this->persistenceManager = $persistenceManager;
     }
@@ -104,8 +108,8 @@ class ObjectSerializer
      */
     public function clearState()
     {
-        $this->objectsAsArray = array();
-        $this->reconstitutedObjects = array();
+        $this->objectsAsArray = [];
+        $this->reconstitutedObjects = [];
     }
 
     /**
@@ -123,16 +127,16 @@ class ObjectSerializer
         $this->objectReferences->attach($object);
 
         $className = get_class($object);
-        $propertyArray = array();
+        $propertyArray = [];
         foreach ($this->reflectionService->getClassPropertyNames($className) as $propertyName) {
             if ($this->reflectionService->isPropertyTaggedWith($className, $propertyName, 'transient')) {
                 continue;
             }
 
-            $propertyReflection = new \TYPO3\Flow\Reflection\PropertyReflection($className, $propertyName);
+            $propertyReflection = new PropertyReflection($className, $propertyName);
             $propertyValue = $propertyReflection->getValue($object);
 
-            if (is_object($propertyValue) && $propertyValue instanceof \TYPO3\Flow\Object\DependencyInjection\DependencyProxy) {
+            if (is_object($propertyValue) && $propertyValue instanceof DependencyInjection\DependencyProxy) {
                 continue;
             }
 
@@ -146,7 +150,7 @@ class ObjectSerializer
 
             if ($propertyClassName === 'SplObjectStorage') {
                 $propertyArray[$propertyName][self::TYPE] = 'SplObjectStorage';
-                $propertyArray[$propertyName][self::VALUE] = array();
+                $propertyArray[$propertyName][self::VALUE] = [];
 
                 foreach ($propertyValue as $storedObject) {
                     $propertyArray[$propertyName][self::VALUE][] = spl_object_hash($storedObject);
@@ -165,15 +169,15 @@ class ObjectSerializer
             } elseif (is_object($propertyValue)
                         && $this->persistenceManager->isNewObject($propertyValue) === false
                         && (
-                            $this->reflectionService->isClassAnnotatedWith($propertyClassName, \TYPO3\Flow\Annotations\Entity::class)
-                            || $this->reflectionService->isClassAnnotatedWith($propertyClassName, \TYPO3\Flow\Annotations\ValueObject::class)
-                            || $this->reflectionService->isClassAnnotatedWith($propertyClassName, 'Doctrine\ORM\Mapping\Entity')
+                            $this->reflectionService->isClassAnnotatedWith($propertyClassName, Flow\Entity::class)
+                            || $this->reflectionService->isClassAnnotatedWith($propertyClassName, Flow\ValueObject::class)
+                            || $this->reflectionService->isClassAnnotatedWith($propertyClassName, ORM\Entity::class)
                         )) {
                 $propertyArray[$propertyName][self::TYPE] = 'persistenceObject';
                 $propertyArray[$propertyName][self::VALUE] = get_class($propertyValue) . ':' . $this->persistenceManager->getIdentifierByObject($propertyValue);
             } elseif (is_object($propertyValue)) {
                 $propertyObjectName = $this->objectManager->getObjectNameByClassName($propertyClassName);
-                if ($this->objectManager->getScope($propertyObjectName) === \TYPO3\Flow\Object\Configuration\Configuration::SCOPE_SINGLETON) {
+                if ($this->objectManager->getScope($propertyObjectName) === Configuration::SCOPE_SINGLETON) {
                     continue;
                 }
 
@@ -189,10 +193,10 @@ class ObjectSerializer
             }
         }
 
-        $this->objectsAsArray[spl_object_hash($object)] = array(
+        $this->objectsAsArray[spl_object_hash($object)] = [
             self::CLASSNAME => $className,
             self::PROPERTIES => $propertyArray
-        );
+        ];
 
         if ($isTopLevelItem) {
             return $this->objectsAsArray;
@@ -209,10 +213,10 @@ class ObjectSerializer
      */
     protected function buildStorageArrayForArrayProperty(array $arrayProperty)
     {
-        $storableArray = array();
+        $storableArray = [];
 
         foreach ($arrayProperty as $key => $value) {
-            $storableArray[$key] = array();
+            $storableArray[$key] = [];
 
             if (is_array($value)) {
                 $storableArray[$key][self::TYPE] = 'array';
@@ -240,7 +244,7 @@ class ObjectSerializer
     public function deserializeObjectsArray(array $dataArray)
     {
         $this->objectsAsArray = $dataArray;
-        $objects = array();
+        $objects = [];
 
         foreach ($this->objectsAsArray as $objectHash => $objectData) {
             if (!isset($objectData[self::CLASSNAME]) || !$this->objectManager->isRegistered($objectData[self::CLASSNAME])) {
@@ -311,7 +315,7 @@ class ObjectSerializer
      */
     protected function reconstituteArray($dataArray)
     {
-        $result = array();
+        $result = [];
 
         foreach ($dataArray as $key => $entryData) {
             $value = null;

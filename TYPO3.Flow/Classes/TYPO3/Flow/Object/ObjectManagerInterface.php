@@ -11,6 +11,8 @@ namespace TYPO3\Flow\Object;
  * source code.
  */
 
+use TYPO3\Flow\Core\ApplicationContext;
+
 /**
  * Interface for the Flow Object Manager
  *
@@ -24,7 +26,7 @@ interface ObjectManagerInterface
     /**
      * Returns the currently set context.
      *
-     * @return \TYPO3\Flow\Core\ApplicationContext the current context
+     * @return ApplicationContext the current context
      * @api
      */
     public function getContext();

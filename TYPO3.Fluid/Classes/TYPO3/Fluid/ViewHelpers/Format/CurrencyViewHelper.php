@@ -31,7 +31,7 @@ use TYPO3\Fluid\Core\ViewHelper\Exception as ViewHelperException;
  * </output>
  *
  * <code title="All parameters">
- * <f:format.currency currencySign="$" decimalSeparator="." thousandsSeparator=",">54321</f:format.currency>
+ * <f:format.currency currencySign="$" decimalSeparator="." thousandsSeparator="," prependCurrency="false", separateCurrency="true", decimals="2">54321</f:format.currency>
  * </code>
  * <output>
  * 54,321.00 $
@@ -61,6 +61,30 @@ use TYPO3\Fluid\Core\ViewHelper\Exception as ViewHelperException;
  * (depending on the value of {someNumber})
  * </output>
  *
+ * <code title="Inline notation with different position for the currency sign">
+ * {someNumber -> f:format.currency(currencySign: '€', prependCurrency: 'true')}
+ * </code>
+ * <output>
+ * € 54.321,00
+ * (depending on the value of {someNumber})
+ * </output>
+ *
+ * <code title="Inline notation with no space between the currency and no decimal places">
+ * {someNumber -> f:format.currency(currencySign: '€', separateCurrency: 'false', decimals: '0')}
+ * </code>
+ * <output>
+ * 54.321€
+ * (depending on the value of {someNumber})
+ * </output>
+ *
+ * Note: This ViewHelper is intended to help you with formatting numbers into monetary units.
+ * Complex calculations and/or conversions should be done before the number is passed.
+ *
+ * Also be aware that if the ``locale`` is set, all arguments except for the currency sign (which
+ * then becomes mandatory) are ignored and the CLDR (Common Locale Data Repository) is used for formatting.
+ * Fore more information about localization see section ``Internationalization & Localization Framework`` in the
+ * Flow documentation.
+ *
  * @api
  */
 class CurrencyViewHelper extends AbstractLocaleAwareViewHelper
@@ -75,13 +99,16 @@ class CurrencyViewHelper extends AbstractLocaleAwareViewHelper
      * @param string $currencySign (optional) The currency sign, eg $ or €.
      * @param string $decimalSeparator (optional) The separator for the decimal point.
      * @param string $thousandsSeparator (optional) The thousands separator.
+     * @param boolean $prependCurrency (optional) Indicates if currency symbol should be placed before or after the numeric value.
+     * @param boolean $separateCurrency (optional) Indicates if a space character should be placed between the number and the currency sign.
+     * @param integer $decimals (optional) The number of decimal places.
      *
      * @throws InvalidVariableException
      * @return string the formatted amount.
      * @throws ViewHelperException
      * @api
      */
-    public function render($currencySign = '', $decimalSeparator = ',', $thousandsSeparator = '.')
+    public function render($currencySign = '', $decimalSeparator = ',', $thousandsSeparator = '.', $prependCurrency = false, $separateCurrency = true, $decimals = 2)
     {
         $stringToFormat = $this->renderChildren();
 
@@ -95,12 +122,21 @@ class CurrencyViewHelper extends AbstractLocaleAwareViewHelper
             } catch (I18nException $exception) {
                 throw new ViewHelperException($exception->getMessage(), 1382350428, $exception);
             }
-        } else {
-            $output = number_format((float)$stringToFormat, 2, $decimalSeparator, $thousandsSeparator);
-            if ($currencySign !== '') {
-                $output .= ' ' . $currencySign;
-            }
+
+            return $output;
         }
+
+        $output = number_format((float)$stringToFormat, $decimals, $decimalSeparator, $thousandsSeparator);
+        if (empty($currencySign)) {
+            return $output;
+        }
+        if ($prependCurrency === true) {
+            $output = $currencySign . ($separateCurrency === true ? ' ' : '') . $output;
+
+            return $output;
+        }
+        $output .= ($separateCurrency === true ? ' ' : '') . $currencySign;
+
         return $output;
     }
 }

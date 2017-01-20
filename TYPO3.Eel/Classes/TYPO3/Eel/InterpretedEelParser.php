@@ -20,13 +20,13 @@ namespace TYPO3\Eel;
 class InterpretedEelParser extends EelParser
 {
     /**
-     * @var \TYPO3\Eel\Context
+     * @var Context
      */
     protected $context;
 
     /**
      * @param string $string
-     * @param \TYPO3\Eel\Context $context The context to interpret
+     * @param Context $context The context to interpret
      */
     public function __construct($string, $context)
     {
@@ -79,7 +79,7 @@ class InterpretedEelParser extends EelParser
 
     public function ObjectPath_MethodCall(&$result, $sub)
     {
-        $arguments = isset($sub['arguments']) ? $sub['arguments'] : array();
+        $arguments = isset($sub['arguments']) ? $sub['arguments'] : [];
         if (!array_key_exists('val', $result)) {
             $result['val'] = $this->context;
         }
@@ -114,7 +114,7 @@ class InterpretedEelParser extends EelParser
     public function ArrayLiteral_Expression(&$result, $sub)
     {
         if (!isset($result['val'])) {
-            $result['val'] = new Context(array());
+            $result['val'] = new Context([]);
         }
         $result['val']->push($sub['val']);
     }
@@ -122,7 +122,7 @@ class InterpretedEelParser extends EelParser
     public function ArrayLiteral__finalise(&$result)
     {
         if (!isset($result['val'])) {
-            $result['val'] = new Context(array());
+            $result['val'] = new Context([]);
         }
     }
 
@@ -139,7 +139,7 @@ class InterpretedEelParser extends EelParser
     public function ObjectLiteral_ObjectLiteralProperty(&$result, $sub)
     {
         if (!isset($result['val'])) {
-            $result['val'] = new Context(array());
+            $result['val'] = new Context([]);
         }
         $result['val']->push($sub['value']['val'], $sub['key']['val']);
     }
@@ -147,7 +147,7 @@ class InterpretedEelParser extends EelParser
     public function ObjectLiteral__finalise(&$result)
     {
         if (!isset($result['val'])) {
-            $result['val'] = new Context(array());
+            $result['val'] = new Context([]);
         }
     }
 

@@ -14,12 +14,14 @@ namespace TYPO3\Flow\Tests\Unit\Security\Authentication\EntryPoint;
 use TYPO3\Flow\Http\Request;
 use TYPO3\Flow\Http\Response;
 use TYPO3\Flow\Http\Uri;
+use TYPO3\Flow\Mvc\Routing\UriBuilder;
 use TYPO3\Flow\Security\Authentication\EntryPoint\WebRedirect;
+use TYPO3\Flow\Tests\UnitTestCase;
 
 /**
  * Testcase for web redirect authentication entry point
  */
-class WebRedirectTest extends \TYPO3\Flow\Tests\UnitTestCase
+class WebRedirectTest extends UnitTestCase
 {
     /**
      * @test
@@ -31,7 +33,7 @@ class WebRedirectTest extends \TYPO3\Flow\Tests\UnitTestCase
         $response = new Response();
 
         $entryPoint = new WebRedirect();
-        $entryPoint->setOptions(array('something' => 'irrelevant'));
+        $entryPoint->setOptions(['something' => 'irrelevant']);
 
         $entryPoint->startAuthentication($request, $response);
     }
@@ -45,7 +47,7 @@ class WebRedirectTest extends \TYPO3\Flow\Tests\UnitTestCase
         $response = new Response();
 
         $entryPoint = new WebRedirect();
-        $entryPoint->setOptions(array('uri' => 'some/page'));
+        $entryPoint->setOptions(['uri' => 'some/page']);
 
         $entryPoint->startAuthentication($request, $response);
 
@@ -62,7 +64,7 @@ class WebRedirectTest extends \TYPO3\Flow\Tests\UnitTestCase
         $response = new Response();
 
         $entryPoint = new WebRedirect();
-        $entryPoint->setOptions(array('uri' => 'http://some.abs/olute/url'));
+        $entryPoint->setOptions(['uri' => 'http://some.abs/olute/url']);
 
         $entryPoint->startAuthentication($request, $response);
 
@@ -79,7 +81,7 @@ class WebRedirectTest extends \TYPO3\Flow\Tests\UnitTestCase
         $response = new Response();
 
         $entryPoint = new WebRedirect();
-        $entryPoint->setOptions(array('routeValues' => 'this/is/invalid'));
+        $entryPoint->setOptions(['routeValues' => 'this/is/invalid']);
         $entryPoint->startAuthentication($request, $response);
     }
 
@@ -91,20 +93,20 @@ class WebRedirectTest extends \TYPO3\Flow\Tests\UnitTestCase
         $request = Request::create(new Uri('http://robertlemke.com/admin'));
         $response = new Response();
 
-        $entryPoint = $this->getAccessibleMock(\TYPO3\Flow\Security\Authentication\EntryPoint\WebRedirect::class, array('dummy'));
-        $routeValues = array(
+        $entryPoint = $this->getAccessibleMock(WebRedirect::class, ['dummy']);
+        $routeValues = [
             '@package' => 'SomePackage',
             '@subpackage' => 'SomeSubPackage',
             '@controller' => 'SomeController',
             '@action' => 'someAction',
             '@format' => 'someFormat',
-            'otherArguments' => array('foo' => 'bar')
-        );
-        $entryPoint->setOptions(array('routeValues' => $routeValues));
+            'otherArguments' => ['foo' => 'bar']
+        ];
+        $entryPoint->setOptions(['routeValues' => $routeValues]);
 
-        $mockUriBuilder = $this->createMock(\TYPO3\Flow\Mvc\Routing\UriBuilder::class);
+        $mockUriBuilder = $this->createMock(UriBuilder::class);
         $mockUriBuilder->expects($this->once())->method('setCreateAbsoluteUri')->with(true)->will($this->returnValue($mockUriBuilder));
-        $mockUriBuilder->expects($this->once())->method('uriFor')->with('someAction', array('otherArguments' => array('foo' => 'bar'), '@format' => 'someFormat'), 'SomeController', 'SomePackage', 'SomeSubPackage')->will($this->returnValue('http://resolved/redirect/uri'));
+        $mockUriBuilder->expects($this->once())->method('uriFor')->with('someAction', ['otherArguments' => ['foo' => 'bar'], '@format' => 'someFormat'], 'SomeController', 'SomePackage', 'SomeSubPackage')->will($this->returnValue('http://resolved/redirect/uri'));
         $entryPoint->_set('uriBuilder', $mockUriBuilder);
 
         $entryPoint->startAuthentication($request, $response);

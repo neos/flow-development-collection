@@ -11,12 +11,14 @@ namespace TYPO3\Flow\Tests\Functional\Persistence\Doctrine;
  * source code.
  */
 
-use TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity;
+use TYPO3\Flow\Persistence\Doctrine\PersistenceManager;
+use TYPO3\Flow\Tests\Functional\Persistence\Fixtures;
+use TYPO3\Flow\Tests\FunctionalTestCase;
 
 /**
  * Testcase for proxy initialization within doctrine lazy loading
  */
-class LazyLoadingTest extends \TYPO3\Flow\Tests\FunctionalTestCase
+class LazyLoadingTest extends FunctionalTestCase
 {
     /**
      * @var boolean
@@ -24,9 +26,14 @@ class LazyLoadingTest extends \TYPO3\Flow\Tests\FunctionalTestCase
     protected static $testablePersistenceEnabled = true;
 
     /**
-     * @var \TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntityRepository;
+     * @var Fixtures\TestEntityRepository
      */
     protected $testEntityRepository;
+
+    /**
+     * @var Fixtures\PostRepository
+     */
+    protected $postRepository;
 
     /**
      * @return void
@@ -34,10 +41,11 @@ class LazyLoadingTest extends \TYPO3\Flow\Tests\FunctionalTestCase
     public function setUp()
     {
         parent::setUp();
-        if (!$this->persistenceManager instanceof \TYPO3\Flow\Persistence\Doctrine\PersistenceManager) {
+        if (!$this->persistenceManager instanceof PersistenceManager) {
             $this->markTestSkipped('Doctrine persistence is not enabled');
         }
-        $this->testEntityRepository = $this->objectManager->get(\TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntityRepository::class);
+        $this->postRepository = $this->objectManager->get(Fixtures\PostRepository::class);
+        $this->testEntityRepository = $this->objectManager->get(Fixtures\TestEntityRepository::class);
     }
 
     /**
@@ -45,9 +53,9 @@ class LazyLoadingTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function dependencyInjectionIsCorrectlyInitializedEvenIfADoctrineProxyGetsInitializedOnTheFlyFromTheOutside()
     {
-        $entity = new TestEntity();
+        $entity = new Fixtures\TestEntity();
         $entity->setName('Andi');
-        $relatedEntity = new TestEntity();
+        $relatedEntity = new Fixtures\TestEntity();
         $relatedEntity->setName('Robert');
         $entity->setRelatedEntity($relatedEntity);
 
@@ -71,9 +79,9 @@ class LazyLoadingTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function aopIsCorrectlyInitializedEvenIfADoctrineProxyGetsInitializedOnTheFlyFromTheOutside()
     {
-        $entity = new TestEntity();
+        $entity = new Fixtures\TestEntity();
         $entity->setName('Andi');
-        $relatedEntity = new TestEntity();
+        $relatedEntity = new Fixtures\TestEntity();
         $relatedEntity->setName('Robert');
         $entity->setRelatedEntity($relatedEntity);
 
@@ -90,5 +98,46 @@ class LazyLoadingTest extends \TYPO3\Flow\Tests\FunctionalTestCase
         $loadedRelatedEntity = $loadedEntity->getRelatedEntity();
 
         $this->assertEquals($loadedRelatedEntity->sayHello(), 'Hello Andi!');
+    }
+
+    /**
+     * @test
+     */
+    public function shutdownObjectMethodIsRegisterdForDoctrineProxy()
+    {
+        $image = new Fixtures\Image();
+        $post = new Fixtures\Post();
+        $post->setImage($image);
+
+        $this->postRepository->add($post);
+        $this->persistenceManager->persistAll();
+        $this->persistenceManager->clearState();
+
+        $postIdentifier = $this->persistenceManager->getIdentifierByObject($post);
+
+        unset($post);
+        unset($image);
+
+        /*
+         * When hydrating the post a DoctrineProxy is generated for the image.
+         * On this proxy __wakeup() is called and the shutdownObject lifecycle method
+         * needs to be registered in the ObjectManager
+         */
+        $post = $this->persistenceManager->getObjectByIdentifier($postIdentifier, Fixtures\Post::class);
+
+        /*
+         * The CleanupObject is just a helper object to test that shutdownObject() on the Fixtures\Image is called
+         */
+        $cleanupObject = new Fixtures\CleanupObject();
+        $this->assertFalse($cleanupObject->getState());
+        $post->getImage()->setRelatedObject($cleanupObject);
+
+        /*
+         * When shutting down the ObjectManager shutdownObject() on Fixtures\Image is called
+         * and toggles the state on the cleanupObject
+         */
+        \TYPO3\Flow\Core\Bootstrap::$staticObjectManager->shutdown();
+
+        $this->assertTrue($cleanupObject->getState());
     }
 }

@@ -10,18 +10,21 @@ namespace TYPO3\Flow\Tests\Unit\I18n;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+use TYPO3\Flow\I18n;
 use TYPO3\Flow\I18n\LocaleTypeConverter;
+use TYPO3\Flow\Property\TypeConverterInterface;
 use TYPO3\Flow\Tests\UnitTestCase;
 
 /**
  * Testcase for the Locale type converter
  *
- * @covers \TYPO3\Flow\I18n\LocaleTypeConverter<extended>
+ * @covers I18n\LocaleTypeConverter<extended>
  */
 class LocaleTypeConverterTest extends UnitTestCase
 {
     /**
-     * @var \TYPO3\Flow\Property\TypeConverterInterface
+     * @var TypeConverterInterface
      */
     protected $converter;
 
@@ -35,8 +38,8 @@ class LocaleTypeConverterTest extends UnitTestCase
      */
     public function checkMetadata()
     {
-        $this->assertEquals(array('string'), $this->converter->getSupportedSourceTypes(), 'Source types do not match');
-        $this->assertEquals(\TYPO3\Flow\I18n\Locale::class, $this->converter->getSupportedTargetType(), 'Target type does not match');
+        $this->assertEquals(['string'], $this->converter->getSupportedSourceTypes(), 'Source types do not match');
+        $this->assertEquals(I18n\Locale::class, $this->converter->getSupportedTargetType(), 'Target type does not match');
         $this->assertEquals(1, $this->converter->getPriority(), 'Priority does not match');
     }
 
@@ -45,7 +48,7 @@ class LocaleTypeConverterTest extends UnitTestCase
      */
     public function convertFromShouldReturnLocale()
     {
-        $this->assertInstanceOf(\TYPO3\Flow\I18n\Locale::class, $this->converter->convertFrom('de', 'irrelevant'));
+        $this->assertInstanceOf(I18n\Locale::class, $this->converter->convertFrom('de', 'irrelevant'));
     }
 
     /**
@@ -53,7 +56,7 @@ class LocaleTypeConverterTest extends UnitTestCase
      */
     public function canConvertFromShouldReturnTrue()
     {
-        $this->assertTrue($this->converter->canConvertFrom('de', \TYPO3\Flow\I18n\Locale::class));
+        $this->assertTrue($this->converter->canConvertFrom('de', I18n\Locale::class));
     }
 
     /**

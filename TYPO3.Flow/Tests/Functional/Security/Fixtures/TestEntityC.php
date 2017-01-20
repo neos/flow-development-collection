@@ -34,19 +34,19 @@ class TestEntityC
     protected $simpleArrayProperty;
 
     /**
-     * @var \TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityD
+     * @var TestEntityD
      * @ORM\OneToOne(inversedBy="relatedEntityC")
      */
     protected $relatedEntityD;
 
     /**
-     * @var Collection<\TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityD>
+     * @var Collection<TestEntityD>
      * @ORM\OneToMany(mappedBy="manyToOneToRelatedEntityC")
      */
     protected $oneToManyToRelatedEntityD;
 
     /**
-     * @var Collection<\TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityD>
+     * @var Collection<TestEntityD>
      * @ORM\ManyToMany
      */
     protected $manyToManyToRelatedEntityD;
@@ -61,7 +61,7 @@ class TestEntityC
     }
 
     /**
-     * @param Collection<\TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityD> $manyToManyToRelatedEntityD
+     * @param Collection<TestEntityD> $manyToManyToRelatedEntityD
      */
     public function setManyToManyToRelatedEntityD($manyToManyToRelatedEntityD)
     {
@@ -69,7 +69,7 @@ class TestEntityC
     }
 
     /**
-     * @return Collection<\TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityD>
+     * @return Collection<TestEntityD>
      */
     public function getManyToManyToRelatedEntityD()
     {
@@ -77,7 +77,7 @@ class TestEntityC
     }
 
     /**
-     * @param Collection<\TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityD> $manyToOneToRelatedEntityD
+     * @param Collection<TestEntityD> $manyToOneToRelatedEntityD
      */
     public function setManyToOneToRelatedEntityD($manyToOneToRelatedEntityD)
     {
@@ -85,7 +85,7 @@ class TestEntityC
     }
 
     /**
-     * @return Collection<\TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityD>
+     * @return Collection<TestEntityD>
      */
     public function getManyToOneToRelatedEntityD()
     {
@@ -93,7 +93,7 @@ class TestEntityC
     }
 
     /**
-     * @param \TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityD $relatedEntityD
+     * @param TestEntityD $relatedEntityD
      */
     public function setRelatedEntityD($relatedEntityD)
     {
@@ -101,7 +101,7 @@ class TestEntityC
     }
 
     /**
-     * @return \TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityD
+     * @return TestEntityD
      */
     public function getRelatedEntityD()
     {

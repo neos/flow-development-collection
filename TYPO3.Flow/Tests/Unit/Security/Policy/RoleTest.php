@@ -26,11 +26,11 @@ class RoleTest extends UnitTestCase
      */
     public function roleIdentifiersAndPackageKeysAndNames()
     {
-        return array(
-            array('TYPO3.Flow:Everybody', 'Everybody', 'TYPO3.Flow'),
-            array('Acme.Demo:Test', 'Test', 'Acme.Demo'),
-            array('Acme.Demo.Sub:Test', 'Test', 'Acme.Demo.Sub')
-        );
+        return [
+            ['TYPO3.Flow:Everybody', 'Everybody', 'TYPO3.Flow'],
+            ['Acme.Demo:Test', 'Test', 'Acme.Demo'],
+            ['Acme.Demo.Sub:Test', 'Test', 'Acme.Demo.Sub']
+        ];
     }
 
     /**
@@ -51,20 +51,20 @@ class RoleTest extends UnitTestCase
     public function setParentRolesMakesSureThatParentRolesDontContainDuplicates()
     {
         /** @var Role|\PHPUnit_Framework_MockObject_MockObject $role */
-        $role = $this->getAccessibleMock(\TYPO3\Flow\Security\Policy\Role::class, array('dummy'), array('Acme.Demo:Test'));
+        $role = $this->getAccessibleMock(Role::class, ['dummy'], ['Acme.Demo:Test']);
 
         /** @var Role|\PHPUnit_Framework_MockObject_MockObject $parentRole1 */
-        $parentRole1 = $this->getAccessibleMock(\TYPO3\Flow\Security\Policy\Role::class, array('dummy'), array('Acme.Demo:Parent1'));
+        $parentRole1 = $this->getAccessibleMock(Role::class, ['dummy'], ['Acme.Demo:Parent1']);
         /** @var Role|\PHPUnit_Framework_MockObject_MockObject $parentRole2 */
-        $parentRole2 = $this->getAccessibleMock(\TYPO3\Flow\Security\Policy\Role::class, array('dummy'), array('Acme.Demo:Parent2'));
+        $parentRole2 = $this->getAccessibleMock(Role::class, ['dummy'], ['Acme.Demo:Parent2']);
 
         $parentRole2->addParentRole($parentRole1);
-        $role->setParentRoles(array($parentRole1, $parentRole2, $parentRole2, $parentRole1));
+        $role->setParentRoles([$parentRole1, $parentRole2, $parentRole2, $parentRole1]);
 
-        $expectedParentRoles = array(
+        $expectedParentRoles = [
             'Acme.Demo:Parent1' => $parentRole1,
             'Acme.Demo:Parent2' => $parentRole2
-        );
+        ];
 
         $this->assertEquals(2, count($role->getParentRoles()));
         $this->assertEquals($expectedParentRoles, $role->getParentRoles());

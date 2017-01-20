@@ -12,6 +12,7 @@ namespace TYPO3\Eel\FlowQuery;
  */
 
 use TYPO3\Eel\Exception;
+use TYPO3\Eel\ProtectedContextAwareInterface;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
@@ -69,7 +70,7 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * If an operation is final, it should return the resulting value directly.
  */
-class FlowQuery implements \TYPO3\Eel\ProtectedContextAwareInterface, \IteratorAggregate, \Countable
+class FlowQuery implements ProtectedContextAwareInterface, \IteratorAggregate, \Countable
 {
     /**
      * the objects this FlowQuery object wraps
@@ -86,11 +87,11 @@ class FlowQuery implements \TYPO3\Eel\ProtectedContextAwareInterface, \IteratorA
      *
      * @var array
      */
-    protected $operations = array();
+    protected $operations = [];
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Eel\FlowQuery\OperationResolverInterface
+     * @var OperationResolverInterface
      */
     protected $operationResolver;
 
@@ -106,7 +107,7 @@ class FlowQuery implements \TYPO3\Eel\ProtectedContextAwareInterface, \IteratorA
      * @throws Exception
      * @api
      */
-    public function __construct($context, array $operations = array())
+    public function __construct($context, array $operations = [])
     {
         if (!(is_array($context) || $context instanceof \Traversable)) {
             throw new Exception('The FlowQuery context must be an array or implement \Traversable but context was a ' . gettype($context), 1380816689);
@@ -137,15 +138,15 @@ class FlowQuery implements \TYPO3\Eel\ProtectedContextAwareInterface, \IteratorA
      *
      * @param string $operationName
      * @param array $arguments
-     * @return \TYPO3\Eel\FlowQuery\FlowQuery
+     * @return FlowQuery
      */
     public function __call($operationName, array $arguments)
     {
         $updatedOperations = $this->operations;
-        $updatedOperations[] = array(
+        $updatedOperations[] = [
             'name' => $operationName,
             'arguments' => $arguments
-        );
+        ];
 
         if ($this->operationResolver->isFinalOperation($operationName)) {
             $operationsBackup = $this->operations;
@@ -172,7 +173,7 @@ class FlowQuery implements \TYPO3\Eel\ProtectedContextAwareInterface, \IteratorA
      */
     public function count()
     {
-        return $this->__call('count', array());
+        return $this->__call('count', []);
     }
 
     /**
@@ -231,10 +232,10 @@ class FlowQuery implements \TYPO3\Eel\ProtectedContextAwareInterface, \IteratorA
      */
     public function pushOperation($operationName, array $arguments)
     {
-        array_unshift($this->operations, array(
+        array_unshift($this->operations, [
             'name' => $operationName,
             'arguments' => $arguments
-        ));
+        ]);
     }
 
     /**

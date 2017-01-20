@@ -286,13 +286,13 @@ abstract class ObjectAccess
         if (!isset(self::$gettablePropertyNamesCache[$className])) {
             foreach (get_class_methods($object) as $methodName) {
                 if (is_callable([$object, $methodName])) {
-                    if (substr($methodName, 0, 2) === 'is') {
+                    if (substr($methodName, 0, 2) === 'is' && strlen($methodName) > 2) {
                         $declaredPropertyNames[] = lcfirst(substr($methodName, 2));
                     }
-                    if (substr($methodName, 0, 3) === 'get') {
+                    if (substr($methodName, 0, 3) === 'get' && strlen($methodName) > 3) {
                         $declaredPropertyNames[] = lcfirst(substr($methodName, 3));
                     }
-                    if (substr($methodName, 0, 3) === 'has') {
+                    if (substr($methodName, 0, 3) === 'has' && strlen($methodName) > 3) {
                         $declaredPropertyNames[] = lcfirst(substr($methodName, 3));
                     }
                 }
@@ -329,7 +329,7 @@ abstract class ObjectAccess
         }
 
         foreach (get_class_methods($object) as $methodName) {
-            if (substr($methodName, 0, 3) === 'set' && is_callable([$object, $methodName])) {
+            if (substr($methodName, 0, 3) === 'set' && strlen($methodName) > 3 && is_callable([$object, $methodName])) {
                 $declaredPropertyNames[] = lcfirst(substr($methodName, 3));
             }
         }

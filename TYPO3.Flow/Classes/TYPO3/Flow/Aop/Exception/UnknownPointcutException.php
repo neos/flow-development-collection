@@ -10,12 +10,13 @@ namespace TYPO3\Flow\Aop\Exception;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use TYPO3\Flow\Aop\Exception;
 
 /**
  * A "unknown pointcut" Exception
  *
  * @api
  */
-class UnknownPointcutException extends \TYPO3\Flow\Aop\Exception
+class UnknownPointcutException extends Exception
 {
 }

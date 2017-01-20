@@ -331,7 +331,7 @@ class MathHelper implements ProtectedContextAwareInterface
     public function max($x = null, $y_ = null)
     {
         $arguments = func_get_args();
-        if ($arguments !== array()) {
+        if ($arguments !== []) {
             return call_user_func_array('max', func_get_args());
         } else {
             return -INF;
@@ -346,7 +346,7 @@ class MathHelper implements ProtectedContextAwareInterface
     public function min($x = null, $y_ = null)
     {
         $arguments = func_get_args();
-        if ($arguments !== array()) {
+        if ($arguments !== []) {
             return call_user_func_array('min', func_get_args());
         } else {
             return INF;

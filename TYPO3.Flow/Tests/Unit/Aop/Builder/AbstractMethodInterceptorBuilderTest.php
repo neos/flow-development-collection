@@ -11,11 +11,16 @@ namespace TYPO3\Flow\Tests\Unit\Aop\Builder;
  * source code.
  */
 
+use TYPO3\Flow\Aop\Builder\AbstractMethodInterceptorBuilder;
+use TYPO3\Flow\Aop\Builder\AdvicedConstructorInterceptorBuilder;
+use TYPO3\Flow\Reflection\ReflectionService;
+use TYPO3\Flow\Tests\UnitTestCase;
+
 /**
  * Testcase for the Abstract Method Interceptor Builder
  *
  */
-class AbstractMethodInterceptorBuilderTest extends \TYPO3\Flow\Tests\UnitTestCase
+class AbstractMethodInterceptorBuilderTest extends UnitTestCase
 {
     /**
      * @test
@@ -24,56 +29,56 @@ class AbstractMethodInterceptorBuilderTest extends \TYPO3\Flow\Tests\UnitTestCas
     {
         $className = 'TestClass' . md5(uniqid(mt_rand(), true));
         eval('
-            class ' . $className . ' {
-                public function foo($arg1, array $arg2, \ArrayObject $arg3, &$arg4, $arg5= "foo", $arg6 = TRUE) {}
-            }
-        ');
-        $methodParameters = array(
-            'arg1' => array(
+			class ' . $className . ' {
+				public function foo($arg1, array $arg2, \ArrayObject $arg3, &$arg4, $arg5= "foo", $arg6 = TRUE) {}
+			}
+		');
+        $methodParameters = [
+            'arg1' => [
                 'position' => 0,
                 'byReference' => false,
                 'array' => false,
                 'optional' => false,
                 'allowsNull' => true
-            ),
-            'arg2' => array(
+            ],
+            'arg2' => [
                 'position' => 1,
                 'byReference' => false,
                 'array' => true,
                 'optional' => false,
                 'allowsNull' => true
-            ),
-            'arg3' => array(
+            ],
+            'arg3' => [
                 'position' => 2,
                 'byReference' => false,
                 'array' => false,
                 'optional' => false,
                 'allowsNull' => true
-            ),
-            'arg4' => array(
+            ],
+            'arg4' => [
                 'position' => 3,
                 'byReference' => true,
                 'array' => false,
                 'optional' => false,
                 'allowsNull' => true
-            ),
-            'arg5' => array(
+            ],
+            'arg5' => [
                 'position' => 4,
                 'byReference' => false,
                 'array' => false,
                 'optional' => true,
                 'allowsNull' => true
-            ),
-            'arg6' => array(
+            ],
+            'arg6' => [
                 'position' => 5,
                 'byReference' => false,
                 'array' => false,
                 'optional' => true,
                 'allowsNull' => true
-            ),
-        );
+            ],
+        ];
 
-        $mockReflectionService = $this->getMockBuilder(\TYPO3\Flow\Reflection\ReflectionService::class)->disableOriginalConstructor()->getMock();
+        $mockReflectionService = $this->getMockBuilder(ReflectionService::class)->disableOriginalConstructor()->getMock();
         $mockReflectionService->expects($this->any())->method('getMethodParameters')->with($className, 'foo')->will($this->returnValue($methodParameters));
 
         $expectedCode = "
@@ -87,7 +92,7 @@ class AbstractMethodInterceptorBuilderTest extends \TYPO3\Flow\Tests\UnitTestCas
                 \$methodArguments['arg6'] = \$arg6;
             ";
 
-        $builder = $this->getAccessibleMock(\TYPO3\Flow\Aop\Builder\AbstractMethodInterceptorBuilder::class, array('build'), array(), '', false);
+        $builder = $this->getAccessibleMock(AbstractMethodInterceptorBuilder::class, ['build'], [], '', false);
         $builder->injectReflectionService($mockReflectionService);
 
         $actualCode = $builder->_call('buildMethodArgumentsArrayCode', $className, 'foo');
@@ -99,7 +104,7 @@ class AbstractMethodInterceptorBuilderTest extends \TYPO3\Flow\Tests\UnitTestCas
      */
     public function buildMethodArgumentsArrayCodeReturnsAnEmptyStringIfTheClassNameIsNULL()
     {
-        $builder = $this->getAccessibleMock(\TYPO3\Flow\Aop\Builder\AbstractMethodInterceptorBuilder::class, array('build'), array(), '', false);
+        $builder = $this->getAccessibleMock(AbstractMethodInterceptorBuilder::class, ['build'], [], '', false);
 
         $actualCode = $builder->_call('buildMethodArgumentsArrayCode', null, 'foo');
         $this->assertSame('', $actualCode);
@@ -112,52 +117,52 @@ class AbstractMethodInterceptorBuilderTest extends \TYPO3\Flow\Tests\UnitTestCas
     {
         $className = 'TestClass' . md5(uniqid(mt_rand(), true));
         eval('
-            class ' . $className . ' {
-                public function __construct($arg1, array $arg2, \ArrayObject $arg3, $arg4= "__construct", $arg5 = TRUE) {}
-            }
-        ');
-        $methodParameters = array(
-            'arg1' => array(
+			class ' . $className . ' {
+				public function __construct($arg1, array $arg2, \ArrayObject $arg3, $arg4= "__construct", $arg5 = TRUE) {}
+			}
+		');
+        $methodParameters = [
+            'arg1' => [
                 'position' => 0,
                 'byReference' => false,
                 'array' => false,
                 'optional' => false,
                 'allowsNull' => true
-            ),
-            'arg2' => array(
+            ],
+            'arg2' => [
                 'position' => 1,
                 'byReference' => false,
                 'array' => true,
                 'optional' => false,
                 'allowsNull' => true
-            ),
-            'arg3' => array(
+            ],
+            'arg3' => [
                 'position' => 2,
                 'byReference' => false,
                 'array' => false,
                 'optional' => false,
                 'allowsNull' => true
-            ),
-            'arg4' => array(
+            ],
+            'arg4' => [
                 'position' => 3,
                 'byReference' => false,
                 'array' => false,
                 'optional' => true,
                 'allowsNull' => true
-            ),
-            'arg5' => array(
+            ],
+            'arg5' => [
                 'position' => 4,
                 'byReference' => false,
                 'array' => false,
                 'optional' => true,
                 'allowsNull' => true
-            ),
-        );
+            ],
+        ];
 
-        $mockReflectionService = $this->getMockBuilder(\TYPO3\Flow\Reflection\ReflectionService::class)->disableOriginalConstructor()->getMock();
+        $mockReflectionService = $this->getMockBuilder(ReflectionService::class)->disableOriginalConstructor()->getMock();
         $mockReflectionService->expects($this->any())->method('getMethodParameters')->with($className, '__construct')->will($this->returnValue($methodParameters));
 
-        $builder = $this->getAccessibleMock(\TYPO3\Flow\Aop\Builder\AdvicedConstructorInterceptorBuilder::class, array('dummy'), array(), '', false);
+        $builder = $this->getAccessibleMock(AdvicedConstructorInterceptorBuilder::class, ['dummy'], [], '', false);
         $builder->injectReflectionService($mockReflectionService);
 
         $expectedCode = '$this->Flow_Aop_Proxy_originalConstructorArguments[\'arg1\'], $this->Flow_Aop_Proxy_originalConstructorArguments[\'arg2\'], $this->Flow_Aop_Proxy_originalConstructorArguments[\'arg3\'], $this->Flow_Aop_Proxy_originalConstructorArguments[\'arg4\'], $this->Flow_Aop_Proxy_originalConstructorArguments[\'arg5\']';

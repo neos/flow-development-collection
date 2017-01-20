@@ -12,11 +12,9 @@ namespace TYPO3\Flow\Tests\Functional\Mvc;
  */
 
 use TYPO3\Flow\Mvc\Routing\Route;
+use TYPO3\Flow\Tests\FunctionalTestCase;
 
-/**
- * Functional tests for the ActionController
- */
-class AbstractControllerTest extends \TYPO3\Flow\Tests\FunctionalTestCase
+class AbstractControllerTest extends FunctionalTestCase
 {
     /**
      * @var boolean
@@ -33,12 +31,12 @@ class AbstractControllerTest extends \TYPO3\Flow\Tests\FunctionalTestCase
         $route = new Route();
         $route->setName('AbstractControllerTest Route 1');
         $route->setUriPattern('test/mvc/abstractcontrollertesta/{@action}');
-        $route->setDefaults(array(
+        $route->setDefaults([
             '@package' => 'TYPO3.Flow',
             '@subpackage' => 'Tests\Functional\Mvc\Fixtures',
             '@controller' => 'AbstractControllerTestA',
-            '@format' => 'html'
-        ));
+            '@format' =>'html'
+        ]);
         $route->setAppendExceedingArguments(true);
         $this->router->addRoute($route);
     }

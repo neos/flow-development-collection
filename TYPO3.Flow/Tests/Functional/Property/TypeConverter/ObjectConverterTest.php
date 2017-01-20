@@ -11,10 +11,12 @@ namespace TYPO3\Flow\Tests\Functional\Property\TypeConverter;
  * source code.
  */
 
+use TYPO3\Flow\Property\Exception\InvalidTargetException;
 use TYPO3\Flow\Property\PropertyMappingConfiguration;
 use TYPO3\Flow\Property\TypeConverter\ObjectConverter;
 use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Flow\Tests\FunctionalTestCase;
+use TYPO3\Flow\Tests\Functional\Property\Fixtures;
 
 /**
  */
@@ -28,7 +30,7 @@ class ObjectConverterTest extends FunctionalTestCase
     public function setUp()
     {
         parent::setUp();
-        $this->converter = $this->objectManager->get(\TYPO3\Flow\Property\TypeConverter\ObjectConverter::class);
+        $this->converter = $this->objectManager->get(ObjectConverter::class);
     }
 
     /**
@@ -42,7 +44,7 @@ class ObjectConverterTest extends FunctionalTestCase
         $configuration
             ->forProperty($propertyName)
             ->setTypeConverterOption(
-                \TYPO3\Flow\Property\TypeConverter\ObjectConverter::class,
+                ObjectConverter::class,
                 ObjectConverter::CONFIGURATION_TARGET_TYPE,
                 $expectedTargetType);
 
@@ -56,7 +58,7 @@ class ObjectConverterTest extends FunctionalTestCase
     public function getTypeOfChildPropertyReturnsCorrectTypeIfAConstructorArgumentForThatPropertyIsPresent()
     {
         $actual = $this->converter->getTypeOfChildProperty(
-            \TYPO3\Flow\Tests\Functional\Property\Fixtures\TestClass::class,
+            Fixtures\TestClass::class,
             'dummy',
             new PropertyMappingConfiguration()
         );
@@ -69,7 +71,7 @@ class ObjectConverterTest extends FunctionalTestCase
     public function getTypeOfChildPropertyReturnsCorrectTypeIfASetterForThatPropertyIsPresent()
     {
         $actual = $this->converter->getTypeOfChildProperty(
-            \TYPO3\Flow\Tests\Functional\Property\Fixtures\TestClass::class,
+            Fixtures\TestClass::class,
             'attributeWithStringTypeAnnotation',
             new PropertyMappingConfiguration()
         );
@@ -81,9 +83,9 @@ class ObjectConverterTest extends FunctionalTestCase
      */
     public function getTypeOfChildPropertyThrowsExceptionIfThatPropertyIsPubliclyPresentButHasNoProperTypeAnnotation()
     {
-        $this->setExpectedException(\TYPO3\Flow\Property\Exception\InvalidTargetException::class, '', 1406821818);
+        $this->setExpectedException(InvalidTargetException::class, '', 1406821818);
         $this->converter->getTypeOfChildProperty(
-            \TYPO3\Flow\Tests\Functional\Property\Fixtures\TestClass::class,
+            Fixtures\TestClass::class,
             'somePublicPropertyWithoutVarAnnotation',
             new PropertyMappingConfiguration()
         );
@@ -96,7 +98,7 @@ class ObjectConverterTest extends FunctionalTestCase
     {
         $configuration = new PropertyMappingConfiguration();
         $actual = $this->converter->getTypeOfChildProperty(
-            \TYPO3\Flow\Tests\Functional\Property\Fixtures\TestClass::class,
+            Fixtures\TestClass::class,
             'somePublicProperty',
             $configuration
         );
@@ -110,12 +112,12 @@ class ObjectConverterTest extends FunctionalTestCase
     {
         $convertedObject = $this->converter->convertFrom(
             'irrelevant',
-            \TYPO3\Flow\Tests\Functional\Property\Fixtures\TestClass::class,
-            array(
+            Fixtures\TestClass::class,
+            [
                 'propertyMeantForConstructorUsage' => 'theValue',
                 'propertyMeantForSetterUsage' => 'theValue',
                 'propertyMeantForPublicUsage' => 'theValue'
-            ),
+            ],
             new PropertyMappingConfiguration()
         );
 

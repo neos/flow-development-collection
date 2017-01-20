@@ -122,7 +122,7 @@
         </trans-unit>
         <trans-unit id="1238108068[1]">
           <source>This field must contain at least {0,number} characters</source>
-          <target xml:lang="nl" state="needs-translation">This field must contain at least {0,number} characters</target>
+          <target xml:lang="nl" state="translated">Dit veld moet ten minste {0,number} karakters bevatten</target>
         </trans-unit>
       </group>
       <group id="1238108069" restype="x-gettext-plurals">
@@ -132,7 +132,7 @@
         </trans-unit>
         <trans-unit id="1238108069[1]">
           <source>This text may not exceed {0,number} characters</source>
-          <target xml:lang="nl" state="needs-translation">This text may not exceed {0,number} characters</target>
+          <target xml:lang="nl" state="translated">Deze tekst mag niet langer zijn dan {0,number} karakters</target>
         </trans-unit>
       </group>
       <!-- StringValidator -->

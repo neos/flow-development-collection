@@ -89,6 +89,8 @@ Flow_Persistence_Doctrine_Results:
   backend: TYPO3\Flow\Cache\Backend\FileBackend
   backendOptions:
     defaultLifetime: 60
+Flow_Persistence_Doctrine_SecondLevel:
+  backend: TYPO3\Flow\Cache\Backend\SimpleFileBackend
 
 # Flow_Reflection*
 #

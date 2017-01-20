@@ -11,14 +11,16 @@ namespace TYPO3\Flow\Tests\Unit\I18n\Formatter;
  * source code.
  */
 
+use TYPO3\Flow\Tests\UnitTestCase;
+use TYPO3\Flow\I18n;
+
 /**
  * Testcase for the NumberFormatter
- *
  */
-class NumberFormatterTest extends \TYPO3\Flow\Tests\UnitTestCase
+class NumberFormatterTest extends UnitTestCase
 {
     /**
-     * @var \TYPO3\Flow\I18n\Locale
+     * @var I18n\Locale
      */
     protected $sampleLocale;
 
@@ -27,7 +29,7 @@ class NumberFormatterTest extends \TYPO3\Flow\Tests\UnitTestCase
      *
      * @var array
      */
-    protected $sampleLocalizedSymbols = array(
+    protected $sampleLocalizedSymbols = [
         'decimal' => ',',
         'group' => ' ',
         'percentSign' => '%',
@@ -35,7 +37,7 @@ class NumberFormatterTest extends \TYPO3\Flow\Tests\UnitTestCase
         'perMille' => '‰',
         'infinity' => '∞',
         'nan' => 'NaN',
-    );
+    ];
 
     /**
      * A template array of parsed format. Used as a base in order to not repeat
@@ -43,7 +45,7 @@ class NumberFormatterTest extends \TYPO3\Flow\Tests\UnitTestCase
      *
      * @var array
      */
-    protected $templateFormat = array(
+    protected $templateFormat = [
         'positivePrefix' => '',
         'positiveSuffix' => '',
         'negativePrefix' => '-',
@@ -60,14 +62,14 @@ class NumberFormatterTest extends \TYPO3\Flow\Tests\UnitTestCase
         'secondaryGroupingSize' => 0,
 
         'rounding' => 0,
-    );
+    ];
 
     /**
      * @return void
      */
     public function setUp()
     {
-        $this->sampleLocale = new \TYPO3\Flow\I18n\Locale('en');
+        $this->sampleLocale = new I18n\Locale('en');
     }
 
     /**
@@ -77,14 +79,14 @@ class NumberFormatterTest extends \TYPO3\Flow\Tests\UnitTestCase
     {
         $sampleNumber = 123.456;
 
-        $formatter = $this->getAccessibleMock(\TYPO3\Flow\I18n\Formatter\NumberFormatter::class, array('formatDecimalNumber', 'formatPercentNumber'));
-        $formatter->expects($this->at(0))->method('formatDecimalNumber')->with($sampleNumber, $this->sampleLocale, \TYPO3\Flow\I18n\Cldr\Reader\NumbersReader::FORMAT_LENGTH_DEFAULT)->will($this->returnValue('bar1'));
-        $formatter->expects($this->at(1))->method('formatPercentNumber')->with($sampleNumber, $this->sampleLocale, \TYPO3\Flow\I18n\Cldr\Reader\NumbersReader::FORMAT_LENGTH_DEFAULT)->will($this->returnValue('bar2'));
+        $formatter = $this->getAccessibleMock(I18n\Formatter\NumberFormatter::class, ['formatDecimalNumber', 'formatPercentNumber']);
+        $formatter->expects($this->at(0))->method('formatDecimalNumber')->with($sampleNumber, $this->sampleLocale, I18n\Cldr\Reader\NumbersReader::FORMAT_LENGTH_DEFAULT)->will($this->returnValue('bar1'));
+        $formatter->expects($this->at(1))->method('formatPercentNumber')->with($sampleNumber, $this->sampleLocale, I18n\Cldr\Reader\NumbersReader::FORMAT_LENGTH_DEFAULT)->will($this->returnValue('bar2'));
 
         $result = $formatter->format($sampleNumber, $this->sampleLocale);
         $this->assertEquals('bar1', $result);
 
-        $result = $formatter->format($sampleNumber, $this->sampleLocale, array('percent'));
+        $result = $formatter->format($sampleNumber, $this->sampleLocale, ['percent']);
         $this->assertEquals('bar2', $result);
     }
 
@@ -99,11 +101,11 @@ class NumberFormatterTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function sampleNumbersAndParsedFormats()
     {
-        return array(
-            array(1234.567, '01234,5670', array_merge($this->templateFormat, array('minDecimalDigits' => 4, 'maxDecimalDigits' => 5, 'minIntegerDigits' => 5))),
-            array(0.10004, '0,1', array_merge($this->templateFormat, array('minDecimalDigits' => 1, 'maxDecimalDigits' => 4))),
-            array(1000.23, '1 000,25', array_merge($this->templateFormat, array('maxDecimalDigits' => 2, 'primaryGroupingSize' => 3, 'secondaryGroupingSize' => 3, 'rounding' => 0.05)))
-        );
+        return [
+            [1234.567, '01234,5670', array_merge($this->templateFormat, ['minDecimalDigits' => 4, 'maxDecimalDigits' => 5, 'minIntegerDigits' => 5])],
+            [0.10004, '0,1', array_merge($this->templateFormat, ['minDecimalDigits' => 1, 'maxDecimalDigits' => 4])],
+            [1000.23, '1 000,25', array_merge($this->templateFormat, ['maxDecimalDigits' => 2, 'primaryGroupingSize' => 3, 'secondaryGroupingSize' => 3, 'rounding' => 0.05])]
+        ];
     }
 
     /**
@@ -112,7 +114,7 @@ class NumberFormatterTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function parsedFormatsAreUsedCorrectly($number, $expectedResult, array $parsedFormat)
     {
-        $formatter = $this->getAccessibleMock(\TYPO3\Flow\I18n\Formatter\NumberFormatter::class, array('dummy'));
+        $formatter = $this->getAccessibleMock(I18n\Formatter\NumberFormatter::class, ['dummy']);
         $result = $formatter->_call('doFormattingWithParsedFormat', $number, $parsedFormat, $this->sampleLocalizedSymbols);
         $this->assertEquals($expectedResult, $result);
     }
@@ -124,23 +126,23 @@ class NumberFormatterTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function customFormatsAndFormatterNumbers()
     {
-        return array(
-            array(
+        return [
+            [
                 1234.567, '00000.0000',
-                array_merge($this->templateFormat, array('minDecimalDigits' => 4, 'maxDecimalDigits' => 4, 'minIntegerDigits' => 5)),
+                array_merge($this->templateFormat, ['minDecimalDigits' => 4, 'maxDecimalDigits' => 4, 'minIntegerDigits' => 5]),
                 '01234,5670',
-            ),
-            array(
+            ],
+            [
                 0.10004, '0.0###',
-                array_merge($this->templateFormat, array('minDecimalDigits' => 1, 'maxDecimalDigits' => 4)),
+                array_merge($this->templateFormat, ['minDecimalDigits' => 1, 'maxDecimalDigits' => 4]),
                 '0,1',
-            ),
-            array(
+            ],
+            [
                 -1099.99, '#,##0.0;(#)',
-                array_merge($this->templateFormat, array('minDecimalDigits' => 1, 'primaryGroupingSize' => 3, 'secondaryGroupingSize' => 3, 'negativePrefix' => '(', 'negativeSuffix' => ')')),
+                array_merge($this->templateFormat, ['minDecimalDigits' => 1, 'primaryGroupingSize' => 3, 'secondaryGroupingSize' => 3, 'negativePrefix' => '(', 'negativeSuffix' => ')']),
                 '(1 100,0)'
-            ),
-        );
+            ],
+        ];
     }
 
     /**
@@ -149,11 +151,11 @@ class NumberFormatterTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function formattingUsingCustomPatternWorks($number, $format, array $parsedFormat, $expectedResult)
     {
-        $mockNumbersReader = $this->createMock(\TYPO3\Flow\I18n\Cldr\Reader\NumbersReader::class);
+        $mockNumbersReader = $this->createMock(I18n\Cldr\Reader\NumbersReader::class);
         $mockNumbersReader->expects($this->once())->method('parseCustomFormat')->with($format)->will($this->returnValue($parsedFormat));
         $mockNumbersReader->expects($this->once())->method('getLocalizedSymbolsForLocale')->with($this->sampleLocale)->will($this->returnValue($this->sampleLocalizedSymbols));
 
-        $formatter = new \TYPO3\Flow\I18n\Formatter\NumberFormatter();
+        $formatter = new I18n\Formatter\NumberFormatter();
         $formatter->injectNumbersReader($mockNumbersReader);
 
         $result = $formatter->formatNumberWithCustomPattern($number, $format, $this->sampleLocale);
@@ -168,37 +170,37 @@ class NumberFormatterTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function sampleDataForSpecificFormattingMethods()
     {
-        return array(
-            array(
+        return [
+            [
                 9999.9,
-                array_merge($this->templateFormat, array('maxDecimalDigits' => 3, 'primaryGroupingSize' => 3, 'secondaryGroupingSize' => 3)),
-                '9 999,9', \TYPO3\Flow\I18n\Cldr\Reader\NumbersReader::FORMAT_TYPE_DECIMAL
-            ),
-            array(
+                array_merge($this->templateFormat, ['maxDecimalDigits' => 3, 'primaryGroupingSize' => 3, 'secondaryGroupingSize' => 3]),
+                '9 999,9', I18n\Cldr\Reader\NumbersReader::FORMAT_TYPE_DECIMAL
+            ],
+            [
                 0.85,
-                array_merge($this->templateFormat, array('multiplier' => 100, 'positiveSuffix' => '%', 'negativeSuffix' => '%')),
-                '85%', \TYPO3\Flow\I18n\Cldr\Reader\NumbersReader::FORMAT_TYPE_PERCENT),
-            array(
+                array_merge($this->templateFormat, ['multiplier' => 100, 'positiveSuffix' => '%', 'negativeSuffix' => '%']),
+                '85%', I18n\Cldr\Reader\NumbersReader::FORMAT_TYPE_PERCENT],
+            [
                 5.5,
-                array_merge($this->templateFormat, array('minDecimalDigits' => 2, 'maxDecimalDigits' => 2, 'primaryGroupingSize' => 3, 'secondaryGroupingSize' => 3, 'positiveSuffix' => ' ¤', 'negativeSuffix' => ' ¤')),
-                '5,50 zł', \TYPO3\Flow\I18n\Cldr\Reader\NumbersReader::FORMAT_TYPE_CURRENCY, 'zł'
-            ),
-            array(
+                array_merge($this->templateFormat, ['minDecimalDigits' => 2, 'maxDecimalDigits' => 2, 'primaryGroupingSize' => 3, 'secondaryGroupingSize' => 3, 'positiveSuffix' => ' ¤', 'negativeSuffix' => ' ¤']),
+                '5,50 zł', I18n\Cldr\Reader\NumbersReader::FORMAT_TYPE_CURRENCY, 'zł'
+            ],
+            [
                 acos(8),
-                array_merge($this->templateFormat, array('minDecimalDigits' => 2, 'maxDecimalDigits' => 2, 'primaryGroupingSize' => 3, 'secondaryGroupingSize' => 3)),
-                'NaN', \TYPO3\Flow\I18n\Cldr\Reader\NumbersReader::FORMAT_TYPE_DECIMAL
-            ),
-            array(
+                array_merge($this->templateFormat, ['minDecimalDigits' => 2, 'maxDecimalDigits' => 2, 'primaryGroupingSize' => 3, 'secondaryGroupingSize' => 3]),
+                'NaN', I18n\Cldr\Reader\NumbersReader::FORMAT_TYPE_DECIMAL
+            ],
+            [
                 log(0),
-                array_merge($this->templateFormat, array('minDecimalDigits' => 2, 'maxDecimalDigits' => 2, 'primaryGroupingSize' => 3, 'secondaryGroupingSize' => 3)),
-                '-∞', \TYPO3\Flow\I18n\Cldr\Reader\NumbersReader::FORMAT_TYPE_PERCENT
-            ),
-            array(
+                array_merge($this->templateFormat, ['minDecimalDigits' => 2, 'maxDecimalDigits' => 2, 'primaryGroupingSize' => 3, 'secondaryGroupingSize' => 3]),
+                '-∞', I18n\Cldr\Reader\NumbersReader::FORMAT_TYPE_PERCENT
+            ],
+            [
                 -log(0),
-                array_merge($this->templateFormat, array('minDecimalDigits' => 2, 'maxDecimalDigits' => 2, 'primaryGroupingSize' => 3, 'secondaryGroupingSize' => 3)),
-                '∞', \TYPO3\Flow\I18n\Cldr\Reader\NumbersReader::FORMAT_TYPE_CURRENCY
-            ),
-        );
+                array_merge($this->templateFormat, ['minDecimalDigits' => 2, 'maxDecimalDigits' => 2, 'primaryGroupingSize' => 3, 'secondaryGroupingSize' => 3]),
+                '∞', I18n\Cldr\Reader\NumbersReader::FORMAT_TYPE_CURRENCY
+            ],
+        ];
     }
 
     /**
@@ -207,11 +209,11 @@ class NumberFormatterTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function specificFormattingMethodsWork($number, array $parsedFormat, $expectedResult, $formatType, $currencySign = null)
     {
-        $mockNumbersReader = $this->createMock(\TYPO3\Flow\I18n\Cldr\Reader\NumbersReader::class);
+        $mockNumbersReader = $this->createMock(I18n\Cldr\Reader\NumbersReader::class);
         $mockNumbersReader->expects($this->once())->method('parseFormatFromCldr')->with($this->sampleLocale, $formatType, 'default')->will($this->returnValue($parsedFormat));
         $mockNumbersReader->expects($this->once())->method('getLocalizedSymbolsForLocale')->with($this->sampleLocale)->will($this->returnValue($this->sampleLocalizedSymbols));
 
-        $formatter = new \TYPO3\Flow\I18n\Formatter\NumberFormatter();
+        $formatter = new I18n\Formatter\NumberFormatter();
         $formatter->injectNumbersReader($mockNumbersReader);
 
         if ($formatType === 'currency') {

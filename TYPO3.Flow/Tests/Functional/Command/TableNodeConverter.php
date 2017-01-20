@@ -10,6 +10,8 @@ namespace TYPO3\Flow\Tests\Functional\Command;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+use TYPO3\Flow\Property\PropertyMappingConfigurationInterface;
 use TYPO3\Flow\Property\TypeConverter\AbstractTypeConverter;
 
 /**
@@ -21,12 +23,12 @@ class TableNodeConverter extends AbstractTypeConverter
     /**
      * @var array<string>
      */
-    protected $sourceTypes = array('string');
+    protected $sourceTypes = ['string'];
 
     /**
      * @var string
      */
-    protected $targetType = \TYPO3\Flow\Tests\Functional\Command\TableNode::class;
+    protected $targetType = TableNode::class;
 
     /**
      * @var integer
@@ -39,11 +41,11 @@ class TableNodeConverter extends AbstractTypeConverter
      * @param mixed $source
      * @param string $targetType
      * @param array $convertedChildProperties
-     * @param \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration
-     * @return float|\TYPO3\Flow\Error\Error
+     * @param PropertyMappingConfigurationInterface $configuration
+     * @return TableNode
      * @api
      */
-    public function convertFrom($source, $targetType, array $convertedChildProperties = array(), \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration = null)
+    public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null)
     {
         return new TableNode(json_decode($source, true));
     }

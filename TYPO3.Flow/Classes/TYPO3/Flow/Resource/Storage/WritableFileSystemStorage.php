@@ -162,10 +162,10 @@ class WritableFileSystemStorage extends FileSystemStorage implements WritableSto
         if (!file_exists(dirname($finalTargetPathAndFilename))) {
             Files::createDirectoryRecursively(dirname($finalTargetPathAndFilename));
         }
-        if (rename($temporaryFile, $finalTargetPathAndFilename) === false) {
-            unlink($temporaryFile);
+        if (copy($temporaryFile, $finalTargetPathAndFilename) === false) {
             throw new StorageException(sprintf('The temporary file of the file import could not be moved to the final target "%s".', $finalTargetPathAndFilename), 1381156103);
         }
+        unlink($temporaryFile);
 
         $this->fixFilePermissions($finalTargetPathAndFilename);
     }

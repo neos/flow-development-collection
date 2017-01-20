@@ -91,6 +91,18 @@ properties:
             type: dictionary
             patternProperties: { '/^[A-Za-z0-9_]+$/': { type: string, format: class-name } }
             additionalProperties: FALSE
+      'secondLevelCache':
+        type: dictionary
+        required: FALSE
+        additionalProperties: FALSE
+        properties:
+          'enabled': { type: boolean }
+          'defaultLifetime': { type: number }
+          'defaultLockLifetime': { type: number }
+          'regions':
+            type: dictionary
+            required: FALSE
+            patternProperties: { '/.*/': { type: number } }
       'dbal':
         type: dictionary
         required: FALSE

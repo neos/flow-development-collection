@@ -29,7 +29,7 @@ abstract class AbstractMessage
     protected $version = 'HTTP/1.1';
 
     /**
-     * @var \TYPO3\Flow\Http\Headers
+     * @var Headers
      */
     protected $headers;
 
@@ -56,7 +56,7 @@ abstract class AbstractMessage
     /**
      * Returns the HTTP headers of this request
      *
-     * @return \TYPO3\Flow\Http\Headers
+     * @return Headers
      * @api
      */
     public function getHeaders()
@@ -173,7 +173,7 @@ abstract class AbstractMessage
         if ($this->headers->has('Content-Type')) {
             $contentType = $this->headers->get('Content-Type');
             if (stripos($contentType, 'text/') === 0) {
-                $matches = array();
+                $matches = [];
                 if (preg_match('/(?P<contenttype>.*); ?charset[^;]+(?P<extra>;.*)?/iu', $contentType, $matches)) {
                     $contentType = $matches['contenttype'];
                 }
@@ -225,7 +225,7 @@ abstract class AbstractMessage
      *
      * This is a shortcut for $message->getHeaders()->setCookie($cookie);
      *
-     * @param \TYPO3\Flow\Http\Cookie $cookie The cookie to set
+     * @param Cookie $cookie The cookie to set
      * @return void
      * @api
      */
@@ -240,7 +240,7 @@ abstract class AbstractMessage
      * This is a shortcut for $message->getHeaders()->getCookie($name);
      *
      * @param string $name Name of the cookie
-     * @return \TYPO3\Flow\Http\Cookie The cookie or NULL if no such cookie exists
+     * @return Cookie The cookie or NULL if no such cookie exists
      * @api
      */
     public function getCookie($name)

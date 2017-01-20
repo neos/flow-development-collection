@@ -1,44 +1,44 @@
 <?php
-return array(
-    'localeDisplayNames' => array(
-        'localeDisplayPattern' => array(
+return [
+    'localeDisplayNames' => [
+        'localeDisplayPattern' => [
             'localePattern' => '{0} ({1})',
-        ),
-        'measurementSystemNames' => array(
+        ],
+        'measurementSystemNames' => [
             'measurementSystemName[@type="metric"]' => 'Metric',
             'measurementSystemName[@type="US"]' => 'US',
-        ),
-    ),
-    'dates' => array(
-        'calendars' => array(
-            'calendar[@type="gregorian"]' => array(
-                'months' => array(
-                    'monthContext[@type="format"]' => array(
-                        'monthWidth[@type="abbreviated"]' => array(
+        ],
+    ],
+    'dates' => [
+        'calendars' => [
+            'calendar[@type="gregorian"]' => [
+                'months' => [
+                    'monthContext[@type="format"]' => [
+                        'monthWidth[@type="abbreviated"]' => [
                             'alias[@source="locale"][@path="../monthWidth[@type=\'wide\']"]' => '',
-                        ),
-                        'monthWidth[@type="wide"]' => array(
+                        ],
+                        'monthWidth[@type="wide"]' => [
                             'month[@type="1"]' => '1',
                             'month[@type="2"]' => '2',
-                        ),
-                    ),
-                ),
-            ),
-            'calendar[@type="chinese"]' => array(
-                'months' => array(
-                    'monthContext[@type="format"]' => array(
-                        'monthWidth[@type="narrow"]' => array(
+                        ],
+                    ],
+                ],
+            ],
+            'calendar[@type="chinese"]' => [
+                'months' => [
+                    'monthContext[@type="format"]' => [
+                        'monthWidth[@type="narrow"]' => [
                             'alias[@source="locale"][@path="../../monthContext[@type=\'stand-alone\']/monthWidth[@type=\'narrow\']"]' => '',
-                        ),
-                    ),
-                    'monthContext[@type="stand-alone"]' => array(
-                        'monthWidth[@type="narrow"]' => array(
+                        ],
+                    ],
+                    'monthContext[@type="stand-alone"]' => [
+                        'monthWidth[@type="narrow"]' => [
                             'month[@type="3"]' => '3',
                             'month[@type="4"]' => '4',
-                        ),
-                    ),
-                ),
-            ),
-        ),
-    ),
-);
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ],
+];

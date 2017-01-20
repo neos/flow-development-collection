@@ -45,9 +45,9 @@ class UsernamePasswordTest extends UnitTestCase
     {
         $this->token = new UsernamePassword();
 
-        $this->mockActionRequest = $this->getMockBuilder(\TYPO3\Flow\Mvc\ActionRequest::class)->disableOriginalConstructor()->getMock();
+        $this->mockActionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
 
-        $this->mockHttpRequest = $this->getMockBuilder(\TYPO3\Flow\Http\Request::class)->disableOriginalConstructor()->getMock();
+        $this->mockHttpRequest = $this->getMockBuilder(Request::class)->disableOriginalConstructor()->getMock();
         $this->mockActionRequest->expects($this->any())->method('getHttpRequest')->will($this->returnValue($this->mockHttpRequest));
     }
 
@@ -56,7 +56,7 @@ class UsernamePasswordTest extends UnitTestCase
      */
     public function credentialsAreSetCorrectlyFromPostArguments()
     {
-        $arguments = array();
+        $arguments = [];
         $arguments['__authentication']['TYPO3']['Flow']['Security']['Authentication']['Token']['UsernamePassword']['username'] = 'johndoe';
         $arguments['__authentication']['TYPO3']['Flow']['Security']['Authentication']['Token']['UsernamePassword']['password'] = 'verysecurepassword';
 
@@ -65,7 +65,7 @@ class UsernamePasswordTest extends UnitTestCase
 
         $this->token->updateCredentials($this->mockActionRequest);
 
-        $expectedCredentials = array('username' => 'johndoe', 'password' => 'verysecurepassword');
+        $expectedCredentials = ['username' => 'johndoe', 'password' => 'verysecurepassword'];
         $this->assertEquals($expectedCredentials, $this->token->getCredentials(), 'The credentials have not been extracted correctly from the POST arguments');
     }
 
@@ -74,7 +74,7 @@ class UsernamePasswordTest extends UnitTestCase
      */
     public function updateCredentialsSetsTheCorrectAuthenticationStatusIfNewCredentialsArrived()
     {
-        $arguments = array();
+        $arguments = [];
         $arguments['__authentication']['TYPO3']['Flow']['Security']['Authentication']['Token']['UsernamePassword']['username'] = 'TYPO3.Flow';
         $arguments['__authentication']['TYPO3']['Flow']['Security']['Authentication']['Token']['UsernamePassword']['password'] = 'verysecurepassword';
 
@@ -91,7 +91,7 @@ class UsernamePasswordTest extends UnitTestCase
      */
     public function updateCredentialsIgnoresAnythingOtherThanPostRequests()
     {
-        $arguments = array();
+        $arguments = [];
         $arguments['__authentication']['TYPO3']['Flow']['Security']['Authentication']['Token']['UsernamePassword']['username'] = 'TYPO3.Flow';
         $arguments['__authentication']['TYPO3']['Flow']['Security']['Authentication']['Token']['UsernamePassword']['password'] = 'verysecurepassword';
 
@@ -99,17 +99,17 @@ class UsernamePasswordTest extends UnitTestCase
         $this->mockActionRequest->expects($this->atLeastOnce())->method('getInternalArguments')->will($this->returnValue($arguments));
 
         $this->token->updateCredentials($this->mockActionRequest);
-        $this->assertEquals(array('username' => 'TYPO3.Flow', 'password' => 'verysecurepassword'), $this->token->getCredentials());
+        $this->assertEquals(['username' => 'TYPO3.Flow', 'password' => 'verysecurepassword'], $this->token->getCredentials());
 
         $secondToken = new UsernamePassword();
-        $secondMockActionRequest = $this->getMockBuilder(\TYPO3\Flow\Mvc\ActionRequest::class)->disableOriginalConstructor()->getMock();
+        $secondMockActionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
 
         /** @var ActionRequest|\PHPUnit_Framework_MockObject_MockObject $secondMockActionRequest */
-        $secondMockHttpRequest = $this->getMockBuilder(\TYPO3\Flow\Http\Request::class)->disableOriginalConstructor()->getMock();
+        $secondMockHttpRequest = $this->getMockBuilder(Request::class)->disableOriginalConstructor()->getMock();
         $secondMockActionRequest->expects($this->any())->method('getHttpRequest')->will($this->returnValue($secondMockHttpRequest));
         $secondMockHttpRequest->expects($this->atLeastOnce())->method('getMethod')->will($this->returnValue('GET'));
         $secondToken->updateCredentials($secondMockActionRequest);
-        $this->assertEquals(array('username' => '', 'password' => ''), $secondToken->getCredentials());
+        $this->assertEquals(['username' => '', 'password' => ''], $secondToken->getCredentials());
     }
 
     /**
@@ -117,7 +117,7 @@ class UsernamePasswordTest extends UnitTestCase
      */
     public function tokenCanBeCastToString()
     {
-        $arguments = array();
+        $arguments = [];
         $arguments['__authentication']['TYPO3']['Flow']['Security']['Authentication']['Token']['UsernamePassword']['username'] = 'TYPO3.Flow';
         $arguments['__authentication']['TYPO3']['Flow']['Security']['Authentication']['Token']['UsernamePassword']['password'] = 'verysecurepassword';
 
