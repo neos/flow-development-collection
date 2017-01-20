@@ -155,4 +155,44 @@ class CurrencyViewHelperTest extends UnitTestCase
         $this->viewHelper->setArguments(array('forceLocale' => true));
         $this->viewHelper->render('$');
     }
+
+    /**
+     * @test
+     */
+    public function viewHelperRespectsPrependCurrencyValue()
+    {
+        $this->viewHelper->expects($this->once())->method('renderChildren')->will($this->returnValue(12345));
+        $actualResult = $this->viewHelper->render('€', ',', '.', true);
+        $this->assertEquals('€ 12.345,00', $actualResult);
+    }
+
+    /**
+     * @test
+     */
+    public function viewHelperRespectsSeperateCurrencyValue()
+    {
+        $this->viewHelper->expects($this->once())->method('renderChildren')->will($this->returnValue(12345));
+        $actualResult = $this->viewHelper->render('€', ',', '.', false, false);
+        $this->assertEquals('12.345,00€', $actualResult);
+    }
+
+    /**
+     * @test
+     */
+    public function viewHelperRespectsCustomDecimalPlaces()
+    {
+        $this->viewHelper->expects($this->once())->method('renderChildren')->will($this->returnValue(12345));
+        $actualResult = $this->viewHelper->render('€', ',', '.', false, true, 4);
+        $this->assertEquals('12.345,0000 €', $actualResult);
+    }
+
+    /**
+     * @test
+     */
+    public function doNotAppendEmptySpaceIfNoCurrencySignIsSet()
+    {
+        $this->viewHelper->expects($this->once())->method('renderChildren')->will($this->returnValue(12345));
+        $actualResult = $this->viewHelper->render('', ',', '.', false, true, 2);
+        $this->assertEquals('12.345,00', $actualResult);
+    }
 }

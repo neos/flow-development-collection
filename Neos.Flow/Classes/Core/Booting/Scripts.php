@@ -263,7 +263,11 @@ class Scripts
 
         $errorHandler = new ErrorHandler();
         $errorHandler->setExceptionalErrors($settings['error']['errorHandler']['exceptionalErrors']);
-        $exceptionHandler = new $settings['error']['exceptionHandler']['className'];
+        if (class_exists($settings['error']['exceptionHandler']['className'])) {
+            $exceptionHandler = new $settings['error']['exceptionHandler']['className'];
+        } else {
+            $exceptionHandler = new \TYPO3\Flow\Error\ProductionExceptionHandler();
+        }
         $exceptionHandler->injectSystemLogger($bootstrap->getEarlyInstance(SystemLoggerInterface::class));
         $exceptionHandler->setOptions($settings['error']['exceptionHandler']);
     }
@@ -369,7 +373,6 @@ class Scripts
     {
         $objectManager = new CompileTimeObjectManager($bootstrap->getContext());
         $bootstrap->setEarlyInstance(ObjectManagerInterface::class, $objectManager);
-        Bootstrap::$staticObjectManager = $objectManager;
 
         $signalSlotDispatcher = $bootstrap->getEarlyInstance(Dispatcher::class);
         $signalSlotDispatcher->injectObjectManager($objectManager);
@@ -377,6 +380,8 @@ class Scripts
         foreach ($bootstrap->getEarlyInstances() as $objectName => $instance) {
             $objectManager->setInstance($objectName, $instance);
         }
+
+        Bootstrap::$staticObjectManager = $objectManager;
     }
 
     /**
@@ -420,7 +425,6 @@ class Scripts
         $objectConfigurationCache = $bootstrap->getEarlyInstance(CacheManager::class)->getCache('Flow_Object_Configuration');
 
         $objectManager = new ObjectManager($bootstrap->getContext());
-        Bootstrap::$staticObjectManager = $objectManager;
 
         $objectManager->injectAllSettings($configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS));
         $objectManager->setObjects($objectConfigurationCache->get('objects'));
@@ -432,6 +436,8 @@ class Scripts
         $objectManager->get(Dispatcher::class)->injectObjectManager($objectManager);
         Debugger::injectObjectManager($objectManager);
         $bootstrap->setEarlyInstance(ObjectManagerInterface::class, $objectManager);
+
+        Bootstrap::$staticObjectManager = $objectManager;
     }
 
     /**
