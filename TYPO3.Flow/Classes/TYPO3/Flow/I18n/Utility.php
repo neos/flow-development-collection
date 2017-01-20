@@ -125,9 +125,9 @@ class Utility
 
         if ($lastDirectoryPart !== null && preg_match(Locale::PATTERN_MATCH_LOCALEIDENTIFIER, $lastDirectoryPart) === 1) {
             return $lastDirectoryPart;
-        } else {
-            return false;
         }
+
+        return false;
     }
 
     /**
