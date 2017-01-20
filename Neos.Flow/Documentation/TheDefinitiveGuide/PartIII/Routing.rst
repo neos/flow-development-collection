@@ -309,7 +309,7 @@ and the method ``resolveValue()`` needs to return an URL segment when being pass
 
  .. code-block:: yaml
 
-  Flow_Mvc_Routing_FindMatchResults:
+  Flow_Mvc_Routing_Route:
     backend: Neos\Cache\Backend\NullBackend
   Flow_Mvc_Routing_Resolve:
     backend: Neos\Cache\Backend\NullBackend

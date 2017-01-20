@@ -25,7 +25,7 @@ use Neos\Flow\Annotations as Flow;
 class SessionObjectMethodsPointcutFilter implements PointcutFilterInterface
 {
     /**
-     * @var \Neos\Flow\ObjectManagement\ObjectManagerInterface
+     * @var CompileTimeObjectManager
      */
     protected $objectManager;
 

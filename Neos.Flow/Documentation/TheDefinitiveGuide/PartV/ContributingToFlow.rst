@@ -17,7 +17,7 @@ this rocks big time.
 * *Tasks:* Find bugs, describe them, reproduce them in a unit test
 * *Skills needed:* Attention to detail, knowledge about PHP and PHPUnit is a plus
 
-**Report bugs in the** `Flow JIRA issue tracker <https://jira.neos.io/browse/FLOW/>`_ **!**
+**Report bugs in the** `Flow issue tracker <https://github.com/neos/flow-development-collection/issues>`_ **!**
 
 Improve Documentation
 =====================

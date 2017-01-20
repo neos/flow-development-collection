@@ -212,6 +212,15 @@ You can, in theory, create a new ``Request`` instance by simply using the ``new`
 arguments to the constructor. However, there are two static factory methods which make life much easier. We recommend
 using these instead of the low-level constructor method.
 
+.. warning::
+
+	You should only create a ``Request`` manually if you want to send out requests or if you know exactly what you are
+	doing. The created ``Request`` will not have any ``HTTP Components`` affect him and might therefore lead to
+	unexpected results, like the trusted proxy headers ``X-Forwarded-*`` not being applied and the ``Request`` providing
+	wrong protocol, host or client IP address.
+	If you need access to the **current** HTTP ``Request`` or ``Response``, instead inject the ``Bootstrap`` and
+	get the ``HttpRequest`` and ``HttpResponse`` through the ``getActiveRequestHandler()``.
+
 create()
 ~~~~~~~~
 
@@ -226,6 +235,8 @@ The second method, ``createFromEnvironment()``, take the environment provided by
 functions into account. It creates a ``Request`` instance which reflects the current HTTP request received from the web
 server. This method is best used if you need a ``Request`` object with all properties set according to the current
 server environment and incoming HTTP request.
+Note though, that you should not expect this ``Request`` to match the current ``Request``, since the latter will still
+have been affected by some ``HTTP Components``. If you need the **current** Request, get it from the ``RequestHandler`` instead.
 
 Creating an ActionRequest
 ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -233,8 +244,25 @@ Creating an ActionRequest
 In order to dispatch a request to a controller, you need an ``ActionRequest``.
 Such a request is always bound to an ``Http\Request``::
 
-	$httpRequest = Request::createFromEnvironment();
-	$actionRequest = new ActionRequest($httpRequest);
+    use TYPO3\Flow\Core\Bootstrap;
+    use TYPO3\Flow\Http\HttpRequestHandlerInterface;
+    use TYPO3\Flow\Mvc\ActionRequest;
+
+    // ...
+
+    /**
+     * @var Bootstrap
+     * @Flow\Inject
+     */
+    protected $bootstrap;
+
+    // ...
+
+    $requestHandler = $this->bootstrap->getActiveRequestHandler();
+    if ($requestHandler instanceof HttpRequestHandlerInterface) {
+        $actionRequest = new ActionRequest($requestHandler->getHttpRequest());
+        // ...
+    }
 
 Arguments
 ~~~~~~~~~

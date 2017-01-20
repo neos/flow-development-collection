@@ -4,7 +4,7 @@
     "description": "A simple generator for controller and views.",
     "license": "MIT",
     "require": {
-        "neos/flow": "*",
+        "neos/flow": "~4.0.0",
         "neos/utility-arrays": "*"
     },
     "autoload": {
