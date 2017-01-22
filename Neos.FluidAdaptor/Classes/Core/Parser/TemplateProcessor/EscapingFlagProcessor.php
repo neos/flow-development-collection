@@ -13,6 +13,7 @@ namespace Neos\FluidAdaptor\Core\Parser\TemplateProcessor;
 
 use TYPO3Fluid\Fluid\Core\Parser\TemplateProcessorInterface;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
+use Neos\FluidAdaptor\Core\Exception;
 
 /**
  * Preprocessor to detect the "escapingEnabled" inline flag in a template.
@@ -50,7 +51,7 @@ class EscapingFlagProcessor implements TemplateProcessorInterface
             return $templateSource;
         }
         if (count($matches) > 1) {
-            throw new \Exception('There is more than one escaping modifier defined. There can only be one {escapingEnabled=...} per template.', 1407331080);
+            throw new Exception('There is more than one escaping modifier defined. There can only be one {escapingEnabled=...} per template.', 1407331080);
         }
         if (strtolower($matches[0]['enabled']) === 'false') {
             $this->renderingContext->getTemplateParser()->setEscapingEnabled(false);
