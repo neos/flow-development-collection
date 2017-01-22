@@ -191,48 +191,12 @@ abstract class AbstractTemplateView extends \TYPO3Fluid\Fluid\View\AbstractTempl
      */
     public function renderSection($sectionName, array $variables = [], $ignoreUnknown = false)
     {
-        if ($this->getCurrentParsedTemplate() === null) {
-            return $this->renderStandaloneSection($sectionName, $variables, $ignoreUnknown);
+        // FIXME: We should probably give variables explicitly to this method.
+        if ($variables === []) {
+            $variables = $this->getRenderingContext()->getVariableProvider()->getAll();
         }
 
         return parent::renderSection($sectionName, $variables, $ignoreUnknown);
-    }
-
-    /**
-     * Renders a section on its own, i.e. without the a surrounding template.
-     *
-     * In this case, we just emulate that a surrounding (empty) layout exists,
-     * and trigger the normal rendering flow then.
-     *
-     * @param string $sectionName Name of section to render
-     * @param array $variables The variables to use
-     * @param boolean $ignoreUnknown Ignore an unknown section and just return an empty string
-     * @return string rendered template for the section
-     */
-    protected function renderStandaloneSection($sectionName, array $variables = [], $ignoreUnknown = false)
-    {
-        $controllerName = $this->baseRenderingContext->getControllerName();
-        $templateParser = $this->baseRenderingContext->getTemplateParser();
-        $templatePaths = $this->baseRenderingContext->getTemplatePaths();
-        $actionName = $this->baseRenderingContext->getControllerAction();
-        $actionName = ucfirst($actionName);
-
-        // Note this is (unfortunately) needed to initialize the template
-        $templatePaths->getTemplateSource($controllerName, $actionName);
-        $templateIdentifier = $templatePaths->getTemplateIdentifier($controllerName, $actionName);
-        $parsedTemplate = $templateParser->getOrParseAndStoreTemplate(
-            $templateIdentifier,
-            function ($parent, TemplatePaths $paths) use ($controllerName, $actionName) {
-                return $paths->getTemplateSource($controllerName, $actionName);
-            }
-        );
-        $parsedTemplate->addCompiledNamespaces($this->baseRenderingContext);
-
-        $this->startRendering(self::RENDERING_LAYOUT, $parsedTemplate, $this->baseRenderingContext);
-        $output = $this->renderSection($sectionName, $variables, $ignoreUnknown);
-        $this->stopRendering();
-
-        return $output;
     }
 
     /**
