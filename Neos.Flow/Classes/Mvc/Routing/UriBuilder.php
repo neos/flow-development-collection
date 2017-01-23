@@ -354,6 +354,8 @@ class UriBuilder
         $httpRequest = $this->request->getHttpRequest();
         if ($this->createAbsoluteUri === true) {
             $uri = $httpRequest->getBaseUri() . $uri;
+        } else {
+            $uri = $httpRequest->getScriptRequestPath() . $uri;
         }
         if ($this->section !== '') {
             $uri .= '#' . $this->section;
