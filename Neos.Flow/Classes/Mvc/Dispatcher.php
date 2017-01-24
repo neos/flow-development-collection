@@ -205,9 +205,6 @@ class Dispatcher
         /** @var ActionRequest $request */
         $controllerObjectName = $request->getControllerObjectName();
         if ($controllerObjectName === '') {
-            if (isset($this->settings['mvc']['notFoundController'])) {
-                throw new NoSuchOptionException('The configuration option Neos.Flow:mvc:notFoundController is deprecated since Flow 2.0. Use the "renderingGroups" option of the production exception handler instead in order to render custom error messages.', 1346949795);
-            }
             $exceptionMessage = 'No controller could be resolved which would match your request';
             if ($request instanceof ActionRequest) {
                 $exceptionMessage .= sprintf('. Package key: "%s", controller name: "%s"', $request->getControllerPackageKey(), $request->getControllerName());
