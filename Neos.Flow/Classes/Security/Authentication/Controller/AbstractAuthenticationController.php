@@ -45,8 +45,8 @@ abstract class AbstractAuthenticationController extends ActionController
      *
      * <f:flashMessages />
      * <f:form action="authenticate">
-     *   <f:form.textfield name="__authentication[TYPO3][Flow][Security][Authentication][Token][UsernamePassword][username]" />
-     *   <f:form.password name="__authentication[TYPO3][Flow][Security][Authentication][Token][UsernamePassword][password]" />
+     *   <f:form.textfield name="__authentication[Neos][Flow][Security][Authentication][Token][UsernamePassword][username]" />
+     *   <f:form.password name="__authentication[Neos][Flow][Security][Authentication][Token][UsernamePassword][password]" />
      *   <f:form.submit value="login" />
      * </f:form>
      *

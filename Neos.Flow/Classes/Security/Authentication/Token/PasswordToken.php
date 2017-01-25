@@ -38,7 +38,7 @@ class PasswordToken extends AbstractToken
      * are available. Sets the authentication status to AUTHENTICATION_NEEDED, if credentials have been sent.
      *
      * Note: You need to send the password in this POST parameter:
-     *       __authentication[TYPO3][Flow][Security][Authentication][Token][PasswordToken][password]
+     *       __authentication[Neos][Flow][Security][Authentication][Token][PasswordToken][password]
      *
      * @param ActionRequest $actionRequest The current action request
      * @return void
@@ -50,7 +50,7 @@ class PasswordToken extends AbstractToken
         }
 
         $postArguments = $actionRequest->getInternalArguments();
-        $password = ObjectAccess::getPropertyPath($postArguments, '__authentication.TYPO3.Flow.Security.Authentication.Token.PasswordToken.password');
+        $password = ObjectAccess::getPropertyPath($postArguments, '__authentication.Neos.Flow.Security.Authentication.Token.PasswordToken.password');
 
         if (!empty($password)) {
             $this->credentials['password'] = $password;
