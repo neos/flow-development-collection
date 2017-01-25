@@ -30,6 +30,8 @@ class Version20170125103800 extends AbstractMigration
     public function up()
     {
         $this->searchAndReplace('[TYPO3][Flow][Security][Authentication]', '[Neos][Flow][Security][Authentication]', ['php', 'ts2', 'fusion', 'js', 'json', 'html']);
+        $this->searchAndReplace('[\'TYPO3\'][\'Flow\'][\'Security\'][\'Authentication\']', '[\'Neos\'][\'Flow\'][\'Security\'][\'Authentication\']', ['php', 'ts2', 'fusion', 'js', 'json', 'html']);
+        $this->searchAndReplace('["TYPO3"]["Flow"]["Security"]["Authentication"]', '["Neos"]["Flow"]["Security"]["Authentication"]', ['php', 'ts2', 'fusion', 'js', 'json', 'html']);
         $this->searchAndReplace('TYPO3.Flow.Security.Authentication', 'TYPO3.Flow.Security.Authentication', ['php', 'ts2', 'fusion', 'js', 'json', 'html']);
     }
 }
