@@ -144,8 +144,8 @@ class AuthenticationTest extends FunctionalTestCase
     public function successfulAuthenticationCallsOnAuthenticationSuccessMethod()
     {
         $arguments = [];
-        $arguments['__authentication']['TYPO3']['Flow']['Security']['Authentication']['Token']['UsernamePassword']['username'] = 'functional_test_account';
-        $arguments['__authentication']['TYPO3']['Flow']['Security']['Authentication']['Token']['UsernamePassword']['password'] = 'a_very_secure_long_password';
+        $arguments['__authentication']['Neos']['Flow']['Security']['Authentication']['Token']['UsernamePassword']['username'] = 'functional_test_account';
+        $arguments['__authentication']['Neos']['Flow']['Security']['Authentication']['Token']['UsernamePassword']['password'] = 'a_very_secure_long_password';
 
         $response = $this->browser->request('http://localhost/test/security/authentication/usernamepassword', 'POST', $arguments);
         $this->assertSame($response->getContent(), 'UsernamePasswordTestController success!' . chr(10) . 'Neos.Flow:Everybody' . chr(10) . 'Neos.Flow:AuthenticatedUser' . chr(10) . 'Neos.Flow:Administrator' . chr(10));
@@ -178,8 +178,8 @@ class AuthenticationTest extends FunctionalTestCase
     public function successfulAuthenticationDoesStartASessionIfTokenRequiresIt()
     {
         $arguments = [];
-        $arguments['__authentication']['TYPO3']['Flow']['Security']['Authentication']['Token']['UsernamePassword']['username'] = 'functional_test_account';
-        $arguments['__authentication']['TYPO3']['Flow']['Security']['Authentication']['Token']['UsernamePassword']['password'] = 'a_very_secure_long_password';
+        $arguments['__authentication']['Neos']['Flow']['Security']['Authentication']['Token']['UsernamePassword']['username'] = 'functional_test_account';
+        $arguments['__authentication']['Neos']['Flow']['Security']['Authentication']['Token']['UsernamePassword']['password'] = 'a_very_secure_long_password';
 
         $response = $this->browser->request('http://localhost/test/security/authentication/usernamepassword', 'POST', $arguments);
         $this->assertNotEmpty($response->getCookies());
