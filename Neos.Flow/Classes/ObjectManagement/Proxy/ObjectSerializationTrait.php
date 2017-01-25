@@ -19,7 +19,6 @@ use Neos\Flow\ObjectManagement\DependencyInjection\DependencyProxy;
 use Neos\Flow\Persistence\Aspect\PersistenceMagicInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Utility\ObjectAccess;
-use Neos\Flow\ResourceManagement\ResourcePointer;
 use Neos\Utility\Arrays;
 
 /**
@@ -150,9 +149,6 @@ trait ObjectSerializationTrait
         if (property_exists($this, 'Flow_Persistence_RelatedEntities') && is_array($this->Flow_Persistence_RelatedEntities)) {
             $persistenceManager = Bootstrap::$staticObjectManager->get(PersistenceManagerInterface::class);
             foreach ($this->Flow_Persistence_RelatedEntities as $entityInformation) {
-                if ($entityInformation['entityType'] === ResourcePointer::class) {
-                    continue;
-                }
                 $entity = $persistenceManager->getObjectByIdentifier($entityInformation['identifier'], $entityInformation['entityType'], true);
                 if (isset($entityInformation['entityPath'])) {
                     $this->{$entityInformation['propertyName']} = Arrays::setValueByPath($this->{$entityInformation['propertyName']}, $entityInformation['entityPath'], $entity);
