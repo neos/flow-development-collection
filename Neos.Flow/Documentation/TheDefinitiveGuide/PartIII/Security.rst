@@ -17,7 +17,7 @@ chapter describes how you can use Flow's security features and how they work int
 Security context
 ----------------
 
-The :abbr:`Security Context (\\TYPO3\\Flow\\Security\\Context)` is initialized as soon as an HTTP request is being
+The :abbr:`Security Context (\\Neos\\Flow\\Security\\Context)` is initialized as soon as an HTTP request is being
 dispatched. It lies in session scope and holds context data like the current authentication status. That means, if you
 need data related to security, the security context (you can get it easily with dependency injection) will be your main
 information source. The details of the context's data will be described in the next chapters.
@@ -40,7 +40,7 @@ Using the authentication controller
 
 First, let's see how you can use Flow's authentication features. There is a base
 controller in the security package: the
-:abbr:`AbstractAuthenticationController (\\TYPO3\\Flow\\Security\\Authentication\\Controller\\AbstractAuthenticationController)`,
+:abbr:`AbstractAuthenticationController (\\Neos\\Flow\\Security\\Authentication\\Controller\\AbstractAuthenticationController)`,
 which already contains almost everything you need to authenticate an account. This controller has
 three actions, namely ``loginAction()``, ``authenticateAction()`` and ``logoutAction()``. To use authentication in your
 project you have to inherit from this controller, provide a template for the login action (e.g. a login form) and
@@ -112,7 +112,7 @@ account by checking a username and password against accounts stored in the datab
               provider: 'PersistedUsernamePasswordProvider'
 
 This registers the
-:abbr:`PersistedUsernamePasswordProvider (\\TYPO3\\Flow\\Security\\Authentication\\Provider\\PersistedUsernamePasswordProvider)`
+:abbr:`PersistedUsernamePasswordProvider (\\Neos\\Flow\\Security\\Authentication\\Provider\\PersistedUsernamePasswordProvider)`
 authentication provider under the name "``SomeAuthenticationProvider``" as the only, global authentication mechanism. To
 successfully authenticate an account with this provider, you'll obviously have to
 provide a username and password. This is done by sending two POST variables to the
@@ -202,7 +202,7 @@ request, so there's no need to start a session for keeping the token. Especially
 when dealing with REST services, it is not desirable to start a session.
 
 Authentication tokens which don't require a session simply need to implement the
-:abbr:`SessionlessTokenInterface (\\TYPO3\\Flow\\Security\\Authentication\\Token\\SessionlessTokenInterface)` marker
+:abbr:`SessionlessTokenInterface (\\Neos\\Flow\\Security\\Authentication\\Token\\SessionlessTokenInterface)` marker
 interface. If a token carries this marker, the Authentication Manager will refrain
 from starting a session during authentication.
 
@@ -229,7 +229,7 @@ Policy section for details).
   the case since Flow 3.0. Instead the active roles will be determined from the configured
   policies. Creating a new role is as easy as adding a line to your ``Policy.yaml``.
   If you do need to add roles during runtime, you can use the ``rolesInitialized`` Signal of
-  the :abbr:`PolicyService (\\TYPO3\\Flow\\Security\\Policy\\PolicyService)`.
+  the :abbr:`PolicyService (\\Neos\\Flow\\Security\\Policy\\PolicyService)`.
 
 .. _Account management:
 

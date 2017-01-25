@@ -608,7 +608,7 @@ With the above methods, the ``Link\ActionViewHelper`` from above can be condense
 
 .. code-block:: php
 
-    class ActionViewHelper extends \TYPO3\\F3\Fluid\Core\AbstractViewHelper {
+    class ActionViewHelper extends \Neos\FluidAdaptor\Core\AbstractViewHelper {
 
         public function initializeArguments() {
             $this->registerUniversalTagAttributes();
