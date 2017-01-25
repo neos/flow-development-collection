@@ -191,7 +191,7 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
                     $account = $token->getAccount();
                     if ($account !== null) {
                         $this->securityContext->withoutAuthorizationChecks(function () use ($account) {
-                            $this->session->addTag('TYPO3-Flow-Security-Account-' . md5($account->getAccountIdentifier()));
+                            $this->session->addTag('Neos-Flow-Security-Account-' . md5($account->getAccountIdentifier()));
                         });
                     }
                 }
@@ -345,7 +345,7 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
                     $patternClassName = $this->requestPatternResolver->resolveRequestPatternClass($patternType);
                     $requestPattern = new $patternClassName($patternOptions);
                     if (!$requestPattern instanceof RequestPatternInterface) {
-                        throw new Exception\InvalidRequestPatternException(sprintf('Invalid request pattern configuration in setting "TYPO3:Flow:security:authentication:providers:%s": Class "%s" does not implement RequestPatternInterface', $providerName, $patternClassName), 1446222774);
+                        throw new Exception\InvalidRequestPatternException(sprintf('Invalid request pattern configuration in setting "Neos:Flow:security:authentication:providers:%s": Class "%s" does not implement RequestPatternInterface', $providerName, $patternClassName), 1446222774);
                     }
 
                     // The following check needed for backwards compatibility:
@@ -362,7 +362,7 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
 
             if (isset($providerConfiguration['entryPoint'])) {
                 if (is_array($providerConfiguration['entryPoint'])) {
-                    $message = 'Invalid entry point configuration in setting "TYPO3:Flow:security:authentication:providers:' . $providerName . '. Check your settings and make sure to specify only one entry point for each provider.';
+                    $message = 'Invalid entry point configuration in setting "Neos:Flow:security:authentication:providers:' . $providerName . '. Check your settings and make sure to specify only one entry point for each provider.';
                     throw new Exception\InvalidAuthenticationProviderException($message, 1327671458);
                 }
                 $entryPointName = $providerConfiguration['entryPoint'];

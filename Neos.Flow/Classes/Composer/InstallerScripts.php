@@ -80,12 +80,22 @@ class InstallerScripts
             $evaluatedInstallerResources = true;
         }
 
-        if (isset($packageExtraConfig['typo3/flow']['post-install']) && $operation->getJobType() === 'install') {
-            self::runPackageScripts($packageExtraConfig['typo3/flow']['post-install']);
+        if ($operation->getJobType() === 'install') {
+            if (isset($packageExtraConfig['typo3/flow']['post-install'])) {
+                self::runPackageScripts($packageExtraConfig['typo3/flow']['post-install']);
+            }
+            if (isset($packageExtraConfig['neos/flow']['post-install'])) {
+                self::runPackageScripts($packageExtraConfig['neos/flow']['post-install']);
+            }
         }
 
-        if (isset($packageExtraConfig['typo3/flow']['post-update']) && $operation->getJobType() === 'update') {
-            self::runPackageScripts($packageExtraConfig['typo3/flow']['post-update']);
+        if ($operation->getJobType() === 'update') {
+            if (isset($packageExtraConfig['typo3/flow']['post-update'])) {
+                self::runPackageScripts($packageExtraConfig['typo3/flow']['post-update']);
+            }
+            if (isset($packageExtraConfig['neos/flow']['post-update'])) {
+                self::runPackageScripts($packageExtraConfig['neos/flow']['post-update']);
+            }
         }
 
         // TODO: Deprecated from Flow 3.1 remove three versions after.

@@ -23,6 +23,7 @@ use Neos\Flow\Core\ClassLoader;
 use Neos\Flow\Core\LockManager as CoreLockManager;
 use Neos\Flow\Error\Debugger;
 use Neos\Flow\Error\ErrorHandler;
+use Neos\Flow\Error\ProductionExceptionHandler;
 use Neos\Flow\Log\Logger;
 use Neos\Flow\Log\LoggerFactory;
 use Neos\Flow\Log\SystemLoggerInterface;
@@ -263,11 +264,7 @@ class Scripts
 
         $errorHandler = new ErrorHandler();
         $errorHandler->setExceptionalErrors($settings['error']['errorHandler']['exceptionalErrors']);
-        if (class_exists($settings['error']['exceptionHandler']['className'])) {
-            $exceptionHandler = new $settings['error']['exceptionHandler']['className'];
-        } else {
-            $exceptionHandler = new \TYPO3\Flow\Error\ProductionExceptionHandler();
-        }
+        $exceptionHandler = class_exists($settings['error']['exceptionHandler']['className']) ? new $settings['error']['exceptionHandler']['className'] : new ProductionExceptionHandler();
         $exceptionHandler->injectSystemLogger($bootstrap->getEarlyInstance(SystemLoggerInterface::class));
         $exceptionHandler->setOptions($settings['error']['exceptionHandler']);
     }
