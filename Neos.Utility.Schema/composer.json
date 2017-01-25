@@ -19,7 +19,7 @@
   },
   "autoload-dev": {
     "psr-4": {
-      "TYPO3\\Flow\\Utility\\Schema\\Tests\\": "Tests"
+      "Neos\\Flow\\Utility\\Schema\\Tests\\": "Tests"
     }
   },
   "extra": {
