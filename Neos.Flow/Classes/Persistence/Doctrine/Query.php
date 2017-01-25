@@ -651,9 +651,13 @@ class Query implements QueryInterface
         $propertyPathParts = explode('.', $propertyPath);
         $conditionPartsCount = count($propertyPathParts);
         for ($i = 0; $i < $conditionPartsCount - 1; $i++) {
-            $joinAlias = $propertyPathParts[$i] . $this->joinAliasCounter++;
-            $this->queryBuilder->leftJoin($previousJoinAlias . '.' . $propertyPathParts[$i], $joinAlias);
-            $this->joins[$joinAlias] = $previousJoinAlias . '.' . $propertyPathParts[$i];
+            $joinProperty = $previousJoinAlias . '.' . $propertyPathParts[$i];
+            $joinAlias = array_search($joinProperty, (array)$this->joins);
+            if ($joinAlias === false) {
+                $joinAlias = $propertyPathParts[$i] . $this->joinAliasCounter++;
+                $this->queryBuilder->leftJoin($joinProperty, $joinAlias);
+                $this->joins[$joinAlias] = $joinProperty;
+            }
             $previousJoinAlias = $joinAlias;
         }
 

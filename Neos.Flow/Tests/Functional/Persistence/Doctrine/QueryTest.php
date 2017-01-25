@@ -241,6 +241,56 @@ class QueryTest extends FunctionalTestCase
     /**
      * @test
      */
+    public function subpropertyQueriesReuseJoinAlias()
+    {
+        $testEntityRepository = new \Neos\Flow\Tests\Functional\Persistence\Fixtures\TestEntityRepository();
+        $testEntityRepository->removeAll();
+
+        $testEntity = new \Neos\Flow\Tests\Functional\Persistence\Fixtures\TestEntity;
+        $testEntity->setName('Flow');
+
+        $subEntity1 = new \Neos\Flow\Tests\Functional\Persistence\Fixtures\SubEntity;
+        $subEntity1->setContent('foo');
+        $subEntity1->setSomeProperty('nope');
+        $subEntity1->setParentEntity($testEntity);
+        $testEntity->addSubEntity($subEntity1);
+        $this->persistenceManager->add($subEntity1);
+
+        $subEntity2 = new \Neos\Flow\Tests\Functional\Persistence\Fixtures\SubEntity;
+        $subEntity2->setContent('bar');
+        $subEntity2->setSomeProperty('yup');
+        $subEntity2->setParentEntity($testEntity);
+        $testEntity->addSubEntity($subEntity2);
+        $this->persistenceManager->add($subEntity2);
+
+        $testEntityRepository->add($testEntity);
+
+        $testEntity2 = new \Neos\Flow\Tests\Functional\Persistence\Fixtures\TestEntity;
+        $testEntity2->setName('Flow');
+
+        $subEntity3 = new \Neos\Flow\Tests\Functional\Persistence\Fixtures\SubEntity;
+        $subEntity3->setContent('foo');
+        $subEntity3->setSomeProperty('yup');
+        $subEntity3->setParentEntity($testEntity2);
+        $testEntity2->addSubEntity($subEntity3);
+        $this->persistenceManager->add($subEntity3);
+
+        $testEntityRepository->add($testEntity2);
+
+        $this->persistenceManager->persistAll();
+
+        $query = new Query(\Neos\Flow\Tests\Functional\Persistence\Fixtures\TestEntity::class);
+        // Read as "All entities with subEntity with *both* content = 'foo' AND someProperty = 'yup'
+        // isntead of "All entities with any subEntity with content 'foo' AND any subEntity with someProperty = 'yup'
+        $constraint = $query->logicalAnd($query->equals('subEntities.content', 'foo'), $query->equals('subEntities.someProperty', 'yup'));
+        $entities = $query->matching($constraint)->execute()->toArray();
+
+        $this->assertEquals(1, count($entities));
+    }
+
+    /**
+     * @test
+     */
     public function comlexQueryWithJoinsCanBeExecutedAfterDeserialization()
     {
         $postEntityRepository = new Fixtures\PostRepository();
