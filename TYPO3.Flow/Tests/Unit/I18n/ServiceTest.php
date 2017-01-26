@@ -149,6 +149,10 @@ class ServiceTest extends UnitTestCase
         foreach (['en_GB', 'sr'] as $localeIdentifier) {
             file_put_contents('vfs://Foo/Bar/Private/Translations/' . $localeIdentifier . '.xlf', 'FooBar');
         }
+        foreach (array('de_DE', 'de_CH') as $localeIdentifier) {
+            mkdir('vfs://Foo/Bar/Private/Translations/' . $localeIdentifier, 0777, true);
+            file_put_contents('vfs://Foo/Bar/Private/Translations/' . $localeIdentifier . '/Main.xlf', 'FooBar');
+        }
 
         $mockPackage = $this->createMock(PackageInterface::class);
         $mockPackage->expects($this->any())->method('getResourcesPath')->will($this->returnValue('vfs://Foo/Bar/'));
@@ -157,7 +161,7 @@ class ServiceTest extends UnitTestCase
         $mockPackageManager->expects($this->any())->method('getActivePackages')->will($this->returnValue([$mockPackage]));
 
         $mockLocaleCollection = $this->createMock(I18n\LocaleCollection::class);
-        $mockLocaleCollection->expects($this->exactly(4))->method('addLocale');
+        $mockLocaleCollection->expects($this->exactly(6))->method('addLocale');
 
         $mockSettings = ['i18n' => [
                                 'defaultLocale' => 'sv_SE',
