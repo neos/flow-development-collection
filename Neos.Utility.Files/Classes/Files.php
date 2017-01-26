@@ -319,7 +319,7 @@ abstract class Files
             } else {
                 $content = file_get_contents($pathAndFilename, $flags, $context, $offset);
             }
-        } catch (FilesException $ignoredException) {
+        } catch (ErrorException $ignoredException) {
             $content = false;
         }
         return $content;
