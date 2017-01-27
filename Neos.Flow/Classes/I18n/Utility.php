@@ -111,6 +111,26 @@ class Utility
     }
 
     /**
+     * Extracts a locale tag (identifier) from the directory name given.
+     *
+     * Note: Locale tag will be extracted from the last directory path segment only.
+     *
+     * @param string $directory Directory path to extract locale identifier from
+     * @return mixed The string with extracted locale identifier of FALSE on failure
+     */
+    public static function extractLocaleTagFromDirectory($directory)
+    {
+        $directoryParts = explode('/', rtrim($directory, '/'));
+        $lastDirectoryPart = array_pop($directoryParts);
+
+        if ($lastDirectoryPart !== null && preg_match(Locale::PATTERN_MATCH_LOCALEIDENTIFIER, $lastDirectoryPart) === 1) {
+            return $lastDirectoryPart;
+        }
+
+        return false;
+    }
+
+    /**
      * Checks if $haystack string begins with $needle string.
      *
      * @param string $haystack
