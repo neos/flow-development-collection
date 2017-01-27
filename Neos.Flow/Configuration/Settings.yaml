@@ -705,7 +705,7 @@ Neos:
           parentClassName: 'Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper'
           classNamePattern: '/^Neos\\FluidAdaptor\\ViewHelpers\\.*$/i'
         parser:
-          implementationClassName: 'TYPO3\DocTools\Domain\Service\FluidViewHelperClassParser'
+          implementationClassName: 'Neos\DocTools\Domain\Service\FluidViewHelperClassParser'
           options:
             namespaces:
               f: 'Neos\FluidAdaptor\ViewHelpers'
@@ -716,7 +716,7 @@ Neos:
           parentClassName: 'Neos\Flow\Validation\Validator\AbstractValidator'
           classNamePattern: '/^Neos\\Flow\\Validation\\Validator\\.*$/i'
         parser:
-          implementationClassName: 'TYPO3\DocTools\Domain\Service\FlowValidatorClassParser'
+          implementationClassName: 'Neos\DocTools\Domain\Service\FlowValidatorClassParser'
       'Flow:FlowSignals':
         title: 'Flow Signals Reference'
         savePathAndFilename: '%FLOW_PATH_PACKAGES%Framework/Neos.Flow/Documentation/TheDefinitiveGuide/PartV/SignalsReference.rst'
@@ -725,7 +725,7 @@ Neos:
           classNamePattern: '/^Neos\\Flow\\.*$/i'
           includeAbstractClasses: TRUE
         parser:
-          implementationClassName: 'TYPO3\DocTools\Domain\Service\SignalsParser'
+          implementationClassName: 'Neos\DocTools\Domain\Service\SignalsParser'
       'Flow:FlowTypeConverters':
         title: 'Flow TypeConverter Reference'
         savePathAndFilename: '%FLOW_PATH_PACKAGES%Framework/Neos.Flow/Documentation/TheDefinitiveGuide/PartV/TypeConverterReference.rst'
@@ -733,11 +733,11 @@ Neos:
           parentClassName: 'Neos\Flow\Property\TypeConverter\AbstractTypeConverter'
           classNamePattern: '/^Neos\\Flow\\.*$/i'
         parser:
-          implementationClassName: 'TYPO3\DocTools\Domain\Service\FlowTypeConverterClassParser'
+          implementationClassName: 'Neos\DocTools\Domain\Service\FlowTypeConverterClassParser'
       'Flow:FlowAnnotations':
         title: 'Flow Annotation Reference'
         savePathAndFilename: '%FLOW_PATH_PACKAGES%Framework/Neos.Flow/Documentation/TheDefinitiveGuide/PartV/AnnotationReference.rst'
         affectedClasses:
           classNamePattern: '/^Neos\\Flow\\Annotations\\.*$/i'
         parser:
-          implementationClassName: 'TYPO3\DocTools\Domain\Service\FlowAnnotationClassParser'
+          implementationClassName: 'Neos\DocTools\Domain\Service\FlowAnnotationClassParser'

@@ -156,7 +156,7 @@ class PackageManagerTest extends UnitTestCase
         $expectedPackageKeys = [
             'Neos.Flow' . md5(uniqid(mt_rand(), true)),
             'Neos.Flow.Test' . md5(uniqid(mt_rand(), true)),
-            'TYPO3.YetAnotherTestPackage' . md5(uniqid(mt_rand(), true)),
+            'Neos.YetAnotherTestPackage' . md5(uniqid(mt_rand(), true)),
             'RobertLemke.Flow.NothingElse' . md5(uniqid(mt_rand(), true))
         ];
 
@@ -191,7 +191,7 @@ class PackageManagerTest extends UnitTestCase
         $expectedPackageKeys = [
             'Neos.Flow' . md5(uniqid(mt_rand(), true)),
             'Neos.Flow.Test' . md5(uniqid(mt_rand(), true)),
-            'TYPO3.YetAnotherTestPackage' . md5(uniqid(mt_rand(), true)),
+            'Neos.YetAnotherTestPackage' . md5(uniqid(mt_rand(), true)),
             'RobertLemke.Flow.NothingElse' . md5(uniqid(mt_rand(), true))
         ];
 
@@ -235,7 +235,7 @@ class PackageManagerTest extends UnitTestCase
         $packageKeys = [
             'RobertLemke.Flow.NothingElse' . md5(uniqid(mt_rand(), true)),
             'Neos.Flow' . md5(uniqid(mt_rand(), true)),
-            'TYPO3.YetAnotherTestPackage' . md5(uniqid(mt_rand(), true)),
+            'Neos.YetAnotherTestPackage' . md5(uniqid(mt_rand(), true)),
         ];
 
         foreach ($packageKeys as $packageKey) {
@@ -280,7 +280,7 @@ class PackageManagerTest extends UnitTestCase
     public function packageKeysAndPaths()
     {
         return [
-            ['TYPO3.YetAnotherTestPackage', 'vfs://Test/Packages/Application/TYPO3.YetAnotherTestPackage/'],
+            ['Neos.YetAnotherTestPackage', 'vfs://Test/Packages/Application/Neos.YetAnotherTestPackage/'],
             ['RobertLemke.Flow.NothingElse', 'vfs://Test/Packages/Application/RobertLemke.Flow.NothingElse/']
         ];
     }

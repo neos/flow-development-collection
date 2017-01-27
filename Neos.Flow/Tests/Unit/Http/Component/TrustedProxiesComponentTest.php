@@ -147,7 +147,7 @@ class TrustedProxiesComponentTest extends UnitTestCase
         $defaultServerEnvironment = array(
             'HTTP_USER_AGENT' => 'Flow/' . FLOW_VERSION_BRANCH . '.x',
             'HTTP_HOST' => 'flow.neos.io',
-            'SERVER_NAME' => 'typo3.org',
+            'SERVER_NAME' => 'neos.io',
             'SERVER_ADDR' => '217.29.36.55',
             'SERVER_PORT' => 80,
             'REMOTE_ADDR' => '17.172.224.47',
