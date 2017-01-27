@@ -747,15 +747,15 @@ specify placeholders in the SubRoutes (see `Nested Subroutes`_).
 		$ ./flow routing:list
 
 		Currently registered routes:
-		typo3/login(/{@action}.{@format})         Neos :: Authentication
-		typo3/logout                              Neos :: Logout
-		typo3/setup(/{@action})                   Neos :: Setup
-		typo3                                     Neos :: Backend Overview
-		typo3/content/{@action}                   Neos :: Backend - Content Module
-		{node}.html/{type}                        Neos :: Frontend content with format and type
-		{node}.html                               Neos :: Frontend content with (HTML) format
-		({node})                                  Neos :: Frontend content without a specified format
-		                                          Neos :: Fallback rule – for when no site has been defined yet
+		neos/login(/{@action}.{@format})         Neos :: Authentication
+		neos/logout                              Neos :: Logout
+		neos/setup(/{@action})                   Neos :: Setup
+		neos                                     Neos :: Backend Overview
+		neos/content/{@action}                   Neos :: Backend - Content Module
+		{node}.html/{type}                       Neos :: Frontend content with format and type
+		{node}.html                              Neos :: Frontend content with (HTML) format
+		({node})                                 Neos :: Frontend content without a specified format
+		                                         Neos :: Fallback rule – for when no site has been defined yet
 
 
 Route Loading Order and the Flow Application Context
