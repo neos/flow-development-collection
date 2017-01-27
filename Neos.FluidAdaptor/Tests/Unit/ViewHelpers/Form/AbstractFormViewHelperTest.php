@@ -25,8 +25,8 @@ class AbstractFormViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpe
     public function renderHiddenIdentityFieldReturnsAHiddenInputFieldContainingTheObjectsUUID()
     {
         $className = 'Object' . uniqid();
-        $fullClassName = 'TYPO3\\Fluid\\ViewHelpers\\Form\\' . $className;
-        eval('namespace TYPO3\\Fluid\\ViewHelpers\\Form; class ' . $className . ' {
+        $fullClassName = 'Neos\\Fluid\\ViewHelpers\\Form\\' . $className;
+        eval('namespace Neos\\Fluid\\ViewHelpers\\Form; class ' . $className . ' {
 			public function __clone() {}
 		}');
         $object = $this->createMock($fullClassName);
@@ -50,8 +50,8 @@ class AbstractFormViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpe
     public function renderHiddenIdentityFieldReturnsAHiddenInputFieldIfObjectIsNewButAClone()
     {
         $className = 'Object' . uniqid();
-        $fullClassName = 'TYPO3\\Fluid\\ViewHelpers\\Form\\' . $className;
-        eval('namespace TYPO3\\Fluid\\ViewHelpers\\Form; class ' . $className . ' {
+        $fullClassName = 'Neos\\Fluid\\ViewHelpers\\Form\\' . $className;
+        eval('namespace Neos\\Fluid\\ViewHelpers\\Form; class ' . $className . ' {
 			public function __clone() {}
 		}');
         $object = $this->createMock($fullClassName);
@@ -75,8 +75,8 @@ class AbstractFormViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpe
     public function renderHiddenIdentityFieldReturnsACommentIfTheObjectIsWithoutIdentity()
     {
         $className = 'Object' . uniqid();
-        $fullClassName = 'TYPO3\\Fluid\\ViewHelpers\\Form\\' . $className;
-        eval('namespace TYPO3\\Fluid\\ViewHelpers\\Form; class ' . $className . ' {
+        $fullClassName = 'Neos\\Fluid\\ViewHelpers\\Form\\' . $className;
+        eval('namespace Neos\\Fluid\\ViewHelpers\\Form; class ' . $className . ' {
 			public function __clone() {}
 		}');
         $object = $this->createMock($fullClassName);

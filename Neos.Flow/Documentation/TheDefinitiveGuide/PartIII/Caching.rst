@@ -293,7 +293,7 @@ Common Options
 |                 | on set()                             |           |         |         |
 +-----------------+--------------------------------------+-----------+---------+---------+
 
-TYPO3\\Flow\\Cache\\Backend\\FileBackend
+Neos\\Flow\\Cache\\Backend\\FileBackend
 ----------------------------------------
 
 The file backend stores every cache entry as a single file to the file system. The
@@ -347,7 +347,7 @@ Options
 |                | * /tmp/my-cache-directory/             |           |        |         |
 +----------------+----------------------------------------+-----------+--------+---------+
 
-TYPO3\\Flow\\Cache\\Backend\\PdoBackend
+Neos\\Flow\\Cache\\Backend\\PdoBackend
 ---------------------------------------
 
 The PDO backend can be used as a native PDO interface to databases which are connected to
@@ -393,7 +393,7 @@ Options
 |                | connection                             |           |        |         |
 +----------------+----------------------------------------+-----------+--------+---------+
 
-TYPO3\\Flow\\Cache\\Backend\\RedisBackend
+Neos\\Flow\\Cache\\Backend\\RedisBackend
 -----------------------------------------
 
 `Redis`_ is a key-value storage/database. In contrast to memcached, it allows structured
@@ -475,7 +475,7 @@ Options
 |                  | specific value.                 |           | (0 to 9)  |           |
 +------------------+---------------------------------+-----------+-----------+-----------+
 
-TYPO3\\Flow\\Cache\\Backend\\MemcachedBackend
+Neos\\Flow\\Cache\\Backend\\MemcachedBackend
 ---------------------------------------------
 
 `Memcached`_ is a simple key/value RAM database which scales across multiple servers. To
@@ -572,7 +572,7 @@ Options
 |             | servers.                                 |           |         |         |
 +-------------+------------------------------------------+-----------+---------+---------+
 
-TYPO3\\Flow\\Cache\\Backend\\ApcBackend
+Neos\\Flow\\Cache\\Backend\\ApcBackend
 ---------------------------------------
 
 `APC`_ is mostly known as an opcode cache for PHP source files but can be used to store
@@ -615,7 +615,7 @@ Options
 
 The APC backend has no options.
 
-TYPO3\\Flow\\Cache\\Backend\\TransientMemoryBackend
+Neos\\Flow\\Cache\\Backend\\TransientMemoryBackend
 ---------------------------------------------------
 
 The transient memory backend stores data in a local array. It is only valid for one
@@ -635,7 +635,7 @@ Options
 
 The transient memory backend has no options.
 
-TYPO3\\Flow\\Cache\\Backend\\NullBackend
+Neos\\Flow\\Cache\\Backend\\NullBackend
 ----------------------------------------
 
 The null backend is a dummy backend which doesn't store any data and always returns
