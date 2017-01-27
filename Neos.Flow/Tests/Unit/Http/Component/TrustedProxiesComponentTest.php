@@ -146,8 +146,8 @@ class TrustedProxiesComponentTest extends UnitTestCase
     {
         $defaultServerEnvironment = array(
             'HTTP_USER_AGENT' => 'Flow/' . FLOW_VERSION_BRANCH . '.x',
-            'HTTP_HOST' => 'flow.typo3.org',
-            'SERVER_NAME' => 'typo3.org',
+            'HTTP_HOST' => 'flow.neos.io',
+            'SERVER_NAME' => 'neos.io',
             'SERVER_ADDR' => '217.29.36.55',
             'SERVER_PORT' => 80,
             'REMOTE_ADDR' => '17.172.224.47',
@@ -157,7 +157,7 @@ class TrustedProxiesComponentTest extends UnitTestCase
             'PHP_SELF' => '/index.php',
         );
 
-        $request = Request::create(new Uri('http://flow.typo3.org'), 'GET', array(), array(), array_replace($defaultServerEnvironment, $serverEnvironment));
+        $request = Request::create(new Uri('http://flow.neos.io'), 'GET', array(), array(), array_replace($defaultServerEnvironment, $serverEnvironment));
         $trustedRequest = $this->callWithRequest($request);
         $this->assertSame($expectedIpAddress, $trustedRequest->getClientIpAddress());
     }

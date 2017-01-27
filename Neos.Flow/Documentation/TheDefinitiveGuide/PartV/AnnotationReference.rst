@@ -269,8 +269,8 @@ Arguments
 * ``package`` (string): Defines the package to be used for retrieving a setting specified via the "setting" parameter. If no package
   is specified, we'll assume the package to be the same which contains the class where the Inject annotation is
   used.
-  
-  Example: TYPO3.Flow
+
+  Example: Neos.Flow
 
 
 
@@ -295,17 +295,17 @@ Arguments
 
 * ``path`` (string): Path of a configuration which should be injected into the property.
   Can be specified as anonymous argument: InjectConfiguration("some.path")
-  
+
   For type "Settings" this refers to the relative path (excluding the package key)
-  
+
   Example: session.name
 
 * ``package`` (string): Defines the package key to be used for retrieving settings. If no package key is specified, we'll assume the
   package to be the same which contains the class where the InjectConfiguration annotation is used.
-  
+
   Note: This property is only supported for type "Settings"
-  
-  Example: TYPO3.Flow
+
+  Example: Neos.Flow
 
 * ``type`` (string one of the ConfigurationManager::CONFIGURATION_TYPE_* constants): Type of Configuration (defaults to "Settings").
 

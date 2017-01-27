@@ -2,7 +2,7 @@
 Kickstart
 =========
 
-Flow makes it easy to start with a new application. The ``Kickstart`` package provides
+Flow makes it easy to start with a new application. The ``Kickstarter`` package provides
 template based scaffolding for generating an initial layout of packages, controllers,
 models and views.
 
@@ -36,7 +36,7 @@ To get an overview of all available commands, enter ``./flow help``:
 
 	The following commands are currently available:
 
-	PACKAGE "TYPO3.FLOW":
+	PACKAGE "NEOS.FLOW":
 	-------------------------------------------------------------------------------
 	* flow:cache:flush                         Flush all caches
 	  cache:warmup                             Warm up caches
@@ -104,7 +104,7 @@ To get an overview of all available commands, enter ``./flow help``:
 	                                           registered type converters
 
 
-	PACKAGE "TYPO3.KICKSTART":
+	PACKAGE "NEOS.KICKSTARTER":
 	-------------------------------------------------------------------------------
 	  kickstart:package                        Kickstart a new package
 	  kickstart:actioncontroller               Kickstart a new action controller
@@ -133,7 +133,7 @@ The kickstarter will create three files:
 
 .. code-block:: none
 
-	Created .../Acme.Blog/Classes/Acme/Blog/Controller/StandardController.php
+	Created .../Acme.Blog/Classes/Controller/StandardController.php
 	Created .../Acme.Blog/Resources/Private/Layouts/Default.html
 	Created .../Acme.Blog/Resources/Private/Templates/Standard/Index.html
 
@@ -147,10 +147,8 @@ skeleton of the future ``Blog`` package:
 
 	Acme.Blog
 	Acme.Blog/Classes
-	Acme.Blog/Classes/Acme
-	Acme.Blog/Classes/Acme/Blog
-	Acme.Blog/Classes/Acme/Blog/Controller
-	Acme.Blog/Classes/Acme/Blog/Controller/StandardController.php
+	Acme.Blog/Classes/Controller
+	Acme.Blog/Classes/Controller/StandardController.php
 	Acme.Blog/composer.json
 	Acme.Blog/Configuration
 	Acme.Blog/Documentation
@@ -200,10 +198,10 @@ resulting in:
 
 .. code-block:: none
 
-	Created .../Acme.Blog/Classes/Acme/Blog/Domain/Model/Post.php
+	Created .../Acme.Blog/Classes/Domain/Model/Post.php
 	Created .../Acme.Blog/Tests/Unit/Domain/Model/PostTest.php
-	Created .../Acme.Blog/Classes/Acme/Blog/Domain/Repository/PostRepository.php
-	Created .../Acme.Blog/Classes/Acme/Blog/Controller/PostController.php
+	Created .../Acme.Blog/Classes/Domain/Repository/PostRepository.php
+	Created .../Acme.Blog/Classes/Controller/PostController.php
 	Omitted .../Acme.Blog/Resources/Private/Layouts/Default.html
 	Created .../Acme.Blog/Resources/Private/Templates/Post/Index.html
 	Created .../Acme.Blog/Resources/Private/Templates/Post/New.html

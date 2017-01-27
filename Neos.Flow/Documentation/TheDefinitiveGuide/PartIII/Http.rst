@@ -26,24 +26,24 @@ The basic walk through a Flow-based web application is as follows:
 
 * the browser sends an HTTP request to a webserver
 * the webserver calls Web/index.php and passes control over to Flow
-* the :abbr:`Bootstrap (\\TYPO3\\Flow\\Core\\Bootstrap)` initializes the bare minimum and passes control to a suitable
+* the :abbr:`Bootstrap (\\Neos\\Flow\\Core\\Bootstrap)` initializes the bare minimum and passes control to a suitable
   request handler
-* by default, the :abbr:`HTTP Request Handler (\\TYPO3\\Flow\\Http\\RequestHandler)` takes over and runs a boot sequence
+* by default, the :abbr:`HTTP Request Handler (\\Neos\\Flow\\Http\\RequestHandler)` takes over and runs a boot sequence
   which initializes all important parts of Flow
 * the HTTP Request Handler builds an HTTP Request and Response object. The
-  :abbr:`Request object (\\TYPO3\\Flow\\Http\\Request)` contains all important properties of the real HTTP request.
-  The :abbr:`Response object (\\TYPO3\\Flow\\Http\\Response)` in turn is empty and will be filled with information by a
+  :abbr:`Request object (\\Neos\\Flow\\Http\\Request)` contains all important properties of the real HTTP request.
+  The :abbr:`Response object (\\Neos\\Flow\\Http\\Response)` in turn is empty and will be filled with information by a
   controller at a later point
 * the HTTP Request Handler initializes the
-  :abbr:`HTTP Component Chain (\\TYPO3\\Flow\\Http\\Component\\ComponentChain)`, a set of independent units that have
+  :abbr:`HTTP Component Chain (\\Neos\\Flow\\Http\\Component\\ComponentChain)`, a set of independent units that have
   access to the current HTTP request and response and can share information amongst each other.
   The chain is fully configurable, but by default it consists of the following steps:
-* the ``routing`` component invokes the :abbr:`Router (\\TYPO3\\Flow\\Mvc\\Routing\\Router)` to determine which
+* the ``routing`` component invokes the :abbr:`Router (\\Neos\\Flow\\Mvc\\Routing\\Router)` to determine which
   controller and action is responsible for processing the request. This information (controller name, action name,
-  arguments) is stored in the :abbr:`ComponentContext (\\TYPO3\\Flow\\Http\\Component\\ComponentContext)`
+  arguments) is stored in the :abbr:`ComponentContext (\\Neos\\Flow\\Http\\Component\\ComponentContext)`
 * the ``dispatching`` component tries to invoke the corresponding controller action via the
-  :abbr:`Dispatcher (TYPO3\\Flow\\Mvc\\Dispatcher)`
-* the controller, usually an :abbr:`Action Controller (\\TYPO3\\Flow\\Mvc\\Controller\\ActionController)`, processes the
+  :abbr:`Dispatcher (Neos\\Flow\\Mvc\\Dispatcher)`
+* the controller, usually an :abbr:`Action Controller (\\Neos\\Flow\\Mvc\\Controller\\ActionController)`, processes the
   request and modifies the given HTTP Response object which will, in the end, contain the content to display (body) as
   well as any headers to be passed back to the client
 * the ``standardsCompliance`` component tries to make the HTTP Response standards compliant by adding required HTTP
@@ -88,7 +88,7 @@ the request handler. This pays off in situations where a specialized request han
 requests in a very effective way. In fact, the request handler is responsible for executing big parts of the
 initialization procedures and thus can optimize the boot process by choosing only the parts it actually needs.
 
-A request handler must implement the :abbr:`RequestHandler interface (\\TYPO3\\Flow\\Core\\RequestHandlerInterface)`
+A request handler must implement the :abbr:`RequestHandler interface (\\Neos\\Flow\\Core\\RequestHandlerInterface)`
 interface which, among others, contains the following methods::
 
 	public function handleRequest();
@@ -118,7 +118,7 @@ Component Chain
 ---------------
 
 Instead of registering a new RequestHandler the application workflow can also be altered by a custom ``HTTP Component``.
-A HTTP component must implement the :abbr:`Component interface (\\TYPO3\\Flow\\Http\\Component\\ComponentInterface)`
+A HTTP component must implement the :abbr:`Component interface (\\Neos\\Flow\\Http\\Component\\ComponentInterface)`
 that defines the ``handle()`` method::
 
 	use Neos\Flow\Http\Component\ComponentInterface;
@@ -159,7 +159,7 @@ The ``ComponentContext`` contains a reference to the current HTTP request and re
 pass arbitrary parameters to successive components.
 To activate a component, it must be configured in the ``Settings.yaml``::
 
-	TYPO3:
+	Neos:
 	  Flow:
 	    http:
 	      chain:
@@ -244,9 +244,9 @@ Creating an ActionRequest
 In order to dispatch a request to a controller, you need an ``ActionRequest``.
 Such a request is always bound to an ``Http\Request``::
 
-    use TYPO3\Flow\Core\Bootstrap;
-    use TYPO3\Flow\Http\HttpRequestHandlerInterface;
-    use TYPO3\Flow\Mvc\ActionRequest;
+    use Neos\Flow\Core\Bootstrap;
+    use Neos\Flow\Http\HttpRequestHandlerInterface;
+    use Neos\Flow\Mvc\ActionRequest;
 
     // ...
 
@@ -317,7 +317,7 @@ sure that those headers are only accepted from trusted proxies.
 For this, you can configure a list of proxy IP address ranges in CIDR notation that are allowed to provide such headers,
 and which headers specifically are accepted for overriding those request information::
 
-	TYPO3:
+	Neos:
 	  Flow:
 	    http:
 	      trustedProxies:
@@ -342,7 +342,7 @@ Those headers will be checked from left to right and the first set header will b
 
 If you know that your installation will not run behind a proxy server, you should change settings to this::
 
-	TYPO3:
+	Neos:
 	  Flow:
 	    http:
 	      trustedProxies:
@@ -450,12 +450,12 @@ Consider the following examples:
 
 A URI specifying a resource:
 
-* http://flow.typo3.org/images/logo
+* http://flow.neos.io/images/logo
 
 A URL specifying two different representations of that resource:
 
-* http://flow.typo3.org/images/logo.png
-* http://flow.typo3.org/images/logo.gif
+* http://flow.neos.io/images/logo.png
+* http://flow.neos.io/images/logo.gif
 
 Throughout the framework we use the term ``URI`` instead of ``URL`` because it is more generic and more often than not,
 the correct term to use.

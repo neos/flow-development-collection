@@ -56,7 +56,7 @@ class PasswordTokenTest extends UnitTestCase
     public function credentialsAreSetCorrectlyFromPostArguments()
     {
         $arguments = [];
-        $arguments['__authentication']['TYPO3']['Flow']['Security']['Authentication']['Token']['PasswordToken']['password'] = 'verysecurepassword';
+        $arguments['__authentication']['Neos']['Flow']['Security']['Authentication']['Token']['PasswordToken']['password'] = 'verysecurepassword';
 
         $this->mockHttpRequest->expects($this->atLeastOnce())->method('getMethod')->will($this->returnValue('POST'));
         $this->mockActionRequest->expects($this->atLeastOnce())->method('getInternalArguments')->will($this->returnValue($arguments));
@@ -73,7 +73,7 @@ class PasswordTokenTest extends UnitTestCase
     public function updateCredentialsSetsTheCorrectAuthenticationStatusIfNewCredentialsArrived()
     {
         $arguments = [];
-        $arguments['__authentication']['TYPO3']['Flow']['Security']['Authentication']['Token']['PasswordToken']['password'] = 'verysecurepassword';
+        $arguments['__authentication']['Neos']['Flow']['Security']['Authentication']['Token']['PasswordToken']['password'] = 'verysecurepassword';
 
         $this->mockHttpRequest->expects($this->atLeastOnce())->method('getMethod')->will($this->returnValue('POST'));
         $this->mockActionRequest->expects($this->atLeastOnce())->method('getInternalArguments')->will($this->returnValue($arguments));
@@ -89,7 +89,7 @@ class PasswordTokenTest extends UnitTestCase
     public function updateCredentialsIgnoresAnythingOtherThanPostRequests()
     {
         $arguments = [];
-        $arguments['__authentication']['TYPO3']['Flow']['Security']['Authentication']['Token']['PasswordToken']['password'] = 'verysecurepassword';
+        $arguments['__authentication']['Neos']['Flow']['Security']['Authentication']['Token']['PasswordToken']['password'] = 'verysecurepassword';
 
         $this->mockHttpRequest->expects($this->atLeastOnce())->method('getMethod')->will($this->returnValue('POST'));
         $this->mockActionRequest->expects($this->atLeastOnce())->method('getInternalArguments')->will($this->returnValue($arguments));

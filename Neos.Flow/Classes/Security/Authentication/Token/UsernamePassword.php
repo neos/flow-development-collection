@@ -32,8 +32,8 @@ class UsernamePassword extends AbstractToken
      * are available. Sets the authentication status to REAUTHENTICATION_NEEDED, if credentials have been sent.
      *
      * Note: You need to send the username and password in these two POST parameters:
-     *       __authentication[TYPO3][Flow][Security][Authentication][Token][UsernamePassword][username]
-     *   and __authentication[TYPO3][Flow][Security][Authentication][Token][UsernamePassword][password]
+     *       __authentication[Neos][Flow][Security][Authentication][Token][UsernamePassword][username]
+     *   and __authentication[Neos][Flow][Security][Authentication][Token][UsernamePassword][password]
      *
      * @param ActionRequest $actionRequest The current action request
      * @return void
@@ -46,8 +46,8 @@ class UsernamePassword extends AbstractToken
         }
 
         $arguments = $actionRequest->getInternalArguments();
-        $username = ObjectAccess::getPropertyPath($arguments, '__authentication.TYPO3.Flow.Security.Authentication.Token.UsernamePassword.username');
-        $password = ObjectAccess::getPropertyPath($arguments, '__authentication.TYPO3.Flow.Security.Authentication.Token.UsernamePassword.password');
+        $username = ObjectAccess::getPropertyPath($arguments, '__authentication.Neos.Flow.Security.Authentication.Token.UsernamePassword.username');
+        $password = ObjectAccess::getPropertyPath($arguments, '__authentication.Neos.Flow.Security.Authentication.Token.UsernamePassword.password');
 
         if (!empty($username) && !empty($password)) {
             $this->credentials['username'] = $username;

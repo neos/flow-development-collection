@@ -179,11 +179,11 @@ tables for our package:
 
 	Do you want to move the migration to one of these Packages?
 	  [0] Don't Move
-	  [1] TYPO3.Eel
-	  [2] TYPO3.Flow
-	  [3] TYPO3.Fluid
-	  [3] TYPO3.Kickstart
-	  [4] TYPO3.Welcome
+	  [1] Neos.Eel
+	  [2] Neos.Flow
+	  [3] Neos.Fluid
+	  [3] Neos.Kickstart
+	  [4] Neos.Welcome
 	  [5] Acme.Blog
 
 Hit a key to move the new migration to the ``Acme.Blog`` package (in this example key "5") and press <ENTER>.

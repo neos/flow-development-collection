@@ -587,7 +587,7 @@ Matches if at least one of the entries in the first array exists in the second o
 
 .. note::
 	It is possible to register arbitrary singletons to be available as global
-	objects with the Flow configuration setting ``TYPO3.Flow.aop.globalObjects``.
+	objects with the Flow configuration setting ``Neos.Flow.aop.globalObjects``.
 
 filter()
 ^^^^^^^^

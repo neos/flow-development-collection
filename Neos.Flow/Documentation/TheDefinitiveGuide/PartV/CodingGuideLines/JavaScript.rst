@@ -30,19 +30,19 @@ Naming Conventions
 - The xtype of a class is always the fully qualified class name. Every class which can be
   instantiated needs to have an xtype declaration.
 - Never create a class which has classes inside itself. Example: if the class
-  ``TYPO3.Foo`` exists, it is prohibited to create a class ``TYPO3.Foo.Bar``.You can
+  ``Neos.Foo`` exists, it is prohibited to create a class ``Neos.Foo.Bar``.You can
   easily check this: If a directory with the same name as the JavaScript file exists, this
   is prohibited.
 
   Here follows an example::
 
-  	TYPO3.Foo.Bar // implemented in .../Foo/Bar.js
-  	TYPO3.Foo.Bar = ...
+  	Neos.Foo.Bar // implemented in .../Foo/Bar.js
+  	Neos.Foo.Bar = ...
 
-  	TYPO3.Foo // implemented in ...Foo.js
-  	TYPO3.Foo = ..... **overriding the "Bar" class**
+  	Neos.Foo // implemented in ...Foo.js
+  	Neos.Foo = ..... **overriding the "Bar" class**
 
-  So, if the class ``TYPO3.Foo.Bar`` is included **before** ``TYPO3.Foo``, then
+  So, if the class ``Neos.Foo.Bar`` is included **before** ``Neos.Foo``, then
   the second class definition completely overrides the ``Bar`` object. In order
   to prevent such issues, this constellation is forbidden.
 - Every class, method and class property should have a doc comment.
@@ -104,7 +104,7 @@ Prototype Class Definitions
 
 Example of a prototype class definition::
 
-	Ext.ns("TYPO3.TYPO3.Content");
+	Ext.ns("Neos.Neos.Content");
 
 	/*                                                                        *
 	 * This script belongs to the Flow framework.                             *
@@ -114,17 +114,17 @@ Example of a prototype class definition::
 	 *                                                                        */
 
 	/**
-	 * @class TYPO3.TYPO3.Content.FrontendEditor
+	 * @class Neos.Neos.Content.FrontendEditor
 	 *
 	 * The main frontend editor.
 	 *
-	 * @namespace TYPO3.TYPO3.Content
+	 * @namespace Neos.Neos.Content
 	 * @extends Ext.Container
 	 */
-	TYPO3.TYPO3.Content.FrontendEditor = Ext.extend(Ext.Container, {
+	Neos.Neos.Content.FrontendEditor = Ext.extend(Ext.Container, {
 		// here comes the class contents
 	});
-	Ext.reg('TYPO3.TYPO3.Content.FrontendEditor', TYPO3.TYPO3.Content.FrontendEditor);
+	Ext.reg('Neos.Neos.Content.FrontendEditor', Neos.Neos.Content.FrontendEditor);
 
 
 -	At the very beginning of the file is the namespace declaration of the
@@ -142,7 +142,7 @@ Usually, the constructor of the class receives a hash of parameters. The possibl
 configuration options need to be documented inside the class with the ``@cfg``
 annotation::
 
-	TYPO3.TYPO3.Content.FrontendEditor = Ext.extend(Ext.Container, {
+	Neos.Neos.Content.FrontendEditor = Ext.extend(Ext.Container, {
 		/**
 		 * An explanation of the configuration option followed
 		 * by a blank line.
@@ -161,7 +161,7 @@ prototype class definition, we will only highlight the differences.
 
 *Example of a singleton class definition*::
 
-	Ext.ns("TYPO3.TYPO3.Core");
+	Ext.ns("Neos.Neos.Core");
 
 	/*                                                                        *
 	 * This script belongs to the Flow framework.                             *
@@ -171,15 +171,15 @@ prototype class definition, we will only highlight the differences.
 	 *                                                                        */
 
 	/**
-	 * @class TYPO3.TYPO3.Core.Application
+	 * @class Neos.Neos.Core.Application
 	 *
 	 * The main entry point which controls the lifecycle of the application.
 	 *
-	 * @namespace TYPO3.TYPO3.Core
+	 * @namespace Neos.Neos.Core
 	 * @extends Ext.util.Observable
 	 * @singleton
 	 */
-	TYPO3.TYPO3.Core.Application = Ext.apply(new Ext.util.Observable, {
+	Neos.Neos.Core.Application = Ext.apply(new Ext.util.Observable, {
 		// here comes the class contents
 	});
 
@@ -217,18 +217,18 @@ well, after a blank line:
 	 * which can possibly span multiple lines
 	 *
 	 * @namespace Acme.Foo
-	 * @extends TYPO3.TYPO3.Core.SomeOtherClass
+	 * @extends Neos.Neos.Core.SomeOtherClass
 	 */
 
 *Example of a class doc comment with constructor*::
 
 	/**
-	 * @class Acme.TYPO3.Foo.ClassWithConstructor
+	 * @class Acme.Neos.Foo.ClassWithConstructor
 	 *
 	 * This class has a constructor!
 	 *
-	 * @namespace Acme.TYPO3.Foo
-	 * @extends TYPO3.TYPO3.Core.SomeOtherClass
+	 * @namespace Acme.Neos.Foo
+	 * @extends Neos.Neos.Core.SomeOtherClass
 	 *
 	 * @constructor
 	 * @param {String} id The ID which to use
@@ -242,7 +242,7 @@ Methods should be documented the following way, with a blank line between method
 *Example of a method comment*::
 
 	...
-	TYPO3.TYPO3.Core.Application = Ext.apply(new Ext.util.Observable, {
+	Neos.Neos.Core.Application = Ext.apply(new Ext.util.Observable, {
 		... property definitions ...
 		/**
 		 * This is a method declaration; and the
@@ -288,7 +288,7 @@ annotation. If a property is private, it should start with an underscore and hav
 ``@private`` annotation at the last line of its doc comment::
 
 	...
-	TYPO3.TYPO3.Core.Application = Ext.apply(new Ext.util.Observable, { // this is just an example class definition
+	Neos.Neos.Core.Application = Ext.apply(new Ext.util.Observable, { // this is just an example class definition
 		/**
 		 * Explanation of the property
 		 * which is followed by a newline
@@ -482,11 +482,11 @@ function. Below follows an example for good and bad code.
 
 *Good Event Handler Code*::
 
-	TYPO3.TYPO3.Application.on('theEventName', this._onCustomEvent, this);
+	Neos.Neos.Application.on('theEventName', this._onCustomEvent, this);
 
 *Bad Event Handler Code*::
 
-	TYPO3.TYPO3.Application.on(
+	Neos.Neos.Application.on(
 		'theEventName',
 		function() {
 			alert('Text');
@@ -497,7 +497,7 @@ function. Below follows an example for good and bad code.
 All events need to be explicitly documented inside the class where they are fired onto
 with an ``@event`` annotation::
 
-	TYPO3.TYPO3.Core.Application = Ext.apply(new Ext.util.Observable, {
+	Neos.Neos.Core.Application = Ext.apply(new Ext.util.Observable, {
 		/**
 		 * @event eventOne Event declaration
 		 */
@@ -533,7 +533,7 @@ How to extend data stores
 
 This is an example for how to extend an ExtJS data store::
 
-	TYPO3.TYPO3.Content.DummyStore = Ext.extend(Ext.data.Store, {
+	Neos.Neos.Content.DummyStore = Ext.extend(Ext.data.Store, {
 
 		constructor: function(cfg) {
 			cfg = cfg || {};
@@ -544,13 +544,13 @@ This is an example for how to extend an ExtJS data store::
 				cfg
 			);
 
-			TYPO3.TYPO3.Content.DummyStore.superclass.constructor.call(
+			Neos.Neos.Content.DummyStore.superclass.constructor.call(
 				this,
 				config
 			);
 		}
 	});
-	Ext.reg('TYPO3.TYPO3.Content.DummyStore', TYPO3.TYPO3.Content.DummyStore);
+	Ext.reg('Neos.Neos.Content.DummyStore', Neos.Neos.Content.DummyStore);
 
 
 Unit Testing

@@ -397,10 +397,10 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
     public function spliceExamples()
     {
         return [
-            'empty array' => [[], [42, 'abc', 'TYPO3'], 2, 2, 42, 'abc', 'TYPO3'],
-            'numeric indices' => [['z', '7d', 'i', '7'], ['z', '7d', 42, 'abc', 'TYPO3'], 2, 2, 42, 'abc', 'TYPO3'],
-            'string keys' => [['foo' => 'bar', 'baz' => 'foo', 'bar' => 'baz'], ['foo' => 'bar', 'baz' => 'foo', 42, 'abc', 'TYPO3'], 2, 2, 42, 'abc', 'TYPO3'],
-            'mixed keys' => [['bar', '24' => 'foo', 'i' => 181.84, 'foo' => 'abc', '84216', 76, 'k' => 53], ['bar', 'foo', 42, 'abc', 'TYPO3', '84216', 76, 'k' => 53], 2, 2, 42, 'abc', 'TYPO3'],
+            'empty array' => [[], [42, 'abc', 'Neos'], 2, 2, 42, 'abc', 'Neos'],
+            'numeric indices' => [['z', '7d', 'i', '7'], ['z', '7d', 42, 'abc', 'Neos'], 2, 2, 42, 'abc', 'Neos'],
+            'string keys' => [['foo' => 'bar', 'baz' => 'foo', 'bar' => 'baz'], ['foo' => 'bar', 'baz' => 'foo', 42, 'abc', 'Neos'], 2, 2, 42, 'abc', 'Neos'],
+            'mixed keys' => [['bar', '24' => 'foo', 'i' => 181.84, 'foo' => 'abc', '84216', 76, 'k' => 53], ['bar', 'foo', 42, 'abc', 'Neos', '84216', 76, 'k' => 53], 2, 2, 42, 'abc', 'Neos'],
         ];
     }
 

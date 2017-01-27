@@ -28,7 +28,7 @@ A *Storage* is configured via ``Settings.yaml``:
 
 .. code-block:: yaml
 
-  TYPO3:
+  Neos:
     Flow:
       resource:
         storages:
@@ -64,7 +64,7 @@ persistent storage above is configured like this:
 
 .. code-block:: yaml
 
-  TYPO3:
+  Neos:
     Flow:
       resource:
         targets:
@@ -88,7 +88,7 @@ The option for your Target you need to set in this case is ``subdivideHashPathSe
 
 .. code-block:: yaml
 
-  TYPO3:
+  Neos:
     Flow:
       resource:
         targets:
@@ -463,7 +463,7 @@ to your collection.
 
 .. code-block:: yaml
 
-  TYPO3:
+  Neos:
     Flow:
       resource:
         collections:
@@ -499,7 +499,7 @@ contains your published resources (as with local storage this can't be the same 
 
 .. code-block:: yaml
 
-  TYPO3:
+  Neos:
     Flow:
       resource:
         storages:
@@ -521,7 +521,7 @@ publication target.
 
 .. code-block:: yaml
 
-  TYPO3:
+  Neos:
     Flow:
       resource:
         collections:
@@ -543,7 +543,7 @@ Now you can overwrite your old collection configuration and remove the temporary
 
 .. code-block:: yaml
 
-  TYPO3:
+  Neos:
     Flow:
       resource:
         collections:

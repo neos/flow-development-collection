@@ -214,4 +214,4 @@ which returns an array of annotations, in this case  ``Neos\Flow\Annotations\Ent
 and our ``Magrathea\Erp\Annotations\Reportable``.
 
 
-.. _Coding Guidelines:                   http://flow.typo3.org/documentation/codingguidelines.html
+.. _Coding Guidelines:                   http://flow.neos.io/documentation/codingguidelines.html

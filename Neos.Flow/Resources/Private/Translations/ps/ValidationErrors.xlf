@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
-  <file original="" product-name="TYPO3.Flow" source-language="en" datatype="plaintext" target-language="ps">
+  <file original="" product-name="Neos.Flow" source-language="en" datatype="plaintext" target-language="ps">
     <body>
       <!-- AlphanumericValidator -->
       <trans-unit id="1221551320" xml:space="preserve">
@@ -155,7 +155,7 @@
       <trans-unit id="1268676765" xml:space="preserve">
 				<source>The person name cannot be empty</source>
 			<target xml:lang="ps" state="needs-translation">The person name cannot be empty</target></trans-unit>
-      <!-- Package "TYPO3.Media" -->
+      <!-- Package "Neos.Media" -->
       <!-- ImageTypeValidator -->
       <trans-unit id="1327947256" xml:space="preserve">
 				<source>The given value is not a Image instance</source>

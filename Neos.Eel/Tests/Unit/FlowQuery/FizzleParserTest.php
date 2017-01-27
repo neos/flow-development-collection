@@ -74,9 +74,9 @@ class FizzleParserTest extends \Neos\Flow\Tests\UnitTestCase
     public function propertyNameFilterIsMatched()
     {
         $parser = new ParserTestWrapper($this, FizzleParser::class);
-        $parser->assertDoesntMatch('PropertyNameFilter', '\TYPO3\Foo', 'A class name can be used as type selector');
-        $parser->assertDoesntMatch('PropertyNameFilter', 'TYPO3\Foo', 'A class name can be used as type selector');
-        $parser->assertDoesntMatch('PropertyNameFilter', 'TYPO3.Foo:Bar', 'A TS Object can be used as type selector');
+        $parser->assertDoesntMatch('PropertyNameFilter', '\Neos\Foo', 'A class name can be used as type selector');
+        $parser->assertDoesntMatch('PropertyNameFilter', 'Neos\Foo', 'A class name can be used as type selector');
+        $parser->assertDoesntMatch('PropertyNameFilter', 'Neos.Foo:Bar', 'A TS Object can be used as type selector');
     }
 
     /**

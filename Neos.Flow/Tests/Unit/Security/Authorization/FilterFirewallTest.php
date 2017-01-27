@@ -37,7 +37,7 @@ class FilterFirewallTest extends UnitTestCase
 
             if ($args[0] === 'URI') {
                 return 'mockPatternURI';
-            } elseif ($args[0] === 'TYPO3\\TestRequestPattern') {
+            } elseif ($args[0] === 'Neos\\TestRequestPattern') {
                 return 'mockPatternTest';
             }
         };
@@ -47,7 +47,7 @@ class FilterFirewallTest extends UnitTestCase
 
             if ($args[0] === 'AccessGrant') {
                 return 'mockInterceptorAccessGrant';
-            } elseif ($args[0] === 'TYPO3\\TestSecurityInterceptor') {
+            } elseif ($args[0] === 'Neos\\TestSecurityInterceptor') {
                 return 'mockInterceptorTest';
             }
         };
@@ -92,9 +92,9 @@ class FilterFirewallTest extends UnitTestCase
                 'interceptor' => 'AccessGrant'
             ],
             [
-                'patternType' => 'TYPO3\TestRequestPattern',
+                'patternType' => 'Neos\TestRequestPattern',
                 'patternValue' => '/some/url/blocked.*',
-                'interceptor' => 'TYPO3\TestSecurityInterceptor'
+                'interceptor' => 'Neos\TestSecurityInterceptor'
             ]
         ];
 

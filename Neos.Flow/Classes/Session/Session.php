@@ -347,7 +347,7 @@ class Session implements SessionInterface
             $this->response->setCookie($this->sessionCookie);
             $this->started = true;
 
-            $sessionObjects = $this->storageCache->get($this->storageIdentifier . md5('TYPO3_Flow_Object_ObjectManager'));
+            $sessionObjects = $this->storageCache->get($this->storageIdentifier . md5('Neos_Flow_Object_ObjectManager'));
             if (is_array($sessionObjects)) {
                 foreach ($sessionObjects as $object) {
                     if ($object instanceof ProxyInterface) {
@@ -361,7 +361,7 @@ class Session implements SessionInterface
             } else {
                 // Fallback for some malformed session data, if it is no array but something else.
                 // In this case, we reset all session objects (graceful degradation).
-                $this->storageCache->set($this->storageIdentifier . md5('TYPO3_Flow_Object_ObjectManager'), [], [$this->storageIdentifier], 0);
+                $this->storageCache->set($this->storageIdentifier . md5('Neos_Flow_Object_ObjectManager'), [], [$this->storageIdentifier], 0);
             }
 
             $lastActivitySecondsAgo = ($this->now - $this->lastActivityTimestamp);
@@ -662,7 +662,7 @@ class Session implements SessionInterface
                     $this->storeAuthenticatedAccountsInfo($securityContext->getAuthenticationTokens());
                 }
 
-                $this->putData('TYPO3_Flow_Object_ObjectManager', $this->objectManager->getSessionInstances());
+                $this->putData('Neos_Flow_Object_ObjectManager', $this->objectManager->getSessionInstances());
                 $this->writeSessionMetaDataCacheEntry();
             }
             $this->started = false;
@@ -747,7 +747,7 @@ class Session implements SessionInterface
             }
         }
         if ($accountProviderAndIdentifierPairs !== []) {
-            $this->putData('TYPO3_Flow_Security_Accounts', array_keys($accountProviderAndIdentifierPairs));
+            $this->putData('Neos_Flow_Security_Accounts', array_keys($accountProviderAndIdentifierPairs));
         }
     }
 

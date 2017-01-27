@@ -121,7 +121,7 @@ of a certain validator::
   you can also fetch the above validator using ``Your.Package:Foo`` as ``$validatorType``.
 
   **This is the recommended way for custom validators.**
-* For the standard validators inside the ``TYPO3.Flow`` package, you can leave out the package key,
+* For the standard validators inside the ``Neos.Flow`` package, you can leave out the package key,
   so you can use ``EmailAddress`` to fetch ``Neos\Flow\Validation\Validator\EmailAddressValidator``
 
 The ``$validatorOptions`` parameter is an associative array of validator options. See the validator
