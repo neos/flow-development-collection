@@ -903,10 +903,10 @@ case, as the scope usually is a design decision which is very unlikely to be cha
 	/**
 	 * This turns off autowiring for a single method:
 	 *
-	 * @param \TYPO3\Foo\Bar $bar
+	 * @param \Neos\Foo\Bar $bar
 	 * @Flow\Autowiring(false)
 	 */
-	public function injectMySpecialDependency(\TYPO3\Foo\Bar $bar) {
+	public function injectMySpecialDependency(\Neos\Foo\Bar $bar) {
 
 	}
 
@@ -959,12 +959,12 @@ the class code of another object you might find the following lines.
 	}
 
 If we want to use the much better object
-``\TYPO3\OtherPackage\GreeterWithCompliments``, the solution is to let the new
+``\Neos\OtherPackage\GreeterWithCompliments``, the solution is to let the new
 implementation implement the same interface.
 
 *Example: The improved Greeter object type* ::
 
-	namespace TYPO3\OtherPackage;
+	namespace Neos\OtherPackage;
 
 	class GreeterWithCompliments implements \MyCompany\MyPackage\GreeterInterface {
 		public function sayHelloTo($name) {
@@ -980,7 +980,7 @@ should be active and are done:
 .. code-block:: yaml
 
 	MyCompany\MyPackage\GreeterInterface:
-	  className: 'TYPO3\OtherPackage\GreeterWithCompliments'
+	  className: 'Neos\OtherPackage\GreeterWithCompliments'
 
 The the same code as above will get the improved ``GreeterWithCompliments``
 instead of the simple ``Greeter`` now.
@@ -1237,7 +1237,7 @@ passed through to the custom factory method:
 	    3:
 	      value: 'Neos\Flow\Log\Backend\FileBackend'
 	    4:
-	      setting: TYPO3.Flow.log.systemLogger.backendOptions
+	      setting: Neos.Flow.log.systemLogger.backendOptions
 
 *Example: PHP code using the custom factory* ::
 

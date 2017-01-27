@@ -39,7 +39,7 @@ to convert an array of data into a domain model::
 	/**
 	 * @Flow\Entity
 	 */
-	class TYPO3\MyPackage\Domain\Model\Person {
+	class Neos\MyPackage\Domain\Model\Person {
 		/**
 		 * @var string
 		 */
@@ -51,7 +51,7 @@ to convert an array of data into a domain model::
 		protected $birthDate;
 
 		/**
-		 * @var TYPO3\MyPackage\Domain\Model\Person
+		 * @var Neos\MyPackage\Domain\Model\Person
 		 */
 		protected $mother;
 		// ... furthermore contains getters and setters for the above properties.
@@ -61,9 +61,9 @@ to convert an array of data into a domain model::
 		'name' => 'John Fisher',
 		'birthDate' => '1990-11-14T15:32:12+00:00'
 	);
-	$person = $propertyMapper->convert($inputArray, \TYPO3\MyPackage\Domain\Model\Person::class);
+	$person = $propertyMapper->convert($inputArray, \Neos\MyPackage\Domain\Model\Person::class);
 
-	// $person is a newly created object of type TYPO3\MyPackage\Domain\Model\Person
+	// $person is a newly created object of type Neos\MyPackage\Domain\Model\Person
 	// $person->name == 'John Fisher'
 	// $person->birthDate is a DateTime object with the correct date set.
 
@@ -74,7 +74,7 @@ We'll first use a simple input array::
 	  'birthDate' => '1990-11-14T15:32:12+00:00'
 	);
 
-After calling ``$propertyMapper->convert($input, \TYPO3\MyPackage\Domain\Model\Person::class)``,
+After calling ``$propertyMapper->convert($input, \Neos\MyPackage\Domain\Model\Person::class)``,
 we receive an ew object of type ``Person`` which has ``$name`` set to ``John Fisher``,
 and ``$birthDate`` set to a ``DateTime`` object of the specified date. You might
 now wonder how the PropertyMapper knows how to convert ``DateTime`` objects and

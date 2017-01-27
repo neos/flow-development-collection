@@ -107,7 +107,7 @@ URI to PHP namespace mapping. The YAML syntax for that is:
 
 .. code-block:: yaml
 
-    TYPO3:
+    Neos:
       Fluid:
         namespaces:
           'http://some/unique/namespace': 'My\Php\Namespace'
@@ -463,8 +463,8 @@ Rendering the View Helper
 
 We refresh what we have learned so far: When a user writes something like
 ``<blog:displayNews />`` inside a template (and has imported the ``blog`` namespace
-to ``TYPO3\Blog\ViewHelpers``), Fluid will automatically instantiate the class
-``TYPO3\Blog\ViewHelpers\DisplayNewsViewHelper``, and invoke the render() method on it.
+to ``Neos\Blog\ViewHelpers``), Fluid will automatically instantiate the class
+``Neos\Blog\ViewHelpers\DisplayNewsViewHelper``, and invoke the render() method on it.
 
 This ``render()`` method should return the rendered content as string.
 

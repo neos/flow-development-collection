@@ -140,7 +140,7 @@ for a common MySQL setup, it would look similar to this:
 
 .. code-block:: yaml
 
-	TYPO3:
+	Neos:
 	  Flow:
 	    persistence:
 	     backendOptions:

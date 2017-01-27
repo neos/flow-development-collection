@@ -72,7 +72,7 @@ in the less-than and greater-than signs will be passed to the sub routes:
 	    '@format': 'html'
 	  subRoutes:
 	    'FlowSubroutes':
-	      package: 'TYPO3.Flow'
+	      package: 'Neos.Flow'
 
 Let's define a similar configuration for the *Blog* package. Please replace
 the YAML code you just inserted (the blog index route) by the following sub

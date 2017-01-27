@@ -3,7 +3,7 @@ Embedded Expression Language
 ----------------------------
 
 .. note:: This repository is a **read-only subsplit** of a package that is part of the
-          Flow framework (learn more on `flow.typo3.org <http://flow.typo3.org/>`_).
+          Flow framework (learn more on `flow.neos.io <http://flow.neos.io/>`_).
 
 The Embedded Expression Language (Eel) is a building block for creating Domain
 Specific Languages. Documentation is `available as part of the Neos documentation
