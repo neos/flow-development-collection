@@ -178,7 +178,7 @@ class MethodPrivilegePointcutFilter implements PointcutFilterInterface
      */
     public function savePolicyCache()
     {
-        $tags = ['TYPO3_Flow_Aop'];
+        $tags = ['Neos_Flow_Aop'];
         if (!$this->methodPermissionCache->has('methodPermission')) {
             $this->methodPermissionCache->set('methodPermission', $this->methodPermissions, $tags);
         }

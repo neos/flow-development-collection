@@ -52,7 +52,7 @@ class WritableFileSystemStorage extends FileSystemStorage implements WritableSto
      */
     public function importResource($source, $collectionName)
     {
-        $temporaryTargetPathAndFilename = $this->environment->getPathToTemporaryDirectory() . uniqid('TYPO3_Flow_ResourceImport_');
+        $temporaryTargetPathAndFilename = $this->environment->getPathToTemporaryDirectory() . uniqid('Neos_Flow_ResourceImport_');
 
         if (is_resource($source)) {
             try {
@@ -89,7 +89,7 @@ class WritableFileSystemStorage extends FileSystemStorage implements WritableSto
      */
     public function importResourceFromContent($content, $collectionName)
     {
-        $temporaryTargetPathAndFilename = $this->environment->getPathToTemporaryDirectory() . uniqid('TYPO3_Flow_ResourceImport_');
+        $temporaryTargetPathAndFilename = $this->environment->getPathToTemporaryDirectory() . uniqid('Neos_Flow_ResourceImport_');
         try {
             file_put_contents($temporaryTargetPathAndFilename, $content);
         } catch (\Exception $exception) {

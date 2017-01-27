@@ -22,9 +22,6 @@ use Neos\Flow\Session\Exception\SessionNotStartedException;
 use Neos\Flow\Session\Session;
 use Neos\Flow\Session\SessionManager;
 use Neos\Cache\Frontend\VariableFrontend;
-use Neos\Flow\Http\Uri;
-use Neos\Flow\Http\Request;
-use Neos\Flow\Http\Response;
 use Neos\Flow\Http;
 use Neos\Flow\Security\Authentication\Token\UsernamePassword;
 use Neos\Flow\Security\Authentication\TokenInterface;
@@ -67,7 +64,7 @@ class SessionTest extends UnitTestCase
     protected $settings = [
         'session' => [
             'inactivityTimeout' => 3600,
-            'name' => 'TYPO3_Flow_Session',
+            'name' => 'Neos_Flow_Session',
             'garbageCollection' => [
                 'probability' => 1,
                 'maximumPerRun' => 1000,
@@ -253,8 +250,8 @@ class SessionTest extends UnitTestCase
 
         $session->resume();
 
-        $this->assertTrue($this->httpResponse->hasCookie('TYPO3_Flow_Session'));
-        $this->assertEquals($sessionIdentifier, $this->httpResponse->getCookie('TYPO3_Flow_Session')->getValue());
+        $this->assertTrue($this->httpResponse->hasCookie('Neos_Flow_Session'));
+        $this->assertEquals($sessionIdentifier, $this->httpResponse->getCookie('Neos_Flow_Session')->getValue());
     }
 
     /**
@@ -292,7 +289,7 @@ class SessionTest extends UnitTestCase
 
         $session->start();
 
-        $cookie = $this->httpResponse->getCookie('TYPO3_Flow_Session');
+        $cookie = $this->httpResponse->getCookie('Neos_Flow_Session');
         $this->assertNotNull($cookie);
         $this->assertEquals($session->getId(), $cookie->getValue());
     }
@@ -905,10 +902,10 @@ class SessionTest extends UnitTestCase
 
         $session->close();
 
-        $this->httpRequest->setCookie($this->httpResponse->getCookie('TYPO3_Flow_Session'));
+        $this->httpRequest->setCookie($this->httpResponse->getCookie('Neos_Flow_Session'));
 
         $session->resume();
-        $this->assertEquals(['MyProvider:admin'], $session->getData('TYPO3_Flow_Security_Accounts'));
+        $this->assertEquals(['MyProvider:admin'], $session->getData('Neos_Flow_Security_Accounts'));
     }
 
     /**

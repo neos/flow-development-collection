@@ -691,10 +691,10 @@ Neos:
         title: 'Flow Command Reference'
         packageKeys:
           - 'Neos.Flow'
-          - 'TYPO3.Party'
+          - 'Neos.Party'
           - 'Neos.FluidAdaptor'
           - 'Neos.Kickstart'
-          - 'TYPO3.Welcome'
+          - 'Neos.Welcome'
         savePathAndFilename: '%FLOW_PATH_PACKAGES%Framework/Neos.Flow/Documentation/TheDefinitiveGuide/PartV/CommandReference.rst'
 
     references:
