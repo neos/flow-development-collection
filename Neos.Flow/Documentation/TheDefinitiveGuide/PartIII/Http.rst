@@ -450,12 +450,12 @@ Consider the following examples:
 
 A URI specifying a resource:
 
-* http://flow.typo3.org/images/logo
+* http://flow.neos.io/images/logo
 
 A URL specifying two different representations of that resource:
 
-* http://flow.typo3.org/images/logo.png
-* http://flow.typo3.org/images/logo.gif
+* http://flow.neos.io/images/logo.png
+* http://flow.neos.io/images/logo.gif
 
 Throughout the framework we use the term ``URI`` instead of ``URL`` because it is more generic and more often than not,
 the correct term to use.
