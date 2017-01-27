@@ -36,7 +36,7 @@ To get an overview of all available commands, enter ``./flow help``:
 
 	The following commands are currently available:
 
-	PACKAGE "TYPO3.FLOW":
+	PACKAGE "Neos.FLOW":
 	-------------------------------------------------------------------------------
 	* flow:cache:flush                         Flush all caches
 	  cache:warmup                             Warm up caches
@@ -104,7 +104,7 @@ To get an overview of all available commands, enter ``./flow help``:
 	                                           registered type converters
 
 
-	PACKAGE "TYPO3.KICKSTART":
+	PACKAGE "Neos.KICKSTART":
 	-------------------------------------------------------------------------------
 	  kickstart:package                        Kickstart a new package
 	  kickstart:actioncontroller               Kickstart a new action controller

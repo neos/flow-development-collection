@@ -103,7 +103,7 @@ account by checking a username and password against accounts stored in the datab
 
 .. code-block:: yaml
 
-  TYPO3:
+  Neos:
     Flow:
       security:
         authentication:
@@ -346,7 +346,7 @@ them in "parallel".
     authentication:
       providers:
         'MyLDAPProvider':
-          provider: 'TYPO3\MyCoolPackage\Security\Authentication\MyLDAPProvider'
+          provider: 'Neos\MyCoolPackage\Security\Authentication\MyLDAPProvider'
           providerOptions: 'Some LDAP configuration options'
         'DefaultProvider':
           provider: 'PersistedUsernamePasswordProvider'
@@ -437,7 +437,7 @@ configuration:
               patternOptions:
                 'cidrPattern': '192.168.178.0/24'
         'MyLDAPProvider':
-          provider: 'TYPO3\MyCoolPackage\Security\Authentication\MyLDAPProvider'
+          provider: 'Neos\MyCoolPackage\Security\Authentication\MyLDAPProvider'
           providerOptions: 'Some LDAP configuration options'
           requestPatterns:
             'Acme.SomePackage:AdministrationArea':
@@ -1322,7 +1322,7 @@ firewall configuration will look like:
 
 .. code-block:: yaml
 
-  TYPO3:
+  Neos:
     Flow:
       security:
         firewall:

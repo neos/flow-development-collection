@@ -159,7 +159,7 @@ The ``ComponentContext`` contains a reference to the current HTTP request and re
 pass arbitrary parameters to successive components.
 To activate a component, it must be configured in the ``Settings.yaml``::
 
-	TYPO3:
+	Neos:
 	  Flow:
 	    http:
 	      chain:
@@ -244,9 +244,9 @@ Creating an ActionRequest
 In order to dispatch a request to a controller, you need an ``ActionRequest``.
 Such a request is always bound to an ``Http\Request``::
 
-    use TYPO3\Flow\Core\Bootstrap;
-    use TYPO3\Flow\Http\HttpRequestHandlerInterface;
-    use TYPO3\Flow\Mvc\ActionRequest;
+    use Neos\Flow\Core\Bootstrap;
+    use Neos\Flow\Http\HttpRequestHandlerInterface;
+    use Neos\Flow\Mvc\ActionRequest;
 
     // ...
 
@@ -317,7 +317,7 @@ sure that those headers are only accepted from trusted proxies.
 For this, you can configure a list of proxy IP address ranges in CIDR notation that are allowed to provide such headers,
 and which headers specifically are accepted for overriding those request information::
 
-	TYPO3:
+	Neos:
 	  Flow:
 	    http:
 	      trustedProxies:
@@ -342,7 +342,7 @@ Those headers will be checked from left to right and the first set header will b
 
 If you know that your installation will not run behind a proxy server, you should change settings to this::
 
-	TYPO3:
+	Neos:
 	  Flow:
 	    http:
 	      trustedProxies:

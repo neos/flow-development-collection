@@ -76,7 +76,7 @@ You will end up with a directory structure like this:
         ...
       Packages/
         Framework/
-          TYPO3.Flow/
+          Neos.Flow/
           ...
       Web/              <-- your virtual host root will point to this
         .htaccess
@@ -319,7 +319,7 @@ setup, it would look similar to this:
 
 .. code-block:: yaml
 
-    TYPO3:
+    Neos:
       Flow:
         persistence:
           backendOptions:

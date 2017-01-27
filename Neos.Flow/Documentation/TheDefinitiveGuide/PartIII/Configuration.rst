@@ -103,10 +103,10 @@ which come with the Flow distribution for getting more examples.
 .. code-block:: yaml
 
     #                                                                        #
-    # Settings Configuration for the TYPO3.Viewhelpertest Package            #
+    # Settings Configuration for the Neos.Viewhelpertest Package            #
     #                                                                        #
 
-    TYPO3:
+    Neos:
       Viewhelpertest:
         includeViewHelpers: [alias, base]
 
@@ -405,9 +405,9 @@ This validator is used in the ``configuration:validate`` command::
   Validating configuration for type: "Settings"
 
   16 schema files were found:
-   - package:"TYPO3.Flow" schema:"Settings/TYPO3.Flow.aop" -> is valid
+   - package:"Neos.Flow" schema:"Settings/Neos.Flow.aop" -> is valid
   …
-   - package:"TYPO3.Flow" schema:"Settings/TYPO3.Flow.utility" -> is valid
+   - package:"Neos.Flow" schema:"Settings/Neos.Flow.utility" -> is valid
 
   The configuration is valid!
 
@@ -444,11 +444,11 @@ The schemas are searched in the path *Resources/Private/Schema* of all active
 Packages. The schema-filenames must match the pattern
 ``<type>.<path>.schema.yaml``. The type and/or the path can also be expressed
 as subdirectories of *Resources/Private/Schema*. So
-*Settings/TYPO3/Flow.persistence.schema.yaml* will match the same paths as
-*Settings.TYPO3.Flow.persistence.schema.yaml* or
-*Settings/TYPO3.Flow/persistence.schema.yaml*.
+*Settings/Neos/Flow.persistence.schema.yaml* will match the same paths as
+*Settings.Neos.Flow.persistence.schema.yaml* or
+*Settings/Neos.Flow/persistence.schema.yaml*.
 
-Here is an example of a schema, from *TYPO3.Flow.core.schema.yaml*:
+Here is an example of a schema, from *Neos.Flow.core.schema.yaml*:
 
 .. code-block:: yaml
 
@@ -458,7 +458,7 @@ Here is an example of a schema, from *TYPO3.Flow.core.schema.yaml*:
    'context': { type: string, required: TRUE }
    'phpBinaryPathAndFilename': { type: string, required: TRUE }
 
-It declares the constraints for the *TYPO3.Flow.core* setting:
+It declares the constraints for the *Neos.Flow.core* setting:
 
 * the setting is a dictionary (an associative array in PHP nomenclature)
 * properties not defined in the schema are not not allowed

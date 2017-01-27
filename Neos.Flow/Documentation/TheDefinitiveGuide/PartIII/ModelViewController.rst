@@ -621,11 +621,11 @@ The general syntax of a view configuration looks like this:
 
 	-
 	  requestFilter: 'isPackage("Foreign.Package") && isController("Standard")'
-	  viewObjectName: 'TYPO3\TypoScript\View\TypoScriptView'
+	  viewObjectName: 'Neos\TypoScript\View\TypoScriptView'
 	  options:
 	    typoScriptPathPattern: 'resource://My.Package/Private/TypoScripts'
 
-The requestFilter is based on TYPO3.Eel allowing you to match arbitrary requests
+The requestFilter is based on Neos.Eel allowing you to match arbitrary requests
 so that you can override View configuration for various scenarios.
 You can combine any of these matchers to filter as specific as you need:
 
@@ -639,7 +639,7 @@ There are additional helpers to get the parentRequest or mainRequest of the curr
 which you can use to limit some configuration to only take effect inside a specific subRequest.
 All Eel matchers above can be used with the parentRequest or mainRequest as well:
 
-* parentRequest.isPackage("TYPO3.Neos")
+* parentRequest.isPackage("Neos.Neos")
 * parentRequest.isController("Standard")
 * mainRequest.isController("Standard")
 * ...
