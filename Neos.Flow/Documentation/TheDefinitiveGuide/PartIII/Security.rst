@@ -126,8 +126,8 @@ Given there is a route that resolves “your/app/authenticate” to the ``authen
 
   <form action="your/app/authenticate" method="post">
      <input type="text"
-        name="__authentication[TYPO3][Flow][Security][Authentication][Token][UsernamePassword][username]" />
-     <input type="password"        name="__authentication[TYPO3][Flow][Security][Authentication][Token][UsernamePassword][password]" />
+        name="__authentication[Neos][Flow][Security][Authentication][Token][UsernamePassword][username]" />
+     <input type="password"        name="__authentication[Neos][Flow][Security][Authentication][Token][UsernamePassword][password]" />
      <input type="submit" value="Login" />
   </form>
 
@@ -181,8 +181,8 @@ from the ``getAuthenticationStatus()`` method of any token.
 Now you might ask yourself, how a token receives its credentials. The simple answer
 is: It's up to the token, to fetch them from somewhere. The ``UsernamePassword``
 token for example checks for a username and password in the two POST parameters:
-``__authentication[TYPO3][Flow][Security][Authentication][Token][UsernamePassword][username]`` and
-``__authentication[TYPO3][Flow][Security][Authentication][Token][UsernamePassword][password]`` (see
+``__authentication[Neos][Flow][Security][Authentication][Token][UsernamePassword][username]`` and
+``__authentication[Neos][Flow][Security][Authentication][Token][UsernamePassword][password]`` (see
 :ref:`Using the authentication controller`). The framework only makes sure that
 ``updateCredentials()`` is called on every token, then the token has to set possibly
 available credentials itself, e.g. from available headers or parameters or anything else
@@ -628,9 +628,9 @@ from the HTTP POST data, look at the following program listing for details::
 
   $postArguments = $this->environment->getRawPostArguments();
   $username = \Neos\Utility\ObjectAccess::getPropertyPath($postArguments,
-      '__authentication.TYPO3.Flow.Security.Authentication.Token.UsernamePassword.username');
+      '__authentication.Neos.Flow.Security.Authentication.Token.UsernamePassword.username');
   $password = \Neos\Utility\ObjectAccess::getPropertyPath($postArguments,
-      '__authentication.TYPO3.Flow.Security.Authentication.Token.UsernamePassword.password');
+      '__authentication.Neos.Flow.Security.Authentication.Token.UsernamePassword.password');
 
 .. note::
 
