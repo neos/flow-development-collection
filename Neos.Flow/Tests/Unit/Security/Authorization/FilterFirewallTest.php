@@ -92,9 +92,9 @@ class FilterFirewallTest extends UnitTestCase
                 'interceptor' => 'AccessGrant'
             ],
             [
-                'patternType' => 'TYPO3\TestRequestPattern',
+                'patternType' => 'Neos\TestRequestPattern',
                 'patternValue' => '/some/url/blocked.*',
-                'interceptor' => 'TYPO3\TestSecurityInterceptor'
+                'interceptor' => 'Neos\TestSecurityInterceptor'
             ]
         ];
 
