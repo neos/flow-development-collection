@@ -1,0 +1,132 @@
+`3.3.7 (2017-01-30) <https://github.com/neos/flow-development-collection/releases/tag/3.3.7>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`TASK: Pin utility versions to 3.3 branch releases <https://github.com/neos/flow-development-collection/pull/846>`_
+-------------------------------------------------------------------------------------------------------------------
+
+Avoid installing breaking versions of the utilities in Flow 3.3.
+
+* Packages: ``Arrays`` ``Flow`` ``Lock``
+
+`BUGFIX: Make I18nService scan Translation folders for available locales <https://github.com/neos/flow-development-collection/pull/411>`_
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+Before, the I18nService only scanned file names for locale identifiers, but the main source
+for available locales are the translations, which reside in locale folders. Therefore it was not
+possible to add an available locale through an additional translation file.
+
+This went unnoticed, because the available locales are still filled with all locales available
+in the CLDR.
+
+This change will now also scan folder names inside `/Private/Translations/` for valid
+locale identifiers.
+
+* Packages: ``Flow``
+
+`BUGFIX: Use fallback if exception handler configured wrong <https://github.com/neos/flow-development-collection/pull/827>`_
+----------------------------------------------------------------------------------------------------------------------------
+
+In case the configured exception handler class dies not exist,
+the `ProductionExceptionHandler` is used instead. This allows
+(force-)flushing the caches to work in more cases.
+
+* Packages: ``Flow``
+
+`BUGFIX: Set Bootstrap::$staticObjectManager only if ready <https://github.com/neos/flow-development-collection/pull/822>`_
+---------------------------------------------------------------------------------------------------------------------------
+
+When an exception occurs, our `Logger` tries to write an exception trace.
+
+For this, it tries to fetch the `Bootstrap` instance from
+`Bootstrap::$staticObjectManager` if that is an instance of
+`ObjectManagerInterface`. Now, due to the order of calls during the bootstrap
+of Flow, `Bootstrap::$staticObjectManager` is set before the `Bootstrap`
+instance is set there. If an exception is to be logged before that point, the
+`ObjectManager` simply tries to build the `Bootstrap` but does not pass the
+required `$context`. That leads to:
+
+    Missing argument 1 for TYPO3\\Flow\\Core\\Bootstrap::__construct(), called in
+    /…/ObjectManager.php
+
+This in turn masks the error that caused the exception to be logged, blocking
+proper resolution of the actual issue.
+
+This change fixes this by making sure the `Bootstrap::$staticObjectManager`
+variable is set after the `Bootstrap` has been "injected" into the
+`ObjectManager` instance.
+
+* Packages: ``Flow``
+
+`FEATURE: Add more optional arguments to currency viewhelper <https://github.com/neos/flow-development-collection/pull/705>`_
+-----------------------------------------------------------------------------------------------------------------------------
+
+Adds ``prependCurrency``, ``separateCurrency`` and ``decimals`` as optional arguments to the ``CurrencyViewHelper``.
+
+* Packages: ``Flow`` ``Fluid``
+
+`BUGFIX: Call of non existing core command issues proper error <https://github.com/neos/flow-development-collection/pull/795>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+And exception was thrown when a non existing core command was being
+invoked, eg. due to a spelling mistake.
+The exception stems from the fact that all core commands are considered
+compiletime commands but handling of non existing command calls is
+done by the ``HelpCommandController`` which itself was not compiletime
+compatible. This change adapts it to use inject methods which resolves
+the problem.
+
+Note that in upmerges the injections must be adapted to changing dependencies.
+
+Fixes: #794
+
+* Packages: ``Flow``
+
+`BUGFIX: Adjust Documentation to renamed routing cache <https://github.com/neos/flow-development-collection/pull/776>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+A follow-up to I`bc55b5a4939b42b7cf2a08ada52985aa04bb7b04 <https://github.com/neos/flow-development-collection/commit/bc55b5a4939b42b7cf2a08ada52985aa04bb7b04>`_
+adjusting the Routing documentation and example configuration
+to the Routing Cache that was renamed with I`ac1bd27cd1f2869e597b696c896633f14703ec40 <https://github.com/neos/flow-development-collection/commit/ac1bd27cd1f2869e597b696c896633f14703ec40>`_
+
+* Packages: ``Flow``
+
+`BUGFIX: DateTimeConverter accepts timestamps when configuration without format is provided <https://github.com/neos/flow-development-collection/pull/420>`_
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Previously, the DateTimeConverter would fail converting timestamps when a configuration for the
+property existed, but did not configure the DateTimeConverter format.
+This is commonly the case in REST Apis, where type conversion needs to be configured for allowing
+creation and modification, but does not necessarily explicitly configure the DateTime format.
+
+* Packages: ``Flow``
+
+`TASK: Adjust documentation recommendations to ComponentChain <https://github.com/neos/flow-development-collection/pull/656>`_
+------------------------------------------------------------------------------------------------------------------------------
+
+The documentation still recommended to create Requests through the `createFromEnvironment`
+factory method, but that completely bypasses the HTTP components and hence leads to unexpected
+results.
+This change adjusts documentation and clearly states, that the factory method should not be used
+to access the **current** request and response. Instead it is suggested to use the `RequestHandler`
+for that purpose only.
+
+* Packages: ``Flow``
+
+`TASK: Update PHP coding guidelines <https://github.com/neos/flow-development-collection/pull/757>`_
+----------------------------------------------------------------------------------------------------
+
+* Packages: ``Flow``
+
+`BUGFIX: Exclude psr/log from reflection <https://github.com/neos/flow-development-collection/pull/726>`_
+---------------------------------------------------------------------------------------------------------
+
+A change in dependencies pulled in psr/log which contains a trait,
+causing failures with PHP 5.3
+
+* Packages: ``Flow``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/3.3.6...3.3.7>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
