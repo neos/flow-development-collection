@@ -452,14 +452,12 @@ class Scripts
         $reflectionService = new ReflectionService();
 
         $reflectionService->injectSystemLogger($bootstrap->getEarlyInstance(SystemLoggerInterface::class));
-        $reflectionService->injectClassLoader($bootstrap->getEarlyInstance(ClassLoader::class));
         $reflectionService->injectSettings($settings);
         $reflectionService->injectPackageManager($bootstrap->getEarlyInstance(PackageManagerInterface::class));
         $reflectionService->setStatusCache($cacheManager->getCache('Flow_Reflection_Status'));
         $reflectionService->setReflectionDataCompiletimeCache($cacheManager->getCache('Flow_Reflection_CompiletimeData'));
         $reflectionService->setReflectionDataRuntimeCache($cacheManager->getCache('Flow_Reflection_RuntimeData'));
         $reflectionService->setClassSchemataRuntimeCache($cacheManager->getCache('Flow_Reflection_RuntimeClassSchemata'));
-        $reflectionService->injectSettings($configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.Flow'));
         $reflectionService->injectEnvironment($bootstrap->getEarlyInstance(Environment::class));
 
         $bootstrap->setEarlyInstance(ReflectionService::class, $reflectionService);
