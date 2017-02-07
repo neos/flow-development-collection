@@ -273,7 +273,8 @@ class DoctrineCommandController extends CommandController
         if ($showDescriptions) {
             $showMigrations = true;
         }
-        $this->outputLine($this->doctrineService->getMigrationStatus($showMigrations, $showDescriptions));
+
+        $this->outputLine($this->doctrineService->getFormattedMigrationStatus($showMigrations, $showDescriptions));
     }
 
     /**
@@ -411,18 +412,25 @@ class DoctrineCommandController extends CommandController
      *
      * @param boolean $diffAgainstCurrent Whether to base the migration on the current schema structure
      * @param string $filterExpression Only include tables/sequences matching the filter expression regexp
+     * @param boolean $force Generate migrations even if there are migrations left to execute
      * @return void
      * @see neos.flow:doctrine:migrate
      * @see neos.flow:doctrine:migrationstatus
      * @see neos.flow:doctrine:migrationexecute
      * @see neos.flow:doctrine:migrationversion
      */
-    public function migrationGenerateCommand($diffAgainstCurrent = true, $filterExpression = null)
+    public function migrationGenerateCommand($diffAgainstCurrent = true, $filterExpression = null, $force = false)
     {
         // "driver" is used only for Doctrine, thus we (mis-)use it here
         // additionally, when no host is set, skip this step, assuming no DB is needed
         if (!$this->isDatabaseConfigured()) {
             $this->outputLine('Doctrine migration generation has been SKIPPED, the driver and host backend options are not set in /Configuration/Settings.yaml.');
+            $this->quit(1);
+        }
+
+        $migrationStatus = $this->doctrineService->getMigrationStatus();
+        if ($migrationStatus['New Migrations'] > 0 && $force === false) {
+            $this->outputLine('There are new migrations available. To avoid duplication those should be executed via `doctrine:migrate` before creating additional migrations.');
             $this->quit(1);
         }
 
