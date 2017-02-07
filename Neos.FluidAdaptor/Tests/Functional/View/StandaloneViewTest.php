@@ -301,4 +301,29 @@ class StandaloneViewTest extends FunctionalTestCase
         $actual = trim($standaloneView->renderSection('test'));
         $this->assertSame($expected, $actual, 'Second rendering was not escaped.');
     }
+
+    /**
+     * @test
+     */
+    public function settingAndGettingFormatWorksAsExpected()
+    {
+        $formatToBeSet = 'xml';
+        $standaloneView = new StandaloneView();
+        $standaloneView->setFormat($formatToBeSet);
+
+        $this->assertSame($formatToBeSet, $standaloneView->getFormat());
+        $this->assertSame($formatToBeSet, $standaloneView->getRenderingContext()->getTemplatePaths()->getFormat());
+    }
+
+    /**
+     * @test
+     */
+    public function settingAndGettingTemplatePathAndFilenameWorksAsExpected()
+    {
+        $templatePathAndFilename = __DIR__ . '/Fixtures/NestedRenderingConfiguration/TemplateWithSection.txt';
+        $standaloneView = new StandaloneView();
+        $standaloneView->setTemplatePathAndFilename($templatePathAndFilename);
+
+        $this->assertSame($templatePathAndFilename, $standaloneView->getTemplatePathAndFilename());
+    }
 }

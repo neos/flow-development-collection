@@ -139,6 +139,7 @@ abstract class AbstractTemplateView extends \TYPO3Fluid\Fluid\View\AbstractTempl
 
     /**
      * @param string $templatePathAndFilename
+     * @return void
      */
     public function setTemplatePathAndFilename($templatePathAndFilename)
     {
@@ -147,6 +148,7 @@ abstract class AbstractTemplateView extends \TYPO3Fluid\Fluid\View\AbstractTempl
 
     /**
      * @param ControllerContext $controllerContext
+     * @return void
      */
     public function setControllerContext(ControllerContext $controllerContext)
     {
@@ -206,6 +208,7 @@ abstract class AbstractTemplateView extends \TYPO3Fluid\Fluid\View\AbstractTempl
      * Validate options given to this view.
      *
      * @param array $options
+     * @return void
      * @throws Exception
      */
     protected function validateOptions(array $options)
@@ -232,6 +235,7 @@ abstract class AbstractTemplateView extends \TYPO3Fluid\Fluid\View\AbstractTempl
      * and sets the resulting options in this object.
      *
      * @param array $options
+     * @return void
      */
     protected function setOptions(array $options)
     {
