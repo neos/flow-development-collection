@@ -187,6 +187,10 @@ class ObjectManager implements ObjectManagerInterface
         }
 
         if (isset($this->objects[$objectName]['f'])) {
+            if ($this->objects[$objectName]['s'] === ObjectConfiguration::SCOPE_PROTOTYPE) {
+                return $this->buildObjectByFactory($objectName);
+            }
+            
             $this->objects[$objectName]['i'] = $this->buildObjectByFactory($objectName);
             return $this->objects[$objectName]['i'];
         }
