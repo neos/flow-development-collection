@@ -142,7 +142,7 @@ abstract class AbstractTemplateView extends \TYPO3Fluid\Fluid\View\AbstractTempl
      */
     public function setTemplatePathAndFilename($templatePathAndFilename)
     {
-        return $this->getTemplatePaths()->setTemplatePathAndFilename($templatePathAndFilename);
+        $this->getTemplatePaths()->setTemplatePathAndFilename($templatePathAndFilename);
     }
 
     /**
@@ -151,18 +151,21 @@ abstract class AbstractTemplateView extends \TYPO3Fluid\Fluid\View\AbstractTempl
     public function setControllerContext(ControllerContext $controllerContext)
     {
         $this->controllerContext = $controllerContext;
-        if ($this->getRenderingContext() instanceof RenderingContext) {
-            $this->getRenderingContext()->setControllerContext($controllerContext);
+
+        $renderingContext = $this->getRenderingContext();
+        if ($renderingContext instanceof RenderingContext) {
+            $renderingContext->setControllerContext($controllerContext);
         }
 
 
         $paths = $this->getTemplatePaths();
         $request = $controllerContext->getRequest();
-        $paths->setFormat($request->getFormat());
 
         if (!$request instanceof ActionRequest) {
             return;
         }
+
+        $paths->setFormat($request->getFormat());
 
         if ($paths->getTemplateRootPaths() === [] && $paths->getLayoutRootPaths() === [] && $paths->getPartialRootPaths() === []) {
             $paths->fillDefaultsByPackageName($request->getControllerPackageKey());
