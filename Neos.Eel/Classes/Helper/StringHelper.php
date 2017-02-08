@@ -584,7 +584,7 @@ class StringHelper implements ProtectedContextAwareInterface
         $unicode_string = preg_replace('/[[:space:]]/', ' ', $unicode_string);
         // The words are now separated by single spaces and can be splitted to an array
         // I have included \n\r\t here as well, but only space will also suffice
-        $words_array = preg_split( "/[\n\r\t ]+/", $unicode_string, 0, PREG_SPLIT_NO_EMPTY );
+        $words_array = preg_split('/[\n\r\t ]+/', $unicode_string, 0, PREG_SPLIT_NO_EMPTY);
 
         // Now we can get the word count by counting array elments
         return count($words_array);
