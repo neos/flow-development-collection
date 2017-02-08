@@ -576,7 +576,7 @@ class StringHelper implements ProtectedContextAwareInterface
      * @param string $string The input string
      * @return integer Length of the string
      */
-    public function wordCount($string)
+    public function wordCount($unicode_string)
     {
         // First remove all the punctuation marks & digits
         $unicode_string = preg_replace('/[[:punct:][:digit:]]/', '', $unicode_string);
