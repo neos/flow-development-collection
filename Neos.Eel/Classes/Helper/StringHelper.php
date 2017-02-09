@@ -571,9 +571,9 @@ class StringHelper implements ProtectedContextAwareInterface
     }
 
     /**
-     * Return numbers of words used in a string. Remove marks & digits and
+     * Return the count of words for a given string. Remove marks & digits and
      * flatten all kind of whitespaces (tabs, new lines and multiple spaces)
-     * This helper is good for calculate the reading time of an article.
+     * For example this helper can be utilized to calculate the reading time of an article.
      *
      * @param string $string The input string
      * @return integer Number of words
