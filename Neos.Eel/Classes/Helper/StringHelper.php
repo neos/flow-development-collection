@@ -571,23 +571,19 @@ class StringHelper implements ProtectedContextAwareInterface
     }
 
     /**
-     * Return numbers of words used in a string
+     * Return numbers of words used in a string. Remove marks & digits and
+     * flatten all kind of whitespaces (tabs, new lines and multiple spaces)
+     * This helper is good for calculate the reading time of an article.
      *
      * @param string $string The input string
-     * @return integer Length of the string
+     * @return integer Number of words
      */
-    public function wordCount($unicode_string)
+    public function wordCount($unicodeString)
     {
-        // First remove all the punctuation marks & digits
-        $unicode_string = preg_replace('/[[:punct:][:digit:]]/', '', $unicode_string);
-        // Now replace all the whitespaces (tabs, new lines, multiple spaces) by single space
-        $unicode_string = preg_replace('/[[:space:]]/', ' ', $unicode_string);
-        // The words are now separated by single spaces and can be splitted to an array
-        // I have included \n\r\t here as well, but only space will also suffice
-        $words_array = preg_split('/[\n\r\t ]+/', $unicode_string, 0, PREG_SPLIT_NO_EMPTY);
+        $unicodeString = preg_replace('/[[:punct:][:digit:]]/', '', $unicodeString);
+        $unicodeString = preg_replace('/[[:space:]]/', ' ', $unicodeString);
 
-        // Now we can get the word count by counting array elments
-        return count($words_array);
+        return count(preg_split('/[\n\r\t ]+/', $unicodeString, 0, PREG_SPLIT_NO_EMPTY));
     }
 
     /**

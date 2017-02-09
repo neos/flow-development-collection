@@ -570,8 +570,11 @@ class StringHelperTest extends UnitTestCase
         return [
             'null' => [null, 0],
             'empty' => ['', 0],
-            'non-empty' => ['Hello fri3nd, you\'re
-       looking          good tod@y!', 6],
+            'non-empty' =>
+                [
+                    'Hello fri3nd, you\'re
+                    looking          good tod@y!', 6
+                ],
             'UTF-8' => ['Cäche Flüsh', 2]
         ];
     }
