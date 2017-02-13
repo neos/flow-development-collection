@@ -22,6 +22,8 @@ WARNING: This file has been machine generated. Do not edit it, or your changes w
  *
  * This parser can evaluate the expression language for Flow and uses
  * the basic types from AbstractParser.
+ *
+ * @TYPO3\Flow\Annotations\Proxy(false)
  */
 class EelParser extends \TYPO3\Eel\AbstractParser {
 
