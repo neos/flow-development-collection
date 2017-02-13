@@ -575,7 +575,7 @@ class StringHelper implements ProtectedContextAwareInterface
      * flatten all kind of whitespaces (tabs, new lines and multiple spaces)
      * For example this helper can be utilized to calculate the reading time of an article.
      *
-     * @param string $string The input string
+     * @param string $unicodeString The input string
      * @return integer Number of words
      */
     public function wordCount($unicodeString)
