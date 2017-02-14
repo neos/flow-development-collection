@@ -373,7 +373,7 @@ class ClassLoader
             return;
         }
 
-        $proxyClasses = @include(FLOW_PATH_DATA . 'Temporary/' . (string)$context . '/AvailableProxyClasses.php');
+        $proxyClasses = @include(FLOW_PATH_TEMPORARY_BASE . '/' . (string)$context . '/AvailableProxyClasses.php');
         if ($proxyClasses !== false) {
             $this->availableProxyClasses = $proxyClasses;
         }
