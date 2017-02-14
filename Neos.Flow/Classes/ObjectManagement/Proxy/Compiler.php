@@ -263,7 +263,12 @@ return ' . var_export($this->storedProxyClasses, true) . ';';
 
         $proxyClassCode .= "\n" . '# PathAndFilename: ' . $pathAndFilename;
 
-        $this->classesCache->set(str_replace('\\', '_', $className), $classCode . $proxyClassCode);
+        $separator =
+            PHP_EOL . '#' .
+            PHP_EOL . '# Start of Flow generated Proxy code' .
+            PHP_EOL . '#' . PHP_EOL;
+
+        $this->classesCache->set(str_replace('\\', '_', $className), $classCode . $separator . $proxyClassCode);
     }
 
     /**
