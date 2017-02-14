@@ -22,6 +22,8 @@ WARNING: This file has been machine generated. Do not edit it, or your changes w
 /**
  * This Abstract Parser class contains definitions for absolutely basic types,
  * like quoted strings or identifiers
+ *
+ * @TYPO3\Flow\Annotations\Proxy(false)
  */
 abstract class AbstractParser extends \PhpPeg\Parser {
 /* S: / \s* / */
@@ -253,10 +255,14 @@ function match_Identifier ($stack = array()) {
 
 
 
-	public function StringLiteral_SingleQuotedStringLiteral(&$result, $sub) {
-		$result['val'] = (string)str_replace("'", "'", substr($sub['text'], 1, -1));
-	}
-	public function StringLiteral_DoubleQuotedStringLiteral(&$result, $sub) {
-		$result['val'] = (string)str_replace('\"', '"', substr($sub['text'], 1, -1));
-	}
+
+    public function StringLiteral_SingleQuotedStringLiteral(&$result, $sub)
+    {
+        $result['val'] = (string)str_replace("'", "'", substr($sub['text'], 1, -1));
+    }
+
+    public function StringLiteral_DoubleQuotedStringLiteral(&$result, $sub)
+    {
+        $result['val'] = (string)str_replace('\"', '"', substr($sub['text'], 1, -1));
+    }
 }
