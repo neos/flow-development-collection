@@ -2024,9 +2024,9 @@ class ReflectionService
             'classesByMethodAnnotations' => $this->classesByMethodAnnotations
         ];
 
-        $reflectionData['classReflectionData'] = $this->filterArrayByClassesInNamespace($reflectionData['classReflectionData'], $packageKey);
-        $reflectionData['classSchemata'] = $this->filterArrayByClassesInNamespace($reflectionData['classSchemata'], $packageKey);
-        $reflectionData['annotatedClasses'] = $this->filterArrayByClassesInNamespace($reflectionData['annotatedClasses'], $packageKey);
+        $reflectionData['classReflectionData'] = $this->filterArrayByClassesInPackageNamespace($reflectionData['classReflectionData'], $packageKey);
+        $reflectionData['classSchemata'] = $this->filterArrayByClassesInPackageNamespace($reflectionData['classSchemata'], $packageKey);
+        $reflectionData['annotatedClasses'] = $this->filterArrayByClassesInPackageNamespace($reflectionData['annotatedClasses'], $packageKey);
 
         $reflectionData['classesByMethodAnnotations'] = isset($reflectionData['classesByMethodAnnotations']) ? $reflectionData['classesByMethodAnnotations'] : [];
         $methodAnnotationsFilters = function ($className) use ($packageKey) {
@@ -2052,7 +2052,7 @@ class ReflectionService
      * @param string $packageKey
      * @return array
      */
-    protected function filterArrayByClassesInNamespace(array $array, $packageKey)
+    protected function filterArrayByClassesInPackageNamespace(array $array, $packageKey)
     {
         return array_filter($array, function ($className) use ($packageKey) {
             return (isset($this->availableClassNames[$packageKey]) && in_array($className, $this->availableClassNames[$packageKey]));
