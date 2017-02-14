@@ -1,0 +1,173 @@
+`3.2.9 (2017-02-14) <https://github.com/neos/flow-development-collection/releases/tag/3.2.9>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: ClassLoader should load AvailableProxies from TEMPORARY_BASE <https://github.com/neos/flow-development-collection/pull/867>`_
+--------------------------------------------------------------------------------------------------------------------------------------
+
+If you have an old version of the AvailableProxyClasses in FLOW_PATH_DATA
+and you change FLOW_PATH_TEMPORARY_BASE, always the old proxy classes
+get loaded.
+
+Resolves: #866
+
+* Packages: ``Flow``
+
+`BUGFIX: Proxy Compiler adds newline after end of original code <https://github.com/neos/flow-development-collection/pull/854>`_
+--------------------------------------------------------------------------------------------------------------------------------
+
+As any original class might end on a comment line without newline we need to
+add a newline as part of the proxy building to avoid putting the proxy
+namespace declaration within a comment. Additionally adds a marker comment
+declaring the beginning of the proxy code.
+
+Fixes: #779
+
+* Packages: ``Flow``
+
+`BUGFIX: Peg generated parsers are excluded from proxy building <https://github.com/neos/flow-development-collection/pull/853>`_
+--------------------------------------------------------------------------------------------------------------------------------
+
+The generated parsers ``AbstractParser``, ``EelParser`` and ``FizzleParser``
+are excluded from proxy building as the include statement and the general
+structure of these make them unsuitable for proxy-ing. This was only a bug
+before if an AOP advice targeted the mentioned classes, now this cannot
+happen anymore.
+
+Fixes: #796
+
+* Packages: ``Eel``
+
+`BUGFIX: Resource setSha1() fails on uppercase hash <https://github.com/neos/flow-development-collection/pull/865>`_
+--------------------------------------------------------------------------------------------------------------------
+
+This change fixes an issue with the Resource object's
+`setSha1()` method which fails if the given hexadecimal
+number uses uppercase characters for A-F.
+
+On some operating systems or third party services,
+uppercase hashes may be used. `setSha1()` now accepts
+values containing uppercase characters and normalizes
+them to lowercase. Therefore, when you set a SHA1
+with an uppercase hexadecimal string, `getSha1()`
+will return it in lowercase.
+
+Related to https://github.com/flownative/flow-google-cloudstorage/issues/4
+
+* Packages: ``Flow``
+
+`BUGFIX: Add documentation about package types <https://github.com/neos/flow-development-collection/pull/862>`_
+---------------------------------------------------------------------------------------------------------------
+
+Adds a note about the package type prefixes support.
+
+Fixes: #503
+
+* Packages: ``Flow``
+
+`BUGFIX: \`\`ReflectionService::getClassSchema\`\` works with Proxies <https://github.com/neos/flow-development-collection/pull/860>`_
+--------------------------------------------------------------------------------------------------------------------------------------
+
+Getting a class schema from the reflection service should work
+when giving a doctrine proxy object instead of the actual entity.
+
+Fixes: #561
+
+* Packages: ``Flow``
+
+`BUGFIX: Allow factories to build prototypes <https://github.com/neos/flow-development-collection/pull/850>`_
+-------------------------------------------------------------------------------------------------------------
+
+This fix allowes to build prototypes using factories by configuring
+`scope: prototype` in the Objects.yaml
+Before the object manager ignores the configuration and generates singletons everytime.
+
+* Packages: ``Flow``
+
+`BUGFIX: Use fallback if exception handler configured wrong <https://github.com/neos/flow-development-collection/pull/827>`_
+----------------------------------------------------------------------------------------------------------------------------
+
+In case the configured exception handler class dies not exist,
+the `ProductionExceptionHandler` is used instead. This allows
+(force-)flushing the caches to work in more cases.
+
+* Packages: ``Flow``
+
+`BUGFIX: Set Bootstrap::$staticObjectManager only if ready <https://github.com/neos/flow-development-collection/pull/822>`_
+---------------------------------------------------------------------------------------------------------------------------
+
+When an exception occurs, our `Logger` tries to write an exception trace.
+
+For this, it tries to fetch the `Bootstrap` instance from
+`Bootstrap::$staticObjectManager` if that is an instance of
+`ObjectManagerInterface`. Now, due to the order of calls during the bootstrap
+of Flow, `Bootstrap::$staticObjectManager` is set before the `Bootstrap`
+instance is set there. If an exception is to be logged before that point, the
+`ObjectManager` simply tries to build the `Bootstrap` but does not pass the
+required `$context`. That leads to:
+
+    Missing argument 1 for TYPO3\\Flow\\Core\\Bootstrap::__construct(), called in
+    /…/ObjectManager.php
+
+This in turn masks the error that caused the exception to be logged, blocking
+proper resolution of the actual issue.
+
+This change fixes this by making sure the `Bootstrap::$staticObjectManager`
+variable is set after the `Bootstrap` has been "injected" into the
+`ObjectManager` instance.
+
+* Packages: ``Flow``
+
+`BUGFIX: Call of non existing core command issues proper error <https://github.com/neos/flow-development-collection/pull/795>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+And exception was thrown when a non existing core command was being
+invoked, eg. due to a spelling mistake.
+The exception stems from the fact that all core commands are considered
+compiletime commands but handling of non existing command calls is
+done by the ``HelpCommandController`` which itself was not compiletime
+compatible. This change adapts it to use inject methods which resolves
+the problem.
+
+Note that in upmerges the injections must be adapted to changing dependencies.
+
+Fixes: #794
+
+* Packages: ``Flow``
+
+`BUGFIX: Adjust Documentation to renamed routing cache <https://github.com/neos/flow-development-collection/pull/776>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+A follow-up to I`bc55b5a4939b42b7cf2a08ada52985aa04bb7b04 <https://github.com/neos/flow-development-collection/commit/bc55b5a4939b42b7cf2a08ada52985aa04bb7b04>`_
+adjusting the Routing documentation and example configuration
+to the Routing Cache that was renamed with I`ac1bd27cd1f2869e597b696c896633f14703ec40 <https://github.com/neos/flow-development-collection/commit/ac1bd27cd1f2869e597b696c896633f14703ec40>`_
+
+* Packages: ``Flow``
+
+`BUGFIX: DateTimeConverter accepts timestamps when configuration without format is provided <https://github.com/neos/flow-development-collection/pull/420>`_
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Previously, the DateTimeConverter would fail converting timestamps when a configuration for the
+property existed, but did not configure the DateTimeConverter format.
+This is commonly the case in REST Apis, where type conversion needs to be configured for allowing
+creation and modification, but does not necessarily explicitly configure the DateTime format.
+
+* Packages: ``Flow``
+
+`TASK: Update PHP coding guidelines <https://github.com/neos/flow-development-collection/pull/757>`_
+----------------------------------------------------------------------------------------------------
+
+* Packages: ``Flow``
+
+`BUGFIX: Exclude psr/log from reflection <https://github.com/neos/flow-development-collection/pull/726>`_
+---------------------------------------------------------------------------------------------------------
+
+A change in dependencies pulled in psr/log which contains a trait,
+causing failures with PHP 5.3
+
+* Packages: ``Flow``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/3.2.8...3.2.9>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
