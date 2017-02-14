@@ -513,7 +513,7 @@ Neos:
         filters:
           'Neos.Flow:CsrfProtection':
             pattern: 'CsrfProtection'
-            interceptor: AccessDeny
+            interceptor: CsrfTokenMissing
 
       authentication:
 
