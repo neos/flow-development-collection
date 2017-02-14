@@ -22,7 +22,7 @@ WARNING: This file has been machine generated. Do not edit it, or your changes w
  * This is the parser for a CSS-like selector language for Objects and Content Repository Nodes.
  * You can think of it as "Sizzle for PHP" (hence the name).
  *
- * @TYPO3\Flow\Annotations\Proxy(false)
+ * @Neos\Flow\Annotations\Proxy(false)
  */
 class FizzleParser extends \Neos\Eel\AbstractParser {
 /* ObjectIdentifier: / [0-9a-zA-Z_-]+ / */
