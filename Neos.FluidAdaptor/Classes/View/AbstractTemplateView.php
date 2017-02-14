@@ -139,30 +139,35 @@ abstract class AbstractTemplateView extends \TYPO3Fluid\Fluid\View\AbstractTempl
 
     /**
      * @param string $templatePathAndFilename
+     * @return void
      */
     public function setTemplatePathAndFilename($templatePathAndFilename)
     {
-        return $this->getTemplatePaths()->setTemplatePathAndFilename($templatePathAndFilename);
+        $this->getTemplatePaths()->setTemplatePathAndFilename($templatePathAndFilename);
     }
 
     /**
      * @param ControllerContext $controllerContext
+     * @return void
      */
     public function setControllerContext(ControllerContext $controllerContext)
     {
         $this->controllerContext = $controllerContext;
-        if ($this->getRenderingContext() instanceof RenderingContext) {
-            $this->getRenderingContext()->setControllerContext($controllerContext);
+
+        $renderingContext = $this->getRenderingContext();
+        if ($renderingContext instanceof RenderingContext) {
+            $renderingContext->setControllerContext($controllerContext);
         }
 
 
         $paths = $this->getTemplatePaths();
         $request = $controllerContext->getRequest();
-        $paths->setFormat($request->getFormat());
 
         if (!$request instanceof ActionRequest) {
             return;
         }
+
+        $paths->setFormat($request->getFormat());
 
         if ($paths->getTemplateRootPaths() === [] && $paths->getLayoutRootPaths() === [] && $paths->getPartialRootPaths() === []) {
             $paths->fillDefaultsByPackageName($request->getControllerPackageKey());
@@ -203,6 +208,7 @@ abstract class AbstractTemplateView extends \TYPO3Fluid\Fluid\View\AbstractTempl
      * Validate options given to this view.
      *
      * @param array $options
+     * @return void
      * @throws Exception
      */
     protected function validateOptions(array $options)
@@ -229,6 +235,7 @@ abstract class AbstractTemplateView extends \TYPO3Fluid\Fluid\View\AbstractTempl
      * and sets the resulting options in this object.
      *
      * @param array $options
+     * @return void
      */
     protected function setOptions(array $options)
     {
