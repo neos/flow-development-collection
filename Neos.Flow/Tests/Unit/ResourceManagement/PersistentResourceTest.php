@@ -97,7 +97,7 @@ class PersistentResourceTest extends UnitTestCase
      */
     public function setSha1RejectsInvalidValues($invalidValue)
     {
-        $resource = new Resource();
+        $resource = new PersistentResource();
         $resource->setSha1($invalidValue);
         $this->assertSame('d0be2dc421be4fcd0172e5afceea3970e2f3d940', $resource->getSha1());
     }
@@ -107,7 +107,7 @@ class PersistentResourceTest extends UnitTestCase
      */
     public function setSha1AcceptsUppercaseHashesAndNormalizesThemToLowercase()
     {
-        $resource = new Resource();
+        $resource = new PersistentResource();
         $resource->setSha1('D0BE2DC421BE4fCD0172E5AFCEEA3970E2f3d940');
         $this->assertSame('d0be2dc421be4fcd0172e5afceea3970e2f3d940', $resource->getSha1());
     }
