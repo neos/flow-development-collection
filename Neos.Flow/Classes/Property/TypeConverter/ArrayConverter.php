@@ -148,7 +148,11 @@ class ArrayConverter extends AbstractTypeConverter
                 case self::RESOURCE_EXPORT_TYPE_BASE64:
                     return [
                         'filename' => $source->getFilename(),
-                        'data' => base64_encode(file_get_contents('resource://' . $source->getSha1()))
+                        'data' => base64_encode(file_get_contents('resource://' . $source->getSha1())),
+                        'collectionName' => $source->getCollectionName(),
+                        'relativePublicationPath' => $source->getRelativePublicationPath(),
+                        'mediaType' => $source->getMediaType(),
+                        'sha1' => $source->getSha1() // to avoid having to compute it from the data and/or for checking transmitted data
                     ];
                 case self::RESOURCE_EXPORT_TYPE_FILE:
                     $sourceStream = $source->getStream();
@@ -161,7 +165,11 @@ class ArrayConverter extends AbstractTypeConverter
                     fclose($sourceStream);
                     return [
                         'filename' => $source->getFilename(),
-                        'hash' => $source->getSha1(),
+                        'collectionName' => $source->getCollectionName(),
+                        'relativePublicationPath' => $source->getRelativePublicationPath(),
+                        'mediaType' => $source->getMediaType(),
+                        'sha1' => $source->getSha1(), // to avoid having to compute it from the data and/or for checking transmitted data
+                        'hash' => $source->getSha1()
                     ];
                 default:
                     throw new InvalidPropertyMappingConfigurationException(sprintf('Conversion from PersistentResource to array failed due to invalid resource export type setting "%s"', $exportType), 1404903210);
