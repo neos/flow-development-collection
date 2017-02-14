@@ -19,6 +19,8 @@ require_once __DIR__ . '/../../../Resources/Private/PHP/php-peg/Parser.php';
 /**
  * This Abstract Parser class contains definitions for absolutely basic types,
  * like quoted strings or identifiers
+ *
+ * @TYPO3\Flow\Annotations\Proxy(false)
  */
 abstract class AbstractParser extends \PhpPeg\Parser {
 /*!* WhiteSpace
@@ -48,7 +50,7 @@ Identifier: / [a-zA-Z_] [a-zA-Z0-9_\-]* /
         $result['val'] = (string)str_replace("'", "'", substr($sub['text'], 1, -1));
     }
 
-    public function StringLiteral_DoubleQuotedStringLiteral(&$result, $sub) 
+    public function StringLiteral_DoubleQuotedStringLiteral(&$result, $sub)
     {
         $result['val'] = (string)str_replace('\"', '"', substr($sub['text'], 1, -1));
     }

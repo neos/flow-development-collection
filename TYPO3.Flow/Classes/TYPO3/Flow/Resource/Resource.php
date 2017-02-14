@@ -339,10 +339,10 @@ class Resource implements ResourceMetaDataInterface, CacheAwareInterface
     public function setSha1($sha1)
     {
         $this->throwExceptionIfProtected();
-        if (preg_match('/[a-f0-9]{40}/', $sha1) !== 1) {
+        if (!is_string($sha1) || preg_match('/[A-Fa-f0-9]{40}/', $sha1) !== 1) {
             throw new \InvalidArgumentException('Specified invalid hash to setSha1()', 1362564220);
         }
-        $this->sha1 = $sha1;
+        $this->sha1 = strtolower($sha1);
     }
 
     /**

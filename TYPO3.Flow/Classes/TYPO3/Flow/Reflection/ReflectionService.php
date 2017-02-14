@@ -1118,7 +1118,7 @@ class ReflectionService
     {
         $className = $classNameOrObject;
         if (is_object($classNameOrObject)) {
-            $className = get_class($classNameOrObject);
+            $className = TypeHandling::getTypeForValue($classNameOrObject);
         }
         $className = $this->cleanClassName($className);
 
