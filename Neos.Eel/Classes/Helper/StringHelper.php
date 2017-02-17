@@ -581,9 +581,8 @@ class StringHelper implements ProtectedContextAwareInterface
     public function wordCount($unicodeString)
     {
         $unicodeString = preg_replace('/[[:punct:][:digit:]]/', '', $unicodeString);
-        $unicodeString = preg_replace('/[[:space:]]/', ' ', $unicodeString);
 
-        return count(preg_split('/[\n\r\t ]+/', $unicodeString, 0, PREG_SPLIT_NO_EMPTY));
+        return count(preg_split('/[[:space:]]+/', $unicodeString, 0, PREG_SPLIT_NO_EMPTY));
     }
 
     /**
