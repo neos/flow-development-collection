@@ -205,8 +205,8 @@ class FileSystemTargetTest extends UnitTestCase
     /**
      * @test
      */
-    public function getWorksWithPackageStorage() {
-
+    public function getWorksWithPackageStorage()
+    {
         vfsStream::setup('Test');
         mkdir('vfs://Test/Packages/Application', 0700, true);
         mkdir('vfs://Test/Packages/Application/TYPO3.Flow/Resources/Public/', 0700, true);
@@ -222,16 +222,15 @@ class FileSystemTargetTest extends UnitTestCase
         $this->inject($this->fileSystemTarget, 'systemLogger', $mockSystemLogger);
         $this->inject($packageStorage, 'packageManager', $packageManager);
 
-        $oneResourcePublished = FALSE;
+        $oneResourcePublished = false;
 
         $_publicationCallback = function () use (&$oneResourcePublished) {
-            $oneResourcePublished = TRUE;
+            $oneResourcePublished = true;
         };
 
         $staticCollection = new Collection('testStaticCollection', $packageStorage, $this->fileSystemTarget, ['*']);
         $this->fileSystemTarget->publishCollection($staticCollection, $_publicationCallback);
 
         $this->assertTrue($oneResourcePublished);
-
     }
 }
