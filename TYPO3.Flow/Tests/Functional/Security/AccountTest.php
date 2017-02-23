@@ -52,7 +52,7 @@ class AccountTest extends FunctionalTestCase
      */
     public function expiredAccountIsInActive()
     {
-        $this->account->setExpirationDate((new \DateTime("now"))->sub(new \DateInterval("PT1M")));
+        $this->account->setExpirationDate((new \DateTime("now"))->sub(new \DateInterval("PT1H")));
         $this->assertFalse($this->account->isActive());
     }
 
@@ -61,7 +61,7 @@ class AccountTest extends FunctionalTestCase
      */
     public function notYetExpiredAccountIsInActive()
     {
-        $this->account->setExpirationDate((new \DateTime("now"))->add(new \DateInterval("PT1M")));
+        $this->account->setExpirationDate((new \DateTime("now"))->add(new \DateInterval("PT1H")));
         $this->assertTrue($this->account->isActive());
     }
 }
