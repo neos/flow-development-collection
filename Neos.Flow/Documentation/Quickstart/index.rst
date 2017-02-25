@@ -708,8 +708,8 @@ argument::
         $this->redirect('index');
     }
 
-Although this method looks quite similar to the ``showAction``, there is an important
-difference you should be aware of: The parameter passed to the ``showAction``
+Although this method looks quite similar to the ``createAction``, there is an important
+difference you should be aware of: The parameter passed to the ``updateAction``
 is an already existing (that is, already *persisted*) coffee bean object with the
 modifications submitted by the user already applied.
 
