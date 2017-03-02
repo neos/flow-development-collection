@@ -1,0 +1,4 @@
+`4.0.0 (2017-01-30) <https://github.com/neos/flow-development-collection/releases/tag/4.0.0>`_
+==============================================================================================
+
+Due to issues with the release process, no changelog has been rendered (yet.)
