@@ -11,10 +11,10 @@ namespace Neos\FluidAdaptor\ViewHelpers\Form;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Property\PropertyMapper;
-use TYPO3\Flow\ResourceManagement\PersistentResource;
-use TYPO3\Fluid\ViewHelpers\FormViewHelper;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Property\PropertyMapper;
+use Neos\Flow\ResourceManagement\PersistentResource;
+use Neos\FluidAdaptor\ViewHelpers\FormViewHelper;
 
 /**
  * A view helper which generates an <input type="file"> HTML element.
@@ -160,7 +160,7 @@ class UploadViewHelper extends AbstractFormFieldViewHelper
     {
         if ($this->isObjectAccessorMode()) {
             $propertySegments = explode('.', $this->arguments['property']);
-            $formObjectName = $this->viewHelperVariableContainer->get(\Neos\FluidAdaptor\ViewHelpers\FormViewHelper::class, 'formObjectName');
+            $formObjectName = $this->viewHelperVariableContainer->get(FormViewHelper::class, 'formObjectName');
             if (!empty($formObjectName)) {
                 array_unshift($propertySegments, $formObjectName);
             }

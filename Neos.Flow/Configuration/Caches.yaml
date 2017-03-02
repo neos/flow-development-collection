@@ -1,0 +1,137 @@
+#                                                                        #
+# Caches configuration                                                   #
+#                                                                        #
+# This file contains a list of caches which are automatically registered #
+# while initializing the cache framework. If caches want to benefit from #
+# the automatic flushing mechanisms (such as garbage collection and      #
+# automatic flushing by tag) they must be registered in a Caches.yaml    #
+# file.                                                                  #
+#                                                                        #
+
+##
+# Default cache configuration
+#
+# If no frontend, backend or options are specified for a cache, these values
+# will be taken to create the cache.
+Default:
+  frontend: Neos\Cache\Frontend\VariableFrontend
+  backend: Neos\Cache\Backend\FileBackend
+  backendOptions:
+    defaultLifetime: 0
+  persistent: false
+
+##
+# Definition of caches used by Flow:
+#
+Flow_Cache_ResourceFiles: []
+
+# Flow_Core
+#
+# This cache is used by the Bootstrap to communicate between main and sub process
+# about Doctrine proxy class building.
+Flow_Core:
+  frontend: Neos\Cache\Frontend\StringFrontend
+  backend: Neos\Cache\Backend\SimpleFileBackend
+
+# Flow_I18n_*
+#
+# These caches contain precompiled data from the CLDR and information about available
+# locales and translations.
+Flow_I18n_AvailableLocalesCache: []
+Flow_I18n_XmlModelCache: []
+Flow_I18n_Cldr_CldrModelCache: []
+Flow_I18n_Cldr_Reader_DatesReaderCache: []
+Flow_I18n_Cldr_Reader_NumbersReaderCache: []
+Flow_I18n_Cldr_Reader_PluralsReaderCache: []
+
+# Flow_Monitor
+Flow_Monitor:
+  frontend: Neos\Cache\Frontend\StringFrontend
+  backend: Neos\Cache\Backend\SimpleFileBackend
+
+# Flow_Mvc_Routing_*
+#
+# These caches contain request patterns and their matches and the opposite direction –
+# action request patterns and their resolved URL.
+Flow_Mvc_Routing_Route:
+  backend: Neos\Cache\Backend\FileBackend
+Flow_Mvc_Routing_Resolve:
+  frontend: Neos\Cache\Frontend\StringFrontend
+  backend: Neos\Cache\Backend\FileBackend
+
+##
+# Cache for RequestFiltered ViewConfigurations
+#
+Flow_Mvc_ViewConfigurations: []
+
+# Flow_Object_Classes
+#
+# This is the main code cache. It contains copies of the original classes and proxy
+# classes built by AOP and the Dependency Injection builder.
+Flow_Object_Classes:
+  frontend: Neos\Cache\Frontend\PhpFrontend
+  backend: Neos\Cache\Backend\SimpleFileBackend
+
+# Flow_Object_Configuration
+#
+# This cache contains meta and status information for all code building mechanisms
+# of Flow. It states if certain code caches are up to date and stores previously
+# built object configurations.
+Flow_Object_Configuration:
+  backend: Neos\Cache\Backend\SimpleFileBackend
+
+# Flow_Persistence_Doctrine
+#
+# This cache contains meta data for the Doctrine ORM.
+Flow_Persistence_Doctrine:
+  backend: Neos\Cache\Backend\SimpleFileBackend
+Flow_Persistence_Doctrine_Results:
+  backend: Neos\Cache\Backend\FileBackend
+  backendOptions:
+    defaultLifetime: 60
+Flow_Persistence_Doctrine_SecondLevel:
+  backend: Neos\Cache\Backend\SimpleFileBackend
+
+# Flow_Reflection*
+#
+#
+Flow_Reflection_Status:
+  frontend: Neos\Cache\Frontend\StringFrontend
+  backend: Neos\Cache\Backend\SimpleFileBackend
+Flow_Reflection_CompiletimeData:
+  backend: Neos\Cache\Backend\SimpleFileBackend
+Flow_Reflection_RuntimeData: []
+Flow_Reflection_RuntimeClassSchemata: []
+
+# Flow_Resource_Status
+#
+# Stores the publication status of static and persistent resources
+Flow_Resource_Status:
+  frontend: Neos\Cache\Frontend\StringFrontend
+
+# Flow_Security_*
+Flow_Security_Authorization_Privilege_Method: []
+Flow_Security_Cryptography_RSAWallet:
+  backendOptions:
+    defaultLifetime: 30
+Flow_Security_Cryptography_HashService:
+  frontend: Neos\Cache\Frontend\StringFrontend
+  backend: Neos\Cache\Backend\SimpleFileBackend
+  persistent: true
+
+
+# Flow_Session_*
+Flow_Session_MetaData:
+  backend: Neos\Cache\Backend\FileBackend
+Flow_Session_Storage:
+  backend: Neos\Cache\Backend\FileBackend
+
+#  Aop filter expressions that need to be evaluated at runtime.
+Flow_Aop_RuntimeExpressions:
+  frontend: Neos\Cache\Frontend\PhpFrontend
+  backend: Neos\Cache\Backend\SimpleFileBackend
+
+# Caches the map of possible PropertyMappers for source and target types
+Flow_PropertyMapper:
+  frontend: Neos\Cache\Frontend\VariableFrontend
+  backend: Neos\Cache\Backend\SimpleFileBackend

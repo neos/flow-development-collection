@@ -14,8 +14,8 @@ include_once(__DIR__ . '/../../BaseTestCase.php');
  */
 use Neos\Cache\Backend\AbstractBackend;
 use Neos\Cache\Tests\BaseTestCase;
-use TYPO3\Flow\Cache\Backend\TaggableBackendInterface;
-use TYPO3\Flow\Cache\Frontend\StringFrontend;
+use Neos\Cache\Backend\TaggableBackendInterface;
+use Neos\Cache\Frontend\StringFrontend;
 
 /**
  * Testcase for the abstract cache frontend

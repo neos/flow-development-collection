@@ -1,0 +1,40 @@
+{namespace k=Neos\Kickstarter\ViewHelpers}<?php
+namespace {namespace};
+
+/*
+ * This file is part of the {packageKey} package.
+ */
+
+use Neos\Flow\Annotations as Flow;
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * @Flow\Entity
+ */
+class {modelName}
+{
+<f:for each="{fieldDefinitions}" as="fieldDefinition" key="fieldName">
+    /**
+     * @var {fieldDefinition.type->f:format.raw()}
+     */
+    protected ${fieldName};
+</f:for>
+<f:for each="{fieldDefinitions}" as="fieldDefinition" key="fieldName">
+    /**
+     * @return {fieldDefinition.type -> f:format.raw()}
+     */
+    public function get{fieldName -> k:format.ucfirst()}()
+    {
+        return $this->{fieldName};
+    }
+
+    /**
+     * @param {fieldDefinition.type -> f:format.raw()} ${fieldName}
+     * @return void
+     */
+    public function set{fieldName -> k:format.ucfirst()}(<f:if condition="{fieldDefinition.typeHint}">{fieldDefinition.typeHint -> f:format.raw()} </f:if>${fieldName})
+    {
+        $this->{fieldName} = ${fieldName};
+    }
+</f:for>
+}

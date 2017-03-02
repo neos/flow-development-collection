@@ -19,7 +19,7 @@ use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 /**
  * Testcase for AbstractWidgetViewHelper
  */
-class AbstractWidgetViewHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
+class AbstractWidgetViewHelperTest extends \Neos\Flow\Tests\UnitTestCase
 {
     /**
      * @var \Neos\FluidAdaptor\Core\Widget\AbstractWidgetViewHelper
@@ -37,17 +37,17 @@ class AbstractWidgetViewHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
     protected $widgetContext;
 
     /**
-     * @var \TYPO3\Flow\ObjectManagement\ObjectManagerInterface
+     * @var \Neos\Flow\ObjectManagement\ObjectManagerInterface
      */
     protected $objectManager;
 
     /**
-     * @var \TYPO3\Flow\Mvc\Controller\ControllerContext
+     * @var \Neos\Flow\Mvc\Controller\ControllerContext
      */
     protected $controllerContext;
 
     /**
-     * @var \TYPO3\Flow\Mvc\ActionRequest
+     * @var \Neos\Flow\Mvc\ActionRequest
      */
     protected $request;
 
@@ -63,13 +63,13 @@ class AbstractWidgetViewHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
         $this->widgetContext = $this->createMock(\Neos\FluidAdaptor\Core\Widget\WidgetContext::class);
         $this->viewHelper->injectWidgetContext($this->widgetContext);
 
-        $this->objectManager = $this->createMock(\TYPO3\Flow\ObjectManagement\ObjectManagerInterface::class);
+        $this->objectManager = $this->createMock(\Neos\Flow\ObjectManagement\ObjectManagerInterface::class);
         $this->viewHelper->injectObjectManager($this->objectManager);
 
-        $this->controllerContext = $this->getMockBuilder(\TYPO3\Flow\Mvc\Controller\ControllerContext::class)->disableOriginalConstructor()->getMock();
+        $this->controllerContext = $this->getMockBuilder(\Neos\Flow\Mvc\Controller\ControllerContext::class)->disableOriginalConstructor()->getMock();
         $this->viewHelper->_set('controllerContext', $this->controllerContext);
 
-        $this->request = $this->getMockBuilder(\TYPO3\Flow\Mvc\ActionRequest::class)->disableOriginalConstructor()->getMock();
+        $this->request = $this->getMockBuilder(\Neos\Flow\Mvc\ActionRequest::class)->disableOriginalConstructor()->getMock();
     }
 
     /**
@@ -156,7 +156,7 @@ class AbstractWidgetViewHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function initiateSubRequestThrowsExceptionIfControllerIsNoWidgetController()
     {
-        $controller = $this->createMock(\TYPO3\Flow\Mvc\Controller\ControllerInterface::class);
+        $controller = $this->createMock(\Neos\Flow\Mvc\Controller\ControllerInterface::class);
         $this->viewHelper->_set('controller', $controller);
 
         $this->viewHelper->_call('initiateSubRequest');

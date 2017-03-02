@@ -13,9 +13,9 @@ include_once(__DIR__ . '/../../BaseTestCase.php');
  * source code.
  */
 use Neos\Cache\Tests\BaseTestCase;
-use TYPO3\Flow\Cache\Backend\PhpCapableBackendInterface;
-use TYPO3\Flow\Cache\Frontend\PhpFrontend;
-use TYPO3\Flow\Cache\Frontend\StringFrontend;
+use Neos\Cache\Backend\PhpCapableBackendInterface;
+use Neos\Cache\Frontend\PhpFrontend;
+use Neos\Cache\Frontend\StringFrontend;
 
 /**
  * Testcase for the PHP source code cache frontend
@@ -58,7 +58,7 @@ class PhpFrontendTest extends BaseTestCase
 
     /**
      * @test
-     * @expectedException \TYPO3\Flow\Cache\Exception\InvalidDataException
+     * @expectedException \Neos\Cache\Exception\InvalidDataException
      */
     public function setThrowsInvalidDataExceptionOnNonStringValues()
     {

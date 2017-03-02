@@ -12,11 +12,11 @@ namespace Neos\FluidAdaptor\Tests\Functional\View;
  */
 
 use Neos\FluidAdaptor\View\TemplatePaths;
-use TYPO3\Flow\Cache\CacheManager;
-use TYPO3\Flow\Http\Request;
-use TYPO3\Flow\Http\Uri;
-use TYPO3\Flow\Mvc\ActionRequest;
-use TYPO3\Flow\Tests\FunctionalTestCase;
+use Neos\Flow\Cache\CacheManager;
+use Neos\Flow\Http\Request;
+use Neos\Flow\Http\Uri;
+use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\FluidAdaptor\Tests\Functional\View\Fixtures\View\StandaloneView;
 
 /**
@@ -300,5 +300,30 @@ class StandaloneViewTest extends FunctionalTestCase
         $expected = 'Christian uses &lt;h1&gt;HACK&lt;/h1&gt;';
         $actual = trim($standaloneView->renderSection('test'));
         $this->assertSame($expected, $actual, 'Second rendering was not escaped.');
+    }
+
+    /**
+     * @test
+     */
+    public function settingAndGettingFormatWorksAsExpected()
+    {
+        $formatToBeSet = 'xml';
+        $standaloneView = new StandaloneView();
+        $standaloneView->setFormat($formatToBeSet);
+
+        $this->assertSame($formatToBeSet, $standaloneView->getFormat());
+        $this->assertSame($formatToBeSet, $standaloneView->getRenderingContext()->getTemplatePaths()->getFormat());
+    }
+
+    /**
+     * @test
+     */
+    public function settingAndGettingTemplatePathAndFilenameWorksAsExpected()
+    {
+        $templatePathAndFilename = __DIR__ . '/Fixtures/NestedRenderingConfiguration/TemplateWithSection.txt';
+        $standaloneView = new StandaloneView();
+        $standaloneView->setTemplatePathAndFilename($templatePathAndFilename);
+
+        $this->assertSame($templatePathAndFilename, $standaloneView->getTemplatePathAndFilename());
     }
 }

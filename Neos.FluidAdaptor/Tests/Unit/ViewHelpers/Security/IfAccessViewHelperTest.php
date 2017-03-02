@@ -12,8 +12,8 @@ namespace Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Security;
  */
 
 use Neos\FluidAdaptor\Core\Rendering\RenderingContext;
-use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
-use TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface;
+use Neos\Flow\ObjectManagement\ObjectManagerInterface;
+use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\FluidAdaptor\ViewHelpers\Security\IfAccessViewHelper;
 use Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase;
 
@@ -35,7 +35,7 @@ class IfAccessViewHelperTest extends ViewHelperBaseTestcase
 
     public function setUp()
     {
-        $this->mockPrivilegeManager = $this->getMockBuilder(\TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface::class)->disableOriginalConstructor()->getMock();
+        $this->mockPrivilegeManager = $this->getMockBuilder(\Neos\Flow\Security\Authorization\PrivilegeManagerInterface::class)->disableOriginalConstructor()->getMock();
 
         $objectManager = $this->getMockBuilder(ObjectManagerInterface::class)->disableOriginalConstructor()->getMock();
         $objectManager->expects($this->any())->method('get')->willReturnCallback(function ($objectName) {

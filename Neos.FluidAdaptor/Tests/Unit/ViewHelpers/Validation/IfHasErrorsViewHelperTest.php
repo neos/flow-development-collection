@@ -11,8 +11,8 @@ namespace Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Security;
  * source code.
  */
 
-use TYPO3\Flow\Error\Error;
-use TYPO3\Flow\Error\Result;
+use Neos\Error\Messages\Error;
+use Neos\Error\Messages\Result;
 use Neos\FluidAdaptor\ViewHelpers\Validation\IfHasErrorsViewHelper;
 use Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase;
 
@@ -23,7 +23,7 @@ require_once(__DIR__ . '/../ViewHelperBaseTestcase.php');
 class IfHasErrorsViewHelperTest extends ViewHelperBaseTestcase
 {
     /**
-     * @var IfHasErrorsViewHelper
+     * @var IfHasErrorsViewHelper|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $viewHelper;
 
@@ -33,8 +33,7 @@ class IfHasErrorsViewHelperTest extends ViewHelperBaseTestcase
     {
         parent::setUp();
         $this->viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\Validation\IfHasErrorsViewHelper::class, array('renderThenChild', 'renderElseChild'));
-        $this->inject($this->viewHelper, 'controllerContext', $this->controllerContext);
-        //$this->inject($this->ifAccessViewHelper, 'accessDecisionManager', $this->mockAccessDecisionManager);
+        $this->injectDependenciesIntoViewHelper($this->viewHelper);
     }
 
     /**
@@ -45,9 +44,7 @@ class IfHasErrorsViewHelperTest extends ViewHelperBaseTestcase
         $result = new Result;
         $result->addError(new Error('I am an error', 1386163707));
 
-        /** @var $requestMock \PHPUnit_Framework_MockObject_MockObject */
-        $requestMock = $this->request;
-        $requestMock->expects($this->once())->method('getInternalArgument')->with('__submittedArgumentValidationResults')->will($this->returnValue($result));
+        $this->request->expects($this->once())->method('getInternalArgument')->with('__submittedArgumentValidationResults')->will($this->returnValue($result));
         $this->viewHelper->expects($this->once())->method('renderThenChild')->will($this->returnValue('ThenChild'));
         $this->assertEquals('ThenChild', $this->viewHelper->render());
     }
@@ -58,7 +55,6 @@ class IfHasErrorsViewHelperTest extends ViewHelperBaseTestcase
     public function returnsAndRendersElseChildIfNoValidationResultsArePresentAtAll()
     {
         $this->viewHelper->expects($this->once())->method('renderElseChild')->will($this->returnValue('ElseChild'));
-        ;
         $this->assertEquals('ElseChild', $this->viewHelper->render());
     }
 
@@ -67,13 +63,12 @@ class IfHasErrorsViewHelperTest extends ViewHelperBaseTestcase
      */
     public function queriesResultForPropertyIfPropertyPathIsGiven()
     {
-        $resultMock = $this->createMock(\TYPO3\Flow\Error\Result::class);
+        $resultMock = $this->createMock(\Neos\Error\Messages\Result::class);
         $resultMock->expects($this->once())->method('forProperty')->with('foo.bar.baz')->will($this->returnValue(new Result()));
 
-        /** @var $requestMock \PHPUnit_Framework_MockObject_MockObject */
-        $requestMock = $this->request;
-        $requestMock->expects($this->once())->method('getInternalArgument')->with('__submittedArgumentValidationResults')->will($this->returnValue($resultMock));
+        $this->request->expects($this->once())->method('getInternalArgument')->with('__submittedArgumentValidationResults')->will($this->returnValue($resultMock));
 
-        $this->viewHelper->render('foo.bar.baz');
+        $this->viewHelper->setArguments(['for' => 'foo.bar.baz']);
+        $this->viewHelper->render();
     }
 }

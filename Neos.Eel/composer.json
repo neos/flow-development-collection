@@ -1,0 +1,27 @@
+{
+    "name": "neos/eel",
+    "type": "neos-framework",
+    "license": ["MIT"],
+    "description": "The Embedded Expression Language (Eel) is a building block for creating Domain Specific Languages",
+    "require": {
+        "neos/flow": "~4.0.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Neos\\Eel\\": "Classes"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Neos\\Eel\\Tests\\": "Classes"
+        }
+    },
+    "replace": {
+        "typo3/eel": "self.version"
+    },
+    "extra": {
+        "neos": {
+            "package-key": "Neos.Eel"
+        }
+    }
+}

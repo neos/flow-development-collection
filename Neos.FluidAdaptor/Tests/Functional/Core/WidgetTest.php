@@ -11,12 +11,12 @@ namespace Neos\FluidAdaptor\Tests\Functional\Core;
  * source code.
  */
 
-use TYPO3\Flow\Mvc\Routing\Route;
+use Neos\Flow\Mvc\Routing\Route;
 
 /**
  * Testcase for the widget mechanism
  */
-class WidgetTest extends \TYPO3\Flow\Tests\FunctionalTestCase
+class WidgetTest extends \Neos\Flow\Tests\FunctionalTestCase
 {
     /**
      * Additional setup: Routes

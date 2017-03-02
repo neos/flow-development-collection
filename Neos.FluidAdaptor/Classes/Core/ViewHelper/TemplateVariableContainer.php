@@ -11,8 +11,8 @@ namespace Neos\FluidAdaptor\Core\ViewHelper;
  * source code.
  */
 
-use TYPO3\Flow\Reflection\Exception\PropertyNotAccessibleException;
-use TYPO3\Flow\Reflection\ObjectAccess;
+use Neos\Utility\Exception\PropertyNotAccessibleException;
+use Neos\Utility\ObjectAccess;
 use Neos\FluidAdaptor\Core\Parser\SyntaxTree\TemplateObjectAccessInterface;
 use TYPO3Fluid\Fluid\Core\Variables\Exception;
 use TYPO3Fluid\Fluid\Core\Variables\StandardVariableProvider;

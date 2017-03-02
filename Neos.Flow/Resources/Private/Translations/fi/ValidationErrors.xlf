@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file original="" product-name="Neos.Flow" source-language="en" datatype="plaintext" target-language="fi">
+    <body>
+      <!-- AlphanumericValidator -->
+      <trans-unit id="1221551320" xml:space="preserve" approved="yes">
+				<source>Only regular characters (a to z, umlauts, ...) and numbers are allowed.</source>
+			<target xml:lang="fi">Ainoastaan kirjaimet ja numerot ovat sallittuja</target></trans-unit>
+      <!-- BooleanValueValidator -->
+      <trans-unit id="1361044943" xml:space="preserve" approved="yes">
+				<source>The given value is expected to be {0}.</source>
+			<target xml:lang="fi">Annetun arvo oletetaan olevan {0}.</target></trans-unit>
+      <!-- CollectionValidator -->
+      <trans-unit id="1317204797" xml:space="preserve" approved="yes">
+				<source>The given subject is not a collection</source>
+			<target xml:lang="fi">Annettu kohde ei ole kokoelma</target><alt-trans><target xml:lang="fi">Annettu aihe ei ole kokoelma</target></alt-trans></trans-unit>
+      <!-- CountValidator -->
+      <trans-unit id="1253718666" xml:space="preserve" approved="yes">
+				<source>The given subject is not countable</source>
+			<target xml:lang="fi">Annettu kohde ei ole laskettavissa</target></trans-unit>
+      <trans-unit id="1253718831" xml:space="preserve" approved="yes">
+				<source>The count must be between {0,number} and {1,number}</source>
+			<target xml:lang="fi">Määrän on oltava välillä {0,number} ja {1,number}</target></trans-unit>
+      <!-- DateTimeRangeValidator -->
+      <trans-unit id="1324314378" xml:space="preserve" approved="yes">
+				<source>The given value is not a valid date</source>
+			<target xml:lang="fi">Annettu arvo ei ole kelvollinen päivämäärä</target></trans-unit>
+      <trans-unit id="1325615630" xml:space="preserve" approved="yes">
+				<source>The given date must be between {0} and {1}</source>
+			<target xml:lang="fi">Päivämäärän on oltava väliltä {0} ja {1}</target></trans-unit>
+      <trans-unit id="1324315107" xml:space="preserve" approved="yes">
+				<source>The given date must be after {0}</source>
+			<target xml:lang="fi">Päivämäärän on oltava jälkeen {0}</target></trans-unit>
+      <trans-unit id="1324315115" xml:space="preserve" approved="yes">
+				<source>The given date must be before {0}</source>
+			<target xml:lang="fi">Päivämäärän on oltava ennen {0}</target></trans-unit>
+      <!-- DateTimeValidator -->
+      <trans-unit id="1281454676" xml:space="preserve" approved="yes">
+				<source>The "locale" option can be only set to string identifier, or Locale object</source>
+			<target xml:lang="fi">"Locale"-asetukseksi voidaan asettaa ainoastaan merkkijonotunniste tai Locale-objekti</target></trans-unit>
+      <trans-unit id="1281454830" xml:space="preserve" approved="yes">
+				<source>A valid time is expected</source>
+			<target xml:lang="fi">Kelvollinen aika vaaditaan</target></trans-unit>
+      <trans-unit id="1281454831" xml:space="preserve" approved="yes">
+				<source>A valid date and time is expected</source>
+			<target xml:lang="fi">Kelvollinen päivämäärä ja aika vaaditaan</target></trans-unit>
+      <trans-unit id="1281454832" xml:space="preserve" approved="yes">
+				<source>A valid date is expected</source>
+			<target xml:lang="fi">Kelvollinen päivämäärä vaaditaan</target></trans-unit>
+      <!-- EmailAddressValidator -->
+      <trans-unit id="1221559976" xml:space="preserve" approved="yes">
+				<source>Please specify a valid email address</source>
+			<target xml:lang="fi">Anna kelvollinen sähköpostiosoite</target></trans-unit>
+      <!-- FloatValidator -->
+      <trans-unit id="1221560288" xml:space="preserve" approved="yes">
+				<source>A valid float number is expected</source>
+			<target xml:lang="fi">Anna kelvollinen liukuluku</target></trans-unit>
+      <trans-unit id="1332934124" xml:space="preserve" approved="yes">
+				<source>"{0}" cannot be converted to a float value</source>
+			<target xml:lang="fi">"{0}" ei ole muunnettavissa liukuluvuksi</target></trans-unit>
+      <!-- GenericObjectValidator -->
+      <trans-unit id="1241099149" xml:space="preserve" approved="yes">
+				<source>Object expected, {0} given</source>
+			<target xml:lang="fi">Objekti vaaditaan, {0} annettu</target></trans-unit>
+      <!-- IntegerValidator -->
+      <trans-unit id="1221560494" xml:space="preserve" approved="yes">
+				<source>A valid integer number is expected</source>
+			<target xml:lang="fi">Kelvollinen kokonaisluku vaaditaan</target></trans-unit>
+      <trans-unit id="1332933658" xml:space="preserve" approved="yes">
+				<source>"{0}" is no integer.</source>
+			<target xml:lang="fi">"{0}" ei ole kokonaisluku.</target></trans-unit>
+      <!-- LabelValidator -->
+      <trans-unit id="1272298003" xml:space="preserve" approved="yes">
+				<source>Only letters, numbers, spaces and certain punctuation marks are expected</source>
+			<target xml:lang="fi">Ainoastaan kirjaimet, numerot ja tietyt välimerkit ovat sallittuja</target></trans-unit>
+      <!-- LocaleIdentifierValidator -->
+      <trans-unit id="1327090892" xml:space="preserve" approved="yes">
+				<source>Value is no valid I18n locale identifier</source>
+			<target xml:lang="fi">Arvo ei ole kelvollinen l18n tunniste</target></trans-unit>
+      <!-- NotEmptyValidator -->
+      <trans-unit id="1221560910" xml:space="preserve" approved="yes">
+				<source>This property is required</source>
+			<target xml:lang="fi">Pakollinen ominaisuus</target></trans-unit>
+      <trans-unit id="1221560718" xml:space="preserve" approved="yes">
+				<source>This property is required</source>
+			<target xml:lang="fi">Pakollinen ominaisuus</target></trans-unit>
+      <!-- NumberRangeValidator -->
+      <trans-unit id="1221563685" xml:space="preserve" approved="yes">
+				<source>A valid number is expected</source>
+			<target xml:lang="fi">Kelvollinen numero vaaditaan</target></trans-unit>
+      <trans-unit id="1221561046" xml:space="preserve" approved="yes">
+				<source>Please enter a valid number between {0,number} and {1,number}</source>
+			<target xml:lang="fi">Syötä numero väliltä {0,number} ja {1,number}</target></trans-unit>
+      <!-- NumberValidator -->
+      <trans-unit id="1281286579" xml:space="preserve" approved="yes">
+				<source>The "locale" option can be only set to string identifier, or Locale object</source>
+			<target xml:lang="fi">"Locale"-asetukseksi voidaan asettaa ainoastaan merkkijonotunniste tai Locale-objekti</target></trans-unit>
+      <trans-unit id="1281452093" xml:space="preserve" approved="yes">
+				<source>A valid percent number is expected</source>
+			<target xml:lang="fi">Kelvollinen prosenttiluku vaaditaan</target></trans-unit>
+      <trans-unit id="1281452094" xml:space="preserve" approved="yes">
+				<source>A valid decimal number is expected</source>
+			<target xml:lang="fi">Kelvollinen desimaaliluku vaaditaan</target></trans-unit>
+      <!-- RegularExpressionValidator -->
+      <trans-unit id="1221565130" xml:space="preserve" approved="yes">
+				<source>The given subject did not match the pattern. Got: {0}</source>
+			<target xml:lang="fi">Annettu kohde ei vastaa mallia. Tulos: {0}</target></trans-unit>
+      <!-- StringLengthValidator -->
+      <trans-unit id="1238110957" xml:space="preserve" approved="yes">
+				<source>The given object could not be converted to a string</source>
+			<target xml:lang="fi">Annettua objektia ei voitu muuttaa merkkijonoksi</target></trans-unit>
+      <trans-unit id="1269883975" xml:space="preserve" approved="yes">
+				<source>The given value is not a valid string</source>
+			<target xml:lang="fi">Annettu arvo ei ole merkkijono</target></trans-unit>
+      <trans-unit id="1238108067" xml:space="preserve" approved="yes">
+				<source>The length of this text must be between {0,number} and {1,number} characters</source>
+			<target xml:lang="fi">Tekstin pituusa saa olla {0,number} - {1,number} merkkiä</target></trans-unit>
+      <group id="1238108068" restype="x-gettext-plurals">
+        <trans-unit id="1238108068[0]" approved="yes">
+          <source>This field must contain at least {0,number} character</source>
+          <target xml:lang="fi">Kentässä on oltava vähintään {0,number} merkki</target>
+        </trans-unit>
+        <trans-unit id="1238108068[1]" approved="yes">
+          <source>This field must contain at least {0,number} characters</source>
+          <target xml:lang="fi">Kentässä on oltava vähintään {0,number} merkkiä</target>
+        </trans-unit>
+      </group>
+      <group id="1238108069" restype="x-gettext-plurals">
+        <trans-unit id="1238108069[0]" approved="yes">
+          <source>This text may not exceed {0,number} character</source>
+          <target xml:lang="fi">Tekstissä saa olla enintään {0,number} merkki</target>
+        </trans-unit>
+        <trans-unit id="1238108069[1]" approved="yes">
+          <source>This text may not exceed {0,number} characters</source>
+          <target xml:lang="fi">Tekstissä saa olla enintään {0,number} merkkiä</target>
+        </trans-unit>
+      </group>
+      <!-- StringValidator -->
+      <trans-unit id="1238108070" xml:space="preserve" approved="yes">
+				<source>A valid string is expected</source>
+			<target xml:lang="fi">Kelvollinen merkkijono vaaditaan</target></trans-unit>
+      <!-- TextValidator -->
+      <trans-unit id="1221565786" xml:space="preserve" approved="yes">
+				<source>Valid text without any XML tags is expected</source>
+			<target xml:lang="fi">Kelvollinen teksti ilman XML tageja vaaditaan</target></trans-unit>
+      <!-- UuidValidator -->
+      <trans-unit id="1221565853" xml:space="preserve" approved="yes">
+				<source>The given subject is not a valid UUID</source>
+			<target xml:lang="fi">Annettu kohde ei ole kelvollinen UUID</target></trans-unit>
+      <!-- ElectronicAddressValidator -->
+      <trans-unit id="1268676030" xml:space="preserve" approved="yes">
+				<source>No validator found for electronic address of type "{0}"</source>
+			<target xml:lang="fi">Validaattoria osoitteelle tyyppiä "{0}" ei löytynyt</target></trans-unit>
+      <!-- PersonNameValidator -->
+      <trans-unit id="1268676765" xml:space="preserve" approved="yes">
+				<source>The person name cannot be empty</source>
+			<target xml:lang="fi">Nimi ei voi olla tyhjä</target></trans-unit>
+      <!-- Package "Neos.Media" -->
+      <!-- ImageTypeValidator -->
+      <trans-unit id="1327947256" xml:space="preserve" approved="yes">
+				<source>The given value is not a Image instance</source>
+			<target xml:lang="fi">Annettu arvo ei ole kuvainstanssi</target></trans-unit>
+      <trans-unit id="1327947647" xml:space="preserve" approved="yes">
+				<source>The image type "{0}" is not allowed</source>
+			<target xml:lang="fi">Kuvatyyppi "{0}" ei ole sallittu</target></trans-unit>
+      <trans-unit id="1328030664" xml:space="preserve" approved="yes">
+				<source>The uploaded file is no valid image</source>
+			<target xml:lang="fi">Ladattu kuva ei ole kelvollinen kuvatiedosto</target></trans-unit>
+      <!-- ImageSizeValidator -->
+      <trans-unit id="1327943859" xml:space="preserve" approved="yes">
+				<source>The given value is not a Image instance</source>
+			<target xml:lang="fi">Annettu arvo ei ole kuvainstanssi</target></trans-unit>
+      <trans-unit id="1319801362" xml:space="preserve" approved="yes">
+				<source>The actual image width of {0,number} is lower than the allowed minimum width of {1,number}</source>
+			<target xml:lang="fi">Kuvan todellinen leveys {0,number} on pienempi kuin sallittu vähimmäisleveys {1,number}</target></trans-unit>
+      <trans-unit id="1319801859" xml:space="preserve" approved="yes">
+				<source>The actual image width of {0,number} is higher than the allowed maximum width of {1,number}</source>
+			<target xml:lang="fi">Kuvan todellinen leveys {0,number} on suurempi kuin sallittu enimmäisleveys {1,number}</target></trans-unit>
+      <trans-unit id="1319801925" xml:space="preserve" approved="yes">
+				<source>The actual image height of {0,number} is lower than the allowed minimum height of {1,number}</source>
+			<target xml:lang="fi">Kuvan korkeus {0,number} on pienempi kuin sallittu vähimmäiskorkeus {1,number}</target><alt-trans><target xml:lang="fi">Kuvan todellinen korkeus {0,number} on pienempi kuin sallittu vähimmäiskorkeus {1,number}</target></alt-trans></trans-unit>
+      <trans-unit id="1319801929" xml:space="preserve" approved="yes">
+				<source>The actual image height of {0,number} is higher than the allowed maximum height of {1,number}</source>
+			<target xml:lang="fi">Kuvan korkeus {0,number} on suurempi kuin sallittu enimmäiskorkeus {1,number}</target></trans-unit>
+      <trans-unit id="1319813336" xml:space="preserve" approved="yes">
+				<source>The given image size of {0,number} x {1,number} is too low for the required minimum resolution of {2,number}</source>
+			<target xml:lang="fi">Kuvan koko {0,number} x {1,number} on liian pieni sallitulle vähimmäisresoluutiolle {2,number}</target><alt-trans><target xml:lang="fi">Kuvan koko {0,number} x {1,number} on liian pieni vaaditulle resoluutiolle {2,number}</target></alt-trans></trans-unit>
+      <trans-unit id="1319813355" xml:space="preserve" approved="yes">
+				<source>The given image size of {0,number} x {1,number} is too high for the required maximum resolution of {2,number}</source>
+			<target xml:lang="fi">Kuvan koko {0,number} x {1,number} on liian suuri sallitulle enimmäisresoluutiolle {2,number}</target></trans-unit>
+      <!-- ImageOrientationValidator -->
+      <trans-unit id="1328028604" xml:space="preserve" approved="yes">
+				<source>The given value is not a Image instance</source>
+			<target xml:lang="fi">Annettu arvo ei ole kuvainstanssi</target></trans-unit>
+      <trans-unit id="1328029406" xml:space="preserve" approved="yes">
+				<source>The image orientation must be "{0}"</source>
+			<target xml:lang="fi">Kuvan suunnan on oltava "{0}"</target></trans-unit>
+      <trans-unit id="1328029362" xml:space="preserve" approved="yes">
+				<source>The image orientation "{0}" is not allowed</source>
+			<target xml:lang="fi">Kuvan suunta "{0}" ei ole sallittu</target></trans-unit>
+    </body>
+  </file>
+</xliff>

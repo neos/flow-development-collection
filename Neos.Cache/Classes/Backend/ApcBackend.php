@@ -13,12 +13,9 @@ namespace Neos\Cache\Backend;
 
 use Neos\Cache\Backend\AbstractBackend as IndependentAbstractBackend;
 use Neos\Cache\EnvironmentConfiguration;
-use TYPO3\Flow\Cache\Backend\IterableBackendInterface;
-use TYPO3\Flow\Cache\Backend\PhpCapableBackendInterface;
-use TYPO3\Flow\Cache\Backend\TaggableBackendInterface;
-use TYPO3\Flow\Cache\Exception;
-use TYPO3\Flow\Cache\Exception\InvalidDataException;
-use TYPO3\Flow\Cache\Frontend\FrontendInterface;
+use Neos\Cache\Exception;
+use Neos\Cache\Exception\InvalidDataException;
+use Neos\Cache\Frontend\FrontendInterface;
 
 /**
  * A caching backend which stores cache entries by using APC.
@@ -85,7 +82,7 @@ class ApcBackend extends IndependentAbstractBackend implements TaggableBackendIn
     {
         parent::setCache($cache);
 
-        $pathHash = substr(md5($this->environmentConfiguration->getApplicationIdentifier() . $this->environmentConfiguration->getApplicationContext() . $cache->getIdentifier()), 0, 12);
+        $pathHash = substr(md5($this->environmentConfiguration->getApplicationIdentifier() . $cache->getIdentifier()), 0, 12);
         $this->identifierPrefix = 'Flow_' . $pathHash . '_';
     }
 

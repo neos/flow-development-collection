@@ -1,0 +1,115 @@
+#                                                                        #
+# Routes leading to controllers used in functional tests                 #
+#                                                                        #
+
+##
+# Routes for the Http functional tests
+
+-
+  name: 'Functional Test: HTTP - FooController'
+  uriPattern: 'neos/flow/test/http/foo'
+  defaults:
+    '@package':    'Neos.Flow'
+    '@subpackage': 'Tests\Functional\Http\Fixtures'
+    '@controller': 'Foo'
+    '@action':     'index'
+    '@format':     'html'
+
+-
+  name: 'Functional Test: dynamic part without default'
+  uriPattern: 'neos/flow/test/dynamic/part/without/default/{dynamic}'
+  defaults:
+    '@package':    'Neos.Flow'
+    '@subpackage': 'Tests\Functional\Mvc\Fixtures'
+    '@controller': 'RoutingTestA'
+
+-
+  name: 'Functional Test: dynamic part with default'
+  uriPattern: 'neos/flow/test/dynamic/part/with/default/{dynamic}'
+  defaults:
+    '@package':    'Neos.Flow'
+    '@subpackage': 'Tests\Functional\Mvc\Fixtures'
+    '@controller': 'RoutingTestA'
+    dynamic: 'DynamicDefault'
+
+-
+  name: 'Functional Test: optional dynamic part with default'
+  uriPattern: 'neos/flow/test/optional/dynamic/part/with/default(/{optionalDynamic})'
+  defaults:
+    '@package':    'Neos.Flow'
+    '@subpackage': 'Tests\Functional\Mvc\Fixtures'
+    '@controller': 'RoutingTestA'
+    optionalDynamic: 'OptionalDynamicDefault'
+
+-
+  name: 'Functional Test: dynamic part case'
+  uriPattern: 'neos/flow/test/dynamic/part/case/{dynamic1}/{dynamic2}'
+  toLowerCase: false
+  routeParts:
+    dynamic2:
+      toLowerCase: true
+  defaults:
+    '@package':    'Neos.Flow'
+    '@subpackage': 'Tests\Functional\Mvc\Fixtures'
+    '@controller': 'RoutingTestA'
+
+-
+  name: 'Functional Test: exceeding arguments 01'
+  uriPattern: 'neos/flow/test/exceeding/arguments1'
+  defaults:
+    '@package':    'Neos.Flow'
+    '@subpackage': 'Tests\Functional\Mvc\Fixtures'
+    '@controller': 'RoutingTestA'
+    dynamic: 'DynamicDefault'
+  appendExceedingArguments: true
+
+-
+  name: 'Functional Test: exceeding arguments 02'
+  uriPattern: 'neos/flow/test/exceeding/arguments2/{dynamic}'
+  defaults:
+    '@package':    'Neos.Flow'
+    '@subpackage': 'Tests\Functional\Mvc\Fixtures'
+    '@controller': 'RoutingTestA'
+  appendExceedingArguments: true
+
+-
+  name: 'Functional Test: static route parts are case sensitive'
+  uriPattern: 'neos/flow/test/Upper/Camel/Case'
+
+-
+  name: 'Functional Test: controller route parts are case insensitive'
+  uriPattern: 'neos/flow/test/{@package}/{@controller}/{@action}.{@format}'
+  defaults:
+    '@package':    'Neos.Flow'
+    '@subpackage': 'Tests\Functional\Mvc\Fixtures'
+    '@controller': 'RoutingTestA'
+
+-
+  name: 'Functional Test: httpMethods are respected'
+  uriPattern: 'neos/flow/test/httpmethods'
+  defaults:
+    '@package':    'Neos.Flow'
+    '@subpackage': 'Tests\Functional\Mvc\Fixtures'
+    '@controller': 'ActionControllerTestA'
+    '@action':     'first'
+  httpMethods: ['GET']
+
+-
+  name: 'Functional Test: httpMethods are respected'
+  uriPattern: 'neos/flow/test/httpmethods'
+  defaults:
+    '@package':    'Neos.Flow'
+    '@subpackage': 'Tests\Functional\Mvc\Fixtures'
+    '@controller': 'ActionControllerTestA'
+    '@action':     'second'
+  httpMethods: ['POST', 'PUT']
+
+-
+  name: 'Functional Test: Standard'
+  uriPattern: 'neos/flow/test'
+  defaults:
+    '@package':    'Neos.Flow'
+    '@subpackage': 'Tests\Functional\Mvc\Fixtures'
+    '@controller': 'Standard'
+    '@action':     'index'
+    '@format':     'html'

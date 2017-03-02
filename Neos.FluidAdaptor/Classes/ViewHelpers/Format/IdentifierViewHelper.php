@@ -11,8 +11,8 @@ namespace Neos\FluidAdaptor\ViewHelpers\Format;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Persistence\PersistenceManagerInterface;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use Neos\FluidAdaptor\Core\ViewHelper;
 
@@ -20,7 +20,7 @@ use Neos\FluidAdaptor\Core\ViewHelper;
  * This ViewHelper renders the identifier of a persisted object (if it has an identity).
  * Usually the identifier is the UUID of the object, but it could be an array of the
  * identity properties, too.
- * @see \TYPO3\Flow\Persistence\PersistenceManagerInterface::getIdentifierByObject()
+ * @see \Neos\Flow\Persistence\PersistenceManagerInterface::getIdentifierByObject()
  *
  * Useful for using the identifier outside of the form view helpers
  * (e.g. JavaScript and AJAX).

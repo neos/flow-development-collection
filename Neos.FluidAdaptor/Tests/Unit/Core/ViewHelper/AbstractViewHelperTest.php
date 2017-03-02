@@ -11,7 +11,9 @@ namespace Neos\FluidAdaptor\Tests\Unit\Core\ViewHelper;
  * source code.
  */
 
-use TYPO3\Flow\Mvc\Controller\ControllerContext;
+use Neos\Flow\Mvc\Controller\ControllerContext;
+use Neos\Flow\ObjectManagement\ObjectManagerInterface;
+use Neos\Flow\Reflection\ReflectionService;
 use Neos\FluidAdaptor\Core\ViewHelper\TemplateVariableContainer;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use Neos\FluidAdaptor\View\TemplateView;
@@ -25,15 +27,15 @@ require_once(__DIR__ . '/../Fixtures/TestViewHelper2.php');
  * Testcase for AbstractViewHelper
  *
  */
-class AbstractViewHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
+class AbstractViewHelperTest extends \Neos\Flow\Tests\UnitTestCase
 {
     /**
-     * @var \TYPO3\Flow\Reflection\ReflectionService
+     * @var \Neos\Flow\Reflection\ReflectionService
      */
     protected $mockReflectionService;
 
     /**
-     * @var \TYPO3\Flow\ObjectManagement\ObjectManagerInterface
+     * @var \Neos\Flow\ObjectManagement\ObjectManagerInterface
      */
     protected $mockObjectManager;
 
@@ -76,9 +78,9 @@ class AbstractViewHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
 
     public function setUp()
     {
-        $this->mockReflectionService = $this->getMockBuilder(\TYPO3\Flow\Reflection\ReflectionService::class)->disableOriginalConstructor()->getMock();
-        $this->mockObjectManager = $this->createMock(\TYPO3\Flow\ObjectManagement\ObjectManagerInterface::class);
-        $this->mockObjectManager->expects($this->any())->method('get')->with(\TYPO3\Flow\Reflection\ReflectionService::class)->will($this->returnValue($this->mockReflectionService));
+        $this->mockReflectionService = $this->getMockBuilder(\Neos\Flow\Reflection\ReflectionService::class)->disableOriginalConstructor()->getMock();
+        $this->mockObjectManager = $this->createMock(\Neos\Flow\ObjectManagement\ObjectManagerInterface::class);
+        $this->mockObjectManager->expects($this->any())->method('get')->with(\Neos\Flow\Reflection\ReflectionService::class)->will($this->returnValue($this->mockReflectionService));
     }
 
     /**
@@ -167,7 +169,7 @@ class AbstractViewHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function prepareArgumentsRegistersAnnotationBasedArgumentsWithDescriptionIfDebugModeIsEnabled()
     {
-        $dataCacheMock = $this->getMockBuilder(\TYPO3\Flow\Cache\Frontend\VariableFrontend::class)->disableOriginalConstructor()->getMock();
+        $dataCacheMock = $this->getMockBuilder(\Neos\Cache\Frontend\VariableFrontend::class)->disableOriginalConstructor()->getMock();
         $dataCacheMock->expects($this->any())->method('has')->will($this->returnValue(true));
         $dataCacheMock->expects($this->any())->method('get')->will($this->returnValue(array()));
 
@@ -191,7 +193,7 @@ class AbstractViewHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function prepareArgumentsRegistersAnnotationBasedArgumentsWithoutDescriptionIfDebugModeIsDisabled()
     {
-        $dataCacheMock = $this->getMockBuilder(\TYPO3\Flow\Cache\Frontend\VariableFrontend::class)->disableOriginalConstructor()->getMock();
+        $dataCacheMock = $this->getMockBuilder(\Neos\Cache\Frontend\VariableFrontend::class)->disableOriginalConstructor()->getMock();
         $dataCacheMock->expects($this->any())->method('has')->will($this->returnValue(true));
         $dataCacheMock->expects($this->any())->method('get')->will($this->returnValue(array()));
 
@@ -307,5 +309,22 @@ class AbstractViewHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
         $this->assertSame($viewHelper->_get('templateVariableContainer'), $templateVariableContainer);
         $this->assertSame($viewHelper->_get('viewHelperVariableContainer'), $viewHelperVariableContainer);
         $this->assertSame($viewHelper->_get('controllerContext'), $controllerContext);
+    }
+
+    /**
+     * @test
+     */
+    public function renderMethodParametersWithMultipleTypesAreRegisteredAsMixed()
+    {
+        $this->mockReflectionService->expects(self::any())->method('getMethodTagsValues')->willReturn([]);
+        $this->mockReflectionService->expects(self::any())->method('getMethodParameters')->willReturn(['someArgument' => [
+            'type' => 'array|\Iterator',
+            'optional' => false
+        ]]);
+
+        $argumentDefinitions = AbstractViewHelper::getRenderMethodArgumentDefinitions($this->mockObjectManager);
+        $this->assertCount(1, $argumentDefinitions);
+        $this->assertArrayHasKey('someArgument', $argumentDefinitions);
+        $this->assertEquals('mixed', $argumentDefinitions['someArgument'][1]);
     }
 }

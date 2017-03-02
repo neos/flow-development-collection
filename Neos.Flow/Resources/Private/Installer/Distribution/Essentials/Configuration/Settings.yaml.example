@@ -1,0 +1,35 @@
+#
+# Example Settings
+#
+# This file can contain settings for your Flow application that override
+# the various defaults defined by other packages.
+#
+# Copy this file to Settings.yaml, and adjust as necessary.
+#
+# For possible configuration options you may refer to the packages'
+# default settings file(s) in the corresponding package directories (for
+# example, Packages/Framework/Neos.Flow/Configuration/Settings.yaml)
+# or read the fine manuals.
+
+Neos:
+  Flow:
+    persistence:
+
+      # It is good practice to not specify user name and password of the database
+      # connection in this global Settings.yaml file. Rather specify them in the
+      # settings of the respective context (Production / Development ...).
+      backendOptions:
+        host: '127.0.0.1'    # adjust to your database host
+
+    # The following lines register the Flow default routes
+    # For productive use you should move this setting to the main package of this
+    # application and/or create custom routes.
+    mvc:
+      routes:
+        'Neos.Flow': TRUE
+
+  # You might need to uncomment the following lines and specify
+  # the location of the PHP binary manually.
+#    core:
+#      phpBinaryPathAndFilename: 'C:/path/to/php.exe'
+

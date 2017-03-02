@@ -11,7 +11,7 @@ namespace Neos\Cache\Backend;
  * source code.
  */
 
-use TYPO3\Flow\Cache\Exception as CacheException;
+use Neos\Flow\Cache\Exception as CacheException;
 
 /**
  * RequireOnceFromValueTrait

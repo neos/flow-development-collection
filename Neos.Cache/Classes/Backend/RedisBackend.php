@@ -13,11 +13,7 @@ namespace Neos\Cache\Backend;
 
 use Neos\Cache\Backend\AbstractBackend as IndependentAbstractBackend;
 use Neos\Cache\EnvironmentConfiguration;
-use TYPO3\Flow\Cache\Backend\FreezableBackendInterface;
-use TYPO3\Flow\Cache\Backend\IterableBackendInterface;
-use TYPO3\Flow\Cache\Backend\PhpCapableBackendInterface;
-use TYPO3\Flow\Cache\Backend\TaggableBackendInterface;
-use TYPO3\Flow\Cache\Exception as CacheException;
+use Neos\Cache\Exception as CacheException;
 
 /**
  * A caching backend which stores cache entries in Redis using the phpredis PHP extension.
@@ -412,7 +408,7 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
      *
      * Leave this empty if you want to connect to a socket
      *
-     * @param string $port Port of the Redis server
+     * @param integer $port Port of the Redis server
      * @api
      */
     public function setPort($port)

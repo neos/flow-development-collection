@@ -15,7 +15,7 @@ namespace Neos\FluidAdaptor\Tests\Unit\Core\Widget;
  * Testcase for AjaxWidgetContextHolder
  *
  */
-class AjaxWidgetContextHolderTest extends \TYPO3\Flow\Tests\UnitTestCase
+class AjaxWidgetContextHolderTest extends \Neos\Flow\Tests\UnitTestCase
 {
     /**
      * @test

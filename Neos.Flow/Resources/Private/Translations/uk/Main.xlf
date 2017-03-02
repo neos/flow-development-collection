@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file original="" product-name="Neos.Flow" source-language="en" datatype="plaintext" target-language="uk">
+    <body>
+      <trans-unit id="authentication.required" xml:space="preserve">
+				<source>Authentication required</source>
+			<target xml:lang="uk" state="translated">Потрібна автентифікація</target></trans-unit>
+      <trans-unit id="authentication.username" xml:space="preserve">
+				<source>Username</source>
+			<target xml:lang="uk" state="translated">Ім'я користувача</target></trans-unit>
+      <trans-unit id="authentication.password" xml:space="preserve">
+				<source>Password</source>
+			<target xml:lang="uk" state="translated">Пароль</target></trans-unit>
+      <trans-unit id="authentication.new-password" xml:space="preserve">
+				<source>New password</source>
+			<target xml:lang="uk" state="translated">Новий пароль</target><alt-trans><target xml:lang="uk">Новий Пароль</target></alt-trans></trans-unit>
+      <trans-unit id="authentication.login" xml:space="preserve">
+				<source>Login</source>
+			<target xml:lang="uk" state="translated">Ввійти</target><alt-trans><target xml:lang="uk">Логін</target></alt-trans><alt-trans><target xml:lang="uk">Вхід</target></alt-trans></trans-unit>
+      <trans-unit id="authentication.logout" xml:space="preserve">
+				<source>Logout</source>
+			<target xml:lang="uk" state="translated">вийти</target></trans-unit>
+      <trans-unit id="update" xml:space="preserve">
+				<source>Update</source>
+			<target xml:lang="uk" state="translated">Оновлення</target></trans-unit>
+      <trans-unit id="submit" xml:space="preserve">
+				<source>Submit</source>
+			<target xml:lang="uk" state="translated">Надіслати</target><alt-trans><target xml:lang="uk">отправить</target></alt-trans></trans-unit>
+    </body>
+  </file>
+</xliff>

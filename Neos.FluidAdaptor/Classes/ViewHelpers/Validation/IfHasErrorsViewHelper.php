@@ -12,10 +12,12 @@ namespace Neos\FluidAdaptor\ViewHelpers\Validation;
  */
 
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Error\Result;
-use TYPO3\Flow\Mvc\ActionRequest;
+use Neos\Flow\Annotations as Flow;
+use Neos\Error\Messages\Result;
+use Neos\Flow\Mvc\ActionRequest;
+use Neos\FluidAdaptor\Core\Rendering\FlowAwareRenderingContextInterface;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractConditionViewHelper;
+use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 
 /**
  * This view helper allows to check whether validation errors adhere to the current request.
@@ -41,29 +43,53 @@ use Neos\FluidAdaptor\Core\ViewHelper\AbstractConditionViewHelper;
  */
 class IfHasErrorsViewHelper extends AbstractConditionViewHelper
 {
+
+    /**
+     * @return void
+     */
+    public function initializeArguments()
+    {
+        $this->registerArgument('then', 'mixed', 'Value to be returned if the condition if met.', false);
+        $this->registerArgument('else', 'mixed', 'Value to be returned if the condition if not met.', false);
+        $this->registerArgument('for', 'string', 'The argument or property name or path to check for error(s). If not set any validation error leads to the "then child" to be rendered', false);
+    }
+
     /**
      * Renders <f:then> child if there are validation errors. The check can be narrowed down to
      * specific property paths.
      * If no errors are there, it renders the <f:else>-child.
      *
-     * @param string $for The argument or property name or path to check for error(s)
-     * @return string
+     * @return mixed
      * @api
      */
-    public function render($for = null)
+    public function render()
     {
+        if (self::evaluateCondition($this->arguments, $this->renderingContext)) {
+            return $this->renderThenChild();
+        } else {
+            return $this->renderElseChild();
+        }
+    }
+
+    /**
+     * @param null $arguments
+     * @param FlowAwareRenderingContextInterface|RenderingContextInterface $renderingContext
+     * @return boolean
+     */
+    protected static function evaluateCondition($arguments = null, RenderingContextInterface $renderingContext)
+    {
+
         /** @var $request ActionRequest */
-        $request = $this->controllerContext->getRequest();
+        $request = $renderingContext->getControllerContext()->getRequest();
         /** @var $validationResults Result */
         $validationResults = $request->getInternalArgument('__submittedArgumentValidationResults');
 
-        if ($validationResults !== null) {
-            // if $for is not set, ->forProperty will return the initial Result object untouched
-            $validationResults = $validationResults->forProperty($for);
-            if ($validationResults->hasErrors()) {
-                return $this->renderThenChild();
-            }
+        if ($validationResults === null) {
+            return false;
         }
-        return $this->renderElseChild();
+        if (isset($arguments['for'])) {
+            $validationResults = $validationResults->forProperty($arguments['for']);
+        }
+        return $validationResults->hasErrors();
     }
 }

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file original="" product-name="Neos.Flow" source-language="en" datatype="plaintext" target-language="fi">
+    <body>
+      <trans-unit id="authentication.required" xml:space="preserve" approved="yes">
+				<source>Authentication required</source>
+			<target xml:lang="fi">Todennus vaaditaan</target></trans-unit>
+      <trans-unit id="authentication.username" xml:space="preserve" approved="yes">
+				<source>Username</source>
+			<target xml:lang="fi">Käyttäjätunnus</target></trans-unit>
+      <trans-unit id="authentication.password" xml:space="preserve" approved="yes">
+				<source>Password</source>
+			<target xml:lang="fi">Salasana</target></trans-unit>
+      <trans-unit id="authentication.new-password" xml:space="preserve" approved="yes">
+				<source>New password</source>
+			<target xml:lang="fi">Uusi salasana</target></trans-unit>
+      <trans-unit id="authentication.login" xml:space="preserve" approved="yes">
+				<source>Login</source>
+			<target xml:lang="fi">Kirjaudu sisään</target></trans-unit>
+      <trans-unit id="authentication.logout" xml:space="preserve" approved="yes">
+				<source>Logout</source>
+			<target xml:lang="fi">Kirjaudu ulos</target></trans-unit>
+      <trans-unit id="update" xml:space="preserve" approved="yes">
+				<source>Update</source>
+			<target xml:lang="fi">Päivitä</target></trans-unit>
+      <trans-unit id="submit" xml:space="preserve" approved="yes">
+				<source>Submit</source>
+			<target xml:lang="fi">Lähetä</target></trans-unit>
+    </body>
+  </file>
+</xliff>

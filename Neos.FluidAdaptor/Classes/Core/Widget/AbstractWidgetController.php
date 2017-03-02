@@ -11,9 +11,9 @@ namespace Neos\FluidAdaptor\Core\Widget;
  * source code.
  */
 
-use TYPO3\Flow\Mvc\Controller\ActionController;
-use TYPO3\Flow\Mvc\RequestInterface;
-use TYPO3\Flow\Mvc\ResponseInterface;
+use Neos\Flow\Mvc\Controller\ActionController;
+use Neos\Flow\Mvc\RequestInterface;
+use Neos\Flow\Mvc\ResponseInterface;
 use Neos\FluidAdaptor\Core\Widget\Exception\WidgetContextNotFoundException;
 
 /**
@@ -44,7 +44,7 @@ abstract class AbstractWidgetController extends ActionController
      */
     public function processRequest(RequestInterface $request, ResponseInterface $response)
     {
-        /** @var $request \TYPO3\Flow\Mvc\ActionRequest */
+        /** @var $request \Neos\Flow\Mvc\ActionRequest */
         /** @var $widgetContext WidgetContext */
         $widgetContext = $request->getInternalArgument('__widgetContext');
         if ($widgetContext === null) {

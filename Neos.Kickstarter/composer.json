@@ -1,0 +1,28 @@
+{
+    "name": "neos/kickstarter",
+    "type": "neos-framework",
+    "description": "A simple generator for controller and views.",
+    "license": "MIT",
+    "require": {
+        "neos/flow": "~4.0.0",
+        "neos/utility-arrays": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Neos\\Kickstarter\\": "Classes"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Neos\\Kickstarter\\Tests\\": "Tests"
+        }
+    },
+    "replace": {
+        "typo3/kickstart": "self.version"
+    },
+    "extra": {
+        "neos": {
+            "package-key": "Neos.Kickstarter"
+        }
+    }
+}

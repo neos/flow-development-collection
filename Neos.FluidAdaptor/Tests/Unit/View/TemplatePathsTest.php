@@ -2,12 +2,12 @@
 namespace Neos\FluidAdaptor\Tests\Unit\View;
 
 use org\bovigo\vfs\vfsStreamWrapper;
-use TYPO3\Flow\Http\Request;
-use TYPO3\Flow\Http\Uri;
-use TYPO3\Flow\Mvc\ActionRequest;
-use TYPO3\Flow\Mvc\Controller\ControllerContext;
-use TYPO3\Flow\Tests\Functional\Mvc\ViewsConfiguration\Fixtures\TemplateView;
-use TYPO3\Flow\Tests\UnitTestCase;
+use Neos\Flow\Http\Request;
+use Neos\Flow\Http\Uri;
+use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\Controller\ControllerContext;
+use Neos\Flow\Tests\Functional\Mvc\ViewsConfiguration\Fixtures\TemplateView;
+use Neos\Flow\Tests\UnitTestCase;
 use Neos\FluidAdaptor\View\TemplatePaths;
 
 /**
@@ -26,7 +26,7 @@ class TemplatePathsTest extends UnitTestCase
      */
     protected function setupMockControllerContextForPathResolving($packageKey, $subPackageKey, $controllerName, $format)
     {
-        $controllerObjectName = 'TYPO3\\' . $packageKey . '\\' . ($subPackageKey != $subPackageKey . '\\' ?: '') . 'Controller\\' . $controllerName . 'Controller';
+        $controllerObjectName = 'Neos\\' . $packageKey . '\\' . ($subPackageKey != $subPackageKey . '\\' ?: '') . 'Controller\\' . $controllerName . 'Controller';
 
         $httpRequest = Request::create(new Uri('http://robertlemke.com/blog'));
         $mockRequest = $this->createMock(ActionRequest::class, [], [$httpRequest]);

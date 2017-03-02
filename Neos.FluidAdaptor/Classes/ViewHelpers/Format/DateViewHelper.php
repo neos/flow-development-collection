@@ -11,9 +11,9 @@ namespace Neos\FluidAdaptor\ViewHelpers\Format;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\I18n\Exception as I18nException;
-use TYPO3\Flow\I18n\Formatter\DatetimeFormatter;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\I18n\Exception as I18nException;
+use Neos\Flow\I18n\Formatter\DatetimeFormatter;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractLocaleAwareViewHelper;
 use Neos\FluidAdaptor\Core\ViewHelper\Exception as ViewHelperException;
 
@@ -106,8 +106,8 @@ class DateViewHelper extends AbstractLocaleAwareViewHelper
      *
      * @param mixed $date either a \DateTime object or a string that is accepted by \DateTime constructor
      * @param string $format Format String which is taken to format the Date/Time if none of the locale options are set.
-     * @param string $localeFormatType Whether to format (according to locale set in $forceLocale) date, time or datetime. Must be one of TYPO3\Flow\I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_*'s constants.
-     * @param string $localeFormatLength Format length if locale set in $forceLocale. Must be one of TYPO3\Flow\I18n\Cldr\Reader\DatesReader::FORMAT_LENGTH_*'s constants.
+     * @param string $localeFormatType Whether to format (according to locale set in $forceLocale) date, time or datetime. Must be one of Neos\Flow\I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_*'s constants.
+     * @param string $localeFormatLength Format length if locale set in $forceLocale. Must be one of Neos\Flow\I18n\Cldr\Reader\DatesReader::FORMAT_LENGTH_*'s constants.
      * @param string $cldrFormat Format string in CLDR format (see http://cldr.unicode.org/translation/date-time)
      * @throws ViewHelperException
      * @return string Formatted date

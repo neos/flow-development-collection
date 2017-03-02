@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file original="" product-name="Neos.Flow" source-language="en" datatype="plaintext" target-language="zh-CN">
+    <body>
+      <trans-unit id="authentication.required" xml:space="preserve">
+				<source>Authentication required</source>
+			<target xml:lang="zh-CN" state="translated">需要认证</target></trans-unit>
+      <trans-unit id="authentication.username" xml:space="preserve">
+				<source>Username</source>
+			<target xml:lang="zh-CN" state="translated">用户名</target></trans-unit>
+      <trans-unit id="authentication.password" xml:space="preserve">
+				<source>Password</source>
+			<target xml:lang="zh-CN" state="translated">密码</target></trans-unit>
+      <trans-unit id="authentication.new-password" xml:space="preserve">
+				<source>New password</source>
+			<target xml:lang="zh-CN" state="translated">新密码</target></trans-unit>
+      <trans-unit id="authentication.login" xml:space="preserve">
+				<source>Login</source>
+			<target xml:lang="zh-CN" state="translated">登录</target></trans-unit>
+      <trans-unit id="authentication.logout" xml:space="preserve">
+				<source>Logout</source>
+			<target xml:lang="zh-CN" state="translated">退出</target></trans-unit>
+      <trans-unit id="update" xml:space="preserve">
+				<source>Update</source>
+			<target xml:lang="zh-CN" state="translated">更新</target></trans-unit>
+      <trans-unit id="submit" xml:space="preserve">
+				<source>Submit</source>
+			<target xml:lang="zh-CN" state="translated">提交</target></trans-unit>
+    </body>
+  </file>
+</xliff>

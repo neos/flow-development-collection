@@ -11,13 +11,13 @@ namespace Neos\FluidAdaptor\Tests\Functional\Form\Fixtures\Controller;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * Controller for simple CRUD actions, to test Fluid forms in
  * combination with Property Mapping
  */
-class FormController extends \TYPO3\Flow\Mvc\Controller\ActionController
+class FormController extends \Neos\Flow\Mvc\Controller\ActionController
 {
     /**
      * Display a start page

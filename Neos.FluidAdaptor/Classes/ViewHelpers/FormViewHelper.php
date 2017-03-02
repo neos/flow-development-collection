@@ -11,11 +11,11 @@ namespace Neos\FluidAdaptor\ViewHelpers;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Mvc\Controller\MvcPropertyMappingConfigurationService;
-use TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface;
-use TYPO3\Flow\Security\Context;
-use TYPO3\Flow\Security\Cryptography\HashService;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Mvc\Controller\MvcPropertyMappingConfigurationService;
+use Neos\Flow\Security\Authentication\AuthenticationManagerInterface;
+use Neos\Flow\Security\Context;
+use Neos\Flow\Security\Cryptography\HashService;
 use Neos\FluidAdaptor\Core\ViewHelper;
 use Neos\FluidAdaptor\ViewHelpers\Form\AbstractFormViewHelper;
 

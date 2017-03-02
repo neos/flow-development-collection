@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Flow\Core\Migrations;
+namespace Neos\Flow\Core\Migrations;
 
 /*
  * This file is part of the Neos.FluidAdaptor package.
@@ -11,17 +11,22 @@ namespace TYPO3\Flow\Core\Migrations;
  * source code.
  */
 
-use TYPO3\Flow\Reflection\ObjectAccess;
-use TYPO3\Flow\Utility\Files;
-use TYPO3\Flow\Utility\PhpAnalyzer;
+use Neos\Utility\Files;
+use Neos\Flow\Utility\PhpAnalyzer;
 
 /**
- * Add "escapeOutput" property to existing ViewHelpers to ensure backwards-compatibility
+ * Warn about "escapeOutput" property for existing ViewHelpers to ensure backwards-compatibility
  *
  * Note: If an affected ViewHelper does not create HTML output, you should remove this property (or set it TRUE) in order to ensure sanitization of the output
  */
 class Version20150214130800 extends AbstractMigration
 {
+
+    public function getIdentifier()
+    {
+        return 'TYPO3.Fluid-20150214130800';
+    }
+
     /**
      * @return void
      */
@@ -39,62 +44,11 @@ class Version20150214130800 extends AbstractMigration
                 $this->showWarning(sprintf('could not extract class name from file "%s"', $pathAndFilename));
                 continue;
             }
-            /** @noinspection PhpIncludeInspection */
-            require_once $pathAndFilename;
-            if (!class_exists($className)) {
-                $this->showWarning(sprintf('could not load class "%s" extracted from file "%s"', $className, $pathAndFilename));
-                continue;
-            }
-            $instance = new $className();
-
-            $escapeOutput = ObjectAccess::getProperty($instance, 'escapeOutput', true);
-            if ($escapeOutput !== null) {
-                continue;
-            }
             $affectedViewHelperClassNames[] = $className;
-            $this->searchAndReplaceRegex('/\R\s*class[^\{]+\R?\{(\s*)(?=.*?\})/s', '$0' . "\n\t" . '/**' . "\n\t" . ' * NOTE: This property has been introduced via code migration to ensure backwards-compatibility.' . "\n\t" . ' * @see AbstractViewHelper::isOutputEscapingEnabled()' . "\n\t" . ' * @var boolean' . "\n\t" . ' */' . "\n\t" . 'protected $escapeOutput = FALSE;$1', $pathAndFilename);
         }
 
         if ($affectedViewHelperClassNames !== array()) {
-            $this->showWarning('Added "escapeOutput" property to following ViewHelpers:' . PHP_EOL . ' * ' . implode(PHP_EOL . ' * ', $affectedViewHelperClassNames) . PHP_EOL . PHP_EOL . 'If an affected ViewHelper does not render HTML output, you should set this property TRUE in order to ensure sanitization of the output!');
-        }
-
-        $this->addWarningsForAffectedViewHelpers($this->targetPackageData['path']);
-    }
-
-    /**
-     * Add a warning for each HTML file that uses one of the f:uri.* or the f:format.json ViewHelpers
-     *
-     * @param string $packagePath
-     * @return void
-     */
-    protected function addWarningsForAffectedViewHelpers($packagePath)
-    {
-        $foundAffectedViewHelpers = array();
-        $allPathsAndFilenames = Files::readDirectoryRecursively($packagePath, null, true);
-        foreach ($allPathsAndFilenames as $pathAndFilename) {
-            $pathInfo = pathinfo($pathAndFilename);
-            if (!isset($pathInfo['filename']) || $pathInfo['extension'] !== 'html') {
-                continue;
-            }
-            $fileContents = file_get_contents($pathAndFilename);
-            preg_match_all('/f\:(uri\.[\w]+|format\.json)/', $fileContents, $matches, PREG_SET_ORDER);
-            foreach ($matches as $match) {
-                $viewHelperName = $match[1];
-                if (!isset($foundAffectedViewHelpers[$viewHelperName])) {
-                    $foundAffectedViewHelpers[$viewHelperName] = array();
-                }
-                $truncatedPathAndFilename = substr($pathAndFilename, strlen($packagePath) + 1);
-                if (!in_array($truncatedPathAndFilename, $foundAffectedViewHelpers[$viewHelperName])) {
-                    $foundAffectedViewHelpers[$viewHelperName][] = $truncatedPathAndFilename;
-                }
-            }
-        }
-        foreach ($foundAffectedViewHelpers as $viewHelperName => $filePathsAndNames) {
-            $this->showWarning(sprintf('The behavior of the "%s" ViewHelper has been changed to produce escaped output.' . chr(10)
-                . 'This package makes use of this ViewHelper in the following files:' . chr(10) . '- %s' . chr(10)
-                . 'See upgrading instructions for further details.' . chr(10),
-                $viewHelperName, implode(chr(10) . '- ', $filePathsAndNames)));
+            $this->showWarning('Make sure that the "escapeOutput" property is correct for the following ViewHelpers:' . PHP_EOL . ' * ' . implode(PHP_EOL . ' * ', $affectedViewHelperClassNames) . PHP_EOL . PHP_EOL . 'If an affected ViewHelper does not render HTML output, you should set this property TRUE in order to ensure sanitization of the output!');
         }
     }
 }

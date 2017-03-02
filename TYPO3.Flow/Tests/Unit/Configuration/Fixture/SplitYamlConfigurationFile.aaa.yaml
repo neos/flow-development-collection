@@ -1,5 +1,0 @@
-configurationFileHasBeenLoaded: TRUE
-TYPO3:
-  Flow:
-    something: 'aaa'
-    '@bar': 1

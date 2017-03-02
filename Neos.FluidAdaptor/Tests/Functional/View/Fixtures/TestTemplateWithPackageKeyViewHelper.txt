@@ -1,1 +1,1 @@
-<typo3.fluid:format.raw>foobar</typo3.fluid:format.raw>
+<neos.fluidadaptor:format.raw>foobar</neos.fluidadaptor:format.raw>

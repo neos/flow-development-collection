@@ -1,12 +1,12 @@
 # folder inside repository, branch, title - adjust per branch!
-branch: 'master'
-docs-path: 'flow/master'
-title: 'Flow Framework (master branch)'
+branch: '4.0'
+docs-path: 'flow/4.0'
+title: 'Flow Framework (4.0 branch)'
 
 # some project specific settings
 docs-repository: 'neos/neos.github.io'
 docs-branch: 'master'
-exclude: 'TYPO3.*/Tests/*,TYPO3.*/Resources/*,TYPO3.*/Migrations/*'
+exclude: 'Neos.*/Tests/*,Neos.*/Resources/*,Neos.*/Migrations/*'
 template-theme: 'bootstrap'
 annotation-groups: 'api,deprecated,todo'
 

@@ -17,7 +17,7 @@ use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
  * Testcase for WidgetContext
  *
  */
-class WidgetContextTest extends \TYPO3\Flow\Tests\UnitTestCase
+class WidgetContextTest extends \Neos\Flow\Tests\UnitTestCase
 {
     /**
      * @var \Neos\FluidAdaptor\Core\Widget\WidgetContext

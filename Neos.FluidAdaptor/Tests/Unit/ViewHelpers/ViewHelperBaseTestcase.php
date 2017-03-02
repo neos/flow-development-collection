@@ -20,10 +20,10 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\TagBuilder;
 /**
  * Base test class for testing view helpers
  */
-abstract class ViewHelperBaseTestcase extends \TYPO3\Flow\Tests\UnitTestCase
+abstract class ViewHelperBaseTestcase extends \Neos\Flow\Tests\UnitTestCase
 {
     /**
-     * @var \TYPO3Fluid\Fluid\Core\ViewHelper\ViewHelperVariableContainer
+     * @var \TYPO3Fluid\Fluid\Core\ViewHelper\ViewHelperVariableContainer|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $viewHelperVariableContainer;
 
@@ -38,22 +38,22 @@ abstract class ViewHelperBaseTestcase extends \TYPO3\Flow\Tests\UnitTestCase
     protected $viewHelperVariableContainerData = array();
 
     /**
-     * @var \Neos\FluidAdaptor\Core\ViewHelper\TemplateVariableContainer
+     * @var \Neos\FluidAdaptor\Core\ViewHelper\TemplateVariableContainer|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $templateVariableContainer;
 
     /**
-     * @var \TYPO3\Flow\Mvc\Routing\UriBuilder
+     * @var \Neos\Flow\Mvc\Routing\UriBuilder|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $uriBuilder;
 
     /**
-     * @var \TYPO3\Flow\Mvc\Controller\ControllerContext
+     * @var \Neos\Flow\Mvc\Controller\ControllerContext|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $controllerContext;
 
     /**
-     * @var TagBuilder
+     * @var TagBuilder|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $tagBuilder;
 
@@ -63,12 +63,12 @@ abstract class ViewHelperBaseTestcase extends \TYPO3\Flow\Tests\UnitTestCase
     protected $arguments;
 
     /**
-     * @var \TYPO3\Flow\Mvc\ActionRequest
+     * @var \Neos\Flow\Mvc\ActionRequest|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $request;
 
     /**
-     * @var \Neos\FluidAdaptor\Core\Rendering\RenderingContext
+     * @var \Neos\FluidAdaptor\Core\Rendering\RenderingContext|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $renderingContext;
 
@@ -81,7 +81,7 @@ abstract class ViewHelperBaseTestcase extends \TYPO3\Flow\Tests\UnitTestCase
         $this->viewHelperVariableContainer->expects($this->any())->method('exists')->will($this->returnCallback(array($this, 'viewHelperVariableContainerExistsCallback')));
         $this->viewHelperVariableContainer->expects($this->any())->method('get')->will($this->returnCallback(array($this, 'viewHelperVariableContainerGetCallback')));
         $this->templateVariableContainer = $this->createMock(TemplateVariableContainer::class);
-        $this->uriBuilder = $this->createMock(\TYPO3\Flow\Mvc\Routing\UriBuilder::class);
+        $this->uriBuilder = $this->createMock(\Neos\Flow\Mvc\Routing\UriBuilder::class);
         $this->uriBuilder->expects($this->any())->method('reset')->will($this->returnValue($this->uriBuilder));
         $this->uriBuilder->expects($this->any())->method('setArguments')->will($this->returnValue($this->uriBuilder));
         $this->uriBuilder->expects($this->any())->method('setSection')->will($this->returnValue($this->uriBuilder));
@@ -90,10 +90,10 @@ abstract class ViewHelperBaseTestcase extends \TYPO3\Flow\Tests\UnitTestCase
         $this->uriBuilder->expects($this->any())->method('setAddQueryString')->will($this->returnValue($this->uriBuilder));
         $this->uriBuilder->expects($this->any())->method('setArgumentsToBeExcludedFromQueryString')->will($this->returnValue($this->uriBuilder));
         // BACKPORTER TOKEN #1
-        $httpRequest = \TYPO3\Flow\Http\Request::create(new \TYPO3\Flow\Http\Uri('http://localhost/foo'));
-        $this->request = $this->getMockBuilder(\TYPO3\Flow\Mvc\ActionRequest::class)->setConstructorArgs(array($httpRequest))->getMock();
+        $httpRequest = \Neos\Flow\Http\Request::create(new \Neos\Flow\Http\Uri('http://localhost/foo'));
+        $this->request = $this->getMockBuilder(\Neos\Flow\Mvc\ActionRequest::class)->setConstructorArgs(array($httpRequest))->getMock();
         $this->request->expects($this->any())->method('isMainRequest')->will($this->returnValue(true));
-        $this->controllerContext = $this->getMockBuilder(\TYPO3\Flow\Mvc\Controller\ControllerContext::class)->disableOriginalConstructor()->getMock();
+        $this->controllerContext = $this->getMockBuilder(\Neos\Flow\Mvc\Controller\ControllerContext::class)->disableOriginalConstructor()->getMock();
         $this->controllerContext->expects($this->any())->method('getUriBuilder')->will($this->returnValue($this->uriBuilder));
         $this->controllerContext->expects($this->any())->method('getRequest')->will($this->returnValue($this->request));
         $this->tagBuilder = $this->createMock(TagBuilder::class);

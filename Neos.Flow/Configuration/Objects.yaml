@@ -1,0 +1,394 @@
+#                                                                         #
+# Object Configuration for the Flow Framework                             #
+#                                                                         #
+# This file contains the default object configuration for the Flow        #
+# Framework. Because it is loaded at a very early stage during ini-       #
+# tialization, this configuration cannot be overridden by other con-      #
+# figuration files.                                                       #
+#                                                                         #
+
+DateTime:
+  scope: prototype
+  autowiring: off
+
+#                                                                          #
+# Cache                                                                    #
+#                                                                          #
+
+Neos\Cache\CacheFactoryInterface:
+  className: Neos\Flow\Cache\CacheFactory
+
+Neos\Flow\Cache\CacheFactory:
+  arguments:
+    1:
+      setting: Neos.Flow.context
+
+
+#                                                                          #
+# I18n                                                                     #
+#                                                                          #
+
+Neos\Flow\I18n\Service:
+  properties:
+    cache:
+      object:
+        factoryObjectName: Neos\Flow\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: Flow_I18n_AvailableLocalesCache
+Neos\Flow\I18n\Cldr\CldrModel:
+  properties:
+    cache:
+      object:
+        factoryObjectName: Neos\Flow\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: Flow_I18n_Cldr_CldrModelCache
+Neos\Flow\I18n\Xliff\XliffModel:
+  properties:
+    cache:
+      object:
+        factoryObjectName: Neos\Flow\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: Flow_I18n_XmlModelCache
+    i18nLogger:
+      object:
+        factoryObjectName: Neos\Flow\Log\LoggerFactory
+        arguments:
+          1:
+            value: 'Flow_I18n'
+          2:
+            value: 'Neos\Flow\Log\Logger'
+          3:
+            setting: Neos.Flow.log.i18nLogger.backend
+          4:
+            setting: Neos.Flow.log.i18nLogger.backendOptions
+Neos\Flow\I18n\Cldr\Reader\DatesReader:
+  properties:
+    cache:
+      object:
+        factoryObjectName: Neos\Flow\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: Flow_I18n_Cldr_Reader_DatesReaderCache
+Neos\Flow\I18n\Cldr\Reader\NumbersReader:
+  properties:
+    cache:
+      object:
+        factoryObjectName: Neos\Flow\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: Flow_I18n_Cldr_Reader_NumbersReaderCache
+Neos\Flow\I18n\Cldr\Reader\PluralsReader:
+  properties:
+    cache:
+      object:
+        factoryObjectName: Neos\Flow\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: Flow_I18n_Cldr_Reader_PluralsReaderCache
+
+#                                                                          #
+# Log                                                                      #
+#                                                                          #
+
+Neos\Flow\Log\Backend\FileBackend:
+  autowiring: off
+Neos\Flow\Log\Backend\NullBackend:
+  autowiring: off
+Neos\Flow\Log\SystemLoggerInterface:
+  scope: singleton
+  factoryObjectName: Neos\Flow\Log\LoggerFactory
+  arguments:
+    1:
+      # Note: This cannot be changed, it is hardcoded
+      value: 'SystemLogger'
+    2:
+      # Note: This cannot be changed here, adjust the setting if needed!
+      setting: Neos.Flow.log.systemLogger.logger
+    3:
+      # Note: This cannot be changed here, adjust the setting if needed!
+      setting: Neos.Flow.log.systemLogger.backend
+    4:
+      # Note: This cannot be changed here, adjust the setting if needed!
+      setting: Neos.Flow.log.systemLogger.backendOptions
+
+Neos\Flow\Log\SecurityLoggerInterface:
+  scope: singleton
+  factoryObjectName: Neos\Flow\Log\LoggerFactory
+  arguments:
+    1:
+      value: 'Flow_Security'
+    2:
+      value: 'Neos\Flow\Log\Logger'
+    3:
+      setting: Neos.Flow.log.securityLogger.backend
+    4:
+      setting: Neos.Flow.log.securityLogger.backendOptions
+
+#                                                                          #
+# Monitor                                                                  #
+#                                                                          #
+
+Neos\Flow\Monitor\ChangeDetectionStrategy\ModificationTimeStrategy:
+  properties:
+    cache:
+      object:
+        factoryObjectName: Neos\Flow\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: Flow_Monitor
+
+Neos\Flow\Monitor\FileMonitor:
+  properties:
+    cache:
+      object:
+        factoryObjectName: Neos\Flow\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: Flow_Monitor
+
+#                                                                          #
+# HTTP                                                                     #
+#                                                                          #
+
+Neos\Flow\Http\Component\ComponentChain:
+  factoryObjectName: Neos\Flow\Http\Component\ComponentChainFactory
+  arguments:
+    1:
+      setting: Neos.Flow.http.chain
+
+#                                                                          #
+# MVC                                                                      #
+#                                                                          #
+
+Neos\Flow\Mvc\Routing\RouterCachingService:
+  properties:
+    routeCache:
+      object:
+        factoryObjectName: Neos\Flow\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: Flow_Mvc_Routing_Route
+    resolveCache:
+      object:
+        factoryObjectName: Neos\Flow\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: Flow_Mvc_Routing_Resolve
+
+Neos\Flow\Mvc\ViewConfigurationManager:
+  properties:
+    cache:
+      object:
+        factoryObjectName: Neos\Flow\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: Flow_Mvc_ViewConfigurations
+#                                                                          #
+# ObjectManagement                                                         #
+#                                                                          #
+
+Neos\Flow\ObjectManagement\ObjectManagerInterface:
+  className: Neos\Flow\ObjectManagement\ObjectManager
+  scope: singleton
+  autowiring: off
+
+Neos\Flow\ObjectManagement\ObjectManager:
+  autowiring: off
+
+Neos\Flow\ObjectManagement\CompileTimeObjectManager:
+  autowiring: off
+
+#                                                                          #
+# Package Management                                                       #
+#                                                                          #
+
+Neos\Flow\Package\PackageManagerInterface:
+  scope: singleton
+
+#                                                                          #
+# Persistence                                                              #
+#                                                                          #
+
+Doctrine\Common\Persistence\ObjectManager:
+  scope: singleton
+  factoryObjectName: Neos\Flow\Persistence\Doctrine\EntityManagerFactory
+
+Neos\Flow\Persistence\PersistenceManagerInterface:
+  className: Neos\Flow\Persistence\Doctrine\PersistenceManager
+
+Neos\Flow\Persistence\Doctrine\Logging\SqlLogger:
+  properties:
+    logger:
+      object:
+        factoryObjectName: Neos\Flow\Log\LoggerFactory
+        arguments:
+          1:
+            value: 'Sql_Queries'
+          2:
+            value: 'Neos\Flow\Log\Logger'
+          3:
+            value: 'Neos\Flow\Log\Backend\FileBackend'
+          4:
+            setting: Neos.Flow.log.sqlLogger.backendOptions
+
+#
+# Property
+#
+
+Neos\Flow\Property\PropertyMapper:
+  properties:
+    cache:
+      object:
+        factoryObjectName: Neos\Flow\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: Flow_PropertyMapper
+
+#                                                                          #
+# ResourceManagement                                                       #
+#                                                                          #
+
+Neos\Flow\ResourceManagement\ResourceManager:
+  properties:
+    statusCache:
+      object:
+        factoryObjectName: Neos\Flow\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: Flow_Resource_Status
+
+#                                                                          #
+# Security                                                                 #
+#                                                                          #
+
+Neos\Flow\Security\Authentication\AuthenticationManagerInterface:
+  className: Neos\Flow\Security\Authentication\AuthenticationProviderManager
+
+
+Neos\Flow\Security\Cryptography\RsaWalletServiceInterface:
+  className: Neos\Flow\Security\Cryptography\RsaWalletServicePhp
+  scope: singleton
+  properties:
+    keystoreCache:
+      object:
+        factoryObjectName: Neos\Flow\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: Flow_Security_Cryptography_RSAWallet
+
+Neos\Flow\Security\Authorization\PrivilegeManagerInterface:
+  className: Neos\Flow\Security\Authorization\PrivilegeManager
+
+Neos\Flow\Security\Authorization\FirewallInterface:
+  className: Neos\Flow\Security\Authorization\FilterFirewall
+
+Neos\Flow\Security\Cryptography\HashService:
+  properties:
+    cache:
+      object:
+        factoryObjectName: Neos\Flow\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: Flow_Security_Cryptography_HashService
+
+Neos\Flow\Security\Cryptography\Pbkdf2HashingStrategy:
+  scope: singleton
+  arguments:
+    1:
+      setting: Neos.Flow.security.cryptography.Pbkdf2HashingStrategy.dynamicSaltLength
+    2:
+      setting: Neos.Flow.security.cryptography.Pbkdf2HashingStrategy.iterationCount
+    3:
+      setting: Neos.Flow.security.cryptography.Pbkdf2HashingStrategy.derivedKeyLength
+    4:
+      setting: Neos.Flow.security.cryptography.Pbkdf2HashingStrategy.algorithm
+
+Neos\Flow\Security\Cryptography\BCryptHashingStrategy:
+  scope: singleton
+  arguments:
+    1:
+      setting: Neos.Flow.security.cryptography.BCryptHashingStrategy.cost
+
+Neos\Flow\Security\Authorization\Privilege\Method\MethodTargetExpressionParser:
+  scope: singleton
+
+Neos\Flow\Security\Authorization\Privilege\Method\MethodPrivilegePointcutFilter:
+  scope: singleton
+  properties:
+    objectManager:
+      object: Neos\Flow\ObjectManagement\ObjectManagerInterface
+
+Neos\Flow\Security\Authorization\Privilege\Entity\Doctrine\EntityPrivilegeExpressionEvaluator:
+  properties:
+    expressionCache:
+      object:
+        factoryObjectName: Neos\Flow\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: Eel_Expression_Code
+
+#                                                                          #
+# Session                                                                  #
+#                                                                          #
+
+Neos\Flow\Session\SessionInterface:
+  scope: singleton
+  factoryObjectName: Neos\Flow\Session\SessionManagerInterface
+  factoryMethodName: getCurrentSession
+
+Neos\Flow\Session\Session:
+  properties:
+    metaDataCache:
+      object:
+        factoryObjectName: Neos\Flow\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: Flow_Session_MetaData
+    storageCache:
+      object:
+        factoryObjectName: Neos\Flow\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: Flow_Session_Storage
+
+Neos\Flow\Session\SessionManagerInterface:
+  className: Neos\Flow\Session\SessionManager
+
+Neos\Flow\Session\SessionManager:
+  properties:
+    metaDataCache:
+      object:
+        factoryObjectName: Neos\Flow\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: Flow_Session_MetaData
+
+#                                                                          #
+# Utility                                                                  #
+#                                                                          #
+
+Neos\Utility\PdoHelper:
+  autowiring: off
+  scope: prototype

@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file original="" product-name="Neos.Flow" source-language="en" datatype="plaintext" target-language="zh-CN">
+    <body>
+      <!-- AlphanumericValidator -->
+      <trans-unit id="1221551320" xml:space="preserve">
+				<source>Only regular characters (a to z, umlauts, ...) and numbers are allowed.</source>
+			<target xml:lang="zh-CN" state="translated">只允许字母和数字</target><alt-trans><target xml:lang="zh-CN">只有常规字符 (到 z，元音变音，...) 和允许数字。</target></alt-trans></trans-unit>
+      <!-- BooleanValueValidator -->
+      <trans-unit id="1361044943" xml:space="preserve">
+				<source>The given value is expected to be {0}.</source>
+			<target xml:lang="zh-CN" state="translated">只允许 {0}</target></trans-unit>
+      <!-- CollectionValidator -->
+      <trans-unit id="1317204797" xml:space="preserve">
+				<source>The given subject is not a collection</source>
+			<target xml:lang="zh-CN" state="translated">给定对象, 不是一个集合</target></trans-unit>
+      <!-- CountValidator -->
+      <trans-unit id="1253718666" xml:space="preserve">
+				<source>The given subject is not countable</source>
+			<target xml:lang="zh-CN" state="translated">给定的对象不可数</target></trans-unit>
+      <trans-unit id="1253718831" xml:space="preserve">
+				<source>The count must be between {0,number} and {1,number}</source>
+			<target xml:lang="zh-CN" state="translated">大小必须在 {0,number} , {1,number}之间</target></trans-unit>
+      <!-- DateTimeRangeValidator -->
+      <trans-unit id="1324314378" xml:space="preserve">
+				<source>The given value is not a valid date</source>
+			<target xml:lang="zh-CN" state="translated">不是有效日期</target></trans-unit>
+      <trans-unit id="1325615630" xml:space="preserve">
+				<source>The given date must be between {0} and {1}</source>
+			<target xml:lang="zh-CN" state="translated">日期必须在 {0} 到 {1}之间</target></trans-unit>
+      <trans-unit id="1324315107" xml:space="preserve">
+				<source>The given date must be after {0}</source>
+			<target xml:lang="zh-CN" state="translated">给定的日期必须在 {0} 之后</target></trans-unit>
+      <trans-unit id="1324315115" xml:space="preserve">
+				<source>The given date must be before {0}</source>
+			<target xml:lang="zh-CN" state="translated">给定的日期必须在 {0} 之前</target></trans-unit>
+      <!-- DateTimeValidator -->
+      <trans-unit id="1281454676" xml:space="preserve">
+				<source>The "locale" option can be only set to string identifier, or Locale object</source>
+			<target xml:lang="zh-CN" state="translated">"区域" 只能为字符串或者区域对象</target></trans-unit>
+      <trans-unit id="1281454830" xml:space="preserve">
+				<source>A valid time is expected</source>
+			<target xml:lang="zh-CN" state="translated">只允许有效时间</target></trans-unit>
+      <trans-unit id="1281454831" xml:space="preserve">
+				<source>A valid date and time is expected</source>
+			<target xml:lang="zh-CN" state="translated">只允许有效的日期和时间</target><alt-trans><target xml:lang="zh-CN">只允许有效果日期和时间</target></alt-trans></trans-unit>
+      <trans-unit id="1281454832" xml:space="preserve">
+				<source>A valid date is expected</source>
+			<target xml:lang="zh-CN" state="translated">只允许有效日期</target></trans-unit>
+      <!-- EmailAddressValidator -->
+      <trans-unit id="1221559976" xml:space="preserve">
+				<source>Please specify a valid email address</source>
+			<target xml:lang="zh-CN" state="translated">请指定一个有效的电子邮件地址。</target></trans-unit>
+      <!-- FloatValidator -->
+      <trans-unit id="1221560288" xml:space="preserve">
+				<source>A valid float number is expected</source>
+			<target xml:lang="zh-CN" state="translated">只允许浮点型数字</target></trans-unit>
+      <trans-unit id="1332934124" xml:space="preserve">
+				<source>"{0}" cannot be converted to a float value</source>
+			<target xml:lang="zh-CN" state="translated">"{0}"不能转换为一个浮点值</target></trans-unit>
+      <!-- GenericObjectValidator -->
+      <trans-unit id="1241099149" xml:space="preserve">
+				<source>Object expected, {0} given</source>
+			<target xml:lang="zh-CN" state="translated">给定的 {0} 不是一个对象</target></trans-unit>
+      <!-- IntegerValidator -->
+      <trans-unit id="1221560494" xml:space="preserve">
+				<source>A valid integer number is expected</source>
+			<target xml:lang="zh-CN" state="translated">要求有效的整数。</target></trans-unit>
+      <trans-unit id="1332933658" xml:space="preserve">
+				<source>"{0}" is no integer.</source>
+			<target xml:lang="zh-CN" state="translated">"{0}"不是整数</target></trans-unit>
+      <!-- LabelValidator -->
+      <trans-unit id="1272298003" xml:space="preserve">
+				<source>Only letters, numbers, spaces and certain punctuation marks are expected</source>
+			<target xml:lang="zh-CN" state="translated">要求只有字母、 数字、 空格和某些标点符号</target></trans-unit>
+      <!-- LocaleIdentifierValidator -->
+      <trans-unit id="1327090892" xml:space="preserve">
+				<source>Value is no valid I18n locale identifier</source>
+			<target xml:lang="zh-CN" state="translated">值是无效的 I18n 区域设置标识符</target></trans-unit>
+      <!-- NotEmptyValidator -->
+      <trans-unit id="1221560910" xml:space="preserve">
+				<source>This property is required</source>
+			<target xml:lang="zh-CN" state="translated">此属性是必需的</target></trans-unit>
+      <trans-unit id="1221560718" xml:space="preserve">
+				<source>This property is required</source>
+			<target xml:lang="zh-CN" state="translated">此属性是必需的</target></trans-unit>
+      <!-- NumberRangeValidator -->
+      <trans-unit id="1221563685" xml:space="preserve">
+				<source>A valid number is expected</source>
+			<target xml:lang="zh-CN" state="translated">要求一个有效的数字。</target></trans-unit>
+      <trans-unit id="1221561046" xml:space="preserve">
+				<source>Please enter a valid number between {0,number} and {1,number}</source>
+			<target xml:lang="zh-CN" state="translated">请输入一个有效号码 {0,number} 和 {1,number} 之间</target></trans-unit>
+      <!-- NumberValidator -->
+      <trans-unit id="1281286579" xml:space="preserve">
+				<source>The "locale" option can be only set to string identifier, or Locale object</source>
+			<target xml:lang="zh-CN" state="translated">"区域" 只能为字符串或者区域对象</target></trans-unit>
+      <trans-unit id="1281452093" xml:space="preserve">
+				<source>A valid percent number is expected</source>
+			<target xml:lang="zh-CN" state="translated">要求一个有效的百分比数字</target></trans-unit>
+      <trans-unit id="1281452094" xml:space="preserve">
+				<source>A valid decimal number is expected</source>
+			<target xml:lang="zh-CN" state="translated">要求有效的十进制数</target></trans-unit>
+      <!-- RegularExpressionValidator -->
+      <trans-unit id="1221565130" xml:space="preserve">
+				<source>The given subject did not match the pattern. Got: {0}</source>
+			<target xml:lang="zh-CN" state="translated">给定的主题不匹配的模式。得到: {0}</target></trans-unit>
+      <!-- StringLengthValidator -->
+      <trans-unit id="1238110957" xml:space="preserve">
+				<source>The given object could not be converted to a string</source>
+			<target xml:lang="zh-CN" state="translated">不能将给定的对象转换为字符串</target></trans-unit>
+      <trans-unit id="1269883975" xml:space="preserve">
+				<source>The given value is not a valid string</source>
+			<target xml:lang="zh-CN" state="translated">给定的值不是有效的字符串</target></trans-unit>
+      <trans-unit id="1238108067" xml:space="preserve">
+				<source>The length of this text must be between {0,number} and {1,number} characters</source>
+			<target xml:lang="zh-CN" state="translated">此文本的长度必须介于 {0,number} 和 {1,number} 个字符之间</target></trans-unit>
+      <group id="1238108068" restype="x-gettext-plurals">
+        <trans-unit id="1238108068[0]">
+          <source>This field must contain at least {0,number} characters</source>
+          <target xml:lang="zh-CN" state="translated">此字段必须包含至少 {0,number} 字符</target>
+        </trans-unit>
+      </group>
+      <group id="1238108069" restype="x-gettext-plurals">
+        <trans-unit id="1238108069[0]">
+          <source>This text may not exceed {0,number} characters</source>
+          <target xml:lang="zh-CN" state="translated">此文本不得超过 {0,number} 字符</target>
+        </trans-unit>
+      </group>
+      <!-- StringValidator -->
+      <trans-unit id="1238108070" xml:space="preserve">
+				<source>A valid string is expected</source>
+			<target xml:lang="zh-CN" state="translated">要求有效的字符串。</target></trans-unit>
+      <!-- TextValidator -->
+      <trans-unit id="1221565786" xml:space="preserve">
+				<source>Valid text without any XML tags is expected</source>
+			<target xml:lang="zh-CN" state="translated">要求没有任何 XML 标签的有效文本。</target></trans-unit>
+      <!-- UuidValidator -->
+      <trans-unit id="1221565853" xml:space="preserve">
+				<source>The given subject is not a valid UUID</source>
+			<target xml:lang="zh-CN" state="translated">给定的标题不是一个有效的 UUID。</target></trans-unit>
+      <!-- ElectronicAddressValidator -->
+      <trans-unit id="1268676030" xml:space="preserve">
+				<source>No validator found for electronic address of type "{0}"</source>
+			<target xml:lang="zh-CN" state="translated">找不到类型"{0}"的电子地址没有验证程序</target></trans-unit>
+      <!-- PersonNameValidator -->
+      <trans-unit id="1268676765" xml:space="preserve">
+				<source>The person name cannot be empty</source>
+			<target xml:lang="zh-CN" state="translated">人名称不能为空</target></trans-unit>
+      <!-- Package "Neos.Media" -->
+      <!-- ImageTypeValidator -->
+      <trans-unit id="1327947256" xml:space="preserve">
+				<source>The given value is not a Image instance</source>
+			<target xml:lang="zh-CN" state="translated">给定的值不是一个图像实例</target></trans-unit>
+      <trans-unit id="1327947647" xml:space="preserve">
+				<source>The image type "{0}" is not allowed</source>
+			<target xml:lang="zh-CN" state="translated">"{0}"的图像类型不允许</target></trans-unit>
+      <trans-unit id="1328030664" xml:space="preserve">
+				<source>The uploaded file is no valid image</source>
+			<target xml:lang="zh-CN" state="translated">上传的文件不是有效的图像</target></trans-unit>
+      <!-- ImageSizeValidator -->
+      <trans-unit id="1327943859" xml:space="preserve">
+				<source>The given value is not a Image instance</source>
+			<target xml:lang="zh-CN" state="translated">给定的值不是一个图像实例</target></trans-unit>
+      <trans-unit id="1319801362" xml:space="preserve">
+				<source>The actual image width of {0,number} is lower than the allowed minimum width of {1,number}</source>
+			<target xml:lang="zh-CN" state="translated">{0,number} 的实际图像宽度小于允许的最小宽度的 {1,number}</target></trans-unit>
+      <trans-unit id="1319801859" xml:space="preserve">
+				<source>The actual image width of {0,number} is higher than the allowed maximum width of {1,number}</source>
+			<target xml:lang="zh-CN" state="translated">{0,number} 的实际图像宽度小于允许的最小宽度的 {1,number}</target></trans-unit>
+      <trans-unit id="1319801925" xml:space="preserve">
+				<source>The actual image height of {0,number} is lower than the allowed minimum height of {1,number}</source>
+			<target xml:lang="zh-CN" state="translated">{0,number} 的实际图像高度小于允许的最小高度的 {1,number}</target></trans-unit>
+      <trans-unit id="1319801929" xml:space="preserve">
+				<source>The actual image height of {0,number} is higher than the allowed maximum height of {1,number}</source>
+			<target xml:lang="zh-CN" state="translated">{0,number} 的实际图像高度大于 {1,number} 的允许最大高度</target></trans-unit>
+      <trans-unit id="1319813336" xml:space="preserve">
+				<source>The given image size of {0,number} x {1,number} is too low for the required minimum resolution of {2,number}</source>
+			<target xml:lang="zh-CN" state="translated">{0,number} x {1,number} 的给定的图像大小是 {2,number} 所需的最小分辨率太低</target></trans-unit>
+      <trans-unit id="1319813355" xml:space="preserve">
+				<source>The given image size of {0,number} x {1,number} is too high for the required maximum resolution of {2,number}</source>
+			<target xml:lang="zh-CN" state="translated">{0,number} x {1,number} 的给定的图像大小是太高了，所需的最大分辨率为 {2,number}</target></trans-unit>
+      <!-- ImageOrientationValidator -->
+      <trans-unit id="1328028604" xml:space="preserve">
+				<source>The given value is not a Image instance</source>
+			<target xml:lang="zh-CN" state="translated">给定的值不是一个图像实例</target></trans-unit>
+      <trans-unit id="1328029406" xml:space="preserve">
+				<source>The image orientation must be "{0}"</source>
+			<target xml:lang="zh-CN" state="translated">图片定位必须是"{0}"</target><alt-trans><target xml:lang="zh-CN">形象定位必须是"{0}"</target></alt-trans></trans-unit>
+      <trans-unit id="1328029362" xml:space="preserve">
+				<source>The image orientation "{0}" is not allowed</source>
+			<target xml:lang="zh-CN" state="translated">图片定位"{0}"不是允许的</target></trans-unit>
+    </body>
+  </file>
+</xliff>
