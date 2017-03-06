@@ -208,9 +208,6 @@ class FileSystemTargetTest extends UnitTestCase
     public function getWorksWithPackageStorage()
     {
         vfsStream::setup('Test');
-        mkdir('vfs://Test/Packages/Application', 0700, true);
-        mkdir('vfs://Test/Packages/Application/TYPO3.Flow/Resources/Public/', 0700, true);
-        touch('vfs://Test/Packages/Application/TYPO3.Flow/Resources/Public/test.css');
         mkdir('vfs://Test/Configuration');
         $packageManager = new PackageManager('vfs://Test/Configuration/PackageStates.php');
         $packageManager->createPackage("TYPO3.Flow");
