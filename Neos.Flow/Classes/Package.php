@@ -116,5 +116,7 @@ class Package extends BasePackage
         $dispatcher->connect(\Neos\Flow\Package\PackageManager::class, 'packageStatesUpdated', function () use ($dispatcher) {
             $dispatcher->connect(\Neos\Flow\Core\Bootstrap::class, 'bootstrapShuttingDown', \Neos\Flow\Cache\CacheManager::class, 'flushCaches');
         });
+
+        $dispatcher->connect(\Neos\Flow\Persistence\Doctrine\EntityManagerFactory::class, 'beforeDoctrineEntityManagerCreation', \Neos\Flow\Persistence\Doctrine\EntityManagerConfiguration::class, 'configureEntityManager');
     }
 }
