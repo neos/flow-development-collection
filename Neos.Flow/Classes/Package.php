@@ -118,5 +118,6 @@ class Package extends BasePackage
         });
 
         $dispatcher->connect(\Neos\Flow\Persistence\Doctrine\EntityManagerFactory::class, 'beforeDoctrineEntityManagerCreation', \Neos\Flow\Persistence\Doctrine\EntityManagerConfiguration::class, 'configureEntityManager');
+        $dispatcher->connect(\Neos\Flow\Persistence\Doctrine\EntityManagerFactory::class, 'afterDoctrineEntityManagerCreation', \Neos\Flow\Persistence\Doctrine\EntityManagerConfiguration::class, 'enhanceEntityManager');
     }
 }

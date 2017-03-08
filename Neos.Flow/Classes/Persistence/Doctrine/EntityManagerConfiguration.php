@@ -14,7 +14,9 @@ namespace Neos\Flow\Persistence\Doctrine;
 use Doctrine\Common\EventManager;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\Configuration;
+use Doctrine\ORM\EntityManager;
 use Neos\Flow\Cache\CacheManager;
 use Neos\Flow\Configuration\Exception\InvalidConfigurationException;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
@@ -172,5 +174,27 @@ class EntityManagerConfiguration
 
         $factory = new \Doctrine\ORM\Cache\DefaultCacheFactory($regionsConfiguration, $cache);
         $doctrineConfiguration->getSecondLevelCacheConfiguration()->setCacheFactory($factory);
+    }
+
+    /**
+     * @param Configuration $config
+     * @param EntityManager $entityManager
+     * @throws \Doctrine\DBAL\DBALException
+     */
+    public function enhanceEntityManager(Configuration $config, EntityManager $entityManager)
+    {
+        if (isset($this->settings['doctrine']['dbal']['mappingTypes']) && is_array($this->settings['doctrine']['dbal']['mappingTypes'])) {
+            foreach ($this->settings['doctrine']['dbal']['mappingTypes'] as $typeName => $typeConfiguration) {
+                Type::addType($typeName, $typeConfiguration['className']);
+                $entityManager->getConnection()->getDatabasePlatform()->registerDoctrineTypeMapping($typeConfiguration['dbType'], $typeName);
+            }
+        }
+
+        if (isset($this->settings['doctrine']['filters']) && is_array($this->settings['doctrine']['filters'])) {
+            foreach ($this->settings['doctrine']['filters'] as $filterName => $filterClass) {
+                $config->addFilter($filterName, $filterClass);
+                $entityManager->getFilters()->enable($filterName);
+            }
+        }
     }
 }

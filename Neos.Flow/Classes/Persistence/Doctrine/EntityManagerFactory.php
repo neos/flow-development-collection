@@ -15,7 +15,6 @@ use Doctrine\Common\EventManager;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception\ConnectionException;
-use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\Configuration;
 use Doctrine\ORM\EntityManager;
 use Neos\Flow\Annotations as Flow;
@@ -67,9 +66,6 @@ class EntityManagerFactory
     public function injectSettings(array $settings)
     {
         $this->settings = $settings['persistence'];
-        if (!is_array($this->settings['doctrine'])) {
-            throw new InvalidConfigurationException(sprintf('The Neos.Flow.persistence.doctrine settings need to be an array, %s given.', gettype($this->settings['doctrine'])), 1392800005);
-        }
         if (!is_array($this->settings['backendOptions'])) {
             throw new InvalidConfigurationException(sprintf('The Neos.Flow.persistence.backendOptions settings need to be an array, %s given.', gettype($this->settings['backendOptions'])), 1426149224);
         }
@@ -119,20 +115,7 @@ class EntityManagerFactory
         $this->emitBeforeDoctrineEntityManagerCreation($connection, $config, $eventManager);
         $entityManager = EntityManager::create($connection, $config, $eventManager);
         $flowAnnotationDriver->setEntityManager($entityManager);
-
-        if (isset($this->settings['doctrine']['dbal']['mappingTypes']) && is_array($this->settings['doctrine']['dbal']['mappingTypes'])) {
-            foreach ($this->settings['doctrine']['dbal']['mappingTypes'] as $typeName => $typeConfiguration) {
-                Type::addType($typeName, $typeConfiguration['className']);
-                $entityManager->getConnection()->getDatabasePlatform()->registerDoctrineTypeMapping($typeConfiguration['dbType'], $typeName);
-            }
-        }
-
-        if (isset($this->settings['doctrine']['filters']) && is_array($this->settings['doctrine']['filters'])) {
-            foreach ($this->settings['doctrine']['filters'] as $filterName => $filterClass) {
-                $config->addFilter($filterName, $filterClass);
-                $entityManager->getFilters()->enable($filterName);
-            }
-        }
+        $this->emitAfterDoctrineEntityManagerCreation($config, $entityManager);
 
         return $entityManager;
     }
@@ -144,6 +127,15 @@ class EntityManagerFactory
      * @Flow\Signal
      */
     public function emitBeforeDoctrineEntityManagerCreation(Connection $connection, Configuration $config, EventManager $eventManager)
+    {
+    }
+
+    /**
+     * @param Configuration $config
+     * @param EntityManager $entityManager
+     * @Flow\Signal
+     */
+    public function emitAfterDoctrineEntityManagerCreation(Configuration $config, EntityManager $entityManager)
     {
     }
 }
