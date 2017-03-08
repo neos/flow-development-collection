@@ -129,6 +129,22 @@ class ObjectConverterTest extends FunctionalTestCase
     /**
      * @test
      */
+    public function getTypeOfChildPropertyReturnsNullIfPropertyDoesNotExistAndCanBeIgnored()
+    {
+        $configuration = new PropertyMappingConfiguration();
+        $configuration->skipUnknownProperties();
+
+        $result = $this->converter->getTypeOfChildProperty(
+            Fixtures\TestClass::class,
+            'someUnknownProperty',
+            $configuration
+        );
+        $this->assertNull($result);
+    }
+
+    /**
+     * @test
+     */
     public function convertFromAllowsAutomaticInjectionOfSingletonConstructorArguments()
     {
         $convertedObject = $this->converter->convertFrom(
