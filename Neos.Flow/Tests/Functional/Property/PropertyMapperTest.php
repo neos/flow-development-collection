@@ -288,6 +288,26 @@ class PropertyMapperTest extends FunctionalTestCase
     }
 
     /**
+     * ObjectConverter->getTypeOfChildProperty will return null if the given property is unknown and skipUnknownPropertiers()
+     * is set. This test makes sure that doMapping() will skip such a property.
+     *
+     * @test
+     */
+    public function skipPropertyIfTypeConverterReturnsNullForChildPropertyType()
+    {
+        $source = [
+            'name' => 'Smilla',
+            'unknownProperty' => 'Oh Harvey!'
+        ];
+
+        $configuration = $this->propertyMapper->buildPropertyMappingConfiguration();
+        $configuration->skipUnknownProperties();
+
+        $mappingResult = $this->propertyMapper->convert($source, Fixtures\TestClass::class, $configuration);
+        $this->assertInstanceOf(Fixtures\TestClass::class, $mappingResult);
+    }
+
+    /**
      * Add and persist a test entity, and return the identifier of the newly created
      * entity.
      *
