@@ -21,7 +21,7 @@ use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\Flow\Tests\Functional\Property\Fixtures;
 
 /**
- * Testcase for Property Mapper
+ * Test case for Property Mapper
  */
 class PropertyMapperTest extends FunctionalTestCase
 {
@@ -142,7 +142,7 @@ class PropertyMapperTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function targetTypeForEntityCanBeOverridenIfConfigured()
+    public function targetTypeForEntityCanBeOverriddenIfConfigured()
     {
         $source = [
             '__type' => Fixtures\TestEntitySubclass::class,
@@ -161,7 +161,7 @@ class PropertyMapperTest extends FunctionalTestCase
      * @test
      * @expectedException \Neos\Flow\Property\Exception
      */
-    public function overridenTargetTypeForEntityMustBeASubclass()
+    public function overriddenTargetTypeForEntityMustBeASubclass()
     {
         $source = [
             '__type' => Fixtures\TestClass::class,
@@ -177,7 +177,7 @@ class PropertyMapperTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function targetTypeForSimpleObjectCanBeOverridenIfConfigured()
+    public function targetTypeForSimpleObjectCanBeOverriddenIfConfigured()
     {
         $source = [
             '__type' => Fixtures\TestSubclass::class,
@@ -195,7 +195,7 @@ class PropertyMapperTest extends FunctionalTestCase
      * @test
      * @expectedException \Neos\Flow\Property\Exception
      */
-    public function overridenTargetTypeForSimpleObjectMustBeASubclass()
+    public function overriddenTargetTypeForSimpleObjectMustBeASubclass()
     {
         $source = [
             '__type' => Fixtures\TestEntity::class,
@@ -259,7 +259,7 @@ class PropertyMapperTest extends FunctionalTestCase
     }
 
     /**
-     * Testcase for http://forge.typo3.org/issues/36988 - needed for Neos
+     * Test case for http://forge.typo3.org/issues/36988 - needed for Neos
      * editing
      *
      * @test
@@ -274,7 +274,7 @@ class PropertyMapperTest extends FunctionalTestCase
     }
 
     /**
-     * Testcase for http://forge.typo3.org/issues/39445
+     * Test case for http://forge.typo3.org/issues/39445
      *
      * @test
      */
@@ -309,7 +309,7 @@ class PropertyMapperTest extends FunctionalTestCase
     }
 
     /**
-     * Testcase for #32829
+     * Test case for #32829
      *
      * @test
      */
