@@ -356,6 +356,15 @@ to clean up hard disk space or memory.
 	not with a capable database like Oracle. We appreciate any feedback for real life use
 	cases of this cache.
 
+.. warning::
+
+	When using MySQL with the PDO backend, you have to create the needed caching tables manually.
+	The table definition for MySQL is the same as the definition for SQLite, which can be
+	found in ``TYPO3.Flow/Resources/Private/Cache/SQL/DDL.sql``.
+	For some cache entries, especially for the content cache, the length of ``TEXT`` (64kb) on
+	the column ``content`` can be too short and would lead to croped caching entries.
+	At least ``MEDIUMTEXT`` should be used.
+
 Options
 ~~~~~~~
 
