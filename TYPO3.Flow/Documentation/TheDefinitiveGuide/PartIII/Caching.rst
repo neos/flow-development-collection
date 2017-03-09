@@ -352,20 +352,20 @@ to clean up hard disk space or memory.
 
 .. note::
 
-	There is currently very little production experience with this  backend, especially
-	not with a capable database like Oracle. We appreciate any feedback for real life use
-	cases of this cache.
+  There is currently very little production experience with this  backend, especially
+  not with a capable database like Oracle. We appreciate any feedback for real life use
+  cases of this cache.
 
 .. note::
 
-	When _not using SQLite_, you have to create the needed caching tables manually.
-	The table definition (as used automatically for SQLite) can be found in the
+  When _not using SQLite_, you have to create the needed caching tables manually.
+  The table definition (as used automatically for SQLite) can be found in the
   file ``TYPO3.Flow/Resources/Private/Cache/SQL/DDL.sql``. It works unchanged for
   MySQL, for other RDBMS you might need to adjust the DDL manually.
 
 .. warning::
 
-	For some cache entries, especially for the content cache, the length of ``TEXT`` (64kb
+  For some cache entries, especially for the content cache, the length of ``TEXT`` (64kb
   on MySQL) on the column ``content`` can be too short and might lead to cropped
   cache entries. At least ``MEDIUMTEXT`` should be used in those cases.
 
