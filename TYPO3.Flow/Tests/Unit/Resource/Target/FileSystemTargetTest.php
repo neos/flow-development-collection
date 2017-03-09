@@ -216,17 +216,20 @@ class FileSystemTargetTest extends UnitTestCase
         $packageStorage = new PackageStorage('testStorage');
 
         $mockSystemLogger = $this->getMockBuilder(SystemLoggerInterface::class)->getMock();
-        $this->inject($this->fileSystemTarget, 'systemLogger', $mockSystemLogger);
+
         $this->inject($packageStorage, 'packageManager', $packageManager);
 
         $oneResourcePublished = false;
 
-        $_publicationCallback = function () use (&$oneResourcePublished) {
+        $_publicationCallback = function ($i, $o) use (&$oneResourcePublished) {
             $oneResourcePublished = true;
         };
 
         $staticCollection = new Collection('testStaticCollection', $packageStorage, $this->fileSystemTarget, ['*']);
-        $this->fileSystemTarget->publishCollection($staticCollection, $_publicationCallback);
+
+        $fileSystemTarget = new FileSystemTarget('test', ['path' => 'vfs://Publish']);
+        $this->inject($fileSystemTarget, 'systemLogger', $mockSystemLogger);
+        $fileSystemTarget->publishCollection($staticCollection, $_publicationCallback);
 
         $this->assertTrue($oneResourcePublished);
     }
