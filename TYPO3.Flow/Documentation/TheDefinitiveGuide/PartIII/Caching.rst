@@ -358,7 +358,7 @@ to clean up hard disk space or memory.
 
 .. note::
 
-  When _not using SQLite_, you have to create the needed caching tables manually.
+  When *not using SQLite*, you have to create the needed caching tables manually.
   The table definition (as used automatically for SQLite) can be found in the
   file ``TYPO3.Flow/Resources/Private/Cache/SQL/DDL.sql``. It works unchanged for
   MySQL, for other RDBMS you might need to adjust the DDL manually.
