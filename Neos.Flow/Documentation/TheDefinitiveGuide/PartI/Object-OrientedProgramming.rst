@@ -114,7 +114,7 @@ PHP Code::
 Our ship now has a name (``$name``\ ), a number of coaches (``$coaches``\ ) and a
 speed (``$speed``\ ). In addition we built in a variable, containing the status
 of the engine (``$engineStatus``\ ). A real ship, of course, has much more
-properties, all important somehow – for our our abstraction these few will be
+properties, all important somehow – for our abstraction these few will be
 sufficient though. We'll focus on why every property is marked with the key
 word ``public`` further down.
 
