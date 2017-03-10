@@ -72,7 +72,7 @@ Classes and Objects
 
 Let's now take a step back and imagine there'd be a blueprint for ships
 in general. We now focus not the ship but this blueprint. It is called
-**class**, in this case is is the class ``Ship``. In PHP this is written as
+**class**, in this case it is the class ``Ship``. In PHP this is written as
 follows;
 
 PHP Code::
