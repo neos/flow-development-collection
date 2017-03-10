@@ -1,0 +1,49 @@
+`4.0.2 (2017-03-10) <https://github.com/neos/flow-development-collection/releases/tag/4.0.2>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Automatic fluid namespace work with PSR-4 autoload paths <https://github.com/neos/flow-development-collection/pull/882>`_
+----------------------------------------------------------------------------------------------------------------------------------
+
+Due to the way the namespace to ViewHelpers in packages was constructed
+it resulted in rather strange errors trying to use one of the automatically
+prepared namespaces in a template.
+The namespaces are now constructed accordingly depending on the autoload type.
+
+* Packages: ``FluidAdaptor``
+
+`BUGFIX: Fix changelog and release note rendering <https://github.com/neos/flow-development-collection/pull/881>`_
+------------------------------------------------------------------------------------------------------------------
+
+This fixes a few places and adjusts some files so the 4.0 branch has proper 
+release notes and changelog rendering.
+
+* Packages: ``Flow``
+
+`BUGFIX: Consider accounts with \`\`expirationDate\`\` in the future as active <https://github.com/neos/flow-development-collection/pull/875>`_
+-----------------------------------------------------------------------------------------------------------------------------------------------
+
+**What I did**
+
+I fixed ``Account::isActive()`` behavior when an expirationDate is set.
+
+**How I did it**
+
+The "Now" injection is now non-lazy, thus the comparison of DateTime objects works.
+
+**How to verify it**
+
+Run the new functional test ``TYPO3.Flow/Tests/Functional/Security/AccountTest.php``
+
+**Checklist**
+
+- [x] Code follows the PSR-2 coding style
+- [ ] Tests have been created, run and adjusted as needed
+- [x] The PR is created against the [lowest maintained branch](https://www.neos.io/features/release-roadmap.html)
+
+Resolves #873
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/4.0.1...4.0.2>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
