@@ -160,6 +160,11 @@ class ObjectConverter extends AbstractTypeConverter
                 }
             }
         }
+
+        if ($configuration->shouldSkipUnknownProperties() || $configuration->shouldSkip($propertyName)) {
+            return null;
+        }
+
         throw new InvalidTargetException(sprintf('Property "%s" has neither a setter or constructor argument, nor is public, in target object of type "%s".', $propertyName, $targetType), 1303379126);
     }
 
