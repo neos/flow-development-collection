@@ -363,11 +363,11 @@ to clean up hard disk space or memory.
   file ``TYPO3.Flow/Resources/Private/Cache/SQL/DDL.sql``. It works unchanged for
   MySQL, for other RDBMS you might need to adjust the DDL manually.
 
-.. warning::
+.. note::
 
-  For some cache entries, especially for the content cache, the length of ``TEXT`` (64kb
-  on MySQL) on the column ``content`` can be too short and might lead to cropped
-  cache entries. At least ``MEDIUMTEXT`` should be used in those cases.
+  When *not using SQLite* the maximum length of each cache entry is restricted.
+  The default in ``TYPO3.Flow/Resources/Private/Cache/SQL/DDL.sql``
+  is ``MEDIUMTEXT`` (16mb on MySQL), which should be sufficient in most cases.
 
 Options
 ~~~~~~~
