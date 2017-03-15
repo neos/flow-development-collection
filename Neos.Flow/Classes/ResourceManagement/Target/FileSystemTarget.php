@@ -12,6 +12,7 @@ namespace Neos\Flow\ResourceManagement\Target;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Cli\CommandRequestHandler;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Http\HttpRequestHandlerInterface;
 use Neos\Flow\Log\SystemLoggerInterface;
@@ -352,6 +353,11 @@ class FileSystemTarget implements TargetInterface
         }
 
         $requestHandler = $this->bootstrap->getActiveRequestHandler();
+
+        if ($requestHandler instanceof CommandRequestHandler) {
+            return '/' . $this->baseUri;
+        }
+
         if ($requestHandler instanceof HttpRequestHandlerInterface) {
             return $requestHandler->getHttpRequest()->getBaseUri() . $this->baseUri;
         }
