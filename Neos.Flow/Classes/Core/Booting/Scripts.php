@@ -511,6 +511,7 @@ class Scripts
                 self::monitorDirectoryIfItExists($fileMonitors['Flow_ClassFiles'], $package->getFunctionalTestsPath(), '\.php$');
             }
         }
+        self::monitorDirectoryIfItExists($fileMonitors['Flow_TranslationFiles'], FLOW_PATH_DATA . 'Translations/', '\.xlf');
         self::monitorDirectoryIfItExists($fileMonitors['Flow_ConfigurationFiles'], FLOW_PATH_CONFIGURATION, '\.yaml$');
         foreach ($fileMonitors as $fileMonitor) {
             $fileMonitor->detectChanges();

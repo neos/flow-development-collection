@@ -24,10 +24,10 @@ class XliffParserTest extends UnitTestCase
      */
     public function parsesXliffFileCorrectly()
     {
-        $mockFilenamePath = __DIR__ . '/../Fixtures/MockXliffData.xlf';
-        $mockParsedData = require(__DIR__ . '/../Fixtures/MockParsedXliffData.php');
+        $mockFilenamePath = __DIR__ . '/../../Fixtures/MockXliffData.xlf';
+        $mockParsedData = require(__DIR__ . '/../../Fixtures/MockParsedXliffData.php');
 
-        $parser = new I18n\Xliff\XliffParser();
+        $parser = new I18n\Xliff\V12\XliffParser();
         $result = $parser->getParsedData($mockFilenamePath);
         $this->assertEquals($mockParsedData, $result);
     }
@@ -38,9 +38,9 @@ class XliffParserTest extends UnitTestCase
      */
     public function missingIdInSingularTransUnitCausesException()
     {
-        $mockFilenamePath = __DIR__ . '/../Fixtures/MockInvalidXliffData.xlf';
+        $mockFilenamePath = __DIR__ . '/../../Fixtures/MockInvalidXliffData.xlf';
 
-        $parser = new I18n\Xliff\XliffParser();
+        $parser = new I18n\Xliff\V12\XliffParser();
         $parser->getParsedData($mockFilenamePath);
     }
 
@@ -50,9 +50,9 @@ class XliffParserTest extends UnitTestCase
      */
     public function missingIdInPluralTransUnitCausesException()
     {
-        $mockFilenamePath = __DIR__ . '/../Fixtures/MockInvalidPluralXliffData.xlf';
+        $mockFilenamePath = __DIR__ . '/../../Fixtures/MockInvalidPluralXliffData.xlf';
 
-        $parser = new I18n\Xliff\XliffParser();
+        $parser = new I18n\Xliff\V12\XliffParser();
         $parser->getParsedData($mockFilenamePath);
     }
 }
