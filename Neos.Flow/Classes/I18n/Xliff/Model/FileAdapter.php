@@ -74,7 +74,7 @@ class FileAdapter
      */
     public function getTargetBySource($source, $pluralFormIndex = 0)
     {
-        if (!isset($this->fileData['translationUnits'])) {
+        if (empty($this->fileData['translationUnits'])) {
             $this->i18nLogger->log(sprintf('No trans-unit elements were found in "%s". This is allowed per specification, but no translation can be applied then.', $this->fileData['fileIdentifier']),
                 LOG_DEBUG);
 
