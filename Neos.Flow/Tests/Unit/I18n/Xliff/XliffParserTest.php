@@ -1,5 +1,5 @@
 <?php
-namespace Neos\Flow\Tests\Unit\I18n\Xliff\V12;
+namespace Neos\Flow\Tests\Unit\I18n\Xliff;
 
 /*
  * This file is part of the Neos.Flow package.
@@ -24,12 +24,12 @@ class XliffParserTest extends UnitTestCase
      */
     public function parsesXliffFileCorrectly()
     {
-        $mockFilenamePath = __DIR__ . '/../../Fixtures/MockXliffData.xlf';
-        $mockParsedData = require(__DIR__ . '/../../Fixtures/MockParsedXliffData.php');
+        $mockFilenamePath = __DIR__ . '/../Fixtures/MockXliffData.xlf';
+        $mockParsedData = require(__DIR__ . '/../Fixtures/MockParsedXliffData.php');
 
-        $parser = new I18n\Xliff\V12\XliffParser();
+        $parser = new I18n\Xliff\XliffParser();
         $result = $parser->getParsedData($mockFilenamePath);
-        $this->assertEquals($mockParsedData, $result);
+        $this->assertEquals($mockParsedData[0], $result);
     }
 
     /**
@@ -38,9 +38,9 @@ class XliffParserTest extends UnitTestCase
      */
     public function missingIdInSingularTransUnitCausesException()
     {
-        $mockFilenamePath = __DIR__ . '/../../Fixtures/MockInvalidXliffData.xlf';
+        $mockFilenamePath = __DIR__ . '/../Fixtures/MockInvalidXliffData.xlf';
 
-        $parser = new I18n\Xliff\V12\XliffParser();
+        $parser = new I18n\Xliff\XliffParser();
         $parser->getParsedData($mockFilenamePath);
     }
 
@@ -50,9 +50,9 @@ class XliffParserTest extends UnitTestCase
      */
     public function missingIdInPluralTransUnitCausesException()
     {
-        $mockFilenamePath = __DIR__ . '/../../Fixtures/MockInvalidPluralXliffData.xlf';
+        $mockFilenamePath = __DIR__ . '/../Fixtures/MockInvalidPluralXliffData.xlf';
 
-        $parser = new I18n\Xliff\V12\XliffParser();
+        $parser = new I18n\Xliff\XliffParser();
         $parser->getParsedData($mockFilenamePath);
     }
 }
