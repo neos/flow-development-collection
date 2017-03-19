@@ -101,7 +101,10 @@ class XliffFileProvider
                     $this->readDirectoryRecursively($translationPath, $parsedData, $fileId, $package->getPackageKey());
                 }
             }
-            $this->readDirectoryRecursively(FLOW_PATH_DATA . 'Translations', $parsedData, $fileId);
+            $generalTranslationPath = FLOW_PATH_DATA . 'Translations';
+            if (is_dir($generalTranslationPath)) {
+                $this->readDirectoryRecursively(FLOW_PATH_DATA . 'Translations', $parsedData, $fileId);
+            }
             $this->files[$fileId][$locale->getLanguage()] = $parsedData;
             $this->cache->set('translationFiles', $this->files);
         }
