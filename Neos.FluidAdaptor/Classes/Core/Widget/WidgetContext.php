@@ -124,11 +124,11 @@ class WidgetContext
      */
     public function getWidgetConfiguration()
     {
-        if ($this->nonAjaxWidgetConfiguration !== null) {
-            return $this->nonAjaxWidgetConfiguration;
-        } else {
+        if ($this->ajaxWidgetConfiguration !== null) {
             return $this->ajaxWidgetConfiguration;
         }
+
+        return $this->nonAjaxWidgetConfiguration;
     }
 
     /**
