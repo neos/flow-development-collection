@@ -6,7 +6,7 @@
   "license": "MIT",
   "require": {
     "neos/utility-files": "*",
-    "php": ">=5.5.0"
+    "php": "~7.0"
   },
   "require-dev": {
     "mikey179/vfsstream": "~1.6",
