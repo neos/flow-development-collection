@@ -35,7 +35,7 @@ class ParserTestWrapper {
 	}
 }
 
-class ParserTestBase extends \PHPUnit_Framework_TestCase {
+class ParserTestBase extends \PHPUnit\Framework\TestCase {
 
 	function buildParser($parser) {
 		$class = 'Parser' . sha1($parser);

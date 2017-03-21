@@ -16,7 +16,7 @@ use Neos\Utility\Arrays;
 /**
  * Testcase for the Utility Array class
  */
-class ArraysTest extends \PHPUnit_Framework_TestCase
+class ArraysTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @test

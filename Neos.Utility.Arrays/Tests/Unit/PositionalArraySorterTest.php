@@ -16,7 +16,7 @@ use Neos\Utility\PositionalArraySorter;
 /**
  * Tests for the PositionalArraySorter utility class
  */
-class PositionalArraySorterTest extends \PHPUnit_Framework_TestCase
+class PositionalArraySorterTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @test

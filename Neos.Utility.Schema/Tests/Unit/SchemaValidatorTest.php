@@ -19,7 +19,7 @@ use Neos\Error\Messages as Error;
 /**
  * Testcase for the configuration validator
  */
-class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
+class SchemaValidatorTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var SchemaValidator

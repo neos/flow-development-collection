@@ -98,7 +98,7 @@ class Scripts
      */
     protected static function requireAutoloaderForPhpUnit()
     {
-        if (class_exists('PHPUnit_Framework_TestCase')) {
+        if (class_exists(\PHPUnit\Framework\TestCase::class)) {
             return;
         }
         if (stream_resolve_include_path('PHPUnit/Autoload.php') !== false) {

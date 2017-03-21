@@ -434,7 +434,7 @@ class RouteTest extends UnitTestCase
     public function matchesThrowsExceptionIfRoutePartValueContainsObjects($shouldThrowException, $routePartValue)
     {
         if ($shouldThrowException === true) {
-            $this->setExpectedException(InvalidRoutePartValueException::class);
+            $this->expectException(InvalidRoutePartValueException::class);
         }
         $mockRoutePart = $this->createMock(Routing\RoutePartInterface::class);
         $mockRoutePart->expects($this->once())->method('match')->with('foo')->will($this->returnValue(true));
