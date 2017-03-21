@@ -62,6 +62,9 @@ Directory						Description
 *Configuration/Production/*		Configuration for the ``Production`` context
 ============================	==================================================
 
+.. note::
+	Setting Up Context with Virtual Host and change Context from «Development» to «Production» is explained in the previous chapter «Installation».
+
 Configuring Flow
 ================
 
