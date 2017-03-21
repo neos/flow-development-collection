@@ -35,6 +35,11 @@ class SubEntity extends SuperEntity
     protected $date;
 
     /**
+     * @var string
+     */
+    protected $someProperty = '';
+
+    /**
      * @param TestEntity $parentEntity
      * @return void
      */
@@ -65,5 +70,21 @@ class SubEntity extends SuperEntity
     public function setDate($date)
     {
         $this->date = $date;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSomeProperty()
+    {
+        return $this->someProperty;
+    }
+
+    /**
+     * @param string $someProperty
+     */
+    public function setSomeProperty($someProperty)
+    {
+        $this->someProperty = $someProperty;
     }
 }

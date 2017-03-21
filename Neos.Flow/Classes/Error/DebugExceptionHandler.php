@@ -12,8 +12,10 @@ namespace Neos\Flow\Error;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Exception as FlowException;
 use Neos\Flow\Http\Response;
+use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 
 /**
  * A basic but solid exception handler which catches everything which
@@ -24,6 +26,31 @@ use Neos\Flow\Http\Response;
  */
 class DebugExceptionHandler extends AbstractExceptionHandler
 {
+    /**
+     * The template for the HTML Exception output.
+     *
+     * @var string
+     */
+    protected $htmlExceptionTemplate = <<<'EOD'
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+    <head>
+        <title>%s</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <style>
+        %s
+        </style>
+    </head>
+    <body>
+        %s
+        <br />
+        %s
+        <br />
+        %s
+    </body>
+</html>
+EOD;
+
     /**
      * Formats and echoes the exception as XHTML.
      *
@@ -41,15 +68,16 @@ class DebugExceptionHandler extends AbstractExceptionHandler
             header(sprintf('HTTP/1.1 %s %s', $statusCode, $statusMessage));
         }
 
-        if (isset($this->renderingOptions['templatePathAndFilename'])) {
-            try {
-                echo $this->buildView($exception, $this->renderingOptions)->render();
-            } catch (\Throwable $throwable) {
-                $this->renderStatically($statusCode, $throwable);
-            } catch (\Exception $exception) {
-                $this->renderStatically($statusCode, $exception);
-            }
-        } else {
+        if (!isset($this->renderingOptions['templatePathAndFilename'])) {
+            $this->renderStatically($statusCode, $exception);
+            return;
+        }
+
+        try {
+            echo $this->buildView($exception, $this->renderingOptions)->render();
+        } catch (\Throwable $throwable) {
+            $this->renderStatically($statusCode, $throwable);
+        } catch (\Exception $exception) {
             $this->renderStatically($statusCode, $exception);
         }
     }
@@ -64,85 +92,62 @@ class DebugExceptionHandler extends AbstractExceptionHandler
     protected function renderStatically($statusCode, $exception)
     {
         $statusMessage = Response::getStatusMessageByCode($statusCode);
-        $exceptionHeader = '';
+        $exceptionHeader = '<div class="Flow-Debug-Exception-Header">';
         while (true) {
-            $pathPosition = strpos($exception->getFile(), 'Packages/');
-            $filePathAndName = ($pathPosition !== false) ? substr($exception->getFile(), $pathPosition) : $exception->getFile();
-            $exceptionCodeNumber = ($exception->getCode() > 0) ? '#' . $exception->getCode() . ': ' : '';
-
+            $filepaths = Debugger::findProxyAndShortFilePath($exception->getFile());
+            $filePathAndName = $filepaths['proxy'] !== '' ? $filepaths['proxy'] : $filepaths['short'];
             $exceptionMessageParts = $this->splitExceptionMessage($exception->getMessage());
 
-            $exceptionHeader .= '<h2 class="ExceptionSubject">' . $exceptionCodeNumber . htmlspecialchars($exceptionMessageParts['subject']) . '</h2>';
+            $exceptionHeader .= '<h1 class="ExceptionSubject">' . htmlspecialchars($exceptionMessageParts['subject']) . '</h1>';
             if ($exceptionMessageParts['body'] !== '') {
                 $exceptionHeader .= '<p class="ExceptionBody">' . nl2br(htmlspecialchars($exceptionMessageParts['body'])) . '</p>';
             }
-            $exceptionHeader .= '
-				<span class="ExceptionProperty">' . get_class($exception) . '</span> thrown in file<br />
-				<span class="ExceptionProperty">' . $filePathAndName . '</span> in line
-				<span class="ExceptionProperty">' . $exception->getLine() . '</span>.<br />';
+
+            $exceptionHeader .= '<table class="Flow-Debug-Exception-Meta"><tbody>';
+            $exceptionHeader .= '<tr><th>Exception Code</th><td class="ExceptionProperty">' . $exception->getCode() . '</td></tr>';
+            $exceptionHeader .= '<tr><th>Exception Type</th><td class="ExceptionProperty">' . get_class($exception) . '</td></tr>';
             if ($exception instanceof FlowException) {
-                $exceptionHeader .= '<span class="ExceptionProperty">Reference code: ' . $exception->getReferenceCode() . '</span><br />';
+                $exceptionHeader .= '<tr><th>Log Reference</th><td class="ExceptionProperty">' . $exception->getReferenceCode() . '</td></tr>';
             }
+
+            $exceptionHeader .= '<tr><th>Thrown in File</th><td class="ExceptionProperty">' . $filePathAndName . '</td></tr>';
+            $exceptionHeader .= '<tr><th>Line</th><td class="ExceptionProperty">' . $exception->getLine() . '</td></tr>';
+
+            if ($filepaths['proxy'] !== '') {
+                $exceptionHeader .= '<tr><th>Original File</th><td class="ExceptionProperty">' . $filepaths['short'] . '</td></tr>';
+            }
+            $exceptionHeader .= '</tbody></table>';
 
             if ($exception->getPrevious() === null) {
                 break;
             }
-
-            $exceptionHeader .= '<br /><div style="width: 100%; background-color: #515151; color: white; padding: 2px; margin: 0 0 6px 0;">Nested Exception</div>';
+            $exceptionHeader .= '<br /><h2>Nested Exception</h2>';
             $exception = $exception->getPrevious();
         }
 
+        $exceptionHeader .= '</div>';
+
         $backtraceCode = Debugger::getBacktraceCode($exception->getTrace());
 
-        echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN"
-				"http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">
-			<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
-			<head>
-				<title>' . $statusCode . ' ' . $statusMessage . '</title>
-				<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-				<style>
-					.ExceptionSubject {
-						margin: 0;
-						padding: 0;
-						font-size: 15px;
-						color: #BE0027;
-					}
-					.ExceptionBody {
-						padding: 10px;
-						margin: 10px;
-						color: black;
-						background: #DDD;
-					}
-					.ExceptionProperty {
-						color: #101010;
-					}
-					pre {
-						margin: 0;
-						font-size: 11px;
-						color: #515151;
-						background-color: #D0D0D0;
-						padding-left: 30px;
-					}
-				</style>
-			</head>
-			<div style="
-					position: absolute;
-					left: 10px;
-					background-color: #B9B9B9;
-					outline: 1px solid #515151;
-					color: #515151;
-					font-family: Arial, Helvetica, sans-serif;
-					font-size: 12px;
-					margin: 10px;
-					padding: 0;
-				">
-				<div style="width: 100%; background-color: #515151; color: white; padding: 2px; margin: 0 0 6px 0;">Uncaught Exception in Flow</div>
-				<div style="width: 100%; padding: 2px; margin: 0 0 6px 0;">
-					' . $exceptionHeader . '
-					<br />
-					' . $backtraceCode . '
-				</div>
-			</div>
-		';
+        $footer = '<div class="Flow-Debug-Exception-Footer">';
+        $footer .= '<table class="Flow-Debug-Exception-InstanceData"><tbody>';
+        if (defined('FLOW_PATH_ROOT')) {
+            $footer .= '<tr><th>Instance root</th><td class="ExceptionProperty">' . FLOW_PATH_ROOT . '</td></tr>';
+        }
+        if (Bootstrap::$staticObjectManager instanceof ObjectManagerInterface) {
+            $bootstrap = Bootstrap::$staticObjectManager->get(Bootstrap::class);
+            $footer .= '<tr><th>Application Context</th><td class="ExceptionProperty">' . $bootstrap->getContext() . '</td></tr>';
+            $footer .= '<tr><th>Request Handler</th><td class="ExceptionProperty">' . get_class($bootstrap->getActiveRequestHandler()) . '</td></tr>';
+        }
+        $footer .= '</tbody></table>';
+        $footer .= '</div>';
+
+        echo sprintf($this->htmlExceptionTemplate,
+            $statusCode . ' ' . $statusMessage,
+            file_get_contents(__DIR__ . '/../../Resources/Public/Error/Exception.css'),
+            $exceptionHeader,
+            $backtraceCode,
+            $footer
+        );
     }
 }

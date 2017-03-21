@@ -41,7 +41,7 @@ use Neos\Flow\Security\Policy\PolicyService;
  *             provider: FileBasedSimpleKeyProvider
  *             providerOptions:
  *               keyName: AdminKey
- *               authenticateRoles: ['TYPO3.Flow.SomeRole']
+ *               authenticateRoles: ['Neos.Flow.SomeRole']
  */
 class FileBasedSimpleKeyProvider extends AbstractProvider
 {

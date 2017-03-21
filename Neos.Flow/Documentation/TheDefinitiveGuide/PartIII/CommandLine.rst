@@ -59,7 +59,7 @@ commands can be obtained with the *help* command:
 
 	The following commands are currently available:
 
-	PACKAGE "TYPO3.Flow":
+	PACKAGE "Neos.Flow":
 	----------------------------------------------------------------------------
 	* flow:cache:flush                         Flush all caches
 	  cache:warmup                             Warm up caches
@@ -77,9 +77,9 @@ package key part of the command to the *help* command:
 .. code-block:: none
 
 	$ ./flow help kickstart
-	5 commands match the command identifier "typo3.kickstart":
+	5 commands match the command identifier "neos.kickstart":
 
-	PACKAGE "TYPO3.KICKSTART":
+	PACKAGE "Neos.KICKSTART":
 	-------------------------------------------------------------------------------
 	kickstart:package                        Kickstart a new package
 	kickstart:actioncontroller               Kickstart a new action controller
@@ -106,13 +106,13 @@ respective command identifier:
 	OPTIONS:
 	  --type               Configuration type to show
 	  --path               path to subconfiguration separated by "." like
-	                       "TYPO3.Flow
+	                       "Neos.Flow
 
 	DESCRIPTION:
 	  The command shows the configuration of the current context as it is used by Flow itself.
 	  You can specify the configuration type and path if you want to show parts of the configuration.
 
-	  ./flow configuration:show --type Settings --path TYPO3.Flow.persistence
+	  ./flow configuration:show --type Settings --path Neos.Flow.persistence
 
 Running a Command
 -----------------
@@ -127,7 +127,7 @@ A fully qualified command identifier is the combination of the package key, the
 command controller name and the actual command name, separated by colons:
 
 The command "warmup" implemented by the "CacheCommandController" contained
-in the package "TYPO3.Flow" is referred to by the command identifier
+in the package "Neos.Flow" is referred to by the command identifier
 *neos.flow:cache:warmup*.
 
 Short Command Identifier
@@ -138,7 +138,7 @@ command identifier. The *help* command lists all commands by the shortest
 possible identifier which is still unique across all available commands.
 
 For example, the command "warmup" implemented by the "CacheCommandController"
-contained in the package "TYPO3.Flow" can also be referred to by the command
+contained in the package "Neos.Flow" can also be referred to by the command
 identifier *cache:warmup* as long as no other package provides a command
 with the same name.
 
@@ -589,7 +589,7 @@ class and can be used as follows:
 	use Neos\Flow\Core\Booting\Scripts;
 
 	/**
-	 * @Flow\InjectConfiguration(package="TYPO3.Flow")
+	 * @Flow\InjectConfiguration(package="Neos.Flow")
 	 * @var array
 	 */
 	protected $flowSettings;

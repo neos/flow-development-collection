@@ -23,7 +23,7 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\TagBuilder;
 abstract class ViewHelperBaseTestcase extends \Neos\Flow\Tests\UnitTestCase
 {
     /**
-     * @var \TYPO3Fluid\Fluid\Core\ViewHelper\ViewHelperVariableContainer
+     * @var \TYPO3Fluid\Fluid\Core\ViewHelper\ViewHelperVariableContainer|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $viewHelperVariableContainer;
 
@@ -38,22 +38,22 @@ abstract class ViewHelperBaseTestcase extends \Neos\Flow\Tests\UnitTestCase
     protected $viewHelperVariableContainerData = array();
 
     /**
-     * @var \Neos\FluidAdaptor\Core\ViewHelper\TemplateVariableContainer
+     * @var \Neos\FluidAdaptor\Core\ViewHelper\TemplateVariableContainer|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $templateVariableContainer;
 
     /**
-     * @var \Neos\Flow\Mvc\Routing\UriBuilder
+     * @var \Neos\Flow\Mvc\Routing\UriBuilder|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $uriBuilder;
 
     /**
-     * @var \Neos\Flow\Mvc\Controller\ControllerContext
+     * @var \Neos\Flow\Mvc\Controller\ControllerContext|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $controllerContext;
 
     /**
-     * @var TagBuilder
+     * @var TagBuilder|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $tagBuilder;
 
@@ -63,12 +63,12 @@ abstract class ViewHelperBaseTestcase extends \Neos\Flow\Tests\UnitTestCase
     protected $arguments;
 
     /**
-     * @var \Neos\Flow\Mvc\ActionRequest
+     * @var \Neos\Flow\Mvc\ActionRequest|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $request;
 
     /**
-     * @var \Neos\FluidAdaptor\Core\Rendering\RenderingContext
+     * @var \Neos\FluidAdaptor\Core\Rendering\RenderingContext|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $renderingContext;
 

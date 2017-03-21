@@ -98,12 +98,12 @@ abstract class Files
      * @param boolean $returnRealPath
      * @param boolean $returnDotFiles
      * @return \Generator
-     * @throws Exception
+     * @throws FilesException
      */
     public static function getRecursiveDirectoryGenerator($path, $suffix = null, $returnRealPath = false, $returnDotFiles = false)
     {
         if (!is_dir($path)) {
-            throw new Exception('"' . $path . '" is no directory.', 1207253462);
+            throw new FilesException('"' . $path . '" is no directory.', 1207253462);
         }
 
         $directories = array(self::getNormalizedPath($path));
@@ -156,7 +156,7 @@ abstract class Files
             foreach ($directoryIterator as $fileInfo) {
                 if (!$fileInfo->isDir()) {
                     if (self::unlink($fileInfo->getPathname()) !== true) {
-                        throw new Exception('Could not unlink file "' . $fileInfo->getPathname() . '".', 1169047619);
+                        throw new FilesException('Could not unlink file "' . $fileInfo->getPathname() . '".', 1169047619);
                     }
                 } elseif (!$directoryIterator->isDot()) {
                     self::removeDirectoryRecursively($fileInfo->getPathname());
@@ -303,12 +303,12 @@ abstract class Files
      * @param string $pathAndFilename Path and name of the file to load
      * @param integer $flags (optional) ORed flags using PHP's FILE_* constants (see manual of file_get_contents).
      * @param resource $context (optional) A context resource created by stream_context_create()
-     * @param integer $offset (optional) Offset where reading of the file starts.
+     * @param integer $offset (optional) Offset where reading of the file starts, as of PHP 7.1 supports negative offsets.
      * @param integer $maximumLength (optional) Maximum length to read. Default is -1 (no limit)
      * @return mixed The file content as a string or FALSE if the file could not be opened.
      * @api
      */
-    public static function getFileContents($pathAndFilename, $flags = 0, $context = null, $offset = -1, $maximumLength = -1)
+    public static function getFileContents($pathAndFilename, $flags = 0, $context = null, $offset = null, $maximumLength = -1)
     {
         if ($flags === true) {
             $flags = FILE_USE_INCLUDE_PATH;

@@ -15,7 +15,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ObjectManagement\Configuration\Configuration;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Reflection\ReflectionService;
-use Neos\Flow\Utility\Exception\InvalidTypeException;
+use Neos\Utility\Exception\InvalidTypeException;
 use Neos\Utility\TypeHandling;
 use Neos\Flow\Validation\Validator\AggregateBoundaryValidator;
 use Neos\Flow\Validation\Validator\ValidatorInterface;

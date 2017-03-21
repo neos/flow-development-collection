@@ -59,11 +59,18 @@ If you would like to use ``package:create`` to create packages of this type in
 *Packages/Acme* instead of the default location *Packages/Application*, add an
 entry in the *Settings.yaml* of the package that expects packages of that type::
 
-  TYPO3:
+  Neos:
     Flow:
       package:
         packagesPathByType:
           'neos-acme': 'Acme'
+
+.. note::
+
+	Packages where the type starts with ``typo3-flow-`` or ``neos-`` are considered
+	Flow packages and will therefore be reflected and proxied by default. We recommend
+	using only the ``neos-`` prefix for the type when creating new packages (but only from
+	Flow 3.2 upwards) as the other is deprecated and will stop working in the next major.
 
 Package Directory Layout
 ========================
@@ -167,7 +174,7 @@ different purposes. They save you from conflicts between packages which were pro
 different parties.
 
 We use *vendor namespaces* for package keys, i.e. all packages which are released
-and maintained by the Neos and Flow core teams start with ``TYPO3.*`` (for historical
+and maintained by the Neos and Flow core teams start with ``Neos.*`` (for historical
 reasons) or ``Neos.*``. In your company we suggest that you use your company name as vendor
 namespace.
 

@@ -15,7 +15,7 @@
  */
 
 if (PHP_SAPI !== 'cli') {
-    echo(sprintf("The TYPO3 Flow command line script or sub process was executed with a '%s' PHP binary. Make sure that you specified a CLI capable PHP binary in your PATH or Flow's Settings.yaml.", PHP_SAPI) . PHP_EOL);
+    echo(sprintf("The Neos Flow command line script or sub process was executed with a '%s' PHP binary. Make sure that you specified a CLI capable PHP binary in your PATH or Flow's Settings.yaml.", PHP_SAPI) . PHP_EOL);
     exit(1);
 }
 
@@ -32,7 +32,7 @@ if (isset($argv[1]) && ($argv[1] === 'neos.flow:core:setfilepermissions' || $arg
     array_shift($argv);
     array_shift($argv);
     $returnValue = 0;
-    system(__DIR__ . '/setfilepermissions.sh ' . implode($argv, ' '), $returnValue);
+    exec(__DIR__ . '/setfilepermissions.sh ' . implode($argv, ' '), $output, $returnValue);
     exit($returnValue);
 } elseif (isset($argv[1]) && ($argv[1] === 'neos.flow:core:migrate' || $argv[1] === 'flow:core:migrate' || $argv[1] === 'core:migrate')) {
     array_shift($argv);

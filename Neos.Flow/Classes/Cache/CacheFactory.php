@@ -15,6 +15,7 @@ use Neos\Cache\Backend\BackendInterface;
 use Neos\Cache\Backend\SimpleFileBackend;
 use Neos\Cache\CacheFactoryInterface;
 use Neos\Cache\EnvironmentConfiguration;
+use Neos\Cache\Frontend\FrontendInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cache\Backend\AbstractBackend as FlowAbstractBackend;
 use Neos\Flow\Cache\Backend\FlowSpecificBackendInterface;
@@ -89,8 +90,7 @@ class CacheFactory extends \Neos\Cache\CacheFactory implements CacheFactoryInter
 
         $environmentConfiguration = new EnvironmentConfiguration(
             FLOW_PATH_ROOT . '~' . (string)$environment->getContext(),
-            $environment->getPathToTemporaryDirectory(),
-            PHP_MAXPATHLEN
+            $environment->getPathToTemporaryDirectory()
         );
 
         parent::__construct($environmentConfiguration);
@@ -101,8 +101,8 @@ class CacheFactory extends \Neos\Cache\CacheFactory implements CacheFactoryInter
      * @param string $cacheObjectName
      * @param string $backendObjectName
      * @param array $backendOptions
-     * @param boolean $persistent
-     * @return Frontend\FrontendInterface
+     * @param bool $persistent
+     * @return FrontendInterface
      */
     public function create($cacheIdentifier, $cacheObjectName, $backendObjectName, array $backendOptions = [], $persistent = false)
     {
@@ -131,8 +131,8 @@ class CacheFactory extends \Neos\Cache\CacheFactory implements CacheFactoryInter
      * @param string $backendObjectName
      * @param array $backendOptions
      * @param boolean $persistent
-     * @return FlowAbstractBackend|Backend\BackendInterface
-     * @throws Exception\InvalidBackendException
+     * @return FlowAbstractBackend|BackendInterface
+     * @throws InvalidBackendException
      */
     protected function instantiateBackend($backendObjectName, $backendOptions, $persistent = false)
     {
@@ -156,7 +156,7 @@ class CacheFactory extends \Neos\Cache\CacheFactory implements CacheFactoryInter
      * @param string $backendObjectName
      * @param array $backendOptions
      * @return FlowAbstractBackend
-     * @throws Exception\InvalidBackendException
+     * @throws InvalidBackendException
      */
     protected function instantiateFlowSpecificBackend($backendObjectName, $backendOptions)
     {

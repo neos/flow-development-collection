@@ -309,7 +309,7 @@ and the method ``resolveValue()`` needs to return an URL segment when being pass
 
  .. code-block:: yaml
 
-  Flow_Mvc_Routing_FindMatchResults:
+  Flow_Mvc_Routing_Route:
     backend: Neos\Cache\Backend\NullBackend
   Flow_Mvc_Routing_Resolve:
     backend: Neos\Cache\Backend\NullBackend
@@ -682,7 +682,7 @@ Settings.yaml (``Configuration/Settings.yaml``):
 
 .. code-block:: yaml
 
-	TYPO3:
+	Neos:
 	  Flow:
 	    mvc:
 	      routes:
@@ -695,7 +695,7 @@ You can also adjust the position of the included SubRoutes:
 
 .. code-block:: yaml
 
-	TYPO3:
+	Neos:
 	  Flow:
 	    mvc:
 	      routes:
@@ -725,7 +725,7 @@ two more options you can use:
 
 .. code-block:: yaml
 
-	TYPO3:
+	Neos:
 	  Flow:
 	    mvc:
 	      routes:
@@ -747,15 +747,15 @@ specify placeholders in the SubRoutes (see `Nested Subroutes`_).
 		$ ./flow routing:list
 
 		Currently registered routes:
-		typo3/login(/{@action}.{@format})         TYPO3 :: Authentication
-		typo3/logout                              TYPO3 :: Logout
-		typo3/setup(/{@action})                   TYPO3 :: Setup
-		typo3                                     TYPO3 :: Backend Overview
-		typo3/content/{@action}                   TYPO3 :: Backend - Content Module
-		{node}.html/{type}                        TYPO3 :: Frontend content with format and type
-		{node}.html                               TYPO3 :: Frontend content with (HTML) format
-		({node})                                  TYPO3 :: Frontend content without a specified format
-		                                          TYPO3 :: Fallback rule – for when no site has been defined yet
+		neos/login(/{@action}.{@format})         Neos :: Authentication
+		neos/logout                              Neos :: Logout
+		neos/setup(/{@action})                   Neos :: Setup
+		neos                                     Neos :: Backend Overview
+		neos/content/{@action}                   Neos :: Backend - Content Module
+		{node}.html/{type}                       Neos :: Frontend content with format and type
+		{node}.html                              Neos :: Frontend content with (HTML) format
+		({node})                                 Neos :: Frontend content without a specified format
+		                                         Neos :: Fallback rule – for when no site has been defined yet
 
 
 Route Loading Order and the Flow Application Context

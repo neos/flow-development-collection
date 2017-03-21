@@ -18,16 +18,8 @@ Neos:
 
         securityContext: Neos\Flow\Security\Context
 
-    compatibility:
-
-      uriBuilder:
-
-        # A compatibility flag that affects the behavior of the UriBuilder when creating relative URIs:
-        # TRUE: The UriBuilder creates relative path like "some/path", a base tag is required in the respective HTML head
-        # FALSE: The UriBuilder prefixes the path with the scripts request path: "/document/root/some/path", no base tag will be required
-        #
-        # NOTE: This flag will be obsolete with version 2.2 and removed in version 3.0 of Flow
-        createRelativePaths: FALSE
+    # A section for compatibility flags that are deprecated.
+    compatibility: []
 
     core:
 
@@ -521,7 +513,7 @@ Neos:
         filters:
           'Neos.Flow:CsrfProtection':
             pattern: 'CsrfProtection'
-            interceptor: AccessDeny
+            interceptor: CsrfTokenMissing
 
       authentication:
 
@@ -699,10 +691,10 @@ Neos:
         title: 'Flow Command Reference'
         packageKeys:
           - 'Neos.Flow'
-          - 'TYPO3.Party'
+          - 'Neos.Party'
           - 'Neos.FluidAdaptor'
           - 'Neos.Kickstart'
-          - 'TYPO3.Welcome'
+          - 'Neos.Welcome'
         savePathAndFilename: '%FLOW_PATH_PACKAGES%Framework/Neos.Flow/Documentation/TheDefinitiveGuide/PartV/CommandReference.rst'
 
     references:
@@ -713,7 +705,7 @@ Neos:
           parentClassName: 'Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper'
           classNamePattern: '/^Neos\\FluidAdaptor\\ViewHelpers\\.*$/i'
         parser:
-          implementationClassName: 'TYPO3\DocTools\Domain\Service\FluidViewHelperClassParser'
+          implementationClassName: 'Neos\DocTools\Domain\Service\FluidViewHelperClassParser'
           options:
             namespaces:
               f: 'Neos\FluidAdaptor\ViewHelpers'
@@ -724,7 +716,7 @@ Neos:
           parentClassName: 'Neos\Flow\Validation\Validator\AbstractValidator'
           classNamePattern: '/^Neos\\Flow\\Validation\\Validator\\.*$/i'
         parser:
-          implementationClassName: 'TYPO3\DocTools\Domain\Service\FlowValidatorClassParser'
+          implementationClassName: 'Neos\DocTools\Domain\Service\FlowValidatorClassParser'
       'Flow:FlowSignals':
         title: 'Flow Signals Reference'
         savePathAndFilename: '%FLOW_PATH_PACKAGES%Framework/Neos.Flow/Documentation/TheDefinitiveGuide/PartV/SignalsReference.rst'
@@ -733,7 +725,7 @@ Neos:
           classNamePattern: '/^Neos\\Flow\\.*$/i'
           includeAbstractClasses: TRUE
         parser:
-          implementationClassName: 'TYPO3\DocTools\Domain\Service\SignalsParser'
+          implementationClassName: 'Neos\DocTools\Domain\Service\SignalsParser'
       'Flow:FlowTypeConverters':
         title: 'Flow TypeConverter Reference'
         savePathAndFilename: '%FLOW_PATH_PACKAGES%Framework/Neos.Flow/Documentation/TheDefinitiveGuide/PartV/TypeConverterReference.rst'
@@ -741,11 +733,11 @@ Neos:
           parentClassName: 'Neos\Flow\Property\TypeConverter\AbstractTypeConverter'
           classNamePattern: '/^Neos\\Flow\\.*$/i'
         parser:
-          implementationClassName: 'TYPO3\DocTools\Domain\Service\FlowTypeConverterClassParser'
+          implementationClassName: 'Neos\DocTools\Domain\Service\FlowTypeConverterClassParser'
       'Flow:FlowAnnotations':
         title: 'Flow Annotation Reference'
         savePathAndFilename: '%FLOW_PATH_PACKAGES%Framework/Neos.Flow/Documentation/TheDefinitiveGuide/PartV/AnnotationReference.rst'
         affectedClasses:
           classNamePattern: '/^Neos\\Flow\\Annotations\\.*$/i'
         parser:
-          implementationClassName: 'TYPO3\DocTools\Domain\Service\FlowAnnotationClassParser'
+          implementationClassName: 'Neos\DocTools\Domain\Service\FlowAnnotationClassParser'

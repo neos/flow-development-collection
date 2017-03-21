@@ -20,7 +20,7 @@ use Neos\Flow\Property\Exception\InvalidTargetException;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Utility\ObjectAccess;
 use Neos\Flow\Reflection\ReflectionService;
-use Neos\Flow\Utility\Exception\InvalidTypeException;
+use Neos\Utility\Exception\InvalidTypeException;
 use Neos\Utility\TypeHandling;
 
 /**
@@ -160,6 +160,11 @@ class ObjectConverter extends AbstractTypeConverter
                 }
             }
         }
+
+        if ($configuration->shouldSkipUnknownProperties() || $configuration->shouldSkip($propertyName)) {
+            return null;
+        }
+
         throw new InvalidTargetException(sprintf('Property "%s" has neither a setter or constructor argument, nor is public, in target object of type "%s".', $propertyName, $targetType), 1303379126);
     }
 

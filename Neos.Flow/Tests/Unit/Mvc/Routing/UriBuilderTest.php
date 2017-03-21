@@ -749,23 +749,6 @@ class UriBuilderTest extends UnitTestCase
     /**
      * @test
      */
-    public function buildDoesNotPrependsScriptRequestPathIfCreateRelativePathsCompatibilityFlagIsTrue()
-    {
-        $this->mockHttpRequest->expects($this->never())->method('getScriptRequestPath');
-        $this->mockRouter->expects($this->once())->method('resolve')->will($this->returnValue('resolvedUri'));
-
-        $this->uriBuilder->setCreateAbsoluteUri(false);
-        $this->uriBuilder->setCreateRelativePaths(true);
-
-        $expectedResult = 'resolvedUri';
-        $actualResult = $this->uriBuilder->build();
-
-        $this->assertEquals($expectedResult, $actualResult);
-    }
-
-    /**
-     * @test
-     */
     public function buildPrependsIndexFileIfRewriteUrlsIsOff()
     {
         $this->mockRouter->expects($this->once())->method('resolve')->will($this->returnValue('resolvedUri'));

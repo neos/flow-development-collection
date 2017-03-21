@@ -29,7 +29,7 @@ class CldrModel
      *
      * @var string
      */
-    protected $cldrBasePath = 'resource://TYPO3.Neos/Private/I18n/CLDR/Sources/';
+    protected $cldrBasePath = 'resource://Neos.Neos/Private/I18n/CLDR/Sources/';
 
     /**
      * @var VariableFrontend

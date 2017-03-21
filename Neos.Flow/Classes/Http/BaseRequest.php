@@ -52,7 +52,7 @@ class BaseRequest extends AbstractMessage implements RequestInterface
     /**
      * Returns the request URI
      *
-     * @return Uri
+     * @return UriInterface
      * @api
      */
     public function getUri()

@@ -59,7 +59,7 @@ class TranslateViewHelperTest extends ViewHelperBaseTestcase
      */
     public function viewHelperTranslatesByOriginalLabel()
     {
-        $this->mockTranslator->expects($this->once())->method('translateByOriginalLabel', 'Untranslated Label', 'Main', 'TYPO3.Flow', array(), null, $this->dummyLocale)->will($this->returnValue('Translated Label'));
+        $this->mockTranslator->expects($this->once())->method('translateByOriginalLabel', 'Untranslated Label', 'Main', 'Neos.Flow', array(), null, $this->dummyLocale)->will($this->returnValue('Translated Label'));
 
         $this->translateViewHelper->expects($this->once())->method('renderChildren')->will($this->returnValue('Untranslated Label'));
 
@@ -72,7 +72,7 @@ class TranslateViewHelperTest extends ViewHelperBaseTestcase
      */
     public function viewHelperTranslatesById()
     {
-        $this->mockTranslator->expects($this->once())->method('translateById', 'some.label', 'Main', 'TYPO3.Flow', array(), null, $this->dummyLocale)->will($this->returnValue('Translated Label'));
+        $this->mockTranslator->expects($this->once())->method('translateById', 'some.label', 'Main', 'Neos.Flow', array(), null, $this->dummyLocale)->will($this->returnValue('Translated Label'));
 
         $result = $this->translateViewHelper->render('some.label', null, array(), 'Main', null, null, 'de_DE');
         $this->assertEquals('Translated Label', $result);
@@ -105,7 +105,7 @@ class TranslateViewHelperTest extends ViewHelperBaseTestcase
      */
     public function viewHelperReturnsIdWhenRenderChildrenReturnsEmptyResultIfIdIsNotFound()
     {
-        $this->mockTranslator->expects($this->once())->method('translateById', 'some.label', 'Main', 'TYPO3.Flow', array(), null, $this->dummyLocale)->will($this->returnValue('some.label'));
+        $this->mockTranslator->expects($this->once())->method('translateById', 'some.label', 'Main', 'Neos.Flow', array(), null, $this->dummyLocale)->will($this->returnValue('some.label'));
 
         $this->translateViewHelper->expects($this->once())->method('renderChildren')->will($this->returnValue(null));
 

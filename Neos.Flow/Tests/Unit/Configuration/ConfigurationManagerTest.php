@@ -227,8 +227,6 @@ class ConfigurationManagerTest extends UnitTestCase
         $configurationManager = $this->getAccessibleMock(ConfigurationManager::class, ['postProcessConfiguration'], [new ApplicationContext('Testing')]);
         $configurationManager->_set('configurationSource', $mockConfigurationSource);
 
-        $configurationManager->expects($this->once())->method('postProcessConfiguration');
-
         $configurationManager->_call('loadConfiguration', ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, $mockPackages);
 
         $actualConfigurations = $configurationManager->_get('configurations');
@@ -613,7 +611,7 @@ EOD;
         $cachedConfigurationsPathAndFilename = vfsStream::url('Flow/Cache/Configurations.php');
         file_put_contents($cachedConfigurationsPathAndFilename, $configurationsCode);
 
-        $configurationManager = $this->getAccessibleMock(ConfigurationManager::class, ['postProcessConfiguration', 'constructConfigurationCachePath'], [], '', false);
+        $configurationManager = $this->getAccessibleMock(ConfigurationManager::class, ['postProcessConfiguration', 'constructConfigurationCachePath', 'refreshConfiguration'], [], '', false);
         $configurationManager->expects($this->any())->method('constructConfigurationCachePath')->willReturn('notfound.php', $cachedConfigurationsPathAndFilename);
         $configurationManager->_set('configurations', ['foo' => 'untouched']);
         $configurationManager->_call('loadConfigurationCache');
@@ -669,6 +667,7 @@ EOD;
         $configurationManager->setTemporaryDirectoryPath($temporaryDirectoryPath);
         $configurationManager->expects($this->any())->method('constructConfigurationCachePath')->willReturn($cachedConfigurationsPathAndFilename);
         $configurationManager->_set('configurations', $mockConfigurations);
+        $configurationManager->_set('unprocessedConfiguration', $mockConfigurations);
         $configurationManager->_set('configurationTypes', [
             ConfigurationManager::CONFIGURATION_TYPE_ROUTES => array(
                 'processingType' => ConfigurationManager::CONFIGURATION_PROCESSING_TYPE_ROUTES,
@@ -693,7 +692,7 @@ EOD;
     /**
      * @test
      */
-    public function postProcessConfigurationReplacesConstantMarkersByRealGlobalConstants()
+    public function replaceVariablesInPhpStringReplacesConstantMarkersByRealGlobalConstantCode()
     {
         $settings = [
             'foo' => 'bar',
@@ -704,18 +703,17 @@ EOD;
                 ]
             ]
         ];
-
+        $settingsPhpString = var_export($settings, true);
         $configurationManager = $this->getAccessibleMock(ConfigurationManager::class, ['dummy'], [], '', false);
-        $configurationManager->_callRef('postProcessConfiguration', $settings);
-
-        $this->assertSame(PHP_VERSION, $settings['baz']);
-        $this->assertSame(FLOW_PATH_ROOT, $settings['inspiring']['people']['to']);
+        $processedPhpString = $configurationManager->_call('replaceVariablesInPhpString', $settingsPhpString);
+        $this->assertContains("'baz' => (defined('PHP_VERSION') ? constant('PHP_VERSION') : null)", $processedPhpString);
+        $this->assertContains("'to' => (defined('FLOW_PATH_ROOT') ? constant('FLOW_PATH_ROOT') : null)", $processedPhpString);
     }
 
     /**
      * @test
      */
-    public function postProcessConfigurationMaintainsConstantTypeIfOnlyValue()
+    public function replaceVariablesInPhpStringMaintainsConstantTypeIfOnlyValue()
     {
         $settings = [
             'foo' => 'bar',
@@ -726,10 +724,11 @@ EOD;
                 ]
             ]
         ];
+        $settingsPhpString = var_export($settings, true);
 
         $configurationManager = $this->getAccessibleMock(ConfigurationManager::class, ['dummy'], [], '', false);
-        $configurationManager->_callRef('postProcessConfiguration', $settings);
-
+        $processedPhpString = $configurationManager->_call('replaceVariablesInPhpString', $settingsPhpString);
+        $settings = eval('return ' . $processedPhpString . ';');
         $this->assertInternalType('integer', $settings['anIntegerConstant']);
         $this->assertSame(PHP_VERSION_ID, $settings['anIntegerConstant']);
 
@@ -740,7 +739,7 @@ EOD;
     /**
      * @test
      */
-    public function postProcessConfigurationReplacesClassConstantMarkersWithApproppriateConstants()
+    public function replaceVariablesInPhpStringReplacesClassConstantMarkersWithApproppriateConstants()
     {
         $settings = [
             'foo' => 'bar',
@@ -752,9 +751,11 @@ EOD;
                 ]
             ]
         ];
+        $settingsPhpString = var_export($settings, true);
 
         $configurationManager = $this->getAccessibleMock(ConfigurationManager::class, ['dummy'], [], '', false);
-        $configurationManager->_callRef('postProcessConfiguration', $settings);
+        $processedPhpString = $configurationManager->_call('replaceVariablesInPhpString', $settingsPhpString);
+        $settings = eval('return ' . $processedPhpString . ';');
 
         $this->assertSame(ConfigurationManager::CONFIGURATION_TYPE_POLICY, $settings['baz']);
         $this->assertSame(Bootstrap::MINIMUM_PHP_VERSION, $settings['inspiring']['people']['to']);
@@ -764,7 +765,7 @@ EOD;
     /**
      * @test
      */
-    public function postProcessConfigurationReplacesEnvMarkersWithEnvironmentValues()
+    public function replaceVariablesInPhpStringReplacesEnvMarkersWithEnvironmentValues()
     {
         $envVarName = 'NEOS_FLOW_TESTS_UNIT_CONFIGURATION_CONFIGURATIONMANAGERTEST_MOCKENVVAR';
         $envVarValue = 'NEOS_Flow_Tests_Unit_Configuration_ConfigurationManagerTest_MockEnvValue';
@@ -781,9 +782,11 @@ EOD;
                 )
             )
         );
+        $settingsPhpString = var_export($settings, true);
 
-        $configurationManager = $this->getAccessibleMock(\Neos\Flow\Configuration\ConfigurationManager::class, array('dummy'), array(), '', false);
-        $configurationManager->_callRef('postProcessConfiguration', $settings);
+        $configurationManager = $this->getAccessibleMock(ConfigurationManager::class, ['dummy'], [], '', false);
+        $processedPhpString = $configurationManager->_call('replaceVariablesInPhpString', $settingsPhpString);
+        $settings = eval('return ' . $processedPhpString . ';');
 
         $this->assertSame($envVarValue, $settings['baz']);
         $this->assertSame($envVarValue, $settings['inspiring']['people']['to']);
@@ -1096,8 +1099,6 @@ EOD;
 
         $configurationManager = $this->getAccessibleMock(ConfigurationManager::class, ['postProcessConfiguration'], [new ApplicationContext('Testing')]);
         $configurationManager->_set('configurationSource', $mockConfigurationSource);
-
-        $configurationManager->expects($this->atLeastOnce())->method('postProcessConfiguration');
 
         $mockPackages = $this->getMockPackages();
         $configurationManager->setPackages($mockPackages);
@@ -1539,8 +1540,6 @@ EOD;
 
         $configurationManager = $this->getAccessibleMock(ConfigurationManager::class, ['postProcessConfiguration', 'includeSubRoutesFromSettings'], [new ApplicationContext($contextName)]);
         $configurationManager->_set('configurationSource', $mockConfigurationSource);
-
-        $configurationManager->expects($this->atLeastOnce())->method('postProcessConfiguration');
 
         return $configurationManager;
     }

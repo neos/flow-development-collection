@@ -9,7 +9,7 @@ Eel
 Eel stands for Embedded Expression Language and enables developers to create a Domain Specific
 Language.
 
-E.g. Neos TypoScript has Eel embedded to parse some parts in combination with FlowQuery.
+E.g. Neos Fusion has Eel embedded to parse some parts in combination with FlowQuery.
 
 .. _eel-quickstart:
 

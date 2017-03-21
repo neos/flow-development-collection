@@ -12,7 +12,7 @@ namespace Neos\Flow\Http;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Error\Messages as FlowError;
+use Neos\Flow\Error as ErrorException;
 use Neos\Utility\Unicode;
 use Psr\Http\Message\UriInterface;
 
@@ -102,7 +102,7 @@ class Uri implements UriInterface
         $parseUrlException = null;
         try {
             $uriParts = Unicode\Functions::parse_url($uriString);
-        } catch (FlowError\Exception $exception) {
+        } catch (ErrorException $exception) {
             $parseUrlException = $exception;
         }
         if (is_array($uriParts)) {

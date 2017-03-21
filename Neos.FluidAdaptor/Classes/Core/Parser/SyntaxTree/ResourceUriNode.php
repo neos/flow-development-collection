@@ -17,6 +17,7 @@ use Neos\FluidAdaptor\Core\ViewHelper\ViewHelperResolver;
 use Neos\FluidAdaptor\ViewHelpers\Uri\ResourceViewHelper;
 use TYPO3Fluid\Fluid\Core\Parser\ParsingState;
 use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\ViewHelperNode;
+use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\NodeInterface;
 
 /**
  * A special ViewHelperNode that works via injections and is created by the ResourceInterceptor

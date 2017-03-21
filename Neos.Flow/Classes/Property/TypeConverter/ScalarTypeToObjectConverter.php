@@ -11,6 +11,7 @@ namespace Neos\Flow\Property\TypeConverter;
  * source code.
  */
 
+use Doctrine\ORM\Mapping\Entity;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Flow\Reflection\ReflectionService;
@@ -56,6 +57,14 @@ class ScalarTypeToObjectConverter extends AbstractTypeConverter
      */
     public function canConvertFrom($source, $targetType)
     {
+        if ((
+            $this->reflectionService->isClassAnnotatedWith($targetType, Flow\Entity::class) ||
+            $this->reflectionService->isClassAnnotatedWith($targetType, Flow\ValueObject::class) ||
+            $this->reflectionService->isClassAnnotatedWith($targetType, Entity::class)
+        ) === true) {
+            return false;
+        }
+
         $methodParameters = $this->reflectionService->getMethodParameters($targetType, '__construct');
         if (count($methodParameters) !== 1) {
             return false;

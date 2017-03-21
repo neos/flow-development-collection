@@ -27,8 +27,8 @@ class AbstractFormFieldViewHelperTest extends FormFieldViewHelperBaseTestcase
         $mockPersistenceManager->expects($this->any())->method('getIdentifierByObject')->will($this->returnValue('6f487e40-4483-11de-8a39-0800200c9a66'));
 
         $className = 'Object' . uniqid();
-        $fullClassName = 'TYPO3\\Fluid\\ViewHelpers\\Form\\' . $className;
-        eval('namespace TYPO3\\Fluid\\ViewHelpers\\Form; class ' . $className . ' {
+        $fullClassName = 'Neos\\Fluid\\ViewHelpers\\Form\\' . $className;
+        eval('namespace Neos\\Fluid\\ViewHelpers\\Form; class ' . $className . ' {
 			public function __clone() {}
 		}');
         $object = $this->createMock($fullClassName);

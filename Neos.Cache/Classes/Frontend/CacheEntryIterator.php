@@ -35,9 +35,8 @@ class CacheEntryIterator implements \Iterator
      *
      * @param FrontendInterface $frontend Frontend of the cache to iterate over
      * @param IterableBackendInterface $backend Backend of the cache
-     * @param integer $chunkSize Determines the number of entries fetched by the backend at once (for future use)
      */
-    public function __construct(FrontendInterface $frontend, IterableBackendInterface $backend, $chunkSize = null)
+    public function __construct(FrontendInterface $frontend, IterableBackendInterface $backend)
     {
         $this->frontend = $frontend;
         $this->backend = $backend;

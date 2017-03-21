@@ -315,10 +315,10 @@ class PersistentResource implements ResourceMetaDataInterface, CacheAwareInterfa
     public function setSha1($sha1)
     {
         $this->throwExceptionIfProtected();
-        if (preg_match('/[a-f0-9]{40}/', $sha1) !== 1) {
+        if (!is_string($sha1) || preg_match('/[A-Fa-f0-9]{40}/', $sha1) !== 1) {
             throw new \InvalidArgumentException('Specified invalid hash to setSha1()', 1362564220);
         }
-        $this->sha1 = $sha1;
+        $this->sha1 = strtolower($sha1);
     }
 
     /**
@@ -360,7 +360,7 @@ class PersistentResource implements ResourceMetaDataInterface, CacheAwareInterfa
             $temporaryPathAndFilename = $this->environment->getPathToTemporaryDirectory() . 'ResourceFiles/';
             try {
                 Utility\Files::createDirectoryRecursively($temporaryPathAndFilename);
-            } catch (Utility\Exception $e) {
+            } catch (Utility\Exception\FilesException $e) {
                 throw new ResourceException(sprintf('Could not create the temporary directory %s while trying to create a temporary local copy of resource %s (%s).', $temporaryPathAndFilename, $this->sha1, $this->filename), 1416221864);
             }
 

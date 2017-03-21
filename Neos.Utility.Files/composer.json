@@ -18,7 +18,7 @@
   },
   "autoload-dev": {
     "psr-4": {
-      "TYPO3\\Flow\\Utility\\Files\\Tests\\": "Tests"
+      "Neos\\Flow\\Utility\\Files\\Tests\\": "Tests"
     }
   },
   "extra": {

@@ -28,7 +28,7 @@ abstract class AbstractFrontend implements FrontendInterface
     protected $identifier;
 
     /**
-     * @var \Neos\Cache\Backend\AbstractBackend
+     * @var BackendInterface
      */
     protected $backend;
 

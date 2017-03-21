@@ -201,7 +201,7 @@ class Service
         }
 
         $configuration = new Configuration($connection, $outputWriter);
-        $configuration->setMigrationsNamespace(\Neos\Flow\Persistence\Doctrine\Migrations::class);
+        $configuration->setMigrationsNamespace('Neos\Flow\Persistence\Doctrine\Migrations');
         $configuration->setMigrationsDirectory(Files::concatenatePaths([FLOW_PATH_DATA, 'DoctrineMigrations']));
         $configuration->setMigrationsTableName(self::DOCTRINE_MIGRATIONSTABLENAME);
 
@@ -224,13 +224,11 @@ class Service
     }
 
     /**
-     * Returns the current migration status formatted as plain text.
+     * Returns the current migration status as an array.
      *
-     * @param boolean $showMigrations
-     * @param boolean $showDescriptions
-     * @return string
+     * @return array
      */
-    public function getMigrationStatus($showMigrations = false, $showDescriptions = false)
+    public function getMigrationStatus()
     {
         $configuration = $this->getMigrationConfiguration();
 
@@ -241,7 +239,7 @@ class Service
         $numExecutedUnavailableMigrations = count($executedUnavailableMigrations);
         $numNewMigrations = count(array_diff($availableMigrations, $executedMigrations));
 
-        $statusInformation = [
+        return [
             'Name' => $configuration->getName() ? $configuration->getName() : 'Doctrine Database Migrations',
             'Database Driver' => $configuration->getConnection()->getDriver()->getName(),
             'Database Name' => $configuration->getConnection()->getDatabase(),
@@ -259,7 +257,18 @@ class Service
             'Available Migrations' => count($availableMigrations),
             'New Migrations' => $numNewMigrations,
         ];
+    }
 
+    /**
+     * Returns a formatted string of current database migration status.
+     *
+     * @param boolean $showMigrations
+     * @param boolean $showDescriptions
+     * @return string
+     */
+    public function getFormattedMigrationStatus($showMigrations = false, $showDescriptions = false)
+    {
+        $statusInformation = $this->getMigrationStatus();
         $output = PHP_EOL . '<info>==</info> Configuration' . PHP_EOL;
 
         foreach ($statusInformation as $name => $value) {

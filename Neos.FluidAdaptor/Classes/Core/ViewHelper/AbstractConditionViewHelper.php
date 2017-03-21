@@ -18,21 +18,22 @@ use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 
 /**
  * This view helper is an abstract ViewHelper which implements an if/else condition.
- * @see Neos\FluidAdaptor\Core\Parser\SyntaxTree\ViewHelperNode::convertArgumentValue() to find see how boolean arguments are evaluated
+ *
+ * @see \TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\BooleanNode::convertToBoolean to find see how boolean arguments are evaluated
  *
  * = Usage =
  *
- * To create a custom Condition ViewHelper, you need to subclass this class, and
- * implement your own render() method. Inside there, you should call $this->renderThenChild()
- * if the condition evaluated to TRUE, and $this->renderElseChild() if the condition evaluated
- * to FALSE.
+ * To create a custom condition ViewHelper, you need to subclass this class, and
+ * implement your own static evaluateCondition() method that should return a boolean.
+ * The given RenderingContext can provide you with an object manager to get anything you
+ * might need to evaluate the condition together with the given arguments.
+ * Depending on the result of this method either the then or the else part is rendered.
+ *
+ * @see \Neos\FluidAdaptor\ViewHelpers\Security\IfAccessViewHelper::evaluateCondition for a simple usage example.
  *
  * Every Condition ViewHelper has a "then" and "else" argument, so it can be used like:
  * <[aConditionViewHelperName] .... then="condition true" else="condition false" />,
  * or as well use the "then" and "else" child nodes.
- *
- * @see Neos\FluidAdaptor\ViewHelpers\IfViewHelper for a more detailed explanation and a simple usage example.
- * Make sure to NOT OVERRIDE the constructor.
  *
  * @api
  */

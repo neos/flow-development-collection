@@ -249,9 +249,7 @@ welcome screen:
 	The Flow Welcome screen
 
 .. tip::
-	If you get in trouble during the installation check out the `installation hints
-	<http://wiki.typo3.org/Flow_Installation_Hints>`_ on the TYPO3 wiki. On
-	Windows you will most likely have to check the section *Running on Windows OS's*
-	of that page.
+	If you get in trouble during the installation ask for help `at discuss.neos.io
+	<https://discuss.neos.io/>`_.
 
 .. _Composer:             https://getcomposer.org

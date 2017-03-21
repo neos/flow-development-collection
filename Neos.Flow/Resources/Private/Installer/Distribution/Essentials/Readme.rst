@@ -1,5 +1,5 @@
 ------------------
-Flow Framework 3.3
+Flow Framework 4.0
 ------------------
 
 Welcome to Flow!
@@ -17,4 +17,5 @@ In short here's what you need to do:
    your system environment!).
 3) Call the URL leading to your virtual host from a browser
 
-Have fun!
+If you are stuck or have some questions not answered in the documentation, you are welcome to ask your question in
+the `Neos forum <https://discuss.neos.io>`_.

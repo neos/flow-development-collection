@@ -82,7 +82,7 @@ class Git
     public static function move($source, $target)
     {
         $result = 255;
-        system('git mv ' . escapeshellarg($source) . ' ' . escapeshellarg($target), $result);
+        exec('git mv ' . escapeshellarg($source) . ' ' . escapeshellarg($target), $output, $result);
         return $result;
     }
 
@@ -94,9 +94,9 @@ class Git
     {
         $result = 255;
         if (is_dir($fileOrDirectory)) {
-            system('git rm -qr ' . escapeshellarg($fileOrDirectory), $result);
+            exec('git rm -qr ' . escapeshellarg($fileOrDirectory), $output, $result);
         } else {
-            system('git rm -q ' . escapeshellarg($fileOrDirectory), $result);
+            exec('git rm -q ' . escapeshellarg($fileOrDirectory), $output, $result);
         }
         return $result;
     }

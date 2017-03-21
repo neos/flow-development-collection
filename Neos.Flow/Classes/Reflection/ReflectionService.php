@@ -63,14 +63,19 @@ class ReflectionService
     const VISIBILITY_PRIVATE = 1;
     const VISIBILITY_PROTECTED = 2;
     const VISIBILITY_PUBLIC = 3;
+
     // Implementations of an interface
     const DATA_INTERFACE_IMPLEMENTATIONS = 1;
+
     // Implemented interfaces of a class
     const DATA_CLASS_INTERFACES = 2;
+
     // Subclasses of a class
     const DATA_CLASS_SUBCLASSES = 3;
+
     // Class tag values
     const DATA_CLASS_TAGS_VALUES = 4;
+
     // Class annotations
     const DATA_CLASS_ANNOTATIONS = 5;
     const DATA_CLASS_ABSTRACT = 6;
@@ -99,11 +104,6 @@ class ReflectionService
      * @var \Doctrine\Common\Annotations\Reader
      */
     protected $annotationReader;
-
-    /**
-     * @var ClassLoader
-     */
-    protected $classLoader;
 
     /**
      * @var array
@@ -292,15 +292,6 @@ class ReflectionService
     public function injectSystemLogger(SystemLoggerInterface $systemLogger)
     {
         $this->systemLogger = $systemLogger;
-    }
-
-    /**
-     * @param ClassLoader $classLoader
-     * @return void
-     */
-    public function injectClassLoader(ClassLoader $classLoader)
-    {
-        $this->classLoader = $classLoader;
     }
 
     /**
@@ -1126,7 +1117,7 @@ class ReflectionService
     {
         $className = $classNameOrObject;
         if (is_object($classNameOrObject)) {
-            $className = get_class($classNameOrObject);
+            $className = TypeHandling::getTypeForValue($classNameOrObject);
         }
         $className = $this->cleanClassName($className);
 
@@ -2022,9 +2013,9 @@ class ReflectionService
         if (!$this->initialized) {
             $this->initialize();
         }
-        $package = $this->packageManager->getPackage($packageKey);
-
-        $packageNamespace = $package->getNamespace() . '\\';
+        if (empty($this->availableClassNames)) {
+            $this->availableClassNames = $this->reflectionDataRuntimeCache->get('__availableClassNames');
+        }
 
         $reflectionData = [
             'classReflectionData' => $this->classReflectionData,
@@ -2033,13 +2024,13 @@ class ReflectionService
             'classesByMethodAnnotations' => $this->classesByMethodAnnotations
         ];
 
-        $reflectionData['classReflectionData'] = $this->filterArrayByClassesInNamespace($reflectionData['classReflectionData'], $packageNamespace);
-        $reflectionData['classSchemata'] = $this->filterArrayByClassesInNamespace($reflectionData['classSchemata'], $packageNamespace);
-        $reflectionData['annotatedClasses'] = $this->filterArrayByClassesInNamespace($reflectionData['annotatedClasses'], $packageNamespace);
+        $reflectionData['classReflectionData'] = $this->filterArrayByClassesInPackageNamespace($reflectionData['classReflectionData'], $packageKey);
+        $reflectionData['classSchemata'] = $this->filterArrayByClassesInPackageNamespace($reflectionData['classSchemata'], $packageKey);
+        $reflectionData['annotatedClasses'] = $this->filterArrayByClassesInPackageNamespace($reflectionData['annotatedClasses'], $packageKey);
 
         $reflectionData['classesByMethodAnnotations'] = isset($reflectionData['classesByMethodAnnotations']) ? $reflectionData['classesByMethodAnnotations'] : [];
-        $methodAnnotationsFilters = function ($className) use ($packageNamespace) {
-            return strpos($className, $packageNamespace) === 0;
+        $methodAnnotationsFilters = function ($className) use ($packageKey) {
+            return (isset($this->availableClassNames[$packageKey]) && in_array($className, $this->availableClassNames[$packageKey]));
         };
 
         foreach ($reflectionData['classesByMethodAnnotations'] as $annotationClassName => $classNames) {
@@ -2058,17 +2049,14 @@ class ReflectionService
      * Filter an array of entries were keys are class names by being in the given package namespace.
      *
      * @param array $array
-     * @param string $packageNamespace
+     * @param string $packageKey
      * @return array
      */
-    protected function filterArrayByClassesInNamespace(array $array, $packageNamespace)
+    protected function filterArrayByClassesInPackageNamespace(array $array, $packageKey)
     {
-        // TODO: With PHP 5.6 the closure function can get the key for filtering.
-        return array_filter($array, function ($item) use (&$array, $packageNamespace) {
-            $className = key($array);
-            next($array);
-            return strpos($className, $packageNamespace) === 0;
-        });
+        return array_filter($array, function ($className) use ($packageKey) {
+            return (isset($this->availableClassNames[$packageKey]) && in_array($className, $this->availableClassNames[$packageKey]));
+        }, ARRAY_FILTER_USE_KEY);
     }
 
     /**
@@ -2120,6 +2108,10 @@ class ReflectionService
 
         if (!($this->reflectionDataCompiletimeCache instanceof FrontendInterface)) {
             throw new Exception('A cache must be injected before initializing the Reflection Service.', 1232044697);
+        }
+
+        if (!empty($this->availableClassNames)) {
+            $this->reflectionDataRuntimeCache->set('__availableClassNames', $this->availableClassNames);
         }
 
         if ($this->updatedReflectionData !== []) {

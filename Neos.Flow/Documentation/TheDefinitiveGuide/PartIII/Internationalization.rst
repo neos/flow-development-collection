@@ -35,9 +35,9 @@ use the i18n service API to obtain these verified ``Locale`` objects.
 .. note::
 
   You can configure which folders Flow should scan for finding available locales through
-  the ``TYPO3.Flow.i18n.scan.includePaths`` setting. This is useful to restrict the scanning
+  the ``Neos.Flow.i18n.scan.includePaths`` setting. This is useful to restrict the scanning
   to specific paths when you have a big file structure in your package ``Resources``.
-  You can also blacklist folders through ``TYPO3.Flow.i18n.scan.excludePatterns``.
+  You can also blacklist folders through ``Neos.Flow.i18n.scan.excludePatterns``.
   By default all folders except 'node_modules', 'bower_components' and any folder starting
   with a dot will be scanned.
 
@@ -269,7 +269,7 @@ of these translations, you have to adjust your templates to make use of the ``Tr
 
   <f:form.validationResults for="{property}">
 	<f:for each="{validationResults.errors}" as="error">
-		{error -> f:translate(id: error.code, arguments: error.arguments, package: 'TYPO3.Flow', source: 'ValidationErrors')}
+		{error -> f:translate(id: error.code, arguments: error.arguments, package: 'Neos.Flow', source: 'ValidationErrors')}
 	</f:for>
   </f:form.validationResults>
 
@@ -484,7 +484,7 @@ in two forms that will be used depending on the count:
 
 Please be aware that the number of the available plural forms depends on the language!
 If you want to find out which plural forms are available for a locale you can have a
-look at *TYPO3.Flow/Resources/Private/I18n/CLDR/Sources/supplemental/plurals.xml*
+look at *Neos.Flow/Resources/Private/I18n/CLDR/Sources/supplemental/plurals.xml*
 
 XLIFF file translation
 ----------------------

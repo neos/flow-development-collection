@@ -388,8 +388,8 @@ class CacheManager
             $this->getCache($cacheName)->flush();
         }
 
-        $this->systemLogger->log('A configuration file has been changed, flushing compiled configuration cache', LOG_INFO);
-        $this->configurationManager->flushConfigurationCache();
+        $this->systemLogger->log('A configuration file has been changed, refreshing compiled configuration cache', LOG_INFO);
+        $this->configurationManager->refreshConfiguration();
 
         if ($aopProxyClassRebuildIsNeeded) {
             $this->systemLogger->log('The configuration has changed, triggering an AOP proxy class rebuild.', LOG_INFO);

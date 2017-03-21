@@ -99,7 +99,7 @@ class AuthenticationProviderManagerTest extends UnitTestCase
         $token->expects($this->atLeastOnce())->method('isAuthenticated')->will($this->returnValue(true));
         $securityContext->expects($this->atLeastOnce())->method('getAuthenticationTokens')->will($this->returnValue([$token]));
 
-        $this->mockSession->expects($this->once())->method('addTag')->with('TYPO3-Flow-Security-Account-21232f297a57a5a743894a0e4a801fc3');
+        $this->mockSession->expects($this->once())->method('addTag')->with('Neos-Flow-Security-Account-21232f297a57a5a743894a0e4a801fc3');
 
         $this->authenticationProviderManager->_set('providers', []);
         $this->authenticationProviderManager->_set('securityContext', $securityContext);

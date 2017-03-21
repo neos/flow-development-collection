@@ -2,7 +2,7 @@
 namespace Neos\Eel\Tests\Unit;
 
 /*                                                                        *
- * This script belongs to the Flow package "TYPO3.Eel".                   *
+ * This script belongs to the Flow package "Neos.Eel".                   *
  *                                                                        */
 
 use Neos\Eel\Helper\SecurityHelper;

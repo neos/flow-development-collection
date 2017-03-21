@@ -157,7 +157,7 @@ class ComposerUtility
         }
 
         if (!isset($manifest['require']) || empty($manifest['require'])) {
-            $manifest['require'] = array('typo3/flow' => '*');
+            $manifest['require'] = array('neos/flow' => '*');
         }
 
         if (!isset($manifest['autoload'])) {

@@ -22,7 +22,7 @@
   },
   "autoload-dev": {
     "psr-4": {
-      "TYPO3\\Flow\\Utility\\Unicode\\Tests\\": "Tests"
+      "Neos\\Flow\\Utility\\Unicode\\Tests\\": "Tests"
     }
   }
 }

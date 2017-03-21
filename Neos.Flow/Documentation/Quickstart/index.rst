@@ -76,7 +76,7 @@ You will end up with a directory structure like this:
         ...
       Packages/
         Framework/
-          TYPO3.Flow/
+          Neos.Flow/
           ...
       Web/              <-- your virtual host root will point to this
         .htaccess
@@ -319,7 +319,7 @@ setup, it would look similar to this:
 
 .. code-block:: yaml
 
-    TYPO3:
+    Neos:
       Flow:
         persistence:
           backendOptions:
@@ -708,8 +708,8 @@ argument::
         $this->redirect('index');
     }
 
-Although this method looks quite similar to the ``showAction``, there is an important
-difference you should be aware of: The parameter passed to the ``showAction``
+Although this method looks quite similar to the ``createAction``, there is an important
+difference you should be aware of: The parameter passed to the ``updateAction``
 is an already existing (that is, already *persisted*) coffee bean object with the
 modifications submitted by the user already applied.
 

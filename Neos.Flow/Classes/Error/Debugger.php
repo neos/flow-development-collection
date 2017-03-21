@@ -16,9 +16,8 @@ use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\ObjectManagement\Configuration\Configuration;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\ObjectManagement\Proxy\ProxyInterface;
-use Neos\Utility\Exception\PropertyNotAccessibleException;
-use Neos\Utility\ObjectAccess;
 use Neos\Utility\Arrays;
+use Neos\Utility\ObjectAccess;
 
 /**
  * A debugging utility class
@@ -41,6 +40,7 @@ class Debugger
     /**
      * Hardcoded list of Flow class names (regex) which should not be displayed during debugging.
      * This is a fallback in case the classes could not be fetched from the configuration
+     *
      * @var array
      */
     protected static $ignoredClassesFallback = [
@@ -63,7 +63,8 @@ class Debugger
         'Neos\\\\FluidAdaptor\\\\.*' => true,
         '.+Service$' => true,
         '.+Repository$' => true,
-        'PHPUnit_Framework_MockObject_InvocationMocker' => true];
+        'PHPUnit_Framework_MockObject_InvocationMocker' => true
+    ];
 
     /**
      * @var string
@@ -79,6 +80,7 @@ class Debugger
 
     /**
      * Is set to TRUE once the CSS file is included in the current page to prevent double inclusions of the CSS file.
+     *
      * @var boolean
      */
     public static $stylesheetEchoed = false;
@@ -139,6 +141,7 @@ class Debugger
         } else {
             $dump = '[unhandled type]';
         }
+
         return $dump;
     }
 
@@ -159,6 +162,7 @@ class Debugger
             $dump .= chr(10) . str_repeat(' ', $level) . self::renderDump($key, 0, $plaintext, $ansiColors) . ' => ';
             $dump .= self::renderDump($value, $level + 1, $plaintext, $ansiColors);
         }
+
         return $dump;
     }
 
@@ -286,6 +290,7 @@ class Debugger
                 $dump = '<a href="#o' . $objectIdentifier . '" onclick="document.location.hash=\'#o' . $objectIdentifier . '\'; return false;" class="debug-seeabove" title="see above">' . $dump . '</a>';
             }
         }
+
         return $dump;
     }
 
@@ -299,88 +304,95 @@ class Debugger
      */
     public static function getBacktraceCode(array $trace, $includeCode = true, $plaintext = false)
     {
-        $backtraceCode = '';
-        if (count($trace)) {
-            foreach ($trace as $index => $step) {
-                if ($plaintext) {
-                    $class = isset($step['class']) ? $step['class'] . '::' : '';
-                } else {
-                    $class = isset($step['class']) ? $step['class'] . '<span style="color:white;">::</span>' : '';
-                }
+        if ($plaintext) {
+            return static::getBacktraceCodePlaintext($trace, $includeCode);
+        }
+        $backtraceCode = '<ol class="Flow-Debug-Backtrace" reversed>';
+        foreach ($trace as $index => $step) {
+            $backtraceCode .= '<li class="Flow-Debug-Backtrace-Step">';
+            $class = isset($step['class']) ? $step['class'] . '<span class="color-muted">::</span>' : '';
 
-                $arguments = '';
-                if (isset($step['args']) && is_array($step['args'])) {
-                    foreach ($step['args'] as $argument) {
-                        if ($plaintext) {
-                            $arguments .= (strlen($arguments) === 0) ? '' : ', ';
-                        } else {
-                            $arguments .= (strlen($arguments) === 0) ? '' : '<span style="color:white;">,</span> ';
-                        }
-                        if (is_object($argument)) {
-                            if ($plaintext) {
-                                $arguments .= get_class($argument);
-                            } else {
-                                $arguments .= '<span style="color:#FF8700;"><em>' . get_class($argument) . '</em></span>';
-                            }
-                        } elseif (is_string($argument)) {
-                            $preparedArgument = (strlen($argument) < 100) ? $argument : substr($argument, 0, 50) . '…' . substr($argument, -50);
-                            $preparedArgument = htmlspecialchars($preparedArgument);
-                            if ($plaintext) {
-                                $arguments .= '"' . $argument . '"';
-                            } else {
-                                $preparedArgument = str_replace('…', '<span style="color:white;">…</span>', $preparedArgument);
-                                $preparedArgument = str_replace("\n", '<span style="color:white;">⏎</span>', $preparedArgument);
-                                $arguments .= '"<span style="color:#FF8700;" title="' . htmlspecialchars($argument) . '">' . $preparedArgument . '</span>"';
-                            }
-                        } elseif (is_numeric($argument)) {
-                            if ($plaintext) {
-                                $arguments .= (string)$argument;
-                            } else {
-                                $arguments .= '<span style="color:#FF8700;">' . (string)$argument . '</span>';
-                            }
-                        } elseif (is_bool($argument)) {
-                            if ($plaintext) {
-                                $arguments .= ($argument === true ? 'TRUE' : 'FALSE');
-                            } else {
-                                $arguments .= '<span style="color:#FF8700;">' . ($argument === true ? 'TRUE' : 'FALSE') . '</span>';
-                            }
-                        } elseif (is_array($argument)) {
-                            if ($plaintext) {
-                                $arguments .= 'array|' . count($argument) . '|';
-                            } else {
-                                $arguments .= sprintf(
-                                    '<span style="color:#FF8700;" title="%s"><em>array|%d|</em></span>',
-                                    htmlspecialchars(self::renderArrayDump($argument, 0, true)),
-                                    count($argument)
-                                );
-                            }
-                        } else {
-                            if ($plaintext) {
-                                $arguments .= gettype($argument);
-                            } else {
-                                $arguments .= '<span style="color:#FF8700;"><em>' . gettype($argument) . '</em></span>';
-                            }
-                        }
+            $arguments = '';
+            if (isset($step['args']) && is_array($step['args'])) {
+                foreach ($step['args'] as $argument) {
+                    $arguments .= (strlen($arguments) === 0) ? '' : '<span class="color-muted">,</span> ';
+                    $arguments .= '<span class="color-text-inverted">';
+                    if (is_object($argument)) {
+                        $arguments .= '<em>' . get_class($argument) . '</em>';
+                    } elseif (is_string($argument)) {
+                        $preparedArgument = (strlen($argument) < 100) ? $argument : substr($argument, 0, 50) . '…' . substr($argument, -50);
+                        $preparedArgument = htmlspecialchars($preparedArgument);
+                        $preparedArgument = str_replace('…', '<span class="color-muted">…</span>', $preparedArgument);
+                        $preparedArgument = str_replace("\n", '<span class="color-muted">⏎</span>', $preparedArgument);
+                        $arguments .= '"<span title="' . htmlspecialchars($argument) . '">' . $preparedArgument . '</span>"';
+                    } elseif (is_numeric($argument)) {
+                        $arguments .= (string)$argument;
+                    } elseif (is_bool($argument)) {
+                        $arguments .= ($argument === true ? 'TRUE' : 'FALSE');
+                    } elseif (is_array($argument)) {
+                        $arguments .= sprintf(
+                            '<em title="%s">array|%d|</em>',
+                            htmlspecialchars(self::renderArrayDump($argument, 0, true)),
+                            count($argument)
+                        );
+                    } else {
+                        $arguments .= '<em>' . gettype($argument) . '</em>';
                     }
-                }
-
-                if ($plaintext) {
-                    $backtraceCode .= (count($trace) - $index) . ' ' . $class . $step['function'] . '(' . $arguments . ')';
-                } else {
-                    $backtraceCode .= '<pre style="color:#69A550; background-color: #414141; padding: 4px 2px 4px 2px;">';
-                    $backtraceCode .= '<span style="color:white;">' . (count($trace) - $index) . '</span> ' . $class . $step['function'] . '<span style="color:white;">(' . $arguments . ')</span>';
-                    $backtraceCode .= '</pre>';
-                }
-
-                if (isset($step['file']) && $includeCode) {
-                    $backtraceCode .= self::getCodeSnippet($step['file'], $step['line'], $plaintext);
-                }
-                if ($plaintext) {
-                    $backtraceCode .= PHP_EOL;
-                } else {
-                    $backtraceCode .= '<br />';
+                    $arguments .= '</span>';
                 }
             }
+
+            $backtraceCode .= '<pre class="Flow-Debug-Backtrace-Step-Function">';
+            $backtraceCode .= $class . $step['function'] . '<span class="color-muted">(' . $arguments . ')</span>';
+            $backtraceCode .= '</pre>';
+
+            if (isset($step['file']) && $includeCode) {
+                $backtraceCode .= self::getCodeSnippet($step['file'], $step['line']);
+            }
+            $backtraceCode .= '</li>';
+        }
+        $backtraceCode .= '</ol>';
+        return $backtraceCode;
+    }
+
+    /**
+     * @param array $trace
+     * @param bool $includeCode
+     * @return string
+     */
+    protected static function getBacktraceCodePlaintext(array $trace, $includeCode = true)
+    {
+        $backtraceCode = '';
+        foreach ($trace as $index => $step) {
+            $class = isset($step['class']) ? $step['class'] . '::' : '';
+
+            $arguments = '';
+            if (isset($step['args']) && is_array($step['args'])) {
+                foreach ($step['args'] as $argument) {
+                    $arguments .= (strlen($arguments) === 0) ? '' : ', ';
+                    if (is_object($argument)) {
+                        $arguments .= get_class($argument);
+                    } elseif (is_string($argument)) {
+                        $preparedArgument = (strlen($argument) < 100) ? $argument : substr($argument, 0, 50) . '…' . substr($argument, -50);
+                        $arguments .= '"' . $preparedArgument . '"';
+                    } elseif (is_numeric($argument)) {
+                        $arguments .= (string)$argument;
+                    } elseif (is_bool($argument)) {
+                        $arguments .= ($argument === true ? 'TRUE' : 'FALSE');
+                    } elseif (is_array($argument)) {
+                        $arguments .= 'array|' . count($argument) . '|';
+                    } else {
+                        $arguments .= gettype($argument);
+                    }
+                }
+            }
+
+            $backtraceCode .= (count($trace) - $index) . ' ' . $class . $step['function'] . '(' . $arguments . ')';
+
+            if (isset($step['file']) && $includeCode) {
+                $backtraceCode .= self::getCodeSnippetPlaintext($step['file'], $step['line']);
+            }
+            $backtraceCode .= PHP_EOL;
         }
 
         return $backtraceCode;
@@ -393,62 +405,90 @@ class Debugger
      * @param integer $lineNumber Line number defining the center of the code snippet
      * @param boolean $plaintext
      * @return string The code snippet
-     * @todo make plaintext-aware
      */
     public static function getCodeSnippet($filePathAndName, $lineNumber, $plaintext = false)
     {
-        $pathPosition = strpos($filePathAndName, 'Packages/');
         if ($plaintext) {
-            $codeSnippet = PHP_EOL;
-        } else {
-            $codeSnippet = '<br />';
+            return static::getCodeSnippetPlaintext($filePathAndName, $lineNumber);
         }
+
+        $codeSnippet = '<br />';
         if (@file_exists($filePathAndName)) {
             $phpFile = @file($filePathAndName);
-            if (is_array($phpFile)) {
-                $startLine = ($lineNumber > 2) ? ($lineNumber - 2) : 1;
-                $endLine = ($lineNumber < (count($phpFile) - 2)) ? ($lineNumber + 3) : count($phpFile) + 1;
-                if ($endLine > $startLine) {
-                    if ($pathPosition !== false) {
-                        if ($plaintext) {
-                            $codeSnippet = PHP_EOL . substr($filePathAndName, $pathPosition) . ':' . PHP_EOL;
-                        } else {
-                            $codeSnippet = '<br /><span style="font-size:10px;">' . substr($filePathAndName, $pathPosition) . ':</span><br /><pre>';
-                        }
-                    } else {
-                        if ($plaintext) {
-                            $codeSnippet = PHP_EOL . $filePathAndName . ':' . PHP_EOL;
-                        } else {
-                            $codeSnippet = '<br /><span style="font-size:10px;">' . $filePathAndName . ':</span><br /><pre>';
-                        }
-                    }
-                    for ($line = $startLine; $line < $endLine; $line++) {
-                        $codeLine = str_replace("\t", ' ', $phpFile[$line - 1]);
+            if (!is_array($phpFile)) {
+                return $codeSnippet;
+            }
+            $filePaths = static::findProxyAndShortFilePath($filePathAndName);
 
-                        if ($line === $lineNumber) {
-                            if (!$plaintext) {
-                                $codeSnippet .= '</pre><pre style="background-color: #F1F1F1; color: black;">';
-                            }
-                        }
-                        $codeSnippet .= sprintf('%05d', $line) . ': ';
+            $codeSnippet = '<div class="Flow-Debug-CodeSnippet">';
+            $filePathReal = $filePaths['proxy'] !== '' ? $filePaths['proxy'] : $filePaths['short'];
+            $codeSnippet .= '<div class="Flow-Debug-CodeSnippet-File">' . $filePathReal . '</div>';
+            if ($filePaths['proxy'] !== '') {
+                $codeSnippet .= '<div class="Flow-Debug-CodeSnippet-File">Original File: ' . $filePaths['short'] . '</div>';
+            }
 
-                        if ($plaintext) {
-                            $codeSnippet .= $codeLine;
-                        } else {
-                            $codeSnippet .= htmlspecialchars($codeLine);
-                        }
+            $codeSnippet .= '<div class="Flow-Debug-CodeSnippet-Code">';
 
-                        if ($line === $lineNumber && !$plaintext) {
-                            $codeSnippet .= '</pre><pre>';
-                        }
-                    }
-                    if (!$plaintext) {
-                        $codeSnippet .= '</pre>';
-                    }
+            $startLine = ($lineNumber > 2) ? ($lineNumber - 2) : 1;
+            $endLine = ($lineNumber < (count($phpFile) - 2)) ? ($lineNumber + 3) : count($phpFile) + 1;
+            for ($line = $startLine; $line < $endLine; $line++) {
+                $codeSnippet .= '<pre class="' . (($line === $lineNumber) ? 'Flow-Debug-CodeSnippet-Code-Highlighted' : '') . '">';
+                $codeLine = str_replace("\t", ' ', $phpFile[$line - 1]);
+                $codeSnippet .= sprintf('%05d', $line) . ': ';
+                $codeSnippet .= htmlspecialchars($codeLine);
+                $codeSnippet .= '</pre>';
+            }
+            $codeSnippet .= '</div></div>';
+        }
+
+        return $codeSnippet;
+    }
+
+    protected static function getCodeSnippetPlaintext($filePathAndName, $lineNumber)
+    {
+        $codeSnippet = PHP_EOL;
+        if (@file_exists($filePathAndName)) {
+            $phpFile = @file($filePathAndName);
+            if (!is_array($phpFile)) {
+                return $codeSnippet;
+            }
+
+            $filePaths = static::findProxyAndShortFilePath($filePathAndName);
+            $startLine = ($lineNumber > 2) ? ($lineNumber - 2) : 1;
+            $endLine = ($lineNumber < (count($phpFile) - 2)) ? ($lineNumber + 3) : count($phpFile) + 1;
+            if ($endLine > $startLine) {
+                $codeSnippet = PHP_EOL . $filePaths['short'] . ($filePaths['proxy'] !== '' ? ' (actually in ' . $filePaths['proxy'] . ')' : '') . ':' . PHP_EOL;
+                for ($line = $startLine; $line < $endLine; $line++) {
+                    $codeSnippet .= sprintf('%05d', $line) . ': ';
+                    $codeSnippet .= str_replace("\t", ' ', $phpFile[$line - 1]);
                 }
             }
         }
+
         return $codeSnippet;
+    }
+
+    /**
+     * @param string $file
+     * @return array
+     */
+    public static function findProxyAndShortFilePath($file)
+    {
+        $flowRoot = defined('FLOW_PATH_ROOT') ? FLOW_PATH_ROOT : '';
+        $originalPath = $file;
+        $proxyClassPathPosition = strpos($file, 'Flow_Object_Classes/');
+        if ($proxyClassPathPosition) {
+            $fileContent = @file($file);
+            $originalPath = trim(substr($fileContent[count($fileContent) - 2], 19));
+        }
+
+        $originalPath = str_replace($flowRoot, '', $originalPath);
+        $file = str_replace($flowRoot, '', $file);
+
+        return [
+            'short' => $originalPath,
+            'proxy' => ($originalPath !== $file) ? $file : ''
+        ];
     }
 
     /**
@@ -501,6 +541,7 @@ class Debugger
         }
 
         self::$ignoredClassesRegex = sprintf('/^%s$/xs', implode('$|^', $ignoredClasses));
+
         return self::$ignoredClassesRegex;
     }
 }

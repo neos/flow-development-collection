@@ -139,30 +139,35 @@ abstract class AbstractTemplateView extends \TYPO3Fluid\Fluid\View\AbstractTempl
 
     /**
      * @param string $templatePathAndFilename
+     * @return void
      */
     public function setTemplatePathAndFilename($templatePathAndFilename)
     {
-        return $this->getTemplatePaths()->setTemplatePathAndFilename($templatePathAndFilename);
+        $this->getTemplatePaths()->setTemplatePathAndFilename($templatePathAndFilename);
     }
 
     /**
      * @param ControllerContext $controllerContext
+     * @return void
      */
     public function setControllerContext(ControllerContext $controllerContext)
     {
         $this->controllerContext = $controllerContext;
-        if ($this->getRenderingContext() instanceof RenderingContext) {
-            $this->getRenderingContext()->setControllerContext($controllerContext);
+
+        $renderingContext = $this->getRenderingContext();
+        if ($renderingContext instanceof RenderingContext) {
+            $renderingContext->setControllerContext($controllerContext);
         }
 
 
         $paths = $this->getTemplatePaths();
         $request = $controllerContext->getRequest();
-        $paths->setFormat($request->getFormat());
 
         if (!$request instanceof ActionRequest) {
             return;
         }
+
+        $paths->setFormat($request->getFormat());
 
         if ($paths->getTemplateRootPaths() === [] && $paths->getLayoutRootPaths() === [] && $paths->getPartialRootPaths() === []) {
             $paths->fillDefaultsByPackageName($request->getControllerPackageKey());
@@ -191,54 +196,19 @@ abstract class AbstractTemplateView extends \TYPO3Fluid\Fluid\View\AbstractTempl
      */
     public function renderSection($sectionName, array $variables = [], $ignoreUnknown = false)
     {
-        if ($this->getCurrentParsedTemplate() === null) {
-            return $this->renderStandaloneSection($sectionName, $variables, $ignoreUnknown);
+        // FIXME: We should probably give variables explicitly to this method.
+        if ($variables === []) {
+            $variables = $this->getRenderingContext()->getVariableProvider()->getAll();
         }
 
         return parent::renderSection($sectionName, $variables, $ignoreUnknown);
     }
 
     /**
-     * Renders a section on its own, i.e. without the a surrounding template.
-     *
-     * In this case, we just emulate that a surrounding (empty) layout exists,
-     * and trigger the normal rendering flow then.
-     *
-     * @param string $sectionName Name of section to render
-     * @param array $variables The variables to use
-     * @param boolean $ignoreUnknown Ignore an unknown section and just return an empty string
-     * @return string rendered template for the section
-     */
-    protected function renderStandaloneSection($sectionName, array $variables = [], $ignoreUnknown = false)
-    {
-        $controllerName = $this->baseRenderingContext->getControllerName();
-        $templateParser = $this->baseRenderingContext->getTemplateParser();
-        $templatePaths = $this->baseRenderingContext->getTemplatePaths();
-        $actionName = $this->baseRenderingContext->getControllerAction();
-        $actionName = ucfirst($actionName);
-
-        // Note this is (unfortunately) needed to initialize the template
-        $templatePaths->getTemplateSource($controllerName, $actionName);
-        $templateIdentifier = $templatePaths->getTemplateIdentifier($controllerName, $actionName);
-        $parsedTemplate = $templateParser->getOrParseAndStoreTemplate(
-            $templateIdentifier,
-            function ($parent, TemplatePaths $paths) use ($controllerName, $actionName) {
-                return $paths->getTemplateSource($controllerName, $actionName);
-            }
-        );
-        $parsedTemplate->addCompiledNamespaces($this->baseRenderingContext);
-
-        $this->startRendering(self::RENDERING_LAYOUT, $parsedTemplate, $this->baseRenderingContext);
-        $output = $this->renderSection($sectionName, $variables, $ignoreUnknown);
-        $this->stopRendering();
-
-        return $output;
-    }
-
-    /**
      * Validate options given to this view.
      *
      * @param array $options
+     * @return void
      * @throws Exception
      */
     protected function validateOptions(array $options)
@@ -265,6 +235,7 @@ abstract class AbstractTemplateView extends \TYPO3Fluid\Fluid\View\AbstractTempl
      * and sets the resulting options in this object.
      *
      * @param array $options
+     * @return void
      */
     protected function setOptions(array $options)
     {

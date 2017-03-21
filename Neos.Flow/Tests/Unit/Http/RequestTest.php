@@ -136,19 +136,19 @@ class RequestTest extends UnitTestCase
      */
     public function createUsesReasonableDefaultsForCreatingANewRequest()
     {
-        $uri = new Uri('http://flow.typo3.org/foo/bar?baz=1&quux=true#at-the-very-bottom');
+        $uri = new Uri('http://flow.neos.io/foo/bar?baz=1&quux=true#at-the-very-bottom');
         $request = Request::create($uri);
 
         $this->assertEquals('GET', $request->getMethod());
         $this->assertEquals($uri, $request->getUri());
         $this->assertEquals('HTTP/1.1', $request->getVersion());
 
-        $uri = new Uri('https://flow.typo3.org/foo/bar?baz=1&quux=true#at-the-very-bottom');
+        $uri = new Uri('https://flow.neos.io/foo/bar?baz=1&quux=true#at-the-very-bottom');
         $request = Request::create($uri);
 
         $this->assertEquals($uri, $request->getUri());
 
-        $uri = new Uri('http://flow.typo3.org/foo/bar?baz=1&quux=true#at-the-very-bottom');
+        $uri = new Uri('http://flow.neos.io/foo/bar?baz=1&quux=true#at-the-very-bottom');
         $request = Request::create($uri, 'POST');
 
         $this->assertEquals('POST', $request->getMethod());
@@ -160,7 +160,7 @@ class RequestTest extends UnitTestCase
      */
     public function settingVersionHasExpectedImplications()
     {
-        $uri = new Uri('http://flow.typo3.org/foo/bar?baz=1&quux=true#at-the-very-bottom');
+        $uri = new Uri('http://flow.neos.io/foo/bar?baz=1&quux=true#at-the-very-bottom');
         $request = Request::create($uri);
         $request->setVersion('HTTP/1.0');
 
@@ -225,7 +225,7 @@ class RequestTest extends UnitTestCase
      */
     public function methodCanBeOverridden($originalMethod, array $arguments, array $server, $expectedMethod)
     {
-        $uri = new Uri('http://flow.typo3.org');
+        $uri = new Uri('http://flow.neos.io');
         $request = Request::create($uri, $originalMethod, $arguments, [], $server);
         $this->assertEquals($expectedMethod, $request->getMethod());
     }
@@ -238,7 +238,7 @@ class RequestTest extends UnitTestCase
      */
     public function createSetsTheContentTypeHeaderToFormUrlEncodedByDefaultIfRequestMethodSuggestsIt()
     {
-        $uri = new Uri('http://flow.typo3.org/foo');
+        $uri = new Uri('http://flow.neos.io/foo');
         $request = Request::create($uri, 'POST');
 
         $this->assertEquals('application/x-www-form-urlencoded', $request->getHeaders()->get('Content-Type'));
@@ -249,7 +249,7 @@ class RequestTest extends UnitTestCase
      */
     public function createActionRequestCreatesAnMvcRequestConnectedToTheParentRequest()
     {
-        $uri = new Uri('http://flow.typo3.org');
+        $uri = new Uri('http://flow.neos.io');
         $request = Request::create($uri);
 
         $subRequest = new ActionRequest($request);
@@ -276,7 +276,7 @@ class RequestTest extends UnitTestCase
      */
     public function setMethodAcceptsAnyRequestMethod($validMethod)
     {
-        $request = Request::create(new Uri('http://flow.typo3.org'));
+        $request = Request::create(new Uri('http://flow.neos.io'));
         $request->setMethod($validMethod);
         $this->assertSame($validMethod, $request->getMethod());
     }
@@ -311,7 +311,7 @@ class RequestTest extends UnitTestCase
         $expectedContent = 'userid=joe&password=joh316';
         file_put_contents('vfs://Foo/content.txt', $expectedContent);
 
-        $request = Request::create(new Uri('http://flow.typo3.org'));
+        $request = Request::create(new Uri('http://flow.neos.io'));
         $request->setContent(null);
         $this->inject($request, 'inputStreamUri', 'vfs://Foo/content.txt');
 
@@ -329,7 +329,7 @@ class RequestTest extends UnitTestCase
         $expectedContent = 'userid=joe&password=joh316';
         file_put_contents('vfs://Foo/content.txt', $expectedContent);
 
-        $request = Request::create(new Uri('http://flow.typo3.org'));
+        $request = Request::create(new Uri('http://flow.neos.io'));
         $request->setContent(null);
         $this->inject($request, 'inputStreamUri', 'vfs://Foo/content.txt');
 
@@ -349,7 +349,7 @@ class RequestTest extends UnitTestCase
 
         file_put_contents('vfs://Foo/content.txt', 'xy');
 
-        $request = Request::create(new Uri('http://flow.typo3.org'));
+        $request = Request::create(new Uri('http://flow.neos.io'));
         $this->inject($request, 'inputStreamUri', 'vfs://Foo/content.txt');
 
         $request->getContent(true);

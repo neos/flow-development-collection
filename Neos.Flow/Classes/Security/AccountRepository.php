@@ -58,7 +58,7 @@ class AccountRepository extends Repository
     {
         parent::remove($object);
         /** @var Account $object */
-        $tag = 'TYPO3-Flow-Security-Account-' . md5($object->getAccountIdentifier());
+        $tag = 'Neos-Flow-Security-Account-' . md5($object->getAccountIdentifier());
         $this->sessionManager->destroySessionsByTag($tag, sprintf('The account %s (%s) was deleted', $object->getAccountIdentifier(), $object->getAuthenticationProviderName()));
     }
 
