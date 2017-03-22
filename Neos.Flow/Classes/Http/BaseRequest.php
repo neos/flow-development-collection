@@ -45,6 +45,7 @@ class BaseRequest extends AbstractMessage implements RequestInterface
      */
     public function __construct(UriInterface $uri, $method = 'GET')
     {
+        parent::__construct();
         $this->uri = $uri;
         $this->method = $method;
     }
@@ -52,7 +53,7 @@ class BaseRequest extends AbstractMessage implements RequestInterface
     /**
      * Returns the request URI
      *
-     * @return UriInterface
+     * @return UriInterface|Uri
      * @api
      */
     public function getUri()
@@ -63,7 +64,7 @@ class BaseRequest extends AbstractMessage implements RequestInterface
     /**
      * Returns the detected base URI
      *
-     * @return Uri
+     * @return UriInterface|Uri
      * @api
      */
     public function getBaseUri()
@@ -90,12 +91,15 @@ class BaseRequest extends AbstractMessage implements RequestInterface
      */
     protected function detectBaseUri()
     {
-        if ($this->baseUri === null) {
-            $this->baseUri = clone $this->uri;
-            $this->baseUri->setQuery(null);
-            $this->baseUri->setFragment(null);
-            $this->baseUri->setPath($this->getScriptRequestPath());
+        if ($this->baseUri !== null) {
+            return;
         }
+
+        $baseUri = clone $this->uri;
+        $baseUri = $baseUri->withQuery('');
+        $baseUri = $baseUri->withFragment('');
+        $baseUri = $baseUri->withPath($this->getScriptRequestPath());
+        $this->baseUri = $baseUri;
     }
 
     /**
@@ -217,26 +221,10 @@ class BaseRequest extends AbstractMessage implements RequestInterface
      */
     public function renderHeaders()
     {
-        $headers = $this->getRequestLine();
-
-        foreach ($this->headers->getAll() as $name => $values) {
-            foreach ($values as $value) {
-                $headers .= sprintf("%s: %s\r\n", $name, $value);
-            }
-        }
+        $headers = $this->getStartLine();
+        $headers .= $this->headers->__toString();
 
         return $headers;
-    }
-
-    /**
-     * Cast the request to a string: return the content part of this response
-     *
-     * @return string The same as getContent()
-     * @api
-     */
-    public function __toString()
-    {
-        return $this->renderHeaders() . "\r\n" . $this->getContent();
     }
 
     /**
@@ -280,6 +268,7 @@ class BaseRequest extends AbstractMessage implements RequestInterface
      *     request-target forms allowed in request messages)
      * @param mixed $requestTarget
      * @return self
+     * @api PSR-7
      */
     public function withRequestTarget($requestTarget)
     {
@@ -302,6 +291,7 @@ class BaseRequest extends AbstractMessage implements RequestInterface
      * @param string $method Case-sensitive method.
      * @return self
      * @throws \InvalidArgumentException for invalid HTTP methods.
+     * @api PSR-7
      */
     public function withMethod($method)
     {
@@ -340,6 +330,7 @@ class BaseRequest extends AbstractMessage implements RequestInterface
      * @param UriInterface $uri New request URI to use.
      * @param bool $preserveHost Preserve the original state of the Host header.
      * @return self
+     * @api PSR-7
      */
     public function withUri(UriInterface $uri, $preserveHost = false)
     {
@@ -374,6 +365,28 @@ class BaseRequest extends AbstractMessage implements RequestInterface
         }
 
         $this->setHeader('Host', $host);
+    }
+
+    /**
+     * Returns the relative path (ie. relative to the web root) to the script as
+     * it was accessed through the web server.
+     *
+     * @return string Relative path to the PHP script as accessed through the web
+     */
+    protected function getScriptRequestPath()
+    {
+        return '/';
+    }
+
+    /**
+     * Cast the request to a string: return the content part of this response
+     *
+     * @return string The same as getContent()
+     * @api
+     */
+    public function __toString()
+    {
+        return $this->renderHeaders() . "\r\n" . $this->getContent();
     }
 
     /**

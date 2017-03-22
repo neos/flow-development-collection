@@ -12,7 +12,7 @@ namespace Neos\Flow\Http;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Error as ErrorException;
+use Neos\Flow\Error\Exception as ErrorException;
 use Neos\Utility\Unicode;
 use Psr\Http\Message\UriInterface;
 
@@ -86,6 +86,11 @@ class Uri implements UriInterface
      */
     protected $fragment;
 
+    protected $defaultPortsForScheme = [
+        'http' => 80,
+        'https' => 443
+    ];
+
     /**
      * Constructs the URI object from a string
      *
@@ -99,36 +104,32 @@ class Uri implements UriInterface
             throw new \InvalidArgumentException('The URI must be a valid string.', 1176550571);
         }
 
+        $uriParts = null;
         $parseUrlException = null;
+
         try {
             $uriParts = Unicode\Functions::parse_url($uriString);
         } catch (ErrorException $exception) {
             $parseUrlException = $exception;
         }
-        if (is_array($uriParts)) {
-            $this->scheme = isset($uriParts['scheme']) ? $uriParts['scheme'] : null;
-            $this->username = isset($uriParts['user']) ? $uriParts['user'] : null;
-            $this->password = isset($uriParts['pass']) ? $uriParts['pass'] : null;
-            $this->host = isset($uriParts['host']) ? $uriParts['host'] : null;
-            $this->port = isset($uriParts['port']) ? $uriParts['port'] : null;
-            if ($this->port === null) {
-                switch ($this->scheme) {
-                    case 'http':
-                        $this->port = 80;
-                    break;
-                    case 'https':
-                        $this->port = 443;
-                    break;
-                }
-            }
-            $this->path = isset($uriParts['path']) ? $uriParts['path'] : null;
-            if (isset($uriParts['query'])) {
-                $this->setQuery($uriParts['query']);
-            }
-            $this->fragment = isset($uriParts['fragment']) ? $uriParts['fragment'] : null;
-        } else {
+
+        if (!is_array($uriParts)) {
             throw new \InvalidArgumentException('The given URI "' . $uriString . '" is not a valid one.', 1351594202, $parseUrlException);
         }
+
+        $this->scheme = isset($uriParts['scheme']) ? $uriParts['scheme'] : null;
+        $this->username = isset($uriParts['user']) ? $uriParts['user'] : null;
+        $this->password = isset($uriParts['pass']) ? $uriParts['pass'] : null;
+        $this->host = isset($uriParts['host']) ? $uriParts['host'] : null;
+        $this->port = isset($uriParts['port']) ? $uriParts['port'] : null;
+        if ($this->port === null) {
+            $this->port = $this->resolveDefaultPortForScheme($this->scheme);
+        }
+        $this->path = isset($uriParts['path']) ? $uriParts['path'] : null;
+        if (isset($uriParts['query'])) {
+            $this->setQuery($uriParts['query']);
+        }
+        $this->fragment = isset($uriParts['fragment']) ? $uriParts['fragment'] : null;
     }
 
     /**
@@ -180,11 +181,11 @@ class Uri implements UriInterface
      */
     public function setUsername($username)
     {
-        if (preg_match(self::PATTERN_MATCH_USERNAME, $username) === 1) {
-            $this->username = $username;
-        } else {
+        if (preg_match(self::PATTERN_MATCH_USERNAME, $username) !== 1) {
             throw new \InvalidArgumentException('"' . $username . '" is not a valid username.', 1184071238);
         }
+
+        $this->username = $username;
     }
 
     /**
@@ -208,11 +209,11 @@ class Uri implements UriInterface
      */
     public function setPassword($password)
     {
-        if (preg_match(self::PATTERN_MATCH_PASSWORD, $password) === 1) {
-            $this->password = $password;
-        } else {
+        if (preg_match(self::PATTERN_MATCH_PASSWORD, $password) !== 1) {
             throw new \InvalidArgumentException('The specified password is not valid as part of a URI.', 1184071239);
         }
+
+        $this->password = $password;
     }
 
     /**
@@ -236,11 +237,11 @@ class Uri implements UriInterface
      */
     public function setHost($host)
     {
-        if (preg_match(self::PATTERN_MATCH_HOST, $host) === 1) {
-            $this->host = $host;
-        } else {
+        if (preg_match(self::PATTERN_MATCH_HOST, $host) !== 1) {
             throw new \InvalidArgumentException('"' . $host . '" is not valid host as part of a URI.', 1184071240);
         }
+
+        $this->host = $host;
     }
 
     /**
@@ -264,11 +265,11 @@ class Uri implements UriInterface
      */
     public function setPort($port)
     {
-        if (preg_match(self::PATTERN_MATCH_PORT, $port) === 1) {
-            $this->port = (integer)$port;
-        } else {
+        if (preg_match(self::PATTERN_MATCH_PORT, $port) !== 1) {
             throw new \InvalidArgumentException('"' . $port . '" is not valid port number as part of a URI.', 1184071241);
         }
+
+        $this->port = (integer)$port;
     }
 
     /**
@@ -292,11 +293,11 @@ class Uri implements UriInterface
      */
     public function setPath($path)
     {
-        if (preg_match(self::PATTERN_MATCH_PATH, $path) === 1) {
-            $this->path = $path;
-        } else {
+        if (preg_match(self::PATTERN_MATCH_PATH, $path) !== 1) {
             throw new \InvalidArgumentException('"' . $path . '" is not valid path as part of a URI.', 1184071242);
         }
+
+        $this->path = $path;
     }
 
     /**
@@ -355,11 +356,11 @@ class Uri implements UriInterface
      */
     public function setFragment($fragment)
     {
-        if (preg_match(self::PATTERN_MATCH_FRAGMENT, $fragment) === 1) {
-            $this->fragment = $fragment;
-        } else {
+        if (preg_match(self::PATTERN_MATCH_FRAGMENT, $fragment) !== 1) {
             throw new \InvalidArgumentException('"' . $fragment . '" is not valid fragment as part of a URI.', 1184071252);
         }
+
+        $this->fragment = $fragment;
     }
 
     /**
@@ -372,16 +373,8 @@ class Uri implements UriInterface
             return $hostAndPort;
         }
 
-        switch ($this->scheme) {
-            case 'http':
-                $hostAndPort .= ($this->port !== 80 ? ':' . $this->port : '');
-                break;
-            case 'https':
-                $hostAndPort .= ($this->port !== 443 ? ':' . $this->port : '');
-                break;
-            default:
-                $hostAndPort .= (isset($this->port) ? ':' . $this->port : '');
-        }
+        $defaultPort = $this->defaultPortsForScheme[$this->scheme] ?? '';
+        $hostAndPort .= ($this->port !== $defaultPort ? ':' . $this->port : '');
 
         return $hostAndPort;
     }
@@ -403,6 +396,7 @@ class Uri implements UriInterface
      *
      * @see https://tools.ietf.org/html/rfc3986#section-3.2
      * @return string The URI authority, in "[user-info@]host[:port]" format.
+     * @api PSR-7
      */
     public function getAuthority()
     {
@@ -437,6 +431,7 @@ class Uri implements UriInterface
      * NOT be added.
      *
      * @return string The URI user information, in "username[:password]" format.
+     * @api PSR-7
      */
     public function getUserInfo()
     {
@@ -472,6 +467,7 @@ class Uri implements UriInterface
      * @param string $scheme The scheme to use with the new instance.
      * @return self A new instance with the specified scheme.
      * @throws \InvalidArgumentException for invalid or unsupported schemes.
+     * @api PSR-7
      */
     public function withScheme($scheme)
     {
@@ -493,6 +489,7 @@ class Uri implements UriInterface
      * @param string $user The user name to use for authority.
      * @param null|string $password The password associated with $user.
      * @return self A new instance with the specified user information.
+     * @api PSR-7
      */
     public function withUserInfo($user, $password = null)
     {
@@ -513,6 +510,7 @@ class Uri implements UriInterface
      * @param string $host The hostname to use with the new instance.
      * @return self A new instance with the specified host.
      * @throws \InvalidArgumentException for invalid hostnames.
+     * @api PSR-7
      */
     public function withHost($host)
     {
@@ -537,6 +535,7 @@ class Uri implements UriInterface
      *     removes the port information.
      * @return self A new instance with the specified port.
      * @throws \InvalidArgumentException for invalid ports.
+     * @api PSR-7
      */
     public function withPort($port)
     {
@@ -566,6 +565,7 @@ class Uri implements UriInterface
      * @param string $path The path to use with the new instance.
      * @return self A new instance with the specified path.
      * @throws \InvalidArgumentException for invalid paths.
+     * @api PSR-7
      */
     public function withPath($path)
     {
@@ -588,6 +588,7 @@ class Uri implements UriInterface
      * @param string $query The query string to use with the new instance.
      * @return self A new instance with the specified query string.
      * @throws \InvalidArgumentException for invalid query strings.
+     * @api PSR-7
      */
     public function withQuery($query)
     {
@@ -609,12 +610,22 @@ class Uri implements UriInterface
      *
      * @param string $fragment The fragment to use with the new instance.
      * @return self A new instance with the specified fragment.
+     * @api PSR-7
      */
     public function withFragment($fragment)
     {
         $newUri = clone $this;
         $newUri->setFragment($fragment);
         return $newUri;
+    }
+
+    /**
+     * @param string $scheme
+     * @return integer
+     */
+    private function resolveDefaultPortForScheme($scheme)
+    {
+        return ($this->defaultPortsForScheme[$scheme] ?? null);
     }
 
     /**
@@ -628,14 +639,7 @@ class Uri implements UriInterface
         $uriString = '';
 
         $uriString .= isset($this->scheme) ? $this->scheme . '://' : '';
-        if (isset($this->username)) {
-            if (isset($this->password)) {
-                $uriString .= $this->username . ':' . $this->password . '@';
-            } else {
-                $uriString .= $this->username . '@';
-            }
-        }
-        $uriString .= $this->getHostAndOptionalPort();
+        $uriString .= $this->getAuthority();
         $uriString .= isset($this->path) ? $this->path : '';
         $uriString .= isset($this->query) ? '?' . $this->query : '';
         $uriString .= isset($this->fragment) ? '#' . $this->fragment : '';

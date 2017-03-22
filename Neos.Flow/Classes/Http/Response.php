@@ -475,11 +475,7 @@ class Response extends AbstractMessage implements ResponseInterface, \Psr\Http\M
         $statusHeader = rtrim($this->getStatusLine(), "\r\n");
 
         $preparedHeaders[] = $statusHeader;
-        foreach ($this->headers->getAll() as $name => $values) {
-            foreach ($values as $value) {
-                $preparedHeaders[] = $name . ': ' . $value;
-            }
-        }
+        $preparedHeaders = array_merge($preparedHeaders, $this->headers->getPreparedValues());
 
         return $preparedHeaders;
     }
@@ -597,6 +593,7 @@ class Response extends AbstractMessage implements ResponseInterface, \Psr\Http\M
      * @return void
      * @codeCoverageIgnore
      * @api
+     * @api PSR-7
      */
     public function send()
     {
@@ -650,6 +647,7 @@ class Response extends AbstractMessage implements ResponseInterface, \Psr\Http\M
      *     use the defaults as suggested in the HTTP specification.
      * @return self
      * @throws \InvalidArgumentException For invalid status code arguments.
+     * @api PSR-7
      */
     public function withStatus($code, $reasonPhrase = '')
     {
@@ -670,6 +668,7 @@ class Response extends AbstractMessage implements ResponseInterface, \Psr\Http\M
      * @link http://tools.ietf.org/html/rfc7231#section-6
      * @link http://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml
      * @return string Reason phrase; must return an empty string if none present.
+     * @api PSR-7
      */
     public function getReasonPhrase()
     {

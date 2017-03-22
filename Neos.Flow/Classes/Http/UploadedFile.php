@@ -2,6 +2,7 @@
 namespace Neos\Flow\Http;
 
 use InvalidArgumentException;
+use Neos\Utility\Files;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UploadedFileInterface;
 use RuntimeException;
@@ -74,17 +75,17 @@ class UploadedFile implements UploadedFileInterface
      */
     protected function setStreamOrFile($streamOrFile)
     {
-        if (is_string($streamOrFile)) {
+        if (is_string($streamOrFile) || $streamOrFile instanceof StreamInterface) {
             $this->file = $streamOrFile;
-        } elseif (is_resource($streamOrFile)) {
-            $this->stream = new ContentStream($streamOrFile);
-        } elseif ($streamOrFile instanceof StreamInterface) {
-            $this->stream = $streamOrFile;
-        } else {
-            throw new InvalidArgumentException(
-                'Invalid stream or file provided for UploadedFile'
-            );
+            return;
         }
+
+        if (is_resource($streamOrFile)) {
+            $this->stream = new ContentStream($streamOrFile);
+            return;
+        }
+
+        throw new InvalidArgumentException('Invalid stream or file provided for UploadedFile', 1490139592);
     }
 
     /**
@@ -108,6 +109,7 @@ class UploadedFile implements UploadedFileInterface
     /**
      * {@inheritdoc}
      * @throws RuntimeException if the upload was not successful.
+     * @api PSR-7
      */
     public function getStream()
     {
@@ -130,6 +132,7 @@ class UploadedFile implements UploadedFileInterface
      * @throws InvalidArgumentException if the $path specified is invalid.
      * @throws RuntimeException on any error during the move operation, or on
      *     the second or subsequent call to the method.
+     * @api PSR-7
      */
     public function moveTo($targetPath)
     {
@@ -156,6 +159,7 @@ class UploadedFile implements UploadedFileInterface
      * {@inheritdoc}
      *
      * @return int|null The file size in bytes or null if unknown.
+     * @api PSR-7
      */
     public function getSize()
     {
@@ -167,6 +171,7 @@ class UploadedFile implements UploadedFileInterface
      *
      * @see http://php.net/manual/en/features.file-upload.errors.php
      * @return int One of PHP's UPLOAD_ERR_XXX constants.
+     * @api PSR-7
      */
     public function getError()
     {
@@ -178,6 +183,7 @@ class UploadedFile implements UploadedFileInterface
      *
      * @return string|null The filename sent by the client or null if none
      *     was provided.
+     * @api PSR-7
      */
     public function getClientFilename()
     {
@@ -186,6 +192,7 @@ class UploadedFile implements UploadedFileInterface
 
     /**
      * {@inheritdoc}
+     * @api PSR-7
      */
     public function getClientMediaType()
     {

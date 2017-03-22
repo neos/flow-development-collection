@@ -12,11 +12,11 @@ namespace Neos\Flow\Http;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Mvc\ActionRequest;
 use Neos\Utility\Arrays;
 use Neos\Utility\MediaTypes;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UploadedFileInterface;
+use Psr\Http\Message\UriInterface;
 
 /**
  * Represents an HTTP request
@@ -210,7 +210,7 @@ class Request extends BaseRequest implements ServerRequestInterface
     /**
      * Returns the detected base URI
      *
-     * @return Uri
+     * @return UriInterface|Uri
      * @api
      */
     public function getBaseUri()
@@ -765,17 +765,6 @@ class Request extends BaseRequest implements ServerRequestInterface
     }
 
     /**
-     * Cast the request to a string: return the content part of this response
-     *
-     * @return string The same as getContent()
-     * @api
-     */
-    public function __toString()
-    {
-        return $this->renderHeaders() . "\r\n" . $this->getContent();
-    }
-
-    /**
      * Parses a RFC 2616 Media Type and returns its parts in an associative array.
      * @see MediaTypes::parseMediaType()
      *
@@ -898,6 +887,7 @@ class Request extends BaseRequest implements ServerRequestInterface
      *
      * @param array $query Array of query string arguments, typically from $_GET.
      * @return static
+     * @api PSR-7
      */
     public function withQueryParams(array $query)
     {
@@ -908,15 +898,17 @@ class Request extends BaseRequest implements ServerRequestInterface
 
     /**
      * @return array
+     * @api PSR-7
      */
     public function getUploadedFiles()
     {
-        $this->uploadedFiles;
+        return $this->uploadedFiles;
     }
 
     /**
      * @param array $uploadedFiles
      * @return ServerRequestInterface
+     * @api PSR-7
      */
     public function withUploadedFiles(array $uploadedFiles)
     {
@@ -927,15 +919,17 @@ class Request extends BaseRequest implements ServerRequestInterface
 
     /**
      * @return array|null|object
+     * @api PSR-7
      */
     public function getParsedBody()
     {
-        isset($this->parsedBody) ? $this->parsedBody : $_POST;
+        return isset($this->parsedBody) ? $this->parsedBody : $this->arguments;
     }
 
     /**
      * @param array|null|object $data
      * @return ServerRequestInterface
+     * @api PSR-7
      */
     public function withParsedBody($data)
     {
@@ -948,7 +942,7 @@ class Request extends BaseRequest implements ServerRequestInterface
      * Return an UploadedFile instance array.
      *
      * @param array $files A array which respect $_FILES structure
-     * @throws InvalidArgumentException for unrecognized values
+     * @throws \InvalidArgumentException for unrecognized values
      * @return array
      */
     public static function normalizeFiles(array $files)
@@ -964,7 +958,7 @@ class Request extends BaseRequest implements ServerRequestInterface
                 $normalized[$key] = self::normalizeFiles($value);
                 continue;
             } else {
-                throw new InvalidArgumentException('Invalid value in files specification');
+                throw new \InvalidArgumentException('Invalid value in uploaded files data.', 1490139141);
             }
         }
 

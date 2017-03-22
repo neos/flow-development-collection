@@ -463,4 +463,60 @@ class Headers
             }
         }
     }
+
+    /**
+     * Get all header lines prepared as "name: value" strings.
+     *
+     * @return array
+     */
+    public function getPreparedValues()
+    {
+        $preparedValues = [];
+        foreach ($this->getAll() as $name => $values) {
+            $preparedValues = array_merge($preparedValues, $this->prepareValues($name, $values));
+        }
+
+        return $preparedValues;
+    }
+
+    /**
+     * @param string $headerName
+     * @param array $values
+     * @return array
+     */
+    private function prepareValues($headerName, array $values)
+    {
+        $preparedValues = [];
+        foreach ($values as $value) {
+            $preparedValues[] = sprintf("%s: %s", $headerName, $value);
+        }
+
+        return $preparedValues;
+    }
+
+    /**
+     * @param string $headerName
+     * @param array $values
+     * @return string
+     */
+    private function renderValuesFor($headerName, array $values)
+    {
+        return implode("\r\n", $this->prepareValues($headerName, $values));
+    }
+
+    /**
+     * Renders this headers object as string, with lines separated by "\r\n" as required by RFC 2616 sec 5.
+     *
+     * @return string
+     * @api
+     */
+    public function __toString()
+    {
+        $headers = '';
+        foreach ($this->getAll() as $name => $values) {
+            $headers .= $this->renderValuesFor($name, $values) . "\r\n";
+        }
+
+        return $headers;
+    }
 }
