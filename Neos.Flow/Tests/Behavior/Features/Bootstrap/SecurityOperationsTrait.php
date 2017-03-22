@@ -16,7 +16,7 @@ use Neos\Flow\Security\Exception\AccessDeniedException;
 use Neos\Flow\Security\Policy\PolicyService;
 use Neos\Flow\Tests\Functional\Security\Fixtures\Controller\AuthenticationController;
 use Neos\Utility\Arrays;
-use PHPUnit_Framework_Assert as Assert;
+use PHPUnit\Framework\Assert;
 
 /**
  * A trait with shared step definitions for testing compile time security privilege types

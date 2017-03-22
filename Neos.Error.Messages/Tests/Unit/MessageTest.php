@@ -16,7 +16,7 @@ use Neos\Error\Messages\Message;
 /**
  * Testcase for the Message object
  */
-class MessageTest extends \PHPUnit_Framework_TestCase
+class MessageTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @test

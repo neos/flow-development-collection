@@ -16,7 +16,7 @@ use Neos\Utility\SchemaGenerator;
 /**
  * Testcase for the Schema Generator
  */
-class SchemaGeneratorTest extends \PHPUnit_Framework_TestCase
+class SchemaGeneratorTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var SchemaGenerator

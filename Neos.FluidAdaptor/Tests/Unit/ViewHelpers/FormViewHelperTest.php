@@ -538,11 +538,11 @@ class FormViewHelperTest extends ViewHelperBaseTestcase
 
     /**
      * @test
+     * @expectedException \Neos\FluidAdaptor\Core\ViewHelper\Exception
+     * @expectedExceptionCode 1361354942
      */
     public function renderThrowsExceptionIfUseParentRequestIsSetAndTheCurrentRequestHasNoParentRequest()
     {
-        $this->setExpectedException(\Neos\FluidAdaptor\Core\ViewHelper\Exception::class, '', 1361354942);
-
         $viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\FormViewHelper::class, array('renderChildren'), array(), '', false);
         $this->arguments['useParentRequest'] = true;
         $this->injectDependenciesIntoViewHelper($viewHelper);

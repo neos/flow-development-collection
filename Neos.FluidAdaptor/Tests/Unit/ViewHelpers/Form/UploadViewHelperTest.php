@@ -60,7 +60,7 @@ class UploadViewHelperTest extends FormFieldViewHelperBaseTestcase
      */
     public function renderCorrectlySetsTagName()
     {
-        $this->tagBuilder->expects($this->any())->method('setTagName')->with('input');
+        $this->tagBuilder->expects($this->atLeastOnce())->method('setTagName')->with('input');
 
         $this->viewHelper->initialize();
         $this->viewHelper->render();
