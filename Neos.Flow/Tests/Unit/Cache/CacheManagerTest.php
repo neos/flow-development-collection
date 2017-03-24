@@ -26,7 +26,7 @@ use Neos\Flow\Utility\Environment;
 class CacheManagerTest extends UnitTestCase
 {
     /**
-     * @var Cache\CacheManager
+     * @var CacheManager
      */
     protected $cacheManager;
 

@@ -14,13 +14,11 @@ namespace Neos\Flow\Tests\Unit\Configuration;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Configuration\Source\YamlSource;
 use Neos\Flow\Core\ApplicationContext;
-use org\bovigo\vfs\vfsStream;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Package\Package;
 use Neos\Flow\Package\PackageInterface;
-use Neos\Flow\SomeClass;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Flow\Utility\Environment;
+use org\bovigo\vfs\vfsStream;
 
 /**
  * Testcase for the configuration manager
