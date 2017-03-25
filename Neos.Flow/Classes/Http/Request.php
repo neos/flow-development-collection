@@ -16,10 +16,10 @@ use Neos\Utility\Arrays;
 use Neos\Utility\MediaTypes;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UploadedFileInterface;
-use Psr\Http\Message\UriInterface;
 
 /**
- * Represents an HTTP request
+ * Represents an HTTP request in the PHP world, inlcuding server variables.
+ * This is the object used for incoming requests from a browser.
  *
  * @api
  * @Flow\Proxy(false)
@@ -208,28 +208,6 @@ class Request extends BaseRequest implements ServerRequestInterface
     }
 
     /**
-     * Returns the detected base URI
-     *
-     * @return UriInterface|Uri
-     * @api
-     */
-    public function getBaseUri()
-    {
-        if ($this->baseUri === null) {
-            $this->detectBaseUri();
-        }
-        return $this->baseUri;
-    }
-
-    /**
-     * @param Uri $baseUri
-     */
-    public function setBaseUri($baseUri)
-    {
-        $this->baseUri = $baseUri;
-    }
-
-    /**
      * Indicates if this request has been received through a secure channel.
      *
      * @return boolean
@@ -238,18 +216,6 @@ class Request extends BaseRequest implements ServerRequestInterface
     public function isSecure()
     {
         return $this->uri->getScheme() === 'https';
-    }
-
-    /**
-     * Sets the request method
-     *
-     * @param string $method The request method, for example "GET".
-     * @return void
-     * @api
-     */
-    public function setMethod($method)
-    {
-        $this->method = $method;
     }
 
     /**
@@ -624,21 +590,6 @@ class Request extends BaseRequest implements ServerRequestInterface
     }
 
     /**
-     * Tries to detect the base URI of request.
-     *
-     * @return void
-     */
-    protected function detectBaseUri()
-    {
-        if ($this->baseUri === null) {
-            $this->baseUri = clone $this->uri;
-            $this->baseUri->setQuery(null);
-            $this->baseUri->setFragment(null);
-            $this->baseUri->setPath($this->getScriptRequestPath());
-        }
-    }
-
-    /**
      * Takes the raw GET & POST arguments and maps them into the request object.
      * Afterwards all mapped arguments can be retrieved by the getArgument(s) method, no matter if they
      * have been GET, POST or PUT arguments before.
@@ -652,9 +603,9 @@ class Request extends BaseRequest implements ServerRequestInterface
     {
         $arguments = $getArguments;
         $arguments = Arrays::arrayMergeRecursiveOverrule($arguments, $postArguments);
-        $files = static::normalizeFiles($uploadArguments);
-        $this->uploadedFiles = $files;
+        $files = $this->untangleFilesArray($uploadArguments);
         $arguments = Arrays::arrayMergeRecursiveOverrule($arguments, $files);
+        $this->uploadedFiles = $this->createUploadedFilesFromUntangledUploads($files, $arguments);
         return $arguments;
     }
 
@@ -722,6 +673,52 @@ class Request extends BaseRequest implements ServerRequestInterface
             }
         }
         return $fieldPaths;
+    }
+
+    /**
+     * @param array $untangledFilesStructure
+     * @param array $arguments
+     * @return array
+     */
+    protected function createUploadedFilesFromUntangledUploads(array $untangledFilesStructure, array $arguments)
+    {
+        $uploadedFiles = [];
+        foreach ($untangledFilesStructure as $key => $nestedStructure) {
+            if (!isset($value['tmp_name'])) {
+                $uploadedFiles[$key] = static::createUploadedFilesFromUntangledUploads($nestedStructure, $arguments[$key]);
+                continue;
+            }
+            $uploadedFiles[$key] = static::createUploadedFileFromSpec($nestedStructure, $arguments[$key]);
+        }
+
+        return $uploadedFiles;
+    }
+
+    /**
+     * Create and return an UploadedFile instance from a $_FILES specification.
+     *
+     * If the specification represents an array of values, this method will
+     * delegate to normalizeNestedFileSpec() and return that return value.
+     *
+     * @param array $value $_FILES struct
+     * @param array $argumentsForValue
+     * @return array|UploadedFileInterface
+     */
+    private static function createUploadedFileFromSpec(array $value, $argumentsForValue)
+    {
+        $file = new FlowUploadedFile(
+            $value['tmp_name'],
+            (int)$value['size'],
+            (int)$value['error'],
+            $value['name'],
+            $value['type']
+        );
+
+        if ($argumentsForValue['originallySubmittedResource']) {
+            $file->setOriginallySubmittedResource($argumentsForValue['originallySubmittedResource']);
+        }
+
+        return $file;
     }
 
     /**
@@ -897,7 +894,16 @@ class Request extends BaseRequest implements ServerRequestInterface
     }
 
     /**
-     * @return array
+     * Retrieve normalized file upload data.
+     *
+     * This method returns upload metadata in a normalized tree, with each leaf
+     * an instance of Psr\Http\Message\UploadedFileInterface.
+     *
+     * These values MAY be prepared from $_FILES or the message body during
+     * instantiation, or MAY be injected via withUploadedFiles().
+     *
+     * @return array An array tree of UploadedFileInterface instances; an empty
+     *     array MUST be returned if no data is present.
      * @api PSR-7
      */
     public function getUploadedFiles()
@@ -906,6 +912,12 @@ class Request extends BaseRequest implements ServerRequestInterface
     }
 
     /**
+     * Create a new instance with the specified uploaded files.
+     *
+     * This method MUST be implemented in such a way as to retain the
+     * immutability of the message, and MUST return an instance that has the
+     * updated body parameters.
+     *
      * @param array $uploadedFiles
      * @return ServerRequestInterface
      * @api PSR-7
@@ -918,6 +930,17 @@ class Request extends BaseRequest implements ServerRequestInterface
     }
 
     /**
+     * Retrieve any parameters provided in the request body.
+     *
+     * If the request Content-Type is either application/x-www-form-urlencoded
+     * or multipart/form-data, and the request method is POST, this method MUST
+     * return the contents of $_POST.
+     *
+     * Otherwise, this method may return any results of deserializing
+     * the request body content; as parsing returns structured content, the
+     * potential types MUST be arrays or objects only. A null value indicates
+     * the absence of body content.
+     *
      * @return array|null|object
      * @api PSR-7
      */
@@ -927,6 +950,27 @@ class Request extends BaseRequest implements ServerRequestInterface
     }
 
     /**
+     * Return an instance with the specified body parameters.
+     *
+     * These MAY be injected during instantiation.
+     *
+     * If the request Content-Type is either application/x-www-form-urlencoded
+     * or multipart/form-data, and the request method is POST, use this method
+     * ONLY to inject the contents of $_POST.
+     *
+     * The data IS NOT REQUIRED to come from $_POST, but MUST be the results of
+     * deserializing the request body content. Deserialization/parsing returns
+     * structured data, and, as such, this method ONLY accepts arrays or objects,
+     * or a null value if nothing was available to parse.
+     *
+     * As an example, if content negotiation determines that the request data
+     * is a JSON payload, this method could be used to create a request
+     * instance with the deserialized parameters.
+     *
+     * This method MUST be implemented in such a way as to retain the
+     * immutability of the message, and MUST return an instance that has the
+     * updated body parameters.
+     *
      * @param array|null|object $data
      * @return ServerRequestInterface
      * @api PSR-7
@@ -936,83 +980,5 @@ class Request extends BaseRequest implements ServerRequestInterface
         $newRequest = clone $this;
         $newRequest->parsedBody = $data;
         return $newRequest;
-    }
-
-    /**
-     * Return an UploadedFile instance array.
-     *
-     * @param array $files A array which respect $_FILES structure
-     * @throws \InvalidArgumentException for unrecognized values
-     * @return array
-     */
-    public static function normalizeFiles(array $files)
-    {
-        $normalized = [];
-
-        foreach ($files as $key => $value) {
-            if ($value instanceof UploadedFileInterface) {
-                $normalized[$key] = $value;
-            } elseif (is_array($value) && isset($value['tmp_name'])) {
-                $normalized[$key] = self::createUploadedFileFromSpec($value);
-            } elseif (is_array($value)) {
-                $normalized[$key] = self::normalizeFiles($value);
-                continue;
-            } else {
-                throw new \InvalidArgumentException('Invalid value in uploaded files data.', 1490139141);
-            }
-        }
-
-        return $normalized;
-    }
-
-    /**
-     * Create and return an UploadedFile instance from a $_FILES specification.
-     *
-     * If the specification represents an array of values, this method will
-     * delegate to normalizeNestedFileSpec() and return that return value.
-     *
-     * @param array $value $_FILES struct
-     * @return array|UploadedFileInterface
-     */
-    private static function createUploadedFileFromSpec(array $value)
-    {
-        if (is_array($value['tmp_name'])) {
-            return self::normalizeNestedFileSpec($value);
-        }
-
-        return new UploadedFile(
-            $value['tmp_name'],
-            (int)$value['size'],
-            (int)$value['error'],
-            $value['name'],
-            $value['type']
-        );
-    }
-
-    /**
-     * Normalize an array of file specifications.
-     *
-     * Loops through all nested files and returns a normalized array of
-     * UploadedFileInterface instances.
-     *
-     * @param array $files
-     * @return UploadedFileInterface[]
-     */
-    private static function normalizeNestedFileSpec(array $files = [])
-    {
-        $normalizedFiles = [];
-
-        foreach (array_keys($files['tmp_name']) as $key) {
-            $spec = [
-                'tmp_name' => $files['tmp_name'][$key],
-                'size' => $files['size'][$key],
-                'error' => $files['error'][$key],
-                'name' => $files['name'][$key],
-                'type' => $files['type'][$key],
-            ];
-            $normalizedFiles[$key] = self::createUploadedFileFromSpec($spec);
-        }
-
-        return $normalizedFiles;
     }
 }

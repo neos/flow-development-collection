@@ -6,12 +6,14 @@ use Psr\Http\Message\UriInterface;
 use Neos\Utility\MediaTypes;
 
 /**
- *
+ * This is a HTTP request representation excluding any notion of
+ * PHP specifica like server variables. This can be used to describe
+ * a request to be made.
  */
 class BaseRequest extends AbstractMessage implements RequestInterface
 {
     /**
-     * @var Uri
+     * @var UriInterface
      */
     protected $uri;
 
@@ -23,7 +25,7 @@ class BaseRequest extends AbstractMessage implements RequestInterface
     /**
      * @var string
      */
-    protected $method = 'GET';
+    protected $method;
 
     /**
      * URI for the "input" stream wrapper which can be modified for testing purposes
@@ -43,11 +45,13 @@ class BaseRequest extends AbstractMessage implements RequestInterface
      * @param UriInterface $uri
      * @param string $method
      */
-    public function __construct(UriInterface $uri, $method = 'GET')
+    public function __construct(UriInterface $uri, string $method = 'GET')
     {
         parent::__construct();
         $this->uri = $uri;
-        $this->method = $method;
+        if (strlen($method) > 0) {
+            $this->setMethod($method);
+        }
     }
 
     /**
@@ -70,36 +74,39 @@ class BaseRequest extends AbstractMessage implements RequestInterface
     public function getBaseUri()
     {
         if ($this->baseUri === null) {
-            $this->detectBaseUri();
+            $this->baseUri = $this->detectBaseUri();
         }
 
         return $this->baseUri;
     }
 
     /**
-     * @param Uri $baseUri
+     * Set the base URI of this request.
+     *
+     * @param string|UriInterface $baseUri
+     * @api
      */
     public function setBaseUri($baseUri)
     {
+        if (is_string($baseUri)) {
+            $baseUri = new Uri($baseUri);
+        }
+
         $this->baseUri = $baseUri;
     }
 
     /**
      * Tries to detect the base URI of request.
      *
-     * @return void
+     * @return UriInterface
      */
     protected function detectBaseUri()
     {
-        if ($this->baseUri !== null) {
-            return;
-        }
-
         $baseUri = clone $this->uri;
         $baseUri = $baseUri->withQuery('');
         $baseUri = $baseUri->withFragment('');
         $baseUri = $baseUri->withPath($this->getScriptRequestPath());
-        $this->baseUri = $baseUri;
+        return $baseUri;
     }
 
     /**
@@ -109,9 +116,9 @@ class BaseRequest extends AbstractMessage implements RequestInterface
      * @return void
      * @api
      */
-    public function setMethod($method)
+    public function setMethod(string $method)
     {
-        $this->method = strtoupper($method);
+        $this->method = $method;
     }
 
     /**

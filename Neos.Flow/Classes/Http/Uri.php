@@ -640,9 +640,9 @@ class Uri implements UriInterface
 
         $uriString .= isset($this->scheme) ? $this->scheme . '://' : '';
         $uriString .= $this->getAuthority();
-        $uriString .= isset($this->path) ? $this->path : '';
-        $uriString .= isset($this->query) ? '?' . $this->query : '';
-        $uriString .= isset($this->fragment) ? '#' . $this->fragment : '';
+        $uriString .= !empty($this->path) ? $this->path : '';
+        $uriString .= !empty($this->query) ? '?' . $this->query : '';
+        $uriString .= !empty($this->fragment) ? '#' . $this->fragment : '';
         return $uriString;
     }
 }

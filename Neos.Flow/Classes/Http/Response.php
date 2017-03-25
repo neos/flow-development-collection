@@ -592,7 +592,6 @@ class Response extends AbstractMessage implements ResponseInterface, \Psr\Http\M
      *
      * @return void
      * @codeCoverageIgnore
-     * @api
      * @api PSR-7
      */
     public function send()
