@@ -51,7 +51,7 @@ type: '@schema'
     type: { type: 'any', required: TRUE }
     enum: 'array'
     disallow: 'array'
-    description: 'array'
+    description: 'string'
     required: 'boolean'
   additionalProperties: FALSE
 
