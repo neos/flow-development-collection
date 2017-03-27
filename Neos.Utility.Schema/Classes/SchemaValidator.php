@@ -85,11 +85,11 @@ class SchemaValidator
                         $typeSchema = $possibleTypeSchema;
                         if (array_key_exists('superTypes', $possibleTypeSchema)) {
                             foreach ($possibleTypeSchema['superTypes'] as $superTypeKey) {
-                                if (array_key_exists($superTypeKey, $types)) {
-                                    $typeSchema = Arrays::arrayMergeRecursiveOverrule($types[$superTypeKey], $typeSchema);
-                                } else {
+                                if (!array_key_exists($superTypeKey, $types)) {
                                     $result->addError($this->createError('SuperType "' . $superTypeKey . '" is unknown'));
+                                    continue;
                                 }
+                                $typeSchema = Arrays::arrayMergeRecursiveOverrule($types[$superTypeKey], $typeSchema);
                             }
                         }
                         $types[$possibleTypeKey] = $typeSchema;
