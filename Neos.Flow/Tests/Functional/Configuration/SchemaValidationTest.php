@@ -60,7 +60,8 @@ class SchemaValidationTest extends FunctionalTestCase
     /**
      * @return array
      */
-    public function schemaFilesAreValidDataProvider() {
+    public function schemaFilesAreValidDataProvider()
+    {
 
         $bootstrap = Bootstrap::$staticObjectManager->get(Bootstrap::class);
         $objectManager = $bootstrap->getObjectManager();

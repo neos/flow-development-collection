@@ -578,7 +578,7 @@ class SchemaValidator
                     }
                     break;
                 case 'type-reference':
-                    if (substr($value, 0, 1) == '@' || array_key_exists(substr($value, 1), $types) === false  ) {
+                    if (substr($value, 0, 1) == '@' || array_key_exists(substr($value, 1), $types) === false) {
                         $result->addError($this->createError('format=type-reference', $value));
                     }
                     break;

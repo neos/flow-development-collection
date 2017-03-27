@@ -1297,7 +1297,7 @@ class SchemaValidatorTest extends \PHPUnit\Framework\TestCase
      * @test
      * @dataProvider validateCustomTypeArrayDataProvider
      */
-    public function validateCustomTypeArray ($value, $expectedResult)
+    public function validateCustomTypeArray($value, $expectedResult)
     {
         $schema = [
             'type' => 'dictionary',
