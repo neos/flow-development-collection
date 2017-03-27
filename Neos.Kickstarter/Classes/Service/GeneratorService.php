@@ -386,6 +386,28 @@ class GeneratorService
     }
 
     /**
+     * Generate translation for the package key
+     *
+     * @param string $packageKey
+     * @param string $languageKey
+     * @return array An array of generated filenames
+     */
+    public function generateTranslation($packageKey, $languageKey)
+    {
+        $translationPath = Files::concatenatePaths([$this->packageManager->getPackage($packageKey)->getPackagePath(), 'Resources/Private/Translations', $languageKey]);
+        $contextVariables = array();
+        $contextVariables['packageKey'] = $packageKey;
+        $contextVariables['languageKey'] = $languageKey;
+
+        $templatePathAndFilename = 'resource://Neos.Kickstarter/Private/Generator/Translations/TranslationsTemplate.xlf.tmpl';
+        $fileContent = $this->renderTemplate($templatePathAndFilename, $contextVariables);
+        $targetPathAndFilename = $translationPath . '/Main.xlf';
+        $this->generateFile($targetPathAndFilename, $fileContent);
+
+        return $this->generatedFiles;
+    }
+
+    /**
      * Normalize types and prefix types with namespaces
      *
      * @param array $fieldDefinitions The field definitions
