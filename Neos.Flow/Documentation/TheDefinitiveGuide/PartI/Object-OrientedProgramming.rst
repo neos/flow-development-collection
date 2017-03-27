@@ -72,7 +72,7 @@ Classes and Objects
 
 Let's now take a step back and imagine there'd be a blueprint for ships
 in general. We now focus not the ship but this blueprint. It is called
-**class**, in this case is is the class ``Ship``. In PHP this is written as
+**class**, in this case it is the class ``Ship``. In PHP this is written as
 follows;
 
 PHP Code::
@@ -114,7 +114,7 @@ PHP Code::
 Our ship now has a name (``$name``\ ), a number of coaches (``$coaches``\ ) and a
 speed (``$speed``\ ). In addition we built in a variable, containing the status
 of the engine (``$engineStatus``\ ). A real ship, of course, has much more
-properties, all important somehow – for our our abstraction these few will be
+properties, all important somehow – for our abstraction these few will be
 sufficient though. We'll focus on why every property is marked with the key
 word ``public`` further down.
 

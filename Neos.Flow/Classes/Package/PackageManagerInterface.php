@@ -179,4 +179,13 @@ interface PackageManagerInterface
      * @api
      */
     public function deletePackage($packageKey);
+
+    /**
+     * Rescans available packages, order and write a new PackageStates file.
+     *
+     * @param boolean $reloadPackageStates Should the package states be loaded before scanning or use the current configuration
+     * @return array The found and sorted package states.
+     * @api
+     */
+    public function rescanPackages($reloadPackageStates = true);
 }

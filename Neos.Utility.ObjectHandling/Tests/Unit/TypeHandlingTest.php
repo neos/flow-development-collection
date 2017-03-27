@@ -16,7 +16,7 @@ use Neos\Utility\TypeHandling;
 /**
  * Testcase for the Utility\TypeHandling class
  */
-class TypeHandlingTest extends \PHPUnit_Framework_TestCase
+class TypeHandlingTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @test

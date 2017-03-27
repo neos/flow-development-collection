@@ -17,7 +17,7 @@ use Neos\Utility\Files;
 /**
  * Testcase for the Utility Files class
  */
-class FilesTest extends \PHPUnit_Framework_TestCase
+class FilesTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var string
