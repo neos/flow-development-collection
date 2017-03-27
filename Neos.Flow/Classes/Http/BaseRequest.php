@@ -9,6 +9,9 @@ use Neos\Utility\MediaTypes;
  * This is a HTTP request representation excluding any notion of
  * PHP specifica like server variables. This can be used to describe
  * a request to be made.
+ *
+ * @api PSR-7
+ * @Flow\Proxy(false)
  */
 class BaseRequest extends AbstractMessage implements RequestInterface
 {

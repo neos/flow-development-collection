@@ -10,6 +10,7 @@ use RuntimeException;
 /**
  * Generic implementation of the PSR-7 UploadedFileInterface.
  *
+ * @api PSR-7
  */
 class UploadedFile implements UploadedFileInterface
 {

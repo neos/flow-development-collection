@@ -74,37 +74,47 @@ class DispatchComponent implements ComponentInterface
      */
     public function handle(ComponentContext $componentContext)
     {
-        $httpRequest = $componentContext->getHttpRequest();
-        /** @var $actionRequest ActionRequest */
-        $actionRequest = $this->objectManager->get(ActionRequest::class, $httpRequest);
-        $this->securityContext->setRequest($actionRequest);
-
-        $routingMatchResults = $componentContext->getParameter(Routing\RoutingComponent::class, 'matchResults');
-
-        $actionRequest->setArguments($this->mergeArguments($httpRequest, $routingMatchResults));
+        $componentContext = $this->prepareActionRequest($componentContext);
+        $actionRequest = $componentContext->getParameter(self::class, 'actionRequest');
         $this->setDefaultControllerAndActionNameIfNoneSpecified($actionRequest);
-
-        $componentContext->setParameter(self::class, 'actionRequest', $actionRequest);
         $this->dispatcher->dispatch($actionRequest, $componentContext->getHttpResponse());
     }
 
     /**
-     * @param HttpRequest $httpRequest
-     * @param array $routingMatchResults
-     * @return array
+     * Create ActionRequest with arguments from body and routing merged and add it to the component context.
+     *
+     * TODO: This could be a separate HTTP component (ActionRequestFactoryComponent) that sits in the chain before the DispatchComponent.
+     *
+     * @param ComponentContext $componentContext
+     * @return ComponentContext
      */
-    protected function mergeArguments(HttpRequest $httpRequest, array $routingMatchResults = null)
+    protected function prepareActionRequest(ComponentContext $componentContext)
     {
-        $arguments = $this->parseRequestBody($httpRequest);
+        $httpRequest = $componentContext->getHttpRequest();
+        $arguments = $httpRequest->getArguments();
 
-        // HTTP arguments (e.g. GET parameters)
-        $arguments = Arrays::arrayMergeRecursiveOverrule($httpRequest->getArguments(), $arguments);
+        $parsedBody = $this->parseRequestBody($httpRequest);
+        if ($parsedBody !== []) {
+            $arguments = Arrays::arrayMergeRecursiveOverrule($arguments, $parsedBody);
+            $httpRequest = $httpRequest->withParsedBody($parsedBody);
+        }
 
-        // Routing results
+
+        $routingMatchResults = $componentContext->getParameter(Routing\RoutingComponent::class, 'matchResults');
         if ($routingMatchResults !== null) {
             $arguments = Arrays::arrayMergeRecursiveOverrule($arguments, $routingMatchResults);
         }
-        return $arguments;
+
+        /** @var $actionRequest ActionRequest */
+        $actionRequest = $this->objectManager->get(ActionRequest::class, $httpRequest);
+
+        $actionRequest->setArguments($arguments);
+        $this->securityContext->setRequest($actionRequest);
+        $componentContext->replaceHttpRequest($httpRequest);
+
+        $componentContext->setParameter(self::class, 'actionRequest', $actionRequest);
+
+        return $componentContext;
     }
 
     /**

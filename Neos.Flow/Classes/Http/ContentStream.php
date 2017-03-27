@@ -5,6 +5,8 @@ use Psr\Http\Message\StreamInterface;
 
 /**
  * Implementation of a PSR-7 HTTP stream
+ *
+ * @api PSR-7
  */
 class ContentStream implements StreamInterface
 {

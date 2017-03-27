@@ -21,6 +21,8 @@ use Psr\Http\Message\UploadedFileInterface;
  * Represents an HTTP request in the PHP world, inlcuding server variables.
  * This is the object used for incoming requests from a browser.
  *
+ * TODO: Maybe separate BaseRequest and Request implementations (trait?)
+ *
  * @api
  * @Flow\Proxy(false)
  */
@@ -123,6 +125,7 @@ class Request extends BaseRequest implements ServerRequestInterface
             $this->uri->setPort($server['SERVER_PORT']);
         }
 
+        $this->parsedBody = $post;
         $this->queryParams = $get;
         $this->server = $server;
         $this->arguments = $this->buildUnifiedArguments($get, $post, $files);
@@ -219,17 +222,6 @@ class Request extends BaseRequest implements ServerRequestInterface
     }
 
     /**
-     * Returns the request method
-     *
-     * @return string The request method
-     * @api
-     */
-    public function getMethod()
-    {
-        return $this->method;
-    }
-
-    /**
      * Returns the port used for this request
      *
      * @return integer
@@ -289,29 +281,6 @@ class Request extends BaseRequest implements ServerRequestInterface
     public function getArgument($name)
     {
         return (isset($this->arguments[$name]) ? $this->arguments[$name] : null);
-    }
-
-    /**
-     * Explicitly sets the content of the request body
-     *
-     * In most cases, content is just a string representation of the request body.
-     * In order to reduce memory consumption for uploads and other big data, it is
-     * also possible to pass a stream resource. The easies way to convert a local file
-     * into a stream resource is probably: $resource = fopen('file://path/to/file', 'rb');
-     *
-     * @param string|resource $content The body content, for example arguments of a PUT request, or a stream resource
-     * @return void
-     * @api
-     */
-    public function setContent($content)
-    {
-        if (is_resource($content) && get_resource_type($content) === 'stream' && stream_is_local($content)) {
-            $streamMetaData = stream_get_meta_data($content);
-            $this->headers->set('Content-Length', filesize($streamMetaData['uri']));
-            $this->headers->set('Content-Type', MediaTypes::getMediaTypeFromFilename($streamMetaData['uri']));
-        }
-
-        parent::setContent($content);
     }
 
     /**
@@ -560,36 +529,6 @@ class Request extends BaseRequest implements ServerRequestInterface
     }
 
     /**
-     * Return the Request-Line of this Request Message, consisting of the method, the uri and the HTTP version
-     * Would be, for example, "GET /foo?bar=baz HTTP/1.1"
-     * Note that the URI part is, at the moment, only possible in the form "abs_path" since the
-     * actual requestUri of the Request cannot be determined during the creation of the Request.
-     *
-     * @return string
-     * @see http://www.w3.org/Protocols/rfc2616/rfc2616-sec5.html#sec5.1
-     * @api
-     */
-    public function getRequestLine()
-    {
-        $requestUri = $this->uri->getPath() .
-            ($this->uri->getQuery() ? '?' . $this->uri->getQuery() : '') .
-            ($this->uri->getFragment() ? '#' . $this->uri->getFragment() : '');
-        return sprintf("%s %s %s\r\n", $this->method, $requestUri, $this->version);
-    }
-
-    /**
-     * Returns the first line of this Request Message, which is the Request-Line in this case
-     *
-     * @return string The Request-Line of this Request
-     * @see http://www.w3.org/Protocols/rfc2616/rfc2616-sec4.html chapter 4.1 "Message Types"
-     * @api
-     */
-    public function getStartLine()
-    {
-        return $this->getRequestLine();
-    }
-
-    /**
      * Takes the raw GET & POST arguments and maps them into the request object.
      * Afterwards all mapped arguments can be retrieved by the getArgument(s) method, no matter if they
      * have been GET, POST or PUT arguments before.
@@ -685,10 +624,10 @@ class Request extends BaseRequest implements ServerRequestInterface
         $uploadedFiles = [];
         foreach ($untangledFilesStructure as $key => $nestedStructure) {
             if (!isset($value['tmp_name'])) {
-                $uploadedFiles[$key] = static::createUploadedFilesFromUntangledUploads($nestedStructure, $arguments[$key]);
+                $uploadedFiles[$key] = $this->createUploadedFilesFromUntangledUploads($nestedStructure, $arguments[$key]);
                 continue;
             }
-            $uploadedFiles[$key] = static::createUploadedFileFromSpec($nestedStructure, $arguments[$key]);
+            $uploadedFiles[$key] = $this->createUploadedFileFromSpec($nestedStructure, $arguments[$key]);
         }
 
         return $uploadedFiles;
@@ -702,9 +641,9 @@ class Request extends BaseRequest implements ServerRequestInterface
      *
      * @param array $value $_FILES struct
      * @param array $argumentsForValue
-     * @return array|UploadedFileInterface
+     * @return UploadedFileInterface
      */
-    private static function createUploadedFileFromSpec(array $value, $argumentsForValue)
+    protected function createUploadedFileFromSpec(array $value, $argumentsForValue)
     {
         $file = new FlowUploadedFile(
             $value['tmp_name'],
@@ -716,6 +655,10 @@ class Request extends BaseRequest implements ServerRequestInterface
 
         if ($argumentsForValue['originallySubmittedResource']) {
             $file->setOriginallySubmittedResource($argumentsForValue['originallySubmittedResource']);
+        }
+
+        if ($argumentsForValue['__collectionName']) {
+            $file->setCollectionName($argumentsForValue['__collectionName']);
         }
 
         return $file;
