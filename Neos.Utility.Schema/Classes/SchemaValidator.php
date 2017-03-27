@@ -225,7 +225,19 @@ class SchemaValidator
             }
         }
         if ($isValid === false) {
-            $result->addError($this->createError('None of the given schemas ' . (is_array($schema['type']) ? implode(', ', $schema['type']) : $schema['type']) .' matched ' . (is_scalar($value) ? $value : gettype($value))));
+            $possibleTypes = [];
+            foreach ($schema['type'] as $type) {
+                if (is_scalar($type)) {
+                    $possibleTypes[] = $type;
+                } elseif (is_array($type) && array_key_exists('type', $type)) {
+                    $possibleTypes[] = $type['type'];
+                }
+            }
+            $error = $this->createError(sprintf('None of the given schemas %s matched %s',
+                implode(',', $possibleTypes),
+                is_scalar($value) ? (string)$value : gettype($value)
+            ));
+            $result->addError($error);
         }
 
         return $result;
