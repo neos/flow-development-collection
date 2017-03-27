@@ -439,7 +439,7 @@ class SchemaValidator
         if (isset($schema['formatProperties']) && count($propertyKeysToHandle) > 0 && $this->isDictionary($schema['formatProperties'])) {
             foreach (array_values($propertyKeysToHandle) as $propertyKey) {
                 foreach ($schema['formatProperties'] as $propertyPattern => $propertySchema) {
-                    $keyResult = $this->validateStringType($propertyKey, ['format' => $propertyPattern]), $types);
+                    $keyResult = $this->validateStringType($propertyKey, ['format' => $propertyPattern], $types);
                     if ($keyResult->hasErrors() === false) {
                         $subresult = $this->validate($value[$propertyKey], $propertySchema, $types);
                         if ($subresult->hasErrors()) {

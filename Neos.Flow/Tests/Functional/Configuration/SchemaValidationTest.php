@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Flow\Tests\Functional\Utility;
+namespace Neos\Flow\Tests\Functional\Configuration;
 
 /*
- * This file is part of the Neos.Utility.Schema package.
+ * This file is part of the Neos.Flow package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -11,24 +11,25 @@ namespace TYPO3\Flow\Tests\Functional\Utility;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Tests\FunctionalTestCase;
-use TYPO3\Flow\Utility\SchemaValidator;
-use TYPO3\Flow\Package\PackageManagerInterface;
-use TYPO3\Flow\Package\PackageInterface;
-use TYPO3\Flow\Utility\Files;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Core\Bootstrap;
+use Neos\Flow\Tests\FunctionalTestCase;
+use Neos\Flow\Package\PackageManagerInterface;
+use Neos\Utility\SchemaValidator;
+use Neos\Utility\Files;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Testcase for the Flow Validation Framework
  *
  */
-class SchemaSchemaTest extends FunctionalTestCase
+class SchemaValidationTest extends FunctionalTestCase
 {
 
     /**
      * @var array<string>
      */
-    protected $schemaPackageKeys = ['TYPO3.Flow', 'TYPO3.Fluid', 'TYPO3.Eel', 'TYPO3.Kickstart'];
+    protected $schemaPackageKeys = ['Neos.Flow', 'Neos.FluidAdaptor', 'Neos.Eel', 'Neos.Kickstart'];
 
     /**
      * The schema-schema yaml
@@ -53,7 +54,7 @@ class SchemaSchemaTest extends FunctionalTestCase
     {
         parent::setUp();
         $this->schemaValidator = new SchemaValidator();
-        $this->schemaSchema = \Symfony\Component\Yaml\Yaml::parse($this->schemaSchemaResource);
+        $this->schemaSchema = Yaml::parse($this->schemaSchemaResource);
     }
 
     /**
@@ -61,7 +62,7 @@ class SchemaSchemaTest extends FunctionalTestCase
      */
     public function schemaFilesAreValidDataProvider() {
 
-        $bootstrap = \TYPO3\Flow\Core\Bootstrap::$staticObjectManager->get(\TYPO3\Flow\Core\Bootstrap::class);
+        $bootstrap = Bootstrap::$staticObjectManager->get(Bootstrap::class);
         $objectManager = $bootstrap->getObjectManager();
         $packageManager = $objectManager->get(PackageManagerInterface::class);
 
@@ -94,7 +95,7 @@ class SchemaSchemaTest extends FunctionalTestCase
      */
     public function schemaFilesAreValid($schemaFile)
     {
-        $schema = \Symfony\Component\Yaml\Yaml::parse($schemaFile);
+        $schema = Yaml::parse($schemaFile);
         $result = $this->schemaValidator->validate($schema, $this->schemaSchema);
         $hasErrors = $result->hasErrors();
         $message = sprintf('Schema-file "%s" is valid', $schemaFile);
