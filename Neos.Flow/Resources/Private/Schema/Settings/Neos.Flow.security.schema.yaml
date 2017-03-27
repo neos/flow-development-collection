@@ -15,7 +15,7 @@ properties:
           properties:
             'pattern': { type: string, required: TRUE }
             'patternOptions': { type: dictionary }
-            'interceptor': { type: string, required: TRUE, enum: ['AccessGrant', 'AccessDeny'] }
+            'interceptor': { type: string, required: TRUE }
 
   'authentication':
     type: dictionary
