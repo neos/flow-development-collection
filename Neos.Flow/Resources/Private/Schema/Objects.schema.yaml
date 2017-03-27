@@ -29,6 +29,7 @@ additionalProperties:
                 type: dictionary
                 additionalProperties: FALSE
                 properties:
+                  'name': {type: string}
                   'factoryObjectName': {type: string, format: class-name}
                   'factoryMethodName': {type: string}
                   'arguments':
@@ -56,6 +57,7 @@ additionalProperties:
                 type: dictionary
                 additionalProperties: FALSE
                 properties:
+                  'name': {type: string}
                   'factoryObjectName': {type: string, format: class-name}
                   'factoryMethodName': {type: string}
                   'arguments':
