@@ -20,7 +20,7 @@ use Neos\Utility\Lock\LockNotAcquiredException;
 /**
  * Strictly a functional test for the Lock class and FlockLockStrategy.
  */
-class LockTest extends \PHPUnit_Framework_TestCase
+class LockTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var string

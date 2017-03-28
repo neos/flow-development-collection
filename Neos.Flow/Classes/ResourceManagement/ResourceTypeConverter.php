@@ -246,7 +246,7 @@ class ResourceTypeConverter extends AbstractTypeConverter
                 }
             }
             if ($hash !== null && $resource->getSha1() !== $hash) {
-                throw new InvalidResourceDataException('The source SHA1 did not match the SHA1 of the imported resource.', 1482248149);
+                throw new Exception\InvalidResourceDataException('The source SHA1 did not match the SHA1 of the imported resource.', 1482248149);
             }
         }
 

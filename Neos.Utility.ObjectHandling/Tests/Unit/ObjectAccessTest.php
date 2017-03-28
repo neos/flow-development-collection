@@ -24,7 +24,7 @@ require_once('Fixture/Model/EntityWithDoctrineProxy.php');
  * Testcase for Object Access
  *
  */
-class ObjectAccessTest extends \PHPUnit_Framework_TestCase
+class ObjectAccessTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var DummyClassWithGettersAndSetters

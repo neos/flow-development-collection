@@ -16,7 +16,7 @@ use Neos\Error\Messages\Result;
 /**
  * Testcase for the Error Container object
  */
-class ResultTest extends \PHPUnit_Framework_TestCase
+class ResultTest extends \PHPUnit\Framework\TestCase
 {
     /**
      *

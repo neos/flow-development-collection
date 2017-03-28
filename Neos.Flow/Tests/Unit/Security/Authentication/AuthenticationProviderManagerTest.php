@@ -352,7 +352,7 @@ class AuthenticationProviderManagerTest extends UnitTestCase
         }));
         $this->mockSession->expects($this->once())->method('destroy')->will($this->returnCallback(function () use (&$loggedOutEmitted) {
             if (!$loggedOutEmitted) {
-                \PHPUnit_Framework_Assert::fail('emitLoggedOut was not called before destroy');
+                \PHPUnit\Framework\Assert::fail('emitLoggedOut was not called before destroy');
             }
         }));
 

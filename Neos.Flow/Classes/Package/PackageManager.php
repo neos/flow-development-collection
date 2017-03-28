@@ -655,7 +655,6 @@ class PackageManager implements PackageManagerInterface
      * @param boolean $reloadPackageStates Should the package states be loaded before scanning or use the current configuration
      * @return array The found and sorted package states.
      * @api
-     * TODO: Add to Interface with Flow 4.0
      */
     public function rescanPackages($reloadPackageStates = true)
     {

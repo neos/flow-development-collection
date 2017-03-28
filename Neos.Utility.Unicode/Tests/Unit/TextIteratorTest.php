@@ -17,7 +17,7 @@ use Neos\Utility\Unicode;
 /**
  * Testcase for the TextIterator port
  */
-class TextIteratorTest extends \PHPUnit_Framework_TestCase
+class TextIteratorTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * Checks if a new instance with the default iterator type can be created

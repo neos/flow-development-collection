@@ -407,7 +407,7 @@ class SimpleFileBackendTest extends BaseTestCase
 
     /**
      * @test
-     * @expectedException \PHPUnit_Framework_Error_Warning
+     * @expectedException \PHPUnit\Framework\Error\Warning
      */
     public function requireOnceDoesNotSwallowPhpWarningsOfTheIncludedFile()
     {
@@ -420,7 +420,7 @@ class SimpleFileBackendTest extends BaseTestCase
 
     /**
      * @test
-     * @expectedException \PHPUnit_Framework_Error_Notice
+     * @expectedException \PHPUnit\Framework\Error\Notice
      */
     public function requireOnceDoesNotSwallowPhpNoticesOfTheIncludedFile()
     {
