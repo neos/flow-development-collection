@@ -92,24 +92,6 @@ class Scripts
     }
 
     /**
-     * Include the PHPUnit autoloader if PHPUnit is installed via PEAR.
-     *
-     * @return void
-     */
-    protected static function requireAutoloaderForPhpUnit()
-    {
-        if (class_exists(\PHPUnit\Framework\TestCase::class)) {
-            return;
-        }
-        if (stream_resolve_include_path('PHPUnit/Autoload.php') !== false) {
-            require_once('PHPUnit/Autoload.php');
-        } else {
-            echo PHP_EOL . 'Neos Flow Bootstrap Error: The Testing context requires PHPUnit. Looked for "PHPUnit/Autoload.php" without success.';
-            exit(1);
-        }
-    }
-
-    /**
      * Register the class loader into the Doctrine AnnotationRegistry so
      * the DocParser is able to load annation classes from packages.
      *
