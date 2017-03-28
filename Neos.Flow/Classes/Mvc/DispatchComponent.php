@@ -75,7 +75,7 @@ class DispatchComponent implements ComponentInterface
     public function handle(ComponentContext $componentContext)
     {
         $componentContext = $this->prepareActionRequest($componentContext);
-        $actionRequest = $componentContext->getParameter(self::class, 'actionRequest');
+        $actionRequest = $componentContext->getParameter(DispatchComponent::class, 'actionRequest');
         $this->setDefaultControllerAndActionNameIfNoneSpecified($actionRequest);
         $this->dispatcher->dispatch($actionRequest, $componentContext->getHttpResponse());
     }
@@ -112,7 +112,7 @@ class DispatchComponent implements ComponentInterface
         $this->securityContext->setRequest($actionRequest);
         $componentContext->replaceHttpRequest($httpRequest);
 
-        $componentContext->setParameter(self::class, 'actionRequest', $actionRequest);
+        $componentContext->setParameter(DispatchComponent::class, 'actionRequest', $actionRequest);
 
         return $componentContext;
     }

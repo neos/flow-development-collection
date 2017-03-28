@@ -56,7 +56,7 @@ class AjaxWidgetComponent extends DispatchComponent
 
         $componentContext = $this->prepareActionRequest($componentContext);
         /** @var $actionRequest ActionRequest */
-        $actionRequest = $componentContext->getParameter(self::class, 'actionRequest');
+        $actionRequest = $componentContext->getParameter(DispatchComponent::class, 'actionRequest');
         $actionRequest->setArgument('__widgetContext', $widgetContext);
         $actionRequest->setControllerObjectName($widgetContext->getControllerObjectName());
         $this->setDefaultControllerAndActionNameIfNoneSpecified($actionRequest);
