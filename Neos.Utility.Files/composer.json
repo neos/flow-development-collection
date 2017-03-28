@@ -5,7 +5,8 @@
   "homepage": "http://flow.neos.io",
   "license": "MIT",
   "require": {
-    "php": "~7.0"
+    "php": "~7.0",
+    "neos/error-messages": "*"
   },
   "require-dev": {
     "mikey179/vfsstream": "~1.6",

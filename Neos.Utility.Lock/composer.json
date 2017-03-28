@@ -5,6 +5,7 @@
   "homepage": "http://flow.neos.io",
   "license": "MIT",
   "require": {
+    "neos/flow": "*",
     "neos/utility-files": "*",
     "php": "~7.0"
   },
