@@ -389,20 +389,30 @@ class GeneratorService
      * Generate translation for the package key
      *
      * @param string $packageKey
-     * @param string $languageKey
+     * @param string $sourceLanguageKey
+     * @param array $targetLanguageKeys
      * @return array An array of generated filenames
      */
-    public function generateTranslation($packageKey, $languageKey)
+    public function generateTranslation($packageKey, $sourceLanguageKey, array $targetLanguageKeys)
     {
-        $translationPath = Files::concatenatePaths([$this->packageManager->getPackage($packageKey)->getPackagePath(), 'Resources/Private/Translations', $languageKey]);
+        $translationPath = Files::concatenatePaths([$this->packageManager->getPackage($packageKey)->getPackagePath(), 'Resources/Private/Translations']);
         $contextVariables = array();
         $contextVariables['packageKey'] = $packageKey;
-        $contextVariables['languageKey'] = $languageKey;
+        $contextVariables['sourceLanguageKey'] = $sourceLanguageKey;
 
-        $templatePathAndFilename = 'resource://Neos.Kickstarter/Private/Generator/Translations/TranslationsTemplate.xlf.tmpl';
+        $templatePathAndFilename = 'resource://Neos.Kickstarter/Private/Generator/Translations/DefaultLanguageTemplate.xlf.tmpl';
         $fileContent = $this->renderTemplate($templatePathAndFilename, $contextVariables);
-        $targetPathAndFilename = $translationPath . '/Main.xlf';
+        $targetPathAndFilename = $translationPath . '/' . $sourceLanguageKey . '/Main.xlf';
         $this->generateFile($targetPathAndFilename, $fileContent);
+
+        $templatePathAndFilename = 'resource://Neos.Kickstarter/Private/Generator/Translations/TranslationTemplate.xlf.tmpl';
+        foreach($targetLanguageKeys as $targetLanguageKey)
+        {
+            $contextVariables['targetLanguageKey'] = $targetLanguageKey;
+            $fileContent = $this->renderTemplate($templatePathAndFilename, $contextVariables);
+            $targetPathAndFilename = $translationPath . '/' . $targetLanguageKey . '/Main.xlf';
+            $this->generateFile($targetPathAndFilename, $fileContent);
+        }
 
         return $this->generatedFiles;
     }

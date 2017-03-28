@@ -406,9 +406,10 @@ It is possible to create initial translation files for a given language. With Fl
 
 .. code-block:: bash
 
-./flow kickstart:translation --package-key Some.Package --language-key en
+./flow kickstart:translation --package-key Some.Package --source-language-key en --target-language-keys "de,fr"
 
-the files for the *english* translation in the package *Some.Package* will be created.
+the files for the default language *english* in the package *Some.Package* will be created as well as the translation
+files for *german* and *french*.
 
 A minimal XLIFF file looks like this:
 
