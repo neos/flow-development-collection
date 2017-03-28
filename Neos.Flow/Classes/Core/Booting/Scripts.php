@@ -84,28 +84,7 @@ class Scripts
         spl_autoload_register([$classLoader, 'loadClass'], true, true);
         $bootstrap->setEarlyInstance(ClassLoader::class, $classLoader);
         if ($bootstrap->getContext()->isTesting()) {
-            self::requireAutoloaderForPhpUnit();
             $classLoader->setConsiderTestsNamespace(true);
-            require_once(FLOW_PATH_FLOW . 'Tests/BaseTestCase.php');
-            require_once(FLOW_PATH_FLOW . 'Tests/FunctionalTestCase.php');
-        }
-    }
-
-    /**
-     * Include the PHPUnit autoloader if PHPUnit is installed via PEAR.
-     *
-     * @return void
-     */
-    protected static function requireAutoloaderForPhpUnit()
-    {
-        if (class_exists(\PHPUnit\Framework\TestCase::class)) {
-            return;
-        }
-        if (stream_resolve_include_path('PHPUnit/Autoload.php') !== false) {
-            require_once('PHPUnit/Autoload.php');
-        } else {
-            echo PHP_EOL . 'Neos Flow Bootstrap Error: The Testing context requires PHPUnit. Looked for "PHPUnit/Autoload.php" without success.';
-            exit(1);
         }
     }
 
