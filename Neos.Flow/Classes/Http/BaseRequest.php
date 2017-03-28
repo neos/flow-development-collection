@@ -1,6 +1,7 @@
 <?php
 namespace Neos\Flow\Http;
 
+use Neos\Flow\Annotations as Flow;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\UriInterface;
 use Neos\Utility\MediaTypes;
