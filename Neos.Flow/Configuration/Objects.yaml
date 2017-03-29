@@ -384,11 +384,3 @@ Neos\Flow\Session\SessionManager:
         arguments:
           1:
             value: Flow_Session_MetaData
-
-#                                                                          #
-# Utility                                                                  #
-#                                                                          #
-
-Neos\Utility\PdoHelper:
-  autowiring: off
-  scope: prototype

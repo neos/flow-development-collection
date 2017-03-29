@@ -5,6 +5,7 @@
     "license": "MIT",
     "require": {
         "neos/flow": "*",
+        "neos/fluid-adaptor": "*",
         "neos/utility-arrays": "*"
     },
     "autoload": {

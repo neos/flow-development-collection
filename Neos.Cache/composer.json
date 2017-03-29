@@ -8,7 +8,6 @@
         "php": "~7.0",
         "neos/utility-files": "*",
         "neos/utility-pdo": "*",
-        "neos/utility-lock": "*",
         "neos/utility-opcodecache": "*"
     },
     "require-dev": {
