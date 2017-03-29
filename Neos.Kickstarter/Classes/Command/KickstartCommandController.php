@@ -280,6 +280,29 @@ class KickstartCommandController extends CommandController
     }
 
     /**
+     * Kickstart translation
+     *
+     * Generates the translation files for the given package.
+     *
+     * @param string $packageKey The package key of the package for the translation
+     * @param string $sourceLanguageKey The language key of the default language
+     * @param array $targetLanguageKeys Comma separated language keys for the target translations
+     * @return void
+     */
+    public function translationCommand($packageKey, $sourceLanguageKey, array $targetLanguageKeys = [])
+    {
+        $this->validatePackageKey($packageKey);
+        if (!$this->packageManager->isPackageAvailable($packageKey)) {
+            $this->outputLine('Package "%s" is not available.', [$packageKey]);
+            exit(2);
+        }
+
+        $generateFiles = $this->generatorService->generateTranslation($packageKey, $sourceLanguageKey, $targetLanguageKeys);
+
+        $this->outputLine(implode(PHP_EOL, $generateFiles));
+    }
+
+    /**
      * Checks the syntax of the given $packageKey and quits with an error message if it's not valid
      *
      * @param string $packageKey
