@@ -3,7 +3,7 @@ type: '@schema'
 #
 # A schema can be defined in many different ways
 #
-@schema:
+'@schema':
   type:
     - '@simpleSchema'
     - '@arrayOfSchemas'
@@ -15,12 +15,12 @@ type: '@schema'
     - '@dictionarySchema'
     - '@nullSchema'
     - '@anySchema'
-    - '@typeArraySchema'
+    - '@typeSchema'
 
 #
 # A simple schema is simply the type as string
 #
-@simpleSchema:
+'@simpleSchema':
   type: 'string'
   enum: ['string', 'number', 'integer', 'boolean', 'array', 'dictionary', 'null', 'any']
   required: TRUE
@@ -28,7 +28,7 @@ type: '@schema'
 #
 # An array schema is an array of schemas of which at least one must match
 #
-@arrayOfSchemas:
+'@arrayOfSchemas':
   type: 'array'
   items: '@schema'
   minItems: 1
@@ -37,15 +37,15 @@ type: '@schema'
 #
 # A local schema is a reference to a locally defined schema
 #
-@localSchema:
+'@localSchema':
   type: 'string'
-  format: 'type-reference'
+  pattern: '/@[a-zA-Z0-9-_]+/'
   required: TRUE
 
 #
 # The base for all complex schema definitions with type property
 #
-@baseSchema:
+'@baseSchema':
   type: 'dictionary'
   properties:
     type: { type: 'any', required: TRUE }
@@ -54,11 +54,13 @@ type: '@schema'
     description: 'string'
     required: 'boolean'
   additionalProperties: FALSE
+  patternProperties:
+    '/@.*/':  { type: 'any' }
 
 #
 # Boolean property schema
 #
-@booleanSchema:
+'@booleanSchema':
   superTypes:
     - '@baseSchema'
   properties:
@@ -67,7 +69,7 @@ type: '@schema'
 #
 # Number property schema
 #
-@numberSchema:
+'@numberSchema':
   superTypes:
     - '@baseSchema'
   properties:
@@ -81,7 +83,7 @@ type: '@schema'
 #
 # String property schema
 #
-@stringSchema:
+'@stringSchema':
   superTypes:
     - '@baseSchema'
   properties:
@@ -96,7 +98,7 @@ type: '@schema'
 #
 # Array property schema
 #
-@arraySchema:
+'@arraySchema':
   superTypes:
     - '@baseSchema'
   properties:
@@ -109,7 +111,7 @@ type: '@schema'
 #
 # Dictionary property schema
 #
-@dictionarySchema:
+'@dictionarySchema':
   superTypes:
     - '@baseSchema'
   properties:
@@ -128,26 +130,26 @@ type: '@schema'
 #
 # Null property schema
 #
-@nullSchema:
+'@nullSchema':
   superTypes:
     - '@baseSchema'
   properties:
-      type: { enum: ['null'] }
+    type: { enum: ['null'] }
 
 #
 # Any property schema
 #
-@anySchema:
+'@anySchema':
   superTypes:
     - '@baseSchema'
   properties:
-      type: { enum: ['any'] }
+    type: { enum: ['any'] }
 
 #
-# Schema for schemas with an array of types
+# Schema for schemas that use a subschema as type
 #
-@typeArraySchema:
+'@typeSchema':
   superTypes:
     - '@baseSchema'
   properties:
-    type: '@arrayOfSchemas'
+    type: '@schema'
