@@ -409,7 +409,8 @@ It is possible to create initial translation files for a given language. With Fl
 ./flow kickstart:translation --package-key Some.Package --source-language-key en --target-language-keys "de,fr"
 
 the files for the default language *english* in the package *Some.Package* will be created as well as the translation
-files for *german* and *french*.
+files for *german* and *french*. Already existing files will not be overwritten. Translations that do not yet exist are
+generated based on the default language.
 
 A minimal XLIFF file looks like this:
 

@@ -12,6 +12,7 @@ namespace Neos\Kickstarter\Service;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\I18n\Xliff\XliffParser;
 use Neos\FluidAdaptor\View\StandaloneView;
 use Neos\Flow\Core\ClassLoader;
 use Neos\Flow\Package\PackageInterface;
@@ -393,25 +394,30 @@ class GeneratorService
      * @param array $targetLanguageKeys
      * @return array An array of generated filenames
      */
-    public function generateTranslation($packageKey, $sourceLanguageKey, array $targetLanguageKeys)
+    public function generateTranslation($packageKey, $sourceLanguageKey, array $targetLanguageKeys = [])
     {
-        $translationPath = Files::concatenatePaths([$this->packageManager->getPackage($packageKey)->getPackagePath(), 'Resources/Private/Translations']);
-        $contextVariables = array();
+        $translationPath = Files::concatenatePaths([$this->packageManager->getPackage($packageKey)->getResourcesPath(), 'Private/Translations']);
+        $contextVariables = [];
         $contextVariables['packageKey'] = $packageKey;
         $contextVariables['sourceLanguageKey'] = $sourceLanguageKey;
 
-        $templatePathAndFilename = 'resource://Neos.Kickstarter/Private/Generator/Translations/DefaultLanguageTemplate.xlf.tmpl';
+        $templatePathAndFilename = 'resource://Neos.Kickstarter/Private/Generator/Translations/SourceLanguageTemplate.xlf.tmpl';
         $fileContent = $this->renderTemplate($templatePathAndFilename, $contextVariables);
-        $targetPathAndFilename = $translationPath . '/' . $sourceLanguageKey . '/Main.xlf';
-        $this->generateFile($targetPathAndFilename, $fileContent);
+        $sourceLanguageFile = Files::concatenatePaths([$translationPath, $sourceLanguageKey, 'Main.xlf']);
+        $this->generateFile($sourceLanguageFile, $fileContent);
 
-        $templatePathAndFilename = 'resource://Neos.Kickstarter/Private/Generator/Translations/TranslationTemplate.xlf.tmpl';
-        foreach($targetLanguageKeys as $targetLanguageKey)
-        {
-            $contextVariables['targetLanguageKey'] = $targetLanguageKey;
-            $fileContent = $this->renderTemplate($templatePathAndFilename, $contextVariables);
-            $targetPathAndFilename = $translationPath . '/' . $targetLanguageKey . '/Main.xlf';
-            $this->generateFile($targetPathAndFilename, $fileContent);
+        if ($targetLanguageKeys) {
+            $xliffParser = new XliffParser();
+            $parsedXliffArray = $xliffParser->getParsedData($sourceLanguageFile);
+            foreach ($targetLanguageKeys as $targetLanguageKey) {
+                $contextVariables['targetLanguageKey'] = $targetLanguageKey;
+                $contextVariables['translationUnits'] = $parsedXliffArray['translationUnits'];
+
+                $templatePathAndFilename = 'resource://Neos.Kickstarter/Private/Generator/Translations/TargetLanguageTemplate.xlf.tmpl';
+                $fileContent = $this->renderTemplate($templatePathAndFilename, $contextVariables);
+                $targetPathAndFilename = Files::concatenatePaths([$translationPath, $targetLanguageKey, 'Main.xlf']);
+                $this->generateFile($targetPathAndFilename, $fileContent);
+            }
         }
 
         return $this->generatedFiles;
