@@ -287,6 +287,7 @@ class KickstartCommandController extends CommandController
      * @param string $packageKey The package key of the package for the translation
      * @param string $sourceLanguageKey The language key of the default language
      * @param array $targetLanguageKeys Comma separated language keys for the target translations
+     * @return void
      */
     public function translationCommand($packageKey, $sourceLanguageKey, array $targetLanguageKeys = [])
     {
