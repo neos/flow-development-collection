@@ -396,7 +396,7 @@ class GeneratorService
      */
     public function generateTranslation($packageKey, $sourceLanguageKey, array $targetLanguageKeys = [])
     {
-        $translationPath = Files::concatenatePaths([$this->packageManager->getPackage($packageKey)->getResourcesPath(), 'Private/Translations']);
+        $translationPath = 'resource://' . $packageKey . '/Private/Translations';
         $contextVariables = [];
         $contextVariables['packageKey'] = $packageKey;
         $contextVariables['sourceLanguageKey'] = $sourceLanguageKey;
@@ -476,7 +476,7 @@ class GeneratorService
             file_put_contents($targetPathAndFilename, $fileContent);
             $this->generatedFiles[] = 'Created .../' . $relativeTargetPathAndFilename;
         } else {
-            $this->generatedFiles[] = 'Omitted .../' . $relativeTargetPathAndFilename;
+            $this->generatedFiles[] = 'Omitted as file already exists .../' . $relativeTargetPathAndFilename;
         }
     }
 
