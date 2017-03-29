@@ -3,7 +3,7 @@
 Flow TypeConverter Reference
 ============================
 
-This reference was automatically generated from code on 2016-06-14
+This reference was automatically generated from code on 2017-03-29
 
 
 .. _`Flow TypeConverter Reference: ArrayConverter`:
@@ -17,7 +17,7 @@ Converter which transforms various types to arrays.
 * If the source is a string, is is converted depending on CONFIGURATION_STRING_FORMAT,
   which can be STRING_FORMAT_CSV or STRING_FORMAT_JSON. For CSV the delimiter can be
   set via CONFIGURATION_STRING_DELIMITER.
-* If the source is a Resource object, it is converted to an array. The actual resource
+* If the source is a PersistentResource object, it is converted to an array. The actual resource
   content is either embedded as base64-encoded data or saved to a file, depending on
   CONFIGURATION_RESOURCE_EXPORT_TYPE. For RESOURCE_EXPORT_TYPE_FILE the setting
   CONFIGURATION_RESOURCE_SAVE_PATH must be set as well.
@@ -27,7 +27,7 @@ Converter which transforms various types to arrays.
 :Source types:
  * array
  * string
- * Neos\Flow\Resource\Resource
+ * Neos\Flow\ResourceManagement\PersistentResource
 
 
 
@@ -147,7 +147,7 @@ As an alternative to providing the date as string, you might supply day, month a
  );
 
 :Priority: 1
-:Target type: DateTime
+:Target type: DateTimeInterface
 :Source types:
  * string
  * integer
@@ -365,7 +365,7 @@ as the serialized value.
 ResourceTypeConverter
 ---------------------
 
-A type converter for converting strings, array and uploaded files to Resource objects.
+A type converter for converting strings, array and uploaded files to PersistentResource objects.
 
 Has two major working modes:
 
@@ -390,16 +390,16 @@ Has two major working modes:
    - is a string looking like a SHA1 (40 characters [0-9a-f]) or
    - is an array and contains the key 'hash' with a value looking like a SHA1 (40 characters [0-9a-f])
 
-   the converter will look up an existing Resource with that hash and return it if found. If that fails,
+   the converter will look up an existing PersistentResource with that hash and return it if found. If that fails,
    the converter will try to import a file named like that hash from the configured CONFIGURATION_RESOURCE_LOAD_PATH.
 
    If no hash is given in an array source but the key 'data' is set, the content of that key is assumed a binary string
-   and a Resource representing this content is created and returned.
+   and a PersistentResource representing this content is created and returned.
 
-   The imported Resource will be given a 'filename' if set in the source array in both cases (import from file or data).
+   The imported PersistentResource will be given a 'filename' if set in the source array in both cases (import from file or data).
 
 :Priority: 1
-:Target type: Neos\Flow\Resource\Resource
+:Target type: Neos\Flow\ResourceManagement\PersistentResource
 :Source types:
  * string
  * array
@@ -418,6 +418,28 @@ This converter transforms strings to role instances
 :Target type: Neos\Flow\Security\Policy\Role
 :Source type: string
 
+
+
+
+
+.. _`Flow TypeConverter Reference: ScalarTypeToObjectConverter`:
+
+ScalarTypeToObjectConverter
+---------------------------
+
+A type converter which converts a scalar type (string, boolean, float or integer) to an object by instantiating
+the object and passing the string as the constructor argument.
+
+This converter will only be used if the target class has a constructor with exactly one argument whose type must
+be the given type.
+
+:Priority: 10
+:Target type: object
+:Source types:
+ * string
+ * integer
+ * float
+ * bool
 
 
 
@@ -461,7 +483,7 @@ For array to CSV string, the delimiter can be set via CONFIGURATION_CSV_DELIMITE
  * float
  * boolean
  * array
- * DateTime
+ * DateTimeInterface
 
 
 
