@@ -163,6 +163,7 @@ class Logger implements SystemLoggerInterface, ThrowableLoggerInterface, Securit
             $errorDumpPathAndFilename = FLOW_PATH_DATA . 'Logs/Exceptions/' . $referenceCode . '.txt';
             file_put_contents($errorDumpPathAndFilename, $this->renderErrorInfo($error));
             $message .= ' - See also: ' . basename($errorDumpPathAndFilename);
+            $error->isDumpedToFile = true;
         } else {
             $this->log(sprintf('Could not write exception backtrace into %s because the directory could not be created or is not writable.', FLOW_PATH_DATA . 'Logs/Exceptions/'), LOG_WARNING, [], 'Flow', __CLASS__, __FUNCTION__);
         }

@@ -284,7 +284,7 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
         }
         $exceptionMessage .= $this->renderExceptionDetailCli('File', str_replace(FLOW_PATH_ROOT, '', $exception->getFile()));
         $exceptionMessage .= $this->renderExceptionDetailCli('Line', $exception->getLine());
-        if ($exception instanceof FlowException) {
+        if ($exception instanceof FlowException && isset($exception->isDumpedToFile) && $exception->isDumpedToFile === true) {
             $exceptionMessage .= PHP_EOL . 'Open <b>Data/Logs/Exceptions/' . $exception->getReferenceCode() . '.txt</b> for a full stack trace.' . PHP_EOL;
         }
         return $exceptionMessage;
