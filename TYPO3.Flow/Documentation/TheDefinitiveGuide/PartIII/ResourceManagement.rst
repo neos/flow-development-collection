@@ -242,6 +242,8 @@ Provided that the ``Image`` class has a ``$title`` and a ``$originalResource`` p
 that they are accessible through ``setTitle()`` and ``setOriginalResource()`` respectively the
 above code will work just as expected::
 
+	use Doctrine\ORM\Mapping as ORM;
+
 	class Image {
 
 	   /**
@@ -251,6 +253,7 @@ above code will work just as expected::
 
 	   /**
 	    * @var \TYPO3\Flow\Resource\Resource
+	    * @ORM\OneToOne
 	    */
 	   protected $originalResource;
 
