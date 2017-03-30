@@ -75,19 +75,19 @@ class DateHelper implements ProtectedContextAwareInterface
      *
      * @param \DateTime $date
      * @param string $cldrFormat Format string in CLDR format (see http://cldr.unicode.org/translation/date-time)
-     * @param string $locale String locale - example (de|en|ru_RU). Must be one of Neos\Flow\I18n\Cldr\Reader\DatesReader::FORMAT_LENGTH_*'s constants.
+     * @param null|string $locale String locale - example (de|en|ru_RU)
      *
      * @return string
      */
-    public function formatCldr($date = null, $cldrFormat = null, $locale = null)
+    public function formatCldr($date, $cldrFormat, $locale = null)
     {
-        if ($date === null) {
-            $date = new \DateTime('now');
+        if (!$date instanceof \DateTimeInterface) {
+            throw new \InvalidArgumentException('"' . $date . '" could not be parsed by \DateTime constructor.');
         }
-        if ($cldrFormat === null) {
-            $cldrFormat = 'dd MMMM yyyy HH:mm:ss';
+        if (empty($cldrFormat)) {
+            throw new \InvalidArgumentException('CLDR date formatting parameter not passed.');
         }
-        if ($locale === null) {
+        if (empty($locale)) {
             $useLocale = $this->localizationService->getConfiguration()->getCurrentLocale();
         } else {
             $useLocale = new Locale($locale);
