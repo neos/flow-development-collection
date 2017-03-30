@@ -589,11 +589,6 @@ class SchemaValidator
                         $result->addError($this->createError('format=interface-name', $value));
                     }
                     break;
-                case 'type-reference':
-                    if (substr($value, 0, 1) == '@' || array_key_exists(substr($value, 1), $types) === false) {
-                        $result->addError($this->createError('format=type-reference', $value));
-                    }
-                    break;
                 default:
                     $result->addError($this->createError('Expected string-format "' . $schema['format'] . '" is unknown'));
                     break;

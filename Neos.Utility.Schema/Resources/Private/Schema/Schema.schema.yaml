@@ -93,7 +93,7 @@ type: '@schema'
     maxLength: 'integer'
     format:
       type: 'string'
-      enum: ['date-time', 'date', 'time', 'uri', 'email', 'ipv4', 'ipv6', 'ip-address', 'host-name', 'class-name', 'interface-name', 'type-reference']
+      enum: ['date-time', 'date', 'time', 'uri', 'email', 'ipv4', 'ipv6', 'ip-address', 'host-name', 'class-name', 'interface-name']
 
 #
 # Array property schema
