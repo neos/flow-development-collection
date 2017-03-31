@@ -158,9 +158,8 @@ class Collection implements CollectionInterface
     {
         $objects = [];
         if ($this->storage instanceof PackageStorage && $this->pathPatterns !== []) {
-            $objects = new \AppendIterator();
             foreach ($this->pathPatterns as $pathPattern) {
-                $objects->append($this->storage->getObjectsByPathPattern($pathPattern, $callback));
+                $objects = array_merge($objects, $this->storage->getObjectsByPathPattern($pathPattern, $callback));
             }
         } else {
             $objects = $this->storage->getObjectsByCollection($this, $callback);
