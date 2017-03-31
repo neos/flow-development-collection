@@ -13,7 +13,6 @@ namespace Neos\Flow\Tests\Unit\Security\Authentication;
 
 use Neos\Flow\ObjectManagement\ObjectManager;
 use Neos\Flow\Security\Authentication\AuthenticationProviderResolver;
-use Neos\Flow\Security\Authentication\Provider\ValidShortName;
 use Neos\Flow\Tests\UnitTestCase;
 
 /**
@@ -40,11 +39,13 @@ class AuthenticationProviderResolverTest extends UnitTestCase
      */
     public function resolveProviderReturnsTheCorrectProviderForAShortName()
     {
-        $getCaseSensitiveObjectNameCallback = function () {
+        $longClassNameForTest = 'Neos\Flow\Security\Authentication\Provider\ValidShortName';
+
+        $getCaseSensitiveObjectNameCallback = function () use ($longClassNameForTest) {
             $args = func_get_args();
 
-            if ($args[0] === ValidShortName::class) {
-                return ValidShortName::class;
+            if ($args[0] === $longClassNameForTest) {
+                return $longClassNameForTest;
             }
 
             return false;
@@ -56,7 +57,7 @@ class AuthenticationProviderResolverTest extends UnitTestCase
         $providerResolver = new AuthenticationProviderResolver($mockObjectManager);
         $providerClass = $providerResolver->resolveProviderClass('ValidShortName');
 
-        $this->assertEquals(ValidShortName::class, $providerClass, 'The wrong classname has been resolved');
+        $this->assertEquals($longClassNameForTest, $providerClass, 'The wrong classname has been resolved');
     }
 
     /**

@@ -3,7 +3,7 @@
 Flow Annotation Reference
 =========================
 
-This reference was automatically generated from code on 2016-08-30
+This reference was automatically generated from code on 2017-03-29
 
 
 .. _`Flow Annotation Reference: After`:
@@ -263,15 +263,6 @@ Arguments
 * ``lazy`` (boolean): Whether the dependency should be injected instantly or if a lazy dependency
   proxy should be injected instead
 
-* ``setting`` (string): Path of a setting (without the package key) which should be injected into the property.
-  Example: session.name
-
-* ``package`` (string): Defines the package to be used for retrieving a setting specified via the "setting" parameter. If no package
-  is specified, we'll assume the package to be the same which contains the class where the Inject annotation is
-  used.
-
-  Example: Neos.Flow
-
 
 
 
@@ -295,16 +286,16 @@ Arguments
 
 * ``path`` (string): Path of a configuration which should be injected into the property.
   Can be specified as anonymous argument: InjectConfiguration("some.path")
-
+  
   For type "Settings" this refers to the relative path (excluding the package key)
-
+  
   Example: session.name
 
 * ``package`` (string): Defines the package key to be used for retrieving settings. If no package key is specified, we'll assume the
   package to be the same which contains the class where the InjectConfiguration annotation is used.
-
+  
   Note: This property is only supported for type "Settings"
-
+  
   Example: Neos.Flow
 
 * ``type`` (string one of the ConfigurationManager::CONFIGURATION_TYPE_* constants): Type of Configuration (defaults to "Settings").

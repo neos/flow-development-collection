@@ -11,7 +11,7 @@ namespace Neos\Utility;
  * source code.
  */
 
-use Neos\Error\Messages\Exception as ErrorException;
+use Neos\Flow\Error\Exception as ErrorException;
 use Neos\Utility\Exception\FilesException;
 
 /**

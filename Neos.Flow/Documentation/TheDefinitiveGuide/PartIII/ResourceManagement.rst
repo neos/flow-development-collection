@@ -441,11 +441,7 @@ this. To use this feature, just pass the resource hash:
 
 *Example: Accessing persisted resources* ::
 
-	$imageFile = file_get_contents('resource://' . $resource);
-
-Note that you need to have a ``PersistentResource`` in order to access its file and that the
-above example only works because ``PersistentResource`` provides a ``__toString()`` method which
-returns the resource's hash. This hash can also be accessed by using ``$resource->getSha1()``.
+	$imageFile = file_get_contents('resource://' . $resource->getSha1());
 
 You are encouraged to use this stream wrapper wherever you need to access a static or
 persistent resource in your PHP code.

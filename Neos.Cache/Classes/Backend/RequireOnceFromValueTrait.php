@@ -11,8 +11,6 @@ namespace Neos\Cache\Backend;
  * source code.
  */
 
-use Neos\Flow\Cache\Exception as CacheException;
-
 /**
  * RequireOnceFromValueTrait
  */
