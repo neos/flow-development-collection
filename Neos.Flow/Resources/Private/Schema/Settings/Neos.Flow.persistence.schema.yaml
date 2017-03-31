@@ -16,7 +16,7 @@ properties:
           type: string
           format: ip-address
         -
-          type: null
+          type: 'null'
       'charset': { type: string }
       'dbname': { type: ['string','null'] }
       'user': { type: ['string','null'] }
@@ -71,13 +71,12 @@ properties:
           type: dictionary
           additionalProperties: FALSE
           properties:
-            'events': { type: [string, array], items: { type: string } }
+            'events': [{ type: array, items: { type: string } }, { type: string }]
             'listener': { type: string, format: class-name }
       'filters':
         type: dictionary
         additionalProperties:
           type: string
-          additionalProperties: TRUE
       'dql':
         type: dictionary
         required: FALSE
