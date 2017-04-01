@@ -1,0 +1,57 @@
+`2.3.15 (2016-06-17) <https://github.com/neos/flow-development-collection/releases/tag/2.3.15>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`Complete code examples with necessary use statement <https://github.com/neos/flow-development-collection/pull/382>`_
+---------------------------------------------------------------------------------------------------------------------
+
+The examples contain namespace and full class body, so they seem to be complete and executable. But for usage of `@Flow` the use statement is necessary.
+
+* Packages: ``Flow``
+
+`BUGFIX: Exclude sebastian.* and phpdocumentor.* from reflection <https://github.com/neos/flow-development-collection/pull/381>`_
+---------------------------------------------------------------------------------------------------------------------------------
+
+This fixes reflection failures caused by some classes in those libraries:
+
+phpunit/phpunit depends on phpspec/prophecy, which depends on phpdocumentor/reflection-docblock.
+Now prophecy changed that dependency from `~2.0` to `^2.0|^3.0.2` when going from 1.6.0 to 1.6.1.
+reflection-docblock 3.x includes (new) code which fails reflection (namespace does not match file path).
+
+* Packages: ``Flow``
+
+`TASK: Clarify positioning of arguments and options in CommandController <https://github.com/neos/flow-development-collection/pull/379>`_
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+In the method signature, all (mandatory) arguments must be placed in front of the options. If not, all options placed in front of the last argument become mandatory, too in the command line prompt. This should be stated explicitely in the documentation.
+
+* Packages: ``Flow``
+
+`TASK: Provide proper error message when no request handler can be resolved <https://github.com/neos/flow-development-collection/pull/376>`_
+--------------------------------------------------------------------------------------------------------------------------------------------
+
+Previously Flow would just fail with an error message:
+`Warning: ksort() expects parameter 1 to be array, null given`
+when for some reason no suitable request handler can be found for the current request.
+This change will instead throw a useful exception and hint the user at a setup problem.
+
+* Packages: ``Flow``
+
+`TASK: Remove incorrect parenthesis in Reflection code example <https://github.com/neos/flow-development-collection/pull/368>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Flow``
+
+`TASK: Apply fixes from StyleCI <https://github.com/neos/flow-development-collection/pull/371>`_
+------------------------------------------------------------------------------------------------
+
+This pull request applies code style fixes from an analysis carried out by StyleCI.
+
+For details see https://styleci.io/analyses/zEPDxA
+
+* Packages: ``Eel`` ``Flow``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/2.3.14...2.3.15>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

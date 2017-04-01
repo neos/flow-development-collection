@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE ldml SYSTEM "dtd/ldml.dtd">
+<ldml>
+	<identity>
+		<version number="foo"/>
+		<generation date="foo"/>
+		<language type="pl"/>
+	</identity>
+	<dates>
+		<calendars>
+			<calendar type="gregorian">
+				<dateFormats>
+					<dateFormatLength type="full">
+						<dateFormat>
+							<pattern>EEEE, d MMMM y</pattern>
+						</dateFormat>
+					</dateFormatLength>
+					<dateFormatLength type="long">
+						<dateFormat>
+							<pattern>d MMMM y</pattern>
+						</dateFormat>
+					</dateFormatLength>
+					<dateFormatLength type="medium">
+						<dateFormat>
+							<pattern>dd-MM-yyyy</pattern>
+							<pattern alt="proposed-x1001" draft="unconfirmed">d MMM y</pattern>
+						</dateFormat>
+					</dateFormatLength>
+					<dateFormatLength type="short">
+						<alias source="locale" path="../dateFormatLength[@type='medium']"/>
+					</dateFormatLength>
+				</dateFormats>
+			</calendar>
+			<calendar type="buddhist">
+				<dateFormats>
+					<dateFormatLength type="full">
+						<alias source="locale" path="../../../calendar[@type='gregorian']/dateFormats/dateFormatLength[@type='full']"/>
+					</dateFormatLength>
+				</dateFormats>
+			</calendar>
+		</calendars>
+	</dates>
+</ldml>

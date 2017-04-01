@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE supplementalData SYSTEM "../../common/dtd/ldmlSupplemental.dtd">
+<supplementalData>
+  <version number="$Revision: 4747 $"/>
+	<generation date="$Date: 2010-02-25 15:22:30 -0600 (Thu, 25 Feb 2010) $"/>
+	<transforms>
+		<transform source="Telugu" target="Gujarati" direction="forward">
+			<tRule>::[ఁ-ఃఅ-ఌఎ-ఐఒ-నప-ళవ-హా-ౄె-ైొ-్ౕ-ౖౠ-ౡ౦-౯];</tRule>
+			<tRule>::NFD;</tRule>
+			<tRule>::Telugu-InterIndic;</tRule>
+			<tRule>::InterIndic-Gujarati;</tRule>
+			<tRule>::NFC;</tRule>
+		</transform>
+	</transforms>
+</supplementalData>
+

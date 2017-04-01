@@ -1,0 +1,10 @@
+roles:
+  Administrator: ['Package2:PowerUser']
+
+acls:
+  Administrator:
+    methods:
+      method1: 'Some policy from Foo.Package1 for Foo.Package1:Administrator'
+  'Package2:User':
+    methods:
+      method1: 'Some policy from Foo.Package1 for Package2:User with packageKey definition'

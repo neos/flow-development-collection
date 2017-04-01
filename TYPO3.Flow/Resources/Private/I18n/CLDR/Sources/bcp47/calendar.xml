@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE ldmlBCP47 SYSTEM "../../common/dtd/ldmlBCP47.dtd">
+
+<ldmlBCP47>
+    <version number="$Revision: 4761 $"/>
+    <generation date="$Date: 2010-02-26 18:11:12 -0600 (Fri, 26 Feb 2010) $"/>
+    <keyword>
+        <key name="ca" alias="calendar">
+            <type name="buddhist"/>
+            <type name="chinese"/>
+            <type name="coptic"/>
+            <type name="ethioaa" alias="ethiopic-amete-alem"/>
+            <type name="ethiopic"/>
+            <type name="gregory" alias="gregorian"/>
+            <type name="hebrew"/>
+            <type name="indian"/>
+            <type name="islamic"/>
+            <type name="islamicc" alias="islamic-civil"/>
+            <type name="japanese"/>
+            <type name="persian"/>
+            <type name="roc"/>
+        </key>
+    </keyword>
+</ldmlBCP47>

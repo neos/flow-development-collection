@@ -1,0 +1,158 @@
+====================
+2.3.3
+====================
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Base Distribution
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Eel
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Flow
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Update references in documentation
+-----------------------------------------------------------------------------------------
+
+See https://ci.neos.typo3.org/job/typo3-flow-release/39/
+
+* Commit: `206ce1c <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/206ce1c9ec5edfa95ebb46f4fd3b34c6549605c9>`_
+
+[BUGFIX] Re-activate authorization checks only when not disabled already
+-----------------------------------------------------------------------------------------
+
+This change fixes the re-enabling of authorization checks, when calling
+``Security\\Context::withoutAuthorizationChecks()`` in nested calls.
+
+Fixes: FLOW-249
+
+* Commit: `f62ddef <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/f62ddefa1d2d52a28ddffb0aa9e5604652d9bb71>`_
+
+[BUGFIX] Fix support for PHP 5.3
+-----------------------------------------------------------------------------------------
+
+This is a follow up to the "[BUGFIX] Disable security for CLI requests"
+(I1dc9d463bbe651f5cfc4faa646b35ae8bac85fe5) that introduced a regression
+for PHP versions < 5.4.
+
+Note:
+This is only applied to the 2.3 branch because the regression hasn't
+been merged in older branches yet and because 3.0 relies on PHP 5.5
+anyways.
+
+Related: FLOW-163
+
+* Commit: `a083948 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/a083948c1602db1a6df2dcc4918ff210a76d072c>`_
+
+[BUGFIX] Flush compiled configuration on cache:flush
+-----------------------------------------------------------------------------------------
+
+The ConfigurationManager writes compiled configuration to disk (if this
+is enabled, by default this is the case in Production context). But this
+compiled configuration is not removed when flushing caches, so that
+changes never become active.
+
+This change adjusts the CacheManager to be aware of this compiled
+configuration and remove it during flushCaches().
+
+Fixes: FLOW-229
+
+* Commit: `1ca43c3 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/1ca43c3357a62d9fa596ca141983fbb55073ce49>`_
+
+[BUGFIX] Fix resolving of imported interface namespaces
+-----------------------------------------------------------------------------------------
+
+Dependency injection and property mapping does not work for
+interfaces of the current namespace if the code does not refer to
+the fully qualified name.
+
+Fixes: FLOW-34
+
+* Commit: `c738f23 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/c738f23796b4b0c240dab62f829c76e107e6c0dd>`_
+
+[TASK] Bump version in Documentation/Settings.yml
+-----------------------------------------------------------------------------------------
+
+* Commit: `35a7a92 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/35a7a92292beebb24f10ca6b8bb6ed68031c84f9>`_
+
+[BUGFIX] Disable security for CLI requests
+-----------------------------------------------------------------------------------------
+
+Currently it's not possible to invoke methods that are covered by a
+policy via CLI because the security context is not yet initialized
+leading to a ``The security Context cannot be initialized yet``
+exception.
+
+With this change all authorization checks are disabled for command
+controllers.
+
+Fixes: FLOW-163
+
+* Commit: `8053aeb <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/8053aeb36df565931162849e4622b3d3d1813adf>`_
+
+[BUGFIX] PersistentObjectConverter works with "immutable" properties
+-----------------------------------------------------------------------------------------
+
+The PersistentObjectConverter sets convertedChildProperties on the
+object after it was created (either newly constructed or
+hydrated from persistance). Creating a new object will filter
+constructor arguments from the convertedChildProperties but
+if the object already existed that does not happen.
+This poses a problem for objects that accept arguments in the
+constructor that are not settable afterwards. So those properties are
+considered "immutable".
+In cases where you cannot be sure if an object already exists and you
+give the identity and all properties of an object with "immutable"
+properties the property mapping will fail if the object already existed
+as the converter tries to set the "immutable" properties as well.
+
+With this change we check for this kind of properties and compare the
+given value with the already set value. In case they are identical
+we ignore the given value and proceed with the property mapping. In
+case they differ there is an inconsistency in your data that we cannot
+handle and so throw an exception.
+This is not breaking as before in all cases an exception would be thrown.
+
+Fixes: NEOS-937
+
+* Commit: `09a9516 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/09a9516b159b2421f70370b9304cccf06cfaded5>`_
+
+[TASK] Add @covers to list of ignored annotations
+-----------------------------------------------------------------------------------------
+
+With recent PHPUnit versions phpdocumentor/reflection-docblock is pulled
+in. This contains a @covers annotation that triggers an exception during
+reflection. To avoid this, it is added to Flows default list of ignored
+annotations.
+
+* Commit: `c7e2a3b <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/c7e2a3b24706319a6cf2a28f513c1b95a2d0d8ad>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Fluid
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Kickstart
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Party
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Welcome
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+

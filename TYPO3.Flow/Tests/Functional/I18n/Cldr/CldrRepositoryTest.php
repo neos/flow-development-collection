@@ -1,0 +1,67 @@
+<?php
+namespace TYPO3\Flow\Tests\Functional\I18n\Cldr;
+
+/*
+ * This file is part of the TYPO3.Flow package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
+
+/**
+ * Testcase for the I18N CLDR Repository
+ *
+ */
+class CldrRepositoryTest extends \TYPO3\Flow\Tests\FunctionalTestCase
+{
+    /**
+     * @var \TYPO3\Flow\I18n\Cldr\CldrRepository
+     */
+    protected $cldrRepository;
+
+    /**
+     * @var string
+     */
+    protected $cldrBasePath;
+
+    /**
+     * Initialize dependencies
+     */
+    public function setUp()
+    {
+        parent::setUp();
+        $this->cldrRepository = $this->objectManager->get('TYPO3\Flow\I18n\Cldr\CldrRepository');
+
+        $this->cldrBasePath = $this->retrieveCldrBasePath();
+    }
+
+    /**
+     * Retrieves the base path from the CldrRepository's cldrBasePath attribute
+     * @return string
+     */
+    protected function retrieveCldrBasePath()
+    {
+        $reflectedCldrRepository = new \ReflectionObject($this->cldrRepository);
+        $reflectedBasePathProperty = $reflectedCldrRepository->getProperty('cldrBasePath');
+        $reflectedBasePathProperty->setAccessible(true);
+
+        return $reflectedBasePathProperty->getValue($this->cldrRepository);
+    }
+
+    /**
+     * @test
+     */
+    public function modelIsReturnedCorrectlyForLocaleImplicatingChaining()
+    {
+        $localeImplementingChaining = new \TYPO3\Flow\I18n\Locale('de_DE');
+
+        $cldrModel = $this->cldrRepository->getModelForLocale($localeImplementingChaining);
+
+        $this->assertAttributeContains(\TYPO3\Flow\Utility\Files::concatenatePaths(array($this->cldrBasePath, 'main/root.xml')), 'sourcePaths', $cldrModel);
+        $this->assertAttributeContains(\TYPO3\Flow\Utility\Files::concatenatePaths(array($this->cldrBasePath, 'main/de_DE.xml')), 'sourcePaths', $cldrModel);
+        $this->assertAttributeContains(\TYPO3\Flow\Utility\Files::concatenatePaths(array($this->cldrBasePath, 'main/de.xml')), 'sourcePaths', $cldrModel);
+    }
+}

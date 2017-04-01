@@ -1,0 +1,26 @@
+`2.3.10 (2015-12-18) <https://github.com/neos/flow-development-collection/releases/tag/2.3.10>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Properly escape sub process variables on windows <https://github.com/neos/flow-development-collection/pull/184>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+Windows SET command does not parse out quotes of the variable value but rather treats them as part of the value,
+which currently results in an error on windows since the fix for FLOW-381:
+
+  Flow could not create the directory
+  ""C:/workspace/Flow/Data/Temporary"/Development/".
+
+Note the extra quotes around the temporary base path.
+
+This change fixes that by properly escaping the SET command arguments on windows by using escapeshellcmd instead
+of escapeshellarg.
+
+FLOW-425 #comment Fix for 2.3.x
+
+* Packages: ``Flow``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/2.3.9...2.3.10>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

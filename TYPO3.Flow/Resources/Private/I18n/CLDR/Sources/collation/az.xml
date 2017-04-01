@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE ldml SYSTEM "../../common/dtd/ldml.dtd">
+<ldml>
+	<identity>
+		<version number="$Revision: 4126 $"/>
+		<generation date="$Date: 2009-05-05 18:33:13 -0500 (Tue, 05 May 2009) $"/>
+		<language type="az" /> 
+	</identity>
+		<collations validSubLocales="az_Latn az_Latn_AZ">
+			<collation type="standard" >
+				<rules>
+					<reset>C</reset>
+					<p>ç</p>
+					<t>Ç</t>
+					<reset>G</reset>
+					<p>ğ</p>
+					<t>Ğ</t>
+					<reset before="primary">i</reset>
+					<p>ı</p>
+					<t>I</t>
+					<reset>i</reset>
+					<t>İ</t>
+					<reset>O</reset>
+					<p>ö</p>
+					<t>Ö</t>
+					<reset>S</reset>
+					<p>ş</p>
+					<t>Ş</t>
+					<reset>U</reset>
+					<p>ü</p>
+					<t>Ü</t>
+					<reset>K</reset>
+					<p>q</p>
+					<t>Q</t>
+					<reset>E</reset>
+					<p>ə</p>
+					<t>Ə</t>
+					<reset>H</reset>
+					<p>x</p>
+					<t>X</t>
+				</rules>
+			</collation>
+		</collations>
+</ldml>

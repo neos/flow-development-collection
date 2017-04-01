@@ -1,0 +1,71 @@
+<?php
+namespace TYPO3\Flow\Tests\Unit\Validation\Validator;
+
+/*
+ * This file is part of the TYPO3.Flow package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
+
+require_once('AbstractValidatorTestcase.php');
+
+/**
+ * Testcase for the alphanumeric validator
+ *
+ */
+class AlphanumericValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Validator\AbstractValidatorTestcase
+{
+    protected $validatorClassName = 'TYPO3\Flow\Validation\Validator\AlphanumericValidator';
+
+    /**
+     * @test
+     */
+    public function alphanumericValidatorShouldReturnNoErrorsIfTheGivenValueIsNull()
+    {
+        $this->assertFalse($this->validator->validate(null)->hasErrors());
+    }
+
+    /**
+     * @test
+     */
+    public function alphanumericValidatorShouldReturnNoErrorsIfTheGivenStringIsEmpty()
+    {
+        $this->assertFalse($this->validator->validate('')->hasErrors());
+    }
+
+    /**
+     * @test
+     */
+    public function alphanumericValidatorShouldReturnNoErrorsForAnAlphanumericString()
+    {
+        $this->assertFalse($this->validator->validate('12ssDF34daweidf')->hasErrors());
+    }
+
+    /**
+     * @test
+     */
+    public function alphanumericValidatorShouldReturnNoErrorsForAnAlphanumericStringWithUmlauts()
+    {
+        $this->assertFalse($this->validator->validate('12ssDF34daweidfäøüößØLīgaestevimīlojuņščļœøÅ')->hasErrors());
+    }
+
+    /**
+     * @test
+     */
+    public function alphanumericValidatorReturnsErrorsForAStringWithSpecialCharacters()
+    {
+        $this->assertTrue($this->validator->validate('adsf%&/$jklsfdö')->hasErrors());
+    }
+
+    /**
+     * @test
+     */
+    public function alphanumericValidatorCreatesTheCorrectErrorForAnInvalidSubject()
+    {
+        $this->assertEquals(1, count($this->validator->validate('adsf%&/$jklsfdö')->getErrors()));
+    }
+}

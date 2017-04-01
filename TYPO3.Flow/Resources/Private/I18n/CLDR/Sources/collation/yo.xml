@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE ldml SYSTEM "../../common/dtd/ldml.dtd">
+<ldml>
+	<identity>
+		<version number="$Revision: 4208 $"/>
+		<generation date="$Date: 2009-07-03 13:17:21 -0500 (Fri, 03 Jul 2009) $"/>
+		<language type="yo"/> 
+	</identity>
+	<collations  validSubLocales="yo_NG">
+		<collation type="standard">
+			<settings normalization="on"/>
+                	<rules>
+				<reset>E</reset>
+					<p>ẹ</p>
+					<t>Ẹ</t>
+				<reset>G</reset>
+					<p>gb</p>
+					<t>Gb</t>
+					<t>GB</t>
+				<reset>O</reset>
+					<p>ọ</p>
+					<t>Ọ</t>
+				<reset>S</reset>
+					<p>ṣ</p>
+					<t>Ṣ</t>
+			</rules>
+		</collation>
+	</collations>
+</ldml>

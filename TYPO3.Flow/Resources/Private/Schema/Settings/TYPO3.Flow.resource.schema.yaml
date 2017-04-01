@@ -1,0 +1,15 @@
+type: dictionary
+additionalProperties: FALSE
+properties:
+  'publishing':
+    type: dictionary
+    additionalProperties: FALSE
+    required: TRUE
+    properties:
+      'detectPackageResourceChanges': { type: boolean, required: TRUE }
+      'fileSystem':
+        type: dictionary
+        additionalProperties: FALSE
+        required: TRUE
+        properties:
+          'mirrorMode': { type: string, required: TRUE, enum: ['link', 'copy'] }

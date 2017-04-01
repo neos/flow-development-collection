@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE ldml SYSTEM "../../common/dtd/ldml.dtd">
+<ldml>
+	<identity>
+		<version number="$Revision: 4805 $"/>
+		<generation date="$Date: 2010-03-11 13:03:28 -0600 (Thu, 11 Mar 2010) $"/>
+		<language type="ca" /> 
+	</identity>
+		<collations  validSubLocales="ca_ES">
+			<collation type="standard" >
+				<settings backwards="on"  />
+				<rules>
+					<reset>C</reset>
+					<p>ch</p>
+					<t>Ch</t>
+					<t>CH</t>
+					<reset>L</reset>
+					<p>ll</p>
+					<t>l·l</t>
+					<t>Ll</t>
+					<t>L·l</t>
+					<t>LL</t>
+					<t>L·L</t>
+				</rules>
+			</collation  >
+			<collation draft="unconfirmed" alt="proposed" type="standard" >
+				<settings backwards="on"  />
+				<rules>
+					<reset>C</reset>
+					<p>ch</p>
+					<t>cH</t>
+					<t>Ch</t>
+					<t>CH</t>
+					<reset>L</reset>
+					<p>ll</p>
+					<t>l·l</t>
+					<t>lL</t>
+					<t>l·L</t>
+					<t>Ll</t>
+					<t>L·l</t>
+					<t>LL</t>
+					<t>L·L</t>
+				</rules>
+			</collation  >
+		</collations>
+</ldml>
