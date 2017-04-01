@@ -1,0 +1,86 @@
+`3.0.11 (2017-04-01) <https://github.com/neos/flow-development-collection/releases/tag/3.0.11>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Use fallback if exception handler configured wrong <https://github.com/neos/flow-development-collection/pull/827>`_
+----------------------------------------------------------------------------------------------------------------------------
+
+In case the configured exception handler class dies not exist,
+the `ProductionExceptionHandler` is used instead. This allows
+(force-)flushing the caches to work in more cases.
+
+* Packages: ``Flow``
+
+`BUGFIX: Adjust Documentation to renamed routing cache <https://github.com/neos/flow-development-collection/pull/776>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+A follow-up to I`bc55b5a4939b42b7cf2a08ada52985aa04bb7b04 <https://github.com/neos/flow-development-collection/commit/bc55b5a4939b42b7cf2a08ada52985aa04bb7b04>`_
+adjusting the Routing documentation and example configuration
+to the Routing Cache that was renamed with I`ac1bd27cd1f2869e597b696c896633f14703ec40 <https://github.com/neos/flow-development-collection/commit/ac1bd27cd1f2869e597b696c896633f14703ec40>`_
+
+* Packages: ``Flow``
+
+`TASK: Update PHP coding guidelines <https://github.com/neos/flow-development-collection/pull/757>`_
+----------------------------------------------------------------------------------------------------
+
+* Packages: ``Flow``
+
+`FEATURE: added missing "schema“-definition for the "token"-property of "authentication"-providers <https://github.com/neos/flow-development-collection/pull/708>`_
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+resolves #700
+
+* Packages: ``Flow``
+
+`BUGFIX: Fix calling shutdownObject() on doctrine proxy <https://github.com/neos/flow-development-collection/pull/731>`_
+------------------------------------------------------------------------------------------------------------------------
+
+This change fixes #613 by creating the code to also call `shutdownObject()` on Doctrine Proxies. The proxy generation did not took into account that in `__wakeup()` the current Object can be an Instance of a Doctrine Proxy and therefore did not registered the `shutdownObject()` method on the ObjectManager.
+
+As stated in #613 the temporary files from `Resource::createTemporaryLocalCopy()` where not removed, but with this fix they will be removed as expected.
+
+Thanks to @monofone and @hlubek for support in finding the bug and implementing the solution and tests.
+
+
+* Packages: ``Flow``
+
+`BUGFIX: Exclude psr/log from reflection <https://github.com/neos/flow-development-collection/pull/726>`_
+---------------------------------------------------------------------------------------------------------
+
+A change in dependencies pulled in psr/log which contains a trait,
+causing failures with PHP 5.3
+
+* Packages: ``Flow``
+
+`BUGFIX: Redis backend should prevent iteration of duplicate entries <https://github.com/neos/flow-development-collection/pull/709>`_
+-------------------------------------------------------------------------------------------------------------------------------------
+
+When setting or flushing by tag the list of entries is not correctly
+updated. This could also occur if an entry is expired.
+
+This change fixes the flush by tag behaviour to correctly remove
+entries and adds a check into the iteration of cache entries to check
+for existing entries.
+
+* Packages: ``Flow``
+
+`BUGFIX: Do not throw exception when concurrently unlinking files <https://github.com/neos/flow-development-collection/pull/471>`_
+----------------------------------------------------------------------------------------------------------------------------------
+
+Fixes a race condition where concurrent emptying of a directory causes
+errors because files were already unlinked by another process.
+
+FLOW-283 #close
+FLOW-345 #close
+
+* Packages: ``Flow``
+
+`TASK: Adjust commit subject prefix for core migrations <https://github.com/neos/flow-development-collection/pull/707>`_
+------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Flow``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/3.0.10...3.0.11>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
