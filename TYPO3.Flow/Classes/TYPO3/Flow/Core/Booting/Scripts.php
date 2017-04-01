@@ -212,11 +212,7 @@ class Scripts
 
         $errorHandler = new \TYPO3\Flow\Error\ErrorHandler();
         $errorHandler->setExceptionalErrors($settings['error']['errorHandler']['exceptionalErrors']);
-        if (class_exists($settings['error']['exceptionHandler']['className'])) {
-            $exceptionHandler = new $settings['error']['exceptionHandler']['className'];
-        } else {
-            $exceptionHandler = new \TYPO3\Flow\Error\ProductionExceptionHandler();
-        }
+        $exceptionHandler = new $settings['error']['exceptionHandler']['className'];
         $exceptionHandler->injectSystemLogger($bootstrap->getEarlyInstance('TYPO3\Flow\Log\SystemLoggerInterface'));
         $exceptionHandler->setOptions($settings['error']['exceptionHandler']);
     }

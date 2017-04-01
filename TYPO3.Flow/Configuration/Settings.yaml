@@ -196,7 +196,6 @@ TYPO3:
         'sebastian.*': ['.*']
         'phpdocumentor.*': ['.*']
         'mikey179.vfsStream': ['.*']
-        'psr.log': ['.*']
         # workaround, should rather be deactivated
         'neos.composerplugin': ['.*']
         'Composer.Installers': ['.*']
