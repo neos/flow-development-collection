@@ -1,8 +1,0 @@
-roles:
-  RoleWithoutPackageKey: []
-
-acls:
-  RoleWithoutPackageKey:
-    methods:
-      method2: 'Some global policy acl.'
-
