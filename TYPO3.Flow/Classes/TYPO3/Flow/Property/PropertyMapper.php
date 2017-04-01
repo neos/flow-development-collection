@@ -403,8 +403,8 @@ class PropertyMapper
         return $typeConverterMap;
     }
 
-/**
- * Returns a multi-dimensional array with the Type Converters available in the system.
+    /**
+     * Returns a multi-dimensional array with the Type Converters available in the system.
      *
      * It has the following structure:
      *
