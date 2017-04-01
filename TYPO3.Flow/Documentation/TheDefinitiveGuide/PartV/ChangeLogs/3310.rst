@@ -1,0 +1,74 @@
+`3.3.10 (2017-04-01) <https://github.com/neos/flow-development-collection/releases/tag/3.3.10>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`TASK: Add missing model annotation in documentation <https://github.com/neos/flow-development-collection/pull/642>`_
+---------------------------------------------------------------------------------------------------------------------
+
+- Without this annotation it will not be possible to generate doctrine
+  migration.
+
+* Packages: ``Flow``
+
+`BUGFIX: Adjust typeconverter:list to getTypeConverters() return value <https://github.com/neos/flow-development-collection/pull/908>`_
+---------------------------------------------------------------------------------------------------------------------------------------
+
+Fixes #828
+
+* Packages: ``Flow``
+
+`BUGFIX: Accessing in empty array in PropertyMapper <https://github.com/neos/flow-development-collection/pull/895>`_
+--------------------------------------------------------------------------------------------------------------------
+
+As ``$this->typeConverters`` is not filled during this method, as this method will provide the necessary information, we need to access ``$typeConverterMap`` which contains the class name already.
+
+**What I did**
+Fix accessing empty array.
+
+**How I did it**
+Accessing method internal existing array containing the necessary information.
+
+**How to verify it**
+Register two TypeConverters for same conersion with same priority.
+
+**Checklist**
+
+- [x] Code follows the PSR-2 coding style
+- [ ] Tests have been created, run and adjusted as needed
+- [x] The PR is created against the [lowest maintained branch](https://www.neos.io/features/release-roadmap.html)
+I could not find any information about Flow at the given url.
+
+* Packages: ``Flow``
+
+`TASK: Add documentation for using PdoBackend with MySQL <https://github.com/neos/flow-development-collection/pull/885>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+When using the PdoBackend with MySQL for caching,
+the needed caching tables have to be created manually.
+This adds a hint on creating the tables to the documentation
+on the PdoBackend.
+
+Solving the documentation part of neos/flow-development-collection#884
+
+This depends on #886 
+
+* Packages: ``Flow``
+
+`TASK: Increase max-length for cache entries in PdoBackend <https://github.com/neos/flow-development-collection/pull/886>`_
+---------------------------------------------------------------------------------------------------------------------------
+
+When not using SQLite for the `PdoBackend` and manually creating
+the cache tables by using the `DDL.sql`, the content column of the
+cache table with type `TEXT` could easily lead to cropped
+caching entries because of the length restriction.
+Using `MEDIUMTEXT` practically prevents this issue.
+
+See also: neos/flow-development-collection#884 and
+neos/flow-development-collection#885
+
+* Packages: ``Flow``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/3.3.9...3.3.10>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
