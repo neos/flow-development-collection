@@ -1,0 +1,25 @@
+`2.3.17 (2017-04-01) <https://github.com/neos/flow-development-collection/releases/tag/2.3.17>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Use fallback if exception handler configured wrong <https://github.com/neos/flow-development-collection/pull/827>`_
+----------------------------------------------------------------------------------------------------------------------------
+
+In case the configured exception handler class dies not exist,
+the `ProductionExceptionHandler` is used instead. This allows
+(force-)flushing the caches to work in more cases.
+
+* Packages: ``Flow``
+
+`BUGFIX: Exclude psr/log from reflection <https://github.com/neos/flow-development-collection/pull/726>`_
+---------------------------------------------------------------------------------------------------------
+
+A change in dependencies pulled in psr/log which contains a trait,
+causing failures with PHP 5.3
+
+* Packages: ``Flow``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/2.3.16...2.3.17>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

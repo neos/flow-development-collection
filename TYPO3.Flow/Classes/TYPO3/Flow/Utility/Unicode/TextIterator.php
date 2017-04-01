@@ -20,36 +20,35 @@ use TYPO3\Flow\Annotations as Flow;
  */
 class TextIterator implements \Iterator
 {
-    const
-        CODE_POINT = 1,
-        COMB_SEQUENCE = 2,
-        CHARACTER = 3,
-        WORD = 4,
-        LINE = 5,
-        SENTENCE = 6,
+    const CODE_POINT = 1;
+    const COMB_SEQUENCE = 2;
+    const CHARACTER = 3;
+    const WORD = 4;
+    const LINE = 5;
+    const SENTENCE = 6;
 
-        DONE = 'DONE',
+    const DONE = 'DONE';
 
-        WORD_NONE = 'WORD_NONE',
-        WORD_NONE_LIMIT = 'WORD_NONE_LIMIT',
-        WORD_NUMBER = 'WORD_NUMBER',
-        WORD_NUMBER_LIMIT = 'WORD_NUMBER_LIMIT',
-        WORD_LETTER = 'WORD_LETTER',
-        WORD_LETTER_LIMIT = 'WORD_LETTER_LIMIT',
-        WORD_KANA = 'WORD_KANA',
-        WORD_KANA_LIMIT = 'WORD_KANA_LIMIT',
+    const WORD_NONE = 'WORD_NONE';
+    const WORD_NONE_LIMIT = 'WORD_NONE_LIMIT';
+    const WORD_NUMBER = 'WORD_NUMBER';
+    const WORD_NUMBER_LIMIT = 'WORD_NUMBER_LIMIT';
+    const WORD_LETTER = 'WORD_LETTER';
+    const WORD_LETTER_LIMIT = 'WORD_LETTER_LIMIT';
+    const WORD_KANA = 'WORD_KANA';
+    const WORD_KANA_LIMIT = 'WORD_KANA_LIMIT';
 
-        LINE_SOFT = 'LINE_SOFT',
-        LINE_SOFT_LIMIT = 'LINE_SOFT_LIMIT',
-        LINE_HARD = 'LINE_HARD',
-        LINE_HARD_LIMIT = 'LINE_HARD_LIMIT',
+    const LINE_SOFT = 'LINE_SOFT';
+    const LINE_SOFT_LIMIT = 'LINE_SOFT_LIMIT';
+    const LINE_HARD = 'LINE_HARD';
+    const LINE_HARD_LIMIT = 'LINE_HARD_LIMIT';
 
-        SENTENCE_TERM = 'SENTENCE_TERM',
-        SENTENCE_TERM_LIMIT = 'SENTENCE_TERM_LIMIT',
-        SENTENCE_SEP = 'SENTENCE_SEP',
-        SENTENCE_SEP_LIMIT = 'SENTENCE_SEP_LIMIT',
+    const SENTENCE_TERM = 'SENTENCE_TERM';
+    const SENTENCE_TERM_LIMIT = 'SENTENCE_TERM_LIMIT';
+    const SENTENCE_SEP = 'SENTENCE_SEP';
+    const SENTENCE_SEP_LIMIT = 'SENTENCE_SEP_LIMIT';
 
-        REGEXP_SENTENCE_DELIMITERS = '[\.|,|!|\?|;]';
+    const REGEXP_SENTENCE_DELIMITERS = '[\.|,|!|\?|;]';
 
     /**
      * @var integer

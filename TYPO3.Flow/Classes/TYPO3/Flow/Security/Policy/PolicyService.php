@@ -25,11 +25,10 @@ use TYPO3\Flow\Security\Exception\RoleExistsException;
  */
 class PolicyService implements \TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface
 {
-    const
-        PRIVILEGE_ABSTAIN = 0,
-        PRIVILEGE_GRANT = 1,
-        PRIVILEGE_DENY = 2,
-        MATCHER_ANY = 'ANY';
+    const PRIVILEGE_ABSTAIN = 0;
+    const PRIVILEGE_GRANT = 1;
+    const PRIVILEGE_DENY = 2;
+    const MATCHER_ANY = 'ANY';
 
     /**
      * @var boolean
