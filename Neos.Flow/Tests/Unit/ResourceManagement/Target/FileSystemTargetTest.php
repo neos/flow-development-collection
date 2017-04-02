@@ -16,9 +16,15 @@ use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Http\HttpRequestHandlerInterface;
 use Neos\Flow\Http\Request;
 use Neos\Flow\Http\Uri;
+use Neos\Flow\Log\SystemLoggerInterface;
+use Neos\Flow\Package;
+use Neos\Flow\Package\PackageManager;
+use Neos\Flow\ResourceManagement\Collection;
 use Neos\Flow\ResourceManagement\PersistentResource;
+use Neos\Flow\ResourceManagement\Storage\PackageStorage;
 use Neos\Flow\ResourceManagement\Target\FileSystemTarget;
 use Neos\Flow\Tests\UnitTestCase;
+use org\bovigo\vfs\vfsStream;
 
 /**
  * Tests for the FileSystemTarget class
@@ -193,5 +199,37 @@ class FileSystemTargetTest extends UnitTestCase
         $mockResource = $this->getMockBuilder(PersistentResource::class)->disableOriginalConstructor()->getMock();
 
         $this->fileSystemTarget->getPublicStaticResourceUri($mockResource);
+    }
+
+    /**
+     * @test
+     */
+    public function getWorksWithPackageStorage()
+    {
+        vfsStream::setup('Test');
+        mkdir('vfs://Test/Configuration');
+        $packageManager = new PackageManager('vfs://Test/Configuration/PackageStates.php');
+        $packageManager->createPackage("Neos.Flow");
+        $packageManager->activatePackage("Neos.Flow");
+
+        $packageStorage = new PackageStorage('testStorage');
+
+        $mockSystemLogger = $this->getMockBuilder(SystemLoggerInterface::class)->getMock();
+
+        $this->inject($packageStorage, 'packageManager', $packageManager);
+
+        $oneResourcePublished = false;
+
+        $_publicationCallback = function ($i, $o) use (&$oneResourcePublished) {
+            $oneResourcePublished = true;
+        };
+
+        $staticCollection = new Collection('testStaticCollection', $packageStorage, $this->fileSystemTarget, ['*']);
+
+        $fileSystemTarget = new FileSystemTarget('test', ['path' => 'vfs://Publish']);
+        $this->inject($fileSystemTarget, 'systemLogger', $mockSystemLogger);
+        $fileSystemTarget->publishCollection($staticCollection, $_publicationCallback);
+
+        $this->assertTrue($oneResourcePublished);
     }
 }
