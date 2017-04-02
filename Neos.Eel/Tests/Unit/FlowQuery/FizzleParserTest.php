@@ -56,14 +56,14 @@ class FizzleParserTest extends \Neos\Flow\Tests\UnitTestCase
         $this->assertSame('foo', $actual['PropertyNameFilter']);
 
         $this->assertSame('[baz]', $actual['AttributeFilters'][0]['text']);
-        $this->assertSame('baz', $actual['AttributeFilters'][0]['Identifier']);
+        $this->assertSame('baz', $actual['AttributeFilters'][0]['PropertyPath']);
         $this->assertSame('[foo  =  asdf]', $actual['AttributeFilters'][1]['text']);
-        $this->assertSame('foo', $actual['AttributeFilters'][1]['Identifier']);
+        $this->assertSame('foo', $actual['AttributeFilters'][1]['PropertyPath']);
         $this->assertSame('=', $actual['AttributeFilters'][1]['Operator']);
         $this->assertSame('asdf', $actual['AttributeFilters'][1]['Operand']);
 
         $actual = $parser->match('Filter', '[baz]');
-        $this->assertSame('baz', $actual['AttributeFilters'][0]['Identifier']);
+        $this->assertSame('baz', $actual['AttributeFilters'][0]['PropertyPath']);
 
         $parser->assertDoesntMatch('Filter', '*');
     }

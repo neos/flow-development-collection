@@ -114,6 +114,10 @@ class FlowQueryTest extends UnitTestCase
         $myObject7 = new \stdClass();
         $myObject7->aNumber = 142;
 
+        $myObject8 = new \stdClass();
+        $myObject8->resource = new \stdClass();
+        $myObject8->resource->fileExtension = "pdf";
+
         return [
             'Property existance test works' => [
                 'sourceObjects' => [$myObject, $myObject2],
@@ -134,6 +138,11 @@ class FlowQueryTest extends UnitTestCase
                 'sourceObjects' => [$myObject, $myObject2, $myObject3, $myObject4],
                 'filter' => '[myProperty=asdf]',
                 'expectedResult' => [$myObject]
+            ],
+            'Exact match of property path is supported' => [
+                'sourceObjects' => [$myObject, $myObject2, $myObject3, $myObject4, $myObject8],
+                'filter' => '[resource.fileExtension=pdf]',
+                'expectedResult' => [$myObject8]
             ],
             'Boolean matches' => [
                 'sourceObjects' => [$myObject, $myObject2, $myObject3, $myObject4, $myObject5, $myObject6],
