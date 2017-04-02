@@ -11,16 +11,15 @@ namespace Neos\Flow\Tests\Unit\ResourceManagement\Streams;
  * source code.
  */
 
-use TYPO3\Flow\Package;
 use Neos\Flow\Cli\CommandRequestHandler;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Http\HttpRequestHandlerInterface;
 use Neos\Flow\Http\Request;
 use Neos\Flow\Http\Uri;
-use TYPO3\Flow\Log\SystemLoggerInterface;
-use TYPO3\Flow\Package\PackageManager;
-use TYPO3\Flow\Resource\Resource;
-use TYPO3\Flow\Resource\Collection;
+use Neos\Flow\Log\SystemLoggerInterface;
+use Neos\Flow\Package;
+use Neos\Flow\Package\PackageManager;
+use Neos\Flow\ResourceManagement\Collection;
 use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\Flow\ResourceManagement\Storage\PackageStorage;
 use Neos\Flow\ResourceManagement\Target\FileSystemTarget;
@@ -210,8 +209,8 @@ class FileSystemTargetTest extends UnitTestCase
         vfsStream::setup('Test');
         mkdir('vfs://Test/Configuration');
         $packageManager = new PackageManager('vfs://Test/Configuration/PackageStates.php');
-        $packageManager->createPackage("TYPO3.Flow");
-        $packageManager->activatePackage("TYPO3.Flow");
+        $packageManager->createPackage("Neos.Flow");
+        $packageManager->activatePackage("Neos.Flow");
 
         $packageStorage = new PackageStorage('testStorage');
 
