@@ -162,7 +162,7 @@ class PersistenceManager extends AbstractPersistenceManager
 
         try {
             $this->entityManager->flush();
-        } catch (\Exception $exception) {
+        } catch (\Doctrine\DBAL\DBALException $exception) {
             $this->systemLogger->logException($exception);
             /** @var Connection $connection */
             $connection = $this->entityManager->getConnection();
