@@ -152,6 +152,11 @@ class ClassLoader
             return true;
         }
 
+        if (FLOW_ONLY_COMPOSER_LOADER) {
+            // Early return if system uses only composer class loader.
+            return false;
+        }
+
         $classNamePart = array_pop($namespaceParts);
         $classNameParts = explode('_', $classNamePart);
         $namespaceParts = array_merge($namespaceParts, $classNameParts);

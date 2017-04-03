@@ -11,9 +11,6 @@ namespace Neos\Flow\Core;
  * source code.
  */
 
-// Load the composer autoloader first
-require_once(__DIR__ . '/../../../../Libraries/autoload.php');
-
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\Booting\Step;
 use Neos\Flow\Core\Booting\Sequence;
@@ -85,8 +82,12 @@ class Bootstrap
      */
     public function __construct($context)
     {
+        // Load the composer autoloader first
+        $composerAutoloader = require(__DIR__ . '/../../../../Libraries/autoload.php');
+
         $this->context = new ApplicationContext($context);
         $this->earlyInstances[__CLASS__] = $this;
+        $this->earlyInstances[\Composer\Autoload\ClassLoader::class] = $composerAutoloader;
 
         $this->defineConstants();
         $this->ensureRequiredEnvironment();
@@ -536,6 +537,15 @@ class Bootstrap
             $temporaryDirectoryPath = Files::concatenatePaths([FLOW_PATH_TEMPORARY_BASE, str_replace('/', '/SubContext', (string)$this->context)]) . '/';
             define('FLOW_PATH_TEMPORARY', $temporaryDirectoryPath);
         }
+
+        // Not using this flag and loading classes via our class loader is deprecated
+        // and we will remove class loading from our loader in the next major of Flow (5.0).
+        $onlyUseComposerAutoLoaderForPackageClasses = false;
+        if (in_array(self::getEnvironmentConfigurationSetting('FLOW_ONLY_COMPOSER_LOADER'), [true, 'true', 1, '1'])) {
+            $onlyUseComposerAutoLoaderForPackageClasses = true;
+        }
+
+        define('FLOW_ONLY_COMPOSER_LOADER', $onlyUseComposerAutoLoaderForPackageClasses);
 
         define('FLOW_VERSION_BRANCH', '4.0');
     }

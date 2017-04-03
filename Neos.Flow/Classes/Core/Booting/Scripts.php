@@ -62,8 +62,6 @@ class Scripts
      */
     public static function initializeClassLoader(Bootstrap $bootstrap)
     {
-        require_once(FLOW_PATH_FLOW . 'Classes/Core/ClassLoader.php');
-
         $initialClassLoaderMappings = [
             [
                 'namespace' => 'Neos\\Flow\\',
@@ -97,6 +95,7 @@ class Scripts
      */
     public static function registerClassLoaderInAnnotationRegistry(Bootstrap $bootstrap)
     {
+        AnnotationRegistry::registerLoader([$bootstrap->getEarlyInstance(\Composer\Autoload\ClassLoader::class), 'loadClass']);
         AnnotationRegistry::registerLoader([$bootstrap->getEarlyInstance(ClassLoader::class), 'loadClass']);
     }
 
