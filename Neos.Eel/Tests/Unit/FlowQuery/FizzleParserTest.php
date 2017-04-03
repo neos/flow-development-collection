@@ -50,6 +50,7 @@ class FizzleParserTest extends \Neos\Flow\Tests\UnitTestCase
         $parser->assertMatches('Filter', 'foo[baz]');
         $parser->assertMatches('Filter', 'foo[baz][bar]');
         $parser->assertMatches('Filter', 'foo[baz]');
+        $parser->assertMatches('Filter', 'foo[bar.baz]');
         $parser->assertMatches('Filter', '[baz][foo="asdf"]');
 
         $actual = $parser->match('Filter', 'foo[baz][foo  =  asdf]');
@@ -64,6 +65,7 @@ class FizzleParserTest extends \Neos\Flow\Tests\UnitTestCase
 
         $actual = $parser->match('Filter', '[baz]');
         $this->assertSame('baz', $actual['AttributeFilters'][0]['PropertyPath']);
+        $this->assertSame('baz', $actual['AttributeFilters'][0]['Identifier'], 'Identifier key is added for compatibility');
 
         $parser->assertDoesntMatch('Filter', '*');
     }

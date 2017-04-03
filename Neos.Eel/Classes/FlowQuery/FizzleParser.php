@@ -814,10 +814,12 @@ function match_AttributeFilter ($stack = array()) {
 function AttributeFilter__construct (&$result) {
 		$result['Operator'] = NULL;
 		$result['PropertyPath'] = NULL;
+		$result['Identifier'] = NULL;
 	}
 
 function AttributeFilter_PropertyPath (&$result, $sub) {
 		$result['PropertyPath'] = $sub['text'];
+		$result['Identifier'] = $result['PropertyPath'];
 	}
 
 function AttributeFilter_Operator (&$result, $sub) {
