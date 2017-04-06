@@ -12,7 +12,6 @@ namespace Neos\Flow\Tests\Unit\Security;
  */
 
 use Neos\Flow\ObjectManagement\ObjectManager;
-use Neos\Flow\Security\RequestPattern\ValidShortName;
 use Neos\Flow\Security\RequestPatternResolver;
 use Neos\Flow\Tests\UnitTestCase;
 
@@ -40,11 +39,13 @@ class RequestPatternResolverTest extends UnitTestCase
      */
     public function resolveRequestPatternReturnsTheCorrectRequestPatternForAShortName()
     {
-        $getCaseSensitiveObjectNameCallback = function () {
+        $longNameForTest = 'Neos\Flow\Security\RequestPattern\ValidShortName';
+
+        $getCaseSensitiveObjectNameCallback = function () use ($longNameForTest) {
             $args = func_get_args();
 
-            if ($args[0] === ValidShortName::class) {
-                return ValidShortName::class;
+            if ($args[0] === $longNameForTest) {
+                return $longNameForTest;
             }
 
             return false;
@@ -56,7 +57,7 @@ class RequestPatternResolverTest extends UnitTestCase
         $requestPatternResolver = new RequestPatternResolver($mockObjectManager);
         $requestPatternClass = $requestPatternResolver->resolveRequestPatternClass('ValidShortName');
 
-        $this->assertEquals(ValidShortName::class, $requestPatternClass, 'The wrong classname has been resolved');
+        $this->assertEquals($longNameForTest, $requestPatternClass, 'The wrong classname has been resolved');
     }
 
     /**

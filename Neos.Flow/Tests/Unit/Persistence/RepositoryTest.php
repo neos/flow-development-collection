@@ -62,12 +62,12 @@ class RepositoryTest extends UnitTestCase
      */
     public function constructSetsObjectTypeFromClassConstant()
     {
-        $repositoryNamespace = \Neos\Flow\Tests\Persistence\Fixture\Repository::class;
+        $repositoryNamespace = 'Neos\Flow\Tests\Persistence\Fixture\Repository';
         $repositoryClassName = 'NonstandardEntityRepository';
-        $modelClassName = Fixture\Model\Entity::class;
-        $fullRepositorClassName = $repositoryNamespace . '\\' . $repositoryClassName;
+        $modelClassName = 'Neos\Flow\Tests\Persistence\Fixture\Model\Entity';
+        $fullRepositoryClassName = $repositoryNamespace . '\\' . $repositoryClassName;
 
-        $repository = new $fullRepositorClassName();
+        $repository = new $fullRepositoryClassName();
         $this->assertEquals($modelClassName, $repository->getEntityClassName());
     }
 

@@ -39,11 +39,13 @@ class InterceptorResolverTest extends UnitTestCase
      */
     public function resolveInterceptorReturnsTheCorrectInterceptorForAShortName()
     {
-        $getCaseSensitiveObjectNameCallback = function () {
+        $longClassNameForTest = 'Neos\Flow\Security\Authorization\Interceptor\ValidShortName';
+
+        $getCaseSensitiveObjectNameCallback = function () use ($longClassNameForTest) {
             $args = func_get_args();
 
-            if ($args[0] === Security\Authorization\Interceptor\ValidShortName::class) {
-                return Security\Authorization\Interceptor\ValidShortName::class;
+            if ($args[0] === $longClassNameForTest) {
+                return $longClassNameForTest;
             }
 
             return false;
@@ -56,7 +58,7 @@ class InterceptorResolverTest extends UnitTestCase
         $interceptorResolver = new Security\Authorization\InterceptorResolver($mockObjectManager);
         $interceptorClass = $interceptorResolver->resolveInterceptorClass('ValidShortName');
 
-        $this->assertEquals(Security\Authorization\Interceptor\ValidShortName::class, $interceptorClass, 'The wrong classname has been resolved');
+        $this->assertEquals($longClassNameForTest, $interceptorClass, 'The wrong classname has been resolved');
     }
 
     /**

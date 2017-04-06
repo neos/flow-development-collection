@@ -33,7 +33,7 @@ class PasswordTokenTest extends UnitTestCase
     protected $mockActionRequest;
 
     /**
-     * @var Request
+     * @var Http\Request
      */
     protected $mockHttpRequest;
 

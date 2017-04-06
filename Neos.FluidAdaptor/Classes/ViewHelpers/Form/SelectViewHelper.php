@@ -367,7 +367,7 @@ class SelectViewHelper extends AbstractFormFieldViewHelper
      * @param string $label option tag label
      * @return string
      * @throws ViewHelper\Exception
-     * @throws Fluid\Exception
+     * @throws FluidAdaptor\Exception
      */
     protected function getTranslatedLabel($value, $label)
     {

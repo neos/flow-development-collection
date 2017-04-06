@@ -12,7 +12,6 @@ namespace Neos\Flow\Tests\Unit\Security\Authorization\Interceptor;
  */
 
 use Neos\Flow\Aop\JoinPointInterface;
-use Neos\Flow\Security\Authorization\Privilege\GenericPrivilegeSubject;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Flow\Security;
 

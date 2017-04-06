@@ -21,8 +21,6 @@ use Neos\Flow\SignalSlot\Dispatcher;
 use Neos\Flow\Utility\Exception as UtilityException;
 use Neos\Utility\Files;
 use Neos\Utility\OpcodeCacheHelper;
-use Neos\Utility\TypeHandling;
-use Neos\Flow\Package\Exception as PackageException;
 
 /**
  * The default Flow Package Manager
@@ -333,7 +331,7 @@ class PackageManager implements PackageManagerInterface
      * Create a package, given the package key
      *
      * @param string $packageKey The package key of the new package
-     * @param array $manifest A composer manifest as associative array. This is a preparation for the signature change in Flow 4.0. If you use this argument, then $packageMetaData and $packageType will be ignored.
+     * @param array $manifest A composer manifest as associative array.
      * @param string $packagesPath If specified, the package will be created in this path, otherwise the default "Application" directory is used
      * @return PackageInterface The newly created package
      *
