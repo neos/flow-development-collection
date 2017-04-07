@@ -76,6 +76,9 @@ class EntityManagerFactory
         if (!is_array($this->settings['backendOptions'])) {
             throw new InvalidConfigurationException(sprintf('The Neos.Flow.persistence.backendOptions settings need to be an array, %s given.', gettype($this->settings['backendOptions'])), 1426149224);
         }
+        if (!is_array($this->settings['doctrine']['secondLevelCache'])) {
+            throw new InvalidConfigurationException(sprintf('The TYPO3.Flow.persistence.doctrine.secondLevelCache settings need to be an array, %s given.', gettype($this->settings['doctrine']['secondLevelCache'])), 1491305513);
+        }
     }
 
     /**
