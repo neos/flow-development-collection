@@ -1,0 +1,30 @@
+`3.3.12 (2017-04-07) <https://github.com/neos/flow-development-collection/releases/tag/3.3.12>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Injected configuration should also be ignored in class schema <https://github.com/neos/flow-development-collection/pull/931>`_
+---------------------------------------------------------------------------------------------------------------------------------------
+
+Injected properties were always ignored in the persistence class schema as
+it makes no sense to persist injected properties. Same is obviously true for
+injected configuration, but this was never done so this change ignores
+properties with a ``InjectConfiguration`` annotation.
+
+This may be breaking if you use ``InjectConfiguration`` on a property that you
+actually want to persist (which is not a good idea anyway). You would need to
+add another property with the inject annotation and pass the value over to the
+persisted property in ``initializeObject`` for example.
+
+* Packages: ``Flow``
+
+`TASK: throw InvalidConfigurationException if there are no secondLevelCache settings for doctrine <https://github.com/neos/flow-development-collection/pull/928>`_
+------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+#When using more than one doctrine backend, you have to make sure to set TYPO3.Flow.persistence.doctrine.secondLevelCache, or else you will get "An error occurred in the Database Abstraction Layer." as an exception which doesn't tell you much. By throwing an approriate exception we make clearer what the problem is.
+
+* Packages: ``Flow``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/3.3.11...3.3.12>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
