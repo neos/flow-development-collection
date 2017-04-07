@@ -374,7 +374,7 @@ function match_PathFilter ($stack = array()) {
   '[' S
       (
           ( Operator:( 'instanceof' | '!instanceof' ) S ( Operand:StringLiteral | Operand:UnquotedOperand ) S )
-          | ( :Identifier S
+          | ( :PropertyPath S
               (
                   Operator:( 'instanceof' | '!instanceof' | PrefixMatch | SuffixMatch | SubstringMatch | ExactMatch | NotEqualMatch | LessThanOrEqualMatch | LessThanMatch | GreaterThanOrEqualMatch | GreaterThanMatch )
                   S ( Operand:StringLiteral | Operand:NumberLiteral | Operand:BooleanLiteral | Operand:UnquotedOperand ) S
@@ -484,10 +484,10 @@ function match_AttributeFilter ($stack = array()) {
 				$this->pos = $pos_55;
 				$_138 = NULL;
 				do {
-					$matcher = 'match_'.'Identifier'; $key = $matcher; $pos = $this->pos;
+					$matcher = 'match_'.'PropertyPath'; $key = $matcher; $pos = $this->pos;
 					$subres = ( $this->packhas( $key, $pos ) ? $this->packread( $key, $pos ) : $this->packwrite( $key, $pos, $this->$matcher(array_merge($stack, array($result))) ) );
 					if ($subres !== FALSE) {
-						$this->store( $result, $subres, "Identifier" );
+						$this->store( $result, $subres, "PropertyPath" );
 					}
 					else { $_138 = FALSE; break; }
 					$matcher = 'match_'.'S'; $key = $matcher; $pos = $this->pos;
@@ -813,11 +813,13 @@ function match_AttributeFilter ($stack = array()) {
 
 function AttributeFilter__construct (&$result) {
 		$result['Operator'] = NULL;
+		$result['PropertyPath'] = NULL;
 		$result['Identifier'] = NULL;
 	}
 
-function AttributeFilter_Identifier (&$result, $sub) {
-		$result['Identifier'] = $sub['text'];
+function AttributeFilter_PropertyPath (&$result, $sub) {
+		$result['PropertyPath'] = $sub['text'];
+		$result['Identifier'] = $result['PropertyPath'];
 	}
 
 function AttributeFilter_Operator (&$result, $sub) {
