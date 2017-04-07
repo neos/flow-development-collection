@@ -1,0 +1,131 @@
+`4.0.3 (2017-04-01) <https://github.com/neos/flow-development-collection/releases/tag/4.0.3>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`TASK: Add missing model annotation in documentation <https://github.com/neos/flow-development-collection/pull/642>`_
+---------------------------------------------------------------------------------------------------------------------
+
+- Without this annotation it will not be possible to generate doctrine
+  migration.
+
+`TASK: Adjust DocTools settings <https://github.com/neos/flow-development-collection/pull/919>`_
+------------------------------------------------------------------------------------------------
+
+Fixes neos/neos-development-collection#1490
+
+* Packages: ``Flow``
+
+`BUGFIX: Adjust typeconverter:list to getTypeConverters() return value <https://github.com/neos/flow-development-collection/pull/908>`_
+---------------------------------------------------------------------------------------------------------------------------------------
+
+Fixes #828
+
+`TASK: Remove unused classes and exceptions <https://github.com/neos/flow-development-collection/pull/909>`_
+------------------------------------------------------------------------------------------------------------
+
+These classes became useless with the release of 4.0 but were
+overlooked and forgotten.
+
+* Packages: ``Flow``
+
+`TASK: Fix "undefined class" warnings <https://github.com/neos/flow-development-collection/pull/906>`_
+------------------------------------------------------------------------------------------------------
+
+Mostly fixes comments, but some use statements as well.
+
+`BUGFIX: Use correct branch in .travis.yml <https://github.com/neos/flow-development-collection/pull/907>`_
+-----------------------------------------------------------------------------------------------------------
+
+`BUGFIX: Update docs to code changes <https://github.com/neos/flow-development-collection/pull/905>`_
+-----------------------------------------------------------------------------------------------------
+
+The ``PersistentResource`` no longer provides a ``__toString()``, so adjust
+documentation to that.
+
+* Packages: ``Flow``
+
+`TASK: Remove PhpUnit 4.8 support code <https://github.com/neos/flow-development-collection/pull/902>`_
+-------------------------------------------------------------------------------------------------------
+
+We no longer support PhpUnit 4.8 so some code could be removed.
+
+* Packages: ``Cache`` ``Flow``
+
+`BUGFIX: Fix 4.0 composer manifests <https://github.com/neos/flow-development-collection/pull/898>`_
+----------------------------------------------------------------------------------------------------
+
+A number of inconsistencies and errors are in the composer manifests of the 4.0 branch:
+
+- some libraries pinned to strictly 4.0.0
+- outdated/wrong names and namespaces in merged collection manifest
+- inconsistent dependencies on PHP
+- inconsistent dependencies on PhpUnit
+
+The first is an actual bug, since even with 4.0.2 of Flow, those packages are pinned to
+the 4.0.0 version, even though it should be 4.0.2.
+
+While the last two might in fact be correct, the merged manifest is prone to containing
+wrong constraints, so this change sync the related constraints with the Flow package
+itself.
+
+
+* Packages: ``Flow``
+
+`BUGFIX: Accessing in empty array in PropertyMapper <https://github.com/neos/flow-development-collection/pull/895>`_
+--------------------------------------------------------------------------------------------------------------------
+
+As ``$this->typeConverters`` is not filled during this method, as this method will provide the necessary information, we need to access ``$typeConverterMap`` which contains the class name already.
+
+**What I did**
+Fix accessing empty array.
+
+**How I did it**
+Accessing method internal existing array containing the necessary information.
+
+**How to verify it**
+Register two TypeConverters for same conersion with same priority.
+
+**Checklist**
+
+- [x] Code follows the PSR-2 coding style
+- [ ] Tests have been created, run and adjusted as needed
+- [x] The PR is created against the [lowest maintained branch](https://www.neos.io/features/release-roadmap.html)
+I could not find any information about Flow at the given url.
+
+`TASK: Add documentation for using PdoBackend with MySQL <https://github.com/neos/flow-development-collection/pull/885>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+When using the PdoBackend with MySQL for caching,
+the needed caching tables have to be created manually.
+This adds a hint on creating the tables to the documentation
+on the PdoBackend.
+
+Solving the documentation part of neos/flow-development-collection#884
+
+This depends on #886 
+
+`TASK: Increase max-length for cache entries in PdoBackend <https://github.com/neos/flow-development-collection/pull/886>`_
+---------------------------------------------------------------------------------------------------------------------------
+
+When not using SQLite for the `PdoBackend` and manually creating
+the cache tables by using the `DDL.sql`, the content column of the
+cache table with type `TEXT` could easily lead to cropped
+caching entries because of the length restriction.
+Using `MEDIUMTEXT` practically prevents this issue.
+
+See also: neos/flow-development-collection#884 and
+neos/flow-development-collection#885
+
+`TASK: Improve documentation on Object-OrientedProgramming <https://github.com/neos/flow-development-collection/pull/887>`_
+---------------------------------------------------------------------------------------------------------------------------
+
+Two small typo
+1. doubled «is is» to «it is»
+2. doubled «our our» to «our»
+
+* Packages: ``Flow``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/4.0.2...4.0.3>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

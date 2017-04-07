@@ -12,7 +12,7 @@ namespace Neos\Flow\Http;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Error as ErrorException;
+use Neos\Flow\Error\Exception as ErrorException;
 use Neos\Utility\Unicode;
 
 /**

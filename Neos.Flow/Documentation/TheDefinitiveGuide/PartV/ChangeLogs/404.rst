@@ -1,0 +1,13 @@
+`4.0.4 (2017-04-03) <https://github.com/neos/flow-development-collection/releases/tag/4.0.4>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Fix test merged without adjustments <https://github.com/neos/flow-development-collection/pull/923>`_
+-------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Cache`` ``Flow``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/4.0.3...4.0.4>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

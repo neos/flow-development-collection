@@ -11,13 +11,13 @@ namespace Neos\Flow\Tests\Functional\Mvc\ViewsConfiguration\Fixtures;
  * source code.
  */
 use Neos\Flow\Mvc\Controller\ControllerContext;
-use Neos\Flow\Mvc\View\EmptyView;
+use Neos\Flow\Mvc\View\AbstractView;
 
 /**
  * An empty view - a special case.
  *
  */
-final class TemplateView extends \Neos\Flow\Mvc\View\AbstractView
+final class TemplateView extends AbstractView
 {
     /**
      * @var array
@@ -55,7 +55,7 @@ final class TemplateView extends \Neos\Flow\Mvc\View\AbstractView
      *
      * @param string $key
      * @param mixed $value
-     * @return EmptyView instance of $this to allow chaining
+     * @return self instance of $this to allow chaining
      * @api
      */
     public function assign($key, $value)
@@ -67,7 +67,7 @@ final class TemplateView extends \Neos\Flow\Mvc\View\AbstractView
      * Dummy method to satisfy the ViewInterface
      *
      * @param array $values
-     * @return EmptyView instance of $this to allow chaining
+     * @return self instance of $this to allow chaining
      * @api
      */
     public function assignMultiple(array $values)

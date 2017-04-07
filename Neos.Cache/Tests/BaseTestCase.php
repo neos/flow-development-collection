@@ -29,27 +29,6 @@ abstract class BaseTestCase extends \PHPUnit_Framework_TestCase
     protected $backupStaticAttributes = false;
 
     /**
-     * Returns a test double for the specified class.
-     *
-     * This can be removed as soon as we drop support for PHPUnit 4.8
-     *
-     * @param string $originalClassName
-     * @return \PHPUnit_Framework_MockObject_MockObject
-     */
-    public function createMock($originalClassName)
-    {
-        if (is_callable('parent::createMock')) {
-            return parent::createMock($originalClassName);
-        } else {
-            return $this->getMockBuilder($originalClassName)
-                ->disableOriginalConstructor()
-                ->disableOriginalClone()
-                ->disableArgumentCloning()
-                ->getMock();
-        }
-    }
-
-    /**
      * Injects $dependency into property $name of $target
      *
      * This is a convenience method for setting a protected or private property in
