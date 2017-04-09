@@ -20,6 +20,7 @@ use Doctrine\ORM\EntityManager;
 use Neos\Flow\Cache\CacheManager;
 use Neos\Flow\Configuration\Exception\InvalidConfigurationException;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
+use Neos\Flow\Persistence\Doctrine\Logging\SqlLogger;
 use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
 use Neos\Flow\Annotations as Flow;
 
@@ -58,37 +59,26 @@ class EntityManagerConfiguration
     }
 
     /**
+     * Configure the Doctrine EntityManager according to configuration settings before it's creation.
+     *
      * @param Connection $connection
      * @param Configuration $config
      * @param EventManager $eventManager
+     * @throws InvalidConfigurationException
+     * @throws IllegalObjectTypeException
      */
     public function configureEntityManager(Connection $connection, Configuration $config, EventManager $eventManager)
     {
         if (is_string($this->settings['doctrine']['sqlLogger']) && class_exists($this->settings['doctrine']['sqlLogger'])) {
-            $configuredSqlLogger = $this->settings['doctrine']['sqlLogger'];
-            $sqlLoggerInstance = new $configuredSqlLogger();
-            if ($sqlLoggerInstance instanceof SQLLogger) {
-                $config->setSQLLogger($sqlLoggerInstance);
-            } else {
-                throw new InvalidConfigurationException(sprintf('Neos.Flow.persistence.doctrine.sqlLogger must point to a \Doctrine\DBAL\Logging\SQLLogger implementation, %s given.', get_class($sqlLoggerInstance)), 1426150388);
-            }
+            $this->enableSqlLogger($this->settings['doctrine']['sqlLogger'], $config);
         }
 
         if (isset($this->settings['doctrine']['eventSubscribers']) && is_array($this->settings['doctrine']['eventSubscribers'])) {
-            foreach ($this->settings['doctrine']['eventSubscribers'] as $subscriberClassName) {
-                $subscriber = $this->objectManager->get($subscriberClassName);
-                if (!$subscriber instanceof EventSubscriber) {
-                    throw new IllegalObjectTypeException('Doctrine eventSubscribers must extend class \Doctrine\Common\EventSubscriber, ' . $subscriberClassName . ' fails to do so.', 1366018193);
-                }
-                $eventManager->addEventSubscriber($subscriber);
-            }
+            $this->registerEventSubscribers($this->settings['doctrine']['eventSubscribers'], $eventManager);
         }
 
         if (isset($this->settings['doctrine']['eventListeners']) && is_array($this->settings['doctrine']['eventListeners'])) {
-            foreach ($this->settings['doctrine']['eventListeners'] as $listenerOptions) {
-                $listener = $this->objectManager->get($listenerOptions['listener']);
-                $eventManager->addEventListener($listenerOptions['events'], $listener);
-            }
+            $this->registerEventListeners($this->settings['doctrine']['eventListeners'], $eventManager);
         }
 
         $this->applyCacheConfiguration($config);
@@ -99,6 +89,49 @@ class EntityManagerConfiguration
 
         if (isset($this->settings['doctrine']['dql']) && is_array($this->settings['doctrine']['dql'])) {
             $this->applyDqlSettingsToConfiguration($this->settings['doctrine']['dql'], $config);
+        }
+    }
+
+    /**
+     * @param string $configuredSqlLogger
+     * @param Configuration $doctrineConfiguration
+     * @throws InvalidConfigurationException
+     */
+    protected function enableSqlLogger(string $configuredSqlLogger, Configuration $doctrineConfiguration)
+    {
+        $sqlLoggerInstance = new $configuredSqlLogger();
+        if ($sqlLoggerInstance instanceof SQLLogger) {
+            $doctrineConfiguration->setSQLLogger($sqlLoggerInstance);
+        } else {
+            throw new InvalidConfigurationException(sprintf('Neos.Flow.persistence.doctrine.sqlLogger must point to a \Doctrine\DBAL\Logging\SQLLogger implementation, %s given.', get_class($sqlLoggerInstance)), 1426150388);
+        }
+    }
+
+    /**
+     * @param array $configuredSubscribers
+     * @param EventManager $eventManager
+     * @throws IllegalObjectTypeException
+     */
+    protected function registerEventSubscribers(array $configuredSubscribers, EventManager $eventManager)
+    {
+        foreach ($configuredSubscribers as $subscriberClassName) {
+            $subscriber = $this->objectManager->get($subscriberClassName);
+            if (!$subscriber instanceof EventSubscriber) {
+                throw new IllegalObjectTypeException('Doctrine eventSubscribers must extend class \Doctrine\Common\EventSubscriber, ' . $subscriberClassName . ' fails to do so.', 1366018193);
+            }
+            $eventManager->addEventSubscriber($subscriber);
+        }
+    }
+
+    /**
+     * @param array $configuredListeners
+     * @param EventManager $eventManager
+     */
+    protected function registerEventListeners(array $configuredListeners, EventManager $eventManager)
+    {
+        foreach ($configuredListeners as $listenerOptions) {
+            $listener = $this->objectManager->get($listenerOptions['listener']);
+            $eventManager->addEventListener($listenerOptions['events'], $listener);
         }
     }
 
@@ -124,6 +157,8 @@ class EntityManagerConfiguration
     }
 
     /**
+     * Apply basic cache configuration for the metadata, query and result caches.
+     *
      * @param Configuration $config
      */
     protected function applyCacheConfiguration(Configuration $config)
@@ -177,6 +212,8 @@ class EntityManagerConfiguration
     }
 
     /**
+     * Enhance the Doctrine EntityManager by applying post creation settings, like custom filters.
+     *
      * @param Configuration $config
      * @param EntityManager $entityManager
      * @throws \Doctrine\DBAL\DBALException
