@@ -69,7 +69,7 @@ class EntityManagerConfiguration
      */
     public function configureEntityManager(Connection $connection, Configuration $config, EventManager $eventManager)
     {
-        if (is_string($this->settings['doctrine']['sqlLogger']) && class_exists($this->settings['doctrine']['sqlLogger'])) {
+        if (isset($this->settings['doctrine']['sqlLogger']) && is_string($this->settings['doctrine']['sqlLogger']) && class_exists($this->settings['doctrine']['sqlLogger'])) {
             $this->enableSqlLogger($this->settings['doctrine']['sqlLogger'], $config);
         }
 
