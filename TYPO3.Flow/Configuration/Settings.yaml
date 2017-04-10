@@ -673,9 +673,9 @@ TYPO3:
         # Allow http access only.
         httponly: TRUE
 
-        # The cookie domain. Use dot notation if cookies should be valid for
-        # all subdomains.
-        #domain: .domain.com
+        # The cookie domain. Only denote the top-level domain if cookies should be valid for
+        # all subdomains. Dot notation is not supported.
+        #domain: domain.com
         domain: NULL
 
     utility:
