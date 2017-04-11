@@ -539,6 +539,20 @@ Filter System.
   ``@Flow\Proxy(false)`` to your filter class to prevent Flow from building a proxy,
   which causes this error.
 
+.. warning:: Custom SqlFilter implementations - watch out for data privacy issues!
+
+  If using custom SqlFilters, you have to be aware that the SQL filter is cached by doctrine, thus your SqlFilter might
+  not be called as often as you might expect. This may lead to displaying data which is not normally visible to the user!
+
+  Basically you are not allowed to call `setParameter` inside `addFilterConstraint`; but setParameter must be called *before*
+  the SQL query is actually executed. Currently, there's no standard Doctrine way to provide this; so you manually can receive
+  the filter instance from `$entityManager->getFilters()->getEnabledFilters()` and call `setParameter()` then.
+
+  Alternatively, you can register a global context object in `TYPO3.Flow.aop.globalObjects` and use it to provide additional
+  identifiers for the caching by letting these global objects implement `CacheAwareInterface`; effectively seggregating the
+  Doctrine cache some more.
+
+
 Custom Doctrine DQL functions
 -----------------------------
 
