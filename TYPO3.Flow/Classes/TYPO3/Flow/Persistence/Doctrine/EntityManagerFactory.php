@@ -19,7 +19,6 @@ use Doctrine\DBAL\Logging\SQLLogger;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\Configuration;
 use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\Query\Filter\SQLFilter;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cache\CacheManager;
 use TYPO3\Flow\Configuration\Exception\InvalidConfigurationException;
@@ -59,11 +58,6 @@ class EntityManagerFactory
      * @var array
      */
     protected $settings = [];
-
-    /**
-     * @var SQLFilter[]
-     */
-    protected $enabledFilterInstances = [];
 
     /**
      * Injects the Flow settings, the persistence part is kept
@@ -152,7 +146,7 @@ class EntityManagerFactory
         if (isset($this->settings['doctrine']['filters']) && is_array($this->settings['doctrine']['filters'])) {
             foreach ($this->settings['doctrine']['filters'] as $filterName => $filterClass) {
                 $config->addFilter($filterName, $filterClass);
-                $this->enabledFilterInstances[$filterName] = $entityManager->getFilters()->enable($filterName);
+                $entityManager->getFilters()->enable($filterName);
             }
         }
 
@@ -161,17 +155,6 @@ class EntityManagerFactory
         }
 
         return $entityManager;
-    }
-
-    /**
-     * Returns the active and instanciated SQL Filters. Needed to lateron call setParameter() on custom
-     * SQL filter instances before doing queries.
-     *
-     * @return SQLFilter[] the SQL filters, indexed by filter name as given in Settings.yaml
-     */
-    public function getEnabledFilterInstances()
-    {
-        return $this->enabledFilterInstances;
     }
 
     /**

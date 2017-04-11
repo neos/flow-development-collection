@@ -1143,7 +1143,7 @@ all privilege targets that are not granted to the current user.
 
   Basically you are not allowed to call `setParameter` inside `addFilterConstraint`; but setParameter must be called *before*
   the SQL query is actually executed. Currently, there's no standard Doctrine way to provide this; so you manually can receive
-  the filter instance from `EntityManagerFactory::getEnabledFilterInstances()` and call `setParameter()` then.
+  the filter instance from `$entityManager->getFilters()->getEnabledFilters()` and call `setParameter()` then.
 
   Alternatively, you can use the mechanism from above, where you register a global context object in `TYPO3.Flow.aop.globalObjects`
   and use it to provide additional identifiers for the caching; effectively seggregating the Doctrine cache some more.
