@@ -1610,6 +1610,10 @@ class ReflectionService
             return false;
         }
 
+        if ($this->isPropertyAnnotatedWith($className, $propertyName, Flow\InjectConfiguration::class)) {
+            return false;
+        }
+
         if (!$this->isPropertyTaggedWith($className, $propertyName, 'var')) {
             return false;
         }
