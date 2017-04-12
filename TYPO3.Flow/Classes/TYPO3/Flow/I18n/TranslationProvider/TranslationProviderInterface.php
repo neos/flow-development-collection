@@ -27,12 +27,12 @@ interface TranslationProviderInterface
      *
      * @param string $originalLabel Label used as a key in order to find translation
      * @param \TYPO3\Flow\I18n\Locale $locale Locale to use
-     * @param string $pluralForm One of RULE constants of PluralsReader
+     * @param float|int|null $quantity A number to find plural form for (float or int), NULL to not use plural forms
      * @param string $sourceName Name of file with translations, base path is $packageKey/Resources/Private/Locale/Translations/
      * @param string $packageKey Key of the package containing the source file
      * @return mixed Translated label or FALSE on failure
      */
-    public function getTranslationByOriginalLabel($originalLabel, \TYPO3\Flow\I18n\Locale $locale, $pluralForm = null, $sourceName = 'Main', $packageKey = 'TYPO3.Flow');
+    public function getTranslationByOriginalLabel($originalLabel, \TYPO3\Flow\I18n\Locale $locale, $quantity = null, $sourceName = 'Main', $packageKey = 'TYPO3.Flow');
 
     /**
      * Returns label for a key ($labelId) from a file defined by $sourceName.
@@ -41,10 +41,10 @@ interface TranslationProviderInterface
      *
      * @param string $labelId Key used to find translated label
      * @param \TYPO3\Flow\I18n\Locale $locale Locale to use
-     * @param string $pluralForm One of RULE constants of PluralsReader
+     * @param float|int|null $quantity A number to find plural form for (float or int), NULL to not use plural forms
      * @param string $sourceName Name of file with translations, base path is $packageKey/Resources/Private/Locale/Translations/
      * @param string $packageKey Key of the package containing the source file
      * @return mixed Translated label or FALSE on failure
      */
-    public function getTranslationById($labelId, \TYPO3\Flow\I18n\Locale $locale, $pluralForm = null, $sourceName = 'Main', $packageKey = 'TYPO3.Flow');
+    public function getTranslationById($labelId, \TYPO3\Flow\I18n\Locale $locale, $quantity = null, $sourceName = 'Main', $packageKey = 'TYPO3.Flow');
 }
