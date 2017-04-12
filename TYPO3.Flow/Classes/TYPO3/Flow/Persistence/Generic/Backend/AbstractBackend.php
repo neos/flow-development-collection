@@ -25,6 +25,7 @@ use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Flow\Reflection\ClassSchema;
 use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Flow\Reflection\ReflectionService;
+use TYPO3\Flow\Utility\Algorithms;
 use TYPO3\Flow\Utility\TypeHandling;
 use TYPO3\Flow\Validation\ValidatorResolver;
 use TYPO3\Flow\Persistence\Exception as PersistenceException;
@@ -642,7 +643,7 @@ abstract class AbstractBackend implements BackendInterface
      */
     protected function processNestedArray($parentIdentifier, array $nestedArray, \Closure $handler = null)
     {
-        $identifier = uniqid('a', true);
+        $identifier = 'a' . Algorithms::generateRandomString(23);
         $data = [
             'multivalue' => true,
             'value' => $this->processArray($nestedArray, $parentIdentifier)
