@@ -32,6 +32,7 @@ use TYPO3\Flow\Object\Proxy\Compiler;
 use TYPO3\Flow\Reflection\ClassReflection;
 use TYPO3\Flow\Reflection\PropertyReflection;
 use TYPO3\Flow\Reflection\ReflectionService;
+use TYPO3\Flow\Utility\Algorithms;
 
 /**
  * The main class of the AOP (Aspect Oriented Programming) framework.
@@ -666,7 +667,7 @@ class ProxyClassBuilder
             }
             foreach ($aspectContainer->getInterfaceIntroductions() as $introduction) {
                 $pointcut = $introduction->getPointcut();
-                if ($pointcut->matches($targetClassName, null, null, uniqid())) {
+                if ($pointcut->matches($targetClassName, null, null, Algorithms::generateRandomString(13))) {
                     $introductions[] = $introduction;
                 }
             }
@@ -691,7 +692,7 @@ class ProxyClassBuilder
             }
             foreach ($aspectContainer->getPropertyIntroductions() as $introduction) {
                 $pointcut = $introduction->getPointcut();
-                if ($pointcut->matches($targetClassName, null, null, uniqid())) {
+                if ($pointcut->matches($targetClassName, null, null, Algorithms::generateRandomString(13))) {
                     $introductions[] = $introduction;
                 }
             }
