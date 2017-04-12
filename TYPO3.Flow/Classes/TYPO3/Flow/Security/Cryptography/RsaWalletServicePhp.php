@@ -16,6 +16,7 @@ use TYPO3\Flow\Security\Exception as SecurityException;
 use TYPO3\Flow\Security\Exception\DecryptionNotAllowedException;
 use TYPO3\Flow\Security\Exception\InvalidKeyPairIdException;
 use TYPO3\Flow\Security\Exception\MissingConfigurationException;
+use TYPO3\Flow\Utility;
 
 /**
  * Implementation of the RSAWalletServiceInterface using PHP's OpenSSL extension
@@ -370,7 +371,7 @@ class RsaWalletServicePhp implements RsaWalletServiceInterface
             return;
         }
 
-        $temporaryKeystorePathAndFilename = $this->keystorePathAndFilename . uniqid() . '.temp';
+        $temporaryKeystorePathAndFilename = $this->keystorePathAndFilename . Utility\Algorithms::generateRandomString(13) . '.temp';
         $result = file_put_contents($temporaryKeystorePathAndFilename, serialize($this->keys));
 
         if ($result === false) {
