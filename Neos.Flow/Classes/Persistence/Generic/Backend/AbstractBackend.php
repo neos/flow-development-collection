@@ -25,6 +25,7 @@ use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Reflection\ClassSchema;
 use Neos\Utility\ObjectAccess;
 use Neos\Flow\Reflection\ReflectionService;
+use Neos\Flow\Utility\Algorithms;
 use Neos\Utility\TypeHandling;
 use Neos\Flow\Validation\ValidatorResolver;
 use Neos\Flow\Persistence\Exception as PersistenceException;
@@ -642,7 +643,7 @@ abstract class AbstractBackend implements BackendInterface
      */
     protected function processNestedArray($parentIdentifier, array $nestedArray, \Closure $handler = null)
     {
-        $identifier = uniqid('a', true);
+        $identifier = 'a' . Algorithms::generateRandomString(23);
         $data = [
             'multivalue' => true,
             'value' => $this->processArray($nestedArray, $parentIdentifier)
