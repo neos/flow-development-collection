@@ -20,6 +20,7 @@ use Neos\Utility\ObjectAccess;
 use Neos\Flow\ResourceManagement\Storage\StorageInterface;
 use Neos\Flow\ResourceManagement\Storage\WritableStorageInterface;
 use Neos\Flow\ResourceManagement\Target\TargetInterface;
+use Neos\Flow\Utility\Algorithms;
 use Neos\Flow\Utility\Environment;
 use Neos\Utility\Unicode\Functions as UnicodeFunctions;
 
@@ -620,7 +621,7 @@ class ResourceManager
 
         if ($openBasedirEnabled === true) {
             // Move uploaded file to a readable folder before trying to read sha1 value of file
-            $newTemporaryTargetPathAndFilename = $this->environment->getPathToTemporaryDirectory() . 'ResourceUpload.' . uniqid() . '.tmp';
+            $newTemporaryTargetPathAndFilename = $this->environment->getPathToTemporaryDirectory() . 'ResourceUpload.' . Algorithms::generateRandomString(13) . '.tmp';
             if (move_uploaded_file($temporaryTargetPathAndFilename, $newTemporaryTargetPathAndFilename) === false) {
                 throw new Exception(sprintf('The uploaded file "%s" could not be moved to the temporary location "%s".', $temporaryTargetPathAndFilename, $newTemporaryTargetPathAndFilename), 1375199056);
             }
