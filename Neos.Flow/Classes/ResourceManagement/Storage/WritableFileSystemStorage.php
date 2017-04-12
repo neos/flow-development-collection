@@ -11,10 +11,9 @@ namespace Neos\Flow\ResourceManagement\Storage;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\Flow\ResourceManagement\Storage\Exception as StorageException;
-use TYPO3\Flow\Utility\Algorithms;
+use neos\Flow\Utility\Algorithms;
 use Neos\Utility\Files;
 
 /**

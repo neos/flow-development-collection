@@ -11,7 +11,7 @@ namespace Neos\Flow\Security\Cryptography;
  * source code.
  */
 
-use TYPO3\Flow\Utility;
+use Neos\Flow\Utility;
 
 /**
  * A salted MD5 based password hashing strategy
