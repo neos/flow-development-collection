@@ -15,6 +15,7 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Resource\Collection;
 use TYPO3\Flow\Resource\CollectionInterface;
 use TYPO3\Flow\Resource\Storage\PackageStorage;
+use TYPO3\Flow\Utility\Algorithms;
 use TYPO3\Flow\Utility\Files;
 use TYPO3\Flow\Utility\Unicode\Functions as UnicodeFunctions;
 use TYPO3\Flow\Resource\Target\Exception as TargetException;
@@ -80,7 +81,7 @@ class FileSystemSymlinkTarget extends FileSystemTarget
                 Files::unlink($targetPathAndFilename);
             }
 
-            $temporaryTargetPathAndFilename = uniqid($targetPathAndFilename . '.') . '.tmp';
+            $temporaryTargetPathAndFilename = $targetPathAndFilename . '.' . Algorithms::generateRandomString(13) . '.tmp';
             symlink($sourcePathAndFilename, $temporaryTargetPathAndFilename);
             $result = rename($temporaryTargetPathAndFilename, $targetPathAndFilename);
         } catch (\Exception $exception) {
@@ -118,7 +119,7 @@ class FileSystemSymlinkTarget extends FileSystemTarget
                 Files::unlink($targetPathAndFilename);
             }
 
-            $temporaryTargetPathAndFilename = uniqid($targetPathAndFilename . '.') . '.tmp';
+            $temporaryTargetPathAndFilename = $targetPathAndFilename . '.' . Algorithms::generateRandomString(13) . '.tmp';
             symlink($sourcePath, $temporaryTargetPathAndFilename);
             $result = rename($temporaryTargetPathAndFilename, $targetPathAndFilename);
         } catch (\Exception $exception) {

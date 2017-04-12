@@ -13,6 +13,7 @@ namespace TYPO3\Flow\Session;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Core\Bootstrap;
+use TYPO3\Flow\Utility\Algorithms;
 
 /**
  * Implementation of a transient session.
@@ -72,7 +73,7 @@ class TransientSession implements SessionInterface
      */
     public function start()
     {
-        $this->sessionId = uniqid();
+        $this->sessionId = Algorithms::generateRandomString(13);
         $this->started = true;
     }
 
@@ -106,7 +107,7 @@ class TransientSession implements SessionInterface
      */
     public function renewId()
     {
-        $this->sessionId = uniqid();
+        $this->sessionId = Algorithms::generateRandomString(13);
         return $this->sessionId;
     }
 
