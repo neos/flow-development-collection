@@ -11,7 +11,7 @@ namespace TYPO3\Flow\Security\Cryptography;
  * source code.
  */
 
-use TYPO3\Flow\Utility\Algorithms;
+use TYPO3\Flow\Utility;
 
 /**
  * A salted MD5 based password hashing strategy
@@ -27,7 +27,7 @@ class SaltedMd5HashingStrategy implements PasswordHashingStrategyInterface
      */
     public static function generateSaltedMd5($clearString)
     {
-        $salt = substr(md5(rand() . Algorithms::generateRandomString(23)), 0, rand(6, 10));
+        $salt = substr(md5(rand() . Utility\Algorithms::generateRandomString(23)), 0, rand(6, 10));
         return (md5(md5($clearString) . $salt) . ',' . $salt);
     }
 
