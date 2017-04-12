@@ -11,9 +11,9 @@ namespace Neos\Flow\ResourceManagement\Storage;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\Flow\ResourceManagement\Storage\Exception as StorageException;
+use neos\Flow\Utility\Algorithms;
 use Neos\Utility\Files;
 
 /**
@@ -52,7 +52,7 @@ class WritableFileSystemStorage extends FileSystemStorage implements WritableSto
      */
     public function importResource($source, $collectionName)
     {
-        $temporaryTargetPathAndFilename = $this->environment->getPathToTemporaryDirectory() . uniqid('Neos_Flow_ResourceImport_');
+        $temporaryTargetPathAndFilename = $this->environment->getPathToTemporaryDirectory() . 'Neos_Flow_ResourceImport_' . Algorithms::generateRandomString(13);
 
         if (is_resource($source)) {
             try {
@@ -89,7 +89,7 @@ class WritableFileSystemStorage extends FileSystemStorage implements WritableSto
      */
     public function importResourceFromContent($content, $collectionName)
     {
-        $temporaryTargetPathAndFilename = $this->environment->getPathToTemporaryDirectory() . uniqid('Neos_Flow_ResourceImport_');
+        $temporaryTargetPathAndFilename = $this->environment->getPathToTemporaryDirectory() . 'Neos_Flow_ResourceImport_' . Algorithms::generateRandomString(13);
         try {
             file_put_contents($temporaryTargetPathAndFilename, $content);
         } catch (\Exception $exception) {
