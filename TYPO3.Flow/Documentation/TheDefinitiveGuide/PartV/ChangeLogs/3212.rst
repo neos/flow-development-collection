@@ -1,8 +1,0 @@
-`3.2.12 (2017-04-03) <https://github.com/neos/flow-development-collection/releases/tag/3.2.12>`_
-================================================================================================
-
-Overview of merged pull requests
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-`Detailed log <https://github.com/neos/flow-development-collection/compare/3.2.11...3.2.12>`_
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
