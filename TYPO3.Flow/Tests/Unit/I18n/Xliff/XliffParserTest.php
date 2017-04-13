@@ -11,11 +11,13 @@ namespace TYPO3\Flow\Tests\Unit\I18n\Xliff;
  * source code.
  */
 
+use TYPO3\Flow\Tests\UnitTestCase;
+use TYPO3\Flow\I18n;
+
 /**
  * Testcase for the XliffParser
- *
  */
-class XliffParserTest extends \TYPO3\Flow\Tests\UnitTestCase
+class XliffParserTest extends UnitTestCase
 {
     /**
      * @test
@@ -25,7 +27,7 @@ class XliffParserTest extends \TYPO3\Flow\Tests\UnitTestCase
         $mockFilenamePath = __DIR__ . '/../Fixtures/MockXliffData.xlf';
         $mockParsedData = require(__DIR__ . '/../Fixtures/MockParsedXliffData.php');
 
-        $parser = new \TYPO3\Flow\I18n\Xliff\XliffParser();
+        $parser = new I18n\Xliff\XliffParser();
         $result = $parser->getParsedData($mockFilenamePath);
         $this->assertEquals($mockParsedData, $result);
     }
@@ -38,7 +40,7 @@ class XliffParserTest extends \TYPO3\Flow\Tests\UnitTestCase
     {
         $mockFilenamePath = __DIR__ . '/../Fixtures/MockInvalidXliffData.xlf';
 
-        $parser = new \TYPO3\Flow\I18n\Xliff\XliffParser();
+        $parser = new I18n\Xliff\XliffParser();
         $parser->getParsedData($mockFilenamePath);
     }
 
@@ -50,7 +52,7 @@ class XliffParserTest extends \TYPO3\Flow\Tests\UnitTestCase
     {
         $mockFilenamePath = __DIR__ . '/../Fixtures/MockInvalidPluralXliffData.xlf';
 
-        $parser = new \TYPO3\Flow\I18n\Xliff\XliffParser();
+        $parser = new I18n\Xliff\XliffParser();
         $parser->getParsedData($mockFilenamePath);
     }
 }

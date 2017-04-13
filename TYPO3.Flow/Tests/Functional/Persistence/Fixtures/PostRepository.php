@@ -11,14 +11,16 @@ namespace TYPO3\Flow\Tests\Functional\Persistence\Fixtures;
  * source code.
  */
 
+use TYPO3\Flow\Persistence\Doctrine\Repository;
+
 /**
  * A repository for posts
  * @TYPO3\Flow\Annotations\Scope("singleton")
  */
-class PostRepository extends \TYPO3\Flow\Persistence\Doctrine\Repository
+class PostRepository extends Repository
 {
     /**
      * @var string
      */
-    const ENTITY_CLASSNAME = \TYPO3\Flow\Tests\Functional\Persistence\Fixtures\Post::class;
+    const ENTITY_CLASSNAME = Post::class;
 }

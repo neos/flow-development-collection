@@ -45,6 +45,7 @@ properties:
             'token': { type: string }
             'entryPoint': { type: string }
             'entryPointOptions': { type: dictionary }
+            'token': { type: string }
       'authenticationStrategy':
         type: string
         required: TRUE

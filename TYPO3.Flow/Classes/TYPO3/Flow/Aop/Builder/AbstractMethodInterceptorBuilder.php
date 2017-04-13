@@ -10,6 +10,8 @@ namespace TYPO3\Flow\Aop\Builder;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use TYPO3\Flow\Object\Proxy\Compiler;
+use TYPO3\Flow\Reflection\ReflectionService;
 
 /**
  * An abstract class with builder functions for AOP method interceptors code
@@ -19,31 +21,31 @@ namespace TYPO3\Flow\Aop\Builder;
 abstract class AbstractMethodInterceptorBuilder
 {
     /**
-     * @var \TYPO3\Flow\Reflection\ReflectionService
+     * @var ReflectionService
      */
     protected $reflectionService;
 
     /**
-     * @var \TYPO3\Flow\Object\Proxy\Compiler
+     * @var Compiler
      */
     protected $compiler;
 
     /**
      * Injects the reflection service
      *
-     * @param \TYPO3\Flow\Reflection\ReflectionService $reflectionService The reflection service
+     * @param ReflectionService $reflectionService The reflection service
      * @return void
      */
-    public function injectReflectionService(\TYPO3\Flow\Reflection\ReflectionService $reflectionService)
+    public function injectReflectionService(ReflectionService $reflectionService)
     {
         $this->reflectionService = $reflectionService;
     }
 
     /**
-     * @param \TYPO3\Flow\Object\Proxy\Compiler $compiler
+     * @param Compiler $compiler
      * @return void
      */
-    public function injectCompiler(\TYPO3\Flow\Object\Proxy\Compiler $compiler)
+    public function injectCompiler(Compiler $compiler)
     {
         $this->compiler = $compiler;
     }

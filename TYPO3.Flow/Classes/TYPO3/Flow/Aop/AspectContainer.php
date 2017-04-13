@@ -12,6 +12,7 @@ namespace TYPO3\Flow\Aop;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Aop\Pointcut\Pointcut;
 
 /**
  * An aspect is represented by class tagged with the "aspect" annotation.
@@ -45,19 +46,19 @@ class AspectContainer
      * An array of \TYPO3\Flow\Aop\Advisor objects
      * @var array
      */
-    protected $advisors = array();
+    protected $advisors = [];
 
     /**
      * An array of \TYPO3\Flow\Aop\InterfaceIntroduction objects
      * @var array
      */
-    protected $interfaceIntroductions = array();
+    protected $interfaceIntroductions = [];
 
     /**
      * An array of \TYPO3\Flow\Aop\PropertyIntroduction objects
      * @var array
      */
-    protected $propertyIntroductions = array();
+    protected $propertyIntroductions = [];
 
     /**
      * An array of \TYPO3\Flow\Aop\TraitIntroduction objects
@@ -70,7 +71,7 @@ class AspectContainer
      * An array of explicitly declared \TYPO3\Flow\Pointcut objects
      * @var array
      */
-    protected $pointcuts = array();
+    protected $pointcuts = [];
 
     /**
      * @var \TYPO3\Flow\Aop\Builder\ClassNameIndex
@@ -196,10 +197,10 @@ class AspectContainer
     /**
      * Adds a pointcut (from a pointcut declaration) to this aspect container
      *
-     * @param \TYPO3\Flow\Aop\Pointcut\Pointcut $pointcut The pointcut to add
+     * @param Pointcut $pointcut The pointcut to add
      * @return void
      */
-    public function addPointcut(\TYPO3\Flow\Aop\Pointcut\Pointcut $pointcut)
+    public function addPointcut(Pointcut $pointcut)
     {
         $this->pointcuts[] = $pointcut;
     }

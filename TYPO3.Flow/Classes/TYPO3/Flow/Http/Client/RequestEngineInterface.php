@@ -12,7 +12,7 @@ namespace TYPO3\Flow\Http\Client;
  */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Http\Request;
+use TYPO3\Flow\Http;
 
 /**
  * Interface for a Request Engine which can be used by a HTTP Client implementation
@@ -23,9 +23,9 @@ interface RequestEngineInterface
     /**
      * Sends the given HTTP request
      *
-     * @param \TYPO3\Flow\Http\Request $request
-     * @return \TYPO3\Flow\Http\Response
-     * @throws \TYPO3\Flow\Http\Exception
+     * @param Http\Request $request
+     * @return Http\Response
+     * @throws Http\Exception
      */
-    public function sendRequest(Request $request);
+    public function sendRequest(Http\Request $request);
 }

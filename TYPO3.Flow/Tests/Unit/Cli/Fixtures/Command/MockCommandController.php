@@ -11,10 +11,12 @@ namespace TYPO3\Flow\Tests\Unit\Cli\Fixtures\Command;
  * source code.
  */
 
+use TYPO3\Flow\Cli;
+
 /**
  * A mock CLI Command
  */
-class MockACommandController extends \TYPO3\Flow\Cli\Command
+class MockACommandController extends Cli\Command
 {
     public function fooCommand()
     {
@@ -28,7 +30,7 @@ class MockACommandController extends \TYPO3\Flow\Cli\Command
 /**
  * Another mock CLI Command
  */
-class MockBCommandController extends \TYPO3\Flow\Cli\Command
+class MockBCommandController extends Cli\Command
 {
     public function bazCommand()
     {

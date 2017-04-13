@@ -16,6 +16,6 @@ namespace TYPO3\Flow\Aop\Advice;
  * Implementation of the Before Advice.
  *
  */
-class BeforeAdvice extends \TYPO3\Flow\Aop\Advice\AbstractAdvice implements \TYPO3\Flow\Aop\Advice\AdviceInterface
+class BeforeAdvice extends AbstractAdvice implements AdviceInterface
 {
 }

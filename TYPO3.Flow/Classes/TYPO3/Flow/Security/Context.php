@@ -12,8 +12,10 @@ namespace TYPO3\Flow\Security;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Cache\CacheAwareInterface;
 use TYPO3\Flow\Log\SecurityLoggerInterface;
 use TYPO3\Flow\Mvc\RequestInterface;
+use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\Flow\Security\Authentication\TokenInterface;
 use TYPO3\Flow\Security\Policy\Role;
 use TYPO3\Flow\Mvc\ActionRequest;
@@ -192,6 +194,20 @@ class Context
      * @var string
      */
     protected $contextHash = null;
+
+    /**
+     * @Flow\Inject
+     * @var ObjectManagerInterface
+     */
+    protected $objectManager;
+
+    /**
+     * Array of registered global objects that can be accessed as operands
+     *
+     * @Flow\InjectConfiguration("aop.globalObjects")
+     * @var array
+     */
+    protected $globalObjects = [];
 
     /**
      * Inject the authentication manager
@@ -852,7 +868,18 @@ class Context
             $this->initialize();
         }
         if ($this->contextHash === null) {
-            $this->contextHash = md5(implode('|', array_keys($this->getRoles())));
+            $contextHashSoFar = implode('|', array_keys($this->getRoles()));
+
+            $this->withoutAuthorizationChecks(function () use (&$contextHashSoFar) {
+                foreach ($this->globalObjects as $globalObjectsRegisteredClassName) {
+                    if (is_subclass_of($globalObjectsRegisteredClassName, CacheAwareInterface::class)) {
+                        $globalObject = $this->objectManager->get($globalObjectsRegisteredClassName);
+                        $contextHashSoFar .= '<' . $globalObject->getCacheEntryIdentifier();
+                    }
+                }
+            });
+
+            $this->contextHash = md5($contextHashSoFar);
         }
         return $this->contextHash;
     }

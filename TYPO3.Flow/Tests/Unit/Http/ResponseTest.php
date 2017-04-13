@@ -14,11 +14,13 @@ namespace TYPO3\Flow\Tests\Unit\Http;
 use TYPO3\Flow\Http\Request;
 use TYPO3\Flow\Http\Response;
 use TYPO3\Flow\Http\Uri;
+use TYPO3\Flow\Http;
+use TYPO3\Flow\Tests\UnitTestCase;
 
 /**
  * Test case for the Http Response class
  */
-class ResponseTest extends \TYPO3\Flow\Tests\UnitTestCase
+class ResponseTest extends UnitTestCase
 {
     /**
      * @test
@@ -35,9 +37,9 @@ class ResponseTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function rawResponses()
     {
-        return array(
-            array(file_get_contents(__DIR__ . '/../Fixtures/RawResponse-1.txt'),
-                array(
+        return [
+            [file_get_contents(__DIR__ . '/../Fixtures/RawResponse-1.txt'),
+                [
                     'Server' => 'Apache/2.2.17 (Ubuntu)',
                     'X-Flow-Powered' => 'Flow/1.2',
                     'Cache-Control' => 'public, s-maxage=600',
@@ -49,12 +51,12 @@ class ResponseTest extends \TYPO3\Flow\Tests\UnitTestCase
                     'Age' => 550,
                     'Via' => '1.1 varnish',
                     'Connection' => 'keep-alive'
-                )
-            , 200),
-            array(file_get_contents(__DIR__ . '/../Fixtures/RawResponse-2.txt'),
-                array(
+                ]
+            , 200],
+            [file_get_contents(__DIR__ . '/../Fixtures/RawResponse-2.txt'),
+                [
                     'Server' => 'Apache/2.2.17 (Ubuntu)',
-                    'Location' => 'http://flow.typo3.org/',
+                    'Location' => 'http://flow.neos.io/',
                     'Vary' => 'Accept-Encoding',
                     'Content-Encoding' => 'gzip',
                     'Content-Type' => 'text/html; charset=iso-8859-1',
@@ -64,9 +66,9 @@ class ResponseTest extends \TYPO3\Flow\Tests\UnitTestCase
                     'Age' => 0,
                     'Via' => '1.1 varnish',
                     'Connection' => 'keep-alive'
-                )
-            , 301)
-        );
+                ]
+            , 301]
+        ];
     }
 
     /**
@@ -103,18 +105,18 @@ class ResponseTest extends \TYPO3\Flow\Tests\UnitTestCase
         $response = Response::createFromRaw(file_get_contents(__DIR__ . '/../Fixtures/RawResponse-1.txt'));
         $this->assertCount(4, $response->getCookies());
 
-        $this->assertInstanceOf(\TYPO3\Flow\Http\Cookie::class, $response->getCookie('tg'));
+        $this->assertInstanceOf(Http\Cookie::class, $response->getCookie('tg'));
         $this->assertEquals('426148', $response->getCookie('tg')->getValue());
         $this->assertEquals(1665942816, $response->getCookie('tg')->getExpires());
 
-        $this->assertInstanceOf(\TYPO3\Flow\Http\Cookie::class, $response->getCookie('dmvk'));
+        $this->assertInstanceOf(Http\Cookie::class, $response->getCookie('dmvk'));
         $this->assertEquals('507d9f20317a5', $response->getCookie('dmvk')->getValue());
         $this->assertEquals('example.org', $response->getCookie('dmvk')->getDomain());
 
-        $this->assertInstanceOf(\TYPO3\Flow\Http\Cookie::class, $response->getCookie('ql_n'));
+        $this->assertInstanceOf(Http\Cookie::class, $response->getCookie('ql_n'));
         $this->assertEquals('0', $response->getCookie('ql_n')->getValue());
 
-        $this->assertInstanceOf(\TYPO3\Flow\Http\Cookie::class, $response->getCookie('masscast'));
+        $this->assertInstanceOf(Http\Cookie::class, $response->getCookie('masscast'));
         $this->assertEquals('null', $response->getCookie('masscast')->getValue());
 
         foreach ($response->getCookies() as $cookie) {
@@ -214,14 +216,34 @@ class ResponseTest extends \TYPO3\Flow\Tests\UnitTestCase
         $response->setHeader('MyHeader', 'MyValue');
         $response->setHeader('OtherHeader', 'OtherValue');
 
-        $expectedHeaders = array(
+        $expectedHeaders = [
             'HTTP/1.1 123 Custom Status',
             'Content-Type: text/html; charset=UTF-8',
             'MyHeader: MyValue',
             'OtherHeader: OtherValue',
-        );
+        ];
 
 
+
+        $this->assertEquals($expectedHeaders, $response->renderHeaders());
+    }
+
+    /**
+     * @test
+     */
+    public function multipleHeadersCanBeSetAsArray()
+    {
+        $response = new Response();
+        $response->setStatus(123, 'Custom Status');
+        $response->setHeader('MyHeader', ['MyValue-1','MyValue-2','MyValue-3']);
+
+        $expectedHeaders = [
+            'HTTP/1.1 123 Custom Status',
+            'Content-Type: text/html; charset=UTF-8',
+            'MyHeader: MyValue-1',
+            'MyHeader: MyValue-2',
+            'MyHeader: MyValue-3',
+        ];
 
         $this->assertEquals($expectedHeaders, $response->renderHeaders());
     }
@@ -428,7 +450,7 @@ class ResponseTest extends \TYPO3\Flow\Tests\UnitTestCase
         $request = Request::create(new Uri('http://localhost'));
         $response = new Response();
 
-        foreach (array(100, 101, 204, 304) as $statusCode) {
+        foreach ([100, 101, 204, 304] as $statusCode) {
             $response->setStatus($statusCode);
             $response->setContent('Body Language');
             $response->makeStandardsCompliant($request);
@@ -632,13 +654,13 @@ class ResponseTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function contentAndExpectedStringRepresentation()
     {
-        return array(
-            array('foo bar', 'foo bar'),
-            array(2556, '2556'),
-            array(true, '1'),
-            array(false, ''),
-            array(new \stdClass(), '')
-        );
+        return [
+            ['foo bar', 'foo bar'],
+            [2556, '2556'],
+            [true, '1'],
+            [false, ''],
+            [new \stdClass(), '']
+        ];
     }
 
     /**

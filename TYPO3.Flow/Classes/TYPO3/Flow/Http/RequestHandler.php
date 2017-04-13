@@ -14,6 +14,7 @@ namespace TYPO3\Flow\Http;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Core\Bootstrap;
 use TYPO3\Flow\Configuration\ConfigurationManager;
+use TYPO3\Flow\Http\Component\ComponentChain;
 use TYPO3\Flow\Http\Component\ComponentContext;
 use TYPO3\Flow\Package\Package;
 
@@ -169,9 +170,9 @@ class RequestHandler implements HttpRequestHandlerInterface
     protected function resolveDependencies()
     {
         $objectManager = $this->bootstrap->getObjectManager();
-        $this->baseComponentChain = $objectManager->get(\TYPO3\Flow\Http\Component\ComponentChain::class);
+        $this->baseComponentChain = $objectManager->get(ComponentChain::class);
 
-        $configurationManager = $objectManager->get(\TYPO3\Flow\Configuration\ConfigurationManager::class);
+        $configurationManager = $objectManager->get(ConfigurationManager::class);
         $this->settings = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'TYPO3.Flow');
     }
 

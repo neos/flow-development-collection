@@ -11,9 +11,10 @@ namespace TYPO3\Flow\Tests\Unit\Persistence\Doctrine;
  * source code.
  */
 
-/**
- */
-class EntityManagerFactoryTest extends \TYPO3\Flow\Tests\UnitTestCase
+use TYPO3\Flow\Persistence\Doctrine\EntityManagerFactory;
+use TYPO3\Flow\Tests\UnitTestCase;
+
+class EntityManagerFactoryTest extends UnitTestCase
 {
     /**
      * @test
@@ -53,23 +54,23 @@ class EntityManagerFactoryTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     protected function buildAndPrepareDqlCustomStringConfiguration()
     {
-        $entityManagerFactory = $this->getAccessibleMock(\TYPO3\Flow\Persistence\Doctrine\EntityManagerFactory::class, array('dummy'));
+        $entityManagerFactory = $this->getAccessibleMock(EntityManagerFactory::class, ['dummy']);
         $configuration = new \Doctrine\ORM\Configuration;
 
-        $settingsArray = array(
-            'customStringFunctions' => array(
+        $settingsArray = [
+            'customStringFunctions' => [
                 'FOOSTRING' => 'Some\Foo\StringClass',
                 'BARSTRING' => 'Some\Bar\StringClass'
-            ),
-            'customNumericFunctions' => array(
+            ],
+            'customNumericFunctions' => [
                 'FOONUMERIC' => 'Some\Foo\NumericClass',
                 'BARNUMERIC' => 'Some\Bar\NumericClass'
-            ),
-            'customDatetimeFunctions' => array(
+            ],
+            'customDatetimeFunctions' => [
                 'FOODATETIME' => 'Some\Foo\DateTimeClass',
                 'BARDATETIME' => 'Some\Bar\DateTimeClass'
-            ),
-        );
+            ],
+        ];
         $entityManagerFactory->_call('applyDqlSettingsToConfiguration', $settingsArray, $configuration);
         return $configuration;
     }

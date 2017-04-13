@@ -11,11 +11,13 @@ namespace TYPO3\Flow\Tests\Functional\Aop;
  * source code.
  */
 
+use TYPO3\Flow\Tests\FunctionalTestCase;
+
 /**
  * Test suite for poincut expression related features
  *
  */
-class PointcutExpressionTest extends \TYPO3\Flow\Tests\FunctionalTestCase
+class PointcutExpressionTest extends FunctionalTestCase
 {
     /**
      * @test

@@ -23,7 +23,7 @@ use TYPO3\Flow\Annotations as Flow;
 class Response extends AbstractMessage implements ResponseInterface
 {
     /**
-     * @var \TYPO3\Flow\Http\Response
+     * @var Response
      */
     protected $parentResponse;
 
@@ -53,7 +53,7 @@ class Response extends AbstractMessage implements ResponseInterface
      */
     public static function getStatusMessageByCode($statusCode)
     {
-        $statusMessages = array(
+        $statusMessages = [
                 100 => 'Continue',
                 101 => 'Switching Protocols',
                 102 => 'Processing', // RFC 2518
@@ -99,14 +99,14 @@ class Response extends AbstractMessage implements ResponseInterface
                 505 => 'HTTP Version Not Supported',
                 507 => 'Insufficient Storage',
                 509 => 'Bandwidth Limit Exceeded',
-        );
+        ];
         return isset($statusMessages[$statusCode]) ? $statusMessages[$statusCode] : 'Unknown Status';
     }
 
     /**
      * Construct this Response
      *
-     * @param \TYPO3\Flow\Http\Response $parentResponse
+     * @param Response $parentResponse
      */
     public function __construct(Response $parentResponse = null)
     {
@@ -119,10 +119,10 @@ class Response extends AbstractMessage implements ResponseInterface
      * Creates a response from the given raw, that is plain text, HTTP response.
      *
      * @param string $rawResponse
-     * @param \TYPO3\Flow\Http\Response $parentResponse Parent response, if called recursively
+     * @param Response $parentResponse Parent response, if called recursively
      *
      * @throws \InvalidArgumentException
-     * @return \TYPO3\Flow\Http\Response
+     * @return Response
      */
     public static function createFromRaw($rawResponse, Response $parentResponse = null)
     {
@@ -139,7 +139,7 @@ class Response extends AbstractMessage implements ResponseInterface
         $response->setStatus((integer)$statusCode, trim($reasonPhrase));
 
         $parsingHeader = true;
-        $contentLines = array();
+        $contentLines = [];
         $headers = new Headers();
         foreach ($lines as $line) {
             if ($parsingHeader) {
@@ -171,7 +171,7 @@ class Response extends AbstractMessage implements ResponseInterface
     /**
      * Return the parent response or NULL if none exists.
      *
-     * @return \TYPO3\Flow\Http\Response the parent response, or NULL if none
+     * @return Response the parent response, or NULL if none
      */
     public function getParentResponse()
     {
@@ -182,7 +182,7 @@ class Response extends AbstractMessage implements ResponseInterface
      * Appends content to the already existing content.
      *
      * @param string $content More response content
-     * @return \TYPO3\Flow\Http\Response This response, for method chaining
+     * @return Response This response, for method chaining
      * @api
      */
     public function appendContent($content)
@@ -207,7 +207,7 @@ class Response extends AbstractMessage implements ResponseInterface
      *
      * @param integer $code The status code
      * @param string $message If specified, this message is sent instead of the standard message
-     * @return \TYPO3\Flow\Http\Response This response, for method chaining
+     * @return Response This response, for method chaining
      * @throws \InvalidArgumentException if the specified status code is not valid
      * @api
      */
@@ -249,7 +249,7 @@ class Response extends AbstractMessage implements ResponseInterface
     /**
      * Replaces all possibly existing HTTP headers with the ones specified
      *
-     * @param \TYPO3\Flow\Http\Headers
+     * @param Headers
      * @return void
      * @api
      */
@@ -288,7 +288,7 @@ class Response extends AbstractMessage implements ResponseInterface
      * time remains the same.
      *
      * @param string|\DateTime $date
-     * @return \TYPO3\Flow\Http\Response This response, for method chaining
+     * @return Response This response, for method chaining
      * @api
      */
     public function setDate($date)
@@ -318,7 +318,7 @@ class Response extends AbstractMessage implements ResponseInterface
      * time remains the same.
      *
      * @param string|\DateTime $date
-     * @return \TYPO3\Flow\Http\Response This response, for method chaining
+     * @return Response This response, for method chaining
      * @api
      */
     public function setLastModified($date)
@@ -356,7 +356,7 @@ class Response extends AbstractMessage implements ResponseInterface
      * to RFC 2616 / 14.21
      *
      * @param string|\DateTime $date
-     * @return \TYPO3\Flow\Http\Response This response, for method chaining
+     * @return Response This response, for method chaining
      * @api
      */
     public function setExpires($date)
@@ -409,7 +409,7 @@ class Response extends AbstractMessage implements ResponseInterface
      * This method sets the "max-age" directive in the Cache-Control header.
      *
      * @param integer $age The maximum age in seconds
-     * @return \TYPO3\Flow\Http\Response This response, for method chaining
+     * @return Response This response, for method chaining
      * @api
      */
     public function setMaximumAge($age)
@@ -439,7 +439,7 @@ class Response extends AbstractMessage implements ResponseInterface
      * This method sets the "s-maxage" directive in the Cache-Control header.
      *
      * @param integer $maximumAge The maximum age in seconds
-     * @return \TYPO3\Flow\Http\Response This response, for method chaining
+     * @return Response This response, for method chaining
      * @api
      */
     public function setSharedMaximumAge($maximumAge)
@@ -471,7 +471,7 @@ class Response extends AbstractMessage implements ResponseInterface
      */
     public function renderHeaders()
     {
-        $preparedHeaders = array();
+        $preparedHeaders = [];
         $statusHeader = rtrim($this->getStatusLine(), "\r\n");
 
         $preparedHeaders[] = $statusHeader;
@@ -490,7 +490,7 @@ class Response extends AbstractMessage implements ResponseInterface
      * A response flagged as "public" may be cached by any cache, even if it normally
      * wouldn't be cacheable in a shared cache.
      *
-     * @return \TYPO3\Flow\Http\Response This response, for method chaining
+     * @return Response This response, for method chaining
      * @api
      */
     public function setPublic()
@@ -505,7 +505,7 @@ class Response extends AbstractMessage implements ResponseInterface
      * A response flagged as "private" tells that it is intended for a specific
      * user and must not be cached by a shared cache.
      *
-     * @return \TYPO3\Flow\Http\Response This response, for method chaining
+     * @return Response This response, for method chaining
      * @api
      */
     public function setPrivate()
@@ -522,7 +522,7 @@ class Response extends AbstractMessage implements ResponseInterface
      * It is recommended to call this method before the response is sent and Flow
      * does so by default in its built-in HTTP request handler.
      *
-     * @param \TYPO3\Flow\Http\Request $request The corresponding request
+     * @param Request $request The corresponding request
      * @return void
      * @api
      */
@@ -544,7 +544,7 @@ class Response extends AbstractMessage implements ResponseInterface
             }
         }
 
-        if (in_array($this->statusCode, array(100, 101, 204, 304))) {
+        if (in_array($this->statusCode, [100, 101, 204, 304])) {
             $this->content = '';
         }
 
@@ -584,7 +584,7 @@ class Response extends AbstractMessage implements ResponseInterface
             return;
         }
         foreach ($this->renderHeaders() as $header) {
-            header($header);
+            header($header, false);
         }
         foreach ($this->headers->getCookies() as $cookie) {
             header('Set-Cookie: ' . $cookie, false);

@@ -14,6 +14,7 @@ namespace TYPO3\Flow\Resource\Storage;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Resource\Resource as PersistentResource;
 use TYPO3\Flow\Resource\Storage\Exception as StorageException;
+use TYPO3\Flow\Utility\Algorithms;
 use TYPO3\Flow\Utility\Files;
 
 /**
@@ -52,7 +53,7 @@ class WritableFileSystemStorage extends FileSystemStorage implements WritableSto
      */
     public function importResource($source, $collectionName)
     {
-        $temporaryTargetPathAndFilename = $this->environment->getPathToTemporaryDirectory() . uniqid('TYPO3_Flow_ResourceImport_');
+        $temporaryTargetPathAndFilename = $this->environment->getPathToTemporaryDirectory() . 'TYPO3_Flow_ResourceImport_' . Algorithms::generateRandomString(13);
 
         if (is_resource($source)) {
             try {
@@ -89,7 +90,7 @@ class WritableFileSystemStorage extends FileSystemStorage implements WritableSto
      */
     public function importResourceFromContent($content, $collectionName)
     {
-        $temporaryTargetPathAndFilename = $this->environment->getPathToTemporaryDirectory() . uniqid('TYPO3_Flow_ResourceImport_');
+        $temporaryTargetPathAndFilename = $this->environment->getPathToTemporaryDirectory() . 'TYPO3_Flow_ResourceImport_' . Algorithms::generateRandomString(13);
         try {
             file_put_contents($temporaryTargetPathAndFilename, $content);
         } catch (\Exception $exception) {
@@ -162,10 +163,10 @@ class WritableFileSystemStorage extends FileSystemStorage implements WritableSto
         if (!file_exists(dirname($finalTargetPathAndFilename))) {
             Files::createDirectoryRecursively(dirname($finalTargetPathAndFilename));
         }
-        if (rename($temporaryFile, $finalTargetPathAndFilename) === false) {
-            unlink($temporaryFile);
+        if (copy($temporaryFile, $finalTargetPathAndFilename) === false) {
             throw new StorageException(sprintf('The temporary file of the file import could not be moved to the final target "%s".', $finalTargetPathAndFilename), 1381156103);
         }
+        unlink($temporaryFile);
 
         $this->fixFilePermissions($finalTargetPathAndFilename);
     }

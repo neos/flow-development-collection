@@ -11,10 +11,12 @@ namespace TYPO3\Flow\Tests\Functional\Http;
  * source code.
  */
 
+use TYPO3\Flow\Tests\FunctionalTestCase;
+
 /**
  * Functional tests for the HTTP cache header support
  */
-class CacheHeadersTest extends \TYPO3\Flow\Tests\FunctionalTestCase
+class CacheHeadersTest extends FunctionalTestCase
 {
     /**
      * @test

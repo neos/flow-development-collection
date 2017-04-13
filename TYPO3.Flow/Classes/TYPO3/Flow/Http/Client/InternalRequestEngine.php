@@ -16,12 +16,14 @@ use TYPO3\Flow\Configuration\ConfigurationManager;
 use TYPO3\Flow\Core\Bootstrap;
 use TYPO3\Flow\Error\Debugger;
 use TYPO3\Flow\Exception;
+use TYPO3\Flow\Http\Component\ComponentChain;
 use TYPO3\Flow\Http\Component\ComponentContext;
 use TYPO3\Flow\Http;
 use TYPO3\Flow\Mvc\Dispatcher;
 use TYPO3\Flow\Mvc\Routing\Router;
 use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Flow\Security\Context;
+use TYPO3\Flow\Session\SessionInterface;
 use TYPO3\Flow\Tests\FunctionalTestRequestHandler;
 use TYPO3\Flow\Validation\ValidatorResolver;
 
@@ -108,8 +110,8 @@ class InternalRequestEngine implements RequestEngineInterface
         $this->validatorResolver->reset();
 
         $response = new Http\Response();
-        $requestHandler->setHttpRequest($httpRequest);
-        $requestHandler->setHttpResponse($response);
+        $componentContext = new ComponentContext($httpRequest, $response);
+        $requestHandler->setComponentContext($componentContext);
 
         $objectManager = $this->bootstrap->getObjectManager();
         $baseComponentChain = $objectManager->get(\TYPO3\Flow\Http\Component\ComponentChain::class);
@@ -118,16 +120,16 @@ class InternalRequestEngine implements RequestEngineInterface
         try {
             $baseComponentChain->handle($componentContext);
         } catch (\Throwable $throwable) {
-            $this->prepareErrorResponse($throwable, $response);
+            $this->prepareErrorResponse($throwable, $componentContext->getHttpResponse());
         } catch (\Exception $exception) {
-            $this->prepareErrorResponse($exception, $response);
+            $this->prepareErrorResponse($exception, $componentContext->getHttpResponse());
         }
-        $session = $this->bootstrap->getObjectManager()->get(\TYPO3\Flow\Session\SessionInterface::class);
+        $session = $this->bootstrap->getObjectManager()->get(SessionInterface::class);
         if ($session->isStarted()) {
             $session->close();
         }
         $this->persistenceManager->clearState();
-        return $response;
+        return $componentContext->getHttpResponse();
     }
 
     /**

@@ -11,11 +11,13 @@ namespace TYPO3\Flow\Tests\Unit\Utility;
  * source code.
  */
 
+use TYPO3\Flow\Package\PackageManager;
+use TYPO3\Flow\Package\PackageManagerInterface;
 use TYPO3\Flow\Utility\SchemaValidator;
+use TYPO3\Flow\Error;
 
 /**
  * Testcase for the configuration validator
- *
  */
 class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
 {
@@ -26,17 +28,17 @@ class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->configurationValidator = $this->getMockBuilder(SchemaValidator::class)->setMethods(array('getError'))->getMock();
+        $this->configurationValidator = $this->getMockBuilder(SchemaValidator::class)->setMethods(['getError'])->getMock();
     }
 
     /**
      * Handle the assertion that the given result object has errors
      *
-     * @param \TYPO3\Flow\Error\Result $result
+     * @param Error\Result $result
      * @param boolean $expectError
      * @return void
      */
-    protected function assertError(\TYPO3\Flow\Error\Result $result, $expectError = true)
+    protected function assertError(Error\Result $result, $expectError = true)
     {
         if ($expectError === true) {
             $this->assertTrue($result->hasErrors());
@@ -48,11 +50,11 @@ class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
     /**
      * Handle the assertion that the given result object has no errors
      *
-     * @param \TYPO3\Flow\Error\Result $result
+     * @param Error\Result $result
      * @param boolean $expectSuccess
      * @return void
      */
-    protected function assertSuccess(\TYPO3\Flow\Error\Result $result, $expectSuccess = true)
+    protected function assertSuccess(Error\Result $result, $expectSuccess = true)
     {
         if ($expectSuccess === true) {
             $this->assertFalse($result->hasErrors());
@@ -66,15 +68,15 @@ class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function validateHandlesRequiredPropertyDataProvider()
     {
-        return array(
-            array(array('foo' => 'a string'), true),
-            array(array('foo' => 'a string', 'bar' => 'a string'), true),
-            array(array('foo' => 'a string', 'bar' => 123), false),
-            array(array('foo' => 'a string', 'bar' => 'a string'), true),
-            array(array('foo' => 123, 'bar' => 'a string'), false),
-            array(array('foo' => null, 'bar' => 'a string'), false),
-            array(array('bar' => 'string'), false)
-        );
+        return [
+            [['foo' => 'a string'], true],
+            [['foo' => 'a string', 'bar' => 'a string'], true],
+            [['foo' => 'a string', 'bar' => 123], false],
+            [['foo' => 'a string', 'bar' => 'a string'], true],
+            [['foo' => 123, 'bar' => 'a string'], false],
+            [['foo' => null, 'bar' => 'a string'], false],
+            [['bar' => 'string'], false]
+        ];
     }
 
     /**
@@ -83,16 +85,16 @@ class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function validateHandlesRequiredProperty($value, $expectSuccess)
     {
-        $schema = array(
+        $schema = [
             'type' => 'dictionary',
-            'properties' => array(
-                'foo' => array(
+            'properties' => [
+                'foo' => [
                     'type' => 'string',
                     'required' => true
-                ),
+                ],
                 'bar' => 'string'
-            )
-        );
+            ]
+        ];
         $this->assertSuccess($this->configurationValidator->validate($value, $schema), $expectSuccess);
     }
 
@@ -101,11 +103,11 @@ class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function validateHandlesDisallowPropertyDataProvider()
     {
-        return array(
-            array('string', true),
-            array(123, false),
-            array(array(1,2,3), false)
-        );
+        return [
+            ['string', true],
+            [123, false],
+            [[1,2,3], false]
+        ];
     }
 
     /**
@@ -114,9 +116,9 @@ class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function validateHandlesDisallowProperty($value, $expectSuccess)
     {
-        $schema = array(
-            'disallow' => array('integer','array')
-        );
+        $schema = [
+            'disallow' => ['integer','array']
+        ];
         $this->assertSuccess($this->configurationValidator->validate($value, $schema), $expectSuccess);
     }
 
@@ -125,13 +127,13 @@ class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function validateHandlesEnumPropertyDataProvider()
     {
-        return array(
-            array(1, true),
-            array(2, true),
-            array(null, false),
-            array(4, false),
-            array(array(1,2,3), false)
-        );
+        return [
+            [1, true],
+            [2, true],
+            [null, false],
+            [4, false],
+            [[1,2,3], false]
+        ];
     }
 
     /**
@@ -140,9 +142,9 @@ class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function validateHandlesEnumProperty($value, $expectSuccess)
     {
-        $schema = array(
-            'enum' => array(1,2,3)
-        );
+        $schema = [
+            'enum' => [1,2,3]
+        ];
         $this->assertSuccess($this->configurationValidator->validate($value, $schema), $expectSuccess);
     }
 
@@ -151,30 +153,30 @@ class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function validateReturnsErrorPath()
     {
-        $value = array(
-            'foo' => array(
-                'bar' => array(
+        $value = [
+            'foo' => [
+                'bar' => [
                     'baz' => 'string'
-                )
-            )
-        );
+                ]
+            ]
+        ];
 
-        $schema = array(
+        $schema = [
             'type' => 'dictionary',
-            'properties' => array(
-                'foo' => array(
+            'properties' => [
+                'foo' => [
                     'type' => 'dictionary',
-                    'properties' => array(
-                        'bar' => array(
+                    'properties' => [
+                        'bar' => [
                             'type' => 'dictionary',
-                            'properties' => array(
+                            'properties' => [
                                 'baz' => 'number'
-                            )
-                        )
-                    )
-                )
-            )
-        );
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ];
 
         $result = $this->configurationValidator->validate($value, $schema);
         $this->assertError($result);
@@ -185,7 +187,7 @@ class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
         $pathErrors = $result->forProperty('foo.bar.baz')->getErrors();
         $firstPathError = $pathErrors[0];
         $this->assertEquals($firstPathError->getCode(), 1328557141);
-        $this->assertEquals($firstPathError->getArguments(), array('type=number', 'type=string'));
+        $this->assertEquals($firstPathError->getArguments(), ['type=number', 'type=string']);
     }
 
     /**
@@ -193,13 +195,13 @@ class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function validateHandlesMultipleTypesDataProvider()
     {
-        return array(
+        return [
             [['property' => 'value'], true],
             ['value', true],
             [false, false],
             [123, false],
-            [array(1,2,3), false]
-        );
+            [[1,2,3], false]
+        ];
     }
 
     /**
@@ -208,7 +210,7 @@ class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function validateHandlesMultipleTypes($value, $expectSuccess)
     {
-        $schema = array('dictionary', 'string');
+        $schema = ['dictionary', 'string'];
 
         $result = $this->configurationValidator->validate($value, $schema);
         $this->assertSuccess($result, $expectSuccess);
@@ -220,9 +222,9 @@ class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function validateHandlesMultipleTypesInSchemaType($value, $expectSuccess)
     {
-        $schema = array(
-            'type' => array('dictionary', 'string')
-        );
+        $schema = [
+            'type' => ['dictionary', 'string']
+        ];
         $result = $this->configurationValidator->validate($value, $schema);
         $this->assertSuccess($result, $expectSuccess);
     }
@@ -233,14 +235,14 @@ class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function validateHandlesMultipleTypesInSubProperty($value, $expectSuccess)
     {
-        $schema = array(
+        $schema = [
             'type' => 'dictionary',
-            'properties' => array(
-                'foo' => array(
-                    'type' => array('dictionary', 'string')
-                )
-            )
-        );
+            'properties' => [
+                'foo' => [
+                    'type' => ['dictionary', 'string']
+                ]
+            ]
+        ];
         $result = $this->configurationValidator->validate(['foo' => $value], $schema);
         $this->assertSuccess($result, $expectSuccess);
     }
@@ -252,13 +254,13 @@ class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function validateHandlesIntegerTypePropertyDataProvider()
     {
-        return array(
-            array(23, true),
-            array('foo', false),
-            array(23.42, false),
-            array(array(), false),
-            array(null, false),
-        );
+        return [
+            [23, true],
+            ['foo', false],
+            [23.42, false],
+            [[], false],
+            [null, false],
+        ];
     }
 
     /**
@@ -267,9 +269,9 @@ class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function validateHandlesIntegerTypeProperty($value, $expectSuccess)
     {
-        $schema = array(
+        $schema = [
             'type' => 'integer'
-        );
+        ];
         $this->assertSuccess($this->configurationValidator->validate($value, $schema), $expectSuccess);
     }
 
@@ -280,12 +282,12 @@ class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function validateHandlesNumberTypePropertyDataProvider()
     {
-        return array(
-            array(23.42, true),
-            array(42, true),
-            array('foo', false),
-            array(null, false)
-        );
+        return [
+            [23.42, true],
+            [42, true],
+            ['foo', false],
+            [null, false]
+        ];
     }
 
     /**
@@ -294,9 +296,9 @@ class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function validateHandlesNumberTypeProperty($value, $expectSuccess)
     {
-        $schema = array(
+        $schema = [
             'type' => 'number'
-        );
+        ];
         $this->assertSuccess($this->configurationValidator->validate($value, $schema), $expectSuccess);
     }
 
@@ -305,13 +307,13 @@ class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function validateHandlesNumberTypePropertyWithMinimumAndMaximumConstraintDataProvider()
     {
-        return array(
-            array(33, true),
-            array(99, false),
-            array(1, false),
-            array(23, true),
-            array(42, true)
-        );
+        return [
+            [33, true],
+            [99, false],
+            [1, false],
+            [23, true],
+            [42, true]
+        ];
     }
 
     /**
@@ -320,11 +322,11 @@ class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function validateHandlesNumberTypePropertyWithMinimumAndMaximumConstraint($value, $expectSuccess)
     {
-        $schema = array(
+        $schema = [
             'type' => 'number',
             'minimum' => 23,
             'maximum' => 42
-        );
+        ];
         $this->assertSuccess($this->configurationValidator->validate($value, $schema), $expectSuccess);
     }
 
@@ -334,13 +336,13 @@ class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function validateHandlesNumberTypePropertyWithNonExclusiveMinimumAndMaximumConstraint($value, $expectSuccess)
     {
-        $schema = array(
+        $schema = [
             'type' => 'number',
             'minimum' => 23,
             'exclusiveMinimum' => false,
             'maximum' => 42,
             'exclusiveMaximum' => false
-        );
+        ];
         $this->assertSuccess($this->configurationValidator->validate($value, $schema), $expectSuccess);
     }
 
@@ -349,14 +351,14 @@ class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function validateHandlesNumberTypePropertyWithExclusiveMinimumAndMaximumConstraintDataProvider()
     {
-        return array(
-            array(10, false),
-            array(22, false),
-            array(23, true),
-            array(42, true),
-            array(43, false),
-            array(99, false)
-        );
+        return [
+            [10, false],
+            [22, false],
+            [23, true],
+            [42, true],
+            [43, false],
+            [99, false]
+        ];
     }
 
     /**
@@ -365,13 +367,13 @@ class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function validateHandlesNumberTypePropertyWithExclusiveMinimumAndMaximumConstraint($value, $expectSuccess)
     {
-        $schema = array(
+        $schema = [
             'type' => 'number',
             'minimum' => 22,
             'exclusiveMinimum' => true,
             'maximum' => 43,
             'exclusiveMaximum' => true
-        );
+        ];
         $this->assertSuccess($this->configurationValidator->validate($value, $schema), $expectSuccess);
     }
 
@@ -380,13 +382,13 @@ class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function validateHandlesNumberTypePropertyWithDivisibleByConstraintDataProvider()
     {
-        return array(
-            array(4, true),
-            array(3, false),
-            array(-3, false),
-            array(-4, true),
-            array(0, true),
-        );
+        return [
+            [4, true],
+            [3, false],
+            [-3, false],
+            [-4, true],
+            [0, true],
+        ];
     }
 
     /**
@@ -395,10 +397,10 @@ class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function validateHandlesNumberTypePropertyWithDivisibleByConstraint($value, $expectSuccess)
     {
-        $schema = array(
+        $schema = [
             'type' => 'number',
             'divisibleBy' => 2
-        );
+        ];
         $this->assertSuccess($this->configurationValidator->validate($value, $schema), $expectSuccess);
     }
 
@@ -409,10 +411,10 @@ class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function validateHandlesStringTypePropertyDataProvider()
     {
-        return array(
-            array('FooBar', true),
-            array(123, false)
-        );
+        return [
+            ['FooBar', true],
+            [123, false]
+        ];
     }
 
     /**
@@ -421,9 +423,9 @@ class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function validateHandlesStringTypeProperty($value, $expectedResult)
     {
-        $schema = array(
+        $schema = [
             'type' => 'string',
-        );
+        ];
         $this->assertSuccess($this->configurationValidator->validate($value, $schema), $expectedResult);
     }
 
@@ -432,11 +434,11 @@ class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function validateHandlesStringTypePropertyWithPatternConstraintDataProvider()
     {
-        return array(
-            array('12a', true),
-            array('1236', false),
-            array('12c', false)
-        );
+        return [
+            ['12a', true],
+            ['1236', false],
+            ['12c', false]
+        ];
     }
 
     /**
@@ -445,10 +447,10 @@ class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function validateHandlesStringTypePropertyWithPatternConstraint($value, $expectedResult)
     {
-        $schema = array(
+        $schema = [
             'type' => 'string',
             'pattern' => '/^[123ab]{3}$/'
-        );
+        ];
         $this->assertSuccess($this->configurationValidator->validate($value, $schema), $expectedResult);
     }
 
@@ -457,13 +459,13 @@ class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function validateHandlesStringTypePropertyWithDateTimeConstraintDataProvider()
     {
-        return array(
-            array('01:25:00', false),
-            array('1976-04-18', false),
-            array('1976-04-18T01:25:00+00:00', true),
-            array('foobar', false),
-            array(123, false)
-        );
+        return [
+            ['01:25:00', false],
+            ['1976-04-18', false],
+            ['1976-04-18T01:25:00+00:00', true],
+            ['foobar', false],
+            [123, false]
+        ];
     }
 
     /**
@@ -472,10 +474,10 @@ class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function validateHandlesStringTypePropertyWithDateTimeConstraint($value, $expectedResult)
     {
-        $schema = array(
+        $schema = [
             'type' => 'string',
             'format' => 'date-time'
-        );
+        ];
         $this->assertSuccess($this->configurationValidator->validate($value, $schema), $expectedResult);
     }
 
@@ -484,13 +486,13 @@ class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function validateHandlesStringTypePropertyWithFormatDateConstraintDataProvider()
     {
-        return array(
-            array('01:25:00', false),
-            array('1976-04-18', true),
-            array('1976-04-18T01:25:00+00:00', false),
-            array('foobar', false),
-            array(123, false)
-        );
+        return [
+            ['01:25:00', false],
+            ['1976-04-18', true],
+            ['1976-04-18T01:25:00+00:00', false],
+            ['foobar', false],
+            [123, false]
+        ];
     }
 
     /**
@@ -499,10 +501,10 @@ class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function validateHandlesStringTypePropertyWithFormatDateConstraint($value, $expectedResult)
     {
-        $schema = array(
+        $schema = [
             'type' => 'string',
             'format' => 'date'
-        );
+        ];
         $this->assertSuccess($this->configurationValidator->validate($value, $schema), $expectedResult);
     }
 
@@ -511,13 +513,13 @@ class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function validateHandlesStringTypePropertyWithFormatTimeConstraintDataProvider()
     {
-        return array(
-            array('01:25:00', true),
-            array('1976-04-18', false),
-            array('1976-04-18T01:25:00+00:00', false),
-            array('foobar', false),
-            array(123, false)
-        );
+        return [
+            ['01:25:00', true],
+            ['1976-04-18', false],
+            ['1976-04-18T01:25:00+00:00', false],
+            ['foobar', false],
+            [123, false]
+        ];
     }
 
     /**
@@ -526,10 +528,10 @@ class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function validateHandlesStringTypePropertyWithFormatTimeConstraint($value, $expectedResult)
     {
-        $schema = array(
+        $schema = [
             'type' => 'string',
             'format' => 'time'
-        );
+        ];
         $this->assertSuccess($this->configurationValidator->validate($value, $schema), $expectedResult);
     }
 
@@ -538,12 +540,12 @@ class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function validateHandlesStringTypePropertyWithFormatUriPConstraintDataProvider()
     {
-        return array(
-            array('http://foo.bar.de', true),
-            array('ftp://dasdas.de/foo/bar/?asds=123&dasdasd#dasdas', true),
-            array('foo', false),
-            array(123, false),
-        );
+        return [
+            ['http://foo.bar.de', true],
+            ['ftp://dasdas.de/foo/bar/?asds=123&dasdasd#dasdas', true],
+            ['foo', false],
+            [123, false],
+        ];
     }
 
     /**
@@ -552,10 +554,10 @@ class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function validateHandlesStringTypePropertyWithFormatUriPConstraint($value, $expectedResult)
     {
-        $schema = array(
+        $schema = [
             'type' => 'string',
             'format' => 'uri'
-        );
+        ];
         $this->assertSuccess($this->configurationValidator->validate($value, $schema), $expectedResult);
     }
 
@@ -564,12 +566,12 @@ class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function validateHandlesStringTypePropertyWithFormatHostnameConstraintDataProvider()
     {
-        return array(
-            array('www.neos.io', true),
-            array('this.is.an.invalid.hostname', false),
-            array('foobar', false),
-            array(123, false)
-        );
+        return [
+            ['www.neos.io', true],
+            ['this.is.an.invalid.hostname', false],
+            ['foobar', false],
+            [123, false]
+        ];
     }
 
     /**
@@ -578,10 +580,10 @@ class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function validateHandlesStringTypePropertyWithFormatHostnameConstraint($value, $expectedResult)
     {
-        $schema = array(
+        $schema = [
             'type' => 'string',
             'format' => 'host-name'
-        );
+        ];
         $this->assertSuccess($this->configurationValidator->validate($value, $schema), $expectedResult);
     }
 
@@ -590,12 +592,12 @@ class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function validateHandlesStringTypePropertyWithFormatIpv4ConstraintDataProvider()
     {
-        return array(
-            array('2001:0db8:85a3:08d3:1319:8a2e:0370:7344', false),
-            array('123.132.123.132', true),
-            array('foobar', false),
-            array(123, false)
-        );
+        return [
+            ['2001:0db8:85a3:08d3:1319:8a2e:0370:7344', false],
+            ['123.132.123.132', true],
+            ['foobar', false],
+            [123, false]
+        ];
     }
 
     /**
@@ -604,10 +606,10 @@ class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function validateHandlesStringTypePropertyWithFormatIpv4Constraint($value, $expectedResult)
     {
-        $schema = array(
+        $schema = [
             'type' => 'string',
             'format' => 'ipv4'
-        );
+        ];
         $this->assertSuccess($this->configurationValidator->validate($value, $schema), $expectedResult);
     }
 
@@ -616,12 +618,12 @@ class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function validateHandlesStringTypePropertyWithFormatIpv6ConstraintDataProvider()
     {
-        return array(
-            array('2001:0db8:85a3:08d3:1319:8a2e:0370:7344', true),
-            array('123.132.123.132', false),
-            array('foobar', false),
-            array(123, false)
-        );
+        return [
+            ['2001:0db8:85a3:08d3:1319:8a2e:0370:7344', true],
+            ['123.132.123.132', false],
+            ['foobar', false],
+            [123, false]
+        ];
     }
 
     /**
@@ -630,10 +632,10 @@ class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function validateHandlesStringTypePropertyWithFormatIpv6Constraint($value, $expectedResult)
     {
-        $schema = array(
+        $schema = [
             'type' => 'string',
             'format' => 'ipv6'
-        );
+        ];
         $this->assertSuccess($this->configurationValidator->validate($value, $schema), $expectedResult);
     }
 
@@ -642,25 +644,25 @@ class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function validateHandlesStringTypePropertyWithFormatIpAddressConstraintDataProvider()
     {
-        return array(
-            array('2001:0db8:85a3:08d3:1319:8a2e:0370:7344', true),
-            array('123.132.123.132', true),
-            array('foobar', false),
-            array('ab1', false),
-            array(123, false)
-        );
+        return [
+            ['2001:0db8:85a3:08d3:1319:8a2e:0370:7344', true],
+            ['123.132.123.132', true],
+            ['foobar', false],
+            ['ab1', false],
+            [123, false]
+        ];
     }
 
     /**
-    * @test
+     * @test
      * @dataProvider validateHandlesStringTypePropertyWithFormatIpAddressConstraintDataProvider
      */
     public function validateHandlesStringTypePropertyWithFormatIpAddressConstraint($value, $expectedResult)
     {
-        $schema = array(
+        $schema = [
             'type' => 'string',
             'format' => 'ip-address'
-        );
+        ];
         $this->assertSuccess($this->configurationValidator->validate($value, $schema), $expectedResult);
     }
 
@@ -669,15 +671,15 @@ class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function validateHandlesStringTypePropertyWithFormatClassNameConstraintDataProvider()
     {
-        return array(
-            array(\TYPO3\Flow\Package\PackageManager::class, true),
-            array('TYPO3\Flow\UnknownClass', false),
-            array('foobar', false),
-            array('foo bar', false),
-            array('foo/bar', false),
-            array('flow/welcome', false),
-            array(123, false)
-        );
+        return [
+            [PackageManager::class, true],
+            ['TYPO3\Flow\UnknownClass', false],
+            ['foobar', false],
+            ['foo bar', false],
+            ['foo/bar', false],
+            ['flow/welcome', false],
+            [123, false]
+        ];
     }
 
     /**
@@ -686,10 +688,10 @@ class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function validateHandlesStringTypePropertyWithFormatClassNameConstraint($value, $expectedResult)
     {
-        $schema = array(
+        $schema = [
             'type' => 'string',
             'format' => 'class-name'
-        );
+        ];
         $this->assertSuccess($this->configurationValidator->validate($value, $schema), $expectedResult);
     }
 
@@ -698,15 +700,15 @@ class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function validateHandlesStringTypePropertyWithFormatInterfaceNameConstraintDataProvider()
     {
-        return array(
-            array(\TYPO3\Flow\Package\PackageManagerInterface::class, true),
-            array('\TYPO3\Flow\UnknownClass', false),
-            array('foobar', false),
-            array('foo bar', false),
-            array('foo/bar', false),
-            array('flow/welcome', false),
-            array(123, false)
-        );
+        return [
+            [PackageManagerInterface::class, true],
+            ['\TYPO3\Flow\UnknownClass', false],
+            ['foobar', false],
+            ['foo bar', false],
+            ['foo/bar', false],
+            ['flow/welcome', false],
+            [123, false]
+        ];
     }
 
     /**
@@ -715,10 +717,10 @@ class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function validateHandlesStringTypePropertyWithFormatInterfaceNameConstraint($value, $expectedResult)
     {
-        $schema = array(
+        $schema = [
             'type' => 'string',
             'format' => 'interface-name'
-        );
+        ];
         $this->assertSuccess($this->configurationValidator->validate($value, $schema), $expectedResult);
     }
 
@@ -727,11 +729,11 @@ class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function validateHandlesStringTypePropertyWithMinLengthConstraintDataProvider()
     {
-        return array(
-            array('12356', true),
-            array('1235', true),
-            array('123', false),
-        );
+        return [
+            ['12356', true],
+            ['1235', true],
+            ['123', false],
+        ];
     }
 
     /**
@@ -740,10 +742,10 @@ class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function validateHandlesStringTypePropertyWithMinLengthConstraint($value, $expectedResult)
     {
-        $schema = array(
+        $schema = [
             'type' => 'string',
             'minLength' => 4
-        );
+        ];
         $this->assertSuccess($this->configurationValidator->validate($value, $schema), $expectedResult);
     }
 
@@ -752,11 +754,11 @@ class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function validateHandlesStringTypePropertyWithMaxLengthConstraintDataProvider()
     {
-        return array(
-            array('123', true),
-            array('1234', true),
-            array('12345', false)
-        );
+        return [
+            ['123', true],
+            ['1234', true],
+            ['12345', false]
+        ];
     }
 
     /**
@@ -765,10 +767,10 @@ class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function validateHandlesStringTypePropertyWithMaxLengthConstraint($value, $expectedResult)
     {
-        $schema = array(
+        $schema = [
             'type' => 'string',
             'maxLength' => 4
-        );
+        ];
         $this->assertSuccess($this->configurationValidator->validate($value, $schema), $expectedResult);
     }
 
@@ -780,14 +782,14 @@ class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function validateHandlesBooleanTypeDataProvider()
     {
-        return array(
-            array(true, true),
-            array(false, true),
-            array('foo', false),
-            array(123, false),
-            array(12.34, false),
-            array(array(1,2,3), false)
-        );
+        return [
+            [true, true],
+            [false, true],
+            ['foo', false],
+            [123, false],
+            [12.34, false],
+            [[1,2,3], false]
+        ];
     }
 
     /**
@@ -796,9 +798,9 @@ class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function validateHandlesBooleanType($value, $expectedResult)
     {
-        $schema = array(
+        $schema = [
             'type' => 'boolean',
-        );
+        ];
         $this->assertSuccess($this->configurationValidator->validate($value, $schema), $expectedResult);
     }
 
@@ -809,11 +811,11 @@ class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function validateHandlesArrayTypePropertyDataProvider()
     {
-        return array(
-            array(array(1, 2, 3), true),
-            array('foo', false),
-            array(array('foo' => 'bar'), false)
-        );
+        return [
+            [[1, 2, 3], true],
+            ['foo', false],
+            [['foo' => 'bar'], false]
+        ];
     }
 
     /**
@@ -822,9 +824,9 @@ class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function validateHandlesArrayTypeProperty($value, $expectedResult)
     {
-        $schema = array(
+        $schema = [
             'type' => 'array'
-        );
+        ];
         $this->assertSuccess($this->configurationValidator->validate($value, $schema), $expectedResult);
     }
 
@@ -833,10 +835,10 @@ class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function validateHandlesArrayTypePropertyWithItemsConstraintDataProvider()
     {
-        return array(
-            array(array(1, 2, 3), true),
-            array(array(1, 2, 'test string'), false)
-        );
+        return [
+            [[1, 2, 3], true],
+            [[1, 2, 'test string'], false]
+        ];
     }
 
     /**
@@ -845,10 +847,10 @@ class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function validateHandlesArrayTypePropertyWithItemsConstraint($value, $expectedResult)
     {
-        $schema = array(
+        $schema = [
             'type' => 'array',
             'items' => 'integer'
-        );
+        ];
         $this->assertSuccess($this->configurationValidator->validate($value, $schema), $expectedResult);
     }
 
@@ -857,10 +859,10 @@ class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function validateHandlesArrayTypePropertyWithItemsSchemaConstraintDataProvider()
     {
-        return array(
-            array(array(1, 2, 3), true),
-            array(array(1, 2, 'test string'), false)
-        );
+        return [
+            [[1, 2, 3], true],
+            [[1, 2, 'test string'], false]
+        ];
     }
 
     /**
@@ -869,12 +871,12 @@ class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function validateHandlesArrayTypePropertyWithItemsSchemaConstraint($value, $expectedResult)
     {
-        $schema = array(
+        $schema = [
             'type' => 'array',
-            'items' => array(
+            'items' => [
                 'type' => 'integer'
-            )
-        );
+            ]
+        ];
         $this->assertSuccess($this->configurationValidator->validate($value, $schema), $expectedResult);
     }
 
@@ -883,10 +885,10 @@ class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function validateHandlesArrayTypePropertyWithItemsArrayConstraintDataProvider()
     {
-        return array(
-            array(array(1, 2, 'test string'), true),
-            array(array(1, 2, 'test string', 1.56), false)
-        );
+        return [
+            [[1, 2, 'test string'], true],
+            [[1, 2, 'test string', 1.56], false]
+        ];
     }
 
     /**
@@ -895,13 +897,13 @@ class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function validateHandlesArrayTypePropertyWithItemsArrayConstraint($value, $expectedResult)
     {
-        $schema = array(
+        $schema = [
             'type' => 'array',
-            'items' => array(
-                array('type' => 'integer'),
+            'items' => [
+                ['type' => 'integer'],
                 'string'
-            )
-        );
+            ]
+        ];
         $this->assertSuccess($this->configurationValidator->validate($value, $schema), $expectedResult);
     }
 
@@ -910,12 +912,12 @@ class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function validateHandlesArrayUniqueItemsConstraintDataProvider()
     {
-        return array(
-            array(array(1,2,3), true),
-            array(array(1,2,1), false),
-            array(array(array(1,2), array(1,3)), true),
-            array(array(array(1,2), array(1,3), array(1,2)), false),
-        );
+        return [
+            [[1,2,3], true],
+            [[1,2,1], false],
+            [[[1,2], [1,3]], true],
+            [[[1,2], [1,3], [1,2]], false],
+        ];
     }
 
     /**
@@ -924,10 +926,10 @@ class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function validateHandlesArrayUniqueItemsConstraint($value, $expectedResult)
     {
-        $schema = array(
+        $schema = [
             'type' => 'array',
             'uniqueItems' => true
-        );
+        ];
         $this->assertSuccess($this->configurationValidator->validate($value, $schema), $expectedResult);
     }
 
@@ -938,10 +940,10 @@ class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function validateHandlesDictionaryTypeDataProvider()
     {
-        return array(
-            array(array('A' => 1, 'B' => 2, 'C' => 3), true),
-            array(array(1, 2, 3), false)
-        );
+        return [
+            [['A' => 1, 'B' => 2, 'C' => 3], true],
+            [[1, 2, 3], false]
+        ];
     }
 
     /**
@@ -950,9 +952,9 @@ class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function validateHandlesDictionaryType($value, $expectedResult)
     {
-        $schema = array(
+        $schema = [
             'type' => 'dictionary'
-        );
+        ];
         $this->assertSuccess($this->configurationValidator->validate($value, $schema), $expectedResult);
     }
 
@@ -961,11 +963,11 @@ class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function validateHandlesDictionaryTypeWithPropertiesConstraintDataProvider()
     {
-        return array(
-            array(array('foo' => 123, 'bar' => 'baz'), true),
-            array(array('foo' => 'baz', 'bar' => 'baz'), false),
-            array(array('foo' => 123, 'bar' => 123), false)
-        );
+        return [
+            [['foo' => 123, 'bar' => 'baz'], true],
+            [['foo' => 'baz', 'bar' => 'baz'], false],
+            [['foo' => 123, 'bar' => 123], false]
+        ];
     }
 
     /**
@@ -974,13 +976,13 @@ class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function validateHandlesDictionaryTypeWithPropertiesConstraint($value, $expectedResult)
     {
-        $schema = array(
+        $schema = [
             'type' => 'dictionary',
-            'properties' => array(
+            'properties' => [
                 'foo' => 'integer',
-                'bar' => array('type' => 'string')
-            )
-        );
+                'bar' => ['type' => 'string']
+            ]
+        ];
         $this->assertSuccess($this->configurationValidator->validate($value, $schema), $expectedResult);
     }
 
@@ -989,12 +991,12 @@ class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function validateHandlesDictionaryTypeWithPatternPropertiesConstraintDataProvider()
     {
-        return array(
-            array(array('ab1' => 'string'), true),
-            array(array('bbb' => 123), false),
-            array(array('ab' => 123), false),
-            array(array('ad12' => 'string'), false),
-        );
+        return [
+            [['ab1' => 'string'], true],
+            [['bbb' => 123], false],
+            [['ab' => 123], false],
+            [['ad12' => 'string'], false],
+        ];
     }
 
     /**
@@ -1003,13 +1005,13 @@ class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function validateHandlesDictionaryTypeWithPatternPropertiesConstraint($value, $expectedResult)
     {
-        $schema = array(
+        $schema = [
             'type' => 'dictionary',
-            'patternProperties' => array(
+            'patternProperties' => [
                 '/^[123ab]{3}$/' => 'string'
-            ),
+            ],
             'additionalProperties' => false
-        );
+        ];
         $this->assertSuccess($this->configurationValidator->validate($value, $schema), $expectedResult);
     }
 
@@ -1018,11 +1020,11 @@ class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function validateHandlesDictionaryTypeWithFormatPropertiesConstraintDataProvider()
     {
-        return array(
-            array(array('127.0.0.1' => 'string'), true),
-            array(array('string' => 123), false),
-            array(array('127.0.0.1' => 123), false),
-        );
+        return [
+            [['127.0.0.1' => 'string'], true],
+            [['string' => 123], false],
+            [['127.0.0.1' => 123], false],
+        ];
     }
 
     /**
@@ -1031,13 +1033,13 @@ class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function validateHandlesDictionaryTypeWithFormatPropertiesConstraint($value, $expectedResult)
     {
-        $schema = array(
+        $schema = [
             'type' => 'dictionary',
-            'formatProperties' => array(
+            'formatProperties' => [
                 'ip-address' => 'string'
-            ),
+            ],
             'additionalProperties' => false
-        );
+        ];
         $this->assertSuccess($this->configurationValidator->validate($value, $schema), $expectedResult);
     }
 
@@ -1046,11 +1048,11 @@ class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function validateHandlesDictionaryTypeWithAdditionalPropertyFalseConstraintDataProvider()
     {
-        return array(
-            array(array('empty' => null), true),
-            array(array('foo' => 123, 'bar' => 'baz'), true),
-            array(array('foo' => 123, 'bar' => 'baz', 'baz' => 'blah'), false)
-        );
+        return [
+            [['empty' => null], true],
+            [['foo' => 123, 'bar' => 'baz'], true],
+            [['foo' => 123, 'bar' => 'baz', 'baz' => 'blah'], false]
+        ];
     }
 
     /**
@@ -1059,15 +1061,15 @@ class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function validateHandlesDictionaryTypeWithAdditionalPropertyFalseConstraint($value, $expectedResult)
     {
-        $schema = array(
+        $schema = [
             'type' => 'dictionary',
-            'properties' => array(
+            'properties' => [
                 'empty' => 'null',
                 'foo' => 'integer',
-                'bar' => array('type' => 'string')
-            ),
+                'bar' => ['type' => 'string']
+            ],
             'additionalProperties' => false
-        );
+        ];
         $this->assertSuccess($this->configurationValidator->validate($value, $schema), $expectedResult);
     }
 
@@ -1076,11 +1078,11 @@ class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function validateHandlesDictionaryTypeWithAdditionalPropertySchemaConstraintDataProvider()
     {
-        return array(
-            array(array('foo' => 123, 'bar' => 'baz'), true),
-            array(array('foo' => 123, 'bar' => 'baz', 'baz' => 123), true),
-            array(array('foo' => 123, 'bar' => 123, 'baz' => 'string'), false)
-        );
+        return [
+            [['foo' => 123, 'bar' => 'baz'], true],
+            [['foo' => 123, 'bar' => 'baz', 'baz' => 123], true],
+            [['foo' => 123, 'bar' => 123, 'baz' => 'string'], false]
+        ];
     }
 
     /**
@@ -1089,14 +1091,14 @@ class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function validateHandlesDictionaryTypeWithAdditionalPropertySchemaConstraint($value, $expectedResult)
     {
-        $schema = array(
+        $schema = [
             'type' => 'dictionary',
-            'properties' => array(
+            'properties' => [
                 'foo' => 'integer',
-                'bar' => array('type' => 'string')
-            ),
+                'bar' => ['type' => 'string']
+            ],
             'additionalProperties' => 'integer'
-        );
+        ];
         $this->assertSuccess($this->configurationValidator->validate($value, $schema), $expectedResult);
     }
 
@@ -1105,13 +1107,13 @@ class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function validateHandlesDictionaryTypeWithAdditionalPropertyTrueSchemaConstraint()
     {
-        $schema = array(
+        $schema = [
             'type' => 'dictionary',
             'additionalProperties' => true
-        );
-        $value = array(
+        ];
+        $value = [
             'foo' => 42
-        );
+        ];
 
         $this->assertSuccess($this->configurationValidator->validate($value, $schema), true);
     }
@@ -1123,10 +1125,10 @@ class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function validateHandlesNullTypeDataProvider()
     {
-        return array(
-            array(null, true),
-            array(123, false)
-        );
+        return [
+            [null, true],
+            [123, false]
+        ];
     }
 
     /**
@@ -1135,9 +1137,9 @@ class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function validateHandlesNullType($value, $expectedResult)
     {
-        $schema = array(
+        $schema = [
             'type' => 'null'
-        );
+        ];
         $this->assertSuccess($this->configurationValidator->validate($value, $schema), $expectedResult);
     }
 
@@ -1146,10 +1148,10 @@ class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function validateHandlesUnknownTypeDataProvider()
     {
-        return array(
-            array(null, false),
-            array(123, false)
-        );
+        return [
+            [null, false],
+            [123, false]
+        ];
     }
 
     /**
@@ -1158,9 +1160,9 @@ class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function validateHandlesUnknownType($value, $expectedResult)
     {
-        $schema = array(
+        $schema = [
             'type' => 'unknown'
-        );
+        ];
         $this->assertSuccess($this->configurationValidator->validate($value, $schema), $expectedResult);
     }
 
@@ -1172,14 +1174,14 @@ class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function validateAnyTypeResultHasNoErrorsInAnyCaseDataProvider()
     {
-        return array(
-            array(23, true),
-            array(23.42, true),
-            array('foo', true),
-            array(array(1,2,3), true),
-            array(array('A' => 1, 'B' => 2, 'C' => 3), true),
-            array(null, true),
-        );
+        return [
+            [23, true],
+            [23.42, true],
+            ['foo', true],
+            [[1,2,3], true],
+            [['A' => 1, 'B' => 2, 'C' => 3], true],
+            [null, true],
+        ];
     }
 
     /**
@@ -1188,9 +1190,9 @@ class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function validateAnyTypeResultHasNoErrorsInAnyCase($value, $expectedResult)
     {
-        $schema = array(
+        $schema = [
             'type' => 'any'
-        );
+        ];
         $this->assertSuccess($this->configurationValidator->validate($value, $schema), $expectedResult);
     }
 }

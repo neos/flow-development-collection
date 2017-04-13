@@ -19,9 +19,9 @@ namespace TYPO3\Flow\Error;
 class Result
 {
     /**
-     * @var array<\TYPO3\Flow\Error\Error>
+     * @var array<Error>
      */
-    protected $errors = array();
+    protected $errors = [];
 
     /**
      * Caches the existence of errors
@@ -30,9 +30,9 @@ class Result
     protected $errorsExist = false;
 
     /**
-     * @var array<\TYPO3\Flow\Error\Warning>
+     * @var array<Warning>
      */
-    protected $warnings = array();
+    protected $warnings = [];
 
     /**
      * Caches the existence of warning
@@ -41,9 +41,9 @@ class Result
     protected $warningsExist = false;
 
     /**
-     * @var array<\TYPO3\Flow\Error\Notice>
+     * @var array<Notice>
      */
-    protected $notices = array();
+    protected $notices = [];
 
     /**
      * Caches the existence of notices
@@ -54,9 +54,9 @@ class Result
     /**
      * The result objects for the sub properties
      *
-     * @var array<\TYPO3\Flow\Error\Result>
+     * @var array<Result>
      */
-    protected $propertyResults = array();
+    protected $propertyResults = [];
 
     /**
      * @var Result
@@ -129,7 +129,7 @@ class Result
      * Get all errors in the current Result object (non-recursive)
      *
      * @param string $messageTypeFilter if specified only errors implementing the given class are returned
-     * @return array<\TYPO3\Flow\Error\Error>
+     * @return array<Error>
      * @api
      */
     public function getErrors($messageTypeFilter = null)
@@ -141,7 +141,7 @@ class Result
      * Get all warnings in the current Result object (non-recursive)
      *
      * @param string $messageTypeFilter if specified only warnings implementing the given class are returned
-     * @return array<\TYPO3\Flow\Error\Warning>
+     * @return array<Warning>
      * @api
      */
     public function getWarnings($messageTypeFilter = null)
@@ -153,7 +153,7 @@ class Result
      * Get all notices in the current Result object (non-recursive)
      *
      * @param string $messageTypeFilter if specified only notices implementing the given class are returned
-     * @return array<\TYPO3\Flow\Error\Notice>
+     * @return array<Notice>
      * @api
      */
     public function getNotices($messageTypeFilter = null)
@@ -345,12 +345,12 @@ class Result
      * where the key is the property path where the error occurred, and the
      * value is a list of all errors (stored as array)
      *
-     * @return array<\TYPO3\Flow\Error\Error>
+     * @return array<Error>
      * @api
      */
     public function getFlattenedErrors()
     {
-        $result = array();
+        $result = [];
         $this->flattenTree('errors', $result);
         return $result;
     }
@@ -361,13 +361,13 @@ class Result
      * value is a list of all errors (stored as array)
      *
      * @param string $type
-     * @return array<\TYPO3\Flow\Error\Error>
+     * @return array<Error>
      * @api
      */
     public function getFlattenedErrorsOfType($type)
     {
-        $result = array();
-        $this->flattenTree('errors', $result, array(), $type);
+        $result = [];
+        $this->flattenTree('errors', $result, [], $type);
         return $result;
     }
 
@@ -376,12 +376,12 @@ class Result
      * where the key is the property path where the warning occurred, and the
      * value is a list of all warnings (stored as array)
      *
-     * @return array<\TYPO3\Flow\Error\Warning>
+     * @return array<Warning>
      * @api
      */
     public function getFlattenedWarnings()
     {
-        $result = array();
+        $result = [];
         $this->flattenTree('warnings', $result);
         return $result;
     }
@@ -391,12 +391,12 @@ class Result
      * where the key is the property path where the notice occurred, and the
      * value is a list of all notices (stored as array)
      *
-     * @return array<\TYPO3\Flow\Error\Notice>
+     * @return array<Notice>
      * @api
      */
     public function getFlattenedNotices()
     {
-        $result = array();
+        $result = [];
         $this->flattenTree('notices', $result);
         return $result;
     }
@@ -410,7 +410,7 @@ class Result
      * @param string $messageTypeFilter If specified only messages implementing the given class name are taken into account
      * @return void
      */
-    protected function flattenTree($propertyName, array &$result, array $level = array(), $messageTypeFilter = null)
+    public function flattenTree($propertyName, array &$result, array $level = [], $messageTypeFilter = null)
     {
         if (count($this->$propertyName) > 0) {
             $propertyPath = implode('.', $level);
@@ -487,7 +487,7 @@ class Result
     /**
      * Get a list of all sub Result objects available.
      *
-     * @return array<\TYPO3\Flow\Error\Result>
+     * @return array<Result>
      */
     public function getSubResults()
     {
@@ -501,14 +501,14 @@ class Result
      */
     public function clear()
     {
-        $this->errors = array();
-        $this->notices = array();
-        $this->warnings = array();
+        $this->errors = [];
+        $this->notices = [];
+        $this->warnings = [];
 
         $this->warningsExist = false;
         $this->noticesExist = false;
         $this->errorsExist = false;
 
-        $this->propertyResults = array();
+        $this->propertyResults = [];
     }
 }

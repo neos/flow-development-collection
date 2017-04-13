@@ -11,6 +11,7 @@ namespace TYPO3\Eel\FlowQuery\Operations;
  * source code.
  */
 
+use TYPO3\Eel\FlowQuery\FlowQuery;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
@@ -43,11 +44,11 @@ class GetOperation extends AbstractOperation
     /**
      * {@inheritdoc}
      *
-     * @param \TYPO3\Eel\FlowQuery\FlowQuery $flowQuery the FlowQuery object
+     * @param FlowQuery $flowQuery the FlowQuery object
      * @param array $arguments the context index to fetch from
      * @return mixed
      */
-    public function evaluate(\TYPO3\Eel\FlowQuery\FlowQuery $flowQuery, array $arguments)
+    public function evaluate(FlowQuery $flowQuery, array $arguments)
     {
         $context = $flowQuery->getContext();
         if (isset($arguments[0])) {

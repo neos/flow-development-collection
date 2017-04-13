@@ -12,6 +12,8 @@ namespace TYPO3\Eel;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Reflection\Exception\PropertyNotAccessibleException;
+use TYPO3\Flow\Reflection\ObjectAccess;
 
 /**
  * A Eel evaluation context
@@ -60,8 +62,8 @@ class Context
                 return array_key_exists($path, $this->value) ? $this->value[$path] : null;
             } elseif (is_object($this->value)) {
                 try {
-                    return \TYPO3\Flow\Reflection\ObjectAccess::getProperty($this->value, $path);
-                } catch (\TYPO3\Flow\Reflection\Exception\PropertyNotAccessibleException $exception) {
+                    return ObjectAccess::getProperty($this->value, $path);
+                } catch (PropertyNotAccessibleException $exception) {
                     return null;
                 }
             }
@@ -74,7 +76,7 @@ class Context
      * Get a value by path and wrap it into another context
      *
      * @param string $path
-     * @return \TYPO3\Eel\Context The wrapped value
+     * @return Context The wrapped value
      */
     public function getAndWrap($path = null)
     {
@@ -89,12 +91,12 @@ class Context
      * @return mixed
      * @throws \Exception
      */
-    public function call($method, array $arguments = array())
+    public function call($method, array $arguments = [])
     {
         if ($this->value === null) {
             return null;
         } elseif (is_object($this->value)) {
-            $callback = array($this->value, $method);
+            $callback = [$this->value, $method];
         } elseif (is_array($this->value)) {
             if (!array_key_exists($method, $this->value)) {
                 throw new EvaluationException('Array has no function "' . $method . '"', 1344350459);
@@ -122,7 +124,7 @@ class Context
      * @param array $arguments
      * @return mixed
      */
-    public function callAndWrap($method, array $arguments = array())
+    public function callAndWrap($method, array $arguments = [])
     {
         return $this->wrap($this->call($method, $arguments));
     }
@@ -131,7 +133,7 @@ class Context
      * Wraps the given value in a new Context
      *
      * @param mixed $value
-     * @return \TYPO3\Eel\Context
+     * @return Context
      */
     public function wrap($value)
     {
@@ -183,7 +185,7 @@ class Context
      *
      * @param mixed $value
      * @param string $key
-     * @return \TYPO3\Eel\Context
+     * @return Context
      * @throws EvaluationException
      */
     public function push($value, $key = null)

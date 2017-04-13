@@ -104,7 +104,7 @@ Session Backends
 
 The session implementation of Flow is written in pure PHP and uses the caching
 framework as its storage. This allows for storing session data in a variety of
-backends, including PDO databases, APC, Memcache and Redis.
+backends, including PDO databases, APC and Redis.
 
 The preferred storage backend for the built-in session is defined through a custom
 Caches.yaml file, placed in a package or the global configuration directory:

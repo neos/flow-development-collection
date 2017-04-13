@@ -11,13 +11,15 @@ namespace TYPO3\Flow\Tests\Unit\Persistence\Aspect;
  * source code.
  */
 
+use TYPO3\Flow\Aop\JoinPointInterface;
 use TYPO3\Flow\Persistence\Aspect\PersistenceMagicAspect;
+use TYPO3\Flow\Persistence\PersistenceManagerInterface;
+use TYPO3\Flow\Tests\UnitTestCase;
 
 /**
  * Testcase for the PersistenceMagicAspect
- *
  */
-class PersistenceMagicAspectTest extends \TYPO3\Flow\Tests\UnitTestCase
+class PersistenceMagicAspectTest extends UnitTestCase
 {
     /**
      * @var PersistenceMagicAspect
@@ -25,12 +27,12 @@ class PersistenceMagicAspectTest extends \TYPO3\Flow\Tests\UnitTestCase
     protected $persistenceMagicAspect;
 
     /**
-     * @var \TYPO3\Flow\Aop\JoinPointInterface
+     * @var JoinPointInterface
      */
     protected $mockJoinPoint;
 
     /**
-     * @var \TYPO3\Flow\Persistence\PersistenceManagerInterface
+     * @var PersistenceManagerInterface
      */
     protected $mockPersistenceManager;
 
@@ -39,12 +41,12 @@ class PersistenceMagicAspectTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function setUp()
     {
-        $this->persistenceMagicAspect = $this->getAccessibleMock(\TYPO3\Flow\Persistence\Aspect\PersistenceMagicAspect::class, array('dummy'), array());
+        $this->persistenceMagicAspect = $this->getAccessibleMock(PersistenceMagicAspect::class, ['dummy'], []);
 
-        $this->mockPersistenceManager = $this->createMock(\TYPO3\Flow\Persistence\PersistenceManagerInterface::class);
+        $this->mockPersistenceManager = $this->createMock(PersistenceManagerInterface::class);
         $this->persistenceMagicAspect->_set('persistenceManager', $this->mockPersistenceManager);
 
-        $this->mockJoinPoint = $this->createMock(\TYPO3\Flow\Aop\JoinPointInterface::class);
+        $this->mockJoinPoint = $this->createMock(JoinPointInterface::class);
     }
 
     /**

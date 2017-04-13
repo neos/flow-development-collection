@@ -12,20 +12,21 @@ namespace TYPO3\Flow\Tests\Unit\I18n\Cldr;
  */
 
 use org\bovigo\vfs\vfsStream;
+use TYPO3\Flow\Tests\UnitTestCase;
+use TYPO3\Flow\I18n;
 
 /**
  * Testcase for the CldrRepository
- *
  */
-class CldrRepositoryTest extends \TYPO3\Flow\Tests\UnitTestCase
+class CldrRepositoryTest extends UnitTestCase
 {
     /**
-     * @var \TYPO3\Flow\I18n\Cldr\CldrRepository
+     * @var I18n\Cldr\CldrRepository
      */
     protected $repository;
 
     /**
-     * @var \TYPO3\Flow\I18n\Locale
+     * @var I18n\Locale
      */
     protected $dummyLocale;
 
@@ -36,10 +37,10 @@ class CldrRepositoryTest extends \TYPO3\Flow\Tests\UnitTestCase
     {
         vfsStream::setup('Foo');
 
-        $this->repository = $this->getAccessibleMock(\TYPO3\Flow\I18n\Cldr\CldrRepository::class, array('dummy'));
+        $this->repository = $this->getAccessibleMock(I18n\Cldr\CldrRepository::class, ['dummy']);
         $this->repository->_set('cldrBasePath', 'vfs://Foo/');
 
-        $this->dummyLocale = new \TYPO3\Flow\I18n\Locale('en');
+        $this->dummyLocale = new I18n\Locale('en');
     }
 
     /**

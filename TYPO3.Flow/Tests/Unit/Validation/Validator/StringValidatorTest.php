@@ -11,14 +11,16 @@ namespace TYPO3\Flow\Tests\Unit\Validation\Validator;
  * source code.
  */
 
+use TYPO3\Flow\Validation\Validator\StringValidator;
+
 require_once('AbstractValidatorTestcase.php');
 /**
  * Testcase for the string length validator
  *
  */
-class StringValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Validator\AbstractValidatorTestcase
+class StringValidatorTest extends AbstractValidatorTestcase
 {
-    protected $validatorClassName = \TYPO3\Flow\Validation\Validator\StringValidator::class;
+    protected $validatorClassName = StringValidator::class;
 
     /**
      * @test

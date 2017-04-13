@@ -44,7 +44,7 @@ class AbstractMessageTest extends UnitTestCase
         $message->setHeader('MyHeader', 'MyValue');
         $message->setHeader('MyHeader', 'OtherValue');
 
-        $expectedHeaders = array('MyHeader' => array('OtherValue'));
+        $expectedHeaders = ['MyHeader' => ['OtherValue']];
         $this->assertEquals($expectedHeaders, $message->getHeaders()->getAll());
     }
 
@@ -57,7 +57,7 @@ class AbstractMessageTest extends UnitTestCase
         $message->setHeader('MyHeader', 'MyValue', false);
         $message->setHeader('MyHeader', 'OtherValue', false);
 
-        $expectedHeaders = array('MyHeader' => array('MyValue', 'OtherValue'));
+        $expectedHeaders = ['MyHeader' => ['MyValue', 'OtherValue']];
         $this->assertEquals($expectedHeaders, $message->getHeaders()->getAll());
     }
 
@@ -72,7 +72,7 @@ class AbstractMessageTest extends UnitTestCase
         $this->assertEquals('MyValue', $message->getHeader('MyHeader'));
 
         $message->setHeader('MyHeader', 'OtherValue', false);
-        $this->assertEquals(array('MyValue', 'OtherValue'), $message->getHeader('MyHeader'));
+        $this->assertEquals(['MyValue', 'OtherValue'], $message->getHeader('MyHeader'));
     }
 
     /**
@@ -193,7 +193,7 @@ class AbstractMessageTest extends UnitTestCase
 
         $this->assertSame($cookie, $message->getCookie('foo'));
         $this->assertSame($cookie, $message->getHeaders()->getCookie('foo'));
-        $this->assertSame(array('foo' => $cookie), $message->getCookies());
+        $this->assertSame(['foo' => $cookie], $message->getCookies());
         $this->assertTrue($message->hasCookie('foo'));
         $message->removeCookie('foo');
         $this->assertFalse($message->hasCookie('foo'));
@@ -204,6 +204,6 @@ class AbstractMessageTest extends UnitTestCase
      */
     protected function getAbstractMessageMock()
     {
-        return $this->getMockForAbstractClass(\TYPO3\Flow\Http\AbstractMessage::class);
+        return $this->getMockForAbstractClass(AbstractMessage::class);
     }
 }

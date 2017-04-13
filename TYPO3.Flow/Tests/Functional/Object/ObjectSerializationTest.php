@@ -11,30 +11,32 @@ namespace TYPO3\Flow\Tests\Functional\Object;
  * source code.
  */
 
+use TYPO3\Flow\Tests\FunctionalTestCase;
+
 /**
  * Functional tests for Object serialization.
  *
  */
-class ObjectSerializationTest extends \TYPO3\Flow\Tests\FunctionalTestCase
+class ObjectSerializationTest extends FunctionalTestCase
 {
     /**
      * @test
      */
     public function serializingAnObjectAndUnserializingWillReinjectProperties()
     {
-        $object = $this->objectManager->get(\TYPO3\Flow\Tests\Functional\Object\Fixtures\ClassToBeSerialized::class);
+        $object = $this->objectManager->get(Fixtures\ClassToBeSerialized::class);
         $object->interfaceDeclaredSingletonButImplementationIsPrototype->getSingletonA();
-        $this->assertInstanceOf(\TYPO3\Flow\Tests\Functional\Object\Fixtures\PrototypeClassA::class, $object->interfaceDeclaredSingletonButImplementationIsPrototype);
+        $this->assertInstanceOf(Fixtures\PrototypeClassA::class, $object->interfaceDeclaredSingletonButImplementationIsPrototype);
 
         $object->prototypeB->setSomeProperty('This is not a coffee machine.');
 
         $serializedObject = serialize($object);
         $object = unserialize($serializedObject);
 
-        $this->assertInstanceOf(\TYPO3\Flow\Tests\Functional\Object\Fixtures\ClassToBeSerialized::class, $object);
+        $this->assertInstanceOf(Fixtures\ClassToBeSerialized::class, $object);
         $object->interfaceDeclaredSingletonButImplementationIsPrototype->getSingletonA();
-        $this->assertInstanceOf(\TYPO3\Flow\Tests\Functional\Object\Fixtures\PrototypeClassA::class, $object->interfaceDeclaredSingletonButImplementationIsPrototype);
-        $this->assertInstanceOf(\TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassC::class, $object->eagerC);
+        $this->assertInstanceOf(Fixtures\PrototypeClassA::class, $object->interfaceDeclaredSingletonButImplementationIsPrototype);
+        $this->assertInstanceOf(Fixtures\SingletonClassC::class, $object->eagerC);
 
         $this->assertEquals(null, $object->prototypeB->getSomeProperty(), 'An injected prototype instance will be overwritten with a fresh instance on unserialize.');
     }
@@ -44,9 +46,9 @@ class ObjectSerializationTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function flowObjectPropertiesToSerializeContainsOnlyPropertiesThatCannotBeReinjected()
     {
-        $object = $this->objectManager->get(\TYPO3\Flow\Tests\Functional\Object\Fixtures\ClassToBeSerialized::class);
+        $object = $this->objectManager->get(Fixtures\ClassToBeSerialized::class);
         $object->interfaceDeclaredSingletonButImplementationIsPrototype->getSingletonA();
-        $this->assertInstanceOf(\TYPO3\Flow\Tests\Functional\Object\Fixtures\PrototypeClassA::class, $object->interfaceDeclaredSingletonButImplementationIsPrototype);
+        $this->assertInstanceOf(Fixtures\PrototypeClassA::class, $object->interfaceDeclaredSingletonButImplementationIsPrototype);
 
         $propertiesToBeSerialized = $object->__sleep();
 

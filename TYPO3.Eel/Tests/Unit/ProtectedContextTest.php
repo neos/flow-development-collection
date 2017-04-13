@@ -13,11 +13,13 @@ namespace TYPO3\Eel\Tests\Unit;
 
 use TYPO3\Eel\CompilingEvaluator;
 use TYPO3\Eel\ProtectedContext;
+use TYPO3\Eel\Tests\Unit\Fixtures\TestObject;
+use TYPO3\Flow\Tests\UnitTestCase;
 
 /**
  * Untrusted context test
  */
-class ProtectedContextTest extends \TYPO3\Flow\Tests\UnitTestCase
+class ProtectedContextTest extends UnitTestCase
 {
     /**
      * @test
@@ -25,11 +27,11 @@ class ProtectedContextTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function methodCallToAnyValueIsNotAllowed()
     {
-        $securedObject = new \TYPO3\Eel\Tests\Unit\Fixtures\TestObject();
+        $securedObject = new TestObject();
 
-        $context = new ProtectedContext(array(
+        $context = new ProtectedContext([
             'secure' => $securedObject
-        ));
+        ]);
 
         $evaluator = new CompilingEvaluator();
         $evaluator->evaluate('secure.callMe("Christopher")', $context);
@@ -41,11 +43,11 @@ class ProtectedContextTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function arrayAccessResultIsStillUntrusted()
     {
-        $securedObject = new \TYPO3\Eel\Tests\Unit\Fixtures\TestObject();
+        $securedObject = new TestObject();
 
-        $context = new ProtectedContext(array(
-            'secure' => array($securedObject)
-        ));
+        $context = new ProtectedContext([
+            'secure' => [$securedObject]
+        ]);
 
         $evaluator = new CompilingEvaluator();
         $evaluator->evaluate('secure[0].callMe("Christopher")', $context);
@@ -56,13 +58,13 @@ class ProtectedContextTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function propertyAccessToAnyValueIsAllowed()
     {
-        $object = (object)array(
+        $object = (object)[
             'foo' => 'Bar'
-        );
+        ];
 
-        $context = new ProtectedContext(array(
+        $context = new ProtectedContext([
             'value' => $object
-        ));
+        ]);
 
         $evaluator = new CompilingEvaluator();
         $result = $evaluator->evaluate('value.foo', $context);
@@ -75,9 +77,9 @@ class ProtectedContextTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function methodCallToWhitelistedValueIsAllowed()
     {
-        $context = new ProtectedContext(array(
+        $context = new ProtectedContext([
             'String' => new \TYPO3\Eel\Helper\StringHelper()
-        ));
+        ]);
         $context->whitelist('String.*');
 
         $evaluator = new CompilingEvaluator();
@@ -93,11 +95,11 @@ class ProtectedContextTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function firstLevelFunctionsHaveToBeWhitelisted()
     {
-        $context = new ProtectedContext(array(
+        $context = new ProtectedContext([
             'ident' => function ($value) {
                 return $value;
             }
-        ));
+        ]);
 
         $evaluator = new CompilingEvaluator();
 
@@ -110,15 +112,15 @@ class ProtectedContextTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function resultOfFirstLevelMethodCallIsProtected()
     {
-        $securedObject = new \TYPO3\Eel\Tests\Unit\Fixtures\TestObject();
+        $securedObject = new TestObject();
 
-        $context = new ProtectedContext(array(
+        $context = new ProtectedContext([
             'ident' => function ($value) {
                 return $value;
             },
             'value' => $securedObject
-        ));
-        $context->whitelist(array('ident'));
+        ]);
+        $context->whitelist(['ident']);
 
         $evaluator = new CompilingEvaluator();
 
@@ -134,16 +136,16 @@ class ProtectedContextTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function resultOfWhitelistedMethodCallIsProtected()
     {
-        $securedObject = new \TYPO3\Eel\Tests\Unit\Fixtures\TestObject();
+        $securedObject = new TestObject();
 
-        $context = new ProtectedContext(array(
-            'Array' => array(
+        $context = new ProtectedContext([
+            'Array' => [
                 'reverse' => function ($value) {
                     return array_reverse($value);
                 }
-            ),
-            'value' => array($securedObject)
-        ));
+            ],
+            'value' => [$securedObject]
+        ]);
         $context->whitelist('Array');
 
         $evaluator = new CompilingEvaluator();
@@ -159,17 +161,17 @@ class ProtectedContextTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function chainedCallsArePossibleWithExplicitContextWrapping()
     {
-        $context = new ProtectedContext(array(
+        $context = new ProtectedContext([
             // Simulate something like FlowQuery
             'q' => function ($value) {
-                $context = new ProtectedContext(array('count' => function () use ($value) {
+                $context = new ProtectedContext(['count' => function () use ($value) {
                     return count($value);
-                }));
+                }]);
                 $context->whitelist('*');
                 return $context;
             },
-            'value' => array('Foo', 'Bar')
-        ));
+            'value' => ['Foo', 'Bar']
+        ]);
         $context->whitelist('q');
 
         $evaluator = new CompilingEvaluator();
@@ -183,13 +185,13 @@ class ProtectedContextTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function protectedContextAwareInterfaceAllowsCallsDynamicallyWithoutWhitelist()
     {
-        $securedObject = new \TYPO3\Eel\Tests\Unit\Fixtures\TestObject();
+        $securedObject = new TestObject();
 
         $securedObject->setDynamicMethodName('callMe');
 
-        $context = new ProtectedContext(array(
+        $context = new ProtectedContext([
             'value' => $securedObject
-        ));
+        ]);
 
         $evaluator = new CompilingEvaluator();
 
@@ -202,9 +204,9 @@ class ProtectedContextTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function methodCallToNullValueDoesNotThrowNotAllowedException()
     {
-        $context = new ProtectedContext(array(
+        $context = new ProtectedContext([
 
-        ));
+        ]);
 
         $evaluator = new CompilingEvaluator();
         $result = $evaluator->evaluate('unknown.someMethod()', $context);

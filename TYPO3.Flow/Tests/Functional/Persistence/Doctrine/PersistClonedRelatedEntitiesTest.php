@@ -11,14 +11,14 @@ namespace TYPO3\Flow\Tests\Functional\Persistence\Doctrine;
  * source code.
  */
 
-use TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEmbeddable;
-use TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity;
-use TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestValueObject;
+use TYPO3\Flow\Persistence\Doctrine\PersistenceManager;
+use TYPO3\Flow\Tests\Functional\Persistence\Fixtures;
+use TYPO3\Flow\Tests\FunctionalTestCase;
 
 /**
  * Testcase for persisting cloned related entities
  */
-class PersistClonedRelatedEntitiesTest extends \TYPO3\Flow\Tests\FunctionalTestCase
+class PersistClonedRelatedEntitiesTest extends FunctionalTestCase
 {
     /**
      * @var boolean
@@ -26,7 +26,7 @@ class PersistClonedRelatedEntitiesTest extends \TYPO3\Flow\Tests\FunctionalTestC
     protected static $testablePersistenceEnabled = true;
 
     /**
-     * @var \TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntityRepository;
+     * @var Fixtures\TestEntityRepository
      */
     protected $testEntityRepository;
 
@@ -36,10 +36,10 @@ class PersistClonedRelatedEntitiesTest extends \TYPO3\Flow\Tests\FunctionalTestC
     public function setUp()
     {
         parent::setUp();
-        if (!$this->persistenceManager instanceof \TYPO3\Flow\Persistence\Doctrine\PersistenceManager) {
+        if (!$this->persistenceManager instanceof PersistenceManager) {
             $this->markTestSkipped('Doctrine persistence is not enabled');
         }
-        $this->testEntityRepository = $this->objectManager->get(\TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntityRepository::class);
+        $this->testEntityRepository = $this->objectManager->get(Fixtures\TestEntityRepository::class);
     }
 
     /**
@@ -47,9 +47,9 @@ class PersistClonedRelatedEntitiesTest extends \TYPO3\Flow\Tests\FunctionalTestC
      */
     public function relatedEntitiesCanBePersistedWhenFetchedAsDoctrineProxy()
     {
-        $entity = new TestEntity();
+        $entity = new Fixtures\TestEntity();
         $entity->setName('Andi');
-        $relatedEntity = new TestEntity();
+        $relatedEntity = new Fixtures\TestEntity();
         $relatedEntity->setName('Robert');
         $entity->setRelatedEntity($relatedEntity);
 
@@ -68,7 +68,7 @@ class PersistClonedRelatedEntitiesTest extends \TYPO3\Flow\Tests\FunctionalTestC
 
         $clonedEntityIdentifier = $this->persistenceManager->getIdentifierByObject($clonedRelatedEntity);
         $clonedLoadedEntity = $this->testEntityRepository->findByIdentifier($clonedEntityIdentifier);
-        $this->assertInstanceOf(\TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity::class, $clonedLoadedEntity);
+        $this->assertInstanceOf(Fixtures\TestEntity::class, $clonedLoadedEntity);
     }
 
     /**
@@ -77,13 +77,13 @@ class PersistClonedRelatedEntitiesTest extends \TYPO3\Flow\Tests\FunctionalTestC
     public function embeddablesInsideClonedProxiedEntitiesAreCorrectlyLoaded()
     {
         $this->markTestSkipped('This is possibly a bug of Doctrine');
-        $entity = new TestEntity();
+        $entity = new Fixtures\TestEntity();
         $entity->setName('Andi');
-        $relatedEntity = new TestEntity();
+        $relatedEntity = new Fixtures\TestEntity();
         $relatedEntity->setName('Robert');
-        $embedded = new TestEmbeddable('Foo');
+        $embedded = new Fixtures\TestEmbeddable('Foo');
         $relatedEntity->setEmbedded($embedded);
-        $valueObject = new TestValueObject('Bar');
+        $valueObject = new Fixtures\TestValueObject('Bar');
         $relatedEntity->setRelatedValueObject($valueObject);
         $entity->setRelatedEntity($relatedEntity);
 

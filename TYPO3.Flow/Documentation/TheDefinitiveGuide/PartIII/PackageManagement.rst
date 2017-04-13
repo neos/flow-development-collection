@@ -53,7 +53,7 @@ The location for Flow packages installed via Composer (as opposed to manually
 placing them in a *Packages/* sub folder) is determined by looking at the package
 type in the manifest file. This would place a package into *Packages/Acme*::
 
- "type": "typo3-flow-acme"
+ "type": "neos-acme"
 
 If you would like to use ``package:create`` to create packages of this type in
 *Packages/Acme* instead of the default location *Packages/Application*, add an
@@ -63,7 +63,14 @@ entry in the *Settings.yaml* of the package that expects packages of that type::
     Flow:
       package:
         packagesPathByType:
-          'typo3-flow-acme': 'Acme'
+          'neos-acme': 'Acme'
+
+.. note::
+
+	Packages where the type starts with ``typo3-flow-`` or ``neos-`` are considered
+	Flow packages and will therefore be reflected and proxied by default. We recommend
+	using only the ``neos-`` prefix for the type when creating new packages (but only from
+	Flow 3.2 upwards) as the other is deprecated and will stop working in the next major.
 
 Package Directory Layout
 ========================

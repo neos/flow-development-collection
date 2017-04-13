@@ -20,7 +20,7 @@ class PrototypeClassAFactory
      * Creates a new instance of PrototypeClassA
      *
      * @param string $someProperty
-     * @return \TYPO3\Flow\Tests\Functional\Object\Fixtures\PrototypeClassA
+     * @return PrototypeClassA
      */
     public function create($someProperty)
     {

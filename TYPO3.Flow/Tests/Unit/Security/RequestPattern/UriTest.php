@@ -24,12 +24,12 @@ class UriTest extends UnitTestCase
 {
     public function matchRequestDataProvider()
     {
-        return array(
-            array('uriPath' => '', 'pattern' => '.*', 'shouldMatch' => true),
-            array('uriPath' => '', 'pattern' => '/some/nice/.*', 'shouldMatch' => false),
-            array('uriPath' => '/some/nice/path/to/index.php', 'pattern' => '/some/nice/.*', 'shouldMatch' => true),
-            array('uriPath' => '/some/other/path', 'pattern' => '.*/other/.*', 'shouldMatch' => true),
-        );
+        return [
+            ['uriPath' => '', 'pattern' => '.*', 'shouldMatch' => true],
+            ['uriPath' => '', 'pattern' => '/some/nice/.*', 'shouldMatch' => false],
+            ['uriPath' => '/some/nice/path/to/index.php', 'pattern' => '/some/nice/.*', 'shouldMatch' => true],
+            ['uriPath' => '/some/other/path', 'pattern' => '.*/other/.*', 'shouldMatch' => true],
+        ];
     }
 
     /**

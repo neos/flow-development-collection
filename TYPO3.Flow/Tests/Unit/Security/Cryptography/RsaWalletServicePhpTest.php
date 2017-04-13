@@ -12,16 +12,18 @@ namespace TYPO3\Flow\Tests\Unit\Security\Cryptography;
  */
 
 use org\bovigo\vfs\vfsStream;
+use TYPO3\Flow\Security\Cryptography\RsaWalletServicePhp;
+use TYPO3\Flow\Tests\UnitTestCase;
 
 /**
  * Testcase for for the PHP (OpenSSL) based RSAWalletService
  *
  * @requires function openssl_pkey_new
  */
-class RsaWalletServicePhpTest extends \TYPO3\Flow\Tests\UnitTestCase
+class RsaWalletServicePhpTest extends UnitTestCase
 {
     /**
-     * @var \TYPO3\Flow\Security\Cryptography\RsaWalletServicePhp
+     * @var RsaWalletServicePhp
      */
     protected $rsaWalletService;
 
@@ -41,7 +43,7 @@ class RsaWalletServicePhpTest extends \TYPO3\Flow\Tests\UnitTestCase
         vfsStream::setup('Foo');
         $settings['security']['cryptography']['RSAWalletServicePHP']['keystorePath'] = 'vfs://Foo/EncryptionKey';
 
-        $this->rsaWalletService = $this->getAccessibleMock(\TYPO3\Flow\Security\Cryptography\RsaWalletServicePhp::class, array('dummy'));
+        $this->rsaWalletService = $this->getAccessibleMock(RsaWalletServicePhp::class, ['dummy']);
         $this->rsaWalletService->injectSettings($settings);
 
         $this->keyPairUuid = $this->rsaWalletService->generateNewKeypair();

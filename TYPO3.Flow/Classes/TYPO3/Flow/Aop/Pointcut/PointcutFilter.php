@@ -12,13 +12,16 @@ namespace TYPO3\Flow\Aop\Pointcut;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Aop\Builder\ClassNameIndex;
+use TYPO3\Flow\Aop\Builder\ProxyClassBuilder;
+use TYPO3\Flow\Aop\Exception\UnknownPointcutException;
 
 /**
  * A filter which refers to another pointcut.
  *
  * @Flow\Proxy(false)
  */
-class PointcutFilter implements \TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface
+class PointcutFilter implements PointcutFilterInterface
 {
     /**
      * Name of the aspect class where the pointcut was declared
@@ -40,7 +43,7 @@ class PointcutFilter implements \TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface
 
     /**
      * A reference to the AOP Proxy ClassBuilder
-     * @var \TYPO3\Flow\Aop\Builder\ProxyClassBuilder
+     * @var ProxyClassBuilder
      */
     protected $proxyClassBuilder;
 
@@ -59,10 +62,10 @@ class PointcutFilter implements \TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface
     /**
      * Injects the AOP Proxy Class Builder
      *
-     * @param \TYPO3\Flow\Aop\Builder\ProxyClassBuilder $proxyClassBuilder
+     * @param ProxyClassBuilder $proxyClassBuilder
      * @return void
      */
-    public function injectProxyClassBuilder(\TYPO3\Flow\Aop\Builder\ProxyClassBuilder $proxyClassBuilder)
+    public function injectProxyClassBuilder(ProxyClassBuilder $proxyClassBuilder)
     {
         $this->proxyClassBuilder = $proxyClassBuilder;
     }
@@ -75,7 +78,7 @@ class PointcutFilter implements \TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface
      * @param string $methodDeclaringClassName Name of the class the method was originally declared in
      * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
      * @return boolean TRUE if the class matches, otherwise FALSE
-     * @throws \TYPO3\Flow\Aop\Exception\UnknownPointcutException
+     * @throws UnknownPointcutException
      */
     public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier)
     {
@@ -83,7 +86,7 @@ class PointcutFilter implements \TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface
             $this->pointcut = $this->proxyClassBuilder->findPointcut($this->aspectClassName, $this->pointcutMethodName);
         }
         if ($this->pointcut === false) {
-            throw new \TYPO3\Flow\Aop\Exception\UnknownPointcutException('No pointcut "' . $this->pointcutMethodName . '" found in aspect class "' . $this->aspectClassName . '" .', 1172223694);
+            throw new UnknownPointcutException('No pointcut "' . $this->pointcutMethodName . '" found in aspect class "' . $this->aspectClassName . '" .', 1172223694);
         }
         return $this->pointcut->matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier);
     }
@@ -109,7 +112,7 @@ class PointcutFilter implements \TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface
             $this->pointcut = $this->proxyClassBuilder->findPointcut($this->aspectClassName, $this->pointcutMethodName);
         }
         if ($this->pointcut === false) {
-            return array();
+            return [];
         }
 
         return $this->pointcut->getRuntimeEvaluationsDefinition();
@@ -118,10 +121,10 @@ class PointcutFilter implements \TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface
     /**
      * This method is used to optimize the matching process.
      *
-     * @param \TYPO3\Flow\Aop\Builder\ClassNameIndex $classNameIndex
-     * @return \TYPO3\Flow\Aop\Builder\ClassNameIndex
+     * @param ClassNameIndex $classNameIndex
+     * @return ClassNameIndex
      */
-    public function reduceTargetClassNames(\TYPO3\Flow\Aop\Builder\ClassNameIndex $classNameIndex)
+    public function reduceTargetClassNames(ClassNameIndex $classNameIndex)
     {
         if ($this->pointcut === null) {
             $this->pointcut = $this->proxyClassBuilder->findPointcut($this->aspectClassName, $this->pointcutMethodName);

@@ -11,10 +11,7 @@ namespace TYPO3\Flow\Tests\Unit\Http\Component;
  * source code.
  */
 
-use TYPO3\Flow\Http\Component\ComponentContext;
-use TYPO3\Flow\Http\Component\StandardsComplianceComponent;
-use TYPO3\Flow\Http\Request;
-use TYPO3\Flow\Http\Response;
+use TYPO3\Flow\Http;
 use TYPO3\Flow\Tests\UnitTestCase;
 
 /**
@@ -23,35 +20,35 @@ use TYPO3\Flow\Tests\UnitTestCase;
 class StandardsComplianceComponentTest extends UnitTestCase
 {
     /**
-     * @var StandardsComplianceComponent
+     * @var Http\Component\StandardsComplianceComponent
      */
     protected $standardsComplianceComponent;
 
     /**
-     * @var ComponentContext|\PHPUnit_Framework_MockObject_MockObject
+     * @var Http\Component\ComponentContext|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $mockComponentContext;
 
     /**
-     * @var Request|\PHPUnit_Framework_MockObject_MockObject
+     * @var Http\Request|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $mockHttpRequest;
 
     /**
-     * @var Response|\PHPUnit_Framework_MockObject_MockObject
+     * @var Http\Response|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $mockHttpResponse;
 
     public function setUp()
     {
-        $this->mockHttpRequest = $this->getMockBuilder(\TYPO3\Flow\Http\Request::class)->disableOriginalConstructor()->getMock();
-        $this->mockHttpResponse = $this->getMockBuilder(\TYPO3\Flow\Http\Response::class)->disableOriginalConstructor()->getMock();
+        $this->mockHttpRequest = $this->getMockBuilder(Http\Request::class)->disableOriginalConstructor()->getMock();
+        $this->mockHttpResponse = $this->getMockBuilder(Http\Response::class)->disableOriginalConstructor()->getMock();
 
-        $this->mockComponentContext = $this->getMockBuilder(\TYPO3\Flow\Http\Component\ComponentContext::class)->disableOriginalConstructor()->getMock();
+        $this->mockComponentContext = $this->getMockBuilder(Http\Component\ComponentContext::class)->disableOriginalConstructor()->getMock();
         $this->mockComponentContext->expects($this->any())->method('getHttpRequest')->will($this->returnValue($this->mockHttpRequest));
         $this->mockComponentContext->expects($this->any())->method('getHttpResponse')->will($this->returnValue($this->mockHttpResponse));
 
-        $this->standardsComplianceComponent = new StandardsComplianceComponent(array());
+        $this->standardsComplianceComponent = new Http\Component\StandardsComplianceComponent([]);
     }
 
     /**

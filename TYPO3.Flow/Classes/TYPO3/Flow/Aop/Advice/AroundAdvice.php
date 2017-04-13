@@ -11,20 +11,20 @@ namespace TYPO3\Flow\Aop\Advice;
  * source code.
  */
 
+use TYPO3\Flow\Aop\JoinPointInterface;
 
 /**
  * Implementation of the Around Advice.
- *
  */
-class AroundAdvice extends \TYPO3\Flow\Aop\Advice\AbstractAdvice implements \TYPO3\Flow\Aop\Advice\AdviceInterface
+class AroundAdvice extends AbstractAdvice implements AdviceInterface
 {
     /**
      * Invokes the advice method
      *
-     * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint The current join point which is passed to the advice method
+     * @param JoinPointInterface $joinPoint The current join point which is passed to the advice method
      * @return mixed Result of the advice method
      */
-    public function invoke(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint)
+    public function invoke(JoinPointInterface $joinPoint)
     {
         if ($this->runtimeEvaluator !== null && $this->runtimeEvaluator->__invoke($joinPoint, $this->objectManager) === false) {
             return $joinPoint->getAdviceChain()->proceed($joinPoint);

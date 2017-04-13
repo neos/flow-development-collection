@@ -11,29 +11,31 @@ namespace TYPO3\Flow\Tests\Unit\Utility;
  * source code.
  */
 
+use TYPO3\Flow\Http\Request;
+use TYPO3\Flow\Tests\UnitTestCase;
 use TYPO3\Flow\Utility\MediaTypes;
 
 /**
  * Testcase for the Utility Media Types class
  */
-class MediaTypesTest extends \TYPO3\Flow\Tests\UnitTestCase
+class MediaTypesTest extends UnitTestCase
 {
     /**
      * Data Provider
      */
     public function filenamesAndMediaTypes()
     {
-        return array(
-            array('', 'application/octet-stream'),
-            array('foo', 'application/octet-stream'),
-            array('foo.bar', 'application/octet-stream'),
-            array('index.html', 'text/html'),
-            array('video.mov', 'video/quicktime'),
-            array('image.jpeg', 'image/jpeg'),
-            array('image.jpg', 'image/jpeg'),
-            array('image.JPG', 'image/jpeg'),
-            array('image.JPEG', 'image/jpeg'),
-        );
+        return [
+            ['', 'application/octet-stream'],
+            ['foo', 'application/octet-stream'],
+            ['foo.bar', 'application/octet-stream'],
+            ['index.html', 'text/html'],
+            ['video.mov', 'video/quicktime'],
+            ['image.jpeg', 'image/jpeg'],
+            ['image.jpg', 'image/jpeg'],
+            ['image.JPG', 'image/jpeg'],
+            ['image.JPEG', 'image/jpeg'],
+        ];
     }
 
     /**
@@ -50,12 +52,12 @@ class MediaTypesTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function mediaTypesAndFilenames()
     {
-        return array(
-            array('foo/bar', array()),
-            array('application/octet-stream', array('bin', 'dms', 'lrf', 'mar', 'so', 'dist', 'distz', 'pkg', 'bpk', 'dump', 'elc', 'deploy')),
-            array('text/html', array('html', 'htm')),
-            array('text/csv', array('csv')),
-        );
+        return [
+            ['foo/bar', []],
+            ['application/octet-stream', ['bin', 'dms', 'lrf', 'mar', 'so', 'dist', 'distz', 'pkg', 'bpk', 'dump', 'elc', 'deploy']],
+            ['text/html', ['html', 'htm']],
+            ['text/csv', ['csv']],
+        ];
     }
 
     /**
@@ -64,7 +66,7 @@ class MediaTypesTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function getFilenameExtensionFromMediaTypeReturnsFirstFileExtensionFoundForThatMediaType($mediaType, $filenameExtensions)
     {
-        $this->assertSame(($filenameExtensions === array() ? '' : $filenameExtensions[0]), MediaTypes::getFilenameExtensionFromMediaType($mediaType));
+        $this->assertSame(($filenameExtensions === [] ? '' : $filenameExtensions[0]), MediaTypes::getFilenameExtensionFromMediaType($mediaType));
     }
 
     /**
@@ -82,11 +84,11 @@ class MediaTypesTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function mediaTypesAndParsedPieces()
     {
-        return array(
-            array('text/html', array('type' => 'text', 'subtype' => 'html', 'parameters' => array())),
-            array('application/json; charset=UTF-8', array('type' => 'application', 'subtype' => 'json', 'parameters' => array('charset' => 'UTF-8'))),
-            array('application/vnd.org.flow.coffee+json; kind =Arabica;weight= 15g;  sugar =none', array('type' => 'application', 'subtype' => 'vnd.org.flow.coffee+json', 'parameters' => array('kind' => 'Arabica', 'weight' => '15g', 'sugar' => 'none'))),
-        );
+        return [
+            ['text/html', ['type' => 'text', 'subtype' => 'html', 'parameters' => []]],
+            ['application/json; charset=UTF-8', ['type' => 'application', 'subtype' => 'json', 'parameters' => ['charset' => 'UTF-8']]],
+            ['application/vnd.org.flow.coffee+json; kind =Arabica;weight= 15g;  sugar =none', ['type' => 'application', 'subtype' => 'vnd.org.flow.coffee+json', 'parameters' => ['kind' => 'Arabica', 'weight' => '15g', 'sugar' => 'none']]],
+        ];
     }
 
     /**
@@ -95,7 +97,7 @@ class MediaTypesTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function parseMediaTypeReturnsAssociativeArrayWithIndividualPartsOfTheMediaType($mediaType, $expectedPieces)
     {
-        $request = $this->getAccessibleMock(\TYPO3\Flow\Http\Request::class, array('dummy'), array(), '', false);
+        $request = $this->getAccessibleMock(Request::class, ['dummy'], [], '', false);
         $actualPieces = MediaTypes::parseMediaType($mediaType);
         $this->assertSame($expectedPieces, $actualPieces);
     }
@@ -105,19 +107,19 @@ class MediaTypesTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function mediaRangesAndMatchingOrNonMatchingMediaTypes()
     {
-        return array(
-            array('invalid', 'text/html', false),
-            array('text/html', 'text/html', true),
-            array('text/html', 'text/plain', false),
-            array('*/*', 'text/html', true),
-            array('*/*', 'application/json', true),
-            array('text/*', 'text/html', true),
-            array('text/*', 'text/plain', true),
-            array('text/*', 'application/xml', false),
-            array('application/*', 'application/xml', true),
-            array('text/x-dvi', 'text/x-dvi', true),
-            array('-Foo.+/~Bar199', '-Foo.+/~Bar199', true),
-        );
+        return [
+            ['invalid', 'text/html', false],
+            ['text/html', 'text/html', true],
+            ['text/html', 'text/plain', false],
+            ['*/*', 'text/html', true],
+            ['*/*', 'application/json', true],
+            ['text/*', 'text/html', true],
+            ['text/*', 'text/plain', true],
+            ['text/*', 'application/xml', false],
+            ['application/*', 'application/xml', true],
+            ['text/x-dvi', 'text/x-dvi', true],
+            ['-Foo.+/~Bar199', '-Foo.+/~Bar199', true],
+        ];
     }
 
     /**
@@ -135,13 +137,13 @@ class MediaTypesTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function mediaTypesWithAndWithoutParameters()
     {
-        return array(
-            array('text/html', 'text/html'),
-            array('application/json; charset=UTF-8', 'application/json'),
-            array('application/vnd.org.flow.coffee+json; kind =Arabica;weight= 15g;  sugar =none', 'application/vnd.org.flow.coffee+json'),
-            array('invalid', null),
-            array('invalid/', null),
-        );
+        return [
+            ['text/html', 'text/html'],
+            ['application/json; charset=UTF-8', 'application/json'],
+            ['application/vnd.org.flow.coffee+json; kind =Arabica;weight= 15g;  sugar =none', 'application/vnd.org.flow.coffee+json'],
+            ['invalid', null],
+            ['invalid/', null],
+        ];
     }
 
     /**

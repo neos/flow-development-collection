@@ -11,11 +11,19 @@ namespace TYPO3\Flow\Tests\Unit\Object;
  * source code.
  */
 
+use TYPO3\Flow\Object\Configuration\Configuration;
+use TYPO3\Flow\Object\ObjectManager;
+use TYPO3\Flow\Object\ObjectSerializer;
+use TYPO3\Flow\Persistence\PersistenceManagerInterface;
+use TYPO3\Flow\Reflection\ReflectionService;
+use TYPO3\Flow\Session\SessionInterface;
+use TYPO3\Flow\Tests\UnitTestCase;
+use TYPO3\Flow\Annotations as Flow;
+
 /**
  * @testcase for the object serializer
- *
  */
-class ObjectSerializerTest extends \TYPO3\Flow\Tests\UnitTestCase
+class ObjectSerializerTest extends UnitTestCase
 {
     /**
      * @test
@@ -29,32 +37,32 @@ class ObjectSerializerTest extends \TYPO3\Flow\Tests\UnitTestCase
 			public $publicProperty = \'publicProperty\';
 		}');
 
-        $mockReflectionService = $this->getMockBuilder(\TYPO3\Flow\Reflection\ReflectionService::class)->disableOriginalConstructor()->getMock();
-        $mockReflectionService->expects($this->any())->method('getClassPropertyNames')->with($className)->will($this->returnValue(array('privateProperty', 'protectedProperty', 'publicProperty')));
+        $mockReflectionService = $this->getMockBuilder(ReflectionService::class)->disableOriginalConstructor()->getMock();
+        $mockReflectionService->expects($this->any())->method('getClassPropertyNames')->with($className)->will($this->returnValue(['privateProperty', 'protectedProperty', 'publicProperty']));
 
-        $objectSerializer = new \TYPO3\Flow\Object\ObjectSerializer($this->createMock(\TYPO3\Flow\Session\SessionInterface::class));
+        $objectSerializer = new ObjectSerializer($this->getMockBuilder(SessionInterface::class)->disableOriginalConstructor()->getMock());
         $objectSerializer->injectReflectionService($mockReflectionService);
 
         $someObject = new $className();
-        $expectedPropertyArray = array(
-            \spl_object_hash($someObject) => array(
-            \TYPO3\Flow\Object\ObjectSerializer::CLASSNAME => $className,
-                \TYPO3\Flow\Object\ObjectSerializer::PROPERTIES => array(
-                    'privateProperty' => array(
-                        \TYPO3\Flow\Object\ObjectSerializer::TYPE => 'simple',
-                        \TYPO3\Flow\Object\ObjectSerializer::VALUE => 'privateProperty',
-                    ),
-                    'protectedProperty' => array(
-                        \TYPO3\Flow\Object\ObjectSerializer::TYPE => 'simple',
-                        \TYPO3\Flow\Object\ObjectSerializer::VALUE => 'protectedProperty',
-                    ),
-                    'publicProperty' => array(
-                        \TYPO3\Flow\Object\ObjectSerializer::TYPE => 'simple',
-                        \TYPO3\Flow\Object\ObjectSerializer::VALUE => 'publicProperty',
-                    )
-                )
-            )
-        );
+        $expectedPropertyArray = [
+          \spl_object_hash($someObject) => [
+            ObjectSerializer::CLASSNAME => $className,
+                ObjectSerializer::PROPERTIES => [
+                    'privateProperty' => [
+                        ObjectSerializer::TYPE => 'simple',
+                        ObjectSerializer::VALUE => 'privateProperty',
+                    ],
+                    'protectedProperty' => [
+                        ObjectSerializer::TYPE => 'simple',
+                        ObjectSerializer::VALUE => 'protectedProperty',
+                    ],
+                    'publicProperty' => [
+                        ObjectSerializer::TYPE => 'simple',
+                        ObjectSerializer::VALUE => 'publicProperty',
+                    ]
+                ]
+          ]
+        ];
 
         $this->assertEquals($expectedPropertyArray, $objectSerializer->serializeObjectAsPropertyArray($someObject), 'The object was not serialized correctly as property array.');
     }
@@ -69,26 +77,26 @@ class ObjectSerializerTest extends \TYPO3\Flow\Tests\UnitTestCase
 			private $arrayProperty = array(1,2,3);
 		}');
 
-        $mockReflectionService = $this->getMockBuilder(\TYPO3\Flow\Reflection\ReflectionService::class)->disableOriginalConstructor()->getMock();
-        $mockReflectionService->expects($this->any())->method('getClassPropertyNames')->with($className)->will($this->returnValue(array('arrayProperty')));
+        $mockReflectionService = $this->getMockBuilder(ReflectionService::class)->disableOriginalConstructor()->getMock();
+        $mockReflectionService->expects($this->any())->method('getClassPropertyNames')->with($className)->will($this->returnValue(['arrayProperty']));
 
-        $objectSerializer = $this->getMockBuilder(\TYPO3\Flow\Object\ObjectSerializer::class)->disableOriginalConstructor()->setMethods(array('buildStorageArrayForArrayProperty'))->getMock();
+        $objectSerializer = $this->getMockBuilder(ObjectSerializer::class)->disableOriginalConstructor()->setMethods(['buildStorageArrayForArrayProperty'])->getMock();
         $objectSerializer->injectReflectionService($mockReflectionService);
 
-        $objectSerializer->expects($this->once())->method('buildStorageArrayForArrayProperty')->with(array(1, 2, 3))->will($this->returnValue('storable array'));
+        $objectSerializer->expects($this->once())->method('buildStorageArrayForArrayProperty')->with([1, 2, 3])->will($this->returnValue('storable array'));
 
         $someObject = new $className();
-        $expectedPropertyArray = array(
-            \spl_object_hash($someObject) => array(
-                \TYPO3\Flow\Object\ObjectSerializer::CLASSNAME => $className,
-                \TYPO3\Flow\Object\ObjectSerializer::PROPERTIES => array(
-                    'arrayProperty' => array(
-                        \TYPO3\Flow\Object\ObjectSerializer::TYPE => 'array',
-                        \TYPO3\Flow\Object\ObjectSerializer::VALUE => 'storable array',
-                    )
-                )
-            )
-        );
+        $expectedPropertyArray = [
+            \spl_object_hash($someObject) => [
+                ObjectSerializer::CLASSNAME => $className,
+                ObjectSerializer::PROPERTIES => [
+                    'arrayProperty' => [
+                        ObjectSerializer::TYPE => 'array',
+                        ObjectSerializer::VALUE => 'storable array',
+                    ]
+                ]
+            ]
+        ];
 
         $this->assertEquals($expectedPropertyArray, $objectSerializer->serializeObjectAsPropertyArray($someObject), 'The array property was not serialized correctly.');
     }
@@ -107,26 +115,26 @@ class ObjectSerializerTest extends \TYPO3\Flow\Tests\UnitTestCase
 			}
 		}');
 
-        $mockReflectionService = $this->getMockBuilder(\TYPO3\Flow\Reflection\ReflectionService::class)->disableOriginalConstructor()->getMock();
-        $mockReflectionService->expects($this->any())->method('getClassPropertyNames')->with($className)->will($this->returnValue(array('arrayObjectProperty')));
+        $mockReflectionService = $this->getMockBuilder(ReflectionService::class)->disableOriginalConstructor()->getMock();
+        $mockReflectionService->expects($this->any())->method('getClassPropertyNames')->with($className)->will($this->returnValue(['arrayObjectProperty']));
 
-        $objectSerializer = $this->getMockBuilder(\TYPO3\Flow\Object\ObjectSerializer::class)->disableOriginalConstructor()->setMethods(array('buildStorageArrayForArrayProperty'))->getMock();
+        $objectSerializer = $this->getMockBuilder(ObjectSerializer::class)->disableOriginalConstructor()->setMethods(['buildStorageArrayForArrayProperty'])->getMock();
         $objectSerializer->injectReflectionService($mockReflectionService);
 
-        $objectSerializer->expects($this->once())->method('buildStorageArrayForArrayProperty')->with(array(1, 2, 3))->will($this->returnValue('storable array'));
+        $objectSerializer->expects($this->once())->method('buildStorageArrayForArrayProperty')->with([1, 2, 3])->will($this->returnValue('storable array'));
 
         $someObject = new $className();
-        $expectedPropertyArray = array(
-            \spl_object_hash($someObject) => array(
-                \TYPO3\Flow\Object\ObjectSerializer::CLASSNAME => $className,
-                \TYPO3\Flow\Object\ObjectSerializer::PROPERTIES => array(
-                    'arrayObjectProperty' => array(
-                        \TYPO3\Flow\Object\ObjectSerializer::TYPE => 'ArrayObject',
-                        \TYPO3\Flow\Object\ObjectSerializer::VALUE => 'storable array',
-                    )
-                )
-            )
-        );
+        $expectedPropertyArray = [
+            \spl_object_hash($someObject) => [
+                ObjectSerializer::CLASSNAME => $className,
+                ObjectSerializer::PROPERTIES => [
+                    'arrayObjectProperty' => [
+                        ObjectSerializer::TYPE => 'ArrayObject',
+                        ObjectSerializer::VALUE => 'storable array',
+                    ]
+                ]
+            ]
+        ];
 
         $this->assertEquals($expectedPropertyArray, $objectSerializer->serializeObjectAsPropertyArray($someObject), 'The ArrayObject property was not serialized correctly.');
     }
@@ -152,38 +160,38 @@ class ObjectSerializerTest extends \TYPO3\Flow\Tests\UnitTestCase
 			}
 		}');
 
-        $mockReflectionService = $this->getMockBuilder(\TYPO3\Flow\Reflection\ReflectionService::class)->disableOriginalConstructor()->getMock();
-        $mockReflectionService->expects($this->at(0))->method('getClassPropertyNames')->with($className1)->will($this->returnValue(array('objectProperty')));
-        $mockReflectionService->expects($this->at(2))->method('getClassPropertyNames')->with($className2)->will($this->returnValue(array()));
+        $mockReflectionService = $this->getMockBuilder(ReflectionService::class)->disableOriginalConstructor()->getMock();
+        $mockReflectionService->expects($this->at(0))->method('getClassPropertyNames')->with($className1)->will($this->returnValue(['objectProperty']));
+        $mockReflectionService->expects($this->at(2))->method('getClassPropertyNames')->with($className2)->will($this->returnValue([]));
 
-        $mockObjectManager = $this->getMockBuilder(\TYPO3\Flow\Object\ObjectManager::class)->disableOriginalConstructor()->getMock();
+        $mockObjectManager = $this->getMockBuilder(ObjectManager::class)->disableOriginalConstructor()->getMock();
         $mockObjectManager->expects($this->once())->method('getObjectNameByClassName')->with($className2)->will($this->returnValue('objectName2'));
-        $mockObjectManager->expects($this->once())->method('getScope')->with('objectName2')->will($this->returnValue(\TYPO3\Flow\Object\Configuration\Configuration::SCOPE_PROTOTYPE));
+        $mockObjectManager->expects($this->once())->method('getScope')->with('objectName2')->will($this->returnValue(Configuration::SCOPE_PROTOTYPE));
 
-        $mockPersistenceManager = $this->createMock(\TYPO3\Flow\Persistence\PersistenceManagerInterface::class);
+        $mockPersistenceManager = $this->createMock(PersistenceManagerInterface::class);
 
-        $objectSerializer = $this->getMockBuilder(\TYPO3\Flow\Object\ObjectSerializer::class)->disableOriginalConstructor()->setMethods(array('dummy'))->getMock();
+        $objectSerializer = $this->getMockBuilder(ObjectSerializer::class)->disableOriginalConstructor()->setMethods(['dummy'])->getMock();
         $objectSerializer->injectReflectionService($mockReflectionService);
         $objectSerializer->injectObjectManager($mockObjectManager);
         $objectSerializer->injectPersistenceManager($mockPersistenceManager);
 
         $someObject = new $className1();
 
-        $expectedPropertyArray = array(
-            \spl_object_hash($someObject) => array(
-                \TYPO3\Flow\Object\ObjectSerializer::CLASSNAME => $className1,
-                \TYPO3\Flow\Object\ObjectSerializer::PROPERTIES => array(
-                    'objectProperty' => array(
-                        \TYPO3\Flow\Object\ObjectSerializer::TYPE => 'object',
-                        \TYPO3\Flow\Object\ObjectSerializer::VALUE => spl_object_hash($someObject->getObjectProperty()),
-                    )
-                )
-            ),
-            spl_object_hash($someObject->getObjectProperty()) => array(
-                \TYPO3\Flow\Object\ObjectSerializer::CLASSNAME => $className2,
-                \TYPO3\Flow\Object\ObjectSerializer::PROPERTIES => array(),
-            )
-        );
+        $expectedPropertyArray = [
+            \spl_object_hash($someObject) => [
+                ObjectSerializer::CLASSNAME => $className1,
+                ObjectSerializer::PROPERTIES => [
+                    'objectProperty' => [
+                        ObjectSerializer::TYPE => 'object',
+                        ObjectSerializer::VALUE => spl_object_hash($someObject->getObjectProperty()),
+                    ]
+                ]
+            ],
+            spl_object_hash($someObject->getObjectProperty()) => [
+                ObjectSerializer::CLASSNAME => $className2,
+                ObjectSerializer::PROPERTIES => [],
+            ]
+        ];
 
         $this->assertEquals($expectedPropertyArray, $objectSerializer->serializeObjectAsPropertyArray($someObject), 'The object property was not serialized correctly.');
     }
@@ -223,52 +231,52 @@ class ObjectSerializerTest extends \TYPO3\Flow\Tests\UnitTestCase
 
         $object = new $className();
 
-        $mockReflectionService = $this->getMockBuilder(\TYPO3\Flow\Reflection\ReflectionService::class)->disableOriginalConstructor()->getMock();
+        $mockReflectionService = $this->getMockBuilder(ReflectionService::class)->disableOriginalConstructor()->getMock();
         $mockReflectionService->expects($this->any())->method('isPropertyTaggedWith')->will($this->returnValue(false));
-        $mockReflectionService->expects($this->at(0))->method('getClassPropertyNames')->with($className)->will($this->returnValue(array('property1', 'property2', 'property3')));
-        $mockReflectionService->expects($this->any())->method('getClassPropertyNames')->will($this->returnValue(array()));
+        $mockReflectionService->expects($this->at(0))->method('getClassPropertyNames')->with($className)->will($this->returnValue(['property1', 'property2', 'property3']));
+        $mockReflectionService->expects($this->any())->method('getClassPropertyNames')->will($this->returnValue([]));
 
-        $mockObjectManager = $this->getMockBuilder(\TYPO3\Flow\Object\ObjectManager::class)->disableOriginalConstructor()->getMock();
+        $mockObjectManager = $this->getMockBuilder(ObjectManager::class)->disableOriginalConstructor()->getMock();
         $mockObjectManager->expects($this->at(0))->method('getObjectNameByClassName')->with($propertyClassName1)->will($this->returnValue('propertyObjectName1'));
-        $mockObjectManager->expects($this->at(1))->method('getScope')->with('propertyObjectName1')->will($this->returnValue(\TYPO3\Flow\Object\Configuration\Configuration::SCOPE_PROTOTYPE));
+        $mockObjectManager->expects($this->at(1))->method('getScope')->with('propertyObjectName1')->will($this->returnValue(Configuration::SCOPE_PROTOTYPE));
         $mockObjectManager->expects($this->at(2))->method('getObjectNameByClassName')->with($propertyClassName2)->will($this->returnValue('propertyObjectName2'));
-        $mockObjectManager->expects($this->at(3))->method('getScope')->with('propertyObjectName2')->will($this->returnValue(\TYPO3\Flow\Object\Configuration\Configuration::SCOPE_SINGLETON));
+        $mockObjectManager->expects($this->at(3))->method('getScope')->with('propertyObjectName2')->will($this->returnValue(Configuration::SCOPE_SINGLETON));
         $mockObjectManager->expects($this->at(4))->method('getObjectNameByClassName')->with($propertyClassName3)->will($this->returnValue('propertyObjectName3'));
-        $mockObjectManager->expects($this->at(5))->method('getScope')->with('propertyObjectName3')->will($this->returnValue(\TYPO3\Flow\Object\Configuration\Configuration::SCOPE_SESSION));
+        $mockObjectManager->expects($this->at(5))->method('getScope')->with('propertyObjectName3')->will($this->returnValue(Configuration::SCOPE_SESSION));
 
-        $mockPersistenceManager = $this->createMock(\TYPO3\Flow\Persistence\PersistenceManagerInterface::class);
+        $mockPersistenceManager = $this->createMock(PersistenceManagerInterface::class);
 
-        $objectSerializer = $this->getAccessibleMock(\TYPO3\Flow\Object\ObjectSerializer::class, array('dummy'), array(), '', true);
+        $objectSerializer = $this->getAccessibleMock(ObjectSerializer::class, ['dummy'], [], '', true);
         $objectSerializer->injectReflectionService($mockReflectionService);
         $objectSerializer->injectObjectManager($mockObjectManager);
         $objectSerializer->injectPersistenceManager($mockPersistenceManager);
-        $objectSerializer->_set('objects', array($className => $object));
+        $objectSerializer->_set('objects', [$className => $object]);
 
         $objectHash1 = spl_object_hash($object->getProperty1());
         $objectHash3 = spl_object_hash($object->getProperty3());
-        $expectedArray = array(
-            spl_object_hash($object) => array(
-                \TYPO3\Flow\Object\ObjectSerializer::CLASSNAME => $className,
-                \TYPO3\Flow\Object\ObjectSerializer::PROPERTIES => array(
-                    'property1' => array(
-                        \TYPO3\Flow\Object\ObjectSerializer::TYPE => 'object',
-                        \TYPO3\Flow\Object\ObjectSerializer::VALUE => $objectHash1,
-                    ),
-                    'property3' => array(
-                        \TYPO3\Flow\Object\ObjectSerializer::TYPE => 'object',
-                        \TYPO3\Flow\Object\ObjectSerializer::VALUE => $objectHash3,
-                    )
-                )
-            ),
-            $objectHash1 => array(
-                \TYPO3\Flow\Object\ObjectSerializer::CLASSNAME => $propertyClassName1,
-                \TYPO3\Flow\Object\ObjectSerializer::PROPERTIES => array(),
-            ),
-            $objectHash3 => array(
-                \TYPO3\Flow\Object\ObjectSerializer::CLASSNAME => $propertyClassName3,
-                \TYPO3\Flow\Object\ObjectSerializer::PROPERTIES => array(),
-            )
-        );
+        $expectedArray = [
+            spl_object_hash($object) => [
+                ObjectSerializer::CLASSNAME => $className,
+                ObjectSerializer::PROPERTIES => [
+                    'property1' => [
+                        ObjectSerializer::TYPE => 'object',
+                        ObjectSerializer::VALUE => $objectHash1,
+                    ],
+                    'property3' => [
+                        ObjectSerializer::TYPE => 'object',
+                        ObjectSerializer::VALUE => $objectHash3,
+                    ]
+                ]
+            ],
+            $objectHash1 => [
+                ObjectSerializer::CLASSNAME => $propertyClassName1,
+                ObjectSerializer::PROPERTIES => [],
+            ],
+            $objectHash3 => [
+                ObjectSerializer::CLASSNAME => $propertyClassName3,
+                ObjectSerializer::PROPERTIES => [],
+            ]
+        ];
 
         $this->assertEquals($expectedArray, $objectSerializer->serializeObjectAsPropertyArray($object), 'The singleton has not been skipped.');
     }
@@ -285,31 +293,32 @@ class ObjectSerializerTest extends \TYPO3\Flow\Tests\UnitTestCase
 			public $publicProperty = \'publicProperty\';
 		}');
 
-        $mockReflectionService = $this->getMockBuilder(\TYPO3\Flow\Reflection\ReflectionService::class)->disableOriginalConstructor()->getMock();
-        $mockReflectionService->expects($this->any())->method('getClassPropertyNames')->with($className)->will($this->returnValue(array('privateProperty', 'protectedProperty', 'publicProperty')));
+        $mockReflectionService = $this->getMockBuilder(ReflectionService::class)->disableOriginalConstructor()->getMock();
+        $mockReflectionService->expects($this->any())->method('getClassPropertyNames')->with($className)->will($this->returnValue(['privateProperty', 'protectedProperty', 'publicProperty']));
         $mockReflectionService->expects($this->at(1))->method('isPropertyTaggedWith')->with($className, 'privateProperty', 'transient')->will($this->returnValue(false));
         $mockReflectionService->expects($this->at(2))->method('isPropertyTaggedWith')->with($className, 'protectedProperty', 'transient')->will($this->returnValue(true));
         $mockReflectionService->expects($this->at(3))->method('isPropertyTaggedWith')->with($className, 'publicProperty', 'transient')->will($this->returnValue(false));
 
-        $objectSerializer = $this->getAccessibleMock(\TYPO3\Flow\Object\ObjectSerializer::class, array('dummy'), array(), '', false);
+        /** @var ObjectSerializer $objectSerializer */
+        $objectSerializer = $this->getAccessibleMock(ObjectSerializer::class, ['dummy'], [], '', false);
         $objectSerializer->injectReflectionService($mockReflectionService);
 
         $someObject = new $className();
-        $expectedPropertyArray = array(
-            spl_object_hash($someObject) => array(
-                \TYPO3\Flow\Object\ObjectSerializer::CLASSNAME => $className,
-                \TYPO3\Flow\Object\ObjectSerializer::PROPERTIES => array(
-                    'privateProperty' => array(
-                        \TYPO3\Flow\Object\ObjectSerializer::TYPE => 'simple',
-                        \TYPO3\Flow\Object\ObjectSerializer::VALUE => 'privateProperty',
-                    ),
-                    'publicProperty' => array(
-                        \TYPO3\Flow\Object\ObjectSerializer::TYPE => 'simple',
-                        \TYPO3\Flow\Object\ObjectSerializer::VALUE => 'publicProperty',
-                    )
-                )
-            )
-        );
+        $expectedPropertyArray = [
+            spl_object_hash($someObject) => [
+                ObjectSerializer::CLASSNAME => $className,
+                ObjectSerializer::PROPERTIES => [
+                    'privateProperty' => [
+                        ObjectSerializer::TYPE => 'simple',
+                        ObjectSerializer::VALUE => 'privateProperty',
+                    ],
+                    'publicProperty' => [
+                        ObjectSerializer::TYPE => 'simple',
+                        ObjectSerializer::VALUE => 'publicProperty',
+                    ]
+                ]
+            ]
+        ];
 
         $this->assertEquals($expectedPropertyArray, $objectSerializer->serializeObjectAsPropertyArray($someObject), 'The object was not stored correctly as property array.');
     }
@@ -326,16 +335,16 @@ class ObjectSerializerTest extends \TYPO3\Flow\Tests\UnitTestCase
 			public $child;
 		}');
 
-        $mockObjectManager = $this->getMockBuilder(\TYPO3\Flow\Object\ObjectManager::class)->disableOriginalConstructor()->getMock();
-        $mockObjectManager->expects($this->any())->method('getObjectNameByClassName')->with($className)->will($this->returnValue(\TYPO3\Flow\Object\ObjectSerializer::CLASSNAME));
+        $mockObjectManager = $this->getMockBuilder(ObjectManager::class)->disableOriginalConstructor()->getMock();
+        $mockObjectManager->expects($this->any())->method('getObjectNameByClassName')->with($className)->will($this->returnValue(ObjectSerializer::CLASSNAME));
 
-        $mockReflectionService = $this->getMockBuilder(\TYPO3\Flow\Reflection\ReflectionService::class)->disableOriginalConstructor()->getMock();
-        $mockReflectionService->expects($this->any())->method('getClassPropertyNames')->with($className)->will($this->returnValue(array('name', 'parent', 'child')));
+        $mockReflectionService = $this->getMockBuilder(ReflectionService::class)->disableOriginalConstructor()->getMock();
+        $mockReflectionService->expects($this->any())->method('getClassPropertyNames')->with($className)->will($this->returnValue(['name', 'parent', 'child']));
         $mockReflectionService->expects($this->any())->method('isPropertyTaggedWith')->will($this->returnValue(false));
 
-        $mockPersistenceManager = $this->createMock(\TYPO3\Flow\Persistence\PersistenceManagerInterface::class);
-
-        $objectSerializer = $this->getAccessibleMock(\TYPO3\Flow\Object\ObjectSerializer::class, array('dummy'));
+        $mockPersistenceManager = $this->createMock(PersistenceManagerInterface::class);
+        /** @var ObjectSerializer $objectSerializer */
+        $objectSerializer = $this->getAccessibleMock(ObjectSerializer::class, ['dummy']);
         $objectSerializer->injectObjectManager($mockObjectManager);
         $objectSerializer->injectReflectionService($mockReflectionService);
         $objectSerializer->injectPersistenceManager($mockPersistenceManager);
@@ -348,42 +357,42 @@ class ObjectSerializerTest extends \TYPO3\Flow\Tests\UnitTestCase
         $objectA->child = $objectB;
         $objectB->parent = $objectA;
 
-        $expectedPropertyArray = array(
-            spl_object_hash($objectB) => array(
-                \TYPO3\Flow\Object\ObjectSerializer::CLASSNAME => $className,
-                \TYPO3\Flow\Object\ObjectSerializer::PROPERTIES => array(
-                    'name' => array(
-                        \TYPO3\Flow\Object\ObjectSerializer::TYPE => 'simple',
-                        \TYPO3\Flow\Object\ObjectSerializer::VALUE => 'B',
-                    ),
-                    'parent' => array(
-                        \TYPO3\Flow\Object\ObjectSerializer::TYPE => 'object',
-                        \TYPO3\Flow\Object\ObjectSerializer::VALUE => \spl_object_hash($objectA),
-                    ),
-                    'child' => array(
-                        \TYPO3\Flow\Object\ObjectSerializer::TYPE => 'simple',
-                        \TYPO3\Flow\Object\ObjectSerializer::VALUE => null,
-                    )
-                )
-            ),
-            spl_object_hash($objectA) => array(
-                \TYPO3\Flow\Object\ObjectSerializer::CLASSNAME => $className,
-                \TYPO3\Flow\Object\ObjectSerializer::PROPERTIES => array(
-                    'name' => array(
-                        \TYPO3\Flow\Object\ObjectSerializer::TYPE => 'simple',
-                        \TYPO3\Flow\Object\ObjectSerializer::VALUE => 'A',
-                    ),
-                    'parent' => array(
-                        \TYPO3\Flow\Object\ObjectSerializer::TYPE => 'simple',
-                        \TYPO3\Flow\Object\ObjectSerializer::VALUE => null,
-                    ),
-                    'child' => array(
-                        \TYPO3\Flow\Object\ObjectSerializer::TYPE => 'object',
-                        \TYPO3\Flow\Object\ObjectSerializer::VALUE => \spl_object_hash($objectB),
-                    )
-                )
-            )
-        );
+        $expectedPropertyArray = [
+            spl_object_hash($objectB) => [
+                ObjectSerializer::CLASSNAME => $className,
+                ObjectSerializer::PROPERTIES => [
+                    'name' => [
+                        ObjectSerializer::TYPE => 'simple',
+                        ObjectSerializer::VALUE => 'B',
+                    ],
+                    'parent' => [
+                        ObjectSerializer::TYPE => 'object',
+                        ObjectSerializer::VALUE => \spl_object_hash($objectA),
+                    ],
+                    'child' => [
+                        ObjectSerializer::TYPE => 'simple',
+                        ObjectSerializer::VALUE => null,
+                    ]
+                ]
+            ],
+            spl_object_hash($objectA) => [
+                ObjectSerializer::CLASSNAME => $className,
+                ObjectSerializer::PROPERTIES => [
+                    'name' => [
+                        ObjectSerializer::TYPE => 'simple',
+                        ObjectSerializer::VALUE => 'A',
+                    ],
+                    'parent' => [
+                        ObjectSerializer::TYPE => 'simple',
+                        ObjectSerializer::VALUE => null,
+                    ],
+                    'child' => [
+                        ObjectSerializer::TYPE => 'object',
+                        ObjectSerializer::VALUE => \spl_object_hash($objectB),
+                    ]
+                ]
+            ]
+        ];
 
         $actualPropertyArray = $objectSerializer->serializeObjectAsPropertyArray($objectA);
         $this->assertEquals($expectedPropertyArray, $actualPropertyArray);
@@ -408,27 +417,28 @@ class ObjectSerializerTest extends \TYPO3\Flow\Tests\UnitTestCase
 
         $entityObject = new $entityClassName();
 
-        $mockPersistenceManager = $this->createMock(\TYPO3\Flow\Persistence\PersistenceManagerInterface::class);
+        $mockPersistenceManager = $this->createMock(PersistenceManagerInterface::class);
         $mockPersistenceManager->expects($this->once())->method('isNewObject')->with($entityObject)->will($this->returnValue(false));
         $mockPersistenceManager->expects($this->once())->method('getIdentifierByObject')->with($entityObject)->will($this->returnValue('someUUID'));
 
-        $mockReflectionService = $this->getMockBuilder(\TYPO3\Flow\Reflection\ReflectionService::class)->disableOriginalConstructor()->getMock();
-        $mockReflectionService->expects($this->any())->method('getClassPropertyNames')->with($sessionClassName)->will($this->returnValue(array('entityProperty')));
+        $mockReflectionService = $this->getMockBuilder(ReflectionService::class)->disableOriginalConstructor()->getMock();
+        $mockReflectionService->expects($this->any())->method('getClassPropertyNames')->with($sessionClassName)->will($this->returnValue(['entityProperty']));
         $mockReflectionService->expects($this->at(2))->method('isClassAnnotatedWith')->with($entityClassName, \TYPO3\Flow\Annotations\Entity::class)->will($this->returnValue(true));
 
-        $objectSerializer = $this->getMockBuilder(\TYPO3\Flow\Object\ObjectSerializer::class)->disableOriginalConstructor()->setMethods(array('dummy'))->getMock();
+        /** @var ObjectSerializer $objectSerializer */
+        $objectSerializer = $this->getMockBuilder(ObjectSerializer::class)->disableOriginalConstructor()->setMethods(['dummy'])->getMock();
         $objectSerializer->injectReflectionService($mockReflectionService);
         $objectSerializer->injectPersistenceManager($mockPersistenceManager);
 
-        $expectedArray = array(
-            \TYPO3\Flow\Object\ObjectSerializer::CLASSNAME => $sessionClassName,
-            \TYPO3\Flow\Object\ObjectSerializer::PROPERTIES => array(
-                'entityProperty' => array(
-                    \TYPO3\Flow\Object\ObjectSerializer::TYPE => 'persistenceObject',
-                    \TYPO3\Flow\Object\ObjectSerializer::VALUE => $entityClassName . ':someUUID',
-                )
-            )
-        );
+        $expectedArray = [
+            ObjectSerializer::CLASSNAME => $sessionClassName,
+            ObjectSerializer::PROPERTIES => [
+                'entityProperty' => [
+                    ObjectSerializer::TYPE => 'persistenceObject',
+                    ObjectSerializer::VALUE => $entityClassName . ':' . 'someUUID',
+                ]
+            ]
+        ];
 
         $sessionObject = new $sessionClassName();
         $sessionObject->entityProperty = $entityObject;
@@ -456,28 +466,29 @@ class ObjectSerializerTest extends \TYPO3\Flow\Tests\UnitTestCase
 
         $entityObject = new $entityClassName();
 
-        $mockPersistenceManager = $this->createMock(\TYPO3\Flow\Persistence\PersistenceManagerInterface::class);
+        $mockPersistenceManager = $this->createMock(PersistenceManagerInterface::class);
         $mockPersistenceManager->expects($this->once())->method('isNewObject')->with($entityObject)->will($this->returnValue(false));
         $mockPersistenceManager->expects($this->once())->method('getIdentifierByObject')->with($entityObject)->will($this->returnValue('someUUID'));
 
-        $mockReflectionService = $this->getMockBuilder(\TYPO3\Flow\Reflection\ReflectionService::class)->disableOriginalConstructor()->getMock();
-        $mockReflectionService->expects($this->any())->method('getClassPropertyNames')->with($sessionClassName)->will($this->returnValue(array('entityProperty')));
+        $mockReflectionService = $this->getMockBuilder(ReflectionService::class)->disableOriginalConstructor()->getMock();
+        $mockReflectionService->expects($this->any())->method('getClassPropertyNames')->with($sessionClassName)->will($this->returnValue(['entityProperty']));
         $mockReflectionService->expects($this->at(2))->method('isClassAnnotatedWith')->with($entityClassName, \TYPO3\Flow\Annotations\Entity::class)->will($this->returnValue(false));
         $mockReflectionService->expects($this->at(3))->method('isClassAnnotatedWith')->with($entityClassName, \TYPO3\Flow\Annotations\ValueObject::class)->will($this->returnValue(true));
 
-        $objectSerializer = $this->getMockBuilder(\TYPO3\Flow\Object\ObjectSerializer::class)->disableOriginalConstructor()->setMethods(array('dummy'))->getMock();
+        /** @var ObjectSerializer $objectSerializer */
+        $objectSerializer = $this->getMockBuilder(ObjectSerializer::class)->disableOriginalConstructor()->setMethods(['dummy'])->getMock();
         $objectSerializer->injectReflectionService($mockReflectionService);
         $objectSerializer->injectPersistenceManager($mockPersistenceManager);
 
-        $expectedArray = array(
-            \TYPO3\Flow\Object\ObjectSerializer::CLASSNAME => $sessionClassName,
-            \TYPO3\Flow\Object\ObjectSerializer::PROPERTIES => array(
-                'entityProperty' => array(
-                    \TYPO3\Flow\Object\ObjectSerializer::TYPE => 'persistenceObject',
-                    \TYPO3\Flow\Object\ObjectSerializer::VALUE => $entityClassName . ':someUUID'
-                )
-            )
-        );
+        $expectedArray = [
+            ObjectSerializer::CLASSNAME => $sessionClassName,
+            ObjectSerializer::PROPERTIES => [
+                'entityProperty' => [
+                    ObjectSerializer::TYPE => 'persistenceObject',
+                    ObjectSerializer::VALUE => $entityClassName . ':someUUID'
+                ]
+            ]
+        ];
 
         $sessionObject = new $sessionClassName();
         $sessionObject->entityProperty = $entityObject;
@@ -491,13 +502,13 @@ class ObjectSerializerTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function deserializeObjectsArraySetsTheInternalObjectsAsArrayPropertyCorrectly()
     {
-        $someDataArray = array(
+        $someDataArray = [
             'bla' => 'blub',
             'another' => 'bla',
             'and another' => 'blub'
-        );
+        ];
 
-        $mockObjectManager = $this->getMockBuilder(\TYPO3\Flow\Object\ObjectManager::class)->disableOriginalConstructor()->getMock();
+        $mockObjectManager = $this->getMockBuilder(ObjectManager::class)->disableOriginalConstructor()->getMock();
         $mockObjectManager->expects($this->any())->method('isRegistered')->will($this->returnValue(false));
 
         $objectSerializer = $this->getAccessibleMock(\TYPO3\Flow\Object\ObjectSerializer::class, array('dummy'), array(), '', false);
@@ -516,34 +527,34 @@ class ObjectSerializerTest extends \TYPO3\Flow\Tests\UnitTestCase
         eval('class ' . $className . ' {}');
 
         $className1 = 'class1' . md5(uniqid(mt_rand(), true));
-        $object1 = $this->createMock($className, array(), array(), $className1, false);
+        $object1 = $this->createMock($className, [], [], $className1, false);
         $className2 = 'class2' . md5(uniqid(mt_rand(), true));
-        $object2 = $this->createMock($className, array(), array(), $className2, false);
+        $object2 = $this->createMock($className, [], [], $className2, false);
         $className3 = 'class3' . md5(uniqid(mt_rand(), true));
-        $object3 = $this->createMock($className, array(), array(), $className3, false);
+        $object3 = $this->createMock($className, [], [], $className3, false);
 
-        $objectsAsArray = array(
-            spl_object_hash($object1) => array(
-                \TYPO3\Flow\Object\ObjectSerializer::CLASSNAME => $className1,
-                \TYPO3\Flow\Object\ObjectSerializer::PROPERTIES => array(1),
-            ),
-            spl_object_hash($object2) => array(
-                \TYPO3\Flow\Object\ObjectSerializer::CLASSNAME => $className2,
-                \TYPO3\Flow\Object\ObjectSerializer::PROPERTIES => array(2),
-            ),
-            'someReferencedObject1' => array(),
-            spl_object_hash($object3) => array(
-                \TYPO3\Flow\Object\ObjectSerializer::CLASSNAME => $className3,
-                \TYPO3\Flow\Object\ObjectSerializer::PROPERTIES => array(3),
-            ),
-            'someReferencedObject2' => array(),
-            'someReferencedObject3' => array(),
-        );
+        $objectsAsArray = [
+            spl_object_hash($object1) => [
+                ObjectSerializer::CLASSNAME => $className1,
+                ObjectSerializer::PROPERTIES => [1],
+            ],
+            spl_object_hash($object2) => [
+                ObjectSerializer::CLASSNAME => $className2,
+                ObjectSerializer::PROPERTIES => [2],
+            ],
+            'someReferencedObject1' => [],
+            spl_object_hash($object3) => [
+                ObjectSerializer::CLASSNAME => $className3,
+                ObjectSerializer::PROPERTIES => [3],
+            ],
+            'someReferencedObject2' => [],
+            'someReferencedObject3' => [],
+        ];
 
-        $mockObjectManager = $this->getMockBuilder(\TYPO3\Flow\Object\ObjectManager::class)->disableOriginalConstructor()->getMock();
+        $mockObjectManager = $this->getMockBuilder(ObjectManager::class)->disableOriginalConstructor()->getMock();
         $mockObjectManager->expects($this->any())->method('isRegistered')->will($this->returnValue(true));
 
-        $objectSerializer = $this->getAccessibleMock(\TYPO3\Flow\Object\ObjectSerializer::class, array('reconstituteObject', 'createEmptyObject'), array(), '', false);
+        $objectSerializer = $this->getAccessibleMock(ObjectSerializer::class, ['reconstituteObject', 'createEmptyObject'], [], '', false);
         $objectSerializer->expects($this->at(0))->method('reconstituteObject')->with(spl_object_hash($object1), $objectsAsArray[spl_object_hash($object1)])->will($this->returnValue($object1));
         $objectSerializer->expects($this->at(1))->method('reconstituteObject')->with(spl_object_hash($object2), $objectsAsArray[spl_object_hash($object2)])->will($this->returnValue($object2));
         $objectSerializer->expects($this->at(2))->method('reconstituteObject')->with(spl_object_hash($object3), $objectsAsArray[spl_object_hash($object3)])->will($this->returnValue($object3));
@@ -553,11 +564,11 @@ class ObjectSerializerTest extends \TYPO3\Flow\Tests\UnitTestCase
         $objects = $objectSerializer->deserializeObjectsArray($objectsAsArray);
 
         $this->assertEquals(
-            array(
+            [
                 spl_object_hash($object1) => $object1,
                 spl_object_hash($object2) => $object2,
                 spl_object_hash($object3) => $object3
-            ),
+            ],
             $objects
         );
     }
@@ -569,38 +580,38 @@ class ObjectSerializerTest extends \TYPO3\Flow\Tests\UnitTestCase
     {
         $objectSerializer = $this->getAccessibleMock(\TYPO3\Flow\Object\ObjectSerializer::class, array('dummy'), array(), '', false);
 
-        $expectedArray = array(
-            'key1' => array(
-                \TYPO3\Flow\Object\ObjectSerializer::TYPE => 'simple',
-                \TYPO3\Flow\Object\ObjectSerializer::VALUE => 1,
-            ),
-            'key2' => array(
-                \TYPO3\Flow\Object\ObjectSerializer::TYPE => 'simple',
-                \TYPO3\Flow\Object\ObjectSerializer::VALUE => 2,
-            ),
-            'key3' => array(
-                \TYPO3\Flow\Object\ObjectSerializer::TYPE => 'array',
-                \TYPO3\Flow\Object\ObjectSerializer::VALUE => array(
-                    'key4' => array(
-                        \TYPO3\Flow\Object\ObjectSerializer::TYPE => 'simple',
-                        \TYPO3\Flow\Object\ObjectSerializer::VALUE => 4,
-                    ),
-                    'key5' => array(
-                        \TYPO3\Flow\Object\ObjectSerializer::TYPE => 'simple',
-                        \TYPO3\Flow\Object\ObjectSerializer::VALUE => 5,
-                    )
-                )
-            )
-        );
+        $expectedArray = [
+            'key1' => [
+                ObjectSerializer::TYPE => 'simple',
+                ObjectSerializer::VALUE => 1,
+            ],
+            'key2' => [
+                ObjectSerializer::TYPE => 'simple',
+                ObjectSerializer::VALUE => 2,
+            ],
+            'key3' => [
+                ObjectSerializer::TYPE => 'array',
+                ObjectSerializer::VALUE => [
+                    'key4' => [
+                        ObjectSerializer::TYPE => 'simple',
+                        ObjectSerializer::VALUE => 4,
+                    ],
+                    'key5' => [
+                        ObjectSerializer::TYPE => 'simple',
+                        ObjectSerializer::VALUE => 5,
+                    ]
+                ]
+            ]
+        ];
 
-        $arrayProperty = array(
+        $arrayProperty = [
             'key1' => 1,
             'key2' => 2,
-            'key3' => array(
+            'key3' => [
                 'key4' => 4,
                 'key5' => 5
-            )
-        );
+            ]
+        ];
 
         $this->assertSame($expectedArray, $objectSerializer->_call('buildStorageArrayForArrayProperty', $arrayProperty));
     }
@@ -615,24 +626,24 @@ class ObjectSerializerTest extends \TYPO3\Flow\Tests\UnitTestCase
         $mockObject = $this->createMock($className);
         $objectName = spl_object_hash($mockObject);
 
-        $objectSerializer = $this->getAccessibleMock(\TYPO3\Flow\Object\ObjectSerializer::class, array('serializeObjectAsPropertyArray'), array(), '', false);
+        $objectSerializer = $this->getAccessibleMock(ObjectSerializer::class, ['serializeObjectAsPropertyArray'], [], '', false);
         $objectSerializer->expects($this->once())->method('serializeObjectAsPropertyArray')->with($mockObject);
 
-        $arrayProperty = array(
+        $arrayProperty = [
             'key1' => 1,
             'key2' => $mockObject,
-        );
+        ];
 
-        $expectedArray = array(
-            'key1' => array(
-                \TYPO3\Flow\Object\ObjectSerializer::TYPE => 'simple',
-                \TYPO3\Flow\Object\ObjectSerializer::VALUE => 1,
-            ),
-            'key2' => array(
-                \TYPO3\Flow\Object\ObjectSerializer::TYPE => 'object',
-                \TYPO3\Flow\Object\ObjectSerializer::VALUE => $objectName,
-            )
-        );
+        $expectedArray = [
+            'key1' => [
+                ObjectSerializer::TYPE => 'simple',
+                ObjectSerializer::VALUE => 1,
+            ],
+            'key2' => [
+                ObjectSerializer::TYPE => 'object',
+                ObjectSerializer::VALUE => $objectName,
+            ]
+        ];
 
         $this->assertSame($expectedArray, $objectSerializer->_call('buildStorageArrayForArrayProperty', $arrayProperty));
     }
@@ -664,39 +675,39 @@ class ObjectSerializerTest extends \TYPO3\Flow\Tests\UnitTestCase
 			}
 		}');
 
-        $mockReflectionService = $this->getMockBuilder(\TYPO3\Flow\Reflection\ReflectionService::class)->disableOriginalConstructor()->getMock();
-        $mockReflectionService->expects($this->at(0))->method('getClassPropertyNames')->with($className)->will($this->returnValue(array('SplObjectProperty')));
-        $mockReflectionService->expects($this->at(1))->method('getClassPropertyNames')->will($this->returnValue(array()));
-        $mockReflectionService->expects($this->at(2))->method('getClassPropertyNames')->will($this->returnValue(array()));
-        $mockReflectionService->expects($this->at(3))->method('getClassPropertyNames')->will($this->returnValue(array()));
+        $mockReflectionService = $this->getMockBuilder(ReflectionService::class)->disableOriginalConstructor()->getMock();
+        $mockReflectionService->expects($this->at(0))->method('getClassPropertyNames')->with($className)->will($this->returnValue(['SplObjectProperty']));
+        $mockReflectionService->expects($this->at(1))->method('getClassPropertyNames')->will($this->returnValue([]));
+        $mockReflectionService->expects($this->at(2))->method('getClassPropertyNames')->will($this->returnValue([]));
+        $mockReflectionService->expects($this->at(3))->method('getClassPropertyNames')->will($this->returnValue([]));
         $mockReflectionService->expects($this->any())->method('isPropertyTaggedWith')->with($className, 'SplObjectProperty', 'transient')->will($this->returnValue(false));
 
-        $objectSerializer = new \TYPO3\Flow\Object\ObjectSerializer($this->createMock(\TYPO3\Flow\Session\SessionInterface::class));
+        $objectSerializer = new ObjectSerializer($this->getMockBuilder(SessionInterface::class)->disableOriginalConstructor()->getMock());
         $objectSerializer->injectReflectionService($mockReflectionService);
 
         $objectHash1 = spl_object_hash($propertyClass1);
         $objectHash2 = spl_object_hash($propertyClass2);
 
         $object = new $className($propertyClass1, $propertyClass2);
-        $expectedArray = array(
-            spl_object_hash($object) => array(
-                \TYPO3\Flow\Object\ObjectSerializer::CLASSNAME => $className,
-                \TYPO3\Flow\Object\ObjectSerializer::PROPERTIES => array(
-                    'SplObjectProperty' => array(
-                        \TYPO3\Flow\Object\ObjectSerializer::TYPE => 'SplObjectStorage',
-                        \TYPO3\Flow\Object\ObjectSerializer::VALUE => array($objectHash1, $objectHash2)
-                    )
-                )
-            ),
-            $objectHash1 => array(
-                \TYPO3\Flow\Object\ObjectSerializer::CLASSNAME => $propertyClassName1,
-                \TYPO3\Flow\Object\ObjectSerializer::PROPERTIES => array(),
-            ),
-            $objectHash2 => array(
-                \TYPO3\Flow\Object\ObjectSerializer::CLASSNAME => $propertyClassName2,
-                \TYPO3\Flow\Object\ObjectSerializer::PROPERTIES => array(),
-            ),
-        );
+        $expectedArray = [
+            spl_object_hash($object) => [
+                ObjectSerializer::CLASSNAME => $className,
+                ObjectSerializer::PROPERTIES => [
+                    'SplObjectProperty' => [
+                        ObjectSerializer::TYPE => 'SplObjectStorage',
+                        ObjectSerializer::VALUE => [$objectHash1, $objectHash2]
+                    ]
+                ]
+            ],
+            $objectHash1 => [
+                ObjectSerializer::CLASSNAME => $propertyClassName1,
+                ObjectSerializer::PROPERTIES => [],
+            ],
+            $objectHash2 => [
+                ObjectSerializer::CLASSNAME => $propertyClassName2,
+                ObjectSerializer::PROPERTIES => [],
+            ],
+        ];
 
         $this->assertEquals($expectedArray, $objectSerializer->serializeObjectAsPropertyArray($object));
     }
@@ -728,65 +739,65 @@ class ObjectSerializerTest extends \TYPO3\Flow\Tests\UnitTestCase
 			public function getPersistenceObjectProperty() { return $this->persistenceObjectProperty; }
 		}');
 
-        $objectData = array(
-            \TYPO3\Flow\Object\ObjectSerializer::CLASSNAME => $className,
-            \TYPO3\Flow\Object\ObjectSerializer::PROPERTIES => array(
-                'simpleProperty' => array(
-                    \TYPO3\Flow\Object\ObjectSerializer::TYPE => 'simple',
-                    \TYPO3\Flow\Object\ObjectSerializer::VALUE => 'simplePropertyValue',
-                ),
-                'arrayProperty' => array(
-                    \TYPO3\Flow\Object\ObjectSerializer::TYPE => 'array',
-                    \TYPO3\Flow\Object\ObjectSerializer::VALUE => 'arrayPropertyValue',
-                ),
-                'arrayObjectProperty' => array(
-                    \TYPO3\Flow\Object\ObjectSerializer::TYPE => 'ArrayObject',
-                    \TYPO3\Flow\Object\ObjectSerializer::VALUE => 'arrayObjectPropertyValue',
-                ),
-                'objectProperty' => array(
-                    \TYPO3\Flow\Object\ObjectSerializer::TYPE => 'object',
-                    \TYPO3\Flow\Object\ObjectSerializer::VALUE => 'emptyClass'
-                ),
-                'splObjectStorageProperty' => array(
-                    \TYPO3\Flow\Object\ObjectSerializer::TYPE => 'SplObjectStorage',
-                    \TYPO3\Flow\Object\ObjectSerializer::VALUE => array('splObjectStoragePropertyValue'),
-                ),
-                'collectionProperty' => array(
-                    \TYPO3\Flow\Object\ObjectSerializer::TYPE => 'Collection',
-                    \TYPO3\Flow\Object\ObjectSerializer::CLASSNAME => 'Doctrine\Common\Collections\ArrayCollection',
-                    \TYPO3\Flow\Object\ObjectSerializer::VALUE => array('collectionPropertyValue'),
-                ),
-                'persistenceObjectProperty' => array(
-                    \TYPO3\Flow\Object\ObjectSerializer::TYPE => 'persistenceObject',
-                    \TYPO3\Flow\Object\ObjectSerializer::VALUE => 'persistenceObjectClassName:persistenceObjectUUID',
-                )
-            )
-        );
+        $objectData = [
+            ObjectSerializer::CLASSNAME => $className,
+            ObjectSerializer::PROPERTIES => [
+                'simpleProperty' => [
+                    ObjectSerializer::TYPE => 'simple',
+                    ObjectSerializer::VALUE => 'simplePropertyValue',
+                ],
+                'arrayProperty' => [
+                    ObjectSerializer::TYPE => 'array',
+                    ObjectSerializer::VALUE => 'arrayPropertyValue',
+                ],
+                'arrayObjectProperty' => [
+                    ObjectSerializer::TYPE => 'ArrayObject',
+                    ObjectSerializer::VALUE => 'arrayObjectPropertyValue',
+                ],
+                'objectProperty' => [
+                    ObjectSerializer::TYPE => 'object',
+                    ObjectSerializer::VALUE => 'emptyClass'
+                ],
+                'splObjectStorageProperty' => [
+                    ObjectSerializer::TYPE => 'SplObjectStorage',
+                    ObjectSerializer::VALUE => ['splObjectStoragePropertyValue'],
+                ],
+                'collectionProperty' => [
+                    ObjectSerializer::TYPE => 'Collection',
+                    ObjectSerializer::CLASSNAME => 'Doctrine\Common\Collections\ArrayCollection',
+                    ObjectSerializer::VALUE => ['collectionPropertyValue'],
+                ],
+                'persistenceObjectProperty' => [
+                    ObjectSerializer::TYPE => 'persistenceObject',
+                    ObjectSerializer::VALUE => 'persistenceObjectClassName:persistenceObjectUUID',
+                ]
+            ]
+        ];
 
-        $mockObjectManager = $this->getMockBuilder(\TYPO3\Flow\Object\ObjectManager::class)->disableOriginalConstructor()->getMock();
+        $mockObjectManager = $this->getMockBuilder(ObjectManager::class)->disableOriginalConstructor()->getMock();
         $mockObjectManager->expects($this->any())->method('getClassNameByObjectName')->will($this->returnArgument(0));
 
-        $objectSerializer = $this->getAccessibleMock(\TYPO3\Flow\Object\ObjectSerializer::class, array('reconstituteArray', 'reconstituteSplObjectStorage', 'reconstituteCollection', 'reconstitutePersistenceObject'), array(), '', false);
+        $objectSerializer = $this->getAccessibleMock(ObjectSerializer::class, ['reconstituteArray', 'reconstituteSplObjectStorage', 'reconstituteCollection', 'reconstitutePersistenceObject'], [], '', false);
         $objectSerializer->injectObjectManager($mockObjectManager);
         $objectSerializer->expects($this->at(0))->method('reconstituteArray')->with('arrayPropertyValue')->will($this->returnValue('arrayPropertyValue'));
-        $objectSerializer->expects($this->at(1))->method('reconstituteArray')->with('arrayObjectPropertyValue')->will($this->returnValue(array('arrayObjectPropertyValue')));
-        $objectSerializer->expects($this->once())->method('reconstituteSplObjectStorage')->with(array('splObjectStoragePropertyValue'))->will($this->returnValue('splObjectStoragePropertyValue'));
-        $objectSerializer->expects($this->once())->method('reconstituteCollection')->with('Doctrine\Common\Collections\ArrayCollection', array('collectionPropertyValue'))->will($this->returnValue('collectionPropertyValue'));
+        $objectSerializer->expects($this->at(1))->method('reconstituteArray')->with('arrayObjectPropertyValue')->will($this->returnValue(['arrayObjectPropertyValue']));
+        $objectSerializer->expects($this->once())->method('reconstituteSplObjectStorage')->with(['splObjectStoragePropertyValue'])->will($this->returnValue('splObjectStoragePropertyValue'));
+        $objectSerializer->expects($this->once())->method('reconstituteCollection')->with('Doctrine\Common\Collections\ArrayCollection', ['collectionPropertyValue'])->will($this->returnValue('collectionPropertyValue'));
         $objectSerializer->expects($this->once())->method('reconstitutePersistenceObject')->with('persistenceObjectClassName', 'persistenceObjectUUID')->will($this->returnValue('persistenceObjectPropertyValue'));
 
-        $objectsAsArray = array(
-            'emptyClass' => array(
-                \TYPO3\Flow\Object\ObjectSerializer::CLASSNAME => $emptyClassName,
-                \TYPO3\Flow\Object\ObjectSerializer::PROPERTIES => array(),
-            )
-        );
+        $objectsAsArray = [
+            'emptyClass' => [
+                ObjectSerializer::CLASSNAME => $emptyClassName,
+                ObjectSerializer::PROPERTIES => [],
+            ]
+        ];
         $objectSerializer->_set('objectsAsArray', $objectsAsArray);
 
         $object = $objectSerializer->_call('reconstituteObject', 'dummyobjecthash', $objectData);
 
         $this->assertEquals('simplePropertyValue', $object->getSimpleProperty(), 'Simple property was not set as expected.');
         $this->assertEquals('arrayPropertyValue', $object->getArrayProperty(), 'Array property was not set as expected.');
-        $this->assertEquals(new \ArrayObject(array('arrayObjectPropertyValue')), $object->getArrayObjectProperty(), 'ArrayObject property was not set as expected.');
+        $this->assertEquals(new \ArrayObject(['arrayObjectPropertyValue']), $object->getArrayObjectProperty(), 'ArrayObject property was not set as expected.');
         $this->assertEquals(new $emptyClassName(), $object->getObjectProperty(), 'Object property was not set as expected.');
         $this->assertEquals('splObjectStoragePropertyValue', $object->getSplObjectStorageProperty(), 'SplObjectStorage property was not set as expected.');
         $this->assertEquals('collectionPropertyValue', $object->getCollectionProperty(), 'Collection property was not set as expected.');
@@ -798,40 +809,40 @@ class ObjectSerializerTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function reconstituteArrayWorks()
     {
-        $objectSerializer = $this->getAccessibleMock(\TYPO3\Flow\Object\ObjectSerializer::class, array('dummy'), array(), '', false);
+        $objectSerializer = $this->getAccessibleMock(ObjectSerializer::class, ['dummy'], [], '', false);
 
-        $dataArray = array(
-            'key1' => array(
-                \TYPO3\Flow\Object\ObjectSerializer::TYPE => 'simple',
-                \TYPO3\Flow\Object\ObjectSerializer::VALUE => 1,
-            ),
-            'key2' => array(
-                \TYPO3\Flow\Object\ObjectSerializer::TYPE => 'simple',
-                \TYPO3\Flow\Object\ObjectSerializer::VALUE => 2,
-            ),
-            'key3' => array(
-                \TYPO3\Flow\Object\ObjectSerializer::TYPE => 'array',
-                \TYPO3\Flow\Object\ObjectSerializer::VALUE => array(
-                    'key4' => array(
-                        \TYPO3\Flow\Object\ObjectSerializer::TYPE => 'simple',
-                        \TYPO3\Flow\Object\ObjectSerializer::VALUE => 4,
-                    ),
-                    'key5' => array(
-                        \TYPO3\Flow\Object\ObjectSerializer::TYPE => 'simple',
-                        \TYPO3\Flow\Object\ObjectSerializer::VALUE => 5,
-                    )
-                )
-            )
-        );
+        $dataArray = [
+            'key1' => [
+                ObjectSerializer::TYPE => 'simple',
+                ObjectSerializer::VALUE => 1,
+            ],
+            'key2' => [
+                ObjectSerializer::TYPE => 'simple',
+                ObjectSerializer::VALUE => 2,
+            ],
+            'key3' => [
+                ObjectSerializer::TYPE => 'array',
+                ObjectSerializer::VALUE => [
+                    'key4' => [
+                        ObjectSerializer::TYPE => 'simple',
+                        ObjectSerializer::VALUE => 4,
+                    ],
+                    'key5' => [
+                        ObjectSerializer::TYPE => 'simple',
+                        ObjectSerializer::VALUE => 5,
+                    ]
+                ]
+            ]
+        ];
 
-        $expectedArrayProperty = array(
+        $expectedArrayProperty = [
             'key1' => 1,
             'key2' => 2,
-            'key3' => array(
+            'key3' => [
                 'key4' => 4,
                 'key5' => 5
-            )
-        );
+            ]
+        ];
 
         $this->assertEquals($expectedArrayProperty, $objectSerializer->_call('reconstituteArray', $dataArray), 'The array was not reconstituted correctly.');
     }
@@ -841,32 +852,33 @@ class ObjectSerializerTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function reconstituteArrayWorksWithObjectsInTheArray()
     {
-        $objectsAsArray = array(
-            'some object' => array(
-                \TYPO3\Flow\Object\ObjectSerializer::CLASSNAME => 'some object',
-                \TYPO3\Flow\Object\ObjectSerializer::PROPERTIES => \TYPO3\Flow\Object\ObjectSerializer::PROPERTIES,
-            )
-        );
+        $objectsAsArray = [
+            'some object' => [
+                ObjectSerializer::CLASSNAME => 'some object',
+                ObjectSerializer::PROPERTIES => ObjectSerializer::PROPERTIES,
+            ]
+        ];
 
-        $objectSerializer = $this->getAccessibleMock(\TYPO3\Flow\Object\ObjectSerializer::class, array('reconstituteObject'), array(), '', false);
-        $objectSerializer->expects($this->once())->method('reconstituteObject')->with('some object', array(\TYPO3\Flow\Object\ObjectSerializer::CLASSNAME => 'some object', \TYPO3\Flow\Object\ObjectSerializer::PROPERTIES => \TYPO3\Flow\Object\ObjectSerializer::PROPERTIES, ))->will($this->returnValue('reconstituted object'));
+        $objectSerializer = $this->getAccessibleMock(ObjectSerializer::class, ['reconstituteObject'], [], '', false);
+        $objectSerializer->expects($this->once())->method('reconstituteObject')->with('some object', [ObjectSerializer::CLASSNAME => 'some object', ObjectSerializer::PROPERTIES => ObjectSerializer::PROPERTIES,])->will($this->returnValue('reconstituted object'));
         $objectSerializer->_set('objectsAsArray', $objectsAsArray);
 
-        $dataArray = array(
-            'key1' => array(
-                \TYPO3\Flow\Object\ObjectSerializer::TYPE => 'simple',
-                \TYPO3\Flow\Object\ObjectSerializer::VALUE => 1,
-            ),
-            'key2' => array(
-                \TYPO3\Flow\Object\ObjectSerializer::TYPE => 'object',
-                \TYPO3\Flow\Object\ObjectSerializer::VALUE => 'some object'
-            )
-        );
 
-        $expectedArrayProperty = array(
+        $dataArray = [
+            'key1' => [
+                ObjectSerializer::TYPE => 'simple',
+                ObjectSerializer::VALUE => 1,
+            ],
+            'key2' => [
+                ObjectSerializer::TYPE => 'object',
+                ObjectSerializer::VALUE => 'some object'
+            ]
+        ];
+
+        $expectedArrayProperty = [
             'key1' => 1,
             'key2' => 'reconstituted object',
-        );
+        ];
 
         $this->assertEquals($expectedArrayProperty, $objectSerializer->_call('reconstituteArray', $dataArray), 'The array was not reconstituted correctly.');
     }
@@ -876,32 +888,33 @@ class ObjectSerializerTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function reconstituteArrayWorksWithSplObjectStorageInTheArray()
     {
-        $objectsAsArray = array(
-            'some object' => array(
-                \TYPO3\Flow\Object\ObjectSerializer::CLASSNAME => 'some object',
-                \TYPO3\Flow\Object\ObjectSerializer::PROPERTIES => \TYPO3\Flow\Object\ObjectSerializer::PROPERTIES,
-            )
-        );
+        $objectsAsArray = [
+            'some object' => [
+                ObjectSerializer::CLASSNAME => 'some object',
+                ObjectSerializer::PROPERTIES => ObjectSerializer::PROPERTIES,
+            ]
+        ];
 
-        $objectSerializer = $this->getAccessibleMock(\TYPO3\Flow\Object\ObjectSerializer::class, array('reconstituteSplObjectStorage'), array(), '', false);
-        $objectSerializer->expects($this->once())->method('reconstituteSplObjectStorage')->with(array(\TYPO3\Flow\Object\ObjectSerializer::CLASSNAME => 'some object', \TYPO3\Flow\Object\ObjectSerializer::PROPERTIES => \TYPO3\Flow\Object\ObjectSerializer::PROPERTIES, ))->will($this->returnValue('reconstituted object'));
+        $objectSerializer = $this->getAccessibleMock(ObjectSerializer::class, ['reconstituteSplObjectStorage'], [], '', false);
+        $objectSerializer->expects($this->once())->method('reconstituteSplObjectStorage')->with([ObjectSerializer::CLASSNAME => 'some object', ObjectSerializer::PROPERTIES => ObjectSerializer::PROPERTIES,])->will($this->returnValue('reconstituted object'));
         $objectSerializer->_set('objectsAsArray', $objectsAsArray);
 
-        $dataArray = array(
-            'key1' => array(
-                \TYPO3\Flow\Object\ObjectSerializer::TYPE => 'simple',
-                \TYPO3\Flow\Object\ObjectSerializer::VALUE => 1,
-            ),
-            'key2' => array(
-                \TYPO3\Flow\Object\ObjectSerializer::TYPE => 'SplObjectStorage',
-                \TYPO3\Flow\Object\ObjectSerializer::VALUE => 'some object'
-            )
-        );
 
-        $expectedArrayProperty = array(
+        $dataArray = [
+            'key1' => [
+                ObjectSerializer::TYPE => 'simple',
+                ObjectSerializer::VALUE => 1,
+            ],
+            'key2' => [
+                ObjectSerializer::TYPE => 'SplObjectStorage',
+                ObjectSerializer::VALUE => 'some object'
+            ]
+        ];
+
+        $expectedArrayProperty = [
             'key1' => 1,
             'key2' => 'reconstituted object',
-        );
+        ];
 
         $this->assertEquals($expectedArrayProperty, $objectSerializer->_call('reconstituteArray', $dataArray), 'The array was not reconstituted correctly.');
     }
@@ -911,35 +924,35 @@ class ObjectSerializerTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function reconstituteArrayWorksWithPersistenceObjectsInTheArray()
     {
-        $objectsAsArray = array(
-            'some object' => array(
-                \TYPO3\Flow\Object\ObjectSerializer::CLASSNAME => 'some object',
-                \TYPO3\Flow\Object\ObjectSerializer::PROPERTIES => \TYPO3\Flow\Object\ObjectSerializer::PROPERTIES,
-            )
-        );
+        $objectsAsArray = [
+            'some object' => [
+                ObjectSerializer::CLASSNAME => 'some object',
+                ObjectSerializer::PROPERTIES => ObjectSerializer::PROPERTIES,
+            ]
+        ];
 
-        $objectSerializer = $this->getAccessibleMock(\TYPO3\Flow\Object\ObjectSerializer::class, array('reconstitutePersistenceObject'), array(), '', false);
+        $objectSerializer = $this->getAccessibleMock(ObjectSerializer::class, ['reconstitutePersistenceObject'], [], '', false);
         $objectSerializer->expects($this->once())->method('reconstitutePersistenceObject')->with('persistenceObjectClassName', 'someUUID')->will($this->returnValue('reconstituted object'));
         $objectSerializer->_set('objectsAsArray', $objectsAsArray);
 
-        $dataArray = array(
-            'key1' => array(
-                \TYPO3\Flow\Object\ObjectSerializer::TYPE => 'simple',
-                \TYPO3\Flow\Object\ObjectSerializer::VALUE => 1,
-            ),
-            'key2' => array(
-                \TYPO3\Flow\Object\ObjectSerializer::TYPE => 'persistenceObject',
-                \TYPO3\Flow\Object\ObjectSerializer::VALUE => array(
-                    \TYPO3\Flow\Object\ObjectSerializer::CLASSNAME => 'persistenceObjectClassName',
+        $dataArray = [
+            'key1' => [
+                ObjectSerializer::TYPE => 'simple',
+                ObjectSerializer::VALUE => 1,
+            ],
+            'key2' => [
+                ObjectSerializer::TYPE => 'persistenceObject',
+                ObjectSerializer::VALUE => [
+                    ObjectSerializer::CLASSNAME => 'persistenceObjectClassName',
                     'UUID' => 'someUUID',
-                )
-            )
-        );
+                ]
+            ]
+        ];
 
-        $expectedArrayProperty = array(
+        $expectedArrayProperty = [
             'key1' => 1,
             'key2' => 'reconstituted object',
-        );
+        ];
 
         $this->assertEquals($expectedArrayProperty, $objectSerializer->_call('reconstituteArray', $dataArray), 'The array was not reconstituted correctly.');
     }
@@ -952,17 +965,18 @@ class ObjectSerializerTest extends \TYPO3\Flow\Tests\UnitTestCase
         $mockObject1 = new \stdClass();
         $mockObject2 = new \stdClass();
 
-        $objectsAsArray = array(
-            'some object' => array('object1 data'),
-            'some other object' => array('object2 data')
-        );
+        $objectsAsArray = [
+            'some object' => ['object1 data'],
+            'some other object' => ['object2 data']
+        ];
 
-        $objectSerializer = $this->getAccessibleMock(\TYPO3\Flow\Object\ObjectSerializer::class, array('reconstituteObject'), array(), '', false);
-        $objectSerializer->expects($this->at(0))->method('reconstituteObject')->with('some object', array('object1 data'))->will($this->returnValue($mockObject1));
-        $objectSerializer->expects($this->at(1))->method('reconstituteObject')->with('some other object', array('object2 data'))->will($this->returnValue($mockObject2));
+        $objectSerializer = $this->getAccessibleMock(ObjectSerializer::class, ['reconstituteObject'], [], '', false);
+        $objectSerializer->expects($this->at(0))->method('reconstituteObject')->with('some object', ['object1 data'])->will($this->returnValue($mockObject1));
+        $objectSerializer->expects($this->at(1))->method('reconstituteObject')->with('some other object', ['object2 data'])->will($this->returnValue($mockObject2));
         $objectSerializer->_set('objectsAsArray', $objectsAsArray);
 
-        $dataArray = array('some object', 'some other object');
+
+        $dataArray = ['some object', 'some other object'];
 
         $expectedResult = new \SplObjectStorage();
         $expectedResult->attach($mockObject1);
@@ -976,10 +990,10 @@ class ObjectSerializerTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function reconstitutePersistenceObjectRetrievesTheObjectCorrectlyFromThePersistenceFramework()
     {
-        $mockPersistenceManager = $this->createMock(\TYPO3\Flow\Persistence\PersistenceManagerInterface::class);
+        $mockPersistenceManager = $this->createMock(PersistenceManagerInterface::class);
         $mockPersistenceManager->expects($this->once())->method('getObjectByIdentifier')->with('someUUID')->will($this->returnValue('theObject'));
 
-        $objectSerializer = $this->getAccessibleMock(\TYPO3\Flow\Object\ObjectSerializer::class, array('dummy'), array(), '', false);
+        $objectSerializer = $this->getAccessibleMock(ObjectSerializer::class, ['dummy'], [], '', false);
         $objectSerializer->injectPersistenceManager($mockPersistenceManager);
 
         $this->assertEquals('theObject', $objectSerializer->_call('reconstitutePersistenceObject', 'someClassName', 'someUUID'));
@@ -1012,40 +1026,40 @@ class ObjectSerializerTest extends \TYPO3\Flow\Tests\UnitTestCase
 			}
 		}');
 
-        $mockReflectionService = $this->getMockBuilder(\TYPO3\Flow\Reflection\ReflectionService::class)->disableOriginalConstructor()->getMock();
-        $mockReflectionService->expects($this->at(0))->method('getClassPropertyNames')->with($className)->will($this->returnValue(array('collectionProperty')));
-        $mockReflectionService->expects($this->at(1))->method('getClassPropertyNames')->will($this->returnValue(array()));
-        $mockReflectionService->expects($this->at(2))->method('getClassPropertyNames')->will($this->returnValue(array()));
-        $mockReflectionService->expects($this->at(3))->method('getClassPropertyNames')->will($this->returnValue(array()));
+        $mockReflectionService = $this->getMockBuilder(ReflectionService::class)->disableOriginalConstructor()->getMock();
+        $mockReflectionService->expects($this->at(0))->method('getClassPropertyNames')->with($className)->will($this->returnValue(['collectionProperty']));
+        $mockReflectionService->expects($this->at(1))->method('getClassPropertyNames')->will($this->returnValue([]));
+        $mockReflectionService->expects($this->at(2))->method('getClassPropertyNames')->will($this->returnValue([]));
+        $mockReflectionService->expects($this->at(3))->method('getClassPropertyNames')->will($this->returnValue([]));
         $mockReflectionService->expects($this->any())->method('isPropertyTaggedWith')->with($className, 'collectionProperty', 'transient')->will($this->returnValue(false));
 
-        $objectSerializer = new \TYPO3\Flow\Object\ObjectSerializer($this->createMock(\TYPO3\Flow\Session\SessionInterface::class));
+        $objectSerializer = new ObjectSerializer($this->getMockBuilder(SessionInterface::class)->disableOriginalConstructor()->getMock());
         $objectSerializer->injectReflectionService($mockReflectionService);
 
         $objectHash1 = spl_object_hash($propertyClass1);
         $objectHash2 = spl_object_hash($propertyClass2);
 
         $object = new $className($propertyClass1, $propertyClass2);
-        $expectedArray = array(
-            $objectHash1 => array(
-                \TYPO3\Flow\Object\ObjectSerializer::CLASSNAME => $propertyClassName1,
-                \TYPO3\Flow\Object\ObjectSerializer::PROPERTIES => array(),
-            ),
-            $objectHash2 => array(
-                \TYPO3\Flow\Object\ObjectSerializer::CLASSNAME => $propertyClassName2,
-                \TYPO3\Flow\Object\ObjectSerializer::PROPERTIES => array(),
-            ),
-            spl_object_hash($object) => array(
-                \TYPO3\Flow\Object\ObjectSerializer::CLASSNAME => $className,
-                \TYPO3\Flow\Object\ObjectSerializer::PROPERTIES => array(
-                    'collectionProperty' => array(
-                        \TYPO3\Flow\Object\ObjectSerializer::TYPE => 'Collection',
-                        \TYPO3\Flow\Object\ObjectSerializer::CLASSNAME => 'Doctrine\Common\Collections\ArrayCollection',
-                        \TYPO3\Flow\Object\ObjectSerializer::VALUE => array($objectHash1, $objectHash2)
-                    )
-                )
-            )
-        );
+        $expectedArray = [
+            $objectHash1 => [
+                ObjectSerializer::CLASSNAME => $propertyClassName1,
+                ObjectSerializer::PROPERTIES => [],
+            ],
+            $objectHash2 => [
+                ObjectSerializer::CLASSNAME => $propertyClassName2,
+                ObjectSerializer::PROPERTIES => [],
+            ],
+            spl_object_hash($object) => [
+                ObjectSerializer::CLASSNAME => $className,
+                ObjectSerializer::PROPERTIES => [
+                    'collectionProperty' => [
+                        ObjectSerializer::TYPE => 'Collection',
+                        ObjectSerializer::CLASSNAME => 'Doctrine\Common\Collections\ArrayCollection',
+                        ObjectSerializer::VALUE => [$objectHash1, $objectHash2]
+                    ]
+                ]
+            ]
+        ];
 
         $this->assertEquals($expectedArray, $objectSerializer->serializeObjectAsPropertyArray($object));
     }
@@ -1058,17 +1072,18 @@ class ObjectSerializerTest extends \TYPO3\Flow\Tests\UnitTestCase
         $mockObject1 = new \stdClass();
         $mockObject2 = new \stdClass();
 
-        $objectsAsArray = array(
-            'some object' => array('object1 data'),
-            'some other object' => array('object2 data')
-        );
+        $objectsAsArray = [
+            'some object' => ['object1 data'],
+            'some other object' => ['object2 data']
+        ];
 
-        $objectSerializer = $this->getAccessibleMock(\TYPO3\Flow\Object\ObjectSerializer::class, array('reconstituteObject'), array(), '', false);
-        $objectSerializer->expects($this->at(0))->method('reconstituteObject')->with('some object', array('object1 data'))->will($this->returnValue($mockObject1));
-        $objectSerializer->expects($this->at(1))->method('reconstituteObject')->with('some other object', array('object2 data'))->will($this->returnValue($mockObject2));
+        $objectSerializer = $this->getAccessibleMock(ObjectSerializer::class, ['reconstituteObject'], [], '', false);
+        $objectSerializer->expects($this->at(0))->method('reconstituteObject')->with('some object', ['object1 data'])->will($this->returnValue($mockObject1));
+        $objectSerializer->expects($this->at(1))->method('reconstituteObject')->with('some other object', ['object2 data'])->will($this->returnValue($mockObject2));
         $objectSerializer->_set('objectsAsArray', $objectsAsArray);
 
-        $dataArray = array('some object', 'some other object');
+
+        $dataArray = ['some object', 'some other object'];
 
         $expectedResult = new \Doctrine\Common\Collections\ArrayCollection();
         $expectedResult->add($mockObject1);
@@ -1082,33 +1097,34 @@ class ObjectSerializerTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function reconstituteArrayWorksWithCollectionInTheArray()
     {
-        $objectsAsArray = array(
-            'some object' => array(
-                \TYPO3\Flow\Object\ObjectSerializer::CLASSNAME => 'some object',
-                \TYPO3\Flow\Object\ObjectSerializer::PROPERTIES => \TYPO3\Flow\Object\ObjectSerializer::PROPERTIES,
-            )
-        );
+        $objectsAsArray = [
+            'some object' => [
+                ObjectSerializer::CLASSNAME => 'some object',
+                ObjectSerializer::PROPERTIES => ObjectSerializer::PROPERTIES,
+            ]
+        ];
 
-        $objectSerializer = $this->getAccessibleMock(\TYPO3\Flow\Object\ObjectSerializer::class, array('reconstituteCollection'), array(), '', false);
-        $objectSerializer->expects($this->once())->method('reconstituteCollection')->with('Doctrine\Common\Collections\ArrayCollection', array('some object'))->will($this->returnValue('reconstituted object'));
+        $objectSerializer = $this->getAccessibleMock(ObjectSerializer::class, ['reconstituteCollection'], [], '', false);
+        $objectSerializer->expects($this->once())->method('reconstituteCollection')->with('Doctrine\Common\Collections\ArrayCollection', ['some object'])->will($this->returnValue('reconstituted object'));
         $objectSerializer->_set('objectsAsArray', $objectsAsArray);
 
-        $dataArray = array(
-            'key1' => array(
-                \TYPO3\Flow\Object\ObjectSerializer::TYPE => 'simple',
-                \TYPO3\Flow\Object\ObjectSerializer::VALUE => 1,
-            ),
-            'key2' => array(
-                \TYPO3\Flow\Object\ObjectSerializer::TYPE => 'Collection',
-                \TYPO3\Flow\Object\ObjectSerializer::CLASSNAME => 'Doctrine\Common\Collections\ArrayCollection',
-                \TYPO3\Flow\Object\ObjectSerializer::VALUE => array('some object')
-            )
-        );
 
-        $expectedArrayProperty = array(
+        $dataArray = [
+            'key1' => [
+                ObjectSerializer::TYPE => 'simple',
+                ObjectSerializer::VALUE => 1,
+            ],
+            'key2' => [
+                ObjectSerializer::TYPE => 'Collection',
+                ObjectSerializer::CLASSNAME => 'Doctrine\Common\Collections\ArrayCollection',
+                ObjectSerializer::VALUE => ['some object']
+            ]
+        ];
+
+        $expectedArrayProperty = [
             'key1' => 1,
-            'key2' => 'reconstituted object',
-        );
+            'key2' => 'reconstituted object'
+        ];
 
         $this->assertEquals($expectedArrayProperty, $objectSerializer->_call('reconstituteArray', $dataArray), 'The array was not reconstituted correctly.');
     }

@@ -11,14 +11,16 @@ namespace TYPO3\Flow\Tests\Unit\Core\Booting;
  * source code.
  */
 
+use TYPO3\Flow\Core\Booting\Scripts;
+use TYPO3\Flow\Tests\UnitTestCase;
+
 /**
  * Testcase for the initialization scripts
- *
  */
-class ScriptsTest extends \TYPO3\Flow\Tests\UnitTestCase
+class ScriptsTest extends UnitTestCase
 {
     /**
-     * @var \TYPO3\Flow\Core\Booting\Scripts|\PHPUnit_Framework_MockObject_MockObject
+     * @var Scripts|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $scriptsMock;
 
@@ -27,7 +29,7 @@ class ScriptsTest extends \TYPO3\Flow\Tests\UnitTestCase
     protected function setUp()
     {
         parent::setUp();
-        $this->scriptsMock = $this->getAccessibleMock(\TYPO3\Flow\Core\Booting\Scripts::class, array('dummy'));
+        $this->scriptsMock = $this->getAccessibleMock(Scripts::class, ['dummy']);
     }
 
     /**
@@ -35,10 +37,10 @@ class ScriptsTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function subProcessCommandEvaluatesIniFileUsageSettingCorrectly()
     {
-        $settings = array('core' => array(
+        $settings = ['core' => [
             'context' => 'Testing',
             'phpBinaryPathAndFilename' => '/foo/var/php'
-        ));
+        ]];
 
         $message = 'The command must contain the current ini because it is not explicitly set in settings.';
         $actual = $this->scriptsMock->_call('buildSubprocessCommand', 'flow:foo:identifier', $settings);
@@ -65,11 +67,11 @@ class ScriptsTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function subProcessCommandEvaluatesSubRequestIniEntriesCorrectly()
     {
-        $settings = array('core' => array(
+        $settings = ['core' => [
             'context' => 'Testing',
             'phpBinaryPathAndFilename' => '/must/be/set/according/to/schema',
-            'subRequestIniEntries' => array('someSetting' => 'withValue', 'someFlagSettingWithoutValue' => '')
-        ));
+            'subRequestIniEntries' => ['someSetting' => 'withValue', 'someFlagSettingWithoutValue' => '']
+        ]];
         $actual = $this->scriptsMock->_call('buildSubprocessCommand', 'flow:foo:identifier', $settings);
 
         $this->assertContains(sprintf(' -d %s=%s ', escapeshellarg('someSetting'), escapeshellarg('withValue')), $actual);

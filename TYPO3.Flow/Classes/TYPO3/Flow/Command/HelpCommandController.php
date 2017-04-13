@@ -125,7 +125,7 @@ class HelpCommandController extends CommandController
     }
 
     /**
-     * @param array<\TYPO3\Flow\Cli\Command> $commands
+     * @param array<Command> $commands
      * @return void
      */
     protected function displayShortHelpForCommands(array $commands)
@@ -262,7 +262,7 @@ class HelpCommandController extends CommandController
      * Builds an index of available commands. For each of them a Command object is
      * added to the commands array of this class.
      *
-     * @param array<\TYPO3\Flow\Cli\Command> $commands
+     * @param array<Command> $commands
      * @return array in the format array('<packageKey>' => array('<CommandControllerClassName>', array('<command1>' => $command1, '<command2>' => $command2)))
      */
     protected function buildCommandsIndex(array $commands)

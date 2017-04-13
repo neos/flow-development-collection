@@ -6,7 +6,7 @@
   "license": "MIT",
   "require": {
     "php": ">=5.5.0",
-    "neos/utility-objecthandling": "*"
+    "neos/utility-objecthandling": "~3.3.0"
   },
   "require-dev": {
     "mikey179/vfsstream": "~1.6",

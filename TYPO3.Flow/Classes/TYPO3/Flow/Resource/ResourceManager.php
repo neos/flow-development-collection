@@ -22,6 +22,7 @@ use TYPO3\Flow\Resource\Storage\StorageInterface;
 use TYPO3\Flow\Resource\Storage\WritableStorageInterface;
 use TYPO3\Flow\Resource\Target\TargetInterface;
 use TYPO3\Flow\Resource\Resource as PersistentResource;
+use TYPO3\Flow\Utility\Algorithms;
 use TYPO3\Flow\Utility\Environment;
 use TYPO3\Flow\Utility\Unicode\Functions as UnicodeFunctions;
 
@@ -633,7 +634,7 @@ class ResourceManager
 
         if ($openBasedirEnabled === true) {
             // Move uploaded file to a readable folder before trying to read sha1 value of file
-            $newTemporaryTargetPathAndFilename = $this->environment->getPathToTemporaryDirectory() . 'ResourceUpload.' . uniqid() . '.tmp';
+            $newTemporaryTargetPathAndFilename = $this->environment->getPathToTemporaryDirectory() . 'ResourceUpload.' . Algorithms::generateRandomString(13) . '.tmp';
             if (move_uploaded_file($temporaryTargetPathAndFilename, $newTemporaryTargetPathAndFilename) === false) {
                 throw new Exception(sprintf('The uploaded file "%s" could not be moved to the temporary location "%s".', $temporaryTargetPathAndFilename, $newTemporaryTargetPathAndFilename), 1375199056);
             }

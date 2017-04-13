@@ -12,6 +12,7 @@ namespace TYPO3\Eel;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Cache\Frontend\PhpFrontend;
 
 /**
  * An evaluator that compiles expressions down to PHP code
@@ -26,11 +27,11 @@ class CompilingEvaluator implements EelEvaluatorInterface
     /**
      * @var array
      */
-    protected $newExpressions = array();
+    protected $newExpressions = [];
 
     /**
      * @Flow\Inject(lazy=false)
-     * @var \TYPO3\Flow\Cache\Frontend\PhpFrontend
+     * @var PhpFrontend
      */
     protected $expressionCache;
 

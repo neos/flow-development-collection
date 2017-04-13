@@ -63,14 +63,19 @@ class ReflectionService
     const VISIBILITY_PRIVATE = 1;
     const VISIBILITY_PROTECTED = 2;
     const VISIBILITY_PUBLIC = 3;
+
     // Implementations of an interface
     const DATA_INTERFACE_IMPLEMENTATIONS = 1;
+
     // Implemented interfaces of a class
     const DATA_CLASS_INTERFACES = 2;
+
     // Subclasses of a class
     const DATA_CLASS_SUBCLASSES = 3;
+
     // Class tag values
     const DATA_CLASS_TAGS_VALUES = 4;
+
     // Class annotations
     const DATA_CLASS_ANNOTATIONS = 5;
     const DATA_CLASS_ABSTRACT = 6;
@@ -1113,7 +1118,7 @@ class ReflectionService
     {
         $className = $classNameOrObject;
         if (is_object($classNameOrObject)) {
-            $className = get_class($classNameOrObject);
+            $className = TypeHandling::getTypeForValue($classNameOrObject);
         }
         $className = $this->cleanClassName($className);
 
@@ -1177,7 +1182,7 @@ class ReflectionService
                 return false;
             }
 
-                    $scopeAnnotation = $this->getClassAnnotation($className, Flow\Scope::class);
+            $scopeAnnotation = $this->getClassAnnotation($className, Flow\Scope::class);
             if ($scopeAnnotation !== null && $scopeAnnotation->value !== 'prototype') {
                 throw new Exception(sprintf('Classes tagged as entity or value object must be of scope prototype, however, %s is declared as %s.', $className, $scopeAnnotation->value), 1264103349);
             }
@@ -1599,6 +1604,10 @@ class ReflectionService
         }
 
         if ($this->isPropertyAnnotatedWith($className, $propertyName, Flow\Inject::class)) {
+            return false;
+        }
+
+        if ($this->isPropertyAnnotatedWith($className, $propertyName, Flow\InjectConfiguration::class)) {
             return false;
         }
 

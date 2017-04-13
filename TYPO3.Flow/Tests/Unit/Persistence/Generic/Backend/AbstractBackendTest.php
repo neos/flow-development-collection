@@ -11,18 +11,20 @@ namespace TYPO3\Flow\Tests\Unit\Persistence\Generic\Backend;
  * source code.
  */
 
+use TYPO3\Flow\Persistence;
+use TYPO3\Flow\Tests\UnitTestCase;
+
 /**
  * Testcase for \TYPO3\Flow\Persistence\Backend
- *
  */
-class AbstractBackendTest extends \TYPO3\Flow\Tests\UnitTestCase
+class AbstractBackendTest extends UnitTestCase
 {
     /**
      * @test
      */
     public function commitDelegatesToPersistObjectsAndProcessDeletedObjects()
     {
-        $backend = $this->getMockBuilder(\TYPO3\Flow\Persistence\Generic\Backend\AbstractBackend::class)->setMethods(array('persistObjects', 'processDeletedObjects', 'getObjectCountByQuery', 'getObjectDataByQuery', 'getObjectDataByIdentifier', 'removeEntity', 'removeValueObject', 'storeObject', 'isConnected'))->getMock();
+        $backend = $this->getMockBuilder(Persistence\Generic\Backend\AbstractBackend::class)->setMethods(['persistObjects', 'processDeletedObjects', 'getObjectCountByQuery', 'getObjectDataByQuery', 'getObjectDataByIdentifier', 'removeEntity', 'removeValueObject', 'storeObject', 'isConnected'])->getMock();
         $backend->expects($this->once())->method('persistObjects');
         $backend->expects($this->once())->method('processDeletedObjects');
         $backend->commit();
@@ -37,8 +39,8 @@ class AbstractBackendTest extends \TYPO3\Flow\Tests\UnitTestCase
         $objects->attach(new \stdClass());
         $objects->attach(new \stdClass());
 
-        $mockPersistenceSession = $this->createMock(\TYPO3\Flow\Persistence\Generic\Session::class);
-        $backend = $this->getAccessibleMock(\TYPO3\Flow\Persistence\Generic\Backend\AbstractBackend::class, array('persistObject', 'getObjectCountByQuery', 'getObjectDataByQuery', 'getObjectDataByIdentifier', 'removeEntity', 'removeValueObject', 'storeObject', 'isConnected'));
+        $mockPersistenceSession = $this->createMock(Persistence\Generic\Session::class);
+        $backend = $this->getAccessibleMock(Persistence\Generic\Backend\AbstractBackend::class, ['persistObject', 'getObjectCountByQuery', 'getObjectDataByQuery', 'getObjectDataByIdentifier', 'removeEntity', 'removeValueObject', 'storeObject', 'isConnected']);
 
         $backend->injectPersistenceSession($mockPersistenceSession);
         $backend->expects($this->exactly(2))->method('persistObject');
@@ -55,12 +57,12 @@ class AbstractBackendTest extends \TYPO3\Flow\Tests\UnitTestCase
         $objects = new \SplObjectStorage();
         $objects->attach($object);
 
-        $mockSession = $this->createMock(\TYPO3\Flow\Persistence\Generic\Session::class);
+        $mockSession = $this->createMock(Persistence\Generic\Session::class);
         $mockSession->expects($this->at(0))->method('hasObject')->with($object)->will($this->returnValue(true));
         $mockSession->expects($this->at(1))->method('unregisterReconstitutedEntity')->with($object);
         $mockSession->expects($this->at(2))->method('unregisterObject')->with($object);
 
-        $backend = $this->getAccessibleMock(\TYPO3\Flow\Persistence\Generic\Backend\AbstractBackend::class, array('getObjectCountByQuery', 'getObjectDataByQuery', 'getObjectDataByIdentifier', 'removeEntity', 'removeValueObject', 'storeObject', 'isConnected'));
+        $backend = $this->getAccessibleMock(Persistence\Generic\Backend\AbstractBackend::class, ['getObjectCountByQuery', 'getObjectDataByQuery', 'getObjectDataByIdentifier', 'removeEntity', 'removeValueObject', 'storeObject', 'isConnected']);
         $backend->injectPersistenceSession($mockSession);
         $backend->expects($this->once())->method('removeEntity')->with($object);
         $backend->setDeletedEntities($objects);
@@ -76,11 +78,11 @@ class AbstractBackendTest extends \TYPO3\Flow\Tests\UnitTestCase
         $objects = new \SplObjectStorage();
         $objects->attach($object);
 
-        $mockSession = $this->createMock(\TYPO3\Flow\Persistence\Generic\Session::class);
+        $mockSession = $this->createMock(Persistence\Generic\Session::class);
         $mockSession->expects($this->at(0))->method('hasObject')->with($object)->will($this->returnValue(false));
         $mockSession->expects($this->never())->method('unregisterObject');
 
-        $backend = $this->getAccessibleMock(\TYPO3\Flow\Persistence\Generic\Backend\AbstractBackend::class, array('getObjectCountByQuery', 'getObjectDataByQuery', 'getObjectDataByIdentifier', 'removeEntity', 'removeValueObject', 'storeObject', 'isConnected'));
+        $backend = $this->getAccessibleMock(Persistence\Generic\Backend\AbstractBackend::class, ['getObjectCountByQuery', 'getObjectDataByQuery', 'getObjectDataByIdentifier', 'removeEntity', 'removeValueObject', 'storeObject', 'isConnected']);
         $backend->injectPersistenceSession($mockSession);
         $backend->expects($this->never())->method('removeEntity');
         $backend->setDeletedEntities($objects);
@@ -92,7 +94,7 @@ class AbstractBackendTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function getTypeNormalizesDoubleToFloat()
     {
-        $backend = $this->getAccessibleMockForAbstractClass(\TYPO3\Flow\Persistence\Generic\Backend\AbstractBackend::class);
+        $backend = $this->getAccessibleMockForAbstractClass(Persistence\Generic\Backend\AbstractBackend::class);
         $this->assertEquals('float', $backend->_call('getType', 1.234));
     }
 
@@ -101,7 +103,7 @@ class AbstractBackendTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function getTypeReturnsClassNameForObjects()
     {
-        $backend = $this->getAccessibleMockForAbstractClass(\TYPO3\Flow\Persistence\Generic\Backend\AbstractBackend::class);
+        $backend = $this->getAccessibleMockForAbstractClass(Persistence\Generic\Backend\AbstractBackend::class);
         $this->assertEquals('stdClass', $backend->_call('getType', new \stdClass()));
     }
 
@@ -112,12 +114,12 @@ class AbstractBackendTest extends \TYPO3\Flow\Tests\UnitTestCase
     {
         $object = new \stdClass();
 
-        $mockSession = $this->createMock(\TYPO3\Flow\Persistence\Generic\Session::class);
+        $mockSession = $this->createMock(Persistence\Generic\Session::class);
 
-        $backend = $this->getAccessibleMockForAbstractClass(\TYPO3\Flow\Persistence\Generic\Backend\AbstractBackend::class);
+        $backend = $this->getAccessibleMockForAbstractClass(Persistence\Generic\Backend\AbstractBackend::class);
         $backend->injectPersistenceSession($mockSession);
 
-        $this->assertTrue($backend->_call('arrayContainsObject', array($object), $object, 'fakeUuid'));
+        $this->assertTrue($backend->_call('arrayContainsObject', [$object], $object, 'fakeUuid'));
     }
 
     /**
@@ -125,13 +127,13 @@ class AbstractBackendTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function arrayContainsObjectReturnsFalseForDifferentObject()
     {
-        $mockSession = $this->createMock(\TYPO3\Flow\Persistence\Generic\Session::class);
+        $mockSession = $this->createMock(Persistence\Generic\Session::class);
         $mockSession->expects($this->any())->method('getIdentifierByObject')->will($this->returnValue('uuid2'));
 
-        $backend = $this->getAccessibleMockForAbstractClass(\TYPO3\Flow\Persistence\Generic\Backend\AbstractBackend::class);
+        $backend = $this->getAccessibleMockForAbstractClass(Persistence\Generic\Backend\AbstractBackend::class);
         $backend->injectPersistenceSession($mockSession);
 
-        $this->assertFalse($backend->_call('arrayContainsObject', array(new \stdClass()), new \stdClass(), 'uuid1'));
+        $this->assertFalse($backend->_call('arrayContainsObject', [new \stdClass()], new \stdClass(), 'uuid1'));
     }
 
     /**
@@ -142,12 +144,12 @@ class AbstractBackendTest extends \TYPO3\Flow\Tests\UnitTestCase
         $object = new \stdClass();
         $clone = clone $object;
 
-        $mockSession = $this->createMock(\TYPO3\Flow\Persistence\Generic\Session::class);
+        $mockSession = $this->createMock(Persistence\Generic\Session::class);
         $mockSession->expects($this->any())->method('getIdentifierByObject')->with($object)->will($this->returnValue('fakeUuid'));
 
-        $backend = $this->getAccessibleMockForAbstractClass(\TYPO3\Flow\Persistence\Generic\Backend\AbstractBackend::class);
+        $backend = $this->getAccessibleMockForAbstractClass(Persistence\Generic\Backend\AbstractBackend::class);
         $backend->injectPersistenceSession($mockSession);
 
-        $this->assertFalse($backend->_call('arrayContainsObject', array($object), $clone, 'clonedFakeUuid'));
+        $this->assertFalse($backend->_call('arrayContainsObject', [$object], $clone, 'clonedFakeUuid'));
     }
 }

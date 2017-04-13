@@ -1,8 +1,8 @@
 <?php
-return array(
-    'months' => array(
-        'monthContext[@type="format"]' => array(
-            'monthWidth[@type="wide"]' => array(
+return [
+    'months' => [
+        'monthContext[@type="format"]' => [
+            'monthWidth[@type="wide"]' => [
                 'month[@type="1"]' => 'January',
                 'month[@type="2"]' => 'February',
                 'month[@type="3"]' => 'March',
@@ -15,8 +15,8 @@ return array(
                 'month[@type="10"]' => 'October',
                 'month[@type="11"]' => 'November',
                 'month[@type="12"]' => 'December',
-            ),
-            'monthWidth[@type="abbreviated"]' => array(
+            ],
+            'monthWidth[@type="abbreviated"]' => [
                 'month[@type="1"]' => 'Jan',
                 'month[@type="2"]' => 'Feb',
                 'month[@type="3"]' => 'Mar',
@@ -29,8 +29,8 @@ return array(
                 'month[@type="10"]' => 'Oct',
                 'month[@type="11"]' => 'Nov',
                 'month[@type="12"]' => 'Dec',
-            ),
-            'monthWidth[@type="narrow"]' => array(
+            ],
+            'monthWidth[@type="narrow"]' => [
                 'month[@type="1"]' => 'J',
                 'month[@type="2"]' => 'F',
                 'month[@type="3"]' => 'M',
@@ -43,10 +43,10 @@ return array(
                 'month[@type="10"]' => 'O',
                 'month[@type="11"]' => 'N',
                 'month[@type="12"]' => 'D',
-            ),
-        ),
-        'monthContext[@type="stand-alone"]' => array(
-            'monthWidth[@type="wide"]' => array(
+            ],
+        ],
+        'monthContext[@type="stand-alone"]' => [
+            'monthWidth[@type="wide"]' => [
                 'month[@type="1"]' => 'January',
                 'month[@type="2"]' => 'February',
                 'month[@type="3"]' => 'March',
@@ -59,8 +59,8 @@ return array(
                 'month[@type="10"]' => 'October',
                 'month[@type="11"]' => 'November',
                 'month[@type="12"]' => 'December',
-            ),
-            'monthWidth[@type="abbreviated"]' => array(
+            ],
+            'monthWidth[@type="abbreviated"]' => [
                 'month[@type="1"]' => 'Jan',
                 'month[@type="2"]' => 'Feb',
                 'month[@type="3"]' => 'Mar',
@@ -73,8 +73,8 @@ return array(
                 'month[@type="10"]' => 'Oct',
                 'month[@type="11"]' => 'Nov',
                 'month[@type="12"]' => 'Dec',
-            ),
-            'monthWidth[@type="narrow"]' => array(
+            ],
+            'monthWidth[@type="narrow"]' => [
                 'month[@type="1"]' => 'J',
                 'month[@type="2"]' => 'F',
                 'month[@type="3"]' => 'M',
@@ -87,12 +87,12 @@ return array(
                 'month[@type="10"]' => 'O',
                 'month[@type="11"]' => 'N',
                 'month[@type="12"]' => 'D',
-            ),
-        ),
-    ),
-    'days' => array(
-        'dayContext[@type="format"]' => array(
-            'dayWidth[@type="wide"]' => array(
+            ],
+        ],
+    ],
+    'days' => [
+        'dayContext[@type="format"]' => [
+            'dayWidth[@type="wide"]' => [
                 'day[@type="sun"]' => 'Sunday',
                 'day[@type="mon"]' => 'Monday',
                 'day[@type="tue"]' => 'Tuesday',
@@ -100,8 +100,8 @@ return array(
                 'day[@type="thu"]' => 'Thursday',
                 'day[@type="fri"]' => 'Friday',
                 'day[@type="sat"]' => 'Saturday',
-            ),
-            'dayWidth[@type="abbreviated"]' => array(
+            ],
+            'dayWidth[@type="abbreviated"]' => [
                 'day[@type="sun"]' => 'Sun',
                 'day[@type="mon"]' => 'Mon',
                 'day[@type="tue"]' => 'Tue',
@@ -109,8 +109,8 @@ return array(
                 'day[@type="thu"]' => 'Thu',
                 'day[@type="fri"]' => 'Fri',
                 'day[@type="sat"]' => 'Sat',
-            ),
-            'dayWidth[@type="narrow"]' => array(
+            ],
+            'dayWidth[@type="narrow"]' => [
                 'day[@type="sun"]' => 'S',
                 'day[@type="mon"]' => 'M',
                 'day[@type="tue"]' => 'T',
@@ -118,10 +118,10 @@ return array(
                 'day[@type="thu"]' => 'T',
                 'day[@type="fri"]' => 'F',
                 'day[@type="sat"]' => 'S',
-            ),
-        ),
-        'dayContext[@type="stand-alone"]' => array(
-            'dayWidth[@type="wide"]' => array(
+            ],
+        ],
+        'dayContext[@type="stand-alone"]' => [
+            'dayWidth[@type="wide"]' => [
                 'day[@type="sun"]' => 'Sunday',
                 'day[@type="mon"]' => 'Monday',
                 'day[@type="tue"]' => 'Tuesday',
@@ -129,8 +129,8 @@ return array(
                 'day[@type="thu"]' => 'Thursday',
                 'day[@type="fri"]' => 'Friday',
                 'day[@type="sat"]' => 'Saturday',
-            ),
-            'dayWidth[@type="abbreviated"]' => array(
+            ],
+            'dayWidth[@type="abbreviated"]' => [
                 'day[@type="sun"]' => 'Sun',
                 'day[@type="mon"]' => 'Mon',
                 'day[@type="tue"]' => 'Tue',
@@ -138,8 +138,8 @@ return array(
                 'day[@type="thu"]' => 'Thu',
                 'day[@type="fri"]' => 'Fri',
                 'day[@type="sat"]' => 'Sat',
-            ),
-            'dayWidth[@type="narrow"]' => array(
+            ],
+            'dayWidth[@type="narrow"]' => [
                 'day[@type="sun"]' => '1',
                 'day[@type="mon"]' => '2',
                 'day[@type="tue"]' => '3',
@@ -147,94 +147,94 @@ return array(
                 'day[@type="thu"]' => '5',
                 'day[@type="fri"]' => '6',
                 'day[@type="sat"]' => '7',
-            ),
-        ),
-    ),
-    'quarters' => array(
-        'quarterContext[@type="format"]' => array(
-            'quarterWidth[@type="wide"]' => array(
+            ],
+        ],
+    ],
+    'quarters' => [
+        'quarterContext[@type="format"]' => [
+            'quarterWidth[@type="wide"]' => [
                 'quarter[@type="1"]' => '1st quarter',
                 'quarter[@type="2"]' => '2nd quarter',
                 'quarter[@type="3"]' => '3rd quarter',
                 'quarter[@type="4"]' => '4th quarter',
-            ),
-            'quarterWidth[@type="abbreviated"]' => array(
+            ],
+            'quarterWidth[@type="abbreviated"]' => [
                 'quarter[@type="1"]' => 'Q1',
                 'quarter[@type="2"]' => 'Q2',
                 'quarter[@type="3"]' => 'Q3',
                 'quarter[@type="4"]' => 'Q4',
 
-            ),
-            'quarterWidth[@type="narrow"]' => array(
+            ],
+            'quarterWidth[@type="narrow"]' => [
                 'quarter[@type="1"]' => '1',
                 'quarter[@type="2"]' => '2',
                 'quarter[@type="3"]' => '3',
                 'quarter[@type="4"]' => '4',
-            ),
-        ),
-        'quarterContext[@type="stand-alone"]' => array(
-            'quarterWidth[@type="wide"]' => array(
+            ],
+        ],
+        'quarterContext[@type="stand-alone"]' => [
+            'quarterWidth[@type="wide"]' => [
                 'quarter[@type="1"]' => '1st quarter',
                 'quarter[@type="2"]' => '2nd quarter',
                 'quarter[@type="3"]' => '3rd quarter',
                 'quarter[@type="4"]' => '4th quarter',
-            ),
-            'quarterWidth[@type="abbreviated"]' => array(
+            ],
+            'quarterWidth[@type="abbreviated"]' => [
                 'quarter[@type="1"]' => 'Q1',
                 'quarter[@type="2"]' => 'Q2',
                 'quarter[@type="3"]' => 'Q3',
                 'quarter[@type="4"]' => 'Q4',
-            ),
-            'quarterWidth[@type="narrow"]' => array(
+            ],
+            'quarterWidth[@type="narrow"]' => [
                 'quarter[@type="1"]' => '1',
                 'quarter[@type="2"]' => '2',
                 'quarter[@type="3"]' => '3',
                 'quarter[@type="4"]' => '4',
-            ),
-        ),
-    ),
-    'dayPeriods' => array(
-        'dayPeriodContext[@type="format"]' => array(
-            'dayPeriodWidth[@type="wide"]' => array(
+            ],
+        ],
+    ],
+    'dayPeriods' => [
+        'dayPeriodContext[@type="format"]' => [
+            'dayPeriodWidth[@type="wide"]' => [
                 'dayPeriod[@type="am"]' => 'a.m.',
                 'dayPeriod[@type="pm"]' => 'p.m.',
-            ),
-            'dayPeriodWidth[@type="abbreviated"]' => array(
+            ],
+            'dayPeriodWidth[@type="abbreviated"]' => [
                 'dayPeriod[@type="am"]' => 'a.m.',
                 'dayPeriod[@type="pm"]' => 'p.m.',
-            ),
-            'dayPeriodWidth[@type="narrow"]' => array(
+            ],
+            'dayPeriodWidth[@type="narrow"]' => [
                 'dayPeriod[@type="am"]' => 'a.m.',
                 'dayPeriod[@type="pm"]' => 'p.m.',
-            ),
-        ),
-        'dayPeriodContext[@type="stand-alone"]' => array(
-            'dayPeriodWidth[@type="wide"]' => array(
+            ],
+        ],
+        'dayPeriodContext[@type="stand-alone"]' => [
+            'dayPeriodWidth[@type="wide"]' => [
                 'dayPeriod[@type="am"]' => 'a.m.',
                 'dayPeriod[@type="pm"]' => 'p.m.',
-            ),
-            'dayPeriodWidth[@type="abbreviated"]' => array(
+            ],
+            'dayPeriodWidth[@type="abbreviated"]' => [
                 'dayPeriod[@type="am"]' => 'a.m.',
                 'dayPeriod[@type="pm"]' => 'p.m.',
-            ),
-            'dayPeriodWidth[@type="narrow"]' => array(
+            ],
+            'dayPeriodWidth[@type="narrow"]' => [
                 'dayPeriod[@type="am"]' => 'a.m.',
                 'dayPeriod[@type="pm"]' => 'p.m.',
-            ),
-        ),
-    ),
-    'eras' => array(
-        'eraNames' => array(
+            ],
+        ],
+    ],
+    'eras' => [
+        'eraNames' => [
             'era[@type="0"]' => 'Before Christ',
             'era[@type="1"]' => 'Anno Domini',
-        ),
-        'eraAbbr' => array(
+        ],
+        'eraAbbr' => [
             'era[@type="0"]' => 'BC',
             'era[@type="1"]' => 'AD',
-        ),
-        'eraNarrow' => array(
+        ],
+        'eraNarrow' => [
             'era[@type="0"]' => 'B',
             'era[@type="1"]' => 'A',
-        ),
-    ),
-);
+        ],
+    ],
+];
