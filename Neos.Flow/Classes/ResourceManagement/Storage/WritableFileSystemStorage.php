@@ -13,7 +13,7 @@ namespace Neos\Flow\ResourceManagement\Storage;
 
 use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\Flow\ResourceManagement\Storage\Exception as StorageException;
-use neos\Flow\Utility\Algorithms;
+use Neos\Flow\Utility\Algorithms;
 use Neos\Utility\Files;
 
 /**
