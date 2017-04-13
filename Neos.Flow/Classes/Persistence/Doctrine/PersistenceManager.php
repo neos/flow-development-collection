@@ -22,7 +22,6 @@ use Neos\Flow\Persistence\Exception\ObjectValidationFailedException;
 use Neos\Flow\Persistence\Exception as PersistenceException;
 use Neos\Flow\Persistence\Exception\UnknownObjectException;
 use Neos\Flow\Reflection\ClassSchema;
-use Neos\Flow\Error\Exception;
 use Neos\Utility\ObjectAccess;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Utility\TypeHandling;
@@ -165,7 +164,10 @@ class PersistenceManager extends AbstractPersistenceManager
 
         try {
             $this->entityManager->flush();
-        } catch (Exception $exception) {
+        } catch (\Doctrine\DBAL\DBALException $exception) {
+            if (!$this->entityManager->isOpen()) {
+                throw $exception;
+            }
             $this->systemLogger->logException($exception);
             /** @var Connection $connection */
             $connection = $this->entityManager->getConnection();
