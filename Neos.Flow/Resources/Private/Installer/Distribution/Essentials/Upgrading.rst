@@ -1,61 +1,13 @@
 Upgrading instructions
 ======================
 
-This file contains instructions for upgrading your Flow 3.3 based
-applications to Neos Flow 4.0
+This file contains instructions for upgrading your Flow 4.0 based
+applications to Neos Flow 4.1
 
 What has changed
 ----------------
 
-Neos 3.0 and Flow 4.0 represent the biggest refactoring effort the Neos project has undergone so far. Not only have Neos
-and Flow, and more than 100 related packages, been ported over to the new Neos namespace - you can now also say hello to
-Fusion, which is the new name for TypoScript2. These steps are the basis for all the exciting things that we have
-planned for Neos and Flow in the future.
-
-Since a lot of refactoring, especially regarding the naming of things, has been done, developers will need to get
-familiar with a few changes. This was necessary to prepare our basis for the features we are planning to build. Here's a
-list of the most important changes and renamings, to help you get used to Neos 3.0 quickly. There's also a detailed
-step-by-step upgrade guide further down in this post.
-
-Neos Namespace
-^^^^^^^^^^^^^^
-
-Up until Neos 2.3, we were still using the TYPO3 namespace for all our PHP classes in Neos and Flow. The team pulled a
-bunch of long nights, armed with a few crates of beer (but mostly coffee), to remove every reference to the old
-namespace from both Neos and Flow. We’re happy to see this completed. Flow is now in the Neos\Flow namespace, Neos
-itself is using Neos\Neos. This is a rather trivial, but very important change as it breaks compatibility with
-practically all sites and packages developed for pre-3.0. This means that there’s quite a bit of code to adust when you
-upgrade a package to Neos 3.0 / Flow 4.0. But fear not, we solved migration the "Flow" way – most of the adjustments can
-be applied automatically! We have compiled a list of things to look at further below in this post.
-
-TypoScript2 becomes Fusion
-^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-The name TypoScript has, until now, been used for both TYPO3 TypoScript and “our” rendering layer, called TypoScript2.
-As the two languages do not have much in common anymore and many developers are confused by the similar names, the team
-decided to rename TypoScript2 to Fusion with Neos 3.0. This means that the name TypoScript is officially deprecated in
-Neos. We even get a new file ending - say hello to .fusion!
-
-Having said that, to not break compatibility too badly, we will continue to support the legacy .ts2 file ending and will
-also provide a legacy TypoScriptService until the release of Neos 4.0. Check the upgrade guide below to see what you
-will need to change.
-
-PHP 7.1 support
-^^^^^^^^^^^^^^^
-
-PHP 7.1 and Flow 3.3/Neos 2.3 have not been getting along very well, breaking the rendering (Fluid and Fusion) for most
-sites. This has been fixed, Neos 3.0 and Flow 4.0 are fully compatible with PHP 7.1. Additionally, since PHP 7.0 a few
-more keywords have been reserved for future use. Among them are “Resource” and “Object”, which previously were used as
-class names in Flow’s resource framework. Even though this does not cause real problems at present, we refactored our
-class names and namespaces to comply with these new reserved keywords in order to be compatible with future versions of
-PHP.
-
-PSR-4 autoloading replaces PSR-0
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-All our packages now use PSR-4 autoloading. In most cases, this means that you will move all your package content from
-something like Packages/Sites/Vendor.Namespace/Vendor/Namespace/... to just Packages/Sites/Vendor.Namespace, and update
-your composer.json to indicate the use of PSR-4 instead of PSR-0.
+Since there were mostly bugfixes and only a few small features, no breaking changes are to be expected.
 
 Upgrading your Packages
 -----------------------
@@ -125,5 +77,5 @@ in *Development Context*, padded with some manual checking and adjustments needs
 That should result in a working package.
 
 If it does not and you have no idea what to do next, please get in touch
-with us. The `support page <https://www.neos.io/support/>`_ provides more
+with us. The `support page <https://www.neos.io/docs-and-support/support.html>`_ provides more
 information.
