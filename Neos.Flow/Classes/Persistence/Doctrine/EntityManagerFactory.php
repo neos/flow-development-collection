@@ -12,19 +12,15 @@ namespace Neos\Flow\Persistence\Doctrine;
  */
 
 use Doctrine\Common\EventManager;
-use Doctrine\Common\EventSubscriber;
 use Doctrine\DBAL\DriverManager;
+use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception\ConnectionException;
-use Doctrine\DBAL\Logging\SQLLogger;
-use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\Configuration;
 use Doctrine\ORM\EntityManager;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Cache\CacheManager;
 use Neos\Flow\Configuration\Exception\InvalidConfigurationException;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Persistence\Doctrine\Mapping\Driver\FlowAnnotationDriver;
-use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Utility\Environment;
 use Neos\Utility\Files;
@@ -70,9 +66,6 @@ class EntityManagerFactory
     public function injectSettings(array $settings)
     {
         $this->settings = $settings['persistence'];
-        if (!is_array($this->settings['doctrine'])) {
-            throw new InvalidConfigurationException(sprintf('The Neos.Flow.persistence.doctrine settings need to be an array, %s given.', gettype($this->settings['doctrine'])), 1392800005);
-        }
         if (!is_array($this->settings['backendOptions'])) {
             throw new InvalidConfigurationException(sprintf('The Neos.Flow.persistence.backendOptions settings need to be an array, %s given.', gettype($this->settings['backendOptions'])), 1426149224);
         }
@@ -91,30 +84,8 @@ class EntityManagerFactory
     {
         $config = new Configuration();
         $config->setClassMetadataFactoryName(Mapping\ClassMetadataFactory::class);
-        $this->applySecondLevelCacheSettingsToConfiguration($this->settings['doctrine']['secondLevelCache'], $config);
 
-        $cache = new CacheAdapter();
-        // must use ObjectManager in compile phase...
-        $cache->setCache($this->objectManager->get(CacheManager::class)->getCache('Flow_Persistence_Doctrine'));
-        $config->setMetadataCacheImpl($cache);
-        $config->setQueryCacheImpl($cache);
-
-        $resultCache = new CacheAdapter();
-        // must use ObjectManager in compile phase...
-        $resultCache->setCache($this->objectManager->get(CacheManager::class)->getCache('Flow_Persistence_Doctrine_Results'));
-        $config->setResultCacheImpl($resultCache);
-
-        if (is_string($this->settings['doctrine']['sqlLogger']) && class_exists($this->settings['doctrine']['sqlLogger'])) {
-            $configuredSqlLogger = $this->settings['doctrine']['sqlLogger'];
-            $sqlLoggerInstance = new $configuredSqlLogger();
-            if ($sqlLoggerInstance instanceof SQLLogger) {
-                $config->setSQLLogger($sqlLoggerInstance);
-            } else {
-                throw new InvalidConfigurationException(sprintf('Neos.Flow.persistence.doctrine.sqlLogger must point to a \Doctrine\DBAL\Logging\SQLLogger implementation, %s given.', get_class($sqlLoggerInstance)), 1426150388);
-            }
-        }
-
-        $eventManager = $this->buildEventManager();
+        $eventManager = new EventManager();
 
         $flowAnnotationDriver = $this->objectManager->get(FlowAnnotationDriver::class);
         $config->setMetadataDriverImpl($flowAnnotationDriver);
@@ -144,111 +115,30 @@ class EntityManagerFactory
             $connection = DriverManager::getConnection($settings, $config, $eventManager);
         }
 
+        $this->emitBeforeDoctrineEntityManagerCreation($connection, $config, $eventManager);
         $entityManager = EntityManager::create($connection, $config, $eventManager);
         $flowAnnotationDriver->setEntityManager($entityManager);
-
-        if (isset($this->settings['doctrine']['dbal']['mappingTypes']) && is_array($this->settings['doctrine']['dbal']['mappingTypes'])) {
-            foreach ($this->settings['doctrine']['dbal']['mappingTypes'] as $typeName => $typeConfiguration) {
-                Type::addType($typeName, $typeConfiguration['className']);
-                $entityManager->getConnection()->getDatabasePlatform()->registerDoctrineTypeMapping($typeConfiguration['dbType'], $typeName);
-            }
-        }
-
-        if (isset($this->settings['doctrine']['filters']) && is_array($this->settings['doctrine']['filters'])) {
-            foreach ($this->settings['doctrine']['filters'] as $filterName => $filterClass) {
-                $config->addFilter($filterName, $filterClass);
-                $entityManager->getFilters()->enable($filterName);
-            }
-        }
-
-        if (isset($this->settings['doctrine']['dql']) && is_array($this->settings['doctrine']['dql'])) {
-            $this->applyDqlSettingsToConfiguration($this->settings['doctrine']['dql'], $config);
-        }
+        $this->emitAfterDoctrineEntityManagerCreation($config, $entityManager);
 
         return $entityManager;
     }
 
     /**
-     * Add configured event subscribers and listeners to the event manager
-     *
-     * @return EventManager
-     * @throws IllegalObjectTypeException
+     * @param Connection $connection
+     * @param Configuration $config
+     * @param EventManager $eventManager
+     * @Flow\Signal
      */
-    protected function buildEventManager()
+    public function emitBeforeDoctrineEntityManagerCreation(Connection $connection, Configuration $config, EventManager $eventManager)
     {
-        $eventManager = new EventManager();
-        if (isset($this->settings['doctrine']['eventSubscribers']) && is_array($this->settings['doctrine']['eventSubscribers'])) {
-            foreach ($this->settings['doctrine']['eventSubscribers'] as $subscriberClassName) {
-                $subscriber = $this->objectManager->get($subscriberClassName);
-                if (!$subscriber instanceof EventSubscriber) {
-                    throw new IllegalObjectTypeException('Doctrine eventSubscribers must extend class \Doctrine\Common\EventSubscriber, ' . $subscriberClassName . ' fails to do so.', 1366018193);
-                }
-                $eventManager->addEventSubscriber($subscriber);
-            }
-        }
-        if (isset($this->settings['doctrine']['eventListeners']) && is_array($this->settings['doctrine']['eventListeners'])) {
-            foreach ($this->settings['doctrine']['eventListeners'] as $listenerOptions) {
-                $listener = $this->objectManager->get($listenerOptions['listener']);
-                $eventManager->addEventListener($listenerOptions['events'], $listener);
-            }
-        }
-        return $eventManager;
     }
 
     /**
-     * Apply configured settings regarding DQL to the Doctrine Configuration.
-     * At the moment, these are custom DQL functions.
-     *
-     * @param array $configuredSettings
-     * @param Configuration $doctrineConfiguration
-     * @return void
+     * @param Configuration $config
+     * @param EntityManager $entityManager
+     * @Flow\Signal
      */
-    protected function applyDqlSettingsToConfiguration(array $configuredSettings, Configuration $doctrineConfiguration)
+    public function emitAfterDoctrineEntityManagerCreation(Configuration $config, EntityManager $entityManager)
     {
-        if (isset($configuredSettings['customStringFunctions'])) {
-            $doctrineConfiguration->setCustomStringFunctions($configuredSettings['customStringFunctions']);
-        }
-        if (isset($configuredSettings['customNumericFunctions'])) {
-            $doctrineConfiguration->setCustomNumericFunctions($configuredSettings['customNumericFunctions']);
-        }
-        if (isset($configuredSettings['customDatetimeFunctions'])) {
-            $doctrineConfiguration->setCustomDatetimeFunctions($configuredSettings['customDatetimeFunctions']);
-        }
-    }
-
-    /**
-     * Apply configured settings regarding Doctrine's second level cache.
-     *
-     * @param array $configuredSettings
-     * @param Configuration $doctrineConfiguration
-     * @return void
-     */
-    protected function applySecondLevelCacheSettingsToConfiguration(array $configuredSettings, Configuration $doctrineConfiguration)
-    {
-        if (!isset($configuredSettings['enable']) || $configuredSettings['enable'] !== true) {
-            return;
-        }
-
-        $doctrineConfiguration->setSecondLevelCacheEnabled();
-        $regionsConfiguration = $doctrineConfiguration->getSecondLevelCacheConfiguration()->getRegionsConfiguration();
-        if (isset($configuredSettings['defaultLifetime'])) {
-            $regionsConfiguration->setDefaultLifetime($configuredSettings['defaultLifetime']);
-        }
-        if (isset($configuredSettings['defaultLockLifetime'])) {
-            $regionsConfiguration->setDefaultLockLifetime($configuredSettings['defaultLockLifetime']);
-        }
-
-        if (isset($configuredSettings['regions']) && is_array($configuredSettings['regions'])) {
-            foreach ($configuredSettings['regions'] as $regionName => $regionLifetime) {
-                $regionsConfiguration->setLifetime($regionName, $regionLifetime);
-            }
-        }
-
-        $cache = new CacheAdapter();
-        // must use ObjectManager in compile phase...
-        $cache->setCache($this->objectManager->get(CacheManager::class)->getCache('Flow_Persistence_Doctrine_SecondLevel'));
-
-        $factory = new \Doctrine\ORM\Cache\DefaultCacheFactory($regionsConfiguration, $cache);
-        $doctrineConfiguration->getSecondLevelCacheConfiguration()->setCacheFactory($factory);
     }
 }

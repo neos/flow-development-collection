@@ -11,10 +11,12 @@ namespace Neos\Flow\Tests\Unit\Persistence\Doctrine;
  * source code.
  */
 
-use Neos\Flow\Persistence\Doctrine\EntityManagerFactory;
+use Doctrine\Common\EventManager;
+use Doctrine\DBAL\Connection;
+use Neos\Flow\Persistence\Doctrine\EntityManagerConfiguration;
 use Neos\Flow\Tests\UnitTestCase;
 
-class EntityManagerFactoryTest extends UnitTestCase
+class EntityManagerConfigurationTest extends UnitTestCase
 {
     /**
      * @test
@@ -54,24 +56,37 @@ class EntityManagerFactoryTest extends UnitTestCase
      */
     protected function buildAndPrepareDqlCustomStringConfiguration()
     {
-        $entityManagerFactory = $this->getAccessibleMock(EntityManagerFactory::class, ['dummy']);
+        /** @var EntityManagerConfiguration $entityManagerConfiguration */
+        $entityManagerConfiguration = $this->getAccessibleMock(EntityManagerConfiguration::class, ['applyCacheConfiguration']);
+        /** @var Connection $connection */
+        $connection = $this->getMockBuilder(Connection::class)->disableOriginalConstructor()->getMock();
+        /** @var EventManager $eventManager */
+        $eventManager = $this->getMockBuilder(EventManager::class)->disableOriginalConstructor()->getMock();
         $configuration = new \Doctrine\ORM\Configuration;
 
         $settingsArray = [
-            'customStringFunctions' => [
-                'FOOSTRING' => 'Some\Foo\StringClass',
-                'BARSTRING' => 'Some\Bar\StringClass'
-            ],
-            'customNumericFunctions' => [
-                'FOONUMERIC' => 'Some\Foo\NumericClass',
-                'BARNUMERIC' => 'Some\Bar\NumericClass'
-            ],
-            'customDatetimeFunctions' => [
-                'FOODATETIME' => 'Some\Foo\DateTimeClass',
-                'BARDATETIME' => 'Some\Bar\DateTimeClass'
-            ],
+            'persistence' => [
+                'doctrine' => [
+                    'dql' => [
+                        'customStringFunctions' => [
+                            'FOOSTRING' => 'Some\Foo\StringClass',
+                            'BARSTRING' => 'Some\Bar\StringClass'
+                        ],
+                        'customNumericFunctions' => [
+                            'FOONUMERIC' => 'Some\Foo\NumericClass',
+                            'BARNUMERIC' => 'Some\Bar\NumericClass'
+                        ],
+                        'customDatetimeFunctions' => [
+                            'FOODATETIME' => 'Some\Foo\DateTimeClass',
+                            'BARDATETIME' => 'Some\Bar\DateTimeClass'
+                        ],
+                    ]
+                ]
+            ]
         ];
-        $entityManagerFactory->_call('applyDqlSettingsToConfiguration', $settingsArray, $configuration);
+
+        $entityManagerConfiguration->injectSettings($settingsArray);
+        $entityManagerConfiguration->configureEntityManager($connection, $configuration, $eventManager);
         return $configuration;
     }
 }
