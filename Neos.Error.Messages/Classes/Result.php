@@ -213,7 +213,7 @@ class Result
      * @return Result
      * @api
      */
-    public function forProperty(string $propertyPath): Result
+    public function forProperty(string $propertyPath = null): Result
     {
         if ($propertyPath === '' || $propertyPath === null) {
             return $this;
