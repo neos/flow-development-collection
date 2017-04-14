@@ -168,11 +168,11 @@ class Result
      * @return Error
      * @api
      */
-    public function getFirstError(string $messageTypeFilter = null): Error
+    public function getFirstError(string $messageTypeFilter = null)
     {
         $matchingErrors = $this->filterMessages($this->errors, $messageTypeFilter);
         reset($matchingErrors);
-        return current($matchingErrors) ?: null;
+        return current($matchingErrors);
     }
 
     /**
@@ -182,11 +182,11 @@ class Result
      * @return Warning
      * @api
      */
-    public function getFirstWarning(string $messageTypeFilter = null): Warning
+    public function getFirstWarning(string $messageTypeFilter = null)
     {
         $matchingWarnings = $this->filterMessages($this->warnings, $messageTypeFilter);
         reset($matchingWarnings);
-        return current($matchingWarnings) ?: null;
+        return current($matchingWarnings);
     }
 
     /**
@@ -196,11 +196,11 @@ class Result
      * @return Notice
      * @api
      */
-    public function getFirstNotice(string $messageTypeFilter = null): Notice
+    public function getFirstNotice(string $messageTypeFilter = null)
     {
         $matchingNotices = $this->filterMessages($this->notices, $messageTypeFilter);
         reset($matchingNotices);
-        return current($matchingNotices) ?: null;
+        return current($matchingNotices);
     }
 
     /**
