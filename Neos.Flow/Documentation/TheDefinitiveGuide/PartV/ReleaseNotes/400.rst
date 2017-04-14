@@ -24,6 +24,12 @@ In general make sure to run the commands::
 
 when upgrading (see below).
 
+Namespace change
+^^^^^^^^^^^^^^^^
+
+All namespaces beginning with ``TYPO3\\`` have been changed to the ``Neos\\`` vendor namespace.
+Migrations are provided for automatically adjusting user packages.
+
 Fluid standalone
 ^^^^^^^^^^^^^^^^
 
@@ -31,21 +37,21 @@ Replaces ``TYPO3.Fluid`` with ``Neos.FluidAdaptor`` integrating standalone fluid
 
 This change brings the following:
 
- * Standalone Fluid integration (see https://github.com/typo3/fluid)
- * Flow no longer depends on Fluid, the default View is configurable
- * Partials can be called with a package prefix "Vendor.Package:Path/Partial"
+* Standalone Fluid integration (see https://github.com/typo3/fluid)
+* Flow no longer depends on Fluid, the default View is configurable
+* Partials can be called with a package prefix "Vendor.Package:Path/Partial"
 
 Standalone Fluid in general is faster and many of the Flow specific ViewHelpers were
 rewritten to take advantage of compiling as well to make it even faster.
 
 The change is breaking because:
 
- * Standalone Fluid is a major rewrite, it might react differently for edge cases
- * Notably escaping now also escapes single quotes.
- * The ``ViewInterface`` got a new static ``createWithOptions(array $options)`` construct method, which needs to be implemented by custom view classes to have a defined way to instantiate views.
- * Flow no longer depends on Fluid, which means you might need to require it yourself in your distribution or package(s)
- * ``TYPO3\\Fluid\\*`` classes have moved to ``Neos\\FluidAdaptor\\*`` and a lot of classes are gone and instead to be used from the standalone fluid package if needed.
- * Boilerplate code to create Fluid views is slightly different and might need to be adapted in projects. 
+* Standalone Fluid is a major rewrite, it might react differently for edge cases
+* Notably escaping now also escapes single quotes.
+* The ``ViewInterface`` got a new static ``createWithOptions(array $options)`` construct method, which needs to be implemented by custom view classes to have a defined way to instantiate views.
+* Flow no longer depends on Fluid, which means you might need to require it yourself in your distribution or package(s)
+* ``TYPO3\\Fluid\\*`` classes have moved to ``Neos\\FluidAdaptor\\*`` and a lot of classes are gone and instead to be used from the standalone fluid package if needed.
+* Boilerplate code to create Fluid views is slightly different and might need to be adapted in projects. 
 
 Make Cache FileBackends independent of external locks
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -67,11 +73,11 @@ Previously a query object like
 
 would generate an SQL statement with two joins to the `related` entity, one for each condition, translating to
 
-"get all objects that have any related entity with a `property` 'foo' and any related entity with `otherProperty` 'bar'".
+*"get all objects that have any related entity with a `property` 'foo' and any related entity with `otherProperty` 'bar'"*.
 
 With this change, it will only generate a single join and reuse the join for multiple conditionals, therefore translating the above query object to the more common
 
-"get all objects that have a related entity with both a `property` 'foo' and `otherProperty` 'bar'"
+*"get all objects that have a related entity with both a `property` 'foo' and `otherProperty` 'bar'"*
 
 This also improves performance of such queries by avoiding unnecessary joins.
 
@@ -99,8 +105,7 @@ controller method.
 Parse media types from file content
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-MediaTypes::getMediaTypeFromFileContent() can be used to return
-the media type from a given file content.
+``MediaTypes::getMediaTypeFromFileContent()`` can be used to return the media type from a given file content.
 
 Extend AuthenticationManagerInterface with getter for providers
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -117,8 +122,8 @@ Support allowable tags in ``stripTags`` Eel String helper
 
 Now the ``stripTags`` string eel helper will accept a second optional argument in form of a list of allowed tags which will not be stripped from the string.
 
-Add String.pregSplit Eel helper
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Add ``String.pregSplit`` Eel helper
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Adds a new helper method to the string helper for splitting strings with a PREG pattern.
 
