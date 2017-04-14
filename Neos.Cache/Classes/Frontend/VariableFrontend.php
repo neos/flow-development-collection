@@ -87,9 +87,8 @@ class VariableFrontend extends AbstractFrontend
         $rawResult = $this->backend->get($entryIdentifier);
         if ($rawResult === false) {
             return false;
-        } else {
-            return ($this->useIgBinary === true) ? igbinary_unserialize($rawResult) : unserialize($rawResult);
         }
+        return ($this->useIgBinary === true) ? igbinary_unserialize($rawResult) : unserialize($rawResult);
     }
 
     /**
