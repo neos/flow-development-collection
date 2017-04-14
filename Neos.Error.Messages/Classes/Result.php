@@ -132,7 +132,7 @@ class Result
      * @return array<Error>
      * @api
      */
-    public function getErrors($messageTypeFilter = null)
+    public function getErrors(string $messageTypeFilter = null): array
     {
         return $this->filterMessages($this->errors, $messageTypeFilter);
     }
@@ -144,7 +144,7 @@ class Result
      * @return array<Warning>
      * @api
      */
-    public function getWarnings($messageTypeFilter = null)
+    public function getWarnings(string $messageTypeFilter = null): array
     {
         return $this->filterMessages($this->warnings, $messageTypeFilter);
     }
@@ -156,7 +156,7 @@ class Result
      * @return array<Notice>
      * @api
      */
-    public function getNotices($messageTypeFilter = null)
+    public function getNotices(string $messageTypeFilter = null): array
     {
         return $this->filterMessages($this->notices, $messageTypeFilter);
     }
@@ -168,11 +168,11 @@ class Result
      * @return Error
      * @api
      */
-    public function getFirstError($messageTypeFilter = null)
+    public function getFirstError(string $messageTypeFilter = null): Error
     {
         $matchingErrors = $this->filterMessages($this->errors, $messageTypeFilter);
         reset($matchingErrors);
-        return current($matchingErrors);
+        return current($matchingErrors) ?: null;
     }
 
     /**
@@ -182,11 +182,11 @@ class Result
      * @return Warning
      * @api
      */
-    public function getFirstWarning($messageTypeFilter = null)
+    public function getFirstWarning(string $messageTypeFilter = null): Warning
     {
         $matchingWarnings = $this->filterMessages($this->warnings, $messageTypeFilter);
         reset($matchingWarnings);
-        return current($matchingWarnings);
+        return current($matchingWarnings) ?: null;
     }
 
     /**
@@ -196,11 +196,11 @@ class Result
      * @return Notice
      * @api
      */
-    public function getFirstNotice($messageTypeFilter = null)
+    public function getFirstNotice(string $messageTypeFilter = null): Notice
     {
         $matchingNotices = $this->filterMessages($this->notices, $messageTypeFilter);
         reset($matchingNotices);
-        return current($matchingNotices);
+        return current($matchingNotices) ?: null;
     }
 
     /**
@@ -213,7 +213,7 @@ class Result
      * @return Result
      * @api
      */
-    public function forProperty($propertyPath)
+    public function forProperty(string $propertyPath): Result
     {
         if ($propertyPath === '' || $propertyPath === null) {
             return $this;
@@ -235,7 +235,7 @@ class Result
      * @param array $pathSegments
      * @return Result
      */
-    public function recurseThroughResult(array $pathSegments)
+    public function recurseThroughResult(array $pathSegments): Result
     {
         if (count($pathSegments) === 0) {
             return $this;
@@ -260,7 +260,7 @@ class Result
      * @return boolean
      * @api
      */
-    public function hasErrors()
+    public function hasErrors(): bool
     {
         return $this->errorsExist;
     }
@@ -285,7 +285,7 @@ class Result
      * @return boolean
      * @api
      */
-    public function hasWarnings()
+    public function hasWarnings(): bool
     {
         return $this->warningsExist;
     }
@@ -335,7 +335,7 @@ class Result
      *
      * @return bool
      */
-    public function hasMessages()
+    public function hasMessages(): bool
     {
         return $this->errorsExist || $this->noticesExist || $this->warningsExist;
     }
@@ -348,7 +348,7 @@ class Result
      * @return array<Error>
      * @api
      */
-    public function getFlattenedErrors()
+    public function getFlattenedErrors(): array
     {
         $result = [];
         $this->flattenTree('errors', $result);
@@ -364,7 +364,7 @@ class Result
      * @return array<Error>
      * @api
      */
-    public function getFlattenedErrorsOfType($type)
+    public function getFlattenedErrorsOfType(string $type): array
     {
         $result = [];
         $this->flattenTree('errors', $result, [], $type);
@@ -379,7 +379,7 @@ class Result
      * @return array<Warning>
      * @api
      */
-    public function getFlattenedWarnings()
+    public function getFlattenedWarnings(): array
     {
         $result = [];
         $this->flattenTree('warnings', $result);
@@ -394,7 +394,7 @@ class Result
      * @return array<Notice>
      * @api
      */
-    public function getFlattenedNotices()
+    public function getFlattenedNotices(): array
     {
         $result = [];
         $this->flattenTree('notices', $result);
@@ -410,7 +410,7 @@ class Result
      * @param string $messageTypeFilter If specified only messages implementing the given class name are taken into account
      * @return void
      */
-    public function flattenTree($propertyName, array &$result, array $level = [], $messageTypeFilter = null)
+    public function flattenTree(string $propertyName, array &$result, array $level = [], string $messageTypeFilter = null)
     {
         if (count($this->$propertyName) > 0) {
             $propertyPath = implode('.', $level);
@@ -429,7 +429,7 @@ class Result
      * @param string $messageTypeFilter If specified only messages implementing the given class name are taken into account
      * @return array the filtered message instances
      */
-    protected function filterMessages(array $messages, $messageTypeFilter = null)
+    protected function filterMessages(array $messages, string $messageTypeFilter = null): array
     {
         if ($messageTypeFilter === null) {
             return $messages;
@@ -477,7 +477,7 @@ class Result
      * @param string $adderName
      * @return void
      */
-    protected function mergeProperty(Result $otherResult, $getterName, $adderName)
+    protected function mergeProperty(Result $otherResult, string $getterName, string $adderName)
     {
         foreach ($otherResult->$getterName() as $messageInOtherResult) {
             $this->$adderName($messageInOtherResult);
@@ -489,7 +489,7 @@ class Result
      *
      * @return array<Result>
      */
-    public function getSubResults()
+    public function getSubResults(): array
     {
         return $this->propertyResults;
     }
