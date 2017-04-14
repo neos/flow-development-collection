@@ -24,12 +24,46 @@ In general make sure to run the commands::
 
 when upgrading (see below).
 
+Fluid standalone
+^^^^^^^^^^^^^^^^
+
+Replaces ``TYPO3.Fluid`` with ``Neos.FluidAdaptor`` integrating standalone fluid.
+
+This change brings the following:
+
+ * Standalone Fluid integration (see https://github.com/typo3/fluid)
+ * Flow no longer depends on Fluid, the default View is configurable
+ * Partials can be called with a package prefix "Vendor.Package:Path/Partial"
+
+Standalone Fluid in general is faster and many of the Flow specific ViewHelpers were
+rewritten to take advantage of compiling as well to make it even faster.
+
+The change is breaking because:
+
+ * Standalone Fluid is a major rewrite, it might react differently for edge cases
+ * Notably escaping now also escapes single quotes.
+ * The ``ViewInterface`` got a new static ``createWithOptions(array $options)`` construct method, which needs to be implemented by custom view classes to have a defined way to instantiate views.
+ * Flow no longer depends on Fluid, which means you might need to require it yourself in your distribution or package(s)
+ * ``TYPO3\\Fluid\\*`` classes have moved to ``Neos\\FluidAdaptor\\*`` and a lot of classes are gone and instead to be used from the standalone fluid package if needed.
+ * Boilerplate code to create Fluid views is slightly different and might need to be adapted in projects. 
+
+Make Cache FileBackends independent of external locks
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This avoids using external locks, which are prone to platform issues
+(race conditions and tombstones for lock files or missing semaphore extension)
+and instead directly uses the file locking mechanism of PHP to lock the cache files.
+
+This should noticeably improve performance for the FileBackend caches and avoid
+having thousands of Lock files which clobber the file system and created issues
+with big setups previously.
+
 Reuse join aliases on same property paths in QueryBuilder
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Previously a query object like
 
-`$query->logicalAnd($query->equals('related.property', 'foo'), $query->equals('related.otherProperty', 'bar'));`
+``$query->logicalAnd($query->equals('related.property', 'foo'), $query->equals('related.otherProperty', 'bar'));``
 
 would generate an SQL statement with two joins to the `related` entity, one for each condition, translating to
 
@@ -47,16 +81,6 @@ Runtime evaluation of env and constants in Configuration
 The configuration is now cached with php expressions that read
 environment variables and constants at runtime to allow writing
 the configuration cache on a different environment.
-
-Make Cache FileBackends independent of external locks
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-This avoids using external locks, which are prone to platform issues
-(race conditions and tombstones for lock files or missing semaphore extension)
-and instead directly uses the file locking mechanism of PHP to lock the cache files.
-
-This should noticeably improve performance for the FileBackend caches and avoid
-having thousands of Lock files which clobber the file system.
 
 Scalar to object converter
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -83,38 +107,24 @@ Extend AuthenticationManagerInterface with getter for providers
 
 Adds a new getter method to the ``AuthenticationManagerInterface``, that has to return all provided authentication providers.
 
-Fluid standalone
-^^^^^^^^^^^^^^^^
-
-Replaces ``TYPO3.Fluid`` with ``Neos.FluidAdaptor`` integrating standalone fluid.
-
-This change brings the following:
-
- * Standalone Fluid integration (see https://github.com/typo3/fluid)
- * Flow no longer depends on Fluid, the default View is configurable
- * Partials can be called with a package prefix "Vendor.Package:Path/Partial"
-
-Standalone Fluid in general is faster and many of the Flow specific ViewHelpers were
-rewritten to take advantage of compiling as well to make it even faster.
-
-The change is breaking because:
-
- * Standalone Fluid is a major rewrite, it might react differently for edge cases
- * Notably escaping now also escapes single quotes.
- * The ``ViewInterface`` got a new static ``createWithOptions(array $options)`` construct
-method, which needs to be implemented by custom view classes to have a defined way to
-instantiate views.
- * Flow no longer depends on Fluid, which means you might need to require it yourself in your
-distribution or package(s)
- * ``TYPO3\\Fluid\\*`` classes have moved to ``Neos\\FluidAdaptor\\*`` and a lot of classes are gone and instead to be used from the standalone fluid package if needed.
- * Boilerplate code to create Fluid views is slightly different and might need to be adapted in projects. 
-
 ``Array.flip()`` Eel helper
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 With this helper it is possible to flip the keys and values from an array.
 
-`Array.flip(array)`
+Support allowable tags in ``stripTags`` Eel String helper
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Now the ``stripTags`` string eel helper will accept a second optional argument in form of a list of allowed tags which will not be stripped from the string.
+
+Add String.pregSplit Eel helper
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Adds a new helper method to the string helper for splitting strings with a PREG pattern.
+
+Example::
+
+    String.pregSplit("foo bar   baz", "/\\s+/") == ['foo', 'bar', 'baz']
 
 Internal TypeConverters
 ^^^^^^^^^^^^^^^^^^^^^^^
@@ -159,37 +169,19 @@ Besides final classes could not be targeted by AOP advices.
 With this change, final classes are now also proxied by default.
 To _disable_ AOP/DI for those the already existing ``Proxy`` annotation can be used::
 
-```
-use TYPO3\\Flow\\Annotations as Flow;
-
-/**
- * @Flow\\Proxy(false)
- */
-final class SomeClass
-{
-    // ...
-```
+    use TYPO3\\Flow\\Annotations as Flow;
+    
+    /**
+     * @Flow\\Proxy(false)
+     */
+    final class SomeClass
+    {
+        // ...
 
 Background:
 
 Marking classes ``final`` is an important tool for framework code as it allows to define extension points
 more explicitly, but until now we had to avoid the ``final`` keyword in order to support DI and AOP.
-
-Support allowable tags in \`\`stripTags\`\` Eel String helper
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Now the `stripTags` string eel helper will accept a second optional argument in form of a list of allowed tags which will not be stripped from the string.
-
-Add String.pregSplit Eel helper
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Adds a new helper method to the string helper for splitting strings with a PREG pattern.
-
-Example::
-
-```
-String.pregSplit("foo bar   baz", "/\\s+/") == ['foo', 'bar', 'baz']
-```
 
 ViewConfiguration use only the settings of highest weighted request filter
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -200,8 +192,8 @@ This patch removes the merging of view-configurations entirely since this lead t
 
 This is breaking if you have multiple configurations with filters that apply to the same request and expect some option from one of the configurations to still be present despite another configuration having a higher weight.
 
-Rename [TYPO3][Flow][Security][Authentication]
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Rename ``[TYPO3][Flow][Security][Authentication]``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 This change adjusts the path used for the POST argument
 used for authentication with username and password to the
@@ -213,8 +205,8 @@ JavaScript - relying on the old path needs to be updated.
 This change provides a core migration which carries out
 these changes.
 
-Remove deprecated \`\`ResourcePublisher\`\` and pointer
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Remove deprecated ``ResourcePublisher`` and pointer
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The old resource management pre Flow 3.0 used the ``ResourcePublisher``
 as main service to get public URLs to resources and the ``ResourcePointer``
@@ -232,18 +224,18 @@ Remove deprecated support of temporary path setting
 The setting ``TYPO3.Flow.utility.environment.temporaryDirectoryBase``
 was deprecated and with this change finally removed.
 
-The temporary path defaults to FLOW_PATH_ROOT . 'Data/Temporary', but
+The temporary path defaults to ``FLOW_PATH_ROOT . 'Data/Temporary'``, but
 you can always override the temporary path via the environment variable
 ``FLOW_PATH_TEMPORARY_BASE`` instead.
 
 Note that in either case a sub path will be created based on the
 current application context.
 
-Remove deprecated \`\`EarlyLogger\`\` from Flow
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Remove deprecated ``EarlyLogger``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Remove deprecated \`\`PropertyMappingConfigurationBuilder\`\`
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Remove deprecated ``PropertyMappingConfigurationBuilder``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The ``PropertyMappingConfigurationBuilder`` class was deprecated and
 is bound to be removed.
@@ -251,8 +243,8 @@ is bound to be removed.
 It can be fully replaced by calling
 ``PropertyMapper::buildPropertyMappingConfiguration`` from now on.
 
-Remove deprecated \`\`getClassTag\`\` and constants
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Remove deprecated ``getClassTag`` and constants
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The ``CacheManager::getClassTag`` method was unused since
 quite some time and became deprecated in previous releases.
@@ -260,33 +252,33 @@ It is therefore bound for removal in this major version.
 Additionally the unused tagging constants in the ``FrontendInterface``
 are removed as they are also no longer needed.
 
-Remove relations to party in \`\`Account\`\` and \`\`Security\\Context\`\`
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Remove relations to party in ``Account`` and ``Security\\Context``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Since 3.0 something like a `Party` is not attached to the account directly anymore.
+Since 3.0 something like a ``Party`` is not attached to the account directly anymore.
 Fetch your user/party/organization etc. instance on your own using Domain Services or Repositories.
 
-One example is `TYPO3\\Party\\Domain\\Service\\PartyService`.
+One example is ``TYPO3\\Party\\Domain\\Service\\PartyService``.
 
 Remove deprecated properties and methods in Argument
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Remove deprecated class \`\`ResourcePublisher\`\`
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Remove deprecated class ``ResourcePublisher``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Rename object and resource
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-This renames the class `Resource` to `ResourceObject` and renames the namespaces
-`TYPO3\\Flow\\Object` and `TYPO3\\Flow\\Resource` to `TYPO3\\Flow\\ObjectManagement`
-and `TYPO3\\Flow\\ResourceManagement` respectively.
+This renames the class ``Resource`` to ``ResourceObject`` and renames the namespaces
+``TYPO3\\Flow\\Object`` and ``TYPO3\\Flow\\Resource`` to ``TYPO3\\Flow\\ObjectManagement``
+and ``TYPO3\\Flow\\ResourceManagement`` respectively.
 
 A Doctrine migration and two core migrations to help with adjusting code are added.
 
 Remove internal properties request and response from RequestHandler
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Since the Request and Response instances are supposed to change inside the ComponentChain,
+Since the ``Request`` and ``Response`` instances are supposed to change inside the ComponentChain,
 it is error-prone to keep a reference to the initial instances inside the RequestHandler.
 This change removes the class properties $request and $response and instead uses local variables.
 
@@ -304,9 +296,7 @@ than 1.1 (and whose passwords were never updated since then).
 In that case make sure to add the prefix to the corresponding accounts in the accounts table.
 For the default configuration the corresponding SQL query would be:
 
-```
-UPDATE typo3_flow_security_account SET credentialssource = CONCAT('bcrypt=>', credentialssource)
-```
+    UPDATE typo3_flow_security_account SET credentialssource = CONCAT('bcrypt=>', credentialssource)
 
 Background:
 
@@ -314,8 +304,8 @@ Due to some problems caused by older Flow installations that migrated from 1.0, 
 mechanism for the password hashing strategies was implemented for password hashes that don't
 contain the strategy prefix (i.e. "bcrypt=>").
 
-As a result the default strategy for `HashService::hashPassword()` is a different one than for
-`HashService::validatePassword()` unless specified explicitly because for the latter the configured
+As a result the default strategy for ``HashService::hashPassword()`` is a different one than for
+``HashService::validatePassword()`` unless specified explicitly because for the latter the configured
 fallback strategy would be used rather than the default.
 
 Remove deprecated setting injection
@@ -324,29 +314,29 @@ Remove deprecated setting injection
 This removes the deprecated injection of settings via the ``@Flow\\Inject`` annotation.
 Instead, use the ``@Flow\InjectConfiguration`` annotation.
 
-Remove deprecated \`\`TypeHandling::hex2bin\`\` method
+Remove deprecated ``TypeHandling::hex2bin`` method
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Remove deprecated ``StringHelper::match`` method
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Remove deprecated ``Http\\Message`` class
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Remove deprecated ``TranslationHelper::translateById``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Remove deprecated \`\`StringHelper::match\`\` method
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Remove deprecated ``redirectToReferringRequest``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Remove deprecated \`\`Http\\Message\`\` class
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Remove deprecated ``Route::getMatchingUri``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Remove deprecated \`\`TranslationHelper::translateById\`\`
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Remove output related methods from ``AbstractMigration``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Remove deprecated \`\`redirectToReferringRequest\`\`
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Remove deprecated \`\`Route::getMatchingUri\`\`
+Remove deprecated methods from ``TemplateView``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Remove output related methods from \`\`AbstractMigration\`\`
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Remove deprecated methods from \`\`TemplateView\`\`
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Upgrading your Packages
 -----------------------
