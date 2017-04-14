@@ -208,6 +208,34 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
     }
 
     /**
+     * Try to remove a file and make sure it is not locked.
+     *
+     * @param string $fileName The full filename of the file to remove.
+     * @return bool True if the file was removed successfully or false otherwise
+     */
+    private function tryRemoveWithLock($fileName)
+    {
+        if (strncasecmp(PHP_OS, 'WIN', 3) == 0) {
+            // On Windows, unlinking a locked/opened file will not work, so we just attempt the delete straight away.
+            // In the worst case, the unlink will just fail due to concurrent access and the caller needs to deal with that.
+            return unlink($fileName);
+        }
+        $file = fopen($fileName, 'rb');
+        if ($file === false) {
+            return false;
+        }
+
+        $result = false;
+        if (flock($file, LOCK_EX) !== false) {
+            $result = unlink($fileName);
+            flock($file, LOCK_UN);
+        }
+        fclose($file);
+
+        return $result;
+    }
+
+    /**
      * Removes all cache entries matching the specified identifier.
      * Usually this only affects one entry.
      *
@@ -226,23 +254,8 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
         }
         $cacheEntryPathAndFilename = $this->cacheDirectory . $entryIdentifier . $this->cacheEntryFileExtension;
         for ($i = 0; $i < 3; $i++) {
-            $result = false;
             try {
-                if (strncasecmp(PHP_OS, 'WIN', 3) == 0) {
-                    // On Windows, unlinking a locked/opened file will not work, so we just attempt the delete straight away.
-                    // In the worst case, the unlink will just fail due to concurrent access and the caller needs to deal with that.
-                    $result = unlink($cacheEntryPathAndFilename);
-                } else {
-                    $file = fopen($cacheEntryPathAndFilename, 'rb');
-                    if ($file === false) {
-                        continue;
-                    }
-                    if (flock($file, LOCK_EX) !== false) {
-                        $result = unlink($cacheEntryPathAndFilename);
-                        flock($file, LOCK_UN);
-                    }
-                    fclose($file);
-                }
+                $result = $this->tryRemoveWithLock($cacheEntryPathAndFilename);
 
                 if ($result === true) {
                     clearstatcache(true, $cacheEntryPathAndFilename);
