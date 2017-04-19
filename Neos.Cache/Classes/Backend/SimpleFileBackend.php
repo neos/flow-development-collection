@@ -263,7 +263,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
                 }
             } catch (\Exception $e) {
             }
-            usleep(random_int(10, 500));
+            usleep(rand(10, 500));
         }
 
         return false;
@@ -505,7 +505,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
             if ($data !== false) {
                 return $data;
             }
-            usleep(random_int(10, 500));
+            usleep(rand(10, 500));
         }
 
         return false;
@@ -540,7 +540,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
                 clearstatcache(true, $cacheEntryPathAndFilename);
                 return $result;
             }
-            usleep(random_int(10, 500));
+            usleep(rand(10, 500));
         }
 
         return false;
