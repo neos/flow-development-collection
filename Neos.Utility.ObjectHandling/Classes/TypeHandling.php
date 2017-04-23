@@ -150,6 +150,18 @@ abstract class TypeHandling
     }
 
     /**
+     * @param string $type
+     * @return string The original type without an optional "null" type information
+     */
+    public static function stripNullableType($type)
+    {
+        if (stripos($type, 'null') === false) {
+            return $type;
+        }
+        return preg_replace('/(\\|null|null\\|)/i', '', $type);
+    }
+
+    /**
      * Return simple type or class for object
      *
      * @param mixed $value
