@@ -79,5 +79,5 @@ in *Development Context*, padded with some manual checking and adjustments needs
 That should result in a working package.
 
 If it does not and you have no idea what to do next, please get in touch
-with us. The `support page <http://flow.typo3.org/support/>`_ provides more
+with us. The `support page <https://www.neos.io/docs-and-support/support.html>`_ provides more
 information.
