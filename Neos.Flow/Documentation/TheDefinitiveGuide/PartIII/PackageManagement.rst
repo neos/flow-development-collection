@@ -65,6 +65,13 @@ entry in the *Settings.yaml* of the package that expects packages of that type::
         packagesPathByType:
           'neos-acme': 'Acme'
 
+.. note::
+
+	Packages where the type starts with ``typo3-flow-`` or ``neos-`` are considered
+	Flow packages and will therefore be reflected and proxied by default. We recommend
+	using only the ``neos-`` prefix for the type when creating new packages (but only from
+	Flow 3.2 upwards) as the other is deprecated and will stop working in the next major.
+
 Package Directory Layout
 ========================
 

@@ -1,5 +1,4 @@
 `4.0.0 (2017-04-14) <https://github.com/neos/flow-development-collection/releases/tag/4.0.0>`_
-==============================================================================================
 
 Overview of merged pull requests
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1051,3 +1050,4 @@ Also some changelog files were added that are not supposed to be in master.
 
 `Detailed log <https://github.com/neos/flow-development-collection/compare/upstream/3.3...4.0.0>`_
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+

@@ -1,0 +1,8 @@
+`4.0.5 (2017-04-11) <https://github.com/neos/flow-development-collection/releases/tag/4.0.5>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/4.0.6...4.0.5>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

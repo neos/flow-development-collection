@@ -1,0 +1,134 @@
+`4.0.1 (2017-02-14) <https://github.com/neos/flow-development-collection/releases/tag/4.0.1>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Cleanup of reflection freezing <https://github.com/neos/flow-development-collection/pull/851>`_
+--------------------------------------------------------------------------------------------------------
+
+The reflection freezing process still used a removed method from packages,
+this has been refactored as the information needed is already available and
+just needed to be cached.
+
+Additionally a bit of clean up was done while looking at it.
+
+Fixes: #743
+
+* Packages: ``Flow``
+
+`BUGFIX: Use request correctly in Fluid Views <https://github.com/neos/flow-development-collection/pull/852>`_
+--------------------------------------------------------------------------------------------------------------
+
+The refactoring of Fluid to the Adaptor left some places with invalid handling
+of request and format inside of Views. The code couldn't work in it's current
+state and is now adapted.
+
+Fixes: #848
+
+* Packages: ``FluidAdaptor``
+
+`BUGFIX: ClassLoader should load AvailableProxies from TEMPORARY_BASE <https://github.com/neos/flow-development-collection/pull/867>`_
+--------------------------------------------------------------------------------------------------------------------------------------
+
+If you have an old version of the AvailableProxyClasses in FLOW_PATH_DATA
+and you change FLOW_PATH_TEMPORARY_BASE, always the old proxy classes
+get loaded.
+
+Resolves: #866
+
+`BUGFIX: Proxy Compiler adds newline after end of original code <https://github.com/neos/flow-development-collection/pull/854>`_
+--------------------------------------------------------------------------------------------------------------------------------
+
+As any original class might end on a comment line without newline we need to
+add a newline as part of the proxy building to avoid putting the proxy
+namespace declaration within a comment. Additionally adds a marker comment
+declaring the beginning of the proxy code.
+
+Fixes: #779
+
+`BUGFIX: Use \`\`exec\`\` everywhere instead of \`\`system\`\` <https://github.com/neos/flow-development-collection/pull/856>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+Instead of using both, the Flow core uses the ``exec`` function throughout
+now and the requirements documentation is updated accordingly.
+
+Fixes: #634
+
+* Packages: ``Flow``
+
+`BUGFIX: Peg generated parsers are excluded from proxy building <https://github.com/neos/flow-development-collection/pull/853>`_
+--------------------------------------------------------------------------------------------------------------------------------
+
+The generated parsers ``AbstractParser``, ``EelParser`` and ``FizzleParser``
+are excluded from proxy building as the include statement and the general
+structure of these make them unsuitable for proxy-ing. This was only a bug
+before if an AOP advice targeted the mentioned classes, now this cannot
+happen anymore.
+
+Fixes: #796
+
+`BUGFIX: Documented correct implementation of condition ViewHelpers <https://github.com/neos/flow-development-collection/pull/855>`_
+------------------------------------------------------------------------------------------------------------------------------------
+
+With the introduction of standalone Fluid the correct way to implement
+custom condition ViewHelpers has changed but this was not reflected in
+the doc block of the ``AbstractConditionViewHelper``. This change finally
+adds the missing explanation.
+
+Fixes: #746
+
+* Packages: ``FluidAdaptor``
+
+`BUGFIX: Resource setSha1() fails on uppercase hash <https://github.com/neos/flow-development-collection/pull/865>`_
+--------------------------------------------------------------------------------------------------------------------
+
+This change fixes an issue with the Resource object's
+`setSha1()` method which fails if the given hexadecimal
+number uses uppercase characters for A-F.
+
+On some operating systems or third party services,
+uppercase hashes may be used. `setSha1()` now accepts
+values containing uppercase characters and normalizes
+them to lowercase. Therefore, when you set a SHA1
+with an uppercase hexadecimal string, `getSha1()`
+will return it in lowercase.
+
+Related to https://github.com/flownative/flow-google-cloudstorage/issues/4
+
+`BUGFIX: Add documentation about package types <https://github.com/neos/flow-development-collection/pull/862>`_
+---------------------------------------------------------------------------------------------------------------
+
+Adds a note about the package type prefixes support.
+
+Fixes: #503
+
+`BUGFIX: \`\`ReflectionService::getClassSchema\`\` works with Proxies <https://github.com/neos/flow-development-collection/pull/860>`_
+--------------------------------------------------------------------------------------------------------------------------------------
+
+Getting a class schema from the reflection service should work
+when giving a doctrine proxy object instead of the actual entity.
+
+Fixes: #561
+
+`TASK: Fix version in Flows Documentation/conf.py <https://github.com/neos/flow-development-collection/pull/861>`_
+------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Flow``
+
+`BUGFIX: Allow factories to build prototypes <https://github.com/neos/flow-development-collection/pull/850>`_
+-------------------------------------------------------------------------------------------------------------
+
+This fix allowes to build prototypes using factories by configuring
+`scope: prototype` in the Objects.yaml
+Before the object manager ignores the configuration and generates singletons everytime.
+
+`TASK: Pin utility versions to 3.3 branch releases <https://github.com/neos/flow-development-collection/pull/846>`_
+-------------------------------------------------------------------------------------------------------------------
+
+Avoid installing breaking versions of the utilities in Flow 3.3.
+
+* Packages: ``Arrays`` ``Lock``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/4.0.0...4.0.1>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

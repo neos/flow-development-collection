@@ -186,7 +186,7 @@ class PersistenceTest extends FunctionalTestCase
     {
         $expectedEntity = new Fixtures\TestEntity();
         $uuid = $this->persistenceManager->getIdentifierByObject($expectedEntity);
-        $actualEntity = $this->persistenceManager->getObjectByIdentifier($uuid, TestEntity::class);
+        $actualEntity = $this->persistenceManager->getObjectByIdentifier($uuid, Fixtures\TestEntity::class);
         $this->assertSame($expectedEntity, $actualEntity);
     }
 

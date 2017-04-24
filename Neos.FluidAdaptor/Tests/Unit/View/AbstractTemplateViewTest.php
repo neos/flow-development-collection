@@ -31,12 +31,12 @@ class AbstractTemplateViewTest extends \Neos\Flow\Tests\UnitTestCase
     protected $renderingContext;
 
     /**
-     * @var \Neos\FluidAdaptor\Core\ViewHelper\ViewHelperVariableContainer
+     * @var ViewHelperVariableContainer
      */
     protected $viewHelperVariableContainer;
 
     /**
-     * @var \Neos\FluidAdaptor\Core\ViewHelper\TemplateVariableContainer
+     * @var TemplateVariableContainer
      */
     protected $templateVariableContainer;
 

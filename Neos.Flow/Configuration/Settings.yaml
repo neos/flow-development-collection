@@ -664,9 +664,9 @@ Neos:
         # Allow http access only.
         httponly: TRUE
 
-        # The cookie domain. Use dot notation if cookies should be valid for
-        # all subdomains.
-        #domain: .domain.com
+        # The cookie domain. Only denote the top-level domain if cookies should be valid for
+        # all subdomains. Dot notation is not supported.
+        #domain: domain.com
         domain: NULL
 
     utility:
@@ -680,7 +680,8 @@ Neos:
         commandReferences:
           - 'Flow:FlowCommands'
         references:
-          - 'Flow:FluidViewHelpers'
+          - 'TYPO3Fluid:ViewHelpers'
+          - 'Flow:FluidAdaptorViewHelpers'
           - 'Flow:FlowValidators'
           - 'Flow:FlowSignals'
           - 'Flow:FlowTypeConverters'
@@ -698,9 +699,20 @@ Neos:
         savePathAndFilename: '%FLOW_PATH_PACKAGES%Framework/Neos.Flow/Documentation/TheDefinitiveGuide/PartV/CommandReference.rst'
 
     references:
-      'Flow:FluidViewHelpers':
-        title: 'Fluid ViewHelper Reference'
-        savePathAndFilename: '%FLOW_PATH_PACKAGES%Framework/Neos.Flow/Documentation/TheDefinitiveGuide/PartV/FluidViewHelperReference.rst'
+      'TYPO3Fluid:ViewHelpers':
+        title: 'TYPO3 Fluid ViewHelper Reference'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Framework/Neos.Flow/Documentation/TheDefinitiveGuide/PartV/TYPO3FluidViewHelperReference.rst'
+        affectedClasses:
+          parentClassName: TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper
+          classNamePattern: '/^TYPO3Fluid\\Fluid\\ViewHelpers\\.*$/i'
+        parser:
+          implementationClassName: Neos\DocTools\Domain\Service\FluidViewHelperClassParser
+          options:
+            namespaces:
+              f: TYPO3Fluid\Fluid\ViewHelpers
+      'Flow:FluidAdaptorViewHelpers':
+        title: 'FluidAdaptor ViewHelper Reference'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Framework/Neos.Flow/Documentation/TheDefinitiveGuide/PartV/FluidAdaptorViewHelperReference.rst'
         affectedClasses:
           parentClassName: 'Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper'
           classNamePattern: '/^Neos\\FluidAdaptor\\ViewHelpers\\.*$/i'

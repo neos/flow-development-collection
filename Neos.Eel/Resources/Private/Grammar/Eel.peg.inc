@@ -19,6 +19,8 @@ namespace Neos\Eel;
  *
  * This parser can evaluate the expression language for Flow and uses
  * the basic types from AbstractParser.
+ *
+ * @Neos\Flow\Annotations\Proxy(false)
  */
 class EelParser extends \Neos\Eel\AbstractParser {
 

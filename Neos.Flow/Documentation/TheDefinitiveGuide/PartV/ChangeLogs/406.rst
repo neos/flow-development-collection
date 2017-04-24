@@ -1,0 +1,37 @@
+`4.0.6 (2017-04-12) <https://github.com/neos/flow-development-collection/releases/tag/4.0.6>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Correctly document usage of \`\`...cookie.domain\`\` setting <https://github.com/neos/flow-development-collection/pull/933>`_
+--------------------------------------------------------------------------------------------------------------------------------------
+
+The cookie domain was allowed to be set with a leading dot to signal
+that it should be valid for all subdomains. This was later changed in
+the current RFC 6265. Our ``Session`` implementation checks for domains
+without leading dot, while the comment suggested to use it. This is now
+matched.
+
+Fixes: neos/neos-development-collection#813
+
+`BUGFIX: Injected configuration should also be ignored in class schema <https://github.com/neos/flow-development-collection/pull/931>`_
+---------------------------------------------------------------------------------------------------------------------------------------
+
+Injected properties were always ignored in the persistence class schema as
+it makes no sense to persist injected properties. Same is obviously true for
+injected configuration, but this was never done so this change ignores
+properties with a ``InjectConfiguration`` annotation.
+
+This may be breaking if you use ``InjectConfiguration`` on a property that you
+actually want to persist (which is not a good idea anyway). You would need to
+add another property with the inject annotation and pass the value over to the
+persisted property in ``initializeObject`` for example.
+
+`TASK: throw InvalidConfigurationException if there are no secondLevelCache settings for doctrine <https://github.com/neos/flow-development-collection/pull/928>`_
+------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+#When using more than one doctrine backend, you have to make sure to set TYPO3.Flow.persistence.doctrine.secondLevelCache, or else you will get "An error occurred in the Database Abstraction Layer." as an exception which doesn't tell you much. By throwing an approriate exception we make clearer what the problem is.
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/4.0.4...4.0.6>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
