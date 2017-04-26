@@ -1,0 +1,65 @@
+========
+Flow 4.1
+========
+
+====================
+Upgrade Instructions
+====================
+
+This section contains instructions for upgrading your Flow 4.0 based applications to Flow 4.1.
+
+Since the 4.1 Release mainly consists of bugfixes and non-intrusive features, the update process
+should be straightforward.
+
+In general just make sure to run the command::
+
+ ./flow flow:cache:flush --force
+
+If you are upgrading from a lower version than 4.0, be sure to read the upgrade instructions from
+the 4.0 Release Notes first.
+
+What has changed
+----------------
+
+Allow more flexible Doctrine Entity Manager configuration
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Currently we need to add new configuration settings for every feature of Doctrine that is configurable through the entity manager.
+Now there is a signal that is triggered before the Doctrine Entity Manager is configured to allow changing configuration settings of Doctrine programmatically.
+
+Check for webserver group membership in file permission script
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The file permission script now checks if the command line user is a member of the webserver group.
+
+New ``wordCount`` Eel string helper
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The ``${String.wordCount()}`` eel helper can be used to determine the number of words in a string.
+
+Kickstarter command to create XLIFF translation files
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+It is now possible to create initial XLIFF translation by running a kickstart command. E.g. call ``./flow kickstart:translation --package-key Neos.Demo --language-key de`` and check the created folders and files at ``Packages/Sites/Neos.Demo/Resources/Private/Translations``.
+
+Unknown properties for ObjectConverter are now skipped
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This enables the ObjectConverter (for simple PHP objects) to acknowledge the ``skipUnknownProperties`` flag of the property mapping configuration and thus ignore properties from the source which don't exist in the target.
+If a source array contains properties "foo" and "bar" and the target class constructor only contains "foo", the array can now be mapped if ``skipUnknownProperties`` is set in the respective property mapping configuration.
+
+Build environment overhaul
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+For 4.1 our internal build tools have been tweaked when it comes to branching and dependency management. This way it will be less painful for us to provide you with new releases of Flow.
+
+Upgrading your Packages
+-----------------------
+
+Upgrading existing code
+^^^^^^^^^^^^^^^^^^^^^^^
+
+In case you have been implementing your own ``PackageManager``, there is a breaking change in this release that introduces the
+method ``rescanPackages()`` to the ``PackageManagerInterface``. So in case you really implemented your own Package
+Management, you should add an implementation for this method. Be aware though that implementing a custom PackageManager was never
+intended and the support for this will likely be removed in an upcoming version.
