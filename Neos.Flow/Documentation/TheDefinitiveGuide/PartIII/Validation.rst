@@ -48,6 +48,35 @@ the process is as follows:
 	``errorAction()``, you can add a ``@Flow\IgnoreValidation("$comment")`` annotation
 	to the docblock of the corresponding controller action.
 
+Normally, you build up your Controller with separate actions for displaying a form to edit an entity
+and another action to actually create/remove/update the entity. For those actions the validation for
+Domain Model arguments is triggered as explained above. So in order for the automatic re-display of the
+previous edit form to work, the validation inside that action needs to be suppressed, or else it would
+itself possibly fail the validation and try to redirect to previous action, ending up in an infinite loop.
+
+	class CommentController extends \Neos\Flow\Mvc\Controller\ActionController {
+
+		/**
+		 * @param \YourPackage\Domain\Model\Comment $comment
+		 * @Flow\IgnoreValidation("$comment")
+		 */
+		public function editAction(\YourPackage\Domain\Model\Comment $comment) {
+			// here, $comment is not necessarily a valid object
+		}
+
+		/**
+		 * @param \YourPackage\Domain\Model\Comment $comment
+		 */
+		public function updateAction(\YourPackage\Domain\Model\Comment $comment) {
+			// here, $comment is a valid object
+		}
+	}
+
+.. warning::
+
+	You should *always* annotate the model arguments of your form displaying actions to ignore
+	validation, or else you might end up with an infinite loop on failing validation.
+
 Furthermore, it is also possible to execute *additional validators* only for specific action
 arguments using ``@Flow\Validate`` inside a controller action::
 
