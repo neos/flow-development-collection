@@ -1049,6 +1049,6 @@ Also some changelog files were added that are not supposed to be in master.
 `Merge 3.3 into 'master' <https://github.com/neos/flow-development-collection/pull/440>`_
 -----------------------------------------------------------------------------------------
 
-`Detailed log <https://github.com/neos/flow-development-collection/compare/upstream/3.3...4.0.0>`_
+`Detailed log <https://github.com/neos/flow-development-collection/compare/3.3.0...4.0.0>`_
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
