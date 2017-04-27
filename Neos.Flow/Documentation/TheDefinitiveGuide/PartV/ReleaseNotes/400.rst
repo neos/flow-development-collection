@@ -1,0 +1,417 @@
+========
+Flow 4.0
+========
+
+====================
+Upgrade Instructions
+====================
+
+This section contains instructions for upgrading your Flow 3.3 based applications to Flow 4.0.
+
+What has changed
+----------------
+
+Flow 4.0 comes with major changes, numerous fixes and improvements. Here's a list of changes that might need special
+attention when upgrading.
+
+In general make sure to run the commands::
+
+ ./flow flow:cache:flush --force
+ ./flow core:migrate
+ ./flow database:setcharset
+ ./flow doctrine:migrate
+ ./flow resource:publish
+
+when upgrading (see below).
+
+Namespace change
+^^^^^^^^^^^^^^^^
+
+All namespaces beginning with ``TYPO3\\`` have been changed to the ``Neos\\`` vendor namespace.
+Migrations are provided for automatically adjusting user packages.
+
+Fluid standalone
+^^^^^^^^^^^^^^^^
+
+Replaces ``TYPO3.Fluid`` with ``Neos.FluidAdaptor`` integrating standalone fluid.
+
+This change brings the following:
+
+* Standalone Fluid integration (see https://github.com/typo3/fluid)
+* Flow no longer depends on Fluid, the default View is configurable
+* Partials can be called with a package prefix "Vendor.Package:Path/Partial"
+
+Standalone Fluid in general is faster and many of the Flow specific ViewHelpers were
+rewritten to take advantage of compiling as well to make it even faster.
+
+The change is breaking because:
+
+* Standalone Fluid is a major rewrite, it might react differently for edge cases
+* Notably escaping now also escapes single quotes.
+* The ``ViewInterface`` got a new static ``createWithOptions(array $options)`` construct method, which needs to be implemented by custom view classes to have a defined way to instantiate views.
+* Flow no longer depends on Fluid, which means you might need to require it yourself in your distribution or package(s)
+* ``TYPO3\\Fluid\\*`` classes have moved to ``Neos\\FluidAdaptor\\*`` and a lot of classes are gone and instead to be used from the standalone fluid package if needed.
+* Boilerplate code to create Fluid views is slightly different and might need to be adapted in projects. 
+
+Make Cache FileBackends independent of external locks
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This avoids using external locks, which are prone to platform issues
+(race conditions and tombstones for lock files or missing semaphore extension)
+and instead directly uses the file locking mechanism of PHP to lock the cache files.
+
+This should noticeably improve performance for the FileBackend caches and avoid
+having thousands of Lock files which clobber the file system and created issues
+with big setups previously.
+
+Reuse join aliases on same property paths in QueryBuilder
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Previously a query object like
+
+``$query->logicalAnd($query->equals('related.property', 'foo'), $query->equals('related.otherProperty', 'bar'));``
+
+would generate an SQL statement with two joins to the `related` entity, one for each condition, translating to
+
+*"get all objects that have any related entity with a `property` 'foo' and any related entity with `otherProperty` 'bar'"*.
+
+With this change, it will only generate a single join and reuse the join for multiple conditionals, therefore translating the above query object to the more common
+
+*"get all objects that have a related entity with both a `property` 'foo' and `otherProperty` 'bar'"*
+
+This also improves performance of such queries by avoiding unnecessary joins.
+
+Runtime evaluation of env and constants in Configuration
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The configuration is now cached with php expressions that read
+environment variables and constants at runtime to allow writing
+the configuration cache on a different environment.
+
+Scalar to object converter
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This introduces a simple type converter which can convert
+a scalar value (string, integer, float or boolean) into an
+object by passing that value to the class constructor.
+
+This converter helps developers using Value Objects (not
+managed by the persistence framework) or other Data
+Transfer Objects in places where type conversion is
+supported. One common case is to use Value Object class
+names as a type hint for arguments in a command line
+controller method.
+
+Parse media types from file content
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+``MediaTypes::getMediaTypeFromFileContent()`` can be used to return the media type from a given file content.
+
+Extend AuthenticationManagerInterface with getter for providers
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Adds a new getter method to the ``AuthenticationManagerInterface``, that has to return all provided authentication providers.
+
+``Array.flip()`` Eel helper
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+With this helper it is possible to flip the keys and values from an array.
+
+Support allowable tags in ``stripTags`` Eel String helper
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Now the ``stripTags`` string eel helper will accept a second optional argument in form of a list of allowed tags which will not be stripped from the string.
+
+Add ``String.pregSplit`` Eel helper
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Adds a new helper method to the string helper for splitting strings with a PREG pattern.
+
+Example::
+
+    String.pregSplit("foo bar   baz", "/\\s+/") == ['foo', 'bar', 'baz']
+
+Internal TypeConverters
+^^^^^^^^^^^^^^^^^^^^^^^
+
+Creating a new TypeConverter can have major side-effects on existing applications.
+This change allows TypeConverters to have a negative priority in order to mark them "internal".
+Internal TypeConverters will be skipped from PropertyMapping by default.
+
+To use them explicitly the ``PropertyMappingConfiguration`` can be used::
+
+    $configuration = new PropertyMappingConfiguration();
+    $configuration->setTypeConverter(new SomeInternalTypeConverter());
+    $this->propertyMapper->convert($source, $targetType, $configuration);
+
+Allow property mapping of DateTimeImmutables
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This extends ``DateTimeConverter`` and ``StringConverter`` so that they support
+any class implementing the ``\\DateTimeInterface`` (including ``\\DateTimeImmutable``).
+
+Support for protected static compiled methods
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+With this change static methods annotated ``@Flow\\CompileStatic`` can now
+be ``protected`` allowing for more concise public APIs.
+
+If the annotated method is ``private`` or not ``static`` an exception is
+thrown during compile time in `Production` context.
+
+As a side-effect this change adds a new API method ``ReflectionService:: getMethodsAnnotatedWith()``
+that allows for retrieval of all method names of a class that are annotated with a
+given annotation.
+
+Dependency Injection and AOP for final classes
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This adds support for proxied `final` classes.
+
+Previously those were always skipped from proxy building disallowing Dependency Injection.
+Besides final classes could not be targeted by AOP advices.
+
+With this change, final classes are now also proxied by default.
+To _disable_ AOP/DI for those the already existing ``Proxy`` annotation can be used::
+
+    use TYPO3\\Flow\\Annotations as Flow;
+    
+    /**
+     * @Flow\\Proxy(false)
+     */
+    final class SomeClass
+    {
+        // ...
+
+Background:
+
+Marking classes ``final`` is an important tool for framework code as it allows to define extension points
+more explicitly, but until now we had to avoid the ``final`` keyword in order to support DI and AOP.
+
+ViewConfiguration use only the settings of highest weighted request filter
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Before this the higher weighted requestFilters were merged into the lower-weighted ones which placed the array-properties of the higher weighted filters last in the merged configuration. This made it impossible to add a new path templatePath that would be considered before.
+
+This patch removes the merging of view-configurations entirely since this lead to confusion in the integration because the merging was unexpected.
+
+This is breaking if you have multiple configurations with filters that apply to the same request and expect some option from one of the configurations to still be present despite another configuration having a higher weight.
+
+Rename ``[TYPO3][Flow][Security][Authentication]``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This change adjusts the path used for the POST argument
+used for authentication with username and password to the
+new vendor namespace.
+
+Any application - and especially its Fluid templates and
+JavaScript - relying on the old path needs to be updated.
+
+This change provides a core migration which carries out
+these changes.
+
+Remove deprecated ``ResourcePublisher`` and pointer
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The old resource management pre Flow 3.0 used the ``ResourcePublisher``
+as main service to get public URLs to resources and the ``ResourcePointer``
+to keep track of unique resources. Both became unnecessary and were
+deprecated with Flow 3.0 and are therefore removed with this major release.
+
+Remove deprecated support for relative uri paths
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Removed the long-deprecated compat flag for relative uri paths and the according code in the UriBuilder and UriBuilder test.
+
+Remove deprecated support of temporary path setting
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The setting ``TYPO3.Flow.utility.environment.temporaryDirectoryBase``
+was deprecated and with this change finally removed.
+
+The temporary path defaults to ``FLOW_PATH_ROOT . 'Data/Temporary'``, but
+you can always override the temporary path via the environment variable
+``FLOW_PATH_TEMPORARY_BASE`` instead.
+
+Note that in either case a sub path will be created based on the
+current application context.
+
+Remove deprecated ``EarlyLogger``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Remove deprecated ``PropertyMappingConfigurationBuilder``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The ``PropertyMappingConfigurationBuilder`` class was deprecated and
+is bound to be removed.
+
+It can be fully replaced by calling
+``PropertyMapper::buildPropertyMappingConfiguration`` from now on.
+
+Remove deprecated ``getClassTag`` and constants
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The ``CacheManager::getClassTag`` method was unused since
+quite some time and became deprecated in previous releases.
+It is therefore bound for removal in this major version.
+Additionally the unused tagging constants in the ``FrontendInterface``
+are removed as they are also no longer needed.
+
+Remove relations to party in ``Account`` and ``Security\\Context``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Since 3.0 something like a ``Party`` is not attached to the account directly anymore.
+Fetch your user/party/organization etc. instance on your own using Domain Services or Repositories.
+
+One example is ``TYPO3\\Party\\Domain\\Service\\PartyService``.
+
+Remove deprecated properties and methods in Argument
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Remove deprecated class ``ResourcePublisher``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Rename object and resource
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This renames the class ``Resource`` to ``ResourceObject`` and renames the namespaces
+``TYPO3\\Flow\\Object`` and ``TYPO3\\Flow\\Resource`` to ``TYPO3\\Flow\\ObjectManagement``
+and ``TYPO3\\Flow\\ResourceManagement`` respectively.
+
+A Doctrine migration and two core migrations to help with adjusting code are added.
+
+Remove internal properties request and response from RequestHandler
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Since the ``Request`` and ``Response`` instances are supposed to change inside the ComponentChain,
+it is error-prone to keep a reference to the initial instances inside the RequestHandler.
+This change removes the class properties $request and $response and instead uses local variables.
+
+This is marked breaking only for the reason that some RequestHandler implementations could
+exist that still somehow depend on this internal detail. It is not really breaking as those properties
+were never part of the public api though.
+
+Remove "fallback" password hashing strategy
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This removes the fallback for password hashing strategies.
+
+This is a breaking change for installations that had accounts created with a Flow version lower
+than 1.1 (and whose passwords were never updated since then).
+In that case make sure to add the prefix to the corresponding accounts in the accounts table.
+For the default configuration the corresponding SQL query would be:
+
+    UPDATE typo3_flow_security_account SET credentialssource = CONCAT('bcrypt=>', credentialssource)
+
+Background:
+
+Due to some problems caused by older Flow installations that migrated from 1.0, a fallback
+mechanism for the password hashing strategies was implemented for password hashes that don't
+contain the strategy prefix (i.e. "bcrypt=>").
+
+As a result the default strategy for ``HashService::hashPassword()`` is a different one than for
+``HashService::validatePassword()`` unless specified explicitly because for the latter the configured
+fallback strategy would be used rather than the default.
+
+Remove deprecated setting injection
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This removes the deprecated injection of settings via the ``@Flow\\Inject`` annotation.
+Instead, use the ``@Flow\InjectConfiguration`` annotation.
+
+Remove deprecated ``TypeHandling::hex2bin`` method
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Remove deprecated ``StringHelper::match`` method
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Remove deprecated ``Http\\Message`` class
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Remove deprecated ``TranslationHelper::translateById``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Remove deprecated ``redirectToReferringRequest``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Remove deprecated ``Route::getMatchingUri``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Remove output related methods from ``AbstractMigration``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Remove deprecated methods from ``TemplateView``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Upgrading your Packages
+-----------------------
+
+Upgrading existing code
+^^^^^^^^^^^^^^^^^^^^^^^
+
+There have been major API changes in Flow 4.0 which require your code to be adjusted. As with earlier changes to Flow
+that required code changes on the user side we provide a code migration tool.
+
+Given you have a Flow system with your (outdated) package in place you should run the following before attempting to fix
+anything by hand::
+
+ ./flow core:migrate --package-key Acme.Demo
+
+The package key is optional, if left out it will work on all packages it finds (except for library packages and packages
+prefixed with "TYPO3.*" or "Neos.*") - for the first run you might want to limit things a little to keep the overview,
+though.
+
+Make sure to run::
+
+ ./flow help core:migrate
+
+to see all the other helpful options this command provides.
+
+Inside core:migrate
+"""""""""""""""""""
+
+The tool roughly works like this:
+
+* Collect all code migrations from packages
+
+* Collect all files from all packages (except *Framework* and
+  *Libraries*) or the package given with ``--package-key``
+* For each migration and package
+
+  * Check for clean git working copy (otherwise skip it)
+  * Check if migration is needed (looks for Migration footers in commit
+    messages)
+  * Apply migration and commit the changes
+
+Afterwards you probably get a list of warnings and notes from the
+migrations, check those to see if anything needs to be done manually.
+
+Check the created commits and feel free to amend as needed, should
+things be missing or wrong. The only thing you must keep in place from
+the generated commits is the migration data in ``composer.json``. It is
+used to detect if a migration has been applied already, so if you drop
+it, things might get out of hands in the future.
+
+Upgrading the database schema
+-----------------------------
+
+Upgrading the schema is done by running::
+
+ ./flow doctrine:migrate
+
+to update your database with any changes to the framework-supplied
+schema.
+
+Famous last words
+-----------------
+
+In a nutshell, running::
+
+ ./flow core:migrate
+ ./flow doctrine:migrationgenerate
+
+in *Development Context*, padded with some manual checking and adjustments needs to be done.
+That should result in a working package.
+
+If it does not and you have no idea what to do next, please get in touch
+with us.
