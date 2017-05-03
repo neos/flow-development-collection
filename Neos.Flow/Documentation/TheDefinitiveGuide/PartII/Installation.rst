@@ -231,7 +231,7 @@ machine. Add the following line to your */etc/hosts* file
 Change Context to «Production» without Virtual Host
 ---------------------------------------------------
 
-If you decided to skip setting up virtual hosts earlier on, you can enable the ``Production`` context by editing the ``.htaccess`` file in the``Web`` directory and remove the comment sign in front of the ``SetEnv`` line:
+If you decided to skip setting up virtual hosts earlier on, you can enable the ``Production`` context by editing the ``.htaccess`` file in the ``Web`` directory and remove the comment sign in front of the ``SetEnv`` line:
 
 *.htaccess*:
 
@@ -241,7 +241,7 @@ If you decided to skip setting up virtual hosts earlier on, you can enable the `
 	SetEnv FLOW_CONTEXT Production
   
 .. note::
-	The concept of contexts and why do you want contexts, is explained in the	next chapter «Configuration».
+	The concept of contexts and their benefits is explained in the next chapter «Configuration».
 
 Welcome to Flow
 ---------------
