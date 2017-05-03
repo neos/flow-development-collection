@@ -65,8 +65,6 @@ Directory						Description
 .. note::
 	Setting Up Context with Virtual Host and change Context from «Development» to «Production» is explained in the previous chapter «Installation».
 
-Configuring Flow
-================
 
 One thing you certainly need to adjust is the database configuration. Aside from that
 Flow should work fine with the default configuration delivered with the distribution.
