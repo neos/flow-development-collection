@@ -55,28 +55,16 @@ class Nl2brViewHelper extends AbstractViewHelper
      */
     public function render($value = null)
     {
-        return self::renderStatic(array('value' => $value), $this->buildRenderChildrenClosure(), $this->renderingContext);
-    }
-
-    /**
-     * Applies nl2br() on the specified value.
-     *
-     * @param array $arguments
-     * @param \Closure $renderChildrenClosure
-     * @param RenderingContextInterface $renderingContext
-     * @return string
-     */
-    public static function renderStatic(array $arguments, \Closure $renderChildrenClosure, RenderingContextInterface $renderingContext)
-    {
-        $value = $arguments['value'];
         if ($value === null) {
-            $value = $renderChildrenClosure();
+            $value = $this->renderChildren();
         }
 
         return nl2br($value);
     }
 
     /**
+     * Compile to direct nl2br use in template code.
+     *
      * @param string $argumentsName
      * @param string $closureName
      * @param string $initializationPhpCode

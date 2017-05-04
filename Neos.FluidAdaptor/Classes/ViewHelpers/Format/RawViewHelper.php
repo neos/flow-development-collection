@@ -45,7 +45,7 @@ use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
  * </output>
  *
  * @api
- * @deprecated If you extend this ViewHelper, change to extending the parent from Fluid.
+ * @deprecated If you extend this ViewHelper, change to extending the parent from Fluid. This will be removed with Flow 5.0
  */
 class RawViewHelper extends \TYPO3Fluid\Fluid\ViewHelpers\Format\RawViewHelper
 {

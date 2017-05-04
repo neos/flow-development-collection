@@ -73,6 +73,9 @@ class ResourceViewHelper extends AbstractViewHelper
      */
     protected $i18nService;
 
+    /**
+     * Initialize and register all arguments.
+     */
     public function initializeArguments()
     {
         $this->registerArgument('path', 'string', 'Location of the resource, can be either a path relative to the Public resource directory of the package or a resource://... URI', false, null);
@@ -97,11 +100,12 @@ class ResourceViewHelper extends AbstractViewHelper
      * @param array $arguments
      * @param \Closure $renderChildrenClosure
      * @param RenderingContextInterface $renderingContext
-     * @return bool|string
+     * @return string
      * @throws InvalidVariableException
      */
     public static function renderStatic(array $arguments, \Closure $renderChildrenClosure, RenderingContextInterface $renderingContext)
     {
+        /** @var ResourceManager $resourceManager */
         $resourceManager = $renderingContext->getObjectManager()->get(ResourceManager::class);
 
         if ($arguments['resource'] !== null) {

@@ -83,6 +83,8 @@ class IdentifierViewHelper extends AbstractViewHelper
     }
 
     /**
+     * Directly compile to code for the tmeplate cache.
+     *
      * @param string $argumentsName
      * @param string $closureName
      * @param string $initializationPhpCode

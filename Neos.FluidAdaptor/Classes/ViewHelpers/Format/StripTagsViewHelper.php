@@ -56,22 +56,8 @@ class StripTagsViewHelper extends AbstractViewHelper
      */
     public function render($value = null)
     {
-        return self::renderStatic($this->arguments, $this->buildRenderChildrenClosure(), $this->renderingContext);
-    }
-
-    /**
-     * Applies strip_tags() on the specified value.
-     *
-     * @param array $arguments
-     * @param \Closure $renderChildrenClosure
-     * @param RenderingContextInterface $renderingContext
-     * @return string
-     */
-    public static function renderStatic(array $arguments, \Closure $renderChildrenClosure, RenderingContextInterface $renderingContext)
-    {
-        $value = $arguments['value'];
         if ($value === null) {
-            $value = $renderChildrenClosure();
+            $value = $this->renderChildren();
         }
         if (is_string($value) || (is_object($value) && method_exists($value, '__toString'))) {
             return strip_tags($value);
@@ -81,6 +67,8 @@ class StripTagsViewHelper extends AbstractViewHelper
     }
 
     /**
+     * Compile into direct strip_tags call in the cached template.
+     *
      * @param string $argumentsName
      * @param string $closureName
      * @param string $initializationPhpCode

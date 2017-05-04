@@ -73,7 +73,7 @@ class Base64DecodeViewHelper extends AbstractViewHelper
     }
 
     /**
-     * This ViewHelper is used whenver something was wrappded in CDATA
+     * This ViewHelper is used whenever something was wrappded in CDATA
      * Therefore we render it to raw PHP code during compilation.
      *
      * @param string $argumentsName
