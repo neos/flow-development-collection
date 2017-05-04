@@ -12,6 +12,8 @@ namespace Neos\FluidAdaptor\ViewHelpers\Format;
  */
 
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
+use TYPO3Fluid\Fluid\Core\Compiler\TemplateCompiler;
+use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\ViewHelperNode;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 
 /**
@@ -88,5 +90,27 @@ class JsonViewHelper extends AbstractViewHelper
         }
 
         return json_encode($value, $options);
+    }
+
+    /**
+     * @param string $argumentsName
+     * @param string $closureName
+     * @param string $initializationPhpCode
+     * @param ViewHelperNode $node
+     * @param TemplateCompiler $compiler
+     * @return string
+     */
+    public function compile($argumentsName, $closureName, &$initializationPhpCode, ViewHelperNode $node, TemplateCompiler $compiler)
+    {
+        $valueVariableName = $compiler->variableName('value');
+        $optionsVariableName = $compiler->variableName('options');
+        $initializationPhpCode .= sprintf('%1$s = (%2$s[\'value\'] !== null ? %2$s[\'value\'] : %3$s());', $valueVariableName, $argumentsName, $closureName) . chr(10);
+        $initializationPhpCode .= sprintf('%1$s = %2$s[\'forceObject\'] !== false ? JSON_HEX_TAG |JSON_FORCE_OBJECT : JSON_HEX_TAG;', $optionsVariableName, $argumentsName) . chr(10);
+
+        return sprintf(
+            'json_encode(%1$s, %2$s)',
+            $valueVariableName,
+            $optionsVariableName
+        );
     }
 }

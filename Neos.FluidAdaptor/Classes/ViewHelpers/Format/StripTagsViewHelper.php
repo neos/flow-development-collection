@@ -11,6 +11,8 @@ namespace Neos\FluidAdaptor\ViewHelpers\Format;
  * source code.
  */
 
+use TYPO3Fluid\Fluid\Core\Compiler\TemplateCompiler;
+use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\ViewHelperNode;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 
@@ -76,5 +78,21 @@ class StripTagsViewHelper extends AbstractViewHelper
         }
 
         return $value;
+    }
+
+    /**
+     * @param string $argumentsName
+     * @param string $closureName
+     * @param string $initializationPhpCode
+     * @param ViewHelperNode $node
+     * @param TemplateCompiler $compiler
+     * @return string
+     */
+    public function compile($argumentsName, $closureName, &$initializationPhpCode, ViewHelperNode $node, TemplateCompiler $compiler)
+    {
+        $valueVariableName = $compiler->variableName('value');
+        $initializationPhpCode .= sprintf('%1$s = (%2$s[\'value\'] !== null ? %2$s[\'value\'] : %3$s());', $valueVariableName, $argumentsName, $closureName) . chr(10);
+
+        return sprintf('(is_string(%1$s) || (is_object(%1$s) && method_exists(%1$s, \'__toString\'))) ? strip_tags(%1$s) : %1$s', $valueVariableName);
     }
 }

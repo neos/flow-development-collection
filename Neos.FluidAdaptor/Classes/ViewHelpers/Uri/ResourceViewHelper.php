@@ -18,6 +18,7 @@ use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use Neos\FluidAdaptor\Core\ViewHelper\Exception\InvalidVariableException;
+use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 
 /**
  * A view helper for creating URIs to resources.
@@ -72,49 +73,73 @@ class ResourceViewHelper extends AbstractViewHelper
      */
     protected $i18nService;
 
+    public function initializeArguments()
+    {
+        $this->registerArgument('path', 'string', 'Location of the resource, can be either a path relative to the Public resource directory of the package or a resource://... URI', false, null);
+        $this->registerArgument('package', 'string', 'Target package key. If not set, the current package key will be used', false, null);
+        $this->registerArgument('resource', PersistentResource::class, 'If specified, this resource object is used instead of the path and package information', false, null);
+        $this->registerArgument('localize', 'bool', 'Whether resource localization should be attempted or not.', false, true);
+    }
+
     /**
      * Render the URI to the resource. The filename is used from child content.
      *
-     * @param string $path The location of the resource, can be either a path relative to the Public resource directory of the package or a resource://... URI
-     * @param string $package Target package key. If not set, the current package key will be used
-     * @param PersistentResource $resource If specified, this resource object is used instead of the path and package information
-     * @param boolean $localize Whether resource localization should be attempted or not
      * @return string The absolute URI to the resource
      * @throws InvalidVariableException
      * @api
      */
-    public function render($path = null, $package = null, PersistentResource $resource = null, $localize = true)
+    public function render()
     {
-        if ($resource !== null) {
-            $uri = $this->resourceManager->getPublicPersistentResourceUri($resource);
+        return self::renderStatic($this->arguments, $this->buildRenderChildrenClosure(), $this->renderingContext);
+    }
+
+    /**
+     * @param array $arguments
+     * @param \Closure $renderChildrenClosure
+     * @param RenderingContextInterface $renderingContext
+     * @return bool|string
+     * @throws InvalidVariableException
+     */
+    public static function renderStatic(array $arguments, \Closure $renderChildrenClosure, RenderingContextInterface $renderingContext)
+    {
+        $resourceManager = $renderingContext->getObjectManager()->get(ResourceManager::class);
+
+        if ($arguments['resource'] !== null) {
+            $uri = $resourceManager->getPublicPersistentResourceUri($arguments['resource']);
             if ($uri === false) {
                 $uri = '404-Resource-Not-Found';
             }
-        } else {
-            if ($path === null) {
-                throw new InvalidVariableException('The ResourceViewHelper did neither contain a valuable "resource" nor "path" argument.', 1353512742);
-            }
-            if ($package === null) {
-                $package = $this->controllerContext->getRequest()->getControllerPackageKey();
-            }
-            if (strpos($path, 'resource://') === 0) {
-                try {
-                    list($package, $path) = $this->resourceManager->getPackageAndPathByPublicPath($path);
-                } catch (Exception $exception) {
-                    throw new InvalidVariableException(sprintf('The specified path "%s" does not point to a public resource.', $path), 1386458851);
-                }
-            }
-            if ($localize === true) {
-                $resourcePath = 'resource://' . $package . '/Public/' . $path;
-                $localizedResourcePathData = $this->i18nService->getLocalizedFilename($resourcePath);
-                $matches = array();
-                if (preg_match('#resource://([^/]+)/Public/(.*)#', current($localizedResourcePathData), $matches) === 1) {
-                    $package = $matches[1];
-                    $path = $matches[2];
-                }
-            }
-            $uri = $this->resourceManager->getPublicPackageResourceUri($package, $path);
+
+            return $uri;
         }
+
+        $path = $arguments['path'];
+        if ($path === null) {
+            throw new InvalidVariableException('The ResourceViewHelper did neither contain a valuable "resource" nor "path" argument.', 1353512742);
+        }
+        if ($arguments['package'] === null) {
+            $controllerContext = $renderingContext->getControllerContext();
+            $package = $controllerContext->getRequest()->getControllerPackageKey();
+        }
+        if (strpos($path, 'resource://') === 0) {
+            try {
+                list($package, $path) = $resourceManager->getPackageAndPathByPublicPath($path);
+            } catch (Exception $exception) {
+                throw new InvalidVariableException(sprintf('The specified path "%s" does not point to a public resource.', $path), 1386458851);
+            }
+        }
+        if ($arguments['localize'] === true) {
+            $i18nService = $renderingContext->getObjectManager()->get(Service::class);
+            $resourcePath = 'resource://' . $arguments['package'] . '/Public/' . $path;
+            $localizedResourcePathData = $i18nService->getLocalizedFilename($resourcePath);
+            $matches = [];
+            if (preg_match('#resource://([^/]+)/Public/(.*)#', current($localizedResourcePathData), $matches) === 1) {
+                $package = $matches[1];
+                $path = $matches[2];
+            }
+        }
+        $uri = $resourceManager->getPublicPackageResourceUri($package, $path);
+
         return $uri;
     }
 }

@@ -14,6 +14,7 @@ namespace Neos\FluidAdaptor\ViewHelpers\Security;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Context;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
+use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 
 /**
  * ViewHelper that outputs a CSRF token which is required for "unsafe" requests (e.g. POST, PUT, DELETE, ...).
@@ -53,6 +54,17 @@ class CsrfTokenViewHelper extends AbstractViewHelper
      */
     public function render()
     {
-        return $this->securityContext->getCsrfProtectionToken();
+        return self::renderStatic($this->arguments, $this->buildRenderChildrenClosure(), $this->renderingContext);
+    }
+
+    /**
+     * @param array $arguments
+     * @param \Closure $renderChildrenClosure
+     * @param RenderingContextInterface $renderingContext
+     * @return mixed
+     */
+    public static function renderStatic(array $arguments, \Closure $renderChildrenClosure, RenderingContextInterface $renderingContext)
+    {
+        return $renderingContext->getObjectManager()->get(Context::class)->getCsrfProtectionToken();
     }
 }
