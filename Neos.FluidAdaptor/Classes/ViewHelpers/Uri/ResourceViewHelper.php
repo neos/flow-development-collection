@@ -76,7 +76,7 @@ class ResourceViewHelper extends AbstractViewHelper
     /**
      * Initialize and register all arguments.
      *
-     * @return string
+     * @return void
      */
     public function initializeArguments()
     {
