@@ -64,9 +64,7 @@ class StripTagsViewHelperTest extends ViewHelperBaseTestcase
     public function renderUsesChildnodesAsSourceIfSpecified()
     {
         $string = 'Some string';
-        $this->viewHelper->expects($this->once())->method('buildRenderChildrenClosure')->willReturn(function () use ($string) {
-            return $string;
-        });
+        $this->viewHelper->expects($this->once())->method('renderChildren')->willReturn($string);
         $actualResult = $this->viewHelper->render();
         $this->assertEquals($string, $actualResult);
     }
