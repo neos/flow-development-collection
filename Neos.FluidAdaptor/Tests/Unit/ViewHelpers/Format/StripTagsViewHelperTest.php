@@ -32,7 +32,7 @@ class StripTagsViewHelperTest extends ViewHelperBaseTestcase
     public function setUp()
     {
         parent::setUp();
-        $this->viewHelper = $this->getMockBuilder(\Neos\FluidAdaptor\ViewHelpers\Format\StripTagsViewHelper::class)->setMethods(array('buildRenderChildrenClosure'))->getMock();
+        $this->viewHelper = $this->getMockBuilder(\Neos\FluidAdaptor\ViewHelpers\Format\StripTagsViewHelper::class)->setMethods(array('buildRenderChildrenClosure', 'renderChildren'))->getMock();
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
         $this->viewHelper->initializeArguments();
     }
