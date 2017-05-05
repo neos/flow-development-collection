@@ -51,11 +51,10 @@ class StripTagsViewHelperTest extends ViewHelperBaseTestcase
     public function renderUsesValueAsSourceIfSpecified()
     {
         $string = 'Some string';
-        $this->viewHelper->expects($this->once())->method('buildRenderChildrenClosure')->willReturn(function () {
+        $this->viewHelper->expects(self::any())->method('buildRenderChildrenClosure')->willReturn(function () {
             throw new \Exception('rendderChildrenClosure was invoked but should not have been');
         });
-        $this->viewHelper->setArguments(['value' => $string]);
-        $actualResult = $this->viewHelper->render();
+        $actualResult = $this->viewHelper->render($string);
         $this->assertEquals($string, $actualResult);
     }
 
@@ -68,7 +67,6 @@ class StripTagsViewHelperTest extends ViewHelperBaseTestcase
         $this->viewHelper->expects($this->once())->method('buildRenderChildrenClosure')->willReturn(function () use ($string) {
             return $string;
         });
-        $this->viewHelper->setArguments(['value' => null]);
         $actualResult = $this->viewHelper->render();
         $this->assertEquals($string, $actualResult);
     }
@@ -93,11 +91,10 @@ class StripTagsViewHelperTest extends ViewHelperBaseTestcase
      */
     public function renderCorrectlyConvertsIntoPlaintext($source, $expectedResult)
     {
-        $this->viewHelper->expects($this->once())->method('buildRenderChildrenClosure')->willReturn(function () {
+        $this->viewHelper->expects(self::any())->method('buildRenderChildrenClosure')->willReturn(function () {
             throw new \Exception('rendderChildrenClosure was invoked but should not have been');
         });
-        $this->viewHelper->setArguments(['value' => $source]);
-        $actualResult = $this->viewHelper->render();
+        $actualResult = $this->viewHelper->render($source);
         $this->assertSame($expectedResult, $actualResult);
     }
 
@@ -107,11 +104,10 @@ class StripTagsViewHelperTest extends ViewHelperBaseTestcase
     public function renderReturnsUnmodifiedSourceIfItIsANumber()
     {
         $source = 123.45;
-        $this->viewHelper->expects($this->once())->method('buildRenderChildrenClosure')->willReturn(function () {
+        $this->viewHelper->expects(self::any())->method('buildRenderChildrenClosure')->willReturn(function () {
             throw new \Exception('rendderChildrenClosure was invoked but should not have been');
         });
-        $this->viewHelper->setArguments(['value' => $source]);
-        $actualResult = $this->viewHelper->render();
+        $actualResult = $this->viewHelper->render($source);
         $this->assertSame($source, $actualResult);
     }
 
@@ -122,11 +118,10 @@ class StripTagsViewHelperTest extends ViewHelperBaseTestcase
     {
         $user = new UserWithToString('Xaver <b>Cross-Site</b>');
         $expectedResult = 'Xaver Cross-Site';
-        $this->viewHelper->expects($this->once())->method('buildRenderChildrenClosure')->willReturn(function () {
+        $this->viewHelper->expects(self::any())->method('buildRenderChildrenClosure')->willReturn(function () {
             throw new \Exception('rendderChildrenClosure was invoked but should not have been');
         });
-        $this->viewHelper->setArguments(['value' => $user]);
-        $actualResult = $this->viewHelper->render();
+        $actualResult = $this->viewHelper->render($user);
         $this->assertSame($expectedResult, $actualResult);
     }
 
@@ -136,11 +131,10 @@ class StripTagsViewHelperTest extends ViewHelperBaseTestcase
     public function renderDoesNotModifySourceIfItIsAnObjectThatCantBeConvertedToAString()
     {
         $user = new UserWithoutToString('Xaver <b>Cross-Site</b>');
-        $this->viewHelper->expects($this->once())->method('buildRenderChildrenClosure')->willReturn(function () {
+        $this->viewHelper->expects(self::any())->method('buildRenderChildrenClosure')->willReturn(function () {
             throw new \Exception('rendderChildrenClosure was invoked but should not have been');
         });
-        $this->viewHelper->setArguments(['value' => $user]);
-        $actualResult = $this->viewHelper->render();
+        $actualResult = $this->viewHelper->render($user);
         $this->assertSame($user, $actualResult);
     }
 }

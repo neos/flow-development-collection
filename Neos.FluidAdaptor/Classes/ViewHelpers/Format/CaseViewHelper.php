@@ -109,7 +109,7 @@ class CaseViewHelper extends AbstractViewHelper
      */
     public function render($value = null, $mode = self::CASE_UPPER)
     {
-        self::renderStatic(['value' => $value, 'mode' => $mode], $this->buildRenderChildrenClosure(), $this->renderingContext);
+        return self::renderStatic(['value' => $value, 'mode' => $mode], $this->buildRenderChildrenClosure(), $this->renderingContext);
     }
 
     /**

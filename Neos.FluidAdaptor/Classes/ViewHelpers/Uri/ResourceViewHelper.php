@@ -110,8 +110,10 @@ class ResourceViewHelper extends AbstractViewHelper
         /** @var ResourceManager $resourceManager */
         $resourceManager = $renderingContext->getObjectManager()->get(ResourceManager::class);
 
-        if ($arguments['resource'] !== null) {
-            $uri = $resourceManager->getPublicPersistentResourceUri($arguments['resource']);
+        $resource = $arguments['resource'] ?? null;
+
+        if ($resource !== null) {
+            $uri = $resourceManager->getPublicPersistentResourceUri($resource);
             if ($uri === false) {
                 $uri = '404-Resource-Not-Found';
             }
@@ -119,11 +121,13 @@ class ResourceViewHelper extends AbstractViewHelper
             return $uri;
         }
 
-        $path = $arguments['path'];
+        $path = $arguments['path'] ?? null;
         if ($path === null) {
             throw new InvalidVariableException('The ResourceViewHelper did neither contain a valuable "resource" nor "path" argument.', 1353512742);
         }
-        if ($arguments['package'] === null) {
+
+        $package = $arguments['package'] ?? null;
+        if ($package === null) {
             $controllerContext = $renderingContext->getControllerContext();
             $package = $controllerContext->getRequest()->getControllerPackageKey();
         }
@@ -134,9 +138,11 @@ class ResourceViewHelper extends AbstractViewHelper
                 throw new InvalidVariableException(sprintf('The specified path "%s" does not point to a public resource.', $path), 1386458851);
             }
         }
-        if ($arguments['localize'] === true) {
+
+        $localize = $arguments['localize'] ?? true;
+        if ($localize === true) {
             $i18nService = $renderingContext->getObjectManager()->get(Service::class);
-            $resourcePath = 'resource://' . $arguments['package'] . '/Public/' . $path;
+            $resourcePath = 'resource://' . $package . '/Public/' . $path;
             $localizedResourcePathData = $i18nService->getLocalizedFilename($resourcePath);
             $matches = [];
             if (preg_match('#resource://([^/]+)/Public/(.*)#', current($localizedResourcePathData), $matches) === 1) {
@@ -144,8 +150,8 @@ class ResourceViewHelper extends AbstractViewHelper
                 $path = $matches[2];
             }
         }
-        $uri = $resourceManager->getPublicPackageResourceUri($package, $path);
 
+        $uri = $resourceManager->getPublicPackageResourceUri($package, $path);
         return $uri;
     }
 }
