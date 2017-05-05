@@ -60,7 +60,7 @@ class CsrfTokenViewHelper extends AbstractViewHelper
     }
 
     /**
-     * Copmile to direct call in the template.
+     * Compile to direct call in the template.
      *
      * @param string $argumentsName
      * @param string $closureName
