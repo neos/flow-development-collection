@@ -1527,6 +1527,32 @@ EOD;
     }
 
     /**
+     * @test
+     */
+    public function loadingConfigurationOfCustomConfigurationTypeWorks()
+    {
+        $configurationManager = $this->getConfigurationManagerWithFlowPackage('loadingConfigurationOfCustomConfigurationTypeCallback', 'Testing');
+
+        $configurationManager->registerConfigurationType('MyCustomConfiguration', ConfigurationManager::CONFIGURATION_PROCESSING_TYPE_SETTINGS);
+        $configurationManager->_call('loadConfiguration', 'MyCustomConfiguration', $this->getMockPackages());
+        $configuration = $configurationManager->getConfiguration('MyCustomConfiguration');
+        $this->assertArrayHasKey('SomeKey', $configuration);
+    }
+
+    /**
+     * A callback as stand in configruation source for above test.
+     *
+     * @param string $filenameAndPath
+     * @return array
+     */
+    public function loadingConfigurationOfCustomConfigurationTypeCallback($filenameAndPath)
+    {
+        return [
+            'SomeKey' => 'SomeValue'
+        ];
+    }
+
+    /**
      * @param string $configurationSourceCallbackName
      * @param string $contextName
      * @return ConfigurationManager
