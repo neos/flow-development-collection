@@ -423,6 +423,7 @@ class ConfigurationManager
      */
     protected function loadConfiguration($configurationType, array $packages)
     {
+        $this->configurations[$configurationType] = [];
         $this->cacheNeedsUpdate = true;
 
         $configurationProcessingType = $this->resolveConfigurationProcessingType($configurationType);
@@ -465,7 +466,6 @@ class ConfigurationManager
                 $this->configurations[$configurationType]['Neos']['Flow']['core']['context'] = (string)$this->context;
             break;
             case self::CONFIGURATION_PROCESSING_TYPE_OBJECTS:
-                $this->configurations[$configurationType] = [];
                 /** @var $package PackageInterface */
                 foreach ($packages as $packageKey => $package) {
                     $configuration = $this->configurationSource->load($package->getConfigurationPath() . $configurationType);
@@ -486,7 +486,7 @@ class ConfigurationManager
                         break;
                     }
                 }
-                $this->configurations[$configurationType] = [];
+
                 /** @var $package PackageInterface */
                 foreach ($packages as $package) {
                     $packagePolicyConfiguration = $this->configurationSource->load($package->getConfigurationPath() . $configurationType, $allowSplitSource);
@@ -506,7 +506,6 @@ class ConfigurationManager
                 }
             break;
             case self::CONFIGURATION_PROCESSING_TYPE_DEFAULT:
-                $this->configurations[$configurationType] = [];
                 /** @var $package PackageInterface */
                 foreach ($packages as $package) {
                     $this->configurations[$configurationType] = Arrays::arrayMergeRecursiveOverrule($this->configurations[$configurationType], $this->configurationSource->load($package->getConfigurationPath() . $configurationType, $allowSplitSource));
@@ -523,7 +522,6 @@ class ConfigurationManager
             break;
             case self::CONFIGURATION_PROCESSING_TYPE_ROUTES:
                 // load main routes
-                $this->configurations[$configurationType] = [];
                 foreach (array_reverse($this->orderedListOfContextNames) as $contextName) {
                     $this->configurations[$configurationType] = array_merge($this->configurations[$configurationType], $this->configurationSource->load(FLOW_PATH_CONFIGURATION . $contextName . '/' . $configurationType));
                 }
@@ -534,7 +532,6 @@ class ConfigurationManager
                 $this->mergeRoutesWithSubRoutes($this->configurations[$configurationType]);
             break;
             case self::CONFIGURATION_PROCESSING_TYPE_APPEND:
-                $this->configurations[$configurationType] = [];
                 /** @var $package PackageInterface */
                 foreach ($packages as $package) {
                     $this->configurations[$configurationType] = array_merge($this->configurations[$configurationType], $this->configurationSource->load($package->getConfigurationPath() . $configurationType, $allowSplitSource));
