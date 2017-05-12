@@ -243,15 +243,9 @@ class HeadersTest extends UnitTestCase
     /**
      * @test
      */
-    public function cookiesWithInvalidNameAreLoggedAndSkipped()
+    public function cookiesWithInvalidNameAreIgnored()
     {
-        $mockSystemLogger = $this->getMockBuilder('TYPO3\Flow\Log\Logger')->setMethods(['log'])->getMock();
-        $mockSystemLogger->expects($this->once())->method('log')->with($this->equalTo(
-            sprintf('Cookie name %s is not RFC 2616 compliant, therefore it will be skipped', 'cookie[invalid]')
-        ));
-
         $headers = new Headers();
-        $headers->injectSystemLogger($mockSystemLogger);
         $headers->set('Cookie', ['cookie-valid=this+is+valid; cookie[invalid]=this+is+invalid']);
 
         $this->assertTrue($headers->hasCookie('cookie-valid'));
