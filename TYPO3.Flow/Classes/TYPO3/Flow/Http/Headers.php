@@ -12,7 +12,6 @@ namespace TYPO3\Flow\Http;
  */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Log\SystemLoggerInterface;
 
 /**
  * Container for HTTP header fields
@@ -33,11 +32,6 @@ class Headers
     protected $cookies = array();
 
     /**
-     * @var SystemLoggerInterface
-     */
-    protected $systemLogger;
-
-    /**
      * @var array
      */
     protected $cacheDirectives = array(
@@ -49,15 +43,6 @@ class Headers
         'no-store' => '',
         'no-transform' => ''
     );
-
-    /**
-     * @param SystemLoggerInterface $systemLogger
-     * @return void
-     */
-    public function injectSystemLogger(SystemLoggerInterface $systemLogger)
-    {
-        $this->systemLogger = $systemLogger;
-    }
 
     /**
      * Constructs a new Headers object.
@@ -467,13 +452,7 @@ class Headers
             list($name, $value) = explode('=', $cookiePair, 2);
             $trimmedName = trim($name);
 
-            if ($trimmedName === '') {
-                continue;
-            }
-
-            if (preg_match(Cookie::PATTERN_TOKEN, $trimmedName) !== 1) {
-                $this->systemLogger->log(sprintf('Cookie name %s is not RFC 2616 compliant, therefore it will be skipped', $trimmedName), LOG_INFO);
-            } else {
+            if ($trimmedName !== '' && preg_match(Cookie::PATTERN_TOKEN, $trimmedName) === 1) {
                 $this->setCookie(new Cookie($trimmedName, urldecode(trim($value, "\t ;\""))));
             }
         }
