@@ -209,6 +209,8 @@ class FileSystemTargetTest extends UnitTestCase
         vfsStream::setup('Test');
         mkdir('vfs://Test/Configuration');
         $packageManager = new PackageManager('vfs://Test/Configuration/PackageStates.php');
+        $this->inject($packageManager, 'packagesBasePath', 'vfs://Test/Packages/');
+
         $packageManager->createPackage("TYPO3.Flow");
         $packageManager->activatePackage("TYPO3.Flow");
 
