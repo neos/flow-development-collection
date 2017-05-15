@@ -255,12 +255,14 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
             if ($expiryTime !== 0 && $expiryTime < $now) {
                 continue;
             }
-            if (in_array($searchedTag, explode(' ', substr($metaData, 0, -self::EXPIRYTIME_LENGTH)))) {
-                if ($cacheEntryFileExtensionLength > 0) {
-                    $entryIdentifiers[] = substr($directoryIterator->getFilename(), 0, -$cacheEntryFileExtensionLength);
-                } else {
-                    $entryIdentifiers[] = $directoryIterator->getFilename();
-                }
+            if (!in_array($searchedTag, explode(' ', substr($metaData, 0, -self::EXPIRYTIME_LENGTH)))) {
+                continue;
+            }
+
+            if ($cacheEntryFileExtensionLength > 0) {
+                $entryIdentifiers[] = substr($directoryIterator->getFilename(), 0, -$cacheEntryFileExtensionLength);
+            } else {
+                $entryIdentifiers[] = $directoryIterator->getFilename();
             }
         }
         return $entryIdentifiers;
@@ -381,16 +383,15 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
         if ($this->frozen === true) {
             if (isset($this->cacheEntryIdentifiers[$entryIdentifier])) {
                 return require_once($this->cacheDirectory . $entryIdentifier . $this->cacheEntryFileExtension);
-            } else {
-                return false;
             }
-        } else {
-            $pathAndFilename = $this->cacheDirectory . $entryIdentifier . $this->cacheEntryFileExtension;
-            if ($entryIdentifier !== basename($entryIdentifier)) {
-                throw new \InvalidArgumentException('The specified entry identifier (' . $entryIdentifier . ') must not contain a path segment.', 1282073036);
-            }
-            return ($this->isCacheFileExpired($pathAndFilename)) ? false : require_once($pathAndFilename);
+            return false;
         }
+
+        $pathAndFilename = $this->cacheDirectory . $entryIdentifier . $this->cacheEntryFileExtension;
+        if ($entryIdentifier !== basename($entryIdentifier)) {
+            throw new \InvalidArgumentException('The specified entry identifier (' . $entryIdentifier . ') must not contain a path segment.', 1282073036);
+        }
+        return ($this->isCacheFileExpired($pathAndFilename)) ? false : require_once($pathAndFilename);
     }
 
     /**

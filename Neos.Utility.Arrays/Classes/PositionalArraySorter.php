@@ -11,8 +11,6 @@ namespace Neos\Utility;
  * source code.
  */
 
-use Neos\Utility\ObjectAccess;
-
 /**
  * Flexible array sorter that sorts an array according to a "position" meta data.
  * The expected format for the $subject is:
@@ -82,7 +80,7 @@ class PositionalArraySorter
      * @param array $subject The source array to sort
      * @param string $positionPropertyPath optional property path to the string that contains the position
      */
-    public function __construct(array $subject, $positionPropertyPath = 'position')
+    public function __construct(array $subject, string $positionPropertyPath = 'position')
     {
         $this->subject = $subject;
         $this->positionPropertyPath = $positionPropertyPath;
@@ -93,7 +91,7 @@ class PositionalArraySorter
      *
      * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
         $sortedArrayKeys = $this->getSortedKeys();
 
@@ -112,7 +110,7 @@ class PositionalArraySorter
      * @return array an ordered list of keys
      * @throws Exception\InvalidPositionException if the positional string has an unsupported format
      */
-    public function getSortedKeys()
+    public function getSortedKeys(): array
     {
         $arrayKeysWithPosition = $this->collectArrayKeysAndPositions();
 
@@ -267,7 +265,7 @@ class PositionalArraySorter
      *
      * @return array an associative array where each key of $subject has a position string assigned
      */
-    protected function collectArrayKeysAndPositions()
+    protected function collectArrayKeysAndPositions(): array
     {
         $arrayKeysWithPosition = [];
 
@@ -294,7 +292,7 @@ class PositionalArraySorter
      *
      * @return array
      */
-    protected function generateSortedKeysMap()
+    protected function generateSortedKeysMap(): array
     {
         $sortedKeysMap = [];
 

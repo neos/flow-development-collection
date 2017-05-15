@@ -68,7 +68,7 @@ AttributeFilter:
   '[' S
       (
           ( Operator:( 'instanceof' | '!instanceof' ) S ( Operand:StringLiteral | Operand:UnquotedOperand ) S )
-          | ( :Identifier S
+          | ( :PropertyPath S
               (
                   Operator:( 'instanceof' | '!instanceof' | PrefixMatch | SuffixMatch | SubstringMatch | ExactMatch | NotEqualMatch | LessThanOrEqualMatch | LessThanMatch | GreaterThanOrEqualMatch | GreaterThanMatch )
                   S ( Operand:StringLiteral | Operand:NumberLiteral | Operand:BooleanLiteral | Operand:UnquotedOperand ) S
@@ -78,10 +78,10 @@ AttributeFilter:
   S ']'
 	function __construct(&$result) {
 		$result['Operator'] = NULL;
-		$result['Identifier'] = NULL;
+		$result['PropertyPath'] = NULL;
 	}
-	function Identifier(&$result, $sub) {
-		$result['Identifier'] = $sub['text'];
+	function PropertyPath(&$result, $sub) {
+		$result['PropertyPath'] = $sub['text'];
 	}
 	function Operator(&$result, $sub) {
 		$result['Operator'] = $sub['text'];

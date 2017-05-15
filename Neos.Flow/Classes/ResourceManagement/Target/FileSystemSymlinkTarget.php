@@ -15,6 +15,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ResourceManagement\Collection;
 use Neos\Flow\ResourceManagement\CollectionInterface;
 use Neos\Flow\ResourceManagement\Storage\PackageStorage;
+use Neos\Flow\Utility\Algorithms;
 use Neos\Utility\Files;
 use Neos\Utility\Unicode\Functions as UnicodeFunctions;
 use Neos\Flow\ResourceManagement\Target\Exception as TargetException;
@@ -88,7 +89,7 @@ class FileSystemSymlinkTarget extends FileSystemTarget
             if ($this->relativeSymlinks) {
                 $result = Files::createRelativeSymlink($sourcePathAndFilename, $targetPathAndFilename);
             } else {
-                $temporaryTargetPathAndFilename = uniqid($targetPathAndFilename . '.') . '.tmp';
+                $temporaryTargetPathAndFilename = $targetPathAndFilename . '.' . Algorithms::generateRandomString(13) . '.tmp';
                 symlink($sourcePathAndFilename, $temporaryTargetPathAndFilename);
                 $result = rename($temporaryTargetPathAndFilename, $targetPathAndFilename);
             }
@@ -129,7 +130,7 @@ class FileSystemSymlinkTarget extends FileSystemTarget
             if ($this->relativeSymlinks) {
                 $result = Files::createRelativeSymlink($sourcePath, $targetPathAndFilename);
             } else {
-                $temporaryTargetPathAndFilename = uniqid($targetPathAndFilename . '.') . '.tmp';
+                $temporaryTargetPathAndFilename = $targetPathAndFilename . '.' . Algorithms::generateRandomString(13) . '.tmp';
                 symlink($sourcePath, $temporaryTargetPathAndFilename);
                 $result = rename($temporaryTargetPathAndFilename, $targetPathAndFilename);
             }

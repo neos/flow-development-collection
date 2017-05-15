@@ -141,12 +141,12 @@ class MemcachedBackend extends IndependentAbstractBackend implements TaggableBac
     {
         if ($this->memcache instanceof \Memcached) {
             $this->memcache->setOption(\Memcached::OPT_COMPRESSION, $useCompression);
+            return;
+        }
+        if ($useCompression === true) {
+            $this->flags ^= MEMCACHE_COMPRESSED;
         } else {
-            if ($useCompression === true) {
-                $this->flags ^= MEMCACHE_COMPRESSED;
-            } else {
-                $this->flags &= ~MEMCACHE_COMPRESSED;
-            }
+            $this->flags &= ~MEMCACHE_COMPRESSED;
         }
     }
 

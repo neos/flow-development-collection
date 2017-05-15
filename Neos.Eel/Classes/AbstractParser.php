@@ -253,6 +253,49 @@ function match_Identifier ($stack = array()) {
 }
 
 
+/* PropertyPath: Identifier ( '.' Identifier )* */
+protected $match_PropertyPath_typestack = array('PropertyPath');
+function match_PropertyPath ($stack = array()) {
+	$matchrule = "PropertyPath"; $result = $this->construct($matchrule, $matchrule, null);
+	$_41 = NULL;
+	do {
+		$matcher = 'match_'.'Identifier'; $key = $matcher; $pos = $this->pos;
+		$subres = ( $this->packhas( $key, $pos ) ? $this->packread( $key, $pos ) : $this->packwrite( $key, $pos, $this->$matcher(array_merge($stack, array($result))) ) );
+		if ($subres !== FALSE) { $this->store( $result, $subres ); }
+		else { $_41 = FALSE; break; }
+		while (true) {
+			$res_40 = $result;
+			$pos_40 = $this->pos;
+			$_39 = NULL;
+			do {
+				if (substr($this->string,$this->pos,1) == '.') {
+					$this->pos += 1;
+					$result["text"] .= '.';
+				}
+				else { $_39 = FALSE; break; }
+				$matcher = 'match_'.'Identifier'; $key = $matcher; $pos = $this->pos;
+				$subres = ( $this->packhas( $key, $pos ) ? $this->packread( $key, $pos ) : $this->packwrite( $key, $pos, $this->$matcher(array_merge($stack, array($result))) ) );
+				if ($subres !== FALSE) { $this->store( $result, $subres ); }
+				else { $_39 = FALSE; break; }
+				$_39 = TRUE; break;
+			}
+			while(0);
+			if( $_39 === FALSE) {
+				$result = $res_40;
+				$this->pos = $pos_40;
+				unset( $res_40 );
+				unset( $pos_40 );
+				break;
+			}
+		}
+		$_41 = TRUE; break;
+	}
+	while(0);
+	if( $_41 === TRUE ) { return $this->finalise($result); }
+	if( $_41 === FALSE) { return FALSE; }
+}
+
+
 
 
 

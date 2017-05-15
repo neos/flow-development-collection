@@ -13,6 +13,7 @@ namespace Neos\Flow\Session;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\Bootstrap;
+use Neos\Flow\Utility\Algorithms;
 
 /**
  * Implementation of a transient session.
@@ -72,7 +73,7 @@ class TransientSession implements SessionInterface
      */
     public function start()
     {
-        $this->sessionId = uniqid();
+        $this->sessionId = Algorithms::generateRandomString(13);
         $this->started = true;
     }
 
@@ -106,7 +107,7 @@ class TransientSession implements SessionInterface
      */
     public function renewId()
     {
-        $this->sessionId = uniqid();
+        $this->sessionId = Algorithms::generateRandomString(13);
         return $this->sessionId;
     }
 
