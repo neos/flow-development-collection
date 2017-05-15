@@ -413,27 +413,28 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
      */
     public function rewind()
     {
-        if ($this->cacheEntriesIterator === null) {
-            $cacheEntries = [];
+        if ($this->cacheEntriesIterator !== null) {
+            $this->cacheEntriesIterator->rewind();
+            return;
+        }
 
-            $statementHandle = $this->databaseHandle->prepare('SELECT "identifier", "content" FROM "cache" WHERE "context"=? AND "cache"=?' . $this->getNotExpiredStatement());
-            $statementHandle->execute(array($this->context(), $this->cacheIdentifier));
-            $fetchedColumns = $statementHandle->fetchAll();
+        $cacheEntries = [];
 
-            foreach ($fetchedColumns as $fetchedColumn) {
-                // Convert hexadecimal data into binary string,
-                // because it is not allowed to store null bytes in PostgreSQL.
-                if ($this->pdoDriver === 'pgsql') {
-                    $fetchedColumn['content'] = hex2bin($fetchedColumn['content']);
-                }
+        $statementHandle = $this->databaseHandle->prepare('SELECT "identifier", "content" FROM "cache" WHERE "context"=? AND "cache"=?' . $this->getNotExpiredStatement());
+        $statementHandle->execute(array($this->context(), $this->cacheIdentifier));
+        $fetchedColumns = $statementHandle->fetchAll();
 
-                $cacheEntries[$fetchedColumn['identifier']] = $fetchedColumn['content'];
+        foreach ($fetchedColumns as $fetchedColumn) {
+            // Convert hexadecimal data into binary string,
+            // because it is not allowed to store null bytes in PostgreSQL.
+            if ($this->pdoDriver === 'pgsql') {
+                $fetchedColumn['content'] = hex2bin($fetchedColumn['content']);
             }
 
-            $this->cacheEntriesIterator = new \ArrayIterator($cacheEntries);
-        } else {
-            $this->cacheEntriesIterator->rewind();
+            $cacheEntries[$fetchedColumn['identifier']] = $fetchedColumn['content'];
         }
+
+        $this->cacheEntriesIterator = new \ArrayIterator($cacheEntries);
     }
 
     /**

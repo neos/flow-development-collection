@@ -158,13 +158,12 @@ abstract class AbstractBackend implements BackendInterface
     protected function calculateExpiryTime($lifetime = null)
     {
         if ($lifetime === self::UNLIMITED_LIFETIME || ($lifetime === null && $this->defaultLifetime === self::UNLIMITED_LIFETIME)) {
-            $expiryTime = new \DateTime(self::DATETIME_EXPIRYTIME_UNLIMITED, new \DateTimeZone('UTC'));
-        } else {
-            if ($lifetime === null) {
-                $lifetime = $this->defaultLifetime;
-            }
-            $expiryTime = new \DateTime('now +' . $lifetime . ' seconds', new \DateTimeZone('UTC'));
+            return new \DateTime(self::DATETIME_EXPIRYTIME_UNLIMITED, new \DateTimeZone('UTC'));
         }
-        return $expiryTime;
+
+        if ($lifetime === null) {
+            $lifetime = $this->defaultLifetime;
+        }
+        return new \DateTime('now +' . $lifetime . ' seconds', new \DateTimeZone('UTC'));
     }
 }

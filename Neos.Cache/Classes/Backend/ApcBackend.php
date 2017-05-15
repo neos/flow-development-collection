@@ -288,13 +288,14 @@ class ApcBackend extends IndependentAbstractBackend implements TaggableBackendIn
             // corrupted, we still can get 'false' from array_search(). This is
             // not a problem because we are removing this identifier from
             // anywhere.
-            if (($key = array_search($entryIdentifier, $identifiers)) !== false) {
-                unset($identifiers[$key]);
-                if (count($identifiers)) {
-                    apc_store($this->identifierPrefix . 'tag_' . $tag, $identifiers);
-                } else {
-                    apc_delete($this->identifierPrefix . 'tag_' . $tag);
-                }
+            if (($key = array_search($entryIdentifier, $identifiers)) === false) {
+                continue;
+            }
+            unset($identifiers[$key]);
+            if (count($identifiers)) {
+                apc_store($this->identifierPrefix . 'tag_' . $tag, $identifiers);
+            } else {
+                apc_delete($this->identifierPrefix . 'tag_' . $tag);
             }
         }
         // Clear reverse tag index for this identifier
