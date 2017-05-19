@@ -21,7 +21,7 @@ use Neos\Utility\Files;
  * Class TemplatePaths
  *
  * Custom implementation for template paths resolving, one which differs from the base
- * implementation in that it is capable of resolving template paths based on TypoScript
+ * implementation in that it is capable of resolving template paths based on Fusion
  * configuration when given a package name, and is aware of the Frontend/Backend contexts of TYPO3.
  */
 class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
