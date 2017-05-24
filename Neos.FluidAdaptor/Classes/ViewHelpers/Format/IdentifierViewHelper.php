@@ -15,6 +15,8 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use Neos\FluidAdaptor\Core\ViewHelper;
+use TYPO3Fluid\Fluid\Core\Compiler\TemplateCompiler;
+use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\ViewHelperNode;
 
 /**
  * This ViewHelper renders the identifier of a persisted object (if it has an identity).
@@ -78,5 +80,27 @@ class IdentifierViewHelper extends AbstractViewHelper
             throw new ViewHelper\Exception('f:format.identifier expects an object, ' . gettype($value) . ' given.', 1337700024);
         }
         return $this->persistenceManager->getIdentifierByObject($value);
+    }
+
+    /**
+     * Directly compile to code for the template cache.
+     *
+     * @param string $argumentsName
+     * @param string $closureName
+     * @param string $initializationPhpCode
+     * @param ViewHelperNode $node
+     * @param TemplateCompiler $compiler
+     * @return string
+     */
+    public function compile($argumentsName, $closureName, &$initializationPhpCode, ViewHelperNode $node, TemplateCompiler $compiler)
+    {
+        $valueVariableName = $compiler->variableName('value');
+        $initializationPhpCode .= sprintf('%1$s = (%2$s[\'value\'] !== null ? %2$s[\'value\'] : %3$s());', $valueVariableName, $argumentsName, $closureName) . chr(10);
+        $initializationPhpCode .= sprintf('if (!is_object(%1$s) && %1$s !== null) { throw new \Neos\FluidAdaptor\Core\ViewHelper\Exception(\'f:format.identifier expects an object, \' . gettype(%1$s) . \' given.\', 1337700024); }', $valueVariableName) . chr(10);
+
+        return sprintf(
+            '%1$s === null ? null : $renderingContext->getObjectManager()->get(\Neos\Flow\Persistence\PersistenceManagerInterface::class)->getIdentifierByObject(%1$s)',
+            $valueVariableName
+        );
     }
 }

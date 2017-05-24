@@ -13,6 +13,7 @@ namespace Neos\FluidAdaptor\ViewHelpers\Format;
 
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use Neos\FluidAdaptor\Core\ViewHelper\Exception\InvalidVariableException;
+use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 
 /**
  * Modifies the case of an input string to upper- or lowercase or capitalization.
@@ -108,8 +109,22 @@ class CaseViewHelper extends AbstractViewHelper
      */
     public function render($value = null, $mode = self::CASE_UPPER)
     {
+        return self::renderStatic(['value' => $value, 'mode' => $mode], $this->buildRenderChildrenClosure(), $this->renderingContext);
+    }
+
+    /**
+     * @param array $arguments
+     * @param \Closure $renderChildrenClosure
+     * @param RenderingContextInterface $renderingContext
+     * @return string
+     * @throws InvalidVariableException
+     */
+    public static function renderStatic(array $arguments, \Closure $renderChildrenClosure, RenderingContextInterface $renderingContext)
+    {
+        $value = $arguments['value'];
+        $mode = $arguments['mode'];
         if ($value === null) {
-            $value = $this->renderChildren();
+            $value = $renderChildrenClosure();
         }
 
         $originalEncoding = mb_internal_encoding();
@@ -137,6 +152,7 @@ class CaseViewHelper extends AbstractViewHelper
         }
 
         mb_internal_encoding($originalEncoding);
+
         return $output;
     }
 }

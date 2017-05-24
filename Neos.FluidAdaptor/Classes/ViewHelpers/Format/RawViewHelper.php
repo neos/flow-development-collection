@@ -45,53 +45,8 @@ use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
  * </output>
  *
  * @api
+ * @deprecated If you extend this ViewHelper, change to extending the parent from Fluid. This will be removed with Flow 5.0
  */
 class RawViewHelper extends \TYPO3Fluid\Fluid\ViewHelpers\Format\RawViewHelper
 {
-    /**
-     * @var boolean
-     */
-//    protected $escapeChildren = false;
-
-    /**
-     * @var boolean
-     */
-//    protected $escapeOutput = false;
-
-    /**
-     * @param mixed $value The value to output
-     * @return string
-     */
-//    public function render($value = null)
-//    {
-//        return static::renderStatic($this->arguments, $this->buildRenderChildrenClosure(), $this->renderingContext);
-//    }
-
-    /**
-     * @param array $arguments
-     * @param \Closure $renderChildrenClosure
-     * @param RenderingContextInterface $renderingContext
-     * @return mixed
-     */
-//    public static function renderStatic(array $arguments, \Closure $renderChildrenClosure, RenderingContextInterface $renderingContext)
-//    {
-//        if (isset($arguments['value'])) {
-//            return $arguments['value'];
-//        }
-//
-//        return $renderChildrenClosure();
-//    }
-
-    /**
-     * @param string $argumentsName
-     * @param string $closureName
-     * @param string $initializationPhpCode
-     * @param ViewHelperNode $node
-     * @param TemplateCompiler $compiler
-     * @return mixed
-     */
-//    public function compile($argumentsName, $closureName, &$initializationPhpCode, ViewHelperNode $node, TemplateCompiler $compiler)
-//    {
-//        return sprintf("isset(%s['value']) ? %s['value'] : %s()", $argumentsName, $argumentsName, $closureName);
-//    }
 }
