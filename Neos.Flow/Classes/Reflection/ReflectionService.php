@@ -352,6 +352,12 @@ class ReflectionService
             }
         }
 
+        foreach ($this->settings['reflection']['ignoredNamespaces'] as $namespace => $ignoreFlag) {
+            if ($ignoreFlag === true) {
+                AnnotationReader::addGlobalIgnoredNamespace($namespace);
+            }
+        }
+
         $this->initialized = true;
     }
 

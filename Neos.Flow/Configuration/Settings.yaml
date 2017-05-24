@@ -369,7 +369,7 @@ Neos:
 
     reflection:
 
-      # A list of tags to be ignored during reflection
+      # A list of annotation tags to be ignored during reflection
       ignoredTags:
         'api': TRUE
         'package': TRUE
@@ -404,6 +404,9 @@ Neos:
         'AfterStep': TRUE
         'WithoutSecurityChecks': TRUE
         'covers': TRUE
+
+      # A list of annotation namespaces to be ignored during reflection
+      ignoredNamespaces: []
 
       # If enabled, the Reflection Service notes all incorrect or inconsistent usage
       # of @param annotations in the default log.
