@@ -155,10 +155,6 @@ class ProxyMethod
         $visibility = ($this->visibility === null ? $this->getMethodVisibilityString() : $this->visibility);
 
         $returnType = $this->reflectionService->getMethodDeclaredReturnType($this->fullOriginalClassName, $this->methodName);
-        // TODO: Revise "TypeHandling::isSimpleType" and check if we want to add null.
-        if ($returnType !== null && !TypeHandling::isSimpleType($returnType) && !in_array($returnType, ['self', 'null', 'callable'])) {
-            $returnType = '\\' . $returnType;
-        }
         $returnTypeDeclaration = ($returnType !== null ? ' : ' . $returnType : '');
 
 

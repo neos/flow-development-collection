@@ -272,6 +272,64 @@ class FrameworkTest extends FunctionalTestCase
 
         $targetClass = new Fixtures\TargetClassWithPhp7Features();
 
-        $this->assertSame('This is so NaN', $targetClass->methodWithStaticTypeDeclarations('The answer', 42));
+        $this->assertSame('This is so NaN', $targetClass->methodWithStaticTypeDeclarations('The answer', 42, $targetClass));
     }
+
+    /**
+     * @test
+     */
+    public function methodWithStaticScalarReturnTypeDeclarationCanBeAdviced()
+    {
+        if (version_compare(PHP_VERSION, '7.0.0') < 0) {
+            $this->markTestSkipped('Requires PHP 7');
+        }
+
+        $targetClass = new Fixtures\TargetClassWithPhp7Features();
+
+        $this->assertSame('adviced: it works', $targetClass->methodWithStaticScalarReturnTypeDeclaration());
+    }
+
+    /**
+     * @test
+     */
+    public function methodWithStaticObjectReturnTypeDeclarationCanBeAdviced()
+    {
+        if (version_compare(PHP_VERSION, '7.0.0') < 0) {
+            $this->markTestSkipped('Requires PHP 7');
+        }
+
+        $targetClass = new Fixtures\TargetClassWithPhp7Features();
+
+        $this->assertInstanceOf(Fixtures\TargetClassWithPhp7Features::class, $targetClass->methodWithStaticObjectReturnTypeDeclaration());
+    }
+
+    /**
+     * @test
+     */
+    public function methodWithNullableScalarReturnTypeDeclarationCanBeAdviced()
+    {
+        if (version_compare(PHP_VERSION, '7.1.0') < 0) {
+            $this->markTestSkipped('Requires PHP 7.1');
+        }
+
+        $targetClass = new Fixtures\TargetClassWithPhp71Features();
+
+        $this->assertSame('adviced: NULL', $targetClass->methodWithNullableScalarReturnTypeDeclaration());
+    }
+
+    /**
+     * @test
+     */
+    public function methodWithNullableObjectReturnTypeDeclarationCanBeAdviced()
+    {
+        if (version_compare(PHP_VERSION, '7.1.0') < 0) {
+            $this->markTestSkipped('Requires PHP 7.1');
+        }
+
+        $targetClass = new Fixtures\TargetClassWithPhp71Features();
+
+        $this->assertNull($targetClass->methodWithNullableObjectReturnTypeDeclaration());
+    }
+
+
 }
