@@ -865,8 +865,8 @@ class PackageManager implements PackageManagerInterface
 
             $packageConfiguration = $this->preparePackageStateConfiguration($packageKey, $packagePath, $composerManifest, $state);
             if (isset($newPackageStatesConfiguration['packages'][$composerManifest['name']])) {
-                throw new Exception(
-                    sprintf('The package with the name "%s" was found more than once, please make sure it exits only once. Paths "%s" and "%s".',
+                throw new PackageException(
+                    sprintf('The package with the name "%s" was found more than once, please make sure it exists only once. Paths "%s" and "%s".',
                         $composerManifest['name'],
                         $packageConfiguration['packagePath'],
                         $newPackageStatesConfiguration['packages'][$composerManifest['name']]['packagePath']),
