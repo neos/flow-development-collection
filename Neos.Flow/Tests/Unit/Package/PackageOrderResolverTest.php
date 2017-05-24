@@ -64,8 +64,8 @@ class PackageOrderResolverTest extends \Neos\Flow\Tests\UnitTestCase
                             'neos/neos' => 'dev-master',
                         ],
                     ],
-                    'flowpack/behat' => [
-                        'name' => 'flowpack/behat',
+                    'neos/behat' => [
+                        'name' => 'neos/behat',
                         'require' => [
                             'neos/flow' => 'dev-master',
                         ],
@@ -90,7 +90,7 @@ class PackageOrderResolverTest extends \Neos\Flow\Tests\UnitTestCase
                             'neos/twitter-bootstrap' => 'dev-master',
                             'neos/setup' => 'dev-master',
                             'neos/fusion' => 'dev-master',
-                            'neos/neos-nodetypes' => 'dev-master',
+                            'neos/nodetypes' => 'dev-master',
                             'neos/media' => 'dev-master',
                             'neos/extjs' => 'dev-master',
                             'neos/flow' => 'dev-master',
@@ -117,8 +117,8 @@ class PackageOrderResolverTest extends \Neos\Flow\Tests\UnitTestCase
                             'neos/flow' => 'dev-master',
                         ],
                     ],
-                    'neos/neos-nodetypes' => [
-                        'name' => 'neos/neos-nodetypes',
+                    'neos/nodetypes' => [
+                        'name' => 'neos/nodetypes',
                         'require' => [
                             'neos/fusion' => 'dev-master',
                             'neos/flow' => 'dev-master',
@@ -146,7 +146,7 @@ class PackageOrderResolverTest extends \Neos\Flow\Tests\UnitTestCase
                     'neos/sitekickstarter' => [
                         'name' => 'neos/sitekickstarter',
                         'require' => [
-                            'neos/kickstart' => 'dev-master',
+                            'neos/kickstarter' => 'dev-master',
                             'neos/flow' => 'dev-master',
                         ],
                     ],
@@ -291,8 +291,8 @@ class PackageOrderResolverTest extends \Neos\Flow\Tests\UnitTestCase
                             'neos/flow' => 'dev-master',
                         ],
                     ],
-                    'neos/kickstart' => [
-                        'name' => 'neos/kickstart',
+                    'neos/kickstarter' => [
+                        'name' => 'neos/kickstarter',
                         'require' => [
                             'neos/flow' => 'dev-master',
                         ],
@@ -325,7 +325,7 @@ class PackageOrderResolverTest extends \Neos\Flow\Tests\UnitTestCase
                     'neos/flow',
                     'neos/form',
                     'neos/fusion',
-                    'neos/neos-nodetypes',
+                    'neos/nodetypes',
                     'neos/imagine',
                     'neos/media',
                     'neos/extjs',
@@ -334,8 +334,8 @@ class PackageOrderResolverTest extends \Neos\Flow\Tests\UnitTestCase
                     'neos/contentrepository',
                     'neos/neos',
                     'neos/demo',
-                    'flowpack/behat',
-                    'neos/kickstart',
+                    'neos/behat',
+                    'neos/kickstarter',
                     'neos/sitekickstarter',
                     'mikey179/vfsstream',
                     'phpunit/phptexttemplate',
