@@ -11,8 +11,7 @@ namespace Neos\Flow\ResourceManagement\Target;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
-use Neos\Flow\ResourceManagement\Collection;
+use Neos\Error\Messages\Error;
 use Neos\Flow\ResourceManagement\CollectionInterface;
 use Neos\Flow\ResourceManagement\Storage\PackageStorage;
 use Neos\Flow\Utility\Algorithms;
@@ -101,6 +100,30 @@ class FileSystemSymlinkTarget extends FileSystemTarget
         }
 
         $this->systemLogger->log(sprintf('FileSystemSymlinkTarget: Published file. (target: %s, file: %s)', $this->name, $relativeTargetPathAndFilename), LOG_DEBUG);
+    }
+
+    /**
+     * Removes the specified target file from the public directory
+     *
+     * This method fails silently if the given file could not be unpublished or already didn't exist anymore.
+     *
+     * @param string $relativeTargetPathAndFilename relative path and filename in the target directory
+     * @return void
+     */
+    protected function unpublishFile($relativeTargetPathAndFilename)
+    {
+        $targetPathAndFilename = $this->path . $relativeTargetPathAndFilename;
+        if (!is_link($targetPathAndFilename) && !file_exists($targetPathAndFilename)) {
+            $message = sprintf('Did not remove file %s because it did not exist.', $targetPathAndFilename);
+            $this->messageCollector->append($message, Error::SEVERITY_NOTICE);
+            return;
+        }
+        if (!Files::unlink($targetPathAndFilename)) {
+            $message = sprintf('Removal of file %s failed.', $targetPathAndFilename);
+            $this->messageCollector->append($message, Error::SEVERITY_WARNING);
+            return;
+        }
+        Files::removeEmptyDirectoriesOnPath(dirname($targetPathAndFilename));
     }
 
     /**
