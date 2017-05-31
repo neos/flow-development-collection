@@ -455,6 +455,10 @@ class UriBuilder
                 if (!empty($requestActionName)) {
                     $requestArguments['@action'] = $requestActionName;
                 }
+                $requestFormat = $subRequest->getFormat();
+                if (!empty($requestFormat)) {
+                    $requestArguments['@format'] = $requestFormat;
+                }
 
                 if (count($requestArguments) > 0) {
                     $requestArguments = $this->addNamespaceToArguments($requestArguments, $subRequest);
