@@ -11,7 +11,6 @@ namespace Neos\FluidAdaptor\Core\ViewHelper;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use TYPO3Fluid\Fluid\Core\ViewHelper\TagBuilder;
 
 /**
@@ -147,25 +146,42 @@ abstract class AbstractTagBasedViewHelper extends AbstractViewHelper
     }
 
     /**
-     * Handles additional arguments, sorting out any data-
-     * prefixed tag attributes and assigning them. Then passes
-     * the unassigned arguments to the parent class' method,
-     * which in the default implementation will throw an error
-     * about "undeclared argument used".
+     * Handles additional arguments that were not defined for this viewHelper.
+     * If the argument can be converted to string it will be added to the tag
+     * as attribute.
      *
      * @param array $arguments
      * @return void
+     * @throws Exception
      */
     public function handleAdditionalArguments(array $arguments)
     {
-        $unassigned = array();
+        if (!isset(self::$tagAttributes[get_class($this)]) || !is_array(self::$tagAttributes[get_class($this)])) {
+            self::$tagAttributes[get_class($this)] = [];
+        }
+
         foreach ($arguments as $argumentName => $argumentValue) {
-            if (strpos($argumentName, 'data-') === 0) {
-                $this->tag->addAttribute($argumentName, $argumentValue);
-            } else {
-                $unassigned[$argumentName] = $argumentValue;
+            self::$tagAttributes[get_class($this)][] = $argumentName;
+            $this->arguments[$argumentName] = $argumentValue;
+        }
+    }
+
+    /**
+     * @param array $arguments
+     * @throws Exception
+     */
+    public function validateAdditionalArguments(array $arguments)
+    {
+        foreach ($arguments as $argumentName => $argumentValue) {
+            try {
+                $argumentValue = (string)$argumentValue;
+            } catch (\Exception $exception) {
+                throw new Exception(sprintf(
+                        'You gave an undeclared argument "%s" to the tag based ViewHelper "%s" which could not be converterted to a string and therefore not rendered as tag attribute.',
+                        $argumentName, get_class($this)
+                    )
+                );
             }
         }
-        parent::handleAdditionalArguments($unassigned);
     }
 }

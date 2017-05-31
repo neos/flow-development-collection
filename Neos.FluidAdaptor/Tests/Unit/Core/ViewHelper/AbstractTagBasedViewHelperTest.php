@@ -10,16 +10,24 @@ namespace Neos\FluidAdaptor\Tests\Unit\Core\ViewHelper;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+use Neos\Flow\Tests\UnitTestCase;
+use Neos\FluidAdaptor\Core\ViewHelper\AbstractTagBasedViewHelper;
 use TYPO3Fluid\Fluid\Core\ViewHelper\TagBuilder;
 
 /**
  * Testcase for TagBasedViewHelper
  */
-class AbstractTagBasedViewHelperTest extends \Neos\Flow\Tests\UnitTestCase
+class AbstractTagBasedViewHelperTest extends UnitTestCase
 {
+    /**
+     * @var AbstractTagBasedViewHelper
+     */
+    protected $viewHelper;
+
     public function setUp()
     {
-        $this->viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\Core\ViewHelper\AbstractTagBasedViewHelper::class, array('dummy'), array(), '', false);
+        $this->viewHelper = $this->getAccessibleMock(AbstractTagBasedViewHelper::class, array('dummy'), array(), '', false);
     }
 
     /**
@@ -109,5 +117,41 @@ class AbstractTagBasedViewHelperTest extends \Neos\Flow\Tests\UnitTestCase
         $this->viewHelper->setArguments($arguments);
         $this->viewHelper->initializeArguments();
         $this->viewHelper->initialize();
+    }
+
+    /**
+     * @test
+     */
+    public function undefinedArgumentsAreRenderedAsAttributes()
+    {
+        $mockTagBuilder = $this->getMockBuilder(TagBuilder::class)->setMethods(['addAttribute'])->disableOriginalConstructor()->getMock();
+        $mockTagBuilder->expects($this->at(0))->method('addAttribute')->with('class', 'classAttribute');
+        $mockTagBuilder->expects($this->at(1))->method('addAttribute')->with('some-undefined-argument', 'works');
+        $this->viewHelper->injectTagBuilder($mockTagBuilder);
+        $declaredArguments = [
+            'class' => 'classAttribute',
+        ];
+        $undeclaredArguments = [
+            'some-undefined-argument' => 'works'
+        ];
+
+        $this->viewHelper->_call('registerUniversalTagAttributes');
+        $this->viewHelper->setArguments($declaredArguments);
+        $this->viewHelper->handleAdditionalArguments($undeclaredArguments);
+        $this->viewHelper->initializeArguments();
+        $this->viewHelper->initialize();
+    }
+
+    /**
+     * @test
+     * @expectedException \Neos\FluidAdaptor\Core\ViewHelper\Exception
+     */
+    public function undefinedArgumentsThatCannotBeCastToStringRaiseException()
+    {
+        $undeclaredArguments = [
+            'some-undefined-argument' => ['this', 'cannot', 'cast', 'to', 'string']
+        ];
+
+        $this->viewHelper->validateAdditionalArguments($undeclaredArguments);
     }
 }
