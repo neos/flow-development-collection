@@ -334,6 +334,4 @@ class FrameworkTest extends FunctionalTestCase
 //
 //        $this->assertNull($targetClass->methodWithNullableObjectReturnTypeDeclaration());
 //    }
-
-
 }

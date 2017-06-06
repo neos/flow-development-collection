@@ -39,10 +39,8 @@ class TargetClassWithPhp7Features
         return $this;
     }
 
-    function __toString()
+    public function __toString()
     {
         return 'TargetClassWithPhp7Features';
     }
-
-
 }
