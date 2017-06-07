@@ -89,31 +89,44 @@ class YamlSource
         }
         $configuration = [];
         foreach ($pathsAndFileNames as $pathAndFilename) {
-            if (is_file($pathAndFilename)) {
-                try {
-                    if ($this->usePhpYamlExtension) {
-                        if (strpos($pathAndFilename, 'resource://') === 0) {
-                            $yaml = file_get_contents($pathAndFilename);
-                            $loadedConfiguration = @yaml_parse($yaml);
-                            unset($yaml);
-                        } else {
-                            $loadedConfiguration = @yaml_parse_file($pathAndFilename);
-                        }
-                        if ($loadedConfiguration === false) {
-                            throw new ParseErrorException('A parse error occurred while parsing file "' . $pathAndFilename . '".', 1391894094);
-                        }
-                    } else {
-                        $loadedConfiguration = Yaml::parse($pathAndFilename);
-                    }
-
-                    if (is_array($loadedConfiguration)) {
-                        $configuration = Arrays::arrayMergeRecursiveOverrule($configuration, $loadedConfiguration);
-                    }
-                } catch (Exception $exception) {
-                    throw new ParseErrorException('A parse error occurred while parsing file "' . $pathAndFilename . '". Error message: ' . $exception->getMessage(), 1232014321);
-                }
-            }
+            $configuration = $this->mergeFileContent($pathAndFilename, $configuration);
         }
+        return $configuration;
+    }
+
+    /**
+     * Loads the file with the given path and merge it's contents into the configuration array.
+     *
+     * @param string $pathAndFilename
+     * @param array $configuration
+     * @return array
+     * @throws ParseErrorException
+     */
+    protected function mergeFileContent($pathAndFilename, array $configuration)
+    {
+        if (!is_file($pathAndFilename)) {
+            return $configuration;
+        }
+
+        try {
+            $yaml = file_get_contents($pathAndFilename);
+            if ($this->usePhpYamlExtension) {
+                $loadedConfiguration = @yaml_parse($yaml);
+                if ($loadedConfiguration === false) {
+                    throw new ParseErrorException('A parse error occurred while parsing file "' . $pathAndFilename . '".', 1391894094);
+                }
+            } else {
+                $loadedConfiguration = Yaml::parse($yaml);
+            }
+            unset($yaml);
+
+            if (is_array($loadedConfiguration)) {
+                $configuration = Arrays::arrayMergeRecursiveOverrule($configuration, $loadedConfiguration);
+            }
+        } catch (Exception $exception) {
+            throw new ParseErrorException('A parse error occurred while parsing file "' . $pathAndFilename . '". Error message: ' . $exception->getMessage(), 1232014321);
+        }
+
         return $configuration;
     }
 
