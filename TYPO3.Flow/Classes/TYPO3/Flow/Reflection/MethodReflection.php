@@ -107,7 +107,7 @@ class MethodReflection extends \ReflectionMethod
     }
 
     /**
-     * @return bool Whether a return type is declared (@see getDeclaredReturnType()) and has a nullable modified ("?")
+     * @return bool Whether a return type is declared (@see getDeclaredReturnType()) and has a nullable modifier ("?")
      */
     public function isDeclaredReturnTypeNullable()
     {
