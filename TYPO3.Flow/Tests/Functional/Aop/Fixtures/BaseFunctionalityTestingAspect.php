@@ -213,4 +213,46 @@ class BaseFunctionalityTestingAspect
     {
         return 'This is so NaN';
     }
+
+    /**
+     * @Flow\Around("method(TYPO3\Flow\Tests\Functional\Aop\Fixtures\TargetClassWithPhp7Features->methodWithStaticScalarReturnTypeDeclaration())")
+     * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint
+     * @return string
+     */
+    public function methodWithStaticScalarReturnTypeDeclarationAdvice(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint)
+    {
+        return 'adviced: ' . $joinPoint->getAdviceChain()->proceed($joinPoint);
+    }
+
+    /**
+     * @Flow\Around("method(TYPO3\Flow\Tests\Functional\Aop\Fixtures\TargetClassWithPhp7Features->methodWithStaticObjectReturnTypeDeclaration())")
+     * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint
+     * @return string
+     */
+    public function methodWithStaticObjectReturnTypeDeclarationAdvice(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint)
+    {
+        return $joinPoint->getAdviceChain()->proceed($joinPoint);
+    }
+
+    /**
+     * @Flow\Around("method(TYPO3\Flow\Tests\Functional\Aop\Fixtures\TargetClassWithPhp71Features->methodWithNullableScalarReturnTypeDeclaration())")
+     * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint
+     * @return string
+     */
+    public function methodWithNullableScalarReturnTypeDeclarationAdvice(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint)
+    {
+        $originalResult = $joinPoint->getAdviceChain()->proceed($joinPoint);
+        return 'adviced: ' . ($originalResult === null ? 'NULL' : $originalResult);
+    }
+
+
+    /**
+     * @Flow\Around("method(TYPO3\Flow\Tests\Functional\Aop\Fixtures\TargetClassWithPhp71Features->methodWithNullableObjectReturnTypeDeclaration())")
+     * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint
+     * @return string
+     */
+    public function methodWithNullableObjectReturnTypeDeclarationAdvice(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint)
+    {
+        return $joinPoint->getAdviceChain()->proceed($joinPoint);
+    }
 }
