@@ -2209,7 +2209,7 @@ class ReflectionService
      */
     protected function produceCacheIdentifierFromClassName($className)
     {
-        return str_replace('\\', '_', $className);
+        return str_replace('\\', '-', $className);
     }
 
     /**

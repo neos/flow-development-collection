@@ -120,4 +120,13 @@ class ProxyCompilerTest extends FunctionalTestCase
         $this->assertSame($prototypeF->getNonTransientProperty(), 'bar');
         $this->assertSame($prototypeF->getTransientProperty(), null);
     }
+
+    /**
+     * @test
+     */
+    public function classesWithUnderscoresAreSupported()
+    {
+        $class = $this->objectManager->get(Fixtures\ClassWithUnderscoreClassDependencies::class);
+        $this->assertInstanceOf(Fixtures\Class_With_Underscores::class, $class->classWithUnderscores);
+    }
 }

@@ -109,7 +109,7 @@ class AbstractFrontendTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function getClassTagRendersTagWhichCanBeUsedToTagACacheEntryWithACertainClass()
     {
-        $this->assertEquals('%CLASS%TYPO3_Foo_Bar_Baz', \TYPO3\Flow\Cache\CacheManager::getClassTag('TYPO3\Foo\Bar\Baz'));
+        $this->assertEquals('%CLASS%TYPO3-Foo-Bar-Baz', \TYPO3\Flow\Cache\CacheManager::getClassTag('TYPO3\Foo\Bar\Baz'));
     }
 
     /**

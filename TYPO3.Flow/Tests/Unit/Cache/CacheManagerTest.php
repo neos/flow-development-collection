@@ -240,7 +240,7 @@ class CacheManagerTest extends UnitTestCase
         $objectConfigurationCache = $this->registerCache('Flow_Object_Configuration');
         $this->registerCache('Flow_Reflection_Status');
 
-        $objectClassCache->expects($this->once())->method('remove')->with('TYPO3_Flow_Cache_CacheManager');
+        $objectClassCache->expects($this->once())->method('remove')->with('TYPO3-Flow-Cache-CacheManager');
         $objectConfigurationCache->expects($this->once())->method('remove')->with('allCompiledCodeUpToDate');
 
         $this->cacheManager->flushSystemCachesByChangedFiles('Flow_ClassFiles', [
@@ -257,7 +257,7 @@ class CacheManagerTest extends UnitTestCase
         $objectConfigurationCache = $this->registerCache('Flow_Object_Configuration');
         $this->registerCache('Flow_Reflection_Status');
 
-        $objectClassCache->expects($this->once())->method('remove')->with('TYPO3_Flow_Tests_Unit_Cache_CacheManagerTest');
+        $objectClassCache->expects($this->once())->method('remove')->with('TYPO3-Flow-Tests-Unit-Cache-CacheManagerTest');
         $objectConfigurationCache->expects($this->once())->method('remove')->with('allCompiledCodeUpToDate');
 
         $this->cacheManager->flushSystemCachesByChangedFiles('Flow_ClassFiles', [
