@@ -72,7 +72,7 @@ class PersistedUsernamePasswordProviderTest extends FunctionalTestCase
         $this->assertTrue($this->authenticationToken->isAuthenticated());
 
         $account = $this->accountRepository->findActiveByAccountIdentifierAndAuthenticationProviderName('username', 'myTestProvider');
-        $this->assertEquals(new \DateTime(), $account->getLastSuccessfulAuthenticationDate());
+        $this->assertEquals((new \DateTime())->format(\DateTime::W3C), $account->getLastSuccessfulAuthenticationDate()->format(\DateTime::W3C));
         $this->assertEquals(0, $account->getFailedAuthenticationCount());
     }
 
@@ -120,7 +120,7 @@ class PersistedUsernamePasswordProviderTest extends FunctionalTestCase
         $this->persistedUsernamePasswordProvider->authenticate($this->authenticationToken);
 
         $account = $this->accountRepository->findActiveByAccountIdentifierAndAuthenticationProviderName('username', 'myTestProvider');
-        $this->assertEquals(new \DateTime(), $account->getLastSuccessfulAuthenticationDate());
+        $this->assertEquals((new \DateTime())->format(\DateTime::W3C), $account->getLastSuccessfulAuthenticationDate()->format(\DateTime::W3C));
         $this->assertEquals(0, $account->getFailedAuthenticationCount());
     }
 }
