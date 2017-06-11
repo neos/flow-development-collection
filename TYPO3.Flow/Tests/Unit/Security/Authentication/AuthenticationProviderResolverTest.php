@@ -11,11 +11,15 @@ namespace TYPO3\Flow\Tests\Unit\Security\Authentication;
  * source code.
  */
 
+use TYPO3\Flow\Object\ObjectManager;
+use TYPO3\Flow\Security\Authentication\AuthenticationProviderResolver;
+use TYPO3\Flow\Security\Authentication\Provider\ValidShortName;
+use TYPO3\Flow\Tests\UnitTestCase;
+
 /**
  * Testcase for the security interceptor resolver
- *
  */
-class AuthenticationProviderResolverTest extends \TYPO3\Flow\Tests\UnitTestCase
+class AuthenticationProviderResolverTest extends UnitTestCase
 {
     /**
      * @test
@@ -23,10 +27,10 @@ class AuthenticationProviderResolverTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function resolveProviderObjectNameThrowsAnExceptionIfNoProviderIsAvailable()
     {
-        $mockObjectManager = $this->getMockBuilder(\TYPO3\Flow\Object\ObjectManager::class)->disableOriginalConstructor()->getMock();
+        $mockObjectManager = $this->getMockBuilder(ObjectManager::class)->disableOriginalConstructor()->getMock();
         $mockObjectManager->expects($this->any())->method('getCaseSensitiveObjectName')->will($this->returnValue(false));
 
-        $providerResolver = new \TYPO3\Flow\Security\Authentication\AuthenticationProviderResolver($mockObjectManager);
+        $providerResolver = new AuthenticationProviderResolver($mockObjectManager);
 
         $providerResolver->resolveProviderClass('notExistingClass');
     }
@@ -39,20 +43,20 @@ class AuthenticationProviderResolverTest extends \TYPO3\Flow\Tests\UnitTestCase
         $getCaseSensitiveObjectNameCallback = function () {
             $args = func_get_args();
 
-            if ($args[0] === 'TYPO3\Flow\Security\Authentication\Provider\ValidShortName') {
-                return 'TYPO3\Flow\Security\Authentication\Provider\ValidShortName';
+            if ($args[0] === ValidShortName::class) {
+                return ValidShortName::class;
             }
 
             return false;
         };
 
-        $mockObjectManager = $this->getMockBuilder(\TYPO3\Flow\Object\ObjectManager::class)->disableOriginalConstructor()->getMock();
+        $mockObjectManager = $this->getMockBuilder(ObjectManager::class)->disableOriginalConstructor()->getMock();
         $mockObjectManager->expects($this->any())->method('getCaseSensitiveObjectName')->will($this->returnCallback($getCaseSensitiveObjectNameCallback));
 
-        $providerResolver = new \TYPO3\Flow\Security\Authentication\AuthenticationProviderResolver($mockObjectManager);
+        $providerResolver = new AuthenticationProviderResolver($mockObjectManager);
         $providerClass = $providerResolver->resolveProviderClass('ValidShortName');
 
-        $this->assertEquals('TYPO3\Flow\Security\Authentication\Provider\ValidShortName', $providerClass, 'The wrong classname has been resolved');
+        $this->assertEquals(ValidShortName::class, $providerClass, 'The wrong classname has been resolved');
     }
 
     /**
@@ -60,10 +64,10 @@ class AuthenticationProviderResolverTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function resolveProviderReturnsTheCorrectProviderForACompleteClassName()
     {
-        $mockObjectManager = $this->getMockBuilder(\TYPO3\Flow\Object\ObjectManager::class)->disableOriginalConstructor()->getMock();
+        $mockObjectManager = $this->getMockBuilder(ObjectManager::class)->disableOriginalConstructor()->getMock();
         $mockObjectManager->expects($this->any())->method('getCaseSensitiveObjectName')->with('existingProviderClass')->will($this->returnValue('existingProviderClass'));
 
-        $providerResolver = new \TYPO3\Flow\Security\Authentication\AuthenticationProviderResolver($mockObjectManager);
+        $providerResolver = new AuthenticationProviderResolver($mockObjectManager);
         $providerClass = $providerResolver->resolveProviderClass('existingProviderClass');
 
         $this->assertEquals('existingProviderClass', $providerClass, 'The wrong classname has been resolved');

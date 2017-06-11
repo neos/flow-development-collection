@@ -48,7 +48,7 @@ class UniqueEntityValidatorTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function validatorBehavesCorrectlyOnDuplicateEntityWithSingleConfiguredIdentityProperty()
     {
-        $validator = new \TYPO3\Flow\Validation\Validator\UniqueEntityValidator(array('identityProperties' => array('title')));
+        $validator = new \TYPO3\Flow\Validation\Validator\UniqueEntityValidator(['identityProperties' => ['title']]);
         $post = new Post();
         $post->setTitle('The title of the initial post');
         $this->postRepository->add($post);

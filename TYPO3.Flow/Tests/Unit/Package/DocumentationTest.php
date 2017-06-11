@@ -12,12 +12,14 @@ namespace TYPO3\Flow\Tests\Unit\Package;
  */
 
 use org\bovigo\vfs\vfsStream;
+use TYPO3\Flow\Tests\UnitTestCase;
+use TYPO3\Flow\Package;
+use TYPO3\Flow\Utility\Files;
 
 /**
  * Testcase for the package documentation class
- *
  */
-class DocumentationTest extends \TYPO3\Flow\Tests\UnitTestCase
+class DocumentationTest extends UnitTestCase
 {
     /**
      * Sets up this test case
@@ -35,9 +37,9 @@ class DocumentationTest extends \TYPO3\Flow\Tests\UnitTestCase
     {
         $documentationPath = vfsStream::url('testDirectory') . '/';
 
-        $mockPackage = $this->createMock(\TYPO3\Flow\Package\PackageInterface::class);
+        $mockPackage = $this->createMock(Package\PackageInterface::class);
 
-        $documentation = new \TYPO3\Flow\Package\Documentation($mockPackage, 'Manual', $documentationPath);
+        $documentation = new Package\Documentation($mockPackage, 'Manual', $documentationPath);
 
         $this->assertSame($mockPackage, $documentation->getPackage());
         $this->assertEquals('Manual', $documentation->getDocumentationName());
@@ -51,11 +53,11 @@ class DocumentationTest extends \TYPO3\Flow\Tests\UnitTestCase
     {
         $documentationPath = vfsStream::url('testDirectory') . '/';
 
-        $mockPackage = $this->createMock(\TYPO3\Flow\Package\PackageInterface::class);
+        $mockPackage = $this->createMock(Package\PackageInterface::class);
 
-        \TYPO3\Flow\Utility\Files::createDirectoryRecursively($documentationPath . 'DocBook/en');
+        Files::createDirectoryRecursively($documentationPath . 'DocBook/en');
 
-        $documentation = new \TYPO3\Flow\Package\Documentation($mockPackage, 'Manual', $documentationPath);
+        $documentation = new Package\Documentation($mockPackage, 'Manual', $documentationPath);
         $documentationFormats = $documentation->getDocumentationFormats();
 
         $this->assertEquals('DocBook', $documentationFormats['DocBook']->getFormatName());

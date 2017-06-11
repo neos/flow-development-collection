@@ -971,6 +971,34 @@ The following example introduces a new interface ``NewInterface`` to the class
 		}
 	}
 
+Trait introduction
+-------------------
+
+Like the interface introductions, also trait introductions are declared
+by annotation. It even uses the same annotation with a different argument:
+
+``@Flow\Introduce("PointcutExpression", traitName="NewTraitName")``
+
+Again only pointcuts filtering for classes make sense. The traitName must
+be a fully qualified "class" (trait) name without leading backslash.
+
+The following example introduces a trait ``SomeTrait`` to the class ``MyClass``.
+
+*Example: Trait introduction*::
+
+	namespace Example\MyPackage;
+
+	/**
+	 * An aspect for demonstrating trait introduction
+	 *
+	 * Introduces Example\MyPackage\SomeTrait to the class Example\MyPackage\MyClass:
+	 *
+	 * @Flow\Introduce("class(Example\MyPackage\MyClass)", traitName="Example\MyPackage\SomeTrait")
+	 * @Flow\Aspect
+	 */
+	class TraitIntroductionAspect {
+	}
+
 Property introduction
 -----------------------
 

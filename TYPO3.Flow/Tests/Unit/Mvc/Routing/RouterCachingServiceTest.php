@@ -10,6 +10,8 @@ namespace TYPO3\Flow\Tests\Unit\Mvc\Routing;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+use TYPO3\Flow\Cache\CacheAwareInterface;
 use TYPO3\Flow\Cache\Frontend\StringFrontend;
 use TYPO3\Flow\Cache\Frontend\VariableFrontend;
 use TYPO3\Flow\Core\ApplicationContext;
@@ -77,18 +79,18 @@ class RouterCachingServiceTest extends UnitTestCase
      */
     public function setUp()
     {
-        $this->routerCachingService = $this->getAccessibleMock(\TYPO3\Flow\Mvc\Routing\RouterCachingService::class, array('dummy'));
+        $this->routerCachingService = $this->getAccessibleMock(RouterCachingService::class, ['dummy']);
 
-        $this->mockRouteCache = $this->getMockBuilder(\TYPO3\Flow\Cache\Frontend\VariableFrontend::class)->disableOriginalConstructor()->getMock();
+        $this->mockRouteCache = $this->getMockBuilder(VariableFrontend::class)->disableOriginalConstructor()->getMock();
         $this->inject($this->routerCachingService, 'routeCache', $this->mockRouteCache);
 
-        $this->mockResolveCache = $this->getMockBuilder(\TYPO3\Flow\Cache\Frontend\StringFrontend::class)->disableOriginalConstructor()->getMock();
+        $this->mockResolveCache = $this->getMockBuilder(StringFrontend::class)->disableOriginalConstructor()->getMock();
         $this->inject($this->routerCachingService, 'resolveCache', $this->mockResolveCache);
 
-        $this->mockPersistenceManager  = $this->createMock(\TYPO3\Flow\Persistence\PersistenceManagerInterface::class);
+        $this->mockPersistenceManager  = $this->getMockBuilder(PersistenceManagerInterface::class)->getMock();
         $this->inject($this->routerCachingService, 'persistenceManager', $this->mockPersistenceManager);
 
-        $this->mockSystemLogger  = $this->createMock(\TYPO3\Flow\Log\SystemLoggerInterface::class);
+        $this->mockSystemLogger  = $this->getMockBuilder(SystemLoggerInterface::class)->getMock();
         $this->inject($this->routerCachingService, 'systemLogger', $this->mockSystemLogger);
 
         $this->mockObjectManager  = $this->createMock(ObjectManagerInterface::class);
@@ -180,15 +182,15 @@ class RouterCachingServiceTest extends UnitTestCase
     public function containsObjectDetectsObjectsInVariousSituationsDataProvider()
     {
         $object = new \stdClass();
-        return array(
-            array(true, $object),
-            array(true, array('foo' => $object)),
-            array(true, array('foo' => 'bar', 'baz' => $object)),
-            array(true, array('foo' => array('bar' => array('baz' => 'quux', 'here' => $object)))),
-            array(false, 'no object'),
-            array(false, array('foo' => 'no object')),
-            array(false, true)
-        );
+        return [
+            [true, $object],
+            [true, ['foo' => $object]],
+            [true, ['foo' => 'bar', 'baz' => $object]],
+            [true, ['foo' => ['bar' => ['baz' => 'quux', 'here' => $object]]]],
+            [false, 'no object'],
+            [false, ['foo' => 'no object']],
+            [false, true]
+        ];
     }
 
     /**
@@ -206,7 +208,7 @@ class RouterCachingServiceTest extends UnitTestCase
      */
     public function getCachedMatchResultsReturnsCachedMatchResultsIfFoundInCache()
     {
-        $expectedResult = array('cached' => 'route values');
+        $expectedResult = ['cached' => 'route values'];
         $cacheIdentifier = '89dcfa70030cbdf762b727b5ba41c7bb';
         $this->mockRouteCache->expects($this->once())->method('get')->with($cacheIdentifier)->will($this->returnValue($expectedResult));
 
@@ -232,7 +234,7 @@ class RouterCachingServiceTest extends UnitTestCase
      */
     public function storeMatchResultsDoesNotStoreMatchResultsInCacheIfTheyContainObjects()
     {
-        $matchResults = array('this' => array('contains' => array('objects', new \stdClass())));
+        $matchResults = ['this' => ['contains' => ['objects', new \stdClass()]]];
 
         $this->mockRouteCache->expects($this->never())->method('set');
 
@@ -246,14 +248,14 @@ class RouterCachingServiceTest extends UnitTestCase
     {
         $uuid1 = '550e8400-e29b-11d4-a716-446655440000';
         $uuid2 = '302abe9c-7d07-4200-a868-478586019290';
-        $matchResults = array('some' => array('matchResults' => array('uuid', $uuid1)), 'foo' => $uuid2);
+        $matchResults = ['some' => ['matchResults' => ['uuid', $uuid1]], 'foo' => $uuid2];
 
         /** @var RouterCachingService|\PHPUnit_Framework_MockObject_MockObject $routerCachingService */
-        $routerCachingService = $this->getAccessibleMock(\TYPO3\Flow\Mvc\Routing\RouterCachingService::class, array('buildRouteCacheIdentifier'));
+        $routerCachingService = $this->getAccessibleMock(RouterCachingService::class, ['buildRouteCacheIdentifier']);
         $routerCachingService->expects($this->atLeastOnce())->method('buildRouteCacheIdentifier')->with($this->mockHttpRequest)->will($this->returnValue('cacheIdentifier'));
         $this->inject($routerCachingService, 'routeCache', $this->mockRouteCache);
 
-        $this->mockRouteCache->expects($this->once())->method('set')->with('cacheIdentifier', $matchResults, array($uuid1, $uuid2, md5('some'), md5('some/route'), md5('some/route/path')));
+        $this->mockRouteCache->expects($this->once())->method('set')->with('cacheIdentifier', $matchResults, [$uuid1, $uuid2, md5('some'), md5('some/route'), md5('some/route/path')]);
 
         $routerCachingService->storeMatchResults($this->mockHttpRequest, $matchResults);
     }
@@ -263,7 +265,7 @@ class RouterCachingServiceTest extends UnitTestCase
      */
     public function getCachedResolvedUriPathReturnsCachedResolvedUriPathIfFoundInCache()
     {
-        $routeValues = array('b' => 'route values', 'a' => 'Some more values');
+        $routeValues = ['b' => 'route values', 'a' => 'Some more values'];
         $cacheIdentifier = '88a1c4366ca37b55e53905d61e184d08';
 
         $expectedResult = 'cached/matching/uri';
@@ -279,7 +281,7 @@ class RouterCachingServiceTest extends UnitTestCase
     public function storeResolvedUriPathConvertsObjectsToHashesToGenerateCacheIdentifier()
     {
         $mockObject = new \stdClass();
-        $routeValues = array('b' => 'route values', 'someObject' => $mockObject);
+        $routeValues = ['b' => 'route values', 'someObject' => $mockObject];
         $cacheIdentifier = '264b593d59582adea4ccc52b33cc093f';
 
         $this->mockPersistenceManager->expects($this->once())->method('getIdentifierByObject')->with($mockObject)->will($this->returnValue('objectIdentifier'));
@@ -299,13 +301,13 @@ class RouterCachingServiceTest extends UnitTestCase
         $trimmedResolvedUriPath = 'some/request/path';
         $uuid1 = '550e8400-e29b-11d4-a716-446655440000';
         $uuid2 = '302abe9c-7d07-4200-a868-478586019290';
-        $routeValues = array('some' => array('routeValues' => array('uuid', $uuid1)), 'foo' => $uuid2);
+        $routeValues = ['some' => ['routeValues' => ['uuid', $uuid1]], 'foo' => $uuid2];
 
-        $routerCachingService = $this->getAccessibleMock(\TYPO3\Flow\Mvc\Routing\RouterCachingService::class, array('buildResolveCacheIdentifier'));
+        $routerCachingService = $this->getAccessibleMock(RouterCachingService::class, ['buildResolveCacheIdentifier']);
         $routerCachingService->expects($this->atLeastOnce())->method('buildResolveCacheIdentifier')->with($routeValues)->will($this->returnValue('cacheIdentifier'));
         $this->inject($routerCachingService, 'resolveCache', $this->mockResolveCache);
 
-        $this->mockResolveCache->expects($this->once())->method('set')->with('cacheIdentifier', $trimmedResolvedUriPath, array($uuid1, $uuid2, md5('some'), md5('some/request'), md5('some/request/path')));
+        $this->mockResolveCache->expects($this->once())->method('set')->with('cacheIdentifier', $trimmedResolvedUriPath, [$uuid1, $uuid2, md5('some'), md5('some/request'), md5('some/request/path')]);
 
         $routerCachingService->storeResolvedUriPath($resolvedUriPath, $routeValues);
     }
@@ -316,7 +318,7 @@ class RouterCachingServiceTest extends UnitTestCase
     public function getCachedResolvedUriPathSkipsCacheIfRouteValuesContainObjectsThatCantBeConvertedToHashes()
     {
         $mockObject = new \stdClass();
-        $routeValues = array('b' => 'route values', 'someObject' => $mockObject);
+        $routeValues = ['b' => 'route values', 'someObject' => $mockObject];
 
         $this->mockPersistenceManager->expects($this->once())->method('getIdentifierByObject')->with($mockObject)->will($this->returnValue(null));
 
@@ -341,11 +343,11 @@ class RouterCachingServiceTest extends UnitTestCase
      */
     public function storeResolvedUriPathConvertsObjectsImplementingCacheAwareInterfaceToCacheEntryIdentifier()
     {
-        $mockObject = $this->createMock(\TYPO3\Flow\Cache\CacheAwareInterface::class);
+        $mockObject = $this->createMock(CacheAwareInterface::class);
 
         $mockObject->expects($this->atLeastOnce())->method('getCacheEntryIdentifier')->will($this->returnValue('objectIdentifier'));
 
-        $routeValues = array('b' => 'route values', 'someObject' => $mockObject);
+        $routeValues = ['b' => 'route values', 'someObject' => $mockObject];
 
         $cacheIdentifier = '264b593d59582adea4ccc52b33cc093f';
 

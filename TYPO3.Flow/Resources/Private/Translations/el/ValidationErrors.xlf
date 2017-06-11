@@ -40,21 +40,21 @@
 			<target xml:lang="el" state="needs-translation">The "locale" option can be only set to string identifier, or Locale object</target></trans-unit>
       <trans-unit id="1281454830" xml:space="preserve">
 				<source>A valid time is expected</source>
-			<target xml:lang="el" state="needs-translation">A valid time is expected</target></trans-unit>
+			<target xml:lang="el" state="translated">Αναμένεται μια έγκυρη ώρα</target></trans-unit>
       <trans-unit id="1281454831" xml:space="preserve">
 				<source>A valid date and time is expected</source>
-			<target xml:lang="el" state="needs-translation">A valid date and time is expected</target></trans-unit>
+			<target xml:lang="el" state="translated">Αναμένεται μια έγκυρη ημερομηνία και ώρα</target></trans-unit>
       <trans-unit id="1281454832" xml:space="preserve">
 				<source>A valid date is expected</source>
-			<target xml:lang="el" state="needs-translation">A valid date is expected</target></trans-unit>
+			<target xml:lang="el" state="translated">Αναμένεται μια έγκυρη ημερομηνία</target></trans-unit>
       <!-- EmailAddressValidator -->
       <trans-unit id="1221559976" xml:space="preserve">
 				<source>Please specify a valid email address</source>
-			<target xml:lang="el" state="needs-translation">Please specify a valid email address</target></trans-unit>
+			<target xml:lang="el" state="translated">Παρακαλώ ορίστε μια έγκυρη διεύθυνση email</target></trans-unit>
       <!-- FloatValidator -->
       <trans-unit id="1221560288" xml:space="preserve">
 				<source>A valid float number is expected</source>
-			<target xml:lang="el" state="needs-translation">A valid float number is expected</target></trans-unit>
+			<target xml:lang="el" state="translated">Αναμένεται ένας έγκυρος δεκαδικός αριθμός</target></trans-unit>
       <trans-unit id="1332934124" xml:space="preserve">
 				<source>"{0}" cannot be converted to a float value</source>
 			<target xml:lang="el" state="needs-translation">"{0}" cannot be converted to a float value</target></trans-unit>
@@ -68,7 +68,7 @@
 			<target xml:lang="el" state="needs-translation">A valid integer number is expected</target></trans-unit>
       <trans-unit id="1332933658" xml:space="preserve">
 				<source>"{0}" is no integer.</source>
-			<target xml:lang="el" state="needs-translation">"{0}" is no integer.</target></trans-unit>
+			<target xml:lang="el" state="translated">Η τιμή "{0}" δεν είναι ακέραιος.</target></trans-unit>
       <!-- LabelValidator -->
       <trans-unit id="1272298003" xml:space="preserve">
 				<source>Only letters, numbers, spaces and certain punctuation marks are expected</source>
@@ -87,7 +87,7 @@
       <!-- NumberRangeValidator -->
       <trans-unit id="1221563685" xml:space="preserve">
 				<source>A valid number is expected</source>
-			<target xml:lang="el" state="needs-translation">A valid number is expected</target></trans-unit>
+			<target xml:lang="el" state="translated">Αναμένεται ένας έγκυρος αριθμός</target></trans-unit>
       <trans-unit id="1221561046" xml:space="preserve">
 				<source>Please enter a valid number between {0,number} and {1,number}</source>
 			<target xml:lang="el" state="needs-translation">Please enter a valid number between {0,number} and {1,number}</target></trans-unit>

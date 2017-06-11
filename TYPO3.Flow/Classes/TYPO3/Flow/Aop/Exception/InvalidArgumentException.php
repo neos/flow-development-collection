@@ -10,12 +10,13 @@ namespace TYPO3\Flow\Aop\Exception;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use TYPO3\Flow\Aop\Exception;
 
 /**
  * A "Invalid Argument" Exception
  *
  * @api
  */
-class InvalidArgumentException extends \TYPO3\Flow\Aop\Exception
+class InvalidArgumentException extends Exception
 {
 }

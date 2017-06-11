@@ -12,6 +12,7 @@ namespace TYPO3\Flow\Tests\Functional\Aop\Fixtures;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Tests\Functional\Security\Fixtures;
 
 /**
  * A simple test context that is registered as a global AOP object
@@ -21,14 +22,14 @@ use TYPO3\Flow\Annotations as Flow;
 class TestContext
 {
     /**
-     * @var \TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityD
+     * @var Fixtures\TestEntityD
      */
     protected $securityFixturesEntityD;
 
     /**
-     * @var array<\TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityD>
+     * @var array<Fixtures\TestEntityD>
      */
-    protected $securityFixturesEntityDCollection = array();
+    protected $securityFixturesEntityDCollection = [];
 
     /**
      * @return string
@@ -39,7 +40,7 @@ class TestContext
     }
 
     /**
-     * @param \TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityD $securityFixturesEntityD
+     * @param Fixtures\TestEntityD $securityFixturesEntityD
      */
     public function setSecurityFixturesEntityD($securityFixturesEntityD)
     {
@@ -47,7 +48,7 @@ class TestContext
     }
 
     /**
-     * @return \TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityD
+     * @return Fixtures\TestEntityD
      */
     public function getSecurityFixturesEntityD()
     {
@@ -55,7 +56,7 @@ class TestContext
     }
 
     /**
-     * @param array<\TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityD> $securityFixturesEntityDCollection
+     * @param array<Fixtures\TestEntityD> $securityFixturesEntityDCollection
      */
     public function setSecurityFixturesEntityDCollection($securityFixturesEntityDCollection)
     {
@@ -63,7 +64,7 @@ class TestContext
     }
 
     /**
-     * @return array<\TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityD>
+     * @return array<Fixtures\TestEntityD>
      */
     public function getSecurityFixturesEntityDCollection()
     {

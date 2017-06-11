@@ -1,0 +1,33 @@
+`3.3.9 (2017-03-10) <https://github.com/neos/flow-development-collection/releases/tag/3.3.9>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Consider accounts with \`\`expirationDate\`\` in the future as active <https://github.com/neos/flow-development-collection/pull/875>`_
+-----------------------------------------------------------------------------------------------------------------------------------------------
+
+**What I did**
+
+I fixed ``Account::isActive()`` behavior when an expirationDate is set.
+
+**How I did it**
+
+The "Now" injection is now non-lazy, thus the comparison of DateTime objects works.
+
+**How to verify it**
+
+Run the new functional test ``TYPO3.Flow/Tests/Functional/Security/AccountTest.php``
+
+**Checklist**
+
+- [x] Code follows the PSR-2 coding style
+- [ ] Tests have been created, run and adjusted as needed
+- [x] The PR is created against the [lowest maintained branch](https://www.neos.io/features/release-roadmap.html)
+
+Resolves #873
+
+* Packages: ``Flow``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/3.3.8...3.3.9>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

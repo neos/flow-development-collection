@@ -302,12 +302,12 @@ abstract class Files
      * @param string $pathAndFilename Path and name of the file to load
      * @param integer $flags (optional) ORed flags using PHP's FILE_* constants (see manual of file_get_contents).
      * @param resource $context (optional) A context resource created by stream_context_create()
-     * @param integer $offset (optional) Offset where reading of the file starts.
+     * @param integer $offset (optional) Offset where reading of the file starts, as of PHP 7.1 supports negative offsets.
      * @param integer $maximumLength (optional) Maximum length to read. Default is -1 (no limit)
      * @return mixed The file content as a string or FALSE if the file could not be opened.
      * @api
      */
-    public static function getFileContents($pathAndFilename, $flags = 0, $context = null, $offset = -1, $maximumLength = -1)
+    public static function getFileContents($pathAndFilename, $flags = 0, $context = null, $offset = null, $maximumLength = -1)
     {
         if ($flags === true) {
             $flags = FILE_USE_INCLUDE_PATH;
@@ -383,9 +383,10 @@ abstract class Files
     /**
      * A version of unlink() that works on Windows regardless on the symlink type (file/directory).
      *
-     * If this method could not unlink the specified file, it will clear the stat cache for its filename and check if
-     * the file still exist. If it does not exist, this method assumes that the file has been deleted by another process
-     * and will return TRUE. If the file still exists though, this method will return FALSE.
+     * If this method could not unlink the specified file or it doesn't exist anymore (e.g. because of a concurrent
+     * deletion), it will clear the stat cache for its filename and check if the file still exist. If it does not exist,
+     * this method assumes that the file has been deleted by another process and will return TRUE. If the file still
+     * exists though, this method will return FALSE.
      *
      * @param string $pathAndFilename Path and name of the file or directory
      * @return boolean TRUE if file/directory was removed successfully
@@ -396,7 +397,11 @@ abstract class Files
         try {
             // if not on Windows, call PHPs own unlink() function
             if (DIRECTORY_SEPARATOR === '/' || is_file($pathAndFilename)) {
-                return @\unlink($pathAndFilename);
+                if (!@\unlink($pathAndFilename)) {
+                    clearstatcache();
+                    return !file_exists($pathAndFilename);
+                }
+                return true;
             }
         } catch (\Exception $exception) {
             clearstatcache();

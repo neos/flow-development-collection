@@ -13,6 +13,7 @@ namespace TYPO3\Flow\Resource\Target;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Core\Bootstrap;
+use TYPO3\Flow\Error\Error;
 use TYPO3\Flow\Http\HttpRequestHandlerInterface;
 use TYPO3\Flow\Log\SystemLoggerInterface;
 use TYPO3\Flow\Resource\CollectionInterface;
@@ -23,7 +24,6 @@ use TYPO3\Flow\Resource\ResourceRepository;
 use TYPO3\Flow\Resource\Storage\Object as StorageObject;
 use TYPO3\Flow\Utility\Files;
 use TYPO3\Flow\Utility\Unicode\Functions as UnicodeFunctions;
-use TYPO3\Flow\Utility\Exception as UtilityException;
 use TYPO3\Flow\Resource\Target\Exception as TargetException;
 
 /**
@@ -223,6 +223,8 @@ class FileSystemTarget implements TargetInterface
     {
         $resources = $this->resourceRepository->findSimilarResources($resource);
         if (count($resources) > 1) {
+            $message = sprintf('Did not unpublish resource %s with SHA1 hash %s because it is used by other Resource objects.', $resource->getFilename(), $resource->getSha1());
+            $this->messageCollector->append($message, Error::SEVERITY_NOTICE);
             return;
         }
         $this->unpublishFile($this->getRelativePublicationPathAndFilename($resource));
@@ -317,9 +319,13 @@ class FileSystemTarget implements TargetInterface
     {
         $targetPathAndFilename = $this->path . $relativeTargetPathAndFilename;
         if (!file_exists($targetPathAndFilename)) {
+            $message = sprintf('Did not remove file %s because it did not exist.', $targetPathAndFilename);
+            $this->messageCollector->append($message, Error::SEVERITY_NOTICE);
             return;
         }
         if (!Files::unlink($targetPathAndFilename)) {
+            $message = sprintf('Removal of file %s failed.', $targetPathAndFilename);
+            $this->messageCollector->append($message, Error::SEVERITY_WARNING);
             return;
         }
         Files::removeEmptyDirectoriesOnPath(dirname($targetPathAndFilename));

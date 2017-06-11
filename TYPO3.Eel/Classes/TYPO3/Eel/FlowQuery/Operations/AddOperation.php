@@ -11,6 +11,7 @@ namespace TYPO3\Eel\FlowQuery\Operations;
  * source code.
  */
 
+use TYPO3\Eel\FlowQuery\FlowQuery;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
@@ -28,13 +29,13 @@ class AddOperation extends AbstractOperation
     /**
      * {@inheritdoc}
      *
-     * @param \TYPO3\Eel\FlowQuery\FlowQuery $flowQuery the FlowQuery object
+     * @param FlowQuery $flowQuery the FlowQuery object
      * @param array $arguments the elements to add (as array in index 0)
      * @return void
      */
-    public function evaluate(\TYPO3\Eel\FlowQuery\FlowQuery $flowQuery, array $arguments)
+    public function evaluate(FlowQuery $flowQuery, array $arguments)
     {
-        $output = array();
+        $output = [];
         foreach ($flowQuery->getContext() as $element) {
             $output[] = $element;
         }

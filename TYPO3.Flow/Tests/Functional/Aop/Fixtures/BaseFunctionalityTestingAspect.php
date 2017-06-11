@@ -12,6 +12,7 @@ namespace TYPO3\Flow\Tests\Functional\Aop\Fixtures;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Aop\JoinPointInterface;
 
 /**
  * An aspect for testing the basic functionality of the AOP framework
@@ -41,10 +42,10 @@ class BaseFunctionalityTestingAspect
 
     /**
      * @Flow\Around("method(public TYPO3\Flow\Tests\Functional\Aop\Fixtures\TargetClass01->__construct())")
-     * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint
+     * @param JoinPointInterface $joinPoint
      * @return void
      */
-    public function lousyConstructorAdvice(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint)
+    public function lousyConstructorAdvice(JoinPointInterface $joinPoint)
     {
         $joinPoint->getAdviceChain()->proceed($joinPoint);
         $joinPoint->getProxy()->constructorResult .= ' is lousier than A-380';
@@ -52,70 +53,70 @@ class BaseFunctionalityTestingAspect
 
     /**
      * @Flow\Around("within(TYPO3\Flow\Tests\Functional\Aop\Fixtures\SayHelloInterface) && method(.*->sayHello())")
-     * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint
+     * @param JoinPointInterface $joinPoint
      * @return string
      */
-    public function worldAdvice(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint)
+    public function worldAdvice(JoinPointInterface $joinPoint)
     {
         return $joinPoint->getAdviceChain()->proceed($joinPoint) . ' World';
     }
 
     /**
      * @Flow\Around("within(TYPO3\Flow\Tests\Functional\Aop\Fixtures\TargetClass01) && method(.*->sayWhatFlowIs())")
-     * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint
+     * @param JoinPointInterface $joinPoint
      * @return string
      */
-    public function rocketScienceAdvice(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint)
+    public function rocketScienceAdvice(JoinPointInterface $joinPoint)
     {
         return $joinPoint->getAdviceChain()->proceed($joinPoint) . ' Rocket Science';
     }
 
     /**
      * @Flow\Around("within(TYPO3\Flow\Tests\Functional\Aop\Fixtures\TargetClass01) && method(.*->someStaticMethod())")
-     * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint
+     * @param JoinPointInterface $joinPoint
      * @return string
      */
-    public function tryToWrapStaticMethodAdvice(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint)
+    public function tryToWrapStaticMethodAdvice(JoinPointInterface $joinPoint)
     {
         return 'failed';
     }
 
     /**
      * @Flow\Around("method(public TYPO3\Flow\Tests\Functional\Aop\Fixtures\TargetClass01->saySomethingSmart())")
-     * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint
+     * @param JoinPointInterface $joinPoint
      * @return string
      */
-    public function somethingSmartAdvice(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint)
+    public function somethingSmartAdvice(JoinPointInterface $joinPoint)
     {
         return $joinPoint->getAdviceChain()->proceed($joinPoint) . ' For big twos and small fives!';
     }
 
     /**
      * @Flow\Around("method(public TYPO3\Flow\Tests\Functional\Aop\Fixtures\TargetClass01->sayHelloAndThrow())")
-     * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint
+     * @param JoinPointInterface $joinPoint
      * @return string
      */
-    public function throwWorldAdvice(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint)
+    public function throwWorldAdvice(JoinPointInterface $joinPoint)
     {
         return $joinPoint->getAdviceChain()->proceed($joinPoint) . ' World';
     }
 
     /**
      * @Flow\Around("method(public TYPO3\Flow\Tests\Functional\Aop\Fixtures\TargetClass01->greet(name === 'Flow'))")
-     * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint
+     * @param JoinPointInterface $joinPoint
      * @return string
      */
-    public function specialNameAdvice(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint)
+    public function specialNameAdvice(JoinPointInterface $joinPoint)
     {
         return 'Hello, me';
     }
 
     /**
      * @Flow\Around("method(public TYPO3\Flow\Tests\Functional\Aop\Fixtures\TargetClass01->greet())")
-     * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint
+     * @param JoinPointInterface $joinPoint
      * @return string
      */
-    public function changeNameArgumentAdvice(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint)
+    public function changeNameArgumentAdvice(JoinPointInterface $joinPoint)
     {
         if ($joinPoint->getMethodArgument('name') === 'Andi') {
             $joinPoint->setMethodArgument('name', 'Robert');
@@ -125,80 +126,80 @@ class BaseFunctionalityTestingAspect
 
     /**
      * @Flow\Around("method(public TYPO3\Flow\Tests\Functional\Aop\Fixtures\TargetClass01->greetMany(names contains this.currentName))")
-     * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint
+     * @param JoinPointInterface $joinPoint
      * @return string
      */
-    public function manyNamesAdvice(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint)
+    public function manyNamesAdvice(JoinPointInterface $joinPoint)
     {
         return 'Hello, special guest';
     }
 
     /**
      * @Flow\AfterReturning("method(TYPO3\Flow\Tests\Functional\Aop\Fixtures\TargetClass02->publicTargetMethod())")
-     * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint
+     * @param JoinPointInterface $joinPoint
      * @return string
      */
-    public function anAfterReturningAdvice(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint)
+    public function anAfterReturningAdvice(JoinPointInterface $joinPoint)
     {
         $joinPoint->getProxy()->afterReturningAdviceWasInvoked = true;
     }
 
     /**
      * @Flow\Around("method(protected TYPO3\Flow\Tests\Functional\Aop\Fixtures\TargetClass02->protectedTargetMethod())")
-     * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint
+     * @param JoinPointInterface $joinPoint
      * @return string
      */
-    public function anAdviceForAProtectedTargetMethod(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint)
+    public function anAdviceForAProtectedTargetMethod(JoinPointInterface $joinPoint)
     {
         return $joinPoint->getAdviceChain()->proceed($joinPoint) . ' bar';
     }
 
     /**
      * @Flow\Around("method(TYPO3\Flow\Tests\Functional\Aop\Fixtures\TargetClass01->greetObject(name.name === 'TYPO3'))")
-     * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint
+     * @param JoinPointInterface $joinPoint
      * @return string
      */
-    public function propertyOnMethodArgumentAdvice(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint)
+    public function propertyOnMethodArgumentAdvice(JoinPointInterface $joinPoint)
     {
         return 'Hello, old friend';
     }
 
     /**
      * @Flow\Around("method(TYPO3\Flow\Tests\Functional\Aop\Fixtures\TargetClass01->greetObject(name === this.currentName))")
-     * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint
+     * @param JoinPointInterface $joinPoint
      * @return string
      */
-    public function thisOnMethodArgumentAdvice(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint)
+    public function thisOnMethodArgumentAdvice(JoinPointInterface $joinPoint)
     {
         return 'Hello, you';
     }
 
     /**
      * @Flow\Around("method(public TYPO3\Flow\Tests\Functional\Aop\Fixtures\TargetClass01->greet(name === current.testContext.nameOfTheWeek))")
-     * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint
+     * @param JoinPointInterface $joinPoint
      * @return string
      */
-    public function globalNameAdvice(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint)
+    public function globalNameAdvice(JoinPointInterface $joinPoint)
     {
         return 'Hello, superstar';
     }
 
     /**
      * @Flow\Around("method(TYPO3\Flow\Tests\Functional\Aop\Fixtures\TargetClass03->introducedMethod01())")
-     * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint
+     * @param JoinPointInterface $joinPoint
      * @return string
      */
-    public function introducedMethod01Implementation(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint)
+    public function introducedMethod01Implementation(JoinPointInterface $joinPoint)
     {
         return 'Implemented';
     }
 
     /**
      * @Flow\Around("method(TYPO3\Flow\Tests\Functional\Aop\Fixtures\TargetClass03->introducedMethodWithArguments())")
-     * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint
+     * @param JoinPointInterface $joinPoint
      * @return string
      */
-    public function introducedMethodWithArgumentsImplementation(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint)
+    public function introducedMethodWithArgumentsImplementation(JoinPointInterface $joinPoint)
     {
         return 'Implemented';
     }
@@ -211,5 +212,47 @@ class BaseFunctionalityTestingAspect
     public function methodWithStaticTypeDeclarationsAdvice(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint)
     {
         return 'This is so NaN';
+    }
+
+    /**
+     * @Flow\Around("method(TYPO3\Flow\Tests\Functional\Aop\Fixtures\TargetClassWithPhp7Features->methodWithStaticScalarReturnTypeDeclaration())")
+     * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint
+     * @return string
+     */
+    public function methodWithStaticScalarReturnTypeDeclarationAdvice(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint)
+    {
+        return 'adviced: ' . $joinPoint->getAdviceChain()->proceed($joinPoint);
+    }
+
+    /**
+     * @Flow\Around("method(TYPO3\Flow\Tests\Functional\Aop\Fixtures\TargetClassWithPhp7Features->methodWithStaticObjectReturnTypeDeclaration())")
+     * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint
+     * @return string
+     */
+    public function methodWithStaticObjectReturnTypeDeclarationAdvice(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint)
+    {
+        return $joinPoint->getAdviceChain()->proceed($joinPoint);
+    }
+
+    /**
+     * @Flow\Around("method(TYPO3\Flow\Tests\Functional\Aop\Fixtures\TargetClassWithPhp71Features->methodWithNullableScalarReturnTypeDeclaration())")
+     * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint
+     * @return string
+     */
+    public function methodWithNullableScalarReturnTypeDeclarationAdvice(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint)
+    {
+        $originalResult = $joinPoint->getAdviceChain()->proceed($joinPoint);
+        return 'adviced: ' . ($originalResult === null ? 'NULL' : $originalResult);
+    }
+
+
+    /**
+     * @Flow\Around("method(TYPO3\Flow\Tests\Functional\Aop\Fixtures\TargetClassWithPhp71Features->methodWithNullableObjectReturnTypeDeclaration())")
+     * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint
+     * @return string
+     */
+    public function methodWithNullableObjectReturnTypeDeclarationAdvice(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint)
+    {
+        return $joinPoint->getAdviceChain()->proceed($joinPoint);
     }
 }

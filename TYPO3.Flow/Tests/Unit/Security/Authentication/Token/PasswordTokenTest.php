@@ -11,7 +11,7 @@ namespace TYPO3\Flow\Tests\Unit\Security\Authentication\Token;
  * source code.
  */
 
-use TYPO3\Flow\Http\Request;
+use TYPO3\Flow\Http;
 use TYPO3\Flow\Mvc\ActionRequest;
 use TYPO3\Flow\Security\Authentication\TokenInterface;
 use TYPO3\Flow\Security\Authentication\Token\PasswordToken;
@@ -44,9 +44,9 @@ class PasswordTokenTest extends UnitTestCase
     {
         $this->token = new PasswordToken();
 
-        $this->mockActionRequest = $this->getMockBuilder(\TYPO3\Flow\Mvc\ActionRequest::class)->disableOriginalConstructor()->getMock();
+        $this->mockActionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
 
-        $this->mockHttpRequest = $this->getMockBuilder(\TYPO3\Flow\Http\Request::class)->disableOriginalConstructor()->getMock();
+        $this->mockHttpRequest = $this->getMockBuilder(Http\Request::class)->disableOriginalConstructor()->getMock();
         $this->mockActionRequest->expects($this->any())->method('getHttpRequest')->will($this->returnValue($this->mockHttpRequest));
     }
 
@@ -55,7 +55,7 @@ class PasswordTokenTest extends UnitTestCase
      */
     public function credentialsAreSetCorrectlyFromPostArguments()
     {
-        $arguments = array();
+        $arguments = [];
         $arguments['__authentication']['TYPO3']['Flow']['Security']['Authentication']['Token']['PasswordToken']['password'] = 'verysecurepassword';
 
         $this->mockHttpRequest->expects($this->atLeastOnce())->method('getMethod')->will($this->returnValue('POST'));
@@ -63,7 +63,7 @@ class PasswordTokenTest extends UnitTestCase
 
         $this->token->updateCredentials($this->mockActionRequest);
 
-        $expectedCredentials = array('password' => 'verysecurepassword');
+        $expectedCredentials = ['password' => 'verysecurepassword'];
         $this->assertEquals($expectedCredentials, $this->token->getCredentials(), 'The credentials have not been extracted correctly from the POST arguments');
     }
 
@@ -72,7 +72,7 @@ class PasswordTokenTest extends UnitTestCase
      */
     public function updateCredentialsSetsTheCorrectAuthenticationStatusIfNewCredentialsArrived()
     {
-        $arguments = array();
+        $arguments = [];
         $arguments['__authentication']['TYPO3']['Flow']['Security']['Authentication']['Token']['PasswordToken']['password'] = 'verysecurepassword';
 
         $this->mockHttpRequest->expects($this->atLeastOnce())->method('getMethod')->will($this->returnValue('POST'));
@@ -88,22 +88,22 @@ class PasswordTokenTest extends UnitTestCase
      */
     public function updateCredentialsIgnoresAnythingOtherThanPostRequests()
     {
-        $arguments = array();
+        $arguments = [];
         $arguments['__authentication']['TYPO3']['Flow']['Security']['Authentication']['Token']['PasswordToken']['password'] = 'verysecurepassword';
 
         $this->mockHttpRequest->expects($this->atLeastOnce())->method('getMethod')->will($this->returnValue('POST'));
         $this->mockActionRequest->expects($this->atLeastOnce())->method('getInternalArguments')->will($this->returnValue($arguments));
 
         $this->token->updateCredentials($this->mockActionRequest);
-        $this->assertEquals(array('password' => 'verysecurepassword'), $this->token->getCredentials());
+        $this->assertEquals(['password' => 'verysecurepassword'], $this->token->getCredentials());
 
         $secondToken = new PasswordToken();
-        $secondMockActionRequest = $this->getMockBuilder(\TYPO3\Flow\Mvc\ActionRequest::class)->disableOriginalConstructor()->getMock();
+        $secondMockActionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
 
-        $secondMockHttpRequest = $this->getMockBuilder(\TYPO3\Flow\Http\Request::class)->disableOriginalConstructor()->getMock();
+        $secondMockHttpRequest = $this->getMockBuilder(Http\Request::class)->disableOriginalConstructor()->getMock();
         $secondMockActionRequest->expects($this->any())->method('getHttpRequest')->will($this->returnValue($secondMockHttpRequest));
         $secondMockHttpRequest->expects($this->atLeastOnce())->method('getMethod')->will($this->returnValue('GET'));
         $secondToken->updateCredentials($secondMockActionRequest);
-        $this->assertEquals(array('password' => ''), $secondToken->getCredentials());
+        $this->assertEquals(['password' => ''], $secondToken->getCredentials());
     }
 }

@@ -11,6 +11,8 @@ namespace TYPO3\Eel\FlowQuery\Operations;
  * source code.
  */
 
+use TYPO3\Eel\FlowQuery\FlowQueryException;
+use TYPO3\Eel\FlowQuery\OperationInterface;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
@@ -19,7 +21,7 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * @api
  */
-abstract class AbstractOperation implements \TYPO3\Eel\FlowQuery\OperationInterface
+abstract class AbstractOperation implements OperationInterface
 {
     /**
      * The short name of the operation
@@ -66,12 +68,12 @@ abstract class AbstractOperation implements \TYPO3\Eel\FlowQuery\OperationInterf
     /**
      * @return string the short name of the operation
      * @api
-     * @throws \TYPO3\Eel\FlowQuery\FlowQueryException
+     * @throws FlowQueryException
      */
     public static function getShortName()
     {
         if (!is_string(static::$shortName)) {
-            throw new \TYPO3\Eel\FlowQuery\FlowQueryException('Short name in class ' . __CLASS__ . ' is empty.', 1332488549);
+            throw new FlowQueryException('Short name in class ' . __CLASS__ . ' is empty.', 1332488549);
         }
         return static::$shortName;
     }

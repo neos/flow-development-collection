@@ -24,9 +24,9 @@ class ActionControllerTestAController extends ActionController
     /**
      * @var array
      */
-    protected $supportedMediaTypes = array(
+    protected $supportedMediaTypes = [
         'text/html', 'application/json'
-    );
+    ];
 
     /**
      * @return string

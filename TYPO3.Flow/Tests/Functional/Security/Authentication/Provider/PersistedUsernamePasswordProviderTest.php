@@ -13,12 +13,13 @@ namespace TYPO3\Flow\Tests\Functional\Security\Authentication\Provider;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Security\Authentication\Provider\PersistedUsernamePasswordProvider;
+use TYPO3\Flow\Tests\FunctionalTestCase;
+use TYPO3\Flow\Security;
 
 /**
  * Testcase for the persisted username and password provider
- *
  */
-class PersistedUsernamePasswordProviderTest extends \TYPO3\Flow\Tests\FunctionalTestCase
+class PersistedUsernamePasswordProviderTest extends FunctionalTestCase
 {
     protected $testableSecurityEnabled = true;
 
@@ -28,19 +29,20 @@ class PersistedUsernamePasswordProviderTest extends \TYPO3\Flow\Tests\Functional
     protected $persistedUsernamePasswordProvider;
 
     /**
-     * @var \TYPO3\Flow\Security\AccountFactory
+     * @var Security\AccountFactory
      */
     protected $accountFactory;
 
     /**
-     * @var \TYPO3\Flow\Security\AccountRepository
+     * @var Security\AccountRepository
      */
     protected $accountRepository;
 
     /**
-     * @var \TYPO3\Flow\Security\Authentication\Token\UsernamePassword
+     * @var Security\Authentication\Token\UsernamePassword
      */
     protected $authenticationToken;
+
 
 
     public function setUp()
@@ -48,10 +50,10 @@ class PersistedUsernamePasswordProviderTest extends \TYPO3\Flow\Tests\Functional
         parent::setUp();
 
         $this->persistedUsernamePasswordProvider = new PersistedUsernamePasswordProvider('myTestProvider');
-        $this->accountFactory = new \TYPO3\Flow\Security\AccountFactory();
-        $this->accountRepository = new \TYPO3\Flow\Security\AccountRepository();
+        $this->accountFactory = new Security\AccountFactory();
+        $this->accountRepository = new Security\AccountRepository();
 
-        $this->authenticationToken = $this->getAccessibleMock(\TYPO3\Flow\Security\Authentication\Token\UsernamePassword::class, array('dummy'));
+        $this->authenticationToken = $this->getAccessibleMock(Security\Authentication\Token\UsernamePassword::class, array('dummy'));
 
         $account = $this->accountFactory->createAccountWithPassword('username', 'password', array(), 'myTestProvider');
         $this->accountRepository->add($account);
@@ -70,7 +72,7 @@ class PersistedUsernamePasswordProviderTest extends \TYPO3\Flow\Tests\Functional
         $this->assertTrue($this->authenticationToken->isAuthenticated());
 
         $account = $this->accountRepository->findActiveByAccountIdentifierAndAuthenticationProviderName('username', 'myTestProvider');
-        $this->assertEquals(new \DateTime(), $account->getLastSuccessfulAuthenticationDate());
+        $this->assertEquals((new \DateTime())->format(\DateTime::W3C), $account->getLastSuccessfulAuthenticationDate()->format(\DateTime::W3C));
         $this->assertEquals(0, $account->getFailedAuthenticationCount());
     }
 
@@ -118,7 +120,7 @@ class PersistedUsernamePasswordProviderTest extends \TYPO3\Flow\Tests\Functional
         $this->persistedUsernamePasswordProvider->authenticate($this->authenticationToken);
 
         $account = $this->accountRepository->findActiveByAccountIdentifierAndAuthenticationProviderName('username', 'myTestProvider');
-        $this->assertEquals(new \DateTime(), $account->getLastSuccessfulAuthenticationDate());
+        $this->assertEquals((new \DateTime())->format(\DateTime::W3C), $account->getLastSuccessfulAuthenticationDate()->format(\DateTime::W3C));
         $this->assertEquals(0, $account->getFailedAuthenticationCount());
     }
 }

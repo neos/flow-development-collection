@@ -11,14 +11,18 @@ namespace TYPO3\Flow\Tests\Unit\Property\TypeConverter;
  * source code.
  */
 
+use TYPO3\Flow\Property\TypeConverter\UriTypeConverter;
+use TYPO3\Flow\Tests\UnitTestCase;
+use TYPO3\Flow\Http;
+use TYPO3\Flow\Error as FlowError;
+
 /**
  * Testcase for the URI type converter
- *
  */
-class UriTypeConverterTest extends \TYPO3\Flow\Tests\UnitTestCase
+class UriTypeConverterTest extends UnitTestCase
 {
     /**
-     * @var \TYPO3\Flow\Property\TypeConverter\UriTypeConverter
+     * @var UriTypeConverter
      */
     protected $typeConverter;
 
@@ -27,7 +31,7 @@ class UriTypeConverterTest extends \TYPO3\Flow\Tests\UnitTestCase
     protected function setUp()
     {
         parent::setUp();
-        $this->typeConverter = new \TYPO3\Flow\Property\TypeConverter\UriTypeConverter();
+        $this->typeConverter = new UriTypeConverter();
     }
 
     /**
@@ -45,7 +49,7 @@ class UriTypeConverterTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function targetTypeIsUri()
     {
-        $this->assertSame(\TYPO3\Flow\Http\Uri::class, $this->typeConverter->getSupportedTargetType());
+        $this->assertSame(Http\Uri::class, $this->typeConverter->getSupportedTargetType());
     }
 
     /**
@@ -53,7 +57,7 @@ class UriTypeConverterTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function typeConverterReturnsUriOnValidUri()
     {
-        $this->assertInstanceOf(\TYPO3\Flow\Http\Uri::class, $this->typeConverter->convertFrom('http://localhost/foo', \TYPO3\Flow\Http\Uri::class));
+        $this->assertInstanceOf(Http\Uri::class, $this->typeConverter->convertFrom('http://localhost/foo', Http\Uri::class));
     }
 
     /**
@@ -61,7 +65,7 @@ class UriTypeConverterTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function typeConverterReturnsErrorOnMalformedUri()
     {
-        $actual = $this->typeConverter->convertFrom('http:////localhost', \TYPO3\Flow\Http\Uri::class);
-        $this->assertInstanceOf(\TYPO3\Flow\Error\Error::class, $actual);
+        $actual = $this->typeConverter->convertFrom('http:////localhost', Http\Uri::class);
+        $this->assertInstanceOf(FlowError\Error::class, $actual);
     }
 }

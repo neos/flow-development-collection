@@ -12,6 +12,7 @@ namespace TYPO3\Flow\Core;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Cache\Frontend\PhpFrontend;
 use TYPO3\Flow\Package;
 use TYPO3\Flow\Utility\Files;
 
@@ -45,7 +46,7 @@ class ClassLoader
     const MAPPING_TYPE_FILES = 'files';
 
     /**
-     * @var \TYPO3\Flow\Cache\Frontend\PhpFrontend
+     * @var PhpFrontend
      */
     protected $classesCache;
 
@@ -61,7 +62,7 @@ class ClassLoader
      *
      * @var array
      */
-    protected $packageNamespaces = array();
+    protected $packageNamespaces = [];
 
     /**
      * @var boolean
@@ -71,7 +72,7 @@ class ClassLoader
     /**
      * @var array
      */
-    protected $ignoredClassNames = array(
+    protected $ignoredClassNames = [
         'integer' => true,
         'string' => true,
         'param' => true,
@@ -88,12 +89,12 @@ class ClassLoader
         'deprecated' => true,
         'internal' => true,
         'since' => true,
-    );
+    ];
 
     /**
      * @var array
      */
-    protected $fallbackClassPaths = array();
+    protected $fallbackClassPaths = [];
 
     /**
      * Cache classNames that were not found in this class loader in order
@@ -103,7 +104,7 @@ class ClassLoader
      * @var array
      *
      */
-    protected $nonExistentClasses = array();
+    protected $nonExistentClasses = [];
 
     /**
      * @var array
@@ -129,10 +130,10 @@ class ClassLoader
     /**
      * Injects the cache for storing the renamed original classes
      *
-     * @param \TYPO3\Flow\Cache\Frontend\PhpFrontend $classesCache
+     * @param PhpFrontend $classesCache
      * @return void
      */
-    public function injectClassesCache(\TYPO3\Flow\Cache\Frontend\PhpFrontend $classesCache)
+    public function injectClassesCache(PhpFrontend $classesCache)
     {
         $this->classesCache = $classesCache;
     }
@@ -171,9 +172,9 @@ class ClassLoader
         $packagenamespacePartCount = 0;
 
         // This will contain all possible class mappings for the given class name. We start with the fallback paths and prepend mappings with growing specificy.
-        $collectedPossibleNamespaceMappings = array(
-            array('p' => $this->fallbackClassPaths, 'c' => 0)
-        );
+        $collectedPossibleNamespaceMappings = [
+            ['p' => $this->fallbackClassPaths, 'c' => 0]
+        ];
 
         if ($namespacePartCount > 1) {
             while (($packagenamespacePartCount + 1) < $namespacePartCount) {
@@ -185,7 +186,7 @@ class ClassLoader
                 $packagenamespacePartCount++;
                 $currentPackageArray = $currentPackageArray[$possiblePackageNamespacePart];
                 if (isset($currentPackageArray['_pathData'])) {
-                    array_unshift($collectedPossibleNamespaceMappings, array('p' => $currentPackageArray['_pathData'], 'c' => $packagenamespacePartCount));
+                    array_unshift($collectedPossibleNamespaceMappings, ['p' => $currentPackageArray['_pathData'], 'c' => $packagenamespacePartCount]);
                 }
             }
         }
@@ -268,18 +269,18 @@ class ClassLoader
         $currentArray = & $this->packageNamespaces;
         foreach (explode('\\', rtrim($namespace, '\\')) as $namespacePart) {
             if (!isset($currentArray[$namespacePart])) {
-                $currentArray[$namespacePart] = array();
+                $currentArray[$namespacePart] = [];
             }
             $currentArray = & $currentArray[$namespacePart];
         }
         if (!isset($currentArray['_pathData'])) {
-            $currentArray['_pathData'] = array();
+            $currentArray['_pathData'] = [];
         }
 
-        $currentArray['_pathData'][$entryIdentifier] = array(
+        $currentArray['_pathData'][$entryIdentifier] = [
             'mappingType' => $mappingType,
             'path' => $unifiedClassPath
-        );
+        ];
     }
 
     /**
@@ -292,10 +293,10 @@ class ClassLoader
     {
         $entryIdentifier = md5($path);
         if (!isset($this->fallbackClassPaths[$entryIdentifier])) {
-            $this->fallbackClassPaths[$entryIdentifier] = array(
+            $this->fallbackClassPaths[$entryIdentifier] = [
                 'path' => $path,
                 'mappingType' => self::MAPPING_TYPE_PSR4
-            );
+            ];
         }
     }
 
@@ -372,7 +373,7 @@ class ClassLoader
             return;
         }
 
-        $proxyClasses = @include(FLOW_PATH_DATA . 'Temporary/' . (string)$context . '/AvailableProxyClasses.php');
+        $proxyClasses = @include(FLOW_PATH_TEMPORARY_BASE . '/' . (string)$context . '/AvailableProxyClasses.php');
         if ($proxyClasses !== false) {
             $this->availableProxyClasses = $proxyClasses;
         }

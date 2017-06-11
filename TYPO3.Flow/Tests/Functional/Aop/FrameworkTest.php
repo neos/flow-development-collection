@@ -11,11 +11,14 @@ namespace TYPO3\Flow\Tests\Functional\Aop;
  * source code.
  */
 
+use TYPO3\Flow\Tests\FunctionalTestCase;
+use TYPO3\Flow\Tests\Functional\Aop\Fixtures;
+
 /**
  * Testcase for the AOP Framework class
  *
  */
-class FrameworkTest extends \TYPO3\Flow\Tests\FunctionalTestCase
+class FrameworkTest extends FunctionalTestCase
 {
     /**
      * @test
@@ -55,8 +58,8 @@ class FrameworkTest extends \TYPO3\Flow\Tests\FunctionalTestCase
     public function containWithSplObjectStorageInRuntimeEvaluation()
     {
         $targetClass = new Fixtures\TargetClass01();
-        $name = new \TYPO3\Flow\Tests\Functional\Aop\Fixtures\Name('Flow');
-        $otherName = new \TYPO3\Flow\Tests\Functional\Aop\Fixtures\Name('TYPO3');
+        $name = new Fixtures\Name('Flow');
+        $otherName = new Fixtures\Name('TYPO3');
         $splObjectStorage = new \SplObjectStorage();
         $splObjectStorage->attach($name);
         $targetClass->setCurrentName($name);
@@ -92,7 +95,7 @@ class FrameworkTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function adviceInformationIsAlsoBuiltWhenTheTargetClassIsUnserialized()
     {
-        $className = \TYPO3\Flow\Tests\Functional\Aop\Fixtures\TargetClass01::class;
+        $className = Fixtures\TargetClass01::class;
         $targetClass = unserialize('O:' . strlen($className) . ':"' . $className . '":0:{};');
         $this->assertSame('Hello, me', $targetClass->greet('Flow'));
     }
@@ -143,10 +146,10 @@ class FrameworkTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function resultOfGreetObjectMethodIsModifiedByAdvice()
     {
-        $targetClass = $this->objectManager->get(\TYPO3\Flow\Tests\Functional\Aop\Fixtures\TargetClass01::class);
-        $name = new \TYPO3\Flow\Tests\Functional\Aop\Fixtures\Name('TYPO3');
+        $targetClass = $this->objectManager->get(Fixtures\TargetClass01::class);
+        $name = new Fixtures\Name('TYPO3');
         $this->assertSame('Hello, old friend', $targetClass->greetObject($name), 'Aspect should greet with "old friend" if the name property equals "TYPO3"');
-        $name = new \TYPO3\Flow\Tests\Functional\Aop\Fixtures\Name('Christopher');
+        $name = new Fixtures\Name('Christopher');
         $this->assertSame('Hello, Christopher', $targetClass->greetObject($name));
     }
 
@@ -155,12 +158,12 @@ class FrameworkTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function thisIsSupportedInMethodRuntimeCondition()
     {
-        $targetClass = $this->objectManager->get(\TYPO3\Flow\Tests\Functional\Aop\Fixtures\TargetClass01::class);
-        $name = new \TYPO3\Flow\Tests\Functional\Aop\Fixtures\Name('Neos');
+        $targetClass = $this->objectManager->get(Fixtures\TargetClass01::class);
+        $name = new Fixtures\Name('Neos');
         $targetClass->setCurrentName($name);
         $this->assertSame('Hello, you', $targetClass->greetObject($name), 'Aspect should greet with "you" if the current name equals the name argument');
 
-        $name = new \TYPO3\Flow\Tests\Functional\Aop\Fixtures\Name('Christopher');
+        $name = new Fixtures\Name('Christopher');
         $targetClass->setCurrentName(null);
         $this->assertSame('Hello, Christopher', $targetClass->greetObject($name), 'Aspect should greet with given name if the current name is not equal to the name argument');
     }
@@ -170,7 +173,7 @@ class FrameworkTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function globalObjectsAreSupportedInMethodRuntimeCondition()
     {
-        $targetClass = $this->objectManager->get(\TYPO3\Flow\Tests\Functional\Aop\Fixtures\TargetClass01::class);
+        $targetClass = $this->objectManager->get(Fixtures\TargetClass01::class);
         $this->assertSame('Hello, superstar', $targetClass->greet('Robbie'), 'Aspect should greet with "superstar" if the global context getNameOfTheWeek equals the given name');
         $this->assertSame('Hello, Christopher', $targetClass->greet('Christopher'), 'Aspect should greet with given name if the global context getNameOfTheWeek does not equal the given name');
     }
@@ -185,7 +188,7 @@ class FrameworkTest extends \TYPO3\Flow\Tests\FunctionalTestCase
     {
         $targetClass = new Fixtures\TargetClass03();
 
-        $this->assertInstanceOf(\TYPO3\Flow\Tests\Functional\Aop\Fixtures\Introduced01Interface::class, $targetClass);
+        $this->assertInstanceOf(Fixtures\Introduced01Interface::class, $targetClass);
         $this->assertTrue(method_exists($targetClass, 'introducedMethod01'));
         $this->assertTrue(method_exists($targetClass, 'introducedMethodWithArguments'));
     }
@@ -269,6 +272,69 @@ class FrameworkTest extends \TYPO3\Flow\Tests\FunctionalTestCase
 
         $targetClass = new Fixtures\TargetClassWithPhp7Features();
 
-        $this->assertSame('This is so NaN', $targetClass->methodWithStaticTypeDeclarations('The answer', 42));
+        $this->assertSame('This is so NaN', $targetClass->methodWithStaticTypeDeclarations('The answer', 42, $targetClass));
     }
+
+//  NOTE: The following tests are commented out for now because they break compatibility with PHP < 7.0
+//        We should re-activate them as soon as 7.0 is the minimal required PHP version for Flow
+//
+//    /**
+//     * @test
+//     */
+//    public function methodWithStaticScalarReturnTypeDeclarationCanBeAdviced()
+//    {
+//        if (version_compare(PHP_VERSION, '7.0.0') < 0) {
+//            $this->markTestSkipped('Requires PHP 7');
+//        }
+//
+//        $targetClass = new Fixtures\TargetClassWithPhp7Features();
+//
+//        $this->assertSame('adviced: it works', $targetClass->methodWithStaticScalarReturnTypeDeclaration());
+//    }
+//
+//    /**
+//     * @test
+//     */
+//    public function methodWithStaticObjectReturnTypeDeclarationCanBeAdviced()
+//    {
+//        if (version_compare(PHP_VERSION, '7.0.0') < 0) {
+//            $this->markTestSkipped('Requires PHP 7');
+//        }
+//
+//        $targetClass = new Fixtures\TargetClassWithPhp7Features();
+//
+//        $this->assertInstanceOf(Fixtures\TargetClassWithPhp7Features::class, $targetClass->methodWithStaticObjectReturnTypeDeclaration());
+//    }
+
+
+//  NOTE: The following tests are commented out for now because they break compatibility with PHP < 7.1
+//        We should re-activate them as soon as 7.1 is the minimal required PHP version for Flow
+//
+//    /**
+//     * @test
+//     */
+//    public function methodWithNullableScalarReturnTypeDeclarationCanBeAdviced()
+//    {
+//        if (version_compare(PHP_VERSION, '7.1.0') < 0) {
+//            $this->markTestSkipped('Requires PHP 7.1');
+//        }
+//
+//        $targetClass = new Fixtures\TargetClassWithPhp71Features();
+//
+//        $this->assertSame('adviced: NULL', $targetClass->methodWithNullableScalarReturnTypeDeclaration());
+//    }
+//
+//    /**
+//     * @test
+//     */
+//    public function methodWithNullableObjectReturnTypeDeclarationCanBeAdviced()
+//    {
+//        if (version_compare(PHP_VERSION, '7.1.0') < 0) {
+//            $this->markTestSkipped('Requires PHP 7.1');
+//        }
+//
+//        $targetClass = new Fixtures\TargetClassWithPhp71Features();
+//
+//        $this->assertNull($targetClass->methodWithNullableObjectReturnTypeDeclaration());
+//    }
 }

@@ -100,7 +100,7 @@ class Account
     protected $objectManager;
 
     /**
-     * @Flow\Inject
+     * @Flow\Inject(lazy=false)
      * @var Now
      */
     protected $now;

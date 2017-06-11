@@ -11,21 +11,24 @@ namespace TYPO3\Flow\Tests\Functional\Property\TypeConverter;
  * source code.
  */
 
+use TYPO3\Flow\Property\PropertyMapper;
 use TYPO3\Flow\Tests\FunctionalTestCase;
+use TYPO3\Flow\Tests\Functional\Property\Fixtures;
+use TYPO3\Flow\Property\Exception as PropertyException;
 
 class PersistentObjectConverterTest extends FunctionalTestCase
 {
     /**
      *
-     * @var \TYPO3\Flow\Property\PropertyMapper
+     * @var PropertyMapper
      */
     protected $propertyMapper;
 
-    protected $sourceProperties = array(
+    protected $sourceProperties = [
         'name' => 'Christian M',
         'age' => '34',
         'averageNumberOfKids' => '0'
-    );
+    ];
 
     protected static $testablePersistenceEnabled = true;
 
@@ -35,7 +38,7 @@ class PersistentObjectConverterTest extends FunctionalTestCase
     public function setUp()
     {
         parent::setUp();
-        $this->propertyMapper = $this->objectManager->get(\TYPO3\Flow\Property\PropertyMapper::class);
+        $this->propertyMapper = $this->objectManager->get(PropertyMapper::class);
     }
 
     /**
@@ -43,8 +46,8 @@ class PersistentObjectConverterTest extends FunctionalTestCase
      */
     public function entityWithImmutablePropertyIsCreatedCorrectly()
     {
-        $result = $this->propertyMapper->convert($this->sourceProperties, \TYPO3\Flow\Tests\Functional\Property\Fixtures\TestEntityWithImmutableProperty::class);
-        $this->assertInstanceOf(\TYPO3\Flow\Tests\Functional\Property\Fixtures\TestEntityWithImmutableProperty::class, $result);
+        $result = $this->propertyMapper->convert($this->sourceProperties, Fixtures\TestEntityWithImmutableProperty::class);
+        $this->assertInstanceOf(Fixtures\TestEntityWithImmutableProperty::class, $result);
         $this->assertEquals('Christian M', $result->getName());
     }
 
@@ -53,20 +56,20 @@ class PersistentObjectConverterTest extends FunctionalTestCase
      */
     public function entityWithImmutablePropertyCanBeUpdatedIfImmutablePropertyIsNotGiven()
     {
-        $result = $this->propertyMapper->convert($this->sourceProperties, \TYPO3\Flow\Tests\Functional\Property\Fixtures\TestEntityWithImmutableProperty::class);
+        $result = $this->propertyMapper->convert($this->sourceProperties, Fixtures\TestEntityWithImmutableProperty::class);
         $identifier = $this->persistenceManager->getIdentifierByObject($result);
         $this->persistenceManager->add($result);
         $this->persistenceManager->persistAll();
         $this->persistenceManager->clearState();
 
-        $update = array(
+        $update = [
             '__identity' => $identifier,
             'age' => '25'
-        );
+        ];
 
-        $result = $this->propertyMapper->convert($update, \TYPO3\Flow\Tests\Functional\Property\Fixtures\TestEntityWithImmutableProperty::class);
+        $result = $this->propertyMapper->convert($update, Fixtures\TestEntityWithImmutableProperty::class);
 
-        $this->assertInstanceOf(\TYPO3\Flow\Tests\Functional\Property\Fixtures\TestEntityWithImmutableProperty::class, $result);
+        $this->assertInstanceOf(Fixtures\TestEntityWithImmutableProperty::class, $result);
         $this->assertEquals('Christian M', $result->getName());
     }
 
@@ -75,21 +78,21 @@ class PersistentObjectConverterTest extends FunctionalTestCase
      */
     public function entityWithImmutablePropertyCanBeUpdatedIfImmutablePropertyIsGivenAndSameAsBefore()
     {
-        $result = $this->propertyMapper->convert($this->sourceProperties, \TYPO3\Flow\Tests\Functional\Property\Fixtures\TestEntityWithImmutableProperty::class);
+        $result = $this->propertyMapper->convert($this->sourceProperties, Fixtures\TestEntityWithImmutableProperty::class);
         $identifier = $this->persistenceManager->getIdentifierByObject($result);
         $this->persistenceManager->add($result);
         $this->persistenceManager->persistAll();
         $this->persistenceManager->clearState();
 
-        $update = array(
+        $update = [
             '__identity' => $identifier,
             'age' => '25',
             'name' => 'Christian M'
-        );
+        ];
 
-        $result = $this->propertyMapper->convert($update, \TYPO3\Flow\Tests\Functional\Property\Fixtures\TestEntityWithImmutableProperty::class);
+        $result = $this->propertyMapper->convert($update, Fixtures\TestEntityWithImmutableProperty::class);
 
-        $this->assertInstanceOf(\TYPO3\Flow\Tests\Functional\Property\Fixtures\TestEntityWithImmutableProperty::class, $result);
+        $this->assertInstanceOf(Fixtures\TestEntityWithImmutableProperty::class, $result);
         $this->assertEquals('Christian M', $result->getName());
     }
 
@@ -99,21 +102,21 @@ class PersistentObjectConverterTest extends FunctionalTestCase
      */
     public function entityWithImmutablePropertyCanNotBeUpdatedWhenImmutablePropertyChanged()
     {
-        $result = $this->propertyMapper->convert($this->sourceProperties, \TYPO3\Flow\Tests\Functional\Property\Fixtures\TestEntityWithImmutableProperty::class);
+        $result = $this->propertyMapper->convert($this->sourceProperties, Fixtures\TestEntityWithImmutableProperty::class);
         $identifier = $this->persistenceManager->getIdentifierByObject($result);
         $this->persistenceManager->add($result);
         $this->persistenceManager->persistAll();
         $this->persistenceManager->clearState();
 
-        $update = array(
+        $update = [
             '__identity' => $identifier,
             'age' => '25',
             'name' => 'Christian D'
-        );
+        ];
 
-        $result = $this->propertyMapper->convert($update, \TYPO3\Flow\Tests\Functional\Property\Fixtures\TestEntityWithImmutableProperty::class);
+        $result = $this->propertyMapper->convert($update, Fixtures\TestEntityWithImmutableProperty::class);
 
-        $this->assertInstanceOf(\TYPO3\Flow\Tests\Functional\Property\Fixtures\TestEntityWithImmutableProperty::class, $result);
+        $this->assertInstanceOf(Fixtures\TestEntityWithImmutableProperty::class, $result);
         $this->assertEquals('Christian M', $result->getName());
     }
 }

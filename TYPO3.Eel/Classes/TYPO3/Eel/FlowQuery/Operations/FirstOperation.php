@@ -11,6 +11,7 @@ namespace TYPO3\Eel\FlowQuery\Operations;
  * source code.
  */
 
+use TYPO3\Eel\FlowQuery\FlowQuery;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
@@ -28,17 +29,17 @@ class FirstOperation extends AbstractOperation
     /**
      * {@inheritdoc}
      *
-     * @param \TYPO3\Eel\FlowQuery\FlowQuery $flowQuery the FlowQuery object
+     * @param FlowQuery $flowQuery the FlowQuery object
      * @param array $arguments Ignored for this operation
      * @return void
      */
-    public function evaluate(\TYPO3\Eel\FlowQuery\FlowQuery $flowQuery, array $arguments)
+    public function evaluate(FlowQuery $flowQuery, array $arguments)
     {
         $context = $flowQuery->getContext();
         if (isset($context[0])) {
-            $flowQuery->setContext(array($context[0]));
+            $flowQuery->setContext([$context[0]]);
         } else {
-            $flowQuery->setContext(array());
+            $flowQuery->setContext([]);
         }
     }
 }

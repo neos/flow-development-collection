@@ -11,11 +11,12 @@ namespace TYPO3\Flow\Mvc\Routing\Fixtures;
  * source code.
  */
 
+use TYPO3\Flow\Mvc\Routing\DynamicRoutePart;
+
 /**
  * A mock RoutePartHandler
- *
  */
-class MockRoutePartHandler extends \TYPO3\Flow\Mvc\Routing\DynamicRoutePart
+class MockRoutePartHandler extends DynamicRoutePart
 {
     protected function matchValue($value)
     {

@@ -539,6 +539,20 @@ Filter System.
   ``@Flow\Proxy(false)`` to your filter class to prevent Flow from building a proxy,
   which causes this error.
 
+.. warning:: Custom SqlFilter implementations - watch out for data privacy issues!
+
+  If using custom SqlFilters, you have to be aware that the SQL filter is cached by doctrine, thus your SqlFilter might
+  not be called as often as you might expect. This may lead to displaying data which is not normally visible to the user!
+
+  Basically you are not allowed to call `setParameter` inside `addFilterConstraint`; but setParameter must be called *before*
+  the SQL query is actually executed. Currently, there's no standard Doctrine way to provide this; so you manually can receive
+  the filter instance from `$entityManager->getFilters()->getEnabledFilters()` and call `setParameter()` then.
+
+  Alternatively, you can register a global context object in `TYPO3.Flow.aop.globalObjects` and use it to provide additional
+  identifiers for the caching by letting these global objects implement `CacheAwareInterface`; effectively seggregating the
+  Doctrine cache some more.
+
+
 Custom Doctrine DQL functions
 -----------------------------
 
@@ -564,6 +578,32 @@ See the Doctrine documentation ([#doctrineDqlFunctions]_) for more information o
 functions.
 
 .. [#doctrineDqlFunctions] http://docs.doctrine-project.org/projects/doctrine-orm/en/latest/reference/dql-doctrine-query-language.html#adding-your-own-functions-to-the-dql-language
+
+Using Doctrine's Second Level Cache
+-----------------------------------
+
+Since 2.5, Doctrine provides a second level cache that further improves performance of relation queries
+beyond the result query cache.
+
+See the Doctrine documentation ([#doctrineSecondLevelCache]_) for more information on the second level cache.
+Flow allows you to enable and configure the second level cache through the configuration setting
+``TYPO3.Flow.persistence.doctrine.secondLevelCache``.
+
+*Example: Configuration for Doctrine second level cache*:
+
+.. code-block:: yaml
+
+  TYPO3:
+    Flow:
+      persistence:
+        doctrine:
+          secondLevelCache:
+            enable: true
+            defaultLifetime: 3600
+            regions:
+              'my_entity_region': 7200
+
+.. [#doctrineSecondLevelCache] http://docs.doctrine-project.org/en/latest/reference/second-level-cache.html
 
 Differences between Flow and plain Doctrine
 -------------------------------------------

@@ -11,18 +11,21 @@ namespace TYPO3\Flow\Tests\Functional\Utility;
  * source code.
  */
 
+use TYPO3\Flow\Tests\FunctionalTestCase;
+use TYPO3\Flow\Utility;
+
 /**
  * Functional test for the Now class
  */
-class NowTest extends \TYPO3\Flow\Tests\FunctionalTestCase
+class NowTest extends FunctionalTestCase
 {
     /**
      * @test
      */
     public function nowReturnsAUniqueTimestamp()
     {
-        $now = $this->objectManager->get(\TYPO3\Flow\Utility\Now::class);
-        $alsoNow = $this->objectManager->get(\TYPO3\Flow\Utility\Now::class);
+        $now = $this->objectManager->get(Utility\Now::class);
+        $alsoNow = $this->objectManager->get(Utility\Now::class);
         $this->assertSame($now->getTimeStamp(), $alsoNow->getTimeStamp());
     }
 }

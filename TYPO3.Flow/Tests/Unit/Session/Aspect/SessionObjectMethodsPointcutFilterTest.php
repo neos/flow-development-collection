@@ -11,39 +11,44 @@ namespace TYPO3\Flow\Tests\Unit\Session\Aspect;
  * source code.
  */
 
+use TYPO3\Flow\Aop\Builder\ClassNameIndex;
+use TYPO3\Flow\Object\CompileTimeObjectManager;
+use TYPO3\Flow\Object\Configuration\Configuration;
+use TYPO3\Flow\Session\Aspect\SessionObjectMethodsPointcutFilter;
+use TYPO3\Flow\Tests\UnitTestCase;
+
 /**
  * Testcase for the SessionObjectMethodsPointcutFilter
- *
  */
-class SessionObjectMethodsPointcutFilterTest extends \TYPO3\Flow\Tests\UnitTestCase
+class SessionObjectMethodsPointcutFilterTest extends UnitTestCase
 {
     /**
      * @test
      */
     public function reduceTargetClassNamesFiltersAllClassesNotBeeingConfiguredAsScopeSession()
     {
-        $availableClassNames = array(
+        $availableClassNames = [
             'TestPackage\Subpackage\Class1',
             'TestPackage\Class2',
             'TestPackage\Subpackage\SubSubPackage\Class3',
             'TestPackage\Subpackage2\Class4'
-        );
+        ];
         sort($availableClassNames);
-        $availableClassNamesIndex = new \TYPO3\Flow\Aop\Builder\ClassNameIndex();
+        $availableClassNamesIndex = new ClassNameIndex();
         $availableClassNamesIndex->setClassNames($availableClassNames);
 
-        $mockCompileTimeObjectManager = $this->getMockBuilder(\TYPO3\Flow\Object\CompileTimeObjectManager::class)->disableOriginalConstructor()->getMock();
-        $mockCompileTimeObjectManager->expects($this->any())->method('getClassNamesByScope')->with(\TYPO3\Flow\Object\Configuration\Configuration::SCOPE_SESSION)->will($this->returnValue(array('TestPackage\Subpackage\Class1', 'TestPackage\Subpackage\SubSubPackage\Class3', 'SomeMoreClass')));
+        $mockCompileTimeObjectManager = $this->getMockBuilder(CompileTimeObjectManager::class)->disableOriginalConstructor()->getMock();
+        $mockCompileTimeObjectManager->expects($this->any())->method('getClassNamesByScope')->with(Configuration::SCOPE_SESSION)->will($this->returnValue(['TestPackage\Subpackage\Class1', 'TestPackage\Subpackage\SubSubPackage\Class3', 'SomeMoreClass']));
 
-        $sessionObjectMethodsPointcutFilter = new \TYPO3\Flow\Session\Aspect\SessionObjectMethodsPointcutFilter();
+        $sessionObjectMethodsPointcutFilter = new SessionObjectMethodsPointcutFilter();
         $sessionObjectMethodsPointcutFilter->injectObjectManager($mockCompileTimeObjectManager);
 
-        $expectedClassNames = array(
+        $expectedClassNames = [
             'TestPackage\Subpackage\Class1',
             'TestPackage\Subpackage\SubSubPackage\Class3'
-        );
+        ];
         sort($expectedClassNames);
-        $expectedClassNamesIndex = new \TYPO3\Flow\Aop\Builder\ClassNameIndex();
+        $expectedClassNamesIndex = new ClassNameIndex();
         $expectedClassNamesIndex->setClassNames($expectedClassNames);
 
         $result = $sessionObjectMethodsPointcutFilter->reduceTargetClassNames($availableClassNamesIndex);

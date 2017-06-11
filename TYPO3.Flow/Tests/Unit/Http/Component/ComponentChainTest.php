@@ -11,9 +11,8 @@ namespace TYPO3\Flow\Tests\Unit\Http\Component;
  * source code.
  */
 
-use TYPO3\Flow\Http\Component\ComponentChain;
-use TYPO3\Flow\Http\Component\ComponentContext;
 use TYPO3\Flow\Tests\UnitTestCase;
+use TYPO3\Flow\Http;
 
 /**
  * Test case for the Http Component Chain
@@ -21,18 +20,18 @@ use TYPO3\Flow\Tests\UnitTestCase;
 class ComponentChainTest extends UnitTestCase
 {
     /**
-     * @var ComponentChain
+     * @var Http\Component\ComponentChain
      */
     protected $componentChain;
 
     /**
-     * @var ComponentContext|\PHPUnit_Framework_MockObject_MockObject
+     * @var Http\Component\ComponentContext|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $mockComponentContext;
 
     public function setUp()
     {
-        $this->mockComponentContext = $this->getMockBuilder(\TYPO3\Flow\Http\Component\ComponentContext::class)->disableOriginalConstructor()->getMock();
+        $this->mockComponentContext = $this->getMockBuilder(Http\Component\ComponentContext::class)->disableOriginalConstructor()->getMock();
     }
 
     /**
@@ -40,8 +39,8 @@ class ComponentChainTest extends UnitTestCase
      */
     public function handleReturnsIfNoComponentsAreConfigured()
     {
-        $options = array();
-        $this->componentChain = new ComponentChain($options);
+        $options = [];
+        $this->componentChain = new Http\Component\ComponentChain($options);
         $this->componentChain->handle($this->mockComponentContext);
 
         // dummy assertion to silence PHPUnit warning
@@ -53,13 +52,13 @@ class ComponentChainTest extends UnitTestCase
      */
     public function handleProcessesConfiguredComponents()
     {
-        $mockComponent1 = $this->createMock(\TYPO3\Flow\Http\Component\ComponentInterface::class);
+        $mockComponent1 = $this->getMockBuilder(Http\Component\ComponentInterface::class)->getMock();
         $mockComponent1->expects($this->once())->method('handle')->with($this->mockComponentContext);
-        $mockComponent2 = $this->createMock(\TYPO3\Flow\Http\Component\ComponentInterface::class);
+        $mockComponent2 = $this->getMockBuilder(Http\Component\ComponentInterface::class)->getMock();
         $mockComponent2->expects($this->once())->method('handle')->with($this->mockComponentContext);
 
-        $options = array('components' => array($mockComponent1, $mockComponent2));
-        $this->componentChain = new ComponentChain($options);
+        $options = ['components' => [$mockComponent1, $mockComponent2]];
+        $this->componentChain = new Http\Component\ComponentChain($options);
         $this->componentChain->handle($this->mockComponentContext);
     }
 
@@ -68,15 +67,15 @@ class ComponentChainTest extends UnitTestCase
      */
     public function handleStopsProcessingIfAComponentCancelsTheCurrentChain()
     {
-        $mockComponent1 = $this->createMock(\TYPO3\Flow\Http\Component\ComponentInterface::class);
+        $mockComponent1 = $this->getMockBuilder(Http\Component\ComponentInterface::class)->getMock();
         $mockComponent1->expects($this->once())->method('handle')->with($this->mockComponentContext);
-        $mockComponent2 = $this->createMock(\TYPO3\Flow\Http\Component\ComponentInterface::class);
+        $mockComponent2 = $this->getMockBuilder(Http\Component\ComponentInterface::class)->getMock();
         $mockComponent2->expects($this->never())->method('handle');
 
-        $this->mockComponentContext->expects($this->once())->method('getParameter')->with(\TYPO3\Flow\Http\Component\ComponentChain::class, 'cancel')->will($this->returnValue(true));
+        $this->mockComponentContext->expects($this->once())->method('getParameter')->with(Http\Component\ComponentChain::class, 'cancel')->will($this->returnValue(true));
 
-        $options = array('components' => array($mockComponent1, $mockComponent2));
-        $this->componentChain = new ComponentChain($options);
+        $options = ['components' => [$mockComponent1, $mockComponent2]];
+        $this->componentChain = new Http\Component\ComponentChain($options);
         $this->componentChain->handle($this->mockComponentContext);
     }
 
@@ -85,13 +84,13 @@ class ComponentChainTest extends UnitTestCase
      */
     public function handleResetsTheCancelParameterIfItWasTrue()
     {
-        $mockComponent1 = $this->createMock(\TYPO3\Flow\Http\Component\ComponentInterface::class);
+        $mockComponent1 = $this->getMockBuilder(Http\Component\ComponentInterface::class)->getMock();
 
-        $this->mockComponentContext->expects($this->at(1))->method('getParameter')->with(\TYPO3\Flow\Http\Component\ComponentChain::class, 'cancel')->will($this->returnValue(true));
-        $this->mockComponentContext->expects($this->at(2))->method('setParameter')->with(\TYPO3\Flow\Http\Component\ComponentChain::class, 'cancel', null);
+        $this->mockComponentContext->expects($this->at(1))->method('getParameter')->with(Http\Component\ComponentChain::class, 'cancel')->will($this->returnValue(true));
+        $this->mockComponentContext->expects($this->at(2))->method('setParameter')->with(Http\Component\ComponentChain::class, 'cancel', null);
 
-        $options = array('components' => array($mockComponent1));
-        $this->componentChain = new ComponentChain($options);
+        $options = ['components' => [$mockComponent1]];
+        $this->componentChain = new Http\Component\ComponentChain($options);
         $this->componentChain->handle($this->mockComponentContext);
     }
 }

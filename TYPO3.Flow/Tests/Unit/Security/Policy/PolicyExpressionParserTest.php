@@ -11,11 +11,13 @@ namespace TYPO3\Flow\Tests\Unit\Security\Policy;
  * source code.
  */
 
+use TYPO3\Flow\Security\Authorization\Privilege\Method\MethodTargetExpressionParser;
+use TYPO3\Flow\Tests\UnitTestCase;
+
 /**
  * Testcase for the policy expression parser
- *
  */
-class PolicyExpressionParserTest extends \TYPO3\Flow\Tests\UnitTestCase
+class PolicyExpressionParserTest extends UnitTestCase
 {
     /**
      * @test
@@ -23,7 +25,7 @@ class PolicyExpressionParserTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function parseMethodThrowsAnExceptionIfAnotherPrivilegeTargetIsReferencedInAnExpression()
     {
-        $parser = $this->getMockBuilder(\TYPO3\Flow\Security\Authorization\Privilege\Method\MethodTargetExpressionParser::class)->setMethods(array('parseDesignatorMethod'))->getMock();
+        $parser = $this->getMockBuilder(MethodTargetExpressionParser::class)->setMethods(['parseDesignatorMethod'])->getMock();
         $parser->parse('method(TYPO3\TestPackage\BasicClass->setSomeProperty()) || privilegeTarget2', 'FunctionTests');
     }
 }

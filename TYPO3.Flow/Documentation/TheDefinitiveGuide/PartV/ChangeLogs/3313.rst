@@ -1,0 +1,21 @@
+`3.3.13 (2017-04-11) <https://github.com/neos/flow-development-collection/releases/tag/3.3.13>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Correctly document usage of \`\`...cookie.domain\`\` setting <https://github.com/neos/flow-development-collection/pull/933>`_
+--------------------------------------------------------------------------------------------------------------------------------------
+
+The cookie domain was allowed to be set with a leading dot to signal
+that it should be valid for all subdomains. This was later changed in
+the current RFC 6265. Our ``Session`` implementation checks for domains
+without leading dot, while the comment suggested to use it. This is now
+matched.
+
+Fixes: neos/neos-development-collection#813
+
+* Packages: ``Flow``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/3.3.12...3.3.13>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -22,7 +22,6 @@ use TYPO3\Flow\Persistence\Exception\ObjectValidationFailedException;
 use TYPO3\Flow\Persistence\Exception as PersistenceException;
 use TYPO3\Flow\Persistence\Exception\UnknownObjectException;
 use TYPO3\Flow\Reflection\ClassSchema;
-use TYPO3\Flow\Error\Exception;
 use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Flow\Reflection\ReflectionService;
 use TYPO3\Flow\Utility\TypeHandling;

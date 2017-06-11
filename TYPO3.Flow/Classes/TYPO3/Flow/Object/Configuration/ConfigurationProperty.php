@@ -42,14 +42,14 @@ class ConfigurationProperty
 
     /**
      * If specified, this configuration is used for instantiating / retrieving an property of type object
-     * @var \TYPO3\Flow\Object\Configuration\Configuration
+     * @var Configuration
      */
     protected $objectConfiguration = null;
 
     /**
      * @var integer
      */
-    protected $autowiring = \TYPO3\Flow\Object\Configuration\Configuration::AUTOWIRING_MODE_ON;
+    protected $autowiring = Configuration::AUTOWIRING_MODE_ON;
 
     /**
      * Should this property be lazy loaded
@@ -64,7 +64,7 @@ class ConfigurationProperty
      * @param string $name Name of the property
      * @param mixed $value Value of the property
      * @param integer $type Type of the property - one of the PROPERTY_TYPE_* constants
-     * @param \TYPO3\Flow\Object\Configuration\Configuration $objectConfiguration If $type is OBJECT, a custom object configuration may be specified
+     * @param Configuration $objectConfiguration If $type is OBJECT, a custom object configuration may be specified
      * @param boolean $lazyLoading
      */
     public function __construct($name, $value, $type = self::PROPERTY_TYPES_STRAIGHTVALUE, $objectConfiguration = null, $lazyLoading = true)
@@ -78,7 +78,7 @@ class ConfigurationProperty
      * @param string $name Name of the property
      * @param mixed $value Value of the property
      * @param integer $type Type of the property - one of the PROPERTY_TYPE_* constants
-     * @param \TYPO3\Flow\Object\Configuration\Configuration $objectConfiguration If $type is OBJECT, a custom object configuration may be specified
+     * @param Configuration $objectConfiguration If $type is OBJECT, a custom object configuration may be specified
      * @param boolean $lazyLoading
      * @return void
      */
@@ -124,7 +124,7 @@ class ConfigurationProperty
     /**
      * Returns the (optional) object configuration which may be defined for properties of type OBJECT
      *
-     * @return \TYPO3\Flow\Object\Configuration\Configuration The object configuration or NULL
+     * @return Configuration The object configuration or NULL
      */
     public function getObjectConfiguration()
     {
@@ -134,7 +134,7 @@ class ConfigurationProperty
     /**
      * Sets autowiring for this property
      *
-     * @param integer $autowiring One of the \TYPO3\Flow\Object\Configuration\Configuration::AUTOWIRING_MODE_* constants
+     * @param integer $autowiring One of the Configuration::AUTOWIRING_MODE_* constants
      * @return void
      */
     public function setAutowiring($autowiring)
@@ -145,7 +145,7 @@ class ConfigurationProperty
     /**
      * Returns the autowiring mode for this property
      *
-     * @return integer Value of one of the \TYPO3\Flow\Object\Configuration\Configuration::AUTOWIRING_MODE_* constants
+     * @return integer Value of one of the Configuration::AUTOWIRING_MODE_* constants
      */
     public function getAutowiring()
     {

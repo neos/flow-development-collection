@@ -96,7 +96,7 @@ be done by typing:
 
 .. code-block:: none
 
-	sudo usermod -a -G _www john
+	sudo usermod -a -G www-data john
 
 On a Mac you can add a user to the web group with the following command:
 

@@ -10,6 +10,8 @@ namespace TYPO3\Flow\Tests\Functional\Mvc\ViewsConfiguration\Fixtures;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use TYPO3\Flow\Mvc\Controller\ControllerContext;
+use TYPO3\Flow\Mvc\View\EmptyView;
 
 /**
  * An empty view - a special case.
@@ -20,31 +22,31 @@ final class TemplateView extends \TYPO3\Flow\Mvc\View\AbstractView
     /**
      * @var array
      */
-    protected $supportedOptions = array(
-        'templateRootPathPattern' => array('@packageResourcesPath/Private/Templates', 'Pattern to be resolved for "@templateRoot" in the other patterns', 'string'),
-        'partialRootPathPattern' => array('@packageResourcesPath/Private/Partials', 'Pattern to be resolved for "@partialRoot" in the other patterns', 'string'),
-        'layoutRootPathPattern' => array('@packageResourcesPath/Private/Layouts', 'Pattern to be resolved for "@layoutRoot" in the other patterns', 'string'),
+    protected $supportedOptions = [
+        'templateRootPathPattern' => ['@packageResourcesPath/Private/Templates', 'Pattern to be resolved for "@templateRoot" in the other patterns', 'string'],
+        'partialRootPathPattern' => ['@packageResourcesPath/Private/Partials', 'Pattern to be resolved for "@partialRoot" in the other patterns', 'string'],
+        'layoutRootPathPattern' => ['@packageResourcesPath/Private/Layouts', 'Pattern to be resolved for "@layoutRoot" in the other patterns', 'string'],
 
-        'templateRootPath' => array(null, 'Path to the template root. If NULL, then $this->templateRootPathPattern will be used', 'string'),
-        'partialRootPath' => array(null, 'Path to the partial root. If NULL, then $this->partialRootPathPattern will be used', 'string'),
-        'layoutRootPath' => array(null, 'Path to the layout root. If NULL, then $this->layoutRootPathPattern will be used', 'string'),
+        'templateRootPath' => [null, 'Path to the template root. If NULL, then $this->templateRootPathPattern will be used', 'string'],
+        'partialRootPath' => [null, 'Path to the partial root. If NULL, then $this->partialRootPathPattern will be used', 'string'],
+        'layoutRootPath' => [null, 'Path to the layout root. If NULL, then $this->layoutRootPathPattern will be used', 'string'],
 
-        'templatePathAndFilenamePattern' => array('@templateRoot/@subpackage/@controller/@action.@format', 'File pattern for resolving the template file', 'string'),
-        'partialPathAndFilenamePattern' => array('@partialRoot/@subpackage/@partial.@format', 'Directory pattern for global partials. Not part of the public API, should not be changed for now.', 'string'),
-        'layoutPathAndFilenamePattern' => array('@layoutRoot/@layout.@format', 'File pattern for resolving the layout', 'string'),
+        'templatePathAndFilenamePattern' => ['@templateRoot/@subpackage/@controller/@action.@format', 'File pattern for resolving the template file', 'string'],
+        'partialPathAndFilenamePattern' => ['@partialRoot/@subpackage/@partial.@format', 'Directory pattern for global partials. Not part of the public API, should not be changed for now.', 'string'],
+        'layoutPathAndFilenamePattern' => ['@layoutRoot/@layout.@format', 'File pattern for resolving the layout', 'string'],
 
-        'templatePathAndFilename' => array(null, 'Path and filename of the template file. If set,  overrides the templatePathAndFilenamePattern', 'string'),
-        'layoutPathAndFilename' => array(null, 'Path and filename of the layout file. If set, overrides the layoutPathAndFilenamePattern', 'string'),
-    );
+        'templatePathAndFilename' => [null, 'Path and filename of the template file. If set,  overrides the templatePathAndFilenamePattern', 'string'],
+        'layoutPathAndFilename' => [null, 'Path and filename of the layout file. If set, overrides the layoutPathAndFilenamePattern', 'string'],
+    ];
 
     /**
      * Dummy method to satisfy the ViewInterface
      *
-     * @param \TYPO3\Flow\Mvc\Controller\ControllerContext $controllerContext
+     * @param ControllerContext $controllerContext
      * @return void
      * @api
      */
-    public function setControllerContext(\TYPO3\Flow\Mvc\Controller\ControllerContext $controllerContext)
+    public function setControllerContext(ControllerContext $controllerContext)
     {
     }
 
@@ -53,7 +55,7 @@ final class TemplateView extends \TYPO3\Flow\Mvc\View\AbstractView
      *
      * @param string $key
      * @param mixed $value
-     * @return \TYPO3\Flow\Tests\Functional\Mvc\ViewsConfiguration\Fixtures\TemplateView instance of $this to allow chaining
+     * @return EmptyView instance of $this to allow chaining
      * @api
      */
     public function assign($key, $value)
@@ -65,7 +67,7 @@ final class TemplateView extends \TYPO3\Flow\Mvc\View\AbstractView
      * Dummy method to satisfy the ViewInterface
      *
      * @param array $values
-     * @return \TYPO3\Flow\Tests\Functional\Mvc\ViewsConfiguration\Fixtures\TemplateView instance of $this to allow chaining
+     * @return EmptyView instance of $this to allow chaining
      * @api
      */
     public function assignMultiple(array $values)
@@ -76,11 +78,11 @@ final class TemplateView extends \TYPO3\Flow\Mvc\View\AbstractView
     /**
      * This view can be used in any case.
      *
-     * @param \TYPO3\Flow\Mvc\Controller\ControllerContext $controllerContext
+     * @param ControllerContext $controllerContext
      * @return boolean TRUE
      * @api
      */
-    public function canRender(\TYPO3\Flow\Mvc\Controller\ControllerContext $controllerContext)
+    public function canRender(ControllerContext $controllerContext)
     {
         return true;
     }

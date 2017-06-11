@@ -20,16 +20,16 @@ class SliceOperationTest extends \TYPO3\Flow\Tests\UnitTestCase
 {
     public function sliceExamples()
     {
-        return array(
-            'no argument' => array(array('a', 'b', 'c'), array(), array('a', 'b', 'c')),
-            'empty array' => array(array(), array(1), array()),
-            'empty array with end' => array(array(), array(1, 5), array()),
-            'slice in bounds' => array(array('a', 'b', 'c', 'd'), array(1, 3), array('b', 'c')),
-            'positive start' => array(array('a', 'b', 'c', 'd'), array(2), array('c', 'd')),
-            'negative start' => array(array('a', 'b', 'c', 'd'), array(-1), array('d')),
-            'end out of bounds' => array(array('a', 'b', 'c', 'd'), array(3, 10), array('d')),
-            'negative start and end' => array(array('a', 'b', 'c', 'd'), array(-3, -1), array('b', 'c')),
-        );
+        return [
+            'no argument' => [['a', 'b', 'c'], [], ['a', 'b', 'c']],
+            'empty array' => [[], [1], []],
+            'empty array with end' => [[], [1, 5], []],
+            'slice in bounds' => [['a', 'b', 'c', 'd'], [1, 3], ['b', 'c']],
+            'positive start' => [['a', 'b', 'c', 'd'], [2], ['c', 'd']],
+            'negative start' => [['a', 'b', 'c', 'd'], [-1], ['d']],
+            'end out of bounds' => [['a', 'b', 'c', 'd'], [3, 10], ['d']],
+            'negative start and end' => [['a', 'b', 'c', 'd'], [-3, -1], ['b', 'c']],
+        ];
     }
 
     /**

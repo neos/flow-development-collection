@@ -75,4 +75,40 @@ class ResourceTest extends UnitTestCase
         $resource->setFilename('file.someunknownextension');
         $this->assertSame('application/octet-stream', $resource->getMediaType());
     }
+
+    /**
+     * @return array
+     */
+    public function invalidSha1Values()
+    {
+        return [
+          [''],
+          [null],
+          ['XYZE2DC421BE4fCD0172E5AFCEEA3970E2f3d940'],
+          [new \stdClass()],
+          [false],
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider invalidSha1Values
+     * @expectedException \InvalidArgumentException
+     */
+    public function setSha1RejectsInvalidValues($invalidValue)
+    {
+        $resource = new Resource();
+        $resource->setSha1($invalidValue);
+        $this->assertSame('d0be2dc421be4fcd0172e5afceea3970e2f3d940', $resource->getSha1());
+    }
+
+    /**
+     * @test
+     */
+    public function setSha1AcceptsUppercaseHashesAndNormalizesThemToLowercase()
+    {
+        $resource = new Resource();
+        $resource->setSha1('D0BE2DC421BE4fCD0172E5AFCEEA3970E2f3d940');
+        $this->assertSame('d0be2dc421be4fcd0172e5afceea3970e2f3d940', $resource->getSha1());
+    }
 }

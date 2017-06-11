@@ -50,7 +50,7 @@ class RelatedIndexEntity
     }
 
     /**
-     * @param \TYPO3\Flow\Tests\Functional\Persistence\Fixtures\EntityWithIndexedRelation $entityWithIndexedRelation
+     * @param EntityWithIndexedRelation $entityWithIndexedRelation
      */
     public function setEntityWithIndexedRelation($entityWithIndexedRelation)
     {
@@ -58,7 +58,7 @@ class RelatedIndexEntity
     }
 
     /**
-     * @return \TYPO3\Flow\Tests\Functional\Persistence\Fixtures\EntityWithIndexedRelation
+     * @return EntityWithIndexedRelation
      */
     public function getEntityWithIndexedRelation()
     {

@@ -13,6 +13,7 @@ namespace TYPO3\Flow\Tests\Functional\Persistence\Fixtures;
 
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Tests\Functional\Persistence\Fixtures;
 
 /**
  * A sample entity for tests
@@ -29,13 +30,13 @@ class Post
     protected $title = '';
 
     /**
-     * @var \TYPO3\Flow\Tests\Functional\Persistence\Fixtures\Image
+     * @var Image
      * @ORM\OneToOne
      */
     protected $image;
 
     /**
-     * @var \TYPO3\Flow\Tests\Functional\Persistence\Fixtures\Image
+     * @var Image
      * @ORM\OneToOne
      */
     protected $thumbnail;
@@ -44,14 +45,14 @@ class Post
      * Yeah, only one comment allowed for a post ;-)
      * But that's the easiest option for our functional test.
      *
-     * @var \TYPO3\Flow\Tests\Functional\Persistence\Fixtures\Comment
+     * @var Comment
      * @ORM\OneToOne
      * @ORM\JoinColumn(onDelete="SET NULL")
      */
     protected $comment;
 
     /**
-     * @var \Doctrine\Common\Collections\Collection<\TYPO3\Flow\Tests\Functional\Persistence\Fixtures\Post>
+     * @var \Doctrine\Common\Collections\Collection<Fixtures\Post>
      * @ORM\ManyToMany
      * @ORM\JoinTable(inverseJoinColumns={@ORM\JoinColumn(name="related_post_id")})
      */
@@ -82,7 +83,7 @@ class Post
     }
 
     /**
-     * @param \TYPO3\Flow\Tests\Functional\Persistence\Fixtures\Image $image
+     * @param Image $image
      */
     public function setImage($image)
     {
@@ -90,7 +91,7 @@ class Post
     }
 
     /**
-     * @return \TYPO3\Flow\Tests\Functional\Persistence\Fixtures\Image
+     * @return Image
      */
     public function getImage()
     {

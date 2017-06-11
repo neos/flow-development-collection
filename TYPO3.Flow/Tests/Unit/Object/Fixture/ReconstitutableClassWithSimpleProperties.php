@@ -1,7 +1,12 @@
 <?php
 namespace TYPO3\Flow\Tests\Object\Fixture;
 
-class ReconstitutableClassWithSimpleProperties implements \TYPO3\Flow\Persistence\Aspect\PersistenceMagicInterface, \TYPO3\Flow\Object\Proxy\ProxyInterface
+use TYPO3\Flow\Aop\JoinPointInterface;
+use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\Object\Proxy\ProxyInterface;
+use TYPO3\Flow\Persistence\Aspect\PersistenceMagicInterface;
+
+class ReconstitutableClassWithSimpleProperties implements PersistenceMagicInterface, ProxyInterface
 {
     /**
      * @var string
@@ -32,7 +37,7 @@ class ReconstitutableClassWithSimpleProperties implements \TYPO3\Flow\Persistenc
      * The constructor - similar to what you would find in a AOP proxy class.
      *
      */
-    public function __construct($someArgument, \TYPO3\Flow\Object\ObjectManagerInterface $Flow_Aop_Proxy_objectManager)
+    public function __construct($someArgument, ObjectManagerInterface $Flow_Aop_Proxy_objectManager)
     {
         $this->constructorHasBeenCalled = true;
     }
@@ -42,7 +47,7 @@ class ReconstitutableClassWithSimpleProperties implements \TYPO3\Flow\Persistenc
         $this->stringDependency = $string;
     }
 
-    public function Flow_Aop_Proxy_invokeJoinPoint(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint)
+    public function Flow_Aop_Proxy_invokeJoinPoint(JoinPointInterface $joinPoint)
     {
     }
 

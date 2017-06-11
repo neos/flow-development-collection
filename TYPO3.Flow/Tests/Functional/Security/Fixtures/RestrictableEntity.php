@@ -13,6 +13,7 @@ namespace TYPO3\Flow\Tests\Functional\Security\Fixtures;
 
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Security;
 
 /**
  * A restrictable entity for tests
@@ -32,7 +33,7 @@ class RestrictableEntity
     protected $name;
 
     /**
-     * @var \TYPO3\Flow\Security\Account
+     * @var Security\Account
      * @ORM\ManyToOne
      */
     protected $ownerAccount;
@@ -86,7 +87,7 @@ class RestrictableEntity
     }
 
     /**
-     * @param \TYPO3\Flow\Security\Account $ownerAccount
+     * @param Security\Account $ownerAccount
      */
     public function setOwnerAccount($ownerAccount)
     {
@@ -94,7 +95,7 @@ class RestrictableEntity
     }
 
     /**
-     * @return \TYPO3\Flow\Security\Account
+     * @return Security\Account
      */
     public function getOwnerAccount()
     {

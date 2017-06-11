@@ -13,6 +13,7 @@ namespace TYPO3\Flow\Tests\Functional\Reflection\Fixtures\Model;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Tests\Functional\Persistence\Fixtures as PF;
+use TYPO3\Flow\Tests\Functional\Reflection\Fixtures;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -35,7 +36,7 @@ class EntityWithUseStatements
     protected $propertyFromOtherNamespace;
 
     /**
-     * @param \TYPO3\Flow\Tests\Functional\Reflection\Fixtures\Model\SubEntity $parameter
+     * @param Fixtures\Model\SubEntity $parameter
      * @return void
      */
     public function fullyQualifiedClassName(SubEntity $parameter)

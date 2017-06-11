@@ -11,14 +11,20 @@ namespace TYPO3\Flow\Tests\Unit\Resource\Streams;
  * source code.
  */
 
+use TYPO3\Flow\Package;
 use TYPO3\Flow\Cli\CommandRequestHandler;
 use TYPO3\Flow\Core\Bootstrap;
 use TYPO3\Flow\Http\HttpRequestHandlerInterface;
 use TYPO3\Flow\Http\Request;
 use TYPO3\Flow\Http\Uri;
+use TYPO3\Flow\Log\SystemLoggerInterface;
+use TYPO3\Flow\Package\PackageManager;
 use TYPO3\Flow\Resource\Resource;
+use TYPO3\Flow\Resource\Collection;
+use TYPO3\Flow\Resource\Storage\PackageStorage;
 use TYPO3\Flow\Resource\Target\FileSystemTarget;
 use TYPO3\Flow\Tests\UnitTestCase;
+use org\bovigo\vfs\vfsStream;
 
 /**
  * Tests for the FileSystemTarget class
@@ -193,5 +199,39 @@ class FileSystemTargetTest extends UnitTestCase
         $mockResource = $this->getMockBuilder(Resource::class)->disableOriginalConstructor()->getMock();
 
         $this->fileSystemTarget->getPublicStaticResourceUri($mockResource);
+    }
+
+    /**
+     * @test
+     */
+    public function getWorksWithPackageStorage()
+    {
+        vfsStream::setup('Test');
+        mkdir('vfs://Test/Configuration');
+        $packageManager = new PackageManager('vfs://Test/Configuration/PackageStates.php');
+        $this->inject($packageManager, 'packagesBasePath', 'vfs://Test/Packages/');
+
+        $packageManager->createPackage("TYPO3.Flow");
+        $packageManager->activatePackage("TYPO3.Flow");
+
+        $packageStorage = new PackageStorage('testStorage');
+
+        $mockSystemLogger = $this->getMockBuilder(SystemLoggerInterface::class)->getMock();
+
+        $this->inject($packageStorage, 'packageManager', $packageManager);
+
+        $oneResourcePublished = false;
+
+        $_publicationCallback = function ($i, $o) use (&$oneResourcePublished) {
+            $oneResourcePublished = true;
+        };
+
+        $staticCollection = new Collection('testStaticCollection', $packageStorage, $this->fileSystemTarget, ['*']);
+
+        $fileSystemTarget = new FileSystemTarget('test', ['path' => 'vfs://Publish']);
+        $this->inject($fileSystemTarget, 'systemLogger', $mockSystemLogger);
+        $fileSystemTarget->publishCollection($staticCollection, $_publicationCallback);
+
+        $this->assertTrue($oneResourcePublished);
     }
 }

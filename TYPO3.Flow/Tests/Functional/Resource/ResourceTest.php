@@ -14,6 +14,7 @@ namespace TYPO3\Flow\Tests\Functional\Resource;
 use TYPO3\Flow\Persistence\Doctrine\PersistenceManager;
 use TYPO3\Flow\Resource\ResourceManager;
 use TYPO3\Flow\Tests\FunctionalTestCase;
+use TYPO3\Flow\Resource\Resource as PersistenceResource;
 
 /**
  * Functional tests for resources
@@ -40,7 +41,7 @@ class ResourceTest extends FunctionalTestCase
         if (!$this->persistenceManager instanceof PersistenceManager) {
             $this->markTestSkipped('Doctrine persistence is not enabled');
         }
-        $this->resourceManager = $this->objectManager->get(\TYPO3\Flow\Resource\ResourceManager::class);
+        $this->resourceManager = $this->objectManager->get(ResourceManager::class);
     }
 
     /**
@@ -48,7 +49,7 @@ class ResourceTest extends FunctionalTestCase
      */
     public function fileGetContentsReturnFixtureContentForResourceUri()
     {
-        /** @var \TYPO3\Flow\Resource\Resource $resource */
+        /** @var PersistenceResource $resource */
         $resource = $this->resourceManager->importResourceFromContent('fixture', 'fixture.txt');
         $this->assertEquals('fixture', file_get_contents('resource://' . $resource->getSha1()));
     }

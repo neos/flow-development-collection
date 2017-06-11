@@ -11,6 +11,7 @@ namespace TYPO3\Flow\Tests\Functional\Error;
  * source code.
  */
 
+use TYPO3\Flow\Configuration\ConfigurationManager;
 use TYPO3\Flow\Core\ApplicationContext;
 use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Flow\Tests\FunctionalTestCase;
@@ -23,7 +24,7 @@ use TYPO3\Flow\Utility\Arrays;
 class DebuggerTest extends FunctionalTestCase
 {
     /**
-     * @var \TYPO3\Flow\Configuration\ConfigurationManager
+     * @var ConfigurationManager
      */
     protected $configurationManager;
 
@@ -31,7 +32,7 @@ class DebuggerTest extends FunctionalTestCase
     public function setUp()
     {
         parent::setUp();
-        $this->configurationManager = $this->objectManager->get(\TYPO3\Flow\Configuration\ConfigurationManager::class);
+        $this->configurationManager = $this->objectManager->get(ConfigurationManager::class);
         Debugger::clearState();
     }
 
@@ -42,7 +43,7 @@ class DebuggerTest extends FunctionalTestCase
     public function ignoredClassesCanBeOverwrittenBySettings()
     {
         $object = new ApplicationContext('Development');
-        $this->assertEquals('TYPO3\Flow\Core\ApplicationContext prototype object', Debugger::renderDump($object, 10, true));
+        $this->assertEquals(sprintf('%s prototype object', ApplicationContext::class), Debugger::renderDump($object, 10, true));
         Debugger::clearState();
 
         $currentConfiguration = ObjectAccess::getProperty($this->configurationManager, 'configurations', true);

@@ -13,6 +13,7 @@ namespace TYPO3\Flow\Tests\Functional\Session\Fixtures\Controller;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Mvc\Controller\ActionController;
+use TYPO3\Flow\Session\SessionInterface;
 
 /**
  * A controller for functional testing
@@ -21,7 +22,7 @@ class SessionTestController extends ActionController
 {
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Session\SessionInterface
+     * @var SessionInterface
      */
     protected $session;
 

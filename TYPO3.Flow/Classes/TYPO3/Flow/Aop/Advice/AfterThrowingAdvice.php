@@ -16,6 +16,6 @@ namespace TYPO3\Flow\Aop\Advice;
  * Implementation of the After Throwing Advice.
  *
  */
-class AfterThrowingAdvice extends \TYPO3\Flow\Aop\Advice\AbstractAdvice implements \TYPO3\Flow\Aop\Advice\AdviceInterface
+class AfterThrowingAdvice extends AbstractAdvice implements AdviceInterface
 {
 }

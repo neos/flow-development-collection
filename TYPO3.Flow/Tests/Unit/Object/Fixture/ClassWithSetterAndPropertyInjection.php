@@ -12,6 +12,7 @@ namespace TYPO3\Flow\Tests\Object\Fixture;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Object\ObjectManagerInterface;
 
 /**
  */
@@ -30,9 +31,9 @@ class ClassWithSetterAndPropertyInjection
     protected $secondDependency;
 
     /**
-     * @param \TYPO3\Flow\Object\ObjectManagerInterface
+     * @param ObjectManagerInterface $firstDependency
      */
-    public function injectFirstDependency(\TYPO3\Flow\Object\ObjectManagerInterface $firstDependency)
+    public function injectFirstDependency(ObjectManagerInterface $firstDependency)
     {
         $this->firstDependency = $firstDependency;
     }

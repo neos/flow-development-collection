@@ -12,11 +12,9 @@ namespace TYPO3\Flow\Tests\Unit\Object\DependencyInject;
  */
 
 use TYPO3\Flow\Object\DependencyInjection\DependencyProxy;
+use TYPO3\Flow\Tests\UnitTestCase;
 
-/**
- *
- */
-class DependencyProxyTest extends \TYPO3\Flow\Tests\UnitTestCase
+class DependencyProxyTest extends UnitTestCase
 {
     /**
      * @test

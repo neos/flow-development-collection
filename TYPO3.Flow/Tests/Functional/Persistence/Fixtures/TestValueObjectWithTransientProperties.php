@@ -35,7 +35,7 @@ class TestValueObjectWithTransientProperties
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntityRepository
+     * @var TestEntityRepository
      */
     protected $dependency;
 

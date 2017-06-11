@@ -45,7 +45,7 @@ class ConfigurationArgument
     /**
      * @var integer
      */
-    protected $autowiring = \TYPO3\Flow\Object\Configuration\Configuration::AUTOWIRING_MODE_ON;
+    protected $autowiring = Configuration::AUTOWIRING_MODE_ON;
 
     /**
      * Constructor - sets the index, value and type of the argument
@@ -107,7 +107,7 @@ class ConfigurationArgument
     /**
      * Sets autowiring for this argument
      *
-     * @param integer $autowiring One of the \TYPO3\Flow\Object\Configuration\Configuration::AUTOWIRING_MODE_* constants
+     * @param integer $autowiring One of the Configuration::AUTOWIRING_MODE_* constants
      * @return void
      */
     public function setAutowiring($autowiring)
@@ -118,7 +118,7 @@ class ConfigurationArgument
     /**
      * Returns the autowiring mode for this argument
      *
-     * @return integer Value of one of the \TYPO3\Flow\Object\Configuration\Configuration::AUTOWIRING_MODE_* constants
+     * @return integer Value of one of the Configuration::AUTOWIRING_MODE_* constants
      */
     public function getAutowiring()
     {

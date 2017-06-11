@@ -11,11 +11,14 @@ namespace TYPO3\Flow\Tests\Unit\Aop\Pointcut;
  * source code.
  */
 
+use TYPO3\Flow\Reflection\ReflectionService;
+use TYPO3\Flow\Tests\UnitTestCase;
+use TYPO3\Flow\Aop;
+
 /**
  * Testcase for the Pointcut Method Name Filter
- *
  */
-class PointcutMethodNameFilterTest extends \TYPO3\Flow\Tests\UnitTestCase
+class PointcutMethodNameFilterTest extends UnitTestCase
 {
     /**
      * @test
@@ -29,10 +32,10 @@ class PointcutMethodNameFilterTest extends \TYPO3\Flow\Tests\UnitTestCase
 			}'
         );
 
-        $mockReflectionService = $this->getMockBuilder(\TYPO3\Flow\Reflection\ReflectionService::class)->disableOriginalConstructor()->setMethods(array('isMethodFinal'))->getMock();
+        $mockReflectionService = $this->getMockBuilder(ReflectionService::class)->disableOriginalConstructor()->setMethods(['isMethodFinal'])->getMock();
         $mockReflectionService->expects($this->atLeastOnce())->method('isMethodFinal')->with($className, 'someFinalMethod')->will($this->returnValue(true));
 
-        $methodNameFilter = new \TYPO3\Flow\Aop\Pointcut\PointcutMethodNameFilter('someFinalMethod');
+        $methodNameFilter = new Aop\Pointcut\PointcutMethodNameFilter('someFinalMethod');
         $methodNameFilter->injectReflectionService($mockReflectionService);
 
         $this->assertFalse($methodNameFilter->matches($className, 'someFinalMethod', $className, 1));
@@ -52,20 +55,20 @@ class PointcutMethodNameFilterTest extends \TYPO3\Flow\Tests\UnitTestCase
 			}'
         );
 
-        $mockReflectionService = $this->createMock(\TYPO3\Flow\Reflection\ReflectionService::class);
+        $mockReflectionService = $this->createMock(ReflectionService::class);
         $mockReflectionService->expects($this->atLeastOnce())->method('isMethodPublic')->will($this->onConsecutiveCalls(true, false, false, true));
         $mockReflectionService->expects($this->atLeastOnce())->method('isMethodProtected')->will($this->onConsecutiveCalls(false, true, false, false));
         $mockReflectionService->expects($this->atLeastOnce())->method('isMethodFinal')->will($this->returnValue(false));
-        $mockReflectionService->expects($this->atLeastOnce())->method('getMethodParameters')->will($this->returnValue(array()));
+        $mockReflectionService->expects($this->atLeastOnce())->method('getMethodParameters')->will($this->returnValue([]));
 
-        $methodNameFilter = new \TYPO3\Flow\Aop\Pointcut\PointcutMethodNameFilter('some.*', 'public');
+        $methodNameFilter = new Aop\Pointcut\PointcutMethodNameFilter('some.*', 'public');
         $methodNameFilter->injectReflectionService($mockReflectionService);
         $this->assertTrue($methodNameFilter->matches(__CLASS__, 'somePublicMethod', $className, 1));
         $this->assertFalse($methodNameFilter->matches(__CLASS__, 'someProtectedMethod', $className, 1));
         $this->assertFalse($methodNameFilter->matches(__CLASS__, 'somePrivateMethod', $className, 1));
         $this->assertFalse($methodNameFilter->matches(__CLASS__, 'somePublicMethod', null, 1));
 
-        $methodNameFilter = new \TYPO3\Flow\Aop\Pointcut\PointcutMethodNameFilter('some.*', 'protected');
+        $methodNameFilter = new Aop\Pointcut\PointcutMethodNameFilter('some.*', 'protected');
         $methodNameFilter->injectReflectionService($mockReflectionService);
         $this->assertFalse($methodNameFilter->matches(__CLASS__, 'somePublicMethod', $className, 1));
         $this->assertTrue($methodNameFilter->matches(__CLASS__, 'someProtectedMethod', $className, 1));
@@ -87,30 +90,30 @@ class PointcutMethodNameFilterTest extends \TYPO3\Flow\Tests\UnitTestCase
 			}"
         );
 
-        $mockReflectionService = $this->createMock(\TYPO3\Flow\Reflection\ReflectionService::class);
+        $mockReflectionService = $this->createMock(ReflectionService::class);
         $mockReflectionService->expects($this->exactly(3))->method('getMethodParameters')->will($this->onConsecutiveCalls(
-                array('arg1' => array()),
-                array('arg1' => array(), 'arg2' => array()),
-                array('arg1' => array(), 'arg2' => array(), 'arg3' => array())
+                ['arg1' => []],
+                ['arg1' => [], 'arg2' => []],
+                ['arg1' => [], 'arg2' => [], 'arg3' => []]
         ));
 
-        $mockSystemLogger = $this->getMockBuilder(\TYPO3\Flow\Log\Logger::class)->setMethods(array('log'))->getMock();
+        $mockSystemLogger = $this->getMockBuilder('TYPO3\Flow\Log\Logger')->setMethods(['log'])->getMock();
         $mockSystemLogger->expects($this->once())->method('log')->with($this->equalTo(
             'The argument "arg2" declared in pointcut does not exist in method ' . $className . '->somePublicMethod'
         ));
 
-        $argumentConstraints = array(
-            'arg1' => array(
+        $argumentConstraints = [
+            'arg1' => [
                 'operator' => '==',
                 'value' => 'someValue'
-            ),
-            'arg2.some.sub.object' => array(
+            ],
+            'arg2.some.sub.object' => [
                 'operator' => '==',
                 'value' => 'someValue'
-            )
-        );
+            ]
+        ];
 
-        $methodNameFilter = new \TYPO3\Flow\Aop\Pointcut\PointcutMethodNameFilter('some.*', null, $argumentConstraints);
+        $methodNameFilter = new Aop\Pointcut\PointcutMethodNameFilter('some.*', null, $argumentConstraints);
         $methodNameFilter->injectReflectionService($mockReflectionService);
         $methodNameFilter->injectSystemLogger($mockSystemLogger);
 
@@ -125,18 +128,18 @@ class PointcutMethodNameFilterTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function getRuntimeEvaluationsReturnsTheMethodArgumentConstraintsDefinitions()
     {
-        $argumentConstraints = array(
-            'arg2' => array(
+        $argumentConstraints = [
+            'arg2' => [
                 'operator' => '==',
                 'value' => 'someValue'
-            )
-        );
+            ]
+        ];
 
-        $expectedRuntimeEvaluations = array(
+        $expectedRuntimeEvaluations = [
             'methodArgumentConstraints' => $argumentConstraints
-        );
+        ];
 
-        $methodNameFilter = new \TYPO3\Flow\Aop\Pointcut\PointcutMethodNameFilter('some.*', null, $argumentConstraints);
+        $methodNameFilter = new Aop\Pointcut\PointcutMethodNameFilter('some.*', null, $argumentConstraints);
 
         $this->assertEquals($expectedRuntimeEvaluations, $methodNameFilter->getRuntimeEvaluationsDefinition(), 'The argument constraint definitions have not been returned as expected.');
     }

@@ -11,22 +11,23 @@ namespace TYPO3\Flow\Tests\Unit\Validation\Validator;
  * source code.
  */
 
+use TYPO3\Flow\Validation\Validator\RawValidator;
+
 require_once('AbstractValidatorTestcase.php');
 
 /**
  * Testcase for the raw validator
- *
  */
-class RawValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Validator\AbstractValidatorTestcase
+class RawValidatorTest extends AbstractValidatorTestcase
 {
-    protected $validatorClassName = \TYPO3\Flow\Validation\Validator\RawValidator::class;
+    protected $validatorClassName = RawValidator::class;
 
     /**
      * @test
      */
     public function theRawValidatorAlwaysReturnsNoErrors()
     {
-        $rawValidator = new \TYPO3\Flow\Validation\Validator\RawValidator(array());
+        $rawValidator = new RawValidator([]);
 
         $this->assertFalse($rawValidator->validate('simple1expression')->hasErrors());
         $this->assertFalse($rawValidator->validate('')->hasErrors());

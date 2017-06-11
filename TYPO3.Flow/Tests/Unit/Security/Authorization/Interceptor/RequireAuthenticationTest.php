@@ -11,22 +11,25 @@ namespace TYPO3\Flow\Tests\Unit\Security\Authorization\Interceptor;
  * source code.
  */
 
+use TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface;
+use TYPO3\Flow\Security\Authorization\Interceptor\RequireAuthentication;
+use TYPO3\Flow\Tests\UnitTestCase;
+
 /**
  * Testcase for the authentication required security interceptor
- *
  */
-class RequireAuthenticationTest extends \TYPO3\Flow\Tests\UnitTestCase
+class RequireAuthenticationTest extends UnitTestCase
 {
     /**
      * @test
      */
     public function invokeCallsTheAuthenticationManagerToPerformAuthentication()
     {
-        $authenticationManager = $this->createMock(\TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface::class);
+        $authenticationManager = $this->createMock(AuthenticationManagerInterface::class);
 
         $authenticationManager->expects($this->once())->method('authenticate');
 
-        $interceptor = new \TYPO3\Flow\Security\Authorization\Interceptor\RequireAuthentication($authenticationManager);
+        $interceptor = new RequireAuthentication($authenticationManager);
         $interceptor->invoke();
     }
 }
