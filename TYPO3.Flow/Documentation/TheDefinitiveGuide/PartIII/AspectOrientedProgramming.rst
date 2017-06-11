@@ -984,7 +984,7 @@ be a fully qualified "class" (trait) name without leading backslash.
 
 The following example introduces a trait ``SomeTrait`` to the class ``MyClass``.
 
-*Example: Interface introduction*::
+*Example: Trait introduction*::
 
 	namespace Example\MyPackage;
 
