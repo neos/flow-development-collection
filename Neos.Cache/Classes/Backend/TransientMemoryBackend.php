@@ -53,6 +53,7 @@ class TransientMemoryBackend extends IndependentAbstractBackend implements Tagga
         if (!is_string($data)) {
             throw new InvalidDataException('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1238244993);
         }
+
         $this->entries[$entryIdentifier] = $data;
         foreach ($tags as $tag) {
             $this->tagsAndEntries[$tag][$entryIdentifier] = true;
@@ -78,7 +79,7 @@ class TransientMemoryBackend extends IndependentAbstractBackend implements Tagga
      * @return boolean TRUE if such an entry exists, FALSE if not
      * @api
      */
-    public function has($entryIdentifier)
+    public function has($entryIdentifier): bool
     {
         return isset($this->entries[$entryIdentifier]);
     }
@@ -90,7 +91,7 @@ class TransientMemoryBackend extends IndependentAbstractBackend implements Tagga
      * @return boolean TRUE if the entry could be removed or FALSE if no entry was found
      * @api
      */
-    public function remove($entryIdentifier)
+    public function remove($entryIdentifier): bool
     {
         if (!isset($this->entries[$entryIdentifier])) {
             return false;
@@ -112,13 +113,12 @@ class TransientMemoryBackend extends IndependentAbstractBackend implements Tagga
      * @return array An array with identifiers of all matching entries. An empty array if no entries matched
      * @api
      */
-    public function findIdentifiersByTag($tag)
+    public function findIdentifiersByTag($tag): array
     {
         if (isset($this->tagsAndEntries[$tag])) {
             return array_keys($this->tagsAndEntries[$tag]);
-        } else {
-            return [];
         }
+        return [];
     }
 
     /**
@@ -140,7 +140,7 @@ class TransientMemoryBackend extends IndependentAbstractBackend implements Tagga
      * @return integer The number of entries which have been affected by this flush
      * @api
      */
-    public function flushByTag($tag)
+    public function flushByTag($tag): int
     {
         $identifiers = $this->findIdentifiersByTag($tag);
         foreach ($identifiers as $identifier) {

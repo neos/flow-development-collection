@@ -57,7 +57,7 @@ class NullBackend extends AbstractCacheBackend implements PhpCapableBackendInter
      * @return boolean FALSE
      * @api
      */
-    public function has($entryIdentifier)
+    public function has($entryIdentifier): bool
     {
         return false;
     }
@@ -69,7 +69,7 @@ class NullBackend extends AbstractCacheBackend implements PhpCapableBackendInter
      * @return boolean FALSE
      * @api
      */
-    public function remove($entryIdentifier)
+    public function remove($entryIdentifier): bool
     {
         return false;
     }
@@ -81,7 +81,7 @@ class NullBackend extends AbstractCacheBackend implements PhpCapableBackendInter
      * @return array An empty array
      * @api
      */
-    public function findIdentifiersByTag($tag)
+    public function findIdentifiersByTag($tag): array
     {
         return [];
     }
@@ -100,11 +100,12 @@ class NullBackend extends AbstractCacheBackend implements PhpCapableBackendInter
      * Does nothing
      *
      * @param string $tag ignored
-     * @return void
+     * @return integer
      * @api
      */
-    public function flushByTag($tag)
+    public function flushByTag($tag): int
     {
+        return 0;
     }
 
     /**

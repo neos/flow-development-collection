@@ -113,7 +113,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
      * @return void
      * @api
      */
-    public function setCacheDirectory($cacheDirectory)
+    public function setCacheDirectory(string $cacheDirectory)
     {
         $this->cacheDirectory = rtrim($cacheDirectory, '/') . '/';
     }
@@ -124,7 +124,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
      * @return string Full path of the cache directory
      * @api
      */
-    public function getCacheDirectory()
+    public function getCacheDirectory(): string
     {
         return $this->cacheDirectory;
     }
@@ -199,7 +199,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
      * @throws \InvalidArgumentException
      * @api
      */
-    public function has($entryIdentifier)
+    public function has($entryIdentifier): bool
     {
         if ($entryIdentifier !== basename($entryIdentifier)) {
             throw new \InvalidArgumentException('The specified entry identifier must not contain a path segment.', 1334756878);
@@ -213,7 +213,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
      * @param string $fileName The full filename of the file to remove.
      * @return bool True if the file was removed successfully or false otherwise
      */
-    private function tryRemoveWithLock($fileName)
+    private function tryRemoveWithLock(string $fileName): bool
     {
         if (strncasecmp(PHP_OS, 'WIN', 3) == 0) {
             // On Windows, unlinking a locked/opened file will not work, so we just attempt the delete straight away.
@@ -244,7 +244,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
      * @throws \InvalidArgumentException
      * @api
      */
-    public function remove($entryIdentifier)
+    public function remove($entryIdentifier): bool
     {
         if ($entryIdentifier !== basename($entryIdentifier)) {
             throw new \InvalidArgumentException('The specified entry identifier must not contain a path segment.', 1334756960);
@@ -288,7 +288,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
      * @return boolean
      * @api
      */
-    protected function isCacheFileExpired($cacheEntryPathAndFilename)
+    protected function isCacheFileExpired(string $cacheEntryPathAndFilename): bool
     {
         return (file_exists($cacheEntryPathAndFilename) === false);
     }
@@ -310,7 +310,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
      * @return mixed The filenames (including path) as an array if one or more entries could be found, otherwise FALSE
      * @throws Exception if no frontend has been set
      */
-    protected function findCacheFilesByIdentifier($entryIdentifier)
+    protected function findCacheFilesByIdentifier(string $entryIdentifier)
     {
         $pathAndFilename = $this->cacheDirectory . $entryIdentifier . $this->cacheEntryFileExtension;
         return (file_exists($pathAndFilename) ? [$pathAndFilename] : false);
@@ -378,7 +378,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
      * @return string
      * @api
      */
-    public function key()
+    public function key(): string
     {
         if ($this->cacheFilesIterator === null) {
             $this->rewind();
@@ -392,7 +392,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
      * @return boolean TRUE if the current position is valid, otherwise FALSE
      * @api
      */
-    public function valid()
+    public function valid(): bool
     {
         if ($this->cacheFilesIterator === null) {
             $this->rewind();
@@ -422,7 +422,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
      * @return void
      * @throws Exception
      */
-    protected function throwExceptionIfPathExceedsMaximumLength($cacheEntryPathAndFilename)
+    protected function throwExceptionIfPathExceedsMaximumLength(string $cacheEntryPathAndFilename)
     {
         if (strlen($cacheEntryPathAndFilename) > $this->environmentConfiguration->getMaximumPathLength()) {
             throw new Exception('The length of the cache entry path "' . $cacheEntryPathAndFilename . '" exceeds the maximum path length of ' . $this->environmentConfiguration->getMaximumPathLength() . '. Please consider setting the FLOW_PATH_TEMPORARY_BASE environment variable to a shorter path. ', 1248710426);
@@ -432,7 +432,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
     /**
      * @return string
      */
-    public function getBaseDirectory()
+    public function getBaseDirectory(): string
     {
         return $this->baseDirectory;
     }
@@ -440,7 +440,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
     /**
      * @param string $baseDirectory
      */
-    public function setBaseDirectory($baseDirectory)
+    public function setBaseDirectory(string $baseDirectory)
     {
         $this->baseDirectory = $baseDirectory;
     }
@@ -482,7 +482,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
      * @param int|null $maxlen
      * @return boolean|string The contents of the cache file or FALSE on error
      */
-    protected function readCacheFile($cacheEntryPathAndFilename, $offset = null, $maxlen = null)
+    protected function readCacheFile(string $cacheEntryPathAndFilename, int $offset = null, int $maxlen = null)
     {
         for ($i = 0; $i < 3; $i++) {
             $data = false;
@@ -518,7 +518,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
      * @param string $data
      * @return boolean|integer Return value of file_put_contents
      */
-    protected function writeCacheFile($cacheEntryPathAndFilename, $data)
+    protected function writeCacheFile(string $cacheEntryPathAndFilename, string $data)
     {
         for ($i = 0; $i < 3; $i++) {
             // This can be replaced by a simple file_put_contents($cacheEntryPathAndFilename, $data, LOCK_EX) once vfs

@@ -68,7 +68,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
      * @return void
      * @api
      */
-    public function setDataSourceName($DSN)
+    public function setDataSourceName(string $DSN)
     {
         $this->dataSourceName = $DSN;
     }
@@ -80,7 +80,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
      * @return void
      * @api
      */
-    public function setUsername($username)
+    public function setUsername(string $username)
     {
         $this->username = $username;
     }
@@ -92,7 +92,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
      * @return void
      * @api
      */
-    public function setPassword($password)
+    public function setPassword(string $password)
     {
         $this->password = $password;
     }
@@ -186,7 +186,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
      * @return boolean TRUE if such an entry exists, FALSE if not
      * @api
      */
-    public function has($entryIdentifier)
+    public function has($entryIdentifier): bool
     {
         $this->connect();
 
@@ -204,7 +204,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
      * @return boolean TRUE if (at least) an entry could be removed or FALSE if no entry was found
      * @api
      */
-    public function remove($entryIdentifier)
+    public function remove($entryIdentifier): bool
     {
         $this->connect();
 
@@ -238,18 +238,22 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
      * Removes all cache entries of this cache which are tagged by the specified tag.
      *
      * @param string $tag The tag the entries must have
-     * @return void
+     * @return integer
      * @api
      */
-    public function flushByTag($tag)
+    public function flushByTag($tag): int
     {
         $this->connect();
 
         $statementHandle = $this->databaseHandle->prepare('DELETE FROM "cache" WHERE "context"=? AND "cache"=? AND "identifier" IN (SELECT "identifier" FROM "tags" WHERE "context"=? AND "cache"=? AND "tag"=?)');
         $statementHandle->execute([$this->context(), $this->cacheIdentifier, $this->context(), $this->cacheIdentifier, $tag]);
 
+        $flushed = $statementHandle->rowCount();
+
         $statementHandle = $this->databaseHandle->prepare('DELETE FROM "tags" WHERE "context"=? AND "cache"=? AND "tag"=?');
         $statementHandle->execute([$this->context(), $this->cacheIdentifier, $tag]);
+
+        return $flushed;
     }
 
     /**
@@ -260,7 +264,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
      * @return array An array with identifiers of all matching entries. An empty array if no entries matched
      * @api
      */
-    public function findIdentifiersByTag($tag)
+    public function findIdentifiersByTag($tag): array
     {
         $this->connect();
 
@@ -291,7 +295,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
      *
      * @return string
      */
-    protected function getNotExpiredStatement()
+    protected function getNotExpiredStatement(): string
     {
         return ' AND ("lifetime" = 0 OR "created" + "lifetime" >= ' . time() . ')';
     }
@@ -382,7 +386,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
      * @return string
      * @api
      */
-    public function key()
+    public function key(): string
     {
         if ($this->cacheEntriesIterator === null) {
             $this->rewind();
@@ -396,7 +400,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
      * @return boolean TRUE if the current position is valid, otherwise FALSE
      * @api
      */
-    public function valid()
+    public function valid(): bool
     {
         if ($this->cacheEntriesIterator === null) {
             $this->rewind();
@@ -440,7 +444,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
     /**
      * @return string
      */
-    protected function context()
+    protected function context(): string
     {
         if ($this->context === null) {
             $this->context = md5($this->environmentConfiguration->getApplicationIdentifier());

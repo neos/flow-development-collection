@@ -39,7 +39,7 @@ abstract class AbstractFrontend implements FrontendInterface
      * @param BackendInterface $backend Backend to be used for this cache
      * @throws \InvalidArgumentException if the identifier doesn't match PATTERN_ENTRYIDENTIFIER
      */
-    public function __construct($identifier, BackendInterface $backend)
+    public function __construct(string $identifier, BackendInterface $backend)
     {
         if (preg_match(self::PATTERN_ENTRYIDENTIFIER, $identifier) !== 1) {
             throw new \InvalidArgumentException('"' . $identifier . '" is not a valid cache identifier.', 1203584729);
@@ -70,7 +70,7 @@ abstract class AbstractFrontend implements FrontendInterface
      * @return string The identifier for this cache
      * @api
      */
-    public function getIdentifier()
+    public function getIdentifier(): string
     {
         return $this->identifier;
     }
@@ -81,7 +81,7 @@ abstract class AbstractFrontend implements FrontendInterface
      * @return BackendInterface The backend used by this cache
      * @api
      */
-    public function getBackend()
+    public function getBackend(): BackendInterface
     {
         return $this->backend;
     }
@@ -94,7 +94,7 @@ abstract class AbstractFrontend implements FrontendInterface
      * @throws \InvalidArgumentException
      * @api
      */
-    public function has($entryIdentifier)
+    public function has($entryIdentifier): bool
     {
         if (!$this->isValidEntryIdentifier($entryIdentifier)) {
             throw new \InvalidArgumentException('"' . $entryIdentifier . '" is not a valid cache entry identifier.', 1233058486);
@@ -111,7 +111,7 @@ abstract class AbstractFrontend implements FrontendInterface
      * @throws \InvalidArgumentException
      * @api
      */
-    public function remove($entryIdentifier)
+    public function remove($entryIdentifier): bool
     {
         if (!$this->isValidEntryIdentifier($entryIdentifier)) {
             throw new \InvalidArgumentException('"' . $entryIdentifier . '" is not a valid cache entry identifier.', 1233058495);
@@ -167,7 +167,7 @@ abstract class AbstractFrontend implements FrontendInterface
      * @return boolean
      * @api
      */
-    public function isValidEntryIdentifier($identifier)
+    public function isValidEntryIdentifier($identifier): bool
     {
         return preg_match(self::PATTERN_ENTRYIDENTIFIER, $identifier) === 1;
     }
@@ -179,7 +179,7 @@ abstract class AbstractFrontend implements FrontendInterface
      * @return boolean
      * @api
      */
-    public function isValidTag($tag)
+    public function isValidTag($tag): bool
     {
         return preg_match(self::PATTERN_TAG, $tag) === 1;
     }

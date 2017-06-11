@@ -100,7 +100,7 @@ class VariableFrontend extends AbstractFrontend
      * @throws \InvalidArgumentException
      * @api
      */
-    public function getByTag($tag)
+    public function getByTag($tag): array
     {
         if (!$this->backend instanceof TaggableBackendInterface) {
             throw new NotSupportedByBackendException('The backend must implement TaggableBackendInterface. Please choose a different cache backend or adjust the code using this cache.', 1483487409);
@@ -126,7 +126,7 @@ class VariableFrontend extends AbstractFrontend
      * @return \Neos\Cache\Frontend\CacheEntryIterator
      * @throws NotSupportedByBackendException
      */
-    public function getIterator()
+    public function getIterator(): CacheEntryIterator
     {
         if (!$this->backend instanceof IterableBackendInterface) {
             throw new NotSupportedByBackendException('The cache backend (%s) configured for cache "%s" cannot be used as an iterator. Please choose a different cache backend or adjust the code using this cache.', 1371463860);
