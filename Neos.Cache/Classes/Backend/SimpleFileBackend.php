@@ -142,11 +142,8 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
      * @throws \InvalidArgumentException
      * @api
      */
-    public function set($entryIdentifier, $data, array $tags = [], $lifetime = null)
+    public function set(string $entryIdentifier, string $data, array $tags = [], int $lifetime = null)
     {
-        if (!is_string($data)) {
-            throw new InvalidDataException('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1334756734);
-        }
         if ($entryIdentifier !== basename($entryIdentifier)) {
             throw new \InvalidArgumentException('The specified entry identifier must not contain a path segment.', 1334756735);
         }
@@ -176,7 +173,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
      * @throws \InvalidArgumentException
      * @api
      */
-    public function get($entryIdentifier)
+    public function get(string $entryIdentifier)
     {
         if ($entryIdentifier !== basename($entryIdentifier)) {
             throw new \InvalidArgumentException('The specified entry identifier must not contain a path segment.', 1334756877);
@@ -199,7 +196,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
      * @throws \InvalidArgumentException
      * @api
      */
-    public function has($entryIdentifier): bool
+    public function has(string $entryIdentifier): bool
     {
         if ($entryIdentifier !== basename($entryIdentifier)) {
             throw new \InvalidArgumentException('The specified entry identifier must not contain a path segment.', 1334756878);
@@ -244,7 +241,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
      * @throws \InvalidArgumentException
      * @api
      */
-    public function remove($entryIdentifier): bool
+    public function remove(string $entryIdentifier): bool
     {
         if ($entryIdentifier !== basename($entryIdentifier)) {
             throw new \InvalidArgumentException('The specified entry identifier must not contain a path segment.', 1334756960);
@@ -324,7 +321,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
      * @throws \InvalidArgumentException
      * @api
      */
-    public function requireOnce($entryIdentifier)
+    public function requireOnce(string $entryIdentifier)
     {
         $pathAndFilename = $this->cacheDirectory . $entryIdentifier . $this->cacheEntryFileExtension;
         if ($entryIdentifier !== basename($entryIdentifier)) {

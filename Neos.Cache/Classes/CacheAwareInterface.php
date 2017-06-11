@@ -24,5 +24,5 @@ interface CacheAwareInterface
      *
      * @return string
      */
-    public function getCacheEntryIdentifier();
+    public function getCacheEntryIdentifier(): string;
 }

@@ -41,7 +41,7 @@ interface BackendInterface
      * @param string $entryIdentifier
      * @return string
      */
-    public function getPrefixedIdentifier($entryIdentifier);
+    public function getPrefixedIdentifier(string $entryIdentifier): string;
 
     /**
      * Saves data in the cache.
@@ -56,7 +56,7 @@ interface BackendInterface
      * @throws \Neos\Cache\Exception\InvalidDataException if $data is not a string
      * @api
      */
-    public function set($entryIdentifier, $data, array $tags = [], $lifetime = null);
+    public function set(string $entryIdentifier, string $data, array $tags = [], int $lifetime = null);
 
     /**
      * Loads data from the cache.
@@ -65,7 +65,7 @@ interface BackendInterface
      * @return mixed The cache entry's content as a string or FALSE if the cache entry could not be loaded
      * @api
      */
-    public function get($entryIdentifier);
+    public function get(string $entryIdentifier);
 
     /**
      * Checks if a cache entry with the specified identifier exists.
@@ -74,7 +74,7 @@ interface BackendInterface
      * @return boolean TRUE if such an entry exists, FALSE if not
      * @api
      */
-    public function has($entryIdentifier);
+    public function has(string $entryIdentifier): bool;
 
     /**
      * Removes all cache entries matching the specified identifier.
@@ -85,7 +85,7 @@ interface BackendInterface
      * @return boolean TRUE if (at least) an entry could be removed or FALSE if no entry was found
      * @api
      */
-    public function remove($entryIdentifier);
+    public function remove(string $entryIdentifier): bool;
 
     /**
      * Removes all cache entries of this cache.
