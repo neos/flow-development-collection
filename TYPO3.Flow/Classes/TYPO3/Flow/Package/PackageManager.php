@@ -826,6 +826,7 @@ class PackageManager implements PackageManagerInterface
      *
      * @param array $previousPackageStatesConfiguration Existing package state configuration
      * @return array
+     * @throws Exception
      * @throws InvalidConfigurationException
      */
     protected function scanAvailablePackages($previousPackageStatesConfiguration)
@@ -846,6 +847,7 @@ class PackageManager implements PackageManagerInterface
             if (!isset($composerManifest['name'])) {
                 throw new InvalidConfigurationException(sprintf('A package composer.json was found at "%s" that contained no "name".', $packagePath), 1445933572);
             }
+
             $packageKey = $this->getPackageKeyFromManifest($composerManifest, $packagePath);
             $this->composerNameToPackageKeyMap[strtolower($composerManifest['name'])] = $packageKey;
 
@@ -862,6 +864,16 @@ class PackageManager implements PackageManagerInterface
             }
 
             $packageConfiguration = $this->preparePackageStateConfiguration($packageKey, $packagePath, $composerManifest, $state);
+            if (isset($newPackageStatesConfiguration['packages'][$composerManifest['name']])) {
+                throw new PackageException(
+                    sprintf('The package with the name "%s" was found more than once, please make sure it exists only once. Paths "%s" and "%s".',
+                        $composerManifest['name'],
+                        $packageConfiguration['packagePath'],
+                        $newPackageStatesConfiguration['packages'][$composerManifest['name']]['packagePath']),
+                    1493030262781
+                );
+            }
+
             $newPackageStatesConfiguration['packages'][$composerManifest['name']] = $packageConfiguration;
 
             if ($state === self::PACKAGE_STATE_INACTIVE && $packageInActivePackagesFolder && is_dir($packagePath)) {
