@@ -125,8 +125,10 @@ class Package extends BasePackage
             }
         });
 
-        $dispatcher->connect(\TYPO3\Flow\Package\PackageManager::class, 'packageStatesUpdated', function () use ($dispatcher) {
-            $dispatcher->connect(\TYPO3\Flow\Core\Bootstrap::class, 'bootstrapShuttingDown', \TYPO3\Flow\Cache\CacheManager::class, 'flushCaches');
+        $dispatcher->connect(\TYPO3\Flow\Package\PackageManager::class, 'packageStatesUpdated', function () use ($dispatcher, $bootstrap) {
+            $dispatcher->connect(\TYPO3\Flow\Core\Bootstrap::class, 'bootstrapShuttingDown', function () use ($bootstrap) {
+                $bootstrap->getObjectManager()->get(\TYPO3\Flow\Cache\CacheManager::class)->flushCaches();
+            });
         });
     }
 }
