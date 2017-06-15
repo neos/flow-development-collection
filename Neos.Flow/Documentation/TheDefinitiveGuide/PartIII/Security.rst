@@ -1063,7 +1063,7 @@ entities. The following examples, taken from the functional tests, show some mor
     'Acme.MyPackage.RelatedStringProperty':
       matcher: 'isType("Acme\MyPackage\EntityA") && property("relatedEntityB.stringValue") == "Admin"'
 
-    'Acme.MyPackage.RelatedPropertyComparedWithGlobalObject:
+    'Acme.MyPackage.RelatedPropertyComparedWithGlobalObject':
      matcher: 'isType("Acme\MyPackage\EntityA") && property("relatedEntityB.ownerAccount") != "context.securityContext.account" && property("relatedEntityB.ownerAccount") != NULL'
 
     'Acme.MyPackage.CompareStringPropertyWithCollection':
