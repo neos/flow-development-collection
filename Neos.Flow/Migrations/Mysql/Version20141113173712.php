@@ -64,6 +64,9 @@ class Version20141113173712 extends AbstractMigration
      */
     protected function migrateAccountRolesUp()
     {
+        if (!$this->sm->tablesExist(['typo3_flow_security_account_roles_join', 'typo3_flow_security_policy_role'])) {
+            return;
+        }
         $accountsWithRoles = array();
 
         $accountRolesResult = $this->connection->executeQuery('SELECT j.flow_security_account, r.identifier FROM typo3_flow_security_account_roles_join as j LEFT JOIN typo3_flow_security_policy_role AS r ON j.flow_policy_role = r.identifier');
@@ -84,6 +87,9 @@ class Version20141113173712 extends AbstractMigration
      */
     protected function migrateAccountRolesDown()
     {
+        if (!$this->sm->tablesExist(['typo3_flow_security_account', 'typo3_flow_security_policy_role', 'typo3_flow_security_account_roles_join'])) {
+            return;
+        }
         $allRolesAndAccounts = array();
         $accountRolesResult = $this->connection->executeQuery('SELECT persistence_object_identifier, roleidentifiers FROM typo3_flow_security_account');
         while ($accountIdentifierAndRoles = $accountRolesResult->fetch(\PDO::FETCH_ASSOC)) {
