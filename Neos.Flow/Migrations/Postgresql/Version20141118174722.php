@@ -51,6 +51,9 @@ class Version20141118174722 extends AbstractMigration
      */
     public function postUp(Schema $schema)
     {
+        if (!$this->sm->tablesExist(['typo3_flow_resource_resource'])) {
+            return;
+        }
         $resourcesResult = $this->connection->executeQuery('SELECT persistence_object_identifier, sha1, filename FROM typo3_flow_resource_resource');
         while ($resourceInfo = $resourcesResult->fetch(\PDO::FETCH_ASSOC)) {
             $resourcePathAndFilename = FLOW_PATH_DATA . 'Persistent/Resources/' . $resourceInfo['sha1'];
@@ -123,6 +126,9 @@ class Version20141118174722 extends AbstractMigration
      */
     public function postDown(Schema $schema)
     {
+        if (!$this->sm->tablesExist(['typo3_flow_resource_resource', 'typo3_flow_resource_resourcepointer'])) {
+            return;
+        }
         $resourcesResult = $this->connection->executeQuery('SELECT DISTINCT resourcepointer FROM typo3_flow_resource_resource');
         while ($resourceInfo = $resourcesResult->fetch(\PDO::FETCH_ASSOC)) {
             $this->connection->executeQuery(

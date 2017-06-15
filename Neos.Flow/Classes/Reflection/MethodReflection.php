@@ -107,6 +107,18 @@ class MethodReflection extends \ReflectionMethod
     }
 
     /**
+     * @return bool Whether a return type is declared (@see getDeclaredReturnType()) and has a nullable modifier ("?")
+     */
+    public function isDeclaredReturnTypeNullable()
+    {
+        if (!is_callable(array($this, 'getReturnType'))) {
+            return false;
+        }
+        $type = $this->getReturnType();
+        return $type !== null && $type->allowsNull();
+    }
+
+    /**
      * Returns an instance of the doc comment parser and
      * runs the parse() method.
      *

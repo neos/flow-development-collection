@@ -18,6 +18,10 @@ class Version20150611154421 extends AbstractMigration
     {
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != "postgresql");
 
+        if (!$this->sm->tablesExist(['typo3_flow_resource_resource'])) {
+            return;
+        }
+
         $resourcesResult = $this->connection->executeQuery('SELECT persistence_object_identifier, sha1, filename FROM typo3_flow_resource_resource');
         while ($resourceInfo = $resourcesResult->fetch(\PDO::FETCH_ASSOC)) {
             $resourcePathAndFilename = FLOW_PATH_DATA . 'Persistent/Resources/' . wordwrap($resourceInfo['sha1'], 5, '/', true) . '/' . $resourceInfo['sha1'];
