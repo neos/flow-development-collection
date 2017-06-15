@@ -100,8 +100,8 @@ class RuntimeExpressionEvaluator
     {
         $functionName = $this->generateExpressionFunctionName($privilegeIdentifier);
 
-        if (!$this->runtimeExpressions[$functionName] instanceof \Closure) {
-            throw new Exception('Runtime expression "' . $functionName . '" does not exist.', 1428694144);
+        if (!isset($this->runtimeExpressions[$functionName]) || !$this->runtimeExpressions[$functionName] instanceof \Closure) {
+            throw new Exception('Runtime expression "' . $functionName . '" does not exist. Flushing the code caches may help to solve this.', 1428694144);
         }
 
         return $this->runtimeExpressions[$functionName]->__invoke($joinPoint, $this->objectManager);
