@@ -134,7 +134,7 @@ class CommandRequestHandler implements RequestHandlerInterface
         if ($this->bootstrap->isCompiletimeCommand($command->getCommandIdentifier())) {
             $this->response->appendContent(sprintf(
                 "<b>Unrecognized Command</b>\n\n" .
-                "Sorry, but he command \"%s\" must be specified by its full command\n" .
+                "Sorry, but the command \"%s\" must be specified by its full command\n" .
                 "identifier because it is a compile time command which cannot be resolved\n" .
                 "from an abbreviated command identifier.\n\n",
                 $command->getCommandIdentifier())
