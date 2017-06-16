@@ -41,6 +41,25 @@ class FilesTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * @param string $target
+     * @param string $link
+     * @return boolean
+     * @throws \Exception
+     */
+    protected function trySymlink($target, $link)
+    {
+        try {
+            return symlink($target, $link);
+        } catch (\Exception $e) {
+            if (DIRECTORY_SEPARATOR !== '/') {
+                $this->markTestSkipped('Your windows installation does not allow symlinks. Make sure these tests are run with appropriate rights.');
+                return false;
+            }
+            throw $e;
+        }
+    }
+
+    /**
      * @test
      */
     public function getUnixStylePathWorksForPathWithoutSlashes()
@@ -200,7 +219,7 @@ class FilesTest extends \PHPUnit\Framework\TestCase
         if (file_exists($linkPathAndFilename)) {
             @unlink($linkPathAndFilename);
         }
-        symlink($targetPathAndFilename, $linkPathAndFilename);
+        $this->trySymlink($targetPathAndFilename, $linkPathAndFilename);
         $this->assertTrue(Files::is_link($linkPathAndFilename));
     }
 
@@ -229,7 +248,7 @@ class FilesTest extends \PHPUnit\Framework\TestCase
         if (is_dir($linkPath)) {
             Files::removeDirectoryRecursively($linkPath);
         }
-        symlink($targetPath, $linkPath);
+        $this->trySymlink($targetPath, $linkPath);
         $this->assertTrue(Files::is_link($linkPath));
     }
 
@@ -346,7 +365,7 @@ class FilesTest extends \PHPUnit\Framework\TestCase
         if (file_exists($linkPathAndFilename)) {
             @unlink($linkPathAndFilename);
         }
-        symlink($targetPathAndFilename, $linkPathAndFilename);
+        $this->trySymlink($targetPathAndFilename, $linkPathAndFilename);
         $this->assertTrue(Files::unlink($linkPathAndFilename));
         $this->assertTrue(file_exists($targetPathAndFilename));
         $this->assertFalse(file_exists($linkPathAndFilename));
@@ -365,7 +384,7 @@ class FilesTest extends \PHPUnit\Framework\TestCase
         if (is_dir($linkPath)) {
             Files::removeDirectoryRecursively($linkPath);
         }
-        symlink($targetPath, $linkPath);
+        $this->trySymlink($targetPath, $linkPath);
         $this->assertTrue(Files::unlink($linkPath));
         $this->assertTrue(file_exists($targetPath));
         $this->assertFalse(file_exists($linkPath));
