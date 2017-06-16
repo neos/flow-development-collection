@@ -67,7 +67,7 @@ class FlockLockStrategy implements LockStrategyInterface
      * @return void
      * @throws LockNotAcquiredException
      */
-    public function acquire($subject, $exclusiveLock)
+    public function acquire(string $subject, bool $exclusiveLock)
     {
         $this->lockFileName = Utility\Files::concatenatePaths([$this->temporaryDirectory, md5($subject)]);
         $aquiredLock = false;
@@ -88,7 +88,7 @@ class FlockLockStrategy implements LockStrategyInterface
      * @throws LockNotAcquiredException
      * return void
      */
-    protected function configureLockDirectory($lockDirectory)
+    protected function configureLockDirectory(string $lockDirectory)
     {
         Utility\Files::createDirectoryRecursively($lockDirectory);
         $this->temporaryDirectory = $lockDirectory;
@@ -101,7 +101,7 @@ class FlockLockStrategy implements LockStrategyInterface
      * @return boolean Was a lock aquired?
      * @throws LockNotAcquiredException
      */
-    protected function tryToAcquireLock($exclusiveLock)
+    protected function tryToAcquireLock(bool $exclusiveLock): bool
     {
         $this->filePointer = @fopen($this->lockFileName, 'w');
         if ($this->filePointer === false) {
@@ -132,7 +132,7 @@ class FlockLockStrategy implements LockStrategyInterface
      * @param boolean $exclusiveLock
      * @throws LockNotAcquiredException
      */
-    protected function applyFlock($exclusiveLock)
+    protected function applyFlock(bool $exclusiveLock)
     {
         $lockOption = $exclusiveLock === true ? LOCK_EX : LOCK_SH;
 
@@ -146,7 +146,7 @@ class FlockLockStrategy implements LockStrategyInterface
      *
      * @return boolean TRUE on success, FALSE otherwise
      */
-    public function release()
+    public function release(): bool
     {
         $success = true;
         if (is_resource($this->filePointer)) {
@@ -165,7 +165,7 @@ class FlockLockStrategy implements LockStrategyInterface
     /**
      * @return string
      */
-    public function getLockFileName()
+    public function getLockFileName(): string
     {
         return $this->lockFileName;
     }
