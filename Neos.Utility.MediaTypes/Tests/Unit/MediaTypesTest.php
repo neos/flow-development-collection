@@ -66,7 +66,7 @@ class MediaTypesTest extends UnitTestCase
     public function getMediaTypeFromFilename(string $filename, string $expectedMediaType)
     {
         $filePath = __DIR__ . '/Fixtures/' . $filename;
-        $fileContent = file_exists($filePath) ? file_get_contents($filePath) : '';
+        $fileContent = is_file($filePath) ? file_get_contents($filePath) : '';
         $this->assertSame($expectedMediaType, MediaTypes::getMediaTypeFromFileContent($fileContent));
     }
 
