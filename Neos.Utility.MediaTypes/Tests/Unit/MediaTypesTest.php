@@ -42,7 +42,7 @@ class MediaTypesTest extends UnitTestCase
      * @test
      * @dataProvider filenamesAndMediaTypes
      */
-    public function getMediaTypeFromFilenameMapsFilenameOrExtensionToMediaType($filename, $expectedMediaType)
+    public function getMediaTypeFromFilenameMapsFilenameOrExtensionToMediaType(string $filename, string $expectedMediaType)
     {
         $this->assertSame($expectedMediaType, MediaTypes::getMediaTypeFromFilename($filename));
     }
@@ -63,7 +63,7 @@ class MediaTypesTest extends UnitTestCase
      * @test
      * @dataProvider filesAndMediaTypes
      */
-    public function getMediaTypeFromFilename($filename, $expectedMediaType)
+    public function getMediaTypeFromFilename(string $filename, string $expectedMediaType)
     {
         $filePath = __DIR__ . '/Fixtures/' . $filename;
         $fileContent = file_exists($filePath) ? file_get_contents($filePath) : '';
@@ -87,7 +87,7 @@ class MediaTypesTest extends UnitTestCase
      * @test
      * @dataProvider mediaTypesAndFilenames
      */
-    public function getFilenameExtensionFromMediaTypeReturnsFirstFileExtensionFoundForThatMediaType($mediaType, $filenameExtensions)
+    public function getFilenameExtensionFromMediaTypeReturnsFirstFileExtensionFoundForThatMediaType(string $mediaType, array $filenameExtensions)
     {
         $this->assertSame(($filenameExtensions === [] ? '' : $filenameExtensions[0]), MediaTypes::getFilenameExtensionFromMediaType($mediaType));
     }
@@ -96,7 +96,7 @@ class MediaTypesTest extends UnitTestCase
      * @test
      * @dataProvider mediaTypesAndFilenames
      */
-    public function getFilenameExtensionsFromMediaTypeReturnsAllFileExtensionForThatMediaType($mediaType, $filenameExtensions)
+    public function getFilenameExtensionsFromMediaTypeReturnsAllFileExtensionForThatMediaType(string $mediaType, array $filenameExtensions)
     {
         $this->assertSame($filenameExtensions, MediaTypes::getFilenameExtensionsFromMediaType($mediaType));
     }
@@ -118,7 +118,7 @@ class MediaTypesTest extends UnitTestCase
      * @test
      * @dataProvider mediaTypesAndParsedPieces
      */
-    public function parseMediaTypeReturnsAssociativeArrayWithIndividualPartsOfTheMediaType($mediaType, $expectedPieces)
+    public function parseMediaTypeReturnsAssociativeArrayWithIndividualPartsOfTheMediaType(string $mediaType, array $expectedPieces)
     {
         $request = $this->getAccessibleMock(Request::class, ['dummy'], [], '', false);
         $actualPieces = MediaTypes::parseMediaType($mediaType);
@@ -149,7 +149,7 @@ class MediaTypesTest extends UnitTestCase
      * @test
      * @dataProvider mediaRangesAndMatchingOrNonMatchingMediaTypes
      */
-    public function mediaRangeMatchesChecksIfTheGivenMediaRangeMatchesTheGivenMediaType($mediaRange, $mediaType, $expectedResult)
+    public function mediaRangeMatchesChecksIfTheGivenMediaRangeMatchesTheGivenMediaType(string $mediaRange, string $mediaType, bool $expectedResult)
     {
         $actualResult = MediaTypes::mediaRangeMatches($mediaRange, $mediaType);
         $this->assertSame($expectedResult, $actualResult);
@@ -173,7 +173,7 @@ class MediaTypesTest extends UnitTestCase
      * @test
      * @dataProvider mediaTypesWithAndWithoutParameters
      */
-    public function trimMediaTypeReturnsJustTheTypeAndSubTypeWithoutParameters($mediaType, $expectedResult)
+    public function trimMediaTypeReturnsJustTheTypeAndSubTypeWithoutParameters(string $mediaType, $expectedResult)
     {
         $actualResult = MediaTypes::trimMediaType($mediaType);
         $this->assertSame($expectedResult, $actualResult);
