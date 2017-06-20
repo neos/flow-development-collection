@@ -1,0 +1,16 @@
+`3.0.13 (2017-06-20) <https://github.com/neos/flow-development-collection/releases/tag/3.0.13>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`TASK: Use generateRandomString() instead of uniqid() <https://github.com/neos/flow-development-collection/pull/935>`_
+----------------------------------------------------------------------------------------------------------------------
+
+This reduces the risk of collision on temporary filenames and other
+identifiers and data.
+
+* Packages: ``Flow``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/3.0.12...3.0.13>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
