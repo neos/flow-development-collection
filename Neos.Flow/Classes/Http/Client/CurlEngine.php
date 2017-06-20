@@ -107,6 +107,13 @@ class CurlEngine implements RequestEngineInterface
                     ]);
                 }
             break;
+            case 'HEAD':
+                if (!is_resource($content)) {
+                    $body = $content !== '' ? $content : http_build_query($request->getArguments());
+                    curl_setopt($curlHandle, CURLOPT_POSTFIELDS, $body);
+                }
+                curl_setopt($curlHandle, CURLOPT_NOBODY, true);
+            break;
             default:
                 if (!is_resource($content)) {
                     $body = $content !== '' ? $content : http_build_query($request->getArguments());
