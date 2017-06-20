@@ -21,6 +21,7 @@ use Neos\Flow\SignalSlot\Dispatcher;
 use Neos\Flow\Utility\Exception as UtilityException;
 use Neos\Utility\Files;
 use Neos\Utility\OpcodeCacheHelper;
+use Neos\Flow\Package\Exception as PackageException;
 
 /**
  * The default Flow Package Manager
