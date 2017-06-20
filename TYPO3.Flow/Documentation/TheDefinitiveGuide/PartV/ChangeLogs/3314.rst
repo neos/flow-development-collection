@@ -1,0 +1,164 @@
+`3.3.14 (2017-06-20) <https://github.com/neos/flow-development-collection/releases/tag/3.3.14>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Add handling of HTTP HEAD-request with curl <https://github.com/neos/flow-development-collection/pull/993>`_
+---------------------------------------------------------------------------------------------------------------------
+
+Extended CurlEngine for request-type HEAD to set the option to not expect a body.
+
+resolves #992 
+
+* Packages: ``Flow``
+
+`TASK: Better message on missing runtime expression <https://github.com/neos/flow-development-collection/pull/996>`_
+--------------------------------------------------------------------------------------------------------------------
+
+This improves the error message on missing AOP runtime expressions
+just a little.
+
+* Packages: ``Flow``
+
+`TASK: Add missing documentation for trait introduction <https://github.com/neos/flow-development-collection/pull/984>`_
+------------------------------------------------------------------------------------------------------------------------
+
+Trait introduction is available since some time, but it was never
+documented. This change adds a short explanation with a code
+example to fix that.
+
+* Packages: ``Flow``
+
+`TASK: Throw error if package exists two times <https://github.com/neos/flow-development-collection/pull/953>`_
+---------------------------------------------------------------------------------------------------------------
+
+Without this change a package (defined by composer name eg. "neos/party")
+that exists two times in the installation would be silently ignored and added
+with the second path found.	This could still result in strange effects
+happening as autoload and Flow internal paths (configuration, resources) could
+diverge.
+
+With this change an exception is thrown when the package states are resolved
+and a package is found a second time.
+
+Fixes: #611
+
+* Packages: ``Flow``
+
+`BUGFIX: Trait AOP works when only introduces traits to class <https://github.com/neos/flow-development-collection/pull/987>`_
+------------------------------------------------------------------------------------------------------------------------------
+
+When introducing a trait using AOP it now works if the class only has traits introduced via AOP.
+
+* Packages: ``Flow``
+
+`BUGFIX: Check for link in unpublishFile() <https://github.com/neos/flow-development-collection/pull/973>`_
+-----------------------------------------------------------------------------------------------------------
+
+`unpublishFile()` in the `FileSystemTarget` does not remove symlinks
+correctly, thus the method is adjusted in the `FileSystemSymlinkTarget`
+to check using `is_link()` instead of `file_exists()`.
+
+Fixes #972
+
+* Packages: ``Flow``
+
+`BUGFIX: Return type declaration should be FQCN <https://github.com/neos/flow-development-collection/pull/967>`_
+----------------------------------------------------------------------------------------------------------------
+
+Fixes #963
+
+* Packages: ``Flow``
+
+`BUGFIX: FileSystemTargetTest shouldn't have side effects <https://github.com/neos/flow-development-collection/pull/966>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+The test would create a Flow package in the current installation as the
+package manager in the test was not prepared with a virtual filesystem.
+
+* Packages: ``Flow``
+
+`TASK: Adjust schema of routes configuration <https://github.com/neos/flow-development-collection/pull/932>`_
+-------------------------------------------------------------------------------------------------------------
+
+Previously the route parts were evaluated correct regardless of the configured keys because the schema used the configuration `additionalAttributes = FALSE` instead of `additionalProperties = FALSE`. This is fixed and the schema is updated 
+
+- validate the keys in route parts strictly
+- allow configuration of `objectType` and  `uriPattern ` instead of `handler`
+- allow `options` and `toLowerCase` for all routeParts
+
+- [x] Code follows the PSR-2 coding style
+- [ ] Tests have been created, run and adjusted as needed
+- [x] The PR is created against the [lowest maintained branch](https://www.neos.io/features/release-roadmap.html)
+
+* Packages: ``Flow``
+
+`TASK: Fix error message to correctly refer to composer.json <https://github.com/neos/flow-development-collection/pull/960>`_
+-----------------------------------------------------------------------------------------------------------------------------
+
+This misleading message was introduced in `a0a1453d87053e2c17b954804c61c5c03fa00c89 <https://github.com/neos/flow-development-collection/commit/a0a1453d87053e2c17b954804c61c5c03fa00c89>`_
+due to too much javascript work being done.
+
+* Packages: ``Flow``
+
+`TASK: Remove usage of deprecated \`\`Yaml::parse\`\` with file path <https://github.com/neos/flow-development-collection/pull/949>`_
+-------------------------------------------------------------------------------------------------------------------------------------
+
+The symfony yaml parser deprecated handing in a file path and
+instead expects the yaml content as string. As that is the same
+behavior as for the PHP YAML extension the code was adapted to
+read the file in all cases and pass the content to the respective
+parser.
+
+Fixes: #824
+
+* Packages: ``Flow``
+
+`TASK: Fix link to support page <https://github.com/neos/flow-development-collection/pull/952>`_
+------------------------------------------------------------------------------------------------
+
+Related #940
+
+* Packages: ``Flow``
+
+`BUGFIX: Attempt reconnect only if EntityManager is open <https://github.com/neos/flow-development-collection/pull/921>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+If a `\\Doctrine\\DBAL\\DBALException` is thrown in `persistAll()`, a reconnect will be attempted,
+but only if `EntityManager->isOpen()` returns true. Otherwise the exception is re-thrown.
+
+Before the connection to the server was sometimes never re-established, since only the specific
+Flow\\Error\\Exception was caught.
+
+Also this will prevent hiding exceptions that result in a closed EntityManager.
+
+Fixes #870
+
+* Packages: ``Flow``
+
+`BUGFIX: Fix support for PHP 7.1 <https://github.com/neos/flow-development-collection/pull/936>`_
+-------------------------------------------------------------------------------------------------
+
+With PHP 7.1 the behavior of `file_get_contents()` has been changed
+allowing negative offsets to be specified.
+
+This change adjusts the signature of `TYPO3\\Flow\\Utility\\Files::getFileContents()`
+accordingly.
+
+*Note:* This is a backport of #821 which has only been applied to the 4.0 branch
+
+Fixes: neos/neos-development-collection#1301, #847
+
+* Packages: ``Files`` ``Flow``
+
+`TASK: Use generateRandomString() instead of uniqid() <https://github.com/neos/flow-development-collection/pull/935>`_
+----------------------------------------------------------------------------------------------------------------------
+
+This reduces the risk of collision on temporary filenames and other
+identifiers and data.
+
+* Packages: ``Flow``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/3.3.13...3.3.14>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
