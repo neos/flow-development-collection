@@ -11,13 +11,13 @@ namespace TYPO3\Flow\Tests\Unit\Resource\Streams;
  * source code.
  */
 
-use TYPO3\Flow\Package;
 use TYPO3\Flow\Cli\CommandRequestHandler;
 use TYPO3\Flow\Core\Bootstrap;
 use TYPO3\Flow\Http\HttpRequestHandlerInterface;
 use TYPO3\Flow\Http\Request;
 use TYPO3\Flow\Http\Uri;
 use TYPO3\Flow\Log\SystemLoggerInterface;
+use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\Flow\Package\PackageManager;
 use TYPO3\Flow\Resource\Resource;
 use TYPO3\Flow\Resource\Collection;
@@ -215,6 +215,7 @@ class FileSystemTargetTest extends UnitTestCase
         $packageManager->activatePackage("TYPO3.Flow");
 
         $packageStorage = new PackageStorage('testStorage');
+        $packageStorage->initializeObject(ObjectManagerInterface::INITIALIZATIONCAUSE_CREATED);
 
         $mockSystemLogger = $this->getMockBuilder(SystemLoggerInterface::class)->getMock();
 
@@ -228,7 +229,8 @@ class FileSystemTargetTest extends UnitTestCase
 
         $staticCollection = new Collection('testStaticCollection', $packageStorage, $this->fileSystemTarget, ['*']);
 
-        $fileSystemTarget = new FileSystemTarget('test', ['path' => 'vfs://Publish']);
+        $fileSystemTarget = new FileSystemTarget('test', ['path' => 'vfs://Test/Publish']);
+        $fileSystemTarget->initializeObject(ObjectManagerInterface::INITIALIZATIONCAUSE_CREATED);
         $this->inject($fileSystemTarget, 'systemLogger', $mockSystemLogger);
         $fileSystemTarget->publishCollection($staticCollection, $_publicationCallback);
 
