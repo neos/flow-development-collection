@@ -827,4 +827,39 @@ class UriBuilderTest extends UnitTestCase
         $expectedResult = $arguments;
         $this->assertEquals($expectedResult, $this->uriBuilder->getArguments());
     }
+
+    /**
+     * @test
+     */
+    public function uriForInSubRequestWillKeepFormatOfMainRequest()
+    {
+        $expectedArguments = [
+            '@format' => 'custom',
+            'SubNamespace' => ['@action' => 'someaction', '@controller' => 'somecontroller', '@package' => 'somepackage']
+        ];
+        $this->mockMainRequest->expects($this->any())->method('getFormat')->will($this->returnValue('custom'));
+
+        $this->uriBuilder->setRequest($this->mockSubRequest);
+        $this->uriBuilder->uriFor('SomeAction', [], 'SomeController', 'SomePackage');
+
+        $this->assertEquals($expectedArguments, $this->uriBuilder->getLastArguments());
+    }
+
+    /**
+     * @test
+     */
+    public function uriForInSubRequestWithFormatWillNotOverrideFormatOfMainRequest()
+    {
+        $expectedArguments = [
+            '@format' => 'custom',
+            'SubNamespace' => ['@action' => 'someaction', '@controller' => 'somecontroller', '@package' => 'somepackage', '@format' => 'inner']
+        ];
+        $this->mockMainRequest->expects($this->any())->method('getFormat')->will($this->returnValue('custom'));
+
+        $this->uriBuilder->setRequest($this->mockSubRequest);
+        $this->uriBuilder->setFormat('inner');
+        $this->uriBuilder->uriFor('SomeAction', [], 'SomeController', 'SomePackage');
+
+        $this->assertEquals($expectedArguments, $this->uriBuilder->getLastArguments());
+    }
 }
