@@ -469,11 +469,12 @@ class ActionRequest implements RequestInterface
      */
     public function setArgument($argumentName, $value)
     {
-        if (!is_string($argumentName) || strlen($argumentName) === 0) {
+        $argumentName = (string)$argumentName;
+        if (empty($argumentName)) {
             throw new Exception\InvalidArgumentNameException('Invalid argument name (must be a non-empty string).', 1210858767);
         }
 
-        if (substr($argumentName, 0, 2) === '__') {
+        if (strpos($argumentName, '__') === 0) {
             $this->internalArguments[$argumentName] = $value;
             return;
         }
@@ -482,7 +483,7 @@ class ActionRequest implements RequestInterface
             throw new Exception\InvalidArgumentTypeException('You are not allowed to store objects in the request arguments. Please convert the object of type "' . get_class($value) . '" given for argument "' . $argumentName . '" to a simple type first.', 1302783022);
         }
 
-        if (substr($argumentName, 0, 2) === '--') {
+        if (strpos($argumentName, '--') === 0) {
             $this->pluginArguments[substr($argumentName, 2)] = $value;
             return;
         }
