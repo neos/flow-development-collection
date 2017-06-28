@@ -11,6 +11,8 @@ namespace Neos\Kickstarter\Command;
  * source code.
  */
 
+use Neos\Flow\Composer\ComposerUtility;
+use Neos\Flow\Package\PackageInterface;
 use Neos\Utility\Arrays;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
@@ -43,10 +45,11 @@ class KickstartCommandController extends CommandController
      * For creating a new package without sample code use the package:create command.
      *
      * @param string $packageKey The package key, for example "MyCompany.MyPackageName"
+     * @param string $packageType Optional package type, e.g. "neos-plugin"
      * @return string
-     * @see typo3.flow:package:create
+     * @see neos.flow:package:create
      */
-    public function packageCommand($packageKey)
+    public function packageCommand($packageKey, $packageType = PackageInterface::DEFAULT_COMPOSER_TYPE)
     {
         $this->validatePackageKey($packageKey);
 
@@ -54,7 +57,13 @@ class KickstartCommandController extends CommandController
             $this->outputLine('Package "%s" already exists.', array($packageKey));
             exit(2);
         }
-        $this->packageManager->createPackage($packageKey);
+
+        if (!ComposerUtility::isFlowPackageType($packageType)) {
+            $this->outputLine('The package must be a Flow package, but "%s" is not a valid Flow package type.', [$packageType]);
+            $this->quit(1);
+        }
+
+        $this->packageManager->createPackage($packageKey, ['type' => $packageType]);
         $this->actionControllerCommand($packageKey, 'Standard');
         $this->documentationCommand($packageKey);
     }
