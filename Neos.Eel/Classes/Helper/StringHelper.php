@@ -198,7 +198,7 @@ class StringHelper implements ProtectedContextAwareInterface
         return $matches;
     }
 
-      /**
+    /**
      * Perform a global regular expression match (PREG style)
      *
      * Example::
