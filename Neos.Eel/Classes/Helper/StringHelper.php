@@ -198,6 +198,31 @@ class StringHelper implements ProtectedContextAwareInterface
         return $matches;
     }
 
+      /**
+     * Perform a global regular expression match (PREG style)
+     *
+     * Example::
+     *
+     *     String.pregMatchAll("<hr id="icon-one" /><hr id="icon-two" />", '/id="icon-(.+?)"/')
+     *       == [['id="icon-one"', 'id="icon-two"'],['one','two']]
+     *
+     * @param string $string The input string
+     * @param string $pattern A PREG pattern
+     * @return array The matches as array or NULL if not matched
+     * @throws EvaluationException
+     */
+    public function pregMatchAll($string, $pattern)
+    {
+        $number = preg_match_all($pattern, $string, $matches);
+        if ($number === false) {
+            throw new EvaluationException('Error evaluating regular expression ' . $pattern . ': ' . preg_last_error(), 1372793595);
+        }
+        if ($number === 0) {
+            return null;
+        }
+        return $matches;
+    }
+
     /**
      * Replace occurrences of a search string inside the string using regular expression matching (PREG style)
      *
