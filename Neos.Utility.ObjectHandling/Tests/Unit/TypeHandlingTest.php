@@ -238,6 +238,9 @@ class TypeHandlingTest extends \PHPUnit\Framework\TestCase
 
             // Types might also contain underscores at various points.
             ['null|Doctrine\Common\Collections\Array_Collection<>', 'Doctrine\Common\Collections\Array_Collection<>'],
+
+            // This is madness. This... is... NULL!
+            ['null', 'null']
         ];
     }
 
