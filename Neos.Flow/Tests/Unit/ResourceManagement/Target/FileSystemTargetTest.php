@@ -17,6 +17,7 @@ use Neos\Flow\Http\HttpRequestHandlerInterface;
 use Neos\Flow\Http\Request;
 use Neos\Flow\Http\Uri;
 use Neos\Flow\Log\SystemLoggerInterface;
+use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Package;
 use Neos\Flow\Package\PackageManager;
 use Neos\Flow\ResourceManagement\Collection;
@@ -215,6 +216,7 @@ class FileSystemTargetTest extends UnitTestCase
         $packageManager->activatePackage("Neos.Flow");
 
         $packageStorage = new PackageStorage('testStorage');
+        $packageStorage->initializeObject(ObjectManagerInterface::INITIALIZATIONCAUSE_CREATED);
 
         $mockSystemLogger = $this->getMockBuilder(SystemLoggerInterface::class)->getMock();
 
@@ -228,7 +230,8 @@ class FileSystemTargetTest extends UnitTestCase
 
         $staticCollection = new Collection('testStaticCollection', $packageStorage, $this->fileSystemTarget, ['*']);
 
-        $fileSystemTarget = new FileSystemTarget('test', ['path' => 'vfs://Publish']);
+        $fileSystemTarget = new FileSystemTarget('test', ['path' => 'vfs://Test/Publish']);
+        $fileSystemTarget->initializeObject(ObjectManagerInterface::INITIALIZATIONCAUSE_CREATED);
         $this->inject($fileSystemTarget, 'systemLogger', $mockSystemLogger);
         $fileSystemTarget->publishCollection($staticCollection, $_publicationCallback);
 
