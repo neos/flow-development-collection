@@ -450,8 +450,10 @@ class Headers
                 continue;
             }
             list($name, $value) = explode('=', $cookiePair, 2);
-            if (trim($name) !== '') {
-                $this->setCookie(new Cookie(trim($name), urldecode(trim($value, "\t ;\""))));
+            $trimmedName = trim($name);
+
+            if ($trimmedName !== '' && preg_match(Cookie::PATTERN_TOKEN, $trimmedName) === 1) {
+                $this->setCookie(new Cookie($trimmedName, urldecode(trim($value, "\t ;\""))));
             }
         }
     }
