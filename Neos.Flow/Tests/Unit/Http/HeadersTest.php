@@ -241,6 +241,18 @@ class HeadersTest extends UnitTestCase
     }
 
     /**
+     * @test
+     */
+    public function cookiesWithInvalidNameAreIgnored()
+    {
+        $headers = new Headers();
+        $headers->set('Cookie', array('cookie-valid=this+is+valid; cookie[invalid]=this+is+invalid'));
+
+        $this->assertTrue($headers->hasCookie('cookie-valid'));
+        $this->assertFalse($headers->hasCookie('cookie[invalid]'));
+    }
+
+    /**
      * Data provider with valid cache control headers
      */
     public function cacheControlHeaders()
