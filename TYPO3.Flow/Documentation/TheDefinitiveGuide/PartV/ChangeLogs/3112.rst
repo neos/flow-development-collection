@@ -1,0 +1,17 @@
+`3.1.12 (2017-07-07) <https://github.com/neos/flow-development-collection/releases/tag/3.1.12>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`TASK: Ignore invalid cookie names instead of throwing an exception <https://github.com/neos/flow-development-collection/pull/971>`_
+------------------------------------------------------------------------------------------------------------------------------------
+
+This prevents the exception that is thrown when a cookie has an invalid name.
+
+See the discussion here: https://discuss.neos.io/t/ignore-invalid-cookies-instead-of-throwing-an-exception/2234
+
+* Packages: ``Flow``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/3.1.11...3.1.12>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
