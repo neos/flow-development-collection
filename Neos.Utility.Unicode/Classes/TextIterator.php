@@ -83,17 +83,17 @@ class TextIterator implements \Iterator
      * Constructs the TextIterator
      *
      * @param string $subject
-     * @param integer $iteratorType The type of iterator
+     * @param int $iteratorType The type of iterator
      * @throws Exception
      */
-    public function __construct($subject, $iteratorType = self::CHARACTER)
+    public function __construct(string $subject, int $iteratorType = self::CHARACTER)
     {
         if ($iteratorType < 1 || $iteratorType > 6) {
             throw new Exception('Fatal error: Invalid iterator type in TextIterator constructor', 1210849014);
         }
 
         $this->iteratorType = $iteratorType;
-        $this->subject = (string)$subject;
+        $this->subject = $subject;
         $this->currentPosition = 0;
         $this->iteratorCache = new \ArrayObject();
         $this->iteratorCacheIterator = $this->iteratorCache->getIterator();
@@ -195,11 +195,11 @@ class TextIterator implements \Iterator
     }
 
     /**
-     * Returns the next elment following the character of the original string
+     * Returns the next element following the character of the original string
      * given by its offset
      *
      * @param integer $offset The offset of the character
-     * @return string The element following this character
+     * @return integer The element following this character
      */
     public function following($offset)
     {
@@ -218,7 +218,7 @@ class TextIterator implements \Iterator
      * Returns the element preceding the character of the original string given by its offset
      *
      * @param integer $offset The offset of the character
-     * @return string The element preceding this character
+     * @return integer The element preceding this character
      */
     public function preceding($offset)
     {
