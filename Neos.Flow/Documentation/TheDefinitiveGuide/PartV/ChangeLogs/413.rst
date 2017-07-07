@@ -1,0 +1,53 @@
+`4.1.3 (2017-07-07) <https://github.com/neos/flow-development-collection/releases/tag/4.1.3>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Make CLI subprocesses work on Windows <https://github.com/neos/flow-development-collection/pull/1010>`_
+----------------------------------------------------------------------------------------------------------------
+
+On Windows, the `PHP_BINDIR` constant will resolve to "C:\\php" no matter what the actual php directory is, because this constant is decided at compile time. However, the `PHP_BINARY` constant will resolve to the current executable that runs the script at runtime, which at least for CLI will be the PHP executable.
+
+* Packages: ``Flow``
+
+`BUGFIX: Integer argumentName should not result in an exception <https://github.com/neos/flow-development-collection/pull/954>`_
+--------------------------------------------------------------------------------------------------------------------------------
+
+This prevents an exception in case an argument name is evaluated to
+another simple type (integer) but can be converted to string easily.
+
+Fixes: #612
+
+`BUGFIX: Keep format for URIs built in subrequests <https://github.com/neos/flow-development-collection/pull/985>`_
+-------------------------------------------------------------------------------------------------------------------
+
+Adds handling for the `@format` argument when merging arguments
+from the request hierarchy to keep the format when building
+URIs from a sub request.
+
+Fixes neos/neos-development-collection#1596
+
+`TASK: Fix typo in @return annotation <https://github.com/neos/flow-development-collection/pull/1006>`_
+-------------------------------------------------------------------------------------------------------
+
+`BUGFIX: FileSystemTargetTest shouldn't create package stub <https://github.com/neos/flow-development-collection/pull/1005>`_
+-----------------------------------------------------------------------------------------------------------------------------
+
+The FileSystemTargetTest was fixed earlier to no longer create a stub
+of a package during test runs in the real filesystem see PR #966.)
+
+The test still created a stub package, because the FileSystemTarget
+was told to publish to a vfs location - but that option is only used
+if initializeObject() is called, which in unit tests does not happen
+automagically.
+
+`TASK: Ignore invalid cookie names instead of throwing an exception <https://github.com/neos/flow-development-collection/pull/971>`_
+------------------------------------------------------------------------------------------------------------------------------------
+
+This prevents the exception that is thrown when a cookie has an invalid name.
+
+See the discussion here: https://discuss.neos.io/t/ignore-invalid-cookies-instead-of-throwing-an-exception/2234
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/4.1.2...4.1.3>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
