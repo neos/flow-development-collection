@@ -173,7 +173,7 @@ class MediaTypesTest extends UnitTestCase
      * @test
      * @dataProvider mediaTypesWithAndWithoutParameters
      */
-    public function trimMediaTypeReturnsJustTheTypeAndSubTypeWithoutParameters(string $mediaType, $expectedResult)
+    public function trimMediaTypeReturnsJustTheTypeAndSubTypeWithoutParameters(string $mediaType, string $expectedResult = null)
     {
         $actualResult = MediaTypes::trimMediaType($mediaType);
         $this->assertSame($expectedResult, $actualResult);
