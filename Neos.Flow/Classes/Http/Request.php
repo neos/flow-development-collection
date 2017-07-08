@@ -577,7 +577,7 @@ class Request extends AbstractMessage
                 }
             }
         }
-        return ($trim ? MediaTypes::trimMediaType($negotiatedMediaType) : $negotiatedMediaType);
+        return ($trim && $negotiatedMediaType !== null ? MediaTypes::trimMediaType($negotiatedMediaType) : $negotiatedMediaType);
     }
 
     /**
