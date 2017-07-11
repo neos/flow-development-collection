@@ -284,17 +284,10 @@ abstract class ObjectAccess
             foreach (get_class_methods($object) as $methodName) {
                 if (is_callable([$object, $methodName])) {
                     $methodNameLength = strlen($methodName);
-                    if ($methodNameLength > 2) {
-                        if (strpos($methodName, 'is') === 0) {
-                            $declaredPropertyNames[] = lcfirst(substr($methodName, 2));
-                        } elseif ($methodNameLength > 3) {
-                            $methodNamePrefix = substr($methodName, 0, 3);
-                            if ($methodNamePrefix === 'get') {
-                                $declaredPropertyNames[] = lcfirst(substr($methodName, 3));
-                            } elseif ($methodNamePrefix === 'has') {
-                                $declaredPropertyNames[] = lcfirst(substr($methodName, 3));
-                            }
-                        }
+                    if ($methodNameLength > 2 && substr($methodName, 0, 2) === 'is') {
+                        $declaredPropertyNames[] = lcfirst(substr($methodName, 2));
+                    } elseif ($methodNameLength > 3 && (($methodNamePrefix = substr($methodName, 0, 3)) === 'get' || $methodNamePrefix === 'has')) {
+                        $declaredPropertyNames[] = lcfirst(substr($methodName, 3));
                     }
                 }
             }
