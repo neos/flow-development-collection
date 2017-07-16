@@ -66,7 +66,7 @@ class TypeHandlingTest extends \PHPUnit\Framework\TestCase
      * @test
      * @dataProvider types
      */
-    public function parseTypeReturnsArrayWithInformation($type, $expectedResult)
+    public function parseTypeReturnsArrayWithInformation(string $type, array $expectedResult)
     {
         $this->assertEquals(
             $expectedResult,
@@ -104,7 +104,7 @@ class TypeHandlingTest extends \PHPUnit\Framework\TestCase
      * @test
      * @dataProvider compositeTypes
      */
-    public function extractCollectionTypeReturnsOnlyTheMainType($type, $expectedResult)
+    public function extractCollectionTypeReturnsOnlyTheMainType(string $type, string $expectedResult)
     {
         $this->assertEquals(
             $expectedResult,
@@ -130,7 +130,7 @@ class TypeHandlingTest extends \PHPUnit\Framework\TestCase
      * @test
      * @dataProvider normalizeTypes
      */
-    public function normalizeTypesReturnsNormalizedType($type, $normalized)
+    public function normalizeTypesReturnsNormalizedType(string $type, string $normalized)
     {
         $this->assertEquals(TypeHandling::normalizeType($type), $normalized);
     }
@@ -153,7 +153,7 @@ class TypeHandlingTest extends \PHPUnit\Framework\TestCase
      * @test
      * @dataProvider nonliteralTypes
      */
-    public function isLiteralReturnsFalseForNonLiteralTypes($type)
+    public function isLiteralReturnsFalseForNonLiteralTypes(string $type)
     {
         $this->assertFalse(TypeHandling::isLiteral($type), 'Failed for ' . $type);
     }
@@ -178,7 +178,7 @@ class TypeHandlingTest extends \PHPUnit\Framework\TestCase
      * @test
      * @dataProvider literalTypes
      */
-    public function isLiteralReturnsTrueForLiteralType($type)
+    public function isLiteralReturnsTrueForLiteralType(string $type)
     {
         $this->assertTrue(TypeHandling::isLiteral($type), 'Failed for ' . $type);
     }
@@ -209,7 +209,7 @@ class TypeHandlingTest extends \PHPUnit\Framework\TestCase
      * @test
      * @dataProvider collectionTypes
      */
-    public function isCollectionTypeReturnsTrueForCollectionType($type, $expected)
+    public function isCollectionTypeReturnsTrueForCollectionType(string $type, bool $expected)
     {
         $this->assertSame($expected, TypeHandling::isCollectionType($type), 'Failed for ' . $type);
     }
