@@ -28,7 +28,7 @@ abstract class Functions
      * @return string The converted string
      * @api
      */
-    public static function strtotitle($string)
+    public static function strtotitle(string $string): string
     {
         $result = '';
         $splitIntoLowerCaseWords = preg_split("/([\n\r\t ])/", self::strtolower($string), -1, PREG_SPLIT_DELIM_CAPTURE);
@@ -47,7 +47,7 @@ abstract class Functions
      * @return string The processed string
      * @api
      */
-    public static function substr($string, $start, $length = null)
+    public static function substr(string $string, int $start, int $length = null)
     {
         if ($length === 0) {
             return '';
@@ -63,9 +63,9 @@ abstract class Functions
             mb_internal_encoding($enc);
 
             return $str;
-        } else {
-            return mb_substr($string, $start, $length, 'UTF-8');
         }
+
+        return mb_substr($string, $start, $length, 'UTF-8');
     }
 
     /**
@@ -75,7 +75,7 @@ abstract class Functions
      * @return string The processed string
      * @api
      */
-    public static function strtoupper($string)
+    public static function strtoupper(string $string): string
     {
         return str_replace('ß', 'SS', mb_strtoupper($string, 'UTF-8'));
     }
@@ -87,7 +87,7 @@ abstract class Functions
      * @return string The processed string
      * @api
      */
-    public static function strtolower($string)
+    public static function strtolower(string $string): string
     {
         return mb_strtolower($string, 'UTF-8');
     }
@@ -99,7 +99,7 @@ abstract class Functions
      * @return integer The number of characters
      * @api
      */
-    public static function strlen($string)
+    public static function strlen(string $string): int
     {
         return mb_strlen($string, 'UTF-8');
     }
@@ -111,7 +111,7 @@ abstract class Functions
      * @return string The same string, first character uppercased
      * @api
      */
-    public static function ucfirst($string)
+    public static function ucfirst(string $string): string
     {
         return self::strtoupper(self::substr($string, 0, 1)) . self::substr($string, 1);
     }
@@ -123,7 +123,7 @@ abstract class Functions
      * @return string The same string, first character lowercased
      * @api
      */
-    public static function lcfirst($string)
+    public static function lcfirst(string $string): string
     {
         return self::strtolower(self::substr($string, 0, 1)) . self::substr($string, 1);
     }
@@ -137,7 +137,7 @@ abstract class Functions
      * @return integer The character position
      * @api
      */
-    public static function strpos($haystack, $needle, $offset = 0)
+    public static function strpos(string $haystack, string $needle, int $offset = 0): int
     {
         return mb_strpos($haystack, $needle, $offset, 'UTF-8');
     }
@@ -159,7 +159,7 @@ abstract class Functions
      * @return string|array
      * @api
      */
-    public static function pathinfo($path, $options = null)
+    public static function pathinfo(string $path, int $options = null)
     {
         $currentLocale = setlocale(LC_CTYPE, 0);
         // Before we have a setting for setlocale, his should suffice for pathinfo
@@ -177,7 +177,7 @@ abstract class Functions
      * @param integer $component Specify one of PHP_URL_SCHEME, PHP_URL_HOST, PHP_URL_PORT, PHP_URL_USER, PHP_URL_PASS, PHP_URL_PATH, PHP_URL_QUERY or PHP_URL_FRAGMENT to retrieve just a specific URL component as a string (except when PHP_URL_PORT is given, in which case the return value will be an integer).
      * @return mixed
      */
-    public static function parse_url($url, $component = -1)
+    public static function parse_url(string $url, int $component = -1)
     {
         $encodedUrl = preg_replace_callback('%[^:@/?#&=\.]+%usD', function ($matches) {
             return urlencode($matches[0]);
