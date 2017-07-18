@@ -7,6 +7,10 @@ namespace Neos\Flow\Http;
 class FlowUploadedFile extends UploadedFile
 {
     /**
+     * This is either the persistent identifier of a previously submitted resource file
+     * or an array with the "__identity" key set to the persistent identifier.
+     *
+     *
      * @var array|string
      */
     protected $originallySubmittedResource;
@@ -25,6 +29,11 @@ class FlowUploadedFile extends UploadedFile
     }
 
     /**
+     * Sets a previously submitted resource reference.
+     *
+     * This is either the persistent identifier of a previously submitted resource file
+     * or an array with the "__identity" key set to the persistent identifier.
+     *
      * @param array|string $originallySubmittedResource
      */
     public function setOriginallySubmittedResource($originallySubmittedResource)

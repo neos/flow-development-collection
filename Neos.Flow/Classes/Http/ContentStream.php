@@ -72,11 +72,12 @@ class ContentStream implements StreamInterface
         if (!is_resource($stream)) {
             $stream = $this->openStream($stream, $mode);
         }
-        $this->resource = $stream;
 
-        if (!$this->hasValidResource()) {
+        if (!$this->isValidResource($stream)) {
             throw new \InvalidArgumentException('Invalid stream provided; must be a string or stream resource', 1453891861);
         }
+
+        $this->resource = $stream;
     }
 
     /**
@@ -86,7 +87,7 @@ class ContentStream implements StreamInterface
      */
     public function getSize()
     {
-        if (!$this->hasValidResource()) {
+        if (!$this->isValidResource($this->resource)) {
             return null;
         }
 
@@ -120,7 +121,7 @@ class ContentStream implements StreamInterface
      */
     public function eof()
     {
-        if (!$this->hasValidResource()) {
+        if (!$this->isValidResource($this->resource)) {
             return true;
         }
 
@@ -134,7 +135,7 @@ class ContentStream implements StreamInterface
      */
     public function isSeekable()
     {
-        if (!$this->hasValidResource()) {
+        if (!$this->isValidResource($this->resource)) {
             return false;
         }
 
@@ -195,7 +196,7 @@ class ContentStream implements StreamInterface
      */
     public function isWritable()
     {
-        if (!$this->hasValidResource()) {
+        if (!$this->isValidResource($this->resource)) {
             return false;
         }
 
@@ -240,7 +241,7 @@ class ContentStream implements StreamInterface
      */
     public function isReadable()
     {
-        if (!$this->hasValidResource()) {
+        if (!$this->isValidResource($this->resource)) {
             return false;
         }
 
@@ -346,7 +347,7 @@ class ContentStream implements StreamInterface
      */
     protected function ensureResourceOpen()
     {
-        if (!$this->hasValidResource()) {
+        if (!$this->isValidResource($this->resource)) {
             throw new \RuntimeException('No resource available to apply operation', 1453891806);
         }
     }
@@ -354,9 +355,9 @@ class ContentStream implements StreamInterface
     /**
      * @return boolean
      */
-    protected function hasValidResource()
+    protected function isValidResource($resource)
     {
-        return (is_resource($this->resource) && get_resource_type($this->resource) === 'stream');
+        return (is_resource($resource) && get_resource_type($resource) === 'stream');
     }
 
     /**
