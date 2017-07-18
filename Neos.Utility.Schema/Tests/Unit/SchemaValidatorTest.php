@@ -1195,4 +1195,132 @@ class SchemaValidatorTest extends \PHPUnit\Framework\TestCase
         ];
         $this->assertSuccess($this->configurationValidator->validate($value, $schema), $expectedResult);
     }
+
+    /// CUSTOM ///
+
+    /**
+     * @return array
+     */
+    public function validateCustomTypeResultDataProvider()
+    {
+        return array(
+            array( ['property' => ['integer_property' => 1, 'string_property' => 'string' ] ], true ),
+            array( ['property' => ['integer_property' => 'no_integer', 'string_property' => 123 ] ], false ),
+            array( ['property' => 'some_value' ], false ),
+            array( ['other_property' => ['integer_property' => 1, 'string_property' => 'string' ] ], false ),
+            array( ['other_property' => 'some_value' ], false )
+        );
+    }
+
+    /**
+     * @test
+     * @dataProvider validateCustomTypeResultDataProvider
+     */
+    public function validateCustomTypeResult($value, $expectedResult)
+    {
+        $schema = [
+            'type' => 'dictionary',
+            'properties' => [
+                'property' => '@customType'
+            ],
+            'additionalProperties' => false,
+            '@customType' => [
+                'type' => 'dictionary',
+                'properties' => [
+                    'integer_property' => 'integer',
+                    'string_property' => 'string'
+                ]
+            ]
+        ];
+        $this->assertSuccess($this->configurationValidator->validate($value, $schema), $expectedResult);
+    }
+
+    /**
+     * @return array
+     */
+    public function validateCustomTypeWithSuperTypesDataProvider()
+    {
+        return array(
+            array( ['property' => ['supertype_property' => 1, 'type_property' => 'string' ] ], true ),
+            array( ['property' => ['supertype_property' => 'no_integer', 'type_property' => 123 ] ], false ),
+            array( ['property' => 'some_value' ], false ),
+            array( ['other_property' => ['supertype_property' => 1, 'type_property' => 'string' ] ], false ),
+            array( ['other_property' => 'some_value' ], false )
+        );
+    }
+
+    /**
+     * @test
+     * @dataProvider validateCustomTypeWithSuperTypesDataProvider
+     */
+    public function validateCustomTypeWithSuperTypes($value, $expectedResult)
+    {
+        $schema = [
+            'type' => 'dictionary',
+            'properties' => [
+                'property' => '@customType'
+            ],
+            'additionalProperties' => false,
+            '@customSuperType' => [
+                'type' => 'dictionary',
+                'properties' => [
+                    'supertype_property' => 'integer'
+                ]
+            ],
+            '@customType' => [
+                'superTypes' => ['@customSuperType'],
+                'type' => 'dictionary',
+                'properties' => [
+                    'type_property' => 'string'
+                ]
+            ]
+        ];
+        $this->assertSuccess($this->configurationValidator->validate($value, $schema), $expectedResult);
+    }
+
+    /**
+     * @return array
+     */
+    public function validateCustomTypeArrayDataProvider()
+    {
+        return array(
+            array( ['property' => ['custom_type_a_property' => 1]], true ),
+            array( ['property' => ['custom_type_b_property' => 'string' ] ], true ),
+            array( ['property' => ['custom_type_a_property' => 1, 'custom_type_b_property' => 'string' ] ], false ),
+
+            array( ['property' => ['custom_type_a_property' => 'no_integer' ] ], false ),
+            array( ['property' => ['custom_type_b_property' => 12324 ] ], false ),
+        );
+    }
+
+    /**
+     * @test
+     * @dataProvider validateCustomTypeArrayDataProvider
+     */
+    public function validateCustomTypeArray($value, $expectedResult)
+    {
+        $schema = [
+            'type' => 'dictionary',
+            'properties' => [
+                'property' => ['@customTypeA','@customTypeB'],
+            ],
+            'additionalProperties' => false,
+            '@customTypeA' => [
+                'type' => 'dictionary',
+                'properties' => [
+                    'custom_type_a_property' => 'integer'
+                ],
+                'additionalProperties' => false,
+            ],
+            '@customTypeB' => [
+                'type' => 'dictionary',
+                'properties' => [
+                    'custom_type_b_property' => 'string'
+                ],
+                'additionalProperties' => false,
+            ]
+        ];
+
+        $this->assertSuccess($this->configurationValidator->validate($value, $schema), $expectedResult);
+    }
 }

@@ -206,7 +206,7 @@ class DataMapperTest extends UnitTestCase
                     'value' => 'theUnixtime'
                 ],
                 'fourthProperty' => [
-                    'type' => \Neos\Some\Domain\Model::class,
+                    'type' => 'Neos\Some\Domain\Model',
                     'multivalue' => false,
                     'value' => ['identifier' => 'theMappedObjectIdentifier']
                 ]
@@ -217,7 +217,7 @@ class DataMapperTest extends UnitTestCase
         $classSchema->addProperty('firstProperty', 'array');
         $classSchema->addProperty('secondProperty', 'SplObjectStorage');
         $classSchema->addProperty('thirdProperty', 'DateTime');
-        $classSchema->addProperty('fourthProperty', \Neos\Some\Domain\Model::class);
+        $classSchema->addProperty('fourthProperty', 'Neos\Some\Domain\Model');
 
         $mockReflectionService = $this->createMock(ReflectionService::class);
         $mockReflectionService->expects($this->once())->method('getClassSchema')->will($this->returnValue($classSchema));

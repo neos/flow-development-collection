@@ -62,7 +62,7 @@ class Message
      * @param string $title optional title for the message
      * @api
      */
-    public function __construct($message, $code = null, array $arguments = [], $title = '')
+    public function __construct(string $message, int $code = null, array $arguments = [], string $title = '')
     {
         $this->message = $message;
         $this->code = $code;
@@ -76,7 +76,7 @@ class Message
      * @return string The error message
      * @api
      */
-    public function getMessage()
+    public function getMessage(): string
     {
         return $this->message;
     }
@@ -87,7 +87,7 @@ class Message
      * @return integer The error code
      * @api
      */
-    public function getCode()
+    public function getCode(): int
     {
         return $this->code;
     }
@@ -96,7 +96,7 @@ class Message
      * @return array
      * @api
      */
-    public function getArguments()
+    public function getArguments(): array
     {
         return $this->arguments;
     }
@@ -105,7 +105,7 @@ class Message
      * @return string
      * @api
      */
-    public function getTitle()
+    public function getTitle(): string
     {
         return $this->title;
     }
@@ -114,7 +114,7 @@ class Message
      * @return string
      * @api
      */
-    public function getSeverity()
+    public function getSeverity(): string
     {
         return $this->severity;
     }
@@ -122,7 +122,7 @@ class Message
     /**
      * @return string
      */
-    public function render()
+    public function render(): string
     {
         if ($this->arguments !== []) {
             return vsprintf($this->message, $this->arguments);
@@ -137,7 +137,7 @@ class Message
      * @return string
      * @api
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->render();
     }

@@ -241,7 +241,7 @@ class ProxyClassBuilder
      *
      * @param Configuration $objectConfiguration
      * @return string The built code
-     * @throws UnknownObjectException
+     * @throws ObjectException\UnknownObjectException
      */
     protected function buildConstructorInjectionCode(Configuration $objectConfiguration)
     {

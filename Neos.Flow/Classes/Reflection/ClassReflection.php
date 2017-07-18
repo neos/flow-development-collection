@@ -94,7 +94,7 @@ class ClassReflection extends \ReflectionClass
      * original ReflectionMethod instances.
      *
      * @param integer $filter A filter mask
-     * @return MethodReflection Method reflection objects of the methods in this class
+     * @return array<MethodReflection> Method reflection objects of the methods in this class
      */
     public function getMethods($filter = null)
     {

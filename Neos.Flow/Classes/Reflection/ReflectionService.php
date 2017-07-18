@@ -1393,6 +1393,12 @@ class ReflectionService
 
         $returnType = $method->getDeclaredReturnType();
         if ($returnType !== null) {
+            if (!TypeHandling::isSimpleType($returnType) && !in_array($returnType, ['self', 'null', 'callable'])) {
+                $returnType = '\\' . $returnType;
+            }
+            if ($method->isDeclaredReturnTypeNullable()) {
+                $returnType = '?' . $returnType;
+            }
             $this->classReflectionData[$className][self::DATA_CLASS_METHODS][$methodName][self::DATA_METHOD_DECLARED_RETURN_TYPE] = $returnType;
         }
 
@@ -1607,6 +1613,10 @@ class ReflectionService
         }
 
         if ($this->isPropertyAnnotatedWith($className, $propertyName, Flow\Inject::class)) {
+            return false;
+        }
+
+        if ($this->isPropertyAnnotatedWith($className, $propertyName, Flow\InjectConfiguration::class)) {
             return false;
         }
 

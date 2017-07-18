@@ -550,6 +550,20 @@ Filter System.
   ``@Flow\Proxy(false)`` to your filter class to prevent Flow from building a proxy,
   which causes this error.
 
+.. warning:: Custom SqlFilter implementations - watch out for data privacy issues!
+
+  If using custom SqlFilters, you have to be aware that the SQL filter is cached by doctrine, thus your SqlFilter might
+  not be called as often as you might expect. This may lead to displaying data which is not normally visible to the user!
+
+  Basically you are not allowed to call `setParameter` inside `addFilterConstraint`; but setParameter must be called *before*
+  the SQL query is actually executed. Currently, there's no standard Doctrine way to provide this; so you manually can receive
+  the filter instance from `$entityManager->getFilters()->getEnabledFilters()` and call `setParameter()` then.
+
+  Alternatively, you can register a global context object in `Neos.Flow.aop.globalObjects` and use it to provide additional
+  identifiers for the caching by letting these global objects implement `CacheAwareInterface`; effectively seggregating the
+  Doctrine cache some more.
+
+
 Custom Doctrine DQL functions
 -----------------------------
 
@@ -601,6 +615,21 @@ Flow allows you to enable and configure the second level cache through the confi
               'my_entity_region': 7200
 
 .. [#doctrineSecondLevelCache] http://docs.doctrine-project.org/en/latest/reference/second-level-cache.html
+
+Customizing Doctrine EntityManager
+----------------------------------
+
+For any cases that are not covered with the above options, Flow provides two convenient signals
+to hook into the setup of the doctrine EntityManager.
+The `beforeDoctrineEntityManagerCreation` signal provides you with the DBAL connection, the
+doctrine configuration and EventManager classes, that you can change before the actual
+EntityManager is instanciated.
+The `afterDoctrineEntityManagerCreation` signal provides the doctrine configuration and
+EntityManager instance, in order to to further set options.
+
+.. note:: All above configuration options through the settings are actually implemented as slots to the
+  before mentioned signals. If you want to take some look how this works, check the
+  `Neos\Flow\Persistence\Doctrine\EntityManagerConfiguration` class.
 
 Differences between Flow and plain Doctrine
 -------------------------------------------

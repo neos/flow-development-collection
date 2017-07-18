@@ -9,7 +9,8 @@
   },
   "require-dev": {
     "mikey179/vfsstream": "~1.6",
-    "phpunit/phpunit": "~6.0"
+    "phpunit/phpunit": "~6.0",
+    "neos/flow": "*"
   },
   "autoload": {
     "psr-4": {

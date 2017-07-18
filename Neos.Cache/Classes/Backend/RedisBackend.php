@@ -311,10 +311,8 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
     public function key()
     {
         $entryIdentifier = $this->redis->lIndex($this->buildKey('entries'), $this->entryCursor);
-        if ($entryIdentifier !== false) {
-            if (!$this->has($entryIdentifier)) {
-                return false;
-            }
+        if ($entryIdentifier !== false && !$this->has($entryIdentifier)) {
+            return false;
         }
         return $entryIdentifier;
     }

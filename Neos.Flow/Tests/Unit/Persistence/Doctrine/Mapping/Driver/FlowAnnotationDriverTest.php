@@ -32,7 +32,7 @@ class FlowAnnotationDriverTest extends UnitTestCase
             ['SomePackage\Domain\Model\Blob', 'somepackage_domain_model_blob'],
             [Security\Policy\Role::class, 'neos_flow_security_policy_role'],
             [Security\Account::class, 'neos_flow_security_account'],
-            [\Neos\Flow\Security\Authorization\Resource\SecurityPublishingConfiguration::class, 'neos_flow_security_authorization_resource_securitypublishi_07c54']
+            ['Neos\Flow\Security\Authorization\Resource\SecurityPublishingConfiguration', 'neos_flow_security_authorization_resource_securitypublishi_07c54']
         ];
     }
 
@@ -59,9 +59,9 @@ class FlowAnnotationDriverTest extends UnitTestCase
             [64, 'SomePackage\Domain\Model\Blob', 'propertyName', 'somepackage_domain_model_blob_propertyname_join'],
             [64, Security\Policy\Role::class, 'propertyName', 'neos_flow_security_policy_role_propertyname_join'],
             [64, Security\Account::class, 'propertyName', 'neos_flow_security_account_propertyname_join'],
-            [64, \Neos\Flow\Security\Authorization\Resource\SecurityPublishingConfiguration::class, 'propertyName', 'neos_flow_security_authorization_resourc_07c54_propertyname_join'],
-            [30, \Neos\Flow\Security\Authorization\Resource\SecurityPublishingConfiguration::class, 'propertyName', 'neos_f_07c54_propertyname_join'],
-            [30, \Neos\Flow\Security\Authorization\Resource\SecurityPublishingConfiguration::class, 'somePrettyLongPropertyNameWhichMustBeShortened', 'neos_flow_security_autho_6afa5']
+            [64, 'Neos\Flow\Security\Authorization\Resource\SecurityPublishingConfiguration', 'propertyName', 'neos_flow_security_authorization_resourc_07c54_propertyname_join'],
+            [30, 'Neos\Flow\Security\Authorization\Resource\SecurityPublishingConfiguration', 'propertyName', 'neos_f_07c54_propertyname_join'],
+            [30, 'Neos\Flow\Security\Authorization\Resource\SecurityPublishingConfiguration', 'somePrettyLongPropertyNameWhichMustBeShortened', 'neos_flow_security_autho_6afa5']
         ];
     }
 

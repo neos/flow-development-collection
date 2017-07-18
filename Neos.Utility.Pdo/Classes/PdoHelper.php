@@ -29,7 +29,7 @@ abstract class PdoHelper
      * @param string $pathAndFilename
      * @return void
      */
-    public static function importSql(\PDO $databaseHandle, $pdoDriver, $pathAndFilename)
+    public static function importSql(\PDO $databaseHandle, string $pdoDriver, string $pathAndFilename)
     {
         $sql = file($pathAndFilename, FILE_IGNORE_NEW_LINES & FILE_SKIP_EMPTY_LINES);
         // Remove MySQL style key length delimiters (yuck!) if we are not setting up a MySQL db

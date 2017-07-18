@@ -21,10 +21,21 @@ class TargetClassWithPhp7Features
      *
      * @param string $aString
      * @param int $aNumber
+     * @param TargetClassWithPhp7Features $anObject
      * @return string
      */
-    public function methodWithStaticTypeDeclarations(string $aString, int $aNumber)
+    public function methodWithStaticTypeDeclarations(string $aString, int $aNumber, TargetClassWithPhp7Features $anObject)
     {
-        return "{$aString} and {$aNumber}";
+        return "{$aString} and {$aNumber} and {$anObject}";
+    }
+
+    public function methodWithStaticScalarReturnTypeDeclaration(): string
+    {
+        return 'it works';
+    }
+
+    public function methodWithStaticObjectReturnTypeDeclaration(): TargetClassWithPhp7Features
+    {
+        return $this;
     }
 }

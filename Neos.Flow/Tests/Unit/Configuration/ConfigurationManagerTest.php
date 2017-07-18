@@ -14,13 +14,11 @@ namespace Neos\Flow\Tests\Unit\Configuration;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Configuration\Source\YamlSource;
 use Neos\Flow\Core\ApplicationContext;
-use org\bovigo\vfs\vfsStream;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Package\Package;
 use Neos\Flow\Package\PackageInterface;
-use Neos\Flow\SomeClass;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Flow\Utility\Environment;
+use org\bovigo\vfs\vfsStream;
 
 /**
  * Testcase for the configuration manager
@@ -1526,6 +1524,32 @@ EOD;
             default:
                 throw new \Exception('Unexpected filename: ' . $filenameAndPath);
         }
+    }
+
+    /**
+     * @test
+     */
+    public function loadingConfigurationOfCustomConfigurationTypeWorks()
+    {
+        $configurationManager = $this->getConfigurationManagerWithFlowPackage('loadingConfigurationOfCustomConfigurationTypeCallback', 'Testing');
+
+        $configurationManager->registerConfigurationType('MyCustomConfiguration', ConfigurationManager::CONFIGURATION_PROCESSING_TYPE_SETTINGS);
+        $configurationManager->_call('loadConfiguration', 'MyCustomConfiguration', $this->getMockPackages());
+        $configuration = $configurationManager->getConfiguration('MyCustomConfiguration');
+        $this->assertArrayHasKey('SomeKey', $configuration);
+    }
+
+    /**
+     * A callback as stand in configruation source for above test.
+     *
+     * @param string $filenameAndPath
+     * @return array
+     */
+    public function loadingConfigurationOfCustomConfigurationTypeCallback($filenameAndPath)
+    {
+        return [
+            'SomeKey' => 'SomeValue'
+        ];
     }
 
     /**

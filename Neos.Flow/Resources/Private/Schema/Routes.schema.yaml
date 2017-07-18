@@ -15,11 +15,22 @@ items:
         '@subpackage': {type: string}
     'routeParts':
       type: dictionary
-      additionalAttributes:
-        type: dictionary
-        additionalAttributes: FALSE
-        properties:
-          'handler': {type: string, required: TRUE, format: class-name}
+      additionalProperties:
+        -
+          type: dictionary
+          additionalProperties: FALSE
+          properties:
+            'handler': {type: string, required: TRUE, format: class-name}
+            'options': {type: dictionary }
+            'toLowerCase':  {type: boolean }
+        -
+          type: dictionary
+          additionalProperties: FALSE
+          properties:
+            'objectType': {type: string, required: TRUE, format: class-name}
+            'uriPattern': {type: string}
+            'options': {type: dictionary }
+            'toLowerCase':  {type: boolean }
     'appendExceedingArguments': {type: boolean}
     'toLowerCase': {type: boolean}
     'httpMethods':

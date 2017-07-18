@@ -11,7 +11,6 @@ namespace Neos\Utility\Lock;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Utility;
 
 /**

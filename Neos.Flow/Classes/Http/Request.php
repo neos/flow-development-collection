@@ -479,7 +479,7 @@ class Request extends BaseRequest implements ServerRequestInterface
                 }
             }
         }
-        return ($trim ? MediaTypes::trimMediaType($negotiatedMediaType) : $negotiatedMediaType);
+        return ($trim && $negotiatedMediaType !== null ? MediaTypes::trimMediaType($negotiatedMediaType) : $negotiatedMediaType);
     }
 
     /**

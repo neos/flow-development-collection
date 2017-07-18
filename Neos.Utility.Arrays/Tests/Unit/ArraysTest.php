@@ -501,7 +501,7 @@ class ArraysTest extends \PHPUnit\Framework\TestCase
      * @dataProvider arrayMergeRecursiveOverruleData
      * @test
      */
-    public function arrayMergeRecursiveOverruleMergesSimpleArrays($inputArray1, $inputArray2, $dontAddNewKeys, $emptyValuesOverride, $expected)
+    public function arrayMergeRecursiveOverruleMergesSimpleArrays(array $inputArray1, array $inputArray2, bool $dontAddNewKeys, bool $emptyValuesOverride, array $expected)
     {
         $actual = Arrays::arrayMergeRecursiveOverrule($inputArray1, $inputArray2, $dontAddNewKeys, $emptyValuesOverride);
         $this->assertSame($expected, $actual);

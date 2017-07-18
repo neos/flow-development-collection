@@ -192,7 +192,7 @@ abstract class AbstractTemplateView extends \TYPO3Fluid\Fluid\View\AbstractTempl
      * @param array $variables The variables to use
      * @param boolean $ignoreUnknown Ignore an unknown section and just return an empty string
      * @return string rendered template for the section
-     * @throws InvalidSectionException
+     * @throws \Neos\FluidAdaptor\View\Exception\InvalidSectionException
      */
     public function renderSection($sectionName, array $variables = [], $ignoreUnknown = false)
     {

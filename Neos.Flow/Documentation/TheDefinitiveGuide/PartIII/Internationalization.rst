@@ -402,8 +402,17 @@ as a directory hierarchy in between. The minimum needed to provide message catal
 XLIFF file creation
 -------------------
 
-For now there are no Flow tools to aid in creation of the initial XLIFF files. So you
-need to write them yourself. A minimal XLIFF file looks like this:
+It is possible to create initial translation files for a given language. With Flow command
+
+.. code-block:: bash
+
+./flow kickstart:translation --package-key Some.Package --source-language-key en --target-language-keys "de,fr"
+
+the files for the default language *english* in the package *Some.Package* will be created as well as the translation
+files for *german* and *french*. Already existing files will not be overwritten. Translations that do not yet exist are
+generated based on the default language.
+
+A minimal XLIFF file looks like this:
 
 .. code-block:: xml
 

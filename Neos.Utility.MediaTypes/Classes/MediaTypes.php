@@ -1799,14 +1799,13 @@ abstract class MediaTypes
      * @return string The IANA Internet Media Type
      * @api
      */
-    public static function getMediaTypeFromFilename($filename)
+    public static function getMediaTypeFromFilename(string $filename): string
     {
         $pathinfo = pathinfo(strtolower($filename));
         if (!isset($pathinfo['extension'])) {
             return 'application/octet-stream';
-        } else {
-            return isset(self::$extensionToMediaType[$pathinfo['extension']]) ? self::$extensionToMediaType[$pathinfo['extension']] : 'application/octet-stream';
         }
+        return self::$extensionToMediaType[$pathinfo['extension']] ?? 'application/octet-stream';
     }
 
     /**
@@ -1815,7 +1814,7 @@ abstract class MediaTypes
      * @param string $fileContent The file content do determine the media type from
      * @return string The IANA Internet Media Type
      */
-    public static function getMediaTypeFromFileContent($fileContent)
+    public static function getMediaTypeFromFileContent(string $fileContent): string
     {
         $fileInfo = new \finfo(FILEINFO_MIME);
         $mediaType = self::trimMediaType($fileInfo->buffer($fileContent));
@@ -1829,9 +1828,9 @@ abstract class MediaTypes
      * @return string The corresponding filename extension, for example "html"
      * @api
      */
-    public static function getFilenameExtensionFromMediaType($mediaType)
+    public static function getFilenameExtensionFromMediaType(string $mediaType): string
     {
-        return isset(self::$mediaTypeToFileExtension[$mediaType]) ? self::$mediaTypeToFileExtension[$mediaType][0] : '';
+        return self::$mediaTypeToFileExtension[$mediaType][0] ?? '';
     }
 
     /**
@@ -1841,9 +1840,9 @@ abstract class MediaTypes
      * @return array The corresponding filename extensions, for example ("html", "htm")
      * @api
      */
-    public static function getFilenameExtensionsFromMediaType($mediaType)
+    public static function getFilenameExtensionsFromMediaType(string $mediaType): array
     {
-        return isset(self::$mediaTypeToFileExtension[$mediaType]) ? self::$mediaTypeToFileExtension[$mediaType] : [];
+        return self::$mediaTypeToFileExtension[$mediaType] ?? [];
     }
 
     /**
@@ -1861,12 +1860,12 @@ abstract class MediaTypes
      * @param string $rawMediaType The raw media type, for example "application/json; charset=UTF-8"
      * @return array An associative array with parsed information
      */
-    public static function parseMediaType($rawMediaType)
+    public static function parseMediaType(string $rawMediaType): array
     {
         preg_match(self::PATTERN_SPLITMEDIATYPE, $rawMediaType, $matches);
         $result = [];
-        $result['type'] = isset($matches['type']) ? $matches['type'] : '';
-        $result['subtype'] = isset($matches['subtype']) ? $matches['subtype'] : '';
+        $result['type'] = $matches['type'] ?? '';
+        $result['subtype'] = $matches['subtype'] ?? '';
         $result['parameters'] = [];
 
         if (isset($matches['parameters'])) {
@@ -1894,7 +1893,7 @@ abstract class MediaTypes
      * @param string $mediaType The media type to match against, for example "text/html"
      * @return boolean TRUE if both match, FALSE if they don't match or either of them is invalid
      */
-    public static function mediaRangeMatches($mediaRange, $mediaType)
+    public static function mediaRangeMatches(string $mediaRange, string $mediaType): bool
     {
         preg_match(self::PATTERN_SPLITMEDIARANGE, $mediaRange, $mediaRangeMatches);
         preg_match(self::PATTERN_SPLITMEDIATYPE, $mediaType, $mediaTypeMatches);
@@ -1915,7 +1914,7 @@ abstract class MediaTypes
      * @param string $rawMediaType The full media type, for example "application/json; charset=UTF-8"
      * @return string Just the type and subtype, for example "application/json"
      */
-    public static function trimMediaType($rawMediaType)
+    public static function trimMediaType(string $rawMediaType)
     {
         $pieces = self::parseMediaType($rawMediaType);
         return trim(sprintf('%s/%s', $pieces['type'], $pieces['subtype']), '/') ?: null;

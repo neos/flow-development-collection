@@ -35,8 +35,8 @@ class PackageOrderResolverTest extends \Neos\Flow\Tests\UnitTestCase
                         'name' => 'symfony/component-yaml',
                         'require' => [],
                     ],
-                    'typo3/flow' => [
-                        'name' => 'typo3/flow',
+                    'neos/flow' => [
+                        'name' => 'neos/flow',
                         'require' => ['symfony/component-yaml' => 'dev-master', 'doctrine/orm' => 'dev-master'],
                     ],
                     'doctrine/common' => [
@@ -53,101 +53,101 @@ class PackageOrderResolverTest extends \Neos\Flow\Tests\UnitTestCase
                     'doctrine/dbal',
                     'doctrine/orm',
                     'symfony/component-yaml',
-                    'typo3/flow'
+                    'neos/flow'
                 ],
             ],
             [
                 [
-                    'typo3/neosdemotypo3org' => [
-                        'name' => 'typo3/neosdemotypo3org',
+                    'neos/demo' => [
+                        'name' => 'neos/demo',
                         'require' => [
-                            'typo3/neos' => 'dev-master',
+                            'neos/neos' => 'dev-master',
                         ],
                     ],
-                    'flowpack/behat' => [
-                        'name' => 'flowpack/behat',
+                    'neos/behat' => [
+                        'name' => 'neos/behat',
                         'require' => [
-                            'typo3/flow' => 'dev-master',
+                            'neos/flow' => 'dev-master',
                         ],
                     ],
-                    'typo3/imagine' => [
-                        'name' => 'typo3/imagine',
+                    'neos/imagine' => [
+                        'name' => 'neos/imagine',
                         'require' => [
                             'imagine/imagine' => 'dev-master',
-                            'typo3/flow' => 'dev-master',
+                            'neos/flow' => 'dev-master',
                         ],
                     ],
-                    'typo3/typo3cr' => [
-                        'name' => 'typo3/typo3cr',
+                    'neos/contentrepository' => [
+                        'name' => 'neos/contentrepository',
                         'require' => [
-                            'typo3/flow' => 'dev-master',
+                            'neos/flow' => 'dev-master',
                         ],
                     ],
-                    'typo3/neos' => [
-                        'name' => 'typo3/neos',
+                    'neos/neos' => [
+                        'name' => 'neos/neos',
                         'require' => [
-                            'typo3/typo3cr' => 'dev-master',
-                            'typo3/twitter-bootstrap' => 'dev-master',
-                            'typo3/setup' => 'dev-master',
-                            'typo3/typoscript' => 'dev-master',
-                            'typo3/neos-nodetypes' => 'dev-master',
-                            'typo3/media' => 'dev-master',
-                            'typo3/extjs' => 'dev-master',
-                            'typo3/flow' => 'dev-master',
+                            'neos/contentrepository' => 'dev-master',
+                            'neos/twitter-bootstrap' => 'dev-master',
+                            'neos/setup' => 'dev-master',
+                            'neos/fusion' => 'dev-master',
+                            'neos/nodetypes' => 'dev-master',
+                            'neos/media' => 'dev-master',
+                            'neos/extjs' => 'dev-master',
+                            'neos/flow' => 'dev-master',
                         ],
                     ],
-                    'typo3/setup' => [
-                        'name' => 'typo3/setup',
+                    'neos/setup' => [
+                        'name' => 'neos/setup',
                         'require' => [
-                            'typo3/twitter-bootstrap' => 'dev-master',
-                            'typo3/form' => 'dev-master',
-                            'typo3/flow' => 'dev-master',
+                            'neos/twitter-bootstrap' => 'dev-master',
+                            'neos/form' => 'dev-master',
+                            'neos/flow' => 'dev-master',
                         ],
                     ],
-                    'typo3/media' => [
-                        'name' => 'typo3/media',
+                    'neos/media' => [
+                        'name' => 'neos/media',
                         'require' => [
-                            'typo3/imagine' => 'dev-master',
-                            'typo3/flow' => 'dev-master',
+                            'neos/imagine' => 'dev-master',
+                            'neos/flow' => 'dev-master',
                         ],
                     ],
-                    'typo3/extjs' => [
-                        'name' => 'typo3/extjs',
+                    'neos/extjs' => [
+                        'name' => 'neos/extjs',
                         'require' => [
-                            'typo3/flow' => 'dev-master',
+                            'neos/flow' => 'dev-master',
                         ],
                     ],
-                    'typo3/neos-nodetypes' => [
-                        'name' => 'typo3/neos-nodetypes',
+                    'neos/nodetypes' => [
+                        'name' => 'neos/nodetypes',
                         'require' => [
-                            'typo3/typoscript' => 'dev-master',
-                            'typo3/flow' => 'dev-master',
+                            'neos/fusion' => 'dev-master',
+                            'neos/flow' => 'dev-master',
                         ],
                     ],
-                    'typo3/typoscript' => [
-                        'name' => 'typo3/typoscript',
+                    'neos/fusion' => [
+                        'name' => 'neos/fusion',
                         'require' => [
-                            'typo3/eel' => 'dev-master',
-                            'typo3/flow' => 'dev-master',
+                            'neos/eel' => 'dev-master',
+                            'neos/flow' => 'dev-master',
                         ],
                     ],
-                    'typo3/form' => [
-                        'name' => 'typo3/form',
+                    'neos/form' => [
+                        'name' => 'neos/form',
                         'require' => [
-                            'typo3/flow' => 'dev-master',
+                            'neos/flow' => 'dev-master',
                         ],
                     ],
-                    'typo3/twitter-bootstrap' => [
-                        'name' => 'typo3/twitter-bootstrap',
+                    'neos/twitter-bootstrap' => [
+                        'name' => 'neos/twitter-bootstrap',
                         'require' => [
-                            'typo3/flow' => 'dev-master',
+                            'neos/flow' => 'dev-master',
                         ],
                     ],
-                    'typo3/sitekickstarter' => [
-                        'name' => 'typo3/sitekickstarter',
+                    'neos/sitekickstarter' => [
+                        'name' => 'neos/sitekickstarter',
                         'require' => [
-                            'typo3/kickstart' => 'dev-master',
-                            'typo3/flow' => 'dev-master',
+                            'neos/kickstarter' => 'dev-master',
+                            'neos/flow' => 'dev-master',
                         ],
                     ],
                     'imagine/imagine' => [
@@ -266,41 +266,41 @@ class PackageOrderResolverTest extends \Neos\Flow\Tests\UnitTestCase
                             'phpunit/phpfileiterator' => 'dev-master',
                         ],
                     ],
-                    'typo3/party' => [
-                        'name' => 'typo3/party',
+                    'neos/party' => [
+                        'name' => 'neos/party',
                         'require' => [
-                            'typo3/flow' => 'dev-master',
+                            'neos/flow' => 'dev-master',
                         ],
                     ],
-                    'typo3/flow' => [
-                        'name' => 'typo3/flow',
+                    'neos/flow' => [
+                        'name' => 'neos/flow',
                         'require' => [
                             'composer/installers' => 'dev-master',
                             'symfony/domcrawler' => 'dev-master',
                             'symfony/yaml' => 'dev-master',
                             'doctrine/migrations' => 'dev-master',
                             'doctrine/orm' => 'dev-master',
-                            'typo3/eel' => 'dev-master',
-                            'typo3/party' => 'dev-master',
-                            'typo3/fluid' => 'dev-master',
+                            'neos/eel' => 'dev-master',
+                            'neos/party' => 'dev-master',
+                            'neos/fluid' => 'dev-master',
                         ],
                     ],
-                    'typo3/eel' => [
-                        'name' => 'typo3/eel',
+                    'neos/eel' => [
+                        'name' => 'neos/eel',
                         'require' => [
-                            'typo3/flow' => 'dev-master',
+                            'neos/flow' => 'dev-master',
                         ],
                     ],
-                    'typo3/kickstart' => [
-                        'name' => 'typo3/kickstart',
+                    'neos/kickstarter' => [
+                        'name' => 'neos/kickstarter',
                         'require' => [
-                            'typo3/flow' => 'dev-master',
+                            'neos/flow' => 'dev-master',
                         ],
                     ],
-                    'typo3/fluid' => [
-                        'name' => 'typo3/fluid',
+                    'neos/fluid' => [
+                        'name' => 'neos/fluid',
                         'require' => [
-                            'typo3/flow' => 'dev-master',
+                            'neos/flow' => 'dev-master',
                         ],
                     ],
                 ],
@@ -319,24 +319,24 @@ class PackageOrderResolverTest extends \Neos\Flow\Tests\UnitTestCase
                     'symfony/console',
                     'doctrine/orm',
                     'imagine/imagine',
-                    'typo3/eel',
-                    'typo3/party',
-                    'typo3/fluid',
-                    'typo3/flow',
-                    'typo3/form',
-                    'typo3/typoscript',
-                    'typo3/neos-nodetypes',
-                    'typo3/imagine',
-                    'typo3/media',
-                    'typo3/extjs',
-                    'typo3/twitter-bootstrap',
-                    'typo3/setup',
-                    'typo3/typo3cr',
-                    'typo3/neos',
-                    'typo3/neosdemotypo3org',
-                    'flowpack/behat',
-                    'typo3/kickstart',
-                    'typo3/sitekickstarter',
+                    'neos/eel',
+                    'neos/party',
+                    'neos/fluid',
+                    'neos/flow',
+                    'neos/form',
+                    'neos/fusion',
+                    'neos/nodetypes',
+                    'neos/imagine',
+                    'neos/media',
+                    'neos/extjs',
+                    'neos/twitter-bootstrap',
+                    'neos/setup',
+                    'neos/contentrepository',
+                    'neos/neos',
+                    'neos/demo',
+                    'neos/behat',
+                    'neos/kickstarter',
+                    'neos/sitekickstarter',
                     'mikey179/vfsstream',
                     'phpunit/phptexttemplate',
                     'phpunit/phptokenstream',

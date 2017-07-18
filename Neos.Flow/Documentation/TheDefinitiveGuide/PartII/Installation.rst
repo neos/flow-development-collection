@@ -9,7 +9,7 @@ Flow uses `Composer`_ for dependency management, which is a separate command lin
 Install it by following the `installation instructions <https://getcomposer.org/download/>`_
 which boil down to this in the simplest case:
 
-.. code-block:: none
+.. code-block:: sh
 
 	curl -s https://getcomposer.org/installer | php
 
@@ -22,7 +22,7 @@ Then use `Composer`_ in a directory which will be accessible by your web server 
 and install all packages of the Flow Base Distribution. The following command will
 clone the 3.0.0 version, include development dependencies and keep git metadata for future use:
 
-.. code-block:: none
+.. code-block:: sh
 
  composer create-project --keep-vcs neos/flow-base-distribution tutorial 3.0.0
 
@@ -33,7 +33,7 @@ clone the 3.0.0 version, include development dependencies and keep git metadata 
 
 To update all dependencies, run this from the top-level folder of the distribution:
 
-.. code-block:: none
+.. code-block:: sh
 
 	composer update
 
@@ -80,7 +80,7 @@ group. All users who also need to launch Flow must also be added this group.
 But don't worry, this is simply done by changing to the Flow base directory
 and calling the following command (this command must be called as super user):
 
-.. code-block:: none
+.. code-block:: sh
 
 	sudo ./flow core:setfilepermissions john www-data www-data
 
@@ -94,13 +94,13 @@ Now that the file permissions are set, all users who plan using Flow from the
 command line need to join the web server's group. On a Linux machine this can
 be done by typing:
 
-.. code-block:: none
+.. code-block:: sh
 
 	sudo usermod -a -G www-data john
 
 On a Mac you can add a user to the web group with the following command:
 
-.. code-block:: none
+.. code-block:: sh
 
 	sudo dscl . -append /Groups/_www GroupMembership johndoe
 
@@ -124,37 +124,15 @@ from the web. For testing purposes on your local machine it is okay (but not
 very convenient) to do without a virtual host, but don't try that on a public
 server!
 
-Setting Up a Virtual Host
--------------------------
-
-Assuming that you chose Apache 2 as your web server, simply create a new virtual
-host by adding the following directions to your Apache configuration
-(``conf/extra/httpd-vhosts.conf`` on many systems; make sure it is actually
-loaded with ``Include`` in ``httpd.conf``):
-
-*httpd.conf*:
-
-.. code-block:: none
-
-	<VirtualHost *:80>
-		DocumentRoot /var/apache2/htdocs/tutorial/Web/
-		ServerName dev.tutorial.local
-	</VirtualHost>
-
-This virtual host will later be accessible via the URL http://dev.tutorial.local.
-
-.. note::
-	Flow runs per default in the ``Development`` context. That's why the *ServerName*
-	in this example is  *dev.*tutorial.local. Later you will add another virtual
-	host for the ``Production`` context. The concept of contexts is explained in the
-	next section *Configuration*.
+Configure AllowOverride and MultiViews
+--------------------------------------
 
 Because Flow provides an ``.htaccess`` file with ``mod_rewrite`` rules in it,
 you need to make sure that the directory grants the neccessary rights:
 
 *httpd.conf*:
 
-.. code-block:: none
+.. code-block:: apache
 
 	<Directory /var/apache2/htdocs/tutorial/>
 		AllowOverride FileInfo Options=MultiViews
@@ -164,7 +142,7 @@ The way Flow addresses resources on the web makes it incompatible with the ``Mul
 feature of Apache. This needs to be turned off, the default ``.htaccess`` file distributed
 with Flow contains this code already
 
-.. code-block:: none
+.. code-block:: apache
 
 	<IfModule mod_negotiation.c>
 
@@ -172,6 +150,9 @@ with Flow contains this code already
 		Options -MultiViews
 
 	</IfModule>
+  
+Configure server-side scripts
+-----------------------------
 
 Important: Disallow execution of server-side scripts below `Web/_Resources`. If users
 can upload (PHP) scripts they can otherwise be executed on the server. This should almost
@@ -181,7 +162,7 @@ never be allowed, so make sure to disable PHP (or other script handlers) for any
 The `.htaccess` file placed into the `Web/_Resources` folder does this for Apache when
 `.htaccess` is evaluated. Another way is to use this in the configuration:
 
-.. code-block:: none
+.. code-block:: apache
 
 	<Directory /var/apache2/htdocs/tutorial/Web/_Resources>
 		AllowOverride None
@@ -197,12 +178,37 @@ Configure a Context
 As you'll learn soon, Flow can be launched in different **contexts**, the most
 popular being ``Production``, ``Development`` and ``Testing``. Although there
 are various ways to choose the current context, the most convenient is to setup
-a dedicated virtual host defining an environment variable. Just add the
-following virtual host to your Apache configuration:
+a dedicated virtual host defining an environment variable.
+
+Setting Up a Virtual Host for Context «Development»
+---------------------------------------------------
+
+Assuming that you chose Apache 2 as your web server, simply create a new virtual
+host by adding the following directions to your Apache configuration
+(``conf/extra/httpd-vhosts.conf`` on many systems; make sure it is actually
+loaded with ``Include`` in ``httpd.conf``):
 
 *httpd.conf*:
 
-.. code-block:: none
+.. code-block:: apache
+
+	<VirtualHost *:80>
+		DocumentRoot /var/apache2/htdocs/tutorial/Web/
+		ServerName dev.tutorial.local
+	</VirtualHost>
+
+This virtual host will later be accessible via the URL http://dev.tutorial.local.
+
+.. note::
+	Flow runs per default in the ``Development`` context. That's why the *ServerName*
+	in this example is  **dev**.tutorial.local.
+  
+Setting Up a Virtual Host for Context «Production»
+---------------------------------------------------
+
+*httpd.conf*:
+
+.. code-block:: apache
 
 	<VirtualHost *:80>
 		DocumentRoot /var/apache2/htdocs/tutorial/Web/
@@ -216,24 +222,24 @@ your operating system that the invented domain names can be found on your local
 machine. Add the following line to your */etc/hosts* file
 (*C:\windows\system32\drivers\etc\hosts* on Windows):
 
-*hosts*:
-
-.. code-block:: none
+*hosts*::
 
 	127.0.0.1 tutorial.local dev.tutorial.local
 
-.. tip::
-	If you decided to skip setting up virtual hosts earlier on, you can
-	enable the ``Production`` context by editing the ``.htaccess`` file in the
-	``Web`` directory and remove the comment sign in front of the ``SetEnv``
-	line:
+Change Context to «Production» without Virtual Host
+---------------------------------------------------
+
+If you decided to skip setting up virtual hosts earlier on, you can enable the ``Production`` context by editing the ``.htaccess`` file in the ``Web`` directory and remove the comment sign in front of the ``SetEnv`` line:
 
 *.htaccess*:
 
-.. code-block:: none
+.. code-block:: apache
 
 	# You can specify a default context by activating this option:
 	SetEnv FLOW_CONTEXT Production
+  
+.. note::
+	The concept of contexts and their benefits is explained in the next chapter «Configuration».
 
 Welcome to Flow
 ---------------

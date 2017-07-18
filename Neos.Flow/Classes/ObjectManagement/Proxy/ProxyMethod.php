@@ -14,6 +14,7 @@ namespace Neos\Flow\ObjectManagement\Proxy;
 use Doctrine\ORM\Mapping as ORM;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Reflection\ReflectionService;
+use Neos\Flow\Utility\TypeHandling;
 
 /**
  * Representation of a method within a proxy class

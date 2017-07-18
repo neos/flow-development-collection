@@ -38,7 +38,7 @@ class ResultTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    protected function getMockMessage($type)
+    protected function getMockMessage(string $type)
     {
         return $this->getMockBuilder('Neos\Error\Messages\\' . $type)->disableOriginalConstructor()->getMock();
     }
@@ -47,7 +47,7 @@ class ResultTest extends \PHPUnit\Framework\TestCase
      * @test
      * @dataProvider dataTypes
      */
-    public function addedMessagesShouldBeRetrievableAgain($dataTypeInSingular, $dataTypeInPlural)
+    public function addedMessagesShouldBeRetrievableAgain(string $dataTypeInSingular, string $dataTypeInPlural)
     {
         $message = $this->getMockMessage($dataTypeInSingular);
         $addMethodName = 'add' . $dataTypeInSingular;
@@ -61,7 +61,7 @@ class ResultTest extends \PHPUnit\Framework\TestCase
      * @test
      * @dataProvider dataTypes
      */
-    public function getMessageShouldNotBeRecursive($dataTypeInSingular, $dataTypeInPlural)
+    public function getMessageShouldNotBeRecursive(string $dataTypeInSingular, string $dataTypeInPlural)
     {
         $message = $this->getMockMessage($dataTypeInSingular);
         $addMethodName = 'add' . $dataTypeInSingular;
@@ -75,7 +75,7 @@ class ResultTest extends \PHPUnit\Framework\TestCase
      * @test
      * @dataProvider dataTypes
      */
-    public function getFirstMessageShouldReturnFirstMessage($dataTypeInSingular, $dataTypeInPlural)
+    public function getFirstMessageShouldReturnFirstMessage(string $dataTypeInSingular, string $dataTypeInPlural)
     {
         $message1 = $this->getMockMessage($dataTypeInSingular);
         $message2 = $this->getMockMessage($dataTypeInSingular);
@@ -119,7 +119,7 @@ class ResultTest extends \PHPUnit\Framework\TestCase
      * @test
      * @dataProvider dataTypes
      */
-    public function hasMessagesShouldReturnTrueIfTopLevelObjectHasMessages($dataTypeInSingular, $dataTypeInPlural)
+    public function hasMessagesShouldReturnTrueIfTopLevelObjectHasMessages(string $dataTypeInSingular, string $dataTypeInPlural)
     {
         $message = $this->getMockMessage($dataTypeInSingular);
         $addMethodName = 'add' . $dataTypeInSingular;
@@ -133,7 +133,7 @@ class ResultTest extends \PHPUnit\Framework\TestCase
      * @test
      * @dataProvider dataTypes
      */
-    public function hasMessageshouldReturnTrueIfSubObjectHasErrors($dataTypeInSingular, $dataTypeInPlural)
+    public function hasMessageshouldReturnTrueIfSubObjectHasErrors(string $dataTypeInSingular, string $dataTypeInPlural)
     {
         $addMethodName = 'add' . $dataTypeInSingular;
         $methodName = 'has' . $dataTypeInPlural;
@@ -147,7 +147,7 @@ class ResultTest extends \PHPUnit\Framework\TestCase
      * @test
      * @dataProvider dataTypes
      */
-    public function hasMessagesShouldReturnFalseIfSubObjectHasNoErrors($dataTypeInSingular, $dataTypeInPlural)
+    public function hasMessagesShouldReturnFalseIfSubObjectHasNoErrors(string $dataTypeInSingular, string $dataTypeInPlural)
     {
         $methodName = 'has' . $dataTypeInPlural;
 
@@ -160,7 +160,7 @@ class ResultTest extends \PHPUnit\Framework\TestCase
      * @test
      * @dataProvider dataTypes
      */
-    public function getFlattenedMessagesShouldReturnAllSubMessages($dataTypeInSingular, $dataTypeInPlural)
+    public function getFlattenedMessagesShouldReturnAllSubMessages(string $dataTypeInSingular, string $dataTypeInPlural)
     {
         $message1 = $this->getMockMessage($dataTypeInSingular);
         $message2 = $this->getMockMessage($dataTypeInSingular);
@@ -190,7 +190,7 @@ class ResultTest extends \PHPUnit\Framework\TestCase
      * @test
      * @dataProvider dataTypes
      */
-    public function getFlattenedMessagesShouldNotContainEmptyResults($dataTypeInSingular, $dataTypeInPlural)
+    public function getFlattenedMessagesShouldNotContainEmptyResults(string $dataTypeInSingular, string $dataTypeInPlural)
     {
         $message1 = $this->getMockMessage($dataTypeInSingular);
         $message2 = $this->getMockMessage($dataTypeInSingular);

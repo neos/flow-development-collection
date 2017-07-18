@@ -571,6 +571,21 @@ class StringHelper implements ProtectedContextAwareInterface
     }
 
     /**
+     * Return the count of words for a given string. Remove marks & digits and
+     * flatten all kind of whitespaces (tabs, new lines and multiple spaces)
+     * For example this helper can be utilized to calculate the reading time of an article.
+     *
+     * @param string $unicodeString The input string
+     * @return integer Number of words
+     */
+    public function wordCount($unicodeString)
+    {
+        $unicodeString = preg_replace('/[[:punct:][:digit:]]/', '', $unicodeString);
+
+        return count(preg_split('/[[:space:]]+/', $unicodeString, 0, PREG_SPLIT_NO_EMPTY));
+    }
+
+    /**
      * All methods are considered safe
      *
      * @param string $methodName

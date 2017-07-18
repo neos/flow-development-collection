@@ -22,21 +22,24 @@ additionalProperties:
             'value': {type: any}
             'setting': {type: string}
             'object':
-              type: [dictionary, string]
-              # if string, require string to be a class name
-              format: class-name
-              additionalProperties: FALSE
-              properties:
-                'factoryObjectName': {type: string, format: class-name}
-                'factoryMethodName': {type: string}
-                'arguments':
-                  type: array
-                  items:
-                    type: dictionary
-                    additionalProperties: FALSE
-                    properties:
-                      'value': {type: string}
-                      'setting': {type: string}
+              -
+                type: string
+                format: class-name
+              -
+                type: dictionary
+                additionalProperties: FALSE
+                properties:
+                  'name': {type: string}
+                  'factoryObjectName': {type: string, format: class-name}
+                  'factoryMethodName': {type: string}
+                  'arguments':
+                    type: array
+                    items:
+                      type: dictionary
+                      additionalProperties: FALSE
+                      properties:
+                        'value': {type: string}
+                        'setting': {type: string}
 
       'properties':
         type: dictionary
@@ -47,19 +50,22 @@ additionalProperties:
             'setting': {type: string}
             'value': {type: any}
             'object':
-              type: [dictionary, string]
-              # if string, require string to be a class name
-              format: class-name
-              additionalProperties: FALSE
-              properties:
-                'factoryObjectName': {type: string, format: class-name}
-                'factoryMethodName': {type: string}
-                'arguments':
-                  type: array
-                  items:
-                    type: dictionary
-                    additionalProperties: FALSE
-                    properties:
-                      'value': {type: string}
-                      'setting': {type: string}
+              -
+                type: string
+                format: class-name
+              -
+                type: dictionary
+                additionalProperties: FALSE
+                properties:
+                  'name': {type: string}
+                  'factoryObjectName': {type: string, format: class-name}
+                  'factoryMethodName': {type: string}
+                  'arguments':
+                    type: array
+                    items:
+                      type: dictionary
+                      additionalProperties: FALSE
+                      properties:
+                        'value': {type: string}
+                        'setting': {type: string}
 

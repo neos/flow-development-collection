@@ -12,6 +12,7 @@ namespace Neos\Kickstarter\Service;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\I18n\Xliff\XliffParser;
 use Neos\FluidAdaptor\View\StandaloneView;
 use Neos\Flow\Core\ClassLoader;
 use Neos\Flow\Package\PackageInterface;
@@ -386,6 +387,43 @@ class GeneratorService
     }
 
     /**
+     * Generate translation for the package key
+     *
+     * @param string $packageKey
+     * @param string $sourceLanguageKey
+     * @param array $targetLanguageKeys
+     * @return array An array of generated filenames
+     */
+    public function generateTranslation($packageKey, $sourceLanguageKey, array $targetLanguageKeys = [])
+    {
+        $translationPath = 'resource://' . $packageKey . '/Private/Translations';
+        $contextVariables = [];
+        $contextVariables['packageKey'] = $packageKey;
+        $contextVariables['sourceLanguageKey'] = $sourceLanguageKey;
+
+        $templatePathAndFilename = 'resource://Neos.Kickstarter/Private/Generator/Translations/SourceLanguageTemplate.xlf.tmpl';
+        $fileContent = $this->renderTemplate($templatePathAndFilename, $contextVariables);
+        $sourceLanguageFile = Files::concatenatePaths([$translationPath, $sourceLanguageKey, 'Main.xlf']);
+        $this->generateFile($sourceLanguageFile, $fileContent);
+
+        if ($targetLanguageKeys) {
+            $xliffParser = new XliffParser();
+            $parsedXliffArray = $xliffParser->getParsedData($sourceLanguageFile);
+            foreach ($targetLanguageKeys as $targetLanguageKey) {
+                $contextVariables['targetLanguageKey'] = $targetLanguageKey;
+                $contextVariables['translationUnits'] = $parsedXliffArray['translationUnits'];
+
+                $templatePathAndFilename = 'resource://Neos.Kickstarter/Private/Generator/Translations/TargetLanguageTemplate.xlf.tmpl';
+                $fileContent = $this->renderTemplate($templatePathAndFilename, $contextVariables);
+                $targetPathAndFilename = Files::concatenatePaths([$translationPath, $targetLanguageKey, 'Main.xlf']);
+                $this->generateFile($targetPathAndFilename, $fileContent);
+            }
+        }
+
+        return $this->generatedFiles;
+    }
+
+    /**
      * Normalize types and prefix types with namespaces
      *
      * @param array $fieldDefinitions The field definitions
@@ -438,7 +476,7 @@ class GeneratorService
             file_put_contents($targetPathAndFilename, $fileContent);
             $this->generatedFiles[] = 'Created .../' . $relativeTargetPathAndFilename;
         } else {
-            $this->generatedFiles[] = 'Omitted .../' . $relativeTargetPathAndFilename;
+            $this->generatedFiles[] = 'Omitted as file already exists .../' . $relativeTargetPathAndFilename;
         }
     }
 

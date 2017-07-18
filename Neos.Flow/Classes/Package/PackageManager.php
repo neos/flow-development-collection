@@ -21,7 +21,6 @@ use Neos\Flow\SignalSlot\Dispatcher;
 use Neos\Flow\Utility\Exception as UtilityException;
 use Neos\Utility\Files;
 use Neos\Utility\OpcodeCacheHelper;
-use Neos\Utility\TypeHandling;
 use Neos\Flow\Package\Exception as PackageException;
 
 /**
@@ -333,7 +332,7 @@ class PackageManager implements PackageManagerInterface
      * Create a package, given the package key
      *
      * @param string $packageKey The package key of the new package
-     * @param array $manifest A composer manifest as associative array. This is a preparation for the signature change in Flow 4.0. If you use this argument, then $packageMetaData and $packageType will be ignored.
+     * @param array $manifest A composer manifest as associative array.
      * @param string $packagesPath If specified, the package will be created in this path, otherwise the default "Application" directory is used
      * @return PackageInterface The newly created package
      *
@@ -711,6 +710,7 @@ class PackageManager implements PackageManagerInterface
      *
      * @param array $previousPackageStatesConfiguration Existing package state configuration
      * @return array
+     * @throws Exception
      * @throws InvalidConfigurationException
      */
     protected function scanAvailablePackages($previousPackageStatesConfiguration)
@@ -731,6 +731,7 @@ class PackageManager implements PackageManagerInterface
             if (!isset($composerManifest['name'])) {
                 throw new InvalidConfigurationException(sprintf('A package composer.json was found at "%s" that contained no "name".', $packagePath), 1445933572);
             }
+
             $packageKey = $this->getPackageKeyFromManifest($composerManifest, $packagePath);
             $this->composerNameToPackageKeyMap[strtolower($composerManifest['name'])] = $packageKey;
 
@@ -747,6 +748,16 @@ class PackageManager implements PackageManagerInterface
             }
 
             $packageConfiguration = $this->preparePackageStateConfiguration($packageKey, $packagePath, $composerManifest, $state);
+            if (isset($newPackageStatesConfiguration['packages'][$composerManifest['name']])) {
+                throw new PackageException(
+                    sprintf('The package with the name "%s" was found more than once, please make sure it exists only once. Paths "%s" and "%s".',
+                        $composerManifest['name'],
+                        $packageConfiguration['packagePath'],
+                        $newPackageStatesConfiguration['packages'][$composerManifest['name']]['packagePath']),
+                    1493030262781
+                );
+            }
+
             $newPackageStatesConfiguration['packages'][$composerManifest['name']] = $packageConfiguration;
 
             if ($state === self::PACKAGE_STATE_INACTIVE && $packageInActivePackagesFolder && is_dir($packagePath)) {

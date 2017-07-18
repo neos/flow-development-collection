@@ -24,6 +24,7 @@ use Neos\Flow\Aop\TraitIntroduction;
 use Neos\Flow\Aop;
 use Neos\Flow\ObjectManagement\Proxy;
 use Neos\Flow\Reflection\ReflectionService;
+use Neos\Flow\Utility\Algorithms;
 
 /**
  * The main class of the AOP (Aspect Oriented Programming) framework.
@@ -436,7 +437,7 @@ class ProxyClassBuilder
         $this->addAdvicedMethodsToInterceptedMethods($interceptedMethods, array_merge($methodsFromTargetClass, $methodsFromIntroducedInterfaces), $targetClassName, $aspectContainers);
         $this->addIntroducedMethodsToInterceptedMethods($interceptedMethods, $methodsFromIntroducedInterfaces);
 
-        if (count($interceptedMethods) < 1 && count($introducedInterfaces) < 1 && count($propertyIntroductions) < 1) {
+        if (count($interceptedMethods) < 1 && count($introducedInterfaces) < 1 && count($introducedTraits) < 1 && count($propertyIntroductions) < 1) {
             return false;
         }
 
@@ -722,7 +723,7 @@ class ProxyClassBuilder
             }
             foreach ($aspectContainer->getInterfaceIntroductions() as $introduction) {
                 $pointcut = $introduction->getPointcut();
-                if ($pointcut->matches($targetClassName, null, null, uniqid())) {
+                if ($pointcut->matches($targetClassName, null, null, Algorithms::generateRandomString(13))) {
                     $introductions[] = $introduction;
                 }
             }
@@ -747,7 +748,7 @@ class ProxyClassBuilder
             }
             foreach ($aspectContainer->getPropertyIntroductions() as $introduction) {
                 $pointcut = $introduction->getPointcut();
-                if ($pointcut->matches($targetClassName, null, null, uniqid())) {
+                if ($pointcut->matches($targetClassName, null, null, Algorithms::generateRandomString(13))) {
                     $introductions[] = $introduction;
                 }
             }
@@ -774,7 +775,7 @@ class ProxyClassBuilder
             /** @var TraitIntroduction $introduction */
             foreach ($aspectContainer->getTraitIntroductions() as $introduction) {
                 $pointcut = $introduction->getPointcut();
-                if ($pointcut->matches($targetClassName, null, null, uniqid())) {
+                if ($pointcut->matches($targetClassName, null, null, Algorithms::generateRandomString(13))) {
                     $introductions[] = '\\' . $introduction->getTraitName();
                 }
             }

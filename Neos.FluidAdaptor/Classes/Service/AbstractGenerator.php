@@ -13,7 +13,7 @@ namespace Neos\FluidAdaptor\Service;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Reflection\ClassReflection;
-use Neos\FluidAdaptor\Fluid;
+use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 
 /**
  * Common base class for XML generators.
@@ -47,7 +47,7 @@ abstract class AbstractGenerator
      */
     public function __construct()
     {
-        $this->abstractViewHelperReflectionClass = new ClassReflection(\Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper::class);
+        $this->abstractViewHelperReflectionClass = new ClassReflection(AbstractViewHelper::class);
     }
 
     /**
@@ -60,7 +60,7 @@ abstract class AbstractGenerator
     {
         $affectedViewHelperClassNames = array();
 
-        $allViewHelperClassNames = $this->reflectionService->getAllSubClassNamesForClass(\Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper::class);
+        $allViewHelperClassNames = $this->reflectionService->getAllSubClassNamesForClass(AbstractViewHelper::class);
         foreach ($allViewHelperClassNames as $viewHelperClassName) {
             if ($this->reflectionService->isClassAbstract($viewHelperClassName)) {
                 continue;

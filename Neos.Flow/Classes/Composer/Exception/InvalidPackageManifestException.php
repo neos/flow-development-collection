@@ -1,5 +1,5 @@
 <?php
-namespace Neos\Flow\Package\Exception;
+namespace Neos\Flow\Composer\Exception;
 
 /*
  * This file is part of the Neos.Flow package.
@@ -12,7 +12,7 @@ namespace Neos\Flow\Package\Exception;
  */
 
 /**
- * An "Invalid Package Key" exception
+ * An "package manifest could not be converted to JSON" exception
  *
  * @api
  */

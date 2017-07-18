@@ -224,4 +224,46 @@ class BaseFunctionalityTestingAspect
         $originalValue = $joinPoint->getAdviceChain()->proceed($joinPoint);
         return 'nothing is ' . $originalValue . '!';
     }
+
+    /**
+     * @Flow\Around("method(Neos\Flow\Tests\Functional\Aop\Fixtures\TargetClassWithPhp7Features->methodWithStaticScalarReturnTypeDeclaration())")
+     * @param \Neos\Flow\Aop\JoinPointInterface $joinPoint
+     * @return string
+     */
+    public function methodWithStaticScalarReturnTypeDeclarationAdvice(\Neos\Flow\Aop\JoinPointInterface $joinPoint)
+    {
+        return 'adviced: ' . $joinPoint->getAdviceChain()->proceed($joinPoint);
+    }
+
+    /**
+     * @Flow\Around("method(Neos\Flow\Tests\Functional\Aop\Fixtures\TargetClassWithPhp7Features->methodWithStaticObjectReturnTypeDeclaration())")
+     * @param \Neos\Flow\Aop\JoinPointInterface $joinPoint
+     * @return string
+     */
+    public function methodWithStaticObjectReturnTypeDeclarationAdvice(\Neos\Flow\Aop\JoinPointInterface $joinPoint)
+    {
+        return $joinPoint->getAdviceChain()->proceed($joinPoint);
+    }
+
+    /**
+     * @Flow\Around("method(Neos\Flow\Tests\Functional\Aop\Fixtures\TargetClassWithPhp71Features->methodWithNullableScalarReturnTypeDeclaration())")
+     * @param \Neos\Flow\Aop\JoinPointInterface $joinPoint
+     * @return string
+     */
+    public function methodWithNullableScalarReturnTypeDeclarationAdvice(\Neos\Flow\Aop\JoinPointInterface $joinPoint)
+    {
+        $originalResult = $joinPoint->getAdviceChain()->proceed($joinPoint);
+        return 'adviced: ' . ($originalResult === null ? 'NULL' : $originalResult);
+    }
+
+
+    /**
+     * @Flow\Around("method(Neos\Flow\Tests\Functional\Aop\Fixtures\TargetClassWithPhp71Features->methodWithNullableObjectReturnTypeDeclaration())")
+     * @param \Neos\Flow\Aop\JoinPointInterface $joinPoint
+     * @return string
+     */
+    public function methodWithNullableObjectReturnTypeDeclarationAdvice(\Neos\Flow\Aop\JoinPointInterface $joinPoint)
+    {
+        return $joinPoint->getAdviceChain()->proceed($joinPoint);
+    }
 }

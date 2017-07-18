@@ -68,7 +68,7 @@ class TransientMemoryBackend extends IndependentAbstractBackend implements Tagga
      */
     public function get($entryIdentifier)
     {
-        return (isset($this->entries[$entryIdentifier])) ? $this->entries[$entryIdentifier] : false;
+        return $this->entries[$entryIdentifier] ?? false;
     }
 
     /**
@@ -92,17 +92,16 @@ class TransientMemoryBackend extends IndependentAbstractBackend implements Tagga
      */
     public function remove($entryIdentifier)
     {
-        if (isset($this->entries[$entryIdentifier])) {
-            unset($this->entries[$entryIdentifier]);
-            foreach (array_keys($this->tagsAndEntries) as $tag) {
-                if (isset($this->tagsAndEntries[$tag][$entryIdentifier])) {
-                    unset($this->tagsAndEntries[$tag][$entryIdentifier]);
-                }
-            }
-            return true;
-        } else {
+        if (!isset($this->entries[$entryIdentifier])) {
             return false;
         }
+        unset($this->entries[$entryIdentifier]);
+        foreach (array_keys($this->tagsAndEntries) as $tag) {
+            if (isset($this->tagsAndEntries[$tag][$entryIdentifier])) {
+                unset($this->tagsAndEntries[$tag][$entryIdentifier]);
+            }
+        }
+        return true;
     }
 
     /**

@@ -282,6 +282,11 @@ class Service
         }
 
         if ($showMigrations) {
+            $configuration = $this->getMigrationConfiguration();
+
+            $executedMigrations = $configuration->getMigratedVersions();
+            $availableMigrations = $configuration->getAvailableVersions();
+            $executedUnavailableMigrations = array_diff($executedMigrations, $availableMigrations);
             if ($migrations = $configuration->getMigrations()) {
                 $docCommentParser = new DocCommentParser();
 

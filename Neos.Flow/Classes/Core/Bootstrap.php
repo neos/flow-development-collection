@@ -424,7 +424,7 @@ class Bootstrap
             }
         }
         if (empty($suitableRequestHandlers)) {
-            throw new FlowException('No suitable request handler could be found for the current request. This is most likely a setup-problem, so please check your package.json and/or try removing Configuration/PackageStates.php', 1464882543);
+            throw new FlowException('No suitable request handler could be found for the current request. This is most likely a setup-problem, so please check your composer.json and/or try removing Configuration/PackageStates.php', 1464882543);
         }
         ksort($suitableRequestHandlers);
         return array_pop($suitableRequestHandlers);
@@ -537,7 +537,7 @@ class Bootstrap
             define('FLOW_PATH_TEMPORARY', $temporaryDirectoryPath);
         }
 
-        define('FLOW_VERSION_BRANCH', '4.0');
+        define('FLOW_VERSION_BRANCH', 'master');
     }
 
     /**

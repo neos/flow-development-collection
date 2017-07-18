@@ -13,7 +13,6 @@ namespace Neos\Flow\Tests\Functional\ObjectManagement;
 
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\FinalClassWithDependencies;
-use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\FinalClassWithDependenciesAndProxyAnnotation;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\Flow175\ClassWithTransitivePrototypeDependency;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\SingletonClassA;
 use Neos\Flow\Tests\FunctionalTestCase;

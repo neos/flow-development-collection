@@ -25,11 +25,11 @@ abstract class Arrays
      * @param string $string The string to explode
      * @return array Exploded values, all converted to integers
      */
-    public static function integerExplode($delimiter, $string)
+    public static function integerExplode(string $delimiter, string $string): array
     {
         $chunksArr = explode($delimiter, $string);
-        while (list($key, $value) = each($chunksArr)) {
-            $chunks[$key] = intval($value);
+        foreach ($chunksArr as $key => $value) {
+            $chunks[$key] = (int)$value;
         }
         reset($chunks);
         return $chunks;
@@ -44,7 +44,7 @@ abstract class Arrays
      * @param boolean $onlyNonEmptyValues If disabled, even empty values (='') will be set in output
      * @return array Exploded values
      */
-    public static function trimExplode($delimiter, $string, $onlyNonEmptyValues = true)
+    public static function trimExplode(string $delimiter, string $string, bool $onlyNonEmptyValues = true): array
     {
         $chunksArr = explode($delimiter, $string);
         $newChunksArr = [];
@@ -68,7 +68,7 @@ abstract class Arrays
      * @param boolean $emptyValuesOverride If set (which is the default), values from $secondArray will overrule if they are empty (according to PHP's empty() function)
      * @return array Resulting array where $secondArray values has overruled $firstArray values
      */
-    public static function arrayMergeRecursiveOverrule(array $firstArray, array $secondArray, $dontAddNewKeys = false, $emptyValuesOverride = true)
+    public static function arrayMergeRecursiveOverrule(array $firstArray, array $secondArray, bool $dontAddNewKeys = false, bool $emptyValuesOverride = true): array
     {
         $data = [&$firstArray, $secondArray];
         $entryCount = 1;
@@ -112,7 +112,7 @@ abstract class Arrays
      * @param callable $toArray The given closure will get a value that is not an array and has to return an array. This is to allow custom merging of simple types with (sub) arrays
      * @return array Resulting array where $secondArray values has overruled $firstArray values
      */
-    public static function arrayMergeRecursiveOverruleWithCallback(array $firstArray, array $secondArray, \Closure $toArray)
+    public static function arrayMergeRecursiveOverruleWithCallback(array $firstArray, array $secondArray, \Closure $toArray): array
     {
         $data = [&$firstArray, $secondArray];
         $entryCount = 1;
@@ -150,13 +150,13 @@ abstract class Arrays
      * @param array $array
      * @return boolean
      */
-    public static function containsMultipleTypes(array $array)
+    public static function containsMultipleTypes(array $array): bool
     {
         if (count($array) > 0) {
             reset($array);
             $previousType = gettype(current($array));
             next($array);
-            while (list(, $value) = each($array)) {
+            foreach ($array as $value) {
                 if ($previousType !== gettype($value)) {
                     return true;
                 }
@@ -174,7 +174,7 @@ abstract class Arrays
      * @param mixed $initial the initial accumulator value
      * @return mixed
      */
-    public static function array_reduce(array $array, $function, $initial = null)
+    public static function array_reduce(array $array, string $function, $initial = null)
     {
         $accumulator = $initial;
         foreach ($array as $value) {
@@ -219,7 +219,7 @@ abstract class Arrays
      * @return array The modified array or object
      * @throws \InvalidArgumentException
      */
-    public static function setValueByPath($subject, $path, $value)
+    public static function setValueByPath($subject, $path, $value): array
     {
         if (!is_array($subject) && !($subject instanceof \ArrayAccess)) {
             throw new \InvalidArgumentException('setValueByPath() expects $subject to be array or an object implementing \ArrayAccess, "' . (is_object($subject) ? get_class($subject) : gettype($subject)) . '" given.', 1306424308);
@@ -249,7 +249,7 @@ abstract class Arrays
      * @return array The modified array
      * @throws \InvalidArgumentException
      */
-    public static function unsetValueByPath(array $array, $path)
+    public static function unsetValueByPath(array $array, $path): array
     {
         if (is_string($path)) {
             $path = explode('.', $path);
@@ -276,7 +276,7 @@ abstract class Arrays
      * @return boolean TRUE on success, FALSE on failure
      * @see asort()
      */
-    public static function sortKeysRecursively(array &$array, $sortFlags = null)
+    public static function sortKeysRecursively(array &$array, int $sortFlags = null): bool
     {
         foreach ($array as &$value) {
             if (is_array($value)) {
@@ -295,7 +295,7 @@ abstract class Arrays
      * @return array The subject represented as an array
      * @throws \InvalidArgumentException
      */
-    public static function convertObjectToArray($subject)
+    public static function convertObjectToArray($subject): array
     {
         if (!is_object($subject) && !is_array($subject)) {
             throw new \InvalidArgumentException('convertObjectToArray expects either array or object as input, ' . gettype($subject) . ' given.', 1287059709);
@@ -317,7 +317,7 @@ abstract class Arrays
      * @param array $array
      * @return array the modified array
      */
-    public static function removeEmptyElementsRecursively(array $array)
+    public static function removeEmptyElementsRecursively(array $array): array
     {
         $result = $array;
         foreach ($result as $key => $value) {
