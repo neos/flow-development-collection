@@ -1,6 +1,7 @@
 <?php
 namespace Neos\Flow\Http;
 
+use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\SystemLoggerInterface;
 use Psr\Http\Message\StreamInterface;
 
