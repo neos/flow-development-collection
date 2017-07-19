@@ -48,15 +48,26 @@ class PackageFactory
             $packageClassName = $packageClassInformation['className'];
             $packageClassPath = Files::concatenatePaths(array($absolutePackagePath, $packageClassInformation['pathAndFilename']));
             $packageClassExists = @include_once($packageClassPath);
-        }
 
-        if ($packageClassExists === false) {
-            throw new Exception\PackageClassMissingException(sprintf('The package class of package "%s" could not be loaded.', 1461911652));
+            if ($packageClassExists === false) {
+                throw new Exception\PackageClassMissingException(
+                    sprintf(
+                        'The package class "%s" (expected in file "%s" of package "%s") could not be loaded.',
+                        $packageClassName,
+                        $packageClassPath,
+                        $$packageKey
+                    ), 1461911652);
+            }
         }
 
         $package = new $packageClassName($packageKey, $composerName, $absolutePackagePath, $autoloadConfiguration);
         if (!$package instanceof PackageInterface) {
-            throw new Exception\CorruptPackageException(sprintf('The package class of package "%s" does not implement \TYPO3\Flow\Package\PackageInterface. Check the file "%s".', $packageKey, $packageClassInformation['pathAndFilename']), 1427193370);
+            throw new Exception\CorruptPackageException(
+                sprintf(
+                    'The package class of package "%s" does not implement \TYPO3\Flow\Package\PackageInterface. Check the file "%s".',
+                    $packageKey,
+                    $packageClassInformation['pathAndFilename']
+                ), 1427193370);
         }
 
         return $package;
