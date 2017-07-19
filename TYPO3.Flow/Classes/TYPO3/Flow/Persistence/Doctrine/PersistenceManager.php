@@ -160,22 +160,16 @@ class PersistenceManager extends AbstractPersistenceManager
             return;
         }
 
-        try {
-            $this->entityManager->flush();
-        } catch (\Doctrine\DBAL\DBALException $exception) {
-            if (!$this->entityManager->isOpen()) {
-                throw $exception;
-            }
-            $this->systemLogger->logException($exception);
-            /** @var Connection $connection */
-            $connection = $this->entityManager->getConnection();
+        /** @var Connection $connection */
+        $connection = $this->entityManager->getConnection();
+        if ($connection->ping() === false) {
+            $this->systemLogger->log('Reconnecting the Doctrine EntityManager to the persistence backend.', LOG_INFO);
             $connection->close();
             $connection->connect();
-            $this->systemLogger->log('Reconnected the Doctrine EntityManager to the persistence backend.', LOG_INFO);
-            $this->entityManager->flush();
-        } finally {
-            $this->emitAllObjectsPersisted();
         }
+
+        $this->entityManager->flush();
+        $this->emitAllObjectsPersisted();
     }
 
     /**
