@@ -10,7 +10,6 @@ class FlowUploadedFile extends UploadedFile
      * This is either the persistent identifier of a previously submitted resource file
      * or an array with the "__identity" key set to the persistent identifier.
      *
-     *
      * @var array|string
      */
     protected $originallySubmittedResource;
@@ -21,6 +20,9 @@ class FlowUploadedFile extends UploadedFile
     protected $collectionName;
 
     /**
+     * This is either the persistent identifier of a previously submitted resource file
+     * or an array with the "__identity" key set to the persistent identifier.
+     *
      * @return array|string
      */
     public function getOriginallySubmittedResource()
