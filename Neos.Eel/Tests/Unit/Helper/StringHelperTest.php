@@ -179,6 +179,24 @@ class StringHelperTest extends UnitTestCase
         $this->assertSame($expected, $result);
     }
 
+    public function pregMatchAllExamples()
+    {
+        return [
+            'matches' => ['<hr id="icon-one" /><hr id="icon-two" />', '/id="icon-(.+?)"/', [['id="icon-one"', 'id="icon-two"'],['one','two']]]
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider pregMatchAllExamples
+     */
+    public function pregMatchAllWorks($string, $pattern, $expected)
+    {
+        $helper = new StringHelper();
+        $result = $helper->pregMatchAll($string, $pattern);
+        $this->assertSame($expected, $result);
+    }
+
     public function pregReplaceExamples()
     {
         return [
