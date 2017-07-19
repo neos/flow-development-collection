@@ -101,6 +101,7 @@ abstract class AbstractAuthenticationController extends ActionController
      * method to do the actual logout.
      *
      * @return void
+     * @Flow\SkipCsrfProtection
      */
     public function logoutAction()
     {
