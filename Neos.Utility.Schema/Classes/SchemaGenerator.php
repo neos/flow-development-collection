@@ -28,7 +28,7 @@ class SchemaGenerator
      * @param mixed $value value to create a schema for
      * @return array schema as array structure
      */
-    public function generate($value)
+    public function generate($value): array
     {
         $schema = [];
         switch (gettype($value)) {
@@ -65,7 +65,7 @@ class SchemaGenerator
      * @param array $dictionaryValue
      * @return array
      */
-    protected function generateDictionarySchema(array $dictionaryValue)
+    protected function generateDictionarySchema(array $dictionaryValue): array
     {
         $schema = ['type' => 'dictionary', 'properties' => []];
         ksort($dictionaryValue);
@@ -81,7 +81,7 @@ class SchemaGenerator
      * @param array $arrayValue
      * @return array schema
      */
-    protected function generateArraySchema(array $arrayValue)
+    protected function generateArraySchema(array $arrayValue): array
     {
         $schema = ['type' => 'array'];
         $subSchemas = [];
@@ -98,7 +98,7 @@ class SchemaGenerator
      * @param string $stringValue
      * @return array
      */
-    protected function generateStringSchema($stringValue)
+    protected function generateStringSchema(string $stringValue): array
     {
         $schema = ['type' => 'string'];
         $schemaValidator = new SchemaValidator();
@@ -134,8 +134,7 @@ class SchemaGenerator
         $result = array_values($uniqueItems);
         if (count($result) === 1) {
             return $result[0];
-        } else {
-            return $result;
         }
+        return $result;
     }
 }
