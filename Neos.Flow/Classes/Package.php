@@ -12,6 +12,7 @@ namespace Neos\Flow;
  */
 
 use Neos\Flow\Package\Package as BasePackage;
+use Neos\Flow\Package\PackageManagerInterface;
 use Neos\Flow\ResourceManagement\ResourceManager;
 
 /**
@@ -117,6 +118,22 @@ class Package extends BasePackage
             $dispatcher->connect(\Neos\Flow\Core\Bootstrap::class, 'bootstrapShuttingDown', function () use ($bootstrap) {
                 $bootstrap->getObjectManager()->get(\Neos\Flow\Cache\CacheManager::class)->flushCaches();
             });
+        });
+
+        $dispatcher->connect(\Neos\Flow\Monitor\FileMonitor::class, 'filesHaveChanged', function ($monitorIdentifier, $changedFiles) use ($bootstrap) {
+            if ($monitorIdentifier !== 'Flow_ClassFiles') {
+                return;
+            }
+            $packageManager = $bootstrap->getEarlyInstance(PackageManagerInterface::class);
+            $packagePhpReversed = strrev('Package.php');
+            foreach ($changedFiles as $pathAndFilename => $status) {
+                if (strpos(strrev($pathAndFilename), $packagePhpReversed) === 0) {
+                    $packageManager->rescanPackages();
+                    $packageManager->initialize($bootstrap);
+
+                    return;
+                }
+            }
         });
     }
 }

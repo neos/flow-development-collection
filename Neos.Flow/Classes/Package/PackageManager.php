@@ -137,9 +137,16 @@ class PackageManager implements PackageManagerInterface
         $this->bootstrap = $bootstrap;
         $this->packageStatesConfiguration = $this->getCurrentPackageStates();
         $this->activePackages = [];
-        $this->registerPackagesFromConfiguration($this->packageStatesConfiguration);
-        /** @var PackageInterface $package */
 
+        try {
+            $this->registerPackagesFromConfiguration($this->packageStatesConfiguration);
+        } catch (PackageClassMissingException $packageClassMissing) {
+            $this->packageStatesConfiguration = $this->rescanPackages();
+            $this->registerPackagesFromConfiguration($this->packageStatesConfiguration);
+        }
+
+
+        /** @var PackageInterface $package */
         foreach ($this->activePackages as $package) {
             $package->boot($bootstrap);
         }
@@ -378,11 +385,20 @@ class PackageManager implements PackageManagerInterface
 
         $manifest = ComposerUtility::writeComposerManifest($packagePath, $packageKey, $manifest);
 
+        $packagePath = str_replace($this->packagesBasePath, '', $packagePath);
+        $package = $this->packageFactory->create($this->packagesBasePath, $packagePath, $packageKey, $manifest['name'], (isset($manifest['autoload']) ? $manifest['autoload'] : []), null);
+
         $refreshedPackageStatesConfiguration = $this->rescanPackages(false);
         $this->packageStatesConfiguration = $refreshedPackageStatesConfiguration;
         $this->registerPackageFromStateConfiguration($manifest['name'], $this->packageStatesConfiguration['packages'][$manifest['name']]);
 
+        $this->packages[$packageKey] = $package;
+        $this->activePackages[$packageKey] = $package;
+        $this->packageKeys[strtolower($packageKey)] = $packageKey;
+
         return $this->packages[$packageKey];
+
+        return $package;
     }
 
     /**
