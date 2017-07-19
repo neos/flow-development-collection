@@ -86,14 +86,14 @@ class TextIterator implements \Iterator
      * @param integer $iteratorType The type of iterator
      * @throws Exception
      */
-    public function __construct($subject, $iteratorType = self::CHARACTER)
+    public function __construct(string $subject, int $iteratorType = self::CHARACTER)
     {
         if ($iteratorType < 1 || $iteratorType > 6) {
             throw new Exception('Fatal error: Invalid iterator type in TextIterator constructor', 1210849014);
         }
 
         $this->iteratorType = $iteratorType;
-        $this->subject = (string)$subject;
+        $this->subject = $subject;
         $this->currentPosition = 0;
         $this->iteratorCache = new \ArrayObject();
         $this->iteratorCacheIterator = $this->iteratorCache->getIterator();
@@ -108,7 +108,7 @@ class TextIterator implements \Iterator
      *
      * @return string The value of the current element
      */
-    public function current()
+    public function current(): string
     {
         return $this->getCurrentElement()->getValue();
     }
@@ -140,9 +140,9 @@ class TextIterator implements \Iterator
      *
      * @return boolean True if the iterator has not reached it's end
      */
-    public function valid()
+    public function valid(): bool
     {
-        if ($this->getCurrentElement() && $this->getCurrentElement()->getValue() != self::DONE && $this->getCurrentElement()->getOffset() != -1) {
+        if ($this->getCurrentElement() !== null && $this->getCurrentElement()->getValue() !== self::DONE && $this->getCurrentElement()->getOffset() !== -1) {
             return true;
         }
         return false;
@@ -163,7 +163,7 @@ class TextIterator implements \Iterator
      *
      * @return integer The offset of the current element
      */
-    public function offset()
+    public function offset(): int
     {
         return $this->getCurrentElement()->getOffset();
     }
@@ -173,7 +173,7 @@ class TextIterator implements \Iterator
      *
      * @return string The previous element of the iterator
      */
-    public function previous()
+    public function previous(): string
     {
         return $this->previousElement->getValue();
     }
@@ -183,7 +183,7 @@ class TextIterator implements \Iterator
      *
      * @return string the last element of the iterator
      */
-    public function last()
+    public function last(): string
     {
         $this->rewind();
         $previousElement = $this->getCurrentElement();
@@ -201,7 +201,7 @@ class TextIterator implements \Iterator
      * @param integer $offset The offset of the character
      * @return string The element following this character
      */
-    public function following($offset)
+    public function following(int $offset): string
     {
         $this->rewind();
         while ($this->valid()) {
@@ -220,7 +220,7 @@ class TextIterator implements \Iterator
      * @param integer $offset The offset of the character
      * @return string The element preceding this character
      */
-    public function preceding($offset)
+    public function preceding(int $offset): string
     {
         $this->rewind();
         while ($this->valid()) {
@@ -245,7 +245,7 @@ class TextIterator implements \Iterator
      *
      * @return boolean True if the current element is a boundary element
      */
-    public function isBoundary()
+    public function isBoundary(): bool
     {
         return $this->getCurrentElement()->isBoundary();
     }
@@ -255,7 +255,7 @@ class TextIterator implements \Iterator
      *
      * @return array All elements of the iterator
      */
-    public function getAll()
+    public function getAll(): array
     {
         $this->rewind();
         $allValues = [];
@@ -295,7 +295,7 @@ class TextIterator implements \Iterator
      *
      * @return string The first element of the iterator
      */
-    public function first()
+    public function first(): string
     {
         $this->rewind();
         return $this->getCurrentElement()->getValue();
@@ -309,22 +309,22 @@ class TextIterator implements \Iterator
      */
     private function generateIteratorElements()
     {
-        if ($this->subject == '') {
+        if ($this->subject === '') {
             $this->iteratorCache->append(new TextIteratorElement(self::DONE, -1));
             return;
         }
 
-        if ($this->iteratorType == self::CODE_POINT) {
+        if ($this->iteratorType === self::CODE_POINT) {
             throw new UnsupportedFeatureException('Unsupported iterator type.', 1210849150);
-        } elseif ($this->iteratorType == self::COMB_SEQUENCE) {
+        } elseif ($this->iteratorType === self::COMB_SEQUENCE) {
             throw new UnsupportedFeatureException('Unsupported iterator type.', 1210849151);
-        } elseif ($this->iteratorType == self::CHARACTER) {
+        } elseif ($this->iteratorType === self::CHARACTER) {
             $this->parseSubjectByCharacter();
-        } elseif ($this->iteratorType == self::WORD) {
+        } elseif ($this->iteratorType === self::WORD) {
             $this->parseSubjectByWord();
-        } elseif ($this->iteratorType == self::LINE) {
+        } elseif ($this->iteratorType === self::LINE) {
             $this->parseSubjectByLine();
-        } elseif ($this->iteratorType == self::SENTENCE) {
+        } elseif ($this->iteratorType === self::SENTENCE) {
             $this->parseSubjectBySentence();
         }
 
@@ -340,7 +340,7 @@ class TextIterator implements \Iterator
     {
         $i = 0;
         foreach (preg_split('//u', $this->subject) as $currentCharacter) {
-            if ($currentCharacter == '') {
+            if ($currentCharacter === '') {
                 continue;
             }
             $this->iteratorCache->append(new TextIteratorElement($currentCharacter, $i, 1, false));
@@ -368,7 +368,7 @@ class TextIterator implements \Iterator
                 $j = 0;
                 $splittedWord = preg_split('/' . self::REGEXP_SENTENCE_DELIMITERS . '/', $currentWord);
                 foreach ($splittedWord as $currentPart) {
-                    if ($currentPart != '') {
+                    if ($currentPart !== '') {
                         $this->iteratorCache->append(new TextIteratorElement($currentPart, $i, Unicode\Functions::strlen($currentPart), false));
                         $i += Unicode\Functions::strlen($currentPart);
                     }
@@ -449,16 +449,19 @@ class TextIterator implements \Iterator
             for ($k = 0; $k < $count; $k++) {
                 $whiteSpace .= ' ';
             }
-            if ($whiteSpace != '') {
+            if ($whiteSpace !== '') {
                 $this->iteratorCache->append(new TextIteratorElement($whiteSpace, $i, $count, true));
             }
             $i += $count;
 
-            if ($currentPart != '' && $j < count($delimitersMatches[0])) {
+            if ($j >= count($delimitersMatches[0])) {
+                continue;
+            }
+            if ($currentPart !== '') {
                 $this->iteratorCache->append(new TextIteratorElement($currentPart . $delimitersMatches[0][$j], $i, Unicode\Functions::strlen($currentPart . $delimitersMatches[0][$j]), false));
                 $i += Unicode\Functions::strlen($currentPart . $delimitersMatches[0][$j]);
                 $j++;
-            } elseif ($j < count($delimitersMatches[0])) {
+            } else {
                 $this->iteratorCache->append(new TextIteratorElement($delimitersMatches[0][$j], $i, 1, true));
                 $i++;
                 $j++;
@@ -469,7 +472,7 @@ class TextIterator implements \Iterator
     /**
      * Helper function to get the current element from the cache.
      *
-     * @return TextIteratorElement The current element of the cache
+     * @return TextIteratorElement|null The current element of the cache
      */
     private function getCurrentElement()
     {

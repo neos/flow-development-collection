@@ -567,7 +567,7 @@ class StringHelper implements ProtectedContextAwareInterface
      */
     public function length($string)
     {
-        return UnicodeFunctions::strlen($string);
+        return $string === null ? 0 : UnicodeFunctions::strlen($string);
     }
 
     /**
