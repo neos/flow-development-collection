@@ -52,7 +52,7 @@ class FilesTest extends \PHPUnit\Framework\TestCase
             return symlink($target, $link);
         } catch (\Exception $e) {
             if (DIRECTORY_SEPARATOR !== '/') {
-                $this->markTestSkipped('Your windows installation does not allow symlinks. Make sure these tests are run with appropriate rights.');
+                $this->markTestSkipped('Your Windows Installation does not allow the PHP process to create symlinks. Try running tests from an admin elevated command line.');
                 return false;
             }
             throw $e;
