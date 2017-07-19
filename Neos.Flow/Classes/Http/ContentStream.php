@@ -1,6 +1,7 @@
 <?php
 namespace Neos\Flow\Http;
 
+use Neos\Flow\Log\SystemLoggerInterface;
 use Psr\Http\Message\StreamInterface;
 
 /**
@@ -19,6 +20,12 @@ class ContentStream implements StreamInterface
      * @var string|resource
      */
     protected $stream;
+
+    /**
+     * @Flow\Inject
+     * @var SystemLoggerInterface
+     */
+    protected $systemLogger;
 
     /**
      * @param string|resource $stream
@@ -385,6 +392,7 @@ class ContentStream implements StreamInterface
 
             return $this->getContents();
         } catch (\Exception $e) {
+            $this->systemLogger->log(sprintf('Tried to convert a http content stream to a string but an exception occured: [%s] - %s', $e->getCode(), $e->getMessage()), LOG_ERR);
             return '';
         }
     }

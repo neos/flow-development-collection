@@ -360,7 +360,7 @@ abstract class AbstractMessage implements MessageInterface
         }
 
         if (is_array($headerLine)) {
-            $headerLine = explode(', ', $headerLine);
+            $headerLine = implode(', ', $headerLine);
         }
 
         return $headerLine;
