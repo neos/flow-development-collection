@@ -29,6 +29,7 @@ use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Property\Exception\TargetNotFoundException;
 use Neos\Flow\Property\TypeConverter\Error\TargetNotFoundError;
 use Neos\Flow\Reflection\ReflectionService;
+use Neos\Utility\TypeHandling;
 
 /**
  * An HTTP based multi-action controller.
@@ -245,6 +246,9 @@ class ActionController extends AbstractController
                 throw new InvalidArgumentTypeException('The argument type for parameter $' . $parameterName . ' of method ' . get_class($this) . '->' . $this->actionMethodName . '() could not be detected.', 1253175643);
             }
             $defaultValue = (isset($parameterInfo['defaultValue']) ? $parameterInfo['defaultValue'] : null);
+            if ($parameterInfo['optional'] === true && $defaultValue === null) {
+                $dataType = TypeHandling::stripNullableType($dataType);
+            }
             $this->arguments->addNewArgument($parameterName, $dataType, ($parameterInfo['optional'] === false), $defaultValue);
         }
     }

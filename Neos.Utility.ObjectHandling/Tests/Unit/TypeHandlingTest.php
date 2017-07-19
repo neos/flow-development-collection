@@ -213,4 +213,47 @@ class TypeHandlingTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertSame($expected, TypeHandling::isCollectionType($type), 'Failed for ' . $type);
     }
+
+    /**
+     * data provider for stripNullableTypesReturnsOnlyTheType
+     */
+    public function nullableTypes()
+    {
+        return [
+            ['integer|null', 'integer'],
+            ['null|int', 'int'],
+            ['array|null', 'array'],
+            ['ArrayObject|null', 'ArrayObject'],
+            ['null|SplObjectStorage', 'SplObjectStorage'],
+            ['Doctrine\Common\Collections\Collection|null', 'Doctrine\Common\Collections\Collection'],
+            ['Doctrine\Common\Collections\ArrayCollection|null', 'Doctrine\Common\Collections\ArrayCollection'],
+            ['array<\Some\Other\Class>|null', 'array<\Some\Other\Class>'],
+            ['ArrayObject<int>|null', 'ArrayObject<int>'],
+            ['SplObjectStorage<\object>|null', 'SplObjectStorage<\object>'],
+            ['Doctrine\Common\Collections\Collection<ElementType>|null', 'Doctrine\Common\Collections\Collection<ElementType>'],
+            ['Doctrine\Common\Collections\ArrayCollection<>|null', 'Doctrine\Common\Collections\ArrayCollection<>'],
+
+            // This is not even a use case for Flow and is bad API design, but we still should handle it correctly.
+            ['integer|null|bool', 'integer|bool'],
+
+            // Types might also contain underscores at various points.
+            ['null|Doctrine\Common\Collections\Array_Collection<>', 'Doctrine\Common\Collections\Array_Collection<>'],
+
+            // This is madness. This... is... NULL!
+            ['null', 'null']
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider nullableTypes
+     */
+    public function stripNullableTypesReturnsOnlyTheType($type, $expectedResult)
+    {
+        $this->assertEquals(
+            $expectedResult,
+            TypeHandling::stripNullableType($type),
+            'Failed for ' . $type
+        );
+    }
 }
