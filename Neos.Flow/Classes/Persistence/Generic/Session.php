@@ -159,7 +159,7 @@ class Session
         $currentValue = ObjectAccess::getProperty($object, $propertyName, true);
         $cleanData =& $this->reconstitutedEntitiesData[$this->getIdentifierByObject($object)]['properties'][$propertyName];
 
-        if ($currentValue instanceof LazySplObjectStorage && !$currentValue->isInitialized()
+        if (($currentValue instanceof LazySplObjectStorage && !$currentValue->isInitialized())
                 || ($currentValue === null && $cleanData['value'] === null)) {
             return false;
         }
