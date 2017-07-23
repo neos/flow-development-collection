@@ -27,7 +27,7 @@ class TypeHelper implements ProtectedContextAwareInterface
      * @param mixed $variable
      * @return string
      */
-    public function typeof($variable)
+    public function typeof($variable): string
     {
         return gettype($variable);
     }
@@ -39,7 +39,7 @@ class TypeHelper implements ProtectedContextAwareInterface
      * @return string
      * @see typeof()
      */
-    public function getType($variable)
+    public function getType($variable): string
     {
         return $this->typeof($variable);
     }
@@ -65,7 +65,7 @@ class TypeHelper implements ProtectedContextAwareInterface
      * @param mixed $variable
      * @return boolean
      */
-    public function isArray($variable)
+    public function isArray($variable): bool
     {
         return is_array($variable);
     }
@@ -76,7 +76,7 @@ class TypeHelper implements ProtectedContextAwareInterface
      * @param mixed $variable
      * @return boolean
      */
-    public function isString($variable)
+    public function isString($variable): bool
     {
         return is_string($variable);
     }
@@ -87,7 +87,7 @@ class TypeHelper implements ProtectedContextAwareInterface
      * @param mixed $variable
      * @return boolean
      */
-    public function isNumeric($variable)
+    public function isNumeric($variable): bool
     {
         return is_numeric($variable);
     }
@@ -98,7 +98,7 @@ class TypeHelper implements ProtectedContextAwareInterface
      * @param mixed $variable
      * @return boolean
      */
-    public function isInteger($variable)
+    public function isInteger($variable): bool
     {
         return is_int($variable);
     }
@@ -109,7 +109,7 @@ class TypeHelper implements ProtectedContextAwareInterface
      * @param mixed $variable
      * @return boolean
      */
-    public function isFloat($variable)
+    public function isFloat($variable): bool
     {
         return is_float($variable);
     }
@@ -120,7 +120,7 @@ class TypeHelper implements ProtectedContextAwareInterface
      * @param mixed $variable
      * @return boolean
      */
-    public function isScalar($variable)
+    public function isScalar($variable): bool
     {
         return is_scalar($variable);
     }
@@ -131,7 +131,7 @@ class TypeHelper implements ProtectedContextAwareInterface
      * @param mixed $variable
      * @return boolean
      */
-    public function isBoolean($variable)
+    public function isBoolean($variable): bool
     {
         return is_bool($variable);
     }
@@ -142,7 +142,7 @@ class TypeHelper implements ProtectedContextAwareInterface
      * @param mixed $variable
      * @return boolean
      */
-    public function isObject($variable)
+    public function isObject($variable): bool
     {
         return is_object($variable);
     }
@@ -154,7 +154,7 @@ class TypeHelper implements ProtectedContextAwareInterface
      * @param string $expectedObjectType
      * @return boolean
      */
-    public function instance($variable, $expectedObjectType)
+    public function instance($variable, string $expectedObjectType): bool
     {
         return ($variable instanceof $expectedObjectType);
     }
@@ -163,7 +163,7 @@ class TypeHelper implements ProtectedContextAwareInterface
      * @param string $methodName
      * @return boolean
      */
-    public function allowsCallOfMethod($methodName)
+    public function allowsCallOfMethod($methodName): bool
     {
         return true;
     }

@@ -51,15 +51,15 @@ class PropertyOperation extends AbstractOperation
     {
         if (!isset($arguments[0]) || empty($arguments[0])) {
             throw new FlowQueryException('property() must be given an attribute name when used on objects, fetching all attributes is not supported.', 1332492263);
-        } else {
-            $context = $flowQuery->getContext();
-            if (!isset($context[0])) {
-                return null;
-            }
-
-            $element = $context[0];
-            $propertyPath = $arguments[0];
-            return ObjectAccess::getPropertyPath($element, $propertyPath);
         }
+
+        $context = $flowQuery->getContext();
+        if (!isset($context[0])) {
+            return null;
+        }
+
+        $element = $context[0];
+        $propertyPath = $arguments[0];
+        return ObjectAccess::getPropertyPath($element, $propertyPath);
     }
 }

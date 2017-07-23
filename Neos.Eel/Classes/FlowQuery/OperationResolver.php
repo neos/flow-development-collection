@@ -66,7 +66,7 @@ class OperationResolver implements OperationResolverInterface
      * @throws FlowQueryException
      * @Flow\CompileStatic
      */
-    public static function buildOperationsAndFinalOperationNames($objectManager)
+    public static function buildOperationsAndFinalOperationNames(ObjectManagerInterface $objectManager): array
     {
         $operations = [];
         $finalOperationNames = [];
@@ -104,7 +104,7 @@ class OperationResolver implements OperationResolverInterface
      * @param string $operationName
      * @return boolean TRUE if $operationName is final
      */
-    public function isFinalOperation($operationName)
+    public function isFinalOperation($operationName): bool
     {
         return isset($this->finalOperationNames[$operationName]);
     }
@@ -117,7 +117,7 @@ class OperationResolver implements OperationResolverInterface
      * @throws FlowQueryException
      * @return OperationInterface the resolved operation
      */
-    public function resolveOperation($operationName, $context)
+    public function resolveOperation($operationName, $context): OperationInterface
     {
         if (!isset($this->operations[$operationName])) {
             throw new FlowQueryException('Operation "' . $operationName . '" not found.', 1332491837);
@@ -137,7 +137,7 @@ class OperationResolver implements OperationResolverInterface
      * @param string $operationName
      * @return boolean
      */
-    public function hasOperation($operationName)
+    public function hasOperation($operationName): bool
     {
         return isset($this->operations[$operationName]);
     }

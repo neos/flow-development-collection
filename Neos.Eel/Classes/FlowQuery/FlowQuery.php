@@ -171,7 +171,7 @@ class FlowQuery implements ProtectedContextAwareInterface, \IteratorAggregate, \
      *
      * @return integer
      */
-    public function count()
+    public function count(): int
     {
         return $this->__call('count', []);
     }
@@ -183,7 +183,7 @@ class FlowQuery implements ProtectedContextAwareInterface, \IteratorAggregate, \
      *
      * @return \ArrayIterator
      */
-    public function getIterator()
+    public function getIterator(): \Iterator
     {
         if (count($this->operations) > 0) {
             $this->evaluateOperations();
@@ -215,7 +215,7 @@ class FlowQuery implements ProtectedContextAwareInterface, \IteratorAggregate, \
      *
      * @return array
      */
-    public function popOperation()
+    public function popOperation(): array
     {
         return array_shift($this->operations);
     }
@@ -230,7 +230,7 @@ class FlowQuery implements ProtectedContextAwareInterface, \IteratorAggregate, \
      * @param string $operationName
      * @param array $arguments
      */
-    public function pushOperation($operationName, array $arguments)
+    public function pushOperation(string $operationName, array $arguments)
     {
         array_unshift($this->operations, [
             'name' => $operationName,
@@ -243,15 +243,14 @@ class FlowQuery implements ProtectedContextAwareInterface, \IteratorAggregate, \
      *
      * Should only be called inside an operation.
      *
-     * @return string the next operation name or NULL if no next operation found.
+     * @return string|null the next operation name or NULL if no next operation found.
      */
     public function peekOperationName()
     {
         if (isset($this->operations[0])) {
             return $this->operations[0]['name'];
-        } else {
-            return null;
         }
+        return null;
     }
 
     /**
@@ -282,7 +281,7 @@ class FlowQuery implements ProtectedContextAwareInterface, \IteratorAggregate, \
      * @param string $methodName
      * @return boolean
      */
-    public function allowsCallOfMethod($methodName)
+    public function allowsCallOfMethod($methodName): bool
     {
         return $this->operationResolver->hasOperation($methodName);
     }

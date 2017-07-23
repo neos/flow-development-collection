@@ -34,7 +34,7 @@ class ArrayHelper implements ProtectedContextAwareInterface
      * @param array|mixed $array_ Optional variable list of additional arrays / values
      * @return array The array with concatenated arrays or values
      */
-    public function concat($array1, $array2, $array_ = null)
+    public function concat($array1, $array2, $array_ = null): array
     {
         $arguments = func_get_args();
         foreach ($arguments as &$argument) {
@@ -52,7 +52,7 @@ class ArrayHelper implements ProtectedContextAwareInterface
      * @param string $separator A separator for the values
      * @return string A string with the joined values separated by the separator
      */
-    public function join(array $array, $separator = ',')
+    public function join(array $array, string $separator = ','): string
     {
         return implode($separator, $array);
     }
@@ -61,11 +61,11 @@ class ArrayHelper implements ProtectedContextAwareInterface
      * Extract a portion of an indexed array
      *
      * @param array $array The array (with numeric indices)
-     * @param string $begin
-     * @param string $end
+     * @param integer $begin
+     * @param integer $end
      * @return array
      */
-    public function slice(array $array, $begin, $end = null)
+    public function slice(array $array, int $begin, int $end = null): array
     {
         if ($end === null) {
             $end = count($array);
@@ -82,7 +82,7 @@ class ArrayHelper implements ProtectedContextAwareInterface
      * @param array $array The array
      * @return array
      */
-    public function reverse(array $array)
+    public function reverse(array $array): array
     {
         return array_reverse($array);
     }
@@ -93,7 +93,7 @@ class ArrayHelper implements ProtectedContextAwareInterface
      * @param array $array The array
      * @return array
      */
-    public function keys(array $array)
+    public function keys(array $array): array
     {
         return array_keys($array);
     }
@@ -104,7 +104,7 @@ class ArrayHelper implements ProtectedContextAwareInterface
      * @param array $array The array
      * @return integer
      */
-    public function length(array $array)
+    public function length(array $array): int
     {
         return count($array);
     }
@@ -115,7 +115,7 @@ class ArrayHelper implements ProtectedContextAwareInterface
      * @param array $array The array
      * @return boolean TRUE if the array is empty
      */
-    public function isEmpty(array $array)
+    public function isEmpty(array $array): bool
     {
         return count($array) === 0;
     }
@@ -146,9 +146,9 @@ class ArrayHelper implements ProtectedContextAwareInterface
      * @param array $array
      * @param mixed $searchElement
      * @param integer $fromIndex
-     * @return mixed
+     * @return integer|string
      */
-    public function indexOf(array $array, $searchElement, $fromIndex = null)
+    public function indexOf(array $array, $searchElement, int $fromIndex = null)
     {
         if ($fromIndex !== null) {
             $array = array_slice($array, $fromIndex, null, true);
@@ -186,7 +186,7 @@ class ArrayHelper implements ProtectedContextAwareInterface
      * @param array $array
      * @return array The sorted array
      */
-    public function sort(array $array)
+    public function sort(array $array): array
     {
         if ($array === []) {
             return $array;
@@ -215,7 +215,7 @@ class ArrayHelper implements ProtectedContextAwareInterface
      * @param boolean $preserveKeys Wether to preserve the keys when shuffling the array
      * @return array The shuffled array
      */
-    public function shuffle(array $array, $preserveKeys = true)
+    public function shuffle(array $array, bool $preserveKeys = true): array
     {
         if ($array === []) {
             return $array;
@@ -244,7 +244,7 @@ class ArrayHelper implements ProtectedContextAwareInterface
      * @param array $array
      * @return array The array without the last element
      */
-    public function pop(array $array)
+    public function pop(array $array): array
     {
         if ($array === []) {
             return $array;
@@ -264,7 +264,7 @@ class ArrayHelper implements ProtectedContextAwareInterface
      * @param mixed $element
      * @return array The array with the inserted elements
      */
-    public function push(array $array, $element)
+    public function push(array $array, $element): array
     {
         $elements = func_get_args();
         array_shift($elements);
@@ -284,7 +284,7 @@ class ArrayHelper implements ProtectedContextAwareInterface
      * @param array $array
      * @return array The array without the first element
      */
-    public function shift(array $array)
+    public function shift(array $array): array
     {
         array_shift($array);
         return $array;
@@ -301,7 +301,7 @@ class ArrayHelper implements ProtectedContextAwareInterface
      * @param mixed $element
      * @return array The array with the inserted elements
      */
-    public function unshift(array $array, $element)
+    public function unshift(array $array, $element): array
     {
         // get all elements that are supposed to be added
         $elements = func_get_args();
@@ -325,7 +325,7 @@ class ArrayHelper implements ProtectedContextAwareInterface
      * @param mixed $replacements Elements to insert instead of the removed range
      * @return array The array with removed and replaced elements
      */
-    public function splice(array $array, $offset, $length = 1, $replacements = null)
+    public function splice(array $array, int $offset, int $length = 1, $replacements = null): array
     {
         $arguments = func_get_args();
         $replacements = array_slice($arguments, 3);
@@ -342,7 +342,7 @@ class ArrayHelper implements ProtectedContextAwareInterface
      * @param array $array
      * @return array The array with flipped keys and values
      */
-    public function flip(array $array)
+    public function flip(array $array): array
     {
         return array_flip($array);
     }
@@ -353,7 +353,7 @@ class ArrayHelper implements ProtectedContextAwareInterface
      * @param string $methodName
      * @return boolean
      */
-    public function allowsCallOfMethod($methodName)
+    public function allowsCallOfMethod($methodName): bool
     {
         return true;
     }

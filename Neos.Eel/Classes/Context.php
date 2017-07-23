@@ -91,7 +91,7 @@ class Context
      * @return mixed
      * @throws \Exception
      */
-    public function call($method, array $arguments = [])
+    public function call(string $method, array $arguments = [])
     {
         if ($this->value === null) {
             return null;

@@ -506,7 +506,7 @@ class FlowQueryTest extends UnitTestCase
      * @param array $elements
      * @return FlowQuery
      */
-    protected function createFlowQuery(array $elements)
+    protected function createFlowQuery(array $elements): FlowQuery
     {
         $flowQuery = $this->getAccessibleMock(FlowQuery::class, ['dummy'], [$elements]);
 

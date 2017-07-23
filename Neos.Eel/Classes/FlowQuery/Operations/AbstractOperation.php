@@ -51,7 +51,7 @@ abstract class AbstractOperation implements OperationInterface
      * @return integer the priority of the operation
      * @api
      */
-    public static function getPriority()
+    public static function getPriority(): int
     {
         return static::$priority;
     }
@@ -60,7 +60,7 @@ abstract class AbstractOperation implements OperationInterface
      * @return boolean TRUE if the operation is final, FALSE otherwise
      * @api
      */
-    public static function isFinal()
+    public static function isFinal(): bool
     {
         return static::$final;
     }
@@ -70,7 +70,7 @@ abstract class AbstractOperation implements OperationInterface
      * @api
      * @throws FlowQueryException
      */
-    public static function getShortName()
+    public static function getShortName(): string
     {
         if (!is_string(static::$shortName)) {
             throw new FlowQueryException('Short name in class ' . __CLASS__ . ' is empty.', 1332488549);
@@ -85,7 +85,7 @@ abstract class AbstractOperation implements OperationInterface
      * @return boolean TRUE if the operation can be applied onto the $context, FALSE otherwise
      * @api
      */
-    public function canEvaluate($context)
+    public function canEvaluate($context): bool
     {
         return true;
     }

@@ -29,7 +29,7 @@ class MathHelper implements ProtectedContextAwareInterface
     /**
      * @return float Euler's constant and the base of natural logarithms, approximately 2.718
      */
-    public function getE()
+    public function getE(): float
     {
         return exp(1);
     }
@@ -37,7 +37,7 @@ class MathHelper implements ProtectedContextAwareInterface
     /**
      * @return float Natural logarithm of 2, approximately 0.693
      */
-    public function getLN2()
+    public function getLN2(): float
     {
         return log(2);
     }
@@ -45,7 +45,7 @@ class MathHelper implements ProtectedContextAwareInterface
     /**
      * @return float Natural logarithm of 10, approximately 2.303
      */
-    public function getLN10()
+    public function getLN10(): float
     {
         return log(10);
     }
@@ -53,7 +53,7 @@ class MathHelper implements ProtectedContextAwareInterface
     /**
      * @return float Base 2 logarithm of E, approximately 1.443
      */
-    public function getLOG2E()
+    public function getLOG2E(): float
     {
         return log(exp(1), 2);
     }
@@ -61,7 +61,7 @@ class MathHelper implements ProtectedContextAwareInterface
     /**
      * @return float Base 10 logarithm of E, approximately 0.434
      */
-    public function getLOG10E()
+    public function getLOG10E(): float
     {
         return log(exp(1), 10);
     }
@@ -69,7 +69,7 @@ class MathHelper implements ProtectedContextAwareInterface
     /**
      * @return float Ratio of the circumference of a circle to its diameter, approximately 3.14159
      */
-    public function getPI()
+    public function getPI(): float
     {
         return pi();
     }
@@ -77,7 +77,7 @@ class MathHelper implements ProtectedContextAwareInterface
     /**
      * @return float Square root of 1/2; equivalently, 1 over the square root of 2, approximately 0.707
      */
-    public function getSQRT1_2()
+    public function getSQRT1_2(): float
     {
         return sqrt(0.5);
     }
@@ -85,7 +85,7 @@ class MathHelper implements ProtectedContextAwareInterface
     /**
      * @return float Square root of 2, approximately 1.414
      */
-    public function getSQRT2()
+    public function getSQRT2(): float
     {
         return sqrt(2);
     }
@@ -94,7 +94,7 @@ class MathHelper implements ProtectedContextAwareInterface
      * @param float $x A number
      * @return float The absolute value of the given value
      */
-    public function abs($x = 'NAN')
+    public function abs($x = 'NAN'): float
     {
         if (!is_numeric($x) && $x !== null) {
             return NAN;
@@ -106,7 +106,7 @@ class MathHelper implements ProtectedContextAwareInterface
      * @param float $x A number
      * @return float The arccosine (in radians) of the given value
      */
-    public function acos($x)
+    public function acos(float $x): float
     {
         return acos($x);
     }
@@ -115,7 +115,7 @@ class MathHelper implements ProtectedContextAwareInterface
      * @param float $x A number
      * @return float The hyperbolic arccosine (in radians) of the given value
      */
-    public function acosh($x)
+    public function acosh(float $x): float
     {
         return acosh($x);
     }
@@ -124,7 +124,7 @@ class MathHelper implements ProtectedContextAwareInterface
      * @param float $x A number
      * @return float The arcsine (in radians) of the given value
      */
-    public function asin($x)
+    public function asin(float $x): float
     {
         return asin($x);
     }
@@ -133,7 +133,7 @@ class MathHelper implements ProtectedContextAwareInterface
      * @param float $x A number
      * @return float The hyperbolic arcsine (in radians) of the given value
      */
-    public function asinh($x)
+    public function asinh(float $x): float
     {
         return asinh($x);
     }
@@ -142,7 +142,7 @@ class MathHelper implements ProtectedContextAwareInterface
      * @param float $x A number
      * @return float The arctangent (in radians) of the given value
      */
-    public function atan($x)
+    public function atan(float $x): float
     {
         return atan($x);
     }
@@ -151,7 +151,7 @@ class MathHelper implements ProtectedContextAwareInterface
      * @param float $x A number
      * @return float The hyperbolic arctangent (in radians) of the given value
      */
-    public function atanh($x)
+    public function atanh(float $x): float
     {
         return atanh($x);
     }
@@ -161,7 +161,7 @@ class MathHelper implements ProtectedContextAwareInterface
      * @param float $x A number
      * @return float The arctangent of the quotient of its arguments
      */
-    public function atan2($y, $x)
+    public function atan2(float $y, float $x): float
     {
         return atan2($y, $x);
     }
@@ -170,7 +170,7 @@ class MathHelper implements ProtectedContextAwareInterface
      * @param float $x A number
      * @return float The cube root of the given value
      */
-    public function cbrt($x)
+    public function cbrt(float $x): float
     {
         $y = pow(abs($x), 1 / 3);
         return $x < 0 ? -$y : $y;
@@ -180,7 +180,7 @@ class MathHelper implements ProtectedContextAwareInterface
      * @param float $x A number
      * @return float The smallest integer greater than or equal to the given value
      */
-    public function ceil($x)
+    public function ceil(float $x): float
     {
         return ceil($x);
     }
@@ -189,7 +189,7 @@ class MathHelper implements ProtectedContextAwareInterface
      * @param float $x A number given in radians
      * @return float The cosine of the given value
      */
-    public function cos($x)
+    public function cos(float $x): float
     {
         return cos($x);
     }
@@ -198,7 +198,7 @@ class MathHelper implements ProtectedContextAwareInterface
      * @param float $x A number
      * @return float The hyperbolic cosine of the given value
      */
-    public function cosh($x)
+    public function cosh(float $x): float
     {
         return cosh($x);
     }
@@ -207,7 +207,7 @@ class MathHelper implements ProtectedContextAwareInterface
      * @param float $x A number
      * @return float The power of the Euler's constant with the given value (e^x)
      */
-    public function exp($x)
+    public function exp(float $x): float
     {
         return exp($x);
     }
@@ -216,7 +216,7 @@ class MathHelper implements ProtectedContextAwareInterface
      * @param float $x A number
      * @return float The power of the Euler's constant with the given value minus 1 (e^x - 1)
      */
-    public function expm1($x)
+    public function expm1(float $x): float
     {
         return expm1($x);
     }
@@ -225,7 +225,7 @@ class MathHelper implements ProtectedContextAwareInterface
      * @param float $x A number
      * @return float The largest integer less than or equal to the given value
      */
-    public function floor($x)
+    public function floor(float $x): float
     {
         return floor($x);
     }
@@ -238,7 +238,7 @@ class MathHelper implements ProtectedContextAwareInterface
      * @param mixed $x A value
      * @return boolean TRUE if the value is a finite (not NAN) number
      */
-    public function isFinite($x)
+    public function isFinite($x): bool
     {
         return is_numeric($x) && is_finite($x);
     }
@@ -251,7 +251,7 @@ class MathHelper implements ProtectedContextAwareInterface
      * @param mixed $x A value
      * @return boolean TRUE if the value is INF or -INF
      */
-    public function isInfinite($x)
+    public function isInfinite($x): bool
     {
         return is_numeric($x) && is_infinite($x);
     }
@@ -264,7 +264,7 @@ class MathHelper implements ProtectedContextAwareInterface
      * @param mixed $x A value
      * @return boolean TRUE if the value is not a number
      */
-    public function isNaN($x)
+    public function isNaN($x): bool
     {
         return !is_numeric($x) || is_nan($x);
     }
@@ -275,7 +275,7 @@ class MathHelper implements ProtectedContextAwareInterface
      * @param float $z_ Optional variable list of additional numbers
      * @return float The square root of the sum of squares of the arguments
      */
-    public function hypot($x, $y, $z_ = null)
+    public function hypot(float $x, float $y, float $z_ = null): float
     {
         if ($z_ === null) {
             return hypot($x, $y);
@@ -291,7 +291,7 @@ class MathHelper implements ProtectedContextAwareInterface
      * @param float $x A number
      * @return float The natural logarithm (base e) of the given value
      */
-    public function log($x)
+    public function log(float $x): float
     {
         return log($x);
     }
@@ -300,7 +300,7 @@ class MathHelper implements ProtectedContextAwareInterface
      * @param float $x A number
      * @return float The natural logarithm (base e) of 1 + the given value
      */
-    public function log1p($x)
+    public function log1p(float $x): float
     {
         return log1p($x);
     }
@@ -309,7 +309,7 @@ class MathHelper implements ProtectedContextAwareInterface
      * @param float $x A number
      * @return float The base 10 logarithm of the given value
      */
-    public function log10($x)
+    public function log10(float $x): float
     {
         return log10($x);
     }
@@ -318,7 +318,7 @@ class MathHelper implements ProtectedContextAwareInterface
      * @param float $x A number
      * @return float The base 2 logarithm of the given value
      */
-    public function log2($x)
+    public function log2(float $x): float
     {
         return log($x, 2);
     }
@@ -328,14 +328,13 @@ class MathHelper implements ProtectedContextAwareInterface
      * @param float $y_ Optional variable list of additional numbers
      * @return float The largest of the given numbers (zero or more)
      */
-    public function max($x = null, $y_ = null)
+    public function max(float $x = null, float $y_ = null): float
     {
         $arguments = func_get_args();
         if ($arguments !== []) {
             return call_user_func_array('max', func_get_args());
-        } else {
-            return -INF;
         }
+        return -INF;
     }
 
     /**
@@ -343,14 +342,13 @@ class MathHelper implements ProtectedContextAwareInterface
      * @param float $y_ Optional variable list of additional numbers
      * @return float The smallest of the given numbers (zero or more)
      */
-    public function min($x = null, $y_ = null)
+    public function min(float $x = null, float $y_ = null): float
     {
         $arguments = func_get_args();
         if ($arguments !== []) {
             return call_user_func_array('min', func_get_args());
-        } else {
-            return INF;
         }
+        return INF;
     }
 
     /**
@@ -360,7 +358,7 @@ class MathHelper implements ProtectedContextAwareInterface
      * @param float $y The exponent
      * @return float The base to the exponent power (x^y)
      */
-    public function pow($x, $y)
+    public function pow(float $x, float $y): float
     {
         return pow($x, $y);
     }
@@ -375,7 +373,7 @@ class MathHelper implements ProtectedContextAwareInterface
      *
      * @return float A random floating point number between 0 (inclusive) and 1 (exclusive), that is from [0, 1)
      */
-    public function random()
+    public function random(): float
     {
         return mt_rand(0, mt_getrandmax() - 1) / mt_getrandmax();
     }
@@ -389,7 +387,7 @@ class MathHelper implements ProtectedContextAwareInterface
      * @param integer $max The upper bound for the random number (inclusive)
      * @return integer A random number between min and max (inclusive), that is from [min, max]
      */
-    public function randomInt($min, $max)
+    public function randomInt(int $min, int $max): int
     {
         return mt_rand($min, $max);
     }
@@ -404,13 +402,13 @@ class MathHelper implements ProtectedContextAwareInterface
      * @param integer $precision The precision (digits after decimal point) to use, defaults to 0
      * @return float The rounded value
      */
-    public function round($subject, $precision = 0)
+    public function round($subject, $precision = 0): float
     {
         if (!is_numeric($subject)) {
             return NAN;
         }
         $subject = floatval($subject);
-        if ($precision != null && !is_int($precision)) {
+        if ($precision !== null && !is_int($precision)) {
             return NAN;
         }
         return round($subject, $precision);
@@ -439,7 +437,7 @@ class MathHelper implements ProtectedContextAwareInterface
      * @param float $x A number given in radians
      * @return float The sine of the given value
      */
-    public function sin($x)
+    public function sin(float $x): float
     {
         return sin($x);
     }
@@ -448,7 +446,7 @@ class MathHelper implements ProtectedContextAwareInterface
      * @param float $x A number
      * @return float The hyperbolic sine of the given value
      */
-    public function sinh($x)
+    public function sinh(float $x): float
     {
         return sinh($x);
     }
@@ -457,7 +455,7 @@ class MathHelper implements ProtectedContextAwareInterface
      * @param float $x A number
      * @return float The square root of the given number
      */
-    public function sqrt($x)
+    public function sqrt(float $x): float
     {
         return sqrt($x);
     }
@@ -466,7 +464,7 @@ class MathHelper implements ProtectedContextAwareInterface
      * @param float $x A number given in radians
      * @return float The tangent of the given value
      */
-    public function tan($x)
+    public function tan(float $x): float
     {
         return tan($x);
     }
@@ -475,7 +473,7 @@ class MathHelper implements ProtectedContextAwareInterface
      * @param float $x A number
      * @return float The hyperbolic tangent of the given value
      */
-    public function tanh($x)
+    public function tanh(float $x): float
     {
         return tanh($x);
     }
@@ -489,14 +487,14 @@ class MathHelper implements ProtectedContextAwareInterface
      * @param float $x A number
      * @return integer The integral part of the given number
      */
-    public function trunc($x)
+    public function trunc(float $x): int
     {
         $sign = $this->sign($x);
         switch ($sign) {
             case -1:
-                return ceil($x);
+                return (int)ceil($x);
             case 1:
-                return floor($x);
+                return (int)floor($x);
             default:
                 return $sign;
         }
@@ -508,7 +506,7 @@ class MathHelper implements ProtectedContextAwareInterface
      * @param string $methodName
      * @return boolean
      */
-    public function allowsCallOfMethod($methodName)
+    public function allowsCallOfMethod($methodName): bool
     {
         return true;
     }

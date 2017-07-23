@@ -46,9 +46,9 @@ class CountOperation extends AbstractOperation
     {
         if (count($arguments) == 0) {
             return count($flowQuery->getContext());
-        } else {
-            $flowQuery->pushOperation('count', []);
-            $flowQuery->pushOperation('filter', $arguments);
         }
+
+        $flowQuery->pushOperation('count', []);
+        $flowQuery->pushOperation('filter', $arguments);
     }
 }

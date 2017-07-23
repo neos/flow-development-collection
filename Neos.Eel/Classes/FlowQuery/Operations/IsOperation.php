@@ -47,9 +47,8 @@ class IsOperation extends AbstractOperation
     {
         if (count($arguments) == 0) {
             return count($flowQuery->getContext()) > 0;
-        } else {
-            $flowQuery->pushOperation('is', []);
-            $flowQuery->pushOperation('filter', $arguments);
         }
+        $flowQuery->pushOperation('is', []);
+        $flowQuery->pushOperation('filter', $arguments);
     }
 }

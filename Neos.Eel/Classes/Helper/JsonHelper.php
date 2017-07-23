@@ -27,7 +27,7 @@ class JsonHelper implements ProtectedContextAwareInterface
      * @param mixed $value
      * @return string
      */
-    public function stringify($value)
+    public function stringify($value): string
     {
         return json_encode($value);
     }
@@ -39,7 +39,7 @@ class JsonHelper implements ProtectedContextAwareInterface
      * @param boolean $associativeArrays
      * @return mixed
      */
-    public function parse($json, $associativeArrays = true)
+    public function parse(string $json, bool $associativeArrays = true)
     {
         return json_decode($json, $associativeArrays);
     }
@@ -50,7 +50,7 @@ class JsonHelper implements ProtectedContextAwareInterface
      * @param string $methodName
      * @return boolean
      */
-    public function allowsCallOfMethod($methodName)
+    public function allowsCallOfMethod($methodName): bool
     {
         return true;
     }

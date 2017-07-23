@@ -38,7 +38,7 @@ class ConfigurationHelper implements ProtectedContextAwareInterface
      * @param string $settingPath
      * @return mixed
      */
-    public function setting($settingPath)
+    public function setting(string $settingPath)
     {
         return $this->configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, $settingPath);
     }
@@ -49,7 +49,7 @@ class ConfigurationHelper implements ProtectedContextAwareInterface
      * @param string $methodName
      * @return boolean
      */
-    public function allowsCallOfMethod($methodName)
+    public function allowsCallOfMethod($methodName): bool
     {
         return true;
     }

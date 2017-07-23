@@ -91,7 +91,7 @@ class ChildrenOperation extends AbstractOperation
      * @param string $propertyNameFilter
      * @return void
      */
-    protected function evaluatePropertyNameFilter(FlowQuery $query, $propertyNameFilter)
+    protected function evaluatePropertyNameFilter(FlowQuery $query, string $propertyNameFilter)
     {
         $resultObjects = [];
         $resultObjectHashes = [];

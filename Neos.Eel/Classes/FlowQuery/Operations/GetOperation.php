@@ -55,11 +55,9 @@ class GetOperation extends AbstractOperation
             $index = $arguments[0];
             if (isset($context[$index])) {
                 return $context[$index];
-            } else {
-                return null;
             }
-        } else {
-            return $context;
+            return null;
         }
+        return $context;
     }
 }

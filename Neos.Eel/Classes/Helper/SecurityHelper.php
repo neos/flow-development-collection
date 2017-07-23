@@ -49,7 +49,7 @@ class SecurityHelper implements ProtectedContextAwareInterface
      * @param string $roleIdentifier The string representation of the role to search for
      * @return boolean TRUE, if a role with the given string representation was found
      */
-    public function hasRole($roleIdentifier)
+    public function hasRole(string $roleIdentifier): bool
     {
         if ($roleIdentifier === 'Neos.Flow:Everybody') {
             return true;
@@ -68,7 +68,7 @@ class SecurityHelper implements ProtectedContextAwareInterface
      * @param string $methodName
      * @return boolean
      */
-    public function allowsCallOfMethod($methodName)
+    public function allowsCallOfMethod($methodName): bool
     {
         return true;
     }

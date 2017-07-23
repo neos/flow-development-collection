@@ -28,7 +28,7 @@ class DateHelper implements ProtectedContextAwareInterface
      * @param string $format
      * @return \DateTime
      */
-    public function parse($string, $format)
+    public function parse(string $string, string $format): \DateTime
     {
         return \DateTime::createFromFormat($format, $string);
     }
@@ -42,7 +42,7 @@ class DateHelper implements ProtectedContextAwareInterface
      * @param string $format
      * @return string
      */
-    public function format($date, $format)
+    public function format($date, string $format): string
     {
         if ($date instanceof \DateTimeInterface) {
             return $date->format($format);
@@ -65,7 +65,7 @@ class DateHelper implements ProtectedContextAwareInterface
      *
      * @return \DateTime
      */
-    public function now()
+    public function now(): \DateTime
     {
         return new \DateTime('now');
     }
@@ -75,7 +75,7 @@ class DateHelper implements ProtectedContextAwareInterface
      *
      * @return \DateTime
      */
-    public function today()
+    public function today(): \DateTime
     {
         return new \DateTime('today');
     }
@@ -83,11 +83,11 @@ class DateHelper implements ProtectedContextAwareInterface
     /**
      * Add an interval to a date and return a new DateTime object
      *
-     * @param \DateTime $date
+     * @param \DateTimeInterface $date
      * @param string|\DateInterval $interval
-     * @return \DateTime
+     * @return \DateTimeInterface
      */
-    public function add($date, $interval)
+    public function add(\DateTimeInterface $date, $interval): \DateTimeInterface
     {
         if (!$interval instanceof \DateInterval) {
             $interval = new \DateInterval($interval);
@@ -99,11 +99,11 @@ class DateHelper implements ProtectedContextAwareInterface
     /**
      * Subtract an interval from a date and return a new DateTime object
      *
-     * @param \DateTime $date
+     * @param \DateTimeInterface $date
      * @param string|\DateInterval $interval
-     * @return \DateTime
+     * @return \DateTimeInterface
      */
-    public function subtract($date, $interval)
+    public function subtract(\DateTimeInterface $date, $interval): \DateTimeInterface
     {
         if (!$interval instanceof \DateInterval) {
             $interval = new \DateInterval($interval);
@@ -115,11 +115,11 @@ class DateHelper implements ProtectedContextAwareInterface
     /**
      * Get the difference between two dates as a \DateInterval object
      *
-     * @param \DateTime $dateA
-     * @param \DateTime $dateB
+     * @param \DateTimeInterface $dateA
+     * @param \DateTimeInterface $dateB
      * @return \DateInterval
      */
-    public function diff($dateA, $dateB)
+    public function diff(\DateTimeInterface $dateA, \DateTimeInterface $dateB): \DateInterval
     {
         return $dateA->diff($dateB);
     }
@@ -130,7 +130,7 @@ class DateHelper implements ProtectedContextAwareInterface
      * @param \DateTimeInterface $dateTime
      * @return integer The day of month of the given date
      */
-    public function dayOfMonth(\DateTimeInterface $dateTime)
+    public function dayOfMonth(\DateTimeInterface $dateTime): int
     {
         return (integer)$dateTime->format('d');
     }
@@ -141,7 +141,7 @@ class DateHelper implements ProtectedContextAwareInterface
      * @param \DateTimeInterface $dateTime
      * @return integer The month of the given date
      */
-    public function month(\DateTimeInterface $dateTime)
+    public function month(\DateTimeInterface $dateTime): int
     {
         return (integer)$dateTime->format('m');
     }
@@ -152,7 +152,7 @@ class DateHelper implements ProtectedContextAwareInterface
      * @param \DateTimeInterface $dateTime
      * @return integer The year of the given date
      */
-    public function year(\DateTimeInterface $dateTime)
+    public function year(\DateTimeInterface $dateTime): int
     {
         return (integer)$dateTime->format('Y');
     }
@@ -163,7 +163,7 @@ class DateHelper implements ProtectedContextAwareInterface
      * @param \DateTimeInterface $dateTime
      * @return integer The hour of the given date
      */
-    public function hour(\DateTimeInterface $dateTime)
+    public function hour(\DateTimeInterface $dateTime): int
     {
         return (integer)$dateTime->format('H');
     }
@@ -174,7 +174,7 @@ class DateHelper implements ProtectedContextAwareInterface
      * @param \DateTimeInterface $dateTime
      * @return integer The minute of the given date
      */
-    public function minute(\DateTimeInterface $dateTime)
+    public function minute(\DateTimeInterface $dateTime): int
     {
         return (integer)$dateTime->format('i');
     }
@@ -185,7 +185,7 @@ class DateHelper implements ProtectedContextAwareInterface
      * @param \DateTimeInterface $dateTime
      * @return integer The second of the given date
      */
-    public function second(\DateTimeInterface $dateTime)
+    public function second(\DateTimeInterface $dateTime): int
     {
         return (integer)$dateTime->format('s');
     }
@@ -196,7 +196,7 @@ class DateHelper implements ProtectedContextAwareInterface
      * @param string $methodName
      * @return boolean
      */
-    public function allowsCallOfMethod($methodName)
+    public function allowsCallOfMethod($methodName): bool
     {
         return true;
     }

@@ -113,7 +113,7 @@ class FilterOperation extends AbstractOperation
      * @param array $parsedFilter
      * @return boolean TRUE if $element matches filter group, FALSE otherwise
      */
-    protected function matchesFilterGroup($element, array $parsedFilter)
+    protected function matchesFilterGroup($element, array $parsedFilter): bool
     {
         foreach ($parsedFilter['Filters'] as $filter) {
             if ($this->matchesFilter($element, $filter)) {
@@ -128,10 +128,10 @@ class FilterOperation extends AbstractOperation
      * Match a single filter, i.e. [foo]. It matches only if all filter parts match.
      *
      * @param object $element
-     * @param string $filter
+     * @param array<string> $filter
      * @return boolean TRUE if $element matches filter, FALSE otherwise
      */
-    protected function matchesFilter($element, $filter)
+    protected function matchesFilter($element, array $filter): bool
     {
         if (isset($filter['IdentifierFilter']) && !$this->matchesIdentifierFilter($element, $filter['IdentifierFilter'])) {
             return false;
@@ -158,7 +158,7 @@ class FilterOperation extends AbstractOperation
      * @return boolean
      * @throws FizzleException
      */
-    protected function matchesPropertyNameFilter($element, $propertyNameFilter)
+    protected function matchesPropertyNameFilter($element, string $propertyNameFilter): bool
     {
         throw new FizzleException('Property Name filter not supported for generic objects.', 1332489796);
     }
@@ -170,19 +170,17 @@ class FilterOperation extends AbstractOperation
      * @param array $attributeFilter
      * @return boolean
      */
-    protected function matchesAttributeFilter($element, array $attributeFilter)
+    protected function matchesAttributeFilter($element, array $attributeFilter): bool
     {
         if ($attributeFilter['PropertyPath'] !== null) {
             $value = $this->getPropertyPath($element, $attributeFilter['PropertyPath']);
         } else {
             $value = $element;
         }
-        $operand = null;
-        if (isset($attributeFilter['Operand'])) {
-            $operand = $attributeFilter['Operand'];
-        }
+        $operand = $attributeFilter['Operand'] ?? null;
+        $operator = $attributeFilter['Operator'] ?? 'isset';
 
-        return $this->evaluateOperator($value, $attributeFilter['Operator'], $operand);
+        return $this->evaluateOperator($value, $operator, $operand);
     }
 
     /**
@@ -192,7 +190,7 @@ class FilterOperation extends AbstractOperation
      * @param string $identifier
      * @return boolean
      */
-    protected function matchesIdentifierFilter($element, $identifier)
+    protected function matchesIdentifierFilter($element, string $identifier): bool
     {
         return ($this->persistenceManager->getIdentifierByObject($element) === $identifier);
     }
@@ -205,7 +203,7 @@ class FilterOperation extends AbstractOperation
      * @param string $propertyPath
      * @return mixed
      */
-    protected function getPropertyPath($element, $propertyPath)
+    protected function getPropertyPath($element, string $propertyPath)
     {
         return ObjectAccess::getPropertyPath($element, $propertyPath);
     }
@@ -218,7 +216,7 @@ class FilterOperation extends AbstractOperation
      * @param mixed $operand
      * @return boolean
      */
-    protected function evaluateOperator($value, $operator, $operand)
+    protected function evaluateOperator($value, string $operator, $operand): bool
     {
         switch ($operator) {
             case '=':
@@ -260,17 +258,17 @@ class FilterOperation extends AbstractOperation
      * @param string $type
      * @return boolean TRUE if operand is a simple type (object, array, string, ...); i.e. everything which is NOT a class name
      */
-    protected function operandIsSimpleType($type)
+    protected function operandIsSimpleType(string $type): bool
     {
         return $type === 'object' || $type === 'array' || TypeHandling::isLiteral($type);
     }
 
     /**
      * @param string $operand
-     * @param string $value
+     * @param mixed $value
      * @return boolean TRUE if $value is of type $operand; FALSE otherwise
      */
-    protected function handleSimpleTypeOperand($operand, $value)
+    protected function handleSimpleTypeOperand(string $operand, $value): bool
     {
         $operand = TypeHandling::normalizeType($operand);
         if ($operand === 'object') {
@@ -278,7 +276,7 @@ class FilterOperation extends AbstractOperation
         } elseif ($operand === 'string') {
             return is_string($value);
         } elseif ($operand === 'integer') {
-            return is_integer($value);
+            return is_int($value);
         } elseif ($operand === 'boolean') {
             return is_bool($value);
         } elseif ($operand === 'float') {
