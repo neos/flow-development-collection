@@ -104,7 +104,7 @@ class CacheFactory extends \Neos\Cache\CacheFactory implements CacheFactoryInter
      * @param bool $persistent
      * @return FrontendInterface
      */
-    public function create($cacheIdentifier, $cacheObjectName, $backendObjectName, array $backendOptions = [], $persistent = false)
+    public function create($cacheIdentifier, $cacheObjectName, $backendObjectName, array $backendOptions = [], $persistent = false): FrontendInterface
     {
         $backend = $this->instantiateBackend($backendObjectName, $backendOptions, $persistent);
         $cache = $this->instantiateCache($cacheIdentifier, $cacheObjectName, $backend);
@@ -116,7 +116,7 @@ class CacheFactory extends \Neos\Cache\CacheFactory implements CacheFactoryInter
     /**
      * {@inheritdoc}
      */
-    protected function instantiateCache($cacheIdentifier, $cacheObjectName, $backend)
+    protected function instantiateCache(string $cacheIdentifier, string $cacheObjectName, BackendInterface $backend): FrontendInterface
     {
         $cache = parent::instantiateCache($cacheIdentifier, $cacheObjectName, $backend);
 
@@ -134,7 +134,7 @@ class CacheFactory extends \Neos\Cache\CacheFactory implements CacheFactoryInter
      * @return FlowAbstractBackend|BackendInterface
      * @throws InvalidBackendException
      */
-    protected function instantiateBackend($backendObjectName, $backendOptions, $persistent = false)
+    protected function instantiateBackend(string $backendObjectName, array $backendOptions, bool $persistent = false): BackendInterface
     {
         if (
             $persistent &&
@@ -158,7 +158,7 @@ class CacheFactory extends \Neos\Cache\CacheFactory implements CacheFactoryInter
      * @return FlowAbstractBackend
      * @throws InvalidBackendException
      */
-    protected function instantiateFlowSpecificBackend($backendObjectName, $backendOptions)
+    protected function instantiateFlowSpecificBackend(string $backendObjectName, array $backendOptions)
     {
         $backend = new $backendObjectName($this->context, $backendOptions);
 

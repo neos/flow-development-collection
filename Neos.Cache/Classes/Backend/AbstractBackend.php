@@ -68,7 +68,7 @@ abstract class AbstractBackend implements BackendInterface
      * @return void
      * @throws \InvalidArgumentException
      */
-    protected function setProperties($properties, $throwExceptionIfPropertyNotSettable = true)
+    protected function setProperties(array $properties, bool $throwExceptionIfPropertyNotSettable = true)
     {
         foreach ($properties as $propertyName => $propertyValue) {
             $propertyWasSet = $this->setProperty($propertyName, $propertyValue);
@@ -87,7 +87,7 @@ abstract class AbstractBackend implements BackendInterface
      * @param mixed $propertyValue
      * @return boolean
      */
-    protected function setProperty($propertyName, $propertyValue)
+    protected function setProperty(string $propertyName, $propertyValue): bool
     {
         $setterName = 'set' . ucfirst($propertyName);
         if (method_exists($this, $setterName)) {
@@ -127,7 +127,7 @@ abstract class AbstractBackend implements BackendInterface
      * @return string The prefixed identifier, for example "Flow694a5c7a43a4_NumberOfPostedArticles"
      * @api
      */
-    public function getPrefixedIdentifier($entryIdentifier)
+    public function getPrefixedIdentifier($entryIdentifier): string
     {
         return $entryIdentifier;
     }
@@ -140,9 +140,9 @@ abstract class AbstractBackend implements BackendInterface
      * @throws \InvalidArgumentException
      * @api
      */
-    public function setDefaultLifetime($defaultLifetime)
+    public function setDefaultLifetime(int $defaultLifetime)
     {
-        if (!is_int($defaultLifetime) || $defaultLifetime < 0) {
+        if ($defaultLifetime < 0) {
             throw new \InvalidArgumentException('The default lifetime must be given as a positive integer.', 1233072774);
         }
         $this->defaultLifetime = $defaultLifetime;
@@ -155,7 +155,7 @@ abstract class AbstractBackend implements BackendInterface
      * @param integer $lifetime The lifetime in seconds
      * @return \DateTime The expiry time
      */
-    protected function calculateExpiryTime($lifetime = null)
+    protected function calculateExpiryTime(int $lifetime = null): \DateTime
     {
         if ($lifetime === self::UNLIMITED_LIFETIME || ($lifetime === null && $this->defaultLifetime === self::UNLIMITED_LIFETIME)) {
             return new \DateTime(self::DATETIME_EXPIRYTIME_UNLIMITED, new \DateTimeZone('UTC'));

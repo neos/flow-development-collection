@@ -32,7 +32,7 @@ class PhpFrontend extends StringFrontend
      * @param string $identifier A identifier which describes this cache
      * @param PhpCapableBackendInterface $backend Backend to be used for this cache
      */
-    public function __construct($identifier, PhpCapableBackendInterface $backend)
+    public function __construct(string $identifier, PhpCapableBackendInterface $backend)
     {
         parent::__construct($identifier, $backend);
     }
@@ -68,7 +68,7 @@ class PhpFrontend extends StringFrontend
      * @return string
      * @throws \InvalidArgumentException
      */
-    public function getWrapped($entryIdentifier)
+    public function getWrapped(string $entryIdentifier): string
     {
         if (!$this->isValidEntryIdentifier($entryIdentifier)) {
             throw new \InvalidArgumentException('"' . $entryIdentifier . '" is not a valid cache entry identifier.', 1233057752);
@@ -113,7 +113,7 @@ class PhpFrontend extends StringFrontend
      * @return mixed Potential return value from the include operation
      * @api
      */
-    public function requireOnce($entryIdentifier)
+    public function requireOnce(string $entryIdentifier)
     {
         return $this->backend->requireOnce($entryIdentifier);
     }

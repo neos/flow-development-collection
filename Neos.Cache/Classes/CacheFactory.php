@@ -53,7 +53,7 @@ class CacheFactory implements CacheFactoryInterface
      * @throws InvalidCacheException
      * @api
      */
-    public function create($cacheIdentifier, $cacheObjectName, $backendObjectName, array $backendOptions = [])
+    public function create($cacheIdentifier, $cacheObjectName, $backendObjectName, array $backendOptions = []): FrontendInterface
     {
         $backend = $this->instantiateBackend($backendObjectName, $backendOptions);
         $cache = $this->instantiateCache($cacheIdentifier, $cacheObjectName, $backend);
@@ -68,7 +68,7 @@ class CacheFactory implements CacheFactoryInterface
      * @return BackendInterface
      * @throws InvalidBackendException
      */
-    protected function instantiateBackend($backendObjectName, $backendOptions)
+    protected function instantiateBackend(string $backendObjectName, array $backendOptions): BackendInterface
     {
         $backend = new $backendObjectName($this->environmentConfiguration, $backendOptions);
         if (!$backend instanceof BackendInterface) {
@@ -85,7 +85,7 @@ class CacheFactory implements CacheFactoryInterface
      * @return FrontendInterface
      * @throws InvalidCacheException
      */
-    protected function instantiateCache($cacheIdentifier, $cacheObjectName, $backend)
+    protected function instantiateCache(string $cacheIdentifier, string $cacheObjectName, BackendInterface $backend): FrontendInterface
     {
         $cache = new $cacheObjectName($cacheIdentifier, $backend);
         if (!$cache instanceof FrontendInterface) {

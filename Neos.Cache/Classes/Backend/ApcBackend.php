@@ -99,7 +99,7 @@ class ApcBackend extends IndependentAbstractBackend implements TaggableBackendIn
      * @return string The prefixed identifier, for example "Flow694a5c7a43a4_NumberOfPostedArticles"
      * @api
      */
-    public function getPrefixedIdentifier($entryIdentifier)
+    public function getPrefixedIdentifier($entryIdentifier): string
     {
         return $this->identifierPrefix . 'entry_' . $entryIdentifier;
     }
@@ -159,7 +159,7 @@ class ApcBackend extends IndependentAbstractBackend implements TaggableBackendIn
      * @return boolean TRUE if such an entry exists, FALSE if not
      * @api
      */
-    public function has($entryIdentifier)
+    public function has($entryIdentifier): bool
     {
         $success = false;
         apc_fetch($this->identifierPrefix . 'entry_' . $entryIdentifier, $success);
@@ -175,7 +175,7 @@ class ApcBackend extends IndependentAbstractBackend implements TaggableBackendIn
      * @return boolean TRUE if (at least) an entry could be removed or FALSE if no entry was found
      * @api
      */
-    public function remove($entryIdentifier)
+    public function remove($entryIdentifier): bool
     {
         $this->removeIdentifierFromAllTags($entryIdentifier);
         return apc_delete($this->identifierPrefix . 'entry_' . $entryIdentifier);
@@ -189,15 +189,14 @@ class ApcBackend extends IndependentAbstractBackend implements TaggableBackendIn
      * @return array An array with identifiers of all matching entries. An empty array if no entries matched
      * @api
      */
-    public function findIdentifiersByTag($tag)
+    public function findIdentifiersByTag($tag): array
     {
         $success = false;
         $identifiers = apc_fetch($this->identifierPrefix . 'tag_' . $tag, $success);
         if ($success === false) {
             return [];
-        } else {
-            return (array) $identifiers;
         }
+        return (array) $identifiers;
     }
 
     /**
@@ -207,7 +206,7 @@ class ApcBackend extends IndependentAbstractBackend implements TaggableBackendIn
      * @param string $identifier Identifier to find tags by
      * @return array Array with tags
      */
-    protected function findTagsByIdentifier($identifier)
+    protected function findTagsByIdentifier(string $identifier): array
     {
         $success = false;
         $tags = apc_fetch($this->identifierPrefix . 'ident_' . $identifier, $success);
@@ -236,7 +235,7 @@ class ApcBackend extends IndependentAbstractBackend implements TaggableBackendIn
      * @return integer The number of entries which have been affected by this flush
      * @api
      */
-    public function flushByTag($tag)
+    public function flushByTag($tag): int
     {
         $identifiers = $this->findIdentifiersByTag($tag);
         foreach ($identifiers as $identifier) {
@@ -252,7 +251,7 @@ class ApcBackend extends IndependentAbstractBackend implements TaggableBackendIn
      * @param array $tags
      * @return void
      */
-    protected function addIdentifierToTags($entryIdentifier, array $tags)
+    protected function addIdentifierToTags(string $entryIdentifier, array $tags)
     {
         foreach ($tags as $tag) {
             // Update tag-to-identifier index
@@ -276,7 +275,7 @@ class ApcBackend extends IndependentAbstractBackend implements TaggableBackendIn
      * @param string $entryIdentifier
      * @return void
      */
-    protected function removeIdentifierFromAllTags($entryIdentifier)
+    protected function removeIdentifierFromAllTags(string $entryIdentifier)
     {
         // Get tags for this identifier
         $tags = $this->findTagsByIdentifier($entryIdentifier);
@@ -348,7 +347,7 @@ class ApcBackend extends IndependentAbstractBackend implements TaggableBackendIn
      * @return string
      * @api
      */
-    public function key()
+    public function key(): string
     {
         if ($this->cacheEntriesIterator === null) {
             $this->rewind();
@@ -362,7 +361,7 @@ class ApcBackend extends IndependentAbstractBackend implements TaggableBackendIn
      * @return boolean TRUE if the current position is valid, otherwise FALSE
      * @api
      */
-    public function valid()
+    public function valid(): bool
     {
         if ($this->cacheEntriesIterator === null) {
             $this->rewind();
