@@ -1,0 +1,30 @@
+`3.3.16 (2017-07-27) <https://github.com/neos/flow-development-collection/releases/tag/3.3.16>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: PersistenceManager correctly checks and reattempts lost connections <https://github.com/neos/flow-development-collection/pull/926>`_
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+This change replaces the previously put in place try/catch attempt at handling lost connections
+with a proper explicit call to the doctrine connection's `ping()` method.
+As a side-effect, this will no longer trigger the `AllObjectsPersisted` signal if flushing fails, however
+this is not really breaking, since in those circumstances, the application is supposed to not do any
+further work anyway.
+
+Fixes #870
+
+This is a follow-up to #921 - see discussion there.
+
+* Packages: ``Flow``
+
+`BUGFIX: Annotate logoutAction with SkipCsrfProtection <https://github.com/neos/flow-development-collection/pull/1014>`_
+------------------------------------------------------------------------------------------------------------------------
+
+Sometimes (especially in Neos) on logout the CSRF token is missing (`CsrfTokenMissing` interceptor). No harm in ignoring it here.
+
+* Packages: ``Flow``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/3.3.15...3.3.16>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
