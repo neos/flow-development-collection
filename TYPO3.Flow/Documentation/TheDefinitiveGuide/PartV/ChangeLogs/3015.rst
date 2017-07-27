@@ -1,0 +1,15 @@
+`3.0.15 (2017-07-27) <https://github.com/neos/flow-development-collection/releases/tag/3.0.15>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Annotate logoutAction with SkipCsrfProtection <https://github.com/neos/flow-development-collection/pull/1014>`_
+------------------------------------------------------------------------------------------------------------------------
+
+Sometimes (especially in Neos) on logout the CSRF token is missing (`CsrfTokenMissing` interceptor). No harm in ignoring it here.
+
+* Packages: ``Flow``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/3.0.14...3.0.15>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
