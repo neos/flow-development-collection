@@ -73,7 +73,7 @@ class CaseViewHelperTest extends ViewHelperBaseTestcase
     /**
      *
      */
-    public function testStringDataProvider()
+    public function fixtureStringDataProvider()
     {
         return [
             ['', ''],
@@ -83,7 +83,7 @@ class CaseViewHelperTest extends ViewHelperBaseTestcase
     }
 
     /**
-     * @dataProvider testStringDataProvider
+     * @dataProvider fixtureStringDataProvider
      * @test
      */
     public function viewHelperDoesNotRenderChildrenIfGivenValueIsNotNull($testString, $expected)
