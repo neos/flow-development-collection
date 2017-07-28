@@ -166,6 +166,9 @@ class DynamicRoutePart extends AbstractRoutePart implements DynamicRoutePartInte
      */
     protected function findValueToResolve(array $routeValues)
     {
+        if ($this->name === null || $this->name === '') {
+            return null;
+        }
         return ObjectAccess::getPropertyPath($routeValues, $this->name);
     }
 

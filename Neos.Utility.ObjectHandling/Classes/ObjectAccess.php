@@ -64,7 +64,7 @@ abstract class ObjectAccess
      * @throws \InvalidArgumentException in case $subject was not an object or $propertyName was not a string
      * @throws PropertyNotAccessibleException if the property was not accessible
      */
-    public static function getProperty($subject, $propertyName, $forceDirectAccess = false)
+    public static function getProperty($subject, $propertyName, bool $forceDirectAccess = false)
     {
         if (!is_object($subject) && !is_array($subject)) {
             throw new \InvalidArgumentException('$subject must be an object or array, ' . gettype($subject) . ' given.', 1237301367);
@@ -97,7 +97,7 @@ abstract class ObjectAccess
      * @throws PropertyNotAccessibleException
      * @see getProperty()
      */
-    protected static function getPropertyInternal($subject, $propertyName, $forceDirectAccess, &$propertyExists)
+    protected static function getPropertyInternal($subject, string $propertyName, bool $forceDirectAccess, bool &$propertyExists)
     {
         if ($subject === null) {
             return null;
@@ -158,7 +158,7 @@ abstract class ObjectAccess
      * @param string $propertyName
      * @return void
      */
-    protected static function initializePropertyGetterCache($cacheIdentifier, $subject, $propertyName)
+    protected static function initializePropertyGetterCache(string $cacheIdentifier, $subject, string $propertyName)
     {
         if (isset(self::$propertyGetterCache[$cacheIdentifier])) {
             return;
@@ -192,8 +192,13 @@ abstract class ObjectAccess
      * @param string $propertyPath
      * @return mixed Value of the property
      */
-    public static function getPropertyPath($subject, $propertyPath)
+    public static function getPropertyPath($subject, string $propertyPath = null)
     {
+        // TODO: This default value handling is only in place for b/c to have this method accept nulls.
+        //       It can be removed with Flow 5.0 and other breaking typehint changes.
+        if ($propertyPath === null) {
+            return null;
+        }
         $propertyPathSegments = explode('.', $propertyPath);
         foreach ($propertyPathSegments as $pathSegment) {
             $propertyExists = false;
@@ -227,7 +232,7 @@ abstract class ObjectAccess
      * @return boolean TRUE if the property could be set, FALSE otherwise
      * @throws \InvalidArgumentException in case $object was not an object or $propertyName was not a string
      */
-    public static function setProperty(&$subject, $propertyName, $propertyValue, $forceDirectAccess = false)
+    public static function setProperty(&$subject, $propertyName, $propertyValue, bool $forceDirectAccess = false): bool
     {
         if (is_array($subject)) {
             $subject[$propertyName] = $propertyValue;
@@ -275,7 +280,7 @@ abstract class ObjectAccess
      * @return array Array of all gettable property names
      * @throws \InvalidArgumentException
      */
-    public static function getGettablePropertyNames($object)
+    public static function getGettablePropertyNames($object): array
     {
         if (!is_object($object)) {
             throw new \InvalidArgumentException('$object must be an object, ' . gettype($object) . ' given.', 1237301369);
@@ -321,7 +326,7 @@ abstract class ObjectAccess
      * @return array Array of all settable property names
      * @throws \InvalidArgumentException
      */
-    public static function getSettablePropertyNames($object)
+    public static function getSettablePropertyNames($object): array
     {
         if (!is_object($object)) {
             throw new \InvalidArgumentException('$object must be an object, ' . gettype($object) . ' given.', 1264022994);
@@ -352,7 +357,7 @@ abstract class ObjectAccess
      * @return boolean
      * @throws \InvalidArgumentException
      */
-    public static function isPropertySettable($object, $propertyName)
+    public static function isPropertySettable($object, string $propertyName): bool
     {
         if (!is_object($object)) {
             throw new \InvalidArgumentException('$object must be an object, ' . gettype($object) . ' given.', 1259828920);
@@ -373,7 +378,7 @@ abstract class ObjectAccess
      * @return boolean
      * @throws \InvalidArgumentException
      */
-    public static function isPropertyGettable($object, $propertyName)
+    public static function isPropertyGettable($object, string $propertyName): bool
     {
         if (!is_object($object)) {
             throw new \InvalidArgumentException('$object must be an object, ' . gettype($object) . ' given.', 1259828921);
@@ -398,7 +403,7 @@ abstract class ObjectAccess
      * @throws \InvalidArgumentException
      * @todo What to do with ArrayAccess
      */
-    public static function getGettableProperties($object)
+    public static function getGettableProperties($object): array
     {
         if (!is_object($object)) {
             throw new \InvalidArgumentException('$object must be an object, ' . gettype($object) . ' given.', 1237301370);
@@ -421,7 +426,7 @@ abstract class ObjectAccess
      * @param string $propertyName Name of the property
      * @return string Name of the setter method name
      */
-    public static function buildSetterMethodName($propertyName)
+    public static function buildSetterMethodName(string $propertyName): string
     {
         return 'set' . ucfirst($propertyName);
     }

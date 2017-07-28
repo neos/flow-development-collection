@@ -44,24 +44,24 @@ abstract class TypeHandling
      * @return array An array with information about the type
      * @throws InvalidTypeException
      */
-    public static function parseType($type)
+    public static function parseType(string $type): array
     {
         $matches = [];
-        if (preg_match(self::PARSE_TYPE_PATTERN, $type, $matches)) {
-            $type = self::normalizeType($matches['type']);
-            $elementType = isset($matches['elementType']) ? self::normalizeType($matches['elementType']) : null;
-
-            if ($elementType !== null && !self::isCollectionType($type)) {
-                throw new InvalidTypeException('Found an invalid element type declaration in %s. Type "' . $type . '" must not have an element type hint (' . $elementType . ').', 1264093642);
-            }
-
-            return [
-                'type' => $type,
-                'elementType' => $elementType
-            ];
-        } else {
+        if (preg_match(self::PARSE_TYPE_PATTERN, $type, $matches) === 0) {
             throw new InvalidTypeException('Found an invalid element type declaration in %s. A type "' . var_export($type, true) . '" does not exist.', 1264093630);
         }
+
+        $type = self::normalizeType($matches['type']);
+        $elementType = isset($matches['elementType']) ? self::normalizeType($matches['elementType']) : null;
+
+        if ($elementType !== null && !self::isCollectionType($type)) {
+            throw new InvalidTypeException('Found an invalid element type declaration in %s. Type "' . $type . '" must not have an element type hint (' . $elementType . ').', 1264093642);
+        }
+
+        return [
+            'type' => $type,
+            'elementType' => $elementType
+        ];
     }
 
     /**
@@ -73,7 +73,7 @@ abstract class TypeHandling
      * @param string $type Data type to unify
      * @return string unified data type
      */
-    public static function normalizeType($type)
+    public static function normalizeType(string $type): string
     {
         switch ($type) {
             case 'int':
@@ -95,7 +95,7 @@ abstract class TypeHandling
      * @param string $type
      * @return boolean
      */
-    public static function isLiteral($type)
+    public static function isLiteral(string $type): bool
     {
         return preg_match(self::LITERAL_TYPE_PATTERN, $type) === 1;
     }
@@ -106,7 +106,7 @@ abstract class TypeHandling
      * @param string $type
      * @return boolean
      */
-    public static function isSimpleType($type)
+    public static function isSimpleType(string $type): bool
     {
         return in_array(self::normalizeType($type), ['array', 'string', 'float', 'integer', 'boolean'], true);
     }
@@ -117,7 +117,7 @@ abstract class TypeHandling
      * @param string $type
      * @return boolean
      */
-    public static function isCollectionType($type)
+    public static function isCollectionType(string $type): bool
     {
         if (in_array($type, self::$collectionTypes, true)) {
             return true;
@@ -141,7 +141,7 @@ abstract class TypeHandling
      * @param string $type
      * @return string The original type without its element type (if any)
      */
-    public static function truncateElementType($type)
+    public static function truncateElementType(string $type): string
     {
         if (strpos($type, '<') === false) {
             return $type;
@@ -167,7 +167,7 @@ abstract class TypeHandling
      * @param mixed $value
      * @return string
      */
-    public static function getTypeForValue($value)
+    public static function getTypeForValue($value): string
     {
         if (is_object($value)) {
             if ($value instanceof Proxy) {
