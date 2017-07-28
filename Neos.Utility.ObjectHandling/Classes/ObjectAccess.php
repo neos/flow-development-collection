@@ -16,6 +16,7 @@ use Neos\Utility\Exception\PropertyNotAccessibleException;
 /**
  * Provides methods to call appropriate getter/setter on an object given the
  * property name. It does this following these rules:
+ *
  * - if the target object is an instance of ArrayAccess, it gets/sets the property
  * - if public getter/setter method exists, call it.
  * - if public property exists, return/set the value of it.
@@ -47,6 +48,7 @@ abstract class ObjectAccess
      * Get a property of a given object or array.
      *
      * Tries to get the property the following ways:
+     *
      * - if the target is an array, and has this property, we return it.
      * - if super cow powers should be used, fetch value through reflection
      * - if public getter method exists, call it.
@@ -81,8 +83,11 @@ abstract class ObjectAccess
 
     /**
      * Gets a property of a given object or array.
+     *
      * This is an internal method that does only limited type checking for performance reasons.
-     * If you can't make sure that $subject is either of type array or object and $propertyName of type string you should use getProperty() instead.
+     *
+     * If you can't make sure that $subject is either of type array or object and $propertyName
+     * of type string you should use getProperty() instead.
      *
      * @param mixed $subject Object or array to get the property from
      * @param string $propertyName name of the property to retrieve
@@ -204,7 +209,9 @@ abstract class ObjectAccess
 
     /**
      * Set a property for a given object.
+     *
      * Tries to set the property the following ways:
+     *
      * - if target is an array, set value
      * - if super cow powers should be used, set value through reflection
      * - if public setter method exists, call it.
@@ -258,7 +265,9 @@ abstract class ObjectAccess
     /**
      * Returns an array of properties which can be get with the getProperty()
      * method.
+     *
      * Includes the following properties:
+     *
      * - which can be get through a public getter method.
      * - public properties which can be directly get.
      *
@@ -302,7 +311,9 @@ abstract class ObjectAccess
     /**
      * Returns an array of properties which can be set with the setProperty()
      * method.
+     *
      * Includes the following properties:
+     *
      * - which can be set through a public setter method.
      * - public properties which can be directly set.
      *
@@ -413,5 +424,51 @@ abstract class ObjectAccess
     public static function buildSetterMethodName($propertyName)
     {
         return 'set' . ucfirst($propertyName);
+    }
+
+    /**
+     * Instantiates the class named `$className` using the `$arguments` as constructor
+     * arguments (in array order).
+     *
+     * For less than 7 arguments `new` is used, for more a `ReflectionClass` is created
+     * and `newInstanceArgs` is used.
+     *
+     * Note: this should be used sparingly, just calling `new` yourself or using Dependency
+     * Injection are most probably better alternatives.
+     *
+     * @param string $className
+     * @param array $arguments
+     * @return object
+     */
+    public static function instantiateClass($className, $arguments)
+    {
+        switch (count($arguments)) {
+            case 0:
+                $object = new $className();
+                break;
+            case 1:
+                $object = new $className($arguments[0]);
+                break;
+            case 2:
+                $object = new $className($arguments[0], $arguments[1]);
+                break;
+            case 3:
+                $object = new $className($arguments[0], $arguments[1], $arguments[2]);
+                break;
+            case 4:
+                $object = new $className($arguments[0], $arguments[1], $arguments[2], $arguments[3]);
+                break;
+            case 5:
+                $object = new $className($arguments[0], $arguments[1], $arguments[2], $arguments[3], $arguments[4]);
+                break;
+            case 6:
+                $object = new $className($arguments[0], $arguments[1], $arguments[2], $arguments[3], $arguments[4], $arguments[5]);
+                break;
+            default:
+                $class = new \ReflectionClass($className);
+                $object = $class->newInstanceArgs($arguments);
+        }
+
+        return $object;
     }
 }
