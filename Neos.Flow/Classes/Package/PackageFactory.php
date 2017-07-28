@@ -12,6 +12,7 @@ namespace Neos\Flow\Package;
  */
 
 use Neos\Flow\Composer\ComposerUtility;
+use Neos\Flow\Package\Exception\InvalidPackagePathException;
 use Neos\Utility\Files;
 use Neos\Flow\Utility\PhpAnalyzer;
 
@@ -31,6 +32,8 @@ class PackageFactory
      * @param array $packageClassInformation
      * @return PackageInterface
      * @throws Exception\CorruptPackageException
+     * @throws Exception\PackageClassMissingException
+     * @throws InvalidPackagePathException
      */
     public function create($packagesBasePath, $packagePath, $packageKey, $composerName, array $autoloadConfiguration = [], array $packageClassInformation = null)
     {
@@ -44,7 +47,17 @@ class PackageFactory
         if (!empty($packageClassInformation)) {
             $packageClassName = $packageClassInformation['className'];
             $packageClassPath = Files::concatenatePaths(array($absolutePackagePath, $packageClassInformation['pathAndFilename']));
-            require_once($packageClassPath);
+            $packageClassExists = @include_once($packageClassPath);
+
+            if ($packageClassExists === false) {
+                throw new Exception\PackageClassMissingException(
+                    sprintf(
+                        'The package class "%s" (expected in file "%s" of package "%s") could not be loaded.',
+                        $packageClassName,
+                        $packageClassPath,
+                        $$packageKey
+                    ), 1461911652);
+            }
         }
 
         $package = new $packageClassName($packageKey, $composerName, $absolutePackagePath, $autoloadConfiguration);
