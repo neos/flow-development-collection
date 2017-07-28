@@ -364,6 +364,14 @@ abstract class AbstractEvaluatorTest extends UnitTestCase
             ['[[1, 2], 3, 4]', $c, [[1, 2], 3, 4]],
             // Nested expressions in array literal
             ['[[foo[bar], 2], test("a"), 4]', $c, [['Hello', 2], 'test|a|', 4]],
+            // Simple array, padded with whitespace
+            ['[ 1, 2, 3 ]', $c, [1, 2, 3]],
+            // Simple multiline array
+            ['[
+                1,
+                2,
+                3
+            ]', $c, [1, 2, 3]],
         ];
     }
 
@@ -383,6 +391,13 @@ abstract class AbstractEvaluatorTest extends UnitTestCase
             ['{"foo": "bar", \'bar\': "baz"}', $c, ['foo' => 'bar', 'bar' => 'baz']],
             // Nested object literals with unquoted key
             ['{foo: "bar", bar: {baz: "quux"}}', $c, ['foo' => 'bar', 'bar' => ['baz' => 'quux']]],
+            // Simple object literal, padded with whitespace
+            ['{ foo: "bar", bar: "baz" }', $c, ['foo' => 'bar', 'bar' => 'baz']],
+            // Simple multiline object literal
+            ['{
+                foo: "bar",
+                bar: "baz"
+            }', $c, ['foo' => 'bar', 'bar' => 'baz']],
         ];
     }
 
