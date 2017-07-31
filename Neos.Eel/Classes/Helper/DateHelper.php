@@ -13,7 +13,6 @@ namespace Neos\Eel\Helper;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Eel\ProtectedContextAwareInterface;
-use Neos\Flow\I18n\Exception as I18nException;
 use Neos\Flow\I18n\Formatter\DatetimeFormatter;
 use Neos\Flow\I18n\Locale;
 use Neos\Flow\I18n\Service as I18nService;
@@ -73,15 +72,20 @@ class DateHelper implements ProtectedContextAwareInterface
     /**
      * Format a date to a string with a given cldr format
      *
-     * @param \DateTime $date
+     * @param integer|string|\DateTime $date
      * @param string $cldrFormat Format string in CLDR format (see http://cldr.unicode.org/translation/date-time)
      * @param null|string $locale String locale - example (de|en|ru_RU)
-     *
      * @return string
      */
     public function formatCldr($date, $cldrFormat, $locale = null)
     {
-        if (!$date instanceof \DateTimeInterface) {
+        if ($date === 'now') {
+            $date = new \DateTime($date);
+        } elseif (is_int($date)) {
+            $timestamp = $date;
+            $date = new \DateTime();
+            $date->setTimestamp($timestamp);
+        } elseif (!$date instanceof \DateTimeInterface) {
             throw new \InvalidArgumentException('"' . $date . '" could not be parsed by \DateTime constructor.');
         }
         if (empty($cldrFormat)) {
