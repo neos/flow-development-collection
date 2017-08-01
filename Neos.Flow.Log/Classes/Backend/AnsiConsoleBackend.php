@@ -11,8 +11,6 @@ namespace Neos\Flow\Log\Backend;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
-
 /**
  * Extended ANSI console backend with human friendly formatting
  *

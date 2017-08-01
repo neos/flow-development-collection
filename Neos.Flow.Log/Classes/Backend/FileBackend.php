@@ -258,7 +258,6 @@ class FileBackend extends AbstractBackend
      *
      * @return void
      * @api
-     * @todo revise upon resolution of http://forge.typo3.org/issues/9861
      */
     public function close()
     {

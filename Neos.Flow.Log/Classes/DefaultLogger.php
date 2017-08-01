@@ -10,22 +10,30 @@ namespace Neos\Flow\Log;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use Neos\Flow\Core\Bootstrap;
-use Neos\Flow\Error\Debugger;
-use Neos\Flow\Exception;
-use Neos\Flow\Http\HttpRequestHandlerInterface;
+
 use Neos\Flow\Log\Exception\NoSuchBackendException;
-use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 
 /**
+ * The default logger of the Flow framework
  *
+ * @api
  */
-class Logger extends DefaultLogger implements SystemLoggerInterface, SecurityLoggerInterface
+class DefaultLogger implements ThrowableLoggerInterface
 {
     /**
      * @var \SplObjectStorage
      */
     protected $backends;
+
+    /**
+     * @var \closure
+     */
+    protected $requestInfoCallback = null;
+
+    /**
+     * @var \closure
+     */
+    protected $renderBacktraceCallback = null;
 
     /**
      * Constructs the logger
@@ -34,6 +42,22 @@ class Logger extends DefaultLogger implements SystemLoggerInterface, SecurityLog
     public function __construct()
     {
         $this->backends = new \SplObjectStorage();
+    }
+
+    /**
+     * @param \Closure $closure
+     */
+    public function setRequestInfoCallback(\Closure $closure)
+    {
+        $this->requestInfoCallback = $closure;
+    }
+
+    /**
+     * @param \Closure $closure
+     */
+    public function setRenderBacktraceCallback(\Closure $closure)
+    {
+        $this->renderBacktraceCallback = $closure;
     }
 
     /**
@@ -153,10 +177,11 @@ class Logger extends DefaultLogger implements SystemLoggerInterface, SecurityLog
         // FIXME: This is not really the package key:
         $packageKey = (isset($explodedClassName[1])) ? $explodedClassName[1] : null;
 
-        if (!file_exists(FLOW_PATH_DATA . 'Logs/Exceptions')) {
+        $flowPathDataIsAvailable = defined(FLOW_PATH_DATA);
+        if ($flowPathDataIsAvailable && !file_exists(FLOW_PATH_DATA . 'Logs/Exceptions')) {
             mkdir(FLOW_PATH_DATA . 'Logs/Exceptions');
         }
-        if (file_exists(FLOW_PATH_DATA . 'Logs/Exceptions') && is_dir(FLOW_PATH_DATA . 'Logs/Exceptions') && is_writable(FLOW_PATH_DATA . 'Logs/Exceptions')) {
+        if ($flowPathDataIsAvailable && file_exists(FLOW_PATH_DATA . 'Logs/Exceptions') && is_dir(FLOW_PATH_DATA . 'Logs/Exceptions') && is_writable(FLOW_PATH_DATA . 'Logs/Exceptions')) {
             $referenceCode = ($error instanceof Exception) ? $error->getReferenceCode() : date('YmdHis', $_SERVER['REQUEST_TIME']) . substr(md5(rand()), 0, 6);
             $errorDumpPathAndFilename = FLOW_PATH_DATA . 'Logs/Exceptions/' . $referenceCode . '.txt';
             file_put_contents($errorDumpPathAndFilename, $this->renderErrorInfo($error));
@@ -179,13 +204,13 @@ class Logger extends DefaultLogger implements SystemLoggerInterface, SecurityLog
         $maximumDepth = 100;
         $backTrace = $error->getTrace();
         $message = $this->getErrorLogMessage($error);
-        $postMortemInfo = $this->renderBacktrace($message, $backTrace);
+        $postMortemInfo = $message . PHP_EOL . PHP_EOL . $this->renderBacktrace($backTrace);
         $depth = 0;
         while (($error->getPrevious() instanceof \Throwable || $error->getPrevious() instanceof \Exception) && $depth < $maximumDepth) {
             $error = $error->getPrevious();
             $message = 'Previous exception: ' . $this->getErrorLogMessage($error);
             $backTrace = $error->getTrace();
-            $postMortemInfo .= PHP_EOL . $this->renderBacktrace($message, $backTrace);
+            $postMortemInfo .= PHP_EOL . $message . PHP_EOL . PHP_EOL . $this->renderBacktrace($backTrace);
             ++$depth;
         }
 
@@ -207,20 +232,18 @@ class Logger extends DefaultLogger implements SystemLoggerInterface, SecurityLog
         $errorCodeNumber = ($error->getCode() > 0) ? ' #' . $error->getCode() : '';
         $backTrace = $error->getTrace();
         $line = isset($backTrace[0]['line']) ? ' in line ' . $backTrace[0]['line'] . ' of ' . $backTrace[0]['file'] : '';
-
         return 'Exception' . $errorCodeNumber . $line . ': ' . $error->getMessage();
     }
 
     /**
      * Renders background information about the circumstances of the exception.
      *
-     * @param string $message
      * @param array $backTrace
      * @return string
      */
-    protected function renderBacktrace($message, $backTrace)
+    protected function renderBacktrace($backTrace)
     {
-        return $message . PHP_EOL . PHP_EOL . Debugger::getBacktraceCode($backTrace, false, true);
+        return $this->renderBacktraceCallback->__invoke($backTrace);
     }
 
     /**
@@ -231,18 +254,8 @@ class Logger extends DefaultLogger implements SystemLoggerInterface, SecurityLog
     protected function renderRequestInfo()
     {
         $output = '';
-
-        if (Bootstrap::$staticObjectManager instanceof ObjectManagerInterface) {
-            $bootstrap = Bootstrap::$staticObjectManager->get(Bootstrap::class);
-            /* @var Bootstrap $bootstrap */
-            $requestHandler = $bootstrap->getActiveRequestHandler();
-            if ($requestHandler instanceof HttpRequestHandlerInterface) {
-                $request = $requestHandler->getHttpRequest();
-                $response = $requestHandler->getHttpResponse();
-                $output .= PHP_EOL . 'HTTP REQUEST:' . PHP_EOL . ($request == '' ? '[request was empty]' : $request) . PHP_EOL;
-                $output .= PHP_EOL . 'HTTP RESPONSE:' . PHP_EOL . ($response == '' ? '[response was empty]' : $response) . PHP_EOL;
-                $output .= PHP_EOL . 'PHP PROCESS:' . PHP_EOL . 'Inode: ' . getmyinode() . PHP_EOL . 'PID: ' . getmypid() . PHP_EOL . 'UID: ' . getmyuid() . PHP_EOL . 'GID: ' . getmygid() . PHP_EOL . 'User: ' . get_current_user() . PHP_EOL;
-            }
+        if ($this->requestInfoCallback !== null) {
+            $output = $this->requestInfoCallback->__invoke();
         }
 
         return $output;
@@ -255,5 +268,8 @@ class Logger extends DefaultLogger implements SystemLoggerInterface, SecurityLog
      */
     public function shutdownObject()
     {
+        foreach ($this->backends as $backend) {
+            $backend->close();
+        }
     }
 }
