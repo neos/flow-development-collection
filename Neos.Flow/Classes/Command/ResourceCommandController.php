@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Command;
 
 /*
@@ -94,17 +95,17 @@ class ResourceCommandController extends CommandController
             }
 
             foreach ($collections as $collection) {
-            	try{
-		            /** @var CollectionInterface $collection */
-		            $this->outputLine('Publishing resources of collection "%s"', [$collection->getName()]);
-		            $target = $collection->getTarget();
-		            $target->publishCollection($collection, function ($iteration) {
-			            $this->clearState($iteration);
-		            });
-	            } catch (Exception $exception) {
-            		$message = 'An error occurred while publishing the collection ' . $collection->getName() . ': ' . get_class($exception) . ' (Exception code: '. $exception->getCode() . '):' . $exception->getMessage();
-		            $this->messageCollector->append($message);
-	            }
+                try {
+                    /** @var CollectionInterface $collection */
+                    $this->outputLine('Publishing resources of collection "%s"', [$collection->getName()]);
+                    $target = $collection->getTarget();
+                    $target->publishCollection($collection, function ($iteration) {
+                        $this->clearState($iteration);
+                    });
+                } catch (Exception $exception) {
+                    $message = 'An error occurred while publishing the collection ' . $collection->getName() . ': ' . get_class($exception) . ' (Exception code: ' . $exception->getCode() . '):' . $exception->getMessage();
+                    $this->messageCollector->append($message);
+                }
 
             }
 
@@ -268,9 +269,9 @@ class ResourceCommandController extends CommandController
                     $brokenThumbnailCounter = 0;
                     foreach ($brokenResources as $sha1 => $resource) {
                         $this->outputLine('- delete %s (%s) from "%s" collection', [
-                            $resource->getFilename(),
-                            $resource->getSha1(),
-                            $resource->getCollectionName()
+                                $resource->getFilename(),
+                                $resource->getSha1(),
+                                $resource->getCollectionName()
                         ]);
                         $resource->disableLifecycleEvents();
                         $this->resourceRepository->remove($resource);
@@ -301,11 +302,11 @@ class ResourceCommandController extends CommandController
                     break;
                 case 'n':
                     $this->outputLine('Did not delete any resource objects.');
-                break;
+                    break;
                 case 'c':
                     $this->outputLine('Stopping. Did not delete any resource objects.');
                     $this->quit(0);
-                break;
+                    break;
             }
         }
     }
