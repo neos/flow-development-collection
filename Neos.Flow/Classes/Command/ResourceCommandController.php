@@ -94,12 +94,18 @@ class ResourceCommandController extends CommandController
             }
 
             foreach ($collections as $collection) {
-                /** @var CollectionInterface $collection */
-                $this->outputLine('Publishing resources of collection "%s"', [$collection->getName()]);
-                $target = $collection->getTarget();
-                $target->publishCollection($collection, function ($iteration) {
-                    $this->clearState($iteration);
-                });
+            	try{
+		            /** @var CollectionInterface $collection */
+		            $this->outputLine('Publishing resources of collection "%s"', [$collection->getName()]);
+		            $target = $collection->getTarget();
+		            $target->publishCollection($collection, function ($iteration) {
+			            $this->clearState($iteration);
+		            });
+	            } catch (Exception $exception) {
+            		$message = 'An error occurred while publishing the collection ' . $collection->getName() . ': ' . get_class($exception) . ' (Exception code: '. $exception->getCode() . ')';
+		            $this->messageCollector->append($message);
+	            }
+
             }
 
             if ($this->messageCollector->hasMessages()) {
