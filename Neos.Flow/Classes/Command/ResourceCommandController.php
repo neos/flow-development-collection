@@ -1,5 +1,4 @@
 <?php
-
 namespace Neos\Flow\Command;
 
 /*
@@ -268,9 +267,9 @@ class ResourceCommandController extends CommandController
                     $brokenThumbnailCounter = 0;
                     foreach ($brokenResources as $sha1 => $resource) {
                         $this->outputLine('- delete %s (%s) from "%s" collection', [
-                                $resource->getFilename(),
-                                $resource->getSha1(),
-                                $resource->getCollectionName()
+                            $resource->getFilename(),
+                            $resource->getSha1(),
+                            $resource->getCollectionName()
                         ]);
                         $resource->disableLifecycleEvents();
                         $this->resourceRepository->remove($resource);
