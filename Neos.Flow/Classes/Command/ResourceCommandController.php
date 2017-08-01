@@ -106,7 +106,6 @@ class ResourceCommandController extends CommandController
                     $message = 'An error occurred while publishing the collection ' . $collection->getName() . ': ' . get_class($exception) . ' (Exception code: ' . $exception->getCode() . '):' . $exception->getMessage();
                     $this->messageCollector->append($message);
                 }
-
             }
 
             if ($this->messageCollector->hasMessages()) {
