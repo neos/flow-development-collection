@@ -148,9 +148,9 @@ class PropertyMappingConfiguration implements PropertyMappingConfigurationInterf
      * @return PropertyMappingConfiguration this
      * @api
      */
-    public function allowProperties()
+    public function allowProperties(string ...$propertyNames)
     {
-        foreach (func_get_args() as $propertyName) {
+        foreach ($propertyNames as $propertyName) {
             $this->propertiesToBeMapped[$propertyName] = $propertyName;
         }
         return $this;
@@ -165,9 +165,9 @@ class PropertyMappingConfiguration implements PropertyMappingConfigurationInterf
      * @return PropertyMappingConfiguration this
      * @api
      */
-    public function skipProperties()
+    public function skipProperties(string ...$propertyNames)
     {
-        foreach (func_get_args() as $propertyName) {
+        foreach ($propertyNames as $propertyName) {
             $this->propertiesToSkip[$propertyName] = $propertyName;
         }
         return $this;
@@ -182,11 +182,11 @@ class PropertyMappingConfiguration implements PropertyMappingConfigurationInterf
      * @return PropertyMappingConfiguration this
      * @api
      */
-    public function allowAllPropertiesExcept()
+    public function allowAllPropertiesExcept(string ...$propertyNames)
     {
         $this->mapUnknownProperties = true;
 
-        foreach (func_get_args() as $propertyName) {
+        foreach ($propertyNames as $propertyName) {
             $this->propertiesNotToBeMapped[$propertyName] = $propertyName;
         }
         return $this;
