@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\FluidAdaptor\ViewHelpers\Security;
 
 /*
@@ -103,7 +104,7 @@ class IfAccessViewHelper extends AbstractConditionViewHelper
         /** @var Context $securityContext */
         $securityContext = $objectManager->get(Context::class);
 
-        if(!$securityContext->canBeInitialized()) {
+        if (!$securityContext->canBeInitialized()) {
             return false;
         }
         $privilegeManager = static::getPrivilegeManager($renderingContext);

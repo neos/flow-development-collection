@@ -117,7 +117,7 @@ class IfHasRoleViewHelper extends AbstractConditionViewHelper
         /** @var Context $securityContext */
         $securityContext = $objectManager->get(Context::class);
 
-        if(!$securityContext->canBeInitialized()) {
+        if (!$securityContext->canBeInitialized()) {
             return false;
         }
 
