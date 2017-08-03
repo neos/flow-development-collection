@@ -117,6 +117,10 @@ class IfHasRoleViewHelper extends AbstractConditionViewHelper
         /** @var Context $securityContext */
         $securityContext = $objectManager->get(Context::class);
 
+        if(!$securityContext->canBeInitialized()) {
+            return false;
+        }
+
         $role = $arguments['role'];
         $account = $arguments['account'];
         $packageKey = isset($arguments['packageKey']) ? $arguments['packageKey'] : $renderingContext->getControllerContext()->getRequest()->getControllerPackageKey();

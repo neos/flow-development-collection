@@ -96,21 +96,33 @@ class CurrencyViewHelper extends AbstractLocaleAwareViewHelper
     protected $numberFormatter;
 
     /**
-     * @param string $currencySign (optional) The currency sign, eg $ or €.
-     * @param string $decimalSeparator (optional) The separator for the decimal point.
-     * @param string $thousandsSeparator (optional) The thousands separator.
-     * @param boolean $prependCurrency (optional) Indicates if currency symbol should be placed before or after the numeric value.
-     * @param boolean $separateCurrency (optional) Indicates if a space character should be placed between the number and the currency sign.
-     * @param integer $decimals (optional) The number of decimal places.
+     * Initialize the arguments.
+     *
+     * @return void
+     * @api
+     */
+    public function initializeArguments()
+    {
+        $this->registerArgument('currencySign', 'string', '(optional) The currency sign, eg $ or €.', false, '');
+        $this->registerArgument('decimalSeparator', 'string', '(optional) The separator for the decimal point.', false, ',');
+        $this->registerArgument('thousandsSeparator', 'string', '(optional) The thousands separator.', false, '.');
+        $this->registerArgument('prependCurrency', 'boolean', '(optional) Indicates if currency symbol should be placed before or after the numeric value.', false, false);
+        $this->registerArgument('separateCurrency', 'boolean', '(optional) Indicates if a space character should be placed between the number and the currency sign.', false, true);
+        $this->registerArgument('decimals', 'integer', '(optional) The number of decimal places.', false, 2);
+    }
+
+    /**
      *
      * @throws InvalidVariableException
      * @return string the formatted amount.
      * @throws ViewHelperException
      * @api
      */
-    public function render($currencySign = '', $decimalSeparator = ',', $thousandsSeparator = '.', $prependCurrency = false, $separateCurrency = true, $decimals = 2)
+    public function render()
     {
         $stringToFormat = $this->renderChildren();
+        $currencySign = $this->arguments['currencySign'];
+        $separateCurrency = $this->arguments['separateCurrency'];
 
         $useLocale = $this->getLocale();
         if ($useLocale !== null) {
@@ -126,11 +138,11 @@ class CurrencyViewHelper extends AbstractLocaleAwareViewHelper
             return $output;
         }
 
-        $output = number_format((float)$stringToFormat, $decimals, $decimalSeparator, $thousandsSeparator);
+        $output = number_format((float)$stringToFormat, $this->arguments['decimals'], $this->arguments['decimalSeparator'], $this->arguments['thousandsSeparator']);
         if (empty($currencySign)) {
             return $output;
         }
-        if ($prependCurrency === true) {
+        if ($this->arguments['prependCurrency'] === true) {
             $output = $currencySign . ($separateCurrency === true ? ' ' : '') . $output;
 
             return $output;

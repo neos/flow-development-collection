@@ -47,15 +47,27 @@ class StripTagsViewHelper extends AbstractViewHelper
     protected $escapeChildren = false;
 
     /**
+     * Initialize the arguments.
+     *
+     * @return void
+     * @api
+     */
+    public function initializeArguments()
+    {
+        $this->registerArgument('value', 'string', 'string to format', false, null);
+    }
+
+    /**
      * Escapes special characters with their escaped counterparts as needed using PHPs strip_tags() function.
      *
-     * @param string $value string to format
      * @return mixed
      * @see http://www.php.net/manual/function.strip-tags.php
      * @api
      */
-    public function render($value = null)
+    public function render()
     {
+        $value = $this->arguments['value'];
+
         if ($value === null) {
             $value = $this->renderChildren();
         }
