@@ -145,6 +145,7 @@ class PropertyMappingConfiguration implements PropertyMappingConfigurationInterf
      *
      * Example: allowProperties('title', 'content', 'author')
      *
+     * @param string ...$propertyNames
      * @return PropertyMappingConfiguration this
      * @api
      */
@@ -162,6 +163,7 @@ class PropertyMappingConfiguration implements PropertyMappingConfigurationInterf
      *
      * Example: skipProperties('unused', 'dummy')
      *
+     * @param string ...$propertyNames
      * @return PropertyMappingConfiguration this
      * @api
      */
@@ -179,6 +181,7 @@ class PropertyMappingConfiguration implements PropertyMappingConfigurationInterf
      *
      * Example: allowAllPropertiesExcept('password', 'userGroup')
      *
+     * @param string ...$propertyNames
      * @return PropertyMappingConfiguration this
      * @api
      */
