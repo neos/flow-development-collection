@@ -30,9 +30,8 @@ class UrlencodeViewHelperTest extends ViewHelperBaseTestcase
     public function setUp()
     {
         parent::setUp();
-        $this->viewHelper = $this->getMockBuilder(UrlencodeViewHelper::class)->setMethods(array('renderChildren'))->getMock();
+        $this->viewHelper = $this->getMockBuilder(UrlencodeViewHelper::class)->setMethods(array('renderChildren', 'registerRenderMethodArguments'))->getMock();
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
-        $this->viewHelper->initializeArguments();
     }
 
     /**
@@ -49,7 +48,8 @@ class UrlencodeViewHelperTest extends ViewHelperBaseTestcase
     public function renderUsesValueAsSourceIfSpecified()
     {
         $this->viewHelper->expects($this->never())->method('renderChildren');
-        $actualResult = $this->viewHelper->render('Source');
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['value' => 'Source']);
+        $actualResult = $this->viewHelper->render();
         $this->assertEquals('Source', $actualResult);
     }
 
@@ -59,6 +59,7 @@ class UrlencodeViewHelperTest extends ViewHelperBaseTestcase
     public function renderUsesChildnodesAsSourceIfSpecified()
     {
         $this->viewHelper->expects($this->atLeastOnce())->method('renderChildren')->will($this->returnValue('Source'));
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, []);
         $actualResult = $this->viewHelper->render();
         $this->assertEquals('Source', $actualResult);
     }
@@ -69,7 +70,8 @@ class UrlencodeViewHelperTest extends ViewHelperBaseTestcase
     public function renderDoesNotModifyValueIfItDoesNotContainSpecialCharacters()
     {
         $source = 'StringWithoutSpecialCharacters';
-        $actualResult = $this->viewHelper->render($source);
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['value' => $source]);
+        $actualResult = $this->viewHelper->render();
         $this->assertSame($source, $actualResult);
     }
 
@@ -80,7 +82,8 @@ class UrlencodeViewHelperTest extends ViewHelperBaseTestcase
     {
         $source = 'Foo @+%/ "';
         $expectedResult = 'Foo%20%40%2B%25%2F%20%22';
-        $actualResult = $this->viewHelper->render($source);
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['value' => $source]);
+        $actualResult = $this->viewHelper->render();
         $this->assertEquals($expectedResult, $actualResult);
     }
 
@@ -91,7 +94,8 @@ class UrlencodeViewHelperTest extends ViewHelperBaseTestcase
     public function renderThrowsExceptionIfItIsNoStringAndHasNoToStringMethod()
     {
         $source = new \stdClass();
-        $this->viewHelper->render($source);
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['value' => $source]);
+        $this->viewHelper->render();
     }
 
     /**
@@ -100,7 +104,8 @@ class UrlencodeViewHelperTest extends ViewHelperBaseTestcase
     public function renderRendersObjectWithToStringMethod()
     {
         $source = new Uri('http://typo3.com/foo&bar=1');
-        $actualResult = $this->viewHelper->render($source);
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['value' => $source]);
+        $actualResult = $this->viewHelper->render();
         $this->assertEquals(urlencode('http://typo3.com/foo&bar=1'), $actualResult);
     }
 }

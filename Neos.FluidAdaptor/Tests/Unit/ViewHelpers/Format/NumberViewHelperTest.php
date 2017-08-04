@@ -24,7 +24,7 @@ class NumberViewHelperTest extends \Neos\Flow\Tests\UnitTestCase
 
     public function setUp()
     {
-        $this->viewHelper = $this->getMockBuilder(\Neos\FluidAdaptor\ViewHelpers\Format\NumberViewHelper::class)->setMethods(array('renderChildren'))->getMock();
+        $this->viewHelper = $this->getMockBuilder(\Neos\FluidAdaptor\ViewHelpers\Format\NumberViewHelper::class)->setMethods(array('renderChildren', 'registerRenderMethodArguments'))->getMock();
     }
 
     /**
@@ -33,6 +33,7 @@ class NumberViewHelperTest extends \Neos\Flow\Tests\UnitTestCase
     public function formatNumberDefaultsToEnglishNotationWithTwoDecimals()
     {
         $this->viewHelper->expects($this->once())->method('renderChildren')->will($this->returnValue(10000.0 / 3.0));
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, []);
         $actualResult = $this->viewHelper->render();
         $this->assertEquals('3,333.33', $actualResult);
     }
@@ -43,7 +44,8 @@ class NumberViewHelperTest extends \Neos\Flow\Tests\UnitTestCase
     public function formatNumberWithDecimalsDecimalPointAndSeparator()
     {
         $this->viewHelper->expects($this->once())->method('renderChildren')->will($this->returnValue(10000.0 / 3.0));
-        $actualResult = $this->viewHelper->render(3, ',', '.');
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['decimals' => 3, 'decimalSeparator' => ',', 'thousandsSeparator' => '.']);
+        $actualResult = $this->viewHelper->render();
         $this->assertEquals('3.333,333', $actualResult);
     }
 
@@ -57,7 +59,8 @@ class NumberViewHelperTest extends \Neos\Flow\Tests\UnitTestCase
 
         $this->inject($this->viewHelper, 'numberFormatter', $mockNumberFormatter);
         $this->viewHelper->setArguments(array('forceLocale' => 'de_DE'));
-        $this->viewHelper->render(2, '#', '*');
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['decimals' => 2, 'decimalSeparator' => '#', 'thousandsSeparator' => '*']);
+        $this->viewHelper->render();
     }
 
     /**
@@ -77,6 +80,7 @@ class NumberViewHelperTest extends \Neos\Flow\Tests\UnitTestCase
 
         $this->viewHelper->expects($this->once())->method('renderChildren')->will($this->returnValue(123.456));
         $this->viewHelper->setArguments(array('forceLocale' => true));
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, []);
         $this->viewHelper->render();
     }
 
@@ -98,6 +102,7 @@ class NumberViewHelperTest extends \Neos\Flow\Tests\UnitTestCase
 
         $this->viewHelper->expects($this->once())->method('renderChildren')->will($this->returnValue(123.456));
         $this->viewHelper->setArguments(array('forceLocale' => true));
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, []);
         $this->viewHelper->render();
     }
 }
