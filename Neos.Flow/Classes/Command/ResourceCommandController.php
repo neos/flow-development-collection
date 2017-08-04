@@ -102,7 +102,13 @@ class ResourceCommandController extends CommandController
                         $this->clearState($iteration);
                     });
                 } catch (Exception $exception) {
-                    $message = 'An error occurred while publishing the collection ' . $collection->getName() . ': ' . get_class($exception) . ' (Exception code: ' . $exception->getCode() . '):' . $exception->getMessage();
+                    $message = sprintf(
+                        'An error occurred while publishing the collection "%s": %s (Exception code: %u): %s',
+                        $collection->getName(),
+                        get_class($exception),
+                        $exception->getCode(),
+                        $exception->getMessage()
+                    );
                     $this->messageCollector->append($message);
                 }
             }
