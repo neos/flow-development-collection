@@ -13,6 +13,7 @@ namespace Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Format;
 
 require_once(__DIR__ . '/../ViewHelperBaseTestcase.php');
 
+use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\FluidAdaptor\Core\Rendering\RenderingContext;
 use Neos\FluidAdaptor\ViewHelpers\Format\CaseViewHelper;
 use Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase;
@@ -42,7 +43,7 @@ class CaseViewHelperTest extends ViewHelperBaseTestcase
     {
         parent::setUp();
         $this->renderingContext = $this->getMockBuilder(RenderingContext::class)->disableOriginalConstructor()->getMock();
-        $this->viewHelper = new CaseViewHelper();
+        $this->viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\Format\CaseViewHelper::class, array('registerRenderMethodArguments'));
         $this->viewHelper->setRenderingContext($this->renderingContext);
             //$this->getMockBuilder(\Neos\FluidAdaptor\ViewHelpers\Format\CaseViewHelper::class)->setMethods(array('renderChildren'))->getMock();
         $this->originalMbEncodingValue = mb_internal_encoding();
@@ -65,7 +66,7 @@ class CaseViewHelperTest extends ViewHelperBaseTestcase
         $this->viewHelper->setRenderChildrenClosure(function () use ($testString) {
             return $testString;
         });
-
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, []);
         $result = $this->viewHelper->render();
         $this->assertEquals(strtoupper($testString), $result);
     }
@@ -88,7 +89,8 @@ class CaseViewHelperTest extends ViewHelperBaseTestcase
      */
     public function viewHelperDoesNotRenderChildrenIfGivenValueIsNotNull($testString, $expected)
     {
-        $result = $this->viewHelper->render($testString);
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['value' => $testString]);
+        $result = $this->viewHelper->render();
         $this->assertEquals($expected, $result);
     }
 
@@ -98,6 +100,7 @@ class CaseViewHelperTest extends ViewHelperBaseTestcase
      */
     public function viewHelperThrowsExceptionIfIncorrectModeIsGiven()
     {
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['value' => 'Foo', 'mode' => 'incorrectMode']);
         $this->viewHelper->render('Foo', 'incorrectMode');
     }
 
@@ -107,7 +110,8 @@ class CaseViewHelperTest extends ViewHelperBaseTestcase
     public function viewHelperRestoresMbInternalEncodingValueAfterInvocation()
     {
         mb_internal_encoding('ASCII');
-        $this->viewHelper->render('dummy');
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['value' => 'dummy']);
+        $this->viewHelper->render();
         $this->assertEquals('ASCII', mb_internal_encoding());
     }
 
@@ -118,7 +122,8 @@ class CaseViewHelperTest extends ViewHelperBaseTestcase
     public function viewHelperRestoresMbInternalEncodingAfterExceptionOccurred()
     {
         mb_internal_encoding('ASCII');
-        $this->viewHelper->render('dummy', 'incorrectModeResultingInException');
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['value' => 'dummy', 'mode' => 'incorrectModeResultingInException']);
+        $this->viewHelper->render();
         $this->assertEquals('ASCII', mb_internal_encoding());
     }
 
@@ -127,7 +132,8 @@ class CaseViewHelperTest extends ViewHelperBaseTestcase
      */
     public function viewHelperConvertsUppercasePerDefault()
     {
-        $this->assertSame('FOOB4R', $this->viewHelper->render('FooB4r'));
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['value' => 'FooB4r']);
+        $this->assertSame('FOOB4R', $this->viewHelper->render());
     }
 
     /**
@@ -155,6 +161,7 @@ class CaseViewHelperTest extends ViewHelperBaseTestcase
      */
     public function viewHelperConvertsCorrectly($input, $mode, $expected)
     {
-        $this->assertSame($expected, $this->viewHelper->render($input, $mode), sprintf('The conversion with mode "%s" did not perform as expected.', $mode));
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['value' => $input, 'mode' => $mode]);
+        $this->assertSame($expected, $this->viewHelper->render(), sprintf('The conversion with mode "%s" did not perform as expected.', $mode));
     }
 }

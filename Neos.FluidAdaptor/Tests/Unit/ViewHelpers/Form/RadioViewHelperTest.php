@@ -26,11 +26,8 @@ class RadioViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Form
     public function setUp()
     {
         parent::setUp();
-        $this->viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\Form\RadioViewHelper::class, array('setErrorClassAttribute', 'getName', 'getValueAttribute', 'isObjectAccessorMode', 'getPropertyValue', 'registerFieldNameForFormTokenGeneration'));
+        $this->viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\Form\RadioViewHelper::class, array('setErrorClassAttribute', 'getName', 'getValueAttribute', 'isObjectAccessorMode', 'getPropertyValue', 'registerFieldNameForFormTokenGeneration', 'registerRenderMethodArguments'));
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
-        $this->viewHelper->initializeArguments();
-        $this->viewHelper->validateArguments();
-
         $this->mockTagBuilder = $this->getMockBuilder(\TYPO3Fluid\Fluid\Core\ViewHelper\TagBuilder::class)->setMethods(array('setTagName', 'addAttribute'))->getMock();
     }
 
@@ -49,7 +46,7 @@ class RadioViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Form
         $this->viewHelper->expects($this->any())->method('getValueAttribute')->will($this->returnValue('bar'));
         $this->viewHelper->injectTagBuilder($this->mockTagBuilder);
 
-        $this->viewHelper->initialize();
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, []);
         $this->viewHelper->render();
     }
 
@@ -62,14 +59,14 @@ class RadioViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Form
         $this->mockTagBuilder->expects($this->at(3))->method('addAttribute')->with('name', 'foo');
         $this->viewHelper->expects($this->once())->method('registerFieldNameForFormTokenGeneration')->with('foo');
         $this->mockTagBuilder->expects($this->at(4))->method('addAttribute')->with('value', 'bar');
-        $this->mockTagBuilder->expects($this->at(5))->method('addAttribute')->with('checked', 'checked');
+        $this->mockTagBuilder->expects($this->at(5))->method('addAttribute')->with('checked', '');
 
         $this->viewHelper->expects($this->any())->method('getName')->will($this->returnValue('foo'));
         $this->viewHelper->expects($this->any())->method('getValueAttribute')->will($this->returnValue('bar'));
         $this->viewHelper->injectTagBuilder($this->mockTagBuilder);
 
-        $this->viewHelper->initialize();
-        $this->viewHelper->render(true);
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['checked' => true]);
+        $this->viewHelper->render();
     }
 
     /**
@@ -87,9 +84,11 @@ class RadioViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Form
         $this->viewHelper->expects($this->any())->method('getPropertyValue')->will($this->returnValue('propertyValue'));
         $this->viewHelper->injectTagBuilder($this->mockTagBuilder);
 
-        $this->viewHelper->initialize();
-        $this->viewHelper->render(true);
-        $this->viewHelper->render(false);
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['checked' => true]);
+        $this->viewHelper->render();
+
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['checked' => false]);
+        $this->viewHelper->render();
     }
 
     /**
@@ -101,7 +100,7 @@ class RadioViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Form
         $this->mockTagBuilder->expects($this->at(3))->method('addAttribute')->with('name', 'foo');
         $this->viewHelper->expects($this->once())->method('registerFieldNameForFormTokenGeneration')->with('foo');
         $this->mockTagBuilder->expects($this->at(4))->method('addAttribute')->with('value', 'bar');
-        $this->mockTagBuilder->expects($this->at(5))->method('addAttribute')->with('checked', 'checked');
+        $this->mockTagBuilder->expects($this->at(5))->method('addAttribute')->with('checked', '');
 
         $this->viewHelper->expects($this->any())->method('getName')->will($this->returnValue('foo'));
         $this->viewHelper->expects($this->any())->method('getValueAttribute')->will($this->returnValue('bar'));
@@ -109,7 +108,7 @@ class RadioViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Form
         $this->viewHelper->expects($this->any())->method('getPropertyValue')->will($this->returnValue(true));
         $this->viewHelper->injectTagBuilder($this->mockTagBuilder);
 
-        $this->viewHelper->initialize();
+        $this->viewHelper = $this->prepareArguments($this->viewHelper);
         $this->viewHelper->render();
     }
 
@@ -129,7 +128,8 @@ class RadioViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Form
         $this->viewHelper->expects($this->any())->method('getPropertyValue')->will($this->returnValue(array()));
         $this->viewHelper->injectTagBuilder($this->mockTagBuilder);
 
-        $this->viewHelper->initialize();
+
+        $this->viewHelper = $this->prepareArguments($this->viewHelper);
         $this->viewHelper->render();
     }
 
@@ -142,7 +142,7 @@ class RadioViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Form
         $this->mockTagBuilder->expects($this->at(3))->method('addAttribute')->with('name', 'foo');
         $this->viewHelper->expects($this->once())->method('registerFieldNameForFormTokenGeneration')->with('foo');
         $this->mockTagBuilder->expects($this->at(4))->method('addAttribute')->with('value', 'bar');
-        $this->mockTagBuilder->expects($this->at(5))->method('addAttribute')->with('checked', 'checked');
+        $this->mockTagBuilder->expects($this->at(5))->method('addAttribute')->with('checked', '');
 
         $this->viewHelper->expects($this->any())->method('getName')->will($this->returnValue('foo'));
         $this->viewHelper->expects($this->any())->method('getValueAttribute')->will($this->returnValue('bar'));
@@ -150,9 +150,9 @@ class RadioViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Form
         $this->viewHelper->expects($this->any())->method('getPropertyValue')->will($this->returnValue('bar'));
         $this->viewHelper->injectTagBuilder($this->mockTagBuilder);
 
-        $this->viewHelper->initialize();
+        $this->viewHelper = $this->prepareArguments($this->viewHelper);
         $this->viewHelper->render();
-    }
+    }   
 
     /**
      * @test
@@ -160,6 +160,7 @@ class RadioViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Form
     public function renderCallsSetErrorClassAttribute()
     {
         $this->viewHelper->expects($this->once())->method('setErrorClassAttribute');
+        $this->viewHelper = $this->prepareArguments($this->viewHelper);
         $this->viewHelper->render();
     }
 }
