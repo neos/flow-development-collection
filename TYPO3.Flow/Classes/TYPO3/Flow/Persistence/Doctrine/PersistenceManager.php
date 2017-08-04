@@ -13,6 +13,7 @@ namespace TYPO3\Flow\Persistence\Doctrine;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Exception\ConnectionException;
 use Doctrine\ORM\Tools\SchemaTool;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Log\SystemLoggerInterface;
@@ -162,10 +163,14 @@ class PersistenceManager extends AbstractPersistenceManager
 
         /** @var Connection $connection */
         $connection = $this->entityManager->getConnection();
-        if ($connection->ping() === false) {
-            $this->systemLogger->log('Reconnecting the Doctrine EntityManager to the persistence backend.', LOG_INFO);
-            $connection->close();
-            $connection->connect();
+        try {
+            if ($connection->ping() === false) {
+                $this->systemLogger->log('Reconnecting the Doctrine EntityManager to the persistence backend.', LOG_INFO);
+                $connection->close();
+                $connection->connect();
+            }
+        } catch (ConnectionException $exception) {
+            $this->systemLogger->logException($exception);
         }
 
         $this->entityManager->flush();
