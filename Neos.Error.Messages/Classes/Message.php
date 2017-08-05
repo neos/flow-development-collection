@@ -39,7 +39,7 @@ class Message
      * The error code.
      * @var integer
      */
-    protected $code = null;
+    protected $code = 0;
 
     /**
      * The message arguments. Will be replaced in the message body.
@@ -65,7 +65,7 @@ class Message
     public function __construct(string $message, int $code = null, array $arguments = [], string $title = '')
     {
         $this->message = $message;
-        $this->code = $code;
+        $this->code = (int)$code;
         $this->arguments = $arguments;
         $this->title = $title;
     }
