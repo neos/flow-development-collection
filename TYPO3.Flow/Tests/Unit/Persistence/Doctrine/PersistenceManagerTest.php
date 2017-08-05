@@ -12,12 +12,12 @@ namespace TYPO3\Flow\Tests\Unit\Persistence\Doctrine;
  */
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Exception\ConnectionException;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\UnitOfWork;
 use TYPO3\Flow\Log\SystemLoggerInterface;
 use TYPO3\Flow\Persistence\Doctrine\PersistenceManager;
 use TYPO3\Flow\Tests\UnitTestCase;
-use TYPO3\Flow\Error as FlowError;
 
 /**
  * Testcase for the doctrine persistence manager
@@ -177,6 +177,15 @@ class PersistenceManagerTest extends UnitTestCase
         $this->mockConnection->expects($this->never())->method('close');
         $this->mockConnection->expects($this->never())->method('connect');
 
+        $this->persistenceManager->persistAll();
+    }
+
+    /**
+     * @test
+     */
+    public function persistAllCatchesConnectionExceptions()
+    {
+        $this->mockPing->willThrowException($this->getMockBuilder(ConnectionException::class)->disableOriginalConstructor()->getMock());
         $this->persistenceManager->persistAll();
     }
 }
