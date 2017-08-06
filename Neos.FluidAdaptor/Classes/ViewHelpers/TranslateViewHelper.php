@@ -108,9 +108,9 @@ class TranslateViewHelper extends ViewHelper\AbstractViewHelper
         $id = $this->arguments['id'];
         $value = $this->arguments['value'];
         $arguments = $this->arguments['arguments'];
-        $source = $this->arguments['asource'];
+        $source = $this->arguments['source'];
         $package = $this->arguments['package'];
-        $quantity  = $this->arguments['quantity '];
+        $quantity  = $this->arguments['quantity'];
         $locale = $this->arguments['locale'];
 
         $localeObject = null;
