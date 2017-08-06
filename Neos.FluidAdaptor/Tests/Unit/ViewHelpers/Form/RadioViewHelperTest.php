@@ -152,7 +152,7 @@ class RadioViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Form
 
         $this->viewHelper = $this->prepareArguments($this->viewHelper);
         $this->viewHelper->render();
-    }   
+    }
 
     /**
      * @test

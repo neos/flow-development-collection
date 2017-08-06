@@ -24,7 +24,6 @@ use Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase;
  */
 class DateViewHelperTest extends ViewHelperBaseTestcase
 {
-
     public function setUp()
     {
         parent::setUp();
@@ -66,7 +65,6 @@ class DateViewHelperTest extends ViewHelperBaseTestcase
      */
     public function viewHelperReturnsEmptyStringIfNULLIsGiven()
     {
-
         $this->viewHelper->expects($this->once())->method('renderChildren')->will($this->returnValue(null));
         $this->viewHelper = $this->prepareArguments($this->viewHelper, []);
         $actualResult = $this->viewHelper->render();
@@ -121,7 +119,6 @@ class DateViewHelperTest extends ViewHelperBaseTestcase
      */
     public function viewHelperCallsDateTimeFormatterWithCorrectlyBuiltConfigurationArguments()
     {
-
         $dateTime = new \DateTime();
         $locale = new I18n\Locale('de');
         $formatType = 'date';
@@ -143,7 +140,6 @@ class DateViewHelperTest extends ViewHelperBaseTestcase
      */
     public function viewHelperFetchesCurrentLocaleViaI18nService()
     {
-
         $localizationConfiguration = new I18n\Configuration('de_DE');
 
         $mockLocalizationService = $this->getMockBuilder(\Neos\Flow\I18n\Service::class)->setMethods(array('getConfiguration'))->getMock();
@@ -165,7 +161,6 @@ class DateViewHelperTest extends ViewHelperBaseTestcase
      */
     public function viewHelperConvertsI18nExceptionsIntoViewHelperExceptions()
     {
-
         $localizationConfiguration = new I18n\Configuration('de_DE');
 
         $mockLocalizationService = $this->getMockBuilder(\Neos\Flow\I18n\Service::class)->setMethods(array('getConfiguration'))->getMock();
@@ -186,7 +181,6 @@ class DateViewHelperTest extends ViewHelperBaseTestcase
      */
     public function viewHelperCallsDateTimeFormatterWithCustomFormat()
     {
-
         $dateTime = new \DateTime();
         $locale = new I18n\Locale('de');
         $cldrFormatString = 'MM';
