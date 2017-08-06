@@ -65,7 +65,7 @@ class ConsoleOutput
      *
      * @return integer
      */
-    public function getMaximumLineLength()
+    public function getMaximumLineLength(): int
     {
         return 79;
     }
@@ -79,7 +79,7 @@ class ConsoleOutput
      * @param array $arguments Optional arguments to use for sprintf
      * @return void
      */
-    public function output($text, array $arguments = [])
+    public function output(string $text, array $arguments = [])
     {
         if ($arguments !== []) {
             $text = vsprintf($text, $arguments);
@@ -96,7 +96,7 @@ class ConsoleOutput
      * @see output()
      * @see outputLines()
      */
-    public function outputLine($text = '', array $arguments = [])
+    public function outputLine(string $text = '', array $arguments = [])
     {
         $this->output($text . PHP_EOL, $arguments);
     }
@@ -111,7 +111,7 @@ class ConsoleOutput
      * @return void
      * @see outputLine()
      */
-    public function outputFormatted($text = '', array $arguments = [], $leftPadding = 0)
+    public function outputFormatted(string $text = '', array $arguments = [], int $leftPadding = 0)
     {
         $lines = explode(PHP_EOL, $text);
         foreach ($lines as $line) {
@@ -126,7 +126,7 @@ class ConsoleOutput
      * @param array $rows
      * @param array $headers
      */
-    public function outputTable($rows, $headers = null)
+    public function outputTable(array $rows, array $headers = null)
     {
         $tableHelper = $this->getTableHelper();
         if ($headers !== null) {
@@ -147,7 +147,7 @@ class ConsoleOutput
      * @return integer|string|array The selected value or values (the key of the choices array)
      * @throws \InvalidArgumentException
      */
-    public function select($question, $choices, $default = null, $multiSelect = false, $attempts = false)
+    public function select($question, array $choices, bool $default = null, bool $multiSelect = false, $attempts = false)
     {
         return $this->getDialogHelper()->select($this->output, $question, $choices, $default, $attempts, 'Value "%s" is invalid', $multiSelect);
     }
@@ -161,7 +161,7 @@ class ConsoleOutput
      * @return string The user answer
      * @throws \RuntimeException If there is no data to read in the input stream
      */
-    public function ask($question, $default = null, array $autocomplete = null)
+    public function ask($question, string $default = null, array $autocomplete = null): string
     {
         return $this->getDialogHelper()->ask($this->output, $question, $default, $autocomplete);
     }
@@ -175,7 +175,7 @@ class ConsoleOutput
      * @param boolean $default The default answer if the user enters nothing
      * @return boolean true if the user has confirmed, false otherwise
      */
-    public function askConfirmation($question, $default = true)
+    public function askConfirmation($question, bool $default = true): bool
     {
         return $this->getDialogHelper()->askConfirmation($this->output, $question, $default);
     }
@@ -188,7 +188,7 @@ class ConsoleOutput
      * @return string The answer
      * @throws \RuntimeException In case the fallback is deactivated and the response can not be hidden
      */
-    public function askHiddenResponse($question, $fallback = true)
+    public function askHiddenResponse($question, bool $fallback = true): string
     {
         return $this->getDialogHelper()->askHiddenResponse($this->output, $question, $fallback);
     }
@@ -208,7 +208,7 @@ class ConsoleOutput
      * @return mixed
      * @throws \Exception When any of the validators return an error
      */
-    public function askAndValidate($question, $validator, $attempts = false, $default = null, array $autocomplete = null)
+    public function askAndValidate($question, $validator, $attempts = false, string $default = null, array $autocomplete = null)
     {
         return $this->getDialogHelper()->askAndValidate($this->output, $question, $validator, $attempts, $default, $autocomplete);
     }
@@ -228,7 +228,7 @@ class ConsoleOutput
      * @throws \Exception When any of the validators return an error
      * @throws \RuntimeException In case the fallback is deactivated and the response can not be hidden
      */
-    public function askHiddenResponseAndValidate($question, $validator, $attempts = false, $fallback = true)
+    public function askHiddenResponseAndValidate($question, $validator, $attempts = false, bool $fallback = true): string
     {
         return $this->getDialogHelper()->askHiddenResponseAndValidate($this->output, $question, $validator, $attempts, $fallback);
     }
@@ -239,7 +239,7 @@ class ConsoleOutput
      * @param integer $max Maximum steps. If NULL an indeterminate progress bar is rendered
      * @return void
      */
-    public function progressStart($max = null)
+    public function progressStart(int $max = null)
     {
         $this->getProgressHelper()->start($this->output, $max);
     }
@@ -248,11 +248,11 @@ class ConsoleOutput
      * Advances the progress output X steps
      *
      * @param integer $step Number of steps to advance
-     * @param Boolean $redraw Whether to redraw or not
+     * @param boolean $redraw Whether to redraw or not
      * @return void
      * @throws \LogicException
      */
-    public function progressAdvance($step = 1, $redraw = false)
+    public function progressAdvance(int $step = 1, bool $redraw = false)
     {
         $this->getProgressHelper()->advance($step, $redraw);
     }
@@ -261,11 +261,11 @@ class ConsoleOutput
      * Sets the current progress
      *
      * @param integer $current The current progress
-     * @param Boolean $redraw Whether to redraw or not
+     * @param boolean $redraw Whether to redraw or not
      * @return void
      * @throws \LogicException
      */
-    public function progressSet($current, $redraw = false)
+    public function progressSet(int $current, bool $redraw = false)
     {
         $this->getProgressHelper()->setCurrent($current, $redraw);
     }
@@ -285,10 +285,10 @@ class ConsoleOutput
      *
      * @return DialogHelper
      */
-    protected function getDialogHelper()
+    protected function getDialogHelper(): DialogHelper
     {
         if ($this->dialogHelper === null) {
-            $this->dialogHelper = new DialogHelper();
+            $this->dialogHelper = new DialogHelper(false);
             $helperSet = new HelperSet([new FormatterHelper()]);
             $this->dialogHelper->setHelperSet($helperSet);
         }
@@ -300,10 +300,10 @@ class ConsoleOutput
      *
      * @return ProgressHelper
      */
-    protected function getProgressHelper()
+    protected function getProgressHelper(): ProgressHelper
     {
         if ($this->progressHelper === null) {
-            $this->progressHelper = new ProgressHelper();
+            $this->progressHelper = new ProgressHelper(false);
         }
         return $this->progressHelper;
     }
@@ -313,10 +313,10 @@ class ConsoleOutput
      *
      * @return TableHelper
      */
-    protected function getTableHelper()
+    protected function getTableHelper(): TableHelper
     {
         if ($this->tableHelper === null) {
-            $this->tableHelper = new TableHelper();
+            $this->tableHelper = new TableHelper(false);
         }
         return $this->tableHelper;
     }

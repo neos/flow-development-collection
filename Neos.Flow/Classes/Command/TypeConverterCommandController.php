@@ -38,7 +38,7 @@ class TypeConverterCommandController extends CommandController
      * @param string $target Filter by target type
      * @return void
      */
-    public function listCommand($source = null, $target = null)
+    public function listCommand(string $source = null, string $target = null)
     {
         $this->outputLine();
         if ($source !== null) {
