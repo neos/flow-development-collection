@@ -28,7 +28,7 @@ abstract class AbstractBackend extends \Neos\Cache\Backend\AbstractBackend imple
     /**
      * The current application context
      *
-*@var \Neos\Flow\Core\ApplicationContext
+     * @var \Neos\Flow\Core\ApplicationContext
      */
     protected $context;
 

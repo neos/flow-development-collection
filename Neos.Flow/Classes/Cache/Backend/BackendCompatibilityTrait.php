@@ -38,7 +38,7 @@ trait BackendCompatibilityTrait
      * @param string $temporaryDirectory
      * @return EnvironmentConfiguration
      */
-    protected function createEnvironmentConfiguration(ApplicationContext $context, $temporaryDirectory = null)
+    protected function createEnvironmentConfiguration(ApplicationContext $context, string $temporaryDirectory = null): EnvironmentConfiguration
     {
         if ($temporaryDirectory === null) {
             $temporaryDirectory = FLOW_PATH_TEMPORARY;

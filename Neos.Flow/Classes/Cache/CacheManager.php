@@ -145,7 +145,7 @@ class CacheManager
      * @throws DuplicateIdentifierException if a cache with the given identifier has already been registered.
      * @api
      */
-    public function registerCache(FrontendInterface $cache, $persistent = false)
+    public function registerCache(FrontendInterface $cache, bool $persistent = false)
     {
         $identifier = $cache->getIdentifier();
         if (isset($this->caches[$identifier])) {
@@ -161,11 +161,11 @@ class CacheManager
      * Returns the cache specified by $identifier
      *
      * @param string $identifier Identifies which cache to return
-     * @return \Neos\Cache\Frontend\FrontendInterface The specified cache frontend
+     * @return FrontendInterface The specified cache frontend
      * @throws NoSuchCacheException
      * @api
      */
-    public function getCache($identifier)
+    public function getCache(string $identifier): FrontendInterface
     {
         if ($this->hasCache($identifier) === false) {
             throw new NoSuchCacheException('A cache with identifier "' . $identifier . '" does not exist.', 1203699034);
@@ -184,7 +184,7 @@ class CacheManager
      * @return boolean TRUE if a cache with the given identifier exists, otherwise FALSE
      * @api
      */
-    public function hasCache($identifier)
+    public function hasCache(string $identifier): bool
     {
         return isset($this->caches[$identifier]) || isset($this->cacheConfigurations[$identifier]);
     }
@@ -195,7 +195,7 @@ class CacheManager
      * @param string $identifier The identifier of the cache
      * @return boolean TRUE if the specified cache is persistent, FALSE if it is not, or if the cache does not exist
      */
-    public function isCachePersistent($identifier)
+    public function isCachePersistent(string $identifier): bool
     {
         return isset($this->persistentCaches[$identifier]);
     }
@@ -207,7 +207,7 @@ class CacheManager
      * @return void
      * @api
      */
-    public function flushCaches($flushPersistentCaches = false)
+    public function flushCaches(bool $flushPersistentCaches = false)
     {
         $this->createAllCaches();
         /** @var FrontendInterface $cache */
@@ -231,7 +231,7 @@ class CacheManager
      * @return void
      * @api
      */
-    public function flushCachesByTag($tag, $flushPersistentCaches = false)
+    public function flushCachesByTag(string $tag, bool $flushPersistentCaches = false)
     {
         $this->createAllCaches();
         /** @var FrontendInterface $cache */
@@ -248,7 +248,7 @@ class CacheManager
      *
      * @return array
      */
-    public function getCacheConfigurations()
+    public function getCacheConfigurations(): array
     {
         return $this->cacheConfigurations;
     }
@@ -268,7 +268,7 @@ class CacheManager
      * @param array $changedFiles A list of full paths to changed files
      * @return void
      */
-    public function flushSystemCachesByChangedFiles($fileMonitorIdentifier, array $changedFiles)
+    public function flushSystemCachesByChangedFiles(string $fileMonitorIdentifier, array $changedFiles)
     {
         switch ($fileMonitorIdentifier) {
             case 'Flow_ClassFiles':
@@ -437,7 +437,7 @@ class CacheManager
      * @param string $identifier
      * @return void
      */
-    protected function createCache($identifier)
+    protected function createCache(string $identifier)
     {
         $frontend = isset($this->cacheConfigurations[$identifier]['frontend']) ? $this->cacheConfigurations[$identifier]['frontend'] : $this->cacheConfigurations['Default']['frontend'];
         $backend = isset($this->cacheConfigurations[$identifier]['backend']) ? $this->cacheConfigurations[$identifier]['backend'] : $this->cacheConfigurations['Default']['backend'];
