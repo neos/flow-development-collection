@@ -11,10 +11,12 @@ namespace Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Format;
  * source code.
  */
 
+use Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase;
+
 /**
  * Test for \Neos\FluidAdaptor\ViewHelpers\Format\NumberViewHelper
  */
-class NumberViewHelperTest extends \Neos\Flow\Tests\UnitTestCase
+class NumberViewHelperTest extends ViewHelperBaseTestcase
 {
 
     /**

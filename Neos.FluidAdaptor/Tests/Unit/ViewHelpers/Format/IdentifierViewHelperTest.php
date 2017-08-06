@@ -78,6 +78,7 @@ class IdentifierViewHelperTest extends ViewHelperBaseTestcase
             ->method('getIdentifierByObject')
             ->with($object)
             ->will($this->returnValue('b59292c5-1a28-4b36-8615-10d3c5b3a4d8'));
+
         $this->viewHelper = $this->prepareArguments($this->viewHelper, []);
         $this->assertEquals('b59292c5-1a28-4b36-8615-10d3c5b3a4d8', $this->viewHelper->render());
     }
@@ -92,6 +93,7 @@ class IdentifierViewHelperTest extends ViewHelperBaseTestcase
             ->method('renderChildren')
             ->will($this->returnValue(null));
 
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, []);
         $this->assertEquals(null, $this->viewHelper->render());
     }
 
