@@ -66,7 +66,7 @@ class AbstractAdvice implements AdviceInterface
      * @param ObjectManagerInterface $objectManager Only require if a runtime evaluations function is specified
      * @param \Closure $runtimeEvaluator Runtime evaluations function
      */
-    public function __construct($aspectObjectName, $adviceMethodName, ObjectManagerInterface $objectManager = null, \Closure $runtimeEvaluator = null)
+    public function __construct(string $aspectObjectName, string $adviceMethodName, ObjectManagerInterface $objectManager = null, \Closure $runtimeEvaluator = null)
     {
         $this->aspectObjectName = $aspectObjectName;
         $this->adviceMethodName = $adviceMethodName;
@@ -98,7 +98,7 @@ class AbstractAdvice implements AdviceInterface
      *
      * @return string The object name of the aspect
      */
-    public function getAspectObjectName()
+    public function getAspectObjectName(): string
     {
         return $this->aspectObjectName;
     }
@@ -108,7 +108,7 @@ class AbstractAdvice implements AdviceInterface
      *
      * @return string The name of the advice method
      */
-    public function getAdviceMethodName()
+    public function getAdviceMethodName(): string
     {
         return $this->adviceMethodName;
     }
@@ -124,7 +124,7 @@ class AbstractAdvice implements AdviceInterface
      * @return void
      * @Flow\Signal
      */
-    protected function emitAdviceInvoked($aspectObject, $methodName, $joinPoint)
+    protected function emitAdviceInvoked($aspectObject, string $methodName, JoinPointInterface $joinPoint)
     {
         if ($this->dispatcher === null) {
             $this->dispatcher = $this->objectManager->get(Dispatcher::class);

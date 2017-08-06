@@ -44,7 +44,7 @@ class InterfaceIntroduction
      * @param string $interfaceName Name of the interface to introduce
      * @param Pointcut $pointcut The pointcut for this introduction
      */
-    public function __construct($declaringAspectClassName, $interfaceName, Pointcut $pointcut)
+    public function __construct(string $declaringAspectClassName, string $interfaceName, Pointcut $pointcut)
     {
         $this->declaringAspectClassName = $declaringAspectClassName;
         $this->interfaceName = $interfaceName;
@@ -56,7 +56,7 @@ class InterfaceIntroduction
      *
      * @return string Name of the introduced interface
      */
-    public function getInterfaceName()
+    public function getInterfaceName(): string
     {
         return $this->interfaceName;
     }
@@ -66,7 +66,7 @@ class InterfaceIntroduction
      *
      * @return Pointcut The pointcut
      */
-    public function getPointcut()
+    public function getPointcut(): string
     {
         return $this->pointcut;
     }
@@ -76,7 +76,7 @@ class InterfaceIntroduction
      *
      * @return string The aspect object name
      */
-    public function getDeclaringAspectClassName()
+    public function getDeclaringAspectClassName(): string
     {
         return $this->declaringAspectClassName;
     }

@@ -47,8 +47,7 @@ class JoinPoint implements JoinPointInterface
 
     /**
      * The advice chain for this join point
-     *
-*@var \Neos\Flow\Aop\Advice\AdviceChain
+     * @var Advice\AdviceChain
      */
     protected $adviceChain;
 
@@ -71,11 +70,11 @@ class JoinPoint implements JoinPointInterface
      * @param string $className Class name of the target class this join point refers to
      * @param string $methodName Method name of the target method which is about to or has been invoked
      * @param array $methodArguments Array of method arguments which have been passed to the target method
-     * @param \Neos\Flow\Aop\Advice\AdviceChain $adviceChain The advice chain for this join point
+     * @param Advice\AdviceChain $adviceChain The advice chain for this join point
      * @param mixed $result The result of the method invocations (only used for After Returning advices)
      * @param \Exception $exception The exception thrown (only used for After Throwing advices)
      */
-    public function __construct($proxy, $className, $methodName, array $methodArguments, Advice\AdviceChain $adviceChain = null, $result = null, \Exception $exception = null)
+    public function __construct($proxy, string $className, string $methodName, array $methodArguments, Advice\AdviceChain $adviceChain = null, $result = null, \Exception $exception = null)
     {
         $this->proxy = $proxy;
         $this->className = $className;
@@ -89,7 +88,7 @@ class JoinPoint implements JoinPointInterface
     /**
      * Returns the reference to the proxy class instance
      *
-     * @return \Neos\Flow\ObjectManagement\Proxy\ProxyInterface
+     * @return object
      * @api
      */
     public function getProxy()
@@ -103,7 +102,7 @@ class JoinPoint implements JoinPointInterface
      * @return string The class name
      * @api
      */
-    public function getClassName()
+    public function getClassName(): string
     {
         return $this->className;
     }
@@ -114,7 +113,7 @@ class JoinPoint implements JoinPointInterface
      * @return string The method name
      * @api
      */
-    public function getMethodName()
+    public function getMethodName(): string
     {
         return $this->methodName;
     }
@@ -125,7 +124,7 @@ class JoinPoint implements JoinPointInterface
      * @return array Array of arguments
      * @api
      */
-    public function getMethodArguments()
+    public function getMethodArguments(): array
     {
         return $this->methodArguments;
     }
@@ -171,7 +170,7 @@ class JoinPoint implements JoinPointInterface
      * @return boolean TRUE if the argument exists
      * @api
      */
-    public function isMethodArgument($argumentName)
+    public function isMethodArgument($argumentName): bool
     {
         return isset($this->methodArguments[$argumentName]);
     }
@@ -179,10 +178,10 @@ class JoinPoint implements JoinPointInterface
     /**
      * Returns the advice chain related to this join point
      *
-     * @return \Neos\Flow\Aop\Advice\AdviceChain The advice chain
+     * @return Advice\AdviceChain The advice chain
      * @api
      */
-    public function getAdviceChain()
+    public function getAdviceChain(): Advice\AdviceChain
     {
         return $this->adviceChain;
     }
@@ -194,7 +193,7 @@ class JoinPoint implements JoinPointInterface
      * @return boolean
      * @api
      */
-    public function hasException()
+    public function hasException(): bool
     {
         return $this->exception !== null;
     }
@@ -204,7 +203,7 @@ class JoinPoint implements JoinPointInterface
      * If no exception has been thrown, NULL is returned.
      * Only makes sense for After Throwing advices.
      *
-     * @return mixed The exception thrown or NULL
+     * @return \Exception|null The exception thrown or NULL
      * @api
      */
     public function getException()

@@ -54,7 +54,7 @@ class PointcutFilterComposite implements PointcutFilterInterface
      * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
      * @return boolean TRUE if class and method match the pattern, otherwise FALSE
      */
-    public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier)
+    public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier): bool
     {
         $this->runtimeEvaluationsDefinition = [];
         $matches = true;

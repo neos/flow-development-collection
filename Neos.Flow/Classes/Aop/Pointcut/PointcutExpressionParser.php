@@ -119,7 +119,7 @@ class PointcutExpressionParser
      * @throws InvalidPointcutExpressionException
      * @throws AopException
      */
-    public function parse($pointcutExpression, $sourceHint)
+    public function parse(string $pointcutExpression, string $sourceHint): PointcutFilterComposite
     {
         $this->sourceHint = $sourceHint;
 
@@ -129,7 +129,8 @@ class PointcutExpressionParser
         $pointcutFilterComposite = new PointcutFilterComposite();
         $pointcutExpressionParts = preg_split(self::PATTERN_SPLITBYOPERATOR, $pointcutExpression, -1, PREG_SPLIT_DELIM_CAPTURE);
 
-        for ($partIndex = 0; $partIndex < count($pointcutExpressionParts); $partIndex += 2) {
+        $count = count($pointcutExpressionParts);
+        for ($partIndex = 0; $partIndex < $count; $partIndex += 2) {
             $operator = ($partIndex > 0) ? trim($pointcutExpressionParts[$partIndex - 1]) : '&&';
             $expression = trim($pointcutExpressionParts[$partIndex]);
 
@@ -179,7 +180,7 @@ class PointcutExpressionParser
      * @param PointcutFilterComposite $pointcutFilterComposite An instance of the pointcut filter composite. The result (ie. the class annotation filter) will be added to this composite object.
      * @return void
      */
-    protected function parseDesignatorClassAnnotatedWith($operator, $annotationPattern, PointcutFilterComposite $pointcutFilterComposite)
+    protected function parseDesignatorClassAnnotatedWith(string $operator, string $annotationPattern, PointcutFilterComposite $pointcutFilterComposite)
     {
         $annotationPropertyConstraints = [];
         $this->parseAnnotationPattern($annotationPattern, $annotationPropertyConstraints);
@@ -199,7 +200,7 @@ class PointcutExpressionParser
      * @param PointcutFilterComposite $pointcutFilterComposite An instance of the pointcut filter composite. The result (ie. the class filter) will be added to this composite object.
      * @return void
      */
-    protected function parseDesignatorClass($operator, $classPattern, PointcutFilterComposite $pointcutFilterComposite)
+    protected function parseDesignatorClass(string $operator, string $classPattern, PointcutFilterComposite $pointcutFilterComposite)
     {
         $filter = new PointcutClassNameFilter($classPattern);
         $filter->injectReflectionService($this->reflectionService);
@@ -215,7 +216,7 @@ class PointcutExpressionParser
      * @param PointcutFilterComposite $pointcutFilterComposite An instance of the pointcut filter composite. The result (ie. the method annotation filter) will be added to this composite object.
      * @return void
      */
-    protected function parseDesignatorMethodAnnotatedWith($operator, $annotationPattern, PointcutFilterComposite $pointcutFilterComposite)
+    protected function parseDesignatorMethodAnnotatedWith(string $operator, string $annotationPattern, PointcutFilterComposite $pointcutFilterComposite)
     {
         $annotationPropertyConstraints = [];
         $this->parseAnnotationPattern($annotationPattern, $annotationPropertyConstraints);
@@ -234,7 +235,7 @@ class PointcutExpressionParser
      * @param array $annotationPropertyConstraints
      * @return void
      */
-    protected function parseAnnotationPattern(&$annotationPattern, array &$annotationPropertyConstraints)
+    protected function parseAnnotationPattern(string &$annotationPattern, array &$annotationPropertyConstraints)
     {
         if (strpos($annotationPattern, '(') !== false) {
             $matches = [];
@@ -257,7 +258,7 @@ class PointcutExpressionParser
      * @return void
      * @throws InvalidPointcutExpressionException if there's an error in the pointcut expression
      */
-    protected function parseDesignatorMethod($operator, $signaturePattern, PointcutFilterComposite $pointcutFilterComposite)
+    protected function parseDesignatorMethod(string $operator, string $signaturePattern, PointcutFilterComposite $pointcutFilterComposite)
     {
         if (strpos($signaturePattern, '->') === false) {
             throw new InvalidPointcutExpressionException('Syntax error: "->" expected in "' . $signaturePattern . '", defined in ' . $this->sourceHint, 1169027339);
@@ -303,7 +304,7 @@ class PointcutExpressionParser
      * @param PointcutFilterComposite $pointcutFilterComposite An instance of the pointcut filter composite. The result (ie. the class type filter) will be added to this composite object.
      * @return void
      */
-    protected function parseDesignatorWithin($operator, $signaturePattern, PointcutFilterComposite $pointcutFilterComposite)
+    protected function parseDesignatorWithin(string $operator, string $signaturePattern, PointcutFilterComposite $pointcutFilterComposite)
     {
         $filter = new PointcutClassTypeFilter($signaturePattern);
         $filter->injectReflectionService($this->reflectionService);
@@ -321,7 +322,7 @@ class PointcutExpressionParser
      * @return void
      * @throws InvalidPointcutExpressionException
      */
-    protected function parseDesignatorPointcut($operator, $pointcutExpression, PointcutFilterComposite $pointcutFilterComposite)
+    protected function parseDesignatorPointcut(string $operator, string $pointcutExpression, PointcutFilterComposite $pointcutFilterComposite)
     {
         if (strpos($pointcutExpression, '->') === false) {
             throw new InvalidPointcutExpressionException('Syntax error: "->" expected in "' . $pointcutExpression . '", defined in ' . $this->sourceHint, 1172219205);
@@ -341,7 +342,7 @@ class PointcutExpressionParser
      * @return void
      * @throws InvalidPointcutExpressionException
      */
-    protected function parseDesignatorFilter($operator, $filterObjectName, PointcutFilterComposite $pointcutFilterComposite)
+    protected function parseDesignatorFilter(string $operator, string $filterObjectName, PointcutFilterComposite $pointcutFilterComposite)
     {
         $customFilter = $this->objectManager->get($filterObjectName);
         if (!$customFilter instanceof PointcutFilterInterface) {
@@ -358,7 +359,7 @@ class PointcutExpressionParser
      * @param PointcutFilterComposite $pointcutFilterComposite An instance of the pointcut filter composite. The result (ie. the custom filter) will be added to this composite object.
      * @return void
      */
-    protected function parseDesignatorSetting($operator, $configurationPath, PointcutFilterComposite $pointcutFilterComposite)
+    protected function parseDesignatorSetting(string $operator, string $configurationPath, PointcutFilterComposite $pointcutFilterComposite)
     {
         $filter = new PointcutSettingFilter($configurationPath);
         /** @var ConfigurationManager $configurationManager */
@@ -376,7 +377,7 @@ class PointcutExpressionParser
      * @param PointcutFilterComposite $pointcutFilterComposite An instance of the pointcut filter composite. The result (ie. the custom filter) will be added to this composite object.
      * @return void
      */
-    protected function parseRuntimeEvaluations($operator, $runtimeEvaluations, PointcutFilterComposite $pointcutFilterComposite)
+    protected function parseRuntimeEvaluations(string $operator, string $runtimeEvaluations, PointcutFilterComposite $pointcutFilterComposite)
     {
         $runtimeEvaluationsDefinition = [
             $operator => [
@@ -395,13 +396,14 @@ class PointcutExpressionParser
      * @return string The inner part between the first level of parentheses
      * @throws InvalidPointcutExpressionException
      */
-    protected function getSubstringBetweenParentheses($string)
+    protected function getSubstringBetweenParentheses(string $string): string
     {
         $startingPosition = 0;
         $openParentheses = 0;
         $substring = '';
 
-        for ($i = $startingPosition; $i < strlen($string); $i++) {
+        $length = strlen($string);
+        for ($i = $startingPosition; $i < $length; $i++) {
             if ($string[$i] === ')') {
                 $openParentheses--;
             }
@@ -426,10 +428,10 @@ class PointcutExpressionParser
      * was found, it will be removed from the $signaturePattern.
      *
      * @param string &$signaturePattern The regular expression for matching the method() signature
-     * @return string Visibility modifier or NULL of none was found
+     * @return string|null Visibility modifier or NULL of none was found
      * @throws InvalidPointcutExpressionException
      */
-    protected function getVisibilityFromSignaturePattern(&$signaturePattern)
+    protected function getVisibilityFromSignaturePattern(string &$signaturePattern)
     {
         $visibility = null;
         $matches = [];
@@ -453,14 +455,15 @@ class PointcutExpressionParser
     * @param string $methodArgumentsPattern The arguments pattern defined in the pointcut expression
     * @return array The corresponding constraints array
     */
-    protected function getArgumentConstraintsFromMethodArgumentsPattern($methodArgumentsPattern)
+    protected function getArgumentConstraintsFromMethodArgumentsPattern(string $methodArgumentsPattern): array
     {
         $matches = [];
         $argumentConstraints = [];
 
         preg_match_all(self::PATTERN_MATCHRUNTIMEEVALUATIONSDEFINITION, $methodArgumentsPattern, $matches);
 
-        for ($i = 0; $i < count($matches[0]); $i++) {
+        $matchesCount = count($matches[0]);
+        for ($i = 0; $i < $matchesCount; $i++) {
             if ($matches[2][$i] === 'in' || $matches[2][$i] === 'matches') {
                 $list = [];
                 $listEntries = [];
@@ -483,7 +486,7 @@ class PointcutExpressionParser
      * @param string $evaluateString The evaluate string defined in the pointcut expression
      * @return array The corresponding constraints array
      */
-    protected function getRuntimeEvaluationConditionsFromEvaluateString($evaluateString)
+    protected function getRuntimeEvaluationConditionsFromEvaluateString(string $evaluateString): array
     {
         $matches = [];
         $runtimeEvaluationConditions = [];

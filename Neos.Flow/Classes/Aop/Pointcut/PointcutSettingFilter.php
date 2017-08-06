@@ -61,7 +61,7 @@ class PointcutSettingFilter implements PointcutFilterInterface
      *
      * @param string $settingComparisonExpression Path (and optional condition) leading to the setting
      */
-    public function __construct($settingComparisonExpression)
+    public function __construct(string $settingComparisonExpression)
     {
         $this->settingComparisonExpression = $settingComparisonExpression;
     }
@@ -88,7 +88,7 @@ class PointcutSettingFilter implements PointcutFilterInterface
      * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
      * @return boolean TRUE if the class matches, otherwise FALSE
      */
-    public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier)
+    public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier): bool
     {
         if ($this->cachedResult === null) {
             $this->cachedResult = (is_bool($this->actualSettingValue)) ? $this->actualSettingValue : ($this->condition === $this->actualSettingValue);
@@ -101,7 +101,7 @@ class PointcutSettingFilter implements PointcutFilterInterface
      *
      * @return boolean TRUE if this filter has runtime evaluations
      */
-    public function hasRuntimeEvaluationsDefinition()
+    public function hasRuntimeEvaluationsDefinition(): bool
     {
         return false;
     }
@@ -111,7 +111,7 @@ class PointcutSettingFilter implements PointcutFilterInterface
      *
      * @return array Runtime evaluations
      */
-    public function getRuntimeEvaluationsDefinition()
+    public function getRuntimeEvaluationsDefinition(): array
     {
         return [];
     }
@@ -124,7 +124,7 @@ class PointcutSettingFilter implements PointcutFilterInterface
      * @return void
      * @throws InvalidPointcutExpressionException
      */
-    protected function parseConfigurationOptionPath($settingComparisonExpression)
+    protected function parseConfigurationOptionPath(string $settingComparisonExpression)
     {
         $settingComparisonExpression = preg_split(self::PATTERN_SPLITBYEQUALSIGN, $settingComparisonExpression);
         if (isset($settingComparisonExpression[1])) {
@@ -139,7 +139,7 @@ class PointcutSettingFilter implements PointcutFilterInterface
             }
         }
 
-        $configurationKeys = preg_split('/\./', $settingComparisonExpression[0]);
+        $configurationKeys = explode('.', $settingComparisonExpression[0]);
 
         if (count($configurationKeys) > 0) {
             $settingPackageKey = array_shift($configurationKeys);
@@ -160,7 +160,7 @@ class PointcutSettingFilter implements PointcutFilterInterface
      * @param ClassNameIndex $classNameIndex
      * @return ClassNameIndex
      */
-    public function reduceTargetClassNames(ClassNameIndex $classNameIndex)
+    public function reduceTargetClassNames(ClassNameIndex $classNameIndex): ClassNameIndex
     {
         return $classNameIndex;
     }

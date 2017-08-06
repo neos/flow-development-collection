@@ -55,7 +55,7 @@ class ClassNameIndex
      *
      * @return array An array of class names contained in this index
      */
-    public function getClassNames()
+    public function getClassNames(): array
     {
         return array_keys($this->classNames);
     }
@@ -66,7 +66,7 @@ class ClassNameIndex
      * @param string $className The class name to check for
      * @return boolean TRUE, if the given class name is contained in this index
      */
-    public function hasClassName($className)
+    public function hasClassName($className): bool
     {
         return isset($this->classNames[$className]);
     }
@@ -78,7 +78,7 @@ class ClassNameIndex
      * @param \Neos\Flow\Aop\Builder\ClassNameIndex $classNameIndex
      * @return \Neos\Flow\Aop\Builder\ClassNameIndex A new index object
      */
-    public function intersect(ClassNameIndex $classNameIndex)
+    public function intersect(ClassNameIndex $classNameIndex): ClassNameIndex
     {
         return new ClassNameIndex(array_intersect_key($this->classNames, $classNameIndex->classNames));
     }
@@ -102,7 +102,7 @@ class ClassNameIndex
      * @param \Neos\Flow\Aop\Builder\ClassNameIndex $classNameIndex
      * @return \Neos\Flow\Aop\Builder\ClassNameIndex A new index object
      */
-    public function union(ClassNameIndex $classNameIndex)
+    public function union(ClassNameIndex $classNameIndex): ClassNameIndex
     {
         $result = clone $classNameIndex;
         $result->applyUnion($this);
@@ -132,7 +132,7 @@ class ClassNameIndex
     }
 
     /**
-     * @return array An key sorted array with all class names of this index as keys
+     * @return void
      */
     public function sort()
     {
@@ -142,7 +142,7 @@ class ClassNameIndex
     /**
      * @return int The number of class names contained in this index
      */
-    public function count()
+    public function count(): int
     {
         return count($this->classNames);
     }
@@ -154,7 +154,7 @@ class ClassNameIndex
      * @param string $prefixFilter A prefix string to filter the class names of this index
      * @return \Neos\Flow\Aop\Builder\ClassNameIndex A new index object
      */
-    public function filterByPrefix($prefixFilter)
+    public function filterByPrefix(string $prefixFilter): ClassNameIndex
     {
         $pointcuts = array_keys($this->classNames);
         $result = new ClassNameIndex();

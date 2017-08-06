@@ -36,7 +36,7 @@ class AdviceChain
      *
      * @param array $advices An array of AdviceInterface compatible objects which form the chain of advices
      */
-    public function __construct($advices)
+    public function __construct(array $advices)
     {
         $this->advices = $advices;
     }

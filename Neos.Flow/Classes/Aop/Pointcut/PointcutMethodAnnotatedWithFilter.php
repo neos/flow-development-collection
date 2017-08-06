@@ -50,7 +50,7 @@ class PointcutMethodAnnotatedWithFilter implements PointcutFilterInterface
      * @param string $annotation An annotation class (for example "Neos\Flow\Annotations\Lazy") which defines which method annotations should match
      * @param array $annotationValueConstraints
      */
-    public function __construct($annotation, array $annotationValueConstraints = [])
+    public function __construct(string $annotation, array $annotationValueConstraints = [])
     {
         $this->annotation = $annotation;
         $this->annotationValueConstraints = $annotationValueConstraints;
@@ -85,7 +85,7 @@ class PointcutMethodAnnotatedWithFilter implements PointcutFilterInterface
      * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection - not used here
      * @return boolean TRUE if the class matches, otherwise FALSE
      */
-    public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier)
+    public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier): bool
     {
         if ($methodDeclaringClassName === null || !method_exists($methodDeclaringClassName, $methodName)) {
             return false;
@@ -93,26 +93,24 @@ class PointcutMethodAnnotatedWithFilter implements PointcutFilterInterface
 
         $designatedAnnotations = $this->reflectionService->getMethodAnnotations($methodDeclaringClassName, $methodName, $this->annotation);
         if ($designatedAnnotations !== [] || $this->annotationValueConstraints === []) {
-            $matches = ($designatedAnnotations !== []);
-        } else {
-            // It makes no sense to check property values for an annotation that is used multiple times, we shortcut and check the value against the first annotation found.
-            $firstFoundAnnotation = $designatedAnnotations;
-            $annotationProperties = $this->reflectionService->getClassPropertyNames($this->annotation);
-            foreach ($this->annotationValueConstraints as $propertyName => $expectedValue) {
-                if (!array_key_exists($propertyName, $annotationProperties)) {
-                    $this->systemLogger->log('The property "' . $propertyName . '" declared in pointcut does not exist in annotation ' . $this->annotation, LOG_NOTICE);
-                    return false;
-                }
+            return ($designatedAnnotations !== []);
+        }
 
-                if ($firstFoundAnnotation->$propertyName === $expectedValue) {
-                    $matches = true;
-                } else {
-                    return false;
-                }
+        // It makes no sense to check property values for an annotation that is used multiple times, we shortcut and check the value against the first annotation found.
+        $firstFoundAnnotation = $designatedAnnotations;
+        $annotationProperties = $this->reflectionService->getClassPropertyNames($this->annotation);
+        foreach ($this->annotationValueConstraints as $propertyName => $expectedValue) {
+            if (!array_key_exists($propertyName, $annotationProperties)) {
+                $this->systemLogger->log('The property "' . $propertyName . '" declared in pointcut does not exist in annotation ' . $this->annotation, LOG_NOTICE);
+                return false;
+            }
+
+            if ($firstFoundAnnotation->$propertyName !== $expectedValue) {
+                return false;
             }
         }
 
-        return $matches;
+        return true;
     }
 
     /**
@@ -120,7 +118,7 @@ class PointcutMethodAnnotatedWithFilter implements PointcutFilterInterface
      *
      * @return boolean TRUE if this filter has runtime evaluations
      */
-    public function hasRuntimeEvaluationsDefinition()
+    public function hasRuntimeEvaluationsDefinition(): bool
     {
         return false;
     }
@@ -130,7 +128,7 @@ class PointcutMethodAnnotatedWithFilter implements PointcutFilterInterface
      *
      * @return array Runtime evaluations
      */
-    public function getRuntimeEvaluationsDefinition()
+    public function getRuntimeEvaluationsDefinition(): array
     {
         return [];
     }
@@ -141,7 +139,7 @@ class PointcutMethodAnnotatedWithFilter implements PointcutFilterInterface
      * @param ClassNameIndex $classNameIndex
      * @return ClassNameIndex
      */
-    public function reduceTargetClassNames(ClassNameIndex $classNameIndex)
+    public function reduceTargetClassNames(ClassNameIndex $classNameIndex): ClassNameIndex
     {
         $classNames = $this->reflectionService->getClassesContainingMethodsAnnotatedWith($this->annotation);
         $annotatedIndex = new ClassNameIndex();
