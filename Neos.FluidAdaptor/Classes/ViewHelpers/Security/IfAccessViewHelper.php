@@ -104,7 +104,7 @@ class IfAccessViewHelper extends AbstractConditionViewHelper
         /** @var Context $securityContext */
         $securityContext = $objectManager->get(Context::class);
 
-        if ($securityContext != NULL && !$securityContext->canBeInitialized()) {
+        if ($securityContext != null && !$securityContext->canBeInitialized()) {
             return false;
         }
         $privilegeManager = static::getPrivilegeManager($renderingContext);
