@@ -60,7 +60,7 @@ class ApplicationContext
      * @param string $contextString
      * @throws FlowException if the parent context is none of "Development", "Production" or "Testing"
      */
-    public function __construct($contextString)
+    public function __construct(string $contextString)
     {
         if (strstr($contextString, '/') === false) {
             $this->rootContextString = $contextString;
@@ -85,7 +85,7 @@ class ApplicationContext
      * @return string
      * @api
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->contextString;
     }
@@ -96,7 +96,7 @@ class ApplicationContext
      * @return boolean
      * @api
      */
-    public function isDevelopment()
+    public function isDevelopment(): bool
     {
         return ($this->rootContextString === 'Development');
     }
@@ -108,7 +108,7 @@ class ApplicationContext
      * @api
      */
 
-    public function isProduction()
+    public function isProduction(): bool
     {
         return ($this->rootContextString === 'Production');
     }
@@ -119,7 +119,7 @@ class ApplicationContext
      * @return boolean
      * @api
      */
-    public function isTesting()
+    public function isTesting(): bool
     {
         return ($this->rootContextString === 'Testing');
     }
