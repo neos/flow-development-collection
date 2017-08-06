@@ -110,7 +110,7 @@ class InstallerScripts
      * @param string $installerResourcesDirectory Path to the installer directory that contains the Distribution/Essentials and/or Distribution/Defaults directories.
      * @return void
      */
-    protected static function copyDistributionFiles($installerResourcesDirectory)
+    protected static function copyDistributionFiles(string $installerResourcesDirectory)
     {
         $essentialsPath = $installerResourcesDirectory . 'Distribution/Essentials';
         if (is_dir($essentialsPath)) {
@@ -130,7 +130,7 @@ class InstallerScripts
      * @return void
      * @throws Exception\InvalidConfigurationException
      */
-    protected static function runPackageScripts($staticMethodReference)
+    protected static function runPackageScripts(string $staticMethodReference)
     {
         $className = substr($staticMethodReference, 0, strpos($staticMethodReference, '::'));
         $methodName = substr($staticMethodReference, strpos($staticMethodReference, '::') + 2);

@@ -43,7 +43,7 @@ class ComposerUtility
      * @param string $configurationPath Optional. Only return the part of the manifest indexed by configurationPath
      * @return array|mixed
      */
-    public static function getComposerManifest($manifestPath, $configurationPath = null)
+    public static function getComposerManifest(string $manifestPath, string $configurationPath = null)
     {
         $composerManifest = static::readComposerManifest($manifestPath);
         if ($composerManifest === null) {
@@ -52,9 +52,8 @@ class ComposerUtility
 
         if ($configurationPath !== null) {
             return ObjectAccess::getPropertyPath($composerManifest, $configurationPath);
-        } else {
-            return $composerManifest;
         }
+        return $composerManifest;
     }
 
     /**
@@ -62,7 +61,7 @@ class ComposerUtility
      *
      * @return array
      */
-    public static function readComposerLock()
+    public static function readComposerLock(): array
     {
         if (self::$composerLockCache !== null) {
             return self::$composerLockCache;
@@ -88,7 +87,7 @@ class ComposerUtility
      * @return array
      * @throws Exception\MissingPackageManifestException
      */
-    protected static function readComposerManifest($manifestPath)
+    protected static function readComposerManifest(string $manifestPath): array
     {
         $manifestPathAndFilename = $manifestPath . 'composer.json';
         if (isset(self::$composerManifestCache[$manifestPathAndFilename])) {
@@ -115,7 +114,7 @@ class ComposerUtility
      * @param string $packageType
      * @return boolean
      */
-    public static function isFlowPackageType($packageType)
+    public static function isFlowPackageType(string $packageType): bool
     {
         foreach (['typo3-flow-', 'neos-'] as $allowedPackageTypePrefix) {
             if (strpos($packageType, $allowedPackageTypePrefix) === 0) {
@@ -132,7 +131,7 @@ class ComposerUtility
      * @param string $packageKey
      * @return string
      */
-    public static function getComposerPackageNameFromPackageKey($packageKey)
+    public static function getComposerPackageNameFromPackageKey(string $packageKey): string
     {
         $nameParts = explode('.', $packageKey);
         $vendor = array_shift($nameParts);
@@ -147,7 +146,7 @@ class ComposerUtility
      * @param array $composerManifestData
      * @return array the manifest data written
      */
-    public static function writeComposerManifest($manifestPath, $packageKey, array $composerManifestData = [])
+    public static function writeComposerManifest(string $manifestPath, string $packageKey, array $composerManifestData = []): array
     {
         $manifest = [
             'description' => ''
