@@ -75,7 +75,7 @@ class IfAuthenticatedViewHelper extends AbstractConditionViewHelper
         /** @var Context $securityContext */
         $securityContext = $objectManager->get(Context::class);
 
-        if (!$securityContext->canBeInitialized()) {
+        if ($securityContext != NULL && !$securityContext->canBeInitialized()) {
             return false;
         }
 

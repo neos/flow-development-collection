@@ -56,10 +56,9 @@ class ResourceViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\V
             [Service::class, $this->mockI18nService],
             [ResourceManager::class, $this->mockResourceManager]
         ]));
-        $this->viewHelper = $this->getAccessibleMock(ResourceViewHelper::class, array('renderChildren'), array(), '', false);
+        $this->viewHelper = $this->getAccessibleMock(ResourceViewHelper::class, array('renderChildren', 'registerRenderMethodArguments'), array(), '', false);
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
         $this->renderingContext->injectObjectManager($this->objectManagerMock);
-        $this->viewHelper->initializeArguments();
     }
 
     /**
@@ -75,6 +74,7 @@ class ResourceViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\V
             'resource' => null,
             'localize' => false
         ]);
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, []);
         $resourceUri = $this->viewHelper->render();
         $this->assertEquals('TheCorrectResourceUri', $resourceUri);
     }
@@ -91,6 +91,7 @@ class ResourceViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\V
             'resource' => null,
             'localize' => false
         ]);
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, []);
         $resourceUri = $this->viewHelper->render();
         $this->assertEquals('TheCorrectResourceUri', $resourceUri);
     }
@@ -108,6 +109,7 @@ class ResourceViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\V
             'resource' => $resource,
             'localize' => false
         ]);
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, []);
         $resourceUri = $this->viewHelper->render();
         $this->assertEquals('TheCorrectResourceUri', $resourceUri);
     }
@@ -125,6 +127,7 @@ class ResourceViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\V
             'resource' => $resource,
             'localize' => false
         ]);
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, []);
         $resourceUri = $this->viewHelper->render();
         $this->assertEquals('404-Resource-Not-Found', $resourceUri);
     }
@@ -140,6 +143,7 @@ class ResourceViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\V
             'path' => 'Styles/Main.css',
             'package' => 'ThePackageKey'
         ]);
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, []);
         $resourceUri = $this->viewHelper->render();
         $this->assertEquals('TheCorrectResourceUri', $resourceUri);
     }
@@ -166,6 +170,7 @@ class ResourceViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\V
             'resource' => null,
             'localize' => true
         ]);
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, []);
         $resourceUri = $this->viewHelper->render();
         $this->assertEquals('TheCorrectResourceUri', $resourceUri);
     }
@@ -182,6 +187,7 @@ class ResourceViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\V
             'resource' => null,
             'localize' => false
         ]);
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, []);
         $this->viewHelper->render();
     }
 
@@ -197,6 +203,7 @@ class ResourceViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\V
             'resource' => null,
             'localize' => false
         ]);
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, []);
         $this->viewHelper->render();
     }
 
@@ -211,6 +218,7 @@ class ResourceViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\V
             'package' => 'SomePackage',
             'resource' => null
         ]);
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, []);
         $this->viewHelper->render();
     }
 
@@ -229,6 +237,7 @@ class ResourceViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\V
             'path' => 'resource://Some.Package/Private/foobar.txt',
             'package' => 'SomePackage'
         ]);
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, []);
         $this->viewHelper->render();
     }
 }
