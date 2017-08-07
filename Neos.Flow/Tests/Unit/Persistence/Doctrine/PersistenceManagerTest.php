@@ -12,6 +12,7 @@ namespace Neos\Flow\Tests\Unit\Persistence\Doctrine;
  */
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Exception\ConnectionException;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\UnitOfWork;
 use Neos\Flow\Log\SystemLoggerInterface;
@@ -177,6 +178,15 @@ class PersistenceManagerTest extends UnitTestCase
         $this->mockConnection->expects($this->never())->method('close');
         $this->mockConnection->expects($this->never())->method('connect');
 
+        $this->persistenceManager->persistAll();
+    }
+
+    /**
+     * @test
+     */
+    public function persistAllCatchesConnectionExceptions()
+    {
+        $this->mockPing->willThrowException($this->getMockBuilder(ConnectionException::class)->disableOriginalConstructor()->getMock());
         $this->persistenceManager->persistAll();
     }
 }
