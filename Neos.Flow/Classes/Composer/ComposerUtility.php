@@ -100,7 +100,7 @@ class ComposerUtility
         $json = file_get_contents($manifestPathAndFilename);
         $composerManifest = json_decode($json, true);
 
-        if($composerManifest === null){
+        if ($composerManifest === null) {
             throw new Exception\InvalidPackageManifestException(sprintf('The composer manifest file found at "%s" could not be parsed. Check for JSON syntax errors!', $manifestPathAndFilename), 1493909988);
         }
 
