@@ -57,15 +57,15 @@ class Message
      * Constructs this error
      *
      * @param string $message An english error message which is used if no other error message can be resolved
-     * @param integer $code A unique error code
+     * @param integer|null $code A unique error code
      * @param array $arguments Array of arguments to be replaced in message
-     * @param string $title optional title for the message
+     * @param string|null $title optional title for the message
      * @api
      */
-    public function __construct(string $message, int $code = null, array $arguments = [], string $title = '')
+    public function __construct(string $message, int $code = null, array $arguments = [], string $title = null)
     {
         $this->message = $message;
-        $this->code = (int)$code;
+        $this->code = $code;
         $this->arguments = $arguments;
         $this->title = $title;
     }
@@ -84,10 +84,10 @@ class Message
     /**
      * Returns the error code
      *
-     * @return integer The error code
+     * @return integer|null The error code
      * @api
      */
-    public function getCode(): int
+    public function getCode()
     {
         return $this->code;
     }
@@ -102,10 +102,10 @@ class Message
     }
 
     /**
-     * @return string
+     * @return string|null
      * @api
      */
-    public function getTitle(): string
+    public function getTitle()
     {
         return $this->title;
     }
