@@ -625,7 +625,7 @@ class Uri implements UriInterface
      */
     private function resolveDefaultPortForScheme($scheme)
     {
-        return ($this->defaultPortsForScheme[$scheme] ?? null);
+        return $this->defaultPortsForScheme[$scheme] ?? null;
     }
 
     /**
