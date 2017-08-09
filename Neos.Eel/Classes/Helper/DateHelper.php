@@ -80,18 +80,18 @@ class DateHelper implements ProtectedContextAwareInterface
     public function formatCldr($date, $cldrFormat, $locale = null)
     {
         if ($date === 'now') {
-            $date = new \DateTime($date);
+            $date = new \DateTime();
         } elseif (is_int($date)) {
             $timestamp = $date;
             $date = new \DateTime();
             $date->setTimestamp($timestamp);
         } elseif (!$date instanceof \DateTimeInterface) {
-            throw new \InvalidArgumentException('"' . $date . '" could not be parsed by \DateTime constructor.');
+            throw new \InvalidArgumentException('The given date "' . $date . '" was neither an integer, "now" or a \DateTimeInterface instance.');
         }
         if (empty($cldrFormat)) {
             throw new \InvalidArgumentException('CLDR date formatting parameter not passed.');
         }
-        if (empty($locale)) {
+        if ($locale === null) {
             $useLocale = $this->localizationService->getConfiguration()->getCurrentLocale();
         } else {
             $useLocale = new Locale($locale);
