@@ -117,11 +117,11 @@ class Uri implements UriInterface
             throw new \InvalidArgumentException('The given URI "' . $uriString . '" is not a valid one.', 1351594202, $parseUrlException);
         }
 
-        $this->scheme = isset($uriParts['scheme']) ? $uriParts['scheme'] : null;
-        $this->username = isset($uriParts['user']) ? $uriParts['user'] : null;
-        $this->password = isset($uriParts['pass']) ? $uriParts['pass'] : null;
-        $this->host = isset($uriParts['host']) ? $uriParts['host'] : null;
-        $this->port = isset($uriParts['port']) ? $uriParts['port'] : null;
+        $this->scheme = $uriParts['scheme'] ?? null;
+        $this->username = $uriParts['user'] ?? null;
+        $this->password = $uriParts['pass'] ?? null;
+        $this->host = $uriParts['host'] ?? null;
+        $this->port = $uriParts['port'] ?? null;
         if ($this->port === null) {
             $this->port = $this->resolveDefaultPortForScheme($this->scheme);
         }
