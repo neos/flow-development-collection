@@ -889,7 +889,7 @@ class Request extends BaseRequest implements ServerRequestInterface
      */
     public function getParsedBody()
     {
-        return isset($this->parsedBody) ? $this->parsedBody : $this->arguments;
+        return $this->parsedBody ?? $this->arguments; 
     }
 
     /**
