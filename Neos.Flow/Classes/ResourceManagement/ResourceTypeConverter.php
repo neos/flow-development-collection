@@ -253,7 +253,7 @@ class ResourceTypeConverter extends AbstractTypeConverter
         if ($resource instanceof PersistentResource) {
             return $resource;
         } else {
-            return new FlowError('The resource manager could not create a PersistentResource instance.', 1404312901);
+            return new FlowError\Error('The resource manager could not create a PersistentResource instance.', 1404312901);
         }
     }
 
@@ -297,7 +297,7 @@ class ResourceTypeConverter extends AbstractTypeConverter
             $this->systemLogger->log('Could not import an uploaded file', LOG_WARNING);
             $this->systemLogger->logException($exception);
 
-            return new FlowError('During import of an uploaded file an error occurred. See log for more details.', 1264517906);
+            return new FlowError\Error('During import of an uploaded file an error occurred. See log for more details.', 1264517906);
         }
     }
 
