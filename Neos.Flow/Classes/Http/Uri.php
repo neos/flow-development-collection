@@ -125,11 +125,11 @@ class Uri implements UriInterface
         if ($this->port === null) {
             $this->port = $this->resolveDefaultPortForScheme($this->scheme);
         }
-        $this->path = isset($uriParts['path']) ? $uriParts['path'] : null;
+        $this->path = $uriParts['path'] ?? null;
         if (isset($uriParts['query'])) {
             $this->setQuery($uriParts['query']);
         }
-        $this->fragment = isset($uriParts['fragment']) ? $uriParts['fragment'] : null;
+        $this->fragment = $uriParts['fragment'] ?? null;
     }
 
     /**
