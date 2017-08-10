@@ -70,6 +70,7 @@ abstract class AbstractXmlParser
 
         return $rootXmlNode;
     }
+
     /**
      * Reads and parses XML file and returns internal representation of data.
      *
