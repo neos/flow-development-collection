@@ -28,6 +28,7 @@ use TYPO3\Flow\Core\ApplicationContext;
  *  - port:            The TCP port of the redis server (will be ignored if connecting to a socket)
  *  - database:        The database index that will be used. By default,
  *                     Redis has 16 databases with index number 0 - 15
+ *  - password:        The password needed for redis clients to connect to the server (hostname)
  *
  * Requirements:
  *  - Redis 2.6.0+ (tested with 2.6.14 and 2.8.5)
@@ -78,6 +79,11 @@ class RedisBackend extends AbstractBackend implements TaggableBackendInterface, 
      */
     protected $database = 0;
 
+    /**
+     * @var string
+     */
+    protected $password = '';
+    
     /**
      * @var integer
      */
@@ -424,6 +430,14 @@ class RedisBackend extends AbstractBackend implements TaggableBackendInterface, 
     }
 
     /**
+     * @param string $password
+     */
+    public function setPassword($password)
+    {
+        $this->password = $password;
+    }
+
+    /**
      * @param integer $compressionLevel
      */
     public function setCompressionLevel($compressionLevel)
@@ -472,6 +486,11 @@ class RedisBackend extends AbstractBackend implements TaggableBackendInterface, 
         $redis = new \Redis();
         if (!$redis->connect($this->hostname, $this->port)) {
             throw new CacheException('Could not connect to Redis.', 1391972021);
+        }
+        if ($this->password) {
+            if (!$redis->auth($this->password)) {
+                throw new CacheException('Redis authentication failed.', 1502366200);
+            }
         }
         $redis->select($this->database);
         return $redis;
