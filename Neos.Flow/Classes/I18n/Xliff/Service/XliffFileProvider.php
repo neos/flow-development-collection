@@ -45,7 +45,6 @@ class XliffFileProvider
      */
     protected $cache;
 
-
     /**
      * The path relative to a package where translation files reside.
      *
@@ -57,7 +56,6 @@ class XliffFileProvider
      * @var array
      */
     protected $files = [];
-
 
     /**
      * Injects the Flow_I18n_XmlModelCache cache
@@ -80,7 +78,6 @@ class XliffFileProvider
     {
         $this->files = $this->cache->get('translationFiles') ?: [];
     }
-
 
     /**
      * @param string $fileId
