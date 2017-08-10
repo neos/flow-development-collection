@@ -62,7 +62,7 @@ class Message
      * @param string|null $title optional title for the message
      * @api
      */
-    public function __construct(string $message, int $code = null, array $arguments = [], string $title = null)
+    public function __construct(string $message, int $code = null, array $arguments = [], $title = '')
     {
         $this->message = $message;
         $this->code = $code;
@@ -79,6 +79,15 @@ class Message
     public function getMessage(): string
     {
         return $this->message;
+    }
+
+    /**
+     * @return bool
+     * @api
+     */
+    public function hasCode(): bool
+    {
+        return $this->code !== null;
     }
 
     /**
@@ -99,6 +108,15 @@ class Message
     public function getArguments(): array
     {
         return $this->arguments;
+    }
+
+    /**
+     * @return bool
+     * @api
+     */
+    public function hasTitle(): bool
+    {
+        return $this->title !== null && $this->title !== '';
     }
 
     /**
