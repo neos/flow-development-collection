@@ -25,7 +25,6 @@ class FileAdapterTest extends UnitTestCase
      */
     protected $mockParsedXliffFile;
 
-
     /**
      * @return void
      */
@@ -35,7 +34,6 @@ class FileAdapterTest extends UnitTestCase
         $this->mockParsedXliffFile = $mockParsedXliffData[0];
         $this->mockParsedXliffFile['fileIdentifier'] = 'Neos.Flow:Foo';
     }
-
 
     /**
      * @test
