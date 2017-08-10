@@ -623,7 +623,7 @@ class Request extends BaseRequest implements ServerRequestInterface
     {
         $uploadedFiles = [];
         foreach ($untangledFilesStructure as $key => $nestedStructure) {
-            if (!isset($value['tmp_name'])) {
+            if (!isset($nestedStructure['tmp_name'])) {
                 $uploadedFiles[$key] = $this->createUploadedFilesFromUntangledUploads($nestedStructure, $arguments[$key]);
                 continue;
             }
