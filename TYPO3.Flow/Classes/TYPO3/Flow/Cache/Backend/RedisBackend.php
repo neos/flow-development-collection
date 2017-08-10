@@ -487,7 +487,7 @@ class RedisBackend extends AbstractBackend implements TaggableBackendInterface, 
         if (!$redis->connect($this->hostname, $this->port)) {
             throw new CacheException('Could not connect to Redis.', 1391972021);
         }
-        if ($this->password) {
+        if ($this->password !== '') {
             if (!$redis->auth($this->password)) {
                 throw new CacheException('Redis authentication failed.', 1502366200);
             }
