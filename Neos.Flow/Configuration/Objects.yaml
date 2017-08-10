@@ -59,7 +59,7 @@ Neos\Flow\I18n\Xliff\Service\XliffReader:
   properties:
     i18nLogger:
       object:
-        factoryObjectName: TYPO3\Flow\Log\LoggerFactory
+        factoryObjectName: Neos\Flow\Log\LoggerFactory
         arguments:
           1:
             value: 'Flow_I18n'
