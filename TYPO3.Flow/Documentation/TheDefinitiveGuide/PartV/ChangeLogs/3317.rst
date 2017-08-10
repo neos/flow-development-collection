@@ -1,0 +1,42 @@
+`3.3.17 (2017-08-07) <https://github.com/neos/flow-development-collection/releases/tag/3.3.17>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Catch ConnectionExceptions in \`PersistenceManager::persistAll()\` <https://github.com/neos/flow-development-collection/pull/1037>`_
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+This adds a `try/catch` block around the `$connection->ping()` call that
+throws an exception if no database credentials are configured (which is
+the case when you do a fresh install of Flow or Neos).
+
+Fixes: #1663
+
+* Packages: ``Flow``
+
+`BUGFIX: Allow array and object literals to be padded with whitespace in Eel <https://github.com/neos/flow-development-collection/pull/1028>`_
+----------------------------------------------------------------------------------------------------------------------------------------------
+
+This change allows expressions like:
+
+    { foo: "bar", bar: "baz" }
+
+or
+
+    {
+      foo: "bar",
+      bar: "baz"
+    }
+
+to be parsed correctly in EEL
+
+The change extends the EEL PEG grammar (in `Eel.peg.inc`) to be tolerant towards
+whitespace (as well as line wraps) in object and array literals.
+
+This fixes #986
+
+* Packages: ``Eel`` ``Flow``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/3.3.16...3.3.17>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
