@@ -64,11 +64,11 @@ Neos\Flow\I18n\Xliff\Service\XliffReader:
           1:
             value: 'Flow_I18n'
           2:
-            value: 'TYPO3\Flow\Log\Logger'
+            value: 'Neos\Flow\Log\Logger'
           3:
-            setting: TYPO3.Flow.log.i18nLogger.backend
+            setting: Neos.Flow.log.i18nLogger.backend
           4:
-            setting: TYPO3.Flow.log.i18nLogger.backendOptions
+            setting: Neos.Flow.log.i18nLogger.backendOptions
 Neos\Flow\I18n\Xliff\Model\FileAdapter:
   properties:
     i18nLogger:
