@@ -33,7 +33,6 @@ use Neos\Flow\I18n\Xliff\Exception\InvalidXliffDataException;
  */
 class XliffParser extends AbstractXmlParser
 {
-
     /**
      * Returns array representation of XLIFF data, starting from a root node.
      *
