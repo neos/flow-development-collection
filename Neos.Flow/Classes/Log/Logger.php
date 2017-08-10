@@ -232,6 +232,7 @@ class Logger implements SystemLoggerInterface, ThrowableLoggerInterface, Securit
     protected function renderRequestInfo()
     {
         $output = '';
+
         if (Bootstrap::$staticObjectManager instanceof ObjectManagerInterface) {
             $bootstrap = Bootstrap::$staticObjectManager->get(Bootstrap::class);
             /* @var Bootstrap $bootstrap */
