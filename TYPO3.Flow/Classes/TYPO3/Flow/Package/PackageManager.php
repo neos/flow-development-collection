@@ -870,7 +870,7 @@ class PackageManager implements PackageManagerInterface
                         $composerManifest['name'],
                         $packageConfiguration['packagePath'],
                         $newPackageStatesConfiguration['packages'][$composerManifest['name']]['packagePath']),
-                    1493030262781
+                    1493030262
                 );
             }
 
