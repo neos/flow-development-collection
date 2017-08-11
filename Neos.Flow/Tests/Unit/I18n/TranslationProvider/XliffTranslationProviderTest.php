@@ -22,12 +22,12 @@ class XliffTranslationProviderTest extends UnitTestCase
     /**
      * @var string
      */
-    protected $sampleSourceName;
+    protected $samplePackageKey;
 
     /**
      * @var string
      */
-    protected $samplePackageKey;
+    protected $sampleSourceName;
 
     /**
      * @var I18n\Locale
@@ -35,20 +35,34 @@ class XliffTranslationProviderTest extends UnitTestCase
     protected $sampleLocale;
 
     /**
-     * @var I18n\Cldr\Reader\PluralsReader
+     * @var I18n\Cldr\Reader\PluralsReader|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $mockPluralsReader;
+
+    /**
+     * @var I18n\Xliff\Service\XliffFileProvider|\PHPUnit_Framework_MockObject_MockObject $mockFileProvider
+     */
+    protected $mockFileProvider;
+
+    /**
+     * @var array
+     */
+    protected $mockParsedXliffFile;
 
     /**
      * @return void
      */
     public function setUp()
     {
-        $this->sampleSourceName = 'foo';
         $this->samplePackageKey = 'Neos.Flow';
+        $this->sampleSourceName = 'Foo';
         $this->sampleLocale = new I18n\Locale('en_GB');
 
+        $mockParsedXliffData = require(__DIR__ . '/../Fixtures/MockParsedXliffData.php');
+        $this->mockParsedXliffFile = $mockParsedXliffData[0];
+
         $this->mockPluralsReader = $this->createMock(I18n\Cldr\Reader\PluralsReader::class);
+        $this->mockFileProvider = $this->createMock(I18n\Xliff\Service\XliffFileProvider::class);
     }
 
     /**
@@ -56,17 +70,22 @@ class XliffTranslationProviderTest extends UnitTestCase
      */
     public function returnsTranslatedLabelWhenOriginalLabelProvided()
     {
-        $mockModel = $this->createMock(I18n\Xliff\XliffModel::class, [], ['foo', $this->sampleLocale]);
-        $mockModel->expects($this->once())->method('getTargetBySource')->with('bar', 0)->will($this->returnValue('baz'));
+        $fileAdapter = new I18n\Xliff\Model\FileAdapter($this->mockParsedXliffFile, $this->sampleLocale);
+        $this->mockFileProvider->expects($this->once())
+            ->method('getFile')
+            ->with($this->samplePackageKey . ':' . $this->sampleSourceName, $this->sampleLocale)
+            ->willReturn($fileAdapter);
 
-        $this->mockPluralsReader->expects($this->once())->method('getPluralForms')->with($this->sampleLocale)->will($this->returnValue([I18n\Cldr\Reader\PluralsReader::RULE_ONE, I18n\Cldr\Reader\PluralsReader::RULE_OTHER]));
+        $this->mockPluralsReader->expects($this->any())->method('getPluralForms')
+            ->with($this->sampleLocale)
+            ->will($this->returnValue([I18n\Cldr\Reader\PluralsReader::RULE_ONE, I18n\Cldr\Reader\PluralsReader::RULE_OTHER]));
 
-        $translationProvider = $this->getAccessibleMock(I18n\TranslationProvider\XliffTranslationProvider::class, ['getModel']);
+        $translationProvider = new I18n\TranslationProvider\XliffTranslationProvider();
         $translationProvider->injectPluralsReader($this->mockPluralsReader);
-        $translationProvider->expects($this->once())->method('getModel')->with($this->samplePackageKey, $this->sampleSourceName, $this->sampleLocale)->will($this->returnValue($mockModel));
+        $translationProvider->injectFileProvider($this->mockFileProvider);
 
-        $result = $translationProvider->getTranslationByOriginalLabel('bar', $this->sampleLocale, I18n\Cldr\Reader\PluralsReader::RULE_ONE, $this->sampleSourceName, $this->samplePackageKey);
-        $this->assertEquals('baz', $result);
+        $result = $translationProvider->getTranslationByOriginalLabel('Source string', $this->sampleLocale, I18n\Cldr\Reader\PluralsReader::RULE_ONE, $this->sampleSourceName, $this->samplePackageKey);
+        $this->assertEquals('Übersetzte Zeichenkette', $result);
     }
 
     /**
@@ -74,17 +93,22 @@ class XliffTranslationProviderTest extends UnitTestCase
      */
     public function returnsTranslatedLabelWhenLabelIdProvided()
     {
-        $mockModel = $this->createMock(I18n\Xliff\XliffModel::class, [], ['foo', $this->sampleLocale]);
-        $mockModel->expects($this->once())->method('getTargetByTransUnitId')->with('bar', 1)->will($this->returnValue('baz'));
+        $fileAdapter = new I18n\Xliff\Model\FileAdapter($this->mockParsedXliffFile, $this->sampleLocale);
+        $this->mockFileProvider->expects($this->once())
+            ->method('getFile')
+            ->with($this->samplePackageKey . ':' . $this->sampleSourceName, $this->sampleLocale)
+            ->willReturn($fileAdapter);
 
-        $this->mockPluralsReader->expects($this->any())->method('getPluralForms')->with($this->sampleLocale)->will($this->returnValue([I18n\Cldr\Reader\PluralsReader::RULE_ONE, I18n\Cldr\Reader\PluralsReader::RULE_OTHER]));
+        $this->mockPluralsReader->expects($this->any())->method('getPluralForms')
+            ->with($this->sampleLocale)
+            ->will($this->returnValue([I18n\Cldr\Reader\PluralsReader::RULE_ONE, I18n\Cldr\Reader\PluralsReader::RULE_OTHER]));
 
-        $translationProvider = $this->getAccessibleMock(I18n\TranslationProvider\XliffTranslationProvider::class, ['getModel']);
+        $translationProvider = new I18n\TranslationProvider\XliffTranslationProvider();
         $translationProvider->injectPluralsReader($this->mockPluralsReader);
-        $translationProvider->expects($this->once())->method('getModel')->with($this->samplePackageKey, $this->sampleSourceName, $this->sampleLocale)->will($this->returnValue($mockModel));
+        $translationProvider->injectFileProvider($this->mockFileProvider);
 
-        $result = $translationProvider->getTranslationById('bar', $this->sampleLocale, I18n\Cldr\Reader\PluralsReader::RULE_OTHER, $this->sampleSourceName, $this->samplePackageKey);
-        $this->assertEquals('baz', $result);
+        $result = $translationProvider->getTranslationById('key1', $this->sampleLocale, I18n\Cldr\Reader\PluralsReader::RULE_ONE, $this->sampleSourceName, $this->samplePackageKey);
+        $this->assertEquals('Übersetzte Zeichenkette', $result);
     }
 
     /**
@@ -93,9 +117,12 @@ class XliffTranslationProviderTest extends UnitTestCase
      */
     public function getTranslationByOriginalLabelThrowsExceptionWhenInvalidPluralFormProvided()
     {
-        $this->mockPluralsReader->expects($this->any())->method('getPluralForms')->with($this->sampleLocale)->will($this->returnValue([I18n\Cldr\Reader\PluralsReader::RULE_ONE, I18n\Cldr\Reader\PluralsReader::RULE_OTHER]));
+        $this->mockPluralsReader->expects($this->any())
+            ->method('getPluralForms')
+            ->with($this->sampleLocale)
+            ->will($this->returnValue([I18n\Cldr\Reader\PluralsReader::RULE_ONE, I18n\Cldr\Reader\PluralsReader::RULE_OTHER]));
 
-        $translationProvider = $this->getMockBuilder(I18n\TranslationProvider\XliffTranslationProvider::class)->setMethods(['getModel'])->getMock();
+        $translationProvider = new I18n\TranslationProvider\XliffTranslationProvider();
         $translationProvider->injectPluralsReader($this->mockPluralsReader);
 
         $translationProvider->getTranslationByOriginalLabel('bar', $this->sampleLocale, I18n\Cldr\Reader\PluralsReader::RULE_FEW, $this->sampleSourceName, $this->samplePackageKey);
@@ -107,30 +134,14 @@ class XliffTranslationProviderTest extends UnitTestCase
      */
     public function getTranslationByIdThrowsExceptionWhenInvalidPluralFormProvided()
     {
-        $this->mockPluralsReader->expects($this->any())->method('getPluralForms')->with($this->sampleLocale)->will($this->returnValue([I18n\Cldr\Reader\PluralsReader::RULE_ONE, I18n\Cldr\Reader\PluralsReader::RULE_OTHER]));
+        $this->mockPluralsReader->expects($this->any())
+            ->method('getPluralForms')
+            ->with($this->sampleLocale)
+            ->will($this->returnValue([I18n\Cldr\Reader\PluralsReader::RULE_ONE, I18n\Cldr\Reader\PluralsReader::RULE_OTHER]));
 
-        $translationProvider = $this->getMockBuilder(I18n\TranslationProvider\XliffTranslationProvider::class)->setMethods(['getModel'])->getMock();
+        $translationProvider = new I18n\TranslationProvider\XliffTranslationProvider();
         $translationProvider->injectPluralsReader($this->mockPluralsReader);
 
         $translationProvider->getTranslationById('bar', $this->sampleLocale, I18n\Cldr\Reader\PluralsReader::RULE_FEW, $this->sampleSourceName, $this->samplePackageKey);
-    }
-
-    /**
-     * @test
-     */
-    public function getModelSetsCorrectLocaleInModel()
-    {
-        $expectedSourcePath = 'expectedSourcePath';
-        $expectedLocale = new I18n\Locale('za');
-
-        $mockLocalizationService = $this->createMock(I18n\Service::class);
-        $mockLocalizationService->expects($this->once())->method('getXliffFilenameAndPath')->will($this->returnValue([$expectedSourcePath, $expectedLocale]));
-
-        $translationProvider = $this->getAccessibleMock(I18n\TranslationProvider\XliffTranslationProvider::class, ['dummy']);
-        $translationProvider->injectLocalizationService($mockLocalizationService);
-
-        $model = $translationProvider->_call('getModel', $this->samplePackageKey, $this->sampleSourceName, $this->sampleLocale);
-        $this->assertAttributeSame($expectedLocale, 'locale', $model);
-        $this->assertAttributeSame($expectedSourcePath, 'sourcePath', $model);
     }
 }

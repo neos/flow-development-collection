@@ -12,8 +12,6 @@ namespace Neos\Flow\I18n\Xliff;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\I18n\AbstractXmlParser;
-use Neos\Flow\I18n\Locale;
 
 /**
  * A class which parses XLIFF file to simple but useful array representation.
@@ -28,8 +26,12 @@ use Neos\Flow\I18n\Locale;
  * @throws Exception\InvalidXliffDataException
  * @see http://docs.oasis-open.org/xliff/v1.2/os/xliff-core.html [1]
  * @see http://docs.oasis-open.org/xliff/v1.2/xliff-profile-po/xliff-profile-po-1.2-cd02.html#s.detailed_mapping.tu [2]
+ * @deprecated use \Neos\Flow\I18n\Xliff\V12\XliffParser instead. Will be removed in Flow 5.0
+ * Also consider using
+ * @see \Neos\Flow\I18n\Xliff\Service\XliffFileProvider
+ * as it is capable of label overrides
  */
-class XliffParser extends AbstractXmlParser
+class XliffParser extends V12\XliffParser
 {
     /**
      * Returns array representation of XLIFF data, starting from a root node.
@@ -37,58 +39,13 @@ class XliffParser extends AbstractXmlParser
      * @param \SimpleXMLElement $root A root node
      * @return array An array representing parsed XLIFF
      * @throws Exception\InvalidXliffDataException
-     * @todo Support "approved" attribute
+     * @deprecated use \Neos\Flow\I18n\Xliff\V12\XliffParser::doParsingFromRoot instead
+     * Also, if you don't really care about the parsing but the result, consider using
+     * @see \Neos\Flow\I18n\Xliff\Service\XliffFileProvider::getFile()
+     * as it is capable of label overrides
      */
-    protected function doParsingFromRoot(\SimpleXMLElement $root)
+    protected function doParsingFromRoot(\SimpleXMLElement $root): array
     {
-        $parsedData = [
-            'sourceLocale' => new Locale((string)$root->file['source-language'])
-        ];
-
-        foreach ($root->file->body->children() as $translationElement) {
-            switch ($translationElement->getName()) {
-                case 'trans-unit':
-                    // If restype would be set, it could be metadata from Gettext to XLIFF conversion (and we don't need this data)
-                    if (!isset($translationElement['restype'])) {
-                        if (!isset($translationElement['id'])) {
-                            throw new Exception\InvalidXliffDataException('A trans-unit tag without id attribute was found, validate your XLIFF files.', 1329399257);
-                        }
-                        $parsedData['translationUnits'][(string)$translationElement['id']][0] = [
-                            'source' => (string)$translationElement->source,
-                            'target' => (string)$translationElement->target,
-                        ];
-                    }
-                    break;
-                case 'group':
-                    if (isset($translationElement['restype']) && (string)$translationElement['restype'] === 'x-gettext-plurals') {
-                        $parsedTranslationElement = [];
-                        foreach ($translationElement->children() as $translationPluralForm) {
-                            if ($translationPluralForm->getName() === 'trans-unit') {
-                                // When using plural forms, ID looks like this: 1[0], 1[1] etc
-                                $formIndex = substr((string)$translationPluralForm['id'], strpos((string)$translationPluralForm['id'], '[') + 1, -1);
-
-                                $parsedTranslationElement[(int)$formIndex] = [
-                                    'source' => (string)$translationPluralForm->source,
-                                    'target' => (string)$translationPluralForm->target,
-                                ];
-                            }
-                        }
-
-                        if (!empty($parsedTranslationElement)) {
-                            if (isset($translationElement->{'trans-unit'}[0]['id'])) {
-                                $id = (string)$translationElement->{'trans-unit'}[0]['id'];
-                                $id = substr($id, 0, strpos($id, '['));
-                            } else {
-                                throw new Exception\InvalidXliffDataException('A trans-unit tag without id attribute was found, validate your XLIFF files.', 1329399258);
-                            }
-
-                            $parsedData['translationUnits'][$id] = $parsedTranslationElement;
-                        }
-                    }
-                    break;
-            }
-        }
-
-        return $parsedData;
+        return parent::doParsingFromRoot($root)[0];
     }
 }
