@@ -37,6 +37,19 @@ class CurlEngineTest extends FunctionalTestCase
     }
 
     /**
+     * Check if the curl engine can handle redirects
+     *
+     * @test
+     */
+    public function redirectsAreFollowed()
+    {
+        $this->browser->getRequestEngine()->setOption(CURLOPT_FOLLOWLOCATION, true);
+        $this->browser->setFollowRedirects(false);
+        $response = $this->browser->request('http://www.neos.io');
+        $this->assertStringStartsWith('<!DOCTYPE html>', $response->getContent());
+    }
+
+    /**
      * Check if the Curl Engine can send a GET request to www.neos.io
      *
      * @test

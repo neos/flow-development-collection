@@ -148,9 +148,10 @@ class CurlEngine implements RequestEngineInterface
         curl_close($curlHandle);
 
         $response = Http\Response::createFromRaw($curlResult);
-        if ($response->getStatusCode() === 100) {
+        while (substr($response->getContent(), 0, 5) === 'HTTP/' || $response->getStatusCode() === 100) {
             $response = Http\Response::createFromRaw($response->getContent(), $response);
         }
+
         return $response;
     }
 }
