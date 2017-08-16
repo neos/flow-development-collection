@@ -53,13 +53,20 @@ class ConfigurationCommandController extends CommandController
      * The command shows the configuration of the current context as it is used by Flow itself.
      * You can specify the configuration type and path if you want to show parts of the configuration.
      *
-     * ./flow configuration:show --type Settings --path TYPO3.Flow.persistence
+     * Display all settings:
+     * ./flow configuration:show
      *
-     * @param string $type Configuration type to show
+     * Display Flow persistence settings:
+     * ./flow configuration:show --path TYPO3.Flow.persistence
+     *
+     * Display Flow Object Cache configuration
+     * ./flow configuration:show --type Caches --path Flow_Object_Classes
+     *
+     * @param string $type Configuration type to show, defaults to Settings
      * @param string $path path to subconfiguration separated by "." like "TYPO3.Flow"
      * @return void
      */
-    public function showCommand($type = null, $path = null)
+    public function showCommand($type = 'Settings', $path = null)
     {
         $availableConfigurationTypes = $this->configurationManager->getAvailableConfigurationTypes();
         if (in_array($type, $availableConfigurationTypes)) {
@@ -77,9 +84,7 @@ class ConfigurationCommandController extends CommandController
                 $this->outputLine($yaml . chr(10));
             }
         } else {
-            if ($type !== null) {
-                $this->outputLine('<b>Configuration type "%s" was not found!</b>', [$type]);
-            }
+            $this->outputLine('<b>Configuration type "%s" was not found!</b>', [$type]);
             $this->outputLine('<b>Available configuration types:</b>');
             foreach ($availableConfigurationTypes as $availableConfigurationType) {
                 $this->outputLine('  ' . $availableConfigurationType);
