@@ -1,5 +1,5 @@
 <?php
-namespace Neos\Flow\Mvc;
+namespace Neos\Flow\Mvc\FlashMessage;
 
 /*
  * This file is part of the Neos.Flow package.
@@ -17,8 +17,7 @@ use Neos\Error\Messages\Message;
 /**
  * This is a container for all Flash Messages.
  *
- * @Flow\Scope("session")
- * @api
+ * @internal You should not interact with this object directly, use the FlashMessageService instead or the addFlashMessage() method when in an AbstractController implementation
  */
 class FlashMessageContainer
 {
@@ -32,12 +31,22 @@ class FlashMessageContainer
      *
      * @param Message $message
      * @return void
-     * @Flow\Session(autoStart=true)
      * @api
      */
     public function addMessage(Message $message)
     {
         $this->messages[] = $message;
+    }
+
+    /**
+     * Whether there are any messages in the FlashMessageContainer
+     *
+     * @return bool
+     * @api
+     */
+    public function hasMessages(): bool
+    {
+        return $this->messages !== [];
     }
 
     /**
@@ -67,7 +76,6 @@ class FlashMessageContainer
      *
      * @param string $severity severity of messages (from Message::SEVERITY_* constants) to remove.
      * @return void
-     * @Flow\Session(autoStart=true)
      * @api
      */
     public function flush($severity = null)

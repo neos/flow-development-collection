@@ -12,12 +12,14 @@ namespace Neos\Flow\Mvc\Controller;
  */
 
 
+use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Response;
-use Neos\Flow\Mvc\FlashMessageContainer;
+use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\FlashMessage\FlashMessageContainer;
+use Neos\Flow\Mvc\FlashMessage\FlashMessageService;
 use Neos\Flow\Mvc\RequestInterface;
 use Neos\Flow\Mvc\ResponseInterface;
 use Neos\Flow\Mvc\Routing\UriBuilder;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * The controller context holds information about the request, response, arguments
@@ -51,9 +53,9 @@ class ControllerContext
 
     /**
      * @Flow\Inject
-     * @var FlashMessageContainer
+     * @var FlashMessageService
      */
-    protected $flashMessageContainer;
+    protected $flashMessageService;
 
     /**
      * Constructs this context
@@ -123,6 +125,6 @@ class ControllerContext
      */
     public function getFlashMessageContainer()
     {
-        return $this->flashMessageContainer;
+        return $this->flashMessageService->getFlashMessageContainerForRequest($this->request);
     }
 }

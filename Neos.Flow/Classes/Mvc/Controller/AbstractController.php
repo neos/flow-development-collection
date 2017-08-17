@@ -11,21 +11,22 @@ namespace Neos\Flow\Mvc\Controller;
  * source code.
  */
 
+use Neos\Error\Messages as Error;
+use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Response;
+use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Exception\ForwardException;
 use Neos\Flow\Mvc\Exception\RequiredArgumentMissingException;
 use Neos\Flow\Mvc\Exception\StopActionException;
 use Neos\Flow\Mvc\Exception\UnsupportedRequestTypeException;
-use Neos\Flow\Mvc\FlashMessageContainer;
+use Neos\Flow\Mvc\FlashMessage\FlashMessageContainer;
+use Neos\Flow\Mvc\FlashMessage\FlashMessageService;
 use Neos\Flow\Mvc\RequestInterface;
 use Neos\Flow\Mvc\ResponseInterface;
 use Neos\Flow\Mvc\Routing\UriBuilder;
-use Neos\Flow\Mvc\ActionRequest;
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
-use Neos\Utility\MediaTypes;
-use Neos\Error\Messages as Error;
 use Neos\Flow\Validation\ValidatorResolver;
+use Neos\Utility\MediaTypes;
 
 /**
  * An abstract base class for HTTP based controllers
@@ -70,15 +71,6 @@ abstract class AbstractController implements ControllerInterface
      * @var ControllerContext
      */
     protected $controllerContext;
-
-    /**
-     * The flash messages. Use $this->flashMessageContainer->addMessage(...) to add a new Flash
-     * Message.
-     *
-     * @Flow\Inject
-     * @var FlashMessageContainer
-     */
-    protected $flashMessageContainer;
 
     /**
      * @Flow\Inject
@@ -174,7 +166,7 @@ abstract class AbstractController implements ControllerInterface
                 $message = new Error\Message($messageBody, $messageCode, $messageArguments, $messageTitle);
             break;
         }
-        $this->flashMessageContainer->addMessage($message);
+        $this->controllerContext->getFlashMessageContainer()->addMessage($message);
     }
 
     /**
