@@ -13,6 +13,7 @@ namespace Neos\Flow\Mvc\Controller;
 
 use Neos\Flow\Http\Response;
 use Neos\Flow\Mvc\Exception\ForwardException;
+use Neos\Flow\Mvc\Exception\InvalidArgumentValueException;
 use Neos\Flow\Mvc\Exception\RequiredArgumentMissingException;
 use Neos\Flow\Mvc\Exception\StopActionException;
 use Neos\Flow\Mvc\Exception\UnsupportedRequestTypeException;
@@ -357,6 +358,7 @@ abstract class AbstractController implements ControllerInterface
      * Maps arguments delivered by the request object to the local controller arguments.
      *
      * @return void
+     * @throws InvalidArgumentValueException
      * @throws RequiredArgumentMissingException
      * @api
      */
@@ -365,7 +367,11 @@ abstract class AbstractController implements ControllerInterface
         foreach ($this->arguments as $argument) {
             $argumentName = $argument->getName();
             if ($this->request->hasArgument($argumentName)) {
-                $argument->setValue($this->request->getArgument($argumentName));
+                $argumentValue = $this->request->getArgument($argumentName);
+                if ($argument->isRequired() && $argumentValue === '' && class_exists($argument->getDataType())) {
+                    throw new InvalidArgumentValueException('The argument "' . $argumentName  . '" is invalid.', 1505460827);
+                }
+                $argument->setValue($argumentValue);
             } elseif ($argument->isRequired()) {
                 throw new RequiredArgumentMissingException('Required argument "' . $argumentName  . '" is not set.', 1298012500);
             }
