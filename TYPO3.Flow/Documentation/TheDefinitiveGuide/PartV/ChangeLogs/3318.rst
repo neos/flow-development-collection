@@ -1,0 +1,34 @@
+`3.3.18 (2017-08-18) <https://github.com/neos/flow-development-collection/releases/tag/3.3.18>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Make CLI subprocesses work on Windows <https://github.com/neos/flow-development-collection/pull/1053>`_
+----------------------------------------------------------------------------------------------------------------
+
+On Windows, the PHP_BINDIR constant will resolve to "C:\\php" no matter what the actual php directory is, because this constant is decided at compile time. However, the PHP_BINARY constant will resolve to the current executable that runs the script at runtime, which at least for CLI will be the PHP executable.
+
+This is a backport of #1010
+
+* Packages: ``Flow``
+
+`BUGFIX: Avoid a syntax error from hiding the intended error message <https://github.com/neos/flow-development-collection/pull/1050>`_
+--------------------------------------------------------------------------------------------------------------------------------------
+
+The error code for the Package Manager error on duplicate packages was
+a millisecond timestamp. Since this is larger than MAX_INT PHP parses
+this as float, which in turn is not accepted as parameter for an
+exception code.
+
+* Packages: ``Flow``
+
+`BUGFIX: Add password option to RedisBackend <https://github.com/neos/flow-development-collection/pull/1049>`_
+--------------------------------------------------------------------------------------------------------------
+
+This adds the (already documented) password option to the `RedisBackend` class.
+
+* Packages: ``Flow``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/3.3.17...3.3.18>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
