@@ -52,11 +52,11 @@ class TrustedProxiesComponent implements ComponentInterface
         $hostHeader = $this->getFirstTrustedProxyHeaderValue(self::HEADER_HOST, $trustedRequest);
         $portFromHost = null;
         if ($hostHeader !== null) {
-            $portSeparator = strrpos($hostHeader, ':');
-            if ($portSeparator > 0) {
-                $portFromHost = substr($hostHeader, $portSeparator + 1);
+            $portSeparatorIndex = strrpos($hostHeader, ':');
+            if ($portSeparatorIndex > 0) {
+                $portFromHost = substr($hostHeader, $portSeparatorIndex + 1);
                 $trustedRequest->getUri()->setPort($portFromHost);
-                $hostHeader = substr($hostHeader, 0, $portSeparator);
+                $hostHeader = substr($hostHeader, 0, $portSeparatorIndex);
             }
             $trustedRequest->getUri()->setHost($hostHeader);
         }
