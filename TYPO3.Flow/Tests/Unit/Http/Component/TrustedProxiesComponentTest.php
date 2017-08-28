@@ -361,6 +361,16 @@ class TrustedProxiesComponentTest extends UnitTestCase
     /**
      * @test
      */
+    public function portIsOverridenIfTheHostHeaderContainsJustThePort()
+    {
+        $request = Request::create(new Uri('http://acme.com'), 'GET', array(), array(), array('HTTP_X_FORWARDED_HOST' => ':443'));
+        $trustedRequest = $this->callWithRequest($request);
+        $this->assertEquals(443, $trustedRequest->getUri()->getPort());
+    }
+
+    /**
+     * @test
+     */
     public function portIsOverridenIfTheHostHeaderContainsPortAlsoIfProtocolHeaderIsSet()
     {
         $request = Request::create(new Uri('http://acme.com'), 'GET', array(), array(), array('HTTP_X_FORWARDED_HOST' => 'neos.io:443', 'HTTP_X_FORWARDED_PROTO' => 'http'));

@@ -53,7 +53,7 @@ class TrustedProxiesComponent implements ComponentInterface
         $portFromHost = null;
         if ($hostHeader !== null) {
             $portSeparatorIndex = strrpos($hostHeader, ':');
-            if ($portSeparatorIndex > 0) {
+            if ($portSeparatorIndex !== false) {
                 $portFromHost = substr($hostHeader, $portSeparatorIndex + 1);
                 $trustedRequest->getUri()->setPort($portFromHost);
                 $hostHeader = substr($hostHeader, 0, $portSeparatorIndex);
