@@ -65,7 +65,7 @@ class Package extends BasePackage
             });
         }
 
-            // Use a closure to invoke the TemplateCompiler, since the object is not registered during compiletime
+        // Use a closure to invoke the TemplateCompiler, since the object is not registered during compiletime
         $flushTemplates = function ($identifier, $changedFiles) use ($bootstrap) {
             if ($identifier !== 'Fluid_TemplateFiles') {
                 return;
