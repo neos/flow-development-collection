@@ -1,0 +1,572 @@
+`4.2.0 (2017-08-30) <https://github.com/neos/flow-development-collection/releases/tag/4.2.0>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`TASK: Remove old changelogs <https://github.com/neos/flow-development-collection/pull/1067>`_
+----------------------------------------------------------------------------------------------
+
+* Packages: ``Flow``
+
+`TASK: Final release related adjustments for 4.2 <https://github.com/neos/flow-development-collection/pull/1066>`_
+------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Eel`` ``Flow`` ``FluidAdaptor`` ``Kickstarter``
+
+`TASK: Improve readability of Role identifier pattern <https://github.com/neos/flow-development-collection/pull/1052>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+This also removes the unused check for simple role name notation.
+
+* Packages: ``Flow``
+
+`BUGFIX: Make CLI subprocesses work on Windows <https://github.com/neos/flow-development-collection/pull/1053>`_
+----------------------------------------------------------------------------------------------------------------
+
+On Windows, the PHP_BINDIR constant will resolve to "C:\\php" no matter what the actual php directory is, because this constant is decided at compile time. However, the PHP_BINARY constant will resolve to the current executable that runs the script at runtime, which at least for CLI will be the PHP executable.
+
+This is a backport of #1010
+
+`TASK: Remove Changelog for 3.3.17 that got upmerged accidentially <https://github.com/neos/flow-development-collection/pull/1058>`_
+------------------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Cache``
+
+`FEATURE: Allow for dynamic label overrides <https://github.com/neos/flow-development-collection/pull/894>`_
+------------------------------------------------------------------------------------------------------------
+
+This replaces the previous physical file model with the file model defined by the XLIFF standard. 
+
+Files IDs are no longer defined by their location in the file system but by their _product-name_ and _orginal_ XLIFF attributes. The location serves as a fallback to prevent this from being a breaking change.
+
+The XLIFF file provider therefore parses all registered packages and in addition the Data/Translations folder in search of file entries in .xlf files.
+The translation file monitor is now also registered for said Data/Translations folder to enable automatic cache clearing.
+
+In preparation for support of XLIFF version 2, the XLIFF parser has been created in a v12 namespace and the class for holding the file data is modeled as an adapter that should be able to handle both formats.
+
+Overriding labels is now be as easy as putting a valid XLIFF file with defined _product-name_ (Package) and _orginal_ (Source) in any translation folder.
+
+I targeted Flow 4.1 since this is a breaking change for Neos, which before used the non-API XLIFF parser directly which is no longer available.
+
+Update: Re-Added old XLIFF parser for backwards compatibility and flagged it as deprecated. We could now also target 4.0 if we wanted to
+
+* Packages: ``Flow``
+
+`BUGFIX: Avoid a syntax error from hiding the intended error message <https://github.com/neos/flow-development-collection/pull/1050>`_
+--------------------------------------------------------------------------------------------------------------------------------------
+
+The error code for the Package Manager error on duplicate packages was
+a millisecond timestamp. Since this is larger than MAX_INT PHP parses
+this as float, which in turn is not accepted as parameter for an
+exception code.
+
+`TASK: Add PSR-7 compatibility to HTTP stack <https://github.com/neos/flow-development-collection/pull/761>`_
+-------------------------------------------------------------------------------------------------------------
+
+This adds all missing methods and implementations to make our
+HTTP implementation PSR-7 compatible.
+
+Further adjustments to Flow are not included yet.
+
+* Packages: ``Cache`` ``Flow``
+
+`TASK: Make FlashMessageViewHelper use \`hasTitle()\` to check for existence <https://github.com/neos/flow-development-collection/pull/1048>`_
+----------------------------------------------------------------------------------------------------------------------------------------------
+
+Depends on #1046
+
+* Packages: ``FluidAdaptor``
+
+`BUGFIX: Add password option to RedisBackend <https://github.com/neos/flow-development-collection/pull/1049>`_
+--------------------------------------------------------------------------------------------------------------
+
+This adds the (already documented) password option to the `RedisBackend` class.
+
+`TASK: Error Message accepts null as message title <https://github.com/neos/flow-development-collection/pull/1046>`_
+--------------------------------------------------------------------------------------------------------------------
+
+Also, this allow the code of the message to be null in `getCode()`, since
+that is the more sane behaviour from an API point of view.
+
+Fixes neos/neos-development-collection#1666
+
+* Packages: ``Messages``
+
+`FEATURE: Add Date.formatCldr helper <https://github.com/neos/flow-development-collection/pull/1032>`_
+------------------------------------------------------------------------------------------------------
+
+This change adds CLDR formatting capability to the Date Eel helper, to match
+the functionality of the `format.date` Fluid ViewHelper.
+
+**P.S.** This PR has taken over from https://github.com/neos/flow-development-collection/pull/920
+All the history can be found the. The original code was written by @litovchenko1, I
+(@zaveryukha) have added the unit tests.
+
+* Packages: ``Eel``
+
+`BUGFIX: Catch ConnectionExceptions in \`PersistenceManager::persistAll()\` <https://github.com/neos/flow-development-collection/pull/1037>`_
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+This adds a `try/catch` block around the `$connection->ping()` call that
+throws an exception if no database credentials are configured (which is
+the case when you do a fresh install of Flow or Neos).
+
+Fixes: #1663
+
+`BUGFIX: Avoid type error with Message->getCode() <https://github.com/neos/flow-development-collection/pull/1034>`_
+-------------------------------------------------------------------------------------------------------------------
+
+The `getCode()` method declares int as return type, but it can happen
+that the internal code is `null`, leading to a type error.
+
+This adjusts the code so the internal code is always an integer.
+
+* Packages: ``Messages``
+
+`TASK: Catch exceptions separately for published resource collections <https://github.com/neos/flow-development-collection/pull/1033>`_
+---------------------------------------------------------------------------------------------------------------------------------------
+
+Implement a separate try/catch blog for each collection so as many collections as possible get published. Fixes could then be done for just the broken collection without running the full command once again.
+
+Extends the Issue: Catch errors while publishing invalid resources #958 (Error Handing for each Resource needs to be done in each Target Class. The native Flow Target Classes already take care about continuing to publish resources)
+
+* Packages: ``Flow``
+
+`TASK: Remove use of func_get_args() in PropertyMappingConfiguration methods <https://github.com/neos/flow-development-collection/pull/1035>`_
+----------------------------------------------------------------------------------------------------------------------------------------------
+
+This changes `allowProperties()`, `skipProperties()` and `allowAllPropertiesExcept()`
+to declare a string-typed `$propertyNames` argument instead of using `func_get_args()`.
+
+* Packages: ``Flow``
+
+`BUGFIX: Fix TypeError in RedisBackendTest <https://github.com/neos/flow-development-collection/pull/1030>`_
+------------------------------------------------------------------------------------------------------------
+
+Some tests failed with
+
+    Return value of Neos\\Cache\\Backend\\RedisBackend::isFrozen() must
+    be of the type boolean, null returned
+
+after the introduction of return type declarations.
+
+* Packages: ``Cache``
+
+`TASK: Remove a "risky test" warning <https://github.com/neos/flow-development-collection/pull/1031>`_
+------------------------------------------------------------------------------------------------------
+
+A data provider named testSomething() is seen as a test, leading to
+a warning about a test not doing any assertions.
+
+Don't do that.
+
+* Packages: ``FluidAdaptor`` ``ObjectHandling``
+
+`TASK: Add PHP 7.0 scalar type hints to method arguments and return types <https://github.com/neos/flow-development-collection/pull/1019>`_
+-------------------------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Eel`` ``Flow`` ``ObjectHandling``
+
+`BUGFIX: Allow array and object literals to be padded with whitespace in Eel <https://github.com/neos/flow-development-collection/pull/1028>`_
+----------------------------------------------------------------------------------------------------------------------------------------------
+
+This change allows expressions like:
+
+    { foo: "bar", bar: "baz" }
+
+or
+
+    {
+      foo: "bar",
+      bar: "baz"
+    }
+
+to be parsed correctly in EEL
+
+The change extends the EEL PEG grammar (in `Eel.peg.inc`) to be tolerant towards
+whitespace (as well as line wraps) in object and array literals.
+
+This fixes #986
+
+`FEATURE: Introduce \`\`ObjectAccess::instantiate\`\` <https://github.com/neos/flow-development-collection/pull/1029>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+This static method allows instantiating a given class with
+and array of arguments in an efficient way.
+
+Most of this method was previously hidden in the ``ObjectManager``
+of Flow but as the same code is replicated in other packages it
+makes sense to open it as generic method for re-use.
+
+* Packages: ``ObjectHandling``
+
+`TASK: Add PHP 7.0 scalar type hints to method arguments and return types <https://github.com/neos/flow-development-collection/pull/1026>`_
+-------------------------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Lock``
+
+`TASK: Add PHP 7.0 scalar type hints to method arguments and return types <https://github.com/neos/flow-development-collection/pull/1025>`_
+-------------------------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Cache`` ``Flow``
+
+`BUGFIX: Fix RoutingTests <https://github.com/neos/flow-development-collection/pull/1027>`_
+-------------------------------------------------------------------------------------------
+
+The functional tests for the Router haven't been adjusted to the
+Package renaming `TYPO3.Flow` => `Neos.Flow`.
+
+* Packages: ``Flow``
+
+`TASK: Skip symlink tests on windows when symlinking fails <https://github.com/neos/flow-development-collection/pull/998>`_
+---------------------------------------------------------------------------------------------------------------------------
+
+On windows it is not unlikely that symlinking does not work due to missing access rights.
+In that case a lot of the Files tests fail without any helpful notice and eventually lead
+to the developer ignoring the failures, possibly overlooking real failures.
+
+This change makes such symlink failures on Windows skip the test instead.
+
+* Packages: ``Eel`` ``Files``
+
+`BUGFIX: PersistenceManager correctly checks and reattempts lost connections <https://github.com/neos/flow-development-collection/pull/926>`_
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+This change replaces the previously put in place try/catch attempt at handling lost connections
+with a proper explicit call to the doctrine connection's `ping()` method.
+As a side-effect, this will no longer trigger the `AllObjectsPersisted` signal if flushing fails, however
+this is not really breaking, since in those circumstances, the application is supposed to not do any
+further work anyway.
+
+Fixes #870
+
+This is a follow-up to #921 - see discussion there.
+
+`FEATURE: Add Eel String helper pregMatchAll <https://github.com/neos/flow-development-collection/pull/1007>`_
+--------------------------------------------------------------------------------------------------------------
+
+This pull request add the Eel String helper `String.pregMatchAll`
+
+* Packages: ``Eel``
+
+`TASK: Add PHP 7.0 scalar type hints to method arguments and return types <https://github.com/neos/flow-development-collection/pull/1017>`_
+-------------------------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Schema``
+
+`TASK: Add PHP 7.0 scalar type hints to method arguments and return types <https://github.com/neos/flow-development-collection/pull/1018>`_
+-------------------------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Eel``
+
+`FEATURE: Allow Nullable action params to be annotated <https://github.com/neos/flow-development-collection/pull/1009>`_
+------------------------------------------------------------------------------------------------------------------------
+
+This change allows action arguments to be annotated "|null" or "null|" when they are optional with default value `null`. Before the type conversion would fail because no matching type converter would be found.
+
+Resolves #927
+
+* Packages: ``ObjectHandling``
+
+`TASK: Output a single link to the exception file in CLI <https://github.com/neos/flow-development-collection/pull/1001>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+This change hide the "Open Data/Logs/Exceptions/20170617104058ccd0f5.txt
+for a full stack trace." link for the nexted exceptions.
+
+* Packages: ``Flow``
+
+`BUGFIX: ObjectAccess should care for properties set to NULL <https://github.com/neos/flow-development-collection/pull/686>`_
+-----------------------------------------------------------------------------------------------------------------------------
+
+By using `array_key_exists()` instead of `isset()`, properties set to `null` will be detected as existing.
+
+* Packages: ``ObjectHandling``
+
+`BUGFIX: Annotate logoutAction with SkipCsrfProtection <https://github.com/neos/flow-development-collection/pull/1014>`_
+------------------------------------------------------------------------------------------------------------------------
+
+Sometimes (especially in Neos) on logout the CSRF token is missing (`CsrfTokenMissing` interceptor). No harm in ignoring it here.
+
+`TASK: Add PHP 7.0 scalar type hints to method arguments and return types <https://github.com/neos/flow-development-collection/pull/1016>`_
+-------------------------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Pdo``
+
+`TASK: Add PHP 7.0 scalar type hints to method arguments and return types <https://github.com/neos/flow-development-collection/pull/1015>`_
+-------------------------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``OpcodeCache``
+
+`FEATURE: Add \`range\` method to Eel Array-helper <https://github.com/neos/flow-development-collection/pull/1013>`_
+--------------------------------------------------------------------------------------------------------------------
+
+The range method is a wrapper around the php range function that creates a sequence of integers or characters as array. This is especially helpful to create paginations in pure fusion.
+
+* Packages: ``Eel``
+
+`TASK: Add PHP 7.0 scalar type hints to method arguments and return types <https://github.com/neos/flow-development-collection/pull/1000>`_
+-------------------------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``MediaTypes``
+
+`TASK: Add PHP 7.0 scalar type hints to method arguments and return types <https://github.com/neos/flow-development-collection/pull/997>`_
+------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+* Packages: ``Files``
+
+`BUGFIX: Make CLI subprocesses work on Windows <https://github.com/neos/flow-development-collection/pull/1010>`_
+----------------------------------------------------------------------------------------------------------------
+
+On Windows, the `PHP_BINDIR` constant will resolve to "C:\\php" no matter what the actual php directory is, because this constant is decided at compile time. However, the `PHP_BINARY` constant will resolve to the current executable that runs the script at runtime, which at least for CLI will be the PHP executable.
+
+* Packages: ``Flow``
+
+`BUGFIX: Integer argumentName should not result in an exception <https://github.com/neos/flow-development-collection/pull/954>`_
+--------------------------------------------------------------------------------------------------------------------------------
+
+This prevents an exception in case an argument name is evaluated to
+another simple type (integer) but can be converted to string easily.
+
+Fixes: #612
+
+`FEATURE: Allow setting the package type when kickstarting a package <https://github.com/neos/flow-development-collection/pull/1004>`_
+--------------------------------------------------------------------------------------------------------------------------------------
+
+You can now do `./flow kickstart:package Foo.Bar --packageType neos-plugin`, like in the PackageCommandController.
+
+A question regarding the docs: Is the "Command Reference" part of the documentation autogenerated? If so, it seems to be outdated, because there are still some mentions of typo3 in there.
+
+* Packages: ``Kickstarter``
+
+`BUGFIX: Keep format for URIs built in subrequests <https://github.com/neos/flow-development-collection/pull/985>`_
+-------------------------------------------------------------------------------------------------------------------
+
+Adds handling for the `@format` argument when merging arguments
+from the request hierarchy to keep the format when building
+URIs from a sub request.
+
+Fixes neos/neos-development-collection#1596
+
+`TASK: Fix typo in @return annotation <https://github.com/neos/flow-development-collection/pull/1006>`_
+-------------------------------------------------------------------------------------------------------
+
+`BUGFIX: FileSystemTargetTest shouldn't create package stub <https://github.com/neos/flow-development-collection/pull/1005>`_
+-----------------------------------------------------------------------------------------------------------------------------
+
+The FileSystemTargetTest was fixed earlier to no longer create a stub
+of a package during test runs in the real filesystem see PR #966.)
+
+The test still created a stub package, because the FileSystemTarget
+was told to publish to a vfs location - but that option is only used
+if initializeObject() is called, which in unit tests does not happen
+automagically.
+
+`BUGFIX: Add missing \`PackageException\` use statement <https://github.com/neos/flow-development-collection/pull/1002>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+Otherwise an undefined Exception is thrown.
+
+* Packages: ``Flow``
+
+`BUGFIX: Add handling of HTTP HEAD-request with curl <https://github.com/neos/flow-development-collection/pull/993>`_
+---------------------------------------------------------------------------------------------------------------------
+
+Extended CurlEngine for request-type HEAD to set the option to not expect a body.
+
+resolves #992 
+
+`TASK: Better message on missing runtime expression <https://github.com/neos/flow-development-collection/pull/996>`_
+--------------------------------------------------------------------------------------------------------------------
+
+This improves the error message on missing AOP runtime expressions
+just a little.
+
+`TASK: Add missing documentation for trait introduction <https://github.com/neos/flow-development-collection/pull/984>`_
+------------------------------------------------------------------------------------------------------------------------
+
+Trait introduction is available since some time, but it was never
+documented. This change adds a short explanation with a code
+example to fix that.
+
+`TASK: Throw error if package exists two times <https://github.com/neos/flow-development-collection/pull/953>`_
+---------------------------------------------------------------------------------------------------------------
+
+Without this change a package (defined by composer name eg. "neos/party")
+that exists two times in the installation would be silently ignored and added
+with the second path found.	This could still result in strange effects
+happening as autoload and Flow internal paths (configuration, resources) could
+diverge.
+
+With this change an exception is thrown when the package states are resolved
+and a package is found a second time.
+
+Fixes: #611
+
+`BUGFIX: Missing end quote in security documentation example <https://github.com/neos/flow-development-collection/pull/988>`_
+-----------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Flow``
+
+`BUGFIX: Trait AOP works when only introduces traits to class <https://github.com/neos/flow-development-collection/pull/987>`_
+------------------------------------------------------------------------------------------------------------------------------
+
+When introducing a trait using AOP it now works if the class only has traits introduced via AOP.
+
+`BUGFIX: Check for link in unpublishFile() <https://github.com/neos/flow-development-collection/pull/973>`_
+-----------------------------------------------------------------------------------------------------------
+
+`unpublishFile()` in the `FileSystemTarget` does not remove symlinks
+correctly, thus the method is adjusted in the `FileSystemSymlinkTarget`
+to check using `is_link()` instead of `file_exists()`.
+
+Fixes #972
+
+`TASK: Add a distinct exception for existing, but invalid composer manifests <https://github.com/neos/flow-development-collection/pull/969>`_
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+Since I just ran into that one and it took me a while to figure out why Flow was throwing a "Composer Manifest does not contain a "name" field", I added a distinct exception for the case when a composer manifest does exist, but cannot be parsed from JSON.
+
+* Packages: ``Flow``
+
+`TASK: Remove TYPO3 and TypoScript uses from code <https://github.com/neos/flow-development-collection/pull/979>`_
+------------------------------------------------------------------------------------------------------------------
+
+Changes some package names used in a test and a comment in a class
+to no longer mention TYPO3, TypoScript or TYPO3CR.
+
+* Packages: ``Flow``
+
+`FEATURE: ViewHelper compilation for increased speed <https://github.com/neos/flow-development-collection/pull/968>`_
+---------------------------------------------------------------------------------------------------------------------
+
+Adds compilation and static rendering to a couple of ViewHelpers
+that were either easy to change or used quite a lot.
+The modified ViewHelpers should all render faster in all scenarios.
+
+* Packages: ``FluidAdaptor``
+
+`BUGFIX: Fix \`doctrine:migrationstatus\` command <https://github.com/neos/flow-development-collection/pull/977>`_
+------------------------------------------------------------------------------------------------------------------
+
+This fixes a regression introduced with #857 that made the
+`doctrine:migrationstatus` CLI command fail with a PHP notice
+if the `--show-migrations` flag was used.
+
+Fixes: #976
+
+* Packages: ``Flow``
+
+`TASK: Improve code readability in Cache package <https://github.com/neos/flow-development-collection/pull/944>`_
+-----------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Cache``
+
+`TASK: Ignore invalid cookie names instead of throwing an exception <https://github.com/neos/flow-development-collection/pull/971>`_
+------------------------------------------------------------------------------------------------------------------------------------
+
+This prevents the exception that is thrown when a cookie has an invalid name.
+
+See the discussion here: https://discuss.neos.io/t/ignore-invalid-cookies-instead-of-throwing-an-exception/2234
+
+`BUGFIX: Return type declaration should be FQCN <https://github.com/neos/flow-development-collection/pull/967>`_
+----------------------------------------------------------------------------------------------------------------
+
+Fixes #963
+
+`TASK: Improve documentation on Configuration and Installation <https://github.com/neos/flow-development-collection/pull/891>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+Have Add a note to chapter «Installation» and change the sequence in chaper «Configuration» for better usable/find the context-part, not to skip because of note I moved this to the end and add more subtitle about context for better SERP-Result.
+
+More Details about the reason in slack-channel «guilde-documentation»
+
+(Second try: Sorry)
+
+* Packages: ``Flow``
+
+`BUGFIX: FileSystemTargetTest shouldn't have side effects <https://github.com/neos/flow-development-collection/pull/966>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+The test would create a Flow package in the current installation as the
+package manager in the test was not prepared with a virtual filesystem.
+
+`BUGFIX: Set FLOW_VERSION_BRANCH to master <https://github.com/neos/flow-development-collection/pull/965>`_
+-----------------------------------------------------------------------------------------------------------
+
+* Packages: ``Flow``
+
+`TASK: Adjust schema of routes configuration <https://github.com/neos/flow-development-collection/pull/932>`_
+-------------------------------------------------------------------------------------------------------------
+
+Previously the route parts were evaluated correct regardless of the configured keys because the schema used the configuration `additionalAttributes = FALSE` instead of `additionalProperties = FALSE`. This is fixed and the schema is updated 
+
+- validate the keys in route parts strictly
+- allow configuration of `objectType` and  `uriPattern ` instead of `handler`
+- allow `options` and `toLowerCase` for all routeParts
+
+- [x] Code follows the PSR-2 coding style
+- [ ] Tests have been created, run and adjusted as needed
+- [x] The PR is created against the [lowest maintained branch](https://www.neos.io/features/release-roadmap.html)
+
+`BUGFIX: Set FLOW_VERSION_BRANCH to 4.1 <https://github.com/neos/flow-development-collection/pull/964>`_
+--------------------------------------------------------------------------------------------------------
+
+* Packages: ``Flow``
+
+`TASK: Add PHP 7.0 scalar type hints to method arguments and return types <https://github.com/neos/flow-development-collection/pull/946>`_
+------------------------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Arrays``
+
+`TASK: Add PHP 7.0 scalar type hints to method arguments and return types <https://github.com/neos/flow-development-collection/pull/945>`_
+------------------------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Messages``
+
+`BUGFIX: ConfigurationManager should never have empty configuration <https://github.com/neos/flow-development-collection/pull/948>`_
+------------------------------------------------------------------------------------------------------------------------------------
+
+Custom configuration types of processing type settings could break
+the compile process as the array wouldn't have the custom configuration
+name as key set because it was never initialized in this processing
+type.
+
+This change initializes any configuration type with an empty array in
+the beginning and provides a test to proof the behavior.
+
+Fixes: #934
+
+* Packages: ``Flow``
+
+`TASK: Fix error message to correctly refer to composer.json <https://github.com/neos/flow-development-collection/pull/960>`_
+-----------------------------------------------------------------------------------------------------------------------------
+
+This misleading message was introduced in `a0a1453d87053e2c17b954804c61c5c03fa00c89 <https://github.com/neos/flow-development-collection/commit/a0a1453d87053e2c17b954804c61c5c03fa00c89>`_
+due to too much javascript work being done.
+
+`TASK: Fix ClassReflection::getMethods return type annotation <https://github.com/neos/flow-development-collection/pull/951>`_
+------------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Flow``
+
+`TASK: #899 Make Fizzle filter nested object properties <https://github.com/neos/flow-development-collection/pull/924>`_
+------------------------------------------------------------------------------------------------------------------------
+
+**What I did**
+Implements #899. I extended the FlowQuery grammar to filter nested object properties.
+
+**How I did it**
+ It was not possible to just extend the `Identifier` rule in `AbstractParser.peg.inc` since that led to a lot of regressions in the Eel parser. Thus, a new rule `PropertyPath` was necessary.
+
+**How to verify it**
+Unit-Tests in Neos.Eel run successfully.
+
+
+* Packages: ``Eel`` ``Flow``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/4.1.0...4.2.0>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
