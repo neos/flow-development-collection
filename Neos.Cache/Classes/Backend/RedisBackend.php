@@ -459,7 +459,7 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
      * @param string $value
      * @return string
      */
-    private function uncompress(string $value): string
+    private function uncompress($value)
     {
         if (empty($value)) {
             return $value;
