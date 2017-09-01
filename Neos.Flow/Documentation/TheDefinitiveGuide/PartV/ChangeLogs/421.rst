@@ -1,0 +1,15 @@
+`4.2.1 (2017-08-31) <https://github.com/neos/flow-development-collection/releases/tag/4.2.1>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Don’t use scalar type hint string for RedisBackend <https://github.com/neos/flow-development-collection/pull/1069>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+The scalar type hint for `compress()` forced the return value of uncompress() to an emtpy string if there is no value in redis. This has to be false.
+
+* Packages: ``Cache`` ``Flow``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/4.2.0...4.2.1>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

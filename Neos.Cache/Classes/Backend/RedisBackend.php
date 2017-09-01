@@ -314,7 +314,7 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
     /**
      * {@inheritdoc}
      */
-    public function key(): string
+    public function key()
     {
         $entryIdentifier = $this->redis->lIndex($this->buildKey('entries'), $this->entryCursor);
         if ($entryIdentifier !== false && !$this->has($entryIdentifier)) {
@@ -434,7 +434,7 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
     /**
      * @param string $password
      */
-    public function setPassword($password)
+    public function setPassword(string $password)
     {
         $this->password = $password;
     }
@@ -456,10 +456,11 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
     }
 
     /**
+     * TODO: No return type declaration for now, as it needs to return false as well.
      * @param string $value
-     * @return string
+     * @return mixed
      */
-    private function uncompress(string $value): string
+    private function uncompress($value)
     {
         if (empty($value)) {
             return $value;
@@ -468,10 +469,11 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
     }
 
     /**
+     * TODO: No return type declaration for now, as it needs to return false as well.
      * @param string $value
-     * @return string
+     * @return string|boolean
      */
-    private function compress(string $value): string
+    private function compress(string $value)
     {
         return $this->useCompression() ? gzencode($value, $this->compressionLevel) : $value;
     }
