@@ -434,7 +434,7 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
     /**
      * @param string $password
      */
-    public function setPassword($password)
+    public function setPassword(string $password)
     {
         $this->password = $password;
     }
@@ -456,7 +456,6 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
     }
 
     /**
-     *
      * TODO: No return type declaration for now, as it needs to return false as well.
      * @param string $value
      * @return mixed
@@ -470,10 +469,11 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
     }
 
     /**
+     * TODO: No return type declaration for now, as it needs to return false as well.
      * @param string $value
-     * @return string
+     * @return string|boolean
      */
-    private function compress(string $value): string
+    private function compress(string $value)
     {
         return $this->useCompression() ? gzencode($value, $this->compressionLevel) : $value;
     }
