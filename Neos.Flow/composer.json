@@ -13,18 +13,18 @@
         "ext-json": ">=1.2.0",
         "ext-reflection": "*",
 
-        "neos/cache": "~4.2.0",
-        "neos/eel": "~4.2.0",
-        "neos/error-messages": "~4.2.0",
-        "neos/utility-arrays": "~4.2.0",
-        "neos/utility-files": "~4.2.0",
-        "neos/utility-lock": "~4.2.0",
-        "neos/utility-mediatypes": "~4.2.0",
-        "neos/utility-objecthandling": "~4.2.0",
-        "neos/utility-opcodecache": "~4.2.0",
-        "neos/utility-schema": "~4.2.0",
-        "neos/utility-unicode": "~4.2.0",
-        "neos/fluid-adaptor": "~4.2.0",
+        "neos/cache": "*",
+        "neos/eel": "*",
+        "neos/error-messages": "*",
+        "neos/utility-arrays": "*",
+        "neos/utility-files": "*",
+        "neos/utility-lock": "*",
+        "neos/utility-mediatypes": "*",
+        "neos/utility-objecthandling": "*",
+        "neos/utility-opcodecache": "*",
+        "neos/utility-schema": "*",
+        "neos/utility-unicode": "*",
+        "neos/fluid-adaptor": "*",
 
         "psr/http-message": "~1.0.0",
 
@@ -39,8 +39,7 @@
         "symfony/dom-crawler": "~2.8.0",
         "symfony/console": "~2.8",
 
-        "neos/composer-plugin": "^2.0.0",
-        "neos/utility-pdo": "~4.2.0"
+        "neos/composer-plugin": "^2.0.0"
     },
     "replace": {
         "typo3/flow": "self.version"
