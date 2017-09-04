@@ -231,7 +231,7 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
                         $index['flags'] = $indexAnnotation->flags;
                     }
                     if (!empty($indexAnnotation->options)) {
-                        $index['options'] = $indexAnnotation->flags;
+                        $index['options'] = $indexAnnotation->options;
                     }
                     if (!empty($indexAnnotation->name)) {
                         $primaryTable['indexes'][$indexAnnotation->name] = $index;
