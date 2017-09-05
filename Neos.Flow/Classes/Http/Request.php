@@ -653,11 +653,11 @@ class Request extends BaseRequest implements ServerRequestInterface
             $value['type']
         );
 
-        if (empty($argumentsForValue['originallySubmittedResource'])) {
+        if (!empty($argumentsForValue['originallySubmittedResource'])) {
             $file->setOriginallySubmittedResource($argumentsForValue['originallySubmittedResource']);
         }
 
-        if (empty($argumentsForValue['__collectionName'])) {
+        if (!empty($argumentsForValue['__collectionName'])) {
             $file->setCollectionName($argumentsForValue['__collectionName']);
         }
 
