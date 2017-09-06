@@ -1,0 +1,55 @@
+`4.2.2 (2017-09-01) <https://github.com/neos/flow-development-collection/releases/tag/4.2.2>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Allow file uploads without arguments for value <https://github.com/neos/flow-development-collection/pull/1070>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+I created an image upload for our Flow application. After updating Flow, it stopped working, because two array keys do not exist. To fix this error I suggest making these keys optional.
+
+`$argumentsForValue['originallySubmittedResource']` and `$argumentsForValue['__collectionName']` must not exist. The file upload should not break, if these array keys are missing.
+
+**Checklist**
+
+- [x] Code follows the PSR-2 coding style
+- [ ] Tests have been created, run and adjusted as needed
+- [ ] The PR is created against the [lowest maintained branch]
+
+* Packages: ``Flow``
+
+`BUGFIX: Fix FLOW_VERSION_BRANCH value <https://github.com/neos/flow-development-collection/pull/1068>`_
+--------------------------------------------------------------------------------------------------------
+
+Use correct version within Bootstrap.php
+
+* Packages: ``Cache`` ``Flow``
+
+`BUGFIX: RedisBackend key() method return typehint was wrong <https://github.com/neos/flow-development-collection/pull/1072>`_
+------------------------------------------------------------------------------------------------------------------------------
+
+This fixes another small error in the return typehints introduced in 4.2
+
+* Packages: ``Cache``
+
+`BUGFIX: RedisBackend compress() method may return false <https://github.com/neos/flow-development-collection/pull/1073>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Cache``
+
+`BUGFIX: Result type hint leads to wrong function result <https://github.com/neos/flow-development-collection/pull/1071>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+The `int` type hint of `strpos(string $haystack, string $needle, int $offset = 0): int` casts a `FALSE` result of `mb_strpos` to `0`, which leads to a wrong result if `$haystack` does not contain `$needle`.
+
+**Checklist**
+
+- [ ] Code follows the PSR-2 coding style
+- [ ] Tests have been created, run and adjusted as needed
+- [x] The PR is created against the [lowest maintained branch](https://www.neos.io/features/release-roadmap.html)
+
+* Packages: ``Flow`` ``Unicode``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/4.2.1...4.2.2>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

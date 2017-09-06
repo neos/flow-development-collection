@@ -50,14 +50,21 @@ class TrustedProxiesComponent implements ComponentInterface
         }
 
         $hostHeader = $this->getFirstTrustedProxyHeaderValue(self::HEADER_HOST, $trustedRequest);
+        $portFromHost = null;
         if ($hostHeader !== null) {
+            $portSeparatorIndex = strrpos($hostHeader, ':');
+            if ($portSeparatorIndex !== false) {
+                $portFromHost = substr($hostHeader, $portSeparatorIndex + 1);
+                $trustedRequest->getUri()->setPort($portFromHost);
+                $hostHeader = substr($hostHeader, 0, $portSeparatorIndex);
+            }
             $trustedRequest->getUri()->setHost($hostHeader);
         }
 
         $portHeader = $this->getFirstTrustedProxyHeaderValue(self::HEADER_PORT, $trustedRequest);
         if ($portHeader !== null) {
             $trustedRequest->getUri()->setPort($portHeader);
-        } elseif ($protocolHeader !== null) {
+        } elseif ($protocolHeader !== null && $portFromHost === null) {
             $trustedRequest->getUri()->setPort(strtolower($protocolHeader) === 'https' ? 443 : 80);
         }
 
