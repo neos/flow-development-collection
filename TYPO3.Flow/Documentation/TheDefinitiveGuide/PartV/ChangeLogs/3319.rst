@@ -1,0 +1,31 @@
+`3.3.19 (2017-09-06) <https://github.com/neos/flow-development-collection/releases/tag/3.3.19>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Annotation reader breaks partial index creation <https://github.com/neos/flow-development-collection/pull/1076>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+The `FlowAnnotationDriver` uses a wrong property of a loaded `Index` annotation object, preventing partial indexes being created on DB platforms supporting it.
+
+Retargeted follow-up to #1074
+
+* Packages: ``Flow``
+
+`BUGFIX: Support proxies forwarding the port in the Forwarded-Host header <https://github.com/neos/flow-development-collection/pull/1056>`_
+-------------------------------------------------------------------------------------------------------------------------------------------
+
+Some proxies like apache's mod_proxy set the port from the forwarded
+connection in the `X-Forwarded-Host` header, e.g. `acme.com:443`.
+This change adjusts the TrustedProxy component to allow setting the
+forwarded port inside the Host header.
+If the `X-Forwarded-Port` header is also present, that one will take
+precedence though.
+
+Fixes #1054
+
+* Packages: ``Flow``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/3.3.18...3.3.19>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
