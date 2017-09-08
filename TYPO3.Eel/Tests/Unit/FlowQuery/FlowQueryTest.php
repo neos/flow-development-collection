@@ -501,7 +501,7 @@ class FlowQueryTest extends UnitTestCase
     {
         $flowQuery = $this->getAccessibleMock(FlowQuery::class, ['dummy'], [$elements]);
 
-            // Set up mock persistence manager to return dummy object identifiers
+        // Set up mock persistence manager to return dummy object identifiers
         $this->mockPersistenceManager = $this->createMock(PersistenceManagerInterface::class);
         $this->mockPersistenceManager->expects($this->any())->method('getIdentifierByObject')->will($this->returnCallback(function ($object) {
             if (isset($object->__identity)) {
