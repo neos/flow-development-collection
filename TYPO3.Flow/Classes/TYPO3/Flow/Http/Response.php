@@ -128,6 +128,7 @@ class Response extends AbstractMessage implements ResponseInterface
     {
         $response = new static($parentResponse);
 
+        // see https://tools.ietf.org/html/rfc7230#section-3.5
         $lines = explode(chr(10), $rawResponse);
         $statusLine = array_shift($lines);
 
@@ -135,6 +136,10 @@ class Response extends AbstractMessage implements ResponseInterface
             throw new \InvalidArgumentException('The given raw HTTP message is not a valid response.', 1335175601);
         }
         list($version, $statusCode, $reasonPhrase) = explode(' ', $statusLine, 3);
+        if (strlen($statusCode) !== 3) {
+            // See https://tools.ietf.org/html/rfc7230#section-3.1.2
+            throw new \InvalidArgumentException('The given raw HTTP message contains an invalid status code.', 1502981352);
+        }
         $response->setVersion($version);
         $response->setStatus((integer)$statusCode, trim($reasonPhrase));
 
@@ -147,7 +152,11 @@ class Response extends AbstractMessage implements ResponseInterface
                     $parsingHeader = false;
                     continue;
                 }
-                $fieldName = trim(substr($line, 0, strpos($line, ':')));
+                $headerSeparatorIndex = strpos($line, ':');
+                if ($headerSeparatorIndex === false) {
+                    throw new \InvalidArgumentException('The given raw HTTP message contains an invalid header.', 1502984804);
+                }
+                $fieldName = trim(substr($line, 0, $headerSeparatorIndex));
                 $fieldValue = trim(substr($line, strlen($fieldName) + 1));
                 if (strtoupper(substr($fieldName, 0, 10)) === 'SET-COOKIE') {
                     $cookie = Cookie::createFromRawSetCookieHeader($fieldValue);
@@ -160,6 +169,9 @@ class Response extends AbstractMessage implements ResponseInterface
             } else {
                 $contentLines[] = $line;
             }
+        }
+        if ($parsingHeader === true) {
+            throw new \InvalidArgumentException('The given raw HTTP message contains no separating empty line between header and body.', 1502984823);
         }
         $content = implode(chr(10), $contentLines);
 
