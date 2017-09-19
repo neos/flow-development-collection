@@ -234,11 +234,34 @@ class FilterOperation extends AbstractOperation
             case '>=':
                 return $value >= $operand;
             case '$=':
-                return strrpos($value, $operand) === strlen($value) - strlen($operand);
+                if (is_array($value)) {
+                    if ($this->evaluateOperator(end($value), '=', $operand)) {
+                        return true;
+                    }
+                    return false;
+                } else {
+                    return strrpos($value, $operand) === strlen($value) - strlen($operand);
+                }
             case '^=':
-                return strpos($value, $operand) === 0;
+                if (is_array($value)) {
+                    if ($this->evaluateOperator(reset($value), '=', $operand)) {
+                        return true;
+                    }
+                    return false;
+                } else {
+                    return strpos($value, $operand) === 0;
+                }
             case '*=':
-                return strpos($value, $operand) !== false;
+                if (is_array($value)) {
+                    foreach ($value as $item) {
+                        if ($this->evaluateOperator($item, '=', $operand)) {
+                            return true;
+                        }
+                    }
+                    return false;
+                } else {
+                    return strpos($value, $operand) !== false;
+                }
             case 'instanceof':
                 if ($this->operandIsSimpleType($operand)) {
                     return $this->handleSimpleTypeOperand($operand, $value);
