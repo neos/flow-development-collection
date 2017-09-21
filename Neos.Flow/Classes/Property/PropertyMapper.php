@@ -260,7 +260,7 @@ class PropertyMapper
     {
         $targetClass = TypeHandling::truncateElementType($targetType);
         if (!class_exists($targetClass) && !interface_exists($targetClass)) {
-            throw new Exception\InvalidTargetException(sprintf('Could not find a suitable type converter for "%s" because no such the class/interface "%s" does not exist.', $targetType, $targetClass), 1297948764);
+            throw new Exception\InvalidTargetException(sprintf('Could not find a suitable type converter for "%s" because the class / interface "%s" does not exist.', $targetType, $targetClass), 1297948764);
         }
 
         if (!isset($this->typeConverters[$sourceType])) {
@@ -371,7 +371,7 @@ class PropertyMapper
         } elseif (is_integer($source)) {
             return ['integer'];
         } elseif (is_bool($source)) {
-            return ['boolean'];
+            return ['bool'];
         } elseif (is_object($source)) {
             $class = get_class($source);
             $parentClasses = class_parents($class);

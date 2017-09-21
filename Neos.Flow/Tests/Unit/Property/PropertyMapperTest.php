@@ -51,7 +51,7 @@ class PropertyMapperTest extends UnitTestCase
             ['someString', ['string']],
             [42, ['integer']],
             [3.5, ['float']],
-            [true, ['boolean']],
+            [true, ['bool']],
             [[], ['array']],
             [new \stdClass(), ['stdClass', 'object']]
         ];
