@@ -592,7 +592,7 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
                 if ($this->reader->getPropertyAnnotation($property, ORM\Id::class) !== null) {
                     $mapping['id'] = true;
                 }
-                if ($oneToOneAnnotation->targetEntity) {
+                if ($oneToOneAnnotation->targetEntity !== null) {
                     $mapping['targetEntity'] = $oneToOneAnnotation->targetEntity;
                 }
                 if ($oneToOneAnnotation->inversedBy !== null || $oneToOneAnnotation->mappedBy === null) {
@@ -600,14 +600,14 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
                 }
                 $mapping['mappedBy'] = $oneToOneAnnotation->mappedBy;
                 $mapping['inversedBy'] = $oneToOneAnnotation->inversedBy;
-                if ($oneToOneAnnotation->cascade) {
+                if ($oneToOneAnnotation->cascade !== null) {
                     $mapping['cascade'] = $oneToOneAnnotation->cascade;
                 } elseif ($this->isValueObject($mapping['targetEntity'], $className)) {
                     $mapping['cascade'] = ['persist'];
                 } elseif ($this->isAggregateRoot($mapping['targetEntity'], $className) === false) {
                     $mapping['cascade'] = ['all'];
                 }
-                if ($oneToOneAnnotation->orphanRemoval) {
+                if ($oneToOneAnnotation->orphanRemoval !== null) {
                     $mapping['orphanRemoval'] = $oneToOneAnnotation->orphanRemoval;
                 } elseif ($this->isAggregateRoot($mapping['targetEntity'], $className) === false &&
                           $this->isValueObject($mapping['targetEntity'], $className) === false) {
@@ -617,12 +617,12 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
                 $metadata->mapOneToOne($mapping);
             } elseif ($oneToManyAnnotation = $this->reader->getPropertyAnnotation($property, ORM\OneToMany::class)) {
                 $mapping['mappedBy'] = $oneToManyAnnotation->mappedBy;
-                if ($oneToManyAnnotation->targetEntity) {
+                if ($oneToManyAnnotation->targetEntity !== null) {
                     $mapping['targetEntity'] = $oneToManyAnnotation->targetEntity;
                 } elseif (isset($propertyMetaData['elementType'])) {
                     $mapping['targetEntity'] = $propertyMetaData['elementType'];
                 }
-                if ($oneToManyAnnotation->cascade) {
+                if ($oneToManyAnnotation->cascade !== null) {
                     $mapping['cascade'] = $oneToManyAnnotation->cascade;
                 } elseif ($this->isValueObject($mapping['targetEntity'], $className)) {
                     $mapping['cascade'] = ['persist'];
@@ -630,7 +630,7 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
                     $mapping['cascade'] = ['all'];
                 }
                 $mapping['indexBy'] = $oneToManyAnnotation->indexBy;
-                if ($oneToManyAnnotation->orphanRemoval) {
+                if ($oneToManyAnnotation->orphanRemoval !== null) {
                     $mapping['orphanRemoval'] = $oneToManyAnnotation->orphanRemoval;
                 } elseif ($this->isAggregateRoot($mapping['targetEntity'], $className) === false &&
                     $this->isValueObject($mapping['targetEntity'], $className) === false) {
@@ -647,12 +647,12 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
                 if ($this->reader->getPropertyAnnotation($property, ORM\Id::class) !== null) {
                     $mapping['id'] = true;
                 }
-                if ($manyToOneAnnotation->targetEntity) {
+                if ($manyToOneAnnotation->targetEntity !== null) {
                     $mapping['targetEntity'] = $manyToOneAnnotation->targetEntity;
                 }
 
                 $mapping['joinColumns'] = $this->buildJoinColumnsIfNeeded($joinColumns, $mapping, $property);
-                if ($manyToOneAnnotation->cascade) {
+                if ($manyToOneAnnotation->cascade !== null) {
                     $mapping['cascade'] = $manyToOneAnnotation->cascade;
                 } elseif ($this->isValueObject($mapping['targetEntity'], $className)) {
                     $mapping['cascade'] = ['persist'];
@@ -663,7 +663,7 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
                 $mapping['fetch'] = $this->getFetchMode($className, $manyToOneAnnotation->fetch);
                 $metadata->mapManyToOne($mapping);
             } elseif ($manyToManyAnnotation = $this->reader->getPropertyAnnotation($property, ORM\ManyToMany::class)) {
-                if ($manyToManyAnnotation->targetEntity) {
+                if ($manyToManyAnnotation->targetEntity !== null) {
                     $mapping['targetEntity'] = $manyToManyAnnotation->targetEntity;
                 } elseif (isset($propertyMetaData['elementType'])) {
                     $mapping['targetEntity'] = $propertyMetaData['elementType'];
@@ -689,7 +689,7 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
                 $mapping['joinTable'] = $joinTable;
                 $mapping['mappedBy'] = $manyToManyAnnotation->mappedBy;
                 $mapping['inversedBy'] = $manyToManyAnnotation->inversedBy;
-                if ($manyToManyAnnotation->cascade) {
+                if ($manyToManyAnnotation->cascade !== null) {
                     $mapping['cascade'] = $manyToManyAnnotation->cascade;
                 } elseif ($this->isValueObject($mapping['targetEntity'], $className)) {
                     $mapping['cascade'] = ['persist'];
@@ -706,7 +706,7 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
 
                 $metadata->mapManyToMany($mapping);
             } elseif ($embeddedAnnotation = $this->reader->getPropertyAnnotation($property, ORM\Embedded::class)) {
-                if ($embeddedAnnotation->class) {
+                if ($embeddedAnnotation->class !== null) {
                     $mapping['class'] = $embeddedAnnotation->class;
                 } else {
                     // This will not happen currently, because "class" argument is required. It would be nice if that could be changed though.
