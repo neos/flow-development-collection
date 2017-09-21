@@ -229,8 +229,8 @@ class PropertyMapper
         $truncatedTargetType = TypeHandling::truncateElementType($normalizedTargetType);
         $converter = null;
 
-        $sourceTypes = $this->determineSourceTypes($source);
-        foreach ($sourceTypes as $sourceType) {
+        $normalizedSourceTypes = $this->determineSourceTypes($source);
+        foreach ($normalizedSourceTypes as $sourceType) {
             if (TypeHandling::isSimpleType($truncatedTargetType)) {
                 if (isset($this->typeConverters[$sourceType][$truncatedTargetType])) {
                     $converter = $this->findEligibleConverterWithHighestPriority($this->typeConverters[$sourceType][$truncatedTargetType], $source, $normalizedTargetType);
@@ -244,7 +244,7 @@ class PropertyMapper
             }
         }
 
-        throw new Exception\TypeConverterException('No converter found which can be used to convert from "' . implode('" or "', $sourceTypes) . '" to "' . $normalizedTargetType . '".');
+        throw new Exception\TypeConverterException('No converter found which can be used to convert from "' . implode('" or "', $normalizedSourceTypes) . '" to "' . $normalizedTargetType . '".');
     }
 
     /**
@@ -371,7 +371,7 @@ class PropertyMapper
         } elseif (is_integer($source)) {
             return ['integer'];
         } elseif (is_bool($source)) {
-            return ['bool'];
+            return ['boolean'];
         } elseif (is_object($source)) {
             $class = get_class($source);
             $parentClasses = class_parents($class);

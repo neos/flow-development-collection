@@ -84,7 +84,8 @@ class PropertyMapperTest extends FunctionalTestCase
         $source = [
             'name' => 'Christopher',
             'size' => '187',
-            'signedCla' => true
+            'signedCla' => true,
+            'signedClaBool' => true
         ];
 
         $result = $this->propertyMapper->convert($source, Fixtures\TestClass::class);
