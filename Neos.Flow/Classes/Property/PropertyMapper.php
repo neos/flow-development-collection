@@ -232,8 +232,8 @@ class PropertyMapper
         $truncatedTargetType = TypeHandling::truncateElementType($normalizedTargetType);
         $converter = null;
 
-        $sourceTypes = $this->determineSourceTypes($source);
-        foreach ($sourceTypes as $sourceType) {
+        $normalizedSourceTypes = $this->determineSourceTypes($source);
+        foreach ($normalizedSourceTypes as $sourceType) {
             if (TypeHandling::isSimpleType($truncatedTargetType)) {
                 if (isset($this->typeConverters[$sourceType][$truncatedTargetType])) {
                     $converter = $this->findEligibleConverterWithHighestPriority($this->typeConverters[$sourceType][$truncatedTargetType], $source, $normalizedTargetType);
@@ -247,7 +247,7 @@ class PropertyMapper
             }
         }
 
-        throw new Exception\TypeConverterException('No converter found which can be used to convert from "' . implode('" or "', $sourceTypes) . '" to "' . $normalizedTargetType . '".');
+        throw new Exception\TypeConverterException('No converter found which can be used to convert from "' . implode('" or "', $normalizedSourceTypes) . '" to "' . $normalizedTargetType . '".');
     }
 
     /**
@@ -263,7 +263,7 @@ class PropertyMapper
     {
         $targetClass = TypeHandling::truncateElementType($targetType);
         if (!class_exists($targetClass) && !interface_exists($targetClass)) {
-            throw new Exception\InvalidTargetException(sprintf('Could not find a suitable type converter for "%s" because no such the class/interface "%s" does not exist.', $targetType, $targetClass), 1297948764);
+            throw new Exception\InvalidTargetException(sprintf('Could not find a suitable type converter for "%s" because the class / interface "%s" does not exist.', $targetType, $targetClass), 1297948764);
         }
 
         if (!isset($this->typeConverters[$sourceType])) {
