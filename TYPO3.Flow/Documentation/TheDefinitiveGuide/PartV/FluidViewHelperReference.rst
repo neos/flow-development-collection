@@ -1865,7 +1865,7 @@ Arguments
 
 * ``format`` (string, *optional*): Format String which is taken to format the Date/Time if none of the locale options are set.
 
-* ``localeFormatType`` (string, *optional*): Whether to format (according to locale set in $forceLocale) date, time or datetime. Must be one of TYPO3\Flow\I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_*'s constants.
+* ``localeFormatType`` (string, *optional*): Whether to format (according to locale set in $forceLocale) date, time or dateTime. Must be one of TYPO3\Flow\I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_*'s constants.
 
 * ``localeFormatLength`` (string, *optional*): Format length if locale set in $forceLocale. Must be one of TYPO3\Flow\I18n\Cldr\Reader\DatesReader::FORMAT_LENGTH_*'s constants.
 
