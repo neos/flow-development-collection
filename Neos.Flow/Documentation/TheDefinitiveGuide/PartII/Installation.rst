@@ -20,11 +20,12 @@ which boil down to this in the simplest case:
 
 Then use `Composer`_ in a directory which will be accessible by your web server to download
 and install all packages of the Flow Base Distribution. The following command will
-clone the 3.0.0 version, include development dependencies and keep git metadata for future use:
+clone the latest stable version, include development dependencies and keep git metadata
+for future use:
 
 .. code-block:: sh
 
- composer create-project --keep-vcs neos/flow-base-distribution tutorial 3.0.0
+ composer create-project --keep-vcs neos/flow-base-distribution tutorial
 
 .. note::
 	Throughout this tutorial we assume that you installed the Flow distribution in
@@ -150,7 +151,7 @@ with Flow contains this code already
 		Options -MultiViews
 
 	</IfModule>
-  
+
 Configure server-side scripts
 -----------------------------
 
@@ -202,7 +203,7 @@ This virtual host will later be accessible via the URL http://dev.tutorial.local
 .. note::
 	Flow runs per default in the ``Development`` context. That's why the *ServerName*
 	in this example is  **dev**.tutorial.local.
-  
+
 Setting Up a Virtual Host for Context «Production»
 ---------------------------------------------------
 
@@ -237,7 +238,7 @@ If you decided to skip setting up virtual hosts earlier on, you can enable the `
 
 	# You can specify a default context by activating this option:
 	SetEnv FLOW_CONTEXT Production
-  
+
 .. note::
 	The concept of contexts and their benefits is explained in the next chapter «Configuration».
 
