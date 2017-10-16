@@ -23,7 +23,11 @@ class ActionControllerTestBController extends ActionController
 {
     public function initializeAction()
     {
-        $this->arguments['argument']->getPropertyMappingConfiguration()->allowAllProperties();
+        /* @var $propertyMappingConfiguration \Neos\Flow\Property\PropertyMappingConfiguration */
+        $propertyMappingConfiguration = $this->arguments['argument']->getPropertyMappingConfiguration();
+        $propertyMappingConfiguration->allowAllProperties();
+        $propertyMappingConfiguration->forProperty('collection')->allowAllProperties();
+        $propertyMappingConfiguration->forProperty('collection.*')->allowAllProperties();
     }
 
     /**

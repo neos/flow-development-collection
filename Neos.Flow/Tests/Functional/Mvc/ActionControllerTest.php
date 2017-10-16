@@ -272,12 +272,58 @@ class ActionControllerTest extends FunctionalTestCase
     /**
      * @test
      */
+    public function notValidatedGroupCollectionsAreNotValidated()
+    {
+        $arguments = [
+            'argument' => [
+                'name' => 'Foo',
+                'emailAddress' => '-invalid-',
+                'collection' => [
+                    [
+                        'name' => 'Bar',
+                        'emailAddress' => '-invalid-'
+                    ]
+                ]
+            ]
+        ];
+        $response = $this->browser->request('http://localhost/test/mvc/actioncontrollertestb/notvalidatedgroupobject', 'POST', $arguments);
+
+        $expectedResult = '-invalid-';
+        $this->assertEquals($expectedResult, $response->getContent());
+    }
+
+    /**
+     * @test
+     */
     public function validatedGroupObjectArgumentsAreValidated()
     {
         $arguments = [
             'argument' => [
                 'name' => 'Foo',
                 'emailAddress' => '-invalid-'
+            ]
+        ];
+        $response = $this->browser->request('http://localhost/test/mvc/actioncontrollertestb/validatedgroupobject', 'POST', $arguments);
+
+        $expectedResult = 'Validation failed while trying to call Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController->validatedGroupObjectAction().' . PHP_EOL;
+        $this->assertEquals($expectedResult, $response->getContent());
+    }
+
+    /**
+     * @test
+     */
+    public function validatedGroupCollectionsAreValidated()
+    {
+        $arguments = [
+            'argument' => [
+                'name' => 'Foo',
+                'emailAddress' => 'foo@bar.org',
+                'collection' => [
+                    [
+                        'name' => 'Bar',
+                        'emailAddress' => '-invalid-'
+                    ]
+                ]
             ]
         ];
         $response = $this->browser->request('http://localhost/test/mvc/actioncontrollertestb/validatedgroupobject', 'POST', $arguments);

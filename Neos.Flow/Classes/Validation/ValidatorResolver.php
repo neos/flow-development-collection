@@ -280,7 +280,7 @@ class ValidatorResolver
             // Model based validator
             $classSchema = $this->reflectionService->getClassSchema($targetClassName);
             if ($classSchema !== null && $classSchema->isAggregateRoot()) {
-                $objectValidator = new AggregateBoundaryValidator(array());
+                $objectValidator = new AggregateBoundaryValidator([]);
             } else {
                 $objectValidator = new GenericObjectValidator([]);
             }
@@ -302,20 +302,27 @@ class ValidatorResolver
                 }
 
                 $propertyTargetClassName = $parsedType['type'];
+                $needsCollectionValidator = false;
+                $needsObjectValidator = false;
                 if (TypeHandling::isCollectionType($propertyTargetClassName) === true) {
-                    $collectionValidator = $this->createValidator(Validator\CollectionValidator::class, ['elementType' => $parsedType['elementType'], 'validationGroups' => $validationGroups]);
-                    $objectValidator->addPropertyValidator($classPropertyName, $collectionValidator);
+                    $needsCollectionValidator = true;
                 } elseif (!TypeHandling::isSimpleType($propertyTargetClassName) && $this->objectManager->isRegistered($propertyTargetClassName) && $this->objectManager->getScope($propertyTargetClassName) === Configuration::SCOPE_PROTOTYPE) {
-                    $validatorForProperty = $this->getBaseValidatorConjunction($propertyTargetClassName, $validationGroups);
-                    if (count($validatorForProperty) > 0) {
-                        $objectValidator->addPropertyValidator($classPropertyName, $validatorForProperty);
-                    }
+                    $needsObjectValidator = true;
                 }
 
                 $validateAnnotations = $this->reflectionService->getPropertyAnnotations($targetClassName, $classPropertyName, Flow\Validate::class);
                 foreach ($validateAnnotations as $validateAnnotation) {
+                    if ($validateAnnotation->type === 'Collection') {
+                        $needsCollectionValidator = false;
+                    }
                     if (count(array_intersect($validateAnnotation->validationGroups, $validationGroups)) === 0) {
+                        if ($validateAnnotation->type === 'GenericObject') {
+                            $needsObjectValidator = false;
+                        }
                         // In this case, the validation groups for the property do not match current validation context
+                        continue;
+                    }
+                    if ($validateAnnotation->type === 'GenericObject') {
                         continue;
                     }
                     $newValidator = $this->createValidator($validateAnnotation->type, $validateAnnotation->options);
@@ -323,6 +330,17 @@ class ValidatorResolver
                         throw new Exception\NoSuchValidatorException('Invalid validate annotation in ' . $targetClassName . '::' . $classPropertyName . ': Could not resolve class name for  validator "' . $validateAnnotation->type . '".', 1241098027);
                     }
                     $objectValidator->addPropertyValidator($classPropertyName, $newValidator);
+                }
+
+                if ($needsCollectionValidator) {
+                    $collectionValidator = $this->createValidator(Validator\CollectionValidator::class, ['elementType' => $parsedType['elementType'], 'validationGroups' => $validationGroups]);
+                    $objectValidator->addPropertyValidator($classPropertyName, $collectionValidator);
+                }
+                if ($needsObjectValidator) {
+                    $validatorForProperty = $this->getBaseValidatorConjunction($propertyTargetClassName, $validationGroups);
+                    if (count($validatorForProperty) > 0) {
+                        $objectValidator->addPropertyValidator($classPropertyName, $validatorForProperty);
+                    }
                 }
             }
             if (count($objectValidator->getPropertyValidators()) === 0) {
@@ -345,7 +363,7 @@ class ValidatorResolver
      *
      * @param string $targetClassName
      * @param ConjunctionValidator $conjunctionValidator
-     * @return NULL|Validator\ObjectValidatorInterface
+     * @return void
      */
     protected function addCustomValidators($targetClassName, ConjunctionValidator &$conjunctionValidator)
     {
