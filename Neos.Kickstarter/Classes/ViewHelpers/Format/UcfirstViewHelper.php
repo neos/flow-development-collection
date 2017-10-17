@@ -20,7 +20,7 @@ use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
  * = Examples =
  *
  * <code title="Example">
- * {textWithMixedCase -> k:ucfirst()}
+ * {textWithMixedCase -> k:format.ucfirst()}
  * </code>
  *
  * Output:
