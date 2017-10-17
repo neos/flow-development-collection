@@ -1052,9 +1052,13 @@ The following example shows the matcher syntax used for entity privilege targets
       matcher: 'isType("Acme\MyPackage\RestrictableEntity") && !(property("ownerAccount").equals("context.securityContext.account")) && property("ownerAccount") != NULL'
 
 EEL expressions are used to target the respective entities. You have to define the entity type, can match on property
-values and use global objects for comparison. Global objects (e.g. the currently authenticated account) are registered
-in the Settings.yaml file in section aop. You also can walk over entity associations to compare properties of related
-entities. The following examples, taken from the functional tests, show some more advanced matcher statements:
+values and use global objects for comparison.
+
+Global objects (by default the current ``SecurityContext`` imported as ``securityContext``) are registered in the
+*Settings.yaml* file in ``aop.globalObjects``. That way you can add your own as well.
+
+You also can walk over entity associations to compare properties of related entities. The following examples, taken
+from the functional tests, show some more advanced matcher statements:
 
 .. code-block:: yaml
 
