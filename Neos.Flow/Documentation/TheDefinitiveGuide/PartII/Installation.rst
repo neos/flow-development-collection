@@ -27,12 +27,14 @@ for future use:
 
  composer create-project --keep-vcs neos/flow-base-distribution tutorial
 
-This will install the latest stable version of Neos. In order to install a specific version, type
+This will install the latest stable version of Neos. In order to install a *specific version*, type:
 
 .. code-block:: sh
- composer create-project --keep-vcs neos/flow-base-distribution tutorial 3.3
 
-to install the last LTS version for example.
+ composer create-project --keep-vcs neos/flow-base-distribution <target-directory> <version>
+
+And replace `<target-directory>` with the folder name to create the project in and `<version>` with the specific version to install, for example `1.2`.
+See [Composer documentation](https://getcomposer.org/doc/03-cli.md#create-project) for further details.
 
 .. note::
 	Throughout this tutorial we assume that you installed the Flow distribution in
