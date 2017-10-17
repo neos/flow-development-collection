@@ -31,7 +31,7 @@ class ScalarTypeToObjectConverter extends AbstractTypeConverter
     /**
      * @var array
      */
-    protected $sourceTypes = ['string', 'integer', 'float', 'bool'];
+    protected $sourceTypes = ['string', 'integer', 'float', 'boolean'];
 
     /**
      * @var string
