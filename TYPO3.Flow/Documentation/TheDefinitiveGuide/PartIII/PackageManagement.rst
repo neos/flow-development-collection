@@ -209,16 +209,22 @@ To activate a package, use the ``package:activate`` command:
 To deactivate a package, use ``package:deactivate``. For a listing of all packages
 (active and inactive) use ``package:list``.
 
+.. note::
+
+	We discourge using this feature. It is available for historical reasons and might
+	stay around for a while, but might be deprecated and removed in the future. Our
+	best practice is to remove packages that are not needed.
+
 Installing a Package
 ====================
 
 There are various ways of installing packages. They can just be copied to a folder in
 *Packages/*, either manually or by some tool, or by keeping them in your project's
-SCM tool (directly or indirectly, via git submodules or svn:externals).
+VCS tool (directly or indirectly, via git submodules or svn:externals).
 
 The true power of dependency management comes with the use of `Composer`_, though.
 Installing a package through composer allows to install dependencies of that package
-automatically as well.
+automatically as well. That is why we suggest only using composer to install packages.
 
 If a package you would like to add is available on `Packagist`_ it can be installed
 by running::
@@ -319,32 +325,18 @@ The bootstrap code can be used to wire some signal to a slot or to register
 request handlers (as shown above), or anything else that can must be done
 early the bootstrap stage.
 
-Using 3rd Party Packages
-========================
+After creating a new `Package.php`_ in your package you need to execute:
 
-When using 3rd party packages via `Composer`_ a variety of issues can come up.
+.. code-block:: bash
 
+	$ ./flow flow:package:rescan
 
-Class loading
--------------
+Otherwise the `Package.php`_ will not be found.
 
-In a composer manifest various ways of autloloading can be configured. Currently
-Flow only supports PSR-0 autoloading and will only use the first entry given in
-the manifest. This leads to issues when loading some packages::
+Using Third Party Packages
+==========================
 
-  "autoload": {
-      "psr-0": {
-          "Guzzle\\Tests": "tests/",
-          "Guzzle": "src/"
-      }
-  },
-
-In this case only the ``Guzzle\Tests`` entry will be used, leading to rather unexpected
-results. This is of course an issue with the way Flow handles this, in the meantime
-you need to adjust the manifest manually.
-
-Other autoloading ways (classmap generation and files) are currently not supported by
-Flow.
-
-.. _Composer:      http://getcomposer.org
-.. _Packagist:     http://packagist.org
+When using 3rd party packages via `Composer`_ everything should work as expected.
+Flow uses the `Composer`_ autoloader to load code.
+Third party packages will not have any Flow "magic" enabled by default. That means
+no AOP will work on classes from third party packages. If you need this see :ref:`sect-enabling-non-flow-packages`
