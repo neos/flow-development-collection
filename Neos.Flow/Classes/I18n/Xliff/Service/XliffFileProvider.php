@@ -94,11 +94,12 @@ class XliffFileProvider
      */
     public function getMergedFileData($fileId, Locale $locale): array
     {
-        if (!isset($this->files[$fileId][$locale->__toString()])) {
+        if (!isset($this->files[$fileId][(string)$locale])) {
             $parsedData = [
                 'fileIdentifier' => $fileId
             ];
             $localeChain = $this->localizationService->getLocaleChain($locale);
+            // Walk locale chain in reverse, so that translations higher in the chain overwrite fallback translations
             foreach (array_reverse($localeChain) as $localeChainItem) {
                 foreach ($this->packageManager->getActivePackages() as $package) {
                     /** @var PackageInterface $package */
@@ -112,11 +113,11 @@ class XliffFileProvider
             if (is_dir($generalTranslationPath)) {
                 $this->readDirectoryRecursively(FLOW_PATH_DATA . 'Translations', $parsedData, $fileId);
             }
-            $this->files[$fileId][$locale->__toString()] = $parsedData;
+            $this->files[$fileId][(string)$locale] = $parsedData;
             $this->cache->set('translationFiles', $this->files);
         }
 
-        return $this->files[$fileId][$locale->__toString()];
+        return $this->files[$fileId][(string)$locale];
     }
 
     /**
