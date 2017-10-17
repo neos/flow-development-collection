@@ -27,6 +27,13 @@ for future use:
 
  composer create-project --keep-vcs neos/flow-base-distribution tutorial
 
+This will install the latest stable version of Neos. In order to install a specific version, type
+
+.. code-block:: sh
+ composer create-project --keep-vcs neos/flow-base-distribution tutorial 3.3
+
+to install the last LTS version for example.
+
 .. note::
 	Throughout this tutorial we assume that you installed the Flow distribution in
 	*/var/apache2/htdocs/tutorial* and that */var/apache2/htdocs* is the document root
