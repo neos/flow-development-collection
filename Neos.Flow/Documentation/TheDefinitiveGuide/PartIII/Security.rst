@@ -1054,7 +1054,7 @@ The following example shows the matcher syntax used for entity privilege targets
 EEL expressions are used to target the respective entities. You have to define the entity type, can match on property
 values and use global objects for comparison.
 
-Global objects (by default the current ``SsecurityContext`` imported as ``securityContext``) are registered in the
+Global objects (by default the current ``SecurityContext`` imported as ``securityContext``) are registered in the
 *Settings.yaml* file in ``aop.globalObjects``. That way you can add your own as well.
 
 You also can walk over entity associations to compare properties of related entities. The following examples, taken
