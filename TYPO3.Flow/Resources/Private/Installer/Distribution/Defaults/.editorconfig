@@ -11,6 +11,7 @@ indent_type = space
 indent_size = 4
 
 [*.yaml]
+indent_type = space
 indent_size = 2
 
 [*.md]
