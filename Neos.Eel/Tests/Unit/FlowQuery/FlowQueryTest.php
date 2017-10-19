@@ -385,9 +385,9 @@ class FlowQueryTest extends UnitTestCase
 
         $this->assertInstanceOf(FlowQuery::class, $query->filter('[stringProperty *= "n33g"]'));
         $this->assertSame([$myObject3], $query->filter('[stringProperty *= "n33g"]')->get());
-        $filterString = "2";
-        $this->assertInstanceOf(FlowQuery::class, $query->filter("[stringProperty $= " + $filterString + "]"));
-        $this->assertSame([$myObject], $query->filter("[stringProperty $= '2']")->get());
+
+        $this->assertInstanceOf(FlowQuery::class, $query->filter('[stringProperty $= "2"]'));
+        $this->assertSame([$myObject], $query->filter('[stringProperty $= "2"]')->get());
 
         $this->assertInstanceOf(FlowQuery::class, $query->filter('[stringProperty *= 2]'));
         $this->assertSame([$myObject], $query->filter('[stringProperty *= 2]')->get());
