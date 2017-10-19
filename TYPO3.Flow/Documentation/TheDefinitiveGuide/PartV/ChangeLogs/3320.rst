@@ -1,0 +1,82 @@
+`3.3.20 (2017-10-18) <https://github.com/neos/flow-development-collection/releases/tag/3.3.20>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Make string-based Fizzle filters treat numbers as strings <https://github.com/neos/flow-development-collection/pull/1085>`_
+------------------------------------------------------------------------------------------------------------------------------------
+
+This fixes #1048 by making sure that `strpos()` recieves two strings instead of a
+string and a number in a Fizzle filter operation (`*=`, `^=`, `$=`), making sure that
+it will look for the actual number in the string it is comparing the operand to instead
+of looking for the char that is represented by the number as a unicode ordinal number.
+
+It does this by casting the variable in which the operand is saved to string where it
+is given to the strpos/strrpos function as a parameter.
+
+* Packages: ``Eel``
+
+`TASK: Describe use of 3rd party packages correctly in docs <https://github.com/neos/flow-development-collection/pull/1090>`_
+-----------------------------------------------------------------------------------------------------------------------------
+
+Adjusted documentation to current status quo regarding package
+management and third party packages.
+
+Fixes: #751
+
+* Packages: ``Flow``
+
+`TASK: Make PHP-Templates PSR2-compatible <https://github.com/neos/flow-development-collection/pull/1081>`_
+-----------------------------------------------------------------------------------------------------------
+
+<!--
+Thanks for your contribution, we appreciate it!
+
+Please read through our pull request guidelines, there are some interesting things there:
+https://discuss.neos.io/t/creating-a-pull-request/506
+
+And one more thing... Don't forget about the tests!
+-->
+
+
+The PSR2 standard says: Opening braces for classes MUST go on the next line, and **closing braces MUST go on the next line after the body.**
+
+This is currently not implemented by the Templates and this commit is fixing it.
+
+**Checklist**
+
+- [ ] Code follows the PSR-2 coding style
+- [ ] Tests have been created, run and adjusted as needed
+- [ ] The PR is created against the [lowest maintained branch](https://www.neos.io/features/release-roadmap.html)
+
+* Packages: ``Kickstart``
+
+`BUGFIX: AnnotationDriver correctly applies ORM relation annotations <https://github.com/neos/flow-development-collection/pull/1080>`_
+--------------------------------------------------------------------------------------------------------------------------------------
+
+Before any `falsy` value in one of the ORM relation annotations, like e.g. `orphanRemoval=false` or `cascade={}`, would not be applied to mapping and hence the defaults still be in effect. This change fixes that by explicitly checking the annotation properties against null, so that any value specified by the user will actually be applied.
+
+Fixes #1079 
+
+* Packages: ``Flow``
+
+`BUGFIX: CurlEngine follows chain of Http headers <https://github.com/neos/flow-development-collection/pull/1057>`_
+-------------------------------------------------------------------------------------------------------------------
+
+Under some circumstances, curl will return all the headers of the request
+chain, for example when the CURLOPT_FOLLOWLOCATION option is set.
+This change will make the CurlEngine follow the chain of response headers
+until the final response.
+
+Fixes #1044,  #849, #570
+
+* Packages: ``Eel`` ``Flow`` ``Fluid``
+
+`BUGFIX: localeFormatType dateTime must use correct case <https://github.com/neos/flow-development-collection/pull/1021>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Flow`` ``Fluid``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/3.3.19...3.3.20>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
