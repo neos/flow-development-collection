@@ -455,6 +455,7 @@ TYPO3:
           storage: 'defaultStaticResourcesStorage'
           target: 'localWebDirectoryStaticResourcesTarget'
           pathPatterns:
+            - '*/Resources/Public/'
             - '*/Resources/Public/*'
 
         # Collection which contains all persistent resources
