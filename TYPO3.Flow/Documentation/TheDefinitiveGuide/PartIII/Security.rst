@@ -654,13 +654,12 @@ You'll have to provide an authentication token, that implements the interface
 ``TYPO3\Flow\Security\Authentication\TokenInterface``:
 
 #. The most interesting method is ``updateCredentials()``. There you'll get the current
-request and you'll have to make sure that credentials sent from the client will be
-fetched and stored in the token.
-
+   request and you'll have to make sure that credentials sent from the client will be
+   fetched and stored in the token.
 #. Implement the remaining methods of the interface. These are  mostly getters and setters,
-have a look in one of the existing  tokens (for example
-``TYPO3\Flow\Security\Authentication\Token\UsernamePassword``), if you need more
-information.
+   have a look in one of the existing  tokens (for example
+   ``TYPO3\Flow\Security\Authentication\Token\UsernamePassword``), if you need more
+   information.
 
 .. tip::
 
@@ -1193,11 +1192,13 @@ matcher syntax.
 
 Coming back to the second use case to create your completely custom privilege type, you also have to implement a
 privilege class with the two functionalities from above:
-# Create your custom privilege subject as a wrapper object for whatever things you want to protect. Corresponding to
-this object you’ll have to implement the ``matchesSubject(...)`` method of your custom privilege class.
-# Additionally the permissions have to be enforced. This is totally up to your privilege type, or in other words your
-use case. Feel free to add custom methods to your privilege class to help you enforcing the new privilege (equivalent
-to generation of SQL or pointcut filters in the entity or method privilege type, respectively).
+
+#. Create your custom privilege subject as a wrapper object for whatever things you want to protect. Corresponding to
+   this object you’ll have to implement the ``matchesSubject(...)`` method of your custom privilege class.
+
+#. Additionally the permissions have to be enforced. This is totally up to your privilege type, or in other words your
+   use case. Feel free to add custom methods to your privilege class to help you enforcing the new privilege (equivalent
+   to generation of SQL or pointcut filters in the entity or method privilege type, respectively).
 
 Retrieving permission and status information
 ============================================
@@ -1207,15 +1208,15 @@ permitted actions before permissions are actually enforced. To find out about pe
 manager (``TYPO3\Flow\Security\Authorization\PrivilegeManager``) can be asked for different things:
 
 #. If the user with the currently authenticated roles is granted for a given subject: ``isGranted(...)``. The subject
-depends on the privilege type, which bring their specific privilege subject implementations. In case of the
-MethodPrivilege this would be the concrete method invocation (``JoinPoint``).
+   depends on the privilege type, which bring their specific privilege subject implementations. In case of the
+   MethodPrivilege this would be the concrete method invocation (``JoinPoint``).
 
 #. If the user with the currently authenticated roles is granted for a given privilege target (no matter which privilege
-type it is): ``isPrivilegeTargetGranted(...)``
+   type it is): ``isPrivilegeTargetGranted(...)``
 
 #. The privilege manager also provides methods to calculate the result for both types of information with different
-roles. By this one can check what would happen if the user had different roles than currently authenticated:
-``isGrantedForRoles(...)`` and ``isPrivilegeTargetGrantedForRoles(...)``
+   roles. By this one can check what would happen if the user had different roles than currently authenticated:
+   ``isGrantedForRoles(...)`` and ``isPrivilegeTargetGrantedForRoles(...)``
 
 Fluid (view) integration
 ------------------------
@@ -1322,14 +1323,14 @@ Commands to analyze the policy
 Flow ships different commands to analyze the configured policy:
 
 #. security:showunprotectedactions: This command lists all controller actions not covered by any privilege target in the
-system. It helps to find out which actions will be publicly available without any security interception in place.
+   system. It helps to find out which actions will be publicly available without any security interception in place.
 
 #. security:showmethodsforprivilegetarget: To test matchers for method privilege, this command lists all methods covered
-by a given privilege target. Of course this command can only be used with privilege targets of type MethodPrivilege.
+   by a given privilege target. Of course this command can only be used with privilege targets of type MethodPrivilege.
 
 #. security:showeffectivepolicy: This command lists the effective permissions for all available privilege targets of the
-given type (entity or method) in the system. To evaluate these permission the respective roles have to be passed to the
-command.
+   given type (entity or method) in the system. To evaluate these permission the respective roles have to be passed to the
+   command.
 
 
 .. _Channel security:
@@ -1486,6 +1487,7 @@ The service can either create new key pairs itself, while returning the fingerpr
 This identifier can be used to export the public key, decrypt and encrypt data or sign data and verify signatures.
 
 To use existing keys the following commands can be used to import keys to be stored and used within the wallet:
+
 * security:importpublickey
 * security:importprivatekey
 
