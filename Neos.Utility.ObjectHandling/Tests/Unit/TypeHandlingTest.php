@@ -33,7 +33,7 @@ class TypeHandlingTest extends \PHPUnit_Framework_TestCase
      */
     public function parseTypeThrowsExceptionOnInvalidElementTypeHint()
     {
-        TypeHandling::parseType('string<integer>');
+        TypeHandling::parseType('string<int>');
     }
 
     /**
@@ -42,13 +42,18 @@ class TypeHandlingTest extends \PHPUnit_Framework_TestCase
     public function types()
     {
         return [
-            ['int', ['type' => 'integer', 'elementType' => null]],
+            ['integer', ['type' => 'int', 'elementType' => null]],
+            ['int', ['type' => 'int', 'elementType' => null]],
+            ['boolean', ['type' => 'bool', 'elementType' => null]],
+            ['bool', ['type' => 'bool', 'elementType' => null]],
             ['string', ['type' => 'string', 'elementType' => null]],
+            ['boolean', ['type' => 'bool', 'elementType' => null]],
+            ['bool', ['type' => 'bool', 'elementType' => null]],
             ['DateTime', ['type' => 'DateTime', 'elementType' => null]],
             ['TYPO3\Foo\Bar', ['type' => 'TYPO3\Foo\Bar', 'elementType' => null]],
             ['\TYPO3\Foo\Bar', ['type' => 'TYPO3\Foo\Bar', 'elementType' => null]],
             ['\stdClass', ['type' => 'stdClass', 'elementType' => null]],
-            ['array<integer>', ['type' => 'array', 'elementType' => 'integer']],
+            ['array<integer>', ['type' => 'array', 'elementType' => 'int']],
             ['ArrayObject<string>', ['type' => 'ArrayObject', 'elementType' => 'string']],
             ['SplObjectStorage<TYPO3\Foo\Bar>', ['type' => 'SplObjectStorage', 'elementType' => 'TYPO3\Foo\Bar']],
             ['SplObjectStorage<\TYPO3\Foo\Bar>', ['type' => 'SplObjectStorage', 'elementType' => 'TYPO3\Foo\Bar']],
@@ -83,6 +88,8 @@ class TypeHandlingTest extends \PHPUnit_Framework_TestCase
         return [
             ['integer', 'integer'],
             ['int', 'int'],
+            ['boolean', 'boolean'],
+            ['bool', 'bool'],
             ['array', 'array'],
             ['ArrayObject', 'ArrayObject'],
             ['SplObjectStorage', 'SplObjectStorage'],
@@ -119,9 +126,11 @@ class TypeHandlingTest extends \PHPUnit_Framework_TestCase
     public function normalizeTypes()
     {
         return [
-            ['int', 'integer'],
+            ['int', 'int'],
+            ['integer', 'int'],
             ['double', 'float'],
-            ['bool', 'boolean'],
+            ['bool', 'bool'],
+            ['boolean', 'bool'],
             ['string', 'string']
         ];
     }

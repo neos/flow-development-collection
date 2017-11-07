@@ -365,9 +365,9 @@ class PropertyMapper
         } elseif (is_float($source)) {
             return ['float'];
         } elseif (is_integer($source)) {
-            return ['integer'];
+            return ['int'];
         } elseif (is_bool($source)) {
-            return ['boolean'];
+            return ['bool'];
         } elseif (is_object($source)) {
             $class = get_class($source);
             $parentClasses = class_parents($class);
