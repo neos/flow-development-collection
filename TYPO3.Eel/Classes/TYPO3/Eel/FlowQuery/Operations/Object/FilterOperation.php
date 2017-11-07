@@ -277,9 +277,9 @@ class FilterOperation extends AbstractOperation
             return is_object($value);
         } elseif ($operand === 'string') {
             return is_string($value);
-        } elseif ($operand === 'integer') {
+        } elseif ($operand === 'int') {
             return is_integer($value);
-        } elseif ($operand === 'boolean') {
+        } elseif ($operand === 'bool') {
             return is_bool($value);
         } elseif ($operand === 'float') {
             return is_float($value);

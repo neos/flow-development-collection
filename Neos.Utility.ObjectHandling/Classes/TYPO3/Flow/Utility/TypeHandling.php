@@ -76,11 +76,11 @@ abstract class TypeHandling
     public static function normalizeType($type)
     {
         switch ($type) {
-            case 'int':
-                $type = 'integer';
+            case 'integer':
+                $type = 'int';
                 break;
-            case 'bool':
-                $type = 'boolean';
+            case 'boolean':
+                $type = 'bool';
                 break;
             case 'double':
                 $type = 'float';
@@ -108,7 +108,7 @@ abstract class TypeHandling
      */
     public static function isSimpleType($type)
     {
-        return in_array(self::normalizeType($type), ['array', 'string', 'float', 'integer', 'boolean'], true);
+        return in_array(self::normalizeType($type), ['array', 'string', 'float', 'int', 'bool'], true);
     }
 
     /**

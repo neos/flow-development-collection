@@ -53,9 +53,9 @@ class PropertyMapperTest extends UnitTestCase
     {
         return [
             ['someString', ['string']],
-            [42, ['integer']],
+            [42, ['int']],
             [3.5, ['float']],
-            [true, ['boolean']],
+            [true, ['bool']],
             [[], ['array']],
             [new \stdClass(), ['stdClass', 'object']]
         ];
@@ -146,17 +146,17 @@ class PropertyMapperTest extends UnitTestCase
                     ]
                 ]], 'array2string,prio10'
             ],
-            ['someStringSource', 'bool', [
+            ['someStringSource', 'boolean', [
                 'string' => [
-                    'boolean' => [
+                    'bool' => [
                         10 => $this->getMockTypeConverter('string2boolean,prio10'),
                         1 => $this->getMockTypeConverter('string2boolean,prio1')
                     ]
                 ]], 'string2boolean,prio10'
             ],
-            ['someStringSource', 'int', [
+            ['someStringSource', 'integer', [
                 'string' => [
-                    'integer' => [
+                    'int' => [
                         10 => $this->getMockTypeConverter('string2integer,prio10'),
                         1 => $this->getMockTypeConverter('string2integer,prio1')
                     ]
@@ -403,8 +403,8 @@ class PropertyMapperTest extends UnitTestCase
             'array' => [
                 'stdClass' => [10 => $this->getMockTypeConverter('array2object', true, $source, 'integer')]
             ],
-            'integer' => [
-                'integer' => [10 => $this->getMockTypeConverter('integer2integer')]
+            'int' => [
+                'int' => [10 => $this->getMockTypeConverter('integer2integer')]
             ]
         ];
         $configuration = new PropertyMappingConfiguration();
@@ -428,8 +428,8 @@ class PropertyMapperTest extends UnitTestCase
             'array' => [
                 'stdClass' => [10 => $this->getMockTypeConverter('array2object', true, $source, 'integer')]
             ],
-            'integer' => [
-                'integer' => [10 => $this->getMockTypeConverter('integer2integer')]
+            'int' => [
+                'int' => [10 => $this->getMockTypeConverter('integer2integer')]
             ]
         ];
         $configuration = new PropertyMappingConfiguration();

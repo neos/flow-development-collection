@@ -255,6 +255,6 @@ class ArgumentTest extends UnitTestCase
     {
         $returnedArgument = $this->simpleValueArgument->setDataType('integer');
         $this->assertSame($this->simpleValueArgument, $returnedArgument, 'The returned argument is not the original argument.');
-        $this->assertSame('integer', $this->simpleValueArgument->getDataType(), 'The got dataType is not the set dataType.');
+        $this->assertSame('int', $this->simpleValueArgument->getDataType(), 'The got dataType is not the set dataType.');
     }
 }
