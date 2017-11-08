@@ -982,7 +982,23 @@ This will result in output that looks similar to the following:
 
 .. code-block:: text
 
-	Generated new migration class to "/…/Data/DoctrineMigrationsVersion20110624143847.php".
+  Generated new migration class!
+
+  Do you want to move the migration to one of these packages?
+    [0 ] Don't Move
+    [1 ] Neos.Diff
+    [2 ] …
+
+You should pick the package that your new migration covers, it will then be moved as requested.
+The command will output the path to generated migration and suggest some next steps to take.
+
+.. important::
+
+  If you decide not to move the file, it will be put into `Data/DoctrineMigrations/`.
+  
+  That directory is only used when creating migrations. The migrations visible to the system
+  are read from *Migrations/<DbPlatForm>* in each package. The *<DbPlatform>* represents the
+  target platform, e.g. ``Mysql`` (as in Doctrine DBAL but with the first character uppercased).
 
 Looking into that file reveals a basic migration class already filled with the differences
 detected between the current schema and the current models in the system:
@@ -1023,13 +1039,6 @@ detected between the current schema and the current models in the system:
 	}
 
 To create an empty migration skeleton, pass ``--diff-against-current 0`` to the command.
-
-.. important::
-
-	The directory generated migrations are written to is only used when creating migrations.
-	The migrations visible to the system are read from *Migrations/<DbPlatForm>* in each
-	package. The *<DbPlatform>* represents the target platform, e.g. ``Mysql`` (as in Doctrine
-	DBAL but with the first character uppercased).
 
 After you generated a migration, you will probably need to clean up a little, as there
 might be differences being picked up that are not useful or can be optimized. An example
