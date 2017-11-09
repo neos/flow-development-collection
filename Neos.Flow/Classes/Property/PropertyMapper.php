@@ -229,8 +229,8 @@ class PropertyMapper
         $truncatedTargetType = TypeHandling::truncateElementType($normalizedTargetType);
         $converter = null;
 
-        $sourceTypes = $this->determineSourceTypes($source);
-        foreach ($sourceTypes as $sourceType) {
+        $normalizedSourceTypes = $this->determineSourceTypes($source);
+        foreach ($normalizedSourceTypes as $sourceType) {
             if (TypeHandling::isSimpleType($truncatedTargetType)) {
                 if (isset($this->typeConverters[$sourceType][$truncatedTargetType])) {
                     $converter = $this->findEligibleConverterWithHighestPriority($this->typeConverters[$sourceType][$truncatedTargetType], $source, $normalizedTargetType);
@@ -244,7 +244,7 @@ class PropertyMapper
             }
         }
 
-        throw new Exception\TypeConverterException('No converter found which can be used to convert from "' . implode('" or "', $sourceTypes) . '" to "' . $normalizedTargetType . '".');
+        throw new Exception\TypeConverterException('No converter found which can be used to convert from "' . implode('" or "', $normalizedSourceTypes) . '" to "' . $normalizedTargetType . '".');
     }
 
     /**
@@ -260,7 +260,7 @@ class PropertyMapper
     {
         $targetClass = TypeHandling::truncateElementType($targetType);
         if (!class_exists($targetClass) && !interface_exists($targetClass)) {
-            throw new Exception\InvalidTargetException(sprintf('Could not find a suitable type converter for "%s" because no such the class/interface "%s" does not exist.', $targetType, $targetClass), 1297948764);
+            throw new Exception\InvalidTargetException(sprintf('Could not find a suitable type converter for "%s" because the class / interface "%s" does not exist.', $targetType, $targetClass), 1297948764);
         }
 
         if (!isset($this->typeConverters[$sourceType])) {
@@ -395,12 +395,15 @@ class PropertyMapper
         $typeConverterMap = [];
         $typeConverterClassNames = static::getTypeConverterImplementationClassNames($this->objectManager);
         foreach ($typeConverterClassNames as $typeConverterClassName) {
+            /** @var TypeConverterInterface $typeConverter */
             $typeConverter = $this->objectManager->get($typeConverterClassName);
             foreach ($typeConverter->getSupportedSourceTypes() as $supportedSourceType) {
-                if (isset($typeConverterMap[$supportedSourceType][$typeConverter->getSupportedTargetType()][$typeConverter->getPriority()])) {
-                    throw new Exception\DuplicateTypeConverterException('There exist at least two converters which handle the conversion from "' . $supportedSourceType . '" to "' . $typeConverter->getSupportedTargetType() . '" with priority "' . $typeConverter->getPriority() . '": ' . $typeConverterMap[$supportedSourceType][$typeConverter->getSupportedTargetType()][$typeConverter->getPriority()] . ' and ' . get_class($typeConverter), 1297951378);
+                $normalizedSourceType = TypeHandling::normalizeType($supportedSourceType);
+                $normalizedTargetType = TypeHandling::normalizeType($typeConverter->getSupportedTargetType());
+                if (isset($typeConverterMap[$normalizedSourceType][$normalizedTargetType][$typeConverter->getPriority()])) {
+                    throw new Exception\DuplicateTypeConverterException('There exist at least two converters which handle the conversion from "' . $supportedSourceType . '" to "' . $normalizedTargetType . '" with priority "' . $typeConverter->getPriority() . '": ' . $typeConverterMap[$supportedSourceType][$normalizedTargetType][$typeConverter->getPriority()] . ' and ' . get_class($typeConverter), 1297951378);
                 }
-                $typeConverterMap[$supportedSourceType][$typeConverter->getSupportedTargetType()][$typeConverter->getPriority()] = $typeConverterClassName;
+                $typeConverterMap[$normalizedSourceType][$normalizedTargetType][$typeConverter->getPriority()] = $typeConverterClassName;
             }
         }
 
