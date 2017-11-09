@@ -1,0 +1,43 @@
+`3.3.21 (2017-11-09) <https://github.com/neos/flow-development-collection/releases/tag/3.3.21>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Correct use of \`void\` return type in proxy classes <https://github.com/neos/flow-development-collection/pull/1091>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+As `void` was not on the list of return types that would be
+normalized to include a leading backslash in the reflection
+data it would be output wrongly in proxy classes and so break
+applications that used it.
+
+Fixes: #1065
+
+* Packages: ``Flow``
+
+`TASK: Add a default .editorconfig <https://github.com/neos/flow-development-collection/pull/1097>`_
+----------------------------------------------------------------------------------------------------
+
+This introduces a default ``.editorconfig`` file in the root of the freshly created project.
+
+It ensures that php follows the PSR-2 coding-style, yaml gets 2 spaces indentation and md files doesn't trim trailing whitespace.
+
+* Packages: ``Flow``
+
+`TASK: Fix some numbered lists in security documentation <https://github.com/neos/flow-development-collection/pull/1105>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+This fixes markup for some numbered lists in the security documentation.
+
+* Packages: ``Flow``
+
+`TASK: Fix FlowQuery Tests for PHP 7.1 <https://github.com/neos/flow-development-collection/pull/1101>`_
+--------------------------------------------------------------------------------------------------------
+
+The newly added test in https://github.com/neos/flow-development-collection/pull/1085 made the test fail in PHP 7.1 due to wrongly trying to concat strings with `+`.
+
+* Packages: ``Eel`` ``Flow``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/3.3.20...3.3.21>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
