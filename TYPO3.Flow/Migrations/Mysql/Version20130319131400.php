@@ -167,7 +167,7 @@ class Version20130319131400 extends AbstractMigration
 
         $yamlSource = new \TYPO3\Flow\Configuration\Source\YamlSource();
         foreach ($configurationPathsAndFilenames as $pathAndFilename) {
-            if (preg_match('%Packages/.+/([^/]+)/Configuration/(?:Development|Production|Policy).+%', $pathAndFilename, $matches) === 0) {
+            if (preg_match('%Packages/[^/]+/([^/]+)/Configuration/(?:Development/|Production/)?[^/]+%', $pathAndFilename, $matches) === 0) {
                 continue;
             };
             $packageKey = $matches[1];
