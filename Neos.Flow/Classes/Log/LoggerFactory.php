@@ -15,6 +15,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Error\Debugger;
 use Neos\Flow\Http\HttpRequestHandlerInterface;
+use Neos\Flow\Log\ThrowableStorage\FileStorage;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 
 /**
@@ -102,12 +103,27 @@ class LoggerFactory
         }
 
         if ($logger instanceof Logger) {
-            $logger->setRequestInfoCallback($this->requestInfoCallback);
-            $logger->setRenderBacktraceCallback(function ($backtrace) {
-                return Debugger::getBacktraceCode($backtrace, false, true);
-            });
+            $logger->injectThrowableStorage($this->instantiateThrowableStorage());
         }
 
         return $logger;
+    }
+
+    /**
+     * @return FileStorage|ThrowableStorageInterface|object
+     */
+    protected function instantiateThrowableStorage()
+    {
+        // Fallback early throwable storage
+        $throwableStorage = new FileStorage();
+        $throwableStorage->injectStoragePath(FLOW_PATH_DATA . 'Logs/Exceptions');
+        if (Bootstrap::$staticObjectManager instanceof ObjectManagerInterface) {
+            $throwableStorage = Bootstrap::$staticObjectManager->get(ThrowableStorageInterface::class);
+        }
+        $throwableStorage->setBacktracRenderer(function ($backtrace) {
+            return Debugger::getBacktraceCode($backtrace, false, true);
+        });
+        $throwableStorage->setRequestInformationRenderer($this->requestInfoCallback);
+        return $throwableStorage;
     }
 }

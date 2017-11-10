@@ -356,4 +356,8 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
             'body' => $body
         ];
     }
+
+    protected function collectAdditionalInformationForException()
+    {
+    }
 }

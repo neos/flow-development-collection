@@ -68,7 +68,7 @@ interface LoggerInterface
      * @param \Exception $exception The exception to log
      * @param array $additionalData Additional data to log
      * @return void
-     * @api
+     * @deprecated This functionality is separated to the \Neos\Flow\Log\ThrowableStorageInterface in Flow. Change your code to use `logThrowable`.
      */
     public function logException(\Exception $exception, array $additionalData = []);
 }
