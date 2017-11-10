@@ -135,10 +135,11 @@ class TranslationHelper implements ProtectedContextAwareInterface
         $shortHandStringParts = explode(':', $shortHandString);
         if (count($shortHandStringParts) === 3) {
             list($package, $source, $id) = $shortHandStringParts;
-            return $this->createTranslationParameterToken($id)
+            $translation = $this->createTranslationParameterToken($id)
                 ->package($package)
                 ->source(str_replace('.', '/', $source))
                 ->translate();
+            return empty($translation) ? $id : $translation;
         }
 
         throw new \InvalidArgumentException(sprintf('The translation shorthand string "%s" has the wrong format', $shortHandString), 1436865829);
