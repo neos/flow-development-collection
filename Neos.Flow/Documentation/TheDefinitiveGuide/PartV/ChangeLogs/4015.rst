@@ -17,16 +17,6 @@ in order to prevent regressions:
 As a result, TypeConverters can now specify short and long version
 in the source/target type definition.
 
-Background:
-
-The original fix was mainly an adjustment to `ScalarTypeToObjectConverter`
-to normalize the constructor param type in order to allow simple types
-to be mapped to classes with a single `bool` or `int` constructor argument.
-But it also adjusted the `StringConverter` breaking the Neos export (see
-neos/neos-development-collection#1732).
-
-Credits to @monofone for the original patch!
-
 Related: #1083
 Related: #1109
 
