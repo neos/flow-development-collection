@@ -142,7 +142,7 @@ class CurlEngine implements RequestEngineInterface
             foreach ($request->getCookies() as $cookie) {
                 $cookies[] = $cookie->getName() . '=' . $cookie->getValue();
             }
-            curl_setopt($curlHandle, CURLOPT_COOKIE, implode(';', $cookies));
+            curl_setopt($curlHandle, CURLOPT_COOKIE, implode('; ', $cookies));
         }
 
         $curlResult = curl_exec($curlHandle);
