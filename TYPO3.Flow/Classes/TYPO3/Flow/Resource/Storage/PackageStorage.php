@@ -84,20 +84,7 @@ class PackageStorage extends FileSystemStorage
         foreach ($directories as $packageKey => $packageDirectories) {
             foreach ($packageDirectories as $directoryPath) {
                 foreach (Files::getRecursiveDirectoryGenerator($directoryPath) as $resourcePathAndFilename) {
-                    $pathInfo = UnicodeFunctions::pathinfo($resourcePathAndFilename);
-
-                    $object = new Object();
-                    $object->setFilename($pathInfo['basename']);
-                    $object->setSha1(sha1_file($resourcePathAndFilename));
-                    $object->setMd5(md5_file($resourcePathAndFilename));
-                    $object->setFileSize(filesize($resourcePathAndFilename));
-                    if (isset($pathInfo['dirname'])) {
-                        list(, $path) = explode('/', str_replace($packages[$packageKey]->getResourcesPath(), '', $pathInfo['dirname']), 2);
-                        $object->setRelativePublicationPath($packageKey . '/' . $path . '/');
-                    }
-                    $object->setStream(function () use ($resourcePathAndFilename) {
-                        return fopen($resourcePathAndFilename, 'r');
-                    });
+                    $object = $this->createStorageObject($resourcePathAndFilename, $packages[$packageKey]);
                     yield $object;
                     if (is_callable($callback)) {
                         call_user_func($callback, $iteration, $object);
@@ -106,6 +93,51 @@ class PackageStorage extends FileSystemStorage
                 }
             }
         }
+    }
+
+    /**
+     * Create a storage object for the given static resource path.
+     *
+     * @param string $resourcePathAndFilename
+     * @param PackageInterface $resourcePackage
+     * @return Object
+     */
+    protected function createStorageObject($resourcePathAndFilename, PackageInterface $resourcePackage)
+    {
+        $pathInfo = UnicodeFunctions::pathinfo($resourcePathAndFilename);
+
+        $object = new Object();
+        $object->setFilename($pathInfo['basename']);
+        $object->setSha1(sha1_file($resourcePathAndFilename));
+        $object->setMd5(md5_file($resourcePathAndFilename));
+        $object->setFileSize(filesize($resourcePathAndFilename));
+        if (isset($pathInfo['dirname'])) {
+            $object->setRelativePublicationPath($this->prepareRelativePublicationPath($pathInfo['dirname'], $resourcePackage->getPackageKey(), $resourcePackage->getResourcesPath()));
+        }
+        $object->setStream(function () use ($resourcePathAndFilename) {
+            return fopen($resourcePathAndFilename, 'r');
+        });
+
+        return $object;
+    }
+
+    /**
+     * Prepares a relative publication path for a package resource.
+     *
+     * @param string $objectPath
+     * @param string $packageKey
+     * @param string $packageResourcePath
+     * @return string
+     */
+    protected function prepareRelativePublicationPath($objectPath, $packageKey, $packageResourcePath)
+    {
+        $relativePathParts = explode('/', str_replace($packageResourcePath, '', $objectPath), 2);
+        $relativePath = '';
+        if (isset($relativePathParts[1])) {
+            $relativePath = $relativePathParts[1];
+        }
+
+        return Files::concatenatePaths([$packageKey, $relativePath]) . '/';
     }
 
     /**
