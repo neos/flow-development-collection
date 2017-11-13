@@ -398,12 +398,15 @@ class PropertyMapper
         $typeConverterMap = [];
         $typeConverterClassNames = static::getTypeConverterImplementationClassNames($this->objectManager);
         foreach ($typeConverterClassNames as $typeConverterClassName) {
+            /** @var TypeConverterInterface $typeConverter */
             $typeConverter = $this->objectManager->get($typeConverterClassName);
             foreach ($typeConverter->getSupportedSourceTypes() as $supportedSourceType) {
-                if (isset($typeConverterMap[$supportedSourceType][$typeConverter->getSupportedTargetType()][$typeConverter->getPriority()])) {
-                    throw new Exception\DuplicateTypeConverterException('There exist at least two converters which handle the conversion from "' . $supportedSourceType . '" to "' . $typeConverter->getSupportedTargetType() . '" with priority "' . $typeConverter->getPriority() . '": ' . $typeConverterMap[$supportedSourceType][$typeConverter->getSupportedTargetType()][$typeConverter->getPriority()] . ' and ' . get_class($typeConverter), 1297951378);
+                $normalizedSourceType = TypeHandling::normalizeType($supportedSourceType);
+                $normalizedTargetType = TypeHandling::normalizeType($typeConverter->getSupportedTargetType());
+                if (isset($typeConverterMap[$normalizedSourceType][$normalizedTargetType][$typeConverter->getPriority()])) {
+                    throw new Exception\DuplicateTypeConverterException('There exist at least two converters which handle the conversion from "' . $supportedSourceType . '" to "' . $normalizedTargetType . '" with priority "' . $typeConverter->getPriority() . '": ' . $typeConverterMap[$supportedSourceType][$normalizedTargetType][$typeConverter->getPriority()] . ' and ' . get_class($typeConverter), 1297951378);
                 }
-                $typeConverterMap[$supportedSourceType][$typeConverter->getSupportedTargetType()][$typeConverter->getPriority()] = $typeConverterClassName;
+                $typeConverterMap[$normalizedSourceType][$normalizedTargetType][$typeConverter->getPriority()] = $typeConverterClassName;
             }
         }
 

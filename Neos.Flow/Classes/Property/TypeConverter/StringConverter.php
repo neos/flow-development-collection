@@ -76,7 +76,7 @@ class StringConverter extends AbstractTypeConverter
     /**
      * @var array<string>
      */
-    protected $sourceTypes = ['string', 'integer', 'float', 'bool', 'array', \DateTimeInterface::class];
+    protected $sourceTypes = ['string', 'integer', 'float', 'boolean', 'array', \DateTimeInterface::class];
 
     /**
      * @var string
