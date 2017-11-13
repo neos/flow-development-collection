@@ -35,6 +35,5 @@ class {modelName}
     public function set{fieldName -> k:format.ucfirst()}(<f:if condition="{fieldDefinition.typeHint}">{fieldDefinition.typeHint -> f:format.raw()} </f:if>${fieldName})
     {
         $this->{fieldName} = ${fieldName};
-    }
-</f:for>
+    }</f:for>
 }

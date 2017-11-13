@@ -42,9 +42,10 @@ Conjunction: lft:Comparison (< / && | and\s+ / > rgt:Comparison)*
 Comparison: lft:SumCalculation (< comp:/ == | != | <= | >= | < | > / > rgt:SumCalculation)?
 SumCalculation: lft:ProdCalculation (< op:/ \+ | \- / > rgt:ProdCalculation)*
 ProdCalculation: lft:SimpleExpression (< op:/ \/ | \* | % / > rgt:SimpleExpression)*
-ArrayLiteral: '[' < Expression? (< ',' > Expression)* > ']'
+ArrayLiteral: '[' _ < Expression? (< _ ',' _ > Expression)* > _ ']'
 ObjectLiteralProperty: key:(StringLiteral | Identifier) < ':' > value:Expression
-ObjectLiteral: '{' ObjectLiteralProperty? (< ',' > ObjectLiteralProperty)* > '}'
+ObjectLiteral: '{' _ ObjectLiteralProperty? (< _ ',' _ > ObjectLiteralProperty)* > _ '}'
+_: / (\s|\n|\r)* /
 */
 
 }

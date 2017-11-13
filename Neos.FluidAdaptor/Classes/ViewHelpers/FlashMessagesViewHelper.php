@@ -117,7 +117,7 @@ class FlashMessagesViewHelper extends AbstractTagBasedViewHelper
         foreach ($flashMessages as $singleFlashMessage) {
             $severityClass = sprintf('%s-%s', $flashMessagesClass, strtolower($singleFlashMessage->getSeverity()));
             $messageContent = htmlspecialchars($singleFlashMessage->render());
-            if ($singleFlashMessage->getTitle() !== '') {
+            if ($singleFlashMessage->hasTitle()) {
                 $messageContent = sprintf('<h3>%s</h3>', htmlspecialchars($singleFlashMessage->getTitle())) . $messageContent;
             }
             $tagContent .= sprintf('<li class="%s">%s</li>', htmlspecialchars($severityClass), $messageContent);
