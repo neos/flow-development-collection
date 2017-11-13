@@ -82,7 +82,6 @@ class PasswordViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\F
         $mockTagBuilder->expects($this->at(1))->method('addAttribute')->with('name', 'NameOfTextbox');
         $this->viewHelper->expects($this->once())->method('registerFieldNameForFormTokenGeneration')->with('NameOfTextbox');
         $mockTagBuilder->expects($this->at(2))->method('addAttribute')->with('value', 'Current value');
-        $mockTagBuilder->expects($this->at(3))->method('addAttribute')->with('required', '');
         $mockTagBuilder->expects($this->once())->method('render');
         $this->viewHelper->injectTagBuilder($mockTagBuilder);
 
@@ -90,11 +89,10 @@ class PasswordViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\F
             'name' => 'NameOfTextbox',
             'value' => 'Current value'
         );
-        $this->viewHelper->setArguments($arguments);
 
         $this->viewHelper->setViewHelperNode(new \Neos\FluidAdaptor\ViewHelpers\Fixtures\EmptySyntaxTreeNode());
 
-        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['required' => true]);
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, $arguments);
 
         $this->viewHelper->render();
     }

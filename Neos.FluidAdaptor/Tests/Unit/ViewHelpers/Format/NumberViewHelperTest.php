@@ -60,8 +60,8 @@ class NumberViewHelperTest extends ViewHelperBaseTestcase
         $mockNumberFormatter->expects($this->once())->method('formatDecimalNumber');
 
         $this->inject($this->viewHelper, 'numberFormatter', $mockNumberFormatter);
-        $this->viewHelper->setArguments(array('forceLocale' => 'de_DE'));
-        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['decimals' => 2, 'decimalSeparator' => '#', 'thousandsSeparator' => '*']);
+        $this->viewHelper->setArguments(array());
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['decimals' => 2, 'decimalSeparator' => '#', 'thousandsSeparator' => '*', 'forceLocale' => 'de_DE']);
         $this->viewHelper->render();
     }
 
@@ -81,8 +81,7 @@ class NumberViewHelperTest extends ViewHelperBaseTestcase
         $this->inject($this->viewHelper, 'numberFormatter', $mockNumberFormatter);
 
         $this->viewHelper->expects($this->once())->method('renderChildren')->will($this->returnValue(123.456));
-        $this->viewHelper->setArguments(array('forceLocale' => true));
-        $this->viewHelper = $this->prepareArguments($this->viewHelper, []);
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['forceLocale' => true]);
         $this->viewHelper->render();
     }
 
@@ -103,8 +102,7 @@ class NumberViewHelperTest extends ViewHelperBaseTestcase
         $this->inject($this->viewHelper, 'numberFormatter', $mockNumberFormatter);
 
         $this->viewHelper->expects($this->once())->method('renderChildren')->will($this->returnValue(123.456));
-        $this->viewHelper->setArguments(array('forceLocale' => true));
-        $this->viewHelper = $this->prepareArguments($this->viewHelper, []);
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['forceLocale' => true]);
         $this->viewHelper->render();
     }
 }

@@ -103,8 +103,7 @@ class FlashMessagesViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelp
     {
         $this->mockFlashMessageContainer->expects($this->once())->method('getMessagesAndFlush')->will($this->returnValue($flashMessages));
         $this->mockTagBuilder->expects($this->once())->method('setContent')->with($expectedResult);
-        $this->viewHelper->_set('arguments', ['class' => $class]);
-        $this->viewHelper = $this->prepareArguments($this->viewHelper, []);
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['class' => $class]);
         $this->viewHelper->render();
     }
 }

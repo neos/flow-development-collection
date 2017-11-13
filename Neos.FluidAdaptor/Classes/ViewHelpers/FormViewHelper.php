@@ -106,7 +106,7 @@ class FormViewHelper extends AbstractFormViewHelper
         $this->registerTagAttribute('name', 'string', 'Name of form');
         $this->registerTagAttribute('onreset', 'string', 'JavaScript: On reset of the form');
         $this->registerTagAttribute('onsubmit', 'string', 'JavaScript: On submit of the form');
-        $this->registerArgument('action', 'string', 'Target action', true);
+        $this->registerArgument('action', 'string', 'Target action', false, null);
         $this->registerArgument('arguments', 'array', 'Arguments', false, array());
         $this->registerArgument('controller', 'string', 'Target controller. If NULL current controllerName is used', false, null);
         $this->registerArgument('package', 'string', 'Target package. if NULL current package is used', false, null);

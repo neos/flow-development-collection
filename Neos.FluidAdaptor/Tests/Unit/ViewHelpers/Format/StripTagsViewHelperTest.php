@@ -120,7 +120,7 @@ class StripTagsViewHelperTest extends ViewHelperBaseTestcase
         $user = new UserWithToString('Xaver <b>Cross-Site</b>');
         $expectedResult = 'Xaver Cross-Site';
         $this->viewHelper->expects(self::any())->method('buildRenderChildrenClosure')->willReturn(function () {
-            throw new \Exception('rendderChildrenClosure was invoked but should not have been');
+            throw new \Exception('renderChildrenClosure was invoked but should not have been');
         });
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['value' => $user]);
         $actualResult = $this->viewHelper->render();
@@ -129,15 +129,15 @@ class StripTagsViewHelperTest extends ViewHelperBaseTestcase
 
     /**
      * @test
+     * @expectedException \InvalidArgumentException
      */
     public function renderDoesNotModifySourceIfItIsAnObjectThatCantBeConvertedToAString()
     {
         $user = new UserWithoutToString('Xaver <b>Cross-Site</b>');
         $this->viewHelper->expects(self::any())->method('buildRenderChildrenClosure')->willReturn(function () {
-            throw new \Exception('rendderChildrenClosure was invoked but should not have been');
+            throw new \Exception('renderChildrenClosure was invoked but should not have been');
         });
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['value' => $user]);
-        $actualResult = $this->viewHelper->render();
-        $this->assertSame($user, $actualResult);
+        $this->viewHelper->render();
     }
 }

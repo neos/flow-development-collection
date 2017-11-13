@@ -99,7 +99,7 @@ class IdentifierViewHelperTest extends ViewHelperBaseTestcase
 
     /**
      * @test
-     * @expectedException \Neos\FluidAdaptor\Core\ViewHelper\Exception
+     * @expectedException \InvalidArgumentException
      */
     public function renderThrowsExceptionIfGivenValueIsNoObject()
     {

@@ -162,12 +162,12 @@ class HtmlentitiesViewHelperTest extends ViewHelperBaseTestcase
 
     /**
      * @test
+     * @expectedException \InvalidArgumentException
      */
     public function renderDoesNotModifySourceIfItIsAnObjectThatCantBeConvertedToAString()
     {
         $user = new UserWithoutToString('Xaver <b>Cross-Site</b>');
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['value' => $user]);
-        $actualResult = $this->viewHelper->render();
-        $this->assertSame($user, $actualResult);
+        $this->viewHelper->render();
     }
 }

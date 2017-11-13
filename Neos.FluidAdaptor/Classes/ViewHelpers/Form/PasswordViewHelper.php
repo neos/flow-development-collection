@@ -65,7 +65,6 @@ class PasswordViewHelper extends AbstractFormFieldViewHelper
         $this->tag->addAttribute('type', 'password');
         $this->tag->addAttribute('name', $name);
         $this->tag->addAttribute('value', $this->getValueAttribute());
-
         $this->addAdditionalIdentityPropertiesIfNeeded();
         $this->setErrorClassAttribute();
 

@@ -103,8 +103,7 @@ class CurrencyViewHelperTest extends ViewHelperBaseTestcase
         $mockNumberFormatter->expects($this->once())->method('formatCurrencyNumber');
         $this->inject($this->viewHelper, 'numberFormatter', $mockNumberFormatter);
 
-        $this->viewHelper->setArguments(array('forceLocale' => 'de_DE'));
-        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['currencySign' => 'EUR', 'decimalSeparator' => '#', 'thousandsSeparator' => '*']);
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['currencySign' => 'EUR', 'decimalSeparator' => '#', 'thousandsSeparator' => '*', 'forceLocale' => 'de_DE']);
         $this->viewHelper->render();
     }
 
@@ -125,8 +124,7 @@ class CurrencyViewHelperTest extends ViewHelperBaseTestcase
 
         $this->viewHelper->expects($this->once())->method('renderChildren')->will($this->returnValue(123.456));
 
-        $this->viewHelper->setArguments(array('forceLocale' => true));
-        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['currencySign' => 'EUR']);
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['currencySign' => 'EUR', 'forceLocale' => true]);
         $this->viewHelper->render();
     }
 
@@ -143,8 +141,7 @@ class CurrencyViewHelperTest extends ViewHelperBaseTestcase
         $this->inject($this->viewHelper, 'localizationService', $mockLocalizationService);
 
         $this->viewHelper->expects($this->once())->method('renderChildren')->will($this->returnValue(123.456));
-        $this->viewHelper->setArguments(array('forceLocale' => true));
-        $this->viewHelper = $this->prepareArguments($this->viewHelper, []);
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['forceLocale' => true]);
         $this->viewHelper->render();
     }
 
@@ -165,8 +162,7 @@ class CurrencyViewHelperTest extends ViewHelperBaseTestcase
         $this->inject($this->viewHelper, 'numberFormatter', $mockNumberFormatter);
 
         $this->viewHelper->expects($this->once())->method('renderChildren')->will($this->returnValue(123.456));
-        $this->viewHelper->setArguments(array('forceLocale' => true));
-        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['currencySign' => '$']);
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['currencySign' => '$', 'forceLocale' => true]);
         $this->viewHelper->render();
     }
 
