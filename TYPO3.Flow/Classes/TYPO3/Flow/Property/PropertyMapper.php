@@ -126,7 +126,7 @@ class PropertyMapper
         } catch (SecurityException $exception) {
             throw $exception;
         } catch (\Exception $exception) {
-            throw new PropertyException('Exception while property mapping for target type "' . $targetType . '", at property path "' . implode('.', $currentPropertyPath) . '": ' . $exception->getMessage(), 1297759968, $exception);
+            throw new PropertyException('Could not convert target type "' . $targetType . '"' . (count($currentPropertyPath) > 0 ? ', at property path "' . implode('.', $currentPropertyPath) . '"' : '') . ': ' . $exception->getMessage(), 1297759968, $exception);
         }
     }
 
