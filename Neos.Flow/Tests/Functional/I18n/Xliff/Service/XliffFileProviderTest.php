@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Tests\Functional\I18n\Xliff\Service;
 
 /*
@@ -36,7 +37,11 @@ class XliffFileProviderTest extends FunctionalTestCase
     public function setUp()
     {
         parent::setUp();
+        $cacheManager = $this->objectManager->get(CacheManager::class);
+        $cacheManager->getCache('Flow_I18n_XmlModelCache')->flush();
+
         $this->fileProvider = $this->objectManager->get(XliffFileProvider::class);
+        $this->fileProvider->initializeObject();
 
         $packages = $this->setUpPackages();
         ComposerUtility::flushCaches();
@@ -48,9 +53,6 @@ class XliffFileProviderTest extends FunctionalTestCase
             ->method('getActivePackages')
             ->will($this->returnValue($packages));
         $this->inject($this->fileProvider, 'packageManager', $mockPackageManager);
-
-        $cacheManager = $this->objectManager->get(CacheManager::class);
-        $cacheManager->getCache('Flow_I18n_XmlModelCache')->flush();
     }
 
     /**
@@ -99,6 +101,20 @@ class XliffFileProviderTest extends FunctionalTestCase
         }
 
         return new Package($packageKey, $composerName, $packagePath);
+    }
+
+    protected function setUpGlobalDataFolder(array $filePaths)
+    {
+        vfsStream::setup('Data');
+        $globalDataFolder = 'vfs://Data/Translations/';
+        mkdir($globalDataFolder, 0700, true);
+        mkdir($globalDataFolder . 'en/', 0700, true);
+        mkdir($globalDataFolder . 'de/', 0700, true);
+
+        $fixtureBasePath = __DIR__ . '/../Fixtures/';
+        foreach ($filePaths as $fixturePath => $targetPath) {
+            copy($fixtureBasePath . $fixturePath, $globalDataFolder . $targetPath);
+        }
     }
 
     /**
@@ -160,6 +176,27 @@ class XliffFileProviderTest extends FunctionalTestCase
                 [
                     'source' => 'Source string',
                     'target' => 'Übersetzte Zeichenkette'
+                ]
+            ]
+        ], $fileData['translationUnits']);
+    }
+
+    /**
+     * @test
+     */
+    public function fileProviderMergesOverrideFromGlobalDataFolder()
+    {
+        $this->setUpGlobalDataFolder([
+            'de/BasePackage.GlobalOverride.xlf' => 'de/GlobalOverride.xlf'
+        ]);
+
+        $fileData = $this->fileProvider->getMergedFileData('Vendor.BasePackage:Main', new Locale('de'));
+
+        $this->assertSame([
+            'key1' => [
+                [
+                    'source' => 'Source string',
+                    'target' => 'Global anders übersetzte Zeichenkette'
                 ]
             ]
         ], $fileData['translationUnits']);

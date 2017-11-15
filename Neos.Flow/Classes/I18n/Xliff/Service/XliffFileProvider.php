@@ -48,6 +48,12 @@ class XliffFileProvider
     protected $xliffReader;
 
     /**
+     * @Flow\InjectConfiguration(path="i18n.globalTranslationPath")
+     * @var string
+     */
+    protected $globalTranslationPath;
+
+    /**
      * @var VariableFrontend
      */
     protected $cache;
@@ -110,7 +116,7 @@ class XliffFileProvider
                 }
             }
 
-            $generalTranslationPath = FLOW_PATH_DATA . 'Translations/'. $locale->getLanguage();
+            $generalTranslationPath = $this->globalTranslationPath. $locale->getLanguage(). '/';
             if (is_dir($generalTranslationPath)) {
                 $this->readDirectoryRecursively($generalTranslationPath, $parsedData, $fileId);
             }
