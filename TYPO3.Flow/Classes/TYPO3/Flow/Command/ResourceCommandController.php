@@ -270,7 +270,7 @@ class ResourceCommandController extends CommandController
                         $this->resourceRepository->remove($resource);
                         if (isset($relatedAssets[$resource])) {
                             foreach ($relatedAssets[$resource] as $asset) {
-                                $assetRepository->remove($asset);
+                                $assetRepository->removeWithoutUsageChecks($asset);
                                 $brokenAssetCounter++;
                             }
                         }
