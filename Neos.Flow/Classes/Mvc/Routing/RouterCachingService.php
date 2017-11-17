@@ -18,13 +18,13 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Request;
 use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\Mvc\Routing\Dto\ResolveContext;
-use Neos\Flow\Mvc\Routing\Dto\ResolveResult;
 use Neos\Flow\Mvc\Routing\Dto\RouteContext;
 use Neos\Flow\Mvc\Routing\Dto\RouteResult;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Validation\Validator\UuidValidator;
 use Neos\Utility\Arrays;
+use Psr\Http\Message\UriInterface;
 
 /**
  * Caching of findMatchResults() and resolve() calls on the web Router.
@@ -143,7 +143,11 @@ class RouterCachingService
         return $this->resolveCache->get($this->buildResolveCacheIdentifier($routeValues));
     }
 
-    public function getCachedResolveResult(ResolveContext $resolveContext)
+    /**
+     * @param ResolveContext $resolveContext
+     * @return UriInterface|null
+     */
+    public function getCachedResolvedUri(ResolveContext $resolveContext)
     {
         // TODO implement
         return null;
@@ -172,7 +176,12 @@ class RouterCachingService
         }
     }
 
-    public function storeResolveResult(ResolveResult $resolveResult)
+    /**
+     * @param ResolveContext $resolveContext
+     * @param UriInterface $resolvedUri
+     * @return void
+     */
+    public function storeResolvedUri(ResolveContext $resolveContext, UriInterface $resolvedUri)
     {
         // TODO implement
     }

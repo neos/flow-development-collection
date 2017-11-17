@@ -12,9 +12,9 @@ namespace Neos\Flow\Mvc\Routing;
  */
 
 use Neos\Flow\Mvc\Routing\Dto\ResolveContext;
-use Neos\Flow\Mvc\Routing\Dto\ResolveResult;
 use Neos\Flow\Mvc\Routing\Dto\RouteContext;
 use Neos\Flow\Mvc\Routing\Dto\RouteResult;
+use Psr\Http\Message\UriInterface;
 
 /**
  * Contract for a Web Router
@@ -33,7 +33,7 @@ interface RouterInterface
      * Walks through all configured routes and calls their respective resolves-method.
      *
      * @param ResolveContext $resolveContext
-     * @return ResolveResult
+     * @return UriInterface
      */
-    public function resolve(ResolveContext $resolveContext): ResolveResult;
+    public function resolve(ResolveContext $resolveContext): UriInterface;
 }

@@ -18,12 +18,12 @@ use Neos\Flow\Mvc\Exception\InvalidRoutePartValueException;
 use Neos\Flow\Mvc\Exception\InvalidRouteSetupException;
 use Neos\Flow\Mvc\Exception\InvalidUriPatternException;
 use Neos\Flow\Mvc\Routing\Dto\ResolveContext;
-use Neos\Flow\Mvc\Routing\Dto\ResolveResult;
 use Neos\Flow\Mvc\Routing\Dto\RouteContext;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Utility\Arrays;
 use Neos\Utility\ObjectAccess;
+use Psr\Http\Message\UriInterface;
 
 /**
  * Implementation of a standard route
@@ -80,9 +80,9 @@ class Route
     /**
      * TODO document
      *
-     * @var ResolveResult|null
+     * @var UriInterface|null
      */
-    protected $resolveResult;
+    protected $resolvedUri;
 
     /**
      * Contains associative array of Route Part options
@@ -315,11 +315,11 @@ class Route
     /**
      * TODO document
      *
-     * @return ResolveResult|null
+     * @return UriInterface|null
      */
-    public function getResolveResult()
+    public function getResolvedUri()
     {
-        return $this->resolveResult;
+        return $this->resolvedUri;
     }
 
     /**
@@ -330,7 +330,7 @@ class Route
      */
     public function getResolvedUriPath()
     {
-        return $this->resolveResult->getUri()->getPath();
+        return $this->resolvedUri->getPath();
     }
 
     /**
@@ -377,8 +377,8 @@ class Route
                 $optionalPartCount = 0;
                 $skipOptionalParts = false;
             }
-            if ($routePart instanceof RouteContextAwareInterface) {
-                $routePart->setRouteContext($routeContext);
+            if ($routePart instanceof RouteParametersAwareInterface) {
+                $routePart->setRouteParameters($routeContext->getParameters());
             }
             if ($routePart->match($routePath) !== true) {
                 if ($routePart->isOptional() && $optionalPartCount === 1) {
@@ -409,8 +409,7 @@ class Route
     /**
      * Checks whether $routeValues can be resolved to a corresponding uri.
      * If all Route Parts can resolve one or more of the $routeValues, TRUE is
-     * returned and $this->matchingURI contains the generated URI (excluding
-     * protocol and host).
+     * returned and $this->resolvedUri contains the generated URI (relative or absolute)
      *
      * @param ResolveContext $resolveContext
      * @return boolean TRUE if this Route corresponds to the given $routeValues, otherwise FALSE
@@ -418,7 +417,7 @@ class Route
      */
     public function resolves(ResolveContext $resolveContext)
     {
-        $this->resolveResult = null;
+        $this->resolvedUri = null;
         if ($this->uriPattern === null) {
             return false;
         }
@@ -427,8 +426,8 @@ class Route
         }
         $routeValues = $resolveContext->getRouteValues();
 
-        $resolveParameters = [];
-        $resolvedUri = '';
+        $resolvePostProcessors = [];
+        $resolvedUriString = '';
         $remainingDefaults = $this->defaults;
         $requireOptionalRouteParts = false;
         $matchingOptionalUriPortion = '';
@@ -439,8 +438,8 @@ class Route
                     return false;
                 }
             }
-            if ($routePart instanceof ResolveParametersProvidingInterface) {
-                $resolveParameters = Arrays::arrayMergeRecursiveOverrule($resolveParameters, $routePart->getResolveParameters());
+            if ($routePart instanceof ResolvePostProcessInterface) {
+                $resolvePostProcessors[] = [$routePart, 'postProcess'];
             }
             if ($routePart->getName() !== null) {
                 $remainingDefaults = Arrays::unsetValueByPath($remainingDefaults, $routePart->getName());
@@ -457,7 +456,7 @@ class Route
                 throw new InvalidRoutePartValueException('RoutePart::getDefaultValue() must return a string, got ' . (is_object($routePartDefaultValue) ? get_class($routePartDefaultValue) : gettype($routePartDefaultValue)) . ' for RoutePart "' . get_class($routePart) . '" in Route "' . $this->getName() . '".');
             }
             if (!$routePart->isOptional()) {
-                $resolvedUri .= $routePart->hasValue() ? $routePartValue : $routePartDefaultValue;
+                $resolvedUriString .= $routePart->hasValue() ? $routePartValue : $routePartDefaultValue;
                 $requireOptionalRouteParts = false;
                 continue;
             }
@@ -468,7 +467,7 @@ class Route
                 $matchingOptionalUriPortion .= $routePartDefaultValue;
             }
             if ($requireOptionalRouteParts) {
-                $resolvedUri .= $matchingOptionalUriPortion;
+                $resolvedUriString .= $matchingOptionalUriPortion;
                 $matchingOptionalUriPortion = '';
             }
         }
@@ -493,22 +492,28 @@ class Route
             }
             $queryString = http_build_query($routeValues, null, '&');
             if ($queryString !== '') {
-                $resolvedUri .= strpos($resolvedUri, '?') !== false ? '&' . $queryString : '?' . $queryString;
+                $resolvedUriString .= strpos($resolvedUriString, '?') !== false ? '&' . $queryString : '?' . $queryString;
             }
         }
 
         if ($resolveContext->hasUriPrefix()) {
-            $resolvedUri = $resolveContext->getUriPrefix() . $resolvedUri;
+            $resolvedUriString = $resolveContext->getUriPrefix() . $resolvedUriString;
         }
         if ($resolveContext->isForceAbsoluteUri()) {
-            $resolvedUri = $resolveContext->getHttpRequest()->getBaseUri() . $resolvedUri;
+            $resolvedUriString = $resolveContext->getHttpRequest()->getBaseUri() . $resolvedUriString;
         } else {
-            $resolvedUri = $resolveContext->getHttpRequest()->getScriptRequestPath() . $resolvedUri;
+            $resolvedUriString = $resolveContext->getHttpRequest()->getScriptRequestPath() . $resolvedUriString;
         }
         if ($resolveContext->hasSection()) {
-            $resolvedUri .= '#' . $resolveContext->getSection();
+            $resolvedUriString .= '#' . $resolveContext->getSection();
         }
-        $this->resolveResult = new ResolveResult(new Uri($resolvedUri), $resolveParameters);
+
+        $resolvedUri = new Uri($resolvedUriString);
+        foreach ($resolvePostProcessors as $postProcessor) {
+            $resolvedUri = call_user_func($postProcessor, $resolvedUri, $resolveContext);
+        }
+
+        $this->resolvedUri = $resolvedUri;
         return true;
     }
 

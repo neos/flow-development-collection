@@ -353,9 +353,9 @@ class UriBuilder
         $uriPrefix = $this->environment->isRewriteEnabled() ? '' : 'index.php/';
         $resolveContext = new ResolveContext($httpRequest, $arguments, $this->createAbsoluteUri, $this->section, $uriPrefix);
 
-        $resolveResult = $this->router->resolve($resolveContext);
+        $resolvedUri = $this->router->resolve($resolveContext);
         $this->lastArguments = $arguments;
-        return $resolveResult->getUri();
+        return $resolvedUri;
     }
 
     /**

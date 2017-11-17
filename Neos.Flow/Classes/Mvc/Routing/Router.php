@@ -13,14 +13,13 @@ namespace Neos\Flow\Mvc\Routing;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Configuration\ConfigurationManager;
-use Neos\Flow\Http\Uri;
 use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\Mvc\Exception\InvalidRouteSetupException;
 use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
 use Neos\Flow\Mvc\Routing\Dto\ResolveContext;
-use Neos\Flow\Mvc\Routing\Dto\ResolveResult;
 use Neos\Flow\Mvc\Routing\Dto\RouteContext;
 use Neos\Flow\Mvc\Routing\Dto\RouteResult;
+use Psr\Http\Message\UriInterface;
 
 /**
  * The default web router
@@ -143,14 +142,14 @@ class Router implements RouterInterface
      * Note: calls of this message are cached by RouterCachingAspect
      *
      * @param ResolveContext $resolveContext
-     * @return ResolveResult
+     * @return UriInterface
      * @throws NoMatchingRouteException
      */
-    public function resolve(ResolveContext $resolveContext): ResolveResult
+    public function resolve(ResolveContext $resolveContext): UriInterface
     {
-        $cachedResolveResult = $this->routerCachingService->getCachedResolveResult($resolveContext);
-        if ($cachedResolveResult !== null) {
-            return $cachedResolveResult;
+        $cachedResolvedUri = $this->routerCachingService->getCachedResolvedUri($resolveContext);
+        if ($cachedResolvedUri !== null) {
+            return $cachedResolvedUri;
         }
 
         $this->createRoutesFromConfiguration();
@@ -158,10 +157,9 @@ class Router implements RouterInterface
         /** @var $route Route */
         foreach ($this->routes as $route) {
             if ($route->resolves($resolveContext) === true) {
-                $resolveResult = $route->getResolveResult();
-                $this->emitRouteResolved($resolveContext, $resolveResult);
-                $this->routerCachingService->storeResolveResult($resolveResult);
-                return $resolveResult;
+                $resolveUri = $route->getResolvedUri();
+                $this->routerCachingService->storeResolvedUri($resolveContext, $resolveUri);
+                return $resolveUri;
             }
         }
         $this->systemLogger->log('Router resolve(): Could not resolve a route for building an URI for the given resolve context.', LOG_WARNING, $resolveContext->getRouteValues());
@@ -240,13 +238,4 @@ class Router implements RouterInterface
     {
     }
 
-    /**
-     * @param ResolveContext $resolveContext
-     * @param ResolveResult $resolveResult
-     * @return void
-     * @Flow\Signal
-     */
-    protected function emitRouteResolved(ResolveContext $resolveContext, ResolveResult &$resolveResult)
-    {
-    }
 }

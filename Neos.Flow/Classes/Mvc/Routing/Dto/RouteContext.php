@@ -26,15 +26,15 @@ final class RouteContext
     private $httpRequest;
 
     /**
-     * @var array
+     * @var Parameters
      */
     private $parameters;
 
     /**
      * @param HttpRequest $httpRequest
-     * @param array $parameters
+     * @param Parameters $parameters
      */
-    public function __construct(HttpRequest $httpRequest, array $parameters)
+    public function __construct(HttpRequest $httpRequest, Parameters $parameters)
     {
         $this->httpRequest = $httpRequest;
         $this->parameters = $parameters;
@@ -46,12 +46,11 @@ final class RouteContext
     }
 
     /**
-     * @param string $namespace
-     * @return Parameter[]
+     * @return Parameters
      */
-    public function getParameters(string $namespace): array
+    public function getParameters(): Parameters
     {
-        return $this->parameters[$namespace] ?? [];
+        return $this->parameters;
     }
 
     /**
@@ -61,8 +60,7 @@ final class RouteContext
      */
     public function withParameter(string $namespace, Parameter $parameter): self
     {
-        $newParameters = $this->parameters;
-        $newParameters[$namespace][$parameter->getName()] = $parameter;
+        $newParameters = $this->parameters->withParameter($namespace, $parameter);
         return new static($this->httpRequest, $newParameters);
     }
 
