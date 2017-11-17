@@ -14,6 +14,7 @@ namespace Neos\Flow\Mvc\Routing;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Component\ComponentContext;
 use Neos\Flow\Http\Component\ComponentInterface;
+use Neos\Flow\Mvc\Routing\Dto\RouteContext;
 
 /**
  * A routing HTTP component
@@ -50,7 +51,8 @@ class RoutingComponent implements ComponentInterface
      */
     public function handle(ComponentContext $componentContext)
     {
-        $matchResults = $this->router->route($componentContext->getHttpRequest());
-        $componentContext->setParameter(RoutingComponent::class, 'matchResults', $matchResults);
+        $routeContext = new RouteContext($componentContext->getHttpRequest(), []);
+        $routeResult = $this->router->route($routeContext);
+        $componentContext->setParameter(RoutingComponent::class, 'matchResults', $routeResult->getRouteValues());
     }
 }

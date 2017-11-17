@@ -11,11 +11,13 @@ namespace Neos\Flow\Mvc\Routing;
  * source code.
  */
 
+use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Request;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\RequestInterface;
+use Neos\Flow\Mvc\Routing\Dto\ResolveContext;
 use Neos\Utility\Arrays;
-use Neos\Flow\Annotations as Flow;
+use Psr\Http\Message\UriInterface;
 
 /**
  * An URI Builder
@@ -325,7 +327,7 @@ class UriBuilder
     protected function addNamespaceToArguments(array $arguments, RequestInterface $currentRequest)
     {
         while (!$currentRequest->isMainRequest()) {
-            $argumentNamespace = $currentRequest->getArgumentNamespace();
+            $argumentNamespace = $currentRequest instanceof ActionRequest ? $currentRequest->getArgumentNamespace() : '';
             if ($argumentNamespace !== '') {
                 $arguments = [$argumentNamespace => $arguments];
             }
@@ -338,7 +340,7 @@ class UriBuilder
      * Builds the URI
      *
      * @param array $arguments optional URI arguments. Will be merged with $this->arguments with precedence to $arguments
-     * @return string The URI
+     * @return UriInterface
      * @api
      */
     public function build(array $arguments = [])
@@ -346,21 +348,14 @@ class UriBuilder
         $arguments = Arrays::arrayMergeRecursiveOverrule($this->arguments, $arguments);
         $arguments = $this->mergeArgumentsWithRequestArguments($arguments);
 
-        $uri = $this->router->resolve($arguments);
-        $this->lastArguments = $arguments;
-        if (!$this->environment->isRewriteEnabled()) {
-            $uri = 'index.php/' . $uri;
-        }
         $httpRequest = $this->request->getHttpRequest();
-        if ($this->createAbsoluteUri === true) {
-            $uri = $httpRequest->getBaseUri() . $uri;
-        } else {
-            $uri = $httpRequest->getScriptRequestPath() . $uri;
-        }
-        if ($this->section !== '') {
-            $uri .= '#' . $this->section;
-        }
-        return $uri;
+
+        $uriPrefix = $this->environment->isRewriteEnabled() ? '' : 'index.php/';
+        $resolveContext = new ResolveContext($httpRequest, $arguments, $this->createAbsoluteUri, $this->section, $uriPrefix);
+
+        $resolveResult = $this->router->resolve($resolveContext);
+        $this->lastArguments = $arguments;
+        return $resolveResult->getUri();
     }
 
     /**

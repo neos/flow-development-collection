@@ -13,10 +13,14 @@ namespace Neos\Flow\Mvc\Routing;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Configuration\ConfigurationManager;
-use Neos\Flow\Http\Request;
+use Neos\Flow\Http\Uri;
 use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\Mvc\Exception\InvalidRouteSetupException;
 use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
+use Neos\Flow\Mvc\Routing\Dto\ResolveContext;
+use Neos\Flow\Mvc\Routing\Dto\ResolveResult;
+use Neos\Flow\Mvc\Routing\Dto\RouteContext;
+use Neos\Flow\Mvc\Routing\Dto\RouteResult;
 
 /**
  * The default web router
@@ -66,16 +70,6 @@ class Router implements RouterInterface
     protected $routesCreated = false;
 
     /**
-     * @var Route
-     */
-    protected $lastMatchedRoute;
-
-    /**
-     * @var Route
-     */
-    protected $lastResolvedRoute;
-
-    /**
      * Sets the routes configuration.
      *
      * @param array $routesConfiguration The routes configuration or NULL if it should be fetched from configuration
@@ -92,43 +86,31 @@ class Router implements RouterInterface
      * Returns the matchResults of the matching route or NULL if no matching
      * route could be found.
      *
-     * @param Request $httpRequest The web request to be analyzed. Will be modified by the router.
-     * @return array The results of the matching route or NULL if no route matched
+     * @param RouteContext $routeContext
+     * @return RouteResult
+     * @throws NoMatchingRouteException
      */
-    public function route(Request $httpRequest)
+    public function route(RouteContext $routeContext): RouteResult
     {
-        $cachedMatchResults = $this->routerCachingService->getCachedMatchResults($httpRequest);
-        if ($cachedMatchResults !== false) {
-            return $cachedMatchResults;
+        $this->emitBeforeRoute($routeContext);
+        $cachedRouteResult = $this->routerCachingService->getCachedRouteResult($routeContext);
+        if ($cachedRouteResult !== null) {
+            return $cachedRouteResult;
         }
-        $this->lastMatchedRoute = null;
         $this->createRoutesFromConfiguration();
 
+        $httpRequest = $routeContext->getHttpRequest();
         /** @var $route Route */
         foreach ($this->routes as $route) {
-            if ($route->matches($httpRequest) === true) {
-                $this->lastMatchedRoute = $route;
-                $matchResults = $route->getMatchResults();
-                if ($matchResults !== null) {
-                    $this->routerCachingService->storeMatchResults($httpRequest, $matchResults);
-                }
+            if ($route->matches($routeContext) === true) {
+                $routeResult = RouteResult::fromMatchedRoute($route);
+                $this->routerCachingService->storeRouteResult($httpRequest, $routeResult);
                 $this->systemLogger->log(sprintf('Router route(): Route "%s" matched the path "%s".', $route->getName(), $httpRequest->getRelativePath()), LOG_DEBUG);
-                return $matchResults;
+                return $routeResult;
             }
         }
         $this->systemLogger->log(sprintf('Router route(): No route matched the route path "%s".', $httpRequest->getRelativePath()), LOG_NOTICE);
-        return null;
-    }
-
-    /**
-     * Returns the route that has been matched with the last route() call.
-     * Returns NULL if no route matched or route() has not been called yet
-     *
-     * @return Route
-     */
-    public function getLastMatchedRoute()
-    {
-        return $this->lastMatchedRoute;
+        throw new NoMatchingRouteException('Could not match a route for the HTTP request.', 1510846308);
     }
 
     /**
@@ -160,44 +142,30 @@ class Router implements RouterInterface
      * method. If no matching route is found, an empty string is returned.
      * Note: calls of this message are cached by RouterCachingAspect
      *
-     * @param array $routeValues Key/value pairs to be resolved. E.g. array('@package' => 'MyPackage', '@controller' => 'MyController');
-     * @return string
+     * @param ResolveContext $resolveContext
+     * @return ResolveResult
      * @throws NoMatchingRouteException
      */
-    public function resolve(array $routeValues)
+    public function resolve(ResolveContext $resolveContext): ResolveResult
     {
-        $cachedResolvedUriPath = $this->routerCachingService->getCachedResolvedUriPath($routeValues);
-        if ($cachedResolvedUriPath !== false) {
-            return $cachedResolvedUriPath;
+        $cachedResolveResult = $this->routerCachingService->getCachedResolveResult($resolveContext);
+        if ($cachedResolveResult !== null) {
+            return $cachedResolveResult;
         }
 
-        $this->lastResolvedRoute = null;
         $this->createRoutesFromConfiguration();
 
         /** @var $route Route */
         foreach ($this->routes as $route) {
-            if ($route->resolves($routeValues)) {
-                $this->lastResolvedRoute = $route;
-                $resolvedUriPath = $route->getResolvedUriPath();
-                if ($resolvedUriPath !== null) {
-                    $this->routerCachingService->storeResolvedUriPath($resolvedUriPath, $routeValues);
-                }
-                return $resolvedUriPath;
+            if ($route->resolves($resolveContext) === true) {
+                $resolveResult = $route->getResolveResult();
+                $this->emitRouteResolved($resolveContext, $resolveResult);
+                $this->routerCachingService->storeResolveResult($resolveResult);
+                return $resolveResult;
             }
         }
-        $this->systemLogger->log('Router resolve(): Could not resolve a route for building an URI for the given route values.', LOG_WARNING, $routeValues);
+        $this->systemLogger->log('Router resolve(): Could not resolve a route for building an URI for the given resolve context.', LOG_WARNING, $resolveContext->getRouteValues());
         throw new NoMatchingRouteException('Could not resolve a route and its corresponding URI for the given parameters. This may be due to referring to a not existing package / controller / action while building a link or URI. Refer to log and check the backtrace for more details.', 1301610453);
-    }
-
-    /**
-     * Returns the route that has been resolved with the last resolve() call.
-     * Returns NULL if no route was found or resolve() has not been called yet
-     *
-     * @return Route
-     */
-    public function getLastResolvedRoute()
-    {
-        return $this->lastResolvedRoute;
     }
 
     /**
@@ -261,5 +229,24 @@ class Router implements RouterInterface
         if ($this->routesConfiguration === null) {
             $this->routesConfiguration = $this->configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_ROUTES);
         }
+    }
+
+    /**
+     * @param RouteContext $routeContext
+     * @return void
+     * @Flow\Signal
+     */
+    protected function emitBeforeRoute(RouteContext &$routeContext)
+    {
+    }
+
+    /**
+     * @param ResolveContext $resolveContext
+     * @param ResolveResult $resolveResult
+     * @return void
+     * @Flow\Signal
+     */
+    protected function emitRouteResolved(ResolveContext $resolveContext, ResolveResult &$resolveResult)
+    {
     }
 }

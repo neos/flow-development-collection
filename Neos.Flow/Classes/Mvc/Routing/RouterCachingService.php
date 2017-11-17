@@ -11,16 +11,20 @@ namespace Neos\Flow\Mvc\Routing;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Cache\CacheAwareInterface;
 use Neos\Cache\Frontend\StringFrontend;
 use Neos\Cache\Frontend\VariableFrontend;
+use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Request;
-use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Log\SystemLoggerInterface;
+use Neos\Flow\Mvc\Routing\Dto\ResolveContext;
+use Neos\Flow\Mvc\Routing\Dto\ResolveResult;
+use Neos\Flow\Mvc\Routing\Dto\RouteContext;
+use Neos\Flow\Mvc\Routing\Dto\RouteResult;
+use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
-use Neos\Utility\Arrays;
 use Neos\Flow\Validation\Validator\UuidValidator;
+use Neos\Utility\Arrays;
 
 /**
  * Caching of findMatchResults() and resolve() calls on the web Router.
@@ -94,6 +98,16 @@ class RouterCachingService
     }
 
     /**
+     * @param RouteContext $routeContext
+     * @return RouteResult|null
+     */
+    public function getCachedRouteResult(RouteContext $routeContext)
+    {
+        // TODO implement
+        return null;
+    }
+
+    /**
      * Stores the $matchResults in the cache
      *
      * @param Request $httpRequest
@@ -107,6 +121,11 @@ class RouterCachingService
         }
         $tags = $this->generateRouteTags($httpRequest->getRelativePath(), $matchResults);
         $this->routeCache->set($this->buildRouteCacheIdentifier($httpRequest), $matchResults, $tags);
+    }
+
+    public function storeRouteResult(Request $httpRequest, RouteResult $routeResult)
+    {
+        // TODO implement
     }
 
     /**
@@ -123,6 +142,13 @@ class RouterCachingService
         }
         return $this->resolveCache->get($this->buildResolveCacheIdentifier($routeValues));
     }
+
+    public function getCachedResolveResult(ResolveContext $resolveContext)
+    {
+        // TODO implement
+        return null;
+    }
+
 
     /**
      * Stores the $uriPath in the cache together with the $routeValues
@@ -144,6 +170,11 @@ class RouterCachingService
             $tags = $this->generateRouteTags($uriPath, $routeValues);
             $this->resolveCache->set($cacheIdentifier, $uriPath, $tags);
         }
+    }
+
+    public function storeResolveResult(ResolveResult $resolveResult)
+    {
+        // TODO implement
     }
 
     /**
@@ -296,4 +327,5 @@ class RouterCachingService
         }
         return $uuids;
     }
+
 }
