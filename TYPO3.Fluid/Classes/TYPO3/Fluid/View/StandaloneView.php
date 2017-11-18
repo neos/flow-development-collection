@@ -20,6 +20,8 @@ use TYPO3\Flow\Mvc\Controller\ControllerContext;
 use TYPO3\Flow\Mvc\Routing\UriBuilder;
 use TYPO3\Flow\Utility\Files;
 use TYPO3\Fluid\View\Exception\InvalidTemplateResourceException;
+use TYPO3\Flow\Core\Bootstrap;
+use TYPO3\Flow\Http\HttpRequestHandlerInterface;
 
 /**
  * A standalone template view.
@@ -78,6 +80,12 @@ class StandaloneView extends AbstractTemplateView
     protected $request;
 
     /**
+     * @var Bootstrap
+     * @Flow\Inject
+     */
+    protected $bootstrap;
+
+    /**
      * Constructor
      *
      * @param ActionRequest $request The current action request. If none is specified it will be created from the environment.
@@ -95,8 +103,13 @@ class StandaloneView extends AbstractTemplateView
     public function initializeObject()
     {
         if ($this->request === null) {
-            $httpRequest = Request::createFromEnvironment();
-            $this->request = $this->objectManager->get(\TYPO3\Flow\Mvc\ActionRequest::class, $httpRequest);
+            $requestHandler = $this->bootstrap->getActiveRequestHandler();
+            if ($requestHandler instanceof HttpRequestHandlerInterface) {
+                $this->request = $this->objectManager->get(\TYPO3\Flow\Mvc\ActionRequest::class, $requestHandler->getHttpRequest());
+            } else {
+                $httpRequest = Request::createFromEnvironment();
+                $this->request = $this->objectManager->get(\TYPO3\Flow\Mvc\ActionRequest::class, $httpRequest);
+            }
         }
 
         $uriBuilder = new UriBuilder();
