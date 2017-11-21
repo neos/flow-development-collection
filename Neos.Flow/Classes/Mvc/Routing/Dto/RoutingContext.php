@@ -11,13 +11,14 @@ namespace Neos\Flow\Mvc\Routing\Dto;
  * source code.
  */
 
+use Neos\Cache\CacheAwareInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Request as HttpRequest;
 
 /**
  * @Flow\Proxy(false)
  */
-final class RouteContext
+final class RoutingContext implements CacheAwareInterface
 {
 
     /**
@@ -31,6 +32,11 @@ final class RouteContext
     private $parameters;
 
     /**
+     * @var string
+     */
+    private $cacheEntryIdentifier;
+
+    /**
      * @param HttpRequest $httpRequest
      * @param Parameters $parameters
      */
@@ -38,6 +44,12 @@ final class RouteContext
     {
         $this->httpRequest = $httpRequest;
         $this->parameters = $parameters;
+        $this->cacheEntryIdentifier = md5(sprintf('host:%s|path:%s|method:%s|parameters:%s',
+            $httpRequest->getUri()->getHost(),
+            $httpRequest->getRelativePath(),
+            $httpRequest->getMethod(),
+            $parameters->getCacheEntryIdentifier()
+        ));
     }
 
     public function getHttpRequest(): HttpRequest
@@ -45,23 +57,26 @@ final class RouteContext
         return $this->httpRequest;
     }
 
-    /**
-     * @return Parameters
-     */
-    public function getParameters(): Parameters
+    public function hasParameter(string $namespace, string $parameterName): bool
     {
-        return $this->parameters;
+        return $this->parameters->has($namespace, $parameterName);
     }
 
     /**
      * @param string $namespace
-     * @param Parameter $parameter
-     * @return self
+     * @param string $parameterName
+     * @return array|string|float|int|bool|CacheAwareInterface|null
      */
-    public function withParameter(string $namespace, Parameter $parameter): self
+    public function getParameterValue(string $namespace, string $parameterName)
     {
-        $newParameters = $this->parameters->withParameter($namespace, $parameter);
-        return new static($this->httpRequest, $newParameters);
+        return $this->parameters->getValue($namespace, $parameterName);
     }
 
+    /**
+     * @return string
+     */
+    public function getCacheEntryIdentifier(): string
+    {
+        return $this->cacheEntryIdentifier;
+    }
 }

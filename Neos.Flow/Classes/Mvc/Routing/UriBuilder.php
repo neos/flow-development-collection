@@ -347,15 +347,19 @@ class UriBuilder
     {
         $arguments = Arrays::arrayMergeRecursiveOverrule($this->arguments, $arguments);
         $arguments = $this->mergeArgumentsWithRequestArguments($arguments);
-
-        $httpRequest = $this->request->getHttpRequest();
-
-        $uriPrefix = $this->environment->isRewriteEnabled() ? '' : 'index.php/';
-        $resolveContext = new ResolveContext($httpRequest, $arguments, $this->createAbsoluteUri, $this->section, $uriPrefix);
-
-        $resolvedUri = $this->router->resolve($resolveContext);
+        $uri = $this->router->resolve($arguments);
         $this->lastArguments = $arguments;
-        return $resolvedUri;
+        if (!$this->environment->isRewriteEnabled()) {
+            $uri = $uri->withPath('index.php/' . $uri->getPath());
+        }
+        $httpRequest = $this->request->getHttpRequest();
+        if ($this->createAbsoluteUri === true && $uri->getHost() === '') {
+            $uri = $uri->withHost($httpRequest->getBaseUri()->getHost())->withScheme($httpRequest->getBaseUri()->getScheme());
+        }
+        if ($this->section !== '') {
+            $uri = $uri->withFragment($this->section);
+        }
+        return $uri;
     }
 
     /**

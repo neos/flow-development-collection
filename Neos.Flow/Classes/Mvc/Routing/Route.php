@@ -12,13 +12,13 @@ namespace Neos\Flow\Mvc\Routing;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Http\Request;
 use Neos\Flow\Http\Uri;
 use Neos\Flow\Mvc\Exception\InvalidRoutePartHandlerException;
 use Neos\Flow\Mvc\Exception\InvalidRoutePartValueException;
 use Neos\Flow\Mvc\Exception\InvalidRouteSetupException;
 use Neos\Flow\Mvc\Exception\InvalidUriPatternException;
-use Neos\Flow\Mvc\Routing\Dto\ResolveContext;
-use Neos\Flow\Mvc\Routing\Dto\RouteContext;
+use Neos\Flow\Mvc\Routing\Dto\RoutingContext;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Utility\Arrays;
@@ -125,6 +125,11 @@ class Route
      * @var PersistenceManagerInterface
      */
     protected $persistenceManager;
+
+    /**
+     * @var RoutingContext
+     */
+    protected $context;
 
     /**
      * Sets Route name.
@@ -301,6 +306,11 @@ class Route
         return $this->httpMethods !== [];
     }
 
+    public function setContext(RoutingContext $context)
+    {
+        $this->context = $context;
+    }
+
     /**
      * Returns an array with the Route match results.
      *
@@ -339,14 +349,13 @@ class Route
      * $this->matchResults contains an array combining Route default values and
      * calculated matchResults from the individual Route Parts.
      *
-     * @param RouteContext $routeContext
+     * @param Request $httpRequest the HTTP request to match
      * @return boolean TRUE if this Route corresponds to the given $routePath, otherwise FALSE
      * @throws InvalidRoutePartValueException
      * @see getMatchResults()
      */
-    public function matches(RouteContext $routeContext)
+    public function matches(Request $httpRequest)
     {
-        $httpRequest = $routeContext->getHttpRequest();
         $routePath = $httpRequest->getRelativePath();
         $this->matchResults = null;
         if ($this->uriPattern === null) {
@@ -365,6 +374,9 @@ class Route
         $optionalPartCount = 0;
         /** @var $routePart RoutePartInterface */
         foreach ($this->routeParts as $routePart) {
+            if ($routePart instanceof RoutingContextAwareInterface) {
+                $routePart->setRoutingContext($this->context);
+            }
             if ($routePart->isOptional()) {
                 $optionalPartCount++;
                 if ($skipOptionalParts) {
@@ -376,9 +388,6 @@ class Route
             } else {
                 $optionalPartCount = 0;
                 $skipOptionalParts = false;
-            }
-            if ($routePart instanceof RouteParametersAwareInterface) {
-                $routePart->setRouteParameters($routeContext->getParameters());
             }
             if ($routePart->match($routePath) !== true) {
                 if ($routePart->isOptional() && $optionalPartCount === 1) {
@@ -409,13 +418,14 @@ class Route
     /**
      * Checks whether $routeValues can be resolved to a corresponding uri.
      * If all Route Parts can resolve one or more of the $routeValues, TRUE is
-     * returned and $this->resolvedUri contains the generated URI (relative or absolute)
+     * returned and $this->matchingURI contains the generated URI (excluding
+     * protocol and host).
      *
-     * @param ResolveContext $resolveContext
+     * @param array $routeValues An array containing key/value pairs to be resolved to uri segments
      * @return boolean TRUE if this Route corresponds to the given $routeValues, otherwise FALSE
      * @throws InvalidRoutePartValueException
      */
-    public function resolves(ResolveContext $resolveContext)
+    public function resolves(array $routeValues)
     {
         $this->resolvedUri = null;
         if ($this->uriPattern === null) {
@@ -424,7 +434,6 @@ class Route
         if (!$this->isParsed) {
             $this->parse();
         }
-        $routeValues = $resolveContext->getRouteValues();
 
         $resolvePostProcessors = [];
         $resolvedUriString = '';
@@ -433,6 +442,9 @@ class Route
         $matchingOptionalUriPortion = '';
         /** @var $routePart RoutePartInterface */
         foreach ($this->routeParts as $routePart) {
+            if ($routePart instanceof RoutingContextAwareInterface) {
+                $routePart->setRoutingContext($this->context);
+            }
             if (!$routePart->resolve($routeValues)) {
                 if (!$routePart->hasDefaultValue()) {
                     return false;
@@ -496,21 +508,10 @@ class Route
             }
         }
 
-        if ($resolveContext->hasUriPrefix()) {
-            $resolvedUriString = $resolveContext->getUriPrefix() . $resolvedUriString;
-        }
-        if ($resolveContext->isForceAbsoluteUri()) {
-            $resolvedUriString = $resolveContext->getHttpRequest()->getBaseUri() . $resolvedUriString;
-        } else {
-            $resolvedUriString = $resolveContext->getHttpRequest()->getScriptRequestPath() . $resolvedUriString;
-        }
-        if ($resolveContext->hasSection()) {
-            $resolvedUriString .= '#' . $resolveContext->getSection();
-        }
 
-        $resolvedUri = new Uri($resolvedUriString);
+        $resolvedUri = new Uri($this->context->getHttpRequest()->getScriptRequestPath() . $resolvedUriString);
         foreach ($resolvePostProcessors as $postProcessor) {
-            $resolvedUri = call_user_func($postProcessor, $resolvedUri, $resolveContext);
+            $resolvedUri = call_user_func($postProcessor, $resolvedUri);
         }
 
         $this->resolvedUri = $resolvedUri;

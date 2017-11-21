@@ -11,17 +11,17 @@ namespace Neos\Flow\Mvc\Routing;
  * source code.
  */
 
-use Neos\Flow\Mvc\Routing\Dto\Parameters;
+use Neos\Flow\Mvc\Routing\Dto\RoutingContext;
 
 /**
  * TODO document
  */
-interface RouteParametersAwareInterface
+interface RoutingContextAwareInterface
 {
 
     /**
-     * @param Parameters $routeParameters
+     * @param RoutingContext $routingContext
      * @return void
      */
-    public function setRouteParameters(Parameters $routeParameters);
+    public function setRoutingContext(RoutingContext $routingContext);
 }

@@ -13,11 +13,12 @@ namespace Neos\Flow\Mvc\Routing\Dto;
 
 use Neos\Cache\CacheAwareInterface;
 use Neos\Flow\Annotations as Flow;
+use Neos\Utility\TypeHandling;
 
 /**
  * @Flow\Proxy(false)
  */
-final class Parameter
+final class Parameter implements CacheAwareInterface
 {
 
     /**
@@ -31,12 +32,17 @@ final class Parameter
     private $value;
 
     /**
+     * @var string
+     */
+    private $cacheEntryIdentifier;
+
+    /**
      * @param string $name
      * @param array|bool|float|int|CacheAwareInterface|string $value
      */
     public function __construct(string $name, $value)
     {
-        // TODO verify $parameterValue (has to be simple type or instanceof CacheAwareInterface) ?
+        $this->cacheEntryIdentifier = $this->buildCacheEntryIdentifier($name, $value);
         $this->name = $name;
         $this->value = $value;
     }
@@ -49,6 +55,29 @@ final class Parameter
     public function getValue()
     {
         return $this->value;
+    }
+
+    private function buildCacheEntryIdentifier(string $name, $value)
+    {
+        if (is_array($value)) {
+            $convertedArray = '';
+            foreach ($value as $key => $subValue) {
+                $convertedArray .= '|' . $this->buildCacheEntryIdentifier($name . '.' . $key, $subValue);
+            }
+            return $convertedArray;
+        }
+        if ($value instanceof CacheAwareInterface) {
+            return $value->getCacheEntryIdentifier();
+        }
+        if (TypeHandling::isSimpleType(gettype($value))) {
+            return $name . ':' . (string)$value;
+        }
+        throw new \InvalidArgumentException(sprintf('Parameter values must be simple types or implement the CacheAwareInterface, given: "%s"', is_object($value) ? get_class($value) : gettype($value)), 1511194273);
+    }
+
+    public function getCacheEntryIdentifier(): string
+    {
+        return $this->cacheEntryIdentifier;
     }
 
 }

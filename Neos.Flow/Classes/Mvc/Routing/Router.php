@@ -13,12 +13,11 @@ namespace Neos\Flow\Mvc\Routing;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Configuration\ConfigurationManager;
+use Neos\Flow\Http\Request;
 use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\Mvc\Exception\InvalidRouteSetupException;
 use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
-use Neos\Flow\Mvc\Routing\Dto\ResolveContext;
-use Neos\Flow\Mvc\Routing\Dto\RouteContext;
-use Neos\Flow\Mvc\Routing\Dto\RouteResult;
+use Neos\Flow\Mvc\Routing\Dto\RoutingContext;
 use Psr\Http\Message\UriInterface;
 
 /**
@@ -69,6 +68,11 @@ class Router implements RouterInterface
     protected $routesCreated = false;
 
     /**
+     * @var RoutingContext
+     */
+    protected $context;
+
+    /**
      * Sets the routes configuration.
      *
      * @param array $routesConfiguration The routes configuration or NULL if it should be fetched from configuration
@@ -80,32 +84,38 @@ class Router implements RouterInterface
         $this->routesCreated = false;
     }
 
+    public function setContext(RoutingContext $context)
+    {
+        $this->context = $context;
+        $this->routesCreated = false;
+    }
+
     /**
      * Iterates through all configured routes and calls matches() on them.
      * Returns the matchResults of the matching route or NULL if no matching
      * route could be found.
      *
-     * @param RouteContext $routeContext
-     * @return RouteResult
+     * @param Request $httpRequest The web request to be analyzed. Will be modified by the router.
+     * @return array The results of the matching route or NULL if no route matched
      * @throws NoMatchingRouteException
      */
-    public function route(RouteContext $routeContext): RouteResult
+    public function route(Request $httpRequest): array
     {
-        $this->emitBeforeRoute($routeContext);
-        $cachedRouteResult = $this->routerCachingService->getCachedRouteResult($routeContext);
-        if ($cachedRouteResult !== null) {
+        $cachedRouteResult = $this->routerCachingService->getCachedMatchResults($this->context);
+        if ($cachedRouteResult !== false) {
             return $cachedRouteResult;
         }
         $this->createRoutesFromConfiguration();
 
-        $httpRequest = $routeContext->getHttpRequest();
         /** @var $route Route */
         foreach ($this->routes as $route) {
-            if ($route->matches($routeContext) === true) {
-                $routeResult = RouteResult::fromMatchedRoute($route);
-                $this->routerCachingService->storeRouteResult($httpRequest, $routeResult);
-                $this->systemLogger->log(sprintf('Router route(): Route "%s" matched the path "%s".', $route->getName(), $httpRequest->getRelativePath()), LOG_DEBUG);
-                return $routeResult;
+            if ($route->matches($httpRequest) === true) {
+                $matchResults = $route->getMatchResults();
+                if ($matchResults !== null) {
+                    $this->routerCachingService->storeMatchResults($this->context, $matchResults);
+                }
+                $this->systemLogger->log(sprintf('Router route(): Route "%s" matched the request "%s (%s)".', $route->getName(), $httpRequest->getUri(), $httpRequest->getMethod()), LOG_DEBUG);
+                return $route->getMatchResults();
             }
         }
         $this->systemLogger->log(sprintf('Router route(): No route matched the route path "%s".', $httpRequest->getRelativePath()), LOG_NOTICE);
@@ -141,14 +151,14 @@ class Router implements RouterInterface
      * method. If no matching route is found, an empty string is returned.
      * Note: calls of this message are cached by RouterCachingAspect
      *
-     * @param ResolveContext $resolveContext
+     * @param array $routeValues Key/value pairs to be resolved. E.g. array('@package' => 'MyPackage', '@controller' => 'MyController');
      * @return UriInterface
      * @throws NoMatchingRouteException
      */
-    public function resolve(ResolveContext $resolveContext): UriInterface
+    public function resolve(array $routeValues): UriInterface
     {
-        $cachedResolvedUri = $this->routerCachingService->getCachedResolvedUri($resolveContext);
-        if ($cachedResolvedUri !== null) {
+        $cachedResolvedUri = $this->routerCachingService->getCachedResolvedUri($this->context, $routeValues);
+        if ($cachedResolvedUri !== false) {
             return $cachedResolvedUri;
         }
 
@@ -156,13 +166,13 @@ class Router implements RouterInterface
 
         /** @var $route Route */
         foreach ($this->routes as $route) {
-            if ($route->resolves($resolveContext) === true) {
+            if ($route->resolves($routeValues) === true) {
                 $resolveUri = $route->getResolvedUri();
-                $this->routerCachingService->storeResolvedUri($resolveContext, $resolveUri);
+                $this->routerCachingService->storeResolvedUri($this->context, $resolveUri, $routeValues);
                 return $resolveUri;
             }
         }
-        $this->systemLogger->log('Router resolve(): Could not resolve a route for building an URI for the given resolve context.', LOG_WARNING, $resolveContext->getRouteValues());
+        $this->systemLogger->log('Router resolve(): Could not resolve a route for building an URI for the given resolve context.', LOG_WARNING, $routeValues);
         throw new NoMatchingRouteException('Could not resolve a route and its corresponding URI for the given parameters. This may be due to referring to a not existing package / controller / action while building a link or URI. Refer to log and check the backtrace for more details.', 1301610453);
     }
 
@@ -212,6 +222,9 @@ class Router implements RouterInterface
                 }
                 $routesWithHttpMethodConstraints[$uriPattern] = false;
             }
+            if ($this->context !== null) {
+                $route->setContext($this->context);
+            }
             $this->routes[] = $route;
         }
         $this->routesCreated = true;
@@ -227,15 +240,6 @@ class Router implements RouterInterface
         if ($this->routesConfiguration === null) {
             $this->routesConfiguration = $this->configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_ROUTES);
         }
-    }
-
-    /**
-     * @param RouteContext $routeContext
-     * @return void
-     * @Flow\Signal
-     */
-    protected function emitBeforeRoute(RouteContext &$routeContext)
-    {
     }
 
 }

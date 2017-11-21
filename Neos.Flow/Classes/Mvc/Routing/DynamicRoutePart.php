@@ -12,6 +12,7 @@ namespace Neos\Flow\Mvc\Routing;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Mvc\Routing\Dto\RoutingContext;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Utility\ObjectAccess;
 use Neos\Utility\Arrays;
@@ -21,7 +22,7 @@ use Neos\Utility\Arrays;
  *
  * @api
  */
-class DynamicRoutePart extends AbstractRoutePart implements DynamicRoutePartInterface
+class DynamicRoutePart extends AbstractRoutePart implements DynamicRoutePartInterface, RoutingContextAwareInterface
 {
     /**
      * @var PersistenceManagerInterface
@@ -38,6 +39,11 @@ class DynamicRoutePart extends AbstractRoutePart implements DynamicRoutePartInte
     protected $splitString = '';
 
     /**
+     * @var RoutingContext
+     */
+    protected $routingContext;
+
+    /**
      * Sets split string of the Route Part.
      *
      * @param string $splitString
@@ -47,6 +53,16 @@ class DynamicRoutePart extends AbstractRoutePart implements DynamicRoutePartInte
     public function setSplitString($splitString)
     {
         $this->splitString = $splitString;
+    }
+
+    /**
+     * @param RoutingContext $routingContext
+     * @return void
+     * @api
+     */
+    public function setRoutingContext(RoutingContext $routingContext)
+    {
+        $this->routingContext = $routingContext;
     }
 
     /**

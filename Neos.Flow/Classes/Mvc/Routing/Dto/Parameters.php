@@ -11,12 +11,13 @@ namespace Neos\Flow\Mvc\Routing\Dto;
  * source code.
  */
 
+use Neos\Cache\CacheAwareInterface;
 use Neos\Flow\Annotations as Flow;
 
 /**
  * @Flow\Proxy(false)
  */
-final class Parameters
+final class Parameters implements CacheAwareInterface
 {
 
     /**
@@ -57,6 +58,18 @@ final class Parameters
     public function getValue(string $namespace, string $parameterName)
     {
         return $this->has($namespace, $parameterName) ? $this->parameters[$namespace][$parameterName]->getValue() : null;
+    }
+
+    public function getCacheEntryIdentifier(): string
+    {
+        $cacheIdentifierParts = [];
+        /** @var Parameter[] $namespaceParameters */
+        foreach($this->parameters as $namespace => $namespaceParameters) {
+            foreach($namespaceParameters as $parameter) {
+                $cacheIdentifierParts[] = $namespace . ':' . $parameter->getCacheEntryIdentifier();
+            }
+        }
+        return md5(implode('|', $cacheIdentifierParts));
     }
 
 }

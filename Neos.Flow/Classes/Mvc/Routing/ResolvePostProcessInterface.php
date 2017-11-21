@@ -11,7 +11,6 @@ namespace Neos\Flow\Mvc\Routing;
  * source code.
  */
 
-use Neos\Flow\Mvc\Routing\Dto\ResolveContext;
 use Psr\Http\Message\UriInterface;
 
 /**
@@ -22,8 +21,7 @@ interface ResolvePostProcessInterface
 
     /**
      * @param UriInterface $resolvedUri
-     * @param ResolveContext $resolveContext
      * @return UriInterface
      */
-    public function postProcess(UriInterface $resolvedUri, ResolveContext $resolveContext): UriInterface;
+    public function postProcess(UriInterface $resolvedUri): UriInterface;
 }
