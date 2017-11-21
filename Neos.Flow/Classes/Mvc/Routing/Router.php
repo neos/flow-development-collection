@@ -68,6 +68,16 @@ class Router implements RouterInterface
     protected $routesCreated = false;
 
     /**
+     * @var Route
+     */
+    protected $lastMatchedRoute;
+
+    /**
+     * @var Route
+     */
+    protected $lastResolvedRoute;
+
+    /**
      * @var RoutingContext
      */
     protected $context;
@@ -123,6 +133,17 @@ class Router implements RouterInterface
     }
 
     /**
+     * Returns the route that has been matched with the last route() call.
+     * Returns NULL if no route matched or route() has not been called yet
+     *
+     * @return Route
+     */
+    public function getLastMatchedRoute()
+    {
+        return $this->lastMatchedRoute;
+    }
+
+    /**
      * Returns a list of configured routes
      *
      * @return array
@@ -174,6 +195,17 @@ class Router implements RouterInterface
         }
         $this->systemLogger->log('Router resolve(): Could not resolve a route for building an URI for the given resolve context.', LOG_WARNING, $routeValues);
         throw new NoMatchingRouteException('Could not resolve a route and its corresponding URI for the given parameters. This may be due to referring to a not existing package / controller / action while building a link or URI. Refer to log and check the backtrace for more details.', 1301610453);
+    }
+
+    /**
+     * Returns the route that has been resolved with the last resolve() call.
+     * Returns NULL if no route was found or resolve() has not been called yet
+     *
+     * @return Route
+     */
+    public function getLastResolvedRoute()
+    {
+        return $this->lastResolvedRoute;
     }
 
     /**
@@ -241,5 +273,4 @@ class Router implements RouterInterface
             $this->routesConfiguration = $this->configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_ROUTES);
         }
     }
-
 }
