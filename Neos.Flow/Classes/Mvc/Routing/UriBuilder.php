@@ -327,7 +327,7 @@ class UriBuilder
     protected function addNamespaceToArguments(array $arguments, RequestInterface $currentRequest)
     {
         while (!$currentRequest->isMainRequest()) {
-            $argumentNamespace = $currentRequest instanceof ActionRequest ? $currentRequest->getArgumentNamespace() : '';
+            $argumentNamespace = $currentRequest->getArgumentNamespace();
             if ($argumentNamespace !== '') {
                 $arguments = [$argumentNamespace => $arguments];
             }

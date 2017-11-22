@@ -436,7 +436,7 @@ class Route
         }
 
         $resolvePostProcessors = [];
-        $resolvedUriString = '';
+        $resolvedUriPath = '';
         $remainingDefaults = $this->defaults;
         $requireOptionalRouteParts = false;
         $matchingOptionalUriPortion = '';
@@ -468,7 +468,7 @@ class Route
                 throw new InvalidRoutePartValueException('RoutePart::getDefaultValue() must return a string, got ' . (is_object($routePartDefaultValue) ? get_class($routePartDefaultValue) : gettype($routePartDefaultValue)) . ' for RoutePart "' . get_class($routePart) . '" in Route "' . $this->getName() . '".');
             }
             if (!$routePart->isOptional()) {
-                $resolvedUriString .= $routePart->hasValue() ? $routePartValue : $routePartDefaultValue;
+                $resolvedUriPath .= $routePart->hasValue() ? $routePartValue : $routePartDefaultValue;
                 $requireOptionalRouteParts = false;
                 continue;
             }
@@ -479,7 +479,7 @@ class Route
                 $matchingOptionalUriPortion .= $routePartDefaultValue;
             }
             if ($requireOptionalRouteParts) {
-                $resolvedUriString .= $matchingOptionalUriPortion;
+                $resolvedUriPath .= $matchingOptionalUriPortion;
                 $matchingOptionalUriPortion = '';
             }
         }
@@ -504,12 +504,12 @@ class Route
             }
             $queryString = http_build_query($routeValues, null, '&');
             if ($queryString !== '') {
-                $resolvedUriString .= strpos($resolvedUriString, '?') !== false ? '&' . $queryString : '?' . $queryString;
+                $resolvedUriPath .= strpos($resolvedUriPath, '?') !== false ? '&' . $queryString : '?' . $queryString;
             }
         }
 
 
-        $resolvedUri = new Uri($this->context->getHttpRequest()->getScriptRequestPath() . $resolvedUriString);
+        $resolvedUri = new Uri($this->context->getHttpRequest()->getScriptRequestPath() . $resolvedUriPath);
         foreach ($resolvePostProcessors as $postProcessor) {
             $resolvedUri = call_user_func($postProcessor, $resolvedUri);
         }
