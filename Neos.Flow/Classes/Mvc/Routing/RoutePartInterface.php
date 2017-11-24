@@ -11,6 +11,8 @@ namespace Neos\Flow\Mvc\Routing;
  * source code.
  */
 
+use Neos\Flow\Mvc\Routing\Dto\ResolveResult;
+
 /**
  * Contract for all Route Parts.
  *
@@ -133,7 +135,7 @@ interface RoutePartInterface
      * This is why $routeValues has to be passed by reference.
      *
      * @param array &$routeValues An array with key/value pairs to be resolved by Dynamic Route Parts.
-     * @return boolean TRUE if Route Part can resolve one or more $routeValues elements, otherwise FALSE.
+     * @return bool|ResolveResult TRUE or an instance of ResolveResult if Route Part can resolve one or more $routeValues elements, otherwise FALSE.
      */
     public function resolve(array &$routeValues);
 }

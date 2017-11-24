@@ -13,6 +13,7 @@ namespace Neos\Flow\Mvc\Routing\Dto;
 
 use Neos\Cache\CacheAwareInterface;
 use Neos\Flow\Annotations as Flow;
+use Neos\Utility\TypeHandling;
 
 /**
  * @Flow\Proxy(false)
@@ -21,53 +22,57 @@ final class Parameters implements CacheAwareInterface
 {
 
     /**
-     * @var array in the format ['<namespace>' => ['<param-name>' => <Parameter>, ...], ...]
+     * @var string[]
      */
     private $parameters = [];
 
     /**
-     * @param array
+     * @param string[] $parameters
      */
     private function __construct(array $parameters)
     {
         $this->parameters = $parameters;
     }
 
-    public static function create(): self
+    public static function createEmpty(): self
     {
         return new static([]);
     }
 
-    public function withParameter(string $namespace, Parameter $parameter): self
+    /**
+     * @param string $parameterName
+     * @param bool|float|int|string|CacheAwareInterface $parameterValue
+     * @return Parameters
+     */
+    public function withParameter(string $parameterName, $parameterValue): self
     {
+        if (!TypeHandling::isLiteral(gettype($parameterValue)) && (!$parameterValue instanceof CacheAwareInterface)) {
+            throw new \InvalidArgumentException(sprintf('Parameter values must be literal types or implement the CacheAwareInterface, given: "%s"', is_object($parameterValue) ? get_class($parameterValue) : gettype($parameterValue)), 1511194273);
+        }
         $newParameters = $this->parameters;
-        $newParameters[$namespace][$parameter->getName()] = $parameter;
+        $newParameters[$parameterName] = $parameterValue;
         return new static($newParameters);
     }
 
-    public function has(string $namespace, string $parameterName)
+    public function has(string $parameterName)
     {
-        return isset($this->parameters[$namespace][$parameterName]);
+        return isset($this->parameters[$parameterName]);
     }
 
     /**
-     * @param string $namespace
      * @param string $parameterName
      * @return mixed|null
      */
-    public function getValue(string $namespace, string $parameterName)
+    public function getValue(string $parameterName)
     {
-        return $this->has($namespace, $parameterName) ? $this->parameters[$namespace][$parameterName]->getValue() : null;
+        return $this->parameters[$parameterName] ?? null;
     }
 
     public function getCacheEntryIdentifier(): string
     {
         $cacheIdentifierParts = [];
-        /** @var Parameter[] $namespaceParameters */
-        foreach($this->parameters as $namespace => $namespaceParameters) {
-            foreach($namespaceParameters as $parameter) {
-                $cacheIdentifierParts[] = $namespace . ':' . $parameter->getCacheEntryIdentifier();
-            }
+        foreach($this->parameters as $parameterName => $parameterValue) {
+            $cacheIdentifierParts[] = $parameterName . ':' . ($parameterValue instanceof CacheAwareInterface ? $parameterValue->getCacheEntryIdentifier() : (string)$parameterValue);
         }
         return md5(implode('|', $cacheIdentifierParts));
     }

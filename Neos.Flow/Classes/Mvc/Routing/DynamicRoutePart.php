@@ -12,7 +12,9 @@ namespace Neos\Flow\Mvc\Routing;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Mvc\Routing\Dto\RoutingContext;
+use Neos\Flow\Mvc\Routing\Dto\MatchResult;
+use Neos\Flow\Mvc\Routing\Dto\Parameters;
+use Neos\Flow\Mvc\Routing\Dto\ResolveResult;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Utility\ObjectAccess;
 use Neos\Utility\Arrays;
@@ -22,7 +24,7 @@ use Neos\Utility\Arrays;
  *
  * @api
  */
-class DynamicRoutePart extends AbstractRoutePart implements DynamicRoutePartInterface, RoutingContextAwareInterface
+class DynamicRoutePart extends AbstractRoutePart implements DynamicRoutePartInterface, ParameterAwareRoutePartInterface
 {
     /**
      * @var PersistenceManagerInterface
@@ -39,9 +41,9 @@ class DynamicRoutePart extends AbstractRoutePart implements DynamicRoutePartInte
     protected $splitString = '';
 
     /**
-     * @var RoutingContext
+     * @var Parameters
      */
-    protected $routingContext;
+    protected $parameters;
 
     /**
      * Sets split string of the Route Part.
@@ -55,14 +57,9 @@ class DynamicRoutePart extends AbstractRoutePart implements DynamicRoutePartInte
         $this->splitString = $splitString;
     }
 
-    /**
-     * @param RoutingContext $routingContext
-     * @return void
-     * @api
-     */
-    public function setRoutingContext(RoutingContext $routingContext)
+    final public function match(&$routePath)
     {
-        $this->routingContext = $routingContext;
+        return $this->matchWithParameters($routePath, Parameters::createEmpty());
     }
 
     /**
@@ -72,22 +69,23 @@ class DynamicRoutePart extends AbstractRoutePart implements DynamicRoutePartInte
      * and shortens $routePath respectively.
      *
      * @param string $routePath The request path to be matched - without query parameters, host and fragment.
-     * @return boolean TRUE if Route Part matched $routePath, otherwise FALSE.
+     * @param Parameters $parameters
+     * @return bool|MatchResult TRUE if Route Part matched $routePath, otherwise FALSE.
      */
-    final public function match(&$routePath)
+    final public function matchWithParameters(&$routePath, Parameters $parameters)
     {
         $this->value = null;
+        $this->parameters = $parameters;
         if ($this->name === null || $this->name === '') {
             return false;
         }
         $valueToMatch = $this->findValueToMatch($routePath);
         $matchResult = $this->matchValue($valueToMatch);
-        if ($matchResult !== true) {
+        if ($matchResult !== true && !($matchResult instanceof MatchResult)) {
             return $matchResult;
         }
         $this->removeMatchingPortionFromRequestPath($routePath, $valueToMatch);
-
-        return true;
+        return $matchResult;
     }
 
     /**
@@ -123,7 +121,7 @@ class DynamicRoutePart extends AbstractRoutePart implements DynamicRoutePartInte
      * This method can be overridden by custom RoutePartHandlers to implement custom matching mechanisms.
      *
      * @param string $value value to match
-     * @return boolean TRUE if value could be matched successfully, otherwise FALSE.
+     * @return bool|MatchResult TRUE if value could be matched successfully, otherwise FALSE.
      * @api
      */
     protected function matchValue($value)
@@ -131,8 +129,7 @@ class DynamicRoutePart extends AbstractRoutePart implements DynamicRoutePartInte
         if ($value === null || $value === '') {
             return false;
         }
-        $this->value = rawurldecode($value);
-        return true;
+        return new MatchResult(rawurldecode($value));
     }
 
     /**
@@ -156,7 +153,7 @@ class DynamicRoutePart extends AbstractRoutePart implements DynamicRoutePartInte
      * If a corresponding element is found in $routeValues, this element is removed from the array.
      *
      * @param array $routeValues An array with key/value pairs to be resolved by Dynamic Route Parts.
-     * @return boolean TRUE if current Route Part could be resolved, otherwise FALSE
+     * @return bool|ResolveResult TRUE or an instance of ResolveResult if current Route Part could be resolved, otherwise FALSE
      */
     final public function resolve(array &$routeValues)
     {
@@ -165,11 +162,12 @@ class DynamicRoutePart extends AbstractRoutePart implements DynamicRoutePartInte
             return false;
         }
         $valueToResolve = $this->findValueToResolve($routeValues);
-        if (!$this->resolveValue($valueToResolve)) {
+        $resolveResult = $this->resolveValue($valueToResolve);
+        if (!$resolveResult) {
             return false;
         }
         $routeValues = Arrays::unsetValueByPath($routeValues, $this->name);
-        return true;
+        return $resolveResult;
     }
 
     /**
@@ -194,7 +192,7 @@ class DynamicRoutePart extends AbstractRoutePart implements DynamicRoutePartInte
      * This method can be overridden by custom RoutePartHandlers to implement custom resolving mechanisms.
      *
      * @param mixed $value value to resolve
-     * @return boolean TRUE if value could be resolved successfully, otherwise FALSE.
+     * @return boolean|ResolveResult TRUE or an instance of ResolveResult if value could be resolved successfully, otherwise FALSE.
      * @api
      */
     protected function resolveValue($value)
@@ -208,10 +206,10 @@ class DynamicRoutePart extends AbstractRoutePart implements DynamicRoutePartInte
                 return false;
             }
         }
-        $this->value = rawurlencode($value);
+        $resolvedValue = rawurlencode($value);
         if ($this->lowerCase) {
-            $this->value = strtolower($this->value);
+            $resolvedValue = strtolower($resolvedValue);
         }
-        return true;
+        return new ResolveResult($resolvedValue);
     }
 }

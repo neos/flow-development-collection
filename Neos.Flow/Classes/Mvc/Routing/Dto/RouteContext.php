@@ -18,7 +18,7 @@ use Neos\Flow\Http\Request as HttpRequest;
 /**
  * @Flow\Proxy(false)
  */
-final class RoutingContext implements CacheAwareInterface
+final class RouteContext implements CacheAwareInterface
 {
 
     /**
@@ -52,24 +52,20 @@ final class RoutingContext implements CacheAwareInterface
         ));
     }
 
+    /**
+     * @return HttpRequest
+     */
     public function getHttpRequest(): HttpRequest
     {
         return $this->httpRequest;
     }
 
-    public function hasParameter(string $namespace, string $parameterName): bool
-    {
-        return $this->parameters->has($namespace, $parameterName);
-    }
-
     /**
-     * @param string $namespace
-     * @param string $parameterName
-     * @return array|string|float|int|bool|CacheAwareInterface|null
+     * @return Parameters
      */
-    public function getParameterValue(string $namespace, string $parameterName)
+    public function getParameters(): Parameters
     {
-        return $this->parameters->getValue($namespace, $parameterName);
+        return $this->parameters;
     }
 
     /**
@@ -79,4 +75,5 @@ final class RoutingContext implements CacheAwareInterface
     {
         return $this->cacheEntryIdentifier;
     }
+
 }
