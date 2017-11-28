@@ -13,10 +13,11 @@ namespace Neos\Flow\Mvc\Routing;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Cache\CacheAwareInterface;
-use Neos\Cache\Frontend\StringFrontend;
 use Neos\Cache\Frontend\VariableFrontend;
-use Neos\Flow\Http\Uri;
-use Neos\Flow\Mvc\Routing\Dto\RoutingContext;
+use Neos\Flow\Mvc\Routing\Dto\ResolveContext;
+use Neos\Flow\Mvc\Routing\Dto\RouteContext;
+use Neos\Flow\Mvc\Routing\Dto\Tags;
+use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
@@ -38,7 +39,7 @@ class RouterCachingService
     protected $routeCache;
 
     /**
-     * @var StringFrontend
+     * @var VariableFrontend
      * @Flow\Inject
      */
     protected $resolveCache;
@@ -80,16 +81,16 @@ class RouterCachingService
     }
 
     /**
-     * Checks the cache for the route path given in the Request and returns the result
+     * Checks the cache for the given RouteContext and returns the result or FALSE if no matching ache entry was found
      *
-     * @param RoutingContext $routingContext
+     * @param RouteContext $routeContext
      * @return array|boolean the cached route values or FALSE if no cache entry was found
      */
-    public function getCachedMatchResults(RoutingContext $routingContext)
+    public function getCachedMatchResults(RouteContext $routeContext)
     {
-        $cachedResult = $this->routeCache->get($routingContext->getCacheEntryIdentifier());
+        $cachedResult = $this->routeCache->get($routeContext->getCacheEntryIdentifier());
         if ($cachedResult !== false) {
-            $this->systemLogger->log(sprintf('Router route(): A cached Route with the cache identifier "%s" matched the request "%s (%s)".', $routingContext->getCacheEntryIdentifier(), $routingContext->getHttpRequest()->getUri(), $routingContext->getHttpRequest()->getMethod()), LOG_DEBUG);
+            $this->systemLogger->log(sprintf('Router route(): A cached Route with the cache identifier "%s" matched the request "%s (%s)".', $routeContext->getCacheEntryIdentifier(), $routeContext->getHttpRequest()->getUri(), $routeContext->getHttpRequest()->getMethod()), LOG_DEBUG);
         }
 
         return $cachedResult;
@@ -98,56 +99,59 @@ class RouterCachingService
     /**
      * Stores the $matchResults in the cache
      *
-     * @param RoutingContext $routingContext
+     * @param RouteContext $routeContext
      * @param array $matchResults
+     * @param Tags|null $matchedTags
      * @return void
      */
-    public function storeMatchResults(RoutingContext $routingContext, array $matchResults)
+    public function storeMatchResults(RouteContext $routeContext, array $matchResults, Tags $matchedTags = null)
     {
         if ($this->containsObject($matchResults)) {
             return;
         }
-        $tags = $this->generateRouteTags($routingContext->getHttpRequest()->getRelativePath(), $matchResults);
-        $this->routeCache->set($routingContext->getCacheEntryIdentifier(), $matchResults, $tags);
+        $tags = $this->generateRouteTags($routeContext->getHttpRequest()->getRelativePath(), $matchResults);
+        if ($matchedTags !== null) {
+            $tags = array_unique(array_merge($matchedTags->getTags(), $tags));
+        }
+        $this->routeCache->set($routeContext->getCacheEntryIdentifier(), $matchResults, $tags);
     }
 
     /**
-     * Checks the cache for the given routing context and route values and returns the cached resolvedUri if a cache entry is found
+     * Checks the cache for the given ResolveContext and returns the cached UriConstraints if a cache entry is found
      *
-     * @param array $routeValues
-     * @return UriInterface|boolean the cached URI or FALSE if no cache entry was found
+     * @param ResolveContext $resolveContext
+     * @return UriConstraints|boolean the cached URI or FALSE if no cache entry was found
      */
-    public function getCachedResolvedUri(RoutingContext $routingContext, array $routeValues)
+    public function getCachedResolvedUriConstraints(ResolveContext $resolveContext)
     {
-        $routeValues = $this->convertObjectsToHashes($routeValues);
+        $routeValues = $this->convertObjectsToHashes($resolveContext->getRouteValues());
         if ($routeValues === null) {
             return false;
         }
-        $cachedUriString = $this->resolveCache->get($this->buildResolveCacheIdentifier($routingContext, $routeValues));
-        if ($cachedUriString === false) {
-            return false;
-        }
-        return new Uri($cachedUriString);
+        return $this->resolveCache->get($this->buildResolveCacheIdentifier($resolveContext, $routeValues));
     }
 
     /**
-     * Stores the $resolvedUri in the cache together with the $routeValues
+     * Stores the resolved UriConstraints in the cache together with the $routeValues
      *
-     * @param RoutingContext $routingContext
-     * @param UriInterface $resolvedUri
-     * @param array $routeValues
+     * @param ResolveContext $resolveContext
+     * @param UriConstraints $uriConstraints
+     * @param Tags|null $resolvedTags
      * @return void
      */
-    public function storeResolvedUri(RoutingContext $routingContext, UriInterface $resolvedUri, array $routeValues)
+    public function storeResolvedUriConstraints(ResolveContext $resolveContext, UriConstraints $uriConstraints, Tags $resolvedTags = null)
     {
-        $routeValues = $this->convertObjectsToHashes($routeValues);
+        $routeValues = $this->convertObjectsToHashes($resolveContext->getRouteValues());
         if ($routeValues === null) {
             return;
         }
 
-        $cacheIdentifier = $this->buildResolveCacheIdentifier($routingContext, $routeValues);
-        $tags = $this->generateRouteTags($resolvedUri->getPath(), $routeValues);
-        $this->resolveCache->set($cacheIdentifier, (string)$resolvedUri, $tags);
+        $cacheIdentifier = $this->buildResolveCacheIdentifier($resolveContext, $routeValues);
+        $tags = $this->generateRouteTags($uriConstraints->getPathConstraint(), $resolveContext->getRouteValues());
+        if ($resolvedTags !== null) {
+            $tags = array_unique(array_merge($resolvedTags->getTags(), $tags));
+        }
+        $this->resolveCache->set($cacheIdentifier, $uriConstraints, $tags);
     }
 
     /**
@@ -259,14 +263,15 @@ class RouterCachingService
     /**
      * Generates the Resolve cache identifier for the given Request
      *
-     * @param RoutingContext $routingContext
+     * @param ResolveContext $resolveContext
      * @param array $routeValues
      * @return string
      */
-    protected function buildResolveCacheIdentifier(RoutingContext $routingContext, array $routeValues)
+    protected function buildResolveCacheIdentifier(ResolveContext $resolveContext, array $routeValues)
     {
         Arrays::sortKeysRecursively($routeValues);
-        return md5($routingContext->getCacheEntryIdentifier() . '|' . trim(http_build_query($routeValues), '/'));
+
+        return md5(sprintf('abs:%s|prefix:%s|routeValues:%s', $resolveContext->isForceAbsoluteUri() ? 1 : 0, $resolveContext->getUriPathPrefix(), trim(http_build_query($routeValues), '/')));
     }
 
     /**

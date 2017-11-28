@@ -84,14 +84,6 @@ class Route
     protected $matchedTags;
 
     /**
-     * Contains the matching uri (excluding protocol and host) after a
-     * successful call of resolves()
-     *
-     * @var string
-     */
-    protected $resolvedUriPath;
-
-    /**
      * @var UriConstraints|null
      */
     protected $resolvedUriConstraints;
@@ -338,16 +330,6 @@ class Route
     }
 
     /**
-     * Returns the URI path which corresponds to this Route.
-     *
-     * @return string A string containing the corresponding uri (excluding protocol and host)
-     */
-    public function getResolvedUriPath()
-    {
-        return $this->resolvedUriPath;
-    }
-
-    /**
      * @return UriConstraints|null
      */
     public function getResolvedUriConstraints()
@@ -460,7 +442,6 @@ class Route
      */
     public function resolves(array $routeValues)
     {
-        $this->resolvedUriPath = null;
         $this->resolvedUriConstraints = UriConstraints::create();
         $this->resolvedTags = Tags::createEmpty();
         if ($this->uriPattern === null) {
@@ -545,7 +526,7 @@ class Route
                 $resolvedUriPath .= strpos($resolvedUriPath, '?') !== false ? '&' . $queryString : '?' . $queryString;
             }
         }
-        $this->resolvedUriPath = $resolvedUriPath;
+        $this->resolvedUriConstraints = $this->resolvedUriConstraints->withPath($resolvedUriPath);
         return true;
     }
 

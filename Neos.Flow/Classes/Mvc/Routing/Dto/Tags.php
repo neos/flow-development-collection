@@ -11,14 +11,18 @@ namespace Neos\Flow\Mvc\Routing\Dto;
  * source code.
  */
 
-use Neos\Cache\CacheAwareInterface;
 use Neos\Flow\Annotations as Flow;
 
 /**
  * @Flow\Proxy(false)
  */
-final class Tags implements CacheAwareInterface
+final class Tags
 {
+
+    /**
+     * Pattern a tag must match. @see \Neos\Cache\Frontend\FrontendInterface::PATTERN_TAG
+     */
+    const PATTERN_TAG = '/^[a-zA-Z0-9_%\-&]{1,250}$/';
 
     /**
      * @var string[]
@@ -33,41 +37,50 @@ final class Tags implements CacheAwareInterface
         $this->tags = $tags;
     }
 
+
     public static function createEmpty(): self
     {
         return new static([]);
     }
 
-    public static function createFromTag(string $tagName, string $tagValue): self
+    public static function createFromTag(string $tag): self
     {
-        return new static([$tagName => $tagValue]);
+        self::validateTag($tag);
+        return new static([$tag]);
     }
 
     public function merge(Tags $tags): self
     {
-        $mergedTags = array_merge($this->tags, $tags->tags);
+        $mergedTags = array_unique(array_merge($this->tags, $tags->tags));
         return new static($mergedTags);
     }
 
-    public function withTag(string $tagName, string $tagValue): self
+    public function withTag(string $tag): self
     {
+        if ($this->has($tag)) {
+            return $this;
+        }
+        self::validateTag($tag);
         $newTags = $this->tags;
-        $newTags[$tagName] = $tagValue;
+        $newTags[] = $tag;
         return new static($newTags);
     }
 
-    public function has(string $tagName)
+    private static function validateTag(string $tag)
     {
-        return isset($this->tags[$tagName]);
+        if (preg_match(self::PATTERN_TAG, $tag) !== 1) {
+            throw new \InvalidArgumentException(sprintf('The given string "%s" is not a valid tag', $tag), 1511807639);
+        }
     }
 
-    public function getCacheEntryIdentifier(): string
+    public function has(string $tag)
     {
-        $cacheIdentifierParts = [];
-        foreach($this->tags as $tagName => $tagValue) {
-            $cacheIdentifierParts[] = $tagName . ':' . $tagValue;
-        }
-        return md5(implode('|', $cacheIdentifierParts));
+        return in_array($tag, $this->tags, true);
+    }
+
+    public function getTags(): array
+    {
+        return array_values($this->tags);
     }
 
 }

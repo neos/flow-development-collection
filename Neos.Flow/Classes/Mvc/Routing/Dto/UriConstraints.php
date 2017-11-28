@@ -12,6 +12,7 @@ namespace Neos\Flow\Mvc\Routing\Dto;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Http\Uri;
 use Psr\Http\Message\UriInterface;
 
 /**
@@ -24,6 +25,9 @@ final class UriConstraints
     const CONSTRAINT_SUB_DOMAIN = 'subDomain';
     const CONSTRAINT_TOP_LEVEL_DOMAIN = 'topLevelDomain';
     const CONSTRAINT_PORT = 'port';
+    const CONSTRAINT_PATH = 'path';
+    const CONSTRAINT_PATH_PREFIX = 'pathPrefix';
+    const CONSTRAINT_PATH_SUFFIX = 'pathSuffix';
 
     /**
      * @var array
@@ -81,9 +85,44 @@ final class UriConstraints
         return new static($newConstraints);
     }
 
-    public function apply(UriInterface $uri, UriInterface $requestUri): UriInterface
+    public function withPath(string $path): self
     {
-        $forceAbsoluteUri = false;
+        $newConstraints = $this->constraints;
+        $newConstraints[self::CONSTRAINT_PATH] = $path;
+        return new static($newConstraints);
+    }
+
+    public function withPathPrefix(string $pathPrefix): self
+    {
+        if ($pathPrefix === '') {
+            return $this;
+        }
+        $newConstraints = $this->constraints;
+        if (isset($newConstraints[self::CONSTRAINT_PATH_PREFIX])) {
+            $pathPrefix .= $newConstraints[self::CONSTRAINT_PATH_PREFIX];
+        }
+        $newConstraints[self::CONSTRAINT_PATH_PREFIX] = $pathPrefix;
+        return new static($newConstraints);
+    }
+
+    public function withPathSuffix(string $pathSuffix): self
+    {
+        $newConstraints = $this->constraints;
+        if (isset($newConstraints[self::CONSTRAINT_PATH_SUFFIX])) {
+            $pathSuffix = $newConstraints[self::CONSTRAINT_PATH_SUFFIX] . $pathSuffix;
+        }
+        $newConstraints[self::CONSTRAINT_PATH_SUFFIX] = $pathSuffix;
+        return new static($newConstraints);
+    }
+
+    public function getPathConstraint()
+    {
+        return $this->constraints[self::CONSTRAINT_PATH] ?? null;
+    }
+
+    public function applyTo(UriInterface $requestUri, bool $forceAbsoluteUri): UriInterface
+    {
+        $uri = new Uri('');
         if (isset($this->constraints[self::CONSTRAINT_SCHEME]) && $this->constraints[self::CONSTRAINT_SCHEME] !== $requestUri->getScheme()) {
             $forceAbsoluteUri = true;
             $uri = $uri->withScheme($this->constraints[self::CONSTRAINT_SCHEME]);
@@ -113,6 +152,16 @@ final class UriConstraints
         if (isset($this->constraints[self::CONSTRAINT_PORT]) && $this->constraints[self::CONSTRAINT_PORT] !== $requestUri->getPort()) {
             $forceAbsoluteUri = true;
             $uri = $uri->withPort($this->constraints[self::CONSTRAINT_PORT]);
+        }
+
+        if (isset($this->constraints[self::CONSTRAINT_PATH]) && $this->constraints[self::CONSTRAINT_PATH] !== $requestUri->getPath()) {
+            $uri = $uri->withPath($this->constraints[self::CONSTRAINT_PATH]);
+        }
+        if (isset($this->constraints[self::CONSTRAINT_PATH_PREFIX])) {
+            $uri = $uri->withPath($this->constraints[self::CONSTRAINT_PATH_PREFIX] . $uri->getPath());
+        }
+        if (isset($this->constraints[self::CONSTRAINT_PATH_SUFFIX])) {
+            $uri = $uri->withPath($uri->getPath() . $this->constraints[self::CONSTRAINT_PATH_PREFIX]);
         }
 
         if ($forceAbsoluteUri) {

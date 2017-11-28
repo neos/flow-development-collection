@@ -102,23 +102,21 @@ class Router implements RouterInterface
     public function route(RouteContext $routeContext): array
     {
         $this->lastMatchedRoute = null;
-//        $cachedRouteResult = $this->routerCachingService->getCachedMatchResults($this->context);
-//        if ($cachedRouteResult !== false) {
-//            return $cachedRouteResult;
-//        }
+        $cachedRouteResult = $this->routerCachingService->getCachedMatchResults($routeContext);
+        if ($cachedRouteResult !== false) {
+            return $cachedRouteResult;
+        }
         $this->createRoutesFromConfiguration();
         $httpRequest = $routeContext->getHttpRequest();
 
         /** @var $route Route */
         foreach ($this->routes as $route) {
             if ($route->matches($routeContext) === true) {
-                $matchResults = $route->getMatchResults();
-                if ($matchResults !== null) {
-                    #$this->routerCachingService->storeMatchResults($this->context, $matchResults);
-                }
-                $this->systemLogger->log(sprintf('Router route(): Route "%s" matched the request "%s (%s)".', $route->getName(), $httpRequest->getUri(), $httpRequest->getMethod()), LOG_DEBUG);
                 $this->lastMatchedRoute = $route;
-                return $route->getMatchResults();
+                $matchResults = $route->getMatchResults();
+                $this->routerCachingService->storeMatchResults($routeContext, $matchResults, $route->getMatchedTags());
+                $this->systemLogger->log(sprintf('Router route(): Route "%s" matched the request "%s (%s)".', $route->getName(), $httpRequest->getUri(), $httpRequest->getMethod()), LOG_DEBUG);
+                return $matchResults;
             }
         }
         $this->systemLogger->log(sprintf('Router route(): No route matched the route path "%s".', $httpRequest->getRelativePath()), LOG_NOTICE);
@@ -172,25 +170,19 @@ class Router implements RouterInterface
     public function resolve(ResolveContext $resolveContext): UriInterface
     {
         $this->lastResolvedRoute = null;
-//        $cachedResolvedUri = $this->routerCachingService->getCachedResolvedUri($this->context, $routeValues);
-//        if ($cachedResolvedUri !== false) {
-//            return $cachedResolvedUri;
-//        }
+        $cachedResolvedUriConstraints = $this->routerCachingService->getCachedResolvedUriConstraints($resolveContext);
+        if ($cachedResolvedUriConstraints !== false) {
+            return $cachedResolvedUriConstraints->applyTo($resolveContext->getRequestUri(), $resolveContext->isForceAbsoluteUri());
+        }
 
         $this->createRoutesFromConfiguration();
 
         /** @var $route Route */
         foreach ($this->routes as $route) {
             if ($route->resolves($resolveContext->getRouteValues()) === true) {
-                $resolvedUriPath = $route->getResolvedUriPath();
-                $uriConstraints = $route->getResolvedUriConstraints();
-                $resolvedUri = new Uri($resolveContext->getUriPathPrefix() . $resolvedUriPath);
-                $requestUri = $resolveContext->getRequestUri();
-                $resolvedUri = $uriConstraints->apply($resolvedUri, $requestUri);
-                if ($resolveContext->isForceAbsoluteUri() && empty($resolvedUri->getHost())) {
-                    $resolvedUri = $resolvedUri->withScheme($requestUri->getScheme())->withHost($requestUri->getHost())->withPort($requestUri->getPort());
-                }
-//                $this->routerCachingService->storeResolvedUri($this->context, $resolveUri, $routeValues);
+                $uriConstraints = $route->getResolvedUriConstraints()->withPathPrefix($resolveContext->getUriPathPrefix());
+                $resolvedUri = $uriConstraints->applyTo($resolveContext->getRequestUri(), $resolveContext->isForceAbsoluteUri());
+                $this->routerCachingService->storeResolvedUriConstraints($resolveContext, $uriConstraints, $route->getResolvedTags());
                 $this->lastResolvedRoute = $route;
                 return $resolvedUri;
             }
