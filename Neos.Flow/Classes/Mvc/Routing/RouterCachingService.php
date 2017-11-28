@@ -295,5 +295,4 @@ class RouterCachingService
         }
         return $uuids;
     }
-
 }

@@ -76,5 +76,4 @@ final class Parameters implements CacheAwareInterface
         }
         return md5(implode('|', $cacheIdentifierParts));
     }
-
 }
