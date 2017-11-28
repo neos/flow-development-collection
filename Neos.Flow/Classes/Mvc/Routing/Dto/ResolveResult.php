@@ -85,5 +85,4 @@ final class ResolveResult
     {
         return $this->tags;
     }
-
 }

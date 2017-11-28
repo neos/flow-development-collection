@@ -73,5 +73,4 @@ final class ResolveContext
     {
         return $this->uriPathPrefix;
     }
-
 }

@@ -75,5 +75,4 @@ final class RouteContext implements CacheAwareInterface
     {
         return $this->cacheEntryIdentifier;
     }
-
 }

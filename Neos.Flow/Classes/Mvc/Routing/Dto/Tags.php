@@ -82,5 +82,4 @@ final class Tags
     {
         return array_values($this->tags);
     }
-
 }

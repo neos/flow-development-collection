@@ -13,7 +13,6 @@ namespace Neos\Flow\Mvc\Routing;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Configuration\ConfigurationManager;
-use Neos\Flow\Http\Uri;
 use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\Mvc\Exception\InvalidRouteSetupException;
 use Neos\Flow\Mvc\Exception\NoMatchingRouteException;

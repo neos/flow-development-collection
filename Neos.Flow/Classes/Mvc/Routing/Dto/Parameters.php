@@ -71,7 +71,7 @@ final class Parameters implements CacheAwareInterface
     public function getCacheEntryIdentifier(): string
     {
         $cacheIdentifierParts = [];
-        foreach($this->parameters as $parameterName => $parameterValue) {
+        foreach ($this->parameters as $parameterName => $parameterValue) {
             $cacheIdentifierParts[] = $parameterName . ':' . ($parameterValue instanceof CacheAwareInterface ? $parameterValue->getCacheEntryIdentifier() : (string)$parameterValue);
         }
         return md5(implode('|', $cacheIdentifierParts));
