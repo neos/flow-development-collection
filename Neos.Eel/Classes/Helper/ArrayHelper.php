@@ -143,12 +143,15 @@ class ArrayHelper implements ProtectedContextAwareInterface
     }
 
     /**
-     * @param array $array
-     * @param mixed $searchElement
-     * @param integer $fromIndex
-     * @return mixed
+     * Returns the index of an array value, starting at 0.
+     * Returns -1 if the value was not found.
+     *
+     * @param array $array The array
+     * @param mixed $searchElement The element value to find
+     * @param int $fromIndex Position in the array to start the search.
+     * @return int
      */
-    public function indexOf(array $array, $searchElement, $fromIndex = null)
+    public function indexOf(array $array, $searchElement, $fromIndex = null): int
     {
         if ($fromIndex !== null) {
             $array = array_slice($array, $fromIndex, null, true);
