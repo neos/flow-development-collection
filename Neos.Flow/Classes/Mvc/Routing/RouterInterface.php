@@ -23,12 +23,11 @@ interface RouterInterface
 {
     /**
      * Iterates through all configured routes and calls matches() on them.
-     * Returns the matchResults of the matching route or NULL if no matching
-     * route could be found.
+     * Returns the matchResults of the matching route.
      *
-     * @param RouteContext $routeContext
+     * @param RouteContext $routeContext The Route Context containing the current HTTP Request and, optional, Routing Parameters
      * @return array The results of the matching route
-     * @throws NoMatchingRouteException
+     * @throws NoMatchingRouteException if no route matched the $routeContext
      */
     public function route(RouteContext $routeContext): array;
 
@@ -36,9 +35,9 @@ interface RouterInterface
      * Walks through all configured routes and calls their respective resolves-method.
      * When a matching route is found, the corresponding URI is returned.
      *
-     * @param ResolveContext $resolveContext
-     * @return UriInterface
-     * @throws NoMatchingRouteException
+     * @param ResolveContext $resolveContext The Resolve Context containing the route values, the request URI and some flags to be resolved
+     * @return UriInterface The resolved Uri
+     * @throws NoMatchingRouteException if no route could resolve the given $resolveContext
      */
     public function resolve(ResolveContext $resolveContext): UriInterface;
 }

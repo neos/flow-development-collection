@@ -17,6 +17,7 @@ use Neos\Flow\Mvc\Exception\InvalidRoutePartValueException;
 use Neos\Flow\Mvc\Exception\InvalidRouteSetupException;
 use Neos\Flow\Mvc\Exception\InvalidUriPatternException;
 use Neos\Flow\Mvc\Routing\Dto\MatchResult;
+use Neos\Flow\Mvc\Routing\Dto\ResolveContext;
 use Neos\Flow\Mvc\Routing\Dto\ResolveResult;
 use Neos\Flow\Mvc\Routing\Dto\RouteContext;
 use Neos\Flow\Mvc\Routing\Dto\Tags;
@@ -79,16 +80,22 @@ class Route
     protected $matchResults = [];
 
     /**
+     * The tags that have been associated with this route during request matching, or NULL if no tags were set
+     *
      * @var Tags|null
      */
     protected $matchedTags;
 
     /**
+     * The merged UriConstraints of all Route Parts after resolving
+     *
      * @var UriConstraints|null
      */
     protected $resolvedUriConstraints;
 
     /**
+     * The tags that have been associated with this route during resolving, or NULL if no tags were set
+     *
      * @var Tags|null
      */
     protected $resolvedTags;
@@ -322,6 +329,8 @@ class Route
     }
 
     /**
+     * Returns the tags that have been associated with this route during request matching, or NULL if no tags were set
+     *
      * @return Tags|null
      */
     public function getMatchedTags()
@@ -330,6 +339,8 @@ class Route
     }
 
     /**
+     * Returns the merged UriConstraints of all Route Parts after resolving, or NULL if no constraints were set yet
+     *
      * @return UriConstraints|null
      */
     public function getResolvedUriConstraints()
@@ -338,6 +349,8 @@ class Route
     }
 
     /**
+     * Returns the tags that have been associated with this route during resolving, or NULL if no tags were set
+     *
      * @return Tags|null
      */
     public function getResolvedTags()
@@ -346,13 +359,12 @@ class Route
     }
 
     /**
-     * Checks whether $routePath corresponds to this Route.
-     * If all Route Parts match successfully TRUE is returned and
-     * $this->matchResults contains an array combining Route default values and
-     * calculated matchResults from the individual Route Parts.
+     * Checks whether $routeContext corresponds to this Route.
+     * If all Route Parts match successfully TRUE is returned an $this->matchResults contains an array
+     * combining Route default values and calculated matchResults from the individual Route Parts.
      *
-     * @param RouteContext $routeContext
-     * @return boolean TRUE if this Route corresponds to the given $routePath, otherwise FALSE
+     * @param RouteContext $routeContext The Route Context containing the current HTTP request object and, optional, Routing Parameters
+     * @return boolean TRUE if this Route corresponds to the given $routeContext, otherwise FALSE
      * @throws InvalidRoutePartValueException
      * @see getMatchResults()
      */
@@ -433,11 +445,11 @@ class Route
     /**
      * Checks whether $routeValues can be resolved to a corresponding uri.
      * If all Route Parts can resolve one or more of the $routeValues, TRUE is
-     * returned and $this->matchingURI contains the generated URI (excluding
-     * protocol and host).
+     * returned and $this->resolvedUriConstraints contains an instance of UriConstraints that can be applied
+     * to a template URI transforming it accordingly (@see Router::resolve())
      *
      * @param array $routeValues An array containing key/value pairs to be resolved to uri segments
-     * @return bool An instance of ResolvesResult if this Route corresponds to the given $routeValues, otherwise FALSE
+     * @return boolean TRUE if this Route corresponds to the given $routeValues, otherwise FALSE
      * @throws InvalidRoutePartValueException
      */
     public function resolves(array $routeValues)

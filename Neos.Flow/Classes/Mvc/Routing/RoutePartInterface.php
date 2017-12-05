@@ -11,6 +11,7 @@ namespace Neos\Flow\Mvc\Routing;
  * source code.
  */
 
+use Neos\Flow\Mvc\Routing\Dto\MatchResult;
 use Neos\Flow\Mvc\Routing\Dto\ResolveResult;
 
 /**
@@ -124,7 +125,7 @@ interface RoutePartInterface
      * This is why $routePath has to be passed by reference.
      *
      * @param string &$routePath The request path to be matched - without query parameters, host and fragment.
-     * @return boolean TRUE if Route Part matched $routePath, otherwise FALSE.
+     * @return bool|MatchResult TRUE or an instance of MatchResult if Route Part matched $routePath, otherwise FALSE.
      */
     public function match(&$routePath);
 

@@ -41,6 +41,9 @@ class DynamicRoutePart extends AbstractRoutePart implements DynamicRoutePartInte
     protected $splitString = '';
 
     /**
+     * The Routing Parameters passed to matchWithParameters()
+     * These allow sub classes to adjust the matching behavior accordingly
+     *
      * @var Parameters
      */
     protected $parameters;
@@ -57,6 +60,14 @@ class DynamicRoutePart extends AbstractRoutePart implements DynamicRoutePartInte
         $this->splitString = $splitString;
     }
 
+    /**
+     * Checks whether this Dynamic Route Part corresponds to the given $routePath.
+     *
+     * @see matchWithParameters()
+     *
+     * @param string $routePath The request path to be matched - without query parameters, host and fragment.
+     * @return bool|MatchResult TRUE or an instance of MatchResult if Route Part matched $routePath, otherwise FALSE.
+     */
     final public function match(&$routePath)
     {
         return $this->matchWithParameters($routePath, Parameters::createEmpty());
@@ -69,8 +80,8 @@ class DynamicRoutePart extends AbstractRoutePart implements DynamicRoutePartInte
      * and shortens $routePath respectively.
      *
      * @param string $routePath The request path to be matched - without query parameters, host and fragment.
-     * @param Parameters $parameters
-     * @return bool|MatchResult TRUE if Route Part matched $routePath, otherwise FALSE.
+     * @param Parameters $parameters Routing parameters that will be stored in $this->parameters and can be evaluated in sub classes
+     * @return bool|MatchResult TRUE or an instance of MatchResult if Route Part matched $routePath, otherwise FALSE.
      */
     final public function matchWithParameters(&$routePath, Parameters $parameters)
     {
@@ -121,7 +132,7 @@ class DynamicRoutePart extends AbstractRoutePart implements DynamicRoutePartInte
      * This method can be overridden by custom RoutePartHandlers to implement custom matching mechanisms.
      *
      * @param string $value value to match
-     * @return bool|MatchResult TRUE if value could be matched successfully, otherwise FALSE.
+     * @return bool|MatchResult An instance of MatchResult if value could be matched successfully, otherwise FALSE.
      * @api
      */
     protected function matchValue($value)
@@ -192,7 +203,7 @@ class DynamicRoutePart extends AbstractRoutePart implements DynamicRoutePartInte
      * This method can be overridden by custom RoutePartHandlers to implement custom resolving mechanisms.
      *
      * @param mixed $value value to resolve
-     * @return boolean|ResolveResult TRUE or an instance of ResolveResult if value could be resolved successfully, otherwise FALSE.
+     * @return boolean|ResolveResult An instance of ResolveResult if value could be resolved successfully, otherwise FALSE.
      * @api
      */
     protected function resolveValue($value)

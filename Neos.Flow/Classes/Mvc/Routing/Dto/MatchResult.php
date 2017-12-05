@@ -14,6 +14,8 @@ namespace Neos\Flow\Mvc\Routing\Dto;
 use Neos\Flow\Annotations as Flow;
 
 /**
+ * The result of a RoutePartInterface::match() call if the corresponding Route Part matched
+ *
  * @Flow\Proxy(false)
  */
 final class MatchResult
@@ -40,6 +42,8 @@ final class MatchResult
     }
 
     /**
+     * The actual matched value of the respective Route Part
+     *
      * @return mixed
      */
     public function getMatchedValue()
@@ -48,6 +52,8 @@ final class MatchResult
     }
 
     /**
+     * Whether this result is tagged
+     *
      * @return bool
      */
     public function hasTags(): bool
@@ -56,6 +62,8 @@ final class MatchResult
     }
 
     /**
+     * Tags to be associated with the MatchResult, or NULL
+     *
      * @return Tags|null
      */
     public function getTags()

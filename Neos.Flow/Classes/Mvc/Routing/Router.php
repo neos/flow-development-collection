@@ -94,9 +94,9 @@ class Router implements RouterInterface
      * Returns the matchResults of the matching route or NULL if no matching
      * route could be found.
      *
-     * @param RouteContext $routeContext
+     * @param RouteContext $routeContext The Route Context containing the current HTTP Request and, optional, Routing Parameters
      * @return array The results of the matching route or NULL if no route matched
-     * @throws NoMatchingRouteException
+     * @throws NoMatchingRouteException if no route matched the given $routeContext
      */
     public function route(RouteContext $routeContext): array
     {
@@ -162,9 +162,9 @@ class Router implements RouterInterface
      * method. If no matching route is found, an empty string is returned.
      * Note: calls of this message are cached by RouterCachingAspect
      *
-     * @param ResolveContext $resolveContext
-     * @return UriInterface
-     * @throws NoMatchingRouteException
+     * @param ResolveContext $resolveContext The Resolve Context containing the route values, the request URI and some flags to be resolved
+     * @return UriInterface The resolved URI
+     * @throws NoMatchingRouteException if no route could resolve the given $resolveContext
      */
     public function resolve(ResolveContext $resolveContext): UriInterface
     {

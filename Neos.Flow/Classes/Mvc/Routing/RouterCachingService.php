@@ -23,7 +23,6 @@ use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Utility\Arrays;
 use Neos\Flow\Validation\Validator\UuidValidator;
-use Psr\Http\Message\UriInterface;
 
 /**
  * Caching of findMatchResults() and resolve() calls on the web Router.

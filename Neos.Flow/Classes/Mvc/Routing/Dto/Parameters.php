@@ -16,33 +16,48 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Utility\TypeHandling;
 
 /**
+ * This class allows the whole routing behavior to be parametrized.
+ * Route Part implementations can react to given parameters and adjust their matching behavior accordingly
+ * if they implement ParameterAwareRoutePartInterface
+ *
+ * Routing Parameters are usually registered using HTTP components
+ *
  * @Flow\Proxy(false)
  */
 final class Parameters implements CacheAwareInterface
 {
 
     /**
-     * @var string[]
+     * The parameters as simple key/value pair in the format ['<parameter1Key>' => <parameter1Value>, ...]
+     *
+     * @var array
      */
     private $parameters = [];
 
     /**
-     * @param string[] $parameters
+     * @param array $parameters simple key/value pair in the format ['<parameter1Key>' => <parameter1Value>, ...]
      */
     private function __construct(array $parameters)
     {
         $this->parameters = $parameters;
     }
 
+    /**
+     * Creates an empty instance of this class
+     *
+     * @return Parameters
+     */
     public static function createEmpty(): self
     {
         return new static([]);
     }
 
     /**
-     * @param string $parameterName
-     * @param bool|float|int|string|CacheAwareInterface $parameterValue
-     * @return Parameters
+     * Create a new instance adding the given parameter
+     *
+     * @param string $parameterName name of the parameter to add
+     * @param bool|float|int|string|CacheAwareInterface $parameterValue value of the parameter, has to be a literal or an object implementing CacheAwareInterface
+     * @return Parameters a new instance with the given parameters added
      */
     public function withParameter(string $parameterName, $parameterValue): self
     {
@@ -54,20 +69,31 @@ final class Parameters implements CacheAwareInterface
         return new static($newParameters);
     }
 
+    /**
+     * Checks whether a given parameter exists
+     *
+     * @param string $parameterName
+     * @return bool
+     */
     public function has(string $parameterName)
     {
         return isset($this->parameters[$parameterName]);
     }
 
     /**
+     * Returns the value for a given $parameterName, or NULL if it doesn't exist
+     *
      * @param string $parameterName
-     * @return mixed|null
+     * @return bool|float|int|string|CacheAwareInterface|null
      */
     public function getValue(string $parameterName)
     {
         return $this->parameters[$parameterName] ?? null;
     }
 
+    /**
+     * @return string
+     */
     public function getCacheEntryIdentifier(): string
     {
         $cacheIdentifierParts = [];

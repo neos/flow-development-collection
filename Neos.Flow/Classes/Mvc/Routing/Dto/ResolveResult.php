@@ -14,22 +14,30 @@ namespace Neos\Flow\Mvc\Routing\Dto;
 use Neos\Flow\Annotations as Flow;
 
 /**
+ * The result of a RoutePartInterface::resolve() call if the corresponding Route Part resolved
+ *
  * @Flow\Proxy(false)
  */
 final class ResolveResult
 {
 
     /**
+     * The resolved string value, or NULL if the corresponding Route Part doesn't affect the uri path
+     *
      * @var string|null
      */
     private $resolvedValue;
 
     /**
+     * The resolved URI constraints, or NULL if the corresponding Route Part doesn't add any constraints
+     *
      * @var UriConstraints|null
      */
     private $uriConstraints;
 
     /**
+     * Tags to be associated with the result, or NULL
+     *
      * @var Tags|null
      */
     private $tags;

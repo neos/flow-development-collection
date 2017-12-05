@@ -14,6 +14,11 @@ namespace Neos\Flow\Mvc\Routing\Dto;
 use Neos\Flow\Annotations as Flow;
 
 /**
+ * Tags to be associated with matched/resolved routes
+ *
+ * Tags can be added by Route Part handlers via the ResolveResult/MatchResult return values
+ * The tags will be added to the corresponding cache entries, so that they can be flushed selectively using the RouterCachingService
+ *
  * @Flow\Proxy(false)
  */
 final class Tags
@@ -25,36 +30,59 @@ final class Tags
     const PATTERN_TAG = '/^[a-zA-Z0-9_%\-&]{1,250}$/';
 
     /**
-     * @var string[]
+     * @var string[] numeric array of strings satisfying the PATTERN_TAG regex
      */
     private $tags = [];
 
     /**
-     * @param string[] $tags
+     * @param string[] $tags numeric array of strings satisfying the PATTERN_TAG regex
      */
     private function __construct(array $tags)
     {
         $this->tags = $tags;
     }
 
-
+    /**
+     * Creates an instance without any tags
+     *
+     * @return Tags
+     */
     public static function createEmpty(): self
     {
         return new static([]);
     }
 
+    /**
+     * Creates an instance with one given tag
+     *
+     * @param string $tag Tag value satisfying the PATTERN_TAG regex
+     * @return Tags
+     */
     public static function createFromTag(string $tag): self
     {
         self::validateTag($tag);
         return new static([$tag]);
     }
 
+    /**
+     * Merges two instances of this class combining and unifying all tags
+     *
+     * @param Tags $tags
+     * @return Tags
+     */
     public function merge(Tags $tags): self
     {
         $mergedTags = array_unique(array_merge($this->tags, $tags->tags));
         return new static($mergedTags);
     }
 
+    /**
+     * Creates a new instance with the given $tag added
+     * If the $tag has been added already, this instance is returned
+     *
+     * @param string $tag
+     * @return Tags
+     */
     public function withTag(string $tag): self
     {
         if ($this->has($tag)) {
@@ -66,6 +94,12 @@ final class Tags
         return new static($newTags);
     }
 
+    /**
+     * Checks the format of a given $tag string and throws an exception if it does not conform to the PATTERN_TAG regex
+     *
+     * @param string $tag
+     * @throws \InvalidArgumentException
+     */
     private static function validateTag(string $tag)
     {
         if (preg_match(self::PATTERN_TAG, $tag) !== 1) {
@@ -73,11 +107,22 @@ final class Tags
         }
     }
 
+    /**
+     * Whether a given $tag is contained in the collection of this instance
+     *
+     * @param string $tag
+     * @return bool
+     */
     public function has(string $tag)
     {
         return in_array($tag, $this->tags, true);
     }
 
+    /**
+     * Returns the tags of this tag collection as value array
+     *
+     * @return array
+     */
     public function getTags(): array
     {
         return array_values($this->tags);

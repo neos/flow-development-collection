@@ -16,17 +16,23 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Request as HttpRequest;
 
 /**
+ * Simple DTO wrapping the values required for a Router::route() call
+ *
  * @Flow\Proxy(false)
  */
 final class RouteContext implements CacheAwareInterface
 {
 
     /**
+     * The current HTTP request
+     *
      * @var HttpRequest
      */
     private $httpRequest;
 
     /**
+     * Routing Parameters
+     *
      * @var Parameters
      */
     private $parameters;
@@ -37,19 +43,14 @@ final class RouteContext implements CacheAwareInterface
     private $cacheEntryIdentifier;
 
     /**
-     * @param HttpRequest $httpRequest
-     * @param Parameters $parameters
+     * @param HttpRequest $httpRequest The current HTTP request
+     * @param Parameters $parameters Routing Parameters
      */
     public function __construct(HttpRequest $httpRequest, Parameters $parameters)
     {
         $this->httpRequest = $httpRequest;
         $this->parameters = $parameters;
-        $this->cacheEntryIdentifier = md5(sprintf('host:%s|path:%s|method:%s|parameters:%s',
-            $httpRequest->getUri()->getHost(),
-            $httpRequest->getRelativePath(),
-            $httpRequest->getMethod(),
-            $parameters->getCacheEntryIdentifier()
-        ));
+
     }
 
     /**
@@ -73,6 +74,14 @@ final class RouteContext implements CacheAwareInterface
      */
     public function getCacheEntryIdentifier(): string
     {
+        if ($this->cacheEntryIdentifier === null) {
+            $this->cacheEntryIdentifier = md5(sprintf('host:%s|path:%s|method:%s|parameters:%s',
+                $this->httpRequest->getUri()->getHost(),
+                $this->httpRequest->getRelativePath(),
+                $this->httpRequest->getMethod(),
+                $this->parameters->getCacheEntryIdentifier()
+            ));
+        }
         return $this->cacheEntryIdentifier;
     }
 }
