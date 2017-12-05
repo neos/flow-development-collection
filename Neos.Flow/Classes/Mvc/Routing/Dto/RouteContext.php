@@ -50,7 +50,6 @@ final class RouteContext implements CacheAwareInterface
     {
         $this->httpRequest = $httpRequest;
         $this->parameters = $parameters;
-
     }
 
     /**
