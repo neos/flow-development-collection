@@ -43,18 +43,22 @@ class LoggerFactory
     {
         $this->requestInfoCallback = function () {
             $output = '';
-            if (Bootstrap::$staticObjectManager instanceof ObjectManagerInterface) {
-                $bootstrap = Bootstrap::$staticObjectManager->get(Bootstrap::class);
-                /* @var Bootstrap $bootstrap */
-                $requestHandler = $bootstrap->getActiveRequestHandler();
-                if ($requestHandler instanceof HttpRequestHandlerInterface) {
-                    $request = $requestHandler->getHttpRequest();
-                    $response = $requestHandler->getHttpResponse();
-                    $output .= PHP_EOL . 'HTTP REQUEST:' . PHP_EOL . ($request == '' ? '[request was empty]' : $request) . PHP_EOL;
-                    $output .= PHP_EOL . 'HTTP RESPONSE:' . PHP_EOL . ($response == '' ? '[response was empty]' : $response) . PHP_EOL;
-                    $output .= PHP_EOL . 'PHP PROCESS:' . PHP_EOL . 'Inode: ' . getmyinode() . PHP_EOL . 'PID: ' . getmypid() . PHP_EOL . 'UID: ' . getmyuid() . PHP_EOL . 'GID: ' . getmygid() . PHP_EOL . 'User: ' . get_current_user() . PHP_EOL;
-                }
+            if (!(Bootstrap::$staticObjectManager instanceof ObjectManagerInterface)) {
+                return $output;
             }
+
+            $bootstrap = Bootstrap::$staticObjectManager->get(Bootstrap::class);
+            /* @var Bootstrap $bootstrap */
+            $requestHandler = $bootstrap->getActiveRequestHandler();
+            if (!$requestHandler instanceof HttpRequestHandlerInterface) {
+                return $output;
+            }
+
+            $request = $requestHandler->getHttpRequest();
+            $response = $requestHandler->getHttpResponse();
+            $output .= PHP_EOL . 'HTTP REQUEST:' . PHP_EOL . ($request == '' ? '[request was empty]' : $request) . PHP_EOL;
+            $output .= PHP_EOL . 'HTTP RESPONSE:' . PHP_EOL . ($response == '' ? '[response was empty]' : $response) . PHP_EOL;
+            $output .= PHP_EOL . 'PHP PROCESS:' . PHP_EOL . 'Inode: ' . getmyinode() . PHP_EOL . 'PID: ' . getmypid() . PHP_EOL . 'UID: ' . getmyuid() . PHP_EOL . 'GID: ' . getmygid() . PHP_EOL . 'User: ' . get_current_user() . PHP_EOL;
 
             return $output;
         };
@@ -120,7 +124,7 @@ class LoggerFactory
         if (Bootstrap::$staticObjectManager instanceof ObjectManagerInterface) {
             $throwableStorage = Bootstrap::$staticObjectManager->get(ThrowableStorageInterface::class);
         }
-        $throwableStorage->setBacktracRenderer(function ($backtrace) {
+        $throwableStorage->setBacktraceRenderer(function ($backtrace) {
             return Debugger::getBacktraceCode($backtrace, false, true);
         });
         $throwableStorage->setRequestInformationRenderer($this->requestInfoCallback);

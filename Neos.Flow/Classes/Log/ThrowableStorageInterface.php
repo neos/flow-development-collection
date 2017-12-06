@@ -34,5 +34,5 @@ interface ThrowableStorageInterface
      * @param \Closure $backtraceRenderer
      * @return self
      */
-    public function setBacktracRenderer(\Closure $backtraceRenderer);
+    public function setBacktraceRenderer(\Closure $backtraceRenderer);
 }

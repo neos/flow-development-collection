@@ -71,6 +71,9 @@ class DefaultLogger implements LoggerInterface
      */
     public function setBackend(Backend\BackendInterface $backend)
     {
+        foreach ($this->backends as $backend) {
+            $backend->close();
+        }
         $this->backends = new \SplObjectStorage();
         $this->backends->attach($backend);
     }

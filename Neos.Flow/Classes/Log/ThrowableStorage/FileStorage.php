@@ -23,7 +23,7 @@ class FileStorage implements ThrowableStorageInterface
     /**
      * @var \Closure
      */
-    protected $backtracRenderer;
+    protected $backtraceRenderer;
 
     /**
      * FileStorage path.
@@ -49,9 +49,9 @@ class FileStorage implements ThrowableStorageInterface
      * @param \Closure $backtraceRenderer
      * @return $this|ThrowableStorageInterface
      */
-    public function setBacktracRenderer(\Closure $backtraceRenderer)
+    public function setBacktraceRenderer(\Closure $backtraceRenderer)
     {
-        $this->backtracRenderer = $backtraceRenderer;
+        $this->backtraceRenderer = $backtraceRenderer;
         return $this;
     }
 
@@ -160,8 +160,8 @@ class FileStorage implements ThrowableStorageInterface
     protected function renderBacktrace($backtrace)
     {
         $output = '';
-        if ($this->backtracRenderer !== null) {
-            $output = $this->backtracRenderer->__invoke($backtrace);
+        if ($this->backtraceRenderer !== null) {
+            $output = $this->backtraceRenderer->__invoke($backtrace);
         }
 
         return $output;
