@@ -30,7 +30,7 @@ class MatchResultTest extends UnitTestCase
         $this->assertSame($matchedValue, $matchResult->getMatchedValue());
     }
 
-   /**
+    /**
      * @test
      */
     public function hasTagsIsFalseByDefault()
@@ -39,7 +39,7 @@ class MatchResultTest extends UnitTestCase
         $this->assertFalse($matchResult->hasTags());
     }
 
-   /**
+    /**
      * @test
      */
     public function hasTagsIsTrueIfTagsAreSet()
@@ -49,7 +49,7 @@ class MatchResultTest extends UnitTestCase
         $this->assertTrue($matchResult->hasTags());
     }
 
-   /**
+    /**
      * @test
      */
     public function getTagsReturnsNullByDefault()
@@ -58,7 +58,7 @@ class MatchResultTest extends UnitTestCase
         $this->assertNull($matchResult->getTags());
     }
 
-   /**
+    /**
      * @test
      */
     public function getTagsReturnsSpecifiedTags()
