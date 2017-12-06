@@ -36,7 +36,6 @@ final class UriConstraints
     const CONSTRAINT_SCHEME = 'scheme';
     const CONSTRAINT_HOST = 'host';
     const CONSTRAINT_SUB_DOMAIN = 'subDomain';
-    const CONSTRAINT_TOP_LEVEL_DOMAIN = 'topLevelDomain';
     const CONSTRAINT_PORT = 'port';
     const CONSTRAINT_PATH = 'path';
     const CONSTRAINT_PATH_PREFIX = 'pathPrefix';
@@ -114,19 +113,6 @@ final class UriConstraints
     {
         $newConstraints = $this->constraints;
         $newConstraints[self::CONSTRAINT_SUB_DOMAIN] = $subDomain;
-        return new static($newConstraints);
-    }
-
-    /**
-     * Create a new instance with the top level domain constraint added
-     *
-     * @param string $topLevelDomain The URI top-level domain part to force, for example "io"
-     * @return UriConstraints
-     */
-    public function withTopLevelDomain(string $topLevelDomain): self
-    {
-        $newConstraints = $this->constraints;
-        $newConstraints[self::CONSTRAINT_TOP_LEVEL_DOMAIN] = $topLevelDomain;
         return new static($newConstraints);
     }
 
@@ -227,17 +213,13 @@ final class UriConstraints
             if ($requestSubDomain !== $this->constraints[self::CONSTRAINT_SUB_DOMAIN]) {
                 $forceAbsoluteUri = true;
                 $host = !empty($uri->getHost()) ? $uri->getHost() : $templateUri->getHost();
-                $host = preg_replace('/^([a-z0-9|-]+)(\.[a-z0-9|-]+\.[a-z]+)/', $this->constraints[self::CONSTRAINT_SUB_DOMAIN] . '$2', $host);
-                $uri = $uri->withHost($host);
-            }
-        }
-        if (isset($this->constraints[self::CONSTRAINT_TOP_LEVEL_DOMAIN])) {
-            $requestTopLevelDomain = $this->extractTopLevelDomain($templateUri);
-            if ($requestTopLevelDomain !== $this->constraints[self::CONSTRAINT_TOP_LEVEL_DOMAIN]) {
-                $forceAbsoluteUri = true;
-                $host = !empty($uri->getHost()) ? $uri->getHost() : $templateUri->getHost();
-                $host = preg_replace('/\.([^\.]+)$/', '.' . $this->constraints[self::CONSTRAINT_SUB_DOMAIN], $host);
-                $uri = $uri->withHost($host);
+                $domainParts = explode('.', $host);
+                if (count($domainParts) > 2) {
+                    $domainParts[0] = $this->constraints[self::CONSTRAINT_SUB_DOMAIN];
+                } else {
+                    array_unshift($domainParts, $this->constraints[self::CONSTRAINT_SUB_DOMAIN]);
+                }
+                $uri = $uri->withHost(implode('.', $domainParts));
             }
         }
         if (isset($this->constraints[self::CONSTRAINT_PORT]) && $this->constraints[self::CONSTRAINT_PORT] !== $templateUri->getPort()) {
@@ -248,11 +230,11 @@ final class UriConstraints
         if (isset($this->constraints[self::CONSTRAINT_PATH]) && $this->constraints[self::CONSTRAINT_PATH] !== $templateUri->getPath()) {
             $uri = $uri->withPath($this->constraints[self::CONSTRAINT_PATH]);
         }
-        if (isset($this->constraints[self::CONSTRAINT_PATH_PREFIX])) {
+        if (isset($this->constraints[self::CONSTRAINT_PATH_PREFIX]) && $uri->getPath() !== '') {
             $uri = $uri->withPath($this->constraints[self::CONSTRAINT_PATH_PREFIX] . $uri->getPath());
         }
-        if (isset($this->constraints[self::CONSTRAINT_PATH_SUFFIX])) {
-            $uri = $uri->withPath($uri->getPath() . $this->constraints[self::CONSTRAINT_PATH_PREFIX]);
+        if (isset($this->constraints[self::CONSTRAINT_PATH_SUFFIX]) && $uri->getPath() !== '') {
+            $uri = $uri->withPath($uri->getPath() . $this->constraints[self::CONSTRAINT_PATH_SUFFIX]);
         }
 
         if ($forceAbsoluteUri) {
@@ -285,18 +267,4 @@ final class UriConstraints
         return $matches[1];
     }
 
-    /**
-     * Extracts the top-level-domain part from a given $uri
-     *
-     * @param UriInterface $uri
-     * @return string
-     */
-    private function extractTopLevelDomain(UriInterface $uri): string
-    {
-        if (preg_match('/\.([^\.]+)$/', $uri->getHost(), $matches) !== 1) {
-            // no top level domain
-            return '';
-        }
-        return $matches[1];
-    }
 }
