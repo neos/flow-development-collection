@@ -65,6 +65,18 @@ final class Tags
     }
 
     /**
+     * Creates an instance with one given tags
+     *
+     * @param string[] $tags An array of strings satisfying the PATTERN_TAG regex
+     * @return Tags
+     */
+    public static function createFromArray(array $tags): self
+    {
+        array_walk($tags, 'static::validateTag');
+        return new static($tags);
+    }
+
+    /**
      * Merges two instances of this class combining and unifying all tags
      *
      * @param Tags $tags
@@ -100,8 +112,11 @@ final class Tags
      * @param string $tag
      * @throws \InvalidArgumentException
      */
-    private static function validateTag(string $tag)
+    private static function validateTag($tag)
     {
+        if (!is_string($tag)) {
+            throw new \InvalidArgumentException(sprintf('Tags have to be strings, %s given', is_object($tag) ? get_class($tag) : gettype($tag)), 1512553153);
+        }
         if (preg_match(self::PATTERN_TAG, $tag) !== 1) {
             throw new \InvalidArgumentException(sprintf('The given string "%s" is not a valid tag', $tag), 1511807639);
         }
