@@ -126,7 +126,7 @@ class EntityManagerFactory
         $config->setAutoGenerateProxyClasses(false);
 
         // Set default host to 127.0.0.1 if there is no host configured but a dbname
-        if (empty($this->settings['backendOptions']['host']) && !empty($this->settings['backendOptions']['dbname'])) {
+        if (empty($this->settings['backendOptions']['host']) && !empty($this->settings['backendOptions']['dbname']) && empty($this->settings['backendOptions']['unix_socket'])) {
             $this->settings['backendOptions']['host'] = '127.0.0.1';
         }
 
