@@ -266,5 +266,4 @@ final class UriConstraints
         }
         return $matches[1];
     }
-
 }

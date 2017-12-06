@@ -13,14 +13,12 @@ namespace Neos\Flow\Tests\Unit\Mvc\Routing\Dto;
 
 use Neos\Flow\Mvc\Routing\Dto\Tags;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\FluidAdaptor\Tests\Functional\Form\Fixtures\Domain\Model\Tag;
 
 /**
  * Testcase for the Tags DTO
  */
 class TagsTest extends UnitTestCase
 {
-
     public function createFromTagThrowsExceptionForInvalidTagsDataProvider()
     {
         return [
@@ -119,5 +117,4 @@ class TagsTest extends UnitTestCase
 
         $this->assertFalse($tags1->has('bar'));
     }
-
 }
