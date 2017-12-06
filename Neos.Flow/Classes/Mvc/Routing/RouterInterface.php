@@ -25,7 +25,7 @@ interface RouterInterface
      * Iterates through all configured routes and calls matches() on them.
      * Returns the matchResults of the matching route.
      *
-     * @param RouteContext $routeContext The Route Context containing the current HTTP Request and, optional, Routing Parameters
+     * @param RouteContext $routeContext The Route Context containing the current HTTP Request and, optional, Routing RouteParameters
      * @return array The results of the matching route
      * @throws NoMatchingRouteException if no route matched the $routeContext
      */

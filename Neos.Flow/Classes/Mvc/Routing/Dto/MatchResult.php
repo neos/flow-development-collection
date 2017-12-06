@@ -27,15 +27,15 @@ final class MatchResult
     private $matchedValue;
 
     /**
-     * @var Tags|null
+     * @var RouteTags|null
      */
     private $tags;
 
     /**
      * @param mixed $matchedValue
-     * @param Tags $tags
+     * @param RouteTags $tags
      */
-    public function __construct($matchedValue, Tags $tags = null)
+    public function __construct($matchedValue, RouteTags $tags = null)
     {
         $this->matchedValue = $matchedValue;
         $this->tags = $tags;
@@ -62,9 +62,9 @@ final class MatchResult
     }
 
     /**
-     * Tags to be associated with the MatchResult, or NULL
+     * RouteTags to be associated with the MatchResult, or NULL
      *
-     * @return Tags|null
+     * @return RouteTags|null
      */
     public function getTags()
     {

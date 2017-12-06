@@ -13,7 +13,7 @@ namespace Neos\Flow\Mvc\Routing;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Routing\Dto\MatchResult;
-use Neos\Flow\Mvc\Routing\Dto\Parameters;
+use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
 use Neos\Flow\Mvc\Routing\Dto\ResolveResult;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Utility\ObjectAccess;
@@ -41,10 +41,10 @@ class DynamicRoutePart extends AbstractRoutePart implements DynamicRoutePartInte
     protected $splitString = '';
 
     /**
-     * The Routing Parameters passed to matchWithParameters()
+     * The Routing RouteParameters passed to matchWithParameters()
      * These allow sub classes to adjust the matching behavior accordingly
      *
-     * @var Parameters
+     * @var RouteParameters
      */
     protected $parameters;
 
@@ -70,7 +70,7 @@ class DynamicRoutePart extends AbstractRoutePart implements DynamicRoutePartInte
      */
     final public function match(&$routePath)
     {
-        return $this->matchWithParameters($routePath, Parameters::createEmpty());
+        return $this->matchWithParameters($routePath, RouteParameters::createEmpty());
     }
 
     /**
@@ -80,10 +80,10 @@ class DynamicRoutePart extends AbstractRoutePart implements DynamicRoutePartInte
      * and shortens $routePath respectively.
      *
      * @param string $routePath The request path to be matched - without query parameters, host and fragment.
-     * @param Parameters $parameters Routing parameters that will be stored in $this->parameters and can be evaluated in sub classes
+     * @param RouteParameters $parameters Routing parameters that will be stored in $this->parameters and can be evaluated in sub classes
      * @return bool|MatchResult TRUE or an instance of MatchResult if Route Part matched $routePath, otherwise FALSE.
      */
-    final public function matchWithParameters(&$routePath, Parameters $parameters)
+    final public function matchWithParameters(&$routePath, RouteParameters $parameters)
     {
         $this->value = null;
         $this->parameters = $parameters;

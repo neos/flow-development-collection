@@ -31,9 +31,9 @@ final class RouteContext implements CacheAwareInterface
     private $httpRequest;
 
     /**
-     * Routing Parameters
+     * Routing RouteParameters
      *
-     * @var Parameters
+     * @var RouteParameters
      */
     private $parameters;
 
@@ -44,9 +44,9 @@ final class RouteContext implements CacheAwareInterface
 
     /**
      * @param HttpRequest $httpRequest The current HTTP request
-     * @param Parameters $parameters Routing Parameters
+     * @param RouteParameters $parameters Routing RouteParameters
      */
-    public function __construct(HttpRequest $httpRequest, Parameters $parameters)
+    public function __construct(HttpRequest $httpRequest, RouteParameters $parameters)
     {
         $this->httpRequest = $httpRequest;
         $this->parameters = $parameters;
@@ -61,9 +61,9 @@ final class RouteContext implements CacheAwareInterface
     }
 
     /**
-     * @return Parameters
+     * @return RouteParameters
      */
-    public function getParameters(): Parameters
+    public function getParameters(): RouteParameters
     {
         return $this->parameters;
     }

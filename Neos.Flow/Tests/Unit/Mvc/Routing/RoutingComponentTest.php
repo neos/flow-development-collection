@@ -14,7 +14,7 @@ namespace Neos\Flow\Tests\Unit\Mvc\Routing;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Http\Component\ComponentContext;
 use Neos\Flow\Http\Request;
-use Neos\Flow\Mvc\Routing\Dto\Parameters;
+use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
 use Neos\Flow\Mvc\Routing\Dto\RouteContext;
 use Neos\Flow\Mvc\Routing\Router;
 use Neos\Flow\Mvc\Routing\RoutingComponent;
@@ -85,7 +85,7 @@ class RoutingComponentTest extends UnitTestCase
     public function handleStoresRouterMatchResultsInTheComponentContext()
     {
         $mockMatchResults = ['someRouterMatchResults'];
-        $routeContext = new RouteContext($this->mockHttpRequest, Parameters::createEmpty());
+        $routeContext = new RouteContext($this->mockHttpRequest, RouteParameters::createEmpty());
 
         $this->mockRouter->expects($this->atLeastOnce())->method('route')->with($routeContext)->will($this->returnValue($mockMatchResults));
         $this->mockComponentContext->expects($this->atLeastOnce())->method('setParameter')->with(RoutingComponent::class, 'matchResults', $mockMatchResults);

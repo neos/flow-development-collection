@@ -15,7 +15,7 @@ use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Http\Request;
 use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
-use Neos\Flow\Mvc\Routing\Dto\Parameters;
+use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
 use Neos\Flow\Mvc\Routing\Dto\ResolveContext;
 use Neos\Flow\Mvc\Routing\Dto\RouteContext;
 use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
@@ -314,7 +314,7 @@ class RouterTest extends UnitTestCase
         $router = $this->getAccessibleMock(Router::class, ['createRoutesFromConfiguration']);
         $this->inject($router, 'systemLogger', $this->mockSystemLogger);
 
-        $routeContext = new RouteContext($this->mockHttpRequest, Parameters::createEmpty());
+        $routeContext = new RouteContext($this->mockHttpRequest, RouteParameters::createEmpty());
         $cachedMatchResults = ['some' => 'cached results'];
 
         $mockRouterCachingService = $this->getMockBuilder(RouterCachingService::class)->getMock();
@@ -337,7 +337,7 @@ class RouterTest extends UnitTestCase
         $this->inject($router, 'systemLogger', $this->mockSystemLogger);
 
         $matchResults = ['some' => 'match results'];
-        $routeContext = new RouteContext($this->mockHttpRequest, Parameters::createEmpty());
+        $routeContext = new RouteContext($this->mockHttpRequest, RouteParameters::createEmpty());
 
         $mockRoute1 = $this->getMockBuilder(Route::class)->getMock();
         $mockRoute1->expects($this->once())->method('matches')->with($routeContext)->will($this->returnValue(false));
@@ -370,7 +370,7 @@ class RouterTest extends UnitTestCase
         $this->inject($router, 'routerCachingService', $this->mockRouterCachingService);
         $this->inject($router, 'systemLogger', $this->mockSystemLogger);
 
-        $routeContext = new RouteContext($this->mockHttpRequest, Parameters::createEmpty());
+        $routeContext = new RouteContext($this->mockHttpRequest, RouteParameters::createEmpty());
 
         $mockRoute1 = $this->getMockBuilder(Route::class)->getMock();
         $mockRoute1->expects($this->once())->method('matches')->with($routeContext)->will($this->returnValue(false));
@@ -410,7 +410,7 @@ class RouterTest extends UnitTestCase
         $this->inject($router, 'configurationManager', $mockConfigurationManager);
 
         try {
-            $router->route(new RouteContext($this->mockHttpRequest, Parameters::createEmpty()));
+            $router->route(new RouteContext($this->mockHttpRequest, RouteParameters::createEmpty()));
         } catch (NoMatchingRouteException $exception) {
         }
 
@@ -445,7 +445,7 @@ class RouterTest extends UnitTestCase
 
         $router->setRoutesConfiguration($routesConfiguration);
         try {
-            $router->route(new RouteContext($this->mockHttpRequest, Parameters::createEmpty()));
+            $router->route(new RouteContext($this->mockHttpRequest, RouteParameters::createEmpty()));
         } catch (NoMatchingRouteException $exception) {
         }
 

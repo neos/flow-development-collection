@@ -16,7 +16,7 @@ use Neos\Cache\CacheAwareInterface;
 use Neos\Cache\Frontend\VariableFrontend;
 use Neos\Flow\Mvc\Routing\Dto\ResolveContext;
 use Neos\Flow\Mvc\Routing\Dto\RouteContext;
-use Neos\Flow\Mvc\Routing\Dto\Tags;
+use Neos\Flow\Mvc\Routing\Dto\RouteTags;
 use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Log\SystemLoggerInterface;
@@ -100,10 +100,10 @@ class RouterCachingService
      *
      * @param RouteContext $routeContext
      * @param array $matchResults
-     * @param Tags|null $matchedTags
+     * @param RouteTags|null $matchedTags
      * @return void
      */
-    public function storeMatchResults(RouteContext $routeContext, array $matchResults, Tags $matchedTags = null)
+    public function storeMatchResults(RouteContext $routeContext, array $matchResults, RouteTags $matchedTags = null)
     {
         if ($this->containsObject($matchResults)) {
             return;
@@ -135,10 +135,10 @@ class RouterCachingService
      *
      * @param ResolveContext $resolveContext
      * @param UriConstraints $uriConstraints
-     * @param Tags|null $resolvedTags
+     * @param RouteTags|null $resolvedTags
      * @return void
      */
-    public function storeResolvedUriConstraints(ResolveContext $resolveContext, UriConstraints $uriConstraints, Tags $resolvedTags = null)
+    public function storeResolvedUriConstraints(ResolveContext $resolveContext, UriConstraints $uriConstraints, RouteTags $resolvedTags = null)
     {
         $routeValues = $this->convertObjectsToHashes($resolveContext->getRouteValues());
         if ($routeValues === null) {

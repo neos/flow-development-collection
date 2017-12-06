@@ -12,7 +12,7 @@ namespace Neos\Flow\Tests\Unit\Mvc\Routing\Dto;
  */
 
 use Neos\Flow\Mvc\Routing\Dto\MatchResult;
-use Neos\Flow\Mvc\Routing\Dto\Tags;
+use Neos\Flow\Mvc\Routing\Dto\RouteTags;
 use Neos\Flow\Tests\UnitTestCase;
 
 /**
@@ -44,7 +44,7 @@ class MatchResultTest extends UnitTestCase
      */
     public function hasTagsIsTrueIfTagsAreSet()
     {
-        $tags = Tags::createEmpty();
+        $tags = RouteTags::createEmpty();
         $matchResult = new MatchResult('matchedValue', $tags);
         $this->assertTrue($matchResult->hasTags());
     }
@@ -63,7 +63,7 @@ class MatchResultTest extends UnitTestCase
      */
     public function getTagsReturnsSpecifiedTags()
     {
-        $tags = Tags::createEmpty()->withTag('foo');
+        $tags = RouteTags::createEmpty()->withTag('foo');
         $matchResult = new MatchResult('matchedValue', $tags);
         $this->assertSame($tags, $matchResult->getTags());
     }

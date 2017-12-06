@@ -14,14 +14,14 @@ namespace Neos\Flow\Mvc\Routing\Dto;
 use Neos\Flow\Annotations as Flow;
 
 /**
- * Tags to be associated with matched/resolved routes
+ * RouteTags to be associated with matched/resolved routes
  *
- * Tags can be added by Route Part handlers via the ResolveResult/MatchResult return values
+ * RouteTags can be added by Route Part handlers via the ResolveResult/MatchResult return values
  * The tags will be added to the corresponding cache entries, so that they can be flushed selectively using the RouterCachingService
  *
  * @Flow\Proxy(false)
  */
-final class Tags
+final class RouteTags
 {
 
     /**
@@ -45,7 +45,7 @@ final class Tags
     /**
      * Creates an instance without any tags
      *
-     * @return Tags
+     * @return RouteTags
      */
     public static function createEmpty(): self
     {
@@ -56,7 +56,7 @@ final class Tags
      * Creates an instance with one given tag
      *
      * @param string $tag Tag value satisfying the PATTERN_TAG regex
-     * @return Tags
+     * @return RouteTags
      */
     public static function createFromTag(string $tag): self
     {
@@ -68,7 +68,7 @@ final class Tags
      * Creates an instance with one given tags
      *
      * @param string[] $tags An array of strings satisfying the PATTERN_TAG regex
-     * @return Tags
+     * @return RouteTags
      */
     public static function createFromArray(array $tags): self
     {
@@ -79,10 +79,10 @@ final class Tags
     /**
      * Merges two instances of this class combining and unifying all tags
      *
-     * @param Tags $tags
-     * @return Tags
+     * @param RouteTags $tags
+     * @return RouteTags
      */
-    public function merge(Tags $tags): self
+    public function merge(RouteTags $tags): self
     {
         $mergedTags = array_unique(array_merge($this->tags, $tags->tags));
         return new static($mergedTags);
@@ -93,7 +93,7 @@ final class Tags
      * If the $tag has been added already, this instance is returned
      *
      * @param string $tag
-     * @return Tags
+     * @return RouteTags
      */
     public function withTag(string $tag): self
     {
@@ -115,7 +115,7 @@ final class Tags
     private static function validateTag($tag)
     {
         if (!is_string($tag)) {
-            throw new \InvalidArgumentException(sprintf('Tags have to be strings, %s given', is_object($tag) ? get_class($tag) : gettype($tag)), 1512553153);
+            throw new \InvalidArgumentException(sprintf('RouteTags have to be strings, %s given', is_object($tag) ? get_class($tag) : gettype($tag)), 1512553153);
         }
         if (preg_match(self::PATTERN_TAG, $tag) !== 1) {
             throw new \InvalidArgumentException(sprintf('The given string "%s" is not a valid tag', $tag), 1511807639);

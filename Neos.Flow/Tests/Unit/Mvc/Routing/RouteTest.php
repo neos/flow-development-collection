@@ -14,7 +14,7 @@ namespace Neos\Flow\Tests\Unit\Mvc\Routing;
 use Neos\Flow\Http;
 use Neos\Flow\Http\Request;
 use Neos\Flow\Mvc\Exception\InvalidRoutePartValueException;
-use Neos\Flow\Mvc\Routing\Dto\Parameters;
+use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
 use Neos\Flow\Mvc\Routing\Dto\RouteContext;
 use Neos\Flow\Mvc\Routing\Fixtures\MockRoutePartHandler;
 use Neos\Flow\Mvc\Routing;
@@ -80,7 +80,7 @@ class RouteTest extends UnitTestCase
         $mockHttpRequest->expects($this->any())->method('getRelativePath')->will($this->returnValue($routePath));
         $mockHttpRequest->expects($this->any())->method('getUri')->will($this->returnValue($mockUri));
 
-        $routeContext = new RouteContext($mockHttpRequest, Parameters::createEmpty());
+        $routeContext = new RouteContext($mockHttpRequest, RouteParameters::createEmpty());
         return $this->route->matches($routeContext);
     }
 
@@ -760,7 +760,7 @@ class RouteTest extends UnitTestCase
         $mockHttpRequest->expects($this->any())->method('getBaseUri')->will($this->returnValue($mockBaseUri));
 
         $mockHttpRequest->expects($this->atLeastOnce())->method('getMethod')->will($this->returnValue('GET'));
-        $this->assertFalse($this->route->matches(new RouteContext($mockHttpRequest, Parameters::createEmpty())), 'Route must not match GET requests if only POST or PUT requests are accepted.');
+        $this->assertFalse($this->route->matches(new RouteContext($mockHttpRequest, RouteParameters::createEmpty())), 'Route must not match GET requests if only POST or PUT requests are accepted.');
     }
 
     /**
@@ -784,7 +784,7 @@ class RouteTest extends UnitTestCase
 
         $mockHttpRequest->expects($this->atLeastOnce())->method('getMethod')->will($this->returnValue('PUT'));
 
-        $this->assertTrue($this->route->matches(new RouteContext($mockHttpRequest, Parameters::createEmpty())), 'Route should match PUT requests if POST and PUT requests are accepted.');
+        $this->assertTrue($this->route->matches(new RouteContext($mockHttpRequest, RouteParameters::createEmpty())), 'Route should match PUT requests if POST and PUT requests are accepted.');
     }
 
     /*                                                                        *

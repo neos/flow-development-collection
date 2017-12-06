@@ -11,13 +11,13 @@ namespace Neos\Flow\Tests\Unit\Mvc\Routing\Dto;
  * source code.
  */
 
-use Neos\Flow\Mvc\Routing\Dto\Tags;
+use Neos\Flow\Mvc\Routing\Dto\RouteTags;
 use Neos\Flow\Tests\UnitTestCase;
 
 /**
- * Testcase for the Tags DTO
+ * Testcase for the RouteTags DTO
  */
-class TagsTest extends UnitTestCase
+class RouteTagsTest extends UnitTestCase
 {
     public function createFromTagThrowsExceptionForInvalidTagsDataProvider()
     {
@@ -35,7 +35,7 @@ class TagsTest extends UnitTestCase
      */
     public function createFromTagThrowsExceptionForInvalidTags($tag)
     {
-        Tags::createFromTag($tag);
+        RouteTags::createFromTag($tag);
     }
 
     /**
@@ -43,7 +43,7 @@ class TagsTest extends UnitTestCase
      */
     public function createFromTagCreatesANewInstanceWithTheGivenTag()
     {
-        $tags = Tags::createFromTag('foo');
+        $tags = RouteTags::createFromTag('foo');
         $this->assertSame(['foo'], $tags->getTags());
     }
 
@@ -52,7 +52,7 @@ class TagsTest extends UnitTestCase
      */
     public function createFromArrayCreatesAnInstanceWithAllGivenTags()
     {
-        $tags = Tags::createFromArray(['foo', 'bar', 'baz']);
+        $tags = RouteTags::createFromArray(['foo', 'bar', 'baz']);
         $this->assertSame(['foo', 'bar', 'baz'], $tags->getTags());
     }
 
@@ -62,7 +62,7 @@ class TagsTest extends UnitTestCase
      */
     public function createFromArrayDoesNotAcceptIntegerValues()
     {
-        Tags::createFromArray([123]);
+        RouteTags::createFromArray([123]);
     }
 
     /**
@@ -71,7 +71,7 @@ class TagsTest extends UnitTestCase
      */
     public function createFromArrayDoesNotAcceptObjectValues()
     {
-        Tags::createFromArray([new \stdClass()]);
+        RouteTags::createFromArray([new \stdClass()]);
     }
 
     /**
@@ -79,8 +79,8 @@ class TagsTest extends UnitTestCase
      */
     public function mergeUnifiesTags()
     {
-        $tags1 = Tags::createEmpty()->withTag('foo')->withTag('bar');
-        $tags2 = Tags::createEmpty()->withTag('foo')->withTag('baz');
+        $tags1 = RouteTags::createEmpty()->withTag('foo')->withTag('bar');
+        $tags2 = RouteTags::createEmpty()->withTag('foo')->withTag('baz');
         $mergedTags = $tags1->merge($tags2);
         $this->assertSame(['foo', 'bar', 'baz'], $mergedTags->getTags());
     }
@@ -90,7 +90,7 @@ class TagsTest extends UnitTestCase
      */
     public function withTagReturnsTheSameInstanceIfTheTagAlreadyExists()
     {
-        $tags1 = Tags::createEmpty()->withTag('foo');
+        $tags1 = RouteTags::createEmpty()->withTag('foo');
         $tags2 = $tags1->withTag('foo');
 
         $this->assertSame($tags1, $tags2);
@@ -101,7 +101,7 @@ class TagsTest extends UnitTestCase
      */
     public function withTagReturnsAnInstanceWithTheNewTag()
     {
-        $tags1 = Tags::createEmpty()->withTag('foo');
+        $tags1 = RouteTags::createEmpty()->withTag('foo');
         $tags2 = $tags1->withTag('bar');
 
         $this->assertTrue($tags2->has('bar'));
@@ -112,7 +112,7 @@ class TagsTest extends UnitTestCase
      */
     public function withTagDoesNotMutateTheInstance()
     {
-        $tags1 = Tags::createEmpty()->withTag('foo');
+        $tags1 = RouteTags::createEmpty()->withTag('foo');
         $tags1->withTag('bar');
 
         $this->assertFalse($tags1->has('bar'));

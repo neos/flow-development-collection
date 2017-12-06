@@ -36,18 +36,18 @@ final class ResolveResult
     private $uriConstraints;
 
     /**
-     * Tags to be associated with the result, or NULL
+     * RouteTags to be associated with the result, or NULL
      *
-     * @var Tags|null
+     * @var RouteTags|null
      */
     private $tags;
 
     /**
      * @param string $resolvedValue
      * @param UriConstraints $uriConstraints
-     * @param Tags $tags
+     * @param RouteTags $tags
      */
-    public function __construct(string $resolvedValue, UriConstraints $uriConstraints = null, Tags $tags = null)
+    public function __construct(string $resolvedValue, UriConstraints $uriConstraints = null, RouteTags $tags = null)
     {
         $this->resolvedValue = $resolvedValue;
         $this->uriConstraints = $uriConstraints;
@@ -87,7 +87,7 @@ final class ResolveResult
     }
 
     /**
-     * @return Tags|null
+     * @return RouteTags|null
      */
     public function getTags()
     {

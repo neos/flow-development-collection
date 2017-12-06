@@ -20,11 +20,11 @@ use Neos\Utility\TypeHandling;
  * Route Part implementations can react to given parameters and adjust their matching behavior accordingly
  * if they implement ParameterAwareRoutePartInterface
  *
- * Routing Parameters are usually registered using HTTP components
+ * Routing RouteParameters are usually registered using HTTP components
  *
  * @Flow\Proxy(false)
  */
-final class Parameters implements CacheAwareInterface
+final class RouteParameters implements CacheAwareInterface
 {
 
     /**
@@ -45,7 +45,7 @@ final class Parameters implements CacheAwareInterface
     /**
      * Creates an empty instance of this class
      *
-     * @return Parameters
+     * @return RouteParameters
      */
     public static function createEmpty(): self
     {
@@ -57,7 +57,7 @@ final class Parameters implements CacheAwareInterface
      *
      * @param string $parameterName name of the parameter to add
      * @param bool|float|int|string|CacheAwareInterface $parameterValue value of the parameter, has to be a literal or an object implementing CacheAwareInterface
-     * @return Parameters a new instance with the given parameters added
+     * @return RouteParameters a new instance with the given parameters added
      */
     public function withParameter(string $parameterName, $parameterValue): self
     {

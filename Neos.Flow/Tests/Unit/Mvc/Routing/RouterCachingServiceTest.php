@@ -18,7 +18,7 @@ use Neos\Flow\Core\ApplicationContext;
 use Neos\Flow\Http\Request;
 use Neos\Flow\Http\Uri;
 use Neos\Flow\Log\SystemLoggerInterface;
-use Neos\Flow\Mvc\Routing\Dto\Parameters;
+use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
 use Neos\Flow\Mvc\Routing\Dto\ResolveContext;
 use Neos\Flow\Mvc\Routing\Dto\RouteContext;
 use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
@@ -216,7 +216,7 @@ class RouterCachingServiceTest extends UnitTestCase
         $cacheIdentifier = '095d44631b8d13717d5fb3d2f6c3e032';
         $this->mockRouteCache->expects($this->once())->method('get')->with($cacheIdentifier)->will($this->returnValue($expectedResult));
 
-        $actualResult = $this->routerCachingService->getCachedMatchResults(new RouteContext($this->mockHttpRequest, Parameters::createEmpty()));
+        $actualResult = $this->routerCachingService->getCachedMatchResults(new RouteContext($this->mockHttpRequest, RouteParameters::createEmpty()));
         $this->assertEquals($expectedResult, $actualResult);
     }
 
@@ -229,7 +229,7 @@ class RouterCachingServiceTest extends UnitTestCase
         $cacheIdentifier = '095d44631b8d13717d5fb3d2f6c3e032';
         $this->mockRouteCache->expects($this->once())->method('get')->with($cacheIdentifier)->will($this->returnValue(false));
 
-        $actualResult = $this->routerCachingService->getCachedMatchResults(new RouteContext($this->mockHttpRequest, Parameters::createEmpty()));
+        $actualResult = $this->routerCachingService->getCachedMatchResults(new RouteContext($this->mockHttpRequest, RouteParameters::createEmpty()));
         $this->assertEquals($expectedResult, $actualResult);
     }
 
@@ -242,7 +242,7 @@ class RouterCachingServiceTest extends UnitTestCase
 
         $this->mockRouteCache->expects($this->never())->method('set');
 
-        $this->routerCachingService->storeMatchResults(new RouteContext($this->mockHttpRequest, Parameters::createEmpty()), $matchResults);
+        $this->routerCachingService->storeMatchResults(new RouteContext($this->mockHttpRequest, RouteParameters::createEmpty()), $matchResults);
     }
 
     /**
@@ -253,7 +253,7 @@ class RouterCachingServiceTest extends UnitTestCase
         $uuid1 = '550e8400-e29b-11d4-a716-446655440000';
         $uuid2 = '302abe9c-7d07-4200-a868-478586019290';
         $matchResults = ['some' => ['matchResults' => ['uuid', $uuid1]], 'foo' => $uuid2];
-        $routeContext = new RouteContext($this->mockHttpRequest, Parameters::createEmpty());
+        $routeContext = new RouteContext($this->mockHttpRequest, RouteParameters::createEmpty());
 
         $this->mockRouteCache->expects($this->once())->method('set')->with($routeContext->getCacheEntryIdentifier(), $matchResults, [$uuid1, $uuid2, md5('some'), md5('some/route'), md5('some/route/path')]);
 

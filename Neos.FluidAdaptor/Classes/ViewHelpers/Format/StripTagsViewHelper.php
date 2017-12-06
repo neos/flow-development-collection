@@ -24,10 +24,10 @@ use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
  * = Examples =
  *
  * <code title="default notation">
- * <f:format.stripTags>Some Text with <b>Tags</b> and an &Uuml;mlaut.</f:format.stripTags>
+ * <f:format.stripTags>Some Text with <b>RouteTags</b> and an &Uuml;mlaut.</f:format.stripTags>
  * </code>
  * <output>
- * Some Text with Tags and an &Uuml;mlaut. (strip_tags() applied. Note: encoded entities are not decoded)
+ * Some Text with RouteTags and an &Uuml;mlaut. (strip_tags() applied. Note: encoded entities are not decoded)
  * </output>
  *
  * <code title="inline notation">

@@ -20,7 +20,7 @@ use Neos\Flow\Mvc\Routing\Dto\MatchResult;
 use Neos\Flow\Mvc\Routing\Dto\ResolveContext;
 use Neos\Flow\Mvc\Routing\Dto\ResolveResult;
 use Neos\Flow\Mvc\Routing\Dto\RouteContext;
-use Neos\Flow\Mvc\Routing\Dto\Tags;
+use Neos\Flow\Mvc\Routing\Dto\RouteTags;
 use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
@@ -82,7 +82,7 @@ class Route
     /**
      * The tags that have been associated with this route during request matching, or NULL if no tags were set
      *
-     * @var Tags|null
+     * @var RouteTags|null
      */
     protected $matchedTags;
 
@@ -96,7 +96,7 @@ class Route
     /**
      * The tags that have been associated with this route during resolving, or NULL if no tags were set
      *
-     * @var Tags|null
+     * @var RouteTags|null
      */
     protected $resolvedTags;
 
@@ -331,7 +331,7 @@ class Route
     /**
      * Returns the tags that have been associated with this route during request matching, or NULL if no tags were set
      *
-     * @return Tags|null
+     * @return RouteTags|null
      */
     public function getMatchedTags()
     {
@@ -351,7 +351,7 @@ class Route
     /**
      * Returns the tags that have been associated with this route during resolving, or NULL if no tags were set
      *
-     * @return Tags|null
+     * @return RouteTags|null
      */
     public function getResolvedTags()
     {
@@ -363,7 +363,7 @@ class Route
      * If all Route Parts match successfully TRUE is returned an $this->matchResults contains an array
      * combining Route default values and calculated matchResults from the individual Route Parts.
      *
-     * @param RouteContext $routeContext The Route Context containing the current HTTP request object and, optional, Routing Parameters
+     * @param RouteContext $routeContext The Route Context containing the current HTTP request object and, optional, Routing RouteParameters
      * @return boolean TRUE if this Route corresponds to the given $routeContext, otherwise FALSE
      * @throws InvalidRoutePartValueException
      * @see getMatchResults()
@@ -373,7 +373,7 @@ class Route
         $httpRequest = $routeContext->getHttpRequest();
         $routePath = $httpRequest->getRelativePath();
         $this->matchResults = null;
-        $this->matchedTags = Tags::createEmpty();
+        $this->matchedTags = RouteTags::createEmpty();
         if ($this->uriPattern === null) {
             return false;
         }
@@ -455,7 +455,7 @@ class Route
     public function resolves(array $routeValues)
     {
         $this->resolvedUriConstraints = UriConstraints::create();
-        $this->resolvedTags = Tags::createEmpty();
+        $this->resolvedTags = RouteTags::createEmpty();
         if ($this->uriPattern === null) {
             return false;
         }

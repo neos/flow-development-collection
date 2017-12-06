@@ -131,7 +131,7 @@ class ProxyMethod
     /**
      * Sets the (exact) code which use used in as the parameters signature for this method.
      *
-     * @param string $code Parameters code, for example: '$foo, array $bar, \Foo\Bar\Baz $baz'
+     * @param string $code RouteParameters code, for example: '$foo, array $bar, \Foo\Bar\Baz $baz'
      * @return void
      */
     public function setMethodParametersCode($code)

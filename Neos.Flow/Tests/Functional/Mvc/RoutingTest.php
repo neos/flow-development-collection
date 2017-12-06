@@ -15,7 +15,7 @@ use Neos\Flow\Http\Request;
 use Neos\Flow\Http\Uri;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
-use Neos\Flow\Mvc\Routing\Dto\Parameters;
+use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
 use Neos\Flow\Mvc\Routing\Dto\ResolveContext;
 use Neos\Flow\Mvc\Routing\Dto\RouteContext;
 use Neos\Flow\Mvc\Routing\Route;
@@ -78,7 +78,7 @@ class RoutingTest extends FunctionalTestCase
     {
         $requestUri = 'http://localhost/neos/flow/test/httpmethods';
         $request = Request::create(new Uri($requestUri), 'GET');
-        $matchResults = $this->router->route(new RouteContext($request, Parameters::createEmpty()));
+        $matchResults = $this->router->route(new RouteContext($request, RouteParameters::createEmpty()));
         $actionRequest = $this->createActionRequest($request, $matchResults);
         $this->assertEquals(ActionControllerTestAController::class, $actionRequest->getControllerObjectName());
         $this->assertEquals('first', $actionRequest->getControllerActionName());
@@ -91,7 +91,7 @@ class RoutingTest extends FunctionalTestCase
     {
         $requestUri = 'http://localhost/neos/flow/test/httpmethods';
         $request = Request::create(new Uri($requestUri), 'POST');
-        $matchResults = $this->router->route(new RouteContext($request, Parameters::createEmpty()));
+        $matchResults = $this->router->route(new RouteContext($request, RouteParameters::createEmpty()));
         $actionRequest = $this->createActionRequest($request, $matchResults);
         $this->assertEquals(ActionControllerTestAController::class, $actionRequest->getControllerObjectName());
         $this->assertEquals('second', $actionRequest->getControllerActionName());
@@ -201,7 +201,7 @@ class RoutingTest extends FunctionalTestCase
     {
         $request = Request::create(new Uri($requestUri));
         try {
-            $matchResults = $this->router->route(new RouteContext($request, Parameters::createEmpty()));
+            $matchResults = $this->router->route(new RouteContext($request, RouteParameters::createEmpty()));
         } catch (NoMatchingRouteException $exception) {
             $matchResults = null;
         }

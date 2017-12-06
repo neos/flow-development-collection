@@ -40,7 +40,7 @@ use Neos\Cache\Exception as CacheException;
  * Each Redis key contains a prefix built from the cache identifier,
  * so one single database can be used for different caches.
  *
- * Cache entry data is stored in a simple key. Tags are stored in Sets.
+ * Cache entry data is stored in a simple key. RouteTags are stored in Sets.
  * Since Redis < 2.8.0 does not provide a mechanism for iterating over keys,
  * a separate list with all entries is populated
  *
@@ -111,7 +111,7 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
      *
      * @param string $entryIdentifier An identifier for this specific cache entry
      * @param string $data The data to be stored
-     * @param array $tags Tags to associate with this cache entry. If the backend does not support tags, this option can be ignored.
+     * @param array $tags RouteTags to associate with this cache entry. If the backend does not support tags, this option can be ignored.
      * @param integer $lifetime Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited lifetime.
      * @throws \RuntimeException
      * @return void

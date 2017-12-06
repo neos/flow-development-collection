@@ -11,12 +11,12 @@ namespace Neos\Flow\Mvc\Routing;
  * source code.
  */
 
-use Neos\Flow\Mvc\Routing\Dto\Parameters;
+use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
 
 /**
- * Contract for Route parts that are aware of Routing Parameters
+ * Contract for Route parts that are aware of Routing RouteParameters
  *
- * This extends the RoutePartInterface by a new method that allows Routing Parameters to be passed in when
+ * This extends the RoutePartInterface by a new method that allows Routing RouteParameters to be passed in when
  * matching an incoming request.
  *
  * @api
@@ -26,8 +26,8 @@ interface ParameterAwareRoutePartInterface extends RoutePartInterface
 
     /**
      * @param string &$routePath The request path to be matched - without query parameters, host and fragment.
-     * @param Parameters $parameters The Routing Parameters that can be registered via HTTP components
+     * @param RouteParameters $parameters The Routing RouteParameters that can be registered via HTTP components
      * @return boolean TRUE if Route Part matched $routePath, otherwise FALSE.
      */
-    public function matchWithParameters(&$routePath, Parameters $parameters);
+    public function matchWithParameters(&$routePath, RouteParameters $parameters);
 }
