@@ -143,8 +143,8 @@ class ArrayHelper implements ProtectedContextAwareInterface
     }
 
     /**
-     * Returns the index of an array value, starting at 0.
-     * Returns -1 if the value was not found.
+     * Returns the first index at which a given element can be found in the array,
+     * or -1 if it is not present
      *
      * @param array $array The array
      * @param mixed $searchElement The element value to find
