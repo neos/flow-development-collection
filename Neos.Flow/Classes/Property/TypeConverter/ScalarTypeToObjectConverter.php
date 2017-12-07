@@ -15,6 +15,7 @@ use Doctrine\ORM\Mapping\Entity;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Flow\Reflection\ReflectionService;
+use Neos\Utility\TypeHandling;
 
 /**
  * A type converter which converts a scalar type (string, boolean, float or integer) to an object by instantiating
@@ -30,7 +31,7 @@ class ScalarTypeToObjectConverter extends AbstractTypeConverter
     /**
      * @var array
      */
-    protected $sourceTypes = ['string', 'integer', 'float', 'bool'];
+    protected $sourceTypes = ['string', 'integer', 'float', 'boolean'];
 
     /**
      * @var string
@@ -70,7 +71,7 @@ class ScalarTypeToObjectConverter extends AbstractTypeConverter
             return false;
         }
         $methodParameter = array_shift($methodParameters);
-        return $methodParameter['type'] === gettype($source);
+        return TypeHandling::normalizeType($methodParameter['type']) === gettype($source);
     }
 
     /**

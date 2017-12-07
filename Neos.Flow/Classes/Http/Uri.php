@@ -86,6 +86,9 @@ class Uri implements UriInterface
      */
     protected $fragment;
 
+    /**
+     * @var array
+     */
     protected $defaultPortsForScheme = [
         'http' => 80,
         'https' => 443

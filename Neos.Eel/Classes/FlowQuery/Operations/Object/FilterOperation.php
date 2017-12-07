@@ -240,7 +240,7 @@ class FilterOperation extends AbstractOperation
                     }
                     return false;
                 } else {
-                    return strrpos($value, $operand) === strlen($value) - strlen($operand);
+                    return strrpos($value, (string)$operand) === strlen($value) - strlen($operand);
                 }
             case '^=':
                 if (is_array($value)) {
@@ -249,7 +249,7 @@ class FilterOperation extends AbstractOperation
                     }
                     return false;
                 } else {
-                    return strpos($value, $operand) === 0;
+                    return strpos($value, (string)$operand) === 0;
                 }
             case '*=':
                 if (is_array($value)) {
@@ -260,7 +260,7 @@ class FilterOperation extends AbstractOperation
                     }
                     return false;
                 } else {
-                    return strpos($value, $operand) !== false;
+                    return strpos($value, (string)$operand) !== false;
                 }
             case 'instanceof':
                 if ($this->operandIsSimpleType($operand)) {
