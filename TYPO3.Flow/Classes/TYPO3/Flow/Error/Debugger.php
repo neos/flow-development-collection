@@ -153,8 +153,13 @@ class Debugger
      */
     protected static function renderArrayDump($array, $level, $plaintext = false, $ansiColors = false)
     {
-        $type = is_array($array) ? 'array' : get_class($array);
-        $dump = $type . (count($array) ? '(' . count($array) . ')' : '(empty)');
+        if (is_array($array)) {
+            $dump = 'array' . (count($array) ? '(' . count($array) . ')' : '(empty)');
+        } elseif ($array instanceof \Countable) {
+            $dump = get_class($array) . (count($array) ? '(' . count($array) . ')' : '(empty)');
+        } else {
+            $dump = get_class($array);
+        }
         foreach ($array as $key => $value) {
             $dump .= chr(10) . str_repeat(' ', $level) . self::renderDump($key, 0, $plaintext, $ansiColors) . ' => ';
             $dump .= self::renderDump($value, $level + 1, $plaintext, $ansiColors);
