@@ -149,7 +149,7 @@ class LazySplObjectStorage extends \SplObjectStorage
         return parent::offsetGet($object);
     }
 
-    public function offsetSet($object, $info)
+    public function offsetSet($object, $info = null)
     {
         $this->initialize();
         parent::offsetSet($object, $info);
