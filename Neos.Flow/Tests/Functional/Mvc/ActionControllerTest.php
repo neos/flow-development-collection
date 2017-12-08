@@ -297,6 +297,7 @@ class ActionControllerTest extends FunctionalTestCase
     public function argumentTestsDataProvider()
     {
         $requiredArgumentExceptionText = 'Uncaught Exception in Flow #1298012500: Required argument "argument" is not set.';
+        $invalidArgumentValueExceptionText = 'Uncaught Exception in Flow #1505460827: The argument "argument" is invalid.';
         $data = [
             'required string            '       => ['requiredString', 'some String', '\'some String\''],
             'required string - missing value'   => ['requiredString', null, $requiredArgumentExceptionText],
@@ -327,7 +328,7 @@ class ActionControllerTest extends FunctionalTestCase
             'required date string'              => ['requiredDate', '1980-12-13T14:22:12+02:00', '1980-12-13'],
             'required date - missing value'     => ['requiredDate', null, $requiredArgumentExceptionText],
             'required date - mapping error'     => ['requiredDate', 'no date', 'Validation failed while trying to call Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController->requiredDateAction().'],
-            'required date - empty value'       => ['requiredDate', '', 'Uncaught Exception in Flow Argument 1 passed to Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController_Original::requiredDateAction() must be an instance of DateTime, null given'],
+            'required date - empty value'       => ['requiredDate', '', $invalidArgumentValueExceptionText],
             'optional date string'              => ['optionalDate', '1980-12-13T14:22:12+02:00', '1980-12-13'],
             'optional date - default value'     => ['optionalDate', null, 'null'],
             'optional date - mapping error'     => ['optionalDate', 'no date', 'Validation failed while trying to call Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController->optionalDateAction().'],
