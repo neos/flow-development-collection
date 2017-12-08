@@ -12,7 +12,7 @@ namespace Neos\Flow\Log;
  */
 
 /**
- *
+ * The Flow enabled logger currently used as default for logging.
  */
 class Logger extends DefaultLogger implements SystemLoggerInterface, SecurityLoggerInterface, ThrowableLoggerInterface
 {

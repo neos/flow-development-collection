@@ -2,10 +2,34 @@
 namespace Neos\Flow\Log;
 
 /**
- *
+ * Format any value as plain text representation.
  */
-abstract class FormatUtility
+class PlaintextFormatter
 {
+    /**
+     * @var mixed
+     */
+    protected $variable;
+
+    /**
+     * Initialize the formatter with any value.
+     *
+     * @param mixed $variable
+     */
+    public function __construct($variable)
+    {
+        $this->variable = $variable;
+    }
+
+    /**
+     * @param $spaces
+     * @return string
+     */
+    public function format($spaces = 4)
+    {
+        return $this->renderVariableAsPlaintext($this->variable, $spaces);
+    }
+
     /**
      * Returns a suitable form of a variable (be it a string, array, object ...) for logfile output
      *
@@ -14,7 +38,7 @@ abstract class FormatUtility
      * @param int $continuationSpaces Running total indentation
      * @return string text output
      */
-    public static function renderVariableAsPlaintext($var, $spaces = 4, $continuationSpaces = 0)
+    protected function renderVariableAsPlaintext($var, $spaces = 4, $continuationSpaces = 0)
     {
         $currentIndent = str_repeat(' ', $spaces + $continuationSpaces);
         if ($continuationSpaces > 100) {
@@ -36,14 +60,14 @@ abstract class FormatUtility
         if (is_array($var)) {
             $output .= PHP_EOL;
             foreach ($var as $k => $v) {
-                $output .= static::renderKeyValue($k, $v, $spaces, $continuationSpaces);
+                $output .= $this->renderKeyValue($k, $v, $spaces, $continuationSpaces);
             }
         }
 
         if (is_object($var)) {
             $output .= '[' . get_class($var) . ']:' . PHP_EOL;
             foreach (get_object_vars($var) as $objVarName => $objVarValue) {
-                $output .= static::renderKeyValue($objVarName, $objVarValue, $spaces, $continuationSpaces);
+                $output .= $this->renderKeyValue($objVarName, $objVarValue, $spaces, $continuationSpaces);
             }
         }
 
@@ -59,9 +83,9 @@ abstract class FormatUtility
      * @param int $continuationSpaces
      * @return string
      */
-    protected static function renderKeyValue($key, $value, $spaces, $continuationSpaces)
+    protected function renderKeyValue($key, $value, $spaces, $continuationSpaces)
     {
         $currentIndent = str_repeat(' ', ($spaces * 2) + $continuationSpaces);
-        return ($currentIndent . $key . ':' . PHP_EOL . static::renderVariableAsPlaintext($value, $spaces, $continuationSpaces + $spaces));
+        return ($currentIndent . $key . ':' . PHP_EOL . $this->renderVariableAsPlaintext($value, $spaces, $continuationSpaces + $spaces));
     }
 }

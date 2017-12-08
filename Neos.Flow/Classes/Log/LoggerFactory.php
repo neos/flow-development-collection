@@ -32,7 +32,7 @@ class LoggerFactory
     protected $logInstanceCache = [];
 
     /**
-     * @var
+     * @var \Closure
      */
     protected $requestInfoCallback;
 
@@ -86,10 +86,10 @@ class LoggerFactory
     /**
      * Create a new logger instance.
      *
-     * @param $loggerObjectName
-     * @param $backendObjectNames
+     * @param string $loggerObjectName
+     * @param array|string $backendObjectNames
      * @param array $backendOptions
-     * @return mixed
+     * @return \Neos\Flow\Log\LoggerInterface
      */
     protected function instantiateLogger($loggerObjectName, $backendObjectNames, array $backendOptions = [])
     {

@@ -149,7 +149,7 @@ Neos\Flow\Log\SecurityLoggerInterface:
     4:
       setting: Neos.Flow.log.securityLogger.backendOptions
 
-Neos\Flow\Log\ThrowableLoggerInterface:
+Neos\Flow\Log\ThrowableStorageInterface:
   scope: singleton
   className: Neos\Flow\Log\ThrowableStorage\FileStorage
 

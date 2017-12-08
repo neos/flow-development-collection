@@ -12,7 +12,7 @@ namespace Neos\Flow\Log\Backend;
  */
 
 use Neos\Flow\Log\Exception\CouldNotOpenResourceException;
-use Neos\Flow\Log\FormatUtility;
+use Neos\Flow\Log\PlaintextFormatter;
 use Neos\Utility\Files;
 
 /**
@@ -243,7 +243,7 @@ class FileBackend extends AbstractBackend
             $output .= ' [logged in ' . $className . '::' . $methodName . '()]';
         }
         if (!empty($additionalData)) {
-            $output .= PHP_EOL . FormatUtility::renderVariableAsPlaintext($additionalData);
+            $output .= PHP_EOL . (new PlaintextFormatter($additionalData))->format();
         }
         if ($this->fileHandle !== false) {
             fputs($this->fileHandle, $output . PHP_EOL);
