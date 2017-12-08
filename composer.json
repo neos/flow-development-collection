@@ -114,6 +114,9 @@
             "Neos\\Flow\\Tests\\": [
                 "Neos.Flow/Tests"
             ],
+            "Neos\\FluidAdaptor\\Tests\\": [
+                "Neos.FluidAdaptor/Tests"
+            ],
             "Neos\\Kickstarter\\Tests\\": [
                 "Neos.Kickstarter/Tests"
             ],

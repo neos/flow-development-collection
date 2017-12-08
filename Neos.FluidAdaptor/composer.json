@@ -14,5 +14,10 @@
 		"psr-4": {
 			"Neos\\FluidAdaptor\\": "Classes/"
 		}
+	},
+	"autoload-dev": {
+		"psr-4": {
+			"Neos\\FluidAdaptor\\Tests\\": "Tests"
+		}
 	}
 }

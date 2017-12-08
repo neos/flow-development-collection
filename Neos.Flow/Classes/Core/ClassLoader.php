@@ -232,14 +232,8 @@ class ClassLoader
     {
         /** @var Package $package */
         foreach ($activePackages as $packageKey => $package) {
-            foreach ($package->getFlattenedAutoloadConfiguration() as $configuration) {
+            foreach ($package->getFlattenedAutoloadConfiguration($this->considerTestsNamespace) as $configuration) {
                 $this->createNamespaceMapEntry($configuration['namespace'], $configuration['classPath'], $configuration['mappingType']);
-            }
-            // TODO: Replace with "autoload-dev" usage
-            if ($this->considerTestsNamespace) {
-                foreach ($package->getNamespaces() as $namespace) {
-                    $this->createNamespaceMapEntry($namespace, $package->getPackagePath(), self::MAPPING_TYPE_PSR4);
-                }
             }
         }
     }
