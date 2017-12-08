@@ -4,7 +4,7 @@ namespace Neos\Flow\Log;
 /**
  * Format any value as plain text representation.
  */
-class PlaintextFormatter
+class PlainTextFormatter
 {
     /**
      * @var mixed
@@ -35,7 +35,7 @@ class PlaintextFormatter
      *
      * @param mixed $var The variable
      * @param integer $spaces Indent for this var dump
-     * @param int $continuationSpaces Running total indentation
+     * @param int $continuationSpaces Running total indentation (INTERNAL)
      * @return string text output
      */
     protected function renderVariableAsPlaintext($var, $spaces = 4, $continuationSpaces = 0)

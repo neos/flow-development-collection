@@ -11,7 +11,7 @@ namespace Neos\Flow\Log\Backend;
  * source code.
  */
 
-use Neos\Flow\Log\PlaintextFormatter;
+use Neos\Flow\Log\PlainTextFormatter;
 
 /**
  * An abstract Log backend
@@ -79,11 +79,11 @@ abstract class AbstractBackend implements BackendInterface
      * @param mixed $var The variable
      * @param integer $spaces Number of spaces to add before a line
      * @return string text output
-     * @deprecated Use the PlaintextFormatter directly
-     * @see PlaintextFormatter
+     * @deprecated Use the PlainTextFormatter directly
+     * @see PlainTextFormatter
      */
     protected function getFormattedVarDump($var, $spaces = 4)
     {
-        return (new PlaintextFormatter($var))->format($spaces);
+        return (new PlainTextFormatter($var))->format($spaces);
     }
 }

@@ -1,7 +1,7 @@
 <?php
 namespace Neos\Flow\Log\ThrowableStorage;
 
-use Neos\Flow\Log\PlaintextFormatter;
+use Neos\Flow\Log\PlainTextFormatter;
 use Neos\Flow\Log\ThrowableStorageInterface;
 use Neos\Utility\Files;
 
@@ -133,7 +133,7 @@ class FileStorage implements ThrowableStorageInterface
 
         $postMortemInfo .= PHP_EOL . $this->renderRequestInfo();
         $postMortemInfo .= PHP_EOL;
-        $postMortemInfo .= (new PlaintextFormatter($additionalData))->format();
+        $postMortemInfo .= (new PlainTextFormatter($additionalData))->format();
 
         return $postMortemInfo;
     }
