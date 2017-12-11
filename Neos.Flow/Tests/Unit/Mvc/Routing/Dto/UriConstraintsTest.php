@@ -42,9 +42,22 @@ class UriConstraintsTest extends UnitTestCase
             ['constraints' => [UriConstraints::CONSTRAINT_HOST => 'some-domain.tld'], 'templateUri' => 'http://some-domain.tld', 'forceAbsoluteUri' => false, 'expectedUri' => ''],
             ['constraints' => [UriConstraints::CONSTRAINT_HOST => 'some-other-domain.tld'], 'templateUri' => 'http://some-domain.tld', 'forceAbsoluteUri' => false, 'expectedUri' => 'http://some-other-domain.tld'],
 
-            ['constraints' => [UriConstraints::CONSTRAINT_SUB_DOMAIN => 'sub-domain'], 'templateUri' => 'http://some-domain.tld', 'forceAbsoluteUri' => false, 'expectedUri' => 'http://sub-domain.some-domain.tld'],
-            ['constraints' => [UriConstraints::CONSTRAINT_SUB_DOMAIN => 'new-sub-domain'], 'templateUri' => 'http://old-sub-domain.some-domain.tld', 'forceAbsoluteUri' => false, 'expectedUri' => 'http://new-sub-domain.some-domain.tld'],
-            ['constraints' => [UriConstraints::CONSTRAINT_SUB_DOMAIN => 'sub-domain'], 'templateUri' => 'http://localhost', 'forceAbsoluteUri' => false, 'expectedUri' => 'http://sub-domain.localhost'],
+            ['constraints' => [UriConstraints::CONSTRAINT_HOST_PREFIX => ['prefix' => 'en.', 'replacePrefixes' => []]], 'templateUri' => 'http://some-domain.tld', 'forceAbsoluteUri' => false, 'expectedUri' => 'http://en.some-domain.tld'],
+            ['constraints' => [UriConstraints::CONSTRAINT_HOST_PREFIX => ['prefix' => 'en.', 'replacePrefixes' => []]], 'templateUri' => 'http://en.some-domain.tld', 'forceAbsoluteUri' => false, 'expectedUri' => ''],
+            ['constraints' => [UriConstraints::CONSTRAINT_HOST_PREFIX => ['prefix' => 'en.', 'replacePrefixes' => []], UriConstraints::CONSTRAINT_HOST => 'new-host.tld'], 'templateUri' => 'http://en.some-domain.tld', 'forceAbsoluteUri' => false, 'expectedUri' => 'http://en.new-host.tld'],
+            ['constraints' => [UriConstraints::CONSTRAINT_HOST_PREFIX => ['prefix' => 'en.', 'replacePrefixes' => []], UriConstraints::CONSTRAINT_HOST => 'new-host.tld'], 'templateUri' => 'http://some-domain.tld', 'forceAbsoluteUri' => false, 'expectedUri' => 'http://en.new-host.tld'],
+            ['constraints' => [UriConstraints::CONSTRAINT_HOST_PREFIX => ['prefix' => 'en.', 'replacePrefixes' => []]], 'templateUri' => 'http://de.some-domain.tld', 'forceAbsoluteUri' => false, 'expectedUri' => 'http://en.de.some-domain.tld'],
+            ['constraints' => [UriConstraints::CONSTRAINT_HOST_PREFIX => ['prefix' => 'en.', 'replacePrefixes' => ['de.', 'ch.']]], 'templateUri' => 'http://some-domain.tld', 'forceAbsoluteUri' => false, 'expectedUri' => 'http://en.some-domain.tld'],
+            ['constraints' => [UriConstraints::CONSTRAINT_HOST_PREFIX => ['prefix' => 'en.', 'replacePrefixes' => ['de.']]], 'templateUri' => 'http://de.some-domain.tld', 'forceAbsoluteUri' => false, 'expectedUri' => 'http://en.some-domain.tld'],
+            ['constraints' => [UriConstraints::CONSTRAINT_HOST_PREFIX => ['prefix' => 'en.', 'replacePrefixes' => ['de.', 'some']]], 'templateUri' => 'http://de.some-domain.tld', 'forceAbsoluteUri' => false, 'expectedUri' => 'http://en.some-domain.tld'],
+
+            ['constraints' => [UriConstraints::CONSTRAINT_HOST_SUFFIX => ['suffix' => '.com', 'replaceSuffixes' => []]], 'templateUri' => 'http://some-domain.tld', 'forceAbsoluteUri' => false, 'expectedUri' => 'http://some-domain.tld.com'],
+            ['constraints' => [UriConstraints::CONSTRAINT_HOST_SUFFIX => ['suffix' => '.com', 'replaceSuffixes' => []]], 'templateUri' => 'http://some-domain.com', 'forceAbsoluteUri' => false, 'expectedUri' => ''],
+            ['constraints' => [UriConstraints::CONSTRAINT_HOST_SUFFIX => ['suffix' => '.com', 'replaceSuffixes' => []], UriConstraints::CONSTRAINT_HOST => 'new-host.tld'], 'templateUri' => 'http://some-domain.com', 'forceAbsoluteUri' => false, 'expectedUri' => 'http://new-host.tld.com'],
+            ['constraints' => [UriConstraints::CONSTRAINT_HOST_SUFFIX => ['suffix' => '.com', 'replaceSuffixes' => []], UriConstraints::CONSTRAINT_HOST => 'new-host.tld'], 'templateUri' => 'http://some-domain.tld', 'forceAbsoluteUri' => false, 'expectedUri' => 'http://new-host.tld.com'],
+            ['constraints' => [UriConstraints::CONSTRAINT_HOST_SUFFIX => ['suffix' => '.com', 'replaceSuffixes' => ['.de', '.tld']]], 'templateUri' => 'http://some-domain.tld', 'forceAbsoluteUri' => false, 'expectedUri' => 'http://some-domain.com'],
+            ['constraints' => [UriConstraints::CONSTRAINT_HOST_SUFFIX => ['suffix' => '.com', 'replaceSuffixes' => ['.de']]], 'templateUri' => 'http://some-domain.de', 'forceAbsoluteUri' => false, 'expectedUri' => 'http://some-domain.com'],
+            ['constraints' => [UriConstraints::CONSTRAINT_HOST_SUFFIX => ['suffix' => '.com', 'replaceSuffixes' => ['.de', 'domain']]], 'templateUri' => 'http://some-domain.de', 'forceAbsoluteUri' => false, 'expectedUri' => 'http://some-domain.com'],
 
             ['constraints' => [UriConstraints::CONSTRAINT_PORT => 80], 'templateUri' => 'http://some-domain.tld', 'forceAbsoluteUri' => false, 'expectedUri' => ''],
             ['constraints' => [UriConstraints::CONSTRAINT_PORT => 8080], 'templateUri' => 'http://some-domain.tld', 'forceAbsoluteUri' => false, 'expectedUri' => 'http://some-domain.tld:8080'],
@@ -105,14 +118,33 @@ class UriConstraintsTest extends UnitTestCase
     /**
      * @test
      */
-    public function withSubDomainReturnsANewInstanceWitSubDomainConstraintSet()
+    public function withHostPrefixReturnsANewInstanceWitSubDomainConstraintSet()
     {
-        $uriConstraints = UriConstraints::create()->withSubDomain('subDomain-constraint');
+        $uriConstraints = UriConstraints::create()->withHostPrefix('host-prefix', ['replace', 'prefixes']);
         $expectedResult = [
-            UriConstraints::CONSTRAINT_SUB_DOMAIN => 'subDomain-constraint'
+            UriConstraints::CONSTRAINT_HOST_PREFIX => [
+                'prefix' => 'host-prefix',
+                'replacePrefixes' => ['replace', 'prefixes'],
+            ]
         ];
         $this->assertSame($expectedResult, ObjectAccess::getProperty($uriConstraints, 'constraints', true));
     }
+
+    /**
+     * @test
+     */
+    public function withHostSuffixReturnsANewInstanceWitSubDomainConstraintSet()
+    {
+        $uriConstraints = UriConstraints::create()->withHostSuffix('host-suffix', ['replace', 'suffixes']);
+        $expectedResult = [
+            UriConstraints::CONSTRAINT_HOST_SUFFIX => [
+                'suffix' => 'host-suffix',
+                'replaceSuffixes' => ['replace', 'suffixes'],
+            ]
+        ];
+        $this->assertSame($expectedResult, ObjectAccess::getProperty($uriConstraints, 'constraints', true));
+    }
+
 
     /**
      * @test

@@ -35,7 +35,8 @@ final class UriConstraints
 {
     const CONSTRAINT_SCHEME = 'scheme';
     const CONSTRAINT_HOST = 'host';
-    const CONSTRAINT_SUB_DOMAIN = 'subDomain';
+    const CONSTRAINT_HOST_PREFIX = 'hostPrefix';
+    const CONSTRAINT_HOST_SUFFIX = 'hostSuffix';
     const CONSTRAINT_PORT = 'port';
     const CONSTRAINT_PATH = 'path';
     const CONSTRAINT_PATH_PREFIX = 'pathPrefix';
@@ -104,15 +105,36 @@ final class UriConstraints
     }
 
     /**
-     * Create a new instance with the sub domain constraint added
+     * Create a new instance with the host prefix constraint added
      *
-     * @param string $subDomain The URI sub-domain part to force, for example "sub-domain"
+     * @param string $prefix The URI host prefix to force, for example "en."
+     * @param string[] $replacePrefixes a list of prefixes that should be replaced with the given prefix. if the list is empty or does not match the current host $prefix will be prepended as is
      * @return UriConstraints
      */
-    public function withSubDomain(string $subDomain): self
+    public function withHostPrefix(string $prefix, array $replacePrefixes = []): self
     {
         $newConstraints = $this->constraints;
-        $newConstraints[self::CONSTRAINT_SUB_DOMAIN] = $subDomain;
+        $newConstraints[self::CONSTRAINT_HOST_PREFIX] = [
+            'prefix' => $prefix,
+            'replacePrefixes' => $replacePrefixes,
+        ];
+        return new static($newConstraints);
+    }
+
+    /**
+     * Create a new instance with the host suffix constraint added
+     *
+     * @param string $suffix The URI host suffix to force, for example ".com"
+     * @param string[] $replaceSuffixes a list of prefixes that should be replaced with the given prefix. if the list is empty or does not match the current host $prefix will be prepended as is
+     * @return UriConstraints
+     */
+    public function withHostSuffix(string $suffix, array $replaceSuffixes = []): self
+    {
+        $newConstraints = $this->constraints;
+        $newConstraints[self::CONSTRAINT_HOST_SUFFIX] = [
+            'suffix' => $suffix,
+            'replaceSuffixes' => $replaceSuffixes,
+        ];
         return new static($newConstraints);
     }
 
@@ -208,18 +230,34 @@ final class UriConstraints
             $forceAbsoluteUri = true;
             $uri = $uri->withHost($this->constraints[self::CONSTRAINT_HOST]);
         }
-        if (isset($this->constraints[self::CONSTRAINT_SUB_DOMAIN])) {
-            $requestSubDomain = $this->extractSubDomain($templateUri);
-            if ($requestSubDomain !== $this->constraints[self::CONSTRAINT_SUB_DOMAIN]) {
+        if (isset($this->constraints[self::CONSTRAINT_HOST_PREFIX])) {
+            $host = !empty($uri->getHost()) ? $uri->getHost() : $templateUri->getHost();
+            $prefix = $this->constraints[self::CONSTRAINT_HOST_PREFIX]['prefix'];
+            $replacePrefixes = $this->constraints[self::CONSTRAINT_HOST_PREFIX]['replacePrefixes'];
+            if (!$this->stringStartsWith($host, $prefix)) {
                 $forceAbsoluteUri = true;
-                $host = !empty($uri->getHost()) ? $uri->getHost() : $templateUri->getHost();
-                $domainParts = explode('.', $host);
-                if (count($domainParts) > 2) {
-                    $domainParts[0] = $this->constraints[self::CONSTRAINT_SUB_DOMAIN];
-                } else {
-                    array_unshift($domainParts, $this->constraints[self::CONSTRAINT_SUB_DOMAIN]);
+                foreach ($replacePrefixes as $replacePrefix) {
+                    if ($this->stringStartsWith($host, $replacePrefix)) {
+                        $host = substr($host, strlen($replacePrefix));
+                        break;
+                    }
                 }
-                $uri = $uri->withHost(implode('.', $domainParts));
+                $uri = $uri->withHost($prefix . $host);
+            }
+        }
+        if (isset($this->constraints[self::CONSTRAINT_HOST_SUFFIX])) {
+            $host = !empty($uri->getHost()) ? $uri->getHost() : $templateUri->getHost();
+            $suffix = $this->constraints[self::CONSTRAINT_HOST_SUFFIX]['suffix'];
+            $replaceSuffixes = $this->constraints[self::CONSTRAINT_HOST_SUFFIX]['replaceSuffixes'];
+            if (!$this->stringEndsWith($host, $suffix)) {
+                $forceAbsoluteUri = true;
+                foreach ($replaceSuffixes as $replaceSuffix) {
+                    if ($this->stringEndsWith($host, $replaceSuffix)) {
+                        $host = substr($host, 0, -strlen($replaceSuffix));
+                        break;
+                    }
+                }
+                $uri = $uri->withHost($host . $suffix);
             }
         }
         if (isset($this->constraints[self::CONSTRAINT_PORT]) && $this->constraints[self::CONSTRAINT_PORT] !== $templateUri->getPort()) {
@@ -253,17 +291,26 @@ final class UriConstraints
     }
 
     /**
-     * Extracts the sub-domain part from a given $uri
+     * Whether the given $string starts with the specified $prefix
      *
-     * @param UriInterface $uri
-     * @return string
+     * @param string $string
+     * @param string $prefix
+     * @return bool
      */
-    private function extractSubDomain(UriInterface $uri): string
+    private function stringStartsWith(string $string, string $prefix): bool
     {
-        if (preg_match('/^([a-z0-9|-]+)\.[a-z0-9|-]+\.[a-z]+/', $uri->getHost(), $matches) !== 1) {
-            // no sub domain
-            return '';
-        }
-        return $matches[1];
+        return substr($string, 0, strlen($prefix)) === $prefix;
+    }
+
+    /**
+     * Whether the given $string ends with the specified $suffix
+     *
+     * @param string $string
+     * @param string $suffix
+     * @return bool
+     */
+    private function stringEndsWith(string $string, string $suffix): bool
+    {
+        return substr($string, -strlen($suffix)) === $suffix;
     }
 }
