@@ -23,10 +23,10 @@ use Psr\Http\Message\UriInterface;
  * $exampleUri = new Uri('http://some-domain.tld/foo');
  * $uriConstraints = UriConstraints::create()
  *   ->withScheme('https')
- *   ->withSubDomain('subdomain')
+ *   ->withHostPrefix('de.', ['en.', 'ch.'])
  *   ->withPort(8080)
  *   ->withPathPrefix('prefix/');
- * $resultingUri = $uriConstraints->applyTo($exampleUri); // https://subdomain.some-domain.tld:8080/prefix/foo
+ * $resultingUri = $uriConstraints->applyTo($exampleUri); // https://de.some-domain.tld:8080/prefix/foo
  *
  *
  * @Flow\Proxy(false)
