@@ -1,0 +1,29 @@
+{
+    "name": "neos/flow-log",
+    "type": "package",
+    "description": "Flow Framework Logger",
+    "homepage": "http://flow.neos.io",
+    "license": [
+        "MIT"
+    ],
+    "require": {
+        "php": "~7.0",
+        "neos/utility-files": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Neos\\Flow\\Log\\": "Classes"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Neos\\Flow\\Log\\Tests\\": "Tests"
+        }
+    },
+    "extra": {
+        "neos": {
+            "package-key": "Neos.Flow.Log"
+        }
+    }
+}
+

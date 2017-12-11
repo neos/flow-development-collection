@@ -1,5 +1,5 @@
 <?php
-namespace Neos\Flow\Tests\Unit\Log;
+namespace Neos\Flow\Log\Tests\Unit;
 
 /*
  * This file is part of the Neos.Flow package.

@@ -12,6 +12,7 @@ namespace Neos\Flow\Log\Backend;
  */
 
 use Neos\Flow\Log\Exception\CouldNotOpenResourceException;
+use Neos\Flow\Log\PlainTextFormatter;
 use Neos\Utility\Files;
 
 /**
@@ -242,7 +243,7 @@ class FileBackend extends AbstractBackend
             $output .= ' [logged in ' . $className . '::' . $methodName . '()]';
         }
         if (!empty($additionalData)) {
-            $output .= PHP_EOL . $this->getFormattedVarDump($additionalData);
+            $output .= PHP_EOL . (new PlainTextFormatter($additionalData))->format();
         }
         if ($this->fileHandle !== false) {
             fputs($this->fileHandle, $output . PHP_EOL);
@@ -258,7 +259,6 @@ class FileBackend extends AbstractBackend
      *
      * @return void
      * @api
-     * @todo revise upon resolution of http://forge.typo3.org/issues/9861
      */
     public function close()
     {

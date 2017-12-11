@@ -1,5 +1,5 @@
 <?php
-namespace Neos\Flow\Log\Exception;
+namespace Neos\Flow\Log;
 
 /*
  * This file is part of the Neos.Flow package.
@@ -12,10 +12,10 @@ namespace Neos\Flow\Log\Exception;
  */
 
 /**
- * A "No Such Backend" exception
+ * A generic Log exception
  *
  * @api
  */
-class NoSuchBackendException extends \Neos\Cache\Exception
+class Exception extends \Exception
 {
 }

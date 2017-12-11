@@ -249,6 +249,10 @@ Neos:
           maximumLogFileSize: 1048576
           logFilesToKeep: 1
 
+      throwables:
+        fileStorage:
+          path: '%FLOW_PATH_DATA%Logs/Exceptions'
+
     i18n:
 
       # The default locale identifier.

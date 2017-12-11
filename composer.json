@@ -28,6 +28,7 @@
         "neos/cache": "self.version",
         "neos/eel": "self.version",
         "neos/error-messages": "self.version",
+        "neos/flow-log": "self.version",
         "neos/flow": "self.version",
         "neos/fluid-adaptor": "self.version",
         "neos/kickstarter": "self.version",
@@ -60,6 +61,9 @@
             ],
             "Neos\\Error\\Messages\\": [
                 "Neos.Error.Messages/Classes"
+            ],
+            "Neos\\Flow\\Log\\": [
+                "Neos.Flow.Log/Classes"
             ],
             "Neos\\Flow\\": [
                 "Neos.Flow/Classes"
@@ -98,7 +102,9 @@
     },
     "require-dev": {
         "mikey179/vfsstream": "~1.6",
-        "phpunit/phpunit": "~6.0"
+        "phpunit/phpunit": "~6.0",
+        "doctrine/orm": "~2.5.0",
+        "doctrine/common": ">=2.4,<2.8-dev"
     },
     "autoload-dev": {
         "psr-4": {
@@ -110,6 +116,9 @@
             ],
             "Neos\\Error\\Messages\\Tests\\": [
                 "Neos.Error.Messages/Tests"
+            ],
+            "Neos\\Flow\\Log\\Tests\\": [
+                "Neos.Flow.Log/Tests"
             ],
             "Neos\\Flow\\Tests\\": [
                 "Neos.Flow/Tests"

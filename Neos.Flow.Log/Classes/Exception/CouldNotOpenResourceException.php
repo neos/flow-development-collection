@@ -11,11 +11,13 @@ namespace Neos\Flow\Log\Exception;
  * source code.
  */
 
+use Neos\Flow\Log\Exception;
+
 /**
- * An "Invalid Backend" exception
+ * A "Could Not Open Resource" exception
  *
  * @api
  */
-class InvalidBackendException extends \Neos\Cache\Exception
+class CouldNotOpenResourceException extends Exception
 {
 }
