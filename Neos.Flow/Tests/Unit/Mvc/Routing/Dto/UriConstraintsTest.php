@@ -185,11 +185,59 @@ class UriConstraintsTest extends UnitTestCase
     /**
      * @test
      */
-    public function withPathSuffixeturnsANewInstanceWitPathSuffixConstraintSet()
+    public function withPathPrefixPrependsNewPrefixByDefault()
+    {
+        $uriConstraints = UriConstraints::create()->withPathPrefix('prefix1')->withPathPrefix('prefix2');
+        $expectedResult = [
+            UriConstraints::CONSTRAINT_PATH_PREFIX => 'prefix2prefix1'
+        ];
+        $this->assertSame($expectedResult, ObjectAccess::getProperty($uriConstraints, 'constraints', true));
+    }
+
+    /**
+     * @test
+     */
+    public function withPathPrefixAppendsNewPrefixIfSpecified()
+    {
+        $uriConstraints = UriConstraints::create()->withPathPrefix('prefix1')->withPathPrefix('prefix2', true);
+        $expectedResult = [
+            UriConstraints::CONSTRAINT_PATH_PREFIX => 'prefix1prefix2'
+        ];
+        $this->assertSame($expectedResult, ObjectAccess::getProperty($uriConstraints, 'constraints', true));
+    }
+
+    /**
+     * @test
+     */
+    public function withPathSuffixReturnsANewInstanceWitPathSuffixConstraintSet()
     {
         $uriConstraints = UriConstraints::create()->withPathSuffix('path-suffix-constraint');
         $expectedResult = [
             UriConstraints::CONSTRAINT_PATH_SUFFIX => 'path-suffix-constraint'
+        ];
+        $this->assertSame($expectedResult, ObjectAccess::getProperty($uriConstraints, 'constraints', true));
+    }
+
+    /**
+     * @test
+     */
+    public function withPathSuffixAppendsNewSuffixByDefault()
+    {
+        $uriConstraints = UriConstraints::create()->withPathSuffix('suffix1')->withPathSuffix('suffix2');
+        $expectedResult = [
+            UriConstraints::CONSTRAINT_PATH_SUFFIX => 'suffix1suffix2'
+        ];
+        $this->assertSame($expectedResult, ObjectAccess::getProperty($uriConstraints, 'constraints', true));
+    }
+
+    /**
+     * @test
+     */
+    public function withPathSuffixPrependsNewSuffixIfSpecified()
+    {
+        $uriConstraints = UriConstraints::create()->withPathSuffix('suffix1')->withPathSuffix('suffix2', true);
+        $expectedResult = [
+            UriConstraints::CONSTRAINT_PATH_SUFFIX => 'suffix2suffix1'
         ];
         $this->assertSame($expectedResult, ObjectAccess::getProperty($uriConstraints, 'constraints', true));
     }
