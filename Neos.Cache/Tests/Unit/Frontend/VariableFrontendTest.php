@@ -224,7 +224,7 @@ class VariableFrontendTest extends BaseTestCase
         $tag = 'sometag';
         $identifiers = ['one', 'two'];
         $entries = ['one' => 'one value', 'two' => 'two value'];
-        $backend = $this->prepareDefaultBackend();
+        $backend = $this->prepareTaggableBackend();
 
         $backend->expects($this->once())->method('findIdentifiersByTag')->with($this->equalTo($tag))->will($this->returnValue($identifiers));
         $backend->expects($this->exactly(2))->method('get')->will($this->onConsecutiveCalls(igbinary_serialize('one value'), igbinary_serialize('two value')));

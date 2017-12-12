@@ -74,7 +74,7 @@ class DataMapperTest extends UnitTestCase
     public function mapToObjectReconstitutesExpectedObjectAndRegistersItWithIdentityMapToObjects()
     {
         $mockEntityClassName = 'Entity' . md5(uniqid(mt_rand(), true));
-        $mockEntity = $this->createMock(ProxyInterface::class, ['Flow_Aop_Proxy_invokeJoinPoint', '__wakeup'], [], $mockEntityClassName);
+        $mockEntity = $this->getMockBuilder(ProxyInterface::class)->setMockClassName($mockEntityClassName)->setMethods(['Flow_Aop_Proxy_invokeJoinPoint', '__wakeup'])->getMock();
 
         $objectData = ['identifier' => '1234', 'classname' => $mockEntityClassName, 'properties' => ['foo']];
 
