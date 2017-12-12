@@ -139,6 +139,8 @@ class IdentityRoutePartTest extends UnitTestCase
      */
     public function matchValueSetsTheRouteValueToTheUrlDecodedPathSegmentIfNoUriPatternIsSpecified()
     {
+        $this->mockClassSchema->expects($this->any())->method('getIdentityProperties')->will($this->returnValue([]));
+
         $this->mockPersistenceManager->expects($this->once())->method('getObjectByIdentifier')->with('The Identifier', 'stdClass')->will($this->returnValue(new \stdClass()));
 
         $this->mockObjectPathMappingRepository->expects($this->never())->method('findOneByObjectTypeUriPatternAndPathSegment');
@@ -268,6 +270,8 @@ class IdentityRoutePartTest extends UnitTestCase
      */
     public function resolveValueSetsTheRouteValueToTheUrlEncodedIdentifierIfNoUriPatternIsSpecified()
     {
+        $this->mockClassSchema->expects($this->any())->method('getIdentityProperties')->will($this->returnValue([]));
+
         $value = ['__identity' => 'Some Identifier'];
         $this->mockObjectPathMappingRepository->expects($this->never())->method('findOneByObjectTypeUriPatternAndIdentifier');
 
