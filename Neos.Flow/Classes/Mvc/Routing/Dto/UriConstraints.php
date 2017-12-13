@@ -233,33 +233,35 @@ final class UriConstraints
             $uri = $uri->withHost($this->constraints[self::CONSTRAINT_HOST]);
         }
         if (isset($this->constraints[self::CONSTRAINT_HOST_PREFIX])) {
-            $host = !empty($uri->getHost()) ? $uri->getHost() : $templateUri->getHost();
+            $originalHost = $host = !empty($uri->getHost()) ? $uri->getHost() : $templateUri->getHost();
             $prefix = $this->constraints[self::CONSTRAINT_HOST_PREFIX]['prefix'];
             $replacePrefixes = $this->constraints[self::CONSTRAINT_HOST_PREFIX]['replacePrefixes'];
-            if (!$this->stringStartsWith($host, $prefix)) {
-                $forceAbsoluteUri = true;
-                foreach ($replacePrefixes as $replacePrefix) {
-                    if ($this->stringStartsWith($host, $replacePrefix)) {
-                        $host = substr($host, strlen($replacePrefix));
-                        break;
-                    }
+            foreach ($replacePrefixes as $replacePrefix) {
+                if ($this->stringStartsWith($host, $replacePrefix)) {
+                    $host = substr($host, strlen($replacePrefix));
+                    break;
                 }
-                $uri = $uri->withHost($prefix . $host);
+            }
+            $host = $prefix . $host;
+            if ($host !== $originalHost) {
+                $forceAbsoluteUri = true;
+                $uri = $uri->withHost($host);
             }
         }
         if (isset($this->constraints[self::CONSTRAINT_HOST_SUFFIX])) {
-            $host = !empty($uri->getHost()) ? $uri->getHost() : $templateUri->getHost();
+            $originalHost = $host = !empty($uri->getHost()) ? $uri->getHost() : $templateUri->getHost();
             $suffix = $this->constraints[self::CONSTRAINT_HOST_SUFFIX]['suffix'];
             $replaceSuffixes = $this->constraints[self::CONSTRAINT_HOST_SUFFIX]['replaceSuffixes'];
-            if (!$this->stringEndsWith($host, $suffix)) {
-                $forceAbsoluteUri = true;
-                foreach ($replaceSuffixes as $replaceSuffix) {
-                    if ($this->stringEndsWith($host, $replaceSuffix)) {
-                        $host = substr($host, 0, -strlen($replaceSuffix));
-                        break;
-                    }
+            foreach ($replaceSuffixes as $replaceSuffix) {
+                if ($this->stringEndsWith($host, $replaceSuffix)) {
+                    $host = substr($host, 0, -strlen($replaceSuffix));
+                    break;
                 }
-                $uri = $uri->withHost($host . $suffix);
+            }
+            $host = $host . $suffix;
+            if ($host !== $originalHost) {
+                $forceAbsoluteUri = true;
+                $uri = $uri->withHost($host);
             }
         }
         if (isset($this->constraints[self::CONSTRAINT_PORT]) && $this->constraints[self::CONSTRAINT_PORT] !== $templateUri->getPort()) {
