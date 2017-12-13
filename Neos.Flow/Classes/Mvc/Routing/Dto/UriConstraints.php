@@ -270,10 +270,10 @@ final class UriConstraints
         if (isset($this->constraints[self::CONSTRAINT_PATH]) && $this->constraints[self::CONSTRAINT_PATH] !== $templateUri->getPath()) {
             $uri = $uri->withPath($this->constraints[self::CONSTRAINT_PATH]);
         }
-        if (isset($this->constraints[self::CONSTRAINT_PATH_PREFIX]) && $uri->getPath() !== '') {
+        if (isset($this->constraints[self::CONSTRAINT_PATH_PREFIX])) {
             $uri = $uri->withPath($this->constraints[self::CONSTRAINT_PATH_PREFIX] . $uri->getPath());
         }
-        if (isset($this->constraints[self::CONSTRAINT_PATH_SUFFIX]) && $uri->getPath() !== '') {
+        if (isset($this->constraints[self::CONSTRAINT_PATH_SUFFIX])) {
             $uri = $uri->withPath($uri->getPath() . $this->constraints[self::CONSTRAINT_PATH_SUFFIX]);
         }
 
