@@ -11,6 +11,9 @@ namespace Neos\Flow\Tests\Unit\Http;
  * source code.
  */
 
+require_once(__DIR__ . '/../Fixtures/ClassWithBoolConstructor.php');
+
+use Neos\Flow\Fixtures\ClassWithBoolConstructor;
 use Neos\Flow\Http\Headers;
 use Neos\Flow\Http\Cookie;
 use Neos\Flow\Tests\UnitTestCase;
@@ -147,6 +150,17 @@ class HeadersTest extends UnitTestCase
 
         $headers->set('X-Test-Run-At', $now);
         $this->assertEquals($nowInGmt->format(DATE_RFC2822), $headers->get('X-Test-Run-At')->format(DATE_RFC2822));
+    }
+
+    /**
+     * @test
+     */
+    public function setAcceptsArbitraryObjects()
+    {
+        $headers = new Headers();
+        $someObject = new ClassWithBoolConstructor(true);
+        $headers->set('X-Test', $someObject);
+        $this->assertSame($someObject, $headers->get('X-Test'));
     }
 
     /**
@@ -470,5 +484,66 @@ class HeadersTest extends UnitTestCase
             $headers->setCacheControlDirective($name, $value);
         }
         $this->assertEquals($value, $headers->getCacheControlDirective($name));
+    }
+
+    /**
+     * @test
+     */
+    public function getPreparedValuesRendersSimpleValues()
+    {
+        $headers = new Headers();
+        $headers->set('X-Integer', 123);
+        $headers->set('X-String', 'Some String');
+
+        $expectedResult = [
+            'X-Integer: 123',
+            'X-String: Some String',
+        ];
+        $this->assertSame($expectedResult, $headers->getPreparedValues());
+    }
+
+    /**
+     * @test
+     */
+    public function getPreparedValuesRendersDateTimeInstancesAsGmtString()
+    {
+        $headers = new Headers();
+        $headers->set('X-Date', new \DateTimeImmutable('1980-12-13'));
+
+        $expectedResult = [
+            'X-Date: Sat, 13 Dec 1980 00:00:00 GMT',
+        ];
+        $this->assertSame($expectedResult, $headers->getPreparedValues());
+    }
+
+    /**
+     * @test
+     */
+    public function getPreparedValuesRendersOneHeaderPerArrayItem()
+    {
+        $headers = new Headers();
+        $headers->set('X-Array', ['some', 'array', 123]);
+
+        $expectedResult = [
+            'X-Array: some',
+            'X-Array: array',
+            'X-Array: 123',
+        ];
+        $this->assertSame($expectedResult, $headers->getPreparedValues());
+    }
+
+    /**
+     * @test
+     */
+    public function getPreparedValuesCastsObjectsToStrings()
+    {
+        $headers = new Headers();
+        $someObject = new ClassWithBoolConstructor(true);
+        $headers->set('X-Object', $someObject);
+
+        $expectedResult = [
+            'X-Object: TRUE'
+        ];
+        $this->assertSame($expectedResult, $headers->getPreparedValues());
     }
 }
