@@ -110,8 +110,8 @@ class Headers
             $date = clone $values;
             $date->setTimezone(new \DateTimeZone('GMT'));
             $values = [$date->format('D, d M Y H:i:s') . ' GMT'];
-        } else {
-            $values = (array) $values;
+        } elseif (!is_array($values)) {
+            $values = [$values];
         }
 
         switch ($name) {

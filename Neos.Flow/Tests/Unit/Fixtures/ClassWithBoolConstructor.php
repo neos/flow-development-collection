@@ -30,4 +30,9 @@ class ClassWithBoolConstructor
     {
         $this->value = $value;
     }
+
+    public function __toString()
+    {
+        return $this->value ? 'TRUE' : 'FALSE';
+    }
 }
