@@ -1,0 +1,78 @@
+`3.3.22 (2017-12-14) <https://github.com/neos/flow-development-collection/releases/tag/3.3.22>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: No longer pick up too much YAML in migration <https://github.com/neos/flow-development-collection/pull/1111>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+The migration to adjust Role persistence reads YAML files to learn
+about existing roles. It picked up "too much" sometimes, which would
+lead to errors, e.g. if some YAML could not be parsed but was not at
+all relevant for the task.
+
+This change makes the check on the path of found files stricter to
+avoid that.
+
+* Packages: ``Flow``
+
+`BUGFIX: Debugger must not count uncountable <https://github.com/neos/flow-development-collection/pull/1134>`_
+--------------------------------------------------------------------------------------------------------------
+
+This fixes a warning in PHP 7.2
+
+* Packages: ``Flow``
+
+`BUGFIX: Get current request for \`\`StandaloneView\`\` from \`\`RequestHandler\`\` <https://github.com/neos/flow-development-collection/pull/1113>`_
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+If no request is passed to a freshly created ``StandaloneView`` it is now retrieved from the  ``RequestHandler`` instead of the old method which called ``createFromEnvironment`` (now used as fallback if ``RequestHandler`` is not an instance of ``HttpRequestHandlerInterface``).
+
+The old implementation can lead to faulty behaviour if the current Request is needed within the view, especially when running Flow behind proxies.
+
+* Packages: ``Fluid``
+
+`BUGFIX: Remove broken assets w/o executing usage checks (\`\`flow resource:clean\`\`) <https://github.com/neos/flow-development-collection/pull/1121>`_
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+
+**What I did**
+
+`./flow resource:clean` was broken (`Call to a member function getName() on null`) because it could not remove a resource that referenced a file that didn't exist -> ends up in an exception.
+
+**How I did it**
+
+`AssetRepository.removeWithoutUsageChecks()` was introduced in Neos 2.3/Flow 3.3.
+
+* Packages: ``Flow``
+
+`BUGFIX: Allow using a unix socket for mysql connection <https://github.com/neos/flow-development-collection/pull/1118>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+When specifying a unix socket for mysql connection, no host parameter must be given. As the code enforces a default value for host connection parameter, this simply adds a check to skip this if a unix socket is configured.
+
+* Packages: ``Flow``
+
+`TASK: Improve property mapping exception message <https://github.com/neos/flow-development-collection/pull/1104>`_
+-------------------------------------------------------------------------------------------------------------------
+
+The exception message was way too technical and in a lot of cases contained the useless addition `, at property path ""`.
+
+* Packages: ``Flow``
+
+`BUGFIX: FileSystemTarget publishes resources in public root <https://github.com/neos/flow-development-collection/pull/1102>`_
+------------------------------------------------------------------------------------------------------------------------------
+
+Due to the defined resource paths (which are not taken into account
+for the FileSystemSymlinkTarget) only files in subdirectories of
+the public resource path were published. This change adds the public
+path itself and adjusts the PackageStorage to take into account
+an empty relative publication path. Additionally does a slight
+refactoring to make the whole class easier to follow.
+
+Fixes: #1055
+
+* Packages: ``Flow``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/3.3.21...3.3.22>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
