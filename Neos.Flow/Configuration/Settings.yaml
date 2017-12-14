@@ -344,6 +344,14 @@ Neos:
         filters:
           Flow_Security_Entity_Filter: 'Neos\Flow\Security\Authorization\Privilege\Entity\Doctrine\SqlFilter'
 
+        dql:
+          customStringFunctions:
+            JSONB_DG: Neos\Flow\Persistence\Doctrine\Query\JsonbDashGreater
+            JSONB_DGG: Neos\Flow\Persistence\Doctrine\Query\JsonbDashGreaterGreater
+            JSONB_AG: Neos\Flow\Persistence\Doctrine\Query\JsonbAtGreater
+            JSONB_HGG: Neos\Flow\Persistence\Doctrine\Query\JsonbHashGreaterGreater
+            JSONB_EX: Neos\Flow\Persistence\Doctrine\Query\JsonbExistence
+
         # DBAL custom mapping types can be registered here
         dbal:
           mappingTypes:
