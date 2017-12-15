@@ -19,7 +19,6 @@ use Neos\Cache\Frontend\FrontendInterface;
 use Neos\Cache\Frontend\StringFrontend;
 use Neos\Cache\Frontend\VariableFrontend;
 use Neos\Flow\Core\ApplicationContext;
-use Neos\Flow\Core\ClassLoader;
 use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\ObjectManagement\Proxy\ProxyInterface;
 use Neos\Flow\Package;

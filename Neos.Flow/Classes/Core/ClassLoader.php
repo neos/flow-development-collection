@@ -12,13 +12,11 @@ namespace Neos\Flow\Core;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Cache\Frontend\PhpFrontend;
 use Neos\Flow\Package;
 use Neos\Utility\Files;
 
 /**
- * Class Loader implementation which loads .php files found in the classes
- * directory of an object.
+ * Class Loader implementation as fallback to the compoer loader and for test classes.
  *
  * @Flow\Proxy(false)
  * @Flow\Scope("singleton")
@@ -44,11 +42,6 @@ class ClassLoader
      * @var string
      */
     const MAPPING_TYPE_FILES = 'files';
-
-    /**
-     * @var PhpFrontend
-     */
-    protected $classesCache;
 
     /**
      * A list of namespaces this class loader is definitely responsible for.
@@ -100,32 +93,13 @@ class ClassLoader
     protected $nonExistentClasses = [];
 
     /**
-     * @var array
-     */
-    protected $availableProxyClasses;
-
-    /**
-     * @param ApplicationContext $context
      * @param array $defaultPackageEntries Adds default entries for packages that should be available for very early loading
      */
-    public function __construct(ApplicationContext $context = null, $defaultPackageEntries = [])
+    public function __construct($defaultPackageEntries = [])
     {
         foreach ($defaultPackageEntries as $entry) {
             $this->createNamespaceMapEntry($entry['namespace'], $entry['classPath'], $entry['mappingType']);
         }
-
-        $this->initializeAvailableProxyClasses($context);
-    }
-
-    /**
-     * Injects the cache for storing the renamed original classes
-     *
-     * @param PhpFrontend $classesCache
-     * @return void
-     */
-    public function injectClassesCache(PhpFrontend $classesCache)
-    {
-        $this->classesCache = $classesCache;
     }
 
     /**
@@ -137,23 +111,10 @@ class ClassLoader
      */
     public function loadClass($className)
     {
-        if ($className[0] === '\\') {
-            $className = ltrim($className, '\\');
-        }
-
+        $className = ltrim($className, '\\');
         $namespaceParts = explode('\\', $className);
         // Workaround for Doctrine's annotation parser which does a class_exists() for annotations like "@param" and so on:
         if (isset($this->ignoredClassNames[$className]) || isset($this->ignoredClassNames[end($namespaceParts)]) || isset($this->nonExistentClasses[$className])) {
-            return false;
-        }
-
-        // Loads any known proxied class:
-        if ($this->classesCache !== null && ($this->availableProxyClasses === null || isset($this->availableProxyClasses[implode('_', $namespaceParts)])) && $this->classesCache->requireOnce(implode('_', $namespaceParts)) !== false) {
-            return true;
-        }
-
-        if (FLOW_ONLY_COMPOSER_LOADER) {
-            // Early return if system uses only composer class loader.
             return false;
         }
 
@@ -355,24 +316,6 @@ class ClassLoader
         $fileName = implode('/', array_slice($classNameParts, $packageNamespacePartCount)) . '.php';
 
         return $classPath . $fileName;
-    }
-
-    /**
-     * Initialize available proxy classes from the cached list.
-     *
-     * @param ApplicationContext $context
-     * @return void
-     */
-    public function initializeAvailableProxyClasses(ApplicationContext $context = null)
-    {
-        if ($context === null) {
-            return;
-        }
-
-        $proxyClasses = @include(FLOW_PATH_TEMPORARY_BASE . '/' . (string)$context . '/AvailableProxyClasses.php');
-        if ($proxyClasses !== false) {
-            $this->availableProxyClasses = $proxyClasses;
-        }
     }
 
     /**
