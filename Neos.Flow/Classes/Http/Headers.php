@@ -115,6 +115,14 @@ class Headers
         }
 
         switch ($name) {
+            case 'Host':
+                if (count($values) > 1) {
+                    throw new \InvalidArgumentException('The "Host" header must be unique and thus only one field value may be specified.', 1478206019);
+                }
+                // Ensure Host is the first header.
+                // See: http://tools.ietf.org/html/rfc7230#section-5.4
+                $this->fields = ['Host' => $values] + $this->fields;
+            break;
             case 'Cache-Control':
                 if (count($values) !== 1) {
                     throw new \InvalidArgumentException('The "Cache-Control" header must be unique and thus only one field value may be specified.', 1337849415);
@@ -238,7 +246,7 @@ class Headers
     /**
      * Returns all cookies
      *
-     * @return array
+     * @return Cookie[]
      * @api
      */
     public function getCookies()
@@ -450,9 +458,67 @@ class Headers
                 continue;
             }
             list($name, $value) = explode('=', $cookiePair, 2);
-            if (trim($name) !== '') {
-                $this->setCookie(new Cookie(trim($name), urldecode(trim($value, "\t ;\""))));
+            $trimmedName = trim($name);
+
+            if ($trimmedName !== '' && preg_match(Cookie::PATTERN_TOKEN, $trimmedName) === 1) {
+                $this->setCookie(new Cookie($trimmedName, urldecode(trim($value, "\t ;\""))));
             }
         }
+    }
+
+    /**
+     * Get all header lines prepared as "name: value" strings.
+     *
+     * @return array
+     */
+    public function getPreparedValues()
+    {
+        $preparedValues = [];
+        foreach ($this->getAll() as $name => $values) {
+            $preparedValues = array_merge($preparedValues, $this->prepareValues($name, $values));
+        }
+
+        return $preparedValues;
+    }
+
+    /**
+     * @param string $headerName
+     * @param array $values
+     * @return array
+     */
+    private function prepareValues($headerName, array $values)
+    {
+        $preparedValues = [];
+        foreach ($values as $value) {
+            $preparedValues[] = sprintf("%s: %s", $headerName, $value);
+        }
+
+        return $preparedValues;
+    }
+
+    /**
+     * @param string $headerName
+     * @param array $values
+     * @return string
+     */
+    private function renderValuesFor($headerName, array $values)
+    {
+        return implode("\r\n", $this->prepareValues($headerName, $values));
+    }
+
+    /**
+     * Renders this headers object as string, with lines separated by "\r\n" as required by RFC 2616 sec 5.
+     *
+     * @return string
+     * @api
+     */
+    public function __toString()
+    {
+        $headers = '';
+        foreach ($this->getAll() as $name => $values) {
+            $headers .= $this->renderValuesFor($name, $values) . "\r\n";
+        }
+
+        return $headers;
     }
 }

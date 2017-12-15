@@ -161,7 +161,7 @@ trait SecurityOperationsTrait
      * The created account is returned for further modification, for example for attaching a Party object to it.
      *
      * @param array $roleNames A list of roles the new account should have
-     * @return Security\Accountt The created account
+     * @return Security\Account The created account
      */
     protected function authenticateRoles(array $roleNames)
     {

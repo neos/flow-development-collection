@@ -29,10 +29,10 @@ class LockManager
     /**
      * LockManager constructor.
      *
-     * @param $lockStrategyClassName
+     * @param string $lockStrategyClassName
      * @param array $lockStrategyOptions
      */
-    public function __construct($lockStrategyClassName, array $lockStrategyOptions = [])
+    public function __construct(string $lockStrategyClassName, array $lockStrategyOptions = [])
     {
         if (!class_exists($lockStrategyClassName)) {
             throw new \InvalidArgumentException('The given class name given as implementation of the LockStrategyInterface does not exist!', 1454694738);
@@ -45,7 +45,7 @@ class LockManager
     /**
      * @return LockStrategyInterface
      */
-    public function getLockStrategyInstance()
+    public function getLockStrategyInstance(): LockStrategyInterface
     {
         $lockStrategy = $this->lockStrategyClassName;
         return new $lockStrategy($this->lockStrategyOptions);

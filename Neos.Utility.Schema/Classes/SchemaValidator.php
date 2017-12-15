@@ -69,10 +69,10 @@ class SchemaValidator
      *
      * @param mixed $value value to validate
      * @param mixed $schema type as string, schema or array of schemas
-     * @return ErrorResult
      * @param array $types the additional type schemas
+     * @return ErrorResult
      */
-    public function validate($value, $schema, array $types = [])
+    public function validate($value, $schema, array $types = []): ErrorResult
     {
         $result = new ErrorResult();
         if (is_array($schema)) {
@@ -81,19 +81,18 @@ class SchemaValidator
                     if (array_key_exists($possibleTypeKey, $types)) {
                         $result->addError($this->createError('CustomType "' . $possibleTypeKey . '" is already defined'));
                         continue;
-                    } else {
-                        $typeSchema = $possibleTypeSchema;
-                        if (array_key_exists('superTypes', $possibleTypeSchema)) {
-                            foreach ($possibleTypeSchema['superTypes'] as $superTypeKey) {
-                                if (!array_key_exists($superTypeKey, $types)) {
-                                    $result->addError($this->createError('SuperType "' . $superTypeKey . '" is unknown'));
-                                    continue;
-                                }
-                                $typeSchema = Arrays::arrayMergeRecursiveOverrule($types[$superTypeKey], $typeSchema);
-                            }
-                        }
-                        $types[$possibleTypeKey] = $typeSchema;
                     }
+                    $typeSchema = $possibleTypeSchema;
+                    if (array_key_exists('superTypes', $possibleTypeSchema)) {
+                        foreach ($possibleTypeSchema['superTypes'] as $superTypeKey) {
+                            if (!array_key_exists($superTypeKey, $types)) {
+                                $result->addError($this->createError('SuperType "' . $superTypeKey . '" is unknown'));
+                                continue;
+                            }
+                            $typeSchema = Arrays::arrayMergeRecursiveOverrule($types[$superTypeKey], $typeSchema);
+                        }
+                    }
+                    $types[$possibleTypeKey] = $typeSchema;
                     unset($schema[$possibleTypeKey]);
                 }
             }
@@ -152,7 +151,7 @@ class SchemaValidator
      * @param array $types
      * @return ErrorResult
      */
-    protected function validateType($value, array $schema, array $types = [])
+    protected function validateType($value, array $schema, array $types = []): ErrorResult
     {
         $result = new ErrorResult();
         if (isset($schema['type'])) {
@@ -214,7 +213,7 @@ class SchemaValidator
      * @param array $types
      * @return ErrorResult
      */
-    protected function validateTypeArray($value, array $schema, array $types = [])
+    protected function validateTypeArray($value, array $schema, array $types = []): ErrorResult
     {
         $result = new ErrorResult();
         $isValid = false;
@@ -257,7 +256,7 @@ class SchemaValidator
      * @param array $schema
      * @return ErrorResult
      */
-    protected function validateNumberType($value, array $schema)
+    protected function validateNumberType($value, array $schema): ErrorResult
     {
         $result = new ErrorResult();
         if (is_numeric($value) === false) {
@@ -308,10 +307,10 @@ class SchemaValidator
      * @param array $schema
      * @return ErrorResult
      */
-    protected function validateIntegerType($value, array $schema)
+    protected function validateIntegerType($value, array $schema): ErrorResult
     {
         $result = new ErrorResult();
-        if (is_integer($value) === false) {
+        if (is_int($value) === false) {
             $result->addError($this->createError('type=integer', 'type=' . gettype($value)));
             return $result;
         }
@@ -326,7 +325,7 @@ class SchemaValidator
      * @param array $schema
      * @return ErrorResult
      */
-    protected function validateBooleanType($value, array $schema)
+    protected function validateBooleanType($value, array $schema): ErrorResult
     {
         $result = new ErrorResult();
         if (is_bool($value) === false) {
@@ -350,7 +349,7 @@ class SchemaValidator
      * @param array $types
      * @return ErrorResult
      */
-    protected function validateArrayType($value, array $schema, array $types = [])
+    protected function validateArrayType($value, array $schema, array $types = []): ErrorResult
     {
         $result = new ErrorResult();
         if (is_array($value) === false || $this->isNumericallyIndexedArray($value) === false) {
@@ -382,9 +381,8 @@ class SchemaValidator
                 if (in_array($itemHash, $values)) {
                     $result->addError($this->createError('Unique values are expected'));
                     break;
-                } else {
-                    $values[] = $itemHash;
                 }
+                $values[] = $itemHash;
             }
         }
 
@@ -405,7 +403,7 @@ class SchemaValidator
      * @param array $types
      * @return ErrorResult
      */
-    protected function validateDictionaryType($value, array $schema, array $types = [])
+    protected function validateDictionaryType($value, array $schema, array $types = []): ErrorResult
     {
         $result = new ErrorResult();
         if (is_array($value) === false || $this->isDictionary($value) === false) {
@@ -424,11 +422,9 @@ class SchemaValidator
                         $result->forProperty($propertyName)->merge($subresult);
                     }
                     $propertyKeysToHandle = array_diff($propertyKeysToHandle, [$propertyName]);
-                } else {
+                } elseif (is_array($propertySchema) && $this->isSchema($propertySchema) && isset($propertySchema['required']) && $propertySchema['required'] === true) {
                     // is subproperty required
-                    if (is_array($propertySchema) && $this->isSchema($propertySchema) && isset($propertySchema['required']) && $propertySchema['required'] === true) {
-                        $result->addError($this->createError('Property ' . $propertyName . ' is required'));
-                    }
+                    $result->addError($this->createError('Property ' . $propertyName . ' is required'));
                 }
             }
         }
@@ -437,13 +433,14 @@ class SchemaValidator
             foreach (array_values($propertyKeysToHandle) as $propertyKey) {
                 foreach ($schema['patternProperties'] as $propertyPattern => $propertySchema) {
                     $keyResult = $this->validateStringType($propertyKey, ['pattern' => $propertyPattern], $types);
-                    if ($keyResult->hasErrors() === false) {
-                        $subresult = $this->validate($value[$propertyKey], $propertySchema, $types);
-                        if ($subresult->hasErrors()) {
-                            $result->forProperty($propertyKey)->merge($subresult);
-                        }
-                        $propertyKeysToHandle = array_diff($propertyKeysToHandle, [$propertyKey]);
+                    if ($keyResult->hasErrors() === true) {
+                        continue;
                     }
+                    $subresult = $this->validate($value[$propertyKey], $propertySchema, $types);
+                    if ($subresult->hasErrors()) {
+                        $result->forProperty($propertyKey)->merge($subresult);
+                    }
+                    $propertyKeysToHandle = array_diff($propertyKeysToHandle, [$propertyKey]);
                 }
             }
         }
@@ -452,13 +449,14 @@ class SchemaValidator
             foreach (array_values($propertyKeysToHandle) as $propertyKey) {
                 foreach ($schema['formatProperties'] as $propertyPattern => $propertySchema) {
                     $keyResult = $this->validateStringType($propertyKey, ['format' => $propertyPattern], $types);
-                    if ($keyResult->hasErrors() === false) {
-                        $subresult = $this->validate($value[$propertyKey], $propertySchema, $types);
-                        if ($subresult->hasErrors()) {
-                            $result->forProperty($propertyKey)->merge($subresult);
-                        }
-                        $propertyKeysToHandle = array_diff($propertyKeysToHandle, [$propertyKey]);
+                    if ($keyResult->hasErrors() === true) {
+                        continue;
                     }
+                    $subresult = $this->validate($value[$propertyKey], $propertySchema, $types);
+                    if ($subresult->hasErrors()) {
+                        $result->forProperty($propertyKey)->merge($subresult);
+                    }
+                    $propertyKeysToHandle = array_diff($propertyKeysToHandle, [$propertyKey]);
                 }
             }
         }
@@ -497,7 +495,7 @@ class SchemaValidator
      * @param array $types
      * @return ErrorResult
      */
-    protected function validateStringType($value, array $schema, array $types = [])
+    protected function validateStringType($value, array $schema, array $types = []): ErrorResult
     {
         $result = new ErrorResult();
         if (is_string($value) === false) {
@@ -604,7 +602,7 @@ class SchemaValidator
      * @param array $schema
      * @return ErrorResult
      */
-    protected function validateNullType($value, array $schema)
+    protected function validateNullType($value, array $schema): ErrorResult
     {
         $result = new ErrorResult();
         if ($value !== null) {
@@ -620,7 +618,7 @@ class SchemaValidator
      * @param array $schema
      * @return ErrorResult
      */
-    protected function validateAnyType($value, array $schema)
+    protected function validateAnyType($value, array $schema): ErrorResult
     {
         return new ErrorResult();
     }
@@ -631,7 +629,7 @@ class SchemaValidator
      * @param mixed $value
      * @return string
      */
-    protected function renderValue($value)
+    protected function renderValue($value): string
     {
         return is_scalar($value) ? (string)$value : 'type=' . gettype($value);
     }
@@ -640,10 +638,10 @@ class SchemaValidator
      * Create Error Object
      *
      * @param string $expectation
-     * @param string $value
+     * @param mixed $value
      * @return Error
      */
-    protected function createError($expectation, $value = null)
+    protected function createError(string $expectation, $value = null): Error
     {
         if ($value !== null) {
             $error = new Error('expected: %s found: %s', 1328557141, [$expectation, $this->renderValue($value)],
@@ -661,7 +659,7 @@ class SchemaValidator
      * @param array $phpArray
      * @return boolean
      */
-    protected function isSchema(array $phpArray)
+    protected function isSchema(array $phpArray): bool
     {
         // maybe we should validate against a schema here ;-)
         return $this->isDictionary($phpArray);
@@ -673,7 +671,7 @@ class SchemaValidator
      * @param array $phpArray
      * @return boolean
      */
-    protected function isNumericallyIndexedArray(array $phpArray)
+    protected function isNumericallyIndexedArray(array $phpArray): bool
     {
         foreach (array_keys($phpArray) as $key) {
             if (is_numeric($key) === false) {
@@ -689,7 +687,7 @@ class SchemaValidator
      * @param array $phpArray
      * @return boolean
      */
-    protected function isDictionary(array $phpArray)
+    protected function isDictionary(array $phpArray): bool
     {
         return array_keys($phpArray) !== range(0, count($phpArray) - 1);
     }

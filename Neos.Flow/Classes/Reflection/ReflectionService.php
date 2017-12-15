@@ -1391,9 +1391,13 @@ class ReflectionService
         }
 
         $returnType = $method->getDeclaredReturnType();
-        if ($returnType !== null) {
-            $this->classReflectionData[$className][self::DATA_CLASS_METHODS][$methodName][self::DATA_METHOD_DECLARED_RETURN_TYPE] = $returnType;
+        if ($returnType !== null && !in_array($returnType, ['self', 'null', 'callable', 'void']) && !TypeHandling::isSimpleType($returnType)) {
+            $returnType = '\\' . $returnType;
         }
+        if ($method->isDeclaredReturnTypeNullable()) {
+            $returnType = '?' . $returnType;
+        }
+        $this->classReflectionData[$className][self::DATA_CLASS_METHODS][$methodName][self::DATA_METHOD_DECLARED_RETURN_TYPE] = $returnType;
 
         foreach ($method->getParameters() as $parameter) {
             $this->reflectClassMethodParameter($className, $method, $parameter);

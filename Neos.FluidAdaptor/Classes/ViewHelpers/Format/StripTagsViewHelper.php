@@ -11,6 +11,8 @@ namespace Neos\FluidAdaptor\ViewHelpers\Format;
  * source code.
  */
 
+use TYPO3Fluid\Fluid\Core\Compiler\TemplateCompiler;
+use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\ViewHelperNode;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 
@@ -54,27 +56,31 @@ class StripTagsViewHelper extends AbstractViewHelper
      */
     public function render($value = null)
     {
-        return self::renderStatic($this->arguments, $this->buildRenderChildrenClosure(), $this->renderingContext);
-    }
-
-    /**
-     * Applies strip_tags() on the specified value.
-     *
-     * @param array $arguments
-     * @param \Closure $renderChildrenClosure
-     * @param RenderingContextInterface $renderingContext
-     * @return string
-     */
-    public static function renderStatic(array $arguments, \Closure $renderChildrenClosure, RenderingContextInterface $renderingContext)
-    {
-        $value = $arguments['value'];
         if ($value === null) {
-            $value = $renderChildrenClosure();
+            $value = $this->renderChildren();
         }
         if (is_string($value) || (is_object($value) && method_exists($value, '__toString'))) {
             return strip_tags($value);
         }
 
         return $value;
+    }
+
+    /**
+     * Compile into direct strip_tags call in the cached template.
+     *
+     * @param string $argumentsName
+     * @param string $closureName
+     * @param string $initializationPhpCode
+     * @param ViewHelperNode $node
+     * @param TemplateCompiler $compiler
+     * @return string
+     */
+    public function compile($argumentsName, $closureName, &$initializationPhpCode, ViewHelperNode $node, TemplateCompiler $compiler)
+    {
+        $valueVariableName = $compiler->variableName('value');
+        $initializationPhpCode .= sprintf('%1$s = (%2$s[\'value\'] !== null ? %2$s[\'value\'] : %3$s());', $valueVariableName, $argumentsName, $closureName) . chr(10);
+
+        return sprintf('(is_string(%1$s) || (is_object(%1$s) && method_exists(%1$s, \'__toString\'))) ? strip_tags(%1$s) : %1$s', $valueVariableName);
     }
 }

@@ -348,6 +348,22 @@ class ArrayHelper implements ProtectedContextAwareInterface
     }
 
     /**
+     * Create an array containing a range of elements
+     *
+     * If a step value is given, it will be used as the increment between elements in the sequence.
+     * step should be given as a positive number. If not specified, step will default to 1.
+     *
+     * @param mixed $start First value of the sequence.
+     * @param mixed $end The sequence is ended upon reaching the end value.
+     * @param integer $step The increment between items, will default to 1.
+     * @return array Array of elements from start to end, inclusive.
+     */
+    public function range($start, $end, $step = 1)
+    {
+        return range($start, $end, $step);
+    }
+
+    /**
      * All methods are considered safe
      *
      * @param string $methodName

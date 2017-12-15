@@ -45,23 +45,23 @@ class Package extends BasePackage
         $bootstrap->registerCompiletimeCommand('neos.flow:package:rescan');
 
         $dispatcher = $bootstrap->getSignalSlotDispatcher();
-        $dispatcher->connect(\Neos\Flow\Mvc\Dispatcher::class, 'afterControllerInvocation', function ($request) use ($bootstrap) {
-            if ($bootstrap->getObjectManager()->hasInstance(\Neos\Flow\Persistence\PersistenceManagerInterface::class)) {
+        $dispatcher->connect(Mvc\Dispatcher::class, 'afterControllerInvocation', function ($request) use ($bootstrap) {
+            if ($bootstrap->getObjectManager()->hasInstance(Persistence\PersistenceManagerInterface::class)) {
                 if (!$request instanceof Mvc\ActionRequest || $request->getHttpRequest()->isMethodSafe() !== true) {
-                    $bootstrap->getObjectManager()->get(\Neos\Flow\Persistence\PersistenceManagerInterface::class)->persistAll();
+                    $bootstrap->getObjectManager()->get(Persistence\PersistenceManagerInterface::class)->persistAll();
                 } elseif ($request->getHttpRequest()->isMethodSafe()) {
-                    $bootstrap->getObjectManager()->get(\Neos\Flow\Persistence\PersistenceManagerInterface::class)->persistAll(true);
+                    $bootstrap->getObjectManager()->get(Persistence\PersistenceManagerInterface::class)->persistAll(true);
                 }
             }
         });
-        $dispatcher->connect(\Neos\Flow\Cli\SlaveRequestHandler::class, 'dispatchedCommandLineSlaveRequest', \Neos\Flow\Persistence\PersistenceManagerInterface::class, 'persistAll');
+        $dispatcher->connect(Cli\SlaveRequestHandler::class, 'dispatchedCommandLineSlaveRequest', Persistence\PersistenceManagerInterface::class, 'persistAll');
 
         $context = $bootstrap->getContext();
         if (!$context->isProduction()) {
-            $dispatcher->connect(\Neos\Flow\Core\Booting\Sequence::class, 'afterInvokeStep', function ($step) use ($bootstrap, $dispatcher) {
+            $dispatcher->connect(Core\Booting\Sequence::class, 'afterInvokeStep', function ($step) use ($bootstrap, $dispatcher) {
                 if ($step->getIdentifier() === 'neos.flow:resources') {
-                    $publicResourcesFileMonitor = \Neos\Flow\Monitor\FileMonitor::createFileMonitorAtBoot('Flow_PublicResourcesFiles', $bootstrap);
-                    $packageManager = $bootstrap->getEarlyInstance(\Neos\Flow\Package\PackageManagerInterface::class);
+                    $publicResourcesFileMonitor = Monitor\FileMonitor::createFileMonitorAtBoot('Flow_PublicResourcesFiles', $bootstrap);
+                    $packageManager = $bootstrap->getEarlyInstance(Package\PackageManagerInterface::class);
                     foreach ($packageManager->getActivePackages() as $packageKey => $package) {
                         if ($packageManager->isPackageFrozen($packageKey)) {
                             continue;
@@ -83,41 +83,43 @@ class Package extends BasePackage
                 return;
             }
             $objectManager = $bootstrap->getObjectManager();
-            $resourceManager = $objectManager->get(\Neos\Flow\ResourceManagement\ResourceManager::class);
+            $resourceManager = $objectManager->get(ResourceManager::class);
             $resourceManager->getCollection(ResourceManager::DEFAULT_STATIC_COLLECTION_NAME)->publish();
         };
 
-        $dispatcher->connect(\Neos\Flow\Monitor\FileMonitor::class, 'filesHaveChanged', $publishResources);
+        $dispatcher->connect(Monitor\FileMonitor::class, 'filesHaveChanged', $publishResources);
 
-        $dispatcher->connect(\Neos\Flow\Core\Bootstrap::class, 'bootstrapShuttingDown', \Neos\Flow\Configuration\ConfigurationManager::class, 'shutdown');
-        $dispatcher->connect(\Neos\Flow\Core\Bootstrap::class, 'bootstrapShuttingDown', \Neos\Flow\ObjectManagement\ObjectManagerInterface::class, 'shutdown');
+        $dispatcher->connect(Core\Bootstrap::class, 'bootstrapShuttingDown', Configuration\ConfigurationManager::class, 'shutdown');
+        $dispatcher->connect(Core\Bootstrap::class, 'bootstrapShuttingDown', ObjectManagement\ObjectManagerInterface::class, 'shutdown');
 
-        $dispatcher->connect(\Neos\Flow\Core\Bootstrap::class, 'bootstrapShuttingDown', \Neos\Flow\Reflection\ReflectionService::class, 'saveToCache');
+        $dispatcher->connect(Core\Bootstrap::class, 'bootstrapShuttingDown', Reflection\ReflectionService::class, 'saveToCache');
 
-        $dispatcher->connect(\Neos\Flow\Command\CoreCommandController::class, 'finishedCompilationRun', \Neos\Flow\Security\Authorization\Privilege\Method\MethodPrivilegePointcutFilter::class, 'savePolicyCache');
-        $dispatcher->connect(\Neos\Flow\Command\CoreCommandController::class, 'finishedCompilationRun', \Neos\Flow\Aop\Pointcut\RuntimeExpressionEvaluator::class, 'saveRuntimeExpressions');
+        $dispatcher->connect(Command\CoreCommandController::class, 'finishedCompilationRun', Security\Authorization\Privilege\Method\MethodPrivilegePointcutFilter::class, 'savePolicyCache');
+        $dispatcher->connect(Command\CoreCommandController::class, 'finishedCompilationRun', Aop\Pointcut\RuntimeExpressionEvaluator::class, 'saveRuntimeExpressions');
 
-        $dispatcher->connect(\Neos\Flow\Security\Authentication\AuthenticationProviderManager::class, 'authenticatedToken', function () use ($bootstrap) {
-            $session = $bootstrap->getObjectManager()->get(\Neos\Flow\Session\SessionInterface::class);
+        $dispatcher->connect(Security\Authentication\AuthenticationProviderManager::class, 'authenticatedToken', function () use ($bootstrap) {
+            $session = $bootstrap->getObjectManager()->get(Session\SessionInterface::class);
             if ($session->isStarted()) {
                 $session->renewId();
             }
         });
 
-        $dispatcher->connect(\Neos\Flow\Monitor\FileMonitor::class, 'filesHaveChanged', \Neos\Flow\Cache\CacheManager::class, 'flushSystemCachesByChangedFiles');
+        $dispatcher->connect(Monitor\FileMonitor::class, 'filesHaveChanged', Cache\CacheManager::class, 'flushSystemCachesByChangedFiles');
 
-        $dispatcher->connect(\Neos\Flow\Tests\FunctionalTestCase::class, 'functionalTestTearDown', \Neos\Flow\Mvc\Routing\RouterCachingService::class, 'flushCaches');
+        $dispatcher->connect(Tests\FunctionalTestCase::class, 'functionalTestTearDown', Mvc\Routing\RouterCachingService::class, 'flushCaches');
 
-        $dispatcher->connect(\Neos\Flow\Configuration\ConfigurationManager::class, 'configurationManagerReady', function (Configuration\ConfigurationManager $configurationManager) {
+        $dispatcher->connect(Configuration\ConfigurationManager::class, 'configurationManagerReady', function (Configuration\ConfigurationManager $configurationManager) {
             $configurationManager->registerConfigurationType('Views', Configuration\ConfigurationManager::CONFIGURATION_PROCESSING_TYPE_APPEND);
         });
-        $dispatcher->connect(\Neos\Flow\Command\CacheCommandController::class, 'warmupCaches', \Neos\Flow\Configuration\ConfigurationManager::class, 'warmup');
+        $dispatcher->connect(Command\CacheCommandController::class, 'warmupCaches', Configuration\ConfigurationManager::class, 'warmup');
 
-        $dispatcher->connect(\Neos\Flow\Package\PackageManager::class, 'packageStatesUpdated', function () use ($dispatcher) {
-            $dispatcher->connect(\Neos\Flow\Core\Bootstrap::class, 'bootstrapShuttingDown', \Neos\Flow\Cache\CacheManager::class, 'flushCaches');
+        $dispatcher->connect(Package\PackageManager::class, 'packageStatesUpdated', function () use ($dispatcher, $bootstrap) {
+            $dispatcher->connect(Core\Bootstrap::class, 'bootstrapShuttingDown', function () use ($bootstrap) {
+                $bootstrap->getObjectManager()->get(Cache\CacheManager::class)->flushCaches();
+            });
         });
 
-        $dispatcher->connect(\Neos\Flow\Persistence\Doctrine\EntityManagerFactory::class, 'beforeDoctrineEntityManagerCreation', \Neos\Flow\Persistence\Doctrine\EntityManagerConfiguration::class, 'configureEntityManager');
-        $dispatcher->connect(\Neos\Flow\Persistence\Doctrine\EntityManagerFactory::class, 'afterDoctrineEntityManagerCreation', \Neos\Flow\Persistence\Doctrine\EntityManagerConfiguration::class, 'enhanceEntityManager');
+        $dispatcher->connect(Persistence\Doctrine\EntityManagerFactory::class, 'beforeDoctrineEntityManagerCreation', Persistence\Doctrine\EntityManagerConfiguration::class, 'configureEntityManager');
+        $dispatcher->connect(Persistence\Doctrine\EntityManagerFactory::class, 'afterDoctrineEntityManagerCreation', Persistence\Doctrine\EntityManagerConfiguration::class, 'enhanceEntityManager');
     }
 }

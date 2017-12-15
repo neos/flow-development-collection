@@ -26,6 +26,8 @@
         "neos/utility-unicode": "*",
         "neos/fluid-adaptor": "*",
 
+        "psr/http-message": "~1.0.0",
+
         "ramsey/uuid": "^3.0.0",
 
         "doctrine/orm": "~2.5.0",

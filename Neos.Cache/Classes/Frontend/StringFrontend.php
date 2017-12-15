@@ -77,7 +77,7 @@ class StringFrontend extends AbstractFrontend
      * @throws \InvalidArgumentException
      * @api
      */
-    public function getByTag($tag)
+    public function getByTag($tag): array
     {
         if (!$this->backend instanceof TaggableBackendInterface) {
             throw new NotSupportedByBackendException('The backend must implement TaggableBackendInterface. Please choose a different cache backend or adjust the code using this cache.', 1483487409);

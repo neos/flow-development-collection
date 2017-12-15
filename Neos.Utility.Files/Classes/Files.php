@@ -27,13 +27,12 @@ abstract class Files
      * @return string
      * @api
      */
-    public static function getUnixStylePath($path)
+    public static function getUnixStylePath(string $path): string
     {
         if (strpos($path, ':') === false) {
             return str_replace(['//', '\\'], '/', $path);
-        } else {
-            return preg_replace('/^([a-z]{2,}):\//', '$1://', str_replace(['//', '\\'], '/', $path));
         }
+        return preg_replace('/^([a-z]{2,}):\//', '$1://', str_replace(['//', '\\'], '/', $path));
     }
 
     /**
@@ -43,7 +42,7 @@ abstract class Files
      * @return string
      * @api
      */
-    public static function getNormalizedPath($path)
+    public static function getNormalizedPath(string $path): string
     {
         return rtrim($path, '/') . '/';
     }
@@ -59,7 +58,7 @@ abstract class Files
      * @see getUnixStylePath()
      * @api
      */
-    public static function concatenatePaths(array $paths)
+    public static function concatenatePaths(array $paths): string
     {
         $resultingPath = '';
         foreach ($paths as $index => $path) {
@@ -87,7 +86,7 @@ abstract class Files
      * @return array Filenames including full path
      * @api
      */
-    public static function readDirectoryRecursively($path, $suffix = null, $returnRealPath = false, $returnDotFiles = false)
+    public static function readDirectoryRecursively(string $path, string $suffix = null, bool $returnRealPath = false, bool $returnDotFiles = false): array
     {
         return iterator_to_array(self::getRecursiveDirectoryGenerator($path, $suffix, $returnRealPath, $returnDotFiles));
     }
@@ -100,7 +99,7 @@ abstract class Files
      * @return \Generator
      * @throws FilesException
      */
-    public static function getRecursiveDirectoryGenerator($path, $suffix = null, $returnRealPath = false, $returnDotFiles = false)
+    public static function getRecursiveDirectoryGenerator(string $path, string $suffix = null, bool $returnRealPath = false, bool $returnDotFiles = false)
     {
         if (!is_dir($path)) {
             throw new FilesException('"' . $path . '" is no directory.', 1207253462);
@@ -141,7 +140,7 @@ abstract class Files
      * @see removeDirectoryRecursively()
      * @api
      */
-    public static function emptyDirectoryRecursively($path)
+    public static function emptyDirectoryRecursively(string $path)
     {
         if (!is_dir($path)) {
             throw new FilesException('"' . $path . '" is no directory.', 1169047616);
@@ -178,7 +177,7 @@ abstract class Files
      * @api
      * @throws FilesException
      */
-    public static function removeEmptyDirectoriesOnPath($path, $basePath = null)
+    public static function removeEmptyDirectoriesOnPath(string $path, string $basePath = null)
     {
         if ($basePath !== null) {
             $basePath = trim($basePath, '/');
@@ -211,7 +210,7 @@ abstract class Files
      * @see emptyDirectoryRecursively()
      * @api
      */
-    public static function removeDirectoryRecursively($path)
+    public static function removeDirectoryRecursively(string $path)
     {
         if (self::is_link($path)) {
             if (self::unlink($path) !== true) {
@@ -239,7 +238,7 @@ abstract class Files
      * @todo Make mode configurable / make umask configurable
      * @api
      */
-    public static function createDirectoryRecursively($path)
+    public static function createDirectoryRecursively(string $path)
     {
         if (substr($path, -2) === '/.') {
             $path = substr($path, 0, -1);
@@ -275,7 +274,7 @@ abstract class Files
      * @throws FilesException
      * @api
      */
-    public static function copyDirectoryRecursively($sourceDirectory, $targetDirectory, $keepExistingFiles = false, $copyDotFiles = false)
+    public static function copyDirectoryRecursively(string $sourceDirectory, string $targetDirectory, bool $keepExistingFiles = false, bool $copyDotFiles = false)
     {
         if (!is_dir($sourceDirectory)) {
             throw new FilesException('"' . $sourceDirectory . '" is no directory.', 1235428779);
@@ -308,7 +307,7 @@ abstract class Files
      * @return mixed The file content as a string or FALSE if the file could not be opened.
      * @api
      */
-    public static function getFileContents($pathAndFilename, $flags = 0, $context = null, $offset = null, $maximumLength = -1)
+    public static function getFileContents(string $pathAndFilename, int $flags = 0, $context = null, int $offset = null, int $maximumLength = -1)
     {
         if ($flags === true) {
             $flags = FILE_USE_INCLUDE_PATH;
@@ -332,7 +331,7 @@ abstract class Files
      * @param integer $errorCode One of the UPLOAD_ERR_ constants
      * @return string
      */
-    public static function getUploadErrorMessage($errorCode)
+    public static function getUploadErrorMessage(int $errorCode): string
     {
         switch ($errorCode) {
             case \UPLOAD_ERR_INI_SIZE:
@@ -364,7 +363,7 @@ abstract class Files
      * @return boolean TRUE if the path exists and is a symbolic link, FALSE otherwise
      * @api
      */
-    public static function is_link($pathAndFilename)
+    public static function is_link(string $pathAndFilename): bool
     {
         // if not on Windows, call PHPs own is_link() function
         if (DIRECTORY_SEPARATOR === '/') {
@@ -393,7 +392,7 @@ abstract class Files
      * @return boolean TRUE if file/directory was removed successfully
      * @api
      */
-    public static function unlink($pathAndFilename)
+    public static function unlink(string $pathAndFilename): bool
     {
         try {
             // if not on Windows, call PHPs own unlink() function
@@ -432,14 +431,25 @@ abstract class Files
      * @param string $thousandsSeparator thousands separator of the resulting string
      * @return string the size string, e.g. "1,024 MB"
      */
-    public static function bytesToSizeString($bytes, $decimals = 0, $decimalSeparator = '.', $thousandsSeparator = ',')
+    public static function bytesToSizeString($bytes, int $decimals = null, string $decimalSeparator = null, string $thousandsSeparator = null): string
     {
-        if (!is_integer($bytes) && !is_float($bytes)) {
+        if (!is_int($bytes) && !is_float($bytes)) {
             if (is_numeric($bytes)) {
                 $bytes = (float)$bytes;
             } else {
                 $bytes = 0;
             }
+        }
+
+        // FIXME: The defaults should again be in the function declaration and nulls not allowed. This is a breaking change though.
+        if ($decimals === null) {
+            $decimals = 0;
+        }
+        if ($decimalSeparator === null) {
+            $decimalSeparator = '.';
+        }
+        if ($thousandsSeparator === null) {
+            $thousandsSeparator = ',';
         }
 
         $bytes = max($bytes, 0);
@@ -461,7 +471,7 @@ abstract class Files
      * @return float The number of bytes the $sizeString represents or 0 if the number could not be parsed
      * @throws FilesException if the specified unit could not be resolved
      */
-    public static function sizeStringToBytes($sizeString)
+    public static function sizeStringToBytes(string $sizeString): float
     {
         preg_match('/(?P<size>\d+\.*\d*)(?P<unit>.*)/', $sizeString, $matches);
         if (empty($matches['size'])) {
@@ -491,7 +501,7 @@ abstract class Files
      * @return boolean
      * @throws FilesException
      */
-    public static function createRelativeSymlink($target, $link)
+    public static function createRelativeSymlink(string $target, string $link): bool
     {
         if (file_exists($link)) {
             self::unlink($link);
@@ -508,9 +518,8 @@ abstract class Files
                 throw new FilesException(sprintf('Error while attempting to create a relative symlink at "%s" pointing to "%s". Make sure you have sufficient privileges and your operating system supports symlinks.', $link, $relativeTargetPath), 1378986321);
             }
             return file_exists($link);
-        } else {
-            return \symlink($relativeTargetPath, $link);
         }
+        return \symlink($relativeTargetPath, $link);
     }
 
     /**
@@ -523,7 +532,7 @@ abstract class Files
      * @param string $to An absolute path to find the relative representation onto $from
      * @return string
      */
-    public static function getRelativePath($from, $to)
+    public static function getRelativePath(string $from, string $to): string
     {
         $from = self::getUnixStylePath($from);
         $to = self::getUnixStylePath($to);
@@ -551,9 +560,8 @@ abstract class Files
                     $padLength = (count($relativePath) + $remaining - 1) * -1;
                     $relativePath = array_pad($relativePath, $padLength, '..');
                     break;
-                } else {
-                    $relativePath[0] = './' . $relativePath[0];
                 }
+                $relativePath[0] = './' . $relativePath[0];
             }
         }
         return implode('/', $relativePath);

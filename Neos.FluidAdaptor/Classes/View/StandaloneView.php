@@ -12,6 +12,8 @@ namespace Neos\FluidAdaptor\View;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Core\Bootstrap;
+use Neos\Flow\Http\HttpRequestHandlerInterface;
 use Neos\Flow\Http\Request;
 use Neos\Flow\Http\Response;
 use Neos\Flow\Mvc\ActionRequest;
@@ -72,6 +74,12 @@ class StandaloneView extends AbstractTemplateView
     protected $request;
 
     /**
+     * @var Bootstrap
+     * @Flow\Inject
+     */
+    protected $bootstrap;
+
+    /**
      * Factory method to create an instance with given options.
      *
      * @param array $options
@@ -87,6 +95,7 @@ class StandaloneView extends AbstractTemplateView
      *
      * @param ActionRequest $request The current action request. If none is specified it will be created from the environment.
      * @param array $options
+     * @throws \Neos\FluidAdaptor\Exception
      */
     public function __construct(ActionRequest $request = null, array $options = [])
     {
@@ -102,8 +111,13 @@ class StandaloneView extends AbstractTemplateView
     public function initializeObject()
     {
         if ($this->request === null) {
-            $httpRequest = Request::createFromEnvironment();
-            $this->request = new ActionRequest($httpRequest);
+            $requestHandler = $this->bootstrap->getActiveRequestHandler();
+            if ($requestHandler instanceof HttpRequestHandlerInterface) {
+                $this->request = new ActionRequest($requestHandler->getHttpRequest());
+            } else {
+                $httpRequest = Request::createFromEnvironment();
+                $this->request = new ActionRequest($httpRequest);
+            }
         }
 
         $uriBuilder = new UriBuilder();

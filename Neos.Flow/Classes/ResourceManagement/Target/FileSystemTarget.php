@@ -13,6 +13,7 @@ namespace Neos\Flow\ResourceManagement\Target;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\Bootstrap;
+use Neos\Error\Messages\Error;
 use Neos\Flow\Http\HttpRequestHandlerInterface;
 use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\ResourceManagement\CollectionInterface;
@@ -223,6 +224,8 @@ class FileSystemTarget implements TargetInterface
     {
         $resources = $this->resourceRepository->findSimilarResources($resource);
         if (count($resources) > 1) {
+            $message = sprintf('Did not unpublish resource %s with SHA1 hash %s because it is used by other Resource objects.', $resource->getFilename(), $resource->getSha1());
+            $this->messageCollector->append($message, Error::SEVERITY_NOTICE);
             return;
         }
         $this->unpublishFile($this->getRelativePublicationPathAndFilename($resource));
@@ -317,9 +320,13 @@ class FileSystemTarget implements TargetInterface
     {
         $targetPathAndFilename = $this->path . $relativeTargetPathAndFilename;
         if (!file_exists($targetPathAndFilename)) {
+            $message = sprintf('Did not remove file %s because it did not exist.', $targetPathAndFilename);
+            $this->messageCollector->append($message, Error::SEVERITY_NOTICE);
             return;
         }
         if (!Files::unlink($targetPathAndFilename)) {
+            $message = sprintf('Removal of file %s failed.', $targetPathAndFilename);
+            $this->messageCollector->append($message, Error::SEVERITY_WARNING);
             return;
         }
         Files::removeEmptyDirectoriesOnPath(dirname($targetPathAndFilename));

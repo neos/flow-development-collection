@@ -13,6 +13,7 @@ namespace Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Format;
 
 require_once(__DIR__ . '/../ViewHelperBaseTestcase.php');
 
+use Neos\FluidAdaptor\Core\Rendering\RenderingContext;
 use Neos\FluidAdaptor\ViewHelpers\Format\CaseViewHelper;
 use Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase;
 
@@ -25,6 +26,12 @@ class CaseViewHelperTest extends ViewHelperBaseTestcase
      * @var \Neos\FluidAdaptor\ViewHelpers\Format\CaseViewHelper
      */
     protected $viewHelper;
+
+    /**
+     * @var RenderingContext
+     */
+    protected $renderingContextMock;
+
     /**
      * Holds the initial mb_internal_encoding value found on this system in order to restore it after the tests
      * @var string
@@ -34,7 +41,10 @@ class CaseViewHelperTest extends ViewHelperBaseTestcase
     public function setUp()
     {
         parent::setUp();
-        $this->viewHelper = $this->getMockBuilder(\Neos\FluidAdaptor\ViewHelpers\Format\CaseViewHelper::class)->setMethods(array('renderChildren'))->getMock();
+        $this->renderingContext = $this->getMockBuilder(RenderingContext::class)->disableOriginalConstructor()->getMock();
+        $this->viewHelper = new CaseViewHelper();
+        $this->viewHelper->setRenderingContext($this->renderingContext);
+        //$this->getMockBuilder(\Neos\FluidAdaptor\ViewHelpers\Format\CaseViewHelper::class)->setMethods(array('renderChildren'))->getMock();
         $this->originalMbEncodingValue = mb_internal_encoding();
     }
 
@@ -51,19 +61,35 @@ class CaseViewHelperTest extends ViewHelperBaseTestcase
      */
     public function viewHelperRendersChildrenIfGivenValueIsNull()
     {
-        $this->viewHelper->expects($this->once())->method('renderChildren');
-        $this->viewHelper->render();
+        $testString = 'child was here';
+        $this->viewHelper->setRenderChildrenClosure(function () use ($testString) {
+            return $testString;
+        });
+
+        $result = $this->viewHelper->render();
+        $this->assertEquals(strtoupper($testString), $result);
     }
 
     /**
+     *
+     */
+    public function fixtureStringDataProvider()
+    {
+        return [
+            ['', ''],
+            [0, '0'],
+            ['foo', 'FOO']
+        ];
+    }
+
+    /**
+     * @dataProvider fixtureStringDataProvider
      * @test
      */
-    public function viewHelperDoesNotRenderChildrenIfGivenValueIsNotNull()
+    public function viewHelperDoesNotRenderChildrenIfGivenValueIsNotNull($testString, $expected)
     {
-        $this->viewHelper->expects($this->never())->method('renderChildren');
-        $this->viewHelper->render('');
-        $this->viewHelper->render(0);
-        $this->viewHelper->render('foo');
+        $result = $this->viewHelper->render($testString);
+        $this->assertEquals($expected, $result);
     }
 
     /**

@@ -50,7 +50,7 @@ Neos\Flow\I18n\Cldr\CldrModel:
         arguments:
           1:
             value: Flow_I18n_Cldr_CldrModelCache
-Neos\Flow\I18n\Xliff\XliffModel:
+Neos\Flow\I18n\Xliff\Service\XliffFileProvider:
   properties:
     cache:
       object:
@@ -59,6 +59,22 @@ Neos\Flow\I18n\Xliff\XliffModel:
         arguments:
           1:
             value: Flow_I18n_XmlModelCache
+Neos\Flow\I18n\Xliff\Service\XliffReader:
+  properties:
+    i18nLogger:
+      object:
+        factoryObjectName: Neos\Flow\Log\LoggerFactory
+        arguments:
+          1:
+            value: 'Flow_I18n'
+          2:
+            value: 'Neos\Flow\Log\Logger'
+          3:
+            setting: Neos.Flow.log.i18nLogger.backend
+          4:
+            setting: Neos.Flow.log.i18nLogger.backendOptions
+Neos\Flow\I18n\Xliff\Model\FileAdapter:
+  properties:
     i18nLogger:
       object:
         factoryObjectName: Neos\Flow\Log\LoggerFactory
@@ -136,6 +152,15 @@ Neos\Flow\Log\SecurityLoggerInterface:
       setting: Neos.Flow.log.securityLogger.backend
     4:
       setting: Neos.Flow.log.securityLogger.backendOptions
+
+Neos\Flow\Log\ThrowableStorageInterface:
+  scope: singleton
+  className: Neos\Flow\Log\ThrowableStorage\FileStorage
+
+Neos\Flow\Log\ThrowableStorage\FileStorage:
+  properties:
+    storagePath:
+      setting: Neos.Flow.log.throwables.fileStorage.path
 
 #                                                                          #
 # Monitor                                                                  #

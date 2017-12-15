@@ -13,6 +13,7 @@ namespace Neos\Flow\Persistence\Doctrine;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Exception\ConnectionException;
 use Doctrine\ORM\Tools\SchemaTool;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\SystemLoggerInterface;
@@ -162,22 +163,20 @@ class PersistenceManager extends AbstractPersistenceManager
             return;
         }
 
+        /** @var Connection $connection */
+        $connection = $this->entityManager->getConnection();
         try {
-            $this->entityManager->flush();
-        } catch (\Doctrine\DBAL\DBALException $exception) {
-            if (!$this->entityManager->isOpen()) {
-                throw $exception;
+            if ($connection->ping() === false) {
+                $this->systemLogger->log('Reconnecting the Doctrine EntityManager to the persistence backend.', LOG_INFO);
+                $connection->close();
+                $connection->connect();
             }
+        } catch (ConnectionException $exception) {
             $this->systemLogger->logException($exception);
-            /** @var Connection $connection */
-            $connection = $this->entityManager->getConnection();
-            $connection->close();
-            $connection->connect();
-            $this->systemLogger->log('Reconnected the Doctrine EntityManager to the persistence backend.', LOG_INFO);
-            $this->entityManager->flush();
-        } finally {
-            $this->emitAllObjectsPersisted();
         }
+
+        $this->entityManager->flush();
+        $this->emitAllObjectsPersisted();
     }
 
     /**

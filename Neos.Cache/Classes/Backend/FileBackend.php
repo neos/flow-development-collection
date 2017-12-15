@@ -100,7 +100,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
      *
      * @return boolean
      */
-    public function isFrozen()
+    public function isFrozen(): bool
     {
         return $this->frozen;
     }
@@ -199,7 +199,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
      * @throws \InvalidArgumentException
      * @api
      */
-    public function has($entryIdentifier)
+    public function has($entryIdentifier): bool
     {
         if ($this->frozen === true) {
             return isset($this->cacheEntryIdentifiers[$entryIdentifier]);
@@ -220,7 +220,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
      * @throws \InvalidArgumentException
      * @api
      */
-    public function remove($entryIdentifier)
+    public function remove($entryIdentifier): bool
     {
         if ($this->frozen === true) {
             throw new \RuntimeException(sprintf('Cannot remove cache entry because the backend of cache "%s" is frozen.', $this->cacheIdentifier), 1323344193);
@@ -237,7 +237,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
      * @return array An array with identifiers of all matching entries. An empty array if no entries matched
      * @api
      */
-    public function findIdentifiersByTag($searchedTag)
+    public function findIdentifiersByTag($searchedTag): array
     {
         $entryIdentifiers = [];
         $now = $_SERVER['REQUEST_TIME'];
@@ -290,7 +290,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
      * @return integer The number of entries which have been affected by this flush
      * @api
      */
-    public function flushByTag($tag)
+    public function flushByTag($tag): int
     {
         $identifiers = $this->findIdentifiersByTag($tag);
         if (count($identifiers) === 0) {
@@ -312,7 +312,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
      * @return boolean
      * @api
      */
-    protected function isCacheFileExpired($cacheEntryPathAndFilename, $acquireLock = true)
+    protected function isCacheFileExpired(string $cacheEntryPathAndFilename, bool $acquireLock = true): bool
     {
         if (is_file($cacheEntryPathAndFilename) === false) {
             return true;
@@ -360,7 +360,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
      * @return mixed The filenames (including path) as an array if one or more entries could be found, otherwise FALSE
      * @throws Exception if no frontend has been set
      */
-    protected function findCacheFilesByIdentifier($entryIdentifier)
+    protected function findCacheFilesByIdentifier(string $entryIdentifier)
     {
         $pattern = $this->cacheDirectory . $entryIdentifier;
         $filesFound = glob($pattern);
@@ -402,7 +402,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
      * @return bool|string
      * @throws \InvalidArgumentException
      */
-    protected function internalGet($entryIdentifier, $acquireLock = true)
+    protected function internalGet(string $entryIdentifier, bool $acquireLock = true)
     {
         if ($entryIdentifier !== basename($entryIdentifier)) {
             throw new \InvalidArgumentException('The specified entry identifier must not contain a path segment.', 1282073033);

@@ -604,4 +604,15 @@ class ActionRequestTest extends UnitTestCase
         $expectedResult = ['pluginArgument' => 'action request'];
         $this->assertSame($expectedResult, $this->actionRequest->getPluginArguments());
     }
+
+    /**
+     * @test
+     */
+    public function settingAnArgumentWithIntegerNameWillCastToString()
+    {
+        $argumentValue = 'amnesia spray';
+        $this->actionRequest->setArgument(123, $argumentValue);
+        $this->assertTrue($this->actionRequest->hasArgument('123'));
+        $this->assertEquals($argumentValue, $this->actionRequest->getArgument('123'));
+    }
 }

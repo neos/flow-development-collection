@@ -94,12 +94,23 @@ class ResourceCommandController extends CommandController
             }
 
             foreach ($collections as $collection) {
-                /** @var CollectionInterface $collection */
-                $this->outputLine('Publishing resources of collection "%s"', [$collection->getName()]);
-                $target = $collection->getTarget();
-                $target->publishCollection($collection, function ($iteration) {
-                    $this->clearState($iteration);
-                });
+                try {
+                    /** @var CollectionInterface $collection */
+                    $this->outputLine('Publishing resources of collection "%s"', [$collection->getName()]);
+                    $target = $collection->getTarget();
+                    $target->publishCollection($collection, function ($iteration) {
+                        $this->clearState($iteration);
+                    });
+                } catch (Exception $exception) {
+                    $message = sprintf(
+                        'An error occurred while publishing the collection "%s": %s (Exception code: %u): %s',
+                        $collection->getName(),
+                        get_class($exception),
+                        $exception->getCode(),
+                        $exception->getMessage()
+                    );
+                    $this->messageCollector->append($message);
+                }
             }
 
             if ($this->messageCollector->hasMessages()) {
@@ -270,7 +281,7 @@ class ResourceCommandController extends CommandController
                         $this->resourceRepository->remove($resource);
                         if (isset($relatedAssets[$resource])) {
                             foreach ($relatedAssets[$resource] as $asset) {
-                                $assetRepository->remove($asset);
+                                $assetRepository->removeWithoutUsageChecks($asset);
                                 $brokenAssetCounter++;
                             }
                         }
@@ -295,11 +306,11 @@ class ResourceCommandController extends CommandController
                     break;
                 case 'n':
                     $this->outputLine('Did not delete any resource objects.');
-                break;
+                    break;
                 case 'c':
                     $this->outputLine('Stopping. Did not delete any resource objects.');
                     $this->quit(0);
-                break;
+                    break;
             }
         }
     }

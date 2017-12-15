@@ -253,14 +253,34 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
         $response = new CliResponse();
 
         $exceptionMessage = $this->renderSingleExceptionCli($exception);
-        while (($exception = $exception->getPrevious()) !== null) {
-            $exceptionMessage .= PHP_EOL . '<u>Nested exception:</u>' . PHP_EOL;
-            $exceptionMessage .= $this->renderSingleExceptionCli($exception);
+        $exceptionMessage = $this->renderNestedExceptonsCli($exception, $exceptionMessage);
+
+        if ($exception instanceof FlowException) {
+            $exceptionMessage .= PHP_EOL . 'Open <b>Data/Logs/Exceptions/' . $exception->getReferenceCode() . '.txt</b> for a full stack trace.' . PHP_EOL;
         }
 
         $response->setContent($exceptionMessage);
         $response->send();
         exit(1);
+    }
+
+    /**
+     * @param object $exception \Exception or \Throwable
+     * @param string $exceptionMessage
+     * @return string
+     */
+    protected function renderNestedExceptonsCli($exception, &$exceptionMessage)
+    {
+        if (!$exception->getPrevious()) {
+            return $exceptionMessage;
+        }
+
+        while ($exception = $exception->getPrevious()) {
+            $exceptionMessage .= PHP_EOL . '<u>Nested exception:</u>' . PHP_EOL;
+            $exceptionMessage .= $this->renderSingleExceptionCli($exception);
+        }
+
+        return $exceptionMessage;
     }
 
     /**
@@ -284,9 +304,7 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
         }
         $exceptionMessage .= $this->renderExceptionDetailCli('File', str_replace(FLOW_PATH_ROOT, '', $exception->getFile()));
         $exceptionMessage .= $this->renderExceptionDetailCli('Line', $exception->getLine());
-        if ($exception instanceof FlowException) {
-            $exceptionMessage .= PHP_EOL . 'Open <b>Data/Logs/Exceptions/' . $exception->getReferenceCode() . '.txt</b> for a full stack trace.' . PHP_EOL;
-        }
+
         return $exceptionMessage;
     }
 
