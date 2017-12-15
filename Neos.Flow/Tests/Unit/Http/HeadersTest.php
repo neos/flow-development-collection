@@ -151,6 +151,16 @@ class HeadersTest extends UnitTestCase
 
     /**
      * @test
+     * @expectedException \InvalidArgumentException
+     */
+    public function setThrowsExceptionWhenValueIsAnObject()
+    {
+        $headers = new Headers();
+        $headers->set('X-Test', new \stdClass());
+    }
+
+    /**
+     * @test
      */
     public function removeRemovesTheSpecifiedHeader()
     {
@@ -328,7 +338,7 @@ class HeadersTest extends UnitTestCase
     public function setExceptsHttpsHeaders()
     {
         $headers = new Headers();
-        $headers->set('HTTPS', 1);
+        $headers->set('HTTPS', '1');
 
         // dummy assertion to suppress PHPUnit warning
         $this->assertTrue(true);
@@ -471,4 +481,49 @@ class HeadersTest extends UnitTestCase
         }
         $this->assertEquals($value, $headers->getCacheControlDirective($name));
     }
+
+    /**
+     * @test
+     */
+    public function getPreparedValuesRendersStringsAsIs()
+    {
+        $headers = new Headers();
+        $headers->set('X-String', 'Some String');
+
+        $expectedResult = [
+            'X-String: Some String',
+        ];
+        $this->assertSame($expectedResult, $headers->getPreparedValues());
+    }
+
+    /**
+     * @test
+     */
+    public function getPreparedValuesRendersDateTimeInstancesAsGmtString()
+    {
+        $headers = new Headers();
+        $headers->set('X-Date', new \DateTimeImmutable('1980-12-13'));
+
+        $expectedResult = [
+            'X-Date: Sat, 13 Dec 1980 00:00:00 GMT',
+        ];
+        $this->assertSame($expectedResult, $headers->getPreparedValues());
+    }
+
+    /**
+     * @test
+     */
+    public function getPreparedValuesRendersOneHeaderPerArrayItem()
+    {
+        $headers = new Headers();
+        $headers->set('X-Array', ['some', 'array', 123]);
+
+        $expectedResult = [
+            'X-Array: some',
+            'X-Array: array',
+            'X-Array: 123',
+        ];
+        $this->assertSame($expectedResult, $headers->getPreparedValues());
+    }
+
 }

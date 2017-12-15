@@ -94,7 +94,7 @@ class Headers
      * GMT previously. GMT is used synonymously with UTC as per RFC 2616 3.3.1.
      *
      * @param string $name Name of the header, for example "Location", "Content-Description" etc.
-     * @param array|string|\DateTime $values An array of values or a single value for the specified header field
+     * @param string|string[]|\DateTime $values An array of values or a single value for the specified header field
      * @param boolean $replaceExistingHeader If a header with the same name should be replaced. Default is TRUE.
      * @return void
      * @throws \InvalidArgumentException
@@ -110,8 +110,10 @@ class Headers
             $date = clone $values;
             $date->setTimezone(new \DateTimeZone('GMT'));
             $values = [$date->format('D, d M Y H:i:s') . ' GMT'];
-        } else {
+        } elseif (is_string($values)) {
             $values = (array) $values;
+        } elseif (!is_array($values)) {
+            throw new \InvalidArgumentException(sprintf('The header value must be a string, string array or an instance of DateTimeInterface, given: %s', is_object($values) ? get_class($values) : gettype($values)), 1513332376);
         }
 
         switch ($name) {
