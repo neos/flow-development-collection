@@ -525,5 +525,4 @@ class HeadersTest extends UnitTestCase
         ];
         $this->assertSame($expectedResult, $headers->getPreparedValues());
     }
-
 }
