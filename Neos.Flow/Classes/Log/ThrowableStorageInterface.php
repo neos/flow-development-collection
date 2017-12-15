@@ -13,7 +13,7 @@ interface ThrowableStorageInterface
      *
      * @param \Throwable $throwable The throwable to log
      * @param array $additionalData Additional data to log
-     * @return void
+     * @return string Informational message about the stored throwable
      * @api
      */
     public function logThrowable(\Throwable $throwable, array $additionalData = []);

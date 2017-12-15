@@ -58,10 +58,11 @@ class FileStorage implements ThrowableStorageInterface
     /**
      * @param \Throwable $throwable
      * @param array $additionalData
+     * @return string Informational message about the stored throwable
      */
     public function logThrowable(\Throwable $throwable, array $additionalData = [])
     {
-        $this->logError($throwable, $additionalData);
+        return $this->logError($throwable, $additionalData);
     }
 
     /**
