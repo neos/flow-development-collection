@@ -873,16 +873,16 @@ If a corresponding route is configured, like:
 
 .. code-block:: yaml
 
-	-
-	  name: 'Secure route'
-	  uriPattern: '{https}'
-	  defaults:
-	    '@package':    'My.Demo'
-	    '@controller': 'Product'
-	    '@action':     'secure'
-	  routeParts:
-	    'https':
-	      handler: 'My\Demo\HttpsRoutePart'
+   -
+     name: 'Secure route'
+     uriPattern: '{https}'
+     defaults:
+       '@package':    'My.Demo'
+       '@controller': 'Product'
+       '@action':     'secure'
+     routeParts:
+       'https':
+         handler: 'My\Demo\HttpsRoutePart'
 
 All URIs pointing to the respective action will be forced to be `https://` URIs.
 
