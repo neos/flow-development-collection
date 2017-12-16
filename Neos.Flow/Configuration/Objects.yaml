@@ -11,6 +11,10 @@ DateTime:
   scope: prototype
   autowiring: off
 
+Composer\Autoload\ClassLoader:
+  scope: singleton
+  autowiring: off
+
 #                                                                          #
 # Cache                                                                    #
 #                                                                          #
