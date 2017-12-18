@@ -166,7 +166,7 @@ class ClassReflection extends \ReflectionClass
     /**
      * Returns an array of tags and their values
      *
-     * @return array RouteTags and values
+     * @return array Tags and values
      */
     public function getTagsValues()
     {
