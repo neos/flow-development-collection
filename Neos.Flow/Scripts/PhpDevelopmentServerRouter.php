@@ -11,6 +11,8 @@ if (strpos($_SERVER['REQUEST_URI'], '_Resources/') !== false) {
 }
 
 require(__DIR__. '/../Classes/Core/Bootstrap.php');
+$context = \Neos\Flow\Core\Bootstrap::getEnvironmentConfigurationSetting('FLOW_CONTEXT') ?: 'Development';
+$bootstrap = new \Neos\Flow\Core\Bootstrap($context);
 
 define('FLOW_PATH_ROOT', Files::getUnixStylePath(realpath(__DIR__ . '/../../../../')) . '/');
 
@@ -21,8 +23,4 @@ $_SERVER['SCRIPT_NAME'] = '/index.php';
 // we want to have nice URLs
 putenv('FLOW_REWRITEURLS=1');
 
-
-
-$context = \Neos\Flow\Core\Bootstrap::getEnvironmentConfigurationSetting('FLOW_CONTEXT') ?: 'Development';
-$bootstrap = new \Neos\Flow\Core\Bootstrap($context);
 $bootstrap->run();

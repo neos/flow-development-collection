@@ -88,9 +88,6 @@ class Bootstrap
         $this->context = new ApplicationContext($context);
         $this->earlyInstances[__CLASS__] = $this;
         $this->earlyInstances[\Composer\Autoload\ClassLoader::class] = $composerAutoloader;
-
-        $this->defineConstants();
-        $this->ensureRequiredEnvironment();
     }
 
     /**
@@ -102,6 +99,9 @@ class Bootstrap
      */
     public function run()
     {
+        $this->defineConstants();
+        $this->ensureRequiredEnvironment();
+
         Scripts::initializeClassLoader($this);
         Scripts::initializeSignalSlot($this);
         Scripts::initializePackageManagement($this);
