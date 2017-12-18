@@ -11,6 +11,7 @@ namespace Neos\Flow\Tests\Unit\Mvc\Routing;
  * source code.
  */
 
+use Neos\Flow\Mvc\Routing\Dto\ResolveResult;
 use Neos\Flow\Mvc\Routing\DynamicRoutePart;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Tests\UnitTestCase;
@@ -89,9 +90,9 @@ class DynamicRoutePartTest extends UnitTestCase
         $this->dynamicRoutPart->setSplitString('/');
 
         $routePath = 'firstSegment/secondSegment';
-        $this->dynamicRoutPart->match($routePath);
+        $matchResult = $this->dynamicRoutPart->match($routePath);
 
-        $this->assertEquals('firstSegment', $this->dynamicRoutPart->getValue(), 'value of Dynamic Route Part should be equal to first request path segment after successful match.');
+        $this->assertEquals('firstSegment', $matchResult->getMatchedValue(), 'value of Dynamic Route Part should be equal to first request path segment after successful match.');
     }
 
     /**
@@ -104,25 +105,9 @@ class DynamicRoutePartTest extends UnitTestCase
         $this->dynamicRoutPart->setSplitString('/');
 
         $routePath = 'some%20%5c%20special%20%c3%b6%c3%a4%c3%bc%c3%9f/secondSegment';
-        $this->dynamicRoutPart->match($routePath);
+        $matchResult = $this->dynamicRoutPart->match($routePath);
 
-        $this->assertEquals('some \ special öäüß', $this->dynamicRoutPart->getValue(), 'value of Dynamic Route Part should be equal to first request path segment after successful match.');
-    }
-
-    /**
-     * @test
-     */
-    public function valueIsNullAfterUnsuccessfulMatch()
-    {
-        $this->dynamicRoutPart->setName('foo');
-        $this->dynamicRoutPart->setSplitString('/');
-
-        $routePath = 'foo/bar';
-        $this->dynamicRoutPart->match($routePath);
-
-        $routePath = '/bar';
-        $this->dynamicRoutPart->match($routePath);
-        $this->assertNull($this->dynamicRoutPart->getValue(), 'Dynamic Route Part value should be NULL after unsuccessful match.');
+        $this->assertEquals('some \ special öäüß', $matchResult->getMatchedValue(), 'value of Dynamic Route Part should be equal to first request path segment after successful match.');
     }
 
     /**
@@ -173,8 +158,8 @@ class DynamicRoutePartTest extends UnitTestCase
 
         $routePath = 'bar';
 
-        $this->assertTrue($this->dynamicRoutPart->match($routePath));
-        $this->assertEquals('bar', $this->dynamicRoutPart->getValue(), 'Dynamic Route Part should match if request Path has only one segment and no split string is set.');
+        $matchResult = $this->dynamicRoutPart->match($routePath);
+        $this->assertEquals('bar', $matchResult->getMatchedValue(), 'Dynamic Route Part should match if request Path has only one segment and no split string is set.');
     }
 
     /**
@@ -187,8 +172,8 @@ class DynamicRoutePartTest extends UnitTestCase
 
         $routePath = 'bar';
 
-        $this->assertTrue($this->dynamicRoutPart->match($routePath));
-        $this->assertEquals('bar', $this->dynamicRoutPart->getValue(), 'Dynamic Route Part should match if request Path has only one segment and does not contain split string.');
+        $matchResult = $this->dynamicRoutPart->match($routePath);
+        $this->assertEquals('bar', $matchResult->getMatchedValue(), 'Dynamic Route Part should match if request Path has only one segment and does not contain split string.');
     }
 
     /**
@@ -213,7 +198,7 @@ class DynamicRoutePartTest extends UnitTestCase
         $this->dynamicRoutPart->setSplitString('_-_');
 
         $routePath = 'foo_-_bar';
-        $this->assertTrue($this->dynamicRoutPart->match($routePath), 'Dynamic Route Part with a split string of "_-_" should match request path of "foo_-_bar".');
+        $this->assertNotFalse($this->dynamicRoutPart->match($routePath), 'Dynamic Route Part with a split string of "_-_" should match request path of "foo_-_bar".');
     }
 
     /*                                                                        *
@@ -238,8 +223,8 @@ class DynamicRoutePartTest extends UnitTestCase
         $this->dynamicRoutPart->setName('foo');
         $routeValues = ['foo' => 'bar'];
 
-        $this->assertTrue($this->dynamicRoutPart->resolve($routeValues));
-        $this->assertEquals('bar', $this->dynamicRoutPart->getValue(), 'Dynamic Route Part should resolve if an element with the same name exists in $routeValues.');
+        $resolveResult = $this->dynamicRoutPart->resolve($routeValues);
+        $this->assertEquals('bar', $resolveResult->getResolvedValue(), 'Dynamic Route Part should resolve if an element with the same name exists in $routeValues.');
     }
 
     /**
@@ -253,9 +238,8 @@ class DynamicRoutePartTest extends UnitTestCase
         $this->dynamicRoutPart->setName('foo');
         $routeValues = ['foo' => 'some \ special öäüß'];
 
-        $this->assertTrue($this->dynamicRoutPart->resolve($routeValues));
-        $this->assertEquals('some%20%5c%20special%20%c3%b6%c3%a4%c3%bc%c3%9f', $this->dynamicRoutPart->getValue());
-        $this->assertNotEquals('some+%5c+special+%c3%b6%c3%a4%c3%bc%c3%9f', $this->dynamicRoutPart->getValue());
+        $resolveResult = $this->dynamicRoutPart->resolve($routeValues);
+        $this->assertEquals('some%20%5c%20special%20%c3%b6%c3%a4%c3%bc%c3%9f', $resolveResult->getResolvedValue());
     }
 
     /**
@@ -289,8 +273,8 @@ class DynamicRoutePartTest extends UnitTestCase
         $this->dynamicRoutPart->setName('Foo');
         $routeValues = ['Foo' => 'Bar'];
 
-        $this->assertTrue($this->dynamicRoutPart->resolve($routeValues));
-        $this->assertEquals('bar', $this->dynamicRoutPart->getValue(), 'By default Dynamic Route Part should lowercase route values.');
+        $resolveResult = $this->dynamicRoutPart->resolve($routeValues);
+        $this->assertEquals('bar', $resolveResult->getResolvedValue(), 'By default Dynamic Route Part should lowercase route values.');
     }
 
     /**
@@ -302,8 +286,8 @@ class DynamicRoutePartTest extends UnitTestCase
         $this->dynamicRoutPart->setLowerCase(false);
         $routeValues = ['Foo' => 'Bar'];
 
-        $this->assertTrue($this->dynamicRoutPart->resolve($routeValues));
-        $this->assertEquals('Bar', $this->dynamicRoutPart->getValue(), 'Dynamic Route Part should not change the case of the value if lowerCase is false.');
+        $resolveResult = $this->dynamicRoutPart->resolve($routeValues);
+        $this->assertEquals('Bar', $resolveResult->getResolvedValue(), 'Dynamic Route Part should not change the case of the value if lowerCase is false.');
     }
 
     /**
@@ -325,7 +309,8 @@ class DynamicRoutePartTest extends UnitTestCase
         $this->dynamicRoutPart->setName('foo');
         $routeValues = ['foo' => 'bar', 'differentString' => 'value2'];
 
-        $this->assertTrue($this->dynamicRoutPart->resolve($routeValues));
+        $resolveResult = $this->dynamicRoutPart->resolve($routeValues);
+        $this->assertNotFalse($resolveResult);
         $this->assertEquals(['differentString' => 'value2'], $routeValues, 'Dynamic Route Part should unset matching element from $routeValues on successful resolve.');
     }
 
@@ -337,7 +322,8 @@ class DynamicRoutePartTest extends UnitTestCase
         $this->dynamicRoutPart->setName('foo.bar.baz');
         $routeValues = ['foo' => ['bar' => ['baz' => 'should be removed', 'otherKey' => 'should stay']], 'differentString' => 'value2'];
 
-        $this->assertTrue($this->dynamicRoutPart->resolve($routeValues));
+        $resolveResult = $this->dynamicRoutPart->resolve($routeValues);
+        $this->assertNotFalse($resolveResult);
         $this->assertEquals(['foo' => ['bar' => ['otherKey' => 'should stay']], 'differentString' => 'value2'], $routeValues);
     }
 
@@ -356,34 +342,36 @@ class DynamicRoutePartTest extends UnitTestCase
     /**
      * @test
      */
-    public function resolveValueReturnsTrueAndSetTheValueToTheLowerCasedIdentifierIfTheValueToBeResolvedIsAnObject()
+    public function resolveValueReturnsMatchResultsAndSetTheValueToTheLowerCasedIdentifierIfTheValueToBeResolvedIsAnObject()
     {
         $object = new \stdClass();
         $this->mockPersistenceManager->expects($this->once())->method('getIdentifierByObject')->with($object)->will($this->returnValue('TheIdentifier'));
-        $this->assertTrue($this->dynamicRoutPart->_call('resolveValue', $object));
-        $this->assertSame('theidentifier', $this->dynamicRoutPart->getValue());
+        /** @var ResolveResult $resolveResult */
+        $resolveResult = $this->dynamicRoutPart->_call('resolveValue', $object);
+        $this->assertSame('theidentifier', $resolveResult->getResolvedValue());
     }
 
     /**
      * @test
      */
-    public function resolveValueReturnsTrueAndSetTheValueToTheCorrectlyCasedIdentifierIfTheValueToBeResolvedIsAnObjectAndLowerCaseIsFalse()
+    public function resolveValueReturnsMatchResultsAndSetTheValueToTheCorrectlyCasedIdentifierIfTheValueToBeResolvedIsAnObjectAndLowerCaseIsFalse()
     {
         $object = new \stdClass();
         $this->mockPersistenceManager->expects($this->once())->method('getIdentifierByObject')->with($object)->will($this->returnValue('TheIdentifier'));
         $this->dynamicRoutPart->setLowerCase(false);
-        $this->assertTrue($this->dynamicRoutPart->_call('resolveValue', $object));
-        $this->assertSame('TheIdentifier', $this->dynamicRoutPart->getValue());
+        /** @var ResolveResult $resolveResult */
+        $resolveResult = $this->dynamicRoutPart->_call('resolveValue', $object);
+        $this->assertSame('TheIdentifier', $resolveResult->getResolvedValue());
     }
 
     /**
      * @test
      */
-    public function resolveValueReturnsTrueIfTheValueToBeResolvedIsAnObjectWithANumericIdentifier()
+    public function resolveValueReturnsMatchResultsIfTheValueToBeResolvedIsAnObjectWithANumericIdentifier()
     {
         $object = new \stdClass();
         $this->mockPersistenceManager->expects($this->once())->method('getIdentifierByObject')->with($object)->will($this->returnValue(123));
-        $this->assertTrue($this->dynamicRoutPart->_call('resolveValue', $object));
+        $this->assertNotFalse($this->dynamicRoutPart->_call('resolveValue', $object));
     }
 
     /**
@@ -416,10 +404,12 @@ class DynamicRoutePartTest extends UnitTestCase
         $this->dynamicRoutPart->setName('foo');
         $routeValues = ['foo' => 'bar'];
 
-        $this->assertTrue($this->dynamicRoutPart->resolve($routeValues));
+        $resolveResult = $this->dynamicRoutPart->resolve($routeValues);
+        $this->assertNotFalse($resolveResult);
 
         $routeValues = [];
-        $this->assertFalse($this->dynamicRoutPart->resolve($routeValues));
+        $resolveResult = $this->dynamicRoutPart->resolve($routeValues);
+        $this->assertFalse($resolveResult);
         $this->assertNull($this->dynamicRoutPart->getValue(), 'Dynamic Route Part value should be NULL when call to resolve() was not successful.');
     }
 }

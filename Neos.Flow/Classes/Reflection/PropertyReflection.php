@@ -58,7 +58,7 @@ class PropertyReflection extends \ReflectionProperty
     /**
      * Returns an array of tags and their values
      *
-     * @return array Tags and values
+     * @return array RouteTags and values
      */
     public function getTagsValues()
     {

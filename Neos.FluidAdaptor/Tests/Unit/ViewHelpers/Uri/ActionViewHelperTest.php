@@ -69,14 +69,14 @@ class ActionViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Vie
     {
         $this->uriBuilder->expects($this->once())->method('setSection')->with('someSection');
         $this->uriBuilder->expects($this->once())->method('setCreateAbsoluteUri')->with(true);
-        $this->uriBuilder->expects($this->once())->method('setArguments')->with(array('additional' => 'Parameters'));
+        $this->uriBuilder->expects($this->once())->method('setArguments')->with(array('additional' => 'RouteParameters'));
         $this->uriBuilder->expects($this->once())->method('setAddQueryString')->with(true);
         $this->uriBuilder->expects($this->once())->method('setArgumentsToBeExcludedFromQueryString')->with(array('arguments' => 'toBeExcluded'));
         $this->uriBuilder->expects($this->once())->method('setFormat')->with('someFormat');
         $this->uriBuilder->expects($this->once())->method('uriFor')->with('someAction', array('some' => 'argument'), 'someController', 'somePackage', 'someSubpackage');
 
         $this->viewHelper->initialize();
-        $this->viewHelper->render('someAction', array('some' => 'argument'), 'someController', 'somePackage', 'someSubpackage', 'someSection', 'someFormat', array('additional' => 'Parameters'), true, true, array('arguments' => 'toBeExcluded'));
+        $this->viewHelper->render('someAction', array('some' => 'argument'), 'someController', 'somePackage', 'someSubpackage', 'someSection', 'someFormat', array('additional' => 'RouteParameters'), true, true, array('arguments' => 'toBeExcluded'));
     }
 
     /**
