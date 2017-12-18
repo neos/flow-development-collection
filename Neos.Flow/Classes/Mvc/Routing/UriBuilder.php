@@ -17,7 +17,6 @@ use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\RequestInterface;
 use Neos\Flow\Mvc\Routing\Dto\ResolveContext;
 use Neos\Utility\Arrays;
-use Psr\Http\Message\UriInterface;
 
 /**
  * An URI Builder
@@ -340,7 +339,7 @@ class UriBuilder
      * Builds the URI
      *
      * @param array $arguments optional URI arguments. Will be merged with $this->arguments with precedence to $arguments
-     * @return UriInterface
+     * @return string the (absolute or relative) URI as string
      * @api
      */
     public function build(array $arguments = [])
@@ -359,7 +358,7 @@ class UriBuilder
         }
 
         $this->lastArguments = $arguments;
-        return $resolvedUri;
+        return (string)$resolvedUri;
     }
 
     /**

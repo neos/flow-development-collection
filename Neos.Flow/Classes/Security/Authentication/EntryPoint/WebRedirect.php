@@ -61,7 +61,7 @@ class WebRedirect extends AbstractEntryPoint
 
         $response->setContent(sprintf('<html><head><meta http-equiv="refresh" content="0;url=%s"/></head></html>', htmlentities($uri, ENT_QUOTES, 'utf-8')));
         $response->setStatus(303);
-        $response->setHeader('Location', (string) $uri);
+        $response->setHeader('Location', $uri);
     }
 
     /**
