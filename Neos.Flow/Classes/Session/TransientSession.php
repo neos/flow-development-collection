@@ -241,7 +241,7 @@ class TransientSession implements SessionInterface
     }
 
     /**
-     * RouteTags this session with the given tag.
+     * Tags this session with the given tag.
      *
      * Note that third-party libraries might also tag your session. Therefore it is
      * recommended to use namespaced tags such as "Acme-Demo-MySpecialTag".
