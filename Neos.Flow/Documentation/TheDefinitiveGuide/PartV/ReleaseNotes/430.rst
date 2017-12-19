@@ -6,7 +6,7 @@ Flow 4.3
 Upgrade Instructions
 ====================
 
-This section contains instructions for upgrading your Flow 4.2 based applications to Flow 4.4.
+This section contains instructions for upgrading your Flow 4.2 based applications to Flow 4.3.
 
 In general just make sure to run the command::
 
@@ -18,8 +18,8 @@ the previous Release Notes first.
 What has changed
 ----------------
 
-Flow 4.0 comes with a major change in the routing and numerous fixes. Here's a list of changes that might need special
-attention when upgrading.
+Flow 4.3 comes with a major change in the routing and numerous fixes. Here's a list of changes that
+might need special attention when upgrading.
 
 `!!! FEATURE: More extensible Routing <https://github.com/neos/flow-development-collection/pull/1126>`_
 -------------------------------------------------------------------------------------------------------
