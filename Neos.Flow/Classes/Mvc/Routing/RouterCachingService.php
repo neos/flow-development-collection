@@ -146,7 +146,7 @@ class RouterCachingService
         }
 
         $cacheIdentifier = $this->buildResolveCacheIdentifier($resolveContext, $routeValues);
-        $tags = $this->generateRouteTags($uriConstraints->getPathConstraint(), $resolveContext->getRouteValues());
+        $tags = $this->generateRouteTags($uriConstraints->getPathConstraint(), $routeValues);
         if ($resolvedTags !== null) {
             $tags = array_unique(array_merge($resolvedTags->getTags(), $tags));
         }
