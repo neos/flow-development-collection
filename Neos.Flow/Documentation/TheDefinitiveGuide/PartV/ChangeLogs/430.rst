@@ -1,0 +1,154 @@
+`4.3.0 (2017-12-19) <https://github.com/neos/flow-development-collection/releases/tag/4.3.0>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`TASK: Remove var_dump from RoutingTest setUp() <https://github.com/neos/flow-development-collection/pull/1147>`_
+-----------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Flow``
+
+`BUGFIX: Flow server init should not rely on Files utility <https://github.com/neos/flow-development-collection/pull/1145>`_
+----------------------------------------------------------------------------------------------------------------------------
+
+Removes usage of Files utility in ``PhpDevelopmentServerRouter.php``
+in favor of the same code to determine the root of the installation
+which is used in the command line init ``flow.php``.
+
+* Packages: ``Flow``
+
+`TASK: Remove submodule file that should not exist <https://github.com/neos/flow-development-collection/pull/1143>`_
+--------------------------------------------------------------------------------------------------------------------
+
+This was added during reverting some unhappy change and should not be
+here at all.
+
+`TASK: Revert changed return type of \`UriBuilder\`-resolved URIs <https://github.com/neos/flow-development-collection/pull/1141>`_
+-----------------------------------------------------------------------------------------------------------------------------------
+
+This partly reverts #1126 by casting the resolved URI so that
+`UriBuilder::uriFor()` and `UriBuilder::build()` returns a
+`string` again rather than an instance of `UriInterface`.
+
+Background:
+Even though `UriInterface` is mostly casted to a string implicitly,
+this change was considered "too dangerous" for a minor release
+because it breaks code that relies on the previous return type
+(i.e. when serializing the resolved URI).
+
+For the next major release we can re-consider this change.
+
+Related: #1120
+
+* Packages: ``Flow``
+
+`TASK: Revert some accidental doc comment changes <https://github.com/neos/flow-development-collection/pull/1142>`_
+-------------------------------------------------------------------------------------------------------------------
+
+This is a (cosmetic) follow-up to #1126 reverting some
+doc comment changes that were introduced by accident.
+
+Related: #1120
+
+* Packages: ``Flow`` ``FluidAdaptor``
+
+`!!! FEATURE: Allow bypassing Flow class loader for performance <https://github.com/neos/flow-development-collection/pull/925>`_
+--------------------------------------------------------------------------------------------------------------------------------
+
+Currently the composer class loader is only used as a fallback to our own,
+but especially if the optimized loader is used the composer one is much
+faster.
+
+On systems in which all packages/classes are registered correctly via
+autoload statements in ``composer.json`` files using our own class loader
+only for proxy classes can bring an substantial boost in performance for
+every request.
+
+In order to enable this feature you need to set an environment variable
+``FLOW_ONLY_COMPOSER_LOADER=1``. Please test carefully if that breaks due
+to your autoload configuration not being fully composer ready.
+
+Additionally it is recommended to use the optimized composer loader by
+calling ``composer dumpautoload -o``.
+
+While not breaking in itself this change deprecates using our class loader
+for anything else than proxy classes. In practice this means you should
+always enable composer auto loader only by using above mentioned environment
+variable. At least make sure that your projects work with this
+enabled.
+
+We will drop the variable and make this the default behavior in the next
+major version of Flow (version 5.0) which means only classes that are
+correctly added to composer (loaded) packages with autoload configuration
+are being loaded correctly.
+
+* Packages: ``Flow``
+
+`BUGFIX: Logger::logThrowable will return a message <https://github.com/neos/flow-development-collection/pull/1139>`_
+---------------------------------------------------------------------------------------------------------------------
+
+null
+
+* Packages: ``Flow``
+
+`TASK: Split Flow Log to separate package <https://github.com/neos/flow-development-collection/pull/216>`_
+----------------------------------------------------------------------------------------------------------
+
+Creates the new `neos/flow-log` package containing the original
+log infrastructure with the original namespace (`Neos\\Flow`). So
+nothing should change for userland code.
+
+The Readme.rst contains a summary of dependencies of this package
+to make it easier to work on removing them and making this package
+more independent of Flow.
+
+The choosen way to split allows for transitioning to a new namespace
+while keeping the old classes.
+
+The `SystemLoggerInterface` and `SecurityLoggerInterface` are kept
+in Flow as they have not much meaning in the Logger package. Additionally
+the `EarlyLogger` was not moved as it depends on those interfaces.
+
+* Packages: ``Flow`` ``Log``
+
+`BUGFIX: LazySplObjectStorage::offsetSet must support parent method si… <https://github.com/neos/flow-development-collection/pull/1129>`_
+-------------------------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Flow``
+
+`FEATURE: Add cookie support on curl request <https://github.com/neos/flow-development-collection/pull/1099>`_
+--------------------------------------------------------------------------------------------------------------
+
+`Neos\\Flow\\Http\\Client\\CurlEngine` will now attach cookies to an outgoing request.
+
+* Packages: ``Flow``
+
+`TASK: Simplify FQN in Package.php for Flow <https://github.com/neos/flow-development-collection/pull/1119>`_
+-------------------------------------------------------------------------------------------------------------
+
+null
+
+* Packages: ``Flow``
+
+`TASK: Tweak documentation on global objects in matcher expressions <https://github.com/neos/flow-development-collection/pull/1095>`_
+-------------------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Flow``
+
+`BUGFIX: Fix code example in UcfirstViewHelper docblock <https://github.com/neos/flow-development-collection/pull/1096>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+The example lacks the `format` prefix.
+
+* Packages: ``Kickstarter``
+
+`BUGFIX: The ScalarTypeToObjectConverter should expose boolean instead… <https://github.com/neos/flow-development-collection/pull/1086>`_
+-------------------------------------------------------------------------------------------------------------------------------------------
+
+Fixed the ScalarTypeToObjectConverter to expose boolean as supported sourceType instead of bool.
+
+* Packages: ``Flow``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/4.2.6...4.3.0>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
