@@ -1,0 +1,39 @@
+========
+Flow 4.3
+========
+
+====================
+Upgrade Instructions
+====================
+
+This section contains instructions for upgrading your Flow 4.2 based applications to Flow 4.4.
+
+In general just make sure to run the command::
+
+ ./flow flow:cache:flush --force
+
+If you are upgrading from a lower version than 4.2, be sure to read the upgrade instructions from
+the previous Release Notes first.
+
+What has changed
+----------------
+
+Flow 4.0 comes with a major change in the routing and numerous fixes. Here's a list of changes that might need special
+attention when upgrading.
+
+!!! More extensible Routing
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The Flow-routing is improved and now allows the definition of RoutingParameters via HTTP-components that can later
+on be handled by custom RoutePartHandlers. That way the routing can react to influences other than the uri-path like
+the requested host-name or scheme or any other computable value.
+
+Attention:  The signature of the internal Router implementation has changed. In the unlikely case that you replaced
+the flow-router with a custom-router you have to adjust your code accordingly.
+
+PHP 7.2 compatibility
+^^^^^^^^^^^^^^^^^^^^^
+
+Flow framework now support php7.2 and all tests are executed for PHP 7.0, 7.1 and 7.2.
+
+
