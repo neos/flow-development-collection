@@ -90,16 +90,11 @@ are being loaded correctly.
 `TASK: Split Flow Log to separate package <https://github.com/neos/flow-development-collection/pull/216>`_
 ----------------------------------------------------------------------------------------------------------
 
-Creates the new `neos/flow-log` package containing the original
-log infrastructure with the original namespace (`Neos\\Flow`). So
-nothing should change for userland code.
-
-The Readme.rst contains a summary of dependencies of this package
-to make it easier to work on removing them and making this package
-more independent of Flow.
-
-The choosen way to split allows for transitioning to a new namespace
-while keeping the old classes.
+The log-package was extracted from Flow to become a separate independent
+composer-package neos/flow-log that can be used outside of Neos or Flow
+projects. This continues our long-time-effort of extracting parts of our
+odebase that can be used separately and making them available to the
+whole php-community.
 
 The `SystemLoggerInterface` and `SecurityLoggerInterface` are kept
 in Flow as they have not much meaning in the Logger package. Additionally
@@ -118,6 +113,6 @@ the `EarlyLogger` was not moved as it depends on those interfaces.
 `FEATURE: PHP 7.2 compatibility`
 -------------------------------
 
-Flow framework now support php7.2 and all tests are executed for PHP 7.0, 7.1 and 7.2.
+Flow framework now supports PHP 7.2 and all tests are executed for PHP versions 7.0, 7.1 and 7.2.
 
 
