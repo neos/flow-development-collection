@@ -15,6 +15,7 @@
 
         "neos/cache": "~4.3.0",
         "neos/eel": "~4.3.0",
+        "neos/flow-log": "~4.3.0",
         "neos/error-messages": "~4.3.0",
         "neos/utility-arrays": "~4.3.0",
         "neos/utility-files": "~4.3.0",
