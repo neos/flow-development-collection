@@ -155,6 +155,7 @@ class ProxyMethod
         $visibility = ($this->visibility === null ? $this->getMethodVisibilityString() : $this->visibility);
 
         $returnType = $this->reflectionService->getMethodDeclaredReturnType($this->fullOriginalClassName, $this->methodName);
+        $returnTypeIsVoid = $returnType === 'void';
         $returnTypeDeclaration = ($returnType !== null ? ' : ' . $returnType : '');
 
 
@@ -168,11 +169,21 @@ class ProxyMethod
             } else {
                 $code .= $this->addedPreParentCallCode;
                 if ($this->addedPostParentCallCode !== '') {
-                    $code .= '            $result = ' . ($callParentMethodCode === '' ? "NULL;\n" : $callParentMethodCode);
+                    if ($returnTypeIsVoid) {
+                        if ($callParentMethodCode !== '') {
+                            $code .= '            ' . $callParentMethodCode;
+                        }
+                    } else {
+                        $code .= '            $result = ' . ($callParentMethodCode === '' ? "NULL;\n" : $callParentMethodCode);
+                    }
                     $code .= $this->addedPostParentCallCode;
-                    $code .= "        return \$result;\n";
+                    if (!$returnTypeIsVoid) {
+                        $code .= "        return \$result;\n";
+                    }
                 } else {
-                    $code .= ($callParentMethodCode === '' ? '' : '        return ' . $callParentMethodCode . ";\n");
+                    if (!$returnTypeIsVoid && $callParentMethodCode !== '') {
+                        $code .= '        return ' . $callParentMethodCode . ";\n";
+                    }
                 }
             }
             $code .= "    }\n";
