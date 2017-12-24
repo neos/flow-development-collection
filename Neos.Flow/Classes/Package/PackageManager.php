@@ -676,7 +676,6 @@ class PackageManager implements PackageManagerInterface
      */
     protected function getCurrentPackageStates()
     {
-        $savePackageStates = false;
         $loadedPackageStates = $this->loadPackageStates();
         if (
             empty($loadedPackageStates)
@@ -684,10 +683,6 @@ class PackageManager implements PackageManagerInterface
             || $loadedPackageStates['version'] < self::PACKAGESTATE_FORMAT_VERSION
         ) {
             $loadedPackageStates = $this->scanAvailablePackages($loadedPackageStates);
-            $savePackageStates = true;
-        }
-
-        if ($savePackageStates) {
             $loadedPackageStates = $this->sortAndSavePackageStates($loadedPackageStates);
         }
 
@@ -730,6 +725,9 @@ class PackageManager implements PackageManagerInterface
             $composerManifest = ComposerUtility::getComposerManifest($packagePath);
             if (!isset($composerManifest['name'])) {
                 throw new InvalidConfigurationException(sprintf('A package composer.json was found at "%s" that contained no "name".', $packagePath), 1445933572);
+            }
+            if (!isset($composerManifest['type']) || !ComposerUtility::isFlowPackageType($composerManifest['type'])) {
+                continue;
             }
 
             $packageKey = $this->getPackageKeyFromManifest($composerManifest, $packagePath);
@@ -875,16 +873,15 @@ class PackageManager implements PackageManagerInterface
      */
     protected function registerPackageFromStateConfiguration($composerName, $packageStateConfiguration)
     {
-        $packagePath = isset($packageStateConfiguration['packagePath']) ? $packageStateConfiguration['packagePath'] : null;
-        $packageClassInformation = isset($packageStateConfiguration['packageClassInformation']) ? $packageStateConfiguration['packageClassInformation'] : null;
-        $package = $this->packageFactory->create($this->packagesBasePath, $packagePath, $packageStateConfiguration['packageKey'], $composerName, $packageStateConfiguration['autoloadConfiguration'], $packageClassInformation);
-        $this->packageKeys[strtolower($package->getPackageKey())] = $package->getPackageKey();
-        $this->packages[$package->getPackageKey()] = $package;
-        if (isset($this->activePackages[$package->getPackageKey()])) {
-            unset($this->activePackages[$package->getPackageKey()]);
-        }
+        $packageKey = $packageStateConfiguration['packageKey'];
+        $packagePath = $packageStateConfiguration['packagePath'] ?? null;
+        $packageClassInformation = $packageStateConfiguration['packageClassInformation'] ?? null;
+        $package = $this->packageFactory->create($this->packagesBasePath, $packagePath, $packageKey, $composerName, $packageStateConfiguration['autoloadConfiguration'], $packageClassInformation);
+        $this->packageKeys[strtolower($packageKey)] = $packageKey;
+        $this->packages[$packageKey] = $package;
+        unset($this->activePackages[$packageKey]);
         if ((isset($packageStateConfiguration['state']) && $packageStateConfiguration['state'] === self::PACKAGE_STATE_ACTIVE) || $package->isProtected()) {
-            $this->activePackages[$package->getPackageKey()] = $package;
+            $this->activePackages[$packageKey] = $package;
         }
     }
 
