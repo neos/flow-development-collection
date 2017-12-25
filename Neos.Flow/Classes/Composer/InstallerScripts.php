@@ -43,6 +43,9 @@ class InstallerScripts
         if (!defined('FLOW_PATH_CONFIGURATION')) {
             define('FLOW_PATH_CONFIGURATION', Files::getUnixStylePath(getcwd()) . '/Configuration/');
         }
+        if (!defined('FLOW_PATH_TEMPORARY_BASE')) {
+            define('FLOW_PATH_TEMPORARY_BASE', Files::getUnixStylePath(getcwd()) . '/Data/Temporary');
+        }
 
         Files::createDirectoryRecursively('Configuration');
         Files::createDirectoryRecursively('Data');
