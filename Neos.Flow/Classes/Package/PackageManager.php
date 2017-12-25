@@ -769,6 +769,7 @@ class PackageManager implements PackageManagerInterface
 
         $packageStatesCode = "<?php\n" . $fileDescription . "\nreturn " . var_export($orderedPackageStates, true) . ';';
 
+        Files::createDirectoryRecursively(dirname($this->packageInformationCacheFilePath));
         $result = @file_put_contents($this->packageInformationCacheFilePath, $packageStatesCode);
         if ($result === false) {
             throw new Exception\PackageStatesFileNotWritableException(sprintf('Flow could not update the list of installed packages because the file %s is not writable. Please, check the file system permissions and make sure that the web server can write to it.', $this->packageInformationCacheFilePath), 1382449759);
