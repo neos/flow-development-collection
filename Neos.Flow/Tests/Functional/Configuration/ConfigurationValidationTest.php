@@ -85,7 +85,7 @@ class ConfigurationValidationTest extends FunctionalTestCase
 
         // get all packages and select the ones we want to test
         $temporaryPackageManager = $this->objectManager->get(PackageManagerInterface::class);
-        foreach ($temporaryPackageManager->getActivePackages() as $package) {
+        foreach ($temporaryPackageManager->getAvailablePackages() as $package) {
             if (in_array($package->getPackageKey(), $this->getSchemaPackageKeys())) {
                 $schemaPackages[$package->getPackageKey()] = $package;
             }

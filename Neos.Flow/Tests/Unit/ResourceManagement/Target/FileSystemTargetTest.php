@@ -213,7 +213,6 @@ class FileSystemTargetTest extends UnitTestCase
         $this->inject($packageManager, 'packagesBasePath', 'vfs://Test/Packages/');
 
         $packageManager->createPackage("Neos.Flow");
-        $packageManager->activatePackage("Neos.Flow");
 
         $packageStorage = new PackageStorage('testStorage');
         $packageStorage->initializeObject(ObjectManagerInterface::INITIALIZATIONCAUSE_CREATED);

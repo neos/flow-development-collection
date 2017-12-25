@@ -186,50 +186,6 @@ class PackageManagerTest extends UnitTestCase
     /**
      * @test
      */
-    public function scanAvailablePackagesKeepsExistingPackageConfiguration()
-    {
-        $expectedPackageKeys = [
-            'Neos.Flow' . md5(uniqid(mt_rand(), true)),
-            'Neos.Flow.Test' . md5(uniqid(mt_rand(), true)),
-            'Neos.YetAnotherTestPackage' . md5(uniqid(mt_rand(), true)),
-            'RobertLemke.Flow.NothingElse' . md5(uniqid(mt_rand(), true))
-        ];
-
-        foreach ($expectedPackageKeys as $packageKey) {
-            $packageName = ComposerUtility::getComposerPackageNameFromPackageKey($packageKey);
-            $packagePath = 'vfs://Test/Packages/Application/' . $packageKey . '/';
-
-            mkdir($packagePath, 0770, true);
-            mkdir($packagePath . 'Classes');
-            file_put_contents($packagePath . 'composer.json', '{"name": "' . $packageName . '", "type": "flow-test"}');
-        }
-
-        $packageManager = $this->getAccessibleMock(PackageManager::class, ['emitPackageStatesUpdated']);
-        $packageManager->_set('packagesBasePath', 'vfs://Test/Packages/');
-        $packageManager->_set('packageStatesPathAndFilename', 'vfs://Test/Configuration/PackageStates.php');
-
-        $packageFactory = new PackageFactory($packageManager);
-        $this->inject($packageManager, 'packageFactory', $packageFactory);
-
-        $packageManager->_set('packageStatesConfiguration', [
-            'packages' => [
-                $packageName => [
-                    'state' => 'inactive',
-                    'frozen' => false,
-                    'packagePath' => 'Application/' . $packageKey . '/',
-                    'classesPath' => 'Classes/'
-                ]
-            ],
-            'version' => 2
-        ]);
-        $packageStates = $packageManager->rescanPackages(false);
-        $this->assertEquals('inactive', $packageStates['packages'][$packageName]['state']);
-    }
-
-
-    /**
-     * @test
-     */
     public function packageStatesConfigurationContainsRelativePaths()
     {
         $packageKeys = [
@@ -260,7 +216,6 @@ class PackageManagerTest extends UnitTestCase
         foreach ($packageKeys as $packageKey) {
             $composerName = ComposerUtility::getComposerPackageNameFromPackageKey($packageKey);
             $expectedPackageStatesConfiguration[$composerName] = [
-                'state' => 'active',
                 'packagePath' => 'Application/' . $packageKey . '/',
                 'composerName' => $composerName,
                 'packageClassInformation' => [],
@@ -407,37 +362,10 @@ class PackageManagerTest extends UnitTestCase
     /**
      * @test
      */
-    public function createPackageActivatesTheNewlyCreatedPackage()
+    public function createPackageMakesTheNewlyCreatedPackageAvailable()
     {
         $this->packageManager->createPackage('Acme.YetAnotherTestPackage');
-        $this->assertTrue($this->packageManager->isPackageActive('Acme.YetAnotherTestPackage'));
-    }
-
-    /**
-     * @test
-     */
-    public function activatePackageAndDeactivatePackageActivateAndDeactivateTheGivenPackage()
-    {
-        $packageKey = 'Acme.YetAnotherTestPackage';
-
-        $this->packageManager->createPackage($packageKey);
-
-        $this->packageManager->deactivatePackage($packageKey);
-        $this->assertFalse($this->packageManager->isPackageActive($packageKey));
-
-        $this->packageManager->activatePackage($packageKey);
-        $this->assertTrue($this->packageManager->isPackageActive($packageKey));
-    }
-
-    /**
-     * @test
-     * @expectedException \Neos\Flow\Package\Exception\ProtectedPackageKeyException
-     */
-    public function deactivatePackageThrowsAnExceptionIfPackageIsProtected()
-    {
-        $package = $this->packageManager->createPackage('Acme.YetAnotherTestPackage');
-        $package->setProtected(true);
-        $this->packageManager->deactivatePackage('Acme.YetAnotherTestPackage');
+        $this->assertTrue($this->packageManager->isPackageAvailable('Acme.YetAnotherTestPackage'));
     }
 
     /**
@@ -469,13 +397,11 @@ class PackageManagerTest extends UnitTestCase
         $packagePath = $package->getPackagePath();
 
         $this->assertTrue(is_dir($packagePath . PackageInterface::DIRECTORY_CONFIGURATION), 'The package configuration directory does not exist.');
-        $this->assertTrue($this->packageManager->isPackageActive('Acme.YetAnotherTestPackage'), 'The package is not active.');
         $this->assertTrue($this->packageManager->isPackageAvailable('Acme.YetAnotherTestPackage'), 'The package is not available.');
 
         $this->packageManager->deletePackage('Acme.YetAnotherTestPackage');
 
         $this->assertFalse(is_dir($packagePath . PackageInterface::DIRECTORY_CONFIGURATION), 'The package configuration directory does still exist.');
-        $this->assertFalse($this->packageManager->isPackageActive('Acme.YetAnotherTestPackage'), 'The package is still active.');
         $this->assertFalse($this->packageManager->isPackageAvailable('Acme.YetAnotherTestPackage'), 'The package is still available.');
     }
 
@@ -535,30 +461,6 @@ class PackageManagerTest extends UnitTestCase
         $this->mockDispatcher->expects($this->once())->method('dispatch')->with(PackageManager::class, 'packageStatesUpdated');
         $this->packageManager->createPackage('Some.Package');
     }
-
-    /**
-     * @test
-     */
-    public function activatePackageEmitsPackageStatesUpdatedSignal()
-    {
-        $this->packageManager->createPackage('Some.Package');
-        $this->packageManager->deactivatePackage('Some.Package');
-
-        $this->mockDispatcher->expects($this->once())->method('dispatch')->with(PackageManager::class, 'packageStatesUpdated');
-        $this->packageManager->activatePackage('Some.Package');
-    }
-
-    /**
-     * @test
-     */
-    public function deactivatePackageEmitsPackageStatesUpdatedSignal()
-    {
-        $this->packageManager->createPackage('Some.Package');
-
-        $this->mockDispatcher->expects($this->once())->method('dispatch')->with(PackageManager::class, 'packageStatesUpdated');
-        $this->packageManager->deactivatePackage('Some.Package');
-    }
-
 
     /**
      * @test

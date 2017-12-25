@@ -181,7 +181,7 @@ class Scripts
 
         $packageManager->initialize($bootstrap);
         if (self::useClassLoader($bootstrap)) {
-            $bootstrap->getEarlyInstance(ClassLoader::class)->setPackages($packageManager->getActivePackages());
+            $bootstrap->getEarlyInstance(ClassLoader::class)->setPackages($packageManager->getAvailablePackages());
         }
     }
 
@@ -204,7 +204,7 @@ class Scripts
         $configurationManager = new ConfigurationManager($context);
         $configurationManager->setTemporaryDirectoryPath($environment->getPathToTemporaryDirectory());
         $configurationManager->injectConfigurationSource(new YamlSource());
-        $configurationManager->setPackages($packageManager->getActivePackages());
+        $configurationManager->setPackages($packageManager->getAvailablePackages());
         if ($configurationManager->loadConfigurationCache() === false) {
             $configurationManager->refreshConfiguration();
         }
@@ -392,7 +392,7 @@ class Scripts
         $objectManager->injectConfigurationManager($configurationManager);
         $objectManager->injectConfigurationCache($cacheManager->getCache('Flow_Object_Configuration'));
         $objectManager->injectSystemLogger($systemLogger);
-        $objectManager->initialize($packageManager->getActivePackages());
+        $objectManager->initialize($packageManager->getAvailablePackages());
 
         foreach ($bootstrap->getEarlyInstances() as $objectName => $instance) {
             $objectManager->setInstance($objectName, $instance);
@@ -482,7 +482,7 @@ class Scripts
         $packagesWithConfiguredObjects = static::getListOfPackagesWithConfiguredObjects($bootstrap);
 
         /** @var PackageInterface $package */
-        foreach ($packageManager->getActivePackages() as $packageKey => $package) {
+        foreach ($packageManager->getAvailablePackages() as $packageKey => $package) {
             if ($packageManager->isPackageFrozen($packageKey)) {
                 continue;
             }

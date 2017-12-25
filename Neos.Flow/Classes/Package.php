@@ -62,7 +62,7 @@ class Package extends BasePackage
                 if ($step->getIdentifier() === 'neos.flow:resources') {
                     $publicResourcesFileMonitor = Monitor\FileMonitor::createFileMonitorAtBoot('Flow_PublicResourcesFiles', $bootstrap);
                     $packageManager = $bootstrap->getEarlyInstance(Package\PackageManagerInterface::class);
-                    foreach ($packageManager->getActivePackages() as $packageKey => $package) {
+                    foreach ($packageManager->getAvailablePackages() as $packageKey => $package) {
                         if ($packageManager->isPackageFrozen($packageKey)) {
                             continue;
                         }

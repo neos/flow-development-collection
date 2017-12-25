@@ -121,66 +121,10 @@ class PackageCommandController extends CommandController
     }
 
     /**
-     * Activate an available package
-     *
-     * This command activates an existing, but currently inactive package.
-     *
-     * @Flow\FlushesCaches
-     * @param string $packageKey The package key of the package to create
-     * @return string
-     * @see neos.flow:package:deactivate
-     */
-    public function activateCommand($packageKey)
-    {
-        if (!$this->packageManager->isPackageAvailable($packageKey)) {
-            $this->outputLine('The package "%s" does not exist.', [$packageKey]);
-            $this->quit(1);
-        }
-
-        if ($this->packageManager->isPackageActive($packageKey)) {
-            $this->outputLine('Package "%s" is already active.', [$packageKey]);
-            $this->quit(1);
-        }
-
-        $this->packageManager->activatePackage($packageKey);
-        $this->outputLine('Activated package "%s".', [$packageKey]);
-        Scripts::executeCommand('neos.flow:cache:flush', $this->settings, false);
-        $this->sendAndExit(0);
-    }
-
-    /**
-     * Deactivate a package
-     *
-     * This command deactivates a currently active package.
-     *
-     * @Flow\FlushesCaches
-     * @param string $packageKey The package key of the package to create
-     * @return string
-     * @see neos.flow:package:activate
-     */
-    public function deactivateCommand($packageKey)
-    {
-        if (!$this->packageManager->isPackageAvailable($packageKey)) {
-            $this->outputLine('The package "%s" does not exist.', [$packageKey]);
-            $this->quit(1);
-        }
-
-        if (!$this->packageManager->isPackageActive($packageKey)) {
-            $this->outputLine('Package "%s" was not active.', [$packageKey]);
-            $this->quit(1);
-        }
-
-        $this->packageManager->deactivatePackage($packageKey);
-        $this->outputLine('Deactivated package "%s".', [$packageKey]);
-        Scripts::executeCommand('neos.flow:cache:flush', $this->settings, false);
-        $this->sendAndExit(0);
-    }
-
-    /**
      * List available packages
      *
      * Lists all locally available packages. Displays the package key, version and
-     * package title and its state – active or inactive.
+     * package title.
      *
      * @param boolean $loadingOrder The returned packages are ordered by their loading order.
      * @return string The list of packages
@@ -190,7 +134,6 @@ class PackageCommandController extends CommandController
     public function listCommand($loadingOrder = false)
     {
         $activePackages = [];
-        $inactivePackages = [];
         $frozenPackages = [];
         $longestPackageKey = 0;
         $freezeSupported = $this->bootstrap->getContext()->isDevelopment();
@@ -199,11 +142,9 @@ class PackageCommandController extends CommandController
             if (strlen($packageKey) > $longestPackageKey) {
                 $longestPackageKey = strlen($packageKey);
             }
-            if ($this->packageManager->isPackageActive($packageKey)) {
-                $activePackages[$packageKey] = $package;
-            } else {
-                $inactivePackages[$packageKey] = $package;
-            }
+
+            $activePackages[$packageKey] = $package;
+
             if ($this->packageManager->isPackageFrozen($packageKey)) {
                 $frozenPackages[$packageKey] = $package;
             }
@@ -211,23 +152,13 @@ class PackageCommandController extends CommandController
 
         if ($loadingOrder === false) {
             ksort($activePackages);
-            ksort($inactivePackages);
         }
 
-        $this->outputLine('ACTIVE PACKAGES:');
+        $this->outputLine('PACKAGES:');
         /** @var PackageInterface $package */
         foreach ($activePackages as $package) {
             $frozenState = ($freezeSupported && isset($frozenPackages[$package->getPackageKey()]) ? '* ' : '  ');
             $this->outputLine(' ' . str_pad($package->getPackageKey(), $longestPackageKey + 3) . $frozenState . str_pad($package->getInstalledVersion(), 15));
-        }
-
-        if (count($inactivePackages) > 0) {
-            $this->outputLine();
-            $this->outputLine('INACTIVE PACKAGES:');
-            foreach ($inactivePackages as $package) {
-                $frozenState = (isset($frozenPackages[$package->getPackageKey()]) ? '* ' : '  ');
-                $this->outputLine(' ' . str_pad($package->getPackageKey(), $longestPackageKey + 3) . $frozenState . str_pad($package->getInstalledVersion(), 15));
-            }
         }
 
         if (count($frozenPackages) > 0 && $freezeSupported) {
@@ -267,7 +198,7 @@ class PackageCommandController extends CommandController
         $packagesToFreeze = [];
 
         if ($packageKey === 'all') {
-            foreach (array_keys($this->packageManager->getActivePackages()) as $packageKey) {
+            foreach (array_keys($this->packageManager->getAvailablePackages()) as $packageKey) {
                 if (!$this->packageManager->isPackageFrozen($packageKey)) {
                     $packagesToFreeze[] = $packageKey;
                 }
@@ -280,14 +211,9 @@ class PackageCommandController extends CommandController
             $this->outputLine('http://bit.ly/freeze-blackberry');
             $this->quit(42);
         } else {
-            if (!$this->packageManager->isPackageActive($packageKey)) {
-                if ($this->packageManager->isPackageAvailable($packageKey)) {
-                    $this->outputLine('Package "%s" is not active and thus cannot be frozen.', [$packageKey]);
-                    $this->quit(1);
-                } else {
-                    $this->outputLine('Package "%s" is not available.', [$packageKey]);
-                    $this->quit(2);
-                }
+            if (!$this->packageManager->isPackageAvailable($packageKey)) {
+                $this->outputLine('Package "%s" is not available.', [$packageKey]);
+                $this->quit(2);
             }
 
             if ($this->packageManager->isPackageFrozen($packageKey)) {

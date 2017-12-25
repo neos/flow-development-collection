@@ -58,7 +58,7 @@ class SchemaCommandController extends CommandController
 
         if (is_null($configurationFile)) {
             $result = new Result();
-            $activePackages = $this->packageManager->getActivePackages();
+            $activePackages = $this->packageManager->getAvailablePackages();
             foreach ($activePackages as $package) {
                 $packageKey = $package->getPackageKey();
                 $packageSchemaPath = Files::concatenatePaths([$package->getResourcesPath(), 'Private/Schema']);
