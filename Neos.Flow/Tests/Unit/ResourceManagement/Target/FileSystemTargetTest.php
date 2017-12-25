@@ -209,8 +209,7 @@ class FileSystemTargetTest extends UnitTestCase
     {
         vfsStream::setup('Test');
         mkdir('vfs://Test/Configuration');
-        $packageManager = new PackageManager('vfs://Test/Configuration/PackageStates.php');
-        $this->inject($packageManager, 'packagesBasePath', 'vfs://Test/Packages/');
+        $packageManager = new PackageManager('vfs://Test/Configuration/PackageStates.php', 'vfs://Test/Packages/');
 
         $packageManager->createPackage("Neos.Flow");
 

@@ -171,7 +171,7 @@ class Scripts
      */
     public static function initializePackageManagement(Bootstrap $bootstrap)
     {
-        $packageManager = new PackageManager();
+        $packageManager = new PackageManager(PackageManager::DEFAULT_PACKAGE_INFORMATION_CACHE_FILEPATH, FLOW_PATH_PACKAGES);
         $bootstrap->setEarlyInstance(PackageManagerInterface::class, $packageManager);
 
         // The package:rescan must happen as early as possible, compiletime alone is not enough.

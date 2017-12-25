@@ -79,14 +79,13 @@ class PackageManagerTest extends UnitTestCase
         mkdir('vfs://Test/Packages/Application', 0700, true);
         mkdir('vfs://Test/Configuration');
 
-        $this->packageManager = new PackageManager('vfs://Test/Configuration/PackageStates.php');
+        $this->packageManager = new PackageManager('vfs://Test/Configuration/PackageStates.php', 'vfs://Test/Packages/');
 
         $composerNameToPackageKeyMap = [
             'neos/flow' => 'Neos.Flow'
         ];
 
         $this->inject($this->packageManager, 'composerNameToPackageKeyMap', $composerNameToPackageKeyMap);
-        $this->inject($this->packageManager, 'packagesBasePath', 'vfs://Test/Packages/');
 
         $this->mockDispatcher = $this->getMockBuilder(Dispatcher::class)->disableOriginalConstructor()->getMock();
         $this->inject($this->packageManager, 'dispatcher', $this->mockDispatcher);
@@ -170,7 +169,7 @@ class PackageManagerTest extends UnitTestCase
 
         $packageManager = $this->getAccessibleMock(PackageManager::class, ['emitPackageStatesUpdated']);
         $packageManager->_set('packagesBasePath', 'vfs://Test/Packages/');
-        $packageManager->_set('packageStatesPathAndFilename', 'vfs://Test/Configuration/PackageStates.php');
+        $packageManager->_set('packageInformationCacheFilePath', 'vfs://Test/Configuration/PackageStates.php');
 
         $packageFactory = new PackageFactory($packageManager);
         $this->inject($packageManager, 'packageFactory', $packageFactory);
@@ -204,7 +203,7 @@ class PackageManagerTest extends UnitTestCase
 
         $packageManager = $this->getAccessibleMock(PackageManager::class, ['updateShortcuts', 'emitPackageStatesUpdated'], [], '', false);
         $packageManager->_set('packagesBasePath', 'vfs://Test/Packages/');
-        $packageManager->_set('packageStatesPathAndFilename', 'vfs://Test/Configuration/PackageStates.php');
+        $packageManager->_set('packageInformationCacheFilePath', 'vfs://Test/Configuration/PackageStates.php');
 
         $packageFactory = new PackageFactory($packageManager);
         $this->inject($packageManager, 'packageFactory', $packageFactory);

@@ -36,6 +36,11 @@ class PackageManager implements PackageManagerInterface
     const PACKAGESTATE_FORMAT_VERSION = 6;
 
     /**
+     * The default package states
+     */
+    const DEFAULT_PACKAGE_INFORMATION_CACHE_FILEPATH = FLOW_PATH_TEMPORARY_BASE . '/PackageInformationCache.php';
+
+    /**
      * @var Bootstrap
      */
     protected $bootstrap;
@@ -76,12 +81,12 @@ class PackageManager implements PackageManagerInterface
      *
      * @var string
      */
-    protected $packagesBasePath = FLOW_PATH_PACKAGES;
+    protected $packagesBasePath;
 
     /**
      * @var string
      */
-    protected $packageStatesPathAndFilename;
+    protected $packageInformationCacheFilePath;
 
     /**
      * Package states configuration as stored in the PackageStates.php file
@@ -105,12 +110,14 @@ class PackageManager implements PackageManagerInterface
     }
 
     /**
-     * @param string $packageStatesPathAndFilename
+     * @param string $packageInformationCacheFilePath
+     * @param string $packagesBasePath
      */
-    public function __construct($packageStatesPathAndFilename = '')
+    public function __construct($packageInformationCacheFilePath, $packagesBasePath)
     {
         $this->packageFactory = new PackageFactory();
-        $this->packageStatesPathAndFilename = $packageStatesPathAndFilename ?: FLOW_PATH_CONFIGURATION . 'PackageStates.php';
+        $this->packagesBasePath = $packagesBasePath;
+        $this->packageInformationCacheFilePath = $packageInformationCacheFilePath;
     }
 
     /**
@@ -570,7 +577,7 @@ class PackageManager implements PackageManagerInterface
      */
     protected function loadPackageStates()
     {
-        return (is_file($this->packageStatesPathAndFilename) ? include($this->packageStatesPathAndFilename) : []);
+        return (is_file($this->packageInformationCacheFilePath) ? include($this->packageInformationCacheFilePath) : []);
     }
 
     /**
@@ -762,11 +769,16 @@ class PackageManager implements PackageManagerInterface
 
         $packageStatesCode = "<?php\n" . $fileDescription . "\nreturn " . var_export($orderedPackageStates, true) . ';';
 
-        $result = @file_put_contents($this->packageStatesPathAndFilename, $packageStatesCode);
+        $result = @file_put_contents($this->packageInformationCacheFilePath, $packageStatesCode);
         if ($result === false) {
-            throw new Exception\PackageStatesFileNotWritableException(sprintf('Flow could not update the list of installed packages because the file %s is not writable. Please, check the file system permissions and make sure that the web server can write to it.', $this->packageStatesPathAndFilename), 1382449759);
+            throw new Exception\PackageStatesFileNotWritableException(sprintf('Flow could not update the list of installed packages because the file %s is not writable. Please, check the file system permissions and make sure that the web server can write to it.', $this->packageInformationCacheFilePath), 1382449759);
         }
-        OpcodeCacheHelper::clearAllActive($this->packageStatesPathAndFilename);
+        // Clean legacy file TODO: Remove at some point
+        $legacyPackageStatesPath = FLOW_PATH_CONFIGURATION . 'PackageStates.php';
+        if (is_file($legacyPackageStatesPath)) {
+            @unlink($legacyPackageStatesPath);
+        }
+        OpcodeCacheHelper::clearAllActive($this->packageInformationCacheFilePath);
 
         $this->emitPackageStatesUpdated();
     }
