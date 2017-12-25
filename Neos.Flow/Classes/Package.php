@@ -32,11 +32,16 @@ class Package extends BasePackage
      */
     public function boot(Core\Bootstrap $bootstrap)
     {
-        $bootstrap->registerRequestHandler(new Cli\SlaveRequestHandler($bootstrap));
-        $bootstrap->registerRequestHandler(new Cli\CommandRequestHandler($bootstrap));
-        $bootstrap->registerRequestHandler(new Http\RequestHandler($bootstrap));
+        $context = $bootstrap->getContext();
 
-        if ($bootstrap->getContext()->isTesting()) {
+        if (PHP_SAPI === 'cli') {
+            $bootstrap->registerRequestHandler(new Cli\SlaveRequestHandler($bootstrap));
+            $bootstrap->registerRequestHandler(new Cli\CommandRequestHandler($bootstrap));
+        } else {
+            $bootstrap->registerRequestHandler(new Http\RequestHandler($bootstrap));
+        }
+
+        if ($context->isTesting()) {
             $bootstrap->registerRequestHandler(new Tests\FunctionalTestRequestHandler($bootstrap));
         }
 
@@ -56,7 +61,6 @@ class Package extends BasePackage
         });
         $dispatcher->connect(Cli\SlaveRequestHandler::class, 'dispatchedCommandLineSlaveRequest', Persistence\PersistenceManagerInterface::class, 'persistAll');
 
-        $context = $bootstrap->getContext();
         if (!$context->isProduction()) {
             $dispatcher->connect(Core\Booting\Sequence::class, 'afterInvokeStep', function ($step) use ($bootstrap, $dispatcher) {
                 if ($step->getIdentifier() === 'neos.flow:resources') {
@@ -76,18 +80,20 @@ class Package extends BasePackage
                     $publicResourcesFileMonitor->shutdownObject();
                 }
             });
+
+            $publishResources = function ($identifier, $changedFiles) use ($bootstrap) {
+                if ($identifier !== 'Flow_PublicResourcesFiles') {
+                    return;
+                }
+                $objectManager = $bootstrap->getObjectManager();
+                $resourceManager = $objectManager->get(ResourceManager::class);
+                $resourceManager->getCollection(ResourceManager::DEFAULT_STATIC_COLLECTION_NAME)->publish();
+            };
+
+            $dispatcher->connect(Monitor\FileMonitor::class, 'filesHaveChanged', $publishResources);
+
+            $dispatcher->connect(Monitor\FileMonitor::class, 'filesHaveChanged', Cache\CacheManager::class, 'flushSystemCachesByChangedFiles');
         }
-
-        $publishResources = function ($identifier, $changedFiles) use ($bootstrap) {
-            if ($identifier !== 'Flow_PublicResourcesFiles') {
-                return;
-            }
-            $objectManager = $bootstrap->getObjectManager();
-            $resourceManager = $objectManager->get(ResourceManager::class);
-            $resourceManager->getCollection(ResourceManager::DEFAULT_STATIC_COLLECTION_NAME)->publish();
-        };
-
-        $dispatcher->connect(Monitor\FileMonitor::class, 'filesHaveChanged', $publishResources);
 
         $dispatcher->connect(Core\Bootstrap::class, 'bootstrapShuttingDown', Configuration\ConfigurationManager::class, 'shutdown');
         $dispatcher->connect(Core\Bootstrap::class, 'bootstrapShuttingDown', ObjectManagement\ObjectManagerInterface::class, 'shutdown');
@@ -103,8 +109,6 @@ class Package extends BasePackage
                 $session->renewId();
             }
         });
-
-        $dispatcher->connect(Monitor\FileMonitor::class, 'filesHaveChanged', Cache\CacheManager::class, 'flushSystemCachesByChangedFiles');
 
         $dispatcher->connect(Tests\FunctionalTestCase::class, 'functionalTestTearDown', Mvc\Routing\RouterCachingService::class, 'flushCaches');
 

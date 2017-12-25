@@ -97,12 +97,11 @@ class Package implements PackageInterface
      * @param string $composerName
      * @param string $packagePath Absolute path to the location of the package's composer manifest
      * @param array $autoloadConfiguration
-     * @throws Exception\InvalidPackageKeyException
      */
     public function __construct($packageKey, $composerName, $packagePath, array $autoloadConfiguration = [])
     {
         $this->autoloadConfiguration = $autoloadConfiguration;
-        $this->packagePath = Files::getNormalizedPath($packagePath);
+        $this->packagePath = $packagePath;
         $this->packageKey = $packageKey;
         $this->composerName = $composerName;
     }
