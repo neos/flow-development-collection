@@ -66,7 +66,7 @@ class SchemaValidationTest extends FunctionalTestCase
         $objectManager = $bootstrap->getObjectManager();
         $packageManager = $objectManager->get(PackageManagerInterface::class);
 
-        $activePackages = $packageManager->getActivePackages();
+        $activePackages = $packageManager->getAvailablePackages();
         foreach ($activePackages as $package) {
             $packageKey = $package->getPackageKey();
             if (in_array($packageKey, $this->schemaPackageKeys)) {

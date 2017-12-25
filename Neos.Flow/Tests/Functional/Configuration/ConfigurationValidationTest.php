@@ -65,11 +65,6 @@ class ConfigurationValidationTest extends FunctionalTestCase
     protected $mockConfigurationManager;
 
     /**
-     * @var PackageManager
-     */
-    protected $mockPackageManager;
-
-    /**
      * @return void
      */
     public function setUp()
@@ -94,13 +89,9 @@ class ConfigurationValidationTest extends FunctionalTestCase
             }
         }
 
-        $this->mockPackageManager = $this->createMock(PackageManager::class);
-        $this->mockPackageManager->expects($this->any())->method('getActivePackages')->will($this->returnValue($schemaPackages));
-
         //
         // create mock configurationManager and store the original one
         //
-
         $this->originalConfigurationManager = $this->objectManager->get(ConfigurationManager::class);
 
         $yamlConfigurationSource = $this->objectManager->get(\Neos\Flow\Tests\Functional\Configuration\Fixtures\RootDirectoryIgnoringYamlSource::class);
