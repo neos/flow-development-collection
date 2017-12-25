@@ -142,7 +142,7 @@ class PackageManagerTest extends UnitTestCase
      */
     public function getCaseSensitivePackageKeyReturnsTheUpperCamelCaseVersionOfAGivenPackageKeyIfThePackageIsRegistered()
     {
-        $packageManager = $this->getAccessibleMock(PackageManager::class, ['dummy']);
+        $packageManager = $this->getAccessibleMock(PackageManager::class, ['dummy'], ['', '']);
         $packageManager->_set('packageKeys', ['acme.testpackage' => 'Acme.TestPackage']);
         $this->assertEquals('Acme.TestPackage', $packageManager->getCaseSensitivePackageKey('acme.testpackage'));
     }
@@ -167,9 +167,7 @@ class PackageManagerTest extends UnitTestCase
             file_put_contents($packagePath . 'composer.json', '{"name": "' . $packageKey . '", "type": "flow-test"}');
         }
 
-        $packageManager = $this->getAccessibleMock(PackageManager::class, ['emitPackageStatesUpdated']);
-        $packageManager->_set('packagesBasePath', 'vfs://Test/Packages/');
-        $packageManager->_set('packageInformationCacheFilePath', 'vfs://Test/Configuration/PackageStates.php');
+        $packageManager = $this->getAccessibleMock(PackageManager::class, ['emitPackageStatesUpdated'], ['vfs://Test/Configuration/PackageStates.php', 'vfs://Test/Packages/']);
 
         $packageFactory = new PackageFactory($packageManager);
         $this->inject($packageManager, 'packageFactory', $packageFactory);
@@ -436,7 +434,7 @@ class PackageManagerTest extends UnitTestCase
             ]
         ];
 
-        $packageManager = $this->getAccessibleMock(PackageManager::class, ['resolvePackageDependencies']);
+        $packageManager = $this->getAccessibleMock(PackageManager::class, ['resolvePackageDependencies'], ['', '']);
         $packageManager->_set('packageStatesConfiguration', $packageStatesConfiguration);
 
         $this->assertEquals($packageKey, $packageManager->_call('getPackageKeyFromComposerName', $composerName));
