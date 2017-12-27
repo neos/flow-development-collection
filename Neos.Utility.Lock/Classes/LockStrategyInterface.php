@@ -23,10 +23,10 @@ interface LockStrategyInterface
      * @param boolean $exclusiveLock TRUE to, acquire an exclusive (write) lock, FALSE for a shared (read) lock.
      * @return void
      */
-    public function acquire($subject, $exclusiveLock);
+    public function acquire(string $subject, bool $exclusiveLock);
 
     /**
      * @return boolean TRUE on success, FALSE otherwise
      */
-    public function release();
+    public function release(): bool;
 }
