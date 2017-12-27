@@ -70,13 +70,13 @@ class ActionViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Vie
     public function renderCorrectlyPassesAllArgumentsToUriBuilder()
     {
         $this->uriBuilder->expects($this->once())->method('setSection')->with('someSection');
-        $this->uriBuilder->expects($this->once())->method('setArguments')->with(array('additional' => 'Parameters'));
+        $this->uriBuilder->expects($this->once())->method('setArguments')->with(array('additional' => 'RouteParameters'));
         $this->uriBuilder->expects($this->once())->method('setAddQueryString')->with(true);
         $this->uriBuilder->expects($this->once())->method('setArgumentsToBeExcludedFromQueryString')->with(array('arguments' => 'toBeExcluded'));
         $this->uriBuilder->expects($this->once())->method('setFormat')->with('someFormat');
         $this->uriBuilder->expects($this->once())->method('uriFor')->with('someAction', array('some' => 'argument'), 'someController', 'somePackage', 'someSubpackage');
 
-        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['action' => 'someAction', 'arguments' => array('some' => 'argument'), 'controller' => 'someController', 'package' => 'somePackage', 'subpackage' => 'someSubpackage', 'section' => 'someSection', 'format' => 'someFormat', 'additionalParams' => array('additional' => 'Parameters'), 'addQueryString' => true, 'argumentsToBeExcludedFromQueryString' => array('arguments' => 'toBeExcluded')]);
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['action' => 'someAction', 'arguments' => array('some' => 'argument'), 'controller' => 'someController', 'package' => 'somePackage', 'subpackage' => 'someSubpackage', 'section' => 'someSection', 'format' => 'someFormat', 'additionalParams' => array('additional' => 'RouteParameters'), 'addQueryString' => true, 'argumentsToBeExcludedFromQueryString' => array('arguments' => 'toBeExcluded')]);
         $this->viewHelper->render();
     }
 

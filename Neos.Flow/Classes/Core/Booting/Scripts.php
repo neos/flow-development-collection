@@ -21,6 +21,7 @@ use Neos\Flow\Configuration\Source\YamlSource;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Core\ClassLoader;
 use Neos\Flow\Core\LockManager as CoreLockManager;
+use Neos\Flow\Core\ProxyClassLoader;
 use Neos\Flow\Error\Debugger;
 use Neos\Flow\Error\ErrorHandler;
 use Neos\Flow\Error\ProductionExceptionHandler;
@@ -62,7 +63,13 @@ class Scripts
      */
     public static function initializeClassLoader(Bootstrap $bootstrap)
     {
-        require_once(FLOW_PATH_FLOW . 'Classes/Core/ClassLoader.php');
+        $proxyClassLoader = new ProxyClassLoader($bootstrap->getContext());
+        spl_autoload_register([$proxyClassLoader, 'loadClass'], true, true);
+        $bootstrap->setEarlyInstance(ProxyClassLoader::class, $proxyClassLoader);
+
+        if (!self::useClassLoader($bootstrap)) {
+            return;
+        }
 
         $initialClassLoaderMappings = [
             [
@@ -80,8 +87,8 @@ class Scripts
             ];
         }
 
-        $classLoader = new ClassLoader($bootstrap->getContext(), $initialClassLoaderMappings);
-        spl_autoload_register([$classLoader, 'loadClass'], true, true);
+        $classLoader = new ClassLoader($initialClassLoaderMappings);
+        spl_autoload_register([$classLoader, 'loadClass'], true);
         $bootstrap->setEarlyInstance(ClassLoader::class, $classLoader);
         if ($bootstrap->getContext()->isTesting()) {
             $classLoader->setConsiderTestsNamespace(true);
@@ -97,7 +104,10 @@ class Scripts
      */
     public static function registerClassLoaderInAnnotationRegistry(Bootstrap $bootstrap)
     {
-        AnnotationRegistry::registerLoader([$bootstrap->getEarlyInstance(ClassLoader::class), 'loadClass']);
+        AnnotationRegistry::registerLoader([$bootstrap->getEarlyInstance(\Composer\Autoload\ClassLoader::class), 'loadClass']);
+        if (self::useClassLoader($bootstrap)) {
+            AnnotationRegistry::registerLoader([$bootstrap->getEarlyInstance(ClassLoader::class), 'loadClass']);
+        }
     }
 
     /**
@@ -109,7 +119,7 @@ class Scripts
     public static function initializeClassLoaderClassesCache(Bootstrap $bootstrap)
     {
         $classesCache = $bootstrap->getEarlyInstance(CacheManager::class)->getCache('Flow_Object_Classes');
-        $bootstrap->getEarlyInstance(ClassLoader::class)->injectClassesCache($classesCache);
+        $bootstrap->getEarlyInstance(ProxyClassLoader::class)->injectClassesCache($classesCache);
     }
 
     /**
@@ -170,7 +180,9 @@ class Scripts
         }
 
         $packageManager->initialize($bootstrap);
-        $bootstrap->getEarlyInstance(ClassLoader::class)->setPackages($packageManager->getActivePackages());
+        if (self::useClassLoader($bootstrap)) {
+            $bootstrap->getEarlyInstance(ClassLoader::class)->setPackages($packageManager->getActivePackages());
+        }
     }
 
     /**
@@ -303,8 +315,8 @@ class Scripts
             }
 
             // As the available proxy classes were already loaded earlier we need to refresh them if the proxies where recompiled.
-            $classLoader = $bootstrap->getEarlyInstance(ClassLoader::class);
-            $classLoader->initializeAvailableProxyClasses($bootstrap->getContext());
+            $proxyClassLoader = $bootstrap->getEarlyInstance(ProxyClassLoader::class);
+            $proxyClassLoader->initializeAvailableProxyClasses($bootstrap->getContext());
         }
 
         // Check if code was updated, if not something went wrong
@@ -712,5 +724,20 @@ class Scripts
         }
 
         return $command;
+    }
+
+    /**
+     * Check if the old fallback classloader should be used.
+     *
+     * The old class loader is used only in the cases:
+     * * the environment variable "FLOW_ONLY_COMPOSER_LOADER" is not set or false
+     * * in a testing context
+     *
+     * @param Bootstrap $bootstrap
+     * @return bool
+     */
+    protected static function useClassLoader(Bootstrap $bootstrap)
+    {
+        return (!FLOW_ONLY_COMPOSER_LOADER || $bootstrap->getContext()->isTesting());
     }
 }

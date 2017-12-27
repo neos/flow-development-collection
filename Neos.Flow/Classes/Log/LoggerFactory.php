@@ -12,6 +12,11 @@ namespace Neos\Flow\Log;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Core\Bootstrap;
+use Neos\Flow\Error\Debugger;
+use Neos\Flow\Http\HttpRequestHandlerInterface;
+use Neos\Flow\Log\ThrowableStorage\FileStorage;
+use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 
 /**
  * The logger factory used to create logger instances.
@@ -21,6 +26,44 @@ use Neos\Flow\Annotations as Flow;
  */
 class LoggerFactory
 {
+    /**
+     * @var array
+     */
+    protected $logInstanceCache = [];
+
+    /**
+     * @var \Closure
+     */
+    protected $requestInfoCallback;
+
+    /**
+     * LoggerFactory constructor.
+     */
+    public function __construct()
+    {
+        $this->requestInfoCallback = function () {
+            $output = '';
+            if (!(Bootstrap::$staticObjectManager instanceof ObjectManagerInterface)) {
+                return $output;
+            }
+
+            $bootstrap = Bootstrap::$staticObjectManager->get(Bootstrap::class);
+            /* @var Bootstrap $bootstrap */
+            $requestHandler = $bootstrap->getActiveRequestHandler();
+            if (!$requestHandler instanceof HttpRequestHandlerInterface) {
+                return $output;
+            }
+
+            $request = $requestHandler->getHttpRequest();
+            $response = $requestHandler->getHttpResponse();
+            $output .= PHP_EOL . 'HTTP REQUEST:' . PHP_EOL . ($request == '' ? '[request was empty]' : $request) . PHP_EOL;
+            $output .= PHP_EOL . 'HTTP RESPONSE:' . PHP_EOL . ($response == '' ? '[response was empty]' : $response) . PHP_EOL;
+            $output .= PHP_EOL . 'PHP PROCESS:' . PHP_EOL . 'Inode: ' . getmyinode() . PHP_EOL . 'PID: ' . getmypid() . PHP_EOL . 'UID: ' . getmyuid() . PHP_EOL . 'GID: ' . getmygid() . PHP_EOL . 'User: ' . get_current_user() . PHP_EOL;
+
+            return $output;
+        };
+    }
+
     /**
      * Factory method which creates the specified logger along with the specified backend(s).
      *
@@ -33,8 +76,24 @@ class LoggerFactory
      */
     public function create($identifier, $loggerObjectName, $backendObjectNames, array $backendOptions = [])
     {
-        $logger = new $loggerObjectName;
+        if (!isset($this->logInstanceCache[$identifier])) {
+            $this->logInstanceCache[$identifier] = $this->instantiateLogger($loggerObjectName, $backendObjectNames, $backendOptions);
+        }
 
+        return $this->logInstanceCache[$identifier];
+    }
+
+    /**
+     * Create a new logger instance.
+     *
+     * @param string $loggerObjectName
+     * @param array|string $backendObjectNames
+     * @param array $backendOptions
+     * @return \Neos\Flow\Log\LoggerInterface
+     */
+    protected function instantiateLogger($loggerObjectName, $backendObjectNames, array $backendOptions = [])
+    {
+        $logger = new $loggerObjectName;
         if (is_array($backendObjectNames)) {
             foreach ($backendObjectNames as $i => $backendObjectName) {
                 if (isset($backendOptions[$i])) {
@@ -46,6 +105,29 @@ class LoggerFactory
             $backend = new $backendObjectNames($backendOptions);
             $logger->addBackend($backend);
         }
+
+        if ($logger instanceof Logger) {
+            $logger->injectThrowableStorage($this->instantiateThrowableStorage());
+        }
+
         return $logger;
+    }
+
+    /**
+     * @return FileStorage|ThrowableStorageInterface|object
+     */
+    protected function instantiateThrowableStorage()
+    {
+        // Fallback early throwable storage
+        $throwableStorage = new FileStorage();
+        $throwableStorage->injectStoragePath(FLOW_PATH_DATA . 'Logs/Exceptions');
+        if (Bootstrap::$staticObjectManager instanceof ObjectManagerInterface) {
+            $throwableStorage = Bootstrap::$staticObjectManager->get(ThrowableStorageInterface::class);
+        }
+        $throwableStorage->setBacktraceRenderer(function ($backtrace) {
+            return Debugger::getBacktraceCode($backtrace, false, true);
+        });
+        $throwableStorage->setRequestInformationRenderer($this->requestInfoCallback);
+        return $throwableStorage;
     }
 }

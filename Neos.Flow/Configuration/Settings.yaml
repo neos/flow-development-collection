@@ -249,6 +249,10 @@ Neos:
           maximumLogFileSize: 1048576
           logFilesToKeep: 1
 
+      throwables:
+        fileStorage:
+          path: '%FLOW_PATH_DATA%Logs/Exceptions'
+
     i18n:
 
       # The default locale identifier.
@@ -451,6 +455,7 @@ Neos:
           storage: 'defaultStaticResourcesStorage'
           target: 'localWebDirectoryStaticResourcesTarget'
           pathPatterns:
+            - '*/Resources/Public/'
             - '*/Resources/Public/*'
 
         # Collection which contains all persistent resources

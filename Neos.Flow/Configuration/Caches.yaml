@@ -56,7 +56,7 @@ Flow_Monitor:
 Flow_Mvc_Routing_Route:
   backend: Neos\Cache\Backend\FileBackend
 Flow_Mvc_Routing_Resolve:
-  frontend: Neos\Cache\Frontend\StringFrontend
+  frontend: Neos\Cache\Frontend\VariableFrontend
   backend: Neos\Cache\Backend\FileBackend
 
 ##

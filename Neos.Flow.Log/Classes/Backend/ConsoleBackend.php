@@ -12,6 +12,7 @@ namespace Neos\Flow\Log\Backend;
  */
 
 use Neos\Flow\Log\Exception\CouldNotOpenResourceException;
+use Neos\Flow\Log\PlainTextFormatter;
 
 /**
  * A log backend which writes log entries to the console (STDOUT or STDERR)
@@ -85,7 +86,7 @@ class ConsoleBackend extends AbstractBackend
         $severityLabel = (isset($this->severityLabels[$severity])) ? $this->severityLabels[$severity] : 'UNKNOWN  ';
         $output = $severityLabel . ' ' . $message;
         if (!empty($additionalData)) {
-            $output .= PHP_EOL . $this->getFormattedVarDump($additionalData);
+            $output .= PHP_EOL . (new PlainTextFormatter($additionalData))->format();
         }
         if (is_resource($this->streamHandle)) {
             fputs($this->streamHandle, $output . PHP_EOL);
