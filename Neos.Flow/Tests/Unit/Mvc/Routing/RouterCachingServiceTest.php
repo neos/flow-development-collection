@@ -294,6 +294,24 @@ class RouterCachingServiceTest extends UnitTestCase
     /**
      * @test
      */
+    public function storeResolvedUriConstraintsConvertsObjectsToHashesToGenerateRouteTags()
+    {
+        $mockUuid = '550e8400-e29b-11d4-a716-446655440000';
+        $mockObject = new \stdClass();
+        $routeValues = ['b' => 'route values', 'someObject' => $mockObject];
+        $cacheIdentifier = 'e56bffd69837730b19089d3cf1eb7af9';
+
+        $this->mockPersistenceManager->expects($this->once())->method('getIdentifierByObject')->with($mockObject)->will($this->returnValue($mockUuid));
+
+        $resolvedUriConstraints = UriConstraints::create()->withPath('path');
+        $this->mockResolveCache->expects($this->once())->method('set')->with($cacheIdentifier, $resolvedUriConstraints, [$mockUuid, md5('path')]);
+
+        $this->routerCachingService->storeResolvedUriConstraints(new ResolveContext($this->mockUri, $routeValues, false), $resolvedUriConstraints);
+    }
+
+    /**
+     * @test
+     */
     public function storeResolvedUriConstraintsExtractsUuidsToCacheTags()
     {
         $uuid1 = '550e8400-e29b-11d4-a716-446655440000';

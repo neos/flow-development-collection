@@ -46,7 +46,6 @@ class RoutingTest extends FunctionalTestCase
                 $foundRoute = true;
                 break;
             }
-            var_dump($route->getName());
         }
 
         if (!$foundRoute) {
