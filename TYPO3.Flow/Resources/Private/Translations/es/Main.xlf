@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="authentication.required" xml:space="preserve">
 				<source>Authentication required</source>
-			<target xml:lang="es-ES" state="translated">Autentificación obligatoria</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Autentificación obligatoria</target><alt-trans><target xml:lang="es-ES">Autenticación requerida</target></alt-trans></trans-unit>
       <trans-unit id="authentication.username" xml:space="preserve">
 				<source>Username</source>
 			<target xml:lang="es-ES" state="translated">Nombre de usuario</target></trans-unit>
@@ -16,10 +16,10 @@
 			<target xml:lang="es-ES" state="translated">Nueva contraseña</target></trans-unit>
       <trans-unit id="authentication.login" xml:space="preserve">
 				<source>Login</source>
-			<target xml:lang="es-ES" state="translated">Entrar</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Entrar</target><alt-trans><target xml:lang="es-ES">Iniciar Sesión</target></alt-trans></trans-unit>
       <trans-unit id="authentication.logout" xml:space="preserve">
 				<source>Logout</source>
-			<target xml:lang="es-ES" state="translated">Salir</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Salir</target><alt-trans><target xml:lang="es-ES">Cerrar sesión</target></alt-trans></trans-unit>
       <trans-unit id="update" xml:space="preserve">
 				<source>Update</source>
 			<target xml:lang="es-ES" state="translated">Actualizar</target></trans-unit>

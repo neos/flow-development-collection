@@ -9,7 +9,7 @@
       <!-- BooleanValueValidator -->
       <trans-unit id="1361044943" xml:space="preserve">
 				<source>The given value is expected to be {0}.</source>
-			<target xml:lang="ar" state="needs-translation">The given value is expected to be {0}.</target></trans-unit>
+			<target xml:lang="ar" state="translated">ومن المتوقع أن تكون القيمة المعطاة {0}.</target></trans-unit>
       <!-- CollectionValidator -->
       <trans-unit id="1317204797" xml:space="preserve">
 				<source>The given subject is not a collection</source>
@@ -20,44 +20,44 @@
 			<target xml:lang="ar" state="needs-translation">The given subject is not countable</target></trans-unit>
       <trans-unit id="1253718831" xml:space="preserve">
 				<source>The count must be between {0,number} and {1,number}</source>
-			<target xml:lang="ar" state="needs-translation">The count must be between {0,number} and {1,number}</target></trans-unit>
+			<target xml:lang="ar" state="translated">يجب أن يكون العدد بين {0,number} و {1,number}</target></trans-unit>
       <!-- DateTimeRangeValidator -->
       <trans-unit id="1324314378" xml:space="preserve">
 				<source>The given value is not a valid date</source>
-			<target xml:lang="ar" state="needs-translation">The given value is not a valid date</target></trans-unit>
+			<target xml:lang="ar" state="translated">القيمة المعطاة ليست تاريخاً صحيحاً</target></trans-unit>
       <trans-unit id="1325615630" xml:space="preserve">
 				<source>The given date must be between {0} and {1}</source>
-			<target xml:lang="ar" state="needs-translation">The given date must be between {0} and {1}</target></trans-unit>
+			<target xml:lang="ar" state="translated">يجب أن يكون التاريخ المعين بين {0} و {1}</target></trans-unit>
       <trans-unit id="1324315107" xml:space="preserve">
 				<source>The given date must be after {0}</source>
-			<target xml:lang="ar" state="needs-translation">The given date must be after {0}</target></trans-unit>
+			<target xml:lang="ar" state="translated">يجب أن يكون التاريخ المعين بعد {0}</target></trans-unit>
       <trans-unit id="1324315115" xml:space="preserve">
 				<source>The given date must be before {0}</source>
-			<target xml:lang="ar" state="needs-translation">The given date must be before {0}</target></trans-unit>
+			<target xml:lang="ar" state="translated">يجب أن يكون التاريخ المعين قبل {0}</target></trans-unit>
       <!-- DateTimeValidator -->
       <trans-unit id="1281454676" xml:space="preserve">
 				<source>The "locale" option can be only set to string identifier, or Locale object</source>
 			<target xml:lang="ar" state="needs-translation">The "locale" option can be only set to string identifier, or Locale object</target></trans-unit>
       <trans-unit id="1281454830" xml:space="preserve">
 				<source>A valid time is expected</source>
-			<target xml:lang="ar" state="needs-translation">A valid time is expected</target></trans-unit>
+			<target xml:lang="ar" state="translated">المتوقع وقت صحيح</target></trans-unit>
       <trans-unit id="1281454831" xml:space="preserve">
 				<source>A valid date and time is expected</source>
-			<target xml:lang="ar" state="needs-translation">A valid date and time is expected</target></trans-unit>
+			<target xml:lang="ar" state="translated">المتوقع تاريخ و وقت صحيح</target></trans-unit>
       <trans-unit id="1281454832" xml:space="preserve">
 				<source>A valid date is expected</source>
-			<target xml:lang="ar" state="needs-translation">A valid date is expected</target></trans-unit>
+			<target xml:lang="ar" state="translated">المتوقع تاريخ صحيح</target></trans-unit>
       <!-- EmailAddressValidator -->
       <trans-unit id="1221559976" xml:space="preserve">
 				<source>Please specify a valid email address</source>
-			<target xml:lang="ar" state="needs-translation">Please specify a valid email address</target></trans-unit>
+			<target xml:lang="ar" state="translated">الرجاء إدخال عنوان بريد الكتروني صحيح</target></trans-unit>
       <!-- FloatValidator -->
       <trans-unit id="1221560288" xml:space="preserve">
 				<source>A valid float number is expected</source>
-			<target xml:lang="ar" state="needs-translation">A valid float number is expected</target></trans-unit>
+			<target xml:lang="ar" state="translated">المتوقع عدد عشري صالح</target></trans-unit>
       <trans-unit id="1332934124" xml:space="preserve">
 				<source>"{0}" cannot be converted to a float value</source>
-			<target xml:lang="ar" state="needs-translation">"{0}" cannot be converted to a float value</target></trans-unit>
+			<target xml:lang="ar" state="translated">"{0}" لا يمكن تحويلها إلى قيمة عدد عشري</target></trans-unit>
       <!-- GenericObjectValidator -->
       <trans-unit id="1241099149" xml:space="preserve">
 				<source>Object expected, {0} given</source>
@@ -65,14 +65,14 @@
       <!-- IntegerValidator -->
       <trans-unit id="1221560494" xml:space="preserve">
 				<source>A valid integer number is expected</source>
-			<target xml:lang="ar" state="needs-translation">A valid integer number is expected</target></trans-unit>
+			<target xml:lang="ar" state="translated">المتوقع عدد صحيح</target></trans-unit>
       <trans-unit id="1332933658" xml:space="preserve">
 				<source>"{0}" is no integer.</source>
-			<target xml:lang="ar" state="needs-translation">"{0}" is no integer.</target></trans-unit>
+			<target xml:lang="ar" state="translated">"{0}" ليس عدد صحيحاً.</target></trans-unit>
       <!-- LabelValidator -->
       <trans-unit id="1272298003" xml:space="preserve">
 				<source>Only letters, numbers, spaces and certain punctuation marks are expected</source>
-			<target xml:lang="ar" state="needs-translation">Only letters, numbers, spaces and certain punctuation marks are expected</target></trans-unit>
+			<target xml:lang="ar" state="translated">يسمح فقط بالحروف والأرقام، والمسافات وعلامات ترقيم معينة</target></trans-unit>
       <!-- LocaleIdentifierValidator -->
       <trans-unit id="1327090892" xml:space="preserve">
 				<source>Value is no valid I18n locale identifier</source>
@@ -80,27 +80,27 @@
       <!-- NotEmptyValidator -->
       <trans-unit id="1221560910" xml:space="preserve">
 				<source>This property is required</source>
-			<target xml:lang="ar" state="needs-translation">This property is required</target></trans-unit>
+			<target xml:lang="ar" state="translated">هذه الخاصية ضرورية</target></trans-unit>
       <trans-unit id="1221560718" xml:space="preserve">
 				<source>This property is required</source>
-			<target xml:lang="ar" state="needs-translation">This property is required</target></trans-unit>
+			<target xml:lang="ar" state="translated">هذه الخاصية ضرورية</target></trans-unit>
       <!-- NumberRangeValidator -->
       <trans-unit id="1221563685" xml:space="preserve">
 				<source>A valid number is expected</source>
-			<target xml:lang="ar" state="needs-translation">A valid number is expected</target></trans-unit>
+			<target xml:lang="ar" state="translated">المتوقع عدد صحيح</target></trans-unit>
       <trans-unit id="1221561046" xml:space="preserve">
 				<source>Please enter a valid number between {0,number} and {1,number}</source>
-			<target xml:lang="ar" state="needs-translation">Please enter a valid number between {0,number} and {1,number}</target></trans-unit>
+			<target xml:lang="ar" state="translated">الرجاء إدخال عدد صحيح بين {0,number} و {1,number}</target></trans-unit>
       <!-- NumberValidator -->
       <trans-unit id="1281286579" xml:space="preserve">
 				<source>The "locale" option can be only set to string identifier, or Locale object</source>
 			<target xml:lang="ar" state="needs-translation">The "locale" option can be only set to string identifier, or Locale object</target></trans-unit>
       <trans-unit id="1281452093" xml:space="preserve">
 				<source>A valid percent number is expected</source>
-			<target xml:lang="ar" state="needs-translation">A valid percent number is expected</target></trans-unit>
+			<target xml:lang="ar" state="translated">المتوقع نسبه مئوية صحيحة</target></trans-unit>
       <trans-unit id="1281452094" xml:space="preserve">
 				<source>A valid decimal number is expected</source>
-			<target xml:lang="ar" state="needs-translation">A valid decimal number is expected</target></trans-unit>
+			<target xml:lang="ar" state="translated">المتوقع عدد عشري صحيح</target></trans-unit>
       <!-- RegularExpressionValidator -->
       <trans-unit id="1221565130" xml:space="preserve">
 				<source>The given subject did not match the pattern. Got: {0}</source>
@@ -118,7 +118,7 @@
       <group id="1238108068" restype="x-gettext-plurals">
         <trans-unit id="1238108068[0]">
           <source>This field must contain at least {0,number} characters</source>
-          <target xml:lang="ar" state="needs-translation">This field must contain at least {0,number} characters</target>
+          <target xml:lang="ar" state="translated">يجب أن يحتوي هذا الحقل على الأقل {0,number} من الأحرف</target>
         </trans-unit>
         <trans-unit id="1238108068[1]">
           <source>This field must contain at least {0,number} character</source>
@@ -144,7 +144,7 @@
       <group id="1238108069" restype="x-gettext-plurals">
         <trans-unit id="1238108069[0]">
           <source>This text may not exceed {0,number} characters</source>
-          <target xml:lang="ar" state="needs-translation">This text may not exceed {0,number} characters</target>
+          <target xml:lang="ar" state="translated">لا يجوز أن يتجاوز هذا النص {0,number} من الأحرف</target>
         </trans-unit>
         <trans-unit id="1238108069[1]">
           <source>This text may not exceed {0,number} character</source>
@@ -170,11 +170,11 @@
       <!-- StringValidator -->
       <trans-unit id="1238108070" xml:space="preserve">
 				<source>A valid string is expected</source>
-			<target xml:lang="ar" state="needs-translation">A valid string is expected</target></trans-unit>
+			<target xml:lang="ar" state="translated">المتوقع نص صحيح</target></trans-unit>
       <!-- TextValidator -->
       <trans-unit id="1221565786" xml:space="preserve">
 				<source>Valid text without any XML tags is expected</source>
-			<target xml:lang="ar" state="needs-translation">Valid text without any XML tags is expected</target></trans-unit>
+			<target xml:lang="ar" state="translated">ويتوقع نص صحيح دون أية علامات XML</target></trans-unit>
       <!-- UuidValidator -->
       <trans-unit id="1221565853" xml:space="preserve">
 				<source>The given subject is not a valid UUID</source>
@@ -186,34 +186,34 @@
       <!-- PersonNameValidator -->
       <trans-unit id="1268676765" xml:space="preserve">
 				<source>The person name cannot be empty</source>
-			<target xml:lang="ar" state="needs-translation">The person name cannot be empty</target></trans-unit>
+			<target xml:lang="ar" state="translated">الاسم لا يمكن أن يكون فارغاً</target></trans-unit>
       <!-- Package "TYPO3.Media" -->
       <!-- ImageTypeValidator -->
       <trans-unit id="1327947256" xml:space="preserve">
 				<source>The given value is not a Image instance</source>
-			<target xml:lang="ar" state="needs-translation">The given value is not a Image instance</target></trans-unit>
+			<target xml:lang="ar" state="translated">القيمة المعطاة ليست نسخة لصورة</target></trans-unit>
       <trans-unit id="1327947647" xml:space="preserve">
 				<source>The image type "{0}" is not allowed</source>
-			<target xml:lang="ar" state="needs-translation">The image type "{0}" is not allowed</target></trans-unit>
+			<target xml:lang="ar" state="translated">غير مسموح بنوع الصورة "{0}"</target></trans-unit>
       <trans-unit id="1328030664" xml:space="preserve">
 				<source>The uploaded file is no valid image</source>
-			<target xml:lang="ar" state="needs-translation">The uploaded file is no valid image</target></trans-unit>
+			<target xml:lang="ar" state="translated">الملف الذي تم تحميله ليس صورة جيدة</target></trans-unit>
       <!-- ImageSizeValidator -->
       <trans-unit id="1327943859" xml:space="preserve">
 				<source>The given value is not a Image instance</source>
-			<target xml:lang="ar" state="needs-translation">The given value is not a Image instance</target></trans-unit>
+			<target xml:lang="ar" state="translated">القيمة المعطاة ليست نسخة لصورة</target></trans-unit>
       <trans-unit id="1319801362" xml:space="preserve">
 				<source>The actual image width of {0,number} is lower than the allowed minimum width of {1,number}</source>
-			<target xml:lang="ar" state="needs-translation">The actual image width of {0,number} is lower than the allowed minimum width of {1,number}</target></trans-unit>
+			<target xml:lang="ar" state="translated">عرض الصورة الفعلية {0,number} أقل من الحد الأدنى المسموح به لعرض {1,number}</target></trans-unit>
       <trans-unit id="1319801859" xml:space="preserve">
 				<source>The actual image width of {0,number} is higher than the allowed maximum width of {1,number}</source>
-			<target xml:lang="ar" state="needs-translation">The actual image width of {0,number} is higher than the allowed maximum width of {1,number}</target></trans-unit>
+			<target xml:lang="ar" state="translated">عرض الصورة الفعلية {0,number} أعلى من عرض الحد الأقصى المسموح به من {1,number}</target></trans-unit>
       <trans-unit id="1319801925" xml:space="preserve">
 				<source>The actual image height of {0,number} is lower than the allowed minimum height of {1,number}</source>
-			<target xml:lang="ar" state="needs-translation">The actual image height of {0,number} is lower than the allowed minimum height of {1,number}</target></trans-unit>
+			<target xml:lang="ar" state="translated">ارتفاع الصورة الفعلية {0,number} أقل من ارتفاع الحد الأدنى المسموح به من {1,number}</target></trans-unit>
       <trans-unit id="1319801929" xml:space="preserve">
 				<source>The actual image height of {0,number} is higher than the allowed maximum height of {1,number}</source>
-			<target xml:lang="ar" state="needs-translation">The actual image height of {0,number} is higher than the allowed maximum height of {1,number}</target></trans-unit>
+			<target xml:lang="ar" state="translated">عرض الصورة الفعلية {0,number} أعلى من عرض الحد الأقصى المسموح به من {1,number}</target></trans-unit>
       <trans-unit id="1319813336" xml:space="preserve">
 				<source>The given image size of {0,number} x {1,number} is too low for the required minimum resolution of {2,number}</source>
 			<target xml:lang="ar" state="needs-translation">The given image size of {0,number} x {1,number} is too low for the required minimum resolution of {2,number}</target></trans-unit>
@@ -223,13 +223,13 @@
       <!-- ImageOrientationValidator -->
       <trans-unit id="1328028604" xml:space="preserve">
 				<source>The given value is not a Image instance</source>
-			<target xml:lang="ar" state="needs-translation">The given value is not a Image instance</target></trans-unit>
+			<target xml:lang="ar" state="translated">القيمة المعطاة ليست نسخة لصورة</target></trans-unit>
       <trans-unit id="1328029406" xml:space="preserve">
 				<source>The image orientation must be "{0}"</source>
-			<target xml:lang="ar" state="needs-translation">The image orientation must be "{0}"</target></trans-unit>
+			<target xml:lang="ar" state="translated">اتجاه الصورة يجب أن تكون "{0}"</target></trans-unit>
       <trans-unit id="1328029362" xml:space="preserve">
 				<source>The image orientation "{0}" is not allowed</source>
-			<target xml:lang="ar" state="needs-translation">The image orientation "{0}" is not allowed</target></trans-unit>
+			<target xml:lang="ar" state="translated">غير مسموح باتجاه الصورة "{0}"</target></trans-unit>
     </body>
   </file>
 </xliff>

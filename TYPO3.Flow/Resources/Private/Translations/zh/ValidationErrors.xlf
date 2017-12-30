@@ -13,7 +13,7 @@
       <!-- CollectionValidator -->
       <trans-unit id="1317204797" xml:space="preserve">
 				<source>The given subject is not a collection</source>
-			<target xml:lang="zh-CN" state="translated">给定对象, 不是一个集合</target></trans-unit>
+			<target xml:lang="zh-CN" state="translated">给定对象, 不是一个集合</target><alt-trans><target xml:lang="zh-CN">给定的对象不是一个集合</target></alt-trans></trans-unit>
       <!-- CountValidator -->
       <trans-unit id="1253718666" xml:space="preserve">
 				<source>The given subject is not countable</source>

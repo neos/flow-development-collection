@@ -118,29 +118,29 @@
       <group id="1238108068" restype="x-gettext-plurals">
         <trans-unit id="1238108068[0]">
           <source>This field must contain at least {0,number} character</source>
-          <target xml:lang="cs" state="needs-translation">This field must contain at least {0,number} character</target>
+          <target xml:lang="cs" state="translated">Toto pole musí obsahovat alespoň {0,number} znaků</target>
         </trans-unit>
         <trans-unit id="1238108068[1]">
           <source>This field must contain at least {0,number} characters</source>
-          <target xml:lang="cs" state="needs-translation">This field must contain at least {0,number} characters</target>
+          <target xml:lang="cs" state="translated">Toto pole musí obsahovat alespoň {0,number} znaků</target>
         </trans-unit>
         <trans-unit id="1238108068[2]">
           <source>This field must contain at least {0,number} characters</source>
-          <target xml:lang="cs" state="needs-translation">This field must contain at least {0,number} characters</target>
+          <target xml:lang="cs" state="translated">Toto pole musí obsahovat alespoň {0,number} znaků</target>
         </trans-unit>
       </group>
       <group id="1238108069" restype="x-gettext-plurals">
         <trans-unit id="1238108069[0]">
           <source>This text may not exceed {0,number} character</source>
-          <target xml:lang="cs" state="needs-translation">This text may not exceed {0,number} character</target>
+          <target xml:lang="cs" state="translated">Tento text nesmí přesáhnout {0,number} znaků</target>
         </trans-unit>
         <trans-unit id="1238108069[1]">
           <source>This text may not exceed {0,number} characters</source>
-          <target xml:lang="cs" state="needs-translation">This text may not exceed {0,number} characters</target>
+          <target xml:lang="cs" state="translated">Tento text nesmí přesáhnout {0,number} znaků</target>
         </trans-unit>
         <trans-unit id="1238108069[2]">
           <source>This text may not exceed {0,number} characters</source>
-          <target xml:lang="cs" state="needs-translation">This text may not exceed {0,number} characters</target>
+          <target xml:lang="cs" state="translated">Tento text nesmí přesáhnout {0,number} znaků</target>
         </trans-unit>
       </group>
       <!-- StringValidator -->
