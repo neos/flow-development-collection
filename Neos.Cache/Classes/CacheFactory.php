@@ -25,6 +25,8 @@ use Neos\Cache\Frontend\FrontendInterface;
  */
 class CacheFactory implements CacheFactoryInterface
 {
+    use BackendInstantiationTrait;
+
     /**
      * @var EnvironmentConfiguration
      */
@@ -55,27 +57,11 @@ class CacheFactory implements CacheFactoryInterface
      */
     public function create($cacheIdentifier, $cacheObjectName, $backendObjectName, array $backendOptions = []): FrontendInterface
     {
-        $backend = $this->instantiateBackend($backendObjectName, $backendOptions);
+        $backend = $this->instantiateBackend($backendObjectName, $backendOptions, $this->environmentConfiguration);
         $cache = $this->instantiateCache($cacheIdentifier, $cacheObjectName, $backend);
         $backend->setCache($cache);
 
         return $cache;
-    }
-
-    /**
-     * @param string $backendObjectName
-     * @param array $backendOptions
-     * @return BackendInterface
-     * @throws InvalidBackendException
-     */
-    protected function instantiateBackend(string $backendObjectName, array $backendOptions): BackendInterface
-    {
-        $backend = new $backendObjectName($this->environmentConfiguration, $backendOptions);
-        if (!$backend instanceof BackendInterface) {
-            throw new InvalidBackendException('"' . $backendObjectName . '" is not a valid cache backend object.', 1216304302);
-        }
-
-        return $backend;
     }
 
     /**
