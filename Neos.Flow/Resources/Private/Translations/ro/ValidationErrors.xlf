@@ -5,59 +5,59 @@
       <!-- AlphanumericValidator -->
       <trans-unit id="1221551320" xml:space="preserve">
 				<source>Only regular characters (a to z, umlauts, ...) and numbers are allowed.</source>
-			<target xml:lang="ro" state="needs-translation">Only regular characters (a to z, umlauts, ...) and numbers are allowed.</target></trans-unit>
+			<target xml:lang="ro" state="translated">Numai litere (A la Z, diacritice, ...) și numere sunt acceptate.</target></trans-unit>
       <!-- BooleanValueValidator -->
       <trans-unit id="1361044943" xml:space="preserve">
 				<source>The given value is expected to be {0}.</source>
-			<target xml:lang="ro" state="needs-translation">The given value is expected to be {0}.</target></trans-unit>
+			<target xml:lang="ro" state="translated">Este de așteptat ca valoarea introdusă sa fie {0}.</target></trans-unit>
       <!-- CollectionValidator -->
       <trans-unit id="1317204797" xml:space="preserve">
 				<source>The given subject is not a collection</source>
-			<target xml:lang="ro" state="needs-translation">The given subject is not a collection</target></trans-unit>
+			<target xml:lang="ro" state="translated">Subiectul dat nu este o colecție</target></trans-unit>
       <!-- CountValidator -->
       <trans-unit id="1253718666" xml:space="preserve">
 				<source>The given subject is not countable</source>
-			<target xml:lang="ro" state="needs-translation">The given subject is not countable</target></trans-unit>
+			<target xml:lang="ro" state="translated">Subiectul dat nu este numărabil</target></trans-unit>
       <trans-unit id="1253718831" xml:space="preserve">
 				<source>The count must be between {0,number} and {1,number}</source>
-			<target xml:lang="ro" state="needs-translation">The count must be between {0,number} and {1,number}</target></trans-unit>
+			<target xml:lang="ro" state="translated">Contorul trebuie să fie între {0,number} și {1,number}</target></trans-unit>
       <!-- DateTimeRangeValidator -->
       <trans-unit id="1324314378" xml:space="preserve">
 				<source>The given value is not a valid date</source>
-			<target xml:lang="ro" state="needs-translation">The given value is not a valid date</target></trans-unit>
+			<target xml:lang="ro" state="translated">Valoarea dată nu este o dată validă</target></trans-unit>
       <trans-unit id="1325615630" xml:space="preserve">
 				<source>The given date must be between {0} and {1}</source>
-			<target xml:lang="ro" state="needs-translation">The given date must be between {0} and {1}</target></trans-unit>
+			<target xml:lang="ro" state="translated">Data curentă trebuie să fie între {0} și {1}</target></trans-unit>
       <trans-unit id="1324315107" xml:space="preserve">
 				<source>The given date must be after {0}</source>
-			<target xml:lang="ro" state="needs-translation">The given date must be after {0}</target></trans-unit>
+			<target xml:lang="ro" state="translated">Data curentă trebuie să fie după {0}</target></trans-unit>
       <trans-unit id="1324315115" xml:space="preserve">
 				<source>The given date must be before {0}</source>
-			<target xml:lang="ro" state="needs-translation">The given date must be before {0}</target></trans-unit>
+			<target xml:lang="ro" state="translated">Data curentă trebuie să fie înainte de {0}</target></trans-unit>
       <!-- DateTimeValidator -->
       <trans-unit id="1281454676" xml:space="preserve">
 				<source>The "locale" option can be only set to string identifier, or Locale object</source>
-			<target xml:lang="ro" state="needs-translation">The "locale" option can be only set to string identifier, or Locale object</target></trans-unit>
+			<target xml:lang="ro" state="translated">Opțiunea "locale" poate fii setată ca string, sau obiect de tip Locale</target></trans-unit>
       <trans-unit id="1281454830" xml:space="preserve">
 				<source>A valid time is expected</source>
-			<target xml:lang="ro" state="needs-translation">A valid time is expected</target></trans-unit>
+			<target xml:lang="ro" state="translated">Este așteptat un format de timp valid</target></trans-unit>
       <trans-unit id="1281454831" xml:space="preserve">
 				<source>A valid date and time is expected</source>
-			<target xml:lang="ro" state="needs-translation">A valid date and time is expected</target></trans-unit>
+			<target xml:lang="ro" state="translated">Este așteptat un format de timp și o dată valide</target></trans-unit>
       <trans-unit id="1281454832" xml:space="preserve">
 				<source>A valid date is expected</source>
-			<target xml:lang="ro" state="needs-translation">A valid date is expected</target></trans-unit>
+			<target xml:lang="ro" state="translated">Este așteptată o dată validă</target></trans-unit>
       <!-- EmailAddressValidator -->
       <trans-unit id="1221559976" xml:space="preserve">
 				<source>Please specify a valid email address</source>
-			<target xml:lang="ro" state="needs-translation">Please specify a valid email address</target></trans-unit>
+			<target xml:lang="ro" state="translated">Vă rugăm specificați o adresă de email validă</target></trans-unit>
       <!-- FloatValidator -->
       <trans-unit id="1221560288" xml:space="preserve">
 				<source>A valid float number is expected</source>
-			<target xml:lang="ro" state="needs-translation">A valid float number is expected</target></trans-unit>
+			<target xml:lang="ro" state="translated">Este așteptat un număr valid de tip float</target></trans-unit>
       <trans-unit id="1332934124" xml:space="preserve">
 				<source>"{0}" cannot be converted to a float value</source>
-			<target xml:lang="ro" state="needs-translation">"{0}" cannot be converted to a float value</target></trans-unit>
+			<target xml:lang="ro" state="translated">"{0}" nu poate fi convertit în float</target></trans-unit>
       <!-- GenericObjectValidator -->
       <trans-unit id="1241099149" xml:space="preserve">
 				<source>Object expected, {0} given</source>
@@ -65,36 +65,36 @@
       <!-- IntegerValidator -->
       <trans-unit id="1221560494" xml:space="preserve">
 				<source>A valid integer number is expected</source>
-			<target xml:lang="ro" state="needs-translation">A valid integer number is expected</target></trans-unit>
+			<target xml:lang="ro" state="translated">Este așteptat un număr integer valid</target></trans-unit>
       <trans-unit id="1332933658" xml:space="preserve">
 				<source>"{0}" is no integer.</source>
-			<target xml:lang="ro" state="needs-translation">"{0}" is no integer.</target></trans-unit>
+			<target xml:lang="ro" state="translated">"{0}" nu este integer.</target></trans-unit>
       <!-- LabelValidator -->
       <trans-unit id="1272298003" xml:space="preserve">
 				<source>Only letters, numbers, spaces and certain punctuation marks are expected</source>
-			<target xml:lang="ro" state="needs-translation">Only letters, numbers, spaces and certain punctuation marks are expected</target></trans-unit>
+			<target xml:lang="ro" state="translated">Doar litere, numere, spații și anumite semne de punctuație sunt permise</target></trans-unit>
       <!-- LocaleIdentifierValidator -->
       <trans-unit id="1327090892" xml:space="preserve">
 				<source>Value is no valid I18n locale identifier</source>
-			<target xml:lang="ro" state="needs-translation">Value is no valid I18n locale identifier</target></trans-unit>
+			<target xml:lang="ro" state="translated">Valoarea nu este un l18n identificator valid</target></trans-unit>
       <!-- NotEmptyValidator -->
       <trans-unit id="1221560910" xml:space="preserve">
 				<source>This property is required</source>
-			<target xml:lang="ro" state="needs-translation">This property is required</target></trans-unit>
+			<target xml:lang="ro" state="translated">Această proprietate este necesară</target></trans-unit>
       <trans-unit id="1221560718" xml:space="preserve">
 				<source>This property is required</source>
-			<target xml:lang="ro" state="needs-translation">This property is required</target></trans-unit>
+			<target xml:lang="ro" state="translated">Această proprietate este necesară</target></trans-unit>
       <!-- NumberRangeValidator -->
       <trans-unit id="1221563685" xml:space="preserve">
 				<source>A valid number is expected</source>
-			<target xml:lang="ro" state="needs-translation">A valid number is expected</target></trans-unit>
+			<target xml:lang="ro" state="translated">Este așteptat un număr valid</target></trans-unit>
       <trans-unit id="1221561046" xml:space="preserve">
 				<source>Please enter a valid number between {0,number} and {1,number}</source>
 			<target xml:lang="ro" state="needs-translation">Please enter a valid number between {0,number} and {1,number}</target></trans-unit>
       <!-- NumberValidator -->
       <trans-unit id="1281286579" xml:space="preserve">
 				<source>The "locale" option can be only set to string identifier, or Locale object</source>
-			<target xml:lang="ro" state="needs-translation">The "locale" option can be only set to string identifier, or Locale object</target></trans-unit>
+			<target xml:lang="ro" state="translated">Opțiunea "locale" poate fii setată ca string, sau obiect de tip Locale</target></trans-unit>
       <trans-unit id="1281452093" xml:space="preserve">
 				<source>A valid percent number is expected</source>
 			<target xml:lang="ro" state="needs-translation">A valid percent number is expected</target></trans-unit>
@@ -126,13 +126,13 @@
         </trans-unit>
         <trans-unit id="1238108068[2]">
           <source>This field must contain at least {0,number} characters</source>
-          <target xml:lang="ro" state="needs-translation">This field must contain at least {0,number} characters</target>
+          <target xml:lang="ro" state="translated">Câmpul trebuie să conțină minim {0,number} caractere</target>
         </trans-unit>
       </group>
       <group id="1238108069" restype="x-gettext-plurals">
         <trans-unit id="1238108069[0]">
           <source>This text may not exceed {0,number} character</source>
-          <target xml:lang="ro" state="needs-translation">This text may not exceed {0,number} character</target>
+          <target xml:lang="ro" state="translated">Acest text nu poate să depășească {0,number} caracter</target>
         </trans-unit>
         <trans-unit id="1238108069[1]">
           <source>This text may not exceed {0,number} characters</source>
@@ -140,7 +140,7 @@
         </trans-unit>
         <trans-unit id="1238108069[2]">
           <source>This text may not exceed {0,number} characters</source>
-          <target xml:lang="ro" state="needs-translation">This text may not exceed {0,number} characters</target>
+          <target xml:lang="ro" state="translated">Acest text nu poate să depășească {0,number} caractere</target>
         </trans-unit>
       </group>
       <!-- StringValidator -->
