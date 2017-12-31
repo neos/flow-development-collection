@@ -49,7 +49,7 @@ class PsrFrontend extends VariableFrontend implements CacheItemPoolInterface
      */
     public function getItems(array $keys = [])
     {
-        return array_map(function($key) {
+        return array_map(function ($key) {
             return $this->getItem($key);
         }, $keys);
     }
