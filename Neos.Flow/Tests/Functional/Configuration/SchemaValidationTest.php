@@ -54,7 +54,7 @@ class SchemaValidationTest extends FunctionalTestCase
     {
         parent::setUp();
         $this->schemaValidator = new SchemaValidator();
-        $this->schemaSchema = Yaml::parse($this->schemaSchemaResource);
+        $this->schemaSchema = Yaml::parseFile($this->schemaSchemaResource);
     }
 
     /**
@@ -95,7 +95,7 @@ class SchemaValidationTest extends FunctionalTestCase
      */
     public function schemaFilesAreValid($schemaFile)
     {
-        $schema = Yaml::parse($schemaFile);
+        $schema = Yaml::parseFile($schemaFile);
         $result = $this->schemaValidator->validate($schema, $this->schemaSchema);
         $hasErrors = $result->hasErrors();
         $message = sprintf('Schema-file "%s" is valid', $schemaFile);
