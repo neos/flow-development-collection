@@ -140,7 +140,7 @@ class PackageManager implements PackageManagerInterface
 
     /**
      * Returns TRUE if a package is available (the package's files exist in the packages directory)
-     * or FALSE if it's not. If a package is available it doesn't mean necessarily that it's active!
+     * or FALSE if it's not.
      *
      * @param string $packageKey The key of the package to check
      * @return boolean TRUE if the package is available, otherwise FALSE
@@ -149,20 +149,6 @@ class PackageManager implements PackageManagerInterface
     public function isPackageAvailable($packageKey)
     {
         return ($this->getCaseSensitivePackageKey($packageKey) !== false);
-    }
-
-    /**
-     * Returns TRUE if a package is available or FALSE if it's not.
-     *
-     * @param string $packageKey The key of the package to check
-     * @return boolean TRUE if package is active, otherwise FALSE
-     * @api
-     * @deprecated There is no longer a package state. Use isPackageAvailable as replacement
-     * @see isPackageAvailable
-     */
-    public function isPackageActive($packageKey)
-    {
-        return $this->isPackageAvailable($packageKey);
     }
 
     /**
@@ -200,19 +186,6 @@ class PackageManager implements PackageManagerInterface
      * @api
      */
     public function getAvailablePackages()
-    {
-        return $this->packages;
-    }
-
-    /**
-     * Returns an array of PackageInterface objects of all packages.
-     *
-     * @return array <PackageInterface>
-     * @api
-     * @deprecated Inactive packages no longer exist, use self::getAvailablePackages as replacement.
-     * @see getAvailablePackages
-     */
-    public function getActivePackages()
     {
         return $this->packages;
     }
@@ -406,7 +379,7 @@ class PackageManager implements PackageManagerInterface
         }
 
         if (!$this->isPackageAvailable($packageKey)) {
-            throw new Exception\UnknownPackageException('Package "' . $packageKey . '" is not available or active.', 1331715956);
+            throw new Exception\UnknownPackageException('Package "' . $packageKey . '" is not available.', 1331715956);
         }
         if ($this->isPackageFrozen($packageKey)) {
             return;
@@ -938,7 +911,7 @@ class PackageManager implements PackageManagerInterface
     }
 
     /**
-     * Emits a signal when package states have been changed (e.g. when a package was created or activated)
+     * Emits a signal when package states have been changed (e.g. when a package was created)
      *
      * The advice is not proxyable, so the signal is dispatched manually here.
      *

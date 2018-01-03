@@ -133,7 +133,7 @@ class PackageCommandController extends CommandController
      */
     public function listCommand($loadingOrder = false)
     {
-        $activePackages = [];
+        $availablePackages = [];
         $frozenPackages = [];
         $longestPackageKey = 0;
         $freezeSupported = $this->bootstrap->getContext()->isDevelopment();
@@ -143,7 +143,7 @@ class PackageCommandController extends CommandController
                 $longestPackageKey = strlen($packageKey);
             }
 
-            $activePackages[$packageKey] = $package;
+            $availablePackages[$packageKey] = $package;
 
             if ($this->packageManager->isPackageFrozen($packageKey)) {
                 $frozenPackages[$packageKey] = $package;
@@ -151,12 +151,12 @@ class PackageCommandController extends CommandController
         }
 
         if ($loadingOrder === false) {
-            ksort($activePackages);
+            ksort($availablePackages);
         }
 
         $this->outputLine('PACKAGES:');
         /** @var PackageInterface $package */
-        foreach ($activePackages as $package) {
+        foreach ($availablePackages as $package) {
             $frozenState = ($freezeSupported && isset($frozenPackages[$package->getPackageKey()]) ? '* ' : '  ');
             $this->outputLine(' ' . str_pad($package->getPackageKey(), $longestPackageKey + 3) . $frozenState . str_pad($package->getInstalledVersion(), 15));
         }
@@ -204,7 +204,7 @@ class PackageCommandController extends CommandController
                 }
             }
             if ($packagesToFreeze === []) {
-                $this->outputLine('Nothing to do, all active packages were already frozen.');
+                $this->outputLine('Nothing to do, all packages were already frozen.');
                 $this->quit(0);
             }
         } elseif ($packageKey === 'blackberry') {
