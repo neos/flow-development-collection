@@ -128,7 +128,7 @@ Flow_Session_Storage:
 
 #  Aop filter expressions that need to be evaluated at runtime.
 Flow_Aop_RuntimeExpressions:
-  frontend: Neos\Cache\Frontend\PhpFrontend
+  frontend: Neos\Cache\Frontend\StringFrontend
   backend: Neos\Cache\Backend\SimpleFileBackend
 
 # Caches the map of possible PropertyMappers for source and target types
