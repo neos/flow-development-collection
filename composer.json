@@ -6,7 +6,7 @@
     ],
     "type": "neos-package-collection",
     "require": {
-        "php": "~7.0",
+        "php": "~7.1",
         "ext-zlib": "*",
         "ext-SPL": "*",
         "ext-json": ">=1.2.0",
