@@ -11,6 +11,7 @@ namespace Neos\Eel\Tests\Unit;
  * source code.
  */
 
+use Neos\Cache\Frontend\StringFrontend;
 use Neos\Eel\Context;
 use Neos\Eel\CompilingEvaluator;
 
@@ -20,11 +21,14 @@ use Neos\Eel\CompilingEvaluator;
 class CompilingEvaluatorTest extends AbstractEvaluatorTest
 {
     /**
-     * @return Context
+     * @return CompilingEvaluator
      */
     protected function createEvaluator()
     {
-        return new CompilingEvaluator();
+        $stringFrontendMock = $this->getMockBuilder(StringFrontend::class)->setMethods([])->disableOriginalConstructor()->getMock();
+        $stringFrontendMock->expects(self::any())->method('get')->willReturn(false);
+
+        return new CompilingEvaluator($stringFrontendMock);
     }
 
     /**
@@ -47,7 +51,10 @@ class CompilingEvaluatorTest extends AbstractEvaluatorTest
      */
     protected function assertEvaluated($expected, $expression, $context)
     {
-        $evaluator = $this->getAccessibleMock(CompilingEvaluator::class, ['dummy']);
+        $stringFrontendMock = $this->getMockBuilder(StringFrontend::class)->setMethods([])->disableOriginalConstructor()->getMock();
+        $stringFrontendMock->expects(self::any())->method('get')->willReturn(false);
+
+        $evaluator = $this->getAccessibleMock(CompilingEvaluator::class, ['dummy'], [$stringFrontendMock]);
         // note, this is not a public method. We should expect expressions coming in here to be trimmed already.
         $code = $evaluator->_call('generateEvaluatorCode', trim($expression));
         $this->assertSame($expected, $evaluator->evaluate($expression, $context), 'Code ' . $code . ' should evaluate to expected result');

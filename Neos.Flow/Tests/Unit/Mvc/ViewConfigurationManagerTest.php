@@ -11,6 +11,7 @@ namespace Neos\Flow\Tests\Unit\Mvc;
  * source code.
  */
 
+use Neos\Cache\Frontend\StringFrontend;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Mvc\ViewConfigurationManager;
 use Neos\Flow\Mvc\ActionRequest;
@@ -50,7 +51,7 @@ class ViewConfigurationManagerTest extends \Neos\Flow\Tests\UnitTestCase
         $this->viewConfigurationManager = new ViewConfigurationManager();
 
         // eel evaluator
-        $eelEvaluator = new CompilingEvaluator();
+        $eelEvaluator = $this->createEvaluator();
         $this->inject($this->viewConfigurationManager, 'eelEvaluator', $eelEvaluator);
 
         // a dummy configuration manager is prepared
@@ -121,5 +122,16 @@ class ViewConfigurationManagerTest extends \Neos\Flow\Tests\UnitTestCase
         $calculatedConfiguration = $this->viewConfigurationManager->getViewConfiguration($this->mockActionRequest);
 
         $this->assertEquals($calculatedConfiguration, $matchingConfigurationTwo);
+    }
+
+    /**
+     * @return CompilingEvaluator
+     */
+    protected function createEvaluator()
+    {
+        $stringFrontendMock = $this->getMockBuilder(StringFrontend::class)->setMethods([])->disableOriginalConstructor()->getMock();
+        $stringFrontendMock->expects(self::any())->method('get')->willReturn(false);
+
+        return new CompilingEvaluator($stringFrontendMock);
     }
 }

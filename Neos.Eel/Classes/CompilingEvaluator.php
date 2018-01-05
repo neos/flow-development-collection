@@ -11,9 +11,8 @@ namespace Neos\Eel;
  * source code.
  */
 
+use Neos\Cache\Frontend\StringFrontend;
 use Neos\Flow\Annotations as Flow;
-use Neos\Cache\Frontend\PhpFrontend;
-use Opis\Closure\SerializableClosure;
 
 /**
  * An evaluator that compiles expressions down to PHP code
@@ -33,10 +32,20 @@ class CompilingEvaluator implements EelEvaluatorInterface
     protected $evaluatedExpressions = [];
 
     /**
-     * @Flow\Inject(lazy=false)
      * @var StringFrontend
      */
     protected $expressionCache;
+
+    /**
+     * Construct a new Evaluator.
+     * TODO: As soon as we support PSR-16 (Simple Cache) this could be replaced by a simple cache.
+     *
+     * @param StringFrontend $expressionCache
+     */
+    public function __construct(StringFrontend $expressionCache)
+    {
+        $this->expressionCache = $expressionCache;
+    }
 
     /**
      * Evaluate an expression under a given context

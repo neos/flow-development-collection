@@ -9,8 +9,8 @@
 
 
 Neos\Eel\CompilingEvaluator:
-  properties:
-    expressionCache:
+  arguments:
+    1:
       object:
         factoryObjectName: Neos\Flow\Cache\CacheManager
         factoryMethodName: getCache
