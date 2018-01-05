@@ -12,7 +12,6 @@ namespace Neos\Eel;
  */
 
 use Neos\Cache\Frontend\StringFrontend;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * An evaluator that compiles expressions down to PHP code
@@ -20,7 +19,6 @@ use Neos\Flow\Annotations as Flow;
  * This simple implementation will lazily parse and evaluate the generated PHP
  * code into a function with a name built from the hashed expression.
  *
- * @Flow\Scope("singleton")
  */
 class CompilingEvaluator implements EelEvaluatorInterface
 {
