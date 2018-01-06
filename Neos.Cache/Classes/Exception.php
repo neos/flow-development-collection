@@ -16,6 +16,6 @@ namespace Neos\Cache;
  *
  * @api
  */
-class Exception extends \Exception
+class Exception extends \Exception implements Psr6CacheException, Psr16CacheException
 {
 }

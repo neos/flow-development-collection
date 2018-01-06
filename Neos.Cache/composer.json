@@ -6,6 +6,7 @@
     "license": ["MIT"],
     "require": {
         "php": "~7.0",
+        "psr/simple-cache": "^1.0",
         "psr/cache": "~1.0",
         "neos/utility-files": "*",
         "neos/utility-pdo": "*",
