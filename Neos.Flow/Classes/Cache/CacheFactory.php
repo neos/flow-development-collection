@@ -106,7 +106,7 @@ class CacheFactory extends \Neos\Cache\CacheFactory implements CacheFactoryInter
      */
     public function create($cacheIdentifier, $cacheObjectName, $backendObjectName, array $backendOptions = [], $persistent = false): FrontendInterface
     {
-        $backend = $this->instantiateBackend($backendObjectName, $backendOptions, $persistent);
+        $backend = $this->instantiateBackend($backendObjectName, $backendOptions, $this->environmentConfiguration, $persistent);
         $cache = $this->instantiateCache($cacheIdentifier, $cacheObjectName, $backend);
         $backend->setCache($cache);
 
