@@ -4,6 +4,7 @@ namespace Neos\Cache;
 use Neos\Cache\Backend\BackendInterface;
 use Neos\Cache\Exception\InvalidBackendException;
 use Neos\Cache\Frontend\PsrSimpleCacheFrontend;
+use Neos\Cache\Frontend\VariableFrontend;
 use Psr\SimpleCache\CacheInterface;
 
 /**
@@ -41,8 +42,10 @@ class SimpleCacheFactory
     public function create($cacheIdentifier, $backendObjectName, array $backendOptions = []): CacheInterface
     {
         $backend = $this->instantiateBackend($backendObjectName, $backendOptions, $this->environmentConfiguration);
-        $cache = $this->instantiateCache($cacheIdentifier, $cacheObjectName, $backend);
-        $backend->setCache($cache);
+        $cache = $this->instantiateCache($cacheIdentifier, $backend);
+        // TODO: Remove this need.
+        $fakeFrontend = new VariableFrontend($cacheIdentifier, $backend);
+        $backend->setCache($fakeFrontend);
 
         return $cache;
     }
