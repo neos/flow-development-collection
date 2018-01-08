@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Persistence\Doctrine;
 
 /*
@@ -222,7 +223,9 @@ class EntityManagerConfiguration
     {
         if (isset($this->settings['doctrine']['dbal']['mappingTypes']) && is_array($this->settings['doctrine']['dbal']['mappingTypes'])) {
             foreach ($this->settings['doctrine']['dbal']['mappingTypes'] as $typeName => $typeConfiguration) {
-                Type::addType($typeName, $typeConfiguration['className']);
+                if (!Type::hasType($typeName)) {
+                    Type::addType($typeName, $typeConfiguration['className']);
+                }
                 $entityManager->getConnection()->getDatabasePlatform()->registerDoctrineTypeMapping($typeConfiguration['dbType'], $typeName);
             }
         }
