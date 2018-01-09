@@ -53,18 +53,6 @@ class LoggerTest extends UnitTestCase
     /**
      * @test
      */
-    public function addBackendRunsTheBackendsOpenMethod()
-    {
-        $mockBackend = $this->getMockBuilder(BackendInterface::class)->setMethods(['open', 'append', 'close'])->getMock();
-        $mockBackend->expects($this->once())->method('open');
-
-        $logger = new Logger();
-        $logger->addBackend($mockBackend);
-    }
-
-    /**
-     * @test
-     */
     public function removeBackendRunsTheBackendsCloseMethodAndRemovesItFromTheLogger()
     {
         $mockBackend = $this->getMockBuilder(BackendInterface::class)->setMethods(['open', 'append', 'close'])->getMock();

@@ -162,6 +162,13 @@ Neos\Flow\Log\ThrowableStorage\FileStorage:
     storagePath:
       setting: Neos.Flow.log.throwables.fileStorage.path
 
+Neos\Flow\Log\PsrLoggerFactory:
+  scope: singleton
+  autowiring: off
+
+Neos\Flow\Log\PsrLoggerFactoryInterface:
+  className: Neos\Flow\Log\PsrLoggerFactory
+
 #                                                                          #
 # Monitor                                                                  #
 #                                                                          #

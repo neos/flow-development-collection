@@ -12,11 +12,11 @@ namespace Neos\Flow\Log;
  */
 
 /**
- * Marker interface for the security logger.
+ * Marker interface for the system logger.
+ * Convenience interface replacing the SystemLoggerInterface
  *
- * @deprecated Replaced by PsrSecurityLoggerInterface
- * @see PsrSecurityLoggerInterface
+ * @see SystemLoggerInterface
  */
-interface SecurityLoggerInterface extends LoggerInterface
+interface PsrSystemLoggerInterface extends \Psr\Log\LoggerInterface
 {
 }

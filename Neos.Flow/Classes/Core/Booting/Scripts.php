@@ -26,7 +26,10 @@ use Neos\Flow\Error\Debugger;
 use Neos\Flow\Error\ErrorHandler;
 use Neos\Flow\Error\ProductionExceptionHandler;
 use Neos\Flow\Log\Logger;
+use Neos\Flow\Log\LoggerBackendConfigurationHelper;
 use Neos\Flow\Log\LoggerFactory;
+use Neos\Flow\Log\PsrLoggerFactory;
+use Neos\Flow\Log\PsrLoggerFactoryInterface;
 use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\Monitor\FileMonitor;
 use Neos\Flow\ObjectManagement\CompileTimeObjectManager;
@@ -233,10 +236,22 @@ class Scripts
         $configurationManager = $bootstrap->getEarlyInstance(ConfigurationManager::class);
         $settings = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.Flow');
 
+        /** @var PsrLoggerFactoryInterface $psrLoggerFactoryName */
+        $psrLoggerFactoryName = $settings['log']['psr3']['loggerFactory'];
+        $psrLogConfigurations = $settings['log']['psr3'][$psrLoggerFactoryName] ?? [];
+        if ($psrLoggerFactoryName === 'legacy') {
+            $psrLoggerFactoryName = PsrLoggerFactory::class;
+            $psrLogConfigurations = (new LoggerBackendConfigurationHelper($settings['log']))->getNormalizedLegacyConfiguration();
+        }
+        $psrLogFactory = $psrLoggerFactoryName::create($psrLogConfigurations);
+
         if (!isset($settings['log']['systemLogger']['logger'])) {
             $settings['log']['systemLogger']['logger'] = Logger::class;
         }
-        $loggerFactory = new LoggerFactory();
+
+        $loggerFactory = new LoggerFactory($psrLogFactory);
+        $bootstrap->setEarlyInstance($psrLoggerFactoryName, $psrLogFactory);
+        $bootstrap->setEarlyInstance(PsrLoggerFactoryInterface::class, $psrLogFactory);
         $bootstrap->setEarlyInstance(LoggerFactory::class, $loggerFactory);
         $systemLogger = $loggerFactory->create('SystemLogger', $settings['log']['systemLogger']['logger'], $settings['log']['systemLogger']['backend'], $settings['log']['systemLogger']['backendOptions']);
         $bootstrap->setEarlyInstance(SystemLoggerInterface::class, $systemLogger);

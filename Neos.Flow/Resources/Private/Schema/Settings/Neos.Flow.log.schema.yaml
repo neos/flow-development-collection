@@ -7,7 +7,16 @@ properties:
         type: dictionary
         properties:
           path: { type: string, required: TRUE }
-
+  psr3:
+    type: dictionary
+    properties:
+      loggerFactory: { type: string }
+    additionalProperties:
+      type: dictionary
+      properties:
+        'class': { type: string, format: class-name }
+        'options':
+          type: dictionary
 additionalProperties:
   type: dictionary
   additionalProperties: FALSE

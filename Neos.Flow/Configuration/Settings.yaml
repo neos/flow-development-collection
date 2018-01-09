@@ -208,7 +208,8 @@ Neos:
           proto: 'X-Forwarded-Proto'
 
     log:
-
+      psr3:
+        loggerFactory: legacy
       # Settings for Flow's default loggers
       systemLogger:
         logger: Neos\Flow\Log\Logger
