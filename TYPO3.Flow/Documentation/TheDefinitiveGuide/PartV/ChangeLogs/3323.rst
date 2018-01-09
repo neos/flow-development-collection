@@ -1,0 +1,29 @@
+`3.3.23 (2018-01-09) <https://github.com/neos/flow-development-collection/releases/tag/3.3.23>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Respect \`void\` return type annotation in proxy method <https://github.com/neos/flow-development-collection/pull/1152>`_
+----------------------------------------------------------------------------------------------------------------------------------
+
+This is a follow-up to #1091 that didn't entirely fix the bug
+mentioned in #1065.
+
+Background:
+
+When using the `void` return type annotation the corresponding
+method must not return anything but by default the proxy method
+is rendered like:
+
+```
+// ...
+$result = parent::originalMethod();
+return $result;
+// ...
+```
+
+* Packages: ``Flow``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/3.3.22...3.3.23>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
