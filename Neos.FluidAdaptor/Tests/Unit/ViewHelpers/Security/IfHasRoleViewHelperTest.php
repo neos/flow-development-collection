@@ -11,6 +11,7 @@ namespace Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Security;
  * source code.
  */
 
+use Neos\Flow\Reflection\ReflectionService;
 use Neos\FluidAdaptor\Core\Rendering\RenderingContext;
 use Neos\Flow\Http\Request;
 use Neos\Flow\Http\Uri;
@@ -51,17 +52,24 @@ class IfHasRoleViewHelperTest extends ViewHelperBaseTestcase
         ])->getMock();
 
         $this->mockSecurityContext = $this->getMockBuilder(\Neos\Flow\Security\Context::class)->disableOriginalConstructor()->getMock();
+        $this->mockSecurityContext->expects(self::any())->method('canBeInitialized')->willReturn(true);
 
         $this->mockPolicyService = $this->getMockBuilder(\Neos\Flow\Security\Policy\PolicyService::class)->disableOriginalConstructor()->getMock();
 
+        $reflectionService = $this->getMockBuilder(ReflectionService::class)->disableOriginalConstructor()->getMock();
+        $reflectionService->expects(self::any())->method('getMethodParameters')->willReturn([]);
+
         $objectManager = $this->getMockBuilder(ObjectManagerInterface::class)->disableOriginalConstructor()->getMock();
-        $objectManager->expects($this->any())->method('get')->willReturnCallback(function ($objectName) {
+        $objectManager->expects($this->any())->method('get')->willReturnCallback(function ($objectName) use ($reflectionService) {
             switch ($objectName) {
                 case Context::class:
                     return $this->mockSecurityContext;
                     break;
                 case PolicyService::class:
                     return $this->mockPolicyService;
+                    break;
+                case ReflectionService::class:
+                    return $reflectionService;
                     break;
             }
         });
@@ -70,6 +78,7 @@ class IfHasRoleViewHelperTest extends ViewHelperBaseTestcase
         $renderingContext->expects($this->any())->method('getObjectManager')->willReturn($objectManager);
         $renderingContext->expects($this->any())->method('getControllerContext')->willReturn($this->getMockControllerContext());
 
+        $this->inject($this->mockViewHelper, 'objectManager', $objectManager);
         $this->inject($this->mockViewHelper, 'renderingContext', $renderingContext);
     }
 
@@ -106,7 +115,7 @@ class IfHasRoleViewHelperTest extends ViewHelperBaseTestcase
             'role' => 'SomeRole',
             'account' => null
         ];
-        $this->mockViewHelper->setArguments($arguments);
+        $this->mockViewHelper = $this->prepareArguments($this->mockViewHelper, $arguments);
         $actualResult = $this->mockViewHelper->render();
         $this->assertEquals('then-child', $actualResult);
     }
@@ -132,7 +141,7 @@ class IfHasRoleViewHelperTest extends ViewHelperBaseTestcase
             'role' => new Role('Neos.FluidAdaptor:Administrator'),
             'account' => null
         ];
-        $this->mockViewHelper->setArguments($arguments);
+        $this->mockViewHelper = $this->prepareArguments($this->mockViewHelper, $arguments);
         $actualResult = $this->mockViewHelper->render();
         $this->assertEquals('true', $actualResult, 'Full role identifier in role argument is accepted');
 
@@ -141,7 +150,7 @@ class IfHasRoleViewHelperTest extends ViewHelperBaseTestcase
             'packageKey' => 'Neos.FluidAdaptor',
             'account' => null
         ];
-        $this->mockViewHelper->setArguments($arguments);
+        $this->mockViewHelper = $this->prepareArguments($this->mockViewHelper, $arguments);
         $actualResult = $this->mockViewHelper->render();
         $this->assertEquals('false', $actualResult);
     }
@@ -167,7 +176,7 @@ class IfHasRoleViewHelperTest extends ViewHelperBaseTestcase
             'packageKey' => null,
             'account' => $mockAccount
         ];
-        $this->mockViewHelper->setArguments($arguments);
+        $this->mockViewHelper = $this->prepareArguments($this->mockViewHelper, $arguments);
         $actualResult = $this->mockViewHelper->render();
         $this->assertEquals('true', $actualResult, 'Full role identifier in role argument is accepted');
     }
