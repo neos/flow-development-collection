@@ -97,7 +97,8 @@ class PsrLoggerFactory implements PsrLoggerFactoryInterface
      * @return BackendInterface
      * @throws \Exception
      */
-    protected function instantiateBackend(string $class, array $options = []) {
+    protected function instantiateBackend(string $class, array $options = [])
+    {
         if (!is_a($class, BackendInterface::class)) {
             throw new \Exception(sprinf('The log backend class "%s" does not implement the BackendInterface', htmlspecialchars($class)), 1515355501615);
         }
