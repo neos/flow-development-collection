@@ -1,0 +1,51 @@
+`4.2.7 (2018-01-09) <https://github.com/neos/flow-development-collection/releases/tag/4.2.7>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Add doctrine mapping type only once <https://github.com/neos/flow-development-collection/pull/1165>`_
+--------------------------------------------------------------------------------------------------------------
+
+If you instantiate an additional entityManager in order to connect
+to a second database the mappingTypes are added again
+which leads to an error.
+
+* Packages: ``Flow`` ``FluidAdaptor``
+
+`BUGFIX: Fix duplicate configuration keys in schema files <https://github.com/neos/flow-development-collection/pull/1164>`_
+---------------------------------------------------------------------------------------------------------------------------
+
+The latest symfony yaml parser is much more strict. This PR fixes duplicate keys in schema files.
+
+* Packages: ``Flow`` ``FluidAdaptor``
+
+`BUGFIX: Respect \`void\` return type annotation in proxy method <https://github.com/neos/flow-development-collection/pull/1152>`_
+----------------------------------------------------------------------------------------------------------------------------------
+
+This is a follow-up to #1091 that didn't entirely fix the bug
+mentioned in #1065.
+
+Background:
+
+When using the `void` return type annotation the corresponding
+method must not return anything but by default the proxy method
+is rendered like:
+
+```
+// ...
+$result = parent::originalMethod();
+return $result;
+// ...
+```
+
+`TASK: Correct expected/actual order in assertion <https://github.com/neos/flow-development-collection/pull/1150>`_
+-------------------------------------------------------------------------------------------------------------------
+
+This fixes the wrong order of expected and actual parameters to an
+`assertSame()` call. Can be confusing if you check test results…
+
+* Packages: ``Flow``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/4.2.6...4.2.7>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
