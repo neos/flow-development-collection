@@ -117,7 +117,7 @@ class DateTimeConverter extends AbstractTypeConverter
      * @param string $targetType must be "DateTime"
      * @param array $convertedChildProperties not used currently
      * @param PropertyMappingConfigurationInterface $configuration
-     * @return \DateTime|Error
+     * @return \DateTimeInterface|Error
      * @throws TypeConverterException
      */
     public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null)
@@ -166,8 +166,8 @@ class DateTimeConverter extends AbstractTypeConverter
         if ($date === false) {
             return new Error('The date "%s" was not recognized (for format "%s").', 1307719788, [$dateAsString, $dateFormat]);
         }
-        if (is_array($source)) {
-            $this->overrideTimeIfSpecified($date, $source);
+        if (is_array($source) && isset($source['hour']) && isset($source['minute']) && isset($source['second'])) {
+            $date = $this->overrideTime($date, $source);
         }
         return $date;
     }
@@ -209,18 +209,18 @@ class DateTimeConverter extends AbstractTypeConverter
     /**
      * Overrides hour, minute & second of the given date with the values in the $source array
      *
-     * @param \DateTime $date
+     * @param \DateTimeInterface $date
      * @param array $source
-     * @return void
+     * @return \DateTimeInterface
      */
-    protected function overrideTimeIfSpecified(\DateTime $date, array $source)
+    protected function overrideTime(\DateTimeInterface $date, array $source)
     {
-        if (!isset($source['hour']) && !isset($source['minute']) && !isset($source['second'])) {
-            return;
-        }
         $hour = isset($source['hour']) ? (integer)$source['hour'] : 0;
         $minute = isset($source['minute']) ? (integer)$source['minute'] : 0;
         $second = isset($source['second']) ? (integer)$source['second'] : 0;
-        $date->setTime($hour, $minute, $second);
+        if ($date instanceof \DateTime || $date instanceof \DateTimeImmutable) {
+            $date = $date->setTime($hour, $minute, $second);
+        }
+        return $date;
     }
 }
