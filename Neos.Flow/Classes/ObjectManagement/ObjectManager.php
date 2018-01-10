@@ -27,7 +27,7 @@ use Psr\Container\ContainerInterface;
  * @Flow\Scope("singleton")
  * @Flow\Proxy(false)
  */
-class ObjectManager implements ObjectManagerInterface, ContainerInterface
+class ObjectManager implements ObjectManagerInterface
 {
     /**
      * The configuration context for this Flow run
