@@ -19,6 +19,7 @@ use Neos\Flow\ObjectManagement\DependencyInjection\DependencyProxy;
 use Neos\Flow\Security\Context;
 use Neos\Utility\Arrays;
 use Neos\Utility\ObjectAccess;
+use Psr\Container\ContainerInterface;
 
 /**
  * Object Manager
@@ -26,7 +27,7 @@ use Neos\Utility\ObjectAccess;
  * @Flow\Scope("singleton")
  * @Flow\Proxy(false)
  */
-class ObjectManager implements ObjectManagerInterface
+class ObjectManager implements ObjectManagerInterface, ContainerInterface
 {
     /**
      * The configuration context for this Flow run
@@ -148,6 +149,18 @@ class ObjectManager implements ObjectManagerInterface
             throw new \InvalidArgumentException('Object names must not start with a backslash ("' . $objectName . '")', 1270827335);
         }
         return false;
+    }
+
+    /**
+     * Returns true if the container can return an entry for the given identifier.
+     * Returns false otherwise.
+     *
+     * @param string $objectName
+     * @return bool
+     */
+    public function has($objectName)
+    {
+        return $this->isRegistered($objectName);
     }
 
     /**
