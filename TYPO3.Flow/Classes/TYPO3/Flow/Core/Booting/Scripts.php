@@ -635,22 +635,21 @@ class Scripts
             } else {
                 $exceptionMessage = sprintf('Execution of subprocess failed with exit code %d without any further output. (Please check your PHP error log for possible Fatal errors)', $result);
 
-                // if the command is too long, it'll just produce /usr/bin/php: Argument list too long but this will be invisible
-                // the length is a guesstimate, there is no easy/clear way to find the limit being applied.
-                if (strlen($command) > 10 * 1024) {
-                    $exceptionMessage .= ' Try to run the command manually, it may just be too long.';
+                // If the command is too long, it'll just produce /usr/bin/php: Argument list too long but this will be invisible
+                // If anything else goes wrong, it may as well not produce any $output, but might do so when run on an interactive
+                // shell. Thus we dump the command next to the exception dumps.
+                $exceptionMessage .= ' Try to run the command manually, to hopefully get some hint on the actual error.';
 
-                    if (!file_exists(FLOW_PATH_DATA . 'Logs/Exceptions')) {
-                        mkdir(FLOW_PATH_DATA . 'Logs/Exceptions');
-                    }
-                    if (file_exists(FLOW_PATH_DATA . 'Logs/Exceptions') && is_dir(FLOW_PATH_DATA . 'Logs/Exceptions') && is_writable(FLOW_PATH_DATA . 'Logs/Exceptions')) {
-                        $referenceCode = date('YmdHis', $_SERVER['REQUEST_TIME']) . substr(md5(rand()), 0, 6);
-                        $errorDumpPathAndFilename = FLOW_PATH_DATA . 'Logs/Exceptions/' . $referenceCode . '-command.txt';
-                        file_put_contents($errorDumpPathAndFilename, $command);
-                        $exceptionMessage .= sprintf(' It has been stored in: %s', basename($errorDumpPathAndFilename));
-                    } else {
-                        $exceptionMessage .= sprintf(' (could not write command into %s because the directory could not be created or is not writable.)', FLOW_PATH_DATA . 'Logs/Exceptions/');
-                    }
+                if (!file_exists(FLOW_PATH_DATA . 'Logs/Exceptions')) {
+                    mkdir(FLOW_PATH_DATA . 'Logs/Exceptions');
+                }
+                if (file_exists(FLOW_PATH_DATA . 'Logs/Exceptions') && is_dir(FLOW_PATH_DATA . 'Logs/Exceptions') && is_writable(FLOW_PATH_DATA . 'Logs/Exceptions')) {
+                    $referenceCode = date('YmdHis', $_SERVER['REQUEST_TIME']) . substr(md5(rand()), 0, 6);
+                    $errorDumpPathAndFilename = FLOW_PATH_DATA . 'Logs/Exceptions/' . $referenceCode . '-command.txt';
+                    file_put_contents($errorDumpPathAndFilename, $command);
+                    $exceptionMessage .= sprintf(' It has been stored in: %s', basename($errorDumpPathAndFilename));
+                } else {
+                    $exceptionMessage .= sprintf(' (could not write command into %s because the directory could not be created or is not writable.)', FLOW_PATH_DATA . 'Logs/Exceptions/');
                 }
             }
             throw new Exception\SubProcessException($exceptionMessage, 1355480641);
