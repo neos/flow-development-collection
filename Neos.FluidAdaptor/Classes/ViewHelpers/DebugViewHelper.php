@@ -63,7 +63,7 @@ class DebugViewHelper extends AbstractViewHelper
     public function initializeArguments()
     {
         $this->registerArgument('title', 'string', 'The title', false, null);
-        $this->registerArgument('ypeOnly', 'boolean', 'Whether only the type should be returned instead of the whole chain.', false, false);
+        $this->registerArgument('typeOnly', 'boolean', 'Whether only the type should be returned instead of the whole chain.', false, false);
     }
 
     /**
