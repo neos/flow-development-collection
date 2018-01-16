@@ -641,7 +641,7 @@ class Scripts
                 $exceptionMessage .= ' Try to run the command manually, to hopefully get some hint on the actual error.';
 
                 if (!file_exists(FLOW_PATH_DATA . 'Logs/Exceptions')) {
-                    mkdir(FLOW_PATH_DATA . 'Logs/Exceptions');
+                    Files::createDirectoryRecursively(FLOW_PATH_DATA . 'Logs/Exceptions');
                 }
                 if (file_exists(FLOW_PATH_DATA . 'Logs/Exceptions') && is_dir(FLOW_PATH_DATA . 'Logs/Exceptions') && is_writable(FLOW_PATH_DATA . 'Logs/Exceptions')) {
                     $referenceCode = date('YmdHis', $_SERVER['REQUEST_TIME']) . substr(md5(rand()), 0, 6);
