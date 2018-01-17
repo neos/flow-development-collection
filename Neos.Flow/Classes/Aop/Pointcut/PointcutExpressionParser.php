@@ -16,7 +16,7 @@ use Neos\Flow\Aop\Builder\ProxyClassBuilder;
 use Neos\Flow\Aop\Exception\InvalidPointcutExpressionException;
 use Neos\Flow\Aop\Exception as AopException;
 use Neos\Flow\Configuration\ConfigurationManager;
-use Neos\Flow\Log\SystemLoggerInterface;
+use Neos\Flow\Log\PsrLoggerFactoryInterface;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Reflection\ReflectionService;
 
@@ -186,7 +186,7 @@ class PointcutExpressionParser
 
         $filter = new PointcutClassAnnotatedWithFilter($annotationPattern, $annotationPropertyConstraints);
         $filter->injectReflectionService($this->reflectionService);
-        $filter->injectSystemLogger($this->objectManager->get(SystemLoggerInterface::class));
+        $filter->injectSystemLogger($this->objectManager->get(PsrLoggerFactoryInterface::class)->get('systemLogger'));
         $pointcutFilterComposite->addFilter($operator, $filter);
     }
 
@@ -222,7 +222,7 @@ class PointcutExpressionParser
 
         $filter = new PointcutMethodAnnotatedWithFilter($annotationPattern, $annotationPropertyConstraints);
         $filter->injectReflectionService($this->reflectionService);
-        $filter->injectSystemLogger($this->objectManager->get(SystemLoggerInterface::class));
+        $filter->injectSystemLogger($this->objectManager->get(PsrLoggerFactoryInterface::class)->get('systemLogger'));
         $pointcutFilterComposite->addFilter($operator, $filter);
     }
 
@@ -278,8 +278,8 @@ class PointcutExpressionParser
         $classNameFilter = new PointcutClassNameFilter($classPattern);
         $classNameFilter->injectReflectionService($this->reflectionService);
         $methodNameFilter = new PointcutMethodNameFilter($methodNamePattern, $methodVisibility, $methodArgumentConstraints);
-        /** @var SystemLoggerInterface $systemLogger */
-        $systemLogger = $this->objectManager->get(SystemLoggerInterface::class);
+        /** @var LoggerInterface $systemLogger */
+        $systemLogger = $this->objectManager->get(PsrLoggerFactoryInterface::class)->get('systemLogger');
         $methodNameFilter->injectSystemLogger($systemLogger);
         $methodNameFilter->injectReflectionService($this->reflectionService);
 

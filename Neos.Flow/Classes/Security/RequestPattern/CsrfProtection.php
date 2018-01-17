@@ -12,7 +12,6 @@ namespace Neos\Flow\Security\RequestPattern;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\RequestInterface;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
@@ -23,6 +22,8 @@ use Neos\Flow\Security\Context;
 use Neos\Flow\Security\Exception\AuthenticationRequiredException;
 use Neos\Flow\Security\Policy\PolicyService;
 use Neos\Flow\Security\RequestPatternInterface;
+use Psr\Log\LoggerInterface;
+use Psr\Log\LogLevel;
 
 /**
  * This class holds a request pattern that decides, if csrf protection was enabled for the current request and searches
@@ -61,10 +62,17 @@ class CsrfProtection implements RequestPatternInterface
     protected $policyService;
 
     /**
-     * @Flow\Inject
-     * @var SystemLoggerInterface
+     * @var LoggerInterface
      */
     protected $systemLogger;
+
+    /**
+     * @param LoggerInterface $systemLogger
+     */
+    public function injectSystemLogger(LoggerInterface $systemLogger)
+    {
+        $this->systemLogger = $systemLogger;
+    }
 
     /**
      * Matches a \Neos\Flow\Mvc\RequestInterface against the configured CSRF pattern rules and
@@ -77,15 +85,15 @@ class CsrfProtection implements RequestPatternInterface
     public function matchRequest(RequestInterface $request)
     {
         if (!$request instanceof ActionRequest || $request->getHttpRequest()->isMethodSafe()) {
-            $this->systemLogger->log('CSRF: No token required, safe request', LOG_DEBUG);
+            $this->systemLogger->log(LogLevel::DEBUG, 'CSRF: No token required, safe request');
             return false;
         }
         if ($this->authenticationManager->isAuthenticated() === false) {
-            $this->systemLogger->log('CSRF: No token required, not authenticated', LOG_DEBUG);
+            $this->systemLogger->log(LogLevel::DEBUG, 'CSRF: No token required, not authenticated');
             return false;
         }
         if ($this->securityContext->areAuthorizationChecksDisabled() === true) {
-            $this->systemLogger->log('CSRF: No token required, authorization checks are disabled', LOG_DEBUG);
+            $this->systemLogger->log(LogLevel::DEBUG, 'CSRF: No token required, authorization checks are disabled');
             return false;
         }
 
@@ -93,11 +101,11 @@ class CsrfProtection implements RequestPatternInterface
         $actionMethodName = $request->getControllerActionName() . 'Action';
 
         if (!$this->hasPolicyEntryForMethod($controllerClassName, $actionMethodName)) {
-            $this->systemLogger->log(sprintf('CSRF: No token required, method %s::%s() is not restricted by a policy.', $controllerClassName, $actionMethodName), LOG_DEBUG);
+            $this->systemLogger->log(LogLevel::DEBUG, sprintf('CSRF: No token required, method %s::%s() is not restricted by a policy.', $controllerClassName, $actionMethodName));
             return false;
         }
         if ($this->reflectionService->isMethodTaggedWith($controllerClassName, $actionMethodName, 'skipcsrfprotection')) {
-            $this->systemLogger->log(sprintf('CSRF: No token required, method %s::%s() is tagged with a "skipcsrfprotection" annotation', $controllerClassName, $actionMethodName), LOG_DEBUG);
+            $this->systemLogger->log(LogLevel::DEBUG, sprintf('CSRF: No token required, method %s::%s() is tagged with a "skipcsrfprotection" annotation', $controllerClassName, $actionMethodName));
             return false;
         }
 
@@ -110,7 +118,7 @@ class CsrfProtection implements RequestPatternInterface
         }
 
         if (empty($csrfToken)) {
-            $this->systemLogger->log(sprintf('CSRF: token was empty but a valid token is required for %s::%s()', $controllerClassName, $actionMethodName), LOG_DEBUG);
+            $this->systemLogger->log(LogLevel::DEBUG, sprintf('CSRF: token was empty but a valid token is required for %s::%s()', $controllerClassName, $actionMethodName));
             return true;
         }
 
@@ -119,11 +127,11 @@ class CsrfProtection implements RequestPatternInterface
         }
 
         if ($this->securityContext->isCsrfProtectionTokenValid($csrfToken) === false) {
-            $this->systemLogger->log(sprintf('CSRF: token was invalid but a valid token is required for %s::%s()', $controllerClassName, $actionMethodName), LOG_DEBUG);
+            $this->systemLogger->log(LogLevel::DEBUG, sprintf('CSRF: token was invalid but a valid token is required for %s::%s()', $controllerClassName, $actionMethodName));
             return true;
         }
 
-        $this->systemLogger->log(sprintf('CSRF: Successfully verified token for %s::%s()', $controllerClassName, $actionMethodName), LOG_DEBUG);
+        $this->systemLogger->log(LogLevel::DEBUG, sprintf('CSRF: Successfully verified token for %s::%s()', $controllerClassName, $actionMethodName));
         return false;
     }
 

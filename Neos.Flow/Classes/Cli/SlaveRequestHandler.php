@@ -15,7 +15,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Core\RequestHandlerInterface;
 use Neos\Flow\Exception as FlowException;
-use Neos\Flow\Log\SystemLoggerInterface;
+use Neos\Flow\Log\PsrLoggerFactoryInterface;
 use Neos\Flow\Mvc\Dispatcher;
 
 /**
@@ -75,7 +75,7 @@ class SlaveRequestHandler implements RequestHandlerInterface
         $sequence->invoke($this->bootstrap);
 
         $objectManager = $this->bootstrap->getObjectManager();
-        $systemLogger = $objectManager->get(SystemLoggerInterface::class);
+        $systemLogger = $objectManager->get(PsrLoggerFactoryInterface::class)->get('systemLogger');
 
         $systemLogger->log('Running sub process loop.', LOG_DEBUG);
         echo "\nREADY\n";

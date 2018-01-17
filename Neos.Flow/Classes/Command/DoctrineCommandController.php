@@ -17,11 +17,13 @@ use Doctrine\DBAL\Migrations\MigrationException;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Error\Debugger;
-use Neos\Flow\Log\SystemLoggerInterface;
+use Neos\Flow\Log\ThrowableStorageInterface;
 use Neos\Flow\Package;
 use Neos\Flow\Package\PackageManagerInterface;
 use Neos\Flow\Persistence\Doctrine\Service as DoctrineService;
 use Neos\Utility\Files;
+use Psr\Log\LoggerInterface;
+use Psr\Log\LogLevel;
 
 /**
  * Command controller for tasks related to Doctrine
@@ -49,7 +51,12 @@ class DoctrineCommandController extends CommandController
 
     /**
      * @Flow\Inject
-     * @var SystemLoggerInterface
+     * @var ThrowableStorageInterface
+     */
+    protected $throwableStorage;
+
+    /**
+     * @var LoggerInterface
      */
     protected $systemLogger;
 
@@ -62,6 +69,14 @@ class DoctrineCommandController extends CommandController
     public function injectSettings(array $settings)
     {
         $this->settings = $settings['persistence'];
+    }
+
+    /**
+     * @param LoggerInterface $systemLogger
+     */
+    public function injectcSystemLogger(LoggerInterface $systemLogger)
+    {
+        $this->systemLogger = $systemLogger;
     }
 
     /**
@@ -491,7 +506,9 @@ class DoctrineCommandController extends CommandController
         $this->outputLine('<error>%s</error>', [$exception->getMessage()]);
         $this->outputLine();
         $this->outputLine('The exception details have been logged to the Flow system log.');
-        $this->systemLogger->logException($exception);
+        $message = $this->throwableStorage->logThrowable($exception);
+        $this->outputLine($message);
+        $this->systemLogger->log(LogLevel::ERROR, $message);
         $this->quit(1);
     }
 

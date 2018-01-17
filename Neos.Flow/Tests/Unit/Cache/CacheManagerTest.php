@@ -19,6 +19,7 @@ use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Flow\Utility\Environment;
+use Psr\Log\LoggerInterface;
 
 /**
  * Testcase for the Cache Manager
@@ -54,7 +55,7 @@ class CacheManagerTest extends UnitTestCase
         $this->mockEnvironment->expects($this->any())->method('getPathToTemporaryDirectory')->will($this->returnValue('vfs://Foo/'));
         $this->cacheManager->injectEnvironment($this->mockEnvironment);
 
-        $this->mockSystemLogger = $this->createMock(SystemLoggerInterface::class);
+        $this->mockSystemLogger = $this->createMock(LoggerInterface::class);
         $this->cacheManager->injectSystemLogger($this->mockSystemLogger);
         $this->mockConfigurationManager = $this->getMockBuilder(ConfigurationManager::class)->disableOriginalConstructor()->getMock();
         $this->cacheManager->injectConfigurationManager($this->mockConfigurationManager);

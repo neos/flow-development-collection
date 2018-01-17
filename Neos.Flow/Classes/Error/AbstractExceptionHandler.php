@@ -11,12 +11,13 @@ namespace Neos\Flow\Error;
  * source code.
  */
 
+use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\Response as CliResponse;
 use Neos\Flow\Exception as FlowException;
 use Neos\Flow\Http\Request;
 use Neos\Flow\Http\Response;
 use Neos\Flow\Log\SystemLoggerInterface;
-use Neos\Flow\Log\ThrowableLoggerInterface;
+use Neos\Flow\Log\ThrowableStorageInterface;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Controller\Arguments;
 use Neos\Flow\Mvc\Controller\ControllerContext;
@@ -24,6 +25,8 @@ use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Flow\Mvc\View\ViewInterface;
 use Neos\Utility\ObjectAccess;
 use Neos\Utility\Arrays;
+use Psr\Log\LoggerInterface;
+use Psr\Log\LogLevel;
 
 /**
  * An abstract exception handler
@@ -32,8 +35,20 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
 {
     /**
      * @var SystemLoggerInterface
+     * @deprecated Use the PSR logger
+     * @see logger
      */
     protected $systemLogger;
+
+    /**
+     * @var LoggerInterface
+     */
+    protected $logger;
+
+    /**
+     * @var ThrowableStorageInterface
+     */
+    protected $throwableStorage;
 
     /**
      * @var array
@@ -54,6 +69,24 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
     public function injectSystemLogger(SystemLoggerInterface $systemLogger)
     {
         $this->systemLogger = $systemLogger;
+    }
+
+    /**
+     * @param LoggerInterface $logger
+     * @return void
+     * @Flow\Autowiring(enabled=false)
+     */
+    public function injectLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
+
+    /**
+     * @param ThrowableStorageInterface $throwableStorage
+     */
+    public function injectThrowableStorage(ThrowableStorageInterface $throwableStorage)
+    {
+        $this->throwableStorage = $throwableStorage;
     }
 
     /**
@@ -92,17 +125,9 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
 
         $this->renderingOptions = $this->resolveCustomRenderingOptions($exception);
 
-        if (is_object($this->systemLogger) && isset($this->renderingOptions['logException']) && $this->renderingOptions['logException']) {
-            if ($exception instanceof \Throwable) {
-                if ($this->systemLogger instanceof ThrowableLoggerInterface) {
-                    $this->systemLogger->logThrowable($exception);
-                } else {
-                    // Convert \Throwable to \Exception for non-supporting logger implementations
-                    $this->systemLogger->logException(new \Exception($exception->getMessage(), $exception->getCode()));
-                }
-            } elseif ($exception instanceof \Exception) {
-                $this->systemLogger->logException($exception);
-            }
+        if ($this->throwableStorage instanceof ThrowableStorageInterface && isset($this->renderingOptions['logException']) && $this->renderingOptions['logException']) {
+            $message = $this->throwableStorage->logThrowable($exception);
+            $this->logger->log(LogLevel::CRITICAL, $message);
         }
 
         switch (PHP_SAPI) {

@@ -14,6 +14,7 @@ namespace Neos\Flow\Error;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Exception as FlowException;
 use Neos\Flow\Http\Response;
+use Psr\Log\LogLevel;
 
 /**
  * A quite exception handler which catches but ignores any exception.
@@ -53,7 +54,8 @@ class ProductionExceptionHandler extends AbstractExceptionHandler
                 echo $this->renderStatically($statusCode, $referenceCode);
             }
         } catch (\Exception $innerException) {
-            $this->systemLogger->logException($innerException);
+            $message = $this->throwableStorage->logThrowable($innerException);
+            $this->logger->log(LogLevel::CRITICAL, $message);
         }
     }
 

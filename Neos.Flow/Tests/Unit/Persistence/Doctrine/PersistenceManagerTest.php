@@ -16,9 +16,11 @@ use Doctrine\DBAL\Exception\ConnectionException;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\UnitOfWork;
 use Neos\Flow\Log\SystemLoggerInterface;
+use Neos\Flow\Log\ThrowableStorageInterface;
 use Neos\Flow\Persistence\Doctrine\PersistenceManager;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Flow\Error as FlowError;
+use Psr\Log\LoggerInterface;
 
 /**
  * Testcase for the doctrine persistence manager
@@ -71,8 +73,10 @@ class PersistenceManagerTest extends UnitTestCase
         $this->mockPing->willReturn(true);
         $this->mockEntityManager->expects($this->any())->method('getConnection')->willReturn($this->mockConnection);
 
-        $this->mockSystemLogger = $this->createMock(\Neos\Flow\Log\SystemLoggerInterface::class);
-        $this->inject($this->persistenceManager, 'systemLogger', $this->mockSystemLogger);
+        $this->mockSystemLogger = $this->createMock(LoggerInterface::class);
+        $this->persistenceManager->injectSystemLogger($this->mockSystemLogger);
+
+        $this->inject($this->persistenceManager, 'throwableStorage', $this->getMockBuilder(ThrowableStorageInterface::class)->getMock());
     }
 
     /**

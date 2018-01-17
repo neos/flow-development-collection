@@ -11,10 +11,8 @@ namespace Neos\Flow\ObjectManagement\DependencyInjection;
  * source code.
  */
 
-use Doctrine\ORM\Mapping as ORM;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Configuration\ConfigurationManager;
-use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\ObjectManagement\CompileTimeObjectManager;
 use Neos\Flow\ObjectManagement\Configuration\Configuration;
 use Neos\Flow\ObjectManagement\Configuration\ConfigurationArgument;
@@ -27,6 +25,8 @@ use Neos\Flow\ObjectManagement\Proxy\ProxyClass;
 use Neos\Flow\Reflection\MethodReflection;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Utility\Arrays;
+use Psr\Log\LoggerInterface;
+use Psr\Log\LogLevel;
 
 /**
  * A Proxy Class Builder which integrates Dependency Injection.
@@ -47,7 +47,7 @@ class ProxyClassBuilder
     protected $compiler;
 
     /**
-     * @var SystemLoggerInterface
+     * @var LoggerInterface
      */
     protected $systemLogger;
 
@@ -94,10 +94,11 @@ class ProxyClassBuilder
     }
 
     /**
-     * @param SystemLoggerInterface $systemLogger
+     * @param LoggerInterface $systemLogger
      * @return void
+     * @Flow\Autowiring(false)
      */
-    public function injectSystemLogger(SystemLoggerInterface $systemLogger)
+    public function injectSystemLogger(LoggerInterface $systemLogger)
     {
         $this->systemLogger = $systemLogger;
     }
@@ -134,7 +135,7 @@ class ProxyClassBuilder
             if ($proxyClass === false) {
                 continue;
             }
-            $this->systemLogger->log('Building DI proxy for "' . $className . '".', LOG_DEBUG);
+            $this->systemLogger->log(LogLevel::DEBUG, 'Building DI proxy for "' . $className . '".');
 
             $constructorPreCode = '';
             $constructorPostCode = '';

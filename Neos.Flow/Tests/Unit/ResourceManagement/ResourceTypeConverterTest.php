@@ -20,6 +20,7 @@ use Neos\Flow\ResourceManagement\ResourceTypeConverter;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Error\Messages as FlowError;
 use Psr\Http\Message\UploadedFileInterface;
+use Psr\Log\LoggerInterface;
 
 /**
  * Test case for the ResourceTypeConverter class
@@ -159,9 +160,9 @@ class ResourceTypeConverterTest extends UnitTestCase
             'error' => \UPLOAD_ERR_CANT_WRITE
         ];
 
-        $mockSystemLogger = $this->getMockBuilder(SystemLoggerInterface::class)->getMock();
+        $mockSystemLogger = $this->getMockBuilder(LoggerInterface::class)->getMock();
         $mockSystemLogger->expects($this->once())->method('log');
-        $this->resourceTypeConverter->_set('systemLogger', $mockSystemLogger);
+        $this->resourceTypeConverter->injectSystemLogger($mockSystemLogger);
 
         $this->resourceTypeConverter->convertFrom($source, PersistentResource::class);
     }
@@ -187,7 +188,7 @@ class ResourceTypeConverterTest extends UnitTestCase
      */
     public function convertFromReturnsAnErrorIfTheUploadedFileCantBeImported()
     {
-        $this->inject($this->resourceTypeConverter, 'systemLogger', $this->createMock(SystemLoggerInterface::class));
+        $this->resourceTypeConverter->injectSystemLogger($this->createMock(LoggerInterface::class));
 
         $source = [
             'tmp_name' => 'SomeFilename',

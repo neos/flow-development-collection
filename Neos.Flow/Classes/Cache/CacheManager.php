@@ -18,10 +18,11 @@ use Neos\Cache\Exception\NoSuchCacheException;
 use Neos\Cache\Frontend\FrontendInterface;
 use Neos\Cache\Frontend\VariableFrontend;
 use Neos\Flow\Configuration\ConfigurationManager;
-use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\Utility\Environment;
 use Neos\Utility\Files;
 use Neos\Flow\Utility\PhpAnalyzer;
+use Psr\Log\LoggerInterface;
+use Psr\Log\LogLevel;
 
 /**
  * The Cache Manager
@@ -42,7 +43,7 @@ class CacheManager
     protected $configurationManager;
 
     /**
-     * @var SystemLoggerInterface
+     * @var LoggerInterface
      */
     protected $systemLogger;
 
@@ -74,10 +75,10 @@ class CacheManager
     ];
 
     /**
-     * @param SystemLoggerInterface $systemLogger
+     * @param LoggerInterface $systemLogger
      * @return void
      */
-    public function injectSystemLogger(SystemLoggerInterface $systemLogger)
+    public function injectSystemLogger(LoggerInterface $systemLogger)
     {
         $this->systemLogger = $systemLogger;
     }
@@ -333,16 +334,16 @@ class CacheManager
             $objectConfigurationCache->remove('allCompiledCodeUpToDate');
         }
         if (count($modifiedAspectClassNamesWithUnderscores) > 0) {
-            $this->systemLogger->log('Aspect classes have been modified, flushing the whole proxy classes cache.', LOG_INFO);
+            $this->systemLogger->log(LogLevel::INFO, 'Aspect classes have been modified, flushing the whole proxy classes cache.');
             $objectClassesCache->flush();
         }
         if ($flushDoctrineProxyCache === true) {
-            $this->systemLogger->log('Domain model changes have been detected, triggering Doctrine 2 proxy rebuilding.', LOG_INFO);
+            $this->systemLogger->log(LogLevel::INFO, 'Domain model changes have been detected, triggering Doctrine 2 proxy rebuilding.');
             $this->getCache('Flow_Persistence_Doctrine')->flush();
             $objectConfigurationCache->remove('doctrineProxyCodeUpToDate');
         }
         if ($flushPolicyCache === true) {
-            $this->systemLogger->log('Controller changes have been detected, trigger AOP rebuild.', LOG_INFO);
+            $this->systemLogger->log(LogLevel::INFO, 'Controller changes have been detected, trigger AOP rebuild.');
             $this->getCache('Flow_Security_Authorization_Privilege_Method')->flush();
             $objectConfigurationCache->remove('allAspectClassesUpToDate');
             $objectConfigurationCache->remove('allCompiledCodeUpToDate');
@@ -384,15 +385,15 @@ class CacheManager
         }
 
         foreach ($cachesToFlush as $cacheName => $cacheFilePattern) {
-            $this->systemLogger->log(sprintf('A configuration file matching the pattern "%s" has been changed, flushing related cache "%s"', $cacheFilePattern, $cacheName), LOG_INFO);
+            $this->systemLogger->log(LogLevel::INFO, sprintf('A configuration file matching the pattern "%s" has been changed, flushing related cache "%s"', $cacheFilePattern, $cacheName));
             $this->getCache($cacheName)->flush();
         }
 
-        $this->systemLogger->log('A configuration file has been changed, refreshing compiled configuration cache', LOG_INFO);
+        $this->systemLogger->log(LogLevel::INFO, 'A configuration file has been changed, refreshing compiled configuration cache');
         $this->configurationManager->refreshConfiguration();
 
         if ($aopProxyClassRebuildIsNeeded) {
-            $this->systemLogger->log('The configuration has changed, triggering an AOP proxy class rebuild.', LOG_INFO);
+            $this->systemLogger->log(LogLevel::INFO, 'The configuration has changed, triggering an AOP proxy class rebuild.');
             $objectConfigurationCache->remove('allAspectClassesUpToDate');
             $objectConfigurationCache->remove('allCompiledCodeUpToDate');
             $objectClassesCache->flush();
@@ -410,7 +411,7 @@ class CacheManager
     {
         foreach ($changedFiles as $pathAndFilename => $status) {
             if (preg_match('/\/Translations\/.+\.xlf/', $pathAndFilename) === 1) {
-                $this->systemLogger->log('The localization files have changed, thus flushing the I18n XML model cache.', LOG_INFO);
+                $this->systemLogger->log(LogLevel::INFO, 'The localization files have changed, thus flushing the I18n XML model cache.');
                 $this->getCache('Flow_I18n_XmlModelCache')->flush();
                 break;
             }

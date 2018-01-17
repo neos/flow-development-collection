@@ -22,6 +22,7 @@ use Neos\Flow\Security\Authentication\AuthenticationManagerInterface;
 use Neos\Flow\Security\Authorization\Privilege\Method\MethodPrivilegeInterface;
 use Neos\Flow\Security;
 use Neos\Flow\Tests\UnitTestCase;
+use Psr\Log\LoggerInterface;
 
 /**
  * Testcase for the CsrfProtection request pattern
@@ -46,7 +47,7 @@ class CsrfProtectionTest extends UnitTestCase
         parent::setUp();
 
         $this->mockActionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
-        $this->mockSystemLogger = $this->createMock(SystemLoggerInterface::class);
+        $this->mockSystemLogger = $this->createMock(LoggerInterface::class);
     }
 
     /**

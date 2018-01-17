@@ -31,6 +31,8 @@ use Neos\Flow\Log\LoggerFactory;
 use Neos\Flow\Log\PsrLoggerFactory;
 use Neos\Flow\Log\PsrLoggerFactoryInterface;
 use Neos\Flow\Log\SystemLoggerInterface;
+use Neos\Flow\Log\ThrowableStorage\FileStorage;
+use Neos\Flow\Log\ThrowableStorageInterface;
 use Neos\Flow\Monitor\FileMonitor;
 use Neos\Flow\ObjectManagement\CompileTimeObjectManager;
 use Neos\Flow\ObjectManagement\ObjectManager;
@@ -249,6 +251,10 @@ class Scripts
             $settings['log']['systemLogger']['logger'] = Logger::class;
         }
 
+        $throwableStorage = new FileStorage();
+        $throwableStorage->injectStoragePath(FLOW_PATH_DATA . 'Logs/Exceptions');
+        $bootstrap->setEarlyInstance(ThrowableStorageInterface::class, $throwableStorage);
+
         $loggerFactory = new LoggerFactory($psrLogFactory);
         $bootstrap->setEarlyInstance($psrLoggerFactoryName, $psrLogFactory);
         $bootstrap->setEarlyInstance(PsrLoggerFactoryInterface::class, $psrLogFactory);
@@ -271,7 +277,18 @@ class Scripts
         $errorHandler = new ErrorHandler();
         $errorHandler->setExceptionalErrors($settings['error']['errorHandler']['exceptionalErrors']);
         $exceptionHandler = class_exists($settings['error']['exceptionHandler']['className']) ? new $settings['error']['exceptionHandler']['className'] : new ProductionExceptionHandler();
-        $exceptionHandler->injectSystemLogger($bootstrap->getEarlyInstance(SystemLoggerInterface::class));
+        if (is_callable([$exceptionHandler, 'injectSystemLogger'])) {
+            $exceptionHandler->injectSystemLogger($bootstrap->getEarlyInstance(SystemLoggerInterface::class));
+        }
+
+        if (is_callable([$exceptionHandler, 'injectLogger'])) {
+            $exceptionHandler->injectLogger($bootstrap->getEarlyInstance(PsrLoggerFactoryInterface::class)->get('systemLogger'));
+        }
+
+        if (is_callable([$exceptionHandler, 'injectThrowableStorage'])) {
+            $exceptionHandler->injectThrowableStorage($bootstrap->getEarlyInstance(ThrowableStorageInterface::class));
+        }
+
         $exceptionHandler->setOptions($settings['error']['exceptionHandler']);
     }
 
@@ -296,7 +313,7 @@ class Scripts
         $cacheManager = new CacheManager();
         $cacheManager->setCacheConfigurations($configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_CACHES));
         $cacheManager->injectConfigurationManager($configurationManager);
-        $cacheManager->injectSystemLogger($bootstrap->getEarlyInstance(SystemLoggerInterface::class));
+        $cacheManager->injectSystemLogger($bootstrap->getEarlyInstance(PsrLoggerFactoryInterface::class)->get('systemLogger'));
         $cacheManager->injectEnvironment($environment);
         $cacheManager->injectCacheFactory($cacheFactory);
 
@@ -399,7 +416,7 @@ class Scripts
         $configurationManager = $bootstrap->getEarlyInstance(ConfigurationManager::class);
         $reflectionService = $objectManager->get(ReflectionService::class);
         $cacheManager = $bootstrap->getEarlyInstance(CacheManager::class);
-        $systemLogger = $bootstrap->getEarlyInstance(SystemLoggerInterface::class);
+        $systemLogger = $bootstrap->getEarlyInstance(PsrLoggerFactoryInterface::class)->get('systemLogger');
         $packageManager = $bootstrap->getEarlyInstance(PackageManagerInterface::class);
 
         $objectManager->injectAllSettings($configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS));
@@ -457,7 +474,7 @@ class Scripts
 
         $reflectionService = new ReflectionService();
 
-        $reflectionService->injectSystemLogger($bootstrap->getEarlyInstance(SystemLoggerInterface::class));
+        $reflectionService->injectSystemLogger($bootstrap->getEarlyInstance(PsrLoggerFactoryInterface::class)->get('systemLogger'));
         $reflectionService->injectSettings($settings);
         $reflectionService->injectPackageManager($bootstrap->getEarlyInstance(PackageManagerInterface::class));
         $reflectionService->setStatusCache($cacheManager->getCache('Flow_Reflection_Status'));

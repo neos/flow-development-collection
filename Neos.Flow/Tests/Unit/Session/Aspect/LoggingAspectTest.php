@@ -16,6 +16,8 @@ use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\Session\TransientSession;
 use Neos\Flow\Session\Aspect\LoggingAspect;
 use Neos\Flow\Tests\UnitTestCase;
+use Psr\Log\LoggerInterface;
+use Psr\Log\LogLevel;
 
 /**
  * Testcase for the Logging Aspect implementation
@@ -33,11 +35,11 @@ class LoggingAspectTest extends UnitTestCase
         $testSessionId = $testSession->getId();
 
         $mockJoinPoint = new JoinPoint($testSession, TransientSession::class, 'destroy', ['reason' => 'session timed out']);
-        $mockSystemLogger = $this->createMock(SystemLoggerInterface::class);
+        $mockSystemLogger = $this->createMock(LoggerInterface::class);
         $mockSystemLogger
             ->expects($this->once())
             ->method('log')
-            ->with($this->equalTo('TransientSession: Destroyed session with id ' . $testSessionId . ': session timed out'), $this->equalTo(LOG_INFO));
+            ->with($this->equalTo(LogLevel::DEBUG), $this->equalTo('TransientSession: Destroyed session with id ' . $testSessionId . ': session timed out'));
 
         $loggingAspect = new LoggingAspect();
         $this->inject($loggingAspect, 'systemLogger', $mockSystemLogger);
@@ -56,11 +58,11 @@ class LoggingAspectTest extends UnitTestCase
         $testSessionId = $testSession->getId();
 
         $mockJoinPoint = new JoinPoint($testSession, TransientSession::class, 'destroy', []);
-        $mockSystemLogger = $this->createMock(SystemLoggerInterface::class);
+        $mockSystemLogger = $this->createMock(LoggerInterface::class);
         $mockSystemLogger
             ->expects($this->once())
             ->method('log')
-            ->with($this->equalTo('TransientSession: Destroyed session with id ' . $testSessionId . ': no reason given'));
+            ->with($this->equalTo(LogLevel::DEBUG), $this->equalTo('TransientSession: Destroyed session with id ' . $testSessionId . ': no reason given'));
 
         $loggingAspect = new LoggingAspect();
         $this->inject($loggingAspect, 'systemLogger', $mockSystemLogger);

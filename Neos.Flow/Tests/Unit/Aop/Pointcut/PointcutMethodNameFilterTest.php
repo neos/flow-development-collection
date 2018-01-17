@@ -14,6 +14,8 @@ namespace Neos\Flow\Tests\Unit\Aop\Pointcut;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Flow\Aop;
+use Psr\Log\LoggerInterface;
+use Psr\Log\LogLevel;
 
 /**
  * Testcase for the Pointcut Method Name Filter
@@ -97,8 +99,8 @@ class PointcutMethodNameFilterTest extends UnitTestCase
                 ['arg1' => [], 'arg2' => [], 'arg3' => []]
         ));
 
-        $mockSystemLogger = $this->getMockBuilder(\Neos\Flow\Log\Logger::class)->setMethods(['log'])->getMock();
-        $mockSystemLogger->expects($this->once())->method('log')->with($this->equalTo(
+        $mockSystemLogger = $this->getMockBuilder(LoggerInterface::class)->setMethods([])->getMock();
+        $mockSystemLogger->expects($this->once())->method('log')->with($this->equalTo(LogLevel::NOTICE), $this->equalTo(
             'The argument "arg2" declared in pointcut does not exist in method ' . $className . '->somePublicMethod'
         ));
 

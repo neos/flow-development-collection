@@ -13,8 +13,9 @@ namespace Neos\Flow\Session\Aspect;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Aop\JoinPointInterface;
-use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\Session\SessionInterface;
+use Psr\Log\LoggerInterface;
+use Psr\Log\LogLevel;
 
 /**
  * An aspect which centralizes the logging of important session actions.
@@ -25,10 +26,17 @@ use Neos\Flow\Session\SessionInterface;
 class LoggingAspect
 {
     /**
-     * @var SystemLoggerInterface
-     * @Flow\Inject
+     * @var LoggerInterface
      */
     protected $systemLogger;
+
+    /**
+     * @param LoggerInterface $systemLogger
+     */
+    public function injectSystemLogger(LoggerInterface $systemLogger)
+    {
+        $this->systemLogger = $systemLogger;
+    }
 
     /**
      * Logs calls of start()
@@ -41,7 +49,7 @@ class LoggingAspect
     {
         $session = $joinPoint->getProxy();
         if ($session->isStarted()) {
-            $this->systemLogger->log(sprintf('%s: Started session with id %s.', $this->getClassName($joinPoint), $session->getId()), LOG_INFO);
+            $this->systemLogger->log(LogLevel::INFO, sprintf('%s: Started session with id %s.', $this->getClassName($joinPoint), $session->getId()));
         }
     }
 
@@ -68,7 +76,7 @@ class LoggingAspect
             } else {
                 $inactivityMessage = sprintf('more than %s hours', intval($inactivityInSeconds / 3600));
             }
-            $this->systemLogger->log(sprintf('%s: Resumed session with id %s which was inactive for %s. (%ss)', $this->getClassName($joinPoint), $joinPoint->getProxy()->getId(), $inactivityMessage, $inactivityInSeconds), LOG_DEBUG);
+            $this->systemLogger->log(LogLevel::DEBUG, sprintf('%s: Resumed session with id %s which was inactive for %s. (%ss)', $this->getClassName($joinPoint), $joinPoint->getProxy()->getId(), $inactivityMessage, $inactivityInSeconds));
         }
     }
 
@@ -84,7 +92,7 @@ class LoggingAspect
         $session = $joinPoint->getProxy();
         if ($session->isStarted()) {
             $reason = $joinPoint->isMethodArgument('reason') ? $joinPoint->getMethodArgument('reason') : 'no reason given';
-            $this->systemLogger->log(sprintf('%s: Destroyed session with id %s: %s', $this->getClassName($joinPoint), $joinPoint->getProxy()->getId(), $reason), LOG_INFO);
+            $this->systemLogger->log(LogLevel::DEBUG, sprintf('%s: Destroyed session with id %s: %s', $this->getClassName($joinPoint), $joinPoint->getProxy()->getId(), $reason));
         }
     }
 
@@ -101,7 +109,7 @@ class LoggingAspect
         $oldId = $session->getId();
         $newId = $joinPoint->getAdviceChain()->proceed($joinPoint);
         if ($session->isStarted()) {
-            $this->systemLogger->log(sprintf('%s: Changed session id from %s to %s', $this->getClassName($joinPoint), $oldId, $newId), LOG_INFO);
+            $this->systemLogger->log(LogLevel::INFO, sprintf('%s: Changed session id from %s to %s', $this->getClassName($joinPoint), $oldId, $newId));
         }
         return $newId;
     }
@@ -117,11 +125,11 @@ class LoggingAspect
     {
         $sessionRemovalCount = $joinPoint->getResult();
         if ($sessionRemovalCount > 0) {
-            $this->systemLogger->log(sprintf('%s: Triggered garbage collection and removed %s expired sessions.', $this->getClassName($joinPoint), $sessionRemovalCount), LOG_INFO);
+            $this->systemLogger->log(LogLevel::INFO, sprintf('%s: Triggered garbage collection and removed %s expired sessions.', $this->getClassName($joinPoint), $sessionRemovalCount));
         } elseif ($sessionRemovalCount === 0) {
-            $this->systemLogger->log(sprintf('%s: Triggered garbage collection but no sessions needed to be removed.', $this->getClassName($joinPoint)), LOG_INFO);
+            $this->systemLogger->log(LogLevel::INFO, sprintf('%s: Triggered garbage collection but no sessions needed to be removed.', $this->getClassName($joinPoint)));
         } elseif ($sessionRemovalCount === false) {
-            $this->systemLogger->log(sprintf('%s: Ommitting garbage collection because another process is already running. Consider lowering the GC propability if these messages appear a lot.', $this->getClassName($joinPoint)), LOG_WARNING);
+            $this->systemLogger->log(LogLevel::WARNING, sprintf('%s: Ommitting garbage collection because another process is already running. Consider lowering the GC propability if these messages appear a lot.', $this->getClassName($joinPoint)));
         }
     }
 

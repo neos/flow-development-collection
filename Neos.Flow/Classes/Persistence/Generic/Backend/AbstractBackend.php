@@ -29,6 +29,7 @@ use Neos\Flow\Utility\Algorithms;
 use Neos\Utility\TypeHandling;
 use Neos\Flow\Validation\ValidatorResolver;
 use Neos\Flow\Persistence\Exception as PersistenceException;
+use Psr\Log\LoggerInterface;
 
 /**
  * An abstract storage backend for the Flow persistence
@@ -71,8 +72,14 @@ abstract class AbstractBackend implements BackendInterface
 
     /**
      * @var SystemLoggerInterface
+     * @deprecated Use the PSR $this->logger
      */
     protected $systemLogger;
+
+    /**
+     * @var LoggerInterface
+     */
+    protected $logger;
 
     /**
      * @var \SplObjectStorage
@@ -163,6 +170,14 @@ abstract class AbstractBackend implements BackendInterface
     public function injectSystemLogger(SystemLoggerInterface $systemLogger)
     {
         $this->systemLogger = $systemLogger;
+    }
+
+    /**
+     * @param LoggerInterface $logger
+     */
+    public function injectLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
     }
 
     /**

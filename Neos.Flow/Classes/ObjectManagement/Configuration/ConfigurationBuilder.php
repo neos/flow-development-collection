@@ -11,17 +11,17 @@ namespace Neos\Flow\ObjectManagement\Configuration;
  * source code.
  */
 
-use Doctrine\ORM\Mapping as ORM;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Annotations\Inject;
 use Neos\Flow\Annotations\InjectConfiguration;
 use Neos\Flow\Configuration\ConfigurationManager;
-use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\ObjectManagement\Exception as ObjectException;
 use Neos\Flow\ObjectManagement\Exception\InvalidObjectConfigurationException;
 use Neos\Flow\ObjectManagement\Exception\UnknownClassException;
 use Neos\Flow\ObjectManagement\Exception\UnresolvedDependenciesException;
 use Neos\Flow\Reflection\ReflectionService;
+use Psr\Log\LoggerInterface;
+use Psr\Log\LogLevel;
 
 /**
  * Object Configuration Builder which can build object configuration objects
@@ -39,7 +39,7 @@ class ConfigurationBuilder
     protected $reflectionService;
 
     /**
-     * @var SystemLoggerInterface
+     * @var LoggerInterface
      */
     protected $systemLogger;
 
@@ -53,10 +53,10 @@ class ConfigurationBuilder
     }
 
     /**
-     * @param SystemLoggerInterface $systemLogger
+     * @param LoggerInterface $systemLogger
      * @return void
      */
-    public function injectSystemLogger(SystemLoggerInterface $systemLogger)
+    public function injectSystemLogger(LoggerInterface $systemLogger)
     {
         $this->systemLogger = $systemLogger;
     }
@@ -452,12 +452,12 @@ class ConfigurationBuilder
                         }
                         $methodParameters = $this->reflectionService->getMethodParameters($className, $methodName);
                         if (count($methodParameters) !== 1) {
-                            $this->systemLogger->log(sprintf('Could not autowire property %s because %s() expects %s instead of exactly 1 parameter.', $className . '::' . $propertyName, $methodName, (count($methodParameters) ?: 'none')), LOG_DEBUG);
+                            $this->systemLogger->log(LogLevel::DEBUG, sprintf('Could not autowire property %s because %s() expects %s instead of exactly 1 parameter.', $className . '::' . $propertyName, $methodName, (count($methodParameters) ?: 'none')));
                             continue;
                         }
                         $methodParameter = array_pop($methodParameters);
                         if ($methodParameter['class'] === null) {
-                            $this->systemLogger->log(sprintf('Could not autowire property %s because the method parameter in %s() contained no class type hint.', $className . '::' . $propertyName, $methodName), LOG_DEBUG);
+                            $this->systemLogger->log(LogLevel::DEBUG, sprintf('Could not autowire property %s because the method parameter in %s() contained no class type hint.', $className . '::' . $propertyName, $methodName));
                             continue;
                         }
                         $properties[$propertyName] = new ConfigurationProperty($propertyName, $methodParameter['class'], ConfigurationProperty::PROPERTY_TYPES_OBJECT);

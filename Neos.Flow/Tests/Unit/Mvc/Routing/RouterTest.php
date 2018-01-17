@@ -25,6 +25,7 @@ use Neos\Flow\Mvc\Routing\RouterCachingService;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Tests\UnitTestCase;
 use Psr\Http\Message\UriInterface;
+use Psr\Log\LoggerInterface;
 
 /**
  * Testcase for the MVC Web Router
@@ -69,8 +70,8 @@ class RouterTest extends UnitTestCase
     {
         $this->router = $this->getAccessibleMock(Router::class, ['dummy']);
 
-        $this->mockSystemLogger = $this->createMock(SystemLoggerInterface::class);
-        $this->inject($this->router, 'systemLogger', $this->mockSystemLogger);
+        $this->mockSystemLogger = $this->createMock(LoggerInterface::class);
+        $this->router->injectSystemLogger($this->mockSystemLogger);
 
         $this->mockRouterCachingService = $this->getMockBuilder(RouterCachingService::class)->getMock();
         $this->mockRouterCachingService->expects($this->any())->method('getCachedResolvedUriConstraints')->will($this->returnValue(false));

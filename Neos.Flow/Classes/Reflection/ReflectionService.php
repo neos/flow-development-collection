@@ -19,7 +19,6 @@ use Neos\Cache\Frontend\FrontendInterface;
 use Neos\Cache\Frontend\StringFrontend;
 use Neos\Cache\Frontend\VariableFrontend;
 use Neos\Flow\Core\ApplicationContext;
-use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\ObjectManagement\Proxy\ProxyInterface;
 use Neos\Flow\Package;
 use Neos\Flow\Package\PackageManagerInterface;
@@ -32,6 +31,8 @@ use Neos\Flow\Utility\Environment;
 use Neos\Utility\Exception\InvalidTypeException;
 use Neos\Utility\Files;
 use Neos\Utility\TypeHandling;
+use Psr\Log\LoggerInterface;
+use Psr\Log\LogLevel;
 
 /**
  * A service for acquiring reflection based information in a performant way. This
@@ -130,7 +131,7 @@ class ReflectionService
     protected $classSchemataRuntimeCache;
 
     /**
-     * @var SystemLoggerInterface
+     * @var LoggerInterface
      */
     protected $systemLogger;
 
@@ -285,10 +286,10 @@ class ReflectionService
     }
 
     /**
-     * @param SystemLoggerInterface $systemLogger
+     * @param LoggerInterface $systemLogger
      * @return void
      */
-    public function injectSystemLogger(SystemLoggerInterface $systemLogger)
+    public function injectSystemLogger(LoggerInterface $systemLogger)
     {
         $this->systemLogger = $systemLogger;
     }
@@ -1166,7 +1167,7 @@ class ReflectionService
             return;
         }
 
-        $this->systemLogger->log('Reflected class names did not match class names to reflect', LOG_DEBUG);
+        $this->systemLogger->log(LogLevel::DEBUG, 'Reflected class names did not match class names to reflect');
         $count = 0;
 
         $classNameFilterFunction = function ($className) use (&$count) {
@@ -1193,7 +1194,7 @@ class ReflectionService
         $this->buildClassSchemata($classNamesToBuildSchemaFor);
 
         if ($count > 0) {
-            $this->log(sprintf('Reflected %s emerged classes.', $count), LOG_INFO);
+            $this->log(sprintf('Reflected %s emerged classes.', $count), LogLevel::INFO);
         }
     }
 
@@ -1225,7 +1226,7 @@ class ReflectionService
      */
     protected function reflectClass($className)
     {
-        $this->log(sprintf('Reflecting class %s', $className), LOG_DEBUG);
+        $this->log(sprintf('Reflecting class %s', $className), LogLevel::DEBUG);
 
         $className = $this->cleanClassName($className);
         if (strpos($className, 'Neos\Flow\Persistence\Doctrine\Proxies') === 0 && in_array(\Doctrine\ORM\Proxy\Proxy::class, class_implements($className))) {
@@ -1421,25 +1422,25 @@ class ReflectionService
         }
 
         if (!isset($paramAnnotations[$parameter->getPosition()])) {
-            $this->log('  Missing @param for "' . $method->getName() . '::$' . $parameter->getName(), LOG_DEBUG);
+            $this->log('  Missing @param for "' . $method->getName() . '::$' . $parameter->getName(), LogLevel::DEBUG);
 
             return;
         }
 
         $parameterAnnotation = explode(' ', $paramAnnotations[$parameter->getPosition()], 3);
         if (count($parameterAnnotation) < 2) {
-            $this->log('  Wrong @param use for "' . $method->getName() . '::' . $parameter->getName() . '": "' . implode(' ', $parameterAnnotation) . '"', LOG_DEBUG);
+            $this->log('  Wrong @param use for "' . $method->getName() . '::' . $parameter->getName() . '": "' . implode(' ', $parameterAnnotation) . '"', LogLevel::DEBUG);
         }
 
         if (
             isset($this->classReflectionData[$className][self::DATA_CLASS_METHODS][$methodName][self::DATA_METHOD_PARAMETERS][$parameter->getName()][self::DATA_PARAMETER_TYPE]) &&
             $this->classReflectionData[$className][self::DATA_CLASS_METHODS][$methodName][self::DATA_METHOD_PARAMETERS][$parameter->getName()][self::DATA_PARAMETER_TYPE] !== $this->cleanClassName($parameterAnnotation[0])
         ) {
-            $this->log('  Wrong type in @param for "' . $method->getName() . '::' . $parameter->getName() . '": "' . $parameterAnnotation[0] . '"', LOG_DEBUG);
+            $this->log('  Wrong type in @param for "' . $method->getName() . '::' . $parameter->getName() . '": "' . $parameterAnnotation[0] . '"', LogLevel::DEBUG);
         }
 
         if ($parameter->getName() !== ltrim($parameterAnnotation[1], '$&')) {
-            $this->log('  Wrong name in @param for "' . $method->getName() . '::$' . $parameter->getName() . '": "' . $parameterAnnotation[1] . '"', LOG_DEBUG);
+            $this->log('  Wrong name in @param for "' . $method->getName() . '::$' . $parameter->getName() . '": "' . $parameterAnnotation[1] . '"', LogLevel::DEBUG);
         }
     }
 
@@ -1880,9 +1881,9 @@ class ReflectionService
      */
     protected function forgetClass($className)
     {
-        $this->systemLogger->log('Forget class ' . $className, LOG_DEBUG);
+        $this->systemLogger->log(LogLevel::DEBUG, 'Forget class ' . $className);
         if (isset($this->classesCurrentlyBeingForgotten[$className])) {
-            $this->systemLogger->log('Detected recursion while forgetting class ' . $className, LOG_WARNING);
+            $this->systemLogger->log(LogLevel::WARNING, 'Detected recursion while forgetting class ' . $className);
 
             return;
         }
@@ -2141,7 +2142,7 @@ class ReflectionService
         foreach (array_keys($this->packageManager->getFrozenPackages()) as $packageKey) {
             $pathAndFilename = $this->getPrecompiledReflectionStoragePath() . $packageKey . '.dat';
             if (!file_exists($pathAndFilename)) {
-                $this->log(sprintf('Rebuilding precompiled reflection data for frozen package %s.', $packageKey), LOG_INFO);
+                $this->log(sprintf('Rebuilding precompiled reflection data for frozen package %s.', $packageKey), LogLevel::DEBUG);
                 $this->freezePackageReflection($packageKey);
             }
         }
@@ -2169,7 +2170,7 @@ class ReflectionService
         $this->reflectionDataRuntimeCache->getBackend()->freeze();
         $this->classSchemataRuntimeCache->getBackend()->freeze();
 
-        $this->log(sprintf('Built and froze reflection runtime caches (%s classes).', count($this->classReflectionData)), LOG_INFO);
+        $this->log(sprintf('Built and froze reflection runtime caches (%s classes).', count($this->classReflectionData)), LogLevel::INFO);
     }
 
     /**
@@ -2177,7 +2178,7 @@ class ReflectionService
      */
     protected function updateReflectionData()
     {
-        $this->log(sprintf('Found %s classes whose reflection data was not cached previously.', count($this->updatedReflectionData)), LOG_DEBUG);
+        $this->log(sprintf('Found %s classes whose reflection data was not cached previously.', count($this->updatedReflectionData)), LogLevel::DEBUG);
 
         foreach (array_keys($this->updatedReflectionData) as $className) {
             $this->statusCache->set($this->produceCacheIdentifierFromClassName($className), '');
@@ -2224,14 +2225,14 @@ class ReflectionService
      * Writes the given message along with the additional information into the log.
      *
      * @param string $message The message to log
-     * @param integer $severity An integer value, one of the LOG_* constants
-     * @param mixed $additionalData A variable containing more information about the event to be logged
+     * @param string $severity One of the PSR LogLevel constants
+     * @param array $additionalData An array containing more information about the event to be logged
      * @return void
      */
-    protected function log($message, $severity = LOG_INFO, $additionalData = null)
+    protected function log($message, $severity = LogLevel::INFO, $additionalData = [])
     {
         if (is_object($this->systemLogger)) {
-            $this->systemLogger->log($message, $severity, $additionalData);
+            $this->systemLogger->log($severity, $message, $additionalData);
         }
     }
 

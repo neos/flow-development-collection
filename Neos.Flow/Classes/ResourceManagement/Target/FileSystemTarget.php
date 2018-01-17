@@ -15,7 +15,6 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Error\Messages\Error;
 use Neos\Flow\Http\HttpRequestHandlerInterface;
-use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\ResourceManagement\CollectionInterface;
 use Neos\Flow\ResourceManagement\Publishing\MessageCollector;
 use Neos\Flow\ResourceManagement\PersistentResource;
@@ -26,6 +25,8 @@ use Neos\Utility\Files;
 use Neos\Utility\Unicode\Functions as UnicodeFunctions;
 use Neos\Flow\Utility\Exception as UtilityException;
 use Neos\Flow\ResourceManagement\Target\Exception as TargetException;
+use Psr\Log\LoggerInterface;
+use Psr\Log\LogLevel;
 
 /**
  * A target which publishes resources to a specific directory in a file system.
@@ -104,8 +105,7 @@ class FileSystemTarget implements TargetInterface
     protected $bootstrap;
 
     /**
-     * @Flow\Inject
-     * @var SystemLoggerInterface
+     * @var LoggerInterface
      */
     protected $systemLogger;
 
@@ -125,6 +125,14 @@ class FileSystemTarget implements TargetInterface
     {
         $this->name = $name;
         $this->options = $options;
+    }
+
+    /**
+     * @param LoggerInterface $systemLogger
+     */
+    public function injectSystemLogger(LoggerInterface $systemLogger)
+    {
+        $this->systemLogger = $systemLogger;
     }
 
     /**
@@ -305,7 +313,7 @@ class FileSystemTarget implements TargetInterface
             throw new TargetException(sprintf('Could not publish "%s" into resource publishing target "%s" because the source file could not be copied to the target location.', $sourceStream, $this->name), 1375258399, (isset($exception) ? $exception : null));
         }
 
-        $this->systemLogger->log(sprintf('FileSystemTarget: Published file. (target: %s, file: %s)', $this->name, $relativeTargetPathAndFilename), LOG_DEBUG);
+        $this->systemLogger->log(LogLevel::DEBUG, sprintf('FileSystemTarget: Published file. (target: %s, file: %s)', $this->name, $relativeTargetPathAndFilename));
     }
 
     /**

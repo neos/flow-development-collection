@@ -51,14 +51,15 @@ class PsrLoggerFactory implements PsrLoggerFactoryInterface
             throw new \InvalidArgumentException(sprintf('The given log identifier "%s" was not configured for the "%s" factory.', htmlspecialchars($identifier), self::class), 1515355505545);
         }
 
-        $backends = $this->instantiateBackends($this->configuration[$identifier]);
-
         if (!class_exists(PsrLogger::class)) {
             throw new \Exception('To use the default logging you have to have the "neos/flow-log" package installed. It seems you miss it, so install it via "composer require neos/flow-log".', 1515437383589);
         }
 
+        $backends = $this->instantiateBackends($this->configuration[$identifier]);
+
         $logger = new PsrLogger($backends);
         $this->instances[$identifier] = $logger;
+        return $logger;
     }
 
     /**
@@ -99,9 +100,11 @@ class PsrLoggerFactory implements PsrLoggerFactoryInterface
      */
     protected function instantiateBackend(string $class, array $options = [])
     {
-        if (!is_a($class, BackendInterface::class)) {
-            throw new \Exception(sprinf('The log backend class "%s" does not implement the BackendInterface', htmlspecialchars($class)), 1515355501615);
+        $backend = new $class($options);
+        if (!($backend instanceof BackendInterface)) {
+            throw new \Exception(sprintf('The log backend class "%s" does not implement the BackendInterface', htmlspecialchars($class)), 1515355501615);
         }
-        return $class($options);
+
+        return $backend;
     }
 }

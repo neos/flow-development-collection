@@ -15,7 +15,6 @@ use Neos\Cache\Backend\IterableBackendInterface;
 use Neos\Cache\Exception\InvalidBackendException;
 use Neos\Cache\Frontend\VariableFrontend;
 use Neos\Flow\Core\Bootstrap;
-use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\ObjectManagement\Configuration\Configuration as ObjectConfiguration;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\ObjectManagement\Proxy\ProxyInterface;
@@ -26,6 +25,8 @@ use Neos\Flow\Http\HttpRequestHandlerInterface;
 use Neos\Flow\Http;
 use Neos\Flow\Security\Authentication\TokenInterface;
 use Neos\Cache\Frontend\FrontendInterface;
+use Psr\Log\LoggerInterface;
+use Psr\Log\LogLevel;
 
 /**
  * A modular session implementation based on the caching framework.
@@ -55,8 +56,7 @@ class Session implements SessionInterface
     protected $objectManager;
 
     /**
-     * @var SystemLoggerInterface
-     * @Flow\Inject
+     * @var LoggerInterface
      */
     protected $systemLogger;
 
@@ -236,6 +236,14 @@ class Session implements SessionInterface
         $this->garbageCollectionProbability = $settings['session']['garbageCollection']['probability'];
         $this->garbageCollectionMaximumPerRun = $settings['session']['garbageCollection']['maximumPerRun'];
         $this->inactivityTimeout = (integer)$settings['session']['inactivityTimeout'];
+    }
+
+    /**
+     * @param LoggerInterface $systemLogger
+     */
+    public function injectSystemLogger(LoggerInterface $systemLogger)
+    {
+        $this->systemLogger = $systemLogger;
     }
 
     /**
@@ -627,7 +635,7 @@ class Session implements SessionInterface
             $lastActivitySecondsAgo = $this->now - $sessionInfo['lastActivityTimestamp'];
             if ($lastActivitySecondsAgo > $this->inactivityTimeout) {
                 if ($sessionInfo['storageIdentifier'] === null) {
-                    $this->systemLogger->log('SESSION INFO INVALID: ' . $sessionIdentifier, LOG_WARNING, $sessionInfo);
+                    $this->systemLogger->log(LogLevel::WARNING, 'SESSION INFO INVALID: ' . $sessionIdentifier, $sessionInfo);
                 } else {
                     $this->storageCache->flushByTag($sessionInfo['storageIdentifier']);
                     $sessionRemovalCount++;

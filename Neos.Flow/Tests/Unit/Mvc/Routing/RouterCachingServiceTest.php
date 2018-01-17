@@ -26,6 +26,7 @@ use Neos\Flow\Mvc\Routing\RouterCachingService;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Tests\UnitTestCase;
+use Psr\Log\LoggerInterface;
 
 /**
  * Testcase for the Router Caching Service
@@ -94,8 +95,8 @@ class RouterCachingServiceTest extends UnitTestCase
         $this->mockPersistenceManager  = $this->getMockBuilder(PersistenceManagerInterface::class)->getMock();
         $this->inject($this->routerCachingService, 'persistenceManager', $this->mockPersistenceManager);
 
-        $this->mockSystemLogger  = $this->getMockBuilder(SystemLoggerInterface::class)->getMock();
-        $this->inject($this->routerCachingService, 'systemLogger', $this->mockSystemLogger);
+        $this->mockSystemLogger  = $this->getMockBuilder(LoggerInterface::class)->getMock();
+        $this->routerCachingService->injectSystemLogger($this->mockSystemLogger);
 
         $this->mockObjectManager  = $this->createMock(ObjectManagerInterface::class);
         $this->mockApplicationContext = $this->getMockBuilder(ApplicationContext::class)->disableOriginalConstructor()->getMock();
