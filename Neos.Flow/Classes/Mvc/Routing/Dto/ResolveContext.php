@@ -27,7 +27,7 @@ final class ResolveContext
      *
      * @var UriInterface
      */
-    private $requestUri;
+    private $baseUri;
 
     /**
      * Route values to build the URI, for example ['@action' => 'index', 'someArgument' => 'foo', ...]
@@ -51,14 +51,14 @@ final class ResolveContext
     private $uriPathPrefix;
 
     /**
-     * @param UriInterface $requestUri The currently requested URI, required to fill in parts of the result when resolving absolute URIs
+     * @param UriInterface $baseUri The base URI, retrieved from the current request URI or from configuration, if specified. Required to fill in parts of the result when resolving absolute URIs
      * @param array $routeValues Route values to build the URI, for example ['@action' => 'index', 'someArgument' => 'foo', ...]
      * @param bool $forceAbsoluteUri Whether or not an absolute URI is to be returned
      * @param string $uriPathPrefix A prefix to be prepended to any resolved URI
      */
-    public function __construct(UriInterface $requestUri, array $routeValues, bool $forceAbsoluteUri, string $uriPathPrefix = '')
+    public function __construct(UriInterface $baseUri, array $routeValues, bool $forceAbsoluteUri, string $uriPathPrefix = '')
     {
-        $this->requestUri = $requestUri;
+        $this->baseUri = $baseUri;
         $this->routeValues = $routeValues;
         $this->forceAbsoluteUri = $forceAbsoluteUri;
         $this->uriPathPrefix = $uriPathPrefix;
@@ -66,10 +66,19 @@ final class ResolveContext
 
     /**
      * @return UriInterface
+     * @deprecated This getter has been renamed. @see getBaseUri()
      */
     public function getRequestUri(): UriInterface
     {
-        return $this->requestUri;
+        return $this->getBaseUri();
+    }
+
+    /**
+     * @return UriInterface
+     */
+    public function getBaseUri(): UriInterface
+    {
+        return $this->baseUri;
     }
 
     /**

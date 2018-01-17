@@ -286,8 +286,8 @@ class RoutingTest extends FunctionalTestCase
      */
     public function resolveTests(array $routeValues, $expectedResolvedRouteName, $expectedResolvedUriPath = null)
     {
-        $requestUri = new Uri('http://localhost');
-        $resolvedUriPath = $this->router->resolve(new ResolveContext($requestUri, $routeValues, false));
+        $baseUri = new Uri('http://localhost');
+        $resolvedUriPath = $this->router->resolve(new ResolveContext($baseUri, $routeValues, false));
         $resolvedRoute = $this->router->getLastResolvedRoute();
         if ($expectedResolvedRouteName === null) {
             if ($resolvedRoute !== null) {
@@ -352,8 +352,8 @@ class RoutingTest extends FunctionalTestCase
             '@action' => 'index',
             '@format' => 'html'
         ];
-        $requestUri = new Uri('http://localhost');
-        $actualResult = $this->router->resolve(new ResolveContext($requestUri, $routeValues, false));
+        $baseUri = new Uri('http://localhost');
+        $actualResult = $this->router->resolve(new ResolveContext($baseUri, $routeValues, false));
 
         $this->assertSame('neos/flow/test/http/foo', (string)$actualResult);
     }
@@ -383,8 +383,8 @@ class RoutingTest extends FunctionalTestCase
             ]
         ];
         $this->router->setRoutesConfiguration($routesConfiguration);
-        $requestUri = new Uri('http://localhost');
-        $actualResult = $this->router->resolve(new ResolveContext($requestUri, $routeValues, false));
+        $baseUri = new Uri('http://localhost');
+        $actualResult = $this->router->resolve(new ResolveContext($baseUri, $routeValues, false));
         $this->assertSame('custom/uri/pattern', (string)$actualResult);
 
         // reset router configuration for following tests
