@@ -12,7 +12,6 @@ namespace Neos\Flow\Tests\Unit\Session\Aspect;
  */
 
 use Neos\Flow\Aop\JoinPoint;
-use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\Session\TransientSession;
 use Neos\Flow\Session\Aspect\LoggingAspect;
 use Neos\Flow\Tests\UnitTestCase;

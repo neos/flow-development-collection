@@ -15,7 +15,6 @@ use org\bovigo\vfs\vfsStream;
 use Neos\Cache;
 use Neos\Flow\Cache\CacheManager;
 use Neos\Flow\Configuration\ConfigurationManager;
-use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Flow\Utility\Environment;
@@ -37,7 +36,7 @@ class CacheManagerTest extends UnitTestCase
     protected $mockConfigurationManager;
 
     /**
-     * @var SystemLoggerInterface
+     * @var LoggerInterface
      */
     protected $mockSystemLogger;
 

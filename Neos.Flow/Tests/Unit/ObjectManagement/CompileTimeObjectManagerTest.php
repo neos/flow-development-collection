@@ -12,7 +12,6 @@ namespace Neos\Flow\Tests\Unit\ObjectManagement;
  */
 
 use org\bovigo\vfs\vfsStream;
-use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\ObjectManagement\CompileTimeObjectManager;
 use Neos\Flow\Package\Package;
 use Neos\Flow\Package\PackageManager;

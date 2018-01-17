@@ -11,7 +11,6 @@ namespace Neos\Flow\Tests\Unit\Monitor;
  * source code.
  */
 
-use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface;
 use org\bovigo\vfs\vfsStream;
 use Neos\Flow\Monitor\FileMonitor;

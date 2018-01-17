@@ -15,11 +15,9 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception\ConnectionException;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\UnitOfWork;
-use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\Log\ThrowableStorageInterface;
 use Neos\Flow\Persistence\Doctrine\PersistenceManager;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Flow\Error as FlowError;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -48,7 +46,7 @@ class PersistenceManagerTest extends UnitTestCase
     protected $mockConnection;
 
     /**
-     * @var SystemLoggerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $mockSystemLogger;
 

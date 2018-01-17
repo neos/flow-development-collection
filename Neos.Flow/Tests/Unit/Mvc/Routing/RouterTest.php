@@ -39,7 +39,7 @@ class RouterTest extends UnitTestCase
     protected $router;
 
     /**
-     * @var SystemLoggerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $mockSystemLogger;
 

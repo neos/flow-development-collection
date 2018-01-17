@@ -13,7 +13,6 @@ namespace Neos\Flow\Tests\Unit\Security\RequestPattern;
 
 use Neos\Flow\Http\Request;
 use Neos\Flow\Http\Uri;
-use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\RequestInterface;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
@@ -38,7 +37,7 @@ class CsrfProtectionTest extends UnitTestCase
     protected $mockActionRequest;
 
     /**
-     * @var  SystemLoggerInterface
+     * @var  LoggerInterface
      */
     protected $mockSystemLogger;
 
