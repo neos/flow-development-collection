@@ -41,7 +41,8 @@ class PasswordViewHelper extends AbstractFormFieldViewHelper
     public function initializeArguments()
     {
         parent::initializeArguments();
-        $this->registerTagAttribute('disabled', 'string', 'Specifies that the input element should be disabled when the page loads');
+        $this->registerTagAttribute('disabled', 'boolean', 'Specifies that the input element should be disabled when the page loads', false, false);
+        $this->registerTagAttribute('required', 'boolean', 'Specifies that the input element requires a entry pre submit', false, false);
         $this->registerTagAttribute('maxlength', 'int', 'The maxlength attribute of the input field (will not be validated)');
         $this->registerTagAttribute('readonly', 'string', 'The readonly attribute of the input field');
         $this->registerTagAttribute('size', 'int', 'The size of the input field');
@@ -53,11 +54,10 @@ class PasswordViewHelper extends AbstractFormFieldViewHelper
     /**
      * Renders the password input field.
      *
-     * @param boolean $required If the field is required or not
      * @return string
      * @api
      */
-    public function render($required = false)
+    public function render()
     {
         $name = $this->getName();
         $this->registerFieldNameForFormTokenGeneration($name);
@@ -65,11 +65,6 @@ class PasswordViewHelper extends AbstractFormFieldViewHelper
         $this->tag->addAttribute('type', 'password');
         $this->tag->addAttribute('name', $name);
         $this->tag->addAttribute('value', $this->getValueAttribute());
-
-        if ($required === true) {
-            $this->tag->addAttribute('required', 'required');
-        }
-
         $this->addAdditionalIdentityPropertiesIfNeeded();
         $this->setErrorClassAttribute();
 

@@ -54,14 +54,25 @@ class Base64DecodeViewHelper extends AbstractViewHelper
     protected $escapeOutput = false;
 
     /**
+     * Initialize the arguments.
+     *
+     * @return void
+     * @api
+     */
+    public function initializeArguments()
+    {
+        $this->registerArgument('value', 'string', 'string to format', false, null);
+    }
+
+    /**
      * Converts all HTML entities to their applicable characters as needed using PHPs html_entity_decode() function.
      *
-     * @param string $value string to format
      * @return string the altered string
      * @api
      */
-    public function render($value = null)
+    public function render()
     {
+        $value = $this->arguments['value'];
         if ($value === null) {
             $value = $this->renderChildren();
         }

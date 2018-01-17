@@ -74,15 +74,13 @@ class IfAuthenticatedViewHelper extends AbstractConditionViewHelper
         $objectManager = $renderingContext->getObjectManager();
         /** @var Context $securityContext */
         $securityContext = $objectManager->get(Context::class);
-        $activeTokens = $securityContext->getAuthenticationTokens();
 
-        $isAuthenticated = false;
-        foreach ($activeTokens as $token) {
-            if ($token->isAuthenticated()) {
-                $isAuthenticated = true;
-            }
+        if ($securityContext != null && !$securityContext->canBeInitialized()) {
+            return false;
         }
 
-        return $isAuthenticated;
+        return array_reduce($securityContext->getAuthenticationTokens(), function (bool $isAuthenticated, TokenInterface $token) {
+            return $isAuthenticated || $token->isAuthenticated();
+        }, false);
     }
 }

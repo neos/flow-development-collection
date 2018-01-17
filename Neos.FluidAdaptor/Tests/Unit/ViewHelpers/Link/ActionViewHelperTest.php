@@ -25,9 +25,8 @@ class ActionViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Vie
     public function setUp()
     {
         parent::setUp();
-        $this->viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\Link\ActionViewHelper::class, array('renderChildren'));
+        $this->viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\Link\ActionViewHelper::class, array('renderChildren', 'registerRenderMethodArguments'));
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
-        $this->viewHelper->initializeArguments();
     }
 
     /**
@@ -45,8 +44,8 @@ class ActionViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Vie
 
         $this->viewHelper->expects($this->any())->method('renderChildren')->will($this->returnValue('some content'));
 
-        $this->viewHelper->initialize();
-        $this->viewHelper->render('index');
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['action' => 'index']);
+        $this->viewHelper->render();
     }
 
     /**
@@ -61,8 +60,8 @@ class ActionViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Vie
         $this->uriBuilder->expects($this->once())->method('setFormat')->with('');
         $this->uriBuilder->expects($this->once())->method('uriFor')->with('theActionName', array(), null, null, null);
 
-        $this->viewHelper->initialize();
-        $this->viewHelper->render('theActionName');
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['action' => 'theActionName']);
+        $this->viewHelper->render();
     }
 
     /**
@@ -77,8 +76,8 @@ class ActionViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Vie
         $this->uriBuilder->expects($this->once())->method('setFormat')->with('someFormat');
         $this->uriBuilder->expects($this->once())->method('uriFor')->with('someAction', array('some' => 'argument'), 'someController', 'somePackage', 'someSubpackage');
 
-        $this->viewHelper->initialize();
-        $this->viewHelper->render('someAction', array('some' => 'argument'), 'someController', 'somePackage', 'someSubpackage', 'someSection', 'someFormat', array('additional' => 'RouteParameters'), true, array('arguments' => 'toBeExcluded'));
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['action' => 'someAction', 'arguments' => array('some' => 'argument'), 'controller' => 'someController', 'package' => 'somePackage', 'subpackage' => 'someSubpackage', 'section' => 'someSection', 'format' => 'someFormat', 'additionalParams' => array('additional' => 'RouteParameters'), 'addQueryString' => true, 'argumentsToBeExcludedFromQueryString' => array('arguments' => 'toBeExcluded')]);
+        $this->viewHelper->render();
     }
 
     /**
@@ -87,9 +86,9 @@ class ActionViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Vie
     public function renderThrowsViewHelperExceptionIfUriBuilderThrowsFlowException()
     {
         $this->uriBuilder->expects($this->any())->method('uriFor')->will($this->throwException(new \Neos\Flow\Exception('Mock Exception', 12345)));
-        $this->viewHelper->initialize();
         try {
-            $this->viewHelper->render('someAction');
+            $this->viewHelper = $this->prepareArguments($this->viewHelper, ['action' => 'someAction']);
+            $this->viewHelper->render();
         } catch (\Neos\FluidAdaptor\Core\ViewHelper\Exception $exception) {
         }
         $this->assertEquals(12345, $exception->getPrevious()->getCode());
@@ -101,8 +100,8 @@ class ActionViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Vie
      */
     public function renderThrowsExceptionIfUseParentRequestIsSetAndTheCurrentRequestHasNoParentRequest()
     {
-        $this->viewHelper->initialize();
-        $this->viewHelper->render('someAction', array(), null, null, null, '', '', array(), false, array(), true);
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['action' => 'someAction', 'arguments' => array(), 'controller' => null, 'package' => null, 'subpackage' => null, 'section' => '', 'format' => '', 'additionalParams' => array(), 'addQueryString' => false, 'argumentsToBeExcludedFromQueryString' => array(), 'useParentRequest' => true]);
+        $this->viewHelper->render();
     }
 
     /**
@@ -110,7 +109,7 @@ class ActionViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Vie
      */
     public function renderUsesParentRequestIfUseParentRequestIsSet()
     {
-        $viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\Link\ActionViewHelper::class, array('renderChildren'));
+        $viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\Link\ActionViewHelper::class, array('renderChildren', 'registerRenderMethodArguments'));
 
         $parentRequest = $this->getMockBuilder(\Neos\Flow\Mvc\ActionRequest::class)->disableOriginalConstructor()->getMock();
 
@@ -127,7 +126,8 @@ class ActionViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Vie
         $this->renderingContext->setControllerContext($this->controllerContext);
         $this->injectDependenciesIntoViewHelper($viewHelper);
 
-        $viewHelper->render('someAction', array(), null, null, null, '', '', array(), false, array(), true);
+        $viewHelper = $this->prepareArguments($viewHelper, ['action' => 'someAction', 'arguments' => array(), 'controller' => null, 'package' => null, 'subpackage' => null, 'section' => '', 'format' => '', 'additionalParams' => array(), 'addQueryString' => false, 'argumentsToBeExcludedFromQueryString' => array(), 'useParentRequest' => true]);
+        $viewHelper->render();
     }
 
     /**
@@ -135,7 +135,7 @@ class ActionViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Vie
      */
     public function renderCreatesAbsoluteUrisByDefault()
     {
-        $viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\Link\ActionViewHelper::class, array('renderChildren'));
+        $viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\Link\ActionViewHelper::class, array('renderChildren', 'registerRenderMethodArguments'));
 
         $parentRequest = $this->getMockBuilder(\Neos\Flow\Mvc\ActionRequest::class)->disableOriginalConstructor()->getMock();
 
@@ -149,8 +149,8 @@ class ActionViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Vie
 
         $this->renderingContext->setControllerContext($this->controllerContext);
         $this->injectDependenciesIntoViewHelper($viewHelper);
-
-        $viewHelper->render('someAction');
+        $viewHelper = $this->prepareArguments($viewHelper, ['action' => 'someAction']);
+        $viewHelper->render();
     }
 
 
@@ -160,7 +160,7 @@ class ActionViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Vie
     public function renderCreatesRelativeUrisIfAbsoluteIsFalse()
     {
         /** @var $viewHelper \Neos\FluidAdaptor\ViewHelpers\Link\ActionViewHelper */
-        $viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\Link\ActionViewHelper::class, array('renderChildren'));
+        $viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\Link\ActionViewHelper::class, array('renderChildren', 'registerRenderMethodArguments'));
 
         $parentRequest = $this->getMockBuilder(\Neos\Flow\Mvc\ActionRequest::class)->disableOriginalConstructor()->getMock();
 
@@ -175,7 +175,8 @@ class ActionViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Vie
         $this->renderingContext->setControllerContext($this->controllerContext);
         $this->injectDependenciesIntoViewHelper($viewHelper);
 
-        $viewHelper->render('someAction', array(), null, null, null, '', '', array(), false, array(), false, false);
+        $viewHelper = $this->prepareArguments($viewHelper, ['action' => 'someAction', 'arguments' => array(), 'controller' => null, 'package' => null, 'subpackage' => null, 'section' => '', 'format' => '', 'additionalParams' => array(), 'addQueryString' => false, 'argumentsToBeExcludedFromQueryString' => array(), 'useParentRequest' => false, 'absolute' => false]);
+        $viewHelper->render();
     }
 
     /**
@@ -183,7 +184,7 @@ class ActionViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Vie
      */
     public function renderUsesParentRequestIfUseMainRequestIsSet()
     {
-        $viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\Link\ActionViewHelper::class, array('renderChildren'));
+        $viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\Link\ActionViewHelper::class, array('renderChildren', 'registerRenderMethodArguments'));
 
         $mainRequest = $this->getMockBuilder(\Neos\Flow\Mvc\ActionRequest::class)->disableOriginalConstructor()->getMock();
 
@@ -200,6 +201,7 @@ class ActionViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Vie
         $this->renderingContext->setControllerContext($this->controllerContext);
         $this->injectDependenciesIntoViewHelper($viewHelper);
 
-        $viewHelper->render('someAction', array(), null, null, null, '', '', array(), false, array(), false, false, true);
+        $viewHelper = $this->prepareArguments($viewHelper, ['action' => 'someAction', 'arguments' => array(), 'controller' => null, 'package' => null, 'subpackage' => null, 'section' => '', 'format' => '', 'additionalParams' => array(), 'addQueryString' => false, 'argumentsToBeExcludedFromQueryString' => array(), 'useParentRequest' => false, 'absolute' => false, 'useMainRequest' => true]);
+        $viewHelper->render();
     }
 }
