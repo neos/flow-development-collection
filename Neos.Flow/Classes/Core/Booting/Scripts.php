@@ -51,6 +51,7 @@ use Neos\Utility\Lock\Lock;
 use Neos\Utility\Lock\LockManager;
 use Neos\Utility\OpcodeCacheHelper;
 use Neos\Flow\Exception as FlowException;
+use Psr\Log\LogLevel;
 
 /**
  * Initialization scripts for modules of the Flow package
@@ -592,13 +593,13 @@ class Scripts
         $cacheManager = $bootstrap->getEarlyInstance(CacheManager::class);
         $objectConfigurationCache = $cacheManager->getCache('Flow_Object_Configuration');
         $coreCache = $cacheManager->getCache('Flow_Core');
-        $systemLogger = $bootstrap->getEarlyInstance(SystemLoggerInterface::class);
         $configurationManager = $bootstrap->getEarlyInstance(ConfigurationManager::class);
         $settings = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.Flow');
 
         if ($objectConfigurationCache->has('doctrineProxyCodeUpToDate') === false && $coreCache->has('doctrineSetupRunning') === false) {
+            $systemLogger = $bootstrap->getEarlyInstance(PsrLoggerFactoryInterface::class)->get('systemLogger');
             $coreCache->set('doctrineSetupRunning', 'White Russian', [], 60);
-            $systemLogger->log('Compiling Doctrine proxies', LOG_DEBUG);
+            $systemLogger->log(LogLevel::DEBUG, 'Compiling Doctrine proxies');
             self::executeCommand('neos.flow:doctrine:compileproxies', $settings);
             $coreCache->remove('doctrineSetupRunning');
             $objectConfigurationCache->set('doctrineProxyCodeUpToDate', true);
