@@ -209,7 +209,7 @@ class Service
 
         $databasePlatformName = $this->getDatabasePlatformName();
         /** @var PackageInterface $package */
-        foreach ($this->packageManager->getActivePackages() as $package) {
+        foreach ($this->packageManager->getAvailablePackages() as $package) {
             $path = Files::concatenatePaths([
                 $package->getPackagePath(),
                 'Migrations',

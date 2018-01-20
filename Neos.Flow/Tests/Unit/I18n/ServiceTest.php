@@ -158,7 +158,7 @@ class ServiceTest extends UnitTestCase
         $mockPackage->expects($this->any())->method('getResourcesPath')->will($this->returnValue('vfs://Foo/Bar/'));
 
         $mockPackageManager = $this->createMock(PackageManagerInterface::class);
-        $mockPackageManager->expects($this->any())->method('getActivePackages')->will($this->returnValue([$mockPackage]));
+        $mockPackageManager->expects($this->any())->method('getAvailablePackages')->will($this->returnValue([$mockPackage]));
 
         $mockLocaleCollection = $this->createMock(I18n\LocaleCollection::class);
         $mockLocaleCollection->expects($this->exactly(6))->method('addLocale');
@@ -205,7 +205,7 @@ class ServiceTest extends UnitTestCase
         $mockPackage->expects($this->any())->method('getResourcesPath')->will($this->returnValue('vfs://Foo/Bar/'));
 
         $mockPackageManager = $this->createMock(PackageManagerInterface::class);
-        $mockPackageManager->expects($this->any())->method('getActivePackages')->will($this->returnValue([$mockPackage]));
+        $mockPackageManager->expects($this->any())->method('getAvailablePackages')->will($this->returnValue([$mockPackage]));
 
         $mockLocaleCollection = $this->createMock(I18n\LocaleCollection::class);
         $mockLocaleCollection->expects($this->exactly(2))->method('addLocale');

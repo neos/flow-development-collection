@@ -1960,7 +1960,7 @@ class ReflectionService
         }
 
         $useIgBinary = extension_loaded('igbinary');
-        foreach ($this->packageManager->getActivePackages() as $packageKey => $package) {
+        foreach ($this->packageManager->getAvailablePackages() as $packageKey => $package) {
             if (!$this->packageManager->isPackageFrozen($packageKey)) {
                 continue;
             }

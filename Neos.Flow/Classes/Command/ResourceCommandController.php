@@ -207,7 +207,7 @@ class ResourceCommandController extends CommandController
         $this->outputLine('Checking if resource data exists for all known resource objects ...');
         $this->outputLine();
 
-        $mediaPackagePresent = $this->packageManager->isPackageActive('Neos.Media');
+        $mediaPackagePresent = $this->packageManager->isPackageAvailable('Neos.Media');
 
         $resourcesCount = $this->resourceRepository->countAll();
         $this->output->progressStart($resourcesCount);

@@ -19,10 +19,6 @@ use Neos\Flow\Core\Bootstrap;
  */
 interface PackageManagerInterface
 {
-    const PACKAGE_STATE_INACTIVE = 'inactive';
-
-    const PACKAGE_STATE_ACTIVE = 'active';
-
     /**
      * Initializes the package manager
      *
@@ -33,22 +29,13 @@ interface PackageManagerInterface
 
     /**
      * Returns TRUE if a package is available (the package's files exist in the packages directory)
-     * or FALSE if it's not. If a package is available it doesn't mean necessarily that it's active!
+     * or FALSE if it's not.
      *
      * @param string $packageKey The key of the package to check
      * @return boolean TRUE if the package is available, otherwise FALSE
      * @api
      */
     public function isPackageAvailable($packageKey);
-
-    /**
-     * Returns TRUE if a package is activated or FALSE if it's not.
-     *
-     * @param string $packageKey The key of the package to check
-     * @return boolean TRUE if package is active, otherwise FALSE
-     * @api
-     */
-    public function isPackageActive($packageKey);
 
     /**
      * Returns a PackageInterface object for the specified package.
@@ -68,16 +55,6 @@ interface PackageManagerInterface
      * @api
      */
     public function getAvailablePackages();
-
-    /**
-     * Returns an array of PackageInterface objects of all active packages.
-     * A package is active, if it is available and has been activated in the package
-     * manager settings.
-     *
-     * @return array<PackageInterface>
-     * @api
-     */
-    public function getActivePackages();
 
     /**
      * Returns an array of PackageInterface objects of all packages that match
@@ -120,24 +97,6 @@ interface PackageManagerInterface
      * @api
      */
     public function createPackage($packageKey, array $manifest = [], $packagesPath = null);
-
-    /**
-     * Deactivates a package if it is in the list of active packages
-     *
-     * @param string $packageKey The package to deactivate
-     * @return void
-     * @api
-     */
-    public function deactivatePackage($packageKey);
-
-    /**
-     * Activates a package
-     *
-     * @param string $packageKey The package to activate
-     * @return void
-     * @api
-     */
-    public function activatePackage($packageKey);
 
     /**
      * Freezes a package
@@ -183,9 +142,8 @@ interface PackageManagerInterface
     /**
      * Rescans available packages, order and write a new PackageStates file.
      *
-     * @param boolean $reloadPackageStates Should the package states be loaded before scanning or use the current configuration
      * @return array The found and sorted package states.
      * @api
      */
-    public function rescanPackages($reloadPackageStates = true);
+    public function rescanPackages();
 }
