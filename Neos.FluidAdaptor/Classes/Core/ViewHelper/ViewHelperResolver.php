@@ -68,7 +68,7 @@ class ViewHelperResolver extends \TYPO3Fluid\Fluid\Core\ViewHelper\ViewHelperRes
         }
 
         /** @var Package $package */
-        foreach ($this->packageManager->getActivePackages() as $package) {
+        foreach ($this->packageManager->getAvailablePackages() as $package) {
             foreach ($package->getNamespaces() as $namespace) {
                 $viewHelperNamespace = $namespace;
                 if (strpos(strrev($namespace), '\\') !== 0) {

@@ -69,7 +69,7 @@ class PackageStorage extends FileSystemStorage
         }
         // $packageKeyPattern can be used in a future implementation to filter by package key
 
-        $packages = $this->packageManager->getActivePackages();
+        $packages = $this->packageManager->getAvailablePackages();
         foreach ($packages as $packageKey => $package) {
             /** @var PackageInterface $package */
             if ($directoryPattern === '*') {
@@ -159,7 +159,7 @@ class PackageStorage extends FileSystemStorage
     public function getPublicResourcePaths()
     {
         $paths = [];
-        $packages = $this->packageManager->getActivePackages();
+        $packages = $this->packageManager->getAvailablePackages();
         foreach ($packages as $packageKey => $package) {
             /** @var PackageInterface $package */
             $publicResourcesPath = Files::concatenatePaths([$package->getResourcesPath(), 'Public']);

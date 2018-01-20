@@ -293,7 +293,7 @@ class Service
         $blacklistPattern = $this->getScanBlacklistPattern();
 
         /** @var PackageInterface $activePackage */
-        foreach ($this->packageManager->getActivePackages() as $activePackage) {
+        foreach ($this->packageManager->getAvailablePackages() as $activePackage) {
             $packageResourcesPath = Files::getNormalizedPath($activePackage->getResourcesPath());
 
             if (!is_dir($packageResourcesPath)) {

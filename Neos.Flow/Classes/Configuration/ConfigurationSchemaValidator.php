@@ -99,7 +99,7 @@ class ConfigurationSchemaValidator
 
         // find schema files for the given type and path
         $schemaFileInfos = [];
-        $activePackages = $this->packageManager->getActivePackages();
+        $activePackages = $this->packageManager->getAvailablePackages();
         foreach ($activePackages as $package) {
             $packageKey = $package->getPackageKey();
             $packageSchemaPath = Files::concatenatePaths([$package->getResourcesPath(), 'Private/Schema']);
