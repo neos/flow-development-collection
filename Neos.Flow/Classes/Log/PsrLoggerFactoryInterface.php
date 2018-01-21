@@ -6,6 +6,7 @@ namespace Neos\Flow\Log;
  * logging in Flow should bring such a factory.
  *
  * @package Neos\Flow\Log
+ * @api
  */
 interface PsrLoggerFactoryInterface
 {
@@ -15,6 +16,7 @@ interface PsrLoggerFactoryInterface
      *
      * @param string $identifier A name for the logger. Factories MAY decide to treat a logger a singleton and return
      * @return \Psr\Log\LoggerInterface
+     * @api
      */
     public function get(string $identifier);
 
@@ -30,6 +32,7 @@ interface PsrLoggerFactoryInterface
      *
      * @param array $configuration
      * @return static
+     * @api
      */
     public static function create(array $configuration);
 }

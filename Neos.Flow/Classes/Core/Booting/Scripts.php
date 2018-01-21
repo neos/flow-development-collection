@@ -314,7 +314,7 @@ class Scripts
         $cacheManager = new CacheManager();
         $cacheManager->setCacheConfigurations($configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_CACHES));
         $cacheManager->injectConfigurationManager($configurationManager);
-        $cacheManager->injectSystemLogger($bootstrap->getEarlyInstance(PsrLoggerFactoryInterface::class)->get('systemLogger'));
+        $cacheManager->injectLogger($bootstrap->getEarlyInstance(PsrLoggerFactoryInterface::class)->get('systemLogger'));
         $cacheManager->injectEnvironment($environment);
         $cacheManager->injectCacheFactory($cacheFactory);
 
@@ -424,7 +424,7 @@ class Scripts
         $objectManager->injectReflectionService($reflectionService);
         $objectManager->injectConfigurationManager($configurationManager);
         $objectManager->injectConfigurationCache($cacheManager->getCache('Flow_Object_Configuration'));
-        $objectManager->injectSystemLogger($systemLogger);
+        $objectManager->injectLogger($systemLogger);
         $objectManager->initialize($packageManager->getAvailablePackages());
 
         foreach ($bootstrap->getEarlyInstances() as $objectName => $instance) {

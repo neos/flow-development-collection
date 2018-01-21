@@ -10,6 +10,7 @@ use Neos\Flow\Annotations as Flow;
  * So IF you use the default logging Neos.Log needs to be installed.
  *
  * @Flow\Proxy(false)
+ * @api
  */
 class PsrLoggerFactory implements PsrLoggerFactoryInterface
 {
@@ -63,8 +64,11 @@ class PsrLoggerFactory implements PsrLoggerFactoryInterface
     }
 
     /**
+     * Create a new instance of this PsrLoggerFactory
+     *
      * @param array $configuration
-     * @return void|static
+     * @return static
+     * @api
      */
     public static function create(array $configuration)
     {

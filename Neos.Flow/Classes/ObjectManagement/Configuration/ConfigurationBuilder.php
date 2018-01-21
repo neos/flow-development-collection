@@ -41,7 +41,7 @@ class ConfigurationBuilder
     /**
      * @var LoggerInterface
      */
-    protected $systemLogger;
+    protected $logger;
 
     /**
      * @param ReflectionService $reflectionService
@@ -53,12 +53,14 @@ class ConfigurationBuilder
     }
 
     /**
-     * @param LoggerInterface $systemLogger
+     * Injects the (system) logger based on PSR-3.
+     *
+     * @param LoggerInterface $logger
      * @return void
      */
-    public function injectSystemLogger(LoggerInterface $systemLogger)
+    public function injectLogger(LoggerInterface $logger)
     {
-        $this->systemLogger = $systemLogger;
+        $this->logger = $logger;
     }
 
     /**
@@ -452,12 +454,12 @@ class ConfigurationBuilder
                         }
                         $methodParameters = $this->reflectionService->getMethodParameters($className, $methodName);
                         if (count($methodParameters) !== 1) {
-                            $this->systemLogger->log(LogLevel::DEBUG, sprintf('Could not autowire property %s because %s() expects %s instead of exactly 1 parameter.', $className . '::' . $propertyName, $methodName, (count($methodParameters) ?: 'none')));
+                            $this->logger->debug(sprintf('Could not autowire property %s because %s() expects %s instead of exactly 1 parameter.', $className . '::' . $propertyName, $methodName, (count($methodParameters) ?: 'none')));
                             continue;
                         }
                         $methodParameter = array_pop($methodParameters);
                         if ($methodParameter['class'] === null) {
-                            $this->systemLogger->log(LogLevel::DEBUG, sprintf('Could not autowire property %s because the method parameter in %s() contained no class type hint.', $className . '::' . $propertyName, $methodName));
+                            $this->logger->debug(sprintf('Could not autowire property %s because the method parameter in %s() contained no class type hint.', $className . '::' . $propertyName, $methodName));
                             continue;
                         }
                         $properties[$propertyName] = new ConfigurationProperty($propertyName, $methodParameter['class'], ConfigurationProperty::PROPERTY_TYPES_OBJECT);

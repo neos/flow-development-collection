@@ -28,7 +28,6 @@ use Neos\Flow\Reflection\ReflectionService;
 use Neos\Utility\TypeHandling;
 use Neos\Flow\Validation\ValidatorResolver;
 use Psr\Log\LoggerInterface;
-use Psr\Log\LogLevel;
 
 /**
  * Flow's Doctrine PersistenceManager
@@ -41,7 +40,7 @@ class PersistenceManager extends AbstractPersistenceManager
     /**
      * @var LoggerInterface
      */
-    protected $systemLogger;
+    protected $logger;
 
     /**
      * @Flow\Inject
@@ -68,11 +67,14 @@ class PersistenceManager extends AbstractPersistenceManager
     protected $reflectionService;
 
     /**
-     * @param LoggerInterface $systemLogger
+     * Injects the (system) logger based on PSR-3.
+     *
+     * @param LoggerInterface $logger
+     * @return void
      */
-    public function injectSystemLogger(LoggerInterface $systemLogger)
+    public function injectLogger(LoggerInterface $logger)
     {
-        $this->systemLogger = $systemLogger;
+        $this->logger = $logger;
     }
 
     /**
@@ -174,7 +176,7 @@ class PersistenceManager extends AbstractPersistenceManager
         }
 
         if (!$this->entityManager->isOpen()) {
-            $this->systemLogger->log(LogLevel::ERROR, 'persistAll() skipped flushing data, the Doctrine EntityManager is closed. Check the logs for error message.');
+            $this->logger->error('persistAll() skipped flushing data, the Doctrine EntityManager is closed. Check the logs for error message.');
             return;
         }
 
@@ -182,13 +184,13 @@ class PersistenceManager extends AbstractPersistenceManager
         $connection = $this->entityManager->getConnection();
         try {
             if ($connection->ping() === false) {
-                $this->systemLogger->log(LogLevel::INFO, 'Reconnecting the Doctrine EntityManager to the persistence backend.');
+                $this->logger->info('Reconnecting the Doctrine EntityManager to the persistence backend.');
                 $connection->close();
                 $connection->connect();
             }
         } catch (ConnectionException $exception) {
             $message = $this->throwableStorage->logThrowable($exception);
-            $this->systemLogger->log(LogLevel::ERROR, $message);
+            $this->logger->error($message);
         }
 
         $this->entityManager->flush();
@@ -375,10 +377,10 @@ class PersistenceManager extends AbstractPersistenceManager
             $proxyFactory = $this->entityManager->getProxyFactory();
             $proxyFactory->generateProxyClasses($this->entityManager->getMetadataFactory()->getAllMetadata());
 
-            $this->systemLogger->log(LogLevel::INFO, 'Doctrine 2 setup finished');
+            $this->logger->info('Doctrine 2 setup finished');
             return true;
         } else {
-            $this->systemLogger->log(LogLevel::NOTICE, 'Doctrine 2 setup skipped, driver and path backend options not set!');
+            $this->logger->notice('Doctrine 2 setup skipped, driver and path backend options not set!');
             return false;
         }
     }
@@ -397,9 +399,9 @@ class PersistenceManager extends AbstractPersistenceManager
 
             $schemaTool = new SchemaTool($this->entityManager);
             $schemaTool->dropDatabase();
-            $this->systemLogger->log(LogLevel::NOTICE, 'Doctrine 2 schema destroyed.');
+            $this->logger->notice('Doctrine 2 schema destroyed.');
         } else {
-            $this->systemLogger->log(LogLevel::NOTICE, 'Doctrine 2 destroy skipped, driver and path backend options not set!');
+            $this->logger->notice('Doctrine 2 destroy skipped, driver and path backend options not set!');
         }
     }
 

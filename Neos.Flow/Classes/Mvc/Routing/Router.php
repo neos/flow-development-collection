@@ -19,7 +19,6 @@ use Neos\Flow\Mvc\Routing\Dto\ResolveContext;
 use Neos\Flow\Mvc\Routing\Dto\RouteContext;
 use Psr\Http\Message\UriInterface;
 use Psr\Log\LoggerInterface;
-use Psr\Log\LogLevel;
 
 /**
  * The default web router
@@ -32,7 +31,7 @@ class Router implements RouterInterface
     /**
      * @var LoggerInterface
      */
-    protected $systemLogger;
+    protected $logger;
 
     /**
      * @Flow\Inject
@@ -78,11 +77,14 @@ class Router implements RouterInterface
     protected $lastResolvedRoute;
 
     /**
-     * @param LoggerInterface $systemLogger
+     * Injects the (system) logger based on PSR-3.
+     *
+     * @param LoggerInterface $logger
+     * @return void
      */
-    public function injectSystemLogger(LoggerInterface $systemLogger)
+    public function injectLogger(LoggerInterface $logger)
     {
-        $this->systemLogger = $systemLogger;
+        $this->logger = $logger;
     }
 
     /**
@@ -122,11 +124,11 @@ class Router implements RouterInterface
                 $this->lastMatchedRoute = $route;
                 $matchResults = $route->getMatchResults();
                 $this->routerCachingService->storeMatchResults($routeContext, $matchResults, $route->getMatchedTags());
-                $this->systemLogger->log(LogLevel::DEBUG, sprintf('Router route(): Route "%s" matched the request "%s (%s)".', $route->getName(), $httpRequest->getUri(), $httpRequest->getMethod()));
+                $this->logger->debug(sprintf('Router route(): Route "%s" matched the request "%s (%s)".', $route->getName(), $httpRequest->getUri(), $httpRequest->getMethod()));
                 return $matchResults;
             }
         }
-        $this->systemLogger->log(LogLevel::NOTICE, sprintf('Router route(): No route matched the route path "%s".', $httpRequest->getRelativePath()));
+        $this->logger->notice(sprintf('Router route(): No route matched the route path "%s".', $httpRequest->getRelativePath()));
         throw new NoMatchingRouteException('Could not match a route for the HTTP request.', 1510846308);
     }
 
@@ -194,7 +196,7 @@ class Router implements RouterInterface
                 return $resolvedUri;
             }
         }
-        $this->systemLogger->log(LogLevel::WARNING, 'Router resolve(): Could not resolve a route for building an URI for the given resolve context.', ['routeValues' => $resolveContext->getRouteValues()]);
+        $this->logger->warning('Router resolve(): Could not resolve a route for building an URI for the given resolve context.', ['routeValues' => $resolveContext->getRouteValues()]);
         throw new NoMatchingRouteException('Could not resolve a route and its corresponding URI for the given parameters. This may be due to referring to a not existing package / controller / action while building a link or URI. Refer to log and check the backtrace for more details.', 1301610453);
     }
 

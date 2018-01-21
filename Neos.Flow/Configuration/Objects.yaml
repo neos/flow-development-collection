@@ -29,7 +29,7 @@ Neos\Flow\Cache\CacheFactory:
 
 Neos\Flow\Cache\CacheManager:
   properties:
-    systemLogger:
+    logger:
       object:
         factoryObjectName: Neos\Flow\Log\PsrLoggerFactoryInterface
         factoryMethodName: get
@@ -262,7 +262,7 @@ Neos\Flow\Http\ContentStream:
 
 Neos\Flow\Mvc\Routing\Router:
   properties:
-    systemLogger:
+    logger:
       object:
         factoryObjectName: Neos\Flow\Log\PsrLoggerFactoryInterface
         factoryMethodName: get
@@ -363,7 +363,7 @@ Neos\Flow\Command\DoctrineCommandController:
 
 Neos\Flow\Persistence\Doctrine\PersistenceManager:
   properties:
-    systemLogger:
+    logger:
       object:
         factoryObjectName: Neos\Flow\Log\PsrLoggerFactoryInterface
         factoryMethodName: get

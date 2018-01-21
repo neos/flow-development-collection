@@ -51,7 +51,7 @@ class CompileTimeObjectManager extends ObjectManager
     /**
      * @var LoggerInterface
      */
-    protected $systemLogger;
+    protected $logger;
 
     /**
      * @var array
@@ -105,12 +105,14 @@ class CompileTimeObjectManager extends ObjectManager
     }
 
     /**
-     * @param LoggerInterface $systemLogger
+     * Injects the (system) logger based on PSR-3.
+     *
+     * @param LoggerInterface $logger
      * @return void
      */
-    public function injectSystemLogger(LoggerInterface $systemLogger)
+    public function injectLogger(LoggerInterface $logger)
     {
-        $this->systemLogger = $systemLogger;
+        $this->logger = $logger;
     }
 
     /**
@@ -128,7 +130,7 @@ class CompileTimeObjectManager extends ObjectManager
 
         $configurationBuilder = new ConfigurationBuilder();
         $configurationBuilder->injectReflectionService($this->reflectionService);
-        $configurationBuilder->injectSystemLogger($this->systemLogger);
+        $configurationBuilder->injectLogger($this->logger);
 
         $this->objectConfigurations = $configurationBuilder->buildObjectConfigurations($this->registeredClassNames, $rawCustomObjectConfigurations);
 
@@ -247,7 +249,7 @@ class CompileTimeObjectManager extends ObjectManager
     protected function filterClassNamesFromConfiguration(array $classNames, $includeClassesConfiguration)
     {
         if (isset($this->allSettings['Neos']['Flow']['object']['excludeClasses'])) {
-            $this->systemLogger->log(LogLevel::INFO, 'Using "Neos.Flow.object.excludeClasses" is deprecated. Non flow packages are no longer enabled for object management by default, you can use "Neos.Flow.object.includeClasses" to add them. You can also use it to remove classes of flow packages from object management as any classes that do not match the given expression(s) are excluded if it is configured for a package.');
+            $this->logger->info('Using "Neos.Flow.object.excludeClasses" is deprecated. Non flow packages are no longer enabled for object management by default, you can use "Neos.Flow.object.includeClasses" to add them. You can also use it to remove classes of flow packages from object management as any classes that do not match the given expression(s) are excluded if it is configured for a package.');
             if (!is_array($this->allSettings['Neos']['Flow']['object']['excludeClasses'])) {
                 throw new InvalidConfigurationTypeException('The setting "Neos.Flow.object.excludeClasses" is invalid, it must be an array if set. Check the syntax in the YAML file.', 1422357311);
             }
@@ -302,7 +304,7 @@ class CompileTimeObjectManager extends ObjectManager
         }
         foreach ($filterConfiguration as $packageKey => $filterExpressions) {
             if (!array_key_exists($packageKey, $classNames)) {
-                $this->systemLogger->log(LogLevel::DEBUG, 'The package "' . $packageKey . '" specified in the setting "Neos.Flow.object.' . $includeOrExclude . 'Classes" was either excluded or is not loaded.');
+                $this->logger->debug('The package "' . $packageKey . '" specified in the setting "Neos.Flow.object.' . $includeOrExclude . 'Classes" was either excluded or is not loaded.');
                 continue;
             }
             if (!is_array($filterExpressions)) {

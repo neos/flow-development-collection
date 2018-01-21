@@ -17,7 +17,9 @@ use Psr\Log\LoggerTrait;
 use Psr\Log\LogLevel;
 
 /**
+ * PSR-3 supporting logger.
  *
+ * @api
  */
 class PsrLogger implements LoggerInterface
 {
@@ -59,6 +61,7 @@ class PsrLogger implements LoggerInterface
      * @param mixed $level
      * @param string $message
      * @param array $context
+     * @api
      */
     public function log($level, $message, array $context = [])
     {

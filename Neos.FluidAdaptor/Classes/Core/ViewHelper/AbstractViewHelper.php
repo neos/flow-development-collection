@@ -45,6 +45,7 @@ abstract class AbstractViewHelper extends FluidAbstractViewHelper
     /**
      * @var SystemLoggerInterface
      * @deprecated
+     * @see logger
      */
     protected $systemLogger;
 
@@ -84,6 +85,12 @@ abstract class AbstractViewHelper extends FluidAbstractViewHelper
         $this->systemLogger = $systemLogger;
     }
 
+    /**
+     * Injects the (system) logger based on PSR-3.
+     *
+     * @param LoggerInterface $logger
+     * @return void
+     */
     public function injectLogger(LoggerInterface $logger)
     {
         $this->logger = $logger;
@@ -119,8 +126,7 @@ abstract class AbstractViewHelper extends FluidAbstractViewHelper
                 throw $exception;
             }
 
-            $this->logger->log(LogLevel::ERROR,
-                'A Fluid ViewHelper Exception was captured: ' . $exception->getMessage() . ' (' . $exception->getCode() . ')',
+            $this->logger->error('A Fluid ViewHelper Exception was captured: ' . $exception->getMessage() . ' (' . $exception->getCode() . ')',
                 ['exception' => $exception]
             );
 
