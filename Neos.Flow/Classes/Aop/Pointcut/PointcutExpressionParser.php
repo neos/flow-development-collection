@@ -186,7 +186,7 @@ class PointcutExpressionParser
 
         $filter = new PointcutClassAnnotatedWithFilter($annotationPattern, $annotationPropertyConstraints);
         $filter->injectReflectionService($this->reflectionService);
-        $filter->injectSystemLogger($this->objectManager->get(PsrLoggerFactoryInterface::class)->get('systemLogger'));
+        $filter->injectLogger($this->objectManager->get(PsrLoggerFactoryInterface::class)->get('systemLogger'));
         $pointcutFilterComposite->addFilter($operator, $filter);
     }
 
@@ -222,7 +222,7 @@ class PointcutExpressionParser
 
         $filter = new PointcutMethodAnnotatedWithFilter($annotationPattern, $annotationPropertyConstraints);
         $filter->injectReflectionService($this->reflectionService);
-        $filter->injectSystemLogger($this->objectManager->get(PsrLoggerFactoryInterface::class)->get('systemLogger'));
+        $filter->injectLogger($this->objectManager->get(PsrLoggerFactoryInterface::class)->get('systemLogger'));
         $pointcutFilterComposite->addFilter($operator, $filter);
     }
 
@@ -280,7 +280,7 @@ class PointcutExpressionParser
         $methodNameFilter = new PointcutMethodNameFilter($methodNamePattern, $methodVisibility, $methodArgumentConstraints);
         /** @var LoggerInterface $systemLogger */
         $systemLogger = $this->objectManager->get(PsrLoggerFactoryInterface::class)->get('systemLogger');
-        $methodNameFilter->injectSystemLogger($systemLogger);
+        $methodNameFilter->injectLogger($systemLogger);
         $methodNameFilter->injectReflectionService($this->reflectionService);
 
         if ($operator !== '&&') {

@@ -195,8 +195,8 @@ class CoreCommandController extends CommandController
         $this->proxyClassCompiler->injectClassesCache($classesCache);
 
         $this->aopProxyClassBuilder->injectObjectConfigurationCache($objectConfigurationCache);
-        $this->aopProxyClassBuilder->injectSystemLogger($systemLogger);
-        $this->dependencyInjectionProxyClassBuilder->injectSystemLogger($systemLogger);
+        $this->aopProxyClassBuilder->injectLogger($systemLogger);
+        $this->dependencyInjectionProxyClassBuilder->injectLogger($systemLogger);
         $this->aopProxyClassBuilder->build();
         $this->dependencyInjectionProxyClassBuilder->build();
 

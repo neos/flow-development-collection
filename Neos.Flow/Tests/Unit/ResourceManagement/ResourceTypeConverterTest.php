@@ -160,8 +160,8 @@ class ResourceTypeConverterTest extends UnitTestCase
         ];
 
         $mockSystemLogger = $this->getMockBuilder(LoggerInterface::class)->getMock();
-        $mockSystemLogger->expects($this->once())->method('log');
-        $this->resourceTypeConverter->injectSystemLogger($mockSystemLogger);
+        $mockSystemLogger->expects($this->once())->method('error');
+        $this->resourceTypeConverter->injectLogger($mockSystemLogger);
 
         $this->resourceTypeConverter->convertFrom($source, PersistentResource::class);
     }
@@ -187,7 +187,7 @@ class ResourceTypeConverterTest extends UnitTestCase
      */
     public function convertFromReturnsAnErrorIfTheUploadedFileCantBeImported()
     {
-        $this->resourceTypeConverter->injectSystemLogger($this->createMock(LoggerInterface::class));
+        $this->resourceTypeConverter->injectLogger($this->createMock(LoggerInterface::class));
 
         $source = [
             'tmp_name' => 'SomeFilename',

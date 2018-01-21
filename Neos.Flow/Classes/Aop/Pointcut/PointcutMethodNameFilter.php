@@ -17,7 +17,6 @@ use Neos\Flow\Aop\Exception;
 use Neos\Flow\Aop\Exception\InvalidPointcutExpressionException;
 use Neos\Flow\Reflection\ReflectionService;
 use Psr\Log\LoggerInterface;
-use Psr\Log\LogLevel;
 
 /**
  * A little filter which filters for method names
@@ -46,7 +45,7 @@ class PointcutMethodNameFilter implements PointcutFilterInterface
     /**
      * @var LoggerInterface
      */
-    protected $systemLogger;
+    protected $logger;
 
     /**
      * @var array Array with constraints for method arguments
@@ -83,12 +82,14 @@ class PointcutMethodNameFilter implements PointcutFilterInterface
     }
 
     /**
-     * @param LoggerInterface $systemLogger
+     * Injects the (system) logger based on PSR-3.
+     *
+     * @param LoggerInterface $logger
      * @return void
      */
-    public function injectSystemLogger(LoggerInterface $systemLogger)
+    public function injectLogger(LoggerInterface $logger)
     {
-        $this->systemLogger = $systemLogger;
+        $this->logger = $logger;
     }
 
     /**
@@ -137,7 +138,7 @@ class PointcutMethodNameFilter implements PointcutFilterInterface
             $objectAccess = explode('.', $argumentName, 2);
             $argumentName = $objectAccess[0];
             if (!array_key_exists($argumentName, $methodArguments)) {
-                $this->systemLogger->log(LogLevel::NOTICE, 'The argument "' . $argumentName . '" declared in pointcut does not exist in method ' . $methodDeclaringClassName . '->' . $methodName);
+                $this->logger->notice('The argument "' . $argumentName . '" declared in pointcut does not exist in method ' . $methodDeclaringClassName . '->' . $methodName);
                 return false;
             }
         }

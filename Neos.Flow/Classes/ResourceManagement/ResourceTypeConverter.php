@@ -21,7 +21,6 @@ use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;
 use Neos\Utility\Files;
 use Psr\Log\LoggerInterface;
-use Psr\Log\LogLevel;
 
 /**
  * A type converter for converting strings, array and uploaded files to PersistentResource objects.
@@ -115,7 +114,7 @@ class ResourceTypeConverter extends AbstractTypeConverter
     /**
      * @var LoggerInterface
      */
-    protected $systemLogger;
+    protected $logger;
 
     /**
      * @var array
@@ -123,11 +122,14 @@ class ResourceTypeConverter extends AbstractTypeConverter
     protected $convertedResources = [];
 
     /**
-     * @param LoggerInterface $systemLogger
+     * Injects the (system) logger based on PSR-3.
+     *
+     * @param LoggerInterface $logger
+     * @return void
      */
-    public function injectSystemLogger(LoggerInterface $systemLogger)
+    public function injectLogger(LoggerInterface $logger)
     {
-        $this->systemLogger = $systemLogger;
+        $this->logger = $logger;
     }
 
     /**
@@ -191,7 +193,7 @@ class ResourceTypeConverter extends AbstractTypeConverter
                 case \UPLOAD_ERR_PARTIAL:
                     return new FlowError\Error(Files::getUploadErrorMessage($source['error']), 1264440823);
                 default:
-                    $this->systemLogger->log(LogLevel::ERROR, sprintf('A server error occurred while converting an uploaded resource: "%s"', Files::getUploadErrorMessage($source['error'])));
+                    $this->logger->error(sprintf('A server error occurred while converting an uploaded resource: "%s"', Files::getUploadErrorMessage($source['error'])));
                     return new FlowError\Error('An error occurred while uploading. Please try again or contact the administrator if the problem remains', 1340193849);
             }
         }
@@ -205,7 +207,7 @@ class ResourceTypeConverter extends AbstractTypeConverter
             $this->convertedResources[$source['tmp_name']] = $resource;
             return $resource;
         } catch (\Exception $exception) {
-            $this->systemLogger->log(LogLevel::WARNING, 'Could not import an uploaded file', ['exception' => $exception]);
+            $this->logger->warning('Could not import an uploaded file', ['exception' => $exception]);
             return new FlowError\Error('During import of an uploaded file an error occurred. See log for more details.', 1264517906);
         }
     }
@@ -286,7 +288,7 @@ class ResourceTypeConverter extends AbstractTypeConverter
             case \UPLOAD_ERR_PARTIAL:
                 return new FlowError\Error(Files::getUploadErrorMessage($source->getError()), 1264440823);
             default:
-                $this->systemLogger->log(LogLevel::ERROR, sprintf('A server error occurred while converting an uploaded resource: "%s"', Files::getUploadErrorMessage($source['error'])));
+                $this->logger->error(sprintf('A server error occurred while converting an uploaded resource: "%s"', Files::getUploadErrorMessage($source['error'])));
 
                 return new FlowError\Error('An error occurred while uploading. Please try again or contact the administrator if the problem remains', 1340193849);
         }
@@ -301,7 +303,7 @@ class ResourceTypeConverter extends AbstractTypeConverter
             $this->convertedResources[spl_object_hash($source)] = $resource;
             return $resource;
         } catch (\Exception $exception) {
-            $this->systemLogger->log(LogLevel::WARNING, 'Could not import an uploaded file', ['exception' => $exception]);
+            $this->logger->warning('Could not import an uploaded file', ['exception' => $exception]);
 
             return new FlowError\Error('During import of an uploaded file an error occurred. See log for more details.', 1264517906);
         }

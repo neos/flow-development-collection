@@ -26,7 +26,6 @@ use Neos\Flow\Http;
 use Neos\Flow\Security\Authentication\TokenInterface;
 use Neos\Cache\Frontend\FrontendInterface;
 use Psr\Log\LoggerInterface;
-use Psr\Log\LogLevel;
 
 /**
  * A modular session implementation based on the caching framework.
@@ -58,7 +57,7 @@ class Session implements SessionInterface
     /**
      * @var LoggerInterface
      */
-    protected $systemLogger;
+    protected $logger;
 
     /**
      * Meta data cache for this session
@@ -239,11 +238,14 @@ class Session implements SessionInterface
     }
 
     /**
-     * @param LoggerInterface $systemLogger
+     * Injects the (system) logger based on PSR-3.
+     *
+     * @param LoggerInterface $logger
+     * @return void
      */
-    public function injectSystemLogger(LoggerInterface $systemLogger)
+    public function injectLogger(LoggerInterface $logger)
     {
-        $this->systemLogger = $systemLogger;
+        $this->logger = $logger;
     }
 
     /**
@@ -635,7 +637,7 @@ class Session implements SessionInterface
             $lastActivitySecondsAgo = $this->now - $sessionInfo['lastActivityTimestamp'];
             if ($lastActivitySecondsAgo > $this->inactivityTimeout) {
                 if ($sessionInfo['storageIdentifier'] === null) {
-                    $this->systemLogger->log(LogLevel::WARNING, 'SESSION INFO INVALID: ' . $sessionIdentifier, $sessionInfo);
+                    $this->logger->warning('SESSION INFO INVALID: ' . $sessionIdentifier, $sessionInfo);
                 } else {
                     $this->storageCache->flushByTag($sessionInfo['storageIdentifier']);
                     $sessionRemovalCount++;

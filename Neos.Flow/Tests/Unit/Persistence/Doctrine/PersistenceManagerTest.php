@@ -72,7 +72,7 @@ class PersistenceManagerTest extends UnitTestCase
         $this->mockEntityManager->expects($this->any())->method('getConnection')->willReturn($this->mockConnection);
 
         $this->mockSystemLogger = $this->createMock(LoggerInterface::class);
-        $this->persistenceManager->injectSystemLogger($this->mockSystemLogger);
+        $this->persistenceManager->injectLogger($this->mockSystemLogger);
 
         $this->inject($this->persistenceManager, 'throwableStorage', $this->getMockBuilder(ThrowableStorageInterface::class)->getMock());
     }

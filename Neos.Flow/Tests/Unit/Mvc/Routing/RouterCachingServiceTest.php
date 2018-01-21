@@ -95,7 +95,7 @@ class RouterCachingServiceTest extends UnitTestCase
         $this->inject($this->routerCachingService, 'persistenceManager', $this->mockPersistenceManager);
 
         $this->mockSystemLogger  = $this->getMockBuilder(LoggerInterface::class)->getMock();
-        $this->routerCachingService->injectSystemLogger($this->mockSystemLogger);
+        $this->routerCachingService->injectLogger($this->mockSystemLogger);
 
         $this->mockObjectManager  = $this->createMock(ObjectManagerInterface::class);
         $this->mockApplicationContext = $this->getMockBuilder(ApplicationContext::class)->disableOriginalConstructor()->getMock();

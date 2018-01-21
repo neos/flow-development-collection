@@ -20,7 +20,6 @@ use Neos\Flow\Monitor\ChangeDetectionStrategy\StrategyWithMarkDeletedInterface;
 use Neos\Flow\SignalSlot\Dispatcher;
 use Neos\Utility\Files;
 use Psr\Log\LoggerInterface;
-use Psr\Log\LogLevel;
 
 /**
  * A monitor which detects changes in directories or files
@@ -47,7 +46,7 @@ class FileMonitor
     /**
      * @var LoggerInterface
      */
-    protected $systemLogger;
+    protected $logger;
 
     /**
      * @var StringFrontend
@@ -117,7 +116,7 @@ class FileMonitor
         $fileMonitor->injectCache($fileMonitorCache);
         $fileMonitor->injectChangeDetectionStrategy($fileChangeDetector);
         $fileMonitor->injectSignalDispatcher($bootstrap->getEarlyInstance(Dispatcher::class));
-        $fileMonitor->injectSystemLogger($bootstrap->getEarlyInstance(PsrLoggerFactoryInterface::class)->get('systemLogger'));
+        $fileMonitor->injectLogger($bootstrap->getEarlyInstance(PsrLoggerFactoryInterface::class)->get('systemLogger'));
 
         return $fileMonitor;
     }
@@ -147,14 +146,14 @@ class FileMonitor
     }
 
     /**
-     * Injects the system logger
+     * Injects the (system) logger based on PSR-3.
      *
-     * @param LoggerInterface $systemLogger
+     * @param LoggerInterface $logger
      * @return void
      */
-    public function injectSystemLogger(LoggerInterface $systemLogger)
+    public function injectLogger(LoggerInterface $logger)
     {
-        $this->systemLogger = $systemLogger;
+        $this->logger = $logger;
     }
 
     /**
@@ -276,7 +275,7 @@ class FileMonitor
             $this->emitDirectoriesHaveChanged($this->identifier, $this->changedPaths);
         }
         if ($changedFileCount > 0 || $changedPathCount) {
-            $this->systemLogger->log(LogLevel::INFO, sprintf('File Monitor "%s" detected %s changed files and %s changed directories.', $this->identifier, $changedFileCount, $changedPathCount));
+            $this->logger->info(sprintf('File Monitor "%s" detected %s changed files and %s changed directories.', $this->identifier, $changedFileCount, $changedPathCount));
         }
     }
 

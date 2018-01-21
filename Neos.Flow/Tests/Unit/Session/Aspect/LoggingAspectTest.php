@@ -16,7 +16,6 @@ use Neos\Flow\Session\TransientSession;
 use Neos\Flow\Session\Aspect\LoggingAspect;
 use Neos\Flow\Tests\UnitTestCase;
 use Psr\Log\LoggerInterface;
-use Psr\Log\LogLevel;
 
 /**
  * Testcase for the Logging Aspect implementation
@@ -37,11 +36,11 @@ class LoggingAspectTest extends UnitTestCase
         $mockSystemLogger = $this->createMock(LoggerInterface::class);
         $mockSystemLogger
             ->expects($this->once())
-            ->method('log')
-            ->with($this->equalTo(LogLevel::DEBUG), $this->equalTo('TransientSession: Destroyed session with id ' . $testSessionId . ': session timed out'));
+            ->method('debug')
+            ->with($this->equalTo('TransientSession: Destroyed session with id ' . $testSessionId . ': session timed out'));
 
         $loggingAspect = new LoggingAspect();
-        $this->inject($loggingAspect, 'systemLogger', $mockSystemLogger);
+        $this->inject($loggingAspect, 'logger', $mockSystemLogger);
         $loggingAspect->logDestroy($mockJoinPoint);
     }
 
@@ -60,11 +59,11 @@ class LoggingAspectTest extends UnitTestCase
         $mockSystemLogger = $this->createMock(LoggerInterface::class);
         $mockSystemLogger
             ->expects($this->once())
-            ->method('log')
-            ->with($this->equalTo(LogLevel::DEBUG), $this->equalTo('TransientSession: Destroyed session with id ' . $testSessionId . ': no reason given'));
+            ->method('debug')
+            ->with($this->equalTo('TransientSession: Destroyed session with id ' . $testSessionId . ': no reason given'));
 
         $loggingAspect = new LoggingAspect();
-        $this->inject($loggingAspect, 'systemLogger', $mockSystemLogger);
+        $this->inject($loggingAspect, 'logger', $mockSystemLogger);
         $loggingAspect->logDestroy($mockJoinPoint);
     }
 }

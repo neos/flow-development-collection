@@ -35,7 +35,7 @@ class CompileTimeObjectManagerTest extends UnitTestCase
         vfsStream::setup('Packages');
         $this->mockPackageManager = $this->getMockBuilder(PackageManager::class)->disableOriginalConstructor()->getMock();
         $this->compileTimeObjectManager = $this->getAccessibleMock(CompileTimeObjectManager::class, array('dummy'), array(), '', false);
-        $this->compileTimeObjectManager->injectSystemLogger($this->createMock(LoggerInterface::class));
+        $this->compileTimeObjectManager->injectLogger($this->createMock(LoggerInterface::class));
         $configurations = array(
             'Neos' => array(
                 'Flow' => array(

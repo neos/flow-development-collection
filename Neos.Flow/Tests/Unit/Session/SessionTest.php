@@ -1212,7 +1212,7 @@ class SessionTest extends UnitTestCase
             $this->inject($session, 'metaDataCache', $metaDataCache);
             $this->inject($session, 'storageCache', $storageCache);
             $session->injectSettings($settings);
-            $session->injectSystemLogger($this->createMock(LoggerInterface::class));
+            $session->injectLogger($this->createMock(LoggerInterface::class));
             $session->initializeObject();
 
             $session->start();

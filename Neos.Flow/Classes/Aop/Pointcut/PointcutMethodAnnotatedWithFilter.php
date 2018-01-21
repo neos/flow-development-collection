@@ -15,7 +15,6 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Aop\Builder\ClassNameIndex;
 use Neos\Flow\Reflection\ReflectionService;
 use Psr\Log\LoggerInterface;
-use Psr\Log\LogLevel;
 
 /**
  * A method filter which fires on methods annotated with a certain annotation
@@ -32,7 +31,7 @@ class PointcutMethodAnnotatedWithFilter implements PointcutFilterInterface
     /**
      * @var LoggerInterface
      */
-    protected $systemLogger;
+    protected $logger;
 
 
     /**
@@ -69,12 +68,14 @@ class PointcutMethodAnnotatedWithFilter implements PointcutFilterInterface
     }
 
     /**
-     * @param LoggerInterface $systemLogger
+     * Injects the (system) logger based on PSR-3.
+     *
+     * @param LoggerInterface $logger
      * @return void
      */
-    public function injectSystemLogger(LoggerInterface $systemLogger)
+    public function injectLogger(LoggerInterface $logger)
     {
-        $this->systemLogger = $systemLogger;
+        $this->logger = $logger;
     }
 
     /**
@@ -101,7 +102,7 @@ class PointcutMethodAnnotatedWithFilter implements PointcutFilterInterface
             $annotationProperties = $this->reflectionService->getClassPropertyNames($this->annotation);
             foreach ($this->annotationValueConstraints as $propertyName => $expectedValue) {
                 if (!array_key_exists($propertyName, $annotationProperties)) {
-                    $this->systemLogger->log(LogLevel::NOTICE, 'The property "' . $propertyName . '" declared in pointcut does not exist in annotation ' . $this->annotation);
+                    $this->logger->notice('The property "' . $propertyName . '" declared in pointcut does not exist in annotation ' . $this->annotation);
                     return false;
                 }
 

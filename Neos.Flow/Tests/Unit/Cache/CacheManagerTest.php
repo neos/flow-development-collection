@@ -55,7 +55,7 @@ class CacheManagerTest extends UnitTestCase
         $this->cacheManager->injectEnvironment($this->mockEnvironment);
 
         $this->mockSystemLogger = $this->createMock(LoggerInterface::class);
-        $this->cacheManager->injectSystemLogger($this->mockSystemLogger);
+        $this->cacheManager->injectLogger($this->mockSystemLogger);
         $this->mockConfigurationManager = $this->getMockBuilder(ConfigurationManager::class)->disableOriginalConstructor()->getMock();
         $this->cacheManager->injectConfigurationManager($this->mockConfigurationManager);
     }

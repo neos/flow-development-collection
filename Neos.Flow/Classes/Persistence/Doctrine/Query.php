@@ -20,7 +20,6 @@ use Neos\Flow\Persistence\QueryInterface;
 use Neos\Flow\Persistence\QueryResultInterface;
 use Neos\Utility\Unicode\Functions as UnicodeFunctions;
 use Psr\Log\LoggerInterface;
-use Psr\Log\LogLevel;
 
 /**
  * A Query class for Doctrine 2
@@ -193,11 +192,11 @@ class Query implements QueryInterface
             return $query->getResult();
         } catch (\Doctrine\ORM\ORMException $ormException) {
             $message = $this->throwableStorage->logThrowable($ormException);
-            $this->logger->log(LogLevel::ERROR, $message);
+            $this->logger->error($message);
             return [];
         } catch (\Doctrine\DBAL\DBALException $dbalException) {
             $message = $this->throwableStorage->logThrowable($dbalException);
-            $this->logger->log(LogLevel::ERROR, $message);
+            $this->logger->debug($message);
 
             if (stripos($dbalException->getMessage(), 'no database selected') !== false) {
                 $message = 'No database name was specified in the configuration.';
@@ -213,7 +212,7 @@ class Query implements QueryInterface
             throw $exception;
         } catch (\PDOException $pdoException) {
             $message = $this->throwableStorage->logThrowable($pdoException);
-            $this->logger->log(LogLevel::ERROR, $message);
+            $this->logger->error($message);
 
             if (stripos($pdoException->getMessage(), 'unknown database') !== false
                 || (stripos($pdoException->getMessage(), 'database') !== false && strpos($pdoException->getMessage(), 'not') !== false && strpos($pdoException->getMessage(), 'exist') !== false)) {
@@ -261,7 +260,7 @@ class Query implements QueryInterface
             return $numberOfResults;
         } catch (\Doctrine\ORM\ORMException $ormException) {
             $message = $this->throwableStorage->logThrowable($ormException);
-            $this->logger->log(LogLevel::ERROR, $message);
+            $this->logger->error($message);
             return 0;
         } catch (\PDOException $pdoException) {
             throw new Exception\DatabaseConnectionException($pdoException->getMessage(), $pdoException->getCode());

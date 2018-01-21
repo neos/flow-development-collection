@@ -86,7 +86,7 @@ class CsrfProtectionTest extends UnitTestCase
         $mockCsrfProtectionPattern->_set('reflectionService', $mockReflectionService);
         $mockCsrfProtectionPattern->_set('policyService', $mockPolicyService);
         $mockCsrfProtectionPattern->_set('securityContext', $mockSecurityContext);
-        $mockCsrfProtectionPattern->_set('systemLogger', $this->mockSystemLogger);
+        $mockCsrfProtectionPattern->_set('logger', $this->mockSystemLogger);
 
         $this->assertFalse($mockCsrfProtectionPattern->matchRequest($this->mockActionRequest));
     }
@@ -121,7 +121,7 @@ class CsrfProtectionTest extends UnitTestCase
         $mockCsrfProtectionPattern->_set('objectManager', $mockObjectManager);
         $mockCsrfProtectionPattern->_set('policyService', $mockPolicyService);
         $mockCsrfProtectionPattern->_set('securityContext', $mockSecurityContext);
-        $mockCsrfProtectionPattern->_set('systemLogger', $this->mockSystemLogger);
+        $mockCsrfProtectionPattern->_set('logger', $this->mockSystemLogger);
 
         $this->assertFalse($mockCsrfProtectionPattern->matchRequest($this->mockActionRequest));
     }
@@ -165,7 +165,7 @@ class CsrfProtectionTest extends UnitTestCase
         $mockCsrfProtectionPattern->_set('reflectionService', $mockReflectionService);
         $mockCsrfProtectionPattern->_set('policyService', $mockPolicyService);
         $mockCsrfProtectionPattern->_set('securityContext', $mockSecurityContext);
-        $mockCsrfProtectionPattern->_set('systemLogger', $this->mockSystemLogger);
+        $mockCsrfProtectionPattern->_set('logger', $this->mockSystemLogger);
 
         $this->assertTrue($mockCsrfProtectionPattern->matchRequest($this->mockActionRequest));
     }
@@ -211,7 +211,7 @@ class CsrfProtectionTest extends UnitTestCase
         $mockCsrfProtectionPattern->_set('reflectionService', $mockReflectionService);
         $mockCsrfProtectionPattern->_set('policyService', $mockPolicyService);
         $mockCsrfProtectionPattern->_set('securityContext', $mockSecurityContext);
-        $mockCsrfProtectionPattern->_set('systemLogger', $this->mockSystemLogger);
+        $mockCsrfProtectionPattern->_set('logger', $this->mockSystemLogger);
 
         $this->assertTrue($mockCsrfProtectionPattern->matchRequest($this->mockActionRequest));
     }
@@ -257,7 +257,7 @@ class CsrfProtectionTest extends UnitTestCase
         $mockCsrfProtectionPattern->_set('reflectionService', $mockReflectionService);
         $mockCsrfProtectionPattern->_set('policyService', $mockPolicyService);
         $mockCsrfProtectionPattern->_set('securityContext', $mockSecurityContext);
-        $mockCsrfProtectionPattern->_set('systemLogger', $this->mockSystemLogger);
+        $mockCsrfProtectionPattern->_set('logger', $this->mockSystemLogger);
 
         $this->assertFalse($mockCsrfProtectionPattern->matchRequest($this->mockActionRequest));
     }
@@ -304,7 +304,7 @@ class CsrfProtectionTest extends UnitTestCase
         $mockCsrfProtectionPattern->_set('reflectionService', $mockReflectionService);
         $mockCsrfProtectionPattern->_set('policyService', $mockPolicyService);
         $mockCsrfProtectionPattern->_set('securityContext', $mockSecurityContext);
-        $mockCsrfProtectionPattern->_set('systemLogger', $this->mockSystemLogger);
+        $mockCsrfProtectionPattern->_set('logger', $this->mockSystemLogger);
 
         $this->assertFalse($mockCsrfProtectionPattern->matchRequest($this->mockActionRequest));
     }
@@ -323,7 +323,7 @@ class CsrfProtectionTest extends UnitTestCase
 
         $mockCsrfProtectionPattern = $this->getAccessibleMock(Security\RequestPattern\CsrfProtection::class, ['dummy']);
         $mockCsrfProtectionPattern->_set('authenticationManager', $mockAuthenticationManager);
-        $mockCsrfProtectionPattern->_set('systemLogger', $this->mockSystemLogger);
+        $mockCsrfProtectionPattern->_set('logger', $this->mockSystemLogger);
 
         $this->assertFalse($mockCsrfProtectionPattern->matchRequest($this->mockActionRequest));
     }
@@ -338,7 +338,7 @@ class CsrfProtectionTest extends UnitTestCase
         $this->mockActionRequest->expects($this->any())->method('getHttpRequest')->will($this->returnValue($httpRequest));
 
         $mockCsrfProtectionPattern = $this->getAccessibleMock(Security\RequestPattern\CsrfProtection::class, ['dummy']);
-        $mockCsrfProtectionPattern->_set('systemLogger', $this->mockSystemLogger);
+        $mockCsrfProtectionPattern->_set('logger', $this->mockSystemLogger);
 
         $this->assertFalse($mockCsrfProtectionPattern->matchRequest($this->mockActionRequest));
     }
@@ -351,7 +351,7 @@ class CsrfProtectionTest extends UnitTestCase
         $mockRequest = $this->createMock(RequestInterface::class);
 
         $mockCsrfProtectionPattern = $this->getAccessibleMock(Security\RequestPattern\CsrfProtection::class, ['dummy']);
-        $mockCsrfProtectionPattern->_set('systemLogger', $this->mockSystemLogger);
+        $mockCsrfProtectionPattern->_set('logger', $this->mockSystemLogger);
 
         $this->assertFalse($mockCsrfProtectionPattern->matchRequest($mockRequest));
     }
@@ -373,7 +373,7 @@ class CsrfProtectionTest extends UnitTestCase
 
         $mockCsrfProtectionPattern = $this->getAccessibleMock(Security\RequestPattern\CsrfProtection::class, ['dummy']);
         $mockCsrfProtectionPattern->_set('authenticationManager', $mockAuthenticationManager);
-        $mockCsrfProtectionPattern->_set('systemLogger', $this->mockSystemLogger);
+        $mockCsrfProtectionPattern->_set('logger', $this->mockSystemLogger);
         $mockCsrfProtectionPattern->_set('securityContext', $mockSecurityContext);
 
         $this->assertFalse($mockCsrfProtectionPattern->matchRequest($this->mockActionRequest));

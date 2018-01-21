@@ -26,7 +26,6 @@ use Neos\Flow\Reflection\MethodReflection;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Utility\Arrays;
 use Psr\Log\LoggerInterface;
-use Psr\Log\LogLevel;
 
 /**
  * A Proxy Class Builder which integrates Dependency Injection.
@@ -49,7 +48,7 @@ class ProxyClassBuilder
     /**
      * @var LoggerInterface
      */
-    protected $systemLogger;
+    protected $logger;
 
     /**
      * @var ConfigurationManager
@@ -94,13 +93,15 @@ class ProxyClassBuilder
     }
 
     /**
-     * @param LoggerInterface $systemLogger
+     * Injects the (system) logger based on PSR-3.
+     *
+     * @param LoggerInterface $logger
      * @return void
      * @Flow\Autowiring(false)
      */
-    public function injectSystemLogger(LoggerInterface $systemLogger)
+    public function injectLogger(LoggerInterface $logger)
     {
-        $this->systemLogger = $systemLogger;
+        $this->logger = $logger;
     }
 
     /**
@@ -135,7 +136,7 @@ class ProxyClassBuilder
             if ($proxyClass === false) {
                 continue;
             }
-            $this->systemLogger->log(LogLevel::DEBUG, 'Building DI proxy for "' . $className . '".');
+            $this->logger->debug('Building DI proxy for "' . $className . '".');
 
             $constructorPreCode = '';
             $constructorPostCode = '';

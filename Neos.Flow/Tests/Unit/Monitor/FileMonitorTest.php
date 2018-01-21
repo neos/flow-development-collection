@@ -99,7 +99,7 @@ class FileMonitorTest extends UnitTestCase
         $mockMonitor = $this->getMockBuilder(FileMonitor::class)->setMethods(['loadDetectedDirectoriesAndFiles', 'detectChangedFiles'])->setConstructorArgs(['Flow_Test'])->getMock();
         $mockMonitor->expects($this->once())->method('detectChangedFiles')->with([$this->unixStylePathAndFilename])->will($this->returnValue([]));
 
-        $mockMonitor->injectSystemLogger($mockSystemLogger);
+        $mockMonitor->injectLogger($mockSystemLogger);
         $mockMonitor->monitorFile(__FILE__);
 
         $mockMonitor->detectChanges();
@@ -123,7 +123,7 @@ class FileMonitorTest extends UnitTestCase
         $mockMonitor->expects($this->once())->method('emitFilesHaveChanged')->with('Flow_Test', $expectedChangedFiles);
 
 
-        $mockMonitor->injectSystemLogger($mockSystemLogger);
+        $mockMonitor->injectLogger($mockSystemLogger);
         $mockMonitor->_set('monitoredFiles', $monitoredFiles);
 
         $mockMonitor->detectChanges();
@@ -295,7 +295,7 @@ class FileMonitorTest extends UnitTestCase
         $fileMonitor->expects($this->once())->method('emitFilesHaveChanged')->with('Flow_Test', $expectedEmittedChanges);
 
         $mockSystemLogger = $this->createMock(LoggerInterface::class);
-        $fileMonitor->injectSystemLogger($mockSystemLogger);
+        $fileMonitor->injectLogger($mockSystemLogger);
 
         $mockCache = $this->getMockBuilder(Cache\Frontend\StringFrontend::class)->disableOriginalConstructor()->getMock();
         $mockCache->expects($this->once())->method('get')->will($this->returnValue(json_encode($knownDirectoriesAndFiles)));

@@ -475,7 +475,7 @@ class Scripts
 
         $reflectionService = new ReflectionService();
 
-        $reflectionService->injectSystemLogger($bootstrap->getEarlyInstance(PsrLoggerFactoryInterface::class)->get('systemLogger'));
+        $reflectionService->injectLogger($bootstrap->getEarlyInstance(PsrLoggerFactoryInterface::class)->get('systemLogger'));
         $reflectionService->injectSettings($settings);
         $reflectionService->injectPackageManager($bootstrap->getEarlyInstance(PackageManagerInterface::class));
         $reflectionService->setStatusCache($cacheManager->getCache('Flow_Reflection_Status'));

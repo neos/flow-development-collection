@@ -100,7 +100,7 @@ class PointcutMethodNameFilterTest extends UnitTestCase
         ));
 
         $mockSystemLogger = $this->getMockBuilder(LoggerInterface::class)->setMethods([])->getMock();
-        $mockSystemLogger->expects($this->once())->method('log')->with($this->equalTo(LogLevel::NOTICE), $this->equalTo(
+        $mockSystemLogger->expects($this->once())->method('notice')->with($this->equalTo(
             'The argument "arg2" declared in pointcut does not exist in method ' . $className . '->somePublicMethod'
         ));
 
@@ -117,7 +117,7 @@ class PointcutMethodNameFilterTest extends UnitTestCase
 
         $methodNameFilter = new Aop\Pointcut\PointcutMethodNameFilter('some.*', null, $argumentConstraints);
         $methodNameFilter->injectReflectionService($mockReflectionService);
-        $methodNameFilter->injectSystemLogger($mockSystemLogger);
+        $methodNameFilter->injectLogger($mockSystemLogger);
 
         $methodNameFilter->matches(__CLASS__, 'somePublicMethod', $className, 1);
 

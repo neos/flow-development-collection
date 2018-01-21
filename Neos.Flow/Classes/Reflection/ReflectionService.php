@@ -133,7 +133,7 @@ class ReflectionService
     /**
      * @var LoggerInterface
      */
-    protected $systemLogger;
+    protected $logger;
 
     /**
      * @var PackageManagerInterface
@@ -286,12 +286,14 @@ class ReflectionService
     }
 
     /**
-     * @param LoggerInterface $systemLogger
+     * Injects the (system) logger based on PSR-3.
+     *
+     * @param LoggerInterface $logger
      * @return void
      */
-    public function injectSystemLogger(LoggerInterface $systemLogger)
+    public function injectLogger(LoggerInterface $logger)
     {
-        $this->systemLogger = $systemLogger;
+        $this->logger = $logger;
     }
 
     /**
@@ -1167,7 +1169,7 @@ class ReflectionService
             return;
         }
 
-        $this->systemLogger->log(LogLevel::DEBUG, 'Reflected class names did not match class names to reflect');
+        $this->log('Reflected class names did not match class names to reflect', LogLevel::DEBUG);
         $count = 0;
 
         $classNameFilterFunction = function ($className) use (&$count) {
@@ -1881,10 +1883,9 @@ class ReflectionService
      */
     protected function forgetClass($className)
     {
-        $this->systemLogger->log(LogLevel::DEBUG, 'Forget class ' . $className);
+        $this->log('Forget class ' . $className, LogLevel::DEBUG);
         if (isset($this->classesCurrentlyBeingForgotten[$className])) {
-            $this->systemLogger->log(LogLevel::WARNING, 'Detected recursion while forgetting class ' . $className);
-
+            $this->log('Detected recursion while forgetting class ' . $className, LogLevel::WARNING);
             return;
         }
         $this->classesCurrentlyBeingForgotten[$className] = true;
@@ -2231,8 +2232,8 @@ class ReflectionService
      */
     protected function log($message, $severity = LogLevel::INFO, $additionalData = [])
     {
-        if (is_object($this->systemLogger)) {
-            $this->systemLogger->log($severity, $message, $additionalData);
+        if (is_object($this->logger)) {
+            $this->logger->log($severity, $message, $additionalData);
         }
     }
 

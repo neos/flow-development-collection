@@ -4,7 +4,6 @@ namespace Neos\Flow\Http;
 use Neos\Flow\Annotations as Flow;
 use Psr\Http\Message\StreamInterface;
 use Psr\Log\LoggerInterface;
-use Psr\Log\LogLevel;
 
 /**
  * Implementation of a PSR-7 HTTP stream
@@ -27,7 +26,7 @@ class ContentStream implements StreamInterface
      * @Flow\Inject
      * @var LoggerInterface
      */
-    protected $systemLogger;
+    protected $logger;
 
     /**
      * @param string|resource $stream
@@ -394,8 +393,8 @@ class ContentStream implements StreamInterface
 
             return $this->getContents();
         } catch (\Exception $e) {
-            if ($this->systemLogger instanceof LoggerInterface) {
-                $this->systemLogger->log(LogLevel::ERROR, sprintf('Tried to convert a http content stream to a string but an exception occured: [%s] - %s', $e->getCode(), $e->getMessage()), ['exception' => $e]);
+            if ($this->logger instanceof LoggerInterface) {
+                $this->logger->error(sprintf('Tried to convert a http content stream to a string but an exception occured: [%s] - %s', $e->getCode(), $e->getMessage()), ['exception' => $e]);
             }
             return '';
         }

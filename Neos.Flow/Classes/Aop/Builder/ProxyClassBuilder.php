@@ -25,7 +25,6 @@ use Neos\Flow\ObjectManagement\Proxy;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Utility\Algorithms;
 use Psr\Log\LoggerInterface;
-use Psr\Log\LogLevel;
 
 /**
  * The main class of the AOP (Aspect Oriented Programming) framework.
@@ -54,7 +53,7 @@ class ProxyClassBuilder
     /**
      * @var LoggerInterface
      */
-    protected $systemLogger;
+    protected $logger;
 
     /**
      * An instance of the pointcut expression parser
@@ -115,13 +114,15 @@ class ProxyClassBuilder
     }
 
     /**
-     * @param LoggerInterface $systemLogger
+     * Injects the (system) logger based on PSR-3.
+     *
+     * @param LoggerInterface $logger
      * @return void
      * @Flow\Autowiring(false)
      */
-    public function injectSystemLogger(LoggerInterface $systemLogger)
+    public function injectLogger(LoggerInterface $logger)
     {
-        $this->systemLogger = $systemLogger;
+        $this->logger = $logger;
     }
 
     /**
@@ -219,7 +220,7 @@ class ProxyClassBuilder
         $rebuildEverything = false;
         if ($this->objectConfigurationCache->has('allAspectClassesUpToDate') === false) {
             $rebuildEverything = true;
-            $this->systemLogger->log(LogLevel::INFO, 'Aspects have been modified, therefore rebuilding all target classes.');
+            $this->logger->info('Aspects have been modified, therefore rebuilding all target classes.');
             $this->objectConfigurationCache->set('allAspectClassesUpToDate', true);
         }
 
@@ -249,7 +250,7 @@ class ProxyClassBuilder
                     if ($isUnproxied) {
                         $this->objectConfigurationCache->remove('unproxiedClass-' . str_replace('\\', '_', $targetClassName));
                     }
-                    $this->systemLogger->log(LogLevel::DEBUG, sprintf('Built AOP proxy for class "%s".', $targetClassName));
+                    $this->logger->debug(sprintf('Built AOP proxy for class "%s".', $targetClassName));
                 } else {
                     $this->objectConfigurationCache->set('unproxiedClass-' . str_replace('\\', '_', $targetClassName), true);
                 }

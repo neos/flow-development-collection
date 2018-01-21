@@ -42,14 +42,17 @@ class MessageCollector
     /**
      * @var LoggerInterface
      */
-    protected $systemLogger;
+    protected $logger;
 
     /**
-     * @param LoggerInterface $systemLogger
+     * Injects the (system) logger based on PSR-3.
+     *
+     * @param LoggerInterface $logger
+     * @return void
      */
-    public function injectSystemLogger(LoggerInterface $systemLogger)
+    public function injectLogger(LoggerInterface $logger)
     {
-        $this->systemLogger = $systemLogger;
+        $this->logger = $logger;
     }
 
     /**
@@ -109,7 +112,7 @@ class MessageCollector
             /** @var Message $message */
             $this->messages->detach($message);
             $severity = self::LOGLEVEL_MAPPING[$message->getSeverity()];
-            $this->systemLogger->log($severity, 'ResourcePublishingMessage: ' . $message->getMessage());
+            $this->logger->log($severity, 'ResourcePublishingMessage: ' . $message->getMessage());
             if ($callback !== null) {
                 $callback($message);
             }
