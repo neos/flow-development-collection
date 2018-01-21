@@ -13,7 +13,7 @@ namespace Neos\Flow\Security;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Cache\CacheAwareInterface;
-use Neos\Flow\Log\SecurityLoggerInterface;
+use Neos\Flow\Log\PsrSecurityLoggerInterface;
 use Neos\Flow\Mvc\RequestInterface;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Security\Authentication\TokenInterface;
@@ -140,7 +140,7 @@ class Context
 
     /**
      * @Flow\Inject
-     * @var SecurityLoggerInterface
+     * @var PsrSecurityLoggerInterface
      */
     protected $securityLogger;
 
@@ -705,14 +705,14 @@ class Context
             foreach ($sessionTokens as $sessionToken) {
                 if ($sessionToken->getAuthenticationProviderName() === $managerToken->getAuthenticationProviderName()) {
                     $session = $this->sessionManager->getCurrentSession();
-                    $this->securityLogger->log(
+                    $this->securityLogger->info(
                         sprintf(
                             'Session %s contains auth token %s for provider %s. Status: %s',
                             $session->getId(),
                             get_class($sessionToken),
                             $sessionToken->getAuthenticationProviderName(),
                             $this->tokenStatusLabels[$sessionToken->getAuthenticationStatus()]
-                        ), LOG_INFO, null, 'Flow'
+                        )
                     );
 
                     $resultTokens[$sessionToken->getAuthenticationProviderName()] = $sessionToken;

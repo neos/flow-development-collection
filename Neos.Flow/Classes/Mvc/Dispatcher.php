@@ -15,7 +15,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\Request as CliRequest;
 use Neos\Flow\Configuration\Exception\NoSuchOptionException;
 use Neos\Flow\Http\Response as HttpResponse;
-use Neos\Flow\Log\SecurityLoggerInterface;
+use Neos\Flow\Log\PsrLoggerFactoryInterface;
 use Neos\Flow\Mvc\Controller\ControllerInterface;
 use Neos\Flow\Mvc\Controller\Exception\InvalidControllerException;
 use Neos\Flow\Mvc\Exception\InfiniteLoopException;
@@ -98,8 +98,8 @@ class Dispatcher
 
         /** @var FirewallInterface $firewall */
         $firewall = $this->objectManager->get(FirewallInterface::class);
-        /** @var SecurityLoggerInterface $securityLogger */
-        $securityLogger = $this->objectManager->get(SecurityLoggerInterface::class);
+        /** @var PsrLoggerFactoryInterface $securityLogger */
+        $securityLogger = $this->objectManager->get(PsrLoggerFactoryInterface::class)->get('securityLogger');
 
         try {
             /** @var ActionRequest $request */
@@ -115,20 +115,20 @@ class Dispatcher
                 }
                 $entryPointFound = true;
                 if ($entryPoint instanceof WebRedirect) {
-                    $securityLogger->log('Redirecting to authentication entry point', LOG_INFO, $entryPoint->getOptions());
+                    $securityLogger->info('Redirecting to authentication entry point', $entryPoint->getOptions());
                 } else {
-                    $securityLogger->log(sprintf('Starting authentication with entry point of type "%s"', get_class($entryPoint)), LOG_INFO);
+                    $securityLogger->info(sprintf('Starting authentication with entry point of type "%s"', get_class($entryPoint)));
                 }
                 $securityContext->setInterceptedRequest($request->getMainRequest());
                 /** @var HttpResponse $response */
                 $entryPoint->startAuthentication($request->getHttpRequest(), $response);
             }
             if ($entryPointFound === false) {
-                $securityLogger->log('No authentication entry point found for active tokens, therefore cannot authenticate or redirect to authentication automatically.', LOG_NOTICE);
+                $securityLogger->notice('No authentication entry point found for active tokens, therefore cannot authenticate or redirect to authentication automatically.');
                 throw $exception;
             }
         } catch (AccessDeniedException $exception) {
-            $securityLogger->log('Access denied', LOG_WARNING);
+            $securityLogger->warning('Access denied');
             throw $exception;
         }
     }

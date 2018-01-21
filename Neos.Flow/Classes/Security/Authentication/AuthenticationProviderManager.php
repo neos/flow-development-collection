@@ -12,7 +12,7 @@ namespace Neos\Flow\Security\Authentication;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Log\SecurityLoggerInterface;
+use Neos\Flow\Log\PsrSecurityLoggerInterface;
 use Neos\Flow\Security\Authentication\Token\SessionlessTokenInterface;
 use Neos\Flow\Security\Context;
 use Neos\Flow\Security\Exception\NoTokensAuthenticatedException;
@@ -30,12 +30,6 @@ use Neos\Flow\Session\SessionInterface;
  */
 class AuthenticationProviderManager implements AuthenticationManagerInterface
 {
-    /**
-     * @Flow\Inject
-     * @var SecurityLoggerInterface
-     */
-    protected $securityLogger;
-
     /**
      * @var SessionInterface
      * @Flow\Inject

@@ -72,30 +72,20 @@ Neos\Flow\I18n\Xliff\Service\XliffReader:
   properties:
     i18nLogger:
       object:
-        factoryObjectName: Neos\Flow\Log\LoggerFactory
+        factoryObjectName: Neos\Flow\Log\PsrLoggerFactoryInterface
+        factoryMethodName: get
         arguments:
           1:
-            value: 'Flow_I18n'
-          2:
-            value: 'Neos\Flow\Log\Logger'
-          3:
-            setting: Neos.Flow.log.i18nLogger.backend
-          4:
-            setting: Neos.Flow.log.i18nLogger.backendOptions
+            value: i18nLogger
 Neos\Flow\I18n\Xliff\Model\FileAdapter:
   properties:
     i18nLogger:
       object:
-        factoryObjectName: Neos\Flow\Log\LoggerFactory
+        factoryObjectName: Neos\Flow\Log\PsrLoggerFactoryInterface
+        factoryMethodName: get
         arguments:
           1:
-            value: 'Flow_I18n'
-          2:
-            value: 'Neos\Flow\Log\Logger'
-          3:
-            setting: Neos.Flow.log.i18nLogger.backend
-          4:
-            setting: Neos.Flow.log.i18nLogger.backendOptions
+            value: i18nLogger
 Neos\Flow\I18n\Cldr\Reader\DatesReader:
   properties:
     cache:
@@ -185,6 +175,14 @@ Neos\Flow\Log\PsrSystemLoggerInterface:
   arguments:
     1:
       value: systemLogger
+
+Neos\Flow\Log\PsrSecurityLoggerInterface:
+  scope: singleton
+  factoryObjectName: Neos\Flow\Log\PsrLoggerFactoryInterface
+  factoryMethodName: get
+  arguments:
+    1:
+      value: securityLogger
 
 # The default PSR-3 logger
 Psr\Log\LoggerInterface:
