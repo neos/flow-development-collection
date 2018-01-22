@@ -135,4 +135,28 @@ abstract class ViewHelperBaseTestcase extends \Neos\Flow\Tests\UnitTestCase
             $viewHelper->injectTagBuilder($this->tagBuilder);
         }
     }
+
+    /**
+     * @param \TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper $viewHelper
+     * @param array $testArguments
+     * @return \TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper
+     */
+    protected function prepareArguments(\TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper $viewHelper, array $testArguments = [])
+    {
+        $evaluatedArguments = [];
+        $argumentDefinitions = $viewHelper->prepareArguments();
+        foreach ($argumentDefinitions as $argumentName => $argumentDefinition) {
+            if (isset($testArguments[$argumentName])) {
+                $argumentValue = $testArguments[$argumentName];
+                $evaluatedArguments[$argumentName] = $argumentValue;
+            } else {
+                $evaluatedArguments[$argumentName] = $argumentDefinition->getDefaultValue();
+            }
+        }
+
+        $viewHelper->setArguments($evaluatedArguments);
+        $viewHelper->validateArguments();
+        $viewHelper->initialize();
+        return $viewHelper;
+    }
 }

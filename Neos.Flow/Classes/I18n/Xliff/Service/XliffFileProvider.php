@@ -101,7 +101,7 @@ class XliffFileProvider
             $localeChain = $this->localizationService->getLocaleChain($locale);
             // Walk locale chain in reverse, so that translations higher in the chain overwrite fallback translations
             foreach (array_reverse($localeChain) as $localeChainItem) {
-                foreach ($this->packageManager->getActivePackages() as $package) {
+                foreach ($this->packageManager->getAvailablePackages() as $package) {
                     /** @var PackageInterface $package */
                     $translationPath = $package->getResourcesPath() . $this->xliffBasePath . $localeChainItem;
                     if (is_dir($translationPath)) {

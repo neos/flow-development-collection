@@ -4,16 +4,16 @@
     <body>
       <trans-unit id="authentication.required" xml:space="preserve">
 				<source>Authentication required</source>
-			<target xml:lang="tr" state="translated">Kimlik doğrulaması gerekli</target></trans-unit>
+			<target xml:lang="tr" state="translated">Kimlik doğrulaması gerekiyor</target><alt-trans><target xml:lang="tr">Kimlik doğrulaması gerekli</target></alt-trans></trans-unit>
       <trans-unit id="authentication.username" xml:space="preserve">
 				<source>Username</source>
-			<target xml:lang="tr" state="needs-translation">Username</target></trans-unit>
+			<target xml:lang="tr" state="translated">Kullanıcı adı</target></trans-unit>
       <trans-unit id="authentication.password" xml:space="preserve">
 				<source>Password</source>
-			<target xml:lang="tr" state="needs-translation">Password</target></trans-unit>
+			<target xml:lang="tr" state="translated">Şifre</target></trans-unit>
       <trans-unit id="authentication.new-password" xml:space="preserve">
 				<source>New password</source>
-			<target xml:lang="tr" state="translated">Yeni şifre</target></trans-unit>
+			<target xml:lang="tr" state="translated">Yeni şifreniz</target><alt-trans><target xml:lang="tr">Yeni şifre</target></alt-trans></trans-unit>
       <trans-unit id="authentication.login" xml:space="preserve">
 				<source>Login</source>
 			<target xml:lang="tr" state="translated">Giriş Yap</target></trans-unit>
