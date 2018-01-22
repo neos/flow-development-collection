@@ -787,7 +787,7 @@ class PackageManager implements PackageManagerInterface
         return array_map(function ($packageState) {
             return ComposerUtility::getComposerManifest(Files::getNormalizedPath(Files::concatenatePaths([$this->packagesBasePath, $packageState['packagePath']])));
         }, $packageStates['packages']);
-                    }
+    }
 
     /**
      * Returns the correctly cased version of the given package key or FALSE
