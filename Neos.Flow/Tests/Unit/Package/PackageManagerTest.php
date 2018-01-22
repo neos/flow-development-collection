@@ -183,50 +183,6 @@ class PackageManagerTest extends UnitTestCase
     /**
      * @test
      */
-    public function scanAvailablePackagesKeepsExistingPackageConfiguration()
-    {
-        $expectedPackageKeys = [
-            'Neos.Flow' . md5(uniqid(mt_rand(), true)),
-            'Neos.Flow.Test' . md5(uniqid(mt_rand(), true)),
-            'Neos.YetAnotherTestPackage' . md5(uniqid(mt_rand(), true)),
-            'RobertLemke.Flow.NothingElse' . md5(uniqid(mt_rand(), true))
-        ];
-
-        foreach ($expectedPackageKeys as $packageKey) {
-            $packageName = ComposerUtility::getComposerPackageNameFromPackageKey($packageKey);
-            $packagePath = 'vfs://Test/Packages/Application/' . $packageKey . '/';
-
-            mkdir($packagePath, 0770, true);
-            mkdir($packagePath . 'Classes');
-            file_put_contents($packagePath . 'composer.json', '{"name": "' . $packageName . '", "type": "neos-test"}');
-        }
-
-        $packageManager = $this->getAccessibleMock(PackageManager::class, ['emitPackageStatesUpdated']);
-        $packageManager->_set('packagesBasePath', 'vfs://Test/Packages/');
-        $packageManager->_set('packageStatesPathAndFilename', 'vfs://Test/Configuration/PackageStates.php');
-
-        $packageFactory = new PackageFactory($packageManager);
-        $this->inject($packageManager, 'packageFactory', $packageFactory);
-
-        $packageManager->_set('packageStatesConfiguration', [
-            'packages' => [
-                $packageName => [
-                    'state' => 'inactive',
-                    'frozen' => false,
-                    'packagePath' => 'Application/' . $packageKey . '/',
-                    'classesPath' => 'Classes/'
-                ]
-            ],
-            'version' => 2
-        ]);
-        $packageStates = $packageManager->rescanPackages(false);
-        $this->assertEquals('inactive', $packageStates['packages'][$packageName]['state']);
-    }
-
-
-    /**
-     * @test
-     */
     public function packageStatesConfigurationContainsRelativePaths()
     {
         $packageKeys = [
