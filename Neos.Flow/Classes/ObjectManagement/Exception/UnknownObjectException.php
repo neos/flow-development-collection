@@ -11,11 +11,13 @@ namespace Neos\Flow\ObjectManagement\Exception;
  * source code.
  */
 
+use Psr\Container\NotFoundExceptionInterface;
+
 /**
  * "Unknown Object" Exception
  *
  * @api
  */
-class UnknownObjectException extends \Neos\Flow\ObjectManagement\Exception
+class UnknownObjectException extends \Neos\Flow\ObjectManagement\Exception implements NotFoundExceptionInterface
 {
 }

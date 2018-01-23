@@ -47,17 +47,27 @@ class UrlencodeViewHelper extends AbstractViewHelper
     protected $escapeChildren = false;
 
     /**
+     * Initialize the arguments.
+     *
+     * @return void
+     * @api
+     */
+    public function initializeArguments()
+    {
+        $this->registerArgument('value', 'string', 'string to format', false, null);
+    }
+
+    /**
      * Escapes special characters with their escaped counterparts as needed using PHPs urlencode() function.
      *
-     * @param string $value string to format
      * @return mixed
      * @see http://www.php.net/manual/function.urlencode.php
      * @api
      * @throws ViewHelper\Exception
      */
-    public function render($value = null)
+    public function render()
     {
-        return self::renderStatic(array('value' => $value), $this->buildRenderChildrenClosure(), $this->renderingContext);
+        return self::renderStatic(array('value' => $this->arguments['value']), $this->buildRenderChildrenClosure(), $this->renderingContext);
     }
 
     /**
@@ -72,6 +82,7 @@ class UrlencodeViewHelper extends AbstractViewHelper
     public static function renderStatic(array $arguments, \Closure $renderChildrenClosure, RenderingContextInterface $renderingContext)
     {
         $value = $arguments['value'];
+
         if ($value === null) {
             $value = $renderChildrenClosure();
         }

@@ -12,13 +12,16 @@ namespace Neos\Flow\ObjectManagement;
  */
 
 use Neos\Flow\Core\ApplicationContext;
+use Psr\Container\ContainerInterface;
 
 /**
  * Interface for the Flow Object Manager
+ * This is a superset of the PSR-11 ContainerInterface.
+ * If all you need is get and has you might want to use ContainerInterface only.
  *
  * @api
  */
-interface ObjectManagerInterface
+interface ObjectManagerInterface extends ContainerInterface
 {
     const INITIALIZATIONCAUSE_CREATED = 1;
     const INITIALIZATIONCAUSE_RECREATED = 2;
@@ -45,6 +48,15 @@ interface ObjectManagerInterface
      * @api
      */
     public function get($objectName);
+
+    /**
+     * This is the PSR-11 ContainerInterface equivalent to `isRegistered`.
+     *
+     * @param string $objectName
+     * @return bool
+     * @see isRegistered
+     */
+    public function has($objectName);
 
     /**
      * Returns TRUE if an object with the given name has already

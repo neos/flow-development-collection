@@ -7,7 +7,7 @@
   "require": {
     "neos/flow": "*",
     "neos/utility-files": "*",
-    "php": "~7.0"
+    "php": "~7.1"
   },
   "require-dev": {
     "mikey179/vfsstream": "~1.6",

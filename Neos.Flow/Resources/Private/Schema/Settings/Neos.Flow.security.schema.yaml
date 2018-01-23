@@ -46,7 +46,6 @@ properties:
                     properties:
                       'pattern': { type: string, required: TRUE }
                       'patternOptions': { type: dictionary }
-            'token': { type: string }
             'entryPoint': { type: string }
             'entryPointOptions': { type: dictionary }
             'token': { type: string, format: class-name }

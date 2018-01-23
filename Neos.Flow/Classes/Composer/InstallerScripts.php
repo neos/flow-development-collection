@@ -43,13 +43,16 @@ class InstallerScripts
         if (!defined('FLOW_PATH_CONFIGURATION')) {
             define('FLOW_PATH_CONFIGURATION', Files::getUnixStylePath(getcwd()) . '/Configuration/');
         }
+        if (!defined('FLOW_PATH_TEMPORARY_BASE')) {
+            define('FLOW_PATH_TEMPORARY_BASE', Files::getUnixStylePath(getcwd()) . '/Data/Temporary');
+        }
 
         Files::createDirectoryRecursively('Configuration');
         Files::createDirectoryRecursively('Data');
 
         Files::copyDirectoryRecursively('Packages/Framework/Neos.Flow/Resources/Private/Installer/Distribution/Essentials', './', false, true);
         Files::copyDirectoryRecursively('Packages/Framework/Neos.Flow/Resources/Private/Installer/Distribution/Defaults', './', true, true);
-        $packageManager = new PackageManager();
+        $packageManager = new PackageManager(PackageManager::DEFAULT_PACKAGE_INFORMATION_CACHE_FILEPATH, FLOW_PATH_PACKAGES);
         $packageManager->rescanPackages();
 
         chmod('flow', 0755);
