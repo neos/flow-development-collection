@@ -10,28 +10,17 @@
 
 Neos\Eel\CompilingEvaluator:
   scope: singleton
-  arguments:
-    1:
+  properties:
+    expressionCache:
       object:
         factoryObjectName: Neos\Flow\Cache\CacheManager
         factoryMethodName: getCache
         arguments:
           1:
             value: Eel_Expression_Code
-
 
 Neos\Eel\EelEvaluatorInterface:
   className: Neos\Eel\CompilingEvaluator
-  # FIXME: This configuration shouldn't be necessary. Check in ObjectConfiguration.
-  arguments:
-    1:
-      object:
-        factoryObjectName: Neos\Flow\Cache\CacheManager
-        factoryMethodName: getCache
-        arguments:
-          1:
-            value: Eel_Expression_Code
-
 
 Neos\Eel\FlowQuery\OperationResolverInterface:
   className: Neos\Eel\FlowQuery\OperationResolver

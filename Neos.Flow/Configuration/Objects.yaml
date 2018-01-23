@@ -366,8 +366,8 @@ Neos\Flow\Security\Authorization\Privilege\Method\MethodPrivilegePointcutFilter:
       object: Neos\Flow\ObjectManagement\ObjectManagerInterface
 
 Neos\Flow\Security\Authorization\Privilege\Entity\Doctrine\EntityPrivilegeExpressionEvaluator:
-  arguments:
-    1:
+  properties:
+    expressionCache:
       object:
         factoryObjectName: Neos\Flow\Cache\CacheManager
         factoryMethodName: getCache
