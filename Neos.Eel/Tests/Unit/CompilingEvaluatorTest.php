@@ -28,7 +28,9 @@ class CompilingEvaluatorTest extends AbstractEvaluatorTest
         $stringFrontendMock = $this->getMockBuilder(StringFrontend::class)->setMethods([])->disableOriginalConstructor()->getMock();
         $stringFrontendMock->expects(self::any())->method('get')->willReturn(false);
 
-        return new CompilingEvaluator($stringFrontendMock);
+        $evaluator = new CompilingEvaluator();
+        $evaluator->injectExpressionCache($stringFrontendMock);
+        return $evaluator;
     }
 
     /**
@@ -54,7 +56,8 @@ class CompilingEvaluatorTest extends AbstractEvaluatorTest
         $stringFrontendMock = $this->getMockBuilder(StringFrontend::class)->setMethods([])->disableOriginalConstructor()->getMock();
         $stringFrontendMock->expects(self::any())->method('get')->willReturn(false);
 
-        $evaluator = $this->getAccessibleMock(CompilingEvaluator::class, ['dummy'], [$stringFrontendMock]);
+        $evaluator = $this->getAccessibleMock(CompilingEvaluator::class, ['dummy']);
+        $evaluator->injectExpressionCache($stringFrontendMock);
         // note, this is not a public method. We should expect expressions coming in here to be trimmed already.
         $code = $evaluator->_call('generateEvaluatorCode', trim($expression));
         $this->assertSame($expected, $evaluator->evaluate($expression, $context), 'Code ' . $code . ' should evaluate to expected result');

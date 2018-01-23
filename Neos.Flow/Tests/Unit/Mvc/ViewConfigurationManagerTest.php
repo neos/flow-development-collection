@@ -132,6 +132,8 @@ class ViewConfigurationManagerTest extends \Neos\Flow\Tests\UnitTestCase
         $stringFrontendMock = $this->getMockBuilder(StringFrontend::class)->setMethods([])->disableOriginalConstructor()->getMock();
         $stringFrontendMock->expects(self::any())->method('get')->willReturn(false);
 
-        return new CompilingEvaluator($stringFrontendMock);
+        $evaluator = new CompilingEvaluator();
+        $evaluator->injectExpressionCache($stringFrontendMock);
+        return $evaluator;
     }
 }
