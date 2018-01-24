@@ -12,10 +12,11 @@ namespace Neos\Flow\Tests\Unit\Mvc\Routing;
  */
 
 use Neos\Flow\Http;
+use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Routing\Dto\ResolveContext;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Flow\Mvc;
-use Neos\Utility;
+use Neos\Flow\Utility;
 use Psr\Http\Message\UriInterface;
 
 /**
@@ -41,7 +42,7 @@ class UriBuilderTest extends UnitTestCase
     /**
      * @var UriInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $mockRequestUri;
+    protected $mockBaseUri;
 
     /**
      * @var Mvc\ActionRequest|\PHPUnit_Framework_MockObject_MockObject
@@ -66,8 +67,8 @@ class UriBuilderTest extends UnitTestCase
     {
         $this->mockHttpRequest = $this->getMockBuilder(Http\Request::class)->disableOriginalConstructor()->getMock();
 
-        $this->mockRequestUri = $this->getMockBuilder(UriInterface::class)->getMock();
-        $this->mockHttpRequest->expects($this->any())->method('getUri')->will($this->returnValue($this->mockRequestUri));
+        $this->mockBaseUri = $this->getMockBuilder(UriInterface::class)->getMock();
+        $this->mockHttpRequest->expects($this->any())->method('getBaseUri')->will($this->returnValue($this->mockBaseUri));
 
         $this->mockRouter = $this->createMock(Mvc\Routing\RouterInterface::class);
 
@@ -711,6 +712,21 @@ class UriBuilderTest extends UnitTestCase
         $this->uriBuilder->build();
 
         $this->assertEquals($expectedArguments, $this->uriBuilder->getLastArguments());
+    }
+
+    /**
+     * @test
+     */
+    public function buildPassesBaseUriToRouter()
+    {
+        $this->mockHttpRequest->expects($this->atLeastOnce())->method('getBaseUri')->will($this->returnValue($this->mockBaseUri));
+
+        $this->mockRouter->expects($this->once())->method('resolve')->willReturnCallback(function (ResolveContext $resolveContext) {
+            $this->assertSame($this->mockBaseUri, $resolveContext->getBaseUri());
+            return $this->getMockBuilder(UriInterface::class)->getMock();
+        });
+
+        $this->uriBuilder->build();
     }
 
     /**
