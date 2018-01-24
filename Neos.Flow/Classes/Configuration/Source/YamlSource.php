@@ -53,6 +53,7 @@ class YamlSource
     {
         if ($allowSplitSource === true) {
             $pathsAndFileNames = glob($pathAndFilename . '.*.yaml');
+            $pathsAndFileNames = array_merge($pathsAndFileNames, glob($pathAndFilename . '.*.yml'));
             if ($pathsAndFileNames !== false) {
                 foreach ($pathsAndFileNames as $pathAndFilename) {
                     if (is_file($pathAndFilename)) {
@@ -61,9 +62,10 @@ class YamlSource
                 }
             }
         }
-        if (is_file($pathAndFilename . '.yaml')) {
+        if (is_file($pathAndFilename . '.yaml') || is_file($pathAndFilename . '.yml')) {
             return true;
         }
+
         return false;
     }
 
@@ -79,9 +81,10 @@ class YamlSource
      */
     public function load($pathAndFilename, $allowSplitSource = false)
     {
-        $pathsAndFileNames = [$pathAndFilename . '.yaml'];
+        $pathsAndFileNames = [$pathAndFilename . '.yaml', $pathAndFilename . '.yml'];
         if ($allowSplitSource === true) {
             $splitSourcePathsAndFileNames = glob($pathAndFilename . '.*.yaml');
+            $splitSourcePathsAndFileNames = array_merge($splitSourcePathsAndFileNames, glob($pathAndFilename . '.*.yml'));
             if ($splitSourcePathsAndFileNames !== false) {
                 sort($splitSourcePathsAndFileNames);
                 $pathsAndFileNames = array_merge($pathsAndFileNames, $splitSourcePathsAndFileNames);
