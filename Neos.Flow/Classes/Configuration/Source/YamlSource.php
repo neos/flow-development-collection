@@ -53,7 +53,6 @@ class YamlSource
     {
         if ($allowSplitSource === true) {
             $pathsAndFileNames = glob($pathAndFilename . '.*.yaml');
-            $pathsAndFileNames = array_merge($pathsAndFileNames, glob($pathAndFilename . '.*.yml'));
             if ($pathsAndFileNames !== false) {
                 foreach ($pathsAndFileNames as $pathAndFilename) {
                     if (is_file($pathAndFilename)) {
@@ -62,7 +61,7 @@ class YamlSource
                 }
             }
         }
-        if (is_file($pathAndFilename . '.yaml') || is_file($pathAndFilename . '.yml')) {
+        if (is_file($pathAndFilename . '.yaml')) {
             return true;
         }
 
@@ -78,10 +77,12 @@ class YamlSource
      * @param boolean $allowSplitSource If TRUE, the type will be used as a prefix when looking for configuration files
      * @return array
      * @throws ParseErrorException
+     * @throws \Neos\Flow\Configuration\Exception
      */
     public function load($pathAndFilename, $allowSplitSource = false)
     {
-        $pathsAndFileNames = [$pathAndFilename . '.yaml', $pathAndFilename . '.yml'];
+        $this->detectFilesWithWrongExtension($pathAndFilename, $allowSplitSource);
+        $pathsAndFileNames = [$pathAndFilename . '.yaml'];
         if ($allowSplitSource === true) {
             $splitSourcePathsAndFileNames = glob($pathAndFilename . '.*.yaml');
             $splitSourcePathsAndFileNames = array_merge($splitSourcePathsAndFileNames, glob($pathAndFilename . '.*.yml'));
@@ -95,6 +96,28 @@ class YamlSource
             $configuration = $this->mergeFileContent($pathAndFilename, $configuration);
         }
         return $configuration;
+    }
+
+    /**
+     * @param string $pathAndFilename
+     * @param bool $allowSplitSource
+     * @throws \Neos\Flow\Configuration\Exception
+     */
+    protected function detectFilesWithWrongExtension($pathAndFilename, $allowSplitSource = false)
+    {
+        $wrongPathsAndFileNames = [];
+        if (is_file($pathAndFilename . '.yml')) {
+            $wrongPathsAndFileNames = [$pathAndFilename . '.yml'];
+        }
+
+        if ($allowSplitSource === true) {
+            $wrongSplitSourcePathsAndFileNames = glob($pathAndFilename . '.*.yml') ?? [];
+            $wrongPathsAndFileNames = array_merge($wrongPathsAndFileNames, $wrongSplitSourcePathsAndFileNames);
+        }
+
+        if ($wrongPathsAndFileNames !== []) {
+            throw new \Neos\Flow\Configuration\Exception(sprintf('The files "%s" exist with "yml" extension, but that is not supported by Flow. Please use "yaml" as file extension for configuration files.', implode(', ', $wrongPathsAndFileNames)), 1516893322579);
+        }
     }
 
     /**

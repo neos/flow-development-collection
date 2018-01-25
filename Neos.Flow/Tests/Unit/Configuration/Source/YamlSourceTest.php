@@ -136,6 +136,9 @@ class YamlSourceTest extends UnitTestCase
         $expectedConfiguration = [
             'configurationFileHasBeenLoaded' => true,
             'Neos' => [
+
+
+
                 'Flow' => [
                     'default' => 'test',
                     'toBeOverwritten' => 2,
@@ -153,20 +156,12 @@ class YamlSourceTest extends UnitTestCase
 
     /**
      * @test
+     * @expectedException \Neos\Flow\Configuration\Exception
      */
-    public function yamlAndYmlExtensionRead()
+    public function configurationFileWithYmlExtensionResultsInException()
     {
-        $expectedConfiguration = [
-            'Neos' => [
-                'Flow' => [
-                    'yaml' => true,
-                    'yml' => true
-                ]
-            ]
-        ];
-        $pathAndFilename = __DIR__ . '/../Fixture/YamlAndYmlRead';
+        $pathAndFilename = __DIR__ . '/../Fixture/YmlThrowsException';
         $configurationSource = new YamlSource();
-        $configuration = $configurationSource->load($pathAndFilename, true);
-        $this->assertSame($expectedConfiguration, $configuration);
+        $configurationSource->load($pathAndFilename, true);
     }
 }
