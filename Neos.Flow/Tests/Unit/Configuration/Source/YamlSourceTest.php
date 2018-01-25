@@ -150,4 +150,23 @@ class YamlSourceTest extends UnitTestCase
         $configuration = $configurationSource->load($pathAndFilename, true);
         $this->assertSame($expectedConfiguration, $configuration);
     }
+
+    /**
+     * @test
+     */
+    public function yamlAndYmlExtensionRead()
+    {
+        $expectedConfiguration = [
+            'Neos' => [
+                'Flow' => [
+                    'yaml' => true,
+                    'yml' => true
+                ]
+            ]
+        ];
+        $pathAndFilename = __DIR__ . '/../Fixture/YamlAndYmlRead';
+        $configurationSource = new YamlSource();
+        $configuration = $configurationSource->load($pathAndFilename, true);
+        $this->assertSame($expectedConfiguration, $configuration);
+    }
 }
