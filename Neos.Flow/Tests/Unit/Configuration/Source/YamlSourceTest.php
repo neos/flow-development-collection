@@ -136,9 +136,6 @@ class YamlSourceTest extends UnitTestCase
         $expectedConfiguration = [
             'configurationFileHasBeenLoaded' => true,
             'Neos' => [
-
-
-
                 'Flow' => [
                     'default' => 'test',
                     'toBeOverwritten' => 2,
