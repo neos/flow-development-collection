@@ -132,7 +132,7 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
             $setOptions['ex'] = $lifetime;
         }
 
-        $redisTags = array_reduce($tags, function($redisTags, $tag) use ($lifetime, $entryIdentifier) {
+        $redisTags = array_reduce($tags, function ($redisTags, $tag) use ($lifetime, $entryIdentifier) {
             $expire = $this->calculateExpires($this->buildKey('tag:' . $tag), $lifetime);
             $redisTags[] = ['key' => $this->buildKey('tag:' . $tag), 'value' => $entryIdentifier, 'expire' => $expire];
 
