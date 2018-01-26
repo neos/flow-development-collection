@@ -141,7 +141,9 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
         $this->redis->rPush($this->buildKey('entries'), $entryIdentifier);
         foreach ($tags as $tag) {
             $this->redis->sAdd($this->buildKey('tag:' . $tag), $entryIdentifier);
+            $this->redis->expire($this->buildKey('tag:' . $tag), $lifetime);
             $this->redis->sAdd($this->buildKey('tags:' . $entryIdentifier), $tag);
+            $this->redis->expire($this->buildKey('tags:' . $entryIdentifier), $lifetime);
         }
         $this->redis->exec();
     }
