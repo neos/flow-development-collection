@@ -196,7 +196,7 @@ class PackageManagerTest extends UnitTestCase
 
             mkdir($packagePath, 0770, true);
             mkdir($packagePath . 'Classes');
-            ComposerUtility::writeComposerManifest($packagePath, $packageKey, ['type' => 'flow-test', 'autoload' => []]);
+            ComposerUtility::writeComposerManifest($packagePath, $packageKey, ['type' => 'neos-test', 'autoload' => []]);
         }
 
         $packageManager = $this->getAccessibleMock(PackageManager::class, ['updateShortcuts', 'emitPackageStatesUpdated'], [], '', false);
@@ -282,7 +282,7 @@ class PackageManagerTest extends UnitTestCase
     {
         $metaData = [
             'name' => 'acme/yetanothertestpackage2',
-            'type' => 'flow-custom-package',
+            'type' => 'neos-custom-package',
             'description' => 'Yet Another Test Package',
             'autoload' => [
                 'psr-0' => [
@@ -296,7 +296,7 @@ class PackageManagerTest extends UnitTestCase
         $json = file_get_contents($package->getPackagePath() . '/composer.json');
         $composerManifest = json_decode($json);
 
-        $this->assertEquals('flow-custom-package', $composerManifest->type);
+        $this->assertEquals('neos-custom-package', $composerManifest->type);
     }
 
 
