@@ -272,9 +272,8 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
         $ttl = $this->redis->ttl($tag);
         if ($ttl === -1 || $lifetime === self::UNLIMITED_LIFETIME) {
             return self::UNLIMITED_LIFETIME;
-        } else {
-            return max($ttl, $lifetime);
         }
+        return max($ttl, $lifetime);
     }
 
     /**
