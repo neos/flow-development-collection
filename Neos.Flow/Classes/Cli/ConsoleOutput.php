@@ -17,7 +17,7 @@ use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Helper\FormatterHelper;
 use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\Console\Helper\ProgressHelper;
-use Symfony\Component\Console\Helper\TableHelper;
+use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Output\ConsoleOutput as SymfonyConsoleOutput;
 use Symfony\Component\Console\Input\StringInput as SymfonyStringInput;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
@@ -49,9 +49,9 @@ class ConsoleOutput
     protected $progressHelper;
 
     /**
-     * @var TableHelper
+     * @var Table
      */
-    protected $tableHelper;
+    protected $table;
 
     /**
      * Creates and initializes the SymfonyConsoleOutput instance
@@ -138,12 +138,12 @@ class ConsoleOutput
      */
     public function outputTable($rows, $headers = null)
     {
-        $tableHelper = $this->getTableHelper();
+        $table = $this->getTable();
         if ($headers !== null) {
-            $tableHelper->setHeaders($headers);
+            $table->setHeaders($headers);
         }
-        $tableHelper->setRows($rows);
-        $tableHelper->render($this->output);
+        $table->setRows($rows);
+        $table->render();
     }
 
     /**
@@ -368,15 +368,15 @@ class ConsoleOutput
     }
 
     /**
-     * Returns or initializes the symfony/console TableHelper
+     * Returns or initializes the symfony/console Table
      *
-     * @return TableHelper
+     * @return Table
      */
-    protected function getTableHelper()
+    protected function getTable()
     {
-        if ($this->tableHelper === null) {
-            $this->tableHelper = new TableHelper();
+        if ($this->table === null) {
+            $this->table = new Table($this->output);
         }
-        return $this->tableHelper;
+        return $this->table;
     }
 }
