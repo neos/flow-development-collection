@@ -64,6 +64,14 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
     protected $requestPatternResolver;
 
     /**
+     * Injected configuration for providers.
+     * Will be null'd again after building the object instances.
+     *
+     * @var array|null
+     */
+    protected $providerConfigurations;
+
+    /**
      * @var array
      */
     protected $providers = [];
@@ -100,7 +108,7 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
             return;
         }
 
-        $this->buildProvidersAndTokensFromConfiguration($settings['security']['authentication']['providers']);
+        $this->providerConfigurations = $settings['security']['authentication']['providers'];
     }
 
     /**
@@ -132,6 +140,7 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
      */
     public function getTokens()
     {
+        $this->buildProvidersAndTokensFromConfiguration();
         return $this->tokens;
     }
 
@@ -142,6 +151,7 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
      */
     public function getProviders()
     {
+        $this->buildProvidersAndTokensFromConfiguration();
         return $this->providers;
     }
 
@@ -170,6 +180,8 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
         if (count($tokens) === 0) {
             throw new NoTokensAuthenticatedException('The security context contained no tokens which could be authenticated.', 1258721059);
         }
+
+        $this->buildProvidersAndTokensFromConfiguration();
 
         /** @var $token TokenInterface */
         foreach ($tokens as $token) {
@@ -281,14 +293,17 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
     /**
      * Builds the provider and token objects based on the given configuration
      *
-     * @param array $providerConfigurations The configured provider settings
      * @return void
      * @throws Exception\InvalidAuthenticationProviderException
      * @throws Exception\NoEntryPointFoundException
      */
-    protected function buildProvidersAndTokensFromConfiguration(array $providerConfigurations)
+    protected function buildProvidersAndTokensFromConfiguration()
     {
-        foreach ($providerConfigurations as $providerName => $providerConfiguration) {
+        if ($this->providerConfigurations === null) {
+            return;
+        }
+
+        foreach ($this->providerConfigurations as $providerName => $providerConfiguration) {
             if (isset($providerConfiguration['providerClass'])) {
                 throw new Exception\InvalidAuthenticationProviderException('The configured authentication provider "' . $providerName . '" uses the deprecated option "providerClass". Check your settings and use the new option "provider" instead.', 1327672030);
             }
@@ -383,5 +398,7 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
                 $tokenInstance->setAuthenticationEntryPoint($entryPoint);
             }
         }
+
+        $this->providerConfigurations = null;
     }
 }

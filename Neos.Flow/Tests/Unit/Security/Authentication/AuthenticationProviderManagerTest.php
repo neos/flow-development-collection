@@ -411,6 +411,7 @@ class AuthenticationProviderManagerTest extends UnitTestCase
         $mockRequestPatternResolver = $this->getMockBuilder(RequestPatternResolver::class)->disableOriginalConstructor()->getMock();
 
         $this->authenticationProviderManager = $this->getAccessibleMock(AuthenticationProviderManager::class, ['authenticate'], [$mockProviderResolver, $mockRequestPatternResolver]);
+        $this->authenticationProviderManager->injectSettings(['security' => ['authentication' => ['providers' => $providerConfiguration]]]);
         $this->authenticationProviderManager->_call('buildProvidersAndTokensFromConfiguration', $providerConfiguration);
     }
 }
