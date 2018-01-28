@@ -13,10 +13,10 @@ namespace Neos\Flow\Cli;
 
 use Neos\Flow\Annotations as Flow;
 use Symfony\Component\Console\Formatter\OutputFormatterStyle;
+use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Helper\FormatterHelper;
 use Symfony\Component\Console\Helper\HelperSet;
-use Symfony\Component\Console\Helper\ProgressHelper;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Output\ConsoleOutput as SymfonyConsoleOutput;
 use Symfony\Component\Console\Input\StringInput as SymfonyStringInput;
@@ -44,9 +44,9 @@ class ConsoleOutput
     protected $questionHelper;
 
     /**
-     * @var ProgressHelper
+     * @var ProgressBar
      */
-    protected $progressHelper;
+    protected $progressBar;
 
     /**
      * @var Table
@@ -289,33 +289,31 @@ class ConsoleOutput
      */
     public function progressStart($max = null)
     {
-        $this->getProgressHelper()->start($this->output, $max);
+        $this->getProgressBar()->start($max);
     }
 
     /**
      * Advances the progress output X steps
      *
      * @param integer $step Number of steps to advance
-     * @param Boolean $redraw Whether to redraw or not
      * @return void
      * @throws \LogicException
      */
-    public function progressAdvance($step = 1, $redraw = false)
+    public function progressAdvance($step = 1)
     {
-        $this->getProgressHelper()->advance($step, $redraw);
+        $this->getProgressBar()->advance($step);
     }
 
     /**
      * Sets the current progress
      *
      * @param integer $current The current progress
-     * @param Boolean $redraw Whether to redraw or not
      * @return void
      * @throws \LogicException
      */
-    public function progressSet($current, $redraw = false)
+    public function progressSet($current)
     {
-        $this->getProgressHelper()->setCurrent($current, $redraw);
+        $this->getProgressBar()->setProgress($current);
     }
 
     /**
@@ -325,7 +323,7 @@ class ConsoleOutput
      */
     public function progressFinish()
     {
-        $this->getProgressHelper()->finish();
+        $this->getProgressBar()->finish();
     }
 
     /**
@@ -357,14 +355,14 @@ class ConsoleOutput
     /**
      * Returns or initializes the symfony/console ProgressHelper
      *
-     * @return ProgressHelper
+     * @return ProgressBar
      */
-    protected function getProgressHelper()
+    protected function getProgressBar()
     {
-        if ($this->progressHelper === null) {
-            $this->progressHelper = new ProgressHelper();
+        if ($this->progressBar === null) {
+            $this->progressBar = new ProgressBar($this->output);
         }
-        return $this->progressHelper;
+        return $this->progressBar;
     }
 
     /**
