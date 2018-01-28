@@ -13,12 +13,15 @@ namespace Neos\Flow\Cli;
 
 use Neos\Flow\Annotations as Flow;
 use Symfony\Component\Console\Formatter\OutputFormatterStyle;
-use Symfony\Component\Console\Helper\DialogHelper;
+use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Helper\FormatterHelper;
 use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\Console\Helper\ProgressHelper;
 use Symfony\Component\Console\Helper\TableHelper;
 use Symfony\Component\Console\Output\ConsoleOutput as SymfonyConsoleOutput;
+use Symfony\Component\Console\Input\StringInput as SymfonyStringInput;
+use Symfony\Component\Console\Question\ConfirmationQuestion;
+use Symfony\Component\Console\Question\Question;
 
 /**
  * A wrapper for Symfony ConsoleOutput and related helpers
@@ -31,9 +34,14 @@ class ConsoleOutput
     protected $output;
 
     /**
-     * @var DialogHelper
+     * @var SymfonyStringInput
      */
-    protected $dialogHelper;
+    protected $input;
+
+    /**
+     * @var QuestionHelper
+     */
+    protected $questionHelper;
 
     /**
      * @var ProgressHelper
@@ -51,6 +59,8 @@ class ConsoleOutput
     public function __construct()
     {
         $this->output = new SymfonyConsoleOutput();
+        $this->input = new SymfonyStringInput('');
+        $this->input->setInteractive(true);
         $this->output->getFormatter()->setStyle('b', new OutputFormatterStyle(null, null, ['bold']));
         $this->output->getFormatter()->setStyle('i', new OutputFormatterStyle('black', 'white'));
         $this->output->getFormatter()->setStyle('u', new OutputFormatterStyle(null, null, ['underscore']));
@@ -149,7 +159,11 @@ class ConsoleOutput
      */
     public function select($question, $choices, $default = null, $multiSelect = false, $attempts = false)
     {
-        return $this->getDialogHelper()->select($this->output, $question, $choices, $default, $attempts, 'Value "%s" is invalid', $multiSelect);
+        if (is_array($question)) {
+            $question = $this->splitQuestion($question);
+        }
+
+        return $this->getQuestionHelper()->select($this->output, $question, $choices, $default, $attempts, 'Value "%s" is invalid', $multiSelect);
     }
 
     /**
@@ -157,13 +171,17 @@ class ConsoleOutput
      *
      * @param string|array $question The question to ask. If an array each array item is turned into one line of a multi-line question
      * @param string $default The default answer if none is given by the user
-     * @param array $autocomplete List of values to autocomplete. This only works if "stty" is installed
      * @return string The user answer
      * @throws \RuntimeException If there is no data to read in the input stream
      */
-    public function ask($question, $default = null, array $autocomplete = null)
+    public function ask($question, $default = null)
     {
-        return $this->getDialogHelper()->ask($this->output, $question, $default, $autocomplete);
+        if (is_array($question)) {
+            $question = $this->splitQuestion($question);
+        }
+        $question = new Question($question, $default);
+
+        return $this->getQuestionHelper()->ask($this->input, $this->output, $question);
     }
 
     /**
@@ -177,7 +195,12 @@ class ConsoleOutput
      */
     public function askConfirmation($question, $default = true)
     {
-        return $this->getDialogHelper()->askConfirmation($this->output, $question, $default);
+        if (is_array($question)) {
+            $question = $this->splitQuestion($question);
+        }
+        $question = new ConfirmationQuestion($question, $default);
+
+        return $this->getQuestionHelper()->ask($this->input, $this->output, $question);
     }
 
     /**
@@ -190,7 +213,15 @@ class ConsoleOutput
      */
     public function askHiddenResponse($question, $fallback = true)
     {
-        return $this->getDialogHelper()->askHiddenResponse($this->output, $question, $fallback);
+        if (is_array($question)) {
+            $question = $this->splitQuestion($question);
+        }
+        $question = new Question($question);
+        $question
+            ->setHidden(true)
+            ->setHiddenFallback($fallback);
+
+        return $this->getQuestionHelper()->ask($this->input, $this->output, $question);
     }
 
     /**
@@ -204,13 +235,20 @@ class ConsoleOutput
      * @param callable $validator A PHP callback that gets a value and is expected to return the (transformed) value or throw an exception if it wasn't valid
      * @param integer|boolean $attempts Max number of times to ask before giving up (false by default, which means infinite)
      * @param string $default The default answer if none is given by the user
-     * @param array $autocomplete List of values to autocomplete. This only works if "stty" is installed
      * @return mixed
      * @throws \Exception When any of the validators return an error
      */
-    public function askAndValidate($question, $validator, $attempts = false, $default = null, array $autocomplete = null)
+    public function askAndValidate($question, $validator, $attempts = null, $default = null)
     {
-        return $this->getDialogHelper()->askAndValidate($this->output, $question, $validator, $attempts, $default, $autocomplete);
+        if (is_array($question)) {
+            $question = $this->splitQuestion($question);
+        }
+        $question = new Question($question, $default);
+        $question
+            ->setValidator($validator)
+            ->setMaxAttempts($attempts);
+
+        return $this->getQuestionHelper()->askAndValidate($this->input, $this->output, $question);
     }
 
     /**
@@ -222,15 +260,25 @@ class ConsoleOutput
      *
      * @param string|array $question The question to ask. If an array each array item is turned into one line of a multi-line question
      * @param callable $validator A PHP callback that gets a value and is expected to return the (transformed) value or throw an exception if it wasn't valid
-     * @param integer|boolean $attempts Max number of times to ask before giving up (false by default, which means infinite)
+     * @param integer|null $attempts Max number of times to ask before giving up (false by default, which means infinite)
      * @param boolean $fallback In case the response can not be hidden, whether to fallback on non-hidden question or not
      * @return string The response
      * @throws \Exception When any of the validators return an error
      * @throws \RuntimeException In case the fallback is deactivated and the response can not be hidden
      */
-    public function askHiddenResponseAndValidate($question, $validator, $attempts = false, $fallback = true)
+    public function askHiddenResponseAndValidate($question, $validator, $attempts = null, $fallback = true)
     {
-        return $this->getDialogHelper()->askHiddenResponseAndValidate($this->output, $question, $validator, $attempts, $fallback);
+        if (is_array($question)) {
+            $question = $this->splitQuestion($question);
+        }
+        $question = new Question($question);
+        $question
+            ->setHidden(true)
+            ->setHiddenFallback($fallback)
+            ->setValidator($validator)
+            ->setMaxAttempts($attempts);
+
+        return $this->getQuestionHelper()->ask($this->input, $this->output, $question);
     }
 
     /**
@@ -281,18 +329,29 @@ class ConsoleOutput
     }
 
     /**
-     * Returns or initializes the symfony/console DialogHelper
+     * Returns or initializes the symfony/console QuestionHelper
      *
-     * @return DialogHelper
+     * @return QuestionHelper
      */
-    protected function getDialogHelper()
+    protected function getQuestionHelper()
     {
-        if ($this->dialogHelper === null) {
-            $this->dialogHelper = new DialogHelper();
+        if ($this->questionHelper === null) {
+            $this->questionHelper = new QuestionHelper();
             $helperSet = new HelperSet([new FormatterHelper()]);
-            $this->dialogHelper->setHelperSet($helperSet);
+            $this->questionHelper->setHelperSet($helperSet);
         }
-        return $this->dialogHelper;
+        return $this->questionHelper;
+    }
+
+    /**
+     * If question is an array, split it into multi-line string
+     *
+     * @param array $question
+     * @return string
+     */
+    protected function splitQuestion(array $question)
+    {
+        return implode('\n', $question);
     }
 
     /**
