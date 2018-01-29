@@ -42,13 +42,14 @@ class ConsoleOutputTest extends UnitTestCase
      */
     public function setUp()
     {
-        $this->input = new ArrayInput(['test']);
+        $this->input = new ArrayInput([]);
+        $this->answerNothing();
+
         $this->output = new StreamOutput(fopen('php://memory', 'w', false));
 
         $this->consoleOutput = new ConsoleOutput();
         $this->consoleOutput->setOutput($this->output);
         $this->consoleOutput->setInput($this->input);
-        $this->consoleOutput->getInput()->setInteractive(false);
     }
 
     /**
@@ -58,7 +59,40 @@ class ConsoleOutputTest extends UnitTestCase
     {
         $string = 'simple output';
         $this->consoleOutput->output($string);
-        $this->assertSame($string, $this->getDisplay());
+        $this->assertSame($string, $this->returnOutput());
+    }
+
+    /**
+     * @test
+     */
+    public function questionIsAskedAnswerIsNo()
+    {
+        $this->answerNo();
+        $answer = $this->consoleOutput->ask('Is this a test?');
+
+        $this->assertSame('no', $answer);
+    }
+
+    /**
+     * @test
+     */
+    public function questionIsAskedAnswerIsYes()
+    {
+        $this->answerYes();
+        $answer = $this->consoleOutput->ask('Are you lying?');
+
+        $this->assertSame('yes', $answer);
+    }
+
+    /**
+     * @test
+     */
+    public function questionIsWrittenToOutput()
+    {
+        $this->answerYes();
+        $this->consoleOutput->ask('Is this a test?');
+
+        $this->assertSame('Is this a test?', $this->returnOutput());
     }
 
     /**
@@ -69,52 +103,54 @@ class ConsoleOutputTest extends UnitTestCase
         $this->assertSame('Not Sure', $this->consoleOutput->ask('Enter your name', 'Not Sure'));
     }
 
-    /**
-     * @test
-     */
-    public function questionIsAskedAnswerIsNo()
+    private function answerYes()
     {
-        $answer = $this->consoleOutput->ask('Is this a test?');
-        \Neos\Flow\var_dump($this->getDisplay());
+        $this->input->setStream(self::createStream(['yes']));
+    }
 
-        $this->assertSame(false, $answer);
+    private function answerNo()
+    {
+        $this->input->setStream(self::createStream(['no']));
+    }
+
+    private function answerCustom(string $answer)
+    {
+        $this->input->setStream(self::createStream([$answer]));
+    }
+
+    private function answerNothing()
+    {
+        $this->input->setStream(self::createStream([' ']));
     }
 
     /**
-     * @test
+     * @param bool $normalize Add line breaks at the end
+     * @return string $streamContent
      */
-    public function questionIsAskedAnswerIsYes()
-    {
-        $answer = $this->consoleOutput->askConfirmation('Are you lying?');
-        $this->assertSame(true, $answer);
-    }
-
-    /**
-     * @test
-     */
-    public function returnUserInput()
-    {
-        $answer = $this->consoleOutput->ask('Are you lying?');
-        $this->assertSame(true, $answer);
-    }
-
-    /**
-     * Gets the display returned by the last execution of the command.
-     *
-     * @param bool $normalize Whether to normalize end of lines to \n or not
-     *
-     * @return string The display
-     */
-    private function getDisplay($normalize = false)
+    private function returnOutput($normalize = false)
     {
         rewind($this->output->getStream());
 
-        $display = stream_get_contents($this->output->getStream());
+        $streamContent = stream_get_contents($this->output->getStream());
 
         if ($normalize) {
-            $display = str_replace(PHP_EOL, "\n", $display);
+            $streamContent = str_replace(PHP_EOL, "\n", $streamContent);
         }
 
-        return $display;
+        return $streamContent;
+    }
+
+    /**
+     * @param array $inputs
+     * @return bool|resource
+     */
+    private static function createStream(array $inputs)
+    {
+        $stream = fopen('php://memory', 'r+', false);
+
+        fwrite($stream, implode(PHP_EOL, $inputs));
+        rewind($stream);
+
+        return $stream;
     }
 }
