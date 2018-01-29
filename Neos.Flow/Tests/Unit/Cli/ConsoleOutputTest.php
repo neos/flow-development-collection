@@ -138,7 +138,7 @@ class ConsoleOutputTest extends UnitTestCase
     public function askAndValidate()
     {
         $this->answerCustom(5);
-        $validator = function($number) {
+        $validator = function ($number) {
             return $number > 4;
         };
 
@@ -160,8 +160,7 @@ class ConsoleOutputTest extends UnitTestCase
             '   0/100 [>---------------------------]   0%' . PHP_EOL .
             '   1/100 [>---------------------------]   1%' . PHP_EOL .
             '  50/100 [==============>-------------]  50%' . PHP_EOL .
-            ' 100/100 [============================] 100%'
-            , $this->returnOutput());
+            ' 100/100 [============================] 100%', $this->returnOutput());
     }
 
     /**
