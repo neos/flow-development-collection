@@ -337,21 +337,24 @@ class ConsoleOutput
     /**
      * @param OutputInterface $output
      */
-    public function setOutput(OutputInterface $output) {
+    public function setOutput(OutputInterface $output)
+    {
         $this->output = $output;
     }
 
     /**
      * @return OutputInterface
      */
-    public function getOutput(): OutputInterface {
+    public function getOutput(): OutputInterface
+    {
         return $this->output;
     }
 
     /**
      * @param InputInterface $input
      */
-    public function setInput(InputInterface $input) {
+    public function setInput(InputInterface $input)
+    {
         $this->input = $input;
     }
 
@@ -359,7 +362,8 @@ class ConsoleOutput
     /**
      * @return InputInterface
      */
-    public function getInput():InputInterface {
+    public function getInput():InputInterface
+    {
         return $this->input;
     }
 

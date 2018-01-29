@@ -85,7 +85,6 @@ class ConsoleOutputTest extends UnitTestCase
      */
     public function questionIsAskedAnswerIsYes()
     {
-
         $answer = $this->consoleOutput->askConfirmation('Are you lying?');
         $this->assertSame(true, $answer);
     }
@@ -119,4 +118,3 @@ class ConsoleOutputTest extends UnitTestCase
         return $display;
     }
 }
-
