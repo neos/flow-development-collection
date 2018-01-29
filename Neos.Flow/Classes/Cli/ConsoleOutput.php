@@ -156,17 +156,22 @@ class ConsoleOutput
      * @param array $choices List of choices to pick from
      * @param boolean $default The default answer if the user enters nothing
      * @param boolean $multiSelect If TRUE the result will be an array with the selected options. Multiple options can be given separated by commas
-     * @param boolean|integer $attempts Max number of times to ask before giving up (false by default, which means infinite)
+     * @param boolean|null $attempts Max number of times to ask before giving up (false by default, which means infinite)
      * @return integer|string|array The selected value or values (the key of the choices array)
      * @throws \InvalidArgumentException
      */
-    public function select($question, $choices, $default = null, $multiSelect = false, $attempts = false)
+    public function select($question, $choices, $default = null, $multiSelect = false, $attempts = null)
     {
         if (is_array($question)) {
             $question = $this->splitQuestion($question);
         }
+        $question = new ChoiceQuestion($question, $choices, $default);
+        $question
+            ->setMaxAttempts($attempts)
+            ->setMultiselect($multiSelect)
+            ->setErrorMessage('Value "%s" is invalid');
 
-        return $this->getQuestionHelper()->select($this->output, $question, $choices, $default, $attempts, 'Value "%s" is invalid', $multiSelect);
+        return $this->getQuestionHelper()->ask($this->input, $this->output, $question);
     }
 
     /**
