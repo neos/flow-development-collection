@@ -103,19 +103,23 @@ class ConsoleOutputTest extends UnitTestCase
         $this->assertSame('Not Sure', $this->consoleOutput->ask('Enter your name', 'Not Sure'));
     }
 
-    private function answerYes() {
+    private function answerYes()
+    {
         $this->input->setStream(self::createStream(['yes']));
     }
 
-    private function answerNo() {
+    private function answerNo()
+    {
         $this->input->setStream(self::createStream(['no']));
     }
 
-    private function answerCustom(string $answer) {
+    private function answerCustom(string $answer)
+    {
         $this->input->setStream(self::createStream([$answer]));
     }
 
-    private function answerNothing() {
+    private function answerNothing()
+    {
         $this->input->setStream(self::createStream([' ']));
     }
 
