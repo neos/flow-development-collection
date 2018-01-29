@@ -118,7 +118,8 @@ class ConsoleOutputTest extends UnitTestCase
         $this->input->setStream(self::createStream([$answer]));
     }
 
-    private function answerNothing() {
+    private function answerNothing()
+    {
         $this->input->setStream(self::createStream([' ']));
     }
 
