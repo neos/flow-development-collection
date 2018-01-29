@@ -18,8 +18,11 @@ use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Helper\FormatterHelper;
 use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\Console\Helper\Table;
+use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\ConsoleOutput as SymfonyConsoleOutput;
 use Symfony\Component\Console\Input\StringInput as SymfonyStringInput;
+use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Question\Question;
 
@@ -58,8 +61,8 @@ class ConsoleOutput
      */
     public function __construct()
     {
-        $this->output = new SymfonyConsoleOutput();
-        $this->input = new SymfonyStringInput('');
+        $this->setOutput(new SymfonyConsoleOutput());
+        $this->setInput(new SymfonyStringInput(''));
         $this->input->setInteractive(true);
         $this->output->getFormatter()->setStyle('b', new OutputFormatterStyle(null, null, ['bold']));
         $this->output->getFormatter()->setStyle('i', new OutputFormatterStyle('black', 'white'));
@@ -324,6 +327,35 @@ class ConsoleOutput
     public function progressFinish()
     {
         $this->getProgressBar()->finish();
+    }
+
+    /**
+     * @param OutputInterface $output
+     */
+    public function setOutput(OutputInterface $output) {
+        $this->output = $output;
+    }
+
+    /**
+     * @return OutputInterface
+     */
+    public function getOutput(): OutputInterface {
+        return $this->output;
+    }
+
+    /**
+     * @param InputInterface $input
+     */
+    public function setInput(InputInterface $input) {
+        $this->input = $input;
+    }
+
+
+    /**
+     * @return InputInterface
+     */
+    public function getInput():InputInterface {
+        return $this->input;
     }
 
     /**
