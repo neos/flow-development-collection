@@ -390,7 +390,7 @@ class ConsoleOutput
      */
     protected function splitQuestion(array $question)
     {
-        return implode('\n', $question);
+        return implode(PHP_EOL, $question);
     }
 
     /**
