@@ -256,7 +256,7 @@ class ConsoleOutput
             ->setValidator($validator)
             ->setMaxAttempts($attempts);
 
-        return $this->getQuestionHelper()->askAndValidate($this->input, $this->output, $question);
+        return $this->getQuestionHelper()->ask($this->input, $this->output, $question);
     }
 
     /**
