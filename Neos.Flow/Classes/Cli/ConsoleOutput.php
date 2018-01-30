@@ -337,7 +337,7 @@ class ConsoleOutput
     /**
      * @param OutputInterface $output
      */
-    public function setOutput(OutputInterface $output)
+    public function setOutput(OutputInterface $output): void
     {
         $this->output = $output;
     }
@@ -353,7 +353,7 @@ class ConsoleOutput
     /**
      * @param InputInterface $input
      */
-    public function setInput(InputInterface $input)
+    public function setInput(InputInterface $input): void
     {
         $this->input = $input;
     }
@@ -388,7 +388,7 @@ class ConsoleOutput
      * @param array $question
      * @return string
      */
-    protected function splitQuestion(array $question)
+    protected function splitQuestion(array $question): string
     {
         return implode(PHP_EOL, $question);
     }

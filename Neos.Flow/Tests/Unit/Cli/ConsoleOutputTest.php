@@ -18,7 +18,7 @@ use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\StreamOutput;
 
 /**
- * Test cases for the CLI console output
+ * Test cases for CLI console output helpers
  */
 class ConsoleOutputTest extends UnitTestCase
 {
@@ -40,7 +40,7 @@ class ConsoleOutputTest extends UnitTestCase
     /**
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         $this->input = new ArrayInput([]);
         $this->answerNothing();
@@ -198,28 +198,32 @@ class ConsoleOutputTest extends UnitTestCase
         );
     }
 
-    private function answerYes()
+    private function answerYes(): void
     {
         $this->input->setStream(self::createStream(['yes']));
     }
 
-    private function answerNo()
+    private function answerNo(): void
     {
         $this->input->setStream(self::createStream(['no']));
     }
 
-    private function answerCustom(string $answer)
+    private function answerCustom(string $answer): void
     {
         $this->input->setStream(self::createStream([$answer]));
     }
 
-    private function answerNothing()
+    private function answerNothing(): void
     {
         $this->input->setStream(self::createStream([' ']));
     }
 
     /**
+     * Return output the way it will be represented within the console
+     *
      * @return string $streamContent
+     * @param bool $removeControlCharacters
+     * @return bool|string
      */
     private function returnOutput()
     {
