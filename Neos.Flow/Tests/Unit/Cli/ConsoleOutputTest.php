@@ -55,12 +55,44 @@ class ConsoleOutputTest extends UnitTestCase
     /**
      * @test
      */
-    public function outputSimpleOutput()
+    public function outputIsSimpleOutput()
     {
         $string = 'simple output';
         $this->consoleOutput->output($string);
 
-        $this->assertSame($string, $this->returnOutput());
+        $this->assertSame($string, $this->getActualConsoleOutput());
+    }
+
+    /**
+     * @test
+     */
+    public function outputIsLine()
+    {
+        $string = 'simple line';
+        $this->consoleOutput->outputLine($string);
+
+        $this->assertSame($string . PHP_EOL, $this->getActualConsoleOutput());
+    }
+
+    /**
+     * @test
+     */
+    public function outputIsFormattedAndMaximumLineLengthIsObeyed()
+    {
+        $string =
+            'this is ' . PHP_EOL .
+            'mutliline ' . PHP_EOL .
+            'content and one line is longer than 79 characters, it\'s exactly this line to be precice ';
+
+        $this->consoleOutput->outputFormatted($string, [], 2);
+
+        $formattedString =
+            '  this is ' . PHP_EOL .
+            '  mutliline ' . PHP_EOL .
+            '  content and one line is longer than 79 characters, it\'s exactly this line to' . PHP_EOL .
+            '  be precice ' . PHP_EOL;
+
+        $this->assertSame($formattedString, $this->getActualConsoleOutput());
     }
 
     /**
@@ -93,7 +125,7 @@ class ConsoleOutputTest extends UnitTestCase
         $this->answerYes();
         $this->consoleOutput->ask('Is this a test?');
 
-        $this->assertSame('Is this a test?', $this->returnOutput());
+        $this->assertSame('Is this a test?', $this->getActualConsoleOutput());
     }
 
     /**
@@ -104,7 +136,7 @@ class ConsoleOutputTest extends UnitTestCase
         $this->answerYes();
         $this->consoleOutput->ask(['First line', 'Second line']);
 
-        $this->assertSame('First line'.PHP_EOL.'Second line', $this->returnOutput());
+        $this->assertSame('First line'.PHP_EOL.'Second line', $this->getActualConsoleOutput());
     }
 
     /**
@@ -120,16 +152,14 @@ class ConsoleOutputTest extends UnitTestCase
      */
     public function tableCanBeDrawn()
     {
-        $this->consoleOutput->outputTable([
-            ['row1', 'row2'],
-            ['header 1', 'header 2']
-        ]);
+        $this->consoleOutput->outputTable([['column1', 'column2']], ['header 1', 'header 2']);
 
         $this->assertSame(
             '+----------+----------+' . PHP_EOL .
-            '| row1     | row2     |' . PHP_EOL .
             '| header 1 | header 2 |' . PHP_EOL .
-            '+----------+----------+' . PHP_EOL, $this->returnOutput());
+            '+----------+----------+' . PHP_EOL .
+            '| column1  | column2  |' . PHP_EOL .
+            '+----------+----------+' . PHP_EOL, $this->getActualConsoleOutput());
     }
 
     /**
@@ -154,26 +184,26 @@ class ConsoleOutputTest extends UnitTestCase
     {
         $this->consoleOutput->progressStart(100);
         $this->consoleOutput->progressAdvance();
-        $progressBar = $this->consoleOutput->progressSet(50);
-        $progressBar = $this->consoleOutput->progressFinish();
+        $this->consoleOutput->progressSet(50);
+        $this->consoleOutput->progressFinish();
         $this->assertSame(
             '   0/100 [>---------------------------]   0%' . PHP_EOL .
             '   1/100 [>---------------------------]   1%' . PHP_EOL .
             '  50/100 [==============>-------------]  50%' . PHP_EOL .
-            ' 100/100 [============================] 100%', $this->returnOutput());
+            ' 100/100 [============================] 100%', $this->getActualConsoleOutput());
     }
 
     /**
      * @test
      */
-    public function selectAndChoosableAnswer()
+    public function selectAnChoosableeAnswer()
     {
         $this->answerCustom('no');
         $choices = [
             'yes' => 'No',
             'no' => 'Yes'
         ];
-        $userAnswer = $this->consoleOutput->select('Is this a good test?', $choices, 2, true);
+        $userAnswer = $this->consoleOutput->select('Is this a good test?', $choices, 'no', true);
 
         $this->assertSame(['no'], $userAnswer);
     }
@@ -183,18 +213,20 @@ class ConsoleOutputTest extends UnitTestCase
      */
     public function selectAnswerIsDisplayed()
     {
-        $this->answerCustom('1');
+        $userAnswer = 1;
+        $this->answerCustom($userAnswer);
         $choices = [
             1 => 'No',
             2 => 'Yes'
         ];
-        $this->consoleOutput->select('Is this a good test?', $choices, 2, true);
+        $this->consoleOutput->select('Is this a good test?', $choices, 1, true);
 
         $this->assertSame(
             'Is this a good test?' . PHP_EOL .
             '  [1] No' . PHP_EOL .
-            '  [2] Yes' . PHP_EOL .' > 1',
-            $this->returnOutput()
+            '  [2] Yes' . PHP_EOL .
+            ' > ' . $userAnswer,
+            $this->getActualConsoleOutput()
         );
     }
 
@@ -225,10 +257,16 @@ class ConsoleOutputTest extends UnitTestCase
      * @param bool $removeControlCharacters
      * @return bool|string
      */
-    private function returnOutput()
+    private function getActualConsoleOutput(bool $removeControlCharacters = true)
     {
         rewind($this->output->getStream());
         $streamContent = stream_get_contents($this->output->getStream());
+
+        // remove control characters for cursor manipulation
+        if ($removeControlCharacters === true) {
+            $cursorCommandCharacters = ["\u{001b}[K", "\u{001b}[1P", "\u{001b}[1X", "\u{001b}[1@", "\u{001b}[1L",  "\u{001b}[1M"];
+            $streamContent = str_replace($cursorCommandCharacters, '', $streamContent);
+        }
 
         return $streamContent;
     }
