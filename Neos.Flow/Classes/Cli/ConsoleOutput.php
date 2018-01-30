@@ -78,7 +78,7 @@ class ConsoleOutput
      *
      * @return integer
      */
-    public function getMaximumLineLength()
+    public function getMaximumLineLength(): int
     {
         return 79;
     }
@@ -92,7 +92,7 @@ class ConsoleOutput
      * @param array $arguments Optional arguments to use for sprintf
      * @return void
      */
-    public function output($text, array $arguments = [])
+    public function output($text, array $arguments = []): void
     {
         if ($arguments !== []) {
             $text = vsprintf($text, $arguments);
@@ -109,7 +109,7 @@ class ConsoleOutput
      * @see output()
      * @see outputLines()
      */
-    public function outputLine($text = '', array $arguments = [])
+    public function outputLine($text = '', array $arguments = []): void
     {
         $this->output($text . PHP_EOL, $arguments);
     }
@@ -124,7 +124,7 @@ class ConsoleOutput
      * @return void
      * @see outputLine()
      */
-    public function outputFormatted($text = '', array $arguments = [], $leftPadding = 0)
+    public function outputFormatted($text = '', array $arguments = [], $leftPadding = 0): void
     {
         $lines = explode(PHP_EOL, $text);
         foreach ($lines as $line) {
@@ -139,7 +139,7 @@ class ConsoleOutput
      * @param array $rows
      * @param array $headers
      */
-    public function outputTable($rows, $headers = null)
+    public function outputTable($rows, $headers = null): void
     {
         $table = $this->getTable();
         if ($headers !== null) {
@@ -182,7 +182,7 @@ class ConsoleOutput
      * @return string The user answer
      * @throws \RuntimeException If there is no data to read in the input stream
      */
-    public function ask($question, $default = null)
+    public function ask($question, $default = null): string
     {
         if (is_array($question)) {
             $question = $this->splitQuestion($question);
@@ -201,7 +201,7 @@ class ConsoleOutput
      * @param boolean $default The default answer if the user enters nothing
      * @return boolean true if the user has confirmed, false otherwise
      */
-    public function askConfirmation($question, $default = true)
+    public function askConfirmation($question, $default = true): bool
     {
         if (is_array($question)) {
             $question = $this->splitQuestion($question);
@@ -219,7 +219,7 @@ class ConsoleOutput
      * @return string The answer
      * @throws \RuntimeException In case the fallback is deactivated and the response can not be hidden
      */
-    public function askHiddenResponse($question, $fallback = true)
+    public function askHiddenResponse($question, $fallback = true): string
     {
         if (is_array($question)) {
             $question = $this->splitQuestion($question);
@@ -243,10 +243,10 @@ class ConsoleOutput
      * @param callable $validator A PHP callback that gets a value and is expected to return the (transformed) value or throw an exception if it wasn't valid
      * @param integer|boolean $attempts Max number of times to ask before giving up (false by default, which means infinite)
      * @param string $default The default answer if none is given by the user
-     * @return mixed
+     * @return bool
      * @throws \Exception When any of the validators return an error
      */
-    public function askAndValidate($question, $validator, $attempts = null, $default = null)
+    public function askAndValidate($question, $validator, $attempts = null, $default = null): bool
     {
         if (is_array($question)) {
             $question = $this->splitQuestion($question);
@@ -274,7 +274,7 @@ class ConsoleOutput
      * @throws \Exception When any of the validators return an error
      * @throws \RuntimeException In case the fallback is deactivated and the response can not be hidden
      */
-    public function askHiddenResponseAndValidate($question, $validator, $attempts = null, $fallback = true)
+    public function askHiddenResponseAndValidate($question, $validator, $attempts = null, $fallback = true): string
     {
         if (is_array($question)) {
             $question = $this->splitQuestion($question);
@@ -295,7 +295,7 @@ class ConsoleOutput
      * @param integer $max Maximum steps. If NULL an indeterminate progress bar is rendered
      * @return void
      */
-    public function progressStart($max = null)
+    public function progressStart($max = null): void
     {
         $this->getProgressBar()->start($max);
     }
@@ -307,7 +307,7 @@ class ConsoleOutput
      * @return void
      * @throws \LogicException
      */
-    public function progressAdvance($step = 1)
+    public function progressAdvance($step = 1): void
     {
         $this->getProgressBar()->advance($step);
     }
@@ -319,7 +319,7 @@ class ConsoleOutput
      * @return void
      * @throws \LogicException
      */
-    public function progressSet($current)
+    public function progressSet($current): void
     {
         $this->getProgressBar()->setProgress($current);
     }
@@ -329,7 +329,7 @@ class ConsoleOutput
      *
      * @return void
      */
-    public function progressFinish()
+    public function progressFinish(): void
     {
         $this->getProgressBar()->finish();
     }
@@ -372,7 +372,7 @@ class ConsoleOutput
      *
      * @return QuestionHelper
      */
-    protected function getQuestionHelper()
+    protected function getQuestionHelper(): QuestionHelper
     {
         if ($this->questionHelper === null) {
             $this->questionHelper = new QuestionHelper();
@@ -398,7 +398,7 @@ class ConsoleOutput
      *
      * @return ProgressBar
      */
-    protected function getProgressBar()
+    protected function getProgressBar(): ProgressBar
     {
         if ($this->progressBar === null) {
             $this->progressBar = new ProgressBar($this->output);
@@ -411,7 +411,7 @@ class ConsoleOutput
      *
      * @return Table
      */
-    protected function getTable()
+    protected function getTable(): Table
     {
         if ($this->table === null) {
             $this->table = new Table($this->output);
