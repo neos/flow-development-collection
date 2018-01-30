@@ -152,7 +152,7 @@ class ConsoleOutputTest extends UnitTestCase
      */
     public function tableCanBeDrawn()
     {
-        $this->consoleOutput->outputTable([['column1', 'column2']],['header 1', 'header 2']);
+        $this->consoleOutput->outputTable([['column1', 'column2']], ['header 1', 'header 2']);
 
         $this->assertSame(
             '+----------+----------+' . PHP_EOL .
