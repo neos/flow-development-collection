@@ -92,7 +92,7 @@ class ConsoleOutput
      * @param array $arguments Optional arguments to use for sprintf
      * @return void
      */
-    public function output($text, array $arguments = []): void
+    public function output(string $text, array $arguments = []): void
     {
         if ($arguments !== []) {
             $text = vsprintf($text, $arguments);
@@ -109,7 +109,7 @@ class ConsoleOutput
      * @see output()
      * @see outputLines()
      */
-    public function outputLine($text = '', array $arguments = []): void
+    public function outputLine(string $text = '', array $arguments = []): void
     {
         $this->output($text . PHP_EOL, $arguments);
     }
@@ -124,7 +124,7 @@ class ConsoleOutput
      * @return void
      * @see outputLine()
      */
-    public function outputFormatted($text = '', array $arguments = [], $leftPadding = 0): void
+    public function outputFormatted(string $text = '', array $arguments = [], int $leftPadding = 0): void
     {
         $lines = explode(PHP_EOL, $text);
         foreach ($lines as $line) {
@@ -139,7 +139,7 @@ class ConsoleOutput
      * @param array $rows
      * @param array $headers
      */
-    public function outputTable($rows, $headers = null): void
+    public function outputTable(array $rows, array $headers = null): void
     {
         $table = $this->getTable();
         if ($headers !== null) {
@@ -156,11 +156,11 @@ class ConsoleOutput
      * @param array $choices List of choices to pick from
      * @param boolean $default The default answer if the user enters nothing
      * @param boolean $multiSelect If TRUE the result will be an array with the selected options. Multiple options can be given separated by commas
-     * @param boolean|null $attempts Max number of times to ask before giving up (false by default, which means infinite)
+     * @param boolean|null $attempts Max number of times to ask before giving up (null by default, which means infinite)
      * @return integer|string|array The selected value or values (the key of the choices array)
      * @throws \InvalidArgumentException
      */
-    public function select($question, $choices, $default = null, $multiSelect = false, $attempts = null)
+    public function select($question, array $choices, bool $default = null, bool $multiSelect = false, $attempts = null)
     {
         if (is_array($question)) {
             $question = $this->splitQuestion($question);
@@ -182,7 +182,7 @@ class ConsoleOutput
      * @return string The user answer
      * @throws \RuntimeException If there is no data to read in the input stream
      */
-    public function ask($question, $default = null): string
+    public function ask($question, string $default = null): string
     {
         if (is_array($question)) {
             $question = $this->splitQuestion($question);
@@ -201,7 +201,7 @@ class ConsoleOutput
      * @param boolean $default The default answer if the user enters nothing
      * @return boolean true if the user has confirmed, false otherwise
      */
-    public function askConfirmation($question, $default = true): bool
+    public function askConfirmation($question, bool $default = true): bool
     {
         if (is_array($question)) {
             $question = $this->splitQuestion($question);
@@ -219,7 +219,7 @@ class ConsoleOutput
      * @return string The answer
      * @throws \RuntimeException In case the fallback is deactivated and the response can not be hidden
      */
-    public function askHiddenResponse($question, $fallback = true): string
+    public function askHiddenResponse($question, bool $fallback = true): string
     {
         if (is_array($question)) {
             $question = $this->splitQuestion($question);
@@ -241,12 +241,12 @@ class ConsoleOutput
      *
      * @param string|array $question The question to ask. If an array each array item is turned into one line of a multi-line question
      * @param callable $validator A PHP callback that gets a value and is expected to return the (transformed) value or throw an exception if it wasn't valid
-     * @param integer|boolean $attempts Max number of times to ask before giving up (false by default, which means infinite)
+     * @param integer|null $attempts Max number of times to ask before giving up (null by default, which means infinite)
      * @param string $default The default answer if none is given by the user
      * @return bool
      * @throws \Exception When any of the validators return an error
      */
-    public function askAndValidate($question, $validator, $attempts = null, $default = null): bool
+    public function askAndValidate($question, callable $validator, int $attempts = null, string $default = null): bool
     {
         if (is_array($question)) {
             $question = $this->splitQuestion($question);
@@ -268,13 +268,13 @@ class ConsoleOutput
      *
      * @param string|array $question The question to ask. If an array each array item is turned into one line of a multi-line question
      * @param callable $validator A PHP callback that gets a value and is expected to return the (transformed) value or throw an exception if it wasn't valid
-     * @param integer|null $attempts Max number of times to ask before giving up (false by default, which means infinite)
+     * @param integer|null $attempts Max number of times to ask before giving up (null by default, which means infinite)
      * @param boolean $fallback In case the response can not be hidden, whether to fallback on non-hidden question or not
      * @return string The response
      * @throws \Exception When any of the validators return an error
      * @throws \RuntimeException In case the fallback is deactivated and the response can not be hidden
      */
-    public function askHiddenResponseAndValidate($question, $validator, $attempts = null, $fallback = true): string
+    public function askHiddenResponseAndValidate($question, callable $validator, int $attempts = null, bool $fallback = true): string
     {
         if (is_array($question)) {
             $question = $this->splitQuestion($question);
@@ -295,7 +295,7 @@ class ConsoleOutput
      * @param integer $max Maximum steps. If NULL an indeterminate progress bar is rendered
      * @return void
      */
-    public function progressStart($max = null): void
+    public function progressStart(int $max = null): void
     {
         $this->getProgressBar()->start($max);
     }
@@ -307,7 +307,7 @@ class ConsoleOutput
      * @return void
      * @throws \LogicException
      */
-    public function progressAdvance($step = 1): void
+    public function progressAdvance(int $step = 1): void
     {
         $this->getProgressBar()->advance($step);
     }
@@ -319,7 +319,7 @@ class ConsoleOutput
      * @return void
      * @throws \LogicException
      */
-    public function progressSet($current): void
+    public function progressSet(int $current): void
     {
         $this->getProgressBar()->setProgress($current);
     }

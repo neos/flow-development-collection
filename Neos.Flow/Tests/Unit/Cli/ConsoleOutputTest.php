@@ -230,21 +230,33 @@ class ConsoleOutputTest extends UnitTestCase
         );
     }
 
+    /**
+     * @return void
+     */
     private function answerYes(): void
     {
         $this->input->setStream(self::createStream(['yes']));
     }
 
+    /**
+     * @return void
+     */
     private function answerNo(): void
     {
         $this->input->setStream(self::createStream(['no']));
     }
 
+    /**
+     * @param string $answer A custom string equivalent to user input in console
+     */
     private function answerCustom(string $answer): void
     {
         $this->input->setStream(self::createStream([$answer]));
     }
 
+    /**
+     * @return void
+     */
     private function answerNothing(): void
     {
         $this->input->setStream(self::createStream([' ']));
