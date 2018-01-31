@@ -162,10 +162,7 @@ class ConsoleOutput
      */
     public function select($question, array $choices, bool $default = null, bool $multiSelect = false, $attempts = null)
     {
-        if (is_array($question)) {
-            $question = $this->combineQuestion($question);
-        }
-        $question = new ChoiceQuestion($question, $choices, $default);
+        $question = new ChoiceQuestion($this->combineQuestion($question), $choices, $default);
         $question
             ->setMaxAttempts($attempts)
             ->setMultiselect($multiSelect)
@@ -184,10 +181,7 @@ class ConsoleOutput
      */
     public function ask($question, string $default = null): string
     {
-        if (is_array($question)) {
-            $question = $this->combineQuestion($question);
-        }
-        $question = new Question($question, $default);
+        $question = new Question($this->combineQuestion($question), $default);
 
         return $this->getQuestionHelper()->ask($this->input, $this->output, $question);
     }
@@ -203,10 +197,7 @@ class ConsoleOutput
      */
     public function askConfirmation($question, bool $default = true): bool
     {
-        if (is_array($question)) {
-            $question = $this->combineQuestion($question);
-        }
-        $question = new ConfirmationQuestion($question, $default);
+        $question = new ConfirmationQuestion($this->combineQuestion($question), $default);
 
         return $this->getQuestionHelper()->ask($this->input, $this->output, $question);
     }
@@ -221,10 +212,7 @@ class ConsoleOutput
      */
     public function askHiddenResponse($question, bool $fallback = true): string
     {
-        if (is_array($question)) {
-            $question = $this->combineQuestion($question);
-        }
-        $question = new Question($question);
+        $question = new Question($this->combineQuestion($question));
         $question
             ->setHidden(true)
             ->setHiddenFallback($fallback);
@@ -248,10 +236,7 @@ class ConsoleOutput
      */
     public function askAndValidate($question, callable $validator, int $attempts = null, string $default = null): bool
     {
-        if (is_array($question)) {
-            $question = $this->combineQuestion($question);
-        }
-        $question = new Question($question, $default);
+        $question = new Question($this->combineQuestion($question), $default);
         $question
             ->setValidator($validator)
             ->setMaxAttempts($attempts);
@@ -276,10 +261,7 @@ class ConsoleOutput
      */
     public function askHiddenResponseAndValidate($question, callable $validator, int $attempts = null, bool $fallback = true): string
     {
-        if (is_array($question)) {
-            $question = $this->combineQuestion($question);
-        }
-        $question = new Question($question);
+        $question = new Question($this->combineQuestion($question));
         $question
             ->setHidden(true)
             ->setHiddenFallback($fallback)
@@ -385,12 +367,16 @@ class ConsoleOutput
     /**
      * If question is an array, split it into multi-line string
      *
-     * @param array $question
+     * @param string|array $question
      * @return string
      */
-    protected function combineQuestion(array $question): string
+    protected function combineQuestion($question): string
     {
-        return implode(PHP_EOL, $question);
+        if (is_array($question)) {
+            return implode(PHP_EOL, $question);
+        }
+
+        return $question;
     }
 
     /**
