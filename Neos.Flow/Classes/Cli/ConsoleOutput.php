@@ -163,7 +163,7 @@ class ConsoleOutput
     public function select($question, array $choices, bool $default = null, bool $multiSelect = false, $attempts = null)
     {
         if (is_array($question)) {
-            $question = $this->splitQuestion($question);
+            $question = $this->combineQuestion($question);
         }
         $question = new ChoiceQuestion($question, $choices, $default);
         $question
@@ -185,7 +185,7 @@ class ConsoleOutput
     public function ask($question, string $default = null): string
     {
         if (is_array($question)) {
-            $question = $this->splitQuestion($question);
+            $question = $this->combineQuestion($question);
         }
         $question = new Question($question, $default);
 
@@ -204,7 +204,7 @@ class ConsoleOutput
     public function askConfirmation($question, bool $default = true): bool
     {
         if (is_array($question)) {
-            $question = $this->splitQuestion($question);
+            $question = $this->combineQuestion($question);
         }
         $question = new ConfirmationQuestion($question, $default);
 
@@ -222,7 +222,7 @@ class ConsoleOutput
     public function askHiddenResponse($question, bool $fallback = true): string
     {
         if (is_array($question)) {
-            $question = $this->splitQuestion($question);
+            $question = $this->combineQuestion($question);
         }
         $question = new Question($question);
         $question
@@ -249,7 +249,7 @@ class ConsoleOutput
     public function askAndValidate($question, callable $validator, int $attempts = null, string $default = null): bool
     {
         if (is_array($question)) {
-            $question = $this->splitQuestion($question);
+            $question = $this->combineQuestion($question);
         }
         $question = new Question($question, $default);
         $question
@@ -277,7 +277,7 @@ class ConsoleOutput
     public function askHiddenResponseAndValidate($question, callable $validator, int $attempts = null, bool $fallback = true): string
     {
         if (is_array($question)) {
-            $question = $this->splitQuestion($question);
+            $question = $this->combineQuestion($question);
         }
         $question = new Question($question);
         $question
@@ -388,7 +388,7 @@ class ConsoleOutput
      * @param array $question
      * @return string
      */
-    protected function splitQuestion(array $question): string
+    protected function combineQuestion(array $question): string
     {
         return implode(PHP_EOL, $question);
     }
