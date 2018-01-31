@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Persistence\Doctrine;
 
 /*
@@ -11,6 +12,9 @@ namespace Neos\Flow\Persistence\Doctrine;
  * source code.
  */
 
+use Doctrine\Common\Persistence\Mapping\ClassMetadata;
+use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Internal\Hydration\IterableResult;
 use Neos\Flow\Annotations as Flow;
@@ -32,6 +36,11 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
     protected $persistenceManager;
 
     /**
+     * @var EntityManager
+     */
+    protected $entityManager;
+
+    /**
      * Warning: if you think you want to set this,
      * look at RepositoryInterface::ENTITY_CLASSNAME first!
      *
@@ -47,10 +56,10 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
     /**
      * Initializes a new Repository.
      *
-     * @param \Doctrine\Common\Persistence\ObjectManager $entityManager The EntityManager to use.
-     * @param \Doctrine\Common\Persistence\Mapping\ClassMetadata $classMetadata The class descriptor.
+     * @param ObjectManager $entityManager The EntityManager to use.
+     * @param ClassMetadata $classMetadata The class descriptor.
      */
-    public function __construct(\Doctrine\Common\Persistence\ObjectManager $entityManager, \Doctrine\Common\Persistence\Mapping\ClassMetadata $classMetadata = null)
+    public function __construct(ObjectManager $entityManager, ClassMetadata $classMetadata = null)
     {
         if ($classMetadata === null) {
             if (defined('static::ENTITY_CLASSNAME') === false) {
@@ -80,10 +89,15 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
      *
      * @param object $object The object to add
      * @return void
+     * @throws IllegalObjectTypeException
      * @api
      */
     public function add($object)
     {
+        if (!is_object($object) || !($object instanceof $this->objectType)) {
+            $type = (is_object($object) ? get_class($object) : gettype($object));
+            throw new IllegalObjectTypeException('The value given to add() was ' . $type . ' , however the ' . get_class($this) . ' can only store ' . $this->objectType . ' instances.', 1517408062);
+        }
         $this->entityManager->persist($object);
     }
 
@@ -92,10 +106,15 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
      *
      * @param object $object The object to remove
      * @return void
+     * @throws IllegalObjectTypeException
      * @api
      */
     public function remove($object)
     {
+        if (!is_object($object) || !($object instanceof $this->objectType)) {
+            $type = (is_object($object) ? get_class($object) : gettype($object));
+            throw new IllegalObjectTypeException('The value given to remove() was ' . $type . ' , however the ' . get_class($this) . ' can only handle ' . $this->objectType . ' instances.', 1517408067);
+        }
         $this->entityManager->remove($object);
     }
 
@@ -147,6 +166,7 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
             $iteration++;
         }
     }
+
 
     /**
      * Finds an object matching the given identifier.
