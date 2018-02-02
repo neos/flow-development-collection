@@ -196,7 +196,6 @@ From Evans, the rules we need to enforce include:
 * When a change to any object within the Aggregate boundary is committed, all invariants
   of the whole Aggregate must be satisfied.
 
-
 On the relationship between adding and retrieving
 -------------------------------------------------
 

@@ -11,7 +11,6 @@ namespace Neos\Flow\Persistence;
  * source code.
  */
 
-use Doctrine\Common\Persistence\ObjectManager;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
 
@@ -27,15 +26,6 @@ abstract class Repository implements RepositoryInterface
      * @var PersistenceManagerInterface
      */
     protected $persistenceManager;
-
-    /**
-     * Doctrine's Entity Manager. Note that "ObjectManager" is the name of the related
-     * interface ...
-     *
-     * @Flow\Inject
-     * @var ObjectManager
-     */
-    protected $entityManager;
 
     /**
      * Warning: if you think you want to set this,

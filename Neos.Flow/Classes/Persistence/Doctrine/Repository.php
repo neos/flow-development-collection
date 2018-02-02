@@ -1,5 +1,4 @@
 <?php
-
 namespace Neos\Flow\Persistence\Doctrine;
 
 /*
@@ -166,7 +165,6 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
             $iteration++;
         }
     }
-
 
     /**
      * Finds an object matching the given identifier.
