@@ -44,11 +44,14 @@ class Version20141015125841 extends AbstractMigration
             return;
         }
         $resourcesResult = $this->connection->executeQuery('SELECT persistence_object_identifier, sha1, filename FROM typo3_flow_resource_resource');
+
         while ($resourceInfo = $resourcesResult->fetch(\PDO::FETCH_ASSOC)) {
             $resourcePathAndFilename = FLOW_PATH_DATA . 'Persistent/Resources/' . $resourceInfo['sha1'];
             $newResourcePathAndFilename = FLOW_PATH_DATA . 'Persistent/Resources/' . $resourceInfo['sha1'][0] . '/' . $resourceInfo['sha1'][1] . '/' . $resourceInfo['sha1'][2] . '/' . $resourceInfo['sha1'][3] . '/' . $resourceInfo['sha1'];
 
             $mediaType = MediaTypes::getMediaTypeFromFilename($resourceInfo['filename']);
+            $filesize = 0;
+            $md5 = ' ';
             if (file_exists($resourcePathAndFilename)) {
                 $md5 = md5_file($resourcePathAndFilename);
                 $filesize = filesize($resourcePathAndFilename);
@@ -67,6 +70,8 @@ class Version20141015125841 extends AbstractMigration
                 continue;
             }
 
+            $this->write(print_r(array('persistent', $mediaType, $md5, $filesize, $resourceInfo['persistence_object_identifier']), true));
+
             $this->connection->executeUpdate(
                 'UPDATE typo3_flow_resource_resource SET collectionname = ?, mediatype = ?, md5 = ?, filesize = ? WHERE persistence_object_identifier = ?',
                 array('persistent', $mediaType, $md5, $filesize, $resourceInfo['persistence_object_identifier'])
@@ -76,6 +81,13 @@ class Version20141015125841 extends AbstractMigration
                 $this->write(sprintf('Could not move the data file of resource "%s" from its legacy location at %s to the correct location %s.', $resourceInfo['sha1'], $resourcePathAndFilename, $newResourcePathAndFilename));
             }
         }
+
+        // create backup of broken files
+        $this->connection->exec('CREATE TABLE typo3_flow_resource_resource_backupfiles AS SELECT * FROM typo3_flow_resource_resource');
+        $this->connection->exec('DELETE FROM typo3_flow_resource_resource_backupfiles WHERE md5 IS NOT NULL AND collectionname IS NOT NULL AND mediatype IS NOT NULL AND filesize IS NOT NULL');
+        // clean broken files
+        $this->connection->exec('DELETE FROM typo3_flow_resource_resource WHERE md5 IS NULL OR collectionname IS NULL OR mediatype IS NULL OR filesize IS NULL');
+        // fix field and enforce values
         $this->connection->exec('ALTER TABLE typo3_flow_resource_resource CHANGE collectionname collectionname VARCHAR(255) NOT NULL, CHANGE mediatype mediatype VARCHAR(100) NOT NULL, CHANGE md5 md5 VARCHAR(32) NOT NULL, CHANGE filesize filesize NUMERIC(20, 0) NOT NULL');
     }
 
