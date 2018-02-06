@@ -1,0 +1,54 @@
+`3.3.24 (2018-02-06) <https://github.com/neos/flow-development-collection/releases/tag/3.3.24>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`TASK: Allow debugging of "silent command failures" <https://github.com/neos/flow-development-collection/pull/1181>`_
+---------------------------------------------------------------------------------------------------------------------
+
+Sometimes a subcommand execution fails without a proper error message. And
+it may happen that even the PHP error is empty at this point.
+
+The error may be "Argument list too long", but this cannot be debugged
+easily.
+
+This change dumps the command that was to be executed into a file, if the
+length of the command exceeds a threshhold. One can then run it manually
+and hopefully see a helpful error message.
+
+* Packages: ``Flow``
+
+`BUGFIX: Pass signal information once, not once more for each slot <https://github.com/neos/flow-development-collection/pull/1177>`_
+------------------------------------------------------------------------------------------------------------------------------------
+
+Signals can pass arguments to slots. These are amended with signal information,
+if desired.
+
+Because slots are hadled in a loop, and the passed signal arguments array was
+used in that loop, the addition of the signal information was done mutliple
+times, if requested.
+
+This change makes sure that the signal information is only added once.
+
+* Packages: ``Flow``
+
+`BUGIFX: RsaWalletServicePhpTest broken depends on PHP configuration <https://github.com/neos/flow-development-collection/pull/1173>`_
+--------------------------------------------------------------------------------------------------------------------------------------
+
+This change fixes `RsaWalletServicePhpTest` on recent Alpine Linux with
+PHP 7.2 (at least, maybe other system can be affected too). I didn't find
+a clear documentation about the reason of this failure:
+
+    1) Neos\\Flow\\Tests\\Unit\\Security\\Cryptography\\RsaWalletServicePhpTest::encryptingAndDecryptingBasicallyWorks
+    openssl_pkey_new(): private key length is too short; it needs to be at least 384 bits, not 0
+
+    /…/Classes/Security/Cryptography/RsaWalletServicePhp.php:92
+    /…/Tests/Unit/Security/Cryptography/RsaWalletServicePhpTest.php:49
+
+This configuration is as light as possible to not slow down the test suite too much.
+
+* Packages: ``Flow``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/3.3.23...3.3.24>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
