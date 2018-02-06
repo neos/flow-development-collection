@@ -356,7 +356,7 @@ Neos:
         eventListeners:
           -
             events: ['onFlush']
-            listener: 'Neos\Flow\Persistence\Doctrine\ObjectValidationListener'
+            listener: 'Neos\Flow\Persistence\Doctrine\OnFlushListener'
 
         secondLevelCache: []
 

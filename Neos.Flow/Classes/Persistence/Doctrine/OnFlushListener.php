@@ -16,20 +16,21 @@ use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\UnitOfWork;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\Exception\ObjectValidationFailedException;
-use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Reflection\ClassSchema;
-use Neos\Utility\ObjectAccess;
 use Neos\Flow\Reflection\ReflectionService;
-use Neos\Utility\TypeHandling;
 use Neos\Flow\Validation\ValidatorResolver;
+use Neos\Utility\ObjectAccess;
+use Neos\Utility\TypeHandling;
 
 /**
- * Flow's Doctrine PersistenceManager
+ * An onFlush listener for Flow's Doctrine PersistenceManager.
+ *
+ * Used to de-duplicate value objects and validate new and updated objects during flush.
  *
  * @Flow\Scope("singleton")
  * @api
  */
-class ObjectValidationListener
+class OnFlushListener
 {
     /**
      * @Flow\Inject
@@ -51,12 +52,12 @@ class ObjectValidationListener
 
     /**
      * @Flow\Inject
-     * @var PersistenceManagerInterface
+     * @var PersistenceManager
      */
     protected $persistenceManager;
 
     /**
-     * An onFlush event listener used to validate entities upon persistence.
+     * An onFlush event listener used to act upon persistence.
      *
      * @param OnFlushEventArgs $eventArgs
      * @return void
@@ -66,9 +67,31 @@ class ObjectValidationListener
     {
         /** @var UnitOfWork $unitOfWork */
         $unitOfWork = $this->entityManager->getUnitOfWork();
+        $validatedInstancesContainer = new \SplObjectStorage();
+
+        $this->deduplicateValueObjectInsertions($unitOfWork, $validatedInstancesContainer);
+
+        foreach ($unitOfWork->getScheduledEntityInsertions() as $entity) {
+            $this->validateObject($entity, $validatedInstancesContainer);
+        }
+
+        foreach ($unitOfWork->getScheduledEntityUpdates() as $entity) {
+            $this->validateObject($entity, $validatedInstancesContainer);
+        }
+    }
+
+    /**
+     * Loops over scheduled insertions and checks for duplicate value objects. Any duplicates are unset from the
+     * list of scheduled insertions.
+     *
+     * @param UnitOfWork $unitOfWork
+     * @param \SplObjectStorage $validatedInstancesContainer
+     * @return void
+     */
+    private function deduplicateValueObjectInsertions(UnitOfWork $unitOfWork, \SplObjectStorage &$validatedInstancesContainer)
+    {
         $entityInsertions = $unitOfWork->getScheduledEntityInsertions();
 
-        $validatedInstancesContainer = new \SplObjectStorage();
         $knownValueObjects = [];
         foreach ($entityInsertions as $entity) {
             $className = TypeHandling::getTypeForValue($entity);
@@ -82,14 +105,9 @@ class ObjectValidationListener
 
                 $knownValueObjects[$className][$identifier] = true;
             }
-            $this->validateObject($entity, $validatedInstancesContainer);
         }
 
         ObjectAccess::setProperty($unitOfWork, 'entityInsertions', $entityInsertions, true);
-
-        foreach ($unitOfWork->getScheduledEntityUpdates() as $entity) {
-            $this->validateObject($entity, $validatedInstancesContainer);
-        }
     }
 
     /**
@@ -100,7 +118,7 @@ class ObjectValidationListener
      * @return void
      * @throws ObjectValidationFailedException
      */
-    protected function validateObject($object, \SplObjectStorage $validatedInstancesContainer)
+    private function validateObject($object, \SplObjectStorage $validatedInstancesContainer)
     {
         $className = $this->entityManager->getClassMetadata(get_class($object))->getName();
         $validator = $this->validatorResolver->getBaseValidatorConjunction($className, ['Persistence', 'Default']);
