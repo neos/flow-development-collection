@@ -384,6 +384,11 @@ Neos\Flow\Security\Authorization\Privilege\Entity\Doctrine\EntityPrivilegeExpres
           1:
             value: Eel_Expression_Code
 
+Neos\Flow\Security\Authentication\Provider\TestingProvider:
+  arguments:
+    1:
+      value: 'TestingProvider'
+
 #                                                                          #
 # Session                                                                  #
 #                                                                          #
