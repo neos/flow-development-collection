@@ -309,7 +309,7 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
             }
 
             /** @var $providerInstance AuthenticationProviderInterface */
-            $providerInstance = new $providerObjectName($providerName, $providerOptions);
+            $providerInstance = $providerObjectName::create($providerName, $providerOptions);
             $this->providers[$providerName] = $providerInstance;
 
             /** @var $tokenInstance TokenInterface */

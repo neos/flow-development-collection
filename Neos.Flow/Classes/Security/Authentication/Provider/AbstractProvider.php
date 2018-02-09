@@ -11,7 +11,6 @@ namespace Neos\Flow\Security\Authentication\Provider;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Authentication\AuthenticationProviderInterface;
 use Neos\Flow\Security\Authentication\TokenInterface;
 
@@ -29,6 +28,16 @@ abstract class AbstractProvider implements AuthenticationProviderInterface
      * @var array
      */
     protected $options = [];
+
+    /**
+     * @param string $name
+     * @param array $options
+     * @return AuthenticationProviderInterface
+     */
+    public static function create(string $name, array $options)
+    {
+        return new static($name, $options);
+    }
 
     /**
      * Constructor
