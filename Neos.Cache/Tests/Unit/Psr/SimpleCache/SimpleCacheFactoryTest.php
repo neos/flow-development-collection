@@ -1,9 +1,9 @@
 <?php
-namespace Neos\Cache\Tests\Unit;
+namespace Neos\Cache\Tests\Unit\Psr\SimpleCache;
 
 use Neos\Cache\Backend\NullBackend;
 use Neos\Cache\EnvironmentConfiguration;
-use Neos\Cache\SimpleCacheFactory;
+use Neos\Cache\Psr\SimpleCache\SimpleCacheFactory;
 use Neos\Cache\Tests\BaseTestCase;
 use org\bovigo\vfs\vfsStream;
 use Psr\SimpleCache\CacheInterface;

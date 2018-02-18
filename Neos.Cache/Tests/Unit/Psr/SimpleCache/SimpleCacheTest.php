@@ -1,16 +1,15 @@
 <?php
-namespace Neos\Cache\Tests\Unit\Frontend;
+namespace Neos\Cache\Tests\Unit\Psr\SimpleCache;
 
 use Neos\Cache\Backend\BackendInterface;
 use Neos\Cache\Exception;
-use Neos\Cache\Exception\PsrInvalidArgumentException;
-use Neos\Cache\Psr\SimpleCacheFrontend;
+use Neos\Cache\Psr\SimpleCache\SimpleCache;
 use Neos\Cache\Tests\BaseTestCase;
 
 /**
  * Tests the PSR-16 simple cache (frontend)
  */
-class PsrSimpleCacheFrontendTest extends BaseTestCase
+class SimpleCacheTest extends BaseTestCase
 {
     /**
      * @var BackendInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -27,16 +26,16 @@ class PsrSimpleCacheFrontendTest extends BaseTestCase
 
     /**
      * @param string $identifier
-     * @return SimpleCacheFrontend
+     * @return SimpleCache
      */
     protected function createSimpleCache($identifier = 'SimpleCacheTest')
     {
-        return new SimpleCacheFrontend($identifier, $this->mockBackend);
+        return new SimpleCache($identifier, $this->mockBackend);
     }
 
     /**
      * @test
-     * @expectedException \Neos\Cache\Exception\PsrInvalidArgumentException
+     * @expectedException \Neos\Cache\Psr\InvalidArgumentException
      */
     public function constructingWithInvalidIdentifierThrowsPsrInvalidArgumentException()
     {
@@ -45,7 +44,7 @@ class PsrSimpleCacheFrontendTest extends BaseTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Cache\Exception\PsrInvalidArgumentException
+     * @expectedException \Neos\Cache\Psr\InvalidArgumentException
      */
     public function setThrowsInvalidArgumentExceptionOnInvalidIdentifier()
     {
@@ -77,7 +76,7 @@ class PsrSimpleCacheFrontendTest extends BaseTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Cache\Exception\PsrInvalidArgumentException
+     * @expectedException \Neos\Cache\Psr\InvalidArgumentException
      */
     public function getThrowsInvalidArgumentExceptionOnInvalidIdentifier()
     {
@@ -123,7 +122,7 @@ class PsrSimpleCacheFrontendTest extends BaseTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Cache\Exception\PsrInvalidArgumentException
+     * @expectedException \Neos\Cache\Psr\InvalidArgumentException
      */
     public function deleteThrowsInvalidArgumentExceptionOnInvalidIdentifier()
     {
@@ -144,7 +143,7 @@ class PsrSimpleCacheFrontendTest extends BaseTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Cache\Exception\PsrInvalidArgumentException
+     * @expectedException \Neos\Cache\Psr\InvalidArgumentException
      */
     public function getMultipleThrowsInvalidArgumentExceptionOnInvalidIdentifier()
     {
@@ -182,7 +181,7 @@ class PsrSimpleCacheFrontendTest extends BaseTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Cache\Exception\PsrInvalidArgumentException
+     * @expectedException \Neos\Cache\Psr\InvalidArgumentException
      */
     public function setMultipleThrowsInvalidArgumentExceptionOnInvalidIdentifier()
     {
@@ -209,7 +208,7 @@ class PsrSimpleCacheFrontendTest extends BaseTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Cache\Exception\PsrInvalidArgumentException
+     * @expectedException \Neos\Cache\Psr\InvalidArgumentException
      */
     public function deleteMultipleThrowsInvalidArgumentExceptionOnInvalidIdentifier()
     {
@@ -219,7 +218,7 @@ class PsrSimpleCacheFrontendTest extends BaseTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Cache\Exception\PsrInvalidArgumentException
+     * @expectedException \Neos\Cache\Psr\InvalidArgumentException
      */
     public function hasThrowsInvalidArgumentExceptionOnInvalidIdentifier()
     {

@@ -1,5 +1,5 @@
 <?php
-namespace Neos\Cache\Exception;
+namespace Neos\Cache\Psr;
 
 /*
  * This file is part of the Neos.Cache package.
@@ -17,6 +17,6 @@ use Psr\SimpleCache\InvalidArgumentException as Psr16InvalidArgumentException;
 /**
  * An invalid argument (usually an inacceptable cache key) was given to a PSR cache.
  */
-class PsrInvalidArgumentException extends \InvalidArgumentException implements Psr6InvalidArgumentException, Psr16InvalidArgumentException
+class InvalidArgumentException extends \InvalidArgumentException implements Psr6InvalidArgumentException, Psr16InvalidArgumentException
 {
 }

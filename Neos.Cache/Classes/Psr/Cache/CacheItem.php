@@ -1,5 +1,5 @@
 <?php
-namespace Neos\Cache\Psr;
+namespace Neos\Cache\Psr\Cache;
 
 /*
  * This file is part of the Neos.Cache package.
@@ -17,9 +17,9 @@ use Psr\Cache\CacheItemInterface;
 /**
  * A cache item (entry).
  * This is not to be created by user libraries. Instead request an item from the pool (frontend).
- * @see PsrFrontend
+ * @see CachePool
  */
-class PsrCacheItem implements CacheItemInterface
+class CacheItem implements CacheItemInterface
 {
     /**
      * @var string
@@ -85,7 +85,7 @@ class PsrCacheItem implements CacheItemInterface
 
     /**
      * @param mixed $value
-     * @return PsrCacheItem|static
+     * @return CacheItem|static
      */
     public function set($value)
     {
@@ -95,7 +95,7 @@ class PsrCacheItem implements CacheItemInterface
 
     /**
      * @param \DateTimeInterface|null $expiration
-     * @return PsrCacheItem|static
+     * @return CacheItem|static
      */
     public function expiresAt($expiration)
     {
@@ -109,7 +109,7 @@ class PsrCacheItem implements CacheItemInterface
 
     /**
      * @param \DateInterval|int|null $time
-     * @return PsrCacheItem|static
+     * @return CacheItem|static
      */
     public function expiresAfter($time)
     {

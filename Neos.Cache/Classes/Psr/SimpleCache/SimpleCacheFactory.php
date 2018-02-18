@@ -1,5 +1,5 @@
 <?php
-namespace Neos\Cache;
+namespace Neos\Cache\Psr\SimpleCache;
 
 /*
  * This file is part of the Neos.Cache package.
@@ -12,8 +12,9 @@ namespace Neos\Cache;
  */
 
 use Neos\Cache\Backend\BackendInterface;
+use Neos\Cache\BackendInstantiationTrait;
+use Neos\Cache\EnvironmentConfiguration;
 use Neos\Cache\Exception\InvalidBackendException;
-use Neos\Cache\Psr\SimpleCacheFrontend;
 use Neos\Cache\Frontend\VariableFrontend;
 use Psr\SimpleCache\CacheInterface;
 
@@ -67,6 +68,6 @@ class SimpleCacheFactory
      */
     protected function instantiateCache($cacheIdentifier, $backend): CacheInterface
     {
-        return new SimpleCacheFrontend($cacheIdentifier, $backend);
+        return new SimpleCache($cacheIdentifier, $backend);
     }
 }

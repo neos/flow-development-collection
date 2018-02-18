@@ -1,5 +1,5 @@
 <?php
-namespace Neos\Cache\Psr;
+namespace Neos\Cache\Psr\SimpleCache;
 
 /*
  * This file is part of the Neos.Cache package.
@@ -13,14 +13,15 @@ namespace Neos\Cache\Psr;
 
 use Neos\Cache\Backend\BackendInterface;
 use Neos\Cache\Exception;
+use Neos\Cache\Psr\InvalidArgumentException;
 use Psr\SimpleCache\CacheInterface;
 use Psr\SimpleCache\DateInterval;
 
 /**
  * A simple cache frontend
- * Note: This does not follow the FrontendInterface this package provides.
+ * Note: This does not follow the \Neos\Cache\Frontend\FrontendInterface this package provides.
  */
-class SimpleCacheFrontend implements CacheInterface
+class SimpleCache implements CacheInterface
 {
     /**
      * Pattern an entry identifier must match.
@@ -42,12 +43,12 @@ class SimpleCacheFrontend implements CacheInterface
      *
      * @param string $identifier A identifier which describes this cache
      * @param BackendInterface $backend Backend to be used for this cache
-     * @throws Exception\PsrInvalidArgumentException if the identifier doesn't match PATTERN_ENTRYIDENTIFIER
+     * @throws InvalidArgumentException if the identifier doesn't match PATTERN_ENTRYIDENTIFIER
      */
     public function __construct(string $identifier, BackendInterface $backend)
     {
         if ($this->isValidEntryIdentifier($identifier) === false) {
-            throw new Exception\PsrInvalidArgumentException('"' . $identifier . '" is not a valid cache identifier.', 1515192811703);
+            throw new InvalidArgumentException('"' . $identifier . '" is not a valid cache identifier.', 1515192811703);
         }
         $this->identifier = $identifier;
         $this->backend = $backend;
@@ -63,7 +64,7 @@ class SimpleCacheFrontend implements CacheInterface
      * @return bool
      *
      * @throws Exception
-     * @throws Exception\PsrInvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function set($key, $variable, $lifetime = null)
     {
@@ -83,7 +84,7 @@ class SimpleCacheFrontend implements CacheInterface
      * @param mixed $defaultValue
      * @return mixed The value or the defaultValue if entry was not found
      * @throws Exception
-     * @throws Exception\PsrInvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function get($key, $defaultValue = null)
     {
@@ -104,7 +105,7 @@ class SimpleCacheFrontend implements CacheInterface
      * @param string $key
      * @return bool
      * @throws Exception
-     * @throws Exception\PsrInvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function delete($key)
     {
@@ -129,7 +130,7 @@ class SimpleCacheFrontend implements CacheInterface
      * @param iterable $keys
      * @param mixed $default
      * @return iterable
-     * @throws Exception\PsrInvalidArgumentException
+     * @throws InvalidArgumentException
      * @throws Exception
      */
     public function getMultiple($keys, $default = null)
@@ -146,7 +147,7 @@ class SimpleCacheFrontend implements CacheInterface
      * @param integer $ttl
      * @return bool
      * @throws Exception
-     * @throws Exception\PsrInvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function setMultiple($values, $ttl = null)
     {
@@ -161,7 +162,8 @@ class SimpleCacheFrontend implements CacheInterface
     /**
      * @param iterable $keys
      * @return bool
-     * @throws Exception\PsrInvalidArgumentException
+     * @throws InvalidArgumentException
+     * @throws Exception
      */
     public function deleteMultiple($keys)
     {
@@ -175,7 +177,7 @@ class SimpleCacheFrontend implements CacheInterface
     /**
      * @param string $key
      * @return bool
-     * @throws Exception\PsrInvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function has($key)
     {
@@ -194,12 +196,12 @@ class SimpleCacheFrontend implements CacheInterface
 
     /**
      * @param $key
-     * @throws Exception\PsrInvalidArgumentException
+     * @throws InvalidArgumentException
      */
     protected function ensureValidEntryIdentifier($key)
     {
         if ($this->isValidEntryIdentifier($key) === false) {
-            throw new Exception\PsrInvalidArgumentException('"' . $key . '" is not a valid cache key.', 1515192768083);
+            throw new InvalidArgumentException('"' . $key . '" is not a valid cache key.', 1515192768083);
         }
     }
 }

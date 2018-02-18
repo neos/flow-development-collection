@@ -1,5 +1,5 @@
 <?php
-namespace Neos\Cache\Frontend;
+namespace Neos\Cache\Psr\Cache;
 
 /*
  * This file is part of the Neos.Cache package.
@@ -11,15 +11,15 @@ namespace Neos\Cache\Frontend;
  * source code.
  */
 
-use Neos\Cache\Exception\PsrInvalidArgumentException;
-use Neos\Cache\Psr\PsrCacheItem;
+use Neos\Cache\Frontend\VariableFrontend;
+use Neos\Cache\Psr\InvalidArgumentException;
 use Psr\Cache\CacheItemInterface;
 use Psr\Cache\CacheItemPoolInterface;
 
 /**
  * A frontend that implements the CacheItemPoolInterface from the PSR-6 specification.
  */
-class PsrFrontend extends VariableFrontend implements CacheItemPoolInterface
+class CachePool extends VariableFrontend implements CacheItemPoolInterface
 {
     /**
      * A list of items still to be persisted.
@@ -33,21 +33,21 @@ class PsrFrontend extends VariableFrontend implements CacheItemPoolInterface
      *
      * @param string $key
      * @return CacheItemInterface
-     * @throws PsrInvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function getItem($key)
     {
         if (!$this->isValidEntryIdentifier($key)) {
-            throw new PsrInvalidArgumentException('"' . $key . '" is not a valid cache entry identifier.', 1514738649629);
+            throw new InvalidArgumentException('"' . $key . '" is not a valid cache entry identifier.', 1514738649629);
         }
 
         $rawResult = $this->backend->get($key);
         if ($rawResult === false) {
-            return new PsrCacheItem($key, false);
+            return new CacheItem($key, false);
         }
 
         $value = ($this->useIgBinary === true) ? igbinary_unserialize($rawResult) : unserialize($rawResult);
-        return new PsrCacheItem($key, true, $value);
+        return new CacheItem($key, true, $value);
     }
 
     /**
@@ -55,7 +55,7 @@ class PsrFrontend extends VariableFrontend implements CacheItemPoolInterface
      *
      * @param string[] $keys
      * @return array
-     * @throws PsrInvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function getItems(array $keys = [])
     {
@@ -69,12 +69,12 @@ class PsrFrontend extends VariableFrontend implements CacheItemPoolInterface
      *
      * @param string $key
      * @return bool
-     * @throws PsrInvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function hasItem($key)
     {
         if (!$this->isValidEntryIdentifier($key)) {
-            throw new PsrInvalidArgumentException('"' . $key . '" is not a valid cache entry identifier.', 1514738924982);
+            throw new InvalidArgumentException('"' . $key . '" is not a valid cache entry identifier.', 1514738924982);
         }
 
         return $this->backend->has($key);
@@ -96,12 +96,12 @@ class PsrFrontend extends VariableFrontend implements CacheItemPoolInterface
      *
      * @param string $key
      * @return bool
-     * @throws PsrInvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function deleteItem($key)
     {
         if (!$this->isValidEntryIdentifier($key)) {
-            throw new PsrInvalidArgumentException('"' . $key . '" is not a valid cache entry identifier.', 1514741469583);
+            throw new InvalidArgumentException('"' . $key . '" is not a valid cache entry identifier.', 1514741469583);
         }
 
         return $this->remove($key);
@@ -112,7 +112,7 @@ class PsrFrontend extends VariableFrontend implements CacheItemPoolInterface
      *
      * @param string[] $keys
      * @return bool
-     * @throws PsrInvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function deleteItems(array $keys)
     {
@@ -134,7 +134,7 @@ class PsrFrontend extends VariableFrontend implements CacheItemPoolInterface
     {
         $lifetime = null;
         $expiresAt = null;
-        if ($item instanceof PsrCacheItem) {
+        if ($item instanceof CacheItem) {
             $expiresAt = $item->getExpirationDate();
         }
 

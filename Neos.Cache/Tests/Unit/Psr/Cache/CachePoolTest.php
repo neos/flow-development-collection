@@ -1,7 +1,5 @@
 <?php
-namespace Neos\Cache\Tests\Unit\Frontend;
-
-include_once(__DIR__ . '/../../BaseTestCase.php');
+namespace Neos\Cache\Tests\Unit\Psr\Cache;
 
 /*
  * This file is part of the Neos.Cache package.
@@ -14,24 +12,24 @@ include_once(__DIR__ . '/../../BaseTestCase.php');
  */
 
 use Neos\Cache\Backend\AbstractBackend;
-use Neos\Cache\Frontend\PsrFrontend;
-use Neos\Cache\Psr\PsrCacheItem;
+use Neos\Cache\Psr\Cache\CachePool;
+use Neos\Cache\Psr\Cache\CacheItem;
 use Neos\Cache\Tests\BaseTestCase;
 
 /**
  * Testcase for the PSR-6 cache frontend
  *
  */
-class PsrFrontendTest extends BaseTestCase
+class CachePoolTest extends BaseTestCase
 {
     /**
-     * @expectedException \Neos\Cache\Exception\PsrInvalidArgumentException
+     * @expectedException \Neos\Cache\Psr\InvalidArgumentException
      * @test
      */
     public function getItemChecksIfTheIdentifierIsValid()
     {
         /** @var PsrFrontend|\PHPUnit_Framework_MockObject_MockObject $cache */
-        $cache = $this->getMockBuilder(PsrFrontend::class)
+        $cache = $this->getMockBuilder(CachePool::class)
             ->setMethods(['isValidEntryIdentifier'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -45,11 +43,11 @@ class PsrFrontendTest extends BaseTestCase
     public function savePassesSerializedStringToBackend()
     {
         $theString = 'Just some value';
-        $cacheItem = new PsrCacheItem('PsrCacheTest', true, $theString);
+        $cacheItem = new CacheItem('PsrCacheTest', true, $theString);
         $backend = $this->prepareDefaultBackend();
         $backend->expects(self::once())->method('set')->with(self::equalTo('PsrCacheTest'), self::equalTo(serialize($theString)));
 
-        $cache = new PsrFrontend('PsrFrontend', $backend);
+        $cache = new CachePool('CachePool', $backend);
         $cache->save($cacheItem);
     }
 
@@ -59,11 +57,11 @@ class PsrFrontendTest extends BaseTestCase
     public function savePassesSerializedArrayToBackend()
     {
         $theArray = ['Just some value', 'and another one.'];
-        $cacheItem = new PsrCacheItem('PsrCacheTest', true, $theArray);
+        $cacheItem = new CacheItem('PsrCacheTest', true, $theArray);
         $backend = $this->prepareDefaultBackend();
         $backend->expects(self::once())->method('set')->with(self::equalTo('PsrCacheTest'), self::equalTo(serialize($theArray)));
 
-        $cache = new PsrFrontend('PsrFrontend', $backend);
+        $cache = new CachePool('CachePool', $backend);
         $cache->save($cacheItem);
     }
 
@@ -75,12 +73,12 @@ class PsrFrontendTest extends BaseTestCase
         // Note that this test can fail due to fraction of second problems in the calculation of lifetime vs. expiration date.
         $theString = 'Just some value';
         $theLifetime = 1234;
-        $cacheItem = new PsrCacheItem('PsrCacheTest', true, $theString);
+        $cacheItem = new CacheItem('PsrCacheTest', true, $theString);
         $cacheItem->expiresAfter($theLifetime);
         $backend = $this->prepareDefaultBackend();
         $backend->expects(self::once())->method('set')->with(self::equalTo('PsrCacheTest'), self::equalTo(serialize($theString)), self::equalTo([]), self::equalTo($theLifetime, 1));
 
-        $cache = new PsrFrontend('PsrFrontend', $backend);
+        $cache = new CachePool('CachePool', $backend);
         $cache->save($cacheItem);
     }
 
@@ -93,7 +91,7 @@ class PsrFrontendTest extends BaseTestCase
         $backend = $this->prepareDefaultBackend();
         $backend->expects(self::any())->method('get')->willReturn(serialize($theString));
 
-        $cache = new PsrFrontend('PsrFrontend', $backend);
+        $cache = new CachePool('CachePool', $backend);
         self::assertEquals(true, $cache->getItem('PsrCacheTest')->isHit(), 'The item should have been a hit but is not');
         self::assertEquals($theString, $cache->getItem('PsrCacheTest')->get(), 'The returned value was not the expected string.');
     }
@@ -106,7 +104,7 @@ class PsrFrontendTest extends BaseTestCase
         $backend = $this->prepareDefaultBackend();
         $backend->expects(self::once())->method('get')->willReturn(serialize(false));
 
-        $cache = new PsrFrontend('PsrFrontend', $backend);
+        $cache = new CachePool('CachePool', $backend);
         $retrievedItem = $cache->getItem('PsrCacheTest');
         self::assertEquals(true, $retrievedItem->isHit(), 'The item should have been a hit but is not');
         self::assertEquals(false, $retrievedItem->get(), 'The returned value was not the FALSE.');
@@ -120,7 +118,7 @@ class PsrFrontendTest extends BaseTestCase
         $backend = $this->prepareDefaultBackend();
         $backend->expects(self::once())->method('has')->with(self::equalTo('PsrCacheTest'))->willReturn(true);
 
-        $cache = new PsrFrontend('PsrFrontend', $backend);
+        $cache = new CachePool('CachePool', $backend);
         self::assertTrue($cache->hasItem('PsrCacheTest'), 'hasItem() did not return TRUE.');
     }
 
@@ -134,7 +132,7 @@ class PsrFrontendTest extends BaseTestCase
 
         $backend->expects(self::once())->method('remove')->with(self::equalTo($cacheIdentifier))->willReturn(true);
 
-        $cache = new PsrFrontend('PsrFrontend', $backend);
+        $cache = new CachePool('CachePool', $backend);
         self::assertTrue($cache->deleteItem($cacheIdentifier), 'deleteItem() did not return TRUE');
     }
 
