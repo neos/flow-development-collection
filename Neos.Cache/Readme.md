@@ -1,0 +1,67 @@
+# Neos Cache Framework
+
+This is a generic cache package for use in projects.
+It implements [PSR-6](https://github.com/php-fig/cache) and [PSR-16](https://github.com/php-fig/simple-cache) but also brings own interfaces used in Flow and Neos which support
+additional featuers.
+
+#### Note
+
+This repository is a **read-only subsplit** of a package that is part of the
+Flow framework (learn more on `http://flow.neos.io <http://flow.neos.io/>`_).
+
+All pull requests and issues should be opened in the [main repository](https://github.com/neos/flow-development-collection).
+
+The package is usable without the Flow framework, but if you
+want to use it, please have a look at the `Flow documentation
+<http://flowframework.readthedocs.org/en/stable/>`_
+
+## Installation
+
+Install latest version via composer:
+   
+`composer require neos/cache`
+
+## Basic usage
+
+
+    $environmentConfiguration = new \Neos\Cache\EnvironmentConfiguration('appIdentifier', __DIR__);
+
+    // This cache factory can be used for PSR-6 caches
+    // and for the Neos CacheInterface
+    $cacheFactory = new \Neos\Cache\CacheFactory(
+        $environmentConfiguration
+    );
+
+    // Create a PSR-6 compatible cache
+    $cachePool = $cacheFactory->create(
+        'myCache', 
+        \Neos\Cache\Psr\Cache\CachePool::class, 
+        \Neos\Cache\Backend\SimpleFileBackend::class
+    );
+
+    // Create a PSR-16 compatible cache
+    $simpleCacheFactory = new \Neos\Cache\Psr\SimpleCache\SimpleCacheFactory(
+        $environmentConfiguration
+    );
+
+    $simpleCache = $simpleCacheFactory->create(
+        'myCache', 
+        \Neos\Cache\Backend\SimpleFileBackend::class
+    );
+    
+The first argument given to either factory is a unique identifier for the specific cache instance.
+If you need different caches you should give them separate identifiers.
+
+## Documenatation
+
+The PSR-6 CachePool is a special implementation of a frontend as described in the documentation below.
+
+* [Frontends](https://flowframework.readthedocs.io/en/stable/TheDefinitiveGuide/PartIII/Caching.html#cache-frontends)
+* [Backends](https://flowframework.readthedocs.io/en/stable/TheDefinitiveGuide/PartIII/Caching.html#cache-backends)
+
+Contribute
+----------
+
+If you want to contribute to the Flow framework, please have a look at
+https://github.com/neos/flow-development-collection - it is the repository
+used for development and all pull requests should go into it.
