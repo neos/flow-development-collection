@@ -155,7 +155,7 @@ class FileBasedSimpleKeyProviderTest extends UnitTestCase
      */
     public function getTokenClassNameReturnsCorrectClassNames()
     {
-        $authenticationProvider = FileBasedSimpleKeyProvider::create('myProvider');
+        $authenticationProvider = FileBasedSimpleKeyProvider::create('myProvider', []);
         $this->assertSame($authenticationProvider->getTokenClassNames(), [PasswordToken::class]);
     }
 
@@ -167,7 +167,7 @@ class FileBasedSimpleKeyProviderTest extends UnitTestCase
     {
         $someInvalidToken = $this->createMock(TokenInterface::class);
 
-        $authenticationProvider = FileBasedSimpleKeyProvider::create('myProvider');
+        $authenticationProvider = FileBasedSimpleKeyProvider::create('myProvider', []);
 
         $authenticationProvider->authenticate($someInvalidToken);
     }
@@ -182,7 +182,7 @@ class FileBasedSimpleKeyProviderTest extends UnitTestCase
         $mockToken2 = $this->createMock(TokenInterface::class);
         $mockToken2->expects($this->once())->method('getAuthenticationProviderName')->will($this->returnValue('someOtherProvider'));
 
-        $authenticationProvider = FileBasedSimpleKeyProvider::create('myProvider');
+        $authenticationProvider = FileBasedSimpleKeyProvider::create('myProvider', []);
 
         $this->assertTrue($authenticationProvider->canAuthenticate($mockToken1));
         $this->assertFalse($authenticationProvider->canAuthenticate($mockToken2));
