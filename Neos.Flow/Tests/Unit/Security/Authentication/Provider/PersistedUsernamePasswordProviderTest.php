@@ -69,7 +69,9 @@ class PersistedUsernamePasswordProviderTest extends UnitTestCase
             return $callback->__invoke();
         }));
 
-        $this->persistedUsernamePasswordProvider = $this->getAccessibleMock(Security\Authentication\Provider\PersistedUsernamePasswordProvider::class, array('dummy'), array('myProvider', array()));
+        $this->persistedUsernamePasswordProvider = $this->getAccessibleMock(Security\Authentication\Provider\PersistedUsernamePasswordProvider::class, array('dummy'), [], '', false);
+        $this->persistedUsernamePasswordProvider->_set('name', 'myProvider');
+        $this->persistedUsernamePasswordProvider->_set('options', []);
         $this->persistedUsernamePasswordProvider->_set('hashService', $this->mockHashService);
         $this->persistedUsernamePasswordProvider->_set('accountRepository', $this->mockAccountRepository);
         $this->persistedUsernamePasswordProvider->_set('persistenceManager', $this->mockPersistenceManager);
