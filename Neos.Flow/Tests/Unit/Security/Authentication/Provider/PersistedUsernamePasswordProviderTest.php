@@ -132,7 +132,7 @@ class PersistedUsernamePasswordProviderTest extends UnitTestCase
     {
         $someNiceToken = $this->createMock(Security\Authentication\TokenInterface::class);
 
-        $usernamePasswordProvider = new Security\Authentication\Provider\PersistedUsernamePasswordProvider('myProvider', array());
+        $usernamePasswordProvider = Security\Authentication\Provider\PersistedUsernamePasswordProvider::create('myProvider', array());
 
         $usernamePasswordProvider->authenticate($someNiceToken);
     }
@@ -147,7 +147,7 @@ class PersistedUsernamePasswordProviderTest extends UnitTestCase
         $mockToken2 = $this->createMock(Security\Authentication\TokenInterface::class);
         $mockToken2->expects($this->once())->method('getAuthenticationProviderName')->will($this->returnValue('someOtherProvider'));
 
-        $usernamePasswordProvider = new Security\Authentication\Provider\PersistedUsernamePasswordProvider('myProvider', array());
+        $usernamePasswordProvider = Security\Authentication\Provider\PersistedUsernamePasswordProvider::create('myProvider', array());
 
         $this->assertTrue($usernamePasswordProvider->canAuthenticate($mockToken1));
         $this->assertFalse($usernamePasswordProvider->canAuthenticate($mockToken2));
