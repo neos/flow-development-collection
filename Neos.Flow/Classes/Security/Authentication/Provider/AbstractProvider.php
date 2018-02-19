@@ -30,9 +30,12 @@ abstract class AbstractProvider implements AuthenticationProviderInterface
     protected $options = [];
 
     /**
+     * Factory method
+     *
      * @param string $name
      * @param array $options
      * @return AuthenticationProviderInterface
+     * @api
      */
     public static function create(string $name, array $options)
     {
@@ -40,12 +43,13 @@ abstract class AbstractProvider implements AuthenticationProviderInterface
     }
 
     /**
-     * Constructor
+     * Protected constructor, see create method
      *
      * @param string $name The name of this authentication provider
      * @param array $options Additional configuration options
+     * @see create
      */
-    public function __construct($name, array $options = [])
+    protected function __construct($name, array $options = [])
     {
         $this->name = $name;
         $this->options = $options;
