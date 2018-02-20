@@ -134,7 +134,7 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
 
         $this->redis->multi();
         $result = $this->redis->set($this->buildKey('entry:' . $entryIdentifier), $this->compress($data), $setOptions);
-        if (!$result instanceof \Redis) {
+        if ($result === false) {
             $this->verifyRedisVersionIsSupported();
         }
         $this->redis->lRem($this->buildKey('entries'), $entryIdentifier, 0);
@@ -517,7 +517,7 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
         // Redis client could be in multi mode, discard for checking the version
         $this->redis->discard();
 
-        $serverInfo = $this->redis->info();
+        $serverInfo = $this->redis->info('SERVER');
         if (!isset($serverInfo['redis_version'])) {
             throw new CacheException('Unsupported Redis version, the Redis cache backend needs at least version ' . self::MIN_REDIS_VERSION, 1438251553);
         }
