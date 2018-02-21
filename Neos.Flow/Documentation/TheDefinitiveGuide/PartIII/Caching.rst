@@ -585,6 +585,40 @@ Options
 |             | servers.                                 |           |         |         |
 +-------------+------------------------------------------+-----------+---------+---------+
 
+Neos\\Flow\\Cache\\Backend\\ApcuBackend
+---------------------------------------
+
+`APCu`_ is also known as APC without opcode cache. It can be used to store user data.
+As main advantage the data can be shared between different PHP processes and requests.
+All calls are direct memory calls. This makes this backend lightning fast for get() and
+set() operations. It can be an option for relatively small caches (few dozens of megabytes)
+which are read and written very often.
+
+The implementation is very similar to the memcached backend implementation and suffers
+from the same problems if APCu runs out of memory.
+
+.. note::
+   It is not advisable to use the APCu backend in shared hosting environments for security
+   reasons: The user cache in APCu is not aware of different virtual hosts. Basically
+   every PHP script which is executed on the system can read and write any data to this
+   shared cache, given data is not encapsulated or namespaced in any way. Only use the
+   APCu backend in environments which are completely under your control and where no third
+   party can read or tamper your data.
+
+.. warning::
+
+   This backend is php-capable. Nevertheless it cannot be used to store the proxy-classes
+   from the ``Flow_Object_Classes`` Cache. It can be used for other code-caches like
+   ``Fluid_TemplateCache``, ``Eel_Expression_Code`` or ``Flow_Aop_RuntimeExpressions``.
+   This can be useful in certain situations to avoid file operations on production
+   environments. If you want to use this backend for code-caching make sure that
+   ``allow_url_include`` is enabled in php.ini
+
+Options
+~~~~~~~
+
+The APCu backend has no options.
+
 Neos\\Flow\\Cache\\Backend\\TransientMemoryBackend
 ---------------------------------------------------
 
@@ -687,4 +721,5 @@ convenience) for a cache::
 .. _phpredis:                    https://github.com/owlient/phpredis
 .. _Memcached:                   http://memcached.org/
 .. _PHP memcache bug 16927:      https://bugs.php.net/bug.php?id=58943
+.. _APCu:                        http://php.net/manual/en/book.apcu.php
 .. _PHP warning:                 https://bugs.php.net/bug.php?id=58982
