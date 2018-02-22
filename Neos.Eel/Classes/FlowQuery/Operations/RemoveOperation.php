@@ -39,21 +39,20 @@ class RemoveOperation extends AbstractOperation
     {
         $valuesToRemove = [];
         if (isset($arguments[0])) {
-            if (is_array($arguments[0]) || $arguments[0] instanceof \Traversable) {
-                foreach ($arguments[0] as $item) {
-                    $valuesToRemove[] = $item;
-                }
+            if (is_array($arguments[0])) {
+                $valuesToRemove = $arguments[0];
+            } elseif ($arguments[0] instanceof \Traversable) {
+                $valuesToRemove = iterator_to_array($arguments[0]);
             } else {
                 $valuesToRemove[] = $arguments[0];
             }
         }
-        $context = $flowQuery->getContext();
-        $newContext = [];
-        foreach ($context as $item) {
-            if (in_array($item, $valuesToRemove, true) === false) {
-                $newContext[] = $item;
+        $filteredContext = array_filter(
+            $flowQuery->getContext(),
+            function ($item) use ($valuesToRemove) {
+                return in_array($item, $valuesToRemove, true) === false;
             }
-        }
-        $flowQuery->setContext($newContext);
+        );
+        $flowQuery->setContext($filteredContext);
     }
 }
