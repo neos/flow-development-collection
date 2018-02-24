@@ -124,7 +124,11 @@
           <source>This field must contain at least {0,number} characters</source>
           <target xml:lang="pl">To pole musi zawierać co najmniej {0,number} znaki</target>
         </trans-unit>
-        <trans-unit id="1238108068[2]" approved="yes">
+        <trans-unit id="1238108068[2]">
+          <source>This field must contain at least {0,number} characters</source>
+          <target xml:lang="pl" state="needs-translation">This field must contain at least {0,number} characters</target>
+        </trans-unit>
+        <trans-unit id="1238108068[3]" approved="yes">
           <source>This field must contain at least {0,number} characters</source>
           <target xml:lang="pl">To pole musi zawierać co najmniej {0,number} znaków</target>
         </trans-unit>
@@ -138,7 +142,11 @@
           <source>This text may not exceed {0,number} characters</source>
           <target xml:lang="pl">Ten tekst nie może przekraczać {0,number} znaków</target>
         </trans-unit>
-        <trans-unit id="1238108069[2]" approved="yes">
+        <trans-unit id="1238108069[2]">
+          <source>This text may not exceed {0,number} characters</source>
+          <target xml:lang="pl" state="needs-translation">This text may not exceed {0,number} characters</target>
+        </trans-unit>
+        <trans-unit id="1238108069[3]" approved="yes">
           <source>This text may not exceed {0,number} characters</source>
           <target xml:lang="pl">Ten tekst nie może przekraczać {0,number} znaków</target>
         </trans-unit>
