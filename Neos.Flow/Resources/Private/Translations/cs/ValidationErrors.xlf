@@ -126,6 +126,10 @@
         </trans-unit>
         <trans-unit id="1238108068[2]">
           <source>This field must contain at least {0,number} characters</source>
+          <target xml:lang="cs" state="needs-translation">This field must contain at least {0,number} characters</target>
+        </trans-unit>
+        <trans-unit id="1238108068[3]">
+          <source>This field must contain at least {0,number} characters</source>
           <target xml:lang="cs" state="translated">Toto pole musí obsahovat alespoň {0,number} znaků</target>
         </trans-unit>
       </group>
@@ -139,6 +143,10 @@
           <target xml:lang="cs" state="translated">Tento text nesmí přesáhnout {0,number} znaků</target>
         </trans-unit>
         <trans-unit id="1238108069[2]">
+          <source>This text may not exceed {0,number} characters</source>
+          <target xml:lang="cs" state="needs-translation">This text may not exceed {0,number} characters</target>
+        </trans-unit>
+        <trans-unit id="1238108069[3]">
           <source>This text may not exceed {0,number} characters</source>
           <target xml:lang="cs" state="translated">Tento text nesmí přesáhnout {0,number} znaků</target>
         </trans-unit>
