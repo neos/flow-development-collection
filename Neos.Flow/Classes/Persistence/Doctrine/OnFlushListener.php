@@ -11,9 +11,7 @@ namespace Neos\Flow\Persistence\Doctrine;
  * source code.
  */
 
-use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\Event\OnFlushEventArgs;
-use Doctrine\ORM\UnitOfWork;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\Exception\ObjectValidationFailedException;
 use Neos\Flow\Reflection\ClassSchema;
@@ -32,12 +30,6 @@ use Neos\Utility\TypeHandling;
  */
 class OnFlushListener
 {
-    /**
-     * @Flow\Inject
-     * @var ObjectManager
-     */
-    protected $entityManager;
-
     /**
      * @Flow\Inject
      * @var ValidatorResolver
@@ -65,8 +57,7 @@ class OnFlushListener
      */
     public function onFlush(OnFlushEventArgs $eventArgs)
     {
-        /** @var UnitOfWork $unitOfWork */
-        $unitOfWork = $this->entityManager->getUnitOfWork();
+        $unitOfWork = $eventArgs->getEntityManager->getUnitOfWork();
         $validatedInstancesContainer = new \SplObjectStorage();
 
         $this->deduplicateValueObjectInsertions($unitOfWork, $validatedInstancesContainer);
