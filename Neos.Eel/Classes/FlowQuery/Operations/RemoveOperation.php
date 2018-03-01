@@ -15,41 +15,44 @@ use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Flow\Annotations as Flow;
 
 /**
- * Adds the given items to the current context.
+ * Removes the given items from the current context.
  * The operation accepts one argument that may be an Array, a FlowQuery
  * or an Object.
  */
-class AddOperation extends AbstractOperation
+class RemoveOperation extends AbstractOperation
 {
     /**
      * {@inheritdoc}
      *
      * @var string
      */
-    protected static $shortName = 'add';
+    protected static $shortName = 'remove';
 
     /**
      * {@inheritdoc}
      *
      * @param FlowQuery $flowQuery the FlowQuery object
-     * @param array $arguments the elements to add (as array in index 0)
+     * @param array $arguments the elements to remove (as array in index 0)
      * @return void
      */
     public function evaluate(FlowQuery $flowQuery, array $arguments)
     {
-        $output = [];
-        foreach ($flowQuery->getContext() as $element) {
-            $output[] = $element;
-        }
+        $valuesToRemove = [];
         if (isset($arguments[0])) {
-            if (is_array($arguments[0]) || $arguments[0] instanceof \Traversable) {
-                foreach ($arguments[0] as $element) {
-                    $output[] = $element;
-                }
+            if (is_array($arguments[0])) {
+                $valuesToRemove = $arguments[0];
+            } elseif ($arguments[0] instanceof \Traversable) {
+                $valuesToRemove = iterator_to_array($arguments[0]);
             } else {
-                $output[] = $arguments[0];
+                $valuesToRemove[] = $arguments[0];
             }
         }
-        $flowQuery->setContext($output);
+        $filteredContext = array_filter(
+            $flowQuery->getContext(),
+            function ($item) use ($valuesToRemove) {
+                return in_array($item, $valuesToRemove, true) === false;
+            }
+        );
+        $flowQuery->setContext($filteredContext);
     }
 }
