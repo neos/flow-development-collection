@@ -112,17 +112,17 @@ class FileBackendTest extends UnitTestCase
      */
     public function logFileIsRotatedIfMaximumSizeIsExceeded()
     {
-        $this->markTestSkipped('vfsStream does not support touch() and rename(), see http://bugs.php.net/38025...');
-
         $logFileUrl = vfsStream::url('testDirectory') . '/test.log';
         file_put_contents($logFileUrl, 'twentybytesofcontent');
 
+        /** @var FileBackend $backend */
         $backend = $this->getAccessibleMock(FileBackend::class, ['dummy'], [['logFileUrl' => $logFileUrl]]);
         $backend->_set('maximumLogFileSize', 10);
         $backend->setLogFilesToKeep(1);
         $backend->open();
 
-        $this->assertFalse(vfsStreamWrapper::getRoot()->hasChild('test.log'));
+        $this->assertTrue(vfsStreamWrapper::getRoot()->hasChild('test.log'));
+        $this->assertSame('', file_get_contents($logFileUrl));
         $this->assertTrue(vfsStreamWrapper::getRoot()->hasChild('test.log.1'));
     }
 }
