@@ -20,7 +20,7 @@ use Neos\Flow\Http\Component\ComponentChain;
 use Neos\Flow\Http\Component\ComponentContext;
 use Neos\Flow\Http;
 use Neos\Flow\Mvc\Dispatcher;
-use Neos\Flow\Mvc\Routing\Router;
+use Neos\Flow\Mvc\Routing\RouterInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Security\Context;
 use Neos\Flow\Session\SessionInterface;
@@ -49,7 +49,7 @@ class InternalRequestEngine implements RequestEngineInterface
 
     /**
      * @Flow\Inject(lazy = false)
-     * @var Router
+     * @var RouterInterface
      */
     protected $router;
 

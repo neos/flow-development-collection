@@ -25,7 +25,7 @@ class RoutingComponent implements ComponentInterface
 {
     /**
      * @Flow\Inject
-     * @var Router
+     * @var RouterInterface
      */
     protected $router;
 

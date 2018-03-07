@@ -292,6 +292,9 @@ Neos\Flow\Property\PropertyMapper:
 # ResourceManagement                                                       #
 #                                                                          #
 
+Neos\Flow\Mvc\Routing\RouterInterface:
+  className: Neos\Flow\Mvc\Routing\Router
+
 Neos\Flow\ResourceManagement\ResourceManager:
   properties:
     statusCache:
