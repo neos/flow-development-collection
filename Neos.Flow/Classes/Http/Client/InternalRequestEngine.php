@@ -135,7 +135,7 @@ class InternalRequestEngine implements RequestEngineInterface
     /**
      * Returns the router used by this internal request engine
      *
-     * @return Router
+     * @return RouterInterface
      */
     public function getRouter()
     {
