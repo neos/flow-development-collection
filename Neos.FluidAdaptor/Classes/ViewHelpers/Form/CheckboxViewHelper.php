@@ -11,6 +11,9 @@ namespace Neos\FluidAdaptor\ViewHelpers\Form;
  * source code.
  */
 
+use Neos\Utility\Arrays;
+use Neos\Utility\TypeHandling;
+
 /**
  * View Helper which creates a simple checkbox (<input type="checkbox">).
  *
@@ -89,7 +92,22 @@ class CheckboxViewHelper extends AbstractFormFieldViewHelper
         }
         if (is_array($propertyValue)) {
             if ($checked === null) {
-                $checked = in_array($valueAttribute, $propertyValue, true);
+                if (TypeHandling::isSimpleType(TypeHandling::getTypeForValue(current($propertyValue))) === false || Arrays::containsMultipleTypes($propertyValue)) {
+                    $checked = false;
+                    foreach ($propertyValue as $value) {
+                        if (TypeHandling::isSimpleType(TypeHandling::getTypeForValue(current($propertyValue)))) {
+                            $checked = $valueAttribute === $value;
+                        } else {
+                            // assume an entity
+                            $checked = $valueAttribute === $this->persistenceManager->getIdentifierByObject($value);
+                        }
+                        if ($checked === true) {
+                            break;
+                        }
+                    }
+                } else {
+                    $checked = in_array($valueAttribute, $propertyValue, true);
+                }
             }
             $this->arguments['multiple'] = true;
         } elseif (!$multiple && $propertyValue !== null) {
