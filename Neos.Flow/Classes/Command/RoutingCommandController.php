@@ -19,7 +19,7 @@ use Neos\Flow\Mvc\Routing\Dto\RouteContext;
 use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
 use Neos\Flow\Mvc\Routing\Exception\InvalidControllerException;
 use Neos\Flow\Mvc\Routing\Route;
-use Neos\Flow\Mvc\Routing\RouterInterface;
+use Neos\Flow\Mvc\Routing\Router;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 
 /**
@@ -37,7 +37,7 @@ class RoutingCommandController extends CommandController
 
     /**
      * @Flow\Inject
-     * @var RouterInterface
+     * @var Router
      */
     protected $router;
 
