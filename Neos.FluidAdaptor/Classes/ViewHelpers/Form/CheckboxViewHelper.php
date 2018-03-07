@@ -78,6 +78,7 @@ class CheckboxViewHelper extends AbstractFormFieldViewHelper
     {
         $this->tag->addAttribute('type', 'checkbox');
 
+        // if value was assigned an object, it's identifier will be returned
         $valueAttribute = $this->getValueAttribute(true);
         $propertyValue = null;
         if ($this->hasMappingErrorOccurred()) {
@@ -95,7 +96,7 @@ class CheckboxViewHelper extends AbstractFormFieldViewHelper
                 if (TypeHandling::isSimpleType(TypeHandling::getTypeForValue(current($propertyValue))) === false || Arrays::containsMultipleTypes($propertyValue)) {
                     $checked = false;
                     foreach ($propertyValue as $value) {
-                        if (TypeHandling::isSimpleType(TypeHandling::getTypeForValue(current($propertyValue)))) {
+                        if (TypeHandling::isSimpleType(TypeHandling::getTypeForValue($value))) {
                             $checked = $valueAttribute === $value;
                         } else {
                             // assume an entity
