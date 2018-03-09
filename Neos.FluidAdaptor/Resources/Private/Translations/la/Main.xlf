@@ -4,10 +4,10 @@
     <body>
       <trans-unit id="widget.paginate.previous" xml:space="preserve">
 				<source>previous</source>
-			<target xml:lang="la-LA">crwdns912:0crwdne912:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns4695:0crwdne4695:0</target></trans-unit>
       <trans-unit id="widget.paginate.next" xml:space="preserve">
 				<source>next</source>
-			<target xml:lang="la-LA">crwdns913:0crwdne913:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns4696:0crwdne4696:0</target></trans-unit>
     </body>
   </file>
 </xliff>
