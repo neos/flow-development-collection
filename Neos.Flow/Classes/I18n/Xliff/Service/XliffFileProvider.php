@@ -104,9 +104,9 @@ class XliffFileProvider
             $parsedData = [
                 'fileIdentifier' => $fileId
             ];
-            $localeChain = $this->localizationService->getLocaleChain($locale);
-            // Walk locale chain in reverse, so that translations higher in the chain overwrite fallback translations
-            foreach (array_reverse($localeChain) as $localeChainItem) {
+            // Use locale chain in reverse, so that translations higher in the chain overwrite fallback translations
+            $reverseLocaleChain = array_reverse($this->localizationService->getLocaleChain($locale));
+            foreach ($reverseLocaleChain as $localeChainItem) {
                 foreach ($this->packageManager->getActivePackages() as $package) {
                     /** @var PackageInterface $package */
                     $translationPath = $package->getResourcesPath() . $this->xliffBasePath . $localeChainItem;
@@ -115,10 +115,11 @@ class XliffFileProvider
                     }
                 }
             }
-
-            $generalTranslationPath = $this->globalTranslationPath. $locale->getLanguage(). '/';
-            if (is_dir($generalTranslationPath)) {
-                $this->readDirectoryRecursively($generalTranslationPath, $parsedData, $fileId);
+            foreach ($reverseLocaleChain as $localeChainItem) {
+                $generalTranslationPath = $this->globalTranslationPath . $localeChainItem;
+                if (is_dir($generalTranslationPath)) {
+                    $this->readDirectoryRecursively($generalTranslationPath, $parsedData, $fileId);
+                }
             }
             $this->files[$fileId][(string)$locale] = $parsedData;
             $this->cache->set('translationFiles', $this->files);
