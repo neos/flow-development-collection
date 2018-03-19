@@ -531,8 +531,9 @@ class FormViewHelperTest extends ViewHelperBaseTestcase
      */
     public function renderThrowsExceptionIfNeitherActionNorActionUriArgumentIsSpecified()
     {
-        $viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\FormViewHelper::class, array('renderChildren'), array(), '', false);
+        $viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\FormViewHelper::class, array('renderChildren', 'registerRenderMethodArguments'), array(), '', false);
         $this->injectDependenciesIntoViewHelper($viewHelper);
+        $viewHelper = $this->prepareArguments($viewHelper, []);
         $viewHelper->render();
     }
 
@@ -543,10 +544,19 @@ class FormViewHelperTest extends ViewHelperBaseTestcase
      */
     public function renderThrowsExceptionIfUseParentRequestIsSetAndTheCurrentRequestHasNoParentRequest()
     {
-        $viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\FormViewHelper::class, array('renderChildren'), array(), '', false);
+        $viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\FormViewHelper::class, array('renderChildren', 'registerRenderMethodArguments'), array(), '', false);
         $this->arguments['useParentRequest'] = true;
+        $this->arguments['action'] = 'index';
         $this->injectDependenciesIntoViewHelper($viewHelper);
-        $viewHelper->render('index');
+
+        $this->viewHelperVariableContainerData = [
+            \Neos\FluidAdaptor\ViewHelpers\FormViewHelper::class => [
+                'formFieldNames' => [],
+            ]
+        ];
+
+        $viewHelper = $this->prepareArguments($viewHelper, $this->arguments);
+        $viewHelper->render();
     }
 
     /**

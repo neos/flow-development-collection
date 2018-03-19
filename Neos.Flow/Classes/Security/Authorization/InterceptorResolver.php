@@ -46,14 +46,14 @@ class InterceptorResolver
      */
     public function resolveInterceptorClass($name)
     {
-        $resolvedObjectName = $this->objectManager->getCaseSensitiveObjectName($name);
-        if ($resolvedObjectName !== false) {
-            return $resolvedObjectName;
+        $resolvedClassName = $this->objectManager->getClassNameByObjectName($name);
+        if ($resolvedClassName !== false) {
+            return $resolvedClassName;
         }
 
-        $resolvedObjectName = $this->objectManager->getCaseSensitiveObjectName('Neos\Flow\Security\Authorization\Interceptor\\' . $name);
-        if ($resolvedObjectName !== false) {
-            return $resolvedObjectName;
+        $resolvedClassName = $this->objectManager->getClassNameByObjectName('Neos\Flow\Security\Authorization\Interceptor\\' . $name);
+        if ($resolvedClassName !== false) {
+            return $resolvedClassName;
         }
 
         throw new NoInterceptorFoundException('A security interceptor with the name: "' . $name . '" could not be resolved.', 1217154134);

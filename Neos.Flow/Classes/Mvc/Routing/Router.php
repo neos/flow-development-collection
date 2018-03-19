@@ -171,7 +171,7 @@ class Router implements RouterInterface
         $this->lastResolvedRoute = null;
         $cachedResolvedUriConstraints = $this->routerCachingService->getCachedResolvedUriConstraints($resolveContext);
         if ($cachedResolvedUriConstraints !== false) {
-            return $cachedResolvedUriConstraints->applyTo($resolveContext->getRequestUri(), $resolveContext->isForceAbsoluteUri());
+            return $cachedResolvedUriConstraints->applyTo($resolveContext->getBaseUri(), $resolveContext->isForceAbsoluteUri());
         }
 
         $this->createRoutesFromConfiguration();
@@ -180,7 +180,7 @@ class Router implements RouterInterface
         foreach ($this->routes as $route) {
             if ($route->resolves($resolveContext->getRouteValues()) === true) {
                 $uriConstraints = $route->getResolvedUriConstraints()->withPathPrefix($resolveContext->getUriPathPrefix());
-                $resolvedUri = $uriConstraints->applyTo($resolveContext->getRequestUri(), $resolveContext->isForceAbsoluteUri());
+                $resolvedUri = $uriConstraints->applyTo($resolveContext->getBaseUri(), $resolveContext->isForceAbsoluteUri());
                 $this->routerCachingService->storeResolvedUriConstraints($resolveContext, $uriConstraints, $route->getResolvedTags());
                 $this->lastResolvedRoute = $route;
                 return $resolvedUri;

@@ -14,6 +14,7 @@ namespace Neos\Flow\Mvc\Routing;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Component\ComponentContext;
 use Neos\Flow\Http\Component\ComponentInterface;
+use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
 use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
 use Neos\Flow\Mvc\Routing\Dto\RouteContext;
 
@@ -57,7 +58,13 @@ class RoutingComponent implements ComponentInterface
             $parameters = RouteParameters::createEmpty();
         }
         $routeContext = new RouteContext($componentContext->getHttpRequest(), $parameters);
-        $matchResults = $this->router->route($routeContext);
+
+        try {
+            $matchResults = $this->router->route($routeContext);
+        } catch (NoMatchingRouteException $exception) {
+            $matchResults = null;
+        }
+
         $componentContext->setParameter(RoutingComponent::class, 'matchResults', $matchResults);
     }
 }

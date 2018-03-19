@@ -27,9 +27,8 @@ class ExternalViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\V
     public function setUp()
     {
         parent::setUp();
-        $this->viewHelper = new \Neos\FluidAdaptor\ViewHelpers\Uri\ExternalViewHelper();
+        $this->viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\Uri\ExternalViewHelper::class, array('renderChildren', 'registerRenderMethodArguments'));
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
-        $this->viewHelper->initializeArguments();
     }
 
     /**
@@ -37,8 +36,8 @@ class ExternalViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\V
      */
     public function renderReturnsSpecifiedUri()
     {
-        $this->viewHelper->initialize();
-        $actualResult = $this->viewHelper->render('http://www.some-domain.tld');
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['uri' => 'http://www.some-domain.tld']);
+        $actualResult = $this->viewHelper->render();
 
         $this->assertEquals('http://www.some-domain.tld', $actualResult);
     }
@@ -48,8 +47,8 @@ class ExternalViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\V
      */
     public function renderAddsHttpPrefixIfSpecifiedUriDoesNotContainScheme()
     {
-        $this->viewHelper->initialize();
-        $actualResult = $this->viewHelper->render('www.some-domain.tld');
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['uri' => 'www.some-domain.tld']);
+        $actualResult = $this->viewHelper->render();
 
         $this->assertEquals('http://www.some-domain.tld', $actualResult);
     }
@@ -59,8 +58,8 @@ class ExternalViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\V
      */
     public function renderAddsSpecifiedSchemeIfUriDoesNotContainScheme()
     {
-        $this->viewHelper->initialize();
-        $actualResult = $this->viewHelper->render('some-domain.tld', 'ftp');
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['uri' => 'some-domain.tld', 'defaultScheme' => 'ftp']);
+        $actualResult = $this->viewHelper->render();
 
         $this->assertEquals('ftp://some-domain.tld', $actualResult);
     }
@@ -70,8 +69,8 @@ class ExternalViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\V
      */
     public function renderDoesNotAddEmptyScheme()
     {
-        $this->viewHelper->initialize();
-        $actualResult = $this->viewHelper->render('some-domain.tld', '');
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['uri' => 'some-domain.tld', 'defaultScheme' => '']);
+        $actualResult = $this->viewHelper->render();
 
         $this->assertEquals('some-domain.tld', $actualResult);
     }

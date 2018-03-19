@@ -26,9 +26,8 @@ class EmailViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\View
     public function setUp()
     {
         parent::setUp();
-        $this->viewHelper = new \Neos\FluidAdaptor\ViewHelpers\Uri\EmailViewHelper();
+        $this->viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\Uri\EmailViewHelper::class, array('renderChildren', 'registerRenderMethodArguments'));
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
-        $this->viewHelper->initializeArguments();
     }
 
     /**
@@ -36,8 +35,8 @@ class EmailViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\View
      */
     public function renderPrependsEmailWithMailto()
     {
-        $this->viewHelper->initialize();
-        $actualResult = $this->viewHelper->render('some@email.tld');
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['email' => 'some@email.tld']);
+        $actualResult = $this->viewHelper->render();
 
         $this->assertEquals('mailto:some@email.tld', $actualResult);
     }

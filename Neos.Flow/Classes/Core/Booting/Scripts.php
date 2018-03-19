@@ -171,7 +171,7 @@ class Scripts
      */
     public static function initializePackageManagement(Bootstrap $bootstrap)
     {
-        $packageManager = new PackageManager();
+        $packageManager = new PackageManager(PackageManager::DEFAULT_PACKAGE_INFORMATION_CACHE_FILEPATH, FLOW_PATH_PACKAGES);
         $bootstrap->setEarlyInstance(PackageManagerInterface::class, $packageManager);
 
         // The package:rescan must happen as early as possible, compiletime alone is not enough.
@@ -181,7 +181,7 @@ class Scripts
 
         $packageManager->initialize($bootstrap);
         if (self::useClassLoader($bootstrap)) {
-            $bootstrap->getEarlyInstance(ClassLoader::class)->setPackages($packageManager->getActivePackages());
+            $bootstrap->getEarlyInstance(ClassLoader::class)->setPackages($packageManager->getAvailablePackages());
         }
     }
 
@@ -204,7 +204,7 @@ class Scripts
         $configurationManager = new ConfigurationManager($context);
         $configurationManager->setTemporaryDirectoryPath($environment->getPathToTemporaryDirectory());
         $configurationManager->injectConfigurationSource(new YamlSource());
-        $configurationManager->setPackages($packageManager->getActivePackages());
+        $configurationManager->setPackages($packageManager->getAvailablePackages());
         if ($configurationManager->loadConfigurationCache() === false) {
             $configurationManager->refreshConfiguration();
         }
@@ -392,7 +392,7 @@ class Scripts
         $objectManager->injectConfigurationManager($configurationManager);
         $objectManager->injectConfigurationCache($cacheManager->getCache('Flow_Object_Configuration'));
         $objectManager->injectSystemLogger($systemLogger);
-        $objectManager->initialize($packageManager->getActivePackages());
+        $objectManager->initialize($packageManager->getAvailablePackages());
 
         foreach ($bootstrap->getEarlyInstances() as $objectName => $instance) {
             $objectManager->setInstance($objectName, $instance);
@@ -482,12 +482,12 @@ class Scripts
         $packagesWithConfiguredObjects = static::getListOfPackagesWithConfiguredObjects($bootstrap);
 
         /** @var PackageInterface $package */
-        foreach ($packageManager->getActivePackages() as $packageKey => $package) {
+        foreach ($packageManager->getAvailablePackages() as $packageKey => $package) {
             if ($packageManager->isPackageFrozen($packageKey)) {
                 continue;
             }
 
-            self::monitorDirectoryIfItExists($fileMonitors['Flow_ConfigurationFiles'], $package->getConfigurationPath(), '\.yaml$');
+            self::monitorDirectoryIfItExists($fileMonitors['Flow_ConfigurationFiles'], $package->getConfigurationPath(), '\.y(a)?ml$');
             self::monitorDirectoryIfItExists($fileMonitors['Flow_TranslationFiles'], $package->getResourcesPath() . 'Private/Translations/', '\.xlf');
 
             if (!in_array($packageKey, $packagesWithConfiguredObjects)) {
@@ -503,7 +503,7 @@ class Scripts
             }
         }
         self::monitorDirectoryIfItExists($fileMonitors['Flow_TranslationFiles'], FLOW_PATH_DATA . 'Translations/', '\.xlf');
-        self::monitorDirectoryIfItExists($fileMonitors['Flow_ConfigurationFiles'], FLOW_PATH_CONFIGURATION, '\.yaml$');
+        self::monitorDirectoryIfItExists($fileMonitors['Flow_ConfigurationFiles'], FLOW_PATH_CONFIGURATION, '\.y(a)?ml$');
         foreach ($fileMonitors as $fileMonitor) {
             $fileMonitor->detectChanges();
         }
@@ -620,6 +620,23 @@ class Scripts
                 $exceptionMessage = implode(PHP_EOL, $output);
             } else {
                 $exceptionMessage = sprintf('Execution of subprocess failed with exit code %d without any further output. (Please check your PHP error log for possible Fatal errors)', $result);
+
+                // If the command is too long, it'll just produce /usr/bin/php: Argument list too long but this will be invisible
+                // If anything else goes wrong, it may as well not produce any $output, but might do so when run on an interactive
+                // shell. Thus we dump the command next to the exception dumps.
+                $exceptionMessage .= ' Try to run the command manually, to hopefully get some hint on the actual error.';
+
+                if (!file_exists(FLOW_PATH_DATA . 'Logs/Exceptions')) {
+                    Files::createDirectoryRecursively(FLOW_PATH_DATA . 'Logs/Exceptions');
+                }
+                if (file_exists(FLOW_PATH_DATA . 'Logs/Exceptions') && is_dir(FLOW_PATH_DATA . 'Logs/Exceptions') && is_writable(FLOW_PATH_DATA . 'Logs/Exceptions')) {
+                    $referenceCode = date('YmdHis', $_SERVER['REQUEST_TIME']) . substr(md5(rand()), 0, 6);
+                    $errorDumpPathAndFilename = FLOW_PATH_DATA . 'Logs/Exceptions/' . $referenceCode . '-command.txt';
+                    file_put_contents($errorDumpPathAndFilename, $command);
+                    $exceptionMessage .= sprintf(' It has been stored in: %s', basename($errorDumpPathAndFilename));
+                } else {
+                    $exceptionMessage .= sprintf(' (could not write command into %s because the directory could not be created or is not writable.)', FLOW_PATH_DATA . 'Logs/Exceptions/');
+                }
             }
             throw new Exception\SubProcessException($exceptionMessage, 1355480641);
         }

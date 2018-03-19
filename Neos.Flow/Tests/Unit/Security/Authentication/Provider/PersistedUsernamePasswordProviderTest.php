@@ -69,7 +69,9 @@ class PersistedUsernamePasswordProviderTest extends UnitTestCase
             return $callback->__invoke();
         }));
 
-        $this->persistedUsernamePasswordProvider = $this->getAccessibleMock(Security\Authentication\Provider\PersistedUsernamePasswordProvider::class, array('dummy'), array('myProvider', array()));
+        $this->persistedUsernamePasswordProvider = $this->getAccessibleMock(Security\Authentication\Provider\PersistedUsernamePasswordProvider::class, array('dummy'), [], '', false);
+        $this->persistedUsernamePasswordProvider->_set('name', 'myProvider');
+        $this->persistedUsernamePasswordProvider->_set('options', []);
         $this->persistedUsernamePasswordProvider->_set('hashService', $this->mockHashService);
         $this->persistedUsernamePasswordProvider->_set('accountRepository', $this->mockAccountRepository);
         $this->persistedUsernamePasswordProvider->_set('persistenceManager', $this->mockPersistenceManager);
@@ -132,7 +134,7 @@ class PersistedUsernamePasswordProviderTest extends UnitTestCase
     {
         $someNiceToken = $this->createMock(Security\Authentication\TokenInterface::class);
 
-        $usernamePasswordProvider = new Security\Authentication\Provider\PersistedUsernamePasswordProvider('myProvider', array());
+        $usernamePasswordProvider = Security\Authentication\Provider\PersistedUsernamePasswordProvider::create('myProvider', array());
 
         $usernamePasswordProvider->authenticate($someNiceToken);
     }
@@ -147,7 +149,7 @@ class PersistedUsernamePasswordProviderTest extends UnitTestCase
         $mockToken2 = $this->createMock(Security\Authentication\TokenInterface::class);
         $mockToken2->expects($this->once())->method('getAuthenticationProviderName')->will($this->returnValue('someOtherProvider'));
 
-        $usernamePasswordProvider = new Security\Authentication\Provider\PersistedUsernamePasswordProvider('myProvider', array());
+        $usernamePasswordProvider = Security\Authentication\Provider\PersistedUsernamePasswordProvider::create('myProvider', array());
 
         $this->assertTrue($usernamePasswordProvider->canAuthenticate($mockToken1));
         $this->assertFalse($usernamePasswordProvider->canAuthenticate($mockToken2));

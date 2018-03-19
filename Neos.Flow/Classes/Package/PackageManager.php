@@ -13,7 +13,6 @@ namespace Neos\Flow\Package;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Composer\Exception\InvalidConfigurationException;
-use Neos\Flow\Composer\Exception\MissingPackageManifestException;
 use Neos\Flow\Composer\ComposerUtility as ComposerUtility;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Reflection\ReflectionService;
@@ -37,9 +36,9 @@ class PackageManager implements PackageManagerInterface
     const PACKAGESTATE_FORMAT_VERSION = 6;
 
     /**
-     * The folder name for inactive packages.
+     * The default package states
      */
-    const INACTIVE_PACKAGES_FOLDER = 'Inactive';
+    const DEFAULT_PACKAGE_INFORMATION_CACHE_FILEPATH = FLOW_PATH_TEMPORARY_BASE . '/PackageInformationCache.php';
 
     /**
      * @var Bootstrap
@@ -78,23 +77,16 @@ class PackageManager implements PackageManagerInterface
     protected $composerNameToPackageKeyMap = [];
 
     /**
-     * List of active packages as package key => package object
-     *
-     * @var array
-     */
-    protected $activePackages = [];
-
-    /**
      * Absolute path leading to the various package directories
      *
      * @var string
      */
-    protected $packagesBasePath = FLOW_PATH_PACKAGES;
+    protected $packagesBasePath;
 
     /**
      * @var string
      */
-    protected $packageStatesPathAndFilename;
+    protected $packageInformationCacheFilePath;
 
     /**
      * Package states configuration as stored in the PackageStates.php file
@@ -118,12 +110,14 @@ class PackageManager implements PackageManagerInterface
     }
 
     /**
-     * @param string $packageStatesPathAndFilename
+     * @param string $packageInformationCacheFilePath
+     * @param string $packagesBasePath
      */
-    public function __construct($packageStatesPathAndFilename = '')
+    public function __construct($packageInformationCacheFilePath, $packagesBasePath)
     {
         $this->packageFactory = new PackageFactory();
-        $this->packageStatesPathAndFilename = $packageStatesPathAndFilename ?: FLOW_PATH_CONFIGURATION . 'PackageStates.php';
+        $this->packagesBasePath = $packagesBasePath;
+        $this->packageInformationCacheFilePath = $packageInformationCacheFilePath;
     }
 
     /**
@@ -136,18 +130,17 @@ class PackageManager implements PackageManagerInterface
     {
         $this->bootstrap = $bootstrap;
         $this->packageStatesConfiguration = $this->getCurrentPackageStates();
-        $this->activePackages = [];
         $this->registerPackagesFromConfiguration($this->packageStatesConfiguration);
         /** @var PackageInterface $package */
 
-        foreach ($this->activePackages as $package) {
+        foreach ($this->packages as $package) {
             $package->boot($bootstrap);
         }
     }
 
     /**
      * Returns TRUE if a package is available (the package's files exist in the packages directory)
-     * or FALSE if it's not. If a package is available it doesn't mean necessarily that it's active!
+     * or FALSE if it's not.
      *
      * @param string $packageKey The key of the package to check
      * @return boolean TRUE if the package is available, otherwise FALSE
@@ -156,18 +149,6 @@ class PackageManager implements PackageManagerInterface
     public function isPackageAvailable($packageKey)
     {
         return ($this->getCaseSensitivePackageKey($packageKey) !== false);
-    }
-
-    /**
-     * Returns TRUE if a package is activated or FALSE if it's not.
-     *
-     * @param string $packageKey The key of the package to check
-     * @return boolean TRUE if package is active, otherwise FALSE
-     * @api
-     */
-    public function isPackageActive($packageKey)
-    {
-        return (isset($this->activePackages[$packageKey]));
     }
 
     /**
@@ -207,19 +188,6 @@ class PackageManager implements PackageManagerInterface
     public function getAvailablePackages()
     {
         return $this->packages;
-    }
-
-    /**
-     * Returns an array of PackageInterface objects of all active packages.
-     * A package is active, if it is available and has been activated in the package
-     * manager settings.
-     *
-     * @return array <PackageInterface>
-     * @api
-     */
-    public function getActivePackages()
-    {
-        return $this->activePackages;
     }
 
     /**
@@ -264,9 +232,6 @@ class PackageManager implements PackageManagerInterface
             case 'available':
                 $packages = $this->getAvailablePackages();
                 break;
-            case 'active':
-                $packages = $this->getActivePackages();
-                break;
             case 'frozen':
                 $packages = $this->getFrozenPackages();
                 break;
@@ -292,7 +257,7 @@ class PackageManager implements PackageManagerInterface
      * @param string $filterPath Filter out anything that's not in this path
      * @return array<PackageInterface>
      */
-    protected function filterPackagesByPath(&$packages, $filterPath)
+    protected function filterPackagesByPath($packages, $filterPath)
     {
         $filteredPackages = [];
         /** @var $package Package */
@@ -315,7 +280,7 @@ class PackageManager implements PackageManagerInterface
      * @param string $packageType Filter out anything that's not of this packageType
      * @return array<PackageInterface>
      */
-    protected function filterPackagesByType(&$packages, $packageType)
+    protected function filterPackagesByType($packages, $packageType)
     {
         $filteredPackages = [];
         /** @var $package Package */
@@ -378,116 +343,11 @@ class PackageManager implements PackageManagerInterface
 
         $manifest = ComposerUtility::writeComposerManifest($packagePath, $packageKey, $manifest);
 
-        $refreshedPackageStatesConfiguration = $this->rescanPackages(false);
+        $refreshedPackageStatesConfiguration = $this->rescanPackages();
         $this->packageStatesConfiguration = $refreshedPackageStatesConfiguration;
         $this->registerPackageFromStateConfiguration($manifest['name'], $this->packageStatesConfiguration['packages'][$manifest['name']]);
 
         return $this->packages[$packageKey];
-    }
-
-    /**
-     * Deactivates a package
-     *
-     * @param string $packageKey The package to deactivate
-     * @return void
-     * @throws Exception\ProtectedPackageKeyException if a package is protected and cannot be deactivated
-     * @api
-     */
-    public function deactivatePackage($packageKey)
-    {
-        if (!$this->isPackageActive($packageKey)) {
-            return;
-        }
-
-        $package = $this->getPackage($packageKey);
-        if ($package->isProtected()) {
-            throw new Exception\ProtectedPackageKeyException('The package "' . $packageKey . '" is protected and cannot be deactivated.', 1308662891);
-        }
-
-        unset($this->activePackages[$packageKey]);
-        $composerName = $package->getComposerName();
-
-        $this->movePackageToDeactivatedPackages($package->getPackagePath());
-        $this->packageStatesConfiguration['packages'][$composerName]['state'] = self::PACKAGE_STATE_INACTIVE;
-        $this->packageStatesConfiguration['packages'][$composerName]['packagePath'] = $this->buildInactivePackageRelativePath($package->getPackagePath());
-        $this->registerPackageFromStateConfiguration($composerName, $this->packageStatesConfiguration['packages'][$composerName]);
-        $this->savePackageStates($this->packageStatesConfiguration);
-    }
-
-    /**
-     * Activates a package
-     *
-     * @param string $packageKey The package to activate
-     * @return void
-     * @api
-     */
-    public function activatePackage($packageKey)
-    {
-        if ($this->isPackageActive($packageKey)) {
-            return;
-        }
-
-        $package = $this->getPackage($packageKey);
-        $composerName = $package->getComposerName();
-
-        $this->movePackageToActivatedPackages($package->getPackagePath());
-        $this->packageStatesConfiguration['packages'][$composerName]['state'] = self::PACKAGE_STATE_ACTIVE;
-        $this->packageStatesConfiguration['packages'][$composerName]['packagePath'] = $this->buildActivePackageRelativePath($package->getPackagePath());
-        $this->registerPackageFromStateConfiguration($composerName, $this->packageStatesConfiguration['packages'][$composerName]);
-        $this->savePackageStates($this->packageStatesConfiguration);
-    }
-
-    /**
-     * Build the relative path to store a deactivated package based on the package.
-     *
-     * @param string $packagePath absolute path to the package
-     * @return string
-     */
-    protected function buildInactivePackageRelativePath($packagePath)
-    {
-        return Files::getNormalizedPath(Files::concatenatePaths([self::INACTIVE_PACKAGES_FOLDER, str_replace($this->packagesBasePath, '', $packagePath)]));
-    }
-
-    /**
-     * Build the relative path to store an active package from the given inactive path
-     *
-     * @param string $inactivePackagePath
-     * @return string
-     */
-    protected function buildActivePackageRelativePath($inactivePackagePath)
-    {
-        $inactivePackagesBasePath = Files::getNormalizedPath(Files::concatenatePaths([$this->packagesBasePath, self::INACTIVE_PACKAGES_FOLDER]));
-        return Files::getNormalizedPath(str_replace($inactivePackagesBasePath, '', $inactivePackagePath));
-    }
-
-    /**
-     * Moves a package from the regular package path to the inactive packages directory.
-     *
-     * @param string $packagePath absolute path to the package
-     * @return void
-     */
-    protected function movePackageToDeactivatedPackages($packagePath)
-    {
-        $inactivePackagePath = Files::getNormalizedPath(Files::concatenatePaths([
-            $this->packagesBasePath,
-            $this->buildInactivePackageRelativePath($packagePath)
-        ]));
-        $this->movePackage($packagePath, $inactivePackagePath);
-    }
-
-    /**
-     * Moves a package from the given inactive package path to the active package path.
-     *
-     * @param string $inactivePackagePath
-     * @return void
-     */
-    protected function movePackageToActivatedPackages($inactivePackagePath)
-    {
-        $activePackagePath = Files::getNormalizedPath(Files::concatenatePaths([
-            $this->packagesBasePath,
-            $this->buildActivePackageRelativePath($inactivePackagePath)
-        ]));
-        $this->movePackage($inactivePackagePath, $activePackagePath);
     }
 
     /**
@@ -518,8 +378,8 @@ class PackageManager implements PackageManagerInterface
             throw new \LogicException('Package freezing is only supported in Development context.', 1338810870);
         }
 
-        if (!$this->isPackageActive($packageKey)) {
-            throw new Exception\UnknownPackageException('Package "' . $packageKey . '" is not available or active.', 1331715956);
+        if (!$this->isPackageAvailable($packageKey)) {
+            throw new Exception\UnknownPackageException('Package "' . $packageKey . '" is not available.', 1331715956);
         }
         if ($this->isPackageFrozen($packageKey)) {
             return;
@@ -611,11 +471,6 @@ class PackageManager implements PackageManagerInterface
         }
 
         $packagePath = $package->getPackagePath();
-        if ($this->isPackageActive($packageKey)) {
-            $this->deactivatePackage($packageKey);
-            $packagePath = Files::concatenatePaths([$this->packagesBasePath, $this->buildInactivePackageRelativePath($packagePath)]);
-        }
-
         $this->unregisterPackage($package);
 
         try {
@@ -651,19 +506,13 @@ class PackageManager implements PackageManagerInterface
     /**
      * Rescans available packages, order and write a new PackageStates file.
      *
-     * @param boolean $reloadPackageStates Should the package states be loaded before scanning or use the current configuration
      * @return array The found and sorted package states.
      * @api
      */
-    public function rescanPackages($reloadPackageStates = true)
+    public function rescanPackages()
     {
-        $loadedPackageStates = $this->packageStatesConfiguration;
-        if ($reloadPackageStates) {
-            $loadedPackageStates = $this->loadPackageStates();
-        }
-        $loadedPackageStates = $this->scanAvailablePackages($loadedPackageStates);
+        $loadedPackageStates = $this->scanAvailablePackages();
         $loadedPackageStates = $this->sortAndSavePackageStates($loadedPackageStates);
-
         return $loadedPackageStates;
     }
 
@@ -676,18 +525,13 @@ class PackageManager implements PackageManagerInterface
      */
     protected function getCurrentPackageStates()
     {
-        $savePackageStates = false;
         $loadedPackageStates = $this->loadPackageStates();
         if (
             empty($loadedPackageStates)
             || !isset($loadedPackageStates['version'])
             || $loadedPackageStates['version'] < self::PACKAGESTATE_FORMAT_VERSION
         ) {
-            $loadedPackageStates = $this->scanAvailablePackages($loadedPackageStates);
-            $savePackageStates = true;
-        }
-
-        if ($savePackageStates) {
+            $loadedPackageStates = $this->scanAvailablePackages();
             $loadedPackageStates = $this->sortAndSavePackageStates($loadedPackageStates);
         }
 
@@ -701,53 +545,38 @@ class PackageManager implements PackageManagerInterface
      */
     protected function loadPackageStates()
     {
-        return (is_file($this->packageStatesPathAndFilename) ? include($this->packageStatesPathAndFilename) : []);
+        return (is_file($this->packageInformationCacheFilePath) ? include($this->packageInformationCacheFilePath) : []);
     }
 
     /**
      * Scans all directories in the packages directories for available packages.
      * For each package a Package object is created and stored in $this->packages.
      *
-     * @param array $previousPackageStatesConfiguration Existing package state configuration
      * @return array
      * @throws Exception
      * @throws InvalidConfigurationException
      */
-    protected function scanAvailablePackages($previousPackageStatesConfiguration)
+    protected function scanAvailablePackages()
     {
-        $recoveredStateByPackage = $this->recoverStateFromConfiguration($previousPackageStatesConfiguration);
         $newPackageStatesConfiguration = ['packages' => []];
-
-        $inactivePackages = [];
-        try {
-            $globalComposerManifest = ComposerUtility::getComposerManifest(FLOW_PATH_ROOT);
-            $inactivePackages = (isset($globalComposerManifest['extra']['neos']['default-disabled-packages']) && is_array($globalComposerManifest['extra']['neos']['default-disabled-packages'])) ? $globalComposerManifest['extra']['neos']['default-disabled-packages'] : [];
-        } catch (MissingPackageManifestException $exception) {
-            // TODO: We should probably throw an exception here and warn about the missing composer.json, but on production machines it might be missing...
-        }
-
         foreach ($this->findComposerPackagesInPath($this->packagesBasePath) as $packagePath) {
             $composerManifest = ComposerUtility::getComposerManifest($packagePath);
             if (!isset($composerManifest['name'])) {
                 throw new InvalidConfigurationException(sprintf('A package composer.json was found at "%s" that contained no "name".', $packagePath), 1445933572);
             }
 
+            if (!isset($composerManifest['type']) || !ComposerUtility::isFlowPackageType($composerManifest['type'])) {
+                continue;
+            }
+            if (strpos($packagePath, Files::concatenatePaths([$this->packagesBasePath, 'Inactive'])) === 0) {
+                // Skip packages in legacy "Inactive" folder.
+                continue;
+            }
+
             $packageKey = $this->getPackageKeyFromManifest($composerManifest, $packagePath);
             $this->composerNameToPackageKeyMap[strtolower($composerManifest['name'])] = $packageKey;
 
-            $state = in_array($composerManifest['name'], $inactivePackages, true) ? self::PACKAGE_STATE_INACTIVE : self::PACKAGE_STATE_ACTIVE;
-
-            if (isset($recoveredStateByPackage[$composerManifest['name']])) {
-                $state = $recoveredStateByPackage[$composerManifest['name']];
-            }
-
-            $packageInActivePackagesFolder = true;
-            if (strpos($packagePath, Files::concatenatePaths([$this->packagesBasePath, self::INACTIVE_PACKAGES_FOLDER])) === 0) {
-                $packageInActivePackagesFolder = false;
-                $state = self::PACKAGE_STATE_INACTIVE;
-            }
-
-            $packageConfiguration = $this->preparePackageStateConfiguration($packageKey, $packagePath, $composerManifest, $state);
+            $packageConfiguration = $this->preparePackageStateConfiguration($packageKey, $packagePath, $composerManifest);
             if (isset($newPackageStatesConfiguration['packages'][$composerManifest['name']])) {
                 throw new PackageException(
                     sprintf('The package with the name "%s" was found more than once, please make sure it exists only once. Paths "%s" and "%s".',
@@ -759,11 +588,6 @@ class PackageManager implements PackageManagerInterface
             }
 
             $newPackageStatesConfiguration['packages'][$composerManifest['name']] = $packageConfiguration;
-
-            if ($state === self::PACKAGE_STATE_INACTIVE && $packageInActivePackagesFolder && is_dir($packagePath)) {
-                $newPackageStatesConfiguration['packages'][$composerManifest['name']]['packagePath'] = $this->buildInactivePackageRelativePath($packagePath);
-                $this->movePackageToDeactivatedPackages($packagePath);
-            }
         }
 
         return $newPackageStatesConfiguration;
@@ -815,12 +639,11 @@ class PackageManager implements PackageManagerInterface
      * @param string $state
      * @return array
      */
-    protected function preparePackageStateConfiguration($packageKey, $packagePath, $composerManifest, $state = self::PACKAGE_STATE_ACTIVE)
+    protected function preparePackageStateConfiguration($packageKey, $packagePath, $composerManifest)
     {
         $autoload = isset($composerManifest['autoload']) ? $composerManifest['autoload'] : [];
 
         return [
-            'state' => $state,
             'packageKey' => $packageKey,
             'packagePath' => str_replace($this->packagesBasePath, '', $packagePath),
             'composerName' => $composerManifest['name'],
@@ -875,16 +698,15 @@ class PackageManager implements PackageManagerInterface
      */
     protected function registerPackageFromStateConfiguration($composerName, $packageStateConfiguration)
     {
-        $packagePath = isset($packageStateConfiguration['packagePath']) ? $packageStateConfiguration['packagePath'] : null;
-        $packageClassInformation = isset($packageStateConfiguration['packageClassInformation']) ? $packageStateConfiguration['packageClassInformation'] : null;
-        $package = $this->packageFactory->create($this->packagesBasePath, $packagePath, $packageStateConfiguration['packageKey'], $composerName, $packageStateConfiguration['autoloadConfiguration'], $packageClassInformation);
-        $this->packageKeys[strtolower($package->getPackageKey())] = $package->getPackageKey();
-        $this->packages[$package->getPackageKey()] = $package;
-        if (isset($this->activePackages[$package->getPackageKey()])) {
-            unset($this->activePackages[$package->getPackageKey()]);
-        }
+        $packageKey = $packageStateConfiguration['packageKey'];
+        $packagePath = $packageStateConfiguration['packagePath'] ?? null;
+        $packageClassInformation = $packageStateConfiguration['packageClassInformation'] ?? null;
+        $package = $this->packageFactory->create($this->packagesBasePath, $packagePath, $packageKey, $composerName, $packageStateConfiguration['autoloadConfiguration'], $packageClassInformation);
+        $this->packageKeys[strtolower($packageKey)] = $packageKey;
+        $this->packages[$packageKey] = $package;
+        unset($this->activePackages[$packageKey]);
         if ((isset($packageStateConfiguration['state']) && $packageStateConfiguration['state'] === self::PACKAGE_STATE_ACTIVE) || $package->isProtected()) {
-            $this->activePackages[$package->getPackageKey()] = $package;
+            $this->activePackages[$packageKey] = $package;
         }
     }
 
@@ -923,11 +745,17 @@ class PackageManager implements PackageManagerInterface
 
         $packageStatesCode = "<?php\n" . $fileDescription . "\nreturn " . var_export($orderedPackageStates, true) . ';';
 
-        $result = @file_put_contents($this->packageStatesPathAndFilename, $packageStatesCode);
+        Files::createDirectoryRecursively(dirname($this->packageInformationCacheFilePath));
+        $result = @file_put_contents($this->packageInformationCacheFilePath, $packageStatesCode);
         if ($result === false) {
-            throw new Exception\PackageStatesFileNotWritableException(sprintf('Flow could not update the list of installed packages because the file %s is not writable. Please, check the file system permissions and make sure that the web server can write to it.', $this->packageStatesPathAndFilename), 1382449759);
+            throw new Exception\PackageStatesFileNotWritableException(sprintf('Flow could not update the list of installed packages because the file %s is not writable. Please, check the file system permissions and make sure that the web server can write to it.', $this->packageInformationCacheFilePath), 1382449759);
         }
-        OpcodeCacheHelper::clearAllActive($this->packageStatesPathAndFilename);
+        // Clean legacy file TODO: Remove at some point
+        $legacyPackageStatesPath = FLOW_PATH_CONFIGURATION . 'PackageStates.php';
+        if (is_file($legacyPackageStatesPath)) {
+            @unlink($legacyPackageStatesPath);
+        }
+        OpcodeCacheHelper::clearAllActive($this->packageInformationCacheFilePath);
 
         $this->emitPackageStatesUpdated();
     }
@@ -959,31 +787,6 @@ class PackageManager implements PackageManagerInterface
         return array_map(function ($packageState) {
             return ComposerUtility::getComposerManifest(Files::getNormalizedPath(Files::concatenatePaths([$this->packagesBasePath, $packageState['packagePath']])));
         }, $packageStates['packages']);
-    }
-
-    /**
-     * Recover previous package state from given packageStatesConfiguration to be used
-     * after rescanning packages.
-     *
-     * @param array $packageStatesConfiguration
-     * @return array
-     */
-    protected function recoverStateFromConfiguration($packageStatesConfiguration)
-    {
-        $packageStateByComposerName = [];
-        if (isset($packageStatesConfiguration['packages']) && is_array($packageStatesConfiguration['packages'])) {
-            foreach ($packageStatesConfiguration['packages'] as $key => $package) {
-                if (isset($package['state'])) {
-                    if (isset($package['packageKey']) && $this->isPackageKeyValid($package['packageKey']) && isset($package['composerName'])) {
-                        $packageStateByComposerName[$package['composerName']] = $package['state'];
-                    } else {
-                        $packageStateByComposerName[$key] = $package['state'];
-                    }
-                }
-            }
-        }
-
-        return $packageStateByComposerName;
     }
 
     /**
@@ -1111,7 +914,7 @@ class PackageManager implements PackageManagerInterface
     }
 
     /**
-     * Emits a signal when package states have been changed (e.g. when a package was created or activated)
+     * Emits a signal when package states have been changed (e.g. when a package was created)
      *
      * The advice is not proxyable, so the signal is dispatched manually here.
      *
