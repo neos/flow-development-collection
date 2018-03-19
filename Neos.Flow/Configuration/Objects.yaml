@@ -68,7 +68,7 @@ Neos\Flow\I18n\Xliff\Service\XliffReader:
           1:
             value: 'Flow_I18n'
           2:
-            value: 'Neos\Flow\Log\Logger'
+            setting: Neos.Flow.log.i18nLogger.logger
           3:
             setting: Neos.Flow.log.i18nLogger.backend
           4:
@@ -82,7 +82,7 @@ Neos\Flow\I18n\Xliff\Model\FileAdapter:
           1:
             value: 'Flow_I18n'
           2:
-            value: 'Neos\Flow\Log\Logger'
+            setting: Neos.Flow.log.i18nLogger.logger
           3:
             setting: Neos.Flow.log.i18nLogger.backend
           4:
@@ -147,7 +147,7 @@ Neos\Flow\Log\SecurityLoggerInterface:
     1:
       value: 'Flow_Security'
     2:
-      value: 'Neos\Flow\Log\Logger'
+      setting: Neos.Flow.log.securityLogger.logger
     3:
       setting: Neos.Flow.log.securityLogger.backend
     4:
@@ -268,9 +268,9 @@ Neos\Flow\Persistence\Doctrine\Logging\SqlLogger:
           1:
             value: 'Sql_Queries'
           2:
-            value: 'Neos\Flow\Log\Logger'
+            setting: Neos.Flow.log.sqlLogger.logger
           3:
-            value: 'Neos\Flow\Log\Backend\FileBackend'
+            setting: Neos.Flow.log.sqlLogger.backend
           4:
             setting: Neos.Flow.log.sqlLogger.backendOptions
 
