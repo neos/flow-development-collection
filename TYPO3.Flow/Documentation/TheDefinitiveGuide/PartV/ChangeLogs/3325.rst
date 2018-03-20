@@ -1,0 +1,20 @@
+`3.3.25 (2018-03-20) <https://github.com/neos/flow-development-collection/releases/tag/3.3.25>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`SECURITY: Update paragonie/random_compat to 2.x minimum <https://github.com/neos/flow-development-collection/pull/1223>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+The `paragonie/random_compat` library could use OpenSSL, and that in turn
+could lead to the use of an insecure CSPRNG (openssl_random_pseudo_bytes())
+
+Related Information: https://github.com/paragonie/random_compat/issues/96
+
+This change fixes #1222 by updating the dependency from `^1.0` to `^2.0`.
+
+* Packages: ``Flow`` ``Fluid``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/3.3.24...3.3.25>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
