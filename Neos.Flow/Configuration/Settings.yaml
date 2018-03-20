@@ -354,7 +354,7 @@ Neos:
         # See Flow manual, chapter "Persistence" for further information on how to subscribe to Doctrine events.
         eventSubscribers: []
         eventListeners:
-          -
+          'Neos\Flow\Persistence\Doctrine\OnFlushListener':
             events: ['onFlush']
             listener: 'Neos\Flow\Persistence\Doctrine\OnFlushListener'
 
