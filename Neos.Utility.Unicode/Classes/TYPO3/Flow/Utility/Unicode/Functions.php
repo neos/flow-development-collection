@@ -179,6 +179,15 @@ abstract class Functions
      */
     public static function parse_url($url, $component = -1)
     {
+        $hostFromUrl = parse_url($url, PHP_URL_HOST);
+        if ($hostFromUrl === false) {
+            return false;
+        }
+        $portFromUrl = parse_url($url, PHP_URL_PORT);
+        if ($portFromUrl === false) {
+            return false;
+        }
+
         $encodedUrl = preg_replace_callback('%[^:@/?#&=\.]+%usD', function ($matches) {
             return urlencode($matches[0]);
         }, $url);
@@ -192,8 +201,12 @@ abstract class Functions
             $currentComponent = urldecode($currentComponent);
         }
 
-        if (array_key_exists('port', $components)) {
-            $components['port'] = (integer)$components['port'];
+        // the host and port must be used as is, to allow IPv6 syntax, e.g.: [3b00:f59:1008::212:183:20]:8080
+        $components['host'] = $hostFromUrl;
+        if ($portFromUrl !== null) {
+            $components['port'] = (integer)$portFromUrl;
+        } else {
+            unset($components['port']);
         }
 
         switch ($component) {
