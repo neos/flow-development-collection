@@ -43,6 +43,7 @@ Flow_I18n_Cldr_CldrModelCache: []
 Flow_I18n_Cldr_Reader_DatesReaderCache: []
 Flow_I18n_Cldr_Reader_NumbersReaderCache: []
 Flow_I18n_Cldr_Reader_PluralsReaderCache: []
+Flow_I18n_Cldr_Reader_CurrencyReaderCache: []
 
 # Flow_Monitor
 Flow_Monitor:
