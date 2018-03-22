@@ -179,12 +179,10 @@ abstract class Functions
      */
     public static function parse_url($url, $component = -1)
     {
-        $hostFromUrl = parse_url($url, PHP_URL_HOST);
-        if ($hostFromUrl === false) {
-            return false;
-        }
-        $portFromUrl = parse_url($url, PHP_URL_PORT);
-        if ($portFromUrl === false) {
+        // the host and port must be used as is, to allow IPv6 syntax, e.g.: [3b00:f59:1008::212:183:20]:8080
+        // thus we parse here, before url-encoding
+        $componentsFromUrl = parse_url($url);
+        if ($componentsFromUrl === false) {
             return false;
         }
 
@@ -202,9 +200,9 @@ abstract class Functions
         }
 
         // the host and port must be used as is, to allow IPv6 syntax, e.g.: [3b00:f59:1008::212:183:20]:8080
-        $components['host'] = $hostFromUrl;
-        if ($portFromUrl !== null) {
-            $components['port'] = (integer)$portFromUrl;
+        $components['host'] = $componentsFromUrl['host];
+        if (array_key_exists('port', $componentsFromUrl)) {
+            $components['port'] = (integer)$componentsFromUrl['port'];
         } else {
             unset($components['port']);
         }
