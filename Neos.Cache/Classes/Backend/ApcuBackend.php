@@ -18,7 +18,7 @@ use Neos\Cache\Exception\InvalidDataException;
 use Neos\Cache\Frontend\FrontendInterface;
 
 /**
- * A caching backend which stores cache entries by using APC.
+ * A caching backend which stores cache entries by using APCu.
  *
  * This backend uses the following types of keys:
  *
@@ -46,18 +46,18 @@ use Neos\Cache\Frontend\FrontendInterface;
  *
  * @api
  */
-class ApcBackend extends IndependentAbstractBackend implements TaggableBackendInterface, IterableBackendInterface, PhpCapableBackendInterface
+class ApcuBackend extends IndependentAbstractBackend implements TaggableBackendInterface, IterableBackendInterface, PhpCapableBackendInterface
 {
     use RequireOnceFromValueTrait;
 
     /**
-     * A prefix to seperate stored data from other data possible stored in the APC
+     * A prefix to seperate stored data from other data possible stored in the APCu
      * @var string
      */
     protected $identifierPrefix;
 
     /**
-     * @var \ApcIterator
+     * @var \APCUIterator
      */
     protected $cacheEntriesIterator;
 
@@ -66,8 +66,8 @@ class ApcBackend extends IndependentAbstractBackend implements TaggableBackendIn
      */
     public function __construct(EnvironmentConfiguration $environmentConfiguration, array $options)
     {
-        if (!extension_loaded('apc')) {
-            throw new Exception('The PHP extension "apc" must be installed and loaded in order to use the APC backend.', 1232985414);
+        if (!extension_loaded('apcu')) {
+            throw new Exception('The PHP extension "apcu" must be installed and loaded in order to use the APCu backend.', 1519241835065);
         }
         parent::__construct($environmentConfiguration, $options);
     }
@@ -126,10 +126,10 @@ class ApcBackend extends IndependentAbstractBackend implements TaggableBackendIn
             throw new InvalidDataException('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1232986825);
         }
 
-        $tags[] = '%APCBE%' . $this->cacheIdentifier;
+        $tags[] = '%APCUBE%' . $this->cacheIdentifier;
         $expiration = $lifetime !== null ? $lifetime : $this->defaultLifetime;
 
-        $success = apc_store($this->identifierPrefix . 'entry_' . $entryIdentifier, $data, $expiration);
+        $success = apcu_store($this->identifierPrefix . 'entry_' . $entryIdentifier, $data, $expiration);
         if ($success === true) {
             $this->removeIdentifierFromAllTags($entryIdentifier);
             $this->addIdentifierToTags($entryIdentifier, $tags);
@@ -148,7 +148,7 @@ class ApcBackend extends IndependentAbstractBackend implements TaggableBackendIn
     public function get($entryIdentifier)
     {
         $success = false;
-        $value = apc_fetch($this->identifierPrefix . 'entry_' . $entryIdentifier, $success);
+        $value = apcu_fetch($this->identifierPrefix . 'entry_' . $entryIdentifier, $success);
         return ($success ? $value : $success);
     }
 
@@ -162,7 +162,7 @@ class ApcBackend extends IndependentAbstractBackend implements TaggableBackendIn
     public function has($entryIdentifier): bool
     {
         $success = false;
-        apc_fetch($this->identifierPrefix . 'entry_' . $entryIdentifier, $success);
+        apcu_fetch($this->identifierPrefix . 'entry_' . $entryIdentifier, $success);
         return $success;
     }
 
@@ -178,7 +178,7 @@ class ApcBackend extends IndependentAbstractBackend implements TaggableBackendIn
     public function remove($entryIdentifier): bool
     {
         $this->removeIdentifierFromAllTags($entryIdentifier);
-        return apc_delete($this->identifierPrefix . 'entry_' . $entryIdentifier);
+        return apcu_delete($this->identifierPrefix . 'entry_' . $entryIdentifier);
     }
 
     /**
@@ -192,7 +192,7 @@ class ApcBackend extends IndependentAbstractBackend implements TaggableBackendIn
     public function findIdentifiersByTag($tag): array
     {
         $success = false;
-        $identifiers = apc_fetch($this->identifierPrefix . 'tag_' . $tag, $success);
+        $identifiers = apcu_fetch($this->identifierPrefix . 'tag_' . $tag, $success);
         if ($success === false) {
             return [];
         }
@@ -209,7 +209,7 @@ class ApcBackend extends IndependentAbstractBackend implements TaggableBackendIn
     protected function findTagsByIdentifier(string $identifier): array
     {
         $success = false;
-        $tags = apc_fetch($this->identifierPrefix . 'ident_' . $identifier, $success);
+        $tags = apcu_fetch($this->identifierPrefix . 'ident_' . $identifier, $success);
         return ($success ? (array)$tags : []);
     }
 
@@ -225,7 +225,7 @@ class ApcBackend extends IndependentAbstractBackend implements TaggableBackendIn
         if (!$this->cache instanceof FrontendInterface) {
             throw new Exception('Yet no cache frontend has been set via setCache().', 1232986971);
         }
-        $this->flushByTag('%APCBE%' . $this->cacheIdentifier);
+        $this->flushByTag('%APCUBE%' . $this->cacheIdentifier);
     }
 
     /**
@@ -258,13 +258,13 @@ class ApcBackend extends IndependentAbstractBackend implements TaggableBackendIn
             $identifiers = $this->findIdentifiersByTag($tag);
             if (array_search($entryIdentifier, $identifiers) === false) {
                 $identifiers[] = $entryIdentifier;
-                apc_store($this->identifierPrefix . 'tag_' . $tag, $identifiers);
+                apcu_store($this->identifierPrefix . 'tag_' . $tag, $identifiers);
             }
 
             // Update identifier-to-tag index
             $existingTags = $this->findTagsByIdentifier($entryIdentifier);
             if (array_search($entryIdentifier, $existingTags) === false) {
-                apc_store($this->identifierPrefix . 'ident_' . $entryIdentifier, array_merge($existingTags, $tags));
+                apcu_store($this->identifierPrefix . 'ident_' . $entryIdentifier, array_merge($existingTags, $tags));
             }
         }
     }
@@ -292,17 +292,17 @@ class ApcBackend extends IndependentAbstractBackend implements TaggableBackendIn
             }
             unset($identifiers[$key]);
             if (count($identifiers)) {
-                apc_store($this->identifierPrefix . 'tag_' . $tag, $identifiers);
+                apcu_store($this->identifierPrefix . 'tag_' . $tag, $identifiers);
             } else {
-                apc_delete($this->identifierPrefix . 'tag_' . $tag);
+                apcu_delete($this->identifierPrefix . 'tag_' . $tag);
             }
         }
         // Clear reverse tag index for this identifier
-        apc_delete($this->identifierPrefix . 'ident_' . $entryIdentifier);
+        apcu_delete($this->identifierPrefix . 'ident_' . $entryIdentifier);
     }
 
     /**
-     * Does nothing, as APC does GC itself
+     * Does nothing, as APCu does GC itself
      *
      * @return void
      * @api
@@ -378,7 +378,7 @@ class ApcBackend extends IndependentAbstractBackend implements TaggableBackendIn
     public function rewind()
     {
         if ($this->cacheEntriesIterator === null) {
-            $this->cacheEntriesIterator = new \APCIterator('user', '/^' . $this->identifierPrefix . 'entry_.*/');
+            $this->cacheEntriesIterator = new \APCUIterator('/^' . $this->identifierPrefix . 'entry_.*/');
         } else {
             $this->cacheEntriesIterator->rewind();
         }

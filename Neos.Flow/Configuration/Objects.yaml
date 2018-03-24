@@ -257,6 +257,8 @@ Neos\Flow\Http\ContentStream:
 #                                                                          #
 # MVC                                                                      #
 #                                                                          #
+Neos\Flow\Mvc\Routing\RouterInterface:
+  className: Neos\Flow\Mvc\Routing\Router
 
 Neos\Flow\Mvc\Routing\Router:
   properties:
