@@ -40,10 +40,12 @@ class XliffFileProviderTest extends FunctionalTestCase
         $cacheManager = $this->objectManager->get(CacheManager::class);
         $cacheManager->getCache('Flow_I18n_XmlModelCache')->flush();
 
+        $packages = $this->setUpPackages();
         $this->fileProvider = $this->objectManager->get(XliffFileProvider::class);
+        // the folder Resources/Private/GlobalTranslations of the base package is used as globalTranslationPath
+        $this->inject($this->fileProvider, 'globalTranslationPath', $packages['Vendor.BasePackage']->getResourcesPath() . '/Private/GlobalTranslations/');
         $this->fileProvider->initializeObject();
 
-        $packages = $this->setUpPackages();
         ComposerUtility::flushCaches();
 
         $mockPackageManager = $this->getMockBuilder(PackageManager::class)
@@ -65,7 +67,10 @@ class XliffFileProviderTest extends FunctionalTestCase
         $basePackage = $this->setUpPackage('BasePackage', [
             'de/BasePackage.Unmerged.xlf' => 'Resources/Private/Translations/de/Unmerged.xlf',
             'de/BasePackage.Main.xlf' => 'Resources/Private/Translations/de/Main.xlf',
-            'de/BasePackage.DependentMain.xlf' => 'Resources/Private/Translations/de/DependentMain.xlf'
+            'de/BasePackage.DependentMain.xlf' => 'Resources/Private/Translations/de/DependentMain.xlf',
+            'de/BasePackage.GlobalOverride.xlf' => 'Resources/Private/Translations/de/GlobalOverride.xlf',
+            'de/BasePackage.GlobalOverride.Global.xlf' => 'Resources/Private/GlobalTranslations/de/BasePackage.GlobalOverride.xlf',
+            'en/BasePackage.GlobalOverride.Global.xlf' => 'Resources/Private/GlobalTranslations/en/BasePackage.GlobalOverride.xlf'
         ]);
         $packages[$basePackage->getPackageKey()] = $basePackage;
 
@@ -93,6 +98,8 @@ class XliffFileProviderTest extends FunctionalTestCase
         mkdir($packagePath, 0700, true);
         mkdir($packagePath . 'Resources/Private/Translations/en/', 0700, true);
         mkdir($packagePath . 'Resources/Private/Translations/de/', 0700, true);
+        mkdir($packagePath . 'Resources/Private/GlobalTranslations/de/', 0700, true);
+        mkdir($packagePath . 'Resources/Private/GlobalTranslations/en/', 0700, true);
         file_put_contents($packagePath . 'composer.json', '{"name": "' . $composerName . '", "type": "flow-test"}');
 
         $fixtureBasePath = __DIR__ . '/../Fixtures/';
@@ -101,20 +108,6 @@ class XliffFileProviderTest extends FunctionalTestCase
         }
 
         return new Package($packageKey, $composerName, $packagePath);
-    }
-
-    protected function setUpGlobalDataFolder(array $filePaths)
-    {
-        vfsStream::setup('Data');
-        $globalDataFolder = 'vfs://Data/Translations/';
-        mkdir($globalDataFolder, 0700, true);
-        mkdir($globalDataFolder . 'en/', 0700, true);
-        mkdir($globalDataFolder . 'de/', 0700, true);
-
-        $fixtureBasePath = __DIR__ . '/../Fixtures/';
-        foreach ($filePaths as $fixturePath => $targetPath) {
-            copy($fixtureBasePath . $fixturePath, $globalDataFolder . $targetPath);
-        }
     }
 
     /**
@@ -186,17 +179,25 @@ class XliffFileProviderTest extends FunctionalTestCase
      */
     public function fileProviderMergesOverrideFromGlobalDataFolder()
     {
-        $this->setUpGlobalDataFolder([
-            'de/BasePackage.GlobalOverride.xlf' => 'de/GlobalOverride.xlf'
-        ]);
-
-        $fileData = $this->fileProvider->getMergedFileData('Vendor.BasePackage:Main', new Locale('de'));
+        $fileData = $this->fileProvider->getMergedFileData('Vendor.BasePackage:GlobalOverride', new Locale('de'));
 
         $this->assertSame([
             'key1' => [
                 [
                     'source' => 'Source string',
                     'target' => 'Global anders übersetzte Zeichenkette'
+                ]
+            ],
+            'key2' => [
+                [
+                    'source' => 'Source string',
+                    'target' => 'Global differently translated string'
+                ]
+            ],
+            'key3' => [
+                [
+                    'source' => 'Source string',
+                    'target' => 'Übersetzte Zeichenkette'
                 ]
             ]
         ], $fileData['translationUnits']);

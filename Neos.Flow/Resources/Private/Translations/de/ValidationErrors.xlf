@@ -54,7 +54,7 @@
       <!-- FloatValidator -->
       <trans-unit id="1221560288" xml:space="preserve" approved="yes">
 				<source>A valid float number is expected</source>
-			<target xml:lang="de">Eine gültige Dezimalzahl wird erwartet</target></trans-unit>
+			<target xml:lang="de">Eine gültige Dezimalzahl wird erwartet</target><alt-trans><target xml:lang="de">Eine durch Punkt getrennte, gültige Dezimalzahl wird erwartet</target></alt-trans><alt-trans><target xml:lang="de">Eine gültige Dezimalzahl mit einem Punkt wird erwartet</target></alt-trans></trans-unit>
       <trans-unit id="1332934124" xml:space="preserve" approved="yes">
 				<source>"{0}" cannot be converted to a float value</source>
 			<target xml:lang="de">"{0}" kann nicht in eine Dezimalzahl umgewandelt werden</target></trans-unit>

@@ -88,6 +88,8 @@ class AbstractViewHelperTest extends \Neos\Flow\Tests\UnitTestCase
      */
     public function argumentsCanBeRegistered()
     {
+        $this->mockReflectionService->expects($this->any())->method('getMethodParameters')->will($this->returnValue([]));
+
         $viewHelper = $this->getAccessibleMock(AbstractViewHelper::class, array('render'), array(), '', false);
         $viewHelper->injectObjectManager($this->mockObjectManager);
 
@@ -123,6 +125,8 @@ class AbstractViewHelperTest extends \Neos\Flow\Tests\UnitTestCase
      */
     public function overrideArgumentOverwritesExistingArgumentDefinition()
     {
+        $this->mockReflectionService->expects($this->any())->method('getMethodParameters')->will($this->returnValue([]));
+
         $viewHelper = $this->getAccessibleMock(AbstractViewHelper::class, array('render'), array(), '', false);
         $viewHelper->injectObjectManager($this->mockObjectManager);
 
@@ -156,6 +160,8 @@ class AbstractViewHelperTest extends \Neos\Flow\Tests\UnitTestCase
      */
     public function prepareArgumentsCallsInitializeArguments()
     {
+        $this->mockReflectionService->expects($this->any())->method('getMethodParameters')->will($this->returnValue([]));
+
         $viewHelper = $this->getAccessibleMock(AbstractViewHelper::class, array('render', 'initializeArguments'), array(), '', false);
         $viewHelper->injectObjectManager($this->mockObjectManager);
 

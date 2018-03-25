@@ -127,13 +127,6 @@ properties:
             type: dictionary
             required: TRUE
             patternProperties: { '/.*/': { type: boolean } }
-      'cacheImplementation':
-        type:
-          - { type: 'null' }
-          - { type: string, format: class-name }
-      'migrations':
-        type: dictionary
-        properties:
           'generate':
             type: dictionary
             properties:
@@ -141,6 +134,10 @@ properties:
                 type:
                   - { type: 'null' }
                   - { type: string }
+      'cacheImplementation':
+        type:
+          - { type: 'null' }
+          - { type: string, format: class-name }
 
   'cacheAllQueryResults':
     type: boolean
