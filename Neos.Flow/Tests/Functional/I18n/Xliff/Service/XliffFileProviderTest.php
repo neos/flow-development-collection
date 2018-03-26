@@ -191,7 +191,7 @@ class XliffFileProviderTest extends FunctionalTestCase
             'key2' => [
                 [
                     'source' => 'Source string',
-                    'target' => 'Global differently translated string'
+                    'target' => 'Übersetzte Zeichenkette'
                 ]
             ],
             'key3' => [
