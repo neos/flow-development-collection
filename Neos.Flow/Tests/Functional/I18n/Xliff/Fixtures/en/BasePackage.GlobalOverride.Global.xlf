@@ -6,10 +6,6 @@
                 <source>Source string</source>
                 <target>Global differently translated string</target>
             </trans-unit>
-            <trans-unit id="key2" xml:space="preserve">
-                <source>Source string</source>
-                <target>Global differently translated string</target>
-            </trans-unit>
         </body>
     </file>
 </xliff>

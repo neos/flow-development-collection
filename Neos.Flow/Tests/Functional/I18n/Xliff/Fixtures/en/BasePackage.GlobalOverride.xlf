@@ -6,14 +6,6 @@
                 <source>Source string</source>
                 <target>Translated string</target>
             </trans-unit>
-            <trans-unit id="key2" xml:space="preserve">
-                <source>Source string</source>
-                <target>Translated string</target>
-            </trans-unit>
-            <trans-unit id="key3" xml:space="preserve">
-                <source>Source string</source>
-                <target>Translated string</target>
-            </trans-unit>
         </body>
     </file>
 </xliff>
