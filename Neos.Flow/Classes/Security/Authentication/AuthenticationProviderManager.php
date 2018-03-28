@@ -191,7 +191,7 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
                     $account = $token->getAccount();
                     if ($account !== null) {
                         $this->securityContext->withoutAuthorizationChecks(function () use ($account) {
-                            $this->session->addTag('Neos-Flow-Security-Account-' . md5($account->getAccountIdentifier()));
+                            $this->session->addTag($this->securityContext->getSessionTagForAccount($account));
                         });
                     }
                 }

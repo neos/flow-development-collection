@@ -16,6 +16,7 @@ use Neos\Cache\CacheAwareInterface;
 use Neos\Flow\Log\SecurityLoggerInterface;
 use Neos\Flow\Mvc\RequestInterface;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
+use Neos\Flow\Security\Account;
 use Neos\Flow\Security\Authentication\TokenInterface;
 use Neos\Flow\Security\Policy\Role;
 use Neos\Flow\Mvc\ActionRequest;
@@ -833,5 +834,27 @@ class Context
             $this->contextHash = md5($contextHashSoFar);
         }
         return $this->contextHash;
+    }
+
+    /**
+     * returns the tag to use for sessions belonging to the given $account
+     *
+     * @param Account $account
+     * @return string
+     */
+    public function getSessionTagForAccount(Account $account): string
+    {
+        return 'Neos-Flow-Security-Account-' . md5($account->getAccountIdentifier());
+    }
+
+    /**
+     * destroys all sessions belonging to the given $account
+     *
+     * @param Account $account
+     * @param string $reason
+     */
+    public function destroySessionsForAccount(Account $account, $reason = '')
+    {
+        $this->sessionManager->destroySessionsByTag($this->getSessionTagForAccount($account), $reason);
     }
 }
