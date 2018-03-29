@@ -162,7 +162,7 @@ class ServiceTest extends UnitTestCase
         $mockPackageManager->expects($this->any())->method('getAvailablePackages')->will($this->returnValue([$mockPackage]));
 
         $mockLocaleCollection = $this->createMock(I18n\LocaleCollection::class);
-        $mockLocaleCollection->expects($this->exactly(6))->method('addLocale');
+        $mockLocaleCollection->expects($this->exactly(4))->method('addLocale');
 
         $mockSettings = ['i18n' => [
                                 'defaultLocale' => 'sv_SE',
