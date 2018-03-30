@@ -364,13 +364,13 @@ to clean up hard disk space or memory.
 
   When *not using SQLite*, you have to create the needed caching tables manually.
   The table definition (as used automatically for SQLite) can be found in the
-  file ``TYPO3.Flow/Resources/Private/Cache/SQL/DDL.sql``. It works unchanged for
+  file ``Neos.Flow/Resources/Private/Cache/SQL/DDL.sql``. It works unchanged for
   MySQL, for other RDBMS you might need to adjust the DDL manually.
 
 .. note::
 
   When *not using SQLite* the maximum length of each cache entry is restricted.
-  The default in ``TYPO3.Flow/Resources/Private/Cache/SQL/DDL.sql``
+  The default in ``Neos.Flow/Resources/Private/Cache/SQL/DDL.sql``
   is ``MEDIUMTEXT`` (16mb on MySQL), which should be sufficient in most cases.
 
 .. warning::
