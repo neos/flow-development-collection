@@ -236,77 +236,37 @@ class CompileTimeObjectManager extends ObjectManager
 
     /**
      * Given an array of class names by package key this filters out classes that
-     * have been configured to be excluded or included by object management.
+     * have been configured to be included by object management.
      *
      * @param array $classNames 2-level array - key of first level is package key, value of second level is classname (FQN)
      * @param array $includeClassesConfiguration array of includeClasses configurations
-     * @return array The input array with all configured to be excluded from object management filtered out
+     * @return array The input array with all configured to be included in object management added in
      * @throws InvalidConfigurationTypeException
      * @throws \Neos\Flow\Configuration\Exception\NoSuchOptionException
      */
     protected function filterClassNamesFromConfiguration(array $classNames, $includeClassesConfiguration)
     {
-        if (isset($this->allSettings['Neos']['Flow']['object']['excludeClasses'])) {
-            $this->systemLogger->log('Using "Neos.Flow.object.excludeClasses" is deprecated. Non flow packages are no longer enabled for object management by default, you can use "Neos.Flow.object.includeClasses" to add them. You can also use it to remove classes of flow packages from object management as any classes that do not match the given expression(s) are excluded if it is configured for a package.');
-            if (!is_array($this->allSettings['Neos']['Flow']['object']['excludeClasses'])) {
-                throw new InvalidConfigurationTypeException('The setting "Neos.Flow.object.excludeClasses" is invalid, it must be an array if set. Check the syntax in the YAML file.', 1422357311);
-            }
-
-            $excludeClasses = $this->collectExcludedPackages(array_keys($classNames));
-            $classNames = $this->applyClassFilterConfiguration($classNames, $excludeClasses, 'exclude');
-        }
-
         $classNames = $this->applyClassFilterConfiguration($classNames, $includeClassesConfiguration);
-
         return $classNames;
     }
 
     /**
-     * Explodes the regular expressions for package name in excludeClasses configuration to full package names.
-     *
-     * @param array $registeredPackageKeys
-     * @return array
-     */
-    protected function collectExcludedPackages($registeredPackageKeys)
-    {
-        $excludeClasses = [];
-        foreach ($this->allSettings['Neos']['Flow']['object']['excludeClasses'] as $packageKey => $filterExpressions) {
-            if (strpos($packageKey, '*') === false) {
-                $excludeClasses[$packageKey] = $filterExpressions;
-                continue;
-            }
-            $packageKey = rtrim($packageKey, '*');
-            foreach ($registeredPackageKeys as $registeredPackageKey) {
-                if (strpos($registeredPackageKey, $packageKey) === 0) {
-                    $excludeClasses[$registeredPackageKey] = $filterExpressions;
-                }
-            }
-        }
-
-        return $excludeClasses;
-    }
-
-    /**
-     * Filters the classnames available for object management by filter expressions that either include or exclude classes.
+     * Filters the classnames available for object management by filter expressions that includes classes.
      *
      * @param array $classNames All classnames per package
      * @param array $filterConfiguration The filter configuration to apply
-     * @param string $includeOrExclude if this is an "include" or "exclude" filter
      * @return array the remaining class
      * @throws InvalidConfigurationTypeException
      */
-    protected function applyClassFilterConfiguration($classNames, $filterConfiguration, $includeOrExclude = 'include')
+    protected function applyClassFilterConfiguration($classNames, $filterConfiguration)
     {
-        if (!in_array($includeOrExclude, ['include', 'exclude'])) {
-            throw new \InvalidArgumentException('The argument $includeOrExclude must be one of "include" or "exclude", the given value was not allowed.', 1423726253);
-        }
         foreach ($filterConfiguration as $packageKey => $filterExpressions) {
             if (!array_key_exists($packageKey, $classNames)) {
-                $this->systemLogger->log('The package "' . $packageKey . '" specified in the setting "Neos.Flow.object.' . $includeOrExclude . 'Classes" was either excluded or is not loaded.', LOG_DEBUG);
+                $this->systemLogger->log('The package "' . $packageKey . '" specified in the setting "Neos.Flow.object.includeClasses" was either excluded or is not loaded.', LOG_DEBUG);
                 continue;
             }
             if (!is_array($filterExpressions)) {
-                throw new InvalidConfigurationTypeException('The value given for setting "Neos.Flow.object.' . $includeOrExclude . 'Classes.\'' . $packageKey . '\'" is  invalid. It should be an array of expressions. Check the syntax in the YAML file.', 1422357272);
+                throw new InvalidConfigurationTypeException('The value given for setting "Neos.Flow.object.includeClasses.\'' . $packageKey . '\'" is  invalid. It should be an array of expressions. Check the syntax in the YAML file.', 1422357272);
             }
 
             $classesForPackageUnderInspection = $classNames[$packageKey];
@@ -315,17 +275,13 @@ class CompileTimeObjectManager extends ObjectManager
             foreach ($filterExpressions as $filterExpression) {
                 $classesForPackageUnderInspection = array_filter(
                     $classesForPackageUnderInspection,
-                    function ($className) use ($filterExpression, $includeOrExclude) {
+                    function ($className) use ($filterExpression) {
                         $match = preg_match('/' . $filterExpression . '/', $className);
-                        return ($includeOrExclude === 'include' ? $match === 1 : $match !== 1);
+                        return $match === 1;
                     }
                 );
-                if ($includeOrExclude === 'include') {
-                    $classNames[$packageKey] = array_merge($classNames[$packageKey], $classesForPackageUnderInspection);
-                    $classesForPackageUnderInspection = $classNames[$packageKey];
-                } else {
-                    $classNames[$packageKey] = $classesForPackageUnderInspection;
-                }
+                $classNames[$packageKey] = array_merge($classNames[$packageKey], $classesForPackageUnderInspection);
+                $classesForPackageUnderInspection = $classNames[$packageKey];
             }
 
             if ($classNames[$packageKey] === []) {
