@@ -114,6 +114,15 @@ Neos\Flow\I18n\Cldr\Reader\PluralsReader:
         arguments:
           1:
             value: Flow_I18n_Cldr_Reader_PluralsReaderCache
+Neos\Flow\I18n\Cldr\Reader\CurrencyReader:
+  properties:
+    cache:
+      object:
+        factoryObjectName: Neos\Flow\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: Flow_I18n_Cldr_Reader_CurrencyReaderCache
 
 #                                                                          #
 # Log                                                                      #
