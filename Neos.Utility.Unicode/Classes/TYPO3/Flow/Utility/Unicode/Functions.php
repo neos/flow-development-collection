@@ -200,7 +200,9 @@ abstract class Functions
         }
 
         // the host and port must be used as is, to allow IPv6 syntax, e.g.: [3b00:f59:1008::212:183:20]:8080
-        $components['host'] = $componentsFromUrl['host];
+        if (array_key_exists('host', $componentsFromUrl)) {
+            $components['host'] = $componentsFromUrl['host'];
+        }
         if (array_key_exists('port', $componentsFromUrl)) {
             $components['port'] = (integer)$componentsFromUrl['port'];
         } else {
