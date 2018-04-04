@@ -66,7 +66,7 @@ class InterfaceIntroduction
      *
      * @return Pointcut The pointcut
      */
-    public function getPointcut(): string
+    public function getPointcut(): Pointcut
     {
         return $this->pointcut;
     }
