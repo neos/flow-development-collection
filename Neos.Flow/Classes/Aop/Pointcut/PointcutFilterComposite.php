@@ -122,7 +122,7 @@ class PointcutFilterComposite implements PointcutFilterInterface
      * @param PointcutFilterInterface $filter A configured class filter
      * @return void
      */
-    public function addFilter($operator, PointcutFilterInterface $filter)
+    public function addFilter($operator, PointcutFilterInterface $filter): void
     {
         $this->filters[] = [$operator, $filter];
         if ($operator !== '&&' && $operator !== '&&!') {
@@ -157,7 +157,7 @@ class PointcutFilterComposite implements PointcutFilterInterface
      * @param array $runtimeEvaluations Runtime evaluations to be added
      * @return void
      */
-    public function setGlobalRuntimeEvaluationsDefinition(array $runtimeEvaluations)
+    public function setGlobalRuntimeEvaluationsDefinition(array $runtimeEvaluations): void
     {
         $this->globalRuntimeEvaluationsDefinition = $runtimeEvaluations;
     }

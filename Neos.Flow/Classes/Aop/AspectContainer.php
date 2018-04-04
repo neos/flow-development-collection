@@ -155,7 +155,7 @@ class AspectContainer
      * @param Advisor $advisor The advisor to add
      * @return void
      */
-    public function addAdvisor(Advisor $advisor)
+    public function addAdvisor(Advisor $advisor): void
     {
         $this->advisors[] = $advisor;
     }
@@ -166,7 +166,7 @@ class AspectContainer
      * @param InterfaceIntroduction $introduction
      * @return void
      */
-    public function addInterfaceIntroduction(InterfaceIntroduction $introduction)
+    public function addInterfaceIntroduction(InterfaceIntroduction $introduction): void
     {
         $this->interfaceIntroductions[] = $introduction;
     }
@@ -177,7 +177,7 @@ class AspectContainer
      * @param PropertyIntroduction $introduction
      * @return void
      */
-    public function addPropertyIntroduction(PropertyIntroduction $introduction)
+    public function addPropertyIntroduction(PropertyIntroduction $introduction): void
     {
         $this->propertyIntroductions[] = $introduction;
     }
@@ -188,7 +188,7 @@ class AspectContainer
      * @param TraitIntroduction $introduction
      * @return void
      */
-    public function addTraitIntroduction(TraitIntroduction $introduction)
+    public function addTraitIntroduction(TraitIntroduction $introduction): void
     {
         $this->traitIntroductions[] = $introduction;
     }
@@ -199,7 +199,7 @@ class AspectContainer
      * @param Pointcut $pointcut The pointcut to add
      * @return void
      */
-    public function addPointcut(Pointcut $pointcut)
+    public function addPointcut(Pointcut $pointcut): void
     {
         $this->pointcuts[] = $pointcut;
     }

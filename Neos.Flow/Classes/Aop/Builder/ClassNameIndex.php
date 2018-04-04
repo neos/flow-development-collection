@@ -45,7 +45,7 @@ class ClassNameIndex
      * @param array $classNames
      * @return void
      */
-    public function setClassNames(array $classNames)
+    public function setClassNames(array $classNames): void
     {
         $this->classNames = count($classNames) > 0 ? array_combine($classNames, array_fill(0, count($classNames), true)) : [];
     }
@@ -90,7 +90,7 @@ class ClassNameIndex
      * @param \Neos\Flow\Aop\Builder\ClassNameIndex $classNameIndex
      * @return void
      */
-    public function applyIntersect(ClassNameIndex $classNameIndex)
+    public function applyIntersect(ClassNameIndex $classNameIndex): void
     {
         $this->classNames = array_intersect_key($this->classNames, $classNameIndex->classNames);
     }
@@ -116,7 +116,7 @@ class ClassNameIndex
      * @param \Neos\Flow\Aop\Builder\ClassNameIndex $classNameIndex
      * @return void
      */
-    public function applyUnion(ClassNameIndex $classNameIndex)
+    public function applyUnion(ClassNameIndex $classNameIndex): void
     {
         if (count($this->classNames) > count($classNameIndex->classNames)) {
             foreach ($classNameIndex->classNames as $className => $value) {
@@ -134,7 +134,7 @@ class ClassNameIndex
     /**
      * @return void
      */
-    public function sort()
+    public function sort(): void
     {
         ksort($this->classNames);
     }

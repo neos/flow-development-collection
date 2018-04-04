@@ -124,7 +124,7 @@ class AbstractAdvice implements AdviceInterface
      * @return void
      * @Flow\Signal
      */
-    protected function emitAdviceInvoked($aspectObject, string $methodName, JoinPointInterface $joinPoint)
+    protected function emitAdviceInvoked($aspectObject, string $methodName, JoinPointInterface $joinPoint): void
     {
         if ($this->dispatcher === null) {
             $this->dispatcher = $this->objectManager->get(Dispatcher::class);

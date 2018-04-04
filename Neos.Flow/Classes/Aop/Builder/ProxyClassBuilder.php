@@ -97,7 +97,7 @@ class ProxyClassBuilder
      * @param Proxy\Compiler $compiler
      * @return void
      */
-    public function injectCompiler(Proxy\Compiler $compiler)
+    public function injectCompiler(Proxy\Compiler $compiler): void
     {
         $this->compiler = $compiler;
     }
@@ -108,7 +108,7 @@ class ProxyClassBuilder
      * @param ReflectionService $reflectionService
      * @return void
      */
-    public function injectReflectionService(ReflectionService $reflectionService)
+    public function injectReflectionService(ReflectionService $reflectionService): void
     {
         $this->reflectionService = $reflectionService;
     }
@@ -117,7 +117,7 @@ class ProxyClassBuilder
      * @param SystemLoggerInterface $systemLogger
      * @return void
      */
-    public function injectSystemLogger(SystemLoggerInterface $systemLogger)
+    public function injectSystemLogger(SystemLoggerInterface $systemLogger): void
     {
         $this->systemLogger = $systemLogger;
     }
@@ -128,7 +128,7 @@ class ProxyClassBuilder
      * @param Aop\Pointcut\PointcutExpressionParser $pointcutExpressionParser
      * @return void
      */
-    public function injectPointcutExpressionParser(Aop\Pointcut\PointcutExpressionParser $pointcutExpressionParser)
+    public function injectPointcutExpressionParser(Aop\Pointcut\PointcutExpressionParser $pointcutExpressionParser): void
     {
         $this->pointcutExpressionParser = $pointcutExpressionParser;
     }
@@ -140,7 +140,7 @@ class ProxyClassBuilder
      * @return void
      * @Flow\Autowiring(false)
      */
-    public function injectObjectConfigurationCache(VariableFrontend $objectConfigurationCache)
+    public function injectObjectConfigurationCache(VariableFrontend $objectConfigurationCache): void
     {
         $this->objectConfigurationCache = $objectConfigurationCache;
     }
@@ -151,7 +151,7 @@ class ProxyClassBuilder
      * @param AdvicedConstructorInterceptorBuilder $builder
      * @return void
      */
-    public function injectAdvicedConstructorInterceptorBuilder(AdvicedConstructorInterceptorBuilder $builder)
+    public function injectAdvicedConstructorInterceptorBuilder(AdvicedConstructorInterceptorBuilder $builder): void
     {
         $this->methodInterceptorBuilders['AdvicedConstructor'] = $builder;
     }
@@ -162,7 +162,7 @@ class ProxyClassBuilder
      * @param AdvicedMethodInterceptorBuilder $builder
      * @return void
      */
-    public function injectAdvicedMethodInterceptorBuilder(AdvicedMethodInterceptorBuilder $builder)
+    public function injectAdvicedMethodInterceptorBuilder(AdvicedMethodInterceptorBuilder $builder): void
     {
         $this->methodInterceptorBuilders['AdvicedMethod'] = $builder;
     }
@@ -171,7 +171,7 @@ class ProxyClassBuilder
      * @param CompileTimeObjectManager $objectManager
      * @return void
      */
-    public function injectObjectManager(CompileTimeObjectManager $objectManager)
+    public function injectObjectManager(CompileTimeObjectManager $objectManager): void
     {
         $this->objectManager = $objectManager;
     }
@@ -182,7 +182,7 @@ class ProxyClassBuilder
      * @param array $settings The settings
      * @return void
      */
-    public function injectSettings(array $settings)
+    public function injectSettings(array $settings): void
     {
         $this->settings = $settings;
     }
@@ -204,7 +204,7 @@ class ProxyClassBuilder
      *
      * @return void
      */
-    public function build()
+    public function build(): void
     {
         $allAvailableClassNamesByPackage = $this->objectManager->getRegisteredClassNames();
         $possibleTargetClassNames = $this->getProxyableClasses($allAvailableClassNamesByPackage);
@@ -631,7 +631,7 @@ class ProxyClassBuilder
      * @return void
      * @throws Aop\Exception\VoidImplementationException
      */
-    protected function buildMethodsInterceptorCode(string $targetClassName, array $interceptedMethods)
+    protected function buildMethodsInterceptorCode(string $targetClassName, array $interceptedMethods): void
     {
         foreach ($interceptedMethods as $methodName => $methodMetaInformation) {
             if (count($methodMetaInformation['groupedAdvices']) === 0) {
@@ -652,7 +652,7 @@ class ProxyClassBuilder
      * @param array &$aspectContainers All aspects to take into consideration
      * @return void
      */
-    protected function addAdvicedMethodsToInterceptedMethods(array &$interceptedMethods, array $methods, string $targetClassName, array &$aspectContainers)
+    protected function addAdvicedMethodsToInterceptedMethods(array &$interceptedMethods, array $methods, string $targetClassName, array &$aspectContainers): void
     {
         $pointcutQueryIdentifier = 0;
 
@@ -695,7 +695,7 @@ class ProxyClassBuilder
      * @param array $methodsFromIntroducedInterfaces An array of class and method names from introduced interfaces
      * @return void
      */
-    protected function addIntroducedMethodsToInterceptedMethods(array &$interceptedMethods, array $methodsFromIntroducedInterfaces)
+    protected function addIntroducedMethodsToInterceptedMethods(array &$interceptedMethods, array $methodsFromIntroducedInterfaces): void
     {
         foreach ($methodsFromIntroducedInterfaces as $interfaceAndMethodName) {
             list($interfaceName, $methodName) = $interfaceAndMethodName;

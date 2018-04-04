@@ -72,7 +72,7 @@ class PointcutSettingFilter implements PointcutFilterInterface
      * @param ConfigurationManager $configurationManager
      * @return void
      */
-    public function injectConfigurationManager(ConfigurationManager $configurationManager)
+    public function injectConfigurationManager(ConfigurationManager $configurationManager): void
     {
         $this->configurationManager = $configurationManager;
         $this->parseConfigurationOptionPath($this->settingComparisonExpression);
@@ -124,7 +124,7 @@ class PointcutSettingFilter implements PointcutFilterInterface
      * @return void
      * @throws InvalidPointcutExpressionException
      */
-    protected function parseConfigurationOptionPath(string $settingComparisonExpression)
+    protected function parseConfigurationOptionPath(string $settingComparisonExpression): void
     {
         $settingComparisonExpression = preg_split(self::PATTERN_SPLITBYEQUALSIGN, $settingComparisonExpression);
         if (isset($settingComparisonExpression[1])) {

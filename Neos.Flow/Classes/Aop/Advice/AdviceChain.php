@@ -66,7 +66,7 @@ class AdviceChain
      *
      * @return void
      */
-    public function rewind()
+    public function rewind(): void
     {
         $this->adviceIndex = -1;
     }

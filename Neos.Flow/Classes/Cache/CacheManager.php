@@ -77,7 +77,7 @@ class CacheManager
      * @param SystemLoggerInterface $systemLogger
      * @return void
      */
-    public function injectSystemLogger(SystemLoggerInterface $systemLogger)
+    public function injectSystemLogger(SystemLoggerInterface $systemLogger): void
     {
         $this->systemLogger = $systemLogger;
     }
@@ -86,7 +86,7 @@ class CacheManager
      * @param CacheFactory $cacheFactory
      * @return void
      */
-    public function injectCacheFactory(CacheFactory $cacheFactory)
+    public function injectCacheFactory(CacheFactory $cacheFactory): void
     {
         $this->cacheFactory = $cacheFactory;
     }
@@ -95,7 +95,7 @@ class CacheManager
      * @param ConfigurationManager $configurationManager
      * @return void
      */
-    public function injectConfigurationManager(ConfigurationManager $configurationManager)
+    public function injectConfigurationManager(ConfigurationManager $configurationManager): void
     {
         $this->configurationManager = $configurationManager;
     }
@@ -104,7 +104,7 @@ class CacheManager
      * @param Environment $environment
      * @return void
      */
-    public function injectEnvironment(Environment $environment)
+    public function injectEnvironment(Environment $environment): void
     {
         $this->environment = $environment;
     }
@@ -126,7 +126,7 @@ class CacheManager
      * @return void
      * @throws \InvalidArgumentException
      */
-    public function setCacheConfigurations(array $cacheConfigurations)
+    public function setCacheConfigurations(array $cacheConfigurations): void
     {
         foreach ($cacheConfigurations as $identifier => $configuration) {
             if (!is_array($configuration)) {
@@ -145,7 +145,7 @@ class CacheManager
      * @throws DuplicateIdentifierException if a cache with the given identifier has already been registered.
      * @api
      */
-    public function registerCache(FrontendInterface $cache, bool $persistent = false)
+    public function registerCache(FrontendInterface $cache, bool $persistent = false): void
     {
         $identifier = $cache->getIdentifier();
         if (isset($this->caches[$identifier])) {
@@ -207,7 +207,7 @@ class CacheManager
      * @return void
      * @api
      */
-    public function flushCaches(bool $flushPersistentCaches = false)
+    public function flushCaches(bool $flushPersistentCaches = false): void
     {
         $this->createAllCaches();
         /** @var FrontendInterface $cache */
@@ -231,7 +231,7 @@ class CacheManager
      * @return void
      * @api
      */
-    public function flushCachesByTag(string $tag, bool $flushPersistentCaches = false)
+    public function flushCachesByTag(string $tag, bool $flushPersistentCaches = false): void
     {
         $this->createAllCaches();
         /** @var FrontendInterface $cache */
@@ -268,7 +268,7 @@ class CacheManager
      * @param array $changedFiles A list of full paths to changed files
      * @return void
      */
-    public function flushSystemCachesByChangedFiles(string $fileMonitorIdentifier, array $changedFiles)
+    public function flushSystemCachesByChangedFiles(string $fileMonitorIdentifier, array $changedFiles): void
     {
         switch ($fileMonitorIdentifier) {
             case 'Flow_ClassFiles':
@@ -290,7 +290,7 @@ class CacheManager
      * @return void
      * @see flushSystemCachesByChangedFiles()
      */
-    protected function flushClassCachesByChangedFiles(array $changedFiles)
+    protected function flushClassCachesByChangedFiles(array $changedFiles): void
     {
         $objectClassesCache = $this->getCache('Flow_Object_Classes');
         $objectConfigurationCache = $this->getCache('Flow_Object_Configuration');
@@ -356,7 +356,7 @@ class CacheManager
      * @return void
      * @see flushSystemCachesByChangedFiles()
      */
-    protected function flushConfigurationCachesByChangedFiles(array $changedFiles)
+    protected function flushConfigurationCachesByChangedFiles(array $changedFiles): void
     {
         $aopProxyClassRebuildIsNeeded = false;
         $aopProxyClassInfluencers = '/(?:Policy|Objects|Settings)(?:\..*)*\.yaml/';
@@ -406,7 +406,7 @@ class CacheManager
      * @return void
      * @see flushSystemCachesByChangedFiles()
      */
-    protected function flushTranslationCachesByChangedFiles(array $changedFiles)
+    protected function flushTranslationCachesByChangedFiles(array $changedFiles): void
     {
         foreach ($changedFiles as $pathAndFilename => $status) {
             if (preg_match('/\/Translations\/.+\.xlf/', $pathAndFilename) === 1) {
@@ -422,7 +422,7 @@ class CacheManager
      *
      * @return void
      */
-    protected function createAllCaches()
+    protected function createAllCaches(): void
     {
         foreach (array_keys($this->cacheConfigurations) as $identifier) {
             if ($identifier !== 'Default' && !isset($this->caches[$identifier])) {
@@ -437,7 +437,7 @@ class CacheManager
      * @param string $identifier
      * @return void
      */
-    protected function createCache(string $identifier)
+    protected function createCache(string $identifier): void
     {
         $frontend = isset($this->cacheConfigurations[$identifier]['frontend']) ? $this->cacheConfigurations[$identifier]['frontend'] : $this->cacheConfigurations['Default']['frontend'];
         $backend = isset($this->cacheConfigurations[$identifier]['backend']) ? $this->cacheConfigurations[$identifier]['backend'] : $this->cacheConfigurations['Default']['backend'];

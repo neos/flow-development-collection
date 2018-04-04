@@ -59,7 +59,7 @@ abstract class AbstractBackend extends \Neos\Cache\Backend\AbstractBackend imple
      * @param Environment $environment
      * @return void
      */
-    public function injectEnvironment(Environment $environment)
+    public function injectEnvironment(Environment $environment): void
     {
         $this->environment = $environment;
     }

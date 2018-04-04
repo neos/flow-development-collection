@@ -76,7 +76,7 @@ class PointcutMethodNameFilter implements PointcutFilterInterface
      * @param ReflectionService $reflectionService The reflection service
      * @return void
      */
-    public function injectReflectionService(ReflectionService $reflectionService)
+    public function injectReflectionService(ReflectionService $reflectionService): void
     {
         $this->reflectionService = $reflectionService;
     }
@@ -85,7 +85,7 @@ class PointcutMethodNameFilter implements PointcutFilterInterface
      * @param SystemLoggerInterface $systemLogger
      * @return void
      */
-    public function injectSystemLogger(SystemLoggerInterface $systemLogger)
+    public function injectSystemLogger(SystemLoggerInterface $systemLogger): void
     {
         $this->systemLogger = $systemLogger;
     }

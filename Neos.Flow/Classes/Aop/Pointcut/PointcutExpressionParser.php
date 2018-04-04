@@ -86,7 +86,7 @@ class PointcutExpressionParser
      * @param ProxyClassBuilder $proxyClassBuilder
      * @return void
      */
-    public function injectProxyClassBuilder(ProxyClassBuilder $proxyClassBuilder)
+    public function injectProxyClassBuilder(ProxyClassBuilder $proxyClassBuilder): void
     {
         $this->proxyClassBuilder = $proxyClassBuilder;
     }
@@ -95,7 +95,7 @@ class PointcutExpressionParser
      * @param ReflectionService $reflectionService
      * @return void
      */
-    public function injectReflectionService(ReflectionService $reflectionService)
+    public function injectReflectionService(ReflectionService $reflectionService): void
     {
         $this->reflectionService = $reflectionService;
     }
@@ -180,7 +180,7 @@ class PointcutExpressionParser
      * @param PointcutFilterComposite $pointcutFilterComposite An instance of the pointcut filter composite. The result (ie. the class annotation filter) will be added to this composite object.
      * @return void
      */
-    protected function parseDesignatorClassAnnotatedWith(string $operator, string $annotationPattern, PointcutFilterComposite $pointcutFilterComposite)
+    protected function parseDesignatorClassAnnotatedWith(string $operator, string $annotationPattern, PointcutFilterComposite $pointcutFilterComposite): void
     {
         $annotationPropertyConstraints = [];
         $this->parseAnnotationPattern($annotationPattern, $annotationPropertyConstraints);
@@ -200,7 +200,7 @@ class PointcutExpressionParser
      * @param PointcutFilterComposite $pointcutFilterComposite An instance of the pointcut filter composite. The result (ie. the class filter) will be added to this composite object.
      * @return void
      */
-    protected function parseDesignatorClass(string $operator, string $classPattern, PointcutFilterComposite $pointcutFilterComposite)
+    protected function parseDesignatorClass(string $operator, string $classPattern, PointcutFilterComposite $pointcutFilterComposite): void
     {
         $filter = new PointcutClassNameFilter($classPattern);
         $filter->injectReflectionService($this->reflectionService);
@@ -216,7 +216,7 @@ class PointcutExpressionParser
      * @param PointcutFilterComposite $pointcutFilterComposite An instance of the pointcut filter composite. The result (ie. the method annotation filter) will be added to this composite object.
      * @return void
      */
-    protected function parseDesignatorMethodAnnotatedWith(string $operator, string $annotationPattern, PointcutFilterComposite $pointcutFilterComposite)
+    protected function parseDesignatorMethodAnnotatedWith(string $operator, string $annotationPattern, PointcutFilterComposite $pointcutFilterComposite): void
     {
         $annotationPropertyConstraints = [];
         $this->parseAnnotationPattern($annotationPattern, $annotationPropertyConstraints);
@@ -235,7 +235,7 @@ class PointcutExpressionParser
      * @param array $annotationPropertyConstraints
      * @return void
      */
-    protected function parseAnnotationPattern(string &$annotationPattern, array &$annotationPropertyConstraints)
+    protected function parseAnnotationPattern(string &$annotationPattern, array &$annotationPropertyConstraints): void
     {
         if (strpos($annotationPattern, '(') !== false) {
             $matches = [];
@@ -258,7 +258,7 @@ class PointcutExpressionParser
      * @return void
      * @throws InvalidPointcutExpressionException if there's an error in the pointcut expression
      */
-    protected function parseDesignatorMethod(string $operator, string $signaturePattern, PointcutFilterComposite $pointcutFilterComposite)
+    protected function parseDesignatorMethod(string $operator, string $signaturePattern, PointcutFilterComposite $pointcutFilterComposite): void
     {
         if (strpos($signaturePattern, '->') === false) {
             throw new InvalidPointcutExpressionException('Syntax error: "->" expected in "' . $signaturePattern . '", defined in ' . $this->sourceHint, 1169027339);
@@ -304,7 +304,7 @@ class PointcutExpressionParser
      * @param PointcutFilterComposite $pointcutFilterComposite An instance of the pointcut filter composite. The result (ie. the class type filter) will be added to this composite object.
      * @return void
      */
-    protected function parseDesignatorWithin(string $operator, string $signaturePattern, PointcutFilterComposite $pointcutFilterComposite)
+    protected function parseDesignatorWithin(string $operator, string $signaturePattern, PointcutFilterComposite $pointcutFilterComposite): void
     {
         $filter = new PointcutClassTypeFilter($signaturePattern);
         $filter->injectReflectionService($this->reflectionService);
@@ -322,7 +322,7 @@ class PointcutExpressionParser
      * @return void
      * @throws InvalidPointcutExpressionException
      */
-    protected function parseDesignatorPointcut(string $operator, string $pointcutExpression, PointcutFilterComposite $pointcutFilterComposite)
+    protected function parseDesignatorPointcut(string $operator, string $pointcutExpression, PointcutFilterComposite $pointcutFilterComposite): void
     {
         if (strpos($pointcutExpression, '->') === false) {
             throw new InvalidPointcutExpressionException('Syntax error: "->" expected in "' . $pointcutExpression . '", defined in ' . $this->sourceHint, 1172219205);
@@ -342,7 +342,7 @@ class PointcutExpressionParser
      * @return void
      * @throws InvalidPointcutExpressionException
      */
-    protected function parseDesignatorFilter(string $operator, string $filterObjectName, PointcutFilterComposite $pointcutFilterComposite)
+    protected function parseDesignatorFilter(string $operator, string $filterObjectName, PointcutFilterComposite $pointcutFilterComposite): void
     {
         $customFilter = $this->objectManager->get($filterObjectName);
         if (!$customFilter instanceof PointcutFilterInterface) {
@@ -359,7 +359,7 @@ class PointcutExpressionParser
      * @param PointcutFilterComposite $pointcutFilterComposite An instance of the pointcut filter composite. The result (ie. the custom filter) will be added to this composite object.
      * @return void
      */
-    protected function parseDesignatorSetting(string $operator, string $configurationPath, PointcutFilterComposite $pointcutFilterComposite)
+    protected function parseDesignatorSetting(string $operator, string $configurationPath, PointcutFilterComposite $pointcutFilterComposite): void
     {
         $filter = new PointcutSettingFilter($configurationPath);
         /** @var ConfigurationManager $configurationManager */
@@ -377,7 +377,7 @@ class PointcutExpressionParser
      * @param PointcutFilterComposite $pointcutFilterComposite An instance of the pointcut filter composite. The result (ie. the custom filter) will be added to this composite object.
      * @return void
      */
-    protected function parseRuntimeEvaluations(string $operator, string $runtimeEvaluations, PointcutFilterComposite $pointcutFilterComposite)
+    protected function parseRuntimeEvaluations(string $operator, string $runtimeEvaluations, PointcutFilterComposite $pointcutFilterComposite): void
     {
         $runtimeEvaluationsDefinition = [
             $operator => [

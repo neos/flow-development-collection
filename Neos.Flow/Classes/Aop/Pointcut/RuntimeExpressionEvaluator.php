@@ -50,7 +50,7 @@ class RuntimeExpressionEvaluator
      * @param ObjectManagerInterface $objectManager
      * @return void
      */
-    public function injectObjectManager(ObjectManagerInterface $objectManager)
+    public function injectObjectManager(ObjectManagerInterface $objectManager): void
     {
         if ($this->objectManager === null) {
             $this->objectManager = $objectManager;
@@ -92,7 +92,7 @@ class RuntimeExpressionEvaluator
      * @param string $expression
      * @return void
      */
-    public function addExpression(string $privilegeIdentifier, string $expression)
+    public function addExpression(string $privilegeIdentifier, string $expression): void
     {
         $functionName = $this->generateExpressionFunctionName($privilegeIdentifier);
         $wrappedExpression = 'return ' . $expression . ';';
@@ -114,7 +114,7 @@ class RuntimeExpressionEvaluator
      *
      * @return void
      */
-    public function flush()
+    public function flush(): void
     {
         $this->runtimeExpressionsCache->flush();
     }

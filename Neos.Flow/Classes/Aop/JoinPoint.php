@@ -154,7 +154,7 @@ class JoinPoint implements JoinPointInterface
      * @throws Exception\InvalidArgumentException
      * @api
      */
-    public function setMethodArgument($argumentName, $argumentValue)
+    public function setMethodArgument($argumentName, $argumentValue): void
     {
         if (!array_key_exists($argumentName, $this->methodArguments)) {
             throw new InvalidArgumentException('The argument "' . $argumentName . '" does not exist in method ' . $this->className . '->' . $this->methodName, 1309260269);

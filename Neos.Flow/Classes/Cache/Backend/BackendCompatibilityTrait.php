@@ -57,7 +57,7 @@ trait BackendCompatibilityTrait
      * @param Environment $environment
      * @return void
      */
-    public function injectEnvironment(Environment $environment)
+    public function injectEnvironment(Environment $environment): void
     {
         $this->environment = $environment;
         $this->environmentConfiguration = $this->createEnvironmentConfiguration($environment->getContext(), $environment->getPathToTemporaryDirectory());

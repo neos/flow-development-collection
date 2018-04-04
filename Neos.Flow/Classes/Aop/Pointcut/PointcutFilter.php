@@ -66,7 +66,7 @@ class PointcutFilter implements PointcutFilterInterface
      * @param ProxyClassBuilder $proxyClassBuilder
      * @return void
      */
-    public function injectProxyClassBuilder(ProxyClassBuilder $proxyClassBuilder)
+    public function injectProxyClassBuilder(ProxyClassBuilder $proxyClassBuilder): void
     {
         $this->proxyClassBuilder = $proxyClassBuilder;
     }
