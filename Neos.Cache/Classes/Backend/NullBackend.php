@@ -45,7 +45,7 @@ class NullBackend extends AbstractCacheBackend implements PhpCapableBackendInter
      * @return boolean FALSE
      * @api
      */
-    public function get(string $entryIdentifier): bool
+    public function get(string $entryIdentifier)
     {
         return false;
     }
