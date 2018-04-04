@@ -723,7 +723,7 @@ class ActionController extends AbstractController
                 $logMessage .= 'Error for ' . $propertyPath . ':  ' . $error->render() . PHP_EOL;
             }
         }
-        $this->logger->log(LogLevel::ERROR, $logMessage);
+        $this->logger->error($logMessage);
 
         return $outputMessage;
     }

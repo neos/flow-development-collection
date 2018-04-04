@@ -127,7 +127,7 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
 
         if ($this->throwableStorage instanceof ThrowableStorageInterface && isset($this->renderingOptions['logException']) && $this->renderingOptions['logException']) {
             $message = $this->throwableStorage->logThrowable($exception);
-            $this->logger->log(LogLevel::CRITICAL, $message);
+            $this->logger->critical($message);
         }
 
         switch (PHP_SAPI) {

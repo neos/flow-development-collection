@@ -17,6 +17,7 @@ use Neos\Flow\Core\RequestHandlerInterface;
 use Neos\Flow\Exception as FlowException;
 use Neos\Flow\Log\PsrLoggerFactoryInterface;
 use Neos\Flow\Mvc\Dispatcher;
+use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 
 /**
@@ -76,16 +77,17 @@ class SlaveRequestHandler implements RequestHandlerInterface
         $sequence->invoke($this->bootstrap);
 
         $objectManager = $this->bootstrap->getObjectManager();
-        $systemLogger = $objectManager->get(PsrLoggerFactoryInterface::class)->get('systemLogger');
+        /** @var LoggerInterface $logger */
+        $logger = $objectManager->get(PsrLoggerFactoryInterface::class)->get('systemLogger');
 
-        $systemLogger->log(LogLevel::DEBUG, 'Running sub process loop.');
+        $logger->debug('Running sub process loop.');
         echo "\nREADY\n";
 
         try {
             while (true) {
                 $commandLine = trim(fgets(STDIN));
                 $trimmedCommandLine = trim($commandLine);
-                $systemLogger->log(LogLevel::INFO, sprintf('Received command "%s".', $trimmedCommandLine));
+                $logger->info(sprintf('Received command "%s".', $trimmedCommandLine));
                 if ($commandLine === "QUIT\n") {
                     break;
                 }
@@ -103,7 +105,7 @@ class SlaveRequestHandler implements RequestHandlerInterface
                 echo "\nREADY\n";
             }
 
-            $systemLogger->log(LogLevel::DEBUG, 'Exiting sub process loop.');
+            $logger->debug('Exiting sub process loop.');
             $this->bootstrap->shutdown(Bootstrap::RUNLEVEL_RUNTIME);
             exit($response->getExitCode());
         } catch (\Exception $exception) {

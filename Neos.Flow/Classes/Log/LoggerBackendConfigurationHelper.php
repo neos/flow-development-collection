@@ -26,7 +26,7 @@ class LoggerBackendConfigurationHelper
      *
      * @return array
      */
-    public function getNormalizedLegacyConfiguration()
+    public function getNormalizedLegacyConfiguration(): array
     {
         $normalizedConfiguration = [];
         foreach ($this->legacyConfiguration as $logIdentifier => $configuration) {
@@ -44,11 +44,11 @@ class LoggerBackendConfigurationHelper
     }
 
     /**
-     * @param $backendObjectNames
-     * @param $backendOptions
+     * @param mixed $backendObjectNames
+     * @param array $backendOptions
      * @return array
      */
-    protected function mapLoggerConfiguration($backendObjectNames, $backendOptions)
+    protected function mapLoggerConfiguration($backendObjectNames, array $backendOptions): array
     {
         if (!is_array($backendObjectNames)) {
             return [$this->mapBackendInformation($backendObjectNames, $backendOptions)];
@@ -71,7 +71,7 @@ class LoggerBackendConfigurationHelper
      * @param array $backendOptions
      * @return array
      */
-    protected function mapBackendInformation($backendObjectName, $backendOptions)
+    protected function mapBackendInformation(string $backendObjectName, array $backendOptions): array
     {
         return [
             'class' => $backendObjectName,

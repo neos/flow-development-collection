@@ -3,6 +3,7 @@ namespace Neos\Flow\Log;
 
 use Neos\Flow\Log\Backend\BackendInterface;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Log\Psr\Logger;
 
 /**
  * This actually creates a logger from the Neos.Log package.
@@ -42,7 +43,7 @@ class PsrLoggerFactory implements PsrLoggerFactoryInterface
      * @return \Psr\Log\LoggerInterface
      * @throws \Exception
      */
-    public function get(string $identifier)
+    public function get(string $identifier): \Psr\Log\LoggerInterface
     {
         if (isset($this->instances[$identifier])) {
             return $this->instances[$identifier];
@@ -52,13 +53,13 @@ class PsrLoggerFactory implements PsrLoggerFactoryInterface
             throw new \InvalidArgumentException(sprintf('The given log identifier "%s" was not configured for the "%s" factory.', htmlspecialchars($identifier), self::class), 1515355505545);
         }
 
-        if (!class_exists(PsrLogger::class)) {
+        if (!class_exists(Logger::class)) {
             throw new \Exception('To use the default logging you have to have the "neos/flow-log" package installed. It seems you miss it, so install it via "composer require neos/flow-log".', 1515437383589);
         }
 
         $backends = $this->instantiateBackends($this->configuration[$identifier]);
 
-        $logger = new PsrLogger($backends);
+        $logger = new Logger($backends);
         $this->instances[$identifier] = $logger;
         return $logger;
     }

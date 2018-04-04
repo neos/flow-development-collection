@@ -1,5 +1,5 @@
 <?php
-namespace Neos\Flow\Log;
+namespace Neos\Flow\Log\Psr;
 
 /*
  * This file is part of the Neos.Flow package.
@@ -18,10 +18,11 @@ use Psr\Log\LogLevel;
 
 /**
  * PSR-3 supporting logger.
+ * This is the primary Logger implementation of the Neos.Flow.Log package.
  *
  * @api
  */
-class PsrLogger implements LoggerInterface
+class Logger implements LoggerInterface
 {
     use LoggerTrait;
 
@@ -42,7 +43,7 @@ class PsrLogger implements LoggerInterface
     protected $backends = [];
 
     /**
-     * PsrLogger constructor.
+     * Constructs the PSR-3 Logger.
      *
      * @param iterable $backends
      */

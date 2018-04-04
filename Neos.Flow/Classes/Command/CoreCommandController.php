@@ -190,13 +190,13 @@ class CoreCommandController extends CommandController
 
         /** @var PhpFrontend $classesCache */
         $classesCache = $this->cacheManager->getCache('Flow_Object_Classes');
-        $systemLogger = $this->objectManager->get(PsrLoggerFactoryInterface::class)->get('systemLogger');
+        $logger = $this->objectManager->get(PsrLoggerFactoryInterface::class)->get('systemLogger');
 
         $this->proxyClassCompiler->injectClassesCache($classesCache);
 
         $this->aopProxyClassBuilder->injectObjectConfigurationCache($objectConfigurationCache);
-        $this->aopProxyClassBuilder->injectLogger($systemLogger);
-        $this->dependencyInjectionProxyClassBuilder->injectLogger($systemLogger);
+        $this->aopProxyClassBuilder->injectLogger($logger);
+        $this->dependencyInjectionProxyClassBuilder->injectLogger($logger);
         $this->aopProxyClassBuilder->build();
         $this->dependencyInjectionProxyClassBuilder->build();
 

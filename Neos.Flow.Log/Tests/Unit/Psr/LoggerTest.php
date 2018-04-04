@@ -1,15 +1,15 @@
 <?php
-namespace Neos\Flow\Log\Tests\Unit;
+namespace Neos\Flow\Log\Tests\Unit\Psr;
 
 use Neos\Flow\Log\Backend\BackendInterface;
-use Neos\Flow\Log\PsrLogger;
+use Neos\Flow\Log\Psr\Logger;
 use Neos\Flow\Tests\UnitTestCase;
 use Psr\Log\LogLevel;
 
 /**
  * Test case for PSR-3 based logger.
  */
-class PsrLoggerTest extends UnitTestCase
+class LoggerTest extends UnitTestCase
 {
     /**
      * @return array
@@ -43,7 +43,7 @@ class PsrLoggerTest extends UnitTestCase
         if (!$willError) {
             $mockBackend->expects(self::once())->method('append')->with('some message', $legacyLogLevel)->willReturn(null);
         }
-        $psrLogger = new PsrLogger([$mockBackend]);
+        $psrLogger = new Logger([$mockBackend]);
 
         try {
             $psrLogger->log($psrLogLevel, 'some message');
@@ -65,7 +65,7 @@ class PsrLoggerTest extends UnitTestCase
         $mockBackend = $this->createMock(BackendInterface::class);
         $mockBackend->expects(self::once())->method('append')->with('some message', $legacyLogLevel)->willReturn(null);
 
-        $psrLogger = new PsrLogger([$mockBackend]);
+        $psrLogger = new Logger([$mockBackend]);
 
         if ($willError) {
             $this->markTestSkipped('unnecessary');
@@ -84,7 +84,7 @@ class PsrLoggerTest extends UnitTestCase
         $mockBackend = $this->createMock(BackendInterface::class);
         $mockBackend->expects(self::once())->method('append')->with('some message', LOG_INFO, $context)->willReturn(null);
 
-        $psrLogger = new PsrLogger([$mockBackend]);
+        $psrLogger = new Logger([$mockBackend]);
         $psrLogger->log(LogLevel::INFO, $message, $context);
     }
 }

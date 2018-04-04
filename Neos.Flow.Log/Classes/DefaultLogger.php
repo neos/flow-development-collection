@@ -15,9 +15,11 @@ use Neos\Flow\Log\Exception\NoSuchBackendException;
 use Psr\Log\LogLevel;
 
 /**
- * The default logger of the Flow framework
+ * This is the deprecated Logger implementing the old Neos.Flow LoggerInterface.
+ * it is replaced
  *
- * @api
+ * @deprecated This should be replaced with usages of the Psr\Logger
+ * @see \Neos\Flow\Log\Psr\Logger
  */
 class DefaultLogger implements LoggerInterface
 {
@@ -35,12 +37,12 @@ class DefaultLogger implements LoggerInterface
     /**
      * @var \Psr\Log\LoggerInterface
      */
-    protected $psrLogger;
+    protected $internalPsrCompatibleLogger;
 
     /**
      * @var bool
      */
-    protected $wasPsrLoggerInjected = false;
+    protected $psrCompatibleLoggerWasInjected = false;
 
     /**
      * @var \SplObjectStorage
@@ -60,13 +62,13 @@ class DefaultLogger implements LoggerInterface
     /**
      * Constructs the logger
      *
-     * @param \Psr\Log\LoggerInterface $psrLogger Should be a fully configured PSR logger instance that then will take over logging.
+     * @param \Psr\Log\LoggerInterface $logger Should be a fully configured PSR logger instance that then will take over logging.
      */
-    public function __construct(\Psr\Log\LoggerInterface $psrLogger = null)
+    public function __construct(\Psr\Log\LoggerInterface $logger = null)
     {
-        $this->psrLogger = $psrLogger;
-        if ($this->psrLogger !== null) {
-            $this->wasPsrLoggerInjected = true;
+        $this->internalPsrCompatibleLogger = $logger;
+        if ($this->internalPsrCompatibleLogger !== null) {
+            $this->psrCompatibleLoggerWasInjected = true;
         }
         $this->backends = new \SplObjectStorage();
     }
@@ -99,7 +101,7 @@ class DefaultLogger implements LoggerInterface
      */
     public function setBackend(Backend\BackendInterface $backend)
     {
-        if ($this->wasPsrLoggerInjected) {
+        if ($this->psrCompatibleLoggerWasInjected) {
             throw new Exception('A PSR-3 logger was injected so setting backends is not possible. Create a new instance.', 1515342951935);
         }
 
@@ -120,7 +122,7 @@ class DefaultLogger implements LoggerInterface
      */
     public function addBackend(Backend\BackendInterface $backend)
     {
-        if ($this->wasPsrLoggerInjected) {
+        if ($this->psrCompatibleLoggerWasInjected) {
             throw new Exception('A PSR-3 logger was injected so adding backends is not possible. Create a new instance.', 1515343013004);
         }
 
@@ -139,7 +141,7 @@ class DefaultLogger implements LoggerInterface
      */
     public function removeBackend(Backend\BackendInterface $backend)
     {
-        if ($this->wasPsrLoggerInjected) {
+        if ($this->psrCompatibleLoggerWasInjected) {
             throw new Exception('A PSR-3 logger was injected so removing backends is not possible. Create a new instance.', 1515343007859);
         }
 
@@ -148,7 +150,8 @@ class DefaultLogger implements LoggerInterface
         }
         $backend->close();
         $this->backends->detach($backend);
-        $this->psrLogger = null;
+        // This needs to be reset in order to re-create a new PSR compatible logger with the remaining backends attached.
+        $this->internalPsrCompatibleLogger = null;
     }
 
     /**
@@ -165,31 +168,23 @@ class DefaultLogger implements LoggerInterface
      */
     public function log($message, $severity = LOG_INFO, $additionalData = null, $packageKey = null, $className = null, $methodName = null)
     {
-        if ($this->psrLogger === null) {
-            $this->psrLogger = $this->createDefaultPsrLogger();
+        if ($this->internalPsrCompatibleLogger === null) {
+            $this->internalPsrCompatibleLogger = $this->createDefaultPsrLogger();
         }
 
         $psrLogLevel = self::LOGLEVEL_MAPPING[$severity] ?? LOG_INFO;
 
-        if ($additionalData === null) {
-            $additionalData = [];
+        $context = [];
+        if ($additionalData !== null) {
+            // In PSR-3 context must always be an array, therefore we create an outer array if different type.
+            $context = is_array($additionalData) ? $additionalData : ['additionalData' => $additionalData];
         }
 
-        $additionalData = is_array($additionalData) ? $additionalData : ['additionalData' => $additionalData];
-
-        if ($packageKey !== null) {
-            $additionalData['packageKey'] = $packageKey;
+        if ($packageKey !== null || $className  !== null || $methodName !== null) {
+            $context['FLOW_LOG_ENVIRONMENT'] = $this->createFlowLogEnvironment($packageKey, $className, $methodName);
         }
 
-        if ($className !== null) {
-            $additionalData['className'] = $className;
-        }
-
-        if ($methodName !== null) {
-            $additionalData['methodName'] = $methodName;
-        }
-
-        $this->psrLogger->log($psrLogLevel, $message, $additionalData);
+        $this->internalPsrCompatibleLogger->log($psrLogLevel, $message, $context);
     }
 
     /**
@@ -212,7 +207,31 @@ class DefaultLogger implements LoggerInterface
      */
     protected function createDefaultPsrLogger()
     {
-        return new PsrLogger($this->backends);
+        return new \Neos\Flow\Log\Psr\Logger($this->backends);
+    }
+
+    /**
+     * @param string $packageKey
+     * @param string $className
+     * @param string $methodName
+     * @return array
+     */
+    protected function createFlowLogEnvironment($packageKey = null, $className = null, $methodName =  null): array
+    {
+        $logEnvironment = [];
+        if ($packageKey !== null) {
+            $logEnvironment['packageKey'] = $packageKey;
+        }
+
+        if ($className !== null) {
+            $logEnvironment['className'] = $className;
+        }
+
+        if ($methodName !== null) {
+            $logEnvironment['methodName'] = $methodName;
+        }
+
+        return $logEnvironment;
     }
 
     /**
@@ -222,7 +241,7 @@ class DefaultLogger implements LoggerInterface
      */
     public function shutdownObject()
     {
-        $this->psrLogger = null;
+        $this->internalPsrCompatibleLogger = null;
         foreach ($this->backends as $backend) {
             $backend->close();
         }

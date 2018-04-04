@@ -58,7 +58,7 @@ class DoctrineCommandController extends CommandController
     /**
      * @var LoggerInterface
      */
-    protected $systemLogger;
+    protected $logger;
 
     /**
      * Injects the Flow settings, only the persistence part is kept for further use
@@ -72,11 +72,11 @@ class DoctrineCommandController extends CommandController
     }
 
     /**
-     * @param LoggerInterface $systemLogger
+     * @param LoggerInterface $logger
      */
-    public function injectcSystemLogger(LoggerInterface $systemLogger)
+    public function injectLogger(LoggerInterface $logger)
     {
-        $this->systemLogger = $systemLogger;
+        $this->logger = $logger;
     }
 
     /**
@@ -508,7 +508,7 @@ class DoctrineCommandController extends CommandController
         $this->outputLine('The exception details have been logged to the Flow system log.');
         $message = $this->throwableStorage->logThrowable($exception);
         $this->outputLine($message);
-        $this->systemLogger->log(LogLevel::ERROR, $message);
+        $this->logger->error($message);
         $this->quit(1);
     }
 

@@ -12,7 +12,11 @@ namespace Neos\Flow\Log;
  */
 
 /**
- * The Flow enabled logger currently used as default for logging.
+ * The Flow enabled logger previously used as default for logging.
+ *
+ * @deprecated Instead a \Psr\Log\LoggerInterface should be used in all places.
+ * @see \Psr\Log\LoggerInterface
+ * @see \Neos\Flow\Log\PsrLoggerFactoryInterface
  */
 class Logger extends DefaultLogger implements SystemLoggerInterface, SecurityLoggerInterface, ThrowableLoggerInterface
 {

@@ -55,7 +55,7 @@ class ProductionExceptionHandler extends AbstractExceptionHandler
             }
         } catch (\Exception $innerException) {
             $message = $this->throwableStorage->logThrowable($innerException);
-            $this->logger->log(LogLevel::CRITICAL, $message);
+            $this->logger->critical($message);
         }
     }
 

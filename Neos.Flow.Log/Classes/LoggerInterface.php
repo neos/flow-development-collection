@@ -24,7 +24,7 @@ namespace Neos\Flow\Log;
  *   LOG_INFO    # Informational: informational messages
  *   LOG_DEBUG   # Debug: debug-level messages
  *
- * @api
+ * @deprecated In favor of the \Psr\Log\LoggerInterface
  */
 interface LoggerInterface
 {

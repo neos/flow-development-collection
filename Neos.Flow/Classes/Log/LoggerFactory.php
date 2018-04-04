@@ -102,7 +102,7 @@ class LoggerFactory
      * @param string $loggerObjectName
      * @return LoggerInterface
      */
-    protected function createPsrBasedLogger($identifier, $loggerObjectName)
+    protected function createPsrBasedLogger(string $identifier, string $loggerObjectName): \Psr\Log\LoggerInterface
     {
         $psrLogger = $this->psrLoggerFactory->get($identifier);
         $logger = $loggerObjectName($psrLogger);
@@ -118,7 +118,7 @@ class LoggerFactory
      * @param array $backendOptions
      * @return \Neos\Flow\Log\LoggerInterface
      */
-    protected function instantiateLogger($loggerObjectName, $backendObjectNames, array $backendOptions = [])
+    protected function instantiateLogger(string $loggerObjectName, $backendObjectNames, array $backendOptions = []): LoggerInterface
     {
         $logger = new $loggerObjectName;
         if (is_array($backendObjectNames)) {
@@ -141,7 +141,7 @@ class LoggerFactory
      * @param LoggerInterface $logger
      * @return LoggerInterface
      */
-    protected function injectAdditionalDependencies(LoggerInterface $logger)
+    protected function injectAdditionalDependencies(LoggerInterface $logger): LoggerInterface
     {
         if ($logger instanceof Logger) {
             $logger->injectThrowableStorage($this->instantiateThrowableStorage());
@@ -151,9 +151,9 @@ class LoggerFactory
     }
 
     /**
-     * @return FileStorage|ThrowableStorageInterface|object
+     * @return FileStorage|ThrowableStorageInterface
      */
-    protected function instantiateThrowableStorage()
+    protected function instantiateThrowableStorage(): ThrowableLoggerInterface
     {
         // Fallback early throwable storage
         $throwableStorage = new FileStorage();

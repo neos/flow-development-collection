@@ -239,6 +239,10 @@ class Scripts
         $configurationManager = $bootstrap->getEarlyInstance(ConfigurationManager::class);
         $settings = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.Flow');
 
+        $throwableStorage = new FileStorage();
+        $throwableStorage->injectStoragePath(FLOW_PATH_DATA . 'Logs/Exceptions');
+        $bootstrap->setEarlyInstance(ThrowableStorageInterface::class, $throwableStorage);
+
         /** @var PsrLoggerFactoryInterface $psrLoggerFactoryName */
         $psrLoggerFactoryName = $settings['log']['psr3']['loggerFactory'];
         $psrLogConfigurations = $settings['log']['psr3'][$psrLoggerFactoryName] ?? [];
@@ -248,19 +252,15 @@ class Scripts
         }
         $psrLogFactory = $psrLoggerFactoryName::create($psrLogConfigurations);
 
-        if (!isset($settings['log']['systemLogger']['logger'])) {
-            $settings['log']['systemLogger']['logger'] = Logger::class;
-        }
-
-        $throwableStorage = new FileStorage();
-        $throwableStorage->injectStoragePath(FLOW_PATH_DATA . 'Logs/Exceptions');
-        $bootstrap->setEarlyInstance(ThrowableStorageInterface::class, $throwableStorage);
-
+        // This is all deprecated and can be removed with the removal of respective interfaces and classes.
         $loggerFactory = new LoggerFactory($psrLogFactory);
         $bootstrap->setEarlyInstance($psrLoggerFactoryName, $psrLogFactory);
         $bootstrap->setEarlyInstance(PsrLoggerFactoryInterface::class, $psrLogFactory);
         $bootstrap->setEarlyInstance(LoggerFactory::class, $loggerFactory);
-        $systemLogger = $loggerFactory->create('SystemLogger', $settings['log']['systemLogger']['logger'], $settings['log']['systemLogger']['backend'], $settings['log']['systemLogger']['backendOptions']);
+        $deprecatedLogger = $settings['log']['systemLogger']['logger'] ?? Logger::class;
+        $deprecatedLoggerBackend = $settings['log']['systemLogger']['backend'] ?? '';
+        $deprecatedLoggerBackendOptions = $settings['log']['systemLogger']['backendOptions'] ?? [];
+        $systemLogger = $loggerFactory->create('SystemLogger', $deprecatedLogger, $deprecatedLoggerBackend, $deprecatedLoggerBackendOptions);
         $bootstrap->setEarlyInstance(SystemLoggerInterface::class, $systemLogger);
     }
 
@@ -417,14 +417,14 @@ class Scripts
         $configurationManager = $bootstrap->getEarlyInstance(ConfigurationManager::class);
         $reflectionService = $objectManager->get(ReflectionService::class);
         $cacheManager = $bootstrap->getEarlyInstance(CacheManager::class);
-        $systemLogger = $bootstrap->getEarlyInstance(PsrLoggerFactoryInterface::class)->get('systemLogger');
+        $logger = $bootstrap->getEarlyInstance(PsrLoggerFactoryInterface::class)->get('systemLogger');
         $packageManager = $bootstrap->getEarlyInstance(PackageManagerInterface::class);
 
         $objectManager->injectAllSettings($configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS));
         $objectManager->injectReflectionService($reflectionService);
         $objectManager->injectConfigurationManager($configurationManager);
         $objectManager->injectConfigurationCache($cacheManager->getCache('Flow_Object_Configuration'));
-        $objectManager->injectLogger($systemLogger);
+        $objectManager->injectLogger($logger);
         $objectManager->initialize($packageManager->getAvailablePackages());
 
         foreach ($bootstrap->getEarlyInstances() as $objectName => $instance) {
@@ -597,9 +597,9 @@ class Scripts
         $settings = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.Flow');
 
         if ($objectConfigurationCache->has('doctrineProxyCodeUpToDate') === false && $coreCache->has('doctrineSetupRunning') === false) {
-            $systemLogger = $bootstrap->getEarlyInstance(PsrLoggerFactoryInterface::class)->get('systemLogger');
+            $logger = $bootstrap->getEarlyInstance(PsrLoggerFactoryInterface::class)->get('systemLogger');
             $coreCache->set('doctrineSetupRunning', 'White Russian', [], 60);
-            $systemLogger->log(LogLevel::DEBUG, 'Compiling Doctrine proxies');
+            $logger->debug('Compiling Doctrine proxies');
             self::executeCommand('neos.flow:doctrine:compileproxies', $settings);
             $coreCache->remove('doctrineSetupRunning');
             $objectConfigurationCache->set('doctrineProxyCodeUpToDate', true);
