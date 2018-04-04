@@ -7,7 +7,7 @@
 			<target xml:lang="ja" state="translated">認証が必要</target><alt-trans><target xml:lang="ja">認証が必要です</target></alt-trans></trans-unit>
       <trans-unit id="authentication.username" xml:space="preserve">
 				<source>Username</source>
-			<target xml:lang="ja" state="needs-translation">Username</target></trans-unit>
+			<target xml:lang="ja" state="translated">ユーザー名</target></trans-unit>
       <trans-unit id="authentication.password" xml:space="preserve">
 				<source>Password</source>
 			<target xml:lang="ja" state="translated">パスワード</target></trans-unit>

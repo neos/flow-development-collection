@@ -196,7 +196,7 @@ class ConfigurationCommandController extends CommandController
     {
         $data = null;
         if ($yaml !== null && is_file($yaml) && is_readable($yaml)) {
-            $data = Yaml::parse($yaml);
+            $data = Yaml::parseFile($yaml);
         } elseif ($type !== null) {
             $data = $this->configurationManager->getConfiguration($type);
             if ($path !== null) {

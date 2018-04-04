@@ -11,6 +11,10 @@ DateTime:
   scope: prototype
   autowiring: off
 
+Composer\Autoload\ClassLoader:
+  scope: singleton
+  autowiring: off
+
 #                                                                          #
 # Cache                                                                    #
 #                                                                          #
@@ -110,6 +114,15 @@ Neos\Flow\I18n\Cldr\Reader\PluralsReader:
         arguments:
           1:
             value: Flow_I18n_Cldr_Reader_PluralsReaderCache
+Neos\Flow\I18n\Cldr\Reader\CurrencyReader:
+  properties:
+    cache:
+      object:
+        factoryObjectName: Neos\Flow\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: Flow_I18n_Cldr_Reader_CurrencyReaderCache
 
 #                                                                          #
 # Log                                                                      #
@@ -149,6 +162,15 @@ Neos\Flow\Log\SecurityLoggerInterface:
     4:
       setting: Neos.Flow.log.securityLogger.backendOptions
 
+Neos\Flow\Log\ThrowableStorageInterface:
+  scope: singleton
+  className: Neos\Flow\Log\ThrowableStorage\FileStorage
+
+Neos\Flow\Log\ThrowableStorage\FileStorage:
+  properties:
+    storagePath:
+      setting: Neos.Flow.log.throwables.fileStorage.path
+
 #                                                                          #
 # Monitor                                                                  #
 #                                                                          #
@@ -186,6 +208,9 @@ Neos\Flow\Http\Component\ComponentChain:
 #                                                                          #
 # MVC                                                                      #
 #                                                                          #
+
+Neos\Flow\Mvc\Routing\RouterInterface:
+  className: Neos\Flow\Mvc\Routing\Router
 
 Neos\Flow\Mvc\Routing\RouterCachingService:
   properties:
@@ -400,3 +425,19 @@ Neos\Flow\Session\SessionManager:
         arguments:
           1:
             value: Flow_Session_MetaData
+
+#
+# Schema
+#
+Neos\Utility\SchemaGenerator:
+  scope: singleton
+
+Neos\Utility\SchemaValidator:
+  scope: singleton
+
+#
+# PdoHelper
+#
+Neos\Utility\PdoHelper:
+  autowiring: off
+  scope: prototype

@@ -15,13 +15,13 @@ The Router
 ==========
 
 The request builder asks the router for the correct package, controller and action. For
-this it passes the current request path to the routers ``match()`` method. The router then
+this it passes the current request to the routers ``route()`` method. The router then
 iterates through all configured routes and invokes their ``matches()`` method. The first
 route that matches, determines which action will be called with what parameters.
 
-The same works for the opposite direction: If a link is generated the router calls the
-``resolve()`` method of all routes until one route can return the correct URI for the
-specified arguments.
+The same works for the opposite direction: If a link is generated the routers ``resolve()``
+method calls the ``resolve()`` method of all routes until one route can return the correct
+URI for the specified arguments.
 
 .. note::
 
@@ -259,10 +259,10 @@ configurable regular expressions:
 		 */
 		protected function matchValue($requestPath) {
 			if (!preg_match($this->options['pattern'], $requestPath, $matches)) {
-				return FALSE;
+				return false;
 			}
 			$this->value = array_shift($matches);
-			return TRUE;
+			return true;
 		}
 
 		/**
@@ -273,10 +273,10 @@ configurable regular expressions:
 		 */
 		protected function resolveValue($value) {
 			if (!is_string($value) || !preg_match($this->options['pattern'], $value, $matches)) {
-				return FALSE;
+				return false;
 			}
 			$this->value = array_shift($matches);
-			return TRUE;
+			return true;
 		}
 
 	}
@@ -303,16 +303,9 @@ The method ``matchValue()`` is called when translating from an URL to a request 
 and the method ``resolveValue()`` needs to return an URL segment when being passed a value.
 
 .. note::
- For performance reasons the routing is cached. During development of route part
- handlers it can be useful to disable the routing cache temporarily. You can do so
- by using the following configuration in your `Caches.yaml`:
 
- .. code-block:: yaml
-
-  Flow_Mvc_Routing_Route:
-    backend: Neos\Cache\Backend\NullBackend
-  Flow_Mvc_Routing_Resolve:
-    backend: Neos\Cache\Backend\NullBackend
+ For performance reasons the routing is cached. See `Caching`_ on how to disable that
+ during development.
 
 .. warning:: Some examples are missing here, which should explain the API better.
 
@@ -763,3 +756,203 @@ Route Loading Order and the Flow Application Context
 
 - routes inside more specific contexts are loaded *first*
 - and *after* that, global ones, so you can specify context-specific routes
+
+Caching
+=======
+
+For performance reasons the routing is cached by default.
+During development of route part handlers it can be useful to disable the routing cache temporarily.
+You can do so by using the following configuration in your `Caches.yaml`:
+
+ .. code-block:: yaml
+
+	Flow_Mvc_Routing_Route:
+	  backend: Neos\Cache\Backend\NullBackend
+	Flow_Mvc_Routing_Resolve:
+	  backend: Neos\Cache\Backend\NullBackend
+
+Also it can be handy to be able to flush caches for certain routes programmatically so that they can be
+regenerated. This is useful for example to update all related routes when an entity was renamed.
+The ``RouterCachingService`` allows flushing of all route caches via the ``flushCaches()`` method.
+Individual routes can be removed from the cache with the ``flushCachesByTag()`` method.
+
+Tagging
+-------
+
+Any UUID string (see ``UuidValidator::PATTERN_MATCH_UUID``) in the route values (when resolving URIs) and the
+match values (when matching incoming requests) will be added to the cache entries automatically
+as well as an md5 hash of all URI path segments for matched and resolved routes.
+
+Custom route part handlers can register additional tags to be associated with a route by returning an instance of
+``MatchResult`` / ``ResolveResult`` instead of ``true``/``false``:
+
+*Example before: SomePartHandler.php* ::
+
+	use Neos\Flow\Mvc\Routing\DynamicRoutePart;
+
+	class SomePartHandler extends DynamicRoutePart {
+
+		protected function matchValue($requestPath) {
+			// custom logic, returning FALSE if the $requestPath doesn't match
+			$this->value = $matchedValue;
+			return true;
+		}
+
+		protected function resolveValue($value) {
+			// custom logic, returning FALSE if the $value doesn't resolve
+			$this->value = $resolvedPathSegment;
+			return true;
+		}
+
+	}
+
+*Example now: SomePartHandler.php* ::
+
+	use Neos\Flow\Mvc\Routing\Dto\MatchResult;
+	use Neos\Flow\Mvc\Routing\Dto\ResolveResult;
+	use Neos\Flow\Mvc\Routing\Dto\RouteTags;
+	use Neos\Flow\Mvc\Routing\DynamicRoutePart;
+
+	class SomePartHandler extends DynamicRoutePart {
+
+		protected function matchValue($requestPath) {
+			// custom logic, returning FALSE if the $requestPath doesn't match, as before
+			return new MatchResult($matchedValue, RouteTags::createFromTag('some-tag'));
+		}
+
+		protected function resolveValue($value) {
+			// custom logic, returning FALSE if the $value doesn't resolve, as before
+			return new ResolveResult($resolvedPathSegment, null, RouteTags::createFromTag('some-tag'));
+		}
+
+	}
+
+All cache entries for routes using the above route part handler will be tagged with `some-tag` and
+could be flushed with ``$routerCachingService->flushCachesByTag('some-tag');``.
+
+URI Constraints
+===============
+
+Most route parts only affect the `path` when resolving URIs.
+Sometimes it can be useful for route parts to affect other parts of the resolved URI. For example there could
+be routes enforcing `https` URIs, a specific HTTP port or global domain and path pre/suffixes.
+
+In the last code example above the ``ResolveResult`` was constructed with the second argument being ``null``.
+This argument allows route part handlers to specify ``UriConstraints`` that can pre-set the following attributes
+of the resulting URI:
+
+* Scheme (for example "https")
+* Host (for example "www.somedomain.tld")
+* Host prefix (for example "en.")
+* Host suffix (for example "co.uk")
+* Port (for example 443)
+* Path (for example "some/path")
+* Path prefix (for example "en/")
+* Path suffix (for example ".html")
+
+Let's have a look at another simple route part handler that allows you to enforce https URLs:
+
+*Example: HttpsRoutePart.php* ::
+
+	use Neos\Flow\Mvc\Routing\Dto\ResolveResult;
+	use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
+	use Neos\Flow\Mvc\Routing\DynamicRoutePart;
+
+	class HttpsRoutePart extends DynamicRoutePart
+	{
+	    protected function resolveValue($value)
+	    {
+	        return new ResolveResult('', UriConstraints::create()->withScheme('https'));
+	    }
+
+	}
+
+If a corresponding route is configured, like:
+
+*Example: Routes.yaml*
+
+.. code-block:: yaml
+
+   -
+     name: 'Secure route'
+     uriPattern: '{https}'
+     defaults:
+       '@package':    'My.Demo'
+       '@controller': 'Product'
+       '@action':     'secure'
+     routeParts:
+       'https':
+         handler: 'My\Demo\HttpsRoutePart'
+
+All URIs pointing to the respective action will be forced to be `https://` URIs.
+
+As you can see, in this example the route part handler doesn't affect the URI path at all, so with the configured route
+this will always point to the homepage. But of course route parts can specify a path (segment) *and* UriConstraints at the
+same time.
+
+Routing Parameters
+==================
+
+The last example only carse about URI *resolving*. What if a route should react to conditions that are not extractable
+from the request URI path? For example the counter-part to the example above, matching only `https://` URIs?
+
+.. warning:: One could be tempted to access the current request from within the route part handler using Dependency
+   Injection. But remember that routes are cached and that route part handlers won't be invoked again once a
+   corresponding cache entry exists.
+
+For route part handlers to safely access values that are not encoded in the URI path, those values have to be registered
+as `Routing Parameters`, usually via a HTTP Component (see respective chapter about :doc:`Http`).
+
+A HTTP Component that registers the current request scheme as Routing Parameter could look like this:
+
+*Example: HttpsRoutePart.php* ::
+
+	use Neos\Flow\Http\Component\ComponentContext;
+	use Neos\Flow\Http\Component\ComponentInterface;
+	use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
+	use Neos\Flow\Mvc\Routing\RoutingComponent;
+
+	class SchemeRoutingParameterComponent implements ComponentInterface
+	{
+
+	    public function handle(ComponentContext $componentContext)
+	    {
+	        $existingParameters = $componentContext->getParameter(RoutingComponent::class, 'parameters');
+	        if ($existingParameters === null) {
+	            $existingParameters = RouteParameters::createEmpty();
+	        }
+	        $parameters = $existingParameters->withParameter('scheme', $componentContext->getHttpRequest()->getUri()->getScheme());
+	        $componentContext->setParameter(RoutingComponent::class, 'parameters', $parameters);
+	    }
+	}
+
+Now we can extend the ``HttpRoutePart`` to only match `https://` requests:
+
+*Example: HttpsRoutePart.php* ::
+
+	use Neos\Flow\Mvc\Routing\Dto\ResolveResult;
+	use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
+	use Neos\Flow\Mvc\Routing\DynamicRoutePart;
+
+	class HttpsRoutePart extends DynamicRoutePart
+	{
+	    protected function matchValue($value)
+	    {
+	        if ($this->parameters->getValue('scheme') !== 'https') {
+              return false;
+          }
+          return true;
+	    }
+
+	    protected function resolveValue($value)
+	    {
+	        return new ResolveResult('', UriConstraints::create()->withScheme('https'));
+	    }
+
+	}
+
+.. note::
+
+	For route part handlers to be able to access the `Routing Parameters` they have to implement the ``ParameterAwareRoutePartInterface``
+  and its ``matchWithParameters()`` method. The ``DynamicRoutePart`` already implements the interface and makes parameters
+  available in the ``parameters`` field.

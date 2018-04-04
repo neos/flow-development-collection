@@ -62,13 +62,10 @@ class ApplicationContext
      */
     public function __construct($contextString)
     {
-        if (strstr($contextString, '/') === false) {
-            $this->rootContextString = $contextString;
-            $this->parentContext = null;
-        } else {
-            $contextStringParts = explode('/', $contextString);
-            $this->rootContextString = $contextStringParts[0];
-            array_pop($contextStringParts);
+        $contextStringParts = explode('/', $contextString);
+        $this->rootContextString = reset($contextStringParts);
+        array_pop($contextStringParts);
+        if ($contextStringParts !== []) {
             $this->parentContext = new ApplicationContext(implode('/', $contextStringParts));
         }
 

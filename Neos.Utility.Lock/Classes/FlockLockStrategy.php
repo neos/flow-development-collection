@@ -67,7 +67,7 @@ class FlockLockStrategy implements LockStrategyInterface
      * @return void
      * @throws LockNotAcquiredException
      */
-    public function acquire($subject, $exclusiveLock)
+    public function acquire(string $subject, bool $exclusiveLock)
     {
         $this->lockFileName = Utility\Files::concatenatePaths([$this->temporaryDirectory, md5($subject)]);
         $aquiredLock = false;

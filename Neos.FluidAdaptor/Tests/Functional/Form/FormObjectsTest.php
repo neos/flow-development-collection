@@ -72,8 +72,8 @@ class FormObjectsTest extends \Neos\Flow\Tests\FunctionalTestCase
 
         $this->browser->request('http://localhost/test/fluid/formobjects/edit?fooPost=' . $postIdentifier);
         $form = $this->browser->getForm();
-        $this->assertFalse(isset($form['post']['tags']['__identity']));
-        $this->assertFalse(isset($form['tags']['__identity']));
+        $this->assertFalse(isset($form['post']['tags']['__identity']), 'Post tags identities not set.');
+        $this->assertFalse(isset($form['tags']['__identity']), 'Tags identities not set.');
     }
 
     /**
@@ -397,7 +397,7 @@ class FormObjectsTest extends \Neos\Flow\Tests\FunctionalTestCase
 
         $form['post']['private']->setValue(true);
         $this->browser->submit($form);
-        $this->assertSame('checked', $this->browser->getCrawler()->filterXPath('//input[@id="private"]')->attr('checked'));
+        $this->assertNotNull($this->browser->getCrawler()->filterXPath('//input[@id="private"]')->attr('checked'));
     }
 
     /**
@@ -414,20 +414,20 @@ class FormObjectsTest extends \Neos\Flow\Tests\FunctionalTestCase
 
         $this->browser->submit($form);
 
-        $this->assertEquals('', $this->browser->getCrawler()->filterXPath('//input[@id="category_foo"]')->attr('checked'));
-        $this->assertEquals('checked', $this->browser->getCrawler()->filterXPath('//input[@id="category_bar"]')->attr('checked'));
-        $this->assertEquals('', $this->browser->getCrawler()->filterXPath('//input[@id="subCategory_foo"]')->attr('checked'));
-        $this->assertEquals('checked', $this->browser->getCrawler()->filterXPath('//input[@id="subCategory_bar"]')->attr('checked'));
+        $this->assertNull($this->browser->getCrawler()->filterXPath('//input[@id="category_foo"]')->attr('checked'));
+        $this->assertNotNull($this->browser->getCrawler()->filterXPath('//input[@id="category_bar"]')->attr('checked'));
+        $this->assertNull($this->browser->getCrawler()->filterXPath('//input[@id="subCategory_foo"]')->attr('checked'));
+        $this->assertNotNull($this->browser->getCrawler()->filterXPath('//input[@id="subCategory_bar"]')->attr('checked'));
 
         $form['post']['category']->setValue('foo');
         $form['post']['subCategory']->setValue('foo');
 
         $this->browser->submit($form);
 
-        $this->assertEquals('checked', $this->browser->getCrawler()->filterXPath('//input[@id="category_foo"]')->attr('checked'));
-        $this->assertEquals('', $this->browser->getCrawler()->filterXPath('//input[@id="category_bar"]')->attr('checked'));
-        $this->assertEquals('checked', $this->browser->getCrawler()->filterXPath('//input[@id="subCategory_foo"]')->attr('checked'));
-        $this->assertEquals('', $this->browser->getCrawler()->filterXPath('//input[@id="subCategory_bar"]')->attr('checked'));
+        $this->assertNotNull($this->browser->getCrawler()->filterXPath('//input[@id="category_foo"]')->attr('checked'));
+        $this->assertNull($this->browser->getCrawler()->filterXPath('//input[@id="category_bar"]')->attr('checked'));
+        $this->assertNotNull($this->browser->getCrawler()->filterXPath('//input[@id="subCategory_foo"]')->attr('checked'));
+        $this->assertNull($this->browser->getCrawler()->filterXPath('//input[@id="subCategory_bar"]')->attr('checked'));
     }
 
     /**
@@ -441,7 +441,7 @@ class FormObjectsTest extends \Neos\Flow\Tests\FunctionalTestCase
 
         $this->browser->request('http://localhost/test/fluid/formobjects/edit?fooPost=' . $postIdentifier);
         $checkboxDisabled = $this->browser->getCrawler()->filterXPath('//*[@id="private"]')->attr('disabled');
-        $this->assertNotEmpty($checkboxDisabled);
+        $this->assertNotNull($checkboxDisabled, 'Private checkbox was not disabled.');
         $this->assertEquals($checkboxDisabled, $this->browser->getCrawler()->filterXPath('//input[@type="hidden" and contains(@name,"private")]')->attr('disabled'), 'The hidden checkbox field is not disabled like the connected checkbox.');
 
         $form = $this->browser->getForm();

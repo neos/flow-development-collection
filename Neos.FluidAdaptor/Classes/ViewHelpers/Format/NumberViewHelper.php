@@ -65,30 +65,40 @@ class NumberViewHelper extends AbstractLocaleAwareViewHelper
     protected $numberFormatter;
 
     /**
+     * Initialize the arguments.
+     *
+     * @return void
+     * @api
+     */
+    public function initializeArguments()
+    {
+        $this->registerArgument('decimals', 'integer', 'The number of digits after the decimal point', false, 2);
+        $this->registerArgument('decimalSeparator', 'string', 'The decimal point character', false, '.');
+        $this->registerArgument('thousandsSeparator', 'string', 'The character for grouping the thousand digits', false, ',');
+        $this->registerArgument('localeFormatLength', 'string', 'Format length if locale set in $forceLocale. Must be one of Neos\Flow\I18n\Cldr\Reader\NumbersReader::FORMAT_LENGTH_*\'s constants.', false, NumbersReader::FORMAT_LENGTH_DEFAULT);
+    }
+
+    /**
      * Format the numeric value as a number with grouped thousands, decimal point and
      * precision.
      *
-     * @param int $decimals The number of digits after the decimal point
-     * @param string $decimalSeparator The decimal point character
-     * @param string $thousandsSeparator The character for grouping the thousand digits
-     * @param string $localeFormatLength Format length if locale set in $forceLocale. Must be one of Neos\Flow\I18n\Cldr\Reader\NumbersReader::FORMAT_LENGTH_*'s constants.
      * @return string The formatted number
      * @api
      * @throws ViewHelperException
      */
-    public function render($decimals = 2, $decimalSeparator = '.', $thousandsSeparator = ',', $localeFormatLength = NumbersReader::FORMAT_LENGTH_DEFAULT)
+    public function render()
     {
         $stringToFormat = $this->renderChildren();
 
         $useLocale = $this->getLocale();
         if ($useLocale !== null) {
             try {
-                $output = $this->numberFormatter->formatDecimalNumber($stringToFormat, $useLocale, $localeFormatLength);
+                $output = $this->numberFormatter->formatDecimalNumber($stringToFormat, $useLocale, $this->arguments['localeFormatLength']);
             } catch (I18nException $exception) {
                 throw new ViewHelperException($exception->getMessage(), 1382351148, $exception);
             }
         } else {
-            $output = number_format((float)$stringToFormat, $decimals, $decimalSeparator, $thousandsSeparator);
+            $output = number_format((float)$stringToFormat, $this->arguments['decimals'], $this->arguments['decimalSeparator'], $this->arguments['thousandsSeparator']);
         }
         return $output;
     }

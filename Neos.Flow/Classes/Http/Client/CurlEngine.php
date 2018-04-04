@@ -137,7 +137,13 @@ class CurlEngine implements RequestEngineInterface
             curl_setopt($curlHandle, CURLOPT_PORT, $requestUri->getPort());
         }
 
-        // CURLOPT_COOKIE
+        if (count($request->getCookies()) > 0) {
+            $cookies = array();
+            foreach ($request->getCookies() as $cookie) {
+                $cookies[] = $cookie->getName() . '=' . $cookie->getValue();
+            }
+            curl_setopt($curlHandle, CURLOPT_COOKIE, implode('; ', $cookies));
+        }
 
         $curlResult = curl_exec($curlHandle);
         if ($curlResult === false) {

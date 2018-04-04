@@ -5,11 +5,11 @@
       <!-- AlphanumericValidator -->
       <trans-unit id="1221551320" xml:space="preserve">
 				<source>Only regular characters (a to z, umlauts, ...) and numbers are allowed.</source>
-			<target xml:lang="id" state="translated">Hanya biasa karakter (sampai z, umlauts,...) dan angka yang diperbolehkan.</target></trans-unit>
+			<target xml:lang="id" state="translated">Hanya karakter biasa (A sampai z, umlauts,...) dan angka yang diperbolehkan.</target><alt-trans><target xml:lang="id">Hanya biasa karakter (sampai z, umlauts,...) dan angka yang diperbolehkan.</target></alt-trans></trans-unit>
       <!-- BooleanValueValidator -->
       <trans-unit id="1361044943" xml:space="preserve">
 				<source>The given value is expected to be {0}.</source>
-			<target xml:lang="id" state="translated">Nilai yang diberikan ini diharapkan akan {0}.</target></trans-unit>
+			<target xml:lang="id" state="translated">Nilai yang diberikan diharapkan {0}.</target><alt-trans><target xml:lang="id">Nilai yang diberikan ini diharapkan akan {0}.</target></alt-trans></trans-unit>
       <!-- CollectionValidator -->
       <trans-unit id="1317204797" xml:space="preserve">
 				<source>The given subject is not a collection</source>
@@ -40,7 +40,7 @@
 			<target xml:lang="id" state="translated">Opsi "locale" dapat diatur hanya untuk string pengenal, atau objek lokal</target></trans-unit>
       <trans-unit id="1281454830" xml:space="preserve">
 				<source>A valid time is expected</source>
-			<target xml:lang="id" state="translated">Waktu yang valid diharapkan</target></trans-unit>
+			<target xml:lang="id" state="translated">Di harapkan waktu yang valid</target><alt-trans><target xml:lang="id">Waktu yang valid diharapkan</target></alt-trans></trans-unit>
       <trans-unit id="1281454831" xml:space="preserve">
 				<source>A valid date and time is expected</source>
 			<target xml:lang="id" state="translated">Tanggal dan waktu yang valid diharapkan</target></trans-unit>
@@ -118,7 +118,7 @@
       <group id="1238108068" restype="x-gettext-plurals">
         <trans-unit id="1238108068[0]">
           <source>This field must contain at least {0,number} characters</source>
-          <target xml:lang="id" state="translated">Bidang ini harus mengandung setidaknya {0,number} karakter</target>
+          <target xml:lang="id" state="translated">Bagian ini harus mengandung setidaknya {0,number} karakter</target>
         </trans-unit>
       </group>
       <group id="1238108069" restype="x-gettext-plurals">

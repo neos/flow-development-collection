@@ -173,14 +173,14 @@ class PointcutFilterComposite implements PointcutFilterInterface
         $conditionCode = $this->buildRuntimeEvaluationsConditionCode('', $this->getRuntimeEvaluationsDefinition(), $useGlobalObjects);
 
         if ($conditionCode !== '') {
-            $code = "\n\t\t\t\t\t\tfunction(\\Neos\\Flow\\Aop\\JoinPointInterface \$joinPoint, \$objectManager) {\n" .
-                    "\t\t\t\t\t\t\t\$currentObject = \$joinPoint->getProxy();\n";
+            $code = "function(\\Neos\\Flow\\Aop\\JoinPointInterface \$joinPoint, \$objectManager) {\n" .
+                    "    \$currentObject = \$joinPoint->getProxy();\n";
             if ($useGlobalObjects) {
-                $code .= "\t\t\t\t\t\t\t\$globalObjectNames = \$objectManager->getSettingsByPath(array('Neos', 'Flow', 'aop', 'globalObjects'));\n";
-                $code .= "\t\t\t\t\t\t\t\$globalObjects = array_map(function(\$objectName) use (\$objectManager) { return \$objectManager->get(\$objectName); }, \$globalObjectNames);\n";
+                $code .= "    \$globalObjectNames = \$objectManager->getSettingsByPath(array('Neos', 'Flow', 'aop', 'globalObjects'));\n";
+                $code .= "    \$globalObjects = array_map(function(\$objectName) use (\$objectManager) { return \$objectManager->get(\$objectName); }, \$globalObjectNames);\n";
             }
-            $code .= "\t\t\t\t\t\t\treturn " . $conditionCode . ';' .
-                    "\n\t\t\t\t\t\t}";
+            $code .= "    return " . $conditionCode . ';' .
+                    "\n}";
             return $code;
         } else {
             return 'NULL';

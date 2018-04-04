@@ -79,14 +79,13 @@ class PackageManagerTest extends UnitTestCase
         mkdir('vfs://Test/Packages/Application', 0700, true);
         mkdir('vfs://Test/Configuration');
 
-        $this->packageManager = new PackageManager('vfs://Test/Configuration/PackageStates.php');
+        $this->packageManager = new PackageManager('vfs://Test/Configuration/PackageStates.php', 'vfs://Test/Packages/');
 
         $composerNameToPackageKeyMap = [
             'neos/flow' => 'Neos.Flow'
         ];
 
         $this->inject($this->packageManager, 'composerNameToPackageKeyMap', $composerNameToPackageKeyMap);
-        $this->inject($this->packageManager, 'packagesBasePath', 'vfs://Test/Packages/');
 
         $this->mockDispatcher = $this->getMockBuilder(Dispatcher::class)->disableOriginalConstructor()->getMock();
         $this->inject($this->packageManager, 'dispatcher', $this->mockDispatcher);
@@ -143,7 +142,7 @@ class PackageManagerTest extends UnitTestCase
      */
     public function getCaseSensitivePackageKeyReturnsTheUpperCamelCaseVersionOfAGivenPackageKeyIfThePackageIsRegistered()
     {
-        $packageManager = $this->getAccessibleMock(PackageManager::class, ['dummy']);
+        $packageManager = $this->getAccessibleMock(PackageManager::class, ['dummy'], ['', '']);
         $packageManager->_set('packageKeys', ['acme.testpackage' => 'Acme.TestPackage']);
         $this->assertEquals('Acme.TestPackage', $packageManager->getCaseSensitivePackageKey('acme.testpackage'));
     }
@@ -168,9 +167,7 @@ class PackageManagerTest extends UnitTestCase
             file_put_contents($packagePath . 'composer.json', '{"name": "' . $packageKey . '", "type": "flow-test"}');
         }
 
-        $packageManager = $this->getAccessibleMock(PackageManager::class, ['emitPackageStatesUpdated']);
-        $packageManager->_set('packagesBasePath', 'vfs://Test/Packages/');
-        $packageManager->_set('packageStatesPathAndFilename', 'vfs://Test/Configuration/PackageStates.php');
+        $packageManager = $this->getAccessibleMock(PackageManager::class, ['emitPackageStatesUpdated'], ['vfs://Test/Configuration/PackageStates.php', 'vfs://Test/Packages/']);
 
         $packageFactory = new PackageFactory($packageManager);
         $this->inject($packageManager, 'packageFactory', $packageFactory);
@@ -182,50 +179,6 @@ class PackageManagerTest extends UnitTestCase
         $actualPackageKeys = array_keys($packageStates['packages']);
         $this->assertEquals(sort($expectedPackageKeys), sort($actualPackageKeys));
     }
-
-    /**
-     * @test
-     */
-    public function scanAvailablePackagesKeepsExistingPackageConfiguration()
-    {
-        $expectedPackageKeys = [
-            'Neos.Flow' . md5(uniqid(mt_rand(), true)),
-            'Neos.Flow.Test' . md5(uniqid(mt_rand(), true)),
-            'Neos.YetAnotherTestPackage' . md5(uniqid(mt_rand(), true)),
-            'RobertLemke.Flow.NothingElse' . md5(uniqid(mt_rand(), true))
-        ];
-
-        foreach ($expectedPackageKeys as $packageKey) {
-            $packageName = ComposerUtility::getComposerPackageNameFromPackageKey($packageKey);
-            $packagePath = 'vfs://Test/Packages/Application/' . $packageKey . '/';
-
-            mkdir($packagePath, 0770, true);
-            mkdir($packagePath . 'Classes');
-            file_put_contents($packagePath . 'composer.json', '{"name": "' . $packageName . '", "type": "flow-test"}');
-        }
-
-        $packageManager = $this->getAccessibleMock(PackageManager::class, ['emitPackageStatesUpdated']);
-        $packageManager->_set('packagesBasePath', 'vfs://Test/Packages/');
-        $packageManager->_set('packageStatesPathAndFilename', 'vfs://Test/Configuration/PackageStates.php');
-
-        $packageFactory = new PackageFactory($packageManager);
-        $this->inject($packageManager, 'packageFactory', $packageFactory);
-
-        $packageManager->_set('packageStatesConfiguration', [
-            'packages' => [
-                $packageName => [
-                    'state' => 'inactive',
-                    'frozen' => false,
-                    'packagePath' => 'Application/' . $packageKey . '/',
-                    'classesPath' => 'Classes/'
-                ]
-            ],
-            'version' => 2
-        ]);
-        $packageStates = $packageManager->rescanPackages(false);
-        $this->assertEquals('inactive', $packageStates['packages'][$packageName]['state']);
-    }
-
 
     /**
      * @test
@@ -243,12 +196,12 @@ class PackageManagerTest extends UnitTestCase
 
             mkdir($packagePath, 0770, true);
             mkdir($packagePath . 'Classes');
-            ComposerUtility::writeComposerManifest($packagePath, $packageKey, ['type' => 'flow-test', 'autoload' => []]);
+            ComposerUtility::writeComposerManifest($packagePath, $packageKey, ['type' => 'neos-test', 'autoload' => []]);
         }
 
         $packageManager = $this->getAccessibleMock(PackageManager::class, ['updateShortcuts', 'emitPackageStatesUpdated'], [], '', false);
         $packageManager->_set('packagesBasePath', 'vfs://Test/Packages/');
-        $packageManager->_set('packageStatesPathAndFilename', 'vfs://Test/Configuration/PackageStates.php');
+        $packageManager->_set('packageInformationCacheFilePath', 'vfs://Test/Configuration/PackageStates.php');
 
         $packageFactory = new PackageFactory($packageManager);
         $this->inject($packageManager, 'packageFactory', $packageFactory);
@@ -260,7 +213,6 @@ class PackageManagerTest extends UnitTestCase
         foreach ($packageKeys as $packageKey) {
             $composerName = ComposerUtility::getComposerPackageNameFromPackageKey($packageKey);
             $expectedPackageStatesConfiguration[$composerName] = [
-                'state' => 'active',
                 'packagePath' => 'Application/' . $packageKey . '/',
                 'composerName' => $composerName,
                 'packageClassInformation' => [],
@@ -330,7 +282,7 @@ class PackageManagerTest extends UnitTestCase
     {
         $metaData = [
             'name' => 'acme/yetanothertestpackage2',
-            'type' => 'flow-custom-package',
+            'type' => 'neos-custom-package',
             'description' => 'Yet Another Test Package',
             'autoload' => [
                 'psr-0' => [
@@ -344,7 +296,7 @@ class PackageManagerTest extends UnitTestCase
         $json = file_get_contents($package->getPackagePath() . '/composer.json');
         $composerManifest = json_decode($json);
 
-        $this->assertEquals('flow-custom-package', $composerManifest->type);
+        $this->assertEquals('neos-custom-package', $composerManifest->type);
     }
 
 
@@ -407,37 +359,10 @@ class PackageManagerTest extends UnitTestCase
     /**
      * @test
      */
-    public function createPackageActivatesTheNewlyCreatedPackage()
+    public function createPackageMakesTheNewlyCreatedPackageAvailable()
     {
         $this->packageManager->createPackage('Acme.YetAnotherTestPackage');
-        $this->assertTrue($this->packageManager->isPackageActive('Acme.YetAnotherTestPackage'));
-    }
-
-    /**
-     * @test
-     */
-    public function activatePackageAndDeactivatePackageActivateAndDeactivateTheGivenPackage()
-    {
-        $packageKey = 'Acme.YetAnotherTestPackage';
-
-        $this->packageManager->createPackage($packageKey);
-
-        $this->packageManager->deactivatePackage($packageKey);
-        $this->assertFalse($this->packageManager->isPackageActive($packageKey));
-
-        $this->packageManager->activatePackage($packageKey);
-        $this->assertTrue($this->packageManager->isPackageActive($packageKey));
-    }
-
-    /**
-     * @test
-     * @expectedException \Neos\Flow\Package\Exception\ProtectedPackageKeyException
-     */
-    public function deactivatePackageThrowsAnExceptionIfPackageIsProtected()
-    {
-        $package = $this->packageManager->createPackage('Acme.YetAnotherTestPackage');
-        $package->setProtected(true);
-        $this->packageManager->deactivatePackage('Acme.YetAnotherTestPackage');
+        $this->assertTrue($this->packageManager->isPackageAvailable('Acme.YetAnotherTestPackage'));
     }
 
     /**
@@ -469,13 +394,11 @@ class PackageManagerTest extends UnitTestCase
         $packagePath = $package->getPackagePath();
 
         $this->assertTrue(is_dir($packagePath . PackageInterface::DIRECTORY_CONFIGURATION), 'The package configuration directory does not exist.');
-        $this->assertTrue($this->packageManager->isPackageActive('Acme.YetAnotherTestPackage'), 'The package is not active.');
         $this->assertTrue($this->packageManager->isPackageAvailable('Acme.YetAnotherTestPackage'), 'The package is not available.');
 
         $this->packageManager->deletePackage('Acme.YetAnotherTestPackage');
 
         $this->assertFalse(is_dir($packagePath . PackageInterface::DIRECTORY_CONFIGURATION), 'The package configuration directory does still exist.');
-        $this->assertFalse($this->packageManager->isPackageActive('Acme.YetAnotherTestPackage'), 'The package is still active.');
         $this->assertFalse($this->packageManager->isPackageAvailable('Acme.YetAnotherTestPackage'), 'The package is still available.');
     }
 
@@ -511,7 +434,7 @@ class PackageManagerTest extends UnitTestCase
             ]
         ];
 
-        $packageManager = $this->getAccessibleMock(PackageManager::class, ['resolvePackageDependencies']);
+        $packageManager = $this->getAccessibleMock(PackageManager::class, ['resolvePackageDependencies'], ['', '']);
         $packageManager->_set('packageStatesConfiguration', $packageStatesConfiguration);
 
         $this->assertEquals($packageKey, $packageManager->_call('getPackageKeyFromComposerName', $composerName));
@@ -535,30 +458,6 @@ class PackageManagerTest extends UnitTestCase
         $this->mockDispatcher->expects($this->once())->method('dispatch')->with(PackageManager::class, 'packageStatesUpdated');
         $this->packageManager->createPackage('Some.Package');
     }
-
-    /**
-     * @test
-     */
-    public function activatePackageEmitsPackageStatesUpdatedSignal()
-    {
-        $this->packageManager->createPackage('Some.Package');
-        $this->packageManager->deactivatePackage('Some.Package');
-
-        $this->mockDispatcher->expects($this->once())->method('dispatch')->with(PackageManager::class, 'packageStatesUpdated');
-        $this->packageManager->activatePackage('Some.Package');
-    }
-
-    /**
-     * @test
-     */
-    public function deactivatePackageEmitsPackageStatesUpdatedSignal()
-    {
-        $this->packageManager->createPackage('Some.Package');
-
-        $this->mockDispatcher->expects($this->once())->method('dispatch')->with(PackageManager::class, 'packageStatesUpdated');
-        $this->packageManager->deactivatePackage('Some.Package');
-    }
-
 
     /**
      * @test

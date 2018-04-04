@@ -21,6 +21,7 @@ use Neos\Flow\Configuration\Source\YamlSource;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Core\ClassLoader;
 use Neos\Flow\Core\LockManager as CoreLockManager;
+use Neos\Flow\Core\ProxyClassLoader;
 use Neos\Flow\Error\Debugger;
 use Neos\Flow\Error\ErrorHandler;
 use Neos\Flow\Error\ProductionExceptionHandler;
@@ -62,7 +63,13 @@ class Scripts
      */
     public static function initializeClassLoader(Bootstrap $bootstrap)
     {
-        require_once(FLOW_PATH_FLOW . 'Classes/Core/ClassLoader.php');
+        $proxyClassLoader = new ProxyClassLoader($bootstrap->getContext());
+        spl_autoload_register([$proxyClassLoader, 'loadClass'], true, true);
+        $bootstrap->setEarlyInstance(ProxyClassLoader::class, $proxyClassLoader);
+
+        if (!self::useClassLoader($bootstrap)) {
+            return;
+        }
 
         $initialClassLoaderMappings = [
             [
@@ -80,8 +87,8 @@ class Scripts
             ];
         }
 
-        $classLoader = new ClassLoader($bootstrap->getContext(), $initialClassLoaderMappings);
-        spl_autoload_register([$classLoader, 'loadClass'], true, true);
+        $classLoader = new ClassLoader($initialClassLoaderMappings);
+        spl_autoload_register([$classLoader, 'loadClass'], true);
         $bootstrap->setEarlyInstance(ClassLoader::class, $classLoader);
         if ($bootstrap->getContext()->isTesting()) {
             $classLoader->setConsiderTestsNamespace(true);
@@ -97,7 +104,10 @@ class Scripts
      */
     public static function registerClassLoaderInAnnotationRegistry(Bootstrap $bootstrap)
     {
-        AnnotationRegistry::registerLoader([$bootstrap->getEarlyInstance(ClassLoader::class), 'loadClass']);
+        AnnotationRegistry::registerLoader([$bootstrap->getEarlyInstance(\Composer\Autoload\ClassLoader::class), 'loadClass']);
+        if (self::useClassLoader($bootstrap)) {
+            AnnotationRegistry::registerLoader([$bootstrap->getEarlyInstance(ClassLoader::class), 'loadClass']);
+        }
     }
 
     /**
@@ -109,7 +119,7 @@ class Scripts
     public static function initializeClassLoaderClassesCache(Bootstrap $bootstrap)
     {
         $classesCache = $bootstrap->getEarlyInstance(CacheManager::class)->getCache('Flow_Object_Classes');
-        $bootstrap->getEarlyInstance(ClassLoader::class)->injectClassesCache($classesCache);
+        $bootstrap->getEarlyInstance(ProxyClassLoader::class)->injectClassesCache($classesCache);
     }
 
     /**
@@ -161,7 +171,7 @@ class Scripts
      */
     public static function initializePackageManagement(Bootstrap $bootstrap)
     {
-        $packageManager = new PackageManager();
+        $packageManager = new PackageManager(PackageManager::DEFAULT_PACKAGE_INFORMATION_CACHE_FILEPATH, FLOW_PATH_PACKAGES);
         $bootstrap->setEarlyInstance(PackageManagerInterface::class, $packageManager);
 
         // The package:rescan must happen as early as possible, compiletime alone is not enough.
@@ -170,7 +180,9 @@ class Scripts
         }
 
         $packageManager->initialize($bootstrap);
-        $bootstrap->getEarlyInstance(ClassLoader::class)->setPackages($packageManager->getActivePackages());
+        if (self::useClassLoader($bootstrap)) {
+            $bootstrap->getEarlyInstance(ClassLoader::class)->setPackages($packageManager->getAvailablePackages());
+        }
     }
 
     /**
@@ -192,7 +204,7 @@ class Scripts
         $configurationManager = new ConfigurationManager($context);
         $configurationManager->setTemporaryDirectoryPath($environment->getPathToTemporaryDirectory());
         $configurationManager->injectConfigurationSource(new YamlSource());
-        $configurationManager->setPackages($packageManager->getActivePackages());
+        $configurationManager->setPackages($packageManager->getAvailablePackages());
         if ($configurationManager->loadConfigurationCache() === false) {
             $configurationManager->refreshConfiguration();
         }
@@ -303,8 +315,8 @@ class Scripts
             }
 
             // As the available proxy classes were already loaded earlier we need to refresh them if the proxies where recompiled.
-            $classLoader = $bootstrap->getEarlyInstance(ClassLoader::class);
-            $classLoader->initializeAvailableProxyClasses($bootstrap->getContext());
+            $proxyClassLoader = $bootstrap->getEarlyInstance(ProxyClassLoader::class);
+            $proxyClassLoader->initializeAvailableProxyClasses($bootstrap->getContext());
         }
 
         // Check if code was updated, if not something went wrong
@@ -380,7 +392,7 @@ class Scripts
         $objectManager->injectConfigurationManager($configurationManager);
         $objectManager->injectConfigurationCache($cacheManager->getCache('Flow_Object_Configuration'));
         $objectManager->injectSystemLogger($systemLogger);
-        $objectManager->initialize($packageManager->getActivePackages());
+        $objectManager->initialize($packageManager->getAvailablePackages());
 
         foreach ($bootstrap->getEarlyInstances() as $objectName => $instance) {
             $objectManager->setInstance($objectName, $instance);
@@ -470,12 +482,12 @@ class Scripts
         $packagesWithConfiguredObjects = static::getListOfPackagesWithConfiguredObjects($bootstrap);
 
         /** @var PackageInterface $package */
-        foreach ($packageManager->getActivePackages() as $packageKey => $package) {
+        foreach ($packageManager->getAvailablePackages() as $packageKey => $package) {
             if ($packageManager->isPackageFrozen($packageKey)) {
                 continue;
             }
 
-            self::monitorDirectoryIfItExists($fileMonitors['Flow_ConfigurationFiles'], $package->getConfigurationPath(), '\.yaml$');
+            self::monitorDirectoryIfItExists($fileMonitors['Flow_ConfigurationFiles'], $package->getConfigurationPath(), '\.y(a)?ml$');
             self::monitorDirectoryIfItExists($fileMonitors['Flow_TranslationFiles'], $package->getResourcesPath() . 'Private/Translations/', '\.xlf');
 
             if (!in_array($packageKey, $packagesWithConfiguredObjects)) {
@@ -491,7 +503,7 @@ class Scripts
             }
         }
         self::monitorDirectoryIfItExists($fileMonitors['Flow_TranslationFiles'], FLOW_PATH_DATA . 'Translations/', '\.xlf');
-        self::monitorDirectoryIfItExists($fileMonitors['Flow_ConfigurationFiles'], FLOW_PATH_CONFIGURATION, '\.yaml$');
+        self::monitorDirectoryIfItExists($fileMonitors['Flow_ConfigurationFiles'], FLOW_PATH_CONFIGURATION, '\.y(a)?ml$');
         foreach ($fileMonitors as $fileMonitor) {
             $fileMonitor->detectChanges();
         }
@@ -608,6 +620,23 @@ class Scripts
                 $exceptionMessage = implode(PHP_EOL, $output);
             } else {
                 $exceptionMessage = sprintf('Execution of subprocess failed with exit code %d without any further output. (Please check your PHP error log for possible Fatal errors)', $result);
+
+                // If the command is too long, it'll just produce /usr/bin/php: Argument list too long but this will be invisible
+                // If anything else goes wrong, it may as well not produce any $output, but might do so when run on an interactive
+                // shell. Thus we dump the command next to the exception dumps.
+                $exceptionMessage .= ' Try to run the command manually, to hopefully get some hint on the actual error.';
+
+                if (!file_exists(FLOW_PATH_DATA . 'Logs/Exceptions')) {
+                    Files::createDirectoryRecursively(FLOW_PATH_DATA . 'Logs/Exceptions');
+                }
+                if (file_exists(FLOW_PATH_DATA . 'Logs/Exceptions') && is_dir(FLOW_PATH_DATA . 'Logs/Exceptions') && is_writable(FLOW_PATH_DATA . 'Logs/Exceptions')) {
+                    $referenceCode = date('YmdHis', $_SERVER['REQUEST_TIME']) . substr(md5(rand()), 0, 6);
+                    $errorDumpPathAndFilename = FLOW_PATH_DATA . 'Logs/Exceptions/' . $referenceCode . '-command.txt';
+                    file_put_contents($errorDumpPathAndFilename, $command);
+                    $exceptionMessage .= sprintf(' It has been stored in: %s', basename($errorDumpPathAndFilename));
+                } else {
+                    $exceptionMessage .= sprintf(' (could not write command into %s because the directory could not be created or is not writable.)', FLOW_PATH_DATA . 'Logs/Exceptions/');
+                }
             }
             throw new Exception\SubProcessException($exceptionMessage, 1355480641);
         }
@@ -712,5 +741,20 @@ class Scripts
         }
 
         return $command;
+    }
+
+    /**
+     * Check if the old fallback classloader should be used.
+     *
+     * The old class loader is used only in the cases:
+     * * the environment variable "FLOW_ONLY_COMPOSER_LOADER" is not set or false
+     * * in a testing context
+     *
+     * @param Bootstrap $bootstrap
+     * @return bool
+     */
+    protected static function useClassLoader(Bootstrap $bootstrap)
+    {
+        return (!FLOW_ONLY_COMPOSER_LOADER || $bootstrap->getContext()->isTesting());
     }
 }
