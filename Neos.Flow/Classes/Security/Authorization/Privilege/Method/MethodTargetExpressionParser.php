@@ -34,7 +34,7 @@ class MethodTargetExpressionParser extends PointcutExpressionParser
      * @return void
      * @throws InvalidPointcutExpressionException
      */
-    protected function parseDesignatorPointcut(string $operator, string $pointcutExpression, PointcutFilterComposite $pointcutFilterComposite, array &$trace = [])
+    protected function parseDesignatorPointcut(string $operator, string $pointcutExpression, PointcutFilterComposite $pointcutFilterComposite, array &$trace = []): void
     {
         throw new InvalidPointcutExpressionException('The given method privilege target matcher contained an expression for a named pointcut. This not supported! Given expression: "' . $pointcutExpression . '".', 1222014591);
     }
