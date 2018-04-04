@@ -14,7 +14,6 @@ namespace Neos\Cache\Backend;
 use Neos\Cache\Backend\AbstractBackend as IndependentAbstractBackend;
 use Neos\Cache\EnvironmentConfiguration;
 use Neos\Cache\Exception;
-use Neos\Cache\Exception\InvalidDataException;
 use Neos\Cache\Frontend\FrontendInterface;
 
 /**
@@ -192,7 +191,6 @@ class MemcachedBackend extends IndependentAbstractBackend implements TaggableBac
      * @return void
      * @throws Exception if no cache frontend has been set.
      * @throws \InvalidArgumentException if the identifier is not valid or the final memcached key is longer than 250 characters
-     * @throws InvalidDataException if $data is not a string
      * @api
      */
     public function set(string $entryIdentifier, string $data, array $tags = [], int $lifetime = null)

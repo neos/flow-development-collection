@@ -15,7 +15,6 @@ use Neos\Cache\Backend\AbstractBackend as IndependentAbstractBackend;
 use Neos\Cache\EnvironmentConfiguration;
 use Neos\Utility\Files;
 use Neos\Cache\Exception;
-use Neos\Cache\Exception\InvalidDataException;
 use Neos\Cache\Frontend\PhpFrontend;
 use Neos\Cache\Frontend\FrontendInterface;
 use Neos\Utility\Exception\FilesException;
@@ -138,7 +137,6 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
      * @param integer $lifetime Ignored in this type of cache backend
      * @return void
      * @throws Exception if the directory does not exist or is not writable or exceeds the maximum allowed path length, or if no cache frontend has been set.
-     * @throws InvalidDataException
      * @throws \InvalidArgumentException
      * @api
      */

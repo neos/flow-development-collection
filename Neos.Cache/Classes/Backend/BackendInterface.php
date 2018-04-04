@@ -53,7 +53,6 @@ interface BackendInterface
      * @return void
      * @throws \Neos\Cache\Exception if no cache frontend has been set.
      * @throws \InvalidArgumentException if the identifier is not valid
-     * @throws \Neos\Cache\Exception\InvalidDataException if $data is not a string
      * @api
      */
     public function set(string $entryIdentifier, string $data, array $tags = [], int $lifetime = null);

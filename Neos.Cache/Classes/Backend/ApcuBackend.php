@@ -14,7 +14,6 @@ namespace Neos\Cache\Backend;
 use Neos\Cache\Backend\AbstractBackend as IndependentAbstractBackend;
 use Neos\Cache\EnvironmentConfiguration;
 use Neos\Cache\Exception;
-use Neos\Cache\Exception\InvalidDataException;
 use Neos\Cache\Frontend\FrontendInterface;
 
 /**
@@ -114,7 +113,6 @@ class ApcuBackend extends IndependentAbstractBackend implements TaggableBackendI
      * @return void
      * @throws Exception if no cache frontend has been set.
      * @throws \InvalidArgumentException if the identifier is not valid
-     * @throws InvalidDataException if $data is not a string
      * @api
      */
     public function set(string $entryIdentifier, string $data, array $tags = [], int $lifetime = null)
