@@ -153,7 +153,7 @@ class LoggerFactory
     /**
      * @return FileStorage|ThrowableStorageInterface
      */
-    protected function instantiateThrowableStorage(): ThrowableLoggerInterface
+    protected function instantiateThrowableStorage(): ThrowableStorageInterface
     {
         // Fallback early throwable storage
         $throwableStorage = new FileStorage();

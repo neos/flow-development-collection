@@ -83,33 +83,19 @@ class Logger implements LoggerInterface
     protected function extractlegacyDataFromContext(array $context): array
     {
         return [
-            $context['packageKey'] ?? null,
-            $context['className'] ?? null,
-            $context['methodName'] ?? null
+            $context['FLOW_LOG_ENVIRONMENT']['packageKey'] ?? null,
+            $context['FLOW_LOG_ENVIRONMENT']['className'] ?? null,
+            $context['FLOW_LOG_ENVIRONMENT']['methodName'] ?? null
         ];
     }
 
     /**
      * @param array $context
-     * @param string $packageKey
-     * @param string $className
-     * @param string $methodName
      * @return array
      */
-    protected function removeLegacyDataFromContext(array $context, string $packageKey = null, string $className = null, $methodName = null): array
+    protected function removeLegacyDataFromContext(array $context): array
     {
-        if (array_key_exists('packageKey', $context) && $context['packageKey'] === $packageKey) {
-            unset($context['packageKey']);
-        }
-
-        if (array_key_exists('className', $context) && $context['className'] === $className) {
-            unset($context['className']);
-        }
-
-        if (array_key_exists('methodName', $context) && $context['methodName'] === $methodName) {
-            unset($context['methodName']);
-        }
-
+        unset($context['FLOW_LOG_ENVIRONMENT']);
         return $context;
     }
 }

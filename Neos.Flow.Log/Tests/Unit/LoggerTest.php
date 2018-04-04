@@ -26,10 +26,7 @@ class LoggerTest extends UnitTestCase
     public function logPassesItsArgumentsToTheBackendsAppendMethod()
     {
         $mockBackend = $this->getMockBuilder(BackendInterface::class)->setMethods(['open', 'append', 'close'])->getMock();
-        $mockBackend->expects($this->once())->method('append')->with('theMessage', 2, [
-            0 => 'foo',
-            'FLOW_LOG_ENVIRONMENT' => ['packageKey' => 'Foo', 'className' => 'Bar', 'methodName' => 'Baz']
-        ]);
+        $mockBackend->expects($this->once())->method('append')->with('theMessage', 2, ['foo'], 'Foo', 'Bar', 'Baz');
 
         $logger = new DefaultLogger();
         $logger->addBackend($mockBackend);
@@ -42,16 +39,10 @@ class LoggerTest extends UnitTestCase
     public function addBackendAllowsForAddingMultipleBackends()
     {
         $mockBackend1 = $this->getMockBuilder(BackendInterface::class)->setMethods(['open', 'append', 'close'])->getMock();
-        $mockBackend1->expects($this->once())->method('append')->with('theMessage', 2, [
-            0 => 'foo',
-            'FLOW_LOG_ENVIRONMENT' => ['packageKey' => 'Foo', 'className' => 'Bar', 'methodName' => 'Baz']
-        ]);
+        $mockBackend1->expects($this->once())->method('append')->with('theMessage', 2, ['foo'], 'Foo', 'Bar', 'Baz');
 
         $mockBackend2 = $this->getMockBuilder(BackendInterface::class)->setMethods(['open', 'append', 'close'])->getMock();
-        $mockBackend2->expects($this->once())->method('append')->with('theMessage', 2, [
-            0 => 'foo',
-            'FLOW_LOG_ENVIRONMENT' => ['packageKey' => 'Foo', 'className' => 'Bar', 'methodName' => 'Baz']
-        ]);
+        $mockBackend2->expects($this->once())->method('append')->with('theMessage', 2, ['foo'], 'Foo', 'Bar', 'Baz');
 
         $logger = new DefaultLogger();
         $logger->addBackend($mockBackend1);
