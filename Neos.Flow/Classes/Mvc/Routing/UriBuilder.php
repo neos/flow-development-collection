@@ -79,6 +79,11 @@ class UriBuilder
     protected $format = null;
 
     /**
+     * @var string
+     */
+    protected $locale = null;
+
+    /**
      * Sets the current request and resets the UriBuilder
      *
      * @param ActionRequest $request
@@ -171,6 +176,28 @@ class UriBuilder
     }
 
     /**
+     * Specifies the locale of the target (e.g. "en_GB" or "de")
+     *
+     * @param string $locale (e.g. "en_GB" or "de"), will be transformed to lowercase!
+     * @return UriBuilder the current UriBuilder to allow method chaining
+     * @api
+     */
+    public function setLocale($locale)
+    {
+        $this->locale = strtolower($locale);
+        return $this;
+    }
+
+    /**
+     * @return string
+     * @api
+     */
+    public function getLocale()
+    {
+        return $this->locale;
+    }
+
+    /**
      * If set, the URI is prepended with the current base URI. Defaults to FALSE.
      *
      * @param boolean $createAbsoluteUri
@@ -260,6 +287,7 @@ class UriBuilder
         $this->arguments = [];
         $this->section = '';
         $this->format = null;
+        $this->locale = null;
         $this->createAbsoluteUri = false;
         $this->addQueryString = false;
         $this->argumentsToBeExcludedFromQueryString = [];
@@ -303,6 +331,10 @@ class UriBuilder
         }
         if ($this->format !== null && $this->format !== '') {
             $controllerArguments['@format'] = $this->format;
+        }
+        $controllerArguments['@locale'] = (string)$this->request->getLocale();
+        if ($this->locale !== null && $this->locale !== '') {
+            $controllerArguments['@locale'] = $this->locale;
         }
 
         $controllerArguments = $this->addNamespaceToArguments($controllerArguments, $this->request);
@@ -427,6 +459,10 @@ class UriBuilder
                 $requestFormat = $subRequest->getFormat();
                 if (!empty($requestFormat)) {
                     $requestArguments['@format'] = $requestFormat;
+                }
+                $requestLocale = $subRequest->getLocale();
+                if (!empty($requestLocale)) {
+                    $requestArguments['@locale'] = $requestLocale;
                 }
 
                 if (count($requestArguments) > 0) {

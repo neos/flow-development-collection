@@ -106,6 +106,12 @@ class ActionRequest implements RequestInterface
     protected $format = null;
 
     /**
+     * The requested representation locale
+     * @var string
+     */
+    protected $locale = null;
+
+    /**
      * If this request has been changed and needs to be dispatched again
      * @var boolean
      */
@@ -504,6 +510,9 @@ class ActionRequest implements RequestInterface
             case '@format':
                 $this->setFormat($value);
                 break;
+            case '@locale':
+                $this->setLocale($value);
+                break;
             default:
                 $this->arguments[$argumentName] = $value;
         }
@@ -650,6 +659,28 @@ class ActionRequest implements RequestInterface
     }
 
     /**
+     * Sets the requested representation locale
+     *
+     * @param string $locale The desired locale.
+     * @return void
+     */
+    public function setLocale($locale)
+    {
+        $this->locale = $locale;
+    }
+
+    /**
+     * Returns the requested representation locale
+     *
+     * @return string The desired locale.
+     * @api
+     */
+    public function getLocale()
+    {
+        return $this->locale;
+    }
+
+    /**
      * Emits a signal when a Request has been dispatched
      *
      * The action request is not proxyable, so the signal is dispatched manually here.
@@ -685,7 +716,7 @@ class ActionRequest implements RequestInterface
      */
     public function __sleep()
     {
-        $properties = ['controllerPackageKey', 'controllerSubpackageKey', 'controllerName', 'controllerActionName', 'arguments', 'internalArguments', 'pluginArguments', 'argumentNamespace', 'format', 'dispatched'];
+        $properties = ['controllerPackageKey', 'controllerSubpackageKey', 'controllerName', 'controllerActionName', 'arguments', 'internalArguments', 'pluginArguments', 'argumentNamespace', 'format', 'locale', 'dispatched'];
         if ($this->parentRequest instanceof ActionRequest) {
             $properties[] = 'parentRequest';
         }
