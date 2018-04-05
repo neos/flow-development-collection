@@ -37,22 +37,6 @@ class Uri implements RequestPatternInterface
     }
 
     /**
-     * Sets an URI pattern (preg_match() syntax)
-     *
-     * Note: the pattern is a full-on regular expression pattern. The only
-     * thing that is touched by the code: forward slashes are escaped before
-     * the pattern is used.
-     *
-     * @param string $uriPattern The URI pattern
-     * @return void
-     * @deprecated since 3.3 this is not used - use options instead (@see __construct())
-     */
-    public function setPattern($uriPattern)
-    {
-        $this->options['uriPattern'] = $uriPattern;
-    }
-
-    /**
      * Matches a \Neos\Flow\Mvc\RequestInterface against its set URL pattern rules
      *
      * @param RequestInterface $request The request that should be matched
