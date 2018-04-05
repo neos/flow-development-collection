@@ -118,7 +118,8 @@ class UriViewHelper extends AbstractViewHelper
             ->setSection($this->arguments['section'])
             ->setCreateAbsoluteUri(true)
             ->setArgumentsToBeExcludedFromQueryString($argumentsToBeExcludedFromQueryString)
-            ->setFormat($this->arguments['format']);
+            ->setFormat($this->arguments['format'])
+            ->setLocale($this->arguments['locale']);
         try {
             $uri = $uriBuilder->uriFor($this->arguments['action'], $this->arguments['arguments'], '', '', '');
         } catch (\Exception $exception) {

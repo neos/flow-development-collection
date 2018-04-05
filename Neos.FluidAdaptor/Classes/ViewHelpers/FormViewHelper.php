@@ -114,6 +114,7 @@ class FormViewHelper extends AbstractFormViewHelper
         $this->registerArgument('object', 'mixed', 'object to use for the form. Use in conjunction with the "property" attribute on the sub tags', false, null);
         $this->registerArgument('section', 'string', 'The anchor to be added to the URI', false, '');
         $this->registerArgument('format', 'string', 'The requested format, e.g. ".html"', false, '');
+        $this->registerArgument('locale', 'string', 'The requested locale, e.g. "de"', false, null);
         $this->registerArgument('additionalParams', 'array', 'additional query parameters that won\'t be prefixed like $arguments (overrule $arguments)', false, array());
         $this->registerArgument('absolute', 'boolean', 'If set, an absolute action URI is rendered (only active if $actionUri is not set)', false, false);
         $this->registerArgument('addQueryString', 'boolean', 'If set, the current query parameters will be kept in the URI', false, false);
@@ -211,7 +212,8 @@ class FormViewHelper extends AbstractFormViewHelper
                 ->setSection($this->arguments['section'])
                 ->setCreateAbsoluteUri($this->arguments['absolute'])
                 ->setAddQueryString($this->arguments['addQueryString'])
-                ->setFormat($this->arguments['format']);
+                ->setFormat($this->arguments['format'])
+                ->setLocale($this->arguments['locale']);
             if (is_array($this->arguments['additionalParams'])) {
                 $uriBuilder->setArguments($this->arguments['additionalParams']);
             }

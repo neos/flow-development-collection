@@ -64,6 +64,7 @@ class ActionViewHelper extends AbstractTagBasedViewHelper
         $this->registerArgument('subpackage', 'string', 'Target subpackage. if NULL current subpackage is used', false, null);
         $this->registerArgument('section', 'string', 'The anchor to be added to the URI', false, '');
         $this->registerArgument('format', 'string', 'The requested format, e.g. ".html"', false, '');
+        $this->registerArgument('locale', 'string', 'The requested locale, e.g. "de"', false, null);
         $this->registerArgument('additionalParams', 'array', 'additional query parameters that won\'t be prefixed like $arguments (overrule $arguments)', false, array());
         $this->registerArgument('addQueryString', 'boolean', 'If set, the current query parameters will be kept in the URI', false, false);
         $this->registerArgument('argumentsToBeExcludedFromQueryString', 'array', 'arguments to be removed from the URI. Only active if $addQueryString = TRUE', false, array());
@@ -104,7 +105,8 @@ class ActionViewHelper extends AbstractTagBasedViewHelper
             ->setArguments($this->arguments['additionalParams'])
             ->setAddQueryString($this->arguments['addQueryString'])
             ->setArgumentsToBeExcludedFromQueryString($this->arguments['argumentsToBeExcludedFromQueryString'])
-            ->setFormat($this->arguments['format']);
+            ->setFormat($this->arguments['format'])
+            ->setLocale($this->arguments['locale']);
         try {
             $uri = $uriBuilder->uriFor($this->arguments['action'], $this->arguments['arguments'], $this->arguments['controller'], $this->arguments['package'], $this->arguments['subpackage']);
         } catch (\Exception $exception) {
