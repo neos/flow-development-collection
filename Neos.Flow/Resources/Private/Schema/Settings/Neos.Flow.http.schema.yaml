@@ -47,7 +47,7 @@ properties:
              additionalProperties:
                type: string
       'headers':
-        type: dictionary
+        type: [string, dictionary]
         required: true
         additionalProperties: false
         properties:
