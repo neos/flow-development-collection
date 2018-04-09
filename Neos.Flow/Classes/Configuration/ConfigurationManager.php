@@ -604,7 +604,7 @@ class ConfigurationManager
     {
         // Make sure that all configuration types are loaded before writing configuration caches.
         foreach (array_keys($this->configurationTypes) as $configurationType) {
-            if (!isset($this->configurations[$configurationType]) || !is_array($this->configurations[$configurationType])) {
+            if (!isset($this->unprocessedConfiguration[$configurationType]) || !is_array($this->unprocessedConfiguration[$configurationType])) {
                 $this->loadConfiguration($configurationType, $this->packages);
             }
         }
