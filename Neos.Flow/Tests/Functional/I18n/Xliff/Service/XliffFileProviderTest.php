@@ -69,7 +69,6 @@ class XliffFileProviderTest extends FunctionalTestCase
             'de/BasePackage.Main.xlf' => 'Resources/Private/Translations/de/Main.xlf',
             'de/BasePackage.DependentMain.xlf' => 'Resources/Private/Translations/de/DependentMain.xlf',
             'de/BasePackage.GlobalOverride.xlf' => 'Resources/Private/Translations/de/GlobalOverride.xlf',
-            'de/BasePackage.GlobalOverride.Global.xlf' => 'Resources/Private/GlobalTranslations/de/BasePackage.GlobalOverride.xlf',
             'en/BasePackage.GlobalOverride.Global.xlf' => 'Resources/Private/GlobalTranslations/en/BasePackage.GlobalOverride.xlf'
         ]);
         $packages[$basePackage->getPackageKey()] = $basePackage;
@@ -177,24 +176,29 @@ class XliffFileProviderTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function fileProviderMergesOverrideFromGlobalDataFolder()
+    public function fileProviderMergesTranslationsFromGlobalDataFolder()
     {
-        $fileData = $this->fileProvider->getMergedFileData('Vendor.BasePackage:GlobalOverride', new Locale('de'));
+        $fileData = $this->fileProvider->getMergedFileData('Vendor.BasePackage:GlobalOverride', new Locale('en'));
 
         $this->assertSame([
             'key1' => [
                 [
                     'source' => 'Source string',
-                    'target' => 'Global anders übersetzte Zeichenkette'
-                ]
-            ],
-            'key2' => [
-                [
-                    'source' => 'Source string',
                     'target' => 'Global differently translated string'
                 ]
-            ],
-            'key3' => [
+            ]
+        ], $fileData['translationUnits']);
+    }
+
+    /**
+     * @test
+     */
+    public function fileProviderMergesMoreSpecificPackageTranslationsOverGlobalFallbackTranslations()
+    {
+        $fileData = $this->fileProvider->getMergedFileData('Vendor.BasePackage:GlobalOverride', new Locale('de'));
+
+        $this->assertSame([
+            'key1' => [
                 [
                     'source' => 'Source string',
                     'target' => 'Übersetzte Zeichenkette'
