@@ -42,11 +42,11 @@ use Neos\Utility\TypeHandling;
  * >=
  *   Value is greater than or equal to operand
  * $=
- *   Value ends with operand (string-based)
+ *   Value ends with operand (string-based) or value's last element is equal to operand (array-based)
  * ^=
- *   Value starts with operand (string-based)
+ *   Value starts with operand (string-based) or value's first element is equal to operand (array-based)
  * *=
- *   Value contains operand (string-based)
+ *   Value contains operand (string-based) or value contains an element that is equal to operand (array based)
  * instanceof
  *   Checks if the value is an instance of the operand
  * !instanceof
