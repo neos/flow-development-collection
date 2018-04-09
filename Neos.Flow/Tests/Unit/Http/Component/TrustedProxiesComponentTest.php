@@ -129,8 +129,6 @@ class TrustedProxiesComponentTest extends UnitTestCase
             array(array('HTTP_X_CLUSTER_CLIENT_IP' => '209.85.148.101, 209.85.148.102'), '209.85.148.101'),
             array(array('HTTP_FORWARDED_FOR' => '209.85.148.101'), '209.85.148.101'),
             array(array('HTTP_FORWARDED' => '209.85.148.101'), '209.85.148.101'),
-            array(array('HTTP_FORWARDED' => 'for=209.85.148.101'), '209.85.148.101'),
-            array(array('HTTP_FORWARDED' => 'for=123.123.123.123, for=209.85.148.101'), '123.123.123.123'),
             array(array('REMOTE_ADDR' => '127.0.0.1'), '127.0.0.1'),
         );
     }

@@ -82,7 +82,9 @@ class TrustedProxiesComponent implements ComponentInterface
      */
     protected function unquoteArray($array)
     {
-        return array_map(function($value) { return trim($value, '"'); }, array_values(array_filter($array)));
+        return array_map(function ($value) {
+            return trim($value, '"');
+        }, array_values(array_filter($array)));
     }
 
     /**
