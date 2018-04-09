@@ -43,7 +43,7 @@ class CurrencyReaderTest extends UnitTestCase
         $mockModel->expects($this->once())->method('getRawArray')->with('currencyData')->will($this->returnValue($sampleCurrencyFractionsData));
 
         $mockRepository = $this->createMock(I18n\Cldr\CldrRepository::class);
-        $mockRepository->expects($this->once())->method('getModel')->with('supplemental/currencyData')->will($this->returnValue($mockModel));
+        $mockRepository->expects($this->once())->method('getModel')->with('supplemental/supplementalData')->will($this->returnValue($mockModel));
 
         $mockCache = $this->getMockBuilder(VariableFrontend::class)->disableOriginalConstructor()->getMock();
         $mockCache->expects($this->at(0))->method('has')->with('fractions')->will($this->returnValue(false));
