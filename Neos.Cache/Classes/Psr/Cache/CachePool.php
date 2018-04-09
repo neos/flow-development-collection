@@ -168,7 +168,7 @@ class CachePool implements CacheItemPoolInterface
             $lifetime = $expiresAt->getTimestamp() - (new \DateTime())->getTimestamp();
         }
 
-        $this->backend->set($item->getKey(), serialize($item->get()),[], $lifetime);
+        $this->backend->set($item->getKey(), serialize($item->get()), [], $lifetime);
         return true;
     }
 
