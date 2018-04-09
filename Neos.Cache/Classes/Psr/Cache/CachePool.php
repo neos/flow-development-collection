@@ -11,7 +11,7 @@ namespace Neos\Cache\Psr\Cache;
  * source code.
  */
 
-use Neos\Cache\Frontend\VariableFrontend;
+use Neos\Cache\Backend\BackendInterface;
 use Neos\Cache\Psr\InvalidArgumentException;
 use Psr\Cache\CacheItemInterface;
 use Psr\Cache\CacheItemPoolInterface;
@@ -19,14 +19,40 @@ use Psr\Cache\CacheItemPoolInterface;
 /**
  * A frontend that implements the CacheItemPoolInterface from the PSR-6 specification.
  */
-class CachePool extends VariableFrontend implements CacheItemPoolInterface
+class CachePool implements CacheItemPoolInterface
 {
+    /**
+     * Pattern an entry identifier must match.
+     */
+    const PATTERN_ENTRYIDENTIFIER = '/^[a-zA-Z0-9_%\-&]{1,250}$/';
+
+    /**
+     * @var BackendInterface
+     */
+    protected $backend;
+
     /**
      * A list of items still to be persisted.
      *
      * @var array
      */
     protected $deferredItems = [];
+
+    /**
+     * Constructs the cache
+     *
+     * @param string $identifier A identifier which describes this cache
+     * @param BackendInterface $backend Backend to be used for this cache
+     * @throws \InvalidArgumentException if the identifier doesn't match PATTERN_ENTRYIDENTIFIER
+     */
+    public function __construct(string $identifier, BackendInterface $backend)
+    {
+        if (preg_match(self::PATTERN_ENTRYIDENTIFIER, $identifier) !== 1) {
+            throw new \InvalidArgumentException('"' . $identifier . '" is not a valid cache identifier.', 1203584729);
+        }
+        $this->identifier = $identifier;
+        $this->backend = $backend;
+    }
 
     /**
      * Returns a Cache Item representing the specified key.
@@ -46,7 +72,7 @@ class CachePool extends VariableFrontend implements CacheItemPoolInterface
             return new CacheItem($key, false);
         }
 
-        $value = ($this->useIgBinary === true) ? igbinary_unserialize($rawResult) : unserialize($rawResult);
+        $value = unserialize($rawResult);
         return new CacheItem($key, true, $value);
     }
 
@@ -87,7 +113,7 @@ class CachePool extends VariableFrontend implements CacheItemPoolInterface
      */
     public function clear()
     {
-        $this->flush();
+        $this->backend->flush();
         return true;
     }
 
@@ -104,7 +130,7 @@ class CachePool extends VariableFrontend implements CacheItemPoolInterface
             throw new InvalidArgumentException('"' . $key . '" is not a valid cache entry identifier.', 1514741469583);
         }
 
-        return $this->remove($key);
+        return $this->backend->remove($key);
     }
 
     /**
@@ -142,7 +168,7 @@ class CachePool extends VariableFrontend implements CacheItemPoolInterface
             $lifetime = $expiresAt->getTimestamp() - (new \DateTime())->getTimestamp();
         }
 
-        $this->set($item->getKey(), $item->get(), [], $lifetime);
+        $this->backend->set($item->getKey(), serialize($item->get()),[], $lifetime);
         return true;
     }
 
@@ -172,5 +198,17 @@ class CachePool extends VariableFrontend implements CacheItemPoolInterface
         $this->deferredItems = [];
 
         return true;
+    }
+
+    /**
+     * Checks the validity of an entry identifier. Returns true if it's valid.
+     *
+     * @param string $identifier An identifier to be checked for validity
+     * @return boolean
+     * @api
+     */
+    public function isValidEntryIdentifier($identifier): bool
+    {
+        return preg_match(self::PATTERN_ENTRYIDENTIFIER, $identifier) === 1;
     }
 }
