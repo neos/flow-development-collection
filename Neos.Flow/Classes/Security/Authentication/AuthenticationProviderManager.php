@@ -306,7 +306,7 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
         $this->tokens = [];
         $this->providers = [];
 
-        foreach ($providerConfigurations as $providerName => $providerConfiguration) {
+        foreach ($this->providerConfigurations as $providerName => $providerConfiguration) {
             if (!is_array($providerConfiguration) || !isset($providerConfiguration['provider'])) {
                 throw new Exception\InvalidAuthenticationProviderException('The configured authentication provider "' . $providerName . '" needs a "provider" option!', 1248209521);
             }
