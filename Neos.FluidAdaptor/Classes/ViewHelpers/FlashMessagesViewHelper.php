@@ -76,19 +76,21 @@ class FlashMessagesViewHelper extends AbstractTagBasedViewHelper
     public function initializeArguments()
     {
         $this->registerUniversalTagAttributes();
+        $this->registerArgument('as', 'string', 'The name of the current flashMessage variable for rendering inside', false, null);
+        $this->registerArgument('severity', 'string', 'severity of the messages (One of the \Neos\Error\Messages\Message::SEVERITY_* constants)', false, null);
     }
 
     /**
      * Renders flash messages that have been added to the FlashMessageContainer in previous request(s).
      *
-     * @param string $as The name of the current flashMessage variable for rendering inside
-     * @param string $severity severity of the messages (One of the \Neos\Error\Messages\Message::SEVERITY_* constants)
      * @return string rendered Flash Messages, if there are any.
      * @api
      */
-    public function render($as = null, $severity = null)
+    public function render()
     {
-        $flashMessages = $this->controllerContext->getFlashMessageContainer()->getMessagesAndFlush($severity);
+        $as = $this->arguments['as'];
+
+        $flashMessages = $this->controllerContext->getFlashMessageContainer()->getMessagesAndFlush($this->arguments['severity']);
         if (count($flashMessages) < 1) {
             return '';
         }
@@ -115,7 +117,7 @@ class FlashMessagesViewHelper extends AbstractTagBasedViewHelper
         foreach ($flashMessages as $singleFlashMessage) {
             $severityClass = sprintf('%s-%s', $flashMessagesClass, strtolower($singleFlashMessage->getSeverity()));
             $messageContent = htmlspecialchars($singleFlashMessage->render());
-            if ($singleFlashMessage->getTitle() !== '') {
+            if ($singleFlashMessage->hasTitle()) {
                 $messageContent = sprintf('<h3>%s</h3>', htmlspecialchars($singleFlashMessage->getTitle())) . $messageContent;
             }
             $tagContent .= sprintf('<li class="%s">%s</li>', htmlspecialchars($severityClass), $messageContent);

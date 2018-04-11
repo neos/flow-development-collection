@@ -57,8 +57,10 @@ class CheckboxViewHelper extends AbstractFormFieldViewHelper
     public function initializeArguments()
     {
         parent::initializeArguments();
-        $this->registerTagAttribute('disabled', 'string', 'Specifies that the input element should be disabled when the page loads');
+        $this->registerTagAttribute('disabled', 'boolean', 'Specifies that the input element should be disabled when the page loads', false, false);
         $this->registerArgument('errorClass', 'string', 'CSS class to set if there are errors for this view helper', false, 'f3-form-error');
+        $this->registerArgument('checked', 'boolean', 'Specifies that the input element should be preselected', false, null);
+        $this->registerArgument('multiple', 'boolean', 'Specifies whether this checkbox belongs to a multivalue (is part of a checkbox group)', false, null);
         $this->overrideArgument('value', 'mixed', 'Value of input tag. Required for checkboxes', true);
         $this->registerUniversalTagAttributes();
     }
@@ -66,20 +68,22 @@ class CheckboxViewHelper extends AbstractFormFieldViewHelper
     /**
      * Renders the checkbox.
      *
-     * @param boolean $checked Specifies that the input element should be preselected
-     * @param boolean $multiple Specifies whether this checkbox belongs to a multivalue (is part of a checkbox group)
      * @return string
      * @api
      */
-    public function render($checked = null, $multiple = null)
+    public function render()
     {
         $this->tag->addAttribute('type', 'checkbox');
+
+        $checked = $this->arguments['checked'];
+        $multiple = $this->arguments['multiple'];
 
         $valueAttribute = $this->getValueAttribute(true);
         $propertyValue = null;
         if ($this->hasMappingErrorOccurred()) {
             $propertyValue = $this->getLastSubmittedFormData();
         }
+
         if ($checked === null && $propertyValue === null) {
             $propertyValue = $this->getPropertyValue();
         }
@@ -105,7 +109,7 @@ class CheckboxViewHelper extends AbstractFormFieldViewHelper
         $this->tag->addAttribute('name', $nameAttribute);
         $this->tag->addAttribute('value', $valueAttribute);
         if ($checked === true) {
-            $this->tag->addAttribute('checked', 'checked');
+            $this->tag->addAttribute('checked', '');
         }
 
         $this->addAdditionalIdentityPropertiesIfNeeded();

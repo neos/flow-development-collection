@@ -365,6 +365,35 @@ class FlowQueryTest extends UnitTestCase
     }
 
     /**
+     * @test
+     */
+    public function filterOperationFiltersNumbersCorrectly()
+    {
+        $myObject = new \stdClass();
+        $myObject->stringProperty = '1foo bar baz2';
+        $myObject2 = new \stdClass();
+        $myObject2->stringProperty = "1zing zang zong";
+        $myObject3 = new \stdClass();
+        $myObject3->stringProperty = "fing', 'fan33g', 'fong";
+        $query = $this->createFlowQuery([$myObject, $myObject2, $myObject3]);
+
+        $this->assertInstanceOf(FlowQuery::class, $query->filter('[stringProperty $= 2]'));
+        $this->assertSame([$myObject], $query->filter('[stringProperty $= 2]')->get());
+
+        $this->assertInstanceOf(FlowQuery::class, $query->filter('[stringProperty *= 33]'));
+        $this->assertSame([$myObject3], $query->filter('[stringProperty *= 33]')->get());
+
+        $this->assertInstanceOf(FlowQuery::class, $query->filter('[stringProperty *= "n33g"]'));
+        $this->assertSame([$myObject3], $query->filter('[stringProperty *= "n33g"]')->get());
+
+        $this->assertInstanceOf(FlowQuery::class, $query->filter('[stringProperty $= "2"]'));
+        $this->assertSame([$myObject], $query->filter('[stringProperty $= "2"]')->get());
+
+        $this->assertInstanceOf(FlowQuery::class, $query->filter('[stringProperty *= 2]'));
+        $this->assertSame([$myObject], $query->filter('[stringProperty *= 2]')->get());
+    }
+
+    /**
      * @return array
      */
     public function dataProviderForChildrenAndFilterAndProperty()
@@ -510,7 +539,7 @@ class FlowQueryTest extends UnitTestCase
     {
         $flowQuery = $this->getAccessibleMock(FlowQuery::class, ['dummy'], [$elements]);
 
-            // Set up mock persistence manager to return dummy object identifiers
+        // Set up mock persistence manager to return dummy object identifiers
         $this->mockPersistenceManager = $this->createMock(PersistenceManagerInterface::class);
         $this->mockPersistenceManager->expects($this->any())->method('getIdentifierByObject')->will($this->returnCallback(function ($object) {
             if (isset($object->__identity)) {

@@ -13,14 +13,27 @@ namespace Neos\Eel\Helper;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Eel\ProtectedContextAwareInterface;
+use Neos\Flow\I18n\Formatter\DatetimeFormatter;
+use Neos\Flow\I18n\Locale;
+use Neos\Flow\I18n\Service as I18nService;
 
 /**
  * Date helpers for Eel contexts
- *
- * @Flow\Proxy(false)
  */
 class DateHelper implements ProtectedContextAwareInterface
 {
+    /**
+     * @Flow\Inject
+     * @var DatetimeFormatter
+     */
+    protected $datetimeFormatter;
+
+    /**
+     * @Flow\Inject
+     * @var I18nService
+     */
+    protected $localizationService;
+
     /**
      * Parse a date from string with a format to a DateTime object
      *
@@ -54,6 +67,52 @@ class DateHelper implements ProtectedContextAwareInterface
             $timestamp = (integer)$date;
             return date($format, $timestamp);
         }
+    }
+
+    /**
+     * Format a date to a string with a given cldr format
+     *
+     * @param integer|string|\DateTime $date
+     * @param string $cldrFormat Format string in CLDR format (see http://cldr.unicode.org/translation/date-time)
+     * @param null|string $locale String locale - example (de|en|ru_RU)
+     * @return string
+     */
+    public function formatCldr($date, $cldrFormat, $locale = null)
+    {
+        if ($date === 'now') {
+            $date = new \DateTime();
+        } elseif (is_int($date)) {
+            $timestamp = $date;
+            $date = new \DateTime();
+            $date->setTimestamp($timestamp);
+        } elseif (!$date instanceof \DateTimeInterface) {
+            throw new \InvalidArgumentException('The given date "' . $date . '" was neither an integer, "now" or a \DateTimeInterface instance.');
+        }
+        if (empty($cldrFormat)) {
+            throw new \InvalidArgumentException('CLDR date formatting parameter not passed.');
+        }
+        if ($locale === null) {
+            $useLocale = $this->localizationService->getConfiguration()->getCurrentLocale();
+        } else {
+            $useLocale = new Locale($locale);
+        }
+        return $this->datetimeFormatter->formatDateTimeWithCustomPattern($date, $cldrFormat, $useLocale);
+    }
+
+    /**
+     * Get a date object by given date or time format
+     *
+     * Examples::
+     *
+     *     Date.create('2018-12-04')
+     *     Date.create('first day of next year')
+     *
+     * @param String $time A date/time string. For valid formats see http://php.net/manual/en/datetime.formats.php
+     * @return \DateTime
+     */
+    public function create(string $time): \DateTime
+    {
+        return new \DateTime($time);
     }
 
     /**

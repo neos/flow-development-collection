@@ -41,16 +41,6 @@ class Host implements RequestPatternInterface
     }
 
     /**
-     * @param string $hostPattern The host pattern
-     * @return void
-     * @deprecated since 3.3 this is not used - use options instead (@see __construct())
-     */
-    public function setPattern($hostPattern)
-    {
-        $this->options['hostPattern'] = $hostPattern;
-    }
-
-    /**
      * Matches a \Neos\Flow\Mvc\RequestInterface against its set host pattern rules
      *
      * @param RequestInterface $request The request that should be matched

@@ -1,4 +1,13 @@
 type: dictionary
+properties:
+  throwables:
+    type: dictionary
+    properties:
+      fileStorage:
+        type: dictionary
+        properties:
+          path: { type: string, required: TRUE }
+
 additionalProperties:
   type: dictionary
   additionalProperties: FALSE

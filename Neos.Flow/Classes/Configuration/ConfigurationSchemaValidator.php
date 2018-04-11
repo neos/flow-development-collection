@@ -99,7 +99,7 @@ class ConfigurationSchemaValidator
 
         // find schema files for the given type and path
         $schemaFileInfos = [];
-        $activePackages = $this->packageManager->getActivePackages();
+        $activePackages = $this->packageManager->getAvailablePackages();
         foreach ($activePackages as $package) {
             $packageKey = $package->getPackageKey();
             $packageSchemaPath = Files::concatenatePaths([$package->getResourcesPath(), 'Private/Schema']);
@@ -140,7 +140,7 @@ class ConfigurationSchemaValidator
             if (empty($data)) {
                 $result->addNotice(new Notice('No configuration found, skipping schema "%s".', 1364985445, [substr($schemaFileInfo['file'], strlen(FLOW_PATH_ROOT))]));
             } else {
-                $parsedSchema = Yaml::parse($schemaFileInfo['file']);
+                $parsedSchema = Yaml::parseFile($schemaFileInfo['file']);
                 $validationResultForSingleSchema = $this->schemaValidator->validate($data, $parsedSchema);
 
                 if ($schemaFileInfo['path'] !== null) {

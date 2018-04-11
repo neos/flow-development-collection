@@ -31,12 +31,21 @@ use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 class EmailViewHelper extends AbstractViewHelper
 {
     /**
-     * @param string $email The email address to be turned into a mailto uri.
+     * Arguments initialization
+     *
+     * @return void
+     */
+    public function initializeArguments()
+    {
+        $this->registerArgument('email', 'string', 'The email address to be turned into a mailto uri.', true);
+    }
+
+    /**
      * @return string Rendered email uri
      * @api
      */
-    public function render($email)
+    public function render()
     {
-        return 'mailto:' . $email;
+        return 'mailto:' . $this->arguments['email'];
     }
 }

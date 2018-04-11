@@ -12,6 +12,7 @@ namespace Neos\Eel\Tests\Unit;
  */
 
 use Neos\Eel\Helper\DateHelper;
+use Neos\Flow\I18n\Locale;
 
 /**
  * Tests for DateHelper
@@ -52,7 +53,6 @@ class DateHelperTest extends \Neos\Flow\Tests\UnitTestCase
         return [
             'DateTime object' => [$dateTime, 'Y-m-d H:i:s', '2013-07-03 12:34:56'],
             'timestamp as integer' => [1372856513, 'Y-m-d', '2013-07-03'],
-            'timestamp as string' => ['1372856513', 'Y-m-d', '2013-07-03'],
             'now' => ['now', 'Y-m-d', date('Y-m-d')],
             'interval' => [new \DateInterval('P1D'), '%d days', '1 days']
         ];
@@ -72,12 +72,79 @@ class DateHelperTest extends \Neos\Flow\Tests\UnitTestCase
     /**
      * @test
      */
+    public function formatCldrThrowsOnEmptyArguments()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $helper = new DateHelper();
+        $helper->formatCldr(null, null);
+    }
+
+    /**
+     * @test
+     */
+    public function formatCldrWorksWithEmptyLocale()
+    {
+        $locale = new Locale('en');
+        $expected = 'whatever-value';
+
+        $configurationMock = $this->createMock(\Neos\Flow\I18n\Configuration::class);
+        $configurationMock->expects($this->atLeastOnce())->method('getCurrentLocale')->willReturn($locale);
+
+        $localizationServiceMock = $this->createMock(\Neos\Flow\I18n\Service::class);
+        $localizationServiceMock->expects($this->atLeastOnce())->method('getConfiguration')->willReturn($configurationMock);
+
+        $formatMock = $this->createMock(\Neos\Flow\I18n\Formatter\DatetimeFormatter::class);
+        $formatMock->expects($this->atLeastOnce())->method('formatDateTimeWithCustomPattern')->willReturn($expected);
+
+        $helper = new DateHelper();
+        $this->inject($helper, 'datetimeFormatter', $formatMock);
+        $this->inject($helper, 'localizationService', $localizationServiceMock);
+
+        $date = \DateTime::createFromFormat('Y-m-d H:i:s', '2013-07-03 12:34:56');
+        $format = 'whatever-format';
+        $helper->formatCldr($date, $format);
+    }
+
+    /**
+     * @test
+     */
+    public function formatCldrCallsFormatService()
+    {
+        $date = \DateTime::createFromFormat('Y-m-d H:i:s', '2013-07-03 12:34:56');
+        $format = 'whatever-format';
+        $locale = 'en';
+        $expected = '2013-07-03 12:34:56';
+
+        $formatMock = $this->createMock(\Neos\Flow\I18n\Formatter\DatetimeFormatter::class);
+        $formatMock->expects($this->atLeastOnce())->method('formatDateTimeWithCustomPattern');
+
+        $helper = new DateHelper();
+        $this->inject($helper, 'datetimeFormatter', $formatMock);
+
+        $helper->formatCldr($date, $format, $locale);
+    }
+
+    /**
+     * @test
+     */
     public function nowWorks()
     {
         $helper = new DateHelper();
         $result = $helper->now();
         $this->assertInstanceOf(\DateTime::class, $result);
         $this->assertEquals(time(), (integer)$result->format('U'), 'Now should be now', 1);
+    }
+
+    /**
+     * @test
+     */
+    public function createWorks()
+    {
+        $helper = new DateHelper();
+        $result = $helper->create('yesterday noon');
+        $expected = new \DateTime('yesterday noon');
+        $this->assertInstanceOf(\DateTime::class, $result);
+        $this->assertEquals($expected->getTimestamp(), $result->getTimestamp(), 'Created DateTime object should match expected', 1);
     }
 
     /**

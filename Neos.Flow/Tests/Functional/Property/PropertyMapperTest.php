@@ -84,7 +84,8 @@ class PropertyMapperTest extends FunctionalTestCase
         $source = [
             'name' => 'Christopher',
             'size' => '187',
-            'signedCla' => true
+            'signedCla' => true,
+            'signedClaBool' => true
         ];
 
         $result = $this->propertyMapper->convert($source, Fixtures\TestClass::class);
@@ -458,5 +459,14 @@ class PropertyMapperTest extends FunctionalTestCase
 
         $this->assertNull($defaultConfiguration->getConfigurationFor('foo')->getConfigurationValue(\Neos\Flow\Property\TypeConverter\PersistentObjectConverter::class, \Neos\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED));
         $this->assertNull($defaultConfiguration->getConfigurationFor('foo')->getConfigurationValue(\Neos\Flow\Property\TypeConverter\PersistentObjectConverter::class, \Neos\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED));
+    }
+
+    /**
+     * @test
+     */
+    public function foo()
+    {
+        $actualResult = $this->propertyMapper->convert(true, 'int');
+        $this->assertSame(42, $actualResult);
     }
 }

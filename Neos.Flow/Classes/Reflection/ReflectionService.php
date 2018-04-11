@@ -19,7 +19,6 @@ use Neos\Cache\Frontend\FrontendInterface;
 use Neos\Cache\Frontend\StringFrontend;
 use Neos\Cache\Frontend\VariableFrontend;
 use Neos\Flow\Core\ApplicationContext;
-use Neos\Flow\Core\ClassLoader;
 use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\ObjectManagement\Proxy\ProxyInterface;
 use Neos\Flow\Package;
@@ -493,19 +492,6 @@ class ReflectionService
         $this->loadOrReflectClassIfNecessary($className);
 
         return (isset($this->classReflectionData[$className][self::DATA_CLASS_SUBCLASSES])) ? array_keys($this->classReflectionData[$className][self::DATA_CLASS_SUBCLASSES]) : [];
-    }
-
-    /**
-     * Returns the class name of the given object. This is a convenience
-     * method that returns the expected class names even for proxy classes.
-     *
-     * @param object $object
-     * @return string The class name of the given object
-     * @deprecated since 3.0 use \Neos\Utility\TypeHandling::getTypeForValue() instead
-     */
-    public function getClassNameByObject($object)
-    {
-        return TypeHandling::getTypeForValue($object);
     }
 
     /**
@@ -1392,15 +1378,13 @@ class ReflectionService
         }
 
         $returnType = $method->getDeclaredReturnType();
-        if ($returnType !== null) {
-            if (!TypeHandling::isSimpleType($returnType) && !in_array($returnType, ['self', 'null', 'callable'])) {
-                $returnType = '\\' . $returnType;
-            }
-            if ($method->isDeclaredReturnTypeNullable()) {
-                $returnType = '?' . $returnType;
-            }
-            $this->classReflectionData[$className][self::DATA_CLASS_METHODS][$methodName][self::DATA_METHOD_DECLARED_RETURN_TYPE] = $returnType;
+        if ($returnType !== null && !in_array($returnType, ['self', 'null', 'callable', 'void']) && !TypeHandling::isSimpleType($returnType)) {
+            $returnType = '\\' . $returnType;
         }
+        if ($method->isDeclaredReturnTypeNullable()) {
+            $returnType = '?' . $returnType;
+        }
+        $this->classReflectionData[$className][self::DATA_CLASS_METHODS][$methodName][self::DATA_METHOD_DECLARED_RETURN_TYPE] = $returnType;
 
         foreach ($method->getParameters() as $parameter) {
             $this->reflectClassMethodParameter($className, $method, $parameter);
@@ -1962,7 +1946,7 @@ class ReflectionService
         }
 
         $useIgBinary = extension_loaded('igbinary');
-        foreach ($this->packageManager->getActivePackages() as $packageKey => $package) {
+        foreach ($this->packageManager->getAvailablePackages() as $packageKey => $package) {
             if (!$this->packageManager->isPackageFrozen($packageKey)) {
                 continue;
             }

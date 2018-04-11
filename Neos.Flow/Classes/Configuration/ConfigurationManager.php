@@ -129,7 +129,7 @@ class ConfigurationManager
         self::CONFIGURATION_TYPE_OBJECTS => ['processingType' => self::CONFIGURATION_PROCESSING_TYPE_OBJECTS, 'allowSplitSource' => false],
         self::CONFIGURATION_TYPE_ROUTES => ['processingType' => self::CONFIGURATION_PROCESSING_TYPE_ROUTES, 'allowSplitSource' => false],
         self::CONFIGURATION_TYPE_POLICY => ['processingType' => self::CONFIGURATION_PROCESSING_TYPE_POLICY, 'allowSplitSource' => false],
-        self::CONFIGURATION_TYPE_SETTINGS => ['processingType' => self::CONFIGURATION_PROCESSING_TYPE_SETTINGS, 'allowSplitSource' => false]
+        self::CONFIGURATION_TYPE_SETTINGS => ['processingType' => self::CONFIGURATION_PROCESSING_TYPE_SETTINGS, 'allowSplitSource' => true]
     ];
 
     /**
@@ -489,7 +489,6 @@ class ConfigurationManager
                 /** @var $package PackageInterface */
                 foreach ($packages as $package) {
                     $packagePolicyConfiguration = $this->configurationSource->load($package->getConfigurationPath() . $configurationType, $allowSplitSource);
-                    $this->validatePolicyConfiguration($packagePolicyConfiguration, $package);
                     $this->configurations[$configurationType] = $this->mergePolicyConfiguration($this->configurations[$configurationType], $packagePolicyConfiguration);
                 }
                 $this->configurations[$configurationType] = $this->mergePolicyConfiguration($this->configurations[$configurationType], $this->configurationSource->load(FLOW_PATH_CONFIGURATION . $configurationType, $allowSplitSource));
@@ -498,7 +497,6 @@ class ConfigurationManager
                     /** @var $package PackageInterface */
                     foreach ($packages as $package) {
                         $packagePolicyConfiguration = $this->configurationSource->load($package->getConfigurationPath() . $contextName . '/' . $configurationType, $allowSplitSource);
-                        $this->validatePolicyConfiguration($packagePolicyConfiguration, $package);
                         $this->configurations[$configurationType] = $this->mergePolicyConfiguration($this->configurations[$configurationType], $packagePolicyConfiguration);
                     }
                     $this->configurations[$configurationType] = $this->mergePolicyConfiguration($this->configurations[$configurationType], $this->configurationSource->load(FLOW_PATH_CONFIGURATION . $contextName . '/' . $configurationType, $allowSplitSource));
@@ -846,28 +844,6 @@ class ConfigurationManager
             $result['roles'][$roleIdentifier]['privileges'] = array_merge($firstConfigurationArray['roles'][$roleIdentifier]['privileges'], $secondConfigurationArray['roles'][$roleIdentifier]['privileges']);
         }
         return $result;
-    }
-
-    /**
-     * Validates the given $policyConfiguration and throws an exception if its not valid
-     *
-     * @param array $policyConfiguration
-     * @param PackageInterface $package
-     * @return void
-     * @throws Exception
-     */
-    protected function validatePolicyConfiguration(array $policyConfiguration, PackageInterface $package)
-    {
-        $errors = [];
-        if (isset($policyConfiguration['resources'])) {
-            $errors[] = 'deprecated "resources" options';
-        }
-        if (isset($policyConfiguration['acls'])) {
-            $errors[] = 'deprecated "acls" options';
-        }
-        if ($errors !== []) {
-            throw new Exception(sprintf('The policy configuration for package "%s" is not valid.%sIt contains following error(s):%s Make sure to run all code migrations.', $package->getPackageKey(), chr(10), chr(10) . '  * ' . implode(chr(10) . '  * ', $errors) . chr(10)), 1415717875);
-        }
     }
 
     /**

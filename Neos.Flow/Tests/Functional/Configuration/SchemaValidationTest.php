@@ -36,7 +36,7 @@ class SchemaValidationTest extends FunctionalTestCase
      *
      * @var string
      */
-    protected $schemaSchemaResource = 'resource://Neos.Utility.Schema/Private/Schema/Schema.schema.yaml';
+    protected $schemaSchemaResource = 'resource://Neos.Flow/Private/Schema/Schema.schema.yaml';
 
     /**
      * The parsed schema-schema
@@ -54,7 +54,7 @@ class SchemaValidationTest extends FunctionalTestCase
     {
         parent::setUp();
         $this->schemaValidator = new SchemaValidator();
-        $this->schemaSchema = Yaml::parse($this->schemaSchemaResource);
+        $this->schemaSchema = Yaml::parseFile($this->schemaSchemaResource);
     }
 
     /**
@@ -66,7 +66,7 @@ class SchemaValidationTest extends FunctionalTestCase
         $objectManager = $bootstrap->getObjectManager();
         $packageManager = $objectManager->get(PackageManagerInterface::class);
 
-        $activePackages = $packageManager->getActivePackages();
+        $activePackages = $packageManager->getAvailablePackages();
         foreach ($activePackages as $package) {
             $packageKey = $package->getPackageKey();
             if (in_array($packageKey, $this->schemaPackageKeys)) {
@@ -95,7 +95,7 @@ class SchemaValidationTest extends FunctionalTestCase
      */
     public function schemaFilesAreValid($schemaFile)
     {
-        $schema = Yaml::parse($schemaFile);
+        $schema = Yaml::parseFile($schemaFile);
         $result = $this->schemaValidator->validate($schema, $this->schemaSchema);
         $hasErrors = $result->hasErrors();
         $message = sprintf('Schema-file "%s" is valid', $schemaFile);
