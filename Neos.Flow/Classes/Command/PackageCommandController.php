@@ -158,8 +158,8 @@ class PackageCommandController extends CommandController
         /** @var PackageInterface $package */
         foreach ($availablePackages as $package) {
             $frozenState = ($freezeSupported && isset($frozenPackages[$package->getPackageKey()]) ? '* ' : '  ');
-                $this->outputLine(' ' . str_pad($package->getPackageKey(), $longestPackageKey + 3) . $frozenState . str_pad($package->getInstalledVersion(), 15));
-            }
+            $this->outputLine(' ' . str_pad($package->getPackageKey(), $longestPackageKey + 3) . $frozenState . str_pad($package->getInstalledVersion(), 15));
+        }
 
         if (count($frozenPackages) > 0 && $freezeSupported) {
             $this->outputLine();
@@ -212,8 +212,8 @@ class PackageCommandController extends CommandController
             $this->quit(42);
         } else {
             if (!$this->packageManager->isPackageAvailable($packageKey)) {
-                    $this->outputLine('Package "%s" is not available.', [$packageKey]);
-                    $this->quit(2);
+                $this->outputLine('Package "%s" is not available.', [$packageKey]);
+                $this->quit(2);
             }
 
             if ($this->packageManager->isPackageFrozen($packageKey)) {
