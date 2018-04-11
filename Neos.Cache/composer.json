@@ -26,6 +26,10 @@
             "Neos\\Cache\\Tests\\": "Tests"
         }
     },
+    "provide": {
+        "psr/cache-implementation": "1.0",
+        "psr/simple-cache-implementation": "1.0"
+    },
     "extra": {
         "neos": {
             "package-key": "Neos.Cache"

@@ -28,14 +28,13 @@ Install latest version via composer:
 
     // This cache factory can be used for PSR-6 caches
     // and for the Neos CacheInterface
-    $cacheFactory = new \Neos\Cache\CacheFactory(
+    $cacheFactory = new \Neos\Cache\Psr\Cache\CacheFactory(
         $environmentConfiguration
     );
 
     // Create a PSR-6 compatible cache
     $cachePool = $cacheFactory->create(
         'myCache', 
-        \Neos\Cache\Psr\Cache\CachePool::class, 
         \Neos\Cache\Backend\SimpleFileBackend::class
     );
 
@@ -54,10 +53,10 @@ If you need different caches you should give them separate identifiers.
 
 ## Documenatation
 
-The PSR-6 CachePool is a special implementation of a frontend as described in the documentation below.
-
-* [Frontends](https://flowframework.readthedocs.io/en/stable/TheDefinitiveGuide/PartIII/Caching.html#cache-frontends)
-* [Backends](https://flowframework.readthedocs.io/en/stable/TheDefinitiveGuide/PartIII/Caching.html#cache-backends)
+Both the PSR-6 CachePool and the PSR-16 SimpleCache are separate implementations with their respective factories,
+but both use the existing [backends](https://flowframework.readthedocs.io/en/stable/TheDefinitiveGuide/PartIII/Caching.html#cache-backends)
+that can also be used with the `\Neos\Cache\Frontend\FrontendInterface` implementations, which are slightly 
+different than the PSR caches but also implement additional features like tagging.
 
 Contribute
 ----------

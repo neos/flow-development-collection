@@ -17,7 +17,8 @@ use Psr\Cache\CacheItemInterface;
 use Psr\Cache\CacheItemPoolInterface;
 
 /**
- * A frontend that implements the CacheItemPoolInterface from the PSR-6 specification.
+ * An implementation of the CacheItemPoolInterface from the PSR-6 specification to be used with our provided backends.
+ * @see CacheFactory
  */
 class CachePool implements CacheItemPoolInterface
 {
@@ -30,6 +31,13 @@ class CachePool implements CacheItemPoolInterface
      * @var BackendInterface
      */
     protected $backend;
+
+    /**
+     * An identifier for this cache, useful if you use several different caches.
+     *
+     * @var string
+     */
+    protected $identifier;
 
     /**
      * A list of items still to be persisted.
