@@ -18,6 +18,7 @@ Neos:
            logMessageOrigin: FALSE
 
       securityLogger:
+        logger: Neos\Flow\Log\Logger
         backend: Neos\Flow\Log\Backend\FileBackend
         backendOptions:
            logFileURL: '%FLOW_PATH_DATA%Logs/Security.log'
@@ -28,6 +29,7 @@ Neos:
            logIpAddress: TRUE
 
       sqlLogger:
+        logger: Neos\Flow\Log\Logger
         backend: Neos\Flow\Log\Backend\FileBackend
         backendOptions:
           logFileURL: '%FLOW_PATH_DATA%Logs/Query.log'
@@ -37,6 +39,7 @@ Neos:
           logFilesToKeep: 1
 
       i18nLogger:
+        logger: Neos\Flow\Log\Logger
         backend: Neos\Flow\Log\Backend\FileBackend
         backendOptions:
           logFileURL: '%FLOW_PATH_DATA%Logs/I18n.log'
