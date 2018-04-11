@@ -111,7 +111,7 @@ class ClassLoader
      */
     public function loadClass(string $className): bool
     {
-            $className = ltrim($className, '\\');
+        $className = ltrim($className, '\\');
         $namespaceParts = explode('\\', $className);
         // Workaround for Doctrine's annotation parser which does a class_exists() for annotations like "@param" and so on:
         if (isset($this->ignoredClassNames[$className]) || isset($this->ignoredClassNames[end($namespaceParts)]) || isset($this->nonExistentClasses[$className])) {
