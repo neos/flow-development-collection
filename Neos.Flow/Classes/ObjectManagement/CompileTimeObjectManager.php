@@ -262,7 +262,7 @@ class CompileTimeObjectManager extends ObjectManager
     {
         foreach ($filterConfiguration as $packageKey => $filterExpressions) {
             if (!array_key_exists($packageKey, $classNames)) {
-                $this->systemLogger->log('The package "' . $packageKey . '" specified in the setting "Neos.Flow.object.includeClasses" was either excluded or is not loaded.', LOG_DEBUG);
+                $this->systemLogger->log('The package "' . $packageKey . '" specified in the setting "Neos.Flow.object.includeClasses" is not available.', LOG_DEBUG);
                 continue;
             }
             if (!is_array($filterExpressions)) {
