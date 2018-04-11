@@ -100,7 +100,7 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
      * Inject the settings and does a fresh build of tokens based on the injected settings
      *
      * @param array $settings The settings
-     * @return void
+     * @return voidt
      */
     public function injectSettings(array $settings)
     {
@@ -302,6 +302,9 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
         if ($this->providerConfigurations === null) {
             return;
         }
+
+        $this->tokens = [];
+        $this->providers = [];
 
         foreach ($this->providerConfigurations as $providerName => $providerConfiguration) {
             if (isset($providerConfiguration['providerClass'])) {

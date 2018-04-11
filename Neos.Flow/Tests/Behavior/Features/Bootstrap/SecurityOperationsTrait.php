@@ -142,6 +142,8 @@ trait SecurityOperationsTrait
         $this->policyService = $this->objectManager->get(PolicyService::class);
 
         $this->authenticationManager = $this->objectManager->get(AuthenticationProviderManager::class);
+        // Making sure providers and tokens were actually build, so the singleton TestingProvider exists.
+        $this->authenticationManager->getProviders();
 
         $this->testingProvider = $this->objectManager->get(TestingProvider::class);
         $this->testingProvider->setName('TestingProvider');
