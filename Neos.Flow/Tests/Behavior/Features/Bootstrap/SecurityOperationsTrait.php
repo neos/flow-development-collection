@@ -1,10 +1,9 @@
 <?php
 namespace Neos\Flow\Tests\Behavior\Features\Bootstrap;
 
-use Neos\Flow\Cache\CacheManager;
 use Neos\Flow\Configuration\ConfigurationManager;
+use Neos\Flow\Exception;
 use Neos\Flow\Http\Request;
-use Neos\Flow\Http\RequestHandler;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Utility\ObjectAccess;
 use Neos\Flow\Security;
@@ -39,9 +38,40 @@ trait SecurityOperationsTrait
     protected static $testingPolicyPathAndFilename;
 
     /**
+     * @var Security\AccountRepository
+     */
+    protected $accountRepository;
+
+    /**
+     * @var AuthenticationProviderManager
+     */
+    protected $authenticationManager;
+
+    /**
+     * @var PolicyService
+     */
+    protected $policyService;
+
+    /**
+     * @var PrivilegeManagerInterface
+     */
+    protected $privilegeManager;
+
+    /**
+     * @var Security\Context
+     */
+    protected $securityContext;
+
+    /**
+     * @var TestingProvider
+     */
+    protected $testingProvider;
+
+    /**
      * WARNING: If using this step definition, IT MUST RUN AS ABSOLUTELY FIRST STEP IN A SCENARIO!
      *
      * @Given /^I have the following policies:$/
+     * @throws \Exception
      */
     public function iHaveTheFollowingPolicies($string)
     {
@@ -76,6 +106,7 @@ trait SecurityOperationsTrait
 
     /**
      * @Given /^I am not authenticated$/
+     * @throws \Neos\Flow\ObjectManagement\Exception\UnknownObjectException
      */
     public function iAmNotAuthenticated()
     {
@@ -88,6 +119,10 @@ trait SecurityOperationsTrait
 
     /**
      * @Given /^I am authenticated with role "([^"]*)"$/
+     * @param $roleIdentifier
+     * @throws Security\Exception
+     * @throws Security\Exception\AuthenticationRequiredException
+     * @throws \Neos\Flow\ObjectManagement\Exception\UnknownObjectException
      */
     public function iAmAuthenticatedWithRole($roleIdentifier)
     {
@@ -100,7 +135,33 @@ trait SecurityOperationsTrait
     }
 
     /**
+     * @Given /^I am authenticated as "([^"]*)" via authentication provider "([^"]*)"$/
+     * @param string $accountIdentifier
+     * @param string|null $authenticationProviderName
+     * @throws Security\Exception
+     * @throws Security\Exception\AuthenticationRequiredException
+     * @throws \Neos\Flow\ObjectManagement\Exception\UnknownObjectException
+     * @throws Exception
+     */
+    public function iAmAuthenticatedAs(string $accountIdentifier, string $authenticationProviderName)
+    {
+        if ($this->isolated === true) {
+            $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s', 'string', escapeshellarg($accountIdentifier), 'string', escapeshellarg($authenticationProviderName)));
+        } else {
+            $this->setupSecurity();
+            $account = $this->accountRepository->findByAccountIdentifierAndAuthenticationProviderName($accountIdentifier, $authenticationProviderName);
+            if ($account) {
+                $this->authenticateAccount($account);
+            } else {
+                throw new Exception('Authentication unsuccessful, account "' . $accountIdentifier . ($authenticationProviderName ? '@' . $authenticationProviderName : '') . '" is missing', 1518179642);
+            }
+        }
+    }
+
+    /**
      * @Then /^I can (not )?call the method "([^"]*)" of class "([^"]*)"(?: with arguments "([^"]*)")?$/
+     * @throws \Neos\Flow\ObjectManagement\Exception\UnknownObjectException
+     * @throws AccessDeniedException
      */
     public function iCanCallTheMethodOfClassWithArguments($not, $methodName, $className, $arguments = '')
     {
@@ -130,6 +191,7 @@ trait SecurityOperationsTrait
      * Security is based on action requests so we need a working route for the TestingProvider.
      *
      * @return void
+     * @throws \Neos\Flow\ObjectManagement\Exception\UnknownObjectException
      */
     protected function setupSecurity()
     {
@@ -140,6 +202,8 @@ trait SecurityOperationsTrait
         $this->privilegeManager->setOverrideDecision(null);
 
         $this->policyService = $this->objectManager->get(PolicyService::class);
+
+        $this->accountRepository = $this->objectManager->get(Security\AccountRepository::class);
 
         $this->authenticationManager = $this->objectManager->get(AuthenticationProviderManager::class);
 
@@ -162,6 +226,8 @@ trait SecurityOperationsTrait
      *
      * @param array $roleNames A list of roles the new account should have
      * @return Security\Account The created account
+     * @throws Security\Exception
+     * @throws Security\Exception\AuthenticationRequiredException
      */
     protected function authenticateRoles(array $roleNames)
     {
@@ -182,6 +248,8 @@ trait SecurityOperationsTrait
      *
      * @param Security\Account $account
      * @return void
+     * @throws Security\Exception
+     * @throws Security\Exception\AuthenticationRequiredException
      */
     protected function authenticateAccount(Security\Account $account)
     {

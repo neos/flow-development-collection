@@ -45,7 +45,7 @@ class Package extends BasePackage
                 if ($step->getIdentifier() === 'neos.flow:systemfilemonitor') {
                     $templateFileMonitor = FileMonitor::createFileMonitorAtBoot('Fluid_TemplateFiles', $bootstrap);
                     $packageManager = $bootstrap->getEarlyInstance(PackageManagerInterface::class);
-                    foreach ($packageManager->getActivePackages() as $packageKey => $package) {
+                    foreach ($packageManager->getAvailablePackages() as $packageKey => $package) {
                         if ($packageManager->isPackageFrozen($packageKey)) {
                             continue;
                         }
@@ -65,7 +65,7 @@ class Package extends BasePackage
             });
         }
 
-            // Use a closure to invoke the TemplateCompiler, since the object is not registered during compiletime
+        // Use a closure to invoke the TemplateCompiler, since the object is not registered during compiletime
         $flushTemplates = function ($identifier, $changedFiles) use ($bootstrap) {
             if ($identifier !== 'Fluid_TemplateFiles') {
                 return;

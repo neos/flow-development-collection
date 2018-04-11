@@ -35,22 +35,21 @@ abstract class AbstractXmlParser
      * @param string $sourcePath An absolute path to XML file
      * @return array Parsed XML file
      */
-    public function getParsedData($sourcePath)
+    public function getParsedData(string $sourcePath)
     {
         if (!isset($this->parsedFiles[$sourcePath])) {
             $this->parsedFiles[$sourcePath] = $this->parseXmlFile($sourcePath);
         }
+
         return $this->parsedFiles[$sourcePath];
     }
 
     /**
-     * Reads and parses XML file and returns internal representation of data.
-     *
-     * @param string $sourcePath An absolute path to XML file
-     * @return array Parsed XML file
-     * @throws Exception\InvalidXmlFileException When SimpleXML couldn't load XML file
+     * @param $sourcePath
+     * @return \SimpleXMLElement
+     * @throws Exception\InvalidXmlFileException
      */
-    protected function parseXmlFile($sourcePath)
+    protected function getRootNode(string $sourcePath): \SimpleXMLElement
     {
         if (!file_exists($sourcePath)) {
             throw new Exception\InvalidXmlFileException('The path "' . $sourcePath . '" does not point to an existing and accessible XML file.', 1328879703);
@@ -68,6 +67,19 @@ abstract class AbstractXmlParser
             }
             throw new Exception\InvalidXmlFileException('Parsing the XML file failed. These error were reported:' . PHP_EOL . implode(PHP_EOL, $errors), 1278155987);
         }
+
+        return $rootXmlNode;
+    }
+
+    /**
+     * Reads and parses XML file and returns internal representation of data.
+     *
+     * @param string $sourcePath An absolute path to XML file
+     * @return array Parsed XML file
+     */
+    protected function parseXmlFile(string $sourcePath)
+    {
+        $rootXmlNode = $this->getRootNode($sourcePath);
 
         return $this->doParsingFromRoot($rootXmlNode);
     }

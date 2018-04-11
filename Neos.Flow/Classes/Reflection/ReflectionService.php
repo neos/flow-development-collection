@@ -19,7 +19,6 @@ use Neos\Cache\Frontend\FrontendInterface;
 use Neos\Cache\Frontend\StringFrontend;
 use Neos\Cache\Frontend\VariableFrontend;
 use Neos\Flow\Core\ApplicationContext;
-use Neos\Flow\Core\ClassLoader;
 use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\ObjectManagement\Proxy\ProxyInterface;
 use Neos\Flow\Package;
@@ -1392,15 +1391,13 @@ class ReflectionService
         }
 
         $returnType = $method->getDeclaredReturnType();
-        if ($returnType !== null) {
-            if (!TypeHandling::isSimpleType($returnType) && !in_array($returnType, ['self', 'null', 'callable'])) {
-                $returnType = '\\' . $returnType;
-            }
-            if ($method->isDeclaredReturnTypeNullable()) {
-                $returnType = '?' . $returnType;
-            }
-            $this->classReflectionData[$className][self::DATA_CLASS_METHODS][$methodName][self::DATA_METHOD_DECLARED_RETURN_TYPE] = $returnType;
+        if ($returnType !== null && !in_array($returnType, ['self', 'null', 'callable', 'void']) && !TypeHandling::isSimpleType($returnType)) {
+            $returnType = '\\' . $returnType;
         }
+        if ($method->isDeclaredReturnTypeNullable()) {
+            $returnType = '?' . $returnType;
+        }
+        $this->classReflectionData[$className][self::DATA_CLASS_METHODS][$methodName][self::DATA_METHOD_DECLARED_RETURN_TYPE] = $returnType;
 
         foreach ($method->getParameters() as $parameter) {
             $this->reflectClassMethodParameter($className, $method, $parameter);
@@ -1962,7 +1959,7 @@ class ReflectionService
         }
 
         $useIgBinary = extension_loaded('igbinary');
-        foreach ($this->packageManager->getActivePackages() as $packageKey => $package) {
+        foreach ($this->packageManager->getAvailablePackages() as $packageKey => $package) {
             if (!$this->packageManager->isPackageFrozen($packageKey)) {
                 continue;
             }

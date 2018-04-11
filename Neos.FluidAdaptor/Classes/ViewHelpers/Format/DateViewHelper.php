@@ -102,19 +102,37 @@ class DateViewHelper extends AbstractLocaleAwareViewHelper
     protected $datetimeFormatter;
 
     /**
+     * Initialize the arguments.
+     *
+     * @return void
+     * @api
+     */
+    public function initializeArguments()
+    {
+        $this->registerArgument('date', 'mixed', 'either a \DateTime object or a string that is accepted by \DateTime constructor', false, null);
+        $this->registerArgument('format', 'string', 'Format String which is taken to format the Date/Time if none of the locale options are set.', false, 'Y-m-d');
+        $this->registerArgument('localeFormatType', 'string', 'Whether to format (according to locale set in $forceLocale) date, time or datetime. Must be one of Neos\Flow\I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_*\'s constants.', false, null);
+        $this->registerArgument('localeFormatLength', 'string', 'Format length if locale set in $forceLocale. Must be one of Neos\Flow\I18n\Cldr\Reader\DatesReader::FORMAT_LENGTH_*\'s constants.', false, null);
+        $this->registerArgument('cldrFormat', 'string', 'Format string in CLDR format (see http://cldr.unicode.org/translation/date-time)', false, null);
+    }
+
+    /**
      * Render the supplied DateTime object as a formatted date.
      *
      * @param mixed $date either a \DateTime object or a string that is accepted by \DateTime constructor
      * @param string $format Format String which is taken to format the Date/Time if none of the locale options are set.
-     * @param string $localeFormatType Whether to format (according to locale set in $forceLocale) date, time or datetime. Must be one of Neos\Flow\I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_*'s constants.
+     * @param string $localeFormatType Whether to format (according to locale set in $forceLocale) date, time or dateTime. Must be one of Neos\Flow\I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_*'s constants.
      * @param string $localeFormatLength Format length if locale set in $forceLocale. Must be one of Neos\Flow\I18n\Cldr\Reader\DatesReader::FORMAT_LENGTH_*'s constants.
      * @param string $cldrFormat Format string in CLDR format (see http://cldr.unicode.org/translation/date-time)
      * @throws ViewHelperException
      * @return string Formatted date
      * @api
      */
-    public function render($date = null, $format = 'Y-m-d', $localeFormatType = null, $localeFormatLength = null, $cldrFormat = null)
+    public function render()
     {
+        $date = $this->arguments['date'];
+        $cldrFormat = $this->arguments['cldrFormat'];
+
         if ($date === null) {
             $date = $this->renderChildren();
             if ($date === null) {
@@ -135,13 +153,13 @@ class DateViewHelper extends AbstractLocaleAwareViewHelper
                 if ($cldrFormat !== null) {
                     $output = $this->datetimeFormatter->formatDateTimeWithCustomPattern($date, $cldrFormat, $useLocale);
                 } else {
-                    $output = $this->datetimeFormatter->format($date, $useLocale, array($localeFormatType, $localeFormatLength));
+                    $output = $this->datetimeFormatter->format($date, $useLocale, array($this->arguments['localeFormatType'], $this->arguments['localeFormatLength']));
                 }
             } catch (I18nException $exception) {
                 throw new ViewHelperException(sprintf('An error occurred while trying to format the given date/time: "%s"', $exception->getMessage()), 1342610987, $exception);
             }
         } else {
-            $output = $date->format($format);
+            $output = $date->format($this->arguments['format']);
         }
 
         return $output;

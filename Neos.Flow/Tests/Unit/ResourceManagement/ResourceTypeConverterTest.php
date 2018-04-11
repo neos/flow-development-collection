@@ -19,6 +19,7 @@ use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Flow\ResourceManagement\ResourceTypeConverter;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Error\Messages as FlowError;
+use Psr\Http\Message\UploadedFileInterface;
 
 /**
  * Test case for the ResourceTypeConverter class
@@ -56,7 +57,7 @@ class ResourceTypeConverterTest extends UnitTestCase
      */
     public function checkMetadata()
     {
-        $this->assertEquals(['string', 'array'], $this->resourceTypeConverter->getSupportedSourceTypes(), 'Source types do not match');
+        $this->assertEquals(['string', 'array', UploadedFileInterface::class], $this->resourceTypeConverter->getSupportedSourceTypes(), 'Source types do not match');
         $this->assertEquals(PersistentResource::class, $this->resourceTypeConverter->getSupportedTargetType(), 'Target type does not match');
         $this->assertEquals(1, $this->resourceTypeConverter->getPriority(), 'Priority does not match');
     }

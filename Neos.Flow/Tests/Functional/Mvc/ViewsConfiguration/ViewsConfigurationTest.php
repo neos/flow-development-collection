@@ -90,7 +90,7 @@ class ViewsConfigurationTest extends FunctionalTestCase
      */
     public function changeTemplatePathAndFilenameForWidget()
     {
-        if ($this->objectManager->get(PackageManagerInterface::class)->isPackageActive('Neos.FluidAdaptor') === false) {
+        if ($this->objectManager->get(PackageManagerInterface::class)->isPackageAvailable('Neos.FluidAdaptor') === false) {
             $this->markTestSkipped('No Fluid adaptor installed');
         }
 

@@ -15,6 +15,8 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Http\Request;
+use Neos\Flow\Mvc\Routing\Dto\RouteContext;
+use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
 use Neos\Flow\Mvc\Routing\Exception\InvalidControllerException;
 use Neos\Flow\Mvc\Routing\Route;
 use Neos\Flow\Mvc\Routing\Router;
@@ -173,10 +175,11 @@ class RoutingCommandController extends CommandController
             'REQUEST_METHOD' => $method
         ];
         $httpRequest = new Request([], [], [], $server);
+        $routeContext = new RouteContext($httpRequest, RouteParameters::createEmpty());
 
         /** @var Route $route */
         foreach ($this->router->getRoutes() as $route) {
-            if ($route->matches($httpRequest) === true) {
+            if ($route->matches($routeContext) === true) {
                 $routeValues = $route->getMatchResults();
 
                 $this->outputLine('<b>Path:</b>');

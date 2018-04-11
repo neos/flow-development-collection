@@ -150,4 +150,15 @@ class YamlSourceTest extends UnitTestCase
         $configuration = $configurationSource->load($pathAndFilename, true);
         $this->assertSame($expectedConfiguration, $configuration);
     }
+
+    /**
+     * @test
+     * @expectedException \Neos\Flow\Configuration\Exception
+     */
+    public function configurationFileWithYmlExtensionResultsInException()
+    {
+        $pathAndFilename = __DIR__ . '/../Fixture/YmlThrowsException';
+        $configurationSource = new YamlSource();
+        $configurationSource->load($pathAndFilename, true);
+    }
 }

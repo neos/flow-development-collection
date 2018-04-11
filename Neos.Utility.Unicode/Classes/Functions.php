@@ -137,7 +137,7 @@ abstract class Functions
      * @return integer The character position
      * @api
      */
-    public static function strpos(string $haystack, string $needle, int $offset = 0): int
+    public static function strpos(string $haystack, string $needle, int $offset = 0)
     {
         return mb_strpos($haystack, $needle, $offset, 'UTF-8');
     }

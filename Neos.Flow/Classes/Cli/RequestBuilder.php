@@ -260,9 +260,9 @@ class RequestBuilder
      * @param string $currentArgument The current argument
      * @param array &$rawCommandLineArguments Array of the remaining command line arguments
      * @param string $expectedArgumentType The expected type of the current argument, because booleans get special attention
-     * @return string The value of the first argument
+     * @return mixed The value of the first argument
      */
-    protected function getValueOfCurrentCommandLineOption(string $currentArgument, array &$rawCommandLineArguments, string $expectedArgumentType): string
+    protected function getValueOfCurrentCommandLineOption(string $currentArgument, array &$rawCommandLineArguments, string $expectedArgumentType)
     {
         if ((!isset($rawCommandLineArguments[0]) && (strpos($currentArgument, '=') === false)) || (isset($rawCommandLineArguments[0]) && $rawCommandLineArguments[0][0] === '-' && (strpos($currentArgument, '=') === false))) {
             return true;

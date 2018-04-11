@@ -168,6 +168,7 @@ class CommandManager
     protected function getShortCommandIdentifiers(): array
     {
         if ($this->shortCommandIdentifiers === null) {
+            $this->shortCommandIdentifiers = [];
             $commandsByCommandName = [];
             /** @var Command $availableCommand */
             foreach ($this->getAvailableCommands() as $availableCommand) {

@@ -29,6 +29,7 @@ use Neos\Cache\Exception as CacheException;
  *  - port:            The TCP port of the redis server (will be ignored if connecting to a socket)
  *  - database:        The database index that will be used. By default,
  *                     Redis has 16 databases with index number 0 - 15
+ *  - password:        The password needed for redis clients to connect to the server (hostname)
  *
  * Requirements:
  *  - Redis 2.6.0+ (tested with 2.6.14 and 2.8.5)
@@ -82,6 +83,11 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
     protected $database = 0;
 
     /**
+     * @var string
+     */
+    protected $password = '';
+
+    /**
      * @var integer
      */
     protected $compressionLevel = 0;
@@ -128,7 +134,7 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
 
         $this->redis->multi();
         $result = $this->redis->set($this->buildKey('entry:' . $entryIdentifier), $this->compress($data), $setOptions);
-        if (!$result instanceof \Redis) {
+        if ($result === false) {
             $this->verifyRedisVersionIsSupported();
         }
         $this->redis->lRem($this->buildKey('entries'), $entryIdentifier, 0);
@@ -308,7 +314,7 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
     /**
      * {@inheritdoc}
      */
-    public function key(): string
+    public function key()
     {
         $entryIdentifier = $this->redis->lIndex($this->buildKey('entries'), $this->entryCursor);
         if ($entryIdentifier !== false && !$this->has($entryIdentifier)) {
@@ -426,6 +432,14 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
     }
 
     /**
+     * @param string $password
+     */
+    public function setPassword(string $password)
+    {
+        $this->password = $password;
+    }
+
+    /**
      * @param integer $compressionLevel
      */
     public function setCompressionLevel(int $compressionLevel)
@@ -442,10 +456,11 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
     }
 
     /**
+     * TODO: No return type declaration for now, as it needs to return false as well.
      * @param string $value
-     * @return string
+     * @return mixed
      */
-    private function uncompress(string $value): string
+    private function uncompress($value)
     {
         if (empty($value)) {
             return $value;
@@ -454,10 +469,11 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
     }
 
     /**
+     * TODO: No return type declaration for now, as it needs to return false as well.
      * @param string $value
-     * @return string
+     * @return string|boolean
      */
-    private function compress(string $value): string
+    private function compress(string $value)
     {
         return $this->useCompression() ? gzencode($value, $this->compressionLevel) : $value;
     }
@@ -483,6 +499,11 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
         if (!$redis->connect($this->hostname, $this->port)) {
             throw new CacheException('Could not connect to Redis.', 1391972021);
         }
+        if ($this->password !== '') {
+            if (!$redis->auth($this->password)) {
+                throw new CacheException('Redis authentication failed.', 1502366200);
+            }
+        }
         $redis->select($this->database);
         return $redis;
     }
@@ -496,7 +517,7 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
         // Redis client could be in multi mode, discard for checking the version
         $this->redis->discard();
 
-        $serverInfo = $this->redis->info();
+        $serverInfo = $this->redis->info('SERVER');
         if (!isset($serverInfo['redis_version'])) {
             throw new CacheException('Unsupported Redis version, the Redis cache backend needs at least version ' . self::MIN_REDIS_VERSION, 1438251553);
         }

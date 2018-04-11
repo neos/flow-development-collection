@@ -824,16 +824,16 @@ PHP in General
 
    if ($template)             // BAD
    if (isset($template))      // GOOD
-   if ($template !== NULL))   // GOOD
-   if ($template !== ''))     // GOOD
+   if ($template !== NULL)    // GOOD
+   if ($template !== '')      // GOOD
 
    if (strlen($template) > 0) // BAD! strlen("-1") is greater than 0
    if (is_string($template) && strlen($template) > 0) // BETTER
 
    if ($foo == $bar)          // BAD, avoid truthy comparisons
    if ($foo != $bar)          // BAD, avoid falsy comparisons
-   if ($foo === $bar))        // GOOD
-   if ($foo !== $bar))        // GOOD
+   if ($foo === $bar)         // GOOD
+   if ($foo !== $bar)         // GOOD
 
   .. figure:: Images/PHP_TrueFalse.jpg
     :alt: Truthy and falsy are fuzzy...
@@ -876,7 +876,7 @@ naming. [#]_ As an example, consider the example for a coding smell::
 This is a perfect case for the refactoring technique "extract method": In order to avoid
 the comment, create a new method which is as explanatory as the comment::
 
- if ($this->isValidPerson($person) {
+ if ($this->isValidPerson($person)) {
    $xmM = $thd;
  }
 

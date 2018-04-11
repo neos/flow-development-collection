@@ -17,6 +17,8 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Component\ComponentContext;
 use Neos\Flow\Http\Request;
 use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
+use Neos\Flow\Mvc\Routing\Dto\RouteContext;
 use Neos\Flow\Mvc\Routing\Route;
 use Neos\Utility\Arrays;
 use Neos\Utility\Files;
@@ -213,7 +215,7 @@ abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
     protected function route(Request $httpRequest)
     {
         $actionRequest = new ActionRequest($httpRequest);
-        $matchResults = $this->router->route($httpRequest);
+        $matchResults = $this->router->route(new RouteContext($httpRequest, RouteParameters::createEmpty()));
         if ($matchResults !== null) {
             $requestArguments = $actionRequest->getArguments();
             $mergedArguments = Arrays::arrayMergeRecursiveOverrule($requestArguments, $matchResults);

@@ -20,7 +20,7 @@ use Neos\Flow\Annotations as Flow;
  * @api
  * @Flow\Proxy(false)
  */
-class Response extends AbstractMessage implements ResponseInterface
+class Response extends AbstractMessage implements ResponseInterface, \Psr\Http\Message\ResponseInterface
 {
     /**
      * @var Response
@@ -128,6 +128,7 @@ class Response extends AbstractMessage implements ResponseInterface
     {
         $response = new static($parentResponse);
 
+        // see https://tools.ietf.org/html/rfc7230#section-3.5
         $lines = explode(chr(10), $rawResponse);
         $statusLine = array_shift($lines);
 
@@ -135,6 +136,10 @@ class Response extends AbstractMessage implements ResponseInterface
             throw new \InvalidArgumentException('The given raw HTTP message is not a valid response.', 1335175601);
         }
         list($version, $statusCode, $reasonPhrase) = explode(' ', $statusLine, 3);
+        if (strlen($statusCode) !== 3) {
+            // See https://tools.ietf.org/html/rfc7230#section-3.1.2
+            throw new \InvalidArgumentException('The given raw HTTP message contains an invalid status code.', 1502981352);
+        }
         $response->setVersion($version);
         $response->setStatus((integer)$statusCode, trim($reasonPhrase));
 
@@ -147,7 +152,11 @@ class Response extends AbstractMessage implements ResponseInterface
                     $parsingHeader = false;
                     continue;
                 }
-                $fieldName = trim(substr($line, 0, strpos($line, ':')));
+                $headerSeparatorIndex = strpos($line, ':');
+                if ($headerSeparatorIndex === false) {
+                    throw new \InvalidArgumentException('The given raw HTTP message contains an invalid header.', 1502984804);
+                }
+                $fieldName = trim(substr($line, 0, $headerSeparatorIndex));
                 $fieldValue = trim(substr($line, strlen($fieldName) + 1));
                 if (strtoupper(substr($fieldName, 0, 10)) === 'SET-COOKIE') {
                     $cookie = Cookie::createFromRawSetCookieHeader($fieldValue);
@@ -160,6 +169,9 @@ class Response extends AbstractMessage implements ResponseInterface
             } else {
                 $contentLines[] = $line;
             }
+        }
+        if ($parsingHeader === true) {
+            throw new \InvalidArgumentException('The given raw HTTP message contains no separating empty line between header and body.', 1502984823);
         }
         $content = implode(chr(10), $contentLines);
 
@@ -475,11 +487,7 @@ class Response extends AbstractMessage implements ResponseInterface
         $statusHeader = rtrim($this->getStatusLine(), "\r\n");
 
         $preparedHeaders[] = $statusHeader;
-        foreach ($this->headers->getAll() as $name => $values) {
-            foreach ($values as $value) {
-                $preparedHeaders[] = $name . ': ' . $value;
-            }
-        }
+        $preparedHeaders = array_merge($preparedHeaders, $this->headers->getPreparedValues());
 
         return $preparedHeaders;
     }
@@ -596,7 +604,7 @@ class Response extends AbstractMessage implements ResponseInterface
      *
      * @return void
      * @codeCoverageIgnore
-     * @api
+     * @api PSR-7
      */
     public function send()
     {
@@ -629,6 +637,53 @@ class Response extends AbstractMessage implements ResponseInterface
     public function getStartLine()
     {
         return $this->getStatusLine();
+    }
+
+    /**
+     * Return an instance with the specified status code and, optionally, reason phrase.
+     *
+     * If no reason phrase is specified, implementations MAY choose to default
+     * to the RFC 7231 or IANA recommended reason phrase for the response's
+     * status code.
+     *
+     * This method MUST be implemented in such a way as to retain the
+     * immutability of the message, and MUST return an instance that has the
+     * updated status and reason phrase.
+     *
+     * @link http://tools.ietf.org/html/rfc7231#section-6
+     * @link http://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml
+     * @param int $code The 3-digit integer result code to set.
+     * @param string $reasonPhrase The reason phrase to use with the
+     *     provided status code; if none is provided, implementations MAY
+     *     use the defaults as suggested in the HTTP specification.
+     * @return self
+     * @throws \InvalidArgumentException For invalid status code arguments.
+     * @api PSR-7
+     */
+    public function withStatus($code, $reasonPhrase = '')
+    {
+        $newResponse = clone $this;
+        $newResponse->setStatus($code, ($reasonPhrase === '' ? null : $reasonPhrase));
+        return $newResponse;
+    }
+
+    /**
+     * Gets the response reason phrase associated with the status code.
+     *
+     * Because a reason phrase is not a required element in a response
+     * status line, the reason phrase value MAY be null. Implementations MAY
+     * choose to return the default RFC 7231 recommended reason phrase (or those
+     * listed in the IANA HTTP Status Code Registry) for the response's
+     * status code.
+     *
+     * @link http://tools.ietf.org/html/rfc7231#section-6
+     * @link http://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml
+     * @return string Reason phrase; must return an empty string if none present.
+     * @api PSR-7
+     */
+    public function getReasonPhrase()
+    {
+        return $this->statusMessage;
     }
 
     /**

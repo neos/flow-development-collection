@@ -96,9 +96,7 @@ class ObjectPathMappingRepository extends Repository
     {
         foreach ($this->entityManager->getUnitOfWork()->getIdentityMap() as $className => $entities) {
             if ($className === $this->entityClassName) {
-                foreach ($entities as $entityToPersist) {
-                    $this->entityManager->flush($entityToPersist);
-                }
+                $this->entityManager->flush($entities);
                 return;
             }
         }

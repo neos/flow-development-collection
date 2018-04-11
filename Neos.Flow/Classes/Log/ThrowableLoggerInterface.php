@@ -24,7 +24,6 @@ namespace Neos\Flow\Log;
  *   LOG_INFO    # Informational: informational messages
  *   LOG_DEBUG   # Debug: debug-level messages
  *
- * @api
  */
 interface ThrowableLoggerInterface extends LoggerInterface
 {

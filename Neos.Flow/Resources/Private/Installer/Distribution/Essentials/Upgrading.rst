@@ -1,13 +1,21 @@
 Upgrading instructions
 ======================
 
-This file contains instructions for upgrading your Flow 4.1 based
-applications to Neos Flow 4.2
+This file contains instructions for upgrading your Flow 4.2 based
+applications to Neos Flow 4.3
 
 What has changed
 ----------------
 
-…
+- The Flow-routing is improved and now allows the definition of RoutingParameters
+via HTTP-components.
+
+- Flow now allows bypassing the custom class loader for performance.
+
+- The log-package was extracted from Flow to become a separate independent
+composer-package neos/flow-log.
+
+For further details see the ReleaseNotes and ChangeLogs.
 
 Upgrading your Packages
 -----------------------

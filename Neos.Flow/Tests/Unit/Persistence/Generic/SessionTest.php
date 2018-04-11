@@ -583,8 +583,11 @@ class SessionTest extends UnitTestCase
         $knownObject = $this->createMock(ProxyInterface::class);
         $knownObject->Persistence_Object_Identifier = 'fakeUuid';
 
+        $mockReflectionService = $this->getMockBuilder(ReflectionService::class)->setMethods(['getPropertyNamesByTag'])->getMock();
+        $mockReflectionService->expects($this->any())->method('getPropertyNamesByTag')->will($this->returnValue([]));
+
         $session = new Persistence\Generic\Session();
-        $session->injectReflectionService($this->createMock(ReflectionService::class));
+        $session->injectReflectionService($mockReflectionService);
 
         $this->assertEquals('fakeUuid', $session->getIdentifierByObject($knownObject));
     }
@@ -600,8 +603,11 @@ class SessionTest extends UnitTestCase
         $knownObject = $this->createMock(ProxyInterface::class);
         $knownObject->Persistence_Object_Identifier = 'fakeHash';
 
+        $mockReflectionService = $this->getMockBuilder(ReflectionService::class)->setMethods(['getPropertyNamesByTag'])->getMock();
+        $mockReflectionService->expects($this->any())->method('getPropertyNamesByTag')->will($this->returnValue([]));
+
         $session = new Persistence\Generic\Session();
-        $session->injectReflectionService($this->createMock(ReflectionService::class));
+        $session->injectReflectionService($mockReflectionService);
 
         $this->assertEquals('fakeHash', $session->getIdentifierByObject($knownObject));
     }
@@ -616,8 +622,11 @@ class SessionTest extends UnitTestCase
     {
         $unknownObject = $this->createMock(ProxyInterface::class);
 
+        $mockReflectionService = $this->getMockBuilder(ReflectionService::class)->setMethods(['getPropertyNamesByTag'])->getMock();
+        $mockReflectionService->expects($this->any())->method('getPropertyNamesByTag')->will($this->returnValue([]));
+
         $session = new Persistence\Generic\Session();
-        $session->injectReflectionService($this->createMock(ReflectionService::class));
+        $session->injectReflectionService($mockReflectionService);
 
         $this->assertNull($session->getIdentifierByObject($unknownObject));
     }

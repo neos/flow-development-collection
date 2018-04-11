@@ -149,7 +149,7 @@ class CacheCommandController extends CommandController
         }
 
         $frozenPackages = [];
-        foreach (array_keys($this->packageManager->getActivePackages()) as $packageKey) {
+        foreach (array_keys($this->packageManager->getAvailablePackages()) as $packageKey) {
             if ($this->packageManager->isPackageFrozen($packageKey)) {
                 $frozenPackages[] = $packageKey;
             }

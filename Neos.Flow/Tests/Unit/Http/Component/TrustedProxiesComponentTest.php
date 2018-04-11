@@ -17,7 +17,6 @@ use Neos\Flow\Http\Request;
 use Neos\Flow\Http\Response;
 use Neos\Flow\Http\Uri;
 use Neos\Flow\Tests\UnitTestCase;
-use Zend\Code\Reflection\ClassReflection;
 
 /**
  * Test case for the TrustedProxiesComponent
@@ -51,8 +50,8 @@ class TrustedProxiesComponentTest extends UnitTestCase
 
     public function setUp()
     {
-        $this->mockHttpRequest = $this->getMockBuilder(\Neos\Flow\Http\Request::class)->disableOriginalConstructor()->getMock();
-        $this->mockHttpResponse = $this->getMockBuilder(\Neos\Flow\Http\Response::class)->disableOriginalConstructor()->getMock();
+        $this->mockHttpRequest = $this->getMockBuilder(Request::class)->disableOriginalConstructor()->getMock();
+        $this->mockHttpResponse = $this->getMockBuilder(Response::class)->disableOriginalConstructor()->getMock();
 
         $this->mockComponentContext =
         $this->trustedProxiesComponent = new TrustedProxiesComponent(array());
@@ -96,9 +95,7 @@ class TrustedProxiesComponentTest extends UnitTestCase
      */
     public function portInProxyHeaderIsAcknowledged()
     {
-        $scriptName = $_SERVER['SCRIPT_NAME'];
-
-        $_SERVER = array(
+        $server = array_merge($_SERVER, [
             'HTTP_HOST' => 'dev.blog.rob',
             'HTTP_X_FORWARDED_PORT' => 2727,
             'SERVER_NAME' => 'dev.blog.rob',
@@ -107,13 +104,11 @@ class TrustedProxiesComponentTest extends UnitTestCase
             'REMOTE_ADDR' => '127.0.0.1',
             'REQUEST_URI' => '/posts/2011/11/28/laboriosam-soluta-est-minus-molestiae?getKey1=getValue1&getKey2=getValue2',
             'REQUEST_TIME' => 1326472534
-        );
+        ]);
 
-        $request = Request::create(new Uri('https://dev.blog.rob/foo/bar?baz=quux&coffee=due'), array(), array(), array(), $_SERVER);
+        $request = Request::create(new Uri('https://dev.blog.rob/foo/bar?baz=quux&coffee=due'), 'GET', array(), array(), $server);
         $trustedRequest = $this->callWithRequest($request);
         $this->assertSame(2727, $trustedRequest->getPort());
-
-        $_SERVER['SCRIPT_NAME'] = $scriptName;
     }
 
     /**
@@ -336,6 +331,56 @@ class TrustedProxiesComponentTest extends UnitTestCase
         $request = Request::create(new Uri('http://acme.com'), 'GET', array(), array(), array('HTTP_X_FORWARDED_HOST' => 'neos.io'));
         $trustedRequest = $this->callWithRequest($request);
         $this->assertEquals('acme.com', $trustedRequest->getUri()->getHost());
+    }
+
+    /**
+     * @test
+     */
+    public function hostIsOverridenIfTheHeaderIsTrusted()
+    {
+        $request = Request::create(new Uri('http://acme.com'), 'GET', array(), array(), array('HTTP_X_FORWARDED_HOST' => 'neos.io'));
+        $trustedRequest = $this->callWithRequest($request);
+        $this->assertEquals('neos.io', $trustedRequest->getUri()->getHost());
+    }
+
+    /**
+     * @test
+     */
+    public function portIsOverridenIfTheHostHeaderContainsPort()
+    {
+        $request = Request::create(new Uri('http://acme.com'), 'GET', array(), array(), array('HTTP_X_FORWARDED_HOST' => 'neos.io:443'));
+        $trustedRequest = $this->callWithRequest($request);
+        $this->assertEquals(443, $trustedRequest->getUri()->getPort());
+    }
+
+    /**
+     * @test
+     */
+    public function portIsOverridenIfTheHostHeaderContainsJustThePort()
+    {
+        $request = Request::create(new Uri('http://acme.com'), 'GET', array(), array(), array('HTTP_X_FORWARDED_HOST' => ':443'));
+        $trustedRequest = $this->callWithRequest($request);
+        $this->assertEquals(443, $trustedRequest->getUri()->getPort());
+    }
+
+    /**
+     * @test
+     */
+    public function portIsOverridenIfTheHostHeaderContainsPortAlsoIfProtocolHeaderIsSet()
+    {
+        $request = Request::create(new Uri('http://acme.com'), 'GET', array(), array(), array('HTTP_X_FORWARDED_HOST' => 'neos.io:443', 'HTTP_X_FORWARDED_PROTO' => 'http'));
+        $trustedRequest = $this->callWithRequest($request);
+        $this->assertEquals(443, $trustedRequest->getUri()->getPort());
+    }
+
+    /**
+     * @test
+     */
+    public function portFromHostHeaderIsOverriddenByPortHeader()
+    {
+        $request = Request::create(new Uri('http://acme.com'), 'GET', array(), array(), array('HTTP_X_FORWARDED_PORT' => 8080, 'HTTP_X_FORWARDED_HOST' => 'neos.io:443'));
+        $trustedRequest = $this->callWithRequest($request);
+        $this->assertEquals(8080, $trustedRequest->getUri()->getPort());
     }
 
     /**
