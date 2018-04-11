@@ -36,18 +36,6 @@ class ControllerObjectName implements RequestPatternInterface
     }
 
     /**
-     * Sets an controller object name pattern (preg_match() syntax)
-     *
-     * @param string $controllerObjectNamePattern The preg_match() styled controller object name pattern
-     * @return void
-     * @deprecated since 3.3 this is not used - use options instead (@see __construct())
-     */
-    public function setPattern($controllerObjectNamePattern)
-    {
-        $this->options['controllerObjectNamePattern'] = $controllerObjectNamePattern;
-    }
-
-    /**
      * Matches a \Neos\Flow\Mvc\RequestInterface against its set controller object name pattern rules
      *
      * @param RequestInterface $request The request that should be matched
