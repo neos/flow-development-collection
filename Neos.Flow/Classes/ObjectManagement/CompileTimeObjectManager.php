@@ -213,22 +213,24 @@ class CompileTimeObjectManager extends ObjectManager
         $availableClassNames = ['' => ['DateTime']];
         /** @var \Neos\Flow\Package\Package $package */
         foreach ($packages as $packageKey => $package) {
-            if ($package->isObjectManagementEnabled() && (ComposerUtility::isFlowPackageType($package->getComposerManifest('type')) || isset($includeClassesConfiguration[$packageKey]))) {
-                foreach ($package->getClassFiles() as $fullClassName => $path) {
+            $packageType = $package->getComposerManifest('type');
+            if ($packageType === null || $package->isObjectManagementEnabled() === false || (!isset($includeClassesConfiguration[$packageKey]) && ComposerUtility::isFlowPackageType($packageType) === false)) {
+                continue;
+            }
+            foreach ($package->getClassFiles() as $fullClassName => $path) {
+                if (substr($fullClassName, -9, 9) !== 'Exception') {
+                    $availableClassNames[$packageKey][] = $fullClassName;
+                }
+            }
+            if (isset($this->allSettings['Neos']['Flow']['object']['registerFunctionalTestClasses']) && $this->allSettings['Neos']['Flow']['object']['registerFunctionalTestClasses'] === true) {
+                foreach ($package->getFunctionalTestsClassFiles() as $fullClassName => $path) {
                     if (substr($fullClassName, -9, 9) !== 'Exception') {
                         $availableClassNames[$packageKey][] = $fullClassName;
                     }
                 }
-                if (isset($this->allSettings['Neos']['Flow']['object']['registerFunctionalTestClasses']) && $this->allSettings['Neos']['Flow']['object']['registerFunctionalTestClasses'] === true) {
-                    foreach ($package->getFunctionalTestsClassFiles() as $fullClassName => $path) {
-                        if (substr($fullClassName, -9, 9) !== 'Exception') {
-                            $availableClassNames[$packageKey][] = $fullClassName;
-                        }
-                    }
-                }
-                if (isset($availableClassNames[$packageKey]) && is_array($availableClassNames[$packageKey])) {
-                    $availableClassNames[$packageKey] = array_unique($availableClassNames[$packageKey]);
-                }
+            }
+            if (isset($availableClassNames[$packageKey]) && is_array($availableClassNames[$packageKey])) {
+                $availableClassNames[$packageKey] = array_unique($availableClassNames[$packageKey]);
             }
         }
         return $this->filterClassNamesFromConfiguration($availableClassNames, $includeClassesConfiguration);
