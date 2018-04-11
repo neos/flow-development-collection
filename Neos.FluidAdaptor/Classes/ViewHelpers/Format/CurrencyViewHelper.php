@@ -12,6 +12,7 @@ namespace Neos\FluidAdaptor\ViewHelpers\Format;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\I18n\Cldr\Reader\NumbersReader;
 use Neos\Flow\I18n\Exception as I18nException;
 use Neos\Flow\I18n\Formatter\NumberFormatter;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractLocaleAwareViewHelper;
@@ -85,6 +86,9 @@ use Neos\FluidAdaptor\Core\ViewHelper\Exception as ViewHelperException;
  * Fore more information about localization see section ``Internationalization & Localization Framework`` in the
  * Flow documentation.
  *
+ * Additionally, if ``currencyCode`` is set, rounding and decimal digits are replaced by the rules for the
+ * respective currency (e.g. JPY never has decimal digits, CHF is rounded using 5 decimals.)
+ *
  * @api
  */
 class CurrencyViewHelper extends AbstractLocaleAwareViewHelper
@@ -109,6 +113,7 @@ class CurrencyViewHelper extends AbstractLocaleAwareViewHelper
         $this->registerArgument('prependCurrency', 'boolean', '(optional) Indicates if currency symbol should be placed before or after the numeric value.', false, false);
         $this->registerArgument('separateCurrency', 'boolean', '(optional) Indicates if a space character should be placed between the number and the currency sign.', false, true);
         $this->registerArgument('decimals', 'integer', '(optional) The number of decimal places.', false, 2);
+        $this->registerArgument('currencyCode', 'string', '(optional) The ISO 4217 currency code of the currency to format. Used to set decimal places and rounding.', false, null);
     }
 
     /**
@@ -130,7 +135,7 @@ class CurrencyViewHelper extends AbstractLocaleAwareViewHelper
                 throw new InvalidVariableException('Using the Locale requires a currencySign.', 1326378320);
             }
             try {
-                $output = $this->numberFormatter->formatCurrencyNumber($stringToFormat, $useLocale, $currencySign);
+                $output = $this->numberFormatter->formatCurrencyNumber($stringToFormat, $useLocale, $currencySign, NumbersReader::FORMAT_LENGTH_DEFAULT, $this->arguments['currencyCode']);
             } catch (I18nException $exception) {
                 throw new ViewHelperException($exception->getMessage(), 1382350428, $exception);
             }

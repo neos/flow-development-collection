@@ -261,6 +261,18 @@ For these cases it is possible to whitelist specific objects via the Persistence
 Be very careful and think twice before using this method since many security measures are
 not active during "safe" request methods.
 
+Dealing with big result sets
+----------------------------
+
+If the amount of the stored data increases, receiving all objects using a ``findAll()`` may
+consume a lot more memory than available. In this cases, you can use the ``findAllIterator()``.
+This method returns an ``IterableResult``over which you can iterate, getting only one object at a time::
+
+    $iterator = $this->postRepository->findAllIterator();
+    foreach ($this->postRepository->iterate($iterator) as $post) {
+        // Iterate over all posts
+    }
+
 Conventions for File and Class Names
 ====================================
 

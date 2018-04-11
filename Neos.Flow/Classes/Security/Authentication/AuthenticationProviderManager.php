@@ -306,13 +306,7 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
         $this->tokens = [];
         $this->providers = [];
 
-        foreach ($this->providerConfigurations as $providerName => $providerConfiguration) {
-            if (isset($providerConfiguration['providerClass'])) {
-                throw new Exception\InvalidAuthenticationProviderException('The configured authentication provider "' . $providerName . '" uses the deprecated option "providerClass". Check your settings and use the new option "provider" instead.', 1327672030);
-            }
-            if (isset($providerConfiguration['options'])) {
-                throw new Exception\InvalidAuthenticationProviderException('The configured authentication provider "' . $providerName . '" uses the deprecated option "options". Check your settings and use the new option "providerOptions" instead.', 1327672031);
-            }
+        foreach ($providerConfigurations as $providerName => $providerConfiguration) {
             if (!is_array($providerConfiguration) || !isset($providerConfiguration['provider'])) {
                 throw new Exception\InvalidAuthenticationProviderException('The configured authentication provider "' . $providerName . '" needs a "provider" option!', 1248209521);
             }
@@ -327,7 +321,7 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
             }
 
             /** @var $providerInstance AuthenticationProviderInterface */
-            $providerInstance = new $providerObjectName($providerName, $providerOptions);
+            $providerInstance = $providerObjectName::create($providerName, $providerOptions);
             $this->providers[$providerName] = $providerInstance;
 
             /** @var $tokenInstance TokenInterface */

@@ -13,18 +13,18 @@ include_once(__DIR__ . '/../../BaseTestCase.php');
  * source code.
  */
 
-use Neos\Cache\Backend\ApcBackend;
+use Neos\Cache\Backend\ApcuBackend;
 use Neos\Cache\EnvironmentConfiguration;
 use Neos\Cache\Tests\BaseTestCase;
 use Neos\Cache\Frontend\FrontendInterface;
 use Neos\Cache\Frontend\VariableFrontend;
 
 /**
- * Testcase for the APC cache backend
+ * Testcase for the APCu cache backend
  *
- * @requires extension apc
+ * @requires extension apcu
  */
-class ApcBackendTest extends BaseTestCase
+class ApcuBackendTest extends BaseTestCase
 {
     /**
      * Sets up this testcase
@@ -33,9 +33,8 @@ class ApcBackendTest extends BaseTestCase
      */
     public function setUp()
     {
-        $this->markTestSkipped('Disabling ALL apc tests for now as they are so unreliable');
         if (ini_get('apc.enabled') == 0 || ini_get('apc.enable_cli') == 0) {
-            $this->markTestSkipped('APC is disabled (for CLI).');
+            $this->markTestSkipped('APCu is disabled (for CLI).');
         }
         if (ini_get('apc.slam_defense') == 1) {
             $this->markTestSkipped('This testcase can only be executed with apc.slam_defense = Off');
@@ -48,7 +47,7 @@ class ApcBackendTest extends BaseTestCase
      */
     public function setThrowsExceptionIfNoFrontEndHasBeenSet()
     {
-        $backend = new ApcBackend($this->getEnvironmentConfiguration(), []);
+        $backend = new ApcuBackend($this->getEnvironmentConfiguration(), []);
         $data = 'Some data';
         $identifier = 'MyIdentifier' . md5(uniqid(mt_rand(), true));
         $backend->set($identifier, $data);
@@ -64,7 +63,7 @@ class ApcBackendTest extends BaseTestCase
         $identifier = 'MyIdentifier' . md5(uniqid(mt_rand(), true));
         $backend->set($identifier, $data);
         $inCache = $backend->has($identifier);
-        $this->assertTrue($inCache, 'APC backend failed to set and check entry');
+        $this->assertTrue($inCache, 'APCu backend failed to set and check entry');
     }
 
     /**
@@ -77,7 +76,7 @@ class ApcBackendTest extends BaseTestCase
         $identifier = 'MyIdentifier' . md5(uniqid(mt_rand(), true));
         $backend->set($identifier, $data);
         $fetchedData = $backend->get($identifier);
-        $this->assertEquals($data, $fetchedData, 'APC backend failed to set and retrieve data');
+        $this->assertEquals($data, $fetchedData, 'APCu backend failed to set and retrieve data');
     }
 
     /**
@@ -91,7 +90,7 @@ class ApcBackendTest extends BaseTestCase
         $backend->set($identifier, $data);
         $backend->remove($identifier);
         $inCache = $backend->has($identifier);
-        $this->assertFalse($inCache, 'Failed to set and remove data from APC backend');
+        $this->assertFalse($inCache, 'Failed to set and remove data from APCu backend');
     }
 
     /**
@@ -106,7 +105,7 @@ class ApcBackendTest extends BaseTestCase
         $otherData = 'some other data';
         $backend->set($identifier, $otherData);
         $fetchedData = $backend->get($identifier);
-        $this->assertEquals($otherData, $fetchedData, 'APC backend failed to overwrite and retrieve data');
+        $this->assertEquals($otherData, $fetchedData, 'APCu backend failed to overwrite and retrieve data');
     }
 
     /**
@@ -173,15 +172,15 @@ class ApcBackendTest extends BaseTestCase
         $backend = $this->setUpBackend();
 
         $data = 'some data' . microtime();
-        $backend->set('BackendAPCTest1', $data, ['UnitTestTag%test', 'UnitTestTag%boring']);
-        $backend->set('BackendAPCTest2', $data, ['UnitTestTag%test', 'UnitTestTag%special']);
-        $backend->set('BackendAPCTest3', $data, ['UnitTestTag%test']);
+        $backend->set('BackendAPCUTest1', $data, ['UnitTestTag%test', 'UnitTestTag%boring']);
+        $backend->set('BackendAPCUTest2', $data, ['UnitTestTag%test', 'UnitTestTag%special']);
+        $backend->set('BackendAPCUTest3', $data, ['UnitTestTag%test']);
 
         $backend->flushByTag('UnitTestTag%special');
 
-        $this->assertTrue($backend->has('BackendAPCTest1'), 'BackendAPCTest1');
-        $this->assertFalse($backend->has('BackendAPCTest2'), 'BackendAPCTest2');
-        $this->assertTrue($backend->has('BackendAPCTest3'), 'BackendAPCTest3');
+        $this->assertTrue($backend->has('BackendAPCUTest1'), 'BackendAPCUTest1');
+        $this->assertFalse($backend->has('BackendAPCUTest2'), 'BackendAPCUTest2');
+        $this->assertTrue($backend->has('BackendAPCUTest3'), 'BackendAPCUTest3');
     }
 
     /**
@@ -192,15 +191,15 @@ class ApcBackendTest extends BaseTestCase
         $backend = $this->setUpBackend();
 
         $data = 'some data' . microtime();
-        $backend->set('BackendAPCTest1', $data);
-        $backend->set('BackendAPCTest2', $data);
-        $backend->set('BackendAPCTest3', $data);
+        $backend->set('BackendAPCUTest1', $data);
+        $backend->set('BackendAPCUTest2', $data);
+        $backend->set('BackendAPCUTest3', $data);
 
         $backend->flush();
 
-        $this->assertFalse($backend->has('BackendAPCTest1'), 'BackendAPCTest1');
-        $this->assertFalse($backend->has('BackendAPCTest2'), 'BackendAPCTest2');
-        $this->assertFalse($backend->has('BackendAPCTest3'), 'BackendAPCTest3');
+        $this->assertFalse($backend->has('BackendAPCUTest1'), 'BackendAPCUTest1');
+        $this->assertFalse($backend->has('BackendAPCUTest2'), 'BackendAPCUTest2');
+        $this->assertFalse($backend->has('BackendAPCUTest3'), 'BackendAPCUTest3');
     }
 
     /**
@@ -210,12 +209,12 @@ class ApcBackendTest extends BaseTestCase
     {
         $thisCache = $this->createMock(FrontendInterface::class);
         $thisCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('thisCache'));
-        $thisBackend = new ApcBackend($this->getEnvironmentConfiguration(), []);
+        $thisBackend = new ApcuBackend($this->getEnvironmentConfiguration(), []);
         $thisBackend->setCache($thisCache);
 
         $thatCache = $this->createMock(FrontendInterface::class);
         $thatCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('thatCache'));
-        $thatBackend = new ApcBackend($this->getEnvironmentConfiguration(), []);
+        $thatBackend = new ApcuBackend($this->getEnvironmentConfiguration(), []);
         $thatBackend->setCache($thatCache);
 
         $thisBackend->set('thisEntry', 'Hello');
@@ -274,14 +273,15 @@ class ApcBackendTest extends BaseTestCase
     }
 
     /**
-     * Sets up the APC backend used for testing
+     * Sets up the APCu backend used for testing
      *
-     * @return ApcBackend
+     * @return ApcuBackend
+     * @throws \Neos\Cache\Exception
      */
     protected function setUpBackend()
     {
         $cache = $this->createMock(FrontendInterface::class);
-        $backend = new ApcBackend($this->getEnvironmentConfiguration(), []);
+        $backend = new ApcuBackend($this->getEnvironmentConfiguration(), []);
         $backend->setCache($cache);
 
         return $backend;
