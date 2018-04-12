@@ -11,12 +11,12 @@ namespace Neos\Utility\Arrays\Tests\Unit;
  * source code.
  */
 
-use TYPO3\Flow\Utility\PositionalArraySorter;
+use Neos\Utility\PositionalArraySorter;
 
 /**
  * Tests for the PositionalArraySorter utility class
  */
-class PositionalArraySorterTest extends \PHPUnit_Framework_TestCase
+class PositionalArraySorterTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @test
@@ -49,7 +49,7 @@ class PositionalArraySorterTest extends \PHPUnit_Framework_TestCase
      * @dataProvider invalidPositions
      *
      * @param array $subject
-     * @expectedException \TYPO3\Flow\Utility\Exception\InvalidPositionException
+     * @expectedException \Neos\Utility\Exception\InvalidPositionException
      */
     public function toArrayThrowsExceptionForInvalidPositions(array $subject)
     {

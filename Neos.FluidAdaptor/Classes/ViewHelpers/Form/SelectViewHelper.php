@@ -11,12 +11,12 @@ namespace Neos\FluidAdaptor\ViewHelpers\Form;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\I18n\Exception\InvalidLocaleIdentifierException;
-use TYPO3\Flow\I18n\Locale;
-use TYPO3\Flow\I18n\Translator;
-use TYPO3\Flow\Mvc\ActionRequest;
-use TYPO3\Flow\Reflection\ObjectAccess;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\I18n\Exception\InvalidLocaleIdentifierException;
+use Neos\Flow\I18n\Locale;
+use Neos\Flow\I18n\Translator;
+use Neos\Flow\Mvc\ActionRequest;
+use Neos\Utility\ObjectAccess;
 use Neos\FluidAdaptor;
 use Neos\FluidAdaptor\Core\ViewHelper;
 
@@ -146,7 +146,8 @@ class SelectViewHelper extends AbstractFormFieldViewHelper
         $this->registerUniversalTagAttributes();
         $this->registerTagAttribute('multiple', 'string', 'if set, multiple select field');
         $this->registerTagAttribute('size', 'string', 'Size of input field');
-        $this->registerTagAttribute('disabled', 'string', 'Specifies that the input element should be disabled when the page loads');
+        $this->registerTagAttribute('disabled', 'boolean', 'Specifies that the input element should be disabled when the page loads', false, false);
+        $this->registerTagAttribute('required', 'boolean', 'Specifies that the select element requires at least one selected option', false, false);
         $this->registerArgument('options', 'array', 'Associative array with internal IDs as key, and the values are displayed in the select box', true);
         $this->registerArgument('optionValueField', 'string', 'If specified, will call the appropriate getter on each object to determine the value.');
         $this->registerArgument('optionLabelField', 'string', 'If specified, will call the appropriate getter on each object to determine the label.');
@@ -367,7 +368,7 @@ class SelectViewHelper extends AbstractFormFieldViewHelper
      * @param string $label option tag label
      * @return string
      * @throws ViewHelper\Exception
-     * @throws Fluid\Exception
+     * @throws FluidAdaptor\Exception
      */
     protected function getTranslatedLabel($value, $label)
     {

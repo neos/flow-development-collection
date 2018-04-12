@@ -16,8 +16,8 @@ include_once(__DIR__ . '/../../BaseTestCase.php');
 use Neos\Cache\Backend\MemcachedBackend;
 use Neos\Cache\EnvironmentConfiguration;
 use Neos\Cache\Tests\BaseTestCase;
-use TYPO3\Flow\Cache\Frontend\AbstractFrontend;
-use TYPO3\Flow\Cache\Frontend\FrontendInterface;
+use Neos\Cache\Frontend\AbstractFrontend;
+use Neos\Cache\Frontend\FrontendInterface;
 
 /**
  * Testcase for the cache to memcached backend
@@ -44,7 +44,7 @@ class MemcachedBackendTest extends BaseTestCase
 
     /**
      * @test
-     * @expectedException \TYPO3\Flow\Cache\Exception
+     * @expectedException \Neos\Cache\Exception
      */
     public function setThrowsExceptionIfNoFrontEndHasBeenSet()
     {
@@ -57,7 +57,7 @@ class MemcachedBackendTest extends BaseTestCase
 
     /**
      * @test
-     * @expectedException \TYPO3\Flow\Cache\Exception
+     * @expectedException \Neos\Cache\Exception
      */
     public function initializeObjectThrowsExceptionIfNoMemcacheServerIsConfigured()
     {
@@ -66,7 +66,7 @@ class MemcachedBackendTest extends BaseTestCase
 
     /**
      * @test
-     * @expectedException \TYPO3\Flow\Cache\Exception
+     * @expectedException \Neos\Cache\Exception
      */
     public function setThrowsExceptionIfConfiguredServersAreUnreachable()
     {

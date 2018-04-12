@@ -1,0 +1,73 @@
+{
+    "name": "neos/flow",
+    "type": "neos-framework",
+    "description": "Flow Application Framework",
+    "homepage": "http://flow.neos.io",
+    "license": ["MIT"],
+
+    "require": {
+        "php": "~7.1",
+
+        "ext-zlib": "*",
+        "ext-SPL": "*",
+        "ext-json": ">=1.2.0",
+        "ext-reflection": "*",
+
+        "neos/cache": "*",
+        "neos/eel": "*",
+        "neos/error-messages": "*",
+        "neos/utility-arrays": "*",
+        "neos/utility-files": "*",
+        "neos/utility-lock": "*",
+        "neos/utility-mediatypes": "*",
+        "neos/utility-objecthandling": "*",
+        "neos/utility-opcodecache": "*",
+        "neos/utility-schema": "*",
+        "neos/utility-unicode": "*",
+        "neos/fluid-adaptor": "*",
+
+        "psr/http-message": "~1.0.0",
+        "psr/container": "~1.0.0",
+
+        "ramsey/uuid": "^3.0.0",
+
+        "doctrine/orm": "~2.5.0",
+        "doctrine/migrations": "~1.6.0",
+        "doctrine/dbal": "~2.6.0",
+        "doctrine/common": ">=2.4,<2.8-dev",
+
+        "symfony/yaml": "~4.0.0",
+        "symfony/dom-crawler": "~4.0.0",
+        "symfony/console": "~4.0.0",
+
+        "neos/composer-plugin": "^2.0.0"
+    },
+    "replace": {
+        "typo3/flow": "self.version"
+    },
+    "suggest": {
+        "ext-curl": "To use the \\Neos\\Flow\\Http\\Client\\CurlEngine",
+        "doctrine/data-fixtures": "To manage and execute the loading of data fixtures for the Doctrine ORM or ODM",
+        "neos/party": "To make use of basic user handling",
+        "php-uuid": "For fast generation of UUIDs used in the persistence."
+    },
+    "autoload": {
+        "psr-4": {
+            "Neos\\Flow\\": "Classes",
+            "Neos\\Flow\\Core\\Migrations\\": "Scripts/Migrations"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Neos\\Flow\\Tests\\": "Tests"
+        }
+    },
+    "extra": {
+        "neos": {
+            "package-key": "Neos.Flow"
+        },
+        "applied-flow-migrations": [
+            "Neos.Media-20161124233100"
+        ]
+    }
+}

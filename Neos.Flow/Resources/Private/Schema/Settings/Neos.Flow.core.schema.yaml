@@ -1,0 +1,12 @@
+type: dictionary
+additionalProperties: false
+properties:
+  'context': { type: string, required: true }
+  'applicationName': { type: string, required: true }
+  'applicationPackageKey': { type: string, required: true }
+  'phpBinaryPathAndFilename': { type: string, required: true }
+  'subRequestEnvironmentVariables':
+    type: dictionary
+  'subRequestPhpIniPathAndFilename': [string, boolean, 'null']
+  'subRequestIniEntries':
+    type: dictionary

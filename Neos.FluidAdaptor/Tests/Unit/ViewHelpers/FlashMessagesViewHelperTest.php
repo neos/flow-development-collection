@@ -18,7 +18,7 @@ require_once(__DIR__ . '/ViewHelperBaseTestcase.php');
 /**
  * Testcase for FlashMessagesViewHelper
  */
-class FlashMessagesViewHelperTest extends \Neos\FluidAdaptor\ViewHelpers\ViewHelperBaseTestcase
+class FlashMessagesViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase
 {
     /**
      * @var \Neos\FluidAdaptor\ViewHelpers\FlashMessagesViewHelper
@@ -26,7 +26,7 @@ class FlashMessagesViewHelperTest extends \Neos\FluidAdaptor\ViewHelpers\ViewHel
     protected $viewHelper;
 
     /**
-     * @var \TYPO3\Flow\Mvc\FlashMessageContainer
+     * @var \Neos\Flow\Mvc\FlashMessageContainer
      */
     protected $mockFlashMessageContainer;
 
@@ -42,15 +42,14 @@ class FlashMessagesViewHelperTest extends \Neos\FluidAdaptor\ViewHelpers\ViewHel
      */
     public function setUp()
     {
-        $this->mockFlashMessageContainer = $this->createMock(\TYPO3\Flow\Mvc\FlashMessageContainer::class);
-        $mockControllerContext = $this->getMockBuilder(\TYPO3\Flow\Mvc\Controller\ControllerContext::class)->disableOriginalConstructor()->getMock();
+        $this->mockFlashMessageContainer = $this->createMock(\Neos\Flow\Mvc\FlashMessageContainer::class);
+        $mockControllerContext = $this->getMockBuilder(\Neos\Flow\Mvc\Controller\ControllerContext::class)->disableOriginalConstructor()->getMock();
         $mockControllerContext->expects($this->any())->method('getFlashMessageContainer')->will($this->returnValue($this->mockFlashMessageContainer));
 
         $this->mockTagBuilder = $this->createMock(TagBuilder::class);
-        $this->viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\FlashMessagesViewHelper::class, array('dummy'));
+        $this->viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\FlashMessagesViewHelper::class, array('dummy', 'registerRenderMethodArguments'));
         $this->viewHelper->_set('controllerContext', $mockControllerContext);
         $this->viewHelper->_set('tag', $this->mockTagBuilder);
-        $this->viewHelper->initialize();
     }
 
     /**
@@ -58,6 +57,8 @@ class FlashMessagesViewHelperTest extends \Neos\FluidAdaptor\ViewHelpers\ViewHel
      */
     public function renderReturnsEmptyStringIfNoFlashMessagesAreInQueue()
     {
+        $this->mockFlashMessageContainer->expects($this->once())->method('getMessagesAndFlush')->will($this->returnValue([]));
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, []);
         $this->assertEmpty($this->viewHelper->render());
     }
 
@@ -69,23 +70,23 @@ class FlashMessagesViewHelperTest extends \Neos\FluidAdaptor\ViewHelpers\ViewHel
         return array(
             array(
                 '<li class="flashmessages-ok">Some Flash Message</li>',
-                array(new \TYPO3\Flow\Error\Message('Some Flash Message'))
+                array(new \Neos\Error\Messages\Message('Some Flash Message'))
             ),
             array(
                 '<li class="flashmessages-error">Error &quot;dynamic&quot; Flash Message</li>',
-                array(new \TYPO3\Flow\Error\Error('Error %s Flash Message', null, array('"dynamic"')))
+                array(new \Neos\Error\Messages\Error('Error %s Flash Message', null, array('"dynamic"')))
             ),
             array(
                 '<li class="flashmessages-error">Error Flash &quot;Message&quot;</li><li class="flashmessages-notice">Notice Flash Message</li>',
-                array(new \TYPO3\Flow\Error\Error('Error Flash "Message"'), new \TYPO3\Flow\Error\Notice('Notice Flash Message'))
+                array(new \Neos\Error\Messages\Error('Error Flash "Message"'), new \Neos\Error\Messages\Notice('Notice Flash Message'))
             ),
             array(
                 '<li class="flashmessages-warning"><h3>Some &quot;Warning&quot;</h3>Warning message body</li><li class="flashmessages-notice">Notice Flash Message</li>',
-                array(new \TYPO3\Flow\Error\Warning('Warning message body', null, array(), 'Some "Warning"'), new \TYPO3\Flow\Error\Notice('Notice Flash Message'))
+                array(new \Neos\Error\Messages\Warning('Warning message body', null, array(), 'Some "Warning"'), new \Neos\Error\Messages\Notice('Notice Flash Message'))
             ),
             array(
                 '<li class="customClass-ok">Message 01</li><li class="customClass-notice">Message 02</li>',
-                array(new \TYPO3\Flow\Error\Message('Message 01'), new \TYPO3\Flow\Error\Notice('Message 02')),
+                array(new \Neos\Error\Messages\Message('Message 01'), new \Neos\Error\Messages\Notice('Message 02')),
                 'customClass'
             ),
         );
@@ -103,7 +104,7 @@ class FlashMessagesViewHelperTest extends \Neos\FluidAdaptor\ViewHelpers\ViewHel
     {
         $this->mockFlashMessageContainer->expects($this->once())->method('getMessagesAndFlush')->will($this->returnValue($flashMessages));
         $this->mockTagBuilder->expects($this->once())->method('setContent')->with($expectedResult);
-        $this->viewHelper->_set('arguments', ['class' => $class]);
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['class' => $class]);
         $this->viewHelper->render();
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\FluidAdaptor\ViewHelpers;
 
 /*
@@ -11,11 +12,11 @@ namespace Neos\FluidAdaptor\ViewHelpers;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\I18n\Exception\InvalidLocaleIdentifierException;
-use TYPO3\Flow\I18n\Locale;
-use TYPO3\Flow\I18n\Translator;
-use TYPO3\Flow\Mvc\ActionRequest;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\I18n\Exception\InvalidLocaleIdentifierException;
+use Neos\Flow\I18n\Locale;
+use Neos\Flow\I18n\Translator;
+use Neos\Flow\Mvc\ActionRequest;
 use Neos\FluidAdaptor\Core\ViewHelper;
 use Neos\FluidAdaptor\Core\ViewHelper\Exception as ViewHelperException;
 
@@ -77,31 +78,41 @@ class TranslateViewHelper extends ViewHelper\AbstractViewHelper
     protected $translator;
 
     /**
-     * @param Translator $translator
+     * Initialize arguments
+     *
+     * @return void
+     * @api
      */
-    public function injectTranslator(Translator $translator)
+    public function initializeArguments()
     {
-        $this->translator = $translator;
+        $this->registerArgument('id', 'string', 'Id to use for finding translation (trans-unit id in XLIFF)', false, null);
+        $this->registerArgument('value', 'string', 'If $key is not specified or could not be resolved, this value is used. If this argument is not set, child nodes will be used to render the default', false, null);
+        $this->registerArgument('arguments', 'array', 'Numerically indexed array of values to be inserted into placeholders', false, array());
+        $this->registerArgument('source', 'string', 'Name of file with translations (use / as a directory separator)', false, 'Main');
+        $this->registerArgument('package', 'string', 'Target package key. If not set, the current package key will be used', false, null);
+        $this->registerArgument('quantity', 'mixed', 'A number to find plural form for (float or int), NULL to not use plural forms', false, null);
+        $this->registerArgument('locale', 'string', 'An identifier of locale to use (NULL for use the default locale)', false, null);
     }
+
 
     /**
      * Renders the translated label.
-
      * Replaces all placeholders with corresponding values if they exist in the
      * translated label.
      *
-     * @param string $id Id to use for finding translation (trans-unit id in XLIFF)
-     * @param string $value If $key is not specified or could not be resolved, this value is used. If this argument is not set, child nodes will be used to render the default
-     * @param array $arguments Numerically indexed array of values to be inserted into placeholders
-     * @param string $source Name of file with translations (use / as a directory separator)
-     * @param string $package Target package key. If not set, the current package key will be used
-     * @param mixed $quantity A number to find plural form for (float or int), NULL to not use plural forms
-     * @param string $locale An identifier of locale to use (NULL for use the default locale)
      * @return string Translated label or source label / ID key
      * @throws ViewHelperException
      */
-    public function render($id = null, $value = null, array $arguments = array(), $source = 'Main', $package = null, $quantity = null, $locale = null)
+    public function render()
     {
+        $id = $this->arguments['id'];
+        $value = $this->arguments['value'];
+        $arguments = $this->arguments['arguments'];
+        $source = $this->arguments['source'];
+        $package = $this->arguments['package'];
+        $quantity  = $this->arguments['quantity'];
+        $locale = $this->arguments['locale'];
+
         $localeObject = null;
         if ($locale !== null) {
             try {
@@ -116,7 +127,8 @@ class TranslateViewHelper extends ViewHelper\AbstractViewHelper
                 $package = $request->getControllerPackageKey();
             }
             if ($package === null) {
-                throw new ViewHelperException('The current package key can\'t be resolved. Make sure to initialize the Fluid view with a proper ActionRequest and/or specify the "package" argument when using the f:translate ViewHelper', 1416832309);
+                throw new ViewHelperException('The current package key can\'t be resolved. Make sure to initialize the Fluid view with a proper ActionRequest and/or specify the "package" argument when using the f:translate ViewHelper',
+                    1416832309);
             }
         }
         $originalLabel = $value === null ? $this->renderChildren() : $value;
@@ -133,5 +145,13 @@ class TranslateViewHelper extends ViewHelper\AbstractViewHelper
             return $originalLabel;
         }
         return (string)$id;
+    }
+
+    /**
+     * @param Translator $translator
+     */
+    public function injectTranslator(Translator $translator)
+    {
+        $this->translator = $translator;
     }
 }

@@ -11,25 +11,48 @@ namespace Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Security;
  * source code.
  */
 
-use TYPO3\Flow\Tests\UnitTestCase;
+use Neos\Flow\ObjectManagement\ObjectManagerInterface;
+use Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase;
+use Neos\FluidAdaptor\ViewHelpers\Security\CsrfTokenViewHelper;
 
 /**
  * Test case for the CsrfTokenViewHelper
  */
-class CsrfTokenViewHelperTest extends UnitTestCase
+class CsrfTokenViewHelperTest extends ViewHelperBaseTestcase
 {
+    /**
+     * @var CsrfTokenViewHelper|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $viewHelper;
+
+    /**
+     * @var ObjectManagerInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $objectManagerMock;
+
+    /**
+     *
+     */
+    public function setUp()
+    {
+        parent::setUp();
+        $this->viewHelper = $this->getMockBuilder(CsrfTokenViewHelper::class)->setMethods(['buildRenderChildrenClosure'])->getMock();
+        $this->injectDependenciesIntoViewHelper($this->viewHelper);
+        $this->objectManagerMock = $this->getMockBuilder(ObjectManagerInterface::class)->getMock();
+        $this->renderingContext->injectObjectManager($this->objectManagerMock);
+        $this->viewHelper->initializeArguments();
+    }
+
     /**
      * @test
      */
     public function viewHelperRendersTheCsrfTokenReturnedFromTheSecurityContext()
     {
-        $mockSecurityContext = $this->createMock(\TYPO3\Flow\Security\Context::class);
+        $mockSecurityContext = $this->createMock(\Neos\Flow\Security\Context::class);
         $mockSecurityContext->expects($this->once())->method('getCsrfProtectionToken')->will($this->returnValue('TheCsrfToken'));
+        $this->objectManagerMock->expects(self::any())->method('get')->willReturn($mockSecurityContext);
 
-        $viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\Security\CsrfTokenViewHelper::class, array('dummy'));
-        $viewHelper->_set('securityContext', $mockSecurityContext);
-
-        $actualResult = $viewHelper->render();
+        $actualResult = $this->viewHelper->render();
         $this->assertEquals('TheCsrfToken', $actualResult);
     }
 }

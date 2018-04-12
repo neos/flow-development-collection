@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Flow\Utility\Lock\Tests\Unit;
+namespace Neos\Utility\Lock\Tests\Unit;
 
 /*
  * This file is part of the Neos.Utility.Lock package.
@@ -12,15 +12,15 @@ namespace TYPO3\Flow\Utility\Lock\Tests\Unit;
  */
 
 use org\bovigo\vfs\vfsStream;
-use TYPO3\Flow\Utility\Lock\FlockLockStrategy;
-use TYPO3\Flow\Utility\Lock\Lock;
-use TYPO3\Flow\Utility\Lock\LockManager;
-use TYPO3\Flow\Utility\Lock\LockNotAcquiredException;
+use Neos\Utility\Lock\FlockLockStrategy;
+use Neos\Utility\Lock\Lock;
+use Neos\Utility\Lock\LockManager;
+use Neos\Utility\Lock\LockNotAcquiredException;
 
 /**
  * Strictly a functional test for the Lock class and FlockLockStrategy.
  */
-class LockTest extends \PHPUnit_Framework_TestCase
+class LockTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var string
@@ -71,11 +71,11 @@ class LockTest extends \PHPUnit_Framework_TestCase
     public function writeLockLocksExclusively()
     {
         $lock = new Lock('testLock');
-        $this->assertExclusivelyLocked($lock);
+        $this->assertExclusivelyLocked('Failed to exclusively lock file.');
         $this->assertTrue($lock->release());
 
         $lock = new Lock('testLock');
-        $this->assertExclusivelyLocked($lock);
+        $this->assertExclusivelyLocked('Failed to exclusively lock file.');
         $this->assertTrue($lock->release());
     }
 
@@ -94,7 +94,7 @@ class LockTest extends \PHPUnit_Framework_TestCase
     /**
      * @param string $message
      */
-    protected function assertExclusivelyLocked($message = '')
+    protected function assertExclusivelyLocked(string $message = '')
     {
         $lockFilePointer = fopen($this->lockFileName, 'w');
         $this->assertFalse(flock($lockFilePointer, LOCK_EX | LOCK_NB), $message);

@@ -12,16 +12,16 @@ namespace Neos\FluidAdaptor\View;
  */
 
 use Neos\FluidAdaptor\View\Exception\InvalidTemplateResourceException;
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Package\PackageManagerInterface;
-use TYPO3\Flow\Reflection\ObjectAccess;
-use TYPO3\Flow\Utility\Files;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Package\PackageManagerInterface;
+use Neos\Utility\ObjectAccess;
+use Neos\Utility\Files;
 
 /**
  * Class TemplatePaths
  *
  * Custom implementation for template paths resolving, one which differs from the base
- * implementation in that it is capable of resolving template paths based on TypoScript
+ * implementation in that it is capable of resolving template paths based on Fusion
  * configuration when given a package name, and is aware of the Frontend/Backend contexts of TYPO3.
  */
 class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
@@ -324,7 +324,7 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
             $packageName = $this->packageManager->getPackageKeyFromComposerName($packageName);
         }
 
-        if (!$this->packageManager->isPackageActive($packageName)) {
+        if (!$this->packageManager->isPackageAvailable($packageName)) {
             return '';
         }
 
@@ -358,7 +358,7 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
      */
     protected function getPackagePrivateResourcesPath($packageKey)
     {
-        if (!$this->packageManager->isPackageActive($packageKey)) {
+        if (!$this->packageManager->isPackageAvailable($packageKey)) {
             return null;
         }
         $packageResourcesPath = $this->packageManager->getPackage($packageKey)->getResourcesPath();

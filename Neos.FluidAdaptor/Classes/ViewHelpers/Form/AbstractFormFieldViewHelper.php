@@ -11,9 +11,9 @@ namespace Neos\FluidAdaptor\ViewHelpers\Form;
  * source code.
  */
 
-use TYPO3\Flow\Error\Result;
-use TYPO3\Flow\Mvc\ActionRequest;
-use TYPO3\Flow\Reflection\ObjectAccess;
+use Neos\Error\Messages\Result;
+use Neos\Flow\Mvc\ActionRequest;
+use Neos\Utility\ObjectAccess;
 
 /**
  * Abstract Form View Helper. Bundles functionality related to direct property access of objects in other Form ViewHelpers.
@@ -97,38 +97,6 @@ abstract class AbstractFormFieldViewHelper extends AbstractFormViewHelper
     }
 
     /**
-     * Get the value of this form element.
-     * Either returns arguments['value'], or the correct value for Object Access.
-     *
-     * @param boolean $convertObjects whether or not to convert objects to identifiers
-     * @return mixed Value
-     * @deprecated since Flow 3.0. Use getValueAttribute() and (if applicable) addAdditionalIdentityPropertiesIfNeeded()
-     */
-    protected function getValue($convertObjects = true)
-    {
-        $value = null;
-
-        if ($this->hasArgument('value')) {
-            $value = $this->arguments['value'];
-        } elseif ($this->isObjectAccessorMode()) {
-            if ($this->hasMappingErrorOccurred()) {
-                $value = $this->getLastSubmittedFormData();
-            } else {
-                $value = $this->getPropertyValue();
-            }
-            $this->addAdditionalIdentityPropertiesIfNeeded();
-        }
-
-        if ($convertObjects && is_object($value)) {
-            $identifier = $this->persistenceManager->getIdentifierByObject($value);
-            if ($identifier !== null) {
-                $value = $identifier;
-            }
-        }
-        return $value;
-    }
-
-    /**
      * Returns the current value of this Form ViewHelper and converts it to an identifier string in case it's an object
      * The value is determined as follows:
      * * If property mapping errors occurred and the form is re-displayed, the *last submitted* value is returned
@@ -159,15 +127,6 @@ abstract class AbstractFormFieldViewHelper extends AbstractFormViewHelper
             }
         }
         return $value;
-    }
-
-    /**
-     * @return boolean TRUE if a mapping error occurred, FALSE otherwise
-     * @deprecated since 2.1 Use hasMappingErrorOccurred() instead
-     */
-    protected function hasMappingErrorOccured()
-    {
-        return $this->hasMappingErrorOccurred();
     }
 
     /**

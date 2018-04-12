@@ -11,6 +11,9 @@ namespace Neos\FluidAdaptor\Core\Rendering;
  * source code.
  */
 
+use Neos\Flow\Mvc\Controller\ControllerContext;
+use Neos\Flow\ObjectManagement\ObjectManagerInterface;
+
 /**
  * Interface for rendering contexts that are Flow aware.
  *

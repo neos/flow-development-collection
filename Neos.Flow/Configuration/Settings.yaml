@@ -1,0 +1,16 @@
+#                                                                        #
+# Configuration for the Flow Framework                                   #
+#                                                                        #
+# This file contains the default base configuration for the Flow         #
+# Framework. Don't modify this file but add configuration options to     #
+# the Settings.yaml file in the in global Configuration/ directory       #
+# instead.                                                               #
+#                                                                        #
+
+Neos:
+  Flow:
+    # A section for compatibility flags that are deprecated.
+    compatibility: []
+
+    utility:
+      lockStrategyClassName: 'Neos\Utility\Lock\FlockLockStrategy'

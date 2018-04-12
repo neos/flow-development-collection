@@ -11,9 +11,9 @@ namespace Neos\FluidAdaptor\Core\ViewHelper;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
+use Neos\Flow\Annotations as Flow;
 use Neos\FluidAdaptor\Core\ViewHelper\Exception\InvalidVariableException;
-use TYPO3\Flow\I18n;
+use Neos\Flow\I18n;
 
 /**
  * Abstract view helper with locale awareness.
@@ -34,7 +34,7 @@ abstract class AbstractLocaleAwareViewHelper extends AbstractViewHelper
      */
     public function __construct()
     {
-        $this->registerArgument('forceLocale', 'mixed', 'Whether if, and what, Locale should be used. May be boolean, string or \TYPO3\Flow\I18n\Locale', false);
+        $this->registerArgument('forceLocale', 'mixed', 'Whether if, and what, Locale should be used. May be boolean, string or \Neos\Flow\I18n\Locale', false);
     }
 
     /**

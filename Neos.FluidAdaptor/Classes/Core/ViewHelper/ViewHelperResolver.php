@@ -11,10 +11,10 @@ namespace Neos\FluidAdaptor\Core\ViewHelper;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
-use TYPO3\Flow\Package\Package;
-use TYPO3\Flow\Package\PackageManagerInterface;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\ObjectManagement\ObjectManagerInterface;
+use Neos\Flow\Package\Package;
+use Neos\Flow\Package\PackageManagerInterface;
 
 /**
  * Class ViewHelperResolver
@@ -68,9 +68,14 @@ class ViewHelperResolver extends \TYPO3Fluid\Fluid\Core\ViewHelper\ViewHelperRes
         }
 
         /** @var Package $package */
-        foreach ($this->packageManager->getActivePackages() as $package) {
+        foreach ($this->packageManager->getAvailablePackages() as $package) {
             foreach ($package->getNamespaces() as $namespace) {
-                $this->addNamespace(strtolower($package->getPackageKey()), $namespace . '\\ViewHelpers');
+                $viewHelperNamespace = $namespace;
+                if (strpos(strrev($namespace), '\\') !== 0) {
+                    $viewHelperNamespace .= '\\';
+                }
+                $viewHelperNamespace .= 'ViewHelpers';
+                $this->addNamespace(strtolower($package->getPackageKey()), $viewHelperNamespace);
             }
         }
     }

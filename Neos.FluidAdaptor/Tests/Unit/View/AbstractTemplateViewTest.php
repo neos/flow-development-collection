@@ -18,7 +18,7 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\ViewHelperVariableContainer;
 /**
  * Testcase for the TemplateView
  */
-class AbstractTemplateViewTest extends \TYPO3\Flow\Tests\UnitTestCase
+class AbstractTemplateViewTest extends \Neos\Flow\Tests\UnitTestCase
 {
     /**
      * @var AbstractTemplateView
@@ -31,12 +31,12 @@ class AbstractTemplateViewTest extends \TYPO3\Flow\Tests\UnitTestCase
     protected $renderingContext;
 
     /**
-     * @var \Neos\FluidAdaptor\Core\ViewHelper\ViewHelperVariableContainer
+     * @var ViewHelperVariableContainer
      */
     protected $viewHelperVariableContainer;
 
     /**
-     * @var \Neos\FluidAdaptor\Core\ViewHelper\TemplateVariableContainer
+     * @var TemplateVariableContainer
      */
     protected $templateVariableContainer;
 

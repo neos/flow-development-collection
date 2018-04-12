@@ -11,13 +11,13 @@ namespace Neos\FluidAdaptor\Tests\Unit\ViewHelpers;
  * source code.
  */
 
-use TYPO3\Flow\Mvc\Controller\MvcPropertyMappingConfigurationService;
-use TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface;
-use TYPO3\Flow\Security\Context;
-use TYPO3\Flow\Security\Cryptography\HashService;
+use Neos\Flow\Mvc\Controller\MvcPropertyMappingConfigurationService;
+use Neos\Flow\Security\Authentication\AuthenticationManagerInterface;
+use Neos\Flow\Security\Context;
+use Neos\Flow\Security\Cryptography\HashService;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use Neos\FluidAdaptor\ViewHelpers\FormViewHelper;
-use Neos\FluidAdaptor\ViewHelpers\ViewHelperBaseTestcase;
+use Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase;
 
 /**
  * Test for the Form view helper
@@ -71,13 +71,13 @@ class FormViewHelperTest extends ViewHelperBaseTestcase
      */
     protected function injectDependenciesIntoViewHelper(AbstractViewHelper $viewHelper)
     {
-        $this->hashService = $this->createMock(\TYPO3\Flow\Security\Cryptography\HashService::class);
+        $this->hashService = $this->createMock(\Neos\Flow\Security\Cryptography\HashService::class);
         $this->inject($viewHelper, 'hashService', $this->hashService);
-        $this->mvcPropertyMappingConfigurationService = $this->createMock(\TYPO3\Flow\Mvc\Controller\MvcPropertyMappingConfigurationService::class);
+        $this->mvcPropertyMappingConfigurationService = $this->createMock(\Neos\Flow\Mvc\Controller\MvcPropertyMappingConfigurationService::class);
         $this->inject($viewHelper, 'mvcPropertyMappingConfigurationService', $this->mvcPropertyMappingConfigurationService);
-        $this->securityContext = $this->createMock(\TYPO3\Flow\Security\Context::class);
+        $this->securityContext = $this->createMock(\Neos\Flow\Security\Context::class);
         $this->inject($viewHelper, 'securityContext', $this->securityContext);
-        $this->mockAuthenticationManager = $this->createMock(\TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface::class);
+        $this->mockAuthenticationManager = $this->createMock(\Neos\Flow\Security\Authentication\AuthenticationManagerInterface::class);
         $this->inject($viewHelper, 'authenticationManager', $this->mockAuthenticationManager);
         parent::injectDependenciesIntoViewHelper($viewHelper);
     }
@@ -365,7 +365,7 @@ class FormViewHelperTest extends ViewHelperBaseTestcase
         $this->injectDependenciesIntoViewHelper($viewHelper);
         $this->securityContext->expects($this->any())->method('isInitialized')->will($this->returnValue(false));
 
-        $mockSubRequest = $this->createMock(\TYPO3\Flow\Mvc\ActionRequest::class, array(), array(), 'Foo', false);
+        $mockSubRequest = $this->createMock(\Neos\Flow\Mvc\ActionRequest::class, array(), array(), 'Foo', false);
         $mockSubRequest->expects($this->atLeastOnce())->method('isMainRequest')->will($this->returnValue(false));
         $mockSubRequest->expects($this->atLeastOnce())->method('getControllerPackageKey')->will($this->returnValue('subRequestPackageKey'));
         $mockSubRequest->expects($this->atLeastOnce())->method('getControllerSubpackageKey')->will($this->returnValue('subRequestSubpackageKey'));
@@ -379,7 +379,7 @@ class FormViewHelperTest extends ViewHelperBaseTestcase
         $this->request->expects($this->atLeastOnce())->method('getControllerName')->will($this->returnValue('controllerName'));
         $this->request->expects($this->atLeastOnce())->method('getControllerActionName')->will($this->returnValue('controllerActionName'));
 
-        $this->controllerContext = $this->getMockBuilder(\TYPO3\Flow\Mvc\Controller\ControllerContext::class)->disableOriginalConstructor()->getMock();
+        $this->controllerContext = $this->getMockBuilder(\Neos\Flow\Mvc\Controller\ControllerContext::class)->disableOriginalConstructor()->getMock();
         $this->controllerContext->expects($this->atLeastOnce())->method('getRequest')->will($this->returnValue($mockSubRequest));
         $this->renderingContext->setControllerContext($this->controllerContext);
         $this->injectDependenciesIntoViewHelper($viewHelper);
@@ -438,11 +438,11 @@ class FormViewHelperTest extends ViewHelperBaseTestcase
     public function renderAddsDefaultFieldNamePrefixToTemplateVariableContainerIfNoPrefixIsSpecifiedAndRequestIsASubRequest()
     {
         $expectedPrefix = 'someArgumentPrefix';
-        $mockSubRequest = $this->getMockBuilder(\TYPO3\Flow\Mvc\ActionRequest::class)->disableOriginalConstructor()->getMock();
+        $mockSubRequest = $this->getMockBuilder(\Neos\Flow\Mvc\ActionRequest::class)->disableOriginalConstructor()->getMock();
         $mockSubRequest->expects($this->once())->method('getArgumentNamespace')->will($this->returnValue($expectedPrefix));
 
         $viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\FormViewHelper::class, array('getFormActionUri', 'renderChildren', 'renderHiddenIdentityField', 'renderHiddenReferrerFields', 'addFormFieldNamesToViewHelperVariableContainer', 'removeFormFieldNamesFromViewHelperVariableContainer', 'addEmptyHiddenFieldNamesToViewHelperVariableContainer', 'removeEmptyHiddenFieldNamesFromViewHelperVariableContainer', 'renderEmptyHiddenFields', 'renderTrustedPropertiesField'), array(), '', false);
-        $this->controllerContext = $this->getMockBuilder(\TYPO3\Flow\Mvc\Controller\ControllerContext::class)->disableOriginalConstructor()->getMock();
+        $this->controllerContext = $this->getMockBuilder(\Neos\Flow\Mvc\Controller\ControllerContext::class)->disableOriginalConstructor()->getMock();
         $this->controllerContext->expects($this->any())->method('getRequest')->will($this->returnValue($mockSubRequest));
         $this->renderingContext->setControllerContext($this->controllerContext);
         $this->injectDependenciesIntoViewHelper($viewHelper);
@@ -458,14 +458,14 @@ class FormViewHelperTest extends ViewHelperBaseTestcase
     public function renderAddsDefaultFieldNamePrefixToTemplateVariableContainerIfNoPrefixIsSpecifiedAndUseParentRequestArgumentIsSet()
     {
         $expectedPrefix = 'parentRequestsPrefix';
-        $mockParentRequest = $this->getMockBuilder(\TYPO3\Flow\Mvc\ActionRequest::class)->disableOriginalConstructor()->getMock();
+        $mockParentRequest = $this->getMockBuilder(\Neos\Flow\Mvc\ActionRequest::class)->disableOriginalConstructor()->getMock();
         $mockParentRequest->expects($this->once())->method('getArgumentNamespace')->will($this->returnValue($expectedPrefix));
-        $mockSubRequest = $this->getMockBuilder(\TYPO3\Flow\Mvc\ActionRequest::class)->disableOriginalConstructor()->getMock();
+        $mockSubRequest = $this->getMockBuilder(\Neos\Flow\Mvc\ActionRequest::class)->disableOriginalConstructor()->getMock();
         $mockSubRequest->expects($this->once())->method('getParentRequest')->will($this->returnValue($mockParentRequest));
 
         $viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\FormViewHelper::class, array('getFormActionUri', 'renderChildren', 'renderHiddenIdentityField', 'renderHiddenReferrerFields', 'addFormFieldNamesToViewHelperVariableContainer', 'removeFormFieldNamesFromViewHelperVariableContainer', 'addEmptyHiddenFieldNamesToViewHelperVariableContainer', 'removeEmptyHiddenFieldNamesFromViewHelperVariableContainer', 'renderEmptyHiddenFields', 'renderTrustedPropertiesField'), array(), '', false);
         $this->arguments['useParentRequest'] = true;
-        $this->controllerContext = $this->getMockBuilder(\TYPO3\Flow\Mvc\Controller\ControllerContext::class)->disableOriginalConstructor()->getMock();
+        $this->controllerContext = $this->getMockBuilder(\Neos\Flow\Mvc\Controller\ControllerContext::class)->disableOriginalConstructor()->getMock();
         $this->controllerContext->expects($this->any())->method('getRequest')->will($this->returnValue($mockSubRequest));
         $this->renderingContext->setControllerContext($this->controllerContext);
         $this->injectDependenciesIntoViewHelper($viewHelper);
@@ -531,22 +531,32 @@ class FormViewHelperTest extends ViewHelperBaseTestcase
      */
     public function renderThrowsExceptionIfNeitherActionNorActionUriArgumentIsSpecified()
     {
-        $viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\FormViewHelper::class, array('renderChildren'), array(), '', false);
+        $viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\FormViewHelper::class, array('renderChildren', 'registerRenderMethodArguments'), array(), '', false);
         $this->injectDependenciesIntoViewHelper($viewHelper);
+        $viewHelper = $this->prepareArguments($viewHelper, []);
         $viewHelper->render();
     }
 
     /**
      * @test
+     * @expectedException \Neos\FluidAdaptor\Core\ViewHelper\Exception
+     * @expectedExceptionCode 1361354942
      */
     public function renderThrowsExceptionIfUseParentRequestIsSetAndTheCurrentRequestHasNoParentRequest()
     {
-        $this->setExpectedException(\Neos\FluidAdaptor\Core\ViewHelper\Exception::class, '', 1361354942);
-
-        $viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\FormViewHelper::class, array('renderChildren'), array(), '', false);
+        $viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\FormViewHelper::class, array('renderChildren', 'registerRenderMethodArguments'), array(), '', false);
         $this->arguments['useParentRequest'] = true;
+        $this->arguments['action'] = 'index';
         $this->injectDependenciesIntoViewHelper($viewHelper);
-        $viewHelper->render('index');
+
+        $this->viewHelperVariableContainerData = [
+            \Neos\FluidAdaptor\ViewHelpers\FormViewHelper::class => [
+                'formFieldNames' => [],
+            ]
+        ];
+
+        $viewHelper = $this->prepareArguments($viewHelper, $this->arguments);
+        $viewHelper->render();
     }
 
     /**
@@ -554,9 +564,9 @@ class FormViewHelperTest extends ViewHelperBaseTestcase
      */
     public function renderUsesParentRequestIfUseParentRequestIsSet()
     {
-        $mockParentRequest = $this->getMockBuilder(\TYPO3\Flow\Mvc\ActionRequest::class)->disableOriginalConstructor()->getMock();
+        $mockParentRequest = $this->getMockBuilder(\Neos\Flow\Mvc\ActionRequest::class)->disableOriginalConstructor()->getMock();
 
-        $mockSubRequest = $this->getMockBuilder(\TYPO3\Flow\Mvc\ActionRequest::class)->disableOriginalConstructor()->getMock();
+        $mockSubRequest = $this->getMockBuilder(\Neos\Flow\Mvc\ActionRequest::class)->disableOriginalConstructor()->getMock();
         $mockSubRequest->expects($this->once())->method('isMainRequest')->will($this->returnValue(false));
         $mockSubRequest->expects($this->once())->method('getParentRequest')->will($this->returnValue($mockParentRequest));
 
@@ -565,7 +575,7 @@ class FormViewHelperTest extends ViewHelperBaseTestcase
         $viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\FormViewHelper::class, array('dummy'), array(), '', false);
         $this->arguments['useParentRequest'] = true;
 
-        $this->controllerContext = $this->getMockBuilder(\TYPO3\Flow\Mvc\Controller\ControllerContext::class)->disableOriginalConstructor()->getMock();
+        $this->controllerContext = $this->getMockBuilder(\Neos\Flow\Mvc\Controller\ControllerContext::class)->disableOriginalConstructor()->getMock();
         $this->controllerContext->expects($this->any())->method('getRequest')->will($this->returnValue($mockSubRequest));
         $this->controllerContext->expects($this->once())->method('getUriBuilder')->will($this->returnValue($this->uriBuilder));
         $this->renderingContext->setControllerContext($this->controllerContext);

@@ -13,9 +13,9 @@ namespace Neos\FluidAdaptor\Tests\Unit\View;
 
 
 use org\bovigo\vfs\vfsStreamWrapper;
-use TYPO3\Flow\Mvc\ActionRequest;
-use TYPO3\Flow\Mvc\Controller\ControllerContext;
-use TYPO3\Flow\Tests\UnitTestCase;
+use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\Controller\ControllerContext;
+use Neos\Flow\Tests\UnitTestCase;
 use Neos\FluidAdaptor\View\StandaloneView;
 
 /**
@@ -42,8 +42,8 @@ class StandaloneViewTest extends UnitTestCase
     {
         $this->standaloneView = $this->getAccessibleMock(\Neos\FluidAdaptor\View\StandaloneView::class, array('dummy'));
 
-        $this->mockRequest = $this->getMockBuilder(\TYPO3\Flow\Mvc\ActionRequest::class)->disableOriginalConstructor()->getMock();
-        $this->mockControllerContext = $this->getMockBuilder(\TYPO3\Flow\Mvc\Controller\ControllerContext::class)->disableOriginalConstructor()->getMock();
+        $this->mockRequest = $this->getMockBuilder(\Neos\Flow\Mvc\ActionRequest::class)->disableOriginalConstructor()->getMock();
+        $this->mockControllerContext = $this->getMockBuilder(\Neos\Flow\Mvc\Controller\ControllerContext::class)->disableOriginalConstructor()->getMock();
         $this->mockControllerContext->expects($this->any())->method('getRequest')->will($this->returnValue($this->mockRequest));
         $this->inject($this->standaloneView, 'controllerContext', $this->mockControllerContext);
     }

@@ -11,13 +11,13 @@ namespace Neos\FluidAdaptor\Core\Widget;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Http\Component\Exception as ComponentException;
-use TYPO3\Flow\Http\Request;
-use TYPO3\Flow\Http\Component\ComponentContext;
-use TYPO3\Flow\Mvc\ActionRequest;
-use TYPO3\Flow\Mvc\DispatchComponent;
-use TYPO3\Flow\Security\Cryptography\HashService;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Http\Component\Exception as ComponentException;
+use Neos\Flow\Http\Request;
+use Neos\Flow\Http\Component\ComponentContext;
+use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\DispatchComponent;
+use Neos\Flow\Security\Cryptography\HashService;
 
 /**
  * A HTTP component specifically for Ajax widgets
@@ -53,18 +53,17 @@ class AjaxWidgetComponent extends DispatchComponent
         if ($widgetContext === null) {
             return;
         }
+
+        $componentContext = $this->prepareActionRequest($componentContext);
         /** @var $actionRequest ActionRequest */
-        $actionRequest = $this->objectManager->get(\TYPO3\Flow\Mvc\ActionRequest::class, $httpRequest);
-        $actionRequest->setArguments($this->mergeArguments($httpRequest, array()));
+        $actionRequest = $componentContext->getParameter(DispatchComponent::class, 'actionRequest');
         $actionRequest->setArgument('__widgetContext', $widgetContext);
         $actionRequest->setControllerObjectName($widgetContext->getControllerObjectName());
         $this->setDefaultControllerAndActionNameIfNoneSpecified($actionRequest);
 
-        $this->securityContext->setRequest($actionRequest);
-
         $this->dispatcher->dispatch($actionRequest, $componentContext->getHttpResponse());
         // stop processing the current component chain
-        $componentContext->setParameter(\TYPO3\Flow\Http\Component\ComponentChain::class, 'cancel', true);
+        $componentContext->setParameter(\Neos\Flow\Http\Component\ComponentChain::class, 'cancel', true);
     }
 
     /**

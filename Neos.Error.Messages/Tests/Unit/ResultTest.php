@@ -11,22 +11,22 @@ namespace Neos\Error\Messages\Tests\Unit;
  * source code.
  */
 
-use TYPO3\Flow\Error;
+use Neos\Error\Messages\Result;
 
 /**
  * Testcase for the Error Container object
  */
-class ResultTest extends \PHPUnit_Framework_TestCase
+class ResultTest extends \PHPUnit\Framework\TestCase
 {
     /**
      *
-     * @var Error\Result
+     * @var Result
      */
     protected $result;
 
     public function setUp()
     {
-        $this->result = new Error\Result();
+        $this->result = new Result();
     }
 
     public function dataTypes()
@@ -38,16 +38,16 @@ class ResultTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
-    protected function getMockMessage($type)
+    protected function getMockMessage(string $type)
     {
-        return $this->getMockBuilder('TYPO3\Flow\Error\\' . $type)->disableOriginalConstructor()->getMock();
+        return $this->getMockBuilder('Neos\Error\Messages\\' . $type)->disableOriginalConstructor()->getMock();
     }
 
     /**
      * @test
      * @dataProvider dataTypes
      */
-    public function addedMessagesShouldBeRetrievableAgain($dataTypeInSingular, $dataTypeInPlural)
+    public function addedMessagesShouldBeRetrievableAgain(string $dataTypeInSingular, string $dataTypeInPlural)
     {
         $message = $this->getMockMessage($dataTypeInSingular);
         $addMethodName = 'add' . $dataTypeInSingular;
@@ -61,7 +61,7 @@ class ResultTest extends \PHPUnit_Framework_TestCase
      * @test
      * @dataProvider dataTypes
      */
-    public function getMessageShouldNotBeRecursive($dataTypeInSingular, $dataTypeInPlural)
+    public function getMessageShouldNotBeRecursive(string $dataTypeInSingular, string $dataTypeInPlural)
     {
         $message = $this->getMockMessage($dataTypeInSingular);
         $addMethodName = 'add' . $dataTypeInSingular;
@@ -75,7 +75,7 @@ class ResultTest extends \PHPUnit_Framework_TestCase
      * @test
      * @dataProvider dataTypes
      */
-    public function getFirstMessageShouldReturnFirstMessage($dataTypeInSingular, $dataTypeInPlural)
+    public function getFirstMessageShouldReturnFirstMessage(string $dataTypeInSingular, string $dataTypeInPlural)
     {
         $message1 = $this->getMockMessage($dataTypeInSingular);
         $message2 = $this->getMockMessage($dataTypeInSingular);
@@ -93,7 +93,7 @@ class ResultTest extends \PHPUnit_Framework_TestCase
     public function forPropertyShouldReturnSubResult()
     {
         $container2 = $this->result->forProperty('foo.bar');
-        $this->assertInstanceOf(Error\Result::class, $container2);
+        $this->assertInstanceOf(Result::class, $container2);
         $this->assertSame($container2, $this->result->forProperty('foo')->forProperty('bar'));
     }
 
@@ -119,7 +119,7 @@ class ResultTest extends \PHPUnit_Framework_TestCase
      * @test
      * @dataProvider dataTypes
      */
-    public function hasMessagesShouldReturnTrueIfTopLevelObjectHasMessages($dataTypeInSingular, $dataTypeInPlural)
+    public function hasMessagesShouldReturnTrueIfTopLevelObjectHasMessages(string $dataTypeInSingular, string $dataTypeInPlural)
     {
         $message = $this->getMockMessage($dataTypeInSingular);
         $addMethodName = 'add' . $dataTypeInSingular;
@@ -133,7 +133,7 @@ class ResultTest extends \PHPUnit_Framework_TestCase
      * @test
      * @dataProvider dataTypes
      */
-    public function hasMessageshouldReturnTrueIfSubObjectHasErrors($dataTypeInSingular, $dataTypeInPlural)
+    public function hasMessageshouldReturnTrueIfSubObjectHasErrors(string $dataTypeInSingular, string $dataTypeInPlural)
     {
         $addMethodName = 'add' . $dataTypeInSingular;
         $methodName = 'has' . $dataTypeInPlural;
@@ -147,7 +147,7 @@ class ResultTest extends \PHPUnit_Framework_TestCase
      * @test
      * @dataProvider dataTypes
      */
-    public function hasMessagesShouldReturnFalseIfSubObjectHasNoErrors($dataTypeInSingular, $dataTypeInPlural)
+    public function hasMessagesShouldReturnFalseIfSubObjectHasNoErrors(string $dataTypeInSingular, string $dataTypeInPlural)
     {
         $methodName = 'has' . $dataTypeInPlural;
 
@@ -160,7 +160,7 @@ class ResultTest extends \PHPUnit_Framework_TestCase
      * @test
      * @dataProvider dataTypes
      */
-    public function getFlattenedMessagesShouldReturnAllSubMessages($dataTypeInSingular, $dataTypeInPlural)
+    public function getFlattenedMessagesShouldReturnAllSubMessages(string $dataTypeInSingular, string $dataTypeInPlural)
     {
         $message1 = $this->getMockMessage($dataTypeInSingular);
         $message2 = $this->getMockMessage($dataTypeInSingular);
@@ -190,7 +190,7 @@ class ResultTest extends \PHPUnit_Framework_TestCase
      * @test
      * @dataProvider dataTypes
      */
-    public function getFlattenedMessagesShouldNotContainEmptyResults($dataTypeInSingular, $dataTypeInPlural)
+    public function getFlattenedMessagesShouldNotContainEmptyResults(string $dataTypeInSingular, string $dataTypeInPlural)
     {
         $message1 = $this->getMockMessage($dataTypeInSingular);
         $message2 = $this->getMockMessage($dataTypeInSingular);
@@ -223,7 +223,7 @@ class ResultTest extends \PHPUnit_Framework_TestCase
         $error2 = $this->getMockMessage('Error');
         $error3 = $this->getMockMessage('Error');
 
-        $otherResult = new Error\Result();
+        $otherResult = new Result();
 
         $otherResult->addNotice($notice1);
         $otherResult->forProperty('foo.bar')->addNotice($notice2);

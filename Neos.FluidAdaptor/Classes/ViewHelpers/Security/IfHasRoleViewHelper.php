@@ -12,10 +12,10 @@ namespace Neos\FluidAdaptor\ViewHelpers\Security;
  */
 
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Security\Account;
-use TYPO3\Flow\Security\Context;
-use TYPO3\Flow\Security\Policy\PolicyService;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Security\Account;
+use Neos\Flow\Security\Context;
+use Neos\Flow\Security\Policy\PolicyService;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractConditionViewHelper;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 
@@ -84,8 +84,6 @@ class IfHasRoleViewHelper extends AbstractConditionViewHelper
         $this->registerArgument('role', 'mixed', 'The role or role identifier.', true);
         $this->registerArgument('packageKey', 'string', 'PackageKey of the package defining the role.', false, null);
         $this->registerArgument('account', Account::class, 'If specified, this subject of this check is the given Account instead of the currently authenticated account', false, null);
-        $this->registerArgument('then', 'mixed', 'Value to be returned if the condition if met.', false);
-        $this->registerArgument('else', 'mixed', 'Value to be returned if the condition if not met.', false);
     }
 
     /**
@@ -117,6 +115,10 @@ class IfHasRoleViewHelper extends AbstractConditionViewHelper
         /** @var Context $securityContext */
         $securityContext = $objectManager->get(Context::class);
 
+        if ($securityContext != null && !$securityContext->canBeInitialized()) {
+            return false;
+        }
+
         $role = $arguments['role'];
         $account = $arguments['account'];
         $packageKey = isset($arguments['packageKey']) ? $arguments['packageKey'] : $renderingContext->getControllerContext()->getRequest()->getControllerPackageKey();
@@ -125,7 +127,7 @@ class IfHasRoleViewHelper extends AbstractConditionViewHelper
             $roleIdentifier = $role;
 
             if (in_array($roleIdentifier, ['Everybody', 'Anonymous', 'AuthenticatedUser'])) {
-                $roleIdentifier = 'TYPO3.Flow:' . $roleIdentifier;
+                $roleIdentifier = 'Neos.Flow:' . $roleIdentifier;
             }
 
             if (strpos($roleIdentifier, '.') === false && strpos($roleIdentifier, ':') === false) {

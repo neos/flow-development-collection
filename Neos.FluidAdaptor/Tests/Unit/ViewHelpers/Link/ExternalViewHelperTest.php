@@ -18,7 +18,7 @@ require_once(__DIR__ . '/../ViewHelperBaseTestcase.php');
 /**
  * Test for \Neos\FluidAdaptor\ViewHelpers\Link\EmailViewHelper
  */
-class ExternalViewHelperTest extends \Neos\FluidAdaptor\ViewHelpers\ViewHelperBaseTestcase
+class ExternalViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase
 {
     /**
      * @var \Neos\FluidAdaptor\ViewHelpers\Link\EmailViewHelper
@@ -28,9 +28,8 @@ class ExternalViewHelperTest extends \Neos\FluidAdaptor\ViewHelpers\ViewHelperBa
     public function setUp()
     {
         parent::setUp();
-        $this->viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\Link\ExternalViewHelper::class, array('renderChildren'));
+        $this->viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\Link\ExternalViewHelper::class, array('renderChildren', 'registerRenderMethodArguments'));
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
-        $this->viewHelper->initializeArguments();
     }
 
     /**
@@ -46,8 +45,8 @@ class ExternalViewHelperTest extends \Neos\FluidAdaptor\ViewHelpers\ViewHelperBa
 
         $this->viewHelper->expects($this->any())->method('renderChildren')->will($this->returnValue('some content'));
 
-        $this->viewHelper->initialize();
-        $this->viewHelper->render('http://www.some-domain.tld');
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['uri' => 'http://www.some-domain.tld']);
+        $this->viewHelper->render();
     }
 
     /**
@@ -63,8 +62,8 @@ class ExternalViewHelperTest extends \Neos\FluidAdaptor\ViewHelpers\ViewHelperBa
 
         $this->viewHelper->expects($this->any())->method('renderChildren')->will($this->returnValue('some content'));
 
-        $this->viewHelper->initialize();
-        $this->viewHelper->render('www.some-domain.tld');
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['uri' => 'www.some-domain.tld']);
+        $this->viewHelper->render();
     }
 
     /**
@@ -80,8 +79,8 @@ class ExternalViewHelperTest extends \Neos\FluidAdaptor\ViewHelpers\ViewHelperBa
 
         $this->viewHelper->expects($this->any())->method('renderChildren')->will($this->returnValue('some content'));
 
-        $this->viewHelper->initialize();
-        $this->viewHelper->render('some-domain.tld', 'ftp');
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['uri' => 'some-domain.tld', 'defaultScheme' => 'ftp']);
+        $this->viewHelper->render();
     }
 
     /**
@@ -97,7 +96,7 @@ class ExternalViewHelperTest extends \Neos\FluidAdaptor\ViewHelpers\ViewHelperBa
 
         $this->viewHelper->expects($this->any())->method('renderChildren')->will($this->returnValue('some content'));
 
-        $this->viewHelper->initialize();
-        $this->viewHelper->render('some-domain.tld', '');
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['uri' => 'some-domain.tld', 'defaultScheme' => '']);
+        $this->viewHelper->render();
     }
 }

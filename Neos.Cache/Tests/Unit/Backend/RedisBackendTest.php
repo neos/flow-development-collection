@@ -16,7 +16,7 @@ include_once(__DIR__ . '/../../BaseTestCase.php');
 use Neos\Cache\Backend\RedisBackend;
 use Neos\Cache\EnvironmentConfiguration;
 use Neos\Cache\Tests\BaseTestCase;
-use TYPO3\Flow\Cache\Frontend\FrontendInterface;
+use Neos\Cache\Frontend\FrontendInterface;
 
 /**
  * Testcase for the redis cache backend
@@ -66,6 +66,11 @@ class RedisBackendTest extends BaseTestCase
 
         $this->backend = new RedisBackend($mockEnvironmentConfiguration, ['redis' => $this->redis]);
         $this->backend->setCache($this->cache);
+
+        // set this to false manually, since the check in isFrozen leads to null (instead of a boolean)
+        // as the exists call is not mocked (and cannot easily be mocked, as it is used for different
+        // things.)
+        $this->inject($this->backend, 'frozen', false);
     }
 
     /**
@@ -194,6 +199,7 @@ class RedisBackendTest extends BaseTestCase
      */
     public function writingOperationsThrowAnExceptionIfCacheIsFrozen($method)
     {
+        $this->inject($this->backend, 'frozen', null);
         $this->redis->expects($this->once())
             ->method('exists')
             ->with('Foo_Cache:frozen')

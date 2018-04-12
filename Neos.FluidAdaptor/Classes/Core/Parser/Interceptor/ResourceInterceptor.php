@@ -11,7 +11,7 @@ namespace Neos\FluidAdaptor\Core\Parser\Interceptor;
  * source code.
  */
 
-use TYPO3\Flow\Package\Package;
+use Neos\Flow\Package\Package;
 use Neos\FluidAdaptor\Core\Parser\SyntaxTree\ResourceUriNode;
 use TYPO3Fluid\Fluid\Core\Parser\InterceptorInterface;
 use TYPO3Fluid\Fluid\Core\Parser\ParsingState;
@@ -54,7 +54,7 @@ class ResourceInterceptor implements InterceptorInterface
      * Is the text at hand a resource URI and what are path/package?
      *
      * @var string
-     * @see \TYPO3\Flow\Pckage\Package::PATTERN_MATCH_PACKAGEKEY
+     * @see \Neos\Flow\Pckage\Package::PATTERN_MATCH_PACKAGEKEY
      */
     const PATTERN_MATCH_RESOURCE_URI = '!(?:../)*(?:(?P<Package>[A-Za-z0-9]+\.(?:[A-Za-z0-9][\.a-z0-9]*)+)/Resources/)?Public/(?P<Path>[^"]+)!';
 

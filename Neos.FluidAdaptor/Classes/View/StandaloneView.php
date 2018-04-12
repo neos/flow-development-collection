@@ -11,15 +11,16 @@ namespace Neos\FluidAdaptor\View;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Http\Request;
-use TYPO3\Flow\Http\Response;
-use TYPO3\Flow\Mvc\ActionRequest;
-use TYPO3\Flow\Mvc\Controller\Arguments;
-use TYPO3\Flow\Mvc\Controller\ControllerContext;
-use TYPO3\Flow\Mvc\RequestInterface;
-use TYPO3\Flow\Mvc\Routing\UriBuilder;
-use TYPO3\Flow\Utility\Files;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Core\Bootstrap;
+use Neos\Flow\Http\HttpRequestHandlerInterface;
+use Neos\Flow\Http\Request;
+use Neos\Flow\Http\Response;
+use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\Controller\Arguments;
+use Neos\Flow\Mvc\Controller\ControllerContext;
+use Neos\Flow\Mvc\Routing\UriBuilder;
+use Neos\Utility\Files;
 use Neos\FluidAdaptor\View\Exception\InvalidTemplateResourceException;
 
 /**
@@ -56,13 +57,13 @@ class StandaloneView extends AbstractTemplateView
     protected $partialRootPath = null;
 
     /**
-     * @var \TYPO3\Flow\Utility\Environment
+     * @var \Neos\Flow\Utility\Environment
      * @Flow\Inject
      */
     protected $environment;
 
     /**
-     * @var \TYPO3\Flow\Mvc\FlashMessageContainer
+     * @var \Neos\Flow\Mvc\FlashMessageContainer
      * @Flow\Inject
      */
     protected $flashMessageContainer;
@@ -71,6 +72,12 @@ class StandaloneView extends AbstractTemplateView
      * @var ActionRequest
      */
     protected $request;
+
+    /**
+     * @var Bootstrap
+     * @Flow\Inject
+     */
+    protected $bootstrap;
 
     /**
      * Factory method to create an instance with given options.
@@ -88,6 +95,7 @@ class StandaloneView extends AbstractTemplateView
      *
      * @param ActionRequest $request The current action request. If none is specified it will be created from the environment.
      * @param array $options
+     * @throws \Neos\FluidAdaptor\Exception
      */
     public function __construct(ActionRequest $request = null, array $options = [])
     {
@@ -103,8 +111,13 @@ class StandaloneView extends AbstractTemplateView
     public function initializeObject()
     {
         if ($this->request === null) {
-            $httpRequest = Request::createFromEnvironment();
-            $this->request = new ActionRequest($httpRequest);
+            $requestHandler = $this->bootstrap->getActiveRequestHandler();
+            if ($requestHandler instanceof HttpRequestHandlerInterface) {
+                $this->request = new ActionRequest($requestHandler->getHttpRequest());
+            } else {
+                $httpRequest = Request::createFromEnvironment();
+                $this->request = new ActionRequest($httpRequest);
+            }
         }
 
         $uriBuilder = new UriBuilder();
@@ -135,7 +148,8 @@ class StandaloneView extends AbstractTemplateView
      */
     public function setFormat($format)
     {
-        $this->baseRenderingContext->getControllerContext()->getRequest()->setFormat($format);
+        $this->request->setFormat($format);
+        $this->baseRenderingContext->getTemplatePaths()->setFormat($format);
     }
 
     /**
@@ -146,17 +160,17 @@ class StandaloneView extends AbstractTemplateView
      */
     public function getFormat()
     {
-        return $this->baseRenderingContext->getControllerContext()->getRequest()->getFormat();
+        return $this->request->getFormat();
     }
 
     /**
      * Returns the current request object
      *
-     * @return RequestInterface
+     * @return ActionRequest
      */
     public function getRequest()
     {
-        return $this->baseRenderingContext->getControllerContext()->getRequest();
+        return $this->request;
     }
 
     /**
@@ -186,7 +200,7 @@ class StandaloneView extends AbstractTemplateView
      */
     public function getTemplatePathAndFilename()
     {
-        return $this->baseRenderingContext->getTemplatePaths()->getTemplatePathAndFilename();
+        return $this->baseRenderingContext->getTemplatePaths()->resolveTemplateFileForControllerAndActionAndFormat($this->request->getControllerName(), $this->request->getControllerActionName(), $this->request->getFormat());
     }
 
     /**

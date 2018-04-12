@@ -13,7 +13,7 @@ namespace Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Format;
 
 require_once(__DIR__ . '/../ViewHelperBaseTestcase.php');
 
-use Neos\FluidAdaptor\ViewHelpers\ViewHelperBaseTestcase;
+use Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase;
 
 /**
  * Test for \Neos\FluidAdaptor\ViewHelpers\Format\IdentifierViewHelper
@@ -26,7 +26,7 @@ class IdentifierViewHelperTest extends ViewHelperBaseTestcase
     protected $viewHelper;
 
     /**
-     * @var \TYPO3\Flow\Persistence\PersistenceManagerInterface
+     * @var \Neos\Flow\Persistence\PersistenceManagerInterface
      */
     protected $mockPersistenceManager;
 
@@ -36,9 +36,9 @@ class IdentifierViewHelperTest extends ViewHelperBaseTestcase
     public function setUp()
     {
         parent::setUp();
-        $this->viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\Format\IdentifierViewHelper::class, array('renderChildren'));
+        $this->viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\Format\IdentifierViewHelper::class, array('renderChildren', 'registerRenderMethodArguments'));
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
-        $this->mockPersistenceManager = $this->createMock(\TYPO3\Flow\Persistence\PersistenceManagerInterface::class);
+        $this->mockPersistenceManager = $this->createMock(\Neos\Flow\Persistence\PersistenceManagerInterface::class);
         $this->viewHelper->_set('persistenceManager', $this->mockPersistenceManager);
     }
 
@@ -55,7 +55,9 @@ class IdentifierViewHelperTest extends ViewHelperBaseTestcase
             ->will($this->returnValue('6f487e40-4483-11de-8a39-0800200c9a66'));
 
         $expectedResult = '6f487e40-4483-11de-8a39-0800200c9a66';
-        $actualResult = $this->viewHelper->render($object);
+
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['value' => $object]);
+        $actualResult = $this->viewHelper->render();
 
         $this->assertEquals($expectedResult, $actualResult);
     }
@@ -77,6 +79,7 @@ class IdentifierViewHelperTest extends ViewHelperBaseTestcase
             ->with($object)
             ->will($this->returnValue('b59292c5-1a28-4b36-8615-10d3c5b3a4d8'));
 
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, []);
         $this->assertEquals('b59292c5-1a28-4b36-8615-10d3c5b3a4d8', $this->viewHelper->render());
     }
 
@@ -90,16 +93,18 @@ class IdentifierViewHelperTest extends ViewHelperBaseTestcase
             ->method('renderChildren')
             ->will($this->returnValue(null));
 
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, []);
         $this->assertEquals(null, $this->viewHelper->render());
     }
 
     /**
      * @test
-     * @expectedException \Neos\FluidAdaptor\Core\ViewHelper\Exception
+     * @expectedException \InvalidArgumentException
      */
     public function renderThrowsExceptionIfGivenValueIsNoObject()
     {
         $notAnObject = array();
-        $this->viewHelper->render($notAnObject);
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['value' => $notAnObject]);
+        $this->viewHelper->render();
     }
 }

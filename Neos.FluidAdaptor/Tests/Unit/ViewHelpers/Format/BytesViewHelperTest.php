@@ -13,7 +13,7 @@ namespace Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Format;
 
 require_once(__DIR__ . '/../ViewHelperBaseTestcase.php');
 
-use Neos\FluidAdaptor\ViewHelpers\ViewHelperBaseTestcase;
+use Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase;
 
 /**
  * Test for \Neos\FluidAdaptor\ViewHelpers\Format\BytesViewHelper
@@ -28,10 +28,9 @@ class BytesViewHelperTest extends ViewHelperBaseTestcase
     public function setUp()
     {
         parent::setUp();
-        $this->viewHelper = $this->getMockBuilder(\Neos\FluidAdaptor\ViewHelpers\Format\BytesViewHelper::class)->setMethods(array('renderChildren'))->getMock();
+        $this->viewHelper = $this->getMockBuilder(\Neos\FluidAdaptor\ViewHelpers\Format\BytesViewHelper::class)->setMethods(array('renderChildren', 'registerRenderMethodArguments'))->getMock();
 
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
-        $this->viewHelper->initializeArguments();
     }
 
     /**
@@ -128,7 +127,8 @@ class BytesViewHelperTest extends ViewHelperBaseTestcase
      */
     public function renderCorrectlyConvertsAValue($value, $decimals, $decimalSeparator, $thousandsSeparator, $expected)
     {
-        $actualResult = $this->viewHelper->render($value, $decimals, $decimalSeparator, $thousandsSeparator);
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['value' => $value, 'decimals' => $decimals, 'decimalSeparator' => $decimalSeparator, 'thousandsSeparator' => $thousandsSeparator]);
+        $actualResult = $this->viewHelper->render();
         $this->assertEquals($expected, $actualResult);
     }
 
@@ -138,6 +138,7 @@ class BytesViewHelperTest extends ViewHelperBaseTestcase
     public function renderUsesChildNodesIfValueArgumentIsOmitted()
     {
         $this->viewHelper->expects($this->once())->method('renderChildren')->will($this->returnValue(12345));
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, []);
         $actualResult = $this->viewHelper->render();
         $this->assertEquals('12 KB', $actualResult);
     }

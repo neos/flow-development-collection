@@ -11,7 +11,7 @@ namespace Neos\FluidAdaptor\Core\Widget;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
+use Neos\Flow\Annotations as Flow;
 use Neos\FluidAdaptor\Core\Widget\Exception\WidgetContextNotFoundException;
 
 /**

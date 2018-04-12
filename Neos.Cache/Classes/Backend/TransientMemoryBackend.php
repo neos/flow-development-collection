@@ -12,10 +12,9 @@ namespace Neos\Cache\Backend;
  */
 
 use Neos\Cache\Backend\AbstractBackend as IndependentAbstractBackend;
-use TYPO3\Flow\Cache\Backend\TaggableBackendInterface;
-use TYPO3\Flow\Cache\Exception;
-use TYPO3\Flow\Cache\Exception\InvalidDataException;
-use TYPO3\Flow\Cache\Frontend\FrontendInterface;
+use Neos\Cache\Exception;
+use Neos\Cache\Exception\InvalidDataException;
+use Neos\Cache\Frontend\FrontendInterface;
 
 /**
  * A caching backend which stores cache entries during one script run.
@@ -54,6 +53,7 @@ class TransientMemoryBackend extends IndependentAbstractBackend implements Tagga
         if (!is_string($data)) {
             throw new InvalidDataException('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1238244993);
         }
+
         $this->entries[$entryIdentifier] = $data;
         foreach ($tags as $tag) {
             $this->tagsAndEntries[$tag][$entryIdentifier] = true;
@@ -69,7 +69,7 @@ class TransientMemoryBackend extends IndependentAbstractBackend implements Tagga
      */
     public function get($entryIdentifier)
     {
-        return (isset($this->entries[$entryIdentifier])) ? $this->entries[$entryIdentifier] : false;
+        return $this->entries[$entryIdentifier] ?? false;
     }
 
     /**
@@ -79,7 +79,7 @@ class TransientMemoryBackend extends IndependentAbstractBackend implements Tagga
      * @return boolean TRUE if such an entry exists, FALSE if not
      * @api
      */
-    public function has($entryIdentifier)
+    public function has($entryIdentifier): bool
     {
         return isset($this->entries[$entryIdentifier]);
     }
@@ -91,19 +91,18 @@ class TransientMemoryBackend extends IndependentAbstractBackend implements Tagga
      * @return boolean TRUE if the entry could be removed or FALSE if no entry was found
      * @api
      */
-    public function remove($entryIdentifier)
+    public function remove($entryIdentifier): bool
     {
-        if (isset($this->entries[$entryIdentifier])) {
-            unset($this->entries[$entryIdentifier]);
-            foreach (array_keys($this->tagsAndEntries) as $tag) {
-                if (isset($this->tagsAndEntries[$tag][$entryIdentifier])) {
-                    unset($this->tagsAndEntries[$tag][$entryIdentifier]);
-                }
-            }
-            return true;
-        } else {
+        if (!isset($this->entries[$entryIdentifier])) {
             return false;
         }
+        unset($this->entries[$entryIdentifier]);
+        foreach (array_keys($this->tagsAndEntries) as $tag) {
+            if (isset($this->tagsAndEntries[$tag][$entryIdentifier])) {
+                unset($this->tagsAndEntries[$tag][$entryIdentifier]);
+            }
+        }
+        return true;
     }
 
     /**
@@ -114,13 +113,12 @@ class TransientMemoryBackend extends IndependentAbstractBackend implements Tagga
      * @return array An array with identifiers of all matching entries. An empty array if no entries matched
      * @api
      */
-    public function findIdentifiersByTag($tag)
+    public function findIdentifiersByTag($tag): array
     {
         if (isset($this->tagsAndEntries[$tag])) {
             return array_keys($this->tagsAndEntries[$tag]);
-        } else {
-            return [];
         }
+        return [];
     }
 
     /**
@@ -142,7 +140,7 @@ class TransientMemoryBackend extends IndependentAbstractBackend implements Tagga
      * @return integer The number of entries which have been affected by this flush
      * @api
      */
-    public function flushByTag($tag)
+    public function flushByTag($tag): int
     {
         $identifiers = $this->findIdentifiersByTag($tag);
         foreach ($identifiers as $identifier) {

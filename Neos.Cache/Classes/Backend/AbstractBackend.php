@@ -12,20 +12,21 @@ namespace Neos\Cache\Backend;
  */
 
 use Neos\Cache\EnvironmentConfiguration;
+use Neos\Cache\Frontend\FrontendInterface;
 
 /**
  * An abstract caching backend
  *
  * @api
  */
-abstract class AbstractBackend implements \TYPO3\Flow\Cache\Backend\BackendInterface
+abstract class AbstractBackend implements BackendInterface
 {
     const DATETIME_EXPIRYTIME_UNLIMITED = '9999-12-31T23:59:59+0000';
     const UNLIMITED_LIFETIME = 0;
 
     /**
      * Reference to the cache frontend which uses this backend
-     * @var \TYPO3\Flow\Cache\Frontend\FrontendInterface
+     * @var FrontendInterface
      */
     protected $cache;
 
@@ -67,7 +68,7 @@ abstract class AbstractBackend implements \TYPO3\Flow\Cache\Backend\BackendInter
      * @return void
      * @throws \InvalidArgumentException
      */
-    protected function setProperties($properties, $throwExceptionIfPropertyNotSettable = true)
+    protected function setProperties(array $properties, bool $throwExceptionIfPropertyNotSettable = true)
     {
         foreach ($properties as $propertyName => $propertyValue) {
             $propertyWasSet = $this->setProperty($propertyName, $propertyValue);
@@ -86,7 +87,7 @@ abstract class AbstractBackend implements \TYPO3\Flow\Cache\Backend\BackendInter
      * @param mixed $propertyValue
      * @return boolean
      */
-    protected function setProperty($propertyName, $propertyValue)
+    protected function setProperty(string $propertyName, $propertyValue): bool
     {
         $setterName = 'set' . ucfirst($propertyName);
         if (method_exists($this, $setterName)) {
@@ -100,11 +101,11 @@ abstract class AbstractBackend implements \TYPO3\Flow\Cache\Backend\BackendInter
     /**
      * Sets a reference to the cache frontend which uses this backend
      *
-     * @param \TYPO3\Flow\Cache\Frontend\FrontendInterface $cache The frontend for this backend
+     * @param FrontendInterface $cache The frontend for this backend
      * @return void
      * @api
      */
-    public function setCache(\TYPO3\Flow\Cache\Frontend\FrontendInterface $cache)
+    public function setCache(FrontendInterface $cache)
     {
         $this->cache = $cache;
         $this->cacheIdentifier = $this->cache->getIdentifier();
@@ -126,7 +127,7 @@ abstract class AbstractBackend implements \TYPO3\Flow\Cache\Backend\BackendInter
      * @return string The prefixed identifier, for example "Flow694a5c7a43a4_NumberOfPostedArticles"
      * @api
      */
-    public function getPrefixedIdentifier($entryIdentifier)
+    public function getPrefixedIdentifier($entryIdentifier): string
     {
         return $entryIdentifier;
     }
@@ -139,9 +140,9 @@ abstract class AbstractBackend implements \TYPO3\Flow\Cache\Backend\BackendInter
      * @throws \InvalidArgumentException
      * @api
      */
-    public function setDefaultLifetime($defaultLifetime)
+    public function setDefaultLifetime(int $defaultLifetime)
     {
-        if (!is_int($defaultLifetime) || $defaultLifetime < 0) {
+        if ($defaultLifetime < 0) {
             throw new \InvalidArgumentException('The default lifetime must be given as a positive integer.', 1233072774);
         }
         $this->defaultLifetime = $defaultLifetime;
@@ -154,16 +155,15 @@ abstract class AbstractBackend implements \TYPO3\Flow\Cache\Backend\BackendInter
      * @param integer $lifetime The lifetime in seconds
      * @return \DateTime The expiry time
      */
-    protected function calculateExpiryTime($lifetime = null)
+    protected function calculateExpiryTime(int $lifetime = null): \DateTime
     {
         if ($lifetime === self::UNLIMITED_LIFETIME || ($lifetime === null && $this->defaultLifetime === self::UNLIMITED_LIFETIME)) {
-            $expiryTime = new \DateTime(self::DATETIME_EXPIRYTIME_UNLIMITED, new \DateTimeZone('UTC'));
-        } else {
-            if ($lifetime === null) {
-                $lifetime = $this->defaultLifetime;
-            }
-            $expiryTime = new \DateTime('now +' . $lifetime . ' seconds', new \DateTimeZone('UTC'));
+            return new \DateTime(self::DATETIME_EXPIRYTIME_UNLIMITED, new \DateTimeZone('UTC'));
         }
-        return $expiryTime;
+
+        if ($lifetime === null) {
+            $lifetime = $this->defaultLifetime;
+        }
+        return new \DateTime('now +' . $lifetime . ' seconds', new \DateTimeZone('UTC'));
     }
 }

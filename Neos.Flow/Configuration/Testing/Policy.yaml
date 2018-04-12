@@ -1,0 +1,113 @@
+#                                                                        #
+# Security policy for the Flow Framework                                 #
+#                                                                        #
+# This file contains additions to the base configuration for the         #
+# Flow Framework when it runs in Testing context.                        #
+#                                                                        #
+# Don't modify this file - instead put your own additions into the       #
+# global Configuration directory and its sub directories.                #
+#                                                                        #
+# This file contains the default security policy configuration for the   #
+# Neos Flow Framework. Don't modify this file but add configuration     #
+# options to the Policy.yaml file in the in global Configuration/        #
+# directory instead.                                                     #
+
+privilegeTargets:
+
+  'Neos\Flow\Security\Authorization\Privilege\Method\MethodPrivilege':
+
+    'Neos.Flow:Tests.RestrictedController.customerAction':
+      matcher: 'method(Neos\Flow\Tests\Functional\Security\Fixtures\Controller\RestrictedController->customerAction())'
+
+    'Neos.Flow:Tests.RestrictedController.adminAction':
+      matcher: 'method(Neos\Flow\Tests\Functional\Security\Fixtures\Controller\RestrictedController->adminAction())'
+
+
+  'Neos\Flow\Security\Authorization\Privilege\Entity\Doctrine\EntityPrivilege':
+
+    'Neos.Flow:Tests.Functional.Security.Fixtures.RestrictableEntity.AllEntities':
+      matcher: 'isType("Neos\Flow\Tests\Functional\Security\Fixtures\RestrictableEntity")'
+
+    'Neos.Flow:Tests.Functional.Security.Fixtures.RestrictableEntity.HiddenEntities':
+      matcher: 'isType("Neos\Flow\Tests\Functional\Security\Fixtures\RestrictableEntity") && TRUE == property("hidden")'
+
+    'Neos.Flow:Tests.Functional.Security.Fixtures.RestrictableEntity.DeletedEntries':
+      matcher: 'isType("Neos\Flow\Tests\Functional\Security\Fixtures\RestrictableEntity") && property("deletedOn") != NULL'
+
+    'Neos.Flow:Tests.Functional.Security.Fixtures.RestrictableEntity.OthersEntities':
+      matcher: 'isType("Neos\Flow\Tests\Functional\Security\Fixtures\RestrictableEntity") && !(property("ownerAccount").equals("context.securityContext.account")) && property("ownerAccount") != NULL'
+
+    'Neos.Flow:adminTestEntities':
+      matcher: 'isType("Neos\Flow\Tests\Functional\Security\Fixtures\TestEntityA") && property("relatedEntityB.stringValue") == "Admin"'
+
+    'Neos.Flow:othersTestEntities':
+      matcher: 'isType("Neos\Flow\Tests\Functional\Security\Fixtures\TestEntityA") && property("relatedEntityB.ownerAccount") != "context.securityContext.account" && property("relatedEntityB.ownerAccount") != NULL'
+
+    'Neos.Flow:inOperatorTestResource':
+      matcher: 'isType("Neos\Flow\Tests\Functional\Security\Fixtures\TestEntityC") && property("simpleStringProperty").in(["Andi", "Robert", "Karsten"])'
+
+    'Neos.Flow:inOperatorWithObjectsTestResource':
+      matcher: 'isType("Neos\Flow\Tests\Functional\Security\Fixtures\TestEntityC") && property("relatedEntityD").in("context.testContext.securityFixturesEntityDCollection")'
+
+
+roles:
+
+  'Neos.Flow:Customer':
+    privileges:
+      -
+        privilegeTarget: 'Neos.Flow:Tests.RestrictedController.customerAction'
+        permission: GRANT
+
+      -
+        privilegeTarget: 'Neos.Flow:Tests.RestrictedController.adminAction'
+        permission: DENY
+
+      -
+        privilegeTarget: 'Neos.Flow:Tests.Functional.Security.Fixtures.RestrictableEntity.AllEntities'
+        permission: GRANT
+
+  'Neos.Flow:Administrator':
+    privileges:
+      -
+        privilegeTarget: 'Neos.Flow:Tests.RestrictedController.customerAction'
+        permission: GRANT
+
+      -
+        privilegeTarget: 'Neos.Flow:Tests.RestrictedController.customerAction'
+        permission: GRANT
+
+      -
+        privilegeTarget: 'Neos.Flow:Tests.RestrictedController.adminAction'
+        permission: GRANT
+
+      -
+        privilegeTarget: 'Neos.Flow:Tests.Functional.Security.Fixtures.RestrictableEntity.AllEntities'
+        permission: GRANT
+
+      -
+        privilegeTarget: 'Neos.Flow:Tests.Functional.Security.Fixtures.RestrictableEntity.HiddenEntities'
+        permission: GRANT
+
+      -
+        privilegeTarget: 'Neos.Flow:Tests.Functional.Security.Fixtures.RestrictableEntity.DeletedEntries'
+        permission: GRANT
+
+      -
+        privilegeTarget: 'Neos.Flow:Tests.Functional.Security.Fixtures.RestrictableEntity.OthersEntities'
+        permission: GRANT
+
+      -
+        privilegeTarget: 'Neos.Flow:adminTestEntities'
+        permission: GRANT
+
+      -
+        privilegeTarget: 'Neos.Flow:othersTestEntities'
+        permission: GRANT
+
+      -
+        privilegeTarget: 'Neos.Flow:inOperatorTestResource'
+        permission: GRANT
+
+      -
+        privilegeTarget: 'Neos.Flow:inOperatorWithObjectsTestResource'
+        permission: GRANT

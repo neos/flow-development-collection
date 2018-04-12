@@ -14,7 +14,7 @@ namespace Neos\FluidAdaptor\ViewHelpers;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 
 /**
- * View helper that outputs its child nodes with \TYPO3\Flow\var_dump()
+ * View helper that outputs its child nodes with \Neos\Flow\var_dump()
  *
  * = Examples =
  *
@@ -56,21 +56,30 @@ class DebugViewHelper extends AbstractViewHelper
     protected $escapeOutput = false;
 
     /**
-     * Wrapper for \TYPO3\Flow\var_dump()
+     * Arguments initialization
      *
-     * @param string $title
-     * @param boolean $typeOnly Whether only the type should be returned instead of the whole chain.
+     * @return void
+     */
+    public function initializeArguments()
+    {
+        $this->registerArgument('title', 'string', 'The title', false, null);
+        $this->registerArgument('typeOnly', 'boolean', 'Whether only the type should be returned instead of the whole chain.', false, false);
+    }
+
+    /**
+     * Wrapper for \Neos\Flow\var_dump()
+     *
      * @return string debug string
      */
-    public function render($title = null, $typeOnly = false)
+    public function render()
     {
         $expressionToExamine = $this->renderChildren();
-        if ($typeOnly === true && $expressionToExamine !== null) {
+        if ($this->arguments['typeOnly'] === true && $expressionToExamine !== null) {
             $expressionToExamine = (is_object($expressionToExamine) ? get_class($expressionToExamine) : gettype($expressionToExamine));
         }
 
         ob_start();
-        \TYPO3\Flow\var_dump($expressionToExamine, $title);
+        \Neos\Flow\var_dump($expressionToExamine, $this->arguments['title']);
         $output = ob_get_contents();
         ob_end_clean();
         return $output;

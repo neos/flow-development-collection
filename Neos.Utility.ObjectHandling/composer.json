@@ -2,18 +2,19 @@
   "name": "neos/utility-objecthandling",
   "description": "Flow array/object property and type utilities",
   "type": "library",
-  "homepage": "http://flow.typo3.org",
+  "homepage": "http://flow.neos.io",
   "license": "MIT",
   "require": {
-    "php": ">=5.5.0"
+    "php": "~7.1"
   },
   "require-dev": {
-    "phpunit/phpunit": "~4.8 || ~5.2.0"
+    "phpunit/phpunit": "~6.0",
+    "doctrine/orm": "~2.5.0",
+    "doctrine/common": ">=2.4,<2.8-dev"
   },
   "autoload": {
-    "psr-0": {
-      "TYPO3\\Flow\\Reflection": "Classes",
-      "TYPO3\\Flow\\Utility": "Classes"
+    "psr-4": {
+      "Neos\\Utility\\": "Classes"
     }
   },
   "autoload-dev": {

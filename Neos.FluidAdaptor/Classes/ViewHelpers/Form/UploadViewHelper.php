@@ -11,10 +11,10 @@ namespace Neos\FluidAdaptor\ViewHelpers\Form;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Property\PropertyMapper;
-use TYPO3\Flow\ResourceManagement\PersistentResource;
-use TYPO3\Fluid\ViewHelpers\FormViewHelper;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Property\PropertyMapper;
+use Neos\Flow\ResourceManagement\PersistentResource;
+use Neos\FluidAdaptor\ViewHelpers\FormViewHelper;
 
 /**
  * A view helper which generates an <input type="file"> HTML element.
@@ -82,7 +82,7 @@ class UploadViewHelper extends AbstractFormFieldViewHelper
     public function initializeArguments()
     {
         parent::initializeArguments();
-        $this->registerTagAttribute('disabled', 'string', 'Specifies that the input element should be disabled when the page loads');
+        $this->registerTagAttribute('disabled', 'boolean', 'Specifies that the input element should be disabled when the page loads', false, false);
         $this->registerArgument('errorClass', 'string', 'CSS class to set if there are errors for this view helper', false, 'f3-form-error');
         $this->registerArgument('collection', 'string', 'Name of the resource collection this file should be uploaded to', false, '');
         $this->registerUniversalTagAttributes();
@@ -160,7 +160,7 @@ class UploadViewHelper extends AbstractFormFieldViewHelper
     {
         if ($this->isObjectAccessorMode()) {
             $propertySegments = explode('.', $this->arguments['property']);
-            $formObjectName = $this->viewHelperVariableContainer->get(\Neos\FluidAdaptor\ViewHelpers\FormViewHelper::class, 'formObjectName');
+            $formObjectName = $this->viewHelperVariableContainer->get(FormViewHelper::class, 'formObjectName');
             if (!empty($formObjectName)) {
                 array_unshift($propertySegments, $formObjectName);
             }

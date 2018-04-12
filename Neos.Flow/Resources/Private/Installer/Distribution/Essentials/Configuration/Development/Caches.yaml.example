@@ -1,0 +1,16 @@
+#                                                                        #
+# Example Settings                                                       #
+#                                                                        #
+# This file contains example cache configuration for use during          #
+# development of your application.                                       #
+# Copy this file to Caches.yaml, and adjust as necessary.                #
+#                                                                        #
+# Please refer to the manuals for possible configuration options.        #
+#                                                                        #
+
+# Uncomment the following lines to disable the routing cache when you are developing
+# something with the routing itself.
+#Flow_Mvc_Routing_Route:
+#  backend: Neos\Cache\Backend\NullBackend
+#Flow_Mvc_Routing_Resolve:
+#  backend: Neos\Cache\Backend\NullBackend

@@ -12,6 +12,8 @@ namespace Neos\FluidAdaptor\ViewHelpers\Format;
  */
 
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
+use TYPO3Fluid\Fluid\Core\Compiler\TemplateCompiler;
+use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\ViewHelperNode;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 
 /**
@@ -51,42 +53,62 @@ class JsonViewHelper extends AbstractViewHelper
     protected $escapeChildren = false;
 
     /**
+     * Initialize the arguments.
+     *
+     * @return void
+     * @api
+     */
+    public function initializeArguments()
+    {
+        $this->registerArgument('value', 'mixed', 'The incoming data to convert, or NULL if VH children should be used', false, null);
+        $this->registerArgument('forceObject', 'boolean', 'Outputs an JSON object rather than an array', false, false);
+    }
+
+    /**
      * Outputs content with its JSON representation. To prevent issues in HTML context, occurrences
      * of greater-than or less-than characters are converted to their hexadecimal representations.
      *
      * If $forceObject is TRUE a JSON object is outputted even if the value is a non-associative array
      * Example: array('foo', 'bar') as input will not be ["foo","bar"] but {"0":"foo","1":"bar"}
      *
-     * @param mixed $value The incoming data to convert, or NULL if VH children should be used
-     * @param boolean $forceObject Outputs an JSON object rather than an array
      * @return string the JSON-encoded string.
      * @see http://www.php.net/manual/en/function.json-encode.php
      * @api
      */
-    public function render($value = null, $forceObject = false)
+    public function render()
     {
-        return self::renderStatic(array('value' => $value, 'forceObject' => $forceObject), $this->buildRenderChildrenClosure(), $this->renderingContext);
-    }
+        $value = $this->arguments['value'];
 
-    /**
-     * Applies json_encode() on the specified value.
-     *
-     * @param array $arguments
-     * @param \Closure $renderChildrenClosure
-     * @param RenderingContextInterface $renderingContext
-     * @return string
-     */
-    public static function renderStatic(array $arguments, \Closure $renderChildrenClosure, RenderingContextInterface $renderingContext)
-    {
-        $value = $arguments['value'];
         if ($value === null) {
-            $value = $renderChildrenClosure();
+            $value = $this->renderChildren();
         }
         $options = JSON_HEX_TAG;
-        if ($arguments['forceObject'] !== false) {
+        if ($this->arguments['forceObject'] !== false) {
             $options = $options | JSON_FORCE_OBJECT;
         }
 
         return json_encode($value, $options);
+    }
+
+    /**
+     * @param string $argumentsName
+     * @param string $closureName
+     * @param string $initializationPhpCode
+     * @param ViewHelperNode $node
+     * @param TemplateCompiler $compiler
+     * @return string
+     */
+    public function compile($argumentsName, $closureName, &$initializationPhpCode, ViewHelperNode $node, TemplateCompiler $compiler)
+    {
+        $valueVariableName = $compiler->variableName('value');
+        $optionsVariableName = $compiler->variableName('options');
+        $initializationPhpCode .= sprintf('%1$s = (%2$s[\'value\'] !== null ? %2$s[\'value\'] : %3$s());', $valueVariableName, $argumentsName, $closureName) . chr(10);
+        $initializationPhpCode .= sprintf('%1$s = %2$s[\'forceObject\'] !== false ? JSON_HEX_TAG |JSON_FORCE_OBJECT : JSON_HEX_TAG;', $optionsVariableName, $argumentsName) . chr(10);
+
+        return sprintf(
+            'json_encode(%1$s, %2$s)',
+            $valueVariableName,
+            $optionsVariableName
+        );
     }
 }

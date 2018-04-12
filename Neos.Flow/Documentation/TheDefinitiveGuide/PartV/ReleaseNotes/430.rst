@@ -1,0 +1,118 @@
+========
+Flow 4.3
+========
+
+====================
+Upgrade Instructions
+====================
+
+This section contains instructions for upgrading your Flow 4.2 based applications to Flow 4.3.
+
+In general just make sure to run the command::
+
+ ./flow flow:cache:flush --force
+
+If you are upgrading from a lower version than 4.2, be sure to read the upgrade instructions from
+the previous Release Notes first.
+
+What has changed
+----------------
+
+Flow 4.3 comes with a major change in the routing and numerous fixes. Here's a list of changes that
+might need special attention when upgrading.
+
+`!!! FEATURE: More extensible Routing <https://github.com/neos/flow-development-collection/pull/1126>`_
+-------------------------------------------------------------------------------------------------------
+
+The Flow-routing is improved and now allows the definition of RoutingParameters
+via HTTP-components that can later on be handled by custom RoutePartHandlers.
+That way the routing can react to influences other than the uri-path like the
+requested host-name or scheme or any other computable value.
+
+Attention: The signature of the internal Router implementation has changed.
+In the unlikely case that you replaced the flow-router with a custom-router
+you have to adjust your code accordingly.
+
+Routing Parameters
+^^^^^^^^^^^^^^^^^^
+
+Routing `Parameters` can be defined globally (via HTTP component) in order
+to allow custom RoutePart handler to react to influences that are outside of
+the incoming URI path (example: The requested host name or scheme)
+
+For a RoutePart handler to access the parameters they have to implement
+the new `ParameterAwareRoutePartInterface`.
+The `DynamicRoutePart` already implements the interface. For custom implementations
+extending `DynamicRoutePart` the parameters will be accessible via `$this->parameters`.
+
+Extended URI matching
+^^^^^^^^^^^^^^^^^^^^^
+
+RoutePart handlers can now return an instance of `MatchResult` when mapping
+incoming requests.
+This allows the handler to specify *Tags*  to be associated with the route.
+
+* Packages: ``Flow``
+
+`!!! FEATURE: Allow bypassing Flow class loader for performance <https://github.com/neos/flow-development-collection/pull/925>`_
+--------------------------------------------------------------------------------------------------------------------------------
+
+Currently the composer class loader is only used as a fallback to our own,
+but especially if the optimized loader is used the composer one is much
+faster.
+
+On systems in which all packages/classes are registered correctly via
+autoload statements in ``composer.json`` files using our own class loader
+only for proxy classes can bring an substantial boost in performance for
+every request.
+
+In order to enable this feature you need to set an environment variable
+``FLOW_ONLY_COMPOSER_LOADER=1``. Please test carefully if that breaks due
+to your autoload configuration not being fully composer ready.
+
+Additionally it is recommended to use the optimized composer loader by
+calling ``composer dumpautoload -o``.
+
+While not breaking in itself this change deprecates using our class loader
+for anything else than proxy classes. In practice this means you should
+always enable composer auto loader only by using above mentioned environment
+variable. At least make sure that your projects work with this
+enabled.
+
+We will drop the variable and make this the default behavior in the next
+major version of Flow (version 5.0) which means only classes that are
+correctly added to composer (loaded) packages with autoload configuration
+are being loaded correctly.
+
+* Packages: ``Flow``
+
+
+`TASK: Split Flow Log to separate package <https://github.com/neos/flow-development-collection/pull/216>`_
+----------------------------------------------------------------------------------------------------------
+
+The log-package was extracted from Flow to become a separate independent
+composer-package neos/flow-log that can be used outside of Neos or Flow
+projects. This continues our long-time-effort of extracting parts of our
+odebase that can be used separately and making them available to the
+whole php-community.
+
+The `SystemLoggerInterface` and `SecurityLoggerInterface` are kept
+in Flow as they have not much meaning in the Logger package. Additionally
+the `EarlyLogger` was not moved as it depends on those interfaces.
+
+* Packages: ``Flow`` ``Log``
+
+`FEATURE: Add cookie support on curl request <https://github.com/neos/flow-development-collection/pull/1099>`_
+--------------------------------------------------------------------------------------------------------------
+
+`Neos\\Flow\\Http\\Client\\CurlEngine` will now attach cookies to an outgoing request.
+
+* Packages: ``Flow``
+
+
+`FEATURE: PHP 7.2 compatibility`
+--------------------------------
+
+Flow framework now supports PHP 7.2 and all tests are executed for PHP versions 7.0, 7.1 and 7.2.
+
+

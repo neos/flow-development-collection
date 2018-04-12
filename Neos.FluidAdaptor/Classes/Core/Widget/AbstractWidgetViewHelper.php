@@ -11,12 +11,12 @@ namespace Neos\FluidAdaptor\Core\Widget;
  * source code.
  */
 
-use TYPO3\Flow\Http\Response;
-use TYPO3\Flow\Mvc\ActionRequest;
-use TYPO3\Flow\Mvc\Exception\ForwardException;
-use TYPO3\Flow\Mvc\Exception\InfiniteLoopException;
-use TYPO3\Flow\Mvc\Exception\StopActionException;
-use TYPO3\Flow\ObjectManagement\DependencyInjection\DependencyProxy;
+use Neos\Flow\Http\Response;
+use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\Exception\ForwardException;
+use Neos\Flow\Mvc\Exception\InfiniteLoopException;
+use Neos\Flow\Mvc\Exception\StopActionException;
+use Neos\Flow\ObjectManagement\DependencyInjection\DependencyProxy;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use Neos\FluidAdaptor\Core\ViewHelper\Facets\ChildNodeAccessInterface;
 use TYPO3Fluid\Fluid\Core\Compiler\TemplateCompiler;
@@ -203,7 +203,7 @@ abstract class AbstractWidgetViewHelper extends AbstractViewHelper implements Ch
             $this->controller->_activateDependency();
         }
         if (!($this->controller instanceof AbstractWidgetController)) {
-            throw new Exception\MissingControllerException('initiateSubRequest() can not be called if there is no controller inside $this->controller. Make sure to add the @TYPO3\Flow\Annotations\Inject annotation in your widget class.', 1284401632);
+            throw new Exception\MissingControllerException('initiateSubRequest() can not be called if there is no controller inside $this->controller. Make sure to add the @Neos\Flow\Annotations\Inject annotation in your widget class.', 1284401632);
         }
 
         /** @var $subRequest ActionRequest */

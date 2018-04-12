@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file original="" product-name="Neos.Flow" source-language="en" datatype="plaintext" target-language="la-LA">
+    <body>
+      <trans-unit id="authentication.required" xml:space="preserve">
+				<source>Authentication required</source>
+			<target xml:lang="la-LA">crwdns6331:0crwdne6331:0</target></trans-unit>
+      <trans-unit id="authentication.username" xml:space="preserve">
+				<source>Username</source>
+			<target xml:lang="la-LA">crwdns6332:0crwdne6332:0</target></trans-unit>
+      <trans-unit id="authentication.password" xml:space="preserve">
+				<source>Password</source>
+			<target xml:lang="la-LA">crwdns6333:0crwdne6333:0</target></trans-unit>
+      <trans-unit id="authentication.new-password" xml:space="preserve">
+				<source>New password</source>
+			<target xml:lang="la-LA">crwdns6334:0crwdne6334:0</target></trans-unit>
+      <trans-unit id="authentication.login" xml:space="preserve">
+				<source>Login</source>
+			<target xml:lang="la-LA">crwdns6335:0crwdne6335:0</target></trans-unit>
+      <trans-unit id="authentication.logout" xml:space="preserve">
+				<source>Logout</source>
+			<target xml:lang="la-LA">crwdns6336:0crwdne6336:0</target></trans-unit>
+      <trans-unit id="update" xml:space="preserve">
+				<source>Update</source>
+			<target xml:lang="la-LA">crwdns6337:0crwdne6337:0</target></trans-unit>
+      <trans-unit id="submit" xml:space="preserve">
+				<source>Submit</source>
+			<target xml:lang="la-LA">crwdns6338:0crwdne6338:0</target></trans-unit>
+    </body>
+  </file>
+</xliff>

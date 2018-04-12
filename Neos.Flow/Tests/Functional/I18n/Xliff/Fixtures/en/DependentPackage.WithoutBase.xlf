@@ -1,0 +1,10 @@
+<?xml version='1.0' encoding='utf-8'?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+    <file original="WithoutBase" product-name="Vendor.BasePackage" source-language="en" target-language="de" datatype="plaintext">
+        <body>
+            <trans-unit id="key1" xml:space="preserve">
+                <source>Additional source string</source>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>

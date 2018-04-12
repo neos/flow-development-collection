@@ -20,7 +20,7 @@ require_once(__DIR__ . '/ViewHelperBaseTestcase.php');
  * Testcase for CycleViewHelper
  *
  */
-class RenderChildrenViewHelperTest extends \Neos\FluidAdaptor\ViewHelpers\ViewHelperBaseTestcase
+class RenderChildrenViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase
 {
     /**
      * var \Neos\FluidAdaptor\ViewHelpers\RenderChildrenViewHelper

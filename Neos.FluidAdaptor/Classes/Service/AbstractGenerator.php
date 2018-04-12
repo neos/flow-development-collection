@@ -11,9 +11,9 @@ namespace Neos\FluidAdaptor\Service;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Reflection\ClassReflection;
-use Neos\FluidAdaptor\Fluid;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Reflection\ClassReflection;
+use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 
 /**
  * Common base class for XML generators.
@@ -30,13 +30,13 @@ abstract class AbstractGenerator
     /**
      * The doc comment parser.
      *
-     * @var \TYPO3\Flow\Reflection\DocCommentParser
+     * @var \Neos\Flow\Reflection\DocCommentParser
      * @Flow\Inject
      */
     protected $docCommentParser;
 
     /**
-     * @var \TYPO3\Flow\Reflection\ReflectionService
+     * @var \Neos\Flow\Reflection\ReflectionService
      * @Flow\Inject
      */
     protected $reflectionService;
@@ -47,7 +47,7 @@ abstract class AbstractGenerator
      */
     public function __construct()
     {
-        $this->abstractViewHelperReflectionClass = new ClassReflection(\Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper::class);
+        $this->abstractViewHelperReflectionClass = new ClassReflection(AbstractViewHelper::class);
     }
 
     /**
@@ -60,7 +60,7 @@ abstract class AbstractGenerator
     {
         $affectedViewHelperClassNames = array();
 
-        $allViewHelperClassNames = $this->reflectionService->getAllSubClassNamesForClass(\Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper::class);
+        $allViewHelperClassNames = $this->reflectionService->getAllSubClassNamesForClass(AbstractViewHelper::class);
         foreach ($allViewHelperClassNames as $viewHelperClassName) {
             if ($this->reflectionService->isClassAbstract($viewHelperClassName)) {
                 continue;

@@ -17,7 +17,7 @@ require_once(__DIR__ . '/../ViewHelperBaseTestcase.php');
  * Test for the Abstract Form view helper
  *
  */
-class AbstractFormViewHelperTest extends \Neos\FluidAdaptor\ViewHelpers\ViewHelperBaseTestcase
+class AbstractFormViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase
 {
     /**
      * @test
@@ -25,13 +25,13 @@ class AbstractFormViewHelperTest extends \Neos\FluidAdaptor\ViewHelpers\ViewHelp
     public function renderHiddenIdentityFieldReturnsAHiddenInputFieldContainingTheObjectsUUID()
     {
         $className = 'Object' . uniqid();
-        $fullClassName = 'TYPO3\\Fluid\\ViewHelpers\\Form\\' . $className;
-        eval('namespace TYPO3\\Fluid\\ViewHelpers\\Form; class ' . $className . ' {
+        $fullClassName = 'Neos\\Fluid\\ViewHelpers\\Form\\' . $className;
+        eval('namespace Neos\\Fluid\\ViewHelpers\\Form; class ' . $className . ' {
 			public function __clone() {}
 		}');
         $object = $this->createMock($fullClassName);
 
-        $mockPersistenceManager = $this->createMock(\TYPO3\Flow\Persistence\PersistenceManagerInterface::class);
+        $mockPersistenceManager = $this->createMock(\Neos\Flow\Persistence\PersistenceManagerInterface::class);
         $mockPersistenceManager->expects($this->once())->method('getIdentifierByObject')->with($object)->will($this->returnValue('123'));
 
         $expectedResult = chr(10) . '<input type="hidden" name="prefix[theName][__identity]" value="123" />' . chr(10);
@@ -50,13 +50,13 @@ class AbstractFormViewHelperTest extends \Neos\FluidAdaptor\ViewHelpers\ViewHelp
     public function renderHiddenIdentityFieldReturnsAHiddenInputFieldIfObjectIsNewButAClone()
     {
         $className = 'Object' . uniqid();
-        $fullClassName = 'TYPO3\\Fluid\\ViewHelpers\\Form\\' . $className;
-        eval('namespace TYPO3\\Fluid\\ViewHelpers\\Form; class ' . $className . ' {
+        $fullClassName = 'Neos\\Fluid\\ViewHelpers\\Form\\' . $className;
+        eval('namespace Neos\\Fluid\\ViewHelpers\\Form; class ' . $className . ' {
 			public function __clone() {}
 		}');
         $object = $this->createMock($fullClassName);
 
-        $mockPersistenceManager = $this->createMock(\TYPO3\Flow\Persistence\PersistenceManagerInterface::class);
+        $mockPersistenceManager = $this->createMock(\Neos\Flow\Persistence\PersistenceManagerInterface::class);
         $mockPersistenceManager->expects($this->once())->method('getIdentifierByObject')->with($object)->will($this->returnValue('123'));
 
         $expectedResult = chr(10) . '<input type="hidden" name="prefix[theName][__identity]" value="123" />' . chr(10);
@@ -75,13 +75,13 @@ class AbstractFormViewHelperTest extends \Neos\FluidAdaptor\ViewHelpers\ViewHelp
     public function renderHiddenIdentityFieldReturnsACommentIfTheObjectIsWithoutIdentity()
     {
         $className = 'Object' . uniqid();
-        $fullClassName = 'TYPO3\\Fluid\\ViewHelpers\\Form\\' . $className;
-        eval('namespace TYPO3\\Fluid\\ViewHelpers\\Form; class ' . $className . ' {
+        $fullClassName = 'Neos\\Fluid\\ViewHelpers\\Form\\' . $className;
+        eval('namespace Neos\\Fluid\\ViewHelpers\\Form; class ' . $className . ' {
 			public function __clone() {}
 		}');
         $object = $this->createMock($fullClassName);
 
-        $mockPersistenceManager = $this->createMock(\TYPO3\Flow\Persistence\PersistenceManagerInterface::class);
+        $mockPersistenceManager = $this->createMock(\Neos\Flow\Persistence\PersistenceManagerInterface::class);
         $mockPersistenceManager->expects($this->once())->method('getIdentifierByObject')->with($object)->will($this->returnValue(null));
 
         $expectedResult = chr(10) . '<!-- Object of type ' . get_class($object) . ' is without identity -->' . chr(10);

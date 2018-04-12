@@ -11,12 +11,12 @@ namespace Neos\Utility\Arrays\Tests\Unit;
  * source code.
  */
 
-use TYPO3\Flow\Utility\Arrays;
+use Neos\Utility\Arrays;
 
 /**
  * Testcase for the Utility Array class
  */
-class ArraysTest extends \PHPUnit_Framework_TestCase
+class ArraysTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @test
@@ -501,7 +501,7 @@ class ArraysTest extends \PHPUnit_Framework_TestCase
      * @dataProvider arrayMergeRecursiveOverruleData
      * @test
      */
-    public function arrayMergeRecursiveOverruleMergesSimpleArrays($inputArray1, $inputArray2, $dontAddNewKeys, $emptyValuesOverride, $expected)
+    public function arrayMergeRecursiveOverruleMergesSimpleArrays(array $inputArray1, array $inputArray2, bool $dontAddNewKeys, bool $emptyValuesOverride, array $expected)
     {
         $actual = Arrays::arrayMergeRecursiveOverrule($inputArray1, $inputArray2, $dontAddNewKeys, $emptyValuesOverride);
         $this->assertSame($expected, $actual);

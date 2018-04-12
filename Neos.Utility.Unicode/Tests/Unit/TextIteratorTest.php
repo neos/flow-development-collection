@@ -11,13 +11,13 @@ namespace Neos\Utility\Unicode\Tests\Unit;
  * source code.
  */
 
-use TYPO3\Flow\Utility\Unicode\TextIterator;
-use TYPO3\Flow\Utility\Unicode;
+use Neos\Utility\Unicode\TextIterator;
+use Neos\Utility\Unicode;
 
 /**
  * Testcase for the TextIterator port
  */
-class TextIteratorTest extends \PHPUnit_Framework_TestCase
+class TextIteratorTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * Checks if a new instance with the default iterator type can be created
@@ -164,7 +164,7 @@ class TextIteratorTest extends \PHPUnit_Framework_TestCase
     {
         $iterator = new TextIterator('This is a test string. Let\'s iterate it by character...', TextIterator::CHARACTER);
         foreach ($iterator as $currentCharacter) {
-            if ($currentCharacter == 'L') {
+            if ($currentCharacter === 'L') {
                 break;
             }
         }
@@ -180,7 +180,7 @@ class TextIteratorTest extends \PHPUnit_Framework_TestCase
     {
         $iterator = new TextIterator('This is a test string. Let\'s iterate it by word...', TextIterator::WORD);
         foreach ($iterator as $currentWord) {
-            if ($currentWord == 'iterate') {
+            if ($currentWord === 'iterate') {
                 break;
             }
         }
@@ -196,7 +196,7 @@ class TextIteratorTest extends \PHPUnit_Framework_TestCase
     {
         $iterator = new TextIterator('This is a test string. Let\'s iterate it by word...', TextIterator::SENTENCE);
         foreach ($iterator as $currentSentence) {
-            if ($currentSentence == 'Let\'s iterate it by word.') {
+            if ($currentSentence === 'Let\'s iterate it by word.') {
                 break;
             }
         }

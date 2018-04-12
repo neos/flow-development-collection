@@ -1,0 +1,13 @@
+{namespace k=Neos\Kickstarter\ViewHelpers}<![CDATA[<f:layout name="Default" />
+
+<f:section name="Title">]]>Show {modelName -> k:inflect.humanizeCamelCase(lowercase: true)}"<![CDATA[{]]>{modelName}<![CDATA[.name}]]>"<![CDATA[</f:section>]]>
+
+<![CDATA[<f:section name="Content">]]>
+    <table><f:for each="{properties}" as="property" key="propertyName">
+        <tr>
+            <th>{propertyName -> k:inflect.humanizeCamelCase()}</th>
+            <td><f:if condition="{0: property.type} == {0: 'DateTime'}"><f:then><![CDATA[{]]>{modelName}.{propertyName}<![CDATA[ -> f:format.date(format: 'Y-m-d H:i')}]]></f:then><f:else><![CDATA[{]]>{modelName}.{propertyName}<![CDATA[}]]></f:else></f:if></td>
+        </tr>
+    </f:for></table>
+    <![CDATA[<f:link.action action="index">Back</f:link.action>]]>
+<![CDATA[</f:section>]]>

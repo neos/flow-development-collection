@@ -19,17 +19,17 @@ use Neos\FluidAdaptor\Core\ViewHelper\AbstractTagBasedViewHelper;
  * = Examples =
  *
  * <code>
- * <f:link.external uri="http://www.typo3.org" target="_blank">external link</f:link.external>
+ * <f:link.external uri="https://www.neos.io" target="_blank">external link</f:link.external>
  * </code>
  * <output>
- * <a href="http://www.typo3.org" target="_blank">external link</a>
+ * <a href="https://www.neos.io" target="_blank">external link</a>
  * </output>
  *
  * <code title="custom default scheme">
- * <f:link.external uri="typo3.org" defaultScheme="ftp">external ftp link</f:link.external>
+ * <f:link.external uri="neos.io" defaultScheme="sftp">external ftp link</f:link.external>
  * </code>
  * <output>
- * <a href="ftp://typo3.org">external ftp link</a>
+ * <a href="sftp://neos.io">external ftp link</a>
  * </output>
  *
  * @api
@@ -54,16 +54,19 @@ class ExternalViewHelper extends AbstractTagBasedViewHelper
         $this->registerTagAttribute('rel', 'string', 'Specifies the relationship between the current document and the linked document');
         $this->registerTagAttribute('rev', 'string', 'Specifies the relationship between the linked document and the current document');
         $this->registerTagAttribute('target', 'string', 'Specifies where to open the linked document');
+        $this->registerArgument('uri', 'string', 'the URI that will be put in the href attribute of the rendered link tag', true);
+        $this->registerArgument('defaultScheme', 'string', 'scheme the href attribute will be prefixed with if specified $uri does not contain a scheme already', false, 'http');
     }
 
     /**
-     * @param string $uri the URI that will be put in the href attribute of the rendered link tag
-     * @param string $defaultScheme scheme the href attribute will be prefixed with if specified $uri does not contain a scheme already
      * @return string Rendered link
      * @api
      */
-    public function render($uri, $defaultScheme = 'http')
+    public function render()
     {
+        $uri = $this->arguments['uri'];
+        $defaultScheme = $this->arguments['defaultScheme'];
+
         $scheme = parse_url($uri, PHP_URL_SCHEME);
         if ($scheme === null && $defaultScheme !== '') {
             $uri = $defaultScheme . '://' . $uri;

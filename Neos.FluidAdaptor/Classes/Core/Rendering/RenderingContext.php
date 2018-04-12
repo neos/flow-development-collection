@@ -14,10 +14,10 @@ namespace Neos\FluidAdaptor\Core\Rendering;
 use Neos\FluidAdaptor\Core\Cache\CacheAdaptor;
 use Neos\FluidAdaptor\Core\Parser\TemplateParser;
 use Neos\FluidAdaptor\Core\Parser\TemplateProcessor\EscapingFlagProcessor;
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Mvc\ActionRequest;
-use TYPO3\Flow\Mvc\Controller\ControllerContext;
-use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\Controller\ControllerContext;
+use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\FluidAdaptor\Core\Parser\Interceptor\ResourceInterceptor;
 use Neos\FluidAdaptor\Core\Parser\SyntaxTree\Expression\LegacyNamespaceExpressionNode;
 use Neos\FluidAdaptor\Core\Parser\TemplateProcessor\NamespaceDetectionTemplateProcessor;
@@ -72,6 +72,11 @@ class RenderingContext extends FluidRenderingContext implements FlowAwareRenderi
      * @var CacheAdaptor
      */
     protected $cache;
+
+    /**
+     * @var Configuration
+     */
+    protected $parserConfiguration;
 
     /**
      * RenderingContext constructor.
@@ -134,25 +139,18 @@ class RenderingContext extends FluidRenderingContext implements FlowAwareRenderi
     }
 
     /**
-     * @return \TYPO3Fluid\Fluid\Core\Variables\VariableProviderInterface
-     * @deprecated use "getVariableProvider"
-     */
-    public function getTemplateVariableContainer()
-    {
-        return $this->getVariableProvider();
-    }
-
-    /**
      * Build parser configuration
      *
      * @return Configuration
      */
     public function buildParserConfiguration()
     {
-        $parserConfiguration = parent::buildParserConfiguration();
-        $parserConfiguration->addInterceptor(new ResourceInterceptor());
+        if ($this->parserConfiguration === null) {
+            $this->parserConfiguration = parent::buildParserConfiguration();
+            $this->parserConfiguration->addInterceptor(new ResourceInterceptor());
+        }
 
-        return $parserConfiguration;
+        return $this->parserConfiguration;
     }
 
     /**
@@ -161,7 +159,7 @@ class RenderingContext extends FluidRenderingContext implements FlowAwareRenderi
      * @param string $optionName
      * @param mixed $value
      * @return void
-     * @throws \TYPO3\Flow\Mvc\Exception
+     * @throws \Neos\Flow\Mvc\Exception
      */
     public function setOption($optionName, $value)
     {

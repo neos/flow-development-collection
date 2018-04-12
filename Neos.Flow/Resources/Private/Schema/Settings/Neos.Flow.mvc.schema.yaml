@@ -1,0 +1,11 @@
+type: dictionary
+additionalProperties: FALSE
+properties:
+  'routes':
+    type: dictionary
+    patternProperties: { '/.*/': { type: [boolean, dictionary] } }
+  'view':
+    type: dictionary
+    properties:
+      'defaultImplementation':
+        type: [{type: 'null'}, {type: 'string', format: 'class-name'}]

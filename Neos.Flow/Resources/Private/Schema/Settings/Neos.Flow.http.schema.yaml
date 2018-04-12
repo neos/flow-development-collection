@@ -1,0 +1,57 @@
+type: dictionary
+additionalProperties: false
+properties:
+  'applicationToken': { type: string, required: true }
+  'baseUri':
+    type: [string, 'null']
+    required: true
+  'chain':
+    type: dictionary
+    required: true
+    additionalProperties:
+      -
+        type: 'null'
+      -
+        type: dictionary
+        additionalProperties: false
+        properties:
+          'position': [string, number]
+          'component': { type: string, format: class-name }
+          'componentOptions': { type: dictionary }
+          'chain':
+            -
+              type: 'null'
+            -
+              type: dictionary
+              additionalProperties:
+                type: dictionary
+                additionalProperties: false
+                properties:
+                  'position': [string, number]
+                  'component': { type: string, format: class-name }
+                  'componentOptions': { type: dictionary }
+                  'chain':
+                    type: dictionary
+  'trustedProxies':
+    type: dictionary
+    required: true
+    additionalProperties: false
+    properties:
+      'proxies':
+         required: true
+         type:
+           -
+             type: 'string'
+           -
+             type: dictionary
+             additionalProperties:
+               type: string
+      'headers':
+        type: dictionary
+        required: true
+        additionalProperties: false
+        properties:
+          'clientIp': { type: string, required: true }
+          'host': { type: string, required: true }
+          'port': { type: string, required: true }
+          'proto': { type: string, required: true }

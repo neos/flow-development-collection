@@ -12,11 +12,11 @@ namespace Neos\FluidAdaptor\Core\ViewHelper;
  */
 
 use Neos\FluidAdaptor\Core\Rendering\FlowAwareRenderingContextInterface;
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Log\SystemLoggerInterface;
-use TYPO3\Flow\Mvc\Controller\ControllerContext;
-use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
-use TYPO3\Flow\Reflection\ReflectionService;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Log\SystemLoggerInterface;
+use Neos\Flow\Mvc\Controller\ControllerContext;
+use Neos\Flow\ObjectManagement\ObjectManagerInterface;
+use Neos\Flow\Reflection\ReflectionService;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper as FluidAbstractViewHelper;
 
@@ -210,10 +210,9 @@ abstract class AbstractViewHelper extends FluidAbstractViewHelper
         $i = 0;
         foreach ($methodParameters as $parameterName => $parameterInfo) {
             $dataType = null;
-            if (isset($parameterInfo['type'])) {
+            $dataType = 'mixed';
+            if (isset($parameterInfo['type']) && strpos($parameterInfo['type'], '|') === false) {
                 $dataType = isset($parameterInfo['array']) && (bool)$parameterInfo['array'] ? 'array' : $parameterInfo['type'];
-            } else {
-                throw new \Neos\FluidAdaptor\Core\Exception('Could not determine type of argument "' . $parameterName . '" of the render-method in ViewHelper "' . static::class . '". Either the methods docComment is invalid or some PHP optimizer strips off comments.', 1242292003);
             }
 
             $description = '';

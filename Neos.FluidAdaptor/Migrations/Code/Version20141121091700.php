@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Flow\Core\Migrations;
+namespace Neos\Flow\Core\Migrations;
 
 /*
  * This file is part of the Neos.FluidAdaptor package.
@@ -11,13 +11,18 @@ namespace TYPO3\Flow\Core\Migrations;
  * source code.
  */
 
-use TYPO3\Flow\Utility\Files;
+use Neos\Utility\Files;
 
 /**
  * Warn about removed ReflectionService dependency from AbstractViewHelper
  */
 class Version20141121091700 extends AbstractMigration
 {
+    public function getIdentifier()
+    {
+        return 'TYPO3.Fluid-20141121091700';
+    }
+
     public function up()
     {
         $affectedFiles = array();

@@ -4,8 +4,11 @@
 	"description": "Fluid Templating Framework Adaptor",
 	"license": ["MIT"],
 	"require": {
-		"typo3/flow": "*",
-		"typo3fluid/fluid": "^2.0.4"
+		"neos/flow": "*",
+		"neos/cache": "*",
+		"neos/utility-files": "*",
+		"neos/utility-objecthandling": "*",
+		"typo3fluid/fluid": "~2.3.4"
 	},
 	"autoload": {
 		"psr-4": {

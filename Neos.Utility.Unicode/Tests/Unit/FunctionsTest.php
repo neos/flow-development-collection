@@ -11,12 +11,12 @@ namespace Neos\Utility\Unicode\Tests\Unit;
  * source code.
  */
 
-use TYPO3\Flow\Utility\Unicode\Functions;
+use Neos\Utility\Unicode\Functions;
 
 /**
  * Testcase for the PHP6 Functions backport
  */
-class FunctionsTest extends \PHPUnit_Framework_TestCase
+class FunctionsTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * Checks if strtotitle() at least works with latin characters.
@@ -75,7 +75,7 @@ class FunctionsTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Checks if our version of \TYPO3\Flow\Utility\Unicode\Functions::strtoupper basically works
+     * Checks if our version of \Neos\Utility\Unicode\Functions::strtoupper basically works
      *
      * @test
      */
@@ -86,7 +86,7 @@ class FunctionsTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Checks if our version of \TYPO3\Flow\Utility\Unicode\Functions::strtoupper can at least handle some common special chars
+     * Checks if our version of \Neos\Utility\Unicode\Functions::strtoupper can at least handle some common special chars
      *
      * @test
      */

@@ -11,8 +11,8 @@ namespace Neos\FluidAdaptor\ViewHelpers\Widget;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Persistence\QueryResultInterface;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Persistence\QueryResultInterface;
 use Neos\FluidAdaptor\Core\Widget\AbstractWidgetViewHelper;
 
 /**

@@ -1,0 +1,101 @@
+/*
+ * This file is part of the Neos.Flow package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
+
+.Flow-Error-Debugger-VarDump {
+	display: block;
+	text-align: left;
+	padding: 3px;
+	margin-bottom: 1.625em;
+	border-radius: 3px;
+	background-color: #00ADEE;
+	z-index: 99999;
+	margin: 20px 0 0 0;
+	color: black;
+}
+
+.Flow-Error-Debugger-VarDump-Inline {
+
+}
+
+.Flow-Error-Debugger-VarDump-Floating {
+	float: left;
+	position: relative;
+	left: 150px;
+	width: 80%;
+}
+
+.Flow-Error-Debugger-VarDump-Top {
+	background: #eeeeee;
+	font: normal bold 12px "Work Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+	padding: 10px 10px 0 10px;
+}
+
+.Flow-Error-Debugger-VarDump-Center {
+	background-color: #eeeeee;
+	font: normal normal 11px/18px Monospaced, "Lucida Console", monospace;
+	padding: 10px 10px;
+}
+
+.Flow-Error-Debugger-VarDump-Center pre {
+	margin: 0;
+	background-color: transparent;
+}
+
+.Flow-Error-Debugger-VarDump-Center, .Flow-Error-Debugger-VarDump-Center pre, .Flow-Error-Debugger-VarDump-Center p, .Flow-Error-Debugger-VarDump-Center a, .Flow-Error-Debugger-VarDump-Center strong, .Flow-Error-Debugger-VarDump-Center .debug-string{
+	font: normal normal 11px/18px Monospaced, "Lucida Console", monospace;
+}
+
+.Flow-Error-Debugger-VarDump-Center .debug-string {
+	color: black;
+}
+
+.Flow-Error-Debugger-VarDump-Center .debug-object {
+	color: #004fb0;
+	padding: 0px 4px;
+}
+
+.Flow-Error-Debugger-VarDump-Center .debug-unregistered {
+	background-color: #dce1e8;
+}
+
+.Flow-Error-Debugger-VarDump-Center .debug-scope, .Flow-Error-Debugger-VarDump-Center .debug-ptype, .Flow-Error-Debugger-VarDump-Center .debug-proxy, .Flow-Error-Debugger-VarDump-Center .debug-filtered {
+	color: white;
+	font-size: 10px;
+	line-height: 16px;
+	padding: 1px 4px;
+}
+
+.Flow-Error-Debugger-VarDump-Center .debug-scope {
+	background-color: #3e7fe1;
+}
+
+.Flow-Error-Debugger-VarDump-Center .debug-ptype {
+	background-color: #87cd3b;
+}
+
+.Flow-Error-Debugger-VarDump-Center .debug-proxy {
+	background-color: #b0000a;
+}
+
+.Flow-Error-Debugger-VarDump-Center .debug-filtered {
+	background-color: #8c8c8c;
+}
+
+.Flow-Error-Debugger-VarDump-Center .debug-seeabove {
+	text-decoration: none;
+	font-style: italic;
+	font-weight: normal;
+}
+
+.Flow-Error-Debugger-VarDump-Center .debug-property {
+	color: #555555;
+	line-height: 16px;
+	padding: 1px 2px;
+}

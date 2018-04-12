@@ -1,0 +1,20 @@
+{namespace k=Neos\Kickstarter\ViewHelpers}<![CDATA[<f:layout name="Default" />
+
+<f:section name="Title">]]>New {modelName -> k:inflect.humanizeCamelCase(lowercase: true)}<![CDATA[</f:section>
+
+<f:section name="Content">]]>
+    <p>Just fill out the following form to create a new {modelName -> k:inflect.humanizeCamelCase(lowercase: true)}:</p>
+
+    <![CDATA[<f:form action="create"]]> objectName="new{modelName -> k:format.ucfirst()}">
+        <ol><f:for each="{properties}" as="property" key="propertyName">
+            <li>
+                <label for="{propertyName}">{propertyName -> k:inflect.humanizeCamelCase()}</label>
+                <f:if condition="{0: property.type} == {0: 'DateTime'}"><f:then><![CDATA[<f:form.textfield]]> type="datetime" value="<![CDATA[{f:format.date(date: 'now', format: 'Y-m-d\TH:i:sP')}]]>" property="{propertyName}" id="{propertyName}" /></f:then><f:else><![CDATA[<f:form.textfield]]> property="{propertyName}" id="{propertyName}" /></f:else></f:if>
+            </li>
+        </f:for>
+            <li>
+                <![CDATA[<f:form.submit value="Create" />
+            </li>
+        </ol>
+    </f:form>]]>
+<![CDATA[</f:section>]]>

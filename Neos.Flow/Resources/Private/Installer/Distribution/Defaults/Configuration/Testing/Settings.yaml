@@ -1,0 +1,15 @@
+#                                                                        #
+# Testing Settings                                                       #
+#                                                                        #
+# This file contains settings for various parts of the application.      #
+# Copy this file to Settings.yaml, and adjust as necessary.              #
+#                                                                        #
+# Please refer to the default settings file(s) or the manuals for        #
+# possible configuration options.                                        #
+#                                                                        #
+
+Neos:
+  Flow:
+    persistence:
+      backendOptions:
+        dbname: 'flow_functional_testing'

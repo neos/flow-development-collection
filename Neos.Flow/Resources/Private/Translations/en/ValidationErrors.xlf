@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+	<file original="" product-name="Neos.Flow" source-language="en" datatype="plaintext">
+		<body>
+			<!-- AlphanumericValidator -->
+			<trans-unit id="1221551320" xml:space="preserve">
+				<source>Only regular characters (a to z, umlauts, ...) and numbers are allowed.</source>
+			</trans-unit>
+
+			<!-- BooleanValueValidator -->
+			<trans-unit id="1361044943" xml:space="preserve">
+				<source>The given value is expected to be {0}.</source>
+			</trans-unit>
+
+			<!-- CollectionValidator -->
+			<trans-unit id="1317204797" xml:space="preserve">
+				<source>The given subject is not a collection</source>
+			</trans-unit>
+
+			<!-- CountValidator -->
+			<trans-unit id="1253718666" xml:space="preserve">
+				<source>The given subject is not countable</source>
+			</trans-unit>
+			<trans-unit id="1253718831" xml:space="preserve">
+				<source>The count must be between {0,number} and {1,number}</source>
+			</trans-unit>
+
+			<!-- DateTimeRangeValidator -->
+			<trans-unit id="1324314378" xml:space="preserve">
+				<source>The given value is not a valid date</source>
+			</trans-unit>
+			<trans-unit id="1325615630" xml:space="preserve">
+				<source>The given date must be between {0} and {1}</source>
+			</trans-unit>
+			<trans-unit id="1324315107" xml:space="preserve">
+				<source>The given date must be after {0}</source>
+			</trans-unit>
+			<trans-unit id="1324315115" xml:space="preserve">
+				<source>The given date must be before {0}</source>
+			</trans-unit>
+
+			<!-- DateTimeValidator -->
+			<trans-unit id="1281454676" xml:space="preserve">
+				<source>The "locale" option can be only set to string identifier, or Locale object</source>
+			</trans-unit>
+			<trans-unit id="1281454830" xml:space="preserve">
+				<source>A valid time is expected</source>
+			</trans-unit>
+			<trans-unit id="1281454831" xml:space="preserve">
+				<source>A valid date and time is expected</source>
+			</trans-unit>
+			<trans-unit id="1281454832" xml:space="preserve">
+				<source>A valid date is expected</source>
+			</trans-unit>
+
+			<!-- EmailAddressValidator -->
+			<trans-unit id="1221559976" xml:space="preserve">
+				<source>Please specify a valid email address</source>
+			</trans-unit>
+
+			<!-- FloatValidator -->
+			<trans-unit id="1221560288" xml:space="preserve">
+				<source>A valid float number is expected</source>
+			</trans-unit>
+			<trans-unit id="1332934124" xml:space="preserve">
+				<source>"{0}" cannot be converted to a float value</source>
+			</trans-unit>
+
+			<!-- GenericObjectValidator -->
+			<trans-unit id="1241099149" xml:space="preserve">
+				<source>Object expected, {0} given</source>
+			</trans-unit>
+
+			<!-- IntegerValidator -->
+			<trans-unit id="1221560494" xml:space="preserve">
+				<source>A valid integer number is expected</source>
+			</trans-unit>
+			<trans-unit id="1332933658" xml:space="preserve">
+				<source>"{0}" is no integer.</source>
+			</trans-unit>
+
+			<!-- LabelValidator -->
+			<trans-unit id="1272298003" xml:space="preserve">
+				<source>Only letters, numbers, spaces and certain punctuation marks are expected</source>
+			</trans-unit>
+
+			<!-- LocaleIdentifierValidator -->
+			<trans-unit id="1327090892" xml:space="preserve">
+				<source>Value is no valid I18n locale identifier</source>
+			</trans-unit>
+
+			<!-- NotEmptyValidator -->
+			<trans-unit id="1221560910" xml:space="preserve">
+				<source>This property is required</source>
+			</trans-unit>
+			<trans-unit id="1221560718" xml:space="preserve">
+				<source>This property is required</source>
+			</trans-unit>
+
+			<!-- NumberRangeValidator -->
+			<trans-unit id="1221563685" xml:space="preserve">
+				<source>A valid number is expected</source>
+			</trans-unit>
+			<trans-unit id="1221561046" xml:space="preserve">
+				<source>Please enter a valid number between {0,number} and {1,number}</source>
+			</trans-unit>
+
+			<!-- NumberValidator -->
+			<trans-unit id="1281286579" xml:space="preserve">
+				<source>The "locale" option can be only set to string identifier, or Locale object</source>
+			</trans-unit>
+			<trans-unit id="1281452093" xml:space="preserve">
+				<source>A valid percent number is expected</source>
+			</trans-unit>
+			<trans-unit id="1281452094" xml:space="preserve">
+				<source>A valid decimal number is expected</source>
+			</trans-unit>
+
+			<!-- RegularExpressionValidator -->
+			<trans-unit id="1221565130" xml:space="preserve">
+				<source>The given subject did not match the pattern. Got: {0}</source>
+			</trans-unit>
+
+			<!-- StringLengthValidator -->
+			<trans-unit id="1238110957" xml:space="preserve">
+				<source>The given object could not be converted to a string</source>
+			</trans-unit>
+			<trans-unit id="1269883975" xml:space="preserve">
+				<source>The given value is not a valid string</source>
+			</trans-unit>
+			<trans-unit id="1238108067" xml:space="preserve">
+				<source>The length of this text must be between {0,number} and {1,number} characters</source>
+			</trans-unit>
+			<group id="1238108068" restype="x-gettext-plurals">
+				<trans-unit id="1238108068[0]" xml:space="preserve">
+					<source>This field must contain at least {0,number} character</source>
+				</trans-unit>
+				<trans-unit id="1238108068[1]" xml:space="preserve">
+					<source>This field must contain at least {0,number} characters</source>
+				</trans-unit>
+			</group>
+			<group id="1238108069" restype="x-gettext-plurals">
+				<trans-unit id="1238108069[0]" xml:space="preserve">
+					<source>This text may not exceed {0,number} character</source>
+				</trans-unit>
+				<trans-unit id="1238108069[1]" xml:space="preserve">
+					<source>This text may not exceed {0,number} characters</source>
+				</trans-unit>
+			</group>
+
+			<!-- StringValidator -->
+			<trans-unit id="1238108070" xml:space="preserve">
+				<source>A valid string is expected</source>
+			</trans-unit>
+
+			<!-- TextValidator -->
+			<trans-unit id="1221565786" xml:space="preserve">
+				<source>Valid text without any XML tags is expected</source>
+			</trans-unit>
+
+			<!-- UuidValidator -->
+			<trans-unit id="1221565853" xml:space="preserve">
+				<source>The given subject is not a valid UUID</source>
+			</trans-unit>
+
+			<!-- ElectronicAddressValidator -->
+			<trans-unit id="1268676030" xml:space="preserve">
+				<source>No validator found for electronic address of type "{0}"</source>
+			</trans-unit>
+
+			<!-- PersonNameValidator -->
+			<trans-unit id="1268676765" xml:space="preserve">
+				<source>The person name cannot be empty</source>
+			</trans-unit>
+
+			<!-- Package "Neos.Media" -->
+			<!-- ImageTypeValidator -->
+			<trans-unit id="1327947256" xml:space="preserve">
+				<source>The given value is not a Image instance</source>
+			</trans-unit>
+			<trans-unit id="1327947647" xml:space="preserve">
+				<source>The image type "{0}" is not allowed</source>
+			</trans-unit>
+			<trans-unit id="1328030664" xml:space="preserve">
+				<source>The uploaded file is no valid image</source>
+			</trans-unit>
+
+			<!-- ImageSizeValidator -->
+			<trans-unit id="1327943859" xml:space="preserve">
+				<source>The given value is not a Image instance</source>
+			</trans-unit>
+			<trans-unit id="1319801362" xml:space="preserve">
+				<source>The actual image width of {0,number} is lower than the allowed minimum width of {1,number}</source>
+			</trans-unit>
+			<trans-unit id="1319801859" xml:space="preserve">
+				<source>The actual image width of {0,number} is higher than the allowed maximum width of {1,number}</source>
+			</trans-unit>
+			<trans-unit id="1319801925" xml:space="preserve">
+				<source>The actual image height of {0,number} is lower than the allowed minimum height of {1,number}</source>
+			</trans-unit>
+			<trans-unit id="1319801929" xml:space="preserve">
+				<source>The actual image height of {0,number} is higher than the allowed maximum height of {1,number}</source>
+			</trans-unit>
+			<trans-unit id="1319813336" xml:space="preserve">
+				<source>The given image size of {0,number} x {1,number} is too low for the required minimum resolution of {2,number}</source>
+			</trans-unit>
+			<trans-unit id="1319813355" xml:space="preserve">
+				<source>The given image size of {0,number} x {1,number} is too high for the required maximum resolution of {2,number}</source>
+			</trans-unit>
+
+			<!-- ImageOrientationValidator -->
+			<trans-unit id="1328028604" xml:space="preserve">
+				<source>The given value is not a Image instance</source>
+			</trans-unit>
+			<trans-unit id="1328029406" xml:space="preserve">
+				<source>The image orientation must be "{0}"</source>
+			</trans-unit>
+			<trans-unit id="1328029362" xml:space="preserve">
+				<source>The image orientation "{0}" is not allowed</source>
+			</trans-unit>
+
+		</body>
+	</file>
+</xliff>

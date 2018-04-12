@@ -16,7 +16,7 @@ namespace Neos\FluidAdaptor\Tests\Functional\Form;
  *
  * @group large
  */
-class FormObjectsTest extends \TYPO3\Flow\Tests\FunctionalTestCase
+class FormObjectsTest extends \Neos\Flow\Tests\FunctionalTestCase
 {
     /**
      * @var boolean
@@ -24,7 +24,7 @@ class FormObjectsTest extends \TYPO3\Flow\Tests\FunctionalTestCase
     protected static $testablePersistenceEnabled = true;
 
     /**
-     * @var \TYPO3\Flow\Http\Client\Browser
+     * @var \Neos\Flow\Http\Client\Browser
      */
     protected $browser;
 
@@ -35,7 +35,7 @@ class FormObjectsTest extends \TYPO3\Flow\Tests\FunctionalTestCase
     {
         parent::setUp();
 
-        $route = new \TYPO3\Flow\Mvc\Routing\Route();
+        $route = new \Neos\Flow\Mvc\Routing\Route();
         $route->setUriPattern('test/fluid/formobjects(/{@action})');
         $route->setDefaults(array(
             '@package' => 'Neos.FluidAdaptor',
@@ -56,11 +56,11 @@ class FormObjectsTest extends \TYPO3\Flow\Tests\FunctionalTestCase
         $this->browser->request('http://localhost/test/fluid/formobjects');
         $form = $this->browser->getForm();
 
-        $form['post']['name']->setValue('Egon Olsen');
-        $form['post']['author']['emailAddress']->setValue('test@typo3.org');
+        $form['post']['name']->setValue('Neos Team');
+        $form['post']['author']['emailAddress']->setValue('hello@neos.io');
 
         $response = $this->browser->submit($form);
-        $this->assertSame('Egon Olsen|test@typo3.org', $response->getContent());
+        $this->assertSame('Neos Team|hello@neos.io', $response->getContent());
     }
 
     /**
@@ -72,8 +72,8 @@ class FormObjectsTest extends \TYPO3\Flow\Tests\FunctionalTestCase
 
         $this->browser->request('http://localhost/test/fluid/formobjects/edit?fooPost=' . $postIdentifier);
         $form = $this->browser->getForm();
-        $this->assertFalse(isset($form['post']['tags']['__identity']));
-        $this->assertFalse(isset($form['tags']['__identity']));
+        $this->assertFalse(isset($form['post']['tags']['__identity']), 'Post tags identities not set.');
+        $this->assertFalse(isset($form['tags']['__identity']), 'Tags identities not set.');
     }
 
     /**
@@ -96,19 +96,19 @@ class FormObjectsTest extends \TYPO3\Flow\Tests\FunctionalTestCase
         $this->browser->request('http://localhost/test/fluid/formobjects');
         $form = $this->browser->getForm();
 
-        $form['post']['name']->setValue('Egon Olsen');
+        $form['post']['name']->setValue('Neos Team');
         $form['post']['author']['emailAddress']->setValue('test_noValidEmail');
 
         $this->browser->submit($form);
         $form = $this->browser->getForm();
-        $this->assertSame('Egon Olsen', $form['post']['name']->getValue());
+        $this->assertSame('Neos Team', $form['post']['name']->getValue());
         $this->assertSame('test_noValidEmail', $form['post']['author']['emailAddress']->getValue());
         $this->assertSame('f3-form-error', $this->browser->getCrawler()->filterXPath('//*[@id="email"]')->attr('class'));
 
         $form['post']['author']['emailAddress']->setValue('another@email.org');
 
         $response = $this->browser->submit($form);
-        $this->assertSame('Egon Olsen|another@email.org', $response->getContent());
+        $this->assertSame('Neos Team|another@email.org', $response->getContent());
     }
 
     /**
@@ -397,7 +397,7 @@ class FormObjectsTest extends \TYPO3\Flow\Tests\FunctionalTestCase
 
         $form['post']['private']->setValue(true);
         $this->browser->submit($form);
-        $this->assertSame('checked', $this->browser->getCrawler()->filterXPath('//input[@id="private"]')->attr('checked'));
+        $this->assertNotNull($this->browser->getCrawler()->filterXPath('//input[@id="private"]')->attr('checked'));
     }
 
     /**
@@ -414,20 +414,20 @@ class FormObjectsTest extends \TYPO3\Flow\Tests\FunctionalTestCase
 
         $this->browser->submit($form);
 
-        $this->assertEquals('', $this->browser->getCrawler()->filterXPath('//input[@id="category_foo"]')->attr('checked'));
-        $this->assertEquals('checked', $this->browser->getCrawler()->filterXPath('//input[@id="category_bar"]')->attr('checked'));
-        $this->assertEquals('', $this->browser->getCrawler()->filterXPath('//input[@id="subCategory_foo"]')->attr('checked'));
-        $this->assertEquals('checked', $this->browser->getCrawler()->filterXPath('//input[@id="subCategory_bar"]')->attr('checked'));
+        $this->assertNull($this->browser->getCrawler()->filterXPath('//input[@id="category_foo"]')->attr('checked'));
+        $this->assertNotNull($this->browser->getCrawler()->filterXPath('//input[@id="category_bar"]')->attr('checked'));
+        $this->assertNull($this->browser->getCrawler()->filterXPath('//input[@id="subCategory_foo"]')->attr('checked'));
+        $this->assertNotNull($this->browser->getCrawler()->filterXPath('//input[@id="subCategory_bar"]')->attr('checked'));
 
         $form['post']['category']->setValue('foo');
         $form['post']['subCategory']->setValue('foo');
 
         $this->browser->submit($form);
 
-        $this->assertEquals('checked', $this->browser->getCrawler()->filterXPath('//input[@id="category_foo"]')->attr('checked'));
-        $this->assertEquals('', $this->browser->getCrawler()->filterXPath('//input[@id="category_bar"]')->attr('checked'));
-        $this->assertEquals('checked', $this->browser->getCrawler()->filterXPath('//input[@id="subCategory_foo"]')->attr('checked'));
-        $this->assertEquals('', $this->browser->getCrawler()->filterXPath('//input[@id="subCategory_bar"]')->attr('checked'));
+        $this->assertNotNull($this->browser->getCrawler()->filterXPath('//input[@id="category_foo"]')->attr('checked'));
+        $this->assertNull($this->browser->getCrawler()->filterXPath('//input[@id="category_bar"]')->attr('checked'));
+        $this->assertNotNull($this->browser->getCrawler()->filterXPath('//input[@id="subCategory_foo"]')->attr('checked'));
+        $this->assertNull($this->browser->getCrawler()->filterXPath('//input[@id="subCategory_bar"]')->attr('checked'));
     }
 
     /**
@@ -441,7 +441,7 @@ class FormObjectsTest extends \TYPO3\Flow\Tests\FunctionalTestCase
 
         $this->browser->request('http://localhost/test/fluid/formobjects/edit?fooPost=' . $postIdentifier);
         $checkboxDisabled = $this->browser->getCrawler()->filterXPath('//*[@id="private"]')->attr('disabled');
-        $this->assertNotEmpty($checkboxDisabled);
+        $this->assertNotNull($checkboxDisabled, 'Private checkbox was not disabled.');
         $this->assertEquals($checkboxDisabled, $this->browser->getCrawler()->filterXPath('//input[@type="hidden" and contains(@name,"private")]')->attr('disabled'), 'The hidden checkbox field is not disabled like the connected checkbox.');
 
         $form = $this->browser->getForm();

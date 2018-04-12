@@ -13,7 +13,7 @@ namespace Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Format;
 
 require_once(__DIR__ . '/../ViewHelperBaseTestcase.php');
 
-use Neos\FluidAdaptor\ViewHelpers\ViewHelperBaseTestcase;
+use Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase;
 
 /**
  * Test for \Neos\FluidAdaptor\ViewHelpers\Format\JsonViewHelper
@@ -28,9 +28,8 @@ class JsonViewHelperTest extends ViewHelperBaseTestcase
     public function setUp()
     {
         parent::setUp();
-        $this->viewHelper = $this->getMockBuilder(\Neos\FluidAdaptor\ViewHelpers\Format\JsonViewHelper::class)->setMethods(array('renderChildren'))->getMock();
+        $this->viewHelper = $this->getMockBuilder(\Neos\FluidAdaptor\ViewHelpers\Format\JsonViewHelper::class)->setMethods(array('renderChildren', 'registerRenderMethodArguments'))->getMock();
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
-        $this->viewHelper->initializeArguments();
     }
 
     /**
@@ -43,6 +42,7 @@ class JsonViewHelperTest extends ViewHelperBaseTestcase
                 ->method('renderChildren')
                 ->will($this->returnValue(array('foo' => 'bar')));
 
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, []);
         $actualResult = $this->viewHelper->render();
         $this->assertEquals('{"foo":"bar"}', $actualResult);
     }
@@ -56,7 +56,8 @@ class JsonViewHelperTest extends ViewHelperBaseTestcase
                 ->expects($this->never())
                 ->method('renderChildren');
 
-        $actualResult = $this->viewHelper->render(array('foo' => 'bar'));
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['value' => array('foo' => 'bar')]);
+        $actualResult = $this->viewHelper->render();
         $this->assertEquals('{"foo":"bar"}', $actualResult);
     }
 
@@ -69,9 +70,11 @@ class JsonViewHelperTest extends ViewHelperBaseTestcase
                 ->expects($this->any())
                 ->method('renderChildren')
                 ->will($this->returnValue(array('foo', 'bar', 42)));
-
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, []);
         $this->assertEquals('["foo","bar",42]', $this->viewHelper->render());
-        $this->assertEquals('{"0":"foo","1":"bar","2":42}', $this->viewHelper->render(null, true));
+
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['value' => null, 'forceObject' => true]);
+        $this->assertEquals('{"0":"foo","1":"bar","2":42}', $this->viewHelper->render());
     }
 
     /**
@@ -79,7 +82,9 @@ class JsonViewHelperTest extends ViewHelperBaseTestcase
      */
     public function viewHelperEscapesGreaterThanLowerThanCharacters()
     {
-        $this->assertEquals('["\u003Cfoo\u003E","bar","elephant \u003E mouse"]', $this->viewHelper->render(array('<foo>', 'bar', 'elephant > mouse')));
-        $this->assertEquals('{"0":"\u003Cfoo\u003E","1":"bar","2":"elephant \u003E mouse"}', $this->viewHelper->render(array('<foo>', 'bar', 'elephant > mouse'), true));
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['value' => array('<foo>', 'bar', 'elephant > mouse')]);
+        $this->assertEquals('["\u003Cfoo\u003E","bar","elephant \u003E mouse"]', $this->viewHelper->render());
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['value' => array('<foo>', 'bar', 'elephant > mouse'), 'forceObject' => true]);
+        $this->assertEquals('{"0":"\u003Cfoo\u003E","1":"bar","2":"elephant \u003E mouse"}', $this->viewHelper->render());
     }
 }
