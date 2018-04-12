@@ -123,14 +123,15 @@ class PointcutTest extends UnitTestCase
         $pointcutExpression = 'ThePointcutExpression';
         $aspectClassName = 'TheAspect';
         $className = 'TheClass';
+        $resultClassNameIndex = new Aop\Builder\ClassNameIndex();
 
         $targetClassNameIndex = new Aop\Builder\ClassNameIndex();
 
         $mockPointcutFilterComposite = $this->getMockBuilder(Pointcut\PointcutFilterComposite::class)->disableOriginalConstructor()->getMock();
-        $mockPointcutFilterComposite->expects($this->once())->method('reduceTargetClassNames')->with($targetClassNameIndex)->will($this->returnValue('someResult'));
+        $mockPointcutFilterComposite->expects($this->once())->method('reduceTargetClassNames')->with($targetClassNameIndex)->willReturn($resultClassNameIndex);
 
         $pointcut = new Pointcut\Pointcut($pointcutExpression, $mockPointcutFilterComposite, $aspectClassName, $className);
 
-        $this->assertEquals('someResult', $pointcut->reduceTargetClassNames($targetClassNameIndex));
+        $this->assertEquals($resultClassNameIndex, $pointcut->reduceTargetClassNames($targetClassNameIndex));
     }
 }

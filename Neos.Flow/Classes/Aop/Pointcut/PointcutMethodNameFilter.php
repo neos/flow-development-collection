@@ -60,7 +60,7 @@ class PointcutMethodNameFilter implements PointcutFilterInterface
      * @param array $methodArgumentConstraints array of method constraints
      * @throws InvalidPointcutExpressionException
      */
-    public function __construct($methodNameFilterExpression, $methodVisibility = null, array $methodArgumentConstraints = [])
+    public function __construct(string $methodNameFilterExpression, string $methodVisibility = null, array $methodArgumentConstraints = [])
     {
         $this->methodNameFilterExpression = $methodNameFilterExpression;
         if (preg_match(self::PATTERN_MATCHVISIBILITYMODIFIER, $methodVisibility) !== 1) {
@@ -76,7 +76,7 @@ class PointcutMethodNameFilter implements PointcutFilterInterface
      * @param ReflectionService $reflectionService The reflection service
      * @return void
      */
-    public function injectReflectionService(ReflectionService $reflectionService)
+    public function injectReflectionService(ReflectionService $reflectionService): void
     {
         $this->reflectionService = $reflectionService;
     }
@@ -85,7 +85,7 @@ class PointcutMethodNameFilter implements PointcutFilterInterface
      * @param SystemLoggerInterface $systemLogger
      * @return void
      */
-    public function injectSystemLogger(SystemLoggerInterface $systemLogger)
+    public function injectSystemLogger(SystemLoggerInterface $systemLogger): void
     {
         $this->systemLogger = $systemLogger;
     }
@@ -104,7 +104,7 @@ class PointcutMethodNameFilter implements PointcutFilterInterface
      * @return boolean TRUE if the class matches, otherwise FALSE
      * @throws Exception
      */
-    public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier)
+    public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier): bool
     {
         $matchResult = preg_match('/^' . $this->methodNameFilterExpression . '$/', $methodName);
 
@@ -148,7 +148,7 @@ class PointcutMethodNameFilter implements PointcutFilterInterface
      *
      * @return boolean TRUE if this filter has runtime evaluations
      */
-    public function hasRuntimeEvaluationsDefinition()
+    public function hasRuntimeEvaluationsDefinition(): bool
     {
         return (count($this->methodArgumentConstraints) > 0);
     }
@@ -158,7 +158,7 @@ class PointcutMethodNameFilter implements PointcutFilterInterface
      *
      * @return array Runtime evaluations
      */
-    public function getRuntimeEvaluationsDefinition()
+    public function getRuntimeEvaluationsDefinition(): array
     {
         return [
             'methodArgumentConstraints' => $this->methodArgumentConstraints
@@ -170,7 +170,7 @@ class PointcutMethodNameFilter implements PointcutFilterInterface
      *
      * @return string
      */
-    public function getMethodNameFilterExpression()
+    public function getMethodNameFilterExpression(): string
     {
         return $this->methodNameFilterExpression;
     }
@@ -180,7 +180,7 @@ class PointcutMethodNameFilter implements PointcutFilterInterface
      *
      * @return string
      */
-    public function getMethodVisibility()
+    public function getMethodVisibility(): string
     {
         return $this->methodVisibility;
     }
@@ -190,7 +190,7 @@ class PointcutMethodNameFilter implements PointcutFilterInterface
      *
      * @return array
      */
-    public function getMethodArgumentConstraints()
+    public function getMethodArgumentConstraints(): array
     {
         return $this->methodArgumentConstraints;
     }
@@ -201,7 +201,7 @@ class PointcutMethodNameFilter implements PointcutFilterInterface
      * @param ClassNameIndex $classNameIndex
      * @return ClassNameIndex
      */
-    public function reduceTargetClassNames(ClassNameIndex $classNameIndex)
+    public function reduceTargetClassNames(ClassNameIndex $classNameIndex): ClassNameIndex
     {
         return $classNameIndex;
     }

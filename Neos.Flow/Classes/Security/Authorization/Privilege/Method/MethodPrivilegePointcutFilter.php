@@ -88,7 +88,7 @@ class MethodPrivilegePointcutFilter implements PointcutFilterInterface
      * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
      * @return boolean TRUE if the names match, otherwise FALSE
      */
-    public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier)
+    public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier): bool
     {
         if ($this->filters === null) {
             $this->buildPointcutFilters();
@@ -120,7 +120,7 @@ class MethodPrivilegePointcutFilter implements PointcutFilterInterface
      *
      * @return boolean TRUE if this filter has runtime evaluations
      */
-    public function hasRuntimeEvaluationsDefinition()
+    public function hasRuntimeEvaluationsDefinition(): bool
     {
         return false;
     }
@@ -130,7 +130,7 @@ class MethodPrivilegePointcutFilter implements PointcutFilterInterface
      *
      * @return array Runtime evaluations
      */
-    public function getRuntimeEvaluationsDefinition()
+    public function getRuntimeEvaluationsDefinition(): array
     {
         return [];
     }
@@ -141,7 +141,7 @@ class MethodPrivilegePointcutFilter implements PointcutFilterInterface
      * @param ClassNameIndex $classNameIndex
      * @return ClassNameIndex
      */
-    public function reduceTargetClassNames(ClassNameIndex $classNameIndex)
+    public function reduceTargetClassNames(ClassNameIndex $classNameIndex): ClassNameIndex
     {
         if ($this->filters === null) {
             $this->buildPointcutFilters();
@@ -157,7 +157,7 @@ class MethodPrivilegePointcutFilter implements PointcutFilterInterface
     /**
      * Builds the needed pointcut filters for matching the policy privileges
      *
-     * @return boolean
+     * @return void
      */
     protected function buildPointcutFilters()
     {
