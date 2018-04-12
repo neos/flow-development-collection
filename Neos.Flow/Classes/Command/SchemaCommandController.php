@@ -49,7 +49,7 @@ class SchemaCommandController extends CommandController
      * @param boolean $verbose if TRUE, output more verbose information on the schema files which were used
      * @return void
      */
-    public function validateCommand($configurationFile = null, $schemaFile = 'resource://Neos.Utility.Schema/Private/Schema/Schema.schema.yaml', $verbose = false)
+    public function validateCommand(string $configurationFile = null, string $schemaFile = 'resource://Neos.Utility.Schema/Private/Schema/Schema.schema.yaml', bool $verbose = false)
     {
         $this->outputLine('Validating <b>' . $configurationFile . '</b> with schema  <b>' . $schemaFile . '</b>');
         $this->outputLine();
@@ -114,7 +114,7 @@ class SchemaCommandController extends CommandController
      * @param boolean $verbose if TRUE, output more verbose information on the schema files which were used
      * @return void
      */
-    public function validateSchemaCommand($configurationFile, $schemaFile = 'resource://Neos.Utility.Schema/Private/Schema/Schema.schema.yaml', $verbose = false)
+    public function validateSchemaCommand(string $configurationFile, string $schemaFile = 'resource://Neos.Utility.Schema/Private/Schema/Schema.schema.yaml', bool $verbose = false)
     {
         $this->outputLine('Validating <b>' . $configurationFile . '</b> with schema  <b>' . $schemaFile . '</b>');
         $this->outputLine();
