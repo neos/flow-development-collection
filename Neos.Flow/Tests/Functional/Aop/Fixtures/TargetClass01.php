@@ -152,4 +152,13 @@ class TargetClass01 implements SayHelloInterface
     {
         return 'I am final.';
     }
+
+
+    /**
+     * @return string
+     */
+    final public function someOtherFinalMethod()
+    {
+        return 'I am final, too';
+    }
 }

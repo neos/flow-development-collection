@@ -56,7 +56,6 @@ class PointcutMethodNameFilterTest extends UnitTestCase
         $mockReflectionService = $this->createMock(ReflectionService::class);
         $mockReflectionService->expects($this->atLeastOnce())->method('isMethodPublic')->will($this->onConsecutiveCalls(true, false, false, true));
         $mockReflectionService->expects($this->atLeastOnce())->method('isMethodProtected')->will($this->onConsecutiveCalls(false, true, false, false));
-        $mockReflectionService->expects($this->atLeastOnce())->method('isMethodFinal')->will($this->returnValue(false));
         $mockReflectionService->expects($this->atLeastOnce())->method('getMethodParameters')->will($this->returnValue([]));
 
         $methodNameFilter = new Aop\Pointcut\PointcutMethodNameFilter('some.*', 'public');
