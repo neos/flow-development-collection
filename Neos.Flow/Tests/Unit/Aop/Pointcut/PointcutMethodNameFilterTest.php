@@ -11,9 +11,9 @@ namespace Neos\Flow\Tests\Unit\Aop\Pointcut;
  * source code.
  */
 
+use Neos\Flow\Aop;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Flow\Aop;
 
 /**
  * Testcase for the Pointcut Method Name Filter
@@ -23,7 +23,7 @@ class PointcutMethodNameFilterTest extends UnitTestCase
     /**
      * @test
      */
-    public function matchesIgnoresFinalMethodsEvenIfTheirNameMatches()
+    public function matchesRespectsFinalMethodsIfTheirNameMatches()
     {
         $className = 'TestClass' . md5(uniqid(mt_rand(), true));
         eval('
@@ -31,14 +31,12 @@ class PointcutMethodNameFilterTest extends UnitTestCase
 				final public function someFinalMethod() {}
 			}'
         );
-
-        $mockReflectionService = $this->getMockBuilder(ReflectionService::class)->disableOriginalConstructor()->setMethods(['isMethodFinal'])->getMock();
-        $mockReflectionService->expects($this->atLeastOnce())->method('isMethodFinal')->with($className, 'someFinalMethod')->will($this->returnValue(true));
-
+        /** @var ReflectionService|\PHPUnit_Framework_MockObject_MockObject $mockReflectionService */
+        $mockReflectionService = $this->createMock(ReflectionService::class);
+        $mockReflectionService->expects($this->any())->method('isMethodFinal')->with($className, 'someFinalMethod')->will($this->returnValue(true));
         $methodNameFilter = new Aop\Pointcut\PointcutMethodNameFilter('someFinalMethod');
         $methodNameFilter->injectReflectionService($mockReflectionService);
-
-        $this->assertFalse($methodNameFilter->matches($className, 'someFinalMethod', $className, 1));
+        $this->assertTrue($methodNameFilter->matches($className, 'someFinalMethod', $className, 1));
     }
 
     /**
@@ -92,9 +90,9 @@ class PointcutMethodNameFilterTest extends UnitTestCase
 
         $mockReflectionService = $this->createMock(ReflectionService::class);
         $mockReflectionService->expects($this->exactly(3))->method('getMethodParameters')->will($this->onConsecutiveCalls(
-                ['arg1' => []],
-                ['arg1' => [], 'arg2' => []],
-                ['arg1' => [], 'arg2' => [], 'arg3' => []]
+            ['arg1' => []],
+            ['arg1' => [], 'arg2' => []],
+            ['arg1' => [], 'arg2' => [], 'arg3' => []]
         ));
 
         $mockSystemLogger = $this->getMockBuilder(\Neos\Flow\Log\Logger::class)->setMethods(['log'])->getMock();
