@@ -4,6 +4,7 @@ namespace Neos\Cache\Psr\Cache;
 use Neos\Cache\BackendInstantiationTrait;
 use Neos\Cache\EnvironmentConfiguration;
 use Neos\Cache\Exception\InvalidBackendException;
+use Neos\Cache\Frontend\VariableFrontend;
 use Psr\Cache\CacheItemPoolInterface;
 
 /**
