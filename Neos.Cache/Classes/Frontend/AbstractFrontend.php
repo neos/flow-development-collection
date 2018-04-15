@@ -94,7 +94,7 @@ abstract class AbstractFrontend implements FrontendInterface
      * @throws \InvalidArgumentException
      * @api
      */
-    public function has($entryIdentifier): bool
+    public function has(string $entryIdentifier): bool
     {
         if (!$this->isValidEntryIdentifier($entryIdentifier)) {
             throw new \InvalidArgumentException('"' . $entryIdentifier . '" is not a valid cache entry identifier.', 1233058486);
@@ -111,7 +111,7 @@ abstract class AbstractFrontend implements FrontendInterface
      * @throws \InvalidArgumentException
      * @api
      */
-    public function remove($entryIdentifier): bool
+    public function remove(string $entryIdentifier): bool
     {
         if (!$this->isValidEntryIdentifier($entryIdentifier)) {
             throw new \InvalidArgumentException('"' . $entryIdentifier . '" is not a valid cache entry identifier.', 1233058495);
@@ -139,7 +139,7 @@ abstract class AbstractFrontend implements FrontendInterface
      * @throws \InvalidArgumentException
      * @api
      */
-    public function flushByTag($tag)
+    public function flushByTag(string $tag): int
     {
         if (!$this->isValidTag($tag)) {
             throw new \InvalidArgumentException('"' . $tag . '" is not a valid tag for a cache entry.', 1233057359);
@@ -167,7 +167,7 @@ abstract class AbstractFrontend implements FrontendInterface
      * @return boolean
      * @api
      */
-    public function isValidEntryIdentifier($identifier): bool
+    public function isValidEntryIdentifier(string $identifier): bool
     {
         return preg_match(self::PATTERN_ENTRYIDENTIFIER, $identifier) === 1;
     }
@@ -179,7 +179,7 @@ abstract class AbstractFrontend implements FrontendInterface
      * @return boolean
      * @api
      */
-    public function isValidTag($tag): bool
+    public function isValidTag(string $tag): bool
     {
         return preg_match(self::PATTERN_TAG, $tag) === 1;
     }

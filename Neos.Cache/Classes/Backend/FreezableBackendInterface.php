@@ -37,5 +37,5 @@ interface FreezableBackendInterface extends BackendInterface
      *
      * @return boolean
      */
-    public function isFrozen();
+    public function isFrozen(): bool;
 }
