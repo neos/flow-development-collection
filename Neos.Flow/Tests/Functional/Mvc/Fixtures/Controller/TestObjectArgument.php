@@ -38,7 +38,8 @@ class TestObjectArgument
      */
     protected $collection;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->collection = new ArrayCollection();
     }
 
