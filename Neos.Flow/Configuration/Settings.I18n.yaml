@@ -31,7 +31,7 @@ Neos:
         #   Resources, except any 'node_modules' sub-folder in either one.
         includePaths:
           '/Public/': TRUE
-          '/Private/': TRUE
+          '/Private/Translations/': TRUE
 
         excludePatterns:
           '/node_modules/': TRUE

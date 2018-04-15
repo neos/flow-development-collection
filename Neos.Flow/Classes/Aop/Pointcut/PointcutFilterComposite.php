@@ -54,7 +54,7 @@ class PointcutFilterComposite implements PointcutFilterInterface
      * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
      * @return boolean TRUE if class and method match the pattern, otherwise FALSE
      */
-    public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier)
+    public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier): bool
     {
         $this->runtimeEvaluationsDefinition = [];
         $matches = true;
@@ -122,7 +122,7 @@ class PointcutFilterComposite implements PointcutFilterInterface
      * @param PointcutFilterInterface $filter A configured class filter
      * @return void
      */
-    public function addFilter($operator, PointcutFilterInterface $filter)
+    public function addFilter($operator, PointcutFilterInterface $filter): void
     {
         $this->filters[] = [$operator, $filter];
         if ($operator !== '&&' && $operator !== '&&!') {
@@ -157,7 +157,7 @@ class PointcutFilterComposite implements PointcutFilterInterface
      * @param array $runtimeEvaluations Runtime evaluations to be added
      * @return void
      */
-    public function setGlobalRuntimeEvaluationsDefinition(array $runtimeEvaluations)
+    public function setGlobalRuntimeEvaluationsDefinition(array $runtimeEvaluations): void
     {
         $this->globalRuntimeEvaluationsDefinition = $runtimeEvaluations;
     }

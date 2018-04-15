@@ -49,7 +49,7 @@ class SlaveRequestHandler implements RequestHandlerInterface
      *
      * @return boolean If the request is a CLI request, TRUE otherwise FALSE
      */
-    public function canHandleRequest()
+    public function canHandleRequest(): bool
     {
         return (PHP_SAPI === 'cli' && isset($_SERVER['argv'][1]) && $_SERVER['argv'][1] === '--start-slave');
     }
@@ -60,7 +60,7 @@ class SlaveRequestHandler implements RequestHandlerInterface
      *
      * @return integer The priority of the request handler.
      */
-    public function getPriority()
+    public function getPriority(): int
     {
         return 200;
     }
