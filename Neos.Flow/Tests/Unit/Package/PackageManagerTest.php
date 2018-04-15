@@ -68,12 +68,6 @@ class PackageManagerTest extends UnitTestCase
         $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
         $this->mockBootstrap->expects($this->any())->method('getObjectManager')->will($this->returnValue($mockObjectManager));
         $mockReflectionService = $this->createMock(ReflectionService::class);
-        $mockReflectionService->expects($this->any())->method('getClassNameByObject')->will($this->returnCallback(function ($object) {
-            if ($object instanceof \Doctrine\ORM\Proxy\Proxy) {
-                return get_parent_class($object);
-            }
-            return get_class($object);
-        }));
         $mockObjectManager->expects($this->any())->method('get')->with(ReflectionService::class)->will($this->returnValue($mockReflectionService));
 
         mkdir('vfs://Test/Packages/Application', 0700, true);

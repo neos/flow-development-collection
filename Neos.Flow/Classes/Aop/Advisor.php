@@ -50,7 +50,7 @@ class Advisor
      *
      * @return AdviceInterface The advice
      */
-    public function getAdvice()
+    public function getAdvice(): AdviceInterface
     {
         return $this->advice;
     }
@@ -60,7 +60,7 @@ class Advisor
      *
      * @return Pointcut The pointcut
      */
-    public function getPointcut()
+    public function getPointcut(): Pointcut
     {
         return $this->pointcut;
     }
