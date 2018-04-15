@@ -11,7 +11,7 @@ namespace Neos\Flow\ResourceManagement;
  * source code.
  */
 
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Internal\Hydration\IterableResult;
 use Doctrine\ORM\QueryBuilder;
 use Neos\Flow\Annotations as Flow;
@@ -38,7 +38,7 @@ class ResourceRepository extends Repository
 
     /**
      * @Flow\Inject
-     * @var ObjectManager
+     * @var EntityManagerInterface
      */
     protected $entityManager;
 

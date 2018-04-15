@@ -11,7 +11,7 @@ namespace Neos\Flow\Tests\Functional\Security\Authorization\Privilege\Entity\Doc
  * source code.
  */
 
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Neos\Flow\Persistence\Doctrine\PersistenceManager;
 use Neos\Flow\Security\Authorization\Privilege\Entity\Doctrine\ConditionGenerator;
 use Neos\Flow\Security\Authorization\Privilege\Entity\Doctrine\EntityPrivilegeExpressionEvaluator;
@@ -71,7 +71,7 @@ class EntityPrivilegeExpressionEvaluatorTest extends FunctionalTestCase
         $evaluator = new EntityPrivilegeExpressionEvaluator();
         $result = $evaluator->evaluate($expression, $context);
 
-        $entityManager = $this->objectManager->get(ObjectManager::class);
+        $entityManager = $this->objectManager->get(EntityManagerInterface::class);
         $sqlFilter = new SqlFilter($entityManager);
 
         $this->assertEquals(Fixtures\RestrictableEntity::class, $result['entityType']);
