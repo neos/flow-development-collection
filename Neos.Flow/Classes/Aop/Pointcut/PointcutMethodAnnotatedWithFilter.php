@@ -98,19 +98,19 @@ class PointcutMethodAnnotatedWithFilter implements PointcutFilterInterface
             return ($designatedAnnotations !== []);
         }
 
-            // It makes no sense to check property values for an annotation that is used multiple times, we shortcut and check the value against the first annotation found.
-            $firstFoundAnnotation = $designatedAnnotations;
-            $annotationProperties = $this->reflectionService->getClassPropertyNames($this->annotation);
-            foreach ($this->annotationValueConstraints as $propertyName => $expectedValue) {
-                if (!array_key_exists($propertyName, $annotationProperties)) {
-                    $this->logger->notice('The property "' . $propertyName . '" declared in pointcut does not exist in annotation ' . $this->annotation);
-                    return false;
-                }
+        // It makes no sense to check property values for an annotation that is used multiple times, we shortcut and check the value against the first annotation found.
+        $firstFoundAnnotation = $designatedAnnotations;
+        $annotationProperties = $this->reflectionService->getClassPropertyNames($this->annotation);
+        foreach ($this->annotationValueConstraints as $propertyName => $expectedValue) {
+            if (!array_key_exists($propertyName, $annotationProperties)) {
+                $this->logger->notice('The property "' . $propertyName . '" declared in pointcut does not exist in annotation ' . $this->annotation);
+                return false;
+            }
 
             if ($firstFoundAnnotation->$propertyName !== $expectedValue) {
-                    return false;
-                }
+                return false;
             }
+        }
 
         return true;
     }

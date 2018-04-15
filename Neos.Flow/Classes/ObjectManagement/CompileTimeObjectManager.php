@@ -282,8 +282,8 @@ class CompileTimeObjectManager extends ObjectManager
                         return $match === 1;
                     }
                 );
-                    $classNames[$packageKey] = array_merge($classNames[$packageKey], $classesForPackageUnderInspection);
-                    $classesForPackageUnderInspection = $classNames[$packageKey];
+                $classNames[$packageKey] = array_merge($classNames[$packageKey], $classesForPackageUnderInspection);
+                $classesForPackageUnderInspection = $classNames[$packageKey];
             }
 
             if ($classNames[$packageKey] === []) {
