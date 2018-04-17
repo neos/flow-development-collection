@@ -149,15 +149,39 @@ class HeadersTest extends UnitTestCase
         $this->assertEquals($nowInGmt->format(DATE_RFC2822), $headers->get('X-Test-Run-At')->format(DATE_RFC2822));
     }
 
+    public function setThrowsExceptionForInvalidValuesDataProvider()
+    {
+        return [
+            [new \stdClass()],
+            [1234],
+            [true],
+            [['foo', 'bar', 123]],
+        ];
+    }
+
+    /**
+     * @test
+     * @expectedException \InvalidArgumentException
+     * @dataProvider setThrowsExceptionForInvalidValuesDataProvider
+     */
+    public function setThrowsExceptionForInvalidValues($value)
+    {
+        $headers = new Headers();
+        $headers->set('X-Test', $value);
+    }
+
     /**
      * @test
      * @expectedException \InvalidArgumentException
      */
-    public function setThrowsExceptionWhenValueIsAnObject()
+    public function setThrowsExceptionWhenValueIsAnInteger()
     {
         $headers = new Headers();
-        $headers->set('X-Test', new \stdClass());
+        $headers->set('X-Test', 123);
     }
+
+
+    #$headers->set('X-Array', ['some', 'array', 123]);
 
     /**
      * @test
@@ -516,7 +540,7 @@ class HeadersTest extends UnitTestCase
     public function getPreparedValuesRendersOneHeaderPerArrayItem()
     {
         $headers = new Headers();
-        $headers->set('X-Array', ['some', 'array', 123]);
+        $headers->set('X-Array', ['some', 'array', '123']);
 
         $expectedResult = [
             'X-Array: some',

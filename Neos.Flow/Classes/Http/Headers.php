@@ -111,8 +111,14 @@ class Headers
             $date->setTimezone(new \DateTimeZone('GMT'));
             $values = [$date->format('D, d M Y H:i:s') . ' GMT'];
         } elseif (is_string($values)) {
-            $values = (array) $values;
-        } elseif (!is_array($values)) {
+            $values = [$values];
+        } elseif (is_array($values)) {
+            array_walk($values, function($item) {
+                if (!is_string($item)) {
+                    throw new \InvalidArgumentException(sprintf('The header value must be a string, string array or an instance of DateTimeInterface, but the given array contains an instance of %s', is_object($item) ? get_class($item) : gettype($item)), 1523973518);
+                }
+            });
+        } else {
             throw new \InvalidArgumentException(sprintf('The header value must be a string, string array or an instance of DateTimeInterface, given: %s', is_object($values) ? get_class($values) : gettype($values)), 1513332376);
         }
 
