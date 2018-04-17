@@ -456,7 +456,7 @@ class PersistentResource implements ResourceMetaDataInterface, CacheAwareInterfa
      *
      * @return string
      */
-    public function getCacheEntryIdentifier()
+    public function getCacheEntryIdentifier(): string
     {
         return $this->sha1;
     }

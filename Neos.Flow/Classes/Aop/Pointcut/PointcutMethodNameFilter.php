@@ -96,8 +96,7 @@ class PointcutMethodNameFilter implements PointcutFilterInterface
      * Checks if the specified method matches against the method name
      * expression.
      *
-     * Returns TRUE if method name, visibility and arguments constraints match and the target
-     * method is not final.
+     * Returns TRUE if method name, visibility and arguments constraints match.
      *
      * @param string $className Ignored in this pointcut filter
      * @param string $methodName Name of the method to match against
@@ -127,10 +126,6 @@ class PointcutMethodNameFilter implements PointcutFilterInterface
                     return false;
                 }
                 break;
-        }
-
-        if ($methodDeclaringClassName !== null && $this->reflectionService->isMethodFinal($methodDeclaringClassName, $methodName)) {
-            return false;
         }
 
         $methodArguments = ($methodDeclaringClassName === null ? [] : $this->reflectionService->getMethodParameters($methodDeclaringClassName, $methodName));

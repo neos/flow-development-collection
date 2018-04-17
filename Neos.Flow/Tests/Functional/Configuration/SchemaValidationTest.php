@@ -36,7 +36,7 @@ class SchemaValidationTest extends FunctionalTestCase
      *
      * @var string
      */
-    protected $schemaSchemaResource = 'resource://Neos.Flow/Private/Schema/Schema.schema.yaml';
+    protected $schemaSchemaResource = 'resource://Neos.Utility.Schema/Private/Schema/Schema.schema.yaml';
 
     /**
      * The parsed schema-schema

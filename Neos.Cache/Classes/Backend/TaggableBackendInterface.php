@@ -25,7 +25,7 @@ interface TaggableBackendInterface extends BackendInterface
      * @return integer The number of entries which have been affected by this flush or NULL if the number is unknown
      * @api
      */
-    public function flushByTag($tag);
+    public function flushByTag(string $tag): int;
 
     /**
      * Finds and returns all cache entry identifiers which are tagged by the
@@ -35,5 +35,5 @@ interface TaggableBackendInterface extends BackendInterface
      * @return array An array with identifiers of all matching entries. An empty array if no entries matched
      * @api
      */
-    public function findIdentifiersByTag($tag);
+    public function findIdentifiersByTag(string $tag): array;
 }

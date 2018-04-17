@@ -26,5 +26,5 @@ interface PhpCapableBackendInterface extends BackendInterface
      * @return mixed Potential return value from the include operation
      * @api
      */
-    public function requireOnce($entryIdentifier);
+    public function requireOnce(string $entryIdentifier);
 }

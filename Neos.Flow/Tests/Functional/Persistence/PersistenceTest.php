@@ -11,13 +11,12 @@ namespace Neos\Flow\Tests\Functional\Persistence;
  * source code.
  */
 
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Tools\SchemaTool;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Persistence\Doctrine\PersistenceManager;
 use Neos\Flow\Persistence\Doctrine\QueryResult;
 use Neos\Flow\Tests\Functional\Persistence\Fixtures;
-use Neos\Flow\Tests\Functional\Persistence\Fixtures\CommonObject;
 use Neos\Flow\Tests\FunctionalTestCase;
 
 /**
@@ -253,8 +252,8 @@ class PersistenceTest extends FunctionalTestCase
      */
     public function embeddedValueObjectsAreActuallyEmbedded()
     {
-        /* @var $entityManager ObjectManager */
-        $entityManager = $this->objectManager->get(ObjectManager::class);
+        /* @var $entityManager EntityManagerInterface */
+        $entityManager = $this->objectManager->get(\Doctrine\ORM\EntityManagerInterface::class);
         $schemaTool = new SchemaTool($entityManager);
         $classMetaData = $entityManager->getClassMetadata(Fixtures\TestEntity::class);
         $this->assertTrue($classMetaData->hasField('embeddedValueObject.value'), 'ClassMetadata is not correctly embedded');
@@ -321,7 +320,7 @@ class PersistenceTest extends FunctionalTestCase
         // only with the Object Identifier
         $this->persistenceManager->clearState();
 
-        $entityManager = $this->objectManager->get(ObjectManager::class);
+        $entityManager = $this->objectManager->get(EntityManagerInterface::class);
         $lazyLoadedEntity = $entityManager->getReference(Fixtures\TestEntity::class, $theObjectIdentifier);
         $lazyLoadedEntity->setName('a');
         $this->testEntityRepository->update($lazyLoadedEntity);
@@ -674,8 +673,8 @@ class PersistenceTest extends FunctionalTestCase
      */
     public function doctrineEmbeddablesAreActuallyEmbedded()
     {
-        /* @var $entityManager ObjectManager */
-        $entityManager = $this->objectManager->get(ObjectManager::class);
+        /* @var $entityManager EntityManagerInterface */
+        $entityManager = $this->objectManager->get(EntityManagerInterface::class);
         $schemaTool = new SchemaTool($entityManager);
         $metaData = $entityManager->getClassMetadata(Fixtures\TestEntity::class);
         $this->assertTrue($metaData->hasField('embedded.value'), 'ClassMetadata does not contain embedded value');

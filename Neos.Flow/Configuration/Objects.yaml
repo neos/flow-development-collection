@@ -338,6 +338,11 @@ Neos\Flow\Package\PackageManagerInterface:
 # Persistence                                                              #
 #                                                                          #
 
+Doctrine\ORM\EntityManagerInterface:
+  scope: singleton
+  factoryObjectName: Neos\Flow\Persistence\Doctrine\EntityManagerFactory
+
+# This is deprecated as of Flow 5.0, use Doctrine\ORM\EntityManagerInterface
 Doctrine\Common\Persistence\ObjectManager:
   scope: singleton
   factoryObjectName: Neos\Flow\Persistence\Doctrine\EntityManagerFactory
@@ -583,19 +588,3 @@ Neos\Flow\Session\SessionManager:
         arguments:
           1:
             value: Flow_Session_MetaData
-
-#
-# Schema
-#
-Neos\Utility\SchemaGenerator:
-  scope: singleton
-
-Neos\Utility\SchemaValidator:
-  scope: singleton
-
-#
-# PdoHelper
-#
-Neos\Utility\PdoHelper:
-  autowiring: off
-  scope: prototype
