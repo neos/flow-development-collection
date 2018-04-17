@@ -53,7 +53,7 @@ class CacheFactory implements CacheFactoryInterface
      * @throws InvalidCacheException
      * @api
      */
-    public function create($cacheIdentifier, $cacheObjectName, $backendObjectName, array $backendOptions = []): FrontendInterface
+    public function create(string $cacheIdentifier, string $cacheObjectName, string $backendObjectName, array $backendOptions = []): FrontendInterface
     {
         $backend = $this->instantiateBackend($backendObjectName, $backendOptions);
         $cache = $this->instantiateCache($cacheIdentifier, $cacheObjectName, $backend);

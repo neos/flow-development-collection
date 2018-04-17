@@ -68,12 +68,6 @@ class PackageManagerTest extends UnitTestCase
         $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
         $this->mockBootstrap->expects($this->any())->method('getObjectManager')->will($this->returnValue($mockObjectManager));
         $mockReflectionService = $this->createMock(ReflectionService::class);
-        $mockReflectionService->expects($this->any())->method('getClassNameByObject')->will($this->returnCallback(function ($object) {
-            if ($object instanceof \Doctrine\ORM\Proxy\Proxy) {
-                return get_parent_class($object);
-            }
-            return get_class($object);
-        }));
         $mockObjectManager->expects($this->any())->method('get')->with(ReflectionService::class)->will($this->returnValue($mockReflectionService));
 
         mkdir('vfs://Test/Packages/Application', 0700, true);
@@ -196,7 +190,7 @@ class PackageManagerTest extends UnitTestCase
 
             mkdir($packagePath, 0770, true);
             mkdir($packagePath . 'Classes');
-            ComposerUtility::writeComposerManifest($packagePath, $packageKey, ['type' => 'neos-test', 'autoload' => []]);
+            ComposerUtility::writeComposerManifest($packagePath, $packageKey, ['type' => 'flow-test', 'autoload' => []]);
         }
 
         $packageManager = $this->getAccessibleMock(PackageManager::class, ['updateShortcuts', 'emitPackageStatesUpdated'], [], '', false);
@@ -282,7 +276,7 @@ class PackageManagerTest extends UnitTestCase
     {
         $metaData = [
             'name' => 'acme/yetanothertestpackage2',
-            'type' => 'neos-custom-package',
+            'type' => 'flow-custom-package',
             'description' => 'Yet Another Test Package',
             'autoload' => [
                 'psr-0' => [
@@ -296,7 +290,7 @@ class PackageManagerTest extends UnitTestCase
         $json = file_get_contents($package->getPackagePath() . '/composer.json');
         $composerManifest = json_decode($json);
 
-        $this->assertEquals('neos-custom-package', $composerManifest->type);
+        $this->assertEquals('flow-custom-package', $composerManifest->type);
     }
 
 

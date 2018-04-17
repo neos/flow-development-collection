@@ -1,0 +1,5 @@
+Neos\Utility\SchemaGenerator:
+  scope: singleton
+
+Neos\Utility\SchemaValidator:
+  scope: singleton
