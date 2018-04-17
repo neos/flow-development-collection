@@ -65,7 +65,7 @@ Neos:
         # proxies:
         #   - '216.246.40.0/24'
         #   - '216.246.100.0/24'
-        proxies: %env:FLOW_HTTP_TRUSTED_PROXIES%
+        proxies: '%env:FLOW_HTTP_TRUSTED_PROXIES%'
 
         # Defines request headers which are trusted from proxies to override important request information
         # Each value can be a single header or a comma separated list of headers
