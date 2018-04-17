@@ -49,22 +49,22 @@ class SchemaCommandController extends CommandController
      * @param boolean $verbose if TRUE, output more verbose information on the schema files which were used
      * @return void
      */
-    public function validateCommand($configurationFile = null, $schemaFile = 'resource://Neos.Utility.Schema/Private/Schema/Schema.schema.yaml', $verbose = false)
+    public function validateCommand(string $configurationFile = null, string $schemaFile = 'resource://Neos.Utility.Schema/Private/Schema/Schema.schema.yaml', bool $verbose = false)
     {
         $this->outputLine('Validating <b>' . $configurationFile . '</b> with schema  <b>' . $schemaFile . '</b>');
         $this->outputLine();
 
-        $schema = Yaml::parse($schemaFile);
+        $schema = Yaml::parseFile($schemaFile);
 
         if (is_null($configurationFile)) {
             $result = new Result();
-            $activePackages = $this->packageManager->getActivePackages();
+            $activePackages = $this->packageManager->getAvailablePackages();
             foreach ($activePackages as $package) {
                 $packageKey = $package->getPackageKey();
                 $packageSchemaPath = Files::concatenatePaths([$package->getResourcesPath(), 'Private/Schema']);
                 if (is_dir($packageSchemaPath) && $packageKey !== 'Neos.Utility.Schema') {
                     foreach (Files::getRecursiveDirectoryGenerator($packageSchemaPath, '.schema.yaml') as $schemaFile) {
-                        $configuration = Yaml::parse($schemaFile);
+                        $configuration = Yaml::parseFile($schemaFile);
                         $schemaPath = str_replace(FLOW_PATH_ROOT, '', $schemaFile);
                         $configurationResult = $this->schemaValidator->validate($configuration, $schema);
                         $result->forProperty($schemaPath)->merge($configurationResult);
@@ -72,7 +72,7 @@ class SchemaCommandController extends CommandController
                 }
             }
         } else {
-            $configuration = Yaml::parse($configurationFile);
+            $configuration = Yaml::parseFile($configurationFile);
             $result = $this->schemaValidator->validate($configuration, $schema);
         }
 
@@ -114,13 +114,13 @@ class SchemaCommandController extends CommandController
      * @param boolean $verbose if TRUE, output more verbose information on the schema files which were used
      * @return void
      */
-    public function validateSchemaCommand($configurationFile, $schemaFile = 'resource://Neos.Utility.Schema/Private/Schema/Schema.schema.yaml', $verbose = false)
+    public function validateSchemaCommand(string $configurationFile, string $schemaFile = 'resource://Neos.Utility.Schema/Private/Schema/Schema.schema.yaml', bool $verbose = false)
     {
         $this->outputLine('Validating <b>' . $configurationFile . '</b> with schema  <b>' . $schemaFile . '</b>');
         $this->outputLine();
 
-        $configuration = Yaml::parse($configurationFile);
-        $schema = Yaml::parse($schemaFile);
+        $configuration = Yaml::parseFile($configurationFile);
+        $schema = Yaml::parseFile($schemaFile);
 
         $result = $this->schemaValidator->validate($configuration, $schema);
 

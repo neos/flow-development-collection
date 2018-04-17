@@ -12,7 +12,7 @@ namespace Neos\Flow\Security\Authorization\Privilege\Entity\Doctrine;
  */
 
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\QuoteStrategy;
 use Doctrine\ORM\Query\Filter\SQLFilter as DoctrineSqlFilter;
 use Neos\Flow\Annotations as Flow;
@@ -81,7 +81,7 @@ class PropertyConditionGenerator implements SqlGeneratorInterface
 
     /**
      * @Flow\Inject
-     * @var ObjectManager
+     * @var EntityManagerInterface
      */
     protected $entityManager;
 

@@ -52,18 +52,28 @@ class PaddingViewHelper extends AbstractViewHelper
     protected $escapeChildren = false;
 
     /**
-     * Pad a string to a certain length with another string
+     * Initialize the arguments.
      *
-     * @param integer $padLength Length of the resulting string. If the value of pad_length is negative or less than the length of the input string, no padding takes place.
-     * @param string $padString The padding string
-     * @param string $padType Append the padding at this site (Possible values: right,left,both. Default: right)
-     * @return string The formatted value
-     * @param string $value string to format
+     * @return void
      * @api
      */
-    public function render($padLength, $padString = ' ', $padType = 'right', $value = null)
+    public function initializeArguments()
     {
-        return self::renderStatic(array('padLength' => $padLength, 'padString' => $padString, 'padType' => $padType, 'value' => $value), $this->buildRenderChildrenClosure(), $this->renderingContext);
+        $this->registerArgument('padLength', 'integer', 'Length of the resulting string. If the value of pad_length is negative or less than the length of the input string, no padding takes place.', true);
+        $this->registerArgument('padString', 'string', 'The padding string', false, ' ');
+        $this->registerArgument('padType', 'string', 'Append the padding at this site (Possible values: right,left,both. Default: right)', false, 'right');
+        $this->registerArgument('value', 'string', 'string to format', false, null);
+    }
+
+    /**
+     * Pad a string to a certain length with another string
+     *
+     * @return string The formatted value
+     * @api
+     */
+    public function render()
+    {
+        return self::renderStatic(array('padLength' => $this->arguments['padLength'], 'padString' => $this->arguments['padString'], 'padType' => $this->arguments['padType'], 'value' => $this->arguments['value']), $this->buildRenderChildrenClosure(), $this->renderingContext);
     }
 
     /**

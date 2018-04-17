@@ -11,7 +11,7 @@ namespace Neos\Flow\Persistence\Doctrine;
  * source code.
  */
 
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\Persistence\Exception\InvalidQueryException;
@@ -112,10 +112,10 @@ class Query implements QueryInterface
     }
 
     /**
-     * @param ObjectManager $entityManager
+     * @param EntityManagerInterface $entityManager
      * @return void
      */
-    public function injectEntityManager(ObjectManager $entityManager)
+    public function injectEntityManager(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
         $this->queryBuilder = $entityManager->createQueryBuilder()->select('e')->from($this->entityClassName, 'e');

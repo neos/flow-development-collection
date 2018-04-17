@@ -5,11 +5,11 @@
   "homepage": "http://flow.neos.io",
   "license": "MIT",
   "require": {
-    "php": "~7.0"
+    "php": "~7.1"
   },
   "require-dev": {
     "mikey179/vfsstream": "~1.6",
-    "phpunit/phpunit": "~6.0",
+    "phpunit/phpunit": "~7.1",
     "neos/flow": "*"
   },
   "autoload": {

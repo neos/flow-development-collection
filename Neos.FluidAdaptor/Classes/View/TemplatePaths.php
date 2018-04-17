@@ -324,7 +324,7 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
             $packageName = $this->packageManager->getPackageKeyFromComposerName($packageName);
         }
 
-        if (!$this->packageManager->isPackageActive($packageName)) {
+        if (!$this->packageManager->isPackageAvailable($packageName)) {
             return '';
         }
 
@@ -358,7 +358,7 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
      */
     protected function getPackagePrivateResourcesPath($packageKey)
     {
-        if (!$this->packageManager->isPackageActive($packageKey)) {
+        if (!$this->packageManager->isPackageAvailable($packageKey)) {
             return null;
         }
         $packageResourcesPath = $this->packageManager->getPackage($packageKey)->getResourcesPath();

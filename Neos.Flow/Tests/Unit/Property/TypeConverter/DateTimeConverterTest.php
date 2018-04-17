@@ -360,6 +360,25 @@ class DateTimeConverterTest extends UnitTestCase
     /**
      * @test
      */
+    public function convertFromAllowsToOverrideTheTimeForImmutableTargetType()
+    {
+        $source = [
+            'date' => '2011-06-16',
+            'dateFormat' => 'Y-m-d',
+            'hour' => '12',
+            'minute' => '30',
+            'second' => '59',
+        ];
+        $date = $this->converter->convertFrom($source, \DateTimeImmutable::class);
+        $this->assertSame('2011-06-16', $date->format('Y-m-d'));
+        $this->assertSame('12', $date->format('H'));
+        $this->assertSame('30', $date->format('i'));
+        $this->assertSame('59', $date->format('s'));
+    }
+
+    /**
+     * @test
+     */
     public function convertFromAllowsToOverrideTheTimezone()
     {
         $source = [
@@ -368,6 +387,24 @@ class DateTimeConverterTest extends UnitTestCase
             'timezone' => 'Atlantic/Reykjavik',
         ];
         $date = $this->converter->convertFrom($source, 'DateTime');
+        $this->assertSame('2011-06-16', $date->format('Y-m-d'));
+        $this->assertSame('12', $date->format('H'));
+        $this->assertSame('30', $date->format('i'));
+        $this->assertSame('59', $date->format('s'));
+        $this->assertSame('Atlantic/Reykjavik', $date->getTimezone()->getName());
+    }
+
+    /**
+     * @test
+     */
+    public function convertFromAllowsToOverrideTheTimezoneForImmutableTargetType()
+    {
+        $source = [
+            'date' => '2011-06-16 12:30:59',
+            'dateFormat' => 'Y-m-d H:i:s',
+            'timezone' => 'Atlantic/Reykjavik',
+        ];
+        $date = $this->converter->convertFrom($source, \DateTimeImmutable::class);
         $this->assertSame('2011-06-16', $date->format('Y-m-d'));
         $this->assertSame('12', $date->format('H'));
         $this->assertSame('30', $date->format('i'));

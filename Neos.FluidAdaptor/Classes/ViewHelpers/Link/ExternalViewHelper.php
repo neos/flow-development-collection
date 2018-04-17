@@ -54,16 +54,19 @@ class ExternalViewHelper extends AbstractTagBasedViewHelper
         $this->registerTagAttribute('rel', 'string', 'Specifies the relationship between the current document and the linked document');
         $this->registerTagAttribute('rev', 'string', 'Specifies the relationship between the linked document and the current document');
         $this->registerTagAttribute('target', 'string', 'Specifies where to open the linked document');
+        $this->registerArgument('uri', 'string', 'the URI that will be put in the href attribute of the rendered link tag', true);
+        $this->registerArgument('defaultScheme', 'string', 'scheme the href attribute will be prefixed with if specified $uri does not contain a scheme already', false, 'http');
     }
 
     /**
-     * @param string $uri the URI that will be put in the href attribute of the rendered link tag
-     * @param string $defaultScheme scheme the href attribute will be prefixed with if specified $uri does not contain a scheme already
      * @return string Rendered link
      * @api
      */
-    public function render($uri, $defaultScheme = 'http')
+    public function render()
     {
+        $uri = $this->arguments['uri'];
+        $defaultScheme = $this->arguments['defaultScheme'];
+
         $scheme = parse_url($uri, PHP_URL_SCHEME);
         if ($scheme === null && $defaultScheme !== '') {
             $uri = $defaultScheme . '://' . $uri;

@@ -58,10 +58,11 @@ class FileStorage implements ThrowableStorageInterface
     /**
      * @param \Throwable $throwable
      * @param array $additionalData
+     * @return string Informational message about the stored throwable
      */
     public function logThrowable(\Throwable $throwable, array $additionalData = [])
     {
-        $this->logError($throwable, $additionalData);
+        return $this->logError($throwable, $additionalData);
     }
 
     /**
@@ -69,7 +70,7 @@ class FileStorage implements ThrowableStorageInterface
      *
      * @param \Throwable $error \Exception or \Throwable
      * @param array $additionalData Additional data to log
-     * @return void
+     * @return string The exception message
      */
     protected function logError(\Throwable $error, array $additionalData = [])
     {
@@ -83,7 +84,7 @@ class FileStorage implements ThrowableStorageInterface
             mkdir($this->storagePath);
         }
         if (!file_exists($this->storagePath) || !is_dir($this->storagePath) || !is_writable($this->storagePath)) {
-            return 'Could not write exception backtrace into %s because the directory could not be created or is not writable.';
+            return sprintf('Could not write exception backtrace into %s because the directory could not be created or is not writable.', $this->storagePath);
         }
 
         // FIXME: getReferenceCode should probably become an interface.
