@@ -152,7 +152,7 @@ class BaseRequest extends AbstractMessage implements RequestInterface
     {
         if (is_resource($content) && get_resource_type($content) === 'stream' && stream_is_local($content)) {
             $streamMetaData = stream_get_meta_data($content);
-            $this->headers->set('Content-Length', filesize($streamMetaData['uri']));
+            $this->headers->set('Content-Length', (string)filesize($streamMetaData['uri']));
             $this->headers->set('Content-Type', MediaTypes::getMediaTypeFromFilename($streamMetaData['uri']));
         }
 

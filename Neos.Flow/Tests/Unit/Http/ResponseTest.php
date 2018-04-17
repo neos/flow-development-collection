@@ -357,9 +357,9 @@ class ResponseTest extends UnitTestCase
 
         $response = new Response();
         $response->setNow($now);
-        $response->setHeader('Age', 123);
+        $response->setHeader('Age', '123');
 
-        $this->assertSame(123, $response->getAge());
+        $this->assertSame('123', $response->getAge());
     }
 
     /**
@@ -472,7 +472,7 @@ class ResponseTest extends UnitTestCase
 
         $response->setContent($content);
         $response->setHeader('Transfer-Encoding', 'chunked');
-        $response->setHeader('Content-Length', strlen($content));
+        $response->setHeader('Content-Length', (string)strlen($content));
         $response->makeStandardsCompliant($request);
         $this->assertFalse($response->hasHeader('Content-Length'));
     }
@@ -526,9 +526,9 @@ class ResponseTest extends UnitTestCase
         $this->assertEquals(strlen($content), $response->getHeader('Content-Length'));
 
         $response = new Response();
-        $response->setHeader('Content-Length', 275);
+        $response->setHeader('Content-Length', '275');
         $response->makeStandardsCompliant($request);
-        $this->assertEquals(275, $response->getHeader('Content-Length'));
+        $this->assertEquals('275', $response->getHeader('Content-Length'));
     }
 
     /**
@@ -560,7 +560,7 @@ class ResponseTest extends UnitTestCase
     public function makeStandardsCompliantReturns304ResponseIfResourceWasNotModified()
     {
         $modifiedSince = \DateTime::createFromFormat(DATE_RFC2822, 'Sun, 20 May 2012 12:00:00 GMT');
-        $lastModified = \DateTime::createFromFormat(DATE_RFC2822, 'Fr, 18 May 2012 12:00:00 GMT');
+        $lastModified = \DateTime::createFromFormat(DATE_RFC2822, 'Fri, 18 May 2012 12:00:00 GMT');
 
         $request = Request::create(new Uri('http://localhost'));
         $response = new Response();

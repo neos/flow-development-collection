@@ -72,12 +72,12 @@ class Headers
         foreach ($server as $name => $value) {
             if (strpos($name, 'HTTP_') === 0) {
                 $name = str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))));
-                $headerFields[$name] = $value;
+                $headerFields[$name] = (string)$value;
             } elseif ($name == 'REDIRECT_REMOTE_AUTHORIZATION' && !isset($headerFields['Authorization'])) {
                 $headerFields['Authorization'] = $value;
             } elseif (in_array($name, ['CONTENT_TYPE', 'CONTENT_LENGTH'])) {
                 $name = str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', $name))));
-                $headerFields[$name] = $value;
+                $headerFields[$name] = (string)$value;
             }
         }
         return new self($headerFields);

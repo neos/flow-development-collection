@@ -563,13 +563,13 @@ class Response extends AbstractMessage implements ResponseInterface, \Psr\Http\M
 
         if ($request->getMethod() === 'HEAD') {
             if (!$this->headers->has('Content-Length')) {
-                $this->headers->set('Content-Length', strlen($this->content));
+                $this->headers->set('Content-Length', (string)strlen($this->content));
             }
             $this->content = '';
         }
 
         if (!$this->headers->has('Content-Length')) {
-            $this->headers->set('Content-Length', strlen($this->content));
+            $this->headers->set('Content-Length', (string)strlen($this->content));
         }
 
         if ($this->headers->has('Transfer-Encoding')) {
