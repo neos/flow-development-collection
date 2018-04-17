@@ -25,7 +25,8 @@ enabled.
 	local security policy `Local Policies > User Rights Assignments > Create symbolic links`
 
 Flow's persistence mechanism requires a `database supported by Doctrine DBAL
-<http://www.doctrine-project.org/projects/dbal.html>`_.
+<http://www.doctrine-project.org/projects/dbal.html>`_. Make sure to use at least 10.2.2
+for MariaDB, and 5.7.7 when using MySQL.
 
 PHP
 ===
