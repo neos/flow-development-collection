@@ -28,7 +28,7 @@ use Neos\Utility\TypeHandling;
  * @Flow\Scope("singleton")
  * @api
  */
-class OnFlushListener
+class ObjectValidationAndDeDuplicationListener
 {
     /**
      * @Flow\Inject
