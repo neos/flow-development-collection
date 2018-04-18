@@ -305,7 +305,7 @@ class CacheManager
             if ($className === null) {
                 continue;
             }
-            $classNameWithUnderscores = str_replace('\\', '_', $className);
+            $classNameWithUnderscores = str_replace('\\', '-', $className);
             $modifiedClassNamesWithUnderscores[$classNameWithUnderscores] = true;
 
             // If an aspect was modified, the whole code cache needs to be flushed, so keep track of them:
