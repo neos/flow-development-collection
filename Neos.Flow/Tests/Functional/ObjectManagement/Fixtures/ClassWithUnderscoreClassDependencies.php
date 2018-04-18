@@ -12,7 +12,6 @@ namespace Neos\Flow\Tests\Functional\ObjectManagement\Fixtures;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\SubNamespace\SubNamespace_Underscores;
 
 /**
  * A class which has dependencies to classes with underscores in their name

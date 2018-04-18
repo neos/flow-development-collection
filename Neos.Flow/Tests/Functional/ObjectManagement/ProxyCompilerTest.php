@@ -136,6 +136,6 @@ class ProxyCompilerTest extends FunctionalTestCase
     public function classesWithUnderscoresAreSupported()
     {
         $class = $this->objectManager->get(Fixtures\ClassWithUnderscoreClassDependencies::class);
-        $this->assertInstanceOf(Fixtures\SubNamespace\SubNamespace_Underscores::class, $class->classWithUnderscores);
+        $this->assertInstanceOf(Fixtures\SubNamespace_Underscores::class, $class->classWithUnderscores);
     }
 }

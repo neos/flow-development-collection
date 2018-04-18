@@ -86,5 +86,5 @@ Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\Flow175\OuterPrototype:
       object:
         name: Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\Flow175\Greeter
 
-Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\SubNamespace\SubNamespace_Underscores:
+Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\SubNamespace_Underscores:
   scope: 'singleton'

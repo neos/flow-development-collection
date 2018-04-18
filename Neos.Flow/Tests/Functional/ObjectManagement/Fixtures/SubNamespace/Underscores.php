@@ -1,5 +1,5 @@
 <?php
-namespace Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\SubNamespace;
+namespace Neos\Flow\Tests\Functional\ObjectManagement\Fixtures;
 
 /*
  * This file is part of the Neos.Flow package.
