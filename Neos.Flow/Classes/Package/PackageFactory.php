@@ -29,7 +29,7 @@ class PackageFactory
      * @param string $composerName
      * @param array $autoloadConfiguration Autoload configuration as defined in composer.json
      * @param array $packageClassInformation
-     * @return PackageInterface
+     * @return PackageInterface|PackageKeyAwareInterface
      * @throws Exception\CorruptPackageException
      */
     public function create($packagesBasePath, $packagePath, $packageKey, $composerName, array $autoloadConfiguration = [], array $packageClassInformation = null)

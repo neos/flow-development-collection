@@ -13,7 +13,7 @@ namespace Neos\Flow\I18n;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Cache\Frontend\VariableFrontend;
-use Neos\Flow\Package\PackageInterface;
+use Neos\Flow\Package\FlowPackageInterface;
 use Neos\Flow\Package\PackageManager;
 use Neos\Utility\Files;
 
@@ -292,7 +292,7 @@ class Service
         }
         $blacklistPattern = $this->getScanBlacklistPattern();
 
-        /** @var PackageInterface $activePackage */
+        /** @var FlowPackageInterface $activePackage */
         foreach ($this->packageManager->getFlowPackages() as $activePackage) {
             $packageResourcesPath = Files::getNormalizedPath($activePackage->getResourcesPath());
 

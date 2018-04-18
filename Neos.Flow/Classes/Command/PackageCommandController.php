@@ -17,7 +17,8 @@ use Neos\Flow\Composer\ComposerUtility;
 use Neos\Flow\Core\Booting\Scripts;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Package\PackageInterface;
-use Neos\Flow\Package\PackageManagerInterface;
+use Neos\Flow\Package\PackageKeyAwareInterface;
+use Neos\Flow\Package\PackageManager;
 
 /**
  * Package command controller to handle packages from CLI (create/activate/deactivate packages)
@@ -27,7 +28,7 @@ use Neos\Flow\Package\PackageManagerInterface;
 class PackageCommandController extends CommandController
 {
     /**
-     * @var PackageManagerInterface
+     * @var PackageManager
      */
     protected $packageManager;
 
@@ -51,10 +52,10 @@ class PackageCommandController extends CommandController
     }
 
     /**
-     * @param PackageManagerInterface $packageManager
+     * @param PackageManager $packageManager
      * @return void
      */
-    public function injectPackageManager(PackageManagerInterface $packageManager)
+    public function injectPackageManager(PackageManager $packageManager)
     {
         $this->packageManager = $packageManager;
     }
@@ -134,7 +135,7 @@ class PackageCommandController extends CommandController
         }
 
         $this->outputLine('PACKAGES:');
-        /** @var PackageInterface $package */
+        /** @var PackageInterface|PackageKeyAwareInterface $package */
         foreach ($availablePackages as $package) {
             $frozenState = ($freezeSupported && isset($frozenPackages[$package->getPackageKey()]) ? '* ' : '  ');
             $this->outputLine(' ' . str_pad($package->getPackageKey(), $longestPackageKey + 3) . $frozenState . str_pad($package->getInstalledVersion(), 15));

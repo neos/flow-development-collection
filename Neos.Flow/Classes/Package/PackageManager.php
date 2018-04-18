@@ -142,7 +142,7 @@ class PackageManager implements PackageManagerInterface
             if ($package instanceof FlowPackageInterface) {
                 $this->flowPackages[$package->getPackageKey()] = $package;
             }
-            if (!$package instanceof BootableInterface) {
+            if (!$package instanceof BootablePackageInterface) {
                 continue;
             }
             $package->boot($bootstrap);
@@ -474,29 +474,6 @@ class PackageManager implements PackageManagerInterface
         }
 
         $this->bootstrap->getObjectManager()->get(ReflectionService::class)->unfreezePackageReflection($packageKey);
-    }
-
-    /**
-     * Unregisters a package from the list of available packages
-     *
-     * @param PackageInterface $package The package to be unregistered
-     * @return void
-     * @throws Exception\InvalidPackageStateException
-     */
-    protected function unregisterPackage(PackageInterface $package)
-    {
-        $packageKey = $package->getPackageKey();
-        if (!$this->isPackageAvailable($packageKey)) {
-            throw new Exception\InvalidPackageStateException('Package "' . $packageKey . '" is not registered.', 1338996142);
-        }
-
-        if (!isset($this->packages[$packageKey])) {
-            return;
-        }
-        $composerName = $package->getComposerName();
-
-        unset($this->packages[$packageKey], $this->packageKeys[strtolower($packageKey)], $this->packageStatesConfiguration['packages'][$composerName]);
-        $this->sortAndSavePackageStates($this->packageStatesConfiguration);
     }
 
     /**

@@ -16,7 +16,7 @@ use Neos\Flow\Core\Bootstrap;
 /**
  * An interface to indicate a bootable package
  */
-interface BootableInterface
+interface BootablePackageInterface
 {
     /**
      * Invokes custom PHP code directly after the package manager has been initialized.

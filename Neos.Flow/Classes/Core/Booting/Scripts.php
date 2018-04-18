@@ -32,8 +32,8 @@ use Neos\Flow\Monitor\FileMonitor;
 use Neos\Flow\ObjectManagement\CompileTimeObjectManager;
 use Neos\Flow\ObjectManagement\ObjectManager;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
+use Neos\Flow\Package\FlowPackageInterface;
 use Neos\Flow\Package\Package;
-use Neos\Flow\Package\PackageInterface;
 use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Package\PackageManagerInterface;
 use Neos\Flow\Reflection\ReflectionService;
@@ -201,7 +201,7 @@ class Scripts
         $bootstrap->setEarlyInstance(Environment::class, $environment);
 
         /** @var PackageManager $packageManager */
-        $packageManager = $bootstrap->getEarlyInstance(PackageManagerInterface::class);
+        $packageManager = $bootstrap->getEarlyInstance(PackageManager::class);
 
         $configurationManager = new ConfigurationManager($context);
         $configurationManager->setTemporaryDirectoryPath($environment->getPathToTemporaryDirectory());
@@ -388,7 +388,7 @@ class Scripts
         $reflectionService = $objectManager->get(ReflectionService::class);
         $cacheManager = $bootstrap->getEarlyInstance(CacheManager::class);
         $systemLogger = $bootstrap->getEarlyInstance(SystemLoggerInterface::class);
-        $packageManager = $bootstrap->getEarlyInstance(PackageManagerInterface::class);
+        $packageManager = $bootstrap->getEarlyInstance(PackageManager::class);
 
         $objectManager->injectAllSettings($configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS));
         $objectManager->injectReflectionService($reflectionService);
@@ -447,7 +447,7 @@ class Scripts
 
         $reflectionService->injectSystemLogger($bootstrap->getEarlyInstance(SystemLoggerInterface::class));
         $reflectionService->injectSettings($settings);
-        $reflectionService->injectPackageManager($bootstrap->getEarlyInstance(PackageManagerInterface::class));
+        $reflectionService->injectPackageManager($bootstrap->getEarlyInstance(PackageManager::class));
         $reflectionService->setStatusCache($cacheManager->getCache('Flow_Reflection_Status'));
         $reflectionService->setReflectionDataCompiletimeCache($cacheManager->getCache('Flow_Reflection_CompiletimeData'));
         $reflectionService->setReflectionDataRuntimeCache($cacheManager->getCache('Flow_Reflection_RuntimeData'));
@@ -481,10 +481,10 @@ class Scripts
 
         $context = $bootstrap->getContext();
         /** @var PackageManager $packageManager */
-        $packageManager = $bootstrap->getEarlyInstance(PackageManagerInterface::class);
+        $packageManager = $bootstrap->getEarlyInstance(PackageManager::class);
         $packagesWithConfiguredObjects = static::getListOfPackagesWithConfiguredObjects($bootstrap);
 
-        /** @var PackageInterface $package */
+        /** @var FlowPackageInterface $package */
         foreach ($packageManager->getFlowPackages() as $packageKey => $package) {
             if ($packageManager->isPackageFrozen($packageKey)) {
                 continue;
@@ -500,8 +500,8 @@ class Scripts
                 self::monitorDirectoryIfItExists($fileMonitors['Flow_ClassFiles'], $autoloadPath, '\.php$');
             }
 
-            if ($context->isTesting() && $package instanceof Package) {
-                /** @var Package $package */
+            // Note that getFunctionalTestsPath is currently not part of any interface... We might want to add it or find a better way.
+            if ($context->isTesting()) {
                 self::monitorDirectoryIfItExists($fileMonitors['Flow_ClassFiles'], $package->getFunctionalTestsPath(), '\.php$');
             }
         }

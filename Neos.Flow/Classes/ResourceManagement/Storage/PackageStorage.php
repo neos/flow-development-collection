@@ -13,7 +13,6 @@ namespace Neos\Flow\ResourceManagement\Storage;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Package\FlowPackageInterface;
-use Neos\Flow\Package\PackageInterface;
 use Neos\Flow\Package\PackageManager;
 use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\Utility\Files;
@@ -159,7 +158,6 @@ class PackageStorage extends FileSystemStorage
     {
         $paths = [];
         foreach ($this->packageManager->getFlowPackages() as $packageKey => $package) {
-            /** @var PackageInterface $package */
             $publicResourcesPath = Files::concatenatePaths([$package->getResourcesPath(), 'Public']);
             if (is_dir($publicResourcesPath)) {
                 $paths[$packageKey] = $publicResourcesPath;

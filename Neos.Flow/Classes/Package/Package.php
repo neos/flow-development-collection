@@ -19,7 +19,7 @@ use Neos\Flow\Core\Bootstrap;
  *
  * @api
  */
-class Package extends GenericPackage implements FlowPackageInterface, BootableInterface
+class Package extends GenericPackage implements FlowPackageInterface, BootablePackageInterface
 {
     /**
      * Invokes custom PHP code directly after the package manager has been initialized.
@@ -32,9 +32,10 @@ class Package extends GenericPackage implements FlowPackageInterface, BootableIn
     }
 
     /**
-     * Returns the array of filenames of class files provided by functional tests contained in this package
+     * Returns a generator of filenames of class files provided by functional tests contained in this package
      *
      * @return \Generator A generator of class names (key) and their filename, including the relative path to the package's directory
+     * @internal
      */
     public function getFunctionalTestsClassFiles()
     {
@@ -55,7 +56,7 @@ class Package extends GenericPackage implements FlowPackageInterface, BootableIn
      * Returns the full path to this package's functional tests directory
      *
      * @return string Path to this package's functional tests directory
-     * @api
+     * @internal
      * TODO: Should be replaced by using autoload-dev
      */
     public function getFunctionalTestsPath()

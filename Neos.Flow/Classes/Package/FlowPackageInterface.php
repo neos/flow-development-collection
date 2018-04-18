@@ -37,4 +37,20 @@ interface FlowPackageInterface extends PackageInterface, PackageKeyAwareInterfac
      * @api
      */
     public function getConfigurationPath();
+
+    /**
+     * Returns a generator of filenames of class files provided by functional tests contained in this package
+     *
+     * @return \Generator
+     * @internal
+     */
+    public function getFunctionalTestsClassFiles();
+
+    /**
+     * Returns the full path to this package's functional tests directory
+     *
+     * @return string Path to this package's functional tests directory
+     * @internal
+     */
+    public function getFunctionalTestsPath();
 }

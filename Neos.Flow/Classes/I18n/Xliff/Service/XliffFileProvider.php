@@ -17,7 +17,6 @@ use Neos\Flow\I18n;
 use Neos\Flow\I18n\Locale;
 use Neos\Flow\I18n\Xliff\Model\FileAdapter;
 use Neos\Flow\I18n\Xliff\V12\XliffParser as V12XliffParser;
-use Neos\Flow\Package\PackageInterface;
 use Neos\Flow\Package\PackageManager;
 use Neos\Utility\Arrays;
 use Neos\Utility\Files;
