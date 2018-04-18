@@ -213,7 +213,7 @@ class CompileTimeObjectManager extends ObjectManager
 
         $availableClassNames = ['' => ['DateTime']];
 
-        $shouldRegisterFunctionalTestClasses = (bool) $this->allSettings['Neos']['Flow']['object']['registerFunctionalTestClasses'] ?? false;
+        $shouldRegisterFunctionalTestClasses = (bool)($this->allSettings['Neos']['Flow']['object']['registerFunctionalTestClasses'] ?? false);
 
         /** @var \Neos\Flow\Package\PackageInterface $package */
         foreach ($packages as $packageKey => $package) {
