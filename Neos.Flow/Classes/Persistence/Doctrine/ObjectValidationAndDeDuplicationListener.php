@@ -57,7 +57,7 @@ class ObjectValidationAndDeDuplicationListener
      */
     public function onFlush(OnFlushEventArgs $eventArgs)
     {
-        $unitOfWork = $eventArgs->getEntityManager->getUnitOfWork();
+        $unitOfWork = $eventArgs->getEntityManager()->getUnitOfWork();
         $validatedInstancesContainer = new \SplObjectStorage();
 
         $this->deduplicateValueObjectInsertions($unitOfWork, $validatedInstancesContainer);
