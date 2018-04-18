@@ -43,7 +43,10 @@ class PackageFactory
         $packageClassName = Package::class;
         if (!empty($packageClassInformation)) {
             $packageClassName = $packageClassInformation['className'];
-            $packageClassPath = Files::concatenatePaths(array($absolutePackagePath, $packageClassInformation['pathAndFilename']));
+            $packageClassPath = !empty($packageClassInformation['pathAndFilename']) ? Files::concatenatePaths(array($absolutePackagePath, $packageClassInformation['pathAndFilename'])) : null;
+        }
+
+        if (!empty($packageClassPath)) {
             require_once($packageClassPath);
         }
 
@@ -72,7 +75,7 @@ class PackageFactory
 
         $composerManifest = ComposerUtility::getComposerManifest($absolutePackagePath);
         if (!ComposerUtility::isFlowPackageType(isset($composerManifest['type']) ? $composerManifest['type'] : '')) {
-            return [];
+            return ['className' => GenericPackage::class, 'pathAndFilename' => ''];
         }
 
         $possiblePackageClassPaths = [
@@ -86,7 +89,7 @@ class PackageFactory
         });
 
         if ($foundPackageClassPaths === []) {
-            return [];
+            return ['className' => Package::class, 'pathAndFilename' => ''];
         }
 
         if (count($foundPackageClassPaths) > 1) {

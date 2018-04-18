@@ -173,6 +173,7 @@ class Scripts
     {
         $packageManager = new PackageManager(PackageManager::DEFAULT_PACKAGE_INFORMATION_CACHE_FILEPATH, FLOW_PATH_PACKAGES);
         $bootstrap->setEarlyInstance(PackageManagerInterface::class, $packageManager);
+        $bootstrap->setEarlyInstance(PackageManager::class, $packageManager);
 
         // The package:rescan must happen as early as possible, compiletime alone is not enough.
         if (isset($_SERVER['argv'][1]) && in_array($_SERVER['argv'][1], ['neos.flow:package:rescan', 'flow:package:rescan'])) {
@@ -199,12 +200,13 @@ class Scripts
         $environment->setTemporaryDirectoryBase(FLOW_PATH_TEMPORARY_BASE);
         $bootstrap->setEarlyInstance(Environment::class, $environment);
 
+        /** @var PackageManager $packageManager */
         $packageManager = $bootstrap->getEarlyInstance(PackageManagerInterface::class);
 
         $configurationManager = new ConfigurationManager($context);
         $configurationManager->setTemporaryDirectoryPath($environment->getPathToTemporaryDirectory());
         $configurationManager->injectConfigurationSource(new YamlSource());
-        $configurationManager->setPackages($packageManager->getAvailablePackages());
+        $configurationManager->setPackages($packageManager->getFlowPackages());
         if ($configurationManager->loadConfigurationCache() === false) {
             $configurationManager->refreshConfiguration();
         }
@@ -380,6 +382,7 @@ class Scripts
      */
     public static function initializeObjectManagerCompileTimeFinalize(Bootstrap $bootstrap)
     {
+        /** @var CompileTimeObjectManager $objectManager */
         $objectManager = $bootstrap->getObjectManager();
         $configurationManager = $bootstrap->getEarlyInstance(ConfigurationManager::class);
         $reflectionService = $objectManager->get(ReflectionService::class);
@@ -477,12 +480,12 @@ class Scripts
         ];
 
         $context = $bootstrap->getContext();
-        /** @var PackageManagerInterface $packageManager */
+        /** @var PackageManager $packageManager */
         $packageManager = $bootstrap->getEarlyInstance(PackageManagerInterface::class);
         $packagesWithConfiguredObjects = static::getListOfPackagesWithConfiguredObjects($bootstrap);
 
         /** @var PackageInterface $package */
-        foreach ($packageManager->getAvailablePackages() as $packageKey => $package) {
+        foreach ($packageManager->getFlowPackages() as $packageKey => $package) {
             if ($packageManager->isPackageFrozen($packageKey)) {
                 continue;
             }

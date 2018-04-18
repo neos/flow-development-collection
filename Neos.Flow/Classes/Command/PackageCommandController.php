@@ -100,27 +100,6 @@ class PackageCommandController extends CommandController
     }
 
     /**
-     * Delete an existing package
-     *
-     * This command deletes an existing package identified by the package key.
-     *
-     * @Flow\FlushesCaches
-     * @param string $packageKey The package key of the package to create
-     * @return void
-     */
-    public function deleteCommand(string $packageKey)
-    {
-        if (!$this->packageManager->isPackageAvailable($packageKey)) {
-            $this->outputLine('The package "%s" does not exist.', [$packageKey]);
-            $this->quit(1);
-        }
-        $this->packageManager->deletePackage($packageKey);
-        $this->outputLine('Deleted package "%s".', [$packageKey]);
-        Scripts::executeCommand('neos.flow:cache:flush', $this->settings, false);
-        $this->sendAndExit(0);
-    }
-
-    /**
      * List available packages
      *
      * Lists all locally available packages. Displays the package key, version and
