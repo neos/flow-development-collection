@@ -12,8 +12,8 @@ namespace Neos\Flow\Persistence\Doctrine;
  */
 
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
-use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Internal\Hydration\IterableResult;
 use Neos\Flow\Annotations as Flow;
@@ -55,10 +55,10 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
     /**
      * Initializes a new Repository.
      *
-     * @param ObjectManager $entityManager The EntityManager to use.
+     * @param EntityManagerInterface $entityManager The EntityManager to use.
      * @param ClassMetadata $classMetadata The class descriptor.
      */
-    public function __construct(ObjectManager $entityManager, ClassMetadata $classMetadata = null)
+    public function __construct(EntityManagerInterface $entityManager, ClassMetadata $classMetadata = null)
     {
         if ($classMetadata === null) {
             if (defined('static::ENTITY_CLASSNAME') === false) {

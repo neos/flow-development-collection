@@ -11,6 +11,7 @@ namespace Neos\Flow\Tests\Functional\Persistence\Doctrine\Mapping\Driver;
  * source code.
  */
 
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Tools\SchemaTool;
 use Neos\Flow\Persistence\Doctrine\Mapping\Driver\FlowAnnotationDriver;
 use Neos\Flow\Persistence\Doctrine\PersistenceManager;
@@ -298,8 +299,8 @@ class FlowAnnotationDriverTest extends FunctionalTestCase
         $this->assertNotEmpty($unidirectionalMapping['joinColumns']);
         $this->assertTrue($unidirectionalMapping['isOwningSide']);
 
-        /* @var $entityManager \Doctrine\Common\Persistence\ObjectManager */
-        $entityManager = $this->objectManager->get(\Doctrine\Common\Persistence\ObjectManager::class);
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = $this->objectManager->get(EntityManagerInterface::class);
         $schemaTool = new SchemaTool($entityManager);
         $schema = $schemaTool->getSchemaFromMetadata([$entityManager->getClassMetadata(Fixtures\OneToOneEntity2::class)]);
         /* @var $foreignKey \Doctrine\DBAL\Schema\ForeignKeyConstraint */

@@ -13,7 +13,7 @@ namespace Neos\Flow\Configuration;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\ApplicationContext;
-use Neos\Flow\Package\PackageInterface;
+use Neos\Flow\Package\FlowPackageInterface;
 use Neos\Utility\Arrays;
 use Neos\Utility\Files;
 use Neos\Utility\OpcodeCacheHelper;
@@ -155,7 +155,7 @@ class ConfigurationManager
     /**
      * Active packages to load the configuration for
      *
-     * @var array<Neos\Flow\Package\PackageInterface>
+     * @var FlowPackageInterface[]
      */
     protected $packages = [];
 
@@ -217,7 +217,7 @@ class ConfigurationManager
     /**
      * Sets the active packages to load the configuration for
      *
-     * @param array<Neos\Flow\Package\PackageInterface> $packages
+     * @param FlowPackageInterface[] $packages
      * @return void
      */
     public function setPackages(array $packages)
@@ -369,7 +369,7 @@ class ConfigurationManager
      * getConfiguration() method.
      *
      * @param string $configurationType The kind of configuration to load - must be one of the CONFIGURATION_TYPE_* constants
-     * @param array $packages An array of Package objects (indexed by package key) to consider
+     * @param FlowPackageInterface[] $packages An array of Package objects (indexed by package key) to consider
      * @throws Exception\InvalidConfigurationTypeException
      * @throws Exception\InvalidConfigurationException
      * @return void
@@ -393,7 +393,6 @@ class ConfigurationManager
                 }
 
                 $settings = [];
-                /** @var $package PackageInterface */
                 foreach ($packages as $packageKey => $package) {
                     if (Arrays::getValueByPath($settings, $packageKey) === null) {
                         $settings = Arrays::setValueByPath($settings, $packageKey, []);
@@ -403,7 +402,6 @@ class ConfigurationManager
                 $settings = Arrays::arrayMergeRecursiveOverrule($settings, $this->configurationSource->load(FLOW_PATH_CONFIGURATION . $configurationType, $allowSplitSource));
 
                 foreach ($this->orderedListOfContextNames as $contextName) {
-                    /** @var $package PackageInterface */
                     foreach ($packages as $package) {
                         $settings = Arrays::arrayMergeRecursiveOverrule($settings, $this->configurationSource->load($package->getConfigurationPath() . $contextName . '/' . $configurationType, $allowSplitSource));
                     }
@@ -419,7 +417,6 @@ class ConfigurationManager
                 $this->configurations[$configurationType]['Neos']['Flow']['core']['context'] = (string)$this->context;
             break;
             case self::CONFIGURATION_PROCESSING_TYPE_OBJECTS:
-                /** @var $package PackageInterface */
                 foreach ($packages as $packageKey => $package) {
                     $configuration = $this->configurationSource->load($package->getConfigurationPath() . $configurationType);
                     $configuration = Arrays::arrayMergeRecursiveOverrule($configuration, $this->configurationSource->load(FLOW_PATH_CONFIGURATION . $configurationType));
@@ -440,7 +437,6 @@ class ConfigurationManager
                     }
                 }
 
-                /** @var $package PackageInterface */
                 foreach ($packages as $package) {
                     $packagePolicyConfiguration = $this->configurationSource->load($package->getConfigurationPath() . $configurationType, $allowSplitSource);
                     $this->configurations[$configurationType] = $this->mergePolicyConfiguration($this->configurations[$configurationType], $packagePolicyConfiguration);
@@ -448,7 +444,6 @@ class ConfigurationManager
                 $this->configurations[$configurationType] = $this->mergePolicyConfiguration($this->configurations[$configurationType], $this->configurationSource->load(FLOW_PATH_CONFIGURATION . $configurationType, $allowSplitSource));
 
                 foreach ($this->orderedListOfContextNames as $contextName) {
-                    /** @var $package PackageInterface */
                     foreach ($packages as $package) {
                         $packagePolicyConfiguration = $this->configurationSource->load($package->getConfigurationPath() . $contextName . '/' . $configurationType, $allowSplitSource);
                         $this->configurations[$configurationType] = $this->mergePolicyConfiguration($this->configurations[$configurationType], $packagePolicyConfiguration);
@@ -457,14 +452,12 @@ class ConfigurationManager
                 }
             break;
             case self::CONFIGURATION_PROCESSING_TYPE_DEFAULT:
-                /** @var $package PackageInterface */
                 foreach ($packages as $package) {
                     $this->configurations[$configurationType] = Arrays::arrayMergeRecursiveOverrule($this->configurations[$configurationType], $this->configurationSource->load($package->getConfigurationPath() . $configurationType, $allowSplitSource));
                 }
                 $this->configurations[$configurationType] = Arrays::arrayMergeRecursiveOverrule($this->configurations[$configurationType], $this->configurationSource->load(FLOW_PATH_CONFIGURATION . $configurationType, $allowSplitSource));
 
                 foreach ($this->orderedListOfContextNames as $contextName) {
-                    /** @var $package PackageInterface */
                     foreach ($packages as $package) {
                         $this->configurations[$configurationType] = Arrays::arrayMergeRecursiveOverrule($this->configurations[$configurationType], $this->configurationSource->load($package->getConfigurationPath() . $contextName . '/' . $configurationType, $allowSplitSource));
                     }
@@ -486,7 +479,6 @@ class ConfigurationManager
                 $this->configurations[$configurationType] = $routeProcessor->process($this->configurations[$configurationType]);
                 break;
             case self::CONFIGURATION_PROCESSING_TYPE_APPEND:
-                /** @var $package PackageInterface */
                 foreach ($packages as $package) {
                     $this->configurations[$configurationType] = array_merge($this->configurations[$configurationType], $this->configurationSource->load($package->getConfigurationPath() . $configurationType, $allowSplitSource));
                 }

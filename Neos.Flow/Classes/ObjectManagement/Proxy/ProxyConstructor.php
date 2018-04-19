@@ -44,6 +44,7 @@ class ProxyConstructor extends ProxyMethod
         $methodDocumentation = $this->buildMethodDocumentation($this->fullOriginalClassName, $this->methodName);
         $callParentMethodCode = $this->buildCallParentMethodCode($this->fullOriginalClassName, $this->methodName);
 
+        $finalKeyword = $this->reflectionService->isMethodFinal($this->fullOriginalClassName, $this->methodName) ? 'final ' : '';
         $staticKeyword = $this->reflectionService->isMethodStatic($this->fullOriginalClassName, $this->methodName) ? 'static ' : '';
 
         $code = '';
@@ -51,7 +52,7 @@ class ProxyConstructor extends ProxyMethod
             $argumentsCode = (count($this->reflectionService->getMethodParameters($this->fullOriginalClassName, $this->methodName)) > 0) ? '        $arguments = func_get_args();' . "\n" : '';
             $code = "\n" .
                 $methodDocumentation .
-                '    ' . $staticKeyword . "public function __construct()\n    {\n" .
+                '    ' . $finalKeyword . $staticKeyword . "public function __construct()\n    {\n" .
                 $argumentsCode .
                 $this->addedPreParentCallCode . $callParentMethodCode . $this->addedPostParentCallCode .
                 "    }\n";

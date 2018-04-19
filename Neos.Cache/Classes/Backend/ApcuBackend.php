@@ -14,7 +14,6 @@ namespace Neos\Cache\Backend;
 use Neos\Cache\Backend\AbstractBackend as IndependentAbstractBackend;
 use Neos\Cache\EnvironmentConfiguration;
 use Neos\Cache\Exception;
-use Neos\Cache\Exception\InvalidDataException;
 use Neos\Cache\Frontend\FrontendInterface;
 
 /**
@@ -99,7 +98,7 @@ class ApcuBackend extends IndependentAbstractBackend implements TaggableBackendI
      * @return string The prefixed identifier, for example "Flow694a5c7a43a4_NumberOfPostedArticles"
      * @api
      */
-    public function getPrefixedIdentifier($entryIdentifier): string
+    public function getPrefixedIdentifier(string $entryIdentifier): string
     {
         return $this->identifierPrefix . 'entry_' . $entryIdentifier;
     }
@@ -114,16 +113,12 @@ class ApcuBackend extends IndependentAbstractBackend implements TaggableBackendI
      * @return void
      * @throws Exception if no cache frontend has been set.
      * @throws \InvalidArgumentException if the identifier is not valid
-     * @throws InvalidDataException if $data is not a string
      * @api
      */
-    public function set($entryIdentifier, $data, array $tags = [], $lifetime = null)
+    public function set(string $entryIdentifier, string $data, array $tags = [], int $lifetime = null)
     {
         if (!$this->cache instanceof FrontendInterface) {
             throw new Exception('No cache frontend has been set yet via setCache().', 1232986818);
-        }
-        if (!is_string($data)) {
-            throw new InvalidDataException('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1232986825);
         }
 
         $tags[] = '%APCUBE%' . $this->cacheIdentifier;
@@ -145,7 +140,7 @@ class ApcuBackend extends IndependentAbstractBackend implements TaggableBackendI
      * @return mixed The cache entry's content as a string or FALSE if the cache entry could not be loaded
      * @api
      */
-    public function get($entryIdentifier)
+    public function get(string $entryIdentifier)
     {
         $success = false;
         $value = apcu_fetch($this->identifierPrefix . 'entry_' . $entryIdentifier, $success);
@@ -159,7 +154,7 @@ class ApcuBackend extends IndependentAbstractBackend implements TaggableBackendI
      * @return boolean TRUE if such an entry exists, FALSE if not
      * @api
      */
-    public function has($entryIdentifier): bool
+    public function has(string $entryIdentifier): bool
     {
         $success = false;
         apcu_fetch($this->identifierPrefix . 'entry_' . $entryIdentifier, $success);
@@ -175,7 +170,7 @@ class ApcuBackend extends IndependentAbstractBackend implements TaggableBackendI
      * @return boolean TRUE if (at least) an entry could be removed or FALSE if no entry was found
      * @api
      */
-    public function remove($entryIdentifier): bool
+    public function remove(string $entryIdentifier): bool
     {
         $this->removeIdentifierFromAllTags($entryIdentifier);
         return apcu_delete($this->identifierPrefix . 'entry_' . $entryIdentifier);
@@ -189,7 +184,7 @@ class ApcuBackend extends IndependentAbstractBackend implements TaggableBackendI
      * @return array An array with identifiers of all matching entries. An empty array if no entries matched
      * @api
      */
-    public function findIdentifiersByTag($tag): array
+    public function findIdentifiersByTag(string $tag): array
     {
         $success = false;
         $identifiers = apcu_fetch($this->identifierPrefix . 'tag_' . $tag, $success);
@@ -235,7 +230,7 @@ class ApcuBackend extends IndependentAbstractBackend implements TaggableBackendI
      * @return integer The number of entries which have been affected by this flush
      * @api
      */
-    public function flushByTag($tag): int
+    public function flushByTag(string $tag): int
     {
         $identifiers = $this->findIdentifiersByTag($tag);
         foreach ($identifiers as $identifier) {

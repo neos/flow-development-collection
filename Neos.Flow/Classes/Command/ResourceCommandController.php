@@ -79,7 +79,7 @@ class ResourceCommandController extends CommandController
      * @param string $collection If specified, only resources of this collection are published. Example: 'persistent'
      * @return void
      */
-    public function publishCommand($collection = null)
+    public function publishCommand(string $collection = null)
     {
         try {
             if ($collection === null) {
@@ -145,7 +145,7 @@ class ResourceCommandController extends CommandController
      * @param boolean $publish If enabled, the target collection will be published after the resources have been copied
      * @return void
      */
-    public function copyCommand($sourceCollection, $targetCollection, $publish = false)
+    public function copyCommand(string $sourceCollection, string $targetCollection, bool $publish = false)
     {
         $sourceCollectionName = $sourceCollection;
         $sourceCollection = $this->resourceManager->getCollection($sourceCollectionName);

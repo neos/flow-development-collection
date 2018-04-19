@@ -12,8 +12,8 @@ namespace Neos\Flow\ResourceManagement\Storage;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Package\PackageInterface;
-use Neos\Flow\Package\PackageManagerInterface;
+use Neos\Flow\Package\FlowPackageInterface;
+use Neos\Flow\Package\PackageManager;
 use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\Utility\Files;
 use Neos\Utility\Unicode\Functions as UnicodeFunctions;
@@ -25,7 +25,7 @@ class PackageStorage extends FileSystemStorage
 {
     /**
      * @Flow\Inject
-     * @var PackageManagerInterface
+     * @var PackageManager
      */
     protected $packageManager;
 
@@ -68,10 +68,8 @@ class PackageStorage extends FileSystemStorage
             $directoryPattern = '*';
         }
         // $packageKeyPattern can be used in a future implementation to filter by package key
-
-        $packages = $this->packageManager->getAvailablePackages();
+        $packages = $this->packageManager->getFlowPackages();
         foreach ($packages as $packageKey => $package) {
-            /** @var PackageInterface $package */
             if ($directoryPattern === '*') {
                 $directories[$packageKey][] = $package->getPackagePath();
             } else {
@@ -98,10 +96,10 @@ class PackageStorage extends FileSystemStorage
      * Create a storage object for the given static resource path.
      *
      * @param string $resourcePathAndFilename
-     * @param PackageInterface $resourcePackage
+     * @param FlowPackageInterface $resourcePackage
      * @return StorageObject
      */
-    protected function createStorageObject($resourcePathAndFilename, PackageInterface $resourcePackage)
+    protected function createStorageObject($resourcePathAndFilename, FlowPackageInterface $resourcePackage)
     {
         $pathInfo = UnicodeFunctions::pathinfo($resourcePathAndFilename);
 
@@ -159,9 +157,7 @@ class PackageStorage extends FileSystemStorage
     public function getPublicResourcePaths()
     {
         $paths = [];
-        $packages = $this->packageManager->getAvailablePackages();
-        foreach ($packages as $packageKey => $package) {
-            /** @var PackageInterface $package */
+        foreach ($this->packageManager->getFlowPackages() as $packageKey => $package) {
             $publicResourcesPath = Files::concatenatePaths([$package->getResourcesPath(), 'Public']);
             if (is_dir($publicResourcesPath)) {
                 $paths[$packageKey] = $publicResourcesPath;

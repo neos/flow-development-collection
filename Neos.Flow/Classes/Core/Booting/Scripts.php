@@ -32,8 +32,8 @@ use Neos\Flow\Monitor\FileMonitor;
 use Neos\Flow\ObjectManagement\CompileTimeObjectManager;
 use Neos\Flow\ObjectManagement\ObjectManager;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
+use Neos\Flow\Package\FlowPackageInterface;
 use Neos\Flow\Package\Package;
-use Neos\Flow\Package\PackageInterface;
 use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Package\PackageManagerInterface;
 use Neos\Flow\Reflection\ReflectionService;
@@ -174,6 +174,7 @@ class Scripts
     {
         $packageManager = new PackageManager(PackageManager::DEFAULT_PACKAGE_INFORMATION_CACHE_FILEPATH, FLOW_PATH_PACKAGES);
         $bootstrap->setEarlyInstance(PackageManagerInterface::class, $packageManager);
+        $bootstrap->setEarlyInstance(PackageManager::class, $packageManager);
 
         // The package:rescan must happen as early as possible, compiletime alone is not enough.
         if (isset($_SERVER['argv'][1]) && in_array($_SERVER['argv'][1], ['neos.flow:package:rescan', 'flow:package:rescan'])) {
@@ -200,12 +201,13 @@ class Scripts
         $environment->setTemporaryDirectoryBase(FLOW_PATH_TEMPORARY_BASE);
         $bootstrap->setEarlyInstance(Environment::class, $environment);
 
-        $packageManager = $bootstrap->getEarlyInstance(PackageManagerInterface::class);
+        /** @var PackageManager $packageManager */
+        $packageManager = $bootstrap->getEarlyInstance(PackageManager::class);
 
         $configurationManager = new ConfigurationManager($context);
         $configurationManager->setTemporaryDirectoryPath($environment->getPathToTemporaryDirectory());
         $configurationManager->injectConfigurationSource(new YamlSource());
-        $configurationManager->setPackages($packageManager->getAvailablePackages());
+        $configurationManager->setPackages($packageManager->getFlowPackages());
         if ($configurationManager->loadConfigurationCache() === false) {
             $configurationManager->refreshConfiguration();
         }
@@ -382,12 +384,13 @@ class Scripts
      */
     public static function initializeObjectManagerCompileTimeFinalize(Bootstrap $bootstrap)
     {
+        /** @var CompileTimeObjectManager $objectManager */
         $objectManager = $bootstrap->getObjectManager();
         $configurationManager = $bootstrap->getEarlyInstance(ConfigurationManager::class);
         $reflectionService = $objectManager->get(ReflectionService::class);
         $cacheManager = $bootstrap->getEarlyInstance(CacheManager::class);
         $systemLogger = $bootstrap->getEarlyInstance(SystemLoggerInterface::class);
-        $packageManager = $bootstrap->getEarlyInstance(PackageManagerInterface::class);
+        $packageManager = $bootstrap->getEarlyInstance(PackageManager::class);
 
         $objectManager->injectAllSettings($configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS));
         $objectManager->injectReflectionService($reflectionService);
@@ -478,12 +481,12 @@ class Scripts
         ];
 
         $context = $bootstrap->getContext();
-        /** @var PackageManagerInterface $packageManager */
-        $packageManager = $bootstrap->getEarlyInstance(PackageManagerInterface::class);
+        /** @var PackageManager $packageManager */
+        $packageManager = $bootstrap->getEarlyInstance(PackageManager::class);
         $packagesWithConfiguredObjects = static::getListOfPackagesWithConfiguredObjects($bootstrap);
 
-        /** @var PackageInterface $package */
-        foreach ($packageManager->getAvailablePackages() as $packageKey => $package) {
+        /** @var FlowPackageInterface $package */
+        foreach ($packageManager->getFlowPackages() as $packageKey => $package) {
             if ($packageManager->isPackageFrozen($packageKey)) {
                 continue;
             }
@@ -498,8 +501,8 @@ class Scripts
                 self::monitorDirectoryIfItExists($fileMonitors['Flow_ClassFiles'], $autoloadPath, '\.php$');
             }
 
-            if ($context->isTesting() && $package instanceof Package) {
-                /** @var Package $package */
+            // Note that getFunctionalTestsPath is currently not part of any interface... We might want to add it or find a better way.
+            if ($context->isTesting()) {
                 self::monitorDirectoryIfItExists($fileMonitors['Flow_ClassFiles'], $package->getFunctionalTestsPath(), '\.php$');
             }
         }

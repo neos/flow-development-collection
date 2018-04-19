@@ -307,7 +307,7 @@ class GeneratorService
         $fileContent = $this->renderTemplate($templatePathAndFilename, $contextVariables);
 
         $testFilename = $testName . '.php';
-        $testPath = $this->packageManager->getPackage($packageKey)->getPackagePath() . PackageInterface::DIRECTORY_TESTS_UNIT . 'Domain/Model/';
+        $testPath = $this->packageManager->getPackage($packageKey)->getPackagePath() . FlowPackageInterface::DIRECTORY_TESTS_UNIT . 'Domain/Model/';
         $targetPathAndFilename = $testPath . $testFilename;
 
         $this->generateFile($targetPathAndFilename, $fileContent, $overwrite);

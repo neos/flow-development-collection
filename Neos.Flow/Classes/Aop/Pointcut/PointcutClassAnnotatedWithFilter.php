@@ -49,7 +49,7 @@ class PointcutClassAnnotatedWithFilter implements PointcutFilterInterface
      * @param string $annotation An annotation class (for example "@Neos\Flow\Annotations\Aspect") which defines which class annotations should match
      * @param array $annotationValueConstraints
      */
-    public function __construct($annotation, array $annotationValueConstraints = [])
+    public function __construct(string $annotation, array $annotationValueConstraints = [])
     {
         $this->annotation = $annotation;
         $this->annotationValueConstraints = $annotationValueConstraints;
@@ -61,7 +61,7 @@ class PointcutClassAnnotatedWithFilter implements PointcutFilterInterface
      * @param ReflectionService $reflectionService The reflection service
      * @return void
      */
-    public function injectReflectionService(ReflectionService $reflectionService)
+    public function injectReflectionService(ReflectionService $reflectionService): void
     {
         $this->reflectionService = $reflectionService;
     }
@@ -70,7 +70,7 @@ class PointcutClassAnnotatedWithFilter implements PointcutFilterInterface
      * @param SystemLoggerInterface $systemLogger
      * @return void
      */
-    public function injectSystemLogger(SystemLoggerInterface $systemLogger)
+    public function injectSystemLogger(SystemLoggerInterface $systemLogger): void
     {
         $this->systemLogger = $systemLogger;
     }
@@ -84,7 +84,7 @@ class PointcutClassAnnotatedWithFilter implements PointcutFilterInterface
      * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
      * @return boolean TRUE if the class matches, otherwise FALSE
      */
-    public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier)
+    public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier): bool
     {
         $designatedAnnotations = $this->reflectionService->getClassAnnotations($className, $this->annotation);
         if ($designatedAnnotations !== [] || $this->annotationValueConstraints === []) {
@@ -115,7 +115,7 @@ class PointcutClassAnnotatedWithFilter implements PointcutFilterInterface
      *
      * @return boolean TRUE if this filter has runtime evaluations
      */
-    public function hasRuntimeEvaluationsDefinition()
+    public function hasRuntimeEvaluationsDefinition(): bool
     {
         return false;
     }
@@ -125,7 +125,7 @@ class PointcutClassAnnotatedWithFilter implements PointcutFilterInterface
      *
      * @return array Runtime evaluations
      */
-    public function getRuntimeEvaluationsDefinition()
+    public function getRuntimeEvaluationsDefinition(): array
     {
         return [];
     }
@@ -136,7 +136,7 @@ class PointcutClassAnnotatedWithFilter implements PointcutFilterInterface
      * @param ClassNameIndex $classNameIndex
      * @return ClassNameIndex
      */
-    public function reduceTargetClassNames(ClassNameIndex $classNameIndex)
+    public function reduceTargetClassNames(ClassNameIndex $classNameIndex): ClassNameIndex
     {
         $classNames = $this->reflectionService->getClassNamesByAnnotation($this->annotation);
         $annotatedIndex = new ClassNameIndex();

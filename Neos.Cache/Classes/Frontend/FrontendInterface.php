@@ -54,7 +54,7 @@ interface FrontendInterface
      * @return void
      * @api
      */
-    public function set($entryIdentifier, $data, array $tags = [], $lifetime = null);
+    public function set(string $entryIdentifier, $data, array $tags = [], int $lifetime = null);
 
     /**
      * Finds and returns data from the cache.
@@ -63,7 +63,7 @@ interface FrontendInterface
      * @return mixed
      * @api
      */
-    public function get($entryIdentifier);
+    public function get(string $entryIdentifier);
 
     /**
      * Finds and returns all cache entries which are tagged by the specified tag.
@@ -72,7 +72,7 @@ interface FrontendInterface
      * @return array An array with the identifier (key) and content (value) of all matching entries. An empty array if no entries matched
      * @api
      */
-    public function getByTag($tag);
+    public function getByTag(string $tag): array;
 
     /**
      * Checks if a cache entry with the specified identifier exists.
@@ -81,7 +81,7 @@ interface FrontendInterface
      * @return boolean TRUE if such an entry exists, FALSE if not
      * @api
      */
-    public function has($entryIdentifier);
+    public function has(string $entryIdentifier): bool;
 
     /**
      * Removes the given cache entry from the cache.
@@ -89,7 +89,7 @@ interface FrontendInterface
      * @param string $entryIdentifier An identifier specifying the cache entry
      * @return boolean TRUE if such an entry exists, FALSE if not
      */
-    public function remove($entryIdentifier);
+    public function remove(string $entryIdentifier): bool;
 
     /**
      * Removes all cache entries of this cache.
@@ -105,7 +105,7 @@ interface FrontendInterface
      * @return integer The number of entries which have been affected by this flush or NULL if the number is unknown
      * @api
      */
-    public function flushByTag($tag);
+    public function flushByTag(string $tag): int;
 
     /**
      * Does garbage collection
@@ -122,7 +122,7 @@ interface FrontendInterface
      * @return boolean
      * @api
      */
-    public function isValidEntryIdentifier($identifier);
+    public function isValidEntryIdentifier(string $identifier): bool;
 
     /**
      * Checks the validity of a tag. Returns true if it's valid.
@@ -131,5 +131,5 @@ interface FrontendInterface
      * @return boolean
      * @api
      */
-    public function isValidTag($tag);
+    public function isValidTag(string $tag): bool;
 }

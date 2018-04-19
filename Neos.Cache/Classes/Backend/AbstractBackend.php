@@ -127,7 +127,7 @@ abstract class AbstractBackend implements BackendInterface
      * @return string The prefixed identifier, for example "Flow694a5c7a43a4_NumberOfPostedArticles"
      * @api
      */
-    public function getPrefixedIdentifier($entryIdentifier): string
+    public function getPrefixedIdentifier(string $entryIdentifier): string
     {
         return $entryIdentifier;
     }

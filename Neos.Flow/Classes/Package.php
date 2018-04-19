@@ -12,6 +12,7 @@ namespace Neos\Flow;
  */
 
 use Neos\Flow\Package\Package as BasePackage;
+use Neos\Flow\Package\PackageManager;
 use Neos\Flow\ResourceManagement\ResourceManager;
 
 /**
@@ -65,8 +66,9 @@ class Package extends BasePackage
             $dispatcher->connect(Core\Booting\Sequence::class, 'afterInvokeStep', function ($step) use ($bootstrap, $dispatcher) {
                 if ($step->getIdentifier() === 'neos.flow:resources') {
                     $publicResourcesFileMonitor = Monitor\FileMonitor::createFileMonitorAtBoot('Flow_PublicResourcesFiles', $bootstrap);
+                    /** @var PackageManager $packageManager */
                     $packageManager = $bootstrap->getEarlyInstance(Package\PackageManagerInterface::class);
-                    foreach ($packageManager->getAvailablePackages() as $packageKey => $package) {
+                    foreach ($packageManager->getFlowPackages() as $packageKey => $package) {
                         if ($packageManager->isPackageFrozen($packageKey)) {
                             continue;
                         }

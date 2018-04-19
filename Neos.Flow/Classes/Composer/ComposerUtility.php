@@ -11,7 +11,7 @@ namespace Neos\Flow\Composer;
  * source code.
  */
 
-use Neos\Flow\Package\PackageInterface;
+use Neos\Flow\Package\FlowPackageInterface;
 use Neos\Utility\ObjectAccess;
 use Neos\Utility\Files;
 
@@ -166,7 +166,7 @@ class ComposerUtility
 
         if (!isset($manifest['autoload'])) {
             $namespace = str_replace('.', '\\', $packageKey) . '\\';
-            $manifest['autoload'] = array('psr-4' => array($namespace => PackageInterface::DIRECTORY_CLASSES));
+            $manifest['autoload'] = array('psr-4' => array($namespace => FlowPackageInterface::DIRECTORY_CLASSES));
         }
 
         $manifest['extra']['neos']['package-key'] = $packageKey;
@@ -178,6 +178,28 @@ class ComposerUtility
         }
 
         return $manifest;
+    }
+
+    /**
+     * Get the package version of the given package
+     * Return normalized package version.
+     *
+     * @param string $composerName
+     * @return string
+     * @see https://getcomposer.org/doc/04-schema.md#version
+     */
+    public static function getPackageVersion($composerName)
+    {
+        foreach (self::readComposerLock() as $composerLockData) {
+            if (!isset($composerLockData['name'])) {
+                continue;
+            }
+            if ($composerLockData['name'] === $composerName) {
+                return preg_replace('/^v([0-9])/', '$1', $composerLockData['version'], 1);
+            }
+        }
+
+        return '';
     }
 
     /**
