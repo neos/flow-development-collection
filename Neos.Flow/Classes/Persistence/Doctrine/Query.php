@@ -660,6 +660,7 @@ class Query implements QueryInterface
             }
             $previousJoinAlias = $joinAlias;
         }
+        $this->setDistinct(true);
 
         return $previousJoinAlias . '.' . $propertyPathParts[$i];
     }
