@@ -1,8 +1,8 @@
 # Neos Cache Framework
 
 This is a generic cache package for use in projects.
-It implements [PSR-6](https://github.com/php-fig/cache) and [PSR-16](https://github.com/php-fig/simple-cache) but also brings own interfaces used in Flow and Neos which support
-additional featuers.
+It implements [PSR-6](https://github.com/php-fig/cache) and [PSR-16](https://github.com/php-fig/simple-cache) but 
+also brings own interfaces used in Flow and Neos which support additional featuers.
 
 #### Note
 
@@ -58,9 +58,14 @@ but both use the existing [backends](https://flowframework.readthedocs.io/en/sta
 that can also be used with the `\Neos\Cache\Frontend\FrontendInterface` implementations, which are slightly 
 different than the PSR caches but also implement additional features like tagging.
 
+#### Note
+
+Both PSR implementations are not integrated in Flow yet, so when you use them within a Flow installation
+it's your responsibility to flush them correctly as ``./flow flow:cache:flush`` will not do that in this case.
+
 Contribute
 ----------
 
-If you want to contribute to the Flow framework, please have a look at
+If you want to contribute to this package or the Flow framework, please have a look at
 https://github.com/neos/flow-development-collection - it is the repository
 used for development and all pull requests should go into it.
