@@ -12,6 +12,7 @@ namespace Neos\Flow\Persistence\Doctrine;
  */
 
 use Doctrine\ORM\Event\OnFlushEventArgs;
+use Doctrine\ORM\UnitOfWork;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\Exception\ObjectValidationFailedException;
 use Neos\Flow\Reflection\ClassSchema;
