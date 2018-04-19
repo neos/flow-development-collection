@@ -12,7 +12,9 @@ Neos:
         dbname: NULL
         user: NULL
         password: NULL
-        charset: 'utf8'
+        charset: 'utf8mb4'
+        defaultTableOptions:
+          charset: 'utf8mb4'
       cacheAllQueryResults: FALSE
 
       doctrine:

@@ -19,6 +19,8 @@ use Neos\Flow\ObjectManagement\Configuration\Configuration;
 use Neos\Flow\ObjectManagement\Configuration\ConfigurationBuilder;
 use Neos\Flow\ObjectManagement\Configuration\ConfigurationProperty as Property;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Package\FlowPackageInterface;
+use Neos\Flow\Package\PackageInterface;
 use Neos\Flow\Reflection\ReflectionService;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
@@ -118,7 +120,7 @@ class CompileTimeObjectManager extends ObjectManager
     /**
      * Initializes the the object configurations and some other parts of this Object Manager.
      *
-     * @param array $packages An array of active packages to consider
+     * @param PackageInterface[] $packages An array of active packages to consider
      * @return void
      */
     public function initialize(array $packages)
@@ -213,15 +215,18 @@ class CompileTimeObjectManager extends ObjectManager
         }
 
         $availableClassNames = ['' => ['DateTime']];
-        /** @var \Neos\Flow\Package\Package $package */
+
+        $shouldRegisterFunctionalTestClasses = (bool)($this->allSettings['Neos']['Flow']['object']['registerFunctionalTestClasses'] ?? false);
+
+        /** @var \Neos\Flow\Package\PackageInterface $package */
         foreach ($packages as $packageKey => $package) {
-            if ($package->isObjectManagementEnabled() && (ComposerUtility::isFlowPackageType($package->getComposerManifest('type')) || isset($includeClassesConfiguration[$packageKey]))) {
+            if (ComposerUtility::isFlowPackageType($package->getComposerManifest('type')) || isset($includeClassesConfiguration[$packageKey])) {
                 foreach ($package->getClassFiles() as $fullClassName => $path) {
                     if (substr($fullClassName, -9, 9) !== 'Exception') {
                         $availableClassNames[$packageKey][] = $fullClassName;
                     }
                 }
-                if (isset($this->allSettings['Neos']['Flow']['object']['registerFunctionalTestClasses']) && $this->allSettings['Neos']['Flow']['object']['registerFunctionalTestClasses'] === true) {
+                if ($package instanceof FlowPackageInterface && $shouldRegisterFunctionalTestClasses) {
                     foreach ($package->getFunctionalTestsClassFiles() as $fullClassName => $path) {
                         if (substr($fullClassName, -9, 9) !== 'Exception') {
                             $availableClassNames[$packageKey][] = $fullClassName;

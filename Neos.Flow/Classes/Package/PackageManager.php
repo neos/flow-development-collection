@@ -101,6 +101,11 @@ class PackageManager implements PackageManagerInterface
     protected $settings;
 
     /**
+     * @var FlowPackageInterface[]
+     */
+    protected $flowPackages = [];
+
+    /**
      * @param array $settings
      * @return void
      */
@@ -134,8 +139,26 @@ class PackageManager implements PackageManagerInterface
         /** @var PackageInterface $package */
 
         foreach ($this->packages as $package) {
+            if ($package instanceof FlowPackageInterface) {
+                $this->flowPackages[$package->getPackageKey()] = $package;
+            }
+            if (!$package instanceof BootablePackageInterface) {
+                continue;
+            }
             $package->boot($bootstrap);
         }
+    }
+
+    /**
+     * Get only packages that implement the FlowPackageInterface for use in the Framework
+     * Array keys will be the respective package keys.
+     *
+     * @return FlowPackageInterface[]
+     * @internal
+     */
+    public function getFlowPackages()
+    {
+        return $this->flowPackages;
     }
 
     /**
@@ -219,7 +242,7 @@ class PackageManager implements PackageManagerInterface
      * the given package state, path, and type filters. All three filters must match, if given.
      *
      * @param string $packageState defaults to available
-     * @param string $packagePath
+     * @param string $packagePath DEPRECATED since Flow 5.0
      * @param string $packageType
      *
      * @return array<PackageInterface>
@@ -332,11 +355,11 @@ class PackageManager implements PackageManagerInterface
 
         foreach (
             [
-                PackageInterface::DIRECTORY_CLASSES,
-                PackageInterface::DIRECTORY_CONFIGURATION,
-                PackageInterface::DIRECTORY_RESOURCES,
-                PackageInterface::DIRECTORY_TESTS_UNIT,
-                PackageInterface::DIRECTORY_TESTS_FUNCTIONAL,
+                FlowPackageInterface::DIRECTORY_CLASSES,
+                FlowPackageInterface::DIRECTORY_CONFIGURATION,
+                FlowPackageInterface::DIRECTORY_RESOURCES,
+                FlowPackageInterface::DIRECTORY_TESTS_UNIT,
+                FlowPackageInterface::DIRECTORY_TESTS_FUNCTIONAL,
             ] as $path) {
             Files::createDirectoryRecursively(Files::concatenatePaths([$packagePath, $path]));
         }
@@ -346,8 +369,12 @@ class PackageManager implements PackageManagerInterface
         $refreshedPackageStatesConfiguration = $this->rescanPackages();
         $this->packageStatesConfiguration = $refreshedPackageStatesConfiguration;
         $this->registerPackageFromStateConfiguration($manifest['name'], $this->packageStatesConfiguration['packages'][$manifest['name']]);
+        $package = $this->packages[$packageKey];
+        if ($package instanceof FlowPackageInterface) {
+            $this->flowPackages[$packageKey] = $package;
+        }
 
-        return $this->packages[$packageKey];
+        return $package;
     }
 
     /**
@@ -447,60 +474,6 @@ class PackageManager implements PackageManagerInterface
         }
 
         $this->bootstrap->getObjectManager()->get(ReflectionService::class)->unfreezePackageReflection($packageKey);
-    }
-
-    /**
-     * Removes a package from registry and deletes it from filesystem
-     *
-     * @param string $packageKey package to remove
-     * @return void
-     * @throws Exception\UnknownPackageException if the specified package is not known
-     * @throws Exception\ProtectedPackageKeyException if a package is protected and cannot be deleted
-     * @throws Exception
-     * @api
-     */
-    public function deletePackage($packageKey)
-    {
-        if (!$this->isPackageAvailable($packageKey)) {
-            throw new Exception\UnknownPackageException('Package "' . $packageKey . '" is not available and cannot be removed.', 1166543253);
-        }
-
-        $package = $this->getPackage($packageKey);
-        if ($package->isProtected()) {
-            throw new Exception\ProtectedPackageKeyException('The package "' . $packageKey . '" is protected and cannot be removed.', 1220722120);
-        }
-
-        $packagePath = $package->getPackagePath();
-        $this->unregisterPackage($package);
-
-        try {
-            Files::removeDirectoryRecursively($packagePath);
-        } catch (UtilityException $exception) {
-            throw new Exception('Please check file permissions. The directory "' . $packagePath . '" for package "' . $packageKey . '" could not be removed.', 1301491089, $exception);
-        }
-    }
-
-    /**
-     * Unregisters a package from the list of available packages
-     *
-     * @param PackageInterface $package The package to be unregistered
-     * @return void
-     * @throws Exception\InvalidPackageStateException
-     */
-    protected function unregisterPackage(PackageInterface $package)
-    {
-        $packageKey = $package->getPackageKey();
-        if (!$this->isPackageAvailable($packageKey)) {
-            throw new Exception\InvalidPackageStateException('Package "' . $packageKey . '" is not registered.', 1338996142);
-        }
-
-        if (!isset($this->packages[$packageKey])) {
-            return;
-        }
-        $composerName = $package->getComposerName();
-
-        unset($this->packages[$packageKey], $this->packageKeys[strtolower($packageKey)], $this->packageStatesConfiguration['packages'][$composerName]);
-        $this->sortAndSavePackageStates($this->packageStatesConfiguration);
     }
 
     /**
@@ -652,28 +625,6 @@ class PackageManager implements PackageManagerInterface
             'autoloadConfiguration' => $autoload,
             'packageClassInformation' => $this->packageFactory->detectFlowPackageFilePath($packageKey, $packagePath)
         ];
-    }
-
-    /**
-     * Get the package version of the given package
-     * Return normalized package version.
-     *
-     * @param string $composerName
-     * @return string
-     * @see https://getcomposer.org/doc/04-schema.md#version
-     */
-    public static function getPackageVersion($composerName)
-    {
-        foreach (ComposerUtility::readComposerLock() as $composerLockData) {
-            if (!isset($composerLockData['name'])) {
-                continue;
-            }
-            if ($composerLockData['name'] === $composerName) {
-                return preg_replace('/^v([0-9])/', '$1', $composerLockData['version'], 1);
-            }
-        }
-
-        return '';
     }
 
     /**

@@ -11,10 +11,10 @@ namespace Neos\Flow\Tests\Unit\I18n;
  * source code.
  */
 
+use Neos\Flow\Package\FlowPackageInterface;
+use Neos\Flow\Package\PackageManager;
 use org\bovigo\vfs\vfsStream;
 use Neos\Cache\Frontend\VariableFrontend;
-use Neos\Flow\Package\PackageInterface;
-use Neos\Flow\Package\PackageManagerInterface;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Flow\I18n;
 
@@ -155,11 +155,11 @@ class ServiceTest extends UnitTestCase
             file_put_contents('vfs://Foo/Bar/Private/Translations/' . $localeIdentifier . '/Main.xlf', 'FooBar');
         }
 
-        $mockPackage = $this->createMock(PackageInterface::class);
+        $mockPackage = $this->createMock(FlowPackageInterface::class);
         $mockPackage->expects($this->any())->method('getResourcesPath')->will($this->returnValue('vfs://Foo/Bar/'));
 
-        $mockPackageManager = $this->createMock(PackageManagerInterface::class);
-        $mockPackageManager->expects($this->any())->method('getAvailablePackages')->will($this->returnValue([$mockPackage]));
+        $mockPackageManager = $this->createMock(PackageManager::class);
+        $mockPackageManager->expects($this->any())->method('getFlowPackages')->will($this->returnValue([$mockPackage]));
 
         $mockLocaleCollection = $this->createMock(I18n\LocaleCollection::class);
         $mockLocaleCollection->expects($this->exactly(4))->method('addLocale');
@@ -202,11 +202,11 @@ class ServiceTest extends UnitTestCase
             file_put_contents('vfs://Foo/Bar/Private/Translations/' . $localeIdentifier . '.xlf', 'FooBar');
         }
 
-        $mockPackage = $this->createMock(PackageInterface::class);
+        $mockPackage = $this->createMock(FlowPackageInterface::class);
         $mockPackage->expects($this->any())->method('getResourcesPath')->will($this->returnValue('vfs://Foo/Bar/'));
 
-        $mockPackageManager = $this->createMock(PackageManagerInterface::class);
-        $mockPackageManager->expects($this->any())->method('getAvailablePackages')->will($this->returnValue([$mockPackage]));
+        $mockPackageManager = $this->createMock(PackageManager::class);
+        $mockPackageManager->expects($this->any())->method('getFlowPackages')->will($this->returnValue([$mockPackage]));
 
         $mockLocaleCollection = $this->createMock(I18n\LocaleCollection::class);
         $mockLocaleCollection->expects($this->exactly(2))->method('addLocale');
