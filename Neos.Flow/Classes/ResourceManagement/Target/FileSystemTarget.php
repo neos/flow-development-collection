@@ -15,7 +15,6 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Error\Messages\Error;
 use Neos\Flow\Http\HttpRequestHandlerInterface;
-use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\ResourceManagement\CollectionInterface;
 use Neos\Flow\ResourceManagement\Publishing\MessageCollector;
 use Neos\Flow\ResourceManagement\PersistentResource;
@@ -24,8 +23,8 @@ use Neos\Flow\ResourceManagement\ResourceRepository;
 use Neos\Flow\ResourceManagement\Storage\StorageObject;
 use Neos\Utility\Files;
 use Neos\Utility\Unicode\Functions as UnicodeFunctions;
-use Neos\Flow\Utility\Exception as UtilityException;
 use Neos\Flow\ResourceManagement\Target\Exception as TargetException;
+use Psr\Log\LoggerInterface;
 
 /**
  * A target which publishes resources to a specific directory in a file system.
@@ -104,10 +103,9 @@ class FileSystemTarget implements TargetInterface
     protected $bootstrap;
 
     /**
-     * @Flow\Inject
-     * @var SystemLoggerInterface
+     * @var LoggerInterface
      */
-    protected $systemLogger;
+    protected $logger;
 
     /**
      * @Flow\Inject
@@ -125,6 +123,17 @@ class FileSystemTarget implements TargetInterface
     {
         $this->name = $name;
         $this->options = $options;
+    }
+
+    /**
+     * Injects the (system) logger based on PSR-3.
+     *
+     * @param LoggerInterface $logger
+     * @return void
+     */
+    public function injectLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
     }
 
     /**
@@ -305,7 +314,7 @@ class FileSystemTarget implements TargetInterface
             throw new TargetException(sprintf('Could not publish "%s" into resource publishing target "%s" because the source file could not be copied to the target location.', $sourceStream, $this->name), 1375258399, (isset($exception) ? $exception : null));
         }
 
-        $this->systemLogger->log(sprintf('FileSystemTarget: Published file. (target: %s, file: %s)', $this->name, $relativeTargetPathAndFilename), LOG_DEBUG);
+        $this->logger->debug(sprintf('FileSystemTarget: Published file. (target: %s, file: %s)', $this->name, $relativeTargetPathAndFilename));
     }
 
     /**

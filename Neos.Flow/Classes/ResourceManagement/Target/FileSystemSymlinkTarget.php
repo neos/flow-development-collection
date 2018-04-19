@@ -18,6 +18,7 @@ use Neos\Flow\Utility\Algorithms;
 use Neos\Utility\Files;
 use Neos\Utility\Unicode\Functions as UnicodeFunctions;
 use Neos\Flow\ResourceManagement\Target\Exception as TargetException;
+use Psr\Log\LogLevel;
 
 /**
  * A target which publishes resources by creating symlinks.
@@ -99,7 +100,7 @@ class FileSystemSymlinkTarget extends FileSystemTarget
             throw new TargetException(sprintf('Could not publish "%s" into resource publishing target "%s" because the source file could not be symlinked at target location.', $sourcePathAndFilename, $this->name), 1415716368, (isset($exception) ? $exception : null));
         }
 
-        $this->systemLogger->log(sprintf('FileSystemSymlinkTarget: Published file. (target: %s, file: %s)', $this->name, $relativeTargetPathAndFilename), LOG_DEBUG);
+        $this->logger->debug(sprintf('FileSystemSymlinkTarget: Published file. (target: %s, file: %s)', $this->name, $relativeTargetPathAndFilename));
     }
 
     /**
@@ -164,7 +165,7 @@ class FileSystemSymlinkTarget extends FileSystemTarget
             throw new TargetException(sprintf('Could not publish "%s" into resource publishing target "%s" because the source directory could not be symlinked at target location.', $sourcePath, $this->name), 1416244515, (isset($exception) ? $exception : null));
         }
 
-        $this->systemLogger->log(sprintf('FileSystemSymlinkTarget: Published directory. (target: %s, file: %s)', $this->name, $relativeTargetPathAndFilename), LOG_DEBUG);
+        $this->logger->debug(sprintf('FileSystemSymlinkTarget: Published directory. (target: %s, file: %s)', $this->name, $relativeTargetPathAndFilename));
     }
 
     /**

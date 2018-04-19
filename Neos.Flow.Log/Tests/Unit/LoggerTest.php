@@ -12,7 +12,7 @@ namespace Neos\Flow\Log\Tests\Unit;
  */
 
 use Neos\Flow\Log\Backend\BackendInterface;
-use Neos\Flow\Log\Logger;
+use Neos\Flow\Log\DefaultLogger;
 use Neos\Flow\Tests\UnitTestCase;
 
 /**
@@ -28,7 +28,7 @@ class LoggerTest extends UnitTestCase
         $mockBackend = $this->getMockBuilder(BackendInterface::class)->setMethods(['open', 'append', 'close'])->getMock();
         $mockBackend->expects($this->once())->method('append')->with('theMessage', 2, ['foo'], 'Foo', 'Bar', 'Baz');
 
-        $logger = new Logger();
+        $logger = new DefaultLogger();
         $logger->addBackend($mockBackend);
         $logger->log('theMessage', 2, ['foo'], 'Foo', 'Bar', 'Baz');
     }
@@ -44,22 +44,10 @@ class LoggerTest extends UnitTestCase
         $mockBackend2 = $this->getMockBuilder(BackendInterface::class)->setMethods(['open', 'append', 'close'])->getMock();
         $mockBackend2->expects($this->once())->method('append')->with('theMessage', 2, ['foo'], 'Foo', 'Bar', 'Baz');
 
-        $logger = new Logger();
+        $logger = new DefaultLogger();
         $logger->addBackend($mockBackend1);
         $logger->addBackend($mockBackend2);
         $logger->log('theMessage', 2, ['foo'], 'Foo', 'Bar', 'Baz');
-    }
-
-    /**
-     * @test
-     */
-    public function addBackendRunsTheBackendsOpenMethod()
-    {
-        $mockBackend = $this->getMockBuilder(BackendInterface::class)->setMethods(['open', 'append', 'close'])->getMock();
-        $mockBackend->expects($this->once())->method('open');
-
-        $logger = new Logger();
-        $logger->addBackend($mockBackend);
     }
 
     /**
@@ -71,7 +59,7 @@ class LoggerTest extends UnitTestCase
         $mockBackend->expects($this->once())->method('close');
         $mockBackend->expects($this->once())->method('append');
 
-        $logger = new Logger();
+        $logger = new DefaultLogger();
         $logger->addBackend($mockBackend);
         $logger->log('theMessage', 2, ['foo'], 'Foo', 'Bar', 'Baz');
 
@@ -87,7 +75,7 @@ class LoggerTest extends UnitTestCase
     {
         $mockBackend = $this->getMockBuilder(BackendInterface::class)->setMethods(['open', 'append', 'close'])->getMock();
 
-        $logger = new Logger();
+        $logger = new DefaultLogger();
         $logger->removeBackend($mockBackend);
     }
 
@@ -102,7 +90,7 @@ class LoggerTest extends UnitTestCase
         $mockBackend2 = $this->getMockBuilder(BackendInterface::class)->setMethods(['open', 'append', 'close'])->getMock();
         $mockBackend2->expects($this->once())->method('close');
 
-        $logger = new Logger();
+        $logger = new DefaultLogger();
         $logger->addBackend($mockBackend1);
         $logger->addBackend($mockBackend2);
         $logger->shutdownObject();

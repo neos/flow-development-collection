@@ -15,12 +15,12 @@ use Psr\Http\Message\UploadedFileInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Error\Messages as FlowError;
 use Neos\Flow\Http\FlowUploadedFile;
-use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Property\Exception\InvalidPropertyMappingConfigurationException;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;
 use Neos\Utility\Files;
+use Psr\Log\LoggerInterface;
 
 /**
  * A type converter for converting strings, array and uploaded files to PersistentResource objects.
@@ -112,15 +112,25 @@ class ResourceTypeConverter extends AbstractTypeConverter
     protected $persistenceManager;
 
     /**
-     * @Flow\Inject
-     * @var SystemLoggerInterface
+     * @var LoggerInterface
      */
-    protected $systemLogger;
+    protected $logger;
 
     /**
      * @var array
      */
     protected $convertedResources = [];
+
+    /**
+     * Injects the (system) logger based on PSR-3.
+     *
+     * @param LoggerInterface $logger
+     * @return void
+     */
+    public function injectLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
 
     /**
      * Converts the given string or array to a PersistentResource object.
@@ -183,7 +193,7 @@ class ResourceTypeConverter extends AbstractTypeConverter
                 case \UPLOAD_ERR_PARTIAL:
                     return new FlowError\Error(Files::getUploadErrorMessage($source['error']), 1264440823);
                 default:
-                    $this->systemLogger->log(sprintf('A server error occurred while converting an uploaded resource: "%s"', Files::getUploadErrorMessage($source['error'])), LOG_ERR);
+                    $this->logger->error(sprintf('A server error occurred while converting an uploaded resource: "%s"', Files::getUploadErrorMessage($source['error'])));
                     return new FlowError\Error('An error occurred while uploading. Please try again or contact the administrator if the problem remains', 1340193849);
             }
         }
@@ -197,8 +207,7 @@ class ResourceTypeConverter extends AbstractTypeConverter
             $this->convertedResources[$source['tmp_name']] = $resource;
             return $resource;
         } catch (\Exception $exception) {
-            $this->systemLogger->log('Could not import an uploaded file', LOG_WARNING);
-            $this->systemLogger->logException($exception);
+            $this->logger->warning('Could not import an uploaded file', ['exception' => $exception]);
             return new FlowError\Error('During import of an uploaded file an error occurred. See log for more details.', 1264517906);
         }
     }
@@ -279,7 +288,7 @@ class ResourceTypeConverter extends AbstractTypeConverter
             case \UPLOAD_ERR_PARTIAL:
                 return new FlowError\Error(Files::getUploadErrorMessage($source->getError()), 1264440823);
             default:
-                $this->systemLogger->log(sprintf('A server error occurred while converting an uploaded resource: "%s"', Files::getUploadErrorMessage($source['error'])), LOG_ERR);
+                $this->logger->error(sprintf('A server error occurred while converting an uploaded resource: "%s"', Files::getUploadErrorMessage($source['error'])));
 
                 return new FlowError\Error('An error occurred while uploading. Please try again or contact the administrator if the problem remains', 1340193849);
         }
@@ -294,8 +303,7 @@ class ResourceTypeConverter extends AbstractTypeConverter
             $this->convertedResources[spl_object_hash($source)] = $resource;
             return $resource;
         } catch (\Exception $exception) {
-            $this->systemLogger->log('Could not import an uploaded file', LOG_WARNING);
-            $this->systemLogger->logException($exception);
+            $this->logger->warning('Could not import an uploaded file', ['exception' => $exception]);
 
             return new FlowError\Error('During import of an uploaded file an error occurred. See log for more details.', 1264517906);
         }

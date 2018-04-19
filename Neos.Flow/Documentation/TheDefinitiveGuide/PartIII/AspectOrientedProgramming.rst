@@ -836,7 +836,7 @@ code will just do that:
 	class LoggingAspect {
 
 		/**
-		 * @var \Neos\Flow\Log\LoggerInterface A logger implementation
+		 * @var \Psr\Log\LoggerInterface A logger implementation
 		 */
 		protected $logger;
 
@@ -844,11 +844,11 @@ code will just do that:
 		 * For logging we need a logger, which we will get injected automatically by
 		 * the Object Manager
 		 *
-		 * @param \Neos\Flow\Log\SystemLoggerInterface $logger The System Logger
+		 * @param \Neos\Flow\Log\PsrSystemLoggerInterface $logger The System Logger
 		 * @return void
 		 */
-		public function injectSystemLogger(\Neos\Flow\Log\SystemLoggerInterface $systemLogger) {
-			$this->logger = $systemLogger;
+		public function injectLogger(\Neos\Flow\Log\PsrSystemLoggerInterface $logger) {
+			$this->logger = $logger;
 		}
 
 		/**
@@ -861,7 +861,7 @@ code will just do that:
 		public function logMethodExecution(\Neos\Flow\AOP\JoinPointInterface $joinPoint) {
 			$logMessage = 'The method ' . $joinPoint->getMethodName() . ' in class ' .
 				$joinPoint->getClassName() . ' has been called.';
-			$this->logger->log($logMessage);
+			$this->logger->info($logMessage);
 		}
 	}
 

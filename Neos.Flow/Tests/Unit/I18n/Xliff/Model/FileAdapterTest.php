@@ -11,9 +11,9 @@ namespace Neos\Flow\Tests\Unit\I18n\Xliff;
  * source code.
  */
 
-use Neos\Flow\Log\LoggerInterface;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Flow\I18n;
+use Psr\Log\LoggerInterface;
 
 /**
  * Testcase for the FileAdapter
@@ -101,8 +101,8 @@ class FileAdapterTest extends UnitTestCase
             ->disableOriginalConstructor()
             ->getMock();
         $mockLogger->expects($this->once())
-            ->method('log')
-            ->with($this->stringStartsWith('No trans-unit elements were found'), LOG_DEBUG);
+            ->method('debug')
+            ->with($this->stringStartsWith('No trans-unit elements were found'));
         $this->inject($fileAdapter, 'i18nLogger', $mockLogger);
 
         $fileAdapter->getTargetBySource('foo');

@@ -25,6 +25,7 @@ use Neos\Flow\Mvc\Routing\RouterCachingService;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Tests\UnitTestCase;
 use Psr\Http\Message\UriInterface;
+use Psr\Log\LoggerInterface;
 
 /**
  * Testcase for the MVC Web Router
@@ -38,7 +39,7 @@ class RouterTest extends UnitTestCase
     protected $router;
 
     /**
-     * @var SystemLoggerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $mockSystemLogger;
 
@@ -69,8 +70,8 @@ class RouterTest extends UnitTestCase
     {
         $this->router = $this->getAccessibleMock(Router::class, ['dummy']);
 
-        $this->mockSystemLogger = $this->createMock(SystemLoggerInterface::class);
-        $this->inject($this->router, 'systemLogger', $this->mockSystemLogger);
+        $this->mockSystemLogger = $this->createMock(LoggerInterface::class);
+        $this->router->injectLogger($this->mockSystemLogger);
 
         $this->mockRouterCachingService = $this->getMockBuilder(RouterCachingService::class)->getMock();
         $this->mockRouterCachingService->expects($this->any())->method('getCachedResolvedUriConstraints')->will($this->returnValue(false));
@@ -93,7 +94,7 @@ class RouterTest extends UnitTestCase
         /** @var Router|\PHPUnit_Framework_MockObject_MockObject $router */
         $router = $this->getAccessibleMock(Router::class, ['createRoutesFromConfiguration']);
         $this->inject($router, 'routerCachingService', $this->mockRouterCachingService);
-        $this->inject($router, 'systemLogger', $this->mockSystemLogger);
+        $this->inject($router, 'logger', $this->mockSystemLogger);
 
         // not saying anything, but seems better than to expect the exception we'd get otherwise
         /** @var Route|\PHPUnit_Framework_MockObject_MockObject $mockRoute */
@@ -176,7 +177,7 @@ class RouterTest extends UnitTestCase
         /** @var Router|\PHPUnit_Framework_MockObject_MockObject $router */
         $router = $this->getAccessibleMock(Router::class, ['createRoutesFromConfiguration']);
         $this->inject($router, 'routerCachingService', $this->mockRouterCachingService);
-        $this->inject($router, 'systemLogger', $this->mockSystemLogger);
+        $this->inject($router, 'logger', $this->mockSystemLogger);
         $routeValues = ['foo' => 'bar'];
 
         $route1 = $this->getMockBuilder(Route::class)->disableOriginalConstructor()->setMethods(['resolves'])->getMock();
@@ -207,7 +208,7 @@ class RouterTest extends UnitTestCase
         /** @var Router|\PHPUnit_Framework_MockObject_MockObject $router */
         $router = $this->getAccessibleMock(Router::class, ['createRoutesFromConfiguration']);
         $this->inject($router, 'routerCachingService', $this->mockRouterCachingService);
-        $this->inject($router, 'systemLogger', $this->mockSystemLogger);
+        $this->inject($router, 'logger', $this->mockSystemLogger);
 
         $route1 = $this->createMock(Route::class);
         $route1->expects($this->once())->method('resolves')->will($this->returnValue(false));
@@ -238,7 +239,7 @@ class RouterTest extends UnitTestCase
         /** @var Router|\PHPUnit_Framework_MockObject_MockObject $router */
         $router = $this->getAccessibleMock(Router::class, ['createRoutesFromConfiguration']);
         $this->inject($router, 'routerCachingService', $this->mockRouterCachingService);
-        $this->inject($router, 'systemLogger', $this->mockSystemLogger);
+        $this->inject($router, 'logger', $this->mockSystemLogger);
 
 
         $routeValues = ['some' => 'route values'];
@@ -264,7 +265,7 @@ class RouterTest extends UnitTestCase
         /** @var Router|\PHPUnit_Framework_MockObject_MockObject $router */
         $router = $this->getAccessibleMock(Router::class, ['createRoutesFromConfiguration']);
         $this->inject($router, 'routerCachingService', $this->mockRouterCachingService);
-        $this->inject($router, 'systemLogger', $this->mockSystemLogger);
+        $this->inject($router, 'logger', $this->mockSystemLogger);
 
         $routeValues = ['some' => 'route values'];
         $mockCachedResolvedUriConstraints = UriConstraints::create()->withPath('cached/path');
@@ -287,7 +288,7 @@ class RouterTest extends UnitTestCase
         /** @var Router|\PHPUnit_Framework_MockObject_MockObject $router */
         $router = $this->getAccessibleMock(Router::class, ['createRoutesFromConfiguration']);
         $this->inject($router, 'routerCachingService', $this->mockRouterCachingService);
-        $this->inject($router, 'systemLogger', $this->mockSystemLogger);
+        $this->inject($router, 'logger', $this->mockSystemLogger);
 
         $routeValues = ['some' => 'route values'];
         $mockResolvedUriConstraints = UriConstraints::create()->withPath('resolved/path');
@@ -312,7 +313,7 @@ class RouterTest extends UnitTestCase
     {
         /** @var Router|\PHPUnit_Framework_MockObject_MockObject $router */
         $router = $this->getAccessibleMock(Router::class, ['createRoutesFromConfiguration']);
-        $this->inject($router, 'systemLogger', $this->mockSystemLogger);
+        $this->inject($router, 'logger', $this->mockSystemLogger);
 
         $routeContext = new RouteContext($this->mockHttpRequest, RouteParameters::createEmpty());
         $cachedMatchResults = ['some' => 'cached results'];
@@ -334,7 +335,7 @@ class RouterTest extends UnitTestCase
         /** @var Router|\PHPUnit_Framework_MockObject_MockObject $router */
         $router = $this->getAccessibleMock(Router::class, ['createRoutesFromConfiguration']);
         $this->inject($router, 'routerCachingService', $this->mockRouterCachingService);
-        $this->inject($router, 'systemLogger', $this->mockSystemLogger);
+        $this->inject($router, 'logger', $this->mockSystemLogger);
 
         $matchResults = ['some' => 'match results'];
         $routeContext = new RouteContext($this->mockHttpRequest, RouteParameters::createEmpty());
@@ -368,7 +369,7 @@ class RouterTest extends UnitTestCase
         /** @var Router|\PHPUnit_Framework_MockObject_MockObject $router */
         $router = $this->getAccessibleMock(Router::class, ['createRoutesFromConfiguration']);
         $this->inject($router, 'routerCachingService', $this->mockRouterCachingService);
-        $this->inject($router, 'systemLogger', $this->mockSystemLogger);
+        $this->inject($router, 'logger', $this->mockSystemLogger);
 
         $routeContext = new RouteContext($this->mockHttpRequest, RouteParameters::createEmpty());
 
@@ -393,7 +394,7 @@ class RouterTest extends UnitTestCase
         /** @var Router|\PHPUnit_Framework_MockObject_MockObject $router */
         $router = $this->getAccessibleMock(Router::class, ['dummy']);
         $this->inject($router, 'routerCachingService', $this->mockRouterCachingService);
-        $this->inject($router, 'systemLogger', $this->mockSystemLogger);
+        $this->inject($router, 'logger', $this->mockSystemLogger);
 
         $routesConfiguration = [
             [
@@ -427,7 +428,7 @@ class RouterTest extends UnitTestCase
         /** @var Router|\PHPUnit_Framework_MockObject_MockObject $router */
         $router = $this->getAccessibleMock(Router::class, ['dummy']);
         $this->inject($router, 'routerCachingService', $this->mockRouterCachingService);
-        $this->inject($router, 'systemLogger', $this->mockSystemLogger);
+        $this->inject($router, 'logger', $this->mockSystemLogger);
 
         $routesConfiguration = [
             [
