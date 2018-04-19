@@ -37,7 +37,7 @@ before_install:
   - cd flow-development-distribution
 install:
   - phpenv config-rm xdebug.ini
-  - composer self-update -q
+  - composer self-update -q 1.6.3
   - if [ -n "$GH_TOKEN" ]; then composer config github-oauth.github.com ${GH_TOKEN}; fi;
   - composer update --no-progress --no-interaction
   - php Build/BuildEssentials/TravisCi/ComposerManifestUpdater.php .
