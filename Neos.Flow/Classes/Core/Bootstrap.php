@@ -17,7 +17,6 @@ use Neos\Flow\Core\Booting\Sequence;
 use Neos\Flow\Core\Booting\Scripts;
 use Neos\Flow\Exception as FlowException;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\SignalSlot\Dispatcher;
 use Neos\Utility\Files;
 
@@ -27,6 +26,7 @@ use Neos\Utility\Files;
  * @api
  * @Flow\Proxy(false)
  * @Flow\Scope("singleton")
+ * @Flow\Autowiring(false)
  */
 class Bootstrap
 {
