@@ -267,11 +267,11 @@ of these translations, you have to adjust your templates to make use of the ``Tr
 
 .. code-block:: xml
 
-  <f:form.validationResults for="{property}">
+  <f:validation.results for="{property}">
 	<f:for each="{validationResults.errors}" as="error">
 		{error -> f:translate(id: error.code, arguments: error.arguments, package: 'Neos.Flow', source: 'ValidationErrors')}
 	</f:for>
-  </f:form.validationResults>
+  </f:validation.results>
 
 If you want to change the validation messages, you can create your own translation bundles and adjust
 the package and source parameters of the TranslateViewHelper at this place. See the ValidationErrors.xlf
