@@ -48,10 +48,11 @@ class AuthenticationProviderManagerTest extends UnitTestCase
     {
         $this->authenticationProviderManager = $this->getAccessibleMock(AuthenticationProviderManager::class, ['dummy'], [], '', false);
         $this->mockSession = $this->getMockBuilder(SessionInterface::class)->getMock();
-        $this->inject($this->authenticationProviderManager, 'session', $this->mockSession);
-
         $this->mockSecurityContext = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
+
+        $this->inject($this->authenticationProviderManager, 'session', $this->mockSession);
         $this->inject($this->authenticationProviderManager, 'securityContext', $this->mockSecurityContext);
+        $this->inject($this->authenticationProviderManager, 'isInitialized', true);
     }
 
     /**
@@ -101,8 +102,8 @@ class AuthenticationProviderManagerTest extends UnitTestCase
 
         $this->mockSession->expects($this->once())->method('addTag')->with('Neos-Flow-Security-Account-21232f297a57a5a743894a0e4a801fc3');
 
-        $this->authenticationProviderManager->_set('providers', []);
-        $this->authenticationProviderManager->_set('securityContext', $securityContext);
+        $this->inject($this->authenticationProviderManager, 'providers', []);
+        $this->inject($this->authenticationProviderManager, 'securityContext', $securityContext);
 
         $this->authenticationProviderManager->authenticate();
     }
@@ -296,6 +297,7 @@ class AuthenticationProviderManagerTest extends UnitTestCase
         $this->authenticationProviderManager = $this->getAccessibleMock(AuthenticationProviderManager::class, ['emitLoggedOut'], [], '', false);
         $this->inject($this->authenticationProviderManager, 'securityContext', $this->mockSecurityContext);
         $this->inject($this->authenticationProviderManager, 'session', $this->mockSession);
+        $this->inject($this->authenticationProviderManager, 'isInitialized', true);
 
         $this->mockSession->expects($this->any())->method('canBeResumed')->will($this->returnValue(true));
         $this->mockSession->expects($this->any())->method('isStarted')->will($this->returnValue(true));
@@ -318,6 +320,7 @@ class AuthenticationProviderManagerTest extends UnitTestCase
         $this->authenticationProviderManager = $this->getAccessibleMock(AuthenticationProviderManager::class, ['emitLoggedOut'], [], '', false);
         $this->inject($this->authenticationProviderManager, 'securityContext', $this->mockSecurityContext);
         $this->inject($this->authenticationProviderManager, 'session', $this->mockSession);
+        $this->inject($this->authenticationProviderManager, 'isInitialized', true);
 
         $token = $this->getMockBuilder(TokenInterface::class)->disableOriginalConstructor()->getMock();
         $token->expects($this->any())->method('isAuthenticated')->will($this->returnValue(true));
@@ -337,6 +340,7 @@ class AuthenticationProviderManagerTest extends UnitTestCase
         $this->authenticationProviderManager = $this->getAccessibleMock(AuthenticationProviderManager::class, ['emitLoggedOut'], [], '', false);
         $this->inject($this->authenticationProviderManager, 'securityContext', $this->mockSecurityContext);
         $this->inject($this->authenticationProviderManager, 'session', $this->mockSession);
+        $this->inject($this->authenticationProviderManager, 'isInitialized', true);
 
         $this->mockSession->expects($this->any())->method('canBeResumed')->will($this->returnValue(true));
         $this->mockSession->expects($this->any())->method('isStarted')->will($this->returnValue(true));
@@ -367,6 +371,7 @@ class AuthenticationProviderManagerTest extends UnitTestCase
         $this->authenticationProviderManager = $this->getAccessibleMock(AuthenticationProviderManager::class, ['emitLoggedOut'], [], '', false);
         $this->inject($this->authenticationProviderManager, 'securityContext', $this->mockSecurityContext);
         $this->inject($this->authenticationProviderManager, 'session', $this->mockSession);
+        $this->inject($this->authenticationProviderManager, 'isInitialized', true);
 
         $this->mockSession->expects($this->any())->method('canBeResumed')->will($this->returnValue(true));
         $this->mockSession->expects($this->any())->method('isStarted')->will($this->returnValue(true));
