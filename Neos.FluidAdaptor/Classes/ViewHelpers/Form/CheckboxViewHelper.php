@@ -93,21 +93,17 @@ class CheckboxViewHelper extends AbstractFormFieldViewHelper
         }
         if (is_array($propertyValue)) {
             if ($checked === null) {
-                if (TypeHandling::isSimpleType(TypeHandling::getTypeForValue(current($propertyValue))) === false || Arrays::containsMultipleTypes($propertyValue)) {
-                    $checked = false;
-                    foreach ($propertyValue as $value) {
-                        if (TypeHandling::isSimpleType(TypeHandling::getTypeForValue($value))) {
-                            $checked = $valueAttribute === $value;
-                        } else {
-                            // assume an entity
-                            $checked = $valueAttribute === $this->persistenceManager->getIdentifierByObject($value);
-                        }
-                        if ($checked === true) {
-                            break;
-                        }
+                $checked = false;
+                foreach ($propertyValue as $value) {
+                    if (TypeHandling::isSimpleType(TypeHandling::getTypeForValue($value))) {
+                        $checked = $valueAttribute === $value;
+                    } else {
+                        // assume an entity
+                        $checked = $valueAttribute === $this->persistenceManager->getIdentifierByObject($value);
                     }
-                } else {
-                    $checked = in_array($valueAttribute, $propertyValue, true);
+                    if ($checked === true) {
+                        break;
+                    }
                 }
             }
             $this->arguments['multiple'] = true;
