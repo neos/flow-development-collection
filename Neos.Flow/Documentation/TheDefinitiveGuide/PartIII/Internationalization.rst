@@ -38,8 +38,8 @@ use the i18n service API to obtain these verified ``Locale`` objects.
   the ``Neos.Flow.i18n.scan.includePaths`` setting. This is useful to restrict the scanning
   to specific paths when you have a big file structure in your package ``Resources``.
   You can also blacklist folders through ``Neos.Flow.i18n.scan.excludePatterns``.
-  By default all folders except 'node_modules', 'bower_components' and any folder starting
-  with a dot will be scanned.
+  By default the ``Public`` and ``Private/Translations`` folders, except 'node_modules',
+  'bower_components' and any folder starting with a dot will be scanned.
 
 Locales are organized in a hierarchy. For example, *en* is a parent of *en_US* which is a
 parent of *en_US_POSIX*. Thanks to the hierarchical relation resources can be
@@ -267,11 +267,11 @@ of these translations, you have to adjust your templates to make use of the ``Tr
 
 .. code-block:: xml
 
-  <f:form.validationResults for="{property}">
+  <f:validation.results for="{property}">
 	<f:for each="{validationResults.errors}" as="error">
 		{error -> f:translate(id: error.code, arguments: error.arguments, package: 'Neos.Flow', source: 'ValidationErrors')}
 	</f:for>
-  </f:form.validationResults>
+  </f:validation.results>
 
 If you want to change the validation messages, you can create your own translation bundles and adjust
 the package and source parameters of the TranslateViewHelper at this place. See the ValidationErrors.xlf

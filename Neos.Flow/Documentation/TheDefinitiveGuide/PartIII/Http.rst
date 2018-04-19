@@ -332,7 +332,9 @@ and which headers specifically are accepted for overriding those request informa
 	          proto: 'X-Forwarded-Proto'
 
 This would mean that only the ``X-Forwarded-*`` headers are accepted and only as long as those come from one of the
-IP ranges ``216.246.40.0-255`` or ``216.246.100.0-255``.
+IP ranges ``216.246.40.0-255`` or ``216.246.100.0-255``. If you are using the standardized `Forwarded Header`__, you
+can also simply set ``trustedProxies.headers`` to ``'Forwarded'``, which is the same as setting all four properties to
+this value.
 By default, no proxies are trusted (unless the environment variable ``FLOW_HTTP_TRUSTED_PROXIES`` is set) and only the
 direct request informations will be used.
 If you specify trusted proxy addresses, by default only the ``X-Forwarded-*`` headers are accepted.
@@ -565,3 +567,4 @@ other application parts which are accessible via HTTP. This browser has the ``In
 .. _REST: http://en.wikipedia.org/wiki/Representational_state_transfer
 .. _Coordinated Universal Time: http://en.wikipedia.org/wiki/Coordinated_Universal_Time
 .. _Greenwich Mean Time: http://en.wikipedia.org/wiki/Greenwich_Mean_Time
+.. _Forwarded Header: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Forwarded

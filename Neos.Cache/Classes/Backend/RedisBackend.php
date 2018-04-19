@@ -117,7 +117,7 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
      * @return void
      * @api
      */
-    public function set($entryIdentifier, $data, array $tags = [], $lifetime = null)
+    public function set(string $entryIdentifier, string $data, array $tags = [], int $lifetime = null)
     {
         if ($this->isFrozen()) {
             throw new \RuntimeException(sprintf('Cannot add or modify cache entry because the backend of cache "%s" is frozen.', $this->cacheIdentifier), 1323344192);
@@ -153,7 +153,7 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
      * @return mixed The cache entry's content as a string or FALSE if the cache entry could not be loaded
      * @api
      */
-    public function get($entryIdentifier)
+    public function get(string $entryIdentifier)
     {
         return $this->uncompress($this->redis->get($this->buildKey('entry:' . $entryIdentifier)));
     }
@@ -165,7 +165,7 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
      * @return boolean TRUE if such an entry exists, FALSE if not
      * @api
      */
-    public function has($entryIdentifier): bool
+    public function has(string $entryIdentifier): bool
     {
         return $this->redis->exists($this->buildKey('entry:' . $entryIdentifier));
     }
@@ -180,7 +180,7 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
      * @return boolean TRUE if (at least) an entry could be removed or FALSE if no entry was found
      * @api
      */
-    public function remove($entryIdentifier): bool
+    public function remove(string $entryIdentifier): bool
     {
         if ($this->isFrozen()) {
             throw new \RuntimeException(sprintf('Cannot remove cache entry because the backend of cache "%s" is frozen.', $this->cacheIdentifier), 1323344192);
@@ -259,7 +259,7 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
      * @return integer The number of entries which have been affected by this flush
      * @api
      */
-    public function flushByTag($tag): int
+    public function flushByTag(string $tag): int
     {
         if ($this->isFrozen()) {
             throw new \RuntimeException(sprintf('Cannot add or modify cache entry because the backend of cache "%s" is frozen.', $this->cacheIdentifier), 1323344192);
@@ -290,7 +290,7 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
      * @return array An array with identifiers of all matching entries. An empty array if no entries matched
      * @api
      */
-    public function findIdentifiersByTag($tag): array
+    public function findIdentifiersByTag(string $tag): array
     {
         return $this->redis->sMembers($this->buildKey('tag:' . $tag));
     }
@@ -314,7 +314,7 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
     /**
      * {@inheritdoc}
      */
-    public function key()
+    public function key(): string
     {
         $entryIdentifier = $this->redis->lIndex($this->buildKey('entries'), $this->entryCursor);
         if ($entryIdentifier !== false && !$this->has($entryIdentifier)) {
@@ -460,7 +460,7 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
      * @param string $value
      * @return mixed
      */
-    private function uncompress($value)
+    private function uncompress(string $value): string
     {
         if (empty($value)) {
             return $value;
@@ -473,7 +473,7 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
      * @param string $value
      * @return string|boolean
      */
-    private function compress(string $value)
+    private function compress(string $value): string
     {
         return $this->useCompression() ? gzencode($value, $this->compressionLevel) : $value;
     }

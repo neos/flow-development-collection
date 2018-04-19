@@ -119,7 +119,7 @@ class DoctrineCommandController extends CommandController
      * @see neos.flow:doctrine:update
      * @see neos.flow:doctrine:migrate
      */
-    public function createCommand($output = null)
+    public function createCommand(string $output = null)
     {
         if (!$this->isDatabaseConfigured()) {
             $this->outputLine('Database schema creation has been SKIPPED, the driver and host backend options are not set in /Configuration/Settings.yaml.');
@@ -147,7 +147,7 @@ class DoctrineCommandController extends CommandController
      * @see neos.flow:doctrine:create
      * @see neos.flow:doctrine:migrate
      */
-    public function updateCommand($unsafeMode = false, $output = null)
+    public function updateCommand(bool $unsafeMode = false, string $output = null)
     {
         if (!$this->isDatabaseConfigured()) {
             $this->outputLine('Database schema update has been SKIPPED, the driver and host backend options are not set in /Configuration/Settings.yaml.');
@@ -175,7 +175,7 @@ class DoctrineCommandController extends CommandController
      * @return void
      * @see neos.flow:doctrine:validate
      */
-    public function entityStatusCommand($dumpMappingData = false, $entityClassName = null)
+    public function entityStatusCommand(bool $dumpMappingData = false, string $entityClassName = null)
     {
         $info = $this->doctrineService->getEntityStatus();
 
@@ -230,7 +230,7 @@ class DoctrineCommandController extends CommandController
      * @return void
      * @throws \InvalidArgumentException
      */
-    public function dqlCommand($depth = 3, $hydrationMode = 'array', $offset = null, $limit = null)
+    public function dqlCommand(int $depth = 3, string $hydrationMode = 'array', int $offset = null, int $limit = null)
     {
         if (!$this->isDatabaseConfigured()) {
             $this->outputLine('DQL query is not possible, the driver and host backend options are not set in /Configuration/Settings.yaml.');
@@ -263,7 +263,7 @@ class DoctrineCommandController extends CommandController
      * @see neos.flow:doctrine:migrationgenerate
      * @see neos.flow:doctrine:migrationversion
      */
-    public function migrationStatusCommand($showMigrations = false, $showDescriptions = false)
+    public function migrationStatusCommand(bool $showMigrations = false, bool $showDescriptions = false)
     {
         if (!$this->isDatabaseConfigured()) {
             $this->outputLine('Doctrine migration status not available, the driver and host backend options are not set in /Configuration/Settings.yaml.');
@@ -293,7 +293,7 @@ class DoctrineCommandController extends CommandController
      * @see neos.flow:doctrine:migrationgenerate
      * @see neos.flow:doctrine:migrationversion
      */
-    public function migrateCommand($version = null, $output = null, $dryRun = false, $quiet = false)
+    public function migrateCommand(string $version = null, string $output = null, bool $dryRun = false, bool $quiet = false)
     {
         if (!$this->isDatabaseConfigured()) {
             $this->outputLine('Doctrine migration not possible, the driver and host backend options are not set in /Configuration/Settings.yaml.');
@@ -302,7 +302,7 @@ class DoctrineCommandController extends CommandController
 
         try {
             $result = $this->doctrineService->executeMigrations($version, $output, $dryRun, $quiet);
-            if ($result == '') {
+            if ($result === '') {
                 if (!$quiet) {
                     $this->outputLine('No migration was necessary.');
                 }
@@ -343,7 +343,7 @@ class DoctrineCommandController extends CommandController
      * @see neos.flow:doctrine:migrationgenerate
      * @see neos.flow:doctrine:migrationversion
      */
-    public function migrationExecuteCommand($version, $direction = 'up', $output = null, $dryRun = false)
+    public function migrationExecuteCommand(string $version, string $direction = 'up', string $output = null, bool $dryRun = false)
     {
         if (!$this->isDatabaseConfigured()) {
             $this->outputLine('Doctrine migration not possible, the driver and host backend options are not set in /Configuration/Settings.yaml.');
@@ -373,7 +373,7 @@ class DoctrineCommandController extends CommandController
      * @see neos.flow:doctrine:migrationexecute
      * @see neos.flow:doctrine:migrationgenerate
      */
-    public function migrationVersionCommand($version, $add = false, $delete = false)
+    public function migrationVersionCommand(string $version, bool $add = false, bool $delete = false)
     {
         if (!$this->isDatabaseConfigured()) {
             $this->outputLine('Doctrine migration not possible, the driver and host backend options are not set in /Configuration/Settings.yaml.');
@@ -419,7 +419,7 @@ class DoctrineCommandController extends CommandController
      * @see neos.flow:doctrine:migrationexecute
      * @see neos.flow:doctrine:migrationversion
      */
-    public function migrationGenerateCommand($diffAgainstCurrent = true, $filterExpression = null, $force = false)
+    public function migrationGenerateCommand(bool $diffAgainstCurrent = true, string $filterExpression = null, bool $force = false)
     {
         // "driver" is used only for Doctrine, thus we (mis-)use it here
         // additionally, when no host is set, skip this step, assuming no DB is needed

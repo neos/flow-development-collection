@@ -19,6 +19,8 @@ Neos:
       # connection in this global Settings.yaml file. Rather specify them in the
       # settings of the respective context (Production / Development ...).
       backendOptions:
+        driver: 'pdo_mysql'  # use pdo_pgsql for PostgreSQL
+        charset: 'utf8mb4'   # change to utf8 when using PostgreSQL
         host: '127.0.0.1'    # adjust to your database host
 
     # The following lines register the Flow default routes

@@ -62,7 +62,7 @@ class PropertyIntroduction
      * @param string $propertyName Name of the property to introduce
      * @param Pointcut $pointcut The pointcut for this introduction
      */
-    public function __construct($declaringAspectClassName, $propertyName, Pointcut $pointcut)
+    public function __construct(string $declaringAspectClassName, string $propertyName, Pointcut $pointcut)
     {
         $this->declaringAspectClassName = $declaringAspectClassName;
         $this->propertyName = $propertyName;
@@ -88,7 +88,7 @@ class PropertyIntroduction
      *
      * @return string Name of the introduced property
      */
-    public function getPropertyName()
+    public function getPropertyName(): string
     {
         return $this->propertyName;
     }
@@ -98,7 +98,7 @@ class PropertyIntroduction
      *
      * @return string Visibility of the introduced property
      */
-    public function getPropertyVisibility()
+    public function getPropertyVisibility(): string
     {
         return $this->propertyVisibility;
     }
@@ -116,7 +116,7 @@ class PropertyIntroduction
      *
      * @return string DocComment of the introduced property
      */
-    public function getPropertyDocComment()
+    public function getPropertyDocComment(): string
     {
         return $this->propertyDocComment;
     }
@@ -126,7 +126,7 @@ class PropertyIntroduction
      *
      * @return Pointcut The pointcut
      */
-    public function getPointcut()
+    public function getPointcut(): Pointcut
     {
         return $this->pointcut;
     }
@@ -136,7 +136,7 @@ class PropertyIntroduction
      *
      * @return string The aspect object name
      */
-    public function getDeclaringAspectClassName()
+    public function getDeclaringAspectClassName(): string
     {
         return $this->declaringAspectClassName;
     }
