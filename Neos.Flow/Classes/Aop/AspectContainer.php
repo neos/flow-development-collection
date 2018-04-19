@@ -62,10 +62,9 @@ class AspectContainer
 
     /**
      * An array of \Neos\Flow\Aop\TraitIntroduction objects
-     *
      * @var array
      */
-    protected $traitIntroductions = array();
+    protected $traitIntroductions = [];
 
     /**
      * An array of explicitly declared \Neos\Flow\Pointcut objects
@@ -74,7 +73,7 @@ class AspectContainer
     protected $pointcuts = [];
 
     /**
-     * @var \Neos\Flow\Aop\Builder\ClassNameIndex
+     * @var Builder\ClassNameIndex
      */
     protected $cachedTargetClassNameCandidates;
 
@@ -83,7 +82,7 @@ class AspectContainer
      *
      * @param string $className Name of the aspect class
      */
-    public function __construct($className)
+    public function __construct(string $className)
     {
         $this->className = $className;
     }
@@ -93,7 +92,7 @@ class AspectContainer
      *
      * @return string Name of the aspect class
      */
-    public function getClassName()
+    public function getClassName(): string
     {
         return $this->className;
     }
@@ -103,7 +102,7 @@ class AspectContainer
      *
      * @return array Array of \Neos\Flow\Aop\Advisor objects
      */
-    public function getAdvisors()
+    public function getAdvisors(): array
     {
         return $this->advisors;
     }
@@ -113,7 +112,7 @@ class AspectContainer
      *
      * @return array Array of \Neos\Flow\Aop\InterfaceIntroduction objects
      */
-    public function getInterfaceIntroductions()
+    public function getInterfaceIntroductions(): array
     {
         return $this->interfaceIntroductions;
     }
@@ -123,7 +122,7 @@ class AspectContainer
      *
      * @return array Array of \Neos\Flow\Aop\PropertyIntroduction objects
      */
-    public function getPropertyIntroductions()
+    public function getPropertyIntroductions(): array
     {
         return $this->propertyIntroductions;
     }
@@ -133,7 +132,7 @@ class AspectContainer
      *
      * @return array Array of \Neos\Flow\Aop\TraitIntroduction objects
      */
-    public function getTraitIntroductions()
+    public function getTraitIntroductions(): array
     {
         return $this->traitIntroductions;
     }
@@ -145,7 +144,7 @@ class AspectContainer
      *
      * @return array Array of \Neos\Flow\Aop\Pointcut\Pointcut objects
      */
-    public function getPointcuts()
+    public function getPointcuts(): array
     {
         return $this->pointcuts;
     }
@@ -156,7 +155,7 @@ class AspectContainer
      * @param Advisor $advisor The advisor to add
      * @return void
      */
-    public function addAdvisor(Advisor $advisor)
+    public function addAdvisor(Advisor $advisor): void
     {
         $this->advisors[] = $advisor;
     }
@@ -167,7 +166,7 @@ class AspectContainer
      * @param InterfaceIntroduction $introduction
      * @return void
      */
-    public function addInterfaceIntroduction(InterfaceIntroduction $introduction)
+    public function addInterfaceIntroduction(InterfaceIntroduction $introduction): void
     {
         $this->interfaceIntroductions[] = $introduction;
     }
@@ -178,7 +177,7 @@ class AspectContainer
      * @param PropertyIntroduction $introduction
      * @return void
      */
-    public function addPropertyIntroduction(PropertyIntroduction $introduction)
+    public function addPropertyIntroduction(PropertyIntroduction $introduction): void
     {
         $this->propertyIntroductions[] = $introduction;
     }
@@ -189,7 +188,7 @@ class AspectContainer
      * @param TraitIntroduction $introduction
      * @return void
      */
-    public function addTraitIntroduction(TraitIntroduction $introduction)
+    public function addTraitIntroduction(TraitIntroduction $introduction): void
     {
         $this->traitIntroductions[] = $introduction;
     }
@@ -200,7 +199,7 @@ class AspectContainer
      * @param Pointcut $pointcut The pointcut to add
      * @return void
      */
-    public function addPointcut(Pointcut $pointcut)
+    public function addPointcut(Pointcut $pointcut): void
     {
         $this->pointcuts[] = $pointcut;
     }
@@ -208,10 +207,10 @@ class AspectContainer
     /**
      * This method is used to optimize the matching process.
      *
-     * @param \Neos\Flow\Aop\Builder\ClassNameIndex $classNameIndex
-     * @return \Neos\Flow\Aop\Builder\ClassNameIndex
+     * @param Builder\ClassNameIndex $classNameIndex
+     * @return Builder\ClassNameIndex
      */
-    public function reduceTargetClassNames(Builder\ClassNameIndex $classNameIndex)
+    public function reduceTargetClassNames(Builder\ClassNameIndex $classNameIndex): Builder\ClassNameIndex
     {
         $result = new Builder\ClassNameIndex();
         foreach ($this->advisors as $advisor) {
@@ -231,9 +230,9 @@ class AspectContainer
     }
 
     /**
-     * @return \Neos\Flow\Aop\Builder\ClassNameIndex
+     * @return Builder\ClassNameIndex
      */
-    public function getCachedTargetClassNameCandidates()
+    public function getCachedTargetClassNameCandidates(): Builder\ClassNameIndex
     {
         return $this->cachedTargetClassNameCandidates;
     }

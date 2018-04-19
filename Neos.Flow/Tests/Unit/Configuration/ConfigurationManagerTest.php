@@ -15,8 +15,8 @@ use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Configuration\Source\YamlSource;
 use Neos\Flow\Core\ApplicationContext;
 use Neos\Flow\Core\Bootstrap;
+use Neos\Flow\Package\FlowPackageInterface;
 use Neos\Flow\Package\Package;
-use Neos\Flow\Package\PackageInterface;
 use Neos\Flow\Tests\UnitTestCase;
 use org\bovigo\vfs\vfsStream;
 
@@ -745,7 +745,7 @@ EOD;
             'inspiring' => [
                 'people' => [
                     'to' => '%Neos\Flow\Core\Bootstrap::MINIMUM_PHP_VERSION%',
-                    'share' => '%Neos\Flow\Package\PackageInterface::DIRECTORY_CLASSES%'
+                    'share' => '%Neos\Flow\Package\FlowPackageInterface::DIRECTORY_CLASSES%'
                 ]
             ]
         ];
@@ -757,7 +757,7 @@ EOD;
 
         $this->assertSame(ConfigurationManager::CONFIGURATION_TYPE_POLICY, $settings['baz']);
         $this->assertSame(Bootstrap::MINIMUM_PHP_VERSION, $settings['inspiring']['people']['to']);
-        $this->assertSame(PackageInterface::DIRECTORY_CLASSES, $settings['inspiring']['people']['share']);
+        $this->assertSame(FlowPackageInterface::DIRECTORY_CLASSES, $settings['inspiring']['people']['share']);
     }
 
     /**

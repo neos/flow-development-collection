@@ -136,7 +136,7 @@ class CommandController implements ControllerInterface
      * @return string Method name of the current command
      * @throws NoSuchCommandException
      */
-    protected function resolveCommandMethodName()
+    protected function resolveCommandMethodName(): string
     {
         $commandMethodName = $this->request->getControllerCommandName() . 'Command';
         if (!is_callable([$this, $commandMethodName])) {
@@ -216,7 +216,7 @@ class CommandController implements ControllerInterface
      * @return void
      * @throws StopActionException
      */
-    protected function forward($commandName, $controllerObjectName = null, array $arguments = [])
+    protected function forward(string $commandName, string $controllerObjectName = null, array $arguments = [])
     {
         $this->request->setDispatched(false);
         $this->request->setControllerCommandName($commandName);
@@ -275,7 +275,7 @@ class CommandController implements ControllerInterface
      *
      * @return string
      */
-    public function getFlowInvocationString()
+    public function getFlowInvocationString(): string
     {
         if (DIRECTORY_SEPARATOR === '/' || (isset($_SERVER['MSYSTEM']) && $_SERVER['MSYSTEM'] === 'MINGW32')) {
             return './flow';
@@ -295,7 +295,7 @@ class CommandController implements ControllerInterface
      * @return void
      * @api
      */
-    protected function output($text, array $arguments = [])
+    protected function output(string $text, array $arguments = [])
     {
         $this->output->output($text, $arguments);
     }
@@ -310,7 +310,7 @@ class CommandController implements ControllerInterface
      * @see outputLines()
      * @api
      */
-    protected function outputLine($text = '', array $arguments = [])
+    protected function outputLine(string $text = '', array $arguments = [])
     {
         $this->output->outputLine($text, $arguments);
     }
@@ -326,7 +326,7 @@ class CommandController implements ControllerInterface
      * @see outputLine()
      * @api
      */
-    protected function outputFormatted($text = '', array $arguments = [], $leftPadding = 0)
+    protected function outputFormatted(string $text = '', array $arguments = [], int $leftPadding = 0)
     {
         $this->output->outputFormatted($text, $arguments, $leftPadding);
     }
@@ -341,7 +341,7 @@ class CommandController implements ControllerInterface
      * @throws StopActionException
      * @return void
      */
-    protected function quit($exitCode = 0)
+    protected function quit(int $exitCode = 0)
     {
         $this->response->setExitCode($exitCode);
         throw new StopActionException;
@@ -354,7 +354,7 @@ class CommandController implements ControllerInterface
      * @param integer $exitCode Exit code to return on exit
      * @return void
      */
-    protected function sendAndExit($exitCode = 0)
+    protected function sendAndExit(int $exitCode = 0)
     {
         $this->response->send();
         exit($exitCode);

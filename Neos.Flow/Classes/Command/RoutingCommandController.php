@@ -72,7 +72,7 @@ class RoutingCommandController extends CommandController
      * @param integer $index The index of the route as given by routing:list
      * @return void
      */
-    public function showCommand($index)
+    public function showCommand(int $index)
     {
         $routes = $this->router->getRoutes();
         if (isset($routes[$index - 1])) {
@@ -106,7 +106,7 @@ class RoutingCommandController extends CommandController
      * @param string $format Requested Format name default is 'html'
      * @return void
      */
-    public function getPathCommand($package, $controller = 'Standard', $action = 'index', $format = 'html')
+    public function getPathCommand(string $package, string $controller = 'Standard', string $action = 'index', string $format = 'html')
     {
         $packageParts = explode('\\', $package, 2);
         $package = $packageParts[0];
@@ -168,7 +168,7 @@ class RoutingCommandController extends CommandController
      * @param string $method The request method (GET, POST, PUT, DELETE, ...) to simulate
      * @return void
      */
-    public function routePathCommand($path, $method = 'GET')
+    public function routePathCommand(string $path, string $method = 'GET')
     {
         $server = [
             'REQUEST_URI' => $path,
@@ -220,7 +220,7 @@ class RoutingCommandController extends CommandController
      * @param string $controllerName the controller name excluding the "Controller" suffix
      * @return string The controller's Object Name or NULL if the controller does not exist
      */
-    protected function getControllerObjectName($packageKey, $subPackageKey, $controllerName)
+    protected function getControllerObjectName(string $packageKey, string $subPackageKey, string $controllerName): string
     {
         $possibleObjectName = '@package\@subpackage\Controller\@controllerController';
         $possibleObjectName = str_replace('@package', str_replace('.', '\\', $packageKey), $possibleObjectName);

@@ -368,13 +368,22 @@ class ConfigurationBuilder
                 continue;
             }
 
+            if ($objectConfiguration->getAutowiring() === Configuration::AUTOWIRING_MODE_OFF) {
+                continue;
+            }
+
+
             $className = $objectConfiguration->getClassName();
             if (!$this->reflectionService->hasMethod($className, '__construct')) {
                 continue;
             }
 
-            $arguments = $objectConfiguration->getArguments();
             $autowiringAnnotation = $this->reflectionService->getMethodAnnotation($className, '__construct', Flow\Autowiring::class);
+            if ($autowiringAnnotation !== null && $autowiringAnnotation->enabled === false) {
+                continue;
+            }
+
+            $arguments = $objectConfiguration->getArguments();
             foreach ($this->reflectionService->getMethodParameters($className, '__construct') as $parameterName => $parameterInformation) {
                 $debuggingHint = '';
                 $index = $parameterInformation['position'] + 1;
@@ -390,11 +399,6 @@ class ConfigurationBuilder
                         $arguments[$index]->setAutowiring(Configuration::AUTOWIRING_MODE_OFF);
                     } elseif (interface_exists($parameterInformation['class'])) {
                         $debuggingHint = sprintf('No default implementation for the required interface %s was configured, therefore no specific class name could be used for this dependency. ', $parameterInformation['class']);
-                    }
-
-                    if (isset($arguments[$index]) && ($objectConfiguration->getAutowiring() === Configuration::AUTOWIRING_MODE_OFF || $autowiringAnnotation !== null && $autowiringAnnotation->enabled === false)) {
-                        $arguments[$index]->setAutowiring(Configuration::AUTOWIRING_MODE_OFF);
-                        $arguments[$index]->set($index, null);
                     }
                 }
 
@@ -424,6 +428,10 @@ class ConfigurationBuilder
             if ($className === '') {
                 continue;
             }
+            if ($objectConfiguration->getAutowiring() === Configuration::AUTOWIRING_MODE_OFF) {
+                continue;
+            }
+
             $classMethodNames = get_class_methods($className);
             if (!is_array($classMethodNames)) {
                 if (!class_exists($className)) {

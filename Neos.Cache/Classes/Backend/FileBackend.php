@@ -141,16 +141,12 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
      * @param integer $lifetime Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited lifetime.
      * @return void
      * @throws \RuntimeException
-     * @throws InvalidDataException
      * @throws Exception if the directory does not exist or is not writable or exceeds the maximum allowed path length, or if no cache frontend has been set.
      * @throws \InvalidArgumentException
      * @api
      */
-    public function set($entryIdentifier, $data, array $tags = [], $lifetime = null)
+    public function set(string $entryIdentifier, string $data, array $tags = [], int $lifetime = null)
     {
-        if (!is_string($data)) {
-            throw new InvalidDataException('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1204481674);
-        }
         if ($entryIdentifier !== basename($entryIdentifier)) {
             throw new \InvalidArgumentException('The specified entry identifier must not contain a path segment.', 1282073032);
         }
@@ -186,7 +182,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
      * @throws \InvalidArgumentException
      * @api
      */
-    public function get($entryIdentifier)
+    public function get(string $entryIdentifier)
     {
         return $this->internalGet($entryIdentifier);
     }
@@ -199,7 +195,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
      * @throws \InvalidArgumentException
      * @api
      */
-    public function has($entryIdentifier): bool
+    public function has(string $entryIdentifier): bool
     {
         if ($this->frozen === true) {
             return isset($this->cacheEntryIdentifiers[$entryIdentifier]);
@@ -220,7 +216,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
      * @throws \InvalidArgumentException
      * @api
      */
-    public function remove($entryIdentifier): bool
+    public function remove(string $entryIdentifier): bool
     {
         if ($this->frozen === true) {
             throw new \RuntimeException(sprintf('Cannot remove cache entry because the backend of cache "%s" is frozen.', $this->cacheIdentifier), 1323344193);
@@ -237,7 +233,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
      * @return array An array with identifiers of all matching entries. An empty array if no entries matched
      * @api
      */
-    public function findIdentifiersByTag($searchedTag): array
+    public function findIdentifiersByTag(string $searchedTag): array
     {
         $entryIdentifiers = [];
         $now = $_SERVER['REQUEST_TIME'];
@@ -290,7 +286,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
      * @return integer The number of entries which have been affected by this flush
      * @api
      */
-    public function flushByTag($tag): int
+    public function flushByTag(string $tag): int
     {
         $identifiers = $this->findIdentifiersByTag($tag);
         if (count($identifiers) === 0) {
@@ -378,7 +374,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
      * @return mixed Potential return value from the include operation
      * @api
      */
-    public function requireOnce($entryIdentifier)
+    public function requireOnce(string $entryIdentifier)
     {
         if ($this->frozen === true) {
             if (isset($this->cacheEntryIdentifiers[$entryIdentifier])) {

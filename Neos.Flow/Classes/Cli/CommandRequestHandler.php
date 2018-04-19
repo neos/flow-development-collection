@@ -65,7 +65,7 @@ class CommandRequestHandler implements RequestHandlerInterface
      *
      * @return boolean If the request is a CLI request, TRUE otherwise FALSE
      */
-    public function canHandleRequest()
+    public function canHandleRequest(): bool
     {
         return (PHP_SAPI === 'cli');
     }
@@ -76,7 +76,7 @@ class CommandRequestHandler implements RequestHandlerInterface
      *
      * @return integer The priority of the request handler.
      */
-    public function getPriority()
+    public function getPriority(): int
     {
         return 100;
     }
@@ -125,7 +125,7 @@ class CommandRequestHandler implements RequestHandlerInterface
      * @param string $runlevel one of the Bootstrap::RUNLEVEL_* constants
      * @return void
      */
-    public function exitIfCompiletimeCommandWasNotCalledCorrectly($runlevel)
+    public function exitIfCompiletimeCommandWasNotCalledCorrectly(string $runlevel)
     {
         if ($runlevel === Bootstrap::RUNLEVEL_COMPILETIME) {
             return;
@@ -153,7 +153,7 @@ class CommandRequestHandler implements RequestHandlerInterface
      * @param string $runlevel one of the Bootstrap::RUNLEVEL_* constants
      * @return void
      */
-    protected function boot($runlevel)
+    protected function boot(string $runlevel)
     {
         $sequence = ($runlevel === Bootstrap::RUNLEVEL_COMPILETIME) ? $this->bootstrap->buildCompiletimeSequence() : $this->bootstrap->buildRuntimeSequence();
         $sequence->invoke($this->bootstrap);
@@ -168,7 +168,7 @@ class CommandRequestHandler implements RequestHandlerInterface
      * @param string $runlevel one of the Bootstrap::RUNLEVEL_* constants
      * @return void
      */
-    protected function shutdown($runlevel)
+    protected function shutdown(string $runlevel)
     {
         $this->bootstrap->shutdown($runlevel);
         if ($runlevel === Bootstrap::RUNLEVEL_COMPILETIME) {

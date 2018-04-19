@@ -16,6 +16,7 @@ use Neos\Flow\Core\ApplicationContext;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Package\Exception\InvalidPackageKeyException;
+use Neos\Flow\Package\FlowPackageInterface;
 use Neos\Flow\Package\PackageFactory;
 use Neos\Flow\Package\PackageInterface;
 use org\bovigo\vfs\vfsStream;
@@ -123,7 +124,7 @@ class PackageManagerTest extends UnitTestCase
 
         $dummyClassFilePath = Files::concatenatePaths([
             $package->getPackagePath(),
-            PackageInterface::DIRECTORY_CLASSES,
+            FlowPackageInterface::DIRECTORY_CLASSES,
             $dummyClassName . '.php'
         ]);
         file_put_contents($dummyClassFilePath, '<?php namespace ' . reset($namespaces) . '; class ' . $dummyClassName . ' {}');
@@ -190,7 +191,7 @@ class PackageManagerTest extends UnitTestCase
 
             mkdir($packagePath, 0770, true);
             mkdir($packagePath . 'Classes');
-            ComposerUtility::writeComposerManifest($packagePath, $packageKey, ['type' => 'neos-test', 'autoload' => []]);
+            ComposerUtility::writeComposerManifest($packagePath, $packageKey, ['type' => 'flow-test', 'autoload' => []]);
         }
 
         $packageManager = $this->getAccessibleMock(PackageManager::class, ['updateShortcuts', 'emitPackageStatesUpdated'], [], '', false);
@@ -209,7 +210,7 @@ class PackageManagerTest extends UnitTestCase
             $expectedPackageStatesConfiguration[$composerName] = [
                 'packagePath' => 'Application/' . $packageKey . '/',
                 'composerName' => $composerName,
-                'packageClassInformation' => [],
+                'packageClassInformation' => ['className' => 'Neos\Flow\Package\GenericPackage', 'pathAndFilename' => ''],
                 'packageKey' => $packageKey,
                 'autoloadConfiguration' => []
             ];
@@ -276,7 +277,7 @@ class PackageManagerTest extends UnitTestCase
     {
         $metaData = [
             'name' => 'acme/yetanothertestpackage2',
-            'type' => 'neos-custom-package',
+            'type' => 'flow-custom-package',
             'description' => 'Yet Another Test Package',
             'autoload' => [
                 'psr-0' => [
@@ -290,7 +291,7 @@ class PackageManagerTest extends UnitTestCase
         $json = file_get_contents($package->getPackagePath() . '/composer.json');
         $composerManifest = json_decode($json);
 
-        $this->assertEquals('neos-custom-package', $composerManifest->type);
+        $this->assertEquals('flow-custom-package', $composerManifest->type);
     }
 
 
@@ -317,11 +318,11 @@ class PackageManagerTest extends UnitTestCase
         $package = $this->packageManager->createPackage('Acme.YetAnotherTestPackage');
         $packagePath = $package->getPackagePath();
 
-        $this->assertTrue(is_dir($packagePath . PackageInterface::DIRECTORY_CLASSES), 'Classes directory was not created');
-        $this->assertTrue(is_dir($packagePath . PackageInterface::DIRECTORY_CONFIGURATION), 'Configuration directory was not created');
-        $this->assertTrue(is_dir($packagePath . PackageInterface::DIRECTORY_RESOURCES), 'Resources directory was not created');
-        $this->assertTrue(is_dir($packagePath . PackageInterface::DIRECTORY_TESTS_UNIT), 'Tests/Unit directory was not created');
-        $this->assertTrue(is_dir($packagePath . PackageInterface::DIRECTORY_TESTS_FUNCTIONAL), 'Tests/Functional directory was not created');
+        $this->assertTrue(is_dir($packagePath . FlowPackageInterface::DIRECTORY_CLASSES), 'Classes directory was not created');
+        $this->assertTrue(is_dir($packagePath . FlowPackageInterface::DIRECTORY_CONFIGURATION), 'Configuration directory was not created');
+        $this->assertTrue(is_dir($packagePath . FlowPackageInterface::DIRECTORY_RESOURCES), 'Resources directory was not created');
+        $this->assertTrue(is_dir($packagePath . FlowPackageInterface::DIRECTORY_TESTS_UNIT), 'Tests/Unit directory was not created');
+        $this->assertTrue(is_dir($packagePath . FlowPackageInterface::DIRECTORY_TESTS_FUNCTIONAL), 'Tests/Functional directory was not created');
     }
 
     /**
@@ -357,43 +358,6 @@ class PackageManagerTest extends UnitTestCase
     {
         $this->packageManager->createPackage('Acme.YetAnotherTestPackage');
         $this->assertTrue($this->packageManager->isPackageAvailable('Acme.YetAnotherTestPackage'));
-    }
-
-    /**
-     * @test
-     * @expectedException \Neos\Flow\Package\Exception\UnknownPackageException
-     */
-    public function deletePackageThrowsErrorIfPackageIsNotAvailable()
-    {
-        $this->packageManager->deletePackage('PrettyUnlikelyThatThisPackageExists');
-    }
-
-    /**
-     * @test
-     * @expectedException \Neos\Flow\Package\Exception\ProtectedPackageKeyException
-     */
-    public function deletePackageThrowsAnExceptionIfPackageIsProtected()
-    {
-        $package = $this->packageManager->createPackage('Acme.YetAnotherTestPackage');
-        $package->setProtected(true);
-        $this->packageManager->deletePackage('Acme.YetAnotherTestPackage');
-    }
-
-    /**
-     * @test
-     */
-    public function deletePackageRemovesPackageFromAvailableAndActivePackagesAndDeletesThePackageDirectory()
-    {
-        $package = $this->packageManager->createPackage('Acme.YetAnotherTestPackage');
-        $packagePath = $package->getPackagePath();
-
-        $this->assertTrue(is_dir($packagePath . PackageInterface::DIRECTORY_CONFIGURATION), 'The package configuration directory does not exist.');
-        $this->assertTrue($this->packageManager->isPackageAvailable('Acme.YetAnotherTestPackage'), 'The package is not available.');
-
-        $this->packageManager->deletePackage('Acme.YetAnotherTestPackage');
-
-        $this->assertFalse(is_dir($packagePath . PackageInterface::DIRECTORY_CONFIGURATION), 'The package configuration directory does still exist.');
-        $this->assertFalse($this->packageManager->isPackageAvailable('Acme.YetAnotherTestPackage'), 'The package is still available.');
     }
 
     /**

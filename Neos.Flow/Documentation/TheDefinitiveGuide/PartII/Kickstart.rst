@@ -55,8 +55,8 @@ To get an overview of all available commands, enter ``./flow help``:
 
 	  database:setcharset                      Convert the database schema to use
 	                                           the given character set and
-	                                           collation (defaults to utf8 and
-	                                           utf8_unicode_ci).
+	                                           collation (defaults to utf8mb4 and
+	                                           utf8mb4_unicode_ci).
 
 	  doctrine:validate                        Validate the class/table mappings
 	  doctrine:create                          Create the database schema
