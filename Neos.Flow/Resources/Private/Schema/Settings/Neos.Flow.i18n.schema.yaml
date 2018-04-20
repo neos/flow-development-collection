@@ -2,6 +2,7 @@ type: dictionary
 additionalProperties: FALSE
 properties:
   'defaultLocale': { type: string, required: TRUE }
+  'globalTranslationPath': { type: string, required: TRUE }
   'fallbackRule':
      type: dictionary
      additionalProperties: FALSE

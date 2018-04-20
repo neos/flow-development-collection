@@ -224,6 +224,8 @@ You can create and use your own translation provider which reads the file format
 like *PO*, *YAML* or even *PHP* arrays. Just implement the interface mentioned earlier and
 use the *Objects.yaml* configuration file to set your translation provider to be injected
 into the ``Translator``.
+Please keep in mind that you have to take care of overrides yourself as this is within the
+responsibilities of the translation provider.
 
 Fluid ViewHelper
 ----------------
@@ -273,9 +275,8 @@ of these translations, you have to adjust your templates to make use of the ``Tr
 	</f:for>
   </f:form.validationResults>
 
-If you want to change the validation messages, you can create your own translation bundles and adjust
-the package and source parameters of the TranslateViewHelper at this place. See the ValidationErrors.xlf
-files in the Resources/Private/Translations subfolders for reference.
+If you want to change the validation messages, you can use your own package and override the labels there.
+See the "XLIFF file overrides" section below.
 
 .. tip::
 
@@ -406,7 +407,7 @@ It is possible to create initial translation files for a given language. With Fl
 
 .. code-block:: bash
 
-./flow kickstart:translation --package-key Some.Package --source-language-key en --target-language-keys "de,fr"
+  ./flow kickstart:translation --package-key Some.Package --source-language-key en --target-language-keys "de,fr"
 
 the files for the default language *english* in the package *Some.Package* will be created as well as the translation
 files for *german* and *french*. Already existing files will not be overwritten. Translations that do not yet exist are
@@ -508,3 +509,72 @@ XLIFF can also easily be converted to *PO* file format, edited by well known *PO
 (like *Poedit*, which supports plural forms), and converted back to *XLIFF* format. The
 *xliff2po* and *po2xliff* tools from the *Translate Toolkit* project can convert without
 information loss.
+
+XLIFF file overrides
+--------------------
+
+As of Flow 4.2, XLIFF files are no longer solely identified by their location in the file system.
+Instead, the ``<file>``'s ``product-name`` and ``original`` attributes are evaluated to the known
+``package`` and ``source`` properties, if given. The actual location in the file system is only taken
+into account if this information is missing and mainly for backwards compatibility.
+
+This allows for an override mechanism, which comes in two levels:
+
+Package-based overrides
+^^^^^^^^^^^^^^^^^^^^^^^
+
+Translation files are assembled by collecting labels along the composer dependency graph. This means that
+as long a package depends (directly or indirectly) on another package, it can override or enrich the other package's
+XLIFF files by using the other package's ``product-name`` and ``original`` values.
+
+.. note::
+
+  If you have trouble overriding another package's translations, please check your ``composer.json`` if you correctly
+  declared that package as a dependency.
+
+Global translations overrides
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+In case translations are provided by another source than packages (e.g. via import from a third party system),
+a global translation path can be declared and is evaluated with highest priority in that it overrides all translations
+provided by packages. The default value for this is ``Data/Translations`` and can be changed via the configuration
+parameter
+
+.. code-block:: yaml
+
+  Neos:
+    Flow:
+      i18n:
+        globalTranslationPath: '%FLOW_PATH_DATA%Translations/'
+
+**Example**
+
+``Packages/Framework/Neos.Flow/Resources/Private/Translations/en/ValidationErrors.xlf``
+
+.. code-block:: xml
+
+  <file original="" product-name="Neos.Flow" source-language="en" datatype="plaintext">
+    <body>
+      <trans-unit id="1221551320" xml:space="preserve">
+        <source>Only regular characters (a to z, umlauts, ...) and numbers are allowed.</source>
+      </trans-unit>
+    </body>
+  </file>
+
+``Packages/Application/Acme.Package/Resources/Private/Translations/en/ValidationErrors.xlf``
+
+.. code-block:: xml
+
+  <file original="ValidationErrors" product-name="Neos.Flow" source-language="en" datatype="plaintext">
+    <body>
+      <trans-unit id="1221551320" xml:space="preserve">
+        <source>Whatever translation more appropriate to your domain comes to your mind.</source>
+      </trans-unit>
+    </body>
+  </file>
+
+.. note::
+
+  In case of undetected labels, please make sure the ``original`` and ``product-name`` attributes are properly set
+  (or not at all, if the file resides in the matching directory). Since these fields are used to detect overrides,
+  they are now meaningful and cannot be filled arbitrarily any more.
