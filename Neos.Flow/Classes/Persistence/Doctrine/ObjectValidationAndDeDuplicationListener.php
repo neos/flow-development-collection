@@ -11,8 +11,8 @@ namespace Neos\Flow\Persistence\Doctrine;
  * source code.
  */
 
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\OnFlushEventArgs;
-use Doctrine\ORM\UnitOfWork;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\Exception\ObjectValidationFailedException;
 use Neos\Flow\Reflection\ClassSchema;
@@ -50,6 +50,11 @@ class ObjectValidationAndDeDuplicationListener
     protected $persistenceManager;
 
     /**
+     * @var EntityManagerInterface
+     */
+    protected $entityManager;
+
+    /**
      * An onFlush event listener used to act upon persistence.
      *
      * @param OnFlushEventArgs $eventArgs
@@ -58,11 +63,12 @@ class ObjectValidationAndDeDuplicationListener
      */
     public function onFlush(OnFlushEventArgs $eventArgs)
     {
-        $unitOfWork = $eventArgs->getEntityManager()->getUnitOfWork();
+        $this->entityManager = $eventArgs->getEntityManager();
         $validatedInstancesContainer = new \SplObjectStorage();
 
-        $this->deduplicateValueObjectInsertions($unitOfWork, $validatedInstancesContainer);
+        $this->deduplicateValueObjectInsertions();
 
+        $unitOfWork = $this->entityManager->getUnitOfWork();
         foreach ($unitOfWork->getScheduledEntityInsertions() as $entity) {
             $this->validateObject($entity, $validatedInstancesContainer);
         }
@@ -76,12 +82,11 @@ class ObjectValidationAndDeDuplicationListener
      * Loops over scheduled insertions and checks for duplicate value objects. Any duplicates are unset from the
      * list of scheduled insertions.
      *
-     * @param UnitOfWork $unitOfWork
-     * @param \SplObjectStorage $validatedInstancesContainer
      * @return void
      */
-    private function deduplicateValueObjectInsertions(UnitOfWork $unitOfWork, \SplObjectStorage &$validatedInstancesContainer)
+    private function deduplicateValueObjectInsertions()
     {
+        $unitOfWork = $this->entityManager->getUnitOfWork();
         $entityInsertions = $unitOfWork->getScheduledEntityInsertions();
 
         $knownValueObjects = [];
