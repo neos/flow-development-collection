@@ -295,6 +295,27 @@ class ActionControllerTest extends FunctionalTestCase
     /**
      * @test
      */
+    public function notValidatedGroupModelRelationIsNotValidated()
+    {
+        $arguments = [
+            'argument' => [
+                'name' => 'Foo',
+                'emailAddress' => '-invalid-',
+                'related' => [
+                    'name' => 'Bar',
+                    'emailAddress' => '-invalid-'
+                ]
+            ]
+        ];
+        $response = $this->browser->request('http://localhost/test/mvc/actioncontrollertestb/notvalidatedgroupobject', 'POST', $arguments);
+
+        $expectedResult = '-invalid-';
+        $this->assertEquals($expectedResult, $response->getContent());
+    }
+
+    /**
+     * @test
+     */
     public function validatedGroupObjectArgumentsAreValidated()
     {
         $arguments = [
@@ -323,6 +344,27 @@ class ActionControllerTest extends FunctionalTestCase
                         'name' => 'Bar',
                         'emailAddress' => '-invalid-'
                     ]
+                ]
+            ]
+        ];
+        $response = $this->browser->request('http://localhost/test/mvc/actioncontrollertestb/validatedgroupobject', 'POST', $arguments);
+
+        $expectedResult = 'Validation failed while trying to call Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController->validatedGroupObjectAction().' . PHP_EOL;
+        $this->assertEquals($expectedResult, $response->getContent());
+    }
+
+    /**
+     * @test
+     */
+    public function validatedGroupModelRelationIsValidated()
+    {
+        $arguments = [
+            'argument' => [
+                'name' => 'Foo',
+                'emailAddress' => 'foo@bar.org',
+                'related' => [
+                    'name' => 'Bar',
+                    'emailAddress' => '-invalid-'
                 ]
             ]
         ];

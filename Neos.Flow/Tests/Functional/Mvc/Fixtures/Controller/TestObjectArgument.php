@@ -38,6 +38,12 @@ class TestObjectArgument
      */
     protected $collection;
 
+    /**
+     * @var TestObjectArgument
+     * @Flow\Validate(type="GenericObject",validationGroups={"validatedGroup"})
+     */
+    protected $related;
+
     public function __construct()
     {
         $this->collection = new ArrayCollection();
@@ -89,5 +95,21 @@ class TestObjectArgument
     public function setEmailAddress($emailAddress)
     {
         $this->emailAddress = $emailAddress;
+    }
+
+    /**
+     * @return TestObjectArgument
+     */
+    public function getRelated()
+    {
+        return $this->related;
+    }
+
+    /**
+     * @param TestObjectArgument $related
+     */
+    public function setRelated($related)
+    {
+        $this->related = $related;
     }
 }

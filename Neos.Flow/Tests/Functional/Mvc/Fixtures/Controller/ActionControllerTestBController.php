@@ -28,6 +28,7 @@ class ActionControllerTestBController extends ActionController
         $propertyMappingConfiguration->allowAllProperties();
         $propertyMappingConfiguration->forProperty('collection')->allowAllProperties();
         $propertyMappingConfiguration->forProperty('collection.*')->allowAllProperties();
+        $propertyMappingConfiguration->forProperty('related')->allowAllProperties();
     }
 
     /**

@@ -302,13 +302,8 @@ class ValidatorResolver
                 }
 
                 $propertyTargetClassName = $parsedType['type'];
-                $needsCollectionValidator = false;
-                $needsObjectValidator = false;
-                if (TypeHandling::isCollectionType($propertyTargetClassName) === true) {
-                    $needsCollectionValidator = true;
-                } elseif (!TypeHandling::isSimpleType($propertyTargetClassName) && $this->objectManager->isRegistered($propertyTargetClassName) && $this->objectManager->getScope($propertyTargetClassName) === Configuration::SCOPE_PROTOTYPE) {
-                    $needsObjectValidator = true;
-                }
+                $needsCollectionValidator = TypeHandling::isCollectionType($propertyTargetClassName);
+                $needsObjectValidator = (!TypeHandling::isSimpleType($propertyTargetClassName) && $this->objectManager->isRegistered($propertyTargetClassName) && $this->objectManager->getScope($propertyTargetClassName) === Configuration::SCOPE_PROTOTYPE);
 
                 $validateAnnotations = $this->reflectionService->getPropertyAnnotations($targetClassName, $classPropertyName, Flow\Validate::class);
                 foreach ($validateAnnotations as $validateAnnotation) {
