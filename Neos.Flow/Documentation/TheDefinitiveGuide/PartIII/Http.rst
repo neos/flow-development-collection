@@ -335,22 +335,24 @@ This would mean that only the ``X-Forwarded-*`` headers are accepted and only as
 IP ranges ``216.246.40.0-255`` or ``216.246.100.0-255``. If you are using the standardized `Forwarded Header`__, you
 can also simply set ``trustedProxies.headers`` to ``'Forwarded'``, which is the same as setting all four properties to
 this value.
-By default, all proxies are trusted (``trustedProxies.proxies`` set to ``'*'``) and only the ``X-Forwarded-*`` headers
-are accepted. Also, for backwards compatibility the following headers are trusted for providing the client IP address:
+By default, no proxies are trusted (unless the environment variable ``FLOW_HTTP_TRUSTED_PROXIES`` is set) and only the
+direct request informations will be used.
+If you specify trusted proxy addresses, by default only the ``X-Forwarded-*`` headers are accepted.
 
-	Client-Ip, X-Forwarded-For, X-Forwarded, X-Cluster-Client-Ip, Forwarded-For, Forwarded
-
-Those headers will be checked from left to right and the first set header will be used for determining the client address.
-
-If you know that your installation will not run behind a proxy server, you should change settings to this::
+You can specify the list of IP addresses or address ranges in comma separated format, which is useful for using the
+environment variable::
 
 	Neos:
 	  Flow:
 	    http:
 	      trustedProxies:
-	        proxies: []
+	        proxies: '216.246.40.0/24,216.246.100.0/24'
 
-With this, no headers will be trusted and only the direct request informations will be used.
+Also, for backwards compatibility the following headers are trusted for providing the client IP address:
+
+	Client-Ip, X-Forwarded-For, X-Forwarded, X-Cluster-Client-Ip, Forwarded-For, Forwarded
+
+Those headers will be checked from left to right and the first set header will be used for determining the client address.
 
 Response
 --------
