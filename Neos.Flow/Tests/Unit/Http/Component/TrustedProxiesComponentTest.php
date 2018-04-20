@@ -54,7 +54,7 @@ class TrustedProxiesComponentTest extends UnitTestCase
         $this->mockHttpResponse = $this->getMockBuilder(Response::class)->disableOriginalConstructor()->getMock();
 
         $this->mockComponentContext =
-        $this->trustedProxiesComponent = new TrustedProxiesComponent(array());
+        $this->trustedProxiesComponent = new TrustedProxiesComponent();
         $componentReflection = new \ReflectionClass($this->trustedProxiesComponent);
         $this->trustedProxiesSettings = $componentReflection->getProperty('settings');
         $this->trustedProxiesSettings->setAccessible(true);
@@ -112,6 +112,31 @@ class TrustedProxiesComponentTest extends UnitTestCase
     }
 
     /**
+     * RFC 2616 / 14.23 (Host)
+     *
+     * @test
+     * @backupGlobals disabled
+     */
+    public function portInProxyHeaderIsAcknowledgedWithIpv6()
+    {
+        $server = array_merge($_SERVER, [
+            'HTTP_HOST' => '[2a00:f48:1008::212:183:10]',
+            'HTTP_X_FORWARDED_HOST' => '[2a00:f48:1008::212:183:10]',
+            'HTTP_X_FORWARDED_PORT' => 2727,
+            'SERVER_NAME' => 'dev.blog.rob',
+            'SERVER_ADDR' => '127.0.0.1',
+            'SERVER_PORT' => '80',
+            'REMOTE_ADDR' => '127.0.0.1',
+            'REQUEST_URI' => '/posts/2011/11/28/laboriosam-soluta-est-minus-molestiae?getKey1=getValue1&getKey2=getValue2',
+            'REQUEST_TIME' => 1326472534
+        ]);
+
+        $request = Request::create(new Uri('https://[2a00:f48:1008::212:183:10]:2727/foo/bar?baz=quux&coffee=due'), 'GET', array(), array(), $server);
+        $trustedRequest = $this->callWithRequest($request);
+        $this->assertSame(2727, $trustedRequest->getPort());
+    }
+
+    /**
      * Data Provider
      */
     public function serverEnvironmentsForClientIpAddresses()
@@ -130,6 +155,7 @@ class TrustedProxiesComponentTest extends UnitTestCase
             array(array('HTTP_FORWARDED_FOR' => '209.85.148.101'), '209.85.148.101'),
             array(array('HTTP_FORWARDED' => '209.85.148.101'), '209.85.148.101'),
             array(array('REMOTE_ADDR' => '127.0.0.1'), '127.0.0.1'),
+            array(array('HTTP_X_FORWARDED_FOR' => '2607:ff10:c5:509a::1'), '2607:ff10:c5:509a::1'),
         );
     }
 
@@ -490,6 +516,12 @@ class TrustedProxiesComponentTest extends UnitTestCase
                 'forwardedPort' => null,
                 'requestUri' => 'http://acme.com',
                 'expectedUri' => 'https://acme.com',
+            ),
+            array(
+                'forwardedProtocol' => 'http',
+                'forwardedPort' => 80,
+                'requestUri' => '[2a00:f48:1008::212:183:10]',
+                'expectedUri' => 'http://[2a00:f48:1008::212:183:10]',
             ),
         );
     }
