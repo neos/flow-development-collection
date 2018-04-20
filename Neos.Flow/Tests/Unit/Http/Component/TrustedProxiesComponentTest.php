@@ -108,7 +108,7 @@ class TrustedProxiesComponentTest extends UnitTestCase
             'REQUEST_TIME' => 1326472534
         );
 
-        $request = Request::create(new Uri('https://dev.blog.rob/foo/bar?baz=quux&coffee=due'), array(), array(), array(), $_SERVER);
+        $request = Request::create(new Uri('https://dev.blog.rob/foo/bar?baz=quux&coffee=due'), 'GET', array(), array(), $_SERVER);
         $trustedRequest = $this->callWithRequest($request);
         $this->assertSame(2727, $trustedRequest->getPort());
 
