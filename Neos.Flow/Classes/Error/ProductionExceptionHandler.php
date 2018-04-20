@@ -26,7 +26,7 @@ class ProductionExceptionHandler extends AbstractExceptionHandler
     /**
      * Echoes an exception for the web.
      *
-     * @param object $exception \Exception or \Throwable
+     * @param \Throwable $exception
      * @return void
      */
     protected function echoExceptionWeb($exception)
@@ -66,7 +66,7 @@ class ProductionExceptionHandler extends AbstractExceptionHandler
      * @param string $referenceCode
      * @return string
      */
-    protected function renderStatically($statusCode, $referenceCode)
+    protected function renderStatically(int $statusCode, string $referenceCode): string
     {
         $statusMessage = Response::getStatusMessageByCode($statusCode);
         $referenceCodeMessage = ($referenceCode !== null) ? '<p>When contacting the maintainer of this application please mention the following reference code:<br /><br />' . $referenceCode . '</p>' : '';

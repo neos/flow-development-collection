@@ -297,7 +297,7 @@ class Session implements SessionInterface
         if ($this->request === null) {
             $requestHandler = $this->bootstrap->getActiveRequestHandler();
             if (!$requestHandler instanceof HttpRequestHandlerInterface) {
-                throw new Exception\InvalidRequestHandlerException('Could not start a session because the currently active request handler (%s) is not an HTTP Request Handler.', 1364367520);
+                throw new Exception\InvalidRequestHandlerException(sprintf('Could not start a session because the currently active request handler (%s) is not an HTTP Request Handler.', gettype($requestHandler)), 1364367520);
             }
             $this->initializeHttpAndCookie($requestHandler);
         }
