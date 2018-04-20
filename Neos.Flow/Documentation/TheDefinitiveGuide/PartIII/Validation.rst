@@ -225,6 +225,28 @@ The returned validator checks the following things:
   whether ``YourPackage\Domain\Validator\CommentValidator`` exists. If it exists, it is automatically
   called on validation.
 
+Normally, you would need to annotate Collection and Model type properties, so that the collection elements and
+the model would be validated like this:
+
+.. code-block::php
+
+  	    /**
+  	     * @var SomeDomainModel
+  	     * @Flow\Validate(type="GenericObject")
+  	     */
+  	    protected $someRelatedModel;
+
+  	    /**
+  	     * @var Collection<SomeOtherDomainModel>
+  	     * @Flow\Validate(type="Collection")
+  	     */
+  	    protected $someOtherRelatedModels;
+
+For convenience, those validators will be added automatically if they are left out, because Flow will always validate
+Model hierarchies. In some cases, it might be necessary to override validation behaviour of those properties,
+e.g. when you want to limit validation with Validation Groups (see below). In that case, you can just explicitly annotate
+the property with additional options and this will then override the automatically generated validator.
+
 When specifying a Domain Model as an argument of a controller action, all the above validations will be
 automatically executed. This is explained in detail in the following section.
 
@@ -323,6 +345,10 @@ The following example demonstrates this::
 
 If interacting with the ``ValidatorResolver`` directly, the to-be-used validation groups
 can be specified as the last argument of ``getBaseValidatorConjunction()``.
+
+.. note::
+  When trying to set the validation groups of a collection or a whole model, which are normally not annotated for
+  you can explicitly specify a "Collection" or "GenericObject" type validator on the property and set the according validationGroup.
 
 Avoiding Duplicate Validation and Recursion
 ===========================================
