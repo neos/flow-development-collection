@@ -40,7 +40,7 @@ class PersistenceManager extends AbstractPersistenceManager
     protected $systemLogger;
 
     /**
-     * @Flow\Inject
+     * @Flow\Inject(lazy=false)
      * @var ObjectManager
      */
     protected $entityManager;
