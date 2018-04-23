@@ -803,16 +803,16 @@ class ConfigurationManager
     /**
      * Replaces placeholders in the format <variableName> with the corresponding variable of the specified $variables collection.
      *
-     * @param string $string
+     * @param mixed $subject
      * @param array $variables
-     * @return string
+     * @return mixed
      */
-    protected function replacePlaceholders(string $string, array $variables): string
+    protected function replacePlaceholders($subject, array $variables)
     {
         foreach ($variables as $variableName => $variableValue) {
-            $string = str_replace('<' . $variableName . '>', $variableValue, $string);
+            $subject = str_replace('<' . $variableName . '>', $variableValue, $subject);
         }
-        return $string;
+        return $subject;
     }
 
     /**
