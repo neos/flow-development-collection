@@ -1,0 +1,3 @@
+<f:form action="foo">
+	<f:form.upload name="foo" />
+</f:form>
