@@ -337,6 +337,19 @@ class Uri implements UriInterface
     {
         return $this->arguments;
     }
+    
+    /**
+     * Sets the URI's arguments. Updates (= overwrites) the query accordingly!
+     *
+     * @param array $arguments The query arguments.
+     * @return void
+     * @api
+     */
+    public function setArguments($arguments)
+    {
+        $this->arguments = $arguments;
+        $this->query = http_build_query($arguments);
+    }
 
     /**
      * Returns the fragment / anchor, if any
