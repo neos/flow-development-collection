@@ -12,6 +12,9 @@ properties:
          required: TRUE
          items:
            type: string
+  'availableLocales':
+    type: array
+    items: { type: string, required: TRUE }
   'scan':
     type: dictionary
     additionalProperties: FALSE
