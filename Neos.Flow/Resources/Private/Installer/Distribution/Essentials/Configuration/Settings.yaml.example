@@ -18,6 +18,8 @@ Neos:
       # It is good practice to not specify user name and password of the database
       # connection in this global Settings.yaml file. Rather specify them in the
       # settings of the respective context (Production / Development ...).
+      # For a reference of the possible options, take a look at
+      # https://www.doctrine-project.org/projects/doctrine-dbal/en/latest/reference/configuration.html
       backendOptions:
         host: '127.0.0.1'    # adjust to your database host
 
