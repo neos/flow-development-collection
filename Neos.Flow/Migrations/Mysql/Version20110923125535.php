@@ -19,7 +19,7 @@ class Version20110923125535 extends AbstractMigration
 
         $this->addSql("ALTER TABLE typo3_flow3_resource_resource DROP FOREIGN KEY typo3_flow3_resource_resource_ibfk_1");
         $this->addSql("DROP INDEX IDX_11FFD19FD0275681 ON typo3_flow3_resource_resource");
-        $this->addSql("ALTER TABLE typo3_flow3_resource_resource CHANGE flow3_resource_resourcepointer resourcepointer VARCHAR(255) DEFAULT NULL");
+        $this->addSql("ALTER TABLE typo3_flow3_resource_resource CHANGE flow3_resource_resourcepointer resourcepointer VARCHAR(191) DEFAULT NULL");
         $this->addSql("ALTER TABLE typo3_flow3_resource_resource ADD  CONSTRAINT typo3_flow3_resource_resource_ibfk_1 FOREIGN KEY (resourcepointer) REFERENCES typo3_flow3_resource_resourcepointer(hash)");
         $this->addSql("CREATE INDEX IDX_B4D45B323CB65D1 ON typo3_flow3_resource_resource (resourcepointer)");
 
@@ -44,7 +44,7 @@ class Version20110923125535 extends AbstractMigration
 
         $this->addSql("ALTER TABLE typo3_flow3_resource_resource DROP FOREIGN KEY typo3_flow3_resource_resource_ibfk_1");
         $this->addSql("DROP INDEX IDX_B4D45B323CB65D1 ON typo3_flow3_resource_resource");
-        $this->addSql("ALTER TABLE typo3_flow3_resource_resource CHANGE resourcepointer flow3_resource_resourcepointer VARCHAR(255) DEFAULT NULL");
+        $this->addSql("ALTER TABLE typo3_flow3_resource_resource CHANGE resourcepointer flow3_resource_resourcepointer VARCHAR(191) DEFAULT NULL");
         $this->addSql("ALTER TABLE typo3_flow3_resource_resource ADD CONSTRAINT typo3_flow3_resource_resource_ibfk_1 FOREIGN KEY (flow3_resource_resourcepointer) REFERENCES typo3_flow3_resource_resourcepointer(hash)");
         $this->addSql("CREATE INDEX IDX_11FFD19FD0275681 ON typo3_flow3_resource_resource (flow3_resource_resourcepointer)");
 

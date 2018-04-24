@@ -17,7 +17,7 @@ class Version20120520211354 extends AbstractMigration
     {
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != "mysql");
 
-        $this->addSql("ALTER TABLE typo3_flow3_security_account CHANGE credentialssource credentialssource VARCHAR(255) DEFAULT NULL");
+        $this->addSql("ALTER TABLE typo3_flow3_security_account CHANGE credentialssource credentialssource VARCHAR(191) DEFAULT NULL");
     }
 
     /**
@@ -28,6 +28,6 @@ class Version20120520211354 extends AbstractMigration
     {
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != "mysql");
 
-        $this->addSql("ALTER TABLE typo3_flow3_security_account CHANGE credentialssource credentialssource VARCHAR(255) NOT NULL");
+        $this->addSql("ALTER TABLE typo3_flow3_security_account CHANGE credentialssource credentialssource VARCHAR(191) NOT NULL");
     }
 }
