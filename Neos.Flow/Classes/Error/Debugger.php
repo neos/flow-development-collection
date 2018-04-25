@@ -583,15 +583,15 @@ function var_dump($variable, string $title = null, bool $return = false, bool $p
     }
     Debugger::clearState();
 
-    if (!$plaintext && Debugger::$stylesheetEchoed === false) {
-        echo '<style type="text/css">' . file_get_contents('resource://Neos.Flow/Public/Error/Debugger.css') . '</style>';
-        Debugger::$stylesheetEchoed = true;
-    }
-
     if ($plaintext) {
         $output = $title . chr(10) . Debugger::renderDump($variable, 0, true, $ansiColors) . chr(10) . chr(10);
     } else {
-        $output = '
+        $output = '';
+        if (Debugger::$stylesheetEchoed === false) {
+            $output .= '<style type="text/css">' . file_get_contents('resource://Neos.Flow/Public/Error/Debugger.css') . '</style>';
+            Debugger::$stylesheetEchoed = true;
+        }
+        $output .= '
 			<div class="Flow-Error-Debugger-VarDump ' . ($return ? 'Flow-Error-Debugger-VarDump-Inline' : 'Flow-Error-Debugger-VarDump-Floating') . '">
 				<div class="Flow-Error-Debugger-VarDump-Top">
 					' . htmlspecialchars($title) . '
