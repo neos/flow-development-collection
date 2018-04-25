@@ -188,7 +188,8 @@ class Debugger
         $additionalAttributes = '';
 
         if ($object instanceof \Doctrine\Common\Collections\Collection || $object instanceof \ArrayObject) {
-            return self::renderArrayDump(\Doctrine\Common\Util\Debug::export($object, 3), $level, $plaintext, $ansiColors);
+            // The doctrine Debug utility usually returns a \stdClass object that we need to cast to array.
+            return self::renderArrayDump((array)\Doctrine\Common\Util\Debug::export($object, 3), $level, $plaintext, $ansiColors);
         }
 
         // Objects returned from Doctrine's Debug::export function are stdClass with special properties:
@@ -582,15 +583,15 @@ function var_dump($variable, string $title = null, bool $return = false, bool $p
     }
     Debugger::clearState();
 
-    if (!$plaintext && Debugger::$stylesheetEchoed === false) {
-        echo '<style type="text/css">' . file_get_contents('resource://Neos.Flow/Public/Error/Debugger.css') . '</style>';
-        Debugger::$stylesheetEchoed = true;
-    }
-
     if ($plaintext) {
         $output = $title . chr(10) . Debugger::renderDump($variable, 0, true, $ansiColors) . chr(10) . chr(10);
     } else {
-        $output = '
+        $output = '';
+        if (Debugger::$stylesheetEchoed === false) {
+            $output .= '<style type="text/css">' . file_get_contents('resource://Neos.Flow/Public/Error/Debugger.css') . '</style>';
+            Debugger::$stylesheetEchoed = true;
+        }
+        $output .= '
 			<div class="Flow-Error-Debugger-VarDump ' . ($return ? 'Flow-Error-Debugger-VarDump-Inline' : 'Flow-Error-Debugger-VarDump-Floating') . '">
 				<div class="Flow-Error-Debugger-VarDump-Top">
 					' . htmlspecialchars($title) . '

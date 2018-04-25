@@ -2,6 +2,7 @@ type: dictionary
 additionalProperties: FALSE
 properties:
   'defaultLocale': { type: string, required: TRUE }
+  'globalTranslationPath': { type: string, required: TRUE }
   'fallbackRule':
      type: dictionary
      additionalProperties: FALSE
@@ -12,6 +13,9 @@ properties:
          required: TRUE
          items:
            type: string
+  'availableLocales':
+    type: array
+    items: { type: string, required: TRUE }
   'scan':
     type: dictionary
     additionalProperties: FALSE
