@@ -14,7 +14,7 @@ based applications to Flow 5.0.
 
 * We now require 7.1.x or higher
 * If you are using a MySQL based database you must use at least 
-MySQL 5.7.7 or MariaDB 10.2.2
+  MySQL 5.7.7 or MariaDB 10.2.2
 
 In general just make sure to run the following commands::
 
@@ -80,7 +80,7 @@ it, things might get out of hands in the future.
 
 ================
 What has changed
-=================
+================
 
 Flow 5.0 comes with some breaking changes and removes several deprecated
 functionalities, be sure to read the following changes and adjust
