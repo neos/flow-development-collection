@@ -265,6 +265,8 @@ Neos:
         # The locales identifiers to use in their desired order
         order: []
 
+      globalTranslationPath: '%FLOW_PATH_DATA%Translations/'
+
       scan:
         # You can list any paths that you want to include in scanning for locales relative to the "Resources"
         # directory of each package. Setting a path to FALSE will skip scanning this folder.
