@@ -98,6 +98,15 @@ class ResourceTypeConverterTest extends UnitTestCase
     /**
      * @test
      */
+    public function convertFromReturnsNullIfNoFileWasUploadedAndEmptyHashIsSet()
+    {
+        $source = ['error' => \UPLOAD_ERR_NO_FILE, 'hash' => ''];
+        $this->assertNull($this->resourceTypeConverter->convertFrom($source, PersistentResource::class));
+    }
+
+    /**
+     * @test
+     */
     public function convertFromReturnsPreviouslyUploadedResourceIfNoNewFileWasUploaded()
     {
         $source = [
