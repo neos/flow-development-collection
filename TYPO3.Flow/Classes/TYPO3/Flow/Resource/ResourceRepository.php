@@ -192,7 +192,7 @@ class ResourceRepository extends Repository
     }
 
     /**
-     * Finds other resources which are referring to the same resource data and filename
+     * Finds other resources which are referring to the same resource data, filename and collection
      *
      * @param PersistentResource $resource The resource used for finding similar resources
      * @return QueryResultInterface The result, including the given resource
@@ -203,7 +203,8 @@ class ResourceRepository extends Repository
         $query->matching(
             $query->logicalAnd(
                 $query->equals('sha1', $resource->getSha1()),
-                $query->equals('filename', $resource->getFilename())
+                $query->equals('filename', $resource->getFilename()),
+                $query->equals('collectionName', $resource->getCollectionName())
             )
         );
         return $query->execute();
@@ -222,6 +223,32 @@ class ResourceRepository extends Repository
         $resources = $query->execute()->toArray();
         foreach ($this->addedResources as $importedResource) {
             if ($importedResource->getSha1() === $sha1Hash) {
+                $resources[] = $importedResource;
+            }
+        }
+
+        return $resources;
+    }
+
+    /**
+     * Find all resources with the same SHA1 hash and collection
+     *
+     * @param string $sha1Hash
+     * @param string $collectionName
+     * @return array
+     */
+    public function findBySha1AndCollectionName($sha1Hash, $collectionName)
+    {
+        $query = $this->createQuery();
+        $query->matching(
+            $query->logicalAnd(
+                $query->equals('sha1', $sha1Hash),
+                $query->equals('collectionName', $collectionName)
+            )
+        );
+        $resources = $query->execute()->toArray();
+        foreach ($this->addedResources as $importedResource) {
+            if ($importedResource->getSha1() === $sha1Hash && $importedResource->getCollectionName() === $collectionName) {
                 $resources[] = $importedResource;
             }
         }

@@ -435,13 +435,22 @@ abstract class FunctionalTestCase extends \TYPO3\Flow\Tests\BaseTestCase
      */
     protected function cleanupPersistentResourcesDirectory()
     {
-        $settings = self::$bootstrap->getObjectManager()->get(\TYPO3\Flow\Configuration\ConfigurationManager::class)->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS);
-        $resourcesStoragePath = $settings['TYPO3']['Flow']['resource']['storages']['defaultPersistentResourcesStorage']['storageOptions']['path'];
-        if (strpos($resourcesStoragePath, FLOW_PATH_DATA) === false) {
-            throw new \Exception(sprintf('The storage path for persistent resources for the Testing context is "%s" but it must point to a directory below "%s". Please check the Flow settings for the Testing context.', $resourcesStoragePath, FLOW_PATH_DATA), 1382018388);
-        }
-        if (file_exists($resourcesStoragePath)) {
-            Files::removeDirectoryRecursively($resourcesStoragePath);
+        $settings = self::$bootstrap->getObjectManager()->get(ConfigurationManager::class)->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS);
+        foreach ($settings['TYPO3']['Flow']['resource']['storages'] as $storageName => $storageSettings) {
+            if (!isset($storageSettings['storageOptions']['path'])) {
+                continue;
+            }
+
+            $resourcesStoragePath = $storageSettings['storageOptions']['path'];
+            if (strpos($resourcesStoragePath, FLOW_PATH_DATA) === false) {
+                throw new \Exception(sprintf('The storage path for persistent resources for the Testing context is "%s" for the "%s" storage, but it must point to a directory below "%s". Please check the Flow settings for the Testing context.', $resourcesStoragePath, $storageName, FLOW_PATH_DATA), 1382018388);
+            }
+            if (strpos($resourcesStoragePath, '/Test/') === false) {
+                throw new \Exception(sprintf('The storage path for persistent resources for the Testing context is "%s" for the "%s" storage, but it must contain "/Test/". Please check the Flow settings for the Testing context.', $resourcesStoragePath, $storageName), 1382018388);
+            }
+            if (file_exists($resourcesStoragePath)) {
+                Files::removeDirectoryRecursively($resourcesStoragePath);
+            }
         }
     }
 
