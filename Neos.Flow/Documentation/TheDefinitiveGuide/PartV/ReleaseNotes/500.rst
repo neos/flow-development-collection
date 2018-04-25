@@ -1,0 +1,25 @@
+========
+Flow 5.0
+========
+
+====================
+Upgrade Instructions
+====================
+
+This section contains instructions for upgrading your Flow 4.3 based applications to Flow 5.0.
+
+In general just make sure to run the command::
+
+ ./flow flow:cache:flush --force
+
+If you are upgrading from a lower version than 4.2, be sure to read the upgrade instructions from
+the previous Release Notes first.
+
+What has changed
+----------------
+
+Flow 5.0 comes with …
+
+Here's a list of changes that might need special attention when upgrading.
+
+…

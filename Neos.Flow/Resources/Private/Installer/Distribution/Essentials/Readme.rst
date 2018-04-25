@@ -1,6 +1,6 @@
----------------------
-Flow Framework master
----------------------
+------------------
+Flow Framework 5.0
+------------------
 
 Welcome to Flow!
 
