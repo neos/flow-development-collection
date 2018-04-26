@@ -47,13 +47,11 @@ class ReflectionServiceTest extends FunctionalTestCase
      * Test for https://jira.neos.io/browse/FLOW-316
      *
      * @test
+     * @doesNotPerformAssertions
      */
     public function classSchemaCanBeBuiltForAggregateRootsWithPlainOldPhpBaseClasses()
     {
         $this->reflectionService->getClassSchema(Reflection\Fixtures\Model\EntityExtendingPlainObject::class);
-
-        // dummy assertion to suppress PHPUnit warning
-        $this->assertTrue(true);
     }
 
     /**
