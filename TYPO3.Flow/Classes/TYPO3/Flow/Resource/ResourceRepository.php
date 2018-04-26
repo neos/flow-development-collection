@@ -50,12 +50,12 @@ class ResourceRepository extends Repository
     protected $persistenceManager;
 
     /**
-     * @var \SplObjectStorage
+     * @var \SplObjectStorage|PersistentResource[]
      */
     protected $removedResources;
 
     /**
-     * @var \SplObjectStorage
+     * @var \SplObjectStorage|PersistentResource[]
      */
     protected $addedResources;
 
@@ -99,6 +99,17 @@ class ResourceRepository extends Repository
             $this->removedResources->attach($object);
             parent::remove($object);
         }
+    }
+
+    /**
+     * Reset internal state after changes have been persisted
+     *
+     * @return void
+     */
+    public function resetAfterPersistingChanges()
+    {
+        $this->removedResources = new \SplObjectStorage();
+        $this->addedResources = new \SplObjectStorage();
     }
 
     /**

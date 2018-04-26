@@ -15,6 +15,7 @@ use TYPO3\Flow\Package\Package as BasePackage;
 use TYPO3\Flow\Package\PackageInterface;
 use TYPO3\Flow\Package\PackageManagerInterface;
 use TYPO3\Flow\Resource\ResourceManager;
+use TYPO3\Flow\Resource\ResourceRepository;
 use TYPO3\Fluid\Core\Parser\TemplateParser;
 
 /**
@@ -130,5 +131,8 @@ class Package extends BasePackage
                 $bootstrap->getObjectManager()->get(\TYPO3\Flow\Cache\CacheManager::class)->flushCaches();
             });
         });
+
+        $dispatcher->connect(Persistence\Doctrine\PersistenceManager::class, 'allObjectsPersisted', ResourceRepository::class, 'resetAfterPersistingChanges');
+        $dispatcher->connect(Persistence\Generic\PersistenceManager::class, 'allObjectsPersisted', ResourceRepository::class, 'resetAfterPersistingChanges');
     }
 }
