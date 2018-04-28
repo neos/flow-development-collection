@@ -250,6 +250,39 @@ class DateHelper implements ProtectedContextAwareInterface
     }
 
     /**
+     * Format a given datetime in a machine-readable way to use it in a <time> tag
+     *
+     * @param \DateTimeInterface $dateTime
+     * @return string
+     */
+    public function htmlDateTime(\DateTimeInterface $dateTime)
+    {
+        return $dateTime->format(\DateTime::W3C);
+    }
+
+    /**
+     * Format a given date in a machine-readable way to use it in a <time> tag
+     *
+     * @param \DateTimeInterface $dateTime
+     * @return string
+     */
+    public function htmlDate(\DateTimeInterface $date)
+    {
+        return $date->format('Y-m-d');
+    }
+
+    /**
+     * Format a given time in a machine-readable way to use it in a <time> tag
+     *
+     * @param \DateTimeInterface $dateTime
+     * @return string
+     */
+    public function htmlTime(\DateTimeInterface $time)
+    {
+        return $time->format('H:i:sP');
+    }
+
+    /**
      * All methods are considered safe
      *
      * @param string $methodName
