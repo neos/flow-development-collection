@@ -53,7 +53,7 @@ class GenericObjectValidator extends AbstractValidator implements ObjectValidato
      */
     public function validate($value)
     {
-        $this->result = new ErrorResult();
+        $this->pushResult();
         if ($this->acceptsEmptyValues === false || $this->isEmpty($value) === false) {
             if (!is_object($value)) {
                 $this->addError('Object expected, %1$s given.', 1241099149, [gettype($value)]);
@@ -62,7 +62,7 @@ class GenericObjectValidator extends AbstractValidator implements ObjectValidato
             }
         }
 
-        return $this->result;
+        return $this->popResult();
     }
 
     /**
@@ -74,15 +74,13 @@ class GenericObjectValidator extends AbstractValidator implements ObjectValidato
      */
     protected function isValid($object)
     {
-        $messages = new ErrorResult();
         foreach ($this->propertyValidators as $propertyName => $validators) {
             $propertyValue = $this->getPropertyValue($object, $propertyName);
             $result = $this->checkProperty($propertyValue, $validators);
             if ($result !== null) {
-                $messages->forProperty($propertyName)->merge($result);
+                $this->result->forProperty($propertyName)->merge($result);
             }
         }
-        $this->result = $messages;
     }
 
     /**
@@ -177,7 +175,7 @@ class GenericObjectValidator extends AbstractValidator implements ObjectValidato
     public function getPropertyValidators($propertyName = null)
     {
         if ($propertyName !== null) {
-            return (isset($this->propertyValidators[$propertyName])) ? $this->propertyValidators[$propertyName] : [];
+            return $this->propertyValidators[$propertyName] ?? [];
         } else {
             return $this->propertyValidators;
         }

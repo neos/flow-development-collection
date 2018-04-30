@@ -48,21 +48,21 @@ class CollectionValidator extends GenericObjectValidator
      */
     public function validate($value)
     {
-        $this->result = new ErrorResult();
+        $this->pushResult();
 
         if ($this->acceptsEmptyValues === false || $this->isEmpty($value) === false) {
             if ($value instanceof \Doctrine\ORM\PersistentCollection && !$value->isInitialized()) {
-                return $this->result;
+                return $this->popResult();
             } elseif ((is_object($value) && !TypeHandling::isCollectionType(get_class($value))) && !is_array($value)) {
                 $this->addError('The given subject was not a collection.', 1317204797);
-                return $this->result;
+                return $this->popResult();
             } elseif (is_object($value) && $this->isValidatedAlready($value)) {
-                return $this->result;
+                return $this->popResult();
             } else {
                 $this->isValid($value);
             }
         }
-        return $this->result;
+        return $this->popResult();
     }
 
     /**
@@ -93,6 +93,7 @@ class CollectionValidator extends GenericObjectValidator
             if ($collectionElementValidator instanceof ObjectValidatorInterface) {
                 $collectionElementValidator->setValidatedInstancesContainer($this->validatedInstancesContainer);
             }
+
             $this->result->forProperty($index)->merge($collectionElementValidator->validate($collectionElement));
         }
     }
