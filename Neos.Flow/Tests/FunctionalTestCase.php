@@ -11,6 +11,7 @@ namespace Neos\Flow\Tests;
  * source code.
  */
 
+use Doctrine\ORM\EntityManagerInterface;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Annotations as Flow;
@@ -20,6 +21,7 @@ use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
 use Neos\Flow\Mvc\Routing\Dto\RouteContext;
 use Neos\Flow\Mvc\Routing\Route;
+use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Utility\Arrays;
 use Neos\Utility\Files;
 
@@ -95,7 +97,7 @@ abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
     protected $authenticationManager;
 
     /**
-     * @var \Neos\Flow\Persistence\PersistenceManagerInterface
+     * @var PersistenceManagerInterface
      */
     protected $persistenceManager;
 
@@ -145,13 +147,13 @@ abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
         }
 
         if ($this->testableSecurityEnabled === true || static::$testablePersistenceEnabled === true) {
-            if (is_callable(array(self::$bootstrap->getObjectManager()->get(\Neos\Flow\Persistence\PersistenceManagerInterface::class), 'compile'))) {
-                $result = self::$bootstrap->getObjectManager()->get(\Neos\Flow\Persistence\PersistenceManagerInterface::class)->compile();
+            if (is_callable(array(self::$bootstrap->getObjectManager()->get(PersistenceManagerInterface::class), 'compile'))) {
+                $result = self::$bootstrap->getObjectManager()->get(PersistenceManagerInterface::class)->compile();
                 if ($result === false) {
                     self::markTestSkipped('Test skipped because setting up the persistence failed.');
                 }
             }
-            $this->persistenceManager = $this->objectManager->get(\Neos\Flow\Persistence\PersistenceManagerInterface::class);
+            $this->persistenceManager = $this->objectManager->get(PersistenceManagerInterface::class);
         } else {
             $privilegeManager = $this->objectManager->get(\Neos\Flow\Security\Authorization\TestingPrivilegeManager::class);
             $privilegeManager->setOverrideDecision(true);
@@ -238,7 +240,7 @@ abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
     {
         $this->tearDownSecurity();
 
-        $persistenceManager = self::$bootstrap->getObjectManager()->get(\Neos\Flow\Persistence\PersistenceManagerInterface::class);
+        $persistenceManager = self::$bootstrap->getObjectManager()->get(PersistenceManagerInterface::class);
 
         // Explicitly call persistAll() so that the "allObjectsPersisted" signal is sent even if persistAll()
         // has not been called during a test. This makes sure that for example certain repositories can clear
@@ -260,6 +262,10 @@ abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
         $this->inject(self::$bootstrap->getObjectManager()->get(\Neos\Flow\ResourceManagement\ResourceTypeConverter::class), 'convertedResources', array());
 
         $this->cleanupPersistentResourcesDirectory();
+
+        $this->objectManager->forgetInstance(EntityManagerInterface::class);
+        $this->objectManager->forgetInstance(PersistenceManagerInterface::class);
+
         $this->emitFunctionalTestTearDown();
     }
 
