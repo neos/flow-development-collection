@@ -304,4 +304,47 @@ class CompilingEelParser extends EelParser
     {
         $result['code'] .= ':(' . $sub['code'] . '))';
     }
+
+    public function MethodArgumentsWithoutParens_Identifier(&$result, $sub)
+    {
+        $result['val'] = [$sub['text']];
+    }
+
+    public function MethodArgumentsWithParens_Identifier(&$result, $sub)
+    {
+        if (!isset($result['val'])) {
+            $result['val'] = [];
+        }
+        $result['val'][] = $sub['text'];
+    }
+
+    public function MethodArguments_arguments(&$result, $sub)
+    {
+        $result['val'] = $sub['val'];
+    }
+
+    public function ArrowFunction_arguments(&$result, $sub)
+    {
+        $result['args'] = $sub['val'];
+    }
+
+    public function ArrowFunction_exp(&$result, $sub)
+    {
+        $result['exp'] = $sub['code'];
+    }
+
+    public function ArrowFunction__finalise(&$self)
+    {
+        $contextScope = '';
+        foreach ($self['args'] as $arg) {
+            $contextScope .= '$context->push($' . $arg . ',"' . $arg . '");';
+        }
+        $self['code'] = 'function(' . implode(',', array_map(function ($arg) {
+            return '$' . $arg;
+        }, $self['args'])) . ') use ($context) {
+            $context = clone $context;
+            ' . $contextScope . '
+            return ' . $self['exp'] . ';
+        }';
+    }
 }
