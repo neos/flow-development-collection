@@ -714,6 +714,7 @@ class AbstractFormFieldViewHelperTest extends FormFieldViewHelperBaseTestcase
 
     /**
      * @test
+     * @doesNotPerformAssertions
      */
     public function renderHiddenFieldForEmptyValueRemovesEmptySquareBracketsFromHiddenFieldName()
     {
@@ -728,13 +729,11 @@ class AbstractFormFieldViewHelperTest extends FormFieldViewHelperBaseTestcase
         );
 
         $formViewHelper->_call('renderHiddenFieldForEmptyValue');
-
-        // dummy assertion to avoid "risky test" warning
-        $this->assertTrue(true);
     }
 
     /**
      * @test
+     * @doesNotPerformAssertions
      */
     public function renderHiddenFieldForEmptyValueDoesNotRemoveNonEmptySquareBracketsFromHiddenFieldName()
     {
@@ -749,9 +748,6 @@ class AbstractFormFieldViewHelperTest extends FormFieldViewHelperBaseTestcase
         );
 
         $formViewHelper->_call('renderHiddenFieldForEmptyValue');
-
-        // dummy assertion to avoid "risky test" warning
-        $this->assertTrue(true);
     }
 
     /**

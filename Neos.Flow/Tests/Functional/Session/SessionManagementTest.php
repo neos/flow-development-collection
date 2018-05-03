@@ -83,13 +83,12 @@ class SessionManagementTest extends FunctionalTestCase
      * See bug #43590
      *
      * @test
+     * @doesNotPerformAssertions
      */
     public function aSessionCanBeStartedInAFunctionalTest()
     {
         $session = $this->objectManager->get(Session\SessionInterface::class);
         $session->start();
-        // dummy assertion to avoid PHPUnit warning
-        $this->assertTrue(true);
     }
 
     /**

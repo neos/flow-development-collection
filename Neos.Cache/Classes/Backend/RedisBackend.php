@@ -456,22 +456,20 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
     }
 
     /**
-     * TODO: No return type declaration for now, as it needs to return false as well.
-     * @param string $value
-     * @return mixed
+     * @param string|bool $value
+     * @return string|bool
      */
-    private function uncompress(string $value): string
+    private function uncompress($value)
     {
-        if (empty($value)) {
+        if ($value === false || empty($value)) {
             return $value;
         }
         return $this->useCompression() ? gzdecode($value) : $value;
     }
 
     /**
-     * TODO: No return type declaration for now, as it needs to return false as well.
      * @param string $value
-     * @return string|boolean
+     * @return string
      */
     private function compress(string $value): string
     {
