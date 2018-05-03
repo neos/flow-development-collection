@@ -1,0 +1,1156 @@
+`5.0.0 (2018-04-25) <https://github.com/neos/flow-development-collection/releases/tag/5.0.0>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`TASK: Adjust (upgrade) docs to 5.0 release <https://github.com/neos/flow-development-collection/pull/1294>`_
+-------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Flow``
+
+`Revert "!!!TASK: Implicit joins in a query make result distinct" <https://github.com/neos/flow-development-collection/pull/1293>`_
+-----------------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Flow``
+
+`TASK: Update standalone Fluid to recent version <https://github.com/neos/flow-development-collection/pull/1291>`_
+------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Flow`` ``FluidAdaptor``
+
+`TASK: Add test for empty resource upload <https://github.com/neos/flow-development-collection/pull/1290>`_
+-----------------------------------------------------------------------------------------------------------
+
+This shows that #542 is no longer relevant.
+
+Resolves #542
+
+* Packages: ``Flow``
+
+`TASK: Add a link to latest doctrine documentation in example Settings <https://github.com/neos/flow-development-collection/pull/1289>`_
+----------------------------------------------------------------------------------------------------------------------------------------
+
+Resolves #526
+
+* Packages: ``Flow``
+
+`FEATURE: Allow specifying a list of available Locales via settings <https://github.com/neos/flow-development-collection/pull/1282>`_
+-------------------------------------------------------------------------------------------------------------------------------------
+
+With this, it is possible to specify a list of available Locales via the
+`Neos.Flow.i18n.availableLocales` setting, which will then avoid triggering
+the scanning process.
+
+Resolves #1232
+
+* Packages: ``Flow``
+
+`BUGFIX: Render debugger-styles directly with first debug-output <https://github.com/neos/flow-development-collection/pull/1286>`_
+----------------------------------------------------------------------------------------------------------------------------------
+
+The styles for rendering the debug-output are now rendered with the
+first output itself instead of being echoed.
+
+The direct echo solution caused trouble whenever non html-data like
+json was rendered because the styles were rendered outside the json-structure 
+and thus caused invalid json.
+
+* Packages: ``Flow``
+
+`BUGFIX: Wrong type hint on replacePlaceholders <https://github.com/neos/flow-development-collection/pull/1285>`_
+-----------------------------------------------------------------------------------------------------------------
+
+The configurationManager.replacePlaceholder() method must not use a
+string type hint for the subject, since in fact that can be an array.
+
+* Packages: ``Flow`` ``FluidAdaptor``
+
+`TASK: Adjust configs to 5.0 branch <https://github.com/neos/flow-development-collection/pull/1284>`_
+-----------------------------------------------------------------------------------------------------
+
+* Packages: ``Eel`` ``Flow`` ``FluidAdaptor`` ``Kickstarter``
+
+`TASK: Make HTTP Request getClientIpAddress() use the request attribute value <https://github.com/neos/flow-development-collection/pull/1270>`_
+-----------------------------------------------------------------------------------------------------------------------------------------------
+
+This in turn will actually make the method take the trusted proxy settings into account instead
+of a hardcoded list of headers.
+Also, this change removes the test for the `Forwarded` header, because the test had wrong expectations
+on the actual formatting of the header value. See #1060
+
+* Packages: ``Flow`` ``FluidAdaptor``
+
+`BUGFIX: Respect given locale when checking general translation path <https://github.com/neos/flow-development-collection/pull/1088>`_
+--------------------------------------------------------------------------------------------------------------------------------------
+
+ for label overrides
+
+This seems to have been forgotten in the original implementation and lead to inconsistent behavior when override labels were present in multiple languages
+
+* Packages: ``Flow`` ``Unicode``
+
+`!!!TASK: Safe trusted proxies default value <https://github.com/neos/flow-development-collection/pull/1273>`_
+--------------------------------------------------------------------------------------------------------------
+
+By default, all proxies were trusted beforehand, but this is an usafe setting in most setups.
+This change switches the `trustedProxies.proxies` setting to `%env:FLOW_HTTP_TRUSTED_PROXIES`, which means no proxies are trusted by default unless something is specified via the environment variable and hence the client IP address, port and host values for the request can not be overridden by any of the `Forwarded-*` headers.
+
+This is breaking if you use a CDN or reverse proxy on your server and relied on the previous unsafe
+default setting. In that case you should instead provide a list of the IP ranges of your proxy/CDN
+servers, either directly or through the `FLOW_HTTP_TRUSTED_PROXIES` environment variable or explicitly switch back to trust all proxy servers by setting the value to `'*'`.
+
+* Packages: ``Flow``
+
+`TASK: Move object validation out of PersistenceManager <https://github.com/neos/flow-development-collection/pull/1192>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+This moves the code used to validate objects using the onFlush event
+of Doctrine out of the PersistenceManager and into it's own class.
+
+The listener is then added using Flow settings, instead of PHP code
+inside PersistenceManager.initializeObject().
+
+* Packages: ``Flow`` ``Unicode``
+
+`TASK: Add PHP 7.0 scalar type hints to method arguments and return types [Composer/Configuration/Core/Error] <https://github.com/neos/flow-development-collection/pull/1043>`_
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Flow``
+
+`BUGFIX: Detect checked state for bound object collections <https://github.com/neos/flow-development-collection/pull/1230>`_
+----------------------------------------------------------------------------------------------------------------------------
+
+When a collection property with objects is bound to a checkbox VH,
+this change makes sure to check object identifiers against the passed
+value when automatically determining the `checked` state.
+
+Fixes #1229
+
+* Packages: ``FluidAdaptor``
+
+`!!! FEATURE: PSR-3 Logging <https://github.com/neos/flow-development-collection/pull/1171>`_
+---------------------------------------------------------------------------------------------
+
+This change accomplishes two things. On the one hand it
+provides PSR-3 compatibility for the logger package.
+On the other hand it lays the ground work to allow  any
+PSR-3 compatible logger to be used in Flow and applications.
+
+This is breaking in case you implemented the ``Neos\\Flow\\Log\\LoggerInterface`` 
+yourself, you should switch to the PSR-3 logger interface (should be easy).
+
+* Packages: ``Flow``
+
+`TASK: Object configuration skips objects with autowiring false <https://github.com/neos/flow-development-collection/pull/1283>`_
+---------------------------------------------------------------------------------------------------------------------------------
+
+As constructor arguments and injections should not be automatically
+resolved when either the whole class or the respective method has
+autowiring false, we should skip any processing of those as early
+as possible to avoid any unnecessary or even wrong checks for
+possible autowiring
+
+This should improve compile performance slightly and prevent errors
+with constructors of singletons with autowiring false.
+Those would previously throw an exception due to non autowired
+constructor arguments..
+
+* Packages: ``Flow``
+
+`!!!TASK: Implicit joins in a query makes the result set distinct by default <https://github.com/neos/flow-development-collection/pull/415>`_
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+Before it was possible that a query with implicit joins created a result set with duplicate entries.
+This change sets the `distinct` flag on the query object to true when an implicit join is created.
+
+This is breaking, as it might change the result sets of your queries, if you used implicit joins (dot notation subproperty queries).
+
+Resolves #552
+
+* Packages: ``Flow``
+
+`!!! TASK: Cleanup in package management <https://github.com/neos/flow-development-collection/pull/1280>`_
+----------------------------------------------------------------------------------------------------------
+
+This is the next step towards a leaner package management,
+the essential part is that packages are now separated into
+third party packages and Flow (enabled) packages.
+All packages are available for object management but Resources
+and Configuration as well as booting are only expected and
+managed in Flow (enabled) packages.
+
+The ``Package`` class is still a fully Flow enabled package and
+no adaption should be necessary to packages.
+``GenericPackage`` is the low level class for describing any
+other package in the system.
+According to that change a couple of interfaces where added:
+
+* ``BootableInterface`` describes a bootable package
+* ``FlowPackageInterface`` extension of the ``PackageInterface``
+  Flow specifics are now moved over to the ``FlowPackageInterface``
+* ``PackageKeyAwareInterface`` defines that the package has a
+  package key. Currently that is implemented by all packages but
+  we might change that at a later point in time.
+
+The notion of ``protected`` and ``objectManagementEnabled`` is gone from
+package classes and the interfaces as both are no longer needed.
+
+The ``PackageManager`` and interface no longer support deleting of
+packages, this should happen through composer now.
+In order the ``package:delete`` command is removed as well.
+
+``PackageManager::getPackageVersion`` was moved over to
+``ComposerUtility::getPackageVersion`` where it should have been in the
+first place. It was not part of the interface nor marked api.
+
+This change is breaking if you use the ``PackageManager`` to get
+all packages and expect them to be Flow packages. You must now
+check for instanceof ``FlowPackageInterface`` if you expect Flow
+specific functionality from a package object.
+
+This is also a preparation to drop the ``PackageManagerInterface`` as
+overriding the implementation is neither possible nor sensible.
+You can directly use the ``PackageManager`` object from now.
+
+* Packages: ``Flow``
+
+`!!!TASK: Change default charset and collation to utf8mb4 <https://github.com/neos/flow-development-collection/pull/1267>`_
+---------------------------------------------------------------------------------------------------------------------------
+
+This changes the charset and collation to create table statements in the
+existing migrations. This make sure the tables are set up correctly
+independent of the database default configuration.
+
+This is breaking if you have existing tables that do not use ut8mb4 as
+charset and utf8mb4_unicode_ci as collation. To solve this you need to
+convert the existing tables. This can be done using the command::
+
+  ./flow database:setcharset
+
+This will convert the database configured in the settings and all tables
+inside to use a default character set of utf8mb4 and a default collation
+of utf8mb4_unicode_ci. It will also convert all character type columns
+to that combination of charset and collation.
+
+Background information on why this is done can be found in
+https://medium.com/@adamhooper/in-mysql-never-use-utf8-use-utf8mb4-11761243e434
+
+* Packages: ``Flow``
+
+`FEATURE: Add PSR-6 and PSR-16 support to cache framework <https://github.com/neos/flow-development-collection/pull/1168>`_
+---------------------------------------------------------------------------------------------------------------------------
+
+This implements a PSR-6 compatible cache pool ``http://www.php-fig.org/psr/psr-6`` and
+a factory for those caches.
+
+Additionally a separate PSR-16 compatible SimpleCache is implemented
+with it's own factory as the interfaces are incompatible with our interfaces.
+
+Important: Both new cache variants are not integrated into Flows cache management at all,
+you need to take care of getting and flushing those caches, they are not flushed on
+`./flow flow:cache:flush`.
+
+* Packages: ``Cache``
+
+`FEATURE: Add Forwarded Header support <https://github.com/neos/flow-development-collection/pull/1269>`_
+--------------------------------------------------------------------------------------------------------
+
+This adds support for setting the standardized `Forwarded` Header as described in RFC 7239 Section 4 (https://tools.ietf.org/html/rfc7239#section-4), as the `headers` trusted proxy setting.
+Also, this change allows to set a single header value for the `headers`, so that working with the single `Forwarded` header is more convenient:
+
+```
+Neos:
+  Flow:
+    http:
+      trustedProxies:
+        headers: 'Forwarded'
+```
+
+Resolves: #1060
+
+* Packages: ``Flow``
+
+`BUGFIX: update documentation <https://github.com/neos/flow-development-collection/pull/1281>`_
+-----------------------------------------------------------------------------------------------
+
+fixes a part of https://github.com/neos/neos-development-collection/issues/2010
+
+* Packages: ``Flow``
+
+`Revert "!!!TASK: Only manage packages of a \`Neos\` type" <https://github.com/neos/flow-development-collection/pull/1278>`_
+----------------------------------------------------------------------------------------------------------------------------
+
+Reverts neos/flow-development-collection#1154
+
+* Packages: ``Flow`` ``Pdo`` ``Schema``
+
+`FEATURE: AOP for final methods <https://github.com/neos/flow-development-collection/pull/661>`_
+------------------------------------------------------------------------------------------------
+
+This adds support proxied `final` methods.
+Previously those were always skipped from proxy building disallowing to advice them via AOP aspects.
+
+Background:
+Marking methods `final` is an important tool for framework code as it allows to define extension points
+more explicitly, but until now we had to avoid the `final` keyword in order to support AOP.
+With this change any `final` modifier is removed from the original class and moved to the proxy class so
+that the behavior of the proxied class stays the same.
+
+Related: #516
+
+* Packages: ``Flow``
+
+`TASK: Update to Doctrine DBAL 2.7 and ORM 2.6 <https://github.com/neos/flow-development-collection/pull/1272>`_
+----------------------------------------------------------------------------------------------------------------
+
+When injecting `Doctrine\\Common\\Persistence\\ObjectManager` be aware that this is
+now deprecated, use `Doctrine\\ORM\\EntityManagerInterface` instead.
+
+* Packages: ``Flow`` ``FluidAdaptor``
+
+`!!!TASK: Add PHP 7.0 scalar type hints to method arguments and return types <https://github.com/neos/flow-development-collection/pull/991>`_
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+This is breaking because it changes the cache interfaces and all implementations need to add scalar typehints.
+The scope should be very limited though, since the amount of custom cache implementations is assumingly low. The most likely break will be with custom `*Privilege` implementations that also override the `getCacheEntryIdentifier()` method.
+
+* Packages: ``Flow``
+
+`TASK: Adjust to PhpUnit 7.1 <https://github.com/neos/flow-development-collection/pull/1271>`_
+----------------------------------------------------------------------------------------------
+
+* Packages: ``Arrays`` ``Cache`` ``Files`` ``Flow`` ``FluidAdaptor`` ``Lock`` ``MediaTypes`` ``Messages`` ``ObjectHandling`` ``Schema`` ``Unicode``
+
+`TASK: Add PHP 7.0 scalar type hints to method arguments and return types [Cli/Command] <https://github.com/neos/flow-development-collection/pull/1042>`_
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Flow``
+
+`TASK: Add PHP 7.0 scalar type hints to method arguments and return types [AOP/Cache] <https://github.com/neos/flow-development-collection/pull/1041>`_
+-------------------------------------------------------------------------------------------------------------------------------------------------------
+
+`TASK: Remove references to excludeClasses from object management <https://github.com/neos/flow-development-collection/pull/1252>`_
+-----------------------------------------------------------------------------------------------------------------------------------
+
+The setting ``Neos.Flow.excludeClasses`` was deprecated since a while
+but the code handling it was not removed until now.
+
+* Packages: ``Flow``
+
+`!!!TASK: Only scan Private/Translations for available locales <https://github.com/neos/flow-development-collection/pull/1234>`_
+--------------------------------------------------------------------------------------------------------------------------------
+
+Before the full `Resources/Private` folder was scanned for available locales, which also included
+for example the CLDR, which ended up filling the available locales with much more locales than
+are actually considered "available" in a normal Flow application.
+This will therefore allow applications to define available locales easily from the Translations
+provided.
+
+This is breaking, because it will end up with less available locales by default, since only the
+locales of Flow Translations are considered available, instead of all of CLDR locales.
+
+Related to #1232
+
+* Packages: ``Flow``
+
+`!!! TASK: Remove \`\`getValue\`\` from \`\`AbstractFormFieldViewHelper\`\` <https://github.com/neos/flow-development-collection/pull/1262>`_
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+The ``getValue`` method was deprecated since Flow 3.0 and should be
+replaced with calls to ``getValueAttribute()`` and if applicable
+to ``addAdditionalIdentityPropertiesIfNeeded()``.
+
+* Packages: ``FluidAdaptor``
+
+`!!! TASK: Remove deprecated \`\`getClassNameByObject\`\` <https://github.com/neos/flow-development-collection/pull/1254>`_
+---------------------------------------------------------------------------------------------------------------------------
+
+Use static ``TypeHandling::getTypeForValue`` as immediate replacement.
+
+* Packages: ``Flow``
+
+`TASK: Remove checks for old (pre 3.0) Policy configuration <https://github.com/neos/flow-development-collection/pull/1258>`_
+-----------------------------------------------------------------------------------------------------------------------------
+
+Unless someone upgrades straight to 5.0 from versions <3.0 this
+configuration shouldn't be in anything anymore. Therefore we
+should be able to safely remove the check and safe some resources
+in the ``ConfigurationManager``.
+
+* Packages: ``Flow``
+
+`!!! TASK: Remove \`\`getTemplateVariableContainer\`\` method <https://github.com/neos/flow-development-collection/pull/1261>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+This method was deprecated with the switch to standalone Fluid in
+Flow 4.0 to get closer to the ``RenderingContext`` in the base
+package. It is therefore now removed.
+
+Any calls to ``getTemplateVariableContainer`` can be replaced with calls to
+``getVariableProvider``.
+
+* Packages: ``FluidAdaptor``
+
+`!!! TASK: Remove deprecated cache parts in Flow <https://github.com/neos/flow-development-collection/pull/1251>`_
+------------------------------------------------------------------------------------------------------------------
+
+After splitting caches some deprecated classes were left over for
+backwards compatibility with existing configurations and backends.
+All of those are now removed just leaving some wrapper code to make
+cache creation in Flow easier.
+
+This is breaking if your cache configuration still used one of the
+deprecated ``Neos\\Flow\\Cache\\Backend\\...`` backend classes instead
+of the ``Neos\\Cache\\Backend\\...`` classes. Just adjust your
+configuration in this case. If you have a custom cache backend it
+also should implement the interface (and abstract class) from
+``Neos.Cache`` instead the now removed ones from ``Neos.Flow``.
+This should also be a rather easy code adjustment.
+
+* Packages: ``Flow``
+
+`TASK: Remove commented \`\`get\`\`/\`\`set\`\` Pattern <https://github.com/neos/flow-development-collection/pull/1256>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+This is a noop as the code was already commented and there
+only for reference apparently.
+
+* Packages: ``Flow``
+
+`!!! TASK: Remove deprecated \`\`ValidationResultsViewHelper\`\` <https://github.com/neos/flow-development-collection/pull/1255>`_
+----------------------------------------------------------------------------------------------------------------------------------
+
+This removes the old ``ValidationResultsViewHelper`` that was moved
+to be ``Validation\\\ResultsViewHelper``.
+
+So if you were still using ``<f:form.validationresults>`` you would
+now use ``<f:validation.results>``.
+
+* Packages: ``FluidAdaptor``
+
+`!!! TASK: Remove deprecated MediaType handling methods in Request <https://github.com/neos/flow-development-collection/pull/1253>`_
+------------------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Flow``
+
+`TASK: Remove deprecated \`\`setHostPattern\`\` method <https://github.com/neos/flow-development-collection/pull/1250>`_
+------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Flow``
+
+`TASK: Remove deprecated \`\`setControllerObjectNamePattern\`\` <https://github.com/neos/flow-development-collection/pull/1249>`_
+---------------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Flow``
+
+`!!! TASK: Remove deprecated unversioned \`\`XliffParser\`\` <https://github.com/neos/flow-development-collection/pull/1259>`_
+------------------------------------------------------------------------------------------------------------------------------
+
+The ``Neos\\Flow\\I18n\\Xliff\\XliffParser`` is fully replaced by the
+``Neos\\Flow\\I18n\\Xliff\\V12\\XliffParser`` so if you were still using
+the old unversioned class, you can simply switch to the new one.
+
+* Packages: ``Flow``
+
+`TASK: Remove deprecated \`\`RawViewHelper\`\` <https://github.com/neos/flow-development-collection/pull/1257>`_
+----------------------------------------------------------------------------------------------------------------
+
+This viewhelper is available in the standalone Fluid package
+we are using since last major and and it is not a problem if
+you are just using the viewhelper as it is automatically available
+just as this one. But if you extended this viewhelper for some
+you need to adapt to the original viewhelper.
+
+* Packages: ``FluidAdaptor``
+
+`TASK: Change package name to Neos.Flow <https://github.com/neos/flow-development-collection/pull/1248>`_
+---------------------------------------------------------------------------------------------------------
+
+In the caching section the flow package name was still TYPO3.Flow.
+So this PR changes the package name to the current Neos.Flow.
+
+* Packages: ``Flow``
+
+`BUGFIX: if cached configuration does not contain all configuration types, ensure on next run the configuration is cached again <https://github.com/neos/flow-development-collection/pull/1266>`_
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+## Problem Description
+
+the following happens in Production context, if letting the CLI compile request run through, but abort the web request.
+
+In this case:
+- the cached Configurations.php object does *not* contain information for NodeTypes etc.
+- thus, node types are loaded on every request
+- this leads to a slow system which can only be fixed by removing the cached Configuration file.
+
+To solve this issue, we now check whether the unprocessed configuration contains the right infos before serializing them.
+
+* Packages: ``Flow``
+
+`BUGFIX: Read currencyData from existing file <https://github.com/neos/flow-development-collection/pull/1265>`_
+---------------------------------------------------------------------------------------------------------------
+
+The feature worked and the test proved it. But both agreed on a filename
+that does not exist for real.
+
+Added with https://github.com/neos/flow-development-collection/pull/1241
+
+Thanks to @mficzel for finding that.
+
+* Packages: ``Flow``
+
+`[TASK] Compile CommandController arguments statically <https://github.com/neos/flow-development-collection/pull/2>`_
+---------------------------------------------------------------------------------------------------------------------
+
+Instead of using the ReflectionService at runtime to determine
+arguments for commands they will be compiled statically and just
+read from the array. Additionally this was centralized into the
+`CommandManager` as `CommandController`, `RequestBuilder` and
+`CommandManager` all fetched similar information from the
+`ReflectionService`.
+
+* Related: `NEOS-1294 <https://jira.neos.io/browse/NEOS-1294>`_
+* Packages: ``Flow``
+
+`BUGFIX: IPv6 support in Uri, parse_url and TrustedProxiesComponent <https://github.com/neos/flow-development-collection/pull/1240>`_
+-------------------------------------------------------------------------------------------------------------------------------------
+
+Fixes #1238
+
+`TASK: Remove deprecated \`\`setPattern\`\` method in \`\`Uri\`\` <https://github.com/neos/flow-development-collection/pull/1260>`_
+-----------------------------------------------------------------------------------------------------------------------------------
+
+The ``Neos\\Flow\\Security\\RequestPattern\\Uri`` contained the
+deprecated ``setPattern`` method still that removed from the
+interface and no longer used.
+
+Related: #1256
+
+* Packages: ``Flow``
+
+`!!! TASK: Remove deprecated \`\`BaseViewhelper\`\` <https://github.com/neos/flow-development-collection/pull/1247>`_
+---------------------------------------------------------------------------------------------------------------------
+
+The BaseViewHelper is deprecated since 2 major versions and
+it's not best practice to use base tags anymore. The functionality
+can be replicated by other means if needed.
+
+This is breaking if you use the ``BaseViewHelper`` in your templates.
+You should replace that with a simple HTML ``<base>`` tag and get
+the baseUri from request yourself.
+
+* Packages: ``FluidAdaptor``
+
+`TASK: Remove check for deprecated configuration from Flow 1.1 <https://github.com/neos/flow-development-collection/pull/1246>`_
+--------------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Flow``
+
+`FEATURE: Allow to use CLDR to format currency <https://github.com/neos/flow-development-collection/pull/1241>`_
+----------------------------------------------------------------------------------------------------------------
+
+Some currencies have specific rules for their formatting, overriding
+the rules that might be used to format for a given locale. The Japanese
+Yen for example never has decimal digits, and the Swiss Franc is rounded
+using five decimals.
+
+This change adds support for that. The CurrencyViewHelper accepts an
+optional `currencyCode` argument now and passes it down to the method
+`formatCurrencyNumber` in `NumberFormatter` doing the actual work.
+
+* Packages: ``Flow`` ``FluidAdaptor``
+
+`TASK: Enable test for log rotation in FileBackend <https://github.com/neos/flow-development-collection/pull/1224>`_
+--------------------------------------------------------------------------------------------------------------------
+
+The needed support for touch() and rename() in vfsStream exists by now.
+
+* Packages: ``Flow``
+
+`BUGFIX: Set orphanRemoval for non-AggregateRoots <https://github.com/neos/flow-development-collection/pull/1235>`_
+-------------------------------------------------------------------------------------------------------------------
+
+After fixing the issue #1079, orphan removal is per default false for properties from classes which are no aggregate roots, because the default value for orphan removal in the ManyToMany, OneToOne and OneToMany annotations is "false".
+Unfortunately we can not prevent the default value in the annotation, so we can not rely on the property not being set to fall back to our defaults.
+This change Fixes that by switching the check for orphanRemoval annotation value fallbacks and always apply our default value for non-aggregate root non-value objects.
+
+Fixes #1127
+
+`FEATURE: Allow authentication of specified user in behavior tests <https://github.com/neos/flow-development-collection/pull/1221>`_
+------------------------------------------------------------------------------------------------------------------------------------
+
+This allows for defining users by identifier and then using them in behavioral test cases
+
+* Packages: ``Flow``
+
+`[TASK] Include Exception class in ExceptionHandler with full path <https://github.com/neos/flow-development-collection/pull/1>`_
+---------------------------------------------------------------------------------------------------------------------------------
+
+The ExceptionHandler includes the Flow Exception class directly by using
+the relative path. This might not work out if at some point we decide to
+combine autoloaded classes as this class is autoloaded and the relative
+path will be wrong then. Using the FLOW_PATH_FLOW constant we can easily
+construct a full path to the file.
+
+* Packages: ``Flow``
+
+`TASK: Use RouterInterface instead of concrete implementation <https://github.com/neos/flow-development-collection/pull/1228>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+Currently the concrete `Router` Implementation is used instead of the more flexible `RouterInterface`.
+
+This PR ensures the `RouterInterface` is used. 
+
+* Packages: ``Flow``
+
+`FEATURE: Add APCu cache backend <https://github.com/neos/flow-development-collection/pull/1218>`_
+--------------------------------------------------------------------------------------------------
+
+This adds a new cache backend for use with the "APC User Cache" (APCu).
+
+Since the APC "extension is considered unmaintained and dead" according
+to the PHP manual, this also removes the `ApcBackend`.
+
+* Packages: ``Cache`` ``Flow``
+
+`TASK: Pass affected entities to flush as array, not one-by-one <https://github.com/neos/flow-development-collection/pull/1225>`_
+---------------------------------------------------------------------------------------------------------------------------------
+
+The `ObjectPathMappingRepository.persistEntities()` method looped over
+the entities and passed them to `flush()` one-by-one. They can be passed
+as the array at hand directly.
+
+* Packages: ``Flow``
+
+`FEATURE: Add \`remove\` flowQuery operation <https://github.com/neos/flow-development-collection/pull/1219>`_
+--------------------------------------------------------------------------------------------------------------
+
+The operation removes the given items from the current FlowQuery context. To do so it accepts a single argument that may be an array, an object or a FlowQuery.
+
+* Packages: ``Eel``
+
+`SECURITY: Update paragonie/random_compat to 2.x minimum <https://github.com/neos/flow-development-collection/pull/1223>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+The `paragonie/random_compat` library could use OpenSSL, and that in turn
+could lead to the use of an insecure CSPRNG (openssl_random_pseudo_bytes())
+
+Related Information: https://github.com/paragonie/random_compat/issues/96
+
+This change fixes #1222 by updating the dependency from `^1.0` to `^2.0`.
+
+`TASK: Make Now immutable <https://github.com/neos/flow-development-collection/pull/1220>`_
+-------------------------------------------------------------------------------------------
+
+This simply replaces Now's base class \\DateTime with \\DateTimeImmutable as planned since 4.0
+
+* Packages: ``Flow``
+
+`BUGFIX: Avoid useless calls to verifyRedisVersionIsSupported() <https://github.com/neos/flow-development-collection/pull/1217>`_
+---------------------------------------------------------------------------------------------------------------------------------
+
+The `set()` call returns a boolean, so the check `instanceof \\Redis` always fails.
+That means on every set, the "supported version check" is run.
+
+* Packages: ``Cache`` ``Flow``
+
+`!!! TASK: Add factory method to \`\`AuthenticationProviderInterface\`\` <https://github.com/neos/flow-development-collection/pull/1213>`_
+------------------------------------------------------------------------------------------------------------------------------------------
+
+There was a long standing comment about having the constructor be part
+of the interface but that was deactivated back in the day as the proxy
+constructor was incompatible with the interface then. A interface
+defined way of creating an ``AuthenticationProvider`` makes sense though
+therefore we introduce a static ``create`` method that returns a fresh
+instance of the class in question. This removes the implicit knowledge
+about the constructor in the code.
+
+This is breaking if you implemented your own
+``AuthenticationProviderInterface`` without making use of the
+``AbstractProvider`` which provides a basic ``create`` method.
+You may need to add this create method in your implementation.
+
+* Packages: ``Flow``
+
+`BUGFIX: Behat subprocess should escape paths in command <https://github.com/neos/flow-development-collection/pull/1210>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Flow``
+
+`TASK: Re-enable PersistenceMagicAspectTest <https://github.com/neos/flow-development-collection/pull/1208>`_
+-------------------------------------------------------------------------------------------------------------
+
+These tests were skipped since it was adapted to new namespaces
+because a wrong use statement was added back then.
+
+This brings back 14 tests by fixing that.
+
+* Packages: ``Flow``
+
+`FEATURE: Introduce findAllIterator() method <https://github.com/neos/flow-development-collection/pull/1207>`_
+--------------------------------------------------------------------------------------------------------------
+
+> If the amount of the stored data increases, receiving all objects using a ``findAll()`` may
+> consume a lot more memory than available. In this cases, you should use the ``findAllIterator()``.
+> This method returns an ``IterableResult``over which you can iterate, getting only one object at a time.
+
+As this pattern is used a lot in Neos repositories, it would make sense to move it to the base repository class.
+
+* Packages: ``Flow``
+
+`BUGFIX: Fix deprecated Symfony console helper implementations <https://github.com/neos/flow-development-collection/pull/1195>`_
+--------------------------------------------------------------------------------------------------------------------------------
+
+Due to the upgrade to symfony/console 4.0 some implementations for utilized CLI helpers changed. 
+Unit tests were added for all console output helpers to prevent similar breakdowns in the future.
+
+regression https://github.com/neos/flow-development-collection/pull/1179
+
+* Packages: ``Flow``
+
+`TASK: Adapt Security ViewHelpers to support recent Fluid version <https://github.com/neos/flow-development-collection/pull/1198>`_
+-----------------------------------------------------------------------------------------------------------------------------------
+
+This change avoid the following exception:
+
+    Argument "then" has already been defined, thus it should not be defined again.
+
+* Packages: ``FluidAdaptor``
+
+`Apply fixes from StyleCI <https://github.com/neos/flow-development-collection/pull/1203>`_
+-------------------------------------------------------------------------------------------
+
+This pull request applies code style fixes from an analysis carried out by [StyleCI](https://styleci.io).
+
+---
+
+For more information, click [here](https://styleci.io/analyses/8j94wR).
+
+* Packages: ``Flow``
+
+`Apply fixes from StyleCI <https://github.com/neos/flow-development-collection/pull/1197>`_
+-------------------------------------------------------------------------------------------
+
+This pull request applies code style fixes from an analysis carried out by [StyleCI](https://styleci.io).
+
+---
+
+For more information, click [here](https://styleci.io/analyses/qJmZpb).
+
+* Packages: ``Flow``
+
+`FEATURE: Add PHPs json_encode options to stringify eel helper <https://github.com/neos/flow-development-collection/pull/1128>`_
+--------------------------------------------------------------------------------------------------------------------------------
+
+This feature adds the possibility to pass option constants to the Json.stringify Eel helper. This is needed for example if you want to have unescaped UTF8 characters in the output.
+
+The usage looks like this:
+
+    @process.jsonStringify = ${Json.stringify(value, ['JSON_UNESCAPED_UNICODE', 'JSON_FORCE_OBJECT'])}
+
+It may look a bit weird on the first look to pass PHP options to a Javascript-like function. But its a PHP method in the end that does the encoding, so the PHP constants are the right options here. 
+
+* Packages: ``Eel``
+
+`!!!TASK: Only manage packages of a \`Neos\` type <https://github.com/neos/flow-development-collection/pull/1154>`_
+-------------------------------------------------------------------------------------------------------------------
+
+Our package management should never touch third party packages ever
+and should only have to deal with packages made for Flow and Neos.
+Those packages are the only ones expected to have Configuration,
+Resources and a Package file. Everything else should be handled as
+black box.
+This serves two purposes, one it shortens the bootstrap time by not
+having as many packages to boot. Basically third party packages now
+do not matter anymore in terms of boot performance.
+Secondly it further reduces the scope of the package manager which
+should ultimately be minimal.
+
+This modifies the package manager to only care for packages which
+have a `neos-*` package type. Everything else will not be seen anymore.
+
+This is marked breaking just because it is a big change, technically
+your packages should always be `neos-*` type if you wanted them handled
+by Flow and Neos.
+
+* Packages: ``Flow``
+
+`FEATURE: Enable split source for settings files <https://github.com/neos/flow-development-collection/pull/1193>`_
+------------------------------------------------------------------------------------------------------------------
+
+Settings can now be split source.
+The Flow Settings now come split to make finding something easier.
+
+Additionally files with the same name as a configuration source but with ``yml``
+extension will result in an exception to avoid confusion.
+
+Fixes: #1180
+
+* Packages: ``Flow``
+
+`TASK: Cache expressions as strings <https://github.com/neos/flow-development-collection/pull/1167>`_
+-----------------------------------------------------------------------------------------------------
+
+This might seem counter-intuitive at first but serves two purposes:
+
+1) Incremental change to the expressions is possible now, before
+a change in policy protected classes would usually lead to an exception
+and required you to flush the full cache, this prevents the issue and
+therefore makes developing much smoother.
+
+2) Caches can be moved to redis or any other backend as it's only
+strings now.
+
+The second part also makes a further separation of EEL and Flow
+possible in the future, eventually allowing EEL to be come a package
+that could be used independently from Flow.
+
+* Packages: ``Eel`` ``Flow``
+
+`TASK: Updated some images in documentation <https://github.com/neos/flow-development-collection/pull/1190>`_
+-------------------------------------------------------------------------------------------------------------
+
+Updated some documentation images to get rid of the old FLOW3 stuff.
+
+* Packages: ``Flow``
+
+`!!! TASK: Make ObjectManagerInterface a superset of PSR-11 <https://github.com/neos/flow-development-collection/pull/1176>`_
+-----------------------------------------------------------------------------------------------------------------------------
+
+Makes the ``ObjectManagerInterface`` fully compatible with
+the PSR-11 ``ContainerInterface``.
+
+This is a breaking change in case you implemented
+``ObjectManagerInterface`` because you would have to implement the
+``has`` method now in your implementation.
+
+* Packages: ``Flow``
+
+`TASK: Update standalone Fluid to 2.3.x <https://github.com/neos/flow-development-collection/pull/1159>`_
+---------------------------------------------------------------------------------------------------------
+
+Pulling in the latest improvements in Fluid.
+
+One major improvement is the addition of an escaping toggle: 
+
+```
+{escaping off}
+```
+
+In a template, layout or partial. When toggled off it causes the template parser to skip escaping of all outputs from ViewHelpers, variable outputs etc.
+
+For legacy reasons the feature is added with backwards compatibility for the original escaping modifier. Therefore, the following values are all equally possible and mean the same:
+
+```
+{escaping off}
+{escapingEnabled off}
+{escaping false}
+{escaping=false}
+{escaping=off}
+{escaping = off}
+{escapingEnabled = off}
+{escapingEnabled = false}
+{escapingEnabled off}
+{escapingEnabled false}
+```
+
+* Packages: ``Flow`` ``FluidAdaptor``
+
+`!!!TASK: Remove deactivating packages from the package manager <https://github.com/neos/flow-development-collection/pull/1156>`_
+---------------------------------------------------------------------------------------------------------------------------------
+
+Packages no longer have state, they are either available or not
+available entirely depending on the fact if they are installed.
+The API is changed accordingly to reflect this change.
+
+The implemented ``PackageManager`` still supports the
+``getActivePackages`` and ``isPackageActive`` methods for
+backwards compatibility but both are deprecated and removed from
+the interface.
+
+This is breaking if you rely on the functionality and requires
+future changes if you use the deprecated methods.
+
+* Packages: ``Flow``
+
+`TASK: Fix code format in docs <https://github.com/neos/flow-development-collection/pull/1182>`_
+------------------------------------------------------------------------------------------------
+
+- Add code-block syntax to format php code as php code.
+- Fix indentation in code example 
+- Indent using spaces instead of tabs.
+- Fix position of curly braces.
+
+* Packages: ``Flow``
+
+`BUGFIX: Respect configured baseUri when resolving URIs <https://github.com/neos/flow-development-collection/pull/1185>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+This fixes a regression intdroduced with #1126 that prevented
+the configured `baseUri` from being respected when building
+URIs using the `UriBuilder`.
+
+Background:
+
+Instead of using the *Request URI* as base for generated URIs
+this fix uses the *Request Base URI*.
+Usually the result is the same, but not if a different `baseUri` is
+configured from the one being requested.
+
+Fixes: #1184
+
+* Packages: ``Flow`` ``FluidAdaptor``
+
+`BUGFIX: Fix typo in \`DebugViewHelper\` <https://github.com/neos/flow-development-collection/pull/1183>`_
+----------------------------------------------------------------------------------------------------------
+
+Fixes a typo that was introduced in #1036
+
+* Packages: ``FluidAdaptor``
+
+`TASK: Allow debugging of "silent command failures" <https://github.com/neos/flow-development-collection/pull/1181>`_
+---------------------------------------------------------------------------------------------------------------------
+
+Sometimes a subcommand execution fails without a proper error message. And
+it may happen that even the PHP error is empty at this point.
+
+The error may be "Argument list too long", but this cannot be debugged
+easily.
+
+This change dumps the command that was to be executed into a file, if the
+length of the command exceeds a threshhold. One can then run it manually
+and hopefully see a helpful error message.
+
+`TASK: Update symfony and doctrine dependencies <https://github.com/neos/flow-development-collection/pull/1179>`_
+-----------------------------------------------------------------------------------------------------------------
+
+This change updates the following packages to recent versions:
+
+- doctrine/migrations: ~1.3.0 -> ~1.6.0
+- doctrine/dbal: ~2.5.0 -> ~2.6.0
+- symfony/yaml: ~2.8.0 -> ~4.0.0
+- symfony/dom-crawler: ~2.8.0 -> ~4.0.0
+- symfony/console: ~2.8 -> ~4.0.0
+
+* Packages: ``Flow``
+
+`DOCUMENTATION: Removed dev composer option since it's deprecated <https://github.com/neos/flow-development-collection/pull/1178>`_
+-----------------------------------------------------------------------------------------------------------------------------------
+
+The option --dev is deprecated. Dev packages are installed by default.
+
+* Packages: ``Flow``
+
+`BUGFIX: Pass signal information once, not once more for each slot <https://github.com/neos/flow-development-collection/pull/1177>`_
+------------------------------------------------------------------------------------------------------------------------------------
+
+Signals can pass arguments to slots. These are amended with signal information,
+if desired.
+
+Because slots are hadled in a loop, and the passed signal arguments array was
+used in that loop, the addition of the signal information was done mutliple
+times, if requested.
+
+This change makes sure that the signal information is only added once.
+
+`FEATURE: FileHelper to read files and metadata about files <https://github.com/neos/flow-development-collection/pull/1174>`_
+-----------------------------------------------------------------------------------------------------------------------------
+
+Adds a basic FileHelper to allow reading files and getting
+file metadata from EEL.
+
+* Packages: ``Eel`` ``Flow``
+
+`BUGFIX: Fix DateTimeImmutable property mapping for custom date formats <https://github.com/neos/flow-development-collection/pull/1175>`_
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+This fixes support for mapping of `DateTimeImmutable` properties introduced
+with #677.
+
+Background:
+
+If the source is an array (for example when specifying `date` as well as
+`dateFormat`) the conversion fails because `DateTimeConverter::overrideTimeIfSpecified()`
+still used the `DateTime` type hint.
+This change adjusts the code so that it works with `DateTimeImmutable`
+instances as well.
+
+Related: #677
+
+* Packages: ``Flow``
+
+`BUGIFX: RsaWalletServicePhpTest broken depends on PHP configuration <https://github.com/neos/flow-development-collection/pull/1173>`_
+--------------------------------------------------------------------------------------------------------------------------------------
+
+This change fixes `RsaWalletServicePhpTest` on recent Alpine Linux with
+PHP 7.2 (at least, maybe other system can be affected too). I didn't find
+a clear documentation about the reason of this failure:
+
+    1) Neos\\Flow\\Tests\\Unit\\Security\\Cryptography\\RsaWalletServicePhpTest::encryptingAndDecryptingBasicallyWorks
+    openssl_pkey_new(): private key length is too short; it needs to be at least 384 bits, not 0
+
+    /…/Classes/Security/Cryptography/RsaWalletServicePhp.php:92
+    /…/Tests/Unit/Security/Cryptography/RsaWalletServicePhpTest.php:49
+
+This configuration is as light as possible to not slow down the test suite too much.
+
+`FEATURE: Make ObjectManager compatible to PSR-11 <https://github.com/neos/flow-development-collection/pull/1163>`_
+-------------------------------------------------------------------------------------------------------------------
+
+PSR-11 is the container interface and it is rather easy to make the
+ObjectManager compatible with it, so here we are.
+
+* Packages: ``Flow``
+
+`!!! TASK: Fix ViewHelpers and remove render attributes <https://github.com/neos/flow-development-collection/pull/1036>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+Refactor most view helpers to don't use arguments inside the render function to fit
+more to the Fluid creation and get rid of the current reflection workaround in the
+future, see #842.
+
+Also changes the `disabled` and `required` attribute to boolean and fixes the
+FluidAdaptor accordingly.
+
+Also fixes issue #637 so security view helpers without the security context set
+will return `false` and no error.
+
+Also fixes issue #930 for the wrong type definition.
+
+* Packages: ``FluidAdaptor``
+
+`FEATURE: Add eel method to create object from string <https://github.com/neos/flow-development-collection/pull/1170>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Eel``
+
+`TASK: Code and speed optimizations <https://github.com/neos/flow-development-collection/pull/1155>`_
+-----------------------------------------------------------------------------------------------------
+
+Some small improvements in the code base that should all improve
+runtime speed.
+
+* Packages: ``Flow``
+
+`BUGFIX: Return path in ThrowableStorage/FileStorage error message <https://github.com/neos/flow-development-collection/pull/1166>`_
+------------------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Flow`` ``FluidAdaptor``
+
+`!!!TASK: Require PHP 7.1 <https://github.com/neos/flow-development-collection/pull/1160>`_
+-------------------------------------------------------------------------------------------
+
+This raises the PHP version requirement for framework packages to
+PHP 7.1 to be able to use a bunch of useful features for us in the
+future.
+
+Eg. iterable pseudo type, nullable types, void returns and more.
+
+* Packages: ``Flow`` ``FluidAdaptor``
+
+`BUGFIX: Add doctrine mapping type only once <https://github.com/neos/flow-development-collection/pull/1165>`_
+--------------------------------------------------------------------------------------------------------------
+
+If you instantiate an additional entityManager in order to connect
+to a second database the mappingTypes are added again
+which leads to an error.
+
+* Packages: ``Flow`` ``FluidAdaptor``
+
+`BUGFIX: Fix duplicate configuration keys in schema files <https://github.com/neos/flow-development-collection/pull/1164>`_
+---------------------------------------------------------------------------------------------------------------------------
+
+The latest symfony yaml parser is much more strict. This PR fixes duplicate keys in schema files.
+
+* Packages: ``Flow`` ``FluidAdaptor``
+
+`BUGFIX: Respect \`void\` return type annotation in proxy method <https://github.com/neos/flow-development-collection/pull/1152>`_
+----------------------------------------------------------------------------------------------------------------------------------
+
+This is a follow-up to #1091 that didn't entirely fix the bug
+mentioned in #1065.
+
+Background:
+
+When using the `void` return type annotation the corresponding
+method must not return anything but by default the proxy method
+is rendered like:
+
+```
+// ...
+$result = parent::originalMethod();
+return $result;
+// ...
+```
+
+`!!!TASK: Add PHP 7.0 scalar type hints to method arguments and return types <https://github.com/neos/flow-development-collection/pull/999>`_
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+This is only breaking for classes implementing `LockStrategyInterface`, whose signature now requires scalar typehints.
+
+* Packages: ``Lock``
+
+`BUGFIX: routing:routepath command does not use routing DTOs <https://github.com/neos/flow-development-collection/pull/1158>`_
+------------------------------------------------------------------------------------------------------------------------------
+
+Before this fix, calling `./flow routing:routepath /somePath` will result in something like
+
+```
+Argument 1 passed to Neos\\Flow\\Mvc\\Routing\\Route_Original::matches() must be an instance of Neos\\Flow\\Mvc\\Routing\\Dto\\RouteContext, instance of Neos\\Flow\\Http\\Request given, called in /flowRootPath/Data/Temporary/Development/SubContextFritjofBohm/Cache/Code/Flow_Object_Classes/Neos_Flow_Command_RoutingCommandController.php on line 179
+```
+
+With this fix, the command uses the right DTOs that were introduced with 4.3.
+
+* Packages: ``Flow``
+
+`BUGFIX: catch NoMatchingRouteException to fix the RedirectHandler <https://github.com/neos/flow-development-collection/pull/1157>`_
+------------------------------------------------------------------------------------------------------------------------------------
+
+**What I did**
+When no route is found the NoMatchingRouteException is now thrown, which breaks up the http component chain, so the RedirectHandlerComponent is never reached.
+This change swallows the exception.
+
+**How to verify it**
+
+Install the redirect handler extension and make sure the redirects work.
+
+**Checklist**
+
+- [x] Code follows the PSR-2 coding style
+- [ ] Tests have been created, run and adjusted as needed
+- [x] The PR is created against the [lowest maintained branch](https://www.neos.io/features/release-roadmap.html)
+
+* Packages: ``Flow``
+
+`TASK: Add some documentation to array:indexOf Eel helper <https://github.com/neos/flow-development-collection/pull/1130>`_
+---------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Eel``
+
+`TASK: Correct expected/actual order in assertion <https://github.com/neos/flow-development-collection/pull/1150>`_
+-------------------------------------------------------------------------------------------------------------------
+
+This fixes the wrong order of expected and actual parameters to an
+`assertSame()` call. Can be confusing if you check test results…
+
+* Packages: ``Flow``
+
+`BUGFIX: Tag routes with UUIDs of entities in route values <https://github.com/neos/flow-development-collection/pull/1149>`_
+----------------------------------------------------------------------------------------------------------------------------
+
+This is a follow up to #1126 fixing the automatic tagging of
+routes in `RouterCachingService::storeResolvedUriConstraints()` that
+no longer included the UUIDs of entities in route values.
+
+Related: #1120
+
+* Packages: ``Flow``
+
+`BUGFIX: Add missing dependency to neos/flow-log <https://github.com/neos/flow-development-collection/pull/1148>`_
+------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Flow``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/4.3.0...5.0.0>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

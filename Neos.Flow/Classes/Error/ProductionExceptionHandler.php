@@ -66,7 +66,7 @@ class ProductionExceptionHandler extends AbstractExceptionHandler
      * @param string $referenceCode
      * @return string
      */
-    protected function renderStatically(int $statusCode, string $referenceCode): string
+    protected function renderStatically(int $statusCode, ?string $referenceCode): string
     {
         $statusMessage = Response::getStatusMessageByCode($statusCode);
         $referenceCodeMessage = ($referenceCode !== null) ? '<p>When contacting the maintainer of this application please mention the following reference code:<br /><br />' . $referenceCode . '</p>' : '';

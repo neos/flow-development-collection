@@ -322,6 +322,7 @@ class HeadersTest extends UnitTestCase
 
     /**
      * @test
+     * @doesNotPerformAssertions
      *
      * Note: This is a fix for https://jira.neos.io/browse/FLOW-324 (see https://code.google.com/p/chromium/issues/detail?id=501095)
      */
@@ -329,9 +330,6 @@ class HeadersTest extends UnitTestCase
     {
         $headers = new Headers();
         $headers->set('HTTPS', 1);
-
-        // dummy assertion to suppress PHPUnit warning
-        $this->assertTrue(true);
     }
 
     /**
