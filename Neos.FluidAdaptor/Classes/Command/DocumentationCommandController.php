@@ -45,8 +45,7 @@ class DocumentationCommandController extends CommandController
      */
     public function generateXsdCommand(
         $phpNamespace, $xsdNamespace = null, $targetFile = null, $xsdDomain = ''
-    )
-    {
+    ) {
         $xsdDomain = trim($xsdDomain);
         $parsedDomain = parse_url($xsdDomain);
         if (empty($xsdDomain) || !isset($parsedDomain['host'], $parsedDomain['scheme'])) {
