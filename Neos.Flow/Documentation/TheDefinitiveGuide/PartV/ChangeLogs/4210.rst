@@ -1,0 +1,133 @@
+`4.2.10 (2018-05-16) <https://github.com/neos/flow-development-collection/releases/tag/4.2.10>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: The Request object should not be mutated after creation <https://github.com/neos/flow-development-collection/pull/1287>`_
+----------------------------------------------------------------------------------------------------------------------------------
+
+Fixes #1123
+
+`TASK: Add test for empty resource upload <https://github.com/neos/flow-development-collection/pull/1290>`_
+-----------------------------------------------------------------------------------------------------------
+
+This shows that #542 is no longer relevant.
+
+Resolves #542
+
+* Packages: ``Flow``
+
+`TASK: Add a link to latest doctrine documentation in example Settings <https://github.com/neos/flow-development-collection/pull/1289>`_
+----------------------------------------------------------------------------------------------------------------------------------------
+
+Resolves #526
+
+* Packages: ``Flow``
+
+`BUGFIX: Render debugger-styles directly with first debug-output <https://github.com/neos/flow-development-collection/pull/1286>`_
+----------------------------------------------------------------------------------------------------------------------------------
+
+The styles for rendering the debug-output are now rendered with the
+first output itself instead of being echoed.
+
+The direct echo solution caused trouble whenever non html-data like
+json was rendered because the styles were rendered outside the json-structure 
+and thus caused invalid json.
+
+* Packages: ``Flow``
+
+`BUGFIX: Respect given locale when checking general translation path <https://github.com/neos/flow-development-collection/pull/1088>`_
+--------------------------------------------------------------------------------------------------------------------------------------
+
+ for label overrides
+
+This seems to have been forgotten in the original implementation and lead to inconsistent behavior when override labels were present in multiple languages
+
+* Packages: ``Flow`` ``Unicode``
+
+`TASK: Move object validation out of PersistenceManager <https://github.com/neos/flow-development-collection/pull/1192>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+This moves the code used to validate objects using the onFlush event
+of Doctrine out of the PersistenceManager and into it's own class.
+
+The listener is then added using Flow settings, instead of PHP code
+inside PersistenceManager.initializeObject().
+
+* Packages: ``Flow`` ``Unicode``
+
+`BUGFIX: Detect checked state for bound object collections <https://github.com/neos/flow-development-collection/pull/1230>`_
+----------------------------------------------------------------------------------------------------------------------------
+
+When a collection property with objects is bound to a checkbox VH,
+this change makes sure to check object identifiers against the passed
+value when automatically determining the `checked` state.
+
+Fixes #1229
+
+* Packages: ``FluidAdaptor``
+
+`BUGFIX: if cached configuration does not contain all configuration types, ensure on next run the configuration is cached again <https://github.com/neos/flow-development-collection/pull/1266>`_
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+## Problem Description
+
+the following happens in Production context, if letting the CLI compile request run through, but abort the web request.
+
+In this case:
+- the cached Configurations.php object does *not* contain information for NodeTypes etc.
+- thus, node types are loaded on every request
+- this leads to a slow system which can only be fixed by removing the cached Configuration file.
+
+To solve this issue, we now check whether the unprocessed configuration contains the right infos before serializing them.
+
+* Packages: ``Flow``
+
+`[TASK] Compile CommandController arguments statically <https://github.com/neos/flow-development-collection/pull/2>`_
+---------------------------------------------------------------------------------------------------------------------
+
+Instead of using the ReflectionService at runtime to determine
+arguments for commands they will be compiled statically and just
+read from the array. Additionally this was centralized into the
+`CommandManager` as `CommandController`, `RequestBuilder` and
+`CommandManager` all fetched similar information from the
+`ReflectionService`.
+
+* Related: `NEOS-1294 <https://jira.neos.io/browse/NEOS-1294>`_
+* Packages: ``Flow``
+
+`BUGFIX: IPv6 support in Uri, parse_url and TrustedProxiesComponent <https://github.com/neos/flow-development-collection/pull/1240>`_
+-------------------------------------------------------------------------------------------------------------------------------------
+
+Fixes #1238
+
+`TASK: Enable test for log rotation in FileBackend <https://github.com/neos/flow-development-collection/pull/1224>`_
+--------------------------------------------------------------------------------------------------------------------
+
+The needed support for touch() and rename() in vfsStream exists by now.
+
+* Packages: ``Flow``
+
+`BUGFIX: Set orphanRemoval for non-AggregateRoots <https://github.com/neos/flow-development-collection/pull/1235>`_
+-------------------------------------------------------------------------------------------------------------------
+
+After fixing the issue #1079, orphan removal is per default false for properties from classes which are no aggregate roots, because the default value for orphan removal in the ManyToMany, OneToOne and OneToMany annotations is "false".
+Unfortunately we can not prevent the default value in the annotation, so we can not rely on the property not being set to fall back to our defaults.
+This change Fixes that by switching the check for orphanRemoval annotation value fallbacks and always apply our default value for non-aggregate root non-value objects.
+
+Fixes #1127
+
+`[TASK] Include Exception class in ExceptionHandler with full path <https://github.com/neos/flow-development-collection/pull/1>`_
+---------------------------------------------------------------------------------------------------------------------------------
+
+The ExceptionHandler includes the Flow Exception class directly by using
+the relative path. This might not work out if at some point we decide to
+combine autoloaded classes as this class is autoloaded and the relative
+path will be wrong then. Using the FLOW_PATH_FLOW constant we can easily
+construct a full path to the file.
+
+* Packages: ``Flow``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/4.2.9...4.2.10>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
