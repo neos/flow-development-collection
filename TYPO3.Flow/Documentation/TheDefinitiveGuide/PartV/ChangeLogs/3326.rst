@@ -1,0 +1,33 @@
+`3.3.26 (2018-05-16) <https://github.com/neos/flow-development-collection/releases/tag/3.3.26>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: The Request object should not be mutated after creation <https://github.com/neos/flow-development-collection/pull/1287>`_
+----------------------------------------------------------------------------------------------------------------------------------
+
+Fixes #1123
+
+* Packages: ``Flow``
+
+`BUGFIX: IPv6 support in Uri, parse_url and TrustedProxiesComponent <https://github.com/neos/flow-development-collection/pull/1240>`_
+-------------------------------------------------------------------------------------------------------------------------------------
+
+Fixes #1238
+
+* Packages: ``Flow``
+
+`BUGFIX: Set orphanRemoval for non-AggregateRoots <https://github.com/neos/flow-development-collection/pull/1235>`_
+-------------------------------------------------------------------------------------------------------------------
+
+After fixing the issue #1079, orphan removal is per default false for properties from classes which are no aggregate roots, because the default value for orphan removal in the ManyToMany, OneToOne and OneToMany annotations is "false".
+Unfortunately we can not prevent the default value in the annotation, so we can not rely on the property not being set to fall back to our defaults.
+This change Fixes that by switching the check for orphanRemoval annotation value fallbacks and always apply our default value for non-aggregate root non-value objects.
+
+Fixes #1127
+
+* Packages: ``Flow``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/3.3.25...3.3.26>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
