@@ -1,0 +1,32 @@
+`5.0.3 (2018-05-16) <https://github.com/neos/flow-development-collection/releases/tag/5.0.3>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`TASK: Don’t set return type for RedisBackend->key() <https://github.com/neos/flow-development-collection/pull/1314>`_
+------------------------------------------------------------------------------------------------------------------------
+
+Fixes #1311 
+
+* Packages: ``Cache``
+
+`BUGFIX: The Request object should not be mutated after creation <https://github.com/neos/flow-development-collection/pull/1287>`_
+----------------------------------------------------------------------------------------------------------------------------------
+
+Fixes #1123
+
+`TASK: Enable test that was skipped due to Doctrine bug <https://github.com/neos/flow-development-collection/pull/1307>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Flow``
+
+`BUGFIX: Remove usage of removed f:base viewhelper from kickstarter <https://github.com/neos/flow-development-collection/pull/1303>`_
+-------------------------------------------------------------------------------------------------------------------------------------
+
+Removes the f:base viewhelper from kickstarted Layout template file since the viewhelper does no longer exist.
+
+* Packages: ``Flow`` ``Kickstarter``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/5.0.2...5.0.3>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
