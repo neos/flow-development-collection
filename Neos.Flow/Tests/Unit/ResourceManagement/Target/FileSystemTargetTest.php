@@ -16,9 +16,7 @@ use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Http\HttpRequestHandlerInterface;
 use Neos\Flow\Http\Request;
 use Neos\Flow\Http\Uri;
-use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use Neos\Flow\Package;
 use Neos\Flow\Package\PackageManager;
 use Neos\Flow\ResourceManagement\Collection;
 use Neos\Flow\ResourceManagement\PersistentResource;
@@ -26,6 +24,7 @@ use Neos\Flow\ResourceManagement\Storage\PackageStorage;
 use Neos\Flow\ResourceManagement\Target\FileSystemTarget;
 use Neos\Flow\Tests\UnitTestCase;
 use org\bovigo\vfs\vfsStream;
+use Psr\Log\LoggerInterface;
 
 /**
  * Tests for the FileSystemTarget class
@@ -216,7 +215,7 @@ class FileSystemTargetTest extends UnitTestCase
         $packageStorage = new PackageStorage('testStorage');
         $packageStorage->initializeObject(ObjectManagerInterface::INITIALIZATIONCAUSE_CREATED);
 
-        $mockSystemLogger = $this->getMockBuilder(SystemLoggerInterface::class)->getMock();
+        $mockSystemLogger = $this->getMockBuilder(LoggerInterface::class)->getMock();
 
         $this->inject($packageStorage, 'packageManager', $packageManager);
 
@@ -230,7 +229,7 @@ class FileSystemTargetTest extends UnitTestCase
 
         $fileSystemTarget = new FileSystemTarget('test', ['path' => 'vfs://Test/Publish']);
         $fileSystemTarget->initializeObject(ObjectManagerInterface::INITIALIZATIONCAUSE_CREATED);
-        $this->inject($fileSystemTarget, 'systemLogger', $mockSystemLogger);
+        $fileSystemTarget->injectLogger($mockSystemLogger);
         $fileSystemTarget->publishCollection($staticCollection, $_publicationCallback);
 
         $this->assertTrue($oneResourcePublished);

@@ -11,22 +11,20 @@ namespace Neos\Flow\Persistence\Doctrine;
  * source code.
  */
 
-use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception\ConnectionException;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Tools\SchemaTool;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Log\SystemLoggerInterface;
+use Neos\Flow\Log\ThrowableStorageInterface;
 use Neos\Flow\Persistence\AbstractPersistenceManager;
 use Neos\Flow\Persistence\Exception\KnownObjectException;
-use Neos\Flow\Persistence\Exception\ObjectValidationFailedException;
 use Neos\Flow\Persistence\Exception as PersistenceException;
 use Neos\Flow\Persistence\Exception\UnknownObjectException;
-use Neos\Flow\Reflection\ClassSchema;
 use Neos\Utility\ObjectAccess;
 use Neos\Flow\Reflection\ReflectionService;
-use Neos\Utility\TypeHandling;
 use Neos\Flow\Validation\ValidatorResolver;
+use Psr\Log\LoggerInterface;
 
 /**
  * Flow's Doctrine PersistenceManager
@@ -37,14 +35,19 @@ use Neos\Flow\Validation\ValidatorResolver;
 class PersistenceManager extends AbstractPersistenceManager
 {
     /**
-     * @Flow\Inject
-     * @var SystemLoggerInterface
+     * @var LoggerInterface
      */
-    protected $systemLogger;
+    protected $logger;
 
     /**
      * @Flow\Inject
-     * @var ObjectManager
+     * @var ThrowableStorageInterface
+     */
+    protected $throwableStorage;
+
+    /**
+     * @Flow\Inject(lazy=false)
+     * @var EntityManagerInterface
      */
     protected $entityManager;
 
@@ -61,81 +64,14 @@ class PersistenceManager extends AbstractPersistenceManager
     protected $reflectionService;
 
     /**
-     * Initializes the persistence manager, called by Flow.
+     * Injects the (system) logger based on PSR-3.
      *
+     * @param LoggerInterface $logger
      * @return void
      */
-    public function initializeObject()
+    public function injectLogger(LoggerInterface $logger)
     {
-        $this->entityManager->getEventManager()->addEventListener([\Doctrine\ORM\Events::onFlush], $this);
-    }
-
-    /**
-     * An onFlush event listener used to validate entities upon persistence.
-     *
-     * @param \Doctrine\ORM\Event\OnFlushEventArgs $eventArgs
-     * @return void
-     */
-    public function onFlush(\Doctrine\ORM\Event\OnFlushEventArgs $eventArgs)
-    {
-        $unitOfWork = $this->entityManager->getUnitOfWork();
-        $entityInsertions = $unitOfWork->getScheduledEntityInsertions();
-
-        $validatedInstancesContainer = new \SplObjectStorage();
-        $knownValueObjects = [];
-        foreach ($entityInsertions as $entity) {
-            $className = TypeHandling::getTypeForValue($entity);
-            if ($this->reflectionService->getClassSchema($className)->getModelType() === ClassSchema::MODELTYPE_VALUEOBJECT) {
-                $identifier = $this->getIdentifierByObject($entity);
-
-                if (isset($knownValueObjects[$className][$identifier]) || $unitOfWork->getEntityPersister($className)->exists($entity)) {
-                    unset($entityInsertions[spl_object_hash($entity)]);
-                    continue;
-                }
-
-                $knownValueObjects[$className][$identifier] = true;
-            }
-            $this->validateObject($entity, $validatedInstancesContainer);
-        }
-
-        ObjectAccess::setProperty($unitOfWork, 'entityInsertions', $entityInsertions, true);
-
-        foreach ($unitOfWork->getScheduledEntityUpdates() as $entity) {
-            $this->validateObject($entity, $validatedInstancesContainer);
-        }
-    }
-
-    /**
-     * Validates the given object and throws an exception if validation fails.
-     *
-     * @param object $object
-     * @param \SplObjectStorage $validatedInstancesContainer
-     * @return void
-     * @throws ObjectValidationFailedException
-     */
-    protected function validateObject($object, \SplObjectStorage $validatedInstancesContainer)
-    {
-        $className = $this->entityManager->getClassMetadata(get_class($object))->getName();
-        $validator = $this->validatorResolver->getBaseValidatorConjunction($className, ['Persistence', 'Default']);
-        if ($validator === null) {
-            return;
-        }
-
-        $validator->setValidatedInstancesContainer($validatedInstancesContainer);
-        $validationResult = $validator->validate($object);
-        if ($validationResult->hasErrors()) {
-            $errorMessages = '';
-            $errorCount = 0;
-            $allErrors = $validationResult->getFlattenedErrors();
-            foreach ($allErrors as $path => $errors) {
-                $errorMessages .= $path . ':' . PHP_EOL;
-                foreach ($errors as $error) {
-                    $errorCount++;
-                    $errorMessages .= (string)$error . PHP_EOL;
-                }
-            }
-            throw new ObjectValidationFailedException('An instance of "' . get_class($object) . '" failed to pass validation with ' . $errorCount . ' error(s): ' . PHP_EOL . $errorMessages, 1322585164);
-        }
+        $this->logger = $logger;
     }
 
     /**
@@ -159,7 +95,7 @@ class PersistenceManager extends AbstractPersistenceManager
         }
 
         if (!$this->entityManager->isOpen()) {
-            $this->systemLogger->log('persistAll() skipped flushing data, the Doctrine EntityManager is closed. Check the logs for error message.', LOG_ERR);
+            $this->logger->error('persistAll() skipped flushing data, the Doctrine EntityManager is closed. Check the logs for error message.');
             return;
         }
 
@@ -167,12 +103,13 @@ class PersistenceManager extends AbstractPersistenceManager
         $connection = $this->entityManager->getConnection();
         try {
             if ($connection->ping() === false) {
-                $this->systemLogger->log('Reconnecting the Doctrine EntityManager to the persistence backend.', LOG_INFO);
+                $this->logger->info('Reconnecting the Doctrine EntityManager to the persistence backend.');
                 $connection->close();
                 $connection->connect();
             }
         } catch (ConnectionException $exception) {
-            $this->systemLogger->logException($exception);
+            $message = $this->throwableStorage->logThrowable($exception);
+            $this->logger->error($message);
         }
 
         $this->entityManager->flush();
@@ -359,10 +296,10 @@ class PersistenceManager extends AbstractPersistenceManager
             $proxyFactory = $this->entityManager->getProxyFactory();
             $proxyFactory->generateProxyClasses($this->entityManager->getMetadataFactory()->getAllMetadata());
 
-            $this->systemLogger->log('Doctrine 2 setup finished');
+            $this->logger->info('Doctrine 2 setup finished');
             return true;
         } else {
-            $this->systemLogger->log('Doctrine 2 setup skipped, driver and path backend options not set!', LOG_NOTICE);
+            $this->logger->notice('Doctrine 2 setup skipped, driver and path backend options not set!');
             return false;
         }
     }
@@ -381,9 +318,9 @@ class PersistenceManager extends AbstractPersistenceManager
 
             $schemaTool = new SchemaTool($this->entityManager);
             $schemaTool->dropDatabase();
-            $this->systemLogger->log('Doctrine 2 schema destroyed.', LOG_NOTICE);
+            $this->logger->notice('Doctrine 2 schema destroyed.');
         } else {
-            $this->systemLogger->log('Doctrine 2 destroy skipped, driver and path backend options not set!', LOG_NOTICE);
+            $this->logger->notice('Doctrine 2 destroy skipped, driver and path backend options not set!');
         }
     }
 

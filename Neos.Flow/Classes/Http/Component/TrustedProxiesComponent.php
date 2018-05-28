@@ -25,6 +25,11 @@ class TrustedProxiesComponent implements ComponentInterface
     const HEADER_PORT = 'port';
     const HEADER_PROTOCOL = 'proto';
 
+    // Patterns for Forwarded headers, according to https://tools.ietf.org/html/rfc7239#section-4
+    const FOR_PATTERN = '(?:for=(?<for>"[^"]+"|[0-9a-z_\.:\-]+))';
+    const PROTO_PATTERN = '(?:proto=(?<proto>[a-z][a-z0-9+\.\-]+))';
+    const HOST_PATTERN = '(?:host=(?<host>"[^"]+"|[0-9a-z_\.:\-]+))';
+
     /**
      * @Flow\InjectConfiguration("http.trustedProxies")
      * @var array
@@ -52,7 +57,11 @@ class TrustedProxiesComponent implements ComponentInterface
         $hostHeader = $this->getFirstTrustedProxyHeaderValue(self::HEADER_HOST, $trustedRequest);
         $portFromHost = null;
         if ($hostHeader !== null) {
-            $portSeparatorIndex = strrpos($hostHeader, ':');
+            if (strpos($hostHeader, '[') === 0 && strrpos($hostHeader, ']') !== false) {
+                $portSeparatorIndex = strrpos($hostHeader, ':', -strrpos($hostHeader, ']'));
+            } else {
+                $portSeparatorIndex = strrpos($hostHeader, ':');
+            }
             if ($portSeparatorIndex !== false) {
                 $portFromHost = substr($hostHeader, $portSeparatorIndex + 1);
                 $trustedRequest->getUri()->setPort($portFromHost);
@@ -72,6 +81,40 @@ class TrustedProxiesComponent implements ComponentInterface
     }
 
     /**
+     * @param array $array
+     * @return array
+     */
+    protected function unquoteArray($array)
+    {
+        return array_map(function ($value) {
+            return trim($value, '"');
+        }, array_values(array_filter($array)));
+    }
+
+    /**
+     * @param string $type The header value type to retrieve from the Forwarded header value. One of the HEADER_* constants.
+     * @param string $headerValue The Forwarded header value, e.g. "for=192.168.178.5; host=www.acme.org:8080"
+     * @return array|null The array of values for the header type or null if the header
+     */
+    protected function getForwardedHeader($type, $headerValue)
+    {
+        $patterns = [
+            self::HEADER_CLIENT_IP => self::FOR_PATTERN,
+            self::HEADER_HOST => self::HOST_PATTERN,
+            self::HEADER_PROTOCOL => self::PROTO_PATTERN
+        ];
+        if (!isset($patterns[$type])) {
+            return null;
+        }
+        preg_match_all('/' . $patterns[$type] . '/i', $headerValue, $matches);
+        $matchedHeader = $this->unquoteArray($matches[1]);
+        if ($matchedHeader === []) {
+            return null;
+        }
+        return $matchedHeader;
+    }
+
+    /**
      * Get the values of trusted proxy header.
      *
      * @param string $type One of the HEADER_* constants
@@ -80,7 +123,11 @@ class TrustedProxiesComponent implements ComponentInterface
      */
     protected function getTrustedProxyHeaderValues($type, Request $request)
     {
-        $trustedHeaders = isset($this->settings['headers'][$type]) ? $this->settings['headers'][$type] : '';
+        if (isset($this->settings['headers']) && is_string($this->settings['headers'])) {
+            $trustedHeaders = $this->settings['headers'];
+        } else {
+            $trustedHeaders = $this->settings['headers'][$type] ?? '';
+        }
         if ($trustedHeaders === '' || !$request->getAttribute(Request::ATTRIBUTE_TRUSTED_PROXY)) {
             yield null;
             return;
@@ -88,7 +135,15 @@ class TrustedProxiesComponent implements ComponentInterface
         $trustedHeaders = array_map('trim', explode(',', $trustedHeaders));
 
         foreach ($trustedHeaders as $trustedHeader) {
-            if ($request->hasHeader($trustedHeader)) {
+            if (!$request->hasHeader($trustedHeader)) {
+                continue;
+            }
+            if (strtolower($trustedHeader) === 'forwarded') {
+                $forwardedHeaderValue = $this->getForwardedHeader($type, $request->getHeader($trustedHeader));
+                if ($forwardedHeaderValue !== null) {
+                    yield $forwardedHeaderValue;
+                }
+            } else {
                 yield array_map('trim', explode(',', $request->getHeader($trustedHeader)));
             }
         }
@@ -120,10 +175,17 @@ class TrustedProxiesComponent implements ComponentInterface
         if (filter_var($ipAddress, FILTER_VALIDATE_IP) === false) {
             return false;
         }
-        if ($this->settings['proxies'] === '*') {
+        $allowedProxies = $this->settings['proxies'];
+        if ($allowedProxies === '*') {
             return true;
         }
-        foreach ($this->settings['proxies'] as $ipPattern) {
+        if (is_string($allowedProxies)) {
+            $allowedProxies = array_map('trim', explode(',', $allowedProxies));
+        }
+        if (!is_array($allowedProxies)) {
+            return false;
+        }
+        foreach ($allowedProxies as $ipPattern) {
             if (IpUtility::cidrMatch($ipAddress, $ipPattern)) {
                 return true;
             }
@@ -168,7 +230,7 @@ class TrustedProxiesComponent implements ComponentInterface
         $trustedIpHeader = [];
         while ($trustedIpHeaders->valid()) {
             $trustedIpHeader = $trustedIpHeaders->current();
-            if ($trustedIpHeader === null || $this->settings['proxies'] === []) {
+            if ($trustedIpHeader === null || empty($this->settings['proxies'])) {
                 return $server['REMOTE_ADDR'];
             }
             $ipAddress = reset($trustedIpHeader);

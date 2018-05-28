@@ -33,7 +33,11 @@ Term: term:BooleanLiteral !Identifier | term:NumberLiteral | term:StringLiteral 
 
 /*!* CombinedExpressions
 Expression: exp:ConditionalExpression
-SimpleExpression: term:WrappedExpression | term:NotExpression | term:ArrayLiteral | term:ObjectLiteral | term:Term
+SimpleExpression: term:ArrowFunction | term:WrappedExpression | term:NotExpression | term:ArrayLiteral | term:ObjectLiteral | term:Term
+ArrowFunction: arguments:MethodArguments < '=>' > exp:Expression
+MethodArguments: arguments:MethodArgumentsWithParens | arguments:MethodArgumentsWithoutParens
+MethodArgumentsWithParens: '(' < Identifier? (< ',' > Identifier)* > ')'
+MethodArgumentsWithoutParens: Identifier
 WrappedExpression: '(' < Expression > ')'
 NotExpression: (/ ! | not\s+ /) > exp:SimpleExpression
 ConditionalExpression: cond:Disjunction (< '?' > then:Expression < ':' > else:Expression)?

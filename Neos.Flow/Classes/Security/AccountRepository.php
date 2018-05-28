@@ -12,7 +12,6 @@ namespace Neos\Flow\Security;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
 use Neos\Flow\Persistence\QueryInterface;
 use Neos\Flow\Persistence\Repository;
@@ -40,12 +39,6 @@ class AccountRepository extends Repository
      * @var SessionManagerInterface
      */
     protected $sessionManager;
-
-    /**
-     * @Flow\Inject
-     * @var SystemLoggerInterface
-     */
-    protected $systemLogger;
 
     /**
      * Removes an account

@@ -17,7 +17,8 @@ use Neos\Flow\Composer\ComposerUtility;
 use Neos\Flow\Core\Booting\Scripts;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Package\PackageInterface;
-use Neos\Flow\Package\PackageManagerInterface;
+use Neos\Flow\Package\PackageKeyAwareInterface;
+use Neos\Flow\Package\PackageManager;
 
 /**
  * Package command controller to handle packages from CLI (create/activate/deactivate packages)
@@ -27,7 +28,7 @@ use Neos\Flow\Package\PackageManagerInterface;
 class PackageCommandController extends CommandController
 {
     /**
-     * @var PackageManagerInterface
+     * @var PackageManager
      */
     protected $packageManager;
 
@@ -51,10 +52,10 @@ class PackageCommandController extends CommandController
     }
 
     /**
-     * @param PackageManagerInterface $packageManager
+     * @param PackageManager $packageManager
      * @return void
      */
-    public function injectPackageManager(PackageManagerInterface $packageManager)
+    public function injectPackageManager(PackageManager $packageManager)
     {
         $this->packageManager = $packageManager;
     }
@@ -77,10 +78,10 @@ class PackageCommandController extends CommandController
      * @Flow\FlushesCaches
      * @param string $packageKey The package key of the package to create
      * @param string $packageType The package type of the package to create
-     * @return string
+     * @return void
      * @see neos.kickstarter:kickstart:package
      */
-    public function createCommand($packageKey, $packageType = PackageInterface::DEFAULT_COMPOSER_TYPE)
+    public function createCommand(string $packageKey, string $packageType = PackageInterface::DEFAULT_COMPOSER_TYPE)
     {
         if (!$this->packageManager->isPackageKeyValid($packageKey)) {
             $this->outputLine('The package key "%s" is not valid.', [$packageKey]);
@@ -100,38 +101,17 @@ class PackageCommandController extends CommandController
     }
 
     /**
-     * Delete an existing package
-     *
-     * This command deletes an existing package identified by the package key.
-     *
-     * @Flow\FlushesCaches
-     * @param string $packageKey The package key of the package to create
-     * @return string
-     */
-    public function deleteCommand($packageKey)
-    {
-        if (!$this->packageManager->isPackageAvailable($packageKey)) {
-            $this->outputLine('The package "%s" does not exist.', [$packageKey]);
-            $this->quit(1);
-        }
-        $this->packageManager->deletePackage($packageKey);
-        $this->outputLine('Deleted package "%s".', [$packageKey]);
-        Scripts::executeCommand('neos.flow:cache:flush', $this->settings, false);
-        $this->sendAndExit(0);
-    }
-
-    /**
      * List available packages
      *
      * Lists all locally available packages. Displays the package key, version and
      * package title.
      *
      * @param boolean $loadingOrder The returned packages are ordered by their loading order.
-     * @return string The list of packages
+     * @return void The list of packages
      * @see neos.flow:package:activate
      * @see neos.flow:package:deactivate
      */
-    public function listCommand($loadingOrder = false)
+    public function listCommand(bool $loadingOrder = false)
     {
         $availablePackages = [];
         $frozenPackages = [];
@@ -155,7 +135,7 @@ class PackageCommandController extends CommandController
         }
 
         $this->outputLine('PACKAGES:');
-        /** @var PackageInterface $package */
+        /** @var PackageInterface|PackageKeyAwareInterface $package */
         foreach ($availablePackages as $package) {
             $frozenState = ($freezeSupported && isset($frozenPackages[$package->getPackageKey()]) ? '* ' : '  ');
             $this->outputLine(' ' . str_pad($package->getPackageKey(), $longestPackageKey + 3) . $frozenState . str_pad($package->getInstalledVersion(), 15));
@@ -188,7 +168,7 @@ class PackageCommandController extends CommandController
      * @see neos.flow:package:unfreeze
      * @see neos.flow:package:refreeze
      */
-    public function freezeCommand($packageKey = 'all')
+    public function freezeCommand(string $packageKey = 'all')
     {
         if (!$this->bootstrap->getContext()->isDevelopment()) {
             $this->outputLine('Package freezing is only supported in Development context.');
@@ -245,7 +225,7 @@ class PackageCommandController extends CommandController
      * @see neos.flow:package:freeze
      * @see neos.flow:cache:flush
      */
-    public function unfreezeCommand($packageKey = 'all')
+    public function unfreezeCommand(string $packageKey = 'all')
     {
         if (!$this->bootstrap->getContext()->isDevelopment()) {
             $this->outputLine('Package freezing is only supported in Development context.');
@@ -303,7 +283,7 @@ class PackageCommandController extends CommandController
      * @see neos.flow:package:freeze
      * @see neos.flow:cache:flush
      */
-    public function refreezeCommand($packageKey = 'all')
+    public function refreezeCommand(string $packageKey = 'all')
     {
         if (!$this->bootstrap->getContext()->isDevelopment()) {
             $this->outputLine('Package freezing is only supported in Development context.');

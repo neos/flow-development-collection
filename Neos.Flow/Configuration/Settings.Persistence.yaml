@@ -12,7 +12,9 @@ Neos:
         dbname: NULL
         user: NULL
         password: NULL
-        charset: 'utf8'
+        charset: 'utf8mb4'
+        defaultTableOptions:
+          charset: 'utf8mb4'
       cacheAllQueryResults: FALSE
 
       doctrine:
@@ -35,7 +37,10 @@ Neos:
         # Doctrine ORM Lifecycle events and their subscribers and listeners.
         # See Flow manual, chapter "Persistence" for further information on how to subscribe to Doctrine events.
         eventSubscribers: []
-        eventListeners: []
+        eventListeners:
+          'Neos\Flow\Persistence\Doctrine\ObjectValidationAndDeDuplicationListener':
+            events: ['onFlush']
+            listener: 'Neos\Flow\Persistence\Doctrine\ObjectValidationAndDeDuplicationListener'
 
         secondLevelCache: []
 

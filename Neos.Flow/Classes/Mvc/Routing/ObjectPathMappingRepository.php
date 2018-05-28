@@ -11,7 +11,7 @@ namespace Neos\Flow\Mvc\Routing;
  * source code.
  */
 
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\QueryInterface;
 use Neos\Flow\Persistence\Repository;
@@ -30,10 +30,10 @@ class ObjectPathMappingRepository extends Repository
     const ENTITY_CLASSNAME = ObjectPathMapping::class;
 
     /**
-     * Doctrine's Entity Manager. Note that "ObjectManager" is the name of the related interface.
+     * Doctrine's Entity Manager.
      *
      * @Flow\Inject
-     * @var ObjectManager
+     * @var EntityManagerInterface
      */
     protected $entityManager;
 
@@ -96,9 +96,7 @@ class ObjectPathMappingRepository extends Repository
     {
         foreach ($this->entityManager->getUnitOfWork()->getIdentityMap() as $className => $entities) {
             if ($className === $this->entityClassName) {
-                foreach ($entities as $entityToPersist) {
-                    $this->entityManager->flush($entityToPersist);
-                }
+                $this->entityManager->flush($entities);
                 return;
             }
         }

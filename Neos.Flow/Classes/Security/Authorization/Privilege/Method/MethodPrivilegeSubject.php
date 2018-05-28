@@ -36,7 +36,7 @@ class MethodPrivilegeSubject implements PrivilegeSubjectInterface
     /**
      * @return JoinPointInterface
      */
-    public function getJoinPoint()
+    public function getJoinPoint(): JoinPointInterface
     {
         return $this->joinPoint;
     }

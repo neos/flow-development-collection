@@ -101,6 +101,11 @@ class PackageManager implements PackageManagerInterface
     protected $settings;
 
     /**
+     * @var FlowPackageInterface[]
+     */
+    protected $flowPackages = [];
+
+    /**
      * @param array $settings
      * @return void
      */
@@ -134,8 +139,26 @@ class PackageManager implements PackageManagerInterface
         /** @var PackageInterface $package */
 
         foreach ($this->packages as $package) {
+            if ($package instanceof FlowPackageInterface) {
+                $this->flowPackages[$package->getPackageKey()] = $package;
+            }
+            if (!$package instanceof BootablePackageInterface) {
+                continue;
+            }
             $package->boot($bootstrap);
         }
+    }
+
+    /**
+     * Get only packages that implement the FlowPackageInterface for use in the Framework
+     * Array keys will be the respective package keys.
+     *
+     * @return FlowPackageInterface[]
+     * @internal
+     */
+    public function getFlowPackages()
+    {
+        return $this->flowPackages;
     }
 
     /**
@@ -219,7 +242,7 @@ class PackageManager implements PackageManagerInterface
      * the given package state, path, and type filters. All three filters must match, if given.
      *
      * @param string $packageState defaults to available
-     * @param string $packagePath
+     * @param string $packagePath DEPRECATED since Flow 5.0
      * @param string $packageType
      *
      * @return array<PackageInterface>
@@ -332,11 +355,11 @@ class PackageManager implements PackageManagerInterface
 
         foreach (
             [
-                PackageInterface::DIRECTORY_CLASSES,
-                PackageInterface::DIRECTORY_CONFIGURATION,
-                PackageInterface::DIRECTORY_RESOURCES,
-                PackageInterface::DIRECTORY_TESTS_UNIT,
-                PackageInterface::DIRECTORY_TESTS_FUNCTIONAL,
+                FlowPackageInterface::DIRECTORY_CLASSES,
+                FlowPackageInterface::DIRECTORY_CONFIGURATION,
+                FlowPackageInterface::DIRECTORY_RESOURCES,
+                FlowPackageInterface::DIRECTORY_TESTS_UNIT,
+                FlowPackageInterface::DIRECTORY_TESTS_FUNCTIONAL,
             ] as $path) {
             Files::createDirectoryRecursively(Files::concatenatePaths([$packagePath, $path]));
         }
@@ -346,8 +369,12 @@ class PackageManager implements PackageManagerInterface
         $refreshedPackageStatesConfiguration = $this->rescanPackages();
         $this->packageStatesConfiguration = $refreshedPackageStatesConfiguration;
         $this->registerPackageFromStateConfiguration($manifest['name'], $this->packageStatesConfiguration['packages'][$manifest['name']]);
+        $package = $this->packages[$packageKey];
+        if ($package instanceof FlowPackageInterface) {
+            $this->flowPackages[$packageKey] = $package;
+        }
 
-        return $this->packages[$packageKey];
+        return $package;
     }
 
     /**
@@ -450,60 +477,6 @@ class PackageManager implements PackageManagerInterface
     }
 
     /**
-     * Removes a package from registry and deletes it from filesystem
-     *
-     * @param string $packageKey package to remove
-     * @return void
-     * @throws Exception\UnknownPackageException if the specified package is not known
-     * @throws Exception\ProtectedPackageKeyException if a package is protected and cannot be deleted
-     * @throws Exception
-     * @api
-     */
-    public function deletePackage($packageKey)
-    {
-        if (!$this->isPackageAvailable($packageKey)) {
-            throw new Exception\UnknownPackageException('Package "' . $packageKey . '" is not available and cannot be removed.', 1166543253);
-        }
-
-        $package = $this->getPackage($packageKey);
-        if ($package->isProtected()) {
-            throw new Exception\ProtectedPackageKeyException('The package "' . $packageKey . '" is protected and cannot be removed.', 1220722120);
-        }
-
-        $packagePath = $package->getPackagePath();
-        $this->unregisterPackage($package);
-
-        try {
-            Files::removeDirectoryRecursively($packagePath);
-        } catch (UtilityException $exception) {
-            throw new Exception('Please check file permissions. The directory "' . $packagePath . '" for package "' . $packageKey . '" could not be removed.', 1301491089, $exception);
-        }
-    }
-
-    /**
-     * Unregisters a package from the list of available packages
-     *
-     * @param PackageInterface $package The package to be unregistered
-     * @return void
-     * @throws Exception\InvalidPackageStateException
-     */
-    protected function unregisterPackage(PackageInterface $package)
-    {
-        $packageKey = $package->getPackageKey();
-        if (!$this->isPackageAvailable($packageKey)) {
-            throw new Exception\InvalidPackageStateException('Package "' . $packageKey . '" is not registered.', 1338996142);
-        }
-
-        if (!isset($this->packages[$packageKey])) {
-            return;
-        }
-        $composerName = $package->getComposerName();
-
-        unset($this->packages[$packageKey], $this->packageKeys[strtolower($packageKey)], $this->packageStatesConfiguration['packages'][$composerName]);
-        $this->sortAndSavePackageStates($this->packageStatesConfiguration);
-    }
-
-    /**
      * Rescans available packages, order and write a new PackageStates file.
      *
      * @return array The found and sorted package states.
@@ -525,6 +498,7 @@ class PackageManager implements PackageManagerInterface
      */
     protected function getCurrentPackageStates()
     {
+        $savePackageStates = false;
         $loadedPackageStates = $this->loadPackageStates();
         if (
             empty($loadedPackageStates)
@@ -532,6 +506,10 @@ class PackageManager implements PackageManagerInterface
             || $loadedPackageStates['version'] < self::PACKAGESTATE_FORMAT_VERSION
         ) {
             $loadedPackageStates = $this->scanAvailablePackages();
+            $savePackageStates = true;
+        }
+
+        if ($savePackageStates) {
             $loadedPackageStates = $this->sortAndSavePackageStates($loadedPackageStates);
         }
 
@@ -565,9 +543,6 @@ class PackageManager implements PackageManagerInterface
                 throw new InvalidConfigurationException(sprintf('A package composer.json was found at "%s" that contained no "name".', $packagePath), 1445933572);
             }
 
-            if (!isset($composerManifest['type']) || !ComposerUtility::isFlowPackageType($composerManifest['type'])) {
-                continue;
-            }
             if (strpos($packagePath, Files::concatenatePaths([$this->packagesBasePath, 'Inactive'])) === 0) {
                 // Skip packages in legacy "Inactive" folder.
                 continue;
@@ -653,28 +628,6 @@ class PackageManager implements PackageManagerInterface
     }
 
     /**
-     * Get the package version of the given package
-     * Return normalized package version.
-     *
-     * @param string $composerName
-     * @return string
-     * @see https://getcomposer.org/doc/04-schema.md#version
-     */
-    public static function getPackageVersion($composerName)
-    {
-        foreach (ComposerUtility::readComposerLock() as $composerLockData) {
-            if (!isset($composerLockData['name'])) {
-                continue;
-            }
-            if ($composerLockData['name'] === $composerName) {
-                return preg_replace('/^v([0-9])/', '$1', $composerLockData['version'], 1);
-            }
-        }
-
-        return '';
-    }
-
-    /**
      * Requires and registers all packages which were defined in packageStatesConfiguration
      *
      * @param array $packageStatesConfiguration
@@ -698,16 +651,11 @@ class PackageManager implements PackageManagerInterface
      */
     protected function registerPackageFromStateConfiguration($composerName, $packageStateConfiguration)
     {
-        $packageKey = $packageStateConfiguration['packageKey'];
-        $packagePath = $packageStateConfiguration['packagePath'] ?? null;
-        $packageClassInformation = $packageStateConfiguration['packageClassInformation'] ?? null;
-        $package = $this->packageFactory->create($this->packagesBasePath, $packagePath, $packageKey, $composerName, $packageStateConfiguration['autoloadConfiguration'], $packageClassInformation);
-        $this->packageKeys[strtolower($packageKey)] = $packageKey;
-        $this->packages[$packageKey] = $package;
-        unset($this->activePackages[$packageKey]);
-        if ((isset($packageStateConfiguration['state']) && $packageStateConfiguration['state'] === self::PACKAGE_STATE_ACTIVE) || $package->isProtected()) {
-            $this->activePackages[$packageKey] = $package;
-        }
+        $packagePath = isset($packageStateConfiguration['packagePath']) ? $packageStateConfiguration['packagePath'] : null;
+        $packageClassInformation = isset($packageStateConfiguration['packageClassInformation']) ? $packageStateConfiguration['packageClassInformation'] : null;
+        $package = $this->packageFactory->create($this->packagesBasePath, $packagePath, $packageStateConfiguration['packageKey'], $composerName, $packageStateConfiguration['autoloadConfiguration'], $packageClassInformation);
+        $this->packageKeys[strtolower($package->getPackageKey())] = $package->getPackageKey();
+        $this->packages[$package->getPackageKey()] = $package;
     }
 
     /**

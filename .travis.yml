@@ -1,6 +1,7 @@
 language: php
 addons:
   postgresql: "9.4"
+  mariadb: '10.2'
 services:
   - postgresql
 matrix:
@@ -33,7 +34,7 @@ before_install:
   - cd flow-development-distribution
 install:
   - phpenv config-rm xdebug.ini
-  - composer self-update -q
+  - composer self-update -q 1.6.3
   - if [ -n "$GH_TOKEN" ]; then composer config github-oauth.github.com ${GH_TOKEN}; fi;
   - composer update --no-progress --no-interaction
   - php Build/BuildEssentials/TravisCi/ComposerManifestUpdater.php .
@@ -52,6 +53,7 @@ before_script:
   - Build/BuildEssentials/TravisCi/SetupDatabase.sh
   - cp Configuration/Settings.yaml Configuration/Testing/
   - if [ "$BEHAT" = "true" ]; then composer install -d Build/Behat; fi
+  - if [ "$DB" = "mysql" ]; then echo "MariaDB version ${TRAVIS_MARIADB_VERSION}"; fi
 script:
   - if [ "$BEHAT" != "true" ]; then sh ./unittest.sh ; fi
   - if [ "$BEHAT" != "true" ]; then bin/phpunit --colors --stop-on-failure -c Build/BuildEssentials/PhpUnit/FunctionalTests.xml --testsuite "Framework tests"; fi

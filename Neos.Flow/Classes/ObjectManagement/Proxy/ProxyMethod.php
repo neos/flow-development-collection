@@ -150,6 +150,7 @@ class ProxyMethod
         $methodParametersCode = ($this->methodParametersCode !== '' ? $this->methodParametersCode : $this->buildMethodParametersCode($this->fullOriginalClassName, $this->methodName));
         $callParentMethodCode = $this->buildCallParentMethodCode($this->fullOriginalClassName, $this->methodName);
 
+        $finalKeyword = $this->reflectionService->isMethodFinal($this->fullOriginalClassName, $this->methodName) ? 'final ' : '';
         $staticKeyword = $this->reflectionService->isMethodStatic($this->fullOriginalClassName, $this->methodName) ? 'static ' : '';
 
         $visibility = ($this->visibility === null ? $this->getMethodVisibilityString() : $this->visibility);
@@ -163,7 +164,7 @@ class ProxyMethod
         if ($this->addedPreParentCallCode !== '' || $this->addedPostParentCallCode !== '' || $this->methodBody !== '') {
             $code = "\n" .
                 $methodDocumentation .
-                '    ' . $staticKeyword . $visibility . ' function ' . $this->methodName . '(' . $methodParametersCode . ")$returnTypeDeclaration\n    {\n";
+                '    ' . $finalKeyword . $staticKeyword . $visibility . ' function ' . $this->methodName . '(' . $methodParametersCode . ")$returnTypeDeclaration\n    {\n";
             if ($this->methodBody !== '') {
                 $code .= "\n" . $this->methodBody . "\n";
             } else {

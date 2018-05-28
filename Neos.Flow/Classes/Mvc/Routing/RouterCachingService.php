@@ -19,10 +19,10 @@ use Neos\Flow\Mvc\Routing\Dto\RouteContext;
 use Neos\Flow\Mvc\Routing\Dto\RouteTags;
 use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Utility\Arrays;
 use Neos\Flow\Validation\Validator\UuidValidator;
+use Psr\Log\LoggerInterface;
 
 /**
  * Caching of findMatchResults() and resolve() calls on the web Router.
@@ -50,10 +50,9 @@ class RouterCachingService
     protected $persistenceManager;
 
     /**
-     * @var SystemLoggerInterface
-     * @Flow\Inject
+     * @var LoggerInterface
      */
-    protected $systemLogger;
+    protected $logger;
 
     /**
      * @Flow\Inject
@@ -66,6 +65,14 @@ class RouterCachingService
      * @var array
      */
     protected $routingSettings;
+
+    /**
+     * @param LoggerInterface $logger
+     */
+    public function injectLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
 
     /**
      * @return void
@@ -89,7 +96,7 @@ class RouterCachingService
     {
         $cachedResult = $this->routeCache->get($routeContext->getCacheEntryIdentifier());
         if ($cachedResult !== false) {
-            $this->systemLogger->log(sprintf('Router route(): A cached Route with the cache identifier "%s" matched the request "%s (%s)".', $routeContext->getCacheEntryIdentifier(), $routeContext->getHttpRequest()->getUri(), $routeContext->getHttpRequest()->getMethod()), LOG_DEBUG);
+            $this->logger->debug(sprintf('Router route(): A cached Route with the cache identifier "%s" matched the request "%s (%s)".', $routeContext->getCacheEntryIdentifier(), $routeContext->getHttpRequest()->getUri(), $routeContext->getHttpRequest()->getMethod()));
         }
 
         return $cachedResult;
