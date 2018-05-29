@@ -13,6 +13,7 @@ namespace Neos\Flow;
 
 use Neos\Flow\Package\Package as BasePackage;
 use Neos\Flow\ResourceManagement\ResourceManager;
+use Neos\Flow\ResourceManagement\ResourceRepository;
 
 /**
  * The Flow Package
@@ -121,5 +122,8 @@ class Package extends BasePackage
 
         $dispatcher->connect(\Neos\Flow\Persistence\Doctrine\EntityManagerFactory::class, 'beforeDoctrineEntityManagerCreation', \Neos\Flow\Persistence\Doctrine\EntityManagerConfiguration::class, 'configureEntityManager');
         $dispatcher->connect(\Neos\Flow\Persistence\Doctrine\EntityManagerFactory::class, 'afterDoctrineEntityManagerCreation', \Neos\Flow\Persistence\Doctrine\EntityManagerConfiguration::class, 'enhanceEntityManager');
+
+        $dispatcher->connect(Persistence\Doctrine\PersistenceManager::class, 'allObjectsPersisted', ResourceRepository::class, 'resetAfterPersistingChanges');
+        $dispatcher->connect(Persistence\Generic\PersistenceManager::class, 'allObjectsPersisted', ResourceRepository::class, 'resetAfterPersistingChanges');
     }
 }
