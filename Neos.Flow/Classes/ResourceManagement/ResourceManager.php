@@ -317,7 +317,7 @@ class ResourceManager
 
         $collectionName = $resource->getCollectionName();
 
-        $result = $this->resourceRepository->findBySha1($resource->getSha1());
+        $result = $this->resourceRepository->findBySha1AndCollectionName($resource->getSha1(), $collectionName);
         if (count($result) > 1) {
             $this->systemLogger->log(sprintf('Not removing storage data of resource %s (%s) because it is still in use by %s other PersistentResource object(s).', $resource->getFilename(), $resource->getSha1(), count($result) - 1), LOG_DEBUG);
         } else {
