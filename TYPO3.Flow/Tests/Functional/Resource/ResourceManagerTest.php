@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Flow\Tests\Functional\ResourceManagement;
+namespace TYPO3\Flow\Tests\Functional\Resource;
 
 /*
  * This file is part of the TYPO3.Flow package.
