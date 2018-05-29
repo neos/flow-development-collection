@@ -69,7 +69,13 @@ Neos:
         defaultPersistentResourcesStorage:
           storage: 'Neos\Flow\ResourceManagement\Storage\WritableFileSystemStorage'
           storageOptions:
-            path: '%FLOW_PATH_DATA%Persistent/TestResources/'
+            path: '%FLOW_PATH_DATA%Persistent/Test/Resources/'
+
+        #
+        customPersistentResourcesStorage:
+          storage: 'Neos\Flow\ResourceManagement\Storage\WritableFileSystemStorage'
+          storageOptions:
+            path: '%FLOW_PATH_DATA%Persistent/Test/CustomResources/'
 
         #
         defaultStaticResourcesStorage:
@@ -92,6 +98,11 @@ Neos:
           storage: 'defaultPersistentResourcesStorage'
           target: 'localWebDirectoryPersistentResourcesTarget'
 
+        # Custom collection for persistent resources
+        custom:
+          storage: 'customPersistentResourcesStorage'
+          target: 'customWebDirectoryPersistentResourcesTarget'
+
       # Definition of the basic resource publication targets.
       targets:
         # Target for publishing static resources to the local web directory
@@ -107,6 +118,15 @@ Neos:
           targetOptions:
             path: '%FLOW_PATH_WEB%_Resources/Testing/Persistent/'
             baseUri: '_Resources/Testing/Persistent/'
+            # If the generated URI path segment containing the sha1 should be divided into multiple segments (recommended if you expect many resources):
+            subdivideHashPathSegment: false
+
+        # Custom target for publishing persistent resources to the local web directory
+        customWebDirectoryPersistentResourcesTarget:
+          target: 'Neos\Flow\ResourceManagement\Target\FileSystemSymlinkTarget'
+          targetOptions:
+            path: '%FLOW_PATH_WEB%_Resources/Testing/Custom/'
+            baseUri: '_Resources/Testing/Custom/'
             # If the generated URI path segment containing the sha1 should be divided into multiple segments (recommended if you expect many resources):
             subdivideHashPathSegment: false
 
