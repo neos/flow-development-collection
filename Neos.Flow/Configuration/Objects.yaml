@@ -415,8 +415,8 @@ Neos\Flow\Property\PropertyMapper:
 Neos\Flow\Reflection\ReflectionService:
   factoryObjectName: Neos\Flow\Reflection\ReflectionServiceFactory
 
-Neos\Flow\Reflection\ReflectionServiceFactory:
-  scope: singleton
+#Neos\Flow\Reflection\ReflectionServiceFactory:
+#  scope: singleton
 
 #                                                                          #
 # ResourceManagement                                                       #
