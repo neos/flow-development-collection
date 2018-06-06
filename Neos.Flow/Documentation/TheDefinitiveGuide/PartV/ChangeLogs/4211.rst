@@ -1,0 +1,94 @@
+`4.2.11 (2018-06-06) <https://github.com/neos/flow-development-collection/releases/tag/4.2.11>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Allow to delete "used" resources from a storage <https://github.com/neos/flow-development-collection/pull/1298>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+This solves the following case…
+
+Given these settings:
+
+    resource:
+      collections:
+        readableFilenames:
+          storage: 'readableFilenameResourcesStorage'
+          target: 'readableFilenameResourcesTarget'
+      storages:
+        readableFilenameResourcesStorage:
+          storage: 'Neos\\Flow\\ResourceManagement\\Storage\\WritableFileSystemStorage'
+          storageOptions:
+            path: '%FLOW_PATH_DATA%Persistent/ReadableResources/'
+      targets:
+        readableFilenameResourcesTarget:
+          target: 'Acme\\AcmeCom\\FilenameFileSystemSymlinkTarget'
+          targetOptions:
+            path: '%FLOW_PATH_WEB%Files/'
+            baseUri: 'Files/'
+
+I want to "move" a resource from the `persistent` to the `readableFilenames` collection. To do this, I get an asset, fetch the resource and import it into the `readableFilenames` collection. After that the newly imported resource is published, assigned to the asset and then the old resource is deleted. Code would be something like this:
+
+        $resource = $asset->getResource();
+
+        $importedResource = $resourceCollection->importResource($resource->getStream());
+        $importedResource->setFilename($resource->getFilename());
+        $importedResource->setMediaType($resource->getMediaType());
+        $resourceCollection->getTarget()->publishResource($resource, $resourceCollection);
+
+        $asset->setResource($importedResource);
+        $this->assetRepository->update($asset);
+
+        $this->resourceManager->deleteResource($resource);
+
+But this leads to log messages about the storage data not being deleted, because the resource is still being used. Which is not true, or at least not fully correct. The problem at this point: the same resource exists in two collections, but the check only looks at the SHA1 (and filename, partly).
+
+So this change adjusts the checks involved to look at the collection a resource is in, too.
+
+* Packages: ``Flow``
+
+`BUGFIX: Allow to delete "used" resources from a storage <https://github.com/neos/flow-development-collection/pull/1315>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+This solves the following case…
+
+Given these settings:
+
+    resource:
+      collections:
+        readableFilenames:
+          storage: 'readableFilenameResourcesStorage'
+          target: 'readableFilenameResourcesTarget'
+      storages:
+        readableFilenameResourcesStorage:
+          storage: 'TYPO3\\Flow\\Resource\\Storage\\WritableFileSystemStorage'
+          storageOptions:
+            path: '%FLOW_PATH_DATA%Persistent/ReadableResources/'
+      targets:
+        readableFilenameResourcesTarget:
+          target: 'Acme\\AcmeCom\\FilenameFileSystemSymlinkTarget'
+          targetOptions:
+            path: '%FLOW_PATH_WEB%Files/'
+            baseUri: 'Files/'
+
+I want to "move" a resource from the `persistent` to the `readableFilenames` collection. To do this, I get an asset, fetch the resource and import it into the `readableFilenames` collection. After that the newly imported resource is published, assigned to the asset and then the old resource is deleted. Code would be something like this:
+
+        $resource = $asset->getResource();
+
+        $importedResource = $resourceCollection->importResource($resource->getStream());
+        $importedResource->setFilename($resource->getFilename());
+        $importedResource->setMediaType($resource->getMediaType());
+        $resourceCollection->getTarget()->publishResource($resource, $resourceCollection);
+
+        $asset->setResource($importedResource);
+        $this->assetRepository->update($asset);
+
+        $this->resourceManager->deleteResource($resource);
+
+But this leads to log messages about the storage data not being deleted, because the resource is still being used. Which is not true, or at least not fully correct. The problem at this point: the same resource exists in two collections, but the check only looks at the SHA1 (and filename, partly).
+
+So this change adjusts the checks involved to look at the collection a resource is in, too.
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/4.2.10...4.2.11>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
