@@ -209,7 +209,7 @@ class ConfigurationManager
      *
      * @param string $temporaryDirectoryPath
      */
-    public function setTemporaryDirectoryPath($temporaryDirectoryPath)
+    public function setTemporaryDirectoryPath(string $temporaryDirectoryPath)
     {
         $this->temporaryDirectoryPath = $temporaryDirectoryPath;
     }
@@ -230,7 +230,7 @@ class ConfigurationManager
      *
      * @return array<string> array of configuration-type identifier strings
      */
-    public function getAvailableConfigurationTypes()
+    public function getAvailableConfigurationTypes(): array
     {
         return array_keys($this->configurationTypes);
     }
@@ -245,7 +245,7 @@ class ConfigurationManager
      * @return string
      * @throws Exception\InvalidConfigurationTypeException on non-existing configurationType
      */
-    public function resolveConfigurationProcessingType($configurationType)
+    public function resolveConfigurationProcessingType(string $configurationType): string
     {
         if (!isset($this->configurationTypes[$configurationType])) {
             throw new Exception\InvalidConfigurationTypeException('Configuration type "' . $configurationType . '" is not registered. You can Register it by calling $configurationManager->registerConfigurationType($configurationType).', 1339166495);
@@ -261,7 +261,7 @@ class ConfigurationManager
      * @return boolean
      * @throws Exception\InvalidConfigurationTypeException on non-existing configurationType
      */
-    public function isSplitSourceAllowedForConfigurationType($configurationType)
+    public function isSplitSourceAllowedForConfigurationType(string $configurationType): bool
     {
         if (!isset($this->configurationTypes[$configurationType])) {
             throw new Exception\InvalidConfigurationTypeException('Configuration type "' . $configurationType . '" is not registered. You can Register it by calling $configurationManager->registerConfigurationType($configurationType).', 1359998400);
@@ -282,7 +282,7 @@ class ConfigurationManager
      * @throws \InvalidArgumentException on invalid configuration processing type
      * @return void
      */
-    public function registerConfigurationType($configurationType, $configurationProcessingType = self::CONFIGURATION_PROCESSING_TYPE_DEFAULT, $allowSplitSource = false)
+    public function registerConfigurationType(string $configurationType, string $configurationProcessingType = self::CONFIGURATION_PROCESSING_TYPE_DEFAULT, bool $allowSplitSource = false)
     {
         $configurationProcessingTypes = [
             self::CONFIGURATION_PROCESSING_TYPE_DEFAULT,
@@ -301,11 +301,11 @@ class ConfigurationManager
     /**
      * Emits a signal after The ConfigurationManager has been loaded
      *
-     * @param \Neos\Flow\Configuration\ConfigurationManager $configurationManager
+     * @param ConfigurationManager $configurationManager
      * @return void
      * @Flow\Signal
      */
-    protected function emitConfigurationManagerReady($configurationManager)
+    protected function emitConfigurationManagerReady(ConfigurationManager $configurationManager)
     {
     }
 
@@ -318,10 +318,10 @@ class ConfigurationManager
      *
      * @param string $configurationType The kind of configuration to fetch - must be one of the CONFIGURATION_TYPE_* constants
      * @param string $configurationPath The path inside the configuration to fetch
-     * @return array The configuration
+     * @return array|null The configuration or NULL if the configuration doesn't exist
      * @throws Exception\InvalidConfigurationTypeException on invalid configuration types
      */
-    public function getConfiguration($configurationType, $configurationPath = null)
+    public function getConfiguration(string $configurationType, string $configurationPath = null)
     {
         if (empty($this->configurations[$configurationType])) {
             $this->loadConfiguration($configurationType, $this->packages);
@@ -374,7 +374,7 @@ class ConfigurationManager
      * @throws Exception\InvalidConfigurationException
      * @return void
      */
-    protected function loadConfiguration($configurationType, array $packages)
+    protected function loadConfiguration(string $configurationType, array $packages)
     {
         $this->configurations[$configurationType] = [];
         $this->cacheNeedsUpdate = true;
@@ -503,7 +503,7 @@ class ConfigurationManager
      *
      * @return boolean If cached configuration was loaded or not
      */
-    public function loadConfigurationCache()
+    public function loadConfigurationCache(): bool
     {
         $cachePathAndFilename = $this->constructConfigurationCachePath();
         $configurations = @include $cachePathAndFilename;
@@ -551,7 +551,7 @@ class ConfigurationManager
     {
         // Make sure that all configuration types are loaded before writing configuration caches.
         foreach (array_keys($this->configurationTypes) as $configurationType) {
-            if (!isset($this->configurations[$configurationType]) || !is_array($this->configurations[$configurationType])) {
+            if (!isset($this->unprocessedConfiguration[$configurationType]) || !is_array($this->unprocessedConfiguration[$configurationType])) {
                 $this->loadConfiguration($configurationType, $this->packages);
             }
         }
@@ -589,7 +589,7 @@ class ConfigurationManager
      * @param string $phpString
      * @return mixed
      */
-    protected function replaceVariablesInPhpString($phpString)
+    protected function replaceVariablesInPhpString(string $phpString)
     {
         $phpString = preg_replace_callback('/
             (?<startString>=>\s\'.*)?      # optionally assignment operator and starting a string
@@ -638,7 +638,7 @@ class ConfigurationManager
      * @param array $secondConfigurationArray
      * @return array
      */
-    protected function mergePolicyConfiguration(array $firstConfigurationArray, array $secondConfigurationArray)
+    protected function mergePolicyConfiguration(array $firstConfigurationArray, array $secondConfigurationArray): array
     {
         $result = Arrays::arrayMergeRecursiveOverrule($firstConfigurationArray, $secondConfigurationArray);
         if (!isset($result['roles'])) {
@@ -659,7 +659,7 @@ class ConfigurationManager
      *
      * @return string
      */
-    protected function constructConfigurationCachePath()
+    protected function constructConfigurationCachePath(): string
     {
         $configurationCachePath = $this->temporaryDirectoryPath . 'Configuration/';
         return $configurationCachePath . str_replace('/', '_', (string)$this->context) . 'Configurations.php';

@@ -26,8 +26,13 @@ use Neos\Flow\Error\Debugger;
 use Neos\Flow\Error\ErrorHandler;
 use Neos\Flow\Error\ProductionExceptionHandler;
 use Neos\Flow\Log\Logger;
+use Neos\Flow\Log\LoggerBackendConfigurationHelper;
 use Neos\Flow\Log\LoggerFactory;
+use Neos\Flow\Log\PsrLoggerFactory;
+use Neos\Flow\Log\PsrLoggerFactoryInterface;
 use Neos\Flow\Log\SystemLoggerInterface;
+use Neos\Flow\Log\ThrowableStorage\FileStorage;
+use Neos\Flow\Log\ThrowableStorageInterface;
 use Neos\Flow\Monitor\FileMonitor;
 use Neos\Flow\ObjectManagement\CompileTimeObjectManager;
 use Neos\Flow\ObjectManagement\ObjectManager;
@@ -47,6 +52,7 @@ use Neos\Utility\Lock\Lock;
 use Neos\Utility\Lock\LockManager;
 use Neos\Utility\OpcodeCacheHelper;
 use Neos\Flow\Exception as FlowException;
+use Psr\Log\LogLevel;
 
 /**
  * Initialization scripts for modules of the Flow package
@@ -236,12 +242,28 @@ class Scripts
         $configurationManager = $bootstrap->getEarlyInstance(ConfigurationManager::class);
         $settings = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.Flow');
 
-        if (!isset($settings['log']['systemLogger']['logger'])) {
-            $settings['log']['systemLogger']['logger'] = Logger::class;
+        $throwableStorage = new FileStorage();
+        $throwableStorage->injectStoragePath(FLOW_PATH_DATA . 'Logs/Exceptions');
+        $bootstrap->setEarlyInstance(ThrowableStorageInterface::class, $throwableStorage);
+
+        /** @var PsrLoggerFactoryInterface $psrLoggerFactoryName */
+        $psrLoggerFactoryName = $settings['log']['psr3']['loggerFactory'];
+        $psrLogConfigurations = $settings['log']['psr3'][$psrLoggerFactoryName] ?? [];
+        if ($psrLoggerFactoryName === 'legacy') {
+            $psrLoggerFactoryName = PsrLoggerFactory::class;
+            $psrLogConfigurations = (new LoggerBackendConfigurationHelper($settings['log']))->getNormalizedLegacyConfiguration();
         }
-        $loggerFactory = new LoggerFactory();
+        $psrLogFactory = $psrLoggerFactoryName::create($psrLogConfigurations);
+
+        // This is all deprecated and can be removed with the removal of respective interfaces and classes.
+        $loggerFactory = new LoggerFactory($psrLogFactory);
+        $bootstrap->setEarlyInstance($psrLoggerFactoryName, $psrLogFactory);
+        $bootstrap->setEarlyInstance(PsrLoggerFactoryInterface::class, $psrLogFactory);
         $bootstrap->setEarlyInstance(LoggerFactory::class, $loggerFactory);
-        $systemLogger = $loggerFactory->create('SystemLogger', $settings['log']['systemLogger']['logger'], $settings['log']['systemLogger']['backend'], $settings['log']['systemLogger']['backendOptions']);
+        $deprecatedLogger = $settings['log']['systemLogger']['logger'] ?? Logger::class;
+        $deprecatedLoggerBackend = $settings['log']['systemLogger']['backend'] ?? '';
+        $deprecatedLoggerBackendOptions = $settings['log']['systemLogger']['backendOptions'] ?? [];
+        $systemLogger = $loggerFactory->create('SystemLogger', $deprecatedLogger, $deprecatedLoggerBackend, $deprecatedLoggerBackendOptions);
         $bootstrap->setEarlyInstance(SystemLoggerInterface::class, $systemLogger);
     }
 
@@ -259,7 +281,18 @@ class Scripts
         $errorHandler = new ErrorHandler();
         $errorHandler->setExceptionalErrors($settings['error']['errorHandler']['exceptionalErrors']);
         $exceptionHandler = class_exists($settings['error']['exceptionHandler']['className']) ? new $settings['error']['exceptionHandler']['className'] : new ProductionExceptionHandler();
+        if (is_callable([$exceptionHandler, 'injectSystemLogger'])) {
         $exceptionHandler->injectSystemLogger($bootstrap->getEarlyInstance(SystemLoggerInterface::class));
+        }
+
+        if (is_callable([$exceptionHandler, 'injectLogger'])) {
+            $exceptionHandler->injectLogger($bootstrap->getEarlyInstance(PsrLoggerFactoryInterface::class)->get('systemLogger'));
+        }
+
+        if (is_callable([$exceptionHandler, 'injectThrowableStorage'])) {
+            $exceptionHandler->injectThrowableStorage($bootstrap->getEarlyInstance(ThrowableStorageInterface::class));
+        }
+
         $exceptionHandler->setOptions($settings['error']['exceptionHandler']);
     }
 
@@ -284,7 +317,7 @@ class Scripts
         $cacheManager = new CacheManager();
         $cacheManager->setCacheConfigurations($configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_CACHES));
         $cacheManager->injectConfigurationManager($configurationManager);
-        $cacheManager->injectSystemLogger($bootstrap->getEarlyInstance(SystemLoggerInterface::class));
+        $cacheManager->injectLogger($bootstrap->getEarlyInstance(PsrLoggerFactoryInterface::class)->get('systemLogger'));
         $cacheManager->injectEnvironment($environment);
         $cacheManager->injectCacheFactory($cacheFactory);
 
@@ -389,14 +422,14 @@ class Scripts
         $configurationManager = $bootstrap->getEarlyInstance(ConfigurationManager::class);
         $reflectionService = $objectManager->get(ReflectionService::class);
         $cacheManager = $bootstrap->getEarlyInstance(CacheManager::class);
-        $systemLogger = $bootstrap->getEarlyInstance(SystemLoggerInterface::class);
+        $logger = $bootstrap->getEarlyInstance(PsrLoggerFactoryInterface::class)->get('systemLogger');
         $packageManager = $bootstrap->getEarlyInstance(PackageManager::class);
 
         $objectManager->injectAllSettings($configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS));
         $objectManager->injectReflectionService($reflectionService);
         $objectManager->injectConfigurationManager($configurationManager);
         $objectManager->injectConfigurationCache($cacheManager->getCache('Flow_Object_Configuration'));
-        $objectManager->injectSystemLogger($systemLogger);
+        $objectManager->injectLogger($logger);
         $objectManager->initialize($packageManager->getAvailablePackages());
 
         foreach ($bootstrap->getEarlyInstances() as $objectName => $instance) {
@@ -520,7 +553,7 @@ class Scripts
      * @param Bootstrap $bootstrap
      * @return array
      */
-    protected static function getListOfPackagesWithConfiguredObjects($bootstrap)
+    protected static function getListOfPackagesWithConfiguredObjects(Bootstrap $bootstrap): array
     {
         $objectManager = $bootstrap->getEarlyInstance(ObjectManagerInterface::class);
         $packagesWithConfiguredObjects = array_reduce($objectManager->getAllObjectConfigurations(), function ($foundPackages, $item) {
@@ -542,7 +575,7 @@ class Scripts
      * @param string $filenamePattern Optional pattern for filenames to consider for file monitoring (regular expression). @see FileMonitor::monitorDirectory()
      * @return void
      */
-    protected static function monitorDirectoryIfItExists(FileMonitor $fileMonitor, $path, $filenamePattern = null)
+    protected static function monitorDirectoryIfItExists(FileMonitor $fileMonitor, string $path, string $filenamePattern = null)
     {
         if (is_dir($path)) {
             $fileMonitor->monitorDirectory($path, $filenamePattern);
@@ -564,13 +597,13 @@ class Scripts
         $cacheManager = $bootstrap->getEarlyInstance(CacheManager::class);
         $objectConfigurationCache = $cacheManager->getCache('Flow_Object_Configuration');
         $coreCache = $cacheManager->getCache('Flow_Core');
-        $systemLogger = $bootstrap->getEarlyInstance(SystemLoggerInterface::class);
         $configurationManager = $bootstrap->getEarlyInstance(ConfigurationManager::class);
         $settings = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.Flow');
 
         if ($objectConfigurationCache->has('doctrineProxyCodeUpToDate') === false && $coreCache->has('doctrineSetupRunning') === false) {
+            $logger = $bootstrap->getEarlyInstance(PsrLoggerFactoryInterface::class)->get('systemLogger');
             $coreCache->set('doctrineSetupRunning', 'White Russian', [], 60);
-            $systemLogger->log('Compiling Doctrine proxies', LOG_DEBUG);
+            $logger->debug('Compiling Doctrine proxies');
             self::executeCommand('neos.flow:doctrine:compileproxies', $settings);
             $coreCache->remove('doctrineSetupRunning');
             $objectConfigurationCache->set('doctrineProxyCodeUpToDate', true);
@@ -612,7 +645,7 @@ class Scripts
      * @api
      * @throws Exception\SubProcessException if execution of the sub process failed
      */
-    public static function executeCommand($commandIdentifier, array $settings, $outputResults = true, array $commandArguments = [])
+    public static function executeCommand(string $commandIdentifier, array $settings, bool $outputResults = true, array $commandArguments = []): bool
     {
         $command = self::buildSubprocessCommand($commandIdentifier, $settings, $commandArguments);
         $output = [];
@@ -661,7 +694,7 @@ class Scripts
      * @return void
      * @api
      */
-    public static function executeCommandAsync($commandIdentifier, array $settings, array $commandArguments = array())
+    public static function executeCommandAsync(string $commandIdentifier, array $settings, array $commandArguments = array())
     {
         $command = self::buildSubprocessCommand($commandIdentifier, $settings, $commandArguments);
         if (DIRECTORY_SEPARATOR === '/') {
@@ -677,7 +710,7 @@ class Scripts
      * @param array $commandArguments Command arguments
      * @return string A command line command ready for being exec()uted
      */
-    protected static function buildSubprocessCommand($commandIdentifier, array $settings, array $commandArguments = [])
+    protected static function buildSubprocessCommand(string $commandIdentifier, array $settings, array $commandArguments = []): string
     {
         $command = self::buildPhpCommand($settings);
 
@@ -709,7 +742,7 @@ class Scripts
      * @param array $settings The Neos.Flow settings
      * @return string A command line command for PHP, which can be extended and then exec()uted
      */
-    public static function buildPhpCommand(array $settings)
+    public static function buildPhpCommand(array $settings): string
     {
         $subRequestEnvironmentVariables = [
             'FLOW_ROOTPATH' => FLOW_PATH_ROOT,

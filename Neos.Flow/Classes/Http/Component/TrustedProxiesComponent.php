@@ -57,7 +57,11 @@ class TrustedProxiesComponent implements ComponentInterface
         $hostHeader = $this->getFirstTrustedProxyHeaderValue(self::HEADER_HOST, $trustedRequest);
         $portFromHost = null;
         if ($hostHeader !== null) {
-            $portSeparatorIndex = strrpos($hostHeader, ':');
+            if (strpos($hostHeader, '[') === 0 && strrpos($hostHeader, ']') !== false) {
+                $portSeparatorIndex = strrpos($hostHeader, ':', -strrpos($hostHeader, ']'));
+            } else {
+                $portSeparatorIndex = strrpos($hostHeader, ':');
+            }
             if ($portSeparatorIndex !== false) {
                 $portFromHost = substr($hostHeader, $portSeparatorIndex + 1);
                 $trustedRequest->getUri()->setPort($portFromHost);
@@ -171,10 +175,17 @@ class TrustedProxiesComponent implements ComponentInterface
         if (filter_var($ipAddress, FILTER_VALIDATE_IP) === false) {
             return false;
         }
-        if ($this->settings['proxies'] === '*') {
+        $allowedProxies = $this->settings['proxies'];
+        if ($allowedProxies === '*') {
             return true;
         }
-        foreach ($this->settings['proxies'] as $ipPattern) {
+        if (is_string($allowedProxies)) {
+            $allowedProxies = array_map('trim', explode(',', $allowedProxies));
+        }
+        if (!is_array($allowedProxies)) {
+            return false;
+        }
+        foreach ($allowedProxies as $ipPattern) {
             if (IpUtility::cidrMatch($ipAddress, $ipPattern)) {
                 return true;
             }
@@ -219,7 +230,7 @@ class TrustedProxiesComponent implements ComponentInterface
         $trustedIpHeader = [];
         while ($trustedIpHeaders->valid()) {
             $trustedIpHeader = $trustedIpHeaders->current();
-            if ($trustedIpHeader === null || $this->settings['proxies'] === []) {
+            if ($trustedIpHeader === null || empty($this->settings['proxies'])) {
                 return $server['REMOTE_ADDR'];
             }
             $ipAddress = reset($trustedIpHeader);

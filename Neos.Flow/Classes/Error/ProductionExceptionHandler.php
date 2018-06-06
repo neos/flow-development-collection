@@ -14,6 +14,7 @@ namespace Neos\Flow\Error;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Exception as FlowException;
 use Neos\Flow\Http\Response;
+use Psr\Log\LogLevel;
 
 /**
  * A quite exception handler which catches but ignores any exception.
@@ -25,7 +26,7 @@ class ProductionExceptionHandler extends AbstractExceptionHandler
     /**
      * Echoes an exception for the web.
      *
-     * @param object $exception \Exception or \Throwable
+     * @param \Throwable $exception
      * @return void
      */
     protected function echoExceptionWeb($exception)
@@ -53,7 +54,8 @@ class ProductionExceptionHandler extends AbstractExceptionHandler
                 echo $this->renderStatically($statusCode, $referenceCode);
             }
         } catch (\Exception $innerException) {
-            $this->systemLogger->logException($innerException);
+            $message = $this->throwableStorage->logThrowable($innerException);
+            $this->logger->critical($message);
         }
     }
 
@@ -64,7 +66,7 @@ class ProductionExceptionHandler extends AbstractExceptionHandler
      * @param string $referenceCode
      * @return string
      */
-    protected function renderStatically($statusCode, $referenceCode)
+    protected function renderStatically(int $statusCode, ?string $referenceCode): string
     {
         $statusMessage = Response::getStatusMessageByCode($statusCode);
         $referenceCodeMessage = ($referenceCode !== null) ? '<p>When contacting the maintainer of this application please mention the following reference code:<br /><br />' . $referenceCode . '</p>' : '';

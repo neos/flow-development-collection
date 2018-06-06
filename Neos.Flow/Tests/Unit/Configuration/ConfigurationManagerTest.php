@@ -1380,7 +1380,14 @@ EOD;
                 'uriPattern' => '',
                 'defaults' => [
                     '@controller' => 'Standard',
-                    '@action' => 'redirect'
+                    '@action' => 'redirect',
+                    '--posts-paginator' => [
+                      '@package' => '',
+                      '@subpackage' => '',
+                      '@controller' => '',
+                      '@action' => 'index',
+                      'currentPage' => '1'
+                    ]
                 ],
             ]
         ];
@@ -1400,7 +1407,14 @@ EOD;
                 'defaults' => [
                     '@package' => 'Welcome',
                     '@controller' => 'Standard',
-                    '@action' => 'redirect'
+                    '@action' => 'redirect',
+                    '--posts-paginator' => [
+                        '@package' => '',
+                        '@subpackage' => '',
+                        '@controller' => '',
+                        '@action' => 'index',
+                        'currentPage' => '1'
+                    ]
                 ],
             ]
         ];

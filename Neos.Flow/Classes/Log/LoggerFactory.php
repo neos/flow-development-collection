@@ -27,6 +27,11 @@ use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 class LoggerFactory
 {
     /**
+     * @var PsrLoggerFactoryInterface
+     */
+    protected $psrLoggerFactory;
+
+    /**
      * @var array
      */
     protected $logInstanceCache = [];
@@ -38,9 +43,12 @@ class LoggerFactory
 
     /**
      * LoggerFactory constructor.
+     *
+     * @param PsrLoggerFactoryInterface $psrLoggerFactory
      */
-    public function __construct()
+    public function __construct(PsrLoggerFactoryInterface $psrLoggerFactory)
     {
+        $this->psrLoggerFactory = $psrLoggerFactory;
         $this->requestInfoCallback = function () {
             $output = '';
             if (!(Bootstrap::$staticObjectManager instanceof ObjectManagerInterface)) {
@@ -77,10 +85,29 @@ class LoggerFactory
     public function create($identifier, $loggerObjectName, $backendObjectNames, array $backendOptions = [])
     {
         if (!isset($this->logInstanceCache[$identifier])) {
-            $this->logInstanceCache[$identifier] = $this->instantiateLogger($loggerObjectName, $backendObjectNames, $backendOptions);
+            if (is_a($loggerObjectName, DefaultLogger::class)) {
+                $logger = $this->createPsrBasedLogger($identifier, $loggerObjectName);
+            } else {
+                $logger = $this->instantiateLogger($loggerObjectName, $backendObjectNames, $backendOptions);
+            }
+
+            $this->logInstanceCache[$identifier] = $logger;
         }
 
         return $this->logInstanceCache[$identifier];
+    }
+
+    /**
+     * @param string $identifier
+     * @param string $loggerObjectName
+     * @return LoggerInterface
+     */
+    protected function createPsrBasedLogger(string $identifier, string $loggerObjectName): \Psr\Log\LoggerInterface
+    {
+        $psrLogger = $this->psrLoggerFactory->get($identifier);
+        $logger = $loggerObjectName($psrLogger);
+        $logger = $this->injectAdditionalDependencies($logger);
+        return $logger;
     }
 
     /**
@@ -91,7 +118,7 @@ class LoggerFactory
      * @param array $backendOptions
      * @return \Neos\Flow\Log\LoggerInterface
      */
-    protected function instantiateLogger($loggerObjectName, $backendObjectNames, array $backendOptions = [])
+    protected function instantiateLogger(string $loggerObjectName, $backendObjectNames, array $backendOptions = []): LoggerInterface
     {
         $logger = new $loggerObjectName;
         if (is_array($backendObjectNames)) {
@@ -106,6 +133,16 @@ class LoggerFactory
             $logger->addBackend($backend);
         }
 
+        $logger = $this->injectAdditionalDependencies($logger);
+        return $logger;
+    }
+
+    /**
+     * @param LoggerInterface $logger
+     * @return LoggerInterface
+     */
+    protected function injectAdditionalDependencies(LoggerInterface $logger): LoggerInterface
+    {
         if ($logger instanceof Logger) {
             $logger->injectThrowableStorage($this->instantiateThrowableStorage());
         }
@@ -114,9 +151,9 @@ class LoggerFactory
     }
 
     /**
-     * @return FileStorage|ThrowableStorageInterface|object
+     * @return FileStorage|ThrowableStorageInterface
      */
-    protected function instantiateThrowableStorage()
+    protected function instantiateThrowableStorage(): ThrowableStorageInterface
     {
         // Fallback early throwable storage
         $throwableStorage = new FileStorage();

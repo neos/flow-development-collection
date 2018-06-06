@@ -11,9 +11,7 @@ namespace Neos\Flow\ResourceManagement;
  * source code.
  */
 
-use Doctrine\ORM\Mapping as ORM;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Utility\ObjectAccess;
@@ -23,6 +21,7 @@ use Neos\Flow\ResourceManagement\Target\TargetInterface;
 use Neos\Flow\Utility\Algorithms;
 use Neos\Flow\Utility\Environment;
 use Neos\Utility\Unicode\Functions as UnicodeFunctions;
+use Psr\Log\LoggerInterface;
 
 /**
  * The ResourceManager
@@ -47,10 +46,9 @@ class ResourceManager
     protected $objectManager;
 
     /**
-     * @Flow\Inject
-     * @var SystemLoggerInterface
+     * @var LoggerInterface
      */
-    protected $systemLogger;
+    protected $logger;
 
     /**
      * @Flow\Inject
@@ -104,6 +102,17 @@ class ResourceManager
     public function injectSettings(array $settings)
     {
         $this->settings = $settings;
+    }
+
+    /**
+     * Injects the (system) logger based on PSR-3.
+     *
+     * @param LoggerInterface $logger
+     * @return void
+     */
+    public function injectLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
     }
 
     /**
@@ -162,7 +171,7 @@ class ResourceManager
         }
 
         $this->resourceRepository->add($resource);
-        $this->systemLogger->log(sprintf('Successfully imported file "%s" into the resource collection "%s" (storage: %s, a %s. SHA1: %s)', $source, $collectionName, $collection->getStorage()->getName(), get_class($collection), $resource->getSha1()), LOG_DEBUG);
+        $this->logger->debug(sprintf('Successfully imported file "%s" into the resource collection "%s" (storage: %s, a %s. SHA1: %s)', $source, $collectionName, $collection->getStorage()->getName(), get_class($collection), $resource->getSha1()));
         return $resource;
     }
 
@@ -209,7 +218,7 @@ class ResourceManager
         }
 
         $this->resourceRepository->add($resource);
-        $this->systemLogger->log(sprintf('Successfully imported content into the resource collection "%s" (storage: %s, a %s. SHA1: %s)', $collectionName, $collection->getStorage()->getName(), get_class($collection->getStorage()), $resource->getSha1()), LOG_DEBUG);
+        $this->logger->debug(sprintf('Successfully imported content into the resource collection "%s" (storage: %s, a %s. SHA1: %s)', $collectionName, $collection->getStorage()->getName(), get_class($collection->getStorage()), $resource->getSha1()));
 
         return $resource;
     }
@@ -245,7 +254,7 @@ class ResourceManager
         }
 
         $this->resourceRepository->add($resource);
-        $this->systemLogger->log(sprintf('Successfully imported the uploaded file "%s" into the resource collection "%s" (storage: "%s", a %s. SHA1: %s)', $resource->getFilename(), $collectionName, $this->collections[$collectionName]->getStorage()->getName(), get_class($this->collections[$collectionName]->getStorage()), $resource->getSha1()), LOG_DEBUG);
+        $this->logger->debug(sprintf('Successfully imported the uploaded file "%s" into the resource collection "%s" (storage: "%s", a %s. SHA1: %s)', $resource->getFilename(), $collectionName, $this->collections[$collectionName]->getStorage()->getName(), get_class($this->collections[$collectionName]->getStorage()), $resource->getSha1()));
 
         return $resource;
     }
@@ -317,25 +326,25 @@ class ResourceManager
 
         $collectionName = $resource->getCollectionName();
 
-        $result = $this->resourceRepository->findBySha1($resource->getSha1());
+        $result = $this->resourceRepository->findBySha1AndCollectionName($resource->getSha1(), $collectionName);
         if (count($result) > 1) {
-            $this->systemLogger->log(sprintf('Not removing storage data of resource %s (%s) because it is still in use by %s other PersistentResource object(s).', $resource->getFilename(), $resource->getSha1(), count($result) - 1), LOG_DEBUG);
+            $this->logger->debug(sprintf('Not removing storage data of resource %s (%s) because it is still in use by %s other PersistentResource object(s).', $resource->getFilename(), $resource->getSha1(), count($result) - 1));
         } else {
             if (!isset($this->collections[$collectionName])) {
-                $this->systemLogger->log(sprintf('Could not remove storage data of resource %s (%s) because it refers to the unknown collection "%s".', $resource->getFilename(), $resource->getSha1(), $collectionName), LOG_WARNING);
+                $this->logger->warning(sprintf('Could not remove storage data of resource %s (%s) because it refers to the unknown collection "%s".', $resource->getFilename(), $resource->getSha1(), $collectionName));
 
                 return false;
             }
             $storage = $this->collections[$collectionName]->getStorage();
             if (!$storage instanceof WritableStorageInterface) {
-                $this->systemLogger->log(sprintf('Could not remove storage data of resource %s (%s) because it its collection "%s" is read-only.', $resource->getFilename(), $resource->getSha1(), $collectionName), LOG_WARNING);
+                $this->logger->warning(sprintf('Could not remove storage data of resource %s (%s) because it its collection "%s" is read-only.', $resource->getFilename(), $resource->getSha1(), $collectionName));
 
                 return false;
             }
             try {
                 $storage->deleteResource($resource);
             } catch (\Exception $exception) {
-                $this->systemLogger->log(sprintf('Could not remove storage data of resource %s (%s): %s.', $resource->getFilename(), $resource->getSha1(), $exception->getMessage()), LOG_WARNING);
+                $this->logger->warning(sprintf('Could not remove storage data of resource %s (%s): %s.', $resource->getFilename(), $resource->getSha1(), $exception->getMessage()));
 
                 return false;
             }
@@ -343,9 +352,9 @@ class ResourceManager
                 /** @var TargetInterface $target */
                 $target = $this->collections[$collectionName]->getTarget();
                 $target->unpublishResource($resource);
-                $this->systemLogger->log(sprintf('Removed storage data and unpublished resource %s (%s) because it not used by any other PersistentResource object.', $resource->getFilename(), $resource->getSha1()), LOG_DEBUG);
+                $this->logger->debug(sprintf('Removed storage data and unpublished resource %s (%s) because it not used by any other PersistentResource object.', $resource->getFilename(), $resource->getSha1()));
             } else {
-                $this->systemLogger->log(sprintf('Removed storage data of resource %s (%s) because it not used by any other PersistentResource object.', $resource->getFilename(), $resource->getSha1()), LOG_DEBUG);
+                $this->logger->debug(sprintf('Removed storage data of resource %s (%s) because it not used by any other PersistentResource object.', $resource->getFilename(), $resource->getSha1()));
             }
         }
 

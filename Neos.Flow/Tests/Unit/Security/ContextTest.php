@@ -11,7 +11,6 @@ namespace Neos\Flow\Tests\Unit\Security;
  * source code.
  */
 
-use Neos\Flow\Log\SecurityLoggerInterface;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Security\Authentication\AuthenticationManagerInterface;
 use Neos\Flow\Security\Account;
@@ -23,6 +22,7 @@ use Neos\Flow\Session\SessionInterface;
 use Neos\Flow\Session\SessionManagerInterface;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Flow\Security\Policy\Role;
+use Psr\Log\LoggerInterface;
 
 /**
  * Testcase for the security context
@@ -157,7 +157,7 @@ class ContextTest extends UnitTestCase
         $mockSession = $this->createMock(SessionInterface::class);
         $mockSessionManager = $this->createMock(SessionManagerInterface::class);
         $mockSessionManager->expects($this->any())->method('getCurrentSession')->will($this->returnValue($mockSession));
-        $mockSecurityLogger = $this->createMock(SecurityLoggerInterface::class);
+        $mockSecurityLogger = $this->createMock(LoggerInterface::class);
 
         $securityContext = $this->getAccessibleMock(Context::class, ['dummy']);
         $securityContext->injectSettings($settings);
@@ -324,7 +324,7 @@ class ContextTest extends UnitTestCase
         $mockSession = $this->createMock(SessionInterface::class);
         $mockSessionManager = $this->createMock(SessionManagerInterface::class);
         $mockSessionManager->expects($this->any())->method('getCurrentSession')->will($this->returnValue($mockSession));
-        $mockSecurityLogger = $this->createMock(SecurityLoggerInterface::class);
+        $mockSecurityLogger = $this->createMock(LoggerInterface::class);
 
         $securityContext = $this->getAccessibleMock(Context::class, ['dummy']);
         $securityContext->injectAuthenticationManager($mockAuthenticationManager);

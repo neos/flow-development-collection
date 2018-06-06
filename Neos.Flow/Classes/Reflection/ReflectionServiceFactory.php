@@ -15,7 +15,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cache\CacheManager;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Core\Bootstrap;
-use Neos\Flow\Log\SystemLoggerInterface;
+use Neos\Flow\Log\PsrLoggerFactoryInterface;
 use Neos\Flow\Package\PackageManagerInterface;
 use Neos\Flow\Utility\Environment;
 
@@ -62,7 +62,7 @@ class ReflectionServiceFactory
         $settings = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.Flow');
 
         $reflectionService = new ReflectionService();
-        $reflectionService->injectSystemLogger($this->bootstrap->getEarlyInstance(SystemLoggerInterface::class));
+        $reflectionService->injectLogger($this->bootstrap->getEarlyInstance(PsrLoggerFactoryInterface::class)->get('systemLogger'));
         $reflectionService->injectSettings($settings);
         $reflectionService->injectPackageManager($this->bootstrap->getEarlyInstance(PackageManagerInterface::class));
         $reflectionService->setStatusCache($cacheManager->getCache('Flow_Reflection_Status'));
