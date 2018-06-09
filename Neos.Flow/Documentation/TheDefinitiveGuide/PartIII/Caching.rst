@@ -650,6 +650,61 @@ Options
 
 The null backend has no options.
 
+Neos\\Cache\\Backend\\MultiBackend
+----------------------------------
+
+This backend accepts several backend configurations
+to be used in order of appareance as a fallback mechanismn
+shoudln't one of them not be available.
+If `backendConfigurations` is an empty array this will act
+just like the NullBackend.
+
+.. warning::
+Due to the nature of this backend as fallback it will swallow all
+errors on creating and using the sub backends. So configuration
+errors won't show up. See `debug` option.
+
+Options
+~~~~~~~
+
+:title:`Multi cache backend options`
+
++-----------------------+------------------------------------------+-----------+---------+---------+
+| Option                | Description                              | Mandatory | Type    | Default |
++=======================+==========================================+===========+=========+=========+
+| setInAllBackends      | Should values given to the backend be    | No        | bool    | true    |
+|                       | replicated into all configured and       |           |         |         |
+|                       |  available backends?                     |           |         |         |
+|                       | Generally that is desireable for         |           |         |         |
+|                       | fallback purposes, but to avoid too much |           |         |         |
+|                       | duplication at the cost of performance on|           |         |         |
+|                       | fallbacks this can be disabled.          |           |         |         |
+|                       |                                          |           |         |         |
++-----------------------+------------------------------------------+-----------+---------+---------+
+| backendConfigurations | A list of backends to be used in order   | Yes       | array   | []      |
+|                       | of appearance. Each entry in that list   |           |         |         |
+|                       | should have the keys "backend" and       |           |         |         |
+|                       | "backendOptions" just as a top level     |           |         |         |
+|                       | backend configuration.                   |           |         |         |
+|                       |                                          |           |         |         |
++-----------------------+------------------------------------------+-----------+---------+---------+
+| debug                 | Switch on debug mode which will throw    | No        | bool    | false   |
+|                       | any errors happening in sub backends.    |           |         |         |
+|                       | Use this in development to make sure     |           |         |         |
+|                       | everything works as expected.            |           |         |         |
+|                       |                                          |           |         |         |
++-----------------------+------------------------------------------+-----------+---------+---------+
+
+
+Neos\\Cache\\Backend\\TaggableMultiBackend
+------------------------------------------
+
+Technically all the same as the MultiBackend above but implements the TaggableBackendInterface and
+so supports tagging.
+
+Options are the same as for the MultiBackend.
+
+
 How to Use the Caching Framework
 ================================
 
