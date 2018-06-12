@@ -376,7 +376,7 @@ class ArrayHelper implements ProtectedContextAwareInterface
      *     Array.map([1, 2, 3, 4], (x, index) => x * index)
      *
      * @param array $array Array of elements to map
-     * @param callable $callback Callback to apply for each element, value and key will be passed as arguments
+     * @param callable $callback Callback to apply for each element, current value and key will be passed as arguments
      * @return array The array with callback applied, keys will be preserved
      */
     public function map(array $array, callable $callback): array
@@ -393,10 +393,11 @@ class ArrayHelper implements ProtectedContextAwareInterface
      *
      * Examples::
      *
-     *     Array.reduce([1, 2, 3, 4], (accumulator, currentValue) => accumulator + currentValue)
+     *     Array.reduce([1, 2, 3, 4], (accumulator, currentValue) => accumulator + currentValue) // == 10
+     *     Array.reduce([1, 2, 3, 4], (accumulator, currentValue) => accumulator + currentValue, 1) // == 11
      *
      * @param array $array Array of elements to reduce to a value
-     * @param callable $callback
+     * @param callable $callback Callback for accumulating values, accumulator, current value and key will be passed as arguments
      * @param mixed $initialValue Initial value, defaults to first item in array and callback starts with second entry
      * @return mixed
      */
@@ -408,9 +409,72 @@ class ArrayHelper implements ProtectedContextAwareInterface
             $accumulator = array_shift($array);
         }
         foreach ($array as $key => $element) {
-            $accumulator = $callback($accumulator, $element, $key, $array);
+            $accumulator = $callback($accumulator, $element, $key);
         }
         return $accumulator;
+    }
+
+    /**
+     * Filter an array by a test given as the callback, passing each element and key as arguments
+     *
+     * Examples:
+     *
+     *     Array.filter([1, 2, 3, 4], x => x % 2 == 0) // == [2, 4]
+     *     Array.filter(['foo', 'bar', 'baz'], (x, index) => index < 2) // == ['foo', 'bar']
+     *
+     * @param array $array Array of elements to filter
+     * @param callable $callback Callback for testing if an element should be included in the result, current value and key will be passed as arguments
+     * @return array The array with elements where callback returned true
+     */
+    public function filter(array $array, callable $callback): array
+    {
+        return array_filter($array, $callback, ARRAY_FILTER_USE_BOTH);
+    }
+
+    /**
+     * Check if at least one element in an array passes a test given by the calback,
+     * passing each element and key as arguments
+     *
+     * Example::
+     *
+     *     Array.some([1, 2, 3, 4], x => x % 2 == 0) // == true
+     *     Array.some([1, 2, 3, 4], x => x > 4) // == false
+     *
+     * @param array $array Array of elements to test
+     * @param callable $callback Callback for testing elements, current value and key will be passed as arguments
+     * @return bool True if at least one element passed the test
+     */
+    public function some(array $array, callable $callback): bool
+    {
+        foreach ($array as $key => $value) {
+            if ($callback($value, $key)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Check if all elements in an array pass a test given by the calback,
+     * passing each element and key as arguments
+     *
+     * Example::
+     *
+     *     Array.every([1, 2, 3, 4], x => x % 2 == 0) // == false
+     *     Array.every([2, 4, 6, 8], x => x % 2) // == true
+     *
+     * @param array $array Array of elements to test
+     * @param callable $callback Callback for testing elements, current value and key will be passed as arguments
+     * @return bool True if all elements passed the test
+     */
+    public function every(array $array, callable $callback): bool
+    {
+        foreach ($array as $key => $value) {
+            if (!$callback($value, $key)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
