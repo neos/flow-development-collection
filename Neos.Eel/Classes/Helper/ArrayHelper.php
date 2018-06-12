@@ -62,11 +62,11 @@ class ArrayHelper implements ProtectedContextAwareInterface
      * Extract a portion of an indexed array
      *
      * @param array $array The array (with numeric indices)
-     * @param string $begin
-     * @param string $end
+     * @param int $begin
+     * @param int $end
      * @return array
      */
-    public function slice(array $array, string $begin, string $end = null): array
+    public function slice(array $array, int $begin, int $end = null): array
     {
         if ($end === null) {
             $end = count($array);
