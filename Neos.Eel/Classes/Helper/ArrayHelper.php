@@ -26,6 +26,7 @@ use Neos\Eel\ProtectedContextAwareInterface;
  */
 class ArrayHelper implements ProtectedContextAwareInterface
 {
+
     /**
      * Concatenate arrays or values to a new array
      *
@@ -378,7 +379,8 @@ class ArrayHelper implements ProtectedContextAwareInterface
      * @param callable $callback Callback to apply for each element, value and key will be passed as arguments
      * @return array The array with callback applied, keys will be preserved
      */
-    public function map(array $array, callable $callback): array {
+    public function map(array $array, callable $callback): array
+    {
         $result = [];
         foreach ($array as $key => $element) {
             $result[$key] = $callback($element, $key);
@@ -398,7 +400,8 @@ class ArrayHelper implements ProtectedContextAwareInterface
      * @param mixed $initialValue Initial value, defaults to first item in array and callback starts with second entry
      * @return mixed
      */
-    public function reduce(array $array, callable $callback, $initialValue = null) {
+    public function reduce(array $array, callable $callback, $initialValue = null)
+    {
         if ($initialValue !== null) {
             $accumulator = $initialValue;
         } else {
