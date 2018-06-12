@@ -473,4 +473,77 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
         $result = call_user_func_array([$helper, 'range'], $arguments);
         $this->assertEquals($expected, $result);
     }
+
+    public function mapExamples()
+    {
+        return [
+            'map squares' => [
+                [1, 2, 3, 4],
+                function($x) { return $x * $x; },
+                [1, 4, 9, 16],
+            ],
+            'preserve keys' => [
+                ['a' => 1, 'b' => 2],
+                function($x) { return $x * 2; },
+                ['a' => 2, 'b' => 4],
+            ],
+            'with keys' => [
+                [1, 2, 3, 4],
+                function($x, $index) { return $x * $index; },
+                [0, 2, 6, 12],
+            ],
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider mapExamples
+     */
+    public function mapWorks($array, $callback, $expected)
+    {
+        $helper = new ArrayHelper();
+        $result = $helper->map($array, $callback);
+        $this->assertSame($expected, $result);
+    }
+
+    public function reduceExamples()
+    {
+        return [
+            'sum with initial value' => [
+                [1, 2, 3, 4],
+                function($sum, $x) { return $sum + $x; },
+                0,
+                10,
+            ],
+            'sum without initial value' => [
+                [1, 2, 3, 4],
+                function($sum, $x) { return $sum + $x; },
+                null,
+                10,
+            ],
+            'sum with empty array and initial value' => [
+                [],
+                function($sum, $x) { return $sum + $x; },
+                0,
+                0,
+            ],
+            'sum with empty array and without initial value' => [
+                [],
+                function($sum, $x) { return $sum + $x; },
+                null,
+                null,
+            ],
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider reduceExamples
+     */
+    public function reduceWorks($array, $callback, $initialValue, $expected)
+    {
+        $helper = new ArrayHelper();
+        $result = $helper->reduce($array, $callback, $initialValue);
+        $this->assertSame($expected, $result);
+    }
 }

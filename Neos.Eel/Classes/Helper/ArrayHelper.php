@@ -367,6 +367,50 @@ class ArrayHelper implements ProtectedContextAwareInterface
     }
 
     /**
+     * Apply the callback to each element of the array, passing each element and key as arguments
+     *
+     * Examples::
+     *
+     *     Array.map([1, 2, 3, 4], x => x * x)
+     *     Array.map([1, 2, 3, 4], (x, index) => x * index)
+     *
+     * @param array $array
+     * @param callable $callback
+     * @return array The array with callback applied, keys will be preserved
+     */
+    public function map(array $array, callable $callback): array {
+        $result = [];
+        foreach ($array as $key => $element) {
+            $result[$key] = $callback($element, $key);
+        }
+        return $result;
+    }
+
+    /**
+     * Apply the callback to each element of the array and accumulate a single value
+     *
+     * Examples::
+     *
+     *     Array.reduce([1, 2, 3, 4], (accumulator, currentValue) => accumulator + currentValue)
+     *
+     * @param array $array Array of elements to reduce to a value
+     * @param callable $callback
+     * @param mixed $initialValue Initial value, defaults to first item in array and callback starts with second entry
+     * @return mixed
+     */
+    public function reduce(array $array, callable $callback, $initialValue = null) {
+        if ($initialValue !== null) {
+            $accumulator = $initialValue;
+        } else {
+            $accumulator = array_shift($array);
+        }
+        foreach ($array as $key => $element) {
+            $accumulator = $callback($accumulator, $element, $key, $array);
+        }
+        return $accumulator;
+    }
+
+    /**
      * All methods are considered safe
      *
      * @param string $methodName
