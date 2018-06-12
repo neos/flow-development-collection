@@ -479,17 +479,23 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
         return [
             'map squares' => [
                 [1, 2, 3, 4],
-                function($x) { return $x * $x; },
+                function ($x) {
+                    return $x * $x;
+                },
                 [1, 4, 9, 16],
             ],
             'preserve keys' => [
                 ['a' => 1, 'b' => 2],
-                function($x) { return $x * 2; },
+                function ($x) {
+                    return $x * 2;
+                },
                 ['a' => 2, 'b' => 4],
             ],
             'with keys' => [
                 [1, 2, 3, 4],
-                function($x, $index) { return $x * $index; },
+                function ($x, $index) {
+                    return $x * $index;
+                },
                 [0, 2, 6, 12],
             ],
         ];
@@ -511,25 +517,33 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
         return [
             'sum with initial value' => [
                 [1, 2, 3, 4],
-                function($sum, $x) { return $sum + $x; },
+                function ($sum, $x) {
+                    return $sum + $x;
+                },
                 0,
                 10,
             ],
             'sum without initial value' => [
                 [1, 2, 3, 4],
-                function($sum, $x) { return $sum + $x; },
+                function ($sum, $x) {
+                    return $sum + $x;
+                },
                 null,
                 10,
             ],
             'sum with empty array and initial value' => [
                 [],
-                function($sum, $x) { return $sum + $x; },
+                function ($sum, $x) {
+                    return $sum + $x;
+                },
                 0,
                 0,
             ],
             'sum with empty array and without initial value' => [
                 [],
-                function($sum, $x) { return $sum + $x; },
+                function ($sum, $x) {
+                    return $sum + $x;
+                },
                 null,
                 null,
             ],
