@@ -1,0 +1,55 @@
+<?php
+namespace Neos\Eel\Helper;
+
+/*
+ * This file is part of the Neos.Eel package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
+
+use Neos\Eel\ProtectedContextAwareInterface;
+use Neos\Flow\Annotations as Flow;
+
+/**
+ * Base64 helpers for Eel contexts
+ */
+class Base64Helper implements ProtectedContextAwareInterface
+{
+    /**
+     * Encodes data with MIME base64
+     *
+     * @param string $data The data to encode.
+     * @return string
+     */
+    public function encode(string $data): string
+    {
+        return base64_encode($data);
+    }
+
+    /**
+     * Decodes data encoded with MIME base64
+     *
+     * @param string $data The encoded data.
+     * @param bool $strict If the strict parameter is set to TRUE then the base64_decode() function will return FALSE if the input contains character from outside the base64 alphabet. Otherwise invalid characters will be silently discarded.
+     * @return string
+     */
+    public function decode(string $data, bool $strict = false): string
+    {
+        return base64_decode($data, $strict);
+    }
+
+    /**
+     * All methods are considered safe
+     *
+     * @param string $methodName
+     * @return boolean
+     */
+    public function allowsCallOfMethod($methodName)
+    {
+        return true;
+    }
+}
