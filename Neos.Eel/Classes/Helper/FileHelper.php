@@ -65,7 +65,7 @@ class FileHelper implements ProtectedContextAwareInterface
      * @param string $methodName
      * @return bool
      */
-    public function allowsCallOfMethod($methodName)
+    public function allowsCallOfMethod(string $methodName) : bool
     {
         return true;
     }
