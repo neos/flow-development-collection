@@ -12,7 +12,7 @@ class Version20180622074421 extends AbstractMigration
      */
     public function getDescription()
     {
-        return 'Add index to "sha1" column of the "persistentresource" table for better read performance';
+        return 'Add index to "sha1" column of the "resource" table for better read performance';
     }
 
     /**
