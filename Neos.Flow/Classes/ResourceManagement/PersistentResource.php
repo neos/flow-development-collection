@@ -25,6 +25,7 @@ use Neos\Flow\ResourceManagement\Exception as ResourceException;
  * Model representing a persistable resource
  *
  * @Flow\Entity
+ * @ORM\Table(indexes={@ORM\Index(columns={"sha1"})})
  */
 class PersistentResource implements ResourceMetaDataInterface, CacheAwareInterface
 {
