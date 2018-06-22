@@ -24,6 +24,7 @@ use TYPO3\Flow\Resource\Exception as ResourceException;
  * Model representing a persistable resource
  *
  * @Flow\Entity
+ * @ORM\Table(indexes={@ORM\Index(columns={"sha1"})})
  */
 class Resource implements ResourceMetaDataInterface, CacheAwareInterface
 {
@@ -63,7 +64,7 @@ class Resource implements ResourceMetaDataInterface, CacheAwareInterface
      * The IANA media type of this resource
      *
      * @var string
-     * @Flow\Validate(type="StringLength", options={ "maximum"=100 })
+     * @Flow\Validate(type="StringLength", options={ "maximum"=100 })Version20180622074421.php
      * @ORM\Column(length=100)
      */
     protected $mediaType;
