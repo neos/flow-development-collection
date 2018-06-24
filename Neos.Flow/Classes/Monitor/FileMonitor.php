@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Monitor;
 
 /*
@@ -106,15 +107,8 @@ class FileMonitor
     {
         $fileMonitorCache = $bootstrap->getEarlyInstance(CacheManager::class)->getCache('Flow_Monitor');
 
-        // The change detector needs to be instantiated and registered manually because
-        // it has a complex dependency (cache) but still needs to be a singleton.
-        $fileChangeDetector = new ChangeDetectionStrategy\ModificationTimeStrategy();
-        $fileChangeDetector->injectCache($fileMonitorCache);
-        $bootstrap->getObjectManager()->registerShutdownObject($fileChangeDetector, 'shutdownObject');
-
         $fileMonitor = new FileMonitor($identifier);
         $fileMonitor->injectCache($fileMonitorCache);
-        $fileMonitor->injectChangeDetectionStrategy($fileChangeDetector);
         $fileMonitor->injectSignalDispatcher($bootstrap->getEarlyInstance(Dispatcher::class));
         $fileMonitor->injectLogger($bootstrap->getEarlyInstance(PsrLoggerFactoryInterface::class)->get('systemLogger'));
 
@@ -165,6 +159,13 @@ class FileMonitor
     public function injectCache(StringFrontend $cache)
     {
         $this->cache = $cache;
+    }
+
+    private static function callWatchman($watchmanSocket, $query)
+    {
+        fwrite($watchmanSocket, json_encode($query) . "\n");
+        $responseString = fgets($watchmanSocket);
+        return json_decode($responseString, true);
     }
 
     /**
@@ -240,6 +241,8 @@ class FileMonitor
         return array_keys($this->monitoredDirectories);
     }
 
+    protected $currentClock = 'c:0:0';
+
     /**
      * Detects changes of the files and directories to be monitored and emits signals
      * accordingly.
@@ -249,176 +252,68 @@ class FileMonitor
      */
     public function detectChanges()
     {
-        if ($this->changedFiles === null || $this->changedPaths === null) {
-            $this->loadDetectedDirectoriesAndFiles();
-            $changesDetected = false;
-            $this->changedPaths = $this->changedFiles = [];
-            $this->changedFiles = $this->detectChangedFiles($this->monitoredFiles);
+        $t1 = microtime(true);
+        $watchmanSocket = $this->getWatchmanSocket();
 
-            foreach ($this->monitoredDirectories as $path => $filenamePattern) {
-                $changesDetected = $this->detectChangesOnPath($path, $filenamePattern) ? true : $changesDetected;
-            }
+        $since = $this->cache->get($this->identifier . '_since') ?: 'c:0:0';
 
-            if ($changesDetected) {
-                $this->saveDetectedDirectoriesAndFiles();
-            }
-            $this->directoriesAndFiles = null;
+        if (count($this->monitoredFiles) != 0) {
+            throw new \Exception('TODO: Monitored files not supported');
         }
 
-        $changedFileCount = count($this->changedFiles);
-        $changedPathCount = count($this->changedPaths);
-
-        if ($changedFileCount > 0) {
-            $this->emitFilesHaveChanged($this->identifier, $this->changedFiles);
+        $expression = ['anyof'];
+        foreach ($this->monitoredDirectories as $directory => $regex) {
+            if ($regex !== null) {
+                $expression[] = ['allof',
+                    ['dirname', rtrim(substr($directory, strlen(FLOW_PATH_PACKAGES)), '/')],
+                    ['pcre', $regex]
+                ];
+            } else {
+                $expression[] = ['dirname', rtrim(substr($directory, strlen(FLOW_PATH_PACKAGES)), '/')];
+            }
         }
+        if (count($expression) === 1) {
+            // no part of expression exists
+            return;
+        }
+
+        $query = ['query', rtrim(FLOW_PATH_PACKAGES, '/'), [
+            'since' => $since,
+            'fields' => ['name', 'exists', 'new'],
+            'expression' => $expression
+        ]];
+
+        $response = self::callWatchman($watchmanSocket, $query);
+        if (isset($response['error']) && strpos($response['error'], 'is not watched') !== -1) {
+            var_dump(self::callWatchman($watchmanSocket, ['watch', rtrim(FLOW_PATH_PACKAGES, '/')]));
+            $response = self::callWatchman($watchmanSocket, $query);
+        }
+
+        $changedFiles = [];
+        foreach ($response['files'] as $file) {
+            $status = ChangeDetectionStrategyInterface::STATUS_CHANGED;
+            if ($file['exists'] === false) {
+                $status = ChangeDetectionStrategyInterface::STATUS_DELETED;
+            } elseif($file['new'] === true) {
+                $status = ChangeDetectionStrategyInterface::STATUS_CREATED;
+            }
+            $changedFiles[FLOW_PATH_PACKAGES . $file['name']] = $status;
+        }
+        if (count($changedFiles) > 0) {
+            $this->emitFilesHaveChanged($this->identifier, $changedFiles);
+        }
+
+
+        if (count($changedFiles) > 0) {
+            $this->logger->info(sprintf('File Monitor "%s" detected %s changed files and %s changed directories.', $this->identifier, count($changedFiles), 0));
+        }
+        $this->currentClock = $response['clock'];
+        /*if ($changedFileCount > 0) {
+
         if ($changedPathCount > 0) {
             $this->emitDirectoriesHaveChanged($this->identifier, $this->changedPaths);
         }
-        if ($changedFileCount > 0 || $changedPathCount) {
-            $this->logger->info(sprintf('File Monitor "%s" detected %s changed files and %s changed directories.', $this->identifier, $changedFileCount, $changedPathCount));
-        }
-    }
-
-    /**
-     * Detect changes for one of the monitored paths.
-     *
-     * @param string $path
-     * @param string $filenamePattern
-     * @return boolean TRUE if any changes were detected in this path
-     */
-    protected function detectChangesOnPath($path, $filenamePattern)
-    {
-        $currentDirectoryChanged = false;
-        try {
-            $currentSubDirectoriesAndFiles = $this->readMonitoredDirectoryRecursively($path, $filenamePattern);
-        } catch (\Exception $exception) {
-            $currentSubDirectoriesAndFiles = [];
-            $this->changedPaths[$path] = ChangeDetectionStrategyInterface::STATUS_DELETED;
-        }
-
-        $nowDetectedFilesAndDirectories = [];
-        if (!isset($this->directoriesAndFiles[$path])) {
-            $this->directoriesAndFiles[$path] = [];
-            $this->changedPaths[$path] = ChangeDetectionStrategyInterface::STATUS_CREATED;
-        }
-
-        foreach ($currentSubDirectoriesAndFiles as $pathAndFilename) {
-            $status = $this->changeDetectionStrategy->getFileStatus($pathAndFilename);
-            if ($status !== ChangeDetectionStrategyInterface::STATUS_UNCHANGED) {
-                $this->changedFiles[$pathAndFilename] = $status;
-                $currentDirectoryChanged = true;
-            }
-
-            if (isset($this->directoriesAndFiles[$path][$pathAndFilename])) {
-                unset($this->directoriesAndFiles[$path][$pathAndFilename]);
-            }
-            $nowDetectedFilesAndDirectories[$pathAndFilename] = 1;
-        }
-
-        if ($this->directoriesAndFiles[$path] !== []) {
-            foreach (array_keys($this->directoriesAndFiles[$path]) as $pathAndFilename) {
-                $this->changedFiles[$pathAndFilename] = ChangeDetectionStrategyInterface::STATUS_DELETED;
-                if ($this->changeDetectionStrategy instanceof StrategyWithMarkDeletedInterface) {
-                    $this->changeDetectionStrategy->setFileDeleted($pathAndFilename);
-                } else {
-                    // This call is needed to mark the file deleted in any possibly existing caches of the strategy.
-                    // The return value is not important as we know this file doesn't exist so we set the status to DELETED anyway.
-                    $this->changeDetectionStrategy->getFileStatus($pathAndFilename);
-                }
-            }
-            $currentDirectoryChanged = true;
-        }
-
-        if ($currentDirectoryChanged) {
-            $this->setDetectedFilesForPath($path, $nowDetectedFilesAndDirectories);
-        }
-
-        return $currentDirectoryChanged;
-    }
-
-    /**
-     * Read a monitored directory recursively, taking into account filename patterns
-     *
-     * @param string $path The path of a monitored directory
-     * @param string $filenamePattern
-     * @return \Generator<string> A generator returning filenames with full path
-     */
-    protected function readMonitoredDirectoryRecursively($path, $filenamePattern)
-    {
-        $directories = [Files::getNormalizedPath($path)];
-        while ($directories !== []) {
-            $currentDirectory = array_pop($directories);
-            if (is_file($currentDirectory . '.flowFileMonitorIgnore')) {
-                continue;
-            }
-            if ($handle = opendir($currentDirectory)) {
-                while (false !== ($filename = readdir($handle))) {
-                    if ($filename[0] === '.') {
-                        continue;
-                    }
-                    $pathAndFilename = $currentDirectory . $filename;
-                    if (is_dir($pathAndFilename)) {
-                        array_push($directories, $pathAndFilename . DIRECTORY_SEPARATOR);
-                    } elseif ($filenamePattern === null || preg_match('|' . $filenamePattern . '|', $filename) === 1) {
-                        yield $pathAndFilename;
-                    }
-                }
-                closedir($handle);
-            }
-        }
-    }
-
-    /**
-     * Loads the last detected files for this monitor.
-     *
-     * @return void
-     */
-    protected function loadDetectedDirectoriesAndFiles()
-    {
-        if ($this->directoriesAndFiles === null) {
-            $this->directoriesAndFiles = json_decode($this->cache->get($this->identifier . '_directoriesAndFiles'), true);
-            if (!is_array($this->directoriesAndFiles)) {
-                $this->directoriesAndFiles = [];
-            }
-        }
-    }
-
-    /**
-     * Store the changed directories and files back to the cache.
-     *
-     * @return void
-     */
-    protected function saveDetectedDirectoriesAndFiles()
-    {
-        $this->cache->set($this->identifier . '_directoriesAndFiles', json_encode($this->directoriesAndFiles));
-    }
-
-    /**
-     * @param string $path
-     * @param array $files
-     * @return void
-     */
-    protected function setDetectedFilesForPath($path, array $files)
-    {
-        $this->directoriesAndFiles[$path] = $files;
-    }
-
-    /**
-     * Detects changes in the given list of files and emits signals if necessary.
-     *
-     * @param array $pathAndFilenames A list of full path and filenames of files to check
-     * @return array An array of changed files (key = path and filenmae) and their status (value)
-     */
-    protected function detectChangedFiles(array $pathAndFilenames)
-    {
-        $changedFiles = [];
-        foreach ($pathAndFilenames as $pathAndFilename) {
-            $status = $this->changeDetectionStrategy->getFileStatus($pathAndFilename);
-            if ($status !== ChangeDetectionStrategyInterface::STATUS_UNCHANGED) {
-                $changedFiles[$pathAndFilename] = $status;
-            }
-        }
-        return $changedFiles;
+        */
     }
 
     /**
@@ -454,6 +349,29 @@ class FileMonitor
      */
     public function shutdownObject()
     {
-        $this->changeDetectionStrategy->shutdownObject();
+        $this->cache->set($this->getIdentifier() . '_since', $this->currentClock);
+    }
+
+    private static $watchmanSocket = null;
+
+    private function getWatchmanSocket()
+    {
+        if (!self::$watchmanSocket) {
+            $socketPathAndFilename = $this->cache->get('watchmanSocketPathAndFilename');
+            if (!$socketPathAndFilename || !file_exists($socketPathAndFilename)) {
+                $resultArr = [];
+                exec('watchman get-sockname', $resultArr);
+                $result = json_decode(join('', $resultArr), true);
+                $socketPathAndFilename = $result['sockname'];
+                $this->cache->set('watchmanSocketPathAndFilename', $socketPathAndFilename);
+            }
+            $errno = 0;
+            $errstr = '';
+            self::$watchmanSocket = stream_socket_client('unix://' . $socketPathAndFilename, $errno, $errstr);
+            if ($errno != 0) {
+                throw new \Neos\Flow\Exception('Watchman socket not openable, error was ' . $errno . ': ' . $errstr);
+            }
+        }
+        return self::$watchmanSocket;
     }
 }
