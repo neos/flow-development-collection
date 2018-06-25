@@ -6,7 +6,6 @@ use Doctrine\DBAL\Schema\Schema;
 
 class Version20180622074422 extends AbstractMigration
 {
-
     /**
      * @return string
      */
@@ -18,6 +17,7 @@ class Version20180622074422 extends AbstractMigration
     /**
      * @param Schema $schema
      * @return void
+     * @throws \Doctrine\DBAL\Migrations\AbortMigrationException
      */
     public function up(Schema $schema)
     {
@@ -29,11 +29,12 @@ class Version20180622074422 extends AbstractMigration
     /**
      * @param Schema $schema
      * @return void
+     * @throws \Doctrine\DBAL\Migrations\AbortMigrationException
      */
     public function down(Schema $schema)
     {
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'postgresql', 'Migration can only be executed safely on "postgresql".');
 
-        $this->addSql('DROP INDEX IDX_35DC14F03332102A ON typo3_flow_resource_resource');
+        $this->addSql('DROP INDEX IDX_35DC14F03332102A');
     }
 }
