@@ -282,7 +282,7 @@ class Scripts
         $errorHandler->setExceptionalErrors($settings['error']['errorHandler']['exceptionalErrors']);
         $exceptionHandler = class_exists($settings['error']['exceptionHandler']['className']) ? new $settings['error']['exceptionHandler']['className'] : new ProductionExceptionHandler();
         if (is_callable([$exceptionHandler, 'injectSystemLogger'])) {
-        $exceptionHandler->injectSystemLogger($bootstrap->getEarlyInstance(SystemLoggerInterface::class));
+            $exceptionHandler->injectSystemLogger($bootstrap->getEarlyInstance(SystemLoggerInterface::class));
         }
 
         if (is_callable([$exceptionHandler, 'injectLogger'])) {
