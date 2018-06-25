@@ -24,6 +24,7 @@ use TYPO3\Flow\Resource\Exception as ResourceException;
  * Model representing a persistable resource
  *
  * @Flow\Entity
+ * @ORM\Table(indexes={@ORM\Index(columns={"sha1"})})
  */
 class Resource implements ResourceMetaDataInterface, CacheAwareInterface
 {
