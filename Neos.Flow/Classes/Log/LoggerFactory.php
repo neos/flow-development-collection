@@ -85,10 +85,10 @@ class LoggerFactory
     public function create($identifier, $loggerObjectName, $backendObjectNames, array $backendOptions = [])
     {
         if (!isset($this->logInstanceCache[$identifier])) {
-            if (is_a($loggerObjectName, DefaultLogger::class)) {
-                $logger = $this->createPsrBasedLogger($identifier, $loggerObjectName);
-            } else {
+            if (is_a($loggerObjectName, DefaultLogger::class, true)) {
                 $logger = $this->instantiateLogger($loggerObjectName, $backendObjectNames, $backendOptions);
+            } else {
+                $logger = $this->createPsrBasedLogger($identifier, $loggerObjectName);
             }
 
             $this->logInstanceCache[$identifier] = $logger;
