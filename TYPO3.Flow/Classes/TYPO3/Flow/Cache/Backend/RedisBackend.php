@@ -165,7 +165,9 @@ class RedisBackend extends AbstractBackend implements TaggableBackendInterface, 
      */
     public function has($entryIdentifier)
     {
-        return $this->redis->exists($this->buildKey('entry:' . $entryIdentifier));
+        // exists returned TRUE or FALSE in phpredis versions < 4.0.0, now it returns the number of keys
+        $existsResult = $this->redis->exists($this->buildKey('entry:' . $entryIdentifier));
+        return $existsResult === true || $existsResult > 0;
     }
 
     /**
