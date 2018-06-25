@@ -86,9 +86,9 @@ class LoggerFactory
     {
         if (!isset($this->logInstanceCache[$identifier])) {
             if (is_a($loggerObjectName, DefaultLogger::class, true)) {
-                $logger = $this->createPsrBasedLogger($identifier, $loggerObjectName);
-            } else {
                 $logger = $this->instantiateLogger($loggerObjectName, $backendObjectNames, $backendOptions);
+            } else {
+                $logger = $this->createPsrBasedLogger($identifier, $loggerObjectName);
             }
 
             $this->logInstanceCache[$identifier] = $logger;
