@@ -1,30 +1,42 @@
 language: php
-addons:
-  postgresql: "9.4"
-  mariadb: '10.2'
-services:
-  - postgresql
 matrix:
   fast_finish: true
   include:
     - php: 7.1
       env: DB=mysql
+      addons:
+        mariadb: '10.2'
     - php: 7.1
       env: DB=pgsql
+      sudo: required
+      addons:
+        postgresql: "9.4"
     - php: 7.1
       env: DB=mysql BEHAT=true
+      addons:
+        mariadb: '10.2'
     - php: 7.1
       env: DB=pgsql BEHAT=true
+      sudo: required
+      addons:
+        postgresql: "9.4"
     - php: 7.2
       env: DB=mysql
+      addons:
+        mariadb: '10.2'
     - php: 7.2
       env: DB=mysql BEHAT=true
+      addons:
+        mariadb: '10.2'
 cache:
   directories:
     - $HOME/.composer/cache
 before_install:
   - export NEOS_TARGET_REPOSITORY=neos/flow-development-collection
   - export NEOS_TARGET_VERSION=5.0
+  - if [ "$DB" = "pgsql" ]; then sudo mount -o remount,size=25% /var/ramfs ; fi
+  - phpenv config-rm xdebug.ini
+  - env
   - sudo add-apt-repository ppa:git-core/ppa -y
   - sudo apt-get update
   - sudo apt-get install git -y
@@ -33,14 +45,13 @@ before_install:
   - git clone https://github.com/neos/flow-development-distribution.git -b ${NEOS_TARGET_VERSION}
   - cd flow-development-distribution
 install:
-  - phpenv config-rm xdebug.ini
   - composer self-update -q 1.6.3
   - if [ -n "$GH_TOKEN" ]; then composer config github-oauth.github.com ${GH_TOKEN}; fi;
   - composer update --no-progress --no-interaction
   - php Build/BuildEssentials/TravisCi/ComposerManifestUpdater.php .
   - composer update --no-progress --no-interaction
 before_script:
-  - echo 'date.timezone = "Antarctica/Troll"' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
+  - echo 'date.timezone = "Africa/Tunis"' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
   - echo 'opcache.fast_shutdown = 0' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
   - echo 'opcache.enable_cli = 0' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
   - echo 'zend.enable_gc = 0' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
