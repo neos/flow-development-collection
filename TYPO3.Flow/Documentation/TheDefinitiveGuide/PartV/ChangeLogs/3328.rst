@@ -1,0 +1,25 @@
+`3.3.28 (2018-06-26) <https://github.com/neos/flow-development-collection/releases/tag/3.3.28>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`Improve performance of ResourceManager::getResourceBySha1() <https://github.com/neos/flow-development-collection/pull/1331>`_
+------------------------------------------------------------------------------------------------------------------------------
+
+This adds an index to the `PersistentResource` table drastically
+improving the performance of `ResourceManager::getResourceBySha1()`
+calls (= public API).
+
+* Packages: ``Flow``
+
+`BUGFIX: Adjust has() to phpredis >= 4.0.0 <https://github.com/neos/flow-development-collection/pull/1326>`_
+------------------------------------------------------------------------------------------------------------
+
+The `exists()` method returned TRUE or FALSE in phpredis versions < 4.0.0, now it
+returns the number of keys tested that do exist.
+
+* Packages: ``Flow``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/3.3.27...3.3.28>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
