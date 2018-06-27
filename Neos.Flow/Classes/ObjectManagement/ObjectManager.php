@@ -132,10 +132,10 @@ class ObjectManager implements ObjectManagerInterface
     }
 
     /**
-     * Returns TRUE if an object with the given name is registered
+     * Returns true if an object with the given name is registered
      *
      * @param  string $objectName Name of the object
-     * @return boolean TRUE if the object has been registered, otherwise false
+     * @return boolean true if the object has been registered, otherwise false
      * @throws \InvalidArgumentException
      * @api
      */
@@ -351,11 +351,11 @@ class ObjectManager implements ObjectManagerInterface
     }
 
     /**
-     * Returns TRUE if this object manager already has an instance for the specified
+     * Returns true if this object manager already has an instance for the specified
      * object.
      *
      * @param string $objectName The object name
-     * @return boolean TRUE if an instance already exists
+     * @return boolean true if an instance already exists
      */
     public function hasInstance($objectName)
     {

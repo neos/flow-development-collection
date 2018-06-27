@@ -83,7 +83,7 @@ class PolicyEnforcement implements InterceptorInterface
     /**
      * Invokes the security interception
      *
-     * @return boolean TRUE if the security checks was passed
+     * @return boolean true if the security checks was passed
      * @throws AccessDeniedException
      * @throws AuthenticationRequiredException if an entity could not be found (assuming it is bound to the current session), causing a redirect to the authentication entrypoint
      * @throws NoTokensAuthenticatedException if no tokens could be found and the accessDecisionManager denied access to the privilege target, causing a redirect to the authentication entrypoint

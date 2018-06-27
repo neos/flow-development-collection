@@ -1891,7 +1891,7 @@ abstract class MediaTypes
      *
      * @param string $mediaRange The media range, for example "text/*"
      * @param string $mediaType The media type to match against, for example "text/html"
-     * @return boolean TRUE if both match, false if they don't match or either of them is invalid
+     * @return boolean true if both match, false if they don't match or either of them is invalid
      */
     public static function mediaRangeMatches(string $mediaRange, string $mediaType): bool
     {

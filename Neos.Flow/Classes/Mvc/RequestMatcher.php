@@ -129,7 +129,7 @@ class RequestMatcher
 
     /**
      * Compare a request propertyValue against an expected
-     * value and add the weight if it's TRUE
+     * value and add the weight if it's true
      *
      * @param string $propertyName
      * @param string $expectedValue

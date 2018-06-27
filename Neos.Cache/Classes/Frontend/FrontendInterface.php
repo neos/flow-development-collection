@@ -78,7 +78,7 @@ interface FrontendInterface
      * Checks if a cache entry with the specified identifier exists.
      *
      * @param string $entryIdentifier An identifier specifying the cache entry
-     * @return boolean TRUE if such an entry exists, false if not
+     * @return boolean true if such an entry exists, false if not
      * @api
      */
     public function has(string $entryIdentifier): bool;
@@ -87,7 +87,7 @@ interface FrontendInterface
      * Removes the given cache entry from the cache.
      *
      * @param string $entryIdentifier An identifier specifying the cache entry
-     * @return boolean TRUE if such an entry exists, false if not
+     * @return boolean true if such an entry exists, false if not
      */
     public function remove(string $entryIdentifier): bool;
 

@@ -89,10 +89,10 @@ function match_NumberLiteral ($stack = array()) {
 			unset( $res_4 );
 			unset( $pos_4 );
 		}
-		$_5 = TRUE; break;
+		$_5 = true; break;
 	}
 	while(0);
-	if( $_5 === TRUE ) { return $this->finalise($result); }
+	if( $_5 === true ) { return $this->finalise($result); }
 	if( $_5 === false) { return false; }
 }
 
@@ -115,10 +115,10 @@ function match_DoubleQuotedStringLiteral ($stack = array()) {
 			$result["text"] .= '"';
 		}
 		else { $_10 = false; break; }
-		$_10 = TRUE; break;
+		$_10 = true; break;
 	}
 	while(0);
-	if( $_10 === TRUE ) { return $this->finalise($result); }
+	if( $_10 === true ) { return $this->finalise($result); }
 	if( $_10 === false) { return false; }
 }
 
@@ -141,10 +141,10 @@ function match_SingleQuotedStringLiteral ($stack = array()) {
 			$result["text"] .= '\'';
 		}
 		else { $_15 = false; break; }
-		$_15 = TRUE; break;
+		$_15 = true; break;
 	}
 	while(0);
-	if( $_15 === TRUE ) { return $this->finalise($result); }
+	if( $_15 === true ) { return $this->finalise($result); }
 	if( $_15 === false) { return false; }
 }
 
@@ -161,7 +161,7 @@ function match_StringLiteral ($stack = array()) {
 		$subres = ( $this->packhas( $key, $pos ) ? $this->packread( $key, $pos ) : $this->packwrite( $key, $pos, $this->$matcher(array_merge($stack, array($result))) ) );
 		if ($subres !== false) {
 			$this->store( $result, $subres );
-			$_20 = TRUE; break;
+			$_20 = true; break;
 		}
 		$result = $res_17;
 		$this->pos = $pos_17;
@@ -169,19 +169,19 @@ function match_StringLiteral ($stack = array()) {
 		$subres = ( $this->packhas( $key, $pos ) ? $this->packread( $key, $pos ) : $this->packwrite( $key, $pos, $this->$matcher(array_merge($stack, array($result))) ) );
 		if ($subres !== false) {
 			$this->store( $result, $subres );
-			$_20 = TRUE; break;
+			$_20 = true; break;
 		}
 		$result = $res_17;
 		$this->pos = $pos_17;
 		$_20 = false; break;
 	}
 	while(0);
-	if( $_20 === TRUE ) { return $this->finalise($result); }
+	if( $_20 === true ) { return $this->finalise($result); }
 	if( $_20 === false) { return false; }
 }
 
 
-/* BooleanLiteral: 'true' | 'TRUE' | 'false' | 'false' */
+/* BooleanLiteral: 'true' | 'true' | 'false' | 'false' */
 protected $match_BooleanLiteral_typestack = array('BooleanLiteral');
 function match_BooleanLiteral ($stack = array()) {
 	$matchrule = "BooleanLiteral"; $result = $this->construct($matchrule, $matchrule, null);
@@ -191,7 +191,7 @@ function match_BooleanLiteral ($stack = array()) {
 		$pos_22 = $this->pos;
 		if (( $subres = $this->literal( 'true' ) ) !== false) {
 			$result["text"] .= $subres;
-			$_33 = TRUE; break;
+			$_33 = true; break;
 		}
 		$result = $res_22;
 		$this->pos = $pos_22;
@@ -199,9 +199,9 @@ function match_BooleanLiteral ($stack = array()) {
 		do {
 			$res_24 = $result;
 			$pos_24 = $this->pos;
-			if (( $subres = $this->literal( 'TRUE' ) ) !== false) {
+			if (( $subres = $this->literal( 'true' ) ) !== false) {
 				$result["text"] .= $subres;
-				$_31 = TRUE; break;
+				$_31 = true; break;
 			}
 			$result = $res_24;
 			$this->pos = $pos_24;
@@ -211,32 +211,32 @@ function match_BooleanLiteral ($stack = array()) {
 				$pos_26 = $this->pos;
 				if (( $subres = $this->literal( 'false' ) ) !== false) {
 					$result["text"] .= $subres;
-					$_29 = TRUE; break;
+					$_29 = true; break;
 				}
 				$result = $res_26;
 				$this->pos = $pos_26;
 				if (( $subres = $this->literal( 'false' ) ) !== false) {
 					$result["text"] .= $subres;
-					$_29 = TRUE; break;
+					$_29 = true; break;
 				}
 				$result = $res_26;
 				$this->pos = $pos_26;
 				$_29 = false; break;
 			}
 			while(0);
-			if( $_29 === TRUE ) { $_31 = TRUE; break; }
+			if( $_29 === true ) { $_31 = true; break; }
 			$result = $res_24;
 			$this->pos = $pos_24;
 			$_31 = false; break;
 		}
 		while(0);
-		if( $_31 === TRUE ) { $_33 = TRUE; break; }
+		if( $_31 === true ) { $_33 = true; break; }
 		$result = $res_22;
 		$this->pos = $pos_22;
 		$_33 = false; break;
 	}
 	while(0);
-	if( $_33 === TRUE ) { return $this->finalise($result); }
+	if( $_33 === true ) { return $this->finalise($result); }
 	if( $_33 === false) { return false; }
 }
 
@@ -277,7 +277,7 @@ function match_PropertyPath ($stack = array()) {
 				$subres = ( $this->packhas( $key, $pos ) ? $this->packread( $key, $pos ) : $this->packwrite( $key, $pos, $this->$matcher(array_merge($stack, array($result))) ) );
 				if ($subres !== false) { $this->store( $result, $subres ); }
 				else { $_39 = false; break; }
-				$_39 = TRUE; break;
+				$_39 = true; break;
 			}
 			while(0);
 			if( $_39 === false) {
@@ -288,10 +288,10 @@ function match_PropertyPath ($stack = array()) {
 				break;
 			}
 		}
-		$_41 = TRUE; break;
+		$_41 = true; break;
 	}
 	while(0);
-	if( $_41 === TRUE ) { return $this->finalise($result); }
+	if( $_41 === true ) { return $this->finalise($result); }
 	if( $_41 === false) { return false; }
 }
 

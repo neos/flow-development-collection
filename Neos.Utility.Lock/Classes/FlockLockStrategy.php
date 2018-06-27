@@ -63,7 +63,7 @@ class FlockLockStrategy implements LockStrategyInterface
 
     /**
      * @param string $subject
-     * @param boolean $exclusiveLock TRUE to, acquire an exclusive (write) lock, false for a shared (read) lock.
+     * @param boolean $exclusiveLock true to, acquire an exclusive (write) lock, false for a shared (read) lock.
      * @return void
      * @throws LockNotAcquiredException
      */
@@ -113,7 +113,7 @@ class FlockLockStrategy implements LockStrategyInterface
         $fstat = fstat($this->filePointer);
         $stat = @stat($this->lockFileName);
         // Make sure that the file did not get unlinked between the fopen and the actual flock
-        // This will always be TRUE on windows, because 'ino' stat will always be 0, but unlink is not possible on opened files anyway
+        // This will always be true on windows, because 'ino' stat will always be 0, but unlink is not possible on opened files anyway
         if ($stat !== false && $stat['ino'] === $fstat['ino']) {
             return true;
         }
@@ -144,7 +144,7 @@ class FlockLockStrategy implements LockStrategyInterface
     /**
      * Releases the lock
      *
-     * @return boolean TRUE on success, false otherwise
+     * @return boolean true on success, false otherwise
      */
     public function release(): bool
     {

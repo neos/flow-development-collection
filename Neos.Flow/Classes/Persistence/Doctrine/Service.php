@@ -505,7 +505,7 @@ class Service
     /**
      * Generates a new migration file and returns the path to it.
      *
-     * If $diffAgainstCurrent is TRUE, it generates a migration file with the
+     * If $diffAgainstCurrent is true, it generates a migration file with the
      * diff between current DB structure and the found mapping metadata.
      *
      * Only include tables/sequences matching the $filterExpression regexp when

@@ -260,10 +260,10 @@ abstract class Files
      * Copies the contents of the source directory to the target directory.
      * $targetDirectory will be created if it does not exist.
      *
-     * If $keepExistingFiles is TRUE, this will keep files already present
+     * If $keepExistingFiles is true, this will keep files already present
      * in the target location. It defaults to false.
      *
-     * If $copyDotFiles is TRUE, this will copy files whose name begin with
+     * If $copyDotFiles is true, this will copy files whose name begin with
      * a dot. It defaults to false.
      *
      * @param string $sourceDirectory
@@ -360,7 +360,7 @@ abstract class Files
      * If http://bugs.php.net/bug.php?id=51766 gets fixed we can drop this.
      *
      * @param string $pathAndFilename Path and name of the file or directory
-     * @return boolean TRUE if the path exists and is a symbolic link, false otherwise
+     * @return boolean true if the path exists and is a symbolic link, false otherwise
      * @api
      */
     public static function is_link(string $pathAndFilename): bool
@@ -385,11 +385,11 @@ abstract class Files
      *
      * If this method could not unlink the specified file or it doesn't exist anymore (e.g. because of a concurrent
      * deletion), it will clear the stat cache for its filename and check if the file still exist. If it does not exist,
-     * this method assumes that the file has been deleted by another process and will return TRUE. If the file still
+     * this method assumes that the file has been deleted by another process and will return true. If the file still
      * exists though, this method will return false.
      *
      * @param string $pathAndFilename Path and name of the file or directory
-     * @return boolean TRUE if file/directory was removed successfully
+     * @return boolean true if file/directory was removed successfully
      * @api
      */
     public static function unlink(string $pathAndFilename): bool

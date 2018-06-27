@@ -220,7 +220,7 @@ class ClassSchema
     /**
      * Whether the class is accessible through a repository and therefore an aggregate root.
      *
-     * @return boolean TRUE
+     * @return boolean true
      */
     public function isAggregateRoot()
     {

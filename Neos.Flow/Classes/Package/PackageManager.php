@@ -162,11 +162,11 @@ class PackageManager implements PackageManagerInterface
     }
 
     /**
-     * Returns TRUE if a package is available (the package's files exist in the packages directory)
+     * Returns true if a package is available (the package's files exist in the packages directory)
      * or false if it's not.
      *
      * @param string $packageKey The key of the package to check
-     * @return boolean TRUE if the package is available, otherwise false
+     * @return boolean true if the package is available, otherwise false
      * @api
      */
     public function isPackageAvailable($packageKey)
@@ -779,7 +779,7 @@ class PackageManager implements PackageManagerInterface
      * Check the conformance of the given package key
      *
      * @param string $packageKey The package key to validate
-     * @return boolean If the package key is valid, returns TRUE otherwise false
+     * @return boolean If the package key is valid, returns true otherwise false
      * @api
      */
     public function isPackageKeyValid($packageKey)

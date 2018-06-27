@@ -67,7 +67,7 @@ class RequestFilter
      * Tries to match the given request against this filter and calls the set security interceptor on success.
      *
      * @param RequestInterface $request The request to be matched
-     * @return boolean Returns TRUE if the filter matched, false otherwise
+     * @return boolean Returns true if the filter matched, false otherwise
      */
     public function filterRequest(RequestInterface $request)
     {

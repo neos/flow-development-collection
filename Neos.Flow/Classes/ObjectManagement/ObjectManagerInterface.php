@@ -59,11 +59,11 @@ interface ObjectManagerInterface extends ContainerInterface
     public function has($objectName);
 
     /**
-     * Returns TRUE if an object with the given name has already
+     * Returns true if an object with the given name has already
      * been registered.
      *
      * @param  string $objectName Name of the object
-     * @return boolean TRUE if the object has been registered, otherwise false
+     * @return boolean true if the object has been registered, otherwise false
      * @since 1.0.0 alpha 8
      * @api
      */

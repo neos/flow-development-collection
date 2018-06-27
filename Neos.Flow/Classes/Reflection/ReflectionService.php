@@ -168,7 +168,7 @@ class ReflectionService
     protected $useStatementsForClassCache;
 
     /**
-     * In Production context, with frozen caches, this flag will be TRUE
+     * In Production context, with frozen caches, this flag will be true
      *
      * @var boolean
      */
@@ -588,7 +588,7 @@ class ReflectionService
      *
      * @param string $className Name of the class
      * @param string $interfaceName interface to check for
-     * @return boolean TRUE if the class implements $interfaceName, otherwise false
+     * @return boolean true if the class implements $interfaceName, otherwise false
      * @api
      */
     public function isClassImplementationOf($className, $interfaceName)
@@ -605,7 +605,7 @@ class ReflectionService
      * Tells if the specified class is abstract or not
      *
      * @param string $className Name of the class to analyze
-     * @return boolean TRUE if the class is abstract, otherwise false
+     * @return boolean true if the class is abstract, otherwise false
      * @api
      */
     public function isClassAbstract($className)
@@ -618,7 +618,7 @@ class ReflectionService
      * Tells if the specified class is final or not
      *
      * @param string $className Name of the class to analyze
-     * @return boolean TRUE if the class is final, otherwise false
+     * @return boolean true if the class is final, otherwise false
      * @api
      */
     public function isClassFinal($className)
@@ -631,7 +631,7 @@ class ReflectionService
      * Tells if the class is unconfigurable or not
      *
      * @param string $className Name of the class to analyze
-     * @return boolean return TRUE if class not could not be automatically configured, otherwise false
+     * @return boolean return true if class not could not be automatically configured, otherwise false
      * @api
      */
     public function isClassUnconfigurable($className)
@@ -679,7 +679,7 @@ class ReflectionService
      *
      * @param string $className Name of the class containing the method
      * @param string $methodName Name of the method to analyze
-     * @return boolean TRUE if the method is final, otherwise false
+     * @return boolean true if the method is final, otherwise false
      * @api
      */
     public function isMethodFinal($className, $methodName)
@@ -693,7 +693,7 @@ class ReflectionService
      *
      * @param string $className Name of the class containing the method
      * @param string $methodName Name of the method to analyze
-     * @return boolean TRUE if the method is static, otherwise false
+     * @return boolean true if the method is static, otherwise false
      * @api
      */
     public function isMethodStatic($className, $methodName)
@@ -707,7 +707,7 @@ class ReflectionService
      *
      * @param string $className Name of the class containing the method
      * @param string $methodName Name of the method to analyze
-     * @return boolean TRUE if the method is public, otherwise false
+     * @return boolean true if the method is public, otherwise false
      * @api
      */
     public function isMethodPublic($className, $methodName)
@@ -721,7 +721,7 @@ class ReflectionService
      *
      * @param string $className Name of the class containing the method
      * @param string $methodName Name of the method to analyze
-     * @return boolean TRUE if the method is protected, otherwise false
+     * @return boolean true if the method is protected, otherwise false
      * @api
      */
     public function isMethodProtected($className, $methodName)
@@ -735,7 +735,7 @@ class ReflectionService
      *
      * @param string $className Name of the class containing the method
      * @param string $methodName Name of the method to analyze
-     * @return boolean TRUE if the method is private, otherwise false
+     * @return boolean true if the method is private, otherwise false
      * @api
      */
     public function isMethodPrivate($className, $methodName)
@@ -750,7 +750,7 @@ class ReflectionService
      * @param string $className Name of the class containing the method
      * @param string $methodName Name of the method to analyze
      * @param string $tag Tag to check for
-     * @return boolean TRUE if the method is tagged with $tag, otherwise false
+     * @return boolean true if the method is tagged with $tag, otherwise false
      * @api
      */
     public function isMethodTaggedWith($className, $methodName, $tag)
@@ -982,7 +982,7 @@ class ReflectionService
      *
      * @param string $className Name of the class containing the method
      * @param string $propertyName Name of the property to analyze
-     * @return boolean TRUE if the property is private, otherwise false
+     * @return boolean true if the property is private, otherwise false
      * @api
      */
     public function isPropertyPrivate($className, $propertyName)
@@ -998,7 +998,7 @@ class ReflectionService
      * @param string $className Name of the class
      * @param string $propertyName Name of the property
      * @param string $tag Tag to check for
-     * @return boolean TRUE if the class property is tagged with $tag, otherwise false
+     * @return boolean true if the class property is tagged with $tag, otherwise false
      * @api
      */
     public function isPropertyTaggedWith($className, $propertyName, $tag)
@@ -1191,7 +1191,7 @@ class ReflectionService
      * Check if a specific annotation tag is configured to be ignored.
      *
      * @param string $tagName The annotation tag to check
-     * @return boolean TRUE if the tag is configured to be ignored, false otherwise
+     * @return boolean true if the tag is configured to be ignored, false otherwise
      */
     protected function isTagIgnored($tagName)
     {
@@ -1929,7 +1929,7 @@ class ReflectionService
      * data could be loaded, false will be returned in order to signal that other
      * packages still need to be reflected.
      *
-     * @return boolean TRUE if reflection data could be loaded, otherwise false
+     * @return boolean true if reflection data could be loaded, otherwise false
      */
     protected function loadClassReflectionCompiletimeCache()
     {

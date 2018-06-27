@@ -120,7 +120,7 @@ class IdentityRoutePart extends DynamicRoutePart
      * If that is found the identifier is stored in $this->value, otherwise this route part does not match.
      *
      * @param string $value value to match, usually the current query path segment(s)
-     * @return boolean TRUE if value could be matched successfully, otherwise false
+     * @return boolean true if value could be matched successfully, otherwise false
      * @api
      */
     protected function matchValue($value)
@@ -192,7 +192,7 @@ class IdentityRoutePart extends DynamicRoutePart
      * Resolves the given entity and sets the value to a URI representation (path segment) that matches $this->uriPattern and is unique for the given object.
      *
      * @param mixed $value
-     * @return boolean TRUE if the object could be resolved and stored in $this->value, otherwise false.
+     * @return boolean true if the object could be resolved and stored in $this->value, otherwise false.
      */
     protected function resolveValue($value)
     {

@@ -92,7 +92,7 @@ abstract class ObjectAccess
      * @param mixed $subject Object or array to get the property from
      * @param string $propertyName name of the property to retrieve
      * @param boolean $forceDirectAccess directly access property using reflection(!)
-     * @param boolean $propertyExists (by reference) will be set to TRUE if the specified property exists and is gettable
+     * @param boolean $propertyExists (by reference) will be set to true if the specified property exists and is gettable
      * @return mixed Value of the property
      * @throws PropertyNotAccessibleException
      * @see getProperty()
@@ -229,7 +229,7 @@ abstract class ObjectAccess
      * @param string|integer $propertyName Name or index of the property to set
      * @param mixed $propertyValue Value of the property
      * @param boolean $forceDirectAccess directly access property using reflection(!)
-     * @return boolean TRUE if the property could be set, false otherwise
+     * @return boolean true if the property could be set, false otherwise
      * @throws \InvalidArgumentException in case $object was not an object or $propertyName was not a string
      */
     public static function setProperty(&$subject, $propertyName, $propertyValue, bool $forceDirectAccess = false): bool

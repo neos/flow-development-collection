@@ -157,7 +157,7 @@ class Command
     }
 
     /**
-     * Returns TRUE if this command expects required and/or optional arguments, otherwise false
+     * Returns true if this command expects required and/or optional arguments, otherwise false
      *
      * @return boolean
      */

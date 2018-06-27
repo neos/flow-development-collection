@@ -36,7 +36,7 @@ class Ip
      *
      * @param string $ip The IP to match
      * @param string $range The CIDR range pattern to match against
-     * @return boolean TRUE if the pattern matched, false otherwise
+     * @return boolean true if the pattern matched, false otherwise
      */
     public static function cidrMatch($ip, $range)
     {

@@ -75,7 +75,7 @@ abstract class AbstractMethodInterceptorBuilder
             if ($value === null) {
                 $code .= 'NULL';
             } elseif (is_bool($value)) {
-                $code .= ($value ? 'TRUE' : 'false');
+                $code .= ($value ? 'true' : 'false');
             } elseif (is_numeric($value)) {
                 $code .= $value;
             } elseif (is_string($value)) {
@@ -214,7 +214,7 @@ abstract class AbstractMethodInterceptorBuilder
                 if (isset($this->Flow_Aop_Proxy_targetMethodsAndGroupedAdvices[\'' . $methodName . '\'][\'Neos\Flow\Aop\Advice\AfterAdvice\'])) {
                     $advices = $this->Flow_Aop_Proxy_targetMethodsAndGroupedAdvices[\'' . $methodName . '\'][\'Neos\Flow\Aop\Advice\AfterAdvice\'];
                     $joinPoint = new \Neos\Flow\Aop\JoinPoint($this, \'' . $targetClassName . '\', \'' . $methodName . '\', $methodArguments, NULL, $result);
-                    $afterAdviceInvoked = TRUE;
+                    $afterAdviceInvoked = true;
                     foreach ($advices as $advice) {
                         $advice->invoke($joinPoint);
                     }

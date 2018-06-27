@@ -219,7 +219,7 @@ class RouterCachingService
      * Checks if the given subject contains an object
      *
      * @param mixed $subject
-     * @return boolean TRUE if $subject contains an object, otherwise false
+     * @return boolean true if $subject contains an object, otherwise false
      */
     protected function containsObject($subject)
     {

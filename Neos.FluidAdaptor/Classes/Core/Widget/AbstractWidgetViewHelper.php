@@ -44,7 +44,7 @@ abstract class AbstractWidgetViewHelper extends AbstractViewHelper implements Ch
     protected $controller;
 
     /**
-     * If set to TRUE, it is an AJAX widget.
+     * If set to true, it is an AJAX widget.
      *
      * @var boolean
      * @api
@@ -55,7 +55,7 @@ abstract class AbstractWidgetViewHelper extends AbstractViewHelper implements Ch
      * If set to false, this widget won't create a session (only relevant for AJAX widgets).
      *
      * You then need to manually add the serialized configuration data to your links, by
-     * setting "includeWidgetContext" to TRUE in the widget link and URI ViewHelpers.
+     * setting "includeWidgetContext" to true in the widget link and URI ViewHelpers.
      *
      * @var boolean
      * @api

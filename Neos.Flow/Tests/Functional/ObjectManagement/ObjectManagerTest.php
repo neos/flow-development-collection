@@ -62,7 +62,7 @@ class ObjectManagerTest extends FunctionalTestCase
 
         /**
          * When shutting down the ObjectManager shutdownObject() on Fixtures\TestEntityWithShutdown is called
-         * and sets $destructed property to TRUE
+         * and sets $destructed property to true
          */
         \Neos\Flow\Core\Bootstrap::$staticObjectManager->shutdown();
 

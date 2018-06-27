@@ -60,7 +60,7 @@ class NumberParser
      * @param string $numberToParse Number to be parsed
      * @param string $format Number format to use
      * @param Locale $locale Locale to use
-     * @param boolean $strictMode Work mode (strict when TRUE, lenient when false)
+     * @param boolean $strictMode Work mode (strict when true, lenient when false)
      * @return mixed Parsed float number or false on failure
      * @api
      */
@@ -75,7 +75,7 @@ class NumberParser
      * @param string $numberToParse Number to be parsed
      * @param Locale $locale Locale to use
      * @param string $formatLength One of NumbersReader FORMAT_LENGTH constants
-     * @param boolean $strictMode Work mode (strict when TRUE, lenient when false)
+     * @param boolean $strictMode Work mode (strict when true, lenient when false)
      * @return mixed Parsed float number or false on failure
      * @api
      */
@@ -91,7 +91,7 @@ class NumberParser
      * @param string $numberToParse Number to be parsed
      * @param Locale $locale Locale to use
      * @param string $formatLength One of NumbersReader FORMAT_LENGTH constants
-     * @param boolean $strictMode Work mode (strict when TRUE, lenient when false)
+     * @param boolean $strictMode Work mode (strict when true, lenient when false)
      * @return mixed Parsed float number or false on failure
      * @api
      */
@@ -107,7 +107,7 @@ class NumberParser
      * @param string $numberToParse Number to be parsed
      * @param array $parsedFormat Parsed format (from NumbersReader)
      * @param array $localizedSymbols An array with symbols to use
-     * @param boolean $strictMode Work mode (strict when TRUE, lenient when false)
+     * @param boolean $strictMode Work mode (strict when true, lenient when false)
      * @return mixed Parsed float number or false on failure
      */
     protected function doParsingWithParsedFormat($numberToParse, array $parsedFormat, array $localizedSymbols, $strictMode)

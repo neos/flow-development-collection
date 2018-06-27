@@ -78,10 +78,10 @@ class CsrfProtection implements RequestPatternInterface
 
     /**
      * Matches a \Neos\Flow\Mvc\RequestInterface against the configured CSRF pattern rules and
-     * searches for invalid csrf tokens. If this returns TRUE, the request is invalid!
+     * searches for invalid csrf tokens. If this returns true, the request is invalid!
      *
      * @param RequestInterface $request The request that should be matched
-     * @return boolean TRUE if the pattern matched, false otherwise
+     * @return boolean true if the pattern matched, false otherwise
      * @throws AuthenticationRequiredException
      */
     public function matchRequest(RequestInterface $request)

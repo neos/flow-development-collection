@@ -215,7 +215,7 @@ class Route
      * Specifies whether Route parts of this route should be converted to lower case when resolved.
      * This setting can be overwritten for all dynamic Route parts.
      *
-     * @param boolean $lowerCase TRUE: Route parts are converted to lower case by default. false: Route parts are not altered.
+     * @param boolean $lowerCase true: Route parts are converted to lower case by default. false: Route parts are not altered.
      * @return void
      */
     public function setLowerCase($lowerCase)
@@ -226,7 +226,7 @@ class Route
     /**
      * Getter for $this->lowerCase.
      *
-     * @return boolean TRUE if this Route part will be converted to lower case, otherwise false.
+     * @return boolean true if this Route part will be converted to lower case, otherwise false.
      * @see setLowerCase()
      */
     public function isLowerCase()
@@ -240,7 +240,7 @@ class Route
      * If set to false, the route won't resolve if there are route values left after iterating through all Route Part
      * handlers and removing the matching default values.
      *
-     * @param boolean $appendExceedingArguments TRUE: exceeding arguments will be appended to the resulting URI
+     * @param boolean $appendExceedingArguments true: exceeding arguments will be appended to the resulting URI
      * @return void
      */
     public function setAppendExceedingArguments($appendExceedingArguments)
@@ -249,7 +249,7 @@ class Route
     }
 
     /**
-     * Returns TRUE if exceeding arguments should be appended to the URI as query string, otherwise false
+     * Returns true if exceeding arguments should be appended to the URI as query string, otherwise false
      *
      * @return boolean
      */
@@ -360,11 +360,11 @@ class Route
 
     /**
      * Checks whether $routeContext corresponds to this Route.
-     * If all Route Parts match successfully TRUE is returned an $this->matchResults contains an array
+     * If all Route Parts match successfully true is returned an $this->matchResults contains an array
      * combining Route default values and calculated matchResults from the individual Route Parts.
      *
      * @param RouteContext $routeContext The Route Context containing the current HTTP request object and, optional, Routing RouteParameters
-     * @return boolean TRUE if this Route corresponds to the given $routeContext, otherwise false
+     * @return boolean true if this Route corresponds to the given $routeContext, otherwise false
      * @throws InvalidRoutePartValueException
      * @see getMatchResults()
      */
@@ -444,12 +444,12 @@ class Route
 
     /**
      * Checks whether $routeValues can be resolved to a corresponding uri.
-     * If all Route Parts can resolve one or more of the $routeValues, TRUE is
+     * If all Route Parts can resolve one or more of the $routeValues, true is
      * returned and $this->resolvedUriConstraints contains an instance of UriConstraints that can be applied
      * to a template URI transforming it accordingly (@see Router::resolve())
      *
      * @param array $routeValues An array containing key/value pairs to be resolved to uri segments
-     * @return boolean TRUE if this Route corresponds to the given $routeValues, otherwise false
+     * @return boolean true if this Route corresponds to the given $routeValues, otherwise false
      * @throws InvalidRoutePartValueException
      */
     public function resolves(array $routeValues)
@@ -551,7 +551,7 @@ class Route
      *
      * @param array $defaults
      * @param array $routeValues
-     * @return boolean false if one of the $routeValues is not equal to it's default value. Otherwise TRUE
+     * @return boolean false if one of the $routeValues is not equal to it's default value. Otherwise true
      */
     protected function compareAndRemoveMatchingDefaultValues(array $defaults, array &$routeValues)
     {

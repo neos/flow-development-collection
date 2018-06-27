@@ -284,7 +284,7 @@ class FileMonitor
      *
      * @param string $path
      * @param string $filenamePattern
-     * @return boolean TRUE if any changes were detected in this path
+     * @return boolean true if any changes were detected in this path
      */
     protected function detectChangesOnPath($path, $filenamePattern)
     {

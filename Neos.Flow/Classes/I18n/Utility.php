@@ -135,7 +135,7 @@ class Utility
      *
      * @param string $haystack
      * @param string $needle
-     * @return boolean TRUE if $haystack begins with $needle
+     * @return boolean true if $haystack begins with $needle
      */
     public static function stringBeginsWith($haystack, $needle)
     {
@@ -151,7 +151,7 @@ class Utility
      *
      * @param string $haystack
      * @param string $needle
-     * @return boolean TRUE if $haystack ends with $needle
+     * @return boolean true if $haystack ends with $needle
      */
     public static function stringEndsWith($haystack, $needle)
     {

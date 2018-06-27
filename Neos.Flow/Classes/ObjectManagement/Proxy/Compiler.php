@@ -179,7 +179,7 @@ class Compiler
      * monitor or some other mechanism.
      *
      * @param string $fullClassName Name of the original class
-     * @return boolean TRUE if a cache entry exists
+     * @return boolean true if a cache entry exists
      */
     public function hasCacheEntryForClass($fullClassName)
     {

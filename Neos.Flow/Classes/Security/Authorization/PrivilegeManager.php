@@ -35,7 +35,7 @@ class PrivilegeManager implements PrivilegeManagerInterface
     protected $securityContext;
 
     /**
-     * If set to TRUE access will be granted for objects where all voters abstain from decision.
+     * If set to true access will be granted for objects where all voters abstain from decision.
      *
      * @Flow\InjectConfiguration("security.authorization.allowAccessIfAllVotersAbstain")
      * @var boolean
@@ -53,7 +53,7 @@ class PrivilegeManager implements PrivilegeManagerInterface
     }
 
     /**
-     * Returns TRUE, if the given privilege type is granted for the given subject based
+     * Returns true, if the given privilege type is granted for the given subject based
      * on the current security context.
      *
      * @param string $privilegeType The type of privilege that should be evaluated
@@ -67,7 +67,7 @@ class PrivilegeManager implements PrivilegeManagerInterface
     }
 
     /**
-     * Returns TRUE, if the given privilege type would be granted for the given roles and subject
+     * Returns true, if the given privilege type would be granted for the given roles and subject
      *
      * @param array<Role> $roles The roles that should be evaluated
      * @param string $privilegeType The type of privilege that should be evaluated
@@ -131,11 +131,11 @@ class PrivilegeManager implements PrivilegeManagerInterface
     }
 
     /**
-     * Returns TRUE if access is granted on the given privilege target in the current security context
+     * Returns true if access is granted on the given privilege target in the current security context
      *
      * @param string $privilegeTargetIdentifier The identifier of the privilege target to decide on
      * @param array $privilegeParameters Optional array of privilege parameters (simple key => value array)
-     * @return boolean TRUE if access is granted, false otherwise
+     * @return boolean true if access is granted, false otherwise
      */
     public function isPrivilegeTargetGranted($privilegeTargetIdentifier, array $privilegeParameters = [])
     {
@@ -143,12 +143,12 @@ class PrivilegeManager implements PrivilegeManagerInterface
     }
 
     /**
-     * Returns TRUE if access is granted on the given privilege target in the current security context
+     * Returns true if access is granted on the given privilege target in the current security context
      *
      * @param array<Role> $roles The roles that should be evaluated
      * @param string $privilegeTargetIdentifier The identifier of the privilege target to decide on
      * @param array $privilegeParameters Optional array of privilege parameters (simple key => value array)
-     * @return boolean TRUE if access is granted, false otherwise
+     * @return boolean true if access is granted, false otherwise
      */
     public function isPrivilegeTargetGrantedForRoles(array $roles, $privilegeTargetIdentifier, array $privilegeParameters = [])
     {

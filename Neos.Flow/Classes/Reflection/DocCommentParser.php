@@ -91,7 +91,7 @@ class DocCommentParser
      * Checks if a tag with the given name exists
      *
      * @param string $tagName The tag name to check for
-     * @return boolean TRUE the tag exists, otherwise false
+     * @return boolean true the tag exists, otherwise false
      */
     public function isTaggedWith($tagName)
     {

@@ -90,7 +90,7 @@ abstract class TypeHandling
     }
 
     /**
-     * Returns TRUE if the $type is a literal.
+     * Returns true if the $type is a literal.
      *
      * @param string $type
      * @return boolean
@@ -101,7 +101,7 @@ abstract class TypeHandling
     }
 
     /**
-     * Returns TRUE if the $type is a simple type.
+     * Returns true if the $type is a simple type.
      *
      * @param string $type
      * @return boolean
@@ -112,7 +112,7 @@ abstract class TypeHandling
     }
 
     /**
-     * Returns TRUE if the $type is a collection type.
+     * Returns true if the $type is a collection type.
      *
      * @param string $type
      * @return boolean

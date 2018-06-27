@@ -31,7 +31,7 @@ interface SessionInterface
     public function start();
 
     /**
-     * Returns TRUE if there is a session that can be resumed. false otherwise
+     * Returns true if there is a session that can be resumed. false otherwise
      *
      * @return boolean
      */
@@ -72,7 +72,7 @@ interface SessionInterface
     public function getData($key);
 
     /**
-     * Returns TRUE if $key is available.
+     * Returns true if $key is available.
      *
      * @param string $key
      * @return boolean

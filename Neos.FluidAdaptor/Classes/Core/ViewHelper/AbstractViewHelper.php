@@ -154,7 +154,7 @@ abstract class AbstractViewHelper extends FluidAbstractViewHelper
      * @param string $name Name of the argument
      * @param string $type Type of the argument
      * @param string $description Description of the argument
-     * @param boolean $required If TRUE, argument is required. Defaults to false.
+     * @param boolean $required If true, argument is required. Defaults to false.
      * @param mixed $defaultValue Default value of argument
      * @return FluidAbstractViewHelper $this, to allow chaining.
      * @throws Exception
@@ -177,7 +177,7 @@ abstract class AbstractViewHelper extends FluidAbstractViewHelper
      * @param string $name Name of the argument
      * @param string $type Type of the argument
      * @param string $description Description of the argument
-     * @param boolean $required If TRUE, argument is required. Defaults to false.
+     * @param boolean $required If true, argument is required. Defaults to false.
      * @param mixed $defaultValue Default value of argument
      * @return FluidAbstractViewHelper $this, to allow chaining.
      * @throws Exception

@@ -72,7 +72,7 @@ class TransientMemoryBackend extends IndependentAbstractBackend implements Tagga
      * Checks if a cache entry with the specified identifier exists.
      *
      * @param string $entryIdentifier An identifier specifying the cache entry
-     * @return boolean TRUE if such an entry exists, false if not
+     * @return boolean true if such an entry exists, false if not
      * @api
      */
     public function has(string $entryIdentifier): bool
@@ -84,7 +84,7 @@ class TransientMemoryBackend extends IndependentAbstractBackend implements Tagga
      * Removes all cache entries matching the specified identifier.
      *
      * @param string $entryIdentifier Specifies the cache entry to remove
-     * @return boolean TRUE if the entry could be removed or false if no entry was found
+     * @return boolean true if the entry could be removed or false if no entry was found
      * @api
      */
     public function remove(string $entryIdentifier): bool

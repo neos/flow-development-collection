@@ -79,7 +79,7 @@ class Debugger
 		/xs';
 
     /**
-     * Is set to TRUE once the CSS file is included in the current page to prevent double inclusions of the CSS file.
+     * Is set to true once the CSS file is included in the current page to prevent double inclusions of the CSS file.
      *
      * @var boolean
      */
@@ -135,7 +135,7 @@ class Debugger
         } elseif (is_object($variable)) {
             $dump = self::renderObjectDump($variable, $level + 1, true, $plaintext, $ansiColors);
         } elseif (is_bool($variable)) {
-            $dump = $variable ? self::ansiEscapeWrap('TRUE', '32', $ansiColors) : self::ansiEscapeWrap('false', '31', $ansiColors);
+            $dump = $variable ? self::ansiEscapeWrap('true', '32', $ansiColors) : self::ansiEscapeWrap('false', '31', $ansiColors);
         } elseif (is_null($variable) || is_resource($variable)) {
             $dump = gettype($variable);
         } else {
@@ -334,7 +334,7 @@ class Debugger
                     } elseif (is_numeric($argument)) {
                         $arguments .= (string)$argument;
                     } elseif (is_bool($argument)) {
-                        $arguments .= ($argument === true ? 'TRUE' : 'false');
+                        $arguments .= ($argument === true ? 'true' : 'false');
                     } elseif (is_array($argument)) {
                         $arguments .= sprintf(
                             '<em title="%s">array|%d|</em>',
@@ -384,7 +384,7 @@ class Debugger
                     } elseif (is_numeric($argument)) {
                         $arguments .= (string)$argument;
                     } elseif (is_bool($argument)) {
-                        $arguments .= ($argument === true ? 'TRUE' : 'false');
+                        $arguments .= ($argument === true ? 'true' : 'false');
                     } elseif (is_array($argument)) {
                         $arguments .= 'array|' . count($argument) . '|';
                     } else {
@@ -561,9 +561,9 @@ use Neos\Flow\Error\Debugger;
  *
  * @param mixed $variable The variable to display a dump of
  * @param string $title optional custom title for the debug output
- * @param boolean $return if TRUE, the dump is returned for displaying it embedded in custom HTML. If false (default), the variable dump is directly displayed.
- * @param boolean $plaintext If TRUE, the dump is in plain text, if false the debug output is in HTML format. If not specified, the mode is guessed from FLOW_SAPITYPE
- * @return void|string if $return is TRUE, the variable dump is returned. By default, the dump is directly displayed, and nothing is returned.
+ * @param boolean $return if true, the dump is returned for displaying it embedded in custom HTML. If false (default), the variable dump is directly displayed.
+ * @param boolean $plaintext If true, the dump is in plain text, if false the debug output is in HTML format. If not specified, the mode is guessed from FLOW_SAPITYPE
+ * @return void|string if $return is true, the variable dump is returned. By default, the dump is directly displayed, and nothing is returned.
  * @api
  */
 function var_dump($variable, string $title = null, bool $return = false, bool $plaintext = null)

@@ -183,7 +183,7 @@ class CacheManager
      * Checks if the specified cache has been registered.
      *
      * @param string $identifier The identifier of the cache
-     * @return boolean TRUE if a cache with the given identifier exists, otherwise false
+     * @return boolean true if a cache with the given identifier exists, otherwise false
      * @api
      */
     public function hasCache(string $identifier): bool
@@ -195,7 +195,7 @@ class CacheManager
      * Checks if the specified cache is marked as "persistent".
      *
      * @param string $identifier The identifier of the cache
-     * @return boolean TRUE if the specified cache is persistent, false if it is not, or if the cache does not exist
+     * @return boolean true if the specified cache is persistent, false if it is not, or if the cache does not exist
      */
     public function isCachePersistent(string $identifier): bool
     {
@@ -205,7 +205,7 @@ class CacheManager
     /**
      * Flushes all registered caches
      *
-     * @param boolean $flushPersistentCaches If set to TRUE, even those caches which are flagged as "persistent" will be flushed
+     * @param boolean $flushPersistentCaches If set to true, even those caches which are flagged as "persistent" will be flushed
      * @return void
      * @api
      */
@@ -229,7 +229,7 @@ class CacheManager
      * caches.
      *
      * @param string $tag Tag to search for
-     * @param boolean $flushPersistentCaches If set to TRUE, even those caches which are flagged as "persistent" will be flushed
+     * @param boolean $flushPersistentCaches If set to true, even those caches which are flagged as "persistent" will be flushed
      * @return void
      * @api
      */

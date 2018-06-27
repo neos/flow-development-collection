@@ -33,7 +33,7 @@ class AfterInvocationProcessorManager implements AfterInvocationManagerInterface
      * @param Context $securityContext The current security context
      * @param object $object The return object to be processed
      * @param JoinPointInterface $joinPoint The joinpoint of the returning method
-     * @return boolean TRUE if access is granted, false if the manager abstains from decision
+     * @return boolean true if access is granted, false if the manager abstains from decision
      * @throws AccessDeniedException If access is not granted
      * @todo processors must also be configurable
      */
@@ -42,10 +42,10 @@ class AfterInvocationProcessorManager implements AfterInvocationManagerInterface
     }
 
     /**
-     * Returns TRUE if a appropriate after invocation processor is available to process return objects of the given classname
+     * Returns true if a appropriate after invocation processor is available to process return objects of the given classname
      *
      * @param string $className The classname that should be checked
-     * @return boolean TRUE if this access decision manager can decide on objects with the given classname
+     * @return boolean true if this access decision manager can decide on objects with the given classname
      */
     public function supports($className)
     {

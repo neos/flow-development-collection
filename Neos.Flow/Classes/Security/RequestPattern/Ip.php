@@ -65,7 +65,7 @@ class Ip implements RequestPatternInterface
      * Matches a \Neos\Flow\Mvc\RequestInterface against the set IP pattern rules
      *
      * @param RequestInterface $request The request that should be matched
-     * @return boolean TRUE if the pattern matched, false otherwise
+     * @return boolean true if the pattern matched, false otherwise
      * @throws InvalidRequestPatternException
      */
     public function matchRequest(RequestInterface $request)

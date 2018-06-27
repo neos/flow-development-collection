@@ -119,7 +119,7 @@ class Arguments extends \ArrayObject
      *
      * @param string $name Name of the argument
      * @param string $dataType Name of one of the built-in data types
-     * @param boolean $isRequired TRUE if this argument should be marked as required
+     * @param boolean $isRequired true if this argument should be marked as required
      * @param mixed $defaultValue Default value of the argument. Only makes sense if $isRequired==false
      * @return Argument The new argument
      * @api
@@ -167,7 +167,7 @@ class Arguments extends \ArrayObject
      * Checks if an argument with the specified name exists
      *
      * @param string $argumentName Name of the argument to check for
-     * @return boolean TRUE if such an argument exists, otherwise false
+     * @return boolean true if such an argument exists, otherwise false
      * @see offsetExists()
      * @api
      */

@@ -106,7 +106,7 @@ class RouteTest extends UnitTestCase
         $this->assertFalse($this->route->hasHttpMethodConstraints(), 'hasHttpMethodConstraints should be false by default');
         $httpMethods = ['POST', 'PUT'];
         $this->route->setHttpMethods($httpMethods);
-        $this->assertTrue($this->route->hasHttpMethodConstraints(), 'hasHttpMethodConstraints should be TRUE if httpMethods are set');
+        $this->assertTrue($this->route->hasHttpMethodConstraints(), 'hasHttpMethodConstraints should be true if httpMethods are set');
         $this->assertEquals($httpMethods, $this->route->getHttpMethods());
         $this->route->setHttpMethods([]);
         $this->assertFalse($this->route->hasHttpMethodConstraints(), 'hasHttpMethodConstraints should be false if httpMethods is empty');

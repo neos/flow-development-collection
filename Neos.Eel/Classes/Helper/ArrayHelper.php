@@ -113,7 +113,7 @@ class ArrayHelper implements ProtectedContextAwareInterface
      * Check if an array is empty
      *
      * @param array $array The array
-     * @return boolean TRUE if the array is empty
+     * @return boolean true if the array is empty
      */
     public function isEmpty(array $array)
     {

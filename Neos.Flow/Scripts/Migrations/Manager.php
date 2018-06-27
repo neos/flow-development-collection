@@ -117,7 +117,7 @@ class Manager
      *
      * @param string $packageKey key of the package to migrate
      * @param string $versionNumber version of the migration to execute (e.g. "20120126163610"), or NULL to execute all migrations
-     * @param boolean $force if TRUE migrations will be applied even if the corresponding package is not a git working copy or contains local changes
+     * @param boolean $force if true migrations will be applied even if the corresponding package is not a git working copy or contains local changes
      * @return void
      */
     public function migrate($packageKey, $versionNumber = null, $force = false)
@@ -136,7 +136,7 @@ class Manager
      * Apply the given migration to the package and commit the result.
      *
      * @param AbstractMigration $migration
-     * @param boolean $force if TRUE the migration will be applied even if the current package is not a git working copy or contains local changes
+     * @param boolean $force if true the migration will be applied even if the current package is not a git working copy or contains local changes
      * @return void
      * @throws \RuntimeException
      */
@@ -216,7 +216,7 @@ class Manager
     /**
      * Imports the core migration log from the git history if it has not been imported previously (the "applied-flow-migrations" composer manifest property does not exist)
      *
-     * @param boolean $commitChanges if TRUE the modified composer manifest is committed - if it changed
+     * @param boolean $commitChanges if true the modified composer manifest is committed - if it changed
      * @return string
      */
     protected function importMigrationLogFromGitHistory($commitChanges = false)

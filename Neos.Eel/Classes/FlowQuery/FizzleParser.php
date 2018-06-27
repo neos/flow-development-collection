@@ -75,7 +75,7 @@ function match_FilterGroup ($stack = array()) {
 					$this->store( $result, $subres, "Filter" );
 				}
 				else { $_6 = false; break; }
-				$_6 = TRUE; break;
+				$_6 = true; break;
 			}
 			while(0);
 			if( $_6 === false) {
@@ -86,10 +86,10 @@ function match_FilterGroup ($stack = array()) {
 				break;
 			}
 		}
-		$_8 = TRUE; break;
+		$_8 = true; break;
 	}
 	while(0);
-	if( $_8 === TRUE ) { return $this->finalise($result); }
+	if( $_8 === true ) { return $this->finalise($result); }
 	if( $_8 === false) { return false; }
 }
 
@@ -118,7 +118,7 @@ function match_Filter ($stack = array()) {
 				$subres = ( $this->packhas( $key, $pos ) ? $this->packread( $key, $pos ) : $this->packwrite( $key, $pos, $this->$matcher(array_merge($stack, array($result))) ) );
 				if ($subres !== false) {
 					$this->store( $result, $subres );
-					$_17 = TRUE; break;
+					$_17 = true; break;
 				}
 				$result = $res_10;
 				$this->pos = $pos_10;
@@ -130,7 +130,7 @@ function match_Filter ($stack = array()) {
 					$subres = ( $this->packhas( $key, $pos ) ? $this->packread( $key, $pos ) : $this->packwrite( $key, $pos, $this->$matcher(array_merge($stack, array($result))) ) );
 					if ($subres !== false) {
 						$this->store( $result, $subres );
-						$_15 = TRUE; break;
+						$_15 = true; break;
 					}
 					$result = $res_12;
 					$this->pos = $pos_12;
@@ -138,21 +138,21 @@ function match_Filter ($stack = array()) {
 					$subres = ( $this->packhas( $key, $pos ) ? $this->packread( $key, $pos ) : $this->packwrite( $key, $pos, $this->$matcher(array_merge($stack, array($result))) ) );
 					if ($subres !== false) {
 						$this->store( $result, $subres );
-						$_15 = TRUE; break;
+						$_15 = true; break;
 					}
 					$result = $res_12;
 					$this->pos = $pos_12;
 					$_15 = false; break;
 				}
 				while(0);
-				if( $_15 === TRUE ) { $_17 = TRUE; break; }
+				if( $_15 === true ) { $_17 = true; break; }
 				$result = $res_10;
 				$this->pos = $pos_10;
 				$_17 = false; break;
 			}
 			while(0);
 			if( $_17 === false) { $_19 = false; break; }
-			$_19 = TRUE; break;
+			$_19 = true; break;
 		}
 		while(0);
 		if( $_19 === false) {
@@ -172,7 +172,7 @@ function match_Filter ($stack = array()) {
 					$this->store( $result, $subres, "AttributeFilters" );
 				}
 				else { $_22 = false; break; }
-				$_22 = TRUE; break;
+				$_22 = true; break;
 			}
 			while(0);
 			if( $_22 === false) {
@@ -183,10 +183,10 @@ function match_Filter ($stack = array()) {
 				break;
 			}
 		}
-		$_24 = TRUE; break;
+		$_24 = true; break;
 	}
 	while(0);
-	if( $_24 === TRUE ) { return $this->finalise($result); }
+	if( $_24 === true ) { return $this->finalise($result); }
 	if( $_24 === false) { return false; }
 }
 
@@ -226,10 +226,10 @@ function match_IdentifierFilter ($stack = array()) {
 			$this->store( $result, $subres, "ObjectIdentifier" );
 		}
 		else { $_28 = false; break; }
-		$_28 = TRUE; break;
+		$_28 = true; break;
 	}
 	while(0);
-	if( $_28 === TRUE ) { return $this->finalise($result); }
+	if( $_28 === true ) { return $this->finalise($result); }
 	if( $_28 === false) { return false; }
 }
 
@@ -290,7 +290,7 @@ function match_PathFilter ($stack = array()) {
 							$this->store( $result, $subres );
 						}
 						else { $_36 = false; break; }
-						$_36 = TRUE; break;
+						$_36 = true; break;
 					}
 					while(0);
 					if( $_36 === false) {
@@ -301,7 +301,7 @@ function match_PathFilter ($stack = array()) {
 						break;
 					}
 				}
-				$_38 = TRUE; break;
+				$_38 = true; break;
 			}
 			while(0);
 			if( $_38 === false) {
@@ -310,10 +310,10 @@ function match_PathFilter ($stack = array()) {
 				unset( $res_39 );
 				unset( $pos_39 );
 			}
-			$_40 = TRUE; break;
+			$_40 = true; break;
 		}
 		while(0);
-		if( $_40 === TRUE ) { $_51 = TRUE; break; }
+		if( $_40 === true ) { $_51 = true; break; }
 		$result = $res_31;
 		$this->pos = $pos_31;
 		$_49 = NULL;
@@ -345,7 +345,7 @@ function match_PathFilter ($stack = array()) {
 					$subres = ( $this->packhas( $key, $pos ) ? $this->packread( $key, $pos ) : $this->packwrite( $key, $pos, $this->$matcher(array_merge($stack, array($result))) ) );
 					if ($subres !== false) { $this->store( $result, $subres ); }
 					else { $_47 = false; break; }
-					$_47 = TRUE; break;
+					$_47 = true; break;
 				}
 				while(0);
 				if( $_47 === false) {
@@ -356,16 +356,16 @@ function match_PathFilter ($stack = array()) {
 					break;
 				}
 			}
-			$_49 = TRUE; break;
+			$_49 = true; break;
 		}
 		while(0);
-		if( $_49 === TRUE ) { $_51 = TRUE; break; }
+		if( $_49 === true ) { $_51 = true; break; }
 		$result = $res_31;
 		$this->pos = $pos_31;
 		$_51 = false; break;
 	}
 	while(0);
-	if( $_51 === TRUE ) { return $this->finalise($result); }
+	if( $_51 === true ) { return $this->finalise($result); }
 	if( $_51 === false) { return false; }
 }
 
@@ -413,13 +413,13 @@ function match_AttributeFilter ($stack = array()) {
 							$pos_56 = $this->pos;
 							if (( $subres = $this->literal( 'instanceof' ) ) !== false) {
 								$result["text"] .= $subres;
-								$_59 = TRUE; break;
+								$_59 = true; break;
 							}
 							$result = $res_56;
 							$this->pos = $pos_56;
 							if (( $subres = $this->literal( '!instanceof' ) ) !== false) {
 								$result["text"] .= $subres;
-								$_59 = TRUE; break;
+								$_59 = true; break;
 							}
 							$result = $res_56;
 							$this->pos = $pos_56;
@@ -427,10 +427,10 @@ function match_AttributeFilter ($stack = array()) {
 						}
 						while(0);
 						if( $_59 === false) { $_61 = false; break; }
-						$_61 = TRUE; break;
+						$_61 = true; break;
 					}
 					while(0);
-					if( $_61 === TRUE ) {
+					if( $_61 === true ) {
 						$subres = $result; $result = array_pop($stack);
 						$this->store( $result, $subres, 'Operator' );
 					}
@@ -452,7 +452,7 @@ function match_AttributeFilter ($stack = array()) {
 							$subres = ( $this->packhas( $key, $pos ) ? $this->packread( $key, $pos ) : $this->packwrite( $key, $pos, $this->$matcher(array_merge($stack, array($result))) ) );
 							if ($subres !== false) {
 								$this->store( $result, $subres, "Operand" );
-								$_67 = TRUE; break;
+								$_67 = true; break;
 							}
 							$result = $res_64;
 							$this->pos = $pos_64;
@@ -460,7 +460,7 @@ function match_AttributeFilter ($stack = array()) {
 							$subres = ( $this->packhas( $key, $pos ) ? $this->packread( $key, $pos ) : $this->packwrite( $key, $pos, $this->$matcher(array_merge($stack, array($result))) ) );
 							if ($subres !== false) {
 								$this->store( $result, $subres, "Operand" );
-								$_67 = TRUE; break;
+								$_67 = true; break;
 							}
 							$result = $res_64;
 							$this->pos = $pos_64;
@@ -468,7 +468,7 @@ function match_AttributeFilter ($stack = array()) {
 						}
 						while(0);
 						if( $_67 === false) { $_69 = false; break; }
-						$_69 = TRUE; break;
+						$_69 = true; break;
 					}
 					while(0);
 					if( $_69 === false) { $_72 = false; break; }
@@ -476,10 +476,10 @@ function match_AttributeFilter ($stack = array()) {
 					$subres = ( $this->packhas( $key, $pos ) ? $this->packread( $key, $pos ) : $this->packwrite( $key, $pos, $this->$matcher(array_merge($stack, array($result))) ) );
 					if ($subres !== false) { $this->store( $result, $subres ); }
 					else { $_72 = false; break; }
-					$_72 = TRUE; break;
+					$_72 = true; break;
 				}
 				while(0);
-				if( $_72 === TRUE ) { $_140 = TRUE; break; }
+				if( $_72 === true ) { $_140 = true; break; }
 				$result = $res_55;
 				$this->pos = $pos_55;
 				$_138 = NULL;
@@ -507,7 +507,7 @@ function match_AttributeFilter ($stack = array()) {
 								$pos_76 = $this->pos;
 								if (( $subres = $this->literal( 'instanceof' ) ) !== false) {
 									$result["text"] .= $subres;
-									$_115 = TRUE; break;
+									$_115 = true; break;
 								}
 								$result = $res_76;
 								$this->pos = $pos_76;
@@ -517,7 +517,7 @@ function match_AttributeFilter ($stack = array()) {
 									$pos_78 = $this->pos;
 									if (( $subres = $this->literal( '!instanceof' ) ) !== false) {
 										$result["text"] .= $subres;
-										$_113 = TRUE; break;
+										$_113 = true; break;
 									}
 									$result = $res_78;
 									$this->pos = $pos_78;
@@ -529,7 +529,7 @@ function match_AttributeFilter ($stack = array()) {
 										$subres = ( $this->packhas( $key, $pos ) ? $this->packread( $key, $pos ) : $this->packwrite( $key, $pos, $this->$matcher(array_merge($stack, array($result))) ) );
 										if ($subres !== false) {
 											$this->store( $result, $subres );
-											$_111 = TRUE; break;
+											$_111 = true; break;
 										}
 										$result = $res_80;
 										$this->pos = $pos_80;
@@ -541,7 +541,7 @@ function match_AttributeFilter ($stack = array()) {
 											$subres = ( $this->packhas( $key, $pos ) ? $this->packread( $key, $pos ) : $this->packwrite( $key, $pos, $this->$matcher(array_merge($stack, array($result))) ) );
 											if ($subres !== false) {
 												$this->store( $result, $subres );
-												$_109 = TRUE; break;
+												$_109 = true; break;
 											}
 											$result = $res_82;
 											$this->pos = $pos_82;
@@ -553,7 +553,7 @@ function match_AttributeFilter ($stack = array()) {
 												$subres = ( $this->packhas( $key, $pos ) ? $this->packread( $key, $pos ) : $this->packwrite( $key, $pos, $this->$matcher(array_merge($stack, array($result))) ) );
 												if ($subres !== false) {
 													$this->store( $result, $subres );
-													$_107 = TRUE; break;
+													$_107 = true; break;
 												}
 												$result = $res_84;
 												$this->pos = $pos_84;
@@ -565,7 +565,7 @@ function match_AttributeFilter ($stack = array()) {
 													$subres = ( $this->packhas( $key, $pos ) ? $this->packread( $key, $pos ) : $this->packwrite( $key, $pos, $this->$matcher(array_merge($stack, array($result))) ) );
 													if ($subres !== false) {
 														$this->store( $result, $subres );
-														$_105 = TRUE; break;
+														$_105 = true; break;
 													}
 													$result = $res_86;
 													$this->pos = $pos_86;
@@ -577,7 +577,7 @@ function match_AttributeFilter ($stack = array()) {
 														$subres = ( $this->packhas( $key, $pos ) ? $this->packread( $key, $pos ) : $this->packwrite( $key, $pos, $this->$matcher(array_merge($stack, array($result))) ) );
 														if ($subres !== false) {
 															$this->store( $result, $subres );
-															$_103 = TRUE; break;
+															$_103 = true; break;
 														}
 														$result = $res_88;
 														$this->pos = $pos_88;
@@ -589,7 +589,7 @@ function match_AttributeFilter ($stack = array()) {
 															$subres = ( $this->packhas( $key, $pos ) ? $this->packread( $key, $pos ) : $this->packwrite( $key, $pos, $this->$matcher(array_merge($stack, array($result))) ) );
 															if ($subres !== false) {
 																$this->store( $result, $subres );
-																$_101 = TRUE; break;
+																$_101 = true; break;
 															}
 															$result = $res_90;
 															$this->pos = $pos_90;
@@ -601,7 +601,7 @@ function match_AttributeFilter ($stack = array()) {
 																$subres = ( $this->packhas( $key, $pos ) ? $this->packread( $key, $pos ) : $this->packwrite( $key, $pos, $this->$matcher(array_merge($stack, array($result))) ) );
 																if ($subres !== false) {
 																	$this->store( $result, $subres );
-																	$_99 = TRUE; break;
+																	$_99 = true; break;
 																}
 																$result = $res_92;
 																$this->pos = $pos_92;
@@ -613,7 +613,7 @@ function match_AttributeFilter ($stack = array()) {
 																	$subres = ( $this->packhas( $key, $pos ) ? $this->packread( $key, $pos ) : $this->packwrite( $key, $pos, $this->$matcher(array_merge($stack, array($result))) ) );
 																	if ($subres !== false) {
 																		$this->store( $result, $subres );
-																		$_97 = TRUE; break;
+																		$_97 = true; break;
 																	}
 																	$result = $res_94;
 																	$this->pos = $pos_94;
@@ -621,72 +621,72 @@ function match_AttributeFilter ($stack = array()) {
 																	$subres = ( $this->packhas( $key, $pos ) ? $this->packread( $key, $pos ) : $this->packwrite( $key, $pos, $this->$matcher(array_merge($stack, array($result))) ) );
 																	if ($subres !== false) {
 																		$this->store( $result, $subres );
-																		$_97 = TRUE; break;
+																		$_97 = true; break;
 																	}
 																	$result = $res_94;
 																	$this->pos = $pos_94;
 																	$_97 = false; break;
 																}
 																while(0);
-																if( $_97 === TRUE ) { $_99 = TRUE; break; }
+																if( $_97 === true ) { $_99 = true; break; }
 																$result = $res_92;
 																$this->pos = $pos_92;
 																$_99 = false; break;
 															}
 															while(0);
-															if( $_99 === TRUE ) { $_101 = TRUE; break; }
+															if( $_99 === true ) { $_101 = true; break; }
 															$result = $res_90;
 															$this->pos = $pos_90;
 															$_101 = false; break;
 														}
 														while(0);
-														if( $_101 === TRUE ) { $_103 = TRUE; break; }
+														if( $_101 === true ) { $_103 = true; break; }
 														$result = $res_88;
 														$this->pos = $pos_88;
 														$_103 = false; break;
 													}
 													while(0);
-													if( $_103 === TRUE ) { $_105 = TRUE; break; }
+													if( $_103 === true ) { $_105 = true; break; }
 													$result = $res_86;
 													$this->pos = $pos_86;
 													$_105 = false; break;
 												}
 												while(0);
-												if( $_105 === TRUE ) { $_107 = TRUE; break; }
+												if( $_105 === true ) { $_107 = true; break; }
 												$result = $res_84;
 												$this->pos = $pos_84;
 												$_107 = false; break;
 											}
 											while(0);
-											if( $_107 === TRUE ) { $_109 = TRUE; break; }
+											if( $_107 === true ) { $_109 = true; break; }
 											$result = $res_82;
 											$this->pos = $pos_82;
 											$_109 = false; break;
 										}
 										while(0);
-										if( $_109 === TRUE ) { $_111 = TRUE; break; }
+										if( $_109 === true ) { $_111 = true; break; }
 										$result = $res_80;
 										$this->pos = $pos_80;
 										$_111 = false; break;
 									}
 									while(0);
-									if( $_111 === TRUE ) { $_113 = TRUE; break; }
+									if( $_111 === true ) { $_113 = true; break; }
 									$result = $res_78;
 									$this->pos = $pos_78;
 									$_113 = false; break;
 								}
 								while(0);
-								if( $_113 === TRUE ) { $_115 = TRUE; break; }
+								if( $_113 === true ) { $_115 = true; break; }
 								$result = $res_76;
 								$this->pos = $pos_76;
 								$_115 = false; break;
 							}
 							while(0);
 							if( $_115 === false) { $_117 = false; break; }
-							$_117 = TRUE; break;
+							$_117 = true; break;
 						}
 						while(0);
-						if( $_117 === TRUE ) {
+						if( $_117 === true ) {
 							$subres = $result; $result = array_pop($stack);
 							$this->store( $result, $subres, 'Operator' );
 						}
@@ -710,7 +710,7 @@ function match_AttributeFilter ($stack = array()) {
 								$subres = ( $this->packhas( $key, $pos ) ? $this->packread( $key, $pos ) : $this->packwrite( $key, $pos, $this->$matcher(array_merge($stack, array($result))) ) );
 								if ($subres !== false) {
 									$this->store( $result, $subres, "Operand" );
-									$_131 = TRUE; break;
+									$_131 = true; break;
 								}
 								$result = $res_120;
 								$this->pos = $pos_120;
@@ -722,7 +722,7 @@ function match_AttributeFilter ($stack = array()) {
 									$subres = ( $this->packhas( $key, $pos ) ? $this->packread( $key, $pos ) : $this->packwrite( $key, $pos, $this->$matcher(array_merge($stack, array($result))) ) );
 									if ($subres !== false) {
 										$this->store( $result, $subres, "Operand" );
-										$_129 = TRUE; break;
+										$_129 = true; break;
 									}
 									$result = $res_122;
 									$this->pos = $pos_122;
@@ -734,7 +734,7 @@ function match_AttributeFilter ($stack = array()) {
 										$subres = ( $this->packhas( $key, $pos ) ? $this->packread( $key, $pos ) : $this->packwrite( $key, $pos, $this->$matcher(array_merge($stack, array($result))) ) );
 										if ($subres !== false) {
 											$this->store( $result, $subres, "Operand" );
-											$_127 = TRUE; break;
+											$_127 = true; break;
 										}
 										$result = $res_124;
 										$this->pos = $pos_124;
@@ -742,27 +742,27 @@ function match_AttributeFilter ($stack = array()) {
 										$subres = ( $this->packhas( $key, $pos ) ? $this->packread( $key, $pos ) : $this->packwrite( $key, $pos, $this->$matcher(array_merge($stack, array($result))) ) );
 										if ($subres !== false) {
 											$this->store( $result, $subres, "Operand" );
-											$_127 = TRUE; break;
+											$_127 = true; break;
 										}
 										$result = $res_124;
 										$this->pos = $pos_124;
 										$_127 = false; break;
 									}
 									while(0);
-									if( $_127 === TRUE ) { $_129 = TRUE; break; }
+									if( $_127 === true ) { $_129 = true; break; }
 									$result = $res_122;
 									$this->pos = $pos_122;
 									$_129 = false; break;
 								}
 								while(0);
-								if( $_129 === TRUE ) { $_131 = TRUE; break; }
+								if( $_129 === true ) { $_131 = true; break; }
 								$result = $res_120;
 								$this->pos = $pos_120;
 								$_131 = false; break;
 							}
 							while(0);
 							if( $_131 === false) { $_133 = false; break; }
-							$_133 = TRUE; break;
+							$_133 = true; break;
 						}
 						while(0);
 						if( $_133 === false) { $_136 = false; break; }
@@ -772,7 +772,7 @@ function match_AttributeFilter ($stack = array()) {
 							$this->store( $result, $subres );
 						}
 						else { $_136 = false; break; }
-						$_136 = TRUE; break;
+						$_136 = true; break;
 					}
 					while(0);
 					if( $_136 === false) {
@@ -781,17 +781,17 @@ function match_AttributeFilter ($stack = array()) {
 						unset( $res_137 );
 						unset( $pos_137 );
 					}
-					$_138 = TRUE; break;
+					$_138 = true; break;
 				}
 				while(0);
-				if( $_138 === TRUE ) { $_140 = TRUE; break; }
+				if( $_138 === true ) { $_140 = true; break; }
 				$result = $res_55;
 				$this->pos = $pos_55;
 				$_140 = false; break;
 			}
 			while(0);
 			if( $_140 === false) { $_142 = false; break; }
-			$_142 = TRUE; break;
+			$_142 = true; break;
 		}
 		while(0);
 		if( $_142 === false) { $_146 = false; break; }
@@ -804,10 +804,10 @@ function match_AttributeFilter ($stack = array()) {
 			$result["text"] .= ']';
 		}
 		else { $_146 = false; break; }
-		$_146 = TRUE; break;
+		$_146 = true; break;
 	}
 	while(0);
-	if( $_146 === TRUE ) { return $this->finalise($result); }
+	if( $_146 === true ) { return $this->finalise($result); }
 	if( $_146 === false) { return false; }
 }
 

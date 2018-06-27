@@ -28,11 +28,11 @@ interface PackageManagerInterface
     public function initialize(Bootstrap $bootstrap);
 
     /**
-     * Returns TRUE if a package is available (the package's files exist in the packages directory)
+     * Returns true if a package is available (the package's files exist in the packages directory)
      * or false if it's not.
      *
      * @param string $packageKey The key of the package to check
-     * @return boolean TRUE if the package is available, otherwise false
+     * @return boolean true if the package is available, otherwise false
      * @api
      */
     public function isPackageAvailable($packageKey);

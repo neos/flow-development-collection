@@ -162,12 +162,12 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
      * Checks if a cache entry with the specified identifier exists.
      *
      * @param string $entryIdentifier An identifier specifying the cache entry
-     * @return boolean TRUE if such an entry exists, false if not
+     * @return boolean true if such an entry exists, false if not
      * @api
      */
     public function has(string $entryIdentifier): bool
     {
-        // exists returned TRUE or false in phpredis versions < 4.0.0, now it returns the number of keys
+        // exists returned true or false in phpredis versions < 4.0.0, now it returns the number of keys
         $existsResult = $this->redis->exists($this->buildKey('entry:' . $entryIdentifier));
         return $existsResult === true || $existsResult > 0;
     }
@@ -179,7 +179,7 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
      *
      * @param string $entryIdentifier Specifies the cache entry to remove
      * @throws \RuntimeException
-     * @return boolean TRUE if (at least) an entry could be removed or false if no entry was found
+     * @return boolean true if (at least) an entry could be removed or false if no entry was found
      * @api
      */
     public function remove(string $entryIdentifier): bool

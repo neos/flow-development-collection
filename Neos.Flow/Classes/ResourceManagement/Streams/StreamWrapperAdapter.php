@@ -110,7 +110,7 @@ class StreamWrapperAdapter
      * Any resources which were locked, or allocated, during opening and use of
      * the directory stream should be released.
      *
-     * @return boolean TRUE on success or false on failure.
+     * @return boolean true on success or false on failure.
      */
     public function dir_closedir()
     {
@@ -124,7 +124,7 @@ class StreamWrapperAdapter
      *
      * @param string $path Specifies the URL that was passed to opendir().
      * @param int $options Whether or not to enforce safe_mode (0x04).
-     * @return boolean TRUE on success or false on failure.
+     * @return boolean true on success or false on failure.
      */
     public function dir_opendir($path, $options)
     {
@@ -153,7 +153,7 @@ class StreamWrapperAdapter
      * to dir_readdir() should return the first entry in the location returned
      * by dir_opendir().
      *
-     * @return boolean TRUE on success or false on failure.
+     * @return boolean true on success or false on failure.
      */
     public function dir_rewinddir()
     {
@@ -172,7 +172,7 @@ class StreamWrapperAdapter
      * @param string $path Directory which should be created.
      * @param integer $mode The value passed to mkdir().
      * @param integer $options A bitwise mask of values, such as STREAM_MKDIR_RECURSIVE.
-     * @return boolean TRUE on success or false on failure.
+     * @return boolean true on success or false on failure.
      */
     public function mkdir($path, $mode, $options)
     {
@@ -193,7 +193,7 @@ class StreamWrapperAdapter
      *
      * @param string $path_from The URL to the current file.
      * @param string $path_to The URL which the path_from should be renamed to.
-     * @return boolean TRUE on success or false on failure.
+     * @return boolean true on success or false on failure.
      */
     public function rename($path_from, $path_to)
     {
@@ -212,7 +212,7 @@ class StreamWrapperAdapter
      *
      * @param string $path The directory URL which should be removed.
      * @param integer $options A bitwise mask of values, such as STREAM_MKDIR_RECURSIVE.
-     * @return boolean TRUE on success or false on failure.
+     * @return boolean true on success or false on failure.
      */
     public function rmdir($path, $options)
     {
@@ -253,7 +253,7 @@ class StreamWrapperAdapter
      *
      * This method is called in response to feof().
      *
-     * @return boolean Should return TRUE if the read/write position is at the end of the stream and if no more data is available to be read, or false otherwise.
+     * @return boolean Should return true if the read/write position is at the end of the stream and if no more data is available to be read, or false otherwise.
      */
     public function stream_eof()
     {
@@ -270,7 +270,7 @@ class StreamWrapperAdapter
      *
      * Note: If not implemented, false is assumed as the return value.
      *
-     * @return boolean Should return TRUE if the cached data was successfully stored (or if there was no data to store), or false if the data could not be stored.
+     * @return boolean Should return true if the cached data was successfully stored (or if there was no data to store), or false if the data could not be stored.
      */
     public function stream_flush()
     {
@@ -291,7 +291,7 @@ class StreamWrapperAdapter
      *  LOCK_NB if you don't want flock() to block while locking.
      *
      * @param integer $operation One of the LOCK_* constants
-     * @return boolean TRUE on success or false on failure.
+     * @return boolean true on success or false on failure.
      */
     public function stream_lock($operation)
     {
@@ -320,7 +320,7 @@ class StreamWrapperAdapter
      * @param string $mode The mode used to open the file, as detailed for fopen().
      * @param integer $options Holds additional flags set by the streams API.
      * @param string &$opened_path path If the path is opened successfully, and STREAM_USE_PATH is set in options, opened_path should be set to the full path of the file/resource that was actually opened.
-     * @return boolean TRUE on success or false on failure.
+     * @return boolean true on success or false on failure.
      */
     public function stream_open($path, $mode, $options, &$opened_path)
     {
@@ -359,7 +359,7 @@ class StreamWrapperAdapter
      *
      * @param integer $offset The stream offset to seek to.
      * @param integer $whence
-     * @return boolean TRUE on success or false on failure.
+     * @return boolean true on success or false on failure.
      */
     public function stream_seek($offset, $whence = SEEK_SET)
     {
@@ -389,7 +389,7 @@ class StreamWrapperAdapter
      * @param integer $option
      * @param integer $arg1
      * @param integer $arg2
-     * @return boolean TRUE on success or false on failure. If option is not implemented, false should be returned.
+     * @return boolean true on success or false on failure. If option is not implemented, false should be returned.
      */
     public function stream_set_option($option, $arg1, $arg2)
     {
@@ -449,7 +449,7 @@ class StreamWrapperAdapter
      * files.
      *
      * @param string $path The file URL which should be deleted.
-     * @return boolean TRUE on success or false on failure.
+     * @return boolean true on success or false on failure.
      */
     public function unlink($path)
     {

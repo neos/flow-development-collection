@@ -132,7 +132,7 @@ abstract class AbstractFormFieldViewHelper extends AbstractFormViewHelper
     /**
      * Checks if a property mapping error has occurred in the last request.
      *
-     * @return boolean TRUE if a mapping error occurred, false otherwise
+     * @return boolean true if a mapping error occurred, false otherwise
      */
     protected function hasMappingErrorOccurred()
     {
@@ -229,7 +229,7 @@ abstract class AbstractFormFieldViewHelper extends AbstractFormViewHelper
     /**
      * Internal method which checks if we should evaluate a domain object or just output arguments['name'] and arguments['value']
      *
-     * @return boolean TRUE if we should evaluate the domain object, false otherwise.
+     * @return boolean true if we should evaluate the domain object, false otherwise.
      */
     protected function isObjectAccessorMode()
     {

@@ -63,7 +63,7 @@ class DatetimeParser
      * @param string $datetimeToParse Date/time to be parsed
      * @param string $format Format string
      * @param I18n\Locale $locale A locale used for finding literals array
-     * @param boolean $strictMode Work mode (strict when TRUE, lenient when false)
+     * @param boolean $strictMode Work mode (strict when true, lenient when false)
      * @return mixed Array of parsed date / time elements, false on failure
      * @api
      * @see DatesReader
@@ -80,7 +80,7 @@ class DatetimeParser
      * @param string $dateToParse date to be parsed
      * @param I18n\Locale $locale
      * @param string $formatLength One of: full, long, medium, short, or 'default' in order to use default length from CLDR
-     * @param boolean $strictMode Work mode (strict when TRUE, lenient when false)
+     * @param boolean $strictMode Work mode (strict when true, lenient when false)
      * @return mixed Array of parsed date elements, false on failure
      * @api
      */
@@ -97,7 +97,7 @@ class DatetimeParser
      * @param string $timeToParse Time to be parsed
      * @param I18n\Locale $locale
      * @param string $formatLength One of: full, long, medium, short, or 'default' in order to use default length from CLDR
-     * @param boolean $strictMode Work mode (strict when TRUE, lenient when false)
+     * @param boolean $strictMode Work mode (strict when true, lenient when false)
      * @return mixed Array of parsed time elements, false on failure
      * @api
      */
@@ -114,7 +114,7 @@ class DatetimeParser
      * @param string $dateAndTimeToParse Date and time to be parsed
      * @param I18n\Locale $locale
      * @param string $formatLength One of: full, long, medium, short, or 'default' in order to use default length from CLDR
-     * @param boolean $strictMode Work mode (strict when TRUE, lenient when false)
+     * @param boolean $strictMode Work mode (strict when true, lenient when false)
      * @return mixed Array of parsed date and time elements, false on failure
      */
     public function parseDateAndTime($dateAndTimeToParse, I18n\Locale $locale, $formatLength = DatesReader::FORMAT_LENGTH_DEFAULT, $strictMode = true)
@@ -129,7 +129,7 @@ class DatetimeParser
      * @param string $datetimeToParse Date/time to be parsed
      * @param array $parsedFormat Parsed format (from DatesReader)
      * @param array $localizedLiterals Array of date / time literals from CLDR
-     * @param boolean $strictMode Work mode (strict when TRUE, lenient when false)
+     * @param boolean $strictMode Work mode (strict when true, lenient when false)
      * @return mixed Array of parsed date and / or time elements, false on failure
      */
     protected function doParsingWithParsedFormat($datetimeToParse, array $parsedFormat, array $localizedLiterals, $strictMode)
@@ -575,14 +575,14 @@ class DatetimeParser
     /**
      * Extracts one or two-digit number from the beginning of the string.
      *
-     * If the number has certainly two digits, $isTwoDigits can be set to TRUE
+     * If the number has certainly two digits, $isTwoDigits can be set to true
      * so no additional checking is done (this implies from some date/time
      * formats, like 'hh').
      *
      * Number is also checked for constraints: minimum and maximum value.
      *
      * @param string $datetimeToParse Date/time to be parsed
-     * @param boolean $isTwoDigits TRUE if number has surely two digits, false if it has one or two digits
+     * @param boolean $isTwoDigits true if number has surely two digits, false if it has one or two digits
      * @param int $minValue
      * @param int $maxValue
      * @return int Parsed number

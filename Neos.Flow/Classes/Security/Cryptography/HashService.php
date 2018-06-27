@@ -100,7 +100,7 @@ class HashService
      *
      * @param string $string The string which should be validated
      * @param string $hmac The hash of the string
-     * @return boolean TRUE if string and hash fit together, false otherwise.
+     * @return boolean true if string and hash fit together, false otherwise.
      */
     public function validateHmac($string, $hmac)
     {
@@ -156,7 +156,7 @@ class HashService
      *
      * @param string $password The cleartext password
      * @param string $hashedPasswordAndSalt The hashed password with salt (if used) and an optional strategy identifier
-     * @return boolean TRUE if the given password matches the hashed password
+     * @return boolean true if the given password matches the hashed password
      * @api
      */
     public function validatePassword($password, $hashedPasswordAndSalt)

@@ -423,7 +423,7 @@ class ProxyClassBuilder
      *
      * @param string $targetClassName Name of the class to create a proxy class file for
      * @param array &$aspectContainers The array of aspect containers from the AOP Framework
-     * @return boolean TRUE if the proxy class could be built, false otherwise.
+     * @return boolean true if the proxy class could be built, false otherwise.
      */
     public function buildProxyClass(string $targetClassName, array &$aspectContainers): bool
     {

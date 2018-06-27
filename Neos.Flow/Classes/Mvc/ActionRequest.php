@@ -253,7 +253,7 @@ class ActionRequest implements RequestInterface
      * The dispatcher will try to dispatch the request again if it has not been
      * addressed yet.
      *
-     * @return boolean TRUE if this request has been dispatched successfully
+     * @return boolean true if this request has been dispatched successfully
      * @api
      */
     public function isDispatched()
@@ -529,7 +529,7 @@ class ActionRequest implements RequestInterface
      * Checks if an argument of the given name exists (is set)
      *
      * @param string $argumentName Name of the argument to check
-     * @return boolean TRUE if the argument is set, otherwise false
+     * @return boolean true if the argument is set, otherwise false
      * @api
      */
     public function hasArgument($argumentName)

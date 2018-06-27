@@ -94,7 +94,7 @@ class ArgumentsTest extends UnitTestCase
         $arguments = new Arguments();
         $this->assertFalse(isset($arguments['someArgument']), 'isset() did not return false.');
         $arguments->addNewArgument('someArgument');
-        $this->assertTrue(isset($arguments['someArgument']), 'isset() did not return TRUE.');
+        $this->assertTrue(isset($arguments['someArgument']), 'isset() did not return true.');
     }
 
     /**

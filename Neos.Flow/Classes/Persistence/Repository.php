@@ -202,9 +202,9 @@ abstract class Repository implements RepositoryInterface
      * Magic call method for repository methods.
      *
      * Provides three methods
-     *  - findBy<PropertyName>($value, $caseSensitive = TRUE, $cacheResult = false)
-     *  - findOneBy<PropertyName>($value, $caseSensitive = TRUE, $cacheResult = false)
-     *  - countBy<PropertyName>($value, $caseSensitive = TRUE)
+     *  - findBy<PropertyName>($value, $caseSensitive = true, $cacheResult = false)
+     *  - findOneBy<PropertyName>($value, $caseSensitive = true, $cacheResult = false)
+     *  - countBy<PropertyName>($value, $caseSensitive = true)
      *
      * @param string $method Name of the method
      * @param array $arguments The arguments

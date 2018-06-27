@@ -169,7 +169,7 @@ final class UriConstraints
      * This can be applied multiple times, later prefixes will be prepended to the start
      *
      * @param string $pathPrefix The URI path prefix to force, for example "some-prefix/"
-     * @param bool $append If TRUE the $pathPrefix will be added *after* previous path prefix constraints. By default prefixes are added *before* any existing prefix
+     * @param bool $append If true the $pathPrefix will be added *after* previous path prefix constraints. By default prefixes are added *before* any existing prefix
      * @return UriConstraints
      */
     public function withPathPrefix(string $pathPrefix, bool $append = false): self
@@ -190,7 +190,7 @@ final class UriConstraints
      * This can be applied multiple times, later suffixes will be appended to the end
      *
      * @param string $pathSuffix The URI path suffix to force, for example ".html"
-     * @param bool $prepend If TRUE the $pathSuffix will be added *before* previous path suffix constraints. By default suffixes are added *after* any existing suffix
+     * @param bool $prepend If true the $pathSuffix will be added *before* previous path suffix constraints. By default suffixes are added *after* any existing suffix
      * @return UriConstraints
      */
     public function withPathSuffix(string $pathSuffix, bool $prepend = false): self

@@ -191,7 +191,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
      * Checks if a cache entry with the specified identifier exists.
      *
      * @param string $entryIdentifier
-     * @return boolean TRUE if such an entry exists, false if not
+     * @return boolean true if such an entry exists, false if not
      * @throws \InvalidArgumentException
      * @api
      */
@@ -211,7 +211,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
      * Usually this only affects one entry.
      *
      * @param string $entryIdentifier Specifies the cache entry to remove
-     * @return boolean TRUE if (at least) an entry could be removed or false if no entry was found
+     * @return boolean true if (at least) an entry could be removed or false if no entry was found
      * @throws \RuntimeException
      * @throws \InvalidArgumentException
      * @api

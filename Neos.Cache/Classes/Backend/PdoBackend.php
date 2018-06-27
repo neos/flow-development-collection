@@ -178,7 +178,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
      * Checks if a cache entry with the specified identifier exists.
      *
      * @param string $entryIdentifier An identifier specifying the cache entry
-     * @return boolean TRUE if such an entry exists, false if not
+     * @return boolean true if such an entry exists, false if not
      * @api
      */
     public function has(string $entryIdentifier): bool
@@ -196,7 +196,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
      * old entries for the identifier still exist, they are removed as well.
      *
      * @param string $entryIdentifier Specifies the cache entry to remove
-     * @return boolean TRUE if (at least) an entry could be removed or false if no entry was found
+     * @return boolean true if (at least) an entry could be removed or false if no entry was found
      * @api
      */
     public function remove(string $entryIdentifier): bool
@@ -392,7 +392,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
     /**
      * Checks if the current position of the cache entry iterator is valid.
      *
-     * @return boolean TRUE if the current position is valid, otherwise false
+     * @return boolean true if the current position is valid, otherwise false
      * @api
      */
     public function valid(): bool

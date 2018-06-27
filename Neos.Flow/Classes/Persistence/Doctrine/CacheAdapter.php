@@ -67,7 +67,7 @@ class CacheAdapter implements Cache
      * Tests if an entry exists in the cache.
      *
      * @param string $id The cache id of the entry to check for.
-     * @return boolean TRUE if a cache entry exists for the given cache id, false otherwise.
+     * @return boolean true if a cache entry exists for the given cache id, false otherwise.
      */
     public function contains($id)
     {
@@ -80,7 +80,7 @@ class CacheAdapter implements Cache
      * @param string $id The cache id.
      * @param mixed $data The cache entry/data.
      * @param int $lifeTime The cache lifetime. If != 0, sets a specific lifetime for this cache entry (0 => infinite lifeTime).
-     * @return boolean TRUE if the entry was successfully stored in the cache, false otherwise.
+     * @return boolean true if the entry was successfully stored in the cache, false otherwise.
      */
     public function save($id, $data, $lifeTime = 0)
     {
@@ -91,7 +91,7 @@ class CacheAdapter implements Cache
      * Deletes a cache entry.
      *
      * @param string $id The cache id.
-     * @return boolean TRUE if the cache entry was successfully deleted, false otherwise.
+     * @return boolean true if the cache entry was successfully deleted, false otherwise.
      */
     public function delete($id)
     {

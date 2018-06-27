@@ -78,7 +78,7 @@ class Response extends \Neos\Flow\Mvc\Response
     /**
      * Sets color support / styled output to yes, no or auto detection
      *
-     * @param boolean $colorSupport TRUE, false or NULL (= autodetection)
+     * @param boolean $colorSupport true, false or NULL (= autodetection)
      * @return void
      */
     public function setColorSupport(bool $colorSupport)
@@ -92,7 +92,7 @@ class Response extends \Neos\Flow\Mvc\Response
      * Regardless of this setting content will only be styled with output format
      * set to "styled".
      *
-     * @return boolean TRUE if the terminal support ANSI colors, otherwise false
+     * @return boolean true if the terminal support ANSI colors, otherwise false
      */
     public function hasColorSupport(): bool
     {

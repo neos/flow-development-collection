@@ -60,7 +60,7 @@ class Router implements RouterInterface
     protected $routes = [];
 
     /**
-     * TRUE if route object have been created, otherwise false
+     * true if route object have been created, otherwise false
      *
      * @var boolean
      */

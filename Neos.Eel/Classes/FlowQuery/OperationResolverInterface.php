@@ -20,7 +20,7 @@ interface OperationResolverInterface
 {
     /**
      * @param string $operationName
-     * @return boolean TRUE if $operationName is final
+     * @return boolean true if $operationName is final
      */
     public function isFinalOperation($operationName);
 

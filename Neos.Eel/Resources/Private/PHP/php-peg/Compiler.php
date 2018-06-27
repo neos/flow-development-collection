@@ -97,12 +97,12 @@ class PHPWriter {
 			->l('$' . $id . ' = NULL;')
 			->b('do',
 				$code->replace([
-					'MBREAK' => '$' . $id . ' = TRUE; break;',
+					'MBREAK' => '$' . $id . ' = true; break;',
 					'FBREAK' => '$' . $id . ' = false; break;'
                 ])
 			)
 			->l('while(0);')
-			->b('if( $' . $id . ' === TRUE )', 'MATCH')
+			->b('if( $' . $id . ' === true )', 'MATCH')
 			->b('if( $' . $id . ' === false)', 'FAIL');
 	}
 }
@@ -463,7 +463,7 @@ class Pending {
 		$this->what = NULL;
 	}
 
-	function set($what, $val = TRUE) {
+	function set($what, $val = true) {
 		$this->what = $what;
 		$this->val = $val;
 	}
@@ -694,13 +694,13 @@ class Rule extends PHPWriter {
 				$o += 1;
 				switch ($c) {
 					case '?':
-						$tokens[$l]->optional = TRUE;
+						$tokens[$l]->optional = true;
 						break;
 					case '*':
-						$tokens[$l]->zero_or_more = TRUE;
+						$tokens[$l]->zero_or_more = true;
 						break;
 					case '+':
-						$tokens[$l]->one_or_more = TRUE;
+						$tokens[$l]->one_or_more = true;
 						break;
 
 					case '&':
@@ -720,7 +720,7 @@ class Rule extends PHPWriter {
 						break;
 					case '<':
 					case '>':
-						$tokens[] = new TokenWhitespace(TRUE);
+						$tokens[] = new TokenWhitespace(true);
 						break;
 
 					case '(':

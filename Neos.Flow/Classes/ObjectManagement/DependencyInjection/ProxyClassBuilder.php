@@ -366,7 +366,7 @@ class ProxyClassBuilder
                     } elseif (is_array($propertyValue)) {
                         $preparedSetterArgument = var_export($propertyValue, true);
                     } elseif (is_bool($propertyValue)) {
-                        $preparedSetterArgument = $propertyValue ? 'TRUE' : 'false';
+                        $preparedSetterArgument = $propertyValue ? 'true' : 'false';
                     } else {
                         $preparedSetterArgument = $propertyValue;
                     }

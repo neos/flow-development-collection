@@ -103,11 +103,11 @@ abstract class AbstractTypeConverter implements TypeConverterInterface
     }
 
     /**
-     * This implementation always returns TRUE for this method.
+     * This implementation always returns true for this method.
      *
      * @param mixed $source the source data
      * @param string $targetType the type to convert to.
-     * @return boolean TRUE if this TypeConverter can convert from $source to $targetType, false otherwise.
+     * @return boolean true if this TypeConverter can convert from $source to $targetType, false otherwise.
      * @api
      */
     public function canConvertFrom($source, $targetType)

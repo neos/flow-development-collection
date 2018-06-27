@@ -79,9 +79,9 @@ abstract class AbstractToken implements TokenInterface
     }
 
     /**
-     * Returns TRUE if this token is currently authenticated
+     * Returns true if this token is currently authenticated
      *
-     * @return boolean TRUE if this this token is currently authenticated
+     * @return boolean true if this this token is currently authenticated
      */
     public function isAuthenticated()
     {
@@ -110,7 +110,7 @@ abstract class AbstractToken implements TokenInterface
     }
 
     /**
-     * Returns TRUE if any request pattern has been defined
+     * Returns true if any request pattern has been defined
      *
      * @return boolean
      */
