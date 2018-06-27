@@ -1,5 +1,5 @@
 type: dictionary
-additionalProperties: FALSE
+additionalProperties: false
 properties:
   'privilegeTargets':
     type: dictionary
@@ -8,7 +8,7 @@ properties:
       type: dictionary
       additionalProperties:
         type: dictionary
-        additionalProperties: FALSE
+        additionalProperties: false
         properties:
           'matcher':
             type: string
@@ -17,7 +17,7 @@ properties:
             type: dictionary
             additionalProperties:
               type: dictionary
-              additionalProperties: FALSE
+              additionalProperties: false
               properties:
                 'className': {type: string, format: class-name}
 
@@ -26,7 +26,7 @@ properties:
     required: true
     additionalProperties:
       type: dictionary
-      additionalProperties: FALSE
+      additionalProperties: false
       properties:
         'abstract': {type: boolean}
         'parentRoles':
@@ -36,7 +36,7 @@ properties:
           type: array
           items:
             type: dictionary
-            additionalProperties: FALSE
+            additionalProperties: false
             properties:
               'privilegeTarget': {type: string}
               'parameters': {type: dictionary}

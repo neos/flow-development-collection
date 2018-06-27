@@ -6,18 +6,18 @@ additionalProperties:
   additionalProperties:
     # third level are actual class options
     type: dictionary
-    additionalProperties: FALSE
+    additionalProperties: false
     properties:
       'scope': {type: string, enum: ['singleton', 'prototype', 'session']}
       'factoryObjectName': {type: string, format: class-name}
       'factoryMethodName': {type: string}
-      'autowiring': {type: [boolean, string], enum: [true, FALSE, 'on', 'off']}
+      'autowiring': {type: [boolean, string], enum: [true, false, 'on', 'off']}
       'className': {type: string, format: class-name}
       'arguments':
         type: array
         items:
           type: dictionary
-          additionalProperties: FALSE
+          additionalProperties: false
           properties:
             'value': {type: any}
             'setting': {type: string}
@@ -27,7 +27,7 @@ additionalProperties:
                 format: class-name
               -
                 type: dictionary
-                additionalProperties: FALSE
+                additionalProperties: false
                 properties:
                   'name': {type: string}
                   'factoryObjectName': {type: string, format: class-name}
@@ -36,7 +36,7 @@ additionalProperties:
                     type: array
                     items:
                       type: dictionary
-                      additionalProperties: FALSE
+                      additionalProperties: false
                       properties:
                         'value': {type: string}
                         'setting': {type: string}
@@ -45,7 +45,7 @@ additionalProperties:
         type: dictionary
         additionalProperties:
           type: dictionary
-          additionalProperties: FALSE
+          additionalProperties: false
           properties:
             'setting': {type: string}
             'value': {type: any}
@@ -55,7 +55,7 @@ additionalProperties:
                 format: class-name
               -
                 type: dictionary
-                additionalProperties: FALSE
+                additionalProperties: false
                 properties:
                   'name': {type: string}
                   'factoryObjectName': {type: string, format: class-name}
@@ -64,7 +64,7 @@ additionalProperties:
                     type: array
                     items:
                       type: dictionary
-                      additionalProperties: FALSE
+                      additionalProperties: false
                       properties:
                         'value': {type: string}
                         'setting': {type: string}

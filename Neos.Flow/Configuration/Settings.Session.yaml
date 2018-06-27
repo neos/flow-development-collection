@@ -45,7 +45,7 @@ Neos:
         path: /
 
         # Force SSL cookies.
-        secure: FALSE
+        secure: false
 
         # Allow http access only.
         httponly: true

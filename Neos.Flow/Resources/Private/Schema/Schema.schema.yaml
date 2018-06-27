@@ -53,7 +53,7 @@ type: '@schema'
     disallow: 'array'
     description: 'string'
     required: 'boolean'
-  additionalProperties: FALSE
+  additionalProperties: false
   patternProperties:
     '/@.*/':  { type: 'any' }
 

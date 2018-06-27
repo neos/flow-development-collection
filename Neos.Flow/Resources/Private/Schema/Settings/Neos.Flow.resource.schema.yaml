@@ -1,5 +1,5 @@
 type: dictionary
-additionalProperties: FALSE
+additionalProperties: false
 properties:
   'uploadExtensionBlacklist':
     type: dictionary
@@ -10,7 +10,7 @@ properties:
     required: true
     additionalProperties:
       type: dictionary
-      additionalProperties: FALSE
+      additionalProperties: false
       properties:
         'storage': { type: string, required: true }
         'storageOptions': { type: dictionary, additionalProperties: true }
@@ -19,7 +19,7 @@ properties:
     required: true
     additionalProperties:
       type: dictionary
-      additionalProperties: FALSE
+      additionalProperties: false
       properties:
         'storage': { type: string, required: true }
         'target': { type: string, required: true }
@@ -29,7 +29,7 @@ properties:
     required: true
     additionalProperties:
       type: dictionary
-      additionalProperties: FALSE
+      additionalProperties: false
       properties:
         'target': { type: string, required: true }
         'targetOptions': { type: dictionary, additionalProperties: true }

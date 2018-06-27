@@ -1,7 +1,7 @@
 type: array
 items:
   type: dictionary
-  additionalProperties: FALSE
+  additionalProperties: false
   properties:
     'requestFilter': {type: string, required: true}
     'viewObjectName': {type: string, format: class-name}

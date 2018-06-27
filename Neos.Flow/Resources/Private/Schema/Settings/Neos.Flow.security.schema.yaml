@@ -1,9 +1,9 @@
 type: dictionary
-additionalProperties: FALSE
+additionalProperties: false
 properties:
   'firewall':
     type: dictionary
-    additionalProperties: FALSE
+    additionalProperties: false
     required: true
     properties:
       'rejectAll': { type: boolean, required: true }
@@ -11,7 +11,7 @@ properties:
         type: dictionary
         additionalProperties:
           type: dictionary
-          additionalProperties: FALSE
+          additionalProperties: false
           properties:
             'pattern': { type: string, required: true }
             'patternOptions': { type: dictionary }
@@ -19,7 +19,7 @@ properties:
 
   'authentication':
     type: dictionary
-    additionalProperties: FALSE
+    additionalProperties: false
     required: true
     properties:
       'providers':
@@ -27,10 +27,10 @@ properties:
         required: true
         additionalProperties:
           type: dictionary
-          additionalProperties: FALSE
+          additionalProperties: false
           required: true
           properties:
-            'label': { type: string, required: FALSE }
+            'label': { type: string, required: false }
             'provider': { type: string, required: true }
             'providerOptions': { type: dictionary }
             'requestPatterns':
@@ -42,7 +42,7 @@ properties:
                     type: 'null'
                   -
                     type: 'dictionary'
-                    additionalProperties: FALSE
+                    additionalProperties: false
                     properties:
                       'pattern': { type: string, required: true }
                       'patternOptions': { type: dictionary }
@@ -56,21 +56,21 @@ properties:
 
   'authorization':
     type: dictionary
-    additionalProperties: FALSE
+    additionalProperties: false
     required: true
     properties:
       'allowAccessIfAllVotersAbstain': { type: boolean, required: true }
 
   'csrf':
     type: dictionary
-    additionalProperties: FALSE
+    additionalProperties: false
     required: true
     properties:
       'csrfStrategy': { type: string, enum: ['onePerRequest', 'onePerSession', 'onePerUri'], required: true }
 
   'cryptography':
     type: dictionary
-    additionalProperties: FALSE
+    additionalProperties: false
     required: true
     properties:
       'hashingStrategies':
@@ -82,7 +82,7 @@ properties:
 
       'Pbkdf2HashingStrategy':
         type: dictionary
-        additionalProperties: FALSE
+        additionalProperties: false
         required: true
         properties:
           'dynamicSaltLength': { type: integer, required: true }
@@ -92,14 +92,14 @@ properties:
 
       'BCryptHashingStrategy':
         type: dictionary
-        additionalProperties: FALSE
+        additionalProperties: false
         required: true
         properties:
           'cost': { type: integer, required: true }
 
       'RSAWalletServicePHP':
         type: dictionary
-        additionalProperties: FALSE
+        additionalProperties: false
         required: true
         properties:
           'keystorePath': { type: string, required: true }

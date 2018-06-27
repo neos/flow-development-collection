@@ -1,7 +1,7 @@
 type: array
 items:
   type: dictionary
-  additionalProperties: FALSE
+  additionalProperties: false
   properties:
     'name': {type: string, required: true}
     'uriPattern': {type: string, required: true}
@@ -18,14 +18,14 @@ items:
       additionalProperties:
         -
           type: dictionary
-          additionalProperties: FALSE
+          additionalProperties: false
           properties:
             'handler': {type: string, required: true, format: class-name}
             'options': {type: dictionary }
             'toLowerCase':  {type: boolean }
         -
           type: dictionary
-          additionalProperties: FALSE
+          additionalProperties: false
           properties:
             'objectType': {type: string, required: true, format: class-name}
             'uriPattern': {type: string}

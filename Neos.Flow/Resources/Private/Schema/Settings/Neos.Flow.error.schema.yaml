@@ -1,9 +1,9 @@
 type: dictionary
-additionalProperties: FALSE
+additionalProperties: false
 properties:
   'exceptionHandler':
     type: dictionary
-    additionalProperties: FALSE
+    additionalProperties: false
     required: true
     properties:
       'className': { type: string, required: true, format: class-name }
@@ -13,7 +13,7 @@ properties:
         type: dictionary
         additionalProperties:
           type: dictionary
-          additionalProperties: FALSE
+          additionalProperties: false
           properties:
             'matchingStatusCodes':
               type: array
@@ -25,7 +25,7 @@ properties:
 
   'errorHandler':
     type: dictionary
-    additionalProperties: FALSE
+    additionalProperties: false
     required: true
     properties:
       'exceptionalErrors':
@@ -35,8 +35,8 @@ properties:
 
   'debugger':
     type: dictionary
-    additionalProperties: FALSE
-    required: FALSE
+    additionalProperties: false
+    required: false
     properties:
       'ignoredClasses':
         type: dictionary

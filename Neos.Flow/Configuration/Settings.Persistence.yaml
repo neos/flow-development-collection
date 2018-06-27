@@ -15,7 +15,7 @@ Neos:
         charset: 'utf8mb4'
         defaultTableOptions:
           charset: 'utf8mb4'
-      cacheAllQueryResults: FALSE
+      cacheAllQueryResults: false
 
       doctrine:
         # By default Doctrine proxy compilation is done in the Flow bootstrap

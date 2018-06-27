@@ -3,7 +3,7 @@ properties:
   'Default':
     type: dictionary
     required: true
-    additionalProperties: FALSE
+    additionalProperties: false
     properties:
       'backend': {type: string, format: class-name, required: true}
       'frontend': {type: string, format: class-name, required: true}
@@ -11,7 +11,7 @@ properties:
       'persistent': {type: boolean}
 additionalProperties:
   type: dictionary
-  additionalProperties: FALSE
+  additionalProperties: false
   properties:
     'backend': {type: string, format: class-name}
     'frontend': {type: string, format: class-name}

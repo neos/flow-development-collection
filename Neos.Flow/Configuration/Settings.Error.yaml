@@ -15,7 +15,7 @@ Neos:
         defaultRenderingOptions:
           viewClassName: Neos\Flow\Mvc\View\SimpleTemplateView
           viewOptions: []
-          renderTechnicalDetails: FALSE
+          renderTechnicalDetails: false
           logException: true
 
         # Rendering groups can define special renderings depending on status code or class of the
@@ -25,7 +25,7 @@ Neos:
           notFoundExceptions:
             matchingStatusCodes: [404]
             options:
-              logException: FALSE
+              logException: false
               templatePathAndFilename: 'resource://Neos.Flow/Private/Templates/Error/Default.html'
               variables:
                 errorDescription: 'Sorry, the page you requested was not found.'

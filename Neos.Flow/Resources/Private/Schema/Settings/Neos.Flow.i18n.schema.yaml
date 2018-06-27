@@ -1,11 +1,11 @@
 type: dictionary
-additionalProperties: FALSE
+additionalProperties: false
 properties:
   'defaultLocale': { type: string, required: true }
   'globalTranslationPath': { type: string, required: true }
   'fallbackRule':
      type: dictionary
-     additionalProperties: FALSE
+     additionalProperties: false
      properties:
        'strict': { type: boolean, required: true }
        'order':
@@ -18,8 +18,8 @@ properties:
     items: { type: string, required: true }
   'scan':
     type: dictionary
-    additionalProperties: FALSE
-    required: FALSE
+    additionalProperties: false
+    required: false
     properties:
       'includePaths':
         type: dictionary

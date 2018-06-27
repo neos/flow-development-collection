@@ -19,7 +19,7 @@ properties:
           type: dictionary
 additionalProperties:
   type: dictionary
-  additionalProperties: FALSE
+  additionalProperties: false
   properties:
     'logger': { type: string, format: class-name }
     'backend': { type: string, format: class-name }
