@@ -181,7 +181,7 @@ function match_StringLiteral ($stack = array()) {
 }
 
 
-/* BooleanLiteral: 'true' | 'true' | 'false' | 'false' */
+/* BooleanLiteral: 'true' | 'TRUE' | 'false' | 'FALSE' */
 protected $match_BooleanLiteral_typestack = array('BooleanLiteral');
 function match_BooleanLiteral ($stack = array()) {
 	$matchrule = "BooleanLiteral"; $result = $this->construct($matchrule, $matchrule, null);

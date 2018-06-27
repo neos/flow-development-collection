@@ -274,10 +274,10 @@ class RequestBuilder
                 if ($expectedArgumentType !== 'boolean') {
                     return $possibleValue;
                 }
-                if (array_search($possibleValue, ['on', '1', 'y', 'yes', 'true', 'true']) !== false) {
+                if (array_search($possibleValue, ['on', '1', 'y', 'yes', 'true', 'TRUE']) !== false) {
                     return true;
                 }
-                if (array_search($possibleValue, ['off', '0', 'n', 'no', 'false', 'false']) !== false) {
+                if (array_search($possibleValue, ['off', '0', 'n', 'no', 'false', 'FALSE']) !== false) {
                     return false;
                 }
                 array_unshift($rawCommandLineArguments, $possibleValue);
