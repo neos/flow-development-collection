@@ -9,7 +9,7 @@ Neos:
       # Note: This only allows to include existing Routes.yaml files from other packages, you can't adjust the routes via Settings.
       #
       # Syntax:
-      # 'Some.Package': TRUE
+      # 'Some.Package': true
       # 'SomeOther.Package':
       #   position: 'after Some.Package'
       #

@@ -4,9 +4,9 @@ properties:
   'exceptionHandler':
     type: dictionary
     additionalProperties: FALSE
-    required: TRUE
+    required: true
     properties:
-      'className': { type: string, required: TRUE, format: class-name }
+      'className': { type: string, required: true, format: class-name }
       'defaultRenderingOptions':
         type: dictionary
       'renderingGroups':
@@ -21,16 +21,16 @@ properties:
             'options': { type: dictionary }
             'matchingExceptionClassNames':
               type: array
-              items: { type: string, required: TRUE, format: class-name }
+              items: { type: string, required: true, format: class-name }
 
   'errorHandler':
     type: dictionary
     additionalProperties: FALSE
-    required: TRUE
+    required: true
     properties:
       'exceptionalErrors':
         type: array
-        required: TRUE
+        required: true
         items: { type: [string, integer] }
 
   'debugger':
@@ -40,5 +40,5 @@ properties:
     properties:
       'ignoredClasses':
         type: dictionary
-        required: TRUE
+        required: true
         patternProperties: { '/.*/': { type: boolean } }

@@ -23,7 +23,7 @@ type: '@schema'
 '@simpleSchema':
   type: 'string'
   enum: ['string', 'number', 'integer', 'boolean', 'array', 'dictionary', 'null', 'any']
-  required: TRUE
+  required: true
 
 #
 # An array schema is an array of schemas of which at least one must match
@@ -32,7 +32,7 @@ type: '@schema'
   type: 'array'
   items: '@schema'
   minItems: 1
-  uniqueItems: TRUE
+  uniqueItems: true
 
 #
 # A local schema is a reference to a locally defined schema
@@ -40,7 +40,7 @@ type: '@schema'
 '@localSchema':
   type: 'string'
   pattern: '/@[a-zA-Z0-9-_]+/'
-  required: TRUE
+  required: true
 
 #
 # The base for all complex schema definitions with type property
@@ -48,7 +48,7 @@ type: '@schema'
 '@baseSchema':
   type: 'dictionary'
   properties:
-    type: { type: 'any', required: TRUE }
+    type: { type: 'any', required: true }
     enum: 'array'
     disallow: 'array'
     description: 'string'

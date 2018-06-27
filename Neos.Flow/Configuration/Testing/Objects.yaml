@@ -34,7 +34,7 @@ Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\SingletonClassC:
     protectedArrayPropertySetViaObjectsYaml:
       value: { 'iAm': { 'aConfigured': 'arrayValue' } }
     protectedBooleanTruePropertySetViaObjectsYaml:
-      value: TRUE
+      value: true
     protectedBooleanFalsePropertySetViaObjectsYaml:
       value: FALSE
     protectedArrayPropertyWithSetterSetViaObjectsYaml:

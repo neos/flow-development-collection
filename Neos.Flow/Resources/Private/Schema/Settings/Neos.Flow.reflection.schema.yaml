@@ -3,6 +3,6 @@ additionalProperties: FALSE
 properties:
   'ignoredTags':
     type: dictionary
-    required: TRUE
+    required: true
     additionalProperties: { type: boolean }
-  'logIncorrectDocCommentHints': { type: boolean, required: TRUE }
+  'logIncorrectDocCommentHints': { type: boolean, required: true }

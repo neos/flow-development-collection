@@ -2,6 +2,6 @@ type: dictionary
 additionalProperties: FALSE
 properties:
   'globalObjects':
-    required: TRUE
+    required: true
     type: dictionary
     additionalProperties: { type: string, format: class-name }

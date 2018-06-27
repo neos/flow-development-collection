@@ -1,21 +1,21 @@
 type: dictionary
 additionalProperties: FALSE
 properties:
-  'defaultLocale': { type: string, required: TRUE }
-  'globalTranslationPath': { type: string, required: TRUE }
+  'defaultLocale': { type: string, required: true }
+  'globalTranslationPath': { type: string, required: true }
   'fallbackRule':
      type: dictionary
      additionalProperties: FALSE
      properties:
-       'strict': { type: boolean, required: TRUE }
+       'strict': { type: boolean, required: true }
        'order':
          type: array
-         required: TRUE
+         required: true
          items:
            type: string
   'availableLocales':
     type: array
-    items: { type: string, required: TRUE }
+    items: { type: string, required: true }
   'scan':
     type: dictionary
     additionalProperties: FALSE
@@ -23,9 +23,9 @@ properties:
     properties:
       'includePaths':
         type: dictionary
-        required: TRUE
+        required: true
         patternProperties: { '/.*/': { type: boolean } }
       'excludePatterns':
         type: dictionary
-        required: TRUE
+        required: true
         patternProperties: { '/.*/': { type: boolean } }

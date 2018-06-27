@@ -6,7 +6,7 @@ properties:
       fileStorage:
         type: dictionary
         properties:
-          path: { type: string, required: TRUE }
+          path: { type: string, required: true }
   psr3:
     type: dictionary
     properties:

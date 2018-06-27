@@ -7,29 +7,29 @@ properties:
       type: boolean
   'storages':
     type: dictionary
-    required: TRUE
+    required: true
     additionalProperties:
       type: dictionary
       additionalProperties: FALSE
       properties:
-        'storage': { type: string, required: TRUE }
-        'storageOptions': { type: dictionary, additionalProperties: TRUE }
+        'storage': { type: string, required: true }
+        'storageOptions': { type: dictionary, additionalProperties: true }
   'collections':
     type: dictionary
-    required: TRUE
+    required: true
     additionalProperties:
       type: dictionary
       additionalProperties: FALSE
       properties:
-        'storage': { type: string, required: TRUE }
-        'target': { type: string, required: TRUE }
+        'storage': { type: string, required: true }
+        'target': { type: string, required: true }
         'pathPatterns': { type: array,  items: { type: string }}
   'targets':
     type: dictionary
-    required: TRUE
+    required: true
     additionalProperties:
       type: dictionary
       additionalProperties: FALSE
       properties:
-        'target': { type: string, required: TRUE }
-        'targetOptions': { type: dictionary, additionalProperties: TRUE }
+        'target': { type: string, required: true }
+        'targetOptions': { type: dictionary, additionalProperties: true }

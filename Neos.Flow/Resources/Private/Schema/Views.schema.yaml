@@ -3,9 +3,9 @@ items:
   type: dictionary
   additionalProperties: FALSE
   properties:
-    'requestFilter': {type: string, required: TRUE}
+    'requestFilter': {type: string, required: true}
     'viewObjectName': {type: string, format: class-name}
     'options':
       # might be any option defined in the supportedOptions array of the viewObject
       type: dictionary
-      additionalProperties: TRUE
+      additionalProperties: true

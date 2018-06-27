@@ -2,11 +2,11 @@ type: dictionary
 properties:
   'Default':
     type: dictionary
-    required: TRUE
+    required: true
     additionalProperties: FALSE
     properties:
-      'backend': {type: string, format: class-name, required: TRUE}
-      'frontend': {type: string, format: class-name, required: TRUE}
+      'backend': {type: string, format: class-name, required: true}
+      'frontend': {type: string, format: class-name, required: true}
       'backendOptions': {type: dictionary}
       'persistent': {type: boolean}
 additionalProperties:

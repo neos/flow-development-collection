@@ -3,7 +3,7 @@ additionalProperties: FALSE
 properties:
   'privilegeTargets':
     type: dictionary
-    required: TRUE
+    required: true
     additionalProperties:
       type: dictionary
       additionalProperties:
@@ -12,7 +12,7 @@ properties:
         properties:
           'matcher':
             type: string
-            required: TRUE
+            required: true
           'parameters':
             type: dictionary
             additionalProperties:
@@ -23,7 +23,7 @@ properties:
 
   'roles':
     type: dictionary
-    required: TRUE
+    required: true
     additionalProperties:
       type: dictionary
       additionalProperties: FALSE

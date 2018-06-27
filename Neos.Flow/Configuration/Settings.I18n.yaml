@@ -28,19 +28,19 @@ Neos:
         #
         # Example:
         #   includePaths:
-        #     '/Public/': TRUE
-        #     '/Private/images/': TRUE
+        #     '/Public/': true
+        #     '/Private/images/': true
         #   excludePatterns:
-        #     '/node_modules/': TRUE
+        #     '/node_modules/': true
         #
         #   This will scan all of the Public Resources folder, as well as the 'images' sub-folder inside the Private
         #   Resources, except any 'node_modules' sub-folder in either one.
         includePaths:
-          '/Public/': TRUE
-          '/Private/Translations/': TRUE
+          '/Public/': true
+          '/Private/Translations/': true
 
         excludePatterns:
-          '/node_modules/': TRUE
-          '/bower_components/': TRUE
+          '/node_modules/': true
+          '/bower_components/': true
           # skip folders starting with a dot (e.g. '.git', '.sass-cache', etc.)
-          '/\..*/': TRUE
+          '/\..*/': true

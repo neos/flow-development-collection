@@ -6,7 +6,7 @@ Neos:
   Flow:
     security:
       firewall:
-        # If set to TRUE, the firewall will reject any request that is not
+        # If set to true, the firewall will reject any request that is not
         # explicitly allowed by a configured request filter.
         rejectAll: FALSE
 
@@ -85,7 +85,7 @@ Neos:
         authenticationStrategy: atLeastOneToken
 
       authorization:
-        # If this is set to TRUE access will be granted even if all voters abstain
+        # If this is set to true access will be granted even if all voters abstain
         allowAccessIfAllVotersAbstain: FALSE
 
       # "Cross-site request forgery" is an attack method to have authorized users trigger
