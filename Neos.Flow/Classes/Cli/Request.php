@@ -212,7 +212,7 @@ class Request implements RequestInterface
      * Checks if an argument of the given name exists (is set)
      *
      * @param string $argumentName Name of the argument to check
-     * @return boolean TRUE if the argument is set, otherwise FALSE
+     * @return boolean TRUE if the argument is set, otherwise false
      */
     public function hasArgument(string $argumentName): bool
     {

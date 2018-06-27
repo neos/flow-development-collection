@@ -267,8 +267,8 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
      * Magic call method for repository methods.
      *
      * Provides three methods
-     *  - findBy<PropertyName>($value, $caseSensitive = TRUE, $cacheResult = FALSE)
-     *  - findOneBy<PropertyName>($value, $caseSensitive = TRUE, $cacheResult = FALSE)
+     *  - findBy<PropertyName>($value, $caseSensitive = TRUE, $cacheResult = false)
+     *  - findOneBy<PropertyName>($value, $caseSensitive = TRUE, $cacheResult = false)
      *  - countBy<PropertyName>($value, $caseSensitive = TRUE)
      *
      * @param string $method Name of the method

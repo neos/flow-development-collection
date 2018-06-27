@@ -65,7 +65,7 @@ abstract class AbstractBackend implements BackendInterface
     /**
      * Enables or disables logging of IP addresses.
      *
-     * @param boolean $logIpAddress Set to TRUE to enable logging of IP address, or FALSE to disable
+     * @param boolean $logIpAddress Set to TRUE to enable logging of IP address, or false to disable
      * @return void
      */
     public function setLogIpAddress($logIpAddress)

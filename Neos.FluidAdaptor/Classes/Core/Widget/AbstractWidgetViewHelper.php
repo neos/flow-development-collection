@@ -52,7 +52,7 @@ abstract class AbstractWidgetViewHelper extends AbstractViewHelper implements Ch
     protected $ajaxWidget = false;
 
     /**
-     * If set to FALSE, this widget won't create a session (only relevant for AJAX widgets).
+     * If set to false, this widget won't create a session (only relevant for AJAX widgets).
      *
      * You then need to manually add the serialized configuration data to your links, by
      * setting "includeWidgetContext" to TRUE in the widget link and URI ViewHelpers.

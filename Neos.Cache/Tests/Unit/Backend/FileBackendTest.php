@@ -343,7 +343,7 @@ class FileBackendTest extends BaseTestCase
         $backend->set($entryIdentifier, $data);
 
         $this->assertTrue($backend->has($entryIdentifier), 'has() did not return TRUE.');
-        $this->assertFalse($backend->has($entryIdentifier . 'Not'), 'has() did not return FALSE.');
+        $this->assertFalse($backend->has($entryIdentifier . 'Not'), 'has() did not return false.');
     }
 
     /**

@@ -50,7 +50,7 @@ class Service
     public $output = [];
 
     /**
-     * @Flow\Inject(lazy = FALSE)
+     * @Flow\Inject(lazy = false)
      * @var EntityManagerInterface
      */
     protected $entityManager;

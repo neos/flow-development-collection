@@ -63,7 +63,7 @@ interface ObjectManagerInterface extends ContainerInterface
      * been registered.
      *
      * @param  string $objectName Name of the object
-     * @return boolean TRUE if the object has been registered, otherwise FALSE
+     * @return boolean TRUE if the object has been registered, otherwise false
      * @since 1.0.0 alpha 8
      * @api
      */
@@ -82,7 +82,7 @@ interface ObjectManagerInterface extends ContainerInterface
     /**
      * Returns the case sensitive object name of an object specified by a
      * case insensitive object name. If no object of that name exists,
-     * FALSE is returned.
+     * false is returned.
      *
      * In general, the case sensitive variant is used everywhere in Flow,
      * however there might be special situations in which the
@@ -90,7 +90,7 @@ interface ObjectManagerInterface extends ContainerInterface
      * rare cases.
      *
      * @param  string $caseInsensitiveObjectName The object name in lower-, upper- or mixed case
-     * @return mixed Either the mixed case object name or FALSE if no object of that name was found.
+     * @return mixed Either the mixed case object name or false if no object of that name was found.
      * @api
      */
     public function getCaseSensitiveObjectName($caseInsensitiveObjectName);
@@ -108,7 +108,7 @@ interface ObjectManagerInterface extends ContainerInterface
      * Returns the implementation class name for the specified object
      *
      * @param string $objectName The object name
-     * @return string The class name corresponding to the given object name or FALSE if no such object is registered
+     * @return string The class name corresponding to the given object name or false if no such object is registered
      * @api
      */
     public function getClassNameByObjectName($objectName);
@@ -117,7 +117,7 @@ interface ObjectManagerInterface extends ContainerInterface
      * Returns the key of the package the specified object is contained in.
      *
      * @param string $objectName The object name
-     * @return string The package key or FALSE if no such object exists
+     * @return string The package key or false if no such object exists
      */
     public function getPackageKeyByObjectName($objectName);
 

@@ -21,7 +21,7 @@ use Neos\Utility\Arrays;
  * Configuration source based on YAML files
  *
  * @Flow\Scope("singleton")
- * @Flow\Proxy(FALSE)
+ * @Flow\Proxy(false)
  * @api
  */
 class YamlSource

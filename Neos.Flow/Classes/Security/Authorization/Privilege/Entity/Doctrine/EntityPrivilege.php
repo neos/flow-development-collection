@@ -111,7 +111,7 @@ class EntityPrivilege extends AbstractPrivilege implements EntityPrivilegeInterf
      * Returns TRUE, if this privilege covers the given subject. As entity
      * privileges are evaluated and enforced "within the database system"
      * in SQL and not by the voting process, this method will always
-     * return FALSE.
+     * return false.
      *
      * @param PrivilegeSubjectInterface $subject
      * @return boolean

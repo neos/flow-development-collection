@@ -324,7 +324,7 @@ class ClassLoaderTest extends UnitTestCase
         mkdir('vfs://Test/Packages/Libraries/test/subPackage/src/', 0770, true);
         mkdir('vfs://Test/Packages/Libraries/test/mainPackage/src/Foo', 0770, true);
         file_put_contents('vfs://Test/Packages/Libraries/test/subPackage/src/Bar3.php', '<?php ' . __CLASS__ . '::$testClassWasOverwritten = TRUE; ?>');
-        file_put_contents('vfs://Test/Packages/Libraries/test/mainPackage/src/Foo/Bar3.php', '<?php ' . __CLASS__ . '::$testClassWasOverwritten = FALSE; ?>');
+        file_put_contents('vfs://Test/Packages/Libraries/test/mainPackage/src/Foo/Bar3.php', '<?php ' . __CLASS__ . '::$testClassWasOverwritten = false; ?>');
 
         $this->classLoader->setPackages($packages);
 

@@ -78,7 +78,7 @@ class PointcutFilter implements PointcutFilterInterface
      * @param string $methodName Name of the method - not used here
      * @param string $methodDeclaringClassName Name of the class the method was originally declared in
      * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
-     * @return boolean TRUE if the class matches, otherwise FALSE
+     * @return boolean TRUE if the class matches, otherwise false
      * @throws UnknownPointcutException
      */
     public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier): bool

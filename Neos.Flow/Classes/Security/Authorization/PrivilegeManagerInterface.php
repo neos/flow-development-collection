@@ -46,7 +46,7 @@ interface PrivilegeManagerInterface
      *
      * @param string $privilegeTargetIdentifier The identifier of the privilege target to decide on
      * @param array $privilegeParameters Optional array of privilege parameters (simple key => value array)
-     * @return boolean TRUE if access is granted, FALSE otherwise
+     * @return boolean TRUE if access is granted, false otherwise
      */
     public function isPrivilegeTargetGranted($privilegeTargetIdentifier, array $privilegeParameters = []);
 
@@ -56,7 +56,7 @@ interface PrivilegeManagerInterface
      * @param array<Role> $roles The roles that should be evaluated
      * @param string $privilegeTargetIdentifier The identifier of the privilege target to decide on
      * @param array $privilegeParameters Optional array of privilege parameters (simple key => value array)
-     * @return boolean TRUE if access is granted, FALSE otherwise
+     * @return boolean TRUE if access is granted, false otherwise
      */
     public function isPrivilegeTargetGrantedForRoles(array $roles, $privilegeTargetIdentifier, array $privilegeParameters = []);
 }

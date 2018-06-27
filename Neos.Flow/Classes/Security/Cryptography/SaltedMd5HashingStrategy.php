@@ -37,7 +37,7 @@ class SaltedMd5HashingStrategy implements PasswordHashingStrategyInterface
      *
      * @param string $clearString
      * @param string $hashedStringAndSalt
-     * @return boolean TRUE if the clear string matches, otherwise FALSE
+     * @return boolean TRUE if the clear string matches, otherwise false
      * @throws \InvalidArgumentException
      */
     public static function validateSaltedMd5($clearString, $hashedStringAndSalt)

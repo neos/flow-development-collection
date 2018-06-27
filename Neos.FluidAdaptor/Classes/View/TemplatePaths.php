@@ -377,7 +377,7 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
      *
      * This method is used to generate "fallback chains" for file system locations where a certain Partial can reside.
      *
-     * If $bubbleControllerAndSubpackage is FALSE and $formatIsOptional is FALSE, then the resulting array will only have one element
+     * If $bubbleControllerAndSubpackage is false and $formatIsOptional is false, then the resulting array will only have one element
      * with all the above placeholders replaced.
      *
      * If you set $bubbleControllerAndSubpackage to TRUE, then you will get an array with potentially many elements:

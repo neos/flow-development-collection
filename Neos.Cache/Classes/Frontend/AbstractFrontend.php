@@ -90,7 +90,7 @@ abstract class AbstractFrontend implements FrontendInterface
      * Checks if a cache entry with the specified identifier exists.
      *
      * @param string $entryIdentifier An identifier specifying the cache entry
-     * @return boolean TRUE if such an entry exists, FALSE if not
+     * @return boolean TRUE if such an entry exists, false if not
      * @throws \InvalidArgumentException
      * @api
      */
@@ -107,7 +107,7 @@ abstract class AbstractFrontend implements FrontendInterface
      * Removes the given cache entry from the cache.
      *
      * @param string $entryIdentifier An identifier specifying the cache entry
-     * @return boolean TRUE if such an entry exists, FALSE if not
+     * @return boolean TRUE if such an entry exists, false if not
      * @throws \InvalidArgumentException
      * @api
      */

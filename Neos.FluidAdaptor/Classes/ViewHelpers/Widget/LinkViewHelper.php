@@ -69,10 +69,10 @@ class LinkViewHelper extends AbstractTagBasedViewHelper
      * @param array $arguments Arguments
      * @param string $section The anchor to be added to the URI
      * @param string $format The requested format, e.g. ".html"
-     * @param boolean $ajax TRUE if the URI should be to an AJAX widget, FALSE otherwise.
+     * @param boolean $ajax TRUE if the URI should be to an AJAX widget, false otherwise.
      * @param boolean $includeWidgetContext TRUE if the URI should contain the serialized widget context (only useful for stateless AJAX widgets)
      * @return string The rendered link
-     * @throws ViewHelper\Exception if $action argument is not specified and $ajax is FALSE
+     * @throws ViewHelper\Exception if $action argument is not specified and $ajax is false
      * @api
      */
     public function render($action = null, $arguments = array(), $section = '', $format = '', $ajax = false, $includeWidgetContext = false)

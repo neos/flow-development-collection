@@ -111,7 +111,7 @@ class FilterOperation extends AbstractOperation
      *
      * @param object $element
      * @param array $parsedFilter
-     * @return boolean TRUE if $element matches filter group, FALSE otherwise
+     * @return boolean TRUE if $element matches filter group, false otherwise
      */
     protected function matchesFilterGroup($element, array $parsedFilter)
     {
@@ -129,7 +129,7 @@ class FilterOperation extends AbstractOperation
      *
      * @param object $element
      * @param string $filter
-     * @return boolean TRUE if $element matches filter, FALSE otherwise
+     * @return boolean TRUE if $element matches filter, false otherwise
      */
     protected function matchesFilter($element, $filter)
     {
@@ -268,7 +268,7 @@ class FilterOperation extends AbstractOperation
     /**
      * @param string $operand
      * @param string $value
-     * @return boolean TRUE if $value is of type $operand; FALSE otherwise
+     * @return boolean TRUE if $value is of type $operand; false otherwise
      */
     protected function handleSimpleTypeOperand($operand, $value)
     {

@@ -226,7 +226,7 @@ class PointcutExpressionParserTest extends UnitTestCase
      */
     public function getArgumentConstraintsFromMethodArgumentsPatternWorks()
     {
-        $methodArgumentsPattern = 'arg1 == "blub,ber",   arg2 != FALSE  ,arg3 in   (TRUE, some.object.access, "fa,sel", \'blub\'), arg4 contains FALSE,arg2==TRUE,arg5 matches (1,2,3), arg6 matches current.party.accounts';
+        $methodArgumentsPattern = 'arg1 == "blub,ber",   arg2 != false  ,arg3 in   (TRUE, some.object.access, "fa,sel", \'blub\'), arg4 contains false,arg2==TRUE,arg5 matches (1,2,3), arg6 matches current.party.accounts';
 
         $expectedConditions = [
             'arg1' => [
@@ -235,7 +235,7 @@ class PointcutExpressionParserTest extends UnitTestCase
             ],
             'arg2' => [
                 'operator' => ['!=', '=='],
-                'value' => ['FALSE', 'TRUE']
+                'value' => ['false', 'TRUE']
             ],
             'arg3' => [
                 'operator' => ['in'],
@@ -250,7 +250,7 @@ class PointcutExpressionParserTest extends UnitTestCase
             ],
             'arg4' => [
                 'operator' => ['contains'],
-                'value' => ['FALSE']
+                'value' => ['false']
             ],
             'arg5' => [
                 'operator' => ['matches'],
@@ -399,7 +399,7 @@ class PointcutExpressionParserTest extends UnitTestCase
         $parser->injectReflectionService($this->mockReflectionService);
         $parser->injectObjectManager($this->mockObjectManager);
 
-        $parser->_call('parseDesignatorClassAnnotatedWith', '&&', 'foo(bar == FALSE)', $pointcutFilterComposite);
+        $parser->_call('parseDesignatorClassAnnotatedWith', '&&', 'foo(bar == false)', $pointcutFilterComposite);
 
         $expectedAnnotation = 'foo';
         $expectedAnnotationValueConstraints = [
@@ -408,7 +408,7 @@ class PointcutExpressionParserTest extends UnitTestCase
                     0 => '=='
                 ],
                 'value' => [
-                    0 => 'FALSE'
+                    0 => 'false'
                 ]
             ]
         ];
@@ -437,7 +437,7 @@ class PointcutExpressionParserTest extends UnitTestCase
         $parser->injectReflectionService($this->mockReflectionService);
         $parser->injectObjectManager($this->mockObjectManager);
 
-        $parser->_call('parseDesignatorMethodAnnotatedWith', '&&', 'foo(bar == FALSE)', $pointcutFilterComposite);
+        $parser->_call('parseDesignatorMethodAnnotatedWith', '&&', 'foo(bar == false)', $pointcutFilterComposite);
 
         $expectedAnnotation = 'foo';
         $expectedAnnotationValueConstraints = [
@@ -446,7 +446,7 @@ class PointcutExpressionParserTest extends UnitTestCase
                     0 => '=='
                 ],
                 'value' => [
-                    0 => 'FALSE'
+                    0 => 'false'
                 ]
             ]
         ];

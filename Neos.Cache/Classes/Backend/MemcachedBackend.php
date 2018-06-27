@@ -254,7 +254,7 @@ class MemcachedBackend extends IndependentAbstractBackend implements TaggableBac
      * Loads data from the cache.
      *
      * @param string $entryIdentifier An identifier which describes the cache entry to load
-     * @return mixed The cache entry's content as a string or FALSE if the cache entry could not be loaded
+     * @return mixed The cache entry's content as a string or false if the cache entry could not be loaded
      * @api
      */
     public function get(string $entryIdentifier)
@@ -274,7 +274,7 @@ class MemcachedBackend extends IndependentAbstractBackend implements TaggableBac
      * Checks if a cache entry with the specified identifier exists.
      *
      * @param string $entryIdentifier An identifier specifying the cache entry
-     * @return boolean TRUE if such an entry exists, FALSE if not
+     * @return boolean TRUE if such an entry exists, false if not
      * @api
      */
     public function has(string $entryIdentifier): bool
@@ -288,7 +288,7 @@ class MemcachedBackend extends IndependentAbstractBackend implements TaggableBac
      * old entries for the identifier still exist, they are removed as well.
      *
      * @param string $entryIdentifier Specifies the cache entry to remove
-     * @return boolean TRUE if (at least) an entry could be removed or FALSE if no entry was found
+     * @return boolean TRUE if (at least) an entry could be removed or false if no entry was found
      * @api
      */
     public function remove(string $entryIdentifier): bool

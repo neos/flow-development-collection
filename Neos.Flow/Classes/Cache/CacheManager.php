@@ -183,7 +183,7 @@ class CacheManager
      * Checks if the specified cache has been registered.
      *
      * @param string $identifier The identifier of the cache
-     * @return boolean TRUE if a cache with the given identifier exists, otherwise FALSE
+     * @return boolean TRUE if a cache with the given identifier exists, otherwise false
      * @api
      */
     public function hasCache(string $identifier): bool
@@ -195,7 +195,7 @@ class CacheManager
      * Checks if the specified cache is marked as "persistent".
      *
      * @param string $identifier The identifier of the cache
-     * @return boolean TRUE if the specified cache is persistent, FALSE if it is not, or if the cache does not exist
+     * @return boolean TRUE if the specified cache is persistent, false if it is not, or if the cache does not exist
      */
     public function isCachePersistent(string $identifier): bool
     {

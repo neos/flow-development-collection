@@ -41,7 +41,7 @@ interface StreamWrapperInterface
      * Any resources which were locked, or allocated, during opening and use of
      * the directory stream should be released.
      *
-     * @return boolean TRUE on success or FALSE on failure.
+     * @return boolean TRUE on success or false on failure.
      * @api
      */
     public function closeDirectory();
@@ -53,7 +53,7 @@ interface StreamWrapperInterface
      *
      * @param string $path Specifies the URL that was passed to opendir().
      * @param int $options Whether or not to enforce safe_mode (0x04).
-     * @return boolean TRUE on success or FALSE on failure.
+     * @return boolean TRUE on success or false on failure.
      * @api
      */
     public function openDirectory($path, $options);
@@ -63,7 +63,7 @@ interface StreamWrapperInterface
      *
      * This method is called in response to readdir().
      *
-     * @return string Should return string representing the next filename, or FALSE if there is no next file.
+     * @return string Should return string representing the next filename, or false if there is no next file.
      * @api
      */
     public function readDirectory();
@@ -77,7 +77,7 @@ interface StreamWrapperInterface
      * to dir_readdir() should return the first entry in the location returned
      * by dir_opendir().
      *
-     * @return boolean TRUE on success or FALSE on failure.
+     * @return boolean TRUE on success or false on failure.
      * @api
      */
     public function rewindDirectory();
@@ -93,7 +93,7 @@ interface StreamWrapperInterface
      * @param string $path Directory which should be created.
      * @param integer $mode The value passed to mkdir().
      * @param integer $options A bitwise mask of values, such as STREAM_MKDIR_RECURSIVE.
-     * @return boolean TRUE on success or FALSE on failure.
+     * @return boolean TRUE on success or false on failure.
      * @api
      */
     public function makeDirectory($path, $mode, $options);
@@ -108,7 +108,7 @@ interface StreamWrapperInterface
      *
      * @param string $path The directory URL which should be removed.
      * @param integer $options A bitwise mask of values, such as STREAM_MKDIR_RECURSIVE.
-     * @return boolean TRUE on success or FALSE on failure.
+     * @return boolean TRUE on success or false on failure.
      * @api
      */
     public function removeDirectory($path, $options);
@@ -122,7 +122,7 @@ interface StreamWrapperInterface
      *
      * @param string $source The URL to the current file.
      * @param string $target The URL which the path_from should be renamed to.
-     * @return boolean TRUE on success or FALSE on failure.
+     * @return boolean TRUE on success or false on failure.
      * @api
      */
     public function rename($source, $target);
@@ -133,7 +133,7 @@ interface StreamWrapperInterface
      * This method is called in response to stream_select().
      *
      * @param integer $castType Can be STREAM_CAST_FOR_SELECT when stream_select() is calling stream_cast() or STREAM_CAST_AS_STREAM when stream_cast() is called for other uses.
-     * @return resource Should return the underlying stream resource used by the wrapper, or FALSE.
+     * @return resource Should return the underlying stream resource used by the wrapper, or false.
      * @api
      */
     public function cast($castType);
@@ -156,7 +156,7 @@ interface StreamWrapperInterface
      *
      * This method is called in response to feof().
      *
-     * @return boolean Should return TRUE if the read/write position is at the end of the stream and if no more data is available to be read, or FALSE otherwise.
+     * @return boolean Should return TRUE if the read/write position is at the end of the stream and if no more data is available to be read, or false otherwise.
      * @api
      */
     public function isAtEof();
@@ -169,9 +169,9 @@ interface StreamWrapperInterface
      * If you have cached data in your stream but not yet stored it into the
      * underlying storage, you should do so now.
      *
-     * Note: If not implemented, FALSE is assumed as the return value.
+     * Note: If not implemented, false is assumed as the return value.
      *
-     * @return boolean Should return TRUE if the cached data was successfully stored (or if there was no data to store), or FALSE if the data could not be stored.
+     * @return boolean Should return TRUE if the cached data was successfully stored (or if there was no data to store), or false if the data could not be stored.
      * @api
      */
     public function flush();
@@ -188,7 +188,7 @@ interface StreamWrapperInterface
      *  LOCK_NB if you don't want flock() to block while locking.
      *
      * @param integer $operation One of the LOCK_* constants
-     * @return boolean TRUE on success or FALSE on failure.
+     * @return boolean TRUE on success or false on failure.
      * @api
      */
     public function lock($operation);
@@ -198,7 +198,7 @@ interface StreamWrapperInterface
      *
      * This method is called when closing the stream (LOCK_UN).
      *
-     * @return boolean TRUE on success or FALSE on failure.
+     * @return boolean TRUE on success or false on failure.
      * @api
      */
     public function unlock();
@@ -221,7 +221,7 @@ interface StreamWrapperInterface
      * @param string $mode The mode used to open the file, as detailed for fopen().
      * @param integer $options Holds additional flags set by the streams API.
      * @param string &$openedPathAndFilename path If the path is opened successfully, and STREAM_USE_PATH is set in options, opened_path should be set to the full path of the file/resource that was actually opened.
-     * @return boolean TRUE on success or FALSE on failure.
+     * @return boolean TRUE on success or false on failure.
      * @api
      */
     public function open($path, $mode, $options, &$openedPathAndFilename);
@@ -235,7 +235,7 @@ interface StreamWrapperInterface
      * number of bytes that were successfully read).
      *
      * @param integer $count How many bytes of data from the current position should be returned.
-     * @return string If there are less than count bytes available, return as many as are available. If no more data is available, return either FALSE or an empty string.
+     * @return string If there are less than count bytes available, return as many as are available. If no more data is available, return either false or an empty string.
      * @api
      */
     public function read($count);
@@ -255,7 +255,7 @@ interface StreamWrapperInterface
      *
      * @param integer $offset The stream offset to seek to.
      * @param integer $whence
-     * @return boolean TRUE on success or FALSE on failure.
+     * @return boolean TRUE on success or false on failure.
      * @api
      */
     public function seek($offset, $whence = SEEK_SET);
@@ -283,7 +283,7 @@ interface StreamWrapperInterface
      * @param integer $option
      * @param integer $argument1
      * @param integer $argument2
-     * @return boolean TRUE on success or FALSE on failure. If option is not implemented, FALSE should be returned.
+     * @return boolean TRUE on success or false on failure. If option is not implemented, false should be returned.
      * @api
      */
     public function setOption($option, $argument1, $argument2);
@@ -325,7 +325,7 @@ interface StreamWrapperInterface
      * files.
      *
      * @param string $path The file URL which should be deleted.
-     * @return boolean TRUE on success or FALSE on failure.
+     * @return boolean TRUE on success or false on failure.
      * @api
      */
     public function unlink($path);

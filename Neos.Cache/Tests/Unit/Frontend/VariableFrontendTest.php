@@ -129,7 +129,7 @@ class VariableFrontendTest extends BaseTestCase
         $backend->expects($this->once())->method('get')->will($this->returnValue(serialize(false)));
 
         $cache = new VariableFrontend('VariableFrontend', $backend);
-        $this->assertFalse($cache->get('VariableCacheTest'), 'The returned value was not the FALSE.');
+        $this->assertFalse($cache->get('VariableCacheTest'), 'The returned value was not the false.');
     }
 
     /**

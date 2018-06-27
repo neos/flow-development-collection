@@ -70,7 +70,7 @@ class RequestHandler implements HttpRequestHandlerInterface
     /**
      * This request handler can handle any web request.
      *
-     * @return boolean If the request is a web request, TRUE otherwise FALSE
+     * @return boolean If the request is a web request, TRUE otherwise false
      * @api
      */
     public function canHandleRequest()

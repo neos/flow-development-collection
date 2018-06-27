@@ -223,13 +223,13 @@ abstract class ObjectAccess
      * - if public property exists, set it directly.
      * - if the target object is an instance of ArrayAccess, it sets the property
      *   on it without checking if it existed.
-     * - else, return FALSE
+     * - else, return false
      *
      * @param mixed $subject The target object or array
      * @param string|integer $propertyName Name or index of the property to set
      * @param mixed $propertyValue Value of the property
      * @param boolean $forceDirectAccess directly access property using reflection(!)
-     * @return boolean TRUE if the property could be set, FALSE otherwise
+     * @return boolean TRUE if the property could be set, false otherwise
      * @throws \InvalidArgumentException in case $object was not an object or $propertyName was not a string
      */
     public static function setProperty(&$subject, $propertyName, $propertyValue, bool $forceDirectAccess = false): bool

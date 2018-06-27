@@ -57,7 +57,7 @@ abstract class AbstractOperation implements OperationInterface
     }
 
     /**
-     * @return boolean TRUE if the operation is final, FALSE otherwise
+     * @return boolean TRUE if the operation is final, false otherwise
      * @api
      */
     public static function isFinal()
@@ -82,7 +82,7 @@ abstract class AbstractOperation implements OperationInterface
      * {@inheritdoc}
      *
      * @param array (or array-like object) $context onto which this operation should be applied
-     * @return boolean TRUE if the operation can be applied onto the $context, FALSE otherwise
+     * @return boolean TRUE if the operation can be applied onto the $context, false otherwise
      * @api
      */
     public function canEvaluate($context)

@@ -178,7 +178,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
      * Loads data from a cache file.
      *
      * @param string $entryIdentifier An identifier which describes the cache entry to load
-     * @return mixed The cache entry's content as a string or FALSE if the cache entry could not be loaded
+     * @return mixed The cache entry's content as a string or false if the cache entry could not be loaded
      * @throws \InvalidArgumentException
      * @api
      */
@@ -191,7 +191,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
      * Checks if a cache entry with the specified identifier exists.
      *
      * @param string $entryIdentifier
-     * @return boolean TRUE if such an entry exists, FALSE if not
+     * @return boolean TRUE if such an entry exists, false if not
      * @throws \InvalidArgumentException
      * @api
      */
@@ -211,7 +211,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
      * Usually this only affects one entry.
      *
      * @param string $entryIdentifier Specifies the cache entry to remove
-     * @return boolean TRUE if (at least) an entry could be removed or FALSE if no entry was found
+     * @return boolean TRUE if (at least) an entry could be removed or false if no entry was found
      * @throws \RuntimeException
      * @throws \InvalidArgumentException
      * @api
@@ -265,7 +265,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
     }
 
     /**
-     * Removes all cache entries of this cache and sets the frozen flag to FALSE.
+     * Removes all cache entries of this cache and sets the frozen flag to false.
      *
      * @return void
      * @api
@@ -353,7 +353,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
      * is due to some error or crash.
      *
      * @param string $entryIdentifier The cache entry identifier
-     * @return mixed The filenames (including path) as an array if one or more entries could be found, otherwise FALSE
+     * @return mixed The filenames (including path) as an array if one or more entries could be found, otherwise false
      * @throws Exception if no frontend has been set
      */
     protected function findCacheFilesByIdentifier(string $entryIdentifier)

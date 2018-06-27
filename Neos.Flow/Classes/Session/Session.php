@@ -277,7 +277,7 @@ class Session implements SessionInterface
      * Tells if the session is local (the current session bound to the current HTTP
      * request) or remote (retrieved through the Session Manager).
      *
-     * @return boolean TRUE if the session is remote, FALSE if this is the current session
+     * @return boolean TRUE if the session is remote, false if this is the current session
      * @api
      */
     public function isRemote()
@@ -689,7 +689,7 @@ class Session implements SessionInterface
     /**
      * Automatically expires the session if the user has been inactive for too long.
      *
-     * @return boolean TRUE if the session expired, FALSE if not
+     * @return boolean TRUE if the session expired, false if not
      */
     protected function autoExpire()
     {

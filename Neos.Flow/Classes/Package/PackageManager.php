@@ -163,10 +163,10 @@ class PackageManager implements PackageManagerInterface
 
     /**
      * Returns TRUE if a package is available (the package's files exist in the packages directory)
-     * or FALSE if it's not.
+     * or false if it's not.
      *
      * @param string $packageKey The key of the package to check
-     * @return boolean TRUE if the package is available, otherwise FALSE
+     * @return boolean TRUE if the package is available, otherwise false
      * @api
      */
     public function isPackageAvailable($packageKey)
@@ -738,11 +738,11 @@ class PackageManager implements PackageManagerInterface
     }
 
     /**
-     * Returns the correctly cased version of the given package key or FALSE
+     * Returns the correctly cased version of the given package key or false
      * if no such package is available.
      *
      * @param string $unknownCasedPackageKey The package key to convert
-     * @return mixed The upper camel cased package key or FALSE if no such package exists
+     * @return mixed The upper camel cased package key or false if no such package exists
      * @api
      */
     public function getCaseSensitivePackageKey($unknownCasedPackageKey)
@@ -779,7 +779,7 @@ class PackageManager implements PackageManagerInterface
      * Check the conformance of the given package key
      *
      * @param string $packageKey The package key to validate
-     * @return boolean If the package key is valid, returns TRUE otherwise FALSE
+     * @return boolean If the package key is valid, returns TRUE otherwise false
      * @api
      */
     public function isPackageKeyValid($packageKey)

@@ -128,7 +128,7 @@ class Tools
      * @param string|\Closure $replace
      * @param string $pathAndFilename
      * @param boolean $regularExpression
-     * @return boolean|NULL FALSE on errors, NULL on skip, TRUE on success
+     * @return boolean|NULL false on errors, NULL on skip, TRUE on success
      */
     public static function searchAndReplace($search, $replace, $pathAndFilename, $regularExpression = false)
     {

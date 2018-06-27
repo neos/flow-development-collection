@@ -27,7 +27,7 @@ use Neos\Flow\Security\Policy\Role;
 class DummyContext extends Context
 {
     /**
-     * TRUE if the context is initialized in the current request, FALSE or NULL otherwise.
+     * TRUE if the context is initialized in the current request, false or NULL otherwise.
      *
      * @var boolean
      * @Flow\Transient
@@ -66,7 +66,7 @@ class DummyContext extends Context
     }
 
     /**
-     * @return boolean TRUE if the Context is initialized, FALSE otherwise.
+     * @return boolean TRUE if the Context is initialized, false otherwise.
      */
     public function isInitialized()
     {
@@ -196,7 +196,7 @@ class DummyContext extends Context
     /**
      * Returns TRUE if the context has CSRF protection tokens.
      *
-     * @return boolean TRUE, if the token is valid. FALSE otherwise.
+     * @return boolean TRUE, if the token is valid. false otherwise.
      */
     public function hasCsrfProtectionTokens()
     {
@@ -208,7 +208,7 @@ class DummyContext extends Context
      * csrf strategy is 'onePerUri'.
      *
      * @param string $csrfToken The token string to be validated
-     * @return boolean TRUE, if the token is valid. FALSE otherwise.
+     * @return boolean TRUE, if the token is valid. false otherwise.
      */
     public function isCsrfProtectionTokenValid($csrfToken)
     {

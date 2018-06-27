@@ -38,7 +38,7 @@ class ParserRegexp {
 			return $this->matches[0][0];
 		}
 
-		return FALSE;
+		return false;
 	}
 }
 
@@ -66,7 +66,7 @@ class Parser {
 			$this->pos += strlen($matches[0][0]);
 			return ' ';
 		}
-		return FALSE;
+		return false;
 	}
 
 	function literal($token) {
@@ -77,7 +77,7 @@ class Parser {
 			$this->pos += $toklen;
 			return $token;
 		}
-		return FALSE;
+		return false;
 	}
 
 	function rx($rx) {
@@ -104,7 +104,7 @@ class Parser {
 				$callback = [$this, "{$type}_DLR{$value}"];
 				if (is_callable($callback)) {
 					$rv = call_user_func($callback);
-					if ($rv !== FALSE) {
+					if ($rv !== false) {
 						break;
 					}
 				}
@@ -233,7 +233,7 @@ class Packrat extends Parser {
 	function packread($key, $pos) {
 		$pos *= 3;
 		if ($this->packstate[$key][$pos] == "\xFE") {
-			return FALSE;
+			return false;
 		}
 
 		$this->pos = ord($this->packstate[$key][$pos]) << 16 | ord($this->packstate[$key][$pos + 1]) << 8 | ord($this->packstate[$key][$pos + 2]);
@@ -247,7 +247,7 @@ class Packrat extends Parser {
 
 		$pos *= 3;
 
-		if ($res !== FALSE) {
+		if ($res !== false) {
 			$i = pack('N', $this->pos);
 
 			$this->packstate[$key][$pos] = $i[1];
@@ -283,7 +283,7 @@ class FalseOnlyPackrat extends Parser {
 	}
 
 	function packread($key, $pos) {
-		return FALSE;
+		return false;
 	}
 
 	function packwrite($key, $pos, $res) {
@@ -291,7 +291,7 @@ class FalseOnlyPackrat extends Parser {
 			$this->packstate[$key] = $this->packstatebase;
 		}
 
-		if ($res === FALSE) {
+		if ($res === false) {
 			$this->packstate[$key][$pos] = 'F';
 		}
 

@@ -216,7 +216,7 @@ class TrustedProxiesComponent implements ComponentInterface
      * If no proxies are trusted or no client IP header is trusted, this is the remote address of the machine
      * directly connected to the server.
      *
-     * @return string|bool The most trusted client's IP address or FALSE if no remote address can be found
+     * @return string|bool The most trusted client's IP address or false if no remote address can be found
      */
     protected function getTrustedClientIpAddress(Request $request)
     {

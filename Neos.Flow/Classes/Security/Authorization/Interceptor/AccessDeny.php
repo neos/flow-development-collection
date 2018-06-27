@@ -25,7 +25,7 @@ class AccessDeny implements InterceptorInterface
     /**
      * Invokes nothing, always throws an AccessDenied Exception.
      *
-     * @return boolean Always returns FALSE
+     * @return boolean Always returns false
      * @throws AccessDeniedException
      */
     public function invoke()

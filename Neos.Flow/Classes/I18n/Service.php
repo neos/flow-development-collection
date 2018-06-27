@@ -119,7 +119,7 @@ class Service
      *
      * @param string $pathAndFilename Path to the file
      * @param Locale $locale Desired locale of localized file
-     * @param boolean $strict Whether to match only provided locale (TRUE) or search for best-matching locale (FALSE)
+     * @param boolean $strict Whether to match only provided locale (TRUE) or search for best-matching locale (false)
      * @return array Path to the localized file (or $filename when no localized file was found) and the matched locale
      * @see Configuration::setFallbackRule()
      * @api

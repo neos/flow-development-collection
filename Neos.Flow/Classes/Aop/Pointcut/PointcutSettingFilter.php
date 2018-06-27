@@ -79,14 +79,14 @@ class PointcutSettingFilter implements PointcutFilterInterface
     }
 
     /**
-     * Checks if the specified configuration option is set to TRUE or FALSE, or if it matches the specified
+     * Checks if the specified configuration option is set to TRUE or false, or if it matches the specified
      * condition
      *
      * @param string $className Name of the class to check against
      * @param string $methodName Name of the method - not used here
      * @param string $methodDeclaringClassName Name of the class the method was originally declared in - not used here
      * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
-     * @return boolean TRUE if the class matches, otherwise FALSE
+     * @return boolean TRUE if the class matches, otherwise false
      */
     public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier): bool
     {

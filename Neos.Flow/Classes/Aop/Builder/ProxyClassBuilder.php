@@ -264,7 +264,7 @@ class ProxyClassBuilder
      *
      * @param string $aspectClassName Name of the aspect class where the pointcut has been declared
      * @param string $pointcutMethodName Method name of the pointcut
-     * @return mixed The Aop\Pointcut\Pointcut or FALSE if none was found
+     * @return mixed The Aop\Pointcut\Pointcut or false if none was found
      */
     public function findPointcut(string $aspectClassName, string $pointcutMethodName)
     {
@@ -423,7 +423,7 @@ class ProxyClassBuilder
      *
      * @param string $targetClassName Name of the class to create a proxy class file for
      * @param array &$aspectContainers The array of aspect containers from the AOP Framework
-     * @return boolean TRUE if the proxy class could be built, FALSE otherwise.
+     * @return boolean TRUE if the proxy class could be built, false otherwise.
      */
     public function buildProxyClass(string $targetClassName, array &$aspectContainers): bool
     {

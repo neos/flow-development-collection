@@ -183,7 +183,7 @@ abstract class AbstractView implements ViewInterface
      * contexts. Override this method if that is not the case.
      *
      * @param ControllerContext $controllerContext
-     * @return boolean TRUE if the view has something useful to display, otherwise FALSE
+     * @return boolean TRUE if the view has something useful to display, otherwise false
      */
     public function canRender(ControllerContext $controllerContext)
     {

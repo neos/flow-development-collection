@@ -63,7 +63,7 @@ class FlockLockStrategy implements LockStrategyInterface
 
     /**
      * @param string $subject
-     * @param boolean $exclusiveLock TRUE to, acquire an exclusive (write) lock, FALSE for a shared (read) lock.
+     * @param boolean $exclusiveLock TRUE to, acquire an exclusive (write) lock, false for a shared (read) lock.
      * @return void
      * @throws LockNotAcquiredException
      */
@@ -144,7 +144,7 @@ class FlockLockStrategy implements LockStrategyInterface
     /**
      * Releases the lock
      *
-     * @return boolean TRUE on success, FALSE otherwise
+     * @return boolean TRUE on success, false otherwise
      */
     public function release(): bool
     {

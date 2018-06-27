@@ -26,7 +26,7 @@ interface AfterInvocationManagerInterface
      * @param Context $securityContext The current security context
      * @param object $object The return object to be processed
      * @param JoinPointInterface $joinPoint The joinpoint of the returning method
-     * @return boolean TRUE if access is granted, FALSE if the manager abstains from decision
+     * @return boolean TRUE if access is granted, false if the manager abstains from decision
      * @throws \Neos\Flow\Security\Exception\AccessDeniedException If access is not granted
      */
     public function process(Context $securityContext, $object, JoinPointInterface $joinPoint);

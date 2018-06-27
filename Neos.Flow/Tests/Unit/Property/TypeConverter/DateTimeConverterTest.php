@@ -157,7 +157,7 @@ class DateTimeConverterTest extends UnitTestCase
     /**
      * @param string $source the string to be converted
      * @param string $dateFormat the expected date format
-     * @param boolean $isValid TRUE if the conversion is expected to be successful, otherwise FALSE
+     * @param boolean $isValid TRUE if the conversion is expected to be successful, otherwise false
      * @test
      * @dataProvider convertFromStringDataProvider
      */
@@ -465,7 +465,7 @@ class DateTimeConverterTest extends UnitTestCase
 
     /**
      * @param array $source the array to be converted
-     * @param boolean $isValid TRUE if the conversion is expected to be successful, otherwise FALSE
+     * @param boolean $isValid TRUE if the conversion is expected to be successful, otherwise false
      * @test
      * @dataProvider convertFromArrayDataProvider
      */

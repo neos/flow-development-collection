@@ -86,7 +86,7 @@ class RoutingCommandController extends CommandController
             foreach ($route->getDefaults() as $defaultKey => $defaultValue) {
                 $this->outputLine('    - ' . $defaultKey . ' => ' . $defaultValue);
             }
-            $this->outputLine('  Append: ' . ($route->getAppendExceedingArguments() ? 'TRUE' : 'FALSE'));
+            $this->outputLine('  Append: ' . ($route->getAppendExceedingArguments() ? 'TRUE' : 'false'));
         } else {
             $this->outputLine('Route ' . $index . ' was not found!');
         }

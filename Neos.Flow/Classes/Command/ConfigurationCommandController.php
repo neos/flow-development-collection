@@ -36,7 +36,7 @@ class ConfigurationCommandController extends CommandController
     protected $configurationManager;
 
     /**
-     * @Flow\Inject(lazy = FALSE)
+     * @Flow\Inject(lazy = false)
      * @var ConfigurationSchemaValidator
      */
     protected $configurationSchemaValidator;

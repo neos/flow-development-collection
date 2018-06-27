@@ -96,7 +96,7 @@ class PropertyMappingConfiguration implements PropertyMappingConfigurationInterf
      * - else, return false.
      *
      * @param string $propertyName
-     * @return boolean TRUE if the given propertyName should be mapped, FALSE otherwise.
+     * @return boolean TRUE if the given propertyName should be mapped, false otherwise.
      */
     public function shouldMap($propertyName)
     {

@@ -89,7 +89,7 @@ interface CollectionInterface
      * data. Note that this stream handle may only be used read-only.
      *
      * @param PersistentResource $resource The resource to retrieve the stream for
-     * @return resource | boolean The resource stream or FALSE if the stream could not be obtained
+     * @return resource | boolean The resource stream or false if the stream could not be obtained
      */
     public function getStreamByResource(PersistentResource $resource);
 }

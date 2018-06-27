@@ -63,7 +63,7 @@ class CommandRequestHandler implements RequestHandlerInterface
     /**
      * This request handler can handle CLI requests.
      *
-     * @return boolean If the request is a CLI request, TRUE otherwise FALSE
+     * @return boolean If the request is a CLI request, TRUE otherwise false
      */
     public function canHandleRequest(): bool
     {

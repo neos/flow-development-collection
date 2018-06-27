@@ -31,7 +31,7 @@ interface SessionInterface
     public function start();
 
     /**
-     * Returns TRUE if there is a session that can be resumed. FALSE otherwise
+     * Returns TRUE if there is a session that can be resumed. false otherwise
      *
      * @return boolean
      */

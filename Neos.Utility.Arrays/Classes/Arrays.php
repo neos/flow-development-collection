@@ -273,7 +273,7 @@ abstract class Arrays
      *
      * @param array $array the array to sort
      * @param integer $sortFlags may be used to modify the sorting behavior using these values (see http://www.php.net/manual/en/function.sort.php)
-     * @return boolean TRUE on success, FALSE on failure
+     * @return boolean TRUE on success, false on failure
      * @see asort()
      */
     public static function sortKeysRecursively(array &$array, int $sortFlags = null): bool

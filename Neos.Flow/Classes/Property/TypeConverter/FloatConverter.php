@@ -59,7 +59,7 @@ use Neos\Flow\Property\PropertyMappingConfigurationInterface;
  * *Example setting lenient mode (abridged)*::
  *
  *  ->setTypeConverterOption(
- *  	\Neos\Flow\Property\TypeConverter\FloatConverter::class, 'strictMode', FALSE
+ *  	\Neos\Flow\Property\TypeConverter\FloatConverter::class, 'strictMode', false
  *  );
  *
  * **Format type**

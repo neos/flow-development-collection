@@ -30,7 +30,7 @@ class SchemaCommandController extends CommandController
 {
 
     /**
-     * @Flow\Inject(lazy = FALSE)
+     * @Flow\Inject(lazy = false)
      * @var SchemaValidator
      */
     protected $schemaValidator;

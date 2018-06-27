@@ -134,7 +134,7 @@ class PersistenceManager extends AbstractPersistenceManager
      * Checks if the given object has ever been persisted.
      *
      * @param object $object The object to check
-     * @return boolean TRUE if the object is new, FALSE if the object exists in the repository
+     * @return boolean TRUE if the object is new, false if the object exists in the repository
      * @api
      */
     public function isNewObject($object)
@@ -268,7 +268,7 @@ class PersistenceManager extends AbstractPersistenceManager
      * Returns TRUE, if an active connection to the persistence
      * backend has been established, e.g. entities can be persisted.
      *
-     * @return boolean TRUE, if an connection has been established, FALSE if add object will not be persisted by the backend
+     * @return boolean TRUE, if an connection has been established, false if add object will not be persisted by the backend
      * @api
      */
     public function isConnected()

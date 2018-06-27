@@ -56,7 +56,7 @@ class MethodReflection extends \ReflectionMethod
      * the specified tag
      *
      * @param string $tag Tag name to check for
-     * @return boolean TRUE if such a tag has been defined, otherwise FALSE
+     * @return boolean TRUE if such a tag has been defined, otherwise false
      */
     public function isTaggedWith($tag)
     {

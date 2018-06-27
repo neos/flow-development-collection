@@ -23,7 +23,7 @@ use Neos\Utility\PositionalArraySorter;
  * A general purpose configuration manager
  *
  * @Flow\Scope("singleton")
- * @Flow\Proxy(FALSE)
+ * @Flow\Proxy(false)
  * @api
  */
 class ConfigurationManager

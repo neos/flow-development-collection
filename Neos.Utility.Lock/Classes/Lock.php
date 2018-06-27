@@ -45,7 +45,7 @@ class Lock
 
     /**
      * @param string $subject
-     * @param boolean $exclusiveLock TRUE to, acquire an exclusive (write) lock, FALSE for a shared (read) lock. An exclusive lock ist the default.
+     * @param boolean $exclusiveLock TRUE to, acquire an exclusive (write) lock, false for a shared (read) lock. An exclusive lock ist the default.
      */
     public function __construct(string $subject, bool $exclusiveLock = true)
     {
@@ -78,7 +78,7 @@ class Lock
 
     /**
      * Releases the lock
-     * @return boolean TRUE on success, FALSE otherwise
+     * @return boolean TRUE on success, false otherwise
      */
     public function release(): bool
     {

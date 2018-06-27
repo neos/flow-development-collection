@@ -75,7 +75,7 @@ abstract class AbstractMethodInterceptorBuilder
             if ($value === null) {
                 $code .= 'NULL';
             } elseif (is_bool($value)) {
-                $code .= ($value ? 'TRUE' : 'FALSE');
+                $code .= ($value ? 'TRUE' : 'false');
             } elseif (is_numeric($value)) {
                 $code .= $value;
             } elseif (is_string($value)) {
@@ -161,7 +161,7 @@ abstract class AbstractMethodInterceptorBuilder
         $advicesCode = $this->buildMethodArgumentsArrayCode($declaringClassName, $methodName, ($methodName === '__construct'));
 
         if (isset($groupedAdvices[\Neos\Flow\Aop\Advice\AfterThrowingAdvice::class]) || isset($groupedAdvices[\Neos\Flow\Aop\Advice\AfterAdvice::class])) {
-            $advicesCode .= "\n        \$result = NULL;\n        \$afterAdviceInvoked = FALSE;\n        try {\n";
+            $advicesCode .= "\n        \$result = NULL;\n        \$afterAdviceInvoked = false;\n        try {\n";
         }
 
         if (isset($groupedAdvices[\Neos\Flow\Aop\Advice\BeforeAdvice::class])) {

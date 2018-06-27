@@ -589,7 +589,7 @@ class ActionController extends AbstractController
     /**
      * Determines the fully qualified view object name.
      *
-     * @return mixed The fully qualified view object name or FALSE if no matching view could be found.
+     * @return mixed The fully qualified view object name or false if no matching view could be found.
      * @api
      */
     protected function resolveViewObjectName()
@@ -733,7 +733,7 @@ class ActionController extends AbstractController
      * display no flash message at all on errors. Override this to customize
      * the flash message in your action controller.
      *
-     * @return \Neos\Error\Messages\Message The flash message or FALSE if no flash message should be set
+     * @return \Neos\Error\Messages\Message The flash message or false if no flash message should be set
      * @api
      */
     protected function getErrorFlashMessage()

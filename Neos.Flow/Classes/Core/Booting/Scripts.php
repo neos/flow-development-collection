@@ -638,7 +638,7 @@ class Scripts
      *
      * @param string $commandIdentifier E.g. neos.flow:cache:flush
      * @param array $settings The Neos.Flow settings
-     * @param boolean $outputResults if FALSE the output of this command is only echoed if the execution was not successful
+     * @param boolean $outputResults if false the output of this command is only echoed if the execution was not successful
      * @param array $commandArguments Command arguments
      * @return boolean TRUE if the command execution was successful (exit code = 0)
      * @api

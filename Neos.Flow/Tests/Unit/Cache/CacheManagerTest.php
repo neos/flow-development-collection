@@ -133,7 +133,7 @@ class CacheManagerTest extends UnitTestCase
         $this->cacheManager->registerCache($cache1);
 
         $this->assertTrue($this->cacheManager->hasCache('cache1'), 'hasCache() did not return TRUE.');
-        $this->assertFalse($this->cacheManager->hasCache('cache2'), 'hasCache() did not return FALSE.');
+        $this->assertFalse($this->cacheManager->hasCache('cache2'), 'hasCache() did not return false.');
     }
 
     /**

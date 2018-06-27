@@ -27,7 +27,7 @@ interface ParameterAwareRoutePartInterface extends RoutePartInterface
     /**
      * @param string &$routePath The request path to be matched - without query parameters, host and fragment.
      * @param RouteParameters $parameters The Routing RouteParameters that can be registered via HTTP components
-     * @return boolean TRUE if Route Part matched $routePath, otherwise FALSE.
+     * @return boolean TRUE if Route Part matched $routePath, otherwise false.
      */
     public function matchWithParameters(&$routePath, RouteParameters $parameters);
 }
