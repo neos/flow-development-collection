@@ -62,7 +62,7 @@ Flow:
         affectedClasses:
           classesContainingMethodsAnnotatedWith: 'Neos\Flow\Annotations\Signal'
           classNamePattern: '/^Neos\\Flow\\.*$/i'
-          includeAbstractClasses: TRUE
+          includeAbstractClasses: true
         parser:
           implementationClassName: 'Neos\DocTools\Domain\Service\SignalsParser'
       'Flow:FlowTypeConverters':

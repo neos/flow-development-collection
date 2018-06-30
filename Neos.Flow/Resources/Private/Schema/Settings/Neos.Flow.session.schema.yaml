@@ -1,19 +1,19 @@
 type: dictionary
-additionalProperties: FALSE
+additionalProperties: false
 properties:
-  'inactivityTimeout': { type: integer, required: TRUE }
-  'name': { type: [string, 'null'], required: TRUE }
+  'inactivityTimeout': { type: integer, required: true }
+  'name': { type: [string, 'null'], required: true }
   'garbageCollection':
     type: dictionary
-    required: TRUE
-    additionalProperties: FALSE
+    required: true
+    additionalProperties: false
     properties:
-      'probability': { type: integer, required: TRUE }
-      'maximumPerRun': { type: integer, required: TRUE }
+      'probability': { type: integer, required: true }
+      'maximumPerRun': { type: integer, required: true }
   'cookie':
     type: dictionary
-    required: TRUE
-    additionalProperties: FALSE
+    required: true
+    additionalProperties: false
     properties:
       'lifetime': { type: integer }
       'path': { type: string }
