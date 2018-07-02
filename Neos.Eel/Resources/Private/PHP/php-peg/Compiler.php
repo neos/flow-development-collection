@@ -61,7 +61,7 @@ class PHPWriter {
 			);
 	}
 
-	function restore($id, $remove = false) {
+	function restore($id, $remove = FALSE) {
 		$code = PHPBuilder::build()
 			->l(
 				'$result = $res' . $id . ';',
@@ -97,13 +97,13 @@ class PHPWriter {
 			->l('$' . $id . ' = NULL;')
 			->b('do',
 				$code->replace([
-					'MBREAK' => '$' . $id . ' = true; break;',
-					'FBREAK' => '$' . $id . ' = false; break;'
+					'MBREAK' => '$' . $id . ' = TRUE; break;',
+					'FBREAK' => '$' . $id . ' = FALSE; break;'
                 ])
 			)
 			->l('while(0);')
-			->b('if( $' . $id . ' === true )', 'MATCH')
-			->b('if( $' . $id . ' === false)', 'FAIL');
+			->b('if( $' . $id . ' === TRUE )', 'MATCH')
+			->b('if( $' . $id . ' === FALSE)', 'FAIL');
 	}
 }
 
@@ -120,19 +120,19 @@ class PHPWriter {
  */
 abstract class Token extends PHPWriter {
 
-	public $optional = false;
+	public $optional = FALSE;
 
-	public $zero_or_more = false;
+	public $zero_or_more = FALSE;
 
-	public $one_or_more = false;
+	public $one_or_more = FALSE;
 
-	public $positive_lookahead = false;
+	public $positive_lookahead = FALSE;
 
-	public $negative_lookahead = false;
+	public $negative_lookahead = FALSE;
 
-	public $silent = false;
+	public $silent = FALSE;
 
-	public $tag = false;
+	public $tag = FALSE;
 
 	public $type;
 
@@ -254,7 +254,7 @@ abstract class TokenTerminal extends Token {
 	}
 
 	protected function match_code($value) {
-		return $this->match_fail_conditional('( $subres = $this->' . $this->type . '( ' . $value . ' ) ) !== false',
+		return $this->match_fail_conditional('( $subres = $this->' . $this->type . '( ' . $value . ' ) ) !== FALSE',
 			$this->set_text('$subres')
 		);
 	}
@@ -377,11 +377,11 @@ class TokenRecurse extends Token {
 				'$matcher = \'match_\'.' . $function . '; $key = $matcher; $pos = $this->pos;',
 				$debug_header,
 				'$subres = ( $this->packhas( $key, $pos ) ? $this->packread( $key, $pos ) : $this->packwrite( $key, $pos, $this->$matcher(array_merge($stack, array($result))) ) );',
-				$this->match_fail_conditional('$subres !== false',
+				$this->match_fail_conditional('$subres !== FALSE',
 					PHPBuilder::build()
 						->l(
 							$debug_match,
-							$this->tag === false ?
+							$this->tag === FALSE ?
 								'$this->store( $result, $subres );' :
 								'$this->store( $result, $subres, "' . $storetag . '" );'
 						),
@@ -463,7 +463,7 @@ class Pending {
 		$this->what = NULL;
 	}
 
-	function set($what, $val = true) {
+	function set($what, $val = TRUE) {
 		$this->what = $what;
 		$this->val = $val;
 	}
@@ -694,13 +694,13 @@ class Rule extends PHPWriter {
 				$o += 1;
 				switch ($c) {
 					case '?':
-						$tokens[$l]->optional = true;
+						$tokens[$l]->optional = TRUE;
 						break;
 					case '*':
-						$tokens[$l]->zero_or_more = true;
+						$tokens[$l]->zero_or_more = TRUE;
 						break;
 					case '+':
-						$tokens[$l]->one_or_more = true;
+						$tokens[$l]->one_or_more = TRUE;
 						break;
 
 					case '&':
@@ -716,11 +716,11 @@ class Rule extends PHPWriter {
 
 					case '[':
 					case ']':
-						$tokens[] = new TokenWhitespace(false);
+						$tokens[] = new TokenWhitespace(FALSE);
 						break;
 					case '<':
 					case '>':
-						$tokens[] = new TokenWhitespace(true);
+						$tokens[] = new TokenWhitespace(TRUE);
 						break;
 
 					case '(':
@@ -790,7 +790,7 @@ class Rule extends PHPWriter {
 			'$matchrule = "' . $function_name . '"; $result = $this->construct($matchrule, $matchrule, ' . $arguments . ');',
 			$this->parsed->compile()->replace([
 				'MATCH' => 'return $this->finalise($result);',
-				'FAIL' => 'return false;'
+				'FAIL' => 'return FALSE;'
             ])
 		);
 

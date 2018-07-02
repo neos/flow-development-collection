@@ -30,11 +30,11 @@ abstract class AbstractParser extends \PhpPeg\Parser {
 protected $match_S_typestack = array('S');
 function match_S ($stack = array()) {
 	$matchrule = "S"; $result = $this->construct($matchrule, $matchrule, null);
-	if (( $subres = $this->rx( '/ \s* /' ) ) !== false) {
+	if (( $subres = $this->rx( '/ \s* /' ) ) !== FALSE) {
 		$result["text"] .= $subres;
 		return $this->finalise($result);
 	}
-	else { return false; }
+	else { return FALSE; }
 }
 
 
@@ -44,11 +44,11 @@ function match_S ($stack = array()) {
 protected $match__IntegerNumber_typestack = array('_IntegerNumber');
 function match__IntegerNumber ($stack = array()) {
 	$matchrule = "_IntegerNumber"; $result = $this->construct($matchrule, $matchrule, null);
-	if (( $subres = $this->rx( '/ -? [0-9]+ /' ) ) !== false) {
+	if (( $subres = $this->rx( '/ -? [0-9]+ /' ) ) !== FALSE) {
 		$result["text"] .= $subres;
 		return $this->finalise($result);
 	}
-	else { return false; }
+	else { return FALSE; }
 }
 
 
@@ -56,11 +56,11 @@ function match__IntegerNumber ($stack = array()) {
 protected $match__Decimals_typestack = array('_Decimals');
 function match__Decimals ($stack = array()) {
 	$matchrule = "_Decimals"; $result = $this->construct($matchrule, $matchrule, null);
-	if (( $subres = $this->rx( '/ \.[0-9]+ /' ) ) !== false) {
+	if (( $subres = $this->rx( '/ \.[0-9]+ /' ) ) !== FALSE) {
 		$result["text"] .= $subres;
 		return $this->finalise($result);
 	}
-	else { return false; }
+	else { return FALSE; }
 }
 
 
@@ -72,15 +72,15 @@ function match_NumberLiteral ($stack = array()) {
 	do {
 		$matcher = 'match_'.'_IntegerNumber'; $key = $matcher; $pos = $this->pos;
 		$subres = ( $this->packhas( $key, $pos ) ? $this->packread( $key, $pos ) : $this->packwrite( $key, $pos, $this->$matcher(array_merge($stack, array($result))) ) );
-		if ($subres !== false) {
+		if ($subres !== FALSE) {
 			$this->store( $result, $subres, "int" );
 		}
-		else { $_5 = false; break; }
+		else { $_5 = FALSE; break; }
 		$res_4 = $result;
 		$pos_4 = $this->pos;
 		$matcher = 'match_'.'_Decimals'; $key = $matcher; $pos = $this->pos;
 		$subres = ( $this->packhas( $key, $pos ) ? $this->packread( $key, $pos ) : $this->packwrite( $key, $pos, $this->$matcher(array_merge($stack, array($result))) ) );
-		if ($subres !== false) {
+		if ($subres !== FALSE) {
 			$this->store( $result, $subres, "dec" );
 		}
 		else {
@@ -89,11 +89,11 @@ function match_NumberLiteral ($stack = array()) {
 			unset( $res_4 );
 			unset( $pos_4 );
 		}
-		$_5 = true; break;
+		$_5 = TRUE; break;
 	}
 	while(0);
-	if( $_5 === true ) { return $this->finalise($result); }
-	if( $_5 === false) { return false; }
+	if( $_5 === TRUE ) { return $this->finalise($result); }
+	if( $_5 === FALSE) { return FALSE; }
 }
 
 
@@ -107,19 +107,19 @@ function match_DoubleQuotedStringLiteral ($stack = array()) {
 			$this->pos += 1;
 			$result["text"] .= '"';
 		}
-		else { $_10 = false; break; }
-		if (( $subres = $this->rx( '/ (\\\\"|[^"])* /' ) ) !== false) { $result["text"] .= $subres; }
-		else { $_10 = false; break; }
+		else { $_10 = FALSE; break; }
+		if (( $subres = $this->rx( '/ (\\\\"|[^"])* /' ) ) !== FALSE) { $result["text"] .= $subres; }
+		else { $_10 = FALSE; break; }
 		if (substr($this->string,$this->pos,1) == '"') {
 			$this->pos += 1;
 			$result["text"] .= '"';
 		}
-		else { $_10 = false; break; }
-		$_10 = true; break;
+		else { $_10 = FALSE; break; }
+		$_10 = TRUE; break;
 	}
 	while(0);
-	if( $_10 === true ) { return $this->finalise($result); }
-	if( $_10 === false) { return false; }
+	if( $_10 === TRUE ) { return $this->finalise($result); }
+	if( $_10 === FALSE) { return FALSE; }
 }
 
 
@@ -133,19 +133,19 @@ function match_SingleQuotedStringLiteral ($stack = array()) {
 			$this->pos += 1;
 			$result["text"] .= '\'';
 		}
-		else { $_15 = false; break; }
-		if (( $subres = $this->rx( '/ (\\\\\'|[^\'])* /' ) ) !== false) { $result["text"] .= $subres; }
-		else { $_15 = false; break; }
+		else { $_15 = FALSE; break; }
+		if (( $subres = $this->rx( '/ (\\\\\'|[^\'])* /' ) ) !== FALSE) { $result["text"] .= $subres; }
+		else { $_15 = FALSE; break; }
 		if (substr($this->string,$this->pos,1) == '\'') {
 			$this->pos += 1;
 			$result["text"] .= '\'';
 		}
-		else { $_15 = false; break; }
-		$_15 = true; break;
+		else { $_15 = FALSE; break; }
+		$_15 = TRUE; break;
 	}
 	while(0);
-	if( $_15 === true ) { return $this->finalise($result); }
-	if( $_15 === false) { return false; }
+	if( $_15 === TRUE ) { return $this->finalise($result); }
+	if( $_15 === FALSE) { return FALSE; }
 }
 
 
@@ -159,25 +159,25 @@ function match_StringLiteral ($stack = array()) {
 		$pos_17 = $this->pos;
 		$matcher = 'match_'.'SingleQuotedStringLiteral'; $key = $matcher; $pos = $this->pos;
 		$subres = ( $this->packhas( $key, $pos ) ? $this->packread( $key, $pos ) : $this->packwrite( $key, $pos, $this->$matcher(array_merge($stack, array($result))) ) );
-		if ($subres !== false) {
+		if ($subres !== FALSE) {
 			$this->store( $result, $subres );
-			$_20 = true; break;
+			$_20 = TRUE; break;
 		}
 		$result = $res_17;
 		$this->pos = $pos_17;
 		$matcher = 'match_'.'DoubleQuotedStringLiteral'; $key = $matcher; $pos = $this->pos;
 		$subres = ( $this->packhas( $key, $pos ) ? $this->packread( $key, $pos ) : $this->packwrite( $key, $pos, $this->$matcher(array_merge($stack, array($result))) ) );
-		if ($subres !== false) {
+		if ($subres !== FALSE) {
 			$this->store( $result, $subres );
-			$_20 = true; break;
+			$_20 = TRUE; break;
 		}
 		$result = $res_17;
 		$this->pos = $pos_17;
-		$_20 = false; break;
+		$_20 = FALSE; break;
 	}
 	while(0);
-	if( $_20 === true ) { return $this->finalise($result); }
-	if( $_20 === false) { return false; }
+	if( $_20 === TRUE ) { return $this->finalise($result); }
+	if( $_20 === FALSE) { return FALSE; }
 }
 
 
@@ -189,9 +189,9 @@ function match_BooleanLiteral ($stack = array()) {
 	do {
 		$res_22 = $result;
 		$pos_22 = $this->pos;
-		if (( $subres = $this->literal( 'true' ) ) !== false) {
+		if (( $subres = $this->literal( 'true' ) ) !== FALSE) {
 			$result["text"] .= $subres;
-			$_33 = true; break;
+			$_33 = TRUE; break;
 		}
 		$result = $res_22;
 		$this->pos = $pos_22;
@@ -199,9 +199,9 @@ function match_BooleanLiteral ($stack = array()) {
 		do {
 			$res_24 = $result;
 			$pos_24 = $this->pos;
-			if (( $subres = $this->literal( 'true' ) ) !== false) {
+			if (( $subres = $this->literal( 'TRUE' ) ) !== FALSE) {
 				$result["text"] .= $subres;
-				$_31 = true; break;
+				$_31 = TRUE; break;
 			}
 			$result = $res_24;
 			$this->pos = $pos_24;
@@ -209,35 +209,35 @@ function match_BooleanLiteral ($stack = array()) {
 			do {
 				$res_26 = $result;
 				$pos_26 = $this->pos;
-				if (( $subres = $this->literal( 'false' ) ) !== false) {
+				if (( $subres = $this->literal( 'false' ) ) !== FALSE) {
 					$result["text"] .= $subres;
-					$_29 = true; break;
+					$_29 = TRUE; break;
 				}
 				$result = $res_26;
 				$this->pos = $pos_26;
-				if (( $subres = $this->literal( 'false' ) ) !== false) {
+				if (( $subres = $this->literal( 'FALSE' ) ) !== FALSE) {
 					$result["text"] .= $subres;
-					$_29 = true; break;
+					$_29 = TRUE; break;
 				}
 				$result = $res_26;
 				$this->pos = $pos_26;
-				$_29 = false; break;
+				$_29 = FALSE; break;
 			}
 			while(0);
-			if( $_29 === true ) { $_31 = true; break; }
+			if( $_29 === TRUE ) { $_31 = TRUE; break; }
 			$result = $res_24;
 			$this->pos = $pos_24;
-			$_31 = false; break;
+			$_31 = FALSE; break;
 		}
 		while(0);
-		if( $_31 === true ) { $_33 = true; break; }
+		if( $_31 === TRUE ) { $_33 = TRUE; break; }
 		$result = $res_22;
 		$this->pos = $pos_22;
-		$_33 = false; break;
+		$_33 = FALSE; break;
 	}
 	while(0);
-	if( $_33 === true ) { return $this->finalise($result); }
-	if( $_33 === false) { return false; }
+	if( $_33 === TRUE ) { return $this->finalise($result); }
+	if( $_33 === FALSE) { return FALSE; }
 }
 
 
@@ -245,11 +245,11 @@ function match_BooleanLiteral ($stack = array()) {
 protected $match_Identifier_typestack = array('Identifier');
 function match_Identifier ($stack = array()) {
 	$matchrule = "Identifier"; $result = $this->construct($matchrule, $matchrule, null);
-	if (( $subres = $this->rx( '/ [a-zA-Z_] [a-zA-Z0-9_\-]* /' ) ) !== false) {
+	if (( $subres = $this->rx( '/ [a-zA-Z_] [a-zA-Z0-9_\-]* /' ) ) !== FALSE) {
 		$result["text"] .= $subres;
 		return $this->finalise($result);
 	}
-	else { return false; }
+	else { return FALSE; }
 }
 
 
@@ -261,8 +261,8 @@ function match_PropertyPath ($stack = array()) {
 	do {
 		$matcher = 'match_'.'Identifier'; $key = $matcher; $pos = $this->pos;
 		$subres = ( $this->packhas( $key, $pos ) ? $this->packread( $key, $pos ) : $this->packwrite( $key, $pos, $this->$matcher(array_merge($stack, array($result))) ) );
-		if ($subres !== false) { $this->store( $result, $subres ); }
-		else { $_41 = false; break; }
+		if ($subres !== FALSE) { $this->store( $result, $subres ); }
+		else { $_41 = FALSE; break; }
 		while (true) {
 			$res_40 = $result;
 			$pos_40 = $this->pos;
@@ -272,15 +272,15 @@ function match_PropertyPath ($stack = array()) {
 					$this->pos += 1;
 					$result["text"] .= '.';
 				}
-				else { $_39 = false; break; }
+				else { $_39 = FALSE; break; }
 				$matcher = 'match_'.'Identifier'; $key = $matcher; $pos = $this->pos;
 				$subres = ( $this->packhas( $key, $pos ) ? $this->packread( $key, $pos ) : $this->packwrite( $key, $pos, $this->$matcher(array_merge($stack, array($result))) ) );
-				if ($subres !== false) { $this->store( $result, $subres ); }
-				else { $_39 = false; break; }
-				$_39 = true; break;
+				if ($subres !== FALSE) { $this->store( $result, $subres ); }
+				else { $_39 = FALSE; break; }
+				$_39 = TRUE; break;
 			}
 			while(0);
-			if( $_39 === false) {
+			if( $_39 === FALSE) {
 				$result = $res_40;
 				$this->pos = $pos_40;
 				unset( $res_40 );
@@ -288,11 +288,11 @@ function match_PropertyPath ($stack = array()) {
 				break;
 			}
 		}
-		$_41 = true; break;
+		$_41 = TRUE; break;
 	}
 	while(0);
-	if( $_41 === true ) { return $this->finalise($result); }
-	if( $_41 === false) { return false; }
+	if( $_41 === TRUE ) { return $this->finalise($result); }
+	if( $_41 === FALSE) { return FALSE; }
 }
 
 
@@ -309,3 +309,4 @@ function match_PropertyPath ($stack = array()) {
         $result['val'] = (string)str_replace('\"', '"', substr($sub['text'], 1, -1));
     }
 }
+
