@@ -645,16 +645,16 @@ class ConfigurationManager
     protected function replaceVariablesInPhpString($phpString)
     {
         $phpString = preg_replace_callback('/
-            (?<startString>=>\s\'.*)?      # optionally assignment operator and starting a string
-            (?P<fullMatch>%                # an expression is indicated by %
+            (?<startString>=>\s\'.*?)?         # optionally assignment operator and starting a string
+            (?P<fullMatch>%                    # an expression is indicated by %
             (?P<expression>
-            (?:(?:\\\?[\d\w_\\\]+\:\:)     # either a class name followed by ::
-            |                              # or
-            (?:(?P<prefix>[a-z]+)\:)       # a prefix followed by : (like "env:")
+            (?:(?:\\\?[\d\w_\\\]+\:\:)         # either a class name followed by ::
+            |                                  # or
+            (?:(?P<prefix>[a-z]+)\:)           # a prefix followed by : (like "env:")
             )?
-            (?P<name>[A-Z_0-9]+))          # the actual variable name in all upper
-            %)                             # concluded by %
-            (?<endString>.*\',\n)?         # optionally concluding a string
+            (?P<name>[A-Z_0-9]+))              # the actual variable name in all upper
+            %)                                 # concluded by %
+            (?<endString>[^%]*?(?:\',\n)?)?    # optionally concluding a string
         /mx', function ($matchGroup) {
             $replacement = "";
             $constantDoesNotStartAsBeginning = false;
