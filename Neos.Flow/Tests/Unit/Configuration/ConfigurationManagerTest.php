@@ -772,7 +772,8 @@ EOD;
 
         $settings = array(
             'foo' => 'bar',
-            'baz' => '%env:' . $envVarName . '%',
+            'bar' => '%env:' . $envVarName . '%',
+            'baz' => '%env:' . $envVarName . '% inspiring people %env:' . $envVarName . '% to share',
             'inspiring' => array(
                 'people' => array(
                     'to' => '%env:' . $envVarName . '%',
@@ -786,7 +787,8 @@ EOD;
         $processedPhpString = $configurationManager->_call('replaceVariablesInPhpString', $settingsPhpString);
         $settings = eval('return ' . $processedPhpString . ';');
 
-        $this->assertSame($envVarValue, $settings['baz']);
+        $this->assertSame($envVarValue, $settings['bar']);
+        $this->assertSame($envVarValue . ' inspiring people ' . $envVarValue . ' to share', $settings['baz']);
         $this->assertSame($envVarValue, $settings['inspiring']['people']['to']);
         $this->assertSame('foo ' . $envVarValue . ' bar', $settings['inspiring']['people']['share']);
 
