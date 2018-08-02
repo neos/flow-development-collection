@@ -1,0 +1,20 @@
+`5.0.6 (2018-08-02) <https://github.com/neos/flow-development-collection/releases/tag/5.0.6>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Fix call of extractLegacyDataFromContext and method name <https://github.com/neos/flow-development-collection/pull/1342>`_
+-----------------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Log``
+
+`TASK: Change uppercase true and false to lowercase in yaml <https://github.com/neos/flow-development-collection/pull/1333>`_
+-----------------------------------------------------------------------------------------------------------------------------
+
+As we changed this convention some time ago we should reflect this in our code :)
+
+* Packages: ``Flow``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/5.0.5...5.0.6>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
