@@ -723,13 +723,9 @@ class Scripts
         }
 
         $escapedArguments = '';
-        if ($commandArguments !== []) {
-            foreach ($commandArguments as $argument => $argumentValue) {
-                $escapedArguments .= ' ' . escapeshellarg('--' . trim($argument));
-                if (trim($argumentValue) !== '') {
-                    $escapedArguments .= ' ' . escapeshellarg(trim($argumentValue));
-                }
-            }
+        foreach ($commandArguments as $argument => $argumentValue) {
+            $argumentValue = trim($argumentValue);
+            $escapedArguments .= ' ' . escapeshellarg('--' . trim($argument)) . ($argumentValue !== '' ? '=' . escapeshellarg($argumentValue) : '');
         }
 
         $command .= sprintf(' %s %s %s', escapeshellarg(FLOW_PATH_FLOW . 'Scripts/flow.php'), escapeshellarg($commandIdentifier), trim($escapedArguments));
