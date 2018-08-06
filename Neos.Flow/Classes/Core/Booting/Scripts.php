@@ -689,7 +689,7 @@ class Scripts
         $escapedArguments = '';
         foreach ($commandArguments as $argument => $argumentValue) {
             $argumentValue = trim($argumentValue);
-            $escapedArguments .= ' --' . trim($argument) . ($argumentValue !== '' ? '=' . escapeshellarg($argumentValue) : '');
+            $escapedArguments .= ' ' . escapeshellarg('--' . trim($argument)) . ($argumentValue !== '' ? '=' . escapeshellarg($argumentValue) : '');
         }
 
         $command .= sprintf(' %s %s %s', escapeshellarg(FLOW_PATH_FLOW . 'Scripts/flow.php'), escapeshellarg($commandIdentifier), trim($escapedArguments));
