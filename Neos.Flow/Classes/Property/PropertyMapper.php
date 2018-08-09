@@ -159,7 +159,7 @@ class PropertyMapper
             return null;
         }
         $targetType = $targetTypeWithoutNull;
-        
+
         if (is_object($source)) {
             $targetClass = TypeHandling::truncateElementType($targetType);
             if ($source instanceof $targetClass) {

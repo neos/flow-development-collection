@@ -556,4 +556,18 @@ class PropertyMapperTest extends UnitTestCase
         $mockConfiguration = $this->getMockBuilder(PropertyMappingConfiguration::class)->disableOriginalConstructor()->getMock();
         $propertyMapper->convert($source, $fullTargetType, $mockConfiguration);
     }
+
+    /**
+     * @test
+     */
+    public function convertCallsConvertToNullWithNullableTargetType()
+    {
+        $source = null;
+        $fullTargetType = 'SplObjectStorage|null';
+
+        $propertyMapper = $this->getAccessibleMock(PropertyMapper::class, ['dummy']);
+
+        $mockConfiguration = $this->getMockBuilder(PropertyMappingConfiguration::class)->disableOriginalConstructor()->getMock();
+        $this->assertEquals(null, $propertyMapper->convert($source, $fullTargetType, $mockConfiguration));
+    }
 }
