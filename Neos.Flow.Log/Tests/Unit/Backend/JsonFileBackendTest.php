@@ -49,7 +49,7 @@ class JsonFileBackendTest extends UnitTestCase
             'methodName' => __FUNCTION__
         ];
 
-        $this->assertGreaterThanOrEqual($actualData['timestamp'], time());
+        $this->assertGreaterThanOrEqual((new \DateTime($actualData['timestamp']))->getTimestamp(), time());
         $this->assertEquals($actualData['severity'], 'warning');
         $this->assertEquals($actualData['origin'], $expectedOrigin);
         $this->assertEquals($actualData['message'], 'the log message');

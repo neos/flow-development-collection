@@ -44,7 +44,7 @@ class JsonFileBackend extends FileBackend
         $severityLabel = (isset($this->severityLabels[$severity])) ? strtolower(trim($this->severityLabels[$severity])) : 'unknown';
 
         $logEntryData = [
-            'timestamp' => time(),
+            'timestamp' => date(\DateTime::ATOM),
             'processId' => $processId,
             'severity' => $severityLabel,
             'remoteIp' => $remoteIp,
