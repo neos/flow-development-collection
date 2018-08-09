@@ -131,12 +131,7 @@ class ObjectConverter extends AbstractTypeConverter
 
         $methodParameters = $this->reflectionService->getMethodParameters($targetType, '__construct');
         if (isset($methodParameters[$propertyName]) && isset($methodParameters[$propertyName]['type'])) {
-            $typeWithoutNull = TypeHandling::stripNullableType($methodParameters[$propertyName]['type']);
-            if ($typeWithoutNull != $methodParameters[$propertyName]['type']) {
-                return $methodParameters[$propertyName]['class'] . '|null';
-            } else {
-                return $methodParameters[$propertyName]['type'];
-            }
+            return $methodParameters[$propertyName]['type'];
         } elseif ($this->reflectionService->hasMethod($targetType, ObjectAccess::buildSetterMethodName($propertyName))) {
             $methodParameters = $this->reflectionService->getMethodParameters($targetType, ObjectAccess::buildSetterMethodName($propertyName));
             $methodParameter = current($methodParameters);
