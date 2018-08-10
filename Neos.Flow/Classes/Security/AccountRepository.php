@@ -49,6 +49,14 @@ class AccountRepository extends Repository
     protected $systemLogger;
 
     /**
+     * Note: This is not required to be "the" SecurityContext of the current session, but any SecurityContext actually.
+     *
+     * @Flow\Inject
+     * @var SecurityContext
+     */
+    protected $securityContext;
+
+    /**
      * Removes an account
      *
      * @param object $object The account to remove
@@ -58,9 +66,9 @@ class AccountRepository extends Repository
     public function remove($object)
     {
         parent::remove($object);
-        
+
         // destroy the sessions for the account to be removed
-        (new SecurityContext)->destroySessionsForAccount($object);
+        $this->securityContext->destroySessionsForAccount($object);
     }
 
     /**
