@@ -191,6 +191,11 @@ class ObjectManager implements ObjectManagerInterface
      */
     public function get($objectName)
     {
+        // XXX: This is a b/c fix for the deprecation of doctrine ObjectManager. Remove this with Flow 6.0
+        if ($objectName === \Doctrine\Common\Persistence\ObjectManager::class) {
+            $objectName = \Doctrine\ORM\EntityManagerInterface::class;
+        }
+
         if (func_num_args() > 1 && isset($this->objects[$objectName]) && $this->objects[$objectName]['s'] !== ObjectConfiguration::SCOPE_PROTOTYPE) {
             throw new \InvalidArgumentException('You cannot provide constructor arguments for singleton objects via get(). If you need to pass arguments to the constructor, define them in the Objects.yaml configuration.', 1298049934);
         }
