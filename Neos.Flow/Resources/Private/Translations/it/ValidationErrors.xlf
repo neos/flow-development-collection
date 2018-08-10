@@ -150,7 +150,7 @@
       <!-- ElectronicAddressValidator -->
       <trans-unit id="1268676030" xml:space="preserve">
 				<source>No validator found for electronic address of type "{0}"</source>
-			<target xml:lang="it" state="needs-translation">No validator found for electronic address of type "{0}"</target></trans-unit>
+			<target xml:lang="it" state="translated">Nessuna convalida trovata per indirizzo di posta elettronica di tipo "{0}"</target></trans-unit>
       <!-- PersonNameValidator -->
       <trans-unit id="1268676765" xml:space="preserve">
 				<source>The person name cannot be empty</source>
@@ -162,17 +162,17 @@
 			<target xml:lang="it" state="needs-translation">The given value is not a Image instance</target></trans-unit>
       <trans-unit id="1327947647" xml:space="preserve">
 				<source>The image type "{0}" is not allowed</source>
-			<target xml:lang="it" state="needs-translation">The image type "{0}" is not allowed</target></trans-unit>
+			<target xml:lang="it" state="translated">Il tipo di immagine "{0}" non è consentito</target></trans-unit>
       <trans-unit id="1328030664" xml:space="preserve">
 				<source>The uploaded file is no valid image</source>
-			<target xml:lang="it" state="needs-translation">The uploaded file is no valid image</target></trans-unit>
+			<target xml:lang="it" state="translated">Il file caricato non è nessuna immagine valida</target></trans-unit>
       <!-- ImageSizeValidator -->
       <trans-unit id="1327943859" xml:space="preserve">
 				<source>The given value is not a Image instance</source>
 			<target xml:lang="it" state="needs-translation">The given value is not a Image instance</target></trans-unit>
       <trans-unit id="1319801362" xml:space="preserve">
 				<source>The actual image width of {0,number} is lower than the allowed minimum width of {1,number}</source>
-			<target xml:lang="it" state="needs-translation">The actual image width of {0,number} is lower than the allowed minimum width of {1,number}</target></trans-unit>
+			<target xml:lang="it" state="translated">La larghezza attuale dell'immagine di {0,number} è inferiore alla larghezza minima consentita di {1,number}</target></trans-unit>
       <trans-unit id="1319801859" xml:space="preserve">
 				<source>The actual image width of {0,number} is higher than the allowed maximum width of {1,number}</source>
 			<target xml:lang="it" state="needs-translation">The actual image width of {0,number} is higher than the allowed maximum width of {1,number}</target></trans-unit>
@@ -184,7 +184,7 @@
 			<target xml:lang="it" state="needs-translation">The actual image height of {0,number} is higher than the allowed maximum height of {1,number}</target></trans-unit>
       <trans-unit id="1319813336" xml:space="preserve">
 				<source>The given image size of {0,number} x {1,number} is too low for the required minimum resolution of {2,number}</source>
-			<target xml:lang="it" state="needs-translation">The given image size of {0,number} x {1,number} is too low for the required minimum resolution of {2,number}</target></trans-unit>
+			<target xml:lang="it" state="translated">La grandezza delle immagini di {0,number} x {1,number} è troppo bassa per la risoluzione minima richiesta di {2,number}</target></trans-unit>
       <trans-unit id="1319813355" xml:space="preserve">
 				<source>The given image size of {0,number} x {1,number} is too high for the required maximum resolution of {2,number}</source>
 			<target xml:lang="it" state="needs-translation">The given image size of {0,number} x {1,number} is too high for the required maximum resolution of {2,number}</target></trans-unit>
@@ -194,7 +194,7 @@
 			<target xml:lang="it" state="needs-translation">The given value is not a Image instance</target></trans-unit>
       <trans-unit id="1328029406" xml:space="preserve">
 				<source>The image orientation must be "{0}"</source>
-			<target xml:lang="it" state="needs-translation">The image orientation must be "{0}"</target></trans-unit>
+			<target xml:lang="it" state="translated">L'orientamento dell'immagine deve essere "{0}"</target></trans-unit>
       <trans-unit id="1328029362" xml:space="preserve">
 				<source>The image orientation "{0}" is not allowed</source>
 			<target xml:lang="it" state="needs-translation">The image orientation "{0}" is not allowed</target></trans-unit>

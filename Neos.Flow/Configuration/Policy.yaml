@@ -8,12 +8,12 @@
 
 roles:
   'Neos.Flow:Everybody':
-    abstract: TRUE
+    abstract: true
 
   'Neos.Flow:Anonymous':
-    abstract: TRUE
+    abstract: true
 
   'Neos.Flow:AuthenticatedUser':
-    abstract: TRUE
+    abstract: true
 
 privilegeTargets: []

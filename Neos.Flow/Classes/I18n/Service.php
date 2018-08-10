@@ -13,8 +13,8 @@ namespace Neos\Flow\I18n;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Cache\Frontend\VariableFrontend;
-use Neos\Flow\Package\PackageInterface;
-use Neos\Flow\Package\PackageManagerInterface;
+use Neos\Flow\Package\FlowPackageInterface;
+use Neos\Flow\Package\PackageManager;
 use Neos\Utility\Files;
 
 /**
@@ -33,7 +33,7 @@ class Service
 
     /**
      * @Flow\Inject
-     * @var PackageManagerInterface
+     * @var PackageManager
      */
     protected $packageManager;
 
@@ -85,6 +85,9 @@ class Service
 
         if ($this->cache->has('availableLocales')) {
             $this->localeCollection = $this->cache->get('availableLocales');
+        } elseif (isset($this->settings['availableLocales']) && !empty($this->settings['availableLocales'])) {
+            $this->generateAvailableLocalesCollectionFromSettings();
+            $this->cache->set('availableLocales', $this->localeCollection);
         } else {
             $this->generateAvailableLocalesCollectionByScanningFilesystem();
             $this->cache->set('availableLocales', $this->localeCollection);
@@ -252,6 +255,21 @@ class Service
     }
 
     /**
+     * Generates the available Locales Collection from the configuration setting
+     * `Neos.Flow.i18n.availableLocales`.
+     *
+     * Note: result of this method invocation is cached
+     *
+     * @return void
+     */
+    protected function generateAvailableLocalesCollectionFromSettings()
+    {
+        foreach ($this->settings['availableLocales'] as $localeIdentifier) {
+            $this->localeCollection->addLocale(new Locale($localeIdentifier));
+        }
+    }
+
+    /**
      * Returns a regex pattern including enclosing characters, that matches any of the configured
      * blacklist paths inside "Neos.Flow.i18n.scan.excludePatterns".
      *
@@ -292,8 +310,8 @@ class Service
         }
         $blacklistPattern = $this->getScanBlacklistPattern();
 
-        /** @var PackageInterface $activePackage */
-        foreach ($this->packageManager->getAvailablePackages() as $activePackage) {
+        /** @var FlowPackageInterface $activePackage */
+        foreach ($this->packageManager->getFlowPackages() as $activePackage) {
             $packageResourcesPath = Files::getNormalizedPath($activePackage->getResourcesPath());
 
             if (!is_dir($packageResourcesPath)) {

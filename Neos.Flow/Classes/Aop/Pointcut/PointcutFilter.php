@@ -54,7 +54,7 @@ class PointcutFilter implements PointcutFilterInterface
      * @param string $aspectClassName Name of the aspect class containing the pointcut
      * @param string $pointcutMethodName Name of the method which acts as an anchor for the pointcut name and expression
      */
-    public function __construct($aspectClassName, $pointcutMethodName)
+    public function __construct(string $aspectClassName, string $pointcutMethodName)
     {
         $this->aspectClassName = $aspectClassName;
         $this->pointcutMethodName = $pointcutMethodName;
@@ -66,7 +66,7 @@ class PointcutFilter implements PointcutFilterInterface
      * @param ProxyClassBuilder $proxyClassBuilder
      * @return void
      */
-    public function injectProxyClassBuilder(ProxyClassBuilder $proxyClassBuilder)
+    public function injectProxyClassBuilder(ProxyClassBuilder $proxyClassBuilder): void
     {
         $this->proxyClassBuilder = $proxyClassBuilder;
     }
@@ -81,7 +81,7 @@ class PointcutFilter implements PointcutFilterInterface
      * @return boolean TRUE if the class matches, otherwise FALSE
      * @throws UnknownPointcutException
      */
-    public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier)
+    public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier): bool
     {
         if ($this->pointcut === null) {
             $this->pointcut = $this->proxyClassBuilder->findPointcut($this->aspectClassName, $this->pointcutMethodName);
@@ -97,7 +97,7 @@ class PointcutFilter implements PointcutFilterInterface
      *
      * @return boolean TRUE if this filter has runtime evaluations
      */
-    public function hasRuntimeEvaluationsDefinition()
+    public function hasRuntimeEvaluationsDefinition(): bool
     {
         return $this->pointcut->hasRuntimeEvaluationsDefinition();
     }
@@ -107,7 +107,7 @@ class PointcutFilter implements PointcutFilterInterface
      *
      * @return array Runtime evaluations
      */
-    public function getRuntimeEvaluationsDefinition()
+    public function getRuntimeEvaluationsDefinition(): array
     {
         if ($this->pointcut === null) {
             $this->pointcut = $this->proxyClassBuilder->findPointcut($this->aspectClassName, $this->pointcutMethodName);
@@ -125,7 +125,7 @@ class PointcutFilter implements PointcutFilterInterface
      * @param ClassNameIndex $classNameIndex
      * @return ClassNameIndex
      */
-    public function reduceTargetClassNames(ClassNameIndex $classNameIndex)
+    public function reduceTargetClassNames(ClassNameIndex $classNameIndex): ClassNameIndex
     {
         if ($this->pointcut === null) {
             $this->pointcut = $this->proxyClassBuilder->findPointcut($this->aspectClassName, $this->pointcutMethodName);

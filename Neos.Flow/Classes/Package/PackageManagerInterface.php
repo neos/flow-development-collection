@@ -61,7 +61,7 @@ interface PackageManagerInterface
      * the given package state, path, and type filters. All three filters must match, if given.
      *
      * @param string $packageState defaults to available
-     * @param string $packagePath
+     * @param string $packagePath DEPRECATED since Flow 5.0
      * @param string $packageType
      *
      * @return array<PackageInterface>
@@ -86,17 +86,6 @@ interface PackageManagerInterface
      * @api
      */
     public function isPackageKeyValid($packageKey);
-
-    /**
-     * Create a new package, given the package key
-     *
-     * @param string $packageKey The package key to use for the new package
-     * @param array $manifest composer manifest data
-     * @param string $packagesPath If specified, the package will be created in this path
-     * @return PackageInterface The newly created package
-     * @api
-     */
-    public function createPackage($packageKey, array $manifest = [], $packagesPath = null);
 
     /**
      * Freezes a package
@@ -129,15 +118,6 @@ interface PackageManagerInterface
      * @return void
      */
     public function refreezePackage($packageKey);
-
-    /**
-     * Removes a package from registry and deletes it from filesystem
-     *
-     * @param string $packageKey package to delete
-     * @return void
-     * @api
-     */
-    public function deletePackage($packageKey);
 
     /**
      * Rescans available packages, order and write a new PackageStates file.

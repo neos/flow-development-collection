@@ -26,7 +26,7 @@ class RootDirectoryIgnoringYamlSource extends \Neos\Flow\Configuration\Source\Ya
      * @throws \Neos\Flow\Configuration\Exception\ParseErrorException
      */
 
-    public function load($pathAndFilename, $allowSplitSource = false)
+    public function load(string $pathAndFilename, bool $allowSplitSource = false): array
     {
         if (strpos($pathAndFilename, FLOW_PATH_CONFIGURATION) === 0) {
             return [];

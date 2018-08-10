@@ -15,8 +15,7 @@ use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\IndexedReader;
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use Doctrine\Common\Persistence\Mapping\Driver\MappingDriver as DoctrineMappingDriverInterface;
-use Doctrine\Common\Persistence\ObjectManager as DoctrineObjectManager;
-use Doctrine\DBAL\Id\TableGenerator;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Events;
 use Doctrine\ORM\Mapping\Builder\EntityListenerBuilder;
 use Doctrine\ORM\Mapping as ORM;
@@ -63,7 +62,7 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
     protected $reader;
 
     /**
-     * @var DoctrineObjectManager
+     * @var EntityManagerInterface
      */
     protected $entityManager;
 
@@ -96,10 +95,10 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
     }
 
     /**
-     * @param DoctrineObjectManager $entityManager
+     * @param EntityManagerInterface $entityManager
      * @return void
      */
-    public function setEntityManager(DoctrineObjectManager $entityManager)
+    public function setEntityManager(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
     }
@@ -607,11 +606,12 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
                 } elseif ($this->isAggregateRoot($mapping['targetEntity'], $className) === false) {
                     $mapping['cascade'] = ['all'];
                 }
-                if ($oneToOneAnnotation->orphanRemoval !== null) {
-                    $mapping['orphanRemoval'] = $oneToOneAnnotation->orphanRemoval;
-                } elseif ($this->isAggregateRoot($mapping['targetEntity'], $className) === false &&
-                          $this->isValueObject($mapping['targetEntity'], $className) === false) {
+                // We need to apply our value for non-aggregate roots first, because Doctrine sets a default value for orphanRemoval (see #1127)
+                if ($this->isAggregateRoot($mapping['targetEntity'], $className) === false &&
+                    $this->isValueObject($mapping['targetEntity'], $className) === false) {
                     $mapping['orphanRemoval'] = true;
+                } elseif ($oneToOneAnnotation->orphanRemoval !== null) {
+                    $mapping['orphanRemoval'] = $oneToOneAnnotation->orphanRemoval;
                 }
                 $mapping['fetch'] = $this->getFetchMode($className, $oneToOneAnnotation->fetch);
                 $metadata->mapOneToOne($mapping);
@@ -630,11 +630,12 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
                     $mapping['cascade'] = ['all'];
                 }
                 $mapping['indexBy'] = $oneToManyAnnotation->indexBy;
-                if ($oneToManyAnnotation->orphanRemoval !== null) {
-                    $mapping['orphanRemoval'] = $oneToManyAnnotation->orphanRemoval;
-                } elseif ($this->isAggregateRoot($mapping['targetEntity'], $className) === false &&
+                // We need to apply our value for non-aggregate roots first, because Doctrine sets a default value for orphanRemoval (see #1127)
+                if ($this->isAggregateRoot($mapping['targetEntity'], $className) === false &&
                     $this->isValueObject($mapping['targetEntity'], $className) === false) {
                     $mapping['orphanRemoval'] = true;
+                } elseif ($oneToManyAnnotation->orphanRemoval !== null) {
+                    $mapping['orphanRemoval'] = $oneToManyAnnotation->orphanRemoval;
                 }
                 $mapping['fetch'] = $this->getFetchMode($className, $oneToManyAnnotation->fetch);
 

@@ -29,23 +29,6 @@ interface RequestPatternInterface
     // public function __construct(array $options);
 
     /**
-     * Returns the set pattern
-     *
-     * @return string The set pattern
-     * @deprecated since 3.3 this is not used - use options instead (@see __construct())
-     */
-    // public function getPattern();
-
-    /**
-     * Sets the pattern (match) configuration
-     *
-     * @param object $pattern The pattern (match) configuration
-     * @return void
-     * @deprecated since 3.3 specify options using the constructor instead
-     */
-    // public function setPattern($pattern);
-
-    /**
      * Matches a \Neos\Flow\Mvc\RequestInterface against its set pattern rules
      *
      * @param RequestInterface $request The request that should be matched

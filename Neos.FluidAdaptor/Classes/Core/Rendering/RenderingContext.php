@@ -139,15 +139,6 @@ class RenderingContext extends FluidRenderingContext implements FlowAwareRenderi
     }
 
     /**
-     * @return \TYPO3Fluid\Fluid\Core\Variables\VariableProviderInterface
-     * @deprecated use "getVariableProvider"
-     */
-    public function getTemplateVariableContainer()
-    {
-        return $this->getVariableProvider();
-    }
-
-    /**
      * Build parser configuration
      *
      * @return Configuration

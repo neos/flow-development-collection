@@ -23,6 +23,7 @@ use Neos\Flow\Cli\CommandManager;
 use Neos\Flow\Cli\RequestBuilder;
 use Neos\Flow\Cli\Response;
 use Neos\Flow\Core\Bootstrap;
+use Neos\Flow\Log\PsrLoggerFactoryInterface;
 use Neos\Flow\Mvc\Dispatcher;
 use Neos\Flow\ObjectManagement\DependencyInjection\ProxyClassBuilder;
 use Neos\Flow\ObjectManagement\Proxy\Compiler;
@@ -177,7 +178,7 @@ class CoreCommandController extends CommandController
      * @param boolean $force If set, classes will be compiled even though the cache says that everything is up to date.
      * @return void
      */
-    public function compileCommand($force = false)
+    public function compileCommand(bool $force = false)
     {
         /** @var VariableFrontend $objectConfigurationCache */
         $objectConfigurationCache = $this->cacheManager->getCache('Flow_Object_Configuration');
@@ -189,9 +190,13 @@ class CoreCommandController extends CommandController
 
         /** @var PhpFrontend $classesCache */
         $classesCache = $this->cacheManager->getCache('Flow_Object_Classes');
+        $logger = $this->objectManager->get(PsrLoggerFactoryInterface::class)->get('systemLogger');
+
         $this->proxyClassCompiler->injectClassesCache($classesCache);
 
         $this->aopProxyClassBuilder->injectObjectConfigurationCache($objectConfigurationCache);
+        $this->aopProxyClassBuilder->injectLogger($logger);
+        $this->dependencyInjectionProxyClassBuilder->injectLogger($logger);
         $this->aopProxyClassBuilder->build();
         $this->dependencyInjectionProxyClassBuilder->build();
 
@@ -224,7 +229,7 @@ class CoreCommandController extends CommandController
      * @param string $webserverGroup Group name of the webserver, for example "www-data"
      * @return void
      */
-    public function setFilePermissionsCommand($commandlineUser, $webserverUser, $webserverGroup)
+    public function setFilePermissionsCommand(string $commandlineUser, string $webserverUser, string $webserverGroup)
     {
         // This command will never be really called. It rather acts as a stub for rendering the
         // documentation for this command. In reality, the "flow" command line script will already
@@ -255,7 +260,7 @@ class CoreCommandController extends CommandController
      * @return void
      * @see neos.flow:doctrine:migrate
      */
-    public function migrateCommand($package, $status = false, $packagesPath = null, $version = null, $verbose = false, $force = false)
+    public function migrateCommand(string $package, bool $status = false, string $packagesPath = null, string $version = null, bool $verbose = false, bool $force = false)
     {
         // This command will never be really called. It rather acts as a stub for rendering the
         // documentation for this command. In reality, the "flow" command line script will already
@@ -289,7 +294,7 @@ class CoreCommandController extends CommandController
 
         while (true) {
             $commandLine = readline('Flow > ');
-            if ($commandLine == '') {
+            if ($commandLine === '') {
                 echo "\n";
                 break;
             }
@@ -351,7 +356,7 @@ class CoreCommandController extends CommandController
      * @return void
      * @Flow\Signal
      */
-    protected function emitFinishedCompilationRun($classCount)
+    protected function emitFinishedCompilationRun(int $classCount)
     {
         $this->signalSlotDispatcher->dispatch(__CLASS__, 'finishedCompilationRun', [$classCount]);
     }
@@ -362,7 +367,7 @@ class CoreCommandController extends CommandController
      * @return array The new sub process and its STDIN, STDOUT, STDERR pipes – or FALSE if an error occurred.
      * @throws \RuntimeException
      */
-    protected function launchSubProcess()
+    protected function launchSubProcess(): array
     {
         $systemCommand = 'FLOW_ROOTPATH=' . FLOW_PATH_ROOT . ' FLOW_PATH_TEMPORARY_BASE=' . FLOW_PATH_TEMPORARY_BASE . ' ' . 'FLOW_CONTEXT=' . $this->bootstrap->getContext() . ' ' . PHP_BINARY . ' -c ' . php_ini_loaded_file() . ' ' . FLOW_PATH_FLOW . 'Scripts/flow.php' . ' --start-slave';
         $descriptorSpecification = [['pipe', 'r'], ['pipe', 'w'], ['pipe', 'a']];
@@ -422,7 +427,7 @@ class CoreCommandController extends CommandController
      * @param integer $index The cursor index at the current (partial) command
      * @return array
      */
-    protected function autocomplete($partialCommand, $index)
+    protected function autocomplete(string $partialCommand, int $index): array
     {
         // @TODO Add more functionality by parsing the current buffer with readline_info()
         // @TODO Filter file system elements (if possible at all)

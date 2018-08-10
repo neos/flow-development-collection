@@ -421,18 +421,7 @@ class Request extends BaseRequest implements ServerRequestInterface
      */
     public function getClientIpAddress()
     {
-        $serverFields = array('HTTP_CLIENT_IP', 'HTTP_X_FORWARDED_FOR', 'HTTP_X_FORWARDED', 'HTTP_X_CLUSTER_CLIENT_IP', 'HTTP_FORWARDED_FOR', 'HTTP_FORWARDED');
-        foreach ($serverFields as $field) {
-            if (empty($this->server[$field])) {
-                continue;
-            }
-            $length = strpos($this->server[$field], ',');
-            $ipAddress = trim(($length === false) ? $this->server[$field] : substr($this->server[$field], 0, $length));
-            if (filter_var($ipAddress, FILTER_VALIDATE_IP, FILTER_FLAG_NO_RES_RANGE | FILTER_FLAG_NO_PRIV_RANGE) !== false) {
-                return $ipAddress;
-            }
-        }
-        return (isset($this->server['REMOTE_ADDR']) ? $this->server['REMOTE_ADDR'] : null);
+        return $this->getAttribute(self::ATTRIBUTE_CLIENT_IP);
     }
 
     /**
@@ -702,47 +691,6 @@ class Request extends BaseRequest implements ServerRequestInterface
         arsort($flattenedAcceptedTypes);
         $parsedValues = array_merge($valuesWithoutQualityValue, array_keys($flattenedAcceptedTypes));
         return $parsedValues;
-    }
-
-    /**
-     * Parses a RFC 2616 Media Type and returns its parts in an associative array.
-     * @see MediaTypes::parseMediaType()
-     *
-     * @param string $rawMediaType The raw media type, for example "application/json; charset=UTF-8"
-     * @return array An associative array with parsed information
-     * @deprecated since Flow 2.1. Use \Neos\Utility\MediaTypes::parseMediaType() instead
-     */
-    public static function parseMediaType($rawMediaType)
-    {
-        return MediaTypes::parseMediaType($rawMediaType);
-    }
-
-    /**
-     * Checks if the given media range and the media type match.
-     * @see MediaTypes::mediaRangeMatches()
-     *
-     * @param string $mediaRange The media range, for example "text/*"
-     * @param string $mediaType The media type to match against, for example "text/html"
-     * @return boolean TRUE if both match, FALSE if they don't match or either of them is invalid
-     * @deprecated since Flow 2.1. Use \Neos\Utility\MediaTypes::mediaRangeMatches() instead
-     */
-    public static function mediaRangeMatches($mediaRange, $mediaType)
-    {
-        return MediaTypes::mediaRangeMatches($mediaRange, $mediaType);
-    }
-
-    /**
-     * Strips off any parameters from the given media type and returns just the type
-     * and subtype in the format "type/subtype".
-     * @see \Neos\Utility\MediaTypes::trimMediaType()
-     *
-     * @param string $rawMediaType The full media type, for example "application/json; charset=UTF-8"
-     * @return string Just the type and subtype, for example "application/json"
-     * @deprecated since Flow 2.1. Use \Neos\Utility\MediaTypes::trimMediaType() instead
-     */
-    public static function trimMediaType($rawMediaType)
-    {
-        return MediaTypes::trimMediaType($rawMediaType);
     }
 
     /**

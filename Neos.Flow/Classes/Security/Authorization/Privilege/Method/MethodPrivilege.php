@@ -81,7 +81,7 @@ class MethodPrivilege extends AbstractPrivilege implements MethodPrivilegeInterf
      * @return boolean
      * @throws InvalidPrivilegeTypeException
      */
-    public function matchesSubject(PrivilegeSubjectInterface $subject)
+    public function matchesSubject(PrivilegeSubjectInterface $subject): bool
     {
         if ($subject instanceof MethodPrivilegeSubject === false) {
             throw new InvalidPrivilegeTypeException(sprintf('Privileges of type "%s" only support subjects of type "%s", but we got a subject of type: "%s".', MethodPrivilegeInterface::class, MethodPrivilegeSubject::class, get_class($subject)), 1416241148);
@@ -111,7 +111,7 @@ class MethodPrivilege extends AbstractPrivilege implements MethodPrivilegeInterf
      * @param string $methodName
      * @return boolean
      */
-    public function matchesMethod($className, $methodName)
+    public function matchesMethod($className, $methodName): bool
     {
         $this->initialize();
 
@@ -128,7 +128,7 @@ class MethodPrivilege extends AbstractPrivilege implements MethodPrivilegeInterf
      *
      * @return PointcutFilterComposite
      */
-    public function getPointcutFilterComposite()
+    public function getPointcutFilterComposite(): PointcutFilterComposite
     {
         if ($this->pointcutFilter === null) {
             /** @var MethodTargetExpressionParser $methodTargetExpressionParser */

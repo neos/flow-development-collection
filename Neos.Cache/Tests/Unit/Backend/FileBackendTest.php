@@ -115,18 +115,6 @@ class FileBackendTest extends BaseTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Cache\Exception\InvalidDataException
-     */
-    public function setThrowsExceptionIfDataIsNotAString()
-    {
-        $mockCache = $this->createMock(AbstractFrontend::class);
-        $backend = $this->prepareDefaultBackend();
-        $backend->setCache($mockCache);
-        $backend->set('SomeIdentifier', ['not a string']);
-    }
-
-    /**
-     * @test
      */
     public function setReallySavesToTheSpecifiedDirectory()
     {
