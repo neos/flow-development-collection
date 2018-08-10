@@ -11,6 +11,8 @@
 Neos:
   Flow:
     persistence:
+      # For a reference of the possible options, take a look at
+      # https://www.doctrine-project.org/projects/doctrine-dbal/en/latest/reference/configuration.html
       backendOptions:
         dbname: 'flow'       # adjust to your database name
         user: ''             # adjust to your database user

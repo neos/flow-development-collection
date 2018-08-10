@@ -33,7 +33,7 @@ class Bootstrap
     /**
      * Required PHP version
      */
-    const MINIMUM_PHP_VERSION = '7.0.0';
+    const MINIMUM_PHP_VERSION = '7.1.0';
 
     const RUNLEVEL_COMPILETIME = 'Compiletime';
     const RUNLEVEL_RUNTIME = 'Runtime';
@@ -301,7 +301,8 @@ class Bootstrap
         $sequence->addStep(new Step('neos.flow:cachemanagement:forceflush', [Scripts::class, 'forceFlushCachesIfNecessary']), 'neos.flow:systemlogger');
         $sequence->addStep(new Step('neos.flow:objectmanagement:compiletime:create', [Scripts::class, 'initializeObjectManagerCompileTimeCreate']), 'neos.flow:systemlogger');
         $sequence->addStep(new Step('neos.flow:systemfilemonitor', [Scripts::class, 'initializeSystemFileMonitor']), 'neos.flow:objectmanagement:compiletime:create');
-        $sequence->addStep(new Step('neos.flow:reflectionservice', [Scripts::class, 'initializeReflectionService']), 'neos.flow:systemfilemonitor');
+        $sequence->addStep(new Step('neos.flow:reflectionservice:factory', [Scripts::class, 'initializeReflectionServiceFactory']), 'neos.flow:systemfilemonitor');
+        $sequence->addStep(new Step('neos.flow:reflectionservice', [Scripts::class, 'initializeReflectionService']), 'neos.flow:reflectionservice:factory');
         $sequence->addStep(new Step('neos.flow:objectmanagement:compiletime:finalize', [Scripts::class, 'initializeObjectManagerCompileTimeFinalize']), 'neos.flow:reflectionservice');
         return $sequence;
     }
@@ -325,8 +326,8 @@ class Bootstrap
             $sequence->addStep(new Step('neos.flow:objectmanagement:recompile', [Scripts::class, 'recompileClasses']), 'neos.flow:systemfilemonitor');
         }
 
-        $sequence->addStep(new Step('neos.flow:reflectionservice', [Scripts::class, 'initializeReflectionService']), 'neos.flow:objectmanagement:runtime');
-        $sequence->addStep(new Step('neos.flow:resources', [Scripts::class, 'initializeResources']), 'neos.flow:reflectionservice');
+        $sequence->addStep(new Step('neos.flow:reflectionservice:factory', [Scripts::class, 'initializeReflectionServiceFactory']), 'neos.flow:objectmanagement:runtime');
+        $sequence->addStep(new Step('neos.flow:resources', [Scripts::class, 'initializeResources']), 'neos.flow:reflectionservice:factory');
         $sequence->addStep(new Step('neos.flow:session', [Scripts::class, 'initializeSession']), 'neos.flow:resources');
         return $sequence;
     }

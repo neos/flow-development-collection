@@ -1031,6 +1031,7 @@ class RequestTest extends UnitTestCase
 
     /**
      * @test
+     * @doesNotPerformAssertions
      *
      * Note: This is a fix for https://jira.neos.io/browse/FLOW-324 (see https://code.google.com/p/chromium/issues/detail?id=501095)
      */
@@ -1040,8 +1041,5 @@ class RequestTest extends UnitTestCase
             'HTTP_HTTPS' => '1',
         ];
         new Request([], [], [], $server);
-
-        // dummy assertion to avoid PHPUnit warning
-        $this->assertTrue(true);
     }
 }

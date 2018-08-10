@@ -188,7 +188,8 @@ class Debugger
         $additionalAttributes = '';
 
         if ($object instanceof \Doctrine\Common\Collections\Collection || $object instanceof \ArrayObject) {
-            return self::renderArrayDump(\Doctrine\Common\Util\Debug::export($object, 3), $level, $plaintext, $ansiColors);
+            // The doctrine Debug utility usually returns a \stdClass object that we need to cast to array.
+            return self::renderArrayDump((array)\Doctrine\Common\Util\Debug::export($object, 3), $level, $plaintext, $ansiColors);
         }
 
         // Objects returned from Doctrine's Debug::export function are stdClass with special properties:

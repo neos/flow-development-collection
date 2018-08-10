@@ -36,15 +36,13 @@ class ComponentChainTest extends UnitTestCase
 
     /**
      * @test
+     * @doesNotPerformAssertions
      */
     public function handleReturnsIfNoComponentsAreConfigured()
     {
         $options = [];
         $this->componentChain = new Http\Component\ComponentChain($options);
         $this->componentChain->handle($this->mockComponentContext);
-
-        // dummy assertion to silence PHPUnit warning
-        $this->assertTrue(true);
     }
 
     /**

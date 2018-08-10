@@ -42,6 +42,7 @@ use Neos\Flow\Package\Package;
 use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Package\PackageManagerInterface;
 use Neos\Flow\Reflection\ReflectionService;
+use Neos\Flow\Reflection\ReflectionServiceFactory;
 use Neos\Flow\ResourceManagement\Streams\StreamWrapperAdapter;
 use Neos\Flow\Session\SessionInterface;
 use Neos\Flow\SignalSlot\Dispatcher;
@@ -336,23 +337,24 @@ class Scripts
     public static function initializeProxyClasses(Bootstrap $bootstrap)
     {
         $objectConfigurationCache = $bootstrap->getEarlyInstance(CacheManager::class)->getCache('Flow_Object_Configuration');
+        if ($objectConfigurationCache->has('allCompiledCodeUpToDate') === true) {
+            return;
+        }
 
         $configurationManager = $bootstrap->getEarlyInstance(ConfigurationManager::class);
         $settings = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.Flow');
 
         // The compile sub command will only be run if the code cache is completely empty:
-        if ($objectConfigurationCache->has('allCompiledCodeUpToDate') === false) {
-            OpcodeCacheHelper::clearAllActive(FLOW_PATH_CONFIGURATION);
-            OpcodeCacheHelper::clearAllActive(FLOW_PATH_DATA);
-            self::executeCommand('neos.flow:core:compile', $settings);
-            if (isset($settings['persistence']['doctrine']['enable']) && $settings['persistence']['doctrine']['enable'] === true) {
-                self::compileDoctrineProxies($bootstrap);
-            }
-
-            // As the available proxy classes were already loaded earlier we need to refresh them if the proxies where recompiled.
-            $proxyClassLoader = $bootstrap->getEarlyInstance(ProxyClassLoader::class);
-            $proxyClassLoader->initializeAvailableProxyClasses($bootstrap->getContext());
+        OpcodeCacheHelper::clearAllActive(FLOW_PATH_CONFIGURATION);
+        OpcodeCacheHelper::clearAllActive(FLOW_PATH_DATA);
+        self::executeCommand('neos.flow:core:compile', $settings);
+        if (isset($settings['persistence']['doctrine']['enable']) && $settings['persistence']['doctrine']['enable'] === true) {
+            self::compileDoctrineProxies($bootstrap);
         }
+
+        // As the available proxy classes were already loaded earlier we need to refresh them if the proxies where recompiled.
+        $proxyClassLoader = $bootstrap->getEarlyInstance(ProxyClassLoader::class);
+        $proxyClassLoader->initializeAvailableProxyClasses($bootstrap->getContext());
 
         // Check if code was updated, if not something went wrong
         if ($objectConfigurationCache->has('allCompiledCodeUpToDate') === false) {
@@ -465,28 +467,27 @@ class Scripts
     }
 
     /**
-     * Initializes the Reflection Service
+     * Initializes the Reflection Service Factory
      *
      * @param Bootstrap $bootstrap
      * @return void
      */
+    public static function initializeReflectionServiceFactory(Bootstrap $bootstrap)
+    {
+        $reflectionServiceFactory = new ReflectionServiceFactory($bootstrap);
+        $bootstrap->setEarlyInstance(ReflectionServiceFactory::class, $reflectionServiceFactory);
+        $bootstrap->getObjectManager()->setInstance(ReflectionServiceFactory::class, $reflectionServiceFactory);
+    }
+
+    /**
+     * Initializes the Reflection Service
+     *
+     * @param Bootstrap $bootstrap
+     * @throws FlowException
+     */
     public static function initializeReflectionService(Bootstrap $bootstrap)
     {
-        $cacheManager = $bootstrap->getEarlyInstance(CacheManager::class);
-        $configurationManager = $bootstrap->getEarlyInstance(ConfigurationManager::class);
-        $settings = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.Flow');
-
-        $reflectionService = new ReflectionService();
-
-        $reflectionService->injectLogger($bootstrap->getEarlyInstance(PsrLoggerFactoryInterface::class)->get('systemLogger'));
-        $reflectionService->injectSettings($settings);
-        $reflectionService->injectPackageManager($bootstrap->getEarlyInstance(PackageManager::class));
-        $reflectionService->setStatusCache($cacheManager->getCache('Flow_Reflection_Status'));
-        $reflectionService->setReflectionDataCompiletimeCache($cacheManager->getCache('Flow_Reflection_CompiletimeData'));
-        $reflectionService->setReflectionDataRuntimeCache($cacheManager->getCache('Flow_Reflection_RuntimeData'));
-        $reflectionService->setClassSchemataRuntimeCache($cacheManager->getCache('Flow_Reflection_RuntimeClassSchemata'));
-        $reflectionService->injectEnvironment($bootstrap->getEarlyInstance(Environment::class));
-
+        $reflectionService = $bootstrap->getEarlyInstance(ReflectionServiceFactory::class)->create();
         $bootstrap->setEarlyInstance(ReflectionService::class, $reflectionService);
         $bootstrap->getObjectManager()->setInstance(ReflectionService::class, $reflectionService);
     }
@@ -723,13 +724,9 @@ class Scripts
         }
 
         $escapedArguments = '';
-        if ($commandArguments !== []) {
-            foreach ($commandArguments as $argument => $argumentValue) {
-                $escapedArguments .= ' ' . escapeshellarg('--' . trim($argument));
-                if (trim($argumentValue) !== '') {
-                    $escapedArguments .= ' ' . escapeshellarg(trim($argumentValue));
-                }
-            }
+        foreach ($commandArguments as $argument => $argumentValue) {
+            $argumentValue = trim($argumentValue);
+            $escapedArguments .= ' ' . escapeshellarg('--' . trim($argument)) . ($argumentValue !== '' ? '=' . escapeshellarg($argumentValue) : '');
         }
 
         $command .= sprintf(' %s %s %s', escapeshellarg(FLOW_PATH_FLOW . 'Scripts/flow.php'), escapeshellarg($commandIdentifier), trim($escapedArguments));

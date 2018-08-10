@@ -85,6 +85,9 @@ class Service
 
         if ($this->cache->has('availableLocales')) {
             $this->localeCollection = $this->cache->get('availableLocales');
+        } elseif (isset($this->settings['availableLocales']) && !empty($this->settings['availableLocales'])) {
+            $this->generateAvailableLocalesCollectionFromSettings();
+            $this->cache->set('availableLocales', $this->localeCollection);
         } else {
             $this->generateAvailableLocalesCollectionByScanningFilesystem();
             $this->cache->set('availableLocales', $this->localeCollection);
@@ -249,6 +252,21 @@ class Service
     public function findBestMatchingLocale(Locale $locale)
     {
         return $this->localeCollection->findBestMatchingLocale($locale);
+    }
+
+    /**
+     * Generates the available Locales Collection from the configuration setting
+     * `Neos.Flow.i18n.availableLocales`.
+     *
+     * Note: result of this method invocation is cached
+     *
+     * @return void
+     */
+    protected function generateAvailableLocalesCollectionFromSettings()
+    {
+        foreach ($this->settings['availableLocales'] as $localeIdentifier) {
+            $this->localeCollection->addLocale(new Locale($localeIdentifier));
+        }
     }
 
     /**

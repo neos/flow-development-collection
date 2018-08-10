@@ -47,6 +47,12 @@ class XliffFileProvider
     protected $xliffReader;
 
     /**
+     * @Flow\InjectConfiguration(path="i18n.globalTranslationPath")
+     * @var string
+     */
+    protected $globalTranslationPath;
+
+    /**
      * @var VariableFrontend
      */
     protected $cache;
@@ -106,10 +112,10 @@ class XliffFileProvider
                         $this->readDirectoryRecursively($translationPath, $parsedData, $fileId, $package->getPackageKey());
                     }
                 }
-            }
-            $generalTranslationPath = FLOW_PATH_DATA . 'Translations';
-            if (is_dir($generalTranslationPath)) {
-                $this->readDirectoryRecursively(FLOW_PATH_DATA . 'Translations', $parsedData, $fileId);
+                $generalTranslationPath = $this->globalTranslationPath . $localeChainItem;
+                if (is_dir($generalTranslationPath)) {
+                    $this->readDirectoryRecursively($generalTranslationPath, $parsedData, $fileId);
+                }
             }
             $this->files[$fileId][(string)$locale] = $parsedData;
             $this->cache->set('translationFiles', $this->files);
