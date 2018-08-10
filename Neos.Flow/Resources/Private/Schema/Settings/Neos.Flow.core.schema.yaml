@@ -7,6 +7,6 @@ properties:
   'phpBinaryPathAndFilename': { type: string, required: true }
   'subRequestEnvironmentVariables':
     type: dictionary
-  'subRequestPhpIniPathAndFilename': { type: [string, boolean, 'null'], required: false }
+  'subRequestPhpIniPathAndFilename': [string, boolean, 'null']
   'subRequestIniEntries':
     type: dictionary

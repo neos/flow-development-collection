@@ -31,11 +31,10 @@ class RequestHandlerTest extends FunctionalTestCase
     {
         $foundRoute = false;
         foreach ($this->router->getRoutes() as $route) {
-            if ($route->getName() === 'Flow :: Functional Test: HTTP - FooController') {
+            if ($route->getName() === 'Neos.Flow :: Functional Test: HTTP - FooController') {
                 $foundRoute = true;
             }
         }
-
         if (!$foundRoute) {
             $this->markTestSkipped('In this distribution the Flow routes are not included into the global configuration.');
             return;
@@ -45,7 +44,7 @@ class RequestHandlerTest extends FunctionalTestCase
             'HTTP_HOST' => 'localhost',
             'REQUEST_METHOD' => 'GET',
             'QUERY_STRING' => '',
-            'REQUEST_URI' => '/typo3/flow/test/http/foo',
+            'REQUEST_URI' => '/neos/flow/test/http/foo',
             'SCRIPT_NAME' => '/index.php',
             'PHP_SELF' => '/index.php',
         ];

@@ -42,34 +42,6 @@ class PackageTest extends UnitTestCase
     /**
      * @test
      */
-    public function aPackageCanBeFlaggedAsProtected()
-    {
-        $packagePath = 'vfs://Packages/Application/Vendor/Dummy/';
-        mkdir($packagePath, 0700, true);
-        file_put_contents($packagePath . 'composer.json', '{"name": "vendor/dummy", "type": "flow-test"}');
-        $package = new Package('Vendor.Dummy', 'vendor/dummy', $packagePath);
-
-        $this->assertFalse($package->isProtected());
-        $package->setProtected(true);
-        $this->assertTrue($package->isProtected());
-    }
-
-    /**
-     * @test
-     */
-    public function isObjectManagementEnabledTellsIfObjectManagementShouldBeEnabledForPackages()
-    {
-        $packagePath = 'vfs://Packages/Application/Vendor/Dummy/';
-        mkdir($packagePath, 0700, true);
-        file_put_contents($packagePath . 'composer.json', '{"name": "vendor/dummy", "type": "neos-test"}');
-        $package = new Package('Vendor.Dummy', 'vendor/dummy', $packagePath);
-
-        $this->assertTrue($package->isObjectManagementEnabled());
-    }
-
-    /**
-     * @test
-     */
     public function getClassFilesReturnsAListOfClassFilesOfThePackage()
     {
         $packagePath = 'vfs://Packages/Application/Acme.MyPackage/';

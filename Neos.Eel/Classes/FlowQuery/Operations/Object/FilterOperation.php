@@ -172,8 +172,8 @@ class FilterOperation extends AbstractOperation
      */
     protected function matchesAttributeFilter($element, array $attributeFilter)
     {
-        if ($attributeFilter['Identifier'] !== null) {
-            $value = $this->getPropertyPath($element, $attributeFilter['Identifier']);
+        if ($attributeFilter['PropertyPath'] !== null) {
+            $value = $this->getPropertyPath($element, $attributeFilter['PropertyPath']);
         } else {
             $value = $element;
         }

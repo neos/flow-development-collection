@@ -287,6 +287,24 @@ class FrameworkTest extends FunctionalTestCase
     /**
      * @test
      */
+    public function finalMethodsCanBeAdvised()
+    {
+        $targetClass = new Fixtures\TargetClass01();
+        $this->assertSame('I am final. But, as said, nothing is final!', $targetClass->someFinalMethod());
+    }
+
+    /**
+     * @test
+     */
+    public function finalMethodsStayFinalEvenIfTheyAreNotAdvised()
+    {
+        $targetClass = new Fixtures\TargetClass01();
+        $this->assertTrue((new \ReflectionMethod($targetClass, 'someOtherFinalMethod'))->isFinal());
+    }
+
+    /**
+     * @test
+     */
     public function methodWithStaticScalarReturnTypeDeclarationCanBeAdviced()
     {
         if (version_compare(PHP_VERSION, '7.0.0') < 0) {

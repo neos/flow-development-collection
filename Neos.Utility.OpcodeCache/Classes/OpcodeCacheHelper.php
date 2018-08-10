@@ -76,7 +76,7 @@ abstract class OpcodeCacheHelper
      * @param string $absolutePathAndFilename Absolute path towards the PHP file to clear.
      * @return void
      */
-    public static function clearAllActive($absolutePathAndFilename = null)
+    public static function clearAllActive(string $absolutePathAndFilename = null)
     {
         if (self::$clearCacheCallbacks === null) {
             self::initialize();

@@ -19,7 +19,7 @@ namespace Neos\Flow\Tests;
  *
  * @api
  */
-abstract class BaseTestCase extends \PHPUnit_Framework_TestCase
+abstract class BaseTestCase extends \PHPUnit\Framework\TestCase
 {
 
     /**
@@ -53,18 +53,31 @@ abstract class BaseTestCase extends \PHPUnit_Framework_TestCase
      */
     protected function getAccessibleMock($originalClassName, $methods = array(), array $arguments = array(), $mockClassName = '', $callOriginalConstructor = true, $callOriginalClone = true, $callAutoload = true, $cloneArguments = false, $callOriginalMethods = false, $proxyTarget = null)
     {
-        $mockObject = $this->getMockObjectGenerator()->getMock(
-            $this->buildAccessibleProxy($originalClassName),
-            $methods,
-            $arguments,
-            $mockClassName,
-            $callOriginalConstructor,
-            $callOriginalClone,
-            $callAutoload,
-            $cloneArguments,
-            $callOriginalMethods,
-            $proxyTarget
-        );
+        $mockBuilder = $this->getMockBuilder($this->buildAccessibleProxy($originalClassName));
+        $mockBuilder->setMethods($methods)->setConstructorArgs($arguments)->setMockClassName($mockClassName);
+        if ($callOriginalConstructor === false) {
+            $mockBuilder->disableOriginalConstructor();
+        }
+        if ($callOriginalClone === false) {
+            $mockBuilder->disableOriginalClone();
+        }
+        if ($callAutoload === false) {
+            $mockBuilder->disableAutoload();
+        }
+        if ($callAutoload === false) {
+            $mockBuilder->enableArgumentCloning();
+        }
+        if ($cloneArguments === true) {
+            $mockBuilder->enableArgumentCloning();
+        }
+        if ($callOriginalMethods === true) {
+            $mockBuilder->enableProxyingToOriginalMethods();
+        }
+        if ($proxyTarget !== null) {
+            $mockBuilder->setProxyTarget($proxyTarget);
+        }
+
+        $mockObject = $mockBuilder->getMock();
 
         $this->registerMockObject($mockObject);
 

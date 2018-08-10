@@ -13,6 +13,7 @@ namespace Neos\FluidAdaptor\ViewHelpers\Format;
 
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use Neos\FluidAdaptor\Core\ViewHelper\Exception\InvalidVariableException;
+use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 
 /**
  * Modifies the case of an input string to upper- or lowercase or capitalization.
@@ -98,18 +99,42 @@ class CaseViewHelper extends AbstractViewHelper
     const CASE_CAPITAL_WORDS = 'capitalWords';
 
     /**
+     * Initialize the arguments.
+     *
+     * @return void
+     * @api
+     */
+    public function initializeArguments()
+    {
+        $this->registerArgument('value', 'string', 'The input value. If not given, the evaluated child nodes will be used', false, null);
+        $this->registerArgument('mode', 'string', 'The case to apply, must be one of this\' CASE_* constants. Defaults to uppercase application', false, self::CASE_UPPER);
+    }
+
+    /**
      * Changes the case of the input string
      *
-     * @param string $value The input value. If not given, the evaluated child nodes will be used
-     * @param string $mode The case to apply, must be one of this' CASE_* constants. Defaults to uppercase application
      * @return string the altered string.
      * @throws InvalidVariableException
      * @api
      */
-    public function render($value = null, $mode = self::CASE_UPPER)
+    public function render()
     {
+        return self::renderStatic(['value' => $this->arguments['value'], 'mode' => $this->arguments['mode']], $this->buildRenderChildrenClosure(), $this->renderingContext);
+    }
+
+    /**
+     * @param array $arguments
+     * @param \Closure $renderChildrenClosure
+     * @param RenderingContextInterface $renderingContext
+     * @return string
+     * @throws InvalidVariableException
+     */
+    public static function renderStatic(array $arguments, \Closure $renderChildrenClosure, RenderingContextInterface $renderingContext)
+    {
+        $value = $arguments['value'];
+        $mode = $arguments['mode'];
         if ($value === null) {
-            $value = $this->renderChildren();
+            $value = $renderChildrenClosure();
         }
 
         $originalEncoding = mb_internal_encoding();
@@ -137,6 +162,7 @@ class CaseViewHelper extends AbstractViewHelper
         }
 
         mb_internal_encoding($originalEncoding);
+
         return $output;
     }
 }

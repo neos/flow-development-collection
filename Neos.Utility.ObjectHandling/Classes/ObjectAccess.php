@@ -16,6 +16,7 @@ use Neos\Utility\Exception\PropertyNotAccessibleException;
 /**
  * Provides methods to call appropriate getter/setter on an object given the
  * property name. It does this following these rules:
+ *
  * - if the target object is an instance of ArrayAccess, it gets/sets the property
  * - if public getter/setter method exists, call it.
  * - if public property exists, return/set the value of it.
@@ -47,6 +48,7 @@ abstract class ObjectAccess
      * Get a property of a given object or array.
      *
      * Tries to get the property the following ways:
+     *
      * - if the target is an array, and has this property, we return it.
      * - if super cow powers should be used, fetch value through reflection
      * - if public getter method exists, call it.
@@ -62,12 +64,12 @@ abstract class ObjectAccess
      * @throws \InvalidArgumentException in case $subject was not an object or $propertyName was not a string
      * @throws PropertyNotAccessibleException if the property was not accessible
      */
-    public static function getProperty($subject, $propertyName, $forceDirectAccess = false)
+    public static function getProperty($subject, $propertyName, bool $forceDirectAccess = false)
     {
         if (!is_object($subject) && !is_array($subject)) {
             throw new \InvalidArgumentException('$subject must be an object or array, ' . gettype($subject) . ' given.', 1237301367);
         }
-        if (!is_string($propertyName) && !is_integer($propertyName)) {
+        if (!is_string($propertyName) && !is_int($propertyName)) {
             throw new \InvalidArgumentException('Given property name/index is not of type string or integer.', 1231178303);
         }
 
@@ -81,8 +83,11 @@ abstract class ObjectAccess
 
     /**
      * Gets a property of a given object or array.
+     *
      * This is an internal method that does only limited type checking for performance reasons.
-     * If you can't make sure that $subject is either of type array or object and $propertyName of type string you should use getProperty() instead.
+     *
+     * If you can't make sure that $subject is either of type array or object and $propertyName
+     * of type string you should use getProperty() instead.
      *
      * @param mixed $subject Object or array to get the property from
      * @param string $propertyName name of the property to retrieve
@@ -92,18 +97,16 @@ abstract class ObjectAccess
      * @throws PropertyNotAccessibleException
      * @see getProperty()
      */
-    protected static function getPropertyInternal($subject, $propertyName, $forceDirectAccess, &$propertyExists)
+    protected static function getPropertyInternal($subject, string $propertyName, bool $forceDirectAccess, bool &$propertyExists)
     {
         if ($subject === null) {
             return null;
         }
         if (is_array($subject)) {
-            if (array_key_exists($propertyName, $subject)) {
-                $propertyExists = true;
-                return $subject[$propertyName];
-            }
-            return null;
-        } elseif (!is_object($subject)) {
+            $propertyExists = array_key_exists($propertyName, $subject);
+            return $propertyExists ? $subject[$propertyName] : null;
+        }
+        if (!is_object($subject)) {
             return null;
         }
 
@@ -115,20 +118,19 @@ abstract class ObjectAccess
                 $propertyReflection = new \ReflectionProperty($className, $propertyName);
                 $propertyReflection->setAccessible(true);
                 return $propertyReflection->getValue($subject);
-            } elseif (property_exists($subject, $propertyName)) {
-                return $subject->$propertyName;
-            } else {
-                throw new PropertyNotAccessibleException('The property "' . $propertyName . '" on the subject does not exist.', 1302855001);
             }
+            if (property_exists($subject, $propertyName)) {
+                return $subject->$propertyName;
+            }
+            throw new PropertyNotAccessibleException('The property "' . $propertyName . '" on the subject does not exist.', 1302855001);
         }
 
         if ($subject instanceof \stdClass) {
             if (array_key_exists($propertyName, get_object_vars($subject))) {
                 return $subject->$propertyName;
-            } else {
-                $propertyExists = false;
-                return null;
             }
+            $propertyExists = false;
+            return null;
         }
 
         $cacheIdentifier = $className . '|' . $propertyName;
@@ -137,14 +139,13 @@ abstract class ObjectAccess
         if (isset(self::$propertyGetterCache[$cacheIdentifier]['accessorMethod'])) {
             $method = self::$propertyGetterCache[$cacheIdentifier]['accessorMethod'];
             return $subject->$method();
-        } elseif (isset(self::$propertyGetterCache[$cacheIdentifier]['publicProperty'])) {
+        }
+        if (isset(self::$propertyGetterCache[$cacheIdentifier]['publicProperty'])) {
             return $subject->$propertyName;
         }
 
-        if (($subject instanceof \ArrayAccess) && !($subject instanceof \SplObjectStorage)) {
-            if (isset($subject[$propertyName])) {
-                return $subject[$propertyName];
-            }
+        if (($subject instanceof \ArrayAccess) && !($subject instanceof \SplObjectStorage) && $subject->offsetExists($propertyName)) {
+            return $subject->offsetGet($propertyName);
         }
 
         $propertyExists = false;
@@ -157,7 +158,7 @@ abstract class ObjectAccess
      * @param string $propertyName
      * @return void
      */
-    protected static function initializePropertyGetterCache($cacheIdentifier, $subject, $propertyName)
+    protected static function initializePropertyGetterCache(string $cacheIdentifier, $subject, string $propertyName)
     {
         if (isset(self::$propertyGetterCache[$cacheIdentifier])) {
             return;
@@ -191,8 +192,13 @@ abstract class ObjectAccess
      * @param string $propertyPath
      * @return mixed Value of the property
      */
-    public static function getPropertyPath($subject, $propertyPath)
+    public static function getPropertyPath($subject, string $propertyPath = null)
     {
+        // TODO: This default value handling is only in place for b/c to have this method accept nulls.
+        //       It can be removed with Flow 5.0 and other breaking typehint changes.
+        if ($propertyPath === null) {
+            return null;
+        }
         $propertyPathSegments = explode('.', $propertyPath);
         foreach ($propertyPathSegments as $pathSegment) {
             $propertyExists = false;
@@ -208,7 +214,9 @@ abstract class ObjectAccess
 
     /**
      * Set a property for a given object.
+     *
      * Tries to set the property the following ways:
+     *
      * - if target is an array, set value
      * - if super cow powers should be used, set value through reflection
      * - if public setter method exists, call it.
@@ -224,7 +232,7 @@ abstract class ObjectAccess
      * @return boolean TRUE if the property could be set, FALSE otherwise
      * @throws \InvalidArgumentException in case $object was not an object or $propertyName was not a string
      */
-    public static function setProperty(&$subject, $propertyName, $propertyValue, $forceDirectAccess = false)
+    public static function setProperty(&$subject, $propertyName, $propertyValue, bool $forceDirectAccess = false): bool
     {
         if (is_array($subject)) {
             $subject[$propertyName] = $propertyValue;
@@ -234,7 +242,7 @@ abstract class ObjectAccess
         if (!is_object($subject)) {
             throw new \InvalidArgumentException('subject must be an object or array, ' . gettype($subject) . ' given.', 1237301368);
         }
-        if (!is_string($propertyName) && !is_integer($propertyName)) {
+        if (!is_string($propertyName) && !is_int($propertyName)) {
             throw new \InvalidArgumentException('Given property name/index is not of type string or integer.', 1231178878);
         }
 
@@ -262,7 +270,9 @@ abstract class ObjectAccess
     /**
      * Returns an array of properties which can be get with the getProperty()
      * method.
+     *
      * Includes the following properties:
+     *
      * - which can be get through a public getter method.
      * - public properties which can be directly get.
      *
@@ -270,7 +280,7 @@ abstract class ObjectAccess
      * @return array Array of all gettable property names
      * @throws \InvalidArgumentException
      */
-    public static function getGettablePropertyNames($object)
+    public static function getGettablePropertyNames($object): array
     {
         if (!is_object($object)) {
             throw new \InvalidArgumentException('$object must be an object, ' . gettype($object) . ' given.', 1237301369);
@@ -287,13 +297,10 @@ abstract class ObjectAccess
         if (!isset(self::$gettablePropertyNamesCache[$className])) {
             foreach (get_class_methods($object) as $methodName) {
                 if (is_callable([$object, $methodName])) {
-                    if (substr($methodName, 0, 2) === 'is' && strlen($methodName) > 2) {
+                    $methodNameLength = strlen($methodName);
+                    if ($methodNameLength > 2 && substr($methodName, 0, 2) === 'is') {
                         $declaredPropertyNames[] = lcfirst(substr($methodName, 2));
-                    }
-                    if (substr($methodName, 0, 3) === 'get' && strlen($methodName) > 3) {
-                        $declaredPropertyNames[] = lcfirst(substr($methodName, 3));
-                    }
-                    if (substr($methodName, 0, 3) === 'has' && strlen($methodName) > 3) {
+                    } elseif ($methodNameLength > 3 && (($methodNamePrefix = substr($methodName, 0, 3)) === 'get' || $methodNamePrefix === 'has')) {
                         $declaredPropertyNames[] = lcfirst(substr($methodName, 3));
                     }
                 }
@@ -309,7 +316,9 @@ abstract class ObjectAccess
     /**
      * Returns an array of properties which can be set with the setProperty()
      * method.
+     *
      * Includes the following properties:
+     *
      * - which can be set through a public setter method.
      * - public properties which can be directly set.
      *
@@ -317,7 +326,7 @@ abstract class ObjectAccess
      * @return array Array of all settable property names
      * @throws \InvalidArgumentException
      */
-    public static function getSettablePropertyNames($object)
+    public static function getSettablePropertyNames($object): array
     {
         if (!is_object($object)) {
             throw new \InvalidArgumentException('$object must be an object, ' . gettype($object) . ' given.', 1264022994);
@@ -348,16 +357,14 @@ abstract class ObjectAccess
      * @return boolean
      * @throws \InvalidArgumentException
      */
-    public static function isPropertySettable($object, $propertyName)
+    public static function isPropertySettable($object, string $propertyName): bool
     {
         if (!is_object($object)) {
             throw new \InvalidArgumentException('$object must be an object, ' . gettype($object) . ' given.', 1259828920);
         }
 
         $className = TypeHandling::getTypeForValue($object);
-        if ($object instanceof \stdClass && array_search($propertyName, array_keys(get_object_vars($object))) !== false) {
-            return true;
-        } elseif (array_search($propertyName, array_keys(get_class_vars($className))) !== false) {
+        if (($object instanceof \stdClass && array_key_exists($propertyName, get_object_vars($object))) || array_key_exists($propertyName, get_class_vars($className))) {
             return true;
         }
         return is_callable([$object, self::buildSetterMethodName($propertyName)]);
@@ -371,28 +378,20 @@ abstract class ObjectAccess
      * @return boolean
      * @throws \InvalidArgumentException
      */
-    public static function isPropertyGettable($object, $propertyName)
+    public static function isPropertyGettable($object, string $propertyName): bool
     {
         if (!is_object($object)) {
             throw new \InvalidArgumentException('$object must be an object, ' . gettype($object) . ' given.', 1259828921);
         }
-        if ($object instanceof \ArrayAccess && isset($object[$propertyName]) === true) {
-            return true;
-        } elseif ($object instanceof \stdClass && array_search($propertyName, array_keys(get_object_vars($object))) !== false) {
+        if (($object instanceof \ArrayAccess && $object->offsetExists($propertyName)) || ($object instanceof \stdClass && array_key_exists($propertyName, get_object_vars($object)))) {
             return true;
         }
         $uppercasePropertyName = ucfirst($propertyName);
-        if (is_callable([$object, 'get' . $uppercasePropertyName])) {
-            return true;
-        }
-        if (is_callable([$object, 'is' . $uppercasePropertyName])) {
-            return true;
-        }
-        if (is_callable([$object, 'has' . $uppercasePropertyName])) {
+        if (is_callable([$object, 'get' . $uppercasePropertyName]) || is_callable([$object, 'is' . $uppercasePropertyName]) || is_callable([$object, 'has' . $uppercasePropertyName])) {
             return true;
         }
         $className = TypeHandling::getTypeForValue($object);
-        return (array_search($propertyName, array_keys(get_class_vars($className))) !== false);
+        return array_key_exists($propertyName, get_class_vars($className));
     }
 
     /**
@@ -404,7 +403,7 @@ abstract class ObjectAccess
      * @throws \InvalidArgumentException
      * @todo What to do with ArrayAccess
      */
-    public static function getGettableProperties($object)
+    public static function getGettableProperties($object): array
     {
         if (!is_object($object)) {
             throw new \InvalidArgumentException('$object must be an object, ' . gettype($object) . ' given.', 1237301370);
@@ -427,8 +426,54 @@ abstract class ObjectAccess
      * @param string $propertyName Name of the property
      * @return string Name of the setter method name
      */
-    public static function buildSetterMethodName($propertyName)
+    public static function buildSetterMethodName(string $propertyName): string
     {
         return 'set' . ucfirst($propertyName);
+    }
+
+    /**
+     * Instantiates the class named `$className` using the `$arguments` as constructor
+     * arguments (in array order).
+     *
+     * For less than 7 arguments `new` is used, for more a `ReflectionClass` is created
+     * and `newInstanceArgs` is used.
+     *
+     * Note: this should be used sparingly, just calling `new` yourself or using Dependency
+     * Injection are most probably better alternatives.
+     *
+     * @param string $className
+     * @param array $arguments
+     * @return object
+     */
+    public static function instantiateClass($className, $arguments)
+    {
+        switch (count($arguments)) {
+            case 0:
+                $object = new $className();
+                break;
+            case 1:
+                $object = new $className($arguments[0]);
+                break;
+            case 2:
+                $object = new $className($arguments[0], $arguments[1]);
+                break;
+            case 3:
+                $object = new $className($arguments[0], $arguments[1], $arguments[2]);
+                break;
+            case 4:
+                $object = new $className($arguments[0], $arguments[1], $arguments[2], $arguments[3]);
+                break;
+            case 5:
+                $object = new $className($arguments[0], $arguments[1], $arguments[2], $arguments[3], $arguments[4]);
+                break;
+            case 6:
+                $object = new $className($arguments[0], $arguments[1], $arguments[2], $arguments[3], $arguments[4], $arguments[5]);
+                break;
+            default:
+                $class = new \ReflectionClass($className);
+                $object = $class->newInstanceArgs($arguments);
+        }
+
+        return $object;
     }
 }

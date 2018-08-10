@@ -15,7 +15,7 @@ namespace Neos\Cache\Tests;
  * The mother of all test cases.
  *
  */
-abstract class BaseTestCase extends \PHPUnit_Framework_TestCase
+abstract class BaseTestCase extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var array

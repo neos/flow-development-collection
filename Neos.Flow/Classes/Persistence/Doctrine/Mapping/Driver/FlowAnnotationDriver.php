@@ -15,8 +15,7 @@ use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\IndexedReader;
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use Doctrine\Common\Persistence\Mapping\Driver\MappingDriver as DoctrineMappingDriverInterface;
-use Doctrine\Common\Persistence\ObjectManager as DoctrineObjectManager;
-use Doctrine\DBAL\Id\TableGenerator;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Events;
 use Doctrine\ORM\Mapping\Builder\EntityListenerBuilder;
 use Doctrine\ORM\Mapping as ORM;
@@ -63,7 +62,7 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
     protected $reader;
 
     /**
-     * @var DoctrineObjectManager
+     * @var EntityManagerInterface
      */
     protected $entityManager;
 
@@ -96,10 +95,10 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
     }
 
     /**
-     * @param DoctrineObjectManager $entityManager
+     * @param EntityManagerInterface $entityManager
      * @return void
      */
-    public function setEntityManager(DoctrineObjectManager $entityManager)
+    public function setEntityManager(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
     }

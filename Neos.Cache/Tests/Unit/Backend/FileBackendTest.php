@@ -115,18 +115,6 @@ class FileBackendTest extends BaseTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Cache\Exception\InvalidDataException
-     */
-    public function setThrowsExceptionIfDataIsNotAString()
-    {
-        $mockCache = $this->createMock(AbstractFrontend::class);
-        $backend = $this->prepareDefaultBackend();
-        $backend->setCache($mockCache);
-        $backend->set('SomeIdentifier', ['not a string']);
-    }
-
-    /**
-     * @test
      */
     public function setReallySavesToTheSpecifiedDirectory()
     {
@@ -572,7 +560,7 @@ class FileBackendTest extends BaseTestCase
 
     /**
      * @test
-     * @expectedException \PHPUnit_Framework_Error_Warning
+     * @expectedException \PHPUnit\Framework\Error\Warning
      */
     public function requireOnceDoesNotSwallowPhpWarningsOfTheIncludedFile()
     {
@@ -589,7 +577,7 @@ class FileBackendTest extends BaseTestCase
 
     /**
      * @test
-     * @expectedException \PHPUnit_Framework_Error_Notice
+     * @expectedException \PHPUnit\Framework\Error\Notice
      */
     public function requireOnceDoesNotSwallowPhpNoticesOfTheIncludedFile()
     {

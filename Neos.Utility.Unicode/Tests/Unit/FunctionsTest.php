@@ -16,7 +16,7 @@ use Neos\Utility\Unicode\Functions;
 /**
  * Testcase for the PHP6 Functions backport
  */
-class FunctionsTest extends \PHPUnit_Framework_TestCase
+class FunctionsTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * Checks if strtotitle() at least works with latin characters.

@@ -28,7 +28,7 @@ use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 class RuntimeExpressionEvaluator
 {
     /**
-     * @var PhpFrontend
+     * @var StringFrontend
      */
     protected $runtimeExpressionsCache;
 
@@ -45,47 +45,19 @@ class RuntimeExpressionEvaluator
     protected $runtimeExpressions = [];
 
     /**
-     * Newly added expressions.
-     *
-     * @var array
-     */
-    protected $newExpressions = [];
-
-    /**
      * This object is created very early and is part of the blacklisted "Neos\Flow\Aop" namespace so we can't rely on AOP for the property injection.
      *
      * @param ObjectManagerInterface $objectManager
      * @return void
      */
-    public function injectObjectManager(ObjectManagerInterface $objectManager)
+    public function injectObjectManager(ObjectManagerInterface $objectManager): void
     {
         if ($this->objectManager === null) {
             $this->objectManager = $objectManager;
             /** @var CacheManager $cacheManager */
             $cacheManager = $this->objectManager->get(CacheManager::class);
             $this->runtimeExpressionsCache = $cacheManager->getCache('Flow_Aop_RuntimeExpressions');
-            $this->runtimeExpressions = $this->runtimeExpressionsCache->requireOnce('Flow_Aop_RuntimeExpressions');
         }
-    }
-
-    /**
-     * Shutdown the Evaluator and save created expressions overwriting any existing expressions
-     *
-     * @return void
-     */
-    public function saveRuntimeExpressions()
-    {
-        if ($this->newExpressions === []) {
-            return;
-        }
-
-        $codeToBeCached = 'return array (' . chr(10);
-
-        foreach ($this->newExpressions as $name => $function) {
-            $codeToBeCached .= "'" . $name . "' => " . $function . ',' . chr(10);
-        }
-        $codeToBeCached .= ');';
-        $this->runtimeExpressionsCache->set('Flow_Aop_RuntimeExpressions', $codeToBeCached);
     }
 
     /**
@@ -96,14 +68,20 @@ class RuntimeExpressionEvaluator
      * @return mixed
      * @throws Exception
      */
-    public function evaluate($privilegeIdentifier, JoinPointInterface $joinPoint)
+    public function evaluate(string $privilegeIdentifier, JoinPointInterface $joinPoint)
     {
         $functionName = $this->generateExpressionFunctionName($privilegeIdentifier);
+        if (isset($this->runtimeExpressions[$functionName])) {
+            return $this->runtimeExpressions[$functionName]->__invoke($joinPoint, $this->objectManager);
+        }
 
-        if (!isset($this->runtimeExpressions[$functionName]) || !$this->runtimeExpressions[$functionName] instanceof \Closure) {
+        $expression = $this->runtimeExpressionsCache->get($functionName);
+
+        if (!$expression) {
             throw new Exception('Runtime expression "' . $functionName . '" does not exist. Flushing the code caches may help to solve this.', 1428694144);
         }
 
+        $this->runtimeExpressions[$functionName] = eval($expression);
         return $this->runtimeExpressions[$functionName]->__invoke($joinPoint, $this->objectManager);
     }
 
@@ -112,18 +90,21 @@ class RuntimeExpressionEvaluator
      *
      * @param string $privilegeIdentifier MD5 hash that identifies a privilege
      * @param string $expression
-     * @return string
+     * @return void
      */
-    public function addExpression($privilegeIdentifier, $expression)
+    public function addExpression(string $privilegeIdentifier, string $expression): void
     {
-        $this->newExpressions[$this->generateExpressionFunctionName($privilegeIdentifier)] = $expression;
+        $functionName = $this->generateExpressionFunctionName($privilegeIdentifier);
+        $wrappedExpression = 'return ' . $expression . ';';
+        $this->runtimeExpressionsCache->set($functionName, $wrappedExpression);
+        $this->runtimeExpressions[$functionName] = eval($wrappedExpression);
     }
 
     /**
      * @param string $privilegeIdentifier MD5 hash that identifies a privilege
      * @return string
      */
-    protected function generateExpressionFunctionName($privilegeIdentifier)
+    protected function generateExpressionFunctionName(string $privilegeIdentifier): string
     {
         return 'flow_aop_expression_' . $privilegeIdentifier;
     }
@@ -133,7 +114,7 @@ class RuntimeExpressionEvaluator
      *
      * @return void
      */
-    public function flush()
+    public function flush(): void
     {
         $this->runtimeExpressionsCache->flush();
     }

@@ -187,6 +187,9 @@ class PropertyMapper
             }
 
             $targetPropertyType = $typeConverter->getTypeOfChildProperty($targetType, $targetPropertyName, $configuration);
+            if ($targetPropertyType === null) {
+                continue;
+            }
 
             $subConfiguration = $configuration->getConfigurationFor($targetPropertyName);
 

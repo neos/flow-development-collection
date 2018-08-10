@@ -42,7 +42,7 @@ class TextfieldViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\
     public function renderCorrectlySetsTagName()
     {
         $mockTagBuilder = $this->getMockBuilder(TagBuilder::class)->setMethods(array('setTagName'))->getMock();
-        $mockTagBuilder->expects($this->any())->method('setTagName')->with('input');
+        $mockTagBuilder->expects($this->atLeastOnce())->method('setTagName')->with('input');
         $this->viewHelper->injectTagBuilder($mockTagBuilder);
 
         $this->viewHelper->initialize();
@@ -55,10 +55,9 @@ class TextfieldViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\
     public function renderCorrectlySetsTypeNameAndValueAttributes()
     {
         $mockTagBuilder = $this->getMockBuilder(TagBuilder::class)->setMethods(array('setContent', 'render', 'addAttribute'))->getMock();
-        $mockTagBuilder->expects($this->at(0))->method('addAttribute')->with('type', 'text');
-        $mockTagBuilder->expects($this->at(1))->method('addAttribute')->with('name', 'NameOfTextfield');
+        $mockTagBuilder->expects($this->at(0))->method('addAttribute')->with('name', 'NameOfTextfield');
         $this->viewHelper->expects($this->once())->method('registerFieldNameForFormTokenGeneration')->with('NameOfTextfield');
-        $mockTagBuilder->expects($this->at(2))->method('addAttribute')->with('value', 'Current value');
+        $mockTagBuilder->expects($this->at(1))->method('addAttribute')->with('value', 'Current value');
         $mockTagBuilder->expects($this->once())->method('render');
         $this->viewHelper->injectTagBuilder($mockTagBuilder);
 

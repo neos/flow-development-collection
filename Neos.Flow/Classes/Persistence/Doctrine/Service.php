@@ -19,6 +19,7 @@ use Doctrine\DBAL\Migrations\Version;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Schema\Identifier;
 use Doctrine\DBAL\Schema\Schema;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\MappingException;
 use Doctrine\ORM\Tools\SchemaTool;
 use Doctrine\ORM\Tools\SchemaValidator;
@@ -50,7 +51,7 @@ class Service
 
     /**
      * @Flow\Inject(lazy = FALSE)
-     * @var \Doctrine\Common\Persistence\ObjectManager
+     * @var EntityManagerInterface
      */
     protected $entityManager;
 
@@ -209,7 +210,7 @@ class Service
 
         $databasePlatformName = $this->getDatabasePlatformName();
         /** @var PackageInterface $package */
-        foreach ($this->packageManager->getActivePackages() as $package) {
+        foreach ($this->packageManager->getAvailablePackages() as $package) {
             $path = Files::concatenatePaths([
                 $package->getPackagePath(),
                 'Migrations',
@@ -224,13 +225,11 @@ class Service
     }
 
     /**
-     * Returns the current migration status formatted as plain text.
+     * Returns the current migration status as an array.
      *
-     * @param boolean $showMigrations
-     * @param boolean $showDescriptions
-     * @return string
+     * @return array
      */
-    public function getMigrationStatus($showMigrations = false, $showDescriptions = false)
+    public function getMigrationStatus()
     {
         $configuration = $this->getMigrationConfiguration();
 
@@ -241,7 +240,7 @@ class Service
         $numExecutedUnavailableMigrations = count($executedUnavailableMigrations);
         $numNewMigrations = count(array_diff($availableMigrations, $executedMigrations));
 
-        $statusInformation = [
+        return [
             'Name' => $configuration->getName() ? $configuration->getName() : 'Doctrine Database Migrations',
             'Database Driver' => $configuration->getConnection()->getDriver()->getName(),
             'Database Name' => $configuration->getConnection()->getDatabase(),
@@ -259,7 +258,18 @@ class Service
             'Available Migrations' => count($availableMigrations),
             'New Migrations' => $numNewMigrations,
         ];
+    }
 
+    /**
+     * Returns a formatted string of current database migration status.
+     *
+     * @param boolean $showMigrations
+     * @param boolean $showDescriptions
+     * @return string
+     */
+    public function getFormattedMigrationStatus($showMigrations = false, $showDescriptions = false)
+    {
+        $statusInformation = $this->getMigrationStatus();
         $output = PHP_EOL . '<info>==</info> Configuration' . PHP_EOL;
 
         foreach ($statusInformation as $name => $value) {
@@ -273,6 +283,11 @@ class Service
         }
 
         if ($showMigrations) {
+            $configuration = $this->getMigrationConfiguration();
+
+            $executedMigrations = $configuration->getMigratedVersions();
+            $availableMigrations = $configuration->getAvailableVersions();
+            $executedUnavailableMigrations = array_diff($executedMigrations, $availableMigrations);
             if ($migrations = $configuration->getMigrations()) {
                 $docCommentParser = new DocCommentParser();
 

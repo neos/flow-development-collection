@@ -11,9 +11,9 @@ namespace Neos\Eel\Helper;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Eel\EvaluationException;
 use Neos\Eel\ProtectedContextAwareInterface;
+use Neos\Flow\Annotations as Flow;
 use Neos\Utility\Unicode\Functions as UnicodeFunctions;
 use Neos\Utility\Unicode\TextIterator;
 
@@ -42,6 +42,8 @@ class StringHelper implements ProtectedContextAwareInterface
      */
     public function substr($string, $start, $length = null)
     {
+        $string = (string)$string;
+
         if ($length === null) {
             $length = mb_strlen($string, 'UTF-8');
         }
@@ -66,6 +68,8 @@ class StringHelper implements ProtectedContextAwareInterface
      */
     public function substring($string, $start, $end = null)
     {
+        $string = (string)$string;
+
         if ($end === null) {
             $end = mb_strlen($string, 'UTF-8');
         }
@@ -96,7 +100,7 @@ class StringHelper implements ProtectedContextAwareInterface
         if ($index < 0) {
             return '';
         }
-        return mb_substr($string, $index, 1, 'UTF-8');
+        return mb_substr((string)$string, $index, 1, 'UTF-8');
     }
 
     /**
@@ -113,6 +117,8 @@ class StringHelper implements ProtectedContextAwareInterface
      */
     public function endsWith($string, $search, $position = null)
     {
+        $string = (string)$string;
+
         $position = $position !== null ? $position : mb_strlen($string, 'UTF-8');
         $position = $position - mb_strlen($search, 'UTF-8');
         return mb_strrpos($string, $search, null, 'UTF-8') === $position;
@@ -132,6 +138,8 @@ class StringHelper implements ProtectedContextAwareInterface
      */
     public function indexOf($string, $search, $fromIndex = null)
     {
+        $string = (string)$string;
+
         $fromIndex = max(0, $fromIndex);
         if ($search === '') {
             return min(mb_strlen($string, 'UTF-8'), $fromIndex);
@@ -157,6 +165,8 @@ class StringHelper implements ProtectedContextAwareInterface
      */
     public function lastIndexOf($string, $search, $toIndex = null)
     {
+        $string = (string)$string;
+
         $length = mb_strlen($string, 'UTF-8');
         if ($toIndex === null) {
             $toIndex = $length;
@@ -188,7 +198,32 @@ class StringHelper implements ProtectedContextAwareInterface
      */
     public function pregMatch($string, $pattern)
     {
-        $number = preg_match($pattern, $string, $matches);
+        $number = preg_match($pattern, (string)$string, $matches);
+        if ($number === false) {
+            throw new EvaluationException('Error evaluating regular expression ' . $pattern . ': ' . preg_last_error(), 1372793595);
+        }
+        if ($number === 0) {
+            return null;
+        }
+        return $matches;
+    }
+
+    /**
+     * Perform a global regular expression match (PREG style)
+     *
+     * Example::
+     *
+     *     String.pregMatchAll("<hr id="icon-one" /><hr id="icon-two" />", '/id="icon-(.+?)"/')
+     *       == [['id="icon-one"', 'id="icon-two"'],['one','two']]
+     *
+     * @param string $string The input string
+     * @param string $pattern A PREG pattern
+     * @return array The matches as array or NULL if not matched
+     * @throws EvaluationException
+     */
+    public function pregMatchAll($string, $pattern)
+    {
+        $number = preg_match_all($pattern, (string)$string, $matches);
         if ($number === false) {
             throw new EvaluationException('Error evaluating regular expression ' . $pattern . ': ' . preg_last_error(), 1372793595);
         }
@@ -213,7 +248,7 @@ class StringHelper implements ProtectedContextAwareInterface
      */
     public function pregReplace($string, $pattern, $replace)
     {
-        return preg_replace($pattern, $replace, $string);
+        return preg_replace($pattern, $replace, (string)$string);
     }
 
     /**
@@ -231,7 +266,7 @@ class StringHelper implements ProtectedContextAwareInterface
      */
     public function pregSplit($string, $pattern, $limit = null)
     {
-        return preg_split($pattern, $string, $limit);
+        return preg_split($pattern, (string)$string, $limit);
     }
 
     /**
@@ -250,7 +285,7 @@ class StringHelper implements ProtectedContextAwareInterface
      */
     public function replace($string, $search, $replace)
     {
-        return str_replace($search, $replace, $string);
+        return str_replace($search, $replace, (string)$string);
     }
 
     /**
@@ -270,6 +305,8 @@ class StringHelper implements ProtectedContextAwareInterface
      */
     public function split($string, $separator = null, $limit = null)
     {
+        $string = (string)$string;
+
         if ($separator === null) {
             return [$string];
         }
@@ -305,7 +342,7 @@ class StringHelper implements ProtectedContextAwareInterface
     public function startsWith($string, $search, $position = null)
     {
         $position = $position !== null ? $position : 0;
-        return mb_strpos($string, $search, null, 'UTF-8') === $position;
+        return mb_strpos((string)$string, $search, null, 'UTF-8') === $position;
     }
 
     /**
@@ -316,7 +353,7 @@ class StringHelper implements ProtectedContextAwareInterface
      */
     public function toLowerCase($string)
     {
-        return mb_strtolower($string, 'UTF-8');
+        return mb_strtolower((string)$string, 'UTF-8');
     }
 
     /**
@@ -327,7 +364,7 @@ class StringHelper implements ProtectedContextAwareInterface
      */
     public function toUpperCase($string)
     {
-        return mb_strtoupper($string, 'UTF-8');
+        return mb_strtoupper((string)$string, 'UTF-8');
     }
 
     /**
@@ -342,7 +379,7 @@ class StringHelper implements ProtectedContextAwareInterface
      */
     public function firstLetterToUpperCase($string)
     {
-        return UnicodeFunctions::ucfirst($string);
+        return UnicodeFunctions::ucfirst((string)$string);
     }
 
     /**
@@ -357,7 +394,7 @@ class StringHelper implements ProtectedContextAwareInterface
      */
     public function firstLetterToLowerCase($string)
     {
-        return UnicodeFunctions::lcfirst($string);
+        return UnicodeFunctions::lcfirst((string)$string);
     }
 
     /**
@@ -375,7 +412,7 @@ class StringHelper implements ProtectedContextAwareInterface
      */
     public function stripTags($string, $allowableTags = null)
     {
-        return strip_tags($string, $allowableTags);
+        return strip_tags((string)$string, $allowableTags);
     }
 
     /**
@@ -403,6 +440,8 @@ class StringHelper implements ProtectedContextAwareInterface
      */
     public function trim($string, $charlist = null)
     {
+        $string = (string)$string;
+
         if ($charlist === null) {
             return trim($string);
         } else {
@@ -453,7 +492,7 @@ class StringHelper implements ProtectedContextAwareInterface
      */
     public function toBoolean($string)
     {
-        return strtolower($string) === 'true' || (integer)$string === 1;
+        return strtolower((string)$string) === 'true' || (integer)$string === 1;
     }
 
     /**
@@ -464,7 +503,7 @@ class StringHelper implements ProtectedContextAwareInterface
      */
     public function rawUrlEncode($string)
     {
-        return rawurlencode($string);
+        return rawurlencode((string)$string);
     }
 
     /**
@@ -475,7 +514,7 @@ class StringHelper implements ProtectedContextAwareInterface
      */
     public function rawUrlDecode($string)
     {
-        return rawurldecode($string);
+        return rawurldecode((string)$string);
     }
 
     /**
@@ -487,7 +526,7 @@ class StringHelper implements ProtectedContextAwareInterface
      */
     public function htmlSpecialChars($string, $preserveEntities = false)
     {
-        return htmlspecialchars($string, null, null, !$preserveEntities);
+        return htmlspecialchars((string)$string, null, null, !$preserveEntities);
     }
 
     /**
@@ -500,6 +539,8 @@ class StringHelper implements ProtectedContextAwareInterface
      */
     public function crop($string, $maximumCharacters, $suffix = '')
     {
+        $string = (string)$string;
+
         if (UnicodeFunctions::strlen($string) > $maximumCharacters) {
             $string = UnicodeFunctions::substr($string, 0, $maximumCharacters);
             $string .= $suffix;
@@ -519,6 +560,8 @@ class StringHelper implements ProtectedContextAwareInterface
      */
     public function cropAtWord($string, $maximumCharacters, $suffix = '')
     {
+        $string = (string)$string;
+
         if (UnicodeFunctions::strlen($string) > $maximumCharacters) {
             $iterator = new TextIterator($string, TextIterator::WORD);
             $string = UnicodeFunctions::substr($string, 0, $iterator->preceding($maximumCharacters));
@@ -539,6 +582,8 @@ class StringHelper implements ProtectedContextAwareInterface
      */
     public function cropAtSentence($string, $maximumCharacters, $suffix = '')
     {
+        $string = (string)$string;
+
         if (UnicodeFunctions::strlen($string) > $maximumCharacters) {
             $iterator = new TextIterator($string, TextIterator::SENTENCE);
             $string = UnicodeFunctions::substr($string, 0, $iterator->preceding($maximumCharacters));
@@ -556,7 +601,7 @@ class StringHelper implements ProtectedContextAwareInterface
      */
     public function md5($string)
     {
-        return md5($string);
+        return md5((string)$string);
     }
 
     /**
@@ -567,7 +612,24 @@ class StringHelper implements ProtectedContextAwareInterface
      */
     public function length($string)
     {
-        return UnicodeFunctions::strlen($string);
+        return UnicodeFunctions::strlen((string)$string);
+    }
+
+    /**
+     * Return the count of words for a given string. Remove marks & digits and
+     * flatten all kind of whitespaces (tabs, new lines and multiple spaces)
+     * For example this helper can be utilized to calculate the reading time of an article.
+     *
+     * @param string $unicodeString The input string
+     * @return integer Number of words
+     */
+    public function wordCount($unicodeString)
+    {
+        $unicodeString = (string)$unicodeString;
+
+        $unicodeString = preg_replace('/[[:punct:][:digit:]]/', '', $unicodeString);
+
+        return count(preg_split('/[[:space:]]+/', $unicodeString, 0, PREG_SPLIT_NO_EMPTY));
     }
 
     /**

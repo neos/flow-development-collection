@@ -37,14 +37,27 @@ use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
  */
 class ExternalViewHelper extends AbstractViewHelper
 {
+
     /**
-     * @param string $uri target URI
-     * @param string $defaultScheme scheme the href attribute will be prefixed with if specified $uri does not contain a scheme already
+     * Arguments initialization
+     *
+     * @return void
+     */
+    public function initializeArguments()
+    {
+        $this->registerArgument('uri', 'string', 'target URI', true);
+        $this->registerArgument('defaultScheme', 'string', 'target URI', false, 'http');
+    }
+
+    /**
      * @return string Rendered URI
      * @api
      */
-    public function render($uri, $defaultScheme = 'http')
+    public function render()
     {
+        $uri = $this->arguments['uri'];
+        $defaultScheme = $this->arguments['defaultScheme'];
+
         $scheme = parse_url($uri, PHP_URL_SCHEME);
         if ($scheme === null && $defaultScheme !== '') {
             $uri = $defaultScheme . '://' . $uri;

@@ -179,6 +179,24 @@ class StringHelperTest extends UnitTestCase
         $this->assertSame($expected, $result);
     }
 
+    public function pregMatchAllExamples()
+    {
+        return [
+            'matches' => ['<hr id="icon-one" /><hr id="icon-two" />', '/id="icon-(.+?)"/', [['id="icon-one"', 'id="icon-two"'],['one','two']]]
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider pregMatchAllExamples
+     */
+    public function pregMatchAllWorks($string, $pattern, $expected)
+    {
+        $helper = new StringHelper();
+        $result = $helper->pregMatchAll($string, $pattern);
+        $this->assertSame($expected, $result);
+    }
+
     public function pregReplaceExamples()
     {
         return [
@@ -562,6 +580,31 @@ class StringHelperTest extends UnitTestCase
     {
         $helper = new StringHelper();
         $result = $helper->length($input);
+        $this->assertSame($expected, $result);
+    }
+
+    public function wordCountExamples()
+    {
+        return [
+            'null' => [null, 0],
+            'empty' => ['', 0],
+            'non-empty' =>
+                [
+                    'Hello	  	fri3nd,	you\'re
+                    looking          good 	 tod@y!', 6
+                ],
+            'UTF-8' => ['Cäche Flüsh', 2]
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider wordCountExamples
+     */
+    public function wordCountWorks($input, $expected)
+    {
+        $helper = new StringHelper();
+        $result = $helper->wordCount($input);
         $this->assertSame($expected, $result);
     }
 }

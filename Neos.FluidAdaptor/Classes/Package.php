@@ -15,7 +15,9 @@ use Neos\Flow\Cache\CacheManager;
 use Neos\Flow\Core\Booting\Sequence;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Monitor\FileMonitor;
+use Neos\Flow\Package\FlowPackageInterface;
 use Neos\Flow\Package\Package as BasePackage;
+use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Package\PackageManagerInterface;
 
 /**
@@ -45,7 +47,11 @@ class Package extends BasePackage
                 if ($step->getIdentifier() === 'neos.flow:systemfilemonitor') {
                     $templateFileMonitor = FileMonitor::createFileMonitorAtBoot('Fluid_TemplateFiles', $bootstrap);
                     $packageManager = $bootstrap->getEarlyInstance(PackageManagerInterface::class);
-                    foreach ($packageManager->getActivePackages() as $packageKey => $package) {
+                    /**
+                     * @var PackageManager $packageKey
+                     * @var FlowPackageInterface $package
+                     */
+                    foreach ($packageManager->getFlowPackages() as $packageKey => $package) {
                         if ($packageManager->isPackageFrozen($packageKey)) {
                             continue;
                         }

@@ -39,7 +39,7 @@ Installing Flow
 Setting up Flow is pretty straight-forward. As a minimum requirement you will need:
 
 * A web server (we recommend Apache with the *mod_rewrite* module enabled)
-* PHP 7.0.0 or later
+* PHP 7.1.0 or later
 * A database supported by Doctrine DBAL, such as MySQL
 * Command line access
 
@@ -62,7 +62,7 @@ Then use Composer in a directory which will be accessible by your web server to 
 and install all packages of the Flow Base Distribution. The following command will
 clone the latest version, include development dependencies and keep git metadata for future use::
 
- composer create-project --dev --keep-vcs neos/flow-base-distribution Quickstart
+ composer create-project --keep-vcs neos/flow-base-distribution Quickstart
 
 You will end up with a directory structure like this:
 
@@ -708,8 +708,8 @@ argument::
         $this->redirect('index');
     }
 
-Although this method looks quite similar to the ``showAction``, there is an important
-difference you should be aware of: The parameter passed to the ``showAction``
+Although this method looks quite similar to the ``createAction``, there is an important
+difference you should be aware of: The parameter passed to the ``updateAction``
 is an already existing (that is, already *persisted*) coffee bean object with the
 modifications submitted by the user already applied.
 

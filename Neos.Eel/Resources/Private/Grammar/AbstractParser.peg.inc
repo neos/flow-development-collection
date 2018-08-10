@@ -12,7 +12,7 @@ namespace Neos\Eel;
  * source code.
  */
 
-require_once __DIR__ . '/../../../Resources/Private/PHP/php-peg/Parser.php';
+require_once __DIR__ . '/../Resources/Private/PHP/php-peg/Parser.php';
 
 /*!* !insert_autogen_warning */
 
@@ -42,6 +42,7 @@ StringLiteral: SingleQuotedStringLiteral | DoubleQuotedStringLiteral
 BooleanLiteral: 'true' | 'TRUE' | 'false' | 'FALSE'
 
 Identifier: / [a-zA-Z_] [a-zA-Z0-9_\-]* /
+PropertyPath: Identifier ( '.' Identifier )*
 */
 
 

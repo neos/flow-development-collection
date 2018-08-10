@@ -12,6 +12,8 @@ namespace Neos\FluidAdaptor\ViewHelpers\Format;
  */
 
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
+use TYPO3Fluid\Fluid\Core\Compiler\TemplateCompiler;
+use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\ViewHelperNode;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 
 /**
@@ -52,38 +54,55 @@ class Base64DecodeViewHelper extends AbstractViewHelper
     protected $escapeOutput = false;
 
     /**
-     * Converts all HTML entities to their applicable characters as needed using PHPs html_entity_decode() function.
+     * Initialize the arguments.
      *
-     * @param string $value string to format
-     * @param boolean $keepQuotes if TRUE, single and double quotes won't be replaced (sets ENT_NOQUOTES flag)
-     * @param string $encoding
-     * @return string the altered string
-     * @see http://www.php.net/html_entity_decode
+     * @return void
      * @api
      */
-    public function render($value = null, $keepQuotes = false, $encoding = 'UTF-8')
+    public function initializeArguments()
     {
-        return self::renderStatic(array('value' => $value, 'keepQuotes' => $keepQuotes, 'encoding' => $encoding), $this->buildRenderChildrenClosure(), $this->renderingContext);
+        $this->registerArgument('value', 'string', 'string to format', false, null);
     }
 
     /**
-     * Applies base64_decode() on the specified value.
+     * Converts all HTML entities to their applicable characters as needed using PHPs html_entity_decode() function.
      *
-     * @param array $arguments
-     * @param \Closure $renderChildrenClosure
-     * @param RenderingContextInterface $renderingContext
-     * @return string
+     * @return string the altered string
+     * @api
      */
-    public static function renderStatic(array $arguments, \Closure $renderChildrenClosure, RenderingContextInterface $renderingContext)
+    public function render()
     {
-        $value = $arguments['value'];
+        $value = $this->arguments['value'];
         if ($value === null) {
-            $value = $renderChildrenClosure();
+            $value = $this->renderChildren();
         }
         if (!is_string($value) && !(is_object($value) && method_exists($value, '__toString'))) {
             return $value;
         }
 
         return base64_decode($value);
+    }
+
+    /**
+     * This ViewHelper is used whenever something was wrappded in CDATA
+     * Therefore we render it to raw PHP code during compilation.
+     *
+     * @param string $argumentsName
+     * @param string $closureName
+     * @param string $initializationPhpCode
+     * @param ViewHelperNode $node
+     * @param TemplateCompiler $compiler
+     * @return string
+     * @see \Neos\FluidAdaptor\Core\Parser\TemplateProcessor\NamespaceDetectionTemplateProcessor::protectCDataSectionsFromParser
+     */
+    public function compile($argumentsName, $closureName, &$initializationPhpCode, ViewHelperNode $node, TemplateCompiler $compiler)
+    {
+        $valueVariableName = $compiler->variableName('value');
+        $initializationPhpCode .= sprintf('%1$s = (%2$s[\'value\'] !== NULL ? %2$s[\'value\'] : %3$s());', $valueVariableName, $argumentsName, $closureName) . chr(10);
+
+        return sprintf(
+            '!is_string(%1$s) && !(is_object(%1$s) && method_exists(%1$s, \'__toString\')) ? %1$s : base64_decode(%1$s)',
+            $valueVariableName
+        );
     }
 }

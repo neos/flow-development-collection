@@ -261,6 +261,18 @@ For these cases it is possible to whitelist specific objects via the Persistence
 Be very careful and think twice before using this method since many security measures are
 not active during "safe" request methods.
 
+Dealing with big result sets
+----------------------------
+
+If the amount of the stored data increases, receiving all objects using a ``findAll()`` may
+consume a lot more memory than available. In this cases, you can use the ``findAllIterator()``.
+This method returns an ``IterableResult``over which you can iterate, getting only one object at a time::
+
+    $iterator = $this->postRepository->findAllIterator();
+    foreach ($this->postRepository->iterate($iterator) as $post) {
+        // Iterate over all posts
+    }
+
 Conventions for File and Class Names
 ====================================
 
@@ -615,6 +627,21 @@ Flow allows you to enable and configure the second level cache through the confi
               'my_entity_region': 7200
 
 .. [#doctrineSecondLevelCache] http://docs.doctrine-project.org/en/latest/reference/second-level-cache.html
+
+Customizing Doctrine EntityManager
+----------------------------------
+
+For any cases that are not covered with the above options, Flow provides two convenient signals
+to hook into the setup of the doctrine EntityManager.
+The `beforeDoctrineEntityManagerCreation` signal provides you with the DBAL connection, the
+doctrine configuration and EventManager classes, that you can change before the actual
+EntityManager is instanciated.
+The `afterDoctrineEntityManagerCreation` signal provides the doctrine configuration and
+EntityManager instance, in order to to further set options.
+
+.. note:: All above configuration options through the settings are actually implemented as slots to the
+  before mentioned signals. If you want to take some look how this works, check the
+  `Neos\Flow\Persistence\Doctrine\EntityManagerConfiguration` class.
 
 Differences between Flow and plain Doctrine
 -------------------------------------------

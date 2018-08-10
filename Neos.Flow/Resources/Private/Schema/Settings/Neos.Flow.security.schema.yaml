@@ -9,13 +9,13 @@ properties:
       'rejectAll': { type: boolean, required: TRUE }
       'filters':
         type: dictionary
-        items:
+        additionalProperties:
           type: dictionary
           additionalProperties: FALSE
           properties:
             'pattern': { type: string, required: TRUE }
             'patternOptions': { type: dictionary }
-            'interceptor': { type: string, required: TRUE, enum: ['AccessGrant', 'AccessDeny'] }
+            'interceptor': { type: string, required: TRUE }
 
   'authentication':
     type: dictionary
@@ -36,12 +36,16 @@ properties:
             'requestPatterns':
               type: dictionary
               additionalProperties:
-                type: [dictionary, 'null']
                 required: TRUE
-                additionalProperties: FALSE
-                properties:
-                  'pattern': { type: string, required: TRUE }
-                  'patternOptions': { type: dictionary }
+                type:
+                  -
+                    type: 'null'
+                  -
+                    type: 'dictionary'
+                    additionalProperties: FALSE
+                    properties:
+                      'pattern': { type: string, required: TRUE }
+                      'patternOptions': { type: dictionary }
             'entryPoint': { type: string }
             'entryPointOptions': { type: dictionary }
             'token': { type: string, format: class-name }

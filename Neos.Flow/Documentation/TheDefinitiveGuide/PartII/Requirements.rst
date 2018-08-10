@@ -25,14 +25,15 @@ enabled.
 	local security policy `Local Policies > User Rights Assignments > Create symbolic links`
 
 Flow's persistence mechanism requires a `database supported by Doctrine DBAL
-<http://www.doctrine-project.org/projects/dbal.html>`_.
+<http://www.doctrine-project.org/projects/dbal.html>`_. Make sure to use at least 10.2.2
+for MariaDB, and 5.7.7 when using MySQL.
 
 PHP
 ===
 
 Flow was one of the first PHP projects taking advantage of namespaces and
 other features introduced in PHP version 5.3. By now we started using features of
-PHP 7.0, so make sure you have **PHP 7.0.0** or later available on your web server. Make
+PHP 7.1, so make sure you have **PHP 7.1.0** or later available on your web server. Make
 sure your PHP CLI binary is the **same version**!
 
 The default settings and extensions of the PHP distribution should work fine

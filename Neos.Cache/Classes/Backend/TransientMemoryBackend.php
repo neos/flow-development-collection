@@ -13,7 +13,6 @@ namespace Neos\Cache\Backend;
 
 use Neos\Cache\Backend\AbstractBackend as IndependentAbstractBackend;
 use Neos\Cache\Exception;
-use Neos\Cache\Exception\InvalidDataException;
 use Neos\Cache\Frontend\FrontendInterface;
 
 /**
@@ -41,18 +40,16 @@ class TransientMemoryBackend extends IndependentAbstractBackend implements Tagga
      * @param array $tags Tags to associate with this cache entry
      * @param integer $lifetime Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited liftime.
      * @return void
-     * @throws InvalidDataException
      * @throws Exception if no cache frontend has been set.
      * @api
      */
-    public function set($entryIdentifier, $data, array $tags = [], $lifetime = null)
+    public function set(string $entryIdentifier, string $data, array $tags = [], int $lifetime = null)
     {
         if (!$this->cache instanceof FrontendInterface) {
             throw new Exception('No cache frontend has been set yet via setCache().', 1238244992);
         }
-        if (!is_string($data)) {
-            throw new InvalidDataException('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1238244993);
-        }
+
+
         $this->entries[$entryIdentifier] = $data;
         foreach ($tags as $tag) {
             $this->tagsAndEntries[$tag][$entryIdentifier] = true;
@@ -66,9 +63,9 @@ class TransientMemoryBackend extends IndependentAbstractBackend implements Tagga
      * @return mixed The cache entry's content as a string or FALSE if the cache entry could not be loaded
      * @api
      */
-    public function get($entryIdentifier)
+    public function get(string $entryIdentifier)
     {
-        return (isset($this->entries[$entryIdentifier])) ? $this->entries[$entryIdentifier] : false;
+        return $this->entries[$entryIdentifier] ?? false;
     }
 
     /**
@@ -78,7 +75,7 @@ class TransientMemoryBackend extends IndependentAbstractBackend implements Tagga
      * @return boolean TRUE if such an entry exists, FALSE if not
      * @api
      */
-    public function has($entryIdentifier)
+    public function has(string $entryIdentifier): bool
     {
         return isset($this->entries[$entryIdentifier]);
     }
@@ -90,19 +87,18 @@ class TransientMemoryBackend extends IndependentAbstractBackend implements Tagga
      * @return boolean TRUE if the entry could be removed or FALSE if no entry was found
      * @api
      */
-    public function remove($entryIdentifier)
+    public function remove(string $entryIdentifier): bool
     {
-        if (isset($this->entries[$entryIdentifier])) {
-            unset($this->entries[$entryIdentifier]);
-            foreach (array_keys($this->tagsAndEntries) as $tag) {
-                if (isset($this->tagsAndEntries[$tag][$entryIdentifier])) {
-                    unset($this->tagsAndEntries[$tag][$entryIdentifier]);
-                }
-            }
-            return true;
-        } else {
+        if (!isset($this->entries[$entryIdentifier])) {
             return false;
         }
+        unset($this->entries[$entryIdentifier]);
+        foreach (array_keys($this->tagsAndEntries) as $tag) {
+            if (isset($this->tagsAndEntries[$tag][$entryIdentifier])) {
+                unset($this->tagsAndEntries[$tag][$entryIdentifier]);
+            }
+        }
+        return true;
     }
 
     /**
@@ -113,13 +109,12 @@ class TransientMemoryBackend extends IndependentAbstractBackend implements Tagga
      * @return array An array with identifiers of all matching entries. An empty array if no entries matched
      * @api
      */
-    public function findIdentifiersByTag($tag)
+    public function findIdentifiersByTag(string $tag): array
     {
         if (isset($this->tagsAndEntries[$tag])) {
             return array_keys($this->tagsAndEntries[$tag]);
-        } else {
-            return [];
         }
+        return [];
     }
 
     /**
@@ -141,7 +136,7 @@ class TransientMemoryBackend extends IndependentAbstractBackend implements Tagga
      * @return integer The number of entries which have been affected by this flush
      * @api
      */
-    public function flushByTag($tag)
+    public function flushByTag(string $tag): int
     {
         $identifiers = $this->findIdentifiersByTag($tag);
         foreach ($identifiers as $identifier) {

@@ -54,7 +54,7 @@ class PointcutFilterComposite implements PointcutFilterInterface
      * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
      * @return boolean TRUE if class and method match the pattern, otherwise FALSE
      */
-    public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier)
+    public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier): bool
     {
         $this->runtimeEvaluationsDefinition = [];
         $matches = true;
@@ -122,7 +122,7 @@ class PointcutFilterComposite implements PointcutFilterInterface
      * @param PointcutFilterInterface $filter A configured class filter
      * @return void
      */
-    public function addFilter($operator, PointcutFilterInterface $filter)
+    public function addFilter($operator, PointcutFilterInterface $filter): void
     {
         $this->filters[] = [$operator, $filter];
         if ($operator !== '&&' && $operator !== '&&!') {
@@ -157,7 +157,7 @@ class PointcutFilterComposite implements PointcutFilterInterface
      * @param array $runtimeEvaluations Runtime evaluations to be added
      * @return void
      */
-    public function setGlobalRuntimeEvaluationsDefinition(array $runtimeEvaluations)
+    public function setGlobalRuntimeEvaluationsDefinition(array $runtimeEvaluations): void
     {
         $this->globalRuntimeEvaluationsDefinition = $runtimeEvaluations;
     }
@@ -173,14 +173,14 @@ class PointcutFilterComposite implements PointcutFilterInterface
         $conditionCode = $this->buildRuntimeEvaluationsConditionCode('', $this->getRuntimeEvaluationsDefinition(), $useGlobalObjects);
 
         if ($conditionCode !== '') {
-            $code = "\n\t\t\t\t\t\tfunction(\\Neos\\Flow\\Aop\\JoinPointInterface \$joinPoint, \$objectManager) {\n" .
-                    "\t\t\t\t\t\t\t\$currentObject = \$joinPoint->getProxy();\n";
+            $code = "function(\\Neos\\Flow\\Aop\\JoinPointInterface \$joinPoint, \$objectManager) {\n" .
+                    "    \$currentObject = \$joinPoint->getProxy();\n";
             if ($useGlobalObjects) {
-                $code .= "\t\t\t\t\t\t\t\$globalObjectNames = \$objectManager->getSettingsByPath(array('Neos', 'Flow', 'aop', 'globalObjects'));\n";
-                $code .= "\t\t\t\t\t\t\t\$globalObjects = array_map(function(\$objectName) use (\$objectManager) { return \$objectManager->get(\$objectName); }, \$globalObjectNames);\n";
+                $code .= "    \$globalObjectNames = \$objectManager->getSettingsByPath(array('Neos', 'Flow', 'aop', 'globalObjects'));\n";
+                $code .= "    \$globalObjects = array_map(function(\$objectName) use (\$objectManager) { return \$objectManager->get(\$objectName); }, \$globalObjectNames);\n";
             }
-            $code .= "\t\t\t\t\t\t\treturn " . $conditionCode . ';' .
-                    "\n\t\t\t\t\t\t}";
+            $code .= "    return " . $conditionCode . ';' .
+                    "\n}";
             return $code;
         } else {
             return 'NULL';

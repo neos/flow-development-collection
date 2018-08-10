@@ -143,12 +143,15 @@ class ArrayHelper implements ProtectedContextAwareInterface
     }
 
     /**
-     * @param array $array
-     * @param mixed $searchElement
-     * @param integer $fromIndex
-     * @return mixed
+     * Returns the first index at which a given element can be found in the array,
+     * or -1 if it is not present
+     *
+     * @param array $array The array
+     * @param mixed $searchElement The element value to find
+     * @param int $fromIndex Position in the array to start the search.
+     * @return int
      */
-    public function indexOf(array $array, $searchElement, $fromIndex = null)
+    public function indexOf(array $array, $searchElement, $fromIndex = null): int
     {
         if ($fromIndex !== null) {
             $array = array_slice($array, $fromIndex, null, true);
@@ -345,6 +348,22 @@ class ArrayHelper implements ProtectedContextAwareInterface
     public function flip(array $array)
     {
         return array_flip($array);
+    }
+
+    /**
+     * Create an array containing a range of elements
+     *
+     * If a step value is given, it will be used as the increment between elements in the sequence.
+     * step should be given as a positive number. If not specified, step will default to 1.
+     *
+     * @param mixed $start First value of the sequence.
+     * @param mixed $end The sequence is ended upon reaching the end value.
+     * @param integer $step The increment between items, will default to 1.
+     * @return array Array of elements from start to end, inclusive.
+     */
+    public function range($start, $end, $step = 1)
+    {
+        return range($start, $end, $step);
     }
 
     /**

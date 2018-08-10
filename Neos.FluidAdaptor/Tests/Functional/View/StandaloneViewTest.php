@@ -11,7 +11,6 @@ namespace Neos\FluidAdaptor\Tests\Functional\View;
  * source code.
  */
 
-use Neos\FluidAdaptor\View\TemplatePaths;
 use Neos\Flow\Cache\CacheManager;
 use Neos\Flow\Http\Request;
 use Neos\Flow\Http\Uri;
@@ -35,7 +34,7 @@ class StandaloneViewTest extends FunctionalTestCase
      * $standaloneViewNonce is initialized to some random value which is used inside
      * an overridden version of StandaloneView::createIdentifierForFile.
      */
-    public function runBare()
+    public function runBare(): void
     {
         $this->standaloneViewNonce = uniqid();
         parent::runBare();

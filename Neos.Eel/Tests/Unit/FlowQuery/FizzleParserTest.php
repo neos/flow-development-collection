@@ -50,20 +50,22 @@ class FizzleParserTest extends \Neos\Flow\Tests\UnitTestCase
         $parser->assertMatches('Filter', 'foo[baz]');
         $parser->assertMatches('Filter', 'foo[baz][bar]');
         $parser->assertMatches('Filter', 'foo[baz]');
+        $parser->assertMatches('Filter', 'foo[bar.baz]');
         $parser->assertMatches('Filter', '[baz][foo="asdf"]');
 
         $actual = $parser->match('Filter', 'foo[baz][foo  =  asdf]');
         $this->assertSame('foo', $actual['PropertyNameFilter']);
 
         $this->assertSame('[baz]', $actual['AttributeFilters'][0]['text']);
-        $this->assertSame('baz', $actual['AttributeFilters'][0]['Identifier']);
+        $this->assertSame('baz', $actual['AttributeFilters'][0]['PropertyPath']);
         $this->assertSame('[foo  =  asdf]', $actual['AttributeFilters'][1]['text']);
-        $this->assertSame('foo', $actual['AttributeFilters'][1]['Identifier']);
+        $this->assertSame('foo', $actual['AttributeFilters'][1]['PropertyPath']);
         $this->assertSame('=', $actual['AttributeFilters'][1]['Operator']);
         $this->assertSame('asdf', $actual['AttributeFilters'][1]['Operand']);
 
         $actual = $parser->match('Filter', '[baz]');
-        $this->assertSame('baz', $actual['AttributeFilters'][0]['Identifier']);
+        $this->assertSame('baz', $actual['AttributeFilters'][0]['PropertyPath']);
+        $this->assertSame('baz', $actual['AttributeFilters'][0]['Identifier'], 'Identifier key is added for compatibility');
 
         $parser->assertDoesntMatch('Filter', '*');
     }

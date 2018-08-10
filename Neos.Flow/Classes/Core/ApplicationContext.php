@@ -60,15 +60,12 @@ class ApplicationContext
      * @param string $contextString
      * @throws FlowException if the parent context is none of "Development", "Production" or "Testing"
      */
-    public function __construct($contextString)
+    public function __construct(string $contextString)
     {
-        if (strstr($contextString, '/') === false) {
-            $this->rootContextString = $contextString;
-            $this->parentContext = null;
-        } else {
-            $contextStringParts = explode('/', $contextString);
-            $this->rootContextString = $contextStringParts[0];
-            array_pop($contextStringParts);
+        $contextStringParts = explode('/', $contextString);
+        $this->rootContextString = reset($contextStringParts);
+        array_pop($contextStringParts);
+        if ($contextStringParts !== []) {
             $this->parentContext = new ApplicationContext(implode('/', $contextStringParts));
         }
 
@@ -85,7 +82,7 @@ class ApplicationContext
      * @return string
      * @api
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->contextString;
     }
@@ -96,7 +93,7 @@ class ApplicationContext
      * @return boolean
      * @api
      */
-    public function isDevelopment()
+    public function isDevelopment(): bool
     {
         return ($this->rootContextString === 'Development');
     }
@@ -108,7 +105,7 @@ class ApplicationContext
      * @api
      */
 
-    public function isProduction()
+    public function isProduction(): bool
     {
         return ($this->rootContextString === 'Production');
     }
@@ -119,7 +116,7 @@ class ApplicationContext
      * @return boolean
      * @api
      */
-    public function isTesting()
+    public function isTesting(): bool
     {
         return ($this->rootContextString === 'Testing');
     }

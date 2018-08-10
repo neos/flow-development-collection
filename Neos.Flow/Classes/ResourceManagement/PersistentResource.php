@@ -14,7 +14,6 @@ namespace Neos\Flow\ResourceManagement;
 use Doctrine\ORM\Mapping as ORM;
 use Neos\Flow\Annotations as Flow;
 use Neos\Cache\CacheAwareInterface;
-use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Utility\Environment;
 use Neos\Utility;
@@ -112,12 +111,6 @@ class PersistentResource implements ResourceMetaDataInterface, CacheAwareInterfa
      * @var ResourceManager
      */
     protected $resourceManager;
-
-    /**
-     * @Flow\Inject
-     * @var SystemLoggerInterface
-     */
-    protected $systemLogger;
 
     /**
      * @Flow\Inject
@@ -463,7 +456,7 @@ class PersistentResource implements ResourceMetaDataInterface, CacheAwareInterfa
      *
      * @return string
      */
-    public function getCacheEntryIdentifier()
+    public function getCacheEntryIdentifier(): string
     {
         return $this->sha1;
     }

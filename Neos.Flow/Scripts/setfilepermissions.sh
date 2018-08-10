@@ -68,6 +68,16 @@ echo "Note: Access Control Lists seem not to be supported by your system."
 echo
 echo "Setting file permissions per file, this might take a while ..."
 
+# Check that command line user is a member of the webserver group
+
+if id -nG "$COMMANDLINE_USER" | grep -qw "$WEBSERVER_GROUP"; then
+  echo "User is a member of the webserver group $WEBSERVER_GROUP, continuing"
+else
+  echo "User is not a member of the webserver group $WEBSERVER_GROUP, exiting"
+  echo
+  exit 1;
+fi
+
 sudo chown -R ${COMMANDLINE_USER}:${WEBSERVER_GROUP} .
 find . -type d -exec sudo chmod 2770 {} \;
 find . -type f \! \( -name commit-msg -or -name '*.sh' \) -exec sudo chmod 660 {} \;

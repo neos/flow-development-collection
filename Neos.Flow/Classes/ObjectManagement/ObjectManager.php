@@ -14,11 +14,12 @@ namespace Neos\Flow\ObjectManagement;
 use Neos\Flow\ObjectManagement\Configuration\Configuration as ObjectConfiguration;
 use Neos\Flow\ObjectManagement\Configuration\ConfigurationArgument as ObjectConfigurationArgument;
 use Neos\Flow\Core\ApplicationContext;
-use Doctrine\ORM\Mapping as ORM;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ObjectManagement\DependencyInjection\DependencyProxy;
 use Neos\Flow\Security\Context;
 use Neos\Utility\Arrays;
+use Neos\Utility\ObjectAccess;
+use Psr\Container\ContainerInterface;
 
 /**
  * Object Manager
@@ -148,6 +149,18 @@ class ObjectManager implements ObjectManagerInterface
             throw new \InvalidArgumentException('Object names must not start with a backslash ("' . $objectName . '")', 1270827335);
         }
         return false;
+    }
+
+    /**
+     * Returns true if the container can return an entry for the given identifier.
+     * Returns false otherwise.
+     *
+     * @param string $objectName
+     * @return bool
+     */
+    public function has($objectName)
+    {
+        return $this->isRegistered($objectName);
     }
 
     /**
@@ -530,18 +543,7 @@ class ObjectManager implements ObjectManagerInterface
         }
 
         try {
-            switch (count($arguments)) {
-                case 0: $object = new $className(); break;
-                case 1: $object = new $className($arguments[0]); break;
-                case 2: $object = new $className($arguments[0], $arguments[1]); break;
-                case 3: $object = new $className($arguments[0], $arguments[1], $arguments[2]); break;
-                case 4: $object = new $className($arguments[0], $arguments[1], $arguments[2], $arguments[3]); break;
-                case 5: $object = new $className($arguments[0], $arguments[1], $arguments[2], $arguments[3], $arguments[4]); break;
-                case 6: $object = new $className($arguments[0], $arguments[1], $arguments[2], $arguments[3], $arguments[4], $arguments[5]); break;
-                default:
-                    $class = new \ReflectionClass($className);
-                    $object =  $class->newInstanceArgs($arguments);
-            }
+            $object = ObjectAccess::instantiateClass($className, $arguments);
             unset($this->classesBeingInstantiated[$className]);
             return $object;
         } catch (\Exception $exception) {

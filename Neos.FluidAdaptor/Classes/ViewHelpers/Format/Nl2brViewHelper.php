@@ -11,6 +11,8 @@ namespace Neos\FluidAdaptor\ViewHelpers\Format;
  * source code.
  */
 
+use TYPO3Fluid\Fluid\Core\Compiler\TemplateCompiler;
+use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\ViewHelperNode;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 
@@ -45,32 +47,48 @@ class Nl2brViewHelper extends AbstractViewHelper
     protected $escapeOutput = false;
 
     /**
-     * Replaces newline characters by HTML line breaks.
+     * Initialize the arguments.
      *
-     * @param string $value string to format
-     * @return string the altered string.
+     * @return void
      * @api
      */
-    public function render($value = null)
+    public function initializeArguments()
     {
-        return self::renderStatic(array('value' => $value), $this->buildRenderChildrenClosure(), $this->renderingContext);
+        $this->registerArgument('value', 'string', 'string to format', false, null);
     }
 
     /**
-     * Applies nl2br() on the specified value.
+     * Replaces newline characters by HTML line breaks.
      *
-     * @param array $arguments
-     * @param \Closure $renderChildrenClosure
-     * @param RenderingContextInterface $renderingContext
-     * @return string
+     * @return string the altered string.
+     * @api
      */
-    public static function renderStatic(array $arguments, \Closure $renderChildrenClosure, RenderingContextInterface $renderingContext)
+    public function render()
     {
-        $value = $arguments['value'];
+        $value = $this->arguments['value'];
+
         if ($value === null) {
-            $value = $renderChildrenClosure();
+            $value = $this->renderChildren();
         }
 
         return nl2br($value);
+    }
+
+    /**
+     * Compile to direct nl2br use in template code.
+     *
+     * @param string $argumentsName
+     * @param string $closureName
+     * @param string $initializationPhpCode
+     * @param ViewHelperNode $node
+     * @param TemplateCompiler $compiler
+     * @return string
+     */
+    public function compile($argumentsName, $closureName, &$initializationPhpCode, ViewHelperNode $node, TemplateCompiler $compiler)
+    {
+        $valueVariableName = $compiler->variableName('value');
+        $initializationPhpCode .= sprintf('%1$s = (%2$s[\'value\'] !== null ? %2$s[\'value\'] : %3$s());', $valueVariableName, $argumentsName, $closureName) . chr(10);
+
+        return sprintf('nl2br(%1$s)', $valueVariableName);
     }
 }

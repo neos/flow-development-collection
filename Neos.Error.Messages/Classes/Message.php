@@ -39,7 +39,7 @@ class Message
      * The error code.
      * @var integer
      */
-    protected $code = null;
+    protected $code = 0;
 
     /**
      * The message arguments. Will be replaced in the message body.
@@ -57,12 +57,12 @@ class Message
      * Constructs this error
      *
      * @param string $message An english error message which is used if no other error message can be resolved
-     * @param integer $code A unique error code
+     * @param integer|null $code A unique error code
      * @param array $arguments Array of arguments to be replaced in message
-     * @param string $title optional title for the message
+     * @param string|null $title optional title for the message
      * @api
      */
-    public function __construct($message, $code = null, array $arguments = [], $title = '')
+    public function __construct(string $message, int $code = null, array $arguments = [], $title = '')
     {
         $this->message = $message;
         $this->code = $code;
@@ -76,15 +76,24 @@ class Message
      * @return string The error message
      * @api
      */
-    public function getMessage()
+    public function getMessage(): string
     {
         return $this->message;
     }
 
     /**
+     * @return bool
+     * @api
+     */
+    public function hasCode(): bool
+    {
+        return $this->code !== null;
+    }
+
+    /**
      * Returns the error code
      *
-     * @return integer The error code
+     * @return integer|null The error code
      * @api
      */
     public function getCode()
@@ -96,13 +105,22 @@ class Message
      * @return array
      * @api
      */
-    public function getArguments()
+    public function getArguments(): array
     {
         return $this->arguments;
     }
 
     /**
-     * @return string
+     * @return bool
+     * @api
+     */
+    public function hasTitle(): bool
+    {
+        return $this->title !== null && $this->title !== '';
+    }
+
+    /**
+     * @return string|null
      * @api
      */
     public function getTitle()
@@ -114,7 +132,7 @@ class Message
      * @return string
      * @api
      */
-    public function getSeverity()
+    public function getSeverity(): string
     {
         return $this->severity;
     }
@@ -122,7 +140,7 @@ class Message
     /**
      * @return string
      */
-    public function render()
+    public function render(): string
     {
         if ($this->arguments !== []) {
             return vsprintf($this->message, $this->arguments);
@@ -137,7 +155,7 @@ class Message
      * @return string
      * @api
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->render();
     }

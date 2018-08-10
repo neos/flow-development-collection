@@ -54,7 +54,7 @@ EOD;
     /**
      * Formats and echoes the exception as XHTML.
      *
-     * @param object $exception \Exception or \Throwable
+     * @param \Throwable $exception
      * @return void
      */
     protected function echoExceptionWeb($exception)
@@ -86,10 +86,10 @@ EOD;
      * Returns the statically rendered exception message
      *
      * @param integer $statusCode
-     * @param object $exception \Exception or \Throwable
+     * @param \Throwable $exception
      * @return void
      */
-    protected function renderStatically($statusCode, $exception)
+    protected function renderStatically(int $statusCode, \Throwable $exception)
     {
         $statusMessage = Response::getStatusMessageByCode($statusCode);
         $exceptionHeader = '<div class="Flow-Debug-Exception-Header">';

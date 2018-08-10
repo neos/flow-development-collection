@@ -134,7 +134,7 @@ class CacheCommandController extends CommandController
      * @see neos.flow:package:freeze
      * @see neos.flow:package:refreeze
      */
-    public function flushCommand($force = false)
+    public function flushCommand(bool $force = false)
     {
 
         // Internal note: the $force option is evaluated early in the Flow
@@ -149,7 +149,7 @@ class CacheCommandController extends CommandController
         }
 
         $frozenPackages = [];
-        foreach (array_keys($this->packageManager->getActivePackages()) as $packageKey) {
+        foreach (array_keys($this->packageManager->getAvailablePackages()) as $packageKey) {
             if ($this->packageManager->isPackageFrozen($packageKey)) {
                 $frozenPackages[] = $packageKey;
             }
@@ -184,7 +184,7 @@ class CacheCommandController extends CommandController
      * @see neos.flow:cache:flush
      * @see neos.flow:configuration:show
      */
-    public function flushOneCommand($identifier)
+    public function flushOneCommand(string $identifier)
     {
         if (!$this->cacheManager->hasCache($identifier)) {
             $this->outputLine('The cache "%s" does not exist.', [$identifier]);
@@ -235,7 +235,7 @@ class CacheCommandController extends CommandController
      * @param integer $address
      * @return void
      */
-    public function sysCommand($address)
+    public function sysCommand(int $address)
     {
         if ($address === 64738) {
             $this->cacheManager->flushCaches();

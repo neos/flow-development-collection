@@ -17,7 +17,7 @@ use Neos\Utility\Files;
 /**
  * Testcase for the Utility Files class
  */
-class FilesTest extends \PHPUnit_Framework_TestCase
+class FilesTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var string
@@ -38,6 +38,25 @@ class FilesTest extends \PHPUnit_Framework_TestCase
     public function tearDown()
     {
         Files::removeDirectoryRecursively($this->temporaryDirectory);
+    }
+
+    /**
+     * @param string $target
+     * @param string $link
+     * @return boolean
+     * @throws \Exception
+     */
+    protected function trySymlink($target, $link)
+    {
+        try {
+            return symlink($target, $link);
+        } catch (\Exception $e) {
+            if (DIRECTORY_SEPARATOR !== '/') {
+                $this->markTestSkipped('Your Windows Installation does not allow the PHP process to create symlinks. Try running tests from an admin elevated command line.');
+                return false;
+            }
+            throw $e;
+        }
     }
 
     /**
@@ -200,7 +219,7 @@ class FilesTest extends \PHPUnit_Framework_TestCase
         if (file_exists($linkPathAndFilename)) {
             @unlink($linkPathAndFilename);
         }
-        symlink($targetPathAndFilename, $linkPathAndFilename);
+        $this->trySymlink($targetPathAndFilename, $linkPathAndFilename);
         $this->assertTrue(Files::is_link($linkPathAndFilename));
     }
 
@@ -229,7 +248,7 @@ class FilesTest extends \PHPUnit_Framework_TestCase
         if (is_dir($linkPath)) {
             Files::removeDirectoryRecursively($linkPath);
         }
-        symlink($targetPath, $linkPath);
+        $this->trySymlink($targetPath, $linkPath);
         $this->assertTrue(Files::is_link($linkPath));
     }
 
@@ -346,7 +365,7 @@ class FilesTest extends \PHPUnit_Framework_TestCase
         if (file_exists($linkPathAndFilename)) {
             @unlink($linkPathAndFilename);
         }
-        symlink($targetPathAndFilename, $linkPathAndFilename);
+        $this->trySymlink($targetPathAndFilename, $linkPathAndFilename);
         $this->assertTrue(Files::unlink($linkPathAndFilename));
         $this->assertTrue(file_exists($targetPathAndFilename));
         $this->assertFalse(file_exists($linkPathAndFilename));
@@ -365,7 +384,7 @@ class FilesTest extends \PHPUnit_Framework_TestCase
         if (is_dir($linkPath)) {
             Files::removeDirectoryRecursively($linkPath);
         }
-        symlink($targetPath, $linkPath);
+        $this->trySymlink($targetPath, $linkPath);
         $this->assertTrue(Files::unlink($linkPath));
         $this->assertTrue(file_exists($targetPath));
         $this->assertFalse(file_exists($linkPath));

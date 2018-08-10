@@ -6,7 +6,7 @@ require_once(__DIR__ . '/SubProcess/SubProcess.php');
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Tests\Features\Bootstrap\SubProcess\SubProcess;
 use Neos\Flow\Cache\CacheManager;
-use PHPUnit_Framework_Assert as Assert;
+use PHPUnit\Framework\Assert;
 
 /**
  * Class IsolatedBehatStepsTrait

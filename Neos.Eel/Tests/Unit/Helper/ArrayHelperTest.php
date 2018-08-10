@@ -444,4 +444,33 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
 
         $this->assertEquals($expected, $result);
     }
+
+    public function rangeExamples()
+    {
+        return [
+            'array from one to three' => [
+                [1, 3],
+                [1, 2, 3]
+            ],
+            'array from one to seven in steps of two' => [
+                [1, 7, 2],
+                [1, 3, 5, 7]
+            ],
+            'array of characters' => [
+                ['c', 'g'],
+                ['c', 'd', 'e', 'f', 'g']
+            ]
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider rangeExamples
+     */
+    public function rangeWorks($arguments, $expected)
+    {
+        $helper = new ArrayHelper();
+        $result = call_user_func_array([$helper, 'range'], $arguments);
+        $this->assertEquals($expected, $result);
+    }
 }

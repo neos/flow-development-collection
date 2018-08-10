@@ -53,14 +53,13 @@ class AjaxWidgetComponent extends DispatchComponent
         if ($widgetContext === null) {
             return;
         }
+
+        $componentContext = $this->prepareActionRequest($componentContext);
         /** @var $actionRequest ActionRequest */
-        $actionRequest = $this->objectManager->get(\Neos\Flow\Mvc\ActionRequest::class, $httpRequest);
-        $actionRequest->setArguments($this->mergeArguments($httpRequest, array()));
+        $actionRequest = $componentContext->getParameter(DispatchComponent::class, 'actionRequest');
         $actionRequest->setArgument('__widgetContext', $widgetContext);
         $actionRequest->setControllerObjectName($widgetContext->getControllerObjectName());
         $this->setDefaultControllerAndActionNameIfNoneSpecified($actionRequest);
-
-        $this->securityContext->setRequest($actionRequest);
 
         $this->dispatcher->dispatch($actionRequest, $componentContext->getHttpResponse());
         // stop processing the current component chain

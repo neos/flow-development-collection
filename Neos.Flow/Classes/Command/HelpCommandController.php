@@ -80,7 +80,7 @@ class HelpCommandController extends CommandController
      * @param string $commandIdentifier Identifier of a command for more details
      * @return void
      */
-    public function helpCommand($commandIdentifier = null)
+    public function helpCommand(string $commandIdentifier = null)
     {
         $exceedingArguments = $this->request->getExceedingArguments();
         if (count($exceedingArguments) > 0 && $commandIdentifier === null) {

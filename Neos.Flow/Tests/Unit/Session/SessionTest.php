@@ -11,11 +11,11 @@ namespace Neos\Flow\Tests\Unit\Session;
  * source code.
  */
 
+use Neos\Flow\Core\RequestHandlerInterface;
 use org\bovigo\vfs\vfsStream;
 use Neos\Cache\Backend\FileBackend;
 use Neos\Cache\EnvironmentConfiguration;
 use Neos\Flow\Core\Bootstrap;
-use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Security\Context;
 use Neos\Flow\Session\Exception\SessionNotStartedException;
@@ -27,6 +27,7 @@ use Neos\Flow\Security\Authentication\Token\UsernamePassword;
 use Neos\Flow\Security\Authentication\TokenInterface;
 use Neos\Flow\Security\Account;
 use Neos\Flow\Tests\UnitTestCase;
+use Psr\Log\LoggerInterface;
 
 /**
  * Unit tests for the Flow Session implementation
@@ -300,8 +301,9 @@ class SessionTest extends UnitTestCase
      */
     public function startThrowsAnExceptionIfIncompatibleRequestHandlerIsUsed()
     {
+        $mockRequestHandler = $this->createMock(RequestHandlerInterface::class);
         $mockBootstrap = $this->createMock(Bootstrap::class);
-        $mockBootstrap->expects($this->any())->method('getActiveRequestHandler')->will($this->returnValue(new \stdClass()));
+        $mockBootstrap->expects($this->any())->method('getActiveRequestHandler')->willReturn($mockRequestHandler);
 
         $session = new Session();
         $this->inject($session, 'bootstrap', $mockBootstrap);
@@ -1212,7 +1214,7 @@ class SessionTest extends UnitTestCase
             $this->inject($session, 'metaDataCache', $metaDataCache);
             $this->inject($session, 'storageCache', $storageCache);
             $session->injectSettings($settings);
-            $this->inject($session, 'systemLogger', $this->createMock(SystemLoggerInterface::class));
+            $session->injectLogger($this->createMock(LoggerInterface::class));
             $session->initializeObject();
 
             $session->start();

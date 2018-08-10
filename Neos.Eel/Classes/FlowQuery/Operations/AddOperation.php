@@ -15,7 +15,9 @@ use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Flow\Annotations as Flow;
 
 /**
- * Add another $flowQuery object to the current one.
+ * Adds the given items to the current context.
+ * The operation accepts one argument that may be an Array, a FlowQuery
+ * or an Object.
  */
 class AddOperation extends AbstractOperation
 {

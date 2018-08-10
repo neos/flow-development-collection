@@ -6,38 +6,43 @@
     "license": ["MIT"],
 
     "require": {
-        "php": "~7.0",
+        "php": "~7.1",
 
         "ext-zlib": "*",
         "ext-SPL": "*",
         "ext-json": ">=1.2.0",
         "ext-reflection": "*",
 
-        "neos/cache": "~4.0.0",
-        "neos/eel": "~4.0.0",
-        "neos/error-messages": "~4.0.0",
-        "neos/utility-arrays": "~4.0.0",
-        "neos/utility-files": "~4.0.0",
-        "neos/utility-lock": "~4.0.0",
-        "neos/utility-mediatypes": "~4.0.0",
-        "neos/utility-objecthandling": "~4.0.0",
-        "neos/utility-opcodecache": "~4.0.0",
-        "neos/utility-pdo": "~4.0.0",
-        "neos/utility-schema": "~4.0.0",
-        "neos/utility-unicode": "~4.0.0",
-        "neos/fluid-adaptor": "~4.0.0",
+        "neos/cache": "~5.0.0",
+        "neos/eel": "~5.0.0",
+        "neos/error-messages": "~5.0.0",
+        "neos/utility-arrays": "~5.0.0",
+        "neos/utility-files": "~5.0.0",
+        "neos/utility-lock": "~5.0.0",
+        "neos/utility-mediatypes": "~5.0.0",
+        "neos/utility-objecthandling": "~5.0.0",
+        "neos/utility-opcodecache": "~5.0.0",
+        "neos/utility-schema": "~5.0.0",
+        "neos/utility-unicode": "~5.0.0",
+        "neos/fluid-adaptor": "~5.0.0",
+
+        "psr/http-message": "~1.0.0",
+        "psr/container": "~1.0.0",
+        "psr/log": "^1.0",
 
         "ramsey/uuid": "^3.0.0",
 
-        "doctrine/orm": "~2.5.0",
-        "doctrine/migrations": "~1.3.0",
-        "doctrine/dbal": "~2.5.0",
+        "doctrine/orm": "~2.6.0",
+        "doctrine/migrations": "~1.6.0",
+        "doctrine/dbal": "~2.7.0",
+        "doctrine/common": ">=2.4,<2.8-dev",
 
-        "symfony/yaml": "~2.8.0",
-        "symfony/dom-crawler": "~2.8.0",
-        "symfony/console": "~2.8",
+        "symfony/yaml": "~4.0.0",
+        "symfony/dom-crawler": "~4.0.0",
+        "symfony/console": "~4.0.0",
 
-        "neos/composer-plugin": "^2.0.0"
+        "neos/composer-plugin": "^2.0.0",
+        "neos/utility-pdo": "~5.0.0"
     },
     "replace": {
         "typo3/flow": "self.version"
