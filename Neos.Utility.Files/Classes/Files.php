@@ -180,7 +180,7 @@ abstract class Files
     public static function removeEmptyDirectoriesOnPath(string $path, string $basePath = null)
     {
         if ($basePath !== null) {
-            $basePath = trim($basePath, '/');
+            $basePath = rtrim($basePath, '/');
             if (strpos($path, $basePath) !== 0) {
                 throw new FilesException(sprintf('Could not remove empty directories on path because the given base path "%s" is not a parent path of "%s".', $basePath, $path), 1323962907);
             }
