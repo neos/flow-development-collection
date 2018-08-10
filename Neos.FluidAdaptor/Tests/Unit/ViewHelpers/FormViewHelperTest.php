@@ -97,9 +97,9 @@ class FormViewHelperTest extends ViewHelperBaseTestcase
         $this->viewHelperVariableContainer->expects($this->at(0))->method('add')->with(\Neos\FluidAdaptor\ViewHelpers\FormViewHelper::class, 'formObject', $formObject);
         $this->viewHelperVariableContainer->expects($this->at(1))->method('add')->with(\Neos\FluidAdaptor\ViewHelpers\FormViewHelper::class, 'additionalIdentityProperties', array());
         $this->viewHelperVariableContainer->expects($this->at(2))->method('add')->with(\Neos\FluidAdaptor\ViewHelpers\FormViewHelper::class, 'emptyHiddenFieldNames', array());
-        $this->viewHelperVariableContainer->expects($this->at(3))->method('remove')->with(\Neos\FluidAdaptor\ViewHelpers\FormViewHelper::class, 'formObject');
-        $this->viewHelperVariableContainer->expects($this->at(4))->method('remove')->with(\Neos\FluidAdaptor\ViewHelpers\FormViewHelper::class, 'additionalIdentityProperties');
-        $this->viewHelperVariableContainer->expects($this->at(5))->method('remove')->with(\Neos\FluidAdaptor\ViewHelpers\FormViewHelper::class, 'emptyHiddenFieldNames');
+        $this->viewHelperVariableContainer->expects($this->at(5))->method('remove')->with(\Neos\FluidAdaptor\ViewHelpers\FormViewHelper::class, 'formObject');
+        $this->viewHelperVariableContainer->expects($this->at(6))->method('remove')->with(\Neos\FluidAdaptor\ViewHelpers\FormViewHelper::class, 'additionalIdentityProperties');
+        $this->viewHelperVariableContainer->expects($this->at(7))->method('remove')->with(\Neos\FluidAdaptor\ViewHelpers\FormViewHelper::class, 'emptyHiddenFieldNames');
         $viewHelper->render('index');
     }
 
