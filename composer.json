@@ -26,7 +26,8 @@
         "symfony/console": "~4.0.0",
         "neos/composer-plugin": "^2.0.0",
         "typo3fluid/fluid": "~2.5.3",
-        "ext-mbstring": "*"
+        "ext-mbstring": "*",
+        "ext-xml": "*"
     },
     "replace": {
         "typo3/eel": "self.version",
