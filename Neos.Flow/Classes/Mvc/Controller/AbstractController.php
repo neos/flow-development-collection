@@ -11,6 +11,7 @@ namespace Neos\Flow\Mvc\Controller;
  * source code.
  */
 
+use Neos\Flow\Http\Helper\MediaTypeHelper;
 use Neos\Flow\Http\Response;
 use Neos\Flow\Mvc\Exception\ForwardException;
 use Neos\Flow\Mvc\Exception\RequiredArgumentMissingException;
@@ -119,7 +120,7 @@ abstract class AbstractController implements ControllerInterface
         $this->arguments = new Arguments([]);
         $this->controllerContext = new ControllerContext($this->request, $this->response, $this->arguments, $this->uriBuilder);
 
-        $mediaType = $request->getHttpRequest()->getNegotiatedMediaType($this->supportedMediaTypes);
+        $mediaType = MediaTypeHelper::negotiateMediaType(MediaTypeHelper::determineAcceptedMediaTypes($request->getHttpRequest()), $this->supportedMediaTypes);
         if ($mediaType === null) {
             $this->throwStatus(406);
         }

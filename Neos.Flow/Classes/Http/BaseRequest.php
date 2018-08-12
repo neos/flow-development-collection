@@ -2,6 +2,7 @@
 namespace Neos\Flow\Http;
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Http\Helper\RequestInformationHelper;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\UriInterface;
 use Neos\Utility\MediaTypes;
@@ -54,7 +55,7 @@ class BaseRequest extends AbstractMessage implements RequestInterface
         parent::__construct();
         $this->uri = $uri;
         if (strlen($method) > 0) {
-            $this->setMethod($method);
+            $this->method = $method;
         }
     }
 
@@ -73,7 +74,8 @@ class BaseRequest extends AbstractMessage implements RequestInterface
      * Returns the detected base URI
      *
      * @return UriInterface|Uri
-     * @api
+     * @deprecated Since Flow 5.1, no replacement on BaseRequest, use attribute on ServerRequestInterface
+     * @see Request::getAttribute(Request::ATTRIBUTE_BASE_URI)
      */
     public function getBaseUri()
     {
@@ -88,7 +90,8 @@ class BaseRequest extends AbstractMessage implements RequestInterface
      * Set the base URI of this request.
      *
      * @param string|UriInterface $baseUri
-     * @api
+     * @deprecated Since Flow 5.1, set as an attribute on ServerRequestInterface instead.
+     * @see Request::withAttribute(Request::ATTRIBUTE_BASE_URI)
      */
     public function setBaseUri($baseUri)
     {
@@ -103,6 +106,7 @@ class BaseRequest extends AbstractMessage implements RequestInterface
      * Tries to detect the base URI of request.
      *
      * @return UriInterface
+     * @deprecated Since Flow 5.1
      */
     protected function detectBaseUri()
     {
@@ -118,7 +122,7 @@ class BaseRequest extends AbstractMessage implements RequestInterface
      *
      * @param string $method The request method, for example "GET".
      * @return void
-     * @api
+     * @deprecated Since Flow 5.1, create a fresh request if you need to change the method.
      */
     public function setMethod(string $method)
     {
@@ -146,7 +150,8 @@ class BaseRequest extends AbstractMessage implements RequestInterface
      *
      * @param string|resource $content The body content, for example arguments of a PUT request, or a stream resource
      * @return void
-     * @api
+     * @deprecated Since Flow 5.1, use withBody
+     * @see withBody()
      */
     public function setContent($content)
     {
@@ -172,8 +177,9 @@ class BaseRequest extends AbstractMessage implements RequestInterface
      *
      * @param boolean $asResource If set, the content is returned as a resource pointing to PHP's input stream
      * @return string|resource
-     * @api
      * @throws Exception
+     * @deprecated Since Flow 5.1, use getBody
+     * @see getBody()
      */
     public function getContent($asResource = false)
     {
@@ -201,15 +207,12 @@ class BaseRequest extends AbstractMessage implements RequestInterface
      *
      * @return string
      * @see http://www.w3.org/Protocols/rfc2616/rfc2616-sec5.html#sec5.1
-     * @api
+     * @deprecated Since Flow 5.1, use the RequestInformationHelper instead
+     * @see RequestInformationHelper::generateRequestLine()
      */
     public function getRequestLine()
     {
-        $requestUri = $this->uri->getPath() .
-            ($this->uri->getQuery() ? '?' . $this->uri->getQuery() : '') .
-            ($this->uri->getFragment() ? '#' . $this->uri->getFragment() : '');
-
-        return sprintf("%s %s %s\r\n", $this->method, $requestUri, $this->version);
+        return RequestInformationHelper::generateRequestLine($this);
     }
 
     /**
@@ -217,23 +220,25 @@ class BaseRequest extends AbstractMessage implements RequestInterface
      *
      * @return string The Request-Line of this Request
      * @see http://www.w3.org/Protocols/rfc2616/rfc2616-sec4.html chapter 4.1 "Message Types"
-     * @api
+     * @deprecated Since Flow 5.1, use the RequestInformationHelper instead
+     * @see RequestInformationHelper::generateRequestLine()
      */
     public function getStartLine()
     {
-        return $this->getRequestLine();
+        return RequestInformationHelper::generateRequestLine($this);
     }
 
     /**
      * Renders the HTTP headers - including the status header - of this request
      *
      * @return string The HTTP headers, one per line, separated by \r\n as required by RFC 2616 sec 5
-     * @api
+     * @deprecated Since Flow 5.1, use the RequestInformationHelper
+     * @see RequestInformationHelper::generateRequestLine() and RequestInformationHelper::renderRequestHeaders()
      */
     public function renderHeaders()
     {
-        $headers = $this->getStartLine();
-        $headers .= $this->headers->__toString();
+        $headers = RequestInformationHelper::generateRequestLine($this);
+        $headers .= RequestInformationHelper::renderRequestHeaders($this);
 
         return $headers;
     }
@@ -307,7 +312,7 @@ class BaseRequest extends AbstractMessage implements RequestInterface
     public function withMethod($method)
     {
         $newRequest = clone $this;
-        $newRequest->setMethod($method);
+        $newRequest->method = $method;
 
         return $newRequest;
     }
@@ -383,6 +388,7 @@ class BaseRequest extends AbstractMessage implements RequestInterface
      * it was accessed through the web server.
      *
      * @return string Relative path to the PHP script as accessed through the web
+     * @deprecated Since Flow 5.1
      */
     protected function getScriptRequestPath()
     {
@@ -397,7 +403,9 @@ class BaseRequest extends AbstractMessage implements RequestInterface
      */
     public function __toString()
     {
-        return $this->renderHeaders() . "\r\n" . $this->getContent();
+        return RequestInformationHelper::generateRequestLine($this)
+            . RequestInformationHelper::renderRequestHeaders($this)
+            . "\r\n" . $this->getBody()->getContents();
     }
 
     /**
