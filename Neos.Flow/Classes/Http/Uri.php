@@ -492,7 +492,7 @@ class Uri implements UriInterface
     public function withScheme($scheme)
     {
         $newUri = clone $this;
-        $newUri->scheme($scheme);
+        $newUri->scheme = $scheme;
         return $newUri;
     }
 
