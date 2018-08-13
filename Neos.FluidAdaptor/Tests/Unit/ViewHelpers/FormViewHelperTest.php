@@ -94,14 +94,16 @@ class FormViewHelperTest extends ViewHelperBaseTestcase
         $this->injectDependenciesIntoViewHelper($viewHelper);
         $this->securityContext->expects($this->any())->method('isInitialized')->will($this->returnValue(false));
 
-        $this->viewHelperVariableContainer->expects($this->exactly(3))->method('add')->withConsecutive([
+        $this->viewHelperVariableContainer->expects($this->exactly(3))->method('add')->withConsecutive(
             [\Neos\FluidAdaptor\ViewHelpers\FormViewHelper::class, 'formObject', $formObject],
             [\Neos\FluidAdaptor\ViewHelpers\FormViewHelper::class, 'additionalIdentityProperties', array()],
-            [\Neos\FluidAdaptor\ViewHelpers\FormViewHelper::class, 'emptyHiddenFieldNames', array()]);
-        $this->viewHelperVariableContainer->expects($this->exactly(3))->method('remove')->withConsecutive([
+            [\Neos\FluidAdaptor\ViewHelpers\FormViewHelper::class, 'emptyHiddenFieldNames', array()]
+        );
+        $this->viewHelperVariableContainer->expects($this->exactly(3))->method('remove')->withConsecutive(
             [\Neos\FluidAdaptor\ViewHelpers\FormViewHelper::class, 'formObject'],
             [\Neos\FluidAdaptor\ViewHelpers\FormViewHelper::class, 'additionalIdentityProperties'],
-            [\Neos\FluidAdaptor\ViewHelpers\FormViewHelper::class, 'emptyHiddenFieldNames']);
+            [\Neos\FluidAdaptor\ViewHelpers\FormViewHelper::class, 'emptyHiddenFieldNames']
+        );
         $viewHelper->render('index');
     }
 
