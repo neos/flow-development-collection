@@ -61,7 +61,7 @@ abstract class UploadedFilesHelper
     }
 
     /**
-     * Returns and array of all possibles "field paths" for the given array.
+     * Returns and array of all possible "field paths" for the given array.
      *
      * @param array $structure The array to walk through
      * @param string $firstLevelFieldName

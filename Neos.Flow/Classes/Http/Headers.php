@@ -16,7 +16,7 @@ use Neos\Flow\Annotations as Flow;
 /**
  * Container for HTTP header fields
  *
- * @deprecated Headers will be an array in side of the Message object
+ * @deprecated Headers will be only accessed via request in the future, if this class stays then as internal implementation detail.
  * @Flow\Proxy(false)
  * TODO: Make array compatible for switch to PSR-7
  */

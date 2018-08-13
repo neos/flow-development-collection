@@ -75,7 +75,7 @@ abstract class RequestInformationHelper
     }
 
     /**
-     * Return the Request-Line of this Request Message, consisting of the method, the uri and the HTTP version
+     * Return the Request-Line of this Request Message, consisting of the method, the URI and the HTTP version
      * Would be, for example, "GET /foo?bar=baz HTTP/1.1"
      * Note that the URI part is, at the moment, only possible in the form "abs_path" since the
      * actual requestUri of the Request cannot be determined during the creation of the Request.
