@@ -1,18 +1,28 @@
 <?php
 namespace Neos\Flow\Http\Helper;
 
+/*
+ * This file is part of the Neos.Flow package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
+
 use Neos\Flow\Http\Headers;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
 
 /**
- * Helper to extract various informations from PSR-7 requests.
+ * Helper to extract various information from PSR-7 requests.
  */
 abstract class RequestInformationHelper
 {
     /**
-     * Returns the relative path (ie. relative to the web root) and name of the
+     * Returns the relative path (i.e. relative to the web root) and name of the
      * script as it was accessed through the web server.
      *
      * @param ServerRequestInterface $request The request in question
@@ -33,7 +43,7 @@ abstract class RequestInformationHelper
     }
 
     /**
-     * Returns the relative path (ie. relative to the web root) to the script as
+     * Returns the relative path (i.e. relative to the web root) to the script as
      * it was accessed through the web server.
      *
      * @param ServerRequestInterface $request The request in question
@@ -46,25 +56,6 @@ abstract class RequestInformationHelper
         $requestPathSegments = explode('/', self::getScriptRequestPathAndFilename($request));
         array_pop($requestPathSegments);
         return implode('/', $requestPathSegments) . '/';
-    }
-
-    /**
-     * Returns the request's path relative to the $baseUri
-     *
-     * @param UriInterface $baseUri The base URI to start from
-     * @param UriInterface $uri The URI in quesiton
-     * @return string
-     */
-    public static function getRelativePath(UriInterface $baseUri, UriInterface $uri): string
-    {
-        // FIXME: We should probably do a strpos === 0 instead to make sure
-        // the baseUri actually matches the start of the Uri.
-        $baseUriLength = strlen($baseUri->getPath());
-        if ($baseUriLength >= strlen($uri->getPath())) {
-            return '';
-        }
-
-        return substr($uri->getPath(), $baseUriLength);
     }
 
     /**
@@ -95,12 +86,7 @@ abstract class RequestInformationHelper
      */
     public static function generateRequestLine(RequestInterface $request): string
     {
-        $uri = $request->getUri();
-        $requestUri = $uri->getPath() .
-            ($uri->getQuery() ? '?' . $uri->getQuery() : '') .
-            ($uri->getFragment() ? '#' . $uri->getFragment() : '');
-
-        return sprintf("%s %s HTTP/%s\r\n", $request->getMethod(), $requestUri, $request->getProtocolVersion());
+        return sprintf("%s %s HTTP/%s\r\n", $request->getMethod(), $request->getRequestTarget(), $request->getProtocolVersion());
     }
 
     /**
@@ -116,11 +102,27 @@ abstract class RequestInformationHelper
         if ($headers instanceof Headers) {
             $renderedHeaders .= $headers->__toString();
         } else {
-            foreach ($headers as $name => $values) {
-                $renderedHeaders .= $name . ": " . implode(", ", $values) . "\r\n";
+            foreach (array_keys($headers) as $name) {
+                $renderedHeaders .= $request->getHeaderLine($name);
             }
         }
 
         return $renderedHeaders;
+    }
+
+    /**
+     * Extract the charset from the content type header if available
+     *
+     * @param RequestInterface $request
+     * @return string the found charset or empty string if none
+     */
+    public static function getContentCharset(RequestInterface $request): string
+    {
+        $contentType = $request->getHeaderLine('Content-Type');
+        if (preg_match('/[^;]+; ?charset=(?P<charset>[^;]+);?.*/', $contentType, $matches)) {
+            return $matches['charset'];
+        }
+
+        return '';
     }
 }

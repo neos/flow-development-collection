@@ -13,6 +13,7 @@ namespace Neos\Flow\Http;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Error\Exception as ErrorException;
+use Neos\Flow\Http\Helper\UriHelper;
 use Neos\Utility\Unicode;
 use Psr\Http\Message\UriInterface;
 
@@ -77,8 +78,9 @@ class Uri implements UriInterface
     /**
      * Array representation of the URI query
      * @var array
+     * @deprecated Since Flow 5.1, can be removed together with the respective method.
      */
-    protected $arguments = [];
+    protected $arguments;
 
     /**
      * Fragment / anchor, if one was specified.
@@ -130,7 +132,7 @@ class Uri implements UriInterface
         }
         $this->path = $uriParts['path'] ?? null;
         if (isset($uriParts['query'])) {
-            $this->setQuery($uriParts['query']);
+            $this->query = $uriParts['query'];
         }
         $this->fragment = $uriParts['fragment'] ?? null;
     }
@@ -152,7 +154,8 @@ class Uri implements UriInterface
      * @param  string $scheme The scheme. Allowed values are "http" and "https"
      * @return void
      * @throws \InvalidArgumentException
-     * @api
+     * @deprecated Since Flow 5.1, use withScheme
+     * @see withScheme()
      */
     public function setScheme($scheme)
     {
@@ -167,7 +170,9 @@ class Uri implements UriInterface
      * Returns the username of a login
      *
      * @return string User name of the login
-     * @api
+     * @deprecated Since Flow 5.1, use getUserInfo and extract via UriHelper::getUsername()
+     * @see getUserInfo()
+     * @see UriHelper::getUsername()
      */
     public function getUsername()
     {
@@ -180,7 +185,8 @@ class Uri implements UriInterface
      * @param string $username User name of the login
      * @return void
      * @throws \InvalidArgumentException
-     * @api
+     * @deprecated Since Flow 5.1, use withUserInfo instead
+     * @see withUserInfo()
      */
     public function setUsername($username)
     {
@@ -195,7 +201,9 @@ class Uri implements UriInterface
      * Returns the password of a login
      *
      * @return string Password of the login
-     * @api
+     * @deprecated Since Flow 5.1, use getUserInfo instead and extract via UriHelper::getPassword()
+     * @see getUserInfo()
+     * @see UriHelper::getPassword()
      */
     public function getPassword()
     {
@@ -208,7 +216,8 @@ class Uri implements UriInterface
      * @param string $password Password of the login
      * @return void
      * @throws \InvalidArgumentException
-     * @api
+     * @deprecated Since Flow 5.1, use withUserInfo instead
+     * @see withUserInfo()
      */
     public function setPassword($password)
     {
@@ -236,7 +245,8 @@ class Uri implements UriInterface
      * @param string $host The hostname(s)
      * @return void
      * @throws \InvalidArgumentException
-     * @api
+     * @deprecated Since Flow 5.1, use withHost instead
+     * @see withHost()
      */
     public function setHost($host)
     {
@@ -264,7 +274,8 @@ class Uri implements UriInterface
      * @param string $port The port number
      * @return void
      * @throws \InvalidArgumentException
-     * @api
+     * @deprecated Since Flow 5.1, use withPort instead
+     * @see withPort()
      */
     public function setPort($port)
     {
@@ -292,7 +303,8 @@ class Uri implements UriInterface
      * @param string $path The path
      * @return void
      * @throws \InvalidArgumentException
-     * @api
+     * @deprecated Since Flow 5.1, use withPath instead
+     * @see withPath()
      */
     public function setPath($path)
     {
@@ -319,22 +331,26 @@ class Uri implements UriInterface
      *
      * @param string $query The query string.
      * @return void
-     * @api
+     * @deprecated Since Flow 5.1, use withQuery instead
+     * @see withQuery()
      */
     public function setQuery($query)
     {
         $this->query = $query;
-        parse_str($query, $this->arguments);
     }
 
     /**
      * Returns the arguments from the URI's query part
      *
      * @return array Associative array of arguments and values of the URI's query part
-     * @api
+     * @deprecated Since Flow 5.1, use UriHelper::parseQueryIntoArguments
+     * @see UriHelper::parseQueryIntoArguments()
      */
     public function getArguments()
     {
+        if ($this->arguments === null) {
+            $this->arguments = UriHelper::parseQueryIntoArguments($this);
+        }
         return $this->arguments;
     }
 
@@ -355,7 +371,8 @@ class Uri implements UriInterface
      * @param string $fragment The fragment (aka "anchor")
      * @return void
      * @throws \InvalidArgumentException
-     * @api
+     * @deprecated Since Flow 5.1, use withFragment instead
+     * @see withFragment()
      */
     public function setFragment($fragment)
     {
@@ -439,7 +456,7 @@ class Uri implements UriInterface
     public function getUserInfo()
     {
         $result = '';
-        $username = $this->getUsername();
+        $username = $this->username;
 
         if (empty($username)) {
             return $result;
@@ -447,7 +464,7 @@ class Uri implements UriInterface
 
         $result .= $username;
 
-        $password = $this->getPassword();
+        $password = $this->password;
         if (empty($password)) {
             return $result;
         }
@@ -475,7 +492,7 @@ class Uri implements UriInterface
     public function withScheme($scheme)
     {
         $newUri = clone $this;
-        $newUri->setScheme($scheme);
+        $newUri->scheme($scheme);
         return $newUri;
     }
 
@@ -497,8 +514,8 @@ class Uri implements UriInterface
     public function withUserInfo($user, $password = null)
     {
         $newUri = clone $this;
-        $newUri->setUsername($user);
-        $newUri->setPassword($password);
+        $newUri->username = $user;
+        $newUri->password = $password;
         return $newUri;
     }
 
@@ -518,7 +535,7 @@ class Uri implements UriInterface
     public function withHost($host)
     {
         $newUri = clone $this;
-        $newUri->setHost($host);
+        $newUri->host = $host;
         return $newUri;
     }
 
@@ -543,7 +560,7 @@ class Uri implements UriInterface
     public function withPort($port)
     {
         $newUri = clone $this;
-        $newUri->setPort($port);
+        $newUri->port = $port;
         return $newUri;
     }
 
@@ -573,7 +590,7 @@ class Uri implements UriInterface
     public function withPath($path)
     {
         $newUri = clone $this;
-        $newUri->setPath($path);
+        $newUri->path = $path;
         return $newUri;
     }
 
@@ -596,7 +613,7 @@ class Uri implements UriInterface
     public function withQuery($query)
     {
         $newUri = clone $this;
-        $newUri->setQuery($query);
+        $newUri->query = $query;
         return $newUri;
     }
 
@@ -618,7 +635,7 @@ class Uri implements UriInterface
     public function withFragment($fragment)
     {
         $newUri = clone $this;
-        $newUri->setFragment($fragment);
+        $newUri->fragment = $fragment;
         return $newUri;
     }
 

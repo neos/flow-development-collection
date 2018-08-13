@@ -1,6 +1,16 @@
 <?php
 namespace Neos\Flow\Http;
 
+/*
+ * This file is part of the Neos.Flow package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
+
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Helper\RequestInformationHelper;
 use Psr\Http\Message\RequestInterface;
@@ -265,7 +275,16 @@ class BaseRequest extends AbstractMessage implements RequestInterface
             return $this->requestTarget;
         }
 
-        return $this->uri->getPath();
+        $uri = $this->getUri();
+        if ($uri === null) {
+            return '/';
+        }
+
+        $requestUri = $uri->getPath() .
+            ($uri->getQuery() ? '?' . $uri->getQuery() : '') .
+            ($uri->getFragment() ? '#' . $uri->getFragment() : '');
+
+        return $requestUri;
     }
 
     /**
@@ -384,7 +403,7 @@ class BaseRequest extends AbstractMessage implements RequestInterface
     }
 
     /**
-     * Returns the relative path (ie. relative to the web root) to the script as
+     * Returns the relative path (i.e. relative to the web root) to the script as
      * it was accessed through the web server.
      *
      * @return string Relative path to the PHP script as accessed through the web

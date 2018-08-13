@@ -17,8 +17,10 @@ use Neos\Flow\Http\Helper\MediaTypeHelper;
 use Neos\Flow\Http\Helper\RequestInformationHelper;
 use Neos\Flow\Http\Helper\SecurityHelper;
 use Neos\Flow\Http\Helper\UploadedFilesHelper;
+use Neos\Flow\Http\Helper\UriHelper;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UploadedFileInterface;
+use Psr\Http\Message\UriInterface;
 
 /**
  * Represents an HTTP request in the PHP world, inlcuding server variables.
@@ -126,11 +128,7 @@ class Request extends BaseRequest implements ServerRequestInterface
         if (substr($requestUri, 0, 10) === '/index.php') {
             $requestUri = '/' . ltrim(substr($requestUri, 10), '/');
         }
-        $this->uri = new Uri($protocol . '://' . $host . $requestUri);
-
-        if (isset($server['SERVER_PORT'])) {
-            $this->uri->setPort($server['SERVER_PORT']);
-        }
+        $this->uri = new Uri($protocol . '://' . $host . (isset($server['SERVER_PORT']) ? ':' . $server['SERVER_PORT'] : '') . $requestUri);
 
         $this->parsedBody = $post;
         $this->queryParams = $get;
@@ -153,7 +151,7 @@ class Request extends BaseRequest implements ServerRequestInterface
      */
     public static function create(Uri $uri, $method = 'GET', array $arguments = [], array $files = [], array $server = [])
     {
-        $get = $uri->getArguments();
+        $get = UriHelper::parseQueryIntoArguments($uri);
         $post = $arguments;
 
         $isDefaultPort = $uri->getScheme() === 'https' ? ($uri->getPort() === 443) : ($uri->getPort() === 80);
@@ -236,7 +234,7 @@ class Request extends BaseRequest implements ServerRequestInterface
      *
      * @return integer
      * @deprecated Since Flow 5.1, use $this->getUri()->getPort() instead.
-     * @see getUri
+     * @see getUri()
      */
     public function getPort()
     {
@@ -254,6 +252,52 @@ class Request extends BaseRequest implements ServerRequestInterface
     public function isMethodSafe()
     {
         return SecurityHelper::hasSafeMethod($this);
+    }
+
+    /**
+     * Returns the detected base URI
+     *
+     * @return UriInterface|Uri
+     * @deprecated Since Flow 5.1, use attribute
+     * @see Request::getAttribute(Request::ATTRIBUTE_BASE_URI)
+     */
+    public function getBaseUri()
+    {
+        if (!isset($this->attributes[self::ATTRIBUTE_BASE_URI])) {
+            $this->attributes[self::ATTRIBUTE_BASE_URI] = $this->detectBaseUri();
+        }
+
+        return $this->attributes[self::ATTRIBUTE_BASE_URI];
+    }
+
+    /**
+     * Set the base URI of this request.
+     *
+     * @param string|UriInterface $baseUri
+     * @deprecated Since Flow 5.1, set as an attribute on ServerRequestInterface instead.
+     * @see Request::withAttribute(Request::ATTRIBUTE_BASE_URI)
+     */
+    public function setBaseUri($baseUri)
+    {
+        if (is_string($baseUri)) {
+            $baseUri = new Uri($baseUri);
+        }
+
+        $this->attributes[self::ATTRIBUTE_BASE_URI] = $baseUri;
+    }
+
+    /**
+     * Tries to detect the base URI of request.
+     *
+     * @return UriInterface
+     * @deprecated Since Flow 5.1
+     */
+    protected function detectBaseUri()
+    {
+        $baseUri = clone $this->uri;
+        $baseUri = $baseUri->withQuery('')->withFragment('')->withPath(RequestInformationHelper::getScriptRequestPath($this));
+
+        return $baseUri;
     }
 
     /**
@@ -476,7 +520,7 @@ class Request extends BaseRequest implements ServerRequestInterface
     }
 
     /**
-     * Returns the relative path (ie. relative to the web root) and name of the
+     * Returns the relative path (i.e. relative to the web root) and name of the
      * script as it was accessed through the web server.
      *
      * @return string Relative path and name of the PHP script as accessed through the web
@@ -489,7 +533,7 @@ class Request extends BaseRequest implements ServerRequestInterface
     }
 
     /**
-     * Returns the relative path (ie. relative to the web root) to the script as
+     * Returns the relative path (i.e. relative to the web root) to the script as
      * it was accessed through the web server.
      *
      * @return string Relative path to the PHP script as accessed through the web
@@ -506,11 +550,11 @@ class Request extends BaseRequest implements ServerRequestInterface
      *
      * @return string
      * @deprecated Since Flow 5.1, use the RequestInformationHelper instead
-     * @see RequestInformationHelper::getRelativePath()
+     * @see UriHelper::getRelativePath()
      */
     public function getRelativePath()
     {
-        return RequestInformationHelper::getRelativePath($this->getBaseUri(), $this->getUri());
+        return UriHelper::getRelativePath($this->getBaseUri(), $this->getUri());
     }
 
     /**

@@ -112,7 +112,7 @@ abstract class AbstractMessage implements MessageInterface
      * @param boolean $replaceExistingHeader If a header with the same name should be replaced. Default is TRUE.
      * @return self This message, for method chaining
      * @throws \InvalidArgumentException
-     * @deprecated Sicne Flow 5.1, use withHeader instead
+     * @deprecated Since Flow 5.1, use withHeader instead
      * @see withHeader()
      */
     public function setHeader($name, $values, $replaceExistingHeader = true)
@@ -196,7 +196,8 @@ abstract class AbstractMessage implements MessageInterface
      * Note that the default character in Flow is UTF-8.
      *
      * @return string An IANA character set identifier
-     * @deprecated Since Flow 5.1, parse it from the "Content-Type" header
+     * @deprecated Since Flow 5.1, parse it from the "Content-Type" header via RequestInformationHelper::getContentCharset
+     * @see RequestInformationHelper::getContentCharset()
      */
     public function getCharset()
     {

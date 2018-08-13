@@ -286,11 +286,15 @@ Media Types
 ~~~~~~~~~~~
 
 The best way to determine the media types mentioned in the ``Accept`` header of a request is to call the
-``determineAcceptedMediaTypes()`` method. There is also a method implementing content negotiation in a convenient way: just
-pass a list of supported formats to ``negotiateMediaType()`` and in return you'll get the media type best fitting
-according to the preferences of the client::
+``\Neos\Flow\Http\Helper\MediaTypeHelper::determineAcceptedMediaTypes()`` method.
+There is also a method implementing content negotiation in a convenient way: just pass a list of supported
+formats to ``\Neos\Flow\Http\Helper\MediaTypeHelper::negotiateMediaType()`` and in return you'll get the
+media type best fitting according to the preferences of the client::
 
-	$preferredType = $request->negotiateMediaType(array('application/json', 'text/html'));
+	$preferredType = \Neos\Flow\Http\Helper\MediaTypeHelper::negotiateMediaType(
+		\Neos\Flow\Http\Helper\MediaTypeHelper::determineAcceptedMediaTypes($request),
+		array('application/json', 'text/html') // These are the accepted media types
+	);
 
 Request Methods
 ~~~~~~~~~~~~~~~
