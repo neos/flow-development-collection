@@ -43,10 +43,10 @@ abstract class MediaTypeHelper
      *
      * @param array $acceptedMediaTypes A list of accepted media types according to a request.
      * @param array $supportedMediaTypes A list of media types which are supported by the application / controller
-     * @param boolean $trim If TRUE, only the type/subtype of the media type is returned. If FALSE, the full original media type string is returned.
+     * @param bool $trim If TRUE, only the type/subtype of the media type is returned. If FALSE, the full original media type string is returned.
      * @return string The media type and sub type which matched, NULL if none matched
      */
-    public static function negotiateMediaType(array $acceptedMediaTypes, array $supportedMediaTypes, $trim = true):? string
+    public static function negotiateMediaType(array $acceptedMediaTypes, array $supportedMediaTypes, bool $trim = true):? string
     {
         $negotiatedMediaType = null;
         foreach ($acceptedMediaTypes as $acceptedMediaType) {

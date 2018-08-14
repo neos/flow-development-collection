@@ -78,13 +78,15 @@ class Response extends AbstractMessage implements ResponseInterface, \Psr\Http\M
      * @param Response $parentResponse Deprecated parameter. Parent response, if called recursively
      *
      * @throws \InvalidArgumentException
-     * @return Response
+     * @return \Psr\Http\Message\ResponseInterface
      * @deprecated Since Flow 5.1, use ResponseInformationHelper::createFromRaw
      * @see ResponseInformationHelper::createFromRaw()
      */
     public static function createFromRaw($rawResponse, Response $parentResponse = null)
     {
-        return ResponseInformationHelper::createFromRaw($rawResponse, $parentResponse);
+        /** @var Response $response */
+        $response = ResponseInformationHelper::createFromRaw($rawResponse);
+        $response->parentResponse = $parentResponse;
     }
 
     /**

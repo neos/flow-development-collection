@@ -30,7 +30,7 @@ abstract class ArgumentsHelper
      * @return array the unified arguments
      * @see \Neos\Flow\Http\Helper\UploadedFilesHelper::untangleFilesArray
      */
-    public static function buildUnifiedArguments(array $getArguments, array $postArguments, array $untangledFiles)
+    public static function buildUnifiedArguments(array $getArguments, array $postArguments, array $untangledFiles): array
     {
         $arguments = Arrays::arrayMergeRecursiveOverrule($getArguments, $postArguments);
         $arguments = Arrays::arrayMergeRecursiveOverrule($arguments, $untangledFiles);

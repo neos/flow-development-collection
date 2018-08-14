@@ -50,7 +50,7 @@ abstract class RequestInformationHelper
      * @return string Relative path to the PHP script as accessed through the web
      * @api
      */
-    public static function getScriptRequestPath(ServerRequestInterface $request)
+    public static function getScriptRequestPath(ServerRequestInterface $request): string
     {
         // FIXME: Shouldn't this be a simple dirname on getScriptRequestPathAndFilename
         $requestPathSegments = explode('/', self::getScriptRequestPathAndFilename($request));
@@ -64,7 +64,7 @@ abstract class RequestInformationHelper
      * @param ServerRequestInterface $request
      * @return UriInterface
      */
-    public static function generateBaseUri(ServerRequestInterface $request)
+    public static function generateBaseUri(ServerRequestInterface $request): UriInterface
     {
         $baseUri = clone $request->getUri();
         $baseUri = $baseUri->withQuery('');

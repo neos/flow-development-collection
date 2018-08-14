@@ -26,14 +26,13 @@ abstract class ResponseInformationHelper
      * Creates a response from the given raw, that is plain text, HTTP response.
      *
      * @param string $rawResponse
-     * @param ResponseInterface $parentResponse Parent response, if called recursively
      *
      * @throws \InvalidArgumentException
      * @return ResponseInterface
      */
-    public static function createFromRaw($rawResponse, ResponseInterface $parentResponse = null)
+    public static function createFromRaw(string $rawResponse): ResponseInterface
     {
-        $response = new Response($parentResponse);
+        $response = new Response();
 
         // see https://tools.ietf.org/html/rfc7230#section-3.5
         $lines = explode(chr(10), $rawResponse);
@@ -95,7 +94,7 @@ abstract class ResponseInformationHelper
      * @param integer $statusCode
      * @return string
      */
-    public static function getStatusMessageByCode($statusCode)
+    public static function getStatusMessageByCode($statusCode): string
     {
         $statusMessages = [
             100 => 'Continue',
