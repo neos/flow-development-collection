@@ -11,14 +11,11 @@ namespace Neos\Flow\Http\Helper;
  * source code.
  */
 
-use Neos\Flow\Http\ContentStream;
 use Neos\Flow\Http\Cookie;
 use Neos\Flow\Http\Headers;
 use Neos\Flow\Http\Response;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\UriInterface;
 
 /**
  * Helper to extract various information from PSR-7 responses.
@@ -248,5 +245,4 @@ abstract class ResponseInformationHelper
 
         return $response;
     }
-
 }
