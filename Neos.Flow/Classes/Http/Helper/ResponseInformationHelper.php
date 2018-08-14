@@ -223,7 +223,7 @@ abstract class ResponseInformationHelper
         }
 
         if (in_array($response->getStatusCode(), [100, 101, 204, 304])) {
-            $response->withBody(ArgumentsHelper::createContentStreamFromString(''));
+            $response = $response->withBody(ArgumentsHelper::createContentStreamFromString(''));
         }
 
         $cacheControlHeaderLine = $response->getHeaderLine('Cache-Control');
@@ -240,7 +240,7 @@ abstract class ResponseInformationHelper
         }
 
         if ($request->getMethod() === 'HEAD') {
-            $response->withBody(ArgumentsHelper::createContentStreamFromString(''));
+            $response = $response->withBody(ArgumentsHelper::createContentStreamFromString(''));
         }
 
         if ($response->hasHeader('Transfer-Encoding')) {

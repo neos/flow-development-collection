@@ -132,7 +132,8 @@ class BaseRequest extends AbstractMessage implements RequestInterface
      *
      * @param string $method The request method, for example "GET".
      * @return void
-     * @deprecated Since Flow 5.1, create a fresh request if you need to change the method.
+     * @deprecated Since Flow 5.1, create a fresh request if you need to change the method or use BaseRequest::withMethod
+     * @see BaseRequest::withMethod()
      */
     public function setMethod(string $method)
     {

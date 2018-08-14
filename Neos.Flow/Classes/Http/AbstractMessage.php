@@ -114,8 +114,9 @@ abstract class AbstractMessage implements MessageInterface
      * @param boolean $replaceExistingHeader If a header with the same name should be replaced. Default is TRUE.
      * @return self This message, for method chaining
      * @throws \InvalidArgumentException
-     * @deprecated Since Flow 5.1, use withHeader instead
+     * @deprecated Since Flow 5.1, use withHeader or withAddedHeader instead
      * @see withHeader()
+     * @see withAddedHeader()
      */
     public function setHeader($name, $values, $replaceExistingHeader = true)
     {
