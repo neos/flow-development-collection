@@ -204,15 +204,19 @@ abstract class ResponseInformationHelper
     {
         $statusCode = $response->getStatusCode();
         if ($request->hasHeader('If-Modified-Since') && $response->hasHeader('Last-Modified') && $statusCode === 200) {
-            $ifModifiedSinceDate = $request->getHeader('If-Modified-Since');
-            $lastModifiedDate = $response->getHeader('Last-Modified')[0];
+            $ifModifiedSince = $request->getHeader('If-Modified-Since');
+            $ifModifiedSinceDate = is_array($ifModifiedSince) ? reset($ifModifiedSince) : $ifModifiedSince;
+            $lastModified = $response->getHeader('Last-Modified');
+            $lastModifiedDate = is_array($lastModified) ? reset($lastModified) : $lastModified;
             if ($lastModifiedDate <= $ifModifiedSinceDate) {
                 $response = $response->withStatus(304);
             }
         } elseif ($request->hasHeader('If-Unmodified-Since') && $response->hasHeader('Last-Modified')
             && (($statusCode >= 200 && $$statusCode <= 299) || $statusCode === 412)) {
-            $unmodifiedSinceDate = $request->getHeader('If-Unmodified-Since')[0];
-            $lastModifiedDate = $response->getHeader('Last-Modified')[0];
+            $unmodifiedSince = $request->getHeader('If-Unmodified-Since');
+            $unmodifiedSinceDate = is_array($unmodifiedSince) ? reset($unmodifiedSince) : $unmodifiedSince;
+            $lastModified = $response->getHeader('Last-Modified');
+            $lastModifiedDate = is_array($lastModified) ? reset($lastModified) : $lastModified;
             if ($lastModifiedDate > $unmodifiedSinceDate) {
                 $response = $response->withStatus(412);
             }
@@ -224,7 +228,7 @@ abstract class ResponseInformationHelper
 
         $cacheControlHeaderLine = $response->getHeaderLine('Cache-Control');
 
-        if (strpos('no-cache', $cacheControlHeaderLine) !== false || $response->hasHeader('Expires')) {
+        if (!empty($cacheControlHeaderLine) && strpos('no-cache', $cacheControlHeaderLine) !== false || $response->hasHeader('Expires')) {
             $cacheControlHeaderValue = trim(substr($cacheControlHeaderLine, 14));
             $cacheControlHeaderValue = str_replace('max-age', '', $cacheControlHeaderValue);
             $cacheControlHeaderValue = trim($cacheControlHeaderValue, ' ,');

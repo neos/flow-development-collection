@@ -16,16 +16,15 @@ use Neos\Flow\Annotations as Flow;
 /**
  * Container for HTTP header fields
  *
- * @deprecated Headers will be only accessed via request in the future, if this class stays then as internal implementation detail.
+ * @deprecated Headers will be only accessed via request in the future, if this class stays, then as internal implementation detail.
  * @Flow\Proxy(false)
- * TODO: Make array compatible for switch to PSR-7
  */
-class Headers
+class Headers implements \Iterator
 {
     /**
      * @var array
      */
-    protected $fields = [];
+    protected $fields = ['Cache-Control' => []];
 
     /**
      * @var array
@@ -125,10 +124,7 @@ class Headers
                 $this->fields = ['Host' => $values] + $this->fields;
             break;
             case 'Cache-Control':
-                if (count($values) !== 1) {
-                    throw new \InvalidArgumentException('The "Cache-Control" header must be unique and thus only one field value may be specified.', 1337849415);
-                }
-                $this->setCacheControlDirectivesFromRawHeader(array_pop($values));
+                $this->setCacheControlDirectivesFromRawHeader(implode(', ', $values));
             break;
             case 'Cookie':
                 if (count($values) !== 1) {
@@ -143,6 +139,25 @@ class Headers
                     $this->fields[$name] = array_merge($this->fields[$name], $values);
                 }
         }
+    }
+
+    /**
+     * Get raw header values
+     *
+     * @param string $name
+     * @return string[]
+     */
+    public function getRaw(string $name): array
+    {
+        if ($name === 'Cache-Control') {
+            return $this->getCacheControlDirectives();
+        }
+
+        if (!isset($this->fields[$name])) {
+            return [];
+        }
+
+        return $this->fields[$name];
     }
 
     /**
@@ -187,8 +202,9 @@ class Headers
     {
         $fields = $this->fields;
         $cacheControlHeader = $this->getCacheControlHeader();
-        if (!empty($cacheControlHeader)) {
-            $fields['Cache-Control'] = [$cacheControlHeader];
+        $fields['Cache-Control'] = [$cacheControlHeader];
+        if (empty($cacheControlHeader)) {
+            unset($fields['Cache-Control']);
         }
         return $fields;
     }
@@ -428,6 +444,14 @@ class Headers
     }
 
     /**
+     * @return array
+     */
+    private function getCacheControlDirectives(): array
+    {
+        return array_values(array_filter($this->cacheDirectives));
+    }
+
+    /**
      * Renders and returns a Cache-Control header, based on the previously set
      * cache control directives.
      *
@@ -521,5 +545,45 @@ class Headers
         }
 
         return $headers;
+    }
+
+    /**
+     * @return string[]|mixed
+     */
+    public function current()
+    {
+        return $this->getRaw($this>key());
+    }
+
+    /**
+     * @return void
+     */
+    public function next()
+    {
+        next($this->fields);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function key()
+    {
+        return key($this->fields);
+    }
+
+    /**
+     * @return bool
+     */
+    public function valid()
+    {
+        return !(key($this->fields) === null && current($this->fields) === false);
+    }
+
+    /**
+     * @return void
+     */
+    public function rewind()
+    {
+        reset($this->fields);
     }
 }

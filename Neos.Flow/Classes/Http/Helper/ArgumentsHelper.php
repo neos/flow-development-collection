@@ -44,7 +44,7 @@ abstract class ArgumentsHelper
      */
     public static function createContentStreamFromString(string $content): ContentStream
     {
-        $handle = fopen('php://temp', 'rw');
+        $handle = fopen('php://memory', 'r+');
         fwrite($handle, $content);
         rewind($handle);
         return new ContentStream($handle);
