@@ -128,8 +128,13 @@ class Request extends BaseRequest implements ServerRequestInterface
         if (substr($requestUri, 0, 10) === '/index.php') {
             $requestUri = '/' . ltrim(substr($requestUri, 10), '/');
         }
-        $this->uri = new Uri($protocol . '://' . $host . (isset($server['SERVER_PORT']) ? ':' . $server['SERVER_PORT'] : '') . $requestUri);
 
+        $uri = new Uri($protocol . '://' . $host . $requestUri);
+        if (isset($server['SERVER_PORT'])) {
+            $uri = $uri->withPort($server['SERVER_PORT']);
+        }
+
+        $this->uri = $uri;
         $this->parsedBody = $post;
         $this->queryParams = $get;
         $this->server = $server;

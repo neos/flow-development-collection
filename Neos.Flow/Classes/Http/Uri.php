@@ -491,8 +491,12 @@ class Uri implements UriInterface
      */
     public function withScheme($scheme)
     {
+        if (preg_match(self::PATTERN_MATCH_SCHEME, $scheme) !== 1) {
+            throw new \InvalidArgumentException('"' . $scheme . '" is not a valid scheme.', 1184071237);
+        }
+
         $newUri = clone $this;
-        $newUri->scheme = $scheme;
+        $newUri->scheme = strtolower($scheme);
         return $newUri;
     }
 
@@ -534,6 +538,9 @@ class Uri implements UriInterface
      */
     public function withHost($host)
     {
+        if (preg_match(self::PATTERN_MATCH_HOST, $host) !== 1) {
+            throw new \InvalidArgumentException('"' . $host . '" is not valid host as part of a URI.', 1184071240);
+        }
         $newUri = clone $this;
         $newUri->host = $host;
         return $newUri;
@@ -557,10 +564,13 @@ class Uri implements UriInterface
      * @throws \InvalidArgumentException for invalid ports.
      * @api PSR-7
      */
-    public function withPort($port)
+    public function withPort($port = null)
     {
+        if (preg_match(self::PATTERN_MATCH_PORT, $port) !== 1) {
+            throw new \InvalidArgumentException('"' . $port . '" is not valid port number as part of a URI.', 1184071241);
+        }
         $newUri = clone $this;
-        $newUri->port = $port;
+        $newUri->port = ($port !== null ? (int)$port : null);
         return $newUri;
     }
 
@@ -613,6 +623,7 @@ class Uri implements UriInterface
     public function withQuery($query)
     {
         $newUri = clone $this;
+        $newUri->arguments = null;
         $newUri->query = $query;
         return $newUri;
     }

@@ -377,7 +377,7 @@ class BaseRequest extends AbstractMessage implements RequestInterface
         $newRequest->uri = $uri;
 
 
-        if ($preserveHost === false) {
+        if ($preserveHost === false || !$this->hasHeader('Host')) {
             $newRequest->updateHostFromUri();
         }
 
