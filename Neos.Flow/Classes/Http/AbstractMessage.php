@@ -12,6 +12,7 @@ namespace Neos\Flow\Http;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Utility\TypeHandling;
 use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\StreamInterface;
 
@@ -145,7 +146,19 @@ abstract class AbstractMessage implements MessageInterface
      */
     public function setContent($content)
     {
-        $this->content = $content;
+        $this->content = null;
+        if ($content === null) {
+            return;
+        }
+
+        if (TypeHandling::isSimpleType(gettype($content)) && !is_array($content)) {
+            $this->content = (string)$content;
+        }
+
+        if (is_resource($content)) {
+            $this->content = $content;
+        }
+
         return $this;
     }
 
@@ -452,7 +465,11 @@ abstract class AbstractMessage implements MessageInterface
     public function getBody()
     {
         $streamResource = fopen('php://memory', 'r+');
-        fwrite($streamResource, $this->content);
+        if (is_resource($this->content)) {
+            stream_copy_to_stream($this->content, $streamResource);
+        } else {
+            fwrite($streamResource, $this->content);
+        }
         rewind($streamResource);
 
         return new ContentStream($streamResource);

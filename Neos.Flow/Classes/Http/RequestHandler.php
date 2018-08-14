@@ -18,6 +18,7 @@ use Neos\Flow\Http\Component\ComponentChain;
 use Neos\Flow\Http\Component\ComponentContext;
 use Neos\Flow\Package\Package;
 use Neos\Flow\Package\PackageManagerInterface;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * A request handler which can handle HTTP requests.
@@ -104,9 +105,13 @@ class RequestHandler implements HttpRequestHandlerInterface
 
         $this->boot();
         $this->resolveDependencies();
-        $this->addPoweredByHeader($response);
+        $response = $this->addPoweredByHeader($response);
+        $this->componentContext->replaceHttpResponse($response);
         if (isset($this->settings['http']['baseUri'])) {
-            $request->setBaseUri(new Uri($this->settings['http']['baseUri']));
+            $baseUri = new Uri($this->settings['http']['baseUri']);
+            $request = $request->withAttribute(Request::ATTRIBUTE_BASE_URI, $baseUri);
+            $this->componentContext->replaceHttpRequest($request);
+            $request->setBaseUri($baseUri);
         }
 
         $this->baseComponentChain->handle($this->componentContext);
@@ -170,23 +175,20 @@ class RequestHandler implements HttpRequestHandlerInterface
     /**
      * Adds an HTTP header to the Response which indicates that the application is powered by Flow.
      *
-     * @param Response $response
-     * @return void
+     * @param ResponseInterface $response
+     * @return ResponseInterface
+     * @throws \Neos\Flow\Exception
      */
-    protected function addPoweredByHeader(Response $response)
+    protected function addPoweredByHeader(ResponseInterface $response): ResponseInterface
     {
         if ($this->settings['http']['applicationToken'] === 'Off') {
-            return;
+            return $response;
         }
 
-        $applicationIsFlow = ($this->settings['core']['applicationPackageKey'] === 'Neos.Flow');
+        $applicationIsNotFlow = ($this->settings['core']['applicationPackageKey'] !== 'Neos.Flow');
         if ($this->settings['http']['applicationToken'] === 'ApplicationName') {
-            if ($applicationIsFlow) {
-                $response->getHeaders()->set('X-Flow-Powered', 'Flow');
-            } else {
-                $response->getHeaders()->set('X-Flow-Powered', 'Flow ' . $this->settings['core']['applicationName']);
-            }
-            return;
+            $applicationName = 'Flow' . ($applicationIsNotFlow ? ' ' . $this->settings['core']['applicationName'] : '');
+            return $response->withAddedHeader('X-Flow-Powered', $applicationName);
         }
 
         /** @var Package $applicationPackage */
@@ -202,11 +204,8 @@ class RequestHandler implements HttpRequestHandlerInterface
             $applicationVersion = $this->renderMinorVersion($applicationPackage->getInstalledVersion());
         }
 
-        if ($applicationIsFlow) {
-            $response->getHeaders()->set('X-Flow-Powered', 'Flow/' . ($flowVersion ?: 'dev'));
-        } else {
-            $response->getHeaders()->set('X-Flow-Powered', 'Flow/' . ($flowVersion ?: 'dev') . ' ' . $this->settings['core']['applicationName'] . '/' . ($applicationVersion ?: 'dev'));
-        }
+        $applicationName = 'Flow/' . ($flowVersion ?: 'dev') . ($applicationIsNotFlow ? ' ' . $this->settings['core']['applicationName'] . '/' . ($applicationVersion ?: 'dev') : '');
+        return $response->withAddedHeader('X-Flow-Powered', $applicationName);
     }
 
     /**

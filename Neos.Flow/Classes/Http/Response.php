@@ -11,6 +11,7 @@ namespace Neos\Flow\Http;
  * source code.
  */
 
+use Neos\Flow\Http\Helper\ResponseInformationHelper;
 use Neos\Flow\Mvc\ResponseInterface;
 use Neos\Flow\Annotations as Flow;
 
@@ -50,65 +51,20 @@ class Response extends AbstractMessage implements ResponseInterface, \Psr\Http\M
      *
      * @param integer $statusCode
      * @return string
+     * @deprecated Since Flow 5.1, use ResponseInformationHelper::getStatusMessageByCode
+     * @see ResponseInformationHelper::getStatusMessageByCode()
      */
     public static function getStatusMessageByCode($statusCode)
     {
-        $statusMessages = [
-                100 => 'Continue',
-                101 => 'Switching Protocols',
-                102 => 'Processing', // RFC 2518
-                200 => 'OK',
-                201 => 'Created',
-                202 => 'Accepted',
-                203 => 'Non-Authoritative Information',
-                204 => 'No Content',
-                205 => 'Reset Content',
-                206 => 'Partial Content',
-                207 => 'Multi-Status',
-                300 => 'Multiple Choices',
-                301 => 'Moved Permanently',
-                302 => 'Found',
-                303 => 'See Other',
-                304 => 'Not Modified',
-                305 => 'Use Proxy',
-                307 => 'Temporary Redirect',
-                400 => 'Bad Request',
-                401 => 'Unauthorized',
-                402 => 'Payment Required',
-                403 => 'Forbidden',
-                404 => 'Not Found',
-                405 => 'Method Not Allowed',
-                406 => 'Not Acceptable',
-                407 => 'Proxy Authentication Required',
-                408 => 'Request Timeout',
-                409 => 'Conflict',
-                410 => 'Gone',
-                411 => 'Length Required',
-                412 => 'Precondition Failed',
-                413 => 'Request Entity Too Large',
-                414 => 'Request-URI Too Long',
-                415 => 'Unsupported Media Type',
-                416 => 'Requested Range Not Satisfiable',
-                417 => 'Expectation Failed',
-                418 => 'Sono Vibiemme',
-                500 => 'Internal Server Error',
-                501 => 'Not Implemented',
-                502 => 'Bad Gateway',
-                503 => 'Service Unavailable',
-                504 => 'Gateway Timeout',
-                505 => 'HTTP Version Not Supported',
-                507 => 'Insufficient Storage',
-                509 => 'Bandwidth Limit Exceeded',
-        ];
-        return isset($statusMessages[$statusCode]) ? $statusMessages[$statusCode] : 'Unknown Status';
+        ResponseInformationHelper::getStatusMessageByCode($statusCode);
     }
 
     /**
      * Construct this Response
      *
-     * @param Response $parentResponse
+     * @param ResponseInterface $parentResponse Deprecated parameter
      */
-    public function __construct(Response $parentResponse = null)
+    public function __construct(ResponseInterface $parentResponse = null)
     {
         $this->headers = new Headers();
         $this->headers->set('Content-Type', 'text/html; charset=' . $this->charset);
@@ -119,71 +75,23 @@ class Response extends AbstractMessage implements ResponseInterface, \Psr\Http\M
      * Creates a response from the given raw, that is plain text, HTTP response.
      *
      * @param string $rawResponse
-     * @param Response $parentResponse Parent response, if called recursively
+     * @param Response $parentResponse Deprecated parameter. Parent response, if called recursively
      *
      * @throws \InvalidArgumentException
      * @return Response
+     * @deprecated Since Flow 5.1, use ResponseInformationHelper::createFromRaw
+     * @see ResponseInformationHelper::createFromRaw()
      */
     public static function createFromRaw($rawResponse, Response $parentResponse = null)
     {
-        $response = new static($parentResponse);
-
-        // see https://tools.ietf.org/html/rfc7230#section-3.5
-        $lines = explode(chr(10), $rawResponse);
-        $statusLine = array_shift($lines);
-
-        if (substr($statusLine, 0, 5) !== 'HTTP/') {
-            throw new \InvalidArgumentException('The given raw HTTP message is not a valid response.', 1335175601);
-        }
-        list($version, $statusCode, $reasonPhrase) = explode(' ', $statusLine, 3);
-        if (strlen($statusCode) !== 3) {
-            // See https://tools.ietf.org/html/rfc7230#section-3.1.2
-            throw new \InvalidArgumentException('The given raw HTTP message contains an invalid status code.', 1502981352);
-        }
-        $response->setVersion($version);
-        $response->setStatus((integer)$statusCode, trim($reasonPhrase));
-
-        $parsingHeader = true;
-        $contentLines = [];
-        $headers = new Headers();
-        foreach ($lines as $line) {
-            if ($parsingHeader) {
-                if (trim($line) === '') {
-                    $parsingHeader = false;
-                    continue;
-                }
-                $headerSeparatorIndex = strpos($line, ':');
-                if ($headerSeparatorIndex === false) {
-                    throw new \InvalidArgumentException('The given raw HTTP message contains an invalid header.', 1502984804);
-                }
-                $fieldName = trim(substr($line, 0, $headerSeparatorIndex));
-                $fieldValue = trim(substr($line, strlen($fieldName) + 1));
-                if (strtoupper(substr($fieldName, 0, 10)) === 'SET-COOKIE') {
-                    $cookie = Cookie::createFromRawSetCookieHeader($fieldValue);
-                    if ($cookie !== null) {
-                        $headers->setCookie($cookie);
-                    }
-                } else {
-                    $headers->set($fieldName, $fieldValue, false);
-                }
-            } else {
-                $contentLines[] = $line;
-            }
-        }
-        if ($parsingHeader === true) {
-            throw new \InvalidArgumentException('The given raw HTTP message contains no separating empty line between header and body.', 1502984823);
-        }
-        $content = implode(chr(10), $contentLines);
-
-        $response->setHeaders($headers);
-        $response->setContent($content);
-        return $response;
+        return ResponseInformationHelper::createFromRaw($rawResponse, $parentResponse);
     }
 
     /**
      * Return the parent response or NULL if none exists.
      *
      * @return Response the parent response, or NULL if none
+     * @deprecated Since Flow 5.1, without replacement
      */
     public function getParentResponse()
     {
@@ -195,7 +103,7 @@ class Response extends AbstractMessage implements ResponseInterface, \Psr\Http\M
      *
      * @param string $content More response content
      * @return Response This response, for method chaining
-     * @api
+     * @deprecated Since Flow 5.1, without replacement
      */
     public function appendContent($content)
     {
@@ -207,7 +115,8 @@ class Response extends AbstractMessage implements ResponseInterface, \Psr\Http\M
      * Returns the response content without sending it.
      *
      * @return string The response content
-     * @api
+     * @deprecated Since Flow 5.1, use getBody
+     * @see getBody()
      */
     public function getContent()
     {
@@ -221,7 +130,8 @@ class Response extends AbstractMessage implements ResponseInterface, \Psr\Http\M
      * @param string $message If specified, this message is sent instead of the standard message
      * @return Response This response, for method chaining
      * @throws \InvalidArgumentException if the specified status code is not valid
-     * @api
+     * @deprecated Since Flow 5.1, use withStatus
+     * @see withStatus()
      */
     public function setStatus($code, $message = null)
     {
@@ -232,7 +142,7 @@ class Response extends AbstractMessage implements ResponseInterface, \Psr\Http\M
             $message = self::getStatusMessageByCode($code);
         }
         $this->statusCode = $code;
-        $this->statusMessage = ($message === null) ? self::$statusMessages[$code] : $message;
+        $this->statusMessage = ($message === null) ? ResponseInformationHelper::getStatusMessageByCode($code) : $message;
         return $this;
     }
 
@@ -240,7 +150,8 @@ class Response extends AbstractMessage implements ResponseInterface, \Psr\Http\M
      * Returns status code and status message.
      *
      * @return string The status code and status message, eg. "404 Not Found"
-     * @api
+     * @deprecated Since Flow 5.1, use getStatusCode
+     * @see getStatusCode()
      */
     public function getStatus()
     {
@@ -263,7 +174,7 @@ class Response extends AbstractMessage implements ResponseInterface, \Psr\Http\M
      *
      * @param Headers
      * @return void
-     * @api
+     * @deprecated Since Flow 5.1, without replacement
      */
     public function setHeaders(Headers $headers)
     {
@@ -283,7 +194,8 @@ class Response extends AbstractMessage implements ResponseInterface, \Psr\Http\M
      *
      * @param \DateTime $now The current point in time
      * @return void
-     * @api
+     * @deprecated Since Flow 5.1, directly set the "Date" header
+     * @see withHeader()
      */
     public function setNow(\DateTime $now)
     {
@@ -301,7 +213,8 @@ class Response extends AbstractMessage implements ResponseInterface, \Psr\Http\M
      *
      * @param string|\DateTime $date
      * @return Response This response, for method chaining
-     * @api
+     * @deprecated Since Flow 5.1, directly set the "Date" header
+     * @see withHeader()
      */
     public function setDate($date)
     {
@@ -315,7 +228,8 @@ class Response extends AbstractMessage implements ResponseInterface, \Psr\Http\M
      * The returned date is configured to be in the GMT timezone.
      *
      * @return \DateTime The date of this response
-     * @api
+     * @deprecated Since Flow 5.1, directly get the "Date" header
+     * @see getHeader()
      */
     public function getDate()
     {
@@ -331,7 +245,8 @@ class Response extends AbstractMessage implements ResponseInterface, \Psr\Http\M
      *
      * @param string|\DateTime $date
      * @return Response This response, for method chaining
-     * @api
+     * @deprecated Since Flow 5.1, directly set the Last-Modified header
+     * @see withHeader()
      */
     public function setLastModified($date)
     {
@@ -346,7 +261,8 @@ class Response extends AbstractMessage implements ResponseInterface, \Psr\Http\M
      * The returned date is configured to be in the GMT timezone.
      *
      * @return \DateTime The last modification date or NULL
-     * @api
+     * @deprecated Since Flow 5.1, directly get the Last-Modified header
+     * @see getHeader()
      */
     public function getLastModified()
     {
@@ -369,7 +285,8 @@ class Response extends AbstractMessage implements ResponseInterface, \Psr\Http\M
      *
      * @param string|\DateTime $date
      * @return Response This response, for method chaining
-     * @api
+     * @deprecated Since Flow 5.1, directly set the Expires header
+     * @see withHeader()
      */
     public function setExpires($date)
     {
@@ -384,7 +301,8 @@ class Response extends AbstractMessage implements ResponseInterface, \Psr\Http\M
      * The returned date is configured to be in the GMT timezone.
      *
      * @return \DateTime The expiration date or NULL
-     * @api
+     * @deprecated Since Flow 5.1, directly get the Expires header
+     * @see getHeader()
      */
     public function getExpires()
     {
@@ -402,7 +320,8 @@ class Response extends AbstractMessage implements ResponseInterface, \Psr\Http\M
      * an Age header if this is the case.
      *
      * @return integer The age in seconds
-     * @api
+     * @deprecated Since Flow 5.1, directly get the Age header
+     * @see getHeader()
      */
     public function getAge()
     {
@@ -422,7 +341,8 @@ class Response extends AbstractMessage implements ResponseInterface, \Psr\Http\M
      *
      * @param integer $age The maximum age in seconds
      * @return Response This response, for method chaining
-     * @api
+     * @deprecated Since Flow 5.1, directly set the cache header
+     * @see withHeader()
      */
     public function setMaximumAge($age)
     {
@@ -437,7 +357,8 @@ class Response extends AbstractMessage implements ResponseInterface, \Psr\Http\M
      * Cache-Control header.
      *
      * @return integer The maximum age in seconds, or NULL if none has been defined
-     * @api
+     * @deprecated Since Flow 5.1, directly get the cache header and parse it
+     * @see getHeader()
      */
     public function getMaximumAge()
     {
@@ -452,7 +373,8 @@ class Response extends AbstractMessage implements ResponseInterface, \Psr\Http\M
      *
      * @param integer $maximumAge The maximum age in seconds
      * @return Response This response, for method chaining
-     * @api
+     * @deprecated Since Flow 5.1, directly set the cache header
+     * @see withHeader()
      */
     public function setSharedMaximumAge($maximumAge)
     {
@@ -468,7 +390,8 @@ class Response extends AbstractMessage implements ResponseInterface, \Psr\Http\M
      * Cache-Control header.
      *
      * @return integer The maximum age in seconds, or NULL if none has been defined
-     * @api
+     * @deprecated Since Flow 5.1, directly get the cache header
+     * @see getHeader()
      */
     public function getSharedMaximumAge()
     {
@@ -479,17 +402,12 @@ class Response extends AbstractMessage implements ResponseInterface, \Psr\Http\M
      * Renders the HTTP headers - including the status header - of this response
      *
      * @return array The HTTP headers
-     * @api
+     * @deprecated Since Flow 5.1, use ResponseInformationHelper::prepareHeaders
+     * @see ResponseInformationHelper::prepareHeaders()
      */
     public function renderHeaders()
     {
-        $preparedHeaders = [];
-        $statusHeader = rtrim($this->getStatusLine(), "\r\n");
-
-        $preparedHeaders[] = $statusHeader;
-        $preparedHeaders = array_merge($preparedHeaders, $this->headers->getPreparedValues());
-
-        return $preparedHeaders;
+        return ResponseInformationHelper::prepareHeaders($this);
     }
 
     /**
@@ -499,7 +417,8 @@ class Response extends AbstractMessage implements ResponseInterface, \Psr\Http\M
      * wouldn't be cacheable in a shared cache.
      *
      * @return Response This response, for method chaining
-     * @api
+     * @deprecated Since Flow 5.1, directly set the cache header
+     * @see withHeader()
      */
     public function setPublic()
     {
@@ -514,7 +433,8 @@ class Response extends AbstractMessage implements ResponseInterface, \Psr\Http\M
      * user and must not be cached by a shared cache.
      *
      * @return Response This response, for method chaining
-     * @api
+     * @deprecated Since Flow 5.1, directly set the cache header
+     * @see withHeader()
      */
     public function setPrivate()
     {
@@ -532,7 +452,8 @@ class Response extends AbstractMessage implements ResponseInterface, \Psr\Http\M
      *
      * @param Request $request The corresponding request
      * @return void
-     * @api
+     * @deprecated Since Flow 5.1, use ResponseInformationHelper::makeStandardsCompliant
+     * @see ResponseInformationHelper::makeStandardsCompliant()
      */
     public function makeStandardsCompliant(Request $request)
     {
@@ -584,7 +505,8 @@ class Response extends AbstractMessage implements ResponseInterface, \Psr\Http\M
      *
      * @return void
      * @codeCoverageIgnore
-     * @api
+     * @deprecated Since Flow 5.1, without replacement
+     * TODO: Make private after deprecation period
      */
     public function sendHeaders()
     {
@@ -610,7 +532,7 @@ class Response extends AbstractMessage implements ResponseInterface, \Psr\Http\M
     {
         $this->sendHeaders();
         if ($this->content !== null) {
-            echo $this->getContent();
+            echo $this->getBody()->getContents();
         }
     }
 
@@ -620,11 +542,12 @@ class Response extends AbstractMessage implements ResponseInterface, \Psr\Http\M
      *
      * @return string
      * @see http://www.w3.org/Protocols/rfc2616/rfc2616-sec6.html#sec6.1
-     * @api
+     * @deprecated Since Flow 5.1
+     * @see ResponseInformationHelper::generateStatusLine
      */
     public function getStatusLine()
     {
-        return sprintf("%s %s %s\r\n", $this->version, $this->statusCode, $this->statusMessage);
+        return ResponseInformationHelper::generateStatusLine($this);
     }
 
     /**
@@ -632,11 +555,12 @@ class Response extends AbstractMessage implements ResponseInterface, \Psr\Http\M
      *
      * @return string The Status-Line of this Response
      * @see http://www.w3.org/Protocols/rfc2616/rfc2616-sec4.html chapter 4.1 "Message Types"
-     * @api
+     * @deprecated Since Flow 5.1
+     * @see ResponseInformationHelper::generateStatusLine
      */
     public function getStartLine()
     {
-        return $this->getStatusLine();
+        return ResponseInformationHelper::generateStatusLine($this);
     }
 
     /**
@@ -694,7 +618,7 @@ class Response extends AbstractMessage implements ResponseInterface, \Psr\Http\M
      */
     public function __toString()
     {
-        $output = $this->getContent();
+        $output = $this->getBody()->getContents();
         if (is_object($output) || is_array($output)) {
             $output = '';
         }

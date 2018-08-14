@@ -11,6 +11,7 @@ namespace Neos\Flow\Http\Helper;
  * source code.
  */
 
+use Neos\Flow\Http\ContentStream;
 use Neos\Utility\Arrays;
 
 /**
@@ -35,5 +36,17 @@ abstract class ArgumentsHelper
         $arguments = Arrays::arrayMergeRecursiveOverrule($arguments, $untangledFiles);
 
         return $arguments;
+    }
+
+    /**
+     * @param string $content
+     * @return ContentStream
+     */
+    public static function createContentStreamFromString(string $content): ContentStream
+    {
+        $handle = fopen('php://temp', 'rw');
+        fwrite($handle, $content);
+        rewind($handle);
+        return new ContentStream($handle);
     }
 }
