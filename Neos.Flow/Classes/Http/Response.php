@@ -87,6 +87,7 @@ class Response extends AbstractMessage implements ResponseInterface, \Psr\Http\M
         /** @var Response $response */
         $response = ResponseInformationHelper::createFromRaw($rawResponse);
         $response->parentResponse = $parentResponse;
+        return $response;
     }
 
     /**
