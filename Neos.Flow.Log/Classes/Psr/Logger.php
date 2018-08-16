@@ -68,8 +68,8 @@ class Logger implements LoggerInterface
     {
         $backendLogLevel = self::LOGLEVEL_MAPPING[$level];
 
-        list($packageKey, $className, $methodName) = $this->extractlegacyDataFromContext($context);
-        $additionalData = $this->removeLegacyDataFromContext($context, $packageKey, $className, $methodName);
+        list($packageKey, $className, $methodName) = $this->extractLegacyDataFromContext($context);
+        $additionalData = $this->removeLegacyDataFromContext($context);
 
         foreach ($this->backends as $backend) {
             $backend->append($message, $backendLogLevel, $additionalData, $packageKey, $className, $methodName);
@@ -80,7 +80,7 @@ class Logger implements LoggerInterface
      * @param array $context
      * @return array list of packageKey, className and methodName either string or null
      */
-    protected function extractlegacyDataFromContext(array $context): array
+    protected function extractLegacyDataFromContext(array $context): array
     {
         return [
             $context['FLOW_LOG_ENVIRONMENT']['packageKey'] ?? null,

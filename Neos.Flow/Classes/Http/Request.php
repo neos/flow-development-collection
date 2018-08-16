@@ -421,18 +421,7 @@ class Request extends BaseRequest implements ServerRequestInterface
      */
     public function getClientIpAddress()
     {
-        $serverFields = array('HTTP_CLIENT_IP', 'HTTP_X_FORWARDED_FOR', 'HTTP_X_FORWARDED', 'HTTP_X_CLUSTER_CLIENT_IP', 'HTTP_FORWARDED_FOR', 'HTTP_FORWARDED');
-        foreach ($serverFields as $field) {
-            if (empty($this->server[$field])) {
-                continue;
-            }
-            $length = strpos($this->server[$field], ',');
-            $ipAddress = trim(($length === false) ? $this->server[$field] : substr($this->server[$field], 0, $length));
-            if (filter_var($ipAddress, FILTER_VALIDATE_IP, FILTER_FLAG_NO_RES_RANGE | FILTER_FLAG_NO_PRIV_RANGE) !== false) {
-                return $ipAddress;
-            }
-        }
-        return (isset($this->server['REMOTE_ADDR']) ? $this->server['REMOTE_ADDR'] : null);
+        return $this->getAttribute(self::ATTRIBUTE_CLIENT_IP);
     }
 
     /**

@@ -329,6 +329,7 @@ class PersistenceTest extends FunctionalTestCase
 
     /**
      * @test
+     * @doesNotPerformAssertions
      */
     public function validationIsOnlyDoneForPropertiesWhichAreInTheDefaultOrPersistencePropertyGroup()
     {
@@ -342,9 +343,6 @@ class PersistenceTest extends FunctionalTestCase
         $testEntity->setDescription('');
         $this->testEntityRepository->update($testEntity);
         $this->persistenceManager->persistAll();
-
-        // dummy assertion to suppress PHPUnit warning
-        $this->assertTrue(true);
     }
 
     /**

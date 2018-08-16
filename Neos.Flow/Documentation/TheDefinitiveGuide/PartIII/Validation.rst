@@ -425,7 +425,7 @@ is an array with the following numerically indexed elements:
 # type of the option (used for documentation rendering)
 # required option flag (optional, defaults to FALSE)
 
-The default values are set in the constructor of the abstract validators provided with FLOW3. If the
+The default values are set in the constructor of the abstract validators provided with Flow. If the
 required flag is set, missing options will cause an ``InvalidValidationOptionsException`` to be thrown
 when the validator is instantiated.
 

@@ -220,7 +220,8 @@ class CompileTimeObjectManager extends ObjectManager
 
         /** @var \Neos\Flow\Package\PackageInterface $package */
         foreach ($packages as $packageKey => $package) {
-            if (ComposerUtility::isFlowPackageType($package->getComposerManifest('type')) || isset($includeClassesConfiguration[$packageKey])) {
+            $packageType = (string)$package->getComposerManifest('type');
+            if (ComposerUtility::isFlowPackageType($packageType) || isset($includeClassesConfiguration[$packageKey])) {
                 foreach ($package->getClassFiles() as $fullClassName => $path) {
                     if (substr($fullClassName, -9, 9) !== 'Exception') {
                         $availableClassNames[$packageKey][] = $fullClassName;

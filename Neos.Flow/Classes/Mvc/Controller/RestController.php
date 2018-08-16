@@ -76,7 +76,11 @@ class RestController extends ActionController
                     $actionName = 'delete';
                 break;
             }
-            $this->request->setControllerActionName($actionName);
+            if ($this->request->getControllerActionName() !== $actionName) {
+                // Clone the request, because it should not be mutated to prevent unexpected routing behavior
+                $this->request = clone $this->request;
+                $this->request->setControllerActionName($actionName);
+            }
         }
         return parent::resolveActionMethodName();
     }

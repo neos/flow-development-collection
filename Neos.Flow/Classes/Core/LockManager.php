@@ -62,7 +62,7 @@ class LockManager
      *
      * @return string
      */
-    protected function getLockPath()
+    protected function getLockPath(): string
     {
         return FLOW_PATH_TEMPORARY;
     }
@@ -88,7 +88,7 @@ class LockManager
      * @return boolean
      * @api
      */
-    public function isSiteLocked()
+    public function isSiteLocked(): bool
     {
         return file_exists($this->lockFlagPathAndFilename);
     }
