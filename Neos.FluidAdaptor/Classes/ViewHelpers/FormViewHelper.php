@@ -17,6 +17,7 @@ use Neos\Flow\Security\Authentication\AuthenticationManagerInterface;
 use Neos\Flow\Security\Context;
 use Neos\Flow\Security\Cryptography\HashService;
 use Neos\FluidAdaptor\Core\ViewHelper;
+use Neos\FluidAdaptor\Core\ViewHelper\Exception\WrongEnctypeException;
 use Neos\FluidAdaptor\ViewHelpers\Form\AbstractFormViewHelper;
 
 /**
@@ -152,8 +153,14 @@ class FormViewHelper extends AbstractFormViewHelper
         $this->addFieldNamePrefixToViewHelperVariableContainer();
         $this->addFormFieldNamesToViewHelperVariableContainer();
         $this->addEmptyHiddenFieldNamesToViewHelperVariableContainer();
+        $this->viewHelperVariableContainer->addOrUpdate(FormViewHelper::class, 'required-enctype', '');
 
         $formContent = $this->renderChildren();
+
+        $requiredEnctype = $this->viewHelperVariableContainer->get(FormViewHelper::class, 'required-enctype');
+        if ($requiredEnctype !== '' && $requiredEnctype !== strtolower($this->arguments['enctype'])) {
+            throw new WrongEnctypeException('The form you are trying to render requires an enctype of "' . $requiredEnctype . '". Please specify the correct enctype when using file uploads.', 1522706399);
+        }
 
         // wrap hidden field in div container in order to create XHTML valid output
         $content = chr(10) . '<div style="display: none">';
