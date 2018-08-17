@@ -56,7 +56,7 @@ class ActionControllerTest extends FunctionalTestCase
         ]);
         $route->setRoutePartsConfiguration([
             'entity' => [
-                'objectType' => \Neos\Flow\Tests\Functional\Persistence\Fixtures\TestEntity::class
+                'objectType' => TestEntity::class
             ]
         ]);
     }
@@ -68,7 +68,7 @@ class ActionControllerTest extends FunctionalTestCase
      *
      * @test
      */
-    public function defaultActionSpecifiedInrouteIsCalledAndResponseIsReturned()
+    public function defaultActionSpecifiedInRouteIsCalledAndResponseIsReturned()
     {
         $response = $this->browser->request('http://localhost/test/mvc/actioncontrollertesta');
         $this->assertEquals('First action was called', $response->getContent());
@@ -376,9 +376,6 @@ class ActionControllerTest extends FunctionalTestCase
 
     /**
      * Data provider for argumentTests()
-     *
-     * @TODO Using 'optional float - default value'    => array('optionalFloat', NULL, 12.34),
-     * this fails (on some machines) because the value is 12.33999999...
      *
      * @return array
      */

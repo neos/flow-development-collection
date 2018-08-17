@@ -15,6 +15,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ObjectManagement\Configuration\Configuration;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Reflection\ReflectionService;
+use Neos\Flow\Validation\Validator\PolyTypeObjectValidatorInterface;
 use Neos\Utility\Exception\InvalidTypeException;
 use Neos\Utility\TypeHandling;
 use Neos\Flow\Validation\Validator\AggregateBoundaryValidator;
@@ -127,6 +128,9 @@ class ValidatorResolver
      * @param string $targetClassName Fully qualified class name of the target class, ie. the class which should be validated
      * @param array $validationGroups The validation groups to build the validator for
      * @return ConjunctionValidator The validator conjunction
+     * @throws Exception\InvalidValidationConfigurationException
+     * @throws Exception\InvalidValidationOptionsException
+     * @throws Exception\NoSuchValidatorException
      * @api
      */
     public function getBaseValidatorConjunction($targetClassName, array $validationGroups = ['Default'])
@@ -153,6 +157,7 @@ class ValidatorResolver
      * @throws Exception\InvalidValidationConfigurationException
      * @throws Exception\NoSuchValidatorException
      * @throws Exception\InvalidTypeHintException
+     * @throws Exception\InvalidValidationOptionsException
      */
     public function buildMethodArgumentsValidatorConjunctions($className, $methodName, array $methodParameters = null, array $methodValidateAnnotations = null)
     {
@@ -166,6 +171,7 @@ class ValidatorResolver
         }
 
         foreach ($methodParameters as $parameterName => $methodParameter) {
+            /** @var ConjunctionValidator $validatorConjunction */
             $validatorConjunction = $this->createValidator(ConjunctionValidator::class);
 
             if (!array_key_exists('type', $methodParameter)) {
@@ -231,6 +237,7 @@ class ValidatorResolver
      * @param array $objectPath The object path
      * @param ValidatorInterface $propertyValidator The validator which should be added to the property specified by objectPath
      * @return GenericObjectValidator
+     * @throws Exception\InvalidValidationOptionsException
      */
     protected function buildSubObjectValidator(array $objectPath, ValidatorInterface $propertyValidator)
     {
@@ -271,10 +278,12 @@ class ValidatorResolver
      * @return void
      * @throws Exception\NoSuchValidatorException
      * @throws \InvalidArgumentException
+     * @throws Exception\InvalidValidationOptionsException
+     * @throws Exception\InvalidValidationConfigurationException
      */
     protected function buildBaseValidatorConjunction($indexKey, $targetClassName, array $validationGroups)
     {
-        $conjunctionValidator = new ConjunctionValidator();
+        $conjunctionValidator = new ConjunctionValidator([]);
         $this->baseValidatorConjunctions[$indexKey] = $conjunctionValidator;
         if (!TypeHandling::isSimpleType($targetClassName) && class_exists($targetClassName)) {
             // Model based validator
@@ -360,6 +369,8 @@ class ValidatorResolver
      * @param string $targetClassName
      * @param ConjunctionValidator $conjunctionValidator
      * @return void
+     * @throws Exception\InvalidValidationConfigurationException
+     * @throws Exception\NoSuchValidatorException
      */
     protected function addCustomValidators($targetClassName, ConjunctionValidator &$conjunctionValidator)
     {
@@ -376,6 +387,7 @@ class ValidatorResolver
         $acceptablePolyTypeValidators = [];
         $polyTypeObjectValidatorImplementationClassNames = static::getPolyTypeObjectValidatorImplementationClassNames($this->objectManager);
         foreach ($polyTypeObjectValidatorImplementationClassNames as $validatorImplementationClassName) {
+            /** @var PolyTypeObjectValidatorInterface $acceptablePolyTypeValidator */
             $acceptablePolyTypeValidator = $this->createValidator($validatorImplementationClassName);
             // skip custom validator already added above
             if ($addedValidatorClassName === get_class($acceptablePolyTypeValidator)) {
