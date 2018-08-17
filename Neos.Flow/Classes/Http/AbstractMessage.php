@@ -512,7 +512,8 @@ abstract class AbstractMessage implements MessageInterface
      *
      * @return string The first line of the message
      * @see http://www.w3.org/Protocols/rfc2616/rfc2616-sec4.html chapter 4.1 "Message Types"
-     * @deprecated Since Flow 5.1
-     */
+     * @deprecated Since Flow 5.1, use the RequestInformationHelper instead
+     * @see RequestInformationHelper::generateRequestLine()
+    */
     abstract public function getStartLine();
 }
