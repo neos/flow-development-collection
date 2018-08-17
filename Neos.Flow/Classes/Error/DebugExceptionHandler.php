@@ -14,6 +14,7 @@ namespace Neos\Flow\Error;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Exception as FlowException;
+use Neos\Flow\Http\Helper\ResponseInformationHelper;
 use Neos\Flow\Http\Response;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 
@@ -63,7 +64,7 @@ EOD;
         if ($exception instanceof FlowException) {
             $statusCode = $exception->getStatusCode();
         }
-        $statusMessage = Response::getStatusMessageByCode($statusCode);
+        $statusMessage = ResponseInformationHelper::getStatusMessageByCode($statusCode);
         if (!headers_sent()) {
             header(sprintf('HTTP/1.1 %s %s', $statusCode, $statusMessage));
         }
@@ -91,7 +92,7 @@ EOD;
      */
     protected function renderStatically(int $statusCode, \Throwable $exception)
     {
-        $statusMessage = Response::getStatusMessageByCode($statusCode);
+        $statusMessage = ResponseInformationHelper::getStatusMessageByCode($statusCode);
         $exceptionHeader = '<div class="Flow-Debug-Exception-Header">';
         while (true) {
             $filepaths = Debugger::findProxyAndShortFilePath($exception->getFile());
