@@ -80,7 +80,7 @@ abstract class AbstractMessage implements MessageInterface
      * @param string $name Name of the header
      * @return string[] An array of field values, may be empty if the header was not set (check with hasHeader)
      * @api
-     * @deprecated Not deprecated but from 5.1 this will only return arrays of strings according to the PSR-7 standard.
+     * @deprecated Not deprecated but from the next major (6.0) this will only return arrays of strings according to the PSR-7 standard.
      */
     public function getHeader($name)
     {
