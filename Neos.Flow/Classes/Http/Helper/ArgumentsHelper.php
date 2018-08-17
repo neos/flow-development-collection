@@ -24,6 +24,8 @@ abstract class ArgumentsHelper
      * Afterwards all mapped arguments can be retrieved by the getArgument(s) method, no matter if they
      * have been GET, POST or PUT arguments before.
      *
+     * The order of merging is GET, POST, FILES, with later items overriding earlier ones.
+     *
      * @param array $getArguments Arguments as found in $_GET
      * @param array $postArguments Arguments as found in $_POST
      * @param array $untangledFiles Untangled $_FILES as provided by \Neos\Flow\Http\Helper\UploadedFilesHelper::untangleFilesArray
