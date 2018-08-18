@@ -172,6 +172,7 @@ class Request extends BaseRequest implements ServerRequestInterface
             'SERVER_PROTOCOL' => 'HTTP/1.1',
             'SCRIPT_NAME' => '/index.php',
             'PHP_SELF' => '/index.php',
+            'REQUEST_TIME' => time()
         ];
 
         if ($uri->getScheme() === 'https') {
