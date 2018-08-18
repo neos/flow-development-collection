@@ -611,19 +611,6 @@ class Scripts
     }
 
     /**
-     * Initializes the session framework
-     *
-     * @param Bootstrap $bootstrap
-     * @return void
-     */
-    public static function initializeSession(Bootstrap $bootstrap)
-    {
-        if (FLOW_SAPITYPE === 'Web') {
-            $bootstrap->getObjectManager()->get(SessionInterface::class)->resume();
-        }
-    }
-
-    /**
      * Initialize the stream wrappers.
      *
      * @param Bootstrap $bootstrap

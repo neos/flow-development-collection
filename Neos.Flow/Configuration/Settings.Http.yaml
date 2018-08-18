@@ -36,7 +36,9 @@ Neos:
             'trustedProxies':
               position: 'start'
               component: 'Neos\Flow\Http\Component\TrustedProxiesComponent'
-
+            'prepareSession':
+              position: 'after trustedProxies'
+              component: 'Neos\Flow\Session\Http\SessionRequestComponent'
         'process':
           chain:
             'routing':
@@ -47,6 +49,9 @@ Neos:
 
         'postprocess':
           chain:
+            'prepareSession':
+              position: 'start'
+              component: 'Neos\Flow\Session\Http\SessionResponseComponent'
             'standardsCompliance':
               position: 'end'
               component: 'Neos\Flow\Http\Component\StandardsComplianceComponent'

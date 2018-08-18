@@ -328,7 +328,6 @@ class Bootstrap
 
         $sequence->addStep(new Step('neos.flow:reflectionservice:factory', [Scripts::class, 'initializeReflectionServiceFactory']), 'neos.flow:objectmanagement:runtime');
         $sequence->addStep(new Step('neos.flow:resources', [Scripts::class, 'initializeResources']), 'neos.flow:reflectionservice:factory');
-        $sequence->addStep(new Step('neos.flow:session', [Scripts::class, 'initializeSession']), 'neos.flow:resources');
         return $sequence;
     }
 

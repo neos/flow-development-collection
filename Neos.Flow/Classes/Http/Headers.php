@@ -102,10 +102,6 @@ class Headers implements \Iterator
      */
     public function set($name, $values, $replaceExistingHeader = true)
     {
-        if (strtoupper(substr($name, 0, 10)) === 'SET-COOKIE') {
-            throw new \InvalidArgumentException('The "Set-Cookie" headers must be set via setCookie().', 1345128153);
-        }
-
         if ($values instanceof \DateTimeInterface) {
             $date = clone $values;
             $date->setTimezone(new \DateTimeZone('GMT'));
