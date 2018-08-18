@@ -32,7 +32,6 @@ class AggregateBoundaryValidator extends GenericObjectValidator
      */
     public function validate($value)
     {
-        $this->result = new Result();
         /**
          * The idea is that Aggregates form a consistency boundary, and an Aggregate only needs to be
          * validated if it changed state. Also since all entity relations are lazy loaded by default,
@@ -42,7 +41,7 @@ class AggregateBoundaryValidator extends GenericObjectValidator
          * relations. Therefore proper Aggregate Design becomes a performance optimization.
          */
         if ($value instanceof \Doctrine\ORM\Proxy\Proxy && !$value->__isInitialized()) {
-            return $this->result;
+            return new Result();
         }
         return parent::validate($value);
     }
