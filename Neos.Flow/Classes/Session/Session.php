@@ -42,7 +42,7 @@ use Psr\Log\LoggerInterface;
  *
  * @see SessionManager
  */
-class Session implements SessionInterface, CookieEnabledInterface
+class Session implements CookieEnabledInterface
 {
     const TAG_PREFIX = 'customtag-';
 

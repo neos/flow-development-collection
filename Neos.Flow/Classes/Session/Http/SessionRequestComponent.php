@@ -1,6 +1,16 @@
 <?php
 namespace Neos\Flow\Session\Http;
 
+/*
+ * This file is part of the Neos.Flow package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
+
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Component\ComponentContext;
 use Neos\Flow\Http\Component\ComponentInterface;
@@ -11,7 +21,7 @@ use Neos\Flow\Utility\Algorithms;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
- *
+ * A HTTP component that initialises the standard Flow session with cookie information.
  */
 class SessionRequestComponent implements ComponentInterface
 {
@@ -41,7 +51,7 @@ class SessionRequestComponent implements ComponentInterface
         $request = $componentContext->getHttpRequest();
         $cookies = $request->getCookieParams();
 
-        if (!isset($cookies[$sessionCookieName]) ) {
+        if (!isset($cookies[$sessionCookieName])) {
             $sessionCookie = $this->prepareCookie($sessionCookieName, Algorithms::generateRandomString(32));
             $this->sessionManager->createCurrentSessionFromCookie($sessionCookie);
             return;
@@ -54,6 +64,8 @@ class SessionRequestComponent implements ComponentInterface
     }
 
     /**
+     * Prepares a cookie object for the session.
+     *
      * @param string $name
      * @param string $value
      * @return Cookie
