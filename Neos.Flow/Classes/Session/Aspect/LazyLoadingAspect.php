@@ -15,6 +15,8 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Aop\JoinPointInterface;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Session\SessionInterface;
+use Neos\Flow\Session\SessionManager;
+use Neos\Flow\Session\SessionManagerInterface;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -34,9 +36,9 @@ class LazyLoadingAspect
 
     /**
      * @Flow\Inject
-     * @var SessionInterface
+     * @var SessionManagerInterface
      */
-    protected $session;
+    protected $sessionManager;
 
     /**
      * @var LoggerInterface
@@ -84,7 +86,13 @@ class LazyLoadingAspect
      */
     public function initializeSession(JoinPointInterface $joinPoint)
     {
-        if ($this->session->isStarted() === true) {
+        if (!$this->sessionManager instanceof SessionManager) {
+            return;
+        }
+
+        $session = $this->sessionManager->getCurrentSession();
+
+        if ($session->isStarted() === true) {
             return;
         }
 
@@ -92,7 +100,7 @@ class LazyLoadingAspect
         $methodName = $joinPoint->getMethodName();
 
         $this->logger->debug(sprintf('Session initialization triggered by %s->%s.', $objectName, $methodName));
-        $this->session->start();
+        $session->start();
     }
 
     /**

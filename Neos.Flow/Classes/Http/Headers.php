@@ -18,6 +18,7 @@ use Neos\Flow\Annotations as Flow;
  *
  * @deprecated Headers will be only accessed via request in the future, if this class stays, then as internal implementation detail.
  * @Flow\Proxy(false)
+ * TODO: case-insensitive header name matching
  */
 class Headers implements \Iterator
 {
@@ -145,10 +146,18 @@ class Headers implements \Iterator
      */
     public function getRaw(string $name): array
     {
-        if ($name === 'Cache-Control') {
+        if (strtolower($name) === 'cache-control') {
             return $this->getCacheControlDirectives();
         }
 
+        if (strtolower($name) === 'set-cookie') {
+            $cookies = $this->fields['Set-Cookie'] ?? [];
+            foreach ($this->cookies as $cookie) {
+                $cookies[] = (string)$cookie;
+            }
+
+            return $cookies;
+        }
         if (!isset($this->fields[$name])) {
             return [];
         }
@@ -167,9 +176,19 @@ class Headers implements \Iterator
      */
     public function get($name)
     {
-        if ($name === 'Cache-Control') {
+        if (strtolower($name) === 'cache-control') {
             return $this->getCacheControlHeader();
         }
+
+        if (strtolower($name) === 'set-cookie') {
+            $cookies = $this->fields['Set-Cookie'] ?? [];
+            foreach ($this->cookies as $cookie) {
+                $cookies[] = (string)$cookie;
+            }
+
+            return $cookies;
+        }
+
         if (!isset($this->fields[$name])) {
             return null;
         }
