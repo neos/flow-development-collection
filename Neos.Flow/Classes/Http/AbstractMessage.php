@@ -474,8 +474,7 @@ abstract class AbstractMessage implements MessageInterface
         }
         rewind($streamResource);
 
-        $contentStream = new ContentStream($streamResource);
-        return $contentStream;
+        return new ContentStream($streamResource);
     }
 
     /**
