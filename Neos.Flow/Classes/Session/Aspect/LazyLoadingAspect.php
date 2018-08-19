@@ -86,10 +86,6 @@ class LazyLoadingAspect
      */
     public function initializeSession(JoinPointInterface $joinPoint)
     {
-        if (!$this->sessionManager instanceof SessionManager) {
-            return;
-        }
-
         $session = $this->sessionManager->getCurrentSession();
 
         if ($session->isStarted() === true) {
