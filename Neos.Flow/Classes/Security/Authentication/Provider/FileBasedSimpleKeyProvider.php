@@ -74,7 +74,7 @@ class FileBasedSimpleKeyProvider extends AbstractProvider
     }
 
     /**
-     * Sets isAuthenticated to TRUE for all tokens.
+     * Sets isAuthenticated to true for all tokens.
      *
      * @param TokenInterface $authenticationToken The token to be authenticated
      * @return void

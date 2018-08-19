@@ -204,7 +204,7 @@ class CommandManager
     }
 
     /**
-     * Returns TRUE if the specified command identifier matches the identifier of the specified command.
+     * Returns true if the specified command identifier matches the identifier of the specified command.
      * This is the case, if
      *  - the identifiers are the same
      *  - if at least the last two command parts match (case sensitive) or
@@ -213,7 +213,7 @@ class CommandManager
      *
      * @param Command $command
      * @param string $commandIdentifier command identifier in the format foo:bar:baz (all lower case)
-     * @return boolean TRUE if the specified command identifier matches this commands identifier
+     * @return boolean true if the specified command identifier matches this commands identifier
      */
     protected function commandMatchesIdentifier(Command $command, string $commandIdentifier): bool
     {

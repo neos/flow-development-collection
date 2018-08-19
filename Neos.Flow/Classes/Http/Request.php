@@ -452,7 +452,7 @@ class Request extends BaseRequest implements ServerRequestInterface
      * rules on a possible Accept header.
      *
      * @param array $supportedMediaTypes A list of media types which are supported by the application / controller
-     * @param boolean $trim If TRUE, only the type/subtype of the media type is returned. If FALSE, the full original media type string is returned.
+     * @param boolean $trim If true, only the type/subtype of the media type is returned. If false, the full original media type string is returned.
      * @return string The media type and sub type which matched, NULL if none matched
      * @api
      */

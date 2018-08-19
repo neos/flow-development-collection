@@ -78,7 +78,7 @@ class Context
     const CONTEXT_HASH_UNINITIALIZED = '__uninitialized__';
 
     /**
-     * TRUE if the context is initialized in the current request, FALSE or NULL otherwise.
+     * true if the context is initialized in the current request, false or NULL otherwise.
      *
      * @var boolean
      * @Flow\Transient
@@ -250,7 +250,7 @@ class Context
     }
 
     /**
-     * Returns TRUE if authorization should be ignored, otherwise FALSE
+     * Returns true if authorization should be ignored, otherwise false
      * This is mainly useful to fetch records without Content Security to kick in (e.g. for AuthenticationProviders)
      *
      * @return boolean
@@ -269,7 +269,7 @@ class Context
      *
      * @param ActionRequest $request The current ActionRequest
      * @return void
-     * @Flow\Autowiring(FALSE)
+     * @Flow\Autowiring(false)
      */
     public function setRequest(ActionRequest $request)
     {
@@ -350,7 +350,7 @@ class Context
     }
 
     /**
-     * @return boolean TRUE if the Context is initialized, FALSE otherwise.
+     * @return boolean true if the Context is initialized, false otherwise.
      */
     public function isInitialized()
     {
@@ -465,11 +465,11 @@ class Context
     }
 
     /**
-     * Returns TRUE, if at least one of the currently authenticated accounts holds
+     * Returns true, if at least one of the currently authenticated accounts holds
      * a role with the given identifier, also recursively.
      *
      * @param string $roleIdentifier The string representation of the role to search for
-     * @return boolean TRUE, if a role with the given string representation was found
+     * @return boolean true, if a role with the given string representation was found
      */
     public function hasRole($roleIdentifier)
     {
@@ -556,9 +556,9 @@ class Context
     }
 
     /**
-     * Returns TRUE if the context has CSRF protection tokens.
+     * Returns true if the context has CSRF protection tokens.
      *
-     * @return boolean TRUE, if the token is valid. FALSE otherwise.
+     * @return boolean true, if the token is valid. false otherwise.
      */
     public function hasCsrfProtectionTokens()
     {
@@ -566,11 +566,11 @@ class Context
     }
 
     /**
-     * Returns TRUE if the given string is a valid CSRF protection token. The token will be removed if the configured
+     * Returns true if the given string is a valid CSRF protection token. The token will be removed if the configured
      * csrf strategy is 'onePerUri'.
      *
      * @param string $csrfToken The token string to be validated
-     * @return boolean TRUE, if the token is valid. FALSE otherwise.
+     * @return boolean true, if the token is valid. false otherwise.
      */
     public function isCsrfProtectionTokenValid($csrfToken)
     {
@@ -657,7 +657,7 @@ class Context
      * - Otherwise it is active only if at least one configured RequestPattern per type matches the request
      *
      * @param TokenInterface $token
-     * @return bool TRUE if the given token is active, otherwise FALSE
+     * @return bool true if the given token is active, otherwise false
      */
     protected function isTokenActive(TokenInterface $token)
     {

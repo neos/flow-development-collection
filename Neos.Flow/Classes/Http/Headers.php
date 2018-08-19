@@ -95,7 +95,7 @@ class Headers
      *
      * @param string $name Name of the header, for example "Location", "Content-Description" etc.
      * @param array|string|\DateTime $values An array of values or a single value for the specified header field
-     * @param boolean $replaceExistingHeader If a header with the same name should be replaced. Default is TRUE.
+     * @param boolean $replaceExistingHeader If a header with the same name should be replaced. Default is true.
      * @return void
      * @throws \InvalidArgumentException
      * @api
@@ -356,7 +356,7 @@ class Headers
      * Returns the value of the specified Cache-Control directive.
      *
      * If the cache directive is not present, NULL is returned. If the specified
-     * directive is present but contains no value, this method returns TRUE. Finally,
+     * directive is present but contains no value, this method returns true. Finally,
      * if the directive is present and does contain a value, the value is returned.
      *
      * @param string $name Name of the cache directive, for example "max-age"

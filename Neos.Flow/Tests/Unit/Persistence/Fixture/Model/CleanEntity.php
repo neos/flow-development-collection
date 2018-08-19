@@ -45,7 +45,7 @@ class CleanEntity implements ProxyInterface
     }
 
     /**
-     * Returns TRUE as this is a DirtyEntity
+     * Returns true as this is a DirtyEntity
      *
      * @return boolean
      */

@@ -82,7 +82,7 @@ class CldrModelTest extends UnitTestCase
     }
 
     /**
-     * When the path points to a leaf, getRawArray() should return FALSE.
+     * When the path points to a leaf, getRawArray() should return false.
      *
      * @test
      */

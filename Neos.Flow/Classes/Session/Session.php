@@ -277,7 +277,7 @@ class Session implements SessionInterface
      * Tells if the session is local (the current session bound to the current HTTP
      * request) or remote (retrieved through the Session Manager).
      *
-     * @return boolean TRUE if the session is remote, FALSE if this is the current session
+     * @return boolean true if the session is remote, false if this is the current session
      * @api
      */
     public function isRemote()
@@ -314,7 +314,7 @@ class Session implements SessionInterface
     }
 
     /**
-     * Returns TRUE if there is a session that can be resumed.
+     * Returns true if there is a session that can be resumed.
      *
      * If a to-be-resumed session was inactive for too long, this function will
      * trigger the expiration of that session. An expired session cannot be resumed.
@@ -437,7 +437,7 @@ class Session implements SessionInterface
     }
 
     /**
-     * Returns TRUE if a session data entry $key is available.
+     * Returns true if a session data entry $key is available.
      *
      * @param string $key Entry identifier of the session data
      * @return boolean
@@ -689,7 +689,7 @@ class Session implements SessionInterface
     /**
      * Automatically expires the session if the user has been inactive for too long.
      *
-     * @return boolean TRUE if the session expired, FALSE if not
+     * @return boolean true if the session expired, false if not
      */
     protected function autoExpire()
     {

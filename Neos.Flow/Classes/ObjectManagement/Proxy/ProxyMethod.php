@@ -196,7 +196,7 @@ class ProxyMethod
      * Tells if enough code was provided (yet) so that this method would actually be rendered
      * if render() is called.
      *
-     * @return boolean TRUE if there is any code to render, otherwise FALSE
+     * @return boolean true if there is any code to render, otherwise false
      */
     public function willBeRendered()
     {
@@ -275,7 +275,7 @@ class ProxyMethod
                         if ($rawDefaultValue === null) {
                             $defaultValue = ' = NULL';
                         } elseif (is_bool($rawDefaultValue)) {
-                            $defaultValue = ($rawDefaultValue ? ' = TRUE' : ' = FALSE');
+                            $defaultValue = ($rawDefaultValue ? ' = true' : ' = false');
                         } elseif (is_numeric($rawDefaultValue)) {
                             $defaultValue = ' = ' . $rawDefaultValue;
                         } elseif (is_string($rawDefaultValue)) {
@@ -325,7 +325,7 @@ class ProxyMethod
             if ($value === null) {
                 $code .= 'NULL';
             } elseif (is_bool($value)) {
-                $code .= ($value ? 'TRUE' : 'FALSE');
+                $code .= ($value ? 'true' : 'false');
             } elseif (is_numeric($value)) {
                 $code .= $value;
             } elseif (is_string($value)) {

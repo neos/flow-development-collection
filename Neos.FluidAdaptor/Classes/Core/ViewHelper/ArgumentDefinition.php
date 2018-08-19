@@ -21,7 +21,7 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\ArgumentDefinition as FluidArgumentDefiniti
 class ArgumentDefinition extends FluidArgumentDefinition
 {
     /**
-     * TRUE if it is a method parameter
+     * true if it is a method parameter
      *
      * @var boolean
      */
@@ -33,9 +33,9 @@ class ArgumentDefinition extends FluidArgumentDefinition
      * @param string $name Name of argument
      * @param string $type Type of argument
      * @param string $description Description of argument
-     * @param boolean $required TRUE if argument is required
+     * @param boolean $required true if argument is required
      * @param mixed $defaultValue Default value
-     * @param boolean $isMethodParameter TRUE if this argument is a method parameter
+     * @param boolean $isMethodParameter true if this argument is a method parameter
      */
     public function __construct($name, $type, $description, $required, $defaultValue = null, $isMethodParameter = false)
     {
@@ -48,9 +48,9 @@ class ArgumentDefinition extends FluidArgumentDefinition
     }
 
     /**
-     * TRUE if it is a method parameter
+     * true if it is a method parameter
      *
-     * @return boolean TRUE if it's a method parameter
+     * @return boolean true if it's a method parameter
      */
     public function isMethodParameter()
     {

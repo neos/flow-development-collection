@@ -393,10 +393,10 @@ class ValidatorResolver
 
     /**
      * Returns the class name of an appropriate validator for the given type. If no
-     * validator is available FALSE is returned
+     * validator is available false is returned
      *
      * @param string $validatorType Either the fully qualified class name of the validator or the short name of a built-in validator
-     * @return string|boolean Class name of the validator or FALSE if not available
+     * @return string|boolean Class name of the validator or false if not available
      */
     protected function resolveValidatorObjectName($validatorType)
     {

@@ -78,7 +78,7 @@ class PersistenceManager extends AbstractPersistenceManager
      * Commits new objects and changes to objects in the current persistence
      * session into the backend
      *
-     * @param boolean $onlyWhitelistedObjects If TRUE an exception will be thrown if there are scheduled updates/deletes or insertions for objects that are not "whitelisted" (see AbstractPersistenceManager::whitelistObject())
+     * @param boolean $onlyWhitelistedObjects If true an exception will be thrown if there are scheduled updates/deletes or insertions for objects that are not "whitelisted" (see AbstractPersistenceManager::whitelistObject())
      * @return void
      * @api
      */
@@ -134,7 +134,7 @@ class PersistenceManager extends AbstractPersistenceManager
      * Checks if the given object has ever been persisted.
      *
      * @param object $object The object to check
-     * @return boolean TRUE if the object is new, FALSE if the object exists in the repository
+     * @return boolean true if the object is new, false if the object exists in the repository
      * @api
      */
     public function isNewObject($object)
@@ -178,7 +178,7 @@ class PersistenceManager extends AbstractPersistenceManager
      *
      * @param mixed $identifier
      * @param string $objectType
-     * @param boolean $useLazyLoading Set to TRUE if you want to use lazy loading for this object
+     * @param boolean $useLazyLoading Set to true if you want to use lazy loading for this object
      * @return object The object for the identifier if it is known, or NULL
      * @throws \RuntimeException
      * @api
@@ -265,10 +265,10 @@ class PersistenceManager extends AbstractPersistenceManager
     }
 
     /**
-     * Returns TRUE, if an active connection to the persistence
+     * Returns true, if an active connection to the persistence
      * backend has been established, e.g. entities can be persisted.
      *
-     * @return boolean TRUE, if an connection has been established, FALSE if add object will not be persisted by the backend
+     * @return boolean true, if an connection has been established, false if add object will not be persisted by the backend
      * @api
      */
     public function isConnected()

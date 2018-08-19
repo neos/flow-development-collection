@@ -17,7 +17,7 @@ use Neos\Flow\Annotations as Flow;
 /**
  * Check whether the at least one of the context elements match the given filter.
  *
- * Without arguments is evaluates to TRUE if the context is not empty. If arguments
+ * Without arguments is evaluates to true if the context is not empty. If arguments
  * are given, they are used to filter the context before evaluation.
  */
 class IsOperation extends AbstractOperation

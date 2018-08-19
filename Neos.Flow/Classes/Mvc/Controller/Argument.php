@@ -37,7 +37,7 @@ class Argument
     protected $dataType = null;
 
     /**
-     * TRUE if this argument is required
+     * true if this argument is required
      * @var boolean
      */
     protected $isRequired = false;
@@ -122,7 +122,7 @@ class Argument
     /**
      * Marks this argument to be required
      *
-     * @param boolean $required TRUE if this argument should be required
+     * @param boolean $required true if this argument should be required
      * @return Argument $this
      * @api
      */
@@ -133,9 +133,9 @@ class Argument
     }
 
     /**
-     * Returns TRUE if this argument is required
+     * Returns true if this argument is required
      *
-     * @return boolean TRUE if this argument is required
+     * @return boolean true if this argument is required
      * @api
      */
     public function isRequired()

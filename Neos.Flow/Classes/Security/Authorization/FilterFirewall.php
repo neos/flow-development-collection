@@ -46,7 +46,7 @@ class FilterFirewall implements FirewallInterface
     protected $filters = [];
 
     /**
-     * If set to TRUE the firewall will reject any request except the ones explicitly
+     * If set to true the firewall will reject any request except the ones explicitly
      * whitelisted by a \Neos\Flow\Security\Authorization\AccessGrantInterceptor
      * @var boolean
      */

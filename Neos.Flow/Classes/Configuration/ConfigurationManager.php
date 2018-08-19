@@ -23,7 +23,7 @@ use Neos\Utility\PositionalArraySorter;
  * A general purpose configuration manager
  *
  * @Flow\Scope("singleton")
- * @Flow\Proxy(FALSE)
+ * @Flow\Proxy(false)
  * @api
  */
 class ConfigurationManager
@@ -295,7 +295,7 @@ class ConfigurationManager
      *
      * @param string $configurationType The type to register, may be anything
      * @param string $configurationProcessingType One of CONFIGURATION_PROCESSING_TYPE_*, defaults to CONFIGURATION_PROCESSING_TYPE_DEFAULT
-     * @param boolean $allowSplitSource If TRUE, the type will be used as a "prefix" when looking for split configuration. Only supported for DEFAULT and SETTINGS processing types!
+     * @param boolean $allowSplitSource If true, the type will be used as a "prefix" when looking for split configuration. Only supported for DEFAULT and SETTINGS processing types!
      * @throws \InvalidArgumentException on invalid configuration processing type
      * @return void
      */
