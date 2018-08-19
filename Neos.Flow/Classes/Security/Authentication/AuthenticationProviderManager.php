@@ -20,7 +20,7 @@ use Neos\Flow\Security\Exception\AuthenticationRequiredException;
 use Neos\Flow\Security\Exception;
 use Neos\Flow\Security\RequestPatternInterface;
 use Neos\Flow\Security\RequestPatternResolver;
-use Neos\Flow\Session\SessionInterface;
+use Neos\Flow\Session\SessionManagerInterface;
 
 /**
  * The default authentication manager, which relies on Authentication Providers
@@ -31,10 +31,10 @@ use Neos\Flow\Session\SessionInterface;
 class AuthenticationProviderManager implements AuthenticationManagerInterface
 {
     /**
-     * @var SessionInterface
+     * @var SessionManagerInterface
      * @Flow\Inject
      */
-    protected $session;
+    protected $sessionManager;
 
     /**
      * The provider resolver
@@ -181,6 +181,7 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
         }
 
         $this->buildProvidersAndTokensFromConfiguration();
+        $session = $this->sessionManager->getCurrentSession();
 
         /** @var $token TokenInterface */
         foreach ($tokens as $token) {
@@ -196,13 +197,13 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
             }
             if ($token->isAuthenticated()) {
                 if (!$token instanceof SessionlessTokenInterface) {
-                    if (!$this->session->isStarted()) {
-                        $this->session->start();
+                    if (!$session->isStarted()) {
+                        $session->start();
                     }
                     $account = $token->getAccount();
                     if ($account !== null) {
-                        $this->securityContext->withoutAuthorizationChecks(function () use ($account) {
-                            $this->session->addTag('Neos-Flow-Security-Account-' . md5($account->getAccountIdentifier()));
+                        $this->securityContext->withoutAuthorizationChecks(function () use ($account, $session) {
+                            $session->addTag('Neos-Flow-Security-Account-' . md5($account->getAccountIdentifier()));
                         });
                     }
                 }
@@ -256,13 +257,15 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
             return;
         }
         $this->isAuthenticated = null;
+        $session = $this->sessionManager->getCurrentSession();
+
         /** @var $token TokenInterface */
         foreach ($this->securityContext->getAuthenticationTokens() as $token) {
             $token->setAuthenticationStatus(TokenInterface::NO_CREDENTIALS_GIVEN);
         }
         $this->emitLoggedOut();
-        if ($this->session->isStarted()) {
-            $this->session->destroy('Logout through AuthenticationProviderManager');
+        if ($session->isStarted()) {
+            $session->destroy('Logout through AuthenticationProviderManager');
         }
         $this->securityContext->refreshTokens();
     }

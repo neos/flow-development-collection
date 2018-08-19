@@ -562,7 +562,6 @@ Neos\Flow\Security\Authentication\Provider\TestingProvider:
 #                                                                          #
 
 Neos\Flow\Session\SessionInterface:
-  scope: singleton
   factoryObjectName: Neos\Flow\Session\SessionManagerInterface
   factoryMethodName: getCurrentSession
 

@@ -675,7 +675,6 @@ class Session implements CookieEnabledInterface
                 $this->collectGarbage();
             }
         }
-        $this->request = null;
     }
 
     /**
