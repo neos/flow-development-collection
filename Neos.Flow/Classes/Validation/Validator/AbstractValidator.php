@@ -51,7 +51,7 @@ abstract class AbstractValidator implements ValidatorInterface
     protected $options = [];
 
     /**
-     * @deprecated since Flow 5.1. Don't overwrite this and instead use pushResult/popResult
+     * @deprecated since Flow 4.3. Don't overwrite this and instead use pushResult/popResult
      * @var ErrorResult
      */
     protected $result;
@@ -102,14 +102,14 @@ abstract class AbstractValidator implements ValidatorInterface
 
     /**
      * Push a new Result onto the Result stack and return it in order to fix cyclic calls to a single validator.
-     * @since Flow 5.1
+     * @since Flow 4.3
      * @see https://github.com/neos/flow-development-collection/pull/1275#issuecomment-414052031
      * @return ErrorResult
      */
     protected function pushResult()
     {
         if ($this->result !== null) {
-            \array_push($this->resultStack, $this->result);
+            array_push($this->resultStack, $this->result);
         }
         $this->result = new ErrorResult();
         return $this->result;
@@ -117,6 +117,7 @@ abstract class AbstractValidator implements ValidatorInterface
 
     /**
      * Pop and return the current Result from the stack and make $this->result point to the last Result again.
+     * @since Flow 4.3
      * @return ErrorResult
      */
     protected function popResult()
