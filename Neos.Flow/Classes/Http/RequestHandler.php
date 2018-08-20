@@ -111,7 +111,6 @@ class RequestHandler implements HttpRequestHandlerInterface
             $baseUri = new Uri($this->settings['http']['baseUri']);
             $request = $request->withAttribute(Request::ATTRIBUTE_BASE_URI, $baseUri);
             $this->componentContext->replaceHttpRequest($request);
-            $request->setBaseUri($baseUri);
         }
 
         $this->baseComponentChain->handle($this->componentContext);

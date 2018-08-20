@@ -142,7 +142,7 @@ class Response extends AbstractMessage implements ResponseInterface, \Psr\Http\M
             throw new \InvalidArgumentException('The HTTP status code must be of type integer, ' . gettype($code) . ' given.', 1220526013);
         }
         if ($message === null) {
-            $message = self::getStatusMessageByCode($code);
+            $message = ResponseInformationHelper::getStatusMessageByCode($code);
         }
         $this->statusCode = $code;
         $this->statusMessage = ($message === null) ? ResponseInformationHelper::getStatusMessageByCode($code) : $message;
