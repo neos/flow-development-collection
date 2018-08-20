@@ -633,6 +633,31 @@ class StringHelper implements ProtectedContextAwareInterface
     }
 
     /**
+     * Implementation of the PHP base64_encode function
+     * @see https://php.net/manual/en/function.base64-encode.php
+     *
+     * @param string $string The data to encode.
+     * @return string The encoded data
+     */
+    public function base64encode($string)
+    {
+        return base64_encode((string)$string);
+    }
+
+    /**
+     * Implementation of the PHP base64_decode function
+     * @see https://php.net/manual/en/function.base64-decode.php
+     *
+     * @param string $string The encoded data.
+     * @param bool $strict If TRUE this function will return FALSE if the input contains character from outside the base64 alphabet.
+     * @return string|bool The decoded data or FALSE on failure. The returned data may be binary.
+     */
+    public function base64decode($string, bool $strict = false)
+    {
+        return base64_decode((string)$string, $strict);
+    }
+
+    /**
      * All methods are considered safe
      *
      * @param string $methodName
