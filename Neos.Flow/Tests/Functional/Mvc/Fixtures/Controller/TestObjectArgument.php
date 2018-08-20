@@ -66,7 +66,7 @@ class TestObjectArgument
     }
 
     /**
-     * @param Collection $collection
+     * @param Collection<TestObjectArgument> $collection
      */
     public function setCollection(Collection $collection)
     {
@@ -74,7 +74,7 @@ class TestObjectArgument
     }
 
     /**
-     * @return Collection
+     * @return Collection<TestObjectArgument>
      */
     public function getCollection()
     {
