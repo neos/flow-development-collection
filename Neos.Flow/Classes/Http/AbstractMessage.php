@@ -59,9 +59,9 @@ abstract class AbstractMessage implements MessageInterface
     /**
      * Returns the HTTP headers of this request
      *
-     * @return iterable|array|Headers
+     * @return Headers|iteratable
      * @api
-     * @deprecated This method is NOT going away but will return an array after next major according to PSR-7, prepare for that. To help the headers object is iteratable now.
+     * Note: This method will return an array of headers after next major according to PSR-7, prepare for that. To help the headers object is iteratable now.
      */
     public function getHeaders()
     {
@@ -78,9 +78,9 @@ abstract class AbstractMessage implements MessageInterface
      * Dates are returned as DateTime objects with the timezone set to GMT.
      *
      * @param string $name Name of the header
-     * @return string[] An array of field values, may be empty if the header was not set (check with hasHeader)
+     * @return array|string An array of field values if multiple headers of that name exist, a string value if only one value exists and NULL if there is no such header.
      * @api
-     * @deprecated Not deprecated but from the next major (6.0) this will only return arrays of strings according to the PSR-7 standard.
+     * NOTE: This method signature will change in next major of Flow according to PSR-7. It will ALWAYS return an array of strings and nothing else.
      */
     public function getHeader($name)
     {
