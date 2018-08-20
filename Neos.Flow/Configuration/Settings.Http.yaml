@@ -36,7 +36,7 @@ Neos:
             'trustedProxies':
               position: 'start'
               component: 'Neos\Flow\Http\Component\TrustedProxiesComponent'
-            'prepareSession':
+            'getSessionCookieFromRequest':
               position: 'after trustedProxies'
               component: 'Neos\Flow\Session\Http\SessionRequestComponent'
         'process':
@@ -49,7 +49,7 @@ Neos:
 
         'postprocess':
           chain:
-            'prepareSession':
+            'setSessionCookie':
               position: 'start'
               component: 'Neos\Flow\Session\Http\SessionResponseComponent'
             'standardsCompliance':
