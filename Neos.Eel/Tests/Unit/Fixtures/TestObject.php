@@ -95,6 +95,4 @@ class TestObject implements ProtectedContextAwareInterface
     {
         return 'Test Object';
     }
-
-
 }
