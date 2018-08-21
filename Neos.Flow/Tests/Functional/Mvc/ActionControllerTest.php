@@ -277,7 +277,6 @@ class ActionControllerTest extends FunctionalTestCase
         $arguments = [
             'argument' => [
                 'name' => 'Foo',
-                'emailAddress' => '-invalid-',
                 'collection' => [
                     [
                         'name' => 'Bar',
@@ -286,7 +285,7 @@ class ActionControllerTest extends FunctionalTestCase
                 ]
             ]
         ];
-        $response = $this->browser->request('http://localhost/test/mvc/actioncontrollertestb/notvalidatedgroupobject', 'POST', $arguments);
+        $response = $this->browser->request('http://localhost/test/mvc/actioncontrollertestb/notvalidatedgroupcollection', 'POST', $arguments);
 
         $expectedResult = '-invalid-';
         $this->assertEquals($expectedResult, $response->getContent());
@@ -300,7 +299,7 @@ class ActionControllerTest extends FunctionalTestCase
         $arguments = [
             'argument' => [
                 'name' => 'Foo',
-                'emailAddress' => '-invalid-',
+                'emailAddress' => '-invalid-'
                 'related' => [
                     'name' => 'Bar',
                     'emailAddress' => '-invalid-'
@@ -338,7 +337,6 @@ class ActionControllerTest extends FunctionalTestCase
         $arguments = [
             'argument' => [
                 'name' => 'Foo',
-                'emailAddress' => 'foo@bar.org',
                 'collection' => [
                     [
                         'name' => 'Bar',
@@ -347,9 +345,9 @@ class ActionControllerTest extends FunctionalTestCase
                 ]
             ]
         ];
-        $response = $this->browser->request('http://localhost/test/mvc/actioncontrollertestb/validatedgroupobject', 'POST', $arguments);
+        $response = $this->browser->request('http://localhost/test/mvc/actioncontrollertestb/validatedgroupcollection', 'POST', $arguments);
 
-        $expectedResult = 'Validation failed while trying to call Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController->validatedGroupObjectAction().' . PHP_EOL;
+        $expectedResult = 'Validation failed while trying to call Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController->validatedGroupCollectionAction().' . PHP_EOL;
         $this->assertEquals($expectedResult, $response->getContent());
     }
 
@@ -361,7 +359,6 @@ class ActionControllerTest extends FunctionalTestCase
         $arguments = [
             'argument' => [
                 'name' => 'Foo',
-                'emailAddress' => 'foo@bar.org',
                 'related' => [
                     'name' => 'Bar',
                     'emailAddress' => '-invalid-'
