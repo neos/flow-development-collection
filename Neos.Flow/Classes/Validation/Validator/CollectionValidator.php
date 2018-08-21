@@ -39,33 +39,6 @@ class CollectionValidator extends GenericObjectValidator
     protected $validatorResolver;
 
     /**
-     * Checks if the given value is valid according to the validator, and returns
-     * the Error Messages object which occurred.
-     *
-     * @param mixed $value The value that should be validated
-     * @return ErrorResult
-     * @api
-     */
-    public function validate($value)
-    {
-        $this->pushResult();
-
-        if ($this->acceptsEmptyValues === false || $this->isEmpty($value) === false) {
-            if ($value instanceof \Doctrine\ORM\PersistentCollection && !$value->isInitialized()) {
-                return $this->popResult();
-            } elseif ((is_object($value) && !TypeHandling::isCollectionType(get_class($value))) && !is_array($value)) {
-                $this->addError('The given subject was not a collection.', 1317204797);
-                return $this->popResult();
-            } elseif (is_object($value) && $this->isValidatedAlready($value)) {
-                return $this->popResult();
-            } else {
-                $this->isValid($value);
-            }
-        }
-        return $this->popResult();
-    }
-
-    /**
      * Checks for a collection and if needed validates the items in the collection.
      * This is done with the specified element validator or a validator based on
      * the given element type and validation group.
@@ -78,6 +51,15 @@ class CollectionValidator extends GenericObjectValidator
      */
     protected function isValid($value)
     {
+        if ($value instanceof \Doctrine\ORM\PersistentCollection && !$value->isInitialized()) {
+            return;
+        } elseif ((is_object($value) && !TypeHandling::isCollectionType(get_class($value))) && !is_array($value)) {
+            $this->addError('The given subject was not a collection.', 1317204797);
+            return;
+        } elseif (is_object($value) && $this->isValidatedAlready($value)) {
+            return;
+        }
+
         foreach ($value as $index => $collectionElement) {
             if (isset($this->options['elementValidator'])) {
                 $collectionElementValidator = $this->validatorResolver->createValidator($this->options['elementValidator'], $this->options['elementValidatorOptions']);

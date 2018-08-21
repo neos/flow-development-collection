@@ -44,28 +44,6 @@ class GenericObjectValidator extends AbstractValidator implements ObjectValidato
     }
 
     /**
-     * Checks if the given value is valid according to the validator, and returns
-     * the Error Messages object which occurred.
-     *
-     * @param mixed $value The value that should be validated
-     * @return ErrorResult
-     * @api
-     */
-    public function validate($value)
-    {
-        $this->pushResult();
-        if ($this->acceptsEmptyValues === false || $this->isEmpty($value) === false) {
-            if (!is_object($value)) {
-                $this->addError('Object expected, %1$s given.', 1241099149, [gettype($value)]);
-            } elseif ($this->isValidatedAlready($value) === false) {
-                $this->isValid($value);
-            }
-        }
-
-        return $this->popResult();
-    }
-
-    /**
      * Checks if the given value is valid according to the property validators.
      *
      * @param mixed $object The value that should be validated
@@ -74,6 +52,12 @@ class GenericObjectValidator extends AbstractValidator implements ObjectValidato
      */
     protected function isValid($object)
     {
+        if (!is_object($object)) {
+            $this->addError('Object expected, %1$s given.', 1241099149, [gettype($value)]);
+            return;
+        } elseif ($this->isValidatedAlready($object) === true) {
+            return;
+        }
         foreach ($this->propertyValidators as $propertyName => $validators) {
             $propertyValue = $this->getPropertyValue($object, $propertyName);
             $result = $this->checkProperty($propertyValue, $validators);

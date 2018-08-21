@@ -27,10 +27,10 @@ class AggregateBoundaryValidator extends GenericObjectValidator
      * an uninitialized lazy loading proxy.
      *
      * @param mixed $value The value that should be validated
-     * @return \Neos\Error\Messages\Result
+     * @return void
      * @api
      */
-    public function validate($value)
+    public function isValid($value)
     {
         /**
          * The idea is that Aggregates form a consistency boundary, and an Aggregate only needs to be
@@ -41,8 +41,8 @@ class AggregateBoundaryValidator extends GenericObjectValidator
          * relations. Therefore proper Aggregate Design becomes a performance optimization.
          */
         if ($value instanceof \Doctrine\ORM\Proxy\Proxy && !$value->__isInitialized()) {
-            return new Result();
+            return;
         }
-        return parent::validate($value);
+        parent::isValid($value);
     }
 }
