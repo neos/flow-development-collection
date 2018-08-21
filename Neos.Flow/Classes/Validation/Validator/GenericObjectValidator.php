@@ -53,7 +53,7 @@ class GenericObjectValidator extends AbstractValidator implements ObjectValidato
     protected function isValid($object)
     {
         if (!is_object($object)) {
-            $this->addError('Object expected, %1$s given.', 1241099149, [gettype($value)]);
+            $this->addError('Object expected, %1$s given.', 1241099149, [gettype($object)]);
             return;
         } elseif ($this->isValidatedAlready($object) === true) {
             return;
@@ -100,11 +100,7 @@ class GenericObjectValidator extends AbstractValidator implements ObjectValidato
             $object->__load();
         }
 
-        if (ObjectAccess::isPropertyGettable($object, $propertyName)) {
-            return ObjectAccess::getProperty($object, $propertyName);
-        } else {
-            return ObjectAccess::getProperty($object, $propertyName, true);
-        }
+        return ObjectAccess::getProperty($object, $propertyName, !ObjectAccess::isPropertyGettable($object, $propertyName));
     }
 
     /**
@@ -160,8 +156,7 @@ class GenericObjectValidator extends AbstractValidator implements ObjectValidato
     {
         if ($propertyName !== null) {
             return $this->propertyValidators[$propertyName] ?? [];
-        } else {
-            return $this->propertyValidators;
         }
+        return $this->propertyValidators;
     }
 }
