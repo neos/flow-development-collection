@@ -95,6 +95,26 @@ class ActionControllerTestBController extends ActionController
     }
 
     /**
+     * @param TestObjectArgument $argument
+     * @Flow\ValidationGroups({"notValidatedGroup"})
+     * @return string
+     */
+    public function notValidatedGroupCollectionAction(TestObjectArgument $argument)
+    {
+        return $argument->getChildren()->get(0)->getEmailAddress();
+    }
+
+    /**
+     * @param TestObjectArgument $argument
+     * @Flow\ValidationGroups({"validatedGroup"})
+     * @return string
+     */
+    public function validatedGroupCollectionAction(TestObjectArgument $argument)
+    {
+        return $argument->getChildren()->get(0)->getEmailAddress();
+    }
+
+    /**
      * @param string $argument
      * @return string
      */
