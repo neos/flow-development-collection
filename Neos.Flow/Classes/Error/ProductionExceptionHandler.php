@@ -13,6 +13,7 @@ namespace Neos\Flow\Error;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Exception as FlowException;
+use Neos\Flow\Http\Helper\ResponseInformationHelper;
 use Neos\Flow\Http\Response;
 use Psr\Log\LogLevel;
 
@@ -35,7 +36,7 @@ class ProductionExceptionHandler extends AbstractExceptionHandler
         if ($exception instanceof FlowException) {
             $statusCode = $exception->getStatusCode();
         }
-        $statusMessage = Response::getStatusMessageByCode($statusCode);
+        $statusMessage = ResponseInformationHelper::getStatusMessageByCode($statusCode);
         $referenceCode = ($exception instanceof FlowException) ? $exception->getReferenceCode() : null;
         if (!headers_sent()) {
             header(sprintf('HTTP/1.1 %s %s', $statusCode, $statusMessage));
@@ -68,7 +69,7 @@ class ProductionExceptionHandler extends AbstractExceptionHandler
      */
     protected function renderStatically(int $statusCode, ?string $referenceCode): string
     {
-        $statusMessage = Response::getStatusMessageByCode($statusCode);
+        $statusMessage = ResponseInformationHelper::getStatusMessageByCode($statusCode);
         $referenceCodeMessage = ($referenceCode !== null) ? '<p>When contacting the maintainer of this application please mention the following reference code:<br /><br />' . $referenceCode . '</p>' : '';
 
         return '<!DOCTYPE html>

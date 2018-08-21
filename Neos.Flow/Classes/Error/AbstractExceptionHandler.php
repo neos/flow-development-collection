@@ -14,6 +14,7 @@ namespace Neos\Flow\Error;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\Response as CliResponse;
 use Neos\Flow\Exception as FlowException;
+use Neos\Flow\Http\Helper\ResponseInformationHelper;
 use Neos\Flow\Http\Request;
 use Neos\Flow\Http\Response;
 use Neos\Flow\Log\SystemLoggerInterface;
@@ -163,8 +164,7 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
             $statusCode = $exception->getStatusCode();
             $referenceCode = $exception->getReferenceCode();
         }
-        $statusMessage = Response::getStatusMessageByCode($statusCode);
-
+        $statusMessage = ResponseInformationHelper::getStatusMessageByCode($statusCode);
         $viewClassName = $renderingOptions['viewClassName'];
         /** @var ViewInterface $view */
         $view = $viewClassName::createWithOptions($renderingOptions['viewOptions']);
