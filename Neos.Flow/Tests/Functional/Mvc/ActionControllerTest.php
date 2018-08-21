@@ -299,7 +299,7 @@ class ActionControllerTest extends FunctionalTestCase
         $arguments = [
             'argument' => [
                 'name' => 'Foo',
-                'emailAddress' => '-invalid-'
+                'emailAddress' => '-invalid-',
                 'related' => [
                     'name' => 'Bar',
                     'emailAddress' => '-invalid-'
