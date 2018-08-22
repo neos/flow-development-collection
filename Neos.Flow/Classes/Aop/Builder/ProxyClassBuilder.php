@@ -16,7 +16,6 @@ use Neos\Flow\Aop\AdvicesTrait;
 use Neos\Flow\Aop\AspectContainer;
 use Neos\Flow\Aop\PropertyIntroduction;
 use Neos\Cache\Frontend\VariableFrontend;
-use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\ObjectManagement\CompileTimeObjectManager;
 use Neos\Flow\Reflection\ClassReflection;
 use Neos\Flow\Reflection\PropertyReflection;
@@ -25,6 +24,7 @@ use Neos\Flow\Aop;
 use Neos\Flow\ObjectManagement\Proxy;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Utility\Algorithms;
+use Psr\Log\LoggerInterface;
 
 /**
  * The main class of the AOP (Aspect Oriented Programming) framework.
@@ -51,9 +51,9 @@ class ProxyClassBuilder
     protected $reflectionService;
 
     /**
-     * @var SystemLoggerInterface
+     * @var LoggerInterface
      */
-    protected $systemLogger;
+    protected $logger;
 
     /**
      * An instance of the pointcut expression parser
@@ -114,12 +114,15 @@ class ProxyClassBuilder
     }
 
     /**
-     * @param SystemLoggerInterface $systemLogger
+     * Injects the (system) logger based on PSR-3.
+     *
+     * @param LoggerInterface $logger
      * @return void
+     * @Flow\Autowiring(false)
      */
-    public function injectSystemLogger(SystemLoggerInterface $systemLogger): void
+    public function injectLogger(LoggerInterface $logger)
     {
-        $this->systemLogger = $systemLogger;
+        $this->logger = $logger;
     }
 
     /**
@@ -217,7 +220,7 @@ class ProxyClassBuilder
         $rebuildEverything = false;
         if ($this->objectConfigurationCache->has('allAspectClassesUpToDate') === false) {
             $rebuildEverything = true;
-            $this->systemLogger->log('Aspects have been modified, therefore rebuilding all target classes.', LOG_INFO);
+            $this->logger->info('Aspects have been modified, therefore rebuilding all target classes.');
             $this->objectConfigurationCache->set('allAspectClassesUpToDate', true);
         }
 
@@ -247,7 +250,7 @@ class ProxyClassBuilder
                     if ($isUnproxied) {
                         $this->objectConfigurationCache->remove('unproxiedClass-' . str_replace('\\', '_', $targetClassName));
                     }
-                    $this->systemLogger->log(sprintf('Built AOP proxy for class "%s".', $targetClassName), LOG_DEBUG);
+                    $this->logger->debug(sprintf('Built AOP proxy for class "%s".', $targetClassName));
                 } else {
                     $this->objectConfigurationCache->set('unproxiedClass-' . str_replace('\\', '_', $targetClassName), true);
                 }

@@ -12,6 +12,7 @@ namespace Neos\Eel\Tests\Unit;
  */
 
 use Neos\Eel\Helper\StringHelper;
+use Neos\Eel\Tests\Unit\Fixtures\TestObject;
 use Neos\Flow\Tests\UnitTestCase;
 
 /**
@@ -606,5 +607,59 @@ class StringHelperTest extends UnitTestCase
         $helper = new StringHelper();
         $result = $helper->wordCount($input);
         $this->assertSame($expected, $result);
+    }
+
+    public function base64encodeEncodesDataProvider()
+    {
+        return [
+            'empty string' => ['input' => '', 'expectedResult' => ''],
+            'simple string' => ['input' => 'Flow rocks', 'expectedResult' => 'RmxvdyByb2Nrcw=='],
+            'special characters' => ['input' => 'Flow röckß', 'expectedResult' => 'RmxvdyByw7Zja8Of'],
+            'integer' => ['input' => 123, 'expectedResult' => 'MTIz'],
+            'Stringable object' => ['input' => new TestObject(), 'expectedResult' => 'VGVzdCBPYmplY3Q='],
+        ];
+    }
+
+    /**
+     * @param mixed $input
+     * @param string|bool $expectedResult
+     * @test
+     * @dataProvider base64encodeEncodesDataProvider
+     */
+    public function base64encodeEncodesTests($input, $expectedResult)
+    {
+        $helper = new StringHelper();
+        $this->assertSame($expectedResult, $helper->base64encode($input));
+    }
+
+    public function base64decodeEncodesDataProvider()
+    {
+        return [
+            'empty string' => ['input' => '', 'expectedResult' => ''],
+            'simple string' => ['input' => 'RmxvdyByb2Nrcw==', 'expectedResult' => 'Flow rocks'],
+            'special characters' => ['input' => 'RmxvdyByw7Zja8Of', 'expectedResult' => 'Flow röckß'],
+            'integer' => ['input' => 'MTIz', 'expectedResult' => '123'],
+        ];
+    }
+
+    /**
+     * @param mixed $input
+     * @param string|bool $expectedResult
+     * @test
+     * @dataProvider base64decodeEncodesDataProvider
+     */
+    public function base64decodeEncodesTests($input, $expectedResult)
+    {
+        $helper = new StringHelper();
+        $this->assertSame($expectedResult, $helper->base64decode($input));
+    }
+
+    /**
+     * @test
+     */
+    public function base64decodeReturnsFalseIfGivenStringIsInvalidAndStrictModeIsSet()
+    {
+        $helper = new StringHelper();
+        $this->assertFalse($helper->base64decode('invälid input', true));
     }
 }

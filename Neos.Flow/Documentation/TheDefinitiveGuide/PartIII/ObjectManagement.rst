@@ -359,7 +359,7 @@ cohesion --- or in short: It makes you a better programmer.
 
 In the context of the previous example it means that the authentication object announces
 that it needs a logger which implements a certain PHP interface (for example the
-``Neos\Flow\Log\LoggerInterface``).
+``Psr\Log\LoggerInterface``).
 The object itself has no control over what kind of logger (file-logger,
 sms-logger, ...) it finally gets and it doesn't have to care about it anyway as long as it
 matches the expected API. As soon as the authentication object is instantiated, the object
@@ -1199,11 +1199,10 @@ Custom Factories
 Complex objects might require a custom factory which takes care of all important settings
 and dependencies. As we have seen previously, a logger consists of a frontend, a backend
 and configuration options for that backend. Instead of creating and configuring these
-objects on your own, you can use the ``Neos\Flow\Log\LoggerFactory`` which provides a
-convenient ``create`` method taking care of all the rest::
+objects on your own, you should use the ``Neos\Flow\Log\PsrLoggerFactory`` which provides a
+convenient ``get`` method taking care of all the rest::
 
-	$myCache = $loggerFactory->create('Flow_System', \Neos\Flow\Log\Logger::class,
-	    \Neos\Flow\Log\Backend\FileBackend::class, array( … ));
+	$myCache = $loggerFactory->get('systemLogger');
 
 It is possible to specify for each object if it should be created by a custom factory
 rather than the Object Builder. Consider the following configuration:
@@ -1212,12 +1211,12 @@ rather than the Object Builder. Consider the following configuration:
 
 .. code-block:: yaml
 
-	Neos\Flow\Log\SystemLoggerInterface:
+	Neos\Flow\Log\PsrSystemLoggerInterface:
 	  scope: singleton
-	  factoryObjectName: Neos\Flow\Log\LoggerFactory
-	  factoryMethodName: create
+	  factoryObjectName: Neos\Flow\Log\PsrLoggerFactory
+	  factoryMethodName: get
 
-From now on the LoggerFactory's ``create`` method will be called each time an object of
+From now on the LoggerFactory's ``get`` method will be called each time an object of
 type ``SystemLoggerInterface`` needs to be instantiated. If arguments were passed to the
 ``ObjectManagerInterface::get()`` method or defined in the configuration, they will be
 passed through to the custom factory method:
@@ -1226,22 +1225,17 @@ passed through to the custom factory method:
 
 .. code-block:: yaml
 
-	Neos\Flow\Log\SystemLoggerInterface:
+	Neos\Flow\Log\PsrSystemLoggerInterface:
 	  scope: singleton
-	  factoryObjectName: Neos\Flow\Log\LoggerFactory
+	  factoryObjectName: Neos\Flow\Log\PsrLoggerFactory
+	  factoryMethodName: get
 	  arguments:
 	    1:
-	      value: 'Flow_System'
-	    2:
-	      value: 'Neos\Flow\Log\Logger'
-	    3:
-	      value: 'Neos\Flow\Log\Backend\FileBackend'
-	    4:
-	      setting: Neos.Flow.log.systemLogger.backendOptions
+	      value: 'systemLogger'
 
 *Example: PHP code using the custom factory* ::
 
-	$myCache = $objectManager->get(\Neos\Flow\Log\SystemLoggerInterface::class);
+	$myCache = $objectManager->get(\Neos\Flow\Log\PsrSystemLoggerInterface::class);
 
 ``$objectManager`` is a reference to the ``Neos\Flow\ObjectManagement\ObjectManager``.
 The required arguments are automatically built from the values defined in the

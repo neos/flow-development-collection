@@ -18,7 +18,6 @@ use Doctrine\DBAL\DriverManager;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Mvc\Exception\StopActionException;
-use Neos\Flow\Package;
 
 /**
  * Command controller for tasks related to database handling
@@ -50,10 +49,10 @@ class DatabaseCommandController extends CommandController
     }
 
     /**
-     * Convert the database schema to use the given character set and collation (defaults to utf8 and utf8_unicode_ci).
+     * Convert the database schema to use the given character set and collation (defaults to utf8mb4 and utf8mb4_unicode_ci).
      *
-     * This command can be used to convert the database configured in the Flow settings to the utf8 character
-     * set and the utf8_unicode_ci collation (by default, a custom collation can be given). It will only
+     * This command can be used to convert the database configured in the Flow settings to the utf8mb4 character
+     * set and the utf8mb4_unicode_ci collation (by default, a custom collation can be given). It will only
      * work when using the pdo_mysql driver.
      *
      * <b>Make a backup</b> before using it, to be on the safe side. If you want to inspect the statements used
@@ -64,29 +63,30 @@ class DatabaseCommandController extends CommandController
      *
      * - http://stackoverflow.com/questions/766809/
      * - http://dev.mysql.com/doc/refman/5.5/en/alter-table.html
-     *
-     * The main purpose of this is to fix setups that were created with Flow 2.3.x or earlier and whose
-     * database server did not have a default collation of utf8_unicode_ci. In those cases, the tables will
-     * have a collation that does not match the default collation of later Flow versions, potentially leading
-     * to problems when creating foreign key constraints (among others, potentially).
-     *
-     * If you have special needs regarding the charset and collation, you <i>can</i> override the defaults with
-     * different ones. One thing this might be useful for is when switching to the utf8mb4 character set, see:
-     *
+     * - https://medium.com/@adamhooper/in-mysql-never-use-utf8-use-utf8mb4-11761243e434
      * - https://mathiasbynens.be/notes/mysql-utf8mb4
      * - https://florian.ec/articles/mysql-doctrine-utf8/
+     *
+     * The main purpose of this is to fix setups that were created with Flow before version 5.0. In those cases,
+     * the tables will have a collation that does not match the default collation of later Flow versions, potentially
+     * leading to problems when creating foreign key constraints (among others, potentially).
+     *
+     * If you have special needs regarding the charset and collation, you <i>can</i> override the defaults with
+     * different ones.
      *
      * Note: This command <b>is not a general purpose conversion tool</b>. It will specifically not fix cases
      * of actual utf8 stored in latin1 columns. For this a conversion to BLOB followed by a conversion to the
      * proper type, charset and collation is needed instead.
      *
-     * @param string $characterSet Character set, defaults to utf8
-     * @param string $collation Collation to use, defaults to utf8_unicode_ci
+     * @param string $characterSet Character set, defaults to utf8mb4
+     * @param string $collation Collation to use, defaults to utf8mb4_unicode_ci
      * @param string $output A file to write SQL to, instead of executing it
      * @param boolean $verbose If set, the statements will be shown as they are executed
+     * @throws ConnectionException
+     * @throws DBALException
      * @throws StopActionException
      */
-    public function setCharsetCommand(string $characterSet = 'utf8', string $collation = 'utf8_unicode_ci', string $output = null, bool $verbose = false)
+    public function setCharsetCommand(string $characterSet = 'utf8mb4', string $collation = 'utf8mb4_unicode_ci', string $output = null, bool $verbose = false)
     {
         if (!in_array($this->persistenceSettings['backendOptions']['driver'], ['pdo_mysql', 'mysqli'])) {
             $this->outputLine('Database charset/collation fixing is only supported on MySQL.');
@@ -118,7 +118,7 @@ class DatabaseCommandController extends CommandController
      * @throws ConnectionException
      * @throws DBALException
      */
-    protected function convertToCharacterSetAndCollation(string $characterSet = 'utf8', string $collation = 'utf8_unicode_ci', string $outputPathAndFilename = null, bool $verbose = false)
+    protected function convertToCharacterSetAndCollation(string $characterSet, string $collation, string $outputPathAndFilename = null, bool $verbose = false)
     {
         $statements = ['SET foreign_key_checks = 0'];
 

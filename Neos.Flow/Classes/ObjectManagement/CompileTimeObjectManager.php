@@ -15,13 +15,15 @@ use Neos\Cache\Frontend\VariableFrontend;
 use Neos\Flow\Composer\ComposerUtility as ComposerUtility;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Configuration\Exception\InvalidConfigurationTypeException;
-use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\ObjectManagement\Configuration\Configuration;
 use Neos\Flow\ObjectManagement\Configuration\ConfigurationBuilder;
 use Neos\Flow\ObjectManagement\Configuration\ConfigurationProperty as Property;
-use Doctrine\ORM\Mapping as ORM;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Package\FlowPackageInterface;
+use Neos\Flow\Package\PackageInterface;
 use Neos\Flow\Reflection\ReflectionService;
+use Psr\Log\LoggerInterface;
+use Psr\Log\LogLevel;
 
 /**
  * A specialized Object Manager which is able to do some basic dependency injection for
@@ -49,9 +51,9 @@ class CompileTimeObjectManager extends ObjectManager
     protected $configurationManager;
 
     /**
-     * @var SystemLoggerInterface
+     * @var LoggerInterface
      */
-    protected $systemLogger;
+    protected $logger;
 
     /**
      * @var array
@@ -105,18 +107,20 @@ class CompileTimeObjectManager extends ObjectManager
     }
 
     /**
-     * @param SystemLoggerInterface $systemLogger
+     * Injects the (system) logger based on PSR-3.
+     *
+     * @param LoggerInterface $logger
      * @return void
      */
-    public function injectSystemLogger(SystemLoggerInterface $systemLogger)
+    public function injectLogger(LoggerInterface $logger)
     {
-        $this->systemLogger = $systemLogger;
+        $this->logger = $logger;
     }
 
     /**
      * Initializes the the object configurations and some other parts of this Object Manager.
      *
-     * @param array $packages An array of active packages to consider
+     * @param PackageInterface[] $packages An array of active packages to consider
      * @return void
      */
     public function initialize(array $packages)
@@ -128,7 +132,7 @@ class CompileTimeObjectManager extends ObjectManager
 
         $configurationBuilder = new ConfigurationBuilder();
         $configurationBuilder->injectReflectionService($this->reflectionService);
-        $configurationBuilder->injectSystemLogger($this->systemLogger);
+        $configurationBuilder->injectLogger($this->logger);
 
         $this->objectConfigurations = $configurationBuilder->buildObjectConfigurations($this->registeredClassNames, $rawCustomObjectConfigurations);
 
@@ -211,15 +215,19 @@ class CompileTimeObjectManager extends ObjectManager
         }
 
         $availableClassNames = ['' => ['DateTime']];
-        /** @var \Neos\Flow\Package\Package $package */
+
+        $shouldRegisterFunctionalTestClasses = (bool)($this->allSettings['Neos']['Flow']['object']['registerFunctionalTestClasses'] ?? false);
+
+        /** @var \Neos\Flow\Package\PackageInterface $package */
         foreach ($packages as $packageKey => $package) {
-            if ($package->isObjectManagementEnabled() && (ComposerUtility::isFlowPackageType($package->getComposerManifest('type')) || isset($includeClassesConfiguration[$packageKey]))) {
+            $packageType = (string)$package->getComposerManifest('type');
+            if (ComposerUtility::isFlowPackageType($packageType) || isset($includeClassesConfiguration[$packageKey])) {
                 foreach ($package->getClassFiles() as $fullClassName => $path) {
                     if (substr($fullClassName, -9, 9) !== 'Exception') {
                         $availableClassNames[$packageKey][] = $fullClassName;
                     }
                 }
-                if (isset($this->allSettings['Neos']['Flow']['object']['registerFunctionalTestClasses']) && $this->allSettings['Neos']['Flow']['object']['registerFunctionalTestClasses'] === true) {
+                if ($package instanceof FlowPackageInterface && $shouldRegisterFunctionalTestClasses) {
                     foreach ($package->getFunctionalTestsClassFiles() as $fullClassName => $path) {
                         if (substr($fullClassName, -9, 9) !== 'Exception') {
                             $availableClassNames[$packageKey][] = $fullClassName;
@@ -262,7 +270,7 @@ class CompileTimeObjectManager extends ObjectManager
     {
         foreach ($filterConfiguration as $packageKey => $filterExpressions) {
             if (!array_key_exists($packageKey, $classNames)) {
-                $this->systemLogger->log('The package "' . $packageKey . '" specified in the setting "Neos.Flow.object.includeClasses" is not available.', LOG_DEBUG);
+                $this->logger->debug('The package "' . $packageKey . '" specified in the setting "Neos.Flow.object.includeClasses" was either excluded or is not loaded.');
                 continue;
             }
             if (!is_array($filterExpressions)) {

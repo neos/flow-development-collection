@@ -17,8 +17,7 @@ use Neos\Flow\I18n;
 use Neos\Flow\I18n\Locale;
 use Neos\Flow\I18n\Xliff\Model\FileAdapter;
 use Neos\Flow\I18n\Xliff\V12\XliffParser as V12XliffParser;
-use Neos\Flow\Package\PackageInterface;
-use Neos\Flow\Package\PackageManagerInterface;
+use Neos\Flow\Package\PackageManager;
 use Neos\Utility\Arrays;
 use Neos\Utility\Files;
 
@@ -31,7 +30,7 @@ class XliffFileProvider
 {
     /**
      * @Flow\Inject
-     * @var PackageManagerInterface
+     * @var PackageManager
      */
     protected $packageManager;
 
@@ -46,6 +45,12 @@ class XliffFileProvider
      * @var XliffReader
      */
     protected $xliffReader;
+
+    /**
+     * @Flow\InjectConfiguration(path="i18n.globalTranslationPath")
+     * @var string
+     */
+    protected $globalTranslationPath;
 
     /**
      * @var VariableFrontend
@@ -101,17 +106,16 @@ class XliffFileProvider
             $localeChain = $this->localizationService->getLocaleChain($locale);
             // Walk locale chain in reverse, so that translations higher in the chain overwrite fallback translations
             foreach (array_reverse($localeChain) as $localeChainItem) {
-                foreach ($this->packageManager->getAvailablePackages() as $package) {
-                    /** @var PackageInterface $package */
+                foreach ($this->packageManager->getFlowPackages() as $package) {
                     $translationPath = $package->getResourcesPath() . $this->xliffBasePath . $localeChainItem;
                     if (is_dir($translationPath)) {
                         $this->readDirectoryRecursively($translationPath, $parsedData, $fileId, $package->getPackageKey());
                     }
                 }
-            }
-            $generalTranslationPath = FLOW_PATH_DATA . 'Translations';
-            if (is_dir($generalTranslationPath)) {
-                $this->readDirectoryRecursively(FLOW_PATH_DATA . 'Translations', $parsedData, $fileId);
+                $generalTranslationPath = $this->globalTranslationPath . $localeChainItem;
+                if (is_dir($generalTranslationPath)) {
+                    $this->readDirectoryRecursively($generalTranslationPath, $parsedData, $fileId);
+                }
             }
             $this->files[$fileId][(string)$locale] = $parsedData;
             $this->cache->set('translationFiles', $this->files);

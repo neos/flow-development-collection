@@ -12,10 +12,11 @@ namespace Neos\Kickstarter\Service;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\I18n\Xliff\XliffParser;
+use Neos\Flow\I18n\Xliff\V12\XliffParser;
 use Neos\FluidAdaptor\View\StandaloneView;
 use Neos\Flow\Core\ClassLoader;
 use Neos\Flow\Package\PackageInterface;
+use Neos\Flow\Package\FlowPackageInterface;
 use Neos\Utility\Files;
 
 /**
@@ -307,7 +308,7 @@ class GeneratorService
         $fileContent = $this->renderTemplate($templatePathAndFilename, $contextVariables);
 
         $testFilename = $testName . '.php';
-        $testPath = $this->packageManager->getPackage($packageKey)->getPackagePath() . PackageInterface::DIRECTORY_TESTS_UNIT . 'Domain/Model/';
+        $testPath = $this->packageManager->getPackage($packageKey)->getPackagePath() . FlowPackageInterface::DIRECTORY_TESTS_UNIT . 'Domain/Model/';
         $targetPathAndFilename = $testPath . $testFilename;
 
         $this->generateFile($targetPathAndFilename, $fileContent, $overwrite);

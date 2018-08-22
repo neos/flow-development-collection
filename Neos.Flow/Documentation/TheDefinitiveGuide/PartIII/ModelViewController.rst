@@ -763,7 +763,7 @@ in a special object, the *mapping results*. These mapping results can be
 conveniently access through a Fluid view helper in order to display warnings and
 errors along the submitted form or on top of it::
 
-	<f:form.validationResults>
+	<f:validation.results>
 		<f:if condition="{validationResults.flattenedErrors}">
 			<ul class="errors">
 				<f:for each="{validationResults.flattenedErrors}" as="errors" key="propertyPath">
@@ -777,7 +777,7 @@ errors along the submitted form or on top of it::
 				</f:for>
 			</ul>
 		</f:if>
-	</f:form.validationResults>
+	</f:validation.results>
 
 Besides using the view helper to display the validation results, you can also
 completely replace the ``errorAction()`` method with your own custom method.

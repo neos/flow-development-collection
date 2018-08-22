@@ -3,7 +3,7 @@
 Flow TypeConverter Reference
 ============================
 
-This reference was automatically generated from code on 2017-03-29
+This reference was automatically generated from code on 2018-08-10
 
 
 .. _`Flow TypeConverter Reference: ArrayConverter`:
@@ -403,6 +403,7 @@ Has two major working modes:
 :Source types:
  * string
  * array
+ * Psr\Http\Message\UploadedFileInterface
 
 
 
@@ -439,7 +440,7 @@ be the given type.
  * string
  * integer
  * float
- * bool
+ * boolean
 
 
 

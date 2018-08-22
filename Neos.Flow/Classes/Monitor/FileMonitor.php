@@ -11,15 +11,15 @@ namespace Neos\Flow\Monitor;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cache\CacheManager;
 use Neos\Cache\Frontend\StringFrontend;
 use Neos\Flow\Core\Bootstrap;
-use Neos\Flow\Log\SystemLoggerInterface;
+use Neos\Flow\Log\PsrLoggerFactoryInterface;
 use Neos\Flow\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface;
 use Neos\Flow\Monitor\ChangeDetectionStrategy\StrategyWithMarkDeletedInterface;
 use Neos\Flow\SignalSlot\Dispatcher;
 use Neos\Utility\Files;
+use Psr\Log\LoggerInterface;
 
 /**
  * A monitor which detects changes in directories or files
@@ -44,9 +44,9 @@ class FileMonitor
     protected $signalDispatcher;
 
     /**
-     * @var SystemLoggerInterface
+     * @var LoggerInterface
      */
-    protected $systemLogger;
+    protected $logger;
 
     /**
      * @var StringFrontend
@@ -116,7 +116,7 @@ class FileMonitor
         $fileMonitor->injectCache($fileMonitorCache);
         $fileMonitor->injectChangeDetectionStrategy($fileChangeDetector);
         $fileMonitor->injectSignalDispatcher($bootstrap->getEarlyInstance(Dispatcher::class));
-        $fileMonitor->injectSystemLogger($bootstrap->getEarlyInstance(SystemLoggerInterface::class));
+        $fileMonitor->injectLogger($bootstrap->getEarlyInstance(PsrLoggerFactoryInterface::class)->get('systemLogger'));
 
         return $fileMonitor;
     }
@@ -146,14 +146,14 @@ class FileMonitor
     }
 
     /**
-     * Injects the system logger
+     * Injects the (system) logger based on PSR-3.
      *
-     * @param SystemLoggerInterface $systemLogger
+     * @param LoggerInterface $logger
      * @return void
      */
-    public function injectSystemLogger(SystemLoggerInterface $systemLogger)
+    public function injectLogger(LoggerInterface $logger)
     {
-        $this->systemLogger = $systemLogger;
+        $this->logger = $logger;
     }
 
     /**
@@ -275,7 +275,7 @@ class FileMonitor
             $this->emitDirectoriesHaveChanged($this->identifier, $this->changedPaths);
         }
         if ($changedFileCount > 0 || $changedPathCount) {
-            $this->systemLogger->log(sprintf('File Monitor "%s" detected %s changed files and %s changed directories.', $this->identifier, $changedFileCount, $changedPathCount), LOG_INFO);
+            $this->logger->info(sprintf('File Monitor "%s" detected %s changed files and %s changed directories.', $this->identifier, $changedFileCount, $changedPathCount));
         }
     }
 

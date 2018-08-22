@@ -106,7 +106,7 @@ class CacheFactory extends \Neos\Cache\CacheFactory implements CacheFactoryInter
      */
     public function create(string $cacheIdentifier, string $cacheObjectName, string $backendObjectName, array $backendOptions = [], bool $persistent = false): FrontendInterface
     {
-        $backend = $this->instantiateBackend($backendObjectName, $backendOptions, $persistent);
+        $backend = $this->instantiateBackend($backendObjectName, $backendOptions, $this->environmentConfiguration, $persistent);
         $cache = $this->instantiateCache($cacheIdentifier, $cacheObjectName, $backend);
         $backend->setCache($cache);
 
@@ -130,11 +130,12 @@ class CacheFactory extends \Neos\Cache\CacheFactory implements CacheFactoryInter
     /**
      * @param string $backendObjectName
      * @param array $backendOptions
+     * @param EnvironmentConfiguration $environmentConfiguration
      * @param boolean $persistent
      * @return FlowAbstractBackend|BackendInterface
      * @throws InvalidBackendException
      */
-    protected function instantiateBackend(string $backendObjectName, array $backendOptions, bool $persistent = false): BackendInterface
+    protected function instantiateBackend(string $backendObjectName, array $backendOptions, EnvironmentConfiguration $environmentConfiguration, bool $persistent = false): BackendInterface
     {
         if (
             $persistent &&
@@ -149,7 +150,7 @@ class CacheFactory extends \Neos\Cache\CacheFactory implements CacheFactoryInter
             return $this->instantiateFlowSpecificBackend($backendObjectName, $backendOptions);
         }
 
-        return parent::instantiateBackend($backendObjectName, $backendOptions);
+        return parent::instantiateBackend($backendObjectName, $backendOptions, $environmentConfiguration);
     }
 
     /**

@@ -1,4 +1,4 @@
-Flow:
+Neos:
   # DocTools is a tool used by Flow Developers to help with a variety of documentation tasks.
   # These settings are only used in generating Documentation.
   DocTools:
@@ -62,7 +62,7 @@ Flow:
         affectedClasses:
           classesContainingMethodsAnnotatedWith: 'Neos\Flow\Annotations\Signal'
           classNamePattern: '/^Neos\\Flow\\.*$/i'
-          includeAbstractClasses: TRUE
+          includeAbstractClasses: true
         parser:
           implementationClassName: 'Neos\DocTools\Domain\Service\SignalsParser'
       'Flow:FlowTypeConverters':
