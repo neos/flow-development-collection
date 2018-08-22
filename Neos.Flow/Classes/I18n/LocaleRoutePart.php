@@ -41,10 +41,10 @@ class LocaleRoutePart extends DynamicRoutePart
 
 		try {
 			$value = rawurldecode($value);
-			$this->value = (string)new \Neos\Flow\I18n\Locale($value);
+			$this->value = (string)new Locale($value);
 
 			return true;
-		} catch (\Neos\Flow\I18n\Exception\InvalidLocaleIdentifierException $exception) {
+		} catch (Exception\InvalidLocaleIdentifierException $exception) {
 		}
 
 		return false;
@@ -63,7 +63,7 @@ class LocaleRoutePart extends DynamicRoutePart
 		if ($value === null) {
 			return false;
 		}
-		if ($value instanceof \Neos\Flow\I18n\Locale) {
+		if ($value instanceof Locale) {
 			$value = (string)$value;
 		}
 		$this->value = rawurlencode($value);
