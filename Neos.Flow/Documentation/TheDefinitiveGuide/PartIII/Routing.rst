@@ -417,6 +417,27 @@ with Flow, so that most links will work out of the box.
 	While matching an incoming request to a route, this has no effect. Nevertheless, all query parameters
 	will be available in the resulting action request via ``$actionRequest::getArguments()``.
 
+Locale
+======
+
+Since Flow 5.1 the Routing Framework supports mapping a route part to the internal ``@locale`` request argument,
+which in turn can be used in the according DetectLanguage HttpComponent in order to set the application locale. That way,
+you can easily create routes for your localization needs.
+
+.. code-block:: yaml
+
+  -
+    uriPattern: '({@locale})/path/'
+    defaults:
+      '@package':    'Acme.Demo'
+      '@controller': 'Standard'
+      '@action':     'action1'
+
+When this route is called with a valid locale identifier, the DetectLanguageComponent will use this locale and try
+to set the application locale to the best matching available locale.
+Accordingly, any routes generated for this action will use the currently selected locale and prefix the url with
+the locale identifier. The locale for generating URLs can also be overridden in the UriBuilder.
+
 Request Methods
 ===============
 
