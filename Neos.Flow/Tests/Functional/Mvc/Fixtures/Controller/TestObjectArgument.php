@@ -11,6 +11,8 @@ namespace Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller;
  * source code.
  */
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -31,6 +33,16 @@ class TestObjectArgument
     protected $emailAddress;
 
     /**
+     * @var Collection<TestObjectArgument>
+     */
+    protected $collection;
+
+    public function __construct()
+    {
+        $this->collection = new ArrayCollection();
+    }
+
+    /**
      * @return string
      */
     public function getName()
@@ -44,6 +56,22 @@ class TestObjectArgument
     public function setName($name)
     {
         $this->name = $name;
+    }
+
+    /**
+     * @param Collection<TestObjectArgument> $collection
+     */
+    public function setCollection(Collection $collection)
+    {
+        $this->collection = $collection;
+    }
+
+    /**
+     * @return Collection<TestObjectArgument>
+     */
+    public function getCollection()
+    {
+        return clone $this->collection;
     }
 
     /**
