@@ -101,7 +101,7 @@ class ActionControllerTestBController extends ActionController
      */
     public function notValidatedGroupCollectionAction(TestObjectArgument $argument)
     {
-        return $argument->getChildren()->get(0)->getEmailAddress();
+        return $argument->getCollection()->get(0)->getEmailAddress();
     }
 
     /**
@@ -111,7 +111,7 @@ class ActionControllerTestBController extends ActionController
      */
     public function validatedGroupCollectionAction(TestObjectArgument $argument)
     {
-        return $argument->getChildren()->get(0)->getEmailAddress();
+        return $argument->getCollection()->get(0)->getEmailAddress();
     }
 
     /**
