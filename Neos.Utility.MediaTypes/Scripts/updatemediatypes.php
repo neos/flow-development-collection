@@ -54,6 +54,6 @@ foreach ($fileExtensionsAndMediaType as $fileExtension => $mediaType) {
 }
 
 $classCode = file_get_contents($mediaTypesClassPathAndFilename);
-$classCode = preg_replace('/(extensionToMediaType = \[\n)([^\)]+)(\t\];)/', '$1' . $fileExtensionsToMediaTypeCode . "    ];", $classCode);
-$classCode = preg_replace('/(mediaTypeToFileExtension = \[\n)([^\;]+)(;)/', '$1' . $mediaTypesToFileExtensionsCode . "    ];", $classCode);
+$classCode = preg_replace('/(extensionToMediaType = \[\n)([^;]+)(;)/', '$1' . $fileExtensionsToMediaTypeCode . "    ];", $classCode);
+$classCode = preg_replace('/(mediaTypeToFileExtension = \[\n)([^;]+)(;)/', '$1' . $mediaTypesToFileExtensionsCode . "    ];", $classCode);
 file_put_contents($mediaTypesClassPathAndFilename, $classCode);
