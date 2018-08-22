@@ -44,6 +44,11 @@ Neos:
             'routing':
               position: 'start'
               component: 'Neos\Flow\Mvc\Routing\RoutingComponent'
+            # To enable language detection from the Request (routing, argument, cookie, header)
+            # uncomment the following lines
+            # 'language':
+            #   position: 'after routing'
+            #   component: 'Neos\Flow\I18n\Http\DetectLanguageComponent'
             'dispatching':
               component: 'Neos\Flow\Mvc\DispatchComponent'
 
