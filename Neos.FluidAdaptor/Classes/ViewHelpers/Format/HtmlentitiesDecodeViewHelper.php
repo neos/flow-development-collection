@@ -60,7 +60,7 @@ class HtmlentitiesDecodeViewHelper extends AbstractViewHelper
     public function initializeArguments()
     {
         $this->registerArgument('value', 'string', 'string to format', false, null);
-        $this->registerArgument('keepQuotes', 'boolean', 'if TRUE, single and double quotes won\'t be replaced (sets ENT_NOQUOTES flag)', false, false);
+        $this->registerArgument('keepQuotes', 'boolean', 'if true, single and double quotes won\'t be replaced (sets ENT_NOQUOTES flag)', false, false);
         $this->registerArgument('encoding', 'string', 'the encoding format', false, 'UTF-8');
     }
 

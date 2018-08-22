@@ -103,7 +103,7 @@ class WritableFileSystemStorage extends FileSystemStorage implements WritableSto
      * Deletes the storage data related to the given PersistentResource object
      *
      * @param PersistentResource $resource The PersistentResource to delete the storage data of
-     * @return boolean TRUE if removal was successful
+     * @return boolean true if removal was successful
      */
     public function deleteResource(PersistentResource $resource)
     {

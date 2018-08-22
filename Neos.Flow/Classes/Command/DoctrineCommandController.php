@@ -409,7 +409,7 @@ class DoctrineCommandController extends CommandController
     /**
      * Generate a new migration
      *
-     * If $diffAgainstCurrent is TRUE (the default), it generates a migration file
+     * If $diffAgainstCurrent is true (the default), it generates a migration file
      * with the diff between current DB structure and the found mapping metadata.
      *
      * Otherwise an empty migration skeleton is generated.

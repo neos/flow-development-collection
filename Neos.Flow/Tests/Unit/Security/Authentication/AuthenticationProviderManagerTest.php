@@ -14,6 +14,7 @@ namespace Neos\Flow\Tests\Unit\Security\Authentication;
 use Neos\Flow\Security\Authentication\AuthenticationProviderInterface;
 use Neos\Flow\Security\Authentication\AuthenticationProviderResolver;
 use Neos\Flow\Security\RequestPatternResolver;
+use Neos\Flow\Session\SessionManager;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Flow\Security\Account;
 use Neos\Flow\Security\Authentication\AuthenticationProviderManager;
@@ -37,6 +38,11 @@ class AuthenticationProviderManagerTest extends UnitTestCase
     protected $mockSession;
 
     /**
+     * @var SessionManager|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $mockSessionManager;
+
+    /**
      * @var Context|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $mockSecurityContext;
@@ -50,7 +56,10 @@ class AuthenticationProviderManagerTest extends UnitTestCase
         $this->mockSession = $this->getMockBuilder(SessionInterface::class)->getMock();
         $this->mockSecurityContext = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
 
-        $this->inject($this->authenticationProviderManager, 'session', $this->mockSession);
+        $this->mockSessionManager = $this->getMockBuilder(SessionManager::class)->getMock();
+        $this->mockSessionManager->expects(self::any())->method('getCurrentSession')->willReturn($this->mockSession);
+
+        $this->inject($this->authenticationProviderManager, 'sessionManager', $this->mockSessionManager);
         $this->inject($this->authenticationProviderManager, 'securityContext', $this->mockSecurityContext);
         $this->inject($this->authenticationProviderManager, 'isInitialized', true);
     }
@@ -296,7 +305,7 @@ class AuthenticationProviderManagerTest extends UnitTestCase
     {
         $this->authenticationProviderManager = $this->getAccessibleMock(AuthenticationProviderManager::class, ['emitLoggedOut'], [], '', false);
         $this->inject($this->authenticationProviderManager, 'securityContext', $this->mockSecurityContext);
-        $this->inject($this->authenticationProviderManager, 'session', $this->mockSession);
+        $this->inject($this->authenticationProviderManager, 'sessionManager', $this->mockSessionManager);
         $this->inject($this->authenticationProviderManager, 'isInitialized', true);
 
         $this->mockSession->expects($this->any())->method('canBeResumed')->will($this->returnValue(true));
@@ -319,7 +328,7 @@ class AuthenticationProviderManagerTest extends UnitTestCase
     {
         $this->authenticationProviderManager = $this->getAccessibleMock(AuthenticationProviderManager::class, ['emitLoggedOut'], [], '', false);
         $this->inject($this->authenticationProviderManager, 'securityContext', $this->mockSecurityContext);
-        $this->inject($this->authenticationProviderManager, 'session', $this->mockSession);
+        $this->inject($this->authenticationProviderManager, 'sessionManager', $this->mockSessionManager);
         $this->inject($this->authenticationProviderManager, 'isInitialized', true);
 
         $token = $this->getMockBuilder(TokenInterface::class)->disableOriginalConstructor()->getMock();
@@ -339,7 +348,7 @@ class AuthenticationProviderManagerTest extends UnitTestCase
     {
         $this->authenticationProviderManager = $this->getAccessibleMock(AuthenticationProviderManager::class, ['emitLoggedOut'], [], '', false);
         $this->inject($this->authenticationProviderManager, 'securityContext', $this->mockSecurityContext);
-        $this->inject($this->authenticationProviderManager, 'session', $this->mockSession);
+        $this->inject($this->authenticationProviderManager, 'sessionManager', $this->mockSessionManager);
         $this->inject($this->authenticationProviderManager, 'isInitialized', true);
 
         $this->mockSession->expects($this->any())->method('canBeResumed')->will($this->returnValue(true));
@@ -370,7 +379,7 @@ class AuthenticationProviderManagerTest extends UnitTestCase
     {
         $this->authenticationProviderManager = $this->getAccessibleMock(AuthenticationProviderManager::class, ['emitLoggedOut'], [], '', false);
         $this->inject($this->authenticationProviderManager, 'securityContext', $this->mockSecurityContext);
-        $this->inject($this->authenticationProviderManager, 'session', $this->mockSession);
+        $this->inject($this->authenticationProviderManager, 'sessionManager', $this->mockSessionManager);
         $this->inject($this->authenticationProviderManager, 'isInitialized', true);
 
         $this->mockSession->expects($this->any())->method('canBeResumed')->will($this->returnValue(true));

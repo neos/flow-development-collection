@@ -64,7 +64,7 @@ class ClassNameIndex
      * Checks, if a class name is contained in this index
      *
      * @param string $className The class name to check for
-     * @return boolean TRUE, if the given class name is contained in this index
+     * @return boolean true, if the given class name is contained in this index
      */
     public function hasClassName($className): bool
     {

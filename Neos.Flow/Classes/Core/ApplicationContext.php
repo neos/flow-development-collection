@@ -88,7 +88,7 @@ class ApplicationContext
     }
 
     /**
-     * Returns TRUE if this context is the Development context or a sub-context of it
+     * Returns true if this context is the Development context or a sub-context of it
      *
      * @return boolean
      * @api
@@ -99,7 +99,7 @@ class ApplicationContext
     }
 
     /**
-     * Returns TRUE if this context is the Production context or a sub-context of it
+     * Returns true if this context is the Production context or a sub-context of it
      *
      * @return boolean
      * @api
@@ -111,7 +111,7 @@ class ApplicationContext
     }
 
     /**
-     * Returns TRUE if this context is the Testing context or a sub-context of it
+     * Returns true if this context is the Testing context or a sub-context of it
      *
      * @return boolean
      * @api

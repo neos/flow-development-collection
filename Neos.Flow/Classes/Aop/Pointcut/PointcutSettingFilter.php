@@ -17,7 +17,7 @@ use Neos\Flow\Aop\Exception\InvalidPointcutExpressionException;
 use Neos\Flow\Configuration\ConfigurationManager;
 
 /**
- * A settings filter which fires on configuration setting set to TRUE or equal to the given condition.
+ * A settings filter which fires on configuration setting set to true or equal to the given condition.
  *
  * Example: setting(FooPackage.configuration.option = 'AOP is cool')
  *
@@ -79,14 +79,14 @@ class PointcutSettingFilter implements PointcutFilterInterface
     }
 
     /**
-     * Checks if the specified configuration option is set to TRUE or FALSE, or if it matches the specified
+     * Checks if the specified configuration option is set to true or false, or if it matches the specified
      * condition
      *
      * @param string $className Name of the class to check against
      * @param string $methodName Name of the method - not used here
      * @param string $methodDeclaringClassName Name of the class the method was originally declared in - not used here
      * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
-     * @return boolean TRUE if the class matches, otherwise FALSE
+     * @return boolean true if the class matches, otherwise false
      */
     public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier): bool
     {
@@ -97,9 +97,9 @@ class PointcutSettingFilter implements PointcutFilterInterface
     }
 
     /**
-     * Returns TRUE if this filter holds runtime evaluations for a previously matched pointcut
+     * Returns true if this filter holds runtime evaluations for a previously matched pointcut
      *
-     * @return boolean TRUE if this filter has runtime evaluations
+     * @return boolean true if this filter has runtime evaluations
      */
     public function hasRuntimeEvaluationsDefinition(): bool
     {

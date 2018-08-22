@@ -167,7 +167,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
      * Loads data from a cache file.
      *
      * @param string $entryIdentifier An identifier which describes the cache entry to load
-     * @return mixed The cache entry's content as a string or FALSE if the cache entry could not be loaded
+     * @return mixed The cache entry's content as a string or false if the cache entry could not be loaded
      * @throws \InvalidArgumentException
      * @api
      */
@@ -190,7 +190,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
      * Checks if a cache entry with the specified identifier exists.
      *
      * @param string $entryIdentifier
-     * @return boolean TRUE if such an entry exists, FALSE if not
+     * @return boolean true if such an entry exists, false if not
      * @throws \InvalidArgumentException
      * @api
      */
@@ -235,7 +235,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
      * Usually this only affects one entry.
      *
      * @param string $entryIdentifier Specifies the cache entry to remove
-     * @return boolean TRUE if (at least) an entry could be removed or FALSE if no entry was found
+     * @return boolean true if (at least) an entry could be removed or false if no entry was found
      * @throws \InvalidArgumentException
      * @api
      */
@@ -302,7 +302,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
      * Tries to find the cache entry for the specified identifier.
      *
      * @param string $entryIdentifier The cache entry identifier
-     * @return mixed The filenames (including path) as an array if one or more entries could be found, otherwise FALSE
+     * @return mixed The filenames (including path) as an array if one or more entries could be found, otherwise false
      * @throws Exception if no frontend has been set
      */
     protected function findCacheFilesByIdentifier(string $entryIdentifier)
@@ -384,7 +384,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
     /**
      * Checks if the current position of the cache entry iterator is valid
      *
-     * @return boolean TRUE if the current position is valid, otherwise FALSE
+     * @return boolean true if the current position is valid, otherwise false
      * @api
      */
     public function valid(): bool
@@ -475,7 +475,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
      * @param string $cacheEntryPathAndFilename
      * @param int|null $offset
      * @param int|null $maxlen
-     * @return boolean|string The contents of the cache file or FALSE on error
+     * @return boolean|string The contents of the cache file or false on error
      */
     protected function readCacheFile(string $cacheEntryPathAndFilename, int $offset = null, int $maxlen = null)
     {
