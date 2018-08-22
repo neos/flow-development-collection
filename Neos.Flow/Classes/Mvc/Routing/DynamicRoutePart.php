@@ -66,7 +66,7 @@ class DynamicRoutePart extends AbstractRoutePart implements DynamicRoutePartInte
      * @see matchWithParameters()
      *
      * @param string $routePath The request path to be matched - without query parameters, host and fragment.
-     * @return bool|MatchResult TRUE or an instance of MatchResult if Route Part matched $routePath, otherwise FALSE.
+     * @return bool|MatchResult true or an instance of MatchResult if Route Part matched $routePath, otherwise false.
      */
     final public function match(&$routePath)
     {
@@ -81,7 +81,7 @@ class DynamicRoutePart extends AbstractRoutePart implements DynamicRoutePartInte
      *
      * @param string $routePath The request path to be matched - without query parameters, host and fragment.
      * @param RouteParameters $parameters Routing parameters that will be stored in $this->parameters and can be evaluated in sub classes
-     * @return bool|MatchResult TRUE or an instance of MatchResult if Route Part matched $routePath, otherwise FALSE.
+     * @return bool|MatchResult true or an instance of MatchResult if Route Part matched $routePath, otherwise false.
      */
     final public function matchWithParameters(&$routePath, RouteParameters $parameters)
     {
@@ -132,7 +132,7 @@ class DynamicRoutePart extends AbstractRoutePart implements DynamicRoutePartInte
      * This method can be overridden by custom RoutePartHandlers to implement custom matching mechanisms.
      *
      * @param string $value value to match
-     * @return bool|MatchResult An instance of MatchResult if value could be matched successfully, otherwise FALSE.
+     * @return bool|MatchResult An instance of MatchResult if value could be matched successfully, otherwise false.
      * @api
      */
     protected function matchValue($value)
@@ -164,7 +164,7 @@ class DynamicRoutePart extends AbstractRoutePart implements DynamicRoutePartInte
      * If a corresponding element is found in $routeValues, this element is removed from the array.
      *
      * @param array $routeValues An array with key/value pairs to be resolved by Dynamic Route Parts.
-     * @return bool|ResolveResult TRUE or an instance of ResolveResult if current Route Part could be resolved, otherwise FALSE
+     * @return bool|ResolveResult true or an instance of ResolveResult if current Route Part could be resolved, otherwise false
      */
     final public function resolve(array &$routeValues)
     {
@@ -203,7 +203,7 @@ class DynamicRoutePart extends AbstractRoutePart implements DynamicRoutePartInte
      * This method can be overridden by custom RoutePartHandlers to implement custom resolving mechanisms.
      *
      * @param mixed $value value to resolve
-     * @return boolean|ResolveResult An instance of ResolveResult if value could be resolved successfully, otherwise FALSE.
+     * @return boolean|ResolveResult An instance of ResolveResult if value could be resolved successfully, otherwise false.
      * @api
      */
     protected function resolveValue($value)

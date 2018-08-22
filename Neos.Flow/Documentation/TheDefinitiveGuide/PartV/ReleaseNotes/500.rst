@@ -12,7 +12,7 @@ Upgrade Instructions
 This section contains instructions for upgrading your Flow 4.3
 based applications to Flow 5.0.
 
-* We now require 7.1.x or higher
+* We now require PHP 7.1.x or higher
 * If you are using a MySQL based database you must use at least 
   MySQL 5.7.7 or MariaDB 10.2.2
 

@@ -11,28 +11,24 @@ namespace Neos\Flow\Tests\Functional\ObjectManagement\Fixtures;
  * source code.
  */
 
+use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Neos\Flow\Annotations as Flow;
 
 /**
- * A class which has lazy dependencies
+ * A class which has doctrine ObjectManager / EntityManagerInterface injections
  */
-class ClassWithLazyDependencies
+class ClassWithDoctrineInjections
 {
     /**
-     * @Flow\Inject
-     * @var SingletonClassA
+     * @Flow\Inject(lazy = FALSE)
+     * @var ObjectManager
      */
-    public $lazyA;
+    public $objectManager;
 
     /**
-     * @Flow\Inject
-     * @var SingletonClassB
+     * @Flow\Inject(lazy = FALSE)
+     * @var EntityManagerInterface
      */
-    public $lazyB;
-
-    /**
-     * @Flow\Inject(lazy = false)
-     * @var SingletonClassC
-     */
-    public $eagerC;
+    public $entityManager;
 }

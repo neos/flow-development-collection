@@ -180,7 +180,7 @@ abstract class Files
     public static function removeEmptyDirectoriesOnPath(string $path, string $basePath = null)
     {
         if ($basePath !== null) {
-            $basePath = trim($basePath, '/');
+            $basePath = rtrim($basePath, '/');
             if (strpos($path, $basePath) !== 0) {
                 throw new FilesException(sprintf('Could not remove empty directories on path because the given base path "%s" is not a parent path of "%s".', $basePath, $path), 1323962907);
             }
@@ -260,11 +260,11 @@ abstract class Files
      * Copies the contents of the source directory to the target directory.
      * $targetDirectory will be created if it does not exist.
      *
-     * If $keepExistingFiles is TRUE, this will keep files already present
-     * in the target location. It defaults to FALSE.
+     * If $keepExistingFiles is true, this will keep files already present
+     * in the target location. It defaults to false.
      *
-     * If $copyDotFiles is TRUE, this will copy files whose name begin with
-     * a dot. It defaults to FALSE.
+     * If $copyDotFiles is true, this will copy files whose name begin with
+     * a dot. It defaults to false.
      *
      * @param string $sourceDirectory
      * @param string $targetDirectory
@@ -304,7 +304,7 @@ abstract class Files
      * @param resource $context (optional) A context resource created by stream_context_create()
      * @param integer $offset (optional) Offset where reading of the file starts, as of PHP 7.1 supports negative offsets.
      * @param integer $maximumLength (optional) Maximum length to read. Default is -1 (no limit)
-     * @return mixed The file content as a string or FALSE if the file could not be opened.
+     * @return mixed The file content as a string or false if the file could not be opened.
      * @api
      */
     public static function getFileContents(string $pathAndFilename, int $flags = 0, $context = null, int $offset = null, int $maximumLength = -1)
@@ -360,7 +360,7 @@ abstract class Files
      * If http://bugs.php.net/bug.php?id=51766 gets fixed we can drop this.
      *
      * @param string $pathAndFilename Path and name of the file or directory
-     * @return boolean TRUE if the path exists and is a symbolic link, FALSE otherwise
+     * @return boolean true if the path exists and is a symbolic link, false otherwise
      * @api
      */
     public static function is_link(string $pathAndFilename): bool
@@ -385,11 +385,11 @@ abstract class Files
      *
      * If this method could not unlink the specified file or it doesn't exist anymore (e.g. because of a concurrent
      * deletion), it will clear the stat cache for its filename and check if the file still exist. If it does not exist,
-     * this method assumes that the file has been deleted by another process and will return TRUE. If the file still
-     * exists though, this method will return FALSE.
+     * this method assumes that the file has been deleted by another process and will return true. If the file still
+     * exists though, this method will return false.
      *
      * @param string $pathAndFilename Path and name of the file or directory
-     * @return boolean TRUE if file/directory was removed successfully
+     * @return boolean true if file/directory was removed successfully
      * @api
      */
     public static function unlink(string $pathAndFilename): bool

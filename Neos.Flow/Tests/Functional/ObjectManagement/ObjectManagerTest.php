@@ -62,10 +62,21 @@ class ObjectManagerTest extends FunctionalTestCase
 
         /**
          * When shutting down the ObjectManager shutdownObject() on Fixtures\TestEntityWithShutdown is called
-         * and sets $destructed property to TRUE
+         * and sets $destructed property to true
          */
         \Neos\Flow\Core\Bootstrap::$staticObjectManager->shutdown();
 
         $this->assertTrue($entity->isDestructed());
+    }
+
+    /**
+     * XXX: Remove this with Flow 6.0
+     * @test
+     */
+    public function deprecatedDoctrineObjectManagerInjectsSameInstanceAsEntityManagerInterface()
+    {
+        $classWithInjections = $this->objectManager->get(Fixtures\ClassWithDoctrineInjections::class);
+
+        $this->assertSame($classWithInjections->entityManager, $classWithInjections->objectManager);
     }
 }

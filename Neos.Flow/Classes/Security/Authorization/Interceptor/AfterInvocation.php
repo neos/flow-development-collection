@@ -72,7 +72,7 @@ class AfterInvocation implements InterceptorInterface
     /**
      * Invokes the security interception
      *
-     * @return boolean TRUE if the security checks was passed
+     * @return boolean true if the security checks was passed
      * @todo Implement interception logic
      */
     public function invoke()

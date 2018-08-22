@@ -113,7 +113,7 @@ class StringHelper implements ProtectedContextAwareInterface
      * @param string $string The string
      * @param string $search A string to search
      * @param integer $position Optional position for limiting the string
-     * @return boolean TRUE if the string ends with the given search
+     * @return boolean true if the string ends with the given search
      */
     public function endsWith($string, $search, $position = null)
     {
@@ -485,7 +485,7 @@ class StringHelper implements ProtectedContextAwareInterface
     /**
      * Convert a string to boolean
      *
-     * A value is ``true``, if it is either the string ``"TRUE"`` or ``"true"`` or the number ``1``.
+     * A value is ``true``, if it is either the string ``"true"`` or ``"true"`` or the number ``1``.
      *
      * @param string $string The string to convert
      * @return boolean The boolean value of the string (``true`` or ``false``)

@@ -155,7 +155,7 @@ class ConsoleOutput
      * @param string|array $question The question to ask. If an array each array item is turned into one line of a multi-line question
      * @param array $choices List of choices to pick from
      * @param boolean $default The default answer if the user enters nothing
-     * @param boolean $multiSelect If TRUE the result will be an array with the selected options. Multiple options can be given separated by commas
+     * @param boolean $multiSelect If true the result will be an array with the selected options. Multiple options can be given separated by commas
      * @param boolean|null $attempts Max number of times to ask before giving up (null by default, which means infinite)
      * @return integer|string|array The selected value or values (the key of the choices array)
      * @throws \InvalidArgumentException

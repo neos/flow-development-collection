@@ -269,10 +269,10 @@ abstract class AbstractBackend implements BackendInterface
     }
 
     /**
-     * Returns TRUE, if an active connection to the persistence
+     * Returns true, if an active connection to the persistence
      * backend has been established, e.g. entities can be persisted.
      *
-     * @return boolean TRUE, if an connection has been established, FALSE if add object will not be persisted by the backend
+     * @return boolean true, if an connection has been established, false if add object will not be persisted by the backend
      * @api
      */
     public function isConnected()
@@ -432,7 +432,7 @@ abstract class AbstractBackend implements BackendInterface
      * @param string $identifier The object's identifier
      * @param object $object The object to work on
      * @param array $properties The properties to collect (as per class schema)
-     * @param boolean $dirty A dirty flag that is passed by reference and set to TRUE if a dirty property was found
+     * @param boolean $dirty A dirty flag that is passed by reference and set to true if a dirty property was found
      * @return array
      */
     protected function collectProperties($identifier, $object, array $properties, &$dirty)

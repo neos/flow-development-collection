@@ -111,7 +111,7 @@ abstract class AbstractMessage implements MessageInterface
      *
      * @param string $name Name of the header, for example "Location", "Content-Description" etc.
      * @param array|string|\DateTime $values An array of values or a single value for the specified header field
-     * @param boolean $replaceExistingHeader If a header with the same name should be replaced. Default is TRUE.
+     * @param boolean $replaceExistingHeader If a header with the same name should be replaced. Default is true.
      * @return self This message, for method chaining
      * @throws \InvalidArgumentException
      * @deprecated Since Flow 5.1, use withHeader or withAddedHeader instead

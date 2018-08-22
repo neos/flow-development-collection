@@ -20,7 +20,7 @@ use Neos\Flow\Annotations as Flow;
 interface PrivilegeManagerInterface
 {
     /**
-     * Returns TRUE, if the given privilege type is granted for the given subject based
+     * Returns true, if the given privilege type is granted for the given subject based
      * on the current security context.
      *
      * @param string $privilegeType The type of privilege that should be evaluated
@@ -31,7 +31,7 @@ interface PrivilegeManagerInterface
     public function isGranted($privilegeType, $subject, &$reason = '');
 
     /**
-     * Returns TRUE, if the given privilege type would be granted for the given roles and subject
+     * Returns true, if the given privilege type would be granted for the given roles and subject
      *
      * @param array<Role> $roles The roles that should be evaluated
      * @param string $privilegeType The type of privilege that should be evaluated
@@ -42,21 +42,21 @@ interface PrivilegeManagerInterface
     public function isGrantedForRoles(array $roles, $privilegeType, $subject, &$reason = '');
 
     /**
-     * Returns TRUE if access is granted on the given privilege target in the current security context
+     * Returns true if access is granted on the given privilege target in the current security context
      *
      * @param string $privilegeTargetIdentifier The identifier of the privilege target to decide on
      * @param array $privilegeParameters Optional array of privilege parameters (simple key => value array)
-     * @return boolean TRUE if access is granted, FALSE otherwise
+     * @return boolean true if access is granted, false otherwise
      */
     public function isPrivilegeTargetGranted($privilegeTargetIdentifier, array $privilegeParameters = []);
 
     /**
-     * Returns TRUE if access is granted on the given privilege target in the current security context
+     * Returns true if access is granted on the given privilege target in the current security context
      *
      * @param array<Role> $roles The roles that should be evaluated
      * @param string $privilegeTargetIdentifier The identifier of the privilege target to decide on
      * @param array $privilegeParameters Optional array of privilege parameters (simple key => value array)
-     * @return boolean TRUE if access is granted, FALSE otherwise
+     * @return boolean true if access is granted, false otherwise
      */
     public function isPrivilegeTargetGrantedForRoles(array $roles, $privilegeTargetIdentifier, array $privilegeParameters = []);
 }

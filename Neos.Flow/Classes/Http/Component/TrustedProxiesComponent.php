@@ -218,7 +218,7 @@ class TrustedProxiesComponent implements ComponentInterface
      * directly connected to the server.
      *
      * @param ServerRequestInterface $request
-     * @return string|bool The most trusted client's IP address or FALSE if no remote address can be found
+     * @return string|bool The most trusted client's IP address or false if no remote address can be found
      */
     protected function getTrustedClientIpAddress(ServerRequestInterface $request)
     {

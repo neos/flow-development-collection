@@ -179,7 +179,7 @@ class BaseRequest extends AbstractMessage implements RequestInterface
      * Returns the content of the request body
      *
      * If the request body has not been set with setContent() previously, this method
-     * will try to retrieve it from the input stream. If $asResource was set to TRUE,
+     * will try to retrieve it from the input stream. If $asResource was set to true,
      * the stream resource will be returned instead of a string.
      *
      * If the content which has been set by setContent() originally was a stream
