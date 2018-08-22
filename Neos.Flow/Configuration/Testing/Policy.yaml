@@ -29,7 +29,7 @@ privilegeTargets:
       matcher: 'isType("Neos\Flow\Tests\Functional\Security\Fixtures\RestrictableEntity")'
 
     'Neos.Flow:Tests.Functional.Security.Fixtures.RestrictableEntity.HiddenEntities':
-      matcher: 'isType("Neos\Flow\Tests\Functional\Security\Fixtures\RestrictableEntity") && TRUE == property("hidden")'
+      matcher: 'isType("Neos\Flow\Tests\Functional\Security\Fixtures\RestrictableEntity") && true == property("hidden")'
 
     'Neos.Flow:Tests.Functional.Security.Fixtures.RestrictableEntity.DeletedEntries':
       matcher: 'isType("Neos\Flow\Tests\Functional\Security\Fixtures\RestrictableEntity") && property("deletedOn") != NULL'

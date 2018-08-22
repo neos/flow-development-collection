@@ -9,7 +9,7 @@ Neos:
       # in the "Classes" directory - also register class files found in the directory
       # "Tests/Functional/". Enabling this feature obviously only makes sense in a
       # testing context.
-      registerFunctionalTestClasses: FALSE
+      registerFunctionalTestClasses: false
 
       # Explicitly include classes to object management (Reflection and Configuration building).
       # Sequence of package keys with an array of regular expressions.
@@ -22,5 +22,4 @@ Neos:
       # reflected by default. You can however exclude specific (or all) classes from Flow packages
       # by specifying corresponding regular expressions that don't match classes to exclude.
       #
-      # Note: The previous setting "excludeClasses" has been deprecated with Flow 3.0
       includeClasses: []

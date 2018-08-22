@@ -45,10 +45,10 @@ Neos:
         path: /
 
         # Force SSL cookies.
-        secure: FALSE
+        secure: false
 
         # Allow http access only.
-        httponly: TRUE
+        httponly: true
 
         # The cookie domain. Only denote the top-level domain if cookies should be valid for
         # all subdomains. Dot notation is not supported.

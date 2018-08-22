@@ -104,7 +104,7 @@ class SecurityCommandController extends CommandController
      * @return void
      * @see neos.flow:security:importprivatekey
      */
-    public function generateKeyPairCommand($usedForPasswords = false)
+    public function generateKeyPairCommand(bool $usedForPasswords = false)
     {
         $fingerprint = $this->rsaWalletService->generateNewKeypair($usedForPasswords);
 
@@ -137,7 +137,7 @@ class SecurityCommandController extends CommandController
      * @see neos.flow:security:importpublickey
      * @see neos.flow:security:generatekeypair
      */
-    public function importPrivateKeyCommand($usedForPasswords = false)
+    public function importPrivateKeyCommand(bool $usedForPasswords = false)
     {
         $keyData = '';
         // no file_get_contents here because it does not work on php://stdin
@@ -158,7 +158,7 @@ class SecurityCommandController extends CommandController
      * @param string $privilegeType The privilege type ("entity", "method" or the FQN of a class implementing PrivilegeInterface)
      * @param string $roles A comma separated list of role identifiers. Shows policy for an unauthenticated user when left empty.
      */
-    public function showEffectivePolicyCommand($privilegeType, $roles = '')
+    public function showEffectivePolicyCommand(string $privilegeType, string $roles = '')
     {
         $systemRoleIdentifiers = ['Neos.Flow:Everybody', 'Neos.Flow:Anonymous', 'Neos.Flow:AuthenticatedUser'];
 
@@ -301,7 +301,7 @@ class SecurityCommandController extends CommandController
      * @param string $privilegeTarget The name of the privilegeTarget as stated in the policy
      * @return void
      */
-    public function showMethodsForPrivilegeTargetCommand($privilegeTarget)
+    public function showMethodsForPrivilegeTargetCommand(string $privilegeTarget)
     {
         $privilegeTargetInstance = $this->policyService->getPrivilegeTargetByIdentifier($privilegeTarget);
         if ($privilegeTargetInstance === null) {

@@ -14,6 +14,7 @@ namespace Neos\Flow\Mvc\Controller;
 use Neos\Error\Messages\Result;
 use Neos\Flow\Annotations as Flow;
 use Neos\Error\Messages as Error;
+use Neos\Flow\Log\PsrSystemLoggerInterface;
 use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\Mvc\Exception\ForwardException;
 use Neos\Flow\Mvc\Exception\InvalidActionVisibilityException;
@@ -30,6 +31,8 @@ use Neos\Flow\Property\Exception\TargetNotFoundException;
 use Neos\Flow\Property\TypeConverter\Error\TargetNotFoundError;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Utility\TypeHandling;
+use Psr\Log\LoggerInterface;
+use Psr\Log\LogLevel;
 
 /**
  * An HTTP based multi-action controller.
@@ -144,8 +147,15 @@ class ActionController extends AbstractController
     /**
      * @var SystemLoggerInterface
      * @Flow\Inject
+     * @deprecated
+     * @see logger
      */
     protected $systemLogger;
+
+    /**
+     * @var LoggerInterface
+     */
+    protected $logger;
 
     /**
      * @param array $settings
@@ -154,6 +164,17 @@ class ActionController extends AbstractController
     public function injectSettings(array $settings)
     {
         $this->settings = $settings;
+    }
+
+    /**
+     * Injects the (system) logger based on PSR-3.
+     *
+     * @param LoggerInterface $logger
+     * @return void
+     */
+    public function injectLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
     }
 
     /**
@@ -702,7 +723,7 @@ class ActionController extends AbstractController
                 $logMessage .= 'Error for ' . $propertyPath . ':  ' . $error->render() . PHP_EOL;
             }
         }
-        $this->systemLogger->log($logMessage, LOG_ERR);
+        $this->logger->error($logMessage);
 
         return $outputMessage;
     }

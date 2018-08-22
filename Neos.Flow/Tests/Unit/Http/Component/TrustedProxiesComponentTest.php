@@ -54,7 +54,7 @@ class TrustedProxiesComponentTest extends UnitTestCase
         $this->mockHttpResponse = $this->getMockBuilder(Response::class)->disableOriginalConstructor()->getMock();
 
         $this->mockComponentContext =
-        $this->trustedProxiesComponent = new TrustedProxiesComponent(array());
+        $this->trustedProxiesComponent = new TrustedProxiesComponent();
         $componentReflection = new \ReflectionClass($this->trustedProxiesComponent);
         $this->trustedProxiesSettings = $componentReflection->getProperty('settings');
         $this->trustedProxiesSettings->setAccessible(true);
@@ -112,6 +112,31 @@ class TrustedProxiesComponentTest extends UnitTestCase
     }
 
     /**
+     * RFC 2616 / 14.23 (Host)
+     *
+     * @test
+     * @backupGlobals disabled
+     */
+    public function portInProxyHeaderIsAcknowledgedWithIpv6()
+    {
+        $server = array_merge($_SERVER, [
+            'HTTP_HOST' => '[2a00:f48:1008::212:183:10]',
+            'HTTP_X_FORWARDED_HOST' => '[2a00:f48:1008::212:183:10]',
+            'HTTP_X_FORWARDED_PORT' => 2727,
+            'SERVER_NAME' => 'dev.blog.rob',
+            'SERVER_ADDR' => '127.0.0.1',
+            'SERVER_PORT' => '80',
+            'REMOTE_ADDR' => '127.0.0.1',
+            'REQUEST_URI' => '/posts/2011/11/28/laboriosam-soluta-est-minus-molestiae?getKey1=getValue1&getKey2=getValue2',
+            'REQUEST_TIME' => 1326472534
+        ]);
+
+        $request = Request::create(new Uri('https://[2a00:f48:1008::212:183:10]:2727/foo/bar?baz=quux&coffee=due'), 'GET', array(), array(), $server);
+        $trustedRequest = $this->callWithRequest($request);
+        $this->assertSame(2727, $trustedRequest->getPort());
+    }
+
+    /**
      * Data Provider
      */
     public function serverEnvironmentsForClientIpAddresses()
@@ -128,8 +153,8 @@ class TrustedProxiesComponentTest extends UnitTestCase
             array(array('HTTP_X_FORWARDED_FOR' => '123.123.123.123, 209.85.148.101, 209.85.148.102'), '123.123.123.123'),
             array(array('HTTP_X_CLUSTER_CLIENT_IP' => '209.85.148.101, 209.85.148.102'), '209.85.148.101'),
             array(array('HTTP_FORWARDED_FOR' => '209.85.148.101'), '209.85.148.101'),
-            array(array('HTTP_FORWARDED' => '209.85.148.101'), '209.85.148.101'),
             array(array('REMOTE_ADDR' => '127.0.0.1'), '127.0.0.1'),
+            array(array('HTTP_X_FORWARDED_FOR' => '2607:ff10:c5:509a::1'), '2607:ff10:c5:509a::1'),
         );
     }
 
@@ -155,6 +180,47 @@ class TrustedProxiesComponentTest extends UnitTestCase
         $request = Request::create(new Uri('http://flow.neos.io'), 'GET', array(), array(), array_replace($defaultServerEnvironment, $serverEnvironment));
         $trustedRequest = $this->callWithRequest($request);
         $this->assertSame($expectedIpAddress, $trustedRequest->getClientIpAddress());
+    }
+
+    /**
+     * Data Provider
+     */
+    public function serverEnvironmentsForForwardedHeader()
+    {
+        return array(
+            array(array('HTTP_FORWARDED' => 'for=209.85.148.101; proto=https; host=www.acme.org'), '209.85.148.101', 'https', 'www.acme.org', 443),
+            array(array('HTTP_FORWARDED' => 'For=123.123.123.123, for=209.85.148.101'), '123.123.123.123', 'http', 'flow.neos.io', 80),
+            array(array('HTTP_FORWARDED' => 'FOR=192.0.2.60, for=209.85.148.101; proto=https; HOST="123.123.123.123:4711", host=www.acme.org:8080; by=203.0.113.43'), '192.0.2.60', 'https', '123.123.123.123', 4711),
+            array(array('HTTP_FORWARDED' => 'for=192.0.2.60; proto=https; host=www.acme.org:8080; by=203.0.113.43'), '192.0.2.60', 'https', 'www.acme.org', 8080),
+        );
+    }
+
+    /**
+     * @test
+     * @dataProvider serverEnvironmentsForForwardedHeader
+     */
+    public function trustedProxyCorrectlyParsesForwardedHeaders(array $serverEnvironment, $expectedIpAddress, $expectedProto, $expectedHost, $expectedPort)
+    {
+        $defaultServerEnvironment = array(
+            'HTTP_USER_AGENT' => 'Flow/' . FLOW_VERSION_BRANCH . '.x',
+            'HTTP_HOST' => 'flow.neos.io',
+            'SERVER_NAME' => 'neos.io',
+            'SERVER_ADDR' => '217.29.36.55',
+            'SERVER_PORT' => 80,
+            'REMOTE_ADDR' => '17.172.224.47',
+            'SCRIPT_FILENAME' => FLOW_PATH_WEB . 'index.php',
+            'SERVER_PROTOCOL' => 'HTTP/1.1',
+            'SCRIPT_NAME' => '/index.php',
+            'PHP_SELF' => '/index.php',
+        );
+
+        $this->withTrustedProxiesSettings(['proxies' => '*', 'headers' => 'Forwarded']);
+        $request = Request::create(new Uri('http://flow.neos.io'), 'GET', array(), array(), array_replace($defaultServerEnvironment, $serverEnvironment));
+        $trustedRequest = $this->callWithRequest($request);
+        $this->assertSame($expectedIpAddress, $trustedRequest->getAttribute(Request::ATTRIBUTE_CLIENT_IP));
+        $this->assertSame($expectedProto, $trustedRequest->getUri()->getScheme());
+        $this->assertSame($expectedHost, $trustedRequest->getUri()->getHost());
+        $this->assertSame($expectedPort, $trustedRequest->getUri()->getPort());
     }
 
     /**
@@ -490,6 +556,12 @@ class TrustedProxiesComponentTest extends UnitTestCase
                 'forwardedPort' => null,
                 'requestUri' => 'http://acme.com',
                 'expectedUri' => 'https://acme.com',
+            ),
+            array(
+                'forwardedProtocol' => 'http',
+                'forwardedPort' => 80,
+                'requestUri' => '[2a00:f48:1008::212:183:10]',
+                'expectedUri' => 'http://[2a00:f48:1008::212:183:10]',
             ),
         );
     }

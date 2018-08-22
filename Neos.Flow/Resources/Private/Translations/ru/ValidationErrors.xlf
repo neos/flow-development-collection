@@ -122,9 +122,13 @@
         </trans-unit>
         <trans-unit id="1238108068[1]" approved="yes">
           <source>This field must contain at least {0,number} characters</source>
-          <target xml:lang="ru">Это поле должно содержать по крайней мере {0,number} символа</target>
+          <target xml:lang="ru">Это поле должно содержать по крайней мере {0,number} символов</target>
         </trans-unit>
         <trans-unit id="1238108068[2]" approved="yes">
+          <source>This field must contain at least {0,number} characters</source>
+          <target xml:lang="ru">Это поле должно содержать по крайней мере {0,number} символов</target>
+        </trans-unit>
+        <trans-unit id="1238108068[3]" approved="yes">
           <source>This field must contain at least {0,number} characters</source>
           <target xml:lang="ru">Это поле должно содержать по крайней мере {0,number} символов</target>
         </trans-unit>
@@ -139,6 +143,10 @@
           <target xml:lang="ru">Длинна этого текста не может превышать {0,number} символа</target>
         </trans-unit>
         <trans-unit id="1238108069[2]" approved="yes">
+          <source>This text may not exceed {0,number} characters</source>
+          <target xml:lang="ru">Длинна этого текста не может превышать {0,number} символов</target>
+        </trans-unit>
+        <trans-unit id="1238108069[3]" approved="yes">
           <source>This text may not exceed {0,number} characters</source>
           <target xml:lang="ru">Длинна этого текста не может превышать {0,number} символов</target>
         </trans-unit>

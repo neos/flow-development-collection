@@ -12,8 +12,8 @@ namespace Neos\Flow\Security\Authorization\Privilege\Entity\Doctrine;
  */
 
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
-use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Neos\Eel\Context as EelContext;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Authorization\Privilege\AbstractPrivilege;
@@ -69,7 +69,7 @@ class EntityPrivilege extends AbstractPrivilege implements EntityPrivilegeInterf
         $this->evaluateMatcher();
 
         /** @var EntityManager $entityManager */
-        $entityManager = $this->objectManager->get(ObjectManager::class);
+        $entityManager = $this->objectManager->get(EntityManagerInterface::class);
         $sqlFilter = new SqlFilter($entityManager);
 
         if (!$this->matchesEntityType($targetEntity->getName())) {

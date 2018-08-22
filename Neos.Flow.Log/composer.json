@@ -8,7 +8,11 @@
     ],
     "require": {
         "php": "~7.1",
-        "neos/utility-files": "*"
+        "neos/utility-files": "*",
+        "psr/log": "^1.0.1"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~6.0.0"
     },
     "autoload": {
         "psr-4": {
@@ -20,10 +24,12 @@
             "Neos\\Flow\\Log\\Tests\\": "Tests"
         }
     },
+    "provide": {
+        "psr/log-implementation": "1.0.0"
+    },
     "extra": {
         "neos": {
             "package-key": "Neos.Flow.Log"
         }
     }
 }
-

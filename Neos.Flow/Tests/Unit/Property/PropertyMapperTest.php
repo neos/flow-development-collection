@@ -434,6 +434,7 @@ class PropertyMapperTest extends UnitTestCase
 
     /**
      * @test
+     * @doesNotPerformAssertions
      */
     public function convertSkipsPropertiesIfConfiguredTo()
     {
@@ -452,13 +453,11 @@ class PropertyMapperTest extends UnitTestCase
         $propertyMapper->_set('typeConverters', $typeConverters);
 
         $propertyMapper->convert($source, 'stdClass', $configuration->allowProperties('firstProperty')->skipProperties('secondProperty'));
-
-        // dummy assertion to avoid PHPUnit warning
-        $this->assertTrue(true);
     }
 
     /**
      * @test
+     * @doesNotPerformAssertions
      */
     public function convertSkipsUnknownPropertiesIfConfiguredTo()
     {
@@ -477,9 +476,6 @@ class PropertyMapperTest extends UnitTestCase
         $propertyMapper->_set('typeConverters', $typeConverters);
 
         $propertyMapper->convert($source, 'stdClass', $configuration->allowProperties('firstProperty')->skipUnknownProperties());
-
-        // dummy assertion to avoid PHPUnit warning
-        $this->assertTrue(true);
     }
 
     /**
@@ -515,8 +511,5 @@ class PropertyMapperTest extends UnitTestCase
 
         $mockConfiguration = $this->getMockBuilder(PropertyMappingConfiguration::class)->disableOriginalConstructor()->getMock();
         $propertyMapper->convert($source, $fullTargetType, $mockConfiguration);
-
-        // dummy assertion to avoid PHPUnit warning
-        $this->assertTrue(true);
     }
 }

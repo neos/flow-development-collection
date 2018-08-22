@@ -11,6 +11,7 @@ namespace Neos\Flow\Aop;
  * source code.
  */
 
+use Neos\Flow\Aop\Pointcut\Pointcut;
 
 /**
  * Implementation of the trait introduction declaration.
@@ -33,7 +34,7 @@ class TraitIntroduction
     /**
      * The pointcut this introduction applies to
      *
-*@var \Neos\Flow\Aop\Pointcut\Pointcut
+     * @var Pointcut
      */
     protected $pointcut;
 
@@ -42,9 +43,9 @@ class TraitIntroduction
      *
      * @param string $declaringAspectClassName Name of the aspect containing the declaration for this introduction
      * @param string $traitName Name of the trait to introduce
-     * @param \Neos\Flow\Aop\Pointcut\Pointcut $pointcut The pointcut for this introduction
+     * @param Pointcut $pointcut The pointcut for this introduction
      */
-    public function __construct($declaringAspectClassName, $traitName, \Neos\Flow\Aop\Pointcut\Pointcut $pointcut)
+    public function __construct(string $declaringAspectClassName, string $traitName, Pointcut $pointcut)
     {
         $this->declaringAspectClassName = $declaringAspectClassName;
         $this->traitName = $traitName;
@@ -56,7 +57,7 @@ class TraitIntroduction
      *
      * @return string Name of the introduced trait
      */
-    public function getTraitName()
+    public function getTraitName(): string
     {
         return $this->traitName;
     }
@@ -64,9 +65,9 @@ class TraitIntroduction
     /**
      * Returns the pointcut this introduction applies to
      *
-     * @return \Neos\Flow\Aop\Pointcut\Pointcut The pointcut
+     * @return Pointcut The pointcut
      */
-    public function getPointcut()
+    public function getPointcut(): Pointcut
     {
         return $this->pointcut;
     }
@@ -76,7 +77,7 @@ class TraitIntroduction
      *
      * @return string The aspect object name
      */
-    public function getDeclaringAspectClassName()
+    public function getDeclaringAspectClassName(): string
     {
         return $this->declaringAspectClassName;
     }

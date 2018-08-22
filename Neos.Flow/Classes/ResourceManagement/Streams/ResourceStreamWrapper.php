@@ -13,6 +13,7 @@ namespace Neos\Flow\ResourceManagement\Streams;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Uri;
+use Neos\Flow\Package\FlowPackageInterface;
 use Neos\Flow\Package\PackageManagerInterface;
 use Neos\Flow\ResourceManagement\Exception as ResourceException;
 use Neos\Flow\ResourceManagement\ResourceManager;
@@ -508,6 +509,9 @@ class ResourceStreamWrapper implements StreamWrapperInterface
         }
 
         $package = $this->packageManager->getPackage($uriParts['host']);
+        if (!$package instanceof FlowPackageInterface) {
+            return false;
+        }
         $resourceUri = Files::concatenatePaths([$package->getResourcesPath(), $uriParts['path']]);
 
         if ($checkForExistence === false || file_exists($resourceUri)) {

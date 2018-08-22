@@ -11,7 +11,6 @@ namespace Neos\FluidAdaptor\Tests\Functional\View;
  * source code.
  */
 
-use Neos\FluidAdaptor\View\TemplatePaths;
 use Neos\Flow\Cache\CacheManager;
 use Neos\Flow\Http\Request;
 use Neos\Flow\Http\Uri;
@@ -35,7 +34,7 @@ class StandaloneViewTest extends FunctionalTestCase
      * $standaloneViewNonce is initialized to some random value which is used inside
      * an overridden version of StandaloneView::createIdentifierForFile.
      */
-    public function runBare()
+    public function runBare(): void
     {
         $this->standaloneViewNonce = uniqid();
         parent::runBare();
@@ -102,6 +101,20 @@ class StandaloneViewTest extends FunctionalTestCase
 
         $standaloneView = new StandaloneView($actionRequest, $this->standaloneViewNonce);
         $standaloneView->setTemplatePathAndFilename(__DIR__ . '/Fixtures/NonExistingTemplate.txt');
+        $standaloneView->render();
+    }
+
+    /**
+     * @test
+     * @expectedException \Neos\FluidAdaptor\Core\ViewHelper\Exception\WrongEnctypeException
+     */
+    public function renderThrowsExceptionIfWrongEnctypeIsSetForFormUpload()
+    {
+        $httpRequest = Request::create(new Uri('http://localhost'));
+        $actionRequest = new ActionRequest($httpRequest);
+
+        $standaloneView = new StandaloneView($actionRequest, $this->standaloneViewNonce);
+        $standaloneView->setTemplatePathAndFilename(__DIR__ . '/Fixtures/TestTemplateWithFormUpload.txt');
         $standaloneView->render();
     }
 

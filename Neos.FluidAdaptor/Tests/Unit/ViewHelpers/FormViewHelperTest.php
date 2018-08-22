@@ -94,12 +94,16 @@ class FormViewHelperTest extends ViewHelperBaseTestcase
         $this->injectDependenciesIntoViewHelper($viewHelper);
         $this->securityContext->expects($this->any())->method('isInitialized')->will($this->returnValue(false));
 
-        $this->viewHelperVariableContainer->expects($this->at(0))->method('add')->with(\Neos\FluidAdaptor\ViewHelpers\FormViewHelper::class, 'formObject', $formObject);
-        $this->viewHelperVariableContainer->expects($this->at(1))->method('add')->with(\Neos\FluidAdaptor\ViewHelpers\FormViewHelper::class, 'additionalIdentityProperties', array());
-        $this->viewHelperVariableContainer->expects($this->at(2))->method('add')->with(\Neos\FluidAdaptor\ViewHelpers\FormViewHelper::class, 'emptyHiddenFieldNames', array());
-        $this->viewHelperVariableContainer->expects($this->at(3))->method('remove')->with(\Neos\FluidAdaptor\ViewHelpers\FormViewHelper::class, 'formObject');
-        $this->viewHelperVariableContainer->expects($this->at(4))->method('remove')->with(\Neos\FluidAdaptor\ViewHelpers\FormViewHelper::class, 'additionalIdentityProperties');
-        $this->viewHelperVariableContainer->expects($this->at(5))->method('remove')->with(\Neos\FluidAdaptor\ViewHelpers\FormViewHelper::class, 'emptyHiddenFieldNames');
+        $this->viewHelperVariableContainer->expects($this->exactly(3))->method('add')->withConsecutive(
+            [\Neos\FluidAdaptor\ViewHelpers\FormViewHelper::class, 'formObject', $formObject],
+            [\Neos\FluidAdaptor\ViewHelpers\FormViewHelper::class, 'additionalIdentityProperties', array()],
+            [\Neos\FluidAdaptor\ViewHelpers\FormViewHelper::class, 'emptyHiddenFieldNames', array()]
+        );
+        $this->viewHelperVariableContainer->expects($this->exactly(3))->method('remove')->withConsecutive(
+            [\Neos\FluidAdaptor\ViewHelpers\FormViewHelper::class, 'formObject'],
+            [\Neos\FluidAdaptor\ViewHelpers\FormViewHelper::class, 'additionalIdentityProperties'],
+            [\Neos\FluidAdaptor\ViewHelpers\FormViewHelper::class, 'emptyHiddenFieldNames']
+        );
         $viewHelper->render('index');
     }
 

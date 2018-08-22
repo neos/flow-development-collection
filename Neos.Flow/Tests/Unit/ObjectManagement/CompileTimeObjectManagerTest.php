@@ -12,11 +12,11 @@ namespace Neos\Flow\Tests\Unit\ObjectManagement;
  */
 
 use org\bovigo\vfs\vfsStream;
-use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\ObjectManagement\CompileTimeObjectManager;
 use Neos\Flow\Package\Package;
 use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Tests\UnitTestCase;
+use Psr\Log\LoggerInterface;
 
 class CompileTimeObjectManagerTest extends UnitTestCase
 {
@@ -35,7 +35,7 @@ class CompileTimeObjectManagerTest extends UnitTestCase
         vfsStream::setup('Packages');
         $this->mockPackageManager = $this->getMockBuilder(PackageManager::class)->disableOriginalConstructor()->getMock();
         $this->compileTimeObjectManager = $this->getAccessibleMock(CompileTimeObjectManager::class, array('dummy'), array(), '', false);
-        $this->compileTimeObjectManager->_set('systemLogger', $this->createMock(SystemLoggerInterface::class));
+        $this->compileTimeObjectManager->injectLogger($this->createMock(LoggerInterface::class));
         $configurations = array(
             'Neos' => array(
                 'Flow' => array(

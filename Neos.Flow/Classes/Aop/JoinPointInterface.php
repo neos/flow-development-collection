@@ -69,7 +69,7 @@ interface JoinPointInterface
      * @param mixed $argumentValue Value of the argument
      * @return void
      */
-    public function setMethodArgument($argumentName, $argumentValue);
+    public function setMethodArgument($argumentName, $argumentValue): void;
 
     /**
      * Returns the advice chain related to this join point

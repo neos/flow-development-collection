@@ -98,7 +98,7 @@ class CurrencyReader
      */
     protected function generateFractions()
     {
-        $model = $this->cldrRepository->getModel('supplemental/currencyData');
+        $model = $this->cldrRepository->getModel('supplemental/supplementalData');
         $currencyData = $model->getRawArray('currencyData');
 
         foreach ($currencyData['fractions'] as $fractionString) {
