@@ -673,6 +673,9 @@ class Route
                     if ($lastRoutePart instanceof DynamicRoutePartInterface) {
                         throw new InvalidUriPatternException('the URI pattern "' . $this->uriPattern . '" of route "' . $this->getName() . '" contains successive Dynamic Route Parts, which is not allowed.', 1218446975);
                     }
+                    if ($routePartName === '@locale' && !isset($this->routePartsConfiguration[$routePartName]['handler'])) {
+                        $this->routePartsConfiguration[$routePartName]['handler'] = \Neos\Flow\I18n\LocaleRoutePart::class;
+                    }
                     if (isset($this->routePartsConfiguration[$routePartName]['handler'])) {
                         $routePart = $this->objectManager->get($this->routePartsConfiguration[$routePartName]['handler']);
                         if (!$routePart instanceof DynamicRoutePartInterface) {
