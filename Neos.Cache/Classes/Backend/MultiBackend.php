@@ -107,7 +107,6 @@ class MultiBackend extends AbstractBackend implements BackendInterface
                 }
             }
         }
-
     }
 
     /**
