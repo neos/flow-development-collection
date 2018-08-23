@@ -3,7 +3,7 @@ namespace Neos\Flow\Persistence\Doctrine\Migrations;
 
 use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\Migrations\AbortMigrationException;
-use Doctrine\Migrations\AbstractMigration;
+use Doctrine\DBAL\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
 
 class Version20180823144409 extends AbstractMigration
