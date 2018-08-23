@@ -61,7 +61,7 @@ class MultiBackend extends AbstractBackend implements BackendInterface
         }
         foreach ($this->backendConfigurations as $backendConfiguration) {
             $backendOptions = $backendConfiguration['backendOptions'] ?? [];
-             $backend = $this->buildSubBackend($backendConfiguration['backend'], $backendOptions);
+            $backend = $this->buildSubBackend($backendConfiguration['backend'], $backendOptions);
             if ($backend !== null) {
                 $this->backends[] = $backend;
             }
