@@ -293,8 +293,8 @@ Common Options
 |                 | on set()                             |           |         |         |
 +-----------------+--------------------------------------+-----------+---------+---------+
 
-Neos\\Flow\\Cache\\Backend\\SimpleFileBackend
----------------------------------------------
+Neos\\Cache\\Backend\\SimpleFileBackend
+---------------------------------------
 
 The simple file backend stores every cache entry as a single file to the file system.
 
@@ -338,8 +338,8 @@ Options
 |                | * /tmp/my-cache-directory/             |           |        |         |
 +----------------+----------------------------------------+-----------+--------+---------+
 
-Neos\\Flow\\Cache\\Backend\\FileBackend
-----------------------------------------
+Neos\\Cache\\Backend\\FileBackend
+---------------------------------
 
 The file backend stores every cache entry as a single file to the file system. The
 lifetime and tags are added after the data part in the same file.
@@ -385,8 +385,8 @@ Options
 |                | * /tmp/my-cache-directory/             |           |        |         |
 +----------------+----------------------------------------+-----------+--------+---------+
 
-Neos\\Flow\\Cache\\Backend\\PdoBackend
----------------------------------------
+Neos\\Cache\\Backend\\PdoBackend
+--------------------------------
 
 The PDO backend can be used as a native PDO interface to databases which are connected to
 PHP via PDO. The garbage collection is implemented for this backend and should be called
@@ -444,8 +444,8 @@ Options
 |                | connection                             |           |        |         |
 +----------------+----------------------------------------+-----------+--------+---------+
 
-Neos\\Flow\\Cache\\Backend\\RedisBackend
------------------------------------------
+Neos\\Cache\\Backend\\RedisBackend
+----------------------------------
 
 `Redis`_ is a key-value storage/database. In contrast to memcached, it allows structured
 values.Data is stored in RAM but it allows persistence to disk and doesn't suffer from the
@@ -526,8 +526,8 @@ Options
 |                  | specific value.                 |           | (0 to 9)  |           |
 +------------------+---------------------------------+-----------+-----------+-----------+
 
-Neos\\Flow\\Cache\\Backend\\MemcachedBackend
----------------------------------------------
+Neos\\Cache\\Backend\\MemcachedBackend
+--------------------------------------
 
 `Memcached`_ is a simple key/value RAM database which scales across multiple servers. To
 use this backend, at least one memcache daemon must be reachable, and the PHP module
@@ -623,8 +623,8 @@ Options
 |             | servers.                                 |           |         |         |
 +-------------+------------------------------------------+-----------+---------+---------+
 
-Neos\\Flow\\Cache\\Backend\\ApcBackend
----------------------------------------
+Neos\\Cache\\Backend\\ApcBackend
+--------------------------------
 
 `APC`_ is mostly known as an opcode cache for PHP source files but can be used to store
 user data as well. As main advantage the data can be shared between different PHP
@@ -666,8 +666,8 @@ Options
 
 The APC backend has no options.
 
-Neos\\Flow\\Cache\\Backend\\TransientMemoryBackend
----------------------------------------------------
+Neos\\Cache\\Backend\\TransientMemoryBackend
+--------------------------------------------
 
 The transient memory backend stores data in a local array. It is only valid for one
 request. This becomes handy if code logic needs to do expensive calculations or must look
@@ -686,8 +686,8 @@ Options
 
 The transient memory backend has no options.
 
-Neos\\Flow\\Cache\\Backend\\NullBackend
-----------------------------------------
+Neos\\Cache\\Backend\\NullBackend
+---------------------------------
 
 The null backend is a dummy backend which doesn't store any data and always returns
 ``FALSE`` on ``get()``.
