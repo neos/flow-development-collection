@@ -71,5 +71,4 @@ class TaggableMultiBackend extends MultiBackend implements TaggableBackendInterf
 
         return array_values(array_unique($identifiers));
     }
-
 }
