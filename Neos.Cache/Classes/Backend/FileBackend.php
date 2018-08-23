@@ -12,6 +12,7 @@ namespace Neos\Cache\Backend;
  */
 
 use Neos\Cache\Exception;
+use Neos\Cache\Exception\InvalidDataException;
 use Neos\Cache\Frontend\FrontendInterface;
 use Neos\Utility\Files;
 use Neos\Utility\OpcodeCacheHelper;
