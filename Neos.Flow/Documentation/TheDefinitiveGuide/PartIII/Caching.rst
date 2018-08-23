@@ -356,29 +356,26 @@ to clean up hard disk space or memory.
 
 .. note::
 
-  There is currently very little production experience with this  backend, especially
-  not with a capable database like Oracle. We appreciate any feedback for real life use
-  cases of this cache.
+  When *using SQLite*, needed caching tables are created automatically by the
+  cache backend. The table definition (as used automatically for SQLite) can be
+  found in the file ``Neos.Cache/Resources/Private/Cache/SQL/DDL.sql``.
 
-.. note::
+  For *MySQL and PostgreSQL* the needed tables are created using a migration.
 
-  When *not using SQLite*, you have to create the needed caching tables manually.
-  The table definition (as used automatically for SQLite) can be found in the
-  file ``TYPO3.Flow/Resources/Private/Cache/SQL/DDL.sql``. It works unchanged for
-  MySQL, for other RDBMS you might need to adjust the DDL manually.
+  For other RDBMS you might need to use (and adjust) the DDL manually.
 
 .. note::
 
   When *not using SQLite* the maximum length of each cache entry is restricted.
-  The default in ``TYPO3.Flow/Resources/Private/Cache/SQL/DDL.sql``
-  is ``MEDIUMTEXT`` (16mb on MySQL), which should be sufficient in most cases.
+  The default for *MySQL* is ``LONGTEXT`` (4 GB) and for PostgreSQL it is ``TEXT``
+  ("about 1 GB") which should be sufficient.
 
 .. warning::
 
 	This backend is php-capable. Nevertheless it cannot be used to store the proxy-classes
 	from the ``FLOW_Object_Classes`` Cache. It can be used for other code-caches like
 	``Fluid_TemplateCache``, ``Eel_Expression_Code`` or ``Flow_Aop_RuntimeExpressions``.
-	This can be usefull in certain situations to avoid file operations on production
+	This can be useful in certain situations to avoid file operations on production
 	environments. If you want to use this backend for code-caching make sure that
 	``allow_url_include`` is enabled in php.ini
 
