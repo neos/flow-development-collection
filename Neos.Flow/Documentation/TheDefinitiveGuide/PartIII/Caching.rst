@@ -293,6 +293,51 @@ Common Options
 |                 | on set()                             |           |         |         |
 +-----------------+--------------------------------------+-----------+---------+---------+
 
+Neos\\Flow\\Cache\\Backend\\SimpleFileBackend
+---------------------------------------------
+
+The simple file backend stores every cache entry as a single file to the file system.
+
+By default, cache entries will be stored in a directory below ``Data/Temporary/{context}/Cache/``.
+For caches which are marked as *persistent*, the default directory is
+``Data/Persistent/Cache/``. You may override each of the defaults by specifying the ``cacheDirectory``
+backend option (see below).
+
+The simple file backend implements the ``PhpCapableInterface`` and can be used in
+combination with the ``PhpFrontend``. The backend was specifically adapted to these
+needs and has low overhead for get and set operations, it scales very well with the
+number of entries for those operations. This mostly depends on the file lookup
+performance of the underlying file system in large directories, and most modern file
+systems use B-trees which can easily handle millions of files without much performance
+impact.
+
+.. note::
+
+	Under heavy load the maximum ``set()`` performance depends on the maximum write and
+	seek performance of the hard disk. If for example the server system shows lots of I/O
+	wait in top, the file backend has reached this bound. A different storage strategy
+	like RAM disks, battery backed up RAID systems or SSD hard disks might help then.
+
+.. note::
+	The SimpleFileBackend and FileBackend are the only cache backends that are capable of
+	storing the ``Flow_Object_Classes`` Cache.
+
+Options
+~~~~~~~
+
+:title:`Simple file cache backend options`
+
++----------------+----------------------------------------+-----------+--------+---------+
+| Option         | Description                            | Mandatory | Type   | Default |
++================+========================================+===========+========+=========+
+| cacheDirectory | Full path leading to a custom cache    | No        | string |         |
+|                | directory.                             |           |        |         |
+|                |                                        |           |        |         |
+|                | :title:`Example:`                      |           |        |         |
+|                |                                        |           |        |         |
+|                | * /tmp/my-cache-directory/             |           |        |         |
++----------------+----------------------------------------+-----------+--------+---------+
+
 Neos\\Flow\\Cache\\Backend\\FileBackend
 ----------------------------------------
 
@@ -304,13 +349,12 @@ For caches which are marked as *persistent*, the default directory is
 ``Data/Persistent/Cache/``. You may override each of the defaults by specifying the ``cacheDirectory``
 backend option (see below).
 
-As main advantage the file backend is the only backend which implements the
-``PhpCapableInterface`` and can be used in combination with the ``PhpFrontend``. The
-backend was specifically adapted to these needs and has low overhead for get and set
-operations, it scales very well with the number of entries for those operations. This
-mostly depends on the file lookup performance of the underlying file system in large
-directories, and most modern file systems use B-trees which can easily handle millions of
-files without much performance impact.
+The file backend implements the ``PhpCapableInterface`` and can be used in combination
+with the ``PhpFrontend``. The backend was specifically adapted to these needs and has
+low overhead for get and set operations, it scales very well with the number of entries
+for those operations. This mostly depends on the file lookup performance of the underlying
+file system in large directories, and most modern file systems use B-trees which can
+easily handle millions of files without much performance impact.
 
 A disadvantage is that the performance of ``flushByTag()`` is bad and scales just O(n).
 This basically means that with twice the number of entries the file backend needs double
@@ -321,15 +365,9 @@ design decision in Flow is that the file backend is mainly used as AOP cache, wh
 production systems, so get and set performance is much more important in this scenario.
 
 .. note::
+	The SimpleFileBackend and FileBackend are the only cache backends that are capable of
+	storing the ``Flow_Object_Classes`` Cache.
 
-	Under heavy load the maximum ``set()`` performance depends on the maximum write and
-	seek performance of the hard disk. If for example the server system shows lots of I/O
-	wait in top, the file backend has reached this bound. A different storage strategy
-	like RAM disks, battery backed up RAID systems or SSD hard disks might help then.
-
-.. note::
-	The FileBackend is the only cache-backend that is capable of storing the
-	``FLOW_Object_Classes`` Cache.
 
 Options
 ~~~~~~~
