@@ -98,7 +98,8 @@ class SchemaValidationTest extends FunctionalTestCase
         $schema = Yaml::parseFile($schemaFile);
         $result = $this->schemaValidator->validate($schema, $this->schemaSchema);
         $hasErrors = $result->hasErrors();
-        $message = sprintf('Schema-file "%s" is valid', $schemaFile);
+
+        $message = sprintf('Schema-file "%s" is not valid: %s', $schemaFile, $result->getFirstError());
         $this->assertFalse($hasErrors, $message);
     }
 }

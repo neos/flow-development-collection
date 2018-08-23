@@ -33,11 +33,11 @@ use Neos\Flow\Property\PropertyMappingConfigurationInterface;
  *
  *  protected function initializeCreateAction() {
  *  	$this->arguments['newBid']->getPropertyMappingConfiguration()->forProperty('price')->setTypeConverterOption(
- *  		\Neos\Flow\Property\TypeConverter\FloatConverter::class, 'locale', TRUE
+ *  		\Neos\Flow\Property\TypeConverter\FloatConverter::class, 'locale', true
  *  	);
  *  }
  *
- * Just providing TRUE as option value will use the current default locale. In case that default locale is "DE"
+ * Just providing true as option value will use the current default locale. In case that default locale is "DE"
  * for Germany for example, where a comma is used as decimal separator, the mentioned code will return
  * (float)15.5 when the input was (string)"15,50".
  *
@@ -54,12 +54,12 @@ use Neos\Flow\Property\PropertyMappingConfigurationInterface;
  * There are two parsing modes available, strict and lenient mode. Strict mode will check all constraints of the provided
  * format, and if any of them are not fulfilled, the conversion will not take place.
  * In Lenient mode the parser will try to extract the intended number from the string, even if it's not well formed.
- * Default for strict mode is TRUE.
+ * Default for strict mode is true.
  *
  * *Example setting lenient mode (abridged)*::
  *
  *  ->setTypeConverterOption(
- *  	\Neos\Flow\Property\TypeConverter\FloatConverter::class, 'strictMode', FALSE
+ *  	\Neos\Flow\Property\TypeConverter\FloatConverter::class, 'strictMode', false
  *  );
  *
  * **Format type**

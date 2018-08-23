@@ -36,7 +36,7 @@ class ConfigurationCommandController extends CommandController
     protected $configurationManager;
 
     /**
-     * @Flow\Inject(lazy = FALSE)
+     * @Flow\Inject(lazy = false)
      * @var ConfigurationSchemaValidator
      */
     protected $configurationSchemaValidator;
@@ -124,7 +124,7 @@ class ConfigurationCommandController extends CommandController
      *
      * @param string $type Configuration type to validate
      * @param string $path path to the subconfiguration separated by "." like "Neos.Flow"
-     * @param boolean $verbose if TRUE, output more verbose information on the schema files which were used
+     * @param boolean $verbose if true, output more verbose information on the schema files which were used
      * @return void
      */
     public function validateCommand(string $type = null, string $path = null, bool $verbose = false)

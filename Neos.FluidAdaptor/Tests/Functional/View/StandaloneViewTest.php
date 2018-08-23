@@ -106,6 +106,20 @@ class StandaloneViewTest extends FunctionalTestCase
 
     /**
      * @test
+     * @expectedException \Neos\FluidAdaptor\Core\ViewHelper\Exception\WrongEnctypeException
+     */
+    public function renderThrowsExceptionIfWrongEnctypeIsSetForFormUpload()
+    {
+        $httpRequest = Request::create(new Uri('http://localhost'));
+        $actionRequest = new ActionRequest($httpRequest);
+
+        $standaloneView = new StandaloneView($actionRequest, $this->standaloneViewNonce);
+        $standaloneView->setTemplatePathAndFilename(__DIR__ . '/Fixtures/TestTemplateWithFormUpload.txt');
+        $standaloneView->render();
+    }
+
+    /**
+     * @test
      * @expectedException \Neos\FluidAdaptor\View\Exception\InvalidTemplateResourceException
      */
     public function renderThrowsExceptionIfSpecifiedTemplatePathAndFilenamePointsToADirectory()

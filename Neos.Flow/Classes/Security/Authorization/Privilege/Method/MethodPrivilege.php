@@ -75,7 +75,7 @@ class MethodPrivilege extends AbstractPrivilege implements MethodPrivilegeInterf
     }
 
     /**
-     * Returns TRUE, if this privilege covers the given subject (join point)
+     * Returns true, if this privilege covers the given subject (join point)
      *
      * @param PrivilegeSubjectInterface $subject
      * @return boolean
@@ -105,7 +105,7 @@ class MethodPrivilege extends AbstractPrivilege implements MethodPrivilegeInterf
     }
 
     /**
-     * Returns TRUE, if this privilege covers the given method
+     * Returns true, if this privilege covers the given method
      *
      * @param string $className
      * @param string $methodName

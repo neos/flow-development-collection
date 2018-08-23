@@ -132,8 +132,8 @@ class CacheManagerTest extends UnitTestCase
         $cache1->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('cache1'));
         $this->cacheManager->registerCache($cache1);
 
-        $this->assertTrue($this->cacheManager->hasCache('cache1'), 'hasCache() did not return TRUE.');
-        $this->assertFalse($this->cacheManager->hasCache('cache2'), 'hasCache() did not return FALSE.');
+        $this->assertTrue($this->cacheManager->hasCache('cache1'), 'hasCache() did not return true.');
+        $this->assertFalse($this->cacheManager->hasCache('cache2'), 'hasCache() did not return false.');
     }
 
     /**

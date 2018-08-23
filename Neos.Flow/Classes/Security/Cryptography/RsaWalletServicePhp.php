@@ -83,7 +83,7 @@ class RsaWalletServicePhp implements RsaWalletServiceInterface
     /**
      * Generates a new keypair and returns a fingerprint to refer to it
      *
-     * @param boolean $usedForPasswords TRUE if this keypair should be used to encrypt passwords (then decryption won't be allowed!).
+     * @param boolean $usedForPasswords true if this keypair should be used to encrypt passwords (then decryption won't be allowed!).
      * @return string The RSA public key fingerprint for reference
      * @throws SecurityException
      */
@@ -109,7 +109,7 @@ class RsaWalletServicePhp implements RsaWalletServiceInterface
      * Adds the specified keypair to the local store and returns a fingerprint to refer to it.
      *
      * @param string $privateKeyString The private key in its string representation
-     * @param boolean $usedForPasswords TRUE if this keypair should be used to encrypt passwords (then decryption won't be allowed!).
+     * @param boolean $usedForPasswords true if this keypair should be used to encrypt passwords (then decryption won't be allowed!).
      * @return string The RSA public key fingerprint for reference
      */
     public function registerKeyPairFromPrivateKeyString($privateKeyString, $usedForPasswords = false)
@@ -227,7 +227,7 @@ class RsaWalletServicePhp implements RsaWalletServiceInterface
      * @param string $plaintext The plaintext to sign
      * @param string $signature The signature that should be verified
      * @param string $fingerprint The fingerprint to identify the public key (RSA public key fingerprint)
-     * @return boolean TRUE if the signature is correct for the given plaintext and public key
+     * @return boolean true if the signature is correct for the given plaintext and public key
      * @throws InvalidKeyPairIdException
      */
     public function verifySignature($plaintext, $signature, $fingerprint)
@@ -249,7 +249,7 @@ class RsaWalletServicePhp implements RsaWalletServiceInterface
      * @param string $passwordHash The md5 hashed password string (md5(md5(password) . salt))
      * @param string $salt The salt used in the md5 password hash
      * @param string $fingerprint The fingerprint to identify the private key (RSA public key fingerprint)
-     * @return boolean TRUE if the password is correct
+     * @return boolean true if the password is correct
      * @throws InvalidKeyPairIdException If the given fingerprint identifies no valid keypair
      */
     public function checkRSAEncryptedPassword($encryptedPassword, $passwordHash, $salt, $fingerprint)
@@ -341,7 +341,7 @@ class RsaWalletServicePhp implements RsaWalletServiceInterface
      *
      * @param OpenSslRsaKey $publicKey The public key
      * @param OpenSslRsaKey $privateKey The private key
-     * @param boolean $usedForPasswords TRUE if this keypair should be used to encrypt passwords (then decryption won't be allowed!).
+     * @param boolean $usedForPasswords true if this keypair should be used to encrypt passwords (then decryption won't be allowed!).
      * @return string The fingerprint which is used as an identifier for storing the key pair
      */
     private function storeKeyPair($publicKey, $privateKey, $usedForPasswords)

@@ -12,6 +12,7 @@ namespace Neos\Flow\Http;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Utility\TypeHandling;
 use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\StreamInterface;
 
@@ -58,8 +59,9 @@ abstract class AbstractMessage implements MessageInterface
     /**
      * Returns the HTTP headers of this request
      *
-     * @return Headers
+     * @return Headers|iteratable
      * @api
+     * Note: This method will return an array of headers after next major according to PSR-7, prepare for that. To help the headers object is iteratable now.
      */
     public function getHeaders()
     {
@@ -78,6 +80,7 @@ abstract class AbstractMessage implements MessageInterface
      * @param string $name Name of the header
      * @return array|string An array of field values if multiple headers of that name exist, a string value if only one value exists and NULL if there is no such header.
      * @api
+     * NOTE: This method signature will change in next major of Flow according to PSR-7. It will ALWAYS return an array of strings and nothing else.
      */
     public function getHeader($name)
     {
@@ -108,10 +111,12 @@ abstract class AbstractMessage implements MessageInterface
      *
      * @param string $name Name of the header, for example "Location", "Content-Description" etc.
      * @param array|string|\DateTime $values An array of values or a single value for the specified header field
-     * @param boolean $replaceExistingHeader If a header with the same name should be replaced. Default is TRUE.
+     * @param boolean $replaceExistingHeader If a header with the same name should be replaced. Default is true.
      * @return self This message, for method chaining
      * @throws \InvalidArgumentException
-     * @api
+     * @deprecated Since Flow 5.1, use withHeader or withAddedHeader instead
+     * @see withHeader()
+     * @see withAddedHeader()
      */
     public function setHeader($name, $values, $replaceExistingHeader = true)
     {
@@ -138,11 +143,24 @@ abstract class AbstractMessage implements MessageInterface
      *
      * @param string $content The body content
      * @return self This message, for method chaining
-     * @api
+     * @deprecated Since Flow 5.1, use withBody
+     * @see withBody()
      */
     public function setContent($content)
     {
-        $this->content = $content;
+        $this->content = null;
+        if ($content === null) {
+            return;
+        }
+
+        if (TypeHandling::isSimpleType(gettype($content)) && !is_array($content)) {
+            $this->content = (string)$content;
+        }
+
+        if (is_resource($content)) {
+            $this->content = $content;
+        }
+
         return $this;
     }
 
@@ -150,7 +168,8 @@ abstract class AbstractMessage implements MessageInterface
      * Returns the content of the message body
      *
      * @return string The response content
-     * @api
+     * @deprecated Since Flow 5.1, use getBody
+     * @see getBody()
      */
     public function getContent()
     {
@@ -166,7 +185,7 @@ abstract class AbstractMessage implements MessageInterface
      * @param string $charset A valid IANA character set identifier
      * @return self This message, for method chaining
      * @see http://www.iana.org/assignments/character-sets
-     * @api
+     * @deprecated Since Flow 5.1, just set the full Content-Type header
      */
     public function setCharset($charset)
     {
@@ -192,7 +211,8 @@ abstract class AbstractMessage implements MessageInterface
      * Note that the default character in Flow is UTF-8.
      *
      * @return string An IANA character set identifier
-     * @api
+     * @deprecated Since Flow 5.1, parse it from the "Content-Type" header via RequestInformationHelper::getContentCharset
+     * @see RequestInformationHelper::getContentCharset()
      */
     public function getCharset()
     {
@@ -204,7 +224,8 @@ abstract class AbstractMessage implements MessageInterface
      *
      * @param string $version
      * @return void
-     * @api
+     * @deprecated Since Flow 5.1, use withProtocolVersion
+     * @see withProtocolVersion()
      */
     public function setVersion($version)
     {
@@ -215,7 +236,8 @@ abstract class AbstractMessage implements MessageInterface
      * Returns the HTTP version value of this message, for example "HTTP/1.1"
      *
      * @return string
-     * @api
+     * @deprecated Since Flow 5.1, use getProtocolVersion which gives ONLY the actual version, eg. "1.1"
+     * @see getProtocolVersion()
      */
     public function getVersion()
     {
@@ -229,7 +251,8 @@ abstract class AbstractMessage implements MessageInterface
      *
      * @param Cookie $cookie The cookie to set
      * @return void
-     * @api
+     * @deprecated Since Flow 5.1, replacement only on ServerRequestInterface
+     * @see Request::withCookieParams()
      */
     public function setCookie(Cookie $cookie)
     {
@@ -243,7 +266,8 @@ abstract class AbstractMessage implements MessageInterface
      *
      * @param string $name Name of the cookie
      * @return Cookie The cookie or NULL if no such cookie exists
-     * @api
+     * @deprecated Since Flow 5.1, replacement only on ServerRequestInterface
+     * @see Request::getCookieParams()
      */
     public function getCookie($name)
     {
@@ -256,7 +280,8 @@ abstract class AbstractMessage implements MessageInterface
      * This is a shortcut for $message->getHeaders()->getCookies();
      *
      * @return array An array of Cookie objects
-     * @api
+     * @deprecated Since Flow 5.1, replacement only on ServerRequestInterface
+     * @see Request::getCookieParams()
      */
     public function getCookies()
     {
@@ -270,7 +295,8 @@ abstract class AbstractMessage implements MessageInterface
      *
      * @param string $name Name of the cookie
      * @return boolean
-     * @api
+     * @deprecated Since Flow 5.1, replacement only on ServerRequestInterface
+     * @see Request::getCookieParams()
      */
     public function hasCookie($name)
     {
@@ -289,7 +315,8 @@ abstract class AbstractMessage implements MessageInterface
      *
      * @param string $name Name of the cookie to remove
      * @return void
-     * @api
+     * @deprecated Since Flow 5.1, replacement only on ServerRequestInterface
+     * @see Request::withCookieParams()
      */
     public function removeCookie($name)
     {
@@ -440,7 +467,11 @@ abstract class AbstractMessage implements MessageInterface
     public function getBody()
     {
         $streamResource = fopen('php://memory', 'r+');
-        fwrite($streamResource, $this->content);
+        if (is_resource($this->content)) {
+            stream_copy_to_stream($this->content, $streamResource);
+        } else {
+            fwrite($streamResource, $this->content);
+        }
         rewind($streamResource);
 
         return new ContentStream($streamResource);
@@ -480,7 +511,8 @@ abstract class AbstractMessage implements MessageInterface
      *
      * @return string The first line of the message
      * @see http://www.w3.org/Protocols/rfc2616/rfc2616-sec4.html chapter 4.1 "Message Types"
-     * @api
-     */
+     * @deprecated Since Flow 5.1, use the RequestInformationHelper instead
+     * @see RequestInformationHelper::generateRequestLine()
+    */
     abstract public function getStartLine();
 }

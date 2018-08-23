@@ -17,6 +17,7 @@ use Neos\Flow\Security\Authentication\AuthenticationManagerInterface;
 use Neos\Flow\Security\Context;
 use Neos\Flow\Security\Cryptography\HashService;
 use Neos\FluidAdaptor\Core\ViewHelper;
+use Neos\FluidAdaptor\Core\ViewHelper\Exception\WrongEnctypeException;
 use Neos\FluidAdaptor\ViewHelpers\Form\AbstractFormViewHelper;
 
 /**
@@ -117,7 +118,7 @@ class FormViewHelper extends AbstractFormViewHelper
         $this->registerArgument('additionalParams', 'array', 'additional query parameters that won\'t be prefixed like $arguments (overrule $arguments)', false, array());
         $this->registerArgument('absolute', 'boolean', 'If set, an absolute action URI is rendered (only active if $actionUri is not set)', false, false);
         $this->registerArgument('addQueryString', 'boolean', 'If set, the current query parameters will be kept in the URI', false, false);
-        $this->registerArgument('argumentsToBeExcludedFromQueryString', 'array', 'arguments to be removed from the URI. Only active if $addQueryString = TRUE', false, array());
+        $this->registerArgument('argumentsToBeExcludedFromQueryString', 'array', 'arguments to be removed from the URI. Only active if $addQueryString = true', false, array());
         $this->registerArgument('fieldNamePrefix', 'string', 'Prefix that will be added to all field names within this form', false, null);
         $this->registerArgument('actionUri', 'string', 'can be used to overwrite the "action" attribute of the form tag', false, null);
         $this->registerArgument('objectName', 'string', 'name of the object that is bound to this form. If this argument is not specified, the name attribute of this form is used to determine the FormObjectName', false, null);
@@ -152,8 +153,14 @@ class FormViewHelper extends AbstractFormViewHelper
         $this->addFieldNamePrefixToViewHelperVariableContainer();
         $this->addFormFieldNamesToViewHelperVariableContainer();
         $this->addEmptyHiddenFieldNamesToViewHelperVariableContainer();
+        $this->viewHelperVariableContainer->addOrUpdate(FormViewHelper::class, 'required-enctype', '');
 
         $formContent = $this->renderChildren();
+
+        $requiredEnctype = $this->viewHelperVariableContainer->get(FormViewHelper::class, 'required-enctype');
+        if ($requiredEnctype !== '' && $requiredEnctype !== strtolower($this->arguments['enctype'])) {
+            throw new WrongEnctypeException('The form you are trying to render requires an enctype of "' . $requiredEnctype . '". Please specify the correct enctype when using file uploads.', 1522706399);
+        }
 
         // wrap hidden field in div container in order to create XHTML valid output
         $content = chr(10) . '<div style="display: none">';

@@ -113,7 +113,7 @@ class StringHelper implements ProtectedContextAwareInterface
      * @param string $string The string
      * @param string $search A string to search
      * @param integer $position Optional position for limiting the string
-     * @return boolean TRUE if the string ends with the given search
+     * @return boolean true if the string ends with the given search
      */
     public function endsWith($string, $search, $position = null)
     {
@@ -485,7 +485,7 @@ class StringHelper implements ProtectedContextAwareInterface
     /**
      * Convert a string to boolean
      *
-     * A value is ``true``, if it is either the string ``"TRUE"`` or ``"true"`` or the number ``1``.
+     * A value is ``true``, if it is either the string ``"true"`` or ``"true"`` or the number ``1``.
      *
      * @param string $string The string to convert
      * @return boolean The boolean value of the string (``true`` or ``false``)
@@ -630,6 +630,31 @@ class StringHelper implements ProtectedContextAwareInterface
         $unicodeString = preg_replace('/[[:punct:][:digit:]]/', '', $unicodeString);
 
         return count(preg_split('/[[:space:]]+/', $unicodeString, 0, PREG_SPLIT_NO_EMPTY));
+    }
+
+    /**
+     * Implementation of the PHP base64_encode function
+     * @see https://php.net/manual/en/function.base64-encode.php
+     *
+     * @param string $string The data to encode.
+     * @return string The encoded data
+     */
+    public function base64encode($string)
+    {
+        return base64_encode((string)$string);
+    }
+
+    /**
+     * Implementation of the PHP base64_decode function
+     * @see https://php.net/manual/en/function.base64-decode.php
+     *
+     * @param string $string The encoded data.
+     * @param bool $strict If TRUE this function will return FALSE if the input contains character from outside the base64 alphabet.
+     * @return string|bool The decoded data or FALSE on failure. The returned data may be binary.
+     */
+    public function base64decode($string, bool $strict = false)
+    {
+        return base64_decode((string)$string, $strict);
     }
 
     /**

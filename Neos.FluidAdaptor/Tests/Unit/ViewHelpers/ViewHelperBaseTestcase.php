@@ -80,6 +80,7 @@ abstract class ViewHelperBaseTestcase extends \Neos\Flow\Tests\UnitTestCase
         $this->viewHelperVariableContainer = $this->createMock(\TYPO3Fluid\Fluid\Core\ViewHelper\ViewHelperVariableContainer::class);
         $this->viewHelperVariableContainer->expects($this->any())->method('exists')->will($this->returnCallback(array($this, 'viewHelperVariableContainerExistsCallback')));
         $this->viewHelperVariableContainer->expects($this->any())->method('get')->will($this->returnCallback(array($this, 'viewHelperVariableContainerGetCallback')));
+        $this->viewHelperVariableContainer->expects($this->any())->method('addOrUpdate')->will($this->returnCallback(array($this, 'viewHelperVariableContainerAddOrUpdateCallback')));
         $this->templateVariableContainer = $this->createMock(TemplateVariableContainer::class);
         $this->uriBuilder = $this->createMock(\Neos\Flow\Mvc\Routing\UriBuilder::class);
         $this->uriBuilder->expects($this->any())->method('reset')->will($this->returnValue($this->uriBuilder));
@@ -122,6 +123,17 @@ abstract class ViewHelperBaseTestcase extends \Neos\Flow\Tests\UnitTestCase
     public function viewHelperVariableContainerGetCallback($viewHelperName, $key)
     {
         return $this->viewHelperVariableContainerData[$viewHelperName][$key];
+    }
+
+    /**
+     * @param string $viewHelperName
+     * @param string $key
+     * @param mixed $value
+     * @return void
+     */
+    public function viewHelperVariableContainerAddOrUpdateCallback($viewHelperName, $key, $value)
+    {
+        $this->viewHelperVariableContainerData[$viewHelperName][$key] = $value;
     }
 
     /**

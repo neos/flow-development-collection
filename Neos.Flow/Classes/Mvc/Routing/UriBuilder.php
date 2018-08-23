@@ -171,7 +171,7 @@ class UriBuilder
     }
 
     /**
-     * If set, the URI is prepended with the current base URI. Defaults to FALSE.
+     * If set, the URI is prepended with the current base URI. Defaults to false.
      *
      * @param boolean $createAbsoluteUri
      * @return UriBuilder the current UriBuilder to allow method chaining
@@ -193,7 +193,7 @@ class UriBuilder
     }
 
     /**
-     * If set, the current query parameters will be merged with $this->arguments. Defaults to FALSE.
+     * If set, the current query parameters will be merged with $this->arguments. Defaults to false.
      *
      * @param boolean $addQueryString
      * @return UriBuilder the current UriBuilder to allow method chaining

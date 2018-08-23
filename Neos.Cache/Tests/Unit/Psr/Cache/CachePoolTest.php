@@ -107,7 +107,7 @@ class CachePoolTest extends BaseTestCase
         $cache = new CachePool('CachePool', $backend);
         $retrievedItem = $cache->getItem('PsrCacheTest');
         self::assertEquals(true, $retrievedItem->isHit(), 'The item should have been a hit but is not');
-        self::assertEquals(false, $retrievedItem->get(), 'The returned value was not the FALSE.');
+        self::assertEquals(false, $retrievedItem->get(), 'The returned value was not the false.');
     }
 
     /**
@@ -119,7 +119,7 @@ class CachePoolTest extends BaseTestCase
         $backend->expects(self::once())->method('has')->with(self::equalTo('PsrCacheTest'))->willReturn(true);
 
         $cache = new CachePool('CachePool', $backend);
-        self::assertTrue($cache->hasItem('PsrCacheTest'), 'hasItem() did not return TRUE.');
+        self::assertTrue($cache->hasItem('PsrCacheTest'), 'hasItem() did not return true.');
     }
 
     /**
@@ -133,7 +133,7 @@ class CachePoolTest extends BaseTestCase
         $backend->expects(self::once())->method('remove')->with(self::equalTo($cacheIdentifier))->willReturn(true);
 
         $cache = new CachePool('CachePool', $backend);
-        self::assertTrue($cache->deleteItem($cacheIdentifier), 'deleteItem() did not return TRUE');
+        self::assertTrue($cache->deleteItem($cacheIdentifier), 'deleteItem() did not return true');
     }
 
     /**

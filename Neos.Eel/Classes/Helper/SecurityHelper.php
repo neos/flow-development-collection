@@ -43,11 +43,11 @@ class SecurityHelper implements ProtectedContextAwareInterface
     }
 
     /**
-     * Returns TRUE, if at least one of the currently authenticated accounts holds
+     * Returns true, if at least one of the currently authenticated accounts holds
      * a role with the given identifier, also recursively.
      *
      * @param string $roleIdentifier The string representation of the role to search for
-     * @return boolean TRUE, if a role with the given string representation was found
+     * @return boolean true, if a role with the given string representation was found
      */
     public function hasRole($roleIdentifier)
     {

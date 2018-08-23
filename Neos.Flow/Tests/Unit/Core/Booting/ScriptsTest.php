@@ -57,7 +57,7 @@ class ScriptsTest extends UnitTestCase
         $this->assertContains(sprintf(' -c %s ', escapeshellarg('/foo/ini/path')), $actual, $message);
 
         $settings['core']['subRequestPhpIniPathAndFilename'] = false;
-        $message = 'The command must not contain an ini file path because it is set to FALSE in settings.';
+        $message = 'The command must not contain an ini file path because it is set to false in settings.';
         $actual = $this->scriptsMock->_call('buildSubprocessCommand', 'flow:foo:identifier', $settings);
         $this->assertNotContains(' -c ', $actual, $message);
     }

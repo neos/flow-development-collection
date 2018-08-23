@@ -31,7 +31,7 @@ interface TranslationProviderInterface
      * @param string $pluralForm One of RULE constants of PluralsReader
      * @param string $sourceName Name of file with translations, base path is $packageKey/Resources/Private/Locale/Translations/
      * @param string $packageKey Key of the package containing the source file
-     * @return mixed Translated label or FALSE on failure
+     * @return mixed Translated label or false on failure
      */
     public function getTranslationByOriginalLabel($originalLabel, Locale $locale, $pluralForm = null, $sourceName = 'Main', $packageKey = 'Neos.Flow');
 
@@ -45,7 +45,7 @@ interface TranslationProviderInterface
      * @param string $pluralForm One of RULE constants of PluralsReader
      * @param string $sourceName Name of file with translations, base path is $packageKey/Resources/Private/Locale/Translations/
      * @param string $packageKey Key of the package containing the source file
-     * @return mixed Translated label or FALSE on failure
+     * @return mixed Translated label or false on failure
      */
     public function getTranslationById($labelId, Locale $locale, $pluralForm = null, $sourceName = 'Main', $packageKey = 'Neos.Flow');
 }

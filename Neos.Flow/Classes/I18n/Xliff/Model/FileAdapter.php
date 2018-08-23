@@ -70,7 +70,7 @@ class FileAdapter
      *
      * @param string $source Label in original language ("source" tag in XLIFF)
      * @param integer $pluralFormIndex Index of plural form to use (starts with 0)
-     * @return mixed Translated label or FALSE on failure
+     * @return mixed Translated label or false on failure
      */
     public function getTargetBySource($source, $pluralFormIndex = 0)
     {
@@ -104,7 +104,7 @@ class FileAdapter
      *
      * @param string $transUnitId The "id" attribute of "trans-unit" tag in XLIFF
      * @param integer $pluralFormIndex Index of plural form to use (starts with 0)
-     * @return mixed Translated label or FALSE on failure
+     * @return mixed Translated label or false on failure
      */
     public function getTargetByTransUnitId($transUnitId, $pluralFormIndex = 0)
     {

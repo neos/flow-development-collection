@@ -47,7 +47,7 @@ class CurlEngine implements RequestEngineInterface
      * Sends the given HTTP request
      *
      * @param Http\Request $request
-     * @return Http\Response The response or FALSE
+     * @return Http\Response The response or false
      * @api
      * @throws Http\Exception
      * @throws CurlEngineException
@@ -153,7 +153,7 @@ class CurlEngine implements RequestEngineInterface
         }
         curl_close($curlHandle);
 
-        $response = Http\Response::createFromRaw($curlResult);
+        $response = Http\Helper\ResponseInformationHelper::createFromRaw($curlResult);
         try {
             while (substr($response->getContent(), 0, 5) === 'HTTP/' || $response->getStatusCode() === 100) {
                 $response = Http\Response::createFromRaw($response->getContent(), $response);

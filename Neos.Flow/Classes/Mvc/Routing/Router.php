@@ -13,6 +13,7 @@ namespace Neos\Flow\Mvc\Routing;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Configuration\ConfigurationManager;
+use Neos\Flow\Mvc\Exception\InvalidRoutePartValueException;
 use Neos\Flow\Mvc\Exception\InvalidRouteSetupException;
 use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
 use Neos\Flow\Mvc\Routing\Dto\ResolveContext;
@@ -60,7 +61,7 @@ class Router implements RouterInterface
     protected $routes = [];
 
     /**
-     * TRUE if route object have been created, otherwise FALSE
+     * true if route object have been created, otherwise false
      *
      * @var boolean
      */
@@ -106,7 +107,9 @@ class Router implements RouterInterface
      *
      * @param RouteContext $routeContext The Route Context containing the current HTTP Request and, optional, Routing RouteParameters
      * @return array The results of the matching route or NULL if no route matched
+     * @throws InvalidRouteSetupException
      * @throws NoMatchingRouteException if no route matched the given $routeContext
+     * @throws InvalidRoutePartValueException
      */
     public function route(RouteContext $routeContext): array
     {
@@ -128,7 +131,7 @@ class Router implements RouterInterface
                 return $matchResults;
             }
         }
-        $this->logger->notice(sprintf('Router route(): No route matched the route path "%s".', $httpRequest->getRelativePath()));
+        $this->logger->debug(sprintf('Router route(): No route matched the route path "%s".', $httpRequest->getRelativePath()));
         throw new NoMatchingRouteException('Could not match a route for the HTTP request.', 1510846308);
     }
 

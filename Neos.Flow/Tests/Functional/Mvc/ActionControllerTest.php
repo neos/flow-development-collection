@@ -287,6 +287,28 @@ class ActionControllerTest extends FunctionalTestCase
     }
 
     /**
+     * @test
+     */
+    public function cyclicCollectionsAreValidated()
+    {
+        $arguments = [
+            'argument' => [
+                'name' => 'Foo',
+                'collection' => [
+                    [
+                        'name' => 'Bar',
+                        'emailAddress' => '-invalid-'
+                    ]
+                ]
+            ]
+        ];
+        $response = $this->browser->request('http://localhost/test/mvc/actioncontrollertestb/validatedcollectionobject', 'POST', $arguments);
+
+        $expectedResult = 'Validation failed while trying to call Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController->validatedCollectionObjectAction().' . PHP_EOL;
+        $this->assertEquals($expectedResult, $response->getContent());
+    }
+
+    /**
      * Data provider for argumentTests()
      *
      * @TODO Using 'optional float - default value'    => array('optionalFloat', NULL, 12.34),

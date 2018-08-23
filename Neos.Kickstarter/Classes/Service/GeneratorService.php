@@ -12,10 +12,11 @@ namespace Neos\Kickstarter\Service;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\I18n\Xliff\XliffParser;
+use Neos\Flow\I18n\Xliff\V12\XliffParser;
 use Neos\FluidAdaptor\View\StandaloneView;
 use Neos\Flow\Core\ClassLoader;
 use Neos\Flow\Package\PackageInterface;
+use Neos\Flow\Package\FlowPackageInterface;
 use Neos\Utility\Files;
 
 /**

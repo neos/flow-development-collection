@@ -133,7 +133,7 @@ class Compiler
      * If no such proxy class has been created yet by this renderer,
      * this function will create one and register it for later use.
      *
-     * If the class is not proxable, FALSE will be returned
+     * If the class is not proxable, false will be returned
      *
      * @param string $fullClassName Name of the original class
      * @return ProxyClass|boolean
@@ -179,7 +179,7 @@ class Compiler
      * monitor or some other mechanism.
      *
      * @param string $fullClassName Name of the original class
-     * @return boolean TRUE if a cache entry exists
+     * @return boolean true if a cache entry exists
      */
     public function hasCacheEntryForClass($fullClassName)
     {

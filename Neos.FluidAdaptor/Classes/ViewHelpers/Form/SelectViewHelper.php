@@ -285,7 +285,7 @@ class SelectViewHelper extends AbstractFormFieldViewHelper
      * Render the option tags.
      *
      * @param mixed $value Value to check for
-     * @return boolean TRUE if the value should be marked a s selected; FALSE otherwise
+     * @return boolean true if the value should be marked a s selected; false otherwise
      */
     protected function isSelected($value)
     {

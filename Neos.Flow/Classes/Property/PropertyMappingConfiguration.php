@@ -74,14 +74,14 @@ class PropertyMappingConfiguration implements PropertyMappingConfigurationInterf
     protected $propertiesNotToBeMapped = [];
 
     /**
-     * If TRUE, unknown properties will be skipped during property mapping
+     * If true, unknown properties will be skipped during property mapping
      *
      * @var boolean
      */
     protected $skipUnknownProperties = false;
 
     /**
-     * If TRUE, unknown properties will be mapped.
+     * If true, unknown properties will be mapped.
      *
      * @var boolean
      */
@@ -96,7 +96,7 @@ class PropertyMappingConfiguration implements PropertyMappingConfigurationInterf
      * - else, return false.
      *
      * @param string $propertyName
-     * @return boolean TRUE if the given propertyName should be mapped, FALSE otherwise.
+     * @return boolean true if the given propertyName should be mapped, false otherwise.
      */
     public function shouldMap($propertyName)
     {

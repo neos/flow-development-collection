@@ -286,11 +286,15 @@ Media Types
 ~~~~~~~~~~~
 
 The best way to determine the media types mentioned in the ``Accept`` header of a request is to call the
-``getAcceptedMediaTypes()`` method. There is also a method implementing content negotiation in a convenient way: just
-pass a list of supported formats to ``getNegotiatedMediaType()`` and in return you'll get the media type best fitting
-according to the preferences of the client::
+``\Neos\Flow\Http\Helper\MediaTypeHelper::determineAcceptedMediaTypes()`` method.
+There is also a method implementing content negotiation in a convenient way: just pass a list of supported
+formats to ``\Neos\Flow\Http\Helper\MediaTypeHelper::negotiateMediaType()`` and in return you'll get the
+media type best fitting according to the preferences of the client::
 
-	$preferredType = $request->getNegotiatedMediaType(array('application/json', 'text/html'));
+	$preferredType = \Neos\Flow\Http\Helper\MediaTypeHelper::negotiateMediaType(
+		\Neos\Flow\Http\Helper\MediaTypeHelper::determineAcceptedMediaTypes($request),
+		array('application/json', 'text/html') // These are the accepted media types
+	);
 
 Request Methods
 ~~~~~~~~~~~~~~~
@@ -332,7 +336,7 @@ and which headers specifically are accepted for overriding those request informa
 	          proto: 'X-Forwarded-Proto'
 
 This would mean that only the ``X-Forwarded-*`` headers are accepted and only as long as those come from one of the
-IP ranges ``216.246.40.0-255`` or ``216.246.100.0-255``. If you are using the standardized `Forwarded Header`__, you
+IP ranges ``216.246.40.0-255`` or ``216.246.100.0-255``. If you are using the standardized `Forwarded Header`_, you
 can also simply set ``trustedProxies.headers`` to ``'Forwarded'``, which is the same as setting all four properties to
 this value.
 By default, no proxies are trusted (unless the environment variable ``FLOW_HTTP_TRUSTED_PROXIES`` is set) and only the

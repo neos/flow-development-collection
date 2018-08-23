@@ -87,7 +87,7 @@ class Pointcut implements PointcutFilterInterface
      * @param string $methodName Method to check against
      * @param string $methodDeclaringClassName Name of the class the method was originally declared in
      * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
-     * @return boolean TRUE if class and method match this point cut, otherwise FALSE
+     * @return boolean true if class and method match this point cut, otherwise false
      * @throws CircularPointcutReferenceException if a circular pointcut reference was detected
      */
     public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier): bool
@@ -137,9 +137,9 @@ class Pointcut implements PointcutFilterInterface
     }
 
     /**
-     * Returns TRUE if this filter holds runtime evaluations for a previously matched pointcut
+     * Returns true if this filter holds runtime evaluations for a previously matched pointcut
      *
-     * @return boolean TRUE if this filter has runtime evaluations
+     * @return boolean true if this filter has runtime evaluations
      */
     public function hasRuntimeEvaluationsDefinition(): bool
     {

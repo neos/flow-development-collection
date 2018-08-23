@@ -11,6 +11,7 @@ namespace Neos\Flow\Tests\Unit\Http;
  * source code.
  */
 
+use Neos\Flow\Http\Helper\UploadedFilesHelper;
 use Neos\Flow\Http\Request;
 use Neos\Flow\Http\Uri;
 use org\bovigo\vfs\vfsStream;
@@ -880,9 +881,7 @@ class RequestTest extends UnitTestCase
             ]
         ];
 
-        $request = $this->getAccessibleMock(Request::class, ['dummy'], [], '', false);
-        $result = $request->_call('untangleFilesArray', $convolutedFiles);
-
+        $result = UploadedFilesHelper::untangleFilesArray($convolutedFiles);
         $this->assertSame($untangledFiles, $result);
     }
 
@@ -940,9 +939,7 @@ class RequestTest extends UnitTestCase
             ],
         ];
 
-        $request = $this->getAccessibleMock(Request::class, ['dummy'], [], '', false);
-        $result = $request->_call('untangleFilesArray', $convolutedFiles);
-
+        $result = UploadedFilesHelper::untangleFilesArray($convolutedFiles);
         $this->assertSame($untangledFiles, $result);
     }
 

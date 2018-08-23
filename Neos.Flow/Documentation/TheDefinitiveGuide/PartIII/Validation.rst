@@ -343,7 +343,7 @@ against it. See ``AbstractCompositeValidator`` and ``isValidatedAlready`` in the
 for examples of how to do this.
 
 Writing Validators
-======================
+==================
 
 Usually, when writing your own validator, you will not directly implement ``ValidatorInterface``, but
 rather subclass ``AbstractValidator``. You only need to specify any options your validator might use and
@@ -386,6 +386,10 @@ implement the ``isValid()`` method then::
 In the above example, the ``isValid()`` method has been implemented, and the parameter ``$value`` is the
 data we want to check for validity. In case the data is valid, nothing needs to be done.
 
+.. warning:: You should avoid overwriting ``validate()`` and if you do, you should never overwrite ``$this->result``
+			 instance variable of the validator. Instead, use ``pushResult()`` to create a new result object and at
+			 the end of your validator, return ``popResult()``.
+
 In case the data is invalid, ``$this->addError()`` should be used to add an error message, an error code
 (which should be the unix timestamp of the current time) and optional arguments which are inserted into
 the error message.
@@ -399,7 +403,7 @@ is an array with the following numerically indexed elements:
 # type of the option (used for documentation rendering)
 # required option flag (optional, defaults to FALSE)
 
-The default values are set in the constructor of the abstract validators provided with FLOW3. If the
+The default values are set in the constructor of the abstract validators provided with Flow. If the
 required flag is set, missing options will cause an ``InvalidValidationOptionsException`` to be thrown
 when the validator is instantiated.
 
