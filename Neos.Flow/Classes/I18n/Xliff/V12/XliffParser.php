@@ -59,9 +59,18 @@ class XliffParser extends AbstractXmlParser
      */
     protected function getFileData(\SimpleXMLElement $file): array
     {
+        $sourceLanguage = (string)$file['source-language'];
         $parsedFile = [
-            'sourceLocale' => new Locale((string)$file['source-language'])
+            'sourceLocale' => new Locale($sourceLanguage)
         ];
+
+        $targetLanguage = (string)$file['target-language'];
+        if ($targetLanguage !== '') {
+            $parsedFile['targetLocale'] = new Locale($targetLanguage);
+        }
+        $parsedFile['productName'] = (string)$file['product-name'];
+        $parsedFile['original'] = (string)$file['original'];
+
         foreach ($file->body->children() as $translationElement) {
             switch ($translationElement->getName()) {
                 case 'trans-unit':
