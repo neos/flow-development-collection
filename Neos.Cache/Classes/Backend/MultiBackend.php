@@ -1,6 +1,16 @@
 <?php
 namespace Neos\Cache\Backend;
 
+/*
+ * This file is part of the Neos.Cache package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
+
 use Neos\Cache\BackendInstantiationTrait;
 use Neos\Cache\EnvironmentConfiguration;
 
@@ -53,6 +63,7 @@ class MultiBackend extends AbstractBackend implements BackendInterface
 
     /**
      * @return void
+     * @throws \Throwable
      */
     protected function prepareBackends()
     {
@@ -73,8 +84,9 @@ class MultiBackend extends AbstractBackend implements BackendInterface
      * @param string $backendClassName
      * @param array $backendOptions
      * @return BackendInterface
+     * @throws \Throwable
      */
-    protected function buildSubBackend(string $backendClassName, array $backendOptions):? BackendInterface
+    protected function buildSubBackend(string $backendClassName, array $backendOptions): ?BackendInterface
     {
         $backend = null;
         try {
@@ -93,6 +105,7 @@ class MultiBackend extends AbstractBackend implements BackendInterface
      * @param string $data
      * @param array $tags
      * @param int|null $lifetime
+     * @throws \Throwable
      */
     public function set(string $entryIdentifier, string $data, array $tags = [], int $lifetime = null)
     {
@@ -112,6 +125,7 @@ class MultiBackend extends AbstractBackend implements BackendInterface
     /**
      * @param string $entryIdentifier
      * @return bool|mixed
+     * @throws \Throwable
      */
     public function get(string $entryIdentifier)
     {
@@ -120,6 +134,7 @@ class MultiBackend extends AbstractBackend implements BackendInterface
         foreach ($this->backends as $backend) {
             try {
                 $result = $this->getFromBackend($backend, $entryIdentifier);
+
                 return $result;
             } catch (\Throwable $t) {
                 $this->handleError($t);
@@ -133,6 +148,7 @@ class MultiBackend extends AbstractBackend implements BackendInterface
     /**
      * @param string $entryIdentifier
      * @return bool
+     * @throws \Throwable
      */
     public function has(string $entryIdentifier): bool
     {
@@ -141,6 +157,7 @@ class MultiBackend extends AbstractBackend implements BackendInterface
         foreach ($this->backends as $backend) {
             try {
                 $result = $this->backendHas($backend, $entryIdentifier);
+
                 return $result;
             } catch (\Throwable $t) {
                 $this->handleError($t);
@@ -154,6 +171,7 @@ class MultiBackend extends AbstractBackend implements BackendInterface
     /**
      * @param string $entryIdentifier
      * @return bool
+     * @throws \Throwable
      */
     public function remove(string $entryIdentifier): bool
     {
@@ -172,6 +190,7 @@ class MultiBackend extends AbstractBackend implements BackendInterface
 
     /**
      * @return void
+     * @throws \Throwable
      */
     public function flush()
     {
@@ -187,6 +206,7 @@ class MultiBackend extends AbstractBackend implements BackendInterface
 
     /**
      * @return void
+     * @throws \Throwable
      */
     public function collectGarbage()
     {
@@ -202,6 +222,7 @@ class MultiBackend extends AbstractBackend implements BackendInterface
 
     /**
      * @param array $backendConfigurations
+     * @return void
      */
     protected function setBackendConfigurations(array $backendConfigurations)
     {
@@ -210,6 +231,7 @@ class MultiBackend extends AbstractBackend implements BackendInterface
 
     /**
      * @param bool $setInAllBackends
+     * @return void
      */
     protected function setSetInAllBackends(bool $setInAllBackends)
     {
@@ -218,6 +240,7 @@ class MultiBackend extends AbstractBackend implements BackendInterface
 
     /**
      * @param bool $debug
+     * @return void
      */
     protected function setDebug(bool $debug)
     {
@@ -230,6 +253,7 @@ class MultiBackend extends AbstractBackend implements BackendInterface
      * @param string $data
      * @param array $tags
      * @param int|null $lifetime
+     * @return void
      * @throws \Neos\Cache\Exception
      */
     protected function setInBackend(BackendInterface $backend, string $entryIdentifier, string $data, array $tags = [], int $lifetime = null)

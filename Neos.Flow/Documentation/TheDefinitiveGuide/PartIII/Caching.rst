@@ -660,9 +660,10 @@ If `backendConfigurations` is an empty array this will act
 just like the NullBackend.
 
 .. warning::
-Due to the nature of this backend as fallback it will swallow all
-errors on creating and using the sub backends. So configuration
-errors won't show up. See `debug` option.
+
+   Due to the nature of this backend as fallback it will swallow all
+   errors on creating and using the sub backends. So configuration
+   errors won't show up. See `debug` option.
 
 Options
 ~~~~~~~

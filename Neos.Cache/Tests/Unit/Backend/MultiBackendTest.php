@@ -20,15 +20,15 @@ class MultiBackendTest extends BaseTestCase
     public function noExceptionIsThrownIfBackendFailsToBeCreated()
     {
         $backendOptions = [
-           'backendConfigurations' => [
-               [
-                   // Will fail as there shouldn't be a redis usually on that port
-                   'backend' => RedisBackend::class,
-                   'backendOptions' => [
+            'backendConfigurations' => [
+                [
+                    // Will fail as there shouldn't be a redis usually on that port
+                    'backend' => RedisBackend::class,
+                    'backendOptions' => [
                         'port' => '60999'
                     ]
-               ]
-           ]
+                ]
+            ]
         ];
 
         $multiBackend = new MultiBackend($this->getEnvironmentConfiguration(), $backendOptions);
@@ -39,7 +39,7 @@ class MultiBackendTest extends BaseTestCase
 
     /**
      * @test
-     * @expectedException Error
+     * @expectedException \Throwable
      */
     public function debugModeWillBubbleExceptions()
     {
