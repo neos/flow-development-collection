@@ -51,6 +51,7 @@ class VariableFrontend extends AbstractFrontend
      * @param integer $lifetime Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited lifetime.
      * @return void
      * @throws \InvalidArgumentException
+     * @throws \Neos\Cache\Exception
      * @api
      */
     public function set($entryIdentifier, $variable, array $tags = [], $lifetime = null)

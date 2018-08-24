@@ -26,7 +26,7 @@ interface FreezableBackendInterface extends BackendInterface
      * individual cache entries are ignored.
      *
      * On the positive side, a frozen cache backend is much faster on read access.
-     * A frozen backend can only be thawn by calling the flush() method.
+     * A frozen backend can only be thawed by calling the flush() method.
      *
      * @return void
      */

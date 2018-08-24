@@ -274,6 +274,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
      *
      * @return void
      * @api
+     * @throws FilesException
      */
     public function flush()
     {
@@ -308,7 +309,6 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
      *
      * @param string $entryIdentifier The cache entry identifier
      * @return mixed The filenames (including path) as an array if one or more entries could be found, otherwise FALSE
-     * @throws Exception if no frontend has been set
      */
     protected function findCacheFilesByIdentifier(string $entryIdentifier)
     {
