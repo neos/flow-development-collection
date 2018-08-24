@@ -293,6 +293,10 @@ Common Options
 |                 | on set()                             |           |         |         |
 +-----------------+--------------------------------------+-----------+---------+---------+
 
+.. note::
+
+	The ``SimpleFileBackend`` does **not support** lifetime for cache entries!
+
 Neos\\Cache\\Backend\\SimpleFileBackend
 ---------------------------------------
 
@@ -313,6 +317,11 @@ impact.
 
 .. note::
 
+	The ``SimpleFileBackend`` is called like that, because it does not support lifetime for
+  cache entries! Nor does it support tagging cache entries!
+
+.. note::
+
 	Under heavy load the maximum ``set()`` performance depends on the maximum write and
 	seek performance of the hard disk. If for example the server system shows lots of I/O
 	wait in top, the file backend has reached this bound. A different storage strategy
@@ -327,16 +336,20 @@ Options
 
 :title:`Simple file cache backend options`
 
-+----------------+----------------------------------------+-----------+--------+---------+
-| Option         | Description                            | Mandatory | Type   | Default |
-+================+========================================+===========+========+=========+
-| cacheDirectory | Full path leading to a custom cache    | No        | string |         |
-|                | directory.                             |           |        |         |
-|                |                                        |           |        |         |
-|                | :title:`Example:`                      |           |        |         |
-|                |                                        |           |        |         |
-|                | * /tmp/my-cache-directory/             |           |        |         |
-+----------------+----------------------------------------+-----------+--------+---------+
++-----------------+----------------------------------------+-----------+--------+---------+
+| Option          | Description                            | Mandatory | Type   | Default |
++=================+========================================+===========+========+=========+
+| cacheDirectory  | Full path leading to a custom cache    | No        | string |         |
+|                 | directory.                             |           |        |         |
+|                 |                                        |           |        |         |
+|                 | :title:`Example:`                      |           |        |         |
+|                 |                                        |           |        |         |
+|                 | * /tmp/my-cache-directory/             |           |        |         |
++-----------------+----------------------------------------+-----------+--------+---------+
+| defaultLifeTime | Cache entry lifetime is **not          | No        |        |         |
+|                 | supported** in this backend. Entries   |           |        |         |
+|                 | never expire!                          |           |        |         |
++-----------------+----------------------------------------+-----------+--------+---------+
 
 Neos\\Cache\\Backend\\FileBackend
 ---------------------------------
