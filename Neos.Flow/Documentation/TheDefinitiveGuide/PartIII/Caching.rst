@@ -655,7 +655,7 @@ Neos\\Cache\\Backend\\MultiBackend
 
 This backend accepts several backend configurations
 to be used in order of appareance as a fallback mechanismn
-shoudln't one of them not be available.
+shoudl one of them not be available.
 If `backendConfigurations` is an empty array this will act
 just like the NullBackend.
 
