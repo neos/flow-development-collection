@@ -2,7 +2,7 @@
 namespace Neos\Flow\Persistence\Doctrine\Migrations;
 
 use Doctrine\DBAL\Schema\Schema;
-use Doctrine\Migrations\AbstractMigration;
+use Doctrine\DBAL\Migrations\AbstractMigration;
 
 /**
  * Add additional index for neos_flow_mvc_routing_objectpathmapping query speedup
@@ -21,7 +21,6 @@ class Version20180827132710 extends AbstractMigration
     /**
      * @param Schema $schema
      * @return void
-     * @throws \Doctrine\DBAL\DBALException
      * @throws \Doctrine\DBAL\Migrations\AbortMigrationException
      */
     public function up(Schema $schema)
@@ -34,7 +33,6 @@ class Version20180827132710 extends AbstractMigration
     /**
      * @param Schema $schema
      * @return void
-     * @throws \Doctrine\DBAL\DBALException
      * @throws \Doctrine\DBAL\Migrations\AbortMigrationException
      */
     public function down(Schema $schema)
