@@ -3,7 +3,7 @@
 Flow TypeConverter Reference
 ============================
 
-This reference was automatically generated from code on 2018-08-28
+This reference was automatically generated from code on 2018-08-29
 
 
 .. _`Flow TypeConverter Reference: ArrayConverter`:
@@ -71,7 +71,7 @@ Converter which transforms simple types to a boolean.
 
 For boolean this is a no-op, integer and float are simply typecast to boolean.
 
-Strings are converted to TRUE unless they are empry or match one of 'off', 'n', 'no', 'false' (case-insensitive).
+Strings are converted to true unless they are empry or match one of 'off', 'n', 'no', 'false' (case-insensitive).
 
 :Priority: 1
 :Target type: boolean
@@ -175,11 +175,11 @@ Using NULL or an empty string as input will result in a NULL return value.
 
  protected function initializeCreateAction() {
  	$this->arguments['newBid']->getPropertyMappingConfiguration()->forProperty('price')->setTypeConverterOption(
- 		\Neos\Flow\Property\TypeConverter\FloatConverter::class, 'locale', TRUE
+ 		\Neos\Flow\Property\TypeConverter\FloatConverter::class, 'locale', true
  	);
  }
 
-Just providing TRUE as option value will use the current default locale. In case that default locale is "DE"
+Just providing true as option value will use the current default locale. In case that default locale is "DE"
 for Germany for example, where a comma is used as decimal separator, the mentioned code will return
 (float)15.5 when the input was (string)"15,50".
 
@@ -196,12 +196,12 @@ for Germany for example, where a comma is used as decimal separator, the mention
 There are two parsing modes available, strict and lenient mode. Strict mode will check all constraints of the provided
 format, and if any of them are not fulfilled, the conversion will not take place.
 In Lenient mode the parser will try to extract the intended number from the string, even if it's not well formed.
-Default for strict mode is TRUE.
+Default for strict mode is true.
 
 *Example setting lenient mode (abridged)*::
 
  ->setTypeConverterOption(
- 	\Neos\Flow\Property\TypeConverter\FloatConverter::class, 'strictMode', FALSE
+ 	\Neos\Flow\Property\TypeConverter\FloatConverter::class, 'strictMode', false
  );
 
 **Format type**
@@ -326,12 +326,12 @@ This converter transforms arrays or strings to persistent objects. It does the f
 - If the input is array, we check if it has an identity property.
 
 - If the input has NO identity property, but additional properties, we create a new object and return it.
-  However, we only do this if the configuration option "CONFIGURATION_CREATION_ALLOWED" is TRUE.
+  However, we only do this if the configuration option "CONFIGURATION_CREATION_ALLOWED" is true.
 - If the input has an identity property AND the configuration option "CONFIGURATION_IDENTITY_CREATION_ALLOWED" is set,
   we fetch the object from persistent or create a new object if none was found and then set the sub-properties.
 - If the input has an identity property and NO additional properties, we fetch the object from persistence.
 - If the input has an identity property AND additional properties, we fetch the object from persistence,
-  and set the sub-properties. We only do this if the configuration option "CONFIGURATION_MODIFICATION_ALLOWED" is TRUE.
+  and set the sub-properties. We only do this if the configuration option "CONFIGURATION_MODIFICATION_ALLOWED" is true.
 
 :Priority: 1
 :Target type: object
