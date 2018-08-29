@@ -155,7 +155,8 @@ class PropertyMapper
     protected function doMapping($source, $targetType, PropertyMappingConfigurationInterface $configuration, &$currentPropertyPath)
     {
         $targetTypeWithoutNull = TypeHandling::stripNullableType($targetType);
-        if ($source === null && $targetType !== $targetTypeWithoutNull) {
+        $isNullableType = $targetType !== $targetTypeWithoutNull;
+        if ($source === null && $isNullableType) {
             return null;
         }
         $targetType = $targetTypeWithoutNull;
