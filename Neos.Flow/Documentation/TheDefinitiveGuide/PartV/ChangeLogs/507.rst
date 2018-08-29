@@ -1,0 +1,136 @@
+`5.0.7 (2018-08-29) <https://github.com/neos/flow-development-collection/releases/tag/5.0.7>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`TASK: Speed up lookups in IdentityRoutePart <https://github.com/neos/flow-development-collection/pull/1377>`_
+--------------------------------------------------------------------------------------------------------------
+
+This adds a second index to the database table in which the
+ObjectPathMapping instances are stored. It speeds up find operations
+for which the existing primary key does not help.
+
+With enough data (250k entries for ObjectPathMapping) this speeds up
+page delivery by about 60%.
+
+* Packages: ``Flow``
+
+`TASK: Tweak docblocks in Neos.Cache classes <https://github.com/neos/flow-development-collection/pull/1376>`_
+--------------------------------------------------------------------------------------------------------------
+
+Non-functional fixes to docblocks, fixing a few typos, adding a few
+@throws annotations and doing some cleanup here and there.
+
+* Packages: ``Cache`` ``Flow``
+
+`TASK: Document SimpleFileBackend in Flow manual <https://github.com/neos/flow-development-collection/pull/1373>`_
+------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Flow``
+
+`BUGFIX: Only add type hint if not already present <https://github.com/neos/flow-development-collection/pull/1370>`_
+--------------------------------------------------------------------------------------------------------------------
+
+The code migration has to respect type hints already present. Otherwise there would be a illegal duplicate type hint.
+
+* Packages: ``Files`` ``Flow``
+
+`BUGFIX: Fix the replacement pattern in updatemediatypes script <https://github.com/neos/flow-development-collection/pull/1371>`_
+---------------------------------------------------------------------------------------------------------------------------------
+
+The pattern for the `extensionToMediaType` array was wrong since #697
+Also, this has updated the MediaTypes with the current version from apache.
+
+Related to #1364 
+
+* Packages: ``MediaTypes``
+
+`!!!BUGFIX: Cyclic validator calls don't lose previous results <https://github.com/neos/flow-development-collection/pull/1369>`_
+--------------------------------------------------------------------------------------------------------------------------------
+
+This change uses a stack inside Validators to store results of previous
+calls, so that results are not lost when a validator is called in a cycle.
+This may happen for any Object or Collection validators, since the Validator
+instances chain is built per class and hence cyclic relations (A -> * -> A)
+may lead to incorrect validation results otherwise.
+
+Note: This bugfix is only breaking if you implemented your own Validator, extending `GenericObjectValidator` or `CollectionValidator`, overriding the `validate()` method and setting `$this->result` inside. In that case you are required to change the code to make use of `pushResult()`/`popResult()` like it is done inside `AbstractValidator::validate()`.
+This is an exception to the otherwise semantic versioning we strive for. It was decided because the breaking only happens in cases that would otherwise potentially be affected by the buggy behaviour of validation that could lead to invalid data entering the system.
+
+In general, you are advised to create own Validators only by implementing the `isValid()` method instead of overriding the `validate()` method.
+
+* Packages: ``Flow``
+
+`Change uppercase true and false to lowercase in php <https://github.com/neos/flow-development-collection/pull/1334>`_
+----------------------------------------------------------------------------------------------------------------------
+
+As we changed this convention some time ago we should reflect this in our code :)
+
+* Packages: ``Eel``
+
+`TASK: Tweak Flow documentation and Release Notes <https://github.com/neos/flow-development-collection/pull/1367>`_
+-------------------------------------------------------------------------------------------------------------------
+
+* Reverse order of ChangeLogs and Release Notes so that the latest
+  appear on top
+* Add missing "PHP" to 5.0 Release Notes
+* Fix reStructuredText errors
+
+* Packages: ``Flow``
+
+`BUGFIX: Do not remove leading slashes from base path <https://github.com/neos/flow-development-collection/pull/1363>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+Retargeted to Flow 4.3. For discussion see #1341 .
+
+* Packages: ``Files`` ``Flow``
+
+`BUGFIX: Use same instance for injecting Doctrine ObjectManager and EntityManagerInterface <https://github.com/neos/flow-development-collection/pull/1362>`_
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+This fixes the b/c break introduced with the deprecation of the ObjectManager. The fix can be removed with Flow 6.0
+
+Fixes #1345
+
+* Packages: ``Flow``
+
+`BUGFIX: Fix wrong namespace for DocTools settings <https://github.com/neos/flow-development-collection/pull/1351>`_
+--------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Flow``
+
+`TASK: Remove doesNotPerformAssertions from a test <https://github.com/neos/flow-development-collection/pull/1360>`_
+--------------------------------------------------------------------------------------------------------------------
+
+… because the test does in fact assert something. So PhpUnit complained:
+
+`This test is annotated with "@doesNotPerformAssertions" but performed 1 assertions`
+
+* Packages: ``Flow``
+
+`BUGFIX: Add ext-xml as composer dependency <https://github.com/neos/flow-development-collection/pull/1357>`_
+-------------------------------------------------------------------------------------------------------------
+
+Fixes #1356
+
+`BUGFIX: Correctly build sub process command arguments <https://github.com/neos/flow-development-collection/pull/1355>`_
+------------------------------------------------------------------------------------------------------------------------
+
+While building sub commands via ``Scripts::buildSubprocessCommand``
+the arguments are not build in a syntax that is sensible for parsing
+by Flow later. Specifically an argument is build like this:
+
+    '--argumentName' 'argumentValue'
+
+The missing equals sign (=) makes this problematic to parse if the
+value contains an equal sign itself as that will then be identified
+as separator between argument name and value. With this change those
+arguments are now build like this:
+
+    '--argumentName'='argumentValue'
+
+* Packages: ``Flow``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/5.0.6...5.0.7>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
