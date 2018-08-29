@@ -54,6 +54,7 @@ class LockManager
         $lockPath = $this->getLockPath();
         $this->lockPathAndFilename = $lockPath . md5(FLOW_PATH_ROOT) . '_Flow.lock';
         $this->lockFlagPathAndFilename = $lockPath . md5(FLOW_PATH_ROOT) . '_FlowIsLocked';
+        $this->lockHoldingPage = defined('FLOW_LOCKHOLDINGPAGE') ? FLOW_PATH_ROOT . FLOW_LOCKHOLDINGPAGE : FLOW_PATH_FLOW . 'Resources/Private/Core/LockHoldingStackPage.html';
         $this->removeExpiredLock();
     }
 
@@ -146,7 +147,7 @@ class LockManager
     {
         if (FLOW_SAPITYPE === 'Web') {
             header('HTTP/1.1 503 Service Temporarily Unavailable');
-            readfile(FLOW_PATH_FLOW . 'Resources/Private/Core/LockHoldingStackPage.html');
+            readfile($this->lockHoldingPage);
         } else {
             $expiresIn = abs((time() - self::LOCKFILE_MAXIMUM_AGE - filemtime($this->lockFlagPathAndFilename)));
             echo 'Site is currently locked, exiting.' . PHP_EOL . 'The current lock will expire after ' . $expiresIn . ' seconds.' . PHP_EOL;
