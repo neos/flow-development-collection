@@ -11,13 +11,11 @@ namespace Neos\FluidAdaptor\View\Exception;
  * source code.
  */
 
-use Neos\FluidAdaptor\View;
-
 /**
  * An "Invalid Template Resource" exception
  *
  * @api
  */
-class InvalidTemplateResourceException extends View\Exception
+class InvalidTemplateResourceException extends \TYPO3Fluid\Fluid\View\Exception\InvalidTemplateResourceException
 {
 }
