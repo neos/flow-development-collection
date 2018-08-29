@@ -11,11 +11,13 @@ namespace Neos\FluidAdaptor\View\Exception;
  * source code.
  */
 
+use Neos\FluidAdaptor\View;
+
 /**
  * An "Invalid Section" exception
  *
  * @api
  */
-class InvalidSectionException extends \TYPO3Fluid\Fluid\View\Exception\InvalidSectionException
+class InvalidSectionException extends View\Exception
 {
 }
