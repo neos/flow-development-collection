@@ -60,7 +60,7 @@ interface WritableStorageInterface extends StorageInterface
      *       the PersistentResource Repository itself!
      *
      * @param PersistentResource $resource The PersistentResource to delete the storage data of
-     * @return boolean TRUE if removal was successful
+     * @return boolean true if removal was successful
      */
     public function deleteResource(PersistentResource $resource);
 }

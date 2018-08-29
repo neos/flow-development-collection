@@ -193,7 +193,7 @@ class Role
     }
 
     /**
-     * Returns TRUE if the given role is a directly assigned parent of this role.
+     * Returns true if the given role is a directly assigned parent of this role.
      *
      * @param Role $role
      * @return boolean

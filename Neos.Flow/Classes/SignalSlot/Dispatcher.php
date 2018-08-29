@@ -56,7 +56,7 @@ class Dispatcher
      * @param string $signalName Name of the signal
      * @param mixed $slotClassNameOrObject Name of the class containing the slot or the instantiated class or a Closure object
      * @param string $slotMethodName Name of the method to be used as a slot. If $slotClassNameOrObject is a Closure object, this parameter is ignored
-     * @param boolean $passSignalInformation If set to TRUE, the last argument passed to the slot will be information about the signal (EmitterClassName::signalName)
+     * @param boolean $passSignalInformation If set to true, the last argument passed to the slot will be information about the signal (EmitterClassName::signalName)
      * @return void
      * @throws \InvalidArgumentException
      * @api

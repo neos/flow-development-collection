@@ -85,6 +85,9 @@ class Service
 
         if ($this->cache->has('availableLocales')) {
             $this->localeCollection = $this->cache->get('availableLocales');
+        } elseif (isset($this->settings['availableLocales']) && !empty($this->settings['availableLocales'])) {
+            $this->generateAvailableLocalesCollectionFromSettings();
+            $this->cache->set('availableLocales', $this->localeCollection);
         } else {
             $this->generateAvailableLocalesCollectionByScanningFilesystem();
             $this->cache->set('availableLocales', $this->localeCollection);
@@ -116,7 +119,7 @@ class Service
      *
      * @param string $pathAndFilename Path to the file
      * @param Locale $locale Desired locale of localized file
-     * @param boolean $strict Whether to match only provided locale (TRUE) or search for best-matching locale (FALSE)
+     * @param boolean $strict Whether to match only provided locale (true) or search for best-matching locale (false)
      * @return array Path to the localized file (or $filename when no localized file was found) and the matched locale
      * @see Configuration::setFallbackRule()
      * @api
@@ -249,6 +252,21 @@ class Service
     public function findBestMatchingLocale(Locale $locale)
     {
         return $this->localeCollection->findBestMatchingLocale($locale);
+    }
+
+    /**
+     * Generates the available Locales Collection from the configuration setting
+     * `Neos.Flow.i18n.availableLocales`.
+     *
+     * Note: result of this method invocation is cached
+     *
+     * @return void
+     */
+    protected function generateAvailableLocalesCollectionFromSettings()
+    {
+        foreach ($this->settings['availableLocales'] as $localeIdentifier) {
+            $this->localeCollection->addLocale(new Locale($localeIdentifier));
+        }
     }
 
     /**

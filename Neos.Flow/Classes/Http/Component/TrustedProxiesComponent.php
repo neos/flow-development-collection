@@ -14,6 +14,7 @@ namespace Neos\Flow\Http\Component;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Request;
 use Neos\Flow\Utility\Ip as IpUtility;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * HTTP component that checks request headers against a configured list of trusted proxy IP addresses.
@@ -51,26 +52,30 @@ class TrustedProxiesComponent implements ComponentInterface
 
         $protocolHeader = $this->getFirstTrustedProxyHeaderValue(self::HEADER_PROTOCOL, $trustedRequest);
         if ($protocolHeader !== null) {
-            $trustedRequest->getUri()->setScheme($protocolHeader);
+            $trustedRequest = $trustedRequest->withUri($trustedRequest->getUri()->withScheme($protocolHeader), true);
         }
 
         $hostHeader = $this->getFirstTrustedProxyHeaderValue(self::HEADER_HOST, $trustedRequest);
         $portFromHost = null;
         if ($hostHeader !== null) {
-            $portSeparatorIndex = strrpos($hostHeader, ':');
+            if (strpos($hostHeader, '[') === 0 && strrpos($hostHeader, ']') !== false) {
+                $portSeparatorIndex = strrpos($hostHeader, ':', -strrpos($hostHeader, ']'));
+            } else {
+                $portSeparatorIndex = strrpos($hostHeader, ':');
+            }
             if ($portSeparatorIndex !== false) {
                 $portFromHost = substr($hostHeader, $portSeparatorIndex + 1);
-                $trustedRequest->getUri()->setPort($portFromHost);
+                $trustedRequest = $trustedRequest->withUri($trustedRequest->getUri()->withPort($portFromHost), true);
                 $hostHeader = substr($hostHeader, 0, $portSeparatorIndex);
             }
-            $trustedRequest->getUri()->setHost($hostHeader);
+            $trustedRequest = $trustedRequest->withUri($trustedRequest->getUri()->withHost($hostHeader), true);
         }
 
         $portHeader = $this->getFirstTrustedProxyHeaderValue(self::HEADER_PORT, $trustedRequest);
         if ($portHeader !== null) {
-            $trustedRequest->getUri()->setPort($portHeader);
+            $trustedRequest = $trustedRequest->withUri($trustedRequest->getUri()->withPort($portHeader), true);
         } elseif ($protocolHeader !== null && $portFromHost === null) {
-            $trustedRequest->getUri()->setPort(strtolower($protocolHeader) === 'https' ? 443 : 80);
+            $trustedRequest = $trustedRequest->withUri($trustedRequest->getUri()->withPort(strtolower($protocolHeader) === 'https' ? 443 : 80), true);
         }
 
         $componentContext->replaceHttpRequest($trustedRequest);
@@ -114,10 +119,10 @@ class TrustedProxiesComponent implements ComponentInterface
      * Get the values of trusted proxy header.
      *
      * @param string $type One of the HEADER_* constants
-     * @param Request $request The request to get the trusted proxy header from
+     * @param ServerRequestInterface $request The request to get the trusted proxy header from
      * @return \Iterator An array of the values for this header type or NULL if this header type should not be trusted
      */
-    protected function getTrustedProxyHeaderValues($type, Request $request)
+    protected function getTrustedProxyHeaderValues($type, ServerRequestInterface $request)
     {
         if (isset($this->settings['headers']) && is_string($this->settings['headers'])) {
             $trustedHeaders = $this->settings['headers'];
@@ -171,10 +176,17 @@ class TrustedProxiesComponent implements ComponentInterface
         if (filter_var($ipAddress, FILTER_VALIDATE_IP) === false) {
             return false;
         }
-        if ($this->settings['proxies'] === '*') {
+        $allowedProxies = $this->settings['proxies'];
+        if ($allowedProxies === '*') {
             return true;
         }
-        foreach ($this->settings['proxies'] as $ipPattern) {
+        if (is_string($allowedProxies)) {
+            $allowedProxies = array_map('trim', explode(',', $allowedProxies));
+        }
+        if (!is_array($allowedProxies)) {
+            return false;
+        }
+        foreach ($allowedProxies as $ipPattern) {
             if (IpUtility::cidrMatch($ipAddress, $ipPattern)) {
                 return true;
             }
@@ -205,9 +217,10 @@ class TrustedProxiesComponent implements ComponentInterface
      * If no proxies are trusted or no client IP header is trusted, this is the remote address of the machine
      * directly connected to the server.
      *
-     * @return string|bool The most trusted client's IP address or FALSE if no remote address can be found
+     * @param ServerRequestInterface $request
+     * @return string|bool The most trusted client's IP address or false if no remote address can be found
      */
-    protected function getTrustedClientIpAddress(Request $request)
+    protected function getTrustedClientIpAddress(ServerRequestInterface $request)
     {
         $server = $request->getServerParams();
         if (!isset($server['REMOTE_ADDR'])) {
@@ -219,7 +232,7 @@ class TrustedProxiesComponent implements ComponentInterface
         $trustedIpHeader = [];
         while ($trustedIpHeaders->valid()) {
             $trustedIpHeader = $trustedIpHeaders->current();
-            if ($trustedIpHeader === null || $this->settings['proxies'] === []) {
+            if ($trustedIpHeader === null || empty($this->settings['proxies'])) {
                 return $server['REMOTE_ADDR'];
             }
             $ipAddress = reset($trustedIpHeader);

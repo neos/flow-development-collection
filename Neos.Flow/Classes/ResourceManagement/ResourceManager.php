@@ -277,7 +277,7 @@ class ResourceManager
      * data. Note that this stream handle may only be used read-only.
      *
      * @param PersistentResource $resource The resource to retrieve the stream for
-     * @return resource|boolean The resource stream or FALSE if the stream could not be obtained
+     * @return resource|boolean The resource stream or false if the stream could not be obtained
      * @api
      */
     public function getStreamByResource(PersistentResource $resource)
@@ -317,7 +317,7 @@ class ResourceManager
      *
      * @param PersistentResource $resource The resource to delete
      * @param boolean $unpublishResource If the resource should be unpublished before deleting it from the storage
-     * @return boolean true if the resource was deleted, otherwise FALSE
+     * @return boolean true if the resource was deleted, otherwise false
      * @api
      */
     public function deleteResource(PersistentResource $resource, $unpublishResource = true)
@@ -326,7 +326,7 @@ class ResourceManager
 
         $collectionName = $resource->getCollectionName();
 
-        $result = $this->resourceRepository->findBySha1($resource->getSha1());
+        $result = $this->resourceRepository->findBySha1AndCollectionName($resource->getSha1(), $collectionName);
         if (count($result) > 1) {
             $this->logger->debug(sprintf('Not removing storage data of resource %s (%s) because it is still in use by %s other PersistentResource object(s).', $resource->getFilename(), $resource->getSha1(), count($result) - 1));
         } else {
@@ -368,7 +368,7 @@ class ResourceManager
      * Returns the web accessible URI for the given resource object
      *
      * @param PersistentResource $resource The resource object
-     * @return string|boolean A URI as a string or FALSE if the collection of the resource is not found
+     * @return string|boolean A URI as a string or false if the collection of the resource is not found
      * @api
      */
     public function getPublicPersistentResourceUri(PersistentResource $resource)

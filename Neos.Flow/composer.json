@@ -25,6 +25,7 @@
         "neos/utility-schema": "*",
         "neos/utility-unicode": "*",
         "neos/fluid-adaptor": "*",
+        "neos/flow-log": "*",
 
         "psr/http-message": "~1.0.0",
         "psr/container": "~1.0.0",
@@ -41,7 +42,8 @@
         "symfony/dom-crawler": "~4.0.0",
         "symfony/console": "~4.0.0",
 
-        "neos/composer-plugin": "^2.0.0"
+        "neos/composer-plugin": "^2.0.0",
+        "neos/utility-pdo": "~5.1.0"
     },
     "replace": {
         "typo3/flow": "self.version"

@@ -25,7 +25,7 @@ abstract class AbstractValidator implements ValidatorInterface
     /**
      * Specifies whether this validator accepts empty values.
      *
-     * If this is TRUE, the validators isValid() method is not called in case of an empty value
+     * If this is true, the validators isValid() method is not called in case of an empty value
      * Note: A value is considered empty if it is NULL or an empty string!
      * By default all validators except for NotEmpty and the Composite Validators accept empty values
      *
@@ -51,9 +51,15 @@ abstract class AbstractValidator implements ValidatorInterface
     protected $options = [];
 
     /**
+     * @deprecated since Flow 4.3. Don't overwrite this and instead use pushResult/popResult
      * @var ErrorResult
      */
     protected $result;
+
+    /**
+     * @var array<ErrorResult>
+     */
+    protected $resultStack;
 
     /**
      * Constructs the validator and sets validation options
@@ -90,6 +96,35 @@ abstract class AbstractValidator implements ValidatorInterface
             ),
             $options
         );
+
+        $this->resultStack = [];
+    }
+
+    /**
+     * Push a new Result onto the Result stack and return it in order to fix cyclic calls to a single validator.
+     * @since Flow 4.3
+     * @see https://github.com/neos/flow-development-collection/pull/1275#issuecomment-414052031
+     * @return ErrorResult
+     */
+    protected function pushResult()
+    {
+        if ($this->result !== null) {
+            array_push($this->resultStack, $this->result);
+        }
+        $this->result = new ErrorResult();
+        return $this->result;
+    }
+
+    /**
+     * Pop and return the current Result from the stack and make $this->result point to the last Result again.
+     * @since Flow 4.3
+     * @return ErrorResult
+     */
+    protected function popResult()
+    {
+        $result = $this->result;
+        $this->result = array_pop($this->resultStack);
+        return $result;
     }
 
     /**
@@ -102,11 +137,11 @@ abstract class AbstractValidator implements ValidatorInterface
      */
     public function validate($value)
     {
-        $this->result = new ErrorResult();
+        $this->pushResult();
         if ($this->acceptsEmptyValues === false || $this->isEmpty($value) === false) {
             $this->isValid($value);
         }
-        return $this->result;
+        return $this->popResult();
     }
 
     /**
@@ -145,7 +180,7 @@ abstract class AbstractValidator implements ValidatorInterface
 
     /**
      * @param mixed $value
-     * @return boolean TRUE if the given $value is NULL or an empty string ('')
+     * @return boolean true if the given $value is NULL or an empty string ('')
      */
     final protected function isEmpty($value)
     {

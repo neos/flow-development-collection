@@ -286,11 +286,15 @@ Media Types
 ~~~~~~~~~~~
 
 The best way to determine the media types mentioned in the ``Accept`` header of a request is to call the
-``getAcceptedMediaTypes()`` method. There is also a method implementing content negotiation in a convenient way: just
-pass a list of supported formats to ``getNegotiatedMediaType()`` and in return you'll get the media type best fitting
-according to the preferences of the client::
+``\Neos\Flow\Http\Helper\MediaTypeHelper::determineAcceptedMediaTypes()`` method.
+There is also a method implementing content negotiation in a convenient way: just pass a list of supported
+formats to ``\Neos\Flow\Http\Helper\MediaTypeHelper::negotiateMediaType()`` and in return you'll get the
+media type best fitting according to the preferences of the client::
 
-	$preferredType = $request->getNegotiatedMediaType(array('application/json', 'text/html'));
+	$preferredType = \Neos\Flow\Http\Helper\MediaTypeHelper::negotiateMediaType(
+		\Neos\Flow\Http\Helper\MediaTypeHelper::determineAcceptedMediaTypes($request),
+		array('application/json', 'text/html') // These are the accepted media types
+	);
 
 Request Methods
 ~~~~~~~~~~~~~~~
@@ -332,25 +336,27 @@ and which headers specifically are accepted for overriding those request informa
 	          proto: 'X-Forwarded-Proto'
 
 This would mean that only the ``X-Forwarded-*`` headers are accepted and only as long as those come from one of the
-IP ranges ``216.246.40.0-255`` or ``216.246.100.0-255``. If you are using the standardized `Forwarded Header`__, you
+IP ranges ``216.246.40.0-255`` or ``216.246.100.0-255``. If you are using the standardized `Forwarded Header`_, you
 can also simply set ``trustedProxies.headers`` to ``'Forwarded'``, which is the same as setting all four properties to
 this value.
-By default, all proxies are trusted (``trustedProxies.proxies`` set to ``'*'``) and only the ``X-Forwarded-*`` headers
-are accepted. Also, for backwards compatibility the following headers are trusted for providing the client IP address:
+By default, no proxies are trusted (unless the environment variable ``FLOW_HTTP_TRUSTED_PROXIES`` is set) and only the
+direct request informations will be used.
+If you specify trusted proxy addresses, by default only the ``X-Forwarded-*`` headers are accepted.
 
-	Client-Ip, X-Forwarded-For, X-Forwarded, X-Cluster-Client-Ip, Forwarded-For, Forwarded
-
-Those headers will be checked from left to right and the first set header will be used for determining the client address.
-
-If you know that your installation will not run behind a proxy server, you should change settings to this::
+You can specify the list of IP addresses or address ranges in comma separated format, which is useful for using the
+environment variable::
 
 	Neos:
 	  Flow:
 	    http:
 	      trustedProxies:
-	        proxies: []
+	        proxies: '216.246.40.0/24,216.246.100.0/24'
 
-With this, no headers will be trusted and only the direct request informations will be used.
+Also, for backwards compatibility the following headers are trusted for providing the client IP address:
+
+	Client-Ip, X-Forwarded-For, X-Forwarded, X-Cluster-Client-Ip, Forwarded-For, Forwarded
+
+Those headers will be checked from left to right and the first set header will be used for determining the client address.
 
 Response
 --------

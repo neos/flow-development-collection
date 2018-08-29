@@ -7,10 +7,10 @@
 			<target xml:lang="ko" state="needs-translation">Authentication required</target></trans-unit>
       <trans-unit id="authentication.username" xml:space="preserve">
 				<source>Username</source>
-			<target xml:lang="ko" state="needs-translation">Username</target></trans-unit>
+			<target xml:lang="ko" state="translated">사용자명</target></trans-unit>
       <trans-unit id="authentication.password" xml:space="preserve">
 				<source>Password</source>
-			<target xml:lang="ko" state="needs-translation">Password</target></trans-unit>
+			<target xml:lang="ko" state="translated">비밀 번호</target></trans-unit>
       <trans-unit id="authentication.new-password" xml:space="preserve">
 				<source>New password</source>
 			<target xml:lang="ko" state="needs-translation">New password</target></trans-unit>

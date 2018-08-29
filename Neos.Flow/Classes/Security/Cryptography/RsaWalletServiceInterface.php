@@ -23,7 +23,7 @@ interface RsaWalletServiceInterface
     /**
      * Generates a new keypair and returns a fingerprint to refer to it
      *
-     * @param boolean $usedForPasswords TRUE if this keypair should be used to encrypt passwords (then decryption won't be allowed!).
+     * @param boolean $usedForPasswords true if this keypair should be used to encrypt passwords (then decryption won't be allowed!).
      * @return string An fingerprint that identifies the generated keypair
      */
     public function generateNewKeypair($usedForPasswords = false);
@@ -32,7 +32,7 @@ interface RsaWalletServiceInterface
      * Adds the specified keypair to the local store and returns a fingerprint to refer to it.
      *
      * @param string $privateKeyString The private key in its string representation
-     * @param boolean $usedForPasswords TRUE if this keypair should be used to encrypt passwords (then decryption won't be allowed!).
+     * @param boolean $usedForPasswords true if this keypair should be used to encrypt passwords (then decryption won't be allowed!).
      * @return string The fingerprint used for storing
      */
     public function registerKeyPairFromPrivateKeyString($privateKeyString, $usedForPasswords = false);
@@ -86,7 +86,7 @@ interface RsaWalletServiceInterface
      * @param string $plaintext The plaintext to sign
      * @param string $signature The signature that should be verified
      * @param string $fingerprint The fingerprint to identify to correct public key
-     * @return boolean TRUE if the signature is correct for the given plaintext and public key
+     * @return boolean true if the signature is correct for the given plaintext and public key
      */
     public function verifySignature($plaintext, $signature, $fingerprint);
 
@@ -107,7 +107,7 @@ interface RsaWalletServiceInterface
      * @param string $passwordHash The md5 hashed password string (md5(md5(password) . salt))
      * @param string $salt The salt used in the md5 password hash
      * @param string $fingerprint The fingerprint to identify to correct private key
-     * @return boolean TRUE if the password is correct
+     * @return boolean true if the password is correct
      */
     public function checkRSAEncryptedPassword($encryptedPassword, $passwordHash, $salt, $fingerprint);
 

@@ -103,13 +103,13 @@ class RouteTest extends UnitTestCase
      */
     public function httpMethodConstraintsCanBeSetAndRetrieved()
     {
-        $this->assertFalse($this->route->hasHttpMethodConstraints(), 'hasHttpMethodConstraints should be FALSE by default');
+        $this->assertFalse($this->route->hasHttpMethodConstraints(), 'hasHttpMethodConstraints should be false by default');
         $httpMethods = ['POST', 'PUT'];
         $this->route->setHttpMethods($httpMethods);
-        $this->assertTrue($this->route->hasHttpMethodConstraints(), 'hasHttpMethodConstraints should be TRUE if httpMethods are set');
+        $this->assertTrue($this->route->hasHttpMethodConstraints(), 'hasHttpMethodConstraints should be true if httpMethods are set');
         $this->assertEquals($httpMethods, $this->route->getHttpMethods());
         $this->route->setHttpMethods([]);
-        $this->assertFalse($this->route->hasHttpMethodConstraints(), 'hasHttpMethodConstraints should be FALSE if httpMethods is empty');
+        $this->assertFalse($this->route->hasHttpMethodConstraints(), 'hasHttpMethodConstraints should be false if httpMethods is empty');
     }
 
     /**

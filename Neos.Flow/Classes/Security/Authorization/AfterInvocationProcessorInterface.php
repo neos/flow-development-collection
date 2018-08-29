@@ -35,10 +35,10 @@ interface AfterInvocationProcessorInterface
     public function process(Context $securityContext, $object, JoinPointInterface $joinPoint);
 
     /**
-     * Returns TRUE if this after invocation processor can process return objects of the given class name
+     * Returns true if this after invocation processor can process return objects of the given class name
      *
      * @param string $className The class name that should be checked
-     * @return boolean TRUE if this access decision manager can decide on objects with the given class name
+     * @return boolean true if this access decision manager can decide on objects with the given class name
      */
     public function supports($className);
 }

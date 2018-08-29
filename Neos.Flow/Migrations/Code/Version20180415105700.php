@@ -29,6 +29,6 @@ class Version20180415105700 extends AbstractMigration
      */
     public function up()
     {
-        $this->searchAndReplaceRegex('~(CacheAwareInterface.*)(public function getCacheEntryIdentifier\\(\\))~s', '${1}public function getCacheEntryIdentifier(): string', ['php']);
+        $this->searchAndReplaceRegex('~(CacheAwareInterface.*public function getCacheEntryIdentifier\\(\\))([^{:]*{)~s', '${1}: string${2}', ['php']);
     }
 }

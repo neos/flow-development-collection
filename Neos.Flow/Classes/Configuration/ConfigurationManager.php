@@ -17,24 +17,16 @@ use Neos\Flow\Package\FlowPackageInterface;
 use Neos\Utility\Arrays;
 use Neos\Utility\Files;
 use Neos\Utility\OpcodeCacheHelper;
-use Neos\Utility\PositionalArraySorter;
 
 /**
  * A general purpose configuration manager
  *
  * @Flow\Scope("singleton")
- * @Flow\Proxy(FALSE)
+ * @Flow\Proxy(false)
  * @api
  */
 class ConfigurationManager
 {
-    /**
-     * The maximum number of recursions when merging subroute configurations.
-     *
-     * @var integer
-     */
-    const MAXIMUM_SUBROUTE_RECURSIONS = 99;
-
     /**
      * Contains a list of caches which are registered automatically. Caches defined in this configuration file are
      * registered in an early stage of the boot process and profit from mechanisms such as automatic flushing by the
@@ -158,9 +150,7 @@ class ConfigurationManager
      *
      * @var array
      */
-    protected $configurations = [
-        self::CONFIGURATION_TYPE_SETTINGS => [],
-    ];
+    protected $configurations = [];
 
     /**
      * Active packages to load the configuration for
@@ -173,13 +163,6 @@ class ConfigurationManager
      * @var boolean
      */
     protected $cacheNeedsUpdate = false;
-
-    /**
-     * Counts how many SubRoutes have been loaded. If this number exceeds MAXIMUM_SUBROUTE_RECURSIONS, an exception is thrown
-     *
-     * @var integer
-     */
-    protected $subRoutesRecursionLevel = 0;
 
     /**
      * An absolute file path to store configuration caches in. If null no cache will be active.
@@ -295,7 +278,7 @@ class ConfigurationManager
      *
      * @param string $configurationType The type to register, may be anything
      * @param string $configurationProcessingType One of CONFIGURATION_PROCESSING_TYPE_*, defaults to CONFIGURATION_PROCESSING_TYPE_DEFAULT
-     * @param boolean $allowSplitSource If TRUE, the type will be used as a "prefix" when looking for split configuration. Only supported for DEFAULT and SETTINGS processing types!
+     * @param boolean $allowSplitSource If true, the type will be used as a "prefix" when looking for split configuration. Only supported for DEFAULT and SETTINGS processing types!
      * @throws \InvalidArgumentException on invalid configuration processing type
      * @return void
      */
@@ -340,45 +323,16 @@ class ConfigurationManager
      */
     public function getConfiguration(string $configurationType, string $configurationPath = null)
     {
-        $configurationProcessingType = $this->resolveConfigurationProcessingType($configurationType);
-        $configuration = [];
-        switch ($configurationProcessingType) {
-            case self::CONFIGURATION_PROCESSING_TYPE_DEFAULT:
-            case self::CONFIGURATION_PROCESSING_TYPE_ROUTES:
-            case self::CONFIGURATION_PROCESSING_TYPE_POLICY:
-            case self::CONFIGURATION_PROCESSING_TYPE_APPEND:
-                if (!isset($this->configurations[$configurationType])) {
-                    $this->loadConfiguration($configurationType, $this->packages);
-                }
-                if (isset($this->configurations[$configurationType])) {
-                    $configuration = &$this->configurations[$configurationType];
-                }
-            break;
-
-            case self::CONFIGURATION_PROCESSING_TYPE_SETTINGS:
-                if (!isset($this->configurations[$configurationType]) || $this->configurations[$configurationType] === []) {
-                    $this->configurations[$configurationType] = [];
-                    $this->loadConfiguration($configurationType, $this->packages);
-                }
-                if (isset($this->configurations[$configurationType])) {
-                    $configuration = &$this->configurations[$configurationType];
-                }
-            break;
-
-            case self::CONFIGURATION_PROCESSING_TYPE_OBJECTS:
-                if (!isset($this->configurations[$configurationType]) || $this->configurations[$configurationType] === []) {
-                    $this->loadConfiguration($configurationType, $this->packages);
-                }
-                if (isset($this->configurations[$configurationType])) {
-                    $configuration = &$this->configurations[$configurationType];
-                }
-            break;
+        if (empty($this->configurations[$configurationType])) {
+            $this->loadConfiguration($configurationType, $this->packages);
         }
 
-        if ($configurationPath !== null && $configuration !== null) {
-            return (Arrays::getValueByPath($configuration, $configurationPath));
+        $configuration = $this->configurations[$configurationType] ?? [];
+        if ($configurationPath === null || $configuration === null) {
+            return $configuration;
         }
-        return $configuration;
+
+        return (Arrays::getValueByPath($configuration, $configurationPath));
     }
 
     /**
@@ -516,11 +470,14 @@ class ConfigurationManager
                     $this->configurations[$configurationType] = array_merge($this->configurations[$configurationType], $this->configurationSource->load(FLOW_PATH_CONFIGURATION . $contextName . '/' . $configurationType));
                 }
                 $this->configurations[$configurationType] = array_merge($this->configurations[$configurationType], $this->configurationSource->load(FLOW_PATH_CONFIGURATION . $configurationType));
-
-                // load subroutes from Routes.yaml and Settings.yaml and merge them with main routes recursively
-                $this->includeSubRoutesFromSettings($this->configurations[$configurationType]);
-                $this->mergeRoutesWithSubRoutes($this->configurations[$configurationType]);
-            break;
+                $routeProcessor = new RouteConfigurationProcessor(
+                    ($this->getConfiguration(self::CONFIGURATION_TYPE_SETTINGS, 'Neos.Flow.mvc.routes') ?? []),
+                    $this->orderedListOfContextNames,
+                    $this->packages,
+                    $this->configurationSource
+                );
+                $this->configurations[$configurationType] = $routeProcessor->process($this->configurations[$configurationType]);
+                break;
             case self::CONFIGURATION_PROCESSING_TYPE_APPEND:
                 foreach ($packages as $package) {
                     $this->configurations[$configurationType] = array_merge($this->configurations[$configurationType], $this->configurationSource->load($package->getConfigurationPath() . $configurationType, $allowSplitSource));
@@ -549,8 +506,9 @@ class ConfigurationManager
     public function loadConfigurationCache(): bool
     {
         $cachePathAndFilename = $this->constructConfigurationCachePath();
-        if (is_file($cachePathAndFilename)) {
-            $this->configurations = require($cachePathAndFilename);
+        $configurations = @include $cachePathAndFilename;
+        if ($configurations !== false) {
+            $this->configurations = $configurations;
             return true;
         }
 
@@ -593,7 +551,7 @@ class ConfigurationManager
     {
         // Make sure that all configuration types are loaded before writing configuration caches.
         foreach (array_keys($this->configurationTypes) as $configurationType) {
-            if (!isset($this->configurations[$configurationType]) || !is_array($this->configurations[$configurationType])) {
+            if (!isset($this->unprocessedConfiguration[$configurationType]) || !is_array($this->unprocessedConfiguration[$configurationType])) {
                 $this->loadConfiguration($configurationType, $this->packages);
             }
         }
@@ -634,16 +592,16 @@ class ConfigurationManager
     protected function replaceVariablesInPhpString(string $phpString)
     {
         $phpString = preg_replace_callback('/
-            (?<startString>=>\s\'.*)?      # optionally assignment operator and starting a string
-            (?P<fullMatch>%                # an expression is indicated by %
+            (?<startString>=>\s\'.*?)?         # optionally assignment operator and starting a string
+            (?P<fullMatch>%                    # an expression is indicated by %
             (?P<expression>
-            (?:(?:\\\?[\d\w_\\\]+\:\:)     # either a class name followed by ::
-            |                              # or
-            (?:(?P<prefix>[a-z]+)\:)       # a prefix followed by : (like "env:")
+            (?:(?:\\\?[\d\w_\\\]+\:\:)         # either a class name followed by ::
+            |                                  # or
+            (?:(?P<prefix>[a-z]+)\:)           # a prefix followed by : (like "env:")
             )?
-            (?P<name>[A-Z_0-9]+))          # the actual variable name in all upper
-            %)                             # concluded by %
-            (?<endString>.*\',\n)?         # optionally concluding a string
+            (?P<name>[A-Z_0-9]+))              # the actual variable name in all upper
+            %)                                 # concluded by %
+            (?<endString>[^%]*?(?:\',\n)?)?    # optionally concluding a string
         /mx', function ($matchGroup) {
             $replacement = "";
             $constantDoesNotStartAsBeginning = false;
@@ -671,148 +629,6 @@ class ConfigurationManager
         }, $phpString);
 
         return $phpString;
-    }
-
-    /**
-     * Loads specified sub routes and builds composite routes.
-     *
-     * @param array $routesConfiguration
-     * @return void
-     * @throws Exception\ParseErrorException
-     * @throws Exception\RecursionException
-     */
-    protected function mergeRoutesWithSubRoutes(array &$routesConfiguration)
-    {
-        $mergedRoutesConfiguration = [];
-        foreach ($routesConfiguration as $routeConfiguration) {
-            if (!isset($routeConfiguration['subRoutes'])) {
-                $mergedRoutesConfiguration[] = $routeConfiguration;
-                continue;
-            }
-            $mergedSubRoutesConfiguration = [$routeConfiguration];
-            foreach ($routeConfiguration['subRoutes'] as $subRouteKey => $subRouteOptions) {
-                if (!isset($subRouteOptions['package'])) {
-                    throw new Exception\ParseErrorException(sprintf('Missing package configuration for SubRoute in Route "%s".', (isset($routeConfiguration['name']) ? $routeConfiguration['name'] : 'unnamed Route')), 1318414040);
-                }
-                if (!isset($this->packages[$subRouteOptions['package']])) {
-                    throw new Exception\ParseErrorException(sprintf('The SubRoute Package "%s" referenced in Route "%s" is not available.', $subRouteOptions['package'], (isset($routeConfiguration['name']) ? $routeConfiguration['name'] : 'unnamed Route')), 1318414040);
-                }
-                $package = $this->packages[$subRouteOptions['package']];
-                $subRouteFilename = 'Routes';
-                if (isset($subRouteOptions['suffix'])) {
-                    $subRouteFilename .= '.' . $subRouteOptions['suffix'];
-                }
-                $subRouteConfiguration = [];
-                foreach (array_reverse($this->orderedListOfContextNames) as $contextName) {
-                    $subRouteFilePathAndName = $package->getConfigurationPath() . $contextName . '/' . $subRouteFilename;
-                    $subRouteConfiguration = array_merge($subRouteConfiguration, $this->configurationSource->load($subRouteFilePathAndName));
-                }
-                $subRouteFilePathAndName = $package->getConfigurationPath() . $subRouteFilename;
-                $subRouteConfiguration = array_merge($subRouteConfiguration, $this->configurationSource->load($subRouteFilePathAndName));
-                if ($this->subRoutesRecursionLevel > self::MAXIMUM_SUBROUTE_RECURSIONS) {
-                    throw new Exception\RecursionException(sprintf('Recursion level of SubRoutes exceed ' . self::MAXIMUM_SUBROUTE_RECURSIONS . ', probably because of a circular reference. Last successfully loaded route configuration is "%s".', $subRouteFilePathAndName), 1361535753);
-                }
-
-                $this->subRoutesRecursionLevel++;
-                $this->mergeRoutesWithSubRoutes($subRouteConfiguration);
-                $this->subRoutesRecursionLevel--;
-                $mergedSubRoutesConfiguration = $this->buildSubRouteConfigurations($mergedSubRoutesConfiguration, $subRouteConfiguration, $subRouteKey, $subRouteOptions);
-            }
-            $mergedRoutesConfiguration = array_merge($mergedRoutesConfiguration, $mergedSubRoutesConfiguration);
-        }
-        $routesConfiguration = $mergedRoutesConfiguration;
-    }
-
-    /**
-     * Merges all routes in $routesConfiguration with the sub routes in $subRoutesConfiguration
-     *
-     * @param array $routesConfiguration
-     * @param array $subRoutesConfiguration
-     * @param string $subRouteKey the key of the sub route: <subRouteKey>
-     * @param array $subRouteOptions
-     * @return array the merged route configuration
-     * @throws Exception\ParseErrorException
-     */
-    protected function buildSubRouteConfigurations(array $routesConfiguration, array $subRoutesConfiguration, string $subRouteKey, array $subRouteOptions): array
-    {
-        $variables = isset($subRouteOptions['variables']) ? $subRouteOptions['variables'] : [];
-        $mergedSubRoutesConfigurations = [];
-        foreach ($subRoutesConfiguration as $subRouteConfiguration) {
-            foreach ($routesConfiguration as $routeConfiguration) {
-                $mergedSubRouteConfiguration = $subRouteConfiguration;
-                $mergedSubRouteConfiguration['name'] = sprintf('%s :: %s', isset($routeConfiguration['name']) ? $routeConfiguration['name'] : 'Unnamed Route', isset($subRouteConfiguration['name']) ? $subRouteConfiguration['name'] : 'Unnamed Subroute');
-                $mergedSubRouteConfiguration['name'] = $this->replacePlaceholders($mergedSubRouteConfiguration['name'], $variables);
-                if (!isset($mergedSubRouteConfiguration['uriPattern'])) {
-                    throw new Exception\ParseErrorException('No uriPattern defined in route configuration "' . $mergedSubRouteConfiguration['name'] . '".', 1274197615);
-                }
-                if ($mergedSubRouteConfiguration['uriPattern'] !== '') {
-                    $mergedSubRouteConfiguration['uriPattern'] = $this->replacePlaceholders($mergedSubRouteConfiguration['uriPattern'], $variables);
-                    $mergedSubRouteConfiguration['uriPattern'] = $this->replacePlaceholders($routeConfiguration['uriPattern'], [$subRouteKey => $mergedSubRouteConfiguration['uriPattern']]);
-                } else {
-                    $mergedSubRouteConfiguration['uriPattern'] = rtrim($this->replacePlaceholders($routeConfiguration['uriPattern'], [$subRouteKey => '']), '/');
-                }
-                if (isset($mergedSubRouteConfiguration['defaults'])) {
-                    foreach ($mergedSubRouteConfiguration['defaults'] as $key => $defaultValue) {
-                        $mergedSubRouteConfiguration['defaults'][$key] = $this->replacePlaceholders($defaultValue, $variables);
-                    }
-                }
-                $mergedSubRouteConfiguration = Arrays::arrayMergeRecursiveOverrule($routeConfiguration, $mergedSubRouteConfiguration);
-                unset($mergedSubRouteConfiguration['subRoutes']);
-                $mergedSubRoutesConfigurations[] = $mergedSubRouteConfiguration;
-            }
-        }
-        return $mergedSubRoutesConfigurations;
-    }
-
-    /**
-     * Merges routes from Neos.Flow.mvc.routes settings into $routeDefinitions
-     * NOTE: Routes from settings will always be appended to existing route definitions from the main Routes configuration!
-     *
-     * @param array $routeDefinitions
-     * @return void
-     */
-    protected function includeSubRoutesFromSettings(array &$routeDefinitions)
-    {
-        $routeSettings = $this->getConfiguration(self::CONFIGURATION_TYPE_SETTINGS, 'Neos.Flow.mvc.routes');
-        if ($routeSettings === null) {
-            return;
-        }
-        $sortedRouteSettings = (new PositionalArraySorter($routeSettings))->toArray();
-        foreach ($sortedRouteSettings as $packageKey => $routeFromSettings) {
-            if ($routeFromSettings === false) {
-                continue;
-            }
-            $subRoutesName = $packageKey . 'SubRoutes';
-            $subRoutesConfiguration = ['package' => $packageKey];
-            if (isset($routeFromSettings['variables'])) {
-                $subRoutesConfiguration['variables'] = $routeFromSettings['variables'];
-            }
-            if (isset($routeFromSettings['suffix'])) {
-                $subRoutesConfiguration['suffix'] = $routeFromSettings['suffix'];
-            }
-            $routeDefinitions[] = [
-                'name' => $packageKey,
-                'uriPattern' => '<' . $subRoutesName . '>',
-                'subRoutes' => [
-                    $subRoutesName => $subRoutesConfiguration
-                ]
-            ];
-        }
-    }
-
-    /**
-     * Replaces placeholders in the format <variableName> with the corresponding variable of the specified $variables collection.
-     *
-     * @param string $string
-     * @param array $variables
-     * @return string
-     */
-    protected function replacePlaceholders(string $string, array $variables): string
-    {
-        foreach ($variables as $variableName => $variableValue) {
-            $string = str_replace('<' . $variableName . '>', $variableValue, $string);
-        }
-        return $string;
     }
 
     /**

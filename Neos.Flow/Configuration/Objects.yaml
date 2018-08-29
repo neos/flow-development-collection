@@ -409,6 +409,15 @@ Neos\Flow\Property\PropertyMapper:
           1:
             value: Flow_PropertyMapper
 
+#
+# Reflection
+#
+Neos\Flow\Reflection\ReflectionService:
+  factoryObjectName: Neos\Flow\Reflection\ReflectionServiceFactory
+
+#Neos\Flow\Reflection\ReflectionServiceFactory:
+#  scope: singleton
+
 #                                                                          #
 # ResourceManagement                                                       #
 #                                                                          #
@@ -543,12 +552,16 @@ Neos\Flow\Security\RequestPattern\CsrfProtection:
           1:
             value: systemLogger
 
+Neos\Flow\Security\Authentication\Provider\TestingProvider:
+  arguments:
+    1:
+      value: 'TestingProvider'
+
 #                                                                          #
 # Session                                                                  #
 #                                                                          #
 
 Neos\Flow\Session\SessionInterface:
-  scope: singleton
   factoryObjectName: Neos\Flow\Session\SessionManagerInterface
   factoryMethodName: getCurrentSession
 

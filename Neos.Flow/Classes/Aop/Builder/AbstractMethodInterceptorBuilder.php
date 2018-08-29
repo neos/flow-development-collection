@@ -75,7 +75,7 @@ abstract class AbstractMethodInterceptorBuilder
             if ($value === null) {
                 $code .= 'NULL';
             } elseif (is_bool($value)) {
-                $code .= ($value ? 'TRUE' : 'FALSE');
+                $code .= ($value ? 'true' : 'false');
             } elseif (is_numeric($value)) {
                 $code .= $value;
             } elseif (is_string($value)) {
@@ -161,7 +161,7 @@ abstract class AbstractMethodInterceptorBuilder
         $advicesCode = $this->buildMethodArgumentsArrayCode($declaringClassName, $methodName, ($methodName === '__construct'));
 
         if (isset($groupedAdvices[\Neos\Flow\Aop\Advice\AfterThrowingAdvice::class]) || isset($groupedAdvices[\Neos\Flow\Aop\Advice\AfterAdvice::class])) {
-            $advicesCode .= "\n        \$result = NULL;\n        \$afterAdviceInvoked = FALSE;\n        try {\n";
+            $advicesCode .= "\n        \$result = NULL;\n        \$afterAdviceInvoked = false;\n        try {\n";
         }
 
         if (isset($groupedAdvices[\Neos\Flow\Aop\Advice\BeforeAdvice::class])) {
@@ -214,7 +214,7 @@ abstract class AbstractMethodInterceptorBuilder
                 if (isset($this->Flow_Aop_Proxy_targetMethodsAndGroupedAdvices[\'' . $methodName . '\'][\'Neos\Flow\Aop\Advice\AfterAdvice\'])) {
                     $advices = $this->Flow_Aop_Proxy_targetMethodsAndGroupedAdvices[\'' . $methodName . '\'][\'Neos\Flow\Aop\Advice\AfterAdvice\'];
                     $joinPoint = new \Neos\Flow\Aop\JoinPoint($this, \'' . $targetClassName . '\', \'' . $methodName . '\', $methodArguments, NULL, $result);
-                    $afterAdviceInvoked = TRUE;
+                    $afterAdviceInvoked = true;
                     foreach ($advices as $advice) {
                         $advice->invoke($joinPoint);
                     }

@@ -97,6 +97,7 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
      *
      * @param EnvironmentConfiguration $environmentConfiguration
      * @param array $options Configuration options - depends on the actual backend
+     * @throws CacheException
      */
     public function __construct(EnvironmentConfiguration $environmentConfiguration, array $options)
     {
@@ -114,6 +115,7 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
      * @param array $tags Tags to associate with this cache entry. If the backend does not support tags, this option can be ignored.
      * @param integer $lifetime Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited lifetime.
      * @throws \RuntimeException
+     * @throws CacheException
      * @return void
      * @api
      */
@@ -150,7 +152,7 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
      * Loads data from the cache.
      *
      * @param string $entryIdentifier An identifier which describes the cache entry to load
-     * @return mixed The cache entry's content as a string or FALSE if the cache entry could not be loaded
+     * @return mixed The cache entry's content as a string or false if the cache entry could not be loaded
      * @api
      */
     public function get(string $entryIdentifier)
@@ -162,12 +164,14 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
      * Checks if a cache entry with the specified identifier exists.
      *
      * @param string $entryIdentifier An identifier specifying the cache entry
-     * @return boolean TRUE if such an entry exists, FALSE if not
+     * @return boolean true if such an entry exists, false if not
      * @api
      */
     public function has(string $entryIdentifier): bool
     {
-        return $this->redis->exists($this->buildKey('entry:' . $entryIdentifier));
+        // exists returned true or false in phpredis versions < 4.0.0, now it returns the number of keys
+        $existsResult = $this->redis->exists($this->buildKey('entry:' . $entryIdentifier));
+        return $existsResult === true || $existsResult > 0;
     }
 
     /**
@@ -177,7 +181,7 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
      *
      * @param string $entryIdentifier Specifies the cache entry to remove
      * @throws \RuntimeException
-     * @return boolean TRUE if (at least) an entry could be removed or FALSE if no entry was found
+     * @return boolean true if (at least) an entry could be removed or false if no entry was found
      * @api
      */
     public function remove(string $entryIdentifier): bool
@@ -314,7 +318,7 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
     /**
      * {@inheritdoc}
      */
-    public function key(): string
+    public function key()
     {
         $entryIdentifier = $this->redis->lIndex($this->buildKey('entries'), $this->entryCursor);
         if ($entryIdentifier !== false && !$this->has($entryIdentifier)) {
@@ -456,22 +460,20 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
     }
 
     /**
-     * TODO: No return type declaration for now, as it needs to return false as well.
-     * @param string $value
-     * @return mixed
+     * @param string|bool $value
+     * @return string|bool
      */
-    private function uncompress(string $value): string
+    private function uncompress($value)
     {
-        if (empty($value)) {
+        if ($value === false || empty($value)) {
             return $value;
         }
         return $this->useCompression() ? gzdecode($value) : $value;
     }
 
     /**
-     * TODO: No return type declaration for now, as it needs to return false as well.
      * @param string $value
-     * @return string|boolean
+     * @return string
      */
     private function compress(string $value): string
     {

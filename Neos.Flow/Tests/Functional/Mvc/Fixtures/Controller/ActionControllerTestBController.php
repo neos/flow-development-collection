@@ -23,7 +23,12 @@ class ActionControllerTestBController extends ActionController
 {
     public function initializeAction()
     {
-        $this->arguments['argument']->getPropertyMappingConfiguration()->allowAllProperties();
+        /* @var $propertyMappingConfiguration \Neos\Flow\Property\PropertyMappingConfiguration */
+        $propertyMappingConfiguration = $this->arguments['argument']->getPropertyMappingConfiguration();
+        $propertyMappingConfiguration->allowAllProperties();
+        $propertyMappingConfiguration->forProperty('collection')->allowAllProperties();
+        $propertyMappingConfiguration->forProperty('collection.*')->allowAllProperties();
+        $propertyMappingConfiguration->forProperty('related')->allowAllProperties();
     }
 
     /**
@@ -87,6 +92,26 @@ class ActionControllerTestBController extends ActionController
     public function validatedGroupObjectAction(TestObjectArgument $argument)
     {
         return $argument->getEmailAddress();
+    }
+
+    /**
+     * @param TestObjectArgument $argument
+     * @Flow\ValidationGroups({"notValidatedGroup"})
+     * @return string
+     */
+    public function notValidatedGroupCollectionAction(TestObjectArgument $argument)
+    {
+        return $argument->getCollection()->get(0)->getEmailAddress();
+    }
+
+    /**
+     * @param TestObjectArgument $argument
+     * @Flow\ValidationGroups({"validatedGroup"})
+     * @return string
+     */
+    public function validatedGroupCollectionAction(TestObjectArgument $argument)
+    {
+        return $argument->getCollection()->get(0)->getEmailAddress();
     }
 
     /**

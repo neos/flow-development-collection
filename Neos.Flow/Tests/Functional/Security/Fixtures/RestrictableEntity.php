@@ -55,7 +55,7 @@ class RestrictableEntity
     }
 
     /**
-     * @return boolean Returns TRUE, if this entity is hidden
+     * @return boolean Returns true, if this entity is hidden
      */
     public function isHidden()
     {

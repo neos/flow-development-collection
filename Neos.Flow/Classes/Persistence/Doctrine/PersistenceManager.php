@@ -19,13 +19,10 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\ThrowableStorageInterface;
 use Neos\Flow\Persistence\AbstractPersistenceManager;
 use Neos\Flow\Persistence\Exception\KnownObjectException;
-use Neos\Flow\Persistence\Exception\ObjectValidationFailedException;
 use Neos\Flow\Persistence\Exception as PersistenceException;
 use Neos\Flow\Persistence\Exception\UnknownObjectException;
-use Neos\Flow\Reflection\ClassSchema;
 use Neos\Utility\ObjectAccess;
 use Neos\Flow\Reflection\ReflectionService;
-use Neos\Utility\TypeHandling;
 use Neos\Flow\Validation\ValidatorResolver;
 use Psr\Log\LoggerInterface;
 
@@ -49,7 +46,7 @@ class PersistenceManager extends AbstractPersistenceManager
     protected $throwableStorage;
 
     /**
-     * @Flow\Inject
+     * @Flow\Inject(lazy=false)
      * @var EntityManagerInterface
      */
     protected $entityManager;
@@ -78,88 +75,10 @@ class PersistenceManager extends AbstractPersistenceManager
     }
 
     /**
-     * Initializes the persistence manager, called by Flow.
-     *
-     * @return void
-     */
-    public function initializeObject()
-    {
-        $this->entityManager->getEventManager()->addEventListener([\Doctrine\ORM\Events::onFlush], $this);
-    }
-
-    /**
-     * An onFlush event listener used to validate entities upon persistence.
-     *
-     * @param \Doctrine\ORM\Event\OnFlushEventArgs $eventArgs
-     * @return void
-     */
-    public function onFlush(\Doctrine\ORM\Event\OnFlushEventArgs $eventArgs)
-    {
-        $unitOfWork = $this->entityManager->getUnitOfWork();
-        $entityInsertions = $unitOfWork->getScheduledEntityInsertions();
-
-        $validatedInstancesContainer = new \SplObjectStorage();
-        $knownValueObjects = [];
-        foreach ($entityInsertions as $entity) {
-            $className = TypeHandling::getTypeForValue($entity);
-            if ($this->reflectionService->getClassSchema($className)->getModelType() === ClassSchema::MODELTYPE_VALUEOBJECT) {
-                $identifier = $this->getIdentifierByObject($entity);
-
-                if (isset($knownValueObjects[$className][$identifier]) || $unitOfWork->getEntityPersister($className)->exists($entity)) {
-                    unset($entityInsertions[spl_object_hash($entity)]);
-                    continue;
-                }
-
-                $knownValueObjects[$className][$identifier] = true;
-            }
-            $this->validateObject($entity, $validatedInstancesContainer);
-        }
-
-        ObjectAccess::setProperty($unitOfWork, 'entityInsertions', $entityInsertions, true);
-
-        foreach ($unitOfWork->getScheduledEntityUpdates() as $entity) {
-            $this->validateObject($entity, $validatedInstancesContainer);
-        }
-    }
-
-    /**
-     * Validates the given object and throws an exception if validation fails.
-     *
-     * @param object $object
-     * @param \SplObjectStorage $validatedInstancesContainer
-     * @return void
-     * @throws ObjectValidationFailedException
-     */
-    protected function validateObject($object, \SplObjectStorage $validatedInstancesContainer)
-    {
-        $className = $this->entityManager->getClassMetadata(get_class($object))->getName();
-        $validator = $this->validatorResolver->getBaseValidatorConjunction($className, ['Persistence', 'Default']);
-        if ($validator === null) {
-            return;
-        }
-
-        $validator->setValidatedInstancesContainer($validatedInstancesContainer);
-        $validationResult = $validator->validate($object);
-        if ($validationResult->hasErrors()) {
-            $errorMessages = '';
-            $errorCount = 0;
-            $allErrors = $validationResult->getFlattenedErrors();
-            foreach ($allErrors as $path => $errors) {
-                $errorMessages .= $path . ':' . PHP_EOL;
-                foreach ($errors as $error) {
-                    $errorCount++;
-                    $errorMessages .= (string)$error . PHP_EOL;
-                }
-            }
-            throw new ObjectValidationFailedException('An instance of "' . get_class($object) . '" failed to pass validation with ' . $errorCount . ' error(s): ' . PHP_EOL . $errorMessages, 1322585164);
-        }
-    }
-
-    /**
      * Commits new objects and changes to objects in the current persistence
      * session into the backend
      *
-     * @param boolean $onlyWhitelistedObjects If TRUE an exception will be thrown if there are scheduled updates/deletes or insertions for objects that are not "whitelisted" (see AbstractPersistenceManager::whitelistObject())
+     * @param boolean $onlyWhitelistedObjects If true an exception will be thrown if there are scheduled updates/deletes or insertions for objects that are not "whitelisted" (see AbstractPersistenceManager::whitelistObject())
      * @return void
      * @api
      */
@@ -215,7 +134,7 @@ class PersistenceManager extends AbstractPersistenceManager
      * Checks if the given object has ever been persisted.
      *
      * @param object $object The object to check
-     * @return boolean TRUE if the object is new, FALSE if the object exists in the repository
+     * @return boolean true if the object is new, false if the object exists in the repository
      * @api
      */
     public function isNewObject($object)
@@ -259,7 +178,7 @@ class PersistenceManager extends AbstractPersistenceManager
      *
      * @param mixed $identifier
      * @param string $objectType
-     * @param boolean $useLazyLoading Set to TRUE if you want to use lazy loading for this object
+     * @param boolean $useLazyLoading Set to true if you want to use lazy loading for this object
      * @return object The object for the identifier if it is known, or NULL
      * @throws \RuntimeException
      * @api
@@ -346,10 +265,10 @@ class PersistenceManager extends AbstractPersistenceManager
     }
 
     /**
-     * Returns TRUE, if an active connection to the persistence
+     * Returns true, if an active connection to the persistence
      * backend has been established, e.g. entities can be persisted.
      *
-     * @return boolean TRUE, if an connection has been established, FALSE if add object will not be persisted by the backend
+     * @return boolean true, if an connection has been established, false if add object will not be persisted by the backend
      * @api
      */
     public function isConnected()

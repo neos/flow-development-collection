@@ -127,7 +127,7 @@ class CldrModel
      * structure.
      *
      * @param string $path A path to the node to get
-     * @return mixed Array or string of matching data, or FALSE on failure
+     * @return mixed Array or string of matching data, or false on failure
      * @see CldrParser
      */
     public function getRawData($path)
@@ -153,11 +153,11 @@ class CldrModel
     /**
      * Returns multi-dimensional array representing desired node and it's children.
      *
-     * This method will return FALSE if the path points to a leaf (i.e. a string,
+     * This method will return false if the path points to a leaf (i.e. a string,
      * not an array).
      *
      * @param string $path A path to the node to get
-     * @return mixed Array of matching data, or FALSE on failure
+     * @return mixed Array of matching data, or false on failure
      * @see CldrParser
      * @see CldrModel::getRawData()
      */
@@ -178,7 +178,7 @@ class CldrModel
      * Path must point to leaf. Syntax for paths is same as for getRawData.
      *
      * @param string $path A path to the element to get
-     * @return mixed String with desired element, or FALSE on failure
+     * @return mixed String with desired element, or false on failure
      */
     public function getElement($path)
     {
@@ -196,7 +196,7 @@ class CldrModel
      *
      * @param string $path A path to search in
      * @param string $nodeName A name of the nodes to return
-     * @return mixed String with desired element, or FALSE on failure
+     * @return mixed String with desired element, or false on failure
      */
     public function findNodesWithinPath($path, $nodeName)
     {
@@ -253,7 +253,7 @@ class CldrModel
      *
      * @param string $nodeString A node key to parse
      * @param string $attributeName Name of the attribute to find
-     * @return mixed Value of desired attribute, or FALSE if there is no such attribute
+     * @return mixed Value of desired attribute, or false if there is no such attribute
      */
     public static function getAttributeValue($nodeString, $attributeName)
     {

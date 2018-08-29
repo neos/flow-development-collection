@@ -113,7 +113,7 @@ class ArrayHelper implements ProtectedContextAwareInterface
      * Check if an array is empty
      *
      * @param array $array The array
-     * @return boolean TRUE if the array is empty
+     * @return boolean true if the array is empty
      */
     public function isEmpty(array $array)
     {
@@ -212,7 +212,7 @@ class ArrayHelper implements ProtectedContextAwareInterface
      * Shuffle an array
      *
      * Randomizes entries an array with the option to preserve the existing keys.
-     * When this option is set to FALSE, all keys will be replaced
+     * When this option is set to false, all keys will be replaced
      *
      * @param array $array
      * @param boolean $preserveKeys Wether to preserve the keys when shuffling the array

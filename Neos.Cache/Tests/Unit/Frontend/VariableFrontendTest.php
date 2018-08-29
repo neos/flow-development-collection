@@ -129,7 +129,7 @@ class VariableFrontendTest extends BaseTestCase
         $backend->expects($this->once())->method('get')->will($this->returnValue(serialize(false)));
 
         $cache = new VariableFrontend('VariableFrontend', $backend);
-        $this->assertFalse($cache->get('VariableCacheTest'), 'The returned value was not the FALSE.');
+        $this->assertFalse($cache->get('VariableCacheTest'), 'The returned value was not the false.');
     }
 
     /**
@@ -157,7 +157,7 @@ class VariableFrontendTest extends BaseTestCase
         $backend->expects($this->once())->method('has')->with($this->equalTo('VariableCacheTest'))->will($this->returnValue(true));
 
         $cache = new VariableFrontend('VariableFrontend', $backend);
-        $this->assertTrue($cache->has('VariableCacheTest'), 'has() did not return TRUE.');
+        $this->assertTrue($cache->has('VariableCacheTest'), 'has() did not return true.');
     }
 
     /**
@@ -171,7 +171,7 @@ class VariableFrontendTest extends BaseTestCase
         $backend->expects($this->once())->method('remove')->with($this->equalTo($cacheIdentifier))->will($this->returnValue(true));
 
         $cache = new VariableFrontend('VariableFrontend', $backend);
-        $this->assertTrue($cache->remove($cacheIdentifier), 'remove() did not return TRUE');
+        $this->assertTrue($cache->remove($cacheIdentifier), 'remove() did not return true');
     }
 
     /**
