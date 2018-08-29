@@ -3,7 +3,7 @@
 Flow TypeConverter Reference
 ============================
 
-This reference was automatically generated from code on 2017-03-29
+This reference was automatically generated from code on 2018-08-29
 
 
 .. _`Flow TypeConverter Reference: ArrayConverter`:
@@ -439,7 +439,7 @@ be the given type.
  * string
  * integer
  * float
- * bool
+ * boolean
 
 
 
