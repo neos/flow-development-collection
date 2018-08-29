@@ -339,4 +339,23 @@ class StandaloneViewTest extends FunctionalTestCase
 
         $this->assertSame($templatePathAndFilename, $standaloneView->getTemplatePathAndFilename());
     }
+
+    /**
+     * @test
+     */
+    public function formViewHelpersOutsideOfFormWork()
+    {
+        $httpRequest = Request::create(new Uri('http://localhost'));
+        $actionRequest = new ActionRequest($httpRequest);
+
+        $standaloneView = new StandaloneView($actionRequest, $this->standaloneViewNonce);
+        $standaloneView->assign('name', 'Karsten');
+        $standaloneView->assign('name', 'Robert');
+        $standaloneView->setTemplatePathAndFilename(__DIR__ . '/Fixtures/TestTemplateWithFormField.txt');
+
+        $expected = 'This is a test template.<input type="checkbox" name="checkbox-outside" value="1" />';
+        $actual = $standaloneView->render();
+        $this->assertSame($expected, $actual);
+    }
+
 }
