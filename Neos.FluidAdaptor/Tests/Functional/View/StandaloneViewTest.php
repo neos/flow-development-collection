@@ -357,5 +357,4 @@ class StandaloneViewTest extends FunctionalTestCase
         $actual = $standaloneView->render();
         $this->assertSame($expected, $actual);
     }
-
 }
