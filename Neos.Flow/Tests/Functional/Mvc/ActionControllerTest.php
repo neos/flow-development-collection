@@ -56,7 +56,7 @@ class ActionControllerTest extends FunctionalTestCase
         ]);
         $route->setRoutePartsConfiguration([
             'entity' => [
-                'objectType' => \Neos\Flow\Tests\Functional\Persistence\Fixtures\TestEntity::class
+                'objectType' => TestEntity::class
             ]
         ]);
     }
@@ -68,7 +68,7 @@ class ActionControllerTest extends FunctionalTestCase
      *
      * @test
      */
-    public function defaultActionSpecifiedInrouteIsCalledAndResponseIsReturned()
+    public function defaultActionSpecifiedInRouteIsCalledAndResponseIsReturned()
     {
         $response = $this->browser->request('http://localhost/test/mvc/actioncontrollertesta');
         $this->assertEquals('First action was called', $response->getContent());
@@ -272,6 +272,49 @@ class ActionControllerTest extends FunctionalTestCase
     /**
      * @test
      */
+    public function notValidatedGroupCollectionsAreNotValidated()
+    {
+        $arguments = [
+            'argument' => [
+                'name' => 'Foo',
+                'collection' => [
+                    [
+                        'name' => 'Bar',
+                        'emailAddress' => '-invalid-'
+                    ]
+                ]
+            ]
+        ];
+        $response = $this->browser->request('http://localhost/test/mvc/actioncontrollertestb/notvalidatedgroupcollection', 'POST', $arguments);
+
+        $expectedResult = '-invalid-';
+        $this->assertEquals($expectedResult, $response->getContent());
+    }
+
+    /**
+     * @test
+     */
+    public function notValidatedGroupModelRelationIsNotValidated()
+    {
+        $arguments = [
+            'argument' => [
+                'name' => 'Foo',
+                'emailAddress' => '-invalid-',
+                'related' => [
+                    'name' => 'Bar',
+                    'emailAddress' => '-invalid-'
+                ]
+            ]
+        ];
+        $response = $this->browser->request('http://localhost/test/mvc/actioncontrollertestb/notvalidatedgroupobject', 'POST', $arguments);
+
+        $expectedResult = '-invalid-';
+        $this->assertEquals($expectedResult, $response->getContent());
+    }
+
+    /**
+     * @test
+     */
     public function validatedGroupObjectArgumentsAreValidated()
     {
         $arguments = [
@@ -289,7 +332,7 @@ class ActionControllerTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function cyclicCollectionsAreValidated()
+    public function validatedGroupCollectionsAreValidated()
     {
         $arguments = [
             'argument' => [
@@ -302,17 +345,34 @@ class ActionControllerTest extends FunctionalTestCase
                 ]
             ]
         ];
-        $response = $this->browser->request('http://localhost/test/mvc/actioncontrollertestb/validatedcollectionobject', 'POST', $arguments);
+        $response = $this->browser->request('http://localhost/test/mvc/actioncontrollertestb/validatedgroupcollection', 'POST', $arguments);
 
-        $expectedResult = 'Validation failed while trying to call Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController->validatedCollectionObjectAction().' . PHP_EOL;
+        $expectedResult = 'Validation failed while trying to call Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController->validatedGroupCollectionAction().' . PHP_EOL;
+        $this->assertEquals($expectedResult, $response->getContent());
+    }
+
+    /**
+     * @test
+     */
+    public function validatedGroupModelRelationIsValidated()
+    {
+        $arguments = [
+            'argument' => [
+                'name' => 'Foo',
+                'related' => [
+                    'name' => 'Bar',
+                    'emailAddress' => '-invalid-'
+                ]
+            ]
+        ];
+        $response = $this->browser->request('http://localhost/test/mvc/actioncontrollertestb/validatedgroupobject', 'POST', $arguments);
+
+        $expectedResult = 'Validation failed while trying to call Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController->validatedGroupObjectAction().' . PHP_EOL;
         $this->assertEquals($expectedResult, $response->getContent());
     }
 
     /**
      * Data provider for argumentTests()
-     *
-     * @TODO Using 'optional float - default value'    => array('optionalFloat', NULL, 12.34),
-     * this fails (on some machines) because the value is 12.33999999...
      *
      * @return array
      */

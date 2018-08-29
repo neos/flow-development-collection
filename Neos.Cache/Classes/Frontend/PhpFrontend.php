@@ -87,6 +87,7 @@ class PhpFrontend extends StringFrontend
      * @return void
      * @throws InvalidDataException
      * @throws \InvalidArgumentException
+     * @throws \Neos\Cache\Exception
      * @api
      */
     public function set(string $entryIdentifier, $sourceCode, array $tags = [], int $lifetime = null)
