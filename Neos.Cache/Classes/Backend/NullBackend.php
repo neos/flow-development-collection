@@ -14,8 +14,6 @@ namespace Neos\Cache\Backend;
 // @codeCoverageIgnoreStart
 
 use Neos\Cache\Backend\AbstractBackend as AbstractCacheBackend;
-use Neos\Cache\Backend\PhpCapableBackendInterface;
-use Neos\Cache\Backend\TaggableBackendInterface;
 
 /**
  * A caching backend which forgets everything immediately

@@ -97,6 +97,7 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
      *
      * @param EnvironmentConfiguration $environmentConfiguration
      * @param array $options Configuration options - depends on the actual backend
+     * @throws CacheException
      */
     public function __construct(EnvironmentConfiguration $environmentConfiguration, array $options)
     {
@@ -114,6 +115,7 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
      * @param array $tags Tags to associate with this cache entry. If the backend does not support tags, this option can be ignored.
      * @param integer $lifetime Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited lifetime.
      * @throws \RuntimeException
+     * @throws CacheException
      * @return void
      * @api
      */
