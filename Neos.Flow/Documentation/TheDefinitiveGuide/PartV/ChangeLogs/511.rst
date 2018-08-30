@@ -1,0 +1,694 @@
+`5.1.1 (2018-08-30) <https://github.com/neos/flow-development-collection/releases/tag/5.1.1>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`TASK: Speed up lookups in IdentityRoutePart <https://github.com/neos/flow-development-collection/pull/1377>`_
+--------------------------------------------------------------------------------------------------------------
+
+This adds a second index to the database table in which the
+ObjectPathMapping instances are stored. It speeds up find operations
+for which the existing primary key does not help.
+
+With enough data (250k entries for ObjectPathMapping) this speeds up
+page delivery by about 60%.
+
+* Packages: ``Flow``
+
+`FEATURE: \`MultiBackend\` to ensure operation on cache failure <https://github.com/neos/flow-development-collection/pull/1321>`_
+---------------------------------------------------------------------------------------------------------------------------------
+
+Introduces the `MultiBackend` and `TaggableMultiBackend` which
+both can hold multiple backends to be used in order while catching
+errors. This ensures operation of applications even if cache
+backends are down or inaccessible. It will operate just like the
+`NullBackend` in case no working backends are left.
+
+* Packages: ``Flow``
+
+`TASK: Tweak docblocks in Neos.Cache classes <https://github.com/neos/flow-development-collection/pull/1376>`_
+--------------------------------------------------------------------------------------------------------------
+
+Non-functional fixes to docblocks, fixing a few typos, adding a few
+@throws annotations and doing some cleanup here and there.
+
+* Packages: ``Cache`` ``Flow``
+
+`TASK: Document SimpleFileBackend in Flow manual <https://github.com/neos/flow-development-collection/pull/1373>`_
+------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Flow``
+
+`BUGFIX: Only add type hint if not already present <https://github.com/neos/flow-development-collection/pull/1370>`_
+--------------------------------------------------------------------------------------------------------------------
+
+The code migration has to respect type hints already present. Otherwise there would be a illegal duplicate type hint.
+
+* Packages: ``Files`` ``Flow``
+
+`FEATURE: Allow specifying validation groups for Collection and Entity validators <https://github.com/neos/flow-development-collection/pull/1275>`_
+---------------------------------------------------------------------------------------------------------------------------------------------------
+
+This makes it possible to explicitly specify a `Collection` or `GenericObject` type validator on according properties in order to override the options, like validation groups. This is useful for example, when you want to prevent a collection of entities or a whole model to be validated in some validation groups. Previously, you would have had to exclude all the properties of the related entities via according validate annotations with specified validation groups.
+
+Resolves #1008
+
+* Packages: ``Eel`` ``Flow`` ``FluidAdaptor`` ``Kickstarter``
+
+`BUGFIX: Fix the replacement pattern in updatemediatypes script <https://github.com/neos/flow-development-collection/pull/1371>`_
+---------------------------------------------------------------------------------------------------------------------------------
+
+The pattern for the `extensionToMediaType` array was wrong since #697
+Also, this has updated the MediaTypes with the current version from apache.
+
+Related to #1364 
+
+* Packages: ``MediaTypes``
+
+`!!!BUGFIX: Cyclic validator calls don't lose previous results <https://github.com/neos/flow-development-collection/pull/1369>`_
+--------------------------------------------------------------------------------------------------------------------------------
+
+This change uses a stack inside Validators to store results of previous
+calls, so that results are not lost when a validator is called in a cycle.
+This may happen for any Object or Collection validators, since the Validator
+instances chain is built per class and hence cyclic relations (A -> * -> A)
+may lead to incorrect validation results otherwise.
+
+Note: This bugfix is only breaking if you implemented your own Validator, extending `GenericObjectValidator` or `CollectionValidator`, overriding the `validate()` method and setting `$this->result` inside. In that case you are required to change the code to make use of `pushResult()`/`popResult()` like it is done inside `AbstractValidator::validate()`.
+This is an exception to the otherwise semantic versioning we strive for. It was decided because the breaking only happens in cases that would otherwise potentially be affected by the buggy behaviour of validation that could lead to invalid data entering the system.
+
+In general, you are advised to create own Validators only by implementing the `isValid()` method instead of overriding the `validate()` method.
+
+* Packages: ``Flow``
+
+`FEATURE: Logger backend to write the log in JSON format <https://github.com/neos/flow-development-collection/pull/1343>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+This logger writes the log message as JSON which is easy parsable for log processing
+but also readable.
+
+* Packages: ``Log``
+
+`TASK: Deprecating non PSR-7 methods <https://github.com/neos/flow-development-collection/pull/1366>`_
+------------------------------------------------------------------------------------------------------
+
+* Packages: ``Flow``
+
+`FEATURE: base64 en-/decoding via Fusion <https://github.com/neos/flow-development-collection/pull/1327>`_
+----------------------------------------------------------------------------------------------------------
+
+<!--
+Thanks for your contribution, we appreciate it!
+
+Please read through our pull request guidelines, there are some interesting things there:
+https://discuss.neos.io/t/creating-a-pull-request/506
+
+And one more thing... Don't forget about the tests!
+-->
+
+
+**What I did**
+An Eel-Helper which uses PHP functions to encode and decode a data-string
+
+
+* Packages: ``Eel``
+
+`Change uppercase true and false to lowercase in php <https://github.com/neos/flow-development-collection/pull/1334>`_
+----------------------------------------------------------------------------------------------------------------------
+
+As we changed this convention some time ago we should reflect this in our code :)
+
+* Packages: ``Eel``
+
+`TASK: Throw a helpful exception when enctype is not set correctly for uploads <https://github.com/neos/flow-development-collection/pull/1349>`_
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+This change will throw an Exception when the Form Upload ViewHelper is used, but the according Form does not specify an enc-type of "multipart/form-data", which is easily forgotten and leads to non-working forms.
+
+Resolves #545
+
+* Packages: ``FluidAdaptor``
+
+`Correct \`FLOW3\` reference to \`Flow\` <https://github.com/neos/flow-development-collection/pull/1368>`_
+----------------------------------------------------------------------------------------------------------
+
+A last reference to `FLOW3` was present in the Validation chapter. This change updates the document to use `Flow`.
+
+Did a search through the Documentation folder and found no other references to FLOW3
+
+* Packages: ``Flow``
+
+`TASK: Tweak Flow documentation and Release Notes <https://github.com/neos/flow-development-collection/pull/1367>`_
+-------------------------------------------------------------------------------------------------------------------
+
+* Reverse order of ChangeLogs and Release Notes so that the latest
+  appear on top
+* Add missing "PHP" to 5.0 Release Notes
+* Fix reStructuredText errors
+
+* Packages: ``Flow``
+
+`TASK: Lower severity of no route matched log message <https://github.com/neos/flow-development-collection/pull/1365>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+I feel that was discussed before. 
+We just moved a big project (from wordpress) to Neos and the system log is flooded with thousands of route not matching log messages.
+Do we really need them on "Notice" level so that they get logged on production servers?
+
+* Packages: ``Flow``
+
+`BUGFIX: Do not remove leading slashes from base path <https://github.com/neos/flow-development-collection/pull/1363>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+Retargeted to Flow 4.3. For discussion see #1341 .
+
+* Packages: ``Files`` ``Flow``
+
+`BUGFIX: Use same instance for injecting Doctrine ObjectManager and EntityManagerInterface <https://github.com/neos/flow-development-collection/pull/1362>`_
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+This fixes the b/c break introduced with the deprecation of the ObjectManager. The fix can be removed with Flow 6.0
+
+Fixes #1345
+
+* Packages: ``Flow``
+
+`BUGFIX: Fix wrong namespace for DocTools settings <https://github.com/neos/flow-development-collection/pull/1351>`_
+--------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Flow``
+
+`TASK: Remove doesNotPerformAssertions from a test <https://github.com/neos/flow-development-collection/pull/1360>`_
+--------------------------------------------------------------------------------------------------------------------
+
+… because the test does in fact assert something. So PhpUnit complained:
+
+`This test is annotated with "@doesNotPerformAssertions" but performed 1 assertions`
+
+* Packages: ``Flow``
+
+`BUGFIX: Add ext-xml as composer dependency <https://github.com/neos/flow-development-collection/pull/1357>`_
+-------------------------------------------------------------------------------------------------------------
+
+Fixes #1356
+
+`BUGFIX: Correctly build sub process command arguments <https://github.com/neos/flow-development-collection/pull/1355>`_
+------------------------------------------------------------------------------------------------------------------------
+
+While building sub commands via ``Scripts::buildSubprocessCommand``
+the arguments are not build in a syntax that is sensible for parsing
+by Flow later. Specifically an argument is build like this:
+
+    '--argumentName' 'argumentValue'
+
+The missing equals sign (=) makes this problematic to parse if the
+value contains an equal sign itself as that will then be identified
+as separator between argument name and value. With this change those
+arguments are now build like this:
+
+    '--argumentName'='argumentValue'
+
+* Packages: ``Flow``
+
+`BUGFIX: Fix call of extractLegacyDataFromContext and method name <https://github.com/neos/flow-development-collection/pull/1342>`_
+-----------------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Log``
+
+`Update symfony/console requirement to ~4.1.1 <https://github.com/neos/flow-development-collection/pull/1335>`_
+---------------------------------------------------------------------------------------------------------------
+
+Updates the requirements on [symfony/console](https://github.com/symfony/console) to permit the latest version.
+<details>
+<summary>Changelog</summary>
+
+*Sourced from [symfony/console's changelog](https://github.com/symfony/console/blob/master/CHANGELOG.md).*
+
+> CHANGELOG
+> =========
+> 
+> 4.1.0
+> -----
+> 
+>  * added option to run suggested command if command is not found and only 1 alternative is available
+>  * added option to modify console output and print multiple modifiable sections
+>  * added support for iterable messages in output `write` and `writeln` methods
+> 
+> 4.0.0
+> -----
+> 
+>  * `OutputFormatter` throws an exception when unknown options are used
+>  * removed `QuestionHelper::setInputStream()/getInputStream()`
+>  * removed `Application::getTerminalWidth()/getTerminalHeight()` and 
+>   `Application::setTerminalDimensions()/getTerminalDimensions()`
+> * removed `ConsoleExceptionEvent`
+> * removed `ConsoleEvents::EXCEPTION`
+> 
+> 3.4.0
+> -----
+> 
+>  * added `SHELL_VERBOSITY` env var to control verbosity
+>  * added `CommandLoaderInterface`, `FactoryCommandLoader` and PSR-11
+>    `ContainerCommandLoader` for commands lazy-loading
+>  * added a case-insensitive command name matching fallback
+>  * added static `Command::$defaultName/getDefaultName()`, allowing for
+>    commands to be registered at compile time in the application command loader.
+>    Setting the `$defaultName` property avoids the need for filling the `command`
+>    attribute on the `console.command` tag when using `AddConsoleCommandPass`.
+> 
+> 3.3.0
+> -----
+> 
+> * added `ExceptionListener`
+> * added `AddConsoleCommandPass` (originally in FrameworkBundle)
+> * [BC BREAK] `Input::getOption()` no longer returns the default value for options
+>   with value optional explicitly passed empty
+> * added console.error event to catch exceptions thrown by other listeners
+> * deprecated console.exception event in favor of console.error
+> * added ability to handle `CommandNotFoundException` through the 
+>  `console.error` event
+> * deprecated default validation in `SymfonyQuestionHelper::ask`
+> 
+> 3.2.0
+> ------
+> 
+> * added `setInputs()` method to CommandTester for ease testing of commands expecting inputs
+> * added `setStream()` and `getStream()` methods to Input (implement StreamableInputInterface)
+></table> ... (truncated)
+</details>
+<details>
+<summary>Commits</summary>
+
+- See full diff in [compare view](https://github.com/symfony/console/commits/v4.1.1)
+</details>
+<br />
+
+Dependabot will resolve any conflicts with this PR as long as you don't alter it yourself. You can also trigger a rebase manually by commenting `@dependabot rebase`.
+
+---
+
+<details>
+<summary>Dependabot commands and options</summary>
+<br />
+
+You can trigger Dependabot actions by commenting on this PR:
+- `@dependabot rebase` will rebase this PR
+- `@dependabot merge` will merge this PR after your CI passes on it
+- `@dependabot ignore this [patch|minor|major] version` will close this PR and stop Dependabot creating any more for this minor/major version (unless you reopen the PR or upgrade to it yourself)
+- `@dependabot ignore this dependency` will close this PR and stop Dependabot creating any more for this dependency (unless you reopen the PR or upgrade to it yourself)
+- `@dependabot use these labels` will set the current labels as the default for future PRs for this repo and language
+- `@dependabot use these reviewers` will set the current reviewers as the default for future PRs for this repo and language
+- `@dependabot use these assignees` will set the current assignees as the default for future PRs for this repo and language
+- `@dependabot badge me` will comment on this PR with code to add a "Dependabot enabled" badge to your readme
+
+Additionally, you can set the following in your Dependabot [dashboard](https://app.dependabot.com):
+- Update frequency (including time of day and day of week)
+- Automerge options (never/patch/minor, and dev/runtime dependencies)
+- Pull request limits (per update run and/or open at any time)
+- Out-of-range updates (receive only lockfile updates, if desired)
+- Security updates (receive only security updates, if desired)
+
+Finally, you can contact us by mentioning @dependabot.
+
+</details>
+
+`Update doctrine/migrations requirement to ~1.8.1 <https://github.com/neos/flow-development-collection/pull/1325>`_
+-------------------------------------------------------------------------------------------------------------------
+
+Updates the requirements on [doctrine/migrations](https://github.com/doctrine/migrations) to permit the latest version.
+<details>
+<summary>Release notes</summary>
+
+*Sourced from [doctrine/migrations's releases](https://github.com/doctrine/migrations/releases).*
+
+> ## 1.8.1
+> 
+> **NOTE** The v1.8.0 tag was accidentally created from master instead of the 1.8 branch. Sorry for the confusion.
+> 
+> - Total issues resolved: **1**
+> - Total pull requests resolved: **1**
+> - Total contributors: **1**
+> 
+> ### Improvement
+> 
+>  - [690: Introduce Doctrine\\DBAL\\Migrations\\AbstractMigration deprecation.](https://github-redirect.dependabot.com/doctrine/migrations/pull/690) thanks to [**jwage**](https://github.com/jwage)
+</details>
+<details>
+<summary>Commits</summary>
+
+- See full diff in [compare view](https://github.com/doctrine/migrations/commits/v1.8.1)
+</details>
+<br />
+
+Dependabot will resolve any conflicts with this PR as long as you don't alter it yourself. You can also trigger a rebase manually by commenting `@dependabot rebase`.
+
+---
+
+<details>
+<summary>Dependabot commands and options</summary>
+<br />
+
+You can trigger Dependabot actions by commenting on this PR:
+- `@dependabot rebase` will rebase this PR
+- `@dependabot ignore this [patch|minor|major] version` will close this PR and stop Dependabot creating any more for this minor/major version (unless you reopen the PR or upgrade to it yourself)
+- `@dependabot ignore this dependency` will close this PR and stop Dependabot creating any more for this dependency (unless you reopen the PR or upgrade to it yourself)
+- `@dependabot use these labels` will set the current labels as the default for future PRs for this repo and language
+- `@dependabot use these reviewers` will set the current reviewers as the default for future PRs for this repo and language
+- `@dependabot use these assignees` will set the current assignees as the default for future PRs for this repo and language
+
+Additionally, you can set the following in your Dependabot [dashboard](https://app.dependabot.com):
+- Update frequency (including time of day and day of week)
+- Automerge options (never/patch/minor, and dev/runtime dependencies)
+- Pull request limits (per update run and/or open at any time)
+- Out-of-range updates (receive only lockfile updates, if desired)
+- Security updates (receive only security updates, if desired)
+
+Finally, you can contact us by mentioning @dependabot.
+
+</details>
+
+* Packages: ``Flow``
+
+`TASK: Change uppercase true and false to lowercase in yaml <https://github.com/neos/flow-development-collection/pull/1333>`_
+-----------------------------------------------------------------------------------------------------------------------------
+
+As we changed this convention some time ago we should reflect this in our code :)
+
+* Packages: ``Flow``
+
+`BUGFIX: Fix distinction between PSR and legacy loggers in the LoggerFactory <https://github.com/neos/flow-development-collection/pull/1312>`_
+----------------------------------------------------------------------------------------------------------------------------------------------
+
+As discussed[1] - set third parameter to "true" to do the correct comparison.
+If this parameter is set to true, a class name string as "object" is allowed.
+
+[1] https://neos-project.slack.com/archives/C04PYL8H3/p1526288487000147
+
+* Packages: ``Flow``
+
+`Improve performance of ResourceManager::getResourceBySha1() <https://github.com/neos/flow-development-collection/pull/1331>`_
+------------------------------------------------------------------------------------------------------------------------------
+
+This adds an index to the `PersistentResource` table drastically
+improving the performance of `ResourceManager::getResourceBySha1()`
+calls (= public API).
+
+`BUGFIX: Adjust has() to phpredis >= 4.0.0 <https://github.com/neos/flow-development-collection/pull/1326>`_
+------------------------------------------------------------------------------------------------------------
+
+The `exists()` method returned TRUE or FALSE in phpredis versions < 4.0.0, now it
+returns the number of keys tested that do exist.
+
+`TASK: Small boot performance improvements <https://github.com/neos/flow-development-collection/pull/1196>`_
+------------------------------------------------------------------------------------------------------------
+
+These changes are meant to defer initializations of low level classes as much
+as possible.
+
+ConfigurationManager had some unnecessary code and route configuration
+processing was separated out to make the class smaller and better to maintain.
+
+ReflectionService is now build via factory at runtime which means if it's not
+needed it will never do its costly initialisation.
+
+Same for the AuthenticationProviderManager internals.
+
+* Packages: ``Flow``
+
+`Update symfony/yaml requirement to ~4.1.0 <https://github.com/neos/flow-development-collection/pull/1318>`_
+------------------------------------------------------------------------------------------------------------
+
+`TASK: Update production exception page <https://github.com/neos/flow-development-collection/pull/1324>`_
+---------------------------------------------------------------------------------------------------------
+
+Simplifies the production exception message to match the current CI more.
+
+![exception](https://user-images.githubusercontent.com/6884391/41510923-766750da-726d-11e8-9998-755de770d453.png)
+
+* Packages: ``Flow``
+
+`BUGFIX: Allow to delete "used" resources from a storage <https://github.com/neos/flow-development-collection/pull/1298>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+This solves the following case…
+
+Given these settings:
+
+    resource:
+      collections:
+        readableFilenames:
+          storage: 'readableFilenameResourcesStorage'
+          target: 'readableFilenameResourcesTarget'
+      storages:
+        readableFilenameResourcesStorage:
+          storage: 'Neos\\Flow\\ResourceManagement\\Storage\\WritableFileSystemStorage'
+          storageOptions:
+            path: '%FLOW_PATH_DATA%Persistent/ReadableResources/'
+      targets:
+        readableFilenameResourcesTarget:
+          target: 'Acme\\AcmeCom\\FilenameFileSystemSymlinkTarget'
+          targetOptions:
+            path: '%FLOW_PATH_WEB%Files/'
+            baseUri: 'Files/'
+
+I want to "move" a resource from the `persistent` to the `readableFilenames` collection. To do this, I get an asset, fetch the resource and import it into the `readableFilenames` collection. After that the newly imported resource is published, assigned to the asset and then the old resource is deleted. Code would be something like this:
+
+        $resource = $asset->getResource();
+
+        $importedResource = $resourceCollection->importResource($resource->getStream());
+        $importedResource->setFilename($resource->getFilename());
+        $importedResource->setMediaType($resource->getMediaType());
+        $resourceCollection->getTarget()->publishResource($resource, $resourceCollection);
+
+        $asset->setResource($importedResource);
+        $this->assetRepository->update($asset);
+
+        $this->resourceManager->deleteResource($resource);
+
+But this leads to log messages about the storage data not being deleted, because the resource is still being used. Which is not true, or at least not fully correct. The problem at this point: the same resource exists in two collections, but the check only looks at the SHA1 (and filename, partly).
+
+So this change adjusts the checks involved to look at the collection a resource is in, too.
+
+* Packages: ``Flow``
+
+`BUGFIX: Allow to delete "used" resources from a storage <https://github.com/neos/flow-development-collection/pull/1315>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+This solves the following case…
+
+Given these settings:
+
+    resource:
+      collections:
+        readableFilenames:
+          storage: 'readableFilenameResourcesStorage'
+          target: 'readableFilenameResourcesTarget'
+      storages:
+        readableFilenameResourcesStorage:
+          storage: 'TYPO3\\Flow\\Resource\\Storage\\WritableFileSystemStorage'
+          storageOptions:
+            path: '%FLOW_PATH_DATA%Persistent/ReadableResources/'
+      targets:
+        readableFilenameResourcesTarget:
+          target: 'Acme\\AcmeCom\\FilenameFileSystemSymlinkTarget'
+          targetOptions:
+            path: '%FLOW_PATH_WEB%Files/'
+            baseUri: 'Files/'
+
+I want to "move" a resource from the `persistent` to the `readableFilenames` collection. To do this, I get an asset, fetch the resource and import it into the `readableFilenames` collection. After that the newly imported resource is published, assigned to the asset and then the old resource is deleted. Code would be something like this:
+
+        $resource = $asset->getResource();
+
+        $importedResource = $resourceCollection->importResource($resource->getStream());
+        $importedResource->setFilename($resource->getFilename());
+        $importedResource->setMediaType($resource->getMediaType());
+        $resourceCollection->getTarget()->publishResource($resource, $resourceCollection);
+
+        $asset->setResource($importedResource);
+        $this->assetRepository->update($asset);
+
+        $this->resourceManager->deleteResource($resource);
+
+But this leads to log messages about the storage data not being deleted, because the resource is still being used. Which is not true, or at least not fully correct. The problem at this point: the same resource exists in two collections, but the check only looks at the SHA1 (and filename, partly).
+
+So this change adjusts the checks involved to look at the collection a resource is in, too.
+
+`Update doctrine/common requirement to ^2.8.1 <https://github.com/neos/flow-development-collection/pull/1306>`_
+---------------------------------------------------------------------------------------------------------------
+
+Updates the requirements on [doctrine/common](https://github.com/doctrine/common) to permit the latest version.
+<details>
+<summary>Release notes</summary>
+
+*Sourced from [doctrine/common's releases](https://github.com/doctrine/common/releases).*
+
+> ## v2.8.1
+> This release fixes an unintentional BC break that prevented
+> passing all the possible available flags to
+> the `Doctrine\\Common\\Proxy\\AbstractProxyFactory`.
+> 
+> Total issues resolved: **2**
+> - [815: Convert proxy factory auto generate mode to integer](https://github-redirect.dependabot.com/doctrine/common/pull/815) thanks to [**dragosprotung**](https://github.com/dragosprotung)
+> - [816: Convert proxy factory auto generate mode to integer](https://github-redirect.dependabot.com/doctrine/common/pull/816) thanks to [**dragosprotung**](https://github.com/dragosprotung)
+</details>
+<details>
+<summary>Commits</summary>
+
+- See full diff in [compare view](https://github.com/doctrine/common/commits/v2.8.1)
+</details>
+<br />
+
+Dependabot will resolve any conflicts with this PR as long as you don't alter it yourself. You can also trigger a rebase manually by commenting `@dependabot rebase`.
+
+---
+
+**Note:** This repo was added to Dependabot recently, so you'll receive a maximum of 5 PRs for your first few update runs. Once an update run creates fewer than 5 PRs we'll remove that limit.
+
+You can always request more updates by clicking `Bump now` in your [Dependabot dashboard](https://app.dependabot.com).
+
+<details>
+<summary>Dependabot commands and options</summary>
+<br />
+
+You can trigger Dependabot actions by commenting on this PR:
+- `@dependabot rebase` will rebase this PR
+- `@dependabot ignore this [minor|major] version` will close this PR and stop Dependabot creating any more for this minor/major version (unless you reopen the PR or upgrade to it yourself)
+- `@dependabot ignore this dependency` will close this PR and stop Dependabot creating any more for this dependency (unless you reopen the PR or upgrade to it yourself)
+- `@dependabot use [this|these] label[s]` will set the current labels as the default for future PRs for this repo and language
+
+Additionally, you can set the following in your Dependabot [dashboard](https://app.dependabot.com):
+- Update frequency (including time of day and day of week)
+- Automerge options (never/patch/minor, and dev/runtime dependencies)
+- Out-of-range updates (receive only lockfile updates, if desired)
+- Security updates (receive only security updates, if desired)
+
+Finally, you can contact us by mentioning @dependabot.
+
+</details>
+
+[//]: # (dependabot-start)
+
+---
+⚠️  **Dependabot is rebasing this PR** ⚠️ 
+
+Sit tight and this PR will be updated for you in a minute. If you make any changes yourself then they'll take precedence over the rebase (which will be abandoned).
+
+[//]: # (dependabot-end)
+
+`Update doctrine/migrations requirement to ~1.7.2 <https://github.com/neos/flow-development-collection/pull/1313>`_
+-------------------------------------------------------------------------------------------------------------------
+
+Updates the requirements on [doctrine/migrations](https://github.com/doctrine/migrations) to permit the latest version.
+<details>
+<summary>Release notes</summary>
+
+*Sourced from [doctrine/migrations's releases](https://github.com/doctrine/migrations/releases).*
+
+> ## 1.7.2
+> ### Fixed
+> 
+>   - [656: Update MigrationsVersion to 1.7.2](https://github-redirect.dependabot.com/doctrine/migrations/pull/656) - [**jwage**](https://github.com/jwage)
+</details>
+<details>
+<summary>Commits</summary>
+
+- See full diff in [compare view](https://github.com/doctrine/migrations/commits/v1.7.2)
+</details>
+<br />
+
+Dependabot will resolve any conflicts with this PR as long as you don't alter it yourself. You can also trigger a rebase manually by commenting `@dependabot rebase`.
+
+---
+
+**Note:** This repo was added to Dependabot recently, so you'll receive a maximum of 5 PRs for your first few update runs. Once an update run creates fewer than 5 PRs we'll remove that limit.
+
+You can always request more updates by clicking `Bump now` in your [Dependabot dashboard](https://app.dependabot.com).
+
+<details>
+<summary>Dependabot commands and options</summary>
+<br />
+
+You can trigger Dependabot actions by commenting on this PR:
+- `@dependabot rebase` will rebase this PR
+- `@dependabot ignore this [patch|minor|major] version` will close this PR and stop Dependabot creating any more for this minor/major version (unless you reopen the PR or upgrade to it yourself)
+- `@dependabot ignore this dependency` will close this PR and stop Dependabot creating any more for this dependency (unless you reopen the PR or upgrade to it yourself)
+- `@dependabot use (this|these) label[s]` will set the current labels as the default for future PRs for this repo and language
+- `@dependabot use (this|these) reviewer[s]` will set the current reviewers as the default for future PRs for this repo and language
+- `@dependabot use (this|these) assignee[s]` will set the current assignees as the default for future PRs for this repo and language
+
+Additionally, you can set the following in your Dependabot [dashboard](https://app.dependabot.com):
+- Update frequency (including time of day and day of week)
+- Automerge options (never/patch/minor, and dev/runtime dependencies)
+- Out-of-range updates (receive only lockfile updates, if desired)
+- Security updates (receive only security updates, if desired)
+
+Finally, you can contact us by mentioning @dependabot.
+
+</details>
+
+`TASK: Don’t set return type for RedisBackend->key() <https://github.com/neos/flow-development-collection/pull/1314>`_
+------------------------------------------------------------------------------------------------------------------------
+
+Fixes #1311 
+
+* Packages: ``Cache``
+
+`BUGFIX: The Request object should not be mutated after creation <https://github.com/neos/flow-development-collection/pull/1287>`_
+----------------------------------------------------------------------------------------------------------------------------------
+
+Fixes #1123
+
+`FEATURE: Arrow function expressions in Eel <https://github.com/neos/flow-development-collection/pull/1276>`_
+-------------------------------------------------------------------------------------------------------------
+
+Adds support to parse and evaluate arrow function expressions in Eel.
+This is only implemented for the CompilingEelEvaluator, since
+expression evaluation need to be deferred in functions.
+
+Arrow function arguments can be specified with or without parentheses.
+The body must be an expression and not a block.
+
+Example:
+
+    map(items, (x) => x * x)
+* Packages: ``Eel``
+
+`TASK: Enable test that was skipped due to Doctrine bug <https://github.com/neos/flow-development-collection/pull/1307>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Flow``
+
+`BUGFIX: Remove usage of removed f:base viewhelper from kickstarter <https://github.com/neos/flow-development-collection/pull/1303>`_
+-------------------------------------------------------------------------------------------------------------------------------------
+
+Removes the f:base viewhelper from kickstarted Layout template file since the viewhelper does no longer exist.
+
+* Packages: ``Flow`` ``Kickstarter``
+
+`BUGFIX: Make $referenceCode nullable in ProductionExceptionHandler <https://github.com/neos/flow-development-collection/pull/1299>`_
+-------------------------------------------------------------------------------------------------------------------------------------
+
+Just a few lines above the reference code may be set to null, and two lines
+down the file a check against null is made. So, null is to be tolerated!
+
+* Packages: ``Flow``
+
+`BUGFIX: Fix broken cache get/set in RedisBackend <https://github.com/neos/flow-development-collection/pull/1300>`_
+-------------------------------------------------------------------------------------------------------------------
+
+The type hints broke correct detection of hits/misses in the cache
+backend.
+
+* Packages: ``Cache``
+
+`TASK: Remove dummy assertions from tests <https://github.com/neos/flow-development-collection/pull/1297>`_
+-----------------------------------------------------------------------------------------------------------
+
+This replaces dummy assertions used to silence PHPUnit warnings with the
+use of the `@doesNotPerformAssertions` annotation.
+
+* Packages: ``Flow`` ``FluidAdaptor``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/5.0.0...5.1.1>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
