@@ -250,7 +250,7 @@ class CacheCommandController extends CommandController
         unset($cacheConfigurations['Default']);
         ksort($cacheConfigurations);
 
-        $headers = ['Cache', 'Status', 'Backend'];
+        $headers = ['Cache', 'Backend', 'Status'];
 
         $rows = [];
         foreach ($cacheConfigurations as $identifier => $configuration) {
@@ -258,6 +258,7 @@ class CacheCommandController extends CommandController
             if (isset($configuration['persistent']) && $configuration['persistent'] === true) {
                 $identifier = $identifier . '*';
             }
+            $backendClassName = isset($configuration['backend']) ? '<b>' . $configuration['backend'] . '</b>' : $defaultConfiguration['backend'];
             $cacheBackend = $cache->getBackend();
             if (!$cacheBackend instanceof SetupableBackendInterface) {
                 $status = '?';
@@ -271,7 +272,7 @@ class CacheCommandController extends CommandController
                     $status = '<success>SUCCESS</success>';
                 }
             }
-            $row = [$identifier, $status, isset($configuration['backend']) ? '<b>' . $configuration['backend'] . '</b>' : $defaultConfiguration['backend']];
+            $row = [$identifier, $backendClassName, $status];
             $rows[] = $row;
         }
         $this->output->outputTable($rows, $headers);

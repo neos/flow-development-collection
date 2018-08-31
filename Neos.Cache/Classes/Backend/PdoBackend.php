@@ -272,14 +272,12 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
         try {
             $statementHandle->execute([$this->context(), $this->cacheIdentifier]);
         } catch (\PDOException $exception) {
-
         }
 
         $statementHandle = $this->databaseHandle->prepare('DELETE FROM "' . $this->cacheTableName . '" WHERE "context"=? AND "cache"=?');
         try {
             $statementHandle->execute([$this->context(), $this->cacheIdentifier]);
         } catch (\PDOException $exception) {
-
         }
     }
 
