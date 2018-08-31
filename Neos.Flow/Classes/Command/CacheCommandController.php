@@ -11,6 +11,12 @@ namespace Neos\Flow\Command;
  * source code.
  */
 
+use Neos\Cache\Backend\SetupableBackendInterface;
+use Neos\Cache\Exception\NoSuchCacheException;
+use Neos\Error\Messages\Error;
+use Neos\Error\Messages\Notice;
+use Neos\Error\Messages\Result;
+use Neos\Error\Messages\Warning;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cache\CacheManager;
 use Neos\Flow\Cli\CommandController;
@@ -21,6 +27,7 @@ use Neos\Flow\ObjectManagement\ObjectManager;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Package\PackageManagerInterface;
 use Neos\Flow\Utility\Environment;
+use Neos\Utility\TypeHandling;
 
 /**
  * Command controller for managing caches
@@ -229,6 +236,144 @@ class CacheCommandController extends CommandController
     }
 
     /**
+     * List configured caches
+     *
+     *
+     * @return void
+     * @see neos.flow:cache:show
+     * @throws NoSuchCacheException
+     */
+    public function listCommand()
+    {
+        $cacheConfigurations = $this->cacheManager->getCacheConfigurations();
+        $defaultConfiguration = $cacheConfigurations['Default'];
+        unset($cacheConfigurations['Default']);
+        ksort($cacheConfigurations);
+
+        $headers = ['Cache', 'Status', 'Backend'];
+
+        $rows = [];
+        foreach ($cacheConfigurations as $identifier => $configuration) {
+            $cache = $this->cacheManager->getCache($identifier);
+            if (isset($configuration['persistent']) && $configuration['persistent'] === true) {
+                $identifier = $identifier . '*';
+            }
+            $cacheBackend = $cache->getBackend();
+            if (!$cacheBackend instanceof SetupableBackendInterface) {
+                $status = '?';
+            } else {
+                $statusResult = $cacheBackend->getStatus();
+                if ($statusResult->hasErrors()) {
+                    $status = '<error>ERROR</error>';
+                } elseif ($statusResult->hasWarnings()) {
+                    $status = '<i>Warning</i>';
+                } else {
+                    $status = '<success>SUCCESS</success>';
+                }
+            }
+            $row = [$identifier, $status, isset($configuration['backend']) ? '<b>' . $configuration['backend'] . '</b>' : $defaultConfiguration['backend']];
+            $rows[] = $row;
+        }
+        $this->output->outputTable($rows, $headers);
+
+        $this->outputLine('* = Persistent Cache');
+        $this->outputLine('<b>Bold = Custom</b>, Thin = Default');
+    }
+
+    /**
+     * TODO document
+     *
+     * @param string $cacheIdentifier
+     * @return void
+     * @see neos.flow:cache:list
+     */
+    public function showCommand(string $cacheIdentifier)
+    {
+        try {
+            $cache = $this->cacheManager->getCache($cacheIdentifier);
+        } catch (NoSuchCacheException $exception) {
+            $this->outputLine('<error>A Cache with id "%s" is not configured.</error>', [$cacheIdentifier]);
+            $this->outputLine('Use the <i>neos.flow:cache:list</i> command to get a list of all configured Caches.');
+            $this->quit(1);
+            return;
+        }
+        $cacheConfigurations = $this->cacheManager->getCacheConfigurations();
+        $defaultConfiguration = $cacheConfigurations['Default'];
+        $cacheConfiguration = $cacheConfigurations[$cache->getIdentifier()];
+        $cacheBackend = $cache->getBackend();
+        $this->outputLine('<b>Identifier</b>: %s', [$cache->getIdentifier()]);
+        $this->outputLine('<b>Frontend</b>: %s', [TypeHandling::getTypeForValue($cache)]);
+        $this->outputLine('<b>Backend</b>: %s', [TypeHandling::getTypeForValue($cacheBackend)]);
+        $options = $cacheConfiguration['backendOptions'] ?? $defaultConfiguration['backendOptions'];
+        $this->outputLine('<b>Backend Options</b>: %s', [json_encode($options)]);
+
+        if ($cacheBackend instanceof SetupableBackendInterface) {
+            $this->outputLine();
+            $this->outputLine('<b>Status:</b>');
+            $this->renderResult($cacheBackend->getStatus());
+        }
+    }
+
+    /**
+     * TODO document
+     *
+     * @param string $cacheIdentifier
+     * @return void
+     * @see neos.flow:cache:list
+     * @see neos.flow:cache:setupall
+     */
+    public function setupCommand(string $cacheIdentifier)
+    {
+        try {
+            $cache = $this->cacheManager->getCache($cacheIdentifier);
+        } catch (NoSuchCacheException $exception) {
+            $this->outputLine('<error>A Cache with id "%s" is not configured.</error>', [$cacheIdentifier]);
+            $this->outputLine('Use the <i>neos.flow:cache:list</i> command to get a list of all configured Caches.');
+            $this->quit(1);
+            return;
+        }
+        $cacheBackend = $cache->getBackend();
+        if (!$cacheBackend instanceof SetupableBackendInterface) {
+            $this->outputLine('<error>The Cache "%s" is configured to use the backend "%s" but this does not implement the SetupableBackendInterface.</error>', [$cacheIdentifier, TypeHandling::getTypeForValue($cacheBackend)]);
+            $this->quit(1);
+            return;
+        }
+        $this->outputLine('Setting up backend <b>%s</b> for cache "%s"', [TypeHandling::getTypeForValue($cacheBackend), $cache->getIdentifier()]);
+        $this->renderResult($cacheBackend->setup());
+    }
+
+    /**
+     * TODO document
+     *
+     * @param bool $verbose
+     * @return void
+     * @see neos.flow:cache:setup
+     * @throws NoSuchCacheException
+     */
+    public function setupAllCommand(bool $verbose = false)
+    {
+        $cacheConfigurations = $this->cacheManager->getCacheConfigurations();
+        unset($cacheConfigurations['Default']);
+        foreach (array_keys($cacheConfigurations) as $cacheIdentifier) {
+            $cache = $this->cacheManager->getCache($cacheIdentifier);
+            $cacheBackend = $cache->getBackend();
+            if ($verbose) {
+                $this->outputLine('<b>%s:</b>', [$cache->getIdentifier()]);
+            }
+            if (!$cacheBackend instanceof SetupableBackendInterface) {
+                if ($verbose) {
+                    $this->outputLine('Skipped, because backend "%s" does not implement the SetupableBackendInterface', [TypeHandling::getTypeForValue($cacheBackend)]);
+                }
+                continue;
+            }
+            $result = $cacheBackend->setup();
+            if ($verbose || $result->hasErrors()) {
+                $this->renderResult($result);
+            }
+        }
+    }
+
+    /**
      * Call system function
      *
      * @Flow\Internal
@@ -246,6 +391,44 @@ class CacheCommandController extends CommandController
                 $this->lockManager->unlockSite();
             }
             $this->sendAndExit(0);
+        }
+    }
+
+    /**
+     * Outputs the given Result object in a human-readable way
+     *
+     * @param Result $result
+     * @return void
+     */
+    private function renderResult(Result $result)
+    {
+        if ($result->hasNotices()) {
+            /** @var Notice $notice */
+            foreach ($result->getNotices() as $notice) {
+                if (!empty($notice->getTitle())) {
+                    $this->outputLine('<b>%s</b>: %s', [$notice->getTitle(), $notice->render()]);
+                } else {
+                    $this->outputLine($notice->render());
+                }
+            }
+        }
+
+        if ($result->hasErrors()) {
+            /** @var Error $error */
+            foreach ($result->getErrors() as $error) {
+                $this->outputLine('<error>ERROR: %s</error>', [$error->render()]);
+            }
+        } elseif ($result->hasWarnings()) {
+            /** @var Warning $warning */
+            foreach ($result->getWarnings() as $warning) {
+                if (!empty($warning->getTitle())) {
+                    $this->outputLine('<b>%s</b>: <em>%s !!!</em>', [$warning->getTitle(), $warning->render()]);
+                } else {
+                    $this->outputLine('<em>%s !!!</em>', [$warning->render()]);
+                }
+            }
+        } else {
+            $this->outputLine('<success>SUCCESS</success>');
         }
     }
 

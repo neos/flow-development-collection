@@ -13,6 +13,8 @@ namespace Neos\Cache\Backend;
 
 use Neos\Cache\Backend\AbstractBackend as IndependentAbstractBackend;
 use Neos\Cache\EnvironmentConfiguration;
+use Neos\Error\Messages\Error;
+use Neos\Error\Messages\Result;
 use Neos\Utility\Files;
 use Neos\Cache\Exception;
 use Neos\Cache\Frontend\PhpFrontend;
@@ -26,7 +28,7 @@ use Neos\Utility\OpcodeCacheHelper;
  *
  * @api
  */
-class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapableBackendInterface, IterableBackendInterface
+class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapableBackendInterface, IterableBackendInterface, SetupableBackendInterface
 {
     const SEPARATOR = '^';
 
@@ -539,5 +541,35 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
         }
 
         return false;
+    }
+
+    /**
+     * TODO document
+     *
+     * @return Result
+     * @api
+     */
+    public function getStatus(): Result
+    {
+        $result = new Result();
+        // TODO check if cache directory exists and is writeable
+        return $result;
+    }
+
+    /**
+     * TODO document
+     *
+     * @return Result
+     * @api
+     */
+    public function setup(): Result
+    {
+        $result = new Result();
+        try {
+            $this->configureCacheDirectory();
+        } catch (Exception $exception) {
+            $result->addError(new Error('Failed to configure cache directory: %s', $exception->getCode(), [$exception->getMessage()]));
+        }
+        return $result;
     }
 }
