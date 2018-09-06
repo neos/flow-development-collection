@@ -299,6 +299,5 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
      */
     protected function emitSuccessfullyAuthenticated()
     {
-
     }
 }

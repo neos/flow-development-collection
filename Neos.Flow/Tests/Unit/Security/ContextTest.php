@@ -742,7 +742,7 @@ class ContextTest extends UnitTestCase
         $securityContext = $this->getAccessibleMock(Context::class, ['initialize', 'getAuthenticationTokens']);
         $securityContext->expects(self::any())->method('getAuthenticationTokens')->willReturn([$mockToken]);
         $this->inject($securityContext, 'objectManager', $this->mockObjectManager);
-        $this->inject($securityContext,'policyService', $mockPolicyService);
+        $this->inject($securityContext, 'policyService', $mockPolicyService);
 
         $this->assertFalse($securityContext->hasRole('Neos.Flow:Anonymous'));
     }

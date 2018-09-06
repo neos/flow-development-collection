@@ -109,7 +109,6 @@ class MethodPrivilege extends AbstractPrivilege implements MethodPrivilegeInterf
         }
 
         return true;
-
     }
 
     /**

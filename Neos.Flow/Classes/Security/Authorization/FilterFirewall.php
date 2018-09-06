@@ -90,7 +90,7 @@ class FilterFirewall implements FirewallInterface
      */
     public function blockIllegalRequests(ActionRequest $request)
     {
-        $filterMatched = array_reduce($this->filters, function(bool $filterMatched, RequestFilter $filter) use ($request) {
+        $filterMatched = array_reduce($this->filters, function (bool $filterMatched, RequestFilter $filter) use ($request) {
             return ($filter->filterRequest($request) ? true : $filterMatched);
         }, false);
 

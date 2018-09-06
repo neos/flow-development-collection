@@ -164,8 +164,7 @@ class PrivilegeManager implements PrivilegeManagerInterface
      */
     protected function getPrivilegeByTypeReducer(string $privilegeType): \Closure
     {
-        return function (array $availablePrivileges, Role $role) use ($privilegeType)
-        {
+        return function (array $availablePrivileges, Role $role) use ($privilegeType) {
             return array_merge($availablePrivileges, $role->getPrivilegesByType($privilegeType));
         };
     }

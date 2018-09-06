@@ -26,7 +26,6 @@ class TokenAndProviderFactoryTest extends UnitTestCase
      */
     public function noTokensAndProvidersAreBuiltIfTheConfigurationArrayIsEmpty()
     {
-
         $mockProviderResolver = $this->getMockBuilder(AuthenticationProviderResolver::class)->disableOriginalConstructor()->getMock();
         $mockRequestPatternResolver = $this->getMockBuilder(RequestPatternResolver::class)->disableOriginalConstructor()->getMock();
 
