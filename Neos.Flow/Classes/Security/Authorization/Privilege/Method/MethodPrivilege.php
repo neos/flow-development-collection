@@ -48,14 +48,17 @@ class MethodPrivilege extends AbstractPrivilege implements MethodPrivilegeInterf
      *
      * @param ObjectManagerInterface $objectManager
      * @return void
+     * @throws \Neos\Cache\Exception\NoSuchCacheException
      */
     public function injectObjectManager(ObjectManagerInterface $objectManager)
     {
         $this->objectManager = $objectManager;
         $this->initialize();
     }
+
     /**
      * @return void
+     * @throws \Neos\Cache\Exception\NoSuchCacheException
      */
     protected function initialize()
     {
@@ -80,6 +83,8 @@ class MethodPrivilege extends AbstractPrivilege implements MethodPrivilegeInterf
      * @param PrivilegeSubjectInterface $subject
      * @return boolean
      * @throws InvalidPrivilegeTypeException
+     * @throws \Neos\Flow\Exception
+     * @throws \Neos\Cache\Exception\NoSuchCacheException
      */
     public function matchesSubject(PrivilegeSubjectInterface $subject): bool
     {
@@ -92,16 +97,19 @@ class MethodPrivilege extends AbstractPrivilege implements MethodPrivilegeInterf
 
         $methodIdentifier = strtolower($joinPoint->getClassName() . '->' . $joinPoint->getMethodName());
 
-        if (isset(static::$methodPermissions[$methodIdentifier][$this->getCacheEntryIdentifier()])) {
-            if (static::$methodPermissions[$methodIdentifier][$this->getCacheEntryIdentifier()]['hasRuntimeEvaluations']) {
-                if ($this->runtimeExpressionEvaluator->evaluate($this->getCacheEntryIdentifier(), $joinPoint) === false) {
-                    return false;
-                }
-            }
-            return true;
+        if (!isset(static::$methodPermissions[$methodIdentifier][$this->getCacheEntryIdentifier()])) {
+            return false;
         }
 
-        return false;
+        if (
+            static::$methodPermissions[$methodIdentifier][$this->getCacheEntryIdentifier()]['hasRuntimeEvaluations']
+            && $this->runtimeExpressionEvaluator->evaluate($this->getCacheEntryIdentifier(), $joinPoint) === false
+        ) {
+            return false;
+        }
+
+        return true;
+
     }
 
     /**
@@ -110,6 +118,7 @@ class MethodPrivilege extends AbstractPrivilege implements MethodPrivilegeInterf
      * @param string $className
      * @param string $methodName
      * @return boolean
+     * @throws \Neos\Cache\Exception\NoSuchCacheException
      */
     public function matchesMethod($className, $methodName): bool
     {
@@ -127,6 +136,8 @@ class MethodPrivilege extends AbstractPrivilege implements MethodPrivilegeInterf
      * Returns the pointcut filter composite, matching all methods covered by this privilege
      *
      * @return PointcutFilterComposite
+     * @throws \Neos\Flow\Aop\Exception
+     * @throws \Neos\Flow\Aop\Exception\InvalidPointcutExpressionException
      */
     public function getPointcutFilterComposite(): PointcutFilterComposite
     {

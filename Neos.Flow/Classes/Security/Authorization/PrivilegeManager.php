@@ -77,53 +77,29 @@ class PrivilegeManager implements PrivilegeManagerInterface
      */
     public function isGrantedForRoles(array $roles, $privilegeType, $subject, &$reason = '')
     {
-        $effectivePrivilegeIdentifiersWithPermission = [];
-        $accessGrants = 0;
-        $accessDenies = 0;
-        $accessAbstains = 0;
-        /** @var Role $role */
-        foreach ($roles as $role) {
-            /** @var PrivilegeInterface[] $availablePrivileges */
-            $availablePrivileges = $role->getPrivilegesByType($privilegeType);
-            /** @var PrivilegeInterface[] $effectivePrivileges */
-            $effectivePrivileges = [];
-            foreach ($availablePrivileges as $privilege) {
-                if ($privilege->matchesSubject($subject)) {
-                    $effectivePrivileges[] = $privilege;
-                }
-            }
+        $availablePrivileges = array_reduce($roles, $this->getPrivilegeByTypeReducer($privilegeType), []);
+        $effectivePrivileges = array_filter($availablePrivileges, $this->getPrivilegeSubjectFilter($subject));
+        /** @var PrivilegePermissionResult $result */
+        $result = array_reduce($effectivePrivileges, [$this, 'applyPrivilegeToResult'], new PrivilegePermissionResult());
 
-            foreach ($effectivePrivileges as $effectivePrivilege) {
-                $privilegeName = $effectivePrivilege->getPrivilegeTargetIdentifier();
-                $parameterStrings = [];
-                foreach ($effectivePrivilege->getParameters() as $parameter) {
-                    $parameterStrings[] = sprintf('%s: "%s"', $parameter->getName(), $parameter->getValue());
-                }
-                if ($parameterStrings !== []) {
-                    $privilegeName .= ' (with parameters: ' . implode(', ', $parameterStrings) . ')';
-                }
-
-                $effectivePrivilegeIdentifiersWithPermission[] = sprintf('"%s": %s', $privilegeName, strtoupper($effectivePrivilege->getPermission()));
-                if ($effectivePrivilege->isGranted()) {
-                    $accessGrants++;
-                } elseif ($effectivePrivilege->isDenied()) {
-                    $accessDenies++;
-                } else {
-                    $accessAbstains++;
-                }
-            }
-        }
-
-        if (count($effectivePrivilegeIdentifiersWithPermission) === 0) {
+        $effectivePrivilegeIdentifiersWithPermission = $result->getEffectivePrivilegeIdentifiersWithPermission();
+        if ($effectivePrivilegeIdentifiersWithPermission === []) {
             $reason = sprintf('No privilege of type "%s" matched.', $privilegeType);
             return true;
-        } else {
-            $reason = sprintf('Evaluated following %d privilege target(s):' . chr(10) . '%s' . chr(10) . '(%d granted, %d denied, %d abstained)', count($effectivePrivilegeIdentifiersWithPermission), implode(chr(10), $effectivePrivilegeIdentifiersWithPermission), $accessGrants, $accessDenies, $accessAbstains);
         }
-        if ($accessDenies > 0) {
+
+        $reason = sprintf('Evaluated following %d privilege target(s):' . chr(10) . '%s' . chr(10) . '(%d granted, %d denied, %d abstained)',
+            count($effectivePrivilegeIdentifiersWithPermission),
+            implode(chr(10), $effectivePrivilegeIdentifiersWithPermission),
+            $result->getGrants(),
+            $result->getDenies(),
+            $result->getAbstains()
+        );
+
+        if ($result->getDenies() > 0) {
             return false;
         }
-        if ($accessGrants > 0) {
+        if ($result->getGrants() > 0) {
             return true;
         }
 
@@ -152,33 +128,56 @@ class PrivilegeManager implements PrivilegeManagerInterface
      */
     public function isPrivilegeTargetGrantedForRoles(array $roles, $privilegeTargetIdentifier, array $privilegeParameters = [])
     {
-        $privilegeFound = false;
-        $accessGrants = 0;
-        $accessDenies = 0;
-        /** @var Role $role */
-        foreach ($roles as $role) {
-            $privilege = $role->getPrivilegeForTarget($privilegeTargetIdentifier, $privilegeParameters);
-            if ($privilege === null) {
-                continue;
-            }
+        $privilegeMapper = function (Role $role) use ($privilegeTargetIdentifier, $privilegeParameters) {
+            return $role->getPrivilegeForTarget($privilegeTargetIdentifier, $privilegeParameters);
+        };
 
-            $privilegeFound = true;
+        $privileges = array_map($privilegeMapper, $roles);
+        /** @var PrivilegePermissionResult $result */
+        $result = array_reduce($privileges, [$this, 'applyPrivilegeToResult'], new PrivilegePermissionResult());
 
-            if ($privilege->isGranted()) {
-                $accessGrants++;
-            } elseif ($privilege->isDenied()) {
-                $accessDenies++;
-            }
-        }
-
-        if ($accessDenies === 0 && $accessGrants > 0) {
+        if ($result->getDenies() === 0 && $result->getGrants() > 0) {
             return true;
         }
 
-        if ($accessDenies === 0 && $accessGrants === 0 && $privilegeFound === true && $this->allowAccessIfAllAbstain === true) {
+        $privilegeFound = $privileges !== [];
+        if ($result->getDenies() === 0 && $result->getGrants() === 0 && $privilegeFound === true && $this->allowAccessIfAllAbstain === true) {
             return true;
         }
 
         return false;
+    }
+
+    /**
+     * @param PrivilegePermissionResult $result
+     * @param PrivilegeInterface|null $privilege
+     * @return PrivilegePermissionResult
+     */
+    protected function applyPrivilegeToResult(PrivilegePermissionResult $result, PrivilegeInterface $privilege = null): PrivilegePermissionResult
+    {
+        return $result->withPrivilege($privilege);
+    }
+
+    /**
+     * @param string $privilegeType
+     * @return \Closure
+     */
+    protected function getPrivilegeByTypeReducer(string $privilegeType): \Closure
+    {
+        return function (array $availablePrivileges, Role $role) use ($privilegeType)
+        {
+            return array_merge($availablePrivileges, $role->getPrivilegesByType($privilegeType));
+        };
+    }
+
+    /**
+     * @param mixed $subject
+     * @return \Closure
+     */
+    protected function getPrivilegeSubjectFilter($subject): \Closure
+    {
+        return function (PrivilegeInterface $privilege) use ($subject) {
+            return $privilege->matchesSubject($subject);
+        };
     }
 }

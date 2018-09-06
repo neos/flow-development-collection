@@ -41,7 +41,7 @@ class FilterFirewall implements FirewallInterface
     protected $interceptorResolver = null;
 
     /**
-     * @var array<RequestFilter>
+     * @var RequestFilter[]
      */
     protected $filters = [];
 
@@ -77,7 +77,7 @@ class FilterFirewall implements FirewallInterface
     public function injectSettings(array $settings)
     {
         $this->rejectAll = $settings['security']['firewall']['rejectAll'];
-        $this->buildFiltersFromSettings($settings['security']['firewall']['filters']);
+        $this->filters = array_map([$this, 'createFilterFromConfiguration'], array_values($settings['security']['firewall']['filters']));
     }
 
     /**
@@ -90,42 +90,37 @@ class FilterFirewall implements FirewallInterface
      */
     public function blockIllegalRequests(ActionRequest $request)
     {
-        $filterMatched = false;
-        /** @var $filter RequestFilter */
-        foreach ($this->filters as $filter) {
-            if ($filter->filterRequest($request)) {
-                $filterMatched = true;
-            }
-        }
+        $filterMatched = array_reduce($this->filters, function(bool $filterMatched, RequestFilter $filter) use ($request) {
+            return ($filter->filterRequest($request) ? true : $filterMatched);
+        }, false);
+
         if ($this->rejectAll && !$filterMatched) {
             throw new AccessDeniedException('The request was blocked, because no request filter explicitly allowed it.', 1216923741);
         }
     }
 
     /**
-     * Sets the internal filters based on the given configuration.
-     *
-     * @param array $filterSettings The filter settings
-     * @return void
+     * @param array $filterConfiguration
+     * @return RequestFilter
+     * @throws \Neos\Flow\Security\Exception\NoInterceptorFoundException
+     * @throws \Neos\Flow\Security\Exception\NoRequestPatternFoundException
      */
-    protected function buildFiltersFromSettings(array $filterSettings)
+    protected function createFilterFromConfiguration(array $filterConfiguration): RequestFilter
     {
-        foreach ($filterSettings as $singleFilterSettings) {
-            $patternType = isset($singleFilterSettings['pattern']) ? $singleFilterSettings['pattern'] : $singleFilterSettings['patternType'];
-            $patternClassName = $this->requestPatternResolver->resolveRequestPatternClass($patternType);
+        $patternType = isset($filterConfiguration['pattern']) ? $filterConfiguration['pattern'] : $filterConfiguration['patternType'];
+        $patternClassName = $this->requestPatternResolver->resolveRequestPatternClass($patternType);
 
-            $patternOptions = isset($singleFilterSettings['patternOptions']) ? $singleFilterSettings['patternOptions'] : [];
-            /** @var $requestPattern RequestPatternInterface */
-            $requestPattern = $this->objectManager->get($patternClassName, $patternOptions);
+        $patternOptions = isset($filterConfiguration['patternOptions']) ? $filterConfiguration['patternOptions'] : [];
+        /** @var $requestPattern RequestPatternInterface */
+        $requestPattern = $this->objectManager->get($patternClassName, $patternOptions);
 
-            // The following check needed for backwards compatibility:
-            // Previously each pattern had only one option that was set via the setPattern() method. Now options are passed to the constructor.
-            if (isset($singleFilterSettings['patternValue']) && is_callable([$requestPattern, 'setPattern'])) {
-                $requestPattern->setPattern($singleFilterSettings['patternValue']);
-            }
-            $interceptor = $this->objectManager->get($this->interceptorResolver->resolveInterceptorClass($singleFilterSettings['interceptor']));
-
-            $this->filters[] = $this->objectManager->get(RequestFilter::class, $requestPattern, $interceptor);
+        // The following check needed for backwards compatibility:
+        // Previously each pattern had only one option that was set via the setPattern() method. Now options are passed to the constructor.
+        if (isset($filterConfiguration['patternValue']) && is_callable([$requestPattern, 'setPattern'])) {
+            $requestPattern->setPattern($filterConfiguration['patternValue']);
         }
+
+        $interceptor = $this->objectManager->get($this->interceptorResolver->resolveInterceptorClass($filterConfiguration['interceptor']));
+        return new RequestFilter($requestPattern, $interceptor);
     }
 }

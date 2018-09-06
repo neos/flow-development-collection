@@ -46,12 +46,12 @@ class AuthenticationProviderResolver
      */
     public function resolveProviderClass($providerName)
     {
-        $resolvedObjectName = $this->objectManager->getCaseSensitiveObjectName($providerName);
+        $resolvedObjectName = $this->objectManager->getClassNameByObjectName($providerName);
         if ($resolvedObjectName !== false) {
             return $resolvedObjectName;
         }
 
-        $resolvedObjectName = $this->objectManager->getCaseSensitiveObjectName('Neos\Flow\Security\Authentication\Provider\\' . $providerName);
+        $resolvedObjectName = $this->objectManager->getClassNameByObjectName('Neos\Flow\Security\Authentication\Provider\\' . $providerName);
         if ($resolvedObjectName !== false) {
             return $resolvedObjectName;
         }

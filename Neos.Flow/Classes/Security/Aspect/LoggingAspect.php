@@ -14,7 +14,6 @@ namespace Neos\Flow\Security\Aspect;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Aop\JoinPointInterface;
 use Neos\Flow\Log\PsrSecurityLoggerInterface;
-use Neos\Flow\Security\Account;
 use Neos\Flow\Security\Authentication\AuthenticationManagerInterface;
 use Neos\Flow\Security\Authentication\TokenInterface;
 use Neos\Flow\Security\Exception\NoTokensAuthenticatedException;
@@ -54,16 +53,21 @@ class LoggingAspect
                 $this->securityLogger->notice(sprintf('Authentication failed: "%s" #%d', $exception->getMessage(), $exception->getCode()));
             }
             throw $exception;
-        } elseif ($this->alreadyLoggedAuthenticateCall === false) {
-            /** @var AuthenticationManagerInterface $authenticationManager */
-            $authenticationManager = $joinPoint->getProxy();
-            if ($authenticationManager->getSecurityContext()->getAccount() !== null) {
-                $this->securityLogger->info(sprintf('Successfully re-authenticated tokens for account "%s"', $authenticationManager->getSecurityContext()->getAccount()->getAccountIdentifier()));
-            } else {
-                $this->securityLogger->info('No account authenticated');
-            }
-            $this->alreadyLoggedAuthenticateCall = true;
         }
+
+        if ($this->alreadyLoggedAuthenticateCall) {
+            return;
+        }
+
+        $this->alreadyLoggedAuthenticateCall = true;
+        /** @var AuthenticationManagerInterface $authenticationManager */
+        $authenticationManager = $joinPoint->getProxy();
+        $logMessage = 'No account authenticated';
+        if ($authenticationManager->getSecurityContext()->getAccount() !== null) {
+            $logMessage = sprintf('Successfully re-authenticated tokens for account "%s"', $authenticationManager->getSecurityContext()->getAccount()->getAccountIdentifier());
+        }
+
+        $this->securityLogger->info($logMessage);
     }
 
     /**
@@ -81,15 +85,24 @@ class LoggingAspect
         if (!$securityContext->isInitialized()) {
             return;
         }
-        $accountIdentifiers = [];
-        foreach ($securityContext->getAuthenticationTokens() as $token) {
-            /** @var $account Account */
-            $account = $token->getAccount();
-            if ($account !== null) {
-                $accountIdentifiers[] = $account->getAccountIdentifier();
-            }
-        }
+
+        $accountIdentifiers = array_reduce($securityContext->getAuthenticationTokens(), [$this, 'reduceTokenToAccountIdentifier'], []);
         $this->securityLogger->info(sprintf('Logged out %d account(s). (%s)', count($accountIdentifiers), implode(', ', $accountIdentifiers)));
+    }
+
+    /**
+     * @param array $collectedIdentifiers
+     * @param TokenInterface $token
+     * @return array
+     */
+    protected function reduceTokenToAccountIdentifier(array $collectedIdentifiers, TokenInterface $token): array
+    {
+        $account = $token->getAccount();
+        if ($account !== null) {
+            $collectedIdentifiers[] = $account->getAccountIdentifier();
+        }
+
+        return $collectedIdentifiers;
     }
 
     /**
