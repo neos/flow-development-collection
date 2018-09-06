@@ -1452,24 +1452,26 @@ class ReflectionService
      */
     protected function expandType(ClassReflection $class, $type)
     {
+        $typeWithoutNull = TypeHandling::stripNullableType($type);
+        $isNullable = $typeWithoutNull !== $type;
         // expand "SomeType<SomeElementType>" to "\SomeTypeNamespace\SomeType<\ElementTypeNamespace\ElementType>"
         if (strpos($type, '<') !== false) {
-            $typeParts = explode('<', $type);
+            $typeParts = explode('<', $typeWithoutNull);
             $type = $typeParts[0];
             $elementType = rtrim($typeParts[1], '>');
 
-            return $this->expandType($class, $type) . '<' . $this->expandType($class, $elementType) . '>';
+            return $this->expandType($class, $type) . '<' . $this->expandType($class, $elementType) . '>' . ($isNullable ? '|null' : '');
         }
 
         // skip simple types and types with fully qualified namespaces
         if ($type === 'mixed' || $type[0] === '\\' || TypeHandling::isSimpleType($type)) {
-            return TypeHandling::normalizeType($type);
+            return TypeHandling::normalizeType($type) . ($isNullable ? '|null' : '');
         }
 
         // we try to find the class relative to the current namespace...
-        $possibleFullyQualifiedClassName = sprintf('%s\\%s', $class->getNamespaceName(), $type);
+        $possibleFullyQualifiedClassName = sprintf('%s\\%s', $class->getNamespaceName(), $typeWithoutNull);
         if (class_exists($possibleFullyQualifiedClassName) || interface_exists($possibleFullyQualifiedClassName)) {
-            return $possibleFullyQualifiedClassName;
+            return $possibleFullyQualifiedClassName . ($isNullable ? '|null' : '');
         }
 
         // and then we try to find "use" statements for the class.
@@ -1480,12 +1482,12 @@ class ReflectionService
         $useStatementsForClass = $this->useStatementsForClassCache[$className];
 
         // ... and try to expand them
-        $typeParts = explode('\\', $type, 2);
+        $typeParts = explode('\\', $typeWithoutNull, 2);
         $lowercasedFirstTypePart = strtolower($typeParts[0]);
         if (isset($useStatementsForClass[$lowercasedFirstTypePart])) {
             $typeParts[0] = $useStatementsForClass[$lowercasedFirstTypePart];
 
-            return implode('\\', $typeParts);
+            return implode('\\', $typeParts) . ($isNullable ? '|null' : '');
         }
 
         return $type;
