@@ -1,5 +1,4 @@
 <?php
-
 namespace Neos\Flow\Core\Booting;
 
 /*
@@ -716,6 +715,8 @@ class Scripts
             $subRequestEnvironmentVariables = array_merge($subRequestEnvironmentVariables, $settings['core']['subRequestEnvironmentVariables']);
         }
 
+        self::ensureCurrentPhpVersionMatchesConfiguredVersion($settings['core']['phpBinaryPathAndFilename']);
+
         $command = '';
         foreach ($subRequestEnvironmentVariables as $argumentKey => $argumentValue) {
             if (DIRECTORY_SEPARATOR === '/') {
@@ -740,29 +741,30 @@ class Scripts
             $command .= ' -c ' . escapeshellarg($useIniFile);
         }
 
-        self::ensureCurrentPhpVersionMatchesConfiguredVersion($command);
 
         return $command;
     }
 
     /**
-     * @param $command
+     * @param string phpBinaryPathAndFilename
      * @throws Exception
      */
-    protected static function ensureCurrentPhpVersionMatchesConfiguredVersion($command)
+    protected static function ensureCurrentPhpVersionMatchesConfiguredVersion($phpBinaryPathAndFilename)
     {
-        $runningPHPVersion = phpversion() . '-' . PHP_SAPI;
-        exec($command . ' -r "echo phpversion() . \'-\' . PHP_SAPI;"', $output, $result);
+        // Resolve any symlinks that the configured php might be pointing to
+        $configuredPhpBinaryPathAndFilename = realpath($phpBinaryPathAndFilename);
 
-        if ($result === 0) {
-            $configuredPHPVersion = $output[0];
-            if (strcmp($runningPHPVersion, $configuredPHPVersion) !== 0) {
-                throw new Exception(sprintf('You are running the Flow CLI with a PHP version different from your system default. ' .
-                    'Flow has been run with "%s", while the system default is "%s". Make sure to configure Flow to use the same PHP ' .
-                    'binary by setting the Neos.Flow.core.phpBinaryPathAndFilename configuration option to "%s". Flush the caches by '.
-                    'removing the folder Data/Temporary before running ./flow again.',
-                    $runningPHPVersion, $configuredPHPVersion, PHP_BINARY), 1536303119);
-            }
+        // if the configured PHP binary is empty here, the file does not exist. We ignore that here because it is checked later in the script.
+        if (strlen($configuredPhpBinaryPathAndFilename) === 0) {
+            return;
+        }
+
+        if (strcmp(PHP_BINARY, $configuredPhpBinaryPathAndFilename) !== 0) {
+            throw new Exception(sprintf('You are running the Flow CLI with a PHP version different from the one Flow is configured to use. ' .
+                'Flow has been run with "%s", while the PHP version Flow is configured to use is "%s". Make sure to configure Flow to ' .
+                'use the same PHP binary by setting the "Neos.Flow.core.phpBinaryPathAndFilename" configuration option to "%s". Flush the ' .
+                'caches by removing the folder Data/Temporary before running ./flow again.',
+                PHP_BINARY, $configuredPhpBinaryPathAndFilename, PHP_BINARY), 1536303119);
         }
     }
 
