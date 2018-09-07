@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Core\Booting;
 
 /*
@@ -25,6 +26,7 @@ use Neos\Flow\Core\ProxyClassLoader;
 use Neos\Flow\Error\Debugger;
 use Neos\Flow\Error\ErrorHandler;
 use Neos\Flow\Error\ProductionExceptionHandler;
+use Neos\Flow\Exception;
 use Neos\Flow\Log\Logger;
 use Neos\Flow\Log\LoggerFactory;
 use Neos\Flow\Log\SystemLoggerInterface;
@@ -700,6 +702,8 @@ class Scripts
     /**
      * @param array $settings The Neos.Flow settings
      * @return string A command line command for PHP, which can be extended and then exec()uted
+     *
+     * @throws Exception
      */
     public static function buildPhpCommand(array $settings)
     {
@@ -736,7 +740,30 @@ class Scripts
             $command .= ' -c ' . escapeshellarg($useIniFile);
         }
 
+        self::ensureCurrentPhpVersionMatchesConfiguredVersion($command);
+
         return $command;
+    }
+
+    /**
+     * @param $command
+     * @throws Exception
+     */
+    protected static function ensureCurrentPhpVersionMatchesConfiguredVersion($command)
+    {
+        $runningPHPVersion = phpversion() . '-' . PHP_SAPI;
+        exec($command . ' -r "echo phpversion() . \'-\' . PHP_SAPI;"', $output, $result);
+
+        if ($result === 0) {
+            $configuredPHPVersion = $output[0];
+            if (strcmp($runningPHPVersion, $configuredPHPVersion) !== 0) {
+                throw new Exception(sprintf('You are running the Flow CLI with a PHP version different from your system default. ' .
+                    'Flow has been run with "%s", while the system default is "%s". Make sure to configure Flow to use the same PHP ' .
+                    'binary by setting the Neos.Flow.core.phpBinaryPathAndFilename configuration option to "%s". Flush the caches by '.
+                    'removing the folder Data/Temporary before running ./flow again.',
+                    $runningPHPVersion, $configuredPHPVersion, PHP_BINARY), 1536303119);
+            }
+        }
     }
 
     /**
