@@ -81,7 +81,7 @@ into the right directories, everything will just work.
 
 The directory layout inside a Flow package is as follows:
 
-Classes/*VendorName*/*PackageName*
+Classes
   This directory contains the actual source code for the package. Package authors
   are free to add (only!) class or interface files directly to this directory or add
   subdirectories to organize the content as necessary. All classes or interfaces
@@ -313,7 +313,7 @@ as dependencies, like needed PHP extensions, version constraints and other packa
 For details on the format and possibilities of that file, have a look at the `Composer`_
 documentation.
 
-Classes/*VendorName*/*PackageName*/Package.php
+Classes/Package.php
 ----------------------------------------------
 
 This file contains bootstrap code for the package. If no bootstrap code is needed,
