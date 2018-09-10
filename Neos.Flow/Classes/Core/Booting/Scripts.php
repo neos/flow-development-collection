@@ -715,7 +715,7 @@ class Scripts
             $subRequestEnvironmentVariables = array_merge($subRequestEnvironmentVariables, $settings['core']['subRequestEnvironmentVariables']);
         }
 
-        self::ensureCurrentPhpVersionMatchesConfiguredVersion($settings['core']['phpBinaryPathAndFilename']);
+        self::ensureCLISubrequestsUseCurrentlyRunningPhpBinary($settings['core']['phpBinaryPathAndFilename']);
 
         $command = '';
         foreach ($subRequestEnvironmentVariables as $argumentKey => $argumentValue) {
@@ -741,16 +741,25 @@ class Scripts
             $command .= ' -c ' . escapeshellarg($useIniFile);
         }
 
+        self::ensureWebSubrequestsUseCurrentlyRunningPhpVersion($command);
 
         return $command;
     }
 
     /**
+     * Compares the realpath of the configured PHP binary (if any) with the one flow was called with in a CLI request.
+     * This avoids config errors where users forget to set Neos.Flow.core.phpBinaryPathAndFilename in CLI.
+     *
      * @param string phpBinaryPathAndFilename
      * @throws Exception
      */
-    protected static function ensureCurrentPhpVersionMatchesConfiguredVersion($phpBinaryPathAndFilename)
+    protected static function ensureCLISubrequestsUseCurrentlyRunningPhpBinary($phpBinaryPathAndFilename)
     {
+        // Do nothing for non-CLI requests
+        if (PHP_SAPI !== 'cli') {
+            return;
+        }
+
         // Resolve any symlinks that the configured php might be pointing to
         $configuredPhpBinaryPathAndFilename = realpath($phpBinaryPathAndFilename);
 
@@ -760,11 +769,42 @@ class Scripts
         }
 
         if (strcmp(PHP_BINARY, $configuredPhpBinaryPathAndFilename) !== 0) {
-            throw new Exception(sprintf('You are running the Flow CLI with a PHP version different from the one Flow is configured to use. ' .
-                'Flow has been run with "%s", while the PHP version Flow is configured to use is "%s". Make sure to configure Flow to ' .
+            throw new Exception(sprintf('You are running the Flow CLI with a PHP binary different from the one Flow is configured to use internally. ' .
+                'Flow has been run with "%s", while the PHP version Flow is configured to use for subrequests is "%s". Make sure to configure Flow to ' .
                 'use the same PHP binary by setting the "Neos.Flow.core.phpBinaryPathAndFilename" configuration option to "%s". Flush the ' .
                 'caches by removing the folder Data/Temporary before running ./flow again.',
                 PHP_BINARY, $configuredPhpBinaryPathAndFilename, PHP_BINARY), 1536303119);
+        }
+    }
+
+    /**
+     * Compares the actual version of the configured PHP binary (if any) with the one flow was called with in a non-CLI request.
+     * This avoids config errors where users forget to set Neos.Flow.core.phpBinaryPathAndFilename in connection with a web
+     * server.
+     *
+     * @param string $phpCommand the completely build php string that is used to execute subrequests
+     * @throws Exception
+     */
+    protected static function ensureWebSubrequestsUseCurrentlyRunningPhpVersion($phpCommand)
+    {
+        // Do nothing for CLI requests
+        if (PHP_SAPI === 'cli') {
+            return;
+        }
+
+        exec($phpCommand . ' -r "echo phpversion();"', $output, $result);
+
+        if ($result !== 0) {
+            return;
+        }
+        $runningPHPVersion = phpversion();
+        $configuredPHPVersion = $output[0];
+        if ($runningPHPVersion !== $configuredPHPVersion) {
+            throw new Exception(sprintf('You are executing Neos/Flow with a PHP version different from the one Flow is configured to use internally. ' .
+                'Flow is running with with PHP "%s", while the PHP version Flow is configured to use for subrequests is "%s". Make sure to configure Flow to ' .
+                'use the same PHP version by setting the "Neos.Flow.core.phpBinaryPathAndFilename" configuration option to a PHP-CLI binary of the version ' .
+                '%s. Flush the caches by removing the folder Data/Temporary before executing Flow/Neos again.',
+                $runningPHPVersion, $configuredPHPVersion, $runningPHPVersion), 1536563428);
         }
     }
 
