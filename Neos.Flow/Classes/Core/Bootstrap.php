@@ -79,11 +79,12 @@ class Bootstrap
      * Constructor
      *
      * @param string $context The application context, for example "Production" or "Development"
+     * @param \Composer\Autoload\ClassLoader $composerAutoloader Composer autoloader
      */
-    public function __construct(string $context)
+    public function __construct(string $context, \Composer\Autoload\ClassLoader $composerAutoloader = null)
     {
-        // Load the composer autoloader first
-        $composerAutoloader = require(__DIR__ . '/../../../../Libraries/autoload.php');
+        // Load the composer autoloader first if not provided
+        $composerAutoloader = $composerAutoloader ?? require(__DIR__ . '/../../../../Libraries/autoload.php');
 
         $this->context = new ApplicationContext($context);
         $this->earlyInstances[__CLASS__] = $this;
