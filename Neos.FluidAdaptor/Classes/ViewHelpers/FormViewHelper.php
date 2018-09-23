@@ -144,7 +144,7 @@ class FormViewHelper extends AbstractFormViewHelper
 
         if (strtolower($this->arguments['method']) === 'get') {
             $this->tag->addAttribute('method', 'get');
-        } else if($this->arguments['method']) === 'dialog') {
+        } elseif(strtolower($this->arguments['method']) === 'dialog') {
              $this->tag->addAttribute('method', 'dialog');
         } else {
             $this->tag->addAttribute('method', 'post');
