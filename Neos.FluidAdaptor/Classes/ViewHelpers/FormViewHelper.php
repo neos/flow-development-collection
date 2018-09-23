@@ -103,7 +103,7 @@ class FormViewHelper extends AbstractFormViewHelper
     public function initializeArguments()
     {
         $this->registerTagAttribute('enctype', 'string', 'MIME type with which the form is submitted');
-        $this->registerTagAttribute('method', 'string', 'Transfer type (GET or POST)');
+        $this->registerTagAttribute('method', 'string', 'Transfer type (GET or POST or dialog)');
         $this->registerTagAttribute('name', 'string', 'Name of form');
         $this->registerTagAttribute('onreset', 'string', 'JavaScript: On reset of the form');
         $this->registerTagAttribute('onsubmit', 'string', 'JavaScript: On submit of the form');
@@ -144,6 +144,8 @@ class FormViewHelper extends AbstractFormViewHelper
 
         if (strtolower($this->arguments['method']) === 'get') {
             $this->tag->addAttribute('method', 'get');
+        } else if($this->arguments['method']) === 'dialog'){
+             $this->tag->addAttribute('method', 'dialog');
         } else {
             $this->tag->addAttribute('method', 'post');
         }
