@@ -63,4 +63,32 @@ class AnnotatedClass
     public function intAndIntegerParameters($int, $integer)
     {
     }
+
+    /**
+     * @param AnnotatedClass $nullable
+     */
+    public function nativeNullableParameter($nullable = null)
+    {
+    }
+
+    /**
+     * @param AnnotatedClass|null $nullable
+     */
+    public function annotatedNullableParameter($nullable)
+    {
+    }
+
+    /**
+     * @param null|AnnotatedClass $nullable
+     */
+    public function reverseAnnotatedNullableParameter($nullable)
+    {
+    }
+
+    /**
+     * @param AnnotatedClass|null $nullable
+     */
+    public function annotatedAndNativeNullableParameter($nullable = null)
+    {
+    }
 }
