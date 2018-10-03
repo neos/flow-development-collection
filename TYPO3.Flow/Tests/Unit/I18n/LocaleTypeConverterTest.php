@@ -19,7 +19,7 @@ use TYPO3\Flow\Tests\UnitTestCase;
 /**
  * Testcase for the Locale type converter
  *
- * @covers I18n\LocaleTypeConverter<extended>
+ * @covers \TYPO3\Flow\I18n\LocaleTypeConverter<extended>
  */
 class LocaleTypeConverterTest extends UnitTestCase
 {
