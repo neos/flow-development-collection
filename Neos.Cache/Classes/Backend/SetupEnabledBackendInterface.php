@@ -18,7 +18,7 @@ use Neos\Error\Messages\Result;
  *
  * @api
  */
-interface SetupableBackendInterface extends BackendInterface
+interface SetupEnabledBackendInterface extends BackendInterface
 {
     /**
      * TODO document

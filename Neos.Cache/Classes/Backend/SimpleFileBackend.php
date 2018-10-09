@@ -28,7 +28,7 @@ use Neos\Utility\OpcodeCacheHelper;
  *
  * @api
  */
-class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapableBackendInterface, IterableBackendInterface, SetupableBackendInterface
+class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapableBackendInterface, IterableBackendInterface, SetupEnabledBackendInterface
 {
     const SEPARATOR = '^';
 

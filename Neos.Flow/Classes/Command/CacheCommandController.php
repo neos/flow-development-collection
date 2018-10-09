@@ -11,7 +11,7 @@ namespace Neos\Flow\Command;
  * source code.
  */
 
-use Neos\Cache\Backend\SetupableBackendInterface;
+use Neos\Cache\Backend\SetupEnabledBackendInterface;
 use Neos\Cache\Exception\NoSuchCacheException;
 use Neos\Error\Messages\Error;
 use Neos\Error\Messages\Notice;
@@ -256,18 +256,18 @@ class CacheCommandController extends CommandController
         foreach ($cacheConfigurations as $identifier => $configuration) {
             $cache = $this->cacheManager->getCache($identifier);
             if (isset($configuration['persistent']) && $configuration['persistent'] === true) {
-                $identifier = $identifier . '*';
+                $identifier = $identifier . ' <comment>*</comment>';
             }
             $backendClassName = isset($configuration['backend']) ? '<b>' . $configuration['backend'] . '</b>' : $defaultConfiguration['backend'];
             $cacheBackend = $cache->getBackend();
-            if (!$cacheBackend instanceof SetupableBackendInterface) {
+            if (!$cacheBackend instanceof SetupEnabledBackendInterface) {
                 $status = '?';
             } else {
                 $statusResult = $cacheBackend->getStatus();
                 if ($statusResult->hasErrors()) {
                     $status = '<error>ERROR</error>';
                 } elseif ($statusResult->hasWarnings()) {
-                    $status = '<i>Warning</i>';
+                    $status = '<comment>Warning</comment>';
                 } else {
                     $status = '<success>SUCCESS</success>';
                 }
@@ -277,7 +277,7 @@ class CacheCommandController extends CommandController
         }
         $this->output->outputTable($rows, $headers);
 
-        $this->outputLine('* = Persistent Cache');
+        $this->outputLine('<comment>*</comment> = Persistent Cache');
         $this->outputLine('<b>Bold = Custom</b>, Thin = Default');
     }
 
@@ -308,7 +308,7 @@ class CacheCommandController extends CommandController
         $options = $cacheConfiguration['backendOptions'] ?? $defaultConfiguration['backendOptions'];
         $this->outputLine('<b>Backend Options</b>: %s', [json_encode($options)]);
 
-        if ($cacheBackend instanceof SetupableBackendInterface) {
+        if ($cacheBackend instanceof SetupEnabledBackendInterface) {
             $this->outputLine();
             $this->outputLine('<b>Status:</b>');
             $this->renderResult($cacheBackend->getStatus());
@@ -334,8 +334,8 @@ class CacheCommandController extends CommandController
             return;
         }
         $cacheBackend = $cache->getBackend();
-        if (!$cacheBackend instanceof SetupableBackendInterface) {
-            $this->outputLine('<error>The Cache "%s" is configured to use the backend "%s" but this does not implement the SetupableBackendInterface.</error>', [$cacheIdentifier, TypeHandling::getTypeForValue($cacheBackend)]);
+        if (!$cacheBackend instanceof SetupEnabledBackendInterface) {
+            $this->outputLine('<error>The Cache "%s" is configured to use the backend "%s" but this does not implement the SetupEnabledBackendInterface.</error>', [$cacheIdentifier, TypeHandling::getTypeForValue($cacheBackend)]);
             $this->quit(1);
             return;
         }
@@ -361,9 +361,9 @@ class CacheCommandController extends CommandController
             if ($verbose) {
                 $this->outputLine('<b>%s:</b>', [$cache->getIdentifier()]);
             }
-            if (!$cacheBackend instanceof SetupableBackendInterface) {
+            if (!$cacheBackend instanceof SetupEnabledBackendInterface) {
                 if ($verbose) {
-                    $this->outputLine('Skipped, because backend "%s" does not implement the SetupableBackendInterface', [TypeHandling::getTypeForValue($cacheBackend)]);
+                    $this->outputLine('Skipped, because backend "%s" does not implement the SetupEnabledBackendInterface', [TypeHandling::getTypeForValue($cacheBackend)]);
                 }
                 continue;
             }

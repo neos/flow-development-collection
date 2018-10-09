@@ -33,7 +33,7 @@ use Neos\Utility\PdoHelper;
  *
  * @api
  */
-class PdoBackend extends IndependentAbstractBackend implements TaggableBackendInterface, IterableBackendInterface, PhpCapableBackendInterface, SetupableBackendInterface
+class PdoBackend extends IndependentAbstractBackend implements TaggableBackendInterface, IterableBackendInterface, PhpCapableBackendInterface, SetupEnabledBackendInterface
 {
     use RequireOnceFromValueTrait;
 
