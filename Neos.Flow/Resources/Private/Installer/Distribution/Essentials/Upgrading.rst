@@ -1,20 +1,13 @@
 Upgrading instructions
 ======================
 
-This file contains instructions for upgrading your Flow 4.3 based
-applications to Neos Flow 5.0
+This file contains instructions for upgrading your Flow 5.0 based
+applications to Neos Flow 5.1
 
 What has changed
 ----------------
 
 For further details see the ReleaseNotes and ChangeLogs.
-
-* We now require 7.1.x or higher
-* If you are using a MySQL based database you must use at least 
-MySQL 5.7.7 or MariaDB 10.2.2
-
-The YAML parser got stricter, so you might get parsing errors, which just means
-the invalid YAML was ignored beforehand with undefined result.
 
 Upgrading your Packages
 -----------------------
@@ -64,10 +57,6 @@ things might get out of hands in the future.
 
 Upgrading the database schema
 -----------------------------
-
-Note that for this release you should update the charset before updating the schema::
-
- ./flow database:setcharset
 
 Upgrading the schema is done by running::
 
