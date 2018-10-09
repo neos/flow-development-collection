@@ -282,7 +282,7 @@ class ReflectionService
      */
     public function injectSettings(array $settings)
     {
-        $this->settings = $settings;
+        $this->settings = $settings['reflection'];
     }
 
     /**
@@ -348,7 +348,7 @@ class ReflectionService
         }
 
         $this->annotationReader = new AnnotationReader();
-        foreach ($this->settings['reflection']['ignoredTags'] as $tagName => $ignoreFlag) {
+        foreach ($this->settings['ignoredTags'] as $tagName => $ignoreFlag) {
             if ($ignoreFlag === true) {
                 AnnotationReader::addGlobalIgnoredName($tagName);
             }
@@ -1195,11 +1195,11 @@ class ReflectionService
      */
     protected function isTagIgnored($tagName)
     {
-        if (isset($this->settings['reflection']['ignoredTags'][$tagName]) && $this->settings['reflection']['ignoredTags'][$tagName] === true) {
+        if (isset($this->settings['ignoredTags'][$tagName]) && $this->settings['ignoredTags'][$tagName] === true) {
             return true;
         }
         // Make this setting backwards compatible with old array schema (deprecated since 3.0)
-        if (in_array($tagName, $this->settings['reflection']['ignoredTags'], true)) {
+        if (in_array($tagName, $this->settings['ignoredTags'], true)) {
             return true;
         }
 
@@ -1406,7 +1406,7 @@ class ReflectionService
         $paramAnnotations = $method->isTaggedWith('param') ? $method->getTagValues('param') : [];
 
         $this->classReflectionData[$className][self::DATA_CLASS_METHODS][$methodName][self::DATA_METHOD_PARAMETERS][$parameter->getName()] = $this->convertParameterReflectionToArray($parameter, $method);
-        if ($this->settings['reflection']['logIncorrectDocCommentHints'] !== true) {
+        if ($this->settings['logIncorrectDocCommentHints'] !== true) {
             return;
         }
 

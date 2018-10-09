@@ -72,24 +72,10 @@ class InternalRequestEngine implements RequestEngineInterface
     protected $validatorResolver;
 
     /**
-     * @var array
-     */
-    protected $settings;
-
-    /**
      * @Flow\Inject
      * @var PersistenceManagerInterface
      */
     protected $persistenceManager;
-
-    /**
-     * @param array $settings
-     * @return void
-     */
-    public function injectSettings(array $settings)
-    {
-        $this->settings = $settings;
-    }
 
     /**
      * Sends the given HTTP request

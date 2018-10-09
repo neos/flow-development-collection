@@ -101,7 +101,7 @@ class ResourceManager
      */
     public function injectSettings(array $settings)
     {
-        $this->settings = $settings;
+        $this->settings = $settings['resource'];
     }
 
     /**
@@ -545,7 +545,7 @@ class ResourceManager
      */
     protected function initializeStorages()
     {
-        foreach ($this->settings['resource']['storages'] as $storageName => $storageDefinition) {
+        foreach ($this->settings['storages'] as $storageName => $storageDefinition) {
             if (!isset($storageDefinition['storage'])) {
                 throw new Exception(sprintf('The configuration for the resource storage "%s" defined in your settings has no valid "storage" option. Please check the configuration syntax and make sure to specify a valid storage class name.', $storageName), 1361467211);
             }
@@ -565,7 +565,7 @@ class ResourceManager
      */
     protected function initializeTargets()
     {
-        foreach ($this->settings['resource']['targets'] as $targetName => $targetDefinition) {
+        foreach ($this->settings['targets'] as $targetName => $targetDefinition) {
             if (!isset($targetDefinition['target'])) {
                 throw new Exception(sprintf('The configuration for the resource target "%s" defined in your settings has no valid "target" option. Please check the configuration syntax and make sure to specify a valid target class name.', $targetName), 1361467838);
             }
@@ -585,7 +585,7 @@ class ResourceManager
      */
     protected function initializeCollections()
     {
-        foreach ($this->settings['resource']['collections'] as $collectionName => $collectionDefinition) {
+        foreach ($this->settings['collections'] as $collectionName => $collectionDefinition) {
             if (!isset($collectionDefinition['storage'])) {
                 throw new Exception(sprintf('The configuration for the resource collection "%s" defined in your settings has no valid "storage" option. Please check the configuration syntax.', $collectionName), 1361468805);
             }
@@ -624,7 +624,7 @@ class ResourceManager
             throw new Exception('The given upload file "' . strip_tags($pathInfo['basename']) . '" was not uploaded through PHP. As it could pose a security risk it cannot be imported.', 1422461503);
         }
 
-        if (isset($pathInfo['extension']) && array_key_exists(strtolower($pathInfo['extension']), $this->settings['resource']['uploadExtensionBlacklist']) && $this->settings['resource']['uploadExtensionBlacklist'][strtolower($pathInfo['extension'])] === true) {
+        if (isset($pathInfo['extension']) && array_key_exists(strtolower($pathInfo['extension']), $this->settings['uploadExtensionBlacklist']) && $this->settings['uploadExtensionBlacklist'][strtolower($pathInfo['extension'])] === true) {
             throw new Exception('The extension of the given upload file "' . strip_tags($pathInfo['basename']) . '" is blacklisted. As it could pose a security risk it cannot be imported.', 1447148472);
         }
 

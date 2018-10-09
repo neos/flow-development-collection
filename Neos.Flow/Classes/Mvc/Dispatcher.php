@@ -44,11 +44,6 @@ class Dispatcher
     protected $objectManager;
 
     /**
-     * @var array
-     */
-    protected $settings = [];
-
-    /**
      * Inject the Object Manager through setter injection because property injection
      * is not available during compile time.
      *
@@ -58,17 +53,6 @@ class Dispatcher
     public function injectObjectManager(ObjectManagerInterface $objectManager)
     {
         $this->objectManager = $objectManager;
-    }
-
-    /**
-     * Injects the Flow settings
-     *
-     * @param array $settings The Flow settings
-     * @return void
-     */
-    public function injectSettings(array $settings)
-    {
-        $this->settings = $settings;
     }
 
     /**

@@ -111,7 +111,7 @@ class PackageManager implements PackageManagerInterface
      */
     public function injectSettings(array $settings)
     {
-        $this->settings = $settings;
+        $this->settings = $settings['package'];
     }
 
     /**
@@ -343,8 +343,8 @@ class PackageManager implements PackageManagerInterface
 
         if ($packagesPath === null) {
             $packagesPath = 'Application';
-            if (is_array($this->settings['package']['packagesPathByType']) && isset($this->settings['package']['packagesPathByType'][$manifest['type']])) {
-                $packagesPath = $this->settings['package']['packagesPathByType'][$manifest['type']];
+            if (is_array($this->settings['packagesPathByType']) && isset($this->settings['packagesPathByType'][$manifest['type']])) {
+                $packagesPath = $this->settings['packagesPathByType'][$manifest['type']];
             }
 
             $packagesPath = Files::getUnixStylePath(Files::concatenatePaths([$this->packagesBasePath, $packagesPath]));
