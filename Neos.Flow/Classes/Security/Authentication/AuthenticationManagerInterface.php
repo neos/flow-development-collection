@@ -12,8 +12,6 @@ namespace Neos\Flow\Security\Authentication;
  */
 
 use Neos\Flow\Security\Context as SecurityContext;
-use Neos\Flow\Security\Exception\AuthenticationRequiredException;
-use Neos\Flow\Security\Exception\NoTokensAuthenticatedException;
 
 /**
  * Contract for an authentication manager.
@@ -28,8 +26,6 @@ interface AuthenticationManagerInterface
      * Note: The order of the tokens in the array is important, as the tokens will be authenticated in the given order.
      *
      * @return array<TokenInterface> An array of tokens this manager is responsible for
-     * @deprecated Use the TokenAndProviderFactory
-     * @see TokenAndProviderFactoryInterface
      */
     public function getTokens();
 
@@ -37,8 +33,6 @@ interface AuthenticationManagerInterface
      * Returns all configured authentication providers
      *
      * @return array Array of \Neos\Flow\Security\Authentication\AuthenticationProviderInterface
-     * @deprecated Use the TokenAndProviderFactory
-     * @see TokenAndProviderFactoryInterface
      */
     public function getProviders();
 
@@ -47,7 +41,6 @@ interface AuthenticationManagerInterface
      *
      * @param SecurityContext $securityContext The security context of the current request
      * @return void
-     * @deprecated Just get it injected
      */
     public function setSecurityContext(SecurityContext $securityContext);
 
@@ -63,8 +56,6 @@ interface AuthenticationManagerInterface
      * (Have a look at the Authentication\TokenManager for an implementation example)
      *
      * @return void
-     * @throws AuthenticationRequiredException
-     * @throws NoTokensAuthenticatedException
      */
     public function authenticate();
 

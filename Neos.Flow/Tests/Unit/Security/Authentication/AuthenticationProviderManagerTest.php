@@ -13,7 +13,6 @@ namespace Neos\Flow\Tests\Unit\Security\Authentication;
 
 use Neos\Flow\Security\Authentication\AuthenticationProviderInterface;
 use Neos\Flow\Security\Authentication\AuthenticationProviderResolver;
-use Neos\Flow\Security\Authentication\TokenAndProviderFactoryInterface;
 use Neos\Flow\Security\RequestPatternResolver;
 use Neos\Flow\Session\SessionManager;
 use Neos\Flow\Tests\UnitTestCase;
@@ -22,7 +21,6 @@ use Neos\Flow\Security\Authentication\AuthenticationProviderManager;
 use Neos\Flow\Security\Authentication\TokenInterface;
 use Neos\Flow\Security\Context;
 use Neos\Flow\Session\SessionInterface;
-use phpDocumentor\Reflection\Types\Self_;
 
 /**
  * Test case for authentication provider manager
@@ -33,11 +31,6 @@ class AuthenticationProviderManagerTest extends UnitTestCase
      * @var AuthenticationProviderManager
      */
     protected $authenticationProviderManager;
-
-    /**
-     * @var TokenAndProviderFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $tokenAndProviderFactory;
 
     /**
      * @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -59,8 +52,7 @@ class AuthenticationProviderManagerTest extends UnitTestCase
      */
     public function setUp()
     {
-        $this->tokenAndProviderFactory = $this->getMockBuilder(TokenAndProviderFactoryInterface::class)->getMock();
-        $this->authenticationProviderManager = $this->getAccessibleMock(AuthenticationProviderManager::class, ['dummy'], [$this->tokenAndProviderFactory], '', true);
+        $this->authenticationProviderManager = $this->getAccessibleMock(AuthenticationProviderManager::class, ['dummy'], [], '', false);
         $this->mockSession = $this->getMockBuilder(SessionInterface::class)->getMock();
         $this->mockSecurityContext = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
 
@@ -93,14 +85,10 @@ class AuthenticationProviderManagerTest extends UnitTestCase
         $mockProvider1->expects($this->once())->method('authenticate')->with($mockToken1);
         $mockProvider2->expects($this->once())->method('authenticate')->with($mockToken2);
 
+        $this->mockSecurityContext->expects($this->atLeastOnce())->method('getAuthenticationStrategy')->will($this->returnValue(Context::AUTHENTICATE_ALL_TOKENS));
         $this->mockSecurityContext->expects($this->atLeastOnce())->method('getAuthenticationTokens')->will($this->returnValue([$mockToken1, $mockToken2]));
 
-        $this->tokenAndProviderFactory->expects(self::any())->method('getProviders')->willReturn([
-            $mockProvider1,
-            $mockProvider2
-        ]);
-
-        $this->inject($this->authenticationProviderManager, 'authenticationStrategy', Context::AUTHENTICATE_ALL_TOKENS);
+        $this->inject($this->authenticationProviderManager, 'providers', [$mockProvider1, $mockProvider2]);
 
         $this->authenticationProviderManager->authenticate();
     }
@@ -123,6 +111,7 @@ class AuthenticationProviderManagerTest extends UnitTestCase
 
         $this->mockSession->expects($this->once())->method('addTag')->with('Neos-Flow-Security-Account-21232f297a57a5a743894a0e4a801fc3');
 
+        $this->inject($this->authenticationProviderManager, 'providers', []);
         $this->inject($this->authenticationProviderManager, 'securityContext', $securityContext);
 
         $this->authenticationProviderManager->authenticate();
@@ -149,13 +138,10 @@ class AuthenticationProviderManagerTest extends UnitTestCase
         $mockProvider->expects($this->any())->method('canAuthenticate')->will($this->returnValue(true));
         $mockProvider->expects($this->once())->method('authenticate')->with($mockToken3);
 
+        $this->mockSecurityContext->expects($this->atLeastOnce())->method('getAuthenticationStrategy')->will($this->returnValue(Context::AUTHENTICATE_ONE_TOKEN));
         $this->mockSecurityContext->expects($this->atLeastOnce())->method('getAuthenticationTokens')->will($this->returnValue([$mockToken1, $mockToken2, $mockToken3]));
 
-        $this->tokenAndProviderFactory->expects(self::any())->method('getProviders')->willReturn([
-            $mockProvider
-        ]);
-
-        $this->inject($this->authenticationProviderManager, 'authenticationStrategy', Context::AUTHENTICATE_ONE_TOKEN);
+        $this->inject($this->authenticationProviderManager, 'providers', [$mockProvider]);
 
         $this->authenticationProviderManager->authenticate();
     }
@@ -174,6 +160,8 @@ class AuthenticationProviderManagerTest extends UnitTestCase
 
         $this->mockSecurityContext->expects($this->atLeastOnce())->method('getAuthenticationTokens')->will($this->returnValue([$token1, $token2]));
 
+        $this->inject($this->authenticationProviderManager, 'providers', []);
+
         $this->authenticationProviderManager->authenticate();
     }
 
@@ -190,8 +178,10 @@ class AuthenticationProviderManagerTest extends UnitTestCase
         $token2->expects($this->atLeastOnce())->method('isAuthenticated')->will($this->returnValue(false));
 
         $this->mockSecurityContext->expects($this->atLeastOnce())->method('getAuthenticationTokens')->will($this->returnValue([$token1, $token2]));
+        $this->mockSecurityContext->expects($this->atLeastOnce())->method('getAuthenticationStrategy')->will($this->returnValue(Context::AUTHENTICATE_ALL_TOKENS));
 
-        $this->inject($this->authenticationProviderManager, 'authenticationStrategy', Context::AUTHENTICATE_ALL_TOKENS);
+        $this->inject($this->authenticationProviderManager, 'providers', []);
+
         $this->authenticationProviderManager->authenticate();
     }
 
@@ -313,7 +303,7 @@ class AuthenticationProviderManagerTest extends UnitTestCase
      */
     public function logoutDestroysSessionIfStarted()
     {
-        $this->authenticationProviderManager = $this->getAccessibleMock(AuthenticationProviderManager::class, ['emitLoggedOut'], [$this->tokenAndProviderFactory], '', true);
+        $this->authenticationProviderManager = $this->getAccessibleMock(AuthenticationProviderManager::class, ['emitLoggedOut'], [], '', false);
         $this->inject($this->authenticationProviderManager, 'securityContext', $this->mockSecurityContext);
         $this->inject($this->authenticationProviderManager, 'sessionManager', $this->mockSessionManager);
         $this->inject($this->authenticationProviderManager, 'isInitialized', true);
@@ -336,7 +326,7 @@ class AuthenticationProviderManagerTest extends UnitTestCase
      */
     public function logoutDoesNotDestroySessionIfNotStarted()
     {
-        $this->authenticationProviderManager = $this->getAccessibleMock(AuthenticationProviderManager::class, ['emitLoggedOut'], [$this->tokenAndProviderFactory], '', true);
+        $this->authenticationProviderManager = $this->getAccessibleMock(AuthenticationProviderManager::class, ['emitLoggedOut'], [], '', false);
         $this->inject($this->authenticationProviderManager, 'securityContext', $this->mockSecurityContext);
         $this->inject($this->authenticationProviderManager, 'sessionManager', $this->mockSessionManager);
         $this->inject($this->authenticationProviderManager, 'isInitialized', true);
@@ -356,7 +346,7 @@ class AuthenticationProviderManagerTest extends UnitTestCase
      */
     public function logoutEmitsLoggedOutSignalBeforeDestroyingSession()
     {
-        $this->authenticationProviderManager = $this->getAccessibleMock(AuthenticationProviderManager::class, ['emitLoggedOut'], [$this->tokenAndProviderFactory], '', true);
+        $this->authenticationProviderManager = $this->getAccessibleMock(AuthenticationProviderManager::class, ['emitLoggedOut'], [], '', false);
         $this->inject($this->authenticationProviderManager, 'securityContext', $this->mockSecurityContext);
         $this->inject($this->authenticationProviderManager, 'sessionManager', $this->mockSessionManager);
         $this->inject($this->authenticationProviderManager, 'isInitialized', true);
@@ -387,7 +377,7 @@ class AuthenticationProviderManagerTest extends UnitTestCase
      */
     public function logoutRefreshesTokensInSecurityContext()
     {
-        $this->authenticationProviderManager = $this->getAccessibleMock(AuthenticationProviderManager::class, ['emitLoggedOut'], [$this->tokenAndProviderFactory], '', true);
+        $this->authenticationProviderManager = $this->getAccessibleMock(AuthenticationProviderManager::class, ['emitLoggedOut'], [], '', false);
         $this->inject($this->authenticationProviderManager, 'securityContext', $this->mockSecurityContext);
         $this->inject($this->authenticationProviderManager, 'sessionManager', $this->mockSessionManager);
         $this->inject($this->authenticationProviderManager, 'isInitialized', true);
@@ -400,8 +390,42 @@ class AuthenticationProviderManagerTest extends UnitTestCase
 
         $this->mockSecurityContext->expects($this->any())->method('getAuthenticationTokens')->will($this->returnValue([$token]));
 
-        $this->authenticationProviderManager->expects(self::once())->method('emitLoggedOut');
+        $this->mockSecurityContext->expects($this->once())->method('refreshTokens');
 
         $this->authenticationProviderManager->logout();
+    }
+
+    /**
+     * @test
+     */
+    public function noTokensAndProvidersAreBuiltIfTheConfigurationArrayIsEmpty()
+    {
+        $this->authenticationProviderManager->_call('buildProvidersAndTokensFromConfiguration', []);
+
+        $providers = $this->authenticationProviderManager->_get('providers');
+        $tokens = $this->authenticationProviderManager->_get('tokens');
+
+        $this->assertEquals([], $providers, 'The array of providers should be empty.');
+        $this->assertEquals([], $tokens, 'The array of tokens should be empty.');
+    }
+
+    /**
+     * @test
+     * @expectedException \Neos\Flow\Security\Exception\InvalidAuthenticationProviderException
+     */
+    public function anExceptionIsThrownIfTheConfiguredProviderDoesNotExist()
+    {
+        $providerConfiguration = [
+            'NotExistingProvider' => [
+                'providerClass' => 'NotExistingProviderClass'
+            ],
+        ];
+
+        $mockProviderResolver = $this->getMockBuilder(AuthenticationProviderResolver::class)->disableOriginalConstructor()->getMock();
+        $mockRequestPatternResolver = $this->getMockBuilder(RequestPatternResolver::class)->disableOriginalConstructor()->getMock();
+
+        $this->authenticationProviderManager = $this->getAccessibleMock(AuthenticationProviderManager::class, ['authenticate'], [$mockProviderResolver, $mockRequestPatternResolver]);
+        $this->authenticationProviderManager->injectSettings(['security' => ['authentication' => ['providers' => $providerConfiguration]]]);
+        $this->authenticationProviderManager->_call('buildProvidersAndTokensFromConfiguration', $providerConfiguration);
     }
 }
