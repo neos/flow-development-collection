@@ -86,7 +86,14 @@ class LoggingAspect
             return;
         }
 
-        $accountIdentifiers = array_reduce($securityContext->getAuthenticationTokens(), [$this, 'reduceTokenToAccountIdentifier'], []);
+        $accountIdentifiers = [];
+        foreach ($securityContext->getAuthenticationTokens() as $token) {
+            $account = $token->getAccount();
+            if ($account !== null) {
+                $accountIdentifiers[] = $account->getAccountIdentifier();
+            }
+        }
+
         $this->securityLogger->info(sprintf('Logged out %d account(s). (%s)', count($accountIdentifiers), implode(', ', $accountIdentifiers)));
     }
 
