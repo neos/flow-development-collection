@@ -12,11 +12,12 @@ namespace Neos\Flow\Log\Utility;
  */
 
 use Neos\Flow\Core\Bootstrap;
+use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Package\PackageInterface;
 use Neos\Flow\Package\PackageKeyAwareInterface;
 use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Package\PackageManagerInterface;
-use Neos\Utility\Arrays;
+use Neos\Flow\Annotations as Flow;
 
 abstract class LogEnvironment
 {
@@ -53,7 +54,7 @@ abstract class LogEnvironment
      */
     protected static function getPackageKeyFromClassName(string $className): string
     {
-        $packageKeys = self::getPackageKeys();
+        $packageKeys = static::getPackageKeys();
         $classPathArray = explode('\\', $className);
 
         $determinedPackageKey = array_shift($classPathArray);
@@ -74,10 +75,15 @@ abstract class LogEnvironment
 
     /**
      * @return array
+     * @Flow\CompileStatic
      */
     protected static function getPackageKeys(): array
     {
         if (self::$packageKeys === null) {
+            if (!Bootstrap::$staticObjectManager instanceof ObjectManagerInterface) {
+                return [];
+            }
+
             /** @var PackageManagerInterface $packageManager */
             $packageManager = Bootstrap::$staticObjectManager->get(PackageManager::class);
 
