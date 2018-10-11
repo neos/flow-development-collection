@@ -633,7 +633,7 @@ class Session implements CookieEnabledInterface
             $lastActivitySecondsAgo = $this->now - $sessionInfo['lastActivityTimestamp'];
             if ($lastActivitySecondsAgo > $this->inactivityTimeout) {
                 if ($sessionInfo['storageIdentifier'] === null) {
-                    $this->logger->warning('SESSION INFO INVALID: ' . $sessionIdentifier, $sessionInfo + , LogEnvironment::fromMethodName(__METHOD__));
+                    $this->logger->warning('SESSION INFO INVALID: ' . $sessionIdentifier, $sessionInfo + LogEnvironment::fromMethodName(__METHOD__));
                 } else {
                     $this->storageCache->flushByTag($sessionInfo['storageIdentifier']);
                     $sessionRemovalCount++;
