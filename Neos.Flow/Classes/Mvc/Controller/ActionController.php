@@ -16,6 +16,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Error\Messages as Error;
 use Neos\Flow\Log\PsrSystemLoggerInterface;
 use Neos\Flow\Log\SystemLoggerInterface;
+use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Mvc\Exception\ForwardException;
 use Neos\Flow\Mvc\Exception\InvalidActionVisibilityException;
 use Neos\Flow\Mvc\Exception\InvalidArgumentTypeException;
@@ -723,7 +724,7 @@ class ActionController extends AbstractController
                 $logMessage .= 'Error for ' . $propertyPath . ':  ' . $error->render() . PHP_EOL;
             }
         }
-        $this->logger->error($logMessage);
+        $this->logger->error($logMessage, LogEnvironment::fromMethodName(__METHOD__));
 
         return $outputMessage;
     }

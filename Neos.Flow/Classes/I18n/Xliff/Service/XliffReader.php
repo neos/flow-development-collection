@@ -12,6 +12,7 @@ namespace Neos\Flow\I18n\Xliff\Service;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Log\Utility\LogEnvironment;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -54,7 +55,7 @@ class XliffReader
                 $offset++;
             }
         } else {
-            $this->i18nLogger->info('Given source "' . $sourcePath . '" is not a valid XLIFF file');
+            $this->i18nLogger->info('Given source "' . $sourcePath . '" is not a valid XLIFF file', LogEnvironment::fromMethodName(__METHOD__));
         }
 
         $reader->close();

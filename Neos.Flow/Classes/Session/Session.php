@@ -13,7 +13,9 @@ namespace Neos\Flow\Session;
 
 use Neos\Cache\Backend\IterableBackendInterface;
 use Neos\Cache\Exception\InvalidBackendException;
+use Neos\Cache\Exception\NotSupportedByBackendException;
 use Neos\Cache\Frontend\VariableFrontend;
+use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\ObjectManagement\Configuration\Configuration as ObjectConfiguration;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\ObjectManagement\Proxy\ProxyInterface;
@@ -608,6 +610,8 @@ class Session implements CookieEnabledInterface
      * timeout was reached.
      *
      * @return integer The number of outdated entries removed
+     * @throws \Neos\Cache\Exception
+     * @throws NotSupportedByBackendException
      * @api
      */
     public function collectGarbage()
@@ -629,7 +633,7 @@ class Session implements CookieEnabledInterface
             $lastActivitySecondsAgo = $this->now - $sessionInfo['lastActivityTimestamp'];
             if ($lastActivitySecondsAgo > $this->inactivityTimeout) {
                 if ($sessionInfo['storageIdentifier'] === null) {
-                    $this->logger->warning('SESSION INFO INVALID: ' . $sessionIdentifier, $sessionInfo);
+                    $this->logger->warning('SESSION INFO INVALID: ' . $sessionIdentifier, $sessionInfo + , LogEnvironment::fromMethodName(__METHOD__));
                 } else {
                     $this->storageCache->flushByTag($sessionInfo['storageIdentifier']);
                     $sessionRemovalCount++;
@@ -652,6 +656,10 @@ class Session implements CookieEnabledInterface
      * management.
      *
      * @return void
+     * @throws Exception\DataNotSerializableException
+     * @throws Exception\SessionNotStartedException
+     * @throws NotSupportedByBackendException
+     * @throws \Neos\Cache\Exception
      */
     public function shutdownObject()
     {
