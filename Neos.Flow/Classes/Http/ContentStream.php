@@ -39,13 +39,27 @@ class ContentStream implements StreamInterface
     protected $logger;
 
     /**
-     * @param string|resource $stream
+     * @param string|resource $stream a valid PHP resource or a filename supported by fopen (see http://php.net/manual/en/function.fopen.php)
      * @param string $mode Mode with which to open stream
      * @throws \InvalidArgumentException
      */
     public function __construct($stream, $mode = 'r')
     {
         $this->replace($stream, $mode);
+    }
+
+    /**
+     * Creates an instance representing the given $contents string
+     *
+     * @param string $contents
+     * @return self
+     */
+    public static function fromContents(string $contents): self
+    {
+        $handle = fopen('php://memory', 'r+');
+        fwrite($handle, $contents);
+        rewind($handle);
+        return new static($handle);
     }
 
     /**
@@ -88,7 +102,7 @@ class ContentStream implements StreamInterface
     {
         $this->close();
         if (!is_resource($stream)) {
-            $stream = $this->openStream($stream, $mode);
+            $stream = @fopen($stream, $mode);
         }
 
         if (!$this->isValidResource($stream)) {
@@ -335,19 +349,6 @@ class ContentStream implements StreamInterface
         }
 
         return $metadata[$key];
-    }
-
-    /**
-     * Set the internal stream resource.
-     *
-     * @param string $stream String stream target or stream resource.
-     * @param string $mode Resource mode for stream target.
-     * @return resource
-     */
-    protected function openStream($stream, $mode = 'r')
-    {
-        $resource = fopen($stream, $mode);
-        return $resource;
     }
 
     /**

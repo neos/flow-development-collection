@@ -43,12 +43,10 @@ abstract class ArgumentsHelper
     /**
      * @param string $content
      * @return ContentStream
+     * @deprecated since Flow 5.2, use ContentStream::fromContents()
      */
     public static function createContentStreamFromString(string $content): ContentStream
     {
-        $handle = fopen('php://memory', 'r+');
-        fwrite($handle, $content);
-        rewind($handle);
-        return new ContentStream($handle);
+        return ContentStream::fromContents($content);
     }
 }
