@@ -89,7 +89,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
      * @return void
      * @api
      */
-    public function setDataSourceName(string $DSN)
+    protected function setDataSourceName(string $DSN)
     {
         $this->dataSourceName = $DSN;
     }
@@ -101,7 +101,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
      * @return void
      * @api
      */
-    public function setUsername(string $username)
+    protected function setUsername(string $username)
     {
         $this->username = $username;
     }
@@ -113,7 +113,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
      * @return void
      * @api
      */
-    public function setPassword(string $password)
+    protected function setPassword(string $password)
     {
         $this->password = $password;
     }
@@ -125,7 +125,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
      * @return void
      * @api
      */
-    public function setCacheTableName(string $cacheTableName)
+    protected function setCacheTableName(string $cacheTableName)
     {
         $this->cacheTableName = $cacheTableName;
     }
@@ -137,7 +137,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
      * @return void
      * @api
      */
-    public function setTagsTableName(string $tagsTableName)
+    protected function setTagsTableName(string $tagsTableName)
     {
         $this->tagsTableName = $tagsTableName;
     }
