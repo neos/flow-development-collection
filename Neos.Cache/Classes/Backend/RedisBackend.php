@@ -14,7 +14,6 @@ namespace Neos\Cache\Backend;
 use Neos\Cache\Backend\AbstractBackend as IndependentAbstractBackend;
 use Neos\Cache\EnvironmentConfiguration;
 use Neos\Cache\Exception as CacheException;
-use Neos\Cache\Exception;
 use Neos\Error\Messages\Error;
 use Neos\Error\Messages\Notice;
 use Neos\Error\Messages\Result;
@@ -523,7 +522,7 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
         // Redis client could be in multi mode, discard for checking the version
         $this->redis->discard();
 
-        $serverInfo = $this->redis->info('SERVER');
+        $serverInfo = (array)$this->redis->info('SERVER');
         if (!isset($serverInfo['redis_version'])) {
             throw new CacheException('Unsupported Redis version, the Redis cache backend needs at least version ' . self::MIN_REDIS_VERSION, 1438251553);
         }
