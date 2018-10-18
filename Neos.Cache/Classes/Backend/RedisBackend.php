@@ -14,6 +14,10 @@ namespace Neos\Cache\Backend;
 use Neos\Cache\Backend\AbstractBackend as IndependentAbstractBackend;
 use Neos\Cache\EnvironmentConfiguration;
 use Neos\Cache\Exception as CacheException;
+use Neos\Cache\Exception;
+use Neos\Error\Messages\Error;
+use Neos\Error\Messages\Notice;
+use Neos\Error\Messages\Result;
 
 /**
  * A caching backend which stores cache entries in Redis using the phpredis PHP extension.
@@ -46,7 +50,7 @@ use Neos\Cache\Exception as CacheException;
  *
  * @api
  */
-class RedisBackend extends IndependentAbstractBackend implements TaggableBackendInterface, IterableBackendInterface, FreezableBackendInterface, PhpCapableBackendInterface
+class RedisBackend extends IndependentAbstractBackend implements TaggableBackendInterface, IterableBackendInterface, FreezableBackendInterface, PhpCapableBackendInterface, WithStatusInterface
 {
     use RequireOnceFromValueTrait;
 
@@ -526,5 +530,33 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
         if (version_compare($serverInfo['redis_version'], self::MIN_REDIS_VERSION) < 0) {
             throw new CacheException('Redis version ' . $serverInfo['redis_version'] . ' not supported, the Redis cache backend needs at least version ' . self::MIN_REDIS_VERSION, 1438251628);
         }
+    }
+
+    /**
+     * Validates that the configured redis backend is accessible and returns some details about its configuration if that's the case
+     *
+     * @return Result
+     * @api
+     */
+    public function getStatus(): Result
+    {
+        $result = new Result();
+        try {
+            $this->verifyRedisVersionIsSupported();
+        } catch (CacheException $exception) {
+            $result->addError(new Error($exception->getMessage(), $exception->getCode(), [], 'Redis Version'));
+            return $result;
+        }
+        $serverInfo = (array)$this->redis->info('SERVER');
+        if (isset($serverInfo['redis_version'])) {
+            $result->addNotice(new Notice((string)$serverInfo['redis_version'], null, [], 'Redis version'));
+        }
+        if (isset($serverInfo['tcp_port'])) {
+            $result->addNotice(new Notice((string)$serverInfo['tcp_port'], null, [], 'TCP Port'));
+        }
+        if (isset($serverInfo['uptime_in_seconds'])) {
+            $result->addNotice(new Notice((string)$serverInfo['uptime_in_seconds'], null, [], 'Uptime (seconds)'));
+        }
+        return $result;
     }
 }

@@ -14,6 +14,7 @@ namespace Neos\Cache\Backend;
 use Neos\Cache\Backend\AbstractBackend as IndependentAbstractBackend;
 use Neos\Cache\EnvironmentConfiguration;
 use Neos\Error\Messages\Error;
+use Neos\Error\Messages\Notice;
 use Neos\Error\Messages\Result;
 use Neos\Utility\Files;
 use Neos\Cache\Exception;
@@ -28,7 +29,7 @@ use Neos\Utility\OpcodeCacheHelper;
  *
  * @api
  */
-class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapableBackendInterface, IterableBackendInterface, SetupEnabledBackendInterface
+class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapableBackendInterface, IterableBackendInterface, WithSetupInterface, WithStatusInterface
 {
     const SEPARATOR = '^';
 
@@ -461,14 +462,22 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
                 throw new Exception('The cache directory "' . $cacheDirectory . '" could not be created.', 1264426237);
             }
         }
-        if (!is_dir($cacheDirectory) && !is_link($cacheDirectory)) {
-            throw new Exception('The cache directory "' . $cacheDirectory . '" does not exist.', 1203965199);
-        }
-        if (!is_writable($cacheDirectory)) {
-            throw new Exception('The cache directory "' . $cacheDirectory . '" is not writable.', 1203965200);
-        }
 
         $this->cacheDirectory = $cacheDirectory;
+        $this->verifyCacheDirectory();
+    }
+
+    /**
+     * @throws Exception
+     */
+    protected function verifyCacheDirectory()
+    {
+        if (!is_dir($this->cacheDirectory) && !is_link($this->cacheDirectory)) {
+            throw new Exception('The cache directory "' . $this->cacheDirectory . '" does not exist.', 1203965199);
+        }
+        if (!is_writable($this->cacheDirectory)) {
+            throw new Exception('The cache directory "' . $this->cacheDirectory . '" is not writable.', 1203965200);
+        }
     }
 
     /**
@@ -544,20 +553,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
     }
 
     /**
-     * TODO document
-     *
-     * @return Result
-     * @api
-     */
-    public function getStatus(): Result
-    {
-        $result = new Result();
-        // TODO check if cache directory exists and is writeable
-        return $result;
-    }
-
-    /**
-     * TODO document
+     * Sets up this backend by creating the required cache directory if it doesn't exist yet
      *
      * @return Result
      * @api
@@ -568,8 +564,28 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
         try {
             $this->configureCacheDirectory();
         } catch (Exception $exception) {
-            $result->addError(new Error('Failed to configure cache directory: %s', $exception->getCode(), [$exception->getMessage()]));
+            $result->addError(new Error('Failed to configure cache directory: %s', $exception->getCode(), [$exception->getMessage()], 'Cache Directory'));
         }
+        return $result;
+    }
+
+    /**
+     * Validates that the configured cache directory exists and is writeable and returns some details about its configuration if that's the case
+     *
+     * @return Result
+     * @api
+     */
+    public function getStatus(): Result
+    {
+        $result = new Result();
+        try {
+            $this->verifyCacheDirectory();
+        } catch (Exception $exception) {
+            $result->addError(new Error($exception->getMessage(), $exception->getCode(), [], 'Cache Directory'));
+            return $result;
+        }
+        $result->addNotice(new Notice($this->baseDirectory ?? '-', null, [], 'Base Directory'));
+        $result->addNotice(new Notice($this->getCacheDirectory(), null, [], 'Cache Directory'));
         return $result;
     }
 }

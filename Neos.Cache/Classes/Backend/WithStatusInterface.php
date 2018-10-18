@@ -14,22 +14,18 @@ namespace Neos\Cache\Backend;
 use Neos\Error\Messages\Result;
 
 /**
- * A contract for a Cache Backend which allows to be setup
+ * A contract for a Cache Backend which allows to retrieve its status
  *
  * @api
  */
-interface SetupEnabledBackendInterface extends BackendInterface
+interface WithStatusInterface
 {
-    /**
-     * TODO document
-     *
-     * @return Result
-     * @api
-     */
-    public function setup(): Result;
 
     /**
-     * TODO document
+     * Returns the status of the cache backend
+     *
+     * This can be used to test the cache configuration. By default that method is only invoked from CLI
+     * so it does not have to be extremely fast and the result can be verbose.
      *
      * @return Result
      * @api
