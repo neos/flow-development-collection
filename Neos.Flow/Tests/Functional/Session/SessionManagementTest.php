@@ -11,7 +11,6 @@ namespace Neos\Flow\Tests\Functional\Session;
  * source code.
  */
 
-use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Mvc\Routing\Route;
 use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\Flow\Session;

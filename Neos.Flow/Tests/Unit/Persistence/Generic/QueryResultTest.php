@@ -15,7 +15,6 @@ use Neos\Flow\Persistence\Generic\PersistenceManager;
 use Neos\Flow\Persistence\Generic\DataMapper;
 use Neos\Flow\Persistence\Generic\QueryResult;
 use Neos\Flow\Persistence\QueryInterface;
-use Neos\Flow\Persistence;
 use Neos\Flow\Tests\UnitTestCase;
 
 /**

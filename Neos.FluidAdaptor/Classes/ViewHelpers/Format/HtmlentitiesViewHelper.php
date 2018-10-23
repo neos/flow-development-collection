@@ -11,7 +11,6 @@ namespace Neos\FluidAdaptor\ViewHelpers\Format;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 

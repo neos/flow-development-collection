@@ -13,7 +13,6 @@ namespace Neos\FluidAdaptor\Tests\Unit\View;
 
 include_once(__DIR__ . '/Fixtures/TemplateViewFixture.php');
 
-use org\bovigo\vfs\vfsStreamWrapper;
 use Neos\Flow\Http\Request;
 use Neos\Flow\Http\Uri;
 use Neos\Flow\Mvc\Controller\ControllerContext;

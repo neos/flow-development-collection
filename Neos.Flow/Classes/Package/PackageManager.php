@@ -17,7 +17,6 @@ use Neos\Flow\Composer\ComposerUtility as ComposerUtility;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\SignalSlot\Dispatcher;
-use Neos\Flow\Utility\Exception as UtilityException;
 use Neos\Utility\Files;
 use Neos\Utility\OpcodeCacheHelper;
 use Neos\Flow\Package\Exception as PackageException;

@@ -12,7 +12,6 @@ namespace Neos\Flow\Tests\Functional\Aop;
  */
 
 use Neos\Flow\Tests\FunctionalTestCase;
-use Neos\Flow\Tests\Functional\Aop\Fixtures;
 
 /**
  * Testcase for the AOP Framework class

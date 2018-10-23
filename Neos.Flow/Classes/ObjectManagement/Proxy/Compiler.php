@@ -11,7 +11,6 @@ namespace Neos\Flow\ObjectManagement\Proxy;
  * source code.
  */
 
-use Doctrine\ORM\Mapping as ORM;
 use Neos\Flow\Annotations as Flow;
 use Neos\Cache\Frontend\PhpFrontend;
 use Neos\Flow\ObjectManagement\CompileTimeObjectManager;

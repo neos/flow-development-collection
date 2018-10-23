@@ -12,7 +12,6 @@ namespace Neos\FluidAdaptor\ViewHelpers;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\I18n\Exception\InvalidLocaleIdentifierException;
 use Neos\Flow\I18n\Locale;
 use Neos\Flow\I18n\Translator;

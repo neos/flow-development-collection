@@ -11,7 +11,6 @@ namespace Neos\Flow\Tests\Unit\Session;
  * source code.
  */
 
-use Neos\Flow\Core\RequestHandlerInterface;
 use org\bovigo\vfs\vfsStream;
 use Neos\Cache\Backend\FileBackend;
 use Neos\Cache\EnvironmentConfiguration;

@@ -16,7 +16,6 @@ use Doctrine\ORM\Tools\SchemaTool;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Persistence\Doctrine\PersistenceManager;
 use Neos\Flow\Persistence\Doctrine\QueryResult;
-use Neos\Flow\Tests\Functional\Persistence\Fixtures;
 use Neos\Flow\Tests\FunctionalTestCase;
 
 /**
