@@ -12,8 +12,6 @@ namespace Neos\Flow\Cli;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Cli\Command;
-use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Mvc\Exception\AmbiguousCommandIdentifierException;
 use Neos\Flow\Mvc\Exception\CommandException;

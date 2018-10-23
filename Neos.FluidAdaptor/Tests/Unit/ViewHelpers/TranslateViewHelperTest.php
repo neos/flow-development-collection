@@ -14,7 +14,6 @@ namespace Neos\FluidAdaptor\Tests\Unit\ViewHelpers;
 use Neos\Flow\I18n\Locale;
 use Neos\Flow\I18n\Translator;
 use Neos\FluidAdaptor\ViewHelpers\TranslateViewHelper;
-use Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase;
 
 require_once(__DIR__ . '/ViewHelperBaseTestcase.php');
 

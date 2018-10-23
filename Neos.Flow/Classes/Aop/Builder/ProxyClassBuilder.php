@@ -18,7 +18,6 @@ use Neos\Flow\Aop\PropertyIntroduction;
 use Neos\Cache\Frontend\VariableFrontend;
 use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\ObjectManagement\CompileTimeObjectManager;
-use Neos\Flow\Reflection\ClassReflection;
 use Neos\Flow\Reflection\PropertyReflection;
 use Neos\Flow\Aop\TraitIntroduction;
 use Neos\Flow\Aop;

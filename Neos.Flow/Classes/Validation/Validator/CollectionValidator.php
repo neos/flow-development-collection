@@ -12,7 +12,6 @@ namespace Neos\Flow\Validation\Validator;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Error\Messages\Result as ErrorResult;
 use Neos\Utility\TypeHandling;
 
 /**
