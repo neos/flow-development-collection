@@ -45,6 +45,7 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
      * @var Context
      */
     protected $securityContext;
+
     /**
      * Injected configuration for providers.
      * Will be null'd again after building the object instances.

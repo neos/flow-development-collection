@@ -12,9 +12,7 @@ namespace Neos\Flow\Tests\Unit\Security\Authentication;
  */
 
 use Neos\Flow\Security\Authentication\AuthenticationProviderInterface;
-use Neos\Flow\Security\Authentication\AuthenticationProviderResolver;
 use Neos\Flow\Security\Authentication\TokenAndProviderFactoryInterface;
-use Neos\Flow\Security\RequestPatternResolver;
 use Neos\Flow\Session\SessionManager;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Flow\Security\Account;
@@ -22,7 +20,6 @@ use Neos\Flow\Security\Authentication\AuthenticationProviderManager;
 use Neos\Flow\Security\Authentication\TokenInterface;
 use Neos\Flow\Security\Context;
 use Neos\Flow\Session\SessionInterface;
-use phpDocumentor\Reflection\Types\Self_;
 
 /**
  * Test case for authentication provider manager

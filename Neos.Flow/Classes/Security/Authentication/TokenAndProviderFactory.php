@@ -17,6 +17,8 @@ use Neos\Flow\Security\RequestPatternInterface;
 use Neos\Flow\Security\RequestPatternResolver;
 
 /**
+ * Default factory for providers and tokens.
+ *
  * @Flow\Scope("singleton")
  */
 class TokenAndProviderFactory implements TokenAndProviderFactoryInterface
