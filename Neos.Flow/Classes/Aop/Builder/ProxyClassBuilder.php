@@ -40,12 +40,6 @@ class ProxyClassBuilder
     protected $compiler;
 
     /**
-     * The Flow settings
-     * @var array
-     */
-    protected $settings;
-
-    /**
      * @var ReflectionService
      */
     protected $reflectionService;
@@ -177,17 +171,6 @@ class ProxyClassBuilder
     public function injectObjectManager(CompileTimeObjectManager $objectManager): void
     {
         $this->objectManager = $objectManager;
-    }
-
-    /**
-     * Injects the Flow settings
-     *
-     * @param array $settings The settings
-     * @return void
-     */
-    public function injectSettings(array $settings): void
-    {
-        $this->settings = $settings;
     }
 
     /**

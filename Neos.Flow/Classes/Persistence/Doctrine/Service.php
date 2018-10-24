@@ -42,11 +42,6 @@ class Service
     /**
      * @var array
      */
-    protected $settings = [];
-
-    /**
-     * @var array
-     */
     public $output = [];
 
     /**
