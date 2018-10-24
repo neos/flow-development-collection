@@ -154,7 +154,7 @@ class HeadersTest extends UnitTestCase
      */
     public function removeRemovesTheSpecifiedHeader()
     {
-        $specifiedFields = array('X-Coffee' => 'Arabica', 'Host' =>'myhost.com');
+        $specifiedFields = ['X-Coffee' => 'Arabica', 'Host' =>'myhost.com'];
         $headers = new Headers($specifiedFields);
 
         $headers->remove('X-Coffee');
@@ -246,7 +246,7 @@ class HeadersTest extends UnitTestCase
     public function cookiesWithInvalidNameAreIgnored()
     {
         $headers = new Headers();
-        $headers->set('Cookie', array('cookie-valid=this+is+valid; cookie[invalid]=this+is+invalid'));
+        $headers->set('Cookie', ['cookie-valid=this+is+valid; cookie[invalid]=this+is+invalid']);
 
         $this->assertTrue($headers->hasCookie('cookie-valid'));
         $this->assertFalse($headers->hasCookie('cookie[invalid]'));

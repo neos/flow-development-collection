@@ -501,7 +501,7 @@ class SessionTest extends UnitTestCase
         $storageCache = $this->createCache('Storage');
 
         /** @var Session $session */
-        $session = $this->getAccessibleMock(Session::class, array('dummy'));
+        $session = $this->getAccessibleMock(Session::class, ['dummy']);
         $this->inject($session, 'objectManager', $this->mockObjectManager);
         $this->inject($session, 'settings', $this->settings);
         $this->inject($session, 'metaDataCache', $metaDataCache);
