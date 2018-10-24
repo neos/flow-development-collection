@@ -614,9 +614,7 @@ class Context
     public function clearContext()
     {
         $sessionDataContainer = $this->objectManager->get(SessionDataContainer::class);
-        $sessionDataContainer->setSecurityTokens([]);
-        $sessionDataContainer->setCsrfProtectionTokens([]);
-        $sessionDataContainer->setInterceptedRequest(null);
+        $sessionDataContainer->reset();
 
         $this->roles = null;
         $this->contextHash = null;
