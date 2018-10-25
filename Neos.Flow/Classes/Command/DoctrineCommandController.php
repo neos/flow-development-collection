@@ -18,6 +18,8 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Error\Debugger;
 use Neos\Flow\Log\ThrowableStorageInterface;
+use Neos\Flow\Log\Utility\LogEnvironment;
+use Neos\Flow\Mvc\Exception\StopActionException;
 use Neos\Flow\Package;
 use Neos\Flow\Package\PackageManagerInterface;
 use Neos\Flow\Persistence\Doctrine\Service as DoctrineService;
@@ -500,6 +502,7 @@ class DoctrineCommandController extends CommandController
      *
      * @param \Exception $exception
      * @return void
+     * @throws StopActionException
      */
     protected function handleException(\Exception $exception)
     {
@@ -508,7 +511,7 @@ class DoctrineCommandController extends CommandController
         $this->outputLine('The exception details have been logged to the Flow system log.');
         $message = $this->throwableStorage->logThrowable($exception);
         $this->outputLine($message);
-        $this->logger->error($message);
+        $this->logger->error($message, LogEnvironment::fromMethodName(__METHOD__));
         $this->quit(1);
     }
 

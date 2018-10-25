@@ -14,6 +14,7 @@ namespace Neos\Flow\Security\Aspect;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Aop\JoinPointInterface;
 use Neos\Flow\Log\PsrSecurityLoggerInterface;
+use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Security\Account;
 use Neos\Flow\Security\Authentication\AuthenticationManagerInterface;
 use Neos\Flow\Security\Authentication\TokenInterface;
@@ -58,9 +59,9 @@ class LoggingAspect
             /** @var AuthenticationManagerInterface $authenticationManager */
             $authenticationManager = $joinPoint->getProxy();
             if ($authenticationManager->getSecurityContext()->getAccount() !== null) {
-                $this->securityLogger->info(sprintf('Successfully re-authenticated tokens for account "%s"', $authenticationManager->getSecurityContext()->getAccount()->getAccountIdentifier()));
+                $this->securityLogger->info(sprintf('Successfully re-authenticated tokens for account "%s"', $authenticationManager->getSecurityContext()->getAccount()->getAccountIdentifier()), LogEnvironment::fromMethodName(__METHOD__));
             } else {
-                $this->securityLogger->info('No account authenticated');
+                $this->securityLogger->info('No account authenticated', LogEnvironment::fromMethodName(__METHOD__));
             }
             $this->alreadyLoggedAuthenticateCall = true;
         }
@@ -89,7 +90,7 @@ class LoggingAspect
                 $accountIdentifiers[] = $account->getAccountIdentifier();
             }
         }
-        $this->securityLogger->info(sprintf('Logged out %d account(s). (%s)', count($accountIdentifiers), implode(', ', $accountIdentifiers)));
+        $this->securityLogger->info(sprintf('Logged out %d account(s). (%s)', count($accountIdentifiers), implode(', ', $accountIdentifiers)), LogEnvironment::fromMethodName(__METHOD__));
     }
 
     /**
@@ -141,7 +142,7 @@ class LoggingAspect
         $subjectJoinPoint = $joinPoint->getMethodArgument('subject');
         $decision = $joinPoint->getResult() === true ? 'GRANTED' : 'DENIED';
         $message = sprintf('Decided "%s" on method call %s::%s().', $decision, $subjectJoinPoint->getClassName(), $subjectJoinPoint->getMethodName());
-        $this->securityLogger->info($message);
+        $this->securityLogger->info($message, LogEnvironment::fromMethodName(__METHOD__));
     }
 
     /**
@@ -155,6 +156,6 @@ class LoggingAspect
     {
         $decision = $joinPoint->getResult() === true ? 'GRANTED' : 'DENIED';
         $message = sprintf('Decided "%s" on privilege "%s".', $decision, $joinPoint->getMethodArgument('privilegeTargetIdentifier'));
-        $this->securityLogger->info($message);
+        $this->securityLogger->info($message, LogEnvironment::fromMethodName(__METHOD__));
     }
 }

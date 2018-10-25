@@ -14,11 +14,13 @@ namespace Neos\Flow\Security;
 use Neos\Flow\Annotations as Flow;
 use Neos\Cache\CacheAwareInterface;
 use Neos\Flow\Log\PsrSecurityLoggerInterface;
+use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Mvc\RequestInterface;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Security\Authentication\TokenInterface;
 use Neos\Flow\Security\Policy\Role;
 use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Session\Exception\SessionNotStartedException;
 use Neos\Flow\Session\SessionManagerInterface;
 use Neos\Flow\Utility\Algorithms;
 use Neos\Utility\TypeHandling;
@@ -684,6 +686,7 @@ class Context
      * @param array $managerTokens Array of tokens provided by the authentication manager
      * @param array $sessionTokens Array of tokens restored from the session
      * @return array Array of Authentication\TokenInterface objects
+     * @throws SessionNotStartedException
      */
     protected function mergeTokens($managerTokens, $sessionTokens)
     {
@@ -712,7 +715,7 @@ class Context
                             get_class($sessionToken),
                             $sessionToken->getAuthenticationProviderName(),
                             $this->tokenStatusLabels[$sessionToken->getAuthenticationStatus()]
-                        )
+                        ), LogEnvironment::fromMethodName(__METHOD__)
                     );
 
                     $resultTokens[$sessionToken->getAuthenticationProviderName()] = $sessionToken;

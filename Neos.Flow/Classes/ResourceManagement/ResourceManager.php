@@ -12,6 +12,7 @@ namespace Neos\Flow\ResourceManagement;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Utility\ObjectAccess;
@@ -331,20 +332,20 @@ class ResourceManager
             $this->logger->debug(sprintf('Not removing storage data of resource %s (%s) because it is still in use by %s other PersistentResource object(s).', $resource->getFilename(), $resource->getSha1(), count($result) - 1));
         } else {
             if (!isset($this->collections[$collectionName])) {
-                $this->logger->warning(sprintf('Could not remove storage data of resource %s (%s) because it refers to the unknown collection "%s".', $resource->getFilename(), $resource->getSha1(), $collectionName));
+                $this->logger->warning(sprintf('Could not remove storage data of resource %s (%s) because it refers to the unknown collection "%s".', $resource->getFilename(), $resource->getSha1(), $collectionName), LogEnvironment::fromMethodName(__METHOD__));
 
                 return false;
             }
             $storage = $this->collections[$collectionName]->getStorage();
             if (!$storage instanceof WritableStorageInterface) {
-                $this->logger->warning(sprintf('Could not remove storage data of resource %s (%s) because it its collection "%s" is read-only.', $resource->getFilename(), $resource->getSha1(), $collectionName));
+                $this->logger->warning(sprintf('Could not remove storage data of resource %s (%s) because it its collection "%s" is read-only.', $resource->getFilename(), $resource->getSha1(), $collectionName), LogEnvironment::fromMethodName(__METHOD__));
 
                 return false;
             }
             try {
                 $storage->deleteResource($resource);
             } catch (\Exception $exception) {
-                $this->logger->warning(sprintf('Could not remove storage data of resource %s (%s): %s.', $resource->getFilename(), $resource->getSha1(), $exception->getMessage()));
+                $this->logger->warning(sprintf('Could not remove storage data of resource %s (%s): %s.', $resource->getFilename(), $resource->getSha1(), $exception->getMessage()), LogEnvironment::fromMethodName(__METHOD__));
 
                 return false;
             }
