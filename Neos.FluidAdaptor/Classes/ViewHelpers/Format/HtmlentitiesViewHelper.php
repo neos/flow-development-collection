@@ -74,7 +74,7 @@ class HtmlentitiesViewHelper extends AbstractViewHelper
      */
     public function render()
     {
-        return self::renderStatic(array('value' => $this->arguments['value'], 'keepQuotes' => $this->arguments['keepQuotes'], 'encoding' => $this->arguments['encoding'], 'doubleEncode' => $this->arguments['doubleEncode']), $this->buildRenderChildrenClosure(), $this->renderingContext);
+        return self::renderStatic(['value' => $this->arguments['value'], 'keepQuotes' => $this->arguments['keepQuotes'], 'encoding' => $this->arguments['encoding'], 'doubleEncode' => $this->arguments['doubleEncode']], $this->buildRenderChildrenClosure(), $this->renderingContext);
     }
 
     /**

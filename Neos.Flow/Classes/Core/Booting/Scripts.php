@@ -681,7 +681,7 @@ class Scripts
      * @return void
      * @api
      */
-    public static function executeCommandAsync(string $commandIdentifier, array $settings, array $commandArguments = array())
+    public static function executeCommandAsync(string $commandIdentifier, array $settings, array $commandArguments = [])
     {
         $command = self::buildSubprocessCommand($commandIdentifier, $settings, $commandArguments);
         if (DIRECTORY_SEPARATOR === '/') {

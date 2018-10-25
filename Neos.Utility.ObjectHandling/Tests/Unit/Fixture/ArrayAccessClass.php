@@ -19,7 +19,7 @@ class ArrayAccessClass implements \ArrayAccess
 {
     protected $internalProperty = 'access through forceDirectAccess';
 
-    protected $array = array();
+    protected $array = [];
 
     public function __construct(array $array)
     {

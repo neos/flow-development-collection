@@ -115,10 +115,10 @@ class PropertyMapperTest extends FunctionalTestCase
      */
     public function embeddedValueobjectCanBeMapped()
     {
-        $source = array(
+        $source = [
             'name' => 'Christopher',
             'age' => '28'
-        );
+        ];
 
         $result = $this->propertyMapper->convert($source, \Neos\Flow\Tests\Functional\Property\Fixtures\TestEmbeddedValueobject::class);
         $this->assertSame('Christopher', $result->getName());

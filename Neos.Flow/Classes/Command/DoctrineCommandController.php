@@ -452,7 +452,7 @@ class DoctrineCommandController extends CommandController
         // use default filter expression from settings
         if ($filterExpression === null) {
             $ignoredTables = array_keys(array_filter($this->settings['doctrine']['migrations']['ignoredTables']));
-            if ($ignoredTables !== array()) {
+            if ($ignoredTables !== []) {
                 $filterExpression = sprintf('/^(?!%s$).*$/xs', implode('$|', $ignoredTables));
             }
         }

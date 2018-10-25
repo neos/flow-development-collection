@@ -150,7 +150,7 @@ class ServiceTest extends UnitTestCase
         foreach (['en_GB', 'sr'] as $localeIdentifier) {
             file_put_contents('vfs://Foo/Bar/Private/Translations/' . $localeIdentifier . '.xlf', 'FooBar');
         }
-        foreach (array('de_DE', 'de_CH') as $localeIdentifier) {
+        foreach (['de_DE', 'de_CH'] as $localeIdentifier) {
             mkdir('vfs://Foo/Bar/Private/Translations/' . $localeIdentifier, 0777, true);
             file_put_contents('vfs://Foo/Bar/Private/Translations/' . $localeIdentifier . '/Main.xlf', 'FooBar');
         }

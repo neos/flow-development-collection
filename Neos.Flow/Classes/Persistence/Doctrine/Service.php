@@ -138,7 +138,7 @@ class Service
      */
     public function getEntityStatus()
     {
-        $info = array();
+        $info = [];
         $entityClassNames = $this->entityManager->getConfiguration()->getMetadataDriverImpl()->getAllClassNames();
         foreach ($entityClassNames as $entityClassName) {
             try {
@@ -192,7 +192,7 @@ class Service
         /** @var \Doctrine\DBAL\Connection $connection */
         $connection = $this->entityManager->getConnection();
         $schemaManager = $connection->getSchemaManager();
-        if ($schemaManager->tablesExist(array('flow3_doctrine_migrationstatus')) === true) {
+        if ($schemaManager->tablesExist(['flow3_doctrine_migrationstatus']) === true) {
             $schemaManager->renameTable('flow3_doctrine_migrationstatus', self::DOCTRINE_MIGRATIONSTABLENAME);
         }
 

@@ -52,7 +52,7 @@ class DocumentationCommandController extends CommandController
             $xsdSchema = $this->xsdGenerator->generateXsd($phpNamespace, $xsdNamespace);
         } catch (Service\Exception $exception) {
             $this->outputLine('An error occurred while trying to generate the XSD schema:');
-            $this->outputLine('%s', array($exception->getMessage()));
+            $this->outputLine('%s', [$exception->getMessage()]);
             $this->quit(1);
         }
         if ($targetFile === null) {

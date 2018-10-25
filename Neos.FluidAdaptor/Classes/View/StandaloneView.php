@@ -126,7 +126,7 @@ class StandaloneView extends AbstractTemplateView
         $this->setControllerContext(new ControllerContext(
             $this->request,
             new Response(),
-            new Arguments(array()),
+            new Arguments([]),
             $uriBuilder
         ));
     }
