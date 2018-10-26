@@ -200,7 +200,7 @@ class FrameworkTest extends FunctionalTestCase
     {
         $targetClass = new Fixtures\TargetClass01();
 
-        $this->assertEquals('I\'m the traitor', call_user_func(array($targetClass, 'introducedTraitMethod')));
+        $this->assertEquals('I\'m the traitor', call_user_func([$targetClass, 'introducedTraitMethod']));
     }
 
     /**

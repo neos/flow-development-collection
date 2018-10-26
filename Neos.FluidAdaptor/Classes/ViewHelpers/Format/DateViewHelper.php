@@ -153,7 +153,7 @@ class DateViewHelper extends AbstractLocaleAwareViewHelper
                 if ($cldrFormat !== null) {
                     $output = $this->datetimeFormatter->formatDateTimeWithCustomPattern($date, $cldrFormat, $useLocale);
                 } else {
-                    $output = $this->datetimeFormatter->format($date, $useLocale, array($this->arguments['localeFormatType'], $this->arguments['localeFormatLength']));
+                    $output = $this->datetimeFormatter->format($date, $useLocale, [$this->arguments['localeFormatType'], $this->arguments['localeFormatLength']]);
                 }
             } catch (I18nException $exception) {
                 throw new ViewHelperException(sprintf('An error occurred while trying to format the given date/time: "%s"', $exception->getMessage()), 1342610987, $exception);

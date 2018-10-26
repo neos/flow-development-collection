@@ -200,6 +200,6 @@ class WidgetContext
      */
     public function __sleep()
     {
-        return array('widgetIdentifier', 'ajaxWidgetIdentifier', 'ajaxWidgetConfiguration', 'controllerObjectName');
+        return ['widgetIdentifier', 'ajaxWidgetIdentifier', 'ajaxWidgetConfiguration', 'controllerObjectName'];
     }
 }

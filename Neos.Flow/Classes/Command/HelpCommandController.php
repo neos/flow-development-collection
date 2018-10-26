@@ -65,7 +65,7 @@ class HelpCommandController extends CommandController
         $context = $this->bootstrap->getContext();
         $applicationPackage = $this->packageManager->getPackage($this->applicationPackageKey);
         $this->outputLine('<b>%s %s ("%s" context)</b>', [$this->applicationName, $applicationPackage->getInstalledVersion() ?: 'dev', $context]);
-        $this->outputLine('<i>usage: %s <command identifier></i>', array($this->getFlowInvocationString()));
+        $this->outputLine('<i>usage: %s <command identifier></i>', [$this->getFlowInvocationString()]);
         $this->outputLine();
         $this->outputLine('See "%s help" for a list of all available commands.', [$this->getFlowInvocationString()]);
         $this->outputLine();

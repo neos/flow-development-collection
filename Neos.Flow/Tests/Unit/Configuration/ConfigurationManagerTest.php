@@ -648,18 +648,18 @@ EOD;
         $configurationManager->_set('configurations', $mockConfigurations);
         $configurationManager->_set('unprocessedConfiguration', $mockConfigurations);
         $configurationManager->_set('configurationTypes', [
-            ConfigurationManager::CONFIGURATION_TYPE_ROUTES => array(
+            ConfigurationManager::CONFIGURATION_TYPE_ROUTES => [
                 'processingType' => ConfigurationManager::CONFIGURATION_PROCESSING_TYPE_ROUTES,
                 'allowSplitSource' => false
-            ),
-            ConfigurationManager::CONFIGURATION_TYPE_CACHES => array(
+            ],
+            ConfigurationManager::CONFIGURATION_TYPE_CACHES => [
                 'processingType' => ConfigurationManager::CONFIGURATION_PROCESSING_TYPE_DEFAULT,
                 'allowSplitSource' => false
-            ),
-            ConfigurationManager::CONFIGURATION_TYPE_SETTINGS => array(
+            ],
+            ConfigurationManager::CONFIGURATION_TYPE_SETTINGS => [
                 'processingType' => ConfigurationManager::CONFIGURATION_PROCESSING_TYPE_DEFAULT,
                 'allowSplitSource' => false
-            ),
+            ],
         ]);
 
         $configurationManager->_call('saveConfigurationCache');
@@ -751,17 +751,17 @@ EOD;
 
         putenv($envVarName . '=' . $envVarValue);
 
-        $settings = array(
+        $settings = [
             'foo' => 'bar',
             'bar' => '%env:' . $envVarName . '%',
             'baz' => '%env:' . $envVarName . '% inspiring people %env:' . $envVarName . '% to share',
-            'inspiring' => array(
-                'people' => array(
+            'inspiring' => [
+                'people' => [
                     'to' => '%env:' . $envVarName . '%',
                     'share' => 'foo %env:' . $envVarName . '% bar'
-                )
-            )
-        );
+                ]
+            ]
+        ];
         $settingsPhpString = var_export($settings, true);
 
         $configurationManager = $this->getAccessibleMock(ConfigurationManager::class, ['dummy'], [], '', false);

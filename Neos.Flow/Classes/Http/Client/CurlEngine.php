@@ -138,7 +138,7 @@ class CurlEngine implements RequestEngineInterface
         }
 
         if (count($request->getCookies()) > 0) {
-            $cookies = array();
+            $cookies = [];
             foreach ($request->getCookies() as $cookie) {
                 $cookies[] = $cookie->getName() . '=' . $cookie->getValue();
             }

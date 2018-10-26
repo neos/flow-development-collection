@@ -283,7 +283,7 @@ abstract class AbstractFormFieldViewHelper extends AbstractFormViewHelper
      */
     protected function renderHiddenFieldForEmptyValue()
     {
-        $emptyHiddenFieldNames = array();
+        $emptyHiddenFieldNames = [];
         if ($this->viewHelperVariableContainer->exists(\Neos\FluidAdaptor\ViewHelpers\FormViewHelper::class, 'emptyHiddenFieldNames')) {
             $emptyHiddenFieldNames = $this->viewHelperVariableContainer->get(\Neos\FluidAdaptor\ViewHelpers\FormViewHelper::class, 'emptyHiddenFieldNames');
         }

@@ -67,7 +67,7 @@ class UrlencodeViewHelper extends AbstractViewHelper
      */
     public function render()
     {
-        return self::renderStatic(array('value' => $this->arguments['value']), $this->buildRenderChildrenClosure(), $this->renderingContext);
+        return self::renderStatic(['value' => $this->arguments['value']], $this->buildRenderChildrenClosure(), $this->renderingContext);
     }
 
     /**

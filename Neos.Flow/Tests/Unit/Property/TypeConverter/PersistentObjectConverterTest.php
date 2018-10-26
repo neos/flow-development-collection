@@ -486,11 +486,11 @@ class PersistentObjectConverterTest extends UnitTestCase
         ];
 
         $this->mockReflectionService->expects($this->once())->method('hasMethod')->with(ClassWithSettersAndConstructor::class, '__construct')->will($this->returnValue(true));
-        $this->mockReflectionService->expects($this->once())->method('getMethodParameters')->with(ClassWithSettersAndConstructor::class, '__construct')->will($this->returnValue(array(
-            'property1' => array('optional' => false, 'type' => null)
-        )));
+        $this->mockReflectionService->expects($this->once())->method('getMethodParameters')->with(ClassWithSettersAndConstructor::class, '__construct')->will($this->returnValue([
+            'property1' => ['optional' => false, 'type' => null]
+        ]));
         $this->mockObjectManager->expects($this->once())->method('getClassNameByObjectName')->with(ClassWithSettersAndConstructor::class)->will($this->returnValue(ClassWithSettersAndConstructor::class));
-        $configuration = $this->buildConfiguration(array(PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED => true));
+        $configuration = $this->buildConfiguration([PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED => true]);
         $result = $this->converter->convertFrom($source, ClassWithSettersAndConstructor::class, $convertedChildProperties, $configuration);
         $this->assertSame($object, $result);
     }

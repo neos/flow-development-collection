@@ -54,7 +54,7 @@ class KickstartCommandController extends CommandController
         $this->validatePackageKey($packageKey);
 
         if ($this->packageManager->isPackageAvailable($packageKey)) {
-            $this->outputLine('Package "%s" already exists.', array($packageKey));
+            $this->outputLine('Package "%s" already exists.', [$packageKey]);
             exit(2);
         }
 
@@ -109,13 +109,13 @@ class KickstartCommandController extends CommandController
         $this->validatePackageKey($packageKey);
         if (!$this->packageManager->isPackageAvailable($packageKey)) {
             if ($generateRelated === false) {
-                $this->outputLine('Package "%s" is not available.', array($packageKey));
+                $this->outputLine('Package "%s" is not available.', [$packageKey]);
                 $this->outputLine('Hint: Use --generate-related for creating it!');
                 exit(2);
             }
             $this->packageManager->createPackage($packageKey);
         }
-        $generatedFiles = array();
+        $generatedFiles = [];
         $generatedModels = false;
 
         $controllerNames = Arrays::trimExplode(',', $controllerName);
@@ -124,10 +124,10 @@ class KickstartCommandController extends CommandController
                 $modelClassName = str_replace('.', '\\', $packageKey) . '\Domain\Model\\' . $currentControllerName;
                 if (!class_exists($modelClassName)) {
                     if ($generateRelated === true) {
-                        $generatedFiles += $this->generatorService->generateModel($packageKey, $currentControllerName, array('name' => array('type' => 'string')));
+                        $generatedFiles += $this->generatorService->generateModel($packageKey, $currentControllerName, ['name' => ['type' => 'string']]);
                         $generatedModels = true;
                     } else {
-                        $this->outputLine('The model %s does not exist, but is necessary for creating the respective actions.', array($modelClassName));
+                        $this->outputLine('The model %s does not exist, but is necessary for creating the respective actions.', [$modelClassName]);
                         $this->outputLine('Hint: Use --generate-related for creating it!');
                         exit(3);
                     }
@@ -138,7 +138,7 @@ class KickstartCommandController extends CommandController
                     if ($generateRelated === true) {
                         $generatedFiles += $this->generatorService->generateRepository($packageKey, $currentControllerName);
                     } else {
-                        $this->outputLine('The repository %s does not exist, but is necessary for creating the respective actions.', array($repositoryClassName));
+                        $this->outputLine('The repository %s does not exist, but is necessary for creating the respective actions.', [$repositoryClassName]);
                         $this->outputLine('Hint: Use --generate-related for creating it!');
                         exit(4);
                     }
@@ -188,10 +188,10 @@ class KickstartCommandController extends CommandController
     {
         $this->validatePackageKey($packageKey);
         if (!$this->packageManager->isPackageAvailable($packageKey)) {
-            $this->outputLine('Package "%s" is not available.', array($packageKey));
+            $this->outputLine('Package "%s" is not available.', [$packageKey]);
             exit(2);
         }
-        $generatedFiles = array();
+        $generatedFiles = [];
         $controllerNames = Arrays::trimExplode(',', $controllerName);
         foreach ($controllerNames as $currentControllerName) {
             $generatedFiles += $this->generatorService->generateCommandController($packageKey, $currentControllerName, $force);
@@ -216,18 +216,18 @@ class KickstartCommandController extends CommandController
     {
         $this->validatePackageKey($packageKey);
         if (!$this->packageManager->isPackageAvailable($packageKey)) {
-            $this->outputLine('Package "%s" is not available.', array($packageKey));
+            $this->outputLine('Package "%s" is not available.', [$packageKey]);
             exit(2);
         }
 
         $this->validateModelName($modelName);
 
         $fieldsArguments = $this->request->getExceedingArguments();
-        $fieldDefinitions = array();
+        $fieldDefinitions = [];
         foreach ($fieldsArguments as $fieldArgument) {
             list($fieldName, $fieldType) = explode(':', $fieldArgument, 2);
 
-            $fieldDefinitions[$fieldName] = array('type' => $fieldType);
+            $fieldDefinitions[$fieldName] = ['type' => $fieldType];
             if (strpos($fieldType, 'array') !== false) {
                 $fieldDefinitions[$fieldName]['typeHint'] = 'array';
             } elseif (strpos($fieldType, '\\') !== false) {
@@ -259,7 +259,7 @@ class KickstartCommandController extends CommandController
     {
         $this->validatePackageKey($packageKey);
         if (!$this->packageManager->isPackageAvailable($packageKey)) {
-            $this->outputLine('Package "%s" is not available.', array($packageKey));
+            $this->outputLine('Package "%s" is not available.', [$packageKey]);
             exit(2);
         }
 
@@ -279,7 +279,7 @@ class KickstartCommandController extends CommandController
     {
         $this->validatePackageKey($packageKey);
         if (!$this->packageManager->isPackageAvailable($packageKey)) {
-            $this->outputLine('Package "%s" is not available.', array($packageKey));
+            $this->outputLine('Package "%s" is not available.', [$packageKey]);
             exit(2);
         }
 
@@ -320,7 +320,7 @@ class KickstartCommandController extends CommandController
     protected function validatePackageKey($packageKey)
     {
         if (!$this->packageManager->isPackageKeyValid($packageKey)) {
-            $this->outputLine('Package key "%s" is not valid. Only UpperCamelCase with alphanumeric characters in the format <VendorName>.<PackageKey>, please!', array($packageKey));
+            $this->outputLine('Package key "%s" is not valid. Only UpperCamelCase with alphanumeric characters in the format <VendorName>.<PackageKey>, please!', [$packageKey]);
             exit(1);
         }
     }
