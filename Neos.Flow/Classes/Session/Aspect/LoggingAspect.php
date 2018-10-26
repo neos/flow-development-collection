@@ -13,7 +13,6 @@ namespace Neos\Flow\Session\Aspect;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Aop\JoinPointInterface;
-use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Session\SessionInterface;
 use Psr\Log\LoggerInterface;
 
