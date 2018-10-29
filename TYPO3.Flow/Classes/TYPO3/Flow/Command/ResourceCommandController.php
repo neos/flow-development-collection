@@ -155,11 +155,10 @@ class ResourceCommandController extends CommandController
             $this->quit(1);
         }
 
-        $sourceObjects = $sourceCollection->getObjects();
         $this->outputLine('Copying resource objects from collection "%s" to collection "%s" ...', [$sourceCollectionName, $targetCollectionName]);
         $this->outputLine();
 
-        $this->output->progressStart(count($sourceObjects));
+        $this->output->progressStart();
         foreach ($sourceCollection->getObjects() as $resource) {
             /** @var \TYPO3\Flow\Resource\Storage\Object $resource */
             $this->output->progressAdvance();
