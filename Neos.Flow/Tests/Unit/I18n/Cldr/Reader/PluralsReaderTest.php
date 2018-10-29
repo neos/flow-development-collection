@@ -36,6 +36,11 @@ class PluralsReaderTest extends UnitTestCase
                 'pluralRule[@count="one"]' => 'n is 1',
                 'pluralRule[@count="few"]' => 'n is 0 OR n is not 1 AND n mod 100 in 1..19',
             ],
+            'pluralRules[@locales="hr ru sr uk be bs sh"]' => [
+                'pluralRule[@count="one"]' => 'n mod 10 is 1 and n mod 100 is not 11',
+                'pluralRule[@count="few"]' => 'n mod 10 in 2..4 and n mod 100 not in 12..14',
+                'pluralRule[@count="many"]' => 'n mod 10 is 0 or n mod 10 in 5..9 or n mod 100 in 11..14'
+            ]
         ];
 
         $mockModel = $this->getAccessibleMock(I18n\Cldr\CldrModel::class, ['getRawArray'], [['fake/path']]);
@@ -63,11 +68,27 @@ class PluralsReaderTest extends UnitTestCase
     public function quantities()
     {
         return [
-            [1, PluralsReader::RULE_ONE],
-            [2, PluralsReader::RULE_FEW],
-            [100, PluralsReader::RULE_OTHER],
-            [101, PluralsReader::RULE_FEW],
-            [101.1, PluralsReader::RULE_OTHER],
+            [
+                'mo',
+                [
+                    [1, PluralsReader::RULE_ONE],
+                    [2, PluralsReader::RULE_FEW],
+                    [100, PluralsReader::RULE_OTHER],
+                    [101, PluralsReader::RULE_FEW],
+                    [101.1, PluralsReader::RULE_OTHER]
+                ]
+            ],
+            [
+                'ru',
+                [
+                    [1, PluralsReader::RULE_ONE],
+                    [2, PluralsReader::RULE_FEW],
+                    [11, PluralsReader::RULE_MANY],
+                    [100, PluralsReader::RULE_MANY],
+                    [101, PluralsReader::RULE_ONE],
+                    [101.1, PluralsReader::RULE_OTHER]
+                ]
+            ]
         ];
     }
 
@@ -75,11 +96,13 @@ class PluralsReaderTest extends UnitTestCase
      * @test
      * @dataProvider quantities
      */
-    public function returnsCorrectPluralForm($quantity, $pluralForm)
+    public function returnsCorrectPluralForm($localeName, $quantities)
     {
-        $locale = new I18n\Locale('mo');
-
-        $result = $this->reader->getPluralForm($quantity, $locale);
-        $this->assertEquals($pluralForm, $result);
+        $locale = new I18n\Locale($localeName);
+        foreach ($quantities as $value) {
+            list($quantity, $pluralForm) = $value;
+            $result = $this->reader->getPluralForm($quantity, $locale);
+            $this->assertEquals($pluralForm, $result);
+        }
     }
 }
