@@ -160,19 +160,21 @@ class PluralsReader
             foreach ($rule as $subrule) {
                 $subrulePassed = false;
 
+                $processedQuantity = $quantity;
+
                 if ($subrule['modulo'] !== false) {
-                    $quantity = fmod($quantity, $subrule['modulo']);
+                    $processedQuantity = fmod($processedQuantity, $subrule['modulo']);
                 }
 
-                if ($quantity == floor($quantity)) {
-                    $quantity = (int)$quantity;
+                if ($processedQuantity == floor($processedQuantity)) {
+                    $processedQuantity = (int)$processedQuantity;
                 }
 
                 $condition = $subrule['condition'];
                 switch ($condition[0]) {
                     case 'is':
                     case 'isnot':
-                        if (is_int($quantity) && $quantity === $condition[1]) {
+                        if (is_int($processedQuantity) && $processedQuantity === $condition[1]) {
                             $subrulePassed = true;
                         }
                         if ($condition[0] === 'isnot') {
@@ -181,7 +183,7 @@ class PluralsReader
                         break;
                     case 'in':
                     case 'notin':
-                        if (is_int($quantity) && $quantity >= $condition[1] && $quantity <= $condition[2]) {
+                        if (is_int($processedQuantity) && $processedQuantity >= $condition[1] && $processedQuantity <= $condition[2]) {
                             $subrulePassed = true;
                         }
                         if ($condition[0] === 'notin') {
@@ -190,7 +192,7 @@ class PluralsReader
                         break;
                     case 'within':
                     case 'notwithin':
-                        if ($quantity >= $condition[1] && $quantity <= $condition[2]) {
+                        if ($processedQuantity >= $condition[1] && $processedQuantity <= $condition[2]) {
                             $subrulePassed = true;
                         }
                         if ($condition[0] === 'notwithin') {
