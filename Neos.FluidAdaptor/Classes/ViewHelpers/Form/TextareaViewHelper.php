@@ -48,6 +48,7 @@ class TextareaViewHelper extends AbstractFormFieldViewHelper
         $this->registerTagAttribute('required', 'boolean', 'If the field should be marked as required or not', false, false);
         $this->registerTagAttribute('placeholder', 'string', 'The placeholder of the textarea');
         $this->registerTagAttribute('autofocus', 'string', 'Specifies that a text area should automatically get focus when the page loads');
+        $this->registerTagAttribute('maxlength', 'int', 'The maxlength attribute of the textarea (will not be validated)');
         $this->registerArgument('errorClass', 'string', 'CSS class to set if there are errors for this view helper', false, 'f3-form-error');
 
         $this->registerUniversalTagAttributes();
