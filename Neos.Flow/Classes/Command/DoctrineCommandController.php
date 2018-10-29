@@ -465,7 +465,7 @@ class DoctrineCommandController extends CommandController
         $this->outputLine();
         if ($migrationClassPathAndFilename) {
             $choices = ['Don\'t Move'];
-            $packages = [null];
+            $packages = [];
 
             /** @var Package $package */
             foreach ($this->packageManager->getAvailablePackages() as $package) {
@@ -474,14 +474,15 @@ class DoctrineCommandController extends CommandController
                     continue;
                 }
                 $choices[] = $package->getPackageKey();
-                $packages[] = $package;
+                $packages[$package->getPackageKey()] = $package;
             }
-            $selectedPackageIndex = (integer)$this->output->select('Do you want to move the migration to one of these packages?', $choices, 0);
+
+            $selectedPackage = $this->output->select('Do you want to move the migration to one of these packages?', $choices, $choices[0]);
             $this->outputLine();
 
-            if ($selectedPackageIndex !== 0) {
+            if ($selectedPackage !== $choices[0]) {
                 /** @var Package $selectedPackage */
-                $selectedPackage = $packages[$selectedPackageIndex];
+                $selectedPackage = $packages[$selectedPackage];
                 $targetPathAndFilename = Files::concatenatePaths([$selectedPackage->getPackagePath(), 'Migrations', $this->doctrineService->getDatabasePlatformName(), basename($migrationClassPathAndFilename)]);
                 Files::createDirectoryRecursively(dirname($targetPathAndFilename));
                 rename($migrationClassPathAndFilename, $targetPathAndFilename);
