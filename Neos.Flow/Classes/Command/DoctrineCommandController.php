@@ -104,6 +104,7 @@ class DoctrineCommandController extends CommandController
      *
      * @return void
      * @see neos.flow:doctrine:entitystatus
+     * @throws StopActionException
      */
     public function validateCommand()
     {
@@ -135,6 +136,7 @@ class DoctrineCommandController extends CommandController
      * @return void
      * @see neos.flow:doctrine:update
      * @see neos.flow:doctrine:migrate
+     * @throws StopActionException
      */
     public function createCommand(string $output = null)
     {
@@ -163,6 +165,7 @@ class DoctrineCommandController extends CommandController
      * @return void
      * @see neos.flow:doctrine:create
      * @see neos.flow:doctrine:migrate
+     * @throws StopActionException
      */
     public function updateCommand(bool $unsafeMode = false, string $output = null)
     {
@@ -246,6 +249,7 @@ class DoctrineCommandController extends CommandController
      * @param integer $limit Limit the result to this number
      * @return void
      * @throws \InvalidArgumentException
+     * @throws StopActionException
      */
     public function dqlCommand(int $depth = 3, string $hydrationMode = 'array', int $offset = null, int $limit = null)
     {
@@ -279,6 +283,7 @@ class DoctrineCommandController extends CommandController
      * @see neos.flow:doctrine:migrationexecute
      * @see neos.flow:doctrine:migrationgenerate
      * @see neos.flow:doctrine:migrationversion
+     * @throws StopActionException
      */
     public function migrationStatusCommand(bool $showMigrations = false, bool $showDescriptions = false)
     {
@@ -309,6 +314,7 @@ class DoctrineCommandController extends CommandController
      * @see neos.flow:doctrine:migrationexecute
      * @see neos.flow:doctrine:migrationgenerate
      * @see neos.flow:doctrine:migrationversion
+     * @throws StopActionException
      */
     public function migrateCommand(string $version = null, string $output = null, bool $dryRun = false, bool $quiet = false)
     {
@@ -359,6 +365,7 @@ class DoctrineCommandController extends CommandController
      * @see neos.flow:doctrine:migrationstatus
      * @see neos.flow:doctrine:migrationgenerate
      * @see neos.flow:doctrine:migrationversion
+     * @throws StopActionException
      */
     public function migrationExecuteCommand(string $version, string $direction = 'up', string $output = null, bool $dryRun = false)
     {
@@ -385,6 +392,7 @@ class DoctrineCommandController extends CommandController
      * @param boolean $delete The migration to mark as not migrated
      * @return void
      * @throws \InvalidArgumentException
+     * @throws StopActionException
      * @see neos.flow:doctrine:migrate
      * @see neos.flow:doctrine:migrationstatus
      * @see neos.flow:doctrine:migrationexecute
@@ -431,6 +439,8 @@ class DoctrineCommandController extends CommandController
      * @param string $filterExpression Only include tables/sequences matching the filter expression regexp
      * @param boolean $force Generate migrations even if there are migrations left to execute
      * @return void
+     * @throws StopActionException
+     * @throws \Neos\Utility\Exception\FilesException
      * @see neos.flow:doctrine:migrate
      * @see neos.flow:doctrine:migrationstatus
      * @see neos.flow:doctrine:migrationexecute
