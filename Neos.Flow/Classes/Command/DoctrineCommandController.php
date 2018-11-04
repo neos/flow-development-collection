@@ -18,6 +18,8 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Error\Debugger;
 use Neos\Flow\Log\ThrowableStorageInterface;
+use Neos\Flow\Log\Utility\LogEnvironment;
+use Neos\Flow\Mvc\Exception\StopActionException;
 use Neos\Flow\Package;
 use Neos\Flow\Package\PackageManagerInterface;
 use Neos\Flow\Persistence\Doctrine\Service as DoctrineService;
@@ -452,7 +454,7 @@ class DoctrineCommandController extends CommandController
         // use default filter expression from settings
         if ($filterExpression === null) {
             $ignoredTables = array_keys(array_filter($this->settings['doctrine']['migrations']['ignoredTables']));
-            if ($ignoredTables !== array()) {
+            if ($ignoredTables !== []) {
                 $filterExpression = sprintf('/^(?!%s$).*$/xs', implode('$|', $ignoredTables));
             }
         }
@@ -463,7 +465,7 @@ class DoctrineCommandController extends CommandController
         $this->outputLine();
         if ($migrationClassPathAndFilename) {
             $choices = ['Don\'t Move'];
-            $packages = [null];
+            $packages = [];
 
             /** @var Package $package */
             foreach ($this->packageManager->getAvailablePackages() as $package) {
@@ -472,14 +474,15 @@ class DoctrineCommandController extends CommandController
                     continue;
                 }
                 $choices[] = $package->getPackageKey();
-                $packages[] = $package;
+                $packages[$package->getPackageKey()] = $package;
             }
-            $selectedPackageIndex = (integer)$this->output->select('Do you want to move the migration to one of these packages?', $choices, 0);
+
+            $selectedPackage = $this->output->select('Do you want to move the migration to one of these packages?', $choices, $choices[0]);
             $this->outputLine();
 
-            if ($selectedPackageIndex !== 0) {
+            if ($selectedPackage !== $choices[0]) {
                 /** @var Package $selectedPackage */
-                $selectedPackage = $packages[$selectedPackageIndex];
+                $selectedPackage = $packages[$selectedPackage];
                 $targetPathAndFilename = Files::concatenatePaths([$selectedPackage->getPackagePath(), 'Migrations', $this->doctrineService->getDatabasePlatformName(), basename($migrationClassPathAndFilename)]);
                 Files::createDirectoryRecursively(dirname($targetPathAndFilename));
                 rename($migrationClassPathAndFilename, $targetPathAndFilename);
@@ -500,6 +503,7 @@ class DoctrineCommandController extends CommandController
      *
      * @param \Exception $exception
      * @return void
+     * @throws StopActionException
      */
     protected function handleException(\Exception $exception)
     {
@@ -508,7 +512,7 @@ class DoctrineCommandController extends CommandController
         $this->outputLine('The exception details have been logged to the Flow system log.');
         $message = $this->throwableStorage->logThrowable($exception);
         $this->outputLine($message);
-        $this->logger->error($message);
+        $this->logger->error($message, LogEnvironment::fromMethodName(__METHOD__));
         $this->quit(1);
     }
 

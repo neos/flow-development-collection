@@ -23,6 +23,7 @@ use Neos\Flow\ObjectManagement\ObjectManagerInterface;
  *
  * @api
  * @Flow\Scope("singleton")
+ * @deprecated Instead a \Neos\Flow\Log\PsrLoggerFactoryInterface should be used.
  */
 class LoggerFactory
 {

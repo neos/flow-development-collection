@@ -3,7 +3,7 @@
 FluidAdaptor ViewHelper Reference
 =================================
 
-This reference was automatically generated from code on 2018-09-19
+This reference was automatically generated from code on 2018-10-02
 
 
 .. _`FluidAdaptor ViewHelper Reference: f:debug`:
@@ -72,6 +72,10 @@ Arguments
 
 * ``data`` (array, *optional*): Additional data-* attributes. They will each be added with a "data-" prefix.
 
+* ``as`` (string, *optional*): The name of the current flashMessage variable for rendering inside
+
+* ``severity`` (string, *optional*): severity of the messages (One of the \Neos\Error\Messages\Message::SEVERITY_* constants)
+
 * ``class`` (string, *optional*): CSS class(es) for this element
 
 * ``dir`` (string, *optional*): Text direction for this HTML element. Allowed strings: "ltr" (left to right), "rtl" (right to left)
@@ -89,10 +93,6 @@ Arguments
 * ``tabindex`` (integer, *optional*): Specifies the tab order of this element
 
 * ``onclick`` (string, *optional*): JavaScript evaluated for the onclick event
-
-* ``as`` (string, *optional*): The name of the current flashMessage variable for rendering inside
-
-* ``severity`` (string, *optional*): severity of the messages (One of the \Neos\Error\Messages\Message::SEVERITY_* constants)
 
 
 

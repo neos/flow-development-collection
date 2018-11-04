@@ -33,11 +33,6 @@ class Compiler
     const ORIGINAL_CLASSNAME_SUFFIX = '_Original';
 
     /**
-     * @var array
-     */
-    protected $settings = [];
-
-    /**
      * @var CompileTimeObjectManager
      */
     protected $objectManager;
@@ -84,17 +79,6 @@ class Compiler
     public function __construct()
     {
         $this->blacklistedSubPackagesLength = strlen('Neos\Flow') + 4;
-    }
-
-    /**
-     * Injects the Flow settings
-     *
-     * @param array $settings The settings
-     * @return void
-     */
-    public function injectSettings(array $settings)
-    {
-        $this->settings = $settings;
     }
 
     /**

@@ -54,9 +54,9 @@ class WidgetContextTest extends \Neos\Flow\Tests\UnitTestCase
      */
     public function nonAjaxWidgetConfigurationIsReturnedWhenContextIsNotSerialized()
     {
-        $this->widgetContext->setNonAjaxWidgetConfiguration(array('key' => 'value'));
-        $this->widgetContext->setAjaxWidgetConfiguration(array('keyAjax' => 'valueAjax'));
-        $this->assertEquals(array('key' => 'value'), $this->widgetContext->getWidgetConfiguration());
+        $this->widgetContext->setNonAjaxWidgetConfiguration(['key' => 'value']);
+        $this->widgetContext->setAjaxWidgetConfiguration(['keyAjax' => 'valueAjax']);
+        $this->assertEquals(['key' => 'value'], $this->widgetContext->getWidgetConfiguration());
     }
 
     /**
@@ -64,11 +64,11 @@ class WidgetContextTest extends \Neos\Flow\Tests\UnitTestCase
      */
     public function aWidgetConfigurationIsReturnedWhenContextIsSerialized()
     {
-        $this->widgetContext->setNonAjaxWidgetConfiguration(array('key' => 'value'));
-        $this->widgetContext->setAjaxWidgetConfiguration(array('keyAjax' => 'valueAjax'));
+        $this->widgetContext->setNonAjaxWidgetConfiguration(['key' => 'value']);
+        $this->widgetContext->setAjaxWidgetConfiguration(['keyAjax' => 'valueAjax']);
         $this->widgetContext = serialize($this->widgetContext);
         $this->widgetContext = unserialize($this->widgetContext);
-        $this->assertEquals(array('keyAjax' => 'valueAjax'), $this->widgetContext->getWidgetConfiguration());
+        $this->assertEquals(['keyAjax' => 'valueAjax'], $this->widgetContext->getWidgetConfiguration());
     }
 
     /**
