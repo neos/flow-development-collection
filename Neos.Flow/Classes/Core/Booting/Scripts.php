@@ -279,19 +279,19 @@ class Scripts
         $configurationManager = $bootstrap->getEarlyInstance(ConfigurationManager::class);
         $settings = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.Flow');
 
-        $storageClasName = $settings['log']['throwables']['storageClass'] ?? FileStorage::class;
-        $storageOptions = $settings['log']['throwables']['optionsByImplementation'][$storageClasName] ?? [];
+        $storageClassName = $settings['log']['throwables']['storageClass'] ?? FileStorage::class;
+        $storageOptions = $settings['log']['throwables']['optionsByImplementation'][$storageClassName] ?? [];
 
 
-        if (!in_array(ThrowableStorageInterface::class, class_implements($storageClasName, true))) {
+        if (!in_array(ThrowableStorageInterface::class, class_implements($storageClassName, true))) {
             throw new \Exception(
-                sprintf('The clas "%s" configured as throwable storage does not implement the ThrowableStorageInterface', $storageClasName),
+                sprintf('The class "%s" configured as throwable storage does not implement the ThrowableStorageInterface', $storageClassName),
                 1540583485
             );
         }
 
         /** @var ThrowableStorageInterface $throwableStorage */
-        $throwableStorage = $storageClasName::createWithOptions($storageOptions);
+        $throwableStorage = $storageClassName::createWithOptions($storageOptions);
 
         $throwableStorage->setBacktraceRenderer(function ($backtrace) {
             return Debugger::getBacktraceCode($backtrace, false, true);
