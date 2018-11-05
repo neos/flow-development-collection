@@ -13,7 +13,6 @@ namespace Neos\Flow\Error;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\Bootstrap;
-use Neos\Flow\Exception as FlowException;
 use Neos\Flow\Http\Helper\ResponseInformationHelper;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 
@@ -59,10 +58,7 @@ EOD;
      */
     protected function echoExceptionWeb($exception)
     {
-        $statusCode = 500;
-        if ($exception instanceof FlowException) {
-            $statusCode = $exception->getStatusCode();
-        }
+        $statusCode = ($exception instanceof WithHttpStatusInterface) ? $exception->getStatusCode() : 500;
         $statusMessage = ResponseInformationHelper::getStatusMessageByCode($statusCode);
         if (!headers_sent()) {
             header(sprintf('HTTP/1.1 %s %s', $statusCode, $statusMessage));
@@ -77,8 +73,6 @@ EOD;
             echo $this->buildView($exception, $this->renderingOptions)->render();
         } catch (\Throwable $throwable) {
             $this->renderStatically($statusCode, $throwable);
-        } catch (\Exception $exception) {
-            $this->renderStatically($statusCode, $exception);
         }
     }
 
@@ -106,7 +100,7 @@ EOD;
             $exceptionHeader .= '<table class="Flow-Debug-Exception-Meta"><tbody>';
             $exceptionHeader .= '<tr><th>Exception Code</th><td class="ExceptionProperty">' . $exception->getCode() . '</td></tr>';
             $exceptionHeader .= '<tr><th>Exception Type</th><td class="ExceptionProperty">' . get_class($exception) . '</td></tr>';
-            if ($exception instanceof FlowException) {
+            if ($exception instanceof WithReferenceCodeInterface) {
                 $exceptionHeader .= '<tr><th>Log Reference</th><td class="ExceptionProperty">' . $exception->getReferenceCode() . '</td></tr>';
             }
 

@@ -12,7 +12,6 @@ namespace Neos\Flow\Error;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Exception as FlowException;
 use Neos\Flow\Http\Helper\ResponseInformationHelper;
 
 /**
@@ -30,12 +29,9 @@ class ProductionExceptionHandler extends AbstractExceptionHandler
      */
     protected function echoExceptionWeb($exception)
     {
-        $statusCode = 500;
-        if ($exception instanceof FlowException) {
-            $statusCode = $exception->getStatusCode();
-        }
+        $statusCode = ($exception instanceof WithHttpStatusInterface) ? $exception->getStatusCode() : 500;
         $statusMessage = ResponseInformationHelper::getStatusMessageByCode($statusCode);
-        $referenceCode = ($exception instanceof FlowException) ? $exception->getReferenceCode() : null;
+        $referenceCode = ($exception instanceof WithReferenceCodeInterface) ? $exception->getReferenceCode() : null;
         if (!headers_sent()) {
             header(sprintf('HTTP/1.1 %s %s', $statusCode, $statusMessage));
         }
@@ -46,8 +42,6 @@ class ProductionExceptionHandler extends AbstractExceptionHandler
                     echo $this->buildView($exception, $this->renderingOptions)->render();
                 } catch (\Throwable $throwable) {
                     $this->renderStatically($statusCode, $throwable);
-                } catch (\Exception $exception) {
-                    $this->renderStatically($statusCode, $exception);
                 }
             } else {
                 echo $this->renderStatically($statusCode, $referenceCode);

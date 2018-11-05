@@ -157,12 +157,9 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
      */
     protected function buildView(\Throwable $exception, array $renderingOptions): ViewInterface
     {
-        $statusCode = 500;
-        $referenceCode = null;
-        if ($exception instanceof FlowException) {
-            $statusCode = $exception->getStatusCode();
-            $referenceCode = $exception->getReferenceCode();
-        }
+        $statusCode = ($exception instanceof WithHttpStatusInterface) ? $exception->getStatusCode() : 500;
+        $referenceCode = ($exception instanceof WithReferenceCodeInterface) ? $exception->getReferenceCode() : null;
+
         $statusMessage = ResponseInformationHelper::getStatusMessageByCode($statusCode);
         $viewClassName = $renderingOptions['viewClassName'];
         /** @var ViewInterface $view */
