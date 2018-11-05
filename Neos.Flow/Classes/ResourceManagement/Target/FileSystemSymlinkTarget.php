@@ -18,7 +18,6 @@ use Neos\Flow\Utility\Algorithms;
 use Neos\Utility\Files;
 use Neos\Utility\Unicode\Functions as UnicodeFunctions;
 use Neos\Flow\ResourceManagement\Target\Exception as TargetException;
-use Psr\Log\LogLevel;
 
 /**
  * A target which publishes resources by creating symlinks.

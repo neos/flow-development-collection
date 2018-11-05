@@ -2,7 +2,6 @@
 namespace Neos\Eel\Validation;
 
 use Neos\Eel\EelParser;
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Validation\Validator\AbstractValidator;
 
 /**

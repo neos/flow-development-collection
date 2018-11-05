@@ -19,7 +19,6 @@ use Neos\Flow\Log\PsrLoggerFactoryInterface;
 use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Mvc\Dispatcher;
 use Psr\Log\LoggerInterface;
-use Psr\Log\LogLevel;
 
 /**
  * A special request handler which handles "slave" command requests as used by

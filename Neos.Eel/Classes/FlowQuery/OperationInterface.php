@@ -11,7 +11,6 @@ namespace Neos\Eel\FlowQuery;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 
 /**
  * Contract for a *FlowQuery operation* which is applied onto a set of objects.

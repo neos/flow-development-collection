@@ -17,7 +17,6 @@ use Neos\Flow\Security\Context;
 use Neos\Flow\Security\Cryptography\HashService;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use Neos\FluidAdaptor\ViewHelpers\FormViewHelper;
-use Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase;
 
 /**
  * Test for the Form view helper

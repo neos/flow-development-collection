@@ -18,7 +18,6 @@ use Neos\Flow\Property\TypeConverter\ObjectConverter;
 use Neos\Flow\Property\TypeConverter\PersistentObjectConverter;
 use Neos\Flow\Security\Account;
 use Neos\Flow\Tests\FunctionalTestCase;
-use Neos\Flow\Tests\Functional\Property\Fixtures;
 
 /**
  * Test case for Property Mapper

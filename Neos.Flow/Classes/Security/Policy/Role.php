@@ -159,23 +159,12 @@ class Role
      */
     public function getAllParentRoles()
     {
-        $result = [];
+        $reducer = function (array $result, Role $role) {
+            $result[$role->getIdentifier()] = $role;
+            return array_merge($result, $role->getAllParentRoles());
+        };
 
-        foreach ($this->parentRoles as $parentRoleIdentifier => $currentParentRole) {
-            if (isset($result[$parentRoleIdentifier])) {
-                continue;
-            }
-            $result[$parentRoleIdentifier] = $currentParentRole;
-
-            $currentGrandParentRoles = $currentParentRole->getAllParentRoles();
-            foreach ($currentGrandParentRoles as $currentGrandParentRoleIdentifier => $currentGrandParentRole) {
-                if (!isset($result[$currentGrandParentRoleIdentifier])) {
-                    $result[$currentGrandParentRoleIdentifier] = $currentGrandParentRole;
-                }
-            }
-        }
-
-        return $result;
+        return array_reduce($this->parentRoles, $reducer, []);
     }
 
     /**
