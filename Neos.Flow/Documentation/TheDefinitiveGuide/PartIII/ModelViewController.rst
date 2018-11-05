@@ -623,7 +623,10 @@ The general syntax of a view configuration looks like this:
 	  requestFilter: 'isPackage("Foreign.Package") && isController("Standard")'
 	  viewObjectName: 'Neos\Fusion\View\FusionView'
 	  options:
-	    fusionPathPattern: 'resource://My.Package/Private/Fusion'
+        fusionPathPatterns:
+          - 'resource://Neos.Fusion/Private/Fusion'
+          - 'resource://My.Package/Private/Fusion'
+        fusionPath: 'yourProtoype'
 
 The requestFilter is based on Neos.Eel allowing you to match arbitrary requests
 so that you can override View configuration for various scenarios.
@@ -678,6 +681,8 @@ If the package is "My.Foo" and the Format is "html" the result will be 10001
 	Previously the configuration of all matching ``Views.yaml`` filters was merged.
 	From version 4.0 on only the matching filter with the highest weight is respected
 	in order to reduce ambiguity.
+
+The fusionPathPatterns has to contain the Root-Fusion and the path to Fusion-Folder which contains your Prototype. Your Prototype gets searched recursively by fusionPath.
 
 Controller Context
 ~~~~~~~~~~~~~~~~~~
