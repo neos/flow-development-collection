@@ -320,7 +320,7 @@ class Service
 
             $directories = [];
             foreach ($whitelistPaths as $path) {
-                $scanPath = Files::concatenatePaths(array($packageResourcesPath, $path));
+                $scanPath = Files::concatenatePaths([$packageResourcesPath, $path]);
                 if (is_dir($scanPath)) {
                     array_push($directories, Files::getNormalizedPath($scanPath));
                 }

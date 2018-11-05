@@ -11,7 +11,6 @@ namespace Neos\Flow\Tests\Unit\Session;
  * source code.
  */
 
-use Neos\Flow\Core\RequestHandlerInterface;
 use org\bovigo\vfs\vfsStream;
 use Neos\Cache\Backend\FileBackend;
 use Neos\Cache\EnvironmentConfiguration;
@@ -501,7 +500,7 @@ class SessionTest extends UnitTestCase
         $storageCache = $this->createCache('Storage');
 
         /** @var Session $session */
-        $session = $this->getAccessibleMock(Session::class, array('dummy'));
+        $session = $this->getAccessibleMock(Session::class, ['dummy']);
         $this->inject($session, 'objectManager', $this->mockObjectManager);
         $this->inject($session, 'settings', $this->settings);
         $this->inject($session, 'metaDataCache', $metaDataCache);

@@ -1,0 +1,52 @@
+`4.3.10 (2018-10-02) <https://github.com/neos/flow-development-collection/releases/tag/4.3.10>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Allow nullable constructor arguments <https://github.com/neos/flow-development-collection/pull/1358>`_
+---------------------------------------------------------------------------------------------------------------
+
+In PropertyMapper checks if the $targetType is nullable and the given source, too. If this is true, return null. Also, in ReflectionService, the annotated type is properly expanded when annotated with '|null' or 'null|'.
+
+**Checklist**
+
+- [x] Code follows the PSR-2 coding style
+- [x] Tests have been created, run and adjusted as needed
+- [x] The PR is created against the [lowest maintained branch](https://www.neos.io/features/release-roadmap.html)
+
+Alternative push for #1353
+
+Fixes #1361
+
+* Packages: ``Flow``
+
+`BUGFIX: correctly handle 410 redirect exceptions <https://github.com/neos/flow-development-collection/pull/1387>`_
+-------------------------------------------------------------------------------------------------------------------
+
+The redirect package throws exceptions on 410, but currently they are not caught, the way 404 exceptions are handled.
+
+**Checklist**
+
+- [x] Code follows the PSR-2 coding style
+- [ ] Tests have been created, run and adjusted as needed
+- [x] The PR is created against the [lowest maintained branch](https://www.neos.io/features/release-roadmap.html)
+
+* Packages: ``Flow``
+
+`BUGFIX: Extend the expected exceptions for missing templates and sections <https://github.com/neos/flow-development-collection/pull/1378>`_
+--------------------------------------------------------------------------------------------------------------------------------------------
+
+typo3fluid/fluid expects specific exceptions to be thrown to implement
+the feature of optional sections and partials. Neos.FluidAdaptor has to
+throw these exceptions or derivates of them. Otherwise the exceptions won't
+be catched and displayed to the user.
+
+fixes: #1347 
+
+Follow-Up for #1348 with correct target.
+
+* Packages: ``Flow`` ``FluidAdaptor``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/4.3.9...4.3.10>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

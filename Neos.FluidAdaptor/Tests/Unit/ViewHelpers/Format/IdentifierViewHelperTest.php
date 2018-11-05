@@ -36,7 +36,7 @@ class IdentifierViewHelperTest extends ViewHelperBaseTestcase
     public function setUp()
     {
         parent::setUp();
-        $this->viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\Format\IdentifierViewHelper::class, array('renderChildren', 'registerRenderMethodArguments'));
+        $this->viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\Format\IdentifierViewHelper::class, ['renderChildren', 'registerRenderMethodArguments']);
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
         $this->mockPersistenceManager = $this->createMock(\Neos\Flow\Persistence\PersistenceManagerInterface::class);
         $this->viewHelper->_set('persistenceManager', $this->mockPersistenceManager);
@@ -103,7 +103,7 @@ class IdentifierViewHelperTest extends ViewHelperBaseTestcase
      */
     public function renderThrowsExceptionIfGivenValueIsNoObject()
     {
-        $notAnObject = array();
+        $notAnObject = [];
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['value' => $notAnObject]);
         $this->viewHelper->render();
     }

@@ -13,7 +13,6 @@ namespace Neos\Flow\Tests\Unit\Mvc\Routing;
 
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Http\Request;
-use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
 use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
 use Neos\Flow\Mvc\Routing\Dto\ResolveContext;

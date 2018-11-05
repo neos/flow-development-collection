@@ -14,7 +14,6 @@ namespace Neos\Flow\Aop\Pointcut;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Aop\Builder\ClassNameIndex;
 use Neos\Flow\Aop\Exception;
-use Neos\Flow\Aop\Pointcut\PointcutFilterInterface;
 use Neos\Flow\Reflection\ReflectionService;
 
 /**

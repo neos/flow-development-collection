@@ -13,7 +13,6 @@ namespace Neos\Flow\Tests\Unit\Security\Authentication\EntryPoint;
 
 use Neos\Flow\Http\Request;
 use Neos\Flow\Http\Response;
-use Neos\Flow\Http\Uri;
 use Neos\Flow\Security\Authentication\EntryPoint\HttpBasic;
 use Neos\Flow\Tests\UnitTestCase;
 

@@ -16,6 +16,7 @@ use Neos\Flow\Cli\Request as CliRequest;
 use Neos\Flow\Configuration\Exception\NoSuchOptionException;
 use Neos\Flow\Http\Response as HttpResponse;
 use Neos\Flow\Log\PsrLoggerFactoryInterface;
+use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Mvc\Controller\ControllerInterface;
 use Neos\Flow\Mvc\Controller\Exception\InvalidControllerException;
 use Neos\Flow\Mvc\Exception\InfiniteLoopException;
@@ -28,6 +29,7 @@ use Neos\Flow\Security\Authorization\FirewallInterface;
 use Neos\Flow\Security\Context;
 use Neos\Flow\Security\Exception\AccessDeniedException;
 use Neos\Flow\Security\Exception\AuthenticationRequiredException;
+use Neos\Flow\Security\Exception\MissingConfigurationException;
 
 /**
  * Dispatches requests to the controller which was specified by the request and
@@ -44,11 +46,6 @@ class Dispatcher
     protected $objectManager;
 
     /**
-     * @var array
-     */
-    protected $settings = [];
-
-    /**
      * Inject the Object Manager through setter injection because property injection
      * is not available during compile time.
      *
@@ -61,23 +58,17 @@ class Dispatcher
     }
 
     /**
-     * Injects the Flow settings
-     *
-     * @param array $settings The Flow settings
-     * @return void
-     */
-    public function injectSettings(array $settings)
-    {
-        $this->settings = $settings;
-    }
-
-    /**
      * Dispatches a request to a controller
      *
      * @param RequestInterface $request The request to dispatch
      * @param ResponseInterface $response The response, to be modified by the controller
      * @return void
-     * @throws AuthenticationRequiredException|AccessDeniedException
+     * @throws AccessDeniedException
+     * @throws AuthenticationRequiredException
+     * @throws InfiniteLoopException
+     * @throws InvalidControllerException
+     * @throws NoSuchOptionException
+     * @throws MissingConfigurationException
      * @api
      */
     public function dispatch(RequestInterface $request, ResponseInterface $response)
@@ -115,9 +106,9 @@ class Dispatcher
                 }
                 $entryPointFound = true;
                 if ($entryPoint instanceof WebRedirect) {
-                    $securityLogger->info('Redirecting to authentication entry point', $entryPoint->getOptions());
+                    $securityLogger->info('Redirecting to authentication entry point', $entryPoint->getOptions(), LogEnvironment::fromMethodName(__METHOD__));
                 } else {
-                    $securityLogger->info(sprintf('Starting authentication with entry point of type "%s"', get_class($entryPoint)));
+                    $securityLogger->info(sprintf('Starting authentication with entry point of type "%s"', get_class($entryPoint)), LogEnvironment::fromMethodName(__METHOD__));
                 }
                 $securityContext->setInterceptedRequest($request->getMainRequest());
                 /** @var HttpResponse $response */
@@ -128,7 +119,7 @@ class Dispatcher
                 throw $exception;
             }
         } catch (AccessDeniedException $exception) {
-            $securityLogger->warning('Access denied');
+            $securityLogger->warning('Access denied', LogEnvironment::fromMethodName(__METHOD__));
             throw $exception;
         }
     }

@@ -2,7 +2,6 @@
 namespace Neos\Eel\Tests\Unit\Validation;
 
 use Neos\Eel\Validation\ExpressionSyntaxValidator;
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Tests\Unit\Validation\Validator\AbstractValidatorTestcase;
 
 /**

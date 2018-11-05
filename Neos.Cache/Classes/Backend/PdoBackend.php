@@ -438,7 +438,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
         $cacheEntries = [];
 
         $statementHandle = $this->databaseHandle->prepare('SELECT "identifier", "content" FROM "cache" WHERE "context"=? AND "cache"=?' . $this->getNotExpiredStatement());
-        $statementHandle->execute(array($this->context(), $this->cacheIdentifier));
+        $statementHandle->execute([$this->context(), $this->cacheIdentifier]);
         $fetchedColumns = $statementHandle->fetchAll();
 
         foreach ($fetchedColumns as $fetchedColumn) {

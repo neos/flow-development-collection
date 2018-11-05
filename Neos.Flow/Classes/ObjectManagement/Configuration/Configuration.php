@@ -11,7 +11,6 @@ namespace Neos\Flow\ObjectManagement\Configuration;
  * source code.
  */
 
-use Doctrine\ORM\Mapping as ORM;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Configuration\Exception\InvalidConfigurationException;
 

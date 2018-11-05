@@ -14,7 +14,6 @@ namespace Neos\Flow\Aop\Pointcut;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Aop\JoinPointInterface;
 use Neos\Flow\Cache\CacheManager;
-use Neos\Cache\Frontend\PhpFrontend;
 use Neos\Flow\Exception;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 

@@ -14,6 +14,7 @@ namespace Neos\Flow\Security\Aspect;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Aop\JoinPointInterface;
 use Neos\Flow\Log\PsrSecurityLoggerInterface;
+use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Security\Authentication\AuthenticationManagerInterface;
 use Neos\Flow\Security\Authentication\TokenInterface;
 use Neos\Flow\Security\Exception\NoTokensAuthenticatedException;
@@ -67,7 +68,7 @@ class LoggingAspect
             $logMessage = sprintf('Successfully re-authenticated tokens for account "%s"', $authenticationManager->getSecurityContext()->getAccount()->getAccountIdentifier());
         }
 
-        $this->securityLogger->info($logMessage);
+        $this->securityLogger->info($logMessage, LogEnvironment::fromMethodName(__METHOD__));
     }
 
     /**
@@ -94,7 +95,7 @@ class LoggingAspect
             }
         }
 
-        $this->securityLogger->info(sprintf('Logged out %d account(s). (%s)', count($accountIdentifiers), implode(', ', $accountIdentifiers)));
+        $this->securityLogger->info(sprintf('Logged out %d account(s). (%s)', count($accountIdentifiers), implode(', ', $accountIdentifiers)), LogEnvironment::fromMethodName(__METHOD__));
     }
 
     /**
@@ -161,7 +162,7 @@ class LoggingAspect
         $subjectJoinPoint = $joinPoint->getMethodArgument('subject');
         $decision = $joinPoint->getResult() === true ? 'GRANTED' : 'DENIED';
         $message = sprintf('Decided "%s" on method call %s::%s().', $decision, $subjectJoinPoint->getClassName(), $subjectJoinPoint->getMethodName());
-        $this->securityLogger->info($message);
+        $this->securityLogger->info($message, LogEnvironment::fromMethodName(__METHOD__));
     }
 
     /**
@@ -175,6 +176,6 @@ class LoggingAspect
     {
         $decision = $joinPoint->getResult() === true ? 'GRANTED' : 'DENIED';
         $message = sprintf('Decided "%s" on privilege "%s".', $decision, $joinPoint->getMethodArgument('privilegeTargetIdentifier'));
-        $this->securityLogger->info($message);
+        $this->securityLogger->info($message, LogEnvironment::fromMethodName(__METHOD__));
     }
 }

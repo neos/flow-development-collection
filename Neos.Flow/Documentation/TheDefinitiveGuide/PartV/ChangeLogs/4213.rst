@@ -1,0 +1,8 @@
+`4.2.13 (2018-08-02) <https://github.com/neos/flow-development-collection/releases/tag/4.2.13>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/4.2.12...4.2.13>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

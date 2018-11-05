@@ -77,7 +77,7 @@ class SchemaValidationTest extends FunctionalTestCase
         $schemaFiles = [];
 
         foreach ($schemaPackages as $package) {
-            $packageSchemaPath = Files::concatenatePaths(array($package->getResourcesPath(), 'Private/Schema'));
+            $packageSchemaPath = Files::concatenatePaths([$package->getResourcesPath(), 'Private/Schema']);
             if (is_dir($packageSchemaPath)) {
                 foreach (Files::getRecursiveDirectoryGenerator($packageSchemaPath, '.schema.yaml') as $schemaFile) {
                     $schemaFiles[] = [$schemaFile];
