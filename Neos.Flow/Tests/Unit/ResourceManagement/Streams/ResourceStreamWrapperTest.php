@@ -13,7 +13,6 @@ namespace Neos\Flow\Tests\Unit\ResourceManagement\Streams;
 
 use Neos\Flow\Package\FlowPackageInterface;
 use org\bovigo\vfs\vfsStream;
-use Neos\Flow\Package\PackageInterface;
 use Neos\Flow\Package\PackageManagerInterface;
 use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\Flow\ResourceManagement\ResourceManager;

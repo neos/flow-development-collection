@@ -11,7 +11,6 @@ namespace Neos\Flow\ObjectManagement\Proxy;
  * source code.
  */
 
-use Doctrine\ORM\Mapping as ORM;
 use Neos\Flow\Annotations as Flow;
 use Neos\Cache\Frontend\PhpFrontend;
 use Neos\Flow\ObjectManagement\CompileTimeObjectManager;
@@ -31,11 +30,6 @@ class Compiler
      * @var string
      */
     const ORIGINAL_CLASSNAME_SUFFIX = '_Original';
-
-    /**
-     * @var array
-     */
-    protected $settings = [];
 
     /**
      * @var CompileTimeObjectManager
@@ -84,17 +78,6 @@ class Compiler
     public function __construct()
     {
         $this->blacklistedSubPackagesLength = strlen('Neos\Flow') + 4;
-    }
-
-    /**
-     * Injects the Flow settings
-     *
-     * @param array $settings The settings
-     * @return void
-     */
-    public function injectSettings(array $settings)
-    {
-        $this->settings = $settings;
     }
 
     /**

@@ -14,8 +14,6 @@ namespace Neos\Flow\Session\Aspect;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Aop\JoinPointInterface;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use Neos\Flow\Session\SessionInterface;
-use Neos\Flow\Session\SessionManager;
 use Neos\Flow\Session\SessionManagerInterface;
 use Psr\Log\LoggerInterface;
 

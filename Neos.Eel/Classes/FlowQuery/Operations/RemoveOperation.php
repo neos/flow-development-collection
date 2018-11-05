@@ -12,7 +12,6 @@ namespace Neos\Eel\FlowQuery\Operations;
  */
 
 use Neos\Eel\FlowQuery\FlowQuery;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * Removes the given items from the current context.

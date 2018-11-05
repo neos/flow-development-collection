@@ -12,6 +12,7 @@ namespace Neos\Flow\ResourceManagement;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Utility\ObjectAccess;
@@ -101,7 +102,7 @@ class ResourceManager
      */
     public function injectSettings(array $settings)
     {
-        $this->settings = $settings;
+        $this->settings = $settings['resource'];
     }
 
     /**
@@ -331,20 +332,20 @@ class ResourceManager
             $this->logger->debug(sprintf('Not removing storage data of resource %s (%s) because it is still in use by %s other PersistentResource object(s).', $resource->getFilename(), $resource->getSha1(), count($result) - 1));
         } else {
             if (!isset($this->collections[$collectionName])) {
-                $this->logger->warning(sprintf('Could not remove storage data of resource %s (%s) because it refers to the unknown collection "%s".', $resource->getFilename(), $resource->getSha1(), $collectionName));
+                $this->logger->warning(sprintf('Could not remove storage data of resource %s (%s) because it refers to the unknown collection "%s".', $resource->getFilename(), $resource->getSha1(), $collectionName), LogEnvironment::fromMethodName(__METHOD__));
 
                 return false;
             }
             $storage = $this->collections[$collectionName]->getStorage();
             if (!$storage instanceof WritableStorageInterface) {
-                $this->logger->warning(sprintf('Could not remove storage data of resource %s (%s) because it its collection "%s" is read-only.', $resource->getFilename(), $resource->getSha1(), $collectionName));
+                $this->logger->warning(sprintf('Could not remove storage data of resource %s (%s) because it its collection "%s" is read-only.', $resource->getFilename(), $resource->getSha1(), $collectionName), LogEnvironment::fromMethodName(__METHOD__));
 
                 return false;
             }
             try {
                 $storage->deleteResource($resource);
             } catch (\Exception $exception) {
-                $this->logger->warning(sprintf('Could not remove storage data of resource %s (%s): %s.', $resource->getFilename(), $resource->getSha1(), $exception->getMessage()));
+                $this->logger->warning(sprintf('Could not remove storage data of resource %s (%s): %s.', $resource->getFilename(), $resource->getSha1(), $exception->getMessage()), LogEnvironment::fromMethodName(__METHOD__));
 
                 return false;
             }
@@ -545,7 +546,7 @@ class ResourceManager
      */
     protected function initializeStorages()
     {
-        foreach ($this->settings['resource']['storages'] as $storageName => $storageDefinition) {
+        foreach ($this->settings['storages'] as $storageName => $storageDefinition) {
             if (!isset($storageDefinition['storage'])) {
                 throw new Exception(sprintf('The configuration for the resource storage "%s" defined in your settings has no valid "storage" option. Please check the configuration syntax and make sure to specify a valid storage class name.', $storageName), 1361467211);
             }
@@ -565,7 +566,7 @@ class ResourceManager
      */
     protected function initializeTargets()
     {
-        foreach ($this->settings['resource']['targets'] as $targetName => $targetDefinition) {
+        foreach ($this->settings['targets'] as $targetName => $targetDefinition) {
             if (!isset($targetDefinition['target'])) {
                 throw new Exception(sprintf('The configuration for the resource target "%s" defined in your settings has no valid "target" option. Please check the configuration syntax and make sure to specify a valid target class name.', $targetName), 1361467838);
             }
@@ -585,7 +586,7 @@ class ResourceManager
      */
     protected function initializeCollections()
     {
-        foreach ($this->settings['resource']['collections'] as $collectionName => $collectionDefinition) {
+        foreach ($this->settings['collections'] as $collectionName => $collectionDefinition) {
             if (!isset($collectionDefinition['storage'])) {
                 throw new Exception(sprintf('The configuration for the resource collection "%s" defined in your settings has no valid "storage" option. Please check the configuration syntax.', $collectionName), 1361468805);
             }
@@ -624,7 +625,7 @@ class ResourceManager
             throw new Exception('The given upload file "' . strip_tags($pathInfo['basename']) . '" was not uploaded through PHP. As it could pose a security risk it cannot be imported.', 1422461503);
         }
 
-        if (isset($pathInfo['extension']) && array_key_exists(strtolower($pathInfo['extension']), $this->settings['resource']['uploadExtensionBlacklist']) && $this->settings['resource']['uploadExtensionBlacklist'][strtolower($pathInfo['extension'])] === true) {
+        if (isset($pathInfo['extension']) && array_key_exists(strtolower($pathInfo['extension']), $this->settings['uploadExtensionBlacklist']) && $this->settings['uploadExtensionBlacklist'][strtolower($pathInfo['extension'])] === true) {
             throw new Exception('The extension of the given upload file "' . strip_tags($pathInfo['basename']) . '" is blacklisted. As it could pose a security risk it cannot be imported.', 1447148472);
         }
 

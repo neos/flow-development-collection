@@ -13,7 +13,6 @@ namespace Neos\FluidAdaptor\Tests\Unit\View;
 
 include_once(__DIR__ . '/Fixtures/TemplateViewFixture.php');
 
-use org\bovigo\vfs\vfsStreamWrapper;
 use Neos\Flow\Http\Request;
 use Neos\Flow\Http\Uri;
 use Neos\Flow\Mvc\Controller\ControllerContext;
@@ -39,7 +38,7 @@ class TemplateViewTest extends UnitTestCase
         $controllerObjectName = 'Neos\\' . $packageKey . '\\' . ($subPackageKey != $subPackageKey . '\\' ? : '') . 'Controller\\' . $controllerName . 'Controller';
 
         $httpRequest = Request::create(new Uri('http://robertlemke.com/blog'));
-        $mockRequest = $this->createMock(\Neos\Flow\Mvc\ActionRequest::class, array(), array($httpRequest));
+        $mockRequest = $this->createMock(\Neos\Flow\Mvc\ActionRequest::class, [], [$httpRequest]);
         $mockRequest->expects($this->any())->method('getControllerPackageKey')->will($this->returnValue($packageKey));
         $mockRequest->expects($this->any())->method('getControllerSubPackageKey')->will($this->returnValue($subPackageKey));
         $mockRequest->expects($this->any())->method('getControllerName')->will($this->returnValue($controllerName));
@@ -47,7 +46,7 @@ class TemplateViewTest extends UnitTestCase
         $mockRequest->expects($this->any())->method('getFormat')->will($this->returnValue($format));
 
         /** @var $mockControllerContext ControllerContext */
-        $mockControllerContext = $this->createMock(\Neos\Flow\Mvc\Controller\ControllerContext::class, array('getRequest'), array(), '', false);
+        $mockControllerContext = $this->createMock(\Neos\Flow\Mvc\Controller\ControllerContext::class, ['getRequest'], [], '', false);
         $mockControllerContext->expects($this->any())->method('getRequest')->will($this->returnValue($mockRequest));
 
         return $mockControllerContext;
@@ -60,7 +59,7 @@ class TemplateViewTest extends UnitTestCase
     {
         $templateView = new TemplateView();
 
-        $templateRootPaths = array('/foo/bar/', 'baz/');
+        $templateRootPaths = ['/foo/bar/', 'baz/'];
         $templateView->setOption('templateRootPaths', $templateRootPaths);
 
         $actual = $templateView->getTemplatePaths()->getTemplateRootPaths();
@@ -74,7 +73,7 @@ class TemplateViewTest extends UnitTestCase
     {
         $templateView = new TemplateView();
 
-        $partialRootPaths = array('/foo/bar/', 'baz/');
+        $partialRootPaths = ['/foo/bar/', 'baz/'];
         $templateView->setOption('partialRootPaths', $partialRootPaths);
 
         $actual = $templateView->getTemplatePaths()->getPartialRootPaths();
@@ -88,7 +87,7 @@ class TemplateViewTest extends UnitTestCase
     {
         $templateView = new TemplateView();
 
-        $layoutRootPaths = array('/foo/bar/', 'baz/');
+        $layoutRootPaths = ['/foo/bar/', 'baz/'];
         $templateView->setOption('layoutRootPaths', $layoutRootPaths);
 
         $actual = $templateView->getTemplatePaths()->getLayoutRootPaths();

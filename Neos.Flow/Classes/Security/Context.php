@@ -14,6 +14,7 @@ namespace Neos\Flow\Security;
 use Neos\Flow\Annotations as Flow;
 use Neos\Cache\CacheAwareInterface;
 use Neos\Flow\Log\PsrSecurityLoggerInterface;
+use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Security\Authentication\TokenAndProviderFactoryInterface;
 use Neos\Flow\Security\Authentication\TokenInterface;
@@ -320,7 +321,6 @@ class Context
         $this->updateTokens($this->activeTokens);
 
         $this->initialized = true;
-        return $tokens;
     }
 
     /**
@@ -757,7 +757,7 @@ class Context
                 get_class($matchingSessionToken),
                 $matchingSessionToken->getAuthenticationProviderName(),
                 $this->tokenStatusLabels[$matchingSessionToken->getAuthenticationStatus()]
-            )
+            ), LogEnvironment::fromMethodName(__METHOD__)
         );
 
         return $matchingSessionToken;

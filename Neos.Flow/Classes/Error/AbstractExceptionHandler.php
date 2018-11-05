@@ -27,7 +27,6 @@ use Neos\Flow\Mvc\View\ViewInterface;
 use Neos\Utility\ObjectAccess;
 use Neos\Utility\Arrays;
 use Psr\Log\LoggerInterface;
-use Psr\Log\LogLevel;
 
 /**
  * An abstract exception handler

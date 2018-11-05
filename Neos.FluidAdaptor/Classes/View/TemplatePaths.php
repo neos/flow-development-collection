@@ -12,7 +12,6 @@ namespace Neos\FluidAdaptor\View;
  */
 
 use Neos\FluidAdaptor\View\Exception\InvalidTemplateResourceException;
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Package\PackageManagerInterface;
 use Neos\Utility\ObjectAccess;
 use Neos\Utility\Files;

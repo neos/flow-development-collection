@@ -511,7 +511,7 @@ class ObjectSerializerTest extends UnitTestCase
         $mockObjectManager = $this->getMockBuilder(ObjectManager::class)->disableOriginalConstructor()->getMock();
         $mockObjectManager->expects($this->any())->method('isRegistered')->will($this->returnValue(false));
 
-        $objectSerializer = $this->getAccessibleMock(\Neos\Flow\ObjectManagement\ObjectSerializer::class, array('dummy'), array(), '', false);
+        $objectSerializer = $this->getAccessibleMock(\Neos\Flow\ObjectManagement\ObjectSerializer::class, ['dummy'], [], '', false);
         $objectSerializer->injectObjectManager($mockObjectManager);
 
         $objectSerializer->deserializeObjectsArray($someDataArray);
@@ -578,7 +578,7 @@ class ObjectSerializerTest extends UnitTestCase
      */
     public function buildStorageArrayCreatesTheCorrectArrayForAnArrayProperty()
     {
-        $objectSerializer = $this->getAccessibleMock(\Neos\Flow\ObjectManagement\ObjectSerializer::class, array('dummy'), array(), '', false);
+        $objectSerializer = $this->getAccessibleMock(\Neos\Flow\ObjectManagement\ObjectSerializer::class, ['dummy'], [], '', false);
 
         $expectedArray = [
             'key1' => [
