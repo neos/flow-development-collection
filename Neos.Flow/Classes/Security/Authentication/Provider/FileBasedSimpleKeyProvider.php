@@ -79,6 +79,8 @@ class FileBasedSimpleKeyProvider extends AbstractProvider
      * @param TokenInterface $authenticationToken The token to be authenticated
      * @return void
      * @throws UnsupportedAuthenticationTokenException
+     * @throws \Neos\Flow\Security\Exception
+     * @throws \Neos\Flow\Security\Exception\InvalidAuthenticationStatusException
      */
     public function authenticate(TokenInterface $authenticationToken)
     {
@@ -100,15 +102,14 @@ class FileBasedSimpleKeyProvider extends AbstractProvider
     /**
      * @param TokenInterface $authenticationToken
      * @param array $credentials
-     * @return TokenInterface
+     * @return void
      * @throws \Neos\Flow\Security\Exception
-     * @throws \Neos\Flow\Security\Exception\NoSuchRoleException
      */
-    protected function validateCredentials(TokenInterface $authenticationToken, $credentials): TokenInterface
+    protected function validateCredentials(TokenInterface $authenticationToken, $credentials): void
     {
         if (!$this->hashService->validatePassword($credentials['password'], $this->fileBasedSimpleKeyService->getKey($this->options['keyName']))) {
             $authenticationToken->setAuthenticationStatus(TokenInterface::WRONG_CREDENTIALS);
-            return $authenticationToken;
+            return;
         }
 
         $authenticationToken->setAuthenticationStatus(TokenInterface::AUTHENTICATION_SUCCESSFUL);
@@ -116,6 +117,5 @@ class FileBasedSimpleKeyProvider extends AbstractProvider
         $roles = array_map([$this->policyService, 'getRole'], $this->options['authenticateRoles']);
         $account->setRoles($roles);
         $authenticationToken->setAccount($account);
-        return $authenticationToken;
     }
 }

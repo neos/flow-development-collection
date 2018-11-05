@@ -46,14 +46,14 @@ class AuthenticationProviderResolver
      */
     public function resolveProviderClass($providerName)
     {
-        $resolvedObjectName = $this->objectManager->getClassNameByObjectName($providerName);
-        if ($resolvedObjectName !== false) {
-            return $resolvedObjectName;
+        $className = $this->objectManager->getClassNameByObjectName($providerName);
+        if ($className !== false) {
+            return $className;
         }
 
-        $resolvedObjectName = $this->objectManager->getClassNameByObjectName('Neos\Flow\Security\Authentication\Provider\\' . $providerName);
-        if ($resolvedObjectName !== false) {
-            return $resolvedObjectName;
+        $className = $this->objectManager->getClassNameByObjectName('Neos\Flow\Security\Authentication\Provider\\' . $providerName);
+        if ($className !== false) {
+            return $className;
         }
 
         throw new NoAuthenticationProviderFoundException('An authentication provider with the name "' . $providerName . '" could not be resolved.', 1217154134);
