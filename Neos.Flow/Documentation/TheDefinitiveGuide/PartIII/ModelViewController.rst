@@ -623,10 +623,10 @@ The general syntax of a view configuration looks like this:
 	  requestFilter: 'isPackage("Foreign.Package") && isController("Standard")'
 	  viewObjectName: 'Neos\Fusion\View\FusionView'
 	  options:
-        fusionPathPatterns:
-          - 'resource://Neos.Fusion/Private/Fusion'
-          - 'resource://My.Package/Private/Fusion'
-        fusionPath: 'yourProtoype'
+	    fusionPathPatterns:
+	      - 'resource://Neos.Fusion/Private/Fusion'
+	      - 'resource://My.Package/Private/Fusion'
+	    fusionPath: 'yourProtoype'
 
 The requestFilter is based on Neos.Eel allowing you to match arbitrary requests
 so that you can override View configuration for various scenarios.
