@@ -84,7 +84,7 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
      * @return void
      * @throws Exception
      */
-    public function injectSettings(array $settings)
+    public function injectSettings(array $settings): void
     {
         if (isset($settings['security']['authentication']['authenticationStrategy'])) {
             $authenticationStrategyName = $settings['security']['authentication']['authenticationStrategy'];
@@ -251,6 +251,8 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
      * Logout all active authentication tokens
      *
      * @return void
+     * @throws Exception
+     * @throws \Neos\Flow\Session\Exception\SessionNotStartedException
      */
     public function logout()
     {
@@ -277,7 +279,7 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
      * @return void
      * @Flow\Signal
      */
-    protected function emitAuthenticatedToken(TokenInterface $token)
+    protected function emitAuthenticatedToken(TokenInterface $token): void
     {
     }
 
@@ -288,7 +290,7 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
      * @return void
      * @Flow\Signal
      */
-    protected function emitLoggedOut()
+    protected function emitLoggedOut(): void
     {
     }
 
@@ -298,7 +300,7 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
      * @return void
      * @Flow\Signal
      */
-    protected function emitSuccessfullyAuthenticated()
+    protected function emitSuccessfullyAuthenticated(): void
     {
     }
 }
