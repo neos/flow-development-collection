@@ -13,7 +13,6 @@ namespace Neos\Flow\Error;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\Bootstrap;
-use Neos\Flow\Exception as FlowException;
 use Neos\Flow\Http\Helper\ResponseInformationHelper;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 
