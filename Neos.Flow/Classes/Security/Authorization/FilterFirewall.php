@@ -114,12 +114,7 @@ class FilterFirewall implements FirewallInterface
         /** @var $requestPattern RequestPatternInterface */
         $requestPattern = $this->objectManager->get($patternClassName, $patternOptions);
 
-        // The following check needed for backwards compatibility:
-        // Previously each pattern had only one option that was set via the setPattern() method. Now options are passed to the constructor.
-        if (isset($filterConfiguration['patternValue']) && is_callable([$requestPattern, 'setPattern'])) {
-            $requestPattern->setPattern($filterConfiguration['patternValue']);
-        }
-
+        /** @var InterceptorInterface $interceptor */
         $interceptor = $this->objectManager->get($this->interceptorResolver->resolveInterceptorClass($filterConfiguration['interceptor']));
         return new RequestFilter($requestPattern, $interceptor);
     }
