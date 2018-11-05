@@ -15,7 +15,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\FluidAdaptor\ViewHelpers\Fixtures\UserDomainClass;
 use Neos\FluidAdaptor\ViewHelpers\Form\CheckboxViewHelper;
-use PHPUnit\Framework\MockObject\MockBuilder;
 use PHPUnit\Framework\MockObject\MockObject;
 use TYPO3Fluid\Fluid\Core\ViewHelper\TagBuilder;
 

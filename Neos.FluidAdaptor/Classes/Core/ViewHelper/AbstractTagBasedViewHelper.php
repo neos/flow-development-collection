@@ -11,7 +11,6 @@ namespace Neos\FluidAdaptor\Core\ViewHelper;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use TYPO3Fluid\Fluid\Core\ViewHelper\TagBuilder;
 
 /**

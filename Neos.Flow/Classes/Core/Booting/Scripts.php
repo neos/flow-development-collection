@@ -44,7 +44,6 @@ use Neos\Flow\Package\PackageManagerInterface;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Reflection\ReflectionServiceFactory;
 use Neos\Flow\ResourceManagement\Streams\StreamWrapperAdapter;
-use Neos\Flow\Session\SessionInterface;
 use Neos\Flow\SignalSlot\Dispatcher;
 use Neos\Flow\Utility\Environment;
 use Neos\Utility\Files;
@@ -52,7 +51,6 @@ use Neos\Utility\Lock\Lock;
 use Neos\Utility\Lock\LockManager;
 use Neos\Utility\OpcodeCacheHelper;
 use Neos\Flow\Exception as FlowException;
-use Psr\Log\LogLevel;
 
 /**
  * Initialization scripts for modules of the Flow package

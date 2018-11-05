@@ -1,6 +1,5 @@
 <?php
 use Behat\Behat\Context\BehatContext;
-use Behat\Gherkin\Node\PyStringNode;
 use Neos\Behat\Tests\Behat\FlowContext;
 use Neos\Flow\Tests\Behavior\Features\Bootstrap\IsolatedBehatStepsTrait;
 use Neos\Flow\Tests\Behavior\Features\Bootstrap\SecurityOperationsTrait;

@@ -25,7 +25,6 @@ use Neos\Flow\Package\PackageManagerInterface;
 use Neos\Flow\Persistence\Doctrine\Service as DoctrineService;
 use Neos\Utility\Files;
 use Psr\Log\LoggerInterface;
-use Psr\Log\LogLevel;
 
 /**
  * Command controller for tasks related to Doctrine
