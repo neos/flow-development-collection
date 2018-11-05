@@ -58,6 +58,7 @@ class MethodPrivilegePointcutFilter implements PointcutFilterInterface
      *
      * @param ObjectManagerInterface $objectManager
      * @return void
+     * @throws \Neos\Cache\Exception\NoSuchCacheException
      */
     public function injectObjectManager(ObjectManagerInterface $objectManager)
     {
@@ -94,25 +95,27 @@ class MethodPrivilegePointcutFilter implements PointcutFilterInterface
             $this->buildPointcutFilters();
         }
 
-        $matches = false;
-        /** @var PointcutFilterComposite $filter */
-        foreach ($this->filters as $privilegeIdentifier => $filter) {
-            if ($filter->matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier)) {
-                $matches = true;
-                $methodIdentifier = strtolower($className . '->' . $methodName);
+        $matchingFilters = array_filter($this->filters, $this->getFilterEvaluator($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier));
 
-                $hasRuntimeEvaluations = false;
-                if ($filter->hasRuntimeEvaluationsDefinition() === true) {
-                    $hasRuntimeEvaluations = true;
-                    $this->runtimeExpressionEvaluator->addExpression($privilegeIdentifier, $filter->getRuntimeEvaluationsClosureCode());
-                }
-
-                $this->methodPermissions[$methodIdentifier][$privilegeIdentifier]['privilegeMatchesMethod'] = true;
-                $this->methodPermissions[$methodIdentifier][$privilegeIdentifier]['hasRuntimeEvaluations'] = $hasRuntimeEvaluations;
-            }
+        if ($matchingFilters === []) {
+            return false;
         }
 
-        return $matches;
+        /** @var PointcutFilterComposite $filter */
+        foreach ($matchingFilters as $privilegeIdentifier => $filter) {
+            $methodIdentifier = strtolower($className . '->' . $methodName);
+
+            $hasRuntimeEvaluations = false;
+            if ($filter->hasRuntimeEvaluationsDefinition() === true) {
+                $hasRuntimeEvaluations = true;
+                $this->runtimeExpressionEvaluator->addExpression($privilegeIdentifier, $filter->getRuntimeEvaluationsClosureCode());
+            }
+
+            $this->methodPermissions[$methodIdentifier][$privilegeIdentifier]['privilegeMatchesMethod'] = true;
+            $this->methodPermissions[$methodIdentifier][$privilegeIdentifier]['hasRuntimeEvaluations'] = $hasRuntimeEvaluations;
+        }
+
+        return true;
     }
 
     /**
@@ -152,6 +155,20 @@ class MethodPrivilegePointcutFilter implements PointcutFilterInterface
             $result->applyUnion($filter->reduceTargetClassNames($classNameIndex));
         }
         return $result;
+    }
+
+    /**
+     * @param $className
+     * @param $methodName
+     * @param $methodDeclaringClassName
+     * @param $pointcutQueryIdentifier
+     * @return \Closure
+     */
+    protected function getFilterEvaluator($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier): \Closure
+    {
+        return function (PointcutFilterComposite $filter) use ($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier) {
+            return $filter->matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier);
+        };
     }
 
     /**
