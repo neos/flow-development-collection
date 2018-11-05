@@ -3,7 +3,7 @@
 FluidAdaptor ViewHelper Reference
 =================================
 
-This reference was automatically generated from code on 2018-10-02
+This reference was automatically generated from code on 2018-11-05
 
 
 .. _`FluidAdaptor ViewHelper Reference: f:base`:
@@ -1006,6 +1006,8 @@ Arguments
 * ``placeholder`` (string, *optional*): The placeholder of the textarea
 
 * ``autofocus`` (string, *optional*): Specifies that a text area should automatically get focus when the page loads
+
+* ``maxlength`` (int, *optional*): The maxlength attribute of the textarea (will not be validated)
 
 * ``errorClass`` (string, *optional*): CSS class to set if there are errors for this view helper
 
