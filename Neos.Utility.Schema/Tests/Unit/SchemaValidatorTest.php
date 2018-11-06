@@ -12,7 +12,6 @@ namespace Neos\Flow\Tests\Unit\Utility;
  */
 
 use Neos\Flow\Package\PackageManager;
-use Neos\Flow\Package\PackageManagerInterface;
 use Neos\Utility\SchemaValidator;
 use Neos\Error\Messages as Error;
 
@@ -701,7 +700,7 @@ class SchemaValidatorTest extends \PHPUnit\Framework\TestCase
     public function validateHandlesStringTypePropertyWithFormatInterfaceNameConstraintDataProvider()
     {
         return [
-            [PackageManagerInterface::class, true],
+            [PackageManager::class, true],
             ['\Neos\Flow\UnknownClass', false],
             ['foobar', false],
             ['foo bar', false],

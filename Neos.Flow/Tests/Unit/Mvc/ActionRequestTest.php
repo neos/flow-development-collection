@@ -15,7 +15,6 @@ use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Http;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Package\PackageManager;
-use Neos\Flow\Package\PackageManagerInterface;
 use Neos\Flow\Security\Cryptography\HashService;
 use Neos\Flow\Security\Exception\InvalidHashException;
 use Neos\Flow\SignalSlot\Dispatcher;
@@ -285,8 +284,8 @@ class ActionRequestTest extends UnitTestCase
         $actionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->setMethods(['getControllerObjectName'])->getMock();
         $actionRequest->expects($this->once())->method('getControllerObjectName')->will($this->returnValue('Neos\MyPackage\Some\SubPackage\Controller\Foo\BarController'));
 
-        /** @var PackageManagerInterface|\PHPUnit_Framework_MockObject_MockObject $mockPackageManager */
-        $mockPackageManager = $this->createMock(PackageManagerInterface::class);
+        /** @var PackageManager|\PHPUnit_Framework_MockObject_MockObject $mockPackageManager */
+        $mockPackageManager = $this->createMock(PackageManager::class);
         $mockPackageManager->expects($this->any())->method('getCaseSensitivePackageKey')->with('neos.mypackage')->will($this->returnValue('Neos.MyPackage'));
         $this->inject($actionRequest, 'packageManager', $mockPackageManager);
 
@@ -304,8 +303,8 @@ class ActionRequestTest extends UnitTestCase
         $actionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->setMethods(['getControllerObjectName'])->getMock();
         $actionRequest->expects($this->any())->method('getControllerObjectName')->will($this->returnValue('Neos\MyPackage\Controller\Foo\BarController'));
 
-        /** @var PackageManagerInterface|\PHPUnit_Framework_MockObject_MockObject $mockPackageManager */
-        $mockPackageManager = $this->createMock(PackageManagerInterface::class);
+        /** @var PackageManager|\PHPUnit_Framework_MockObject_MockObject $mockPackageManager */
+        $mockPackageManager = $this->createMock(PackageManager::class);
         $mockPackageManager->expects($this->any())->method('getCaseSensitivePackageKey')->with('neos.mypackage')->will($this->returnValue('Neos.MyPackage'));
         $this->inject($actionRequest, 'packageManager', $mockPackageManager);
 
@@ -322,8 +321,8 @@ class ActionRequestTest extends UnitTestCase
         $actionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->setMethods(['getControllerObjectName'])->getMock();
         $actionRequest->expects($this->once())->method('getControllerObjectName')->will($this->returnValue(''));
 
-        /** @var PackageManagerInterface|\PHPUnit_Framework_MockObject_MockObject $mockPackageManager */
-        $mockPackageManager = $this->createMock(PackageManagerInterface::class);
+        /** @var PackageManager|\PHPUnit_Framework_MockObject_MockObject $mockPackageManager */
+        $mockPackageManager = $this->createMock(PackageManager::class);
         $mockPackageManager->expects($this->any())->method('getCaseSensitivePackageKey')->with('neos.mypackage')->will($this->returnValue(false));
         $this->inject($actionRequest, 'packageManager', $mockPackageManager);
 

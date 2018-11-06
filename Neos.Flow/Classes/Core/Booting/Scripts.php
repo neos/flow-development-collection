@@ -38,7 +38,6 @@ use Neos\Flow\ObjectManagement\CompileTimeObjectManager;
 use Neos\Flow\ObjectManagement\ObjectManager;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Package\FlowPackageInterface;
-use Neos\Flow\Package\Package;
 use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Package\PackageManagerInterface;
 use Neos\Flow\Reflection\ReflectionService;

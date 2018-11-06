@@ -12,7 +12,7 @@ namespace Neos\FluidAdaptor\View;
  */
 
 use Neos\FluidAdaptor\View\Exception\InvalidTemplateResourceException;
-use Neos\Flow\Package\PackageManagerInterface;
+use Neos\Flow\Package\PackageManager;
 use Neos\Utility\ObjectAccess;
 use Neos\Utility\Files;
 
@@ -55,7 +55,7 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
     protected $options = [];
 
     /**
-     * @var PackageManagerInterface
+     * @var PackageManager
      */
     protected $packageManager;
 
@@ -67,9 +67,9 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
     }
 
     /**
-     * @param PackageManagerInterface $packageManager
+     * @param PackageManager $packageManager
      */
-    public function injectPackageManager(PackageManagerInterface $packageManager)
+    public function injectPackageManager(PackageManager $packageManager)
     {
         $this->packageManager = $packageManager;
     }

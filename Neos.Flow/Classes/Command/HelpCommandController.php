@@ -18,7 +18,7 @@ use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Mvc\Exception\AmbiguousCommandIdentifierException;
 use Neos\Flow\Mvc\Exception\CommandException;
-use Neos\Flow\Package\PackageManagerInterface;
+use Neos\Flow\Package\PackageManager;
 
 /**
  * A Command Controller which provides help for available commands
@@ -29,7 +29,7 @@ class HelpCommandController extends CommandController
 {
     /**
      * @Flow\Inject
-     * @var PackageManagerInterface
+     * @var PackageManager
      */
     protected $packageManager;
 

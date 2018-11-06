@@ -14,7 +14,7 @@ namespace Neos\Flow\ResourceManagement\Streams;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Uri;
 use Neos\Flow\Package\FlowPackageInterface;
-use Neos\Flow\Package\PackageManagerInterface;
+use Neos\Flow\Package\PackageManager;
 use Neos\Flow\ResourceManagement\Exception as ResourceException;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Utility\Files;
@@ -47,7 +47,7 @@ class ResourceStreamWrapper implements StreamWrapperInterface
 
     /**
      * @Flow\Inject(lazy = false)
-     * @var PackageManagerInterface
+     * @var PackageManager
      */
     protected $packageManager;
 
