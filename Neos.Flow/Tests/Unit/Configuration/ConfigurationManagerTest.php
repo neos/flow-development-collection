@@ -349,7 +349,9 @@ class ConfigurationManagerTest extends UnitTestCase
             case FLOW_PATH_CONFIGURATION . 'Testing/Settings': return [];
             case FLOW_PATH_CONFIGURATION . 'Testing/System1/Settings': return [];
             default:
-                throw new \Exception('Unexpected filename: ' . $filenameAndPath);
+                if (strpos($filenameAndPath, ConfigurationManager::CONFIGURATION_CONTEXT_WILDCARD) < 0)
+                    throw new \Exception('Unexpected filename: ' . $filenameAndPath);
+                return [];
         }
     }
 
@@ -462,7 +464,9 @@ class ConfigurationManagerTest extends UnitTestCase
             case FLOW_PATH_CONFIGURATION . 'Testing/Objects': return $globalContextObjects;
             case FLOW_PATH_CONFIGURATION . 'Testing/System1/Objects': return $globalSubContextObjects;
             default:
-                throw new \Exception('Unexpected filename: ' . $filenameAndPath);
+                if (strpos($filenameAndPath, ConfigurationManager::CONFIGURATION_CONTEXT_WILDCARD) < 0)
+                    throw new \Exception('Unexpected filename: ' . $filenameAndPath);
+                return [];
         }
     }
 
@@ -570,7 +574,93 @@ class ConfigurationManagerTest extends UnitTestCase
             case FLOW_PATH_CONFIGURATION . 'Testing/Caches': return $globalContextCaches;
             case FLOW_PATH_CONFIGURATION . 'Testing/System1/Caches': return $globalSubContextCaches;
             default:
-                throw new \Exception('Unexpected filename: ' . $filenameAndPath);
+                if (strpos($filenameAndPath, ConfigurationManager::CONFIGURATION_CONTEXT_WILDCARD) < 0)
+                    throw new \Exception('Unexpected filename: ' . $filenameAndPath);
+                return [];
+        }
+    }
+
+    /**
+     * @test
+     */
+    public function loadConfigurationFromWildcardedContexts()
+    {
+        $configurationManager = $this->getConfigurationManagerWithFlowPackage('wildCardedConfigurationsCallback', 'Testing/Package');
+        $mockPackages = $this->getMockPackages();
+
+        $configurationManager->_call('loadConfiguration', ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, $mockPackages);
+
+        $actualConfigurations = $configurationManager->_get('configurations');
+        $expectedSettings = [
+            'Neos' => [
+                'Flow' => [
+                    'core' => [
+                        'context' => 'Testing/Package',
+                    ],
+                ],
+            ],
+            'Package' => [
+                'foo' => 'global',
+                'testing' => true,
+                'bar' => 'local testing',
+                'baz' => 'local wildcard',
+                'fubar' => 'global wildcard',
+            ],
+        ];
+
+        $this->assertSame($expectedSettings, $actualConfigurations[ConfigurationManager::CONFIGURATION_TYPE_SETTINGS]);
+    }
+
+    /**
+     * Callback for the above test.
+     */
+    public function wildCardedConfigurationsCallback()
+    {
+        $filenameAndPath = func_get_arg(0);
+
+        $settingsPackage = [
+            'Package' => [
+                'foo' => 'local',
+            ],
+        ];
+        $settingsGlobal = [
+            'Package' => [
+                'foo' => 'global',
+            ],
+        ];
+        $settingsPackageTesting = [
+            'Package' => [
+                'testing' => true,
+            ],
+        ];
+        $settingsPackageAnySub = [
+            'Package' => [
+                'bar' => 'local wildcard',
+                'baz' => 'local wildcard',
+            ],
+        ];
+        $settingsGlobalAnySub = [
+            'Package' => [
+                'fubar' => 'global wildcard',
+            ],
+        ];
+        $settingsPackageTestingSub = [
+            'Package' => [
+                'bar' => 'local testing',
+            ],
+        ];
+
+        switch ($filenameAndPath) {
+            case 'Flow/Configuration/Settings': return $settingsPackage;
+            case 'Flow/Configuration/Testing/Settings': return $settingsPackageTesting;
+            case 'Flow/Configuration/Testing/Package/Settings': return $settingsPackageTestingSub;
+            case 'Flow/Configuration/' . ConfigurationManager::CONFIGURATION_CONTEXT_WILDCARD . '/Package/Settings': return $settingsPackageAnySub;
+            case FLOW_PATH_CONFIGURATION . 'Settings': return $settingsGlobal;
+            case FLOW_PATH_CONFIGURATION . ConfigurationManager::CONFIGURATION_CONTEXT_WILDCARD . '/Package/Settings': return $settingsGlobalAnySub;
+            default:
+                if (strpos($filenameAndPath, ConfigurationManager::CONFIGURATION_CONTEXT_WILDCARD) < 0)
+                    throw new \Exception('Unexpected filename: ' . $filenameAndPath);
+                return [];
         }
     }
 
@@ -933,7 +1023,9 @@ EOD;
             case FLOW_PATH_CONFIGURATION . 'Testing/Routes': return $globalContextRoutes;
             case FLOW_PATH_CONFIGURATION . 'Testing/System1/Routes': return $globalSubContextRoutes;
             default:
-                throw new \Exception('Unexpected filename: ' . $filenameAndPath);
+                if (strpos($filenameAndPath, ConfigurationManager::CONFIGURATION_CONTEXT_WILDCARD) < 0)
+                    throw new \Exception('Unexpected filename: ' . $filenameAndPath);
+                return [];
         }
     }
 
@@ -1170,7 +1262,9 @@ EOD;
             case FLOW_PATH_CONFIGURATION . 'Settings': return $globalSettings;
             case FLOW_PATH_CONFIGURATION . 'Testing/Settings': return [];
             default:
-                throw new \Exception('Unexpected filename: ' . $filenameAndPath);
+                if (strpos($filenameAndPath, ConfigurationManager::CONFIGURATION_CONTEXT_WILDCARD) < 0)
+                    throw new \Exception('Unexpected filename: ' . $filenameAndPath);
+                return [];
         }
     }
 
@@ -1518,7 +1612,9 @@ EOD;
             case FLOW_PATH_CONFIGURATION . 'Testing/Views': return $globalContextViewConfigurations;
             case FLOW_PATH_CONFIGURATION . 'Testing/System1/Views': return $globalSubContextViewConfigurations;
             default:
-                throw new \Exception('Unexpected filename: ' . $filenameAndPath);
+                if (strpos($filenameAndPath, ConfigurationManager::CONFIGURATION_CONTEXT_WILDCARD) < 0)
+                    throw new \Exception('Unexpected filename: ' . $filenameAndPath);
+                return [];
         }
     }
 
