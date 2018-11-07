@@ -200,7 +200,7 @@ class ConfigurationManager
                 $contextNameParts = explode('/', (string)$currentContext);
                 $n = count($contextNameParts) - 1;
                 // traverse all permutations of a context
-                for ($i = 0; $i < 2**$n; $i++) {
+                for ($i = 0; $i < 2 ** $n; $i++) {
                     $pattern = sprintf('%0' . $n . 's', decbin($i));
                     $wildcardedParts = $contextNameParts;
                     for ($j = 0; $j < strlen($pattern); $j++) {
@@ -449,7 +449,7 @@ class ConfigurationManager
                     }
                     $this->configurations[$configurationType][$packageKey] = $configuration;
                 }
-            break;
+                break;
             case self::CONFIGURATION_PROCESSING_TYPE_POLICY:
                 if ($this->context->isTesting()) {
                     $testingPolicyPathAndFilename = $this->temporaryDirectoryPath . 'Policy';
@@ -472,7 +472,7 @@ class ConfigurationManager
                     }
                     $this->configurations[$configurationType] = $this->mergePolicyConfiguration($this->configurations[$configurationType], $this->configurationSource->load(FLOW_PATH_CONFIGURATION . $contextName . '/' . $configurationType, $allowSplitSource));
                 }
-            break;
+                break;
             case self::CONFIGURATION_PROCESSING_TYPE_DEFAULT:
                 foreach ($packages as $package) {
                     $this->configurations[$configurationType] = Arrays::arrayMergeRecursiveOverrule($this->configurations[$configurationType], $this->configurationSource->load($package->getConfigurationPath() . $configurationType, $allowSplitSource));
@@ -485,7 +485,7 @@ class ConfigurationManager
                     }
                     $this->configurations[$configurationType] = Arrays::arrayMergeRecursiveOverrule($this->configurations[$configurationType], $this->configurationSource->load(FLOW_PATH_CONFIGURATION . $contextName . '/' . $configurationType, $allowSplitSource));
                 }
-            break;
+                break;
             case self::CONFIGURATION_PROCESSING_TYPE_ROUTES:
                 // load main routes
                 foreach (array_reverse($this->orderedListOfContextNames) as $contextName) {
@@ -512,7 +512,7 @@ class ConfigurationManager
                     }
                     $this->configurations[$configurationType] = array_merge($this->configurations[$configurationType], $this->configurationSource->load(FLOW_PATH_CONFIGURATION . $contextName . '/' . $configurationType, $allowSplitSource));
                 }
-            break;
+                break;
             default:
                 throw new Exception\InvalidConfigurationTypeException('Configuration type "' . $configurationType . '" cannot be loaded with loadConfiguration().', 1251450613);
         }

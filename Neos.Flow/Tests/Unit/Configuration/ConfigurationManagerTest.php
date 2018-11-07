@@ -349,8 +349,9 @@ class ConfigurationManagerTest extends UnitTestCase
             case FLOW_PATH_CONFIGURATION . 'Testing/Settings': return [];
             case FLOW_PATH_CONFIGURATION . 'Testing/System1/Settings': return [];
             default:
-                if (strpos($filenameAndPath, ConfigurationManager::CONFIGURATION_CONTEXT_WILDCARD) < 0)
+                if (strpos($filenameAndPath, ConfigurationManager::CONFIGURATION_CONTEXT_WILDCARD) < 0) {
                     throw new \Exception('Unexpected filename: ' . $filenameAndPath);
+                }
                 return [];
         }
     }
@@ -464,8 +465,9 @@ class ConfigurationManagerTest extends UnitTestCase
             case FLOW_PATH_CONFIGURATION . 'Testing/Objects': return $globalContextObjects;
             case FLOW_PATH_CONFIGURATION . 'Testing/System1/Objects': return $globalSubContextObjects;
             default:
-                if (strpos($filenameAndPath, ConfigurationManager::CONFIGURATION_CONTEXT_WILDCARD) < 0)
+                if (strpos($filenameAndPath, ConfigurationManager::CONFIGURATION_CONTEXT_WILDCARD) < 0) {
                     throw new \Exception('Unexpected filename: ' . $filenameAndPath);
+                }
                 return [];
         }
     }
@@ -574,8 +576,9 @@ class ConfigurationManagerTest extends UnitTestCase
             case FLOW_PATH_CONFIGURATION . 'Testing/Caches': return $globalContextCaches;
             case FLOW_PATH_CONFIGURATION . 'Testing/System1/Caches': return $globalSubContextCaches;
             default:
-                if (strpos($filenameAndPath, ConfigurationManager::CONFIGURATION_CONTEXT_WILDCARD) < 0)
+                if (strpos($filenameAndPath, ConfigurationManager::CONFIGURATION_CONTEXT_WILDCARD) < 0) {
                     throw new \Exception('Unexpected filename: ' . $filenameAndPath);
+                }
                 return [];
         }
     }
@@ -658,8 +661,9 @@ class ConfigurationManagerTest extends UnitTestCase
             case FLOW_PATH_CONFIGURATION . 'Settings': return $settingsGlobal;
             case FLOW_PATH_CONFIGURATION . ConfigurationManager::CONFIGURATION_CONTEXT_WILDCARD . '/Package/Settings': return $settingsGlobalAnySub;
             default:
-                if (strpos($filenameAndPath, ConfigurationManager::CONFIGURATION_CONTEXT_WILDCARD) < 0)
+                if (strpos($filenameAndPath, ConfigurationManager::CONFIGURATION_CONTEXT_WILDCARD) < 0) {
                     throw new \Exception('Unexpected filename: ' . $filenameAndPath);
+                }
                 return [];
         }
     }
@@ -1023,8 +1027,9 @@ EOD;
             case FLOW_PATH_CONFIGURATION . 'Testing/Routes': return $globalContextRoutes;
             case FLOW_PATH_CONFIGURATION . 'Testing/System1/Routes': return $globalSubContextRoutes;
             default:
-                if (strpos($filenameAndPath, ConfigurationManager::CONFIGURATION_CONTEXT_WILDCARD) < 0)
+                if (strpos($filenameAndPath, ConfigurationManager::CONFIGURATION_CONTEXT_WILDCARD) < 0) {
                     throw new \Exception('Unexpected filename: ' . $filenameAndPath);
+                }
                 return [];
         }
     }
@@ -1262,8 +1267,9 @@ EOD;
             case FLOW_PATH_CONFIGURATION . 'Settings': return $globalSettings;
             case FLOW_PATH_CONFIGURATION . 'Testing/Settings': return [];
             default:
-                if (strpos($filenameAndPath, ConfigurationManager::CONFIGURATION_CONTEXT_WILDCARD) < 0)
+                if (strpos($filenameAndPath, ConfigurationManager::CONFIGURATION_CONTEXT_WILDCARD) < 0) {
                     throw new \Exception('Unexpected filename: ' . $filenameAndPath);
+                }
                 return [];
         }
     }
@@ -1612,8 +1618,9 @@ EOD;
             case FLOW_PATH_CONFIGURATION . 'Testing/Views': return $globalContextViewConfigurations;
             case FLOW_PATH_CONFIGURATION . 'Testing/System1/Views': return $globalSubContextViewConfigurations;
             default:
-                if (strpos($filenameAndPath, ConfigurationManager::CONFIGURATION_CONTEXT_WILDCARD) < 0)
+                if (strpos($filenameAndPath, ConfigurationManager::CONFIGURATION_CONTEXT_WILDCARD) < 0) {
                     throw new \Exception('Unexpected filename: ' . $filenameAndPath);
+                }
                 return [];
         }
     }
