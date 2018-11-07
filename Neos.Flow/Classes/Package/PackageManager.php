@@ -340,6 +340,18 @@ class PackageManager implements PackageManagerInterface
             $manifest['type'] = PackageInterface::DEFAULT_COMPOSER_TYPE;
         }
 
+        $runComposerRequireForTheCreatedPackage = false;
+        if ($packagesPath === null) {
+            $composerManifestRepositories = ComposerUtility::getComposerManifest(FLOW_PATH_ROOT, 'repositories');
+            foreach ($composerManifestRepositories as $repository) {
+                if ($repository['type'] == 'path' && substr($repository['url'], 0, 2) == './' && substr($repository['url'], -2) == '/*') {
+                    $packagesPath = Files::getUnixStylePath(Files::concatenatePaths([FLOW_PATH_ROOT, substr($repository['url'], 0, -2)]));
+                    $runComposerRequireForTheCreatedPackage = true;
+                    break;
+                }
+            }
+        }
+
         if ($packagesPath === null) {
             $packagesPath = 'Application';
             if (is_array($this->settings['packagesPathByType']) && isset($this->settings['packagesPathByType'][$manifest['type']])) {
@@ -364,6 +376,10 @@ class PackageManager implements PackageManagerInterface
         }
 
         $manifest = ComposerUtility::writeComposerManifest($packagePath, $packageKey, $manifest);
+
+        if ($runComposerRequireForTheCreatedPackage) {
+            exec('composer require ' . $manifest['name'] . ' @dev');
+        }
 
         $refreshedPackageStatesConfiguration = $this->rescanPackages();
         $this->packageStatesConfiguration = $refreshedPackageStatesConfiguration;
