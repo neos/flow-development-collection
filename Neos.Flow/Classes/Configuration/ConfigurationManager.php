@@ -112,6 +112,14 @@ class ConfigurationManager
     const CONFIGURATION_PROCESSING_TYPE_APPEND = 'AppendProcessing';
 
     /**
+     * A wildcard-context to put your configuration files in, e.g. both contexts Production/Example and
+     * Development/Example would load settings stored in Configuration/<CONFIGURATION_CONTEXT_WILDCARD>/Example/.
+     *
+     * @var string
+     */
+    const CONFIGURATION_CONTEXT_WILDCARD = 'Any';
+
+    /**
      * Defines which Configuration Type is processed by which logic
      *
      * @var array
@@ -188,7 +196,21 @@ class ConfigurationManager
         $orderedListOfContextNames = [];
         $currentContext = $context;
         do {
-            $orderedListOfContextNames[] = (string)$currentContext;
+            if ($currentContext->getParent() !== null) {
+                $contextNameParts = explode('/', (string)$currentContext);
+                $n = count($contextNameParts) - 1;
+                // traverse all permutations of a context
+                for ($i = 0; $i < 2**$n; $i++) {
+                    $pattern = sprintf('%0' . $n . 's', decbin($i));
+                    $wildcardedParts = $contextNameParts;
+                    for ($j = 0; $j < strlen($pattern); $j++) {
+                        $wildcardedParts[$j] = $pattern[$j] == 1 ? self::CONFIGURATION_CONTEXT_WILDCARD : $contextNameParts[$j];
+                    }
+                    $orderedListOfContextNames[] = implode('/', $wildcardedParts);
+                }
+            } else {
+                $orderedListOfContextNames[] = (string)$currentContext;
+            }
         } while ($currentContext = $currentContext->getParent());
         $this->orderedListOfContextNames = array_reverse($orderedListOfContextNames);
     }
