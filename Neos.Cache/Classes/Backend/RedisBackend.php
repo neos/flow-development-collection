@@ -501,9 +501,17 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
             $this->port = null;
         }
         $redis = new \Redis();
-        if (!$redis->connect($this->hostname, $this->port)) {
-            throw new CacheException('Could not connect to Redis.', 1391972021);
+
+        try {
+            $connected = false;
+            // keep the above! the line below leave the variable undefined if an error occurs.
+            $connected = $redis->connect($this->hostname, $this->port);
+        } finally {
+            if ($connected === false) {
+                throw new CacheException('Could not connect to Redis.', 1391972021);
+            }
         }
+
         if ($this->password !== '') {
             if (!$redis->auth($this->password)) {
                 throw new CacheException('Redis authentication failed.', 1502366200);
