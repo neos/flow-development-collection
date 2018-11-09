@@ -13,9 +13,7 @@ namespace Neos\Flow\Log;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\Bootstrap;
-use Neos\Flow\Error\Debugger;
 use Neos\Flow\Http\HttpRequestHandlerInterface;
-use Neos\Flow\Log\ThrowableStorage\FileStorage;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 
 /**
