@@ -181,7 +181,7 @@ class FileSystemTarget implements TargetInterface
      * @param StorageInterface $storage
      * @return void
      */
-    public function checkAndRemovePackageSymlinks(StorageInterface $storage)
+    protected function checkAndRemovePackageSymlinks(StorageInterface $storage)
     {
         if (!$storage instanceof PackageStorage) {
             return;
