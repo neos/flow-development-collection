@@ -54,7 +54,7 @@ class ResourceInterceptor implements InterceptorInterface
      * Is the text at hand a resource URI and what are path/package?
      *
      * @var string
-     * @see \Neos\Flow\Pckage\Package::PATTERN_MATCH_PACKAGEKEY
+     * @see \Neos\Flow\Package\Package::PATTERN_MATCH_PACKAGEKEY
      */
     const PATTERN_MATCH_RESOURCE_URI = '!(?:../)*(?:(?P<Package>[A-Za-z0-9]+\.(?:[A-Za-z0-9][\.a-z0-9]*)+)/Resources/)?Public/(?P<Path>[^"]+)!';
 

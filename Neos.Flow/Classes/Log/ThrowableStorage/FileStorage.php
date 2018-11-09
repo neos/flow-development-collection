@@ -1,20 +1,23 @@
 <?php
 namespace Neos\Flow\Log\ThrowableStorage;
 
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Core\Bootstrap;
+use Neos\Flow\Error\Debugger;
+use Neos\Flow\Http\HttpRequestHandlerInterface;
 use Neos\Flow\Log\PlainTextFormatter;
 use Neos\Flow\Log\ThrowableStorageInterface;
+use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Utility\Files;
 
 /**
  * Stores detailed information about throwables into files.
+ *
+ * @Flow\Proxy(false)
+ * @Flow\Autowiring(false)
  */
 class FileStorage implements ThrowableStorageInterface
 {
-    /**
-     * @var string
-     */
-    protected $storagePath;
-
     /**
      * @var \Closure
      */
@@ -26,13 +29,59 @@ class FileStorage implements ThrowableStorageInterface
     protected $backtraceRenderer;
 
     /**
-     * FileStorage path.
+     * @var string
+     */
+    protected $storagePath;
+
+    /**
+     * Factory method to get an instance.
+     *
+     * @param array $options
+     * @return ThrowableStorageInterface
+     */
+    public static function createWithOptions(array $options): ThrowableStorageInterface
+    {
+        $storagePath = $options['storagePath'] ?? (FLOW_PATH_DATA . 'Logs/Exceptions');
+        $storage = new static($storagePath);
+
+        return $storage;
+    }
+
+    /**
+     * Create new instance.
      *
      * @param string $storagePath
+     * @see createWithOptions
      */
-    public function injectStoragePath(string $storagePath)
+    public function __construct(string $storagePath)
     {
         $this->storagePath = $storagePath;
+
+        $this->requestInformationRenderer = function () {
+            $output = '';
+            if (!(Bootstrap::$staticObjectManager instanceof ObjectManagerInterface)) {
+                return $output;
+            }
+
+            $bootstrap = Bootstrap::$staticObjectManager->get(Bootstrap::class);
+            /* @var Bootstrap $bootstrap */
+            $requestHandler = $bootstrap->getActiveRequestHandler();
+            if (!$requestHandler instanceof HttpRequestHandlerInterface) {
+                return $output;
+            }
+
+            $request = $requestHandler->getHttpRequest();
+            $response = $requestHandler->getHttpResponse();
+            $output .= PHP_EOL . 'HTTP REQUEST:' . PHP_EOL . ($request == '' ? '[request was empty]' : $request) . PHP_EOL;
+            $output .= PHP_EOL . 'HTTP RESPONSE:' . PHP_EOL . ($response == '' ? '[response was empty]' : $response) . PHP_EOL;
+            $output .= PHP_EOL . 'PHP PROCESS:' . PHP_EOL . 'Inode: ' . getmyinode() . PHP_EOL . 'PID: ' . getmypid() . PHP_EOL . 'UID: ' . getmyuid() . PHP_EOL . 'GID: ' . getmygid() . PHP_EOL . 'User: ' . get_current_user() . PHP_EOL;
+
+            return $output;
+        };
+
+        $this->backtraceRenderer = function ($backtrace) {
+            return Debugger::getBacktraceCode($backtrace, false, true);
+        };
     }
 
     /**
@@ -42,6 +91,7 @@ class FileStorage implements ThrowableStorageInterface
     public function setRequestInformationRenderer(\Closure $requestInformationRenderer)
     {
         $this->requestInformationRenderer = $requestInformationRenderer;
+
         return $this;
     }
 
@@ -52,6 +102,7 @@ class FileStorage implements ThrowableStorageInterface
     public function setBacktraceRenderer(\Closure $backtraceRenderer)
     {
         $this->backtraceRenderer = $backtraceRenderer;
+
         return $this;
     }
 
@@ -62,22 +113,10 @@ class FileStorage implements ThrowableStorageInterface
      */
     public function logThrowable(\Throwable $throwable, array $additionalData = [])
     {
-        return $this->logError($throwable, $additionalData);
-    }
+        $message = $this->getErrorLogMessage($throwable);
 
-    /**
-     * Writes information about the given exception into the log.
-     *
-     * @param \Throwable $error \Exception or \Throwable
-     * @param array $additionalData Additional data to log
-     * @return string The exception message
-     */
-    protected function logError(\Throwable $error, array $additionalData = [])
-    {
-        $message = $this->getErrorLogMessage($error);
-
-        if ($error->getPrevious() !== null) {
-            $additionalData['previousException'] = $this->getErrorLogMessage($error->getPrevious());
+        if ($throwable->getPrevious() !== null) {
+            $additionalData['previousException'] = $this->getErrorLogMessage($throwable->getPrevious());
         }
 
         if (!file_exists($this->storagePath)) {
@@ -88,10 +127,13 @@ class FileStorage implements ThrowableStorageInterface
         }
 
         // FIXME: getReferenceCode should probably become an interface.
-        $referenceCode = (is_callable([$error, 'getReferenceCode']) ? $error->getReferenceCode() : $this->generateUniqueReferenceCode());
-        $errorDumpPathAndFilename = Files::concatenatePaths([$this->storagePath, $referenceCode . '.txt']);
-        file_put_contents($errorDumpPathAndFilename, $this->renderErrorInfo($error, $additionalData));
-        $message .= ' - See also: ' . basename($errorDumpPathAndFilename);
+        $referenceCode = (is_callable([
+            $throwable,
+            'getReferenceCode'
+        ]) ? $throwable->getReferenceCode() : $this->generateUniqueReferenceCode());
+        $throwableDumpPathAndFilename = Files::concatenatePaths([$this->storagePath, $referenceCode . '.txt']);
+        file_put_contents($throwableDumpPathAndFilename, $this->renderErrorInfo($throwable, $additionalData));
+        $message .= ' - See also: ' . basename($throwableDumpPathAndFilename);
 
         return $message;
     }
@@ -135,7 +177,7 @@ class FileStorage implements ThrowableStorageInterface
 
         $postMortemInfo .= PHP_EOL . $this->renderRequestInfo();
         $postMortemInfo .= PHP_EOL;
-        $postMortemInfo .= (new PlainTextFormatter($additionalData))->format();
+        $postMortemInfo .= empty($additionalData) ? '' : (new PlainTextFormatter($additionalData))->format();
 
         return $postMortemInfo;
     }

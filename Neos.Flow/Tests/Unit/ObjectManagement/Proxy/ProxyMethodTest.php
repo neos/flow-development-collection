@@ -80,7 +80,7 @@ class ProxyMethodTest extends \Neos\Flow\Tests\UnitTestCase
                 'byReference' => false,
                 'array' => true,
                 'optional' => false,
-                'allowsNull' => true,
+                'allowsNull' => false,
                 'class' => null,
                 'scalarDeclaration' => false
             ],
@@ -89,7 +89,7 @@ class ProxyMethodTest extends \Neos\Flow\Tests\UnitTestCase
                 'byReference' => false,
                 'array' => false,
                 'optional' => false,
-                'allowsNull' => true,
+                'allowsNull' => false,
                 'class' => 'ArrayObject',
                 'scalarDeclaration' => false
             ],
@@ -118,7 +118,7 @@ class ProxyMethodTest extends \Neos\Flow\Tests\UnitTestCase
                 'byReference' => false,
                 'array' => true,
                 'optional' => true,
-                'allowsNull' => true,
+                'allowsNull' => false,
                 'class' => null,
                 'defaultValue' => [0 => true, 'foo' => 'bar', 1 => null, 3 => 1, 4 => 2.3],
                 'scalarDeclaration' => false
