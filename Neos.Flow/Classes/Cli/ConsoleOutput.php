@@ -157,7 +157,7 @@ class ConsoleOutput
      * @param mixed|null $default The default answer if the user enters nothing
      * @param boolean $multiSelect If true the result will be an array with the selected options. Multiple options can be given separated by commas
      * @param integer|null $attempts Max number of times to ask before giving up (null by default, which means infinite)
-     * @return integer|string|array The selected value or values (the key of the choices array)
+     * @return integer|string|array Either the value for indexed arrays, the key for associative arrays or an array for multiple selections
      * @throws \InvalidArgumentException
      */
     public function select($question, array $choices, $default = null, bool $multiSelect = false, int $attempts = null)
