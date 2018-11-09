@@ -315,7 +315,7 @@ class FileSystemTarget implements TargetInterface
 
         $targetPathAndFilename = $this->path . $relativeTargetPathAndFilename;
         $streamMetaData = stream_get_meta_data($sourceStream);
-        $sourcePathAndFilename = $streamMetaData['uri'];
+        $sourcePathAndFilename = $streamMetaData['uri'] ?? null;
 
         if (@fstat($sourceStream) === false) {
             throw new TargetException(sprintf('Could not publish "%s" into resource publishing target "%s" because the source file is not accessible (file stat failed).', $sourceStream, $this->name), 1375258499);
