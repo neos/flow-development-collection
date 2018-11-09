@@ -227,14 +227,15 @@ class ConsoleOutput
      * validated data when the data is valid and throw an exception
      * otherwise.
      *
+     * @see https://symfony.com/doc/current/components/console/helpers/questionhelper.html#validating-the-answer
      * @param string|array $question The question to ask. If an array each array item is turned into one line of a multi-line question
      * @param callable $validator A PHP callback that gets a value and is expected to return the (transformed) value or throw an exception if it wasn't valid
      * @param integer|null $attempts Max number of times to ask before giving up (null by default, which means infinite)
      * @param string $default The default answer if none is given by the user
-     * @return bool
+     * @return string The response
      * @throws \Exception When any of the validators return an error
      */
-    public function askAndValidate($question, callable $validator, int $attempts = null, string $default = null): bool
+    public function askAndValidate($question, callable $validator, int $attempts = null, string $default = null): string
     {
         $question = new Question($this->combineQuestion($question), $default);
         $question
