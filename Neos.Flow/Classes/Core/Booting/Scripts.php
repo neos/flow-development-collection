@@ -274,7 +274,7 @@ class Scripts
      * @throws FlowException
      * @throws \Neos\Flow\Configuration\Exception\InvalidConfigurationTypeException
      */
-    protected static function initializeExceptionStorage(Bootstrap $bootstrap)
+    protected static function initializeExceptionStorage(Bootstrap $bootstrap): ThrowableStorageInterface
     {
         $configurationManager = $bootstrap->getEarlyInstance(ConfigurationManager::class);
         $settings = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.Flow');
