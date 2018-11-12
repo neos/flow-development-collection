@@ -1,0 +1,53 @@
+`5.1.4 (2018-11-12) <https://github.com/neos/flow-development-collection/releases/tag/5.1.4>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`!!! BUGFIX: Allow actually reconfiguring the ThrowableStorage <https://github.com/neos/flow-development-collection/pull/1422>`_
+--------------------------------------------------------------------------------------------------------------------------------
+
+This fixes the instantiation and configuration of ThrowableStorage
+implementations and also fixes stack traces and HTTP request information
+in stored throwables.
+
+This change is not breaking but as pre notice that in the next major the
+`ThrowableStorageInterface` will have an additional method that is currently
+commented and already used to instantiate throwable storages.
+If you implement the interface you must already implement that additional 
+method despite it being not part of the interface. As the object configuration
+for throwable storage doesn't work without this change there cannot be a
+working alternative implementation yet, so this shouldn't break any project.
+
+* Packages: ``Flow``
+
+`BUGFIX: Avoid "wrong" error if Redis is unavailable <https://github.com/neos/flow-development-collection/pull/1431>`_
+----------------------------------------------------------------------------------------------------------------------
+
+At least when running unit tests for the `MultiBackend` the `connect()`
+call raises an error that circumvents exception handling and breaks
+correct execution.
+
+* Packages: ``Cache`` ``Flow``
+
+`BUGFIX: Add nullable parameter detection <https://github.com/neos/flow-development-collection/pull/1388>`_
+-----------------------------------------------------------------------------------------------------------
+
+Nullable paramters (type prepended with `?`) were introduced with PHP 7.1
+see https://secure.php.net/manual/en/migration71.new-features.php#migration71.new-features.nullable-types
+
+We need to support a syntax like `functionName(?string $param)`. Without this fix, this function will get extended as `functionName(string $param)`, which is incompatible.
+
+Starting with PHP 7.1 `functionName(string $param = null)` can also be written as `functionName(?string $param = null)` (but not as ~~`functionName(?string $param)`~~).
+
+For the upmerge with Flow >= 5.0, the PHP version check in line 275 can be removed since at least PHP 7.1 is required there.
+
+* Packages: ``Flow``
+
+`TASK: Fix typo in @see annotation <https://github.com/neos/flow-development-collection/pull/1425>`_
+----------------------------------------------------------------------------------------------------
+
+* Packages: ``Flow`` ``FluidAdaptor``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/5.1.3...5.1.4>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
