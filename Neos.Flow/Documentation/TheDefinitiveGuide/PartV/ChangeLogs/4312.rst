@@ -1,0 +1,27 @@
+`4.3.12 (2018-11-12) <https://github.com/neos/flow-development-collection/releases/tag/4.3.12>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Add nullable parameter detection <https://github.com/neos/flow-development-collection/pull/1388>`_
+-----------------------------------------------------------------------------------------------------------
+
+Nullable paramters (type prepended with `?`) were introduced with PHP 7.1
+see https://secure.php.net/manual/en/migration71.new-features.php#migration71.new-features.nullable-types
+
+We need to support a syntax like `functionName(?string $param)`. Without this fix, this function will get extended as `functionName(string $param)`, which is incompatible.
+
+Starting with PHP 7.1 `functionName(string $param = null)` can also be written as `functionName(?string $param = null)` (but not as ~~`functionName(?string $param)`~~).
+
+For the upmerge with Flow >= 5.0, the PHP version check in line 275 can be removed since at least PHP 7.1 is required there.
+
+* Packages: ``Flow``
+
+`TASK: Fix typo in @see annotation <https://github.com/neos/flow-development-collection/pull/1425>`_
+----------------------------------------------------------------------------------------------------
+
+* Packages: ``Flow`` ``FluidAdaptor``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/4.3.11...4.3.12>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
