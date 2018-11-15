@@ -13,6 +13,8 @@ namespace Neos\Flow\Mvc\Routing;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Configuration\ConfigurationManager;
+use Neos\Flow\Log\Utility\LogEnvironment;
+use Neos\Flow\Mvc\Exception\InvalidRoutePartValueException;
 use Neos\Flow\Mvc\Exception\InvalidRouteSetupException;
 use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
 use Neos\Flow\Mvc\Routing\Dto\ResolveContext;
@@ -60,7 +62,7 @@ class Router implements RouterInterface
     protected $routes = [];
 
     /**
-     * TRUE if route object have been created, otherwise FALSE
+     * true if route object have been created, otherwise false
      *
      * @var boolean
      */
@@ -106,7 +108,9 @@ class Router implements RouterInterface
      *
      * @param RouteContext $routeContext The Route Context containing the current HTTP Request and, optional, Routing RouteParameters
      * @return array The results of the matching route or NULL if no route matched
+     * @throws InvalidRouteSetupException
      * @throws NoMatchingRouteException if no route matched the given $routeContext
+     * @throws InvalidRoutePartValueException
      */
     public function route(RouteContext $routeContext): array
     {
@@ -128,7 +132,7 @@ class Router implements RouterInterface
                 return $matchResults;
             }
         }
-        $this->logger->notice(sprintf('Router route(): No route matched the route path "%s".', $httpRequest->getRelativePath()));
+        $this->logger->debug(sprintf('Router route(): No route matched the route path "%s".', $httpRequest->getRelativePath()));
         throw new NoMatchingRouteException('Could not match a route for the HTTP request.', 1510846308);
     }
 
@@ -196,7 +200,7 @@ class Router implements RouterInterface
                 return $resolvedUri;
             }
         }
-        $this->logger->warning('Router resolve(): Could not resolve a route for building an URI for the given resolve context.', ['routeValues' => $resolveContext->getRouteValues()]);
+        $this->logger->warning('Router resolve(): Could not resolve a route for building an URI for the given resolve context.', LogEnvironment::fromMethodName(__METHOD__) + ['routeValues' => $resolveContext->getRouteValues()]);
         throw new NoMatchingRouteException('Could not resolve a route and its corresponding URI for the given parameters. This may be due to referring to a not existing package / controller / action while building a link or URI. Refer to log and check the backtrace for more details.', 1301610453);
     }
 

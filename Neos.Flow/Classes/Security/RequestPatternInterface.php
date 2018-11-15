@@ -32,7 +32,7 @@ interface RequestPatternInterface
      * Matches a \Neos\Flow\Mvc\RequestInterface against its set pattern rules
      *
      * @param RequestInterface $request The request that should be matched
-     * @return boolean TRUE if the pattern matched, FALSE otherwise
+     * @return boolean true if the pattern matched, false otherwise
      */
     public function matchRequest(RequestInterface $request);
 }

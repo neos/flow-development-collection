@@ -69,11 +69,11 @@ class CldrRepository
      * specified path.
      *
      * Will return existing instance if a model for given $filename was already
-     * requested before. Returns FALSE when $filename doesn't point to existing
+     * requested before. Returns false when $filename doesn't point to existing
      * file.
      *
      * @param string $filename Relative (from CLDR root) path to existing CLDR file
-     * @return CldrModel|boolean A CldrModel instance or FALSE on failure
+     * @return CldrModel|boolean A CldrModel instance or false on failure
      */
     public function getModel($filename)
     {
@@ -100,7 +100,7 @@ class CldrRepository
      * For example, for locale en_GB, returned model could represent 'en_GB',
      * 'en', and 'root' CLDR files.
      *
-     * Returns FALSE when $directoryPath doesn't point to existing directory.
+     * Returns false when $directoryPath doesn't point to existing directory.
      *
      * @param I18n\Locale $locale A locale
      * @param string $directoryPath Relative path to existing CLDR directory which contains one file per locale (see 'main' directory in CLDR for example)

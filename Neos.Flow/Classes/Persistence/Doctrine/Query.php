@@ -14,6 +14,7 @@ namespace Neos\Flow\Persistence\Doctrine;
 use Doctrine\ORM\EntityManagerInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\ThrowableStorageInterface;
+use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Persistence\Exception\InvalidQueryException;
 use Neos\Flow\Persistence\Generic\Qom\Constraint;
 use Neos\Flow\Persistence\QueryInterface;
@@ -192,7 +193,7 @@ class Query implements QueryInterface
             return $query->getResult();
         } catch (\Doctrine\ORM\ORMException $ormException) {
             $message = $this->throwableStorage->logThrowable($ormException);
-            $this->logger->error($message);
+            $this->logger->error($message, LogEnvironment::fromMethodName(__METHOD__));
             return [];
         } catch (\Doctrine\DBAL\DBALException $dbalException) {
             $message = $this->throwableStorage->logThrowable($dbalException);
@@ -212,7 +213,7 @@ class Query implements QueryInterface
             throw $exception;
         } catch (\PDOException $pdoException) {
             $message = $this->throwableStorage->logThrowable($pdoException);
-            $this->logger->error($message);
+            $this->logger->error($message, LogEnvironment::fromMethodName(__METHOD__));
 
             if (stripos($pdoException->getMessage(), 'unknown database') !== false
                 || (stripos($pdoException->getMessage(), 'database') !== false && strpos($pdoException->getMessage(), 'not') !== false && strpos($pdoException->getMessage(), 'exist') !== false)) {
@@ -260,7 +261,7 @@ class Query implements QueryInterface
             return $numberOfResults;
         } catch (\Doctrine\ORM\ORMException $ormException) {
             $message = $this->throwableStorage->logThrowable($ormException);
-            $this->logger->error($message);
+            $this->logger->error($message, LogEnvironment::fromMethodName(__METHOD__));
             return 0;
         } catch (\PDOException $pdoException) {
             throw new Exception\DatabaseConnectionException($pdoException->getMessage(), $pdoException->getCode());

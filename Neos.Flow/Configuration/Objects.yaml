@@ -163,12 +163,8 @@ Neos\Flow\Log\SecurityLoggerInterface:
 
 Neos\Flow\Log\ThrowableStorageInterface:
   scope: singleton
+  # Note that this is a "fake" entry and doesn't get used. Please change the setting Neos.Flow.log.throwables.storageClass
   className: Neos\Flow\Log\ThrowableStorage\FileStorage
-
-Neos\Flow\Log\ThrowableStorage\FileStorage:
-  properties:
-    storagePath:
-      setting: Neos.Flow.log.throwables.fileStorage.path
 
 Neos\Flow\Log\PsrLoggerFactory:
   scope: singleton
@@ -562,7 +558,6 @@ Neos\Flow\Security\Authentication\Provider\TestingProvider:
 #                                                                          #
 
 Neos\Flow\Session\SessionInterface:
-  scope: singleton
   factoryObjectName: Neos\Flow\Session\SessionManagerInterface
   factoryMethodName: getCurrentSession
 

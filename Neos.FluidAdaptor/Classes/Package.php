@@ -56,7 +56,7 @@ class Package extends BasePackage
                             continue;
                         }
 
-                        foreach (array('Templates', 'Partials', 'Layouts') as $path) {
+                        foreach (['Templates', 'Partials', 'Layouts'] as $path) {
                             $templatesPath = $package->getResourcesPath() . 'Private/' . $path;
 
                             if (is_dir($templatesPath)) {

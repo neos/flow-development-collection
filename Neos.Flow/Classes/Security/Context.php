@@ -14,9 +14,10 @@ namespace Neos\Flow\Security;
 use Neos\Flow\Annotations as Flow;
 use Neos\Cache\CacheAwareInterface;
 use Neos\Flow\Log\PsrSecurityLoggerInterface;
-use Neos\Flow\Mvc\RequestInterface;
+use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Security\Account;
+use Neos\Flow\Security\Authentication\TokenAndProviderFactoryInterface;
 use Neos\Flow\Security\Authentication\TokenInterface;
 use Neos\Flow\Security\Policy\Role;
 use Neos\Flow\Mvc\ActionRequest;
@@ -28,7 +29,7 @@ use Neos\Utility\TypeHandling;
  * This is the default implementation of a security context, which holds current
  * security information like roles oder details of authenticated users.
  *
- * @Flow\Scope("session")
+ * @Flow\Scope("singleton")
  */
 class Context
 {
@@ -79,18 +80,18 @@ class Context
     const CONTEXT_HASH_UNINITIALIZED = '__uninitialized__';
 
     /**
-     * TRUE if the context is initialized in the current request, FALSE or NULL otherwise.
+     * One of the AUTHENTICATE_* constants to set the authentication strategy.
      *
-     * @var boolean
-     * @Flow\Transient
+     * @var integer
      */
-    protected $initialized = false;
+    protected $authenticationStrategy = self::AUTHENTICATE_ANY_TOKEN;
 
     /**
-     * Array of configured tokens (might have request patterns)
-     * @var array
+     * One of the CSRF_* constants to set the csrf protection strategy
+     *
+     * @var integer
      */
-    protected $tokens = [];
+    protected $csrfProtectionStrategy = self::CSRF_ONE_PER_SESSION;
 
     /**
      * @var array
@@ -103,35 +104,65 @@ class Context
     ];
 
     /**
+     * true if the context is initialized in the current request, false or NULL otherwise.
+     *
+     * @var boolean
+     */
+    protected $initialized = false;
+
+    /**
      * Array of tokens currently active
      * @var TokenInterface[]
-     * @Flow\Transient
      */
     protected $activeTokens = [];
 
     /**
      * Array of tokens currently inactive
-     * @var array
-     * @Flow\Transient
+     * @var TokenInterface[]
      */
     protected $inactiveTokens = [];
 
     /**
-     * One of the AUTHENTICATE_* constants to set the authentication strategy.
-     * @var integer
-     */
-    protected $authenticationStrategy = self::AUTHENTICATE_ANY_TOKEN;
-
-    /**
      * @var ActionRequest
-     * @Flow\Transient
      */
     protected $request;
 
     /**
-     * @var Authentication\AuthenticationManagerInterface
+     * @var Role[]
      */
-    protected $authenticationManager;
+    protected $roles = null;
+
+    /**
+     * Whether authorization is disabled @see areAuthorizationChecksDisabled()
+     *
+     * @var boolean
+     */
+    protected $authorizationChecksDisabled = false;
+
+    /**
+     * A hash for this security context that is unique to the currently authenticated roles. @see getContextHash()
+     *
+     * @var string
+     */
+    protected $contextHash = null;
+
+    /**
+     * CSRF tokens that are valid during this request but will be gone after.
+     * @var array
+     */
+    protected $csrfTokensRemovedAfterCurrentRequest = [];
+
+    /**
+     * CSRF token created in the current request.
+     * @var string
+     */
+    protected $requestCsrfToken = '';
+
+    /**
+     * @Flow\Inject
+     * @var TokenAndProviderFactoryInterface
+     */
+    protected $tokenAndProviderFactory;
 
     /**
      * @Flow\Inject
@@ -153,50 +184,6 @@ class Context
 
     /**
      * @Flow\Inject
-     * @var Cryptography\HashService
-     */
-    protected $hashService;
-
-    /**
-     * One of the CSRF_* constants to set the csrf protection strategy
-     * @var integer
-     */
-    protected $csrfProtectionStrategy = self::CSRF_ONE_PER_SESSION;
-
-    /**
-     * @var array
-     */
-    protected $csrfProtectionTokens = [];
-
-    /**
-     * @var RequestInterface
-     */
-    protected $interceptedRequest;
-
-    /**
-     * @Flow\Transient
-     * @var Role[]
-     */
-    protected $roles = null;
-
-    /**
-     * Whether authorization is disabled @see areAuthorizationChecksDisabled()
-     *
-     * @Flow\Transient
-     * @var boolean
-     */
-    protected $authorizationChecksDisabled = false;
-
-    /**
-     * A hash for this security context that is unique to the currently authenticated roles. @see getContextHash()
-     *
-     * @Flow\Transient
-     * @var string
-     */
-    protected $contextHash = null;
-
-    /**
-     * @Flow\Inject
      * @var ObjectManagerInterface
      */
     protected $objectManager;
@@ -209,17 +196,6 @@ class Context
      */
     protected $globalObjects = [];
 
-    /**
-     * Inject the authentication manager
-     *
-     * @param Authentication\AuthenticationManagerInterface $authenticationManager The authentication manager
-     * @return void
-     */
-    public function injectAuthenticationManager(Authentication\AuthenticationManagerInterface $authenticationManager)
-    {
-        $this->authenticationManager = $authenticationManager;
-        $this->authenticationManager->setSecurityContext($this);
-    }
 
     /**
      * Lets you switch off authorization checks (CSRF token, policies, content security, ...) for the runtime of $callback
@@ -251,7 +227,7 @@ class Context
     }
 
     /**
-     * Returns TRUE if authorization should be ignored, otherwise FALSE
+     * Returns true if authorization should be ignored, otherwise false
      * This is mainly useful to fetch records without Content Security to kick in (e.g. for AuthenticationProviders)
      *
      * @return boolean
@@ -270,7 +246,7 @@ class Context
      *
      * @param ActionRequest $request The current ActionRequest
      * @return void
-     * @Flow\Autowiring(FALSE)
+     * @Flow\Autowiring(false)
      */
     public function setRequest(ActionRequest $request)
     {
@@ -339,19 +315,17 @@ class Context
             throw new Exception('The security Context cannot be initialized yet. Please check if it can be initialized with $securityContext->canBeInitialized() before trying to do so.', 1358513802);
         }
 
-        if ($this->csrfProtectionStrategy !== self::CSRF_ONE_PER_SESSION) {
-            $this->csrfProtectionTokens = [];
-        }
-
-        $this->tokens = $this->mergeTokens($this->authenticationManager->getTokens(), $this->tokens);
-        $this->separateActiveAndInactiveTokens();
+        $sessionDataContainer = $this->objectManager->get(SessionDataContainer::class);
+        $factoryTokens = $this->tokenAndProviderFactory->getTokens();
+        $tokens = $this->mergeTokens($factoryTokens, $sessionDataContainer->getSecurityTokens());
+        $this->separateActiveAndInactiveTokens($tokens);
         $this->updateTokens($this->activeTokens);
 
         $this->initialized = true;
     }
 
     /**
-     * @return boolean TRUE if the Context is initialized, FALSE otherwise.
+     * @return boolean true if the Context is initialized, false otherwise.
      */
     public function isInitialized()
     {
@@ -420,6 +394,8 @@ class Context
      * The "Neos.Flow:Everybody" roles is always returned.
      *
      * @return Role[]
+     * @throws Exception
+     * @throws Exception\NoSuchRoleException
      */
     public function getRoles()
     {
@@ -427,61 +403,49 @@ class Context
             $this->initialize();
         }
 
-        if ($this->roles === null) {
-            $this->roles = ['Neos.Flow:Everybody' => $this->policyService->getRole('Neos.Flow:Everybody')];
+        if ($this->roles !== null) {
+            return $this->roles;
+        }
 
-            if ($this->authenticationManager->isAuthenticated() === false) {
-                $this->roles['Neos.Flow:Anonymous'] = $this->policyService->getRole('Neos.Flow:Anonymous');
-            } else {
-                $this->roles['Neos.Flow:AuthenticatedUser'] = $this->policyService->getRole('Neos.Flow:AuthenticatedUser');
-                /** @var $token TokenInterface */
-                foreach ($this->getAuthenticationTokens() as $token) {
-                    if ($token->isAuthenticated() !== true) {
-                        continue;
-                    }
-                    $account = $token->getAccount();
-                    if ($account === null) {
-                        continue;
-                    }
-                    if ($account !== null) {
-                        $accountRoles = $account->getRoles();
-                        /** @var $currentRole Role */
-                        foreach ($accountRoles as $currentRole) {
-                            if (!in_array($currentRole, $this->roles)) {
-                                $this->roles[$currentRole->getIdentifier()] = $currentRole;
-                            }
-                            /** @var $currentParentRole Role */
-                            foreach ($currentRole->getAllParentRoles() as $currentParentRole) {
-                                if (!in_array($currentParentRole, $this->roles)) {
-                                    $this->roles[$currentParentRole->getIdentifier()] = $currentParentRole;
-                                }
-                            }
-                        }
-                    }
-                }
+        $this->roles = ['Neos.Flow:Everybody' => $this->policyService->getRole('Neos.Flow:Everybody')];
+
+        $authenticatedTokens = array_filter($this->getAuthenticationTokens(), function (TokenInterface $token) {
+            return $token->isAuthenticated();
+        });
+
+        if (empty($authenticatedTokens)) {
+            $this->roles['Neos.Flow:Anonymous'] = $this->policyService->getRole('Neos.Flow:Anonymous');
+            return $this->roles;
+        }
+
+        $this->roles['Neos.Flow:AuthenticatedUser'] = $this->policyService->getRole('Neos.Flow:AuthenticatedUser');
+
+        /** @var $token TokenInterface */
+        foreach ($authenticatedTokens as $token) {
+            $account = $token->getAccount();
+            if ($account === null) {
+                continue;
             }
+
+            $this->roles = array_merge($this->roles, $this->collectRolesAndParentRolesFromAccount($account));
         }
 
         return $this->roles;
     }
 
     /**
-     * Returns TRUE, if at least one of the currently authenticated accounts holds
+     * Returns true, if at least one of the currently authenticated accounts holds
      * a role with the given identifier, also recursively.
      *
      * @param string $roleIdentifier The string representation of the role to search for
-     * @return boolean TRUE, if a role with the given string representation was found
+     * @return boolean true, if a role with the given string representation was found
+     * @throws Exception
+     * @throws Exception\NoSuchRoleException
      */
     public function hasRole($roleIdentifier)
     {
         if ($roleIdentifier === 'Neos.Flow:Everybody') {
             return true;
-        }
-        if ($roleIdentifier === 'Neos.Flow:Anonymous') {
-            return (!$this->authenticationManager->isAuthenticated());
-        }
-        if ($roleIdentifier === 'Neos.Flow:AuthenticatedUser') {
-            return ($this->authenticationManager->isAuthenticated());
         }
 
         $roles = $this->getRoles();
@@ -542,50 +506,70 @@ class Context
      */
     public function getCsrfProtectionToken()
     {
-        if ($this->initialized === false) {
-            $this->initialize();
+        $sessionDataContainer = $this->objectManager->get(SessionDataContainer::class);
+        $csrfProtectionTokens = $sessionDataContainer->getCsrfProtectionTokens();
+        if ($this->csrfProtectionStrategy === self::CSRF_ONE_PER_SESSION && count($csrfProtectionTokens) === 1) {
+            reset($csrfProtectionTokens);
+            return key($csrfProtectionTokens);
         }
 
-        if (count($this->csrfProtectionTokens) === 1 && $this->csrfProtectionStrategy !== self::CSRF_ONE_PER_URI) {
-            reset($this->csrfProtectionTokens);
-            return key($this->csrfProtectionTokens);
+        if ($this->csrfProtectionStrategy === self::CSRF_ONE_PER_REQUEST) {
+            if (empty($this->requestCsrfToken)) {
+                $this->requestCsrfToken = Algorithms::generateRandomToken(16);
+                $csrfProtectionTokens[$this->requestCsrfToken] = true;
+                $sessionDataContainer->setCsrfProtectionTokens($csrfProtectionTokens);
+            }
+
+            return $this->requestCsrfToken;
         }
+
         $newToken = Algorithms::generateRandomToken(16);
-        $this->csrfProtectionTokens[$newToken] = true;
+        $csrfProtectionTokens[$newToken] = true;
+        $sessionDataContainer->setCsrfProtectionTokens($csrfProtectionTokens);
 
         return $newToken;
     }
 
     /**
-     * Returns TRUE if the context has CSRF protection tokens.
+     * Returns true if the context has CSRF protection tokens.
      *
-     * @return boolean TRUE, if the token is valid. FALSE otherwise.
+     * @return boolean true, if the token is valid. false otherwise.
      */
     public function hasCsrfProtectionTokens()
     {
-        return count($this->csrfProtectionTokens) > 0;
+        $sessionDataContainer = $this->objectManager->get(SessionDataContainer::class);
+        $csrfProtectionTokens = $sessionDataContainer->getCsrfProtectionTokens();
+        return count($csrfProtectionTokens) > 0;
     }
 
     /**
-     * Returns TRUE if the given string is a valid CSRF protection token. The token will be removed if the configured
+     * Returns true if the given string is a valid CSRF protection token. The token will be removed if the configured
      * csrf strategy is 'onePerUri'.
      *
      * @param string $csrfToken The token string to be validated
-     * @return boolean TRUE, if the token is valid. FALSE otherwise.
+     * @return boolean true, if the token is valid. false otherwise.
+     * @throws Exception
      */
     public function isCsrfProtectionTokenValid($csrfToken)
     {
-        if ($this->initialized === false) {
-            $this->initialize();
+        $sessionDataContainer = $this->objectManager->get(SessionDataContainer::class);
+        $csrfProtectionTokens = $sessionDataContainer->getCsrfProtectionTokens();
+
+        if (!isset($csrfProtectionTokens[$csrfToken]) && !isset($this->csrfTokensRemovedAfterCurrentRequest[$csrfToken])) {
+            return false;
         }
 
-        if (isset($this->csrfProtectionTokens[$csrfToken])) {
-            if ($this->csrfProtectionStrategy === self::CSRF_ONE_PER_URI) {
-                unset($this->csrfProtectionTokens[$csrfToken]);
-            }
-            return true;
+        if ($this->csrfProtectionStrategy === self::CSRF_ONE_PER_URI) {
+            unset($csrfProtectionTokens[$csrfToken]);
         }
-        return false;
+
+        if ($this->csrfProtectionStrategy === self::CSRF_ONE_PER_REQUEST) {
+            $this->csrfTokensRemovedAfterCurrentRequest[$csrfToken] = true;
+            unset($csrfProtectionTokens[$csrfToken]);
+        }
+
+        $sessionDataContainer->setCsrfProtectionTokens($csrfProtectionTokens);
+        return true;
     }
 
     /**
@@ -598,18 +582,29 @@ class Context
      */
     public function setInterceptedRequest(ActionRequest $interceptedRequest = null)
     {
-        $this->interceptedRequest = $interceptedRequest;
+        if ($this->initialized === false) {
+            $this->initialize();
+        }
+
+        $sessionDataContainer = $this->objectManager->get(SessionDataContainer::class);
+        $sessionDataContainer->setInterceptedRequest($interceptedRequest);
     }
 
     /**
      * Returns the request, that has been stored for later resuming after it
      * has been intercepted by a security exception, NULL if there is none.
      *
-     * @return ActionRequest
+     * @return ActionRequest|null
+     * TODO: Revisit type (ActionRequest / HTTP request)
      */
     public function getInterceptedRequest()
     {
-        return $this->interceptedRequest;
+        if ($this->initialized === false) {
+            $this->initialize();
+        }
+
+        $sessionDataContainer = $this->objectManager->get(SessionDataContainer::class);
+        return $sessionDataContainer->getInterceptedRequest();
     }
 
     /**
@@ -619,31 +614,62 @@ class Context
      */
     public function clearContext()
     {
+        $sessionDataContainer = $this->objectManager->get(SessionDataContainer::class);
+        $sessionDataContainer->reset();
+
         $this->roles = null;
         $this->contextHash = null;
-        $this->tokens = [];
         $this->activeTokens = [];
         $this->inactiveTokens = [];
         $this->request = null;
-        $this->csrfProtectionTokens = [];
-        $this->interceptedRequest = null;
         $this->authorizationChecksDisabled = false;
         $this->initialized = false;
     }
 
     /**
+     * @param Account $account
+     * @return array
+     */
+    protected function collectRolesAndParentRolesFromAccount(Account $account): array
+    {
+        $reducer = function (array $roles, $currentRole) {
+            $roles[$currentRole->getIdentifier()] = $currentRole;
+            $roles = array_merge($roles, $this->collectParentRoles($currentRole));
+
+            return $roles;
+        };
+
+        return array_reduce($account->getRoles(), $reducer, []);
+    }
+
+    /**
+     * @param Role $role
+     * @return array
+     */
+    protected function collectParentRoles(Role $role): array
+    {
+        $reducer = function (array $roles, Role $parentRole) {
+            $roles[$parentRole->getIdentifier()] = $parentRole;
+            return $roles;
+        };
+
+        return array_reduce($role->getAllParentRoles(), $reducer, []);
+    }
+
+    /**
      * Stores all active tokens in $this->activeTokens, all others in $this->inactiveTokens
      *
+     * @param TokenInterface[] $tokens
      * @return void
      */
-    protected function separateActiveAndInactiveTokens()
+    protected function separateActiveAndInactiveTokens(array $tokens)
     {
         if ($this->request === null) {
             return;
         }
 
         /** @var $token TokenInterface */
-        foreach ($this->tokens as $token) {
+        foreach ($tokens as $token) {
             if ($this->isTokenActive($token)) {
                 $this->activeTokens[$token->getAuthenticationProviderName()] = $token;
             } else {
@@ -658,7 +684,7 @@ class Context
      * - Otherwise it is active only if at least one configured RequestPattern per type matches the request
      *
      * @param TokenInterface $token
-     * @return bool TRUE if the given token is active, otherwise FALSE
+     * @return bool true if the given token is active, otherwise false
      */
     protected function isTokenActive(TokenInterface $token)
     {
@@ -694,39 +720,48 @@ class Context
             return $resultTokens;
         }
 
+        $sessionTokens = $sessionTokens ?? [];
+
         /** @var $managerToken TokenInterface */
         foreach ($managerTokens as $managerToken) {
-            $noCorrespondingSessionTokenFound = true;
-
-            if (!is_array($sessionTokens)) {
-                continue;
-            }
-
-            /** @var $sessionToken TokenInterface */
-            foreach ($sessionTokens as $sessionToken) {
-                if ($sessionToken->getAuthenticationProviderName() === $managerToken->getAuthenticationProviderName()) {
-                    $session = $this->sessionManager->getCurrentSession();
-                    $this->securityLogger->info(
-                        sprintf(
-                            'Session %s contains auth token %s for provider %s. Status: %s',
-                            $session->getId(),
-                            get_class($sessionToken),
-                            $sessionToken->getAuthenticationProviderName(),
-                            $this->tokenStatusLabels[$sessionToken->getAuthenticationStatus()]
-                        )
-                    );
-
-                    $resultTokens[$sessionToken->getAuthenticationProviderName()] = $sessionToken;
-                    $noCorrespondingSessionTokenFound = false;
-                }
-            }
-
-            if ($noCorrespondingSessionTokenFound) {
-                $resultTokens[$managerToken->getAuthenticationProviderName()] = $managerToken;
-            }
+            $resultTokens[$managerToken->getAuthenticationProviderName()] = $this->findBestMatchingToken($managerToken, $sessionTokens);
         }
 
         return $resultTokens;
+    }
+
+    /**
+     * Tries to find a token matchting the given manager token in the session tokens, will return that or the manager token.
+     *
+     * @param TokenInterface $managerToken
+     * @param TokenInterface[] $sessionTokens
+     * @return TokenInterface
+     * @throws \Neos\Flow\Session\Exception\SessionNotStartedException
+     */
+    protected function findBestMatchingToken(TokenInterface $managerToken, array $sessionTokens): TokenInterface
+    {
+        $matchingSessionTokens = array_filter($sessionTokens, function (TokenInterface $sessionToken) use ($managerToken) {
+            return ($sessionToken->getAuthenticationProviderName() === $managerToken->getAuthenticationProviderName());
+        });
+
+        if (empty($matchingSessionTokens)) {
+            return $managerToken;
+        }
+
+        $matchingSessionToken = reset($matchingSessionTokens);
+
+        $session = $this->sessionManager->getCurrentSession();
+        $this->securityLogger->debug(
+            sprintf(
+                'Session %s contains auth token %s for provider %s. Status: %s',
+                $session->getId(),
+                get_class($matchingSessionToken),
+                $matchingSessionToken->getAuthenticationProviderName(),
+                $this->tokenStatusLabels[$matchingSessionToken->getAuthenticationStatus()]
+            ), LogEnvironment::fromMethodName(__METHOD__)
+        );
+
+        return $matchingSessionToken;
     }
 
     /**
@@ -737,15 +772,20 @@ class Context
      */
     protected function updateTokens(array $tokens)
     {
-        if ($this->request !== null) {
-            /** @var $token TokenInterface */
-            foreach ($tokens as $token) {
-                $token->updateCredentials($this->request);
-            }
-        }
-
         $this->roles = null;
         $this->contextHash = null;
+
+        if ($this->request === null) {
+            return;
+        }
+
+        /** @var $token TokenInterface */
+        foreach ($tokens as $token) {
+            $token->updateCredentials($this->request);
+        }
+
+        $sessionDataContainer = $this->objectManager->get(SessionDataContainer::class);
+        $sessionDataContainer->setSecurityTokens(array_merge($this->inactiveTokens, $this->activeTokens));
     }
 
     /**
@@ -774,17 +814,6 @@ class Context
         $this->roles = null;
         $this->contextHash = null;
         $this->getRoles();
-    }
-
-    /**
-     * Shut the object down
-     *
-     * @return void
-     */
-    public function shutdownObject()
-    {
-        $this->tokens = array_merge($this->inactiveTokens, $this->activeTokens);
-        $this->initialized = false;
     }
 
     /**
@@ -819,20 +848,24 @@ class Context
             }
             $this->initialize();
         }
-        if ($this->contextHash === null) {
-            $contextHashSoFar = implode('|', array_keys($this->getRoles()));
 
-            $this->withoutAuthorizationChecks(function () use (&$contextHashSoFar) {
-                foreach ($this->globalObjects as $globalObjectsRegisteredClassName) {
-                    if (is_subclass_of($globalObjectsRegisteredClassName, CacheAwareInterface::class)) {
-                        $globalObject = $this->objectManager->get($globalObjectsRegisteredClassName);
-                        $contextHashSoFar .= '<' . $globalObject->getCacheEntryIdentifier();
-                    }
-                }
-            });
-
-            $this->contextHash = md5($contextHashSoFar);
+        if ($this->contextHash !== null) {
+            return $this->contextHash;
         }
+
+        $contextHashSoFar = implode('|', array_keys($this->getRoles()));
+
+        $this->withoutAuthorizationChecks(function () use (&$contextHashSoFar) {
+            foreach ($this->globalObjects as $globalObjectsRegisteredClassName) {
+                if (is_subclass_of($globalObjectsRegisteredClassName, CacheAwareInterface::class)) {
+                    $globalObject = $this->objectManager->get($globalObjectsRegisteredClassName);
+                    $contextHashSoFar .= '<' . $globalObject->getCacheEntryIdentifier();
+                }
+            }
+        });
+
+        $this->contextHash = md5($contextHashSoFar);
+
         return $this->contextHash;
     }
 

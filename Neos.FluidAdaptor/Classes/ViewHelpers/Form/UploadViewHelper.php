@@ -116,6 +116,7 @@ class UploadViewHelper extends AbstractFormFieldViewHelper
         $this->tag->addAttribute('type', 'file');
         $this->tag->addAttribute('name', $nameAttribute);
 
+        $this->viewHelperVariableContainer->addOrUpdate(FormViewHelper::class, 'required-enctype', 'multipart/form-data');
         $this->addAdditionalIdentityPropertiesIfNeeded();
         $this->setErrorClassAttribute();
 

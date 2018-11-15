@@ -342,8 +342,8 @@ class FileBackendTest extends BaseTestCase
         $data = 'some data' . microtime();
         $backend->set($entryIdentifier, $data);
 
-        $this->assertTrue($backend->has($entryIdentifier), 'has() did not return TRUE.');
-        $this->assertFalse($backend->has($entryIdentifier . 'Not'), 'has() did not return FALSE.');
+        $this->assertTrue($backend->has($entryIdentifier), 'has() did not return true.');
+        $this->assertFalse($backend->has($entryIdentifier . 'Not'), 'has() did not return false.');
     }
 
     /**

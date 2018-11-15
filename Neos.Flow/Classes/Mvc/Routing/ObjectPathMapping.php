@@ -19,6 +19,11 @@ use Neos\Flow\Annotations as Flow;
  * This contains the URI representation of an object (pathSegment)
  *
  * @Flow\Entity
+ * @ORM\Table(
+ *  indexes={
+ *      @ORM\Index(columns={"identifier", "uripattern", "pathsegment"})
+ *  }
+ * )
  */
 class ObjectPathMapping
 {

@@ -56,7 +56,7 @@ class ResourceViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\V
             [Service::class, $this->mockI18nService],
             [ResourceManager::class, $this->mockResourceManager]
         ]));
-        $this->viewHelper = $this->getAccessibleMock(ResourceViewHelper::class, array('renderChildren', 'registerRenderMethodArguments'), array(), '', false);
+        $this->viewHelper = $this->getAccessibleMock(ResourceViewHelper::class, ['renderChildren', 'registerRenderMethodArguments'], [], '', false);
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
         $this->renderingContext->injectObjectManager($this->objectManagerMock);
     }
@@ -133,7 +133,7 @@ class ResourceViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\V
      */
     public function renderLocalizesResource()
     {
-        $this->mockI18nService->expects($this->once())->method('getLocalizedFilename')->with('resource://ThePackageKey/Public/Styles/Main.css')->will($this->returnValue(array('resource://ThePackageKey/Public/Styles/Main.css.de', new Locale('de'))));
+        $this->mockI18nService->expects($this->once())->method('getLocalizedFilename')->with('resource://ThePackageKey/Public/Styles/Main.css')->will($this->returnValue(['resource://ThePackageKey/Public/Styles/Main.css.de', new Locale('de')]));
         $this->mockResourceManager->expects($this->atLeastOnce())->method('getPublicPackageResourceUri')->with('ThePackageKey', 'Styles/Main.css.de')->will($this->returnValue('TheCorrectResourceUri'));
         $this->viewHelper = $this->prepareArguments($this->viewHelper, [
             'path' => 'Styles/Main.css',
@@ -157,7 +157,7 @@ class ResourceViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\V
             ->expects($this->once())
             ->method('getLocalizedFilename')
             ->with('resource://ThePackageKey/Public/Styles/Main.css')
-            ->will($this->returnValue(array('resource://ThePackageKey/Public/Styles/Main.de.css', new Locale('de'))));
+            ->will($this->returnValue(['resource://ThePackageKey/Public/Styles/Main.de.css', new Locale('de')]));
         $this->mockResourceManager->expects($this->atLeastOnce())->method('getPublicPackageResourceUri')->with('ThePackageKey', 'Styles/Main.de.css')->will($this->returnValue('TheCorrectResourceUri'));
         $this->viewHelper = $this->prepareArguments($this->viewHelper, [
             'path' => 'resource://ThePackageKey/Public/Styles/Main.css',

@@ -27,7 +27,7 @@ class AuthenticationProviderResolverTest extends UnitTestCase
     public function resolveProviderObjectNameThrowsAnExceptionIfNoProviderIsAvailable()
     {
         $mockObjectManager = $this->getMockBuilder(ObjectManager::class)->disableOriginalConstructor()->getMock();
-        $mockObjectManager->expects($this->any())->method('getCaseSensitiveObjectName')->will($this->returnValue(false));
+        $mockObjectManager->expects($this->any())->method('getClassNameByObjectName')->will($this->returnValue(false));
 
         $providerResolver = new AuthenticationProviderResolver($mockObjectManager);
 
@@ -52,7 +52,7 @@ class AuthenticationProviderResolverTest extends UnitTestCase
         };
 
         $mockObjectManager = $this->getMockBuilder(ObjectManager::class)->disableOriginalConstructor()->getMock();
-        $mockObjectManager->expects($this->any())->method('getCaseSensitiveObjectName')->will($this->returnCallback($getCaseSensitiveObjectNameCallback));
+        $mockObjectManager->expects($this->any())->method('getClassNameByObjectName')->will($this->returnCallback($getCaseSensitiveObjectNameCallback));
 
         $providerResolver = new AuthenticationProviderResolver($mockObjectManager);
         $providerClass = $providerResolver->resolveProviderClass('ValidShortName');
@@ -66,7 +66,7 @@ class AuthenticationProviderResolverTest extends UnitTestCase
     public function resolveProviderReturnsTheCorrectProviderForACompleteClassName()
     {
         $mockObjectManager = $this->getMockBuilder(ObjectManager::class)->disableOriginalConstructor()->getMock();
-        $mockObjectManager->expects($this->any())->method('getCaseSensitiveObjectName')->with('existingProviderClass')->will($this->returnValue('existingProviderClass'));
+        $mockObjectManager->expects($this->any())->method('getClassNameByObjectName')->with('existingProviderClass')->will($this->returnValue('existingProviderClass'));
 
         $providerResolver = new AuthenticationProviderResolver($mockObjectManager);
         $providerClass = $providerResolver->resolveProviderClass('existingProviderClass');

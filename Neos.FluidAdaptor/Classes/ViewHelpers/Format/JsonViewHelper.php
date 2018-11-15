@@ -14,7 +14,6 @@ namespace Neos\FluidAdaptor\ViewHelpers\Format;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use TYPO3Fluid\Fluid\Core\Compiler\TemplateCompiler;
 use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\ViewHelperNode;
-use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 
 /**
  * Wrapper for PHPs json_encode function.
@@ -68,7 +67,7 @@ class JsonViewHelper extends AbstractViewHelper
      * Outputs content with its JSON representation. To prevent issues in HTML context, occurrences
      * of greater-than or less-than characters are converted to their hexadecimal representations.
      *
-     * If $forceObject is TRUE a JSON object is outputted even if the value is a non-associative array
+     * If $forceObject is true a JSON object is outputted even if the value is a non-associative array
      * Example: array('foo', 'bar') as input will not be ["foo","bar"] but {"0":"foo","1":"bar"}
      *
      * @return string the JSON-encoded string.

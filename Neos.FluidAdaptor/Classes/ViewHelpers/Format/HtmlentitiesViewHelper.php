@@ -11,7 +11,6 @@ namespace Neos\FluidAdaptor\ViewHelpers\Format;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 
@@ -60,9 +59,9 @@ class HtmlentitiesViewHelper extends AbstractViewHelper
     public function initializeArguments()
     {
         $this->registerArgument('value', 'string', 'string to format', false, null);
-        $this->registerArgument('keepQuotes', 'boolean', 'if TRUE, single and double quotes won\'t be replaced (sets ENT_NOQUOTES flag)', false, false);
+        $this->registerArgument('keepQuotes', 'boolean', 'if true, single and double quotes won\'t be replaced (sets ENT_NOQUOTES flag)', false, false);
         $this->registerArgument('encoding', 'string', 'the encoding format', false, 'UTF-8');
-        $this->registerArgument('doubleEncode', 'string', 'If FALSE existing html entities won\'t be encoded, the default is to convert everything.', false, true);
+        $this->registerArgument('doubleEncode', 'string', 'If false existing html entities won\'t be encoded, the default is to convert everything.', false, true);
     }
 
     /**
@@ -74,7 +73,7 @@ class HtmlentitiesViewHelper extends AbstractViewHelper
      */
     public function render()
     {
-        return self::renderStatic(array('value' => $this->arguments['value'], 'keepQuotes' => $this->arguments['keepQuotes'], 'encoding' => $this->arguments['encoding'], 'doubleEncode' => $this->arguments['doubleEncode']), $this->buildRenderChildrenClosure(), $this->renderingContext);
+        return self::renderStatic(['value' => $this->arguments['value'], 'keepQuotes' => $this->arguments['keepQuotes'], 'encoding' => $this->arguments['encoding'], 'doubleEncode' => $this->arguments['doubleEncode']], $this->buildRenderChildrenClosure(), $this->renderingContext);
     }
 
     /**

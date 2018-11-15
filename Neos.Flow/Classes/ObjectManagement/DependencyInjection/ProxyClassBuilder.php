@@ -366,11 +366,11 @@ class ProxyClassBuilder
                     } elseif (is_array($propertyValue)) {
                         $preparedSetterArgument = var_export($propertyValue, true);
                     } elseif (is_bool($propertyValue)) {
-                        $preparedSetterArgument = $propertyValue ? 'TRUE' : 'FALSE';
+                        $preparedSetterArgument = $propertyValue ? 'true' : 'false';
                     } else {
                         $preparedSetterArgument = $propertyValue;
                     }
-                    $commands[] = 'if (\Neos\Utility\ObjectAccess::setProperty($this, \'' . $propertyName . '\', ' . $preparedSetterArgument . ') === FALSE) { $this->' . $propertyName . ' = ' . $preparedSetterArgument . ';}';
+                    $commands[] = 'if (\Neos\Utility\ObjectAccess::setProperty($this, \'' . $propertyName . '\', ' . $preparedSetterArgument . ') === false) { $this->' . $propertyName . ' = ' . $preparedSetterArgument . ';}';
                     break;
                 case ConfigurationProperty::PROPERTY_TYPES_CONFIGURATION:
                     $configurationType = $propertyValue['type'];
@@ -567,7 +567,7 @@ class ProxyClassBuilder
         if ($cause === ObjectManagerInterface::INITIALIZATIONCAUSE_RECREATED) {
             $code .= "\n" . '        $classParents = class_parents($this);';
             $code .= "\n" . '        $classImplements = class_implements($this);';
-            $code .= "\n" . '        $isClassProxy = array_search(\'' . $className . '\', $classParents) !== FALSE && array_search(\'Doctrine\ORM\Proxy\Proxy\', $classImplements) !== FALSE;' . "\n";
+            $code .= "\n" . '        $isClassProxy = array_search(\'' . $className . '\', $classParents) !== false && array_search(\'Doctrine\ORM\Proxy\Proxy\', $classImplements) !== false;' . "\n";
             $code .= "\n" . '        if ($isSameClass || $isClassProxy) {' . "\n";
         } else {
             $code .= "\n" . '        if ($isSameClass) {' . "\n";
@@ -595,7 +595,7 @@ class ProxyClassBuilder
         if ($cause === ObjectManagerInterface::INITIALIZATIONCAUSE_RECREATED) {
             $code .= "\n" . '        $classParents = class_parents($this);';
             $code .= "\n" . '        $classImplements = class_implements($this);';
-            $code .= "\n" . '        $isClassProxy = array_search(\'' . $className . '\', $classParents) !== FALSE && array_search(\'Doctrine\ORM\Proxy\Proxy\', $classImplements) !== FALSE;' . "\n";
+            $code .= "\n" . '        $isClassProxy = array_search(\'' . $className . '\', $classParents) !== false && array_search(\'Doctrine\ORM\Proxy\Proxy\', $classImplements) !== false;' . "\n";
             $code .= "\n" . '        if ($isSameClass || $isClassProxy) {' . "\n";
         } else {
             $code .= "\n" . '        if ($isSameClass) {' . "\n";

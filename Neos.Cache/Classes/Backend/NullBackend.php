@@ -14,8 +14,6 @@ namespace Neos\Cache\Backend;
 // @codeCoverageIgnoreStart
 
 use Neos\Cache\Backend\AbstractBackend as AbstractCacheBackend;
-use Neos\Cache\Backend\PhpCapableBackendInterface;
-use Neos\Cache\Backend\TaggableBackendInterface;
 
 /**
  * A caching backend which forgets everything immediately
@@ -42,7 +40,7 @@ class NullBackend extends AbstractCacheBackend implements PhpCapableBackendInter
      * Returns False
      *
      * @param string $entryIdentifier ignored
-     * @return boolean FALSE
+     * @return boolean false
      * @api
      */
     public function get(string $entryIdentifier)
@@ -54,7 +52,7 @@ class NullBackend extends AbstractCacheBackend implements PhpCapableBackendInter
      * Returns False
      *
      * @param string $entryIdentifier ignored
-     * @return boolean FALSE
+     * @return boolean false
      * @api
      */
     public function has(string $entryIdentifier): bool
@@ -66,7 +64,7 @@ class NullBackend extends AbstractCacheBackend implements PhpCapableBackendInter
      * Does nothing
      *
      * @param string $entryIdentifier ignored
-     * @return boolean FALSE
+     * @return boolean false
      * @api
      */
     public function remove(string $entryIdentifier): bool

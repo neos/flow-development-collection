@@ -25,6 +25,7 @@ use Neos\Flow\Core\ProxyClassLoader;
 use Neos\Flow\Error\Debugger;
 use Neos\Flow\Error\ErrorHandler;
 use Neos\Flow\Error\ProductionExceptionHandler;
+use Neos\Flow\Http\HttpRequestHandlerInterface;
 use Neos\Flow\Log\Logger;
 use Neos\Flow\Log\LoggerBackendConfigurationHelper;
 use Neos\Flow\Log\LoggerFactory;
@@ -44,7 +45,6 @@ use Neos\Flow\Package\PackageManagerInterface;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Reflection\ReflectionServiceFactory;
 use Neos\Flow\ResourceManagement\Streams\StreamWrapperAdapter;
-use Neos\Flow\Session\SessionInterface;
 use Neos\Flow\SignalSlot\Dispatcher;
 use Neos\Flow\Utility\Environment;
 use Neos\Utility\Files;
@@ -52,7 +52,6 @@ use Neos\Utility\Lock\Lock;
 use Neos\Utility\Lock\LockManager;
 use Neos\Utility\OpcodeCacheHelper;
 use Neos\Flow\Exception as FlowException;
-use Psr\Log\LogLevel;
 
 /**
  * Initialization scripts for modules of the Flow package
@@ -242,8 +241,7 @@ class Scripts
         $configurationManager = $bootstrap->getEarlyInstance(ConfigurationManager::class);
         $settings = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.Flow');
 
-        $throwableStorage = new FileStorage();
-        $throwableStorage->injectStoragePath(FLOW_PATH_DATA . 'Logs/Exceptions');
+        $throwableStorage = self::initializeExceptionStorage($bootstrap);
         $bootstrap->setEarlyInstance(ThrowableStorageInterface::class, $throwableStorage);
 
         /** @var PsrLoggerFactoryInterface $psrLoggerFactoryName */
@@ -256,7 +254,7 @@ class Scripts
         $psrLogFactory = $psrLoggerFactoryName::create($psrLogConfigurations);
 
         // This is all deprecated and can be removed with the removal of respective interfaces and classes.
-        $loggerFactory = new LoggerFactory($psrLogFactory);
+        $loggerFactory = new LoggerFactory($psrLogFactory, $throwableStorage);
         $bootstrap->setEarlyInstance($psrLoggerFactoryName, $psrLogFactory);
         $bootstrap->setEarlyInstance(PsrLoggerFactoryInterface::class, $psrLogFactory);
         $bootstrap->setEarlyInstance(LoggerFactory::class, $loggerFactory);
@@ -265,6 +263,62 @@ class Scripts
         $deprecatedLoggerBackendOptions = $settings['log']['systemLogger']['backendOptions'] ?? [];
         $systemLogger = $loggerFactory->create('SystemLogger', $deprecatedLogger, $deprecatedLoggerBackend, $deprecatedLoggerBackendOptions);
         $bootstrap->setEarlyInstance(SystemLoggerInterface::class, $systemLogger);
+    }
+
+    /**
+     * Initialize the exception storage
+     *
+     * @param Bootstrap $bootstrap
+     * @return ThrowableStorageInterface
+     * @throws FlowException
+     * @throws \Neos\Flow\Configuration\Exception\InvalidConfigurationTypeException
+     */
+    protected static function initializeExceptionStorage(Bootstrap $bootstrap): ThrowableStorageInterface
+    {
+        $configurationManager = $bootstrap->getEarlyInstance(ConfigurationManager::class);
+        $settings = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.Flow');
+
+        $storageClassName = $settings['log']['throwables']['storageClass'] ?? FileStorage::class;
+        $storageOptions = $settings['log']['throwables']['optionsByImplementation'][$storageClassName] ?? [];
+
+
+        if (!in_array(ThrowableStorageInterface::class, class_implements($storageClassName, true))) {
+            throw new \Exception(
+                sprintf('The class "%s" configured as throwable storage does not implement the ThrowableStorageInterface', $storageClassName),
+                1540583485
+            );
+        }
+
+        /** @var ThrowableStorageInterface $throwableStorage */
+        $throwableStorage = $storageClassName::createWithOptions($storageOptions);
+
+        $throwableStorage->setBacktraceRenderer(function ($backtrace) {
+            return Debugger::getBacktraceCode($backtrace, false, true);
+        });
+
+        $throwableStorage->setRequestInformationRenderer(function () {
+            $output = '';
+            if (!(Bootstrap::$staticObjectManager instanceof ObjectManagerInterface)) {
+                return $output;
+            }
+
+            $bootstrap = Bootstrap::$staticObjectManager->get(Bootstrap::class);
+            /* @var Bootstrap $bootstrap */
+            $requestHandler = $bootstrap->getActiveRequestHandler();
+            if (!$requestHandler instanceof HttpRequestHandlerInterface) {
+                return $output;
+            }
+
+            $request = $requestHandler->getHttpRequest();
+            $response = $requestHandler->getHttpResponse();
+            $output .= PHP_EOL . 'HTTP REQUEST:' . PHP_EOL . ($request == '' ? '[request was empty]' : $request) . PHP_EOL;
+            $output .= PHP_EOL . 'HTTP RESPONSE:' . PHP_EOL . ($response == '' ? '[response was empty]' : $response) . PHP_EOL;
+            $output .= PHP_EOL . 'PHP PROCESS:' . PHP_EOL . 'Inode: ' . getmyinode() . PHP_EOL . 'PID: ' . getmypid() . PHP_EOL . 'UID: ' . getmyuid() . PHP_EOL . 'GID: ' . getmygid() . PHP_EOL . 'User: ' . get_current_user() . PHP_EOL;
+
+            return $output;
+        });
+
+        return $throwableStorage;
     }
 
     /**
@@ -611,19 +665,6 @@ class Scripts
     }
 
     /**
-     * Initializes the session framework
-     *
-     * @param Bootstrap $bootstrap
-     * @return void
-     */
-    public static function initializeSession(Bootstrap $bootstrap)
-    {
-        if (FLOW_SAPITYPE === 'Web') {
-            $bootstrap->getObjectManager()->get(SessionInterface::class)->resume();
-        }
-    }
-
-    /**
      * Initialize the stream wrappers.
      *
      * @param Bootstrap $bootstrap
@@ -639,9 +680,9 @@ class Scripts
      *
      * @param string $commandIdentifier E.g. neos.flow:cache:flush
      * @param array $settings The Neos.Flow settings
-     * @param boolean $outputResults if FALSE the output of this command is only echoed if the execution was not successful
+     * @param boolean $outputResults if false the output of this command is only echoed if the execution was not successful
      * @param array $commandArguments Command arguments
-     * @return boolean TRUE if the command execution was successful (exit code = 0)
+     * @return boolean true if the command execution was successful (exit code = 0)
      * @api
      * @throws Exception\SubProcessException if execution of the sub process failed
      */
@@ -694,7 +735,7 @@ class Scripts
      * @return void
      * @api
      */
-    public static function executeCommandAsync(string $commandIdentifier, array $settings, array $commandArguments = array())
+    public static function executeCommandAsync(string $commandIdentifier, array $settings, array $commandArguments = [])
     {
         $command = self::buildSubprocessCommand($commandIdentifier, $settings, $commandArguments);
         if (DIRECTORY_SEPARATOR === '/') {

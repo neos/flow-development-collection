@@ -13,6 +13,8 @@ namespace Neos\Flow\Security\Authorization\Privilege;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
+use Neos\Flow\Security\Authorization\Privilege\Parameter\PrivilegeParameterDefinition;
+use Neos\Flow\Security\Authorization\Privilege\Parameter\PrivilegeParameterInterface;
 use Neos\Flow\Security\Exception as SecurityException;
 
 /**
@@ -124,15 +126,7 @@ class PrivilegeTarget
             throw new SecurityException(sprintf('permission must be either "GRANT", "DENY" or "ABSTAIN", given: "%s"', $permission), 1401878462);
         }
 
-        $privilegeParameters = [];
-        foreach ($this->parameterDefinitions as $parameterDefinition) {
-            $parameterName = $parameterDefinition->getName();
-            if (!isset($parameters[$parameterName])) {
-                throw new SecurityException(sprintf('The parameter "%s" is not specified', $parameterName), 1401794982);
-            }
-            $privilegeParameterClassName = $parameterDefinition->getParameterClassName();
-            $privilegeParameters[$parameterName] = new $privilegeParameterClassName($parameterName, $parameters[$parameterName]);
-        }
+        $privilegeParameters = array_map($this->createParameterMapper($parameters), $this->parameterDefinitions);
         $privilege = new $this->privilegeClassName($this, $this->matcher, $permission, $privilegeParameters);
         if (!$privilege instanceof PrivilegeInterface) {
             throw new SecurityException(sprintf('Expected instance of PrivilegeInterface, got "%s"', get_class($privilege)), 1395869340);
@@ -140,5 +134,33 @@ class PrivilegeTarget
         $privilege->injectObjectManager($this->objectManager);
 
         return $privilege;
+    }
+
+    /**
+     * @param array $parameters
+     * @return \Closure
+     */
+    protected function createParameterMapper(array $parameters): \Closure
+    {
+        return function (PrivilegeParameterDefinition $parameterDefinition) use ($parameters) {
+            return $this->createParameter($parameterDefinition, $parameters);
+        };
+    }
+
+    /**
+     * @param PrivilegeParameterDefinition $parameterDefinition
+     * @param array $parameters
+     * @return PrivilegeParameterInterface
+     * @throws SecurityException
+     */
+    protected function createParameter(PrivilegeParameterDefinition $parameterDefinition, array $parameters): PrivilegeParameterInterface
+    {
+        $parameterName = $parameterDefinition->getName();
+        if (!isset($parameters[$parameterName])) {
+            throw new SecurityException(sprintf('The parameter "%s" is not specified', $parameterName), 1401794982);
+        }
+
+        $privilegeParameterClassName = $parameterDefinition->getParameterClassName();
+        return new $privilegeParameterClassName($parameterName, $parameters[$parameterName]);
     }
 }

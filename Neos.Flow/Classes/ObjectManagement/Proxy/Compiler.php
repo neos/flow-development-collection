@@ -11,7 +11,6 @@ namespace Neos\Flow\ObjectManagement\Proxy;
  * source code.
  */
 
-use Doctrine\ORM\Mapping as ORM;
 use Neos\Flow\Annotations as Flow;
 use Neos\Cache\Frontend\PhpFrontend;
 use Neos\Flow\ObjectManagement\CompileTimeObjectManager;
@@ -31,11 +30,6 @@ class Compiler
      * @var string
      */
     const ORIGINAL_CLASSNAME_SUFFIX = '_Original';
-
-    /**
-     * @var array
-     */
-    protected $settings = [];
 
     /**
      * @var CompileTimeObjectManager
@@ -87,17 +81,6 @@ class Compiler
     }
 
     /**
-     * Injects the Flow settings
-     *
-     * @param array $settings The settings
-     * @return void
-     */
-    public function injectSettings(array $settings)
-    {
-        $this->settings = $settings;
-    }
-
-    /**
      * @param CompileTimeObjectManager $objectManager
      * @return void
      */
@@ -133,7 +116,7 @@ class Compiler
      * If no such proxy class has been created yet by this renderer,
      * this function will create one and register it for later use.
      *
-     * If the class is not proxable, FALSE will be returned
+     * If the class is not proxable, false will be returned
      *
      * @param string $fullClassName Name of the original class
      * @return ProxyClass|boolean
@@ -179,7 +162,7 @@ class Compiler
      * monitor or some other mechanism.
      *
      * @param string $fullClassName Name of the original class
-     * @return boolean TRUE if a cache entry exists
+     * @return boolean true if a cache entry exists
      */
     public function hasCacheEntryForClass($fullClassName)
     {

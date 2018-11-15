@@ -14,8 +14,8 @@ namespace Neos\Flow\Mvc\Controller;
 use Neos\Error\Messages\Result;
 use Neos\Flow\Annotations as Flow;
 use Neos\Error\Messages as Error;
-use Neos\Flow\Log\PsrSystemLoggerInterface;
 use Neos\Flow\Log\SystemLoggerInterface;
+use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Mvc\Exception\ForwardException;
 use Neos\Flow\Mvc\Exception\InvalidActionVisibilityException;
 use Neos\Flow\Mvc\Exception\InvalidArgumentTypeException;
@@ -32,7 +32,6 @@ use Neos\Flow\Property\TypeConverter\Error\TargetNotFoundError;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Utility\TypeHandling;
 use Psr\Log\LoggerInterface;
-use Psr\Log\LogLevel;
 
 /**
  * An HTTP based multi-action controller.
@@ -589,7 +588,7 @@ class ActionController extends AbstractController
     /**
      * Determines the fully qualified view object name.
      *
-     * @return mixed The fully qualified view object name or FALSE if no matching view could be found.
+     * @return mixed The fully qualified view object name or false if no matching view could be found.
      * @api
      */
     protected function resolveViewObjectName()
@@ -723,7 +722,7 @@ class ActionController extends AbstractController
                 $logMessage .= 'Error for ' . $propertyPath . ':  ' . $error->render() . PHP_EOL;
             }
         }
-        $this->logger->error($logMessage);
+        $this->logger->error($logMessage, LogEnvironment::fromMethodName(__METHOD__));
 
         return $outputMessage;
     }
@@ -733,7 +732,7 @@ class ActionController extends AbstractController
      * display no flash message at all on errors. Override this to customize
      * the flash message in your action controller.
      *
-     * @return \Neos\Error\Messages\Message The flash message or FALSE if no flash message should be set
+     * @return \Neos\Error\Messages\Message The flash message or false if no flash message should be set
      * @api
      */
     protected function getErrorFlashMessage()

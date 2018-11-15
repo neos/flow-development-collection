@@ -47,7 +47,7 @@ class RedirectController extends AbstractWidgetController
     public function redirectTestAction($delay = 0, $parameter = null, $otherController = false)
     {
         $this->addFlashMessage('Redirect triggered!');
-        $arguments = array();
+        $arguments = [];
         if ($parameter !== null) {
             $arguments['parameter'] = $parameter . ', via redirect';
         }
@@ -65,7 +65,7 @@ class RedirectController extends AbstractWidgetController
     public function forwardTestAction($parameter = null, $otherController = false)
     {
         $this->addFlashMessage('Forward triggered!');
-        $arguments = array();
+        $arguments = [];
         if ($parameter !== null) {
             $arguments['parameter'] = $parameter . ', via forward';
         }

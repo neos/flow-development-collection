@@ -184,7 +184,7 @@ class NumberFormatter implements FormatterInterface
      * @param array $parsedFormat An array describing format (as in $parsedFormats property)
      * @param array $symbols An array with symbols to use (as in $localeSymbols property)
      * @param string $currency Currency symbol to be inserted into formatted number (if applicable)
-     * @return string Formatted number. Will return string-casted version of $number if pattern is FALSE
+     * @return string Formatted number. Will return string-casted version of $number if pattern is false
      */
     protected function doFormattingWithParsedFormat($number, array $parsedFormat, array $symbols, $currency = null)
     {

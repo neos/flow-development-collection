@@ -154,13 +154,13 @@ class ConsoleOutput
      *
      * @param string|array $question The question to ask. If an array each array item is turned into one line of a multi-line question
      * @param array $choices List of choices to pick from
-     * @param boolean $default The default answer if the user enters nothing
-     * @param boolean $multiSelect If TRUE the result will be an array with the selected options. Multiple options can be given separated by commas
-     * @param boolean|null $attempts Max number of times to ask before giving up (null by default, which means infinite)
+     * @param mixed|null $default The default answer if the user enters nothing
+     * @param boolean $multiSelect If true the result will be an array with the selected options. Multiple options can be given separated by commas
+     * @param integer|null $attempts Max number of times to ask before giving up (null by default, which means infinite)
      * @return integer|string|array The selected value or values (the key of the choices array)
      * @throws \InvalidArgumentException
      */
-    public function select($question, array $choices, bool $default = null, bool $multiSelect = false, $attempts = null)
+    public function select($question, array $choices, $default = null, bool $multiSelect = false, int $attempts = null)
     {
         $question = new ChoiceQuestion($this->combineQuestion($question), $choices, $default);
         $question
