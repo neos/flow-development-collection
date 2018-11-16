@@ -367,6 +367,20 @@ class ArrayHelper implements ProtectedContextAwareInterface
     }
 
     /**
+     * Set the specified key in the the array
+     *
+     * @param array $array
+     * @param string|integer $key the Key that will be set
+     * @param mixed $value the value to assign to the key
+     * @return array The modified array.
+     */
+    public function set(array $array, $key, $value)
+    {
+        $array[$key] = $value;
+        return $array;
+    }
+
+    /**
      * All methods are considered safe
      *
      * @param string $methodName
