@@ -113,6 +113,48 @@ class StringHelperTest extends UnitTestCase
         $this->assertSame($expected, $result);
     }
 
+    public function chrExamples()
+    {
+        return [
+            ['value' => 65, 'expected' => 'A'],
+            ['value' => 256, 'expected' => chr(256)],
+            ['value' => 'not a number', 'expected' => chr('not a number')],
+            ['value' => 0, 'expected' => chr(0)],
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider chrExamples
+     */
+    public function chrWorks($value, $expected)
+    {
+        $helper = new StringHelper();
+        $result = $helper->chr($value);
+        $this->assertSame($expected, $result);
+    }
+
+    public function ordExamples()
+    {
+        return [
+            ['value' => 'A', 'expected' => 65],
+            ['value' => '', 'expected' => 0],
+            ['value' => 1, 'expected' => 49],
+            ['value' => 'longer string', 'expected' => 108],
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider ordExamples
+     */
+    public function ordWorks($value, $expected)
+    {
+        $helper = new StringHelper();
+        $result = $helper->ord($value);
+        $this->assertSame($expected, $result);
+    }
+
     public function indexOfExamples()
     {
         return [
@@ -475,6 +517,16 @@ class StringHelperTest extends UnitTestCase
     /**
      * @test
      */
+    public function nl2brWorks()
+    {
+        $helper = new StringHelper();
+        $result = $helper->nl2br('some' . chr(10) . 'string');
+        $this->assertSame('some<br />' . chr(10) . 'string', $result);
+    }
+
+    /**
+     * @test
+     */
     public function rawUrlEncodeWorks()
     {
         $helper = new StringHelper();
@@ -561,6 +613,16 @@ class StringHelperTest extends UnitTestCase
         $helper = new StringHelper();
         $result = $helper->md5('joh316');
         $this->assertSame('bacb98acf97e0b6112b1d1b650b84971', $result);
+    }
+
+    /**
+     * @test
+     */
+    public function sha1Works()
+    {
+        $helper = new StringHelper();
+        $result = $helper->sha1('joh316');
+        $this->assertSame('063b3d108bed9f88fa618c6046de0dccadcf3158', $result);
     }
 
     public function lengthExamples()
