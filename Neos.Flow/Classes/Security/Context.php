@@ -16,7 +16,6 @@ use Neos\Cache\CacheAwareInterface;
 use Neos\Flow\Log\PsrSecurityLoggerInterface;
 use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use Neos\Flow\Security\Account;
 use Neos\Flow\Security\Authentication\TokenAndProviderFactoryInterface;
 use Neos\Flow\Security\Authentication\TokenInterface;
 use Neos\Flow\Security\Policy\Role;
