@@ -473,4 +473,34 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
         $result = call_user_func_array([$helper, 'range'], $arguments);
         $this->assertEquals($expected, $result);
     }
+
+
+    public function setExamples()
+    {
+        return [
+            'add key in empty array' => [
+                [[], 'foo', 'bar'],
+                ['foo' => 'bar']
+            ],
+            'add key to array' => [
+                [['bar' => 'baz'], 'foo', 'bar'],
+                ['bar' => 'baz', 'foo' => 'bar']
+            ],
+            'override value in array' => [
+                [['foo' => 'bar'], 'foo', 'baz'],
+                ['foo' => 'baz']
+            ]
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider setExamples
+     */
+    public function setWorks($arguments, $expected)
+    {
+        $helper = new ArrayHelper();
+        $result = call_user_func_array([$helper, 'set'], $arguments);
+        $this->assertEquals($expected, $result);
+    }
 }
