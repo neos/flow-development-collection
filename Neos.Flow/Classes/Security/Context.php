@@ -884,8 +884,9 @@ class Context
      *
      * @param Account $account
      * @param string $reason
+     * @return void
      */
-    public function destroySessionsForAccount(Account $account, $reason = '')
+    public function destroySessionsForAccount(Account $account, string $reason = ''): void
     {
         $this->sessionManager->destroySessionsByTag($this->getSessionTagForAccount($account), $reason);
     }
