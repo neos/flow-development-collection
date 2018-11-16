@@ -15,7 +15,6 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
 use Neos\Flow\Persistence\QueryInterface;
 use Neos\Flow\Persistence\Repository;
-use Neos\Flow\Session\SessionManagerInterface;
 use Neos\Flow\Security\Context as SecurityContext;
 
 /**
@@ -34,12 +33,6 @@ class AccountRepository extends Repository
      * @var array
      */
     protected $defaultOrderings = ['creationDate' => QueryInterface::ORDER_DESCENDING];
-
-    /**
-     * @Flow\Inject
-     * @var SessionManagerInterface
-     */
-    protected $sessionManager;
 
     /**
      * Note: This is not required to be "the" SecurityContext of the current session, but any SecurityContext actually.
