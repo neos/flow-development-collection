@@ -867,4 +867,27 @@ class Context
 
         return $this->contextHash;
     }
+
+    /**
+     * returns the tag to use for sessions belonging to the given $account
+     *
+     * @param Account $account
+     * @return string
+     */
+    public function getSessionTagForAccount(Account $account): string
+    {
+        return 'Neos-Flow-Security-Account-' . md5($account->getAccountIdentifier());
+    }
+
+    /**
+     * destroys all sessions belonging to the given $account
+     *
+     * @param Account $account
+     * @param string $reason
+     * @return void
+     */
+    public function destroySessionsForAccount(Account $account, string $reason = ''): void
+    {
+        $this->sessionManager->destroySessionsByTag($this->getSessionTagForAccount($account), $reason);
+    }
 }

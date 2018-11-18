@@ -1092,4 +1092,33 @@ class ContextTest extends UnitTestCase
         $securityContext->expects($this->never())->method('initialize');
         $this->assertSame(Context::CONTEXT_HASH_UNINITIALIZED, $securityContext->getContextHash());
     }
+
+    /**
+     * @test
+     */
+    public function getSessionTagForAccountCreatesUniqueTagsPerAccount()
+    {
+        $account1 = $this->createMock(Account::class);
+        $account1->expects($this->any())->method('getAccountIdentifier')->willReturn('Account1');
+        $account2 = $this->createMock(Account::class);
+        $account2->expects($this->any())->method('getAccountIdentifier')->willReturn('Account2');
+
+        $this->assertNotSame($this->securityContext->getSessionTagForAccount($account1), $this->securityContext->getSessionTagForAccount($account2));
+    }
+
+    /**
+     * @test
+     */
+    public function destroySessionsForAccountWillDestroySessionsByAccountTag()
+    {
+        $account = $this->createMock(Account::class);
+        $account->expects($this->any())->method('getAccountIdentifier')->willReturn('Account');
+        $accountTag = $this->securityContext->getSessionTagForAccount($account);
+
+        $mockSessionManager = $this->createMock(SessionManagerInterface::class);
+        $mockSessionManager->expects($this->once())->method('destroySessionsByTag')->with($accountTag);
+        $this->securityContext->_set('sessionManager', $mockSessionManager);
+
+        $this->securityContext->destroySessionsForAccount($account);
+    }
 }
