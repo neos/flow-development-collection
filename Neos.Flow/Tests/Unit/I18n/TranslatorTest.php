@@ -11,10 +11,10 @@ namespace Neos\Flow\Tests\Unit\I18n;
  * source code.
  */
 
+use Neos\Flow\I18n;
 use Neos\Flow\I18n\Cldr\Reader\PluralsReader;
 use Neos\Flow\I18n\TranslationProvider\XliffTranslationProvider;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Flow\I18n;
 
 /**
  * Testcase for the Translator
@@ -27,6 +27,11 @@ class TranslatorTest extends UnitTestCase
     protected $defaultLocale;
 
     /**
+     * @var array<string,I18n\Locale>
+     */
+    protected $defaultLocaleChain;
+
+    /**
      * @var I18n\Translator
      */
     protected $translator;
@@ -37,9 +42,19 @@ class TranslatorTest extends UnitTestCase
     public function setUp()
     {
         $this->defaultLocale = new I18n\Locale('en_GB');
+        $this->defaultLocaleChain = [
+            'en_GB' => $this->defaultLocale,
+            'en' => new I18n\Locale('en'),
+        ];
 
         $mockLocalizationService = $this->createMock(I18n\Service::class);
         $mockLocalizationService->expects($this->any())->method('getConfiguration')->will($this->returnValue(new I18n\Configuration('en_GB')));
+        $mockLocalizationService
+            ->expects($this->any())
+            ->method('getLocaleChain')
+            ->with($this->defaultLocale)
+            ->will($this->returnValue($this->defaultLocaleChain))
+        ;
 
         $this->translator = new I18n\Translator();
         $this->translator->injectLocalizationService($mockLocalizationService);
@@ -73,7 +88,12 @@ class TranslatorTest extends UnitTestCase
     public function translateByOriginalLabelReturnsOriginalLabelWhenTranslationNotAvailable()
     {
         $mockTranslationProvider = $this->createMock(XliffTranslationProvider::class);
-        $mockTranslationProvider->expects($this->once())->method('getTranslationByOriginalLabel')->with('original label', $this->defaultLocale, null, 'source', 'packageKey')->will($this->returnValue(false));
+        $mockTranslationProvider
+            ->expects($this->exactly(\count($this->defaultLocaleChain)))
+            ->method('getTranslationByOriginalLabel')
+            ->with('original label', $this->isInstanceOf(I18n\Locale::class), null, 'source', 'packageKey')
+            ->will($this->returnValue(false))
+        ;
 
         $this->translator->injectTranslationProvider($mockTranslationProvider);
 
@@ -84,15 +104,64 @@ class TranslatorTest extends UnitTestCase
     /**
      * @test
      */
+    public function translateByOriginalLabelUsesLocaleChain()
+    {
+        $mockTranslationProvider = $this->createMock(XliffTranslationProvider::class);
+        $mockTranslationProvider
+            ->expects($this->exactly(2))
+            ->method('getTranslationByOriginalLabel')
+            ->with('original label', $this->isInstanceOf(I18n\Locale::class), null, 'source', 'packageKey')
+            ->will($this->returnValueMap([
+                ['original label', $this->defaultLocale, null, 'source', 'packageKey', false],
+                ['original label', $this->defaultLocaleChain['en'], null, 'source', 'packageKey', 'translated label'],
+            ]))
+        ;
+
+        $this->translator->injectTranslationProvider($mockTranslationProvider);
+
+        $result = $this->translator->translateByOriginalLabel('original label', [], null, null, 'source', 'packageKey');
+        $this->assertEquals('translated label', $result);
+    }
+
+    /**
+     * @test
+     */
     public function translateByIdReturnsNullWhenTranslationNotAvailable()
     {
         $mockTranslationProvider = $this->createMock(XliffTranslationProvider::class);
-        $mockTranslationProvider->expects($this->once())->method('getTranslationById')->with('id', $this->defaultLocale, null, 'source', 'packageKey')->will($this->returnValue(false));
+        $mockTranslationProvider
+            ->expects($this->exactly(\count($this->defaultLocaleChain)))
+            ->method('getTranslationById')
+            ->with('id', $this->isInstanceOf(I18n\Locale::class), null, 'source', 'packageKey')
+            ->will($this->returnValue(false))
+        ;
 
         $this->translator->injectTranslationProvider($mockTranslationProvider);
 
         $result = $this->translator->translateById('id', [], null, $this->defaultLocale, 'source', 'packageKey');
         $this->assertNull($result);
+    }
+
+    /**
+     * @test
+     */
+    public function translateByIdUsesLocaleChain()
+    {
+        $mockTranslationProvider = $this->createMock(XliffTranslationProvider::class);
+        $mockTranslationProvider
+            ->expects($this->exactly(2))
+            ->method('getTranslationById')
+            ->with('id', $this->isInstanceOf(I18n\Locale::class), null, 'source', 'packageKey')
+            ->will($this->returnValueMap([
+                ['id', $this->defaultLocale, null, 'source', 'packageKey', false],
+                ['id', $this->defaultLocaleChain['en'], null, 'source', 'packageKey', 'translatedId'],
+            ]))
+        ;
+
+        $this->translator->injectTranslationProvider($mockTranslationProvider);
+
+        $result = $this->translator->translateById('id', [], null, $this->defaultLocale, 'source', 'packageKey');
+        $this->assertEquals('translatedId', $result);
     }
 
     /**
@@ -174,7 +243,12 @@ class TranslatorTest extends UnitTestCase
     public function translateByOriginalLabelTests($originalLabel, $translatedLabel, $expectedResult)
     {
         $mockTranslationProvider = $this->createMock(XliffTranslationProvider::class);
-        $mockTranslationProvider->expects($this->once())->method('getTranslationByOriginalLabel')->with($originalLabel)->will($this->returnValue($translatedLabel));
+        $mockTranslationProvider
+            ->expects($this->atLeastOnce())
+            ->method('getTranslationByOriginalLabel')
+            ->with($originalLabel)
+            ->will($this->returnValue($translatedLabel))
+        ;
 
         $this->translator->injectTranslationProvider($mockTranslationProvider);
         $actualResult = $this->translator->translateByOriginalLabel($originalLabel);
@@ -202,7 +276,12 @@ class TranslatorTest extends UnitTestCase
     public function translateByIdTests($id, $translatedId, $expectedResult)
     {
         $mockTranslationProvider = $this->createMock(XliffTranslationProvider::class);
-        $mockTranslationProvider->expects($this->once())->method('getTranslationById')->with($id)->will($this->returnValue($translatedId));
+        $mockTranslationProvider
+            ->expects($this->atLeastOnce())
+            ->method('getTranslationById')
+            ->with($id)
+            ->will($this->returnValue($translatedId))
+        ;
 
         $this->translator->injectTranslationProvider($mockTranslationProvider);
         $actualResult = $this->translator->translateById($id);

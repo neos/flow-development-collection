@@ -126,19 +126,29 @@ class Translator
         if ($locale === null) {
             $locale = $this->localizationService->getConfiguration()->getCurrentLocale();
         }
-        $pluralForm = $this->getPluralForm($quantity, $locale);
 
-        $translatedMessage = $this->translationProvider->getTranslationByOriginalLabel($originalLabel, $locale, $pluralForm, $sourceName, $packageKey);
+        foreach ($this->localizationService->getLocaleChain($locale) as $localeInChain) {
+            $translatedMessage = $this->translationProvider->getTranslationByOriginalLabel(
+                $originalLabel,
+                $localeInChain,
+                $this->getPluralForm($quantity, $localeInChain),
+                $sourceName,
+                $packageKey
+            );
 
-        if ($translatedMessage === false) {
-            $translatedMessage = $originalLabel;
+            if ($translatedMessage !== false) {
+                return $arguments === []
+                    ? $translatedMessage
+                    : $this->formatResolver->resolvePlaceholders(
+                        $translatedMessage,
+                        $arguments,
+                        $localeInChain
+                    )
+                ;
+            }
         }
 
-        if (!empty($arguments)) {
-            $translatedMessage = $this->formatResolver->resolvePlaceholders($translatedMessage, $arguments, $locale);
-        }
-
-        return $translatedMessage;
+        return $originalLabel;
     }
 
     /**
@@ -169,17 +179,29 @@ class Translator
         if ($locale === null) {
             $locale = $this->localizationService->getConfiguration()->getCurrentLocale();
         }
-        $pluralForm = $this->getPluralForm($quantity, $locale);
 
-        $translatedMessage = $this->translationProvider->getTranslationById($labelId, $locale, $pluralForm, $sourceName, $packageKey);
-        if ($translatedMessage === false) {
-            return null;
+        foreach ($this->localizationService->getLocaleChain($locale) as $localeInChain) {
+            $translatedMessage = $this->translationProvider->getTranslationById(
+                $labelId,
+                $localeInChain,
+                $this->getPluralForm($quantity, $localeInChain),
+                $sourceName,
+                $packageKey
+            );
+
+            if ($translatedMessage !== false) {
+                return $arguments === []
+                    ? $translatedMessage
+                    : $this->formatResolver->resolvePlaceholders(
+                        $translatedMessage,
+                        $arguments,
+                        $localeInChain
+                    )
+                ;
+            }
         }
 
-        if (!empty($arguments)) {
-            return $this->formatResolver->resolvePlaceholders($translatedMessage, $arguments, $locale);
-        }
-        return $translatedMessage;
+        return null;
     }
 
     /**
