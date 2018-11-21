@@ -178,9 +178,13 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
          * @var ORM\ClassMetadata $metadata
          */
 
-        $class = $metadata->getReflectionClass();
-        $classSchema = $this->getClassSchema($class->getName());
-        $classAnnotations = $this->reader->getClassAnnotations($class);
+        try {
+            $class = $metadata->getReflectionClass();
+            $classSchema = $this->getClassSchema($class->getName());
+            $classAnnotations = $this->reader->getClassAnnotations($class);
+        } catch (ClassSchemaNotFoundException $exception) {
+            throw new ORM\MappingException(sprintf('Failure while fetching class schema class "%s": %s', $metadata->getName(), $exception->getMessage()), 1542792708, $exception);
+        }
 
         // Evaluate Entity annotation
         if (isset($classAnnotations[ORM\MappedSuperclass::class])) {

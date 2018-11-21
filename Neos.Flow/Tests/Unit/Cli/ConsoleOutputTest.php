@@ -15,6 +15,7 @@ use Neos\Flow\Cli\ConsoleOutput;
 use Neos\Flow\Tests\UnitTestCase;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\StreamOutput;
+use Symfony\Component\Console\Exception\RuntimeException;
 
 /**
  * Test cases for CLI console output helpers
@@ -141,6 +142,43 @@ class ConsoleOutputTest extends UnitTestCase
     /**
      * @test
      */
+    public function askAndValidateWillReturnAnswerIfValidationSuccessful()
+    {
+        $this->answerCustom(5);
+        $validator = function ($answer) {
+            if ($answer > 4) {
+                return $answer;
+            }
+
+            throw new RuntimeException('Number is not higher than 4');
+        };
+
+        $userAnswer = $this->consoleOutput->askAndValidate('Enter a number higher than 4', $validator);
+
+        $this->assertSame('5', $userAnswer);
+    }
+
+    /**
+     * @test
+     */
+    public function askAndValidateWillThrowExceptionIfNotSuccessful()
+    {
+        $this->expectException('RuntimeException');
+
+        $this->answerCustom(5);
+        $validator = function ($answer) {
+            if ($answer > 6) {
+                return $answer;
+            }
+            throw new RuntimeException('Number is not higher than 4');
+        };
+
+        $userAnswer = $this->consoleOutput->askAndValidate('Enter a number higher than 4', $validator);
+    }
+
+    /**
+     * @test
+     */
     public function questionWasAskedFallBackToDefaultAnswer()
     {
         $this->assertSame('Not Sure', $this->consoleOutput->ask('Enter your name', 'Not Sure'));
@@ -161,20 +199,6 @@ class ConsoleOutputTest extends UnitTestCase
             '+----------+----------+' . PHP_EOL, $this->getActualConsoleOutput());
     }
 
-    /**
-     * @test
-     */
-    public function askAndValidate()
-    {
-        $this->answerCustom(5);
-        $validator = function ($number) {
-            return $number > 4;
-        };
-
-        $userAnswer = $this->consoleOutput->askAndValidate('Enter a number higher than 4', $validator);
-
-        $this->assertSame(true, $userAnswer);
-    }
 
     /**
      * @test
