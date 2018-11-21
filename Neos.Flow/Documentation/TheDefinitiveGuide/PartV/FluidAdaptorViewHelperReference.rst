@@ -3,7 +3,7 @@
 FluidAdaptor ViewHelper Reference
 =================================
 
-This reference was automatically generated from code on 2018-10-02
+This reference was automatically generated from code on 2018-11-21
 
 
 .. _`FluidAdaptor ViewHelper Reference: f:debug`:
@@ -72,10 +72,6 @@ Arguments
 
 * ``data`` (array, *optional*): Additional data-* attributes. They will each be added with a "data-" prefix.
 
-* ``as`` (string, *optional*): The name of the current flashMessage variable for rendering inside
-
-* ``severity`` (string, *optional*): severity of the messages (One of the \Neos\Error\Messages\Message::SEVERITY_* constants)
-
 * ``class`` (string, *optional*): CSS class(es) for this element
 
 * ``dir`` (string, *optional*): Text direction for this HTML element. Allowed strings: "ltr" (left to right), "rtl" (right to left)
@@ -93,6 +89,10 @@ Arguments
 * ``tabindex`` (integer, *optional*): Specifies the tab order of this element
 
 * ``onclick`` (string, *optional*): JavaScript evaluated for the onclick event
+
+* ``as`` (string, *optional*): The name of the current flashMessage variable for rendering inside
+
+* ``severity`` (string, *optional*): severity of the messages (One of the \Neos\Error\Messages\Message::SEVERITY_* constants)
 
 
 
@@ -169,7 +169,7 @@ Arguments
 
 * ``enctype`` (string, *optional*): MIME type with which the form is submitted
 
-* ``method`` (string, *optional*): Transfer type (GET or POST)
+* ``method`` (string, *optional*): Transfer type (GET or POST or dialog)
 
 * ``name`` (string, *optional*): Name of form
 
@@ -980,6 +980,8 @@ Arguments
 * ``placeholder`` (string, *optional*): The placeholder of the textarea
 
 * ``autofocus`` (string, *optional*): Specifies that a text area should automatically get focus when the page loads
+
+* ``maxlength`` (int, *optional*): The maxlength attribute of the textarea (will not be validated)
 
 * ``errorClass`` (string, *optional*): CSS class to set if there are errors for this view helper
 
