@@ -1,0 +1,34 @@
+`5.0.11 (2018-11-21) <https://github.com/neos/flow-development-collection/releases/tag/5.0.11>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Throw MappingException in loadMetaDataForClass <https://github.com/neos/flow-development-collection/pull/1454>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+When no class schema can be found in `loadMetaDataForClass`, a Doctrine
+`MappingException` is now thrown. This makes our code work nicely with the
+change in https://github.com/doctrine/doctrine2/pull/7471/ that otherwise
+leads to errors like this as of ORM 2.6.3:
+
+```
+FlowAnnotationDriver.php: No class schema found for "some-non-mapped-class".
+
+89 …\\FlowAnnotationDriver_Original::getClassSchema("some-non-mapped-class")
+88 …\\FlowAnnotationDriver_Original::loadMetadataForClass("some-non-mapped-class", Neos\\Flow\\Persistence\\Doctrine\\Mapping\\ClassMetadata)
+```
+
+Fixes #1453
+
+* Packages: ``Flow``
+
+`BUGFIX: Fix console helpers <https://github.com/neos/flow-development-collection/pull/1436>`_
+----------------------------------------------------------------------------------------------
+
+Fix description for ``select`` method and return type an therefore tests for ``askAndValidate``.
+
+* Packages: ``Flow``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/5.0.10...5.0.11>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
