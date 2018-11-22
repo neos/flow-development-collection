@@ -21,6 +21,11 @@ Composer\Autoload\ClassLoader:
 
 Neos\Cache\CacheFactoryInterface:
   className: Neos\Flow\Cache\CacheFactory
+  arguments:
+    1:
+      setting: Neos.Flow.context
+    3:
+      setting: Neos.Flow.cache.applicationIdentifier
 
 Neos\Flow\Cache\CacheFactory:
   arguments:
@@ -28,16 +33,6 @@ Neos\Flow\Cache\CacheFactory:
       setting: Neos.Flow.context
     3:
       setting: Neos.Flow.cache.applicationIdentifier
-
-Neos\Flow\Cache\CacheManager:
-  properties:
-    logger:
-      object:
-        factoryObjectName: Neos\Flow\Log\PsrLoggerFactoryInterface
-        factoryMethodName: get
-        arguments:
-          1:
-            value: systemLogger
 
 #                                                                          #
 # I18n                                                                     #
