@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Flow\Log\Utility;
 
 /*
@@ -37,7 +39,12 @@ abstract class LogEnvironment
      */
     public static function fromMethodName(string $methodName): array
     {
-        list($className, $functionName) = explode('::', $methodName);
+        if (strpos($methodName, '::') > 0) {
+            list($className, $functionName) = explode('::', $methodName);
+        } elseif (substr($methodName, -9, 9) === '{closure}') {
+            $className = substr($methodName, 0, -9);
+            $functionName = '{closure}';
+        }
 
         return [
             'FLOW_LOG_ENVIRONMENT' => [
