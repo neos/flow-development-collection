@@ -28,6 +28,7 @@ use TYPO3Fluid\Fluid\Core\Parser\Configuration;
 use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\Expression\CastingExpressionNode;
 use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\Expression\MathExpressionNode;
 use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\Expression\TernaryExpressionNode;
+use TYPO3Fluid\Fluid\Core\Parser\TemplateProcessor\PassthroughSourceModifierTemplateProcessor;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContext as FluidRenderingContext;
 use TYPO3Fluid\Fluid\View\ViewInterface;
 
@@ -89,7 +90,11 @@ class RenderingContext extends FluidRenderingContext implements FlowAwareRenderi
         parent::__construct($view);
         $this->setTemplateParser(new TemplateParser());
         $this->setViewHelperResolver(new ViewHelperResolver());
-        $this->setTemplateProcessors([new EscapingFlagProcessor(), new NamespaceDetectionTemplateProcessor()]);
+        $this->setTemplateProcessors([
+            new EscapingFlagProcessor(),
+            new PassthroughSourceModifierTemplateProcessor(),
+            new NamespaceDetectionTemplateProcessor()
+        ]);
         $this->setTemplatePaths(new TemplatePaths($options));
         $this->setVariableProvider(new TemplateVariableContainer());
     }
