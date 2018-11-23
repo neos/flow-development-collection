@@ -21,12 +21,18 @@ Composer\Autoload\ClassLoader:
 
 Neos\Cache\CacheFactoryInterface:
   className: Neos\Flow\Cache\CacheFactory
+  arguments:
+    1:
+      setting: Neos.Flow.context
+    3:
+      setting: Neos.Flow.cache.applicationIdentifier
 
 Neos\Flow\Cache\CacheFactory:
   arguments:
     1:
       setting: Neos.Flow.context
-
+    3:
+      setting: Neos.Flow.cache.applicationIdentifier
 
 #                                                                          #
 # I18n                                                                     #
