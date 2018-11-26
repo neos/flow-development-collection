@@ -127,7 +127,7 @@ abstract class AbstractBackend implements BackendInterface
      * @return string The prefixed identifier, for example "Flow694a5c7a43a4_NumberOfPostedArticles"
      * @api
      */
-    public function getPrefixedIdentifier($entryIdentifier): string
+    public function getPrefixedIdentifier(string $entryIdentifier): string
     {
         return $entryIdentifier;
     }
@@ -135,7 +135,7 @@ abstract class AbstractBackend implements BackendInterface
     /**
      * Sets the default lifetime for this cache backend
      *
-     * @param integer $defaultLifetime Default lifetime of this cache backend in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited liftime.
+     * @param integer $defaultLifetime Default lifetime of this cache backend in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited lifetime.
      * @return void
      * @throws \InvalidArgumentException
      * @api

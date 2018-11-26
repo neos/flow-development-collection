@@ -67,7 +67,7 @@ class LazySplObjectStorage extends \SplObjectStorage
     }
 
     /**
-     * Returns TRUE if the LazySplObjectStorage has been initialized.
+     * Returns true if the LazySplObjectStorage has been initialized.
      *
      * @return boolean
      */

@@ -14,7 +14,8 @@ namespace Neos\Flow\Mvc;
 /**
  * A generic and very basic response implementation
  *
- * @api
+ * @deprecated
+ * @see \Psr\Http\Message\ResponseInterface
  */
 interface ResponseInterface
 {

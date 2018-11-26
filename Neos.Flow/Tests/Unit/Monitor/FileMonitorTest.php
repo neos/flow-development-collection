@@ -11,13 +11,13 @@ namespace Neos\Flow\Tests\Unit\Monitor;
  * source code.
  */
 
-use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface;
 use org\bovigo\vfs\vfsStream;
 use Neos\Flow\Monitor\FileMonitor;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Utility\Files;
 use Neos\Cache;
+use Psr\Log\LoggerInterface;
 
 /**
  * Testcase for the File Monitor class
@@ -94,12 +94,12 @@ class FileMonitorTest extends UnitTestCase
      */
     public function detectChangesDetectsChangesInMonitoredFiles()
     {
-        $mockSystemLogger = $this->createMock(SystemLoggerInterface::class);
+        $mockSystemLogger = $this->createMock(LoggerInterface::class);
 
         $mockMonitor = $this->getMockBuilder(FileMonitor::class)->setMethods(['loadDetectedDirectoriesAndFiles', 'detectChangedFiles'])->setConstructorArgs(['Flow_Test'])->getMock();
         $mockMonitor->expects($this->once())->method('detectChangedFiles')->with([$this->unixStylePathAndFilename])->will($this->returnValue([]));
 
-        $mockMonitor->injectSystemLogger($mockSystemLogger);
+        $mockMonitor->injectLogger($mockSystemLogger);
         $mockMonitor->monitorFile(__FILE__);
 
         $mockMonitor->detectChanges();
@@ -110,7 +110,7 @@ class FileMonitorTest extends UnitTestCase
      */
     public function detectChangesEmitsFilesHaveChangedSignalIfFilesHaveChanged()
     {
-        $mockSystemLogger = $this->createMock(SystemLoggerInterface::class);
+        $mockSystemLogger = $this->createMock(LoggerInterface::class);
 
         $monitoredFiles = [__FILE__ . '1', __FILE__ . '2', __FILE__ . '3'];
 
@@ -123,7 +123,7 @@ class FileMonitorTest extends UnitTestCase
         $mockMonitor->expects($this->once())->method('emitFilesHaveChanged')->with('Flow_Test', $expectedChangedFiles);
 
 
-        $mockMonitor->injectSystemLogger($mockSystemLogger);
+        $mockMonitor->injectLogger($mockSystemLogger);
         $mockMonitor->_set('monitoredFiles', $monitoredFiles);
 
         $mockMonitor->detectChanges();
@@ -294,8 +294,8 @@ class FileMonitorTest extends UnitTestCase
         $this->inject($fileMonitor, 'changeDetectionStrategy', $mockChangeDetectionStrategy);
         $fileMonitor->expects($this->once())->method('emitFilesHaveChanged')->with('Flow_Test', $expectedEmittedChanges);
 
-        $mockSystemLogger = $this->createMock(SystemLoggerInterface::class);
-        $fileMonitor->injectSystemLogger($mockSystemLogger);
+        $mockSystemLogger = $this->createMock(LoggerInterface::class);
+        $fileMonitor->injectLogger($mockSystemLogger);
 
         $mockCache = $this->getMockBuilder(Cache\Frontend\StringFrontend::class)->disableOriginalConstructor()->getMock();
         $mockCache->expects($this->once())->method('get')->will($this->returnValue(json_encode($knownDirectoriesAndFiles)));

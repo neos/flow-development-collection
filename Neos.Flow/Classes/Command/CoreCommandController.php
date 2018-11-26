@@ -23,6 +23,7 @@ use Neos\Flow\Cli\CommandManager;
 use Neos\Flow\Cli\RequestBuilder;
 use Neos\Flow\Cli\Response;
 use Neos\Flow\Core\Bootstrap;
+use Neos\Flow\Log\PsrLoggerFactoryInterface;
 use Neos\Flow\Mvc\Dispatcher;
 use Neos\Flow\ObjectManagement\DependencyInjection\ProxyClassBuilder;
 use Neos\Flow\ObjectManagement\Proxy\Compiler;
@@ -189,9 +190,13 @@ class CoreCommandController extends CommandController
 
         /** @var PhpFrontend $classesCache */
         $classesCache = $this->cacheManager->getCache('Flow_Object_Classes');
+        $logger = $this->objectManager->get(PsrLoggerFactoryInterface::class)->get('systemLogger');
+
         $this->proxyClassCompiler->injectClassesCache($classesCache);
 
         $this->aopProxyClassBuilder->injectObjectConfigurationCache($objectConfigurationCache);
+        $this->aopProxyClassBuilder->injectLogger($logger);
+        $this->dependencyInjectionProxyClassBuilder->injectLogger($logger);
         $this->aopProxyClassBuilder->build();
         $this->dependencyInjectionProxyClassBuilder->build();
 
@@ -359,7 +364,7 @@ class CoreCommandController extends CommandController
     /**
      * Launch sub process
      *
-     * @return array The new sub process and its STDIN, STDOUT, STDERR pipes – or FALSE if an error occurred.
+     * @return array The new sub process and its STDIN, STDOUT, STDERR pipes – or false if an error occurred.
      * @throws \RuntimeException
      */
     protected function launchSubProcess(): array

@@ -17,6 +17,7 @@ use Neos\Flow\Security\Authentication\AuthenticationManagerInterface;
 use Neos\Flow\Security\Context;
 use Neos\Flow\Security\Cryptography\HashService;
 use Neos\FluidAdaptor\Core\ViewHelper;
+use Neos\FluidAdaptor\Core\ViewHelper\Exception\WrongEnctypeException;
 use Neos\FluidAdaptor\ViewHelpers\Form\AbstractFormViewHelper;
 
 /**
@@ -102,22 +103,22 @@ class FormViewHelper extends AbstractFormViewHelper
     public function initializeArguments()
     {
         $this->registerTagAttribute('enctype', 'string', 'MIME type with which the form is submitted');
-        $this->registerTagAttribute('method', 'string', 'Transfer type (GET or POST)');
+        $this->registerTagAttribute('method', 'string', 'Transfer type (GET or POST or dialog)');
         $this->registerTagAttribute('name', 'string', 'Name of form');
         $this->registerTagAttribute('onreset', 'string', 'JavaScript: On reset of the form');
         $this->registerTagAttribute('onsubmit', 'string', 'JavaScript: On submit of the form');
         $this->registerArgument('action', 'string', 'Target action', false, null);
-        $this->registerArgument('arguments', 'array', 'Arguments', false, array());
+        $this->registerArgument('arguments', 'array', 'Arguments', false, []);
         $this->registerArgument('controller', 'string', 'Target controller. If NULL current controllerName is used', false, null);
         $this->registerArgument('package', 'string', 'Target package. if NULL current package is used', false, null);
         $this->registerArgument('subpackage', 'string', 'Target subpackage. if NULL current subpackage is used', false, null);
         $this->registerArgument('object', 'mixed', 'object to use for the form. Use in conjunction with the "property" attribute on the sub tags', false, null);
         $this->registerArgument('section', 'string', 'The anchor to be added to the URI', false, '');
         $this->registerArgument('format', 'string', 'The requested format, e.g. ".html"', false, '');
-        $this->registerArgument('additionalParams', 'array', 'additional query parameters that won\'t be prefixed like $arguments (overrule $arguments)', false, array());
+        $this->registerArgument('additionalParams', 'array', 'additional query parameters that won\'t be prefixed like $arguments (overrule $arguments)', false, []);
         $this->registerArgument('absolute', 'boolean', 'If set, an absolute action URI is rendered (only active if $actionUri is not set)', false, false);
         $this->registerArgument('addQueryString', 'boolean', 'If set, the current query parameters will be kept in the URI', false, false);
-        $this->registerArgument('argumentsToBeExcludedFromQueryString', 'array', 'arguments to be removed from the URI. Only active if $addQueryString = TRUE', false, array());
+        $this->registerArgument('argumentsToBeExcludedFromQueryString', 'array', 'arguments to be removed from the URI. Only active if $addQueryString = true', false, []);
         $this->registerArgument('fieldNamePrefix', 'string', 'Prefix that will be added to all field names within this form', false, null);
         $this->registerArgument('actionUri', 'string', 'can be used to overwrite the "action" attribute of the form tag', false, null);
         $this->registerArgument('objectName', 'string', 'name of the object that is bound to this form. If this argument is not specified, the name attribute of this form is used to determine the FormObjectName', false, null);
@@ -143,6 +144,8 @@ class FormViewHelper extends AbstractFormViewHelper
 
         if (strtolower($this->arguments['method']) === 'get') {
             $this->tag->addAttribute('method', 'get');
+        } elseif (strtolower($this->arguments['method']) === 'dialog') {
+            $this->tag->addAttribute('method', 'dialog');
         } else {
             $this->tag->addAttribute('method', 'post');
         }
@@ -152,8 +155,14 @@ class FormViewHelper extends AbstractFormViewHelper
         $this->addFieldNamePrefixToViewHelperVariableContainer();
         $this->addFormFieldNamesToViewHelperVariableContainer();
         $this->addEmptyHiddenFieldNamesToViewHelperVariableContainer();
+        $this->viewHelperVariableContainer->addOrUpdate(FormViewHelper::class, 'required-enctype', '');
 
         $formContent = $this->renderChildren();
+
+        $requiredEnctype = $this->viewHelperVariableContainer->get(FormViewHelper::class, 'required-enctype');
+        if ($requiredEnctype !== '' && $requiredEnctype !== strtolower($this->arguments['enctype'])) {
+            throw new WrongEnctypeException('The form you are trying to render requires an enctype of "' . $requiredEnctype . '". Please specify the correct enctype when using file uploads.', 1522706399);
+        }
 
         // wrap hidden field in div container in order to create XHTML valid output
         $content = chr(10) . '<div style="display: none">';
@@ -286,13 +295,13 @@ class FormViewHelper extends AbstractFormViewHelper
         if (!$request->isMainRequest()) {
             $argumentNamespace = $request->getArgumentNamespace();
 
-            $referrer = array(
+            $referrer = [
                 '@package' => $request->getControllerPackageKey(),
                 '@subpackage' => $request->getControllerSubpackageKey(),
                 '@controller' => $request->getControllerName(),
                 '@action' => $request->getControllerActionName(),
                 'arguments' => $this->hashService->appendHmac(base64_encode(serialize($request->getArguments())))
-            );
+            ];
             foreach ($referrer as $referrerKey => $referrerValue) {
                 $referrerValue = htmlspecialchars($referrerValue);
                 $result .= '<input type="hidden" name="' . $argumentNamespace . '[__referrer][' . $referrerKey . ']" value="' . $referrerValue . '" />' . chr(10);
@@ -307,13 +316,13 @@ class FormViewHelper extends AbstractFormViewHelper
             unset($arguments[$argumentNamespace]);
         }
 
-        $referrer = array(
+        $referrer = [
             '@package' => $request->getControllerPackageKey(),
             '@subpackage' => $request->getControllerSubpackageKey(),
             '@controller' => $request->getControllerName(),
             '@action' => $request->getControllerActionName(),
             'arguments' => $this->hashService->appendHmac(base64_encode(serialize($arguments)))
-        );
+        ];
 
         foreach ($referrer as $referrerKey => $referrerValue) {
             $result .= '<input type="hidden" name="__referrer[' . $referrerKey . ']" value="' . htmlspecialchars($referrerValue) . '" />' . chr(10);
@@ -374,7 +383,7 @@ class FormViewHelper extends AbstractFormViewHelper
     {
         if ($this->hasArgument('object')) {
             $this->viewHelperVariableContainer->add(\Neos\FluidAdaptor\ViewHelpers\FormViewHelper::class, 'formObject', $this->arguments['object']);
-            $this->viewHelperVariableContainer->add(\Neos\FluidAdaptor\ViewHelpers\FormViewHelper::class, 'additionalIdentityProperties', array());
+            $this->viewHelperVariableContainer->add(\Neos\FluidAdaptor\ViewHelpers\FormViewHelper::class, 'additionalIdentityProperties', []);
         }
     }
 
@@ -451,7 +460,7 @@ class FormViewHelper extends AbstractFormViewHelper
      */
     protected function addFormFieldNamesToViewHelperVariableContainer()
     {
-        $this->viewHelperVariableContainer->add(\Neos\FluidAdaptor\ViewHelpers\FormViewHelper::class, 'formFieldNames', array());
+        $this->viewHelperVariableContainer->add(\Neos\FluidAdaptor\ViewHelpers\FormViewHelper::class, 'formFieldNames', []);
     }
 
     /**
@@ -472,7 +481,7 @@ class FormViewHelper extends AbstractFormViewHelper
      */
     protected function addEmptyHiddenFieldNamesToViewHelperVariableContainer()
     {
-        $this->viewHelperVariableContainer->add(\Neos\FluidAdaptor\ViewHelpers\FormViewHelper::class, 'emptyHiddenFieldNames', array());
+        $this->viewHelperVariableContainer->add(\Neos\FluidAdaptor\ViewHelpers\FormViewHelper::class, 'emptyHiddenFieldNames', []);
     }
 
     /**

@@ -28,11 +28,11 @@ interface PackageManagerInterface
     public function initialize(Bootstrap $bootstrap);
 
     /**
-     * Returns TRUE if a package is available (the package's files exist in the packages directory)
-     * or FALSE if it's not.
+     * Returns true if a package is available (the package's files exist in the packages directory)
+     * or false if it's not.
      *
      * @param string $packageKey The key of the package to check
-     * @return boolean TRUE if the package is available, otherwise FALSE
+     * @return boolean true if the package is available, otherwise false
      * @api
      */
     public function isPackageAvailable($packageKey);
@@ -61,7 +61,7 @@ interface PackageManagerInterface
      * the given package state, path, and type filters. All three filters must match, if given.
      *
      * @param string $packageState defaults to available
-     * @param string $packagePath
+     * @param string $packagePath DEPRECATED since Flow 5.0
      * @param string $packageType
      *
      * @return array<PackageInterface>
@@ -70,11 +70,11 @@ interface PackageManagerInterface
     public function getFilteredPackages($packageState = 'available', $packagePath = null, $packageType = null);
 
     /**
-     * Returns the upper camel cased version of the given package key or FALSE
+     * Returns the upper camel cased version of the given package key or false
      * if no such package is available.
      *
      * @param string $unknownCasedPackageKey The package key to convert
-     * @return mixed The upper camel cased package key or FALSE if no such package exists
+     * @return mixed The upper camel cased package key or false if no such package exists
      * @api
      */
     public function getCaseSensitivePackageKey($unknownCasedPackageKey);
@@ -86,17 +86,6 @@ interface PackageManagerInterface
      * @api
      */
     public function isPackageKeyValid($packageKey);
-
-    /**
-     * Create a new package, given the package key
-     *
-     * @param string $packageKey The package key to use for the new package
-     * @param array $manifest composer manifest data
-     * @param string $packagesPath If specified, the package will be created in this path
-     * @return PackageInterface The newly created package
-     * @api
-     */
-    public function createPackage($packageKey, array $manifest = [], $packagesPath = null);
 
     /**
      * Freezes a package
@@ -129,15 +118,6 @@ interface PackageManagerInterface
      * @return void
      */
     public function refreezePackage($packageKey);
-
-    /**
-     * Removes a package from registry and deletes it from filesystem
-     *
-     * @param string $packageKey package to delete
-     * @return void
-     * @api
-     */
-    public function deletePackage($packageKey);
 
     /**
      * Rescans available packages, order and write a new PackageStates file.

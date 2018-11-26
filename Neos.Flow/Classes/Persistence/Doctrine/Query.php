@@ -11,14 +11,16 @@ namespace Neos\Flow\Persistence\Doctrine;
  * source code.
  */
 
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Log\SystemLoggerInterface;
+use Neos\Flow\Log\ThrowableStorageInterface;
+use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Persistence\Exception\InvalidQueryException;
 use Neos\Flow\Persistence\Generic\Qom\Constraint;
 use Neos\Flow\Persistence\QueryInterface;
 use Neos\Flow\Persistence\QueryResultInterface;
 use Neos\Utility\Unicode\Functions as UnicodeFunctions;
+use Psr\Log\LoggerInterface;
 
 /**
  * A Query class for Doctrine 2
@@ -33,10 +35,15 @@ class Query implements QueryInterface
     protected $entityClassName;
 
     /**
-     * @Flow\Inject
-     * @var SystemLoggerInterface
+     * @var LoggerInterface
      */
-    protected $systemLogger;
+    protected $logger;
+
+    /**
+     * @Flow\Inject
+     * @var ThrowableStorageInterface
+     */
+    protected $throwableStorage;
 
     /**
      * @var \Doctrine\ORM\QueryBuilder
@@ -112,10 +119,10 @@ class Query implements QueryInterface
     }
 
     /**
-     * @param ObjectManager $entityManager
+     * @param EntityManagerInterface $entityManager
      * @return void
      */
-    public function injectEntityManager(ObjectManager $entityManager)
+    public function injectEntityManager(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
         $this->queryBuilder = $entityManager->createQueryBuilder()->select('e')->from($this->entityClassName, 'e');
@@ -131,6 +138,14 @@ class Query implements QueryInterface
     public function injectSettings(array $settings)
     {
         $this->settings = $settings['persistence'];
+    }
+
+    /**
+     * @param LoggerInterface $logger
+     */
+    public function injectLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
     }
 
     /**
@@ -177,10 +192,12 @@ class Query implements QueryInterface
             }
             return $query->getResult();
         } catch (\Doctrine\ORM\ORMException $ormException) {
-            $this->systemLogger->logException($ormException);
+            $message = $this->throwableStorage->logThrowable($ormException);
+            $this->logger->error($message, LogEnvironment::fromMethodName(__METHOD__));
             return [];
         } catch (\Doctrine\DBAL\DBALException $dbalException) {
-            $this->systemLogger->logException($dbalException);
+            $message = $this->throwableStorage->logThrowable($dbalException);
+            $this->logger->debug($message);
 
             if (stripos($dbalException->getMessage(), 'no database selected') !== false) {
                 $message = 'No database name was specified in the configuration.';
@@ -195,7 +212,8 @@ class Query implements QueryInterface
 
             throw $exception;
         } catch (\PDOException $pdoException) {
-            $this->systemLogger->logException($pdoException);
+            $message = $this->throwableStorage->logThrowable($pdoException);
+            $this->logger->error($message, LogEnvironment::fromMethodName(__METHOD__));
 
             if (stripos($pdoException->getMessage(), 'unknown database') !== false
                 || (stripos($pdoException->getMessage(), 'database') !== false && strpos($pdoException->getMessage(), 'not') !== false && strpos($pdoException->getMessage(), 'exist') !== false)) {
@@ -242,7 +260,8 @@ class Query implements QueryInterface
             }
             return $numberOfResults;
         } catch (\Doctrine\ORM\ORMException $ormException) {
-            $this->systemLogger->logException($ormException);
+            $message = $this->throwableStorage->logThrowable($ormException);
+            $this->logger->error($message, LogEnvironment::fromMethodName(__METHOD__));
             return 0;
         } catch (\PDOException $pdoException) {
             throw new Exception\DatabaseConnectionException($pdoException->getMessage(), $pdoException->getCode());

@@ -16,15 +16,15 @@ use Neos\Flow\Aop\AdvicesTrait;
 use Neos\Flow\Aop\AspectContainer;
 use Neos\Flow\Aop\PropertyIntroduction;
 use Neos\Cache\Frontend\VariableFrontend;
-use Neos\Flow\Log\SystemLoggerInterface;
+use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\ObjectManagement\CompileTimeObjectManager;
-use Neos\Flow\Reflection\ClassReflection;
 use Neos\Flow\Reflection\PropertyReflection;
 use Neos\Flow\Aop\TraitIntroduction;
 use Neos\Flow\Aop;
 use Neos\Flow\ObjectManagement\Proxy;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Utility\Algorithms;
+use Psr\Log\LoggerInterface;
 
 /**
  * The main class of the AOP (Aspect Oriented Programming) framework.
@@ -40,20 +40,14 @@ class ProxyClassBuilder
     protected $compiler;
 
     /**
-     * The Flow settings
-     * @var array
-     */
-    protected $settings;
-
-    /**
      * @var ReflectionService
      */
     protected $reflectionService;
 
     /**
-     * @var SystemLoggerInterface
+     * @var LoggerInterface
      */
-    protected $systemLogger;
+    protected $logger;
 
     /**
      * An instance of the pointcut expression parser
@@ -114,12 +108,15 @@ class ProxyClassBuilder
     }
 
     /**
-     * @param SystemLoggerInterface $systemLogger
+     * Injects the (system) logger based on PSR-3.
+     *
+     * @param LoggerInterface $logger
      * @return void
+     * @Flow\Autowiring(false)
      */
-    public function injectSystemLogger(SystemLoggerInterface $systemLogger): void
+    public function injectLogger(LoggerInterface $logger)
     {
-        $this->systemLogger = $systemLogger;
+        $this->logger = $logger;
     }
 
     /**
@@ -177,17 +174,6 @@ class ProxyClassBuilder
     }
 
     /**
-     * Injects the Flow settings
-     *
-     * @param array $settings The settings
-     * @return void
-     */
-    public function injectSettings(array $settings): void
-    {
-        $this->settings = $settings;
-    }
-
-    /**
      * Builds proxy class code which weaves advices into the respective target classes.
      *
      * The object configurations provided by the Compiler are searched for possible aspect
@@ -217,7 +203,7 @@ class ProxyClassBuilder
         $rebuildEverything = false;
         if ($this->objectConfigurationCache->has('allAspectClassesUpToDate') === false) {
             $rebuildEverything = true;
-            $this->systemLogger->log('Aspects have been modified, therefore rebuilding all target classes.', LOG_INFO);
+            $this->logger->info('Aspects have been modified, therefore rebuilding all target classes.', LogEnvironment::fromMethodName(__METHOD__));
             $this->objectConfigurationCache->set('allAspectClassesUpToDate', true);
         }
 
@@ -247,7 +233,7 @@ class ProxyClassBuilder
                     if ($isUnproxied) {
                         $this->objectConfigurationCache->remove('unproxiedClass-' . str_replace('\\', '_', $targetClassName));
                     }
-                    $this->systemLogger->log(sprintf('Built AOP proxy for class "%s".', $targetClassName), LOG_DEBUG);
+                    $this->logger->debug(sprintf('Built AOP proxy for class "%s".', $targetClassName));
                 } else {
                     $this->objectConfigurationCache->set('unproxiedClass-' . str_replace('\\', '_', $targetClassName), true);
                 }
@@ -261,7 +247,7 @@ class ProxyClassBuilder
      *
      * @param string $aspectClassName Name of the aspect class where the pointcut has been declared
      * @param string $pointcutMethodName Method name of the pointcut
-     * @return mixed The Aop\Pointcut\Pointcut or FALSE if none was found
+     * @return mixed The Aop\Pointcut\Pointcut or false if none was found
      */
     public function findPointcut(string $aspectClassName, string $pointcutMethodName)
     {
@@ -420,7 +406,7 @@ class ProxyClassBuilder
      *
      * @param string $targetClassName Name of the class to create a proxy class file for
      * @param array &$aspectContainers The array of aspect containers from the AOP Framework
-     * @return boolean TRUE if the proxy class could be built, FALSE otherwise.
+     * @return boolean true if the proxy class could be built, false otherwise.
      */
     public function buildProxyClass(string $targetClassName, array &$aspectContainers): bool
     {
@@ -664,10 +650,6 @@ class ProxyClassBuilder
                 $pointcut = $advisor->getPointcut();
                 foreach ($methods as $method) {
                     list($methodDeclaringClassName, $methodName) = $method;
-
-                    if ($this->reflectionService->isMethodFinal($targetClassName, $methodName)) {
-                        continue;
-                    }
 
                     if ($this->reflectionService->isMethodStatic($targetClassName, $methodName)) {
                         continue;

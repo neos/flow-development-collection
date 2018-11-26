@@ -12,10 +12,11 @@ namespace Neos\Kickstarter\Service;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\I18n\Xliff\XliffParser;
+use Neos\Flow\I18n\Xliff\V12\XliffParser;
 use Neos\FluidAdaptor\View\StandaloneView;
 use Neos\Flow\Core\ClassLoader;
 use Neos\Flow\Package\PackageInterface;
+use Neos\Flow\Package\FlowPackageInterface;
 use Neos\Utility\Files;
 
 /**
@@ -51,7 +52,7 @@ class GeneratorService
     /**
      * @var array
      */
-    protected $generatedFiles = array();
+    protected $generatedFiles = [];
 
     /**
      * Generate a controller with the given name for the given package
@@ -70,7 +71,7 @@ class GeneratorService
 
         $templatePathAndFilename = 'resource://Neos.Kickstarter/Private/Generator/Controller/ActionControllerTemplate.php.tmpl';
 
-        $contextVariables = array();
+        $contextVariables = [];
         $contextVariables['packageKey'] = $packageKey;
         $contextVariables['packageNamespace'] = trim($baseNamespace, '\\');
         $contextVariables['subpackage'] = $subpackage;
@@ -107,7 +108,7 @@ class GeneratorService
 
         $templatePathAndFilename = 'resource://Neos.Kickstarter/Private/Generator/Controller/CrudControllerTemplate.php.tmpl';
 
-        $contextVariables = array();
+        $contextVariables = [];
         $contextVariables['packageKey'] = $packageKey;
         $contextVariables['packageNamespace'] = trim($baseNamespace, '\\');
         $contextVariables['subpackage'] = $subpackage;
@@ -147,7 +148,7 @@ class GeneratorService
 
         $templatePathAndFilename = 'resource://Neos.Kickstarter/Private/Generator/Controller/CommandControllerTemplate.php.tmpl';
 
-        $contextVariables = array();
+        $contextVariables = [];
         $contextVariables['packageKey'] = $packageKey;
         $contextVariables['packageNamespace'] = trim($baseNamespace, '\\');
         $contextVariables['controllerClassName'] = $controllerClassName;
@@ -182,7 +183,7 @@ class GeneratorService
 
         $templatePathAndFilename = 'resource://Neos.Kickstarter/Private/Generator/View/' . $templateName . 'Template.html';
 
-        $contextVariables = array();
+        $contextVariables = [];
         $contextVariables['packageKey'] = $packageKey;
         $contextVariables['subpackage'] = $subpackage;
         $contextVariables['isInSubpackage'] = ($subpackage != '');
@@ -201,8 +202,8 @@ class GeneratorService
             }
         }
 
-        if (!isset($contextVariables['properties']) || $contextVariables['properties'] === array()) {
-            $contextVariables['properties'] = array('name' => array('type' => 'string'));
+        if (!isset($contextVariables['properties']) || $contextVariables['properties'] === []) {
+            $contextVariables['properties'] = ['name' => ['type' => 'string']];
         }
 
         $fileContent = $this->renderTemplate($templatePathAndFilename, $contextVariables);
@@ -231,7 +232,7 @@ class GeneratorService
 
         $templatePathAndFilename = 'resource://Neos.Kickstarter/Private/Generator/View/' . $layoutName . 'Layout.html';
 
-        $contextVariables = array();
+        $contextVariables = [];
         $contextVariables['packageKey'] = $packageKey;
 
         $fileContent = $this->renderTemplate($templatePathAndFilename, $contextVariables);
@@ -263,7 +264,7 @@ class GeneratorService
 
         $templatePathAndFilename = 'resource://Neos.Kickstarter/Private/Generator/Model/EntityTemplate.php.tmpl';
 
-        $contextVariables = array();
+        $contextVariables = [];
         $contextVariables['packageKey'] = $packageKey;
         $contextVariables['modelName'] = $modelName;
         $contextVariables['fieldDefinitions'] = $fieldDefinitions;
@@ -298,7 +299,7 @@ class GeneratorService
 
         $templatePathAndFilename = 'resource://Neos.Kickstarter/Private/Generator/Tests/Unit/Model/EntityTestTemplate.php.tmpl';
 
-        $contextVariables = array();
+        $contextVariables = [];
         $contextVariables['packageKey'] = $packageKey;
         $contextVariables['testName'] = $testName;
         $contextVariables['modelName'] = $modelName;
@@ -307,7 +308,7 @@ class GeneratorService
         $fileContent = $this->renderTemplate($templatePathAndFilename, $contextVariables);
 
         $testFilename = $testName . '.php';
-        $testPath = $this->packageManager->getPackage($packageKey)->getPackagePath() . PackageInterface::DIRECTORY_TESTS_UNIT . 'Domain/Model/';
+        $testPath = $this->packageManager->getPackage($packageKey)->getPackagePath() . FlowPackageInterface::DIRECTORY_TESTS_UNIT . 'Domain/Model/';
         $targetPathAndFilename = $testPath . $testFilename;
 
         $this->generateFile($targetPathAndFilename, $fileContent, $overwrite);
@@ -332,7 +333,7 @@ class GeneratorService
 
         $templatePathAndFilename = 'resource://Neos.Kickstarter/Private/Generator/Repository/RepositoryTemplate.php.tmpl';
 
-        $contextVariables = array();
+        $contextVariables = [];
         $contextVariables['packageKey'] = $packageKey;
         $contextVariables['modelName'] = $modelName;
         $contextVariables['repositoryClassName'] = $repositoryClassName;
@@ -358,7 +359,7 @@ class GeneratorService
     public function generateDocumentation($packageKey)
     {
         $documentationPath = Files::concatenatePaths([$this->packageManager->getPackage($packageKey)->getPackagePath(), 'Documentation']);
-        $contextVariables = array();
+        $contextVariables = [];
         $contextVariables['packageKey'] = $packageKey;
 
         $templatePathAndFilename = 'resource://Neos.Kickstarter/Private/Generator/Documentation/conf.py';

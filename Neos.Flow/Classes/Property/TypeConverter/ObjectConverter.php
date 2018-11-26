@@ -221,7 +221,7 @@ class ObjectConverter extends AbstractTypeConverter
                 throw new \InvalidArgumentException('A property mapping configuration must be given, not NULL.', 1326277369);
             }
             if ($configuration->getConfigurationValue(ObjectConverter::class, self::CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED) !== true) {
-                throw new InvalidPropertyMappingConfigurationException('Override of target type not allowed. To enable this, you need to set the PropertyMappingConfiguration Value "CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED" to TRUE.', 1317050430);
+                throw new InvalidPropertyMappingConfigurationException('Override of target type not allowed. To enable this, you need to set the PropertyMappingConfiguration Value "CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED" to true.', 1317050430);
             }
 
             if ($targetType !== $originalTargetType && is_a($targetType, $originalTargetType, true) === false) {

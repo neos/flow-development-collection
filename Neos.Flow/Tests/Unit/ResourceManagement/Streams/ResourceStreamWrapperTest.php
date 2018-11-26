@@ -11,8 +11,8 @@ namespace Neos\Flow\Tests\Unit\ResourceManagement\Streams;
  * source code.
  */
 
+use Neos\Flow\Package\FlowPackageInterface;
 use org\bovigo\vfs\vfsStream;
-use Neos\Flow\Package\PackageInterface;
 use Neos\Flow\Package\PackageManagerInterface;
 use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\Flow\ResourceManagement\ResourceManager;
@@ -121,7 +121,7 @@ class ResourceStreamWrapperTest extends UnitTestCase
 
         $this->mockPackageManager->expects($this->once())->method('isPackageAvailable')->with($packageKey)->will($this->returnValue(true));
 
-        $mockPackage = $this->createMock(PackageInterface::class);
+        $mockPackage = $this->createMock(FlowPackageInterface::class);
         $mockPackage->expects($this->any())->method('getResourcesPath')->will($this->returnValue('vfs://Foo'));
         $this->mockPackageManager->expects($this->once())->method('getPackage')->with($packageKey)->will($this->returnValue($mockPackage));
 
@@ -141,7 +141,7 @@ class ResourceStreamWrapperTest extends UnitTestCase
 
         $this->mockPackageManager->expects($this->once())->method('isPackageAvailable')->with($packageKey)->will($this->returnValue(true));
 
-        $mockPackage = $this->createMock(PackageInterface::class);
+        $mockPackage = $this->createMock(FlowPackageInterface::class);
         $mockPackage->expects($this->any())->method('getResourcesPath')->will($this->returnValue('vfs://Foo'));
         $this->mockPackageManager->expects($this->once())->method('getPackage')->with($packageKey)->will($this->returnValue($mockPackage));
 

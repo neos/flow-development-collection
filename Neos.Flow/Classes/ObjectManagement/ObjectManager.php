@@ -11,6 +11,7 @@ namespace Neos\Flow\ObjectManagement;
  * source code.
  */
 
+use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\ObjectManagement\Configuration\Configuration as ObjectConfiguration;
 use Neos\Flow\ObjectManagement\Configuration\ConfigurationArgument as ObjectConfigurationArgument;
 use Neos\Flow\Core\ApplicationContext;
@@ -19,7 +20,6 @@ use Neos\Flow\ObjectManagement\DependencyInjection\DependencyProxy;
 use Neos\Flow\Security\Context;
 use Neos\Utility\Arrays;
 use Neos\Utility\ObjectAccess;
-use Psr\Container\ContainerInterface;
 
 /**
  * Object Manager
@@ -132,10 +132,10 @@ class ObjectManager implements ObjectManagerInterface
     }
 
     /**
-     * Returns TRUE if an object with the given name is registered
+     * Returns true if an object with the given name is registered
      *
      * @param  string $objectName Name of the object
-     * @return boolean TRUE if the object has been registered, otherwise FALSE
+     * @return boolean true if the object has been registered, otherwise false
      * @throws \InvalidArgumentException
      * @api
      */
@@ -191,6 +191,11 @@ class ObjectManager implements ObjectManagerInterface
      */
     public function get($objectName)
     {
+        // XXX: This is a b/c fix for the deprecation of doctrine ObjectManager. Remove this with Flow 6.0
+        if ($objectName === \Doctrine\Common\Persistence\ObjectManager::class) {
+            $objectName = \Doctrine\ORM\EntityManagerInterface::class;
+        }
+
         if (func_num_args() > 1 && isset($this->objects[$objectName]) && $this->objects[$objectName]['s'] !== ObjectConfiguration::SCOPE_PROTOTYPE) {
             throw new \InvalidArgumentException('You cannot provide constructor arguments for singleton objects via get(). If you need to pass arguments to the constructor, define them in the Objects.yaml configuration.', 1298049934);
         }
@@ -242,7 +247,7 @@ class ObjectManager implements ObjectManagerInterface
     /**
      * Returns the case sensitive object name of an object specified by a
      * case insensitive object name. If no object of that name exists,
-     * FALSE is returned.
+     * false is returned.
      *
      * In general, the case sensitive variant is used everywhere in Flow,
      * however there might be special situations in which the
@@ -250,7 +255,7 @@ class ObjectManager implements ObjectManagerInterface
      * rare cases.
      *
      * @param  string $caseInsensitiveObjectName The object name in lower-, upper- or mixed case
-     * @return mixed Either the mixed case object name or FALSE if no object of that name was found.
+     * @return mixed Either the mixed case object name or false if no object of that name was found.
      * @api
      */
     public function getCaseSensitiveObjectName($caseInsensitiveObjectName)
@@ -274,7 +279,7 @@ class ObjectManager implements ObjectManagerInterface
      * Returns the object name corresponding to a given class name.
      *
      * @param string $className The class name
-     * @return string The object name corresponding to the given class name or FALSE if no object is configured to use that class
+     * @return string The object name corresponding to the given class name or false if no object is configured to use that class
      * @throws \InvalidArgumentException
      * @api
      */
@@ -300,7 +305,7 @@ class ObjectManager implements ObjectManagerInterface
      * Returns the implementation class name for the specified object
      *
      * @param string $objectName The object name
-     * @return string The class name corresponding to the given object name or FALSE if no such object is registered
+     * @return string The class name corresponding to the given object name or false if no such object is registered
      * @api
      */
     public function getClassNameByObjectName($objectName)
@@ -315,7 +320,7 @@ class ObjectManager implements ObjectManagerInterface
      * Returns the key of the package the specified object is contained in.
      *
      * @param string $objectName The object name
-     * @return string The package key or FALSE if no such object exists
+     * @return string The package key or false if no such object exists
      * @api
      */
     public function getPackageKeyByObjectName($objectName)
@@ -351,11 +356,11 @@ class ObjectManager implements ObjectManagerInterface
     }
 
     /**
-     * Returns TRUE if this object manager already has an instance for the specified
+     * Returns true if this object manager already has an instance for the specified
      * object.
      *
      * @param string $objectName The object name
-     * @return boolean TRUE if an instance already exists
+     * @return boolean true if an instance already exists
      */
     public function hasInstance($objectName)
     {
@@ -474,6 +479,7 @@ class ObjectManager implements ObjectManagerInterface
      *
      * @param array $settingsPath Path to the setting(s) as an array, for example array('Neos', 'Flow', 'persistence', 'backendOptions')
      * @return mixed Either an array of settings or the value of a single setting
+     * @deprecated Use settings injection or the ConfigurationManager to get settings.
      */
     public function getSettingsByPath(array $settingsPath)
     {
@@ -501,6 +507,7 @@ class ObjectManager implements ObjectManagerInterface
      */
     protected function buildObjectByFactory($objectName)
     {
+        $configurationManager = $this->get(ConfigurationManager::class);
         $factory = $this->get($this->objects[$objectName]['f'][0]);
         $factoryMethodName = $this->objects[$objectName]['f'][1];
 
@@ -508,8 +515,7 @@ class ObjectManager implements ObjectManagerInterface
         foreach ($this->objects[$objectName]['fa'] as $index => $argumentInformation) {
             switch ($argumentInformation['t']) {
                 case ObjectConfigurationArgument::ARGUMENT_TYPES_SETTING:
-                    $settingPath = explode('.', $argumentInformation['v']);
-                    $factoryMethodArguments[$index] = Arrays::getValueByPath($this->allSettings, $settingPath);
+                    $factoryMethodArguments[$index] = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, $argumentInformation['v']);
                 break;
                 case ObjectConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE:
                     $factoryMethodArguments[$index] = $argumentInformation['v'];

@@ -12,7 +12,6 @@ namespace Neos\Flow\Tests\Functional\Aop;
  */
 
 use Neos\Flow\Tests\FunctionalTestCase;
-use Neos\Flow\Tests\Functional\Aop\Fixtures;
 
 /**
  * Testcase for the AOP Framework class
@@ -200,7 +199,7 @@ class FrameworkTest extends FunctionalTestCase
     {
         $targetClass = new Fixtures\TargetClass01();
 
-        $this->assertEquals('I\'m the traitor', call_user_func(array($targetClass, 'introducedTraitMethod')));
+        $this->assertEquals('I\'m the traitor', call_user_func([$targetClass, 'introducedTraitMethod']));
     }
 
     /**
@@ -282,6 +281,24 @@ class FrameworkTest extends FunctionalTestCase
     {
         $targetClass = new Fixtures\TargetClassWithFinalModifier();
         $this->assertSame('nothing is final!', $targetClass->someMethod());
+    }
+
+    /**
+     * @test
+     */
+    public function finalMethodsCanBeAdvised()
+    {
+        $targetClass = new Fixtures\TargetClass01();
+        $this->assertSame('I am final. But, as said, nothing is final!', $targetClass->someFinalMethod());
+    }
+
+    /**
+     * @test
+     */
+    public function finalMethodsStayFinalEvenIfTheyAreNotAdvised()
+    {
+        $targetClass = new Fixtures\TargetClass01();
+        $this->assertTrue((new \ReflectionMethod($targetClass, 'someOtherFinalMethod'))->isFinal());
     }
 
     /**

@@ -11,7 +11,6 @@ namespace Neos\Flow\Security\Authorization;
  * source code.
  */
 
-use Doctrine\ORM\Mapping as ORM;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -27,7 +26,7 @@ class TestingPrivilegeManager extends PrivilegeManager
     protected $overrideDecision = null;
 
     /**
-     * Returns TRUE, if the given privilege type is granted for the given subject based
+     * Returns true, if the given privilege type is granted for the given subject based
      * on the current security context or if set based on the override decision value.
      *
      * @param string $privilegeType
@@ -48,12 +47,12 @@ class TestingPrivilegeManager extends PrivilegeManager
     }
 
     /**
-     * Returns TRUE if access is granted on the given privilege target in the current security context
+     * Returns true if access is granted on the given privilege target in the current security context
      * or if set based on the override decision value.
      *
      * @param string $privilegeTargetIdentifier The identifier of the privilege target to decide on
      * @param array $privilegeParameters Optional array of privilege parameters (simple key => value array)
-     * @return boolean TRUE if access is granted, FALSE otherwise
+     * @return boolean true if access is granted, false otherwise
      */
     public function isPrivilegeTargetGranted($privilegeTargetIdentifier, array $privilegeParameters = [])
     {
@@ -68,7 +67,7 @@ class TestingPrivilegeManager extends PrivilegeManager
     /**
      * Set the decision override
      *
-     * @param boolean $overrideDecision TRUE or FALSE to override the decision, NULL to use the access decision voter manager
+     * @param boolean $overrideDecision true or false to override the decision, NULL to use the access decision voter manager
      * @return void
      */
     public function setOverrideDecision($overrideDecision)

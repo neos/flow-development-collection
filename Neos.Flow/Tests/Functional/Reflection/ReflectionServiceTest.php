@@ -47,13 +47,11 @@ class ReflectionServiceTest extends FunctionalTestCase
      * Test for https://jira.neos.io/browse/FLOW-316
      *
      * @test
+     * @doesNotPerformAssertions
      */
     public function classSchemaCanBeBuiltForAggregateRootsWithPlainOldPhpBaseClasses()
     {
         $this->reflectionService->getClassSchema(Reflection\Fixtures\Model\EntityExtendingPlainObject::class);
-
-        // dummy assertion to suppress PHPUnit warning
-        $this->assertTrue(true);
     }
 
     /**
@@ -190,6 +188,18 @@ class ReflectionServiceTest extends FunctionalTestCase
     /**
      * @test
      */
+    public function methodParameterTypeExpansionWorksWithNullable()
+    {
+        $methodParameters = $this->reflectionService->getMethodParameters(Reflection\Fixtures\Model\EntityWithUseStatements::class, 'nullableClassName');
+
+        $expectedType = Reflection\Fixtures\Model\SubEntity::class . '|null';
+        $actualType = $methodParameters['parameter']['type'];
+        $this->assertSame($expectedType, $actualType);
+    }
+
+    /**
+     * @test
+     */
     public function methodParameterTypeExpansionDoesNotModifySimpleTypes()
     {
         $methodParameters = $this->reflectionService->getMethodParameters(Reflection\Fixtures\Model\EntityWithUseStatements::class, 'simpleType');
@@ -241,5 +251,26 @@ class ReflectionServiceTest extends FunctionalTestCase
         foreach ($methodParameters as $methodParameter) {
             $this->assertEquals('integer', $methodParameter['type']);
         }
+    }
+
+    /**
+     * @test
+     */
+    public function nullableMethodParametersWorkCorrectly()
+    {
+        $nativeNullableMethodParameters = $this->reflectionService->getMethodParameters(Reflection\Fixtures\AnnotatedClass::class, 'nativeNullableParameter');
+        $annotatedNullableMethodParameters = $this->reflectionService->getMethodParameters(Reflection\Fixtures\AnnotatedClass::class, 'annotatedNullableParameter');
+        $reverseAnnotatedNullableMethodParameters = $this->reflectionService->getMethodParameters(Reflection\Fixtures\AnnotatedClass::class, 'reverseAnnotatedNullableParameter');
+        $annotatedAndNativeNullableMethodParameters = $this->reflectionService->getMethodParameters(Reflection\Fixtures\AnnotatedClass::class, 'annotatedAndNativeNullableParameter');
+
+        $this->assertTrue($nativeNullableMethodParameters['nullable']['allowsNull']);
+        $this->assertTrue($annotatedNullableMethodParameters['nullable']['allowsNull']);
+        $this->assertTrue($reverseAnnotatedNullableMethodParameters['nullable']['allowsNull']);
+        $this->assertTrue($annotatedAndNativeNullableMethodParameters['nullable']['allowsNull']);
+
+        $this->assertEquals(Reflection\Fixtures\AnnotatedClass::class, $nativeNullableMethodParameters['nullable']['type']);
+        $this->assertEquals(Reflection\Fixtures\AnnotatedClass::class . '|null', $annotatedNullableMethodParameters['nullable']['type']);
+        $this->assertEquals(Reflection\Fixtures\AnnotatedClass::class . '|null', $reverseAnnotatedNullableMethodParameters['nullable']['type']);
+        $this->assertEquals(Reflection\Fixtures\AnnotatedClass::class . '|null', $annotatedAndNativeNullableMethodParameters['nullable']['type']);
     }
 }

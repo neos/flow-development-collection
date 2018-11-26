@@ -165,16 +165,6 @@ class SimpleFileBackendTest extends BaseTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Cache\Exception\InvalidDataException
-     */
-    public function setThrowsExceptionIfDataIsNotAString()
-    {
-        $simpleFileBackend = $this->getSimpleFileBackend();
-        $simpleFileBackend->set('SomeIdentifier', ['not a string']);
-    }
-
-    /**
-     * @test
      */
     public function setReallySavesToTheSpecifiedDirectory()
     {

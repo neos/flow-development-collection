@@ -13,8 +13,8 @@ namespace Neos\Flow\Aop\Pointcut;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Aop\Builder\ClassNameIndex;
-use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\Reflection\ReflectionService;
+use Psr\Log\LoggerInterface;
 
 /**
  * A method filter which fires on methods annotated with a certain annotation
@@ -29,9 +29,9 @@ class PointcutMethodAnnotatedWithFilter implements PointcutFilterInterface
     protected $reflectionService;
 
     /**
-     * @var SystemLoggerInterface
+     * @var LoggerInterface
      */
-    protected $systemLogger;
+    protected $logger;
 
 
     /**
@@ -68,12 +68,14 @@ class PointcutMethodAnnotatedWithFilter implements PointcutFilterInterface
     }
 
     /**
-     * @param SystemLoggerInterface $systemLogger
+     * Injects the (system) logger based on PSR-3.
+     *
+     * @param LoggerInterface $logger
      * @return void
      */
-    public function injectSystemLogger(SystemLoggerInterface $systemLogger): void
+    public function injectLogger(LoggerInterface $logger)
     {
-        $this->systemLogger = $systemLogger;
+        $this->logger = $logger;
     }
 
     /**
@@ -83,7 +85,7 @@ class PointcutMethodAnnotatedWithFilter implements PointcutFilterInterface
      * @param string $methodName Name of the method
      * @param string $methodDeclaringClassName Name of the class the method was originally declared in
      * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection - not used here
-     * @return boolean TRUE if the class matches, otherwise FALSE
+     * @return boolean true if the class matches, otherwise false
      */
     public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier): bool
     {
@@ -101,7 +103,7 @@ class PointcutMethodAnnotatedWithFilter implements PointcutFilterInterface
         $annotationProperties = $this->reflectionService->getClassPropertyNames($this->annotation);
         foreach ($this->annotationValueConstraints as $propertyName => $expectedValue) {
             if (!array_key_exists($propertyName, $annotationProperties)) {
-                $this->systemLogger->log('The property "' . $propertyName . '" declared in pointcut does not exist in annotation ' . $this->annotation, LOG_NOTICE);
+                $this->logger->notice('The property "' . $propertyName . '" declared in pointcut does not exist in annotation ' . $this->annotation);
                 return false;
             }
 
@@ -114,9 +116,9 @@ class PointcutMethodAnnotatedWithFilter implements PointcutFilterInterface
     }
 
     /**
-     * Returns TRUE if this filter holds runtime evaluations for a previously matched pointcut
+     * Returns true if this filter holds runtime evaluations for a previously matched pointcut
      *
-     * @return boolean TRUE if this filter has runtime evaluations
+     * @return boolean true if this filter has runtime evaluations
      */
     public function hasRuntimeEvaluationsDefinition(): bool
     {

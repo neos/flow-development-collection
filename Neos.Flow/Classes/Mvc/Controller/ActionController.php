@@ -15,6 +15,7 @@ use Neos\Error\Messages\Result;
 use Neos\Flow\Annotations as Flow;
 use Neos\Error\Messages as Error;
 use Neos\Flow\Log\SystemLoggerInterface;
+use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Mvc\Exception\ForwardException;
 use Neos\Flow\Mvc\Exception\InvalidActionVisibilityException;
 use Neos\Flow\Mvc\Exception\InvalidArgumentTypeException;
@@ -30,6 +31,7 @@ use Neos\Flow\Property\Exception\TargetNotFoundException;
 use Neos\Flow\Property\TypeConverter\Error\TargetNotFoundError;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Utility\TypeHandling;
+use Psr\Log\LoggerInterface;
 
 /**
  * An HTTP based multi-action controller.
@@ -144,8 +146,15 @@ class ActionController extends AbstractController
     /**
      * @var SystemLoggerInterface
      * @Flow\Inject
+     * @deprecated
+     * @see logger
      */
     protected $systemLogger;
+
+    /**
+     * @var LoggerInterface
+     */
+    protected $logger;
 
     /**
      * @param array $settings
@@ -154,6 +163,17 @@ class ActionController extends AbstractController
     public function injectSettings(array $settings)
     {
         $this->settings = $settings;
+    }
+
+    /**
+     * Injects the (system) logger based on PSR-3.
+     *
+     * @param LoggerInterface $logger
+     * @return void
+     */
+    public function injectLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
     }
 
     /**
@@ -568,7 +588,7 @@ class ActionController extends AbstractController
     /**
      * Determines the fully qualified view object name.
      *
-     * @return mixed The fully qualified view object name or FALSE if no matching view could be found.
+     * @return mixed The fully qualified view object name or false if no matching view could be found.
      * @api
      */
     protected function resolveViewObjectName()
@@ -702,7 +722,7 @@ class ActionController extends AbstractController
                 $logMessage .= 'Error for ' . $propertyPath . ':  ' . $error->render() . PHP_EOL;
             }
         }
-        $this->systemLogger->log($logMessage, LOG_ERR);
+        $this->logger->error($logMessage, LogEnvironment::fromMethodName(__METHOD__));
 
         return $outputMessage;
     }
@@ -712,7 +732,7 @@ class ActionController extends AbstractController
      * display no flash message at all on errors. Override this to customize
      * the flash message in your action controller.
      *
-     * @return \Neos\Error\Messages\Message The flash message or FALSE if no flash message should be set
+     * @return \Neos\Error\Messages\Message The flash message or false if no flash message should be set
      * @api
      */
     protected function getErrorFlashMessage()

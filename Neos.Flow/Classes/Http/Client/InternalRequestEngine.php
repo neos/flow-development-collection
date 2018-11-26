@@ -16,7 +16,6 @@ use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Error\Debugger;
 use Neos\Flow\Exception;
-use Neos\Flow\Http\Component\ComponentChain;
 use Neos\Flow\Http\Component\ComponentContext;
 use Neos\Flow\Http;
 use Neos\Flow\Mvc\Dispatcher;
@@ -72,24 +71,10 @@ class InternalRequestEngine implements RequestEngineInterface
     protected $validatorResolver;
 
     /**
-     * @var array
-     */
-    protected $settings;
-
-    /**
      * @Flow\Inject
      * @var PersistenceManagerInterface
      */
     protected $persistenceManager;
-
-    /**
-     * @param array $settings
-     * @return void
-     */
-    public function injectSettings(array $settings)
-    {
-        $this->settings = $settings;
-    }
 
     /**
      * Sends the given HTTP request

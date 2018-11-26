@@ -79,7 +79,7 @@ class Debugger
 		/xs';
 
     /**
-     * Is set to TRUE once the CSS file is included in the current page to prevent double inclusions of the CSS file.
+     * Is set to true once the CSS file is included in the current page to prevent double inclusions of the CSS file.
      *
      * @var boolean
      */
@@ -116,7 +116,7 @@ class Debugger
      * @param boolean $ansiColors
      * @return string
      */
-    public static function renderDump($variable, $level, $plaintext = false, $ansiColors = false)
+    public static function renderDump($variable, int $level, bool $plaintext = false, bool $ansiColors = false): string
     {
         if ($level > 50) {
             return 'RECURSION ... ' . chr(10);
@@ -135,7 +135,7 @@ class Debugger
         } elseif (is_object($variable)) {
             $dump = self::renderObjectDump($variable, $level + 1, true, $plaintext, $ansiColors);
         } elseif (is_bool($variable)) {
-            $dump = $variable ? self::ansiEscapeWrap('TRUE', '32', $ansiColors) : self::ansiEscapeWrap('FALSE', '31', $ansiColors);
+            $dump = $variable ? self::ansiEscapeWrap('true', '32', $ansiColors) : self::ansiEscapeWrap('false', '31', $ansiColors);
         } elseif (is_null($variable) || is_resource($variable)) {
             $dump = gettype($variable);
         } else {
@@ -154,7 +154,7 @@ class Debugger
      * @param boolean $ansiColors
      * @return string
      */
-    protected static function renderArrayDump($array, $level, $plaintext = false, $ansiColors = false)
+    protected static function renderArrayDump(array $array, int $level, bool $plaintext = false, bool $ansiColors = false): string
     {
         if (is_array($array)) {
             $dump = 'array' . (count($array) ? '(' . count($array) . ')' : '(empty)');
@@ -181,14 +181,15 @@ class Debugger
      * @param boolean $ansiColors
      * @return string
      */
-    protected static function renderObjectDump($object, $level, $renderProperties = true, $plaintext = false, $ansiColors = false)
+    protected static function renderObjectDump($object, int $level, bool $renderProperties = true, bool $plaintext = false, bool $ansiColors = false): string
     {
         $dump = '';
         $scope = '';
         $additionalAttributes = '';
 
         if ($object instanceof \Doctrine\Common\Collections\Collection || $object instanceof \ArrayObject) {
-            return self::renderArrayDump(\Doctrine\Common\Util\Debug::export($object, 3), $level, $plaintext, $ansiColors);
+            // The doctrine Debug utility usually returns a \stdClass object that we need to cast to array.
+            return self::renderArrayDump((array)\Doctrine\Common\Util\Debug::export($object, 3), $level, $plaintext, $ansiColors);
         }
 
         // Objects returned from Doctrine's Debug::export function are stdClass with special properties:
@@ -307,7 +308,7 @@ class Debugger
      * @param boolean $plaintext
      * @return string Backtrace information
      */
-    public static function getBacktraceCode(array $trace, $includeCode = true, $plaintext = false)
+    public static function getBacktraceCode(array $trace, bool $includeCode = true, bool $plaintext = false): string
     {
         if ($plaintext) {
             return static::getBacktraceCodePlaintext($trace, $includeCode);
@@ -333,7 +334,7 @@ class Debugger
                     } elseif (is_numeric($argument)) {
                         $arguments .= (string)$argument;
                     } elseif (is_bool($argument)) {
-                        $arguments .= ($argument === true ? 'TRUE' : 'FALSE');
+                        $arguments .= ($argument === true ? 'true' : 'false');
                     } elseif (is_array($argument)) {
                         $arguments .= sprintf(
                             '<em title="%s">array|%d|</em>',
@@ -365,7 +366,7 @@ class Debugger
      * @param bool $includeCode
      * @return string
      */
-    protected static function getBacktraceCodePlaintext(array $trace, $includeCode = true)
+    protected static function getBacktraceCodePlaintext(array $trace, bool $includeCode = true): string
     {
         $backtraceCode = '';
         foreach ($trace as $index => $step) {
@@ -383,7 +384,7 @@ class Debugger
                     } elseif (is_numeric($argument)) {
                         $arguments .= (string)$argument;
                     } elseif (is_bool($argument)) {
-                        $arguments .= ($argument === true ? 'TRUE' : 'FALSE');
+                        $arguments .= ($argument === true ? 'true' : 'false');
                     } elseif (is_array($argument)) {
                         $arguments .= 'array|' . count($argument) . '|';
                     } else {
@@ -411,7 +412,7 @@ class Debugger
      * @param boolean $plaintext
      * @return string The code snippet
      */
-    public static function getCodeSnippet($filePathAndName, $lineNumber, $plaintext = false)
+    public static function getCodeSnippet(string $filePathAndName, int $lineNumber, bool $plaintext = false): string
     {
         if ($plaintext) {
             return static::getCodeSnippetPlaintext($filePathAndName, $lineNumber);
@@ -449,7 +450,7 @@ class Debugger
         return $codeSnippet;
     }
 
-    protected static function getCodeSnippetPlaintext($filePathAndName, $lineNumber)
+    protected static function getCodeSnippetPlaintext(string $filePathAndName, int $lineNumber): string
     {
         $codeSnippet = PHP_EOL;
         if (@file_exists($filePathAndName)) {
@@ -477,7 +478,7 @@ class Debugger
      * @param string $file
      * @return array
      */
-    public static function findProxyAndShortFilePath($file)
+    public static function findProxyAndShortFilePath(string $file): array
     {
         $flowRoot = defined('FLOW_PATH_ROOT') ? FLOW_PATH_ROOT : '';
         $originalPath = $file;
@@ -501,10 +502,10 @@ class Debugger
      *
      * @param string $string The string to wrap
      * @param string $ansiColors The ansi color sequence (e.g. "1;37")
-     * @param boolean $enable If FALSE, the raw string will be returned
+     * @param boolean $enable If false, the raw string will be returned
      * @return string The wrapped or raw string
      */
-    protected static function ansiEscapeWrap($string, $ansiColors, $enable = true)
+    protected static function ansiEscapeWrap(string $string, string $ansiColors, bool $enable = true): string
     {
         if ($enable) {
             return "\x1B[" . $ansiColors . 'm' . $string . "\x1B[0m";
@@ -520,7 +521,7 @@ class Debugger
      *
      * @return string
      */
-    public static function getIgnoredClassesRegex()
+    public static function getIgnoredClassesRegex(): string
     {
         if (self::$ignoredClassesRegex !== '') {
             return self::$ignoredClassesRegex;
@@ -560,12 +561,12 @@ use Neos\Flow\Error\Debugger;
  *
  * @param mixed $variable The variable to display a dump of
  * @param string $title optional custom title for the debug output
- * @param boolean $return if TRUE, the dump is returned for displaying it embedded in custom HTML. If FALSE (default), the variable dump is directly displayed.
- * @param boolean $plaintext If TRUE, the dump is in plain text, if FALSE the debug output is in HTML format. If not specified, the mode is guessed from FLOW_SAPITYPE
- * @return void|string if $return is TRUE, the variable dump is returned. By default, the dump is directly displayed, and nothing is returned.
+ * @param boolean $return if true, the dump is returned for displaying it embedded in custom HTML. If false (default), the variable dump is directly displayed.
+ * @param boolean $plaintext If true, the dump is in plain text, if false the debug output is in HTML format. If not specified, the mode is guessed from FLOW_SAPITYPE
+ * @return void|string if $return is true, the variable dump is returned. By default, the dump is directly displayed, and nothing is returned.
  * @api
  */
-function var_dump($variable, $title = null, $return = false, $plaintext = null)
+function var_dump($variable, string $title = null, bool $return = false, bool $plaintext = null)
 {
     if ($plaintext === null) {
         $plaintext = (FLOW_SAPITYPE === 'CLI');
@@ -582,15 +583,15 @@ function var_dump($variable, $title = null, $return = false, $plaintext = null)
     }
     Debugger::clearState();
 
-    if (!$plaintext && Debugger::$stylesheetEchoed === false) {
-        echo '<style type="text/css">' . file_get_contents('resource://Neos.Flow/Public/Error/Debugger.css') . '</style>';
-        Debugger::$stylesheetEchoed = true;
-    }
-
     if ($plaintext) {
         $output = $title . chr(10) . Debugger::renderDump($variable, 0, true, $ansiColors) . chr(10) . chr(10);
     } else {
-        $output = '
+        $output = '';
+        if (Debugger::$stylesheetEchoed === false) {
+            $output .= '<style type="text/css">' . file_get_contents('resource://Neos.Flow/Public/Error/Debugger.css') . '</style>';
+            Debugger::$stylesheetEchoed = true;
+        }
+        $output .= '
 			<div class="Flow-Error-Debugger-VarDump ' . ($return ? 'Flow-Error-Debugger-VarDump-Inline' : 'Flow-Error-Debugger-VarDump-Floating') . '">
 				<div class="Flow-Error-Debugger-VarDump-Top">
 					' . htmlspecialchars($title) . '
@@ -604,7 +605,6 @@ function var_dump($variable, $title = null, $return = false, $plaintext = null)
 
     if ($return === true) {
         return $output;
-    } else {
-        echo $output;
     }
+    echo $output;
 }

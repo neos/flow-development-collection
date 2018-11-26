@@ -26,7 +26,7 @@ class Validation
      */
     public static function isReservedKeyword($keyword)
     {
-        $reservedKeywords = array(
+        $reservedKeywords = [
             '__halt_compiler',
             'abstract',
             'and',
@@ -92,7 +92,7 @@ class Validation
             'var',
             'while',
             'xor'
-        );
+        ];
 
         return in_array(strtolower($keyword), $reservedKeywords);
     }

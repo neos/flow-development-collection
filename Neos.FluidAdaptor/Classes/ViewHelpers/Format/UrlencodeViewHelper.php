@@ -14,7 +14,6 @@ namespace Neos\FluidAdaptor\ViewHelpers\Format;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use Neos\FluidAdaptor\Core\ViewHelper;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
-use Neos\FluidAdaptor\Core\ViewHelper\Exception;
 
 /**
  * Encodes the given string according to http://www.faqs.org/rfcs/rfc3986.html (applying PHPs rawurlencode() function)
@@ -67,7 +66,7 @@ class UrlencodeViewHelper extends AbstractViewHelper
      */
     public function render()
     {
-        return self::renderStatic(array('value' => $this->arguments['value']), $this->buildRenderChildrenClosure(), $this->renderingContext);
+        return self::renderStatic(['value' => $this->arguments['value']], $this->buildRenderChildrenClosure(), $this->renderingContext);
     }
 
     /**

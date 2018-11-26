@@ -51,7 +51,7 @@ class AdvicedMethodInterceptorBuilder extends AbstractMethodInterceptorBuilder
 ');
             $proxyMethod->addPostParentCallCode('
         } else {
-            $this->Flow_Aop_Proxy_methodIsInAdviceMode[\'' . $methodName . '\'] = TRUE;
+            $this->Flow_Aop_Proxy_methodIsInAdviceMode[\'' . $methodName . '\'] = true;
             try {
             ' . $advicesCode . '
             } catch (\Exception $exception) {

@@ -8,7 +8,8 @@
 		"neos/cache": "*",
 		"neos/utility-files": "*",
 		"neos/utility-objecthandling": "*",
-		"typo3fluid/fluid": "~2.3.4"
+		"typo3fluid/fluid": "~2.5.3",
+		"psr/log": "^1.0"
 	},
 	"autoload": {
 		"psr-4": {

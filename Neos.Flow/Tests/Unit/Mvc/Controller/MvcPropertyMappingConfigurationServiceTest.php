@@ -157,6 +157,7 @@ class MvcPropertyMappingConfigurationServiceTest extends UnitTestCase
 
     /**
      * @test
+     * @doesNotPerformAssertions
      */
     public function initializePropertyMappingConfigurationDoesNothingIfTrustedPropertiesAreNotSet()
     {
@@ -166,9 +167,6 @@ class MvcPropertyMappingConfigurationServiceTest extends UnitTestCase
 
         $requestHashService = new Mvc\Controller\MvcPropertyMappingConfigurationService();
         $requestHashService->initializePropertyMappingConfigurationFromRequest($request, $arguments);
-
-        // dummy assertion to avoid PHPUnit warning
-        $this->assertTrue(true);
     }
 
     /**

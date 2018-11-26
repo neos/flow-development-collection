@@ -84,9 +84,9 @@ class TextIteratorElement
     }
 
     /**
-     * Returns TRUE for a boundary element
+     * Returns true for a boundary element
      *
-     * @return boolean		TRUE for boundary elements
+     * @return boolean		true for boundary elements
      */
     public function isBoundary(): bool
     {

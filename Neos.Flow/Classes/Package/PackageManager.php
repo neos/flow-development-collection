@@ -17,7 +17,6 @@ use Neos\Flow\Composer\ComposerUtility as ComposerUtility;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\SignalSlot\Dispatcher;
-use Neos\Flow\Utility\Exception as UtilityException;
 use Neos\Utility\Files;
 use Neos\Utility\OpcodeCacheHelper;
 use Neos\Flow\Package\Exception as PackageException;
@@ -101,12 +100,17 @@ class PackageManager implements PackageManagerInterface
     protected $settings;
 
     /**
+     * @var FlowPackageInterface[]
+     */
+    protected $flowPackages = [];
+
+    /**
      * @param array $settings
      * @return void
      */
     public function injectSettings(array $settings)
     {
-        $this->settings = $settings;
+        $this->settings = $settings['package'];
     }
 
     /**
@@ -134,16 +138,34 @@ class PackageManager implements PackageManagerInterface
         /** @var PackageInterface $package */
 
         foreach ($this->packages as $package) {
+            if ($package instanceof FlowPackageInterface) {
+                $this->flowPackages[$package->getPackageKey()] = $package;
+            }
+            if (!$package instanceof BootablePackageInterface) {
+                continue;
+            }
             $package->boot($bootstrap);
         }
     }
 
     /**
-     * Returns TRUE if a package is available (the package's files exist in the packages directory)
-     * or FALSE if it's not.
+     * Get only packages that implement the FlowPackageInterface for use in the Framework
+     * Array keys will be the respective package keys.
+     *
+     * @return FlowPackageInterface[]
+     * @internal
+     */
+    public function getFlowPackages()
+    {
+        return $this->flowPackages;
+    }
+
+    /**
+     * Returns true if a package is available (the package's files exist in the packages directory)
+     * or false if it's not.
      *
      * @param string $packageKey The key of the package to check
-     * @return boolean TRUE if the package is available, otherwise FALSE
+     * @return boolean true if the package is available, otherwise false
      * @api
      */
     public function isPackageAvailable($packageKey)
@@ -219,7 +241,7 @@ class PackageManager implements PackageManagerInterface
      * the given package state, path, and type filters. All three filters must match, if given.
      *
      * @param string $packageState defaults to available
-     * @param string $packagePath
+     * @param string $packagePath DEPRECATED since Flow 5.0
      * @param string $packageType
      *
      * @return array<PackageInterface>
@@ -318,10 +340,22 @@ class PackageManager implements PackageManagerInterface
             $manifest['type'] = PackageInterface::DEFAULT_COMPOSER_TYPE;
         }
 
+        $runComposerRequireForTheCreatedPackage = false;
+        if ($packagesPath === null) {
+            $composerManifestRepositories = ComposerUtility::getComposerManifest(FLOW_PATH_ROOT, 'repositories');
+            foreach ($composerManifestRepositories as $repository) {
+                if ($repository['type'] == 'path' && substr($repository['url'], 0, 2) == './' && substr($repository['url'], -2) == '/*') {
+                    $packagesPath = Files::getUnixStylePath(Files::concatenatePaths([FLOW_PATH_ROOT, substr($repository['url'], 0, -2)]));
+                    $runComposerRequireForTheCreatedPackage = true;
+                    break;
+                }
+            }
+        }
+
         if ($packagesPath === null) {
             $packagesPath = 'Application';
-            if (is_array($this->settings['package']['packagesPathByType']) && isset($this->settings['package']['packagesPathByType'][$manifest['type']])) {
-                $packagesPath = $this->settings['package']['packagesPathByType'][$manifest['type']];
+            if (is_array($this->settings['packagesPathByType']) && isset($this->settings['packagesPathByType'][$manifest['type']])) {
+                $packagesPath = $this->settings['packagesPathByType'][$manifest['type']];
             }
 
             $packagesPath = Files::getUnixStylePath(Files::concatenatePaths([$this->packagesBasePath, $packagesPath]));
@@ -332,22 +366,30 @@ class PackageManager implements PackageManagerInterface
 
         foreach (
             [
-                PackageInterface::DIRECTORY_CLASSES,
-                PackageInterface::DIRECTORY_CONFIGURATION,
-                PackageInterface::DIRECTORY_RESOURCES,
-                PackageInterface::DIRECTORY_TESTS_UNIT,
-                PackageInterface::DIRECTORY_TESTS_FUNCTIONAL,
+                FlowPackageInterface::DIRECTORY_CLASSES,
+                FlowPackageInterface::DIRECTORY_CONFIGURATION,
+                FlowPackageInterface::DIRECTORY_RESOURCES,
+                FlowPackageInterface::DIRECTORY_TESTS_UNIT,
+                FlowPackageInterface::DIRECTORY_TESTS_FUNCTIONAL,
             ] as $path) {
             Files::createDirectoryRecursively(Files::concatenatePaths([$packagePath, $path]));
         }
 
         $manifest = ComposerUtility::writeComposerManifest($packagePath, $packageKey, $manifest);
 
+        if ($runComposerRequireForTheCreatedPackage) {
+            exec('composer require ' . $manifest['name'] . ' @dev');
+        }
+
         $refreshedPackageStatesConfiguration = $this->rescanPackages();
         $this->packageStatesConfiguration = $refreshedPackageStatesConfiguration;
         $this->registerPackageFromStateConfiguration($manifest['name'], $this->packageStatesConfiguration['packages'][$manifest['name']]);
+        $package = $this->packages[$packageKey];
+        if ($package instanceof FlowPackageInterface) {
+            $this->flowPackages[$packageKey] = $package;
+        }
 
-        return $this->packages[$packageKey];
+        return $package;
     }
 
     /**
@@ -450,60 +492,6 @@ class PackageManager implements PackageManagerInterface
     }
 
     /**
-     * Removes a package from registry and deletes it from filesystem
-     *
-     * @param string $packageKey package to remove
-     * @return void
-     * @throws Exception\UnknownPackageException if the specified package is not known
-     * @throws Exception\ProtectedPackageKeyException if a package is protected and cannot be deleted
-     * @throws Exception
-     * @api
-     */
-    public function deletePackage($packageKey)
-    {
-        if (!$this->isPackageAvailable($packageKey)) {
-            throw new Exception\UnknownPackageException('Package "' . $packageKey . '" is not available and cannot be removed.', 1166543253);
-        }
-
-        $package = $this->getPackage($packageKey);
-        if ($package->isProtected()) {
-            throw new Exception\ProtectedPackageKeyException('The package "' . $packageKey . '" is protected and cannot be removed.', 1220722120);
-        }
-
-        $packagePath = $package->getPackagePath();
-        $this->unregisterPackage($package);
-
-        try {
-            Files::removeDirectoryRecursively($packagePath);
-        } catch (UtilityException $exception) {
-            throw new Exception('Please check file permissions. The directory "' . $packagePath . '" for package "' . $packageKey . '" could not be removed.', 1301491089, $exception);
-        }
-    }
-
-    /**
-     * Unregisters a package from the list of available packages
-     *
-     * @param PackageInterface $package The package to be unregistered
-     * @return void
-     * @throws Exception\InvalidPackageStateException
-     */
-    protected function unregisterPackage(PackageInterface $package)
-    {
-        $packageKey = $package->getPackageKey();
-        if (!$this->isPackageAvailable($packageKey)) {
-            throw new Exception\InvalidPackageStateException('Package "' . $packageKey . '" is not registered.', 1338996142);
-        }
-
-        if (!isset($this->packages[$packageKey])) {
-            return;
-        }
-        $composerName = $package->getComposerName();
-
-        unset($this->packages[$packageKey], $this->packageKeys[strtolower($packageKey)], $this->packageStatesConfiguration['packages'][$composerName]);
-        $this->sortAndSavePackageStates($this->packageStatesConfiguration);
-    }
-
-    /**
      * Rescans available packages, order and write a new PackageStates file.
      *
      * @return array The found and sorted package states.
@@ -525,6 +513,7 @@ class PackageManager implements PackageManagerInterface
      */
     protected function getCurrentPackageStates()
     {
+        $savePackageStates = false;
         $loadedPackageStates = $this->loadPackageStates();
         if (
             empty($loadedPackageStates)
@@ -532,6 +521,10 @@ class PackageManager implements PackageManagerInterface
             || $loadedPackageStates['version'] < self::PACKAGESTATE_FORMAT_VERSION
         ) {
             $loadedPackageStates = $this->scanAvailablePackages();
+            $savePackageStates = true;
+        }
+
+        if ($savePackageStates) {
             $loadedPackageStates = $this->sortAndSavePackageStates($loadedPackageStates);
         }
 
@@ -565,9 +558,6 @@ class PackageManager implements PackageManagerInterface
                 throw new InvalidConfigurationException(sprintf('A package composer.json was found at "%s" that contained no "name".', $packagePath), 1445933572);
             }
 
-            if (!isset($composerManifest['type']) || !ComposerUtility::isFlowPackageType($composerManifest['type'])) {
-                continue;
-            }
             if (strpos($packagePath, Files::concatenatePaths([$this->packagesBasePath, 'Inactive'])) === 0) {
                 // Skip packages in legacy "Inactive" folder.
                 continue;
@@ -653,28 +643,6 @@ class PackageManager implements PackageManagerInterface
     }
 
     /**
-     * Get the package version of the given package
-     * Return normalized package version.
-     *
-     * @param string $composerName
-     * @return string
-     * @see https://getcomposer.org/doc/04-schema.md#version
-     */
-    public static function getPackageVersion($composerName)
-    {
-        foreach (ComposerUtility::readComposerLock() as $composerLockData) {
-            if (!isset($composerLockData['name'])) {
-                continue;
-            }
-            if ($composerLockData['name'] === $composerName) {
-                return preg_replace('/^v([0-9])/', '$1', $composerLockData['version'], 1);
-            }
-        }
-
-        return '';
-    }
-
-    /**
      * Requires and registers all packages which were defined in packageStatesConfiguration
      *
      * @param array $packageStatesConfiguration
@@ -698,16 +666,11 @@ class PackageManager implements PackageManagerInterface
      */
     protected function registerPackageFromStateConfiguration($composerName, $packageStateConfiguration)
     {
-        $packageKey = $packageStateConfiguration['packageKey'];
-        $packagePath = $packageStateConfiguration['packagePath'] ?? null;
-        $packageClassInformation = $packageStateConfiguration['packageClassInformation'] ?? null;
-        $package = $this->packageFactory->create($this->packagesBasePath, $packagePath, $packageKey, $composerName, $packageStateConfiguration['autoloadConfiguration'], $packageClassInformation);
-        $this->packageKeys[strtolower($packageKey)] = $packageKey;
-        $this->packages[$packageKey] = $package;
-        unset($this->activePackages[$packageKey]);
-        if ((isset($packageStateConfiguration['state']) && $packageStateConfiguration['state'] === self::PACKAGE_STATE_ACTIVE) || $package->isProtected()) {
-            $this->activePackages[$packageKey] = $package;
-        }
+        $packagePath = isset($packageStateConfiguration['packagePath']) ? $packageStateConfiguration['packagePath'] : null;
+        $packageClassInformation = isset($packageStateConfiguration['packageClassInformation']) ? $packageStateConfiguration['packageClassInformation'] : null;
+        $package = $this->packageFactory->create($this->packagesBasePath, $packagePath, $packageStateConfiguration['packageKey'], $composerName, $packageStateConfiguration['autoloadConfiguration'], $packageClassInformation);
+        $this->packageKeys[strtolower($package->getPackageKey())] = $package->getPackageKey();
+        $this->packages[$package->getPackageKey()] = $package;
     }
 
     /**
@@ -790,11 +753,11 @@ class PackageManager implements PackageManagerInterface
     }
 
     /**
-     * Returns the correctly cased version of the given package key or FALSE
+     * Returns the correctly cased version of the given package key or false
      * if no such package is available.
      *
      * @param string $unknownCasedPackageKey The package key to convert
-     * @return mixed The upper camel cased package key or FALSE if no such package exists
+     * @return mixed The upper camel cased package key or false if no such package exists
      * @api
      */
     public function getCaseSensitivePackageKey($unknownCasedPackageKey)
@@ -831,7 +794,7 @@ class PackageManager implements PackageManagerInterface
      * Check the conformance of the given package key
      *
      * @param string $packageKey The package key to validate
-     * @return boolean If the package key is valid, returns TRUE otherwise FALSE
+     * @return boolean If the package key is valid, returns true otherwise false
      * @api
      */
     public function isPackageKeyValid($packageKey)

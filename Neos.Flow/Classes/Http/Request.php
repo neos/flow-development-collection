@@ -12,10 +12,15 @@ namespace Neos\Flow\Http;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Utility\Arrays;
-use Neos\Utility\MediaTypes;
+use Neos\Flow\Http\Helper\ArgumentsHelper;
+use Neos\Flow\Http\Helper\MediaTypeHelper;
+use Neos\Flow\Http\Helper\RequestInformationHelper;
+use Neos\Flow\Http\Helper\SecurityHelper;
+use Neos\Flow\Http\Helper\UploadedFilesHelper;
+use Neos\Flow\Http\Helper\UriHelper;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UploadedFileInterface;
+use Psr\Http\Message\UriInterface;
 
 /**
  * Represents an HTTP request in the PHP world, inlcuding server variables.
@@ -75,7 +80,6 @@ class Request extends BaseRequest implements ServerRequestInterface
      */
     protected $uploadedFiles = [];
 
-
     /**
      * PSR-7 Attribute containing the resolved trusted client IP address as string
      */
@@ -85,6 +89,11 @@ class Request extends BaseRequest implements ServerRequestInterface
      * PSR-7 Attribute containing a boolean whether the request is from a trusted proxy
      */
     const ATTRIBUTE_TRUSTED_PROXY = 'fromTrustedProxy';
+
+    /**
+     * PSR-7 Attribute containing the base URI for this request.
+     */
+    const ATTRIBUTE_BASE_URI = 'baseUri';
 
     /**
      * Constructs a new Request object based on the given environment data.
@@ -111,7 +120,7 @@ class Request extends BaseRequest implements ServerRequestInterface
                 $method = $server['HTTP_X_HTTP_METHOD'];
             }
         }
-        $this->setMethod($method);
+        $this->method = $method;
 
         $protocol = isset($server['SSL_SESSION_ID']) || (isset($server['HTTPS']) && ($server['HTTPS'] === 'on' || strcmp($server['HTTPS'], '1') === 0)) ? 'https' : 'http';
         $host = isset($server['HTTP_HOST']) ? $server['HTTP_HOST'] : 'localhost';
@@ -119,16 +128,19 @@ class Request extends BaseRequest implements ServerRequestInterface
         if (substr($requestUri, 0, 10) === '/index.php') {
             $requestUri = '/' . ltrim(substr($requestUri, 10), '/');
         }
-        $this->uri = new Uri($protocol . '://' . $host . $requestUri);
 
+        $uri = new Uri($protocol . '://' . $host . $requestUri);
         if (isset($server['SERVER_PORT'])) {
-            $this->uri->setPort($server['SERVER_PORT']);
+            $uri = $uri->withPort($server['SERVER_PORT']);
         }
 
+        $this->uri = $uri;
         $this->parsedBody = $post;
         $this->queryParams = $get;
         $this->server = $server;
-        $this->arguments = $this->buildUnifiedArguments($get, $post, $files);
+        $untangledFiles = UploadedFilesHelper::untangleFilesArray($files);
+        $this->arguments = ArgumentsHelper::buildUnifiedArguments($get, $post, $untangledFiles);
+        $this->uploadedFiles = $this->createUploadedFilesFromUntangledUploads($untangledFiles, $this->arguments);
     }
 
     /**
@@ -144,7 +156,7 @@ class Request extends BaseRequest implements ServerRequestInterface
      */
     public static function create(Uri $uri, $method = 'GET', array $arguments = [], array $files = [], array $server = [])
     {
-        $get = $uri->getArguments();
+        $get = UriHelper::parseQueryIntoArguments($uri);
         $post = $arguments;
 
         $isDefaultPort = $uri->getScheme() === 'https' ? ($uri->getPort() === 443) : ($uri->getPort() === 80);
@@ -160,6 +172,7 @@ class Request extends BaseRequest implements ServerRequestInterface
             'SERVER_PROTOCOL' => 'HTTP/1.1',
             'SCRIPT_NAME' => '/index.php',
             'PHP_SELF' => '/index.php',
+            'REQUEST_TIME' => time()
         ];
 
         if ($uri->getScheme() === 'https') {
@@ -214,18 +227,20 @@ class Request extends BaseRequest implements ServerRequestInterface
      * Indicates if this request has been received through a secure channel.
      *
      * @return boolean
-     * @api
+     * @deprecated Since Flow 5.1, use the SecurityHelper
+     * @see SecurityHelper::isSecureRequest()
      */
     public function isSecure()
     {
-        return $this->uri->getScheme() === 'https';
+        return SecurityHelper::isSecureRequest($this);
     }
 
     /**
      * Returns the port used for this request
      *
      * @return integer
-     * @api
+     * @deprecated Since Flow 5.1, use $this->getUri()->getPort() instead.
+     * @see getUri()
      */
     public function getPort()
     {
@@ -237,11 +252,58 @@ class Request extends BaseRequest implements ServerRequestInterface
      * other action than retrieval. This should the case with "GET" and "HEAD" requests.
      *
      * @return boolean
-     * @api
+     * @deprecated Since Flow 5.1, use the SecurityHelper
+     * @see SecurityHelper::hasSafeMethod()
      */
     public function isMethodSafe()
     {
-        return (in_array($this->method, ['GET', 'HEAD']));
+        return SecurityHelper::hasSafeMethod($this);
+    }
+
+    /**
+     * Returns the detected base URI
+     *
+     * @return UriInterface|Uri
+     * @deprecated Since Flow 5.1, use attribute
+     * @see Request::getAttribute(Request::ATTRIBUTE_BASE_URI)
+     */
+    public function getBaseUri()
+    {
+        if (!isset($this->attributes[self::ATTRIBUTE_BASE_URI])) {
+            $this->attributes[self::ATTRIBUTE_BASE_URI] = $this->detectBaseUri();
+        }
+
+        return $this->attributes[self::ATTRIBUTE_BASE_URI];
+    }
+
+    /**
+     * Set the base URI of this request.
+     *
+     * @param string|UriInterface $baseUri
+     * @deprecated Since Flow 5.1, set as an attribute on ServerRequestInterface instead.
+     * @see Request::withAttribute(Request::ATTRIBUTE_BASE_URI)
+     */
+    public function setBaseUri($baseUri)
+    {
+        if (is_string($baseUri)) {
+            $baseUri = new Uri($baseUri);
+        }
+
+        $this->attributes[self::ATTRIBUTE_BASE_URI] = $baseUri;
+    }
+
+    /**
+     * Tries to detect the base URI of request.
+     *
+     * @return UriInterface
+     * @deprecated Since Flow 5.1
+     */
+    protected function detectBaseUri()
+    {
+        $baseUri = clone $this->uri;
+        $baseUri = $baseUri->withQuery('')->withFragment('')->withPath(RequestInformationHelper::getScriptRequestPath($this));
+
+        return $baseUri;
     }
 
     /**
@@ -251,7 +313,8 @@ class Request extends BaseRequest implements ServerRequestInterface
      * array of arguments.
      *
      * @return array
-     * @api
+     * @deprecated Since Flow 5.1, use ArgumentsHelper to get an array of unified arguments
+     * @see ArgumentsHelper::buildUnifiedArguments()
      */
     public function getArguments()
     {
@@ -264,7 +327,8 @@ class Request extends BaseRequest implements ServerRequestInterface
      *
      * @param string $name Name of the argument
      * @return boolean
-     * @api
+     * @deprecated Since Flow 5.1, use ArgumentsHelper to get an array of unified arguments
+     * @see ArgumentsHelper::buildUnifiedArguments()
      */
     public function hasArgument($name)
     {
@@ -276,7 +340,8 @@ class Request extends BaseRequest implements ServerRequestInterface
      *
      * @param string $name Name of the argument
      * @return mixed Value of the specified argument or NULL if it does not exist
-     * @api
+     * @deprecated Since Flow 5.1, use ArgumentsHelper to get an array of unified arguments
+     * @see ArgumentsHelper::buildUnifiedArguments()
      */
     public function getArgument($name)
     {
@@ -417,22 +482,11 @@ class Request extends BaseRequest implements ServerRequestInterface
      * Don't rely on the client IP address as the only security measure!
      *
      * @return string The client's IP address
-     * @api
+     * @deprecated Since Flow 5.1, use ->getAttribute(Request::ATTRIBUTE_CLIENT_IP)
      */
     public function getClientIpAddress()
     {
-        $serverFields = array('HTTP_CLIENT_IP', 'HTTP_X_FORWARDED_FOR', 'HTTP_X_FORWARDED', 'HTTP_X_CLUSTER_CLIENT_IP', 'HTTP_FORWARDED_FOR', 'HTTP_FORWARDED');
-        foreach ($serverFields as $field) {
-            if (empty($this->server[$field])) {
-                continue;
-            }
-            $length = strpos($this->server[$field], ',');
-            $ipAddress = trim(($length === false) ? $this->server[$field] : substr($this->server[$field], 0, $length));
-            if (filter_var($ipAddress, FILTER_VALIDATE_IP, FILTER_FLAG_NO_RES_RANGE | FILTER_FLAG_NO_PRIV_RANGE) !== false) {
-                return $ipAddress;
-            }
-        }
-        return (isset($this->server['REMOTE_ADDR']) ? $this->server['REMOTE_ADDR'] : null);
+        return $this->getAttribute(self::ATTRIBUTE_CLIENT_IP);
     }
 
     /**
@@ -446,16 +500,13 @@ class Request extends BaseRequest implements ServerRequestInterface
      * is returned.
      *
      * @return array A list of media types and sub types
-     * @api
+     *
+     * @deprecated Since Flow 5.1, in favor of using the separate MediaTypeHelper
+     * @see MediaTypeHelper::determineAcceptedMediaTypes()
      */
     public function getAcceptedMediaTypes()
     {
-        $rawValues = $this->headers->get('Accept');
-        if (empty($rawValues)) {
-            return ['*/*'];
-        }
-        $acceptedMediaTypes = self::parseContentNegotiationQualityValues($rawValues);
-        return $acceptedMediaTypes;
+        return MediaTypeHelper::determineAcceptedMediaTypes($this);
     }
 
     /**
@@ -463,155 +514,53 @@ class Request extends BaseRequest implements ServerRequestInterface
      * rules on a possible Accept header.
      *
      * @param array $supportedMediaTypes A list of media types which are supported by the application / controller
-     * @param boolean $trim If TRUE, only the type/subtype of the media type is returned. If FALSE, the full original media type string is returned.
+     * @param boolean $trim If true, only the type/subtype of the media type is returned. If false, the full original media type string is returned.
      * @return string The media type and sub type which matched, NULL if none matched
-     * @api
+     *
+     * @deprecated Since Flow 5.1, in favor of using the separate MediaTypeHelper
+     * @see MediaTypeHelper::negotiateMediaType()
      */
     public function getNegotiatedMediaType(array $supportedMediaTypes, $trim = true)
     {
-        $negotiatedMediaType = null;
-        $acceptedMediaTypes = $this->getAcceptedMediaTypes();
-        foreach ($acceptedMediaTypes as $acceptedMediaType) {
-            foreach ($supportedMediaTypes as $supportedMediaType) {
-                if (MediaTypes::mediaRangeMatches($acceptedMediaType, $supportedMediaType)) {
-                    $negotiatedMediaType = $supportedMediaType;
-                    break 2;
-                }
-            }
-        }
-        return ($trim && $negotiatedMediaType !== null ? MediaTypes::trimMediaType($negotiatedMediaType) : $negotiatedMediaType);
+        return MediaTypeHelper::negotiateMediaType(MediaTypeHelper::determineAcceptedMediaTypes($this), $supportedMediaTypes, $trim);
     }
 
     /**
-     * Returns the relative path (ie. relative to the web root) and name of the
+     * Returns the relative path (i.e. relative to the web root) and name of the
      * script as it was accessed through the web server.
      *
      * @return string Relative path and name of the PHP script as accessed through the web
-     * @api
+     * @deprecated Since Flow 5.1, use the RequestInformationHelper instead
+     * @see RequestInformationHelper::getScriptRequestPathAndFilename()
      */
     public function getScriptRequestPathAndFilename()
     {
-        if (isset($this->server['SCRIPT_NAME'])) {
-            return $this->server['SCRIPT_NAME'];
-        }
-        if (isset($this->server['ORIG_SCRIPT_NAME'])) {
-            return $this->server['ORIG_SCRIPT_NAME'];
-        }
-        return '';
+        return RequestInformationHelper::getScriptRequestPathAndFilename($this);
     }
 
     /**
-     * Returns the relative path (ie. relative to the web root) to the script as
+     * Returns the relative path (i.e. relative to the web root) to the script as
      * it was accessed through the web server.
      *
      * @return string Relative path to the PHP script as accessed through the web
-     * @api
+     * @deprecated Since Flow 5.1, use the RequestInformationHelper instead
+     * @see RequestInformationHelper::getScriptRequestPath()
      */
     public function getScriptRequestPath()
     {
-        $requestPathSegments = explode('/', $this->getScriptRequestPathAndFilename());
-        array_pop($requestPathSegments);
-        return implode('/', $requestPathSegments) . '/';
+        return RequestInformationHelper::getScriptRequestPath($this);
     }
 
     /**
      * Returns the request's path relative to the $baseUri
      *
      * @return string
+     * @deprecated Since Flow 5.1, use the RequestInformationHelper instead
+     * @see UriHelper::getRelativePath()
      */
     public function getRelativePath()
     {
-        $baseUriLength = strlen($this->getBaseUri()->getPath());
-        if ($baseUriLength >= strlen($this->getUri()->getPath())) {
-            return '';
-        }
-        return substr($this->getUri()->getPath(), $baseUriLength);
-    }
-
-    /**
-     * Takes the raw GET & POST arguments and maps them into the request object.
-     * Afterwards all mapped arguments can be retrieved by the getArgument(s) method, no matter if they
-     * have been GET, POST or PUT arguments before.
-     *
-     * @param array $getArguments Arguments as found in $_GET
-     * @param array $postArguments Arguments as found in $_POST
-     * @param array $uploadArguments Arguments as found in $_FILES
-     * @return array the unified arguments
-     */
-    protected function buildUnifiedArguments(array $getArguments, array $postArguments, array $uploadArguments)
-    {
-        $arguments = $getArguments;
-        $arguments = Arrays::arrayMergeRecursiveOverrule($arguments, $postArguments);
-        $files = $this->untangleFilesArray($uploadArguments);
-        $arguments = Arrays::arrayMergeRecursiveOverrule($arguments, $files);
-        $this->uploadedFiles = $this->createUploadedFilesFromUntangledUploads($files, $arguments);
-        return $arguments;
-    }
-
-    /**
-     * Transforms the convoluted _FILES superglobal into a manageable form.
-     *
-     * @param array $convolutedFiles The _FILES superglobal
-     * @return array Untangled files
-     */
-    protected function untangleFilesArray(array $convolutedFiles)
-    {
-        $untangledFiles = [];
-
-        $fieldPaths = [];
-        foreach ($convolutedFiles as $firstLevelFieldName => $fieldInformation) {
-            if (!is_array($fieldInformation['error'])) {
-                $fieldPaths[] = [$firstLevelFieldName];
-            } else {
-                $newFieldPaths = $this->calculateFieldPaths($fieldInformation['error'], $firstLevelFieldName);
-                array_walk($newFieldPaths,
-                    function (&$value) {
-                        $value = explode('/', $value);
-                    }
-                );
-                $fieldPaths = array_merge($fieldPaths, $newFieldPaths);
-            }
-        }
-
-        foreach ($fieldPaths as $fieldPath) {
-            if (count($fieldPath) === 1) {
-                $fileInformation = $convolutedFiles[$fieldPath{0}];
-            } else {
-                $fileInformation = [];
-                foreach ($convolutedFiles[$fieldPath{0}] as $key => $subStructure) {
-                    $fileInformation[$key] = Arrays::getValueByPath($subStructure, array_slice($fieldPath, 1));
-                }
-            }
-            if (isset($fileInformation['error']) && $fileInformation['error'] !== \UPLOAD_ERR_NO_FILE) {
-                $untangledFiles = Arrays::setValueByPath($untangledFiles, $fieldPath, $fileInformation);
-            }
-        }
-        return $untangledFiles;
-    }
-
-    /**
-     * Returns and array of all possibles "field paths" for the given array.
-     *
-     * @param array $structure The array to walk through
-     * @param string $firstLevelFieldName
-     * @return array An array of paths (as strings) in the format "key1/key2/key3" ...
-     */
-    protected function calculateFieldPaths(array $structure, $firstLevelFieldName = null)
-    {
-        $fieldPaths = [];
-        if (is_array($structure)) {
-            foreach ($structure as $key => $subStructure) {
-                $fieldPath = ($firstLevelFieldName !== null ? $firstLevelFieldName . '/' : '') . $key;
-                if (is_array($subStructure)) {
-                    foreach ($this->calculateFieldPaths($subStructure) as $subFieldPath) {
-                        $fieldPaths[] = $fieldPath . '/' . $subFieldPath;
-                    }
-                } else {
-                    $fieldPaths[] = $fieldPath;
-                }
-            }
-        }
-        return $fieldPaths;
+        return UriHelper::getRelativePath($this->getBaseUri(), $this->getUri());
     }
 
     /**
@@ -670,38 +619,13 @@ class Request extends BaseRequest implements ServerRequestInterface
      *
      * @param string $rawValues The raw Accept* Header field value
      * @return array The parsed list of field values, ordered by user preference
+     *
+     * @deprecated Since Flow 5.1, in favor of using the separate MediaTypeHelper
+     * @see MediaTypeHelper::parseContentNegotiationQualityValues()
      */
     public static function parseContentNegotiationQualityValues($rawValues)
     {
-        $acceptedTypes = array_map(
-            function ($acceptType) {
-                $typeAndQuality = preg_split('/;\s*q=/', $acceptType);
-                return [$typeAndQuality[0], (isset($typeAndQuality[1]) ? (float)$typeAndQuality[1] : '')];
-            }, preg_split('/,\s*/', $rawValues)
-        );
-
-        $flattenedAcceptedTypes = [];
-        $valuesWithoutQualityValue = [[], [], [], []];
-        foreach ($acceptedTypes as $typeAndQuality) {
-            if ($typeAndQuality[1] === '') {
-                $parsedType = MediaTypes::parseMediaType($typeAndQuality[0]);
-                if ($parsedType['type'] === '*') {
-                    $valuesWithoutQualityValue[3][$typeAndQuality[0]] = true;
-                } elseif ($parsedType['subtype'] === '*') {
-                    $valuesWithoutQualityValue[2][$typeAndQuality[0]] = true;
-                } elseif ($parsedType['parameters'] === []) {
-                    $valuesWithoutQualityValue[1][$typeAndQuality[0]] = true;
-                } else {
-                    $valuesWithoutQualityValue[0][$typeAndQuality[0]] = true;
-                }
-            } else {
-                $flattenedAcceptedTypes[$typeAndQuality[0]] = $typeAndQuality[1];
-            }
-        }
-        $valuesWithoutQualityValue = array_merge(array_keys($valuesWithoutQualityValue[0]), array_keys($valuesWithoutQualityValue[1]), array_keys($valuesWithoutQualityValue[2]), array_keys($valuesWithoutQualityValue[3]));
-        arsort($flattenedAcceptedTypes);
-        $parsedValues = array_merge($valuesWithoutQualityValue, array_keys($flattenedAcceptedTypes));
-        return $parsedValues;
+        return MediaTypeHelper::parseContentNegotiationQualityValues($rawValues);
     }
 
     /**
