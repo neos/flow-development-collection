@@ -81,15 +81,16 @@ class CacheFactory extends \Neos\Cache\CacheFactory implements CacheFactoryInter
      *
      * @param ApplicationContext $context The current Flow context
      * @param Environment $environment
+     * @param string $applicationIdentifier
      * @Flow\Autowiring(enabled=false)
      */
-    public function __construct(ApplicationContext $context, Environment $environment)
+    public function __construct(ApplicationContext $context, Environment $environment, string $applicationIdentifier)
     {
         $this->context = $context;
         $this->environment = $environment;
 
         $environmentConfiguration = new EnvironmentConfiguration(
-            FLOW_PATH_ROOT . '~' . (string)$environment->getContext(),
+            $applicationIdentifier,
             $environment->getPathToTemporaryDirectory()
         );
 
