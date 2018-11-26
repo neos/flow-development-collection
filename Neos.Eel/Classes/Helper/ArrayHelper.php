@@ -53,7 +53,7 @@ class ArrayHelper implements ProtectedContextAwareInterface
      * @param string $separator A separator for the values
      * @return string A string with the joined values separated by the separator
      */
-    public function join(array $array, string $separator = ','): string
+    public function join(array $array, $separator = ','): string
     {
         return implode($separator, $array);
     }
@@ -66,7 +66,7 @@ class ArrayHelper implements ProtectedContextAwareInterface
      * @param int $end
      * @return array
      */
-    public function slice(array $array, int $begin, int $end = null): array
+    public function slice(array $array, $begin, $end = null): array
     {
         if ($end === null) {
             $end = count($array);
@@ -219,7 +219,7 @@ class ArrayHelper implements ProtectedContextAwareInterface
      * @param bool $preserveKeys Wether to preserve the keys when shuffling the array
      * @return array The shuffled array
      */
-    public function shuffle(array $array, bool $preserveKeys = true): array
+    public function shuffle(array $array, $preserveKeys = true): array
     {
         if ($array === []) {
             return $array;
@@ -329,7 +329,7 @@ class ArrayHelper implements ProtectedContextAwareInterface
      * @param mixed $replacements Elements to insert instead of the removed range
      * @return array The array with removed and replaced elements
      */
-    public function splice(array $array, int $offset, int $length = 1, $replacements = null): array
+    public function splice(array $array, $offset, $length = 1, $replacements = null): array
     {
         $arguments = func_get_args();
         $replacements = array_slice($arguments, 3);
@@ -362,7 +362,7 @@ class ArrayHelper implements ProtectedContextAwareInterface
      * @param int $step The increment between items, will default to 1.
      * @return array Array of elements from start to end, inclusive.
      */
-    public function range($start, $end, int $step = 1): array
+    public function range($start, $end, $step = 1): array
     {
         return range($start, $end, $step);
     }
@@ -426,7 +426,7 @@ class ArrayHelper implements ProtectedContextAwareInterface
      * @param callable $callback Callback for testing if an element should be included in the result, current value and key will be passed as arguments
      * @return array The array with elements where callback returned true
      */
-    public function filter(array $array, callable $callback): array
+    public function filter(array $array, callable $callback = null): array
     {
         return array_filter($array, $callback, ARRAY_FILTER_USE_BOTH);
     }
