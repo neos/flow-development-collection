@@ -45,6 +45,7 @@ class TypeHandlingTest extends \PHPUnit\Framework\TestCase
             ['int', ['type' => 'integer', 'elementType' => null]],
             ['string', ['type' => 'string', 'elementType' => null]],
             ['DateTime', ['type' => 'DateTime', 'elementType' => null]],
+            ['DateTimeImmutable', ['type' => 'DateTimeImmutable', 'elementType' => null]],
             ['TYPO3\Foo\Bar', ['type' => 'TYPO3\Foo\Bar', 'elementType' => null]],
             ['\TYPO3\Foo\Bar', ['type' => 'TYPO3\Foo\Bar', 'elementType' => null]],
             ['\stdClass', ['type' => 'stdClass', 'elementType' => null]],

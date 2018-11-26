@@ -75,7 +75,7 @@ class CacheFactoryTest extends UnitTestCase
      */
     public function createReturnsInstanceOfTheSpecifiedCacheFrontend()
     {
-        $factory = new CacheFactory(new ApplicationContext('Testing'), $this->mockEnvironment);
+        $factory = new CacheFactory(new ApplicationContext('Testing'), $this->mockEnvironment, 'UnitTesting');
         $factory->injectEnvironmentConfiguration($this->mockEnvironmentConfiguration);
 
         $cache = $factory->create('TYPO3_Flow_Cache_FactoryTest_Cache', VariableFrontend::class, NullBackend::class);
@@ -87,7 +87,7 @@ class CacheFactoryTest extends UnitTestCase
      */
     public function createInjectsAnInstanceOfTheSpecifiedBackendIntoTheCacheFrontend()
     {
-        $factory = new CacheFactory(new ApplicationContext('Testing'), $this->mockEnvironment);
+        $factory = new CacheFactory(new ApplicationContext('Testing'), $this->mockEnvironment, 'UnitTesting');
         $factory->injectEnvironmentConfiguration($this->mockEnvironmentConfiguration);
 
         $cache = $factory->create('TYPO3_Flow_Cache_FactoryTest_Cache', VariableFrontend::class, FileBackend::class);
@@ -100,7 +100,7 @@ class CacheFactoryTest extends UnitTestCase
     public function aDifferentDefaultCacheDirectoryIsUsedForPersistentFileCaches()
     {
         $cacheManager = new CacheManager();
-        $factory = new CacheFactory(new ApplicationContext('Testing'), $this->mockEnvironment);
+        $factory = new CacheFactory(new ApplicationContext('Testing'), $this->mockEnvironment, 'UnitTesting');
         $factory->injectCacheManager($cacheManager);
         $factory->injectEnvironmentConfiguration($this->mockEnvironmentConfiguration);
 

@@ -161,7 +161,7 @@ class DateTimeConverter extends AbstractTypeConverter
             }
             if (isset($source['timezone_type'])) {
                 // DateTime internal format when being serialized with json_encode
-                $dateFormat = "Y-m-d\TH:i:s.v";
+                $dateFormat = "Y-m-d H:i:s.u";
             }
             $date = $targetType::createFromFormat($dateFormat, $dateAsString, $timezone);
         } else {
