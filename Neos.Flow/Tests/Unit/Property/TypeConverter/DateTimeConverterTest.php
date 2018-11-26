@@ -531,4 +531,17 @@ class DateTimeConverterTest extends UnitTestCase
         $this->assertInstanceOf($className, $date);
         $this->assertSame('Bar', $date->foo());
     }
+
+    /**
+     * @test
+     */
+    public function canConvertFromJsonSerializedDateTime()
+    {
+        $sourceDate = new \DateTime('2005-08-15T15:52:01+00:00');
+        // Serialize to an array with json_decode from an json_encoded string
+        $source = json_decode(json_encode($sourceDate), true);
+        $convertedDate = $this->converter->convertFrom($source, 'DateTime');
+        $this->assertInstanceOf('DateTime', $convertedDate);
+        $this->assertSame($sourceDate->getTimestamp(), $convertedDate->getTimestamp());
+    }
 }

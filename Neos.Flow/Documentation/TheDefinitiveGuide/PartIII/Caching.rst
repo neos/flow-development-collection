@@ -188,6 +188,25 @@ Note that, because the cache has been configured as "persistent", the *SimpleFil
 ``Data/Temporary/Production/Cache/Flow_Security_Cryptography_HashService/``. You can override the cache directory
 by specifying it in the cache's backend options.
 
+Application Identifier
+----------------------
+
+The application identifier can be used by cache backends to differentiate cache entries with the same cache
+identifier in the same storage from each other. For example memcache is global, so if you use it for multiple
+installations or possibly just for different Flow contexts you need to find a way to separate entries from each
+other. This setting will do that.
+
+The default of `%FLOW_PATH_ROOT%~%FLOW_APPLICATION_CONTEXT%` is not well suited for installations in which the
+`FLOW_PATH_ROOT` changes after each deployment, so in such cases you might want to exchange it for some hardcoded
+value identifying each specific installation::
+
+  Neos:
+    Flow:
+      cache:
+        applicationIdentifier: 'some-unique-system-identifier'
+
+.. note:: Changing the identifier will make cache entries generated with the old identifier useless.
+
 Cache Frontends
 ===============
 
