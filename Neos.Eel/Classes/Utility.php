@@ -21,13 +21,12 @@ class Utility
      * Check if expression is an Eel expression.
      *
      * @param string $expression
-     * @param array $matches
      *
      * @return bool
      */
-    public static function isEelExpression($expression, &$matches = null)
+    public static function isEelExpression($expression)
     {
-        return preg_match(Package::EelExpressionRecognizer, $expression, $matches);
+        return preg_match(Package::EelExpressionRecognizer, $expression) === 1;
     }
 
     /**
@@ -67,10 +66,11 @@ class Utility
      */
     public static function evaluateEelExpression($expression, EelEvaluatorInterface $eelEvaluator, array $contextVariables, array $defaultContextConfiguration = [])
     {
-        $matches = null;
-        if (!self::isEelExpression($expression, $matches)) {
+        if (!self::isEelExpression($expression)) {
             throw new Exception('The EEL expression "' . $expression . '" was not a valid EEL expression. Perhaps you forgot to wrap it in ${...}?', 1410441849);
         }
+
+        preg_match(Package::EelExpressionRecognizer, $expression, $matches);
 
         $defaultContextVariables = self::getDefaultContextVariables($defaultContextConfiguration);
         $contextVariables = array_merge($defaultContextVariables, $contextVariables);
