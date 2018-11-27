@@ -13,9 +13,7 @@ namespace Neos\Flow\Log;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\Bootstrap;
-use Neos\Flow\Error\Debugger;
 use Neos\Flow\Http\HttpRequestHandlerInterface;
-use Neos\Flow\Log\ThrowableStorage\FileStorage;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 
 /**
@@ -23,6 +21,8 @@ use Neos\Flow\ObjectManagement\ObjectManagerInterface;
  *
  * @api
  * @Flow\Scope("singleton")
+ * @Flow\Autowiring(false)
+ * @deprecated Instead a \Neos\Flow\Log\PsrLoggerFactoryInterface should be used.
  */
 class LoggerFactory
 {
@@ -30,6 +30,11 @@ class LoggerFactory
      * @var PsrLoggerFactoryInterface
      */
     protected $psrLoggerFactory;
+
+    /**
+     * @var ThrowableStorageInterface
+     */
+    protected $throwableStorage;
 
     /**
      * @var array
@@ -45,10 +50,12 @@ class LoggerFactory
      * LoggerFactory constructor.
      *
      * @param PsrLoggerFactoryInterface $psrLoggerFactory
+     * @param ThrowableStorageInterface $throwableStorage
      */
-    public function __construct(PsrLoggerFactoryInterface $psrLoggerFactory)
+    public function __construct(PsrLoggerFactoryInterface $psrLoggerFactory, ThrowableStorageInterface $throwableStorage)
     {
         $this->psrLoggerFactory = $psrLoggerFactory;
+        $this->throwableStorage = $throwableStorage;
         $this->requestInfoCallback = function () {
             $output = '';
             if (!(Bootstrap::$staticObjectManager instanceof ObjectManagerInterface)) {
@@ -144,27 +151,9 @@ class LoggerFactory
     protected function injectAdditionalDependencies(LoggerInterface $logger): LoggerInterface
     {
         if ($logger instanceof Logger) {
-            $logger->injectThrowableStorage($this->instantiateThrowableStorage());
+            $logger->injectThrowableStorage($this->throwableStorage);
         }
 
         return $logger;
-    }
-
-    /**
-     * @return FileStorage|ThrowableStorageInterface
-     */
-    protected function instantiateThrowableStorage(): ThrowableStorageInterface
-    {
-        // Fallback early throwable storage
-        $throwableStorage = new FileStorage();
-        $throwableStorage->injectStoragePath(FLOW_PATH_DATA . 'Logs/Exceptions');
-        if (Bootstrap::$staticObjectManager instanceof ObjectManagerInterface) {
-            $throwableStorage = Bootstrap::$staticObjectManager->get(ThrowableStorageInterface::class);
-        }
-        $throwableStorage->setBacktraceRenderer(function ($backtrace) {
-            return Debugger::getBacktraceCode($backtrace, false, true);
-        });
-        $throwableStorage->setRequestInformationRenderer($this->requestInfoCallback);
-        return $throwableStorage;
     }
 }

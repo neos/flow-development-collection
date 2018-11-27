@@ -11,6 +11,7 @@ namespace Neos\Flow\ObjectManagement;
  * source code.
  */
 
+use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\ObjectManagement\Configuration\Configuration as ObjectConfiguration;
 use Neos\Flow\ObjectManagement\Configuration\ConfigurationArgument as ObjectConfigurationArgument;
 use Neos\Flow\Core\ApplicationContext;
@@ -19,7 +20,6 @@ use Neos\Flow\ObjectManagement\DependencyInjection\DependencyProxy;
 use Neos\Flow\Security\Context;
 use Neos\Utility\Arrays;
 use Neos\Utility\ObjectAccess;
-use Psr\Container\ContainerInterface;
 
 /**
  * Object Manager
@@ -479,6 +479,7 @@ class ObjectManager implements ObjectManagerInterface
      *
      * @param array $settingsPath Path to the setting(s) as an array, for example array('Neos', 'Flow', 'persistence', 'backendOptions')
      * @return mixed Either an array of settings or the value of a single setting
+     * @deprecated Use settings injection or the ConfigurationManager to get settings.
      */
     public function getSettingsByPath(array $settingsPath)
     {
@@ -506,6 +507,7 @@ class ObjectManager implements ObjectManagerInterface
      */
     protected function buildObjectByFactory($objectName)
     {
+        $configurationManager = $this->get(ConfigurationManager::class);
         $factory = $this->get($this->objects[$objectName]['f'][0]);
         $factoryMethodName = $this->objects[$objectName]['f'][1];
 
@@ -513,8 +515,7 @@ class ObjectManager implements ObjectManagerInterface
         foreach ($this->objects[$objectName]['fa'] as $index => $argumentInformation) {
             switch ($argumentInformation['t']) {
                 case ObjectConfigurationArgument::ARGUMENT_TYPES_SETTING:
-                    $settingPath = explode('.', $argumentInformation['v']);
-                    $factoryMethodArguments[$index] = Arrays::getValueByPath($this->allSettings, $settingPath);
+                    $factoryMethodArguments[$index] = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, $argumentInformation['v']);
                 break;
                 case ObjectConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE:
                     $factoryMethodArguments[$index] = $argumentInformation['v'];

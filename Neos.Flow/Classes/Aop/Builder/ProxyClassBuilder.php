@@ -16,8 +16,8 @@ use Neos\Flow\Aop\AdvicesTrait;
 use Neos\Flow\Aop\AspectContainer;
 use Neos\Flow\Aop\PropertyIntroduction;
 use Neos\Cache\Frontend\VariableFrontend;
+use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\ObjectManagement\CompileTimeObjectManager;
-use Neos\Flow\Reflection\ClassReflection;
 use Neos\Flow\Reflection\PropertyReflection;
 use Neos\Flow\Aop\TraitIntroduction;
 use Neos\Flow\Aop;
@@ -38,12 +38,6 @@ class ProxyClassBuilder
      * @var Proxy\Compiler
      */
     protected $compiler;
-
-    /**
-     * The Flow settings
-     * @var array
-     */
-    protected $settings;
 
     /**
      * @var ReflectionService
@@ -180,17 +174,6 @@ class ProxyClassBuilder
     }
 
     /**
-     * Injects the Flow settings
-     *
-     * @param array $settings The settings
-     * @return void
-     */
-    public function injectSettings(array $settings): void
-    {
-        $this->settings = $settings;
-    }
-
-    /**
      * Builds proxy class code which weaves advices into the respective target classes.
      *
      * The object configurations provided by the Compiler are searched for possible aspect
@@ -220,7 +203,7 @@ class ProxyClassBuilder
         $rebuildEverything = false;
         if ($this->objectConfigurationCache->has('allAspectClassesUpToDate') === false) {
             $rebuildEverything = true;
-            $this->logger->info('Aspects have been modified, therefore rebuilding all target classes.');
+            $this->logger->info('Aspects have been modified, therefore rebuilding all target classes.', LogEnvironment::fromMethodName(__METHOD__));
             $this->objectConfigurationCache->set('allAspectClassesUpToDate', true);
         }
 

@@ -23,7 +23,7 @@ Neos:
         renderingGroups:
 
           notFoundExceptions:
-            matchingStatusCodes: [404]
+            matchingStatusCodes: [404, 410]
             options:
               logException: false
               templatePathAndFilename: 'resource://Neos.Flow/Private/Templates/Error/Default.html'

@@ -42,11 +42,11 @@ use Neos\Utility\TypeHandling;
  * >=
  *   Value is greater than or equal to operand
  * $=
- *   Value ends with operand (string-based)
+ *   Value ends with operand (string-based) or value's last element is equal to operand (array-based)
  * ^=
- *   Value starts with operand (string-based)
+ *   Value starts with operand (string-based) or value's first element is equal to operand (array-based)
  * *=
- *   Value contains operand (string-based)
+ *   Value contains operand (string-based) or value contains an element that is equal to operand (array based)
  * instanceof
  *   Checks if the value is an instance of the operand
  * !instanceof
@@ -234,11 +234,34 @@ class FilterOperation extends AbstractOperation
             case '>=':
                 return $value >= $operand;
             case '$=':
-                return strrpos($value, (string)$operand) === strlen($value) - strlen($operand);
+                if (is_array($value)) {
+                    if ($this->evaluateOperator(end($value), '=', $operand)) {
+                        return true;
+                    }
+                    return false;
+                } else {
+                    return strrpos($value, (string)$operand) === strlen($value) - strlen($operand);
+                }
             case '^=':
-                return strpos($value, (string)$operand) === 0;
+                if (is_array($value)) {
+                    if ($this->evaluateOperator(reset($value), '=', $operand)) {
+                        return true;
+                    }
+                    return false;
+                } else {
+                    return strpos($value, (string)$operand) === 0;
+                }
             case '*=':
-                return strpos($value, (string)$operand) !== false;
+                if (is_array($value)) {
+                    foreach ($value as $item) {
+                        if ($this->evaluateOperator($item, '=', $operand)) {
+                            return true;
+                        }
+                    }
+                    return false;
+                } else {
+                    return strpos($value, (string)$operand) !== false;
+                }
             case 'instanceof':
                 if ($this->operandIsSimpleType($operand)) {
                     return $this->handleSimpleTypeOperand($operand, $value);

@@ -11,6 +11,7 @@ namespace Neos\Flow\Persistence\Doctrine;
  * source code.
  */
 
+use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\Migrations\Configuration\Configuration;
 use Doctrine\DBAL\Migrations\Migration;
 use Doctrine\DBAL\Migrations\MigrationException;
@@ -23,9 +24,11 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\MappingException;
 use Doctrine\ORM\Tools\SchemaTool;
 use Doctrine\ORM\Tools\SchemaValidator;
+use Doctrine\ORM\Tools\ToolsException;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Package\PackageInterface;
 use Neos\Flow\Reflection\DocCommentParser;
+use Neos\Utility\Exception\FilesException;
 use Neos\Utility\ObjectAccess;
 use Neos\Flow\Utility\Exception;
 use Neos\Utility\Files;
@@ -38,11 +41,6 @@ use Neos\Utility\Files;
 class Service
 {
     const DOCTRINE_MIGRATIONSTABLENAME = 'flow_doctrine_migrationstatus';
-
-    /**
-     * @var array
-     */
-    protected $settings = [];
 
     /**
      * @var array
@@ -89,6 +87,7 @@ class Service
      *
      * @param string $outputPathAndFilename A file to write SQL to, instead of executing it
      * @return string
+     * @throws ToolsException
      */
     public function createSchema($outputPathAndFilename = null)
     {
@@ -126,6 +125,7 @@ class Service
      * Compiles the Doctrine proxy class code using the Doctrine ProxyFactory.
      *
      * @return void
+     * @throws FilesException
      */
     public function compileProxies()
     {
@@ -140,10 +140,11 @@ class Service
      * mapping information contains errors or not.
      *
      * @return array
+     * @throws \Doctrine\ORM\ORMException
      */
     public function getEntityStatus()
     {
-        $info = array();
+        $info = [];
         $entityClassNames = $this->entityManager->getConfiguration()->getMetadataDriverImpl()->getAllClassNames();
         foreach ($entityClassNames as $entityClassName) {
             try {
@@ -183,6 +184,7 @@ class Service
      * Return the configuration needed for Migrations.
      *
      * @return Configuration
+     * @throws DBALException
      */
     protected function getMigrationConfiguration()
     {
@@ -197,7 +199,7 @@ class Service
         /** @var \Doctrine\DBAL\Connection $connection */
         $connection = $this->entityManager->getConnection();
         $schemaManager = $connection->getSchemaManager();
-        if ($schemaManager->tablesExist(array('flow3_doctrine_migrationstatus')) === true) {
+        if ($schemaManager->tablesExist(['flow3_doctrine_migrationstatus']) === true) {
             $schemaManager->renameTable('flow3_doctrine_migrationstatus', self::DOCTRINE_MIGRATIONSTABLENAME);
         }
 
@@ -228,6 +230,7 @@ class Service
      * Returns the current migration status as an array.
      *
      * @return array
+     * @throws DBALException
      */
     public function getMigrationStatus()
     {
@@ -266,6 +269,8 @@ class Service
      * @param boolean $showMigrations
      * @param boolean $showDescriptions
      * @return string
+     * @throws \ReflectionException
+     * @throws DBALException
      */
     public function getFormattedMigrationStatus($showMigrations = false, $showDescriptions = false)
     {
@@ -330,6 +335,7 @@ class Service
      *
      * @param Version $version
      * @return string
+     * @throws \ReflectionException
      */
     protected function getPackageKeyFromMigrationVersion(Version $version)
     {
@@ -387,6 +393,7 @@ class Service
      * @param Version $version
      * @param DocCommentParser $parser
      * @return string
+     * @throws \ReflectionException
      */
     protected function getMigrationDescription(Version $version, DocCommentParser $parser)
     {
@@ -409,6 +416,8 @@ class Service
      * @param boolean $dryRun Whether to do a dry run or not
      * @param boolean $quiet Whether to do a quiet run or not
      * @return string
+     * @throws MigrationException
+     * @throws DBALException
      */
     public function executeMigrations($version = null, $outputPathAndFilename = null, $dryRun = false, $quiet = false)
     {
@@ -444,6 +453,8 @@ class Service
      * @param string $outputPathAndFilename A file to write SQL to, instead of executing it
      * @param boolean $dryRun Whether to do a dry run or not
      * @return string
+     * @throws MigrationException
+     * @throws DBALException
      */
     public function executeMigration($version, $direction = 'up', $outputPathAndFilename = null, $dryRun = false)
     {
@@ -468,6 +479,7 @@ class Service
      * @return void
      * @throws MigrationException
      * @throws \LogicException
+     * @throws DBALException
      */
     public function markAsMigrated($version, $markAsMigrated)
     {
@@ -515,7 +527,10 @@ class Service
      *
      * @param boolean $diffAgainstCurrent
      * @param string $filterExpression
-     * @return string Path to the new file
+     * @return array Path to the new file
+     * @throws DBALException
+     * @throws \Doctrine\ORM\ORMException
+     * @throws FilesException
      */
     public function generateMigration($diffAgainstCurrent = true, $filterExpression = null)
     {
@@ -579,7 +594,7 @@ class Service
      * @param string $name
      * @return string
      */
-    private function resolveTableName($name)
+    private function resolveTableName(string $name): string
     {
         $pos = strpos($name, '.');
 
@@ -592,8 +607,9 @@ class Service
      * @param string $down
      * @return string
      * @throws \RuntimeException
+     * @throws FilesException
      */
-    protected function writeMigrationClassToFile(Configuration $configuration, $up, $down)
+    protected function writeMigrationClassToFile(Configuration $configuration, ?string $up, ?string $down): string
     {
         $namespace = $configuration->getMigrationsNamespace();
         $className = 'Version' . date('YmdHis');
@@ -611,7 +627,7 @@ class Service
 <?php
 namespace $namespace;
 
-use Doctrine\DBAL\Migrations\AbstractMigration;
+use Doctrine\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
 
 /**
@@ -659,8 +675,9 @@ EOT;
      * @param Configuration $configuration
      * @param array $sql
      * @return string
+     * @throws DBALException
      */
-    protected function buildCodeFromSql(Configuration $configuration, array $sql)
+    protected function buildCodeFromSql(Configuration $configuration, array $sql): string
     {
         $currentPlatform = $configuration->getConnection()->getDatabasePlatform()->getName();
         $code = [];
@@ -690,6 +707,7 @@ EOT;
      * Get name of current database platform
      *
      * @return string
+     * @throws DBALException
      */
     public function getDatabasePlatformName()
     {

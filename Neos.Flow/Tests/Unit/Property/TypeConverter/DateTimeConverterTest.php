@@ -218,10 +218,10 @@ class DateTimeConverterTest extends UnitTestCase
      */
     public function convertFromIntegerOrDigitStringsWithConfigurationWithoutFormatDataProvider()
     {
-        return array(
-            array('1308174051'),
-            array(1308174051),
-        );
+        return [
+            ['1308174051'],
+            [1308174051],
+        ];
     }
 
     /**
@@ -238,7 +238,7 @@ class DateTimeConverterTest extends UnitTestCase
             ->with(DateTimeConverter::class, DateTimeConverter::CONFIGURATION_DATE_FORMAT)
             ->will($this->returnValue(null));
 
-        $date = $this->converter->convertFrom($source, 'DateTime', array(), $mockMappingConfiguration);
+        $date = $this->converter->convertFrom($source, 'DateTime', [], $mockMappingConfiguration);
         $this->assertInstanceOf(\DateTime::class, $date);
         $this->assertSame(strval($source), $date->format('U'));
     }
@@ -530,5 +530,18 @@ class DateTimeConverterTest extends UnitTestCase
 
         $this->assertInstanceOf($className, $date);
         $this->assertSame('Bar', $date->foo());
+    }
+
+    /**
+     * @test
+     */
+    public function canConvertFromJsonSerializedDateTime()
+    {
+        $sourceDate = new \DateTime('2005-08-15T15:52:01+00:00');
+        // Serialize to an array with json_decode from an json_encoded string
+        $source = json_decode(json_encode($sourceDate), true);
+        $convertedDate = $this->converter->convertFrom($source, 'DateTime');
+        $this->assertInstanceOf('DateTime', $convertedDate);
+        $this->assertSame($sourceDate->getTimestamp(), $convertedDate->getTimestamp());
     }
 }

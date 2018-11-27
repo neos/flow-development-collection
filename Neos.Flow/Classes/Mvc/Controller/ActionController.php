@@ -14,8 +14,8 @@ namespace Neos\Flow\Mvc\Controller;
 use Neos\Error\Messages\Result;
 use Neos\Flow\Annotations as Flow;
 use Neos\Error\Messages as Error;
-use Neos\Flow\Log\PsrSystemLoggerInterface;
 use Neos\Flow\Log\SystemLoggerInterface;
+use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Mvc\Exception\ForwardException;
 use Neos\Flow\Mvc\Exception\InvalidActionVisibilityException;
 use Neos\Flow\Mvc\Exception\InvalidArgumentTypeException;
@@ -32,7 +32,6 @@ use Neos\Flow\Property\TypeConverter\Error\TargetNotFoundError;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Utility\TypeHandling;
 use Psr\Log\LoggerInterface;
-use Psr\Log\LogLevel;
 
 /**
  * An HTTP based multi-action controller.
@@ -723,7 +722,7 @@ class ActionController extends AbstractController
                 $logMessage .= 'Error for ' . $propertyPath . ':  ' . $error->render() . PHP_EOL;
             }
         }
-        $this->logger->error($logMessage);
+        $this->logger->error($logMessage, LogEnvironment::fromMethodName(__METHOD__));
 
         return $outputMessage;
     }

@@ -37,7 +37,7 @@ class StringConverterTest extends UnitTestCase
      */
     public function checkMetadata()
     {
-        $this->assertEquals(array('string', 'integer', 'float', 'boolean', 'array', \DateTimeInterface::class), $this->converter->getSupportedSourceTypes(), 'Source types do not match');
+        $this->assertEquals(['string', 'integer', 'float', 'boolean', 'array', \DateTimeInterface::class], $this->converter->getSupportedSourceTypes(), 'Source types do not match');
         $this->assertEquals('string', $this->converter->getSupportedTargetType(), 'Target type does not match');
         $this->assertEquals(1, $this->converter->getPriority(), 'Priority does not match');
     }

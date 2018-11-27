@@ -17,7 +17,6 @@ use Neos\Flow\Composer\ComposerUtility as ComposerUtility;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\SignalSlot\Dispatcher;
-use Neos\Flow\Utility\Exception as UtilityException;
 use Neos\Utility\Files;
 use Neos\Utility\OpcodeCacheHelper;
 use Neos\Flow\Package\Exception as PackageException;
@@ -111,7 +110,7 @@ class PackageManager implements PackageManagerInterface
      */
     public function injectSettings(array $settings)
     {
-        $this->settings = $settings;
+        $this->settings = $settings['package'];
     }
 
     /**
@@ -341,10 +340,22 @@ class PackageManager implements PackageManagerInterface
             $manifest['type'] = PackageInterface::DEFAULT_COMPOSER_TYPE;
         }
 
+        $runComposerRequireForTheCreatedPackage = false;
+        if ($packagesPath === null) {
+            $composerManifestRepositories = ComposerUtility::getComposerManifest(FLOW_PATH_ROOT, 'repositories');
+            foreach ($composerManifestRepositories as $repository) {
+                if ($repository['type'] == 'path' && substr($repository['url'], 0, 2) == './' && substr($repository['url'], -2) == '/*') {
+                    $packagesPath = Files::getUnixStylePath(Files::concatenatePaths([FLOW_PATH_ROOT, substr($repository['url'], 0, -2)]));
+                    $runComposerRequireForTheCreatedPackage = true;
+                    break;
+                }
+            }
+        }
+
         if ($packagesPath === null) {
             $packagesPath = 'Application';
-            if (is_array($this->settings['package']['packagesPathByType']) && isset($this->settings['package']['packagesPathByType'][$manifest['type']])) {
-                $packagesPath = $this->settings['package']['packagesPathByType'][$manifest['type']];
+            if (is_array($this->settings['packagesPathByType']) && isset($this->settings['packagesPathByType'][$manifest['type']])) {
+                $packagesPath = $this->settings['packagesPathByType'][$manifest['type']];
             }
 
             $packagesPath = Files::getUnixStylePath(Files::concatenatePaths([$this->packagesBasePath, $packagesPath]));
@@ -365,6 +376,10 @@ class PackageManager implements PackageManagerInterface
         }
 
         $manifest = ComposerUtility::writeComposerManifest($packagePath, $packageKey, $manifest);
+
+        if ($runComposerRequireForTheCreatedPackage) {
+            exec('composer require ' . $manifest['name'] . ' @dev');
+        }
 
         $refreshedPackageStatesConfiguration = $this->rescanPackages();
         $this->packageStatesConfiguration = $refreshedPackageStatesConfiguration;

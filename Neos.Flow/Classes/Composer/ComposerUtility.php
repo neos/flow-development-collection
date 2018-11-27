@@ -160,20 +160,20 @@ class ComposerUtility
         }
 
         if (!isset($manifest['require']) || empty($manifest['require'])) {
-            $manifest['require'] = array('neos/flow' => '*');
+            $manifest['require'] = ['neos/flow' => '*'];
         }
 
         if (!isset($manifest['autoload'])) {
             $namespace = str_replace('.', '\\', $packageKey) . '\\';
-            $manifest['autoload'] = array('psr-4' => array($namespace => FlowPackageInterface::DIRECTORY_CLASSES));
+            $manifest['autoload'] = ['psr-4' => [$namespace => FlowPackageInterface::DIRECTORY_CLASSES]];
         }
 
         $manifest['extra']['neos']['package-key'] = $packageKey;
 
         if (defined('JSON_PRETTY_PRINT')) {
-            file_put_contents(Files::concatenatePaths(array($manifestPath, 'composer.json')), json_encode($manifest, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT));
+            file_put_contents(Files::concatenatePaths([$manifestPath, 'composer.json']), json_encode($manifest, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT));
         } else {
-            file_put_contents(Files::concatenatePaths(array($manifestPath, 'composer.json')), json_encode($manifest));
+            file_put_contents(Files::concatenatePaths([$manifestPath, 'composer.json']), json_encode($manifest));
         }
 
         return $manifest;

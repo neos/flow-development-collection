@@ -214,7 +214,7 @@ class SelectViewHelper extends AbstractFormFieldViewHelper
 
             $output .= $this->renderOptionTag($value, $label) . chr(10);
         } elseif (empty($options)) {
-            $options = array('' => '');
+            $options = ['' => ''];
         }
         foreach ($options as $value => $label) {
             $output .= $this->renderOptionTag($value, $label) . chr(10);
@@ -231,9 +231,9 @@ class SelectViewHelper extends AbstractFormFieldViewHelper
     protected function getOptions()
     {
         if (!is_array($this->arguments['options']) && !($this->arguments['options'] instanceof \Traversable)) {
-            return array();
+            return [];
         }
-        $options = array();
+        $options = [];
         foreach ($this->arguments['options'] as $key => $value) {
             if (is_object($value)) {
                 if ($this->hasArgument('optionValueField')) {
@@ -314,7 +314,7 @@ class SelectViewHelper extends AbstractFormFieldViewHelper
         if (!is_array($value) && !($value instanceof \Traversable)) {
             return $this->getOptionValueScalar($value);
         }
-        $selectedValues = array();
+        $selectedValues = [];
         foreach ($value as $selectedValueElement) {
             $selectedValues[] = $this->getOptionValueScalar($selectedValueElement);
         }
@@ -398,10 +398,10 @@ class SelectViewHelper extends AbstractFormFieldViewHelper
         switch ($translateBy) {
             case 'label':
                 $label =  isset($translationConfiguration['using']) && $translationConfiguration['using'] === 'value' ? $value : $label;
-                return $this->translator->translateByOriginalLabel($label, array(), null, $localeObject, $sourceName, $packageKey);
+                return $this->translator->translateByOriginalLabel($label, [], null, $localeObject, $sourceName, $packageKey);
             case 'id':
                 $id =  $prefix . (isset($translationConfiguration['using']) && $translationConfiguration['using'] === 'label' ? $label : $value);
-                $translation = $this->translator->translateById($id, array(), null, $localeObject, $sourceName, $packageKey);
+                $translation = $this->translator->translateById($id, [], null, $localeObject, $sourceName, $packageKey);
                 return ($translation !== null) ? $translation : $label;
             default:
                 throw new ViewHelper\Exception('You can only request to translate by "label" or by "id", but asked for "' . $translateBy . '" in your SelectViewHelper tag.', 1340050647);

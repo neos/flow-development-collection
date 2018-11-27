@@ -282,7 +282,7 @@ class ReflectionService
      */
     public function injectSettings(array $settings)
     {
-        $this->settings = $settings;
+        $this->settings = $settings['reflection'];
     }
 
     /**
@@ -348,7 +348,7 @@ class ReflectionService
         }
 
         $this->annotationReader = new AnnotationReader();
-        foreach ($this->settings['reflection']['ignoredTags'] as $tagName => $ignoreFlag) {
+        foreach ($this->settings['ignoredTags'] as $tagName => $ignoreFlag) {
             if ($ignoreFlag === true) {
                 AnnotationReader::addGlobalIgnoredName($tagName);
             }
@@ -1195,11 +1195,11 @@ class ReflectionService
      */
     protected function isTagIgnored($tagName)
     {
-        if (isset($this->settings['reflection']['ignoredTags'][$tagName]) && $this->settings['reflection']['ignoredTags'][$tagName] === true) {
+        if (isset($this->settings['ignoredTags'][$tagName]) && $this->settings['ignoredTags'][$tagName] === true) {
             return true;
         }
         // Make this setting backwards compatible with old array schema (deprecated since 3.0)
-        if (in_array($tagName, $this->settings['reflection']['ignoredTags'], true)) {
+        if (in_array($tagName, $this->settings['ignoredTags'], true)) {
             return true;
         }
 
@@ -1406,7 +1406,7 @@ class ReflectionService
         $paramAnnotations = $method->isTaggedWith('param') ? $method->getTagValues('param') : [];
 
         $this->classReflectionData[$className][self::DATA_CLASS_METHODS][$methodName][self::DATA_METHOD_PARAMETERS][$parameter->getName()] = $this->convertParameterReflectionToArray($parameter, $method);
-        if ($this->settings['reflection']['logIncorrectDocCommentHints'] !== true) {
+        if ($this->settings['logIncorrectDocCommentHints'] !== true) {
             return;
         }
 
@@ -1442,24 +1442,26 @@ class ReflectionService
      */
     protected function expandType(ClassReflection $class, $type)
     {
+        $typeWithoutNull = TypeHandling::stripNullableType($type);
+        $isNullable = $typeWithoutNull !== $type;
         // expand "SomeType<SomeElementType>" to "\SomeTypeNamespace\SomeType<\ElementTypeNamespace\ElementType>"
         if (strpos($type, '<') !== false) {
-            $typeParts = explode('<', $type);
+            $typeParts = explode('<', $typeWithoutNull);
             $type = $typeParts[0];
             $elementType = rtrim($typeParts[1], '>');
 
-            return $this->expandType($class, $type) . '<' . $this->expandType($class, $elementType) . '>';
+            return $this->expandType($class, $type) . '<' . $this->expandType($class, $elementType) . '>' . ($isNullable ? '|null' : '');
         }
 
         // skip simple types and types with fully qualified namespaces
         if ($type === 'mixed' || $type[0] === '\\' || TypeHandling::isSimpleType($type)) {
-            return TypeHandling::normalizeType($type);
+            return TypeHandling::normalizeType($type) . ($isNullable ? '|null' : '');
         }
 
         // we try to find the class relative to the current namespace...
-        $possibleFullyQualifiedClassName = sprintf('%s\\%s', $class->getNamespaceName(), $type);
+        $possibleFullyQualifiedClassName = sprintf('%s\\%s', $class->getNamespaceName(), $typeWithoutNull);
         if (class_exists($possibleFullyQualifiedClassName) || interface_exists($possibleFullyQualifiedClassName)) {
-            return $possibleFullyQualifiedClassName;
+            return $possibleFullyQualifiedClassName . ($isNullable ? '|null' : '');
         }
 
         // and then we try to find "use" statements for the class.
@@ -1470,12 +1472,12 @@ class ReflectionService
         $useStatementsForClass = $this->useStatementsForClassCache[$className];
 
         // ... and try to expand them
-        $typeParts = explode('\\', $type, 2);
+        $typeParts = explode('\\', $typeWithoutNull, 2);
         $lowercasedFirstTypePart = strtolower($typeParts[0]);
         if (isset($useStatementsForClass[$lowercasedFirstTypePart])) {
             $typeParts[0] = $useStatementsForClass[$lowercasedFirstTypePart];
 
-            return implode('\\', $typeParts);
+            return implode('\\', $typeParts) . ($isNullable ? '|null' : '');
         }
 
         return $type;

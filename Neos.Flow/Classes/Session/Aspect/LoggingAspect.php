@@ -51,7 +51,11 @@ class LoggingAspect
     {
         $session = $joinPoint->getProxy();
         if ($session->isStarted()) {
-            $this->logger->info(sprintf('%s: Started session with id %s.', $this->getClassName($joinPoint), $session->getId()));
+            $this->logger->info(sprintf('%s: Started session with id %s.', $this->getClassName($joinPoint), $session->getId()), [
+                'packageKey' => 'Neos.Flow',
+                'className' => $joinPoint->getClassName(),
+                'methodName' => $joinPoint->getMethodName()
+            ]);
         }
     }
 
@@ -111,7 +115,11 @@ class LoggingAspect
         $oldId = $session->getId();
         $newId = $joinPoint->getAdviceChain()->proceed($joinPoint);
         if ($session->isStarted()) {
-            $this->logger->info(sprintf('%s: Changed session id from %s to %s', $this->getClassName($joinPoint), $oldId, $newId));
+            $this->logger->info(sprintf('%s: Changed session id from %s to %s', $this->getClassName($joinPoint), $oldId, $newId), [
+                'packageKey' => 'Neos.Flow',
+                'className' => $joinPoint->getClassName(),
+                'methodName' => $joinPoint->getMethodName()
+            ]);
         }
         return $newId;
     }
@@ -127,11 +135,23 @@ class LoggingAspect
     {
         $sessionRemovalCount = $joinPoint->getResult();
         if ($sessionRemovalCount > 0) {
-            $this->logger->info(sprintf('%s: Triggered garbage collection and removed %s expired sessions.', $this->getClassName($joinPoint), $sessionRemovalCount));
+            $this->logger->info(sprintf('%s: Triggered garbage collection and removed %s expired sessions.', $this->getClassName($joinPoint), $sessionRemovalCount), [
+                'packageKey' => 'Neos.Flow',
+                'className' => $joinPoint->getClassName(),
+                'methodName' => $joinPoint->getMethodName()
+            ]);
         } elseif ($sessionRemovalCount === 0) {
-            $this->logger->info(sprintf('%s: Triggered garbage collection but no sessions needed to be removed.', $this->getClassName($joinPoint)));
+            $this->logger->info(sprintf('%s: Triggered garbage collection but no sessions needed to be removed.', $this->getClassName($joinPoint)), [
+                'packageKey' => 'Neos.Flow',
+                'className' => $joinPoint->getClassName(),
+                'methodName' => $joinPoint->getMethodName()
+            ]);
         } elseif ($sessionRemovalCount === false) {
-            $this->logger->warning(sprintf('%s: Ommitting garbage collection because another process is already running. Consider lowering the GC propability if these messages appear a lot.', $this->getClassName($joinPoint)));
+            $this->logger->warning(sprintf('%s: Ommitting garbage collection because another process is already running. Consider lowering the GC propability if these messages appear a lot.', $this->getClassName($joinPoint)), [
+                'packageKey' => 'Neos.Flow',
+                'className' => $joinPoint->getClassName(),
+                'methodName' => $joinPoint->getMethodName()
+            ]);
         }
     }
 

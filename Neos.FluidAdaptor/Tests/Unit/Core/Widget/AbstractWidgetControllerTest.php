@@ -49,14 +49,14 @@ class AbstractWidgetControllerTest extends UnitTestCase
         $httpRequest = Request::create(new Uri('http://localhost'));
         $mockActionRequest->expects($this->any())->method('getHttpRequest')->will($this->returnValue($httpRequest));
 
-        $expectedWidgetConfiguration = array('foo' => uniqid());
+        $expectedWidgetConfiguration = ['foo' => uniqid()];
 
         $widgetContext = new WidgetContext();
         $widgetContext->setAjaxWidgetConfiguration($expectedWidgetConfiguration);
 
         $mockActionRequest->expects($this->atLeastOnce())->method('getInternalArgument')->with('__widgetContext')->will($this->returnValue($widgetContext));
 
-        $abstractWidgetController = $this->getAccessibleMock(\Neos\FluidAdaptor\Core\Widget\AbstractWidgetController::class, array('resolveActionMethodName', 'initializeActionMethodArguments', 'initializeActionMethodValidators', 'mapRequestArgumentsToControllerArguments', 'detectFormat', 'resolveView', 'callActionMethod'));
+        $abstractWidgetController = $this->getAccessibleMock(\Neos\FluidAdaptor\Core\Widget\AbstractWidgetController::class, ['resolveActionMethodName', 'initializeActionMethodArguments', 'initializeActionMethodValidators', 'mapRequestArgumentsToControllerArguments', 'detectFormat', 'resolveView', 'callActionMethod']);
         $abstractWidgetController->_set('mvcPropertyMappingConfigurationService', $this->createMock(\Neos\Flow\Mvc\Controller\MvcPropertyMappingConfigurationService::class));
 
         $abstractWidgetController->processRequest($mockActionRequest, $mockResponse);

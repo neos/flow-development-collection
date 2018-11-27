@@ -49,7 +49,7 @@ class AutocompleteViewHelper extends AbstractWidgetViewHelper
      * @param array $configuration
      * @return string
      */
-    public function render(QueryResultInterface $objects, $for, $searchProperty, array $configuration = array('limit' => 10))
+    public function render(QueryResultInterface $objects, $for, $searchProperty, array $configuration = ['limit' => 10])
     {
         return $this->initiateSubRequest();
     }

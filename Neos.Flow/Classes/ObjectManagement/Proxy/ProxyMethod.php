@@ -11,10 +11,8 @@ namespace Neos\Flow\ObjectManagement\Proxy;
  * source code.
  */
 
-use Doctrine\ORM\Mapping as ORM;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Reflection\ReflectionService;
-use Neos\Flow\Utility\TypeHandling;
 
 /**
  * Representation of a method within a proxy class
@@ -251,6 +249,7 @@ class ProxyMethod
     {
         $methodParametersCode = '';
         $methodParameterTypeName = '';
+        $nullableSign = '';
         $defaultValue = '';
         $byReferenceSign = '';
 
@@ -267,11 +266,16 @@ class ProxyMethod
                         $methodParameterTypeName = 'array';
                     } elseif ($methodParameterInfo['scalarDeclaration']) {
                         $methodParameterTypeName = $methodParameterInfo['type'];
+                    } elseif ($methodParameterInfo['class'] !== null) {
+                        $methodParameterTypeName = '\\' . $methodParameterInfo['class'];
                     } else {
-                        $methodParameterTypeName = ($methodParameterInfo['class'] === null) ? '' : '\\' . $methodParameterInfo['class'];
+                        $methodParameterTypeName = '';
+                    }
+                    if (\PHP_MAJOR_VERSION >= 7 && \PHP_MINOR_VERSION >= 1) {
+                        $nullableSign = $methodParameterInfo['allowsNull'] ? '?' : '';
                     }
                     if ($methodParameterInfo['optional'] === true) {
-                        $rawDefaultValue = (isset($methodParameterInfo['defaultValue']) ? $methodParameterInfo['defaultValue'] : null);
+                        $rawDefaultValue = $methodParameterInfo['defaultValue'] ?? null;
                         if ($rawDefaultValue === null) {
                             $defaultValue = ' = NULL';
                         } elseif (is_bool($rawDefaultValue)) {
@@ -287,7 +291,13 @@ class ProxyMethod
                     $byReferenceSign = ($methodParameterInfo['byReference'] ? '&' : '');
                 }
 
-                $methodParametersCode .= ($methodParametersCount > 0 ? ', ' : '') . ($methodParameterTypeName ? $methodParameterTypeName . ' ' : '') . $byReferenceSign . '$' . $methodParameterName . $defaultValue;
+                $methodParametersCode .= ($methodParametersCount > 0 ? ', ' : '')
+                    . ($methodParameterTypeName ? $nullableSign . $methodParameterTypeName . ' ' : '')
+                    . $byReferenceSign
+                    . '$'
+                    . $methodParameterName
+                    . $defaultValue
+                ;
                 $methodParametersCount++;
             }
         }
