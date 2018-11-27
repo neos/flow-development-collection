@@ -128,7 +128,8 @@ class CacheCommandController extends CommandController
      * Flush all caches
      *
      * The flush command flushes all caches (including code caches) which have been
-     * registered with Flow's Cache Manager. It also removes any session data.
+     * registered with Flow's Cache Manager. It will NOT remove any session data, unless
+     * you specifically configure the session caches to not be persistent.
      *
      * If fatal errors caused by a package prevent the compile time bootstrap
      * from running, the removal of any temporary data can be forced by specifying

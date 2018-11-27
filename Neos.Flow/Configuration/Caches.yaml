@@ -124,8 +124,10 @@ Flow_Security_Cryptography_HashService:
 # Flow_Session_*
 Flow_Session_MetaData:
   backend: Neos\Cache\Backend\FileBackend
+  persistent: true
 Flow_Session_Storage:
   backend: Neos\Cache\Backend\FileBackend
+  persistent: true
 
 #  Aop filter expressions that need to be evaluated at runtime.
 Flow_Aop_RuntimeExpressions:
