@@ -27,7 +27,7 @@ use Neos\Flow\Core\LockManager;
 use Neos\Flow\Mvc\Exception\StopActionException;
 use Neos\Flow\ObjectManagement\ObjectManager;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use Neos\Flow\Package\PackageManagerInterface;
+use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Utility\Environment;
 use Neos\Utility\TypeHandling;
 
@@ -51,7 +51,7 @@ class CacheCommandController extends CommandController
     protected $lockManager;
 
     /**
-     * @var PackageManagerInterface
+     * @var PackageManager
      */
     protected $packageManager;
 
@@ -89,10 +89,10 @@ class CacheCommandController extends CommandController
     }
 
     /**
-     * @param PackageManagerInterface $packageManager
+     * @param PackageManager $packageManager
      * @return void
      */
-    public function injectPackageManager(PackageManagerInterface $packageManager)
+    public function injectPackageManager(PackageManager $packageManager)
     {
         $this->packageManager =  $packageManager;
     }

@@ -15,7 +15,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Request as HttpRequest;
 use Neos\Flow\ObjectManagement\Exception\UnknownObjectException;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use Neos\Flow\Package\PackageManagerInterface;
+use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Security\Cryptography\HashService;
 use Neos\Flow\SignalSlot\Dispatcher as SignalSlotDispatcher;
 use Neos\Utility\Arrays;
@@ -41,7 +41,7 @@ class ActionRequest implements RequestInterface
 
     /**
      * @Flow\Inject
-     * @var PackageManagerInterface
+     * @var PackageManager
      */
     protected $packageManager;
 

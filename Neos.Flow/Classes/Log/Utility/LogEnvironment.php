@@ -18,7 +18,6 @@ use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Package\PackageInterface;
 use Neos\Flow\Package\PackageKeyAwareInterface;
 use Neos\Flow\Package\PackageManager;
-use Neos\Flow\Package\PackageManagerInterface;
 use Neos\Flow\Annotations as Flow;
 
 abstract class LogEnvironment
@@ -91,7 +90,7 @@ abstract class LogEnvironment
                 return [];
             }
 
-            /** @var PackageManagerInterface $packageManager */
+            /** @var PackageManager $packageManager */
             $packageManager = Bootstrap::$staticObjectManager->get(PackageManager::class);
 
             /** @var PackageInterface $package */

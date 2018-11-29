@@ -27,6 +27,7 @@ use Doctrine\ORM\Tools\SchemaValidator;
 use Doctrine\ORM\Tools\ToolsException;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Package\PackageInterface;
+use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Reflection\DocCommentParser;
 use Neos\Utility\Exception\FilesException;
 use Neos\Utility\ObjectAccess;
@@ -55,7 +56,7 @@ class Service
 
     /**
      * @Flow\Inject
-     * @var \Neos\Flow\Package\PackageManagerInterface
+     * @var PackageManager
      */
     protected $packageManager;
 
