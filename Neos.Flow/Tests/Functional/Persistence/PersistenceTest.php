@@ -538,6 +538,26 @@ class PersistenceTest extends FunctionalTestCase
 
     /**
      * @test
+     */
+    public function immutableDateTimeIsPersistedAndIsReconstituted()
+    {
+        $dateTimeTz = new \DateTimeImmutable('2008-11-16 19:03:30', new \DateTimeZone(ini_get('date.timezone')));
+        $extendedTypesEntity = new Fixtures\ExtendedTypesEntity();
+        $extendedTypesEntity->setDateTimeImmutable($dateTimeTz);
+        $this->persistenceManager->add($extendedTypesEntity);
+        $this->persistenceManager->persistAll();
+        $this->persistenceManager->clearState();
+
+        /**  @var Fixtures\ExtendedTypesEntity $persistedExtendedTypesEntity */
+        $persistedExtendedTypesEntity = $this->extendedTypesEntityRepository->findAll()->getFirst();
+        $this->assertInstanceOf(Fixtures\ExtendedTypesEntity::class, $persistedExtendedTypesEntity);
+        $this->assertInstanceOf('DateTimeImmutable', $persistedExtendedTypesEntity->getDateTimeImmutable());
+        $this->assertEquals($dateTimeTz->getTimestamp(), $persistedExtendedTypesEntity->getDateTimeImmutable()->getTimestamp());
+        $this->assertEquals(ini_get('date.timezone'), $persistedExtendedTypesEntity->getDateTimeImmutable()->getTimezone()->getName());
+    }
+
+    /**
+     * @test
      * @todo We need different tests at least for two types of database.
      * * 1. mysql without timezone support.
      * * 2. a db with timezone support.
