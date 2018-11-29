@@ -732,6 +732,9 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
                         case 'DateTime':
                             $mapping['type'] = 'datetime';
                             break;
+                        case 'DateTimeImmutable':
+                            $mapping['type'] = 'datetime_immutable';
+                            break;
                         case 'string':
                         case 'integer':
                         case 'boolean':

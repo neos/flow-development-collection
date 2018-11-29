@@ -169,8 +169,8 @@ Persistent Cache
 Caches can be marked as being "persistent" which lets the Cache Manager skip the cache while flushing all other
 caches or flushing caches by tag. Persistent caches make for a versatile and easy to use low-level key-value-store.
 Simple data like tokens, preferences or the like which usually would be stored in the file system, can be stored in
-such a cache. Flow uses a persistent cache for storing an encryption key for the Hash Service. The configuration for
-this cache looks like this:
+such a cache. Flow uses a persistent cache for storing an encryption key for the Hash Service and Sessions. The
+configuration for this cache looks like this:
 
 *Example: Persistent cache settings* ::
 
@@ -446,7 +446,7 @@ to clean up hard disk space or memory.
 .. warning::
 
 	This backend is php-capable. Nevertheless it cannot be used to store the proxy-classes
-	from the ``FLOW_Object_Classes`` Cache. It can be used for other code-caches like
+	from the ``Flow_Object_Classes`` Cache. It can be used for other code-caches like
 	``Fluid_TemplateCache``, ``Eel_Expression_Code`` or ``Flow_Aop_RuntimeExpressions``.
 	This can be usefull in certain situations to avoid file operations on production
 	environments. If you want to use this backend for code-caching make sure that
