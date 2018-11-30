@@ -490,29 +490,35 @@ class ResourceStreamWrapper implements StreamWrapperInterface
      */
     protected function evaluateResourcePath($requestedPath, $checkForExistence = true)
     {
-        if (substr($requestedPath, 0, strlen(self::SCHEME)) !== self::SCHEME) {
+        $requestPathParts = explode('://', $requestedPath, 2);
+        if ($requestPathParts[0] !== self::SCHEME) {
             throw new \InvalidArgumentException('The ' . __CLASS__ . ' only supports the \'' . self::SCHEME . '\' scheme.', 1256052544);
         }
 
-        $uriParts = Functions::parse_url($requestedPath);
-        if (!is_array($uriParts) || !isset($uriParts['host'])) {
+        if (!isset($requestPathParts[1])) {
             return false;
         }
 
-        if (preg_match('/^[0-9a-f]{40}$/i', $uriParts['host']) === 1) {
-            $resource = $this->resourceManager->getResourceBySha1($uriParts['host']);
+        $resourceUriWithoutScheme = $requestPathParts[1];
+
+        if (strpos($resourceUriWithoutScheme, '/') === false && preg_match('/^[0-9a-f]{40}$/i', $resourceUriWithoutScheme) === 1) {
+            $resource = $this->resourceManager->getResourceBySha1($resourceUriWithoutScheme);
             return $this->resourceManager->getStreamByResource($resource);
         }
 
-        if (!$this->packageManager->isPackageAvailable($uriParts['host'])) {
-            throw new ResourceException(sprintf('Invalid resource URI "%s": Package "%s" is not available.', $requestedPath, $uriParts['host']), 1309269952);
+        list($packageName, $path) = explode('/', $resourceUriWithoutScheme, 2);
+
+        try {
+            $package = $this->packageManager->getPackage($packageName);
+        } catch (\Neos\Flow\Package\Exception\UnknownPackageException $packageException) {
+            throw new ResourceException(sprintf('Invalid resource URI "%s": Package "%s" is not available.', $requestedPath, $packageName), 1309269952, $packageException);
         }
 
-        $package = $this->packageManager->getPackage($uriParts['host']);
         if (!$package instanceof FlowPackageInterface) {
             return false;
         }
-        $resourceUri = Files::concatenatePaths([$package->getResourcesPath(), $uriParts['path']]);
+
+        $resourceUri = Files::concatenatePaths([$package->getResourcesPath(), $path]);
 
         if ($checkForExistence === false || file_exists($resourceUri)) {
             return $resourceUri;
