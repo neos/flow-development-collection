@@ -13,7 +13,7 @@ namespace Neos\Flow\Tests\Unit\ResourceManagement\Streams;
 
 use Neos\Flow\Package\FlowPackageInterface;
 use org\bovigo\vfs\vfsStream;
-use Neos\Flow\Package\PackageManagerInterface;
+use Neos\Flow\Package\PackageManager;
 use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Flow\ResourceManagement\Streams\ResourceStreamWrapper;
@@ -30,7 +30,7 @@ class ResourceStreamWrapperTest extends UnitTestCase
     protected $resourceStreamWrapper;
 
     /**
-     * @var PackageManagerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var PackageManager|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $mockPackageManager;
 
@@ -45,7 +45,7 @@ class ResourceStreamWrapperTest extends UnitTestCase
 
         $this->resourceStreamWrapper = new ResourceStreamWrapper();
 
-        $this->mockPackageManager = $this->createMock(PackageManagerInterface::class);
+        $this->mockPackageManager = $this->createMock(PackageManager::class);
         $this->inject($this->resourceStreamWrapper, 'packageManager', $this->mockPackageManager);
 
         $this->mockResourceManager = $this->getMockBuilder(ResourceManager::class)->disableOriginalConstructor()->getMock();

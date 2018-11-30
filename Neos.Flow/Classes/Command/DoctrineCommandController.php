@@ -21,7 +21,7 @@ use Neos\Flow\Log\ThrowableStorageInterface;
 use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Mvc\Exception\StopActionException;
 use Neos\Flow\Package;
-use Neos\Flow\Package\PackageManagerInterface;
+use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Persistence\Doctrine\Service as DoctrineService;
 use Neos\Utility\Files;
 use Psr\Log\LoggerInterface;
@@ -46,7 +46,7 @@ class DoctrineCommandController extends CommandController
 
     /**
      * @Flow\Inject
-     * @var PackageManagerInterface
+     * @var PackageManager
      */
     protected $packageManager;
 

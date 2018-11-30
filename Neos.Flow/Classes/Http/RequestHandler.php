@@ -17,7 +17,7 @@ use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Http\Component\ComponentChain;
 use Neos\Flow\Http\Component\ComponentContext;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use Neos\Flow\Package\PackageManagerInterface;
+use Neos\Flow\Package\PackageManager;
 use Psr\Http\Message\ResponseInterface;
 
 /**
@@ -228,7 +228,7 @@ class RequestHandler implements HttpRequestHandlerInterface
             return 'Flow' . ($applicationIsNotFlow ? ' ' . $applicationName : '');
         }
 
-        $packageManager = $objectManager->get(PackageManagerInterface::class);
+        $packageManager = $objectManager->get(PackageManager::class);
         $flowPackage = $packageManager->getPackage('Neos.Flow');
         $applicationPackage = $applicationIsNotFlow ? $packageManager->getPackage($applicationPackageKey) : null;
 

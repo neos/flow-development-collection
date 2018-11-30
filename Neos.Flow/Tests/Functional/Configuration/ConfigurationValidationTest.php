@@ -14,7 +14,6 @@ namespace Neos\Flow\Tests\Functional\Configuration;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Configuration\ConfigurationSchemaValidator;
-use Neos\Flow\Package\PackageManagerInterface;
 use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Core\ApplicationContext;
 use Neos\Error\Messages\Error;
@@ -79,7 +78,7 @@ class ConfigurationValidationTest extends FunctionalTestCase
         $configurationPackages = [];
 
         // get all packages and select the ones we want to test
-        $temporaryPackageManager = $this->objectManager->get(PackageManagerInterface::class);
+        $temporaryPackageManager = $this->objectManager->get(PackageManager::class);
         foreach ($temporaryPackageManager->getAvailablePackages() as $package) {
             if (in_array($package->getPackageKey(), $this->getSchemaPackageKeys())) {
                 $schemaPackages[$package->getPackageKey()] = $package;

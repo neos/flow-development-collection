@@ -13,7 +13,7 @@ namespace Neos\Flow\Command;
 
 use Neos\Error\Messages\Result;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Package\PackageManagerInterface;
+use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Cli\CommandController;
 use Neos\Error\Messages\Error;
 use Neos\Error\Messages\Notice;
@@ -37,7 +37,7 @@ class SchemaCommandController extends CommandController
 
     /**
      * @Flow\Inject
-     * @var PackageManagerInterface
+     * @var PackageManager
      */
     protected $packageManager;
 

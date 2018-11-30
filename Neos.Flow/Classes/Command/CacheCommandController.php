@@ -27,7 +27,7 @@ use Neos\Flow\Core\LockManager;
 use Neos\Flow\Mvc\Exception\StopActionException;
 use Neos\Flow\ObjectManagement\ObjectManager;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use Neos\Flow\Package\PackageManagerInterface;
+use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Utility\Environment;
 use Neos\Utility\TypeHandling;
 
@@ -51,7 +51,7 @@ class CacheCommandController extends CommandController
     protected $lockManager;
 
     /**
-     * @var PackageManagerInterface
+     * @var PackageManager
      */
     protected $packageManager;
 
@@ -89,10 +89,10 @@ class CacheCommandController extends CommandController
     }
 
     /**
-     * @param PackageManagerInterface $packageManager
+     * @param PackageManager $packageManager
      * @return void
      */
-    public function injectPackageManager(PackageManagerInterface $packageManager)
+    public function injectPackageManager(PackageManager $packageManager)
     {
         $this->packageManager =  $packageManager;
     }
@@ -128,7 +128,8 @@ class CacheCommandController extends CommandController
      * Flush all caches
      *
      * The flush command flushes all caches (including code caches) which have been
-     * registered with Flow's Cache Manager. It also removes any session data.
+     * registered with Flow's Cache Manager. It will NOT remove any session data, unless
+     * you specifically configure the session caches to not be persistent.
      *
      * If fatal errors caused by a package prevent the compile time bootstrap
      * from running, the removal of any temporary data can be forced by specifying

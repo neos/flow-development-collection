@@ -35,8 +35,8 @@
 
         "doctrine/orm": "~2.6.0",
         "doctrine/migrations": "~1.6.0",
-        "doctrine/dbal": "~2.7.0",
-        "doctrine/common": ">=2.4,<2.8-dev",
+        "doctrine/dbal": "~2.8.0",
+        "doctrine/common": "~2.4",
 
         "symfony/yaml": "~4.0.0",
         "symfony/dom-crawler": "~4.0.0",

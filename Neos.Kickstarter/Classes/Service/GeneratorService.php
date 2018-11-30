@@ -13,6 +13,7 @@ namespace Neos\Kickstarter\Service;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\I18n\Xliff\V12\XliffParser;
+use Neos\Flow\Package\PackageManager;
 use Neos\FluidAdaptor\View\StandaloneView;
 use Neos\Flow\Core\ClassLoader;
 use Neos\Flow\Package\PackageInterface;
@@ -32,7 +33,7 @@ class GeneratorService
     protected $objectManager;
 
     /**
-     * @var \Neos\Flow\Package\PackageManagerInterface
+     * @var PackageManager
      * @Flow\Inject
      */
     protected $packageManager;
