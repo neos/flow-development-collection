@@ -176,10 +176,10 @@ class ConsoleOutput
      *
      * @param string|array $question The question to ask. If an array each array item is turned into one line of a multi-line question
      * @param string $default The default answer if none is given by the user
-     * @return string The user answer
+     * @return mixed The user answer
      * @throws \RuntimeException If there is no data to read in the input stream
      */
-    public function ask($question, string $default = null): string
+    public function ask($question, string $default = null)
     {
         $question = new Question($this->combineQuestion($question), $default);
 
