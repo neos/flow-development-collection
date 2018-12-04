@@ -764,7 +764,7 @@ class Scripts
         $configuredPhpBinaryPathAndFilename = realpath($phpBinaryPathAndFilename);
 
         // if the configured PHP binary is empty here, the file does not exist. We ignore that here because it is checked later in the script.
-        if (strlen($configuredPhpBinaryPathAndFilename) === 0) {
+        if ($configuredPhpBinaryPathAndFilename === false || strlen($configuredPhpBinaryPathAndFilename) === 0) {
             return;
         }
 
