@@ -817,7 +817,24 @@ class RequestTest extends UnitTestCase
                         ]
                     ]
                 ]
-            ]
+            ],
+            'f0' => [
+                'name' => [
+                    'f1/f2' => 'f.txt',
+                ],
+                'type' => [
+                    'f1/f2' => 'text/plain',
+                ],
+                'tmp_name' => [
+                    'f1/f2' => '/private/var/tmp/php5469a0',
+                ],
+                'error' => [
+                    'f1/f2' => 0,
+                ],
+                'size' => [
+                    'f1/f2' => 100,
+                ],
+            ],
         ];
 
         $untangledFiles = [
@@ -878,7 +895,16 @@ class RequestTest extends UnitTestCase
                         ]
                     ]
                 ]
-            ]
+            ],
+            'f0' => [
+                'f1/f2' => [
+                    'name' => 'f.txt',
+                    'type' => 'text/plain',
+                    'tmp_name' => '/private/var/tmp/php5469a0',
+                    'error' => 0,
+                    'size' => 100,
+                ]
+            ],
         ];
 
         $result = UploadedFilesHelper::untangleFilesArray($convolutedFiles);
