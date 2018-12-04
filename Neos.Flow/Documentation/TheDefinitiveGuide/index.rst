@@ -7,6 +7,5 @@ The Definitive Guide
 	PartI/index
 	PartII/index
 	PartIII/index
-	PartIV/index
 	PartV/index
 	Contributors
