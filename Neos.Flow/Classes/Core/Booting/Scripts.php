@@ -792,19 +792,19 @@ class Scripts
             return;
         }
 
-        exec($phpCommand . ' -r "echo phpversion();"', $output, $result);
+        exec($phpCommand . ' -r "echo PHP_VERSION;"', $output, $result);
 
         if ($result !== 0) {
             return;
         }
-        $runningPHPVersion = phpversion();
+
         $configuredPHPVersion = $output[0];
-        if ($runningPHPVersion !== $configuredPHPVersion) {
+        if (array_slice(explode('.', $configuredPHPVersion), 0, 2) !== array_slice(explode('.', PHP_VERSION), 0, 2);) {
             throw new Exception(sprintf('You are executing Neos/Flow with a PHP version different from the one Flow is configured to use internally. ' .
                 'Flow is running with with PHP "%s", while the PHP version Flow is configured to use for subrequests is "%s". Make sure to configure Flow to ' .
                 'use the same PHP version by setting the "Neos.Flow.core.phpBinaryPathAndFilename" configuration option to a PHP-CLI binary of the version ' .
                 '%s. Flush the caches by removing the folder Data/Temporary before executing Flow/Neos again.',
-                $runningPHPVersion, $configuredPHPVersion, $runningPHPVersion), 1536563428);
+                PHP_VERSION, $configuredPHPVersion, PHP_VERSION), 1536563428);
         }
     }
 
