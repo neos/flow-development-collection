@@ -336,19 +336,19 @@ impact.
 
 .. note::
 
-	The ``SimpleFileBackend`` is called like that, because it does not support lifetime for
+  The ``SimpleFileBackend`` is called like that, because it does not support lifetime for
   cache entries! Nor does it support tagging cache entries!
 
 .. note::
 
-	Under heavy load the maximum ``set()`` performance depends on the maximum write and
-	seek performance of the hard disk. If for example the server system shows lots of I/O
-	wait in top, the file backend has reached this bound. A different storage strategy
-	like RAM disks, battery backed up RAID systems or SSD hard disks might help then.
+  Under heavy load the maximum ``set()`` performance depends on the maximum write and
+  seek performance of the hard disk. If for example the server system shows lots of I/O
+  wait in top, the file backend has reached this bound. A different storage strategy
+  like RAM disks, battery backed up RAID systems or SSD hard disks might help then.
 
 .. note::
-	The SimpleFileBackend and FileBackend are the only cache backends that are capable of
-	storing the ``Flow_Object_Classes`` Cache.
+  The SimpleFileBackend and FileBackend are the only cache backends that are capable of
+  storing the ``Flow_Object_Classes`` Cache.
 
 Options
 ~~~~~~~
@@ -745,8 +745,8 @@ Options
 +=======================+==========================================+===========+=========+=========+
 | setInAllBackends      | Should values given to the backend be    | No        | bool    | true    |
 |                       | replicated into all configured and       |           |         |         |
-|                       |  available backends?                     |           |         |         |
-|                       | Generally that is desireable for         |           |         |         |
+|                       | available backends?                      |           |         |         |
+|                       | Generally that is desirable for          |           |         |         |
 |                       | fallback purposes, but to avoid too much |           |         |         |
 |                       | duplication at the cost of performance on|           |         |         |
 |                       | fallbacks this can be disabled.          |           |         |         |
