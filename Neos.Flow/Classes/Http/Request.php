@@ -595,7 +595,7 @@ class Request extends BaseRequest implements ServerRequestInterface
     protected function calculateFieldPaths(array $structure, string $firstLevelFieldName = null)
     {
         $fieldPaths = $this->calculateFieldPathsAsArray($structure, $firstLevelFieldName);
-        array_walk($fieldPaths, function(&$fieldPath) {
+        array_walk($fieldPaths, function (&$fieldPath) {
             $fieldPath = implode('/', $fieldPath);
         });
         return $fieldPaths;
