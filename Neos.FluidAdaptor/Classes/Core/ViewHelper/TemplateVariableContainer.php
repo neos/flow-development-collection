@@ -24,18 +24,7 @@ use TYPO3Fluid\Fluid\Core\Variables\VariableProviderInterface;
  */
 class TemplateVariableContainer extends StandardVariableProvider implements VariableProviderInterface
 {
-    /**
-     * @param string $identifier
-     * @return mixed
-     */
-    public function get($identifier)
-    {
-        $subject = parent::get($identifier);
-        if ($subject instanceof TemplateObjectAccessInterface) {
-            $subject = $subject->objectAccess();
-        }
-        return $subject;
-    }
+    const ACCESSOR_OBJECT_ACCESS = 'object_access';
 
     /**
      * Get a variable by dotted path expression, retrieving the
@@ -50,27 +39,46 @@ class TemplateVariableContainer extends StandardVariableProvider implements Vari
      */
     public function getByPath($path, array $accessors = [])
     {
-        $propertyPathSegments = explode('.', $path);
-        $subject = $this->variables;
-
-        foreach ($propertyPathSegments as $propertyName) {
-            if ($subject === null) {
-                break;
-            }
-
-            try {
-                $subject = ObjectAccess::getProperty($subject, $propertyName);
-            } catch (PropertyNotAccessibleException $exception) {
-                $subject = null;
-            }
-
-            if ($subject instanceof TemplateObjectAccessInterface) {
-                $subject = $subject->objectAccess();
-            }
-        }
+        $subject = parent::getByPath($path, $accessors);
 
         if ($subject === null) {
             $subject = $this->getBooleanValue($path);
+        }
+
+        return $subject;
+    }
+
+    /**
+     * @param mixed $subject
+     * @param string $propertyName
+     * @return NULL|string
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    protected function detectAccessor($subject, $propertyName)
+    {
+        return TemplateVariableContainer::ACCESSOR_OBJECT_ACCESS;
+    }
+
+    /**
+     * @param mixed $subject
+     * @param string $propertyName
+     * @param string $accessor
+     * @return mixed|null
+     */
+    protected function extractWithAccessor($subject, $propertyName, $accessor)
+    {
+        if (TemplateVariableContainer::ACCESSOR_OBJECT_ACCESS === $accessor) {
+            try {
+                $subject = ObjectAccess::getProperty($subject, $propertyName);
+            } catch (PropertyNotAccessibleException $e) {
+                $subject = null;
+            }
+        } else {
+            $subject = parent::extractWithAccessor($subject, $propertyName, $accessor);
+        }
+
+        if ($subject instanceof TemplateObjectAccessInterface) {
+            return $subject->objectAccess();
         }
 
         return $subject;
