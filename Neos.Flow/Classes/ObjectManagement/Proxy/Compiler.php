@@ -315,7 +315,7 @@ return ' . var_export($this->storedProxyClasses, true) . ';';
                     break;
                 default:
                     if ($optionValue === $optionDefault) {
-                        continue;
+                        break;
                     }
                     $optionsAsStrings[] = $optionName . '=' . $optionValueAsString;
             }

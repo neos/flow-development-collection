@@ -202,7 +202,7 @@ class DataMapper
             } else {
                 switch ($propertyData['type']) {
                     case 'NULL':
-                        continue;
+                        break;
                     case 'array':
                         $propertyValue = $this->mapArray(null);
                     break;
