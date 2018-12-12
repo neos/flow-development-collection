@@ -14,6 +14,7 @@
         "ext-SPL": "*",
         "ext-json": ">=1.2.0",
         "ext-reflection": "*",
+        "ext-xml": "*",
         "psr/http-message": "~1.0.0",
         "psr/container": "~1.0.0",
         "ramsey/uuid": "^3.0.0",
@@ -26,8 +27,7 @@
         "symfony/console": "~4.1.1",
         "neos/composer-plugin": "^2.0.0",
         "typo3fluid/fluid": "~2.5.3",
-        "ext-mbstring": "*",
-        "ext-xml": "*"
+        "ext-mbstring": "*"
     },
     "replace": {
         "typo3/eel": "self.version",
