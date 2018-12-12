@@ -33,6 +33,7 @@ foreach (explode("\n", $rawList) as $line) {
 
 // Add non-registered mime types that we still want to support:
 $mediaTypesAndFileExtensions['application/vnd.apple.pkpass'] = ['pkpass'];
+$mediaTypesAndFileExtensions['image/jp2'] = ['jp2', 'jpg2'];
 
 ksort($mediaTypesAndFileExtensions);
 
