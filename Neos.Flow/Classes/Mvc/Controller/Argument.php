@@ -243,7 +243,7 @@ class Argument
     }
 
     /**
-     * @return Result Validation errors which have occured.
+     * @return Result Validation errors which have occurred.
      * @api
      */
     public function getValidationResults()
