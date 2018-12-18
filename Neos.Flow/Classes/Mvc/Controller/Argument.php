@@ -243,7 +243,7 @@ class Argument
     }
 
     /**
-     * @return array<Neos\Error\Messages\Result> Validation errors which have occured.
+     * @return Result Validation errors which have occured.
      * @api
      */
     public function getValidationResults()
