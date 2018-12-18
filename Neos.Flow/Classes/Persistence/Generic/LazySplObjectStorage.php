@@ -139,8 +139,7 @@ class LazySplObjectStorage extends \SplObjectStorage
 
     public function offsetExists($object)
     {
-        $this->initialize();
-        return parent::offsetExists($object);
+        return $this->contains($object);
     }
 
     public function offsetGet($object)
@@ -151,14 +150,12 @@ class LazySplObjectStorage extends \SplObjectStorage
 
     public function offsetSet($object, $data = null)
     {
-        $this->initialize();
-        parent::offsetSet($object, $data);
+        $this->attach($object, $data);
     }
 
     public function offsetUnset($object)
     {
-        $this->initialize();
-        parent::offsetUnset($object);
+        $this->detach($object);
     }
 
     public function removeAll($storage)
