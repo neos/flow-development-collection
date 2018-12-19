@@ -11,6 +11,7 @@ namespace Neos\Flow\Tests\Functional\Security\Authorization\Privilege\Entity\Doc
  * source code.
  */
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Neos\Flow\Cache\CacheManager;
 use Neos\Flow\Persistence\Doctrine\PersistenceManager;
 use Neos\Flow\Tests\Functional\Security\Fixtures;
@@ -619,5 +620,147 @@ class ContentSecurityTest extends FunctionalTestCase
         $this->restrictableEntityDoctrineRepository->removeAll();
         $this->persistenceManager->persistAll();
         $this->persistenceManager->clearState();
+    }
+
+    /**
+     * @test
+     */
+    public function containsOperatorBlocksWithOneToMany()
+    {
+        $testEntityCIdentifier = $this->setupContainsRelationForOneToMany();
+
+        $result = $this->testEntityCDoctrineRepository->findAllWithDql();
+        $this->assertTrue(count($result) === 0);
+
+        $this->assertNull($this->persistenceManager->getObjectByIdentifier($testEntityCIdentifier, Fixtures\TestEntityC::class));
+
+        $this->restrictableEntityDoctrineRepository->removeAll();
+        $this->persistenceManager->persistAll();
+        $this->persistenceManager->clearState();
+    }
+
+    /**
+     * @test
+     * @throws \Neos\Flow\Persistence\Exception\IllegalObjectTypeException
+     */
+    public function containsOperatorGrantsWithOneToMany()
+    {
+        $testEntityCIdentifier = $this->setupContainsRelationForOneToMany();
+
+        $this->authenticateRoles(['Neos.Flow:Customer']);
+
+        $result = $this->testEntityCDoctrineRepository->findAllWithDql();
+        $this->assertTrue(count($result) === 1);
+
+        $this->assertInstanceOf(Fixtures\TestEntityC::class, $this->persistenceManager->getObjectByIdentifier($testEntityCIdentifier, Fixtures\TestEntityC::class));
+
+        $this->restrictableEntityDoctrineRepository->removeAll();
+        $this->persistenceManager->persistAll();
+        $this->persistenceManager->clearState();
+    }
+
+    /**
+     * @test
+     */
+    public function containsOperatorBlocksWithManyToMany()
+    {
+        $testEntityCIdentifier = $this->setupContainsRelationForManyToMany();
+
+        $result = $this->testEntityCDoctrineRepository->findAllWithDql();
+        $this->assertTrue(count($result) === 0);
+
+        $this->assertNull($this->persistenceManager->getObjectByIdentifier($testEntityCIdentifier, Fixtures\TestEntityC::class));
+
+        $this->restrictableEntityDoctrineRepository->removeAll();
+        $this->persistenceManager->persistAll();
+        $this->persistenceManager->clearState();
+    }
+
+    /**
+     * @test
+     * @throws \Neos\Flow\Persistence\Exception\IllegalObjectTypeException
+     */
+    public function containsOperatorGrantsWithManyToMany()
+    {
+        $testEntityCIdentifier = $this->setupContainsRelationForManyToMany();
+
+        $this->authenticateRoles(['Neos.Flow:Customer']);
+
+        $result = $this->testEntityCDoctrineRepository->findAllWithDql();
+        $this->assertTrue(count($result) === 1);
+
+        $this->assertInstanceOf(Fixtures\TestEntityC::class, $this->persistenceManager->getObjectByIdentifier($testEntityCIdentifier, Fixtures\TestEntityC::class));
+
+        $this->restrictableEntityDoctrineRepository->removeAll();
+        $this->persistenceManager->persistAll();
+        $this->persistenceManager->clearState();
+    }
+
+    /**
+     * @return string
+     * @throws \Neos\Flow\Persistence\Exception\IllegalObjectTypeException
+     */
+    private function setupContainsRelationForOneToMany()
+    {
+        $cacheManager = $this->objectManager->get(CacheManager::class);
+        $cacheManager->getCache('Flow_Persistence_Doctrine')->flush();
+
+        $testEntityD1 = new Fixtures\TestEntityD();
+        $testEntityD2 = new Fixtures\TestEntityD();
+
+        $this->globalObjectTestContext->setSecurityFixturesEntityD($testEntityD1);
+
+        $testEntityC = new Fixtures\TestEntityC();
+        $testEntityCIdentifier = $this->persistenceManager->getIdentifierByObject($testEntityC);
+
+        // the other test policy kicks in
+        $testEntityC->setSimpleStringProperty('Not one of the three');
+        $testEntityC->setRelatedEntityD($testEntityD1);
+        // if neither of those are set this way.
+
+        $testEntityD1->setManyToOneToRelatedEntityC($testEntityC);
+
+        $this->testEntityCDoctrineRepository->add($testEntityC);
+        $this->testEntityDDoctrineRepository->add($testEntityD1);
+        $this->testEntityDDoctrineRepository->add($testEntityD2);
+
+        $this->persistenceManager->persistAll();
+        $this->persistenceManager->clearState();
+
+        return $testEntityCIdentifier;
+    }
+
+    /**
+     * @return string
+     * @throws \Neos\Flow\Persistence\Exception\IllegalObjectTypeException
+     */
+    private function setupContainsRelationForManyToMany()
+    {
+        $cacheManager = $this->objectManager->get(CacheManager::class);
+        $cacheManager->getCache('Flow_Persistence_Doctrine')->flush();
+
+        $testEntityD1 = new Fixtures\TestEntityD();
+        $testEntityD2 = new Fixtures\TestEntityD();
+
+        $this->globalObjectTestContext->setSecurityFixturesEntityD($testEntityD1);
+
+        $testEntityC = new Fixtures\TestEntityC();
+        $testEntityCIdentifier = $this->persistenceManager->getIdentifierByObject($testEntityC);
+
+        // the other test policy kicks in
+        $testEntityC->setSimpleStringProperty('Not one of the three');
+        $testEntityC->setRelatedEntityD($testEntityD1);
+        // if neither of those are set this way.
+
+        $testEntityC->setManyToManyToRelatedEntityD(new ArrayCollection([$testEntityD1]));
+
+        $this->testEntityCDoctrineRepository->add($testEntityC);
+        $this->testEntityDDoctrineRepository->add($testEntityD1);
+        $this->testEntityDDoctrineRepository->add($testEntityD2);
+
+        $this->persistenceManager->persistAll();
+        $this->persistenceManager->clearState();
+
+        return $testEntityCIdentifier;
     }
 }
