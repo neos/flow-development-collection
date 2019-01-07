@@ -17,10 +17,12 @@ namespace Neos\Flow\Tests\Functional\Reflection\Fixtures;
  */
 class DummyClassWithTypeHints
 {
-    public function methodWithScalarTypeHints(int $integer, string $string) {
+    public function methodWithScalarTypeHints(int $integer, string $string)
+    {
     }
 
-    public function methodWithArrayTypeHint(array $array) {
+    public function methodWithArrayTypeHint(array $array)
+    {
     }
 
     /**
