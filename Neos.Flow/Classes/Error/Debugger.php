@@ -72,6 +72,16 @@ class Debugger
     protected static $ignoredClassesRegex = '';
 
     /**
+     * @var integer
+     */
+    protected static $recursionLimit;
+
+    /**
+     * @var integer
+     */
+    protected static $recursionLimitFallback = 5;
+
+    /**
      * @var string
      */
     protected static $blacklistedPropertyNames = '/
@@ -118,7 +128,7 @@ class Debugger
      */
     public static function renderDump($variable, int $level, bool $plaintext = false, bool $ansiColors = false): string
     {
-        if ($level > 5) {
+        if ($level > self::getRecursionLimit()) {
             return 'RECURSION ... ' . chr(10);
         }
         if (is_string($variable)) {
@@ -549,6 +559,34 @@ class Debugger
         self::$ignoredClassesRegex = sprintf('/^%s$/xs', implode('$|^', $ignoredClasses));
 
         return self::$ignoredClassesRegex;
+    }
+
+    /**
+     * Tries to load the 'Neos.Flow.error.debugger.recursionLimit' setting
+     * to determine the maximal recursions-level fgor the debugger.
+     * If settings can't be loaded it uses self::$ignoredClassesFallback.
+     *
+     * @return integer
+     */
+    public static function getRecursionLimit(): int
+    {
+        if (self::$recursionLimit) {
+            return self::$recursionLimit;
+        }
+
+        self::$recursionLimit = self::$recursionLimitFallback;
+
+        if (self::$objectManager instanceof ObjectManagerInterface) {
+            $configurationManager = self::$objectManager->get(ConfigurationManager::class);
+            if ($configurationManager instanceof ConfigurationManager) {
+                $recursionLimitFromSettings = $configurationManager->getConfiguration('Settings', 'Neos.Flow.error.debugger.recursionLimit');
+                if (is_int($recursionLimitFromSettings)) {
+                    self::$recursionLimit = $recursionLimitFromSettings;
+                }
+            }
+        }
+
+        return self::$recursionLimit;
     }
 }
 
