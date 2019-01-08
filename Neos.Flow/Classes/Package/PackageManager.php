@@ -343,11 +343,13 @@ class PackageManager implements PackageManagerInterface
         $runComposerRequireForTheCreatedPackage = false;
         if ($packagesPath === null) {
             $composerManifestRepositories = ComposerUtility::getComposerManifest(FLOW_PATH_ROOT, 'repositories');
-            foreach ($composerManifestRepositories as $repository) {
-                if ($repository['type'] == 'path' && substr($repository['url'], 0, 2) == './' && substr($repository['url'], -2) == '/*') {
-                    $packagesPath = Files::getUnixStylePath(Files::concatenatePaths([FLOW_PATH_ROOT, substr($repository['url'], 0, -2)]));
-                    $runComposerRequireForTheCreatedPackage = true;
-                    break;
+            if (is_array($composerManifestRepositories)) {
+                foreach ($composerManifestRepositories as $repository) {
+                    if ($repository['type'] == 'path' && substr($repository['url'], 0, 2) == './' && substr($repository['url'], -2) == '/*') {
+                        $packagesPath = Files::getUnixStylePath(Files::concatenatePaths([FLOW_PATH_ROOT, substr($repository['url'], 0, -2)]));
+                        $runComposerRequireForTheCreatedPackage = true;
+                        break;
+                    }
                 }
             }
         }
