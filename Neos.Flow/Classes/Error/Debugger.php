@@ -118,7 +118,7 @@ class Debugger
      */
     public static function renderDump($variable, $level, $plaintext = false, $ansiColors = false)
     {
-        if ($level > 50) {
+        if ($level > 5) {
             return 'RECURSION ... ' . chr(10);
         }
         if (is_string($variable)) {
