@@ -61,6 +61,6 @@ class DebuggerTest extends UnitTestCase
     public function ignoredClassesAreNotRendered()
     {
         $object = new ApplicationContext('Development');
-        $this->assertEquals('Neos\Flow\Core\ApplicationContext object', Debugger::renderDump($object, 10, true));
+        $this->assertEquals('Neos\Flow\Core\ApplicationContext object', Debugger::renderDump($object, 0, true));
     }
 }
