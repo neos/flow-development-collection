@@ -477,7 +477,7 @@ class ConfigurationBuilder
 
             foreach ($this->reflectionService->getPropertyNamesByAnnotation($className, Inject::class) as $propertyName) {
                 if ($this->reflectionService->isPropertyPrivate($className, $propertyName)) {
-                    throw new ObjectException(sprintf('The property "%%s" in class "%s" must not be private when annotated for injection.', $propertyName, $className), 1328109641);
+                    throw new ObjectException(sprintf('The property "%s" in class "%s" must not be private when annotated for injection.', $propertyName, $className), 1328109641);
                 }
                 if (!array_key_exists($propertyName, $properties)) {
                     /** @var Inject $injectAnnotation */
