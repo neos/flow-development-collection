@@ -563,12 +563,7 @@ class Request extends BaseRequest implements ServerRequestInterface
             if (!is_array($fieldInformation['error'])) {
                 $fieldPaths[] = [$firstLevelFieldName];
             } else {
-                $newFieldPaths = $this->calculateFieldPaths($fieldInformation['error'], $firstLevelFieldName);
-                array_walk($newFieldPaths,
-                    function (&$value) {
-                        $value = explode('/', $value);
-                    }
-                );
+                $newFieldPaths = $this->calculateFieldPathsAsArray($fieldInformation['error'], $firstLevelFieldName);
                 $fieldPaths = array_merge($fieldPaths, $newFieldPaths);
             }
         }
@@ -590,27 +585,47 @@ class Request extends BaseRequest implements ServerRequestInterface
     }
 
     /**
-     * Returns and array of all possibles "field paths" for the given array.
+     * Returns an array of all possible "field paths" for the given array.
      *
      * @param array $structure The array to walk through
      * @param string $firstLevelFieldName
      * @return array An array of paths (as strings) in the format "key1/key2/key3" ...
+     * @deprecated
      */
-    protected function calculateFieldPaths(array $structure, $firstLevelFieldName = null)
+    protected function calculateFieldPaths(array $structure, string $firstLevelFieldName = null)
+    {
+        $fieldPaths = $this->calculateFieldPathsAsArray($structure, $firstLevelFieldName);
+        array_walk($fieldPaths, function (&$fieldPath) {
+            $fieldPath = implode('/', $fieldPath);
+        });
+        return $fieldPaths;
+    }
+
+    /**
+     * Returns an array of all possible "field paths" for the given array.
+     *
+     * @param array $structure The array to walk through
+     * @param string $firstLevelFieldName
+     * @return array An array of paths (as arrays) in the format ["key1", "key2", "key3"] ...
+     */
+    protected function calculateFieldPathsAsArray(array $structure, string $firstLevelFieldName = null): array
     {
         $fieldPaths = [];
-        if (is_array($structure)) {
-            foreach ($structure as $key => $subStructure) {
-                $fieldPath = ($firstLevelFieldName !== null ? $firstLevelFieldName . '/' : '') . $key;
-                if (is_array($subStructure)) {
-                    foreach ($this->calculateFieldPaths($subStructure) as $subFieldPath) {
-                        $fieldPaths[] = $fieldPath . '/' . $subFieldPath;
-                    }
-                } else {
-                    $fieldPaths[] = $fieldPath;
+        foreach ($structure as $key => $subStructure) {
+            $fieldPath = [];
+            if ($firstLevelFieldName !== null) {
+                $fieldPath[] = $firstLevelFieldName;
+            }
+            $fieldPath[] = $key;
+            if (is_array($subStructure)) {
+                foreach ($this->calculateFieldPathsAsArray($subStructure) as $subFieldPath) {
+                    $fieldPaths[] = array_merge($fieldPath, $subFieldPath);
                 }
+            } else {
+                $fieldPaths[] = $fieldPath;
             }
         }
+
         return $fieldPaths;
     }
 
