@@ -13,6 +13,7 @@ namespace Neos\Kickstarter\Command;
 
 use Neos\Flow\Composer\ComposerUtility;
 use Neos\Flow\Package\PackageInterface;
+use Neos\Flow\Package\PackageManager;
 use Neos\Utility\Arrays;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
@@ -26,7 +27,7 @@ class KickstartCommandController extends CommandController
 {
     /**
      * @Flow\Inject
-     * @var \Neos\Flow\Package\PackageManagerInterface
+     * @var PackageManager
      */
     protected $packageManager;
 

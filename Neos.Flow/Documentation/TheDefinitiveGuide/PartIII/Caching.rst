@@ -169,8 +169,8 @@ Persistent Cache
 Caches can be marked as being "persistent" which lets the Cache Manager skip the cache while flushing all other
 caches or flushing caches by tag. Persistent caches make for a versatile and easy to use low-level key-value-store.
 Simple data like tokens, preferences or the like which usually would be stored in the file system, can be stored in
-such a cache. Flow uses a persistent cache for storing an encryption key for the Hash Service. The configuration for
-this cache looks like this:
+such a cache. Flow uses a persistent cache for storing an encryption key for the Hash Service and Sessions. The
+configuration for this cache looks like this:
 
 *Example: Persistent cache settings* ::
 
@@ -187,6 +187,25 @@ Note that, because the cache has been configured as "persistent", the *SimpleFil
 ``Data/Persistent/Cache/Flow_Security_Cryptography_HashService/`` instead of using the temporary directory
 ``Data/Temporary/Production/Cache/Flow_Security_Cryptography_HashService/``. You can override the cache directory
 by specifying it in the cache's backend options.
+
+Application Identifier
+----------------------
+
+The application identifier can be used by cache backends to differentiate cache entries with the same cache
+identifier in the same storage from each other. For example memcache is global, so if you use it for multiple
+installations or possibly just for different Flow contexts you need to find a way to separate entries from each
+other. This setting will do that.
+
+The default of `%FLOW_PATH_ROOT%~%FLOW_APPLICATION_CONTEXT%` is not well suited for installations in which the
+`FLOW_PATH_ROOT` changes after each deployment, so in such cases you might want to exchange it for some hardcoded
+value identifying each specific installation::
+
+  Neos:
+    Flow:
+      cache:
+        applicationIdentifier: 'some-unique-system-identifier'
+
+.. note:: Changing the identifier will make cache entries generated with the old identifier useless.
 
 Cache Frontends
 ===============
@@ -317,19 +336,19 @@ impact.
 
 .. note::
 
-	The ``SimpleFileBackend`` is called like that, because it does not support lifetime for
+  The ``SimpleFileBackend`` is called like that, because it does not support lifetime for
   cache entries! Nor does it support tagging cache entries!
 
 .. note::
 
-	Under heavy load the maximum ``set()`` performance depends on the maximum write and
-	seek performance of the hard disk. If for example the server system shows lots of I/O
-	wait in top, the file backend has reached this bound. A different storage strategy
-	like RAM disks, battery backed up RAID systems or SSD hard disks might help then.
+  Under heavy load the maximum ``set()`` performance depends on the maximum write and
+  seek performance of the hard disk. If for example the server system shows lots of I/O
+  wait in top, the file backend has reached this bound. A different storage strategy
+  like RAM disks, battery backed up RAID systems or SSD hard disks might help then.
 
 .. note::
-	The SimpleFileBackend and FileBackend are the only cache backends that are capable of
-	storing the ``Flow_Object_Classes`` Cache.
+  The SimpleFileBackend and FileBackend are the only cache backends that are capable of
+  storing the ``Flow_Object_Classes`` Cache.
 
 Options
 ~~~~~~~
@@ -427,7 +446,7 @@ to clean up hard disk space or memory.
 .. warning::
 
 	This backend is php-capable. Nevertheless it cannot be used to store the proxy-classes
-	from the ``FLOW_Object_Classes`` Cache. It can be used for other code-caches like
+	from the ``Flow_Object_Classes`` Cache. It can be used for other code-caches like
 	``Fluid_TemplateCache``, ``Eel_Expression_Code`` or ``Flow_Aop_RuntimeExpressions``.
 	This can be usefull in certain situations to avoid file operations on production
 	environments. If you want to use this backend for code-caching make sure that
@@ -726,8 +745,8 @@ Options
 +=======================+==========================================+===========+=========+=========+
 | setInAllBackends      | Should values given to the backend be    | No        | bool    | true    |
 |                       | replicated into all configured and       |           |         |         |
-|                       |  available backends?                     |           |         |         |
-|                       | Generally that is desireable for         |           |         |         |
+|                       | available backends?                      |           |         |         |
+|                       | Generally that is desirable for          |           |         |         |
 |                       | fallback purposes, but to avoid too much |           |         |         |
 |                       | duplication at the cost of performance on|           |         |         |
 |                       | fallbacks this can be disabled.          |           |         |         |

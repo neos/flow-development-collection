@@ -176,10 +176,10 @@ class ConsoleOutput
      *
      * @param string|array $question The question to ask. If an array each array item is turned into one line of a multi-line question
      * @param string $default The default answer if none is given by the user
-     * @return string The user answer
+     * @return mixed The user answer
      * @throws \RuntimeException If there is no data to read in the input stream
      */
-    public function ask($question, string $default = null): string
+    public function ask($question, string $default = null)
     {
         $question = new Question($this->combineQuestion($question), $default);
 
@@ -207,10 +207,10 @@ class ConsoleOutput
      *
      * @param string|array $question The question. If an array each array item is turned into one line of a multi-line question
      * @param Boolean $fallback In case the response can not be hidden, whether to fallback on non-hidden question or not
-     * @return string The answer
+     * @return mixed The answer
      * @throws \RuntimeException In case the fallback is deactivated and the response can not be hidden
      */
-    public function askHiddenResponse($question, bool $fallback = true): string
+    public function askHiddenResponse($question, bool $fallback = true)
     {
         $question = new Question($this->combineQuestion($question));
         $question
@@ -232,10 +232,10 @@ class ConsoleOutput
      * @param callable $validator A PHP callback that gets a value and is expected to return the (transformed) value or throw an exception if it wasn't valid
      * @param integer|null $attempts Max number of times to ask before giving up (null by default, which means infinite)
      * @param string $default The default answer if none is given by the user
-     * @return string The response
+     * @return mixed The response
      * @throws \Exception When any of the validators return an error
      */
-    public function askAndValidate($question, callable $validator, int $attempts = null, string $default = null): string
+    public function askAndValidate($question, callable $validator, int $attempts = null, string $default = null)
     {
         $question = new Question($this->combineQuestion($question), $default);
         $question
@@ -256,11 +256,11 @@ class ConsoleOutput
      * @param callable $validator A PHP callback that gets a value and is expected to return the (transformed) value or throw an exception if it wasn't valid
      * @param integer|null $attempts Max number of times to ask before giving up (null by default, which means infinite)
      * @param boolean $fallback In case the response can not be hidden, whether to fallback on non-hidden question or not
-     * @return string The response
+     * @return mixed The response
      * @throws \Exception When any of the validators return an error
      * @throws \RuntimeException In case the fallback is deactivated and the response can not be hidden
      */
-    public function askHiddenResponseAndValidate($question, callable $validator, int $attempts = null, bool $fallback = true): string
+    public function askHiddenResponseAndValidate($question, callable $validator, int $attempts = null, bool $fallback = true)
     {
         $question = new Question($this->combineQuestion($question));
         $question

@@ -210,7 +210,7 @@ class FileSystemTargetTest extends UnitTestCase
         mkdir('vfs://Test/Configuration');
         $packageManager = new PackageManager('vfs://Test/Configuration/PackageStates.php', 'vfs://Test/Packages/');
 
-        $packageManager->createPackage("Neos.Flow");
+        $packageManager->createPackage("Some.Testing.Package", [], 'vfs://Test/Packages/Application');
 
         $packageStorage = new PackageStorage('testStorage');
         $packageStorage->initializeObject(ObjectManagerInterface::INITIALIZATIONCAUSE_CREATED);
