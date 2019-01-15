@@ -5,7 +5,6 @@ use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Exception;
 use Neos\Flow\Http\Request;
 use Neos\Flow\Mvc\ActionRequest;
-use Neos\Flow\ObjectManagement\Exception\UnknownObjectException;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Utility\Environment;
 use Neos\Utility\ObjectAccess;
