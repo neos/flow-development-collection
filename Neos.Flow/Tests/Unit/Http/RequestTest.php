@@ -980,9 +980,7 @@ class RequestTest extends UnitTestCase
             ],
         ];
 
-        $request = $this->getAccessibleMock(Request::class, ['dummy'], [], '', false);
-        $result = $request->_call('untangleFilesArray', $convolutedFiles);
-
+        $result = UploadedFilesHelper::untangleFilesArray($convolutedFiles);
         $this->assertSame($untangledFiles, $result);
     }
 
