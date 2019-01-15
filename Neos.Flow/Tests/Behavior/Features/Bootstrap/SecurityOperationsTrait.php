@@ -5,6 +5,9 @@ use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Exception;
 use Neos\Flow\Http\Request;
 use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\ObjectManagement\Exception\UnknownObjectException;
+use Neos\Flow\ObjectManagement\ObjectManagerInterface;
+use Neos\Flow\Utility\Environment;
 use Neos\Utility\ObjectAccess;
 use Neos\Flow\Security;
 use Neos\Flow\Security\Authentication\AuthenticationProviderManager;
@@ -30,6 +33,9 @@ use PHPUnit\Framework\Assert;
  *
  * Note: Make sure to call $this->setupSecurity() in the constructor of your
  * behat context for these steps to work in your tests!
+ *
+ * @property Environment environment
+ * @property ObjectManagerInterface objectManager
  */
 trait SecurityOperationsTrait
 {
@@ -106,7 +112,6 @@ trait SecurityOperationsTrait
 
     /**
      * @Given /^I am not authenticated$/
-     * @throws \Neos\Flow\ObjectManagement\Exception\UnknownObjectException
      */
     public function iAmNotAuthenticated()
     {
@@ -120,9 +125,6 @@ trait SecurityOperationsTrait
     /**
      * @Given /^I am authenticated with role "([^"]*)"$/
      * @param $roleIdentifier
-     * @throws Security\Exception
-     * @throws Security\Exception\AuthenticationRequiredException
-     * @throws \Neos\Flow\ObjectManagement\Exception\UnknownObjectException
      */
     public function iAmAuthenticatedWithRole($roleIdentifier)
     {
@@ -138,9 +140,6 @@ trait SecurityOperationsTrait
      * @Given /^I am authenticated as "([^"]*)" via authentication provider "([^"]*)"$/
      * @param string $accountIdentifier
      * @param string|null $authenticationProviderName
-     * @throws Security\Exception
-     * @throws Security\Exception\AuthenticationRequiredException
-     * @throws \Neos\Flow\ObjectManagement\Exception\UnknownObjectException
      * @throws Exception
      */
     public function iAmAuthenticatedAs(string $accountIdentifier, string $authenticationProviderName)
@@ -160,7 +159,6 @@ trait SecurityOperationsTrait
 
     /**
      * @Then /^I can (not )?call the method "([^"]*)" of class "([^"]*)"(?: with arguments "([^"]*)")?$/
-     * @throws \Neos\Flow\ObjectManagement\Exception\UnknownObjectException
      * @throws AccessDeniedException
      */
     public function iCanCallTheMethodOfClassWithArguments($not, $methodName, $className, $arguments = '')
@@ -191,7 +189,6 @@ trait SecurityOperationsTrait
      * Security is based on action requests so we need a working route for the TestingProvider.
      *
      * @return void
-     * @throws \Neos\Flow\ObjectManagement\Exception\UnknownObjectException
      */
     protected function setupSecurity()
     {
@@ -202,10 +199,9 @@ trait SecurityOperationsTrait
         $this->privilegeManager->setOverrideDecision(null);
 
         $this->policyService = $this->objectManager->get(PolicyService::class);
-
         $this->accountRepository = $this->objectManager->get(Security\AccountRepository::class);
-
         $this->authenticationManager = $this->objectManager->get(AuthenticationProviderManager::class);
+
         // Making sure providers and tokens were actually build, so the singleton TestingProvider exists.
         $this->authenticationManager->getProviders();
 
