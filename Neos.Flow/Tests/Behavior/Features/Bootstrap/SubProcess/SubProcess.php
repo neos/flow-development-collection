@@ -84,7 +84,7 @@ class SubProcess
      * @return array|bool The new sub process and its STDIN, STDOUT, STDERR pipes – or false if an error occurred.
      * @throws \RuntimeException
      */
-    protected function launchSubProcess(): ?array
+    protected function launchSubProcess()
     {
         $systemCommand = 'FLOW_ROOTPATH=' . escapeshellarg(FLOW_PATH_ROOT) . ' FLOW_PATH_TEMPORARY_BASE=' . escapeshellarg(FLOW_PATH_TEMPORARY_BASE) . ' FLOW_CONTEXT=' . (string)$this->context . ' ' . PHP_BINARY . ' -c ' . php_ini_loaded_file() . ' ' . escapeshellarg(FLOW_PATH_FLOW . 'Scripts/flow.php') . ' --start-slave';
         $descriptorSpecification = [['pipe', 'r'], ['pipe', 'w'], ['pipe', 'a']];
