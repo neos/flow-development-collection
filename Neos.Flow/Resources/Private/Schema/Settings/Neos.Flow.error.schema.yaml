@@ -42,3 +42,6 @@ properties:
         type: dictionary
         required: true
         patternProperties: { '/.*/': { type: boolean } }
+      'recursionLimit':
+        type: integer
+        required: true

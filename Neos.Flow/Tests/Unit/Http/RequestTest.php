@@ -944,6 +944,49 @@ class RequestTest extends UnitTestCase
     }
 
     /**
+     * @test
+     */
+    public function untangleFilesArrayWorksWithNamesContainingASlash()
+    {
+        $convolutedFiles = [
+            'a0' => [
+                'name' => [
+                    'a1/a2' => 'a.txt',
+                ],
+                'type' => [
+                    'a1/a2' => 'text/plain',
+                ],
+                'tmp_name' => [
+                    'a1/a2' => '/private/var/tmp/phpvZ6oUD',
+                ],
+                'error' => [
+                    'a1/a2' => 0,
+                ],
+                'size' => [
+                    'a1/a2' => 200,
+                ],
+            ],
+        ];
+
+        $untangledFiles = [
+            'a0' => [
+                'a1/a2' => [
+                    'name' => 'a.txt',
+                    'type' => 'text/plain',
+                    'tmp_name' => '/private/var/tmp/phpvZ6oUD',
+                    'error' => 0,
+                    'size' => 200,
+                ]
+            ],
+        ];
+
+        $request = $this->getAccessibleMock(Request::class, ['dummy'], [], '', false);
+        $result = $request->_call('untangleFilesArray', $convolutedFiles);
+
+        $this->assertSame($untangledFiles, $result);
+    }
+
+    /**
      * Data provider with valid quality value strings and the expected parse output
      *
      * @return array

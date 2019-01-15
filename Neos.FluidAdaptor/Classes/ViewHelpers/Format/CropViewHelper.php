@@ -87,7 +87,7 @@ class CropViewHelper extends AbstractViewHelper
     {
         $value = $arguments['value'];
         if ($value === null) {
-            $value = $renderChildrenClosure();
+            $value = (string)$renderChildrenClosure();
         }
 
         if (UnicodeUtilityFunctions::strlen($value) > $arguments['maxCharacters']) {
