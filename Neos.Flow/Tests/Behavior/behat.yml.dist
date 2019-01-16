@@ -6,7 +6,9 @@ default:
   autoload:
     '': "%paths.base%/Features/Bootstrap"
   suites:
-    default:
+    flow:
+      paths:
+        - "%paths.base%/Features/Security"
       contexts:
         - FeatureContext:
 
