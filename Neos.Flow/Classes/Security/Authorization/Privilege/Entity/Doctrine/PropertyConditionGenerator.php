@@ -214,7 +214,7 @@ class PropertyConditionGenerator implements SqlGeneratorInterface
      * @return $this
      * @throws InvalidPolicyException
      */
-    public function contains($operandDefinition)
+    public function contains($operandDefinition): PropertyConditionGenerator
     {
         if (strpos($this->path, '.') !== false) {
             throw new InvalidPolicyException(sprintf('The "contains" operator does not work on nested property paths (contained a "."). Got: "%s"', $this->path), 1545212769);
