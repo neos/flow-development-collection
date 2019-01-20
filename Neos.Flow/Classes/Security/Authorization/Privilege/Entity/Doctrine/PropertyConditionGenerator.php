@@ -265,7 +265,7 @@ class PropertyConditionGenerator implements SqlGeneratorInterface
      * @throws InvalidQueryRewritingConstraintException
      * @throws \Exception
      */
-    protected function getSqlForPropertyContains(DoctrineSqlFilter $sqlFilter, QuoteStrategy $quoteStrategy, ClassMetadata $targetEntity, $targetTableAlias, $targetEntityPropertyName)
+    protected function getSqlForPropertyContains(DoctrineSqlFilter $sqlFilter, QuoteStrategy $quoteStrategy, ClassMetadata $targetEntity, string $targetTableAlias, string $targetEntityPropertyName): string
     {
         if ($this->operator !== 'contains') {
             throw new InvalidQueryRewritingConstraintException('Multivalued properties are not supported in a content security constraint path unless the "contains" operation is used! Got: "' . $this->path . ' ' . $this->operator . ' ' . $this->operandDefinition . '"', 1416397655);
