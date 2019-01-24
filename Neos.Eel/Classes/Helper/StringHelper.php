@@ -730,6 +730,19 @@ class StringHelper implements ProtectedContextAwareInterface
     }
 
     /**
+     * Implementation of the PHP vsprintf function
+     * @see https://php.net/manual/en/function.vsprintf.php
+     *
+     * @param string $format A formatting string containing directives
+     * @param array $args An array of values to be inserted according to the formatting string $format
+     * @return string A string produced according to the formatting string $format
+     */
+    public function format($format, array $args)
+    {
+        return vsprintf($format, $args);
+    }
+
+    /**
      * All methods are considered safe
      *
      * @param string $methodName
