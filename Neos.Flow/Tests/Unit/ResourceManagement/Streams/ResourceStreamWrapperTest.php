@@ -105,6 +105,7 @@ class ResourceStreamWrapperTest extends UnitTestCase
     public function openThrowsExceptionForNonExistingPackages()
     {
         $packageKey = 'Non.Existing.Package';
+        $this->mockPackageManager->expects(self::once())->method('getPackage')->willThrowException(new \Neos\Flow\Package\Exception\UnknownPackageException('Test exception'));
 
         $openedPathAndFilename = '';
         $this->resourceStreamWrapper->open('resource://' . $packageKey . '/Some/Path', 'r', 0, $openedPathAndFilename);
@@ -118,8 +119,6 @@ class ResourceStreamWrapperTest extends UnitTestCase
         $packageKey = 'Some.Package';
         mkdir('vfs://Foo/Some/');
         file_put_contents('vfs://Foo/Some/Path', 'fixture');
-
-        $this->mockPackageManager->expects($this->once())->method('isPackageAvailable')->with($packageKey)->will($this->returnValue(true));
 
         $mockPackage = $this->createMock(FlowPackageInterface::class);
         $mockPackage->expects($this->any())->method('getResourcesPath')->will($this->returnValue('vfs://Foo'));
@@ -138,9 +137,7 @@ class ResourceStreamWrapperTest extends UnitTestCase
         $packageKey = 'Some.PackageKey.Containing.40.Characters';
         mkdir('vfs://Foo/Some/');
         file_put_contents('vfs://Foo/Some/Path', 'fixture');
-
-        $this->mockPackageManager->expects($this->once())->method('isPackageAvailable')->with($packageKey)->will($this->returnValue(true));
-
+        
         $mockPackage = $this->createMock(FlowPackageInterface::class);
         $mockPackage->expects($this->any())->method('getResourcesPath')->will($this->returnValue('vfs://Foo'));
         $this->mockPackageManager->expects($this->once())->method('getPackage')->with($packageKey)->will($this->returnValue($mockPackage));
