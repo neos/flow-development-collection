@@ -15,6 +15,8 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\Flow\Security\Account;
 use Neos\Flow\Security\Context as SecurityContext;
+use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
+use Neos\Flow\Security\Authentication\TokenInterface;
 
 /**
  * Helper for security related information
@@ -29,6 +31,12 @@ class SecurityHelper implements ProtectedContextAwareInterface
     protected $securityContext;
 
     /**
+     * @Flow\Inject
+     * @var PrivilegeManagerInterface
+     */
+    protected $privilegeManager;
+
+    /**
      * Get the account of the first authenticated token.
      *
      * @return Account|NULL
@@ -40,6 +48,47 @@ class SecurityHelper implements ProtectedContextAwareInterface
         }
 
         return null;
+    }
+
+    /**
+     * Returns CSRF token which is required for "unsafe" requests (e.g. POST, PUT, DELETE, ...)
+     *
+     * @return string
+     */
+    public function csrfToken(): string
+    {
+        return $this->securityContext->getCsrfProtectionToken();
+    }
+
+    /**
+     * Returns true, if any account is currently authenticated
+     *
+     * @return boolean true if any account is authenticated
+     */
+    public function isAuthenticated(): bool
+    {
+        if (!$this->securityContext->canBeInitialized()) {
+            return false;
+        }
+
+        return array_reduce($this->securityContext->getAuthenticationTokens(), function (bool $isAuthenticated, TokenInterface $token) {
+            return $isAuthenticated || $token->isAuthenticated();
+        }, false);
+    }
+
+    /**
+     * Returns true, if access to the given privilege-target is granted
+     *
+     * @param string $privilegeTarget The identifier of the privilege target to decide on
+     * @param array $parameters Optional array of privilege parameters (simple key => value array)
+     * @return boolean true if access is granted, false otherwise
+     */
+    public function hasAccess(string $privilegeTarget, array $parameters = []): bool
+    {
+        if (!$this->securityContext->canBeInitialized()) {
+            return false;
+        }
+        return $this->privilegeManager->isPrivilegeTargetGranted($privilegeTarget, $parameters);
     }
 
     /**
