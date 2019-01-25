@@ -12,7 +12,9 @@ namespace Neos\Flow\Mvc\Controller;
  */
 
 
+use Neos\Flow\Http\Request;
 use Neos\Flow\Http\Response;
+use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\FlashMessageContainer;
 use Neos\Flow\Mvc\RequestInterface;
 use Neos\Flow\Mvc\ResponseInterface;
@@ -69,6 +71,26 @@ class ControllerContext
         $this->response = $response;
         $this->arguments = $arguments;
         $this->uriBuilder = $uriBuilder;
+    }
+
+    /**
+     * Creates a blind controller context from the current request environment.
+     * @see \Neos\Flow\Http\Request::createFromEnvironment()
+     *
+     * @return ControllerContext
+     */
+    public static function createFromEnvironment(): ControllerContext
+    {
+        $httpRequest = Request::createFromEnvironment();
+        $actionRequest = new ActionRequest($httpRequest);
+        $uriBuilder = new UriBuilder();
+        $uriBuilder->setRequest($actionRequest);
+        $response = new Response();
+        $arguments = new Arguments([]);
+
+        $controllerContext = new static($actionRequest, $response, $arguments, $uriBuilder);
+
+        return $controllerContext;
     }
 
     /**
