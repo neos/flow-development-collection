@@ -1454,7 +1454,7 @@ class ReflectionService
         }
 
         // expand SomeElementType[]" to "array<\ElementTypeNamespace\SomeElementType>"
-        if (strpos($typeWithoutNull, '[]') === strlen($typeWithoutNull) - 2) {
+        if (substr_compare($typeWithoutNull, '[]', -2, 2) === 0) {
             $elementType = substr($typeWithoutNull, 0, -2);
             return 'array<' . $this->expandType($class, $elementType) . '>' . ($isNullable ? '|null' : '');
         }
