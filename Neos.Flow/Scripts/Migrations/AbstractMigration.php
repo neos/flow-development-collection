@@ -448,6 +448,9 @@ abstract class AbstractMigration
                 }
             } else {
                 $oldPath = Files::concatenatePaths(array($this->targetPackageData['path'] . '/' . $operation[0]));
+                if (!file_exists($oldPath)) {
+                    continue;
+                }
                 $newPath = Files::concatenatePaths(array($this->targetPackageData['path'] . '/' . $operation[1]));
                 Git::move($oldPath, $newPath);
             }
