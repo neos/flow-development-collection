@@ -547,7 +547,7 @@ class Bootstrap
         }
 
         define('FLOW_ONLY_COMPOSER_LOADER', $onlyUseComposerAutoLoaderForPackageClasses);
-        define('FLOW_VERSION_BRANCH', '5.1');
+        define('FLOW_VERSION_BRANCH', 'master');
         define('FLOW_APPLICATION_CONTEXT', (string)$this->context);
     }
 
