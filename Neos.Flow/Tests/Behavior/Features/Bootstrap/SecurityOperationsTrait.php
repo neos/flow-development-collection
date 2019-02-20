@@ -5,6 +5,7 @@ use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Exception;
 use Neos\Flow\Http\Request;
 use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\ObjectManagement\Exception\UnknownObjectException;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Utility\Environment;
 use Neos\Utility\ObjectAccess;
@@ -111,6 +112,7 @@ trait SecurityOperationsTrait
 
     /**
      * @Given /^I am not authenticated$/
+     * @throws UnknownObjectException
      */
     public function iAmNotAuthenticated()
     {
@@ -124,6 +126,9 @@ trait SecurityOperationsTrait
     /**
      * @Given /^I am authenticated with role "([^"]*)"$/
      * @param $roleIdentifier
+     * @throws Security\Exception
+     * @throws Security\Exception\AuthenticationRequiredException
+     * @throws UnknownObjectException
      */
     public function iAmAuthenticatedWithRole($roleIdentifier)
     {
@@ -139,6 +144,9 @@ trait SecurityOperationsTrait
      * @Given /^I am authenticated as "([^"]*)" via authentication provider "([^"]*)"$/
      * @param string $accountIdentifier
      * @param string|null $authenticationProviderName
+     * @throws Security\Exception
+     * @throws Security\Exception\AuthenticationRequiredException
+     * @throws UnknownObjectException
      * @throws Exception
      */
     public function iAmAuthenticatedAs(string $accountIdentifier, string $authenticationProviderName)
@@ -158,6 +166,7 @@ trait SecurityOperationsTrait
 
     /**
      * @Then /^I can (not )?call the method "([^"]*)" of class "([^"]*)"(?: with arguments "([^"]*)")?$/
+     * @throws UnknownObjectException
      * @throws AccessDeniedException
      */
     public function iCanCallTheMethodOfClassWithArguments($not, $methodName, $className, $arguments = '')
@@ -188,6 +197,7 @@ trait SecurityOperationsTrait
      * Security is based on action requests so we need a working route for the TestingProvider.
      *
      * @return void
+     * @throws UnknownObjectException
      */
     protected function setupSecurity()
     {
