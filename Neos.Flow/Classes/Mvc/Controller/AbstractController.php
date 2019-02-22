@@ -323,11 +323,12 @@ abstract class AbstractController implements ControllerInterface
      */
     protected function redirectToUri($uri, $delay = 0, $statusCode = 303)
     {
-        $escapedUri = htmlentities($uri, ENT_QUOTES, 'utf-8');
-        $this->response->setContent('<html><head><meta http-equiv="refresh" content="' . intval($delay) . ';url=' . $escapedUri . '"/></head></html>');
         $this->response->setStatus($statusCode);
         if ($delay === 0) {
             $this->response->setHeader('Location', (string)$uri);
+        } else {
+            $escapedUri = htmlentities($uri, ENT_QUOTES, 'utf-8');
+            $this->response->setContent('<html><head><meta http-equiv="refresh" content="' . intval($delay) . ';url=' . $escapedUri . '"/></head></html>');
         }
         throw new StopActionException();
     }
