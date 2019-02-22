@@ -37,11 +37,6 @@ class ObjectManager implements ObjectManagerInterface
     protected $context;
 
     /**
-     * @var ObjectSerializer
-     */
-    protected $objectSerializer;
-
-    /**
      * An array of settings of all packages, indexed by package key
      *
      * @var array
