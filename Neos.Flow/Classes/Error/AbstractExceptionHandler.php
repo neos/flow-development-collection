@@ -226,6 +226,7 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
         if (!isset($this->options['renderingGroups'])) {
             return null;
         }
+
         foreach ($this->options['renderingGroups'] as $renderingGroupName => $renderingGroupSettings) {
             if (isset($renderingGroupSettings['matchingExceptionClassNames'])) {
                 foreach ($renderingGroupSettings['matchingExceptionClassNames'] as $exceptionClassName) {
@@ -234,8 +235,9 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
                     }
                 }
             }
-            if (isset($renderingGroupSettings['matchingStatusCodes']) && $exception instanceof FlowException) {
-                if (in_array($exception->getStatusCode(), $renderingGroupSettings['matchingStatusCodes'])) {
+            if (isset($renderingGroupSettings['matchingStatusCodes'])) {
+                $statusCode = $exception instanceof FlowException ? $exception->getStatusCode(): 500;
+                if (in_array($statusCode, $renderingGroupSettings['matchingStatusCodes'])) {
                     return $renderingGroupName;
                 }
             }
