@@ -140,11 +140,6 @@ Neos:
             entryPoint: 'WebRedirect'
             entryPointOptions:
               uri: 'flow/authentication'
-            requestPatterns:
-              'TestsPattern':
-                pattern: 'ControllerObjectName'
-                patternOptions:
-                  controllerObjectNamePattern: 'Neos\Flow\Tests\.*'
           HttpBasicTestingProvider:
             provider: 'Neos\Flow\Security\Authentication\Provider\PersistedUsernamePasswordProvider'
             token: 'Neos\Flow\Security\Authentication\Token\UsernamePasswordHttpBasic'
