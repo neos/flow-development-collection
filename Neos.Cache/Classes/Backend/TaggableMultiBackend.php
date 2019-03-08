@@ -30,7 +30,7 @@ class TaggableMultiBackend extends MultiBackend implements TaggableBackendInterf
     protected function buildSubBackend(string $backendClassName, array $backendOptions): ?BackendInterface
     {
         $backend = null;
-        if (!is_sublcass_of($backendClassName, TaggableBackendInterface::class)) {
+        if (!is_subclass_of($backendClassName, TaggableBackendInterface::class)) {
             return $backend;
         }
 
