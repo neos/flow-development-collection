@@ -143,7 +143,7 @@ class RoutingCommandController extends CommandController
                 $this->outputLine('  Pattern: ' . $route->getUriPattern());
 
                 $this->outputLine('<b>Generated Path:</b>');
-                $this->outputLine('  ' . $route->getResolvedUriPath());
+                $this->outputLine('  ' . $route->getResolvedUriConstraints()->getPathConstraint());
 
                 if ($controllerObjectName !== null) {
                     $this->outputLine('<b>Controller:</b>');
