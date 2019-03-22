@@ -225,6 +225,22 @@ The returned validator checks the following things:
   whether ``YourPackage\Domain\Validator\CommentValidator`` exists. If it exists, it is automatically
   called on validation.
 
+  These *Domain Model Validators* can also mark some specific properties as failed and add specific error messages:
+
+  .. code-block::php
+
+    class CommentValidator extends AbstractValidator
+    {
+        public function isValid($value)
+        {
+            if ($value instanceof \YourPackage\Domain\Model\Comment) {
+                $this->pushResult()->forProperty('text')->addError(
+                                new Error('text can´t be empty.', 1221560910)
+                            );
+            }
+        }
+    }
+
 When specifying a Domain Model as an argument of a controller action, all the above validations will be
 automatically executed. This is explained in detail in the following section.
 
