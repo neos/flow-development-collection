@@ -1,28 +1,8 @@
-`3.3.29 (2018-10-29) <https://github.com/neos/flow-development-collection/releases/tag/3.3.29>`_
+`3.3.29 (2019-03-25) <https://github.com/neos/flow-development-collection/releases/tag/3.3.29>`_
 ================================================================================================
 
 Overview of merged pull requests
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-`BUGFIX: Correct naming for setting <https://github.com/neos/flow-development-collection/pull/1413>`_
------------------------------------------------------------------------------------------------------
-
-Resolves: #1409
-
-**Checklist**
-
-- [x] Code follows the PSR-2 coding style
-- [x] Tests have been created, run and adjusted as needed
-- [x] The PR is created against the [lowest maintained branch](https://www.neos.io/features/release-roadmap.html)
-
-* Packages: ``Flow``
-
-`TASK: Fix phpunit coverage reports <https://github.com/neos/flow-development-collection/pull/1400>`_
------------------------------------------------------------------------------------------------------
-
-Fixes: #1397
-
-* Packages: ``Flow``
-
-`Detailed log <https://github.com/neos/flow-development-collection/compare/3.3.28...3.3.29>`_
+`Detailed log <https://github.com/neos/flow-development-collection/compare/3.3.30...3.3.29>`_
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
