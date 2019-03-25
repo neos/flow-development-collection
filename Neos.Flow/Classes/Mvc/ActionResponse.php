@@ -82,8 +82,6 @@ final class ActionResponse extends \Neos\Flow\Http\Response implements ActionRes
     public function setStatusCode(int $statusCode): void
     {
         $this->statusCode = $statusCode;
-        // TODO: This can be removed after the full changes are done for next major.
-        $this->setStatusCode($statusCode);
     }
 
     /**
