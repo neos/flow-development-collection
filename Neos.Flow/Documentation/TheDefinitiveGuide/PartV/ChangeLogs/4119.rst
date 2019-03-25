@@ -1,0 +1,31 @@
+`4.1.19 (2019-03-25) <https://github.com/neos/flow-development-collection/releases/tag/4.1.19>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Ignore template/psalm annotations <https://github.com/neos/flow-development-collection/pull/1530>`_
+------------------------------------------------------------------------------------------------------------
+
+Fixes #1529 by adjusting the configuration.
+
+`TASK: PHP 7.3 - Use break instead of continue within a switch case <https://github.com/neos/flow-development-collection/pull/1473>`_
+-------------------------------------------------------------------------------------------------------------------------------------
+
+Starting in PHP 7.3, PHP will throw a warning when using `continue`
+within a `switch` to confirm intent. In PHP, within `switch`, `break`
+and `continue` do the same thing.
+
+* Packages: ``Flow``
+
+`TASK: Correct documentation for fusionPathPatterns on FusionView <https://github.com/neos/flow-development-collection/pull/1430>`_
+-----------------------------------------------------------------------------------------------------------------------------------
+
+**What I did**
+
+I have changed the example for configuring the view through Views.yaml. Currently there is an old integration which doesn't work.
+
+* Packages: ``Flow``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/4.1.18...4.1.19>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
