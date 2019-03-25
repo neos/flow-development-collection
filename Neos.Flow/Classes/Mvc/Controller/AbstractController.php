@@ -13,6 +13,7 @@ namespace Neos\Flow\Mvc\Controller;
 
 use Neos\Flow\Http\Helper\MediaTypeHelper;
 use Neos\Flow\Http\Response;
+use Neos\Flow\Mvc\ActionResponseInterface;
 use Neos\Flow\Mvc\Exception\ForwardException;
 use Neos\Flow\Mvc\Exception\RequiredArgumentMissingException;
 use Neos\Flow\Mvc\Exception\StopActionException;
@@ -55,7 +56,7 @@ abstract class AbstractController implements ControllerInterface
 
     /**
      * The response which will be returned by this action controller
-     * @var Response
+     * @var Response|ActionResponseInterface
      * @api
      */
     protected $response;
@@ -101,8 +102,10 @@ abstract class AbstractController implements ControllerInterface
      * This method should be called by the concrete processRequest() method.
      *
      * @param RequestInterface $request
-     * @param ResponseInterface $response
+     * @param ResponseInterface|ActionResponseInterface $response
      * @throws UnsupportedRequestTypeException
+     *
+     * TODO: This should expect an ActionRequest and ActionResponse in the next major.
      */
     protected function initializeController(RequestInterface $request, ResponseInterface $response)
     {
@@ -323,11 +326,11 @@ abstract class AbstractController implements ControllerInterface
      */
     protected function redirectToUri($uri, $delay = 0, $statusCode = 303)
     {
-        $this->response->setStatus($statusCode);
         if ($delay === 0) {
-            $this->response->setHeader('Location', (string)$uri);
+            $this->response->setRedirectUri($uri, $statusCode);
         } else {
             $escapedUri = htmlentities($uri, ENT_QUOTES, 'utf-8');
+            $this->response->setStatusCode($statusCode);
             $this->response->setContent('<html><head><meta http-equiv="refresh" content="' . intval($delay) . ';url=' . $escapedUri . '"/></head></html>');
         }
         throw new StopActionException();
@@ -338,12 +341,15 @@ abstract class AbstractController implements ControllerInterface
      *
      * NOTE: This method only supports web requests and will throw an exception if used with other request types.
      *
+     * TODO: statusMessage argument is deprecated and should be removed in next major.
+     *
      * @param integer $statusCode The HTTP status code
      * @param string $statusMessage A custom HTTP status message
      * @param string $content Body content which further explains the status
      * @throws UnsupportedRequestTypeException If the request is not a web request
      * @throws StopActionException
      * @api
+     * @deprecated This method will no longer accept a status message after next major, but still exist.
      */
     protected function throwStatus($statusCode, $statusMessage = null, $content = null)
     {

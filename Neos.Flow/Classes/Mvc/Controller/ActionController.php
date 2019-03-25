@@ -16,6 +16,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Error\Messages as Error;
 use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\Log\Utility\LogEnvironment;
+use Neos\Flow\Mvc\ActionResponseInterface;
 use Neos\Flow\Mvc\Exception\ForwardException;
 use Neos\Flow\Mvc\Exception\InvalidActionVisibilityException;
 use Neos\Flow\Mvc\Exception\InvalidArgumentTypeException;
@@ -180,7 +181,7 @@ class ActionController extends AbstractController
      * Handles a request. The result output is returned by altering the given response.
      *
      * @param RequestInterface $request The request object
-     * @param ResponseInterface $response The response, modified by this handler
+     * @param ResponseInterface|ActionResponseInterface $response The response, modified by this handler
      * @return void
      * @throws UnsupportedRequestTypeException
      * @api
@@ -445,6 +446,9 @@ class ActionController extends AbstractController
      * If the action returns a string, it is appended to the content in the
      * response object. If the action doesn't return anything and a valid
      * view exists, the view is rendered automatically.
+     *
+     * TODO: In next major this will no longer append content and the response will probably be unique per call.
+     *
      *
      * @return void
      */

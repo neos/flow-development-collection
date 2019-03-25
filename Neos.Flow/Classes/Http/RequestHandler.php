@@ -16,6 +16,7 @@ use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Http\Component\ComponentChain;
 use Neos\Flow\Http\Component\ComponentContext;
+use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Package\PackageManager;
 use Psr\Http\Message\ResponseInterface;

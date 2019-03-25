@@ -20,6 +20,7 @@ use Neos\Flow\Annotations as Flow;
  *
  * @api
  * @Flow\Proxy(false)
+ * @deprecated
  */
 class Response extends AbstractMessage implements ResponseInterface, \Psr\Http\Message\ResponseInterface
 {
