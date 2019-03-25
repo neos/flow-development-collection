@@ -41,6 +41,8 @@ Neos:
         'WithoutSecurityChecks': true
         'covers': true
         'doesNotPerformAssertions': true
+        'template': true
+        'psalm': true
 
       # If enabled, the Reflection Service notes all incorrect or inconsistent usage
       # of @param annotations in the default log.
