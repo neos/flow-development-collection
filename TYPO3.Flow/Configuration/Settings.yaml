@@ -408,6 +408,8 @@ TYPO3:
         'AfterStep': TRUE
         'WithoutSecurityChecks': TRUE
         'covers': TRUE
+        'template': TRUE
+        'psalm': TRUE
 
       # If enabled, the Reflection Service notes all incorrect or inconsistent usage
       # of @param annotations in the default log.
