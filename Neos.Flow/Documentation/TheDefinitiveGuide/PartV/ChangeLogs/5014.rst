@@ -1,0 +1,87 @@
+`5.0.14 (2019-03-25) <https://github.com/neos/flow-development-collection/releases/tag/5.0.14>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Ignore template/psalm annotations <https://github.com/neos/flow-development-collection/pull/1530>`_
+------------------------------------------------------------------------------------------------------------
+
+Fixes #1529 by adjusting the configuration.
+
+`BUGFIX: add \`template\` and \`psalm\` to ignoredTags <https://github.com/neos/flow-development-collection/pull/1528>`_
+------------------------------------------------------------------------------------------------------------------------
+
+Fixes: #1529
+
+* Packages: ``Flow``
+
+`BUGFIX: Accessing non existing array keys can cause a PHP Notice. <https://github.com/neos/flow-development-collection/pull/1511>`_
+------------------------------------------------------------------------------------------------------------------------------------
+
+Would be better to check the array keys before using them.
+
+INFO: For some langauges like "zh" (china), the property "$this->rulesets" is
+not filled properly. So accessing for example "$this->rulesets['zh']" will cause
+a PHP Notice: "Undefined index".
+
+**What I did**
+
+In my fluidtemplate, i want to translate a language ID from "zh/Main.xlf" with this code:
+
+```
+{f:translate(
+  id: 'lang.id.with.plurals.definition',
+  package: 'Some.Package',
+  source: 'Main.xlf',
+  locale: 'zh',
+  quantity: 2
+)}
+```
+
+The definition of this language ID in my "zh/Main.xlf" is this:
+
+```
+<group id="lang.id.with.plurals.definition" restype="x-gettext-plurals">
+		<trans-unit id="lang.id.with.plurals.definition[0]">
+			<source>Acme default Foo</source>
+			<target>Acme ZH Foo</target>
+		</trans-unit>
+		<trans-unit id="lang.id.with.plurals.definition[1]">
+			<source>Acme default Foos</source>
+			<target>"Acme ZH Foos</target>
+		</trans-unit>
+</group>
+```
+
+* Packages: ``Flow``
+
+`TASK: add pushResult for Property example <https://github.com/neos/flow-development-collection/pull/1518>`_
+------------------------------------------------------------------------------------------------------------
+
+This is a direct copy of https://github.com/neos/flow/pull/19 - thanks @kaystrobach
+
+* Packages: ``Flow``
+
+`BUGFIX: Allow testing provider everywhere <https://github.com/neos/flow-development-collection/pull/1516>`_
+------------------------------------------------------------------------------------------------------------
+
+The TestingProvider should be available for all controllers/routes not only for Flow testing controllers otherwise the generic possibility to authenticateRoles in the FunctionalTestCase makes no sense for any other package. In the respective case a Neos test tried to authenticate roles but these would never have an effect due to the patterns.
+
+* Packages: ``Flow``
+
+`BUGFIX: Fix exit code for unresolved CLI commands <https://github.com/neos/flow-development-collection/pull/1505>`_
+--------------------------------------------------------------------------------------------------------------------
+
+Fixes the exit code of
+
+    ./flow non:existing:command
+
+to be 1 instead of 0.
+
+Fixes: #1504
+
+* Packages: ``Flow``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/5.0.13...5.0.14>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
