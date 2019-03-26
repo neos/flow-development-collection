@@ -2,8 +2,6 @@
 namespace Neos\Flow\Mvc;
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Http\Helper\ResponseInformationHelper;
-use Neos\Flow\Http\Response;
 use Psr\Http\Message\UriInterface;
 
 /**
@@ -13,8 +11,10 @@ use Psr\Http\Message\UriInterface;
  * @Flow\Proxy(false)
  * @api
  */
-final class ActionResponse extends \Neos\Flow\Http\Response implements ActionResponseInterface
+final class ActionResponse extends \Neos\Flow\Http\Response
 {
+    use ResponseDeprecationTrait;
+
     /**
      * @var array
      */
@@ -100,26 +100,5 @@ final class ActionResponse extends \Neos\Flow\Http\Response implements ActionRes
             $this->componentParameters[$componentClassName] = [];
         }
         $this->componentParameters[$componentClassName][$parameterName] = $value;
-    }
-
-    /**
-     * Purely internal implementation to support backwards compatibility.
-     *
-     * @param string $rawResponse
-     * @param Response $parentResponse Deprecated parameter. Parent response, if called recursively
-     *
-     * @return self
-     * @throws \InvalidArgumentException
-     * @internal
-     * @deprecated
-     * TODO: Can be removed when the ActionResponse no longer extends HTTP response.
-     */
-    public static function createFromRaw($rawResponse, Response $parentResponse = null)
-    {
-        /** @var Response $response */
-        $response = ResponseInformationHelper::createFromRaw($rawResponse, self::class);
-        $response->parentResponse = $parentResponse;
-
-        return $response;
     }
 }

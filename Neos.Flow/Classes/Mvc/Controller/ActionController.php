@@ -16,7 +16,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Error\Messages as Error;
 use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\Log\Utility\LogEnvironment;
-use Neos\Flow\Mvc\ActionResponseInterface;
+use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Exception\ForwardException;
 use Neos\Flow\Mvc\Exception\InvalidActionVisibilityException;
 use Neos\Flow\Mvc\Exception\InvalidArgumentTypeException;
@@ -181,7 +181,7 @@ class ActionController extends AbstractController
      * Handles a request. The result output is returned by altering the given response.
      *
      * @param RequestInterface $request The request object
-     * @param ResponseInterface|ActionResponseInterface $response The response, modified by this handler
+     * @param ResponseInterface|ActionResponse $response The response, modified by this handler
      * @return void
      * @throws UnsupportedRequestTypeException
      * @api

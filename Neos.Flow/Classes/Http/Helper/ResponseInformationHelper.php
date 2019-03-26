@@ -34,6 +34,10 @@ abstract class ResponseInformationHelper
     {
         $response = new $responseClassName();
 
+        if (!$response instanceof ResponseInterface) {
+            throw new \InvalidArgumentException(sprintf('The given response class name "%s" does not implement the "%s" and cannot be created with this method.', $responseClassName, ResponseInterface::class));
+        }
+
         // see https://tools.ietf.org/html/rfc7230#section-3.5
         $lines = explode(chr(10), $rawResponse);
         $statusLine = array_shift($lines);

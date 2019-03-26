@@ -12,8 +12,7 @@ namespace Neos\Flow\Mvc\Controller;
  */
 
 use Neos\Flow\Http\Helper\MediaTypeHelper;
-use Neos\Flow\Http\Response;
-use Neos\Flow\Mvc\ActionResponseInterface;
+use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Exception\ForwardException;
 use Neos\Flow\Mvc\Exception\RequiredArgumentMissingException;
 use Neos\Flow\Mvc\Exception\StopActionException;
@@ -56,7 +55,7 @@ abstract class AbstractController implements ControllerInterface
 
     /**
      * The response which will be returned by this action controller
-     * @var Response|ActionResponseInterface
+     * @var ActionResponse
      * @api
      */
     protected $response;
@@ -102,7 +101,7 @@ abstract class AbstractController implements ControllerInterface
      * This method should be called by the concrete processRequest() method.
      *
      * @param RequestInterface $request
-     * @param ResponseInterface|ActionResponseInterface $response
+     * @param ResponseInterface|ActionResponse $response
      * @throws UnsupportedRequestTypeException
      *
      * TODO: This should expect an ActionRequest and ActionResponse in the next major.
@@ -341,7 +340,7 @@ abstract class AbstractController implements ControllerInterface
      *
      * NOTE: This method only supports web requests and will throw an exception if used with other request types.
      *
-     * TODO: statusMessage argument is deprecated and should be removed in next major.
+     * TODO: statusMessage argument is deprecated and will no longer be used from 6.0
      *
      * @param integer $statusCode The HTTP status code
      * @param string $statusMessage A custom HTTP status message
@@ -349,7 +348,6 @@ abstract class AbstractController implements ControllerInterface
      * @throws UnsupportedRequestTypeException If the request is not a web request
      * @throws StopActionException
      * @api
-     * @deprecated This method will no longer accept a status message after next major, but still exist.
      */
     protected function throwStatus($statusCode, $statusMessage = null, $content = null)
     {

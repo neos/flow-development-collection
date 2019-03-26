@@ -21,7 +21,7 @@ use Psr\Http\Message\StreamInterface;
  *
  * @api
  * @Flow\Proxy(false)
- * @deprecated
+ * @deprecated Since Flow 5.3, to be removed with 6.0. The whole Flow HTTP implementation will use PSR-7 compatible implementations only from then.
  */
 abstract class AbstractMessage implements MessageInterface
 {

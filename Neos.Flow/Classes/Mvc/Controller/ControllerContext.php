@@ -13,7 +13,7 @@ namespace Neos\Flow\Mvc\Controller;
 
 
 use Neos\Flow\Http\Response;
-use Neos\Flow\Mvc\ActionResponseInterface;
+use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\FlashMessageContainer;
 use Neos\Flow\Mvc\RequestInterface;
 use Neos\Flow\Mvc\ResponseInterface;
@@ -38,7 +38,7 @@ class ControllerContext
     protected $request;
 
     /**
-     * @var Response|ActionResponseInterface
+     * @var ActionResponse
      */
     protected $response;
 
@@ -88,7 +88,7 @@ class ControllerContext
     /**
      * Get the response of the controller
      *
-     * @return ResponseInterface|ActionResponseInterface
+     * @return ResponseInterface|ActionResponse
      * @api
      */
     public function getResponse()

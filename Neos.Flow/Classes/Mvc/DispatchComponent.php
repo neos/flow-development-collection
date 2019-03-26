@@ -165,9 +165,9 @@ class DispatchComponent implements ComponentInterface
      * TODO: Needs to be adapted for next major when we only deliver an action response inside the dispatch.
      *
      * @param \Psr\Http\Message\ResponseInterface $httpResponse
-     * @return ActionResponseInterface|\Psr\Http\Message\ResponseInterface
+     * @return ActionResponse|\Psr\Http\Message\ResponseInterface
      */
-    protected function prepareActionResponse(\Psr\Http\Message\ResponseInterface $httpResponse): ActionResponseInterface
+    protected function prepareActionResponse(\Psr\Http\Message\ResponseInterface $httpResponse): ActionResponse
     {
         $rawResponse = implode("\r\n", ResponseInformationHelper::prepareHeaders($httpResponse));
         $rawResponse .= "\r\n\r\n";
