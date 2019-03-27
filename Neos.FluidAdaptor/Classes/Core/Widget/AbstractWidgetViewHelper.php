@@ -13,6 +13,7 @@ namespace Neos\FluidAdaptor\Core\Widget;
 
 use Neos\Flow\Http\Response;
 use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Exception\ForwardException;
 use Neos\Flow\Mvc\Exception\InfiniteLoopException;
 use Neos\Flow\Mvc\Exception\StopActionException;
@@ -208,8 +209,9 @@ abstract class AbstractWidgetViewHelper extends AbstractViewHelper implements Ch
 
         /** @var $subRequest ActionRequest */
         $subRequest = $this->objectManager->get(ActionRequest::class, $this->controllerContext->getRequest());
-        /** @var $subResponse Response */
-        $subResponse = $this->objectManager->get(Response::class, $this->controllerContext->getResponse());
+
+        // TODO: For next major with the PSR-7 / ActionResponse rework this must be re-evaluated and adjusted.
+        $subResponse = new ActionResponse($this->controllerContext->getResponse());
 
         $this->passArgumentsToSubRequest($subRequest);
         $subRequest->setArgument('__widgetContext', $this->widgetContext);
