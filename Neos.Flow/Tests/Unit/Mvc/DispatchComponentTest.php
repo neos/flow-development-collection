@@ -25,7 +25,6 @@ use Neos\Flow\Property\PropertyMappingConfiguration;
 use Neos\Flow\Property\TypeConverter\MediaTypeConverterInterface;
 use Neos\Flow\Security;
 use Neos\Flow\Tests\UnitTestCase;
-use Psr\Http\Message\ResponseInterface;
 
 /**
  * Test case for the MVC Dispatcher Component
