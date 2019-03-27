@@ -11,6 +11,7 @@ namespace Neos\Flow\Mvc\Controller;
  * source code.
  */
 
+use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Http\Helper\MediaTypeHelper;
 use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Exception\ForwardException;
@@ -27,6 +28,7 @@ use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Utility\MediaTypes;
 use Neos\Error\Messages as Error;
 use Neos\Flow\Validation\ValidatorResolver;
+use Psr\Http\Message\UriInterface;
 
 /**
  * An abstract base class for HTTP based controllers
@@ -326,6 +328,10 @@ abstract class AbstractController implements ControllerInterface
     protected function redirectToUri($uri, $delay = 0, $statusCode = 303)
     {
         if ($delay === 0) {
+            if (!$uri instanceof UriInterface) {
+                $uri = new \Neos\Flow\Http\Uri($uri);
+            }
+
             $this->response->setRedirectUri($uri, $statusCode);
         } else {
             $escapedUri = htmlentities($uri, ENT_QUOTES, 'utf-8');

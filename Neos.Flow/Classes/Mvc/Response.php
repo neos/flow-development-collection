@@ -81,7 +81,6 @@ class Response implements ResponseInterface
      */
     public function __toString()
     {
-        $this->send();
         return $this->getContent();
     }
 }

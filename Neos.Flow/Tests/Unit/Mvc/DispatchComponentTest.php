@@ -15,6 +15,7 @@ use Neos\Flow\Http\Component\ComponentContext;
 use Neos\Flow\Http\Request;
 use Neos\Flow\Http\Response;
 use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\DispatchComponent;
 use Neos\Flow\Mvc\Dispatcher;
 use Neos\Flow\Mvc\Routing\RoutingComponent;
@@ -24,6 +25,7 @@ use Neos\Flow\Property\PropertyMappingConfiguration;
 use Neos\Flow\Property\TypeConverter\MediaTypeConverterInterface;
 use Neos\Flow\Security;
 use Neos\Flow\Tests\UnitTestCase;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * Test case for the MVC Dispatcher Component
@@ -49,11 +51,6 @@ class DispatchComponentTest extends UnitTestCase
      * @var Request|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $mockHttpRequest;
-
-    /**
-     * @var Response|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $mockHttpResponse;
 
     /**
      * @var Dispatcher|\PHPUnit_Framework_MockObject_MockObject
@@ -93,8 +90,8 @@ class DispatchComponentTest extends UnitTestCase
         $this->mockHttpRequest->expects($this->any())->method('withParsedBody')->willReturn($this->mockHttpRequest);
         $this->mockComponentContext->expects($this->any())->method('getHttpRequest')->will($this->returnValue($this->mockHttpRequest));
 
-        $this->mockHttpResponse = $this->getMockBuilder(Response::class)->disableOriginalConstructor()->getMock();
-        $this->mockComponentContext->expects($this->any())->method('getHttpResponse')->will($this->returnValue($this->mockHttpResponse));
+        $httpResponse = new Response();
+        $this->mockComponentContext->expects($this->any())->method('getHttpResponse')->willReturn($httpResponse);
 
         $this->mockDispatcher = $this->getMockBuilder(Dispatcher::class)->getMock();
         $this->inject($this->dispatchComponent, 'dispatcher', $this->mockDispatcher);
@@ -211,14 +208,14 @@ class DispatchComponentTest extends UnitTestCase
         $this->mockHttpRequest->expects($this->any())->method('getArguments')->will($this->returnValue([]));
         $this->mockPropertyMapper->expects($this->any())->method('convert')->with('', 'array', $this->mockPropertyMappingConfiguration)->will($this->returnValue([]));
 
-        $this->mockDispatcher->expects($this->once())->method('dispatch')->with($this->mockActionRequest, $this->mockHttpResponse);
+        $this->mockDispatcher->expects($this->once())->method('dispatch')->with($this->mockActionRequest);
 
-        $this->mockComponentContext->expects($this->any())->method('getParameter')->willReturnMap([
-            [RoutingComponent::class, 'matchResults', []],
-            [DispatchComponent::class, 'actionRequest', $this->mockActionRequest]
-        ]);
-
-        $this->dispatchComponent->handle($this->mockComponentContext);
+        $componentContext = new ComponentContext($this->mockHttpRequest, new Response());
+        $componentContext->setParameter(RoutingComponent::class, 'matchResults', []);
+        $componentContext->setParameter(DispatchComponent::class, 'actionRequest', $this->mockActionRequest);
+        $this->dispatchComponent->handle($componentContext);
+        // TODO: This can be cleaned for next major when ActionResponse and HttpResponse are cleanly separated.
+        $this->assertInstanceOf(ActionResponse::class, $componentContext->getHttpResponse());
     }
 
     /**
