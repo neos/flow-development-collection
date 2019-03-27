@@ -234,12 +234,10 @@ abstract class AbstractWidgetViewHelper extends AbstractViewHelper implements Ch
                     $subRequest = $exception->getNextRequest();
                     continue;
                 }
-                /** @var $parentResponse Response */
+                /** @var $parentResponse ActionResponse */
                 $parentResponse = $this->controllerContext->getResponse();
-                $parentResponse
-                    ->setStatus($subResponse->getStatusCode())
-                    ->setContent($subResponse->getContent())
-                    ->setHeader('Location', $subResponse->getHeader('Location'));
+                $parentResponse->setRedirectUri($subResponse->getHeader('Location'), $subResponse->getStatusCode());
+                $parentResponse->setContent($subResponse->getContent());
                 throw $exception;
             }
         }
