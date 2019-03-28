@@ -12,6 +12,7 @@ namespace Neos\FluidAdaptor\Core\Widget;
  */
 
 use Neos\Flow\Http\Response;
+use Neos\Flow\Http\Uri;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Exception\ForwardException;
@@ -236,7 +237,7 @@ abstract class AbstractWidgetViewHelper extends AbstractViewHelper implements Ch
                 }
                 /** @var $parentResponse ActionResponse */
                 $parentResponse = $this->controllerContext->getResponse();
-                $parentResponse->setRedirectUri($subResponse->getHeader('Location'), $subResponse->getStatusCode());
+                $parentResponse->setRedirectUri(new Uri($subResponse->getHeader('Location')), $subResponse->getStatusCode());
                 $parentResponse->setContent($subResponse->getContent());
                 throw $exception;
             }
