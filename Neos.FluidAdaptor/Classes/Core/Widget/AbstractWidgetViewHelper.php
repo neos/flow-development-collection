@@ -235,10 +235,19 @@ abstract class AbstractWidgetViewHelper extends AbstractViewHelper implements Ch
                     $subRequest = $exception->getNextRequest();
                     continue;
                 }
+
                 /** @var $parentResponse ActionResponse */
                 $parentResponse = $this->controllerContext->getResponse();
-                $parentResponse->setRedirectUri(new Uri($subResponse->getHeader('Location')), $subResponse->getStatusCode());
                 $parentResponse->setContent($subResponse->getContent());
+                $parentResponse->setStatusCode($subResponse->getStatusCode());
+                try {
+                    // TODO: With next major this part should just apply the sub (action) response to the parent (action) response
+                    $redirectUri = new Uri($subResponse->getHeader('Location'));
+                    $parentResponse->setRedirectUri($redirectUri, $subResponse->getStatusCode());
+                } catch (\InvalidArgumentException $innerException) {
+                    // FIXME: What do we do in this case? (probably nothing because there might not have been a location header).
+                }
+
                 throw $exception;
             }
         }
