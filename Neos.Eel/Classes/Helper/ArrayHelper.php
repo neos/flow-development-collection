@@ -492,6 +492,48 @@ class ArrayHelper implements ProtectedContextAwareInterface
     }
 
     /**
+     *
+     * Generates BEM classes as an array. The modifiers property can be a string
+     * (for one modifier), an array (e.g. `['one', 'two']`) or an array with keys and values.
+     * If you have an array with keys and values  (like a Neos.Fusion:DataStructure) and
+     * a value is `true` the name of the key gets used for the modifier.
+     *
+     * @param string $block The name of the block, defaults to null
+     * @param string $element The name of the element, optional, defaults to null
+     * @param string|array $modifiers TThe name of the modifiers, optional, defaults to []
+     *
+     * @return array
+     */
+    public function BEM(string $block = null, string $element = null, $modifiers = []): array
+    {
+        if (!isset($block) || !is_string($block) || !$block) {
+            return [];
+        }
+        $baseClass = $element ? "{$block}__{$element}" : "{$block}";
+        $classes = [$baseClass];
+
+        if (isset($modifiers)) {
+            if (is_string($modifiers)) {
+                $modifiers = [$modifiers];
+            }
+            if (is_array($modifiers)) {
+                foreach ($modifiers as $key => $value) {
+                    if (!$value) {
+                        continue;
+                    }
+                    if (is_string($value)) {
+                        $classes[] = "{$baseClass}--{$value}";
+                    } else if (is_string($key)) {
+                        $classes[] = "{$baseClass}--{$key}";
+                    }
+                }
+            }
+        }
+
+        return $classes;
+    }
+
+    /**
      * All methods are considered safe
      *
      * @param string $methodName

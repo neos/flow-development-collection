@@ -16,6 +16,7 @@ use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Utility\Unicode\Functions as UnicodeFunctions;
 use Neos\Utility\Unicode\TextIterator;
+use Neos\Eel\Helper\ArrayHelper;
 
 /**
  * String helpers for Eel contexts
@@ -740,6 +741,24 @@ class StringHelper implements ProtectedContextAwareInterface
     public function format($format, array $args)
     {
         return vsprintf($format, $args);
+    }
+
+    /**
+     *
+     * Generates BEM classes as a string. The modifiers property can be a string
+     * (for one modifier), an array (e.g. `['one', 'two']`) or an array with keys and values.
+     * If you have an array with keys and values  (like a Neos.Fusion:DataStructure) and
+     * a value is `true` the name of the key gets used for the modifier.
+     *
+     * @param string $block The name of the block, defaults to null
+     * @param string $element The name of the element, optional, defaults to null
+     * @param string|array $modifiers TThe name of the modifiers, optional, defaults to []
+     *
+     * @return string
+     */
+    public function BEM(string $block = null, string $element = null, $modifiers = []): string
+    {
+        return implode(" ", ArrayHelper::BEM($block, $element, $modifiers));
     }
 
     /**
