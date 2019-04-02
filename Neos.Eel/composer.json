@@ -4,7 +4,7 @@
     "license": ["MIT"],
     "description": "The Embedded Expression Language (Eel) is a building block for creating Domain Specific Languages",
     "require": {
-        "neos/flow": "*",
+        "neos/flow": "~5.3.0",
         "neos/cache": "*",
         "neos/utility-unicode": "*",
         "neos/utility-objecthandling": "*"
