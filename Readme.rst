@@ -6,7 +6,7 @@
 .. |Code Climate| image:: https://codeclimate.com/github/neos/flow-development-collection/badges/gpa.svg
    :target: https://codeclimate.com/github/neos/flow-development-collection
    :alt: Code Climate
-.. |StyleCI| image:: https://styleci.io/repos/40963991/shield?style=flat
+.. |StyleCI| image:: https://styleci.io/repos/40963991/shield?style=flat&branch=5.3
    :target: https://styleci.io/repos/40963991
    :alt: StyleCI
 .. |Latest Stable Version| image:: https://poser.pugx.org/neos/flow-development-collection/v/stable
