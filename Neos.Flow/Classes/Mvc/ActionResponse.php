@@ -59,7 +59,7 @@ final class ActionResponse extends \Neos\Flow\Http\Response
      *
      * @param UriInterface $uri
      * @param int $statusCode
-     * return void
+     * @return void
      * @api
      */
     public function setRedirectUri(UriInterface $uri, int $statusCode = 303): void
