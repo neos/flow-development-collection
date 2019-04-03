@@ -6,7 +6,7 @@ use Psr\Http\Message\UriInterface;
 
 /**
  * The new minimal MVC response object.
- * For anything more use a custom HTTP component and set a component parameter.
+ * It allows for simple interactions with the HTTP response from within MVC actions. More specific requirements can be implemented via HTTP Components. @see setComponentParameter() 
  *
  * @Flow\Proxy(false)
  * @api
