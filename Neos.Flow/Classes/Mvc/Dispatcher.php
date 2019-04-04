@@ -130,6 +130,8 @@ class Dispatcher
      * @param RequestInterface $request
      * @param ResponseInterface $response
      * @throws InvalidControllerException|InfiniteLoopException|NoSuchOptionException
+     *
+     * TODO: From next major we might want to create one ActionResponse PER controller invocation and then merge results here
      */
     protected function initiateDispatchLoop(RequestInterface $request, ResponseInterface $response)
     {
