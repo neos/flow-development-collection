@@ -3,6 +3,7 @@
 namespace Neos\Flow\Security;
 
 use Neos\Flow\Security\Authentication\AuthenticationProviderName;
+use Neos\Flow\Security\Authentication\CredentialsSource;
 
 interface AccountInterface {
 
