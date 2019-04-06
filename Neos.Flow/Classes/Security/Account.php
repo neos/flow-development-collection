@@ -14,6 +14,8 @@ namespace Neos\Flow\Security;
 use Doctrine\ORM\Mapping as ORM;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
+use Neos\Flow\Security\Authentication\AuthenticationProviderName;
+use Neos\Flow\Security\Authentication\CredentialsSource;
 use Neos\Flow\Security\Authentication\TokenInterface;
 use Neos\Flow\Security\Exception\InvalidAuthenticationStatusException;
 use Neos\Flow\Security\Policy\PolicyService;
@@ -26,7 +28,7 @@ use Neos\Flow\Utility\Now;
  * @Flow\Entity
  * @api
  */
-class Account
+class Account implements AccountInterface
 {
     /**
      * @var string
@@ -154,7 +156,16 @@ class Account
         $this->accountIdentifier = $accountIdentifier;
     }
 
-    /**
+	/**
+	 * @return AccountIdentifier
+	 */
+	public function getIdentifier() : AccountIdentifier
+	{
+		return new AccountIdentifier($this->accountIdentifier);
+	}
+
+
+	/**
      * Returns the authentication provider name this account corresponds to
      *
      * @return string The authentication provider name
@@ -177,15 +188,24 @@ class Account
         $this->authenticationProviderName = $authenticationProviderName;
     }
 
-    /**
+	/**
+	 * @return AuthenticationProviderName
+	 */
+	public function getProviderName() : AuthenticationProviderName
+	{
+		return new AuthenticationProviderName($this->authenticationProviderName);
+	}
+
+
+	/**
      * Returns the credentials source
      *
-     * @return mixed The credentials source
+     * @return CredentialsSource
      * @api
      */
-    public function getCredentialsSource()
+    public function getCredentialsSource() : CredentialsSource
     {
-        return $this->credentialsSource;
+        return new CredentialsSource($this->credentialsSource);
     }
 
     /**
