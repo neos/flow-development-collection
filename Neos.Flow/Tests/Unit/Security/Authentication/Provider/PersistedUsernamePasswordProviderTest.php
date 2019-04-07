@@ -13,6 +13,7 @@ namespace Neos\Flow\Tests\Unit\Security\Authentication\Provider;
 
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Security;
+use Neos\Flow\Security\Authentication\CredentialsSource;
 use Neos\Flow\Tests\UnitTestCase;
 
 /**
@@ -85,7 +86,7 @@ class PersistedUsernamePasswordProviderTest extends UnitTestCase
     {
         $this->mockHashService->expects($this->once())->method('validatePassword')->with('password', '8bf0abbb93000e2e47f0e0a80721e834,80f117a78cff75f3f73793fd02aa9086')->will($this->returnValue(true));
 
-        $this->mockAccount->expects($this->once())->method('getCredentialsSource')->will($this->returnValue('8bf0abbb93000e2e47f0e0a80721e834,80f117a78cff75f3f73793fd02aa9086'));
+        $this->mockAccount->expects($this->once())->method('getCredentialsSource')->will($this->returnValue(new CredentialsSource('8bf0abbb93000e2e47f0e0a80721e834,80f117a78cff75f3f73793fd02aa9086')));
 
         $this->mockAccountRepository->expects($this->once())->method('findActiveByAccountIdentifierAndAuthenticationProviderName')->with('admin', 'myProvider')->will($this->returnValue($this->mockAccount));
 
@@ -115,7 +116,7 @@ class PersistedUsernamePasswordProviderTest extends UnitTestCase
     {
         $this->mockHashService->expects($this->once())->method('validatePassword')->with('wrong password', '8bf0abbb93000e2e47f0e0a80721e834,80f117a78cff75f3f73793fd02aa9086')->will($this->returnValue(false));
 
-        $this->mockAccount->expects($this->once())->method('getCredentialsSource')->will($this->returnValue('8bf0abbb93000e2e47f0e0a80721e834,80f117a78cff75f3f73793fd02aa9086'));
+        $this->mockAccount->expects($this->once())->method('getCredentialsSource')->will($this->returnValue(new CredentialsSource('8bf0abbb93000e2e47f0e0a80721e834,80f117a78cff75f3f73793fd02aa9086')));
 
         $this->mockAccountRepository->expects($this->once())->method('findActiveByAccountIdentifierAndAuthenticationProviderName')->with('admin', 'myProvider')->will($this->returnValue($this->mockAccount));
 
