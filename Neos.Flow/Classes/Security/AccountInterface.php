@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Neos\Flow\Security;
 
 use Neos\Flow\Security\Authentication\AuthenticationProviderName;
