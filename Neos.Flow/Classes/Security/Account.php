@@ -156,16 +156,15 @@ class Account implements AccountInterface
         $this->accountIdentifier = $accountIdentifier;
     }
 
-	/**
-	 * @return AccountIdentifier
-	 */
-	public function getIdentifier() : AccountIdentifier
-	{
-		return new AccountIdentifier($this->accountIdentifier);
-	}
+    /**
+     * @return AccountIdentifier
+     */
+    public function getIdentifier(): AccountIdentifier
+    {
+        return new AccountIdentifier($this->accountIdentifier);
+    }
 
-
-	/**
+    /**
      * Returns the authentication provider name this account corresponds to
      *
      * @return string The authentication provider name
@@ -188,14 +187,13 @@ class Account implements AccountInterface
         $this->authenticationProviderName = $authenticationProviderName;
     }
 
-	/**
-	 * @return AuthenticationProviderName
-	 */
-	public function getProviderName() : AuthenticationProviderName
-	{
-		return new AuthenticationProviderName($this->authenticationProviderName);
-	}
-
+    /**
+     * @return AuthenticationProviderName
+     */
+    public function getProviderName(): AuthenticationProviderName
+    {
+        return new AuthenticationProviderName($this->authenticationProviderName);
+    }
 
 	/**
      * Returns the credentials source

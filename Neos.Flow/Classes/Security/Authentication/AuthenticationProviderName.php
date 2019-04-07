@@ -27,5 +27,4 @@ final class AuthenticationProviderName
     {
         return $this->authenticationProviderName;
     }
-
 }
