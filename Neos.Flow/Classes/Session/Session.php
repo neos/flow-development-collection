@@ -727,7 +727,7 @@ class Session implements CookieEnabledInterface
         foreach ($tokens as $token) {
             $account = $token->getAccount();
             if ($token->isAuthenticated() && $account !== null) {
-                $accountProviderAndIdentifierPairs[$account->getAuthenticationProviderName() . ':' . $account->getAccountIdentifier()] = true;
+                $accountProviderAndIdentifierPairs[(string) $account->getAuthenticationProviderName() . ':' . $account->getAccountIdentifier()] = true;
             }
         }
         if ($accountProviderAndIdentifierPairs !== []) {

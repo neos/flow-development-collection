@@ -18,7 +18,7 @@ interface AccountInterface
     /**
      * @return AuthenticationProviderName
      */
-    public function getProviderName(): AuthenticationProviderName;
+    public function getAuthenticationProviderName(): AuthenticationProviderName;
 
     /**
      * @return mixed

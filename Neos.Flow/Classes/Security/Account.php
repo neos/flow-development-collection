@@ -167,12 +167,12 @@ class Account implements AccountInterface
     /**
      * Returns the authentication provider name this account corresponds to
      *
-     * @return string The authentication provider name
+     * @return AuthenticationProviderName The authentication provider name
      * @api
      */
-    public function getAuthenticationProviderName()
+    public function getAuthenticationProviderName(): AuthenticationProviderName
     {
-        return $this->authenticationProviderName;
+        return new AuthenticationProviderName($this->authenticationProviderName);
     }
 
     /**
@@ -185,14 +185,6 @@ class Account implements AccountInterface
     public function setAuthenticationProviderName($authenticationProviderName)
     {
         $this->authenticationProviderName = $authenticationProviderName;
-    }
-
-    /**
-     * @return AuthenticationProviderName
-     */
-    public function getProviderName(): AuthenticationProviderName
-    {
-        return new AuthenticationProviderName($this->authenticationProviderName);
     }
 
     /**
