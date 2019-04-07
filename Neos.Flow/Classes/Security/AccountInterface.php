@@ -13,7 +13,7 @@ interface AccountInterface
     /**
      * @return AccountIdentifier
      */
-    public function getIdentifier(): AccountIdentifier;
+    public function getAccountIdentifier(): AccountIdentifier;
 
     /**
      * @return AuthenticationProviderName

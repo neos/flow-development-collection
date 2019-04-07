@@ -139,7 +139,7 @@ class Account implements AccountInterface
      * @return AccountIdentifier The account identifier
      * @api
      */
-    public function getAccountIdentifier()
+    public function getAccountIdentifier(): AccountIdentifier
     {
         return new AccountIdentifier($this->accountIdentifier);
     }
