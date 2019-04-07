@@ -1,27 +1,30 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Neos\Flow\Security\Authentication;
 
-class CredentialsSource {
+final class CredentialsSource
+{
 
-	/**
-	 * @var string
-	 */
-	protected $credentialsSource;
+    /**
+     * @var string
+     */
+    protected $credentialsSource;
 
-	/**
-	 * @param string $credentialsSource
-	 */
-	public function __construct(string $credentialsSource)
-	{
-		$this->credentialsSource = $credentialsSource;
-	}
+    /**
+     * @param string $credentialsSource
+     */
+    public function __construct(string $credentialsSource)
+    {
+        $this->credentialsSource = $credentialsSource;
+    }
 
-	/**
-	 * @return string
-	 */
-	public function __toString()
-	{
-		return $this->credentialsSource;
-	}
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->credentialsSource;
+    }
 }
