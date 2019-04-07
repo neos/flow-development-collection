@@ -136,12 +136,12 @@ class Account implements AccountInterface
     /**
      * Returns the account identifier
      *
-     * @return string The account identifier
+     * @return AccountIdentifier The account identifier
      * @api
      */
     public function getAccountIdentifier()
     {
-        return $this->accountIdentifier;
+        return new AccountIdentifier($this->accountIdentifier);
     }
 
     /**
@@ -154,14 +154,6 @@ class Account implements AccountInterface
     public function setAccountIdentifier($accountIdentifier)
     {
         $this->accountIdentifier = $accountIdentifier;
-    }
-
-    /**
-     * @return AccountIdentifier
-     */
-    public function getIdentifier(): AccountIdentifier
-    {
-        return new AccountIdentifier($this->accountIdentifier);
     }
 
     /**

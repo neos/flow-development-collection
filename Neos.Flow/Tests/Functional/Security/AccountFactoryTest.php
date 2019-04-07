@@ -41,7 +41,7 @@ class AccountFactoryTest extends FunctionalTestCase
 
         $actualAccount = $factory->createAccountWithPassword('username', 'password', ['Neos.Flow:Administrator', 'Neos.Flow:Customer'], 'OtherProvider');
 
-        $this->assertEquals('username', $actualAccount->getAccountIdentifier());
+        $this->assertEquals('username', (string) $actualAccount->getAccountIdentifier());
         $this->assertEquals('OtherProvider', (string) $actualAccount->getAuthenticationProviderName());
 
         $this->assertTrue($actualAccount->hasRole($this->policyService->getRole('Neos.Flow:Administrator')));

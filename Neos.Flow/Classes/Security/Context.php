@@ -876,7 +876,7 @@ class Context
      */
     public function getSessionTagForAccount(Account $account): string
     {
-        return 'Neos-Flow-Security-Account-' . md5($account->getAccountIdentifier());
+        return 'Neos-Flow-Security-Account-' . md5((string) $account->getAccountIdentifier());
     }
 
     /**

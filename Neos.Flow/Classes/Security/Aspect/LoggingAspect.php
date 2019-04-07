@@ -65,7 +65,7 @@ class LoggingAspect
         $authenticationManager = $joinPoint->getProxy();
         $logMessage = 'No account authenticated';
         if ($authenticationManager->getSecurityContext()->getAccount() !== null) {
-            $logMessage = sprintf('Successfully re-authenticated tokens for account "%s"', $authenticationManager->getSecurityContext()->getAccount()->getAccountIdentifier());
+            $logMessage = sprintf('Successfully re-authenticated tokens for account "%s"', (string) $authenticationManager->getSecurityContext()->getAccount()->getAccountIdentifier());
         }
 
         $this->securityLogger->info($logMessage, LogEnvironment::fromMethodName(__METHOD__));
@@ -91,7 +91,7 @@ class LoggingAspect
         foreach ($securityContext->getAuthenticationTokens() as $token) {
             $account = $token->getAccount();
             if ($account !== null) {
-                $accountIdentifiers[] = $account->getAccountIdentifier();
+                $accountIdentifiers[] = (string) $account->getAccountIdentifier();
             }
         }
 
@@ -107,7 +107,7 @@ class LoggingAspect
     {
         $account = $token->getAccount();
         if ($account !== null) {
-            $collectedIdentifiers[] = $account->getAccountIdentifier();
+            $collectedIdentifiers[] = (string) $account->getAccountIdentifier();
         }
 
         return $collectedIdentifiers;
