@@ -20,7 +20,7 @@ class CredentialsSource {
 	/**
 	 * @return string
 	 */
-	public function __string()
+	public function __toString()
 	{
 		return $this->credentialsSource;
 	}
