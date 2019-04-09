@@ -331,11 +331,11 @@ abstract class AbstractController implements ControllerInterface
             if (!$uri instanceof UriInterface) {
                 $uri = new \Neos\Flow\Http\Uri($uri);
             }
-
-            $this->response->setRedirectUri($uri, $statusCode);
+            $this->response->setStatus($statusCode);
+            $this->response->setHeader('Location', (string)$uri);
         } else {
             $escapedUri = htmlentities($uri, ENT_QUOTES, 'utf-8');
-            $this->response->setStatusCode($statusCode);
+            $this->response->setStatus($statusCode);
             $this->response->setContent('<html><head><meta http-equiv="refresh" content="' . (int)$delay . ';url=' . $escapedUri . '"/></head></html>');
         }
         throw new StopActionException();
