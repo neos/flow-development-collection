@@ -16,10 +16,10 @@ use Neos\Flow\Cli\Response as CliResponse;
 use Neos\Flow\Exception as FlowException;
 use Neos\Flow\Http\Helper\ResponseInformationHelper;
 use Neos\Flow\Http\Request;
-use Neos\Flow\Http\Response;
 use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\Log\ThrowableStorageInterface;
 use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Controller\Arguments;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Mvc\Routing\UriBuilder;
@@ -173,7 +173,7 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
         $uriBuilder->setRequest($request);
         $view->setControllerContext(new ControllerContext(
             $request,
-            new Response(),
+            new ActionResponse(),
             new Arguments([]),
             $uriBuilder
         ));

@@ -15,8 +15,8 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Http\HttpRequestHandlerInterface;
 use Neos\Flow\Http\Request;
-use Neos\Flow\Http\Response;
 use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Controller\Arguments;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Mvc\Routing\UriBuilder;
@@ -125,7 +125,7 @@ class StandaloneView extends AbstractTemplateView
 
         $this->setControllerContext(new ControllerContext(
             $this->request,
-            new Response(),
+            new ActionResponse(),
             new Arguments([]),
             $uriBuilder
         ));
