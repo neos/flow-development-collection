@@ -20,6 +20,7 @@ use Neos\Flow\Security\Authentication\TokenInterface;
 use Neos\Flow\Security\Exception\InvalidAuthenticationStatusException;
 use Neos\Flow\Security\Policy\PolicyService;
 use Neos\Flow\Security\Policy\Role;
+use Neos\Flow\Security\Policy\Roles;
 use Neos\Flow\Utility\Now;
 
 /**
@@ -141,7 +142,7 @@ class Account implements AccountInterface
      */
     public function getAccountIdentifier(): AccountIdentifier
     {
-        return new AccountIdentifier($this->accountIdentifier);
+        return AccountIdentifier::fromString($this->accountIdentifier);
     }
 
     /**
@@ -205,13 +206,13 @@ class Account implements AccountInterface
     /**
      * Returns the roles this account has assigned
      *
-     * @return array<Role> The assigned roles, indexed by role identifier
+     * @return Roles The assigned roles, indexed by role identifier
      * @api
      */
-    public function getRoles()
+    public function getRoles(): Roles
     {
         $this->initializeRoles();
-        return $this->roles;
+        return Roles::fromArray($this->roles);
     }
 
     /**
@@ -241,7 +242,7 @@ class Account implements AccountInterface
      * @return boolean
      * @api
      */
-    public function hasRole(Role $role)
+    public function hasRole(Role $role): bool
     {
         $this->initializeRoles();
         return array_key_exists($role->getIdentifier(), $this->roles);

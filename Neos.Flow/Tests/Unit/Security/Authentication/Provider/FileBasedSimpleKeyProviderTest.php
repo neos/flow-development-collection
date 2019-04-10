@@ -114,8 +114,7 @@ class FileBasedSimpleKeyProviderTest extends UnitTestCase
 
         $authenticationProvider->authenticate($this->mockToken);
 
-        $authenticatedRoles = $this->mockToken->getAccount()->getRoles();
-        $this->assertTrue(in_array('Neos.Flow:TestRoleIdentifier', array_keys($authenticatedRoles)));
+        $this->assertTrue($this->mockToken->getAccount()->hasRole(new Role('Neos.Flow:TestRoleIdentifier')));
     }
 
     /**
