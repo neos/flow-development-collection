@@ -72,7 +72,8 @@ final class Roles implements \JsonSerializable, \IteratorAggregate, \Countable, 
         return array_values($this->roles);
     }
 
-    public function offsetSet($offset, $value) {
+    public function offsetSet($offset, $value)
+    {
         if (is_null($offset)) {
             $this->roles[] = $value;
         } else {
@@ -80,17 +81,18 @@ final class Roles implements \JsonSerializable, \IteratorAggregate, \Countable, 
         }
     }
 
-    public function offsetExists($offset) {
+    public function offsetExists($offset)
+    {
         return isset($this->data[$offset]);
     }
 
-    public function offsetUnset($offset) {
+    public function offsetUnset($offset)
+    {
         unset($this->roles[$offset]);
     }
 
-    public function offsetGet($offset) {
+    public function offsetGet($offset)
+    {
         return isset($this->roles[$offset]) ? $this->roles[$offset] : null;
     }
-
-
 }
