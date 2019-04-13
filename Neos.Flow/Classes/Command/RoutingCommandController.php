@@ -15,6 +15,8 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Http\Request;
+use Neos\Flow\Mvc\Exception\InvalidRoutePartValueException;
+use Neos\Flow\Mvc\Exception\StopActionException;
 use Neos\Flow\Mvc\Routing\Dto\RouteContext;
 use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
 use Neos\Flow\Mvc\Routing\Exception\InvalidControllerException;
@@ -105,6 +107,7 @@ class RoutingCommandController extends CommandController
      * @param string $action Action name, default is 'index'
      * @param string $format Requested Format name default is 'html'
      * @return void
+     * @throws InvalidRoutePartValueException
      */
     public function getPathCommand(string $package, string $controller = 'Standard', string $action = 'index', string $format = 'html')
     {
@@ -143,7 +146,7 @@ class RoutingCommandController extends CommandController
                 $this->outputLine('  Pattern: ' . $route->getUriPattern());
 
                 $this->outputLine('<b>Generated Path:</b>');
-                $this->outputLine('  ' . $route->getResolvedUriPath());
+                $this->outputLine('  ' . $route->getResolvedUriConstraints()->getPathConstraint());
 
                 if ($controllerObjectName !== null) {
                     $this->outputLine('<b>Controller:</b>');
@@ -167,6 +170,8 @@ class RoutingCommandController extends CommandController
      * @param string $path The route path to resolve
      * @param string $method The request method (GET, POST, PUT, DELETE, ...) to simulate
      * @return void
+     * @throws InvalidRoutePartValueException
+     * @throws StopActionException
      */
     public function routePathCommand(string $path, string $method = 'GET')
     {
