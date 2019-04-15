@@ -21,6 +21,7 @@ use Psr\Http\Message\StreamInterface;
  *
  * @api
  * @Flow\Proxy(false)
+ * @deprecated Since Flow 5.3, to be removed with 6.0. The whole Flow HTTP implementation will use PSR-7 compatible implementations only from then.
  */
 abstract class AbstractMessage implements MessageInterface
 {
@@ -143,7 +144,6 @@ abstract class AbstractMessage implements MessageInterface
      *
      * @param string $content The body content
      * @return self This message, for method chaining
-     * @deprecated Since Flow 5.1, use withBody
      * @see withBody()
      */
     public function setContent($content)

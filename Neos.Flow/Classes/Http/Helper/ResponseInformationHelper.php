@@ -30,9 +30,13 @@ abstract class ResponseInformationHelper
      * @throws \InvalidArgumentException
      * @return ResponseInterface
      */
-    public static function createFromRaw(string $rawResponse): ResponseInterface
+    public static function createFromRaw(string $rawResponse, string $responseClassName = Response::class): ResponseInterface
     {
-        $response = new Response();
+        $response = new $responseClassName();
+
+        if (!$response instanceof ResponseInterface) {
+            throw new \InvalidArgumentException(sprintf('The given response class name "%s" does not implement the "%s" and cannot be created with this method.', $responseClassName, ResponseInterface::class));
+        }
 
         // see https://tools.ietf.org/html/rfc7230#section-3.5
         $lines = explode(chr(10), $rawResponse);

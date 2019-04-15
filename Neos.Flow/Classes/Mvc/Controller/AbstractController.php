@@ -11,8 +11,9 @@ namespace Neos\Flow\Mvc\Controller;
  * source code.
  */
 
+use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Http\Helper\MediaTypeHelper;
-use Neos\Flow\Http\Response;
+use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Exception\ForwardException;
 use Neos\Flow\Mvc\Exception\RequiredArgumentMissingException;
 use Neos\Flow\Mvc\Exception\StopActionException;
@@ -27,6 +28,7 @@ use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Utility\MediaTypes;
 use Neos\Error\Messages as Error;
 use Neos\Flow\Validation\ValidatorResolver;
+use Psr\Http\Message\UriInterface;
 
 /**
  * An abstract base class for HTTP based controllers
@@ -55,7 +57,7 @@ abstract class AbstractController implements ControllerInterface
 
     /**
      * The response which will be returned by this action controller
-     * @var Response
+     * @var ActionResponse
      * @api
      */
     protected $response;
@@ -101,8 +103,10 @@ abstract class AbstractController implements ControllerInterface
      * This method should be called by the concrete processRequest() method.
      *
      * @param RequestInterface $request
-     * @param ResponseInterface $response
+     * @param ResponseInterface|ActionResponse $response
      * @throws UnsupportedRequestTypeException
+     *
+     * TODO: This should expect an ActionRequest and ActionResponse in the next major.
      */
     protected function initializeController(RequestInterface $request, ResponseInterface $response)
     {
@@ -323,12 +327,16 @@ abstract class AbstractController implements ControllerInterface
      */
     protected function redirectToUri($uri, $delay = 0, $statusCode = 303)
     {
-        $this->response->setStatus($statusCode);
         if ($delay === 0) {
+            if (!$uri instanceof UriInterface) {
+                $uri = new \Neos\Flow\Http\Uri($uri);
+            }
+            $this->response->setStatus($statusCode);
             $this->response->setHeader('Location', (string)$uri);
         } else {
             $escapedUri = htmlentities($uri, ENT_QUOTES, 'utf-8');
-            $this->response->setContent('<html><head><meta http-equiv="refresh" content="' . intval($delay) . ';url=' . $escapedUri . '"/></head></html>');
+            $this->response->setStatus($statusCode);
+            $this->response->setContent('<html><head><meta http-equiv="refresh" content="' . (int)$delay . ';url=' . $escapedUri . '"/></head></html>');
         }
         throw new StopActionException();
     }
@@ -337,6 +345,8 @@ abstract class AbstractController implements ControllerInterface
      * Sends the specified HTTP status immediately.
      *
      * NOTE: This method only supports web requests and will throw an exception if used with other request types.
+     *
+     * TODO: statusMessage argument is deprecated and will no longer be used from 6.0
      *
      * @param integer $statusCode The HTTP status code
      * @param string $statusMessage A custom HTTP status message

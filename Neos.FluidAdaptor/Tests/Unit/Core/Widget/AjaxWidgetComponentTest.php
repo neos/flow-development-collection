@@ -176,7 +176,7 @@ class AjaxWidgetComponentTest extends UnitTestCase
             [RoutingComponent::class, 'matchResults', []],
             [DispatchComponent::class, 'actionRequest', $mockActionRequest]
         ]);
-        $this->mockDispatcher->expects($this->once())->method('dispatch')->with($mockActionRequest, $this->mockHttpResponse);
+        $this->mockDispatcher->expects($this->once())->method('dispatch');
 
         $this->ajaxWidgetComponent->handle($this->mockComponentContext);
     }

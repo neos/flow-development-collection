@@ -20,6 +20,7 @@ use Neos\Flow\Annotations as Flow;
  *
  * @api
  * @Flow\Proxy(false)
+ * @deprecated Since Flow 5.3, to be removed with 6.0. The whole Flow HTTP implementation will use PSR-7 compatible implementations only from then.
  */
 class Response extends AbstractMessage implements ResponseInterface, \Psr\Http\Message\ResponseInterface
 {
