@@ -12,6 +12,7 @@ namespace Neos\Flow\Mvc\Routing;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Http\Helper\RequestInformationHelper;
 use Neos\Flow\Mvc\Exception\InvalidRoutePartHandlerException;
 use Neos\Flow\Mvc\Exception\InvalidRoutePartValueException;
 use Neos\Flow\Mvc\Exception\InvalidRouteSetupException;
@@ -370,7 +371,7 @@ class Route
     public function matches(RouteContext $routeContext)
     {
         $httpRequest = $routeContext->getHttpRequest();
-        $routePath = $httpRequest->getRelativePath();
+        $routePath = RequestInformationHelper::getRelativeRequestPath($httpRequest);
         $this->matchResults = null;
         $this->matchedTags = RouteTags::createEmpty();
         if ($this->uriPattern === null) {

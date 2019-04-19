@@ -136,30 +136,4 @@ class FunctionalTestRequestHandler implements \Neos\Flow\Http\HttpRequestHandler
         }
         return $this->componentContext;
     }
-
-    /**
-     * Allows to set the currently processed HTTP request by the base functional
-     * test case.
-     *
-     * @param \Neos\Flow\Http\Request $request
-     * @return void
-     * @deprecated since Flow 3.3, use setComponentContext() instead
-     */
-    public function setHttpRequest(\Neos\Flow\Http\Request $request)
-    {
-        $this->getComponentContext()->replaceHttpRequest($request);
-    }
-
-    /**
-     * Allows to set the currently processed HTTP response by the base functional
-     * test case.
-     *
-     * @param \Neos\Flow\Http\Response $response
-     * @return void
-     * @deprecated since Flow 3.3, use setComponentContext() instead
-     */
-    public function setHttpResponse(\Neos\Flow\Http\Response $response)
-    {
-        $this->getComponentContext()->replaceHttpResponse($response);
-    }
 }

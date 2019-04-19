@@ -14,6 +14,7 @@ namespace Neos\Flow\Mvc;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Component\ComponentContext;
 use Neos\Flow\Http\Component\ComponentInterface;
+use Neos\Flow\Http\Helper\ArgumentsHelper;
 use Neos\Flow\Http\Helper\ResponseInformationHelper;
 use Neos\Flow\Http\Request as HttpRequest;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
@@ -22,6 +23,7 @@ use Neos\Flow\Property\PropertyMappingConfiguration;
 use Neos\Flow\Property\TypeConverter\MediaTypeConverterInterface;
 use Neos\Flow\Security\Context;
 use Neos\Utility\Arrays;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * A dispatch component
@@ -95,7 +97,7 @@ class DispatchComponent implements ComponentInterface
     protected function prepareActionRequest(ComponentContext $componentContext)
     {
         $httpRequest = $componentContext->getHttpRequest();
-        $arguments = $httpRequest->getArguments();
+        $arguments = $httpRequest->getQueryParams();
 
         $parsedBody = $this->parseRequestBody($httpRequest);
         if ($parsedBody !== []) {
@@ -124,12 +126,12 @@ class DispatchComponent implements ComponentInterface
     /**
      * Parses the request body according to the media type.
      *
-     * @param HttpRequest $httpRequest
+     * @param ServerRequestInterface $httpRequest
      * @return array
      */
-    protected function parseRequestBody(HttpRequest $httpRequest)
+    protected function parseRequestBody(ServerRequestInterface $httpRequest)
     {
-        $requestBody = $httpRequest->getContent();
+        $requestBody = $httpRequest->getBody()->getContents();
         if ($requestBody === null || $requestBody === '') {
             return [];
         }

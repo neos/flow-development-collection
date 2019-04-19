@@ -25,6 +25,7 @@ use Neos\Flow\Security\Context;
 use Neos\Flow\Session\SessionInterface;
 use Neos\Flow\Tests\FunctionalTestRequestHandler;
 use Neos\Flow\Validation\ValidatorResolver;
+use Psr\Http\Message\RequestInterface;
 
 /**
  * A Request Engine which uses Flow's request dispatcher directly for processing
@@ -79,12 +80,12 @@ class InternalRequestEngine implements RequestEngineInterface
     /**
      * Sends the given HTTP request
      *
-     * @param Http\Request $httpRequest
+     * @param RequestInterface $httpRequest
      * @return Http\Response
      * @throws Http\Exception
      * @api
      */
-    public function sendRequest(Http\Request $httpRequest)
+    public function sendRequest(RequestInterface $httpRequest)
     {
         $requestHandler = $this->bootstrap->getActiveRequestHandler();
         if (!$requestHandler instanceof FunctionalTestRequestHandler) {
@@ -100,7 +101,6 @@ class InternalRequestEngine implements RequestEngineInterface
 
         $objectManager = $this->bootstrap->getObjectManager();
         $baseComponentChain = $objectManager->get(\Neos\Flow\Http\Component\ComponentChain::class);
-        $componentContext = new ComponentContext($httpRequest, $response);
 
         try {
             $baseComponentChain->handle($componentContext);

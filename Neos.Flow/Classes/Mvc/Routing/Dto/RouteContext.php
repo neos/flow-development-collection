@@ -13,7 +13,9 @@ namespace Neos\Flow\Mvc\Routing\Dto;
 
 use Neos\Cache\CacheAwareInterface;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Http\Request as HttpRequest;
+use Neos\Flow\Http\Helper\RequestInformationHelper;
+use Neos\Flow\Http\Helper\UriHelper;
+use Psr\Http\Message\ServerRequestInterface as HttpRequest;
 
 /**
  * Simple DTO wrapping the values required for a Router::route() call
@@ -76,7 +78,7 @@ final class RouteContext implements CacheAwareInterface
         if ($this->cacheEntryIdentifier === null) {
             $this->cacheEntryIdentifier = md5(sprintf('host:%s|path:%s|method:%s|parameters:%s',
                 $this->httpRequest->getUri()->getHost(),
-                $this->httpRequest->getRelativePath(),
+                RequestInformationHelper::getRelativeRequestPath($this->httpRequest),
                 $this->httpRequest->getMethod(),
                 $this->parameters->getCacheEntryIdentifier()
             ));

@@ -12,7 +12,7 @@ namespace Neos\Flow\Mvc;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Http\Request as HttpRequest;
+use Psr\Http\Message\ServerRequestInterface as HttpRequest;
 use Neos\Flow\ObjectManagement\Exception\UnknownObjectException;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Package\PackageManager;

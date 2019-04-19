@@ -19,6 +19,7 @@ use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\DispatchComponent;
 use Neos\Flow\Security\Cryptography\HashService;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * A HTTP component specifically for Ajax widgets
@@ -75,15 +76,15 @@ class AjaxWidgetComponent extends DispatchComponent
      * If the request contains an argument "__widgetId" the context is fetched from the session (AjaxWidgetContextHolder).
      * Otherwise the argument "__widgetContext" is expected to contain the serialized WidgetContext (protected by a HMAC suffix)
      *
-     * @param Request $httpRequest
+     * @param ServerRequestInterface $httpRequest
      * @return WidgetContext
      */
-    protected function extractWidgetContext(Request $httpRequest)
+    protected function extractWidgetContext(ServerRequestInterface $httpRequest)
     {
-        if ($httpRequest->hasArgument('__widgetId')) {
-            return $this->ajaxWidgetContextHolder->get($httpRequest->getArgument('__widgetId'));
-        } elseif ($httpRequest->hasArgument('__widgetContext')) {
-            $serializedWidgetContextWithHmac = $httpRequest->getArgument('__widgetContext');
+        if (isset($httpRequest->getQueryParams()['__widgetId'])) {
+            return $this->ajaxWidgetContextHolder->get($httpRequest->ggetQueryParams()['__widgetId']);
+        } elseif (isset($httpRequest->getQueryParams()['__widgetContext'])) {
+            $serializedWidgetContextWithHmac = $httpRequest->getQueryParams()['__widgetContext'];
             $serializedWidgetContext = $this->hashService->validateAndStripHmac($serializedWidgetContextWithHmac);
             return unserialize(base64_decode($serializedWidgetContext));
         }

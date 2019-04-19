@@ -58,6 +58,13 @@ abstract class RequestInformationHelper
         return implode('/', $requestPathSegments) . '/';
     }
 
+    public static function getRelativeRequestPath(ServerRequestInterface $request): string
+    {
+        $baseUri = clone $request->getUri();
+        $baseUri = $baseUri->withQuery('')->withFragment('')->withPath(self::getScriptRequestPath($request));
+        return UriHelper::getRelativePath($baseUri, $request->getUri());
+    }
+
     /**
      * Tries to detect the base URI of request.
      *
@@ -108,6 +115,13 @@ abstract class RequestInformationHelper
         }
 
         return $renderedHeaders;
+    }
+
+    public static function renderRequest(RequestInterface $request): string
+    {
+        return self::generateRequestLine($request)
+               . self::renderRequestHeaders($request)
+               . "\r\n" . $request->getBody()->getContents();
     }
 
     /**

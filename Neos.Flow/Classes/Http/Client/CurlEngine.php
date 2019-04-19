@@ -13,6 +13,7 @@ namespace Neos\Flow\Http\Client;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http;
+use Psr\Http\Message\RequestInterface;
 
 /**
  * A Request Engine which uses cURL in order to send requests to external
@@ -46,13 +47,13 @@ class CurlEngine implements RequestEngineInterface
     /**
      * Sends the given HTTP request
      *
-     * @param Http\Request $request
+     * @param RequestInterface $request
      * @return Http\Response The response or false
      * @api
      * @throws Http\Exception
      * @throws CurlEngineException
      */
-    public function sendRequest(Http\Request $request)
+    public function sendRequest(RequestInterface $request)
     {
         if (!extension_loaded('curl')) {
             throw new Http\Exception('CurlEngine requires the PHP CURL extension to be installed and loaded.', 1346319808);
@@ -68,62 +69,46 @@ class CurlEngine implements RequestEngineInterface
         curl_setopt($curlHandle, CURLOPT_HTTPHEADER, ['Expect:']);
 
         // If the content is a stream resource, use cURL's INFILE feature to stream it
-        $content = $request->getContent();
-        if (is_resource($content)) {
-            curl_setopt_array($curlHandle,
-                [
-                    CURLOPT_INFILE => $content,
-                    CURLOPT_INFILESIZE => $request->getHeader('Content-Length'),
-                ]
-            );
-        }
+        $content = $request->getBody()->getContents();
 
         switch ($request->getMethod()) {
             case 'GET':
-                if ($request->getContent()) {
+                if ($content) {
                     // workaround because else the request would implicitly fall into POST:
                     curl_setopt($curlHandle, CURLOPT_CUSTOMREQUEST, 'GET');
-                    if (!is_resource($content)) {
-                        curl_setopt($curlHandle, CURLOPT_POSTFIELDS, $content);
-                    }
+                    curl_setopt($curlHandle, CURLOPT_POSTFIELDS, $content);
                 }
             break;
             case 'POST':
                 curl_setopt($curlHandle, CURLOPT_POST, true);
-                if (!is_resource($content)) {
-                    $body = $content !== '' ? $content : http_build_query($request->getArguments());
-                    curl_setopt($curlHandle, CURLOPT_POSTFIELDS, $body);
-                }
+                $body = $content !== '' ? $content : $request->getUri()->getQuery();
+                curl_setopt($curlHandle, CURLOPT_POSTFIELDS, $body);
             break;
             case 'PUT':
                 curl_setopt($curlHandle, CURLOPT_PUT, true);
-                if (!is_resource($content) && $content !== '') {
+                if ($content !== '') {
                     $inFileHandler = fopen('php://temp', 'r+');
-                    fwrite($inFileHandler, $request->getContent());
+                    fwrite($inFileHandler, $content);
                     rewind($inFileHandler);
                     curl_setopt_array($curlHandle, [
                         CURLOPT_INFILE => $inFileHandler,
-                        CURLOPT_INFILESIZE => strlen($request->getContent()),
+                        CURLOPT_INFILESIZE => strlen($content),
                     ]);
                 }
             break;
             case 'HEAD':
-                if (!is_resource($content)) {
-                    $body = $content !== '' ? $content : http_build_query($request->getArguments());
-                    curl_setopt($curlHandle, CURLOPT_POSTFIELDS, $body);
-                }
+                $body = $content !== '' ? $content : $request->getUri()->getQuery();
+                curl_setopt($curlHandle, CURLOPT_POSTFIELDS, $body);
                 curl_setopt($curlHandle, CURLOPT_NOBODY, true);
             break;
             default:
-                if (!is_resource($content)) {
-                    $body = $content !== '' ? $content : http_build_query($request->getArguments());
-                    curl_setopt($curlHandle, CURLOPT_POSTFIELDS, $body);
-                }
+                $body = $content !== '' ? $content : $request->getUri()->getQuery();
+                curl_setopt($curlHandle, CURLOPT_POSTFIELDS, $body);
                 curl_setopt($curlHandle, CURLOPT_CUSTOMREQUEST, $request->getMethod());
         }
 
         $preparedHeaders = [];
-        foreach ($request->getHeaders()->getAll() as $fieldName => $values) {
+        foreach ($request->getHeaders() as $fieldName => $values) {
             foreach ($values as $value) {
                 $preparedHeaders[] = $fieldName . ': ' . $value;
             }
@@ -137,12 +122,8 @@ class CurlEngine implements RequestEngineInterface
             curl_setopt($curlHandle, CURLOPT_PORT, $requestUri->getPort());
         }
 
-        if (count($request->getCookies()) > 0) {
-            $cookies = [];
-            foreach ($request->getCookies() as $cookie) {
-                $cookies[] = $cookie->getName() . '=' . $cookie->getValue();
-            }
-            curl_setopt($curlHandle, CURLOPT_COOKIE, implode('; ', $cookies));
+        if (count($request->getHeader("Cookie")) > 0) {
+            curl_setopt($curlHandle, CURLOPT_COOKIE, implode('; ', $request->getHeader("Cookie")));
         }
 
         $curlResult = curl_exec($curlHandle);
@@ -153,6 +134,7 @@ class CurlEngine implements RequestEngineInterface
         }
         curl_close($curlHandle);
 
+        // TODO: Create proper Psr Response from raw data
         $response = Http\Helper\ResponseInformationHelper::createFromRaw($curlResult);
         try {
             while (substr($response->getContent(), 0, 5) === 'HTTP/' || $response->getStatusCode() === 100) {

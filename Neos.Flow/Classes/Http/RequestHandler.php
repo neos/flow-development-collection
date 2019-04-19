@@ -43,6 +43,11 @@ class RequestHandler implements HttpRequestHandlerInterface
     protected $componentContext;
 
     /**
+     * @var \Psr\Http\Message\ResponseFactoryInterface
+     */
+    protected $responseFactory;
+
+    /**
      * Make exit() a closure so it can be manipulated during tests
      *
      * @var \Closure
@@ -90,15 +95,15 @@ class RequestHandler implements HttpRequestHandlerInterface
      */
     public function handleRequest()
     {
-        // Create the request very early so the ResourceManagement has a chance to grab it:
-        $request = Request::createFromEnvironment();
-        $response = new Response();
-        $this->componentContext = new ComponentContext($request, $response);
-
         $this->boot();
         $this->resolveDependencies();
+
+        $request = Request::createFromEnvironment();
+        $response = $this->responseFactory->createResponse();
         $response = $this->addPoweredByHeader($response);
-        $this->componentContext->replaceHttpResponse($response);
+        $this->componentContext = new ComponentContext($request, $response);
+        $this->bootstrap->getObjectManager()->setInstance(ComponentContext::class, $this->componentContext);
+
         $baseUriSetting = $this->bootstrap->getObjectManager()->get(ConfigurationManager::class)->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.Flow.http.baseUri');
         if (!empty($baseUriSetting)) {
             $baseUri = new Uri($baseUriSetting);
@@ -159,6 +164,7 @@ class RequestHandler implements HttpRequestHandlerInterface
     {
         $objectManager = $this->bootstrap->getObjectManager();
         $this->baseComponentChain = $objectManager->get(ComponentChain::class);
+        $this->responseFactory = $objectManager->get(\Psr\Http\Message\ResponseFactoryInterface::class);
     }
 
     /**

@@ -250,6 +250,21 @@ Neos\Flow\Monitor\FileMonitor:
 # HTTP                                                                     #
 #                                                                          #
 
+Psr\Http\Message\ServerRequestFactoryInterface:
+  className: Tuupola\Http\Factory\ServerRequestFactory
+
+Psr\Http\Message\RequestFactoryInterface:
+  className: Tuupola\Http\Factory\RequestFactory
+
+Psr\Http\Message\ResponseFactoryInterface:
+  className: Tuupola\Http\Factory\ResponseFactory
+
+Psr\Http\Message\StreamFactoryInterface:
+  className: Tuupola\Http\Factory\StreamFactory
+
+Psr\Http\Message\UploadedFileFactoryInterface:
+  className: Tuupola\Http\Factory\UploadedFileFactory
+
 Neos\Flow\Http\Component\ComponentChain:
   factoryObjectName: Neos\Flow\Http\Component\ComponentChainFactory
   arguments:

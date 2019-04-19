@@ -16,6 +16,7 @@ use Neos\Flow\Http\Headers;
 use Neos\Flow\Http\Response;
 use Neos\Flow\Http\Uri;
 use Neos\Flow\Http\Request;
+use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Form;
 
@@ -27,7 +28,7 @@ use Symfony\Component\DomCrawler\Form;
 class Browser
 {
     /**
-     * @var Request
+     * @var ServerRequestInterface
      */
     protected $lastRequest;
 
@@ -175,14 +176,14 @@ class Browser
     /**
      * Sends a prepared request and returns the respective response.
      *
-     * @param Request $request
+     * @param ServerRequestInterface $request
      * @return Response
      * @api
      */
-    public function sendRequest(Request $request)
+    public function sendRequest(ServerRequestInterface $request)
     {
         foreach ($this->automaticRequestHeaders->getAll() as $name => $values) {
-            $request->setHeader($name, $values);
+            $request = $request->withAddedHeader($name, $values);
         }
 
         $this->lastRequest = $request;
@@ -204,7 +205,7 @@ class Browser
     /**
      * Returns the last request executed.
      *
-     * @return Request The HTTP request or NULL if there wasn't a request yet
+     * @return ServerRequestInterface The HTTP request or NULL if there wasn't a request yet
      * @api
      */
     public function getLastRequest()
@@ -236,7 +237,7 @@ class Browser
      */
     public function getCrawler()
     {
-        $crawler = new Crawler(null, $this->lastRequest->getBaseUri());
+        $crawler = new Crawler(null, $this->lastRequest->getAttribute(Request::ATTRIBUTE_BASE_URI));
         $crawler->addContent($this->lastResponse->getContent(), $this->lastResponse->getHeader('Content-Type'));
 
         return $crawler;

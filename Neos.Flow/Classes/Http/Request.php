@@ -12,18 +12,20 @@ namespace Neos\Flow\Http;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Http\Helper\ArgumentsHelper;
 use Neos\Flow\Http\Helper\MediaTypeHelper;
 use Neos\Flow\Http\Helper\RequestInformationHelper;
 use Neos\Flow\Http\Helper\SecurityHelper;
 use Neos\Flow\Http\Helper\UploadedFilesHelper;
 use Neos\Flow\Http\Helper\UriHelper;
+use Psr\Http\Message\ServerRequestFactoryInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UploadedFileInterface;
 use Psr\Http\Message\UriInterface;
 
 /**
- * Represents an HTTP request in the PHP world, inlcuding server variables.
+ * Represents an HTTP request in the PHP world, including server variables.
  * This is the object used for incoming requests from a browser.
  *
  * TODO: Maybe separate BaseRequest and Request implementations (trait?)
@@ -96,6 +98,11 @@ class Request extends BaseRequest implements ServerRequestInterface
     const ATTRIBUTE_BASE_URI = 'baseUri';
 
     /**
+     * PSR-7 Attribute containing the Flow unified arguments (get, post, files) for this request.
+     */
+    const ATTRIBUTE_UNIFIED_ARGUMENTS = 'unifiedArguments';
+
+    /**
      * Constructs a new Request object based on the given environment data.
      *
      * @param array $get Data similar to that which is typically provided by $_GET
@@ -140,7 +147,72 @@ class Request extends BaseRequest implements ServerRequestInterface
         $this->server = $server;
         $untangledFiles = UploadedFilesHelper::untangleFilesArray($files);
         $this->arguments = ArgumentsHelper::buildUnifiedArguments($get, $post, $untangledFiles);
-        $this->uploadedFiles = $this->createUploadedFilesFromUntangledUploads($untangledFiles, $this->arguments);
+        $this->uploadedFiles = static::createUploadedFilesFromUntangledUploads($untangledFiles, $this->arguments);
+    }
+
+    /**
+     * Constructs a new Request object based on the given environment data.
+     *
+     * @param array $get Data similar to that which is typically provided by $_GET
+     * @param array $post Data similar to that which is typically provided by $_POST
+     * @param array $files Data similar to that which is typically provided by $_FILES
+     * @param array $server Data similar to that which is typically provided by $_SERVER
+     * @return ServerRequestInterface
+     * @see create()
+     * @see createFromEnvironment()
+     */
+    private static function _create(array $get, array $post, array $files, array $server): ServerRequestInterface
+    {
+        $method = $server['REQUEST_METHOD'] ?? 'GET';
+        if ($method === 'POST') {
+            if (isset($post['__method'])) {
+                $method = $post['__method'];
+            } elseif (isset($server['HTTP_X_HTTP_METHOD_OVERRIDE'])) {
+                $method = $server['HTTP_X_HTTP_METHOD_OVERRIDE'];
+            } elseif (isset($server['HTTP_X_HTTP_METHOD'])) {
+                $method = $server['HTTP_X_HTTP_METHOD'];
+            }
+        }
+
+        $protocol = isset($server['SSL_SESSION_ID']) || (isset($server['HTTPS']) && ($server['HTTPS'] === 'on' || strcmp($server['HTTPS'], '1') === 0)) ? 'https' : 'http';
+        $host = $server['HTTP_HOST'] ?? 'localhost';
+        $requestUri = $server['REQUEST_URI'] ?? '/';
+        if (substr($requestUri, 0, 10) === '/index.php') {
+            $requestUri = '/' . ltrim(substr($requestUri, 10), '/');
+        }
+
+        $uri = new Uri($protocol . '://' . $host . $requestUri);
+        if (isset($server['SERVER_PORT'])) {
+            $uri = $uri->withPort($server['SERVER_PORT']);
+        }
+
+        /* @var $serverRequestFactory ServerRequestFactoryInterface */
+        $serverRequestFactory = Bootstrap::$staticObjectManager->get(ServerRequestFactoryInterface::class);
+        $request = $serverRequestFactory->createServerRequest($method, $uri, $server);
+
+        $baseUri = clone $uri;
+        $baseUri = $baseUri->withQuery('')->withFragment('')->withPath(RequestInformationHelper::getScriptRequestPath($request));
+        $request = $request->withAttribute(static::ATTRIBUTE_BASE_URI, $baseUri);
+
+        $headers = Headers::createFromServer($server);
+        foreach ($headers->getAll() as $name => $value) {
+            $request = $request->withHeader($name, $value);
+        }
+
+        $cookieParams = [];
+        foreach ($headers->getCookies() as $name => $cookie) {
+            $cookieParams[$name] = (string)$cookie->getValue();
+        }
+
+        $untangledFiles = UploadedFilesHelper::untangleFilesArray($files);
+        $arguments = ArgumentsHelper::buildUnifiedArguments($get, $post, $untangledFiles);
+        $uploadedFiles = self::createUploadedFilesFromUntangledUploads($untangledFiles, $arguments);
+
+        return $request
+            ->withAttribute(Request::ATTRIBUTE_CLIENT_IP, isset($server['REMOTE_ADDR']) ? $server['REMOTE_ADDR'] : null)
+            ->withAttribute(Request::ATTRIBUTE_UNIFIED_ARGUMENTS, $arguments)
+            ->withUploadedFiles($uploadedFiles)
+            ->withCookieParams($cookieParams);
     }
 
     /**
@@ -151,10 +223,10 @@ class Request extends BaseRequest implements ServerRequestInterface
      * @param array $arguments Arguments to send in the request body
      * @param array $files
      * @param array $server
-     * @return Request
+     * @return ServerRequestInterface
      * @api
      */
-    public static function create(Uri $uri, $method = 'GET', array $arguments = [], array $files = [], array $server = [])
+    public static function create(Uri $uri, $method = 'GET', array $arguments = [], array $files = [], array $server = []): ServerRequestInterface
     {
         $get = UriHelper::parseQueryIntoArguments($uri);
         $post = $arguments;
@@ -193,7 +265,7 @@ class Request extends BaseRequest implements ServerRequestInterface
         ];
         $server = array_replace($defaultServerEnvironment, $server, $overrideValues);
 
-        return new static($get, $post, $files, $server);
+        return static::_create($get, $post, $files, $server);
     }
 
     /**
@@ -201,14 +273,12 @@ class Request extends BaseRequest implements ServerRequestInterface
      * environment configuration and creates a new instance of this Request class
      * matching that data.
      *
-     * @return Request
+     * @return ServerRequestInterface
      * @api
      */
-    public static function createFromEnvironment()
+    public static function createFromEnvironment(): ServerRequestInterface
     {
-        $request = new static($_GET, $_POST, $_FILES, $_SERVER);
-        $request->setContent(null);
-        return $request;
+        return static::_create($_GET, $_POST, $_FILES, $_SERVER);
     }
 
     /**
@@ -216,6 +286,7 @@ class Request extends BaseRequest implements ServerRequestInterface
      */
     public function __clone()
     {
+        parent::__clone();
         $this->uri = clone $this->uri;
         if ($this->baseUri !== null) {
             $this->baseUri = clone $this->baseUri;
@@ -568,15 +639,15 @@ class Request extends BaseRequest implements ServerRequestInterface
      * @param array $arguments
      * @return array
      */
-    protected function createUploadedFilesFromUntangledUploads(array $untangledFilesStructure, array $arguments)
+    static protected function createUploadedFilesFromUntangledUploads(array $untangledFilesStructure, array $arguments)
     {
         $uploadedFiles = [];
         foreach ($untangledFilesStructure as $key => $nestedStructure) {
             if (!isset($nestedStructure['tmp_name'])) {
-                $uploadedFiles[$key] = $this->createUploadedFilesFromUntangledUploads($nestedStructure, $arguments[$key]);
+                $uploadedFiles[$key] = static::createUploadedFilesFromUntangledUploads($nestedStructure, $arguments[$key]);
                 continue;
             }
-            $uploadedFiles[$key] = $this->createUploadedFileFromSpec($nestedStructure, $arguments[$key]);
+            $uploadedFiles[$key] = static::createUploadedFileFromSpec($nestedStructure, $arguments[$key]);
         }
 
         return $uploadedFiles;
@@ -592,7 +663,7 @@ class Request extends BaseRequest implements ServerRequestInterface
      * @param array $argumentsForValue
      * @return UploadedFileInterface
      */
-    protected function createUploadedFileFromSpec(array $value, $argumentsForValue)
+    static protected function createUploadedFileFromSpec(array $value, $argumentsForValue)
     {
         $file = new FlowUploadedFile(
             $value['tmp_name'],
