@@ -17,6 +17,7 @@ use Neos\Flow\Composer\ComposerUtility as ComposerUtility;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\SignalSlot\Dispatcher;
+use Neos\Utility\Arrays;
 use Neos\Utility\Files;
 use Neos\Utility\OpcodeCacheHelper;
 use Neos\Flow\Package\Exception as PackageException;
@@ -380,7 +381,11 @@ class PackageManager implements PackageManagerInterface
         $manifest = ComposerUtility::writeComposerManifest($packagePath, $packageKey, $manifest);
 
         if ($runComposerRequireForTheCreatedPackage) {
-            exec('composer require ' . $manifest['name'] . ' @dev');
+            $rootManifestFilename = FLOW_PATH_ROOT . 'composer.json';
+            $rootManifestContent = json_decode(file_get_contents($rootManifestFilename));
+            $rootManifestContent = Arrays::arrayMergeRecursiveOverrule($rootManifestContent, ['require' => [$manifest['name'] => '@dev']]);
+            file_put_contents($rootManifestFilename, $rootManifestContent);
+            exec('cd ' . escapeshellarg(FLOW_PATH_ROOT) . ' && composer update');
         }
 
         $refreshedPackageStatesConfiguration = $this->rescanPackages();
