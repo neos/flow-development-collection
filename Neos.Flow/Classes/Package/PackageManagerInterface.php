@@ -16,6 +16,8 @@ use Neos\Flow\Core\Bootstrap;
  * Interface for the Flow Package Manager
  *
  * @api
+ * @deprecated Directly use the PackageManager
+ * @see PackageManager
  */
 interface PackageManagerInterface
 {
@@ -28,11 +30,11 @@ interface PackageManagerInterface
     public function initialize(Bootstrap $bootstrap);
 
     /**
-     * Returns TRUE if a package is available (the package's files exist in the packages directory)
-     * or FALSE if it's not.
+     * Returns true if a package is available (the package's files exist in the packages directory)
+     * or false if it's not.
      *
      * @param string $packageKey The key of the package to check
-     * @return boolean TRUE if the package is available, otherwise FALSE
+     * @return boolean true if the package is available, otherwise false
      * @api
      */
     public function isPackageAvailable($packageKey);
@@ -70,11 +72,11 @@ interface PackageManagerInterface
     public function getFilteredPackages($packageState = 'available', $packagePath = null, $packageType = null);
 
     /**
-     * Returns the upper camel cased version of the given package key or FALSE
+     * Returns the upper camel cased version of the given package key or false
      * if no such package is available.
      *
      * @param string $unknownCasedPackageKey The package key to convert
-     * @return mixed The upper camel cased package key or FALSE if no such package exists
+     * @return mixed The upper camel cased package key or false if no such package exists
      * @api
      */
     public function getCaseSensitivePackageKey($unknownCasedPackageKey);

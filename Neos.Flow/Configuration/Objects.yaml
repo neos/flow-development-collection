@@ -21,11 +21,18 @@ Composer\Autoload\ClassLoader:
 
 Neos\Cache\CacheFactoryInterface:
   className: Neos\Flow\Cache\CacheFactory
+  arguments:
+    1:
+      setting: Neos.Flow.context
+    3:
+      setting: Neos.Flow.cache.applicationIdentifier
 
 Neos\Flow\Cache\CacheFactory:
   arguments:
     1:
       setting: Neos.Flow.context
+    3:
+      setting: Neos.Flow.cache.applicationIdentifier
 
 Neos\Flow\Cache\CacheManager:
   properties:
@@ -163,12 +170,8 @@ Neos\Flow\Log\SecurityLoggerInterface:
 
 Neos\Flow\Log\ThrowableStorageInterface:
   scope: singleton
+  # Note that this is a "fake" entry and doesn't get used. Please change the setting Neos.Flow.log.throwables.storageClass
   className: Neos\Flow\Log\ThrowableStorage\FileStorage
-
-Neos\Flow\Log\ThrowableStorage\FileStorage:
-  properties:
-    storagePath:
-      setting: Neos.Flow.log.throwables.fileStorage.path
 
 Neos\Flow\Log\PsrLoggerFactory:
   scope: singleton
@@ -409,6 +412,15 @@ Neos\Flow\Property\PropertyMapper:
           1:
             value: Flow_PropertyMapper
 
+#
+# Reflection
+#
+Neos\Flow\Reflection\ReflectionService:
+  factoryObjectName: Neos\Flow\Reflection\ReflectionServiceFactory
+
+#Neos\Flow\Reflection\ReflectionServiceFactory:
+#  scope: singleton
+
 #                                                                          #
 # ResourceManagement                                                       #
 #                                                                          #
@@ -543,12 +555,16 @@ Neos\Flow\Security\RequestPattern\CsrfProtection:
           1:
             value: systemLogger
 
+Neos\Flow\Security\Authentication\Provider\TestingProvider:
+  arguments:
+    1:
+      value: 'TestingProvider'
+
 #                                                                          #
 # Session                                                                  #
 #                                                                          #
 
 Neos\Flow\Session\SessionInterface:
-  scope: singleton
   factoryObjectName: Neos\Flow\Session\SessionManagerInterface
   factoryMethodName: getCurrentSession
 

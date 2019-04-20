@@ -11,7 +11,6 @@ namespace Neos\FluidAdaptor\ViewHelpers\Form;
  * source code.
  */
 
-use Neos\Utility\Arrays;
 use Neos\Utility\TypeHandling;
 
 /**

@@ -14,7 +14,6 @@ namespace Neos\Flow\Aop\Pointcut;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Aop\Builder\ClassNameIndex;
 use Neos\Flow\Aop\Exception;
-use Neos\Flow\Aop\Pointcut\PointcutFilterInterface;
 use Neos\Flow\Reflection\ReflectionService;
 
 /**
@@ -76,7 +75,7 @@ class PointcutClassTypeFilter implements PointcutFilterInterface
      * @param string $methodName Name of the method - not used here
      * @param string $methodDeclaringClassName Name of the class the method was originally declared in - not used here
      * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
-     * @return boolean TRUE if the class matches, otherwise FALSE
+     * @return boolean true if the class matches, otherwise false
      */
     public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier): bool
     {
@@ -88,9 +87,9 @@ class PointcutClassTypeFilter implements PointcutFilterInterface
     }
 
     /**
-     * Returns TRUE if this filter holds runtime evaluations for a previously matched pointcut
+     * Returns true if this filter holds runtime evaluations for a previously matched pointcut
      *
-     * @return boolean TRUE if this filter has runtime evaluations
+     * @return boolean true if this filter has runtime evaluations
      */
     public function hasRuntimeEvaluationsDefinition(): bool
     {

@@ -13,7 +13,6 @@ namespace Neos\Eel\FlowQuery\Operations;
 
 use Neos\Eel\FlowQuery\FlowQueryException;
 use Neos\Eel\FlowQuery\OperationInterface;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * Convenience base class for FlowQuery Operations. You should set
@@ -40,7 +39,7 @@ abstract class AbstractOperation implements OperationInterface
     protected static $priority = 1;
 
     /**
-     * If TRUE, the operation is final, i.e. directly executed.
+     * If true, the operation is final, i.e. directly executed.
      *
      * @var boolean
      * @api
@@ -57,7 +56,7 @@ abstract class AbstractOperation implements OperationInterface
     }
 
     /**
-     * @return boolean TRUE if the operation is final, FALSE otherwise
+     * @return boolean true if the operation is final, false otherwise
      * @api
      */
     public static function isFinal()
@@ -82,7 +81,7 @@ abstract class AbstractOperation implements OperationInterface
      * {@inheritdoc}
      *
      * @param array (or array-like object) $context onto which this operation should be applied
-     * @return boolean TRUE if the operation can be applied onto the $context, FALSE otherwise
+     * @return boolean true if the operation can be applied onto the $context, false otherwise
      * @api
      */
     public function canEvaluate($context)

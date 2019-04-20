@@ -19,7 +19,7 @@ use Neos\Flow\Annotations as Flow;
 final class FinalClassWithDependencies
 {
     /**
-     * @Flow\Inject(lazy=FALSE)
+     * @Flow\Inject(lazy=false)
      * @var SingletonClassA
      */
     public $dependency;

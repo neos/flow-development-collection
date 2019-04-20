@@ -13,7 +13,6 @@ namespace Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Format;
 
 require_once(__DIR__ . '/../ViewHelperBaseTestcase.php');
 
-use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\FluidAdaptor\Core\Rendering\RenderingContext;
 use Neos\FluidAdaptor\ViewHelpers\Format\CaseViewHelper;
 use Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase;
@@ -43,7 +42,7 @@ class CaseViewHelperTest extends ViewHelperBaseTestcase
     {
         parent::setUp();
         $this->renderingContext = $this->getMockBuilder(RenderingContext::class)->disableOriginalConstructor()->getMock();
-        $this->viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\Format\CaseViewHelper::class, array('registerRenderMethodArguments'));
+        $this->viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\Format\CaseViewHelper::class, ['registerRenderMethodArguments']);
         $this->viewHelper->setRenderingContext($this->renderingContext);
         //$this->getMockBuilder(\Neos\FluidAdaptor\ViewHelpers\Format\CaseViewHelper::class)->setMethods(array('renderChildren'))->getMock();
         $this->originalMbEncodingValue = mb_internal_encoding();
@@ -141,18 +140,18 @@ class CaseViewHelperTest extends ViewHelperBaseTestcase
      */
     public function conversionTestingDataProvider()
     {
-        return array(
-            array('FooB4r', CaseViewHelper::CASE_LOWER, 'foob4r'),
-            array('FooB4r', CaseViewHelper::CASE_UPPER, 'FOOB4R'),
-            array('foo bar', CaseViewHelper::CASE_CAPITAL, 'Foo bar'),
-            array('FOO Bar', CaseViewHelper::CASE_UNCAPITAL, 'fOO Bar'),
-            array('fOo bar BAZ', CaseViewHelper::CASE_CAPITAL_WORDS, 'Foo Bar Baz'),
-            array('smørrebrød', CaseViewHelper::CASE_UPPER, 'SMØRREBRØD'),
-            array('smørrebrød', CaseViewHelper::CASE_CAPITAL, 'Smørrebrød'),
-            array('römtömtömtöm', CaseViewHelper::CASE_UPPER, 'RÖMTÖMTÖMTÖM'),
-            array('smörrebröd smörrebröd RÖMTÖMTÖMTÖM', CaseViewHelper::CASE_CAPITAL_WORDS, 'Smörrebröd Smörrebröd Römtömtömtöm'),
-            array('Ἕλλάς α ω', CaseViewHelper::CASE_UPPER, 'ἝΛΛΆΣ Α Ω'),
-        );
+        return [
+            ['FooB4r', CaseViewHelper::CASE_LOWER, 'foob4r'],
+            ['FooB4r', CaseViewHelper::CASE_UPPER, 'FOOB4R'],
+            ['foo bar', CaseViewHelper::CASE_CAPITAL, 'Foo bar'],
+            ['FOO Bar', CaseViewHelper::CASE_UNCAPITAL, 'fOO Bar'],
+            ['fOo bar BAZ', CaseViewHelper::CASE_CAPITAL_WORDS, 'Foo Bar Baz'],
+            ['smørrebrød', CaseViewHelper::CASE_UPPER, 'SMØRREBRØD'],
+            ['smørrebrød', CaseViewHelper::CASE_CAPITAL, 'Smørrebrød'],
+            ['römtömtömtöm', CaseViewHelper::CASE_UPPER, 'RÖMTÖMTÖMTÖM'],
+            ['smörrebröd smörrebröd RÖMTÖMTÖMTÖM', CaseViewHelper::CASE_CAPITAL_WORDS, 'Smörrebröd Smörrebröd Römtömtömtöm'],
+            ['Ἕλλάς α ω', CaseViewHelper::CASE_UPPER, 'ἝΛΛΆΣ Α Ω'],
+        ];
     }
 
     /**

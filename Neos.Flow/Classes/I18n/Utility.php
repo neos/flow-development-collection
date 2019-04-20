@@ -27,7 +27,7 @@ class Utility
 
     /**
      * Parses Accept-Language header and returns array of locale tags (like:
-     * en-GB, en), or FALSE if no tags were found.
+     * en-GB, en), or false if no tags were found.
      *
      * This method only returns tags that conforms ISO 639 for language codes
      * and ISO 3166 for region codes. HTTP spec (RFC 2616) defines both of these
@@ -42,7 +42,7 @@ class Utility
      * with the web browsers.
      *
      * @param string $acceptLanguageHeader
-     * @return mixed The array of locale identifiers or FALSE
+     * @return mixed The array of locale identifiers or false
      */
     public static function parseAcceptLanguageHeader($acceptLanguageHeader)
     {
@@ -89,7 +89,7 @@ class Utility
      * Note: this ignores matches on rss, xml and php and validates the identifier.
      *
      * @param string $filename Filename to extract locale identifier from
-     * @return mixed The string with extracted locale identifier of FALSE on failure
+     * @return mixed The string with extracted locale identifier of false on failure
      */
     public static function extractLocaleTagFromFilename($filename)
     {
@@ -116,7 +116,7 @@ class Utility
      * Note: Locale tag will be extracted from the last directory path segment only.
      *
      * @param string $directory Directory path to extract locale identifier from
-     * @return mixed The string with extracted locale identifier of FALSE on failure
+     * @return mixed The string with extracted locale identifier of false on failure
      */
     public static function extractLocaleTagFromDirectory($directory)
     {
@@ -135,7 +135,7 @@ class Utility
      *
      * @param string $haystack
      * @param string $needle
-     * @return boolean TRUE if $haystack begins with $needle
+     * @return boolean true if $haystack begins with $needle
      */
     public static function stringBeginsWith($haystack, $needle)
     {
@@ -151,7 +151,7 @@ class Utility
      *
      * @param string $haystack
      * @param string $needle
-     * @return boolean TRUE if $haystack ends with $needle
+     * @return boolean true if $haystack ends with $needle
      */
     public static function stringEndsWith($haystack, $needle)
     {

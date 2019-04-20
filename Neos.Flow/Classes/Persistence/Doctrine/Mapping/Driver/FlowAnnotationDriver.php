@@ -178,9 +178,13 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
          * @var ORM\ClassMetadata $metadata
          */
 
-        $class = $metadata->getReflectionClass();
-        $classSchema = $this->getClassSchema($class->getName());
-        $classAnnotations = $this->reader->getClassAnnotations($class);
+        try {
+            $class = $metadata->getReflectionClass();
+            $classSchema = $this->getClassSchema($class->getName());
+            $classAnnotations = $this->reader->getClassAnnotations($class);
+        } catch (ClassSchemaNotFoundException $exception) {
+            throw new ORM\MappingException(sprintf('Failure while fetching class schema class "%s": %s', $metadata->getName(), $exception->getMessage()), 1542792708, $exception);
+        }
 
         // Evaluate Entity annotation
         if (isset($classAnnotations[ORM\MappedSuperclass::class])) {
@@ -268,10 +272,10 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
         // Evaluate @Cache annotation
         if (isset($classAnnotations[ORM\Cache::class])) {
             $cacheAnnotation = $classAnnotations[ORM\Cache::class];
-            $cacheMap   = array(
+            $cacheMap   = [
                 'region' => $cacheAnnotation->region,
                 'usage'  => constant('Doctrine\ORM\Mapping\ClassMetadata::CACHE_USAGE_' . $cacheAnnotation->usage),
-            );
+            ];
 
             $metadata->enableCache($cacheMap);
         }
@@ -728,6 +732,9 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
                         case 'DateTime':
                             $mapping['type'] = 'datetime';
                             break;
+                        case 'DateTimeImmutable':
+                            $mapping['type'] = 'datetime_immutable';
+                            break;
                         case 'string':
                         case 'integer':
                         case 'boolean':
@@ -788,10 +795,10 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
 
             // Evaluate @Cache annotation
             if (($cacheAnnotation = $this->reader->getPropertyAnnotation($property, ORM\Cache::class)) !== null) {
-                $metadata->enableAssociationCache($mapping['fieldName'], array(
+                $metadata->enableAssociationCache($mapping['fieldName'], [
                     'usage'         => constant('Doctrine\ORM\Mapping\ClassMetadata::CACHE_USAGE_' . $cacheAnnotation->usage),
                     'region'        => $cacheAnnotation->region,
-                ));
+                ]);
             }
         }
     }
@@ -1009,35 +1016,35 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
 
         foreach ($annotations as $annotation) {
             if ($annotation instanceof ORM\PrePersist) {
-                $callbacks[] = array($method->name, Events::prePersist);
+                $callbacks[] = [$method->name, Events::prePersist];
             }
 
             if ($annotation instanceof ORM\PostPersist) {
-                $callbacks[] = array($method->name, Events::postPersist);
+                $callbacks[] = [$method->name, Events::postPersist];
             }
 
             if ($annotation instanceof ORM\PreUpdate) {
-                $callbacks[] = array($method->name, Events::preUpdate);
+                $callbacks[] = [$method->name, Events::preUpdate];
             }
 
             if ($annotation instanceof ORM\PostUpdate) {
-                $callbacks[] = array($method->name, Events::postUpdate);
+                $callbacks[] = [$method->name, Events::postUpdate];
             }
 
             if ($annotation instanceof ORM\PreRemove) {
-                $callbacks[] = array($method->name, Events::preRemove);
+                $callbacks[] = [$method->name, Events::preRemove];
             }
 
             if ($annotation instanceof ORM\PostRemove) {
-                $callbacks[] = array($method->name, Events::postRemove);
+                $callbacks[] = [$method->name, Events::postRemove];
             }
 
             if ($annotation instanceof ORM\PostLoad) {
-                $callbacks[] = array($method->name, Events::postLoad);
+                $callbacks[] = [$method->name, Events::postLoad];
             }
 
             if ($annotation instanceof ORM\PreFlush) {
-                $callbacks[] = array($method->name, Events::preFlush);
+                $callbacks[] = [$method->name, Events::preFlush];
             }
         }
 
@@ -1198,7 +1205,7 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
      * @param string $methodName Name of the method to check against
      * @param string $methodDeclaringClassName Name of the class the method was originally declared in
      * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
-     * @return boolean TRUE if the class has *no* Id properties
+     * @return boolean true if the class has *no* Id properties
      */
     public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier)
     {
@@ -1213,9 +1220,9 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
     }
 
     /**
-     * Returns TRUE if this filter holds runtime evaluations for a previously matched pointcut
+     * Returns true if this filter holds runtime evaluations for a previously matched pointcut
      *
-     * @return boolean TRUE if this filter has runtime evaluations
+     * @return boolean true if this filter has runtime evaluations
      */
     public function hasRuntimeEvaluationsDefinition()
     {

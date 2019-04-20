@@ -4,28 +4,28 @@
     <body>
       <trans-unit id="authentication.required" xml:space="preserve">
 				<source>Authentication required</source>
-			<target xml:lang="el" state="translated">Απαιτείται έλεγχος ταυτότητας</target></trans-unit>
+			<target state="translated">Απαιτείται έλεγχος ταυτότητας</target></trans-unit>
       <trans-unit id="authentication.username" xml:space="preserve">
 				<source>Username</source>
-			<target xml:lang="el" state="needs-translation">Username</target></trans-unit>
+			<target state="needs-translation">Username</target></trans-unit>
       <trans-unit id="authentication.password" xml:space="preserve">
 				<source>Password</source>
-			<target xml:lang="el" state="translated">Κωδικός</target></trans-unit>
+			<target state="translated">Κωδικός</target></trans-unit>
       <trans-unit id="authentication.new-password" xml:space="preserve">
 				<source>New password</source>
-			<target xml:lang="el" state="translated">Νέος κωδικός πρόσβασης</target></trans-unit>
+			<target state="translated">Νέος κωδικός πρόσβασης</target></trans-unit>
       <trans-unit id="authentication.login" xml:space="preserve">
 				<source>Login</source>
-			<target xml:lang="el" state="translated">Σύνδεση</target></trans-unit>
+			<target state="translated">Σύνδεση</target></trans-unit>
       <trans-unit id="authentication.logout" xml:space="preserve">
 				<source>Logout</source>
-			<target xml:lang="el" state="translated">Αποσύνδεση</target></trans-unit>
+			<target state="translated">Αποσύνδεση</target></trans-unit>
       <trans-unit id="update" xml:space="preserve">
 				<source>Update</source>
-			<target xml:lang="el" state="translated">Ενημέρωση</target></trans-unit>
+			<target state="translated">Ενημέρωση</target></trans-unit>
       <trans-unit id="submit" xml:space="preserve">
 				<source>Submit</source>
-			<target xml:lang="el" state="translated">Αποστολή</target></trans-unit>
+			<target state="translated">Αποστολή</target></trans-unit>
     </body>
   </file>
 </xliff>

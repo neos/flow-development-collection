@@ -21,7 +21,7 @@ use Neos\Utility\Arrays;
  * Configuration source based on YAML files
  *
  * @Flow\Scope("singleton")
- * @Flow\Proxy(FALSE)
+ * @Flow\Proxy(false)
  * @api
  */
 class YamlSource
@@ -43,10 +43,10 @@ class YamlSource
     }
 
     /**
-     * Checks for the specified configuration file and returns TRUE if it exists.
+     * Checks for the specified configuration file and returns true if it exists.
      *
      * @param string $pathAndFilename Full path and filename of the file to load, excluding the file extension (ie. ".yaml")
-     * @param boolean $allowSplitSource If TRUE, the type will be used as a prefix when looking for configuration files
+     * @param boolean $allowSplitSource If true, the type will be used as a prefix when looking for configuration files
      * @return boolean
      */
     public function has(string $pathAndFilename, bool $allowSplitSource = false): bool
@@ -74,7 +74,7 @@ class YamlSource
      * array is returned
      *
      * @param string $pathAndFilename Full path and filename of the file to load, excluding the file extension (ie. ".yaml")
-     * @param boolean $allowSplitSource If TRUE, the type will be used as a prefix when looking for configuration files
+     * @param boolean $allowSplitSource If true, the type will be used as a prefix when looking for configuration files
      * @return array
      * @throws ParseErrorException
      * @throws \Neos\Flow\Configuration\Exception

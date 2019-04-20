@@ -364,7 +364,7 @@ class CoreCommandController extends CommandController
     /**
      * Launch sub process
      *
-     * @return array The new sub process and its STDIN, STDOUT, STDERR pipes – or FALSE if an error occurred.
+     * @return array The new sub process and its STDIN, STDOUT, STDERR pipes – or false if an error occurred.
      * @throws \RuntimeException
      */
     protected function launchSubProcess(): array

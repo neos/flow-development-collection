@@ -32,7 +32,7 @@ interface PasswordHashingStrategyInterface
      * @param string $password
      * @param string $hashedPasswordAndSalt Hashed password with dynamic salt (if used)
      * @param string $staticSalt Optional static salt that will not be stored in the hashed password
-     * @return boolean TRUE if the given cleartext password matched the hashed password
+     * @return boolean true if the given cleartext password matched the hashed password
      */
     public function validatePassword($password, $hashedPasswordAndSalt, $staticSalt = null);
 }

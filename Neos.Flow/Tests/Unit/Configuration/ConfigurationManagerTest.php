@@ -12,6 +12,7 @@ namespace Neos\Flow\Tests\Unit\Configuration;
  */
 
 use Neos\Flow\Configuration\ConfigurationManager;
+use Neos\Flow\Configuration\RouteConfigurationProcessor;
 use Neos\Flow\Configuration\Source\YamlSource;
 use Neos\Flow\Core\ApplicationContext;
 use Neos\Flow\Core\Bootstrap;
@@ -149,18 +150,8 @@ class ConfigurationManagerTest extends UnitTestCase
      */
     public function gettingUnregisteredConfigurationTypeFails()
     {
-        $expectedConfigurations = [
-            'Custom' => ['custom'],
-        ];
-
-        $configurationManager = $this->getAccessibleMock(ConfigurationManager::class, ['loadConfiguration'], [], '', false);
-        $configurationManager->_set('configurations', $expectedConfigurations);
-        $configurationManager->expects($this->never())->method('loadConfiguration');
-
-        foreach ($expectedConfigurations as $configurationType => $expectedConfiguration) {
-            $actualConfiguration = $configurationManager->getConfiguration($configurationType);
-            $this->assertSame($expectedConfiguration, $actualConfiguration);
-        }
+        $configurationManager = new ConfigurationManager(new ApplicationContext('Testing'));
+        $configurationManager->getConfiguration('Custom');
     }
 
     /**
@@ -184,16 +175,6 @@ class ConfigurationManagerTest extends UnitTestCase
 
         $expectedConfigurationTypes = ['Caches', 'Objects', 'Routes', 'Policy', 'Settings', 'Custom'];
         $this->assertEquals($expectedConfigurationTypes, $configurationManager->getAvailableConfigurationTypes());
-    }
-
-    /**
-     * @expectedException \Neos\Flow\Configuration\Exception\InvalidConfigurationTypeException
-     * @test
-     */
-    public function getConfigurationThrowsExceptionOnInvalidConfigurationType()
-    {
-        $configurationManager = $this->getAccessibleMock(ConfigurationManager::class, ['loadConfiguration'], [], '', false);
-        $configurationManager->getConfiguration('Nonsense');
     }
 
     /**
@@ -667,18 +648,18 @@ EOD;
         $configurationManager->_set('configurations', $mockConfigurations);
         $configurationManager->_set('unprocessedConfiguration', $mockConfigurations);
         $configurationManager->_set('configurationTypes', [
-            ConfigurationManager::CONFIGURATION_TYPE_ROUTES => array(
+            ConfigurationManager::CONFIGURATION_TYPE_ROUTES => [
                 'processingType' => ConfigurationManager::CONFIGURATION_PROCESSING_TYPE_ROUTES,
                 'allowSplitSource' => false
-            ),
-            ConfigurationManager::CONFIGURATION_TYPE_CACHES => array(
+            ],
+            ConfigurationManager::CONFIGURATION_TYPE_CACHES => [
                 'processingType' => ConfigurationManager::CONFIGURATION_PROCESSING_TYPE_DEFAULT,
                 'allowSplitSource' => false
-            ),
-            ConfigurationManager::CONFIGURATION_TYPE_SETTINGS => array(
+            ],
+            ConfigurationManager::CONFIGURATION_TYPE_SETTINGS => [
                 'processingType' => ConfigurationManager::CONFIGURATION_PROCESSING_TYPE_DEFAULT,
                 'allowSplitSource' => false
-            ),
+            ],
         ]);
 
         $configurationManager->_call('saveConfigurationCache');
@@ -770,23 +751,25 @@ EOD;
 
         putenv($envVarName . '=' . $envVarValue);
 
-        $settings = array(
+        $settings = [
             'foo' => 'bar',
-            'baz' => '%env:' . $envVarName . '%',
-            'inspiring' => array(
-                'people' => array(
+            'bar' => '%env:' . $envVarName . '%',
+            'baz' => '%env:' . $envVarName . '% inspiring people %env:' . $envVarName . '% to share',
+            'inspiring' => [
+                'people' => [
                     'to' => '%env:' . $envVarName . '%',
                     'share' => 'foo %env:' . $envVarName . '% bar'
-                )
-            )
-        );
+                ]
+            ]
+        ];
         $settingsPhpString = var_export($settings, true);
 
         $configurationManager = $this->getAccessibleMock(ConfigurationManager::class, ['dummy'], [], '', false);
         $processedPhpString = $configurationManager->_call('replaceVariablesInPhpString', $settingsPhpString);
         $settings = eval('return ' . $processedPhpString . ';');
 
-        $this->assertSame($envVarValue, $settings['baz']);
+        $this->assertSame($envVarValue, $settings['bar']);
+        $this->assertSame($envVarValue . ' inspiring people ' . $envVarValue . ' to share', $settings['baz']);
         $this->assertSame($envVarValue, $settings['inspiring']['people']['to']);
         $this->assertSame('foo ' . $envVarValue . ' bar', $settings['inspiring']['people']['share']);
 
@@ -804,6 +787,7 @@ EOD;
 
         $mockPackages = $this->getMockPackages();
         $configurationManager->setPackages($mockPackages);
+        $configurationManager->_set('configurations', ['Settings' => ['Neos' => ['Flow' => ['mvc' => ['routes' => []]]]]]);
         $configurationManager->_call('loadConfiguration', ConfigurationManager::CONFIGURATION_TYPE_ROUTES, $mockPackages);
 
         $actualConfigurations = $configurationManager->_get('configurations');
@@ -1236,8 +1220,8 @@ EOD;
         ];
         $subRoutesConfiguration = [];
 
-        $configurationManager = $this->getAccessibleMock(ConfigurationManager::class, ['dummy'], [new ApplicationContext('Testing')]);
-        $configurationManager->_callRef('mergeRoutesWithSubRoutes', $routesConfiguration, $subRoutesConfiguration);
+        $routeConfigurationProcessor = $this->getAccessibleMock(RouteConfigurationProcessor::class, ['dummy'], [], '', false);
+        $routeConfigurationProcessor->_callRef('mergeRoutesWithSubRoutes', $routesConfiguration, $subRoutesConfiguration);
     }
 
     /**
@@ -1257,17 +1241,15 @@ EOD;
                 ],
             ]
         ];
+
+
         $mockConfigurationSource = $this->getMockBuilder(YamlSource::class)->setMethods(['load', 'save'])->getMock();
         $mockConfigurationSource->expects($this->at(0))->method('load')->with('Flow/Configuration/Testing/System1/Routes.Foo')->will($this->returnValue([]));
         $mockConfigurationSource->expects($this->at(1))->method('load')->with('Flow/Configuration/Testing/Routes.Foo')->will($this->returnValue([]));
         $mockConfigurationSource->expects($this->at(2))->method('load')->with('Flow/Configuration/Routes.Foo')->will($this->returnValue([]));
 
-        $configurationManager = $this->getAccessibleMock(ConfigurationManager::class, ['postProcessConfiguration'], [new ApplicationContext('Testing/System1')]);
-        $configurationManager->_set('configurationSource', $mockConfigurationSource);
-
-        $mockPackages = $this->getMockPackages();
-        $configurationManager->setPackages($mockPackages);
-        $configurationManager->_callRef('mergeRoutesWithSubRoutes', $mockRoutesConfiguration);
+        $routeConfigurationProcessor = new RouteConfigurationProcessor([], ['Testing', 'Testing/System1'], $this->getMockPackages(), $mockConfigurationSource);
+        $routeConfigurationProcessor->process($mockRoutesConfiguration);
     }
 
     /**
@@ -1359,8 +1341,8 @@ EOD;
                 'appendExceedingArguments' => true
             ]
         ];
-        $configurationManager = $this->getAccessibleMock(ConfigurationManager::class, ['dummy'], [new ApplicationContext('Testing')]);
-        $actualResult = $configurationManager->_call('buildSubrouteConfigurations', $routesConfiguration, $subRoutesConfiguration, 'WelcomeSubroutes', []);
+        $RouteConfigurationProcessor = $this->getAccessibleMock(RouteConfigurationProcessor::class, ['dummy'], [], '', false);
+        $actualResult = $RouteConfigurationProcessor->_call('buildSubrouteConfigurations', $routesConfiguration, $subRoutesConfiguration, 'WelcomeSubroutes', []);
 
         $this->assertEquals($expectedResult, $actualResult);
     }
@@ -1438,8 +1420,8 @@ EOD;
                 ],
             ]
         ];
-        $configurationManager = $this->getAccessibleMock(ConfigurationManager::class, ['dummy'], [new ApplicationContext('Testing')]);
-        $actualResult = $configurationManager->_call('buildSubrouteConfigurations', $routesConfiguration, $subRoutesConfiguration, 'WelcomeSubroutes', $subRouteOptions);
+        $routeConfigurationProcessor = $this->getAccessibleMock(RouteConfigurationProcessor::class, ['dummy'], [], '', false);
+        $actualResult = $routeConfigurationProcessor->_call('buildSubrouteConfigurations', $routesConfiguration, $subRoutesConfiguration, 'WelcomeSubroutes', $subRouteOptions);
 
         $this->assertEquals($expectedResult, $actualResult);
     }

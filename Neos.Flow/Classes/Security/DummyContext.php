@@ -27,7 +27,7 @@ use Neos\Flow\Security\Policy\Role;
 class DummyContext extends Context
 {
     /**
-     * TRUE if the context is initialized in the current request, FALSE or NULL otherwise.
+     * true if the context is initialized in the current request, false or NULL otherwise.
      *
      * @var boolean
      * @Flow\Transient
@@ -66,7 +66,7 @@ class DummyContext extends Context
     }
 
     /**
-     * @return boolean TRUE if the Context is initialized, FALSE otherwise.
+     * @return boolean true if the Context is initialized, false otherwise.
      */
     public function isInitialized()
     {
@@ -152,11 +152,11 @@ class DummyContext extends Context
     }
 
     /**
-     * Returns TRUE, if at least one of the currently authenticated accounts holds
+     * Returns true, if at least one of the currently authenticated accounts holds
      * a role with the given identifier, also recursively.
      *
      * @param string $roleIdentifier The string representation of the role to search for
-     * @return boolean TRUE, if a role with the given string representation was found
+     * @return boolean true, if a role with the given string representation was found
      */
     public function hasRole($roleIdentifier)
     {
@@ -194,9 +194,9 @@ class DummyContext extends Context
     }
 
     /**
-     * Returns TRUE if the context has CSRF protection tokens.
+     * Returns true if the context has CSRF protection tokens.
      *
-     * @return boolean TRUE, if the token is valid. FALSE otherwise.
+     * @return boolean true, if the token is valid. false otherwise.
      */
     public function hasCsrfProtectionTokens()
     {
@@ -204,11 +204,11 @@ class DummyContext extends Context
     }
 
     /**
-     * Returns TRUE if the given string is a valid CSRF protection token. The token will be removed if the configured
+     * Returns true if the given string is a valid CSRF protection token. The token will be removed if the configured
      * csrf strategy is 'onePerUri'.
      *
      * @param string $csrfToken The token string to be validated
-     * @return boolean TRUE, if the token is valid. FALSE otherwise.
+     * @return boolean true, if the token is valid. false otherwise.
      */
     public function isCsrfProtectionTokenValid($csrfToken)
     {

@@ -15,17 +15,17 @@ Neos:
         defaultRenderingOptions:
           viewClassName: Neos\Flow\Mvc\View\SimpleTemplateView
           viewOptions: []
-          renderTechnicalDetails: FALSE
-          logException: TRUE
+          renderTechnicalDetails: false
+          logException: true
 
         # Rendering groups can define special renderings depending on status code or class of the
         # thrown exception.
         renderingGroups:
 
           notFoundExceptions:
-            matchingStatusCodes: [404]
+            matchingStatusCodes: [404, 410]
             options:
-              logException: FALSE
+              logException: false
               templatePathAndFilename: 'resource://Neos.Flow/Private/Templates/Error/Default.html'
               variables:
                 errorDescription: 'Sorry, the page you requested was not found.'
@@ -49,23 +49,27 @@ Neos:
         # List of regular expressions classes are matched against in the debugger
         # to prevent them from being expanded.
         ignoredClasses:
-          'Neos\\Flow\\Aop.*': TRUE
-          'Neos\\Flow\\Cac.*': TRUE
-          'Neos\\Flow\\Core\\.*': TRUE
-          'Neos\\Flow\\Con.*': TRUE
-          'Neos\\Flow\\Http\\RequestHandler': TRUE
-          'Neos\\Flow\\Uti.*': TRUE
-          'Neos\\Flow\\Mvc\\Routing.*': TRUE
-          'Neos\\Flow\\Log.*': TRUE
-          'Neos\\Flow\\Obj.*': TRUE
-          'Neos\\Flow\\Pac.*': TRUE
-          'Neos\\Flow\\Persistence\\(?!Doctrine\\Mapping).*': TRUE
-          'Neos\\Flow\\Pro.*': TRUE
-          'Neos\\Flow\\Ref.*': TRUE
-          'Neos\\Flow\\Sec.*': TRUE
-          'Neos\\Flow\\Sig.*': TRUE
-          'Neos\\Flow\\.*ResourceManager': TRUE
-          'Neos\\FluidAdaptor\\.*': TRUE
-          '.+Service$': TRUE
-          '.+Repository$': TRUE
-          'PHPUnit_Framework_MockObject_InvocationMocker': TRUE
+          'Neos\\Flow\\Aop.*': true
+          'Neos\\Flow\\Cac.*': true
+          'Neos\\Flow\\Core\\.*': true
+          'Neos\\Flow\\Con.*': true
+          'Neos\\Flow\\Http\\RequestHandler': true
+          'Neos\\Flow\\Uti.*': true
+          'Neos\\Flow\\Mvc\\Routing.*': true
+          'Neos\\Flow\\Log.*': true
+          'Neos\\Flow\\Obj.*': true
+          'Neos\\Flow\\Pac.*': true
+          'Neos\\Flow\\Persistence\\(?!Doctrine\\Mapping).*': true
+          'Neos\\Flow\\Pro.*': true
+          'Neos\\Flow\\Ref.*': true
+          'Neos\\Flow\\Sec.*': true
+          'Neos\\Flow\\Sig.*': true
+          'Neos\\Flow\\.*ResourceManager': true
+          'Neos\\FluidAdaptor\\.*': true
+          '.+Service$': true
+          '.+Repository$': true
+          'PHPUnit_Framework_MockObject_InvocationMocker': true
+
+        # Maximal recursion for the debugger
+        recursionLimit: 5
+

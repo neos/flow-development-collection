@@ -494,7 +494,6 @@ class PropertyMapperTest extends UnitTestCase
 
     /**
      * @test
-     * @doesNotPerformAssertions
      * @dataProvider convertCallsCanConvertFromWithTheFullNormalizedTargetTypeDataProvider
      */
     public function convertCallsCanConvertFromWithTheFullNormalizedTargetType($source, $fullTargetType)
@@ -512,5 +511,55 @@ class PropertyMapperTest extends UnitTestCase
 
         $mockConfiguration = $this->getMockBuilder(PropertyMappingConfiguration::class)->disableOriginalConstructor()->getMock();
         $propertyMapper->convert($source, $fullTargetType, $mockConfiguration);
+    }
+
+    /**
+     * @return array
+     */
+    public function convertCallsCanConvertFromWithNullableTargetTypeDataProvider()
+    {
+        return [
+            ['source' => 'foo', 'fullTargetType' => 'string|null'],
+            ['source' => 'foo', 'fullTargetType' => 'array|null'],
+            ['source' => 'foo', 'fullTargetType' => 'array<string>|null'],
+            ['source' => 'foo', 'fullTargetType' => 'SplObjectStorage|null'],
+            ['source' => 'foo', 'fullTargetType' => 'SplObjectStorage<Some\Element\Type>|null'],
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider convertCallsCanConvertFromWithNullableTargetTypeDataProvider
+     */
+    public function convertCallsCanConvertFromWithNullableTargetType($source, $fullTargetType)
+    {
+        $fullTargetTypeWithoutNull = TypeHandling::stripNullableType($fullTargetType);
+        $mockTypeConverter = $this->getMockTypeConverter();
+        $mockTypeConverter->expects($this->atLeastOnce())->method('canConvertFrom')->with($source, $fullTargetTypeWithoutNull);
+        $truncatedTargetType = TypeHandling::truncateElementType($fullTargetTypeWithoutNull);
+        $mockTypeConverters = [
+            gettype($source) => [
+                $truncatedTargetType => [1 => $mockTypeConverter]
+            ],
+        ];
+        $propertyMapper = $this->getAccessibleMock(PropertyMapper::class, ['dummy']);
+        $propertyMapper->_set('typeConverters', $mockTypeConverters);
+
+        $mockConfiguration = $this->getMockBuilder(PropertyMappingConfiguration::class)->disableOriginalConstructor()->getMock();
+        $propertyMapper->convert($source, $fullTargetType, $mockConfiguration);
+    }
+
+    /**
+     * @test
+     */
+    public function convertCallsConvertToNullWithNullableTargetType()
+    {
+        $source = null;
+        $fullTargetType = 'SplObjectStorage|null';
+
+        $propertyMapper = $this->getAccessibleMock(PropertyMapper::class, ['dummy']);
+
+        $mockConfiguration = $this->getMockBuilder(PropertyMappingConfiguration::class)->disableOriginalConstructor()->getMock();
+        $this->assertEquals(null, $propertyMapper->convert($source, $fullTargetType, $mockConfiguration));
     }
 }

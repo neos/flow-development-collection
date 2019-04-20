@@ -87,10 +87,10 @@ class RouterCachingService
     }
 
     /**
-     * Checks the cache for the given RouteContext and returns the result or FALSE if no matching ache entry was found
+     * Checks the cache for the given RouteContext and returns the result or false if no matching ache entry was found
      *
      * @param RouteContext $routeContext
-     * @return array|boolean the cached route values or FALSE if no cache entry was found
+     * @return array|boolean the cached route values or false if no cache entry was found
      */
     public function getCachedMatchResults(RouteContext $routeContext)
     {
@@ -126,7 +126,7 @@ class RouterCachingService
      * Checks the cache for the given ResolveContext and returns the cached UriConstraints if a cache entry is found
      *
      * @param ResolveContext $resolveContext
-     * @return UriConstraints|boolean the cached URI or FALSE if no cache entry was found
+     * @return UriConstraints|boolean the cached URI or false if no cache entry was found
      */
     public function getCachedResolvedUriConstraints(ResolveContext $resolveContext)
     {
@@ -219,7 +219,7 @@ class RouterCachingService
      * Checks if the given subject contains an object
      *
      * @param mixed $subject
-     * @return boolean TRUE if $subject contains an object, otherwise FALSE
+     * @return boolean true if $subject contains an object, otherwise false
      */
     protected function containsObject($subject)
     {

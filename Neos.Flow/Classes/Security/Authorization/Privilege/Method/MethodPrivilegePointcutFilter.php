@@ -58,6 +58,7 @@ class MethodPrivilegePointcutFilter implements PointcutFilterInterface
      *
      * @param ObjectManagerInterface $objectManager
      * @return void
+     * @throws \Neos\Cache\Exception\NoSuchCacheException
      */
     public function injectObjectManager(ObjectManagerInterface $objectManager)
     {
@@ -86,7 +87,7 @@ class MethodPrivilegePointcutFilter implements PointcutFilterInterface
      * @param string $methodName Name of the method to check the name of
      * @param string $methodDeclaringClassName Name of the class the method was originally declared in
      * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
-     * @return boolean TRUE if the names match, otherwise FALSE
+     * @return boolean true if the names match, otherwise false
      */
     public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier): bool
     {
@@ -94,31 +95,33 @@ class MethodPrivilegePointcutFilter implements PointcutFilterInterface
             $this->buildPointcutFilters();
         }
 
-        $matches = false;
-        /** @var PointcutFilterComposite $filter */
-        foreach ($this->filters as $privilegeIdentifier => $filter) {
-            if ($filter->matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier)) {
-                $matches = true;
-                $methodIdentifier = strtolower($className . '->' . $methodName);
+        $matchingFilters = array_filter($this->filters, $this->getFilterEvaluator($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier));
 
-                $hasRuntimeEvaluations = false;
-                if ($filter->hasRuntimeEvaluationsDefinition() === true) {
-                    $hasRuntimeEvaluations = true;
-                    $this->runtimeExpressionEvaluator->addExpression($privilegeIdentifier, $filter->getRuntimeEvaluationsClosureCode());
-                }
-
-                $this->methodPermissions[$methodIdentifier][$privilegeIdentifier]['privilegeMatchesMethod'] = true;
-                $this->methodPermissions[$methodIdentifier][$privilegeIdentifier]['hasRuntimeEvaluations'] = $hasRuntimeEvaluations;
-            }
+        if ($matchingFilters === []) {
+            return false;
         }
 
-        return $matches;
+        /** @var PointcutFilterComposite $filter */
+        foreach ($matchingFilters as $privilegeIdentifier => $filter) {
+            $methodIdentifier = strtolower($className . '->' . $methodName);
+
+            $hasRuntimeEvaluations = false;
+            if ($filter->hasRuntimeEvaluationsDefinition() === true) {
+                $hasRuntimeEvaluations = true;
+                $this->runtimeExpressionEvaluator->addExpression($privilegeIdentifier, $filter->getRuntimeEvaluationsClosureCode());
+            }
+
+            $this->methodPermissions[$methodIdentifier][$privilegeIdentifier]['privilegeMatchesMethod'] = true;
+            $this->methodPermissions[$methodIdentifier][$privilegeIdentifier]['hasRuntimeEvaluations'] = $hasRuntimeEvaluations;
+        }
+
+        return true;
     }
 
     /**
-     * Returns TRUE if this filter holds runtime evaluations for a previously matched pointcut
+     * Returns true if this filter holds runtime evaluations for a previously matched pointcut
      *
-     * @return boolean TRUE if this filter has runtime evaluations
+     * @return boolean true if this filter has runtime evaluations
      */
     public function hasRuntimeEvaluationsDefinition(): bool
     {
@@ -152,6 +155,20 @@ class MethodPrivilegePointcutFilter implements PointcutFilterInterface
             $result->applyUnion($filter->reduceTargetClassNames($classNameIndex));
         }
         return $result;
+    }
+
+    /**
+     * @param $className
+     * @param $methodName
+     * @param $methodDeclaringClassName
+     * @param $pointcutQueryIdentifier
+     * @return \Closure
+     */
+    protected function getFilterEvaluator($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier): \Closure
+    {
+        return function (PointcutFilterComposite $filter) use ($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier) {
+            return $filter->matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier);
+        };
     }
 
     /**

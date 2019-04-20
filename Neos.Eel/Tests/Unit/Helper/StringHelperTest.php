@@ -12,6 +12,7 @@ namespace Neos\Eel\Tests\Unit;
  */
 
 use Neos\Eel\Helper\StringHelper;
+use Neos\Eel\Tests\Unit\Fixtures\TestObject;
 use Neos\Flow\Tests\UnitTestCase;
 
 /**
@@ -109,6 +110,48 @@ class StringHelperTest extends UnitTestCase
     {
         $helper = new StringHelper();
         $result = $helper->endsWith($string, $search, $position);
+        $this->assertSame($expected, $result);
+    }
+
+    public function chrExamples()
+    {
+        return [
+            ['value' => 65, 'expected' => 'A'],
+            ['value' => 256, 'expected' => chr(256)],
+            ['value' => 'not a number', 'expected' => chr('not a number')],
+            ['value' => 0, 'expected' => chr(0)],
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider chrExamples
+     */
+    public function chrWorks($value, $expected)
+    {
+        $helper = new StringHelper();
+        $result = $helper->chr($value);
+        $this->assertSame($expected, $result);
+    }
+
+    public function ordExamples()
+    {
+        return [
+            ['value' => 'A', 'expected' => 65],
+            ['value' => '', 'expected' => 0],
+            ['value' => 1, 'expected' => 49],
+            ['value' => 'longer string', 'expected' => 108],
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider ordExamples
+     */
+    public function ordWorks($value, $expected)
+    {
+        $helper = new StringHelper();
+        $result = $helper->ord($value);
         $this->assertSame($expected, $result);
     }
 
@@ -474,6 +517,16 @@ class StringHelperTest extends UnitTestCase
     /**
      * @test
      */
+    public function nl2brWorks()
+    {
+        $helper = new StringHelper();
+        $result = $helper->nl2br('some' . chr(10) . 'string');
+        $this->assertSame('some<br />' . chr(10) . 'string', $result);
+    }
+
+    /**
+     * @test
+     */
     public function rawUrlEncodeWorks()
     {
         $helper = new StringHelper();
@@ -562,6 +615,16 @@ class StringHelperTest extends UnitTestCase
         $this->assertSame('bacb98acf97e0b6112b1d1b650b84971', $result);
     }
 
+    /**
+     * @test
+     */
+    public function sha1Works()
+    {
+        $helper = new StringHelper();
+        $result = $helper->sha1('joh316');
+        $this->assertSame('063b3d108bed9f88fa618c6046de0dccadcf3158', $result);
+    }
+
     public function lengthExamples()
     {
         return [
@@ -606,5 +669,59 @@ class StringHelperTest extends UnitTestCase
         $helper = new StringHelper();
         $result = $helper->wordCount($input);
         $this->assertSame($expected, $result);
+    }
+
+    public function base64encodeEncodesDataProvider()
+    {
+        return [
+            'empty string' => ['input' => '', 'expectedResult' => ''],
+            'simple string' => ['input' => 'Flow rocks', 'expectedResult' => 'RmxvdyByb2Nrcw=='],
+            'special characters' => ['input' => 'Flow röckß', 'expectedResult' => 'RmxvdyByw7Zja8Of'],
+            'integer' => ['input' => 123, 'expectedResult' => 'MTIz'],
+            'Stringable object' => ['input' => new TestObject(), 'expectedResult' => 'VGVzdCBPYmplY3Q='],
+        ];
+    }
+
+    /**
+     * @param mixed $input
+     * @param string|bool $expectedResult
+     * @test
+     * @dataProvider base64encodeEncodesDataProvider
+     */
+    public function base64encodeEncodesTests($input, $expectedResult)
+    {
+        $helper = new StringHelper();
+        $this->assertSame($expectedResult, $helper->base64encode($input));
+    }
+
+    public function base64decodeEncodesDataProvider()
+    {
+        return [
+            'empty string' => ['input' => '', 'expectedResult' => ''],
+            'simple string' => ['input' => 'RmxvdyByb2Nrcw==', 'expectedResult' => 'Flow rocks'],
+            'special characters' => ['input' => 'RmxvdyByw7Zja8Of', 'expectedResult' => 'Flow röckß'],
+            'integer' => ['input' => 'MTIz', 'expectedResult' => '123'],
+        ];
+    }
+
+    /**
+     * @param mixed $input
+     * @param string|bool $expectedResult
+     * @test
+     * @dataProvider base64decodeEncodesDataProvider
+     */
+    public function base64decodeEncodesTests($input, $expectedResult)
+    {
+        $helper = new StringHelper();
+        $this->assertSame($expectedResult, $helper->base64decode($input));
+    }
+
+    /**
+     * @test
+     */
+    public function base64decodeReturnsFalseIfGivenStringIsInvalidAndStrictModeIsSet()
+    {
+        $helper = new StringHelper();
+        $this->assertFalse($helper->base64decode('invälid input', true));
     }
 }

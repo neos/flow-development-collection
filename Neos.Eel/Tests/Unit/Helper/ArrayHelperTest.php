@@ -473,4 +473,245 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
         $result = call_user_func_array([$helper, 'range'], $arguments);
         $this->assertEquals($expected, $result);
     }
+
+
+    public function setExamples()
+    {
+        return [
+            'add key in empty array' => [
+                [[], 'foo', 'bar'],
+                ['foo' => 'bar']
+            ],
+            'add key to array' => [
+                [['bar' => 'baz'], 'foo', 'bar'],
+                ['bar' => 'baz', 'foo' => 'bar']
+            ],
+            'override value in array' => [
+                [['foo' => 'bar'], 'foo', 'baz'],
+                ['foo' => 'baz']
+            ]
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider setExamples
+     */
+    public function setWorks($arguments, $expected)
+    {
+        $helper = new ArrayHelper();
+        $result = call_user_func_array([$helper, 'set'], $arguments);
+        $this->assertEquals($expected, $result);
+    }
+
+    public function mapExamples()
+    {
+        return [
+            'map squares' => [
+                [1, 2, 3, 4],
+                function ($x) {
+                    return $x * $x;
+                },
+                [1, 4, 9, 16],
+            ],
+            'preserve keys' => [
+                ['a' => 1, 'b' => 2],
+                function ($x) {
+                    return $x * 2;
+                },
+                ['a' => 2, 'b' => 4],
+            ],
+            'with keys' => [
+                [1, 2, 3, 4],
+                function ($x, $index) {
+                    return $x * $index;
+                },
+                [0, 2, 6, 12],
+            ],
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider mapExamples
+     */
+    public function mapWorks($array, $callback, $expected)
+    {
+        $helper = new ArrayHelper();
+        $result = $helper->map($array, $callback);
+        $this->assertSame($expected, $result);
+    }
+
+    public function reduceExamples()
+    {
+        return [
+            'sum with initial value' => [
+                [1, 2, 3, 4],
+                function ($sum, $x) {
+                    return $sum + $x;
+                },
+                0,
+                10,
+            ],
+            'sum without initial value' => [
+                [1, 2, 3, 4],
+                function ($sum, $x) {
+                    return $sum + $x;
+                },
+                null,
+                10,
+            ],
+            'sum with empty array and initial value' => [
+                [],
+                function ($sum, $x) {
+                    return $sum + $x;
+                },
+                0,
+                0,
+            ],
+            'sum with empty array and without initial value' => [
+                [],
+                function ($sum, $x) {
+                    return $sum + $x;
+                },
+                null,
+                null,
+            ],
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider reduceExamples
+     */
+    public function reduceWorks($array, $callback, $initialValue, $expected)
+    {
+        $helper = new ArrayHelper();
+        $result = $helper->reduce($array, $callback, $initialValue);
+        $this->assertSame($expected, $result);
+    }
+
+    public function filterExamples()
+    {
+        return [
+            'test by value' => [
+                range(0, 5),
+                function ($x) {
+                    return $x % 2 === 0;
+                },
+                [
+                    0 => 0,
+                    2 => 2,
+                    4 => 4,
+                ],
+            ],
+            'test element by index' => [
+                ['a', 'b', 'c', 'd'],
+                function ($x, $index) {
+                    return $index % 2 === 0;
+                },
+                [
+                    0 => 'a',
+                    2 => 'c',
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider filterExamples
+     */
+    public function filterWorks($array, $callback, $expected)
+    {
+        $helper = new ArrayHelper();
+        $result = $helper->filter($array, $callback);
+        $this->assertSame($expected, $result);
+    }
+
+    public function someExamples()
+    {
+        $isLongWord = function ($x) {
+            return strlen($x) >= 8;
+        };
+        $isFiveApples = function ($x, $key) {
+            return $key === 'apple' && $x > 5;
+        };
+        return [
+            'test by value: success' => [
+                ['brown', 'elephant', 'dung'],
+                $isLongWord,
+                true,
+            ],
+            'test by value: fail' => [
+                ['foo', 'bar', 'baz'],
+                $isLongWord,
+                false,
+            ],
+            'test by key: success' => [
+                ['apple' => 7, 'pear' => 5, 'banana' => 3],
+                $isFiveApples,
+                true,
+            ],
+            'test by key: fail' => [
+                ['apple' => 3, 'pear' => 5, 'banana' => 7],
+                $isFiveApples,
+                false,
+            ],
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider someExamples
+     */
+    public function someWorks($array, $callback, $expected)
+    {
+        $helper = new ArrayHelper();
+        $result = $helper->some($array, $callback);
+        $this->assertSame($expected, $result);
+    }
+
+    public function everyExamples()
+    {
+        $isMediumWord = function ($x) {
+            return strlen($x) >= 4;
+        };
+        $isValueEqualIndex = function ($x, $key) {
+            return $key === $x;
+        };
+        return [
+            'test by value: success' => [
+                ['brown', 'elephant', 'dung'],
+                $isMediumWord,
+                true,
+            ],
+            'test by value: fail' => [
+                ['foo', 'bar', 'baz'],
+                $isMediumWord,
+                false,
+            ],
+            'test by key: success' => [
+                [0, 1, 2, 3],
+                $isValueEqualIndex,
+                true,
+            ],
+            'test by key: fail' => [
+                [0 => 1, 1 => 2, 2 => 3],
+                $isValueEqualIndex,
+                false,
+            ],
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider everyExamples
+     */
+    public function everyWorks($array, $callback, $expected)
+    {
+        $helper = new ArrayHelper();
+        $result = $helper->every($array, $callback);
+        $this->assertSame($expected, $result);
+    }
 }

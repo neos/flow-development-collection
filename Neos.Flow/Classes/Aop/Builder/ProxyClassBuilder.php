@@ -16,8 +16,8 @@ use Neos\Flow\Aop\AdvicesTrait;
 use Neos\Flow\Aop\AspectContainer;
 use Neos\Flow\Aop\PropertyIntroduction;
 use Neos\Cache\Frontend\VariableFrontend;
+use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\ObjectManagement\CompileTimeObjectManager;
-use Neos\Flow\Reflection\ClassReflection;
 use Neos\Flow\Reflection\PropertyReflection;
 use Neos\Flow\Aop\TraitIntroduction;
 use Neos\Flow\Aop;
@@ -38,12 +38,6 @@ class ProxyClassBuilder
      * @var Proxy\Compiler
      */
     protected $compiler;
-
-    /**
-     * The Flow settings
-     * @var array
-     */
-    protected $settings;
 
     /**
      * @var ReflectionService
@@ -180,17 +174,6 @@ class ProxyClassBuilder
     }
 
     /**
-     * Injects the Flow settings
-     *
-     * @param array $settings The settings
-     * @return void
-     */
-    public function injectSettings(array $settings): void
-    {
-        $this->settings = $settings;
-    }
-
-    /**
      * Builds proxy class code which weaves advices into the respective target classes.
      *
      * The object configurations provided by the Compiler are searched for possible aspect
@@ -220,7 +203,7 @@ class ProxyClassBuilder
         $rebuildEverything = false;
         if ($this->objectConfigurationCache->has('allAspectClassesUpToDate') === false) {
             $rebuildEverything = true;
-            $this->logger->info('Aspects have been modified, therefore rebuilding all target classes.');
+            $this->logger->info('Aspects have been modified, therefore rebuilding all target classes.', LogEnvironment::fromMethodName(__METHOD__));
             $this->objectConfigurationCache->set('allAspectClassesUpToDate', true);
         }
 
@@ -264,7 +247,7 @@ class ProxyClassBuilder
      *
      * @param string $aspectClassName Name of the aspect class where the pointcut has been declared
      * @param string $pointcutMethodName Method name of the pointcut
-     * @return mixed The Aop\Pointcut\Pointcut or FALSE if none was found
+     * @return mixed The Aop\Pointcut\Pointcut or false if none was found
      */
     public function findPointcut(string $aspectClassName, string $pointcutMethodName)
     {
@@ -423,7 +406,7 @@ class ProxyClassBuilder
      *
      * @param string $targetClassName Name of the class to create a proxy class file for
      * @param array &$aspectContainers The array of aspect containers from the AOP Framework
-     * @return boolean TRUE if the proxy class could be built, FALSE otherwise.
+     * @return boolean true if the proxy class could be built, false otherwise.
      */
     public function buildProxyClass(string $targetClassName, array &$aspectContainers): bool
     {

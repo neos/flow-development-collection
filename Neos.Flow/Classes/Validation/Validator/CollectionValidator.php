@@ -12,7 +12,6 @@ namespace Neos\Flow\Validation\Validator;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Error\Messages\Result as ErrorResult;
 use Neos\Utility\TypeHandling;
 
 /**
@@ -27,7 +26,7 @@ class CollectionValidator extends GenericObjectValidator
      */
     protected $supportedOptions = [
         'elementValidator' => [null, 'The validator type to use for the collection elements', 'string'],
-        'elementValidatorOptions' => array([], 'The validator options to use for the collection elements', 'array'),
+        'elementValidatorOptions' => [[], 'The validator options to use for the collection elements', 'array'],
         'elementType' => [null, 'The type of the elements in the collection', 'string'],
         'validationGroups' => [null, 'The validation groups to link to', 'string'],
     ];
@@ -37,33 +36,6 @@ class CollectionValidator extends GenericObjectValidator
      * @Flow\Inject
      */
     protected $validatorResolver;
-
-    /**
-     * Checks if the given value is valid according to the validator, and returns
-     * the Error Messages object which occurred.
-     *
-     * @param mixed $value The value that should be validated
-     * @return ErrorResult
-     * @api
-     */
-    public function validate($value)
-    {
-        $this->result = new ErrorResult();
-
-        if ($this->acceptsEmptyValues === false || $this->isEmpty($value) === false) {
-            if ($value instanceof \Doctrine\ORM\PersistentCollection && !$value->isInitialized()) {
-                return $this->result;
-            } elseif ((is_object($value) && !TypeHandling::isCollectionType(get_class($value))) && !is_array($value)) {
-                $this->addError('The given subject was not a collection.', 1317204797);
-                return $this->result;
-            } elseif (is_object($value) && $this->isValidatedAlready($value)) {
-                return $this->result;
-            } else {
-                $this->isValid($value);
-            }
-        }
-        return $this->result;
-    }
 
     /**
      * Checks for a collection and if needed validates the items in the collection.
@@ -78,6 +50,15 @@ class CollectionValidator extends GenericObjectValidator
      */
     protected function isValid($value)
     {
+        if ($value instanceof \Doctrine\ORM\PersistentCollection && !$value->isInitialized()) {
+            return;
+        } elseif ((is_object($value) && !TypeHandling::isCollectionType(get_class($value))) && !is_array($value)) {
+            $this->addError('The given subject was not a collection.', 1317204797);
+            return;
+        } elseif (is_object($value) && $this->isValidatedAlready($value)) {
+            return;
+        }
+
         foreach ($value as $index => $collectionElement) {
             if (isset($this->options['elementValidator'])) {
                 $collectionElementValidator = $this->validatorResolver->createValidator($this->options['elementValidator'], $this->options['elementValidatorOptions']);
@@ -93,6 +74,7 @@ class CollectionValidator extends GenericObjectValidator
             if ($collectionElementValidator instanceof ObjectValidatorInterface) {
                 $collectionElementValidator->setValidatedInstancesContainer($this->validatedInstancesContainer);
             }
+
             $this->result->forProperty($index)->merge($collectionElementValidator->validate($collectionElement));
         }
     }

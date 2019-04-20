@@ -236,7 +236,7 @@ class MathHelper implements ProtectedContextAwareInterface
      * This is equivalent to the global isFinite() function in JavaScript.
      *
      * @param mixed $x A value
-     * @return boolean TRUE if the value is a finite (not NAN) number
+     * @return boolean true if the value is a finite (not NAN) number
      */
     public function isFinite($x)
     {
@@ -249,7 +249,7 @@ class MathHelper implements ProtectedContextAwareInterface
      * This function has no direct equivalent in JavaScript.
      *
      * @param mixed $x A value
-     * @return boolean TRUE if the value is INF or -INF
+     * @return boolean true if the value is INF or -INF
      */
     public function isInfinite($x)
     {
@@ -262,7 +262,7 @@ class MathHelper implements ProtectedContextAwareInterface
      * This is equivalent to the global isNaN() function in JavaScript.
      *
      * @param mixed $x A value
-     * @return boolean TRUE if the value is not a number
+     * @return boolean true if the value is not a number
      */
     public function isNaN($x)
     {

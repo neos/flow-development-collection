@@ -14,7 +14,7 @@ namespace Neos\Flow\Tests\Functional\Configuration;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Tests\FunctionalTestCase;
-use Neos\Flow\Package\PackageManagerInterface;
+use Neos\Flow\Package\PackageManager;
 use Neos\Utility\SchemaValidator;
 use Neos\Utility\Files;
 use Symfony\Component\Yaml\Yaml;
@@ -64,7 +64,7 @@ class SchemaValidationTest extends FunctionalTestCase
     {
         $bootstrap = Bootstrap::$staticObjectManager->get(Bootstrap::class);
         $objectManager = $bootstrap->getObjectManager();
-        $packageManager = $objectManager->get(PackageManagerInterface::class);
+        $packageManager = $objectManager->get(PackageManager::class);
 
         $activePackages = $packageManager->getAvailablePackages();
         foreach ($activePackages as $package) {
@@ -77,7 +77,7 @@ class SchemaValidationTest extends FunctionalTestCase
         $schemaFiles = [];
 
         foreach ($schemaPackages as $package) {
-            $packageSchemaPath = Files::concatenatePaths(array($package->getResourcesPath(), 'Private/Schema'));
+            $packageSchemaPath = Files::concatenatePaths([$package->getResourcesPath(), 'Private/Schema']);
             if (is_dir($packageSchemaPath)) {
                 foreach (Files::getRecursiveDirectoryGenerator($packageSchemaPath, '.schema.yaml') as $schemaFile) {
                     $schemaFiles[] = [$schemaFile];
@@ -98,7 +98,8 @@ class SchemaValidationTest extends FunctionalTestCase
         $schema = Yaml::parseFile($schemaFile);
         $result = $this->schemaValidator->validate($schema, $this->schemaSchema);
         $hasErrors = $result->hasErrors();
-        $message = sprintf('Schema-file "%s" is valid', $schemaFile);
+
+        $message = sprintf('Schema-file "%s" is not valid: %s', $schemaFile, $result->getFirstError());
         $this->assertFalse($hasErrors, $message);
     }
 }

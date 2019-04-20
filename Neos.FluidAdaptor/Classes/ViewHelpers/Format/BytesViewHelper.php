@@ -63,7 +63,7 @@ class BytesViewHelper extends AbstractViewHelper
      */
     public function render()
     {
-        return self::renderStatic(array('value' => $this->arguments['value'], 'decimals' => $this->arguments['decimals'], 'decimalSeparator' => $this->arguments['decimalSeparator'], 'thousandsSeparator' => $this->arguments['thousandsSeparator']), $this->buildRenderChildrenClosure(), $this->renderingContext);
+        return self::renderStatic(['value' => $this->arguments['value'], 'decimals' => $this->arguments['decimals'], 'decimalSeparator' => $this->arguments['decimalSeparator'], 'thousandsSeparator' => $this->arguments['thousandsSeparator']], $this->buildRenderChildrenClosure(), $this->renderingContext);
     }
 
     /**

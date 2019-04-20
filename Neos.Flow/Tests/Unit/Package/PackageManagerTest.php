@@ -93,9 +93,9 @@ class PackageManagerTest extends UnitTestCase
      */
     public function getPackageReturnsTheSpecifiedPackage()
     {
-        $this->packageManager->createPackage('Neos.Flow');
+        $this->packageManager->createPackage('Some.Test.Package', [], 'vfs://Test/Packages/Application');
 
-        $package = $this->packageManager->getPackage('Neos.Flow');
+        $package = $this->packageManager->getPackage('Some.Test.Package');
         $this->assertInstanceOf(PackageInterface::class, $package, 'The result of getPackage() was no valid package object.');
     }
 
@@ -238,7 +238,7 @@ class PackageManagerTest extends UnitTestCase
      */
     public function createPackageCreatesPackageFolderAndReturnsPackage($packageKey, $expectedPackagePath)
     {
-        $actualPackage = $this->packageManager->createPackage($packageKey);
+        $actualPackage = $this->packageManager->createPackage($packageKey, [], 'vfs://Test/Packages/Application');
         $actualPackagePath = $actualPackage->getPackagePath();
 
         $this->assertEquals($expectedPackagePath, $actualPackagePath);
@@ -261,7 +261,7 @@ class PackageManagerTest extends UnitTestCase
                     'Acme\\YetAnotherTestPackage' => 'Classes/'
                 ]
             ]
-        ]);
+        ], 'vfs://Test/Packages/Application');
 
         $json = file_get_contents($package->getPackagePath() . '/composer.json');
         $composerManifest = json_decode($json);
@@ -286,7 +286,7 @@ class PackageManagerTest extends UnitTestCase
             ]
         ];
 
-        $package = $this->packageManager->createPackage('Acme.YetAnotherTestPackage2', $metaData);
+        $package = $this->packageManager->createPackage('Acme.YetAnotherTestPackage2', $metaData, 'vfs://Test/Packages/Application');
 
         $json = file_get_contents($package->getPackagePath() . '/composer.json');
         $composerManifest = json_decode($json);
@@ -300,7 +300,7 @@ class PackageManagerTest extends UnitTestCase
      */
     public function createPackageAlwaysSetsThePackageType()
     {
-        $package = $this->packageManager->createPackage('Acme.YetAnotherTestPackage2');
+        $package = $this->packageManager->createPackage('Acme.YetAnotherTestPackage2', [], 'vfs://Test/Packages/Application');
 
         $json = file_get_contents($package->getPackagePath() . '/composer.json');
         $composerManifest = json_decode($json);
@@ -315,7 +315,7 @@ class PackageManagerTest extends UnitTestCase
      */
     public function createPackageCreatesCommonFolders()
     {
-        $package = $this->packageManager->createPackage('Acme.YetAnotherTestPackage');
+        $package = $this->packageManager->createPackage('Acme.YetAnotherTestPackage', [], 'vfs://Test/Packages/Application');
         $packagePath = $package->getPackagePath();
 
         $this->assertTrue(is_dir($packagePath . FlowPackageInterface::DIRECTORY_CLASSES), 'Classes directory was not created');
@@ -333,7 +333,7 @@ class PackageManagerTest extends UnitTestCase
     public function createPackageThrowsExceptionOnInvalidPackageKey()
     {
         try {
-            $this->packageManager->createPackage('Invalid_PackageKey');
+            $this->packageManager->createPackage('Invalid_PackageKey', [], 'vfs://Test/Packages/Application');
         } catch (InvalidPackageKeyException $exception) {
         }
         $this->assertFalse(is_dir('vfs://Test/Packages/Application/Invalid_PackageKey'), 'Package folder with invalid package key was created');
@@ -347,8 +347,8 @@ class PackageManagerTest extends UnitTestCase
      */
     public function createPackageThrowsExceptionForExistingPackageKey()
     {
-        $this->packageManager->createPackage('Acme.YetAnotherTestPackage');
-        $this->packageManager->createPackage('Acme.YetAnotherTestPackage');
+        $this->packageManager->createPackage('Acme.YetAnotherTestPackage', [], 'vfs://Test/Packages/Application');
+        $this->packageManager->createPackage('Acme.YetAnotherTestPackage', [], 'vfs://Test/Packages/Application');
     }
 
     /**
@@ -356,7 +356,7 @@ class PackageManagerTest extends UnitTestCase
      */
     public function createPackageMakesTheNewlyCreatedPackageAvailable()
     {
-        $this->packageManager->createPackage('Acme.YetAnotherTestPackage');
+        $this->packageManager->createPackage('Acme.YetAnotherTestPackage', [], 'vfs://Test/Packages/Application');
         $this->assertTrue($this->packageManager->isPackageAvailable('Acme.YetAnotherTestPackage'));
     }
 
@@ -404,8 +404,8 @@ class PackageManagerTest extends UnitTestCase
      */
     public function registeringTheSamePackageKeyWithDifferentCaseShouldThrowException()
     {
-        $this->packageManager->createPackage('doctrine.instantiator');
-        $this->packageManager->createPackage('doctrine.Instantiator');
+        $this->packageManager->createPackage('doctrine.instantiator', [], 'vfs://Test/Packages/Application');
+        $this->packageManager->createPackage('doctrine.Instantiator', [], 'vfs://Test/Packages/Application');
     }
 
     /**
@@ -414,7 +414,7 @@ class PackageManagerTest extends UnitTestCase
     public function createPackageEmitsPackageStatesUpdatedSignal()
     {
         $this->mockDispatcher->expects($this->once())->method('dispatch')->with(PackageManager::class, 'packageStatesUpdated');
-        $this->packageManager->createPackage('Some.Package');
+        $this->packageManager->createPackage('Some.Package', [], 'vfs://Test/Packages/Application');
     }
 
     /**
@@ -426,7 +426,7 @@ class PackageManagerTest extends UnitTestCase
 
         $this->packageManager->createPackage('Some.Package', [
             'name' => 'some/package'
-        ]);
+        ], 'vfs://Test/Packages/Application');
 
         $this->mockDispatcher->expects($this->once())->method('dispatch')->with(PackageManager::class, 'packageStatesUpdated');
         $this->packageManager->freezePackage('Some.Package');
@@ -442,7 +442,7 @@ class PackageManagerTest extends UnitTestCase
         $this->packageManager->createPackage('Some.Package', [
             'name' => 'some/package',
             'type' => 'neos-package'
-        ]);
+        ], 'vfs://Test/Packages/Application');
         $this->packageManager->freezePackage('Some.Package');
 
         $this->mockDispatcher->expects($this->once())->method('dispatch')->with(PackageManager::class, 'packageStatesUpdated');

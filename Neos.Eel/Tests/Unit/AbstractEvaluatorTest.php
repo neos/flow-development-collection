@@ -202,20 +202,20 @@ abstract class AbstractEvaluatorTest extends UnitTestCase
         return [
             // Boolean literals work
             ['false', $c, false],
-            ['TRUE', $c, true],
+            ['true', $c, true],
             // Conjunction before Disjunction
-            ['TRUE && TRUE || FALSE && FALSE', $c, true],
-            ['TRUE && FALSE || FALSE && TRUE', $c, false],
+            ['true && true || false && false', $c, true],
+            ['true && false || false && true', $c, false],
             ['1 < 2 && 2 > 1', $c, true],
             ['!1 < 2', $c, true],
             ['!(1 < 2)', $c, false],
             // Named and symbolic operators can be mixed
-            ['TRUE && true and FALSE or false', $c, false],
+            ['true && true and false or false', $c, false],
             // Using variables and literals
-            ['trueVar || FALSE', $c, true],
-            ['trueVar && TRUE', $c, true],
-            ['falseVar || FALSE', $c, false],
-            ['falseVar && TRUE', $c, false],
+            ['trueVar || false', $c, true],
+            ['trueVar && true', $c, true],
+            ['falseVar || false', $c, false],
+            ['falseVar && true', $c, false],
             // JavaScript semantics of boolean operators
             ['null || "foo"', $c, 'foo'],
             ['0 || "foo"', $c, 'foo'],
@@ -414,10 +414,10 @@ abstract class AbstractEvaluatorTest extends UnitTestCase
         ]);
         return [
             // Simple ternary operator expression (condition)
-            ['TRUE ? 1 : 2', $c, 1],
+            ['true ? 1 : 2', $c, 1],
             // Ternary operator using variables
-            ['trueVar ? answer : FALSE', $c, 42],
-            ['!trueVar ? FALSE : answer', $c, 42],
+            ['trueVar ? answer : false', $c, 42],
+            ['!trueVar ? false : answer', $c, 42],
             ['a < b ? 1 : 2', $c, 1],
             // Ternary operator with nested expressions
             ['a < b ? 1 + a : 2 + b', $c, 6],

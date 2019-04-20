@@ -72,6 +72,16 @@ class Debugger
     protected static $ignoredClassesRegex = '';
 
     /**
+     * @var integer
+     */
+    protected static $recursionLimit;
+
+    /**
+     * @var integer
+     */
+    protected static $recursionLimitFallback = 5;
+
+    /**
      * @var string
      */
     protected static $blacklistedPropertyNames = '/
@@ -79,7 +89,7 @@ class Debugger
 		/xs';
 
     /**
-     * Is set to TRUE once the CSS file is included in the current page to prevent double inclusions of the CSS file.
+     * Is set to true once the CSS file is included in the current page to prevent double inclusions of the CSS file.
      *
      * @var boolean
      */
@@ -118,7 +128,7 @@ class Debugger
      */
     public static function renderDump($variable, int $level, bool $plaintext = false, bool $ansiColors = false): string
     {
-        if ($level > 50) {
+        if ($level > self::getRecursionLimit()) {
             return 'RECURSION ... ' . chr(10);
         }
         if (is_string($variable)) {
@@ -135,7 +145,7 @@ class Debugger
         } elseif (is_object($variable)) {
             $dump = self::renderObjectDump($variable, $level + 1, true, $plaintext, $ansiColors);
         } elseif (is_bool($variable)) {
-            $dump = $variable ? self::ansiEscapeWrap('TRUE', '32', $ansiColors) : self::ansiEscapeWrap('FALSE', '31', $ansiColors);
+            $dump = $variable ? self::ansiEscapeWrap('true', '32', $ansiColors) : self::ansiEscapeWrap('false', '31', $ansiColors);
         } elseif (is_null($variable) || is_resource($variable)) {
             $dump = gettype($variable);
         } else {
@@ -334,7 +344,7 @@ class Debugger
                     } elseif (is_numeric($argument)) {
                         $arguments .= (string)$argument;
                     } elseif (is_bool($argument)) {
-                        $arguments .= ($argument === true ? 'TRUE' : 'FALSE');
+                        $arguments .= ($argument === true ? 'true' : 'false');
                     } elseif (is_array($argument)) {
                         $arguments .= sprintf(
                             '<em title="%s">array|%d|</em>',
@@ -384,7 +394,7 @@ class Debugger
                     } elseif (is_numeric($argument)) {
                         $arguments .= (string)$argument;
                     } elseif (is_bool($argument)) {
-                        $arguments .= ($argument === true ? 'TRUE' : 'FALSE');
+                        $arguments .= ($argument === true ? 'true' : 'false');
                     } elseif (is_array($argument)) {
                         $arguments .= 'array|' . count($argument) . '|';
                     } else {
@@ -502,7 +512,7 @@ class Debugger
      *
      * @param string $string The string to wrap
      * @param string $ansiColors The ansi color sequence (e.g. "1;37")
-     * @param boolean $enable If FALSE, the raw string will be returned
+     * @param boolean $enable If false, the raw string will be returned
      * @return string The wrapped or raw string
      */
     protected static function ansiEscapeWrap(string $string, string $ansiColors, bool $enable = true): string
@@ -550,6 +560,34 @@ class Debugger
 
         return self::$ignoredClassesRegex;
     }
+
+    /**
+     * Tries to load the 'Neos.Flow.error.debugger.recursionLimit' setting
+     * to determine the maximal recursions-level fgor the debugger.
+     * If settings can't be loaded it uses self::$ignoredClassesFallback.
+     *
+     * @return integer
+     */
+    public static function getRecursionLimit(): int
+    {
+        if (self::$recursionLimit) {
+            return self::$recursionLimit;
+        }
+
+        self::$recursionLimit = self::$recursionLimitFallback;
+
+        if (self::$objectManager instanceof ObjectManagerInterface) {
+            $configurationManager = self::$objectManager->get(ConfigurationManager::class);
+            if ($configurationManager instanceof ConfigurationManager) {
+                $recursionLimitFromSettings = $configurationManager->getConfiguration('Settings', 'Neos.Flow.error.debugger.recursionLimit');
+                if (is_int($recursionLimitFromSettings)) {
+                    self::$recursionLimit = $recursionLimitFromSettings;
+                }
+            }
+        }
+
+        return self::$recursionLimit;
+    }
 }
 
 namespace Neos\Flow;
@@ -561,9 +599,9 @@ use Neos\Flow\Error\Debugger;
  *
  * @param mixed $variable The variable to display a dump of
  * @param string $title optional custom title for the debug output
- * @param boolean $return if TRUE, the dump is returned for displaying it embedded in custom HTML. If FALSE (default), the variable dump is directly displayed.
- * @param boolean $plaintext If TRUE, the dump is in plain text, if FALSE the debug output is in HTML format. If not specified, the mode is guessed from FLOW_SAPITYPE
- * @return void|string if $return is TRUE, the variable dump is returned. By default, the dump is directly displayed, and nothing is returned.
+ * @param boolean $return if true, the dump is returned for displaying it embedded in custom HTML. If false (default), the variable dump is directly displayed.
+ * @param boolean $plaintext If true, the dump is in plain text, if false the debug output is in HTML format. If not specified, the mode is guessed from FLOW_SAPITYPE
+ * @return void|string if $return is true, the variable dump is returned. By default, the dump is directly displayed, and nothing is returned.
  * @api
  */
 function var_dump($variable, string $title = null, bool $return = false, bool $plaintext = null)

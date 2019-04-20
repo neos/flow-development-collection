@@ -33,3 +33,7 @@ finder:
     - "Neos.Eel/Classes/FlowQuery/FizzleParser.php"
     - "Neos.Eel/Classes/EelParser.php"
     - "Neos.Eel/Classes/AbstractParser.php"
+
+enabled:
+  - short_array_syntax
+  - no_unused_imports

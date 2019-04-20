@@ -14,11 +14,12 @@ namespace Neos\Flow\Error;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\Response as CliResponse;
 use Neos\Flow\Exception as FlowException;
+use Neos\Flow\Http\Helper\ResponseInformationHelper;
 use Neos\Flow\Http\Request;
-use Neos\Flow\Http\Response;
 use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\Log\ThrowableStorageInterface;
 use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Controller\Arguments;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Mvc\Routing\UriBuilder;
@@ -26,7 +27,6 @@ use Neos\Flow\Mvc\View\ViewInterface;
 use Neos\Utility\ObjectAccess;
 use Neos\Utility\Arrays;
 use Psr\Log\LoggerInterface;
-use Psr\Log\LogLevel;
 
 /**
  * An abstract exception handler
@@ -157,14 +157,10 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
      */
     protected function buildView(\Throwable $exception, array $renderingOptions): ViewInterface
     {
-        $statusCode = 500;
-        $referenceCode = null;
-        if ($exception instanceof FlowException) {
-            $statusCode = $exception->getStatusCode();
-            $referenceCode = $exception->getReferenceCode();
-        }
-        $statusMessage = Response::getStatusMessageByCode($statusCode);
+        $statusCode = ($exception instanceof WithHttpStatusInterface) ? $exception->getStatusCode() : 500;
+        $referenceCode = ($exception instanceof WithReferenceCodeInterface) ? $exception->getReferenceCode() : null;
 
+        $statusMessage = ResponseInformationHelper::getStatusMessageByCode($statusCode);
         $viewClassName = $renderingOptions['viewClassName'];
         /** @var ViewInterface $view */
         $view = $viewClassName::createWithOptions($renderingOptions['viewOptions']);
@@ -177,7 +173,7 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
         $uriBuilder->setRequest($request);
         $view->setControllerContext(new ControllerContext(
             $request,
-            new Response(),
+            new ActionResponse(),
             new Arguments([]),
             $uriBuilder
         ));

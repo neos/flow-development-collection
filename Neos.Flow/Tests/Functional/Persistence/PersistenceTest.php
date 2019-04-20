@@ -16,7 +16,6 @@ use Doctrine\ORM\Tools\SchemaTool;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Persistence\Doctrine\PersistenceManager;
 use Neos\Flow\Persistence\Doctrine\QueryResult;
-use Neos\Flow\Tests\Functional\Persistence\Fixtures;
 use Neos\Flow\Tests\FunctionalTestCase;
 
 /**
@@ -257,7 +256,7 @@ class PersistenceTest extends FunctionalTestCase
         $schemaTool = new SchemaTool($entityManager);
         $classMetaData = $entityManager->getClassMetadata(Fixtures\TestEntity::class);
         $this->assertTrue($classMetaData->hasField('embeddedValueObject.value'), 'ClassMetadata is not correctly embedded');
-        $schema = $schemaTool->getSchemaFromMetadata(array($classMetaData));
+        $schema = $schemaTool->getSchemaFromMetadata([$classMetaData]);
         $this->assertTrue($schema->getTable('persistence_testentity')->hasColumn('embeddedvalueobjectvalue'), 'Database schema is missing embedded field');
 
         $valueObject = new Fixtures\TestEmbeddedValueObject('someValue');
@@ -538,6 +537,26 @@ class PersistenceTest extends FunctionalTestCase
 
     /**
      * @test
+     */
+    public function immutableDateTimeIsPersistedAndIsReconstituted()
+    {
+        $dateTimeTz = new \DateTimeImmutable('2008-11-16 19:03:30', new \DateTimeZone(ini_get('date.timezone')));
+        $extendedTypesEntity = new Fixtures\ExtendedTypesEntity();
+        $extendedTypesEntity->setDateTimeImmutable($dateTimeTz);
+        $this->persistenceManager->add($extendedTypesEntity);
+        $this->persistenceManager->persistAll();
+        $this->persistenceManager->clearState();
+
+        /**  @var Fixtures\ExtendedTypesEntity $persistedExtendedTypesEntity */
+        $persistedExtendedTypesEntity = $this->extendedTypesEntityRepository->findAll()->getFirst();
+        $this->assertInstanceOf(Fixtures\ExtendedTypesEntity::class, $persistedExtendedTypesEntity);
+        $this->assertInstanceOf('DateTimeImmutable', $persistedExtendedTypesEntity->getDateTimeImmutable());
+        $this->assertEquals($dateTimeTz->getTimestamp(), $persistedExtendedTypesEntity->getDateTimeImmutable()->getTimestamp());
+        $this->assertEquals(ini_get('date.timezone'), $persistedExtendedTypesEntity->getDateTimeImmutable()->getTimezone()->getName());
+    }
+
+    /**
+     * @test
      * @todo We need different tests at least for two types of database.
      * * 1. mysql without timezone support.
      * * 2. a db with timezone support.
@@ -676,7 +695,7 @@ class PersistenceTest extends FunctionalTestCase
         $schemaTool = new SchemaTool($entityManager);
         $metaData = $entityManager->getClassMetadata(Fixtures\TestEntity::class);
         $this->assertTrue($metaData->hasField('embedded.value'), 'ClassMetadata does not contain embedded value');
-        $schema = $schemaTool->getSchemaFromMetadata(array($metaData));
+        $schema = $schemaTool->getSchemaFromMetadata([$metaData]);
         $this->assertTrue($schema->getTable('persistence_testentity')->hasColumn('embedded_value'), 'Database schema does not contain embedded value field');
 
         $embeddable = new Fixtures\TestEmbeddable('someValue');

@@ -28,7 +28,7 @@ class Nl2brViewHelperTest extends ViewHelperBaseTestcase
     public function setUp()
     {
         parent::setUp();
-        $this->viewHelper = $this->getMockBuilder(\Neos\FluidAdaptor\ViewHelpers\Format\Nl2brViewHelper::class)->setMethods(array('renderChildren', 'registerRenderMethodArguments'))->getMock();
+        $this->viewHelper = $this->getMockBuilder(\Neos\FluidAdaptor\ViewHelpers\Format\Nl2brViewHelper::class)->setMethods(['renderChildren', 'registerRenderMethodArguments'])->getMock();
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
     }
 
