@@ -126,26 +126,14 @@ class LoggingAspect
 
         switch ($token->getAuthenticationStatus()) {
             case TokenInterface::AUTHENTICATION_SUCCESSFUL:
-                $this->securityLogger->notice(sprintf('Successfully authenticated token: %s', $token), [
-                    'packageKey' => 'Neos.Flow',
-                    'className' => $joinPoint->getClassName(),
-                    'methodName' => $joinPoint->getMethodName()
-                ]);
+                $this->securityLogger->notice(sprintf('Successfully authenticated token: %s (in Neos.Flow:%s->%s)', $token, $joinPoint->getClassName(), $joinPoint->getMethodName()));
                 $this->alreadyLoggedAuthenticateCall = true;
             break;
             case TokenInterface::WRONG_CREDENTIALS:
-                $this->securityLogger->warning(sprintf('Wrong credentials given for token: %s', $token), [
-                    'packageKey' => 'Neos.Flow',
-                    'className' => $joinPoint->getClassName(),
-                    'methodName' => $joinPoint->getMethodName()
-                ]);
+                $this->securityLogger->warning(sprintf('Wrong credentials given for token: %s (in Neos.Flow:%s->%s)', $token, $joinPoint->getClassName(), $joinPoint->getMethodName()));
             break;
             case TokenInterface::NO_CREDENTIALS_GIVEN:
-                $this->securityLogger->warning(sprintf('No credentials given or no account found for token: %s', $token), [
-                    'packageKey' => 'Neos.Flow',
-                    'className' => $joinPoint->getClassName(),
-                    'methodName' => $joinPoint->getMethodName()
-                ]);
+                $this->securityLogger->warning(sprintf('No credentials given or no account found for token: %s (in Neos.Flow:%s->%s)', $token, $joinPoint->getClassName(), $joinPoint->getMethodName()));
             break;
         }
     }
