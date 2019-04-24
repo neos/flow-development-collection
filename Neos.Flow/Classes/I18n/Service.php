@@ -253,11 +253,11 @@ class Service
 
     /**
      * Returns a regex pattern including enclosing characters, that matches any of the configured
-     * blacklist paths inside "Neos.Flow.i18n.scan.excludePatterns".
+     * exclude list configured inside "Neos.Flow.i18n.scan.excludePatterns".
      *
-     * @return string The regex pattern matching the configured blacklist
+     * @return string The regex pattern matching the configured exclude list
      */
-    protected function getScanBlacklistPattern()
+    protected function getScanExcludePattern()
     {
         $pattern = implode('|', array_keys(array_filter((array)$this->settings['scan']['excludePatterns'])));
         if ($pattern !== '') {
@@ -286,11 +286,11 @@ class Service
      */
     protected function generateAvailableLocalesCollectionByScanningFilesystem()
     {
-        $whitelistPaths = array_keys(array_filter((array)$this->settings['scan']['includePaths']));
-        if ($whitelistPaths === []) {
+        $includePaths = array_keys(array_filter((array)$this->settings['scan']['includePaths']));
+        if ($includePaths === []) {
             return;
         }
-        $blacklistPattern = $this->getScanBlacklistPattern();
+        $excludePattern = $this->getScanExcludePattern();
 
         /** @var PackageInterface $activePackage */
         foreach ($this->packageManager->getActivePackages() as $activePackage) {
@@ -301,7 +301,7 @@ class Service
             }
 
             $directories = [];
-            foreach ($whitelistPaths as $path) {
+            foreach ($includePaths as $path) {
                 $scanPath = Files::concatenatePaths(array($packageResourcesPath, $path));
                 if (is_dir($scanPath)) {
                     array_push($directories, Files::getNormalizedPath($scanPath));
@@ -311,7 +311,7 @@ class Service
             while ($directories !== []) {
                 $currentDirectory = array_pop($directories);
                 $relativeDirectory = '/' . str_replace($packageResourcesPath, '', $currentDirectory);
-                if ($blacklistPattern !== '' && preg_match($blacklistPattern, $relativeDirectory) === 1) {
+                if ($excludePattern !== '' && preg_match($excludePattern, $relativeDirectory) === 1) {
                     continue;
                 }
 
