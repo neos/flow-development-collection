@@ -20,7 +20,7 @@ use Neos\Flow\Http\Response;
 use Neos\Flow\Http\Uri;
 use Neos\Flow\Mvc\Exception\ForwardException;
 use Neos\Flow\Mvc\Exception\StopActionException;
-use Neos\Flow\Mvc\FlashMessageContainer;
+use Neos\Flow\Mvc\FlashMessage\FlashMessageContainer;
 use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Property\PropertyMapper;
