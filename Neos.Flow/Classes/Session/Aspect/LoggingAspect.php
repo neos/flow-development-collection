@@ -133,7 +133,6 @@ class LoggingAspect
      */
     public function logCollectGarbage(JoinPointInterface $joinPoint)
     {
-
         $logEnvironment = [
             'FLOW_LOG_ENVIRONMENT' => [
                 'packageKey' => 'Neos.Flow',
