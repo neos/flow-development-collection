@@ -169,8 +169,8 @@ Persistent Cache
 Caches can be marked as being "persistent" which lets the Cache Manager skip the cache while flushing all other
 caches or flushing caches by tag. Persistent caches make for a versatile and easy to use low-level key-value-store.
 Simple data like tokens, preferences or the like which usually would be stored in the file system, can be stored in
-such a cache. Flow uses a persistent cache for storing an encryption key for the Hash Service. The configuration for
-this cache looks like this:
+such a cache. Flow uses a persistent cache for storing an encryption key for the Hash Service and Sessions. The
+configuration for this cache looks like this:
 
 *Example: Persistent cache settings* ::
 
@@ -187,6 +187,25 @@ Note that, because the cache has been configured as "persistent", the *SimpleFil
 ``Data/Persistent/Cache/Flow_Security_Cryptography_HashService/`` instead of using the temporary directory
 ``Data/Temporary/Production/Cache/Flow_Security_Cryptography_HashService/``. You can override the cache directory
 by specifying it in the cache's backend options.
+
+Application Identifier
+----------------------
+
+The application identifier can be used by cache backends to differentiate cache entries with the same cache
+identifier in the same storage from each other. For example memcache is global, so if you use it for multiple
+installations or possibly just for different Flow contexts you need to find a way to separate entries from each
+other. This setting will do that.
+
+The default of `%FLOW_PATH_ROOT%~%FLOW_APPLICATION_CONTEXT%` is not well suited for installations in which the
+`FLOW_PATH_ROOT` changes after each deployment, so in such cases you might want to exchange it for some hardcoded
+value identifying each specific installation::
+
+  Neos:
+    Flow:
+      cache:
+        applicationIdentifier: 'some-unique-system-identifier'
+
+.. note:: Changing the identifier will make cache entries generated with the old identifier useless.
 
 Cache Frontends
 ===============
@@ -293,8 +312,66 @@ Common Options
 |                 | on set()                             |           |         |         |
 +-----------------+--------------------------------------+-----------+---------+---------+
 
-Neos\\Flow\\Cache\\Backend\\FileBackend
-----------------------------------------
+.. note::
+
+	The ``SimpleFileBackend`` does **not support** lifetime for cache entries!
+
+Neos\\Cache\\Backend\\SimpleFileBackend
+---------------------------------------
+
+The simple file backend stores every cache entry as a single file to the file system.
+
+By default, cache entries will be stored in a directory below ``Data/Temporary/{context}/Cache/``.
+For caches which are marked as *persistent*, the default directory is
+``Data/Persistent/Cache/``. You may override each of the defaults by specifying the ``cacheDirectory``
+backend option (see below).
+
+The simple file backend implements the ``PhpCapableInterface`` and can be used in
+combination with the ``PhpFrontend``. The backend was specifically adapted to these
+needs and has low overhead for get and set operations, it scales very well with the
+number of entries for those operations. This mostly depends on the file lookup
+performance of the underlying file system in large directories, and most modern file
+systems use B-trees which can easily handle millions of files without much performance
+impact.
+
+.. note::
+
+  The ``SimpleFileBackend`` is called like that, because it does not support lifetime for
+  cache entries! Nor does it support tagging cache entries!
+
+.. note::
+
+  Under heavy load the maximum ``set()`` performance depends on the maximum write and
+  seek performance of the hard disk. If for example the server system shows lots of I/O
+  wait in top, the file backend has reached this bound. A different storage strategy
+  like RAM disks, battery backed up RAID systems or SSD hard disks might help then.
+
+.. note::
+  The SimpleFileBackend and FileBackend are the only cache backends that are capable of
+  storing the ``Flow_Object_Classes`` Cache.
+
+Options
+~~~~~~~
+
+:title:`Simple file cache backend options`
+
++-----------------+----------------------------------------+-----------+--------+---------+
+| Option          | Description                            | Mandatory | Type   | Default |
++=================+========================================+===========+========+=========+
+| cacheDirectory  | Full path leading to a custom cache    | No        | string |         |
+|                 | directory.                             |           |        |         |
+|                 |                                        |           |        |         |
+|                 | :title:`Example:`                      |           |        |         |
+|                 |                                        |           |        |         |
+|                 | * /tmp/my-cache-directory/             |           |        |         |
++-----------------+----------------------------------------+-----------+--------+---------+
+| defaultLifeTime | Cache entry lifetime is **not          | No        |        |         |
+|                 | supported** in this backend. Entries   |           |        |         |
+|                 | never expire!                          |           |        |         |
++-----------------+----------------------------------------+-----------+--------+---------+
+
+Neos\\Cache\\Backend\\FileBackend
+---------------------------------
 
 The file backend stores every cache entry as a single file to the file system. The
 lifetime and tags are added after the data part in the same file.
@@ -304,13 +381,12 @@ For caches which are marked as *persistent*, the default directory is
 ``Data/Persistent/Cache/``. You may override each of the defaults by specifying the ``cacheDirectory``
 backend option (see below).
 
-As main advantage the file backend is the only backend which implements the
-``PhpCapableInterface`` and can be used in combination with the ``PhpFrontend``. The
-backend was specifically adapted to these needs and has low overhead for get and set
-operations, it scales very well with the number of entries for those operations. This
-mostly depends on the file lookup performance of the underlying file system in large
-directories, and most modern file systems use B-trees which can easily handle millions of
-files without much performance impact.
+The file backend implements the ``PhpCapableInterface`` and can be used in combination
+with the ``PhpFrontend``. The backend was specifically adapted to these needs and has
+low overhead for get and set operations, it scales very well with the number of entries
+for those operations. This mostly depends on the file lookup performance of the underlying
+file system in large directories, and most modern file systems use B-trees which can
+easily handle millions of files without much performance impact.
 
 A disadvantage is that the performance of ``flushByTag()`` is bad and scales just O(n).
 This basically means that with twice the number of entries the file backend needs double
@@ -321,15 +397,9 @@ design decision in Flow is that the file backend is mainly used as AOP cache, wh
 production systems, so get and set performance is much more important in this scenario.
 
 .. note::
+	The SimpleFileBackend and FileBackend are the only cache backends that are capable of
+	storing the ``Flow_Object_Classes`` Cache.
 
-	Under heavy load the maximum ``set()`` performance depends on the maximum write and
-	seek performance of the hard disk. If for example the server system shows lots of I/O
-	wait in top, the file backend has reached this bound. A different storage strategy
-	like RAM disks, battery backed up RAID systems or SSD hard disks might help then.
-
-.. note::
-	The FileBackend is the only cache-backend that is capable of storing the
-	``FLOW_Object_Classes`` Cache.
 
 Options
 ~~~~~~~
@@ -347,8 +417,8 @@ Options
 |                | * /tmp/my-cache-directory/             |           |        |         |
 +----------------+----------------------------------------+-----------+--------+---------+
 
-Neos\\Flow\\Cache\\Backend\\PdoBackend
----------------------------------------
+Neos\\Cache\\Backend\\PdoBackend
+--------------------------------
 
 The PDO backend can be used as a native PDO interface to databases which are connected to
 PHP via PDO. The garbage collection is implemented for this backend and should be called
@@ -364,19 +434,19 @@ to clean up hard disk space or memory.
 
   When *not using SQLite*, you have to create the needed caching tables manually.
   The table definition (as used automatically for SQLite) can be found in the
-  file ``TYPO3.Flow/Resources/Private/Cache/SQL/DDL.sql``. It works unchanged for
+  file ``Neos.Flow/Resources/Private/Cache/SQL/DDL.sql``. It works unchanged for
   MySQL, for other RDBMS you might need to adjust the DDL manually.
 
 .. note::
 
   When *not using SQLite* the maximum length of each cache entry is restricted.
-  The default in ``TYPO3.Flow/Resources/Private/Cache/SQL/DDL.sql``
+  The default in ``Neos.Flow/Resources/Private/Cache/SQL/DDL.sql``
   is ``MEDIUMTEXT`` (16mb on MySQL), which should be sufficient in most cases.
 
 .. warning::
 
 	This backend is php-capable. Nevertheless it cannot be used to store the proxy-classes
-	from the ``FLOW_Object_Classes`` Cache. It can be used for other code-caches like
+	from the ``Flow_Object_Classes`` Cache. It can be used for other code-caches like
 	``Fluid_TemplateCache``, ``Eel_Expression_Code`` or ``Flow_Aop_RuntimeExpressions``.
 	This can be usefull in certain situations to avoid file operations on production
 	environments. If you want to use this backend for code-caching make sure that
@@ -406,8 +476,8 @@ Options
 |                | connection                             |           |        |         |
 +----------------+----------------------------------------+-----------+--------+---------+
 
-Neos\\Flow\\Cache\\Backend\\RedisBackend
------------------------------------------
+Neos\\Cache\\Backend\\RedisBackend
+----------------------------------
 
 `Redis`_ is a key-value storage/database. In contrast to memcached, it allows structured
 values.Data is stored in RAM but it allows persistence to disk and doesn't suffer from the
@@ -488,8 +558,8 @@ Options
 |                  | specific value.                 |           | (0 to 9)  |           |
 +------------------+---------------------------------+-----------+-----------+-----------+
 
-Neos\\Flow\\Cache\\Backend\\MemcachedBackend
----------------------------------------------
+Neos\\Cache\\Backend\\MemcachedBackend
+--------------------------------------
 
 `Memcached`_ is a simple key/value RAM database which scales across multiple servers. To
 use this backend, at least one memcache daemon must be reachable, and the PHP module
@@ -585,51 +655,42 @@ Options
 |             | servers.                                 |           |         |         |
 +-------------+------------------------------------------+-----------+---------+---------+
 
-Neos\\Flow\\Cache\\Backend\\ApcBackend
----------------------------------------
+Neos\\Cache\\Backend\\ApcuBackend
+---------------------------------
 
-`APC`_ is mostly known as an opcode cache for PHP source files but can be used to store
-user data as well. As main advantage the data can be shared between different PHP
-processes and requests. All calls are direct memory calls. This makes this backend
-lightning fast for get() and set() operations. It can be an option for relatively small
-caches (few dozens of megabytes) which are read and written very often and becomes handy
-if APC is used as opcode cache anyway.
+`APCu`_ is also known as APC without opcode cache. It can be used to store user data.
+As main advantage the data can be shared between different PHP processes and requests.
+All calls are direct memory calls. This makes this backend lightning fast for get() and
+set() operations. It can be an option for relatively small caches (few dozens of megabytes)
+which are read and written very often.
 
 The implementation is very similar to the memcached backend implementation and suffers
-from the same problems if APC runs out of memory.
-
-The garbage collection is currently not implemented. In its latest version, APC will fail
-to store data with a `PHP warning`_ if it runs out of memory. This may change in the
-future. Even without using the cache backend, it is advisable to increase the memory
-cache size of APC to at least 64MB when working with Flow, simply due to the large number
-of PHP files to be cached. A minimum of 128MB is recommended when using the additional
-content cache. Cache TTL for file and user data should be set to zero (disabled) to avoid
-heavy memory fragmentation.
+from the same problems if APCu runs out of memory.
 
 .. note::
-	It is not advisable to use the APC backend in shared hosting environments for security
-	reasons: The user cache in APC is not aware of different virtual hosts. Basically
-	every PHP script which is executed on the system can read and write any data to this
-	shared cache, given data is not encapsulated or namespaced in any way. Only use the
-	APC backend in environments which are completely under your control and where no third
-	party can read or tamper your data.
+   It is not advisable to use the APCu backend in shared hosting environments for security
+   reasons: The user cache in APCu is not aware of different virtual hosts. Basically
+   every PHP script which is executed on the system can read and write any data to this
+   shared cache, given data is not encapsulated or namespaced in any way. Only use the
+   APCu backend in environments which are completely under your control and where no third
+   party can read or tamper your data.
 
 .. warning::
 
-	This backend is php-capable. Nevertheless it cannot be used to store the proxy-classes
-	from the ``FLOW_Object_Classes`` Cache. It can be used for other code-caches like
-	``Fluid_TemplateCache``, ``Eel_Expression_Code`` or ``Flow_Aop_RuntimeExpressions``.
-	This can be usefull in certain situations to avoid file operations on production
-	environments. If you want to use this backend for code-caching make sure that
-	``allow_url_include`` is enabled in php.ini
+   This backend is php-capable. Nevertheless it cannot be used to store the proxy-classes
+   from the ``Flow_Object_Classes`` Cache. It can be used for other code-caches like
+   ``Fluid_TemplateCache``, ``Eel_Expression_Code`` or ``Flow_Aop_RuntimeExpressions``.
+   This can be useful in certain situations to avoid file operations on production
+   environments. If you want to use this backend for code-caching make sure that
+   ``allow_url_include`` is enabled in php.ini
 
 Options
 ~~~~~~~
 
-The APC backend has no options.
+The APCu backend has no options.
 
-Neos\\Flow\\Cache\\Backend\\TransientMemoryBackend
----------------------------------------------------
+Neos\\Cache\\Backend\\TransientMemoryBackend
+--------------------------------------------
 
 The transient memory backend stores data in a local array. It is only valid for one
 request. This becomes handy if code logic needs to do expensive calculations or must look
@@ -648,8 +709,8 @@ Options
 
 The transient memory backend has no options.
 
-Neos\\Flow\\Cache\\Backend\\NullBackend
-----------------------------------------
+Neos\\Cache\\Backend\\NullBackend
+---------------------------------
 
 The null backend is a dummy backend which doesn't store any data and always returns
 ``FALSE`` on ``get()``.
@@ -658,6 +719,62 @@ Options
 ~~~~~~~
 
 The null backend has no options.
+
+Neos\\Cache\\Backend\\MultiBackend
+----------------------------------
+
+This backend accepts several backend configurations
+to be used in order of appareance as a fallback mechanismn
+shoudl one of them not be available.
+If `backendConfigurations` is an empty array this will act
+just like the NullBackend.
+
+.. warning::
+
+   Due to the nature of this backend as fallback it will swallow all
+   errors on creating and using the sub backends. So configuration
+   errors won't show up. See `debug` option.
+
+Options
+~~~~~~~
+
+:title:`Multi cache backend options`
+
++-----------------------+------------------------------------------+-----------+---------+---------+
+| Option                | Description                              | Mandatory | Type    | Default |
++=======================+==========================================+===========+=========+=========+
+| setInAllBackends      | Should values given to the backend be    | No        | bool    | true    |
+|                       | replicated into all configured and       |           |         |         |
+|                       | available backends?                      |           |         |         |
+|                       | Generally that is desirable for          |           |         |         |
+|                       | fallback purposes, but to avoid too much |           |         |         |
+|                       | duplication at the cost of performance on|           |         |         |
+|                       | fallbacks this can be disabled.          |           |         |         |
+|                       |                                          |           |         |         |
++-----------------------+------------------------------------------+-----------+---------+---------+
+| backendConfigurations | A list of backends to be used in order   | Yes       | array   | []      |
+|                       | of appearance. Each entry in that list   |           |         |         |
+|                       | should have the keys "backend" and       |           |         |         |
+|                       | "backendOptions" just as a top level     |           |         |         |
+|                       | backend configuration.                   |           |         |         |
+|                       |                                          |           |         |         |
++-----------------------+------------------------------------------+-----------+---------+---------+
+| debug                 | Switch on debug mode which will throw    | No        | bool    | false   |
+|                       | any errors happening in sub backends.    |           |         |         |
+|                       | Use this in development to make sure     |           |         |         |
+|                       | everything works as expected.            |           |         |         |
+|                       |                                          |           |         |         |
++-----------------------+------------------------------------------+-----------+---------+---------+
+
+
+Neos\\Cache\\Backend\\TaggableMultiBackend
+------------------------------------------
+
+Technically all the same as the MultiBackend above but implements the TaggableBackendInterface and
+so supports tagging.
+
+Options are the same as for the MultiBackend.
+
 
 How to Use the Caching Framework
 ================================
@@ -730,5 +847,5 @@ convenience) for a cache::
 .. _phpredis:                    https://github.com/owlient/phpredis
 .. _Memcached:                   http://memcached.org/
 .. _PHP memcache bug 16927:      https://bugs.php.net/bug.php?id=58943
-.. _APC:                         http://pecl.php.net/package/APC
+.. _APCu:                        http://php.net/manual/en/book.apcu.php
 .. _PHP warning:                 https://bugs.php.net/bug.php?id=58982

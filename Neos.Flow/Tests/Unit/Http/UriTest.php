@@ -56,6 +56,8 @@ class UriTest extends UnitTestCase
             ['http://127.0.0.1/bar.baz.com/foo.js'],
             ['http://localhost:8080?foo=bar'],
             ['http://localhost:443#hashme!x'],
+            ['http://[3b00:f59:1008::212:183:20]'],
+            ['http://[3b00:f59:1008::212:183:20]:443#hashme!x'],
         ];
     }
 
@@ -123,7 +125,8 @@ class UriTest extends UnitTestCase
     {
         return [
             ['http://www.neos.io/about/project', 'www.neos.io'],
-            ['http://flow.neos.io/foo', 'flow.neos.io']
+            ['http://flow.neos.io/foo', 'flow.neos.io'],
+            ['http://[3b00:f59:1008::212:183:20]', '[3b00:f59:1008::212:183:20]'],
         ];
     }
 
@@ -158,14 +161,21 @@ class UriTest extends UnitTestCase
         $uri->setHost('an#invalid.host');
     }
 
+    public function uriStringTestUris()
+    {
+        return [
+            ['http://username:password@subdomain.domain.com:1234/pathx1/pathx2/index.php?argument1=value1&argument2=value2&argument3[subargument1]=subvalue1#anchorman'],
+            ['http://username:password@[2a00:f48:1008::212:183:10]:1234/pathx1/pathx2/index.php?argument1=value1&argument2=value2&argument3[subargument1]=subvalue1#anchorman'],
+        ];
+    }
     /**
      * Checks if a complete URI with all parts is transformed into an object correctly.
      *
      * @test
+     * @dataProvider uriStringTestUris
      */
-    public function stringRepresentationIsCorrect()
+    public function stringRepresentationIsCorrect($uriString)
     {
-        $uriString = 'http://username:password@subdomain.domain.com:1234/pathx1/pathx2/index.php?argument1=value1&argument2=value2&argument3[subargument1]=subvalue1#anchorman';
         $uri = new Uri($uriString);
         $this->assertEquals($uriString, (string)$uri, 'The string representation of the URI is not equal to the original URI string.');
     }

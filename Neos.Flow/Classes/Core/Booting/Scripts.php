@@ -21,23 +21,29 @@ use Neos\Flow\Configuration\Source\YamlSource;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Core\ClassLoader;
 use Neos\Flow\Core\LockManager as CoreLockManager;
+use Neos\Flow\Core\ProxyClassLoader;
 use Neos\Flow\Error\Debugger;
 use Neos\Flow\Error\ErrorHandler;
 use Neos\Flow\Error\ProductionExceptionHandler;
+use Neos\Flow\Http\HttpRequestHandlerInterface;
 use Neos\Flow\Log\Logger;
+use Neos\Flow\Log\LoggerBackendConfigurationHelper;
 use Neos\Flow\Log\LoggerFactory;
+use Neos\Flow\Log\PsrLoggerFactory;
+use Neos\Flow\Log\PsrLoggerFactoryInterface;
 use Neos\Flow\Log\SystemLoggerInterface;
+use Neos\Flow\Log\ThrowableStorage\FileStorage;
+use Neos\Flow\Log\ThrowableStorageInterface;
 use Neos\Flow\Monitor\FileMonitor;
 use Neos\Flow\ObjectManagement\CompileTimeObjectManager;
 use Neos\Flow\ObjectManagement\ObjectManager;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use Neos\Flow\Package\Package;
-use Neos\Flow\Package\PackageInterface;
+use Neos\Flow\Package\FlowPackageInterface;
 use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Package\PackageManagerInterface;
 use Neos\Flow\Reflection\ReflectionService;
+use Neos\Flow\Reflection\ReflectionServiceFactory;
 use Neos\Flow\ResourceManagement\Streams\StreamWrapperAdapter;
-use Neos\Flow\Session\SessionInterface;
 use Neos\Flow\SignalSlot\Dispatcher;
 use Neos\Flow\Utility\Environment;
 use Neos\Utility\Files;
@@ -62,7 +68,13 @@ class Scripts
      */
     public static function initializeClassLoader(Bootstrap $bootstrap)
     {
-        require_once(FLOW_PATH_FLOW . 'Classes/Core/ClassLoader.php');
+        $proxyClassLoader = new ProxyClassLoader($bootstrap->getContext());
+        spl_autoload_register([$proxyClassLoader, 'loadClass'], true, true);
+        $bootstrap->setEarlyInstance(ProxyClassLoader::class, $proxyClassLoader);
+
+        if (!self::useClassLoader($bootstrap)) {
+            return;
+        }
 
         $initialClassLoaderMappings = [
             [
@@ -80,8 +92,8 @@ class Scripts
             ];
         }
 
-        $classLoader = new ClassLoader($bootstrap->getContext(), $initialClassLoaderMappings);
-        spl_autoload_register([$classLoader, 'loadClass'], true, true);
+        $classLoader = new ClassLoader($initialClassLoaderMappings);
+        spl_autoload_register([$classLoader, 'loadClass'], true);
         $bootstrap->setEarlyInstance(ClassLoader::class, $classLoader);
         if ($bootstrap->getContext()->isTesting()) {
             $classLoader->setConsiderTestsNamespace(true);
@@ -97,7 +109,10 @@ class Scripts
      */
     public static function registerClassLoaderInAnnotationRegistry(Bootstrap $bootstrap)
     {
-        AnnotationRegistry::registerLoader([$bootstrap->getEarlyInstance(ClassLoader::class), 'loadClass']);
+        AnnotationRegistry::registerLoader([$bootstrap->getEarlyInstance(\Composer\Autoload\ClassLoader::class), 'loadClass']);
+        if (self::useClassLoader($bootstrap)) {
+            AnnotationRegistry::registerLoader([$bootstrap->getEarlyInstance(ClassLoader::class), 'loadClass']);
+        }
     }
 
     /**
@@ -109,7 +124,7 @@ class Scripts
     public static function initializeClassLoaderClassesCache(Bootstrap $bootstrap)
     {
         $classesCache = $bootstrap->getEarlyInstance(CacheManager::class)->getCache('Flow_Object_Classes');
-        $bootstrap->getEarlyInstance(ClassLoader::class)->injectClassesCache($classesCache);
+        $bootstrap->getEarlyInstance(ProxyClassLoader::class)->injectClassesCache($classesCache);
     }
 
     /**
@@ -161,8 +176,9 @@ class Scripts
      */
     public static function initializePackageManagement(Bootstrap $bootstrap)
     {
-        $packageManager = new PackageManager();
+        $packageManager = new PackageManager(PackageManager::DEFAULT_PACKAGE_INFORMATION_CACHE_FILEPATH, FLOW_PATH_PACKAGES);
         $bootstrap->setEarlyInstance(PackageManagerInterface::class, $packageManager);
+        $bootstrap->setEarlyInstance(PackageManager::class, $packageManager);
 
         // The package:rescan must happen as early as possible, compiletime alone is not enough.
         if (isset($_SERVER['argv'][1]) && in_array($_SERVER['argv'][1], ['neos.flow:package:rescan', 'flow:package:rescan'])) {
@@ -170,7 +186,9 @@ class Scripts
         }
 
         $packageManager->initialize($bootstrap);
-        $bootstrap->getEarlyInstance(ClassLoader::class)->setPackages($packageManager->getActivePackages());
+        if (self::useClassLoader($bootstrap)) {
+            $bootstrap->getEarlyInstance(ClassLoader::class)->setPackages($packageManager->getAvailablePackages());
+        }
     }
 
     /**
@@ -187,12 +205,13 @@ class Scripts
         $environment->setTemporaryDirectoryBase(FLOW_PATH_TEMPORARY_BASE);
         $bootstrap->setEarlyInstance(Environment::class, $environment);
 
-        $packageManager = $bootstrap->getEarlyInstance(PackageManagerInterface::class);
+        /** @var PackageManager $packageManager */
+        $packageManager = $bootstrap->getEarlyInstance(PackageManager::class);
 
         $configurationManager = new ConfigurationManager($context);
         $configurationManager->setTemporaryDirectoryPath($environment->getPathToTemporaryDirectory());
         $configurationManager->injectConfigurationSource(new YamlSource());
-        $configurationManager->setPackages($packageManager->getActivePackages());
+        $configurationManager->setPackages($packageManager->getFlowPackages());
         if ($configurationManager->loadConfigurationCache() === false) {
             $configurationManager->refreshConfiguration();
         }
@@ -221,13 +240,84 @@ class Scripts
         $configurationManager = $bootstrap->getEarlyInstance(ConfigurationManager::class);
         $settings = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.Flow');
 
-        if (!isset($settings['log']['systemLogger']['logger'])) {
-            $settings['log']['systemLogger']['logger'] = Logger::class;
+        $throwableStorage = self::initializeExceptionStorage($bootstrap);
+        $bootstrap->setEarlyInstance(ThrowableStorageInterface::class, $throwableStorage);
+
+        /** @var PsrLoggerFactoryInterface $psrLoggerFactoryName */
+        $psrLoggerFactoryName = $settings['log']['psr3']['loggerFactory'];
+        $psrLogConfigurations = $settings['log']['psr3'][$psrLoggerFactoryName] ?? [];
+        if ($psrLoggerFactoryName === 'legacy') {
+            $psrLoggerFactoryName = PsrLoggerFactory::class;
+            $psrLogConfigurations = (new LoggerBackendConfigurationHelper($settings['log']))->getNormalizedLegacyConfiguration();
         }
-        $loggerFactory = new LoggerFactory();
+        $psrLogFactory = $psrLoggerFactoryName::create($psrLogConfigurations);
+
+        // This is all deprecated and can be removed with the removal of respective interfaces and classes.
+        $loggerFactory = new LoggerFactory($psrLogFactory, $throwableStorage);
+        $bootstrap->setEarlyInstance($psrLoggerFactoryName, $psrLogFactory);
+        $bootstrap->setEarlyInstance(PsrLoggerFactoryInterface::class, $psrLogFactory);
         $bootstrap->setEarlyInstance(LoggerFactory::class, $loggerFactory);
-        $systemLogger = $loggerFactory->create('SystemLogger', $settings['log']['systemLogger']['logger'], $settings['log']['systemLogger']['backend'], $settings['log']['systemLogger']['backendOptions']);
+        $deprecatedLogger = $settings['log']['systemLogger']['logger'] ?? Logger::class;
+        $deprecatedLoggerBackend = $settings['log']['systemLogger']['backend'] ?? '';
+        $deprecatedLoggerBackendOptions = $settings['log']['systemLogger']['backendOptions'] ?? [];
+        $systemLogger = $loggerFactory->create('SystemLogger', $deprecatedLogger, $deprecatedLoggerBackend, $deprecatedLoggerBackendOptions);
         $bootstrap->setEarlyInstance(SystemLoggerInterface::class, $systemLogger);
+    }
+
+    /**
+     * Initialize the exception storage
+     *
+     * @param Bootstrap $bootstrap
+     * @return ThrowableStorageInterface
+     * @throws FlowException
+     * @throws \Neos\Flow\Configuration\Exception\InvalidConfigurationTypeException
+     */
+    protected static function initializeExceptionStorage(Bootstrap $bootstrap): ThrowableStorageInterface
+    {
+        $configurationManager = $bootstrap->getEarlyInstance(ConfigurationManager::class);
+        $settings = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.Flow');
+
+        $storageClassName = $settings['log']['throwables']['storageClass'] ?? FileStorage::class;
+        $storageOptions = $settings['log']['throwables']['optionsByImplementation'][$storageClassName] ?? [];
+
+
+        if (!in_array(ThrowableStorageInterface::class, class_implements($storageClassName, true))) {
+            throw new \Exception(
+                sprintf('The class "%s" configured as throwable storage does not implement the ThrowableStorageInterface', $storageClassName),
+                1540583485
+            );
+        }
+
+        /** @var ThrowableStorageInterface $throwableStorage */
+        $throwableStorage = $storageClassName::createWithOptions($storageOptions);
+
+        $throwableStorage->setBacktraceRenderer(function ($backtrace) {
+            return Debugger::getBacktraceCode($backtrace, false, true);
+        });
+
+        $throwableStorage->setRequestInformationRenderer(function () {
+            $output = '';
+            if (!(Bootstrap::$staticObjectManager instanceof ObjectManagerInterface)) {
+                return $output;
+            }
+
+            $bootstrap = Bootstrap::$staticObjectManager->get(Bootstrap::class);
+            /* @var Bootstrap $bootstrap */
+            $requestHandler = $bootstrap->getActiveRequestHandler();
+            if (!$requestHandler instanceof HttpRequestHandlerInterface) {
+                return $output;
+            }
+
+            $request = $requestHandler->getHttpRequest();
+            $response = $requestHandler->getHttpResponse();
+            $output .= PHP_EOL . 'HTTP REQUEST:' . PHP_EOL . ($request == '' ? '[request was empty]' : $request) . PHP_EOL;
+            $output .= PHP_EOL . 'HTTP RESPONSE:' . PHP_EOL . ($response == '' ? '[response was empty]' : $response) . PHP_EOL;
+            $output .= PHP_EOL . 'PHP PROCESS:' . PHP_EOL . 'Inode: ' . getmyinode() . PHP_EOL . 'PID: ' . getmypid() . PHP_EOL . 'UID: ' . getmyuid() . PHP_EOL . 'GID: ' . getmygid() . PHP_EOL . 'User: ' . get_current_user() . PHP_EOL;
+
+            return $output;
+        });
+
+        return $throwableStorage;
     }
 
     /**
@@ -244,7 +334,18 @@ class Scripts
         $errorHandler = new ErrorHandler();
         $errorHandler->setExceptionalErrors($settings['error']['errorHandler']['exceptionalErrors']);
         $exceptionHandler = class_exists($settings['error']['exceptionHandler']['className']) ? new $settings['error']['exceptionHandler']['className'] : new ProductionExceptionHandler();
-        $exceptionHandler->injectSystemLogger($bootstrap->getEarlyInstance(SystemLoggerInterface::class));
+        if (is_callable([$exceptionHandler, 'injectSystemLogger'])) {
+            $exceptionHandler->injectSystemLogger($bootstrap->getEarlyInstance(SystemLoggerInterface::class));
+        }
+
+        if (is_callable([$exceptionHandler, 'injectLogger'])) {
+            $exceptionHandler->injectLogger($bootstrap->getEarlyInstance(PsrLoggerFactoryInterface::class)->get('systemLogger'));
+        }
+
+        if (is_callable([$exceptionHandler, 'injectThrowableStorage'])) {
+            $exceptionHandler->injectThrowableStorage($bootstrap->getEarlyInstance(ThrowableStorageInterface::class));
+        }
+
         $exceptionHandler->setOptions($settings['error']['exceptionHandler']);
     }
 
@@ -264,12 +365,12 @@ class Scripts
         $cacheFactoryClass = isset($cacheFactoryObjectConfiguration['className']) ? $cacheFactoryObjectConfiguration['className'] : CacheFactory::class;
 
         /** @var CacheFactory $cacheFactory */
-        $cacheFactory = new $cacheFactoryClass($bootstrap->getContext(), $environment);
+        $cacheFactory = new $cacheFactoryClass($bootstrap->getContext(), $environment, $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.Flow.cache.applicationIdentifier'));
 
         $cacheManager = new CacheManager();
         $cacheManager->setCacheConfigurations($configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_CACHES));
         $cacheManager->injectConfigurationManager($configurationManager);
-        $cacheManager->injectSystemLogger($bootstrap->getEarlyInstance(SystemLoggerInterface::class));
+        $cacheManager->injectLogger($bootstrap->getEarlyInstance(PsrLoggerFactoryInterface::class)->get('systemLogger'));
         $cacheManager->injectEnvironment($environment);
         $cacheManager->injectCacheFactory($cacheFactory);
 
@@ -289,23 +390,24 @@ class Scripts
     public static function initializeProxyClasses(Bootstrap $bootstrap)
     {
         $objectConfigurationCache = $bootstrap->getEarlyInstance(CacheManager::class)->getCache('Flow_Object_Configuration');
+        if ($objectConfigurationCache->has('allCompiledCodeUpToDate') === true) {
+            return;
+        }
 
         $configurationManager = $bootstrap->getEarlyInstance(ConfigurationManager::class);
         $settings = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.Flow');
 
         // The compile sub command will only be run if the code cache is completely empty:
-        if ($objectConfigurationCache->has('allCompiledCodeUpToDate') === false) {
-            OpcodeCacheHelper::clearAllActive(FLOW_PATH_CONFIGURATION);
-            OpcodeCacheHelper::clearAllActive(FLOW_PATH_DATA);
-            self::executeCommand('neos.flow:core:compile', $settings);
-            if (isset($settings['persistence']['doctrine']['enable']) && $settings['persistence']['doctrine']['enable'] === true) {
-                self::compileDoctrineProxies($bootstrap);
-            }
-
-            // As the available proxy classes were already loaded earlier we need to refresh them if the proxies where recompiled.
-            $classLoader = $bootstrap->getEarlyInstance(ClassLoader::class);
-            $classLoader->initializeAvailableProxyClasses($bootstrap->getContext());
+        OpcodeCacheHelper::clearAllActive(FLOW_PATH_CONFIGURATION);
+        OpcodeCacheHelper::clearAllActive(FLOW_PATH_DATA);
+        self::executeCommand('neos.flow:core:compile', $settings);
+        if (isset($settings['persistence']['doctrine']['enable']) && $settings['persistence']['doctrine']['enable'] === true) {
+            self::compileDoctrineProxies($bootstrap);
         }
+
+        // As the available proxy classes were already loaded earlier we need to refresh them if the proxies where recompiled.
+        $proxyClassLoader = $bootstrap->getEarlyInstance(ProxyClassLoader::class);
+        $proxyClassLoader->initializeAvailableProxyClasses($bootstrap->getContext());
 
         // Check if code was updated, if not something went wrong
         if ($objectConfigurationCache->has('allCompiledCodeUpToDate') === false) {
@@ -368,19 +470,20 @@ class Scripts
      */
     public static function initializeObjectManagerCompileTimeFinalize(Bootstrap $bootstrap)
     {
+        /** @var CompileTimeObjectManager $objectManager */
         $objectManager = $bootstrap->getObjectManager();
         $configurationManager = $bootstrap->getEarlyInstance(ConfigurationManager::class);
         $reflectionService = $objectManager->get(ReflectionService::class);
         $cacheManager = $bootstrap->getEarlyInstance(CacheManager::class);
-        $systemLogger = $bootstrap->getEarlyInstance(SystemLoggerInterface::class);
-        $packageManager = $bootstrap->getEarlyInstance(PackageManagerInterface::class);
+        $logger = $bootstrap->getEarlyInstance(PsrLoggerFactoryInterface::class)->get('systemLogger');
+        $packageManager = $bootstrap->getEarlyInstance(PackageManager::class);
 
         $objectManager->injectAllSettings($configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS));
         $objectManager->injectReflectionService($reflectionService);
         $objectManager->injectConfigurationManager($configurationManager);
         $objectManager->injectConfigurationCache($cacheManager->getCache('Flow_Object_Configuration'));
-        $objectManager->injectSystemLogger($systemLogger);
-        $objectManager->initialize($packageManager->getActivePackages());
+        $objectManager->injectLogger($logger);
+        $objectManager->initialize($packageManager->getAvailablePackages());
 
         foreach ($bootstrap->getEarlyInstances() as $objectName => $instance) {
             $objectManager->setInstance($objectName, $instance);
@@ -417,28 +520,27 @@ class Scripts
     }
 
     /**
-     * Initializes the Reflection Service
+     * Initializes the Reflection Service Factory
      *
      * @param Bootstrap $bootstrap
      * @return void
      */
+    public static function initializeReflectionServiceFactory(Bootstrap $bootstrap)
+    {
+        $reflectionServiceFactory = new ReflectionServiceFactory($bootstrap);
+        $bootstrap->setEarlyInstance(ReflectionServiceFactory::class, $reflectionServiceFactory);
+        $bootstrap->getObjectManager()->setInstance(ReflectionServiceFactory::class, $reflectionServiceFactory);
+    }
+
+    /**
+     * Initializes the Reflection Service
+     *
+     * @param Bootstrap $bootstrap
+     * @throws FlowException
+     */
     public static function initializeReflectionService(Bootstrap $bootstrap)
     {
-        $cacheManager = $bootstrap->getEarlyInstance(CacheManager::class);
-        $configurationManager = $bootstrap->getEarlyInstance(ConfigurationManager::class);
-        $settings = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.Flow');
-
-        $reflectionService = new ReflectionService();
-
-        $reflectionService->injectSystemLogger($bootstrap->getEarlyInstance(SystemLoggerInterface::class));
-        $reflectionService->injectSettings($settings);
-        $reflectionService->injectPackageManager($bootstrap->getEarlyInstance(PackageManagerInterface::class));
-        $reflectionService->setStatusCache($cacheManager->getCache('Flow_Reflection_Status'));
-        $reflectionService->setReflectionDataCompiletimeCache($cacheManager->getCache('Flow_Reflection_CompiletimeData'));
-        $reflectionService->setReflectionDataRuntimeCache($cacheManager->getCache('Flow_Reflection_RuntimeData'));
-        $reflectionService->setClassSchemataRuntimeCache($cacheManager->getCache('Flow_Reflection_RuntimeClassSchemata'));
-        $reflectionService->injectEnvironment($bootstrap->getEarlyInstance(Environment::class));
-
+        $reflectionService = $bootstrap->getEarlyInstance(ReflectionServiceFactory::class)->create();
         $bootstrap->setEarlyInstance(ReflectionService::class, $reflectionService);
         $bootstrap->getObjectManager()->setInstance(ReflectionService::class, $reflectionService);
     }
@@ -465,17 +567,17 @@ class Scripts
         ];
 
         $context = $bootstrap->getContext();
-        /** @var PackageManagerInterface $packageManager */
-        $packageManager = $bootstrap->getEarlyInstance(PackageManagerInterface::class);
+        /** @var PackageManager $packageManager */
+        $packageManager = $bootstrap->getEarlyInstance(PackageManager::class);
         $packagesWithConfiguredObjects = static::getListOfPackagesWithConfiguredObjects($bootstrap);
 
-        /** @var PackageInterface $package */
-        foreach ($packageManager->getActivePackages() as $packageKey => $package) {
+        /** @var FlowPackageInterface $package */
+        foreach ($packageManager->getFlowPackages() as $packageKey => $package) {
             if ($packageManager->isPackageFrozen($packageKey)) {
                 continue;
             }
 
-            self::monitorDirectoryIfItExists($fileMonitors['Flow_ConfigurationFiles'], $package->getConfigurationPath(), '\.yaml$');
+            self::monitorDirectoryIfItExists($fileMonitors['Flow_ConfigurationFiles'], $package->getConfigurationPath(), '\.y(a)?ml$');
             self::monitorDirectoryIfItExists($fileMonitors['Flow_TranslationFiles'], $package->getResourcesPath() . 'Private/Translations/', '\.xlf');
 
             if (!in_array($packageKey, $packagesWithConfiguredObjects)) {
@@ -485,13 +587,13 @@ class Scripts
                 self::monitorDirectoryIfItExists($fileMonitors['Flow_ClassFiles'], $autoloadPath, '\.php$');
             }
 
-            if ($context->isTesting() && $package instanceof Package) {
-                /** @var Package $package */
+            // Note that getFunctionalTestsPath is currently not part of any interface... We might want to add it or find a better way.
+            if ($context->isTesting()) {
                 self::monitorDirectoryIfItExists($fileMonitors['Flow_ClassFiles'], $package->getFunctionalTestsPath(), '\.php$');
             }
         }
         self::monitorDirectoryIfItExists($fileMonitors['Flow_TranslationFiles'], FLOW_PATH_DATA . 'Translations/', '\.xlf');
-        self::monitorDirectoryIfItExists($fileMonitors['Flow_ConfigurationFiles'], FLOW_PATH_CONFIGURATION, '\.yaml$');
+        self::monitorDirectoryIfItExists($fileMonitors['Flow_ConfigurationFiles'], FLOW_PATH_CONFIGURATION, '\.y(a)?ml$');
         foreach ($fileMonitors as $fileMonitor) {
             $fileMonitor->detectChanges();
         }
@@ -504,7 +606,7 @@ class Scripts
      * @param Bootstrap $bootstrap
      * @return array
      */
-    protected static function getListOfPackagesWithConfiguredObjects($bootstrap)
+    protected static function getListOfPackagesWithConfiguredObjects(Bootstrap $bootstrap): array
     {
         $objectManager = $bootstrap->getEarlyInstance(ObjectManagerInterface::class);
         $packagesWithConfiguredObjects = array_reduce($objectManager->getAllObjectConfigurations(), function ($foundPackages, $item) {
@@ -526,7 +628,7 @@ class Scripts
      * @param string $filenamePattern Optional pattern for filenames to consider for file monitoring (regular expression). @see FileMonitor::monitorDirectory()
      * @return void
      */
-    protected static function monitorDirectoryIfItExists(FileMonitor $fileMonitor, $path, $filenamePattern = null)
+    protected static function monitorDirectoryIfItExists(FileMonitor $fileMonitor, string $path, string $filenamePattern = null)
     {
         if (is_dir($path)) {
             $fileMonitor->monitorDirectory($path, $filenamePattern);
@@ -548,29 +650,16 @@ class Scripts
         $cacheManager = $bootstrap->getEarlyInstance(CacheManager::class);
         $objectConfigurationCache = $cacheManager->getCache('Flow_Object_Configuration');
         $coreCache = $cacheManager->getCache('Flow_Core');
-        $systemLogger = $bootstrap->getEarlyInstance(SystemLoggerInterface::class);
         $configurationManager = $bootstrap->getEarlyInstance(ConfigurationManager::class);
         $settings = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.Flow');
 
         if ($objectConfigurationCache->has('doctrineProxyCodeUpToDate') === false && $coreCache->has('doctrineSetupRunning') === false) {
+            $logger = $bootstrap->getEarlyInstance(PsrLoggerFactoryInterface::class)->get('systemLogger');
             $coreCache->set('doctrineSetupRunning', 'White Russian', [], 60);
-            $systemLogger->log('Compiling Doctrine proxies', LOG_DEBUG);
+            $logger->debug('Compiling Doctrine proxies');
             self::executeCommand('neos.flow:doctrine:compileproxies', $settings);
             $coreCache->remove('doctrineSetupRunning');
             $objectConfigurationCache->set('doctrineProxyCodeUpToDate', true);
-        }
-    }
-
-    /**
-     * Initializes the session framework
-     *
-     * @param Bootstrap $bootstrap
-     * @return void
-     */
-    public static function initializeSession(Bootstrap $bootstrap)
-    {
-        if (FLOW_SAPITYPE === 'Web') {
-            $bootstrap->getObjectManager()->get(SessionInterface::class)->resume();
         }
     }
 
@@ -590,13 +679,13 @@ class Scripts
      *
      * @param string $commandIdentifier E.g. neos.flow:cache:flush
      * @param array $settings The Neos.Flow settings
-     * @param boolean $outputResults if FALSE the output of this command is only echoed if the execution was not successful
+     * @param boolean $outputResults if false the output of this command is only echoed if the execution was not successful
      * @param array $commandArguments Command arguments
-     * @return boolean TRUE if the command execution was successful (exit code = 0)
+     * @return boolean true if the command execution was successful (exit code = 0)
      * @api
      * @throws Exception\SubProcessException if execution of the sub process failed
      */
-    public static function executeCommand($commandIdentifier, array $settings, $outputResults = true, array $commandArguments = [])
+    public static function executeCommand(string $commandIdentifier, array $settings, bool $outputResults = true, array $commandArguments = []): bool
     {
         $command = self::buildSubprocessCommand($commandIdentifier, $settings, $commandArguments);
         $output = [];
@@ -608,6 +697,23 @@ class Scripts
                 $exceptionMessage = implode(PHP_EOL, $output);
             } else {
                 $exceptionMessage = sprintf('Execution of subprocess failed with exit code %d without any further output. (Please check your PHP error log for possible Fatal errors)', $result);
+
+                // If the command is too long, it'll just produce /usr/bin/php: Argument list too long but this will be invisible
+                // If anything else goes wrong, it may as well not produce any $output, but might do so when run on an interactive
+                // shell. Thus we dump the command next to the exception dumps.
+                $exceptionMessage .= ' Try to run the command manually, to hopefully get some hint on the actual error.';
+
+                if (!file_exists(FLOW_PATH_DATA . 'Logs/Exceptions')) {
+                    Files::createDirectoryRecursively(FLOW_PATH_DATA . 'Logs/Exceptions');
+                }
+                if (file_exists(FLOW_PATH_DATA . 'Logs/Exceptions') && is_dir(FLOW_PATH_DATA . 'Logs/Exceptions') && is_writable(FLOW_PATH_DATA . 'Logs/Exceptions')) {
+                    $referenceCode = date('YmdHis', $_SERVER['REQUEST_TIME']) . substr(md5(rand()), 0, 6);
+                    $errorDumpPathAndFilename = FLOW_PATH_DATA . 'Logs/Exceptions/' . $referenceCode . '-command.txt';
+                    file_put_contents($errorDumpPathAndFilename, $command);
+                    $exceptionMessage .= sprintf(' It has been stored in: %s', basename($errorDumpPathAndFilename));
+                } else {
+                    $exceptionMessage .= sprintf(' (could not write command into %s because the directory could not be created or is not writable.)', FLOW_PATH_DATA . 'Logs/Exceptions/');
+                }
             }
             throw new Exception\SubProcessException($exceptionMessage, 1355480641);
         }
@@ -628,7 +734,7 @@ class Scripts
      * @return void
      * @api
      */
-    public static function executeCommandAsync($commandIdentifier, array $settings, array $commandArguments = array())
+    public static function executeCommandAsync(string $commandIdentifier, array $settings, array $commandArguments = [])
     {
         $command = self::buildSubprocessCommand($commandIdentifier, $settings, $commandArguments);
         if (DIRECTORY_SEPARATOR === '/') {
@@ -644,7 +750,7 @@ class Scripts
      * @param array $commandArguments Command arguments
      * @return string A command line command ready for being exec()uted
      */
-    protected static function buildSubprocessCommand($commandIdentifier, array $settings, array $commandArguments = [])
+    protected static function buildSubprocessCommand(string $commandIdentifier, array $settings, array $commandArguments = []): string
     {
         $command = self::buildPhpCommand($settings);
 
@@ -658,13 +764,9 @@ class Scripts
         }
 
         $escapedArguments = '';
-        if ($commandArguments !== []) {
-            foreach ($commandArguments as $argument => $argumentValue) {
-                $escapedArguments .= ' ' . escapeshellarg('--' . trim($argument));
-                if (trim($argumentValue) !== '') {
-                    $escapedArguments .= ' ' . escapeshellarg(trim($argumentValue));
-                }
-            }
+        foreach ($commandArguments as $argument => $argumentValue) {
+            $argumentValue = trim($argumentValue);
+            $escapedArguments .= ' ' . escapeshellarg('--' . trim($argument)) . ($argumentValue !== '' ? '=' . escapeshellarg($argumentValue) : '');
         }
 
         $command .= sprintf(' %s %s %s', escapeshellarg(FLOW_PATH_FLOW . 'Scripts/flow.php'), escapeshellarg($commandIdentifier), trim($escapedArguments));
@@ -676,7 +778,7 @@ class Scripts
      * @param array $settings The Neos.Flow settings
      * @return string A command line command for PHP, which can be extended and then exec()uted
      */
-    public static function buildPhpCommand(array $settings)
+    public static function buildPhpCommand(array $settings): string
     {
         $subRequestEnvironmentVariables = [
             'FLOW_ROOTPATH' => FLOW_PATH_ROOT,
@@ -712,5 +814,20 @@ class Scripts
         }
 
         return $command;
+    }
+
+    /**
+     * Check if the old fallback classloader should be used.
+     *
+     * The old class loader is used only in the cases:
+     * * the environment variable "FLOW_ONLY_COMPOSER_LOADER" is not set or false
+     * * in a testing context
+     *
+     * @param Bootstrap $bootstrap
+     * @return bool
+     */
+    protected static function useClassLoader(Bootstrap $bootstrap)
+    {
+        return (!FLOW_ONLY_COMPOSER_LOADER || $bootstrap->getContext()->isTesting());
     }
 }

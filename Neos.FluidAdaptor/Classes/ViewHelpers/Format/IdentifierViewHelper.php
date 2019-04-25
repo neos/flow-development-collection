@@ -61,15 +61,27 @@ class IdentifierViewHelper extends AbstractViewHelper
     protected $persistenceManager;
 
     /**
+     * Initialize the arguments.
+     *
+     * @return void
+     * @api
+     */
+    public function initializeArguments()
+    {
+        $this->registerArgument('value', 'object', 'the object to render the identifier for, or NULL if VH children should be used', false, null);
+    }
+
+    /**
      * Outputs the identifier of the specified object
      *
-     * @param object $value the object to render the identifier for, or NULL if VH children should be used
      * @return mixed the identifier of $value, usually the UUID
      * @throws ViewHelper\Exception if the given value is no object
      * @api
      */
-    public function render($value = null)
+    public function render()
     {
+        $value = $this->arguments['value'];
+
         if ($value === null) {
             $value = $this->renderChildren();
         }

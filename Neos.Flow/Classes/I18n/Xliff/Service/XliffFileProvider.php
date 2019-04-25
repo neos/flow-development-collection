@@ -13,11 +13,11 @@ namespace Neos\Flow\I18n\Xliff\Service;
 
 use Neos\Cache\Frontend\VariableFrontend;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\I18n;
 use Neos\Flow\I18n\Locale;
 use Neos\Flow\I18n\Xliff\Model\FileAdapter;
 use Neos\Flow\I18n\Xliff\V12\XliffParser as V12XliffParser;
-use Neos\Flow\Package\PackageInterface;
-use Neos\Flow\Package\PackageManagerInterface;
+use Neos\Flow\Package\PackageManager;
 use Neos\Utility\Arrays;
 use Neos\Utility\Files;
 
@@ -30,15 +30,27 @@ class XliffFileProvider
 {
     /**
      * @Flow\Inject
-     * @var PackageManagerInterface
+     * @var PackageManager
      */
     protected $packageManager;
+
+    /**
+     * @Flow\Inject
+     * @var I18n\Service
+     */
+    protected $localizationService;
 
     /**
      * @Flow\Inject
      * @var XliffReader
      */
     protected $xliffReader;
+
+    /**
+     * @Flow\InjectConfiguration(path="i18n.globalTranslationPath")
+     * @var string
+     */
+    protected $globalTranslationPath;
 
     /**
      * @var VariableFrontend
@@ -87,26 +99,29 @@ class XliffFileProvider
      */
     public function getMergedFileData($fileId, Locale $locale): array
     {
-        if (!isset($this->files[$fileId][$locale->getLanguage()])) {
+        if (!isset($this->files[$fileId][(string)$locale])) {
             $parsedData = [
                 'fileIdentifier' => $fileId
             ];
-            foreach ($this->packageManager->getActivePackages() as $package) {
-                /** @var PackageInterface $package */
-                $translationPath = $package->getResourcesPath() . $this->xliffBasePath . $locale->getLanguage();
-                if (is_dir($translationPath)) {
-                    $this->readDirectoryRecursively($translationPath, $parsedData, $fileId, $package->getPackageKey());
+            $localeChain = $this->localizationService->getLocaleChain($locale);
+            // Walk locale chain in reverse, so that translations higher in the chain overwrite fallback translations
+            foreach (array_reverse($localeChain) as $localeChainItem) {
+                foreach ($this->packageManager->getFlowPackages() as $package) {
+                    $translationPath = $package->getResourcesPath() . $this->xliffBasePath . $localeChainItem;
+                    if (is_dir($translationPath)) {
+                        $this->readDirectoryRecursively($translationPath, $parsedData, $fileId, $package->getPackageKey());
+                    }
+                }
+                $generalTranslationPath = $this->globalTranslationPath . $localeChainItem;
+                if (is_dir($generalTranslationPath)) {
+                    $this->readDirectoryRecursively($generalTranslationPath, $parsedData, $fileId);
                 }
             }
-            $generalTranslationPath = FLOW_PATH_DATA . 'Translations';
-            if (is_dir($generalTranslationPath)) {
-                $this->readDirectoryRecursively(FLOW_PATH_DATA . 'Translations', $parsedData, $fileId);
-            }
-            $this->files[$fileId][$locale->getLanguage()] = $parsedData;
+            $this->files[$fileId][(string)$locale] = $parsedData;
             $this->cache->set('translationFiles', $this->files);
         }
 
-        return $this->files[$fileId][$locale->getLanguage()];
+        return $this->files[$fileId][(string)$locale];
     }
 
     /**

@@ -14,6 +14,8 @@ namespace Neos\Flow\Tests\Unit\Security\Authorization;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Security\Authorization\FilterFirewall;
+use Neos\Flow\Security\Authorization\Interceptor\AccessGrant;
+use Neos\Flow\Security\Authorization\InterceptorInterface;
 use Neos\Flow\Security\Authorization\InterceptorResolver;
 use Neos\Flow\Security\Authorization\RequestFilter;
 use Neos\Flow\Security\RequestPattern\Uri;
@@ -26,89 +28,6 @@ use Neos\Flow\Tests\UnitTestCase;
  */
 class FilterFirewallTest extends UnitTestCase
 {
-    /**
-     * @test
-     * @return void
-     */
-    public function configuredFiltersAreCreatedCorrectlyUsingLegacySettingsFormat()
-    {
-        $resolveRequestPatternClassCallback = function () {
-            $args = func_get_args();
-
-            if ($args[0] === 'URI') {
-                return 'mockPatternURI';
-            } elseif ($args[0] === 'Neos\\TestRequestPattern') {
-                return 'mockPatternTest';
-            }
-        };
-
-        $resolveInterceptorClassCallback = function () {
-            $args = func_get_args();
-
-            if ($args[0] === 'AccessGrant') {
-                return 'mockInterceptorAccessGrant';
-            } elseif ($args[0] === 'Neos\\TestSecurityInterceptor') {
-                return 'mockInterceptorTest';
-            }
-        };
-
-        $mockRequestPattern1 = $this->createMock(Uri::class);
-        $mockRequestPattern1->expects($this->once())->method('setPattern')->with('/some/url/.*');
-        $mockRequestPattern2 = $this->createMock(Uri::class);
-        $mockRequestPattern2->expects($this->once())->method('setPattern')->with('/some/url/blocked.*');
-
-        $getObjectCallback = function () use (&$mockRequestPattern1, &$mockRequestPattern2) {
-            $args = func_get_args();
-
-            if ($args[0] === 'mockPatternURI') {
-                return $mockRequestPattern1;
-            } elseif ($args[0] === 'mockPatternTest') {
-                return $mockRequestPattern2;
-            } elseif ($args[0] === 'mockInterceptorAccessGrant') {
-                return 'AccessGrant';
-            } elseif ($args[0] === 'mockInterceptorTest') {
-                return 'InterceptorTest';
-            } elseif ($args[0] === RequestFilter::class) {
-                if ($args[1] == $mockRequestPattern1 && $args[2] === 'AccessGrant') {
-                    return 'filter1';
-                }
-                if ($args[1] == $mockRequestPattern2 && $args[2] === 'InterceptorTest') {
-                    return 'filter2';
-                }
-            }
-        };
-
-        $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
-        $mockObjectManager->expects($this->any())->method('get')->will($this->returnCallback($getObjectCallback));
-        $mockPatternResolver = $this->getMockBuilder(RequestPatternResolver::class)->disableOriginalConstructor()->getMock();
-        $mockPatternResolver->expects($this->any())->method('resolveRequestPatternClass')->will($this->returnCallback($resolveRequestPatternClassCallback));
-        $mockInterceptorResolver = $this->getMockBuilder(InterceptorResolver::class)->disableOriginalConstructor()->getMock();
-        $mockInterceptorResolver->expects($this->any())->method('resolveInterceptorClass')->will($this->returnCallback($resolveInterceptorClassCallback));
-
-        $settings = [
-            [
-                'patternType' => 'URI',
-                'patternValue' => '/some/url/.*',
-                'interceptor' => 'AccessGrant'
-            ],
-            [
-                'patternType' => 'Neos\TestRequestPattern',
-                'patternValue' => '/some/url/blocked.*',
-                'interceptor' => 'Neos\TestSecurityInterceptor'
-            ]
-        ];
-
-        $firewall = $this->getAccessibleMock(FilterFirewall::class, ['blockIllegalRequests'], [], '', false);
-        $firewall->_set('objectManager', $mockObjectManager);
-        $firewall->_set('requestPatternResolver', $mockPatternResolver);
-        $firewall->_set('interceptorResolver', $mockInterceptorResolver);
-
-        $firewall->_call('buildFiltersFromSettings', $settings);
-        $result = $firewall->_get('filters');
-
-        $this->assertEquals(['filter1', 'filter2'], $result, 'The filters were not built correctly (legacy format).');
-    }
-
     /**
      * @test
      * @return void
@@ -137,8 +56,10 @@ class FilterFirewallTest extends UnitTestCase
 
         $mockRequestPattern1 = $this->createMock(Uri::class);
         $mockRequestPattern2 = $this->createMock(Uri::class);
+        $accessGrant = $this->createMock(AccessGrant::class);
+        $testInterceptor = $this->createMock(InterceptorInterface::class);
 
-        $getObjectCallback = function () use (&$mockRequestPattern1, &$mockRequestPattern2) {
+        $getObjectCallback = function () use ($mockRequestPattern1, $mockRequestPattern2, $accessGrant, $testInterceptor) {
             $args = func_get_args();
 
             if ($args[0] === 'mockPatternURI') {
@@ -148,15 +69,15 @@ class FilterFirewallTest extends UnitTestCase
                 $this->assertSame(['uriPattern' => '/some/url/blocked.*'], $args[1]);
                 return $mockRequestPattern2;
             } elseif ($args[0] === 'mockInterceptorAccessGrant') {
-                return 'AccessGrant';
+                return $accessGrant;
             } elseif ($args[0] === 'mockInterceptorTest') {
-                return 'InterceptorTest';
+                return $testInterceptor;
             } elseif ($args[0] === RequestFilter::class) {
                 if ($args[1] == $mockRequestPattern1 && $args[2] === 'AccessGrant') {
-                    return 'filter1';
+                    return new RequestFilter($mockRequestPattern1, $accessGrant);
                 }
                 if ($args[1] == $mockRequestPattern2 && $args[2] === 'InterceptorTest') {
-                    return 'filter2';
+                    return new RequestFilter($mockRequestPattern2, $testInterceptor);
                 }
             }
         };
@@ -189,11 +110,15 @@ class FilterFirewallTest extends UnitTestCase
         $firewall->_set('objectManager', $mockObjectManager);
         $firewall->_set('requestPatternResolver', $mockPatternResolver);
         $firewall->_set('interceptorResolver', $mockInterceptorResolver);
+        $firewall->injectSettings(['security' => ['firewall' => ['rejectAll' => false,'filters' => $settings]]]);
 
-        $firewall->_call('buildFiltersFromSettings', $settings);
         $result = $firewall->_get('filters');
 
-        $this->assertEquals(['filter1', 'filter2'], $result, 'The filters were not built correctly.');
+        self::assertContainsOnly(RequestFilter::class, $result);
+        self::assertEquals($mockRequestPattern1, $result[0]->getRequestPattern());
+        self::assertEquals($accessGrant, $result[0]->getSecurityInterceptor());
+        self::assertEquals($mockRequestPattern2, $result[1]->getRequestPattern());
+        self::assertEquals($testInterceptor, $result[1]->getSecurityInterceptor());
     }
 
 

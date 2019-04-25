@@ -19,7 +19,7 @@ interface InterceptorInterface
     /**
      * Invokes the security interception (e.g. calls a PrivilegeManagerInterface)
      *
-     * @return boolean TRUE if the security checks was passed
+     * @return boolean true if the security checks was passed
      */
     public function invoke();
 }

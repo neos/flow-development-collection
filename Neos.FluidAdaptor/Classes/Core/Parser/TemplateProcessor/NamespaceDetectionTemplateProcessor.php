@@ -65,38 +65,6 @@ class NamespaceDetectionTemplateProcessor extends FluidNamespaceDetectionTemplat
     }
 
     /**
-     * Register all namespaces that are declared inside the template string
-     *
-     * @param string $templateSource
-     * @return void
-     */
-    public function registerNamespacesFromTemplateSource($templateSource)
-    {
-        $viewHelperResolver = $this->renderingContext->getViewHelperResolver();
-        if (preg_match_all(static::SPLIT_PATTERN_TEMPLATE_OPEN_NAMESPACETAG, $templateSource, $matchedVariables, PREG_SET_ORDER) > 0) {
-            foreach ($matchedVariables as $namespaceMatch) {
-                $viewHelperNamespace = $this->renderingContext->getTemplateParser()->unquoteString($namespaceMatch[2]);
-                $phpNamespace = $viewHelperResolver->resolvePhpNamespaceFromFluidNamespace($viewHelperNamespace);
-                if (stristr($phpNamespace, '/') === false) {
-                    $viewHelperResolver->addNamespace($namespaceMatch[1], $phpNamespace);
-                }
-            }
-        }
-
-        $templateSource = preg_replace_callback(static::NAMESPACE_DECLARATION, function (array $matches) use ($viewHelperResolver) {
-            $identifier = $matches['identifier'];
-            $namespace = isset($matches['phpNamespace']) ? $matches['phpNamespace'] : null;
-            if (strlen($namespace) === 0) {
-                $namespace = null;
-            }
-            $viewHelperResolver->addNamespace($identifier, $namespace);
-            return '';
-        }, $templateSource);
-
-        return $templateSource;
-    }
-
-    /**
      * Encodes areas enclosed in CDATA to prevent further parsing by the Fluid engine.
      * CDATA sections will appear as they are in the final rendered result.
      *

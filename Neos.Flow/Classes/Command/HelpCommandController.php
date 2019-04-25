@@ -18,7 +18,8 @@ use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Mvc\Exception\AmbiguousCommandIdentifierException;
 use Neos\Flow\Mvc\Exception\CommandException;
-use Neos\Flow\Package\PackageManagerInterface;
+use Neos\Flow\Package\PackageManager;
+use Neos\Flow\Mvc\Exception\StopActionException;
 
 /**
  * A Command Controller which provides help for available commands
@@ -29,7 +30,7 @@ class HelpCommandController extends CommandController
 {
     /**
      * @Flow\Inject
-     * @var PackageManagerInterface
+     * @var PackageManager
      */
     protected $packageManager;
 
@@ -65,7 +66,7 @@ class HelpCommandController extends CommandController
         $context = $this->bootstrap->getContext();
         $applicationPackage = $this->packageManager->getPackage($this->applicationPackageKey);
         $this->outputLine('<b>%s %s ("%s" context)</b>', [$this->applicationName, $applicationPackage->getInstalledVersion() ?: 'dev', $context]);
-        $this->outputLine('<i>usage: %s <command identifier></i>', array($this->getFlowInvocationString()));
+        $this->outputLine('<i>usage: %s <command identifier></i>', [$this->getFlowInvocationString()]);
         $this->outputLine();
         $this->outputLine('See "%s help" for a list of all available commands.', [$this->getFlowInvocationString()]);
         $this->outputLine();
@@ -79,8 +80,9 @@ class HelpCommandController extends CommandController
      *
      * @param string $commandIdentifier Identifier of a command for more details
      * @return void
+     * @throws StopActionException
      */
-    public function helpCommand($commandIdentifier = null)
+    public function helpCommand(string $commandIdentifier = null)
     {
         $exceedingArguments = $this->request->getExceedingArguments();
         if (count($exceedingArguments) > 0 && $commandIdentifier === null) {
@@ -93,10 +95,12 @@ class HelpCommandController extends CommandController
             $matchingCommands = $this->commandManager->getCommandsByIdentifier($commandIdentifier);
             $numberOfMatchingCommands = count($matchingCommands);
             if ($numberOfMatchingCommands === 0) {
-                $this->outputLine('No command could be found that matches the command identifier "%s".', [$commandIdentifier]);
+                $this->outputLine('<error>No command could be found that matches the command identifier "%s".</error>', [$commandIdentifier]);
+                $this->quit(1);
             } elseif ($numberOfMatchingCommands > 1) {
-                $this->outputLine('%d commands match the command identifier "%s":', [$numberOfMatchingCommands, $commandIdentifier]);
+                $this->outputLine('<error>%d commands match the command identifier "%s":</error>', [$numberOfMatchingCommands, $commandIdentifier]);
                 $this->displayShortHelpForCommands($matchingCommands);
+                $this->quit(1);
             } else {
                 $this->displayHelpForCommand(array_shift($matchingCommands));
             }
@@ -245,10 +249,11 @@ class HelpCommandController extends CommandController
      * @Flow\Internal
      * @param CommandException $exception
      * @return void
+     * @throws StopActionException
      */
     public function errorCommand(CommandException $exception)
     {
-        $this->outputLine($exception->getMessage());
+        $this->outputLine('<error>%s</error>', [$exception->getMessage()]);
         if ($exception instanceof AmbiguousCommandIdentifierException) {
             $this->outputLine('Please specify the complete command identifier. Matched commands:');
             $this->displayShortHelpForCommands($exception->getMatchingCommands());
@@ -256,6 +261,7 @@ class HelpCommandController extends CommandController
         $this->outputLine();
         $this->outputLine('Enter "%s help" for an overview of all available commands', [$this->getFlowInvocationString()]);
         $this->outputLine('or "%s help <commandIdentifier>" for a detailed description of the corresponding command.', [$this->getFlowInvocationString()]);
+        $this->quit(1);
     }
 
     /**

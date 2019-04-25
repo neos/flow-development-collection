@@ -17,7 +17,7 @@ use Neos\Flow\Mvc\Exception\CommandException;
 use Neos\Flow\Mvc\Exception\InvalidArgumentMixingException;
 use Neos\Flow\Mvc\Exception\InvalidArgumentNameException;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use Neos\Flow\Package\PackageManagerInterface;
+use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Utility\Environment;
 
 /**
@@ -56,7 +56,7 @@ class RequestBuilder
     protected $objectManager;
 
     /**
-     * @var PackageManagerInterface
+     * @var PackageManager
      */
     protected $packageManager;
 
@@ -84,10 +84,10 @@ class RequestBuilder
     }
 
     /**
-     * @param PackageManagerInterface $packageManager
+     * @param PackageManager $packageManager
      * @return void
      */
-    public function injectPackageManager(PackageManagerInterface $packageManager)
+    public function injectPackageManager(PackageManager $packageManager)
     {
         $this->packageManager = $packageManager;
     }
@@ -113,7 +113,7 @@ class RequestBuilder
      * @throws InvalidArgumentMixingException
      * @throws InvalidArgumentNameException
      */
-    public function build($commandLine)
+    public function build($commandLine): Request
     {
         $request = new Request();
         $request->setControllerObjectName(HelpCommandController::class);
@@ -176,7 +176,7 @@ class RequestBuilder
      * @return array All and exceeding command line arguments
      * @throws InvalidArgumentMixingException
      */
-    protected function parseRawCommandLineArguments(array $rawCommandLineArguments, $controllerObjectName, $controllerCommandName)
+    protected function parseRawCommandLineArguments(array $rawCommandLineArguments, string $controllerObjectName, string $controllerCommandName): array
     {
         $commandLineArguments = [];
         $exceedingArguments = [];
@@ -185,9 +185,7 @@ class RequestBuilder
 
         $requiredArguments = [];
         $optionalArguments = [];
-        $argumentNames = [];
         foreach ($commandMethodParameters as $parameterName => $parameterInfo) {
-            $argumentNames[] = $parameterName;
             if ($parameterInfo['optional'] === false) {
                 $requiredArguments[strtolower($parameterName)] = [
                     'parameterName' => $parameterName,
@@ -203,7 +201,6 @@ class RequestBuilder
 
         $decidedToUseNamedArguments = false;
         $decidedToUseUnnamedArguments = false;
-        $argumentIndex = 0;
         while (count($rawCommandLineArguments) > 0) {
             $rawArgument = array_shift($rawCommandLineArguments);
 
@@ -239,7 +236,6 @@ class RequestBuilder
                     $exceedingArguments[] = $rawArgument;
                 }
             }
-            $argumentIndex++;
         }
 
         return [$commandLineArguments, $exceedingArguments];
@@ -251,7 +247,7 @@ class RequestBuilder
      * @param string $commandLinePart Part of the command line, e.g. "my-important-option=SomeInterestingValue"
      * @return string The lowercased argument name, e.g. "myimportantoption"
      */
-    protected function extractArgumentNameFromCommandLinePart($commandLinePart)
+    protected function extractArgumentNameFromCommandLinePart(string $commandLinePart): string
     {
         $nameAndValue = explode('=', $commandLinePart, 2);
 
@@ -264,9 +260,9 @@ class RequestBuilder
      * @param string $currentArgument The current argument
      * @param array &$rawCommandLineArguments Array of the remaining command line arguments
      * @param string $expectedArgumentType The expected type of the current argument, because booleans get special attention
-     * @return string The value of the first argument
+     * @return mixed The value of the first argument
      */
-    protected function getValueOfCurrentCommandLineOption($currentArgument, array &$rawCommandLineArguments, $expectedArgumentType)
+    protected function getValueOfCurrentCommandLineOption(string $currentArgument, array &$rawCommandLineArguments, string $expectedArgumentType)
     {
         if ((!isset($rawCommandLineArguments[0]) && (strpos($currentArgument, '=') === false)) || (isset($rawCommandLineArguments[0]) && $rawCommandLineArguments[0][0] === '-' && (strpos($currentArgument, '=') === false))) {
             return true;
@@ -297,8 +293,6 @@ class RequestBuilder
             $splitArgument = explode('=', $currentArgument);
         }
 
-        $value = (isset($splitArgument[1])) ? $splitArgument[1] : '';
-
-        return $value;
+        return $splitArgument[1] ?? '';
     }
 }

@@ -1,0 +1,75 @@
+#
+# Error configuration for the Flow Framework
+#
+
+Neos:
+  Flow:
+    error:
+      exceptionHandler:
+
+        # Defines the global, last-resort exception handler.
+        # The specified class must implement \Neos\Flow\Error\ExceptionHandlerInterface
+        className: Neos\Flow\Error\ProductionExceptionHandler
+
+        # default options for all rendering groups (see below). Options can be overridden in the respective rendering group
+        defaultRenderingOptions:
+          viewClassName: Neos\Flow\Mvc\View\SimpleTemplateView
+          viewOptions: []
+          renderTechnicalDetails: false
+          logException: true
+
+        # Rendering groups can define special renderings depending on status code or class of the
+        # thrown exception.
+        renderingGroups:
+
+          notFoundExceptions:
+            matchingStatusCodes: [404, 410]
+            options:
+              logException: false
+              templatePathAndFilename: 'resource://Neos.Flow/Private/Templates/Error/Default.html'
+              variables:
+                errorDescription: 'Sorry, the page you requested was not found.'
+
+          databaseConnectionExceptions:
+            matchingExceptionClassNames: ['Neos\Flow\Persistence\Doctrine\Exception\DatabaseException']
+            options:
+              templatePathAndFilename: 'resource://Neos.Flow/Private/Templates/Error/Default.html'
+              variables:
+                errorDescription: 'Sorry, the database connection couldn''t be established.'
+
+      errorHandler:
+
+        # Defines which errors should result in an exception thrown - all other error
+        # levels will be silently ignored. Only errors that can be handled in an
+        # user-defined error handler are affected, of course.
+        exceptionalErrors: ['%E_USER_ERROR%', '%E_RECOVERABLE_ERROR%']
+
+      debugger:
+
+        # List of regular expressions classes are matched against in the debugger
+        # to prevent them from being expanded.
+        ignoredClasses:
+          'Neos\\Flow\\Aop.*': true
+          'Neos\\Flow\\Cac.*': true
+          'Neos\\Flow\\Core\\.*': true
+          'Neos\\Flow\\Con.*': true
+          'Neos\\Flow\\Http\\RequestHandler': true
+          'Neos\\Flow\\Uti.*': true
+          'Neos\\Flow\\Mvc\\Routing.*': true
+          'Neos\\Flow\\Log.*': true
+          'Neos\\Flow\\Obj.*': true
+          'Neos\\Flow\\Pac.*': true
+          'Neos\\Flow\\Persistence\\(?!Doctrine\\Mapping).*': true
+          'Neos\\Flow\\Pro.*': true
+          'Neos\\Flow\\Ref.*': true
+          'Neos\\Flow\\Sec.*': true
+          'Neos\\Flow\\Sig.*': true
+          'Neos\\Flow\\.*ResourceManager': true
+          'Neos\\FluidAdaptor\\.*': true
+          '.+Service$': true
+          '.+Repository$': true
+          'PHPUnit_Framework_MockObject_InvocationMocker': true
+
+        # Maximal recursion for the debugger
+        recursionLimit: 5
+

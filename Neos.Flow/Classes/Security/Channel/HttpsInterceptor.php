@@ -12,7 +12,6 @@ namespace Neos\Flow\Security\Channel;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\Security\Authentication\AuthenticationManagerInterface;
 use Neos\Flow\Security\Authorization\InterceptorInterface;
 use Neos\Flow\Security\Context;
@@ -35,19 +34,17 @@ class HttpsInterceptor implements InterceptorInterface
      *
      * @param Context $securityContext The current security context
      * @param AuthenticationManagerInterface $authenticationManager The authentication Manager
-     * @param SystemLoggerInterface $logger A logger to log security relevant actions
      */
     public function __construct(
         Context $securityContext,
-        AuthenticationManagerInterface $authenticationManager,
-        SystemLoggerInterface $logger
+        AuthenticationManagerInterface $authenticationManager
     ) {
     }
 
     /**
      * Redirects the current request to HTTP or HTTPS depending on $this->useSSL;
      *
-     * @return boolean TRUE if the security checks was passed
+     * @return boolean true if the security checks was passed
      */
     public function invoke()
     {

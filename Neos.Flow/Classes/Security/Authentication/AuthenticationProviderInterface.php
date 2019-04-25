@@ -18,20 +18,19 @@ namespace Neos\Flow\Security\Authentication;
 interface AuthenticationProviderInterface
 {
     /**
-     * Constructor
+     * Constructs an instance with the given name and options.
      *
-     * @param string $name The name of this authentication provider
-     * @param array $options Additional configuration options
-     * @return void
-     * @FIXME The constructor was certainly part of the interface for a reason
+     * @param string $name
+     * @param array $options
+     * @return self
      */
-    // public function __construct($name, array $options);
+    public static function create(string $name, array $options);
 
     /**
-     * Returns TRUE if the given token can be authenticated by this provider
+     * Returns true if the given token can be authenticated by this provider
      *
      * @param TokenInterface $token The token that should be authenticated
-     * @return boolean TRUE if the given token class can be authenticated by this provider
+     * @return boolean true if the given token class can be authenticated by this provider
      */
     public function canAuthenticate(TokenInterface $token);
 
@@ -43,7 +42,7 @@ interface AuthenticationProviderInterface
     public function getTokenClassNames();
 
     /**
-     * Tries to authenticate the given token. Sets isAuthenticated to TRUE if authentication succeeded.
+     * Tries to authenticate the given token. Sets isAuthenticated to true if authentication succeeded.
      *
      * @param TokenInterface $authenticationToken The token to be authenticated
      * @return void

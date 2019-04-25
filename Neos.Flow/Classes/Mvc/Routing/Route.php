@@ -12,15 +12,19 @@ namespace Neos\Flow\Mvc\Routing;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Http\Request;
 use Neos\Flow\Mvc\Exception\InvalidRoutePartHandlerException;
 use Neos\Flow\Mvc\Exception\InvalidRoutePartValueException;
 use Neos\Flow\Mvc\Exception\InvalidRouteSetupException;
 use Neos\Flow\Mvc\Exception\InvalidUriPatternException;
+use Neos\Flow\Mvc\Routing\Dto\MatchResult;
+use Neos\Flow\Mvc\Routing\Dto\ResolveResult;
+use Neos\Flow\Mvc\Routing\Dto\RouteContext;
+use Neos\Flow\Mvc\Routing\Dto\RouteTags;
+use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
-use Neos\Utility\ObjectAccess;
 use Neos\Utility\Arrays;
+use Neos\Utility\ObjectAccess;
 
 /**
  * Implementation of a standard route
@@ -75,12 +79,25 @@ class Route
     protected $matchResults = [];
 
     /**
-     * Contains the matching uri (excluding protocol and host) after a
-     * successful call of resolves()
+     * The tags that have been associated with this route during request matching, or NULL if no tags were set
      *
-     * @var string
+     * @var RouteTags|null
      */
-    protected $resolvedUriPath;
+    protected $matchedTags;
+
+    /**
+     * The merged UriConstraints of all Route Parts after resolving
+     *
+     * @var UriConstraints|null
+     */
+    protected $resolvedUriConstraints;
+
+    /**
+     * The tags that have been associated with this route during resolving, or NULL if no tags were set
+     *
+     * @var RouteTags|null
+     */
+    protected $resolvedTags;
 
     /**
      * Contains associative array of Route Part options
@@ -197,7 +214,7 @@ class Route
      * Specifies whether Route parts of this route should be converted to lower case when resolved.
      * This setting can be overwritten for all dynamic Route parts.
      *
-     * @param boolean $lowerCase TRUE: Route parts are converted to lower case by default. FALSE: Route parts are not altered.
+     * @param boolean $lowerCase true: Route parts are converted to lower case by default. false: Route parts are not altered.
      * @return void
      */
     public function setLowerCase($lowerCase)
@@ -208,7 +225,7 @@ class Route
     /**
      * Getter for $this->lowerCase.
      *
-     * @return boolean TRUE if this Route part will be converted to lower case, otherwise FALSE.
+     * @return boolean true if this Route part will be converted to lower case, otherwise false.
      * @see setLowerCase()
      */
     public function isLowerCase()
@@ -219,10 +236,10 @@ class Route
     /**
      * Specifies whether Route values, that are not part of the Route configuration, should be appended to the
      * Resulting URI as query string.
-     * If set to FALSE, the route won't resolve if there are route values left after iterating through all Route Part
+     * If set to false, the route won't resolve if there are route values left after iterating through all Route Part
      * handlers and removing the matching default values.
      *
-     * @param boolean $appendExceedingArguments TRUE: exceeding arguments will be appended to the resulting URI
+     * @param boolean $appendExceedingArguments true: exceeding arguments will be appended to the resulting URI
      * @return void
      */
     public function setAppendExceedingArguments($appendExceedingArguments)
@@ -231,7 +248,7 @@ class Route
     }
 
     /**
-     * Returns TRUE if exceeding arguments should be appended to the URI as query string, otherwise FALSE
+     * Returns true if exceeding arguments should be appended to the URI as query string, otherwise false
      *
      * @return boolean
      */
@@ -311,30 +328,51 @@ class Route
     }
 
     /**
-     * Returns the URI path which corresponds to this Route.
+     * Returns the tags that have been associated with this route during request matching, or NULL if no tags were set
      *
-     * @return string A string containing the corresponding uri (excluding protocol and host)
+     * @return RouteTags|null
      */
-    public function getResolvedUriPath()
+    public function getMatchedTags()
     {
-        return $this->resolvedUriPath;
+        return $this->matchedTags;
     }
 
     /**
-     * Checks whether $routePath corresponds to this Route.
-     * If all Route Parts match successfully TRUE is returned and
-     * $this->matchResults contains an array combining Route default values and
-     * calculated matchResults from the individual Route Parts.
+     * Returns the merged UriConstraints of all Route Parts after resolving, or NULL if no constraints were set yet
      *
-     * @param Request $httpRequest the HTTP request to match
-     * @return boolean TRUE if this Route corresponds to the given $routePath, otherwise FALSE
+     * @return UriConstraints|null
+     */
+    public function getResolvedUriConstraints()
+    {
+        return $this->resolvedUriConstraints;
+    }
+
+    /**
+     * Returns the tags that have been associated with this route during resolving, or NULL if no tags were set
+     *
+     * @return RouteTags|null
+     */
+    public function getResolvedTags()
+    {
+        return $this->resolvedTags;
+    }
+
+    /**
+     * Checks whether $routeContext corresponds to this Route.
+     * If all Route Parts match successfully true is returned an $this->matchResults contains an array
+     * combining Route default values and calculated matchResults from the individual Route Parts.
+     *
+     * @param RouteContext $routeContext The Route Context containing the current HTTP request object and, optional, Routing RouteParameters
+     * @return boolean true if this Route corresponds to the given $routeContext, otherwise false
      * @throws InvalidRoutePartValueException
      * @see getMatchResults()
      */
-    public function matches(Request $httpRequest)
+    public function matches(RouteContext $routeContext)
     {
+        $httpRequest = $routeContext->getHttpRequest();
         $routePath = $httpRequest->getRelativePath();
         $this->matchResults = null;
+        $this->matchedTags = RouteTags::createEmpty();
         if ($this->uriPattern === null) {
             return false;
         }
@@ -363,7 +401,22 @@ class Route
                 $optionalPartCount = 0;
                 $skipOptionalParts = false;
             }
-            if ($routePart->match($routePath) !== true) {
+            if ($routePart instanceof ParameterAwareRoutePartInterface) {
+                $matchResult = $routePart->matchWithParameters($routePath, $routeContext->getParameters());
+            } else {
+                $matchResult = $routePart->match($routePath);
+            }
+            if ($matchResult instanceof MatchResult) {
+                $routeMatches = true;
+                $routePartValue = $matchResult->getMatchedValue();
+                if ($matchResult->hasTags()) {
+                    $this->matchedTags = $this->matchedTags->merge($matchResult->getTags());
+                }
+            } else {
+                $routeMatches = $matchResult === true;
+                $routePartValue = $routeMatches ? $routePart->getValue() : null;
+            }
+            if ($routeMatches !== true) {
                 if ($routePart->isOptional() && $optionalPartCount === 1) {
                     if ($routePart->getDefaultValue() === null) {
                         return false;
@@ -373,7 +426,6 @@ class Route
                     return false;
                 }
             }
-            $routePartValue = $routePart->getValue();
             if ($routePartValue !== null) {
                 if ($this->containsObject($routePartValue)) {
                     throw new InvalidRoutePartValueException('RoutePart::getValue() must only return simple types after calling RoutePart::match(). RoutePart "' . get_class($routePart) . '" returned one or more objects in Route "' . $this->getName() . '".');
@@ -391,17 +443,18 @@ class Route
 
     /**
      * Checks whether $routeValues can be resolved to a corresponding uri.
-     * If all Route Parts can resolve one or more of the $routeValues, TRUE is
-     * returned and $this->matchingURI contains the generated URI (excluding
-     * protocol and host).
+     * If all Route Parts can resolve one or more of the $routeValues, true is
+     * returned and $this->resolvedUriConstraints contains an instance of UriConstraints that can be applied
+     * to a template URI transforming it accordingly (@see Router::resolve())
      *
      * @param array $routeValues An array containing key/value pairs to be resolved to uri segments
-     * @return boolean TRUE if this Route corresponds to the given $routeValues, otherwise FALSE
+     * @return boolean true if this Route corresponds to the given $routeValues, otherwise false
      * @throws InvalidRoutePartValueException
      */
     public function resolves(array $routeValues)
     {
-        $this->resolvedUriPath = null;
+        $this->resolvedUriConstraints = UriConstraints::create();
+        $this->resolvedTags = RouteTags::createEmpty();
         if ($this->uriPattern === null) {
             return false;
         }
@@ -415,31 +468,41 @@ class Route
         $matchingOptionalUriPortion = '';
         /** @var $routePart RoutePartInterface */
         foreach ($this->routeParts as $routePart) {
-            if (!$routePart->resolve($routeValues)) {
+            $resolveResult = $routePart->resolve($routeValues);
+            if (!$resolveResult) {
                 if (!$routePart->hasDefaultValue()) {
                     return false;
                 }
             }
+            if ($resolveResult instanceof ResolveResult) {
+                $hasRoutePartValue = true;
+                $routePartValue = $resolveResult->getResolvedValue();
+                if ($resolveResult->hasUriConstraints()) {
+                    $this->resolvedUriConstraints = $this->resolvedUriConstraints->merge($resolveResult->getUriConstraints());
+                }
+                if ($resolveResult->hasTags()) {
+                    $this->resolvedTags = $this->resolvedTags->merge($resolveResult->getTags());
+                }
+            } else {
+                $hasRoutePartValue = $routePart->hasValue();
+                $routePartValue = $hasRoutePartValue ? $routePart->getValue() : null;
+            }
             if ($routePart->getName() !== null) {
                 $remainingDefaults = Arrays::unsetValueByPath($remainingDefaults, $routePart->getName());
             }
-            $routePartValue = null;
-            if ($routePart->hasValue()) {
-                $routePartValue = $routePart->getValue();
-                if (!is_string($routePartValue)) {
-                    throw new InvalidRoutePartValueException('RoutePart::getValue() must return a string after calling RoutePart::resolve(), got ' . (is_object($routePartValue) ? get_class($routePartValue) : gettype($routePartValue)) . ' for RoutePart "' . get_class($routePart) . '" in Route "' . $this->getName() . '".');
-                }
+            if ($hasRoutePartValue && !is_string($routePartValue)) {
+                throw new InvalidRoutePartValueException('RoutePart::getValue() must return a string after calling RoutePart::resolve(), got ' . (is_object($routePartValue) ? get_class($routePartValue) : gettype($routePartValue)) . ' for RoutePart "' . get_class($routePart) . '" in Route "' . $this->getName() . '".');
             }
             $routePartDefaultValue = $routePart->getDefaultValue();
             if ($routePartDefaultValue !== null && !is_string($routePartDefaultValue)) {
                 throw new InvalidRoutePartValueException('RoutePart::getDefaultValue() must return a string, got ' . (is_object($routePartDefaultValue) ? get_class($routePartDefaultValue) : gettype($routePartDefaultValue)) . ' for RoutePart "' . get_class($routePart) . '" in Route "' . $this->getName() . '".');
             }
             if (!$routePart->isOptional()) {
-                $resolvedUriPath .= $routePart->hasValue() ? $routePartValue : $routePartDefaultValue;
+                $resolvedUriPath .= $hasRoutePartValue ? $routePartValue : $routePartDefaultValue;
                 $requireOptionalRouteParts = false;
                 continue;
             }
-            if ($routePart->hasValue() && strtolower($routePartValue) !== strtolower($routePartDefaultValue)) {
+            if ($hasRoutePartValue && strtolower($routePartValue) !== strtolower($routePartDefaultValue)) {
                 $matchingOptionalUriPortion .= $routePartValue;
                 $requireOptionalRouteParts = true;
             } else {
@@ -474,7 +537,7 @@ class Route
                 $resolvedUriPath .= strpos($resolvedUriPath, '?') !== false ? '&' . $queryString : '?' . $queryString;
             }
         }
-        $this->resolvedUriPath = $resolvedUriPath;
+        $this->resolvedUriConstraints = $this->resolvedUriConstraints->withPath($resolvedUriPath);
         return true;
     }
 
@@ -483,11 +546,11 @@ class Route
      * If a route value is equal to a default value, it's removed
      * from $routeValues.
      * If a value exists but is not equal to is corresponding default,
-     * iteration is interrupted and FALSE is returned.
+     * iteration is interrupted and false is returned.
      *
      * @param array $defaults
      * @param array $routeValues
-     * @return boolean FALSE if one of the $routeValues is not equal to it's default value. Otherwise TRUE
+     * @return boolean false if one of the $routeValues is not equal to it's default value. Otherwise true
      */
     protected function compareAndRemoveMatchingDefaultValues(array $defaults, array &$routeValues)
     {
@@ -573,8 +636,7 @@ class Route
      * appropriate RoutePart instances.
      *
      * @return void
-     * @throws InvalidRoutePartHandlerException
-     * @throws InvalidUriPatternException
+     * @throws InvalidRoutePartHandlerException|InvalidRouteSetupException|InvalidUriPatternException
      */
     public function parse()
     {

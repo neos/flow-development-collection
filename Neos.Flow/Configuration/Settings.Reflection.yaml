@@ -1,0 +1,49 @@
+#
+# Reflection configuration for the Flow Framework
+#
+
+Neos:
+  Flow:
+    reflection:
+      # A list of tags to be ignored during reflection
+      ignoredTags:
+        'api': true
+        'package': true
+        'subpackage': true
+        'license': true
+        'copyright': true
+        'author': true
+        'const': true
+        'see': true
+        'todo': true
+        'scope': true
+        'fixme': true
+        'test': true
+        'expectedException': true
+        'expectedExceptionMessage': true
+        'expectedExceptionCode': true
+        'depends': true
+        'dataProvider': true
+        'group': true
+        'codeCoverageIgnore': true
+        'requires': true
+        'Given': true
+        'When': true
+        'Then': true
+        'BeforeScenario': true
+        'AfterScenario': true
+        'fixtures': true
+        'Isolated': true
+        'AfterFeature': true
+        'BeforeFeature': true
+        'BeforeStep': true
+        'AfterStep': true
+        'WithoutSecurityChecks': true
+        'covers': true
+        'doesNotPerformAssertions': true
+        'template': true
+        'psalm': true
+
+      # If enabled, the Reflection Service notes all incorrect or inconsistent usage
+      # of @param annotations in the default log.
+      logIncorrectDocCommentHints: false

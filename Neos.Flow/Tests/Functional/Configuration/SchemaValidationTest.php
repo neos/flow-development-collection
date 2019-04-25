@@ -14,7 +14,7 @@ namespace Neos\Flow\Tests\Functional\Configuration;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Tests\FunctionalTestCase;
-use Neos\Flow\Package\PackageManagerInterface;
+use Neos\Flow\Package\PackageManager;
 use Neos\Utility\SchemaValidator;
 use Neos\Utility\Files;
 use Symfony\Component\Yaml\Yaml;
@@ -36,7 +36,7 @@ class SchemaValidationTest extends FunctionalTestCase
      *
      * @var string
      */
-    protected $schemaSchemaResource = 'resource://Neos.Utility.Schema/Private/Schema/Schema.schema.yaml';
+    protected $schemaSchemaResource = 'resource://Neos.Flow/Private/Schema/Schema.schema.yaml';
 
     /**
      * The parsed schema-schema
@@ -54,7 +54,7 @@ class SchemaValidationTest extends FunctionalTestCase
     {
         parent::setUp();
         $this->schemaValidator = new SchemaValidator();
-        $this->schemaSchema = Yaml::parse($this->schemaSchemaResource);
+        $this->schemaSchema = Yaml::parseFile($this->schemaSchemaResource);
     }
 
     /**
@@ -64,9 +64,9 @@ class SchemaValidationTest extends FunctionalTestCase
     {
         $bootstrap = Bootstrap::$staticObjectManager->get(Bootstrap::class);
         $objectManager = $bootstrap->getObjectManager();
-        $packageManager = $objectManager->get(PackageManagerInterface::class);
+        $packageManager = $objectManager->get(PackageManager::class);
 
-        $activePackages = $packageManager->getActivePackages();
+        $activePackages = $packageManager->getAvailablePackages();
         foreach ($activePackages as $package) {
             $packageKey = $package->getPackageKey();
             if (in_array($packageKey, $this->schemaPackageKeys)) {
@@ -77,7 +77,7 @@ class SchemaValidationTest extends FunctionalTestCase
         $schemaFiles = [];
 
         foreach ($schemaPackages as $package) {
-            $packageSchemaPath = Files::concatenatePaths(array($package->getResourcesPath(), 'Private/Schema'));
+            $packageSchemaPath = Files::concatenatePaths([$package->getResourcesPath(), 'Private/Schema']);
             if (is_dir($packageSchemaPath)) {
                 foreach (Files::getRecursiveDirectoryGenerator($packageSchemaPath, '.schema.yaml') as $schemaFile) {
                     $schemaFiles[] = [$schemaFile];
@@ -95,10 +95,11 @@ class SchemaValidationTest extends FunctionalTestCase
      */
     public function schemaFilesAreValid($schemaFile)
     {
-        $schema = Yaml::parse($schemaFile);
+        $schema = Yaml::parseFile($schemaFile);
         $result = $this->schemaValidator->validate($schema, $this->schemaSchema);
         $hasErrors = $result->hasErrors();
-        $message = sprintf('Schema-file "%s" is valid', $schemaFile);
+
+        $message = sprintf('Schema-file "%s" is not valid: %s', $schemaFile, $result->getFirstError());
         $this->assertFalse($hasErrors, $message);
     }
 }

@@ -11,12 +11,10 @@ namespace Neos\Flow\Tests\Functional\Property\Fixtures;
  * source code.
  */
 
-use Doctrine\ORM\Mapping as ORM;
 use Neos\Flow\Tests\Functional\Property\TypeConverter;
 
 /**
  * A simple class for PropertyMapper test
- *
  */
 class TestClass
 {
@@ -34,6 +32,11 @@ class TestClass
      * @var boolean
      */
     protected $signedCla;
+
+    /**
+     * @var bool
+     */
+    protected $signedClaBool;
 
     /**
      * This has no var annotation by intention.
@@ -120,12 +123,29 @@ class TestClass
     }
 
     /**
+     * @return bool
+     */
+    public function getSignedClaBool()
+    {
+        return $this->signedClaBool;
+    }
+
+    /**
      * @param boolean $signedCla
      * @return void
      */
     public function setSignedCla($signedCla)
     {
         $this->signedCla = $signedCla;
+    }
+
+    /**
+     * @param bool $signedClaBool
+     * @return void
+     */
+    public function setSignedClaBool($signedClaBool)
+    {
+        $this->signedClaBool = $signedClaBool;
     }
 
     /**

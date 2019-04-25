@@ -10,8 +10,8 @@ namespace Neos\Flow\Tests\Functional\Mvc\ViewsConfiguration;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use Neos\Flow\Package\PackageManagerInterface;
 
+use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Tests\FunctionalTestCase;
 
 /**
@@ -90,7 +90,7 @@ class ViewsConfigurationTest extends FunctionalTestCase
      */
     public function changeTemplatePathAndFilenameForWidget()
     {
-        if ($this->objectManager->get(PackageManagerInterface::class)->isPackageActive('Neos.FluidAdaptor') === false) {
+        if ($this->objectManager->get(PackageManager::class)->isPackageAvailable('Neos.FluidAdaptor') === false) {
             $this->markTestSkipped('No Fluid adaptor installed');
         }
 

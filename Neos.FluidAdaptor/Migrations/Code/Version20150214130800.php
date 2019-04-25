@@ -17,7 +17,7 @@ use Neos\Flow\Utility\PhpAnalyzer;
 /**
  * Warn about "escapeOutput" property for existing ViewHelpers to ensure backwards-compatibility
  *
- * Note: If an affected ViewHelper does not create HTML output, you should remove this property (or set it TRUE) in order to ensure sanitization of the output
+ * Note: If an affected ViewHelper does not create HTML output, you should remove this property (or set it true) in order to ensure sanitization of the output
  */
 class Version20150214130800 extends AbstractMigration
 {
@@ -48,7 +48,7 @@ class Version20150214130800 extends AbstractMigration
         }
 
         if ($affectedViewHelperClassNames !== array()) {
-            $this->showWarning('Make sure that the "escapeOutput" property is correct for the following ViewHelpers:' . PHP_EOL . ' * ' . implode(PHP_EOL . ' * ', $affectedViewHelperClassNames) . PHP_EOL . PHP_EOL . 'If an affected ViewHelper does not render HTML output, you should set this property TRUE in order to ensure sanitization of the output!');
+            $this->showWarning('Make sure that the "escapeOutput" property is correct for the following ViewHelpers:' . PHP_EOL . ' * ' . implode(PHP_EOL . ' * ', $affectedViewHelperClassNames) . PHP_EOL . PHP_EOL . 'If an affected ViewHelper does not render HTML output, you should set this property true in order to ensure sanitization of the output!');
         }
     }
 }

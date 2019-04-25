@@ -14,6 +14,8 @@ namespace Neos\Flow\Log;
 /**
  * Marker interface for the system logger.
  *
+ * @deprecated replaced by PsrSystemLoggerInterface
+ * @see PsrSystemLoggerInterface
  */
 interface SystemLoggerInterface extends LoggerInterface
 {

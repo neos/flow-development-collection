@@ -17,6 +17,8 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Component\ComponentContext;
 use Neos\Flow\Http\Request;
 use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
+use Neos\Flow\Mvc\Routing\Dto\RouteContext;
 use Neos\Flow\Mvc\Routing\Route;
 use Neos\Utility\Arrays;
 use Neos\Utility\Files;
@@ -143,7 +145,7 @@ abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
         }
 
         if ($this->testableSecurityEnabled === true || static::$testablePersistenceEnabled === true) {
-            if (is_callable(array(self::$bootstrap->getObjectManager()->get(\Neos\Flow\Persistence\PersistenceManagerInterface::class), 'compile'))) {
+            if (is_callable([self::$bootstrap->getObjectManager()->get(\Neos\Flow\Persistence\PersistenceManagerInterface::class), 'compile'])) {
                 $result = self::$bootstrap->getObjectManager()->get(\Neos\Flow\Persistence\PersistenceManagerInterface::class)->compile();
                 if ($result === false) {
                     self::markTestSkipped('Test skipped because setting up the persistence failed.');
@@ -188,13 +190,13 @@ abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
             $this->testingProvider = $this->objectManager->get(\Neos\Flow\Security\Authentication\Provider\TestingProvider::class);
             $this->testingProvider->setName('TestingProvider');
 
-            $this->registerRoute('functionaltestroute', 'typo3/flow/test', array(
+            $this->registerRoute('functionaltestroute', 'typo3/flow/test', [
                 '@package' => 'Neos.Flow',
                 '@subpackage' => 'Tests\Functional\Mvc\Fixtures',
                 '@controller' => 'Standard',
                 '@action' => 'index',
                 '@format' => 'html'
-            ));
+            ]);
 
             $requestHandler = self::$bootstrap->getActiveRequestHandler();
             $actionRequest = $this->route($requestHandler->getHttpRequest());
@@ -213,7 +215,7 @@ abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
     protected function route(Request $httpRequest)
     {
         $actionRequest = new ActionRequest($httpRequest);
-        $matchResults = $this->router->route($httpRequest);
+        $matchResults = $this->router->route(new RouteContext($httpRequest, RouteParameters::createEmpty()));
         if ($matchResults !== null) {
             $requestArguments = $actionRequest->getArguments();
             $mergedArguments = Arrays::arrayMergeRecursiveOverrule($requestArguments, $matchResults);
@@ -247,7 +249,7 @@ abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
         } catch (\Exception $exception) {
         }
 
-        if (is_callable(array($persistenceManager, 'tearDown'))) {
+        if (is_callable([$persistenceManager, 'tearDown'])) {
             $persistenceManager->tearDown();
         }
 
@@ -255,7 +257,7 @@ abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
         self::$bootstrap->getObjectManager()->forgetInstance(\Neos\Flow\Persistence\Aspect\PersistenceMagicAspect::class);
         $this->inject(self::$bootstrap->getObjectManager()->get(\Neos\Flow\ResourceManagement\ResourceRepository::class), 'addedResources', new \SplObjectStorage());
         $this->inject(self::$bootstrap->getObjectManager()->get(\Neos\Flow\ResourceManagement\ResourceRepository::class), 'removedResources', new \SplObjectStorage());
-        $this->inject(self::$bootstrap->getObjectManager()->get(\Neos\Flow\ResourceManagement\ResourceTypeConverter::class), 'convertedResources', array());
+        $this->inject(self::$bootstrap->getObjectManager()->get(\Neos\Flow\ResourceManagement\ResourceTypeConverter::class), 'convertedResources', []);
 
         $this->cleanupPersistentResourcesDirectory();
         $this->emitFunctionalTestTearDown();
@@ -296,7 +298,7 @@ abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
     protected function authenticateRoles(array $roleNames)
     {
         $account = new \Neos\Flow\Security\Account();
-        $roles = array();
+        $roles = [];
         foreach ($roleNames as $roleName) {
             $roles[] = $this->policyService->getRole($roleName);
         }
@@ -369,11 +371,11 @@ abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
      */
     protected static function setupSuperGlobals()
     {
-        $_GET = array();
-        $_POST = array();
-        $_COOKIE = array();
-        $_FILES = array();
-        $_SERVER = array(
+        $_GET = [];
+        $_POST = [];
+        $_COOKIE = [];
+        $_FILES = [];
+        $_SERVER = [
             'REDIRECT_FLOW_CONTEXT' => 'Development',
             'REDIRECT_FLOW_REWRITEURLS' => '1',
             'REDIRECT_STATUS' => '200',
@@ -406,7 +408,7 @@ abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
             'SCRIPT_NAME' => '/index.php',
             'PHP_SELF' => '/index.php',
             'REQUEST_TIME' => 1326472534,
-        );
+        ];
     }
 
     /**
@@ -437,12 +439,21 @@ abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
     protected function cleanupPersistentResourcesDirectory()
     {
         $settings = self::$bootstrap->getObjectManager()->get(ConfigurationManager::class)->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS);
-        $resourcesStoragePath = $settings['Neos']['Flow']['resource']['storages']['defaultPersistentResourcesStorage']['storageOptions']['path'];
-        if (strpos($resourcesStoragePath, FLOW_PATH_DATA) === false) {
-            throw new \Exception(sprintf('The storage path for persistent resources for the Testing context is "%s" but it must point to a directory below "%s". Please check the Flow settings for the Testing context.', $resourcesStoragePath, FLOW_PATH_DATA), 1382018388);
-        }
-        if (file_exists($resourcesStoragePath)) {
-            Files::removeDirectoryRecursively($resourcesStoragePath);
+        foreach ($settings['Neos']['Flow']['resource']['storages'] as $storageName => $storageSettings) {
+            if (!isset($storageSettings['storageOptions']['path'])) {
+                continue;
+            }
+
+            $resourcesStoragePath = $storageSettings['storageOptions']['path'];
+            if (strpos($resourcesStoragePath, FLOW_PATH_DATA) === false) {
+                throw new \Exception(sprintf('The storage path for persistent resources for the Testing context is "%s" for the "%s" storage, but it must point to a directory below "%s". Please check the Flow settings for the Testing context.', $resourcesStoragePath, $storageName, FLOW_PATH_DATA), 1382018388);
+            }
+            if (strpos($resourcesStoragePath, '/Test/') === false) {
+                throw new \Exception(sprintf('The storage path for persistent resources for the Testing context is "%s" for the "%s" storage, but it must contain "/Test/". Please check the Flow settings for the Testing context.', $resourcesStoragePath, $storageName), 1382018388);
+            }
+            if (file_exists($resourcesStoragePath)) {
+                Files::removeDirectoryRecursively($resourcesStoragePath);
+            }
         }
     }
 

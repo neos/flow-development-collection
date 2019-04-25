@@ -77,12 +77,12 @@ class YamlSourceTest extends UnitTestCase
     {
         $pathAndFilename = vfsStream::url('testDirectory') . '/YAMLConfiguration';
         $configurationSource = new YamlSource();
-        $mockConfiguration = array(
+        $mockConfiguration = [
             'configurationFileHasBeenLoaded' => true,
-            'foo' => array(
+            'foo' => [
                 'Foo.Bar:Baz' => 'a quoted key'
-            )
-        );
+            ]
+        ];
         $configurationSource->save($pathAndFilename, $mockConfiguration);
 
         $yaml = 'configurationFileHasBeenLoaded: true' . chr(10) . 'foo:' . chr(10) . '  \'Foo.Bar:Baz\': \'a quoted key\'' . chr(10);
@@ -149,5 +149,16 @@ class YamlSourceTest extends UnitTestCase
         $configurationSource = new YamlSource();
         $configuration = $configurationSource->load($pathAndFilename, true);
         $this->assertSame($expectedConfiguration, $configuration);
+    }
+
+    /**
+     * @test
+     * @expectedException \Neos\Flow\Configuration\Exception
+     */
+    public function configurationFileWithYmlExtensionResultsInException()
+    {
+        $pathAndFilename = __DIR__ . '/../Fixture/YmlThrowsException';
+        $configurationSource = new YamlSource();
+        $configurationSource->load($pathAndFilename, true);
     }
 }

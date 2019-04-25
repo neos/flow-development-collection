@@ -11,7 +11,7 @@ namespace Neos\Flow\Composer;
  * source code.
  */
 
-use Neos\Flow\Package\PackageInterface;
+use Neos\Flow\Package\FlowPackageInterface;
 use Neos\Utility\ObjectAccess;
 use Neos\Utility\Files;
 
@@ -43,7 +43,7 @@ class ComposerUtility
      * @param string $configurationPath Optional. Only return the part of the manifest indexed by configurationPath
      * @return array|mixed
      */
-    public static function getComposerManifest($manifestPath, $configurationPath = null)
+    public static function getComposerManifest(string $manifestPath, string $configurationPath = null)
     {
         $composerManifest = static::readComposerManifest($manifestPath);
         if ($composerManifest === null) {
@@ -52,9 +52,8 @@ class ComposerUtility
 
         if ($configurationPath !== null) {
             return ObjectAccess::getPropertyPath($composerManifest, $configurationPath);
-        } else {
-            return $composerManifest;
         }
+        return $composerManifest;
     }
 
     /**
@@ -62,7 +61,7 @@ class ComposerUtility
      *
      * @return array
      */
-    public static function readComposerLock()
+    public static function readComposerLock(): array
     {
         if (self::$composerLockCache !== null) {
             return self::$composerLockCache;
@@ -88,7 +87,7 @@ class ComposerUtility
      * @return array
      * @throws Exception\MissingPackageManifestException
      */
-    protected static function readComposerManifest($manifestPath)
+    protected static function readComposerManifest(string $manifestPath): array
     {
         $manifestPathAndFilename = $manifestPath . 'composer.json';
         if (isset(self::$composerManifestCache[$manifestPathAndFilename])) {
@@ -101,7 +100,7 @@ class ComposerUtility
         $json = file_get_contents($manifestPathAndFilename);
         $composerManifest = json_decode($json, true);
 
-        if($composerManifest === null){
+        if ($composerManifest === null) {
             throw new Exception\InvalidPackageManifestException(sprintf('The composer manifest file found at "%s" could not be parsed. Check for JSON syntax errors!', $manifestPathAndFilename), 1493909988);
         }
 
@@ -115,7 +114,7 @@ class ComposerUtility
      * @param string $packageType
      * @return boolean
      */
-    public static function isFlowPackageType($packageType)
+    public static function isFlowPackageType(string $packageType): bool
     {
         foreach (['typo3-flow-', 'neos-'] as $allowedPackageTypePrefix) {
             if (strpos($packageType, $allowedPackageTypePrefix) === 0) {
@@ -132,7 +131,7 @@ class ComposerUtility
      * @param string $packageKey
      * @return string
      */
-    public static function getComposerPackageNameFromPackageKey($packageKey)
+    public static function getComposerPackageNameFromPackageKey(string $packageKey): string
     {
         $nameParts = explode('.', $packageKey);
         $vendor = array_shift($nameParts);
@@ -147,7 +146,7 @@ class ComposerUtility
      * @param array $composerManifestData
      * @return array the manifest data written
      */
-    public static function writeComposerManifest($manifestPath, $packageKey, array $composerManifestData = [])
+    public static function writeComposerManifest(string $manifestPath, string $packageKey, array $composerManifestData = []): array
     {
         $manifest = [
             'description' => ''
@@ -161,23 +160,45 @@ class ComposerUtility
         }
 
         if (!isset($manifest['require']) || empty($manifest['require'])) {
-            $manifest['require'] = array('neos/flow' => '*');
+            $manifest['require'] = ['neos/flow' => '*'];
         }
 
         if (!isset($manifest['autoload'])) {
             $namespace = str_replace('.', '\\', $packageKey) . '\\';
-            $manifest['autoload'] = array('psr-4' => array($namespace => PackageInterface::DIRECTORY_CLASSES));
+            $manifest['autoload'] = ['psr-4' => [$namespace => FlowPackageInterface::DIRECTORY_CLASSES]];
         }
 
         $manifest['extra']['neos']['package-key'] = $packageKey;
 
         if (defined('JSON_PRETTY_PRINT')) {
-            file_put_contents(Files::concatenatePaths(array($manifestPath, 'composer.json')), json_encode($manifest, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT));
+            file_put_contents(Files::concatenatePaths([$manifestPath, 'composer.json']), json_encode($manifest, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT));
         } else {
-            file_put_contents(Files::concatenatePaths(array($manifestPath, 'composer.json')), json_encode($manifest));
+            file_put_contents(Files::concatenatePaths([$manifestPath, 'composer.json']), json_encode($manifest));
         }
 
         return $manifest;
+    }
+
+    /**
+     * Get the package version of the given package
+     * Return normalized package version.
+     *
+     * @param string $composerName
+     * @return string
+     * @see https://getcomposer.org/doc/04-schema.md#version
+     */
+    public static function getPackageVersion($composerName)
+    {
+        foreach (self::readComposerLock() as $composerLockData) {
+            if (!isset($composerLockData['name'])) {
+                continue;
+            }
+            if ($composerLockData['name'] === $composerName) {
+                return preg_replace('/^v([0-9])/', '$1', $composerLockData['version'], 1);
+            }
+        }
+
+        return '';
     }
 
     /**

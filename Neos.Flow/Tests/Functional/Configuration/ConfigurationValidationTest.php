@@ -14,7 +14,6 @@ namespace Neos\Flow\Tests\Functional\Configuration;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Configuration\ConfigurationSchemaValidator;
-use Neos\Flow\Package\PackageManagerInterface;
 use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Core\ApplicationContext;
 use Neos\Error\Messages\Error;
@@ -65,11 +64,6 @@ class ConfigurationValidationTest extends FunctionalTestCase
     protected $mockConfigurationManager;
 
     /**
-     * @var PackageManager
-     */
-    protected $mockPackageManager;
-
-    /**
      * @return void
      */
     public function setUp()
@@ -84,8 +78,8 @@ class ConfigurationValidationTest extends FunctionalTestCase
         $configurationPackages = [];
 
         // get all packages and select the ones we want to test
-        $temporaryPackageManager = $this->objectManager->get(PackageManagerInterface::class);
-        foreach ($temporaryPackageManager->getActivePackages() as $package) {
+        $temporaryPackageManager = $this->objectManager->get(PackageManager::class);
+        foreach ($temporaryPackageManager->getAvailablePackages() as $package) {
             if (in_array($package->getPackageKey(), $this->getSchemaPackageKeys())) {
                 $schemaPackages[$package->getPackageKey()] = $package;
             }
@@ -94,13 +88,9 @@ class ConfigurationValidationTest extends FunctionalTestCase
             }
         }
 
-        $this->mockPackageManager = $this->createMock(PackageManager::class);
-        $this->mockPackageManager->expects($this->any())->method('getActivePackages')->will($this->returnValue($schemaPackages));
-
         //
         // create mock configurationManager and store the original one
         //
-
         $this->originalConfigurationManager = $this->objectManager->get(ConfigurationManager::class);
 
         $yamlConfigurationSource = $this->objectManager->get(\Neos\Flow\Tests\Functional\Configuration\Fixtures\RootDirectoryIgnoringYamlSource::class);

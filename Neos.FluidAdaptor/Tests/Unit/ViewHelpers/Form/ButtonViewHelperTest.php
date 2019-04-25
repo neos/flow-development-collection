@@ -28,10 +28,10 @@ class ButtonViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\For
     public function setUp()
     {
         parent::setUp();
-        $this->viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\Form\ButtonViewHelper::class, array('renderChildren'));
+        $this->viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\Form\ButtonViewHelper::class, ['renderChildren','registerRenderMethodArguments']);
         $this->arguments['name'] = '';
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
-        $this->viewHelper->initializeArguments();
+        //$this->viewHelper->initializeArguments();
     }
 
     /**
@@ -39,7 +39,7 @@ class ButtonViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\For
      */
     public function renderCorrectlySetsTagNameAndDefaultAttributes()
     {
-        $mockTagBuilder = $this->getMockBuilder(TagBuilder::class)->setMethods(array('setTagName', 'addAttribute', 'setContent'))->getMock();
+        $mockTagBuilder = $this->getMockBuilder(TagBuilder::class)->setMethods(['setTagName', 'addAttribute', 'setContent'])->getMock();
         $mockTagBuilder->expects($this->any())->method('setTagName')->with('button');
         $mockTagBuilder->expects($this->at(2))->method('addAttribute')->with('type', 'submit');
         $mockTagBuilder->expects($this->at(3))->method('addAttribute')->with('name', '');
@@ -50,7 +50,7 @@ class ButtonViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\For
 
         $this->viewHelper->injectTagBuilder($mockTagBuilder);
 
-        $this->viewHelper->initialize();
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, []);
         $this->viewHelper->render();
     }
 }

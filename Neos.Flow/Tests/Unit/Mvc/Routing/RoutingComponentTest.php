@@ -14,9 +14,12 @@ namespace Neos\Flow\Tests\Unit\Mvc\Routing;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Http\Component\ComponentContext;
 use Neos\Flow\Http\Request;
+use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
+use Neos\Flow\Mvc\Routing\Dto\RouteContext;
 use Neos\Flow\Mvc\Routing\Router;
 use Neos\Flow\Mvc\Routing\RoutingComponent;
 use Neos\Flow\Tests\UnitTestCase;
+use Psr\Http\Message\UriInterface;
 
 /**
  * Testcase for the MVC RoutingComponent
@@ -49,6 +52,11 @@ class RoutingComponentTest extends UnitTestCase
     protected $mockHttpRequest;
 
     /**
+     * @var UriInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $mockRequestUri;
+
+    /**
      * Sets up this test case
      *
      */
@@ -66,6 +74,9 @@ class RoutingComponentTest extends UnitTestCase
 
         $this->mockHttpRequest = $this->getMockBuilder(Request::class)->disableOriginalConstructor()->getMock();
         $this->mockComponentContext->expects($this->any())->method('getHttpRequest')->will($this->returnValue($this->mockHttpRequest));
+
+        $this->mockRequestUri = $this->getMockBuilder(UriInterface::class)->getMock();
+        $this->mockHttpRequest->expects($this->any())->method('getUri')->will($this->returnValue($this->mockRequestUri));
     }
 
     /**
@@ -74,8 +85,9 @@ class RoutingComponentTest extends UnitTestCase
     public function handleStoresRouterMatchResultsInTheComponentContext()
     {
         $mockMatchResults = ['someRouterMatchResults'];
+        $routeContext = new RouteContext($this->mockHttpRequest, RouteParameters::createEmpty());
 
-        $this->mockRouter->expects($this->atLeastOnce())->method('route')->with($this->mockHttpRequest)->will($this->returnValue($mockMatchResults));
+        $this->mockRouter->expects($this->atLeastOnce())->method('route')->with($routeContext)->will($this->returnValue($mockMatchResults));
         $this->mockComponentContext->expects($this->atLeastOnce())->method('setParameter')->with(RoutingComponent::class, 'matchResults', $mockMatchResults);
 
         $this->routingComponent->handle($this->mockComponentContext);

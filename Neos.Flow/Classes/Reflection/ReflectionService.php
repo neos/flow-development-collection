@@ -19,11 +19,9 @@ use Neos\Cache\Frontend\FrontendInterface;
 use Neos\Cache\Frontend\StringFrontend;
 use Neos\Cache\Frontend\VariableFrontend;
 use Neos\Flow\Core\ApplicationContext;
-use Neos\Flow\Core\ClassLoader;
-use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\ObjectManagement\Proxy\ProxyInterface;
 use Neos\Flow\Package;
-use Neos\Flow\Package\PackageManagerInterface;
+use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Persistence\RepositoryInterface;
 use Neos\Flow\Reflection\Exception\ClassSchemaConstraintViolationException;
 use Neos\Flow\Reflection\Exception\InvalidPropertyTypeException;
@@ -33,6 +31,8 @@ use Neos\Flow\Utility\Environment;
 use Neos\Utility\Exception\InvalidTypeException;
 use Neos\Utility\Files;
 use Neos\Utility\TypeHandling;
+use Psr\Log\LoggerInterface;
+use Psr\Log\LogLevel;
 
 /**
  * A service for acquiring reflection based information in a performant way. This
@@ -131,12 +131,12 @@ class ReflectionService
     protected $classSchemataRuntimeCache;
 
     /**
-     * @var SystemLoggerInterface
+     * @var LoggerInterface
      */
-    protected $systemLogger;
+    protected $logger;
 
     /**
-     * @var PackageManagerInterface
+     * @var PackageManager
      */
     protected $packageManager;
 
@@ -168,7 +168,7 @@ class ReflectionService
     protected $useStatementsForClassCache;
 
     /**
-     * In Production context, with frozen caches, this flag will be TRUE
+     * In Production context, with frozen caches, this flag will be true
      *
      * @var boolean
      */
@@ -282,23 +282,25 @@ class ReflectionService
      */
     public function injectSettings(array $settings)
     {
-        $this->settings = $settings;
+        $this->settings = $settings['reflection'];
     }
 
     /**
-     * @param SystemLoggerInterface $systemLogger
+     * Injects the (system) logger based on PSR-3.
+     *
+     * @param LoggerInterface $logger
      * @return void
      */
-    public function injectSystemLogger(SystemLoggerInterface $systemLogger)
+    public function injectLogger(LoggerInterface $logger)
     {
-        $this->systemLogger = $systemLogger;
+        $this->logger = $logger;
     }
 
     /**
-     * @param PackageManagerInterface $packageManager
+     * @param PackageManager $packageManager
      * @return void
      */
-    public function injectPackageManager(PackageManagerInterface $packageManager)
+    public function injectPackageManager(PackageManager $packageManager)
     {
         $this->packageManager = $packageManager;
     }
@@ -346,7 +348,7 @@ class ReflectionService
         }
 
         $this->annotationReader = new AnnotationReader();
-        foreach ($this->settings['reflection']['ignoredTags'] as $tagName => $ignoreFlag) {
+        foreach ($this->settings['ignoredTags'] as $tagName => $ignoreFlag) {
             if ($ignoreFlag === true) {
                 AnnotationReader::addGlobalIgnoredName($tagName);
             }
@@ -410,10 +412,10 @@ class ReflectionService
     /**
      * Searches for and returns the class name of the default implementation of the given
      * interface name. If no class implementing the interface was found or more than one
-     * implementation was found in the package defining the interface, FALSE is returned.
+     * implementation was found in the package defining the interface, false is returned.
      *
      * @param string $interfaceName Name of the interface
-     * @return mixed Either the class name of the default implementation for the object type or FALSE
+     * @return mixed Either the class name of the default implementation for the object type or false
      * @throws \InvalidArgumentException if the given interface does not exist
      * @api
      */
@@ -493,19 +495,6 @@ class ReflectionService
         $this->loadOrReflectClassIfNecessary($className);
 
         return (isset($this->classReflectionData[$className][self::DATA_CLASS_SUBCLASSES])) ? array_keys($this->classReflectionData[$className][self::DATA_CLASS_SUBCLASSES]) : [];
-    }
-
-    /**
-     * Returns the class name of the given object. This is a convenience
-     * method that returns the expected class names even for proxy classes.
-     *
-     * @param object $object
-     * @return string The class name of the given object
-     * @deprecated since 3.0 use \Neos\Utility\TypeHandling::getTypeForValue() instead
-     */
-    public function getClassNameByObject($object)
-    {
-        return TypeHandling::getTypeForValue($object);
     }
 
     /**
@@ -599,7 +588,7 @@ class ReflectionService
      *
      * @param string $className Name of the class
      * @param string $interfaceName interface to check for
-     * @return boolean TRUE if the class implements $interfaceName, otherwise FALSE
+     * @return boolean true if the class implements $interfaceName, otherwise false
      * @api
      */
     public function isClassImplementationOf($className, $interfaceName)
@@ -616,7 +605,7 @@ class ReflectionService
      * Tells if the specified class is abstract or not
      *
      * @param string $className Name of the class to analyze
-     * @return boolean TRUE if the class is abstract, otherwise FALSE
+     * @return boolean true if the class is abstract, otherwise false
      * @api
      */
     public function isClassAbstract($className)
@@ -629,7 +618,7 @@ class ReflectionService
      * Tells if the specified class is final or not
      *
      * @param string $className Name of the class to analyze
-     * @return boolean TRUE if the class is final, otherwise FALSE
+     * @return boolean true if the class is final, otherwise false
      * @api
      */
     public function isClassFinal($className)
@@ -642,7 +631,7 @@ class ReflectionService
      * Tells if the class is unconfigurable or not
      *
      * @param string $className Name of the class to analyze
-     * @return boolean return TRUE if class not could not be automatically configured, otherwise FALSE
+     * @return boolean return true if class not could not be automatically configured, otherwise false
      * @api
      */
     public function isClassUnconfigurable($className)
@@ -690,7 +679,7 @@ class ReflectionService
      *
      * @param string $className Name of the class containing the method
      * @param string $methodName Name of the method to analyze
-     * @return boolean TRUE if the method is final, otherwise FALSE
+     * @return boolean true if the method is final, otherwise false
      * @api
      */
     public function isMethodFinal($className, $methodName)
@@ -704,7 +693,7 @@ class ReflectionService
      *
      * @param string $className Name of the class containing the method
      * @param string $methodName Name of the method to analyze
-     * @return boolean TRUE if the method is static, otherwise FALSE
+     * @return boolean true if the method is static, otherwise false
      * @api
      */
     public function isMethodStatic($className, $methodName)
@@ -718,7 +707,7 @@ class ReflectionService
      *
      * @param string $className Name of the class containing the method
      * @param string $methodName Name of the method to analyze
-     * @return boolean TRUE if the method is public, otherwise FALSE
+     * @return boolean true if the method is public, otherwise false
      * @api
      */
     public function isMethodPublic($className, $methodName)
@@ -732,7 +721,7 @@ class ReflectionService
      *
      * @param string $className Name of the class containing the method
      * @param string $methodName Name of the method to analyze
-     * @return boolean TRUE if the method is protected, otherwise FALSE
+     * @return boolean true if the method is protected, otherwise false
      * @api
      */
     public function isMethodProtected($className, $methodName)
@@ -746,7 +735,7 @@ class ReflectionService
      *
      * @param string $className Name of the class containing the method
      * @param string $methodName Name of the method to analyze
-     * @return boolean TRUE if the method is private, otherwise FALSE
+     * @return boolean true if the method is private, otherwise false
      * @api
      */
     public function isMethodPrivate($className, $methodName)
@@ -761,7 +750,7 @@ class ReflectionService
      * @param string $className Name of the class containing the method
      * @param string $methodName Name of the method to analyze
      * @param string $tag Tag to check for
-     * @return boolean TRUE if the method is tagged with $tag, otherwise FALSE
+     * @return boolean true if the method is tagged with $tag, otherwise false
      * @api
      */
     public function isMethodTaggedWith($className, $methodName, $tag)
@@ -993,7 +982,7 @@ class ReflectionService
      *
      * @param string $className Name of the class containing the method
      * @param string $propertyName Name of the property to analyze
-     * @return boolean TRUE if the property is private, otherwise FALSE
+     * @return boolean true if the property is private, otherwise false
      * @api
      */
     public function isPropertyPrivate($className, $propertyName)
@@ -1009,7 +998,7 @@ class ReflectionService
      * @param string $className Name of the class
      * @param string $propertyName Name of the property
      * @param string $tag Tag to check for
-     * @return boolean TRUE if the class property is tagged with $tag, otherwise FALSE
+     * @return boolean true if the class property is tagged with $tag, otherwise false
      * @api
      */
     public function isPropertyTaggedWith($className, $propertyName, $tag)
@@ -1167,7 +1156,7 @@ class ReflectionService
             return;
         }
 
-        $this->systemLogger->log('Reflected class names did not match class names to reflect', LOG_DEBUG);
+        $this->log('Reflected class names did not match class names to reflect', LogLevel::DEBUG);
         $count = 0;
 
         $classNameFilterFunction = function ($className) use (&$count) {
@@ -1194,7 +1183,7 @@ class ReflectionService
         $this->buildClassSchemata($classNamesToBuildSchemaFor);
 
         if ($count > 0) {
-            $this->log(sprintf('Reflected %s emerged classes.', $count), LOG_INFO);
+            $this->log(sprintf('Reflected %s emerged classes.', $count), LogLevel::INFO);
         }
     }
 
@@ -1202,15 +1191,15 @@ class ReflectionService
      * Check if a specific annotation tag is configured to be ignored.
      *
      * @param string $tagName The annotation tag to check
-     * @return boolean TRUE if the tag is configured to be ignored, FALSE otherwise
+     * @return boolean true if the tag is configured to be ignored, false otherwise
      */
     protected function isTagIgnored($tagName)
     {
-        if (isset($this->settings['reflection']['ignoredTags'][$tagName]) && $this->settings['reflection']['ignoredTags'][$tagName] === true) {
+        if (isset($this->settings['ignoredTags'][$tagName]) && $this->settings['ignoredTags'][$tagName] === true) {
             return true;
         }
         // Make this setting backwards compatible with old array schema (deprecated since 3.0)
-        if (in_array($tagName, $this->settings['reflection']['ignoredTags'], true)) {
+        if (in_array($tagName, $this->settings['ignoredTags'], true)) {
             return true;
         }
 
@@ -1226,7 +1215,7 @@ class ReflectionService
      */
     protected function reflectClass($className)
     {
-        $this->log(sprintf('Reflecting class %s', $className), LOG_DEBUG);
+        $this->log(sprintf('Reflecting class %s', $className), LogLevel::DEBUG);
 
         $className = $this->cleanClassName($className);
         if (strpos($className, 'Neos\Flow\Persistence\Doctrine\Proxies') === 0 && in_array(\Doctrine\ORM\Proxy\Proxy::class, class_implements($className))) {
@@ -1392,15 +1381,13 @@ class ReflectionService
         }
 
         $returnType = $method->getDeclaredReturnType();
-        if ($returnType !== null) {
-            if (!TypeHandling::isSimpleType($returnType) && !in_array($returnType, ['self', 'null', 'callable'])) {
-                $returnType = '\\' . $returnType;
-            }
-            if ($method->isDeclaredReturnTypeNullable()) {
-                $returnType = '?' . $returnType;
-            }
-            $this->classReflectionData[$className][self::DATA_CLASS_METHODS][$methodName][self::DATA_METHOD_DECLARED_RETURN_TYPE] = $returnType;
+        if ($returnType !== null && !in_array($returnType, ['self', 'null', 'callable', 'void']) && !TypeHandling::isSimpleType($returnType)) {
+            $returnType = '\\' . $returnType;
         }
+        if ($method->isDeclaredReturnTypeNullable()) {
+            $returnType = '?' . $returnType;
+        }
+        $this->classReflectionData[$className][self::DATA_CLASS_METHODS][$methodName][self::DATA_METHOD_DECLARED_RETURN_TYPE] = $returnType;
 
         foreach ($method->getParameters() as $parameter) {
             $this->reflectClassMethodParameter($className, $method, $parameter);
@@ -1419,30 +1406,30 @@ class ReflectionService
         $paramAnnotations = $method->isTaggedWith('param') ? $method->getTagValues('param') : [];
 
         $this->classReflectionData[$className][self::DATA_CLASS_METHODS][$methodName][self::DATA_METHOD_PARAMETERS][$parameter->getName()] = $this->convertParameterReflectionToArray($parameter, $method);
-        if ($this->settings['reflection']['logIncorrectDocCommentHints'] !== true) {
+        if ($this->settings['logIncorrectDocCommentHints'] !== true) {
             return;
         }
 
         if (!isset($paramAnnotations[$parameter->getPosition()])) {
-            $this->log('  Missing @param for "' . $method->getName() . '::$' . $parameter->getName(), LOG_DEBUG);
+            $this->log('  Missing @param for "' . $method->getName() . '::$' . $parameter->getName(), LogLevel::DEBUG);
 
             return;
         }
 
         $parameterAnnotation = explode(' ', $paramAnnotations[$parameter->getPosition()], 3);
         if (count($parameterAnnotation) < 2) {
-            $this->log('  Wrong @param use for "' . $method->getName() . '::' . $parameter->getName() . '": "' . implode(' ', $parameterAnnotation) . '"', LOG_DEBUG);
+            $this->log('  Wrong @param use for "' . $method->getName() . '::' . $parameter->getName() . '": "' . implode(' ', $parameterAnnotation) . '"', LogLevel::DEBUG);
         }
 
         if (
             isset($this->classReflectionData[$className][self::DATA_CLASS_METHODS][$methodName][self::DATA_METHOD_PARAMETERS][$parameter->getName()][self::DATA_PARAMETER_TYPE]) &&
             $this->classReflectionData[$className][self::DATA_CLASS_METHODS][$methodName][self::DATA_METHOD_PARAMETERS][$parameter->getName()][self::DATA_PARAMETER_TYPE] !== $this->cleanClassName($parameterAnnotation[0])
         ) {
-            $this->log('  Wrong type in @param for "' . $method->getName() . '::' . $parameter->getName() . '": "' . $parameterAnnotation[0] . '"', LOG_DEBUG);
+            $this->log('  Wrong type in @param for "' . $method->getName() . '::' . $parameter->getName() . '": "' . $parameterAnnotation[0] . '"', LogLevel::DEBUG);
         }
 
         if ($parameter->getName() !== ltrim($parameterAnnotation[1], '$&')) {
-            $this->log('  Wrong name in @param for "' . $method->getName() . '::$' . $parameter->getName() . '": "' . $parameterAnnotation[1] . '"', LOG_DEBUG);
+            $this->log('  Wrong name in @param for "' . $method->getName() . '::$' . $parameter->getName() . '": "' . $parameterAnnotation[1] . '"', LogLevel::DEBUG);
         }
     }
 
@@ -1455,24 +1442,32 @@ class ReflectionService
      */
     protected function expandType(ClassReflection $class, $type)
     {
+        $typeWithoutNull = TypeHandling::stripNullableType($type);
+        $isNullable = $typeWithoutNull !== $type;
         // expand "SomeType<SomeElementType>" to "\SomeTypeNamespace\SomeType<\ElementTypeNamespace\ElementType>"
         if (strpos($type, '<') !== false) {
-            $typeParts = explode('<', $type);
+            $typeParts = explode('<', $typeWithoutNull);
             $type = $typeParts[0];
             $elementType = rtrim($typeParts[1], '>');
 
-            return $this->expandType($class, $type) . '<' . $this->expandType($class, $elementType) . '>';
+            return $this->expandType($class, $type) . '<' . $this->expandType($class, $elementType) . '>' . ($isNullable ? '|null' : '');
+        }
+
+        // expand SomeElementType[]" to "array<\ElementTypeNamespace\SomeElementType>"
+        if (substr_compare($typeWithoutNull, '[]', -2, 2) === 0) {
+            $elementType = substr($typeWithoutNull, 0, -2);
+            return 'array<' . $this->expandType($class, $elementType) . '>' . ($isNullable ? '|null' : '');
         }
 
         // skip simple types and types with fully qualified namespaces
         if ($type === 'mixed' || $type[0] === '\\' || TypeHandling::isSimpleType($type)) {
-            return TypeHandling::normalizeType($type);
+            return TypeHandling::normalizeType($type) . ($isNullable ? '|null' : '');
         }
 
         // we try to find the class relative to the current namespace...
-        $possibleFullyQualifiedClassName = sprintf('%s\\%s', $class->getNamespaceName(), $type);
+        $possibleFullyQualifiedClassName = sprintf('%s\\%s', $class->getNamespaceName(), $typeWithoutNull);
         if (class_exists($possibleFullyQualifiedClassName) || interface_exists($possibleFullyQualifiedClassName)) {
-            return $possibleFullyQualifiedClassName;
+            return $possibleFullyQualifiedClassName . ($isNullable ? '|null' : '');
         }
 
         // and then we try to find "use" statements for the class.
@@ -1483,12 +1478,12 @@ class ReflectionService
         $useStatementsForClass = $this->useStatementsForClassCache[$className];
 
         // ... and try to expand them
-        $typeParts = explode('\\', $type, 2);
+        $typeParts = explode('\\', $typeWithoutNull, 2);
         $lowercasedFirstTypePart = strtolower($typeParts[0]);
         if (isset($useStatementsForClass[$lowercasedFirstTypePart])) {
             $typeParts[0] = $useStatementsForClass[$lowercasedFirstTypePart];
 
-            return implode('\\', $typeParts);
+            return implode('\\', $typeParts) . ($isNullable ? '|null' : '');
         }
 
         return $type;
@@ -1835,7 +1830,7 @@ class ReflectionService
         if (!isset($parameterInformation[self::DATA_PARAMETER_TYPE]) && $parameterClass !== null) {
             $parameterInformation[self::DATA_PARAMETER_TYPE] = $this->cleanClassName($parameterClass->getName());
         } elseif (!isset($parameterInformation[self::DATA_PARAMETER_TYPE])) {
-            $parameterInformation[self::DATA_PARAMETER_TYPE] = 'mixed';
+            $parameterInformation[self::DATA_PARAMETER_TYPE] = $parameter->isArray() ? 'array' : 'mixed';
         }
 
         return $parameterInformation;
@@ -1883,10 +1878,9 @@ class ReflectionService
      */
     protected function forgetClass($className)
     {
-        $this->systemLogger->log('Forget class ' . $className, LOG_DEBUG);
+        $this->log('Forget class ' . $className, LogLevel::DEBUG);
         if (isset($this->classesCurrentlyBeingForgotten[$className])) {
-            $this->systemLogger->log('Detected recursion while forgetting class ' . $className, LOG_WARNING);
-
+            $this->log('Detected recursion while forgetting class ' . $className, LogLevel::WARNING);
             return;
         }
         $this->classesCurrentlyBeingForgotten[$className] = true;
@@ -1940,10 +1934,10 @@ class ReflectionService
      *
      * If no reflection data was found, this method will at least load the precompiled
      * reflection data of any possible frozen package. Even if precompiled reflection
-     * data could be loaded, FALSE will be returned in order to signal that other
+     * data could be loaded, false will be returned in order to signal that other
      * packages still need to be reflected.
      *
-     * @return boolean TRUE if reflection data could be loaded, otherwise FALSE
+     * @return boolean true if reflection data could be loaded, otherwise false
      */
     protected function loadClassReflectionCompiletimeCache()
     {
@@ -1962,7 +1956,7 @@ class ReflectionService
         }
 
         $useIgBinary = extension_loaded('igbinary');
-        foreach ($this->packageManager->getActivePackages() as $packageKey => $package) {
+        foreach ($this->packageManager->getAvailablePackages() as $packageKey => $package) {
             if (!$this->packageManager->isPackageFrozen($packageKey)) {
                 continue;
             }
@@ -2144,7 +2138,7 @@ class ReflectionService
         foreach (array_keys($this->packageManager->getFrozenPackages()) as $packageKey) {
             $pathAndFilename = $this->getPrecompiledReflectionStoragePath() . $packageKey . '.dat';
             if (!file_exists($pathAndFilename)) {
-                $this->log(sprintf('Rebuilding precompiled reflection data for frozen package %s.', $packageKey), LOG_INFO);
+                $this->log(sprintf('Rebuilding precompiled reflection data for frozen package %s.', $packageKey), LogLevel::DEBUG);
                 $this->freezePackageReflection($packageKey);
             }
         }
@@ -2172,7 +2166,7 @@ class ReflectionService
         $this->reflectionDataRuntimeCache->getBackend()->freeze();
         $this->classSchemataRuntimeCache->getBackend()->freeze();
 
-        $this->log(sprintf('Built and froze reflection runtime caches (%s classes).', count($this->classReflectionData)), LOG_INFO);
+        $this->log(sprintf('Built and froze reflection runtime caches (%s classes).', count($this->classReflectionData)), LogLevel::INFO);
     }
 
     /**
@@ -2180,7 +2174,7 @@ class ReflectionService
      */
     protected function updateReflectionData()
     {
-        $this->log(sprintf('Found %s classes whose reflection data was not cached previously.', count($this->updatedReflectionData)), LOG_DEBUG);
+        $this->log(sprintf('Found %s classes whose reflection data was not cached previously.', count($this->updatedReflectionData)), LogLevel::DEBUG);
 
         foreach (array_keys($this->updatedReflectionData) as $className) {
             $this->statusCache->set($this->produceCacheIdentifierFromClassName($className), '');
@@ -2227,14 +2221,14 @@ class ReflectionService
      * Writes the given message along with the additional information into the log.
      *
      * @param string $message The message to log
-     * @param integer $severity An integer value, one of the LOG_* constants
-     * @param mixed $additionalData A variable containing more information about the event to be logged
+     * @param string $severity One of the PSR LogLevel constants
+     * @param array $additionalData An array containing more information about the event to be logged
      * @return void
      */
-    protected function log($message, $severity = LOG_INFO, $additionalData = null)
+    protected function log($message, $severity = LogLevel::INFO, $additionalData = [])
     {
-        if (is_object($this->systemLogger)) {
-            $this->systemLogger->log($message, $severity, $additionalData);
+        if (is_object($this->logger)) {
+            $this->logger->log($severity, $message, $additionalData);
         }
     }
 

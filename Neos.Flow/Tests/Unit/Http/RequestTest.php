@@ -11,6 +11,7 @@ namespace Neos\Flow\Tests\Unit\Http;
  * source code.
  */
 
+use Neos\Flow\Http\Helper\UploadedFilesHelper;
 use Neos\Flow\Http\Request;
 use Neos\Flow\Http\Uri;
 use org\bovigo\vfs\vfsStream;
@@ -880,9 +881,7 @@ class RequestTest extends UnitTestCase
             ]
         ];
 
-        $request = $this->getAccessibleMock(Request::class, ['dummy'], [], '', false);
-        $result = $request->_call('untangleFilesArray', $convolutedFiles);
-
+        $result = UploadedFilesHelper::untangleFilesArray($convolutedFiles);
         $this->assertSame($untangledFiles, $result);
     }
 
@@ -940,9 +939,48 @@ class RequestTest extends UnitTestCase
             ],
         ];
 
-        $request = $this->getAccessibleMock(Request::class, ['dummy'], [], '', false);
-        $result = $request->_call('untangleFilesArray', $convolutedFiles);
+        $result = UploadedFilesHelper::untangleFilesArray($convolutedFiles);
+        $this->assertSame($untangledFiles, $result);
+    }
 
+    /**
+     * @test
+     */
+    public function untangleFilesArrayWorksWithNamesContainingASlash()
+    {
+        $convolutedFiles = [
+            'a0' => [
+                'name' => [
+                    'a1/a2' => 'a.txt',
+                ],
+                'type' => [
+                    'a1/a2' => 'text/plain',
+                ],
+                'tmp_name' => [
+                    'a1/a2' => '/private/var/tmp/phpvZ6oUD',
+                ],
+                'error' => [
+                    'a1/a2' => 0,
+                ],
+                'size' => [
+                    'a1/a2' => 200,
+                ],
+            ],
+        ];
+
+        $untangledFiles = [
+            'a0' => [
+                'a1/a2' => [
+                    'name' => 'a.txt',
+                    'type' => 'text/plain',
+                    'tmp_name' => '/private/var/tmp/phpvZ6oUD',
+                    'error' => 0,
+                    'size' => 200,
+                ]
+            ],
+        ];
+
+        $result = UploadedFilesHelper::untangleFilesArray($convolutedFiles);
         $this->assertSame($untangledFiles, $result);
     }
 
@@ -1031,6 +1069,7 @@ class RequestTest extends UnitTestCase
 
     /**
      * @test
+     * @doesNotPerformAssertions
      *
      * Note: This is a fix for https://jira.neos.io/browse/FLOW-324 (see https://code.google.com/p/chromium/issues/detail?id=501095)
      */
@@ -1040,8 +1079,5 @@ class RequestTest extends UnitTestCase
             'HTTP_HTTPS' => '1',
         ];
         new Request([], [], [], $server);
-
-        // dummy assertion to avoid PHPUnit warning
-        $this->assertTrue(true);
     }
 }

@@ -15,7 +15,6 @@ include_once(__DIR__ . '/../../BaseTestCase.php');
 use Neos\Cache\Backend\AbstractBackend;
 use Neos\Cache\Backend\NullBackend;
 use Neos\Cache\Backend\TaggableBackendInterface;
-use Neos\Cache\Exception\NotSupportedByBackendException;
 use Neos\Cache\Frontend\StringFrontend;
 use Neos\Cache\Tests\BaseTestCase;
 
@@ -101,7 +100,7 @@ class StringFrontendTest extends BaseTestCase
         $backend->expects($this->once())->method('has')->with($this->equalTo('StringCacheTest'))->will($this->returnValue(true));
 
         $cache = new StringFrontend('StringFrontend', $backend);
-        $this->assertTrue($cache->has('StringCacheTest'), 'has() did not return TRUE.');
+        $this->assertTrue($cache->has('StringCacheTest'), 'has() did not return true.');
     }
 
     /**
@@ -115,7 +114,7 @@ class StringFrontendTest extends BaseTestCase
         $backend->expects($this->once())->method('remove')->with($this->equalTo($cacheIdentifier))->will($this->returnValue(true));
 
         $cache = new StringFrontend('StringFrontend', $backend);
-        $this->assertTrue($cache->remove($cacheIdentifier), 'remove() did not return TRUE');
+        $this->assertTrue($cache->remove($cacheIdentifier), 'remove() did not return true');
     }
 
     /**

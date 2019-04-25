@@ -13,8 +13,8 @@ namespace Neos\Flow\Session\Aspect;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Aop\JoinPointInterface;
-use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\Session\SessionInterface;
+use Psr\Log\LoggerInterface;
 
 /**
  * An aspect which centralizes the logging of important session actions.
@@ -25,10 +25,20 @@ use Neos\Flow\Session\SessionInterface;
 class LoggingAspect
 {
     /**
-     * @var SystemLoggerInterface
-     * @Flow\Inject
+     * @var LoggerInterface
      */
-    protected $systemLogger;
+    protected $logger;
+
+    /**
+     * Injects the (system) logger based on PSR-3.
+     *
+     * @param LoggerInterface $logger
+     * @return void
+     */
+    public function injectLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
 
     /**
      * Logs calls of start()
@@ -41,7 +51,11 @@ class LoggingAspect
     {
         $session = $joinPoint->getProxy();
         if ($session->isStarted()) {
-            $this->systemLogger->log(sprintf('%s: Started session with id %s.', $this->getClassName($joinPoint), $session->getId()), LOG_INFO);
+            $this->logger->info(sprintf('%s: Started session with id %s.', $this->getClassName($joinPoint), $session->getId()), [
+                'packageKey' => 'Neos.Flow',
+                'className' => $joinPoint->getClassName(),
+                'methodName' => $joinPoint->getMethodName()
+            ]);
         }
     }
 
@@ -68,7 +82,7 @@ class LoggingAspect
             } else {
                 $inactivityMessage = sprintf('more than %s hours', intval($inactivityInSeconds / 3600));
             }
-            $this->systemLogger->log(sprintf('%s: Resumed session with id %s which was inactive for %s. (%ss)', $this->getClassName($joinPoint), $joinPoint->getProxy()->getId(), $inactivityMessage, $inactivityInSeconds), LOG_DEBUG);
+            $this->logger->debug(sprintf('%s: Resumed session with id %s which was inactive for %s. (%ss)', $this->getClassName($joinPoint), $joinPoint->getProxy()->getId(), $inactivityMessage, $inactivityInSeconds));
         }
     }
 
@@ -84,7 +98,7 @@ class LoggingAspect
         $session = $joinPoint->getProxy();
         if ($session->isStarted()) {
             $reason = $joinPoint->isMethodArgument('reason') ? $joinPoint->getMethodArgument('reason') : 'no reason given';
-            $this->systemLogger->log(sprintf('%s: Destroyed session with id %s: %s', $this->getClassName($joinPoint), $joinPoint->getProxy()->getId(), $reason), LOG_INFO);
+            $this->logger->debug(sprintf('%s: Destroyed session with id %s: %s', $this->getClassName($joinPoint), $joinPoint->getProxy()->getId(), $reason));
         }
     }
 
@@ -101,7 +115,11 @@ class LoggingAspect
         $oldId = $session->getId();
         $newId = $joinPoint->getAdviceChain()->proceed($joinPoint);
         if ($session->isStarted()) {
-            $this->systemLogger->log(sprintf('%s: Changed session id from %s to %s', $this->getClassName($joinPoint), $oldId, $newId), LOG_INFO);
+            $this->logger->info(sprintf('%s: Changed session id from %s to %s', $this->getClassName($joinPoint), $oldId, $newId), [
+                'packageKey' => 'Neos.Flow',
+                'className' => $joinPoint->getClassName(),
+                'methodName' => $joinPoint->getMethodName()
+            ]);
         }
         return $newId;
     }
@@ -117,11 +135,23 @@ class LoggingAspect
     {
         $sessionRemovalCount = $joinPoint->getResult();
         if ($sessionRemovalCount > 0) {
-            $this->systemLogger->log(sprintf('%s: Triggered garbage collection and removed %s expired sessions.', $this->getClassName($joinPoint), $sessionRemovalCount), LOG_INFO);
+            $this->logger->info(sprintf('%s: Triggered garbage collection and removed %s expired sessions.', $this->getClassName($joinPoint), $sessionRemovalCount), [
+                'packageKey' => 'Neos.Flow',
+                'className' => $joinPoint->getClassName(),
+                'methodName' => $joinPoint->getMethodName()
+            ]);
         } elseif ($sessionRemovalCount === 0) {
-            $this->systemLogger->log(sprintf('%s: Triggered garbage collection but no sessions needed to be removed.', $this->getClassName($joinPoint)), LOG_INFO);
+            $this->logger->info(sprintf('%s: Triggered garbage collection but no sessions needed to be removed.', $this->getClassName($joinPoint)), [
+                'packageKey' => 'Neos.Flow',
+                'className' => $joinPoint->getClassName(),
+                'methodName' => $joinPoint->getMethodName()
+            ]);
         } elseif ($sessionRemovalCount === false) {
-            $this->systemLogger->log(sprintf('%s: Ommitting garbage collection because another process is already running. Consider lowering the GC propability if these messages appear a lot.', $this->getClassName($joinPoint)), LOG_WARNING);
+            $this->logger->warning(sprintf('%s: Ommitting garbage collection because another process is already running. Consider lowering the GC propability if these messages appear a lot.', $this->getClassName($joinPoint)), [
+                'packageKey' => 'Neos.Flow',
+                'className' => $joinPoint->getClassName(),
+                'methodName' => $joinPoint->getMethodName()
+            ]);
         }
     }
 

@@ -11,7 +11,6 @@ namespace Neos\Flow\ObjectManagement\Proxy;
  * source code.
  */
 
-use Doctrine\ORM\Mapping as ORM;
 use Neos\Flow\Annotations as Flow;
 use Neos\Cache\Frontend\PhpFrontend;
 use Neos\Flow\ObjectManagement\CompileTimeObjectManager;
@@ -31,11 +30,6 @@ class Compiler
      * @var string
      */
     const ORIGINAL_CLASSNAME_SUFFIX = '_Original';
-
-    /**
-     * @var array
-     */
-    protected $settings = [];
 
     /**
      * @var CompileTimeObjectManager
@@ -87,17 +81,6 @@ class Compiler
     }
 
     /**
-     * Injects the Flow settings
-     *
-     * @param array $settings The settings
-     * @return void
-     */
-    public function injectSettings(array $settings)
-    {
-        $this->settings = $settings;
-    }
-
-    /**
      * @param CompileTimeObjectManager $objectManager
      * @return void
      */
@@ -133,7 +116,7 @@ class Compiler
      * If no such proxy class has been created yet by this renderer,
      * this function will create one and register it for later use.
      *
-     * If the class is not proxable, FALSE will be returned
+     * If the class is not proxable, false will be returned
      *
      * @param string $fullClassName Name of the original class
      * @return ProxyClass|boolean
@@ -179,7 +162,7 @@ class Compiler
      * monitor or some other mechanism.
      *
      * @param string $fullClassName Name of the original class
-     * @return boolean TRUE if a cache entry exists
+     * @return boolean true if a cache entry exists
      */
     public function hasCacheEntryForClass($fullClassName)
     {
@@ -259,6 +242,16 @@ return ' . var_export($this->storedProxyClasses, true) . ';';
             return $matches[1] . $matches[3] . ' ' . $matches[4] . $classNameSuffix;
         }, $classCode);
 
+        // comment out "final" keyword, if the method is final and if it is advised (= part of the $proxyClassCode)
+        // Note: Method name regex according to http://php.net/manual/en/language.oop5.basic.php
+        $classCode = preg_replace_callback('/^(\s*)((public|protected)\s+)?final(\s+(public|protected))?(\s+function\s+)([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]+\s*\()/m', function ($matches) use ($pathAndFilename, $classNameSuffix, $proxyClassCode) {
+            // the method is not advised => don't remove the final keyword
+            if (strpos($proxyClassCode, $matches[0]) === false) {
+                return $matches[0];
+            }
+            return $matches[1] . $matches[2] . '/*final*/' . $matches[4] . $matches[6] . $matches[7];
+        }, $classCode);
+
         $classCode = preg_replace('/\\?>[\n\s\r]*$/', '', $classCode);
 
         $proxyClassCode .= "\n" . '# PathAndFilename: ' . $pathAndFilename;
@@ -315,7 +308,7 @@ return ' . var_export($this->storedProxyClasses, true) . ';';
                     break;
                 default:
                     if ($optionValue === $optionDefault) {
-                        continue;
+                        break;
                     }
                     $optionsAsStrings[] = $optionName . '=' . $optionValueAsString;
             }

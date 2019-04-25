@@ -60,6 +60,14 @@ class EntityWithUseStatements
     }
 
     /**
+     * @param SubEntity|null $parameter
+     * @return void
+     */
+    public function nullableClassName(SubEntity $parameter)
+    {
+    }
+
+    /**
      * @param float $parameter
      * @return void
      */

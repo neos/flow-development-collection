@@ -145,7 +145,7 @@ abstract class Arrays
     }
 
     /**
-     * Returns TRUE if the given array contains elements of varying types
+     * Returns true if the given array contains elements of varying types
      *
      * @param array $array
      * @return boolean
@@ -216,10 +216,10 @@ abstract class Arrays
      * @param array|\ArrayAccess $subject The array or ArrayAccess instance to work on
      * @param array|string $path The path to follow. Either a simple array of keys or a string in the format 'foo.bar.baz'
      * @param mixed $value The value to set
-     * @return array The modified array or object
+     * @return array|\ArrayAccess The modified array or object
      * @throws \InvalidArgumentException
      */
-    public static function setValueByPath($subject, $path, $value): array
+    public static function setValueByPath($subject, $path, $value)
     {
         if (!is_array($subject) && !($subject instanceof \ArrayAccess)) {
             throw new \InvalidArgumentException('setValueByPath() expects $subject to be array or an object implementing \ArrayAccess, "' . (is_object($subject) ? get_class($subject) : gettype($subject)) . '" given.', 1306424308);
@@ -273,7 +273,7 @@ abstract class Arrays
      *
      * @param array $array the array to sort
      * @param integer $sortFlags may be used to modify the sorting behavior using these values (see http://www.php.net/manual/en/function.sort.php)
-     * @return boolean TRUE on success, FALSE on failure
+     * @return boolean true on success, false on failure
      * @see asort()
      */
     public static function sortKeysRecursively(array &$array, int $sortFlags = null): bool

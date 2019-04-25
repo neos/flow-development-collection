@@ -1,4 +1,4 @@
-﻿==========
+==========
 Validation
 ==========
 
@@ -54,23 +54,28 @@ Domain Model arguments is triggered as explained above. So in order for the auto
 previous edit form to work, the validation inside that action needs to be suppressed, or else it would
 itself possibly fail the validation and try to redirect to previous action, ending up in an infinite loop.
 
-	class CommentController extends \Neos\Flow\Mvc\Controller\ActionController {
+.. code-block:: php
 
-		/**
-		 * @param \YourPackage\Domain\Model\Comment $comment
-		 * @Flow\IgnoreValidation("$comment")
-		 */
-		public function editAction(\YourPackage\Domain\Model\Comment $comment) {
-			// here, $comment is not necessarily a valid object
-		}
+    class CommentController extends \Neos\Flow\Mvc\Controller\ActionController
+    {
 
-		/**
-		 * @param \YourPackage\Domain\Model\Comment $comment
-		 */
-		public function updateAction(\YourPackage\Domain\Model\Comment $comment) {
-			// here, $comment is a valid object
-		}
-	}
+        /**
+         * @param \YourPackage\Domain\Model\Comment $comment
+         * @Flow\IgnoreValidation("$comment")
+         */
+        public function editAction(\YourPackage\Domain\Model\Comment $comment)
+        {
+            // here, $comment is not necessarily a valid object
+        }
+
+        /**
+         * @param \YourPackage\Domain\Model\Comment $comment
+         */
+        public function updateAction(\YourPackage\Domain\Model\Comment $comment)
+        {
+            // here, $comment is a valid object
+        }
+    }
 
 .. warning::
 
@@ -80,16 +85,17 @@ itself possibly fail the validation and try to redirect to previous action, endi
 Furthermore, it is also possible to execute *additional validators* only for specific action
 arguments using ``@Flow\Validate`` inside a controller action::
 
-	class CommentController extends \Neos\Flow\Mvc\Controller\ActionController {
+    class CommentController extends \Neos\Flow\Mvc\Controller\ActionController {
 
-		/**
-		 * @param \YourPackage\Domain\Model\Comment $comment
-		 * @Flow\Validate(argumentName="comment", type="YourPackage:SomeSpecialValidator")
-		 */
-		public function updateAction(\YourPackage\Domain\Model\Comment $comment) {
-			// here, $comment is a valid object
-		}
-	}
+        /**
+         * @param \YourPackage\Domain\Model\Comment $comment
+         * @Flow\Validate(argumentName="comment", type="YourPackage:SomeSpecialValidator")
+         */
+        public function updateAction(\YourPackage\Domain\Model\Comment $comment)
+        {
+            // here, $comment is a valid object
+        }
+    }
 
 .. tip::
 
@@ -107,20 +113,20 @@ simple type.
 All validators implement ``\Neos\Flow\Validation\Validator\ValidatorInterface``, and
 the API of every validator is demonstrated in the following code example::
 
-		// NOTE: you should always use the ValidatorResolver to create new
-		// validators, as it is demonstrated in the next section.
-	$validator = new \Neos\Flow\Validation\Validator\StringLengthValidator(array(
-		'minimum' => 10,
-		'maximum' => 20
-	));
+    // NOTE: you should always use the ValidatorResolver to create new
+    // validators, as it is demonstrated in the next section.
+    $validator = new \Neos\Flow\Validation\Validator\StringLengthValidator(array(
+        'minimum' => 10,
+        'maximum' => 20
+    ));
 
-		// $result is of type Neos\Error\Messages\Result
-	$result = $validator->validate('myExampleString');
-	$result->hasErrors(); // is FALSE, as the string is longer than 10 characters.
+    // $result is of type Neos\Error\Messages\Result
+    $result = $validator->validate('myExampleString');
+    $result->hasErrors(); // is FALSE, as the string is longer than 10 characters.
 
-	$result = $validator->validate('short');
-	$result->hasErrors(); // is TRUE, as the string is too short.
-	$result->getFirstError()->getMessage(); // contains the human-readable error message
+    $result = $validator->validate('short');
+    $result->hasErrors(); // is TRUE, as the string is too short.
+    $result->getFirstError()->getMessage(); // contains the human-readable error message
 
 On the above example, it can be seen that validators can be *re-used* for different input.
 Furthermore, a validator does not only just return TRUE or FALSE, but instead returns
@@ -141,7 +147,7 @@ you should not instantiate them directly as it has been done in the above exampl
 you should use the ``\Neos\Flow\Validation\ValidatorResolver`` singleton to get a new instance
 of a certain validator::
 
-	$validatorResolver->createValidator($validatorType, array $validatorOptions);
+    $validatorResolver->createValidator($validatorType, array $validatorOptions);
 
 ``$validatorType`` can be one of the following:
 
@@ -177,9 +183,9 @@ The only exception is the ``NotEmpty`` validator, which disallows both ``NULL`` 
 if you want to validate that a property is e.g. an email address *and* does exist, you need to combine the two
 validators using a ``ConjunctionValidator``::
 
-	$conjunctionValidator = $validatorResolver->createValidator('Conjunction');
-	$conjunctionValidator->addValidator($validatorResolver->createValidator('NotEmpty'));
-	$conjunctionValidator->addValidator($validatorResolver->createValidator('EmailAddress'));
+    $conjunctionValidator = $validatorResolver->createValidator('Conjunction');
+    $conjunctionValidator->addValidator($validatorResolver->createValidator('NotEmpty'));
+    $conjunctionValidator->addValidator($validatorResolver->createValidator('EmailAddress'));
 
 Validating Domain Models
 ========================
@@ -188,8 +194,11 @@ It is very common that a full Domain Model should be validated instead of only a
 To make this use-case more easy, the ``ValidatorResolver`` has a method ``getBaseValidatorConjunction``
 which returns a fully-configured validator for an arbitrary Domain Object::
 
-	$commentValidator = $validatorResolver->getBaseValidatorConjunction('YourPackage\Domain\Model\Comment');
-	$result = $commentValidator->validate($comment);
+    $commentValidator = $validatorResolver->getBaseValidatorConjunction(
+        \YourPackage\Domain\Model\Comment::class, // class name of the object to validate
+        ['Default']                               // optional validation groups to use during validation
+    );
+    $result = $commentValidator->validate($comment);
 
 The returned validator checks the following things:
 
@@ -200,14 +209,15 @@ The returned validator checks the following things:
   	namespace YourPackage\Domain\Model;
   	use Neos\Flow\Annotations as Flow;
 
-  	class Comment {
+  	class Comment
+    {
 
-  		/**
-  		 * @Flow\Validate(type="NotEmpty")
-  		 */
-  		protected $text;
+  	    /**
+  	     * @Flow\Validate(type="NotEmpty")
+  	     */
+  	    protected $text;
 
-  		// Add getters and setters here
+  	    // Add getters and setters here
   	}
 
   It also correctly builds up validators for ``Collections`` or ``arrays``, if they are properly
@@ -217,6 +227,44 @@ The returned validator checks the following things:
   Validator* exists; i.e. for the Domain Model ``YourPackage\Domain\Model\Comment`` it is checked
   whether ``YourPackage\Domain\Validator\CommentValidator`` exists. If it exists, it is automatically
   called on validation.
+
+  These *Domain Model Validators* can also mark some specific properties as failed and add specific error messages:
+
+  .. code-block::php
+
+    class CommentValidator extends AbstractValidator
+    {
+        public function isValid($value)
+        {
+            if ($value instanceof \YourPackage\Domain\Model\Comment) {
+                $this->pushResult()->forProperty('text')->addError(
+                                new Error('text can´t be empty.', 1221560910)
+                            );
+            }
+        }
+    }
+
+Normally, you would need to annotate Collection and Model type properties, so that the collection elements and
+the model would be validated like this:
+
+.. code-block::php
+
+  	    /**
+  	     * @var SomeDomainModel
+  	     * @Flow\Validate(type="GenericObject")
+  	     */
+  	    protected $someRelatedModel;
+
+  	    /**
+  	     * @var Collection<SomeOtherDomainModel>
+  	     * @Flow\Validate(type="Collection")
+  	     */
+  	    protected $someOtherRelatedModels;
+
+For convenience, those validators will be added automatically if they are left out, because Flow will always validate
+Model hierarchies. In some cases, it might be necessary to override validation behaviour of those properties,
+e.g. when you want to limit validation with Validation Groups (see below). In that case, you can just explicitly annotate
+the property with additional options and this will then override the automatically generated validator.
 
 When specifying a Domain Model as an argument of a controller action, all the above validations will be
 automatically executed. This is explained in detail in the following section.
@@ -266,43 +314,47 @@ A validator is only executed if at least one validation group overlap.
 
 The following example demonstrates this::
 
-	class Comment {
-		/**
-		 * @Flow\Validate(type="NotEmpty")
-		 */
-		protected $prop1;
+    class Comment
+    {
 
-		/**
-		 * @Flow\Validate(type="NotEmpty", validationGroups={"Default"})
-		 */
-		protected $prop2;
+        /**
+         * @Flow\Validate(type="NotEmpty")
+         */
+        protected $prop1;
 
-		/**
-		 * @Flow\Validate(type="NotEmpty", validationGroups={"Persistence"})
-		 */
-		protected $prop3;
+        /**
+         * @Flow\Validate(type="NotEmpty", validationGroups={"Default"})
+         */
+        protected $prop2;
 
-		/**
-		 * @Flow\Validate(type="NotEmpty", validationGroups={"Controller"})
-		 */
-		protected $prop4;
+        /**
+         * @Flow\Validate(type="NotEmpty", validationGroups={"Persistence"})
+         */
+        protected $prop3;
 
-		/**
-		 * @Flow\Validate(type="NotEmpty", validationGroups={"createAction"})
-		 */
-		protected $prop5;
-	}
+        /**
+         * @Flow\Validate(type="NotEmpty", validationGroups={"Controller"})
+         */
+        protected $prop4;
 
-	class CommentController extends \Neos\Flow\Mvc\Controller\ActionController {
+        /**
+         * @Flow\Validate(type="NotEmpty", validationGroups={"createAction"})
+         */
+        protected $prop5;
+    }
 
-		/**
-		 * @param Comment $comment
-		 * @Flow\ValidationGroups({"createAction"})
-		 */
-		public function createAction(Comment $comment) {
-			...
-		}
-	}
+    class CommentController extends \Neos\Flow\Mvc\Controller\ActionController
+    {
+
+        /**
+         * @param Comment $comment
+         * @Flow\ValidationGroups({"createAction"})
+         */
+        public function createAction(Comment $comment)
+        {
+            ...
+        }
+    }
 
 * validation for prop1 and prop2 are the same, as the "Default" validation group is added if none is specified
 * validation for prop1 and prop2 are executed both on persisting and inside the controller
@@ -312,6 +364,10 @@ The following example demonstrates this::
 
 If interacting with the ``ValidatorResolver`` directly, the to-be-used validation groups
 can be specified as the last argument of ``getBaseValidatorConjunction()``.
+
+.. note::
+  When trying to set the validation groups of a collection or a whole model, which are normally not annotated for
+  you can explicitly specify a "Collection" or "GenericObject" type validator on the property and set the according validationGroup.
 
 Avoiding Duplicate Validation and Recursion
 ===========================================
@@ -332,46 +388,52 @@ against it. See ``AbstractCompositeValidator`` and ``isValidatedAlready`` in the
 for examples of how to do this.
 
 Writing Validators
-======================
+==================
 
 Usually, when writing your own validator, you will not directly implement ``ValidatorInterface``, but
 rather subclass ``AbstractValidator``. You only need to specify any options your validator might use and
 implement the ``isValid()`` method then::
 
-	/**
-	 * A validator for checking items against foos.
-	 */
-	class MySpecialValidator extends \Neos\Flow\Validation\Validator\AbstractValidator {
+    /**
+     * A validator for checking items against foos.
+     */
+    class MySpecialValidator extends \Neos\Flow\Validation\Validator\AbstractValidator
+    {
 
-		/**
-		 * @var array
-		 */
-		protected $supportedOptions = array(
-			'foo' => array(NULL, 'The foo value to accept as valid', 'mixed', TRUE)
-		);
+        /**
+         * @var array
+         */
+        protected $supportedOptions = array(
+            'foo' => array(NULL, 'The foo value to accept as valid', 'mixed', TRUE)
+        );
 
-		/**
-		 * Check if the given value is a valid foo item. What constitutes a valid foo
-		 is determined through the 'foo' option.
-		 *
-		 * @param mixed $value
-		 * @return void
-		 */
-		protected function isValid($value) {
-			if (!isset($this->options['foo'])) {
-				throw new \Neos\Flow\Validation\Exception\InvalidValidationOptionsException(
-					'The option "foo" for this validator needs to be specified', 12346788
-				);
-			}
+        /**
+         * Check if the given value is a valid foo item. What constitutes a valid foo
+         is determined through the 'foo' option.
+         *
+         * @param mixed $value
+         * @return void
+         */
+        protected function isValid($value)
+        {
+            if (!isset($this->options['foo'])) {
+                throw new \Neos\Flow\Validation\Exception\InvalidValidationOptionsException(
+                    'The option "foo" for this validator needs to be specified', 12346788
+                );
+            }
 
-			if ($value !== $this->options['foo']) {
-				$this->addError('The value must be equal to "%s"', 435346321, array($this->options['foo']));
-			}
-		}
-	}
+            if ($value !== $this->options['foo']) {
+                $this->addError('The value must be equal to "%s"', 435346321, array($this->options['foo']));
+            }
+        }
+    }
 
 In the above example, the ``isValid()`` method has been implemented, and the parameter ``$value`` is the
 data we want to check for validity. In case the data is valid, nothing needs to be done.
+
+.. warning:: You should avoid overwriting ``validate()`` and if you do, you should never overwrite ``$this->result``
+			 instance variable of the validator. Instead, use ``pushResult()`` to create a new result object and at
+			 the end of your validator, return ``popResult()``.
 
 In case the data is invalid, ``$this->addError()`` should be used to add an error message, an error code
 (which should be the unix timestamp of the current time) and optional arguments which are inserted into
@@ -386,7 +448,7 @@ is an array with the following numerically indexed elements:
 # type of the option (used for documentation rendering)
 # required option flag (optional, defaults to FALSE)
 
-The default values are set in the constructor of the abstract validators provided with FLOW3. If the
+The default values are set in the constructor of the abstract validators provided with Flow. If the
 required flag is set, missing options will cause an ``InvalidValidationOptionsException`` to be thrown
 when the validator is instantiated.
 

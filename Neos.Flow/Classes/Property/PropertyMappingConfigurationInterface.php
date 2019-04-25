@@ -26,7 +26,7 @@ interface PropertyMappingConfigurationInterface
 {
     /**
      * @param string $propertyName
-     * @return boolean TRUE if the given propertyName should be mapped, FALSE otherwise.
+     * @return boolean true if the given propertyName should be mapped, false otherwise.
      * @api
      */
     public function shouldMap($propertyName);

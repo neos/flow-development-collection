@@ -16,11 +16,10 @@ use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Error\Debugger;
 use Neos\Flow\Exception;
-use Neos\Flow\Http\Component\ComponentChain;
 use Neos\Flow\Http\Component\ComponentContext;
 use Neos\Flow\Http;
 use Neos\Flow\Mvc\Dispatcher;
-use Neos\Flow\Mvc\Routing\Router;
+use Neos\Flow\Mvc\Routing\RouterInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Security\Context;
 use Neos\Flow\Session\SessionInterface;
@@ -49,7 +48,7 @@ class InternalRequestEngine implements RequestEngineInterface
 
     /**
      * @Flow\Inject(lazy = false)
-     * @var Router
+     * @var RouterInterface
      */
     protected $router;
 
@@ -72,24 +71,10 @@ class InternalRequestEngine implements RequestEngineInterface
     protected $validatorResolver;
 
     /**
-     * @var array
-     */
-    protected $settings;
-
-    /**
      * @Flow\Inject
      * @var PersistenceManagerInterface
      */
     protected $persistenceManager;
-
-    /**
-     * @param array $settings
-     * @return void
-     */
-    public function injectSettings(array $settings)
-    {
-        $this->settings = $settings;
-    }
 
     /**
      * Sends the given HTTP request
@@ -135,7 +120,7 @@ class InternalRequestEngine implements RequestEngineInterface
     /**
      * Returns the router used by this internal request engine
      *
-     * @return Router
+     * @return RouterInterface
      */
     public function getRouter()
     {

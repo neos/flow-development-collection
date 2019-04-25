@@ -137,7 +137,7 @@ abstract class Functions
      * @return integer The character position
      * @api
      */
-    public static function strpos(string $haystack, string $needle, int $offset = 0): int
+    public static function strpos(string $haystack, string $needle, int $offset = 0)
     {
         return mb_strpos($haystack, $needle, $offset, 'UTF-8');
     }
@@ -179,6 +179,13 @@ abstract class Functions
      */
     public static function parse_url(string $url, int $component = -1)
     {
+        // the host and port must be used as is, to allow IPv6 syntax, e.g.: [3b00:f59:1008::212:183:20]:8080
+        // thus we parse here, before url-encoding
+        $componentsFromUrl = parse_url($url);
+        if ($componentsFromUrl === false) {
+            return false;
+        }
+
         $encodedUrl = preg_replace_callback('%[^:@/?#&=\.]+%usD', function ($matches) {
             return urlencode($matches[0]);
         }, $url);
@@ -192,8 +199,14 @@ abstract class Functions
             $currentComponent = urldecode($currentComponent);
         }
 
-        if (array_key_exists('port', $components)) {
-            $components['port'] = (integer)$components['port'];
+        // the host and port must be used as is, to allow IPv6 syntax, e.g.: [3b00:f59:1008::212:183:20]:8080
+        if (array_key_exists('host', $componentsFromUrl)) {
+            $components['host'] = $componentsFromUrl['host'];
+        }
+        if (array_key_exists('port', $componentsFromUrl)) {
+            $components['port'] = (integer)$componentsFromUrl['port'];
+        } else {
+            unset($components['port']);
         }
 
         switch ($component) {

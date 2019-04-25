@@ -60,6 +60,10 @@ class ClassLoaderTest extends UnitTestCase
      */
     public function setUp()
     {
+        if (FLOW_ONLY_COMPOSER_LOADER) {
+            $this->markTestSkipped('Not testing if composer-only loading is requested.');
+        }
+
         vfsStream::setup('Test');
 
         self::$testClassWasLoaded = false;
@@ -101,7 +105,7 @@ class ClassLoaderTest extends UnitTestCase
     public function classesFromSubDirectoriesAreLoaded()
     {
         mkdir('vfs://Test/Packages/Application/Acme.MyApp/Classes/Acme/MyApp/SubDirectory', 0770, true);
-        file_put_contents('vfs://Test/Packages/Application/Acme.MyApp/Classes/Acme/MyApp/SubDirectory/ClassInSubDirectory.php', '<?php ' . __CLASS__ . '::$testClassWasLoaded = TRUE; ?>');
+        file_put_contents('vfs://Test/Packages/Application/Acme.MyApp/Classes/Acme/MyApp/SubDirectory/ClassInSubDirectory.php', '<?php ' . __CLASS__ . '::$testClassWasLoaded = true; ?>');
 
         $this->classLoader->loadClass('Acme\MyApp\SubDirectory\ClassInSubDirectory');
         $this->assertTrue(self::$testClassWasLoaded);
@@ -115,7 +119,7 @@ class ClassLoaderTest extends UnitTestCase
     public function classesFromFunctionalTestsDirectoriesAreLoaded()
     {
         mkdir('vfs://Test/Packages/Application/Acme.MyApp/Tests/Functional/Essentials', 0770, true);
-        file_put_contents('vfs://Test/Packages/Application/Acme.MyApp/Tests/Functional/Essentials/LawnMowerTest.php', '<?php ' . __CLASS__ . '::$testClassWasLoaded = TRUE; ?>');
+        file_put_contents('vfs://Test/Packages/Application/Acme.MyApp/Tests/Functional/Essentials/LawnMowerTest.php', '<?php ' . __CLASS__ . '::$testClassWasLoaded = true; ?>');
 
         $this->classLoader->setConsiderTestsNamespace(true);
         $this->classLoader->setPackages($this->mockPackages);
@@ -130,7 +134,7 @@ class ClassLoaderTest extends UnitTestCase
     public function classesFromDeeplyNestedSubDirectoriesAreLoaded()
     {
         mkdir('vfs://Test/Packages/Application/Acme.MyApp/Classes/Acme/MyApp/SubDirectory/A/B/C/D', 0770, true);
-        file_put_contents('vfs://Test/Packages/Application/Acme.MyApp/Classes/Acme/MyApp/SubDirectory/A/B/C/D/E.php', '<?php ' . __CLASS__ . '::$testClassWasLoaded = TRUE; ?>');
+        file_put_contents('vfs://Test/Packages/Application/Acme.MyApp/Classes/Acme/MyApp/SubDirectory/A/B/C/D/E.php', '<?php ' . __CLASS__ . '::$testClassWasLoaded = true; ?>');
 
         $this->classLoader->loadClass('Acme\MyApp\SubDirectory\A\B\C\D\E');
         $this->assertTrue(self::$testClassWasLoaded);
@@ -145,7 +149,7 @@ class ClassLoaderTest extends UnitTestCase
     public function classesFromSubMatchingPackagesAreLoaded()
     {
         mkdir('vfs://Test/Packages/Application/Acme.MyAppAddon/Classes/Acme/MyAppAddon', 0770, true);
-        file_put_contents('vfs://Test/Packages/Application/Acme.MyAppAddon/Classes/Acme/MyAppAddon/Class.php', '<?php ' . __CLASS__ . '::$testClassWasLoaded = TRUE; ?>');
+        file_put_contents('vfs://Test/Packages/Application/Acme.MyAppAddon/Classes/Acme/MyAppAddon/Class.php', '<?php ' . __CLASS__ . '::$testClassWasLoaded = true; ?>');
 
         $this->classLoader->loadClass('Acme\MyAppAddon\Class');
         $this->assertTrue(self::$testClassWasLoaded);
@@ -159,7 +163,7 @@ class ClassLoaderTest extends UnitTestCase
     public function classesWithUnderscoresAreLoaded()
     {
         mkdir('vfs://Test/Packages/Application/Acme.MyApp/Classes/Acme/MyApp', 0770, true);
-        file_put_contents('vfs://Test/Packages/Application/Acme.MyApp/Classes/Acme/MyApp/Foo.php', '<?php ' . __CLASS__ . '::$testClassWasLoaded = TRUE; ?>');
+        file_put_contents('vfs://Test/Packages/Application/Acme.MyApp/Classes/Acme/MyApp/Foo.php', '<?php ' . __CLASS__ . '::$testClassWasLoaded = true; ?>');
 
         $this->classLoader->loadClass('Acme\MyApp_Foo');
         $this->assertTrue(self::$testClassWasLoaded);
@@ -173,7 +177,7 @@ class ClassLoaderTest extends UnitTestCase
     public function namespaceWithUnderscoresAreLoaded()
     {
         mkdir('vfs://Test/Packages/Application/Acme.MyApp/Classes/Acme/MyApp/My_Underscore', 0770, true);
-        file_put_contents('vfs://Test/Packages/Application/Acme.MyApp/Classes/Acme/MyApp/My_Underscore/Foo.php', '<?php ' . __CLASS__ . '::$testClassWasLoaded = TRUE; ?>');
+        file_put_contents('vfs://Test/Packages/Application/Acme.MyApp/Classes/Acme/MyApp/My_Underscore/Foo.php', '<?php ' . __CLASS__ . '::$testClassWasLoaded = true; ?>');
 
         $this->classLoader->loadClass('Acme\MyApp\My_Underscore\Foo');
         $this->assertTrue(self::$testClassWasLoaded);
@@ -187,7 +191,7 @@ class ClassLoaderTest extends UnitTestCase
     public function classesWithOnlyUnderscoresAreLoaded()
     {
         mkdir('vfs://Test/Packages/Application/Acme.MyApp/Classes/Acme/MyApp', 0770, true);
-        file_put_contents('vfs://Test/Packages/Application/Acme.MyApp/Classes/Acme/MyApp/Foo1.php', '<?php ' . __CLASS__ . '::$testClassWasLoaded = TRUE; ?>');
+        file_put_contents('vfs://Test/Packages/Application/Acme.MyApp/Classes/Acme/MyApp/Foo1.php', '<?php ' . __CLASS__ . '::$testClassWasLoaded = true; ?>');
 
         $this->classLoader->loadClass('Acme_MyApp_Foo1');
         $this->assertTrue(self::$testClassWasLoaded);
@@ -199,7 +203,7 @@ class ClassLoaderTest extends UnitTestCase
     public function classesWithLeadingBackslashAreLoaded()
     {
         mkdir('vfs://Test/Packages/Application/Acme.MyApp/Classes/Acme/MyApp', 0770, true);
-        file_put_contents('vfs://Test/Packages/Application/Acme.MyApp/Classes/Acme/MyApp/Foo2.php', '<?php ' . __CLASS__ . '::$testClassWasLoaded = TRUE; ?>');
+        file_put_contents('vfs://Test/Packages/Application/Acme.MyApp/Classes/Acme/MyApp/Foo2.php', '<?php ' . __CLASS__ . '::$testClassWasLoaded = true; ?>');
 
         $this->classLoader->loadClass('\Acme\MyApp\Foo2');
         $this->assertTrue(self::$testClassWasLoaded);
@@ -215,7 +219,7 @@ class ClassLoaderTest extends UnitTestCase
         $activePackages = ['Acme.MyApp' => $this->mockPackage1];
         $this->classLoader->setPackages($activePackages);
         mkdir('vfs://Test/Packages/Application/Acme.MyAppAddon/Classes/Acme/MyAppAddon', 0770, true);
-        file_put_contents('vfs://Test/Packages/Application/Acme.MyAppAddon/Classes/Acme/MyAppAddon/Class.php', '<?php ' . __CLASS__ . '::$testClassWasLoaded = TRUE; ?>');
+        file_put_contents('vfs://Test/Packages/Application/Acme.MyAppAddon/Classes/Acme/MyAppAddon/Class.php', '<?php ' . __CLASS__ . '::$testClassWasLoaded = true; ?>');
 
         $this->classLoader->loadClass('Acme\MyAppAddon\Class');
         $this->assertFalse(self::$testClassWasLoaded);
@@ -238,7 +242,7 @@ class ClassLoaderTest extends UnitTestCase
         ]));
 
         mkdir('vfs://Test/Packages/Application/Acme.MyApp/Classes', 0770, true);
-        file_put_contents('vfs://Test/Packages/Application/Acme.MyApp/Classes/Foo.php', '<?php ' . __CLASS__ . '::$testClassWasLoaded = TRUE; ?>');
+        file_put_contents('vfs://Test/Packages/Application/Acme.MyApp/Classes/Foo.php', '<?php ' . __CLASS__ . '::$testClassWasLoaded = true; ?>');
 
         $this->mockPackages['Acme.MyApp'] = $this->mockPackage1;
         $this->classLoader->setPackages($this->mockPackages);
@@ -275,8 +279,8 @@ class ClassLoaderTest extends UnitTestCase
         $packages = [$mockPackage2, $mockPackage1];
         mkdir('vfs://Test/Packages/Libraries/test/subPackage/src/', 0770, true);
         mkdir('vfs://Test/Packages/Libraries/test/mainPackage/src/Subscriber', 0770, true);
-        file_put_contents('vfs://Test/Packages/Libraries/test/subPackage/src/Bar.php', '<?php ' . __CLASS__ . '::$testClassWasLoaded = TRUE; ?>');
-        file_put_contents('vfs://Test/Packages/Libraries/test/mainPackage/src/Subscriber/Foo.php', '<?php ' . __CLASS__ . '::$testClassWasLoaded = TRUE; ?>');
+        file_put_contents('vfs://Test/Packages/Libraries/test/subPackage/src/Bar.php', '<?php ' . __CLASS__ . '::$testClassWasLoaded = true; ?>');
+        file_put_contents('vfs://Test/Packages/Libraries/test/mainPackage/src/Subscriber/Foo.php', '<?php ' . __CLASS__ . '::$testClassWasLoaded = true; ?>');
 
         $this->classLoader->setPackages($packages);
 
@@ -319,8 +323,8 @@ class ClassLoaderTest extends UnitTestCase
         $packages = [$mockPackage2, $mockPackage1];
         mkdir('vfs://Test/Packages/Libraries/test/subPackage/src/', 0770, true);
         mkdir('vfs://Test/Packages/Libraries/test/mainPackage/src/Foo', 0770, true);
-        file_put_contents('vfs://Test/Packages/Libraries/test/subPackage/src/Bar3.php', '<?php ' . __CLASS__ . '::$testClassWasOverwritten = TRUE; ?>');
-        file_put_contents('vfs://Test/Packages/Libraries/test/mainPackage/src/Foo/Bar3.php', '<?php ' . __CLASS__ . '::$testClassWasOverwritten = FALSE; ?>');
+        file_put_contents('vfs://Test/Packages/Libraries/test/subPackage/src/Bar3.php', '<?php ' . __CLASS__ . '::$testClassWasOverwritten = true; ?>');
+        file_put_contents('vfs://Test/Packages/Libraries/test/mainPackage/src/Foo/Bar3.php', '<?php ' . __CLASS__ . '::$testClassWasOverwritten = false; ?>');
 
         $this->classLoader->setPackages($packages);
 

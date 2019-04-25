@@ -11,19 +11,22 @@ namespace Neos\Flow\Error;
  * source code.
  */
 
+use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\Response as CliResponse;
 use Neos\Flow\Exception as FlowException;
+use Neos\Flow\Http\Helper\ResponseInformationHelper;
 use Neos\Flow\Http\Request;
-use Neos\Flow\Http\Response;
 use Neos\Flow\Log\SystemLoggerInterface;
-use Neos\Flow\Log\ThrowableLoggerInterface;
+use Neos\Flow\Log\ThrowableStorageInterface;
 use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Controller\Arguments;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Flow\Mvc\View\ViewInterface;
 use Neos\Utility\ObjectAccess;
 use Neos\Utility\Arrays;
+use Psr\Log\LoggerInterface;
 
 /**
  * An abstract exception handler
@@ -32,8 +35,20 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
 {
     /**
      * @var SystemLoggerInterface
+     * @deprecated Use the PSR logger
+     * @see logger
      */
     protected $systemLogger;
+
+    /**
+     * @var LoggerInterface
+     */
+    protected $logger;
+
+    /**
+     * @var ThrowableStorageInterface
+     */
+    protected $throwableStorage;
 
     /**
      * @var array
@@ -54,6 +69,24 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
     public function injectSystemLogger(SystemLoggerInterface $systemLogger)
     {
         $this->systemLogger = $systemLogger;
+    }
+
+    /**
+     * @param LoggerInterface $logger
+     * @return void
+     * @Flow\Autowiring(enabled=false)
+     */
+    public function injectLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
+
+    /**
+     * @param ThrowableStorageInterface $throwableStorage
+     */
+    public function injectThrowableStorage(ThrowableStorageInterface $throwableStorage)
+    {
+        $this->throwableStorage = $throwableStorage;
     }
 
     /**
@@ -80,7 +113,7 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
     /**
      * Handles the given exception
      *
-     * @param object $exception The exception object - can be \Exception, or some type of \Throwable in PHP 7
+     * @param \Throwable $exception The exception object
      * @return void
      */
     public function handleException($exception)
@@ -92,17 +125,9 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
 
         $this->renderingOptions = $this->resolveCustomRenderingOptions($exception);
 
-        if (is_object($this->systemLogger) && isset($this->renderingOptions['logException']) && $this->renderingOptions['logException']) {
-            if ($exception instanceof \Throwable) {
-                if ($this->systemLogger instanceof ThrowableLoggerInterface) {
-                    $this->systemLogger->logThrowable($exception);
-                } else {
-                    // Convert \Throwable to \Exception for non-supporting logger implementations
-                    $this->systemLogger->logException(new \Exception($exception->getMessage(), $exception->getCode()));
-                }
-            } elseif ($exception instanceof \Exception) {
-                $this->systemLogger->logException($exception);
-            }
+        if ($this->throwableStorage instanceof ThrowableStorageInterface && isset($this->renderingOptions['logException']) && $this->renderingOptions['logException']) {
+            $message = $this->throwableStorage->logThrowable($exception);
+            $this->logger->critical($message);
         }
 
         switch (PHP_SAPI) {
@@ -117,7 +142,7 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
     /**
      * Echoes an exception for the web.
      *
-     * @param object $exception \Exception or \Throwable
+     * @param \Throwable $exception
      * @return void
      */
     abstract protected function echoExceptionWeb($exception);
@@ -126,20 +151,16 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
     /**
      * Prepares a Fluid view for rendering the custom error page.
      *
-     * @param object $exception \Exception or \Throwable
+     * @param \Throwable $exception
      * @param array $renderingOptions Rendering options as defined in the settings
      * @return ViewInterface
      */
-    protected function buildView($exception, array $renderingOptions)
+    protected function buildView(\Throwable $exception, array $renderingOptions): ViewInterface
     {
-        $statusCode = 500;
-        $referenceCode = null;
-        if ($exception instanceof FlowException) {
-            $statusCode = $exception->getStatusCode();
-            $referenceCode = $exception->getReferenceCode();
-        }
-        $statusMessage = Response::getStatusMessageByCode($statusCode);
+        $statusCode = ($exception instanceof WithHttpStatusInterface) ? $exception->getStatusCode() : 500;
+        $referenceCode = ($exception instanceof WithReferenceCodeInterface) ? $exception->getReferenceCode() : null;
 
+        $statusMessage = ResponseInformationHelper::getStatusMessageByCode($statusCode);
         $viewClassName = $renderingOptions['viewClassName'];
         /** @var ViewInterface $view */
         $view = $viewClassName::createWithOptions($renderingOptions['viewOptions']);
@@ -152,7 +173,7 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
         $uriBuilder->setRequest($request);
         $view->setControllerContext(new ControllerContext(
             $request,
-            new Response(),
+            new ActionResponse(),
             new Arguments([]),
             $uriBuilder
         ));
@@ -179,7 +200,7 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
      * @param array $renderingOptions
      * @return ViewInterface
      */
-    protected function applyLegacyViewOptions(ViewInterface $view, array $renderingOptions)
+    protected function applyLegacyViewOptions(ViewInterface $view, array $renderingOptions): ViewInterface
     {
         if (isset($renderingOptions['templatePathAndFilename'])) {
             ObjectAccess::setProperty($view, 'templatePathAndFilename', $renderingOptions['templatePathAndFilename']);
@@ -200,10 +221,10 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
     /**
      * Checks if custom rendering rules apply to the given $exception and returns those.
      *
-     * @param object $exception \Exception or \Throwable
+     * @param \Throwable $exception
      * @return array the custom rendering options, or NULL if no custom rendering is defined for this exception
      */
-    protected function resolveCustomRenderingOptions($exception)
+    protected function resolveCustomRenderingOptions(\Throwable $exception): array
     {
         $renderingOptions = [];
         if (isset($this->options['defaultRenderingOptions'])) {
@@ -218,10 +239,10 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
     }
 
     /**
-     * @param object $exception \Exception or \Throwable
+     * @param \Throwable $exception
      * @return string name of the resolved renderingGroup or NULL if no group could be resolved
      */
-    protected function resolveRenderingGroup($exception)
+    protected function resolveRenderingGroup(\Throwable $exception)
     {
         if (!isset($this->options['renderingGroups'])) {
             return null;
@@ -240,15 +261,16 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
                 }
             }
         }
+        return null;
     }
 
     /**
      * Formats and echoes the exception and its previous exceptions (if any) for the command line
      *
-     * @param object $exception \Exception or \Throwable
+     * @param \Throwable $exception
      * @return void
      */
-    protected function echoExceptionCli($exception)
+    protected function echoExceptionCli(\Throwable $exception)
     {
         $response = new CliResponse();
 
@@ -265,11 +287,11 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
     }
 
     /**
-     * @param object $exception \Exception or \Throwable
+     * @param \Throwable $exception
      * @param string $exceptionMessage
      * @return string
      */
-    protected function renderNestedExceptonsCli($exception, &$exceptionMessage)
+    protected function renderNestedExceptonsCli(\Throwable $exception, string &$exceptionMessage): string
     {
         if (!$exception->getPrevious()) {
             return $exceptionMessage;
@@ -286,10 +308,10 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
     /**
      * Renders a single exception including message, code and affected file
      *
-     * @param object $exception \Exception or \Throwable
+     * @param \Throwable $exception
      * @return string
      */
-    protected function renderSingleExceptionCli($exception)
+    protected function renderSingleExceptionCli(\Throwable $exception): string
     {
         $exceptionMessageParts = $this->splitExceptionMessage($exception->getMessage());
         $exceptionMessage = '<error><b>' . $exceptionMessageParts['subject'] . '</b></error>' . PHP_EOL;
@@ -316,7 +338,7 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
      * @return string
      *
      */
-    protected function renderExceptionDetailCli($label, $value)
+    protected function renderExceptionDetailCli(string $label, string $value): string
     {
         $result = '  <b>' . $label . ': </b>';
         $result .= wordwrap($value, 75, PHP_EOL . str_repeat(' ', strlen($label) + 4), true);
@@ -332,7 +354,7 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
      * @param string $exceptionMessage
      * @return array in the format array('subject' => '<subject>', 'body' => '<body>');
      */
-    protected function splitExceptionMessage($exceptionMessage)
+    protected function splitExceptionMessage(string $exceptionMessage): array
     {
         $body = '';
         $pattern = '/

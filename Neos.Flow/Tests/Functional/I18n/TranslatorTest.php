@@ -79,6 +79,27 @@ class TranslatorTest extends FunctionalTestCase
     }
 
     /**
+     * @return array
+     */
+    public function labelAndArgumentsForTranslation()
+    {
+        return [
+            ['The given value is expected to be {0}.', ['foo'], 'The given value is expected to be foo.'],
+            ['Untranslated label value is expected to be {0}.', ['foo'], 'Untranslated label value is expected to be foo.']
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider labelAndArgumentsForTranslation
+     */
+    public function translationByLabelUsesPlaceholders($label, $arguments, $translation)
+    {
+        $result = $this->translator->translateByOriginalLabel($label, $arguments, null, new I18n\Locale('en'), 'ValidationErrors', 'Neos.Flow');
+        $this->assertEquals($translation, $result);
+    }
+
+    /**
      * @test
      */
     public function translationByIdReturnsNullOnFailure()

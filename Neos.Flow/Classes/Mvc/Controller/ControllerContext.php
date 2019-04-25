@@ -14,9 +14,9 @@ namespace Neos\Flow\Mvc\Controller;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Response;
-use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\FlashMessage\FlashMessageContainer;
 use Neos\Flow\Mvc\FlashMessage\FlashMessageService;
+use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\RequestInterface;
 use Neos\Flow\Mvc\ResponseInterface;
 use Neos\Flow\Mvc\Routing\UriBuilder;
@@ -28,6 +28,8 @@ use Neos\Flow\Mvc\Routing\UriBuilder;
  * views being views or view helpers.
  *
  * @api
+ *
+ * TODO: From next major this will use the ActionResponse
  */
 class ControllerContext
 {
@@ -37,7 +39,7 @@ class ControllerContext
     protected $request;
 
     /**
-     * @var Response
+     * @var ActionResponse
      */
     protected $response;
 
@@ -87,7 +89,7 @@ class ControllerContext
     /**
      * Get the response of the controller
      *
-     * @return ResponseInterface
+     * @return ResponseInterface|ActionResponse
      * @api
      */
     public function getResponse()

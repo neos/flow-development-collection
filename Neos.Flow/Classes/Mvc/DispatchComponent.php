@@ -14,6 +14,7 @@ namespace Neos\Flow\Mvc;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Component\ComponentContext;
 use Neos\Flow\Http\Component\ComponentInterface;
+use Neos\Flow\Http\Helper\ResponseInformationHelper;
 use Neos\Flow\Http\Request as HttpRequest;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Property\PropertyMapper;
@@ -77,7 +78,10 @@ class DispatchComponent implements ComponentInterface
         $componentContext = $this->prepareActionRequest($componentContext);
         $actionRequest = $componentContext->getParameter(DispatchComponent::class, 'actionRequest');
         $this->setDefaultControllerAndActionNameIfNoneSpecified($actionRequest);
-        $this->dispatcher->dispatch($actionRequest, $componentContext->getHttpResponse());
+        $actionResponse = $this->prepareActionResponse($componentContext->getHttpResponse());
+        $this->dispatcher->dispatch($actionRequest, $actionResponse);
+        // TODO: This should change in next major when the action response is no longer a HTTP response for backward compatibility.
+        $componentContext->replaceHttpResponse($actionResponse);
     }
 
     /**
@@ -153,5 +157,22 @@ class DispatchComponent implements ComponentInterface
         if ($actionRequest->getControllerActionName() === null) {
             $actionRequest->setControllerActionName('index');
         }
+    }
+
+    /**
+     * Prepares the ActionResponse to be dispatched
+     *
+     * TODO: Needs to be adapted for next major when we only deliver an action response inside the dispatch.
+     *
+     * @param \Psr\Http\Message\ResponseInterface $httpResponse
+     * @return ActionResponse|\Psr\Http\Message\ResponseInterface
+     */
+    protected function prepareActionResponse(\Psr\Http\Message\ResponseInterface $httpResponse): ActionResponse
+    {
+        $rawResponse = implode("\r\n", ResponseInformationHelper::prepareHeaders($httpResponse));
+        $rawResponse .= "\r\n\r\n";
+        $rawResponse .= $httpResponse->getBody()->getContents();
+
+        return ActionResponse::createFromRaw($rawResponse);
     }
 }

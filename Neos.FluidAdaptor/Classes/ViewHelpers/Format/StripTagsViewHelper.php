@@ -13,7 +13,6 @@ namespace Neos\FluidAdaptor\ViewHelpers\Format;
 
 use TYPO3Fluid\Fluid\Core\Compiler\TemplateCompiler;
 use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\ViewHelperNode;
-use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 
 /**
@@ -24,10 +23,10 @@ use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
  * = Examples =
  *
  * <code title="default notation">
- * <f:format.stripTags>Some Text with <b>Tags</b> and an &Uuml;mlaut.</f:format.stripTags>
+ * <f:format.stripTags>Some Text with <b>RouteTags</b> and an &Uuml;mlaut.</f:format.stripTags>
  * </code>
  * <output>
- * Some Text with Tags and an &Uuml;mlaut. (strip_tags() applied. Note: encoded entities are not decoded)
+ * Some Text with RouteTags and an &Uuml;mlaut. (strip_tags() applied. Note: encoded entities are not decoded)
  * </output>
  *
  * <code title="inline notation">
@@ -47,15 +46,27 @@ class StripTagsViewHelper extends AbstractViewHelper
     protected $escapeChildren = false;
 
     /**
+     * Initialize the arguments.
+     *
+     * @return void
+     * @api
+     */
+    public function initializeArguments()
+    {
+        $this->registerArgument('value', 'string', 'string to format', false, null);
+    }
+
+    /**
      * Escapes special characters with their escaped counterparts as needed using PHPs strip_tags() function.
      *
-     * @param string $value string to format
      * @return mixed
      * @see http://www.php.net/manual/function.strip-tags.php
      * @api
      */
-    public function render($value = null)
+    public function render()
     {
+        $value = $this->arguments['value'];
+
         if ($value === null) {
             $value = $this->renderChildren();
         }

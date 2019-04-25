@@ -14,7 +14,6 @@ namespace Neos\Flow\ResourceManagement;
 use Doctrine\ORM\Mapping as ORM;
 use Neos\Flow\Annotations as Flow;
 use Neos\Cache\CacheAwareInterface;
-use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Utility\Environment;
 use Neos\Utility;
@@ -25,6 +24,7 @@ use Neos\Flow\ResourceManagement\Exception as ResourceException;
  * Model representing a persistable resource
  *
  * @Flow\Entity
+ * @ORM\Table(indexes={@ORM\Index(columns={"sha1"})})
  */
 class PersistentResource implements ResourceMetaDataInterface, CacheAwareInterface
 {
@@ -115,12 +115,6 @@ class PersistentResource implements ResourceMetaDataInterface, CacheAwareInterfa
 
     /**
      * @Flow\Inject
-     * @var SystemLoggerInterface
-     */
-    protected $systemLogger;
-
-    /**
-     * @Flow\Inject
      * @var Environment
      */
     protected $environment;
@@ -149,7 +143,7 @@ class PersistentResource implements ResourceMetaDataInterface, CacheAwareInterfa
      *
      * Note: The caller is responsible to close the returned resource by calling fclose($stream)
      *
-     * @return resource | boolean A stream which points to the data of this resource for read-access or FALSE if the stream could not be obtained
+     * @return resource | boolean A stream which points to the data of this resource for read-access or false if the stream could not be obtained
      * @api
      */
     public function getStream()
@@ -463,7 +457,7 @@ class PersistentResource implements ResourceMetaDataInterface, CacheAwareInterfa
      *
      * @return string
      */
-    public function getCacheEntryIdentifier()
+    public function getCacheEntryIdentifier(): string
     {
         return $this->sha1;
     }

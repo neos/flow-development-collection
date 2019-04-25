@@ -16,15 +16,15 @@ use Neos\Flow\Aop\AdvicesTrait;
 use Neos\Flow\Aop\AspectContainer;
 use Neos\Flow\Aop\PropertyIntroduction;
 use Neos\Cache\Frontend\VariableFrontend;
-use Neos\Flow\Log\SystemLoggerInterface;
+use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\ObjectManagement\CompileTimeObjectManager;
-use Neos\Flow\Reflection\ClassReflection;
 use Neos\Flow\Reflection\PropertyReflection;
 use Neos\Flow\Aop\TraitIntroduction;
 use Neos\Flow\Aop;
 use Neos\Flow\ObjectManagement\Proxy;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Utility\Algorithms;
+use Psr\Log\LoggerInterface;
 
 /**
  * The main class of the AOP (Aspect Oriented Programming) framework.
@@ -40,20 +40,14 @@ class ProxyClassBuilder
     protected $compiler;
 
     /**
-     * The Flow settings
-     * @var array
-     */
-    protected $settings;
-
-    /**
      * @var ReflectionService
      */
     protected $reflectionService;
 
     /**
-     * @var SystemLoggerInterface
+     * @var LoggerInterface
      */
-    protected $systemLogger;
+    protected $logger;
 
     /**
      * An instance of the pointcut expression parser
@@ -97,7 +91,7 @@ class ProxyClassBuilder
      * @param Proxy\Compiler $compiler
      * @return void
      */
-    public function injectCompiler(Proxy\Compiler $compiler)
+    public function injectCompiler(Proxy\Compiler $compiler): void
     {
         $this->compiler = $compiler;
     }
@@ -108,18 +102,21 @@ class ProxyClassBuilder
      * @param ReflectionService $reflectionService
      * @return void
      */
-    public function injectReflectionService(ReflectionService $reflectionService)
+    public function injectReflectionService(ReflectionService $reflectionService): void
     {
         $this->reflectionService = $reflectionService;
     }
 
     /**
-     * @param SystemLoggerInterface $systemLogger
+     * Injects the (system) logger based on PSR-3.
+     *
+     * @param LoggerInterface $logger
      * @return void
+     * @Flow\Autowiring(false)
      */
-    public function injectSystemLogger(SystemLoggerInterface $systemLogger)
+    public function injectLogger(LoggerInterface $logger)
     {
-        $this->systemLogger = $systemLogger;
+        $this->logger = $logger;
     }
 
     /**
@@ -128,7 +125,7 @@ class ProxyClassBuilder
      * @param Aop\Pointcut\PointcutExpressionParser $pointcutExpressionParser
      * @return void
      */
-    public function injectPointcutExpressionParser(Aop\Pointcut\PointcutExpressionParser $pointcutExpressionParser)
+    public function injectPointcutExpressionParser(Aop\Pointcut\PointcutExpressionParser $pointcutExpressionParser): void
     {
         $this->pointcutExpressionParser = $pointcutExpressionParser;
     }
@@ -140,7 +137,7 @@ class ProxyClassBuilder
      * @return void
      * @Flow\Autowiring(false)
      */
-    public function injectObjectConfigurationCache(VariableFrontend $objectConfigurationCache)
+    public function injectObjectConfigurationCache(VariableFrontend $objectConfigurationCache): void
     {
         $this->objectConfigurationCache = $objectConfigurationCache;
     }
@@ -151,7 +148,7 @@ class ProxyClassBuilder
      * @param AdvicedConstructorInterceptorBuilder $builder
      * @return void
      */
-    public function injectAdvicedConstructorInterceptorBuilder(AdvicedConstructorInterceptorBuilder $builder)
+    public function injectAdvicedConstructorInterceptorBuilder(AdvicedConstructorInterceptorBuilder $builder): void
     {
         $this->methodInterceptorBuilders['AdvicedConstructor'] = $builder;
     }
@@ -162,7 +159,7 @@ class ProxyClassBuilder
      * @param AdvicedMethodInterceptorBuilder $builder
      * @return void
      */
-    public function injectAdvicedMethodInterceptorBuilder(AdvicedMethodInterceptorBuilder $builder)
+    public function injectAdvicedMethodInterceptorBuilder(AdvicedMethodInterceptorBuilder $builder): void
     {
         $this->methodInterceptorBuilders['AdvicedMethod'] = $builder;
     }
@@ -171,20 +168,9 @@ class ProxyClassBuilder
      * @param CompileTimeObjectManager $objectManager
      * @return void
      */
-    public function injectObjectManager(CompileTimeObjectManager $objectManager)
+    public function injectObjectManager(CompileTimeObjectManager $objectManager): void
     {
         $this->objectManager = $objectManager;
-    }
-
-    /**
-     * Injects the Flow settings
-     *
-     * @param array $settings The settings
-     * @return void
-     */
-    public function injectSettings(array $settings)
-    {
-        $this->settings = $settings;
     }
 
     /**
@@ -204,7 +190,7 @@ class ProxyClassBuilder
      *
      * @return void
      */
-    public function build()
+    public function build(): void
     {
         $allAvailableClassNamesByPackage = $this->objectManager->getRegisteredClassNames();
         $possibleTargetClassNames = $this->getProxyableClasses($allAvailableClassNamesByPackage);
@@ -217,7 +203,7 @@ class ProxyClassBuilder
         $rebuildEverything = false;
         if ($this->objectConfigurationCache->has('allAspectClassesUpToDate') === false) {
             $rebuildEverything = true;
-            $this->systemLogger->log('Aspects have been modified, therefore rebuilding all target classes.', LOG_INFO);
+            $this->logger->info('Aspects have been modified, therefore rebuilding all target classes.', LogEnvironment::fromMethodName(__METHOD__));
             $this->objectConfigurationCache->set('allAspectClassesUpToDate', true);
         }
 
@@ -247,7 +233,7 @@ class ProxyClassBuilder
                     if ($isUnproxied) {
                         $this->objectConfigurationCache->remove('unproxiedClass-' . str_replace('\\', '_', $targetClassName));
                     }
-                    $this->systemLogger->log(sprintf('Built AOP proxy for class "%s".', $targetClassName), LOG_DEBUG);
+                    $this->logger->debug(sprintf('Built AOP proxy for class "%s".', $targetClassName));
                 } else {
                     $this->objectConfigurationCache->set('unproxiedClass-' . str_replace('\\', '_', $targetClassName), true);
                 }
@@ -261,9 +247,9 @@ class ProxyClassBuilder
      *
      * @param string $aspectClassName Name of the aspect class where the pointcut has been declared
      * @param string $pointcutMethodName Method name of the pointcut
-     * @return mixed The Aop\Pointcut\Pointcut or FALSE if none was found
+     * @return mixed The Aop\Pointcut\Pointcut or false if none was found
      */
-    public function findPointcut($aspectClassName, $pointcutMethodName)
+    public function findPointcut(string $aspectClassName, string $pointcutMethodName)
     {
         if (!isset($this->aspectContainers[$aspectClassName])) {
             return false;
@@ -283,7 +269,7 @@ class ProxyClassBuilder
      * @param array $classNamesByPackage Names of the classes to check
      * @return array Names of classes which can be proxied
      */
-    protected function getProxyableClasses(array $classNamesByPackage)
+    protected function getProxyableClasses(array $classNamesByPackage): array
     {
         $proxyableClasses = [];
         foreach ($classNamesByPackage as $classNames) {
@@ -307,7 +293,7 @@ class ProxyClassBuilder
      * @param array &$classNames Classes to check for aspect tags.
      * @return array An array of Aop\AspectContainer for all aspects which were found.
      */
-    protected function buildAspectContainers(array &$classNames)
+    protected function buildAspectContainers(array &$classNames): array
     {
         $aspectContainers = [];
         foreach ($classNames as $aspectClassName) {
@@ -322,10 +308,10 @@ class ProxyClassBuilder
      * fetched (and therefore instantiated if necessary).
      *
      * @param  string $aspectClassName Name of the class which forms the aspect, contains advices etc.
-     * @return mixed The aspect container containing one or more advisors or FALSE if no container could be built
-     * @throws Aop\Exception
+     * @return AspectContainer The aspect container containing one or more advisors
+     * @throws Aop\Exception if no container could be built
      */
-    protected function buildAspectContainer($aspectClassName)
+    protected function buildAspectContainer(string $aspectClassName): AspectContainer
     {
         $aspectContainer = new AspectContainer($aspectClassName);
         $methodNames = get_class_methods($aspectClassName);
@@ -382,7 +368,7 @@ class ProxyClassBuilder
             if ($introduceAnnotation->interfaceName === null && $introduceAnnotation->traitName === null) {
                 throw new Aop\Exception('The introduction in class "' . $aspectClassName . '" does neither contain an interface name nor a trait name, at least one is required.', 1172694761);
             }
-            $pointcutFilterComposite = $this->pointcutExpressionParser->parse($introduceAnnotation->pointcutExpression, $this->renderSourceHint($aspectClassName, $introduceAnnotation->interfaceName, Flow\Introduce::class));
+            $pointcutFilterComposite = $this->pointcutExpressionParser->parse($introduceAnnotation->pointcutExpression, $this->renderSourceHint($aspectClassName, (string)$introduceAnnotation->interfaceName, Flow\Introduce::class));
             $pointcut = new Aop\Pointcut\Pointcut($introduceAnnotation->pointcutExpression, $pointcutFilterComposite, $aspectClassName);
 
             if ($introduceAnnotation->interfaceName !== null) {
@@ -420,9 +406,9 @@ class ProxyClassBuilder
      *
      * @param string $targetClassName Name of the class to create a proxy class file for
      * @param array &$aspectContainers The array of aspect containers from the AOP Framework
-     * @return boolean TRUE if the proxy class could be built, FALSE otherwise.
+     * @return boolean true if the proxy class could be built, false otherwise.
      */
-    public function buildProxyClass($targetClassName, array &$aspectContainers)
+    public function buildProxyClass(string $targetClassName, array &$aspectContainers): bool
     {
         $interfaceIntroductions = $this->getMatchingInterfaceIntroductions($aspectContainers, $targetClassName);
         $introducedInterfaces = $this->getInterfaceNamesFromIntroductions($interfaceIntroductions);
@@ -431,7 +417,7 @@ class ProxyClassBuilder
         $propertyIntroductions = $this->getMatchingPropertyIntroductions($aspectContainers, $targetClassName);
 
         $methodsFromTargetClass = $this->getMethodsFromTargetClass($targetClassName);
-        $methodsFromIntroducedInterfaces = $this->getIntroducedMethodsFromInterfaceIntroductions($interfaceIntroductions, $targetClassName);
+        $methodsFromIntroducedInterfaces = $this->getIntroducedMethodsFromInterfaceIntroductions($interfaceIntroductions);
 
         $interceptedMethods = [];
         $this->addAdvicedMethodsToInterceptedMethods($interceptedMethods, array_merge($methodsFromTargetClass, $methodsFromIntroducedInterfaces), $targetClassName, $aspectContainers);
@@ -462,7 +448,7 @@ class ProxyClassBuilder
             }
             $propertyReflection = new PropertyReflection($declaringAspectClassName, $propertyName);
             $propertyReflection->setIsAopIntroduced(true);
-            $this->reflectionService->reflectClassProperty($targetClassName, $propertyReflection, new ClassReflection($declaringAspectClassName));
+            $this->reflectionService->reflectClassProperty($targetClassName, $propertyReflection);
 
             $proxyClass->addProperty($propertyName, var_export($propertyIntroduction->getInitialValue(), true), $propertyIntroduction->getPropertyVisibility(), $propertyIntroduction->getPropertyDocComment());
         }
@@ -499,7 +485,7 @@ class ProxyClassBuilder
      * @param ClassNameIndex $treatedSubClasses Already treated (sub) classes to avoid duplication
      * @return ClassNameIndex The new collection of already treated classes
      */
-    protected function proxySubClassesOfClassToEnsureAdvices($className, ClassNameIndex $targetClassNameCandidates, ClassNameIndex $treatedSubClasses)
+    protected function proxySubClassesOfClassToEnsureAdvices(string $className, ClassNameIndex $targetClassNameCandidates, ClassNameIndex $treatedSubClasses): ClassNameIndex
     {
         if ($this->reflectionService->isClassReflected($className) === false) {
             return $treatedSubClasses;
@@ -530,7 +516,7 @@ class ProxyClassBuilder
      * @param ClassNameIndex $treatedSubClasses
      * @return ClassNameIndex
      */
-    protected function addBuildMethodsAndAdvicesCodeToClass($className, ClassNameIndex $treatedSubClasses)
+    protected function addBuildMethodsAndAdvicesCodeToClass(string $className, ClassNameIndex $treatedSubClasses): ClassNameIndex
     {
         if ($treatedSubClasses->hasClassName($className)) {
             return $treatedSubClasses;
@@ -559,7 +545,7 @@ class ProxyClassBuilder
      * @param string $targetClassName Name of the target class
      * @return array Method information with declaring class and method name pairs
      */
-    protected function getMethodsFromTargetClass($targetClassName)
+    protected function getMethodsFromTargetClass(string $targetClassName): array
     {
         $methods = [];
         $class = new \ReflectionClass($targetClassName);
@@ -595,7 +581,7 @@ class ProxyClassBuilder
      * @return string PHP code for the content of an array of target method names and advice objects
      * @see buildProxyClass()
      */
-    protected function buildMethodsAndAdvicesArrayCode(array $methodsAndGroupedAdvices)
+    protected function buildMethodsAndAdvicesArrayCode(array $methodsAndGroupedAdvices): string
     {
         if (count($methodsAndGroupedAdvices) < 1) {
             return '';
@@ -616,7 +602,7 @@ class ProxyClassBuilder
             $methodsAndAdvicesArrayCode .= "            ),\n";
         }
         $methodsAndAdvicesArrayCode .= "        );\n";
-        return  $methodsAndAdvicesArrayCode;
+        return $methodsAndAdvicesArrayCode;
     }
 
     /**
@@ -631,7 +617,7 @@ class ProxyClassBuilder
      * @return void
      * @throws Aop\Exception\VoidImplementationException
      */
-    protected function buildMethodsInterceptorCode($targetClassName, array $interceptedMethods)
+    protected function buildMethodsInterceptorCode(string $targetClassName, array $interceptedMethods): void
     {
         foreach ($interceptedMethods as $methodName => $methodMetaInformation) {
             if (count($methodMetaInformation['groupedAdvices']) === 0) {
@@ -652,7 +638,7 @@ class ProxyClassBuilder
      * @param array &$aspectContainers All aspects to take into consideration
      * @return void
      */
-    protected function addAdvicedMethodsToInterceptedMethods(array &$interceptedMethods, array $methods, $targetClassName, array &$aspectContainers)
+    protected function addAdvicedMethodsToInterceptedMethods(array &$interceptedMethods, array $methods, string $targetClassName, array &$aspectContainers): void
     {
         $pointcutQueryIdentifier = 0;
 
@@ -664,10 +650,6 @@ class ProxyClassBuilder
                 $pointcut = $advisor->getPointcut();
                 foreach ($methods as $method) {
                     list($methodDeclaringClassName, $methodName) = $method;
-
-                    if ($this->reflectionService->isMethodFinal($targetClassName, $methodName)) {
-                        continue;
-                    }
 
                     if ($this->reflectionService->isMethodStatic($targetClassName, $methodName)) {
                         continue;
@@ -695,7 +677,7 @@ class ProxyClassBuilder
      * @param array $methodsFromIntroducedInterfaces An array of class and method names from introduced interfaces
      * @return void
      */
-    protected function addIntroducedMethodsToInterceptedMethods(array &$interceptedMethods, array $methodsFromIntroducedInterfaces)
+    protected function addIntroducedMethodsToInterceptedMethods(array &$interceptedMethods, array $methodsFromIntroducedInterfaces): void
     {
         foreach ($methodsFromIntroducedInterfaces as $interfaceAndMethodName) {
             list($interfaceName, $methodName) = $interfaceAndMethodName;
@@ -714,7 +696,7 @@ class ProxyClassBuilder
      * @param string $targetClassName Name of the class the pointcut should match with
      * @return array array of interface names
      */
-    protected function getMatchingInterfaceIntroductions(array &$aspectContainers, $targetClassName)
+    protected function getMatchingInterfaceIntroductions(array &$aspectContainers, string $targetClassName): array
     {
         $introductions = [];
         foreach ($aspectContainers as $aspectContainer) {
@@ -739,7 +721,7 @@ class ProxyClassBuilder
      * @param string $targetClassName Name of the class the pointcut should match with
      * @return array|PropertyIntroduction[] array of property introductions
      */
-    protected function getMatchingPropertyIntroductions(array &$aspectContainers, $targetClassName)
+    protected function getMatchingPropertyIntroductions(array &$aspectContainers, string $targetClassName): array
     {
         $introductions = [];
         foreach ($aspectContainers as $aspectContainer) {
@@ -764,7 +746,7 @@ class ProxyClassBuilder
      * @param string $targetClassName Name of the class the pointcut should match with
      * @return array array of trait names
      */
-    protected function getMatchingTraitNamesFromIntroductions(array &$aspectContainers, $targetClassName)
+    protected function getMatchingTraitNamesFromIntroductions(array &$aspectContainers, string $targetClassName): array
     {
         $introductions = [];
         /** @var AspectContainer $aspectContainer */
@@ -790,7 +772,7 @@ class ProxyClassBuilder
      * @param array $interfaceIntroductions An array of interface introductions
      * @return array Array of interface names
      */
-    protected function getInterfaceNamesFromIntroductions(array $interfaceIntroductions)
+    protected function getInterfaceNamesFromIntroductions(array $interfaceIntroductions): array
     {
         $interfaceNames = [];
         foreach ($interfaceIntroductions as $introduction) {
@@ -806,7 +788,7 @@ class ProxyClassBuilder
      * @return array An array of method information (interface, method name)
      * @throws Aop\Exception
      */
-    protected function getIntroducedMethodsFromInterfaceIntroductions(array $interfaceIntroductions)
+    protected function getIntroducedMethodsFromInterfaceIntroductions(array $interfaceIntroductions): array
     {
         $methods = [];
         $methodsAndIntroductions = [];
@@ -834,7 +816,7 @@ class ProxyClassBuilder
      * @param string $tagName
      * @return string
      */
-    protected function renderSourceHint($aspectClassName, $methodName, $tagName)
+    protected function renderSourceHint(string $aspectClassName, string $methodName, string $tagName): string
     {
         return sprintf('%s::%s (%s advice)', $aspectClassName, $methodName, $tagName);
     }

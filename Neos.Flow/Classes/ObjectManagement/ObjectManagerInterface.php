@@ -12,13 +12,16 @@ namespace Neos\Flow\ObjectManagement;
  */
 
 use Neos\Flow\Core\ApplicationContext;
+use Psr\Container\ContainerInterface;
 
 /**
  * Interface for the Flow Object Manager
+ * This is a superset of the PSR-11 ContainerInterface.
+ * If all you need is get and has you might want to use ContainerInterface only.
  *
  * @api
  */
-interface ObjectManagerInterface
+interface ObjectManagerInterface extends ContainerInterface
 {
     const INITIALIZATIONCAUSE_CREATED = 1;
     const INITIALIZATIONCAUSE_RECREATED = 2;
@@ -47,11 +50,20 @@ interface ObjectManagerInterface
     public function get($objectName);
 
     /**
-     * Returns TRUE if an object with the given name has already
+     * This is the PSR-11 ContainerInterface equivalent to `isRegistered`.
+     *
+     * @param string $objectName
+     * @return bool
+     * @see isRegistered
+     */
+    public function has($objectName);
+
+    /**
+     * Returns true if an object with the given name has already
      * been registered.
      *
      * @param  string $objectName Name of the object
-     * @return boolean TRUE if the object has been registered, otherwise FALSE
+     * @return boolean true if the object has been registered, otherwise false
      * @since 1.0.0 alpha 8
      * @api
      */
@@ -70,7 +82,7 @@ interface ObjectManagerInterface
     /**
      * Returns the case sensitive object name of an object specified by a
      * case insensitive object name. If no object of that name exists,
-     * FALSE is returned.
+     * false is returned.
      *
      * In general, the case sensitive variant is used everywhere in Flow,
      * however there might be special situations in which the
@@ -78,7 +90,7 @@ interface ObjectManagerInterface
      * rare cases.
      *
      * @param  string $caseInsensitiveObjectName The object name in lower-, upper- or mixed case
-     * @return mixed Either the mixed case object name or FALSE if no object of that name was found.
+     * @return mixed Either the mixed case object name or false if no object of that name was found.
      * @api
      */
     public function getCaseSensitiveObjectName($caseInsensitiveObjectName);
@@ -96,7 +108,7 @@ interface ObjectManagerInterface
      * Returns the implementation class name for the specified object
      *
      * @param string $objectName The object name
-     * @return string The class name corresponding to the given object name or FALSE if no such object is registered
+     * @return string The class name corresponding to the given object name or false if no such object is registered
      * @api
      */
     public function getClassNameByObjectName($objectName);
@@ -105,7 +117,7 @@ interface ObjectManagerInterface
      * Returns the key of the package the specified object is contained in.
      *
      * @param string $objectName The object name
-     * @return string The package key or FALSE if no such object exists
+     * @return string The package key or false if no such object exists
      */
     public function getPackageKeyByObjectName($objectName);
 

@@ -131,10 +131,10 @@ or published to the web. Static resources may either be public or private:
 
 Whether a static package resource is public or private is determined by its parent
 directory. For a package *Acme.Demo* the public resources reside in a folder called
-*Acme.Demo/Resources/Public/* while the private resources are stored in
-*Acme.Demo/Resources/Private/*. The directory structure below *Public* and *Private* is up
+``Acme.Demo/Resources/Public/`` while the private resources are stored in
+``Acme.Demo/Resources/Private/``. The directory structure below *Public* and *Private* is up
 to you but there are some suggestions in the :doc:`chapter about package management <PackageManagement>`.
-Both private and public package resources are not represented by ``PersistentResource``s in the database.
+Both private and public package resources are not represented by ``PersistentResource`` instances in the database.
 
 
 Persistent Resources
@@ -342,9 +342,9 @@ There are multiple ways of accessing your resource`s data depending on what you 
 Either you need a web accessible URI to a resource to display or link to it or you need the raw data
 to process it further (like image manipulation for example).
 
-To provide URIs your resources have to be published. For newly created ``PersistentResource``s this happens
-automatically. Package resources have to be published at least once by running the ``resource:publish``
-command:
+To provide URIs your resources have to be published. For newly created ``PersistentResource`` objects
+this happens automatically. Package resources have to be published at least once by running the
+``resource:publish`` command:
 
 .. code-block:: none
 

@@ -24,7 +24,7 @@ Syntax Examples
 * `filter('foo[attribute=bar]')`: object identifier and attribute selectors are both supported.
 * `children('foo').children('bar')`: select the bar object inside the foo object
 * `children('foo[a=b]').children('bar[c=d]')`: select the bar object inside the foo object, but only if the additional attribute matchers fit
-* `filter('[a*= b]')`, `filter('[a^= b]')`, `filter('[a$= b]')`: Substring match, beginning-of-string-match, end-of-string-match
+* `filter('[a*= b]')`, `filter('[a^= b]')`, `filter('[a$= b]')`: Substring match/Array a contains element b, beginning-of-string-match/Array a's first element is equal to b, end-of-string-match/Array a's last element is equal to b
 * `filter('[instanceof foo]')`: select the object if it is instance of foo
 * `filter('[instanceof "foo"]')`: same as above
 * `filter('[attribute instanceof object]')`: Selects an object if it has an attribute `attribute` that is an instance of `object`

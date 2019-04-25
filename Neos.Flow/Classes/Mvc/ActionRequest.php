@@ -15,7 +15,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Request as HttpRequest;
 use Neos\Flow\ObjectManagement\Exception\UnknownObjectException;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use Neos\Flow\Package\PackageManagerInterface;
+use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Security\Cryptography\HashService;
 use Neos\Flow\SignalSlot\Dispatcher as SignalSlotDispatcher;
 use Neos\Utility\Arrays;
@@ -41,7 +41,7 @@ class ActionRequest implements RequestInterface
 
     /**
      * @Flow\Inject
-     * @var PackageManagerInterface
+     * @var PackageManager
      */
     protected $packageManager;
 
@@ -253,7 +253,7 @@ class ActionRequest implements RequestInterface
      * The dispatcher will try to dispatch the request again if it has not been
      * addressed yet.
      *
-     * @return boolean TRUE if this request has been dispatched successfully
+     * @return boolean true if this request has been dispatched successfully
      * @api
      */
     public function isDispatched()
@@ -529,7 +529,7 @@ class ActionRequest implements RequestInterface
      * Checks if an argument of the given name exists (is set)
      *
      * @param string $argumentName Name of the argument to check
-     * @return boolean TRUE if the argument is set, otherwise FALSE
+     * @return boolean true if the argument is set, otherwise false
      * @api
      */
     public function hasArgument($argumentName)
@@ -670,7 +670,7 @@ class ActionRequest implements RequestInterface
     }
 
     /**
-     * Resets the dispatched status to FALSE
+     * Resets the dispatched status to false
      */
     public function __clone()
     {

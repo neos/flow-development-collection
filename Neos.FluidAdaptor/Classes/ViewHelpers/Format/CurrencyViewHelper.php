@@ -12,6 +12,7 @@ namespace Neos\FluidAdaptor\ViewHelpers\Format;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\I18n\Cldr\Reader\NumbersReader;
 use Neos\Flow\I18n\Exception as I18nException;
 use Neos\Flow\I18n\Formatter\NumberFormatter;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractLocaleAwareViewHelper;
@@ -85,6 +86,9 @@ use Neos\FluidAdaptor\Core\ViewHelper\Exception as ViewHelperException;
  * Fore more information about localization see section ``Internationalization & Localization Framework`` in the
  * Flow documentation.
  *
+ * Additionally, if ``currencyCode`` is set, rounding and decimal digits are replaced by the rules for the
+ * respective currency (e.g. JPY never has decimal digits, CHF is rounded using 5 decimals.)
+ *
  * @api
  */
 class CurrencyViewHelper extends AbstractLocaleAwareViewHelper
@@ -96,21 +100,34 @@ class CurrencyViewHelper extends AbstractLocaleAwareViewHelper
     protected $numberFormatter;
 
     /**
-     * @param string $currencySign (optional) The currency sign, eg $ or €.
-     * @param string $decimalSeparator (optional) The separator for the decimal point.
-     * @param string $thousandsSeparator (optional) The thousands separator.
-     * @param boolean $prependCurrency (optional) Indicates if currency symbol should be placed before or after the numeric value.
-     * @param boolean $separateCurrency (optional) Indicates if a space character should be placed between the number and the currency sign.
-     * @param integer $decimals (optional) The number of decimal places.
+     * Initialize the arguments.
+     *
+     * @return void
+     * @api
+     */
+    public function initializeArguments()
+    {
+        $this->registerArgument('currencySign', 'string', '(optional) The currency sign, eg $ or €.', false, '');
+        $this->registerArgument('decimalSeparator', 'string', '(optional) The separator for the decimal point.', false, ',');
+        $this->registerArgument('thousandsSeparator', 'string', '(optional) The thousands separator.', false, '.');
+        $this->registerArgument('prependCurrency', 'boolean', '(optional) Indicates if currency symbol should be placed before or after the numeric value.', false, false);
+        $this->registerArgument('separateCurrency', 'boolean', '(optional) Indicates if a space character should be placed between the number and the currency sign.', false, true);
+        $this->registerArgument('decimals', 'integer', '(optional) The number of decimal places.', false, 2);
+        $this->registerArgument('currencyCode', 'string', '(optional) The ISO 4217 currency code of the currency to format. Used to set decimal places and rounding.', false, null);
+    }
+
+    /**
      *
      * @throws InvalidVariableException
      * @return string the formatted amount.
      * @throws ViewHelperException
      * @api
      */
-    public function render($currencySign = '', $decimalSeparator = ',', $thousandsSeparator = '.', $prependCurrency = false, $separateCurrency = true, $decimals = 2)
+    public function render()
     {
         $stringToFormat = $this->renderChildren();
+        $currencySign = $this->arguments['currencySign'];
+        $separateCurrency = $this->arguments['separateCurrency'];
 
         $useLocale = $this->getLocale();
         if ($useLocale !== null) {
@@ -118,7 +135,7 @@ class CurrencyViewHelper extends AbstractLocaleAwareViewHelper
                 throw new InvalidVariableException('Using the Locale requires a currencySign.', 1326378320);
             }
             try {
-                $output = $this->numberFormatter->formatCurrencyNumber($stringToFormat, $useLocale, $currencySign);
+                $output = $this->numberFormatter->formatCurrencyNumber($stringToFormat, $useLocale, $currencySign, NumbersReader::FORMAT_LENGTH_DEFAULT, $this->arguments['currencyCode']);
             } catch (I18nException $exception) {
                 throw new ViewHelperException($exception->getMessage(), 1382350428, $exception);
             }
@@ -126,11 +143,11 @@ class CurrencyViewHelper extends AbstractLocaleAwareViewHelper
             return $output;
         }
 
-        $output = number_format((float)$stringToFormat, $decimals, $decimalSeparator, $thousandsSeparator);
+        $output = number_format((float)$stringToFormat, $this->arguments['decimals'], $this->arguments['decimalSeparator'], $this->arguments['thousandsSeparator']);
         if (empty($currencySign)) {
             return $output;
         }
-        if ($prependCurrency === true) {
+        if ($this->arguments['prependCurrency'] === true) {
             $output = $currencySign . ($separateCurrency === true ? ' ' : '') . $output;
 
             return $output;
