@@ -23,7 +23,6 @@ use Neos\Flow\Mvc\FlashMessage\FlashMessageStorageInterface;
 
 class FlashMessageCookieStorage implements FlashMessageStorageInterface
 {
-
     const DEFAULT_COOKIE_NAME = 'Neos_Flow_FlashMessages';
 
     /**

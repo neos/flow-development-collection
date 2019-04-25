@@ -117,6 +117,4 @@ class FlashMessageService
         }
         throw new InvalidFlashMessageConfigurationException('No FlashMessage Storage could be resolved for the current request', 1502966545);
     }
-
-
 }
