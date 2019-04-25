@@ -12,7 +12,6 @@ namespace Neos\Flow\Mvc\FlashMessage;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Error\Messages\Message;
 use Neos\Flow\Http\Component\ComponentContext;
 use Neos\Flow\Http\Component\ComponentInterface;
 
