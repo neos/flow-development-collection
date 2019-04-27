@@ -99,6 +99,9 @@
             ],
             "Neos\\Utility\\Unicode\\": [
                 "Neos.Utility.Unicode/Classes"
+            ],
+            "Neos\\Http\\Factories\\": [
+                "Neos.Http.Factories/Classes"
             ]
         }
     },
@@ -155,6 +158,9 @@
             ],
             "Neos\\Flow\\Utility\\Unicode\\Tests\\": [
                 "Neos.Utility.Unicode/Tests"
+            ],
+            "Neos\\Http\\Factories\\Tests\\": [
+                "Neos.Http.Factories/Tests"
             ]
         }
     }

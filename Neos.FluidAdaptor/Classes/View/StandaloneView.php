@@ -11,10 +11,10 @@ namespace Neos\FluidAdaptor\View;
  * source code.
  */
 
+use GuzzleHttp\Psr7\ServerRequest;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Http\HttpRequestHandlerInterface;
-use Neos\Flow\Http\Request;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Controller\Arguments;
@@ -115,7 +115,7 @@ class StandaloneView extends AbstractTemplateView
             if ($requestHandler instanceof HttpRequestHandlerInterface) {
                 $this->request = new ActionRequest($requestHandler->getHttpRequest());
             } else {
-                $httpRequest = Request::createFromEnvironment();
+                $httpRequest = ServerRequest::fromGlobals();
                 $this->request = new ActionRequest($httpRequest);
             }
         }

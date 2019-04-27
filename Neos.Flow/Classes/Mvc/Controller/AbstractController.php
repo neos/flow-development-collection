@@ -331,8 +331,7 @@ abstract class AbstractController implements ControllerInterface
             if (!$uri instanceof UriInterface) {
                 $uri = new \Neos\Flow\Http\Uri($uri);
             }
-            $this->response->setStatus($statusCode);
-            $this->response->setHeader('Location', (string)$uri);
+            $this->response->setRedirectUri($uri, $statusCode);
         } else {
             $escapedUri = htmlentities($uri, ENT_QUOTES, 'utf-8');
             $this->response->setStatus($statusCode);

@@ -13,6 +13,8 @@ namespace Neos\Flow\Security\Authentication;
 
 use Neos\Flow\Http\Request;
 use Neos\Flow\Http\Response;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Contract for an authentication entry point
@@ -41,5 +43,5 @@ interface EntryPointInterface
      * @param Response $response The current response
      * @return void
      */
-    public function startAuthentication(Request $request, Response $response);
+    public function startAuthentication(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface;
 }

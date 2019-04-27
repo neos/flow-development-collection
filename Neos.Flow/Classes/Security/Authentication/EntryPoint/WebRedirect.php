@@ -12,11 +12,16 @@ namespace Neos\Flow\Security\Authentication\EntryPoint;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Http\Helper\ArgumentsHelper;
+use Neos\Flow\Http\Helper\ResponseInformationHelper;
 use Neos\Flow\Http\Request;
 use Neos\Flow\Http\Response;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Flow\Security\Exception\MissingConfigurationException;
+use Neos\Fusion\Tests\Unit\FusionObjects\Http\ResponseHeadImplementationTest;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * An authentication entry point, that redirects to another webpage.
@@ -38,7 +43,7 @@ class WebRedirect extends AbstractEntryPoint
      * @return void
      * @throws MissingConfigurationException
      */
-    public function startAuthentication(Request $request, Response $response)
+    public function startAuthentication(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
         if (isset($this->options['routeValues'])) {
             $routeValues = $this->options['routeValues'];
@@ -59,9 +64,10 @@ class WebRedirect extends AbstractEntryPoint
             throw new MissingConfigurationException('The configuration for the WebRedirect authentication entry point is incorrect or missing. You need to specify either the target "uri" or "routeValues".', 1237282583);
         }
 
-        $response->setContent(sprintf('<html><head><meta http-equiv="refresh" content="0;url=%s"/></head></html>', htmlentities($uri, ENT_QUOTES, 'utf-8')));
-        $response->setStatus(303);
-        $response->setHeader('Location', $uri);
+        return $response
+            ->withBody(ArgumentsHelper::createContentStreamFromString(sprintf('<html><head><meta http-equiv="refresh" content="0;url=%s"/></head></html>', htmlentities($uri, ENT_QUOTES, 'utf-8'))))
+            ->withStatus(303)
+            ->withHeader('Location', $uri);
     }
 
     /**

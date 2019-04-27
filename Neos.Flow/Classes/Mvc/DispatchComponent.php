@@ -14,9 +14,10 @@ namespace Neos\Flow\Mvc;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Component\ComponentContext;
 use Neos\Flow\Http\Component\ComponentInterface;
-use Neos\Flow\Http\Helper\ArgumentsHelper;
+use Neos\Flow\Http\Helper\RequestInformationHelper;
 use Neos\Flow\Http\Helper\ResponseInformationHelper;
-use Neos\Flow\Http\Request as HttpRequest;
+use Neos\Flow\Http\Helper\ArgumentsHelper;
+use Neos\Flow\Http\Helper\UploadedFilesHelper;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Property\PropertyMappingConfiguration;
@@ -105,14 +106,15 @@ class DispatchComponent implements ComponentInterface
             $httpRequest = $httpRequest->withParsedBody($parsedBody);
         }
 
+        $arguments = ArgumentsHelper::buildUnifiedArguments($httpRequest->getQueryParams(), $parsedBody, UploadedFilesHelper::untangleFilesArray($_FILES));
+
+        /** @var $actionRequest ActionRequest */
+        $actionRequest = $this->objectManager->get(ActionRequest::class, $httpRequest);
 
         $routingMatchResults = $componentContext->getParameter(Routing\RoutingComponent::class, 'matchResults');
         if ($routingMatchResults !== null) {
             $arguments = Arrays::arrayMergeRecursiveOverrule($arguments, $routingMatchResults);
         }
-
-        /** @var $actionRequest ActionRequest */
-        $actionRequest = $this->objectManager->get(ActionRequest::class, $httpRequest);
 
         $actionRequest->setArguments($arguments);
         $this->securityContext->setRequest($actionRequest);
@@ -139,7 +141,8 @@ class DispatchComponent implements ComponentInterface
         $mediaTypeConverter = $this->objectManager->get(MediaTypeConverterInterface::class);
         $propertyMappingConfiguration = new PropertyMappingConfiguration();
         $propertyMappingConfiguration->setTypeConverter($mediaTypeConverter);
-        $propertyMappingConfiguration->setTypeConverterOption(MediaTypeConverterInterface::class, MediaTypeConverterInterface::CONFIGURATION_MEDIA_TYPE, $httpRequest->getHeader('Content-Type'));
+        $requestedContentType = RequestInformationHelper::getFirstRequestHeaderValue($httpRequest, 'Content-Type');
+        $propertyMappingConfiguration->setTypeConverterOption(MediaTypeConverterInterface::class, MediaTypeConverterInterface::CONFIGURATION_MEDIA_TYPE, $requestedContentType);
         $arguments = $this->propertyMapper->convert($requestBody, 'array', $propertyMappingConfiguration);
 
         return $arguments;

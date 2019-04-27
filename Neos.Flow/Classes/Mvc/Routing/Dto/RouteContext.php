@@ -15,7 +15,7 @@ use Neos\Cache\CacheAwareInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Helper\RequestInformationHelper;
 use Neos\Flow\Http\Helper\UriHelper;
-use Psr\Http\Message\ServerRequestInterface as HttpRequest;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Simple DTO wrapping the values required for a Router::route() call
@@ -28,7 +28,7 @@ final class RouteContext implements CacheAwareInterface
     /**
      * The current HTTP request
      *
-     * @var HttpRequest
+     * @var ServerRequestInterface
      */
     private $httpRequest;
 
@@ -45,19 +45,19 @@ final class RouteContext implements CacheAwareInterface
     private $cacheEntryIdentifier;
 
     /**
-     * @param HttpRequest $httpRequest The current HTTP request
+     * @param ServerRequestInterface $httpRequest The current HTTP request
      * @param RouteParameters $parameters Routing RouteParameters
      */
-    public function __construct(HttpRequest $httpRequest, RouteParameters $parameters)
+    public function __construct(ServerRequestInterface $httpRequest, RouteParameters $parameters)
     {
         $this->httpRequest = $httpRequest;
         $this->parameters = $parameters;
     }
 
     /**
-     * @return HttpRequest
+     * @return ServerRequestInterface
      */
-    public function getHttpRequest(): HttpRequest
+    public function getHttpRequest(): ServerRequestInterface
     {
         return $this->httpRequest;
     }

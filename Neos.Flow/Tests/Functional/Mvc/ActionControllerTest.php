@@ -11,7 +11,7 @@ namespace Neos\Flow\Tests\Functional\Mvc;
  * source code.
  */
 
-use Neos\Flow\Http\Request;
+use GuzzleHttp\Psr7\ServerRequest;
 use Neos\Flow\Http\Uri;
 use Neos\Flow\Mvc\Controller\MvcPropertyMappingConfigurationService;
 use Neos\Flow\Tests\Functional\Persistence\Fixtures\TestEntity;
@@ -116,7 +116,7 @@ class ActionControllerTest extends FunctionalTestCase
      */
     public function argumentsOfPutRequestArePassedToAction()
     {
-        $request = Request::create(new Uri('http://localhost/test/mvc/actioncontrollertesta/put?getArgument=getValue'), 'PUT');
+        $request = new ServerRequest('PUT', new Uri('http://localhost/test/mvc/actioncontrollertesta/put?getArgument=getValue'));
         $request->setContent('putArgument=first value');
         $request->setHeader('Content-Type', 'application/x-www-form-urlencoded');
         $request->setHeader('Content-Length', 54);
@@ -132,7 +132,7 @@ class ActionControllerTest extends FunctionalTestCase
      */
     public function notFoundStatusIsReturnedIfASpecifiedObjectCantBeFound()
     {
-        $request = Request::create(new Uri('http://localhost/test/mvc/actioncontrollertestc/non-existing-id'), 'GET');
+        $request = new ServerRequest( 'GET', new Uri('http://localhost/test/mvc/actioncontrollertestc/non-existing-id'));
 
         $response = $this->browser->sendRequest($request);
         $this->assertSame(404, $response->getStatusCode());
@@ -146,7 +146,7 @@ class ActionControllerTest extends FunctionalTestCase
      */
     public function notAcceptableStatusIsReturnedIfMediaTypeDoesNotMatchSupportedMediaTypes()
     {
-        $request = Request::create(new Uri('http://localhost/test/mvc/actioncontrollertesta'), 'GET');
+        $request = new ServerRequest( 'GET', new Uri('http://localhost/test/mvc/actioncontrollertesta'));
         $request->setHeader('Content-Type', 'application/xml');
         $request->setHeader('Accept', 'application/xml');
         $request->setContent('<xml></xml>');
@@ -187,7 +187,7 @@ class ActionControllerTest extends FunctionalTestCase
      */
     public function argumentsOfPutRequestWithJsonOrXmlTypeAreAlsoPassedToAction()
     {
-        $request = Request::create(new Uri('http://localhost/test/mvc/actioncontrollertesta/put?getArgument=getValue'), 'PUT');
+        $request = new ServerRequest( 'PUT', new Uri('http://localhost/test/mvc/actioncontrollertesta/put?getArgument=getValue'));
         $request->setHeader('Content-Type', 'application/json');
         $request->setHeader('Content-Length', 29);
         $request->setContent('{"putArgument":"first value"}');
@@ -469,7 +469,7 @@ class ActionControllerTest extends FunctionalTestCase
             ],
             '__trustedProperties' => $trustedProperties
         ];
-        $request = Request::create(new Uri('http://localhost/test/mvc/actioncontrollertestc/' . $identifier . '/update'), 'POST', $form);
+        $request = new ServerRequest( $form, new Uri('http://localhost/test/mvc/actioncontrollertestc/' . $identifier . '/update'), 'POST');
 
         $response = $this->browser->sendRequest($request);
         $this->assertSame('Entity "Foo" updated', $response->getContent());

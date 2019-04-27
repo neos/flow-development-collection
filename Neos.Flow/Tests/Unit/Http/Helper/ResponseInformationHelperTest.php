@@ -1,10 +1,11 @@
 <?php
 namespace Neos\Flow\Tests\Unit\Http\Helper;
 
+use GuzzleHttp\Psr7\Response;
+use GuzzleHttp\Psr7\ServerRequest;
 use Neos\Flow\Http\Helper\ArgumentsHelper;
 use Neos\Flow\Http\Helper\ResponseInformationHelper;
 use Neos\Flow\Http\Request;
-use Neos\Flow\Http\Response;
 use Neos\Flow\Tests\UnitTestCase;
 
 /**
@@ -17,7 +18,7 @@ class ResponseInformationHelperTest extends UnitTestCase
      */
     public function makeStandardCompliantAddsContentLengthHeader()
     {
-        $request = Request::createFromEnvironment();
+        $request = ServerRequest::fromGlobals();
         $response = new Response();
         $response = $response->withBody(ArgumentsHelper::createContentStreamFromString('12345'));
         self::assertFalse($response->hasHeader('Content-Length'));

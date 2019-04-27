@@ -13,7 +13,7 @@ namespace Neos\Flow\Mvc\Routing;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Helper\RequestInformationHelper;
-use Neos\Flow\Http\Request as HttpRequest;
+use Neos\Flow\Http\HttpRequestHandlerInterface;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\RequestInterface;
 use Neos\Flow\Mvc\Routing\Dto\ResolveContext;
@@ -353,7 +353,7 @@ class UriBuilder
 
         $uriPathPrefix = $this->environment->isRewriteEnabled() ? '' : 'index.php/';
         $uriPathPrefix = RequestInformationHelper::getScriptRequestPath($httpRequest) . $uriPathPrefix;
-        $resolveContext = new ResolveContext($httpRequest->getAttribute(HttpRequest::ATTRIBUTE_BASE_URI), $arguments, $this->createAbsoluteUri, $uriPathPrefix);
+        $resolveContext = new ResolveContext($httpRequest->getAttribute(HttpRequestHandlerInterface::ATTRIBUTE_BASE_URI), $arguments, $this->createAbsoluteUri, $uriPathPrefix);
         $resolvedUri = $this->router->resolve($resolveContext);
         if ($this->section !== '') {
             $resolvedUri = $resolvedUri->withFragment($this->section);

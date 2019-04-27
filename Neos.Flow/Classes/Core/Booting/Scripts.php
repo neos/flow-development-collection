@@ -309,10 +309,11 @@ class Scripts
                 return $output;
             }
 
-            $request = RequestInformationHelper::renderRequest($requestHandler->getHttpRequest());
-            $response = (string)$requestHandler->getHttpResponse();
-            $output .= PHP_EOL . 'HTTP REQUEST:' . PHP_EOL . ($request == '' ? '[request was empty]' : $request) . PHP_EOL;
-            $output .= PHP_EOL . 'HTTP RESPONSE:' . PHP_EOL . ($response == '' ? '[response was empty]' : $response) . PHP_EOL;
+            $request = $requestHandler->getHttpRequest();
+            $response = $requestHandler->getHttpResponse();
+            // TODO: Sensible error output
+            $output .= PHP_EOL . 'HTTP REQUEST:' . PHP_EOL . ($request ? '[request was empty]' : RequestInformationHelper::renderRequestHeaders($request)) . PHP_EOL;
+            $output .= PHP_EOL . 'HTTP RESPONSE:' . PHP_EOL . ($response ? '[response was empty]' : $response->getStatusCode()) . PHP_EOL;
             $output .= PHP_EOL . 'PHP PROCESS:' . PHP_EOL . 'Inode: ' . getmyinode() . PHP_EOL . 'PID: ' . getmypid() . PHP_EOL . 'UID: ' . getmyuid() . PHP_EOL . 'GID: ' . getmygid() . PHP_EOL . 'User: ' . get_current_user() . PHP_EOL;
 
             return $output;

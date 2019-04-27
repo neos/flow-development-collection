@@ -115,6 +115,7 @@ class Request extends BaseRequest implements ServerRequestInterface
      */
     public function __construct(array $get, array $post, array $files, array $server)
     {
+        die();
         $this->headers = Headers::createFromServer($server);
         $this->setAttribute(self::ATTRIBUTE_CLIENT_IP, isset($server['REMOTE_ADDR']) ? $server['REMOTE_ADDR'] : null);
         $method = isset($server['REQUEST_METHOD']) ? $server['REQUEST_METHOD'] : 'GET';

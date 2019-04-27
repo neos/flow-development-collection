@@ -11,12 +11,14 @@ namespace Neos\Flow\Http\Client;
  * source code.
  */
 
+use GuzzleHttp\Psr7\ServerRequest;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Headers;
 use Neos\Flow\Http\Response;
 use Neos\Flow\Http\Uri;
 use Neos\Flow\Http\Request;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\UploadedFileInterface;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Form;
 
@@ -121,7 +123,7 @@ class Browser
      * @param string|Uri $uri
      * @param string $method Request method, for example "GET"
      * @param array $arguments Arguments to send in the request body
-     * @param array $files
+     * @param UploadedFileInterface[] $files
      * @param array $server
      * @param string $content
      * @return Response The HTTP response
@@ -138,11 +140,14 @@ class Browser
             throw new \InvalidArgumentException('$uri must be a URI object or a valid string representation of a URI.', 1333443624);
         }
 
-        $request = Request::create($uri, $method, $arguments, $files, $server);
-
-        if ($content !== null) {
-            $request->setContent($content);
+        $request = new ServerRequest($method, $uri, [], $content, '1.1', $server);
+        if (!empty($arguments)) {
+            $request = $request->withQueryParams($arguments);
         }
+        if (!empty($files)) {
+            $request = $request->withUploadedFiles($files);
+        }
+
         $response = $this->sendRequest($request);
 
         $location = $response->getHeader('Location');

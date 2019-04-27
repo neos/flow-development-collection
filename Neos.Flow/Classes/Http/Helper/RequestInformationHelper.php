@@ -55,6 +55,7 @@ abstract class RequestInformationHelper
         // FIXME: Shouldn't this be a simple dirname on getScriptRequestPathAndFilename
         $requestPathSegments = explode('/', self::getScriptRequestPathAndFilename($request));
         array_pop($requestPathSegments);
+
         return implode('/', $requestPathSegments) . '/';
     }
 
@@ -138,5 +139,46 @@ abstract class RequestInformationHelper
         }
 
         return '';
+    }
+
+    /**
+     * @param RequestInterface $request
+     * @param string $headerName
+     * @return string
+     */
+    public static function getFirstRequestHeaderValue(RequestInterface $request, string $headerName):? string
+    {
+        $headerValues = $request->getHeader($headerName);
+        $firstHeaderValue = reset($headerValues);
+
+        return $firstHeaderValue;
+    }
+
+    /**
+     * Extract header key/value pairs from a $_SERVER array.
+     *
+     * @param array $server
+     * @return array
+     */
+    public static function extractHeadersFromServerVariables(array $server): array
+    {
+        $headerFields = [];
+        if (isset($server['PHP_AUTH_USER']) && isset($server['PHP_AUTH_PW'])) {
+            $headerFields['Authorization'] = 'Basic ' . base64_encode($server['PHP_AUTH_USER'] . ':' . $server['PHP_AUTH_PW']);
+        }
+
+        foreach ($server as $name => $value) {
+            if (strpos($name, 'HTTP_') === 0) {
+                $name = str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))));
+                $headerFields[$name] = $value;
+            } elseif ($name == 'REDIRECT_REMOTE_AUTHORIZATION' && !isset($headerFields['Authorization'])) {
+                $headerFields['Authorization'] = $value;
+            } elseif (in_array($name, ['CONTENT_TYPE', 'CONTENT_LENGTH'])) {
+                $name = str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', $name))));
+                $headerFields[$name] = $value;
+            }
+        }
+
+        return $headerFields;
     }
 }

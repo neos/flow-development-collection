@@ -182,8 +182,8 @@ abstract class ResponseInformationHelper
         if ($headers instanceof Headers) {
             $preparedHeaders = array_merge($preparedHeaders, $headers->getPreparedValues());
         } else {
-            foreach (array_keys($headers) as $name) {
-                $preparedHeaders[] = $response->getHeaderLine($name);
+            foreach ($response->getHeaders() as $name => $values) {
+                $preparedHeaders[] = $name . ': ' . implode(', ', $values);
             }
         }
 

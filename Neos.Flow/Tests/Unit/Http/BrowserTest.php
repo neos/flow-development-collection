@@ -11,10 +11,12 @@ namespace Neos\Flow\Tests\Unit\Http;
  * source code.
  */
 
+use GuzzleHttp\Psr7\Response;
 use Neos\Flow\Http\Uri;
 use Neos\Flow\Http\Client;
 use Neos\Flow\Http;
 use Neos\Flow\Tests\UnitTestCase;
+use Psr\Http\Message\RequestInterface;
 
 /**
  * Test case for the Http Cookie class
@@ -44,8 +46,8 @@ class BrowserTest extends UnitTestCase
         $requestEngine
             ->expects($this->once())
             ->method('sendRequest')
-            ->with($this->isInstanceOf(Http\Request::class))
-            ->will($this->returnValue(new Http\Response()));
+            ->with($this->isInstanceOf(RequestInterface::class))
+            ->will($this->returnValue(new Response()));
         $this->browser->setRequestEngine($requestEngine);
         $this->browser->request('http://localhost/foo');
     }
@@ -59,7 +61,7 @@ class BrowserTest extends UnitTestCase
         $requestEngine
             ->expects($this->any())
             ->method('sendRequest')
-            ->will($this->returnValue(new Http\Response()));
+            ->will($this->returnValue(new Response()));
         $this->browser->setRequestEngine($requestEngine);
 
         $this->browser->addAutomaticRequestHeader('X-Test-Header', 'Acme');
@@ -67,7 +69,7 @@ class BrowserTest extends UnitTestCase
         $this->browser->request('http://localhost/foo');
 
         $this->assertTrue($this->browser->getLastRequest()->hasHeader('X-Test-Header'));
-        $this->assertSame('Acme', $this->browser->getLastRequest()->getHeader('X-Test-Header'));
+        $this->assertSame(['Acme'], $this->browser->getLastRequest()->getHeader('X-Test-Header'));
         $this->assertContains('text/plain', $this->browser->getLastRequest()->getHeader('Content-Type'));
     }
 

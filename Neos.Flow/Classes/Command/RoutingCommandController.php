@@ -11,6 +11,8 @@ namespace Neos\Flow\Command;
  * source code.
  */
 
+use GuzzleHttp\Psr7\ServerRequest;
+use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Configuration\ConfigurationManager;
@@ -179,7 +181,7 @@ class RoutingCommandController extends CommandController
             'REQUEST_URI' => $path,
             'REQUEST_METHOD' => $method
         ];
-        $httpRequest = new Request([], [], [], $server);
+        $httpRequest = new ServerRequest($method, new Uri('http://localhost/'), [], '', '1.1', $server);
         $routeContext = new RouteContext($httpRequest, RouteParameters::createEmpty());
 
         /** @var Route $route */
@@ -201,7 +203,7 @@ class RoutingCommandController extends CommandController
                 $this->outputLine('  Action: ' . (isset($routeValues['@action']) ? $routeValues['@action'] : '-'));
                 $this->outputLine('  Format: ' . (isset($routeValues['@format']) ? $routeValues['@format'] : '-'));
 
-                $controllerObjectName = $this->getControllerObjectName($routeValues['@package'], (isset($routeValues['@subpackage']) ? $routeValues['@subpackage'] : null), $routeValues['@controller']);
+                $controllerObjectName = $this->getControllerObjectName($routeValues['@package'], (isset($routeValues['@subpackage']) ? $routeValues['@subpackage'] : ''), $routeValues['@controller']);
                 if ($controllerObjectName === null) {
                     $this->outputLine('<b>Controller Error:</b>');
                     $this->outputLine('  !!! No Controller Object found !!!');

@@ -11,8 +11,8 @@ namespace Neos\FluidAdaptor\Tests\Functional\View;
  * source code.
  */
 
+use GuzzleHttp\Psr7\ServerRequest;
 use Neos\Flow\Cache\CacheManager;
-use Neos\Flow\Http\Request;
 use Neos\Flow\Http\Uri;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Tests\FunctionalTestCase;
@@ -48,7 +48,7 @@ class StandaloneViewTest extends FunctionalTestCase
      */
     public function inlineTemplateIsEvaluatedCorrectly()
     {
-        $httpRequest = Request::create(new Uri('http://localhost'));
+        $httpRequest = new Request('GET', new Uri('http://localhost'));
         $actionRequest = new ActionRequest($httpRequest);
 
         $standaloneView = new StandaloneView($actionRequest, $this->standaloneViewNonce);
@@ -65,7 +65,7 @@ class StandaloneViewTest extends FunctionalTestCase
      */
     public function renderSectionIsEvaluatedCorrectly()
     {
-        $httpRequest = Request::create(new Uri('http://localhost'));
+        $httpRequest = new Request('GET', new Uri('http://localhost'));
         $actionRequest = new ActionRequest($httpRequest);
 
         $standaloneView = new StandaloneView($actionRequest, $this->standaloneViewNonce);
@@ -83,7 +83,7 @@ class StandaloneViewTest extends FunctionalTestCase
      */
     public function renderThrowsExceptionIfNeitherTemplateSourceNorTemplatePathAndFilenameAreSpecified()
     {
-        $httpRequest = Request::create(new Uri('http://localhost'));
+        $httpRequest = new Request('GET', new Uri('http://localhost'));
         $actionRequest = new ActionRequest($httpRequest);
 
         $standaloneView = new StandaloneView($actionRequest, $this->standaloneViewNonce);
@@ -96,7 +96,7 @@ class StandaloneViewTest extends FunctionalTestCase
      */
     public function renderThrowsExceptionSpecifiedTemplatePathAndFilenameDoesNotExist()
     {
-        $httpRequest = Request::create(new Uri('http://localhost'));
+        $httpRequest = new Request('GET', new Uri('http://localhost'));
         $actionRequest = new ActionRequest($httpRequest);
 
         $standaloneView = new StandaloneView($actionRequest, $this->standaloneViewNonce);
@@ -110,7 +110,7 @@ class StandaloneViewTest extends FunctionalTestCase
      */
     public function renderThrowsExceptionIfWrongEnctypeIsSetForFormUpload()
     {
-        $httpRequest = Request::create(new Uri('http://localhost'));
+        $httpRequest = new Request('GET', new Uri('http://localhost'));
         $actionRequest = new ActionRequest($httpRequest);
 
         $standaloneView = new StandaloneView($actionRequest, $this->standaloneViewNonce);
@@ -124,7 +124,7 @@ class StandaloneViewTest extends FunctionalTestCase
      */
     public function renderThrowsExceptionIfSpecifiedTemplatePathAndFilenamePointsToADirectory()
     {
-        $request = Request::create(new Uri('http://localhost'));
+        $request = new Request('GET', new Uri('http://localhost'));
         $actionRequest = new ActionRequest($request);
 
         $standaloneView = new StandaloneView($actionRequest, $this->standaloneViewNonce);
@@ -137,7 +137,7 @@ class StandaloneViewTest extends FunctionalTestCase
      */
     public function templatePathAndFilenameIsLoaded()
     {
-        $httpRequest = Request::create(new Uri('http://localhost'));
+        $httpRequest = new Request('GET', new Uri('http://localhost'));
         $actionRequest = new ActionRequest($httpRequest);
 
         $standaloneView = new StandaloneView($actionRequest, $this->standaloneViewNonce);
@@ -183,7 +183,7 @@ class StandaloneViewTest extends FunctionalTestCase
      */
     public function partialWithDefaultLocationIsUsedIfNoPartialPathIsSetExplicitly()
     {
-        $httpRequest = Request::create(new Uri('http://localhost'));
+        $httpRequest = new Request('GET', new Uri('http://localhost'));
         $actionRequest = new ActionRequest($httpRequest);
         $actionRequest->setFormat('txt');
 
@@ -200,7 +200,7 @@ class StandaloneViewTest extends FunctionalTestCase
      */
     public function explicitPartialPathIsUsed()
     {
-        $httpRequest = Request::create(new Uri('http://localhost'));
+        $httpRequest = new Request('GET', new Uri('http://localhost'));
         $actionRequest = new ActionRequest($httpRequest);
         $actionRequest->setFormat('txt');
 
@@ -218,7 +218,7 @@ class StandaloneViewTest extends FunctionalTestCase
      */
     public function layoutWithDefaultLocationIsUsedIfNoLayoutPathIsSetExplicitly()
     {
-        $httpRequest = Request::create(new Uri('http://localhost'));
+        $httpRequest = new Request('GET', new Uri('http://localhost'));
         $actionRequest = new ActionRequest($httpRequest);
         $actionRequest->setFormat('txt');
 
@@ -235,7 +235,7 @@ class StandaloneViewTest extends FunctionalTestCase
      */
     public function explicitLayoutPathIsUsed()
     {
-        $httpRequest = Request::create(new Uri('http://localhost'));
+        $httpRequest = new Request('GET', new Uri('http://localhost'));
         $actionRequest = new ActionRequest($httpRequest);
         $actionRequest->setFormat('txt');
         $standaloneView = new StandaloneView($actionRequest, $this->standaloneViewNonce);
@@ -253,7 +253,7 @@ class StandaloneViewTest extends FunctionalTestCase
      */
     public function viewThrowsExceptionWhenUnknownViewHelperIsCalled()
     {
-        $httpRequest = Request::create(new Uri('http://localhost'));
+        $httpRequest = new Request('GET', new Uri('http://localhost'));
         $actionRequest = new ActionRequest($httpRequest);
         $actionRequest->setFormat('txt');
         $standaloneView = new Fixtures\View\StandaloneView($actionRequest, $this->standaloneViewNonce);
@@ -268,7 +268,7 @@ class StandaloneViewTest extends FunctionalTestCase
      */
     public function xmlNamespacesCanBeIgnored()
     {
-        $httpRequest = Request::create(new Uri('http://localhost'));
+        $httpRequest = new Request('GET', new Uri('http://localhost'));
         $actionRequest = new ActionRequest($httpRequest);
         $actionRequest->setFormat('txt');
         $standaloneView = new Fixtures\View\StandaloneView($actionRequest, $this->standaloneViewNonce);
@@ -290,7 +290,7 @@ class StandaloneViewTest extends FunctionalTestCase
      */
     public function interceptorsWorkInPartialRenderedInStandaloneSection()
     {
-        $httpRequest = Request::create(new Uri('http://localhost'));
+        $httpRequest = new Request('GET', new Uri('http://localhost'));
         $actionRequest = new ActionRequest($httpRequest);
         $actionRequest->setFormat('html');
 
@@ -345,7 +345,7 @@ class StandaloneViewTest extends FunctionalTestCase
      */
     public function formViewHelpersOutsideOfFormWork()
     {
-        $httpRequest = Request::create(new Uri('http://localhost'));
+        $httpRequest = new Request('GET', new Uri('http://localhost'));
         $actionRequest = new ActionRequest($httpRequest);
 
         $standaloneView = new StandaloneView($actionRequest, $this->standaloneViewNonce);

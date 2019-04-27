@@ -13,13 +13,13 @@ namespace Neos\FluidAdaptor\Core\Widget;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Component\Exception as ComponentException;
-use Neos\Flow\Http\Request;
+use Neos\Flow\Http\Helper\ArgumentsHelper;
 use Neos\Flow\Http\Component\ComponentContext;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\DispatchComponent;
 use Neos\Flow\Security\Cryptography\HashService;
-use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\RequestInterface;
 
 /**
  * A HTTP component specifically for Ajax widgets
@@ -76,15 +76,16 @@ class AjaxWidgetComponent extends DispatchComponent
      * If the request contains an argument "__widgetId" the context is fetched from the session (AjaxWidgetContextHolder).
      * Otherwise the argument "__widgetContext" is expected to contain the serialized WidgetContext (protected by a HMAC suffix)
      *
-     * @param ServerRequestInterface $httpRequest
+     * @param RequestInterface $httpRequest
      * @return WidgetContext
      */
-    protected function extractWidgetContext(ServerRequestInterface $httpRequest)
+    protected function extractWidgetContext(RequestInterface $httpRequest)
     {
-        if (isset($httpRequest->getQueryParams()['__widgetId'])) {
-            return $this->ajaxWidgetContextHolder->get($httpRequest->ggetQueryParams()['__widgetId']);
-        } elseif (isset($httpRequest->getQueryParams()['__widgetContext'])) {
-            $serializedWidgetContextWithHmac = $httpRequest->getQueryParams()['__widgetContext'];
+        $arguments = ArgumentsHelper::buildUnifiedArguments($httpRequest->getQueryParams(), $httpRequest->getParsedBody(), []);
+        if (isset($arguments['__widgetId'])) {
+            return $this->ajaxWidgetContextHolder->get($arguments['__widgetId']);
+        } elseif (isset($arguments['__widgetContext'])) {
+            $serializedWidgetContextWithHmac = $httpRequest->getArgument('__widgetContext');
             $serializedWidgetContext = $this->hashService->validateAndStripHmac($serializedWidgetContextWithHmac);
             return unserialize(base64_decode($serializedWidgetContext));
         }

@@ -401,7 +401,7 @@ class FileSystemTarget implements TargetInterface
 
         $requestHandler = $this->bootstrap->getActiveRequestHandler();
         if ($requestHandler instanceof HttpRequestHandlerInterface) {
-            return $requestHandler->getHttpRequest()->getBaseUri() . $this->baseUri;
+            return $requestHandler->getHttpRequest()->getAttribute(HttpRequestHandlerInterface::ATTRIBUTE_BASE_URI) . $this->baseUri;
         }
 
         if ($this->httpBaseUri === null) {

@@ -19,6 +19,7 @@ use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Security\Cryptography\HashService;
 use Neos\Flow\SignalSlot\Dispatcher as SignalSlotDispatcher;
 use Neos\Utility\Arrays;
+use Psr\Http\Message\RequestInterface as HttpRequestInterface;
 
 /**
  * Represents an internal request targeted to a controller action
@@ -138,7 +139,7 @@ class ActionRequest implements RequestInterface
      */
     public function __construct($parentRequest)
     {
-        if (!$parentRequest instanceof HttpRequest && !$parentRequest instanceof ActionRequest) {
+        if (!$parentRequest instanceof HttpRequestInterface && !$parentRequest instanceof ActionRequest) {
             throw new \InvalidArgumentException('The parent request passed to ActionRequest::__construct() must be either an HTTP request or another ActionRequest', 1327846149);
         }
         $this->parentRequest = $parentRequest;
@@ -164,7 +165,7 @@ class ActionRequest implements RequestInterface
     public function getHttpRequest()
     {
         if ($this->rootRequest === null) {
-            $this->rootRequest = ($this->parentRequest instanceof HttpRequest) ? $this->parentRequest : $this->parentRequest->getHttpRequest();
+            $this->rootRequest = ($this->parentRequest instanceof HttpRequestInterface) ? $this->parentRequest : $this->parentRequest->getHttpRequest();
         }
         return $this->rootRequest;
     }
@@ -177,7 +178,7 @@ class ActionRequest implements RequestInterface
      */
     public function getMainRequest()
     {
-        return ($this->parentRequest instanceof HttpRequest) ? $this : $this->parentRequest->getMainRequest();
+        return ($this->parentRequest instanceof HttpRequestInterface) ? $this : $this->parentRequest->getMainRequest();
     }
 
     /**
@@ -189,7 +190,7 @@ class ActionRequest implements RequestInterface
      */
     public function isMainRequest()
     {
-        return ($this->parentRequest instanceof HttpRequest);
+        return ($this->parentRequest instanceof HttpRequestInterface);
     }
 
     /**

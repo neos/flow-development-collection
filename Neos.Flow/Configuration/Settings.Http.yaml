@@ -36,8 +36,11 @@ Neos:
             'trustedProxies':
               position: 'start'
               component: 'Neos\Flow\Http\Component\TrustedProxiesComponent'
-            'getSessionCookieFromRequest':
+            'baseUri':
               position: 'after trustedProxies'
+              component: 'Neos\Flow\Http\Component\BaseUriComponent'
+            'getSessionCookieFromRequest':
+              position: 'after baseUri'
               component: 'Neos\Flow\Session\Http\SessionRequestComponent'
         'process':
           chain:
@@ -52,6 +55,8 @@ Neos:
             'setSessionCookie':
               position: 'start'
               component: 'Neos\Flow\Session\Http\SessionResponseComponent'
+            'poweredByHeader':
+              component: 'Neos\Flow\Http\Component\PoweredByComponent'
             'standardsCompliance':
               position: 'end'
               component: 'Neos\Flow\Http\Component\StandardsComplianceComponent'

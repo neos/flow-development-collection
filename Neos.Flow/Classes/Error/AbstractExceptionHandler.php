@@ -11,11 +11,11 @@ namespace Neos\Flow\Error;
  * source code.
  */
 
+use GuzzleHttp\Psr7\ServerRequest;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\Response as CliResponse;
 use Neos\Flow\Exception as FlowException;
 use Neos\Flow\Http\Helper\ResponseInformationHelper;
-use Neos\Flow\Http\Request;
 use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\Log\ThrowableStorageInterface;
 use Neos\Flow\Mvc\ActionRequest;
@@ -166,7 +166,7 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
         $view = $viewClassName::createWithOptions($renderingOptions['viewOptions']);
         $view = $this->applyLegacyViewOptions($view, $renderingOptions);
 
-        $httpRequest = Request::createFromEnvironment();
+        $httpRequest = ServerRequest::fromGlobals();
         $request = new ActionRequest($httpRequest);
         $request->setControllerPackageKey('Neos.Flow');
         $uriBuilder = new UriBuilder();

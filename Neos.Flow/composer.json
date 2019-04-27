@@ -27,6 +27,7 @@
         "neos/utility-unicode": "*",
         "neos/fluid-adaptor": "*",
         "neos/flow-log": "*",
+        "neos/http-factories": "*",
 
         "psr/http-message": "^1.0",
         "psr/http-factory": "^1.0",

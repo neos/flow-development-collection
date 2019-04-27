@@ -11,6 +11,7 @@ namespace Neos\Flow\Tests\Unit\Http;
  * source code.
  */
 
+use GuzzleHttp\Psr7\ServerRequest;
 use Neos\Flow\Http\Helper\UploadedFilesHelper;
 use Neos\Flow\Http\Request;
 use Neos\Flow\Http\Uri;
@@ -76,7 +77,7 @@ class RequestTest extends UnitTestCase
             'REQUEST_TIME' => 1326472534,
         ];
 
-        $request = Request::createFromEnvironment();
+        $request = ServerRequest::fromGlobals();
 
         $this->assertEquals('GET', $request->getMethod());
         $this->assertEquals('http://dev.blog.rob/posts/2011/11/28/laboriosam-soluta-est-minus-molestiae?getKey1=getValue1&getKey2=getValue2', (string)$request->getUri());

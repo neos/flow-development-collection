@@ -12,6 +12,7 @@ namespace Neos\Flow\Security\RequestPattern;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Http\Helper\RequestInformationHelper;
 use Neos\Flow\Http\Helper\SecurityHelper;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\RequestInterface;
@@ -114,7 +115,7 @@ class CsrfProtection implements RequestPatternInterface
 
         $httpRequest = $request->getHttpRequest();
         if ($httpRequest->hasHeader('X-Flow-Csrftoken')) {
-            $csrfToken = $httpRequest->getHeader('X-Flow-Csrftoken');
+            $csrfToken = RequestInformationHelper::getFirstRequestHeaderValue($httpRequest, 'X-Flow-Csrftoken');
         } else {
             $internalArguments = $request->getMainRequest()->getInternalArguments();
             $csrfToken = isset($internalArguments['__csrfToken']) ? $internalArguments['__csrfToken'] : null;
