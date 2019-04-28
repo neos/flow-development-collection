@@ -28,7 +28,7 @@ class FileBackendTest extends BaseTestCase
 {
     /**
      */
-    public function setUp()
+    protected function setUp(): void
     {
         vfsStream::setup('Foo');
     }

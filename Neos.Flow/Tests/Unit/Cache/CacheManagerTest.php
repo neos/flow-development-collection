@@ -45,7 +45,7 @@ class CacheManagerTest extends UnitTestCase
      */
     protected $mockEnvironment;
 
-    public function setUp()
+    protected function setUp(): void
     {
         vfsStream::setup('Foo');
         $this->cacheManager = new CacheManager();

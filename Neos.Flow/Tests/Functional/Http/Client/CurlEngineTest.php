@@ -29,7 +29,7 @@ class CurlEngineTest extends FunctionalTestCase
     /**
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $curlEngine = $this->objectManager->get(CurlEngine::class);

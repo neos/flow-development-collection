@@ -65,7 +65,7 @@ class RouterTest extends UnitTestCase
     /**
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->router = $this->getAccessibleMock(Router::class, ['dummy']);
 

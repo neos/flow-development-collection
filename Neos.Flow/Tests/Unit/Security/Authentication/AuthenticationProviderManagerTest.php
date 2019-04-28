@@ -54,7 +54,7 @@ class AuthenticationProviderManagerTest extends UnitTestCase
     /**
      * Sets up this test case
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->tokenAndProviderFactory = $this->getMockBuilder(TokenAndProviderFactoryInterface::class)->getMock();
         $this->authenticationProviderManager = $this->getAccessibleMock(AuthenticationProviderManager::class, ['dummy'], [$this->tokenAndProviderFactory], '', true);

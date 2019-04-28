@@ -51,7 +51,7 @@ class IdentityRoutePartTest extends UnitTestCase
     /**
      * Sets up this test case
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->identityRoutePart = $this->getAccessibleMock(IdentityRoutePart::class, ['createPathSegmentForObject']);
 

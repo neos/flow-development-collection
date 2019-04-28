@@ -33,7 +33,7 @@ class IdentifierViewHelperTest extends ViewHelperBaseTestcase
     /**
      * Sets up this test case
      */
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\Format\IdentifierViewHelper::class, ['renderChildren', 'registerRenderMethodArguments']);

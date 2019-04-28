@@ -46,7 +46,7 @@ class RedisBackendTest extends BaseTestCase
      *
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $phpredisVersion = phpversion('redis');
         if (version_compare($phpredisVersion, '1.2.0', '<')) {
@@ -73,7 +73,7 @@ class RedisBackendTest extends BaseTestCase
      *
      * @return void
      */
-    public function tearDown()
+    protected function tearDown(): void
     {
         if ($this->backend instanceof RedisBackend) {
             $this->backend->flush();

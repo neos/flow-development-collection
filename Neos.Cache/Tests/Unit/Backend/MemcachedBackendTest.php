@@ -31,7 +31,7 @@ class MemcachedBackendTest extends BaseTestCase
      *
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         try {
             if (!@fsockopen('localhost', 11211)) {

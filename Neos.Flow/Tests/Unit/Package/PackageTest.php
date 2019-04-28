@@ -31,7 +31,7 @@ class PackageTest extends UnitTestCase
 
     /**
      */
-    public function setUp()
+    protected function setUp(): void
     {
         ComposerUtility::flushCaches();
         vfsStream::setup('Packages');

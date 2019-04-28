@@ -45,7 +45,7 @@ class PersistedUsernamePasswordProviderTest extends FunctionalTestCase
 
 
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

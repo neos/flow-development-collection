@@ -47,7 +47,7 @@ class ValidatorResolverTest extends UnitTestCase
      */
     protected $mockReflectionService;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->mockObjectManager = $this->createMock(ObjectManagerInterface::class);
         $this->mockReflectionService = $this->createMock(ReflectionService::class);

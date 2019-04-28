@@ -36,7 +36,7 @@ class UniqueEntityValidatorTest extends AbstractValidatorTestcase
 
     /**
      */
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->classSchema = $this->getMockBuilder(ClassSchema::class)->disableOriginalConstructor()->getMock();

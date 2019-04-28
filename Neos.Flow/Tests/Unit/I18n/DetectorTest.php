@@ -27,7 +27,7 @@ class DetectorTest extends UnitTestCase
     /**
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $findBestMatchingLocaleCallback = function () {
             $args = func_get_args();

@@ -37,7 +37,7 @@ class TranslateViewHelperTest extends ViewHelperBaseTestcase
      */
     protected $mockTranslator;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

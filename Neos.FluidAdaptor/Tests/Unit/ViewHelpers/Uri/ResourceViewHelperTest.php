@@ -46,7 +46,7 @@ class ResourceViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\V
      */
     protected $mockResourceManager;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->mockI18nService = $this->createMock(Service::class);

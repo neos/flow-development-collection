@@ -93,7 +93,7 @@ class DispatcherTest extends UnitTestCase
     /**
      * Sets up this test case
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->dispatcher = $this->getMockBuilder(Dispatcher::class)->disableOriginalConstructor()->setMethods(['resolveController'])->getMock();
 

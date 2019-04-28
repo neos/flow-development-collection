@@ -48,7 +48,7 @@ class AbstractControllerTest extends UnitTestCase
      */
     protected $mockActionRequest;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->mockHttpRequest = $this->getMockBuilder(Request::class)->disableOriginalConstructor()->getMock();
         $this->mockHttpRequest->expects($this->any())->method('getNegotiatedMediaType')->will($this->returnValue('text/html'));

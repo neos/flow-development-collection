@@ -31,7 +31,7 @@ class ReflectionServiceTest extends UnitTestCase
      */
     protected $mockAnnotationReader;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->reflectionService = $this->getAccessibleMock(ReflectionService::class, null);
 

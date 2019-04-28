@@ -52,7 +52,7 @@ class PersistentObjectConverterTest extends UnitTestCase
      */
     protected $mockObjectManager;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->converter = new PersistentObjectConverter();
         $this->mockReflectionService = $this->createMock(ReflectionService::class);
@@ -295,7 +295,7 @@ class PersistentObjectConverterTest extends UnitTestCase
      * @param \PHPUnit_Framework_MockObject_Matcher_Invocation $howOftenIsGetFirstCalled
      * @return \stdClass
      */
-    public function setupMockQuery($numberOfResults, $howOftenIsGetFirstCalled)
+    protected function setUpMockQuery($numberOfResults, $howOftenIsGetFirstCalled)
     {
         $mockClassSchema = $this->createMock(ClassSchema::class, [], ['Dummy']);
         $mockClassSchema->expects($this->once())->method('getIdentityProperties')->will($this->returnValue(['key1' => 'someType']));

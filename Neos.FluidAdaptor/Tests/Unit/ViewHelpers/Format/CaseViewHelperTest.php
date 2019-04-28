@@ -38,7 +38,7 @@ class CaseViewHelperTest extends ViewHelperBaseTestcase
      */
     protected $originalMbEncodingValue;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->renderingContext = $this->getMockBuilder(RenderingContext::class)->disableOriginalConstructor()->getMock();
@@ -50,7 +50,7 @@ class CaseViewHelperTest extends ViewHelperBaseTestcase
 
     /**
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         parent::tearDown();
         mb_internal_encoding($this->originalMbEncodingValue);

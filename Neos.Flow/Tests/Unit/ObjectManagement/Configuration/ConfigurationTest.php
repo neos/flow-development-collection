@@ -28,7 +28,7 @@ class ConfigurationTest extends UnitTestCase
      * Prepares everything for a test
      *
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->objectConfiguration = new Configuration\Configuration('Neos\Foo\Bar');
     }

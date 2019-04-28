@@ -28,7 +28,7 @@ class AbstractTokenTest extends UnitTestCase
      */
     protected $token;
 
-    public function setup()
+    protected function setUp(): void
     {
         $this->token = $this->getMockForAbstractClass(AbstractToken::class);
     }

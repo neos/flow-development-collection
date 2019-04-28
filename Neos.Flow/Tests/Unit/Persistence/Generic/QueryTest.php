@@ -40,7 +40,7 @@ class QueryTest extends UnitTestCase
      * Sets up this test case
      *
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->reflectionService = $this->createMock(ReflectionService::class);
         $this->objectManager = $this->createMock(ObjectManagerInterface::class);

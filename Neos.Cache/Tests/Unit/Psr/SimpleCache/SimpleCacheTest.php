@@ -19,7 +19,7 @@ class SimpleCacheTest extends BaseTestCase
     /**
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->mockBackend = $this->getMockBuilder(BackendInterface::class)->getMock();
     }

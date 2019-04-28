@@ -61,7 +61,7 @@ class ContextTest extends UnitTestCase
     /**
      * Sets up this test case
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->mockSessionDataContainer = $this->createMock(SessionDataContainer::class);
 

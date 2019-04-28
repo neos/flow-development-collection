@@ -23,7 +23,7 @@ use Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase;
  */
 class DateViewHelperTest extends ViewHelperBaseTestcase
 {
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->viewHelper = $this->getMockBuilder(\Neos\FluidAdaptor\ViewHelpers\Format\DateViewHelper::class)->setMethods(['renderChildren', 'registerRenderMethodArguments'])->getMock();

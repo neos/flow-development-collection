@@ -42,8 +42,7 @@ class PointcutExpressionParserTest extends UnitTestCase
      *
      * @return void
      */
-    public function setup()
-    {
+    protected function setUp(): void    {
         $this->mockObjectManager = $this->createMock(ObjectManagerInterface::class);
         $this->mockReflectionService = $this->getMockBuilder(ReflectionService::class)->disableOriginalConstructor()->getMock();
     }

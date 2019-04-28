@@ -39,7 +39,7 @@ class FileMonitorTest extends UnitTestCase
      *
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->unixStylePath = Files::getUnixStylePath(__DIR__);
         $this->unixStylePathAndFilename = Files::getUnixStylePath(__FILE__);

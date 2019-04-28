@@ -66,7 +66,7 @@ class ConfigurationValidationTest extends FunctionalTestCase
     /**
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -112,7 +112,7 @@ class ConfigurationValidationTest extends FunctionalTestCase
     /**
      * @return void
      */
-    public function tearDown()
+    protected function tearDown(): void
     {
         $this->objectManager->setInstance(ConfigurationManager::class, $this->originalConfigurationManager);
         $this->injectApplicationContextIntoConfigurationManager($this->objectManager->getContext());

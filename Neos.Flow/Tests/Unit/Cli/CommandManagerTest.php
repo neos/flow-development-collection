@@ -40,7 +40,7 @@ class CommandManagerTest extends UnitTestCase
      */
     protected $commandManager;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->mockReflectionService = $this->createMock(ReflectionService::class);
         $this->commandManager = $this->getMockBuilder(Cli\CommandManager::class)->setMethods(['getAvailableCommands'])->getMock();

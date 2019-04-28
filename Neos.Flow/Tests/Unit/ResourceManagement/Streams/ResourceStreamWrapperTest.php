@@ -39,7 +39,7 @@ class ResourceStreamWrapperTest extends UnitTestCase
      */
     protected $mockResourceManager;
 
-    public function setUp()
+    protected function setUp(): void
     {
         vfsStream::setup('Foo');
 

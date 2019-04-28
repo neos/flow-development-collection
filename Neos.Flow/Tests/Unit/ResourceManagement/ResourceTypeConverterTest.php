@@ -41,7 +41,7 @@ class ResourceTypeConverterTest extends UnitTestCase
      */
     protected $mockResourceManager;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->resourceTypeConverter = $this->getAccessibleMock(ResourceTypeConverter::class, ['dummy']);
 

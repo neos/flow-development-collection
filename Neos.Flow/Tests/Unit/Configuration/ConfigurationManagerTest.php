@@ -31,7 +31,7 @@ class ConfigurationManagerTest extends UnitTestCase
      */
     protected $mockContext;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->mockContext = $this->getMockBuilder(ApplicationContext::class)->disableOriginalConstructor()->getMock();
     }

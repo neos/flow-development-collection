@@ -20,7 +20,7 @@ use Neos\Flow\Tests\UnitTestCase;
  */
 class DebuggerTest extends UnitTestCase
 {
-    public function setUp()
+    protected function setUp(): void
     {
         Debugger::clearState();
     }

@@ -82,7 +82,7 @@ class SessionTest extends UnitTestCase
     /**
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setup();
 

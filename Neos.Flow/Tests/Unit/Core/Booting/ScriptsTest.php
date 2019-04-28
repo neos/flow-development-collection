@@ -26,7 +26,7 @@ class ScriptsTest extends UnitTestCase
 
     /**
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->scriptsMock = $this->getAccessibleMock(Scripts::class, ['dummy']);

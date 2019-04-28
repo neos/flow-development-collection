@@ -38,7 +38,7 @@ class StandaloneViewTest extends UnitTestCase
      */
     protected $mockRequest;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->standaloneView = $this->getAccessibleMock(\Neos\FluidAdaptor\View\StandaloneView::class, ['dummy']);
 

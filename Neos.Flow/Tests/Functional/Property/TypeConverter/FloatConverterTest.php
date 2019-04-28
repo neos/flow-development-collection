@@ -28,7 +28,7 @@ class FloatConverterTest extends FunctionalTestCase
      */
     protected $converter;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->converter = $this->objectManager->get(\Neos\Flow\Property\TypeConverter\FloatConverter::class);

@@ -24,7 +24,7 @@ class FilesTest extends \PHPUnit\Framework\TestCase
      */
     protected $temporaryDirectory;
 
-    public function setUp()
+    protected function setUp(): void
     {
         vfsStream::setup('Foo');
 
@@ -35,7 +35,7 @@ class FilesTest extends \PHPUnit\Framework\TestCase
         $this->temporaryDirectory = realpath($intendedTemporaryDirectory);
     }
 
-    public function tearDown()
+    protected function tearDown(): void
     {
         Files::removeDirectoryRecursively($this->temporaryDirectory);
     }

@@ -40,7 +40,7 @@ class ConsoleOutputTest extends UnitTestCase
     /**
      * @return void
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->input = new ArrayInput([]);
         $this->answerNothing();

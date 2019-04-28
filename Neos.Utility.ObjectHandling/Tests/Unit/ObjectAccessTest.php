@@ -33,7 +33,7 @@ class ObjectAccessTest extends \PHPUnit\Framework\TestCase
 
     /**
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->dummyObject = new DummyClassWithGettersAndSetters();
         $this->dummyObject->setProperty('string1');

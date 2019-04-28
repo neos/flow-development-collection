@@ -29,7 +29,7 @@ class BrowserTest extends UnitTestCase
     /**
      *
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->browser = new Client\Browser();

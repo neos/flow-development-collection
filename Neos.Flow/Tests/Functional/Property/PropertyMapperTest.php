@@ -35,7 +35,7 @@ class PropertyMapperTest extends FunctionalTestCase
     /**
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->propertyMapper = $this->objectManager->get(PropertyMapper::class);

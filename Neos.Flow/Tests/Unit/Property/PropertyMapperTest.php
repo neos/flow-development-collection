@@ -37,7 +37,7 @@ class PropertyMapperTest extends UnitTestCase
      *
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->mockConfiguration = $this->createMock(PropertyMappingConfigurationInterface::class);
     }

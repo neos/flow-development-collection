@@ -52,7 +52,7 @@ class ActionControllerTest extends UnitTestCase
      */
     protected $mockControllerContext;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->actionController = $this->getAccessibleMock(ActionController::class, ['dummy']);
 

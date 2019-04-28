@@ -46,7 +46,7 @@ class FormViewHelperTest extends ViewHelperBaseTestcase
     /**
      * Set up test dependencies
      */
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->arguments['action'] = '';

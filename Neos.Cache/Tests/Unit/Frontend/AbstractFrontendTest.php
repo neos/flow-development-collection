@@ -26,7 +26,7 @@ class AbstractFrontendTest extends BaseTestCase
     /** @var  AbstractBackend */
     protected $mockBackend;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->mockBackend = $this->getMockBuilder(AbstractBackend::class)->setMethods(['get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'])->disableOriginalConstructor()->getMock();

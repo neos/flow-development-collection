@@ -56,7 +56,7 @@ class PackageManagerTest extends UnitTestCase
      * Sets up this test case
      *
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         ComposerUtility::flushCaches();
         vfsStream::setup('Test');

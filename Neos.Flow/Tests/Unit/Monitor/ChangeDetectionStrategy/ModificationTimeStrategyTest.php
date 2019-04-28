@@ -32,7 +32,7 @@ class ModificationTimeStrategyTest extends \Neos\Flow\Tests\UnitTestCase
 
     /**
      */
-    public function setUp()
+    protected function setUp(): void
     {
         vfsStream::setup('testDirectory');
 

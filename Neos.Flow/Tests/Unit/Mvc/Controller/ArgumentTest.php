@@ -39,7 +39,7 @@ class ArgumentTest extends UnitTestCase
 
     /**
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->simpleValueArgument = new Mvc\Controller\Argument('someName', 'string');
         $this->objectArgument = new Mvc\Controller\Argument('someName', 'DateTime');

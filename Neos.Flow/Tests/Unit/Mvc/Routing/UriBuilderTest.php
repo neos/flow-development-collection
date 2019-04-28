@@ -63,7 +63,7 @@ class UriBuilderTest extends UnitTestCase
      * Sets up the test case
      *
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->mockHttpRequest = $this->getMockBuilder(Http\Request::class)->disableOriginalConstructor()->getMock();
 

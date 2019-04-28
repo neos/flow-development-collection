@@ -51,7 +51,7 @@ class FileSystemTargetTest extends UnitTestCase
      */
     protected $mockHttpRequest;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->fileSystemTarget = new FileSystemTarget('test');
 

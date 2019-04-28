@@ -56,7 +56,7 @@ class PersistedUsernamePasswordProviderTest extends UnitTestCase
     protected $persistedUsernamePasswordProvider;
 
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->mockHashService = $this->createMock(Security\Cryptography\HashService::class);
         $this->mockAccount = $this->getMockBuilder(Security\Account::class)->disableOriginalConstructor()->getMock();

@@ -25,7 +25,7 @@ class YamlSourceTest extends UnitTestCase
      * Sets up this test case
      *
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         vfsStream::setup('testDirectory');
     }

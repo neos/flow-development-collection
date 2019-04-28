@@ -29,7 +29,7 @@ class RenderChildrenViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHel
 
     /**
      */
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->viewHelper = $this->getMockBuilder(\Neos\FluidAdaptor\ViewHelpers\RenderChildrenViewHelper::class)->setMethods(['renderChildren'])->getMock();

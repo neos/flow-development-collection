@@ -74,7 +74,7 @@ class AbstractViewHelperTest extends \Neos\Flow\Tests\UnitTestCase
         ]
     ];
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->mockReflectionService = $this->getMockBuilder(\Neos\Flow\Reflection\ReflectionService::class)->disableOriginalConstructor()->getMock();
         $this->mockObjectManager = $this->createMock(\Neos\Flow\ObjectManagement\ObjectManagerInterface::class);

@@ -31,7 +31,7 @@ class ApcuBackendTest extends BaseTestCase
      *
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         if (ini_get('apc.enabled') == 0 || ini_get('apc.enable_cli') == 0) {
             $this->markTestSkipped('APCu is disabled (for CLI).');

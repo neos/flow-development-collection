@@ -49,7 +49,7 @@ class PolicyServiceTest extends UnitTestCase
      */
     protected $mockPrivilege;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->policyService = new PolicyService();
 

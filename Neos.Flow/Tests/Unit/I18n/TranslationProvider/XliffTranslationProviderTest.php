@@ -52,7 +52,7 @@ class XliffTranslationProviderTest extends UnitTestCase
     /**
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->samplePackageKey = 'Neos.Flow';
         $this->sampleSourceName = 'Foo';

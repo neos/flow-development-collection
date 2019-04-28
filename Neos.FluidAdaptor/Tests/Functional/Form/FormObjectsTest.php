@@ -31,7 +31,7 @@ class FormObjectsTest extends \Neos\Flow\Tests\FunctionalTestCase
     /**
      * Initializer
      */
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

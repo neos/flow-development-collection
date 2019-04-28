@@ -38,7 +38,7 @@ class RsaWalletServicePhpTest extends UnitTestCase
      *
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         vfsStream::setup('Foo');
         $settings['security']['cryptography']['RSAWalletServicePHP']['keystorePath'] = 'vfs://Foo/EncryptionKey';

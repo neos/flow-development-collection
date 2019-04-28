@@ -21,7 +21,7 @@ class AbstractValidatorTest extends UnitTestCase
 {
     protected $validator;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->validator = $this->getAccessibleMockForAbstractClass(AbstractValidator::class, [], '', false);
         $this->validator->_set('supportedOptions', [

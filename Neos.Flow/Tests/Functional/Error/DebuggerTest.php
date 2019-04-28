@@ -29,7 +29,7 @@ class DebuggerTest extends FunctionalTestCase
     protected $configurationManager;
 
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->configurationManager = $this->objectManager->get(ConfigurationManager::class);

@@ -25,7 +25,7 @@ class ButtonViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\For
      */
     protected $viewHelper;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\Form\ButtonViewHelper::class, ['renderChildren','registerRenderMethodArguments']);

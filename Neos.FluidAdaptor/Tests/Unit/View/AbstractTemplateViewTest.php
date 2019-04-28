@@ -45,7 +45,7 @@ class AbstractTemplateViewTest extends \Neos\Flow\Tests\UnitTestCase
      *
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->templateVariableContainer = $this->getMockBuilder(TemplateVariableContainer::class)->setMethods(['exists', 'remove', 'add'])->getMock();
         $this->viewHelperVariableContainer = $this->getMockBuilder(ViewHelperVariableContainer::class)->setMethods(['setView'])->getMock();

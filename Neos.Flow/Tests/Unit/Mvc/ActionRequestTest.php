@@ -35,7 +35,7 @@ class ActionRequestTest extends UnitTestCase
      */
     protected $mockHttpRequest;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->mockHttpRequest = $this->getMockBuilder(Http\Request::class)->disableOriginalConstructor()->getMock();
         $this->actionRequest = new ActionRequest($this->mockHttpRequest);

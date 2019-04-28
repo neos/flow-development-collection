@@ -61,7 +61,7 @@ class FileBasedSimpleKeyProviderTest extends UnitTestCase
      */
     protected $mockToken;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->mockRole = $this->getMockBuilder(Role::class)->disableOriginalConstructor()->getMock();
         $this->mockRole->expects($this->any())->method('getIdentifier')->will($this->returnValue('Neos.Flow:TestRoleIdentifier'));

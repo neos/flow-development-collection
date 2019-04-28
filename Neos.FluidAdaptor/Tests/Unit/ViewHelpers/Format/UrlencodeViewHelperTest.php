@@ -27,7 +27,7 @@ class UrlencodeViewHelperTest extends ViewHelperBaseTestcase
      */
     protected $viewHelper;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->viewHelper = $this->getMockBuilder(UrlencodeViewHelper::class)->setMethods(['renderChildren', 'registerRenderMethodArguments'])->getMock();

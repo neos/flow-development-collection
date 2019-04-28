@@ -35,7 +35,7 @@ class ComponentChainFactoryTest extends UnitTestCase
      */
     protected $mockComponent;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->componentChainFactory = new Http\Component\ComponentChainFactory();
 

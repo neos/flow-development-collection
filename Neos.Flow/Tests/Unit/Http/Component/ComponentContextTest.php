@@ -34,7 +34,7 @@ class ComponentContextTest extends UnitTestCase
      */
     protected $mockHttpResponse;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->mockHttpRequest = $this->getMockBuilder(Http\Request::class)->disableOriginalConstructor()->getMock();
         $this->mockHttpResponse = $this->getMockBuilder(Http\Response::class)->disableOriginalConstructor()->getMock();

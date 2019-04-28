@@ -45,7 +45,7 @@ class CommandControllerTest extends UnitTestCase
      */
     protected $mockConsoleOutput;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->commandController = $this->getAccessibleMock(CommandController::class, ['resolveCommandMethodName', 'callCommandMethod']);
 
