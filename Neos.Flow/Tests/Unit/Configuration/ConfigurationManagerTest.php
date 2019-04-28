@@ -11,7 +11,6 @@ namespace Neos\Flow\Tests\Unit\Configuration;
  * source code.
  */
 
-use Neos\Flow\Composer\Exception\InvalidConfigurationException;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Configuration\Exception\InvalidConfigurationTypeException;
 use Neos\Flow\Configuration\Exception\ParseErrorException;
