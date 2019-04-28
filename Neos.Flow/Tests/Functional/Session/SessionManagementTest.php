@@ -101,10 +101,10 @@ class SessionManagementTest extends FunctionalTestCase
     {
         $response = $this->browser->request('http://localhost/test/session');
         $this->assertTrue($response->hasHeader('Set-Cookie'), 'Available Cookies are: ' . implode(', ', array_keys($response->getHeader('Set-Cookie'))));
-        $this->assertContains('Flow_Testing_Session', implode(',', $response->getHeader('Set-Cookie')));
+        $this->assertStringContainsString('Flow_Testing_Session', implode(',', $response->getHeader('Set-Cookie')));
 
         $response = $this->browser->request('http://localhost/test/session');
         $this->assertTrue($response->hasHeader('Set-Cookie'), 'Available Cookies are: ' . implode(', ', array_keys($response->getHeader('Set-Cookie'))));
-        $this->assertContains('Flow_Testing_Session', implode(',', $response->getHeader('Set-Cookie')));
+        $this->assertStringContainsString('Flow_Testing_Session', implode(',', $response->getHeader('Set-Cookie')));
     }
 }

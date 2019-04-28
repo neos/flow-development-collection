@@ -57,6 +57,6 @@ class CurlEngineTest extends FunctionalTestCase
     public function getRequestReturnsResponse()
     {
         $response = $this->browser->request('http://www.neos.io');
-        $this->assertContains('This website is powered by Neos', $response->getContent());
+        $this->assertStringContainsString('This website is powered by Neos', $response->getContent());
     }
 }

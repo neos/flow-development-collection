@@ -79,7 +79,7 @@ class PersistenceTest extends FunctionalTestCase
         $this->assertAttributeInternalType('null', 'rows', $allResults, 'Query Result did not load the result collection lazily.');
 
         $allResultsArray = $allResults->toArray();
-        $this->assertEquals('Flow', $allResultsArray[0]->getName());
+        $this->assertStringContainsString('Flow', $allResultsArray[0]->getName());
         $this->assertAttributeInternalType('array', 'rows', $allResults);
     }
 

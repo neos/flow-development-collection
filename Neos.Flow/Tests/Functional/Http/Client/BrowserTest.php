@@ -62,7 +62,7 @@ class BrowserTest extends FunctionalTestCase
     {
         $this->browser->setFollowRedirects(false);
         $response = $this->browser->request('http://localhost/test/http/redirecting');
-        $this->assertNotContains('arrived.', $response->getContent());
+        $this->assertStringNotContainsString('arrived.', $response->getContent());
         $this->assertEquals(303, $response->getStatusCode());
         $this->assertEquals('http://localhost/test/http/redirecting/tohere', $response->getHeader('Location'));
     }
