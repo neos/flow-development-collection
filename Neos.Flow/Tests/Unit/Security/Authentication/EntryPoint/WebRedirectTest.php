@@ -16,6 +16,7 @@ use Neos\Flow\Http\Response;
 use Neos\Flow\Http\Uri;
 use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Flow\Security\Authentication\EntryPoint\WebRedirect;
+use Neos\Flow\Security\Exception\MissingConfigurationException;
 use Neos\Flow\Tests\UnitTestCase;
 
 /**
@@ -25,10 +26,10 @@ class WebRedirectTest extends UnitTestCase
 {
     /**
      * @test
-     * @expectedException \Neos\Flow\Security\Exception\MissingConfigurationException
      */
     public function startAuthenticationThrowsAnExceptionIfTheConfigurationOptionsAreMissing()
     {
+        $this->expectException(MissingConfigurationException::class);
         $request = Request::create(new Uri('http://robertlemke.com/admin'));
         $response = new Response();
 
@@ -73,10 +74,10 @@ class WebRedirectTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Security\Exception\MissingConfigurationException
      */
     public function startAuthenticationThrowsAnExceptionIfTheConfiguredRoutePartsAreInvalid()
     {
+        $this->expectException(MissingConfigurationException::class);
         $request = Request::create(new Uri('http://robertlemke.com/admin'));
         $response = new Response();
 

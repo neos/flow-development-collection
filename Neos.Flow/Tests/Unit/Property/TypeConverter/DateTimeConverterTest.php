@@ -11,6 +11,7 @@ namespace Neos\Flow\Tests\Unit\Property\TypeConverter;
  * source code.
  */
 
+use Neos\Flow\Property\Exception\TypeConverterException;
 use Neos\Flow\Property\TypeConverter\DateTimeConverter;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Flow\Property\PropertyMappingConfiguration;
@@ -276,10 +277,10 @@ class DateTimeConverterTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Property\Exception\TypeConverterException
      */
     public function convertFromThrowsExceptionIfGivenArrayDoesNotSpecifyTheDate()
     {
+        $this->expectException(TypeConverterException::class);
         $this->converter->convertFrom(['hour' => '12', 'minute' => '30'], 'DateTime');
     }
 
@@ -312,11 +313,11 @@ class DateTimeConverterTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Property\Exception\TypeConverterException
      * @dataProvider invalidDatePartKeyValuesDataProvider
      */
     public function convertFromThrowsExceptionIfDatePartKeysHaveInvalidValuesSpecified($source)
     {
+        $this->expectException(TypeConverterException::class);
         $this->converter->convertFrom($source, 'DateTime');
     }
 
@@ -414,10 +415,10 @@ class DateTimeConverterTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Property\Exception\TypeConverterException
      */
     public function convertFromThrowsExceptionIfSpecifiedTimezoneIsInvalid()
     {
+        $this->expectException(TypeConverterException::class);
         $source = [
             'date' => '2011-06-16',
             'dateFormat' => 'Y-m-d',
@@ -428,10 +429,10 @@ class DateTimeConverterTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Property\Exception\TypeConverterException
      */
     public function convertFromArrayThrowsExceptionForEmptyArray()
     {
+        $this->expectException(TypeConverterException::class);
         $this->converter->convertFrom([], 'DateTime', [], null);
     }
 

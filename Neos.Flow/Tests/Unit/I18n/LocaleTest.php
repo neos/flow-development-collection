@@ -36,10 +36,10 @@ class LocaleTest extends UnitTestCase
     /**
      * @test
      * @dataProvider invalidLocaleIdentifiers
-     * @expectedException \Neos\Flow\I18n\Exception\InvalidLocaleIdentifierException
      */
     public function theConstructorThrowsAnExceptionOnPassingAInvalidLocaleIdentifiers($invalidIdentifier)
     {
+        $this->expectException(I18n\Exception\InvalidLocaleIdentifierException::class);
         new I18n\Locale($invalidIdentifier);
     }
 

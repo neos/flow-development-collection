@@ -11,6 +11,7 @@ namespace Neos\Flow\Log\Tests\Unit\Backend;
  * source code.
  */
 
+use Neos\Flow\Log\Exception\CouldNotOpenResourceException;
 use org\bovigo\vfs\vfsStream;
 use org\bovigo\vfs\vfsStreamWrapper;
 use Neos\Flow\Log\Backend\FileBackend;
@@ -41,10 +42,10 @@ class FileBackendTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Log\Exception\CouldNotOpenResourceException
      */
     public function openDoesNotCreateParentDirectoriesByDefault()
     {
+        $this->expectException(CouldNotOpenResourceException::class);
         $logFileUrl = vfsStream::url('testDirectory') . '/foo/test.log';
         $backend = new FileBackend(['logFileUrl' => $logFileUrl]);
         $backend->open();

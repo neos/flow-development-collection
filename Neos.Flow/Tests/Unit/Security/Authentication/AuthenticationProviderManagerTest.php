@@ -13,6 +13,7 @@ namespace Neos\Flow\Tests\Unit\Security\Authentication;
 
 use Neos\Flow\Security\Authentication\AuthenticationProviderInterface;
 use Neos\Flow\Security\Authentication\TokenAndProviderFactoryInterface;
+use Neos\Flow\Security\Exception\AuthenticationRequiredException;
 use Neos\Flow\Session\SessionManager;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Flow\Security\Account;
@@ -159,10 +160,10 @@ class AuthenticationProviderManagerTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Security\Exception\AuthenticationRequiredException
      */
     public function authenticateThrowsAnExceptionIfNoTokenCouldBeAuthenticated()
     {
+        $this->expectException(AuthenticationRequiredException::class);
         $token1 = $this->createMock(TokenInterface::class);
         $token2 = $this->createMock(TokenInterface::class);
 
@@ -176,10 +177,10 @@ class AuthenticationProviderManagerTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Security\Exception\AuthenticationRequiredException
      */
     public function authenticateThrowsAnExceptionIfAuthenticateAllTokensIsTrueButATokenCouldNotBeAuthenticated()
     {
+        $this->expectException(AuthenticationRequiredException::class);
         $token1 = $this->createMock(TokenInterface::class);
         $token2 = $this->createMock(TokenInterface::class);
 

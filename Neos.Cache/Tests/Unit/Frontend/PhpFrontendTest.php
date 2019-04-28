@@ -12,6 +12,8 @@ include_once(__DIR__ . '/../../BaseTestCase.php');
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+use Neos\Cache\Exception\InvalidDataException;
 use Neos\Cache\Tests\BaseTestCase;
 use Neos\Cache\Backend\PhpCapableBackendInterface;
 use Neos\Cache\Frontend\PhpFrontend;
@@ -24,11 +26,11 @@ use Neos\Cache\Frontend\StringFrontend;
 class PhpFrontendTest extends BaseTestCase
 {
     /**
-     * @expectedException \InvalidArgumentException
      * @test
      */
     public function setChecksIfTheIdentifierIsValid()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $cache = $this->getMockBuilder(StringFrontend::class)
             ->setMethods(['isValidEntryIdentifier'])
             ->disableOriginalConstructor()
@@ -58,10 +60,10 @@ class PhpFrontendTest extends BaseTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Cache\Exception\InvalidDataException
      */
     public function setThrowsInvalidDataExceptionOnNonStringValues()
     {
+        $this->expectException(InvalidDataException::class);
         $cache = $this->getMockBuilder(PhpFrontend::class)
             ->setMethods(null)
             ->disableOriginalConstructor()

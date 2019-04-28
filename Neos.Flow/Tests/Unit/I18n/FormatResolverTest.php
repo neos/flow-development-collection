@@ -65,30 +65,30 @@ class FormatResolverTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\I18n\Exception\InvalidFormatPlaceholderException
      */
     public function throwsExceptionWhenInvalidPlaceholderEncountered()
     {
+        $this->expectException(I18n\Exception\InvalidFormatPlaceholderException::class);
         $formatResolver = new I18n\FormatResolver();
         $formatResolver->resolvePlaceholders('{0,damaged {1}', [], $this->sampleLocale);
     }
 
     /**
      * @test
-     * @expectedException \Neos\Flow\I18n\Exception\IndexOutOfBoundsException
      */
     public function throwsExceptionWhenInsufficientNumberOfArgumentsProvided()
     {
+        $this->expectException(I18n\Exception\IndexOutOfBoundsException::class);
         $formatResolver = new I18n\FormatResolver();
         $formatResolver->resolvePlaceholders('{0}', [], $this->sampleLocale);
     }
 
     /**
      * @test
-     * @expectedException \Neos\Flow\I18n\Exception\UnknownFormatterException
      */
     public function throwsExceptionWhenFormatterDoesNotExist()
     {
+        $this->expectException(I18n\Exception\UnknownFormatterException::class);
         $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
         $mockObjectManager
             ->expects($this->at(0))
@@ -109,10 +109,10 @@ class FormatResolverTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\I18n\Exception\InvalidFormatterException
      */
     public function throwsExceptionWhenFormatterDoesNotImplementFormatterInterface()
     {
+        $this->expectException(I18n\Exception\InvalidFormatterException::class);
         $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
         $mockObjectManager
             ->expects($this->once())

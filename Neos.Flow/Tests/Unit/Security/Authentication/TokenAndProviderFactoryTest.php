@@ -13,6 +13,7 @@ namespace Neos\Flow\Tests\Unit\Security\Authentication;
 
 use Neos\Flow\Security\Authentication\AuthenticationProviderResolver;
 use Neos\Flow\Security\Authentication\TokenAndProviderFactory;
+use Neos\Flow\Security\Exception\InvalidAuthenticationProviderException;
 use Neos\Flow\Security\RequestPatternResolver;
 use Neos\Flow\Tests\UnitTestCase;
 
@@ -37,10 +38,10 @@ class TokenAndProviderFactoryTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Security\Exception\InvalidAuthenticationProviderException
      */
     public function anExceptionIsThrownIfTheConfiguredProviderDoesNotExist()
     {
+        $this->expectException(InvalidAuthenticationProviderException::class);
         $providerConfiguration = [
             'NotExistingProvider' => [
                 'providerClass' => 'NotExistingProviderClass'

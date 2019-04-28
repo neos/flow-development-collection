@@ -128,10 +128,10 @@ class PersistedUsernamePasswordProviderTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Security\Exception\UnsupportedAuthenticationTokenException
      */
     public function authenticatingAnUnsupportedTokenThrowsAnException()
     {
+        $this->expectException(Security\Exception\UnsupportedAuthenticationTokenException::class);
         $someNiceToken = $this->createMock(Security\Authentication\TokenInterface::class);
 
         $usernamePasswordProvider = Security\Authentication\Provider\PersistedUsernamePasswordProvider::create('myProvider', []);

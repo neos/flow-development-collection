@@ -13,6 +13,7 @@ namespace Neos\Flow\Log\Tests\Unit;
 
 use Neos\Flow\Log\Backend\BackendInterface;
 use Neos\Flow\Log\DefaultLogger;
+use Neos\Flow\Log\Exception\NoSuchBackendException;
 use Neos\Flow\Tests\UnitTestCase;
 
 /**
@@ -69,10 +70,10 @@ class LoggerTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Log\Exception\NoSuchBackendException
      */
     public function removeThrowsAnExceptionOnTryingToRemoveABackendNotPreviouslyAdded()
     {
+        $this->expectException(NoSuchBackendException::class);
         $mockBackend = $this->getMockBuilder(BackendInterface::class)->setMethods(['open', 'append', 'close'])->getMock();
 
         $logger = new DefaultLogger();

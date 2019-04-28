@@ -15,6 +15,7 @@ include_once(__DIR__ . '/../../BaseTestCase.php');
 
 use Neos\Cache\Backend\MemcachedBackend;
 use Neos\Cache\EnvironmentConfiguration;
+use Neos\Cache\Exception;
 use Neos\Cache\Tests\BaseTestCase;
 use Neos\Cache\Frontend\AbstractFrontend;
 use Neos\Cache\Frontend\FrontendInterface;
@@ -44,10 +45,10 @@ class MemcachedBackendTest extends BaseTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Cache\Exception
      */
     public function setThrowsExceptionIfNoFrontEndHasBeenSet()
     {
+        $this->expectException(Exception::class);
         $backendOptions = ['servers' => ['localhost:11211']];
         $backend = new MemcachedBackend($this->getEnvironmentConfiguration(), $backendOptions);
         $data = 'Some data';
@@ -57,19 +58,19 @@ class MemcachedBackendTest extends BaseTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Cache\Exception
      */
     public function initializeObjectThrowsExceptionIfNoMemcacheServerIsConfigured()
     {
+        $this->expectException(Exception::class);
         $backend = new MemcachedBackend($this->getEnvironmentConfiguration(), []);
     }
 
     /**
      * @test
-     * @expectedException \Neos\Cache\Exception
      */
     public function setThrowsExceptionIfConfiguredServersAreUnreachable()
     {
+        $this->expectException(Exception::class);
         $backend = $this->setUpBackend(['servers' => ['localhost:11212']]);
         $data = 'Somedata';
         $identifier = 'MyIdentifier' . md5(uniqid(mt_rand(), true));

@@ -11,6 +11,8 @@ namespace Neos\FluidAdaptor\Tests\Unit\Core\Widget;
  * source code.
  */
 
+use Neos\FluidAdaptor\Core\Widget\Exception\WidgetContextNotFoundException;
+
 /**
  * Testcase for AjaxWidgetContextHolder
  *
@@ -48,10 +50,10 @@ class AjaxWidgetContextHolderTest extends \Neos\Flow\Tests\UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\FluidAdaptor\Core\Widget\Exception\WidgetContextNotFoundException
      */
     public function getThrowsExceptionIfWidgetContextIsNotFound()
     {
+        $this->expectException(WidgetContextNotFoundException::class);
         $ajaxWidgetContextHolder = new \Neos\FluidAdaptor\Core\Widget\AjaxWidgetContextHolder();
         $ajaxWidgetContextHolder->get(42);
     }

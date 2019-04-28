@@ -33,10 +33,10 @@ class RegularExpressionValidatorTest extends AbstractValidatorTestcase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Validation\Exception\InvalidValidationOptionsException
      */
     public function validateThrowsExceptionIfExpressionIsEmpty()
     {
+        $this->expectException(Validation\Exception\InvalidValidationOptionsException::class);
         $this->validatorOptions([]);
         $this->validator->validate('foo');
     }

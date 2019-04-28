@@ -13,6 +13,11 @@ namespace Neos\Flow\Tests\Unit\Mvc;
 
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Http;
+use Neos\Flow\Mvc\Exception\InvalidActionNameException;
+use Neos\Flow\Mvc\Exception\InvalidArgumentNameException;
+use Neos\Flow\Mvc\Exception\InvalidArgumentTypeException;
+use Neos\Flow\Mvc\Exception\InvalidControllerNameException;
+use Neos\Flow\ObjectManagement\Exception\UnknownObjectException;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Security\Cryptography\HashService;
@@ -57,11 +62,11 @@ class ActionRequestTest extends UnitTestCase
     }
 
     /**
-     * @expectedException \InvalidArgumentException
      * @test
      */
     public function constructorThrowsAnExceptionIfNoValidRequestIsPassed()
     {
+        $this->expectException(\InvalidArgumentException::class);
         new ActionRequest(new \stdClass());
     }
 
@@ -237,10 +242,10 @@ class ActionRequestTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\ObjectManagement\Exception\UnknownObjectException
      */
     public function setControllerObjectNameThrowsExceptionOnUnknownObjectName()
     {
+        $this->expectException(UnknownObjectException::class);
         $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
         $mockObjectManager->expects($this->any())->method('getCaseSensitiveObjectName')->will($this->returnValue(false));
 
@@ -347,10 +352,10 @@ class ActionRequestTest extends UnitTestCase
      * @test
      * @param mixed $invalidControllerName
      * @dataProvider invalidControllerNames
-     * @expectedException \Neos\Flow\Mvc\Exception\InvalidControllerNameException
      */
     public function setControllerNameThrowsExceptionOnInvalidControllerNames($invalidControllerName)
     {
+        $this->expectException(InvalidControllerNameException::class);
         $this->actionRequest->setControllerName($invalidControllerName);
     }
 
@@ -383,10 +388,10 @@ class ActionRequestTest extends UnitTestCase
      * @test
      * @param mixed $invalidActionName
      * @dataProvider invalidActionNames
-     * @expectedException \Neos\Flow\Mvc\Exception\InvalidActionNameException
      */
     public function setControllerActionNameThrowsExceptionOnInvalidActionNames($invalidActionName)
     {
+        $this->expectException(InvalidActionNameException::class);
         $this->actionRequest->setControllerActionName($invalidActionName);
     }
 
@@ -429,19 +434,19 @@ class ActionRequestTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Mvc\Exception\InvalidArgumentNameException
      */
     public function setArgumentThrowsAnExceptionOnInvalidArgumentNames()
     {
+        $this->expectException(InvalidArgumentNameException::class);
         $this->actionRequest->setArgument('', 'theValue');
     }
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Mvc\Exception\InvalidArgumentTypeException
      */
     public function setArgumentDoesNotAllowObjectValuesForRegularArguments()
     {
+        $this->expectException(InvalidArgumentTypeException::class);
         $this->actionRequest->setArgument('foo', new \stdClass());
     }
 
@@ -533,10 +538,10 @@ class ActionRequestTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Security\Exception\InvalidHashException
      */
     public function getReferringRequestThrowsAnExceptionIfTheHmacOfTheArgumentsCouldNotBeValid()
     {
+        $this->expectException(InvalidHashException::class);
         $serializedArguments = base64_encode('some manipulated arguments string without valid HMAC');
         $referrer = [
             '@controller' => 'Foo',

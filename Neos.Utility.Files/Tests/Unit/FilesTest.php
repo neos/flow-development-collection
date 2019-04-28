@@ -11,6 +11,7 @@ namespace Neos\Flow\Tests\Unit\Utility;
  * source code.
  */
 
+use Neos\Utility\Exception\FilesException;
 use org\bovigo\vfs\vfsStream;
 use Neos\Utility\Files;
 
@@ -266,19 +267,19 @@ class FilesTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @test
-     * @expectedException \Neos\Utility\Exception\FilesException
      */
     public function emptyDirectoryRecursivelyThrowsExceptionIfSpecifiedPathDoesNotExist()
     {
+        $this->expectException(FilesException::class);
         Files::emptyDirectoryRecursively('NonExistingPath');
     }
 
     /**
      * @test
-     * @expectedException \Neos\Utility\Exception\FilesException
      */
     public function removeDirectoryRecursivelyThrowsExceptionIfSpecifiedPathDoesNotExist()
     {
+        $this->expectException(FilesException::class);
         Files::removeDirectoryRecursively('NonExistingPath');
     }
 
@@ -346,10 +347,10 @@ class FilesTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @test
-     * @expectedException \Neos\Utility\Exception\FilesException
      */
     public function removeEmptyDirectoriesOnPathThrowsExceptionIfBasePathIsNotParentOfPath()
     {
+        $this->expectException(FilesException::class);
         Files::createDirectoryRecursively('vfs://Foo/Bar/Baz/Quux');
         Files::removeEmptyDirectoriesOnPath('vfs://Foo/Bar/Baz/Quux', 'vfs://Other/Bar');
     }
@@ -654,10 +655,10 @@ class FilesTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @test
-     * @expectedException \Neos\Utility\Exception\FilesException
      */
     public function sizeStringThrowsExceptionIfTheSpecifiedUnitIsUnknown()
     {
+        $this->expectException(FilesException::class);
         Files::sizeStringToBytes('123 UnknownUnit');
     }
 }

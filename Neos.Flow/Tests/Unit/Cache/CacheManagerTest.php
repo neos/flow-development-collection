@@ -77,10 +77,10 @@ class CacheManagerTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Cache\Exception\DuplicateIdentifierException
      */
     public function managerThrowsExceptionOnCacheRegistrationWithAlreadyExistingIdentifier()
     {
+        $this->expectException(Cache\Exception\DuplicateIdentifierException::class);
         $cache1 = $this->getMockBuilder(Cache\Frontend\AbstractFrontend::class)->disableOriginalConstructor()->getMock();
         $cache1->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('test'));
 
@@ -110,10 +110,10 @@ class CacheManagerTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Cache\Exception\NoSuchCacheException
      */
     public function getCacheThrowsExceptionForNonExistingIdentifier()
     {
+        $this->expectException(Cache\Exception\NoSuchCacheException::class);
         $cache = $this->getMockBuilder(Cache\Frontend\AbstractFrontend::class)->disableOriginalConstructor()->getMock();
         $cache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('someidentifier'));
 

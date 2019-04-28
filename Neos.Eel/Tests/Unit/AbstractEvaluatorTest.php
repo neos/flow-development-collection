@@ -13,6 +13,8 @@ namespace Neos\Eel\Tests\Unit;
 
 use Neos\Eel\Context;
 use Neos\Eel\EelEvaluatorInterface;
+use Neos\Eel\EvaluationException;
+use Neos\Eel\ParserException;
 use Neos\Flow\Tests\UnitTestCase;
 
 /**
@@ -570,10 +572,10 @@ abstract class AbstractEvaluatorTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Eel\EvaluationException
      */
     public function methodCallOfUndefinedFunctionThrowsException()
     {
+        $this->expectException(EvaluationException::class);
         $c = new Context([
             'arr' => [
                 'func' => function ($arg) {
@@ -586,10 +588,10 @@ abstract class AbstractEvaluatorTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Eel\EvaluationException
      */
     public function methodCallOfUnknownMethodThrowsException()
     {
+        $this->expectException(EvaluationException::class);
         $o = new \Neos\Eel\Tests\Unit\Fixtures\TestObject();
 
         $c = new Context([
@@ -671,10 +673,10 @@ abstract class AbstractEvaluatorTest extends UnitTestCase
     /**
      * @test
      * @dataProvider invalidExpressions
-     * @expectedException \Neos\Eel\ParserException
      */
     public function invalidExpressionsThrowExceptions($expression)
     {
+        $this->expectException(ParserException::class);
         $this->assertEvaluated(false, $expression, new Context());
     }
 

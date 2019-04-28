@@ -11,7 +11,11 @@ namespace Neos\Flow\Tests\Unit\Configuration;
  * source code.
  */
 
+use Neos\Flow\Composer\Exception\InvalidConfigurationException;
 use Neos\Flow\Configuration\ConfigurationManager;
+use Neos\Flow\Configuration\Exception\InvalidConfigurationTypeException;
+use Neos\Flow\Configuration\Exception\ParseErrorException;
+use Neos\Flow\Configuration\Exception\RecursionException;
 use Neos\Flow\Configuration\RouteConfigurationProcessor;
 use Neos\Flow\Configuration\Source\YamlSource;
 use Neos\Flow\Core\ApplicationContext;
@@ -146,10 +150,10 @@ class ConfigurationManagerTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Configuration\Exception\InvalidConfigurationTypeException
      */
     public function gettingUnregisteredConfigurationTypeFails()
     {
+        $this->expectException(InvalidConfigurationTypeException::class);
         $configurationManager = new ConfigurationManager(new ApplicationContext('Testing'));
         $configurationManager->getConfiguration('Custom');
     }
@@ -178,11 +182,11 @@ class ConfigurationManagerTest extends UnitTestCase
     }
 
     /**
-     * @expectedException \InvalidArgumentException
      * @test
      */
     public function registerConfigurationTypeThrowsExceptionOnInvalidConfigurationProcessingType()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $configurationManager = $this->getAccessibleMock(ConfigurationManager::class, ['loadConfiguration'], [], '', false);
         $configurationManager->registerConfigurationType('MyCustomType', 'Nonsense');
     }
@@ -1176,10 +1180,10 @@ EOD;
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Configuration\Exception\RecursionException
      */
     public function loadConfigurationForRoutesThrowsExceptionIfSubRoutesContainCircularReferences()
     {
+        $this->expectException(RecursionException::class);
         $mockSubRouteConfiguration =
             [
                 'name' => 'SomeRouteOrSubRoute',
@@ -1203,10 +1207,10 @@ EOD;
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Configuration\Exception\ParseErrorException
      */
     public function mergeRoutesWithSubRoutesThrowsExceptionIfRouteRefersToNonExistingOrInactivePackages()
     {
+        $this->expectException(ParseErrorException::class);
         $routesConfiguration = [
             [
                 'name' => 'Welcome',

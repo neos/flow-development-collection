@@ -11,6 +11,7 @@ namespace Neos\Flow\Tests\Unit\ObjectManagement\Configuration;
  * source code.
  */
 
+use Neos\Flow\Configuration\Exception\InvalidConfigurationException;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Flow\ObjectManagement\Configuration;
 
@@ -37,10 +38,10 @@ class ConfigurationTest extends UnitTestCase
      * Checks if setProperties accepts only valid values
      *
      * @test
-     * @expectedException \Neos\Flow\Configuration\Exception\InvalidConfigurationException
      */
     public function setPropertiesOnlyAcceptsValidValues()
     {
+        $this->expectException(InvalidConfigurationException::class);
         $invalidProperties = [
             'validProperty' => new Configuration\ConfigurationProperty('validProperty', 'simple string'),
             'invalidProperty' => 'foo'
@@ -69,10 +70,10 @@ class ConfigurationTest extends UnitTestCase
      * Checks if setArguments accepts only valid values
      *
      * @test
-     * @expectedException \Neos\Flow\Configuration\Exception\InvalidConfigurationException
      */
     public function setArgumentsOnlyAcceptsValidValues()
     {
+        $this->expectException(InvalidConfigurationException::class);
         $invalidArguments = [
             1 => new Configuration\ConfigurationArgument(1, 'simple string'),
             2 => 'foo'
@@ -117,10 +118,10 @@ class ConfigurationTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
      */
     public function setFactoryMethodNameRejectsAnythingElseThanAString()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $this->objectConfiguration->setFactoryMethodName([]);
     }
 

@@ -89,10 +89,10 @@ class UrlencodeViewHelperTest extends ViewHelperBaseTestcase
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
      */
     public function renderThrowsExceptionIfItIsNoStringAndHasNoToStringMethod()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $source = new \stdClass();
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['value' => $source]);
         $this->viewHelper->render();

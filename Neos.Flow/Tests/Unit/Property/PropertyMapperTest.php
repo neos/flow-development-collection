@@ -13,6 +13,7 @@ namespace Neos\Flow\Tests\Unit\Property;
 
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Property\Exception\DuplicateTypeConverterException;
+use Neos\Flow\Property\Exception\InvalidSourceException;
 use Neos\Flow\Property\Exception\InvalidTargetException;
 use Neos\Flow\Property\Exception\TypeConverterException;
 use Neos\Flow\Property\PropertyMapper;
@@ -80,10 +81,10 @@ class PropertyMapperTest extends UnitTestCase
     /**
      * @test
      * @dataProvider invalidSourceTypes
-     * @expectedException \Neos\Flow\Property\Exception\InvalidSourceException
      */
     public function sourceWhichIsNoSimpleTypeOrObjectThrowsException($source)
     {
+        $this->expectException(InvalidSourceException::class);
         $propertyMapper = $this->getAccessibleMock(PropertyMapper::class, ['dummy']);
         $propertyMapper->_call('determineSourceTypes', $source);
     }
@@ -194,10 +195,10 @@ class PropertyMapperTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Property\Exception\TypeConverterException
      */
     public function findTypeConverterThrowsExceptionIfAllMatchingConvertersHaveNegativePriorities()
     {
+        $this->expectException(TypeConverterException::class);
         $internalTypeConverter1 = $this->getMockTypeConverter('string2string,prio-1');
         $internalTypeConverter1->expects($this->atLeastOnce())->method('getPriority')->will($this->returnValue(-1));
 
@@ -389,10 +390,10 @@ class PropertyMapperTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException Exception
      */
     public function convertDoesNotCatchSecurityExceptions()
     {
+        $this->expectException(Exception::class);
         $propertyMapper = $this->getAccessibleMock(PropertyMapper::class, ['doMapping']);
         $propertyMapper->expects($this->once())->method('doMapping')->with('sourceType', 'targetType', $this->mockConfiguration)->will($this->throwException(new Exception()));
 

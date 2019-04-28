@@ -17,6 +17,9 @@ use Neos\Cache\Frontend\StringFrontend;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Security\Cryptography\HashService;
 use Neos\Flow\Security\Cryptography\PasswordHashingStrategyInterface;
+use Neos\Flow\Security\Exception\InvalidArgumentForHashGenerationException;
+use Neos\Flow\Security\Exception\InvalidHashException;
+use Neos\Flow\Security\Exception\MissingConfigurationException;
 use Neos\Flow\Tests\Unit\Cryptography\Fixture\TestHashingStrategy;
 use Neos\Flow\Tests\UnitTestCase;
 
@@ -102,10 +105,10 @@ class HashServiceTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Security\Exception\InvalidArgumentForHashGenerationException
      */
     public function generateHmacThrowsExceptionIfNoStringGiven()
     {
+        $this->expectException(InvalidArgumentForHashGenerationException::class);
         $this->hashService->generateHmac(null);
     }
 
@@ -170,20 +173,20 @@ class HashServiceTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Security\Exception\MissingConfigurationException
      */
     public function hashPasswordThrowsExceptionIfTheGivenHashingStrategyIsNotConfigured()
     {
+        $this->expectException(MissingConfigurationException::class);
         $this->hashService->hashPassword('myTestPassword', 'nonExistingHashingStrategy');
     }
 
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Security\Exception\MissingConfigurationException
      */
     public function hashPasswordThrowsExceptionIfNoDefaultHashingStrategyIsConfigured()
     {
+        $this->expectException(MissingConfigurationException::class);
         $mockSettings = [
             'security' => [
                 'cryptography' => [
@@ -222,10 +225,10 @@ class HashServiceTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Security\Exception\InvalidArgumentForHashGenerationException
      */
     public function appendHmacThrowsExceptionIfNoStringGiven()
     {
+        $this->expectException(InvalidArgumentForHashGenerationException::class);
         $this->hashService->appendHmac(null);
     }
 
@@ -241,37 +244,37 @@ class HashServiceTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Security\Exception\InvalidArgumentForHashGenerationException
      */
     public function validateAndStripHmacThrowsExceptionIfNoStringGiven()
     {
+        $this->expectException(InvalidArgumentForHashGenerationException::class);
         $this->hashService->validateAndStripHmac(null);
     }
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Security\Exception\InvalidArgumentForHashGenerationException
      */
     public function validateAndStripHmacThrowsExceptionIfGivenStringIsTooShort()
     {
+        $this->expectException(InvalidArgumentForHashGenerationException::class);
         $this->hashService->validateAndStripHmac('string with less than 40 characters');
     }
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Security\Exception\InvalidHashException
      */
     public function validateAndStripHmacThrowsExceptionIfGivenStringHasNoHashAppended()
     {
+        $this->expectException(InvalidHashException::class);
         $this->hashService->validateAndStripHmac('string with exactly a length 40 of chars');
     }
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Security\Exception\InvalidHashException
      */
     public function validateAndStripHmacThrowsExceptionIfTheAppendedHashIsInvalid()
     {
+        $this->expectException(InvalidHashException::class);
         $this->hashService->validateAndStripHmac('some Stringac43682075d36592d4cb320e69ff0aa515886eab');
     }
 

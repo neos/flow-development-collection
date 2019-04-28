@@ -99,10 +99,10 @@ class IdentifierViewHelperTest extends ViewHelperBaseTestcase
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
      */
     public function renderThrowsExceptionIfGivenValueIsNoObject()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $notAnObject = [];
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['value' => $notAnObject]);
         $this->viewHelper->render();

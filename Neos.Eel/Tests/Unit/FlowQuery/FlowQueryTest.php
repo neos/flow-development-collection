@@ -11,6 +11,7 @@ namespace Neos\Eel\Tests\Unit\FlowQuery;
  * source code.
  */
 
+use Neos\Eel\FlowQuery\FizzleException;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\OperationResolver;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
@@ -578,10 +579,11 @@ class FlowQueryTest extends UnitTestCase
     /**
      * @dataProvider dataProviderForErrorQueries
      * @test
-     * @expectedException \Neos\Eel\FlowQuery\FizzleException
      */
     public function errorQueriesThrowError($expression)
     {
+        $this->expectException(FizzleException::class);
+
         $x = new \stdClass();
         $x->foo = new \stdClass();
         $x->foo->foo = 'asdf';

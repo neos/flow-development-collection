@@ -60,10 +60,10 @@ class CommandControllerTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Mvc\Exception\UnsupportedRequestTypeException
      */
     public function processRequestThrowsExceptionIfGivenRequestIsNoCliRequest()
     {
+        $this->expectException(Mvc\Exception\UnsupportedRequestTypeException::class);
         $mockRequest = $this->createMock(Mvc\RequestInterface::class);
         $mockResponse = $this->createMock(Mvc\ResponseInterface::class);
 

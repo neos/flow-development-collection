@@ -11,6 +11,8 @@ namespace Neos\FluidAdaptor\Tests\Unit\ViewHelpers;
  * source code.
  */
 
+use Neos\FluidAdaptor\Core\Widget\Exception\RenderingContextNotFoundException;
+use Neos\FluidAdaptor\Core\Widget\Exception\WidgetContextNotFoundException;
 use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\RootNode;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 
@@ -67,10 +69,10 @@ class RenderChildrenViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHel
 
     /**
      * @test
-     * @expectedException \Neos\FluidAdaptor\Core\Widget\Exception\WidgetContextNotFoundException
      */
     public function renderThrowsExceptionIfTheRequestIsNotAWidgetRequest()
     {
+        $this->expectException(WidgetContextNotFoundException::class);
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
         $this->viewHelper->initializeArguments();
 
@@ -79,10 +81,10 @@ class RenderChildrenViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHel
 
     /**
      * @test
-     * @expectedException \Neos\FluidAdaptor\Core\Widget\Exception\RenderingContextNotFoundException
      */
     public function renderThrowsExceptionIfTheChildNodeRenderingContextIsNotThere()
     {
+        $this->expectException(RenderingContextNotFoundException::class);
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
         $this->viewHelper->initializeArguments();
 

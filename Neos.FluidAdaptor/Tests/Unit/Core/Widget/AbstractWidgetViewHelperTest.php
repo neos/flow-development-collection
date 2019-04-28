@@ -11,6 +11,7 @@ namespace Neos\FluidAdaptor\Tests\Unit\Core\Widget;
  * source code.
  */
 
+use Neos\FluidAdaptor\Core\Widget\Exception\MissingControllerException;
 use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\AbstractNode;
 use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\RootNode;
 use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\TextNode;
@@ -152,10 +153,10 @@ class AbstractWidgetViewHelperTest extends \Neos\Flow\Tests\UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\FluidAdaptor\Core\Widget\Exception\MissingControllerException
      */
     public function initiateSubRequestThrowsExceptionIfControllerIsNoWidgetController()
     {
+        $this->expectException(MissingControllerException::class);
         $controller = $this->createMock(\Neos\Flow\Mvc\Controller\ControllerInterface::class);
         $this->viewHelper->_set('controller', $controller);
 

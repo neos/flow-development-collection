@@ -12,6 +12,7 @@ namespace Neos\Flow\Tests\Unit\Reflection;
  */
 
 use Doctrine\Common\Annotations\Reader;
+use Neos\Flow\Reflection\Exception\ClassLoadingForReflectionFailedException;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Tests\UnitTestCase;
 
@@ -42,28 +43,28 @@ class ReflectionServiceTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Reflection\Exception\ClassLoadingForReflectionFailedException
      */
     public function reflectClassThrowsExceptionForNonExistingClasses()
     {
+        $this->expectException(ClassLoadingForReflectionFailedException::class);
         $this->reflectionService->_call('reflectClass', 'Non\Existing\Class');
     }
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Reflection\Exception\ClassLoadingForReflectionFailedException
      */
     public function reflectClassThrowsExceptionForFilesWithNoClass()
     {
+        $this->expectException(ClassLoadingForReflectionFailedException::class);
         $this->reflectionService->_call('reflectClass', Fixture\FileWithNoClass::class);
     }
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Reflection\Exception\ClassLoadingForReflectionFailedException
      */
     public function reflectClassThrowsExceptionForClassesWithNoMatchingFilename()
     {
+        $this->expectException(ClassLoadingForReflectionFailedException::class);
         $this->reflectionService->_call('reflectClass', Fixture\ClassWithDifferentNameDifferent::class);
     }
 

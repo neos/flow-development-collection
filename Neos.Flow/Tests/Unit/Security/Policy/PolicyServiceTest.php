@@ -15,6 +15,7 @@ use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\ObjectManagement\ObjectManager;
 use Neos\Flow\Security\Authorization\Privilege\AbstractPrivilege;
 use Neos\Flow\Security\Authorization\Privilege\PrivilegeTarget;
+use Neos\Flow\Security\Exception\NoSuchRoleException;
 use Neos\Flow\Security\Policy\PolicyService;
 use Neos\Flow\Security\Policy\Role;
 use Neos\Flow\Tests\UnitTestCase;
@@ -88,10 +89,10 @@ class PolicyServiceTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Security\Exception\NoSuchRoleException
      */
     public function getRoleThrowsExceptionIfTheSpecifiedRoleIsNotConfigured()
     {
+        $this->expectException(NoSuchRoleException::class);
         $this->policyService->getRole('Non.Existing:Role');
     }
 

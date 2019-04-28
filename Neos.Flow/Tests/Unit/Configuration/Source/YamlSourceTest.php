@@ -11,6 +11,7 @@ namespace Neos\Flow\Tests\Unit\Configuration\Source;
  * source code.
  */
 
+use Neos\Flow\Configuration\Exception;
 use org\bovigo\vfs\vfsStream;
 use Neos\Flow\Configuration\Source\YamlSource;
 use Neos\Flow\Tests\UnitTestCase;
@@ -153,10 +154,10 @@ class YamlSourceTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Configuration\Exception
      */
     public function configurationFileWithYmlExtensionResultsInException()
     {
+        $this->expectException(Exception::class);
         $pathAndFilename = __DIR__ . '/../Fixture/YmlThrowsException';
         $configurationSource = new YamlSource();
         $configurationSource->load($pathAndFilename, true);

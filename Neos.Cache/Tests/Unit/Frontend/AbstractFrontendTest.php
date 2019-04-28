@@ -77,10 +77,10 @@ class AbstractFrontendTest extends BaseTestCase
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
      */
     public function flushByTagRejectsInvalidTags()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $identifier = 'someCacheIdentifier';
         $backend = $this->createMock(TaggableBackendInterface::class);
         $backend->expects($this->never())->method('flushByTag');

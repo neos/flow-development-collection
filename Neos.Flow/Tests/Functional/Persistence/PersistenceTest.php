@@ -16,6 +16,8 @@ use Doctrine\ORM\Tools\SchemaTool;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Persistence\Doctrine\PersistenceManager;
 use Neos\Flow\Persistence\Doctrine\QueryResult;
+use Neos\Flow\Persistence\Exception;
+use Neos\Flow\Persistence\Exception\ObjectValidationFailedException;
 use Neos\Flow\Tests\FunctionalTestCase;
 
 /**
@@ -275,10 +277,10 @@ class PersistenceTest extends FunctionalTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Persistence\Exception\ObjectValidationFailedException
      */
     public function validationIsDoneForNewEntities()
     {
+        $this->expectException(ObjectValidationFailedException::class);
         $this->removeExampleEntities();
         $this->insertExampleEntity('A');
 
@@ -287,10 +289,10 @@ class PersistenceTest extends FunctionalTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Persistence\Exception\ObjectValidationFailedException
      */
     public function validationIsDoneForReconstitutedEntities()
     {
+        $this->expectException(ObjectValidationFailedException::class);
         $this->removeExampleEntities();
         $this->insertExampleEntity();
         $this->persistenceManager->persistAll();
@@ -305,10 +307,10 @@ class PersistenceTest extends FunctionalTestCase
      * Testcase for issue #32830 - Validation on persist breaks with Doctrine Lazy Loading Proxies
      *
      * @test
-     * @expectedException \Neos\Flow\Persistence\Exception\ObjectValidationFailedException
      */
     public function validationIsDoneForReconstitutedEntitiesWhichAreLazyLoadingProxies()
     {
+        $this->expectException(ObjectValidationFailedException::class);
         $this->removeExampleEntities();
         $this->insertExampleEntity();
         $this->persistenceManager->persistAll();
@@ -373,11 +375,11 @@ class PersistenceTest extends FunctionalTestCase
     }
 
     /**
-     * @expectedException \Neos\Flow\Persistence\Exception
      * @test
      */
     public function persistAllThrowsExceptionIfNonWhitelistedObjectsAreDirtyAndFlagIsSet()
     {
+        $this->expectException(Exception::class);
         $testEntity = new Fixtures\TestEntity();
         $testEntity->setName('Surfer girl');
         $this->testEntityRepository->add($testEntity);
@@ -385,11 +387,11 @@ class PersistenceTest extends FunctionalTestCase
     }
 
     /**
-     * @expectedException \Neos\Flow\Persistence\Exception
      * @test
      */
     public function persistAllThrowsExceptionIfNonWhitelistedObjectsAreUpdatedAndFlagIsSet()
     {
+        $this->expectException(Exception::class);
         $this->removeExampleEntities();
         $this->insertExampleEntity();
         $this->persistenceManager->persistAll();

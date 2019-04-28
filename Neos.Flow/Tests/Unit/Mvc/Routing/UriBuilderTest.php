@@ -139,10 +139,10 @@ class UriBuilderTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Mvc\Routing\Exception\MissingActionNameException
      */
     public function uriForThrowsExceptionIfActionNameIsNotSpecified()
     {
+        $this->expectException(Mvc\Routing\Exception\MissingActionNameException::class);
         $this->uriBuilder->uriFor(null, [], 'SomeController', 'SomePackage');
     }
 

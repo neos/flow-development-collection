@@ -12,6 +12,7 @@ namespace Neos\Flow\Tests\Unit\Persistence;
  */
 
 use Neos\Flow\Persistence\AbstractPersistenceManager;
+use Neos\Flow\Persistence\Exception\UnknownObjectException;
 use Neos\Flow\Tests\UnitTestCase;
 
 /**
@@ -44,10 +45,10 @@ class AbstractPersistenceManagerTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Persistence\Exception\UnknownObjectException
      */
     public function convertObjectToIdentityArrayThrowsExceptionIfIdentityForTheGivenObjectCantBeDetermined()
     {
+        $this->expectException(UnknownObjectException::class);
         $someObject = new \stdClass();
         $this->abstractPersistenceManager->expects($this->once())->method('getIdentifierByObject')->with($someObject)->will($this->returnValue(null));
 

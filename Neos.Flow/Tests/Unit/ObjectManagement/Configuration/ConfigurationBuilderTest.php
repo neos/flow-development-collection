@@ -16,6 +16,8 @@ use Neos\Flow\ObjectManagement\Configuration\Configuration;
 use Neos\Flow\ObjectManagement\Configuration\ConfigurationArgument;
 use Neos\Flow\ObjectManagement\Configuration\ConfigurationBuilder;
 use Neos\Flow\ObjectManagement\Configuration\ConfigurationProperty;
+use Neos\Flow\ObjectManagement\Exception;
+use Neos\Flow\ObjectManagement\Exception\InvalidObjectConfigurationException;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Flow\Annotations as Flow;
@@ -117,10 +119,10 @@ class ConfigurationBuilderTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\ObjectManagement\Exception\InvalidObjectConfigurationException
      */
     public function invalidOptionResultsInException()
     {
+        $this->expectException(InvalidObjectConfigurationException::class);
         $configurationArray = ['scoopy' => 'prototype'];
         $configurationBuilder = $this->getAccessibleMock(ConfigurationBuilder::class, ['dummy']);
         $configurationBuilder->_call('parseConfigurationArray', 'TestObject', $configurationArray, __CLASS__);
@@ -128,10 +130,10 @@ class ConfigurationBuilderTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\ObjectManagement\Exception
      */
     public function privatePropertyAnnotatedForInjectionThrowsException()
     {
+        $this->expectException(Exception::class);
         $configurationArray = [];
         $configurationArray['arguments'][1]['setting'] = 'Neos.Foo.Bar';
         $configurationArray['properties']['someProperty']['setting'] = 'Neos.Bar.Baz';
@@ -158,10 +160,10 @@ class ConfigurationBuilderTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\ObjectManagement\Exception\UnknownClassException
      */
     public function errorOnGetClassMethodsThrowsException()
     {
+        $this->expectException(Exception\UnknownClassException::class);
         $configurationArray = [];
         $configurationArray['properties']['someProperty']['object']['name'] = 'Foo';
         $configurationArray['properties']['someProperty']['object']['className'] = 'foobar';

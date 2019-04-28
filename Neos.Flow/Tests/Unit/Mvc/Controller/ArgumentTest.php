@@ -56,19 +56,19 @@ class ArgumentTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
      */
     public function constructingArgumentWithoutNameThrowsException()
     {
+        $this->expectException(\InvalidArgumentException::class);
         new Mvc\Controller\Argument('', 'Text');
     }
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
      */
     public function constructingArgumentWithInvalidNameThrowsException()
     {
+        $this->expectException(\InvalidArgumentException::class);
         new Mvc\Controller\Argument(new \ArrayObject(), 'Text');
     }
 

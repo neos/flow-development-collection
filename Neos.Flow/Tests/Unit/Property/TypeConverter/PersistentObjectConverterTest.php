@@ -15,6 +15,10 @@ use Neos\Flow\Fixtures\ClassWithSetters;
 use Neos\Flow\Fixtures\ClassWithSettersAndConstructor;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Persistence;
+use Neos\Flow\Property\Exception\DuplicateObjectException;
+use Neos\Flow\Property\Exception\InvalidPropertyMappingConfigurationException;
+use Neos\Flow\Property\Exception\InvalidSourceException;
+use Neos\Flow\Property\Exception\InvalidTargetException;
 use Neos\Flow\Property\PropertyMappingConfiguration;
 use Neos\Flow\Property\TypeConverter\Error\TargetNotFoundError;
 use Neos\Flow\Property\TypeConverter\PersistentObjectConverter;
@@ -244,10 +248,10 @@ class PersistentObjectConverterTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Property\Exception\InvalidPropertyMappingConfigurationException
      */
     public function convertFromShouldThrowExceptionIfObjectNeedsToBeModifiedButConfigurationIsNotSet()
     {
+        $this->expectException(InvalidPropertyMappingConfigurationException::class);
         $identifier = '550e8400-e29b-11d4-a716-446655440000';
         $object = new \stdClass();
         $object->someProperty = 'asdf';
@@ -347,10 +351,10 @@ class PersistentObjectConverterTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Property\Exception\InvalidSourceException
      */
     public function convertFromShouldThrowExceptionIfIdentityIsOfInvalidType()
     {
+        $this->expectException(InvalidSourceException::class);
         $source = [
             '__identity' => new \stdClass(),
         ];
@@ -359,10 +363,10 @@ class PersistentObjectConverterTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Property\Exception\DuplicateObjectException
      */
     public function convertFromShouldThrowExceptionIfMoreThanOneObjectWasFound()
     {
+        $this->expectException(DuplicateObjectException::class);
         $this->setupMockQuery(2, $this->never());
 
         $source = [
@@ -373,10 +377,10 @@ class PersistentObjectConverterTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Property\Exception\InvalidPropertyMappingConfigurationException
      */
     public function convertFromShouldThrowExceptionIfObjectNeedsToBeCreatedButConfigurationIsNotSet()
     {
+        $this->expectException(InvalidPropertyMappingConfigurationException::class);
         $source = [
             'foo' => 'bar'
         ];
@@ -406,10 +410,10 @@ class PersistentObjectConverterTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Property\Exception\InvalidTargetException
      */
     public function convertFromShouldThrowExceptionIfPropertyOnTargetObjectCouldNotBeSet()
     {
+        $this->expectException(InvalidTargetException::class);
         $source = [
             'propertyX' => 'bar'
         ];
@@ -473,10 +477,10 @@ class PersistentObjectConverterTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Property\Exception\InvalidTargetException
      */
     public function convertFromShouldThrowExceptionIfRequiredConstructorParameterWasNotFound()
     {
+        $this->expectException(InvalidTargetException::class);
         $source = [
             'propertyX' => 'bar'
         ];

@@ -73,10 +73,10 @@ class ComponentChainFactoryTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Http\Component\Exception
      */
     public function createThrowsExceptionIfComponentClassNameIsNotConfigured()
     {
+        $this->expectException(Http\Component\Exception::class);
         $chainConfiguration = [
             'foo' => [
                 'position' => 'start',
@@ -88,10 +88,10 @@ class ComponentChainFactoryTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Http\Component\Exception
      */
     public function createThrowsExceptionIfComponentClassNameDoesNotImplementComponentInterface()
     {
+        $this->expectException(Http\Component\Exception::class);
         $chainConfiguration = [
             'foo' => [
                 'component' => 'Foo\Component\ClassName',

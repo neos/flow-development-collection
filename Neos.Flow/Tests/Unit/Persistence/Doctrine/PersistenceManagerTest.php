@@ -12,11 +12,13 @@ namespace Neos\Flow\Tests\Unit\Persistence\Doctrine;
  */
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\Exception\ConnectionException;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\UnitOfWork;
 use Neos\Flow\Log\ThrowableStorageInterface;
 use Neos\Flow\Persistence\Doctrine\PersistenceManager;
+use Neos\Flow\Persistence\Exception;
 use Neos\Flow\Tests\UnitTestCase;
 use Psr\Log\LoggerInterface;
 
@@ -94,11 +96,11 @@ class PersistenceManagerTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Persistence\Exception
-     * @expectedExceptionMessageRegExp /^Detected modified or new objects/
      */
     public function persistAllThrowsExceptionIfTryingToPersistNonWhitelistedObjectsAndOnlyWhitelistedObjectsFlagIsTrue()
     {
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessageRegExp('/^Detected modified or new objects/');
         $mockObject = new \stdClass();
         $scheduledEntityUpdates = [spl_object_hash($mockObject) => $mockObject];
         $scheduledEntityDeletes = [];
@@ -171,10 +173,10 @@ class PersistenceManagerTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Doctrine\DBAL\DBALException
      */
     public function persistAllThrowsOriginalExceptionWhenEntityManagerGotClosed()
     {
+        $this->expectException(DBALException::class);
         $this->mockEntityManager->expects($this->exactly(1))->method('flush')->willThrowException(new \Doctrine\DBAL\DBALException('Dummy error that closed the entity manager'));
 
         $this->mockConnection->expects($this->never())->method('close');

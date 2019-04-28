@@ -194,11 +194,11 @@ class RedisBackendTest extends BaseTestCase
     /**
      * @test
      * @dataProvider writingOperationsProvider
-     * @expectedException \RuntimeException
      * @param string $method
      */
     public function writingOperationsThrowAnExceptionIfCacheIsFrozen($method)
     {
+        $this->expectException(\RuntimeException::class);
         $this->inject($this->backend, 'frozen', null);
         $this->redis->expects($this->once())
             ->method('exists')

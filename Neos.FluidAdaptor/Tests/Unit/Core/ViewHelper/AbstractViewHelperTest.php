@@ -12,6 +12,7 @@ namespace Neos\FluidAdaptor\Tests\Unit\Core\ViewHelper;
  */
 
 use Neos\Flow\Mvc\Controller\ControllerContext;
+use Neos\FluidAdaptor\Core\ViewHelper\Exception;
 use Neos\FluidAdaptor\Core\ViewHelper\TemplateVariableContainer;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use Neos\FluidAdaptor\View\TemplateView;
@@ -103,10 +104,10 @@ class AbstractViewHelperTest extends \Neos\Flow\Tests\UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\FluidAdaptor\Core\ViewHelper\Exception
      */
     public function registeringTheSameArgumentNameAgainThrowsException()
     {
+        $this->expectException(Exception::class);
         $viewHelper = $this->getAccessibleMock(AbstractViewHelper::class, ['render'], [], '', false);
 
         $name = 'shortName';
@@ -143,10 +144,10 @@ class AbstractViewHelperTest extends \Neos\Flow\Tests\UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\FluidAdaptor\Core\ViewHelper\Exception
      */
     public function overrideArgumentThrowsExceptionWhenTryingToOverwriteAnNonexistingArgument()
     {
+        $this->expectException(Exception::class);
         $viewHelper = $this->getAccessibleMock(AbstractViewHelper::class, ['render'], [], '', false);
         $viewHelper->injectObjectManager($this->mockObjectManager);
 
@@ -260,10 +261,10 @@ class AbstractViewHelperTest extends \Neos\Flow\Tests\UnitTestCase
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
      */
     public function validateArgumentsCallsTheRightValidatorsAndThrowsExceptionIfValidationIsWrong()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $viewHelper = $this->getAccessibleMock(AbstractViewHelper::class, ['render', 'prepareArguments'], [], '', false);
         $viewHelper->injectObjectManager($this->mockObjectManager);
 

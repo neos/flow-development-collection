@@ -11,6 +11,7 @@ namespace Neos\Flow\Tests\Unit\Security;
  * source code.
  */
 
+use Neos\Flow\Exception;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Security\Authentication\AuthenticationManagerInterface;
@@ -437,11 +438,11 @@ class ContextTest extends UnitTestCase
     }
 
     /**
-     * @expectedException \Neos\Flow\Exception
      * @test
      */
     public function invalidAuthenticationStrategyFromConfigurationThrowsException()
     {
+        $this->expectException(Exception::class);
         $settings = [];
         $settings['security']['authentication']['authenticationStrategy'] = 'fizzleGoesHere';
 
@@ -482,11 +483,11 @@ class ContextTest extends UnitTestCase
     }
 
     /**
-     * @expectedException \Neos\Flow\Exception
      * @test
      */
     public function invalidCsrfProtectionStrategyFromConfigurationThrowsException()
     {
+        $this->expectException(Exception::class);
         $settings = [];
         $settings['security']['csrf']['csrfStrategy'] = 'fizzleGoesHere';
 

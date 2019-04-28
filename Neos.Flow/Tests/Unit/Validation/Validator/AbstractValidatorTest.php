@@ -12,6 +12,7 @@ namespace Neos\Flow\Tests\Unit\Validation\Validator;
  */
 
 use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Validation\Exception\InvalidValidationOptionsException;
 use Neos\Flow\Validation\Validator\AbstractValidator;
 
 /**
@@ -43,10 +44,10 @@ class AbstractValidatorTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Validation\Exception\InvalidValidationOptionsException
      */
     public function abstractValidatorConstructWithoutRequiredOptionShouldFail()
     {
+        $this->expectException(InvalidValidationOptionsException::class);
         $this->validator->__construct([]);
     }
 }
