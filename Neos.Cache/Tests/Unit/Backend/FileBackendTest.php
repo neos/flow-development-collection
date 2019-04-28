@@ -614,7 +614,7 @@ class FileBackendTest extends BaseTestCase
         $expectedEntry = 'BackendFileTest2';
 
         $actualEntries = $backend->findIdentifiersByTag('UnitTestTag%special');
-        $this->assertInternalType('array', $actualEntries);
+        $this->assertIsArray($actualEntries);
 
         $this->assertEquals($expectedEntry, array_pop($actualEntries));
     }

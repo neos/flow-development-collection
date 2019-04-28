@@ -689,8 +689,8 @@ EOD;
         $settingsPhpString = var_export($settings, true);
         $configurationManager = $this->getAccessibleMock(ConfigurationManager::class, ['dummy'], [], '', false);
         $processedPhpString = $configurationManager->_call('replaceVariablesInPhpString', $settingsPhpString);
-        $this->assertContains("'baz' => (defined('PHP_VERSION') ? constant('PHP_VERSION') : null)", $processedPhpString);
-        $this->assertContains("'to' => (defined('FLOW_PATH_ROOT') ? constant('FLOW_PATH_ROOT') : null)", $processedPhpString);
+        $this->assertStringContainsString("'baz' => (defined('PHP_VERSION') ? constant('PHP_VERSION') : null)", $processedPhpString);
+        $this->assertStringContainsString("'to' => (defined('FLOW_PATH_ROOT') ? constant('FLOW_PATH_ROOT') : null)", $processedPhpString);
     }
 
     /**
@@ -712,10 +712,10 @@ EOD;
         $configurationManager = $this->getAccessibleMock(ConfigurationManager::class, ['dummy'], [], '', false);
         $processedPhpString = $configurationManager->_call('replaceVariablesInPhpString', $settingsPhpString);
         $settings = eval('return ' . $processedPhpString . ';');
-        $this->assertInternalType('integer', $settings['anIntegerConstant']);
+        $this->assertIsInt($settings['anIntegerConstant']);
         $this->assertSame(PHP_VERSION_ID, $settings['anIntegerConstant']);
 
-        $this->assertInternalType('string', $settings['casted']['to']['string']);
+        $this->assertIsString($settings['casted']['to']['string']);
         $this->assertSame('Version id is ' . PHP_VERSION_ID, $settings['casted']['to']['string']);
     }
 

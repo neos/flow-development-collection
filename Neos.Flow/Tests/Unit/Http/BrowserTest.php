@@ -68,7 +68,7 @@ class BrowserTest extends UnitTestCase
 
         $this->assertTrue($this->browser->getLastRequest()->hasHeader('X-Test-Header'));
         $this->assertSame('Acme', $this->browser->getLastRequest()->getHeader('X-Test-Header'));
-        $this->assertContains('text/plain', $this->browser->getLastRequest()->getHeader('Content-Type'));
+        $this->assertStringContainsString('text/plain', $this->browser->getLastRequest()->getHeader('Content-Type'));
     }
 
     /**

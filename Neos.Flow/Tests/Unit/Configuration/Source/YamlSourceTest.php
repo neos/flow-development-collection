@@ -68,7 +68,7 @@ class YamlSourceTest extends UnitTestCase
         $configurationSource->save($pathAndFilename, $mockConfiguration);
 
         $yaml = 'configurationFileHasBeenLoaded: true' . chr(10) . 'foo:' . chr(10) . '  bar: Baz' . chr(10);
-        $this->assertContains($yaml, file_get_contents($pathAndFilename . '.yaml'), 'Configuration was not written to the file as expected.');
+        $this->assertStringContainsString($yaml, file_get_contents($pathAndFilename . '.yaml'), 'Configuration was not written to the file as expected.');
     }
 
     /**
@@ -87,7 +87,7 @@ class YamlSourceTest extends UnitTestCase
         $configurationSource->save($pathAndFilename, $mockConfiguration);
 
         $yaml = 'configurationFileHasBeenLoaded: true' . chr(10) . 'foo:' . chr(10) . '  \'Foo.Bar:Baz\': \'a quoted key\'' . chr(10);
-        $this->assertContains($yaml, file_get_contents($pathAndFilename . '.yaml'), 'Configuration was not written to the file as expected.');
+        $this->assertStringContainsString($yaml, file_get_contents($pathAndFilename . '.yaml'), 'Configuration was not written to the file as expected.');
     }
 
     /**
@@ -103,8 +103,8 @@ class YamlSourceTest extends UnitTestCase
         $configurationSource->save($pathAndFilename, ['configurationFileHasBeenLoaded' => true]);
 
         $yaml = file_get_contents($pathAndFilename . '.yaml');
-        $this->assertContains('# This comment should stay' . chr(10) . chr(10), $yaml, 'Header comment was removed from file.');
-        $this->assertNotContains('Test: foo', $yaml);
+        $this->assertStringContainsString('# This comment should stay' . chr(10) . chr(10), $yaml, 'Header comment was removed from file.');
+        $this->assertStringNotContainsString('Test: foo', $yaml);
     }
 
     /**

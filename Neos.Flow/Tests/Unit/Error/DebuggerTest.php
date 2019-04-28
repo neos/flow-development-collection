@@ -51,7 +51,7 @@ class DebuggerTest extends UnitTestCase
     public function ignoredClassesRegexContainsFallback()
     {
         $ignoredClassesRegex = Debugger::getIgnoredClassesRegex();
-        $this->assertContains('Neos\\\\Flow\\\\Core\\\\.*', $ignoredClassesRegex);
+        $this->assertStringContainsString('Neos\\\\Flow\\\\Core\\\\.*', $ignoredClassesRegex);
     }
 
     /**
