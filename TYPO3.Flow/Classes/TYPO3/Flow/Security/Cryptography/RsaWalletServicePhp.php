@@ -344,7 +344,7 @@ class RsaWalletServicePhp implements RsaWalletServiceInterface
      * @return string The decrypted plaintext
      * @throws Exception
      */
-    private function decryptWithPrivateKey($cipher, OpenSslRsaKey $privateKey, $paddingAlgorithm = null)
+    private function decryptWithPrivateKey($cipher, OpenSslRsaKey $privateKey)
     {
         $decrypted = '';
         $key = openssl_pkey_get_private($privateKey->getKeyString());
