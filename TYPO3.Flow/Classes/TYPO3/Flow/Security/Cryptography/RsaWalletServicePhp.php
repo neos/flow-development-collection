@@ -13,6 +13,7 @@ namespace TYPO3\Flow\Security\Cryptography;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Security\Exception as SecurityException;
+use TYPO3\Flow\Security\Exception;
 use TYPO3\Flow\Security\Exception\DecryptionNotAllowedException;
 use TYPO3\Flow\Security\Exception\InvalidKeyPairIdException;
 use TYPO3\Flow\Security\Exception\MissingConfigurationException;
@@ -42,6 +43,12 @@ class RsaWalletServicePhp implements RsaWalletServiceInterface
     protected $openSSLConfiguration = [];
 
     /**
+     * The padding to use for OpenSSL encryption/decryption
+     * @var int
+     */
+    protected $paddingAlgorithm = OPENSSL_PKCS1_PADDING;
+
+    /**
      * @var boolean
      */
     protected $saveKeysOnShutdown = true;
@@ -64,6 +71,10 @@ class RsaWalletServicePhp implements RsaWalletServiceInterface
             $this->keystorePathAndFilename = $settings['security']['cryptography']['RSAWalletServicePHP']['keystorePath'];
         } else {
             throw new MissingConfigurationException('The configuration setting TYPO3.Flow.security.cryptography.RSAWalletServicePHP.keystorePath is missing. Please specify it in your Settings.yaml file. Beware: This file must not be accessible by the public!', 1305711354);
+        }
+
+        if (isset($settings['security']['cryptography']['RSAWalletServicePHP']['paddingAlgorithm'])) {
+            $this->paddingAlgorithm = $settings['security']['cryptography']['RSAWalletServicePHP']['paddingAlgorithm'];
         }
     }
 
@@ -165,11 +176,18 @@ class RsaWalletServicePhp implements RsaWalletServiceInterface
      * @param string $plaintext The plaintext to encrypt
      * @param string $fingerprint The fingerprint to identify to correct public key
      * @return string The ciphertext
+     * @throws Exception If encryption failed for some other reason
      */
     public function encryptWithPublicKey($plaintext, $fingerprint)
     {
         $cipher = '';
-        openssl_public_encrypt($plaintext, $cipher, $this->getPublicKey($fingerprint)->getKeyString());
+        if (openssl_public_encrypt($plaintext, $cipher, $this->getPublicKey($fingerprint)->getKeyString(), $this->paddingAlgorithm) === false) {
+            $openSslErrors = [];
+            while (($errorMessage = openssl_error_string()) !== false) {
+                $openSslErrors[] = $errorMessage;
+            }
+            throw new Exception(sprintf('Encryption failed, OpenSSL error: %s', implode(chr(10), $openSslErrors)), 1556609369);
+        }
 
         return $cipher;
     }
@@ -184,6 +202,7 @@ class RsaWalletServicePhp implements RsaWalletServiceInterface
      * @return string The decrypted text
      * @throws InvalidKeyPairIdException If the given fingerprint identifies no valid keypair
      * @throws DecryptionNotAllowedException If the given fingerprint identifies a keypair for encrypted passwords
+     * @throws Exception If decryption failed for some other reason
      */
     public function decrypt($cipher, $fingerprint)
     {
@@ -323,12 +342,19 @@ class RsaWalletServicePhp implements RsaWalletServiceInterface
      * @param string $cipher The ciphertext to decrypt
      * @param OpenSslRsaKey $privateKey The private key
      * @return string The decrypted plaintext
+     * @throws Exception
      */
     private function decryptWithPrivateKey($cipher, OpenSslRsaKey $privateKey)
     {
         $decrypted = '';
         $key = openssl_pkey_get_private($privateKey->getKeyString());
-        openssl_private_decrypt($cipher, $decrypted, $key);
+        if (openssl_private_decrypt($cipher, $decrypted, $key, $this->paddingAlgorithm) === false) {
+            $openSslErrors = [];
+            while (($errorMessage = openssl_error_string()) !== false) {
+                $openSslErrors[] = $errorMessage;
+            }
+            throw new Exception(sprintf('Decryption failed, OpenSSL error: %s', implode(chr(10), $openSslErrors)), 1556609762);
+        }
 
         return $decrypted;
     }
