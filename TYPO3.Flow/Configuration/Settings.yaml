@@ -627,9 +627,9 @@ TYPO3:
           keystorePath: '%FLOW_PATH_DATA%Persistent/RsaWalletData'
 
           # The padding to use when encrypting/decrypting data.
-          # The default is insecure, you should change it to
+          # The default OPENSSL_PKCS1_PADDING is insecure, you should change it to
           # OPENSSL_PKCS1_OAEP_PADDING
-          paddingAlgorithm: '%OPENSSL_PKCS1_PADDING%'
+          paddingAlgorithm: '%OPENSSL_PKCS1_OAEP_PADDING%'
 
           # Defines the openSSL configuration used for key handling.
           # See the PHP openSSL documentation for possible settings.
