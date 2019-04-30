@@ -46,7 +46,7 @@ class RsaWalletServicePhp implements RsaWalletServiceInterface
      * The padding to use for OpenSSL encryption/decryption
      * @var int
      */
-    protected $paddingAlgorithm = OPENSSL_PKCS1_PADDING;
+    protected $paddingAlgorithm = OPENSSL_PKCS1_OAEP_PADDING;
 
     /**
      * @var boolean
@@ -344,11 +344,17 @@ class RsaWalletServicePhp implements RsaWalletServiceInterface
      * @return string The decrypted plaintext
      * @throws Exception
      */
-    private function decryptWithPrivateKey($cipher, OpenSslRsaKey $privateKey)
+    private function decryptWithPrivateKey($cipher, OpenSslRsaKey $privateKey, $paddingAlgorithm = null)
     {
         $decrypted = '';
         $key = openssl_pkey_get_private($privateKey->getKeyString());
         if (openssl_private_decrypt($cipher, $decrypted, $key, $this->paddingAlgorithm) === false) {
+            // Fallback for data that was encrypted with old default OPENSSL_PKCS1_PADDING
+            if ($this->paddingAlgorithm !== OPENSSL_PKCS1_PADDING) {
+                if (openssl_private_decrypt($cipher, $decrypted, $key, OPENSSL_PKCS1_PADDING) !== false) {
+                    return $decrypted;
+                }
+            }
             $openSslErrors = [];
             while (($errorMessage = openssl_error_string()) !== false) {
                 $openSslErrors[] = $errorMessage;
