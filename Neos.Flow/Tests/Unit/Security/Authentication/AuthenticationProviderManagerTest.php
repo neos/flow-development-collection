@@ -59,7 +59,7 @@ class AuthenticationProviderManagerTest extends UnitTestCase
         $this->tokenAndProviderFactory = $this->getMockBuilder(TokenAndProviderFactoryInterface::class)->getMock();
         $this->authenticationProviderManager = $this->getAccessibleMock(AuthenticationProviderManager::class, ['dummy'], [$this->tokenAndProviderFactory], '', true);
         $this->mockSession = $this->getMockBuilder(SessionInterface::class)->getMock();
-        $this->mockSecurityContext = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
+        $this->mockSecurityContext = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->setMethods(['initialize'])->getMock();
 
         $this->mockSessionManager = $this->getMockBuilder(SessionManager::class)->getMock();
         $this->mockSessionManager->expects(self::any())->method('getCurrentSession')->willReturn($this->mockSession);

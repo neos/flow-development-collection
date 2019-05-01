@@ -638,7 +638,7 @@ class Context
             return $roles;
         };
 
-        return array_reduce($account->getRoles(), $reducer, []);
+        return array_reduce(iterator_to_array($account->getRoles()->getIterator()), $reducer, []);
     }
 
     /**

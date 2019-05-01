@@ -13,6 +13,11 @@ declare(strict_types=1);
 
 namespace Neos\Flow\Security;
 
+use Neos\Flow\Annotations as Flow;
+
+/**
+ * @Flow\Proxy(false)
+ */
 final class AccountIdentifier
 {
 

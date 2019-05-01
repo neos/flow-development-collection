@@ -13,9 +13,13 @@ declare(strict_types=1);
 
 namespace Neos\Flow\Security\Authentication;
 
+use Neos\Flow\Annotations as Flow;
+
+/**
+ * @Flow\Proxy(false)
+ */
 final class AuthenticationProviderName
 {
-
     /**
      * @var string
      */

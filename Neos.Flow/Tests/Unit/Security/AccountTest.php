@@ -135,7 +135,7 @@ class AccountTest extends UnitTestCase
 
         $roles = $this->account->getRoles();
         $this->assertCount(1, $roles);
-        $this->assertArrayHasKey($this->administratorRole->getIdentifier(), $roles);
+        $this->assertTrue($roles->has($this->administratorRole));
     }
 
     /**
@@ -155,10 +155,10 @@ class AccountTest extends UnitTestCase
     public function setRolesWorks()
     {
         $roles = [$this->administratorRole, $this->customerRole];
-        $expectedRoles = [$this->administratorRole->getIdentifier() => $this->administratorRole, $this->customerRole->getIdentifier() => $this->customerRole];
         $this->account->setRoles($roles);
 
-        $this->assertSame($expectedRoles, $this->account->getRoles());
+        $this->assertTrue($this->account->getRoles()->has($this->administratorRole));
+        $this->assertTrue($this->account->getRoles()->has($this->customerRole));
     }
 
     /**
