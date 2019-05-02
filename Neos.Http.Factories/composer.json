@@ -1,6 +1,6 @@
 {
     "name": "neos/http-factories",
-    "type": "neos-framework",
+    "type": "library",
     "description": "PSR-17 HTTP Factories",
     "homepage": "http://flow.neos.io",
     "license": [

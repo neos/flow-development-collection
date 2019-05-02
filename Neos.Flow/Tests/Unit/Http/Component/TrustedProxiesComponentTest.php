@@ -19,6 +19,10 @@ use Neos\Flow\Http\Response;
 use Neos\Flow\Http\ServerRequestAttributes;
 use Neos\Flow\Http\Uri;
 use Neos\Flow\Tests\UnitTestCase;
+use Neos\Http\Factories\ServerRequestFactory;
+use Neos\Http\Factories\UriFactory;
+use Psr\Http\Message\ServerRequestFactoryInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Test case for the TrustedProxiesComponent
@@ -36,11 +40,6 @@ class TrustedProxiesComponentTest extends UnitTestCase
     protected $trustedProxiesSettings;
 
     /**
-     * @var ComponentContext|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $mockComponentContext;
-
-    /**
      * @var Request|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $mockHttpRequest;
@@ -50,12 +49,17 @@ class TrustedProxiesComponentTest extends UnitTestCase
      */
     protected $mockHttpResponse;
 
+    /**
+     * @var ServerRequestFactoryInterface
+     */
+    protected $serverRequestFactory;
+
     public function setUp()
     {
         $this->mockHttpRequest = $this->getMockBuilder(Request::class)->disableOriginalConstructor()->getMock();
         $this->mockHttpResponse = $this->getMockBuilder(Response::class)->disableOriginalConstructor()->getMock();
 
-        $this->mockComponentContext =
+        $this->serverRequestFactory = new ServerRequestFactory(new UriFactory());
         $this->trustedProxiesComponent = new TrustedProxiesComponent();
         $componentReflection = new \ReflectionClass($this->trustedProxiesComponent);
         $this->trustedProxiesSettings = $componentReflection->getProperty('settings');
@@ -80,8 +84,8 @@ class TrustedProxiesComponentTest extends UnitTestCase
     }
 
     /**
-     * @param Request $request
-     * @return Request
+     * @param ServerRequestInterface $request
+     * @return ServerRequestInterface
      */
     protected function callWithRequest($request)
     {
@@ -108,7 +112,7 @@ class TrustedProxiesComponentTest extends UnitTestCase
             'REQUEST_TIME' => 1326472534
         ]);
 
-        $request = new ServerRequest('GET', new Uri('https://dev.blog.rob/foo/bar?baz=quux&coffee=due'), RequestInformationHelper::extractHeadersFromServerVariables($server), null, '1.1', $server);
+        $request = $this->serverRequestFactory->createServerRequest('GET', new Uri('https://dev.blog.rob/foo/bar?baz=quux&coffee=due'), $server);
         $trustedRequest = $this->callWithRequest($request);
         $this->assertSame(2727, $trustedRequest->getUri()->getPort());
     }
@@ -133,7 +137,7 @@ class TrustedProxiesComponentTest extends UnitTestCase
             'REQUEST_TIME' => 1326472534
         ]);
 
-        $request = new ServerRequest('GET', new Uri('https://[2a00:f48:1008::212:183:10]:2727/foo/bar?baz=quux&coffee=due'), RequestInformationHelper::extractHeadersFromServerVariables($server), null, '1.1', $server);
+        $request = $this->serverRequestFactory->createServerRequest('GET', new Uri('https://[2a00:f48:1008::212:183:10]:2727/foo/bar?baz=quux&coffee=due'), $server);
         $trustedRequest = $this->callWithRequest($request);
         $this->assertSame(2727, $trustedRequest->getUri()->getPort());
     }
@@ -180,7 +184,7 @@ class TrustedProxiesComponentTest extends UnitTestCase
         ];
 
         $server = array_replace($defaultServerEnvironment, $serverEnvironment);
-        $request = new ServerRequest('GET', new Uri('http://flow.neos.io'), RequestInformationHelper::extractHeadersFromServerVariables($server), null, '1.1', $server);
+        $request = $this->serverRequestFactory->createServerRequest('GET', new Uri('http://flow.neos.io'), $server);
         $trustedRequest = $this->callWithRequest($request);
         $this->assertSame($expectedIpAddress, $trustedRequest->getAttribute(ServerRequestAttributes::ATTRIBUTE_CLIENT_IP));
     }
@@ -219,7 +223,7 @@ class TrustedProxiesComponentTest extends UnitTestCase
 
         $this->withTrustedProxiesSettings(['proxies' => '*', 'headers' => 'Forwarded']);
         $server = array_replace($defaultServerEnvironment, $serverEnvironment);
-        $request = new ServerRequest('GET', new Uri('http://flow.neos.io'), RequestInformationHelper::extractHeadersFromServerVariables($server), null, '1.1', $server);
+        $request = $this->serverRequestFactory->createServerRequest('GET', new Uri('http://flow.neos.io'), $server);
         $trustedRequest = $this->callWithRequest($request);
         $this->assertSame($expectedIpAddress, $trustedRequest->getAttribute(ServerRequestAttributes::ATTRIBUTE_CLIENT_IP));
         $this->assertSame($expectedProto, $trustedRequest->getUri()->getScheme());
@@ -238,7 +242,7 @@ class TrustedProxiesComponentTest extends UnitTestCase
             'HTTP_X_FORWARDED_PORT' => '443'
         ];
 
-        $request = new ServerRequest('GET', new Uri('http://acme.com'), RequestInformationHelper::extractHeadersFromServerVariables($server), null, '1.1', $server);
+        $request = $this->serverRequestFactory->createServerRequest('GET', new Uri('http://acme.com'), $server);
         $trustedRequest = $this->callWithRequest($request);
         $this->assertEquals('https://acme.com', (string)$trustedRequest->getUri());
         $this->assertEquals('https', $trustedRequest->getUri()->getScheme());
@@ -255,7 +259,7 @@ class TrustedProxiesComponentTest extends UnitTestCase
             'HTTP_X_FORWARDED_PORT' => '80',
         ];
 
-        $request = new ServerRequest('GET', new Uri('https://acme.com'), RequestInformationHelper::extractHeadersFromServerVariables($server), null, '1.1', $server);
+        $request = $this->serverRequestFactory->createServerRequest('GET', new Uri('https://acme.com'), $server);
         $trustedRequest = $this->callWithRequest($request);
         $this->assertEquals('http://acme.com', (string)$trustedRequest->getUri());
         $this->assertEquals('http', $trustedRequest->getUri()->getScheme());
@@ -266,7 +270,7 @@ class TrustedProxiesComponentTest extends UnitTestCase
      */
     public function isFromTrustedProxyByDefault()
     {
-        $request = new ServerRequest('GET', new Uri('https://acme.com'));
+        $request = $this->serverRequestFactory->createServerRequest('GET', new Uri('https://acme.com'));
         $trustedRequest = $this->callWithRequest($request);
         $this->assertTrue($trustedRequest->getAttribute(ServerRequestAttributes::ATTRIBUTE_TRUSTED_PROXY));
     }
@@ -277,7 +281,7 @@ class TrustedProxiesComponentTest extends UnitTestCase
     public function isFromTrustedProxyIfRemoteAddressMatchesRange()
     {
         $this->withTrustedProxiesSettings(['proxies' => ['127.0.0.0/24']]);
-        $request = new ServerRequest('GET', new Uri('https://acme.com'));
+        $request = $this->serverRequestFactory->createServerRequest('GET', new Uri('https://acme.com'));
         $trustedRequest = $this->callWithRequest($request);
         $this->assertTrue($trustedRequest->getAttribute(ServerRequestAttributes::ATTRIBUTE_TRUSTED_PROXY));
     }
@@ -288,7 +292,7 @@ class TrustedProxiesComponentTest extends UnitTestCase
     public function isNotFromTrustedProxyIfNoProxiesAreTrusted()
     {
         $this->withTrustedProxiesSettings(['proxies' => []]);
-        $request = new ServerRequest('GET', new Uri('https://acme.com'));
+        $request = $this->serverRequestFactory->createServerRequest('GET', new Uri('https://acme.com'));
         $trustedRequest = $this->callWithRequest($request);
         $this->assertFalse($trustedRequest->getAttribute(ServerRequestAttributes::ATTRIBUTE_TRUSTED_PROXY));
     }
@@ -299,7 +303,7 @@ class TrustedProxiesComponentTest extends UnitTestCase
     public function isNotFromTrustedProxyIfRemoteAddressDoesntMatch()
     {
         $this->withTrustedProxiesSettings(['proxies' => ['10.0.0.1/24']]);
-        $request = new ServerRequest('GET', new Uri('https://acme.com'));
+        $request = $this->serverRequestFactory->createServerRequest('GET', new Uri('https://acme.com'));
         $trustedRequest = $this->callWithRequest($request);
         $this->assertFalse($trustedRequest->getAttribute(ServerRequestAttributes::ATTRIBUTE_TRUSTED_PROXY));
     }
@@ -310,7 +314,7 @@ class TrustedProxiesComponentTest extends UnitTestCase
     public function trustedClientIpAddressIsRemoteAddressIfNoProxiesAreTrusted()
     {
         $this->withTrustedProxiesSettings(['proxies' => [], 'headers' => [TrustedProxiesComponent::HEADER_CLIENT_IP => 'X-Forwarded-For']]);
-        $request = new ServerRequest('GET', new Uri('https://acme.com'), [], null, '1.1', ['HTTP_X_FORWARDED_FOR' => '10.0.0.1']);
+        $request = $this->serverRequestFactory->createServerRequest('GET', new Uri('https://acme.com'), [], null, '1.1', ['HTTP_X_FORWARDED_FOR' => '10.0.0.1']);
         $trustedRequest = $this->callWithRequest($request);
         $this->assertEquals('127.0.0.1', $trustedRequest->getAttribute(ServerRequestAttributes::ATTRIBUTE_CLIENT_IP));
     }
@@ -321,7 +325,7 @@ class TrustedProxiesComponentTest extends UnitTestCase
     public function trustedClientIpAddressIsRemoteAddressIfHeaderNotTrusted()
     {
         $this->withTrustedProxiesSettings(['proxies' => ['127.0.0.1'], 'headers' => []]);
-        $request = new ServerRequest('GET', new Uri('https://acme.com'), [], null, '1.1', ['HTTP_X_FORWARDED_FOR' => '10.0.0.1']);
+        $request = $this->serverRequestFactory->createServerRequest('GET', new Uri('https://acme.com'), ['HTTP_X_FORWARDED_FOR' => '10.0.0.1']);
         $trustedRequest = $this->callWithRequest($request);
         $this->assertEquals('127.0.0.1', $trustedRequest->getAttribute(ServerRequestAttributes::ATTRIBUTE_CLIENT_IP));
     }
@@ -332,7 +336,7 @@ class TrustedProxiesComponentTest extends UnitTestCase
     public function trustedClientIpAddressIsForwardedForAddressIfProxyTrusted()
     {
         $this->withTrustedProxiesSettings(['proxies' => ['127.0.0.1'], 'headers' => [TrustedProxiesComponent::HEADER_CLIENT_IP => 'X-Forwarded-For']]);
-        $request = new ServerRequest('GET', new Uri('https://acme.com'), [], null, '1.1', ['HTTP_X_FORWARDED_FOR' => '13.0.0.1']);
+        $request = $this->serverRequestFactory->createServerRequest('GET', new Uri('https://acme.com'), ['HTTP_X_FORWARDED_FOR' => '13.0.0.1']);
         $trustedRequest = $this->callWithRequest($request);
         $this->assertEquals('13.0.0.1', $trustedRequest->getAttribute(ServerRequestAttributes::ATTRIBUTE_CLIENT_IP));
     }
@@ -343,7 +347,7 @@ class TrustedProxiesComponentTest extends UnitTestCase
     public function trustedClientIpAddressIsFirstForwardedForAddressIfAllProxiesTrusted()
     {
         $this->withTrustedProxiesSettings(['proxies' => '*', 'headers' => [TrustedProxiesComponent::HEADER_CLIENT_IP => 'X-Forwarded-For']]);
-        $request = new ServerRequest('GET', new Uri('https://acme.com'), [], null, '1.1', ['HTTP_X_FORWARDED_FOR' => '13.0.0.1, 13.0.0.2, 13.0.0.3']);
+        $request = $this->serverRequestFactory->createServerRequest('GET', new Uri('https://acme.com'), ['HTTP_X_FORWARDED_FOR' => '13.0.0.1, 13.0.0.2, 13.0.0.3']);
         $trustedRequest = $this->callWithRequest($request);
         $this->assertEquals('13.0.0.1', $trustedRequest->getAttribute(ServerRequestAttributes::ATTRIBUTE_CLIENT_IP));
     }
@@ -354,7 +358,7 @@ class TrustedProxiesComponentTest extends UnitTestCase
     public function trustedClientIpAddressIsRightMostForwardedForAddressThatIsNotTrusted()
     {
         $this->withTrustedProxiesSettings(['proxies' => ['127.0.0.1','10.0.0.1/24'], 'headers' => [TrustedProxiesComponent::HEADER_CLIENT_IP => 'X-Forwarded-For']]);
-        $request = new ServerRequest('GET', new Uri('https://acme.com'), [], null, '1.1', ['HTTP_X_FORWARDED_FOR' => '198.155.23.17, 215.0.0.1, 10.0.0.1, 10.0.0.2']);
+        $request = $this->serverRequestFactory->createServerRequest('GET', new Uri('https://acme.com'), ['HTTP_X_FORWARDED_FOR' => '198.155.23.17, 215.0.0.1, 10.0.0.1, 10.0.0.2']);
         $trustedRequest = $this->callWithRequest($request);
         $this->assertEquals('215.0.0.1', $trustedRequest->getAttribute(ServerRequestAttributes::ATTRIBUTE_CLIENT_IP));
     }
@@ -365,7 +369,7 @@ class TrustedProxiesComponentTest extends UnitTestCase
     public function trustedClientIpAddressIsRemoteAddressIfTheHeaderIsNotTrusted()
     {
         $this->withTrustedProxiesSettings(['proxies' => '*', 'headers' => [TrustedProxiesComponent::HEADER_CLIENT_IP => 'X-Forwarded-Ip']]);
-        $request = new ServerRequest('GET', new Uri('https://acme.com'), [], null, ['HTTP_X_FORWARDED_FOR' => '10.0.0.1']);
+        $request = $this->serverRequestFactory->createServerRequest('GET', new Uri('https://acme.com'), ['HTTP_X_FORWARDED_FOR' => '10.0.0.1']);
         $trustedRequest = $this->callWithRequest($request);
         $this->assertEquals('127.0.0.1', $trustedRequest->getAttribute(ServerRequestAttributes::ATTRIBUTE_CLIENT_IP));
     }
@@ -376,7 +380,7 @@ class TrustedProxiesComponentTest extends UnitTestCase
     public function portIsNotOverridenIfTheHeaderIsNotTrusted()
     {
         $this->withTrustedProxiesSettings(['proxies' => '*', 'headers' => []]);
-        $request = new ServerRequest('GET', new Uri('http://acme.com'), [], null, '1.1', ['HTTP_X_FORWARDED_PORT' => '443']);
+        $request = $this->serverRequestFactory->createServerRequest('GET', new Uri('http://acme.com'), ['HTTP_X_FORWARDED_PORT' => '443']);
         $trustedRequest = $this->callWithRequest($request);
         $this->assertEquals(80, $trustedRequest->getUri()->getPort());
     }
@@ -387,7 +391,7 @@ class TrustedProxiesComponentTest extends UnitTestCase
     public function protocolIsNotOverridenIfTheHeaderIsNotTrusted()
     {
         $this->withTrustedProxiesSettings(['proxies' => '*', 'headers' => []]);
-        $request = new ServerRequest('GET', new Uri('http://acme.com'), [], null, '1.1', ['HTTP_X_FORWARDED_PROTO' => 'https']);
+        $request = $this->serverRequestFactory->createServerRequest('GET', new Uri('http://acme.com'), ['HTTP_X_FORWARDED_PROTO' => 'https']);
         $trustedRequest = $this->callWithRequest($request);
         $this->assertEquals('http', $trustedRequest->getUri()->getScheme());
     }
@@ -398,7 +402,7 @@ class TrustedProxiesComponentTest extends UnitTestCase
     public function hostIsNotOverridenIfTheHeaderIsNotTrusted()
     {
         $this->withTrustedProxiesSettings(['proxies' => '*', 'headers' => []]);
-        $request = new ServerRequest('GET', new Uri('http://acme.com'), [], null, '1.1', ['HTTP_X_FORWARDED_HOST' => 'neos.io']);
+        $request = $this->serverRequestFactory->createServerRequest('GET', new Uri('http://acme.com'), ['HTTP_X_FORWARDED_HOST' => 'neos.io']);
         $trustedRequest = $this->callWithRequest($request);
         $this->assertEquals('acme.com', $trustedRequest->getUri()->getHost());
     }
@@ -408,7 +412,7 @@ class TrustedProxiesComponentTest extends UnitTestCase
      */
     public function hostIsOverridenIfTheHeaderIsTrusted()
     {
-        $request = new ServerRequest('GET', new Uri('http://acme.com'), [], null, '1.1', ['HTTP_X_FORWARDED_HOST' => 'neos.io']);
+        $request = $this->serverRequestFactory->createServerRequest('GET', new Uri('http://acme.com'), ['HTTP_X_FORWARDED_HOST' => 'neos.io']);
         $trustedRequest = $this->callWithRequest($request);
         $this->assertEquals('neos.io', $trustedRequest->getUri()->getHost());
     }
@@ -418,7 +422,7 @@ class TrustedProxiesComponentTest extends UnitTestCase
      */
     public function portIsOverridenIfTheHostHeaderContainsPort()
     {
-        $request = new ServerRequest('GET', new Uri('http://acme.com'), [], null, '1.1', ['HTTP_X_FORWARDED_HOST' => 'neos.io:443']);
+        $request = $this->serverRequestFactory->createServerRequest('GET', new Uri('http://acme.com'), ['HTTP_X_FORWARDED_HOST' => 'neos.io:443']);
         $trustedRequest = $this->callWithRequest($request);
         $this->assertEquals(443, $trustedRequest->getUri()->getPort());
     }
@@ -428,7 +432,7 @@ class TrustedProxiesComponentTest extends UnitTestCase
      */
     public function portIsOverridenIfTheHostHeaderContainsJustThePort()
     {
-        $request = new ServerRequest('GET', new Uri('http://acme.com'), [], null, '1.1', ['HTTP_X_FORWARDED_HOST' => ':443']);
+        $request = $this->serverRequestFactory->createServerRequest('GET', new Uri('http://acme.com'), ['HTTP_X_FORWARDED_HOST' => ':443']);
         $trustedRequest = $this->callWithRequest($request);
         $this->assertEquals(443, $trustedRequest->getUri()->getPort());
     }
@@ -438,7 +442,7 @@ class TrustedProxiesComponentTest extends UnitTestCase
      */
     public function portIsOverridenIfTheHostHeaderContainsPortAlsoIfProtocolHeaderIsSet()
     {
-        $request = new ServerRequest('GET', new Uri('http://acme.com'), [], null, '1.1', ['HTTP_X_FORWARDED_HOST' => 'neos.io:443', 'HTTP_X_FORWARDED_PROTO' => 'http']);
+        $request = $this->serverRequestFactory->createServerRequest('GET', new Uri('http://acme.com'), ['HTTP_X_FORWARDED_HOST' => 'neos.io:443', 'HTTP_X_FORWARDED_PROTO' => 'http']);
         $trustedRequest = $this->callWithRequest($request);
         $this->assertEquals(443, $trustedRequest->getUri()->getPort());
     }
@@ -448,7 +452,7 @@ class TrustedProxiesComponentTest extends UnitTestCase
      */
     public function portFromHostHeaderIsOverriddenByPortHeader()
     {
-        $request = new ServerRequest('GET', new Uri('http://acme.com'), [], null, '1.1', ['HTTP_X_FORWARDED_PORT' => 8080, 'HTTP_X_FORWARDED_HOST' => 'neos.io:443']);
+        $request = $this->serverRequestFactory->createServerRequest('GET', new Uri('http://acme.com'), ['HTTP_X_FORWARDED_PORT' => 8080, 'HTTP_X_FORWARDED_HOST' => 'neos.io:443']);
         $trustedRequest = $this->callWithRequest($request);
         $this->assertEquals(8080, $trustedRequest->getUri()->getPort());
     }
@@ -583,7 +587,7 @@ class TrustedProxiesComponentTest extends UnitTestCase
         if ($forwardedPort !== null) {
             $server['HTTP_X_FORWARDED_PORT'] = $forwardedPort;
         }
-        $request = new ServerRequest('GET', new Uri($requestUri), RequestInformationHelper::extractHeadersFromServerVariables($server), null, '1.1', $server);
+        $request = $this->serverRequestFactory->createServerRequest('GET', new Uri($requestUri), $server);
         $trustedRequest = $this->callWithRequest($request);
         $this->assertEquals($expectedUri, (string)$trustedRequest->getUri());
     }

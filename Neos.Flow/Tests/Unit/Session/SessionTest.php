@@ -11,6 +11,8 @@ namespace Neos\Flow\Tests\Unit\Session;
  * source code.
  */
 
+use Neos\Http\Factories\ServerRequestFactory;
+use Neos\Http\Factories\UriFactory;
 use org\bovigo\vfs\vfsStream;
 use Neos\Cache\Backend\FileBackend;
 use Neos\Cache\EnvironmentConfiguration;
@@ -88,7 +90,8 @@ class SessionTest extends UnitTestCase
 
         vfsStream::setup('Foo');
 
-        $this->httpRequest = Http\Request::create(new Http\Uri('http://localhost'));
+        $serverRequestFactory = new ServerRequestFactory(new UriFactory());
+        $this->httpRequest = $serverRequestFactory->createServerRequest('GET', new Http\Uri('http://localhost'));
         $this->httpResponse = new Http\Response();
 
         $mockRequestHandler = $this->createMock(Http\RequestHandler::class);

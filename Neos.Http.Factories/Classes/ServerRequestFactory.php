@@ -2,8 +2,11 @@
 namespace Neos\Http\Factories;
 
 use GuzzleHttp\Psr7\ServerRequest;
+use GuzzleHttp\Psr7\Uri;
+use Neos\Flow\Http\Helper\RequestInformationHelper;
 use Psr\Http\Message\ServerRequestFactoryInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\UriFactoryInterface;
 use Psr\Http\Message\UriInterface;
 
 /**
@@ -12,10 +15,74 @@ use Psr\Http\Message\UriInterface;
 class ServerRequestFactory implements ServerRequestFactoryInterface
 {
     /**
+     * @var UriFactoryInterface
+     */
+    protected $uriFactory;
+
+    /**
+     * @var string
+     */
+    protected $defaultUserAgent = '';
+
+    /**
+     * @var string
+     */
+    protected $scriptPath = '';
+
+    /**
+     * @var string
+     */
+    protected $defaultHttpVersion = '1.1';
+
+    /**
+     * ServerRequestFactory constructor.
+     *
+     * @param UriFactoryInterface $uriFactory
+     * @param string $defaultUserAgent
+     * @param string $scriptPath
+     * @param string $defaultHttpVersion
+     */
+    public function __construct(
+        UriFactoryInterface $uriFactory,
+        string $defaultUserAgent = 'Flow/' . FLOW_VERSION_BRANCH . '.x',
+        string $scriptPath = FLOW_PATH_WEB . 'index.php',
+        string $defaultHttpVersion = '1.1'
+    )
+    {
+        $this->uriFactory = $uriFactory;
+        $this->defaultUserAgent = $defaultUserAgent;
+        $this->scriptPath = $scriptPath;
+        $this->defaultHttpVersion = $defaultHttpVersion;
+    }
+
+    /**
      * @inheritDoc
      */
     public function createServerRequest(string $method, $uri, array $serverParams = []): ServerRequestInterface
     {
-        return new ServerRequest($method, $uri, [], null, '1.1', $serverParams);
+        if (is_string($uri)) {
+            $uri = $this->uriFactory->createUri($uri);
+        }
+        $isDefaultPort = $uri->getScheme() === 'https' ? ($uri->getPort() === 443) : ($uri->getPort() === 80);
+        $scriptName = '/' . basename($this->scriptPath);
+
+        $defaultServerEnvironment = [
+            'HTTP_USER_AGENT' => $this->defaultUserAgent,
+            'HTTP_HOST' => $uri->getHost() . ($isDefaultPort !== true && $uri->getPort() !== null ? ':' . $uri->getPort() : ''),
+            'SERVER_NAME' => $uri->getHost(),
+            'SERVER_ADDR' => '127.0.0.1',
+            'SERVER_PORT' => $uri->getPort() ?: 80,
+            'REMOTE_ADDR' => '127.0.0.1',
+            'SCRIPT_FILENAME' => $this->scriptPath,
+            'SERVER_PROTOCOL' => 'HTTP/' . $this->defaultHttpVersion,
+            'SCRIPT_NAME' =>  $scriptName,
+            'PHP_SELF' => $scriptName,
+            'REQUEST_TIME' => time()
+        ];
+
+        $serverParams = array_replace($defaultServerEnvironment, $serverParams);
+        $headers = RequestInformationHelper::extractHeadersFromServerVariables($serverParams);
+
+        return new ServerRequest($method, $uri, $headers, null, $this->defaultHttpVersion, $serverParams);
     }
 }
