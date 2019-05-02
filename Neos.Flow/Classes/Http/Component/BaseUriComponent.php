@@ -5,7 +5,6 @@ use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Http\Helper\RequestInformationHelper;
-use Neos\Flow\Http\HttpRequestHandlerInterface;
 use Neos\Flow\Http\ServerRequestAttributes;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 

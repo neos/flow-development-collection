@@ -13,7 +13,6 @@ namespace Neos\Flow\Mvc\Routing;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Helper\RequestInformationHelper;
-use Neos\Flow\Http\HttpRequestHandlerInterface;
 use Neos\Flow\Http\ServerRequestAttributes;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\RequestInterface;

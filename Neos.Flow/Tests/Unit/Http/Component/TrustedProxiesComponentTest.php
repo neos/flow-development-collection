@@ -255,7 +255,7 @@ class TrustedProxiesComponentTest extends UnitTestCase
             'HTTP_X_FORWARDED_PORT' => '80',
         ];
 
-        $request = new ServerRequest('GET' , new Uri('https://acme.com'), RequestInformationHelper::extractHeadersFromServerVariables($server), null, '1.1', $server);
+        $request = new ServerRequest('GET', new Uri('https://acme.com'), RequestInformationHelper::extractHeadersFromServerVariables($server), null, '1.1', $server);
         $trustedRequest = $this->callWithRequest($request);
         $this->assertEquals('http://acme.com', (string)$trustedRequest->getUri());
         $this->assertEquals('http', $trustedRequest->getUri()->getScheme());
@@ -343,7 +343,7 @@ class TrustedProxiesComponentTest extends UnitTestCase
     public function trustedClientIpAddressIsFirstForwardedForAddressIfAllProxiesTrusted()
     {
         $this->withTrustedProxiesSettings(['proxies' => '*', 'headers' => [TrustedProxiesComponent::HEADER_CLIENT_IP => 'X-Forwarded-For']]);
-        $request = new ServerRequest('GET' , new Uri('https://acme.com'), [], null, '1.1', ['HTTP_X_FORWARDED_FOR' => '13.0.0.1, 13.0.0.2, 13.0.0.3']);
+        $request = new ServerRequest('GET', new Uri('https://acme.com'), [], null, '1.1', ['HTTP_X_FORWARDED_FOR' => '13.0.0.1, 13.0.0.2, 13.0.0.3']);
         $trustedRequest = $this->callWithRequest($request);
         $this->assertEquals('13.0.0.1', $trustedRequest->getAttribute(ServerRequestAttributes::ATTRIBUTE_CLIENT_IP));
     }
@@ -354,7 +354,7 @@ class TrustedProxiesComponentTest extends UnitTestCase
     public function trustedClientIpAddressIsRightMostForwardedForAddressThatIsNotTrusted()
     {
         $this->withTrustedProxiesSettings(['proxies' => ['127.0.0.1','10.0.0.1/24'], 'headers' => [TrustedProxiesComponent::HEADER_CLIENT_IP => 'X-Forwarded-For']]);
-        $request = new ServerRequest('GET' , new Uri('https://acme.com'), [], null, '1.1', ['HTTP_X_FORWARDED_FOR' => '198.155.23.17, 215.0.0.1, 10.0.0.1, 10.0.0.2']);
+        $request = new ServerRequest('GET', new Uri('https://acme.com'), [], null, '1.1', ['HTTP_X_FORWARDED_FOR' => '198.155.23.17, 215.0.0.1, 10.0.0.1, 10.0.0.2']);
         $trustedRequest = $this->callWithRequest($request);
         $this->assertEquals('215.0.0.1', $trustedRequest->getAttribute(ServerRequestAttributes::ATTRIBUTE_CLIENT_IP));
     }
@@ -448,7 +448,7 @@ class TrustedProxiesComponentTest extends UnitTestCase
      */
     public function portFromHostHeaderIsOverriddenByPortHeader()
     {
-        $request = new ServerRequest('GET' , new Uri('http://acme.com'), [], null, '1.1', ['HTTP_X_FORWARDED_PORT' => 8080, 'HTTP_X_FORWARDED_HOST' => 'neos.io:443']);
+        $request = new ServerRequest('GET', new Uri('http://acme.com'), [], null, '1.1', ['HTTP_X_FORWARDED_PORT' => 8080, 'HTTP_X_FORWARDED_HOST' => 'neos.io:443']);
         $trustedRequest = $this->callWithRequest($request);
         $this->assertEquals(8080, $trustedRequest->getUri()->getPort());
     }
