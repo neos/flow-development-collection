@@ -47,9 +47,17 @@ Neos:
             'routing':
               position: 'start'
               component: 'Neos\Flow\Mvc\Routing\RoutingComponent'
+            'parseBody':
+              position: 'before dispatching'
+              component: 'Neos\Flow\Http\Component\RequestBodyParsingComponent'
+            'prepareActionRequest':
+              position: 'after parseBody'
+              component: 'Neos\Flow\Mvc\PrepareMvcRequestComponent'
             'dispatching':
               component: 'Neos\Flow\Mvc\DispatchComponent'
-
+            'securityEntryPoint':
+              position: 'after dispatching'
+              component: 'Neos\Flow\Http\Component\SecurityEntryPointComponent'
         'postprocess':
           chain:
             'setSessionCookie':

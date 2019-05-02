@@ -5,7 +5,6 @@ use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Psr7\ServerRequest;
 use Neos\Flow\Http\Helper\ArgumentsHelper;
 use Neos\Flow\Http\Helper\ResponseInformationHelper;
-use Neos\Flow\Http\Request;
 use Neos\Flow\Tests\UnitTestCase;
 
 /**

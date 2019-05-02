@@ -12,8 +12,6 @@ namespace Neos\Flow\Security\Authentication\EntryPoint;
  */
 
 use Neos\Flow\Http\Helper\ArgumentsHelper;
-use Neos\Flow\Http\Request;
-use Neos\Flow\Http\Response;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -25,13 +23,13 @@ class HttpBasic extends AbstractEntryPoint
     /**
      * Starts the authentication: Send HTTP header
      *
-     * @param Request $request The current request
-     * @param Response $response The current response
+     * @param ServerRequestInterface $request The current request
+     * @param ResponseInterface $response The current response
      * @return void
      */
     public function startAuthentication(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
-        return $response->withStatus(401)
+        $response->withStatus(401)
             ->withHeader('WWW-Authenticate', 'Basic realm="' . (isset($this->options['realm']) ? $this->options['realm'] : sha1(FLOW_PATH_ROOT)) . '"')
             ->withBody(ArgumentsHelper::createContentStreamFromString('Authorization required'));
     }

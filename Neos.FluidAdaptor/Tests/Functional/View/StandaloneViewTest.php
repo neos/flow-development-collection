@@ -11,7 +11,6 @@ namespace Neos\FluidAdaptor\Tests\Functional\View;
  * source code.
  */
 
-use GuzzleHttp\Psr7\ServerRequest;
 use Neos\Flow\Cache\CacheManager;
 use Neos\Flow\Http\Uri;
 use Neos\Flow\Mvc\ActionRequest;

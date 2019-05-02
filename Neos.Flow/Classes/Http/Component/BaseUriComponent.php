@@ -6,6 +6,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Http\Helper\RequestInformationHelper;
 use Neos\Flow\Http\HttpRequestHandlerInterface;
+use Neos\Flow\Http\ServerRequestAttributes;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 
 /**
@@ -34,7 +35,7 @@ class BaseUriComponent implements ComponentInterface
             $baseUri = new Uri($baseUriSetting);
         }
 
-        $request = $request->withAttribute(HttpRequestHandlerInterface::ATTRIBUTE_BASE_URI, $baseUri);
+        $request = $request->withAttribute(ServerRequestAttributes::ATTRIBUTE_BASE_URI, $baseUri);
         $componentContext->replaceHttpRequest($request);
     }
 
@@ -47,5 +48,4 @@ class BaseUriComponent implements ComponentInterface
     {
         return (string)$objectManager->get(ConfigurationManager::class)->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.Flow.http.baseUri');
     }
-
 }

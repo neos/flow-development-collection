@@ -14,9 +14,12 @@ namespace Neos\Flow\Mvc\Routing;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Component\ComponentContext;
 use Neos\Flow\Http\Component\ComponentInterface;
+use Neos\Flow\Http\ServerRequestAttributes;
 use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
 use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
 use Neos\Flow\Mvc\Routing\Dto\RouteContext;
+use Neos\Flow\ObjectManagement\ObjectManagerInterface;
+use Neos\Flow\Package\PackageManager;
 
 /**
  * A routing HTTP component
@@ -28,6 +31,12 @@ class RoutingComponent implements ComponentInterface
      * @var RouterInterface
      */
     protected $router;
+
+    /**
+     * @Flow\Inject
+     * @var PackageManager
+     */
+    protected $packageManager;
 
     /**
      * @var array
@@ -65,6 +74,12 @@ class RoutingComponent implements ComponentInterface
             $matchResults = null;
         }
 
+        if (isset($matchResults['@package'])) {
+            $matchResults['@package'] = $this->packageManager->getCaseSensitivePackageKey($matchResults['@package']);
+        }
+
         $componentContext->setParameter(RoutingComponent::class, 'matchResults', $matchResults);
+        $httpRequest = $componentContext->getHttpRequest()->withAttribute(ServerRequestAttributes::ATTRIBUTE_ROUTING_RESULTS, $matchResults);
+        $componentContext->replaceHttpRequest($httpRequest);
     }
 }

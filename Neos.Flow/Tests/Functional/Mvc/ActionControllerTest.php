@@ -132,7 +132,7 @@ class ActionControllerTest extends FunctionalTestCase
      */
     public function notFoundStatusIsReturnedIfASpecifiedObjectCantBeFound()
     {
-        $request = new ServerRequest( 'GET', new Uri('http://localhost/test/mvc/actioncontrollertestc/non-existing-id'));
+        $request = new ServerRequest('GET', new Uri('http://localhost/test/mvc/actioncontrollertestc/non-existing-id'));
 
         $response = $this->browser->sendRequest($request);
         $this->assertSame(404, $response->getStatusCode());
@@ -146,7 +146,7 @@ class ActionControllerTest extends FunctionalTestCase
      */
     public function notAcceptableStatusIsReturnedIfMediaTypeDoesNotMatchSupportedMediaTypes()
     {
-        $request = new ServerRequest( 'GET', new Uri('http://localhost/test/mvc/actioncontrollertesta'));
+        $request = new ServerRequest('GET', new Uri('http://localhost/test/mvc/actioncontrollertesta'));
         $request->setHeader('Content-Type', 'application/xml');
         $request->setHeader('Accept', 'application/xml');
         $request->setContent('<xml></xml>');
@@ -187,7 +187,7 @@ class ActionControllerTest extends FunctionalTestCase
      */
     public function argumentsOfPutRequestWithJsonOrXmlTypeAreAlsoPassedToAction()
     {
-        $request = new ServerRequest( 'PUT', new Uri('http://localhost/test/mvc/actioncontrollertesta/put?getArgument=getValue'));
+        $request = new ServerRequest('PUT', new Uri('http://localhost/test/mvc/actioncontrollertesta/put?getArgument=getValue'));
         $request->setHeader('Content-Type', 'application/json');
         $request->setHeader('Content-Length', 29);
         $request->setContent('{"putArgument":"first value"}');
@@ -469,7 +469,7 @@ class ActionControllerTest extends FunctionalTestCase
             ],
             '__trustedProperties' => $trustedProperties
         ];
-        $request = new ServerRequest( $form, new Uri('http://localhost/test/mvc/actioncontrollertestc/' . $identifier . '/update'), 'POST');
+        $request = new ServerRequest($form, new Uri('http://localhost/test/mvc/actioncontrollertestc/' . $identifier . '/update'), 'POST');
 
         $response = $this->browser->sendRequest($request);
         $this->assertSame('Entity "Foo" updated', $response->getContent());

@@ -12,7 +12,7 @@ namespace Neos\Flow\Http\Component;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Http\HttpRequestHandlerInterface;
+use Neos\Flow\Http\ServerRequestAttributes;
 use Neos\Flow\Utility\Ip as IpUtility;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -46,9 +46,9 @@ class TrustedProxiesComponent implements ComponentInterface
     {
         $request = $componentContext->getHttpRequest();
 
-        $trustedRequest = $request->withAttribute(HttpRequestHandlerInterface::ATTRIBUTE_TRUSTED_PROXY, $this->isFromTrustedProxy($request));
+        $trustedRequest = $request->withAttribute(ServerRequestAttributes::ATTRIBUTE_TRUSTED_PROXY, $this->isFromTrustedProxy($request));
 
-        $trustedRequest = $trustedRequest->withAttribute(HttpRequestHandlerInterface::ATTRIBUTE_CLIENT_IP, $this->getTrustedClientIpAddress($trustedRequest));
+        $trustedRequest = $trustedRequest->withAttribute(ServerRequestAttributes::ATTRIBUTE_CLIENT_IP, $this->getTrustedClientIpAddress($trustedRequest));
 
         $protocolHeader = $this->getFirstTrustedProxyHeaderValue(self::HEADER_PROTOCOL, $trustedRequest);
         if ($protocolHeader !== null) {
@@ -130,7 +130,7 @@ class TrustedProxiesComponent implements ComponentInterface
         } else {
             $trustedHeaders = $this->settings['headers'][$type] ?? '';
         }
-        if ($trustedHeaders === '' || !$request->getAttribute(HttpRequestHandlerInterface::ATTRIBUTE_TRUSTED_PROXY)) {
+        if ($trustedHeaders === '' || !$request->getAttribute(ServerRequestAttributes::ATTRIBUTE_TRUSTED_PROXY)) {
             yield null;
             return;
         }

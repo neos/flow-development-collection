@@ -12,6 +12,7 @@ namespace Neos\FluidAdaptor\Core\Widget;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Http\Component\ComponentChain;
 use Neos\Flow\Http\Component\Exception as ComponentException;
 use Neos\Flow\Http\Helper\ArgumentsHelper;
 use Neos\Flow\Http\Component\ComponentContext;
@@ -68,7 +69,7 @@ class AjaxWidgetComponent extends DispatchComponent
         $this->dispatcher->dispatch($actionRequest, $actionResponse);
         $componentContext->replaceHttpResponse($actionResponse);
         // stop processing the current component chain
-        $componentContext->setParameter(\Neos\Flow\Http\Component\ComponentChain::class, 'cancel', true);
+        $componentContext->setParameter(ComponentChain::class, 'cancel', true);
     }
 
     /**

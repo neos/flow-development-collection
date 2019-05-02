@@ -284,6 +284,16 @@ Neos\Flow\Http\ContentStream:
           1:
             value: systemLogger
 
+Neos\Flow\Http\Component\SecurityEntryPointComponent:
+  properties:
+    securityLogger:
+      object:
+        factoryObjectName: Neos\Flow\Log\PsrLoggerFactoryInterface
+        factoryMethodName: get
+        arguments:
+          1:
+            value: securityLogger
+
 #                                                                          #
 # MVC                                                                      #
 #                                                                          #

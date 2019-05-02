@@ -14,7 +14,6 @@ namespace Neos\Flow\Mvc\Routing\Dto;
 use Neos\Cache\CacheAwareInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Helper\RequestInformationHelper;
-use Neos\Flow\Http\Helper\UriHelper;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**

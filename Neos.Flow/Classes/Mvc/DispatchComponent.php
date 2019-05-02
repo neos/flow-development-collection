@@ -14,17 +14,9 @@ namespace Neos\Flow\Mvc;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Component\ComponentContext;
 use Neos\Flow\Http\Component\ComponentInterface;
-use Neos\Flow\Http\Helper\RequestInformationHelper;
+use Neos\Flow\Http\Component\SecurityEntryPointComponent;
 use Neos\Flow\Http\Helper\ResponseInformationHelper;
-use Neos\Flow\Http\Helper\ArgumentsHelper;
-use Neos\Flow\Http\Helper\UploadedFilesHelper;
-use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use Neos\Flow\Property\PropertyMapper;
-use Neos\Flow\Property\PropertyMappingConfiguration;
-use Neos\Flow\Property\TypeConverter\MediaTypeConverterInterface;
-use Neos\Flow\Security\Context;
-use Neos\Utility\Arrays;
-use Psr\Http\Message\ServerRequestInterface;
+use Neos\Flow\Security\Exception\AuthenticationRequiredException;
 
 /**
  * A dispatch component
@@ -38,39 +30,6 @@ class DispatchComponent implements ComponentInterface
     protected $dispatcher;
 
     /**
-     * @Flow\Inject(lazy=false)
-     * @var Context
-     */
-    protected $securityContext;
-
-    /**
-     * @Flow\Inject(lazy=false)
-     * @var ObjectManagerInterface
-     */
-    protected $objectManager;
-
-    /**
-     * @Flow\Inject
-     * @var PropertyMapper
-     */
-    protected $propertyMapper;
-
-    /**
-     * Options of this component
-     *
-     * @var array
-     */
-    protected $options;
-
-    /**
-     * @param array $options
-     */
-    public function __construct(array $options = [])
-    {
-        $this->options = $options;
-    }
-
-    /**
      * Create an action request from stored route match values and dispatch to that
      *
      * @param ComponentContext $componentContext
@@ -78,90 +37,20 @@ class DispatchComponent implements ComponentInterface
      */
     public function handle(ComponentContext $componentContext)
     {
-        $componentContext = $this->prepareActionRequest($componentContext);
         $actionRequest = $componentContext->getParameter(DispatchComponent::class, 'actionRequest');
-        $this->setDefaultControllerAndActionNameIfNoneSpecified($actionRequest);
         $actionResponse = $this->prepareActionResponse($componentContext->getHttpResponse());
-        $this->dispatcher->dispatch($actionRequest, $actionResponse);
+        try {
+            $this->dispatcher->dispatch($actionRequest, $actionResponse);
+        } catch (AuthenticationRequiredException $exception) {
+            $componentContext->setParameter(
+                SecurityEntryPointComponent::class,
+                SecurityEntryPointComponent::AUTHENTICATION_EXCEPTION,
+                $exception
+            );
+            return;
+        }
         // TODO: This should change in next major when the action response is no longer a HTTP response for backward compatibility.
         $componentContext->replaceHttpResponse($actionResponse);
-    }
-
-    /**
-     * Create ActionRequest with arguments from body and routing merged and add it to the component context.
-     *
-     * TODO: This could be a separate HTTP component (ActionRequestFactoryComponent) that sits in the chain before the DispatchComponent.
-     *
-     * @param ComponentContext $componentContext
-     * @return ComponentContext
-     */
-    protected function prepareActionRequest(ComponentContext $componentContext)
-    {
-        $httpRequest = $componentContext->getHttpRequest();
-        $arguments = $httpRequest->getQueryParams();
-
-        $parsedBody = $this->parseRequestBody($httpRequest);
-        if ($parsedBody !== []) {
-            $arguments = Arrays::arrayMergeRecursiveOverrule($arguments, $parsedBody);
-            $httpRequest = $httpRequest->withParsedBody($parsedBody);
-        }
-
-        $arguments = ArgumentsHelper::buildUnifiedArguments($httpRequest->getQueryParams(), $parsedBody, UploadedFilesHelper::untangleFilesArray($_FILES));
-
-        /** @var $actionRequest ActionRequest */
-        $actionRequest = $this->objectManager->get(ActionRequest::class, $httpRequest);
-
-        $routingMatchResults = $componentContext->getParameter(Routing\RoutingComponent::class, 'matchResults');
-        if ($routingMatchResults !== null) {
-            $arguments = Arrays::arrayMergeRecursiveOverrule($arguments, $routingMatchResults);
-        }
-
-        $actionRequest->setArguments($arguments);
-        $this->securityContext->setRequest($actionRequest);
-        $componentContext->replaceHttpRequest($httpRequest);
-
-        $componentContext->setParameter(DispatchComponent::class, 'actionRequest', $actionRequest);
-
-        return $componentContext;
-    }
-
-    /**
-     * Parses the request body according to the media type.
-     *
-     * @param ServerRequestInterface $httpRequest
-     * @return array
-     */
-    protected function parseRequestBody(ServerRequestInterface $httpRequest)
-    {
-        $requestBody = $httpRequest->getBody()->getContents();
-        if ($requestBody === null || $requestBody === '') {
-            return [];
-        }
-
-        $mediaTypeConverter = $this->objectManager->get(MediaTypeConverterInterface::class);
-        $propertyMappingConfiguration = new PropertyMappingConfiguration();
-        $propertyMappingConfiguration->setTypeConverter($mediaTypeConverter);
-        $requestedContentType = RequestInformationHelper::getFirstRequestHeaderValue($httpRequest, 'Content-Type');
-        $propertyMappingConfiguration->setTypeConverterOption(MediaTypeConverterInterface::class, MediaTypeConverterInterface::CONFIGURATION_MEDIA_TYPE, $requestedContentType);
-        $arguments = $this->propertyMapper->convert($requestBody, 'array', $propertyMappingConfiguration);
-
-        return $arguments;
-    }
-
-    /**
-     * Set the default controller and action names if none has been specified.
-     *
-     * @param ActionRequest $actionRequest
-     * @return void
-     */
-    protected function setDefaultControllerAndActionNameIfNoneSpecified(ActionRequest $actionRequest)
-    {
-        if ($actionRequest->getControllerName() === null) {
-            $actionRequest->setControllerName('Standard');
-        }
-        if ($actionRequest->getControllerActionName() === null) {
-            $actionRequest->setControllerActionName('index');
-        }
     }
 
     /**

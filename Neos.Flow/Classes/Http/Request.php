@@ -640,7 +640,7 @@ class Request extends BaseRequest implements ServerRequestInterface
      * @param array $arguments
      * @return array
      */
-    static protected function createUploadedFilesFromUntangledUploads(array $untangledFilesStructure, array $arguments)
+    protected static function createUploadedFilesFromUntangledUploads(array $untangledFilesStructure, array $arguments)
     {
         $uploadedFiles = [];
         foreach ($untangledFilesStructure as $key => $nestedStructure) {
@@ -664,7 +664,7 @@ class Request extends BaseRequest implements ServerRequestInterface
      * @param array $argumentsForValue
      * @return UploadedFileInterface
      */
-    static protected function createUploadedFileFromSpec(array $value, $argumentsForValue)
+    protected static function createUploadedFileFromSpec(array $value, $argumentsForValue)
     {
         $file = new FlowUploadedFile(
             $value['tmp_name'],

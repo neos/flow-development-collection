@@ -13,13 +13,9 @@ namespace Neos\Flow\Security\Authentication\EntryPoint;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Helper\ArgumentsHelper;
-use Neos\Flow\Http\Helper\ResponseInformationHelper;
-use Neos\Flow\Http\Request;
-use Neos\Flow\Http\Response;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Flow\Security\Exception\MissingConfigurationException;
-use Neos\Fusion\Tests\Unit\FusionObjects\Http\ResponseHeadImplementationTest;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -38,8 +34,8 @@ class WebRedirect extends AbstractEntryPoint
     /**
      * Starts the authentication: Redirect to login page
      *
-     * @param Request $request The current request
-     * @param Response $response The current response
+     * @param ServerRequestInterface $request The current request
+     * @param ResponseInterface $response The current response
      * @return void
      * @throws MissingConfigurationException
      */

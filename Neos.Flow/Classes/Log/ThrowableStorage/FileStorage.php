@@ -5,7 +5,6 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Error\Debugger;
 use Neos\Flow\Http\Helper\RequestInformationHelper;
-use Neos\Flow\Http\Helper\ResponseInformationHelper;
 use Neos\Flow\Http\HttpRequestHandlerInterface;
 use Neos\Flow\Log\PlainTextFormatter;
 use Neos\Flow\Log\ThrowableStorageInterface;

@@ -11,10 +11,8 @@ namespace Neos\Flow\Http\Client;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http;
 use Psr\Http\Message\RequestInterface;
-
 
 /**
  * Interface for a Request Engine which can be used by a HTTP Client implementation

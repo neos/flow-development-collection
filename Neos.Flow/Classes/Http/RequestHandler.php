@@ -16,6 +16,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Http\Component\ComponentChain;
 use Neos\Flow\Http\Component\ComponentContext;
+use Neos\Flow\Http\Helper\ResponseInformationHelper;
 
 /**
  * A request handler which can handle HTTP requests.
@@ -97,7 +98,13 @@ class RequestHandler implements HttpRequestHandlerInterface
 
         $this->baseComponentChain->handle($this->componentContext);
         $response = $this->baseComponentChain->getResponse();
-        $response->send();
+
+        ob_implicit_flush(true);
+        foreach (ResponseInformationHelper::prepareHeaders($this->getHttpResponse()) as $prepareHeader) {
+            header($prepareHeader);
+        }
+        echo $response->getBody()->getContents();
+        ob_end_flush();
 
         $this->bootstrap->shutdown(Bootstrap::RUNLEVEL_RUNTIME);
         $this->exit->__invoke();

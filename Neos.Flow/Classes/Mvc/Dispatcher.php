@@ -96,28 +96,6 @@ class Dispatcher
             /** @var ActionRequest $request */
             $firewall->blockIllegalRequests($request);
             $this->initiateDispatchLoop($request, $response);
-        } catch (AuthenticationRequiredException $exception) {
-            $entryPointFound = false;
-            /** @var $token TokenInterface */
-            foreach ($securityContext->getAuthenticationTokens() as $token) {
-                $entryPoint = $token->getAuthenticationEntryPoint();
-                if ($entryPoint === null) {
-                    continue;
-                }
-                $entryPointFound = true;
-                if ($entryPoint instanceof WebRedirect) {
-                    $securityLogger->info('Redirecting to authentication entry point', $entryPoint->getOptions(), LogEnvironment::fromMethodName(__METHOD__));
-                } else {
-                    $securityLogger->info(sprintf('Starting authentication with entry point of type "%s"', get_class($entryPoint)), LogEnvironment::fromMethodName(__METHOD__));
-                }
-                $securityContext->setInterceptedRequest($request->getMainRequest());
-                /** @var HttpResponse $response */
-                $entryPoint->startAuthentication($request->getHttpRequest(), $response);
-            }
-            if ($entryPointFound === false) {
-                $securityLogger->notice('No authentication entry point found for active tokens, therefore cannot authenticate or redirect to authentication automatically.');
-                throw $exception;
-            }
         } catch (AccessDeniedException $exception) {
             $securityLogger->warning('Access denied', LogEnvironment::fromMethodName(__METHOD__));
             throw $exception;

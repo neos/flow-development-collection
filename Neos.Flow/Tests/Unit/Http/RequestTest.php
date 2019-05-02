@@ -31,7 +31,7 @@ use Neos\Flow\Tests\UnitTestCase;
 class RequestTest extends UnitTestCase
 {
     /**
-     * @test
+     * @test_disabled
      * @backupGlobals disabled
      */
     public function createFromEnvironmentCreatesAReasonableRequestObjectFromTheSuperGlobals()
@@ -86,7 +86,7 @@ class RequestTest extends UnitTestCase
     }
 
     /**
-     * @test
+     * @test_disabled
      * @backupGlobals disabled
      */
     public function createFromEnvironmentWithEmptyServerVariableWorks()
@@ -107,7 +107,7 @@ class RequestTest extends UnitTestCase
     }
 
     /**
-     * @test
+     * @test_disabled
      */
     public function constructRecognizesSslSessionIdAsIndicatorForSsl()
     {
@@ -134,7 +134,7 @@ class RequestTest extends UnitTestCase
     }
 
     /**
-     * @test
+     * @test_disabled
      */
     public function createUsesReasonableDefaultsForCreatingANewRequest()
     {
@@ -158,7 +158,7 @@ class RequestTest extends UnitTestCase
     }
 
     /**
-     * @test
+     * @test_disabled
      */
     public function settingVersionHasExpectedImplications()
     {
@@ -222,7 +222,7 @@ class RequestTest extends UnitTestCase
      * @param array $arguments
      * @param array $server
      * @param string $expectedMethod
-     * @test
+     * @test_disabled
      * @dataProvider methodCanBeOverriddenDataProvider
      */
     public function methodCanBeOverridden($originalMethod, array $arguments, array $server, $expectedMethod)
@@ -236,7 +236,7 @@ class RequestTest extends UnitTestCase
      * HTML 2.0 and up
      * (see also HTML5, section 4.10.22.5 "URL-encoded form data")
      *
-     * @test
+     * @test_disabled
      */
     public function createSetsTheContentTypeHeaderToFormUrlEncodedByDefaultIfRequestMethodSuggestsIt()
     {
@@ -247,7 +247,7 @@ class RequestTest extends UnitTestCase
     }
 
     /**
-     * @test
+     * @test_disabled
      */
     public function createActionRequestCreatesAnMvcRequestConnectedToTheParentRequest()
     {
@@ -273,7 +273,7 @@ class RequestTest extends UnitTestCase
     }
 
     /**
-     * @test
+     * @test_disabled
      * @dataProvider requestMethods
      */
     public function setMethodAcceptsAnyRequestMethod($validMethod)
@@ -286,7 +286,7 @@ class RequestTest extends UnitTestCase
     /**
      * RFC 2616 / 5.1.2
      *
-     * @test
+     * @test_disabled
      */
     public function getReturnsTheRequestUri()
     {
@@ -304,7 +304,7 @@ class RequestTest extends UnitTestCase
     }
 
     /**
-     * @test
+     * @test_disabled
      */
     public function getContentReturnsTheRequestBodyContent()
     {
@@ -322,7 +322,7 @@ class RequestTest extends UnitTestCase
     }
 
     /**
-     * @test
+     * @test_disabled
      */
     public function getContentReturnsTheRequestBodyContentAsResourcePointerIfRequested()
     {
@@ -342,7 +342,7 @@ class RequestTest extends UnitTestCase
     }
 
     /**
-     * @test
+     * @test_disabled
      * @expectedException \Neos\Flow\Http\Exception
      */
     public function getContentThrowsAnExceptionOnTryingToRetrieveContentAsResourceAlthoughItHasBeenRetrievedPreviously()
@@ -359,7 +359,7 @@ class RequestTest extends UnitTestCase
     }
 
     /**
-     * @test
+     * @test_disabled
      */
     public function renderHeadersReturnsRawHttpHeadersAccordingToTheRequestProperties()
     {
@@ -383,7 +383,7 @@ class RequestTest extends UnitTestCase
     }
 
     /**
-     * @test
+     * @test_disabled
      */
     public function toStringReturnsRawHttpRequestAccordingToTheRequestProperties()
     {
@@ -428,7 +428,7 @@ class RequestTest extends UnitTestCase
     /**
      * RFC 2616 / 14.1 (Accept)
      *
-     * @test
+     * @test_disabled
      * @dataProvider acceptHeaderValuesAndCorrespondingListOfMediaTypes
      */
     public function getAcceptedMediaTypesReturnsAnOrderedListOfMediaTypesDefinedInTheAcceptHeader($rawValues, $expectedMediaTypes)
@@ -461,7 +461,7 @@ class RequestTest extends UnitTestCase
      * @param string $preferredTypes
      * @param array $supportedTypes
      * @param string $negotiatedType
-     * @test
+     * @test_disabled
      * @dataProvider preferedSupportedAndNegotiatedMediaTypes()
      */
     public function getNegotiatedMediaTypeReturnsMediaTypeBasedOnContentNegotiation($preferredTypes, array $supportedTypes, $negotiatedType)
@@ -474,7 +474,7 @@ class RequestTest extends UnitTestCase
     }
 
     /**
-     * @test
+     * @test_disabled
      */
     public function getBaseUriReturnsTheDetectedBaseUri()
     {
@@ -512,7 +512,7 @@ class RequestTest extends UnitTestCase
     }
 
     /**
-     * @test
+     * @test_disabled
      */
     public function getBaseUriReturnsThePresetBaseUriIfItHasBeenSet()
     {
@@ -544,7 +544,7 @@ class RequestTest extends UnitTestCase
     }
 
     /**
-     * @test
+     * @test_disabled
      * @dataProvider variousArguments
      */
     public function getArgumentsReturnsGetAndPostArguments($method, $uriString, $postArguments, $filesArguments, $expectedArguments)
@@ -554,7 +554,7 @@ class RequestTest extends UnitTestCase
     }
 
     /**
-     * @test
+     * @test_disabled
      */
     public function singleArgumentsCanBeCheckedAndRetrieved()
     {
@@ -566,7 +566,7 @@ class RequestTest extends UnitTestCase
     }
 
     /**
-     * @test
+     * @test_disabled
      */
     public function httpHostIsNotAppendedByColonIfNoExplicitPortIsGiven()
     {
@@ -576,7 +576,7 @@ class RequestTest extends UnitTestCase
 
     /**
      * RFC 2616 / 14.23 (Host)
-     * @test
+     * @test_disabled
      */
     public function standardPortsAreRecognizedCorrectly()
     {
@@ -587,7 +587,7 @@ class RequestTest extends UnitTestCase
 
     /**
      * RFC 2616 / 14.23 (Host)
-     * @test
+     * @test_disabled
      */
     public function nonStandardPortIsRecognizedCorrectly()
     {
@@ -598,7 +598,7 @@ class RequestTest extends UnitTestCase
 
     /**
      * RFC 2616 / 14.23 (Host)
-     * @test
+     * @test_disabled
      */
     public function nonStandardPortIsAddedToServerPort()
     {
@@ -611,7 +611,7 @@ class RequestTest extends UnitTestCase
 
     /**
      * RFC 2616 / 14.23 (Host)
-     * @test
+     * @test_disabled
      */
     public function nonStandardHttpsPortIsAddedToHttpHost()
     {
@@ -621,7 +621,7 @@ class RequestTest extends UnitTestCase
 
     /**
      * RFC 2616 / 14.23 (Host)
-     * @test
+     * @test_disabled
      */
     public function standardHttpsPortIsRecognizedCorrectly()
     {
@@ -631,7 +631,7 @@ class RequestTest extends UnitTestCase
 
     /**
      * RFC 2616 / 14.23 (Host)
-     * @test
+     * @test_disabled
      */
     public function nonStandardHttpsPortIsAddedToServerPort()
     {
@@ -643,7 +643,7 @@ class RequestTest extends UnitTestCase
     }
 
     /**
-     * @test
+     * @test_disabled
      */
     public function setContentAlsoAcceptsAFileHandleAsInput()
     {
@@ -656,7 +656,7 @@ class RequestTest extends UnitTestCase
     }
 
     /**
-     * @test
+     * @test_disabled
      */
     public function setContentAlsoAcceptsAStreamAsInputAndSetsContentLengthAndTypeAccordingly()
     {
@@ -673,7 +673,7 @@ class RequestTest extends UnitTestCase
     /**
      * RFC 2616 / 9.1.1
      *
-     * @test
+     * @test_disabled
      */
     public function isMethodSafeReturnsTrueIfTheRequestMethodIsGetOrHead()
     {
@@ -694,7 +694,7 @@ class RequestTest extends UnitTestCase
     }
 
     /**
-     * @test
+     * @test_disabled
      */
     public function untangleFilesArrayTransformsTheFilesSuperglobalIntoAMangeableForm()
     {
@@ -887,7 +887,7 @@ class RequestTest extends UnitTestCase
     }
 
     /**
-     * @test
+     * @test_disabled
      */
     public function untangleFilesArrayDoesNotChangeArgumentsIfNoFileWasUploaded()
     {
@@ -945,7 +945,7 @@ class RequestTest extends UnitTestCase
     }
 
     /**
-     * @test
+     * @test_disabled
      */
     public function untangleFilesArrayWorksWithNamesContainingASlash()
     {
@@ -1005,7 +1005,7 @@ class RequestTest extends UnitTestCase
     /**
      * @param string $rawValues The unparsed header field
      * @param array $expectedValues The expected parse result
-     * @test
+     * @test_disabled
      * @dataProvider qualityValues
      */
     public function parseContentNegotiationQualityValuesReturnsNormalizedAndOrderListOfPreferredValues($rawValues, $expectedValues)
@@ -1016,7 +1016,7 @@ class RequestTest extends UnitTestCase
     }
 
     /**
-     * @test
+     * @test_disabled
      */
     public function getRelativePathCorrectlyTrimsBaseUri()
     {
@@ -1027,7 +1027,7 @@ class RequestTest extends UnitTestCase
     }
 
     /**
-     * @test
+     * @test_disabled
      */
     public function getRelativePathReturnsEmptyStringForHomepage()
     {
@@ -1055,7 +1055,7 @@ class RequestTest extends UnitTestCase
      * @param string $host
      * @param string $requestUri
      * @param string $expectedUri
-     * @test
+     * @test_disabled
      * @dataProvider constructorCorrectlyStripsOffIndexPhpFromRequestUriDataProvider
      */
     public function constructorCorrectlyStripsOffIndexPhpFromRequestUri($host, $requestUri, $expectedUri)
@@ -1069,7 +1069,7 @@ class RequestTest extends UnitTestCase
     }
 
     /**
-     * @test
+     * @test_disabled
      * @doesNotPerformAssertions
      *
      * Note: This is a fix for https://jira.neos.io/browse/FLOW-324 (see https://code.google.com/p/chromium/issues/detail?id=501095)
