@@ -13,7 +13,6 @@ namespace TYPO3\Flow\Security\Cryptography;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Security\Exception as SecurityException;
-use TYPO3\Flow\Security\Exception;
 use TYPO3\Flow\Security\Exception\DecryptionNotAllowedException;
 use TYPO3\Flow\Security\Exception\InvalidKeyPairIdException;
 use TYPO3\Flow\Security\Exception\MissingConfigurationException;
@@ -59,7 +58,7 @@ class RsaWalletServicePhp implements RsaWalletServiceInterface
      * @param array $settings
      * @return void
      * @throws MissingConfigurationException
-     * @throws Exception
+     * @throws SecurityException
      */
     public function injectSettings(array $settings)
     {
@@ -77,7 +76,7 @@ class RsaWalletServicePhp implements RsaWalletServiceInterface
         if (isset($settings['security']['cryptography']['RSAWalletServicePHP']['paddingAlgorithm']) && is_int($settings['security']['cryptography']['RSAWalletServicePHP']['paddingAlgorithm'])) {
             $this->paddingAlgorithm = $settings['security']['cryptography']['RSAWalletServicePHP']['paddingAlgorithm'];
         } else {
-            throw new Exception('The padding algorithm given in security.cryptography.RSAWalletServicePHP.paddingAlgorithm is not available.', 1556785429);
+            throw new SecurityException('The padding algorithm given in security.cryptography.RSAWalletServicePHP.paddingAlgorithm is not available.', 1556785429);
         }
     }
 
