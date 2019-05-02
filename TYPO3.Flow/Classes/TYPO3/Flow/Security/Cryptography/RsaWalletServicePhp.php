@@ -46,7 +46,7 @@ class RsaWalletServicePhp implements RsaWalletServiceInterface
      * The padding to use for OpenSSL encryption/decryption
      * @var int
      */
-    protected $paddingAlgorithm = OPENSSL_PKCS1_OAEP_PADDING;
+    protected $paddingAlgorithm;
 
     /**
      * @var boolean
@@ -59,6 +59,7 @@ class RsaWalletServicePhp implements RsaWalletServiceInterface
      * @param array $settings
      * @return void
      * @throws MissingConfigurationException
+     * @throws Exception
      */
     public function injectSettings(array $settings)
     {
@@ -73,8 +74,10 @@ class RsaWalletServicePhp implements RsaWalletServiceInterface
             throw new MissingConfigurationException('The configuration setting TYPO3.Flow.security.cryptography.RSAWalletServicePHP.keystorePath is missing. Please specify it in your Settings.yaml file. Beware: This file must not be accessible by the public!', 1305711354);
         }
 
-        if (isset($settings['security']['cryptography']['RSAWalletServicePHP']['paddingAlgorithm'])) {
+        if (isset($settings['security']['cryptography']['RSAWalletServicePHP']['paddingAlgorithm']) && is_int($settings['security']['cryptography']['RSAWalletServicePHP']['paddingAlgorithm'])) {
             $this->paddingAlgorithm = $settings['security']['cryptography']['RSAWalletServicePHP']['paddingAlgorithm'];
+        } else {
+            throw new Exception('The padding algorithm given in security.cryptography.RSAWalletServicePHP.paddingAlgorithm is not available.', 1556785429);
         }
     }
 
