@@ -178,7 +178,7 @@ class RsaWalletServicePhp implements RsaWalletServiceInterface
      * @param string $plaintext The plaintext to encrypt
      * @param string $fingerprint The fingerprint to identify to correct public key
      * @return string The ciphertext
-     * @throws Exception If encryption failed for some other reason
+     * @throws SecurityException If encryption failed for some other reason
      */
     public function encryptWithPublicKey($plaintext, $fingerprint)
     {
@@ -188,7 +188,7 @@ class RsaWalletServicePhp implements RsaWalletServiceInterface
             while (($errorMessage = openssl_error_string()) !== false) {
                 $openSslErrors[] = $errorMessage;
             }
-            throw new Exception(sprintf('Encryption failed, OpenSSL error: %s', implode(chr(10), $openSslErrors)), 1556609369);
+            throw new SecurityException(sprintf('Encryption failed, OpenSSL error: %s', implode(chr(10), $openSslErrors)), 1556609369);
         }
 
         return $cipher;
@@ -204,7 +204,7 @@ class RsaWalletServicePhp implements RsaWalletServiceInterface
      * @return string The decrypted text
      * @throws InvalidKeyPairIdException If the given fingerprint identifies no valid keypair
      * @throws DecryptionNotAllowedException If the given fingerprint identifies a keypair for encrypted passwords
-     * @throws Exception If decryption failed for some other reason
+     * @throws SecurityException If decryption failed for some other reason
      */
     public function decrypt($cipher, $fingerprint)
     {
@@ -344,7 +344,7 @@ class RsaWalletServicePhp implements RsaWalletServiceInterface
      * @param string $cipher The ciphertext to decrypt
      * @param OpenSslRsaKey $privateKey The private key
      * @return string The decrypted plaintext
-     * @throws Exception
+     * @throws SecurityException
      */
     private function decryptWithPrivateKey($cipher, OpenSslRsaKey $privateKey)
     {
@@ -361,7 +361,7 @@ class RsaWalletServicePhp implements RsaWalletServiceInterface
             while (($errorMessage = openssl_error_string()) !== false) {
                 $openSslErrors[] = $errorMessage;
             }
-            throw new Exception(sprintf('Decryption failed, OpenSSL error: %s', implode(chr(10), $openSslErrors)), 1556609762);
+            throw new SecurityException(sprintf('Decryption failed, OpenSSL error: %s', implode(chr(10), $openSslErrors)), 1556609762);
         }
 
         return $decrypted;
