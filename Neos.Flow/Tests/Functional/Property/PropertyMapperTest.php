@@ -17,6 +17,7 @@ use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Flow\Property\TypeConverter\ObjectConverter;
 use Neos\Flow\Property\TypeConverter\PersistentObjectConverter;
 use Neos\Flow\Security\Account;
+use Neos\Flow\Security\Policy\Role;
 use Neos\Flow\Tests\FunctionalTestCase;
 
 /**
@@ -420,8 +421,9 @@ class PropertyMapperTest extends FunctionalTestCase
         $account = $this->propertyMapper->convert($source, Account::class, $configuration);
 
         $this->assertInstanceOf(Account::class, $account);
-        $this->assertEquals(2, count($account->getRoles()));
-        $this->assertEquals($expectedRoleIdentifiers, array_keys($account->getRoles()));
+        $this->assertCount(2, $account->getRoles());
+        $this->assertTrue($account->getRoles()->has(new Role($expectedRoleIdentifiers[0])));
+        $this->assertTrue($account->getRoles()->has(new Role($expectedRoleIdentifiers[1])));
     }
 
     /**
