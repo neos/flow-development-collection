@@ -211,7 +211,7 @@ abstract class AbstractWidgetViewHelper extends AbstractViewHelper implements Ch
         $subRequest = $this->objectManager->get(ActionRequest::class, $this->controllerContext->getRequest());
 
         // TODO: For next major with the PSR-7 / ActionResponse rework this must be re-evaluated and adjusted.
-        $subResponse = new ActionResponse($this->controllerContext->getResponse());
+        $subResponse = new ActionResponse();
 
         $this->passArgumentsToSubRequest($subRequest);
         $subRequest->setArgument('__widgetContext', $this->widgetContext);
