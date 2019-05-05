@@ -12,6 +12,7 @@ namespace Neos\FluidAdaptor\Tests\Functional\Core\Fixtures\ViewHelpers;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Mvc\ActionResponseRenderer\Content;
 use Neos\FluidAdaptor\Core\Widget\AbstractWidgetViewHelper;
 
 /**
@@ -40,6 +41,7 @@ class SomeAjaxViewHelper extends AbstractWidgetViewHelper
      */
     public function render($option1 = '', $option2 = '')
     {
-        return $this->initiateSubRequest();
+        $response = $this->initiateSubRequest();
+        return $response->prepareRendering(new Content())->render();
     }
 }

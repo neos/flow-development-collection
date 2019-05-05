@@ -26,7 +26,7 @@ use Psr\Http\Message\UriInterface;
  *   ->withHostPrefix('de.', ['en.', 'ch.'])
  *   ->withPort(8080)
  *   ->withPathPrefix('prefix/');
- * $resultingUri = $uriConstraints->applyTo($exampleUri); // https://de.some-domain.tld:8080/prefix/foo
+ * $resultingUri = $uriConstraints->prepareRendering($exampleUri); // https://de.some-domain.tld:8080/prefix/foo
  *
  *
  * @Flow\Proxy(false)

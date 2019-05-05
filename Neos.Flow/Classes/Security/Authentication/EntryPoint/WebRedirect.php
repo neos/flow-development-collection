@@ -13,6 +13,7 @@ namespace Neos\Flow\Security\Authentication\EntryPoint;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Helper\ArgumentsHelper;
+use Neos\Flow\Http\ServerRequestAttributes;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Flow\Security\Exception\MissingConfigurationException;
@@ -55,7 +56,7 @@ class WebRedirect extends AbstractEntryPoint
             $subPackageKey = $this->extractRouteValue($routeValues, '@subpackage');
             $uri = $this->uriBuilder->setCreateAbsoluteUri(true)->uriFor($actionName, $routeValues, $controllerName, $packageKey, $subPackageKey);
         } elseif (isset($this->options['uri'])) {
-            $uri = strpos($this->options['uri'], '://') !== false ? $this->options['uri'] : $request->getBaseUri() . $this->options['uri'];
+            $uri = strpos($this->options['uri'], '://') !== false ? $this->options['uri'] : $request->getAttribute(ServerRequestAttributes::ATTRIBUTE_BASE_URI) . $this->options['uri'];
         } else {
             throw new MissingConfigurationException('The configuration for the WebRedirect authentication entry point is incorrect or missing. You need to specify either the target "uri" or "routeValues".', 1237282583);
         }

@@ -28,6 +28,13 @@ final class ActionResponse extends \Neos\Flow\Http\Response
     private $redirectUri;
 
     /**
+     * The HTTP status code
+     *
+     * @var integer
+     */
+    protected $statusCode = 200;
+
+    /**
      * @var string
      */
     private $contentType = '';
@@ -103,5 +110,20 @@ final class ActionResponse extends \Neos\Flow\Http\Response
             $this->componentParameters[$componentClassName] = [];
         }
         $this->componentParameters[$componentClassName][$parameterName] = $value;
+    }
+
+    /**
+     * @param ActionReponseRendererInterface $renderer
+     * @return ActionReponseRendererInterface
+     */
+    public function prepareRendering(ActionReponseRendererInterface $renderer): ActionReponseRendererInterface
+    {
+        $renderer->setContent($this->content);
+        $renderer->setContentType($this->contentType);
+        $renderer->setRedirectUri($this->redirectUri);
+        $renderer->setStatusCode($this->statusCode);
+        $renderer->setComponentParameters($this->componentParameters);
+
+        return $renderer;
     }
 }

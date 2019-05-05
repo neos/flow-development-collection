@@ -12,6 +12,7 @@ namespace Neos\FluidAdaptor\ViewHelpers\Widget;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Mvc\ActionResponseRenderer\Content;
 use Neos\Flow\Persistence\QueryResultInterface;
 use Neos\FluidAdaptor\Core\Widget\AbstractWidgetViewHelper;
 
@@ -51,6 +52,7 @@ class AutocompleteViewHelper extends AbstractWidgetViewHelper
      */
     public function render(QueryResultInterface $objects, $for, $searchProperty, array $configuration = ['limit' => 10])
     {
-        return $this->initiateSubRequest();
+        $response = $this->initiateSubRequest();
+        return $response->prepareRendering(new Content())->render();
     }
 }

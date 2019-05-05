@@ -12,6 +12,7 @@ namespace Neos\FluidAdaptor\Tests\Functional\Core\Fixtures\ViewHelpers;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Mvc\ActionResponseRenderer\Content;
 use Neos\FluidAdaptor\Core\Widget\AbstractWidgetViewHelper;
 
 /**
@@ -33,6 +34,7 @@ class RedirectViewHelper extends AbstractWidgetViewHelper
      */
     public function render()
     {
-        return $this->initiateSubRequest();
+        $response = $this->initiateSubRequest();
+        return $response->prepareRendering(new Content())->render();
     }
 }

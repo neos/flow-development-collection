@@ -49,8 +49,11 @@ class DispatchComponent implements ComponentInterface
             );
             return;
         }
-        // TODO: This should change in next major when the action response is no longer a HTTP response for backward compatibility.
-        $componentContext->replaceHttpResponse($actionResponse);
+
+        $actionReponseRenderer = new \Neos\Flow\Mvc\ActionResponseRenderer\IntoComponentContext($componentContext);
+        $componentContext = $actionResponse->prepareRendering($actionReponseRenderer)->render();
+//         TODO: This should change in next major when the action response is no longer a HTTP response for backward compatibility.
+//        $componentContext->replaceHttpResponse($actionResponse);
     }
 
     /**

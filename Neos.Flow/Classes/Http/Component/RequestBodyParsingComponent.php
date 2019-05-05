@@ -32,6 +32,9 @@ class RequestBodyParsingComponent implements ComponentInterface
     public function handle(ComponentContext $componentContext)
     {
         $httpRequest = $componentContext->getHttpRequest();
+        if (!empty($httpRequest->getParsedBody())) {
+            return;
+        }
         $parsedBody = $this->parseRequestBody($httpRequest);
         $httpRequest = $httpRequest->withParsedBody($parsedBody);
         $componentContext->replaceHttpRequest($httpRequest);

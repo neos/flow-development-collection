@@ -12,6 +12,7 @@ namespace Neos\FluidAdaptor\ViewHelpers\Widget;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Mvc\ActionResponseRenderer\Content;
 use Neos\Flow\Persistence\QueryResultInterface;
 use Neos\FluidAdaptor\Core\Widget\AbstractWidgetViewHelper;
 
@@ -63,6 +64,6 @@ class PaginateViewHelper extends AbstractWidgetViewHelper
     public function render(QueryResultInterface $objects, $as, array $configuration = ['itemsPerPage' => 10, 'insertAbove' => false, 'insertBelow' => true, 'maximumNumberOfLinks' => 99])
     {
         $response = $this->initiateSubRequest();
-        return $response->getContent();
+        return $response->prepareRendering(new Content())->render();
     }
 }

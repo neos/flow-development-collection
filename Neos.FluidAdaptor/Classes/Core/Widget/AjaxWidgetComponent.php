@@ -17,8 +17,10 @@ use Neos\Flow\Http\Component\Exception as ComponentException;
 use Neos\Flow\Http\Helper\ArgumentsHelper;
 use Neos\Flow\Http\Component\ComponentContext;
 use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\ActionRequestFromHttpTrait;
 use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\DispatchComponent;
+use Neos\Flow\Security\Context;
 use Neos\Flow\Security\Cryptography\HashService;
 use Psr\Http\Message\RequestInterface;
 
@@ -29,6 +31,8 @@ use Psr\Http\Message\RequestInterface;
  */
 class AjaxWidgetComponent extends DispatchComponent
 {
+    use ActionRequestFromHttpTrait;
+
     /**
      * @Flow\Inject
      * @var HashService
@@ -40,6 +44,12 @@ class AjaxWidgetComponent extends DispatchComponent
      * @var AjaxWidgetContextHolder
      */
     protected $ajaxWidgetContextHolder;
+
+    /**
+     * @Flow\Inject
+     * @var Context
+     */
+    protected $securityContext;
 
     /**
      * Check if the current request contains a widget context.
@@ -57,14 +67,12 @@ class AjaxWidgetComponent extends DispatchComponent
             return;
         }
 
-        $componentContext = $this->prepareActionRequest($componentContext);
-        /** @var $actionRequest ActionRequest */
-        $actionRequest = $componentContext->getParameter(DispatchComponent::class, 'actionRequest');
-        $actionRequest->setArgument('__widgetContext', $widgetContext);
+        $actionRequest = $this->createActionRequest($httpRequest, ['__widgetContext' => $widgetContext]);
         $actionRequest->setControllerObjectName($widgetContext->getControllerObjectName());
         $this->setDefaultControllerAndActionNameIfNoneSpecified($actionRequest);
+        $this->securityContext->setRequest($actionRequest);
 
-        $actionResponse = new ActionResponse($componentContext->getHttpResponse());
+        $actionResponse = new ActionResponse();
 
         $this->dispatcher->dispatch($actionRequest, $actionResponse);
         $componentContext->replaceHttpResponse($actionResponse);
@@ -85,11 +93,14 @@ class AjaxWidgetComponent extends DispatchComponent
         $arguments = ArgumentsHelper::buildUnifiedArguments($httpRequest->getQueryParams(), $httpRequest->getParsedBody(), []);
         if (isset($arguments['__widgetId'])) {
             return $this->ajaxWidgetContextHolder->get($arguments['__widgetId']);
-        } elseif (isset($arguments['__widgetContext'])) {
-            $serializedWidgetContextWithHmac = $httpRequest->getArgument('__widgetContext');
+        }
+
+        if (isset($arguments['__widgetContext'])) {
+            $serializedWidgetContextWithHmac = $arguments['__widgetContext'];
             $serializedWidgetContext = $this->hashService->validateAndStripHmac($serializedWidgetContextWithHmac);
             return unserialize(base64_decode($serializedWidgetContext));
         }
+
         return null;
     }
 }
