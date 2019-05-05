@@ -14,6 +14,7 @@ namespace Neos\Flow\Mvc;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\Request as CliRequest;
 use Neos\Flow\Configuration\Exception\NoSuchOptionException;
+use Neos\Flow\Http\Component\SecurityEntryPointComponent;
 use Neos\Flow\Log\PsrLoggerFactoryInterface;
 use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Mvc\Controller\ControllerInterface;
@@ -93,6 +94,14 @@ class Dispatcher
             /** @var ActionRequest $request */
             $firewall->blockIllegalRequests($request);
             $this->initiateDispatchLoop($request, $response);
+        } catch (AuthenticationRequiredException $exception) {
+            /** @var ActionResponse $response */
+            $response->setComponentParameter(
+                SecurityEntryPointComponent::class,
+                SecurityEntryPointComponent::AUTHENTICATION_EXCEPTION,
+                $exception
+            );
+            return;
         } catch (AccessDeniedException $exception) {
             $securityLogger->warning('Access denied', LogEnvironment::fromMethodName(__METHOD__));
             throw $exception;

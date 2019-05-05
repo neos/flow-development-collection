@@ -54,7 +54,7 @@ class RoutingComponent implements ComponentInterface
      * Resolve a route for the request
      *
      * Stores the resolved route values in the IntoComponentContext to pass them
-     * to other components. They can be accessed via IntoComponentContext::getParameter(outingComponent::class, 'matchResults');
+     * to other components. They can be accessed via ComponentContext::getParameter(outingComponent::class, 'matchResults');
      *
      * @param ComponentContext $componentContext
      * @return void

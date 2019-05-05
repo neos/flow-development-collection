@@ -45,9 +45,9 @@ class IntoComponentContext implements ActionReponseRendererInterface
             $httpResponse = $httpResponse->withHeader('Location', $this->redirectUri);
         }
 
-        foreach ($this->componentParameters as $componentParameterGroup) {
+        foreach ($this->componentParameters as $componentClassName => $componentParameterGroup) {
             foreach ($componentParameterGroup as $parameterName => $parameterValue) {
-                $this->componentContext->setParameter($componentParameterGroup, $parameterName, $parameterValue);
+                $this->componentContext->setParameter($componentClassName, $parameterName, $parameterValue);
             }
         }
 

@@ -14,9 +14,7 @@ namespace Neos\Flow\Mvc;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Component\ComponentContext;
 use Neos\Flow\Http\Component\ComponentInterface;
-use Neos\Flow\Http\Component\SecurityEntryPointComponent;
-use Neos\Flow\Http\Helper\ResponseInformationHelper;
-use Neos\Flow\Security\Exception\AuthenticationRequiredException;
+use Neos\Flow\Mvc\ActionResponseRenderer\IntoComponentContext;
 
 /**
  * A dispatch component
@@ -38,36 +36,9 @@ class DispatchComponent implements ComponentInterface
     public function handle(ComponentContext $componentContext)
     {
         $actionRequest = $componentContext->getParameter(DispatchComponent::class, 'actionRequest');
-        $actionResponse = $this->prepareActionResponse($componentContext->getHttpResponse());
-        try {
-            $this->dispatcher->dispatch($actionRequest, $actionResponse);
-        } catch (AuthenticationRequiredException $exception) {
-            $componentContext->setParameter(
-                SecurityEntryPointComponent::class,
-                SecurityEntryPointComponent::AUTHENTICATION_EXCEPTION,
-                $exception
-            );
-            return;
-        }
-
-        $intoComponentContext = new \Neos\Flow\Mvc\ActionResponseRenderer\IntoComponentContext($componentContext);
+        $actionResponse = new ActionResponse();
+        $this->dispatcher->dispatch($actionRequest, $actionResponse);
+        $intoComponentContext = new IntoComponentContext($componentContext);
         $componentContext = $actionResponse->prepareRendering($intoComponentContext)->render();
-    }
-
-    /**
-     * Prepares the ActionResponse to be dispatched
-     *
-     * TODO: Needs to be adapted for next major when we only deliver an action response inside the dispatch.
-     *
-     * @param \Psr\Http\Message\ResponseInterface $httpResponse
-     * @return ActionResponse|\Psr\Http\Message\ResponseInterface
-     */
-    protected function prepareActionResponse(\Psr\Http\Message\ResponseInterface $httpResponse): ActionResponse
-    {
-        $rawResponse = implode("\r\n", ResponseInformationHelper::prepareHeaders($httpResponse));
-        $rawResponse .= "\r\n\r\n";
-        $rawResponse .= $httpResponse->getBody()->getContents();
-
-        return ActionResponse::createFromRaw($rawResponse);
     }
 }

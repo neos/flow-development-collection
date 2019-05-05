@@ -125,7 +125,7 @@ class FunctionalTestRequestHandler implements \Neos\Flow\Http\HttpRequestHandler
     }
 
     /**
-     * Internal getter to ensure an existing IntoComponentContext.
+     * Internal getter to ensure an existing ComponentContext.
      *
      * @return ComponentContext
      */

@@ -17,7 +17,7 @@ use Neos\Flow\Annotations as Flow;
  * An HTTP component
  *
  * A component is one item of the configurable component chain that is processed for every incoming request. A component can change the current HTTP request and response,
- * can communicate with other components and even change the currently processed chain using the IntoComponentContext that gets passed to its handle() method.
+ * can communicate with other components and even change the currently processed chain using the ComponentContext that gets passed to its handle() method.
  *
  * @api
  */
