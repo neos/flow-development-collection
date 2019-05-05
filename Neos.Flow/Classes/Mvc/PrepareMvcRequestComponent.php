@@ -4,12 +4,9 @@ namespace Neos\Flow\Mvc;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Component\ComponentContext;
 use Neos\Flow\Http\Component\ComponentInterface;
-use Neos\Flow\Http\Helper\ArgumentsHelper;
-use Neos\Flow\Http\Helper\UploadedFilesHelper;
 use Neos\Flow\Mvc\Routing\RoutingComponent;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Security\Context;
-use Neos\Utility\Arrays;
 
 /**
  *

@@ -17,7 +17,6 @@ use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Http\Component\ComponentChain;
 use Neos\Flow\Http\Component\ComponentContext;
 use Neos\Flow\Http\Helper\ResponseInformationHelper;
-use Psr\Http\Message\ResponseInterface;
 
 /**
  * A request handler which can handle HTTP requests.

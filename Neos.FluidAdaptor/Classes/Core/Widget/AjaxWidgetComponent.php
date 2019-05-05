@@ -16,7 +16,6 @@ use Neos\Flow\Http\Component\ComponentChain;
 use Neos\Flow\Http\Component\Exception as ComponentException;
 use Neos\Flow\Http\Helper\ArgumentsHelper;
 use Neos\Flow\Http\Component\ComponentContext;
-use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionRequestFromHttpTrait;
 use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\DispatchComponent;

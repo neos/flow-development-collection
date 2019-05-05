@@ -11,10 +11,8 @@ namespace Neos\Flow\Tests\Unit\Http\Component;
  * source code.
  */
 
-use GuzzleHttp\Psr7\ServerRequest;
 use Neos\Flow\Http\Component\ComponentContext;
 use Neos\Flow\Http\Component\TrustedProxiesComponent;
-use Neos\Flow\Http\Helper\RequestInformationHelper;
 use Neos\Flow\Http\Response;
 use Neos\Flow\Http\ServerRequestAttributes;
 use Neos\Flow\Http\Uri;
