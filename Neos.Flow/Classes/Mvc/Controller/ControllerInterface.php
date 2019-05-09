@@ -37,5 +37,5 @@ interface ControllerInterface
      * @throws UnsupportedRequestTypeException if the controller doesn't support the current request type
      * @api
      */
-    public function processRequest(RequestInterface $request, ResponseInterface $response);
+    public function processRequest($request, $response);
 }

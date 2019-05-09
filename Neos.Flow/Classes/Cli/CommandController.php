@@ -112,7 +112,7 @@ class CommandController implements ControllerInterface
      * @throws UnsupportedRequestTypeException if the controller doesn't support the current request type
      * @api
      */
-    public function processRequest(RequestInterface $request, ResponseInterface $response)
+    public function processRequest($request, $response)
     {
         if (!$request instanceof Request) {
             throw new UnsupportedRequestTypeException(sprintf('%s only supports command line requests – requests of type "%s" given.', get_class($this), get_class($request)), 1300787096);

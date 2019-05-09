@@ -13,9 +13,12 @@ use Psr\Http\Message\UriInterface;
  * @Flow\Proxy(false)
  * @api
  */
-final class ActionResponse extends \Neos\Flow\Http\Response
+final class ActionResponse
 {
-    use ResponseDeprecationTrait;
+    /**
+     * @var string
+     */
+    private $content;
 
     /**
      * @var array
@@ -37,7 +40,7 @@ final class ActionResponse extends \Neos\Flow\Http\Response
     /**
      * @var string
      */
-    private $contentType = '';
+    private $contentType;
 
     /**
      * @param string|StreamInterface $content
@@ -61,7 +64,7 @@ final class ActionResponse extends \Neos\Flow\Http\Response
     {
         $this->contentType = $contentType;
         // TODO: This can be removed after the full changes are done for next major.
-        $this->headers->set('Content-Type', $contentType, true);
+//        $this->headers->set('Content-Type', $contentType, true);
     }
 
     /**
@@ -77,8 +80,8 @@ final class ActionResponse extends \Neos\Flow\Http\Response
         $this->redirectUri = $uri;
         $this->statusCode = $statusCode;
         // TODO: This can be removed after the full changes are done for next major.
-        $this->headers->set('Location', (string)$uri, true);
-        $this->setStatusCode($statusCode);
+//        $this->headers->set('Location', (string)$uri, true);
+//        $this->setStatusCode($statusCode);
     }
 
     /**

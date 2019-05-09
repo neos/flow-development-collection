@@ -41,7 +41,7 @@ trait BasicSetterTrait
         $this->content = $content;
     }
 
-    public function setContentType(string $contentType): void
+    public function setContentType(string $contentType = null): void
     {
         $this->contentType = $contentType;
     }
@@ -51,7 +51,7 @@ trait BasicSetterTrait
         $this->redirectUri = $redirectUri;
     }
 
-    public function setStatusCode(int $statusCode): void
+    public function setStatusCode(int $statusCode = null): void
     {
         $this->statusCode = $statusCode;
     }
@@ -59,7 +59,7 @@ trait BasicSetterTrait
     /**
      * @param array $componentParameters
      */
-    public function setComponentParameters(array $componentParameters): void
+    public function setComponentParameters(array $componentParameters = []): void
     {
         $this->componentParameters = $componentParameters;
     }

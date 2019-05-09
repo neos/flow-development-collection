@@ -42,7 +42,7 @@ abstract class AbstractWidgetController extends ActionController
      * @throws WidgetContextNotFoundException
      * @api
      */
-    public function processRequest(RequestInterface $request, ResponseInterface $response)
+    public function processRequest($request, $response)
     {
         /** @var $request \Neos\Flow\Mvc\ActionRequest */
         /** @var $widgetContext WidgetContext */

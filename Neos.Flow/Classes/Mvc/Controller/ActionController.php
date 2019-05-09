@@ -186,7 +186,7 @@ class ActionController extends AbstractController
      * @throws UnsupportedRequestTypeException
      * @api
      */
-    public function processRequest(RequestInterface $request, ResponseInterface $response)
+    public function processRequest($request, $response)
     {
         $this->initializeController($request, $response);
 
@@ -494,11 +494,11 @@ class ActionController extends AbstractController
         }
 
         if ($actionResult === null && $this->view instanceof ViewInterface) {
-            $this->response->appendContent($this->view->render());
+            $this->response->setContent($this->view->render());
         } elseif (is_string($actionResult) && strlen($actionResult) > 0) {
-            $this->response->appendContent($actionResult);
+            $this->response->setContent($actionResult);
         } elseif (is_object($actionResult) && method_exists($actionResult, '__toString')) {
-            $this->response->appendContent((string)$actionResult);
+            $this->response->setContent((string)$actionResult);
         }
     }
 

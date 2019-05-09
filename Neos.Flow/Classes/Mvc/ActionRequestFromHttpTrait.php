@@ -3,7 +3,6 @@ namespace Neos\Flow\Mvc;
 
 use Neos\Flow\Http\Helper\ArgumentsHelper;
 use Neos\Flow\Http\Helper\UploadedFilesHelper;
-use Neos\Flow\Http\ServerRequestAttributes;
 use Neos\Utility\Arrays;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -16,10 +15,12 @@ trait ActionRequestFromHttpTrait
      * @param ServerRequestInterface $httpRequest
      * @param array $additionalArguments
      * @return ActionRequest
+     * @throws Exception\InvalidActionNameException
      * @throws Exception\InvalidArgumentNameException
      * @throws Exception\InvalidArgumentTypeException
+     * @throws Exception\InvalidControllerNameException
      */
-    protected function createActionRequest(ServerRequestInterface $httpRequest, array $additionalArguments = [])
+    protected function createActionRequest(ServerRequestInterface $httpRequest, array $additionalArguments = []): ActionRequest
     {
         $arguments = $httpRequest->getQueryParams();
         if (is_array($httpRequest->getParsedBody())) {
@@ -36,7 +37,7 @@ trait ActionRequestFromHttpTrait
         }
 
         $actionRequest->setArguments($arguments);
-        $this->setDefaultControllerAndActionNameIfNoneSpecified($actionRequest);
+        $actionRequest = $this->setDefaultControllerAndActionNameIfNoneSpecified($actionRequest);
 
         return $actionRequest;
     }
@@ -45,9 +46,11 @@ trait ActionRequestFromHttpTrait
      * Set the default controller and action names if none has been specified.
      *
      * @param ActionRequest $actionRequest
-     * @return void
+     * @return ActionRequest
+     * @throws Exception\InvalidActionNameException
+     * @throws Exception\InvalidControllerNameException
      */
-    protected function setDefaultControllerAndActionNameIfNoneSpecified(ActionRequest $actionRequest)
+    protected function setDefaultControllerAndActionNameIfNoneSpecified(ActionRequest $actionRequest): ActionRequest
     {
         if ($actionRequest->getControllerName() === null) {
             $actionRequest->setControllerName('Standard');
@@ -55,5 +58,7 @@ trait ActionRequestFromHttpTrait
         if ($actionRequest->getControllerActionName() === null) {
             $actionRequest->setControllerActionName('index');
         }
+
+        return $actionRequest;
     }
 }

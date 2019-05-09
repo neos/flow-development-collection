@@ -31,11 +31,26 @@ class IntoActionResponse implements ActionReponseRendererInterface
      */
     public function render(): ActionResponse
     {
-        $this->actionResponse->setContent($this->content);
-        $this->actionResponse->setContentType($this->contentType);
-        $this->actionResponse->setStatusCode($this->statusCode);
-        $this->actionResponse->setRedirectUri($this->redirectUri);
-        $this->actionResponse->setRedirectUri($this->redirectUri);
+        if (!empty($this->content)) {
+            $this->actionResponse->setContent($this->content);
+        }
+        if ($this->contentType !== null) {
+            $this->actionResponse->setContentType($this->contentType);
+        }
+
+        if ($this->statusCode !== null) {
+            $this->actionResponse->setStatusCode($this->statusCode);
+        }
+
+        if ($this->redirectUri !== null) {
+            $this->actionResponse->setRedirectUri($this->redirectUri);
+        }
+
+        foreach ($this->componentParameters as $componentClass => $parameters) {
+            foreach ($parameters as $parameterName => $parameterValue) {
+                $this->actionResponse->setComponentParameter($componentClass, $parameterName, $parameterValue);
+            }
+        }
 
         return $this->actionResponse;
     }

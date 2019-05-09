@@ -66,7 +66,7 @@ class ControllerContext
      * @param Arguments $arguments
      * @param UriBuilder $uriBuilder
      */
-    public function __construct(RequestInterface $request, Response $response, Arguments $arguments, UriBuilder $uriBuilder)
+    public function __construct(RequestInterface $request, ActionResponse $response, Arguments $arguments, UriBuilder $uriBuilder)
     {
         $this->request = $request;
         $this->response = $response;

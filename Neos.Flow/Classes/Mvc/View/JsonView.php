@@ -12,6 +12,7 @@ namespace Neos\Flow\Mvc\View;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Http\Component\SetHeaderComponent;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Utility\ObjectAccess;
@@ -198,7 +199,7 @@ class JsonView extends AbstractView
      */
     public function render()
     {
-        $this->controllerContext->getResponse()->setHeader('Content-Type', 'application/json');
+        $this->controllerContext->getResponse()->setContentType('application/json');
         $propertiesToRender = $this->renderArray();
         $options = $this->getOption('jsonEncodingOptions');
         return json_encode($propertiesToRender, $options);

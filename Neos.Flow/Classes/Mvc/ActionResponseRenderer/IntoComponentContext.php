@@ -34,8 +34,12 @@ class IntoComponentContext implements ActionReponseRendererInterface
     {
         $httpResponse = $this->componentContext->getHttpResponse();
         $httpResponse = $httpResponse
-            ->withStatus($this->statusCode)
-            ->withBody(ArgumentsHelper::createContentStreamFromString($this->content));
+            ->withStatus($this->statusCode);
+
+        if ($this->content !== null) {
+            $httpResponse = $httpResponse->withBody(ArgumentsHelper::createContentStreamFromString($this->content));
+        }
+
 
         if ($this->contentType) {
             $httpResponse = $httpResponse->withHeader('Content-Type', $this->contentType);

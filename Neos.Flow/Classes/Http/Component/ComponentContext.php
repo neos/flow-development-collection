@@ -111,6 +111,15 @@ class ComponentContext
 
     /**
      * @param string $componentClassName
+     * @return mixed
+     */
+    public function getAllParametersFor($componentClassName)
+    {
+        return $this->parameters[$componentClassName] ?? null;
+    }
+
+    /**
+     * @param string $componentClassName
      * @param string $parameterName
      * @param mixed $value
      * @api

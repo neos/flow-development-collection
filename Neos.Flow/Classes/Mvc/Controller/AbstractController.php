@@ -108,7 +108,7 @@ abstract class AbstractController implements ControllerInterface
      *
      * TODO: This should expect an ActionRequest and ActionResponse in the next major.
      */
-    protected function initializeController(RequestInterface $request, ResponseInterface $response)
+    protected function initializeController($request, $response)
     {
         if (!$request instanceof ActionRequest) {
             throw new UnsupportedRequestTypeException(get_class($this) . ' only supports action requests – requests of type "' . get_class($request) . '" given.', 1187701131);

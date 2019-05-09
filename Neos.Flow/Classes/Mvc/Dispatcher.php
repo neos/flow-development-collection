@@ -68,8 +68,9 @@ class Dispatcher
      * @throws NoSuchOptionException
      * @throws MissingConfigurationException
      * @api
+     * FIXME: Type hints and CLI vs Web
      */
-    public function dispatch(RequestInterface $request, ResponseInterface $response)
+    public function dispatch($request, $response)
     {
         if ($request instanceof CliRequest) {
             $this->initiateDispatchLoop($request, $response);
@@ -117,7 +118,7 @@ class Dispatcher
      *
      * TODO: From next major we might want to create one ActionResponse PER controller invocation and then merge results here
      */
-    protected function initiateDispatchLoop(RequestInterface $request, ResponseInterface $response)
+    protected function initiateDispatchLoop($request, $response)
     {
         $dispatchLoopCount = 0;
         /** @var ActionRequest $request */
@@ -150,7 +151,7 @@ class Dispatcher
      * @return void
      * @Flow\Signal
      */
-    protected function emitBeforeControllerInvocation(RequestInterface $request, ResponseInterface $response, ControllerInterface $controller)
+    protected function emitBeforeControllerInvocation($request, $response, ControllerInterface $controller)
     {
     }
 
@@ -164,7 +165,7 @@ class Dispatcher
      * @return void
      * @Flow\Signal
      */
-    protected function emitAfterControllerInvocation(RequestInterface $request, ResponseInterface $response, ControllerInterface $controller)
+    protected function emitAfterControllerInvocation($request, $response, ControllerInterface $controller)
     {
     }
 

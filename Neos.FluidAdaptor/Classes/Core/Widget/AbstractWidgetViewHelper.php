@@ -11,8 +11,6 @@ namespace Neos\FluidAdaptor\Core\Widget;
  * source code.
  */
 
-use Neos\Flow\Http\Response;
-use Neos\Flow\Http\Uri;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\ActionResponseRenderer\IntoActionResponse;
