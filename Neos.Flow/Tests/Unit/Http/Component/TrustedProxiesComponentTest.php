@@ -19,6 +19,7 @@ use Neos\Flow\Http\Uri;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Http\Factories\ServerRequestFactory;
 use Neos\Http\Factories\UriFactory;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestFactoryInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -54,8 +55,8 @@ class TrustedProxiesComponentTest extends UnitTestCase
 
     public function setUp()
     {
-        $this->mockHttpRequest = $this->getMockBuilder(Request::class)->disableOriginalConstructor()->getMock();
-        $this->mockHttpResponse = $this->getMockBuilder(Response::class)->disableOriginalConstructor()->getMock();
+        $this->mockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
+        $this->mockHttpResponse = $this->getMockBuilder(ResponseInterface::class)->disableOriginalConstructor()->getMock();
 
         $this->serverRequestFactory = new ServerRequestFactory(new UriFactory());
         $this->trustedProxiesComponent = new TrustedProxiesComponent();

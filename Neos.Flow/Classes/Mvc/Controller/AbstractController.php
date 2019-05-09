@@ -102,18 +102,12 @@ abstract class AbstractController implements ControllerInterface
      *
      * This method should be called by the concrete processRequest() method.
      *
-     * @param RequestInterface $request
-     * @param ResponseInterface|ActionResponse $response
+     * @param ActionRequest $request
+     * @param ActionResponse $response
      * @throws UnsupportedRequestTypeException
-     *
-     * TODO: This should expect an ActionRequest and ActionResponse in the next major.
      */
-    protected function initializeController($request, $response)
+    protected function initializeController(ActionRequest $request, ActionResponse $response)
     {
-        if (!$request instanceof ActionRequest) {
-            throw new UnsupportedRequestTypeException(get_class($this) . ' only supports action requests – requests of type "' . get_class($request) . '" given.', 1187701131);
-        }
-
         $this->request = $request;
         $this->request->setDispatched(true);
         $this->response = $response;

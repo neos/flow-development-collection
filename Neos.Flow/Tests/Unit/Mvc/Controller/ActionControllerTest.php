@@ -21,6 +21,7 @@ use Neos\Flow\Http;
 use Neos\Flow\Validation\Validator\ConjunctionValidator;
 use Neos\Flow\Validation\Validator\ValidatorInterface;
 use Neos\Flow\Validation\ValidatorResolver;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Testcase for the MVC Action Controller
@@ -142,11 +143,10 @@ class ActionControllerTest extends UnitTestCase
 
         $this->inject($this->actionController, 'arguments', new Arguments([]));
 
-        $mockHttpRequest = $this->getMockBuilder(Http\Request::class)->disableOriginalConstructor()->getMock();
-        $mockHttpRequest->expects($this->any())->method('getNegotiatedMediaType')->will($this->returnValue('*/*'));
+        $mockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
         $mockRequest->expects($this->any())->method('getHttpRequest')->will($this->returnValue($mockHttpRequest));
 
-        $mockResponse = $this->createMock(Http\Response::class);
+        $mockResponse = $this->createMock(Mvc\ActionResponse::class);
 
         $this->actionController->processRequest($mockRequest, $mockResponse);
     }
@@ -183,11 +183,10 @@ class ActionControllerTest extends UnitTestCase
             return $this->createMock($classname);
         }));
 
-        $mockHttpRequest = $this->getMockBuilder(Http\Request::class)->disableOriginalConstructor()->getMock();
-        $mockHttpRequest->expects($this->any())->method('getNegotiatedMediaType')->will($this->returnValue('*/*'));
+        $mockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
         $mockRequest->expects($this->any())->method('getHttpRequest')->will($this->returnValue($mockHttpRequest));
 
-        $mockResponse = $this->createMock(Http\Response::class);
+        $mockResponse = $this->createMock(Mvc\ActionResponse::class);
 
         $this->actionController->processRequest($mockRequest, $mockResponse);
     }
@@ -208,11 +207,10 @@ class ActionControllerTest extends UnitTestCase
         $mockMvcPropertyMappingConfigurationService = $this->createMock(Mvc\Controller\MvcPropertyMappingConfigurationService::class);
         $this->inject($this->actionController, 'mvcPropertyMappingConfigurationService', $mockMvcPropertyMappingConfigurationService);
 
-        $mockHttpRequest = $this->getMockBuilder(Http\Request::class)->disableOriginalConstructor()->getMock();
-        $mockHttpRequest->expects($this->any())->method('getNegotiatedMediaType')->will($this->returnValue('*/*'));
+        $mockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
         $this->mockRequest->expects($this->any())->method('getHttpRequest')->will($this->returnValue($mockHttpRequest));
 
-        $mockResponse = $this->createMock(Http\Response::class);
+        $mockResponse = $this->createMock(Mvc\ActionResponse::class);
 
         $mockView = $this->createMock(Mvc\View\ViewInterface::class);
         $mockView->expects($this->once())->method('setControllerContext')->with($this->mockControllerContext);
@@ -237,11 +235,10 @@ class ActionControllerTest extends UnitTestCase
         $mockMvcPropertyMappingConfigurationService = $this->createMock(Mvc\Controller\MvcPropertyMappingConfigurationService::class);
         $this->inject($this->actionController, 'mvcPropertyMappingConfigurationService', $mockMvcPropertyMappingConfigurationService);
 
-        $mockHttpRequest = $this->getMockBuilder(Http\Request::class)->disableOriginalConstructor()->getMock();
-        $mockHttpRequest->expects($this->any())->method('getNegotiatedMediaType')->will($this->returnValue('*/*'));
+        $mockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
         $this->mockRequest->expects($this->any())->method('getHttpRequest')->will($this->returnValue($mockHttpRequest));
 
-        $mockResponse = $this->createMock(Http\Response::class);
+        $mockResponse = $this->createMock(Mvc\ActionResponse::class);
 
         $mockView = $this->createMock(Mvc\View\ViewInterface::class);
         $mockView->expects($this->once())->method('assign')->with('settings', $mockSettings);

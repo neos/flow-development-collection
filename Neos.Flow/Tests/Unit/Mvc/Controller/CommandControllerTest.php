@@ -64,8 +64,8 @@ class CommandControllerTest extends UnitTestCase
      */
     public function processRequestThrowsExceptionIfGivenRequestIsNoCliRequest()
     {
-        $mockRequest = $this->createMock(Mvc\RequestInterface::class);
-        $mockResponse = $this->createMock(Mvc\ResponseInterface::class);
+        $mockRequest = $this->createMock(Mvc\ActionRequest::class);
+        $mockResponse = $this->createMock(Mvc\ActionResponse::class);
 
         $this->commandController->processRequest($mockRequest, $mockResponse);
     }
@@ -75,8 +75,8 @@ class CommandControllerTest extends UnitTestCase
      */
     public function processRequestMarksRequestDispatched()
     {
-        $mockRequest = $this->getMockBuilder(Request::class)->disableOriginalConstructor()->getMock();
-        $mockResponse = $this->getMockBuilder(Mvc\ResponseInterface::class)->getMock();
+        $mockRequest = $this->getMockBuilder(Mvc\ActionRequest::class)->disableOriginalConstructor()->getMock();
+        $mockResponse = $this->getMockBuilder(Mvc\ActionResponse::class)->getMock();
 
         $mockRequest->expects($this->once())->method('setDispatched')->with(true);
 
@@ -88,8 +88,8 @@ class CommandControllerTest extends UnitTestCase
      */
     public function processRequestResetsCommandMethodArguments()
     {
-        $mockRequest = $this->getMockBuilder(Request::class)->disableOriginalConstructor()->getMock();
-        $mockResponse = $this->getMockBuilder(Mvc\ResponseInterface::class)->getMock();
+        $mockRequest = $this->getMockBuilder(Mvc\ActionRequest::class)->disableOriginalConstructor()->getMock();
+        $mockResponse = $this->getMockBuilder(Mvc\ActionResponse::class)->getMock();
 
         $mockArguments = new Arguments();
         $mockArguments->addNewArgument('foo');

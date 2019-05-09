@@ -13,6 +13,7 @@ namespace Neos\FluidAdaptor\Tests\Unit\Core\Widget;
 use Neos\Flow\Http\Request;
 use Neos\Flow\Http\Response;
 use Neos\Flow\Http\Uri;
+use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\FluidAdaptor\Core\Widget\WidgetContext;
 
@@ -30,7 +31,7 @@ class AbstractWidgetControllerTest extends UnitTestCase
         /** @var \Neos\Flow\Mvc\ActionRequest $mockActionRequest */
         $mockActionRequest = $this->createMock(\Neos\Flow\Mvc\ActionRequest::class);
         $mockActionRequest->expects($this->atLeastOnce())->method('getInternalArgument')->with('__widgetContext')->will($this->returnValue(null));
-        $response = new Response();
+        $response = new ActionResponse();
 
         /** @var \Neos\FluidAdaptor\Core\Widget\AbstractWidgetController $abstractWidgetController */
         $abstractWidgetController = $this->getMockForAbstractClass(\Neos\FluidAdaptor\Core\Widget\AbstractWidgetController::class);
@@ -44,7 +45,7 @@ class AbstractWidgetControllerTest extends UnitTestCase
     {
         /** @var \Neos\Flow\Mvc\ActionRequest $mockActionRequest */
         $mockActionRequest = $this->createMock(\Neos\Flow\Mvc\ActionRequest::class);
-        $mockResponse = $this->createMock(\Neos\Flow\Http\Response::class);
+        $mockResponse = new ActionResponse();
 
         $httpRequest = Request::create(new Uri('http://localhost'));
         $mockActionRequest->expects($this->any())->method('getHttpRequest')->will($this->returnValue($httpRequest));

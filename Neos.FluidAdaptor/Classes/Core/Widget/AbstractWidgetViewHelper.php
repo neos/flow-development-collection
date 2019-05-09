@@ -13,7 +13,7 @@ namespace Neos\FluidAdaptor\Core\Widget;
 
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
-use Neos\Flow\Mvc\ActionResponseRenderer\IntoActionResponse;
+use Neos\Flow\Mvc\ActionResponseRenderer\Content;
 use Neos\Flow\Mvc\Exception\ForwardException;
 use Neos\Flow\Mvc\Exception\InfiniteLoopException;
 use Neos\Flow\Mvc\Exception\StopActionException;
@@ -191,7 +191,7 @@ abstract class AbstractWidgetViewHelper extends AbstractViewHelper implements Ch
     /**
      * Initiate a sub request to $this->controller. Make sure to fill $this->controller
      * via Dependency Injection.
-     * @return ActionResponse the response of this request.
+     * @return string the response content of this request.
      * @throws Exception\InvalidControllerException
      * @throws Exception\MissingControllerException
      * @throws InfiniteLoopException
@@ -234,19 +234,11 @@ abstract class AbstractWidgetViewHelper extends AbstractViewHelper implements Ch
                     $subRequest = $exception->getNextRequest();
                     continue;
                 }
-
-                /** @var $parentResponse ActionResponse */
-                $parentResponse = $this->controllerContext->getResponse();
-                $intoParentResponse = new IntoActionResponse($parentResponse);
-                $parentResponse = $subResponse->prepareRendering($intoParentResponse)->render();
-
                 throw $exception;
             }
         }
 
-        // At this point the sub reponse is already merged to the parent response,
-        // so it's slightly odd to return it here, but for now that's what we do.
-        return $subResponse;
+        return $subResponse->prepareRendering(new Content())->render();
     }
 
     /**

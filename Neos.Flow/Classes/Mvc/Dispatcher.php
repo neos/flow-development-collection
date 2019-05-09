@@ -17,11 +17,13 @@ use Neos\Flow\Configuration\Exception\NoSuchOptionException;
 use Neos\Flow\Http\Component\SecurityEntryPointComponent;
 use Neos\Flow\Log\PsrLoggerFactoryInterface;
 use Neos\Flow\Log\Utility\LogEnvironment;
+use Neos\Flow\Mvc\ActionResponseRenderer\IntoActionResponse;
 use Neos\Flow\Mvc\Controller\ControllerInterface;
 use Neos\Flow\Mvc\Controller\Exception\InvalidControllerException;
 use Neos\Flow\Mvc\Exception\InfiniteLoopException;
 use Neos\Flow\Mvc\Exception\StopActionException;
 use Neos\Flow\Mvc\Exception\ForwardException;
+use Neos\Flow\Mvc\Exception\UnsupportedRequestTypeException;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Security\Authorization\FirewallInterface;
 use Neos\Flow\Security\Context;
@@ -58,8 +60,8 @@ class Dispatcher
     /**
      * Dispatches a request to a controller
      *
-     * @param RequestInterface $request The request to dispatch
-     * @param ResponseInterface $response The response, to be modified by the controller
+     * @param ActionRequest $request The request to dispatch
+     * @param ActionResponse $response The response, to be modified by the controller
      * @return void
      * @throws AccessDeniedException
      * @throws AuthenticationRequiredException
@@ -70,7 +72,7 @@ class Dispatcher
      * @api
      * FIXME: Type hints and CLI vs Web
      */
-    public function dispatch($request, $response)
+    public function dispatch(ActionRequest $request, ActionResponse $response)
     {
         if ($request instanceof CliRequest) {
             $this->initiateDispatchLoop($request, $response);
@@ -112,13 +114,12 @@ class Dispatcher
     /**
      * Try processing the request until it is successfully marked "dispatched"
      *
-     * @param RequestInterface $request
-     * @param ResponseInterface $response
-     * @throws InvalidControllerException|InfiniteLoopException|NoSuchOptionException
-     *
-     * TODO: From next major we might want to create one ActionResponse PER controller invocation and then merge results here
+     * @param ActionRequest $request
+     * @param ActionResponse $parentResponse
+     * @return ActionResponse
+     * @throws InvalidControllerException|InfiniteLoopException|NoSuchOptionException|UnsupportedRequestTypeException
      */
-    protected function initiateDispatchLoop($request, $response)
+    protected function initiateDispatchLoop(ActionRequest $request, ActionResponse $parentResponse)
     {
         $dispatchLoopCount = 0;
         /** @var ActionRequest $request */
@@ -127,6 +128,7 @@ class Dispatcher
                 throw new Exception\InfiniteLoopException(sprintf('Could not ultimately dispatch the request after %d iterations.', $dispatchLoopCount), 1217839467);
             }
             $controller = $this->resolveController($request);
+            $response = new ActionResponse();
             try {
                 $this->emitBeforeControllerInvocation($request, $response, $controller);
                 $controller->processRequest($request, $response);
@@ -138,20 +140,24 @@ class Dispatcher
                 } elseif (!$request->isMainRequest()) {
                     $request = $request->getParentRequest();
                 }
+            } finally {
+                $intoParentResponse = new IntoActionResponse($parentResponse);
+                $parentResponse = $response->prepareRendering($intoParentResponse)->render();
             }
         }
+        return $parentResponse;
     }
 
     /**
      * This signal is emitted directly before the request is been dispatched to a controller.
      *
-     * @param RequestInterface $request
-     * @param ResponseInterface $response
+     * @param ActionRequest $request
+     * @param ActionResponse $response
      * @param ControllerInterface $controller
      * @return void
      * @Flow\Signal
      */
-    protected function emitBeforeControllerInvocation($request, $response, ControllerInterface $controller)
+    protected function emitBeforeControllerInvocation(ActionRequest $request, ActionResponse $response, ControllerInterface $controller)
     {
     }
 
@@ -159,13 +165,13 @@ class Dispatcher
      * This signal is emitted directly after the request has been dispatched to a controller and the controller
      * returned control back to the dispatcher.
      *
-     * @param RequestInterface $request
-     * @param ResponseInterface $response
+     * @param ActionRequest $request
+     * @param ActionResponse $response
      * @param ControllerInterface $controller
      * @return void
      * @Flow\Signal
      */
-    protected function emitAfterControllerInvocation($request, $response, ControllerInterface $controller)
+    protected function emitAfterControllerInvocation(ActionRequest $request, ActionResponse $response, ControllerInterface $controller)
     {
     }
 
@@ -173,12 +179,12 @@ class Dispatcher
      * Finds and instantiates a controller that matches the current request.
      * If no controller can be found, an instance of NotFoundControllerInterface is returned.
      *
-     * @param RequestInterface $request The request to dispatch
+     * @param ActionRequest $request The request to dispatch
      * @return ControllerInterface
      * @throws NoSuchOptionException
      * @throws Controller\Exception\InvalidControllerException
      */
-    protected function resolveController(RequestInterface $request)
+    protected function resolveController(ActionRequest $request)
     {
         /** @var ActionRequest $request */
         $controllerObjectName = $request->getControllerObjectName();

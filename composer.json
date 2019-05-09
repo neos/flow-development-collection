@@ -48,7 +48,8 @@
         "neos/utility-opcodecache": "self.version",
         "neos/utility-pdo": "self.version",
         "neos/utility-schema": "self.version",
-        "neos/utility-unicode": "self.version"
+        "neos/utility-unicode": "self.version",
+        "neos/http-factories": "self.version"
     },
     "suggest": {
         "ext-memcache": "If you have a memcache server and want to use it for caching.",

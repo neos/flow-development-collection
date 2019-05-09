@@ -11,20 +11,20 @@ namespace Neos\Flow\Tests\Functional\Http\Fixtures\Controller;
  * source code.
  */
 
+use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Controller\AbstractController;
-use Neos\Flow\Mvc\RequestInterface;
-use Neos\Flow\Mvc\ResponseInterface;
 
 class FooController extends AbstractController
 {
     /**
      * Process Request
      *
-     * @param RequestInterface $request
-     * @param ResponseInterface $response
+     * @param ActionRequest $request
+     * @param ActionResponse $response
      * @return void
      */
-    public function processRequest(RequestInterface $request, ResponseInterface $response)
+    public function processRequest(ActionRequest $request, ActionResponse $response)
     {
         $this->initializeController($request, $response);
         $response->appendContent('FooController responded');

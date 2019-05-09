@@ -13,6 +13,8 @@ namespace Neos\Flow\Cli;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Command\HelpCommandController;
+use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Controller\Argument;
 use Neos\Flow\Mvc\Controller\ControllerInterface;
 use Neos\Flow\Mvc\Controller\Arguments;
@@ -21,8 +23,6 @@ use Neos\Flow\Mvc\Exception\InvalidArgumentTypeException;
 use Neos\Flow\Mvc\Exception\NoSuchCommandException;
 use Neos\Flow\Mvc\Exception\StopActionException;
 use Neos\Flow\Mvc\Exception\UnsupportedRequestTypeException;
-use Neos\Flow\Mvc\RequestInterface;
-use Neos\Flow\Mvc\ResponseInterface;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 
 /**
@@ -106,13 +106,13 @@ class CommandController implements ControllerInterface
     /**
      * Processes a command line request.
      *
-     * @param RequestInterface $request The request object
-     * @param ResponseInterface $response The response, modified by this handler
+     * @param ActionRequest $request The request object
+     * @param ActionResponse $response The response, modified by this handler
      * @return void
      * @throws UnsupportedRequestTypeException if the controller doesn't support the current request type
      * @api
      */
-    public function processRequest($request, $response)
+    public function processRequest(ActionRequest $request, ActionResponse $response)
     {
         if (!$request instanceof Request) {
             throw new UnsupportedRequestTypeException(sprintf('%s only supports command line requests – requests of type "%s" given.', get_class($this), get_class($request)), 1300787096);

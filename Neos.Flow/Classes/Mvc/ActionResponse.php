@@ -4,6 +4,7 @@ namespace Neos\Flow\Mvc;
 use Neos\Flow\Annotations as Flow;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
+use GuzzleHttp\Psr7\Stream;
 
 /**
  * The minimal MVC response object.
@@ -49,8 +50,10 @@ final class ActionResponse
      */
     public function setContent($content): void
     {
-        // TODO: For next major specific handling of StreamInterface arguments should be done to keep them intact.
-        $this->content = (string)$content;
+        if (is_string($content)) {
+            $content = new Stream(fopen('data://text/plain,' . $content,'rb'));
+        }
+        $this->content = $content;
     }
 
     /**
@@ -63,8 +66,6 @@ final class ActionResponse
     public function setContentType(string $contentType): void
     {
         $this->contentType = $contentType;
-        // TODO: This can be removed after the full changes are done for next major.
-//        $this->headers->set('Content-Type', $contentType, true);
     }
 
     /**
@@ -79,9 +80,6 @@ final class ActionResponse
     {
         $this->redirectUri = $uri;
         $this->statusCode = $statusCode;
-        // TODO: This can be removed after the full changes are done for next major.
-//        $this->headers->set('Location', (string)$uri, true);
-//        $this->setStatusCode($statusCode);
     }
 
     /**

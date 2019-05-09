@@ -26,7 +26,7 @@ use Psr\Http\Message\RequestInterface as HttpRequestInterface;
  *
  * @api
  */
-class ActionRequest implements RequestInterface
+class ActionRequest
 {
     /**
      * @Flow\Inject
