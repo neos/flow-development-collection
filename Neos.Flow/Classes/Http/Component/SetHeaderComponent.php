@@ -19,5 +19,4 @@ class SetHeaderComponent implements ComponentInterface
 
         $componentContext->replaceHttpResponse($httpResponse);
     }
-
 }
