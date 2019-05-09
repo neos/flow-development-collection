@@ -3,6 +3,7 @@ namespace Neos\Flow\Mvc;
 
 use Neos\Flow\Http\Helper\ArgumentsHelper;
 use Neos\Flow\Http\Helper\UploadedFilesHelper;
+use Neos\Flow\Http\ServerRequestAttributes;
 use Neos\Utility\Arrays;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -20,8 +21,13 @@ trait ActionRequestFromHttpTrait
      */
     protected function createActionRequest(ServerRequestInterface $httpRequest, array $additionalArguments = [])
     {
-        // TODO: Move arguments merging into action request as lazy operation to avoid duplicating the arguments?
-        $arguments = ArgumentsHelper::buildUnifiedArguments($httpRequest->getQueryParams(), $httpRequest->getParsedBody(), UploadedFilesHelper::untangleFilesArray($_FILES));
+        $arguments = $httpRequest->getQueryParams();
+        if (is_array($httpRequest->getParsedBody())) {
+            $arguments = ArgumentsHelper::mergeArgumentArrays($arguments, $httpRequest->getParsedBody());
+        }
+
+        $uploadedFiles = UploadedFilesHelper::upcastUploadedFiles($httpRequest->getUploadedFiles(), $arguments);
+        $arguments = ArgumentsHelper::mergeArgumentArrays($arguments, $uploadedFiles);
 
         /** @var $actionRequest ActionRequest */
         $actionRequest = new ActionRequest($httpRequest);

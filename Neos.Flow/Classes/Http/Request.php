@@ -19,6 +19,7 @@ use Neos\Flow\Http\Helper\RequestInformationHelper;
 use Neos\Flow\Http\Helper\SecurityHelper;
 use Neos\Flow\Http\Helper\UploadedFilesHelper;
 use Neos\Flow\Http\Helper\UriHelper;
+use Neos\Http\Factories\FlowUploadedFile;
 use Psr\Http\Message\ServerRequestFactoryInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UploadedFileInterface;

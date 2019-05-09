@@ -11,13 +11,63 @@ namespace Neos\Flow\Http\Helper;
  * source code.
  */
 
+use InvalidArgumentException;
+use Neos\Http\Factories\FlowUploadedFile;
 use Neos\Utility\Arrays;
+use Psr\Http\Message\UploadedFileInterface;
 
 /**
  * Helper to re-organize uploaded file data for requests.
  */
 abstract class UploadedFilesHelper
 {
+    /**
+     * @param UploadedFileInterface[] $uploadedFiles
+     * @param array $arguments
+     * @return FlowUploadedFile[]
+     */
+    public static function upcastUploadedFiles(array $uploadedFiles, array $arguments, array $currentPath = []): array
+    {
+        $upcastedUploads = [];
+
+        foreach ($uploadedFiles as $key => $value) {
+            $currentPath[] = $key;
+            if ($value instanceof UploadedFileInterface) {
+                $originallySubmittedResourcePath = array_merge($currentPath, 'originallySubmittedResource');
+                $collectionNamePath = array_merge($currentPath, '__collectionName');
+                $upcastedUploads[$key] = self::upcastUploadedFile(
+                    $value,
+                    Arrays::getValueByPath($arguments, $originallySubmittedResourcePath),
+                    Arrays::getValueByPath($arguments, $collectionNamePath)
+                );
+            }
+
+            if (is_array($value)) {
+                $upcastedUploads[$key] = self::upcastUploadedFiles($value, $arguments, $currentPath);
+            }
+        }
+
+        return $upcastedUploads;
+    }
+
+    /**
+     * @param UploadedFileInterface $uploadedFile
+     * @param string|array $originallySubmittedResource
+     * @param string $collectionName
+     * @return FlowUploadedFile
+     */
+    protected static function upcastUploadedFile(UploadedFileInterface $uploadedFile, $originallySubmittedResource = null, string $collectionName = null): FlowUploadedFile
+    {
+        $flowUploadedFile = new FlowUploadedFile($uploadedFile->getStream(), $uploadedFile->getSize(), $uploadedFile->getError(), $uploadedFile->getClientFilename(), $uploadedFile->getClientMediaType());
+        if ($originallySubmittedResource) {
+            $flowUploadedFile->setOriginallySubmittedResource($originallySubmittedResource);
+        }
+
+        if ($collectionName) {
+            $flowUploadedFile->setCollectionName($collectionName);
+        }
+    }
+
     /**
      * Transforms the convoluted _FILES superglobal into a manageable form.
      *

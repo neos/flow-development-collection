@@ -2,12 +2,10 @@
 namespace Neos\Http\Factories;
 
 use GuzzleHttp\Psr7\ServerRequest;
-use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Http\Helper\RequestInformationHelper;
 use Psr\Http\Message\ServerRequestFactoryInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriFactoryInterface;
-use Psr\Http\Message\UriInterface;
 
 /**
  *

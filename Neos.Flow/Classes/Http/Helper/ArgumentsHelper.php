@@ -41,6 +41,19 @@ abstract class ArgumentsHelper
     }
 
     /**
+     * @param array ...$argumentArrays
+     * @return array
+     */
+    public static function mergeArgumentArrays(array $arguments, array ...$argumentArrays): array
+    {
+        foreach ($argumentArrays as $argumentArray) {
+            $arguments = Arrays::arrayMergeRecursiveOverrule($arguments, $argumentArray);
+        }
+
+        return $arguments;
+    }
+
+    /**
      * @param string $content
      * @return ContentStream
      * @deprecated since Flow 5.2, use ContentStream::fromContents()

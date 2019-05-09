@@ -4,7 +4,6 @@ namespace Neos\Http\Factories;
 use GuzzleHttp\Psr7\Request;
 use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\UriInterface;
 
 /**
  *
