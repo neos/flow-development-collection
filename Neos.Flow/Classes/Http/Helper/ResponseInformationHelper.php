@@ -11,9 +11,10 @@ namespace Neos\Flow\Http\Helper;
  * source code.
  */
 
+use Neos\Flow\Http\ContentStream;
 use Neos\Flow\Http\Cookie;
 use Neos\Flow\Http\Headers;
-use Neos\Flow\Http\Response;
+use Neos\Http\Factories\ResponseFactory;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
@@ -30,12 +31,12 @@ abstract class ResponseInformationHelper
      * @throws \InvalidArgumentException
      * @return ResponseInterface
      */
-    public static function createFromRaw(string $rawResponse, string $responseClassName = Response::class): ResponseInterface
+    public static function createFromRaw(string $rawResponse): ResponseInterface
     {
-        $response = new $responseClassName();
+        $response = (new ResponseFactory())->createResponse();
 
         if (!$response instanceof ResponseInterface) {
-            throw new \InvalidArgumentException(sprintf('The given response class name "%s" does not implement the "%s" and cannot be created with this method.', $responseClassName, ResponseInterface::class));
+            throw new \InvalidArgumentException(sprintf('The given response class name "%s" does not implement the "%s" and cannot be created with this method.', get_class($response), ResponseInterface::class));
         }
 
         // see https://tools.ietf.org/html/rfc7230#section-3.5
@@ -56,7 +57,6 @@ abstract class ResponseInformationHelper
 
         $parsingHeader = true;
         $contentLines = [];
-        $headers = new Headers();
         foreach ($lines as $line) {
             if ($parsingHeader) {
                 if (trim($line) === '') {
@@ -69,14 +69,7 @@ abstract class ResponseInformationHelper
                 }
                 $fieldName = trim(substr($line, 0, $headerSeparatorIndex));
                 $fieldValue = trim(substr($line, strlen($fieldName) + 1));
-                if (strtoupper(substr($fieldName, 0, 10)) === 'SET-COOKIE') {
-                    $cookie = Cookie::createFromRawSetCookieHeader($fieldValue);
-                    if ($cookie !== null) {
-                        $headers->setCookie($cookie);
-                    }
-                } else {
-                    $headers->set($fieldName, $fieldValue, false);
-                }
+                $response = $response->withHeader($fieldName, $fieldValue);
             } else {
                 $contentLines[] = $line;
             }
@@ -86,10 +79,7 @@ abstract class ResponseInformationHelper
         }
         $content = implode(chr(10), $contentLines);
 
-        $response->setHeaders($headers);
-        $response = $response->withBody(ArgumentsHelper::createContentStreamFromString($content));
-
-        return $response;
+        return $response->withBody(ContentStream::fromContents($content));
     }
 
     /**
@@ -178,13 +168,8 @@ abstract class ResponseInformationHelper
         $statusHeader = rtrim(self::generateStatusLine($response), "\r\n");
 
         $preparedHeaders[] = $statusHeader;
-        $headers = $response->getHeaders();
-        if ($headers instanceof Headers) {
-            $preparedHeaders = array_merge($preparedHeaders, $headers->getPreparedValues());
-        } else {
-            foreach ($response->getHeaders() as $name => $values) {
-                $preparedHeaders[] = $name . ': ' . implode(', ', $values);
-            }
+        foreach ($response->getHeaders() as $name => $values) {
+            $preparedHeaders[] = $name . ': ' . implode(', ', $values);
         }
 
         return $preparedHeaders;
@@ -207,31 +192,32 @@ abstract class ResponseInformationHelper
     {
         $statusCode = $response->getStatusCode();
         if ($request->hasHeader('If-Modified-Since') && $response->hasHeader('Last-Modified') && $statusCode === 200) {
-            $ifModifiedSince = $request->getHeader('If-Modified-Since');
-            $ifModifiedSinceDate = is_array($ifModifiedSince) ? reset($ifModifiedSince) : $ifModifiedSince;
-            $lastModified = $response->getHeader('Last-Modified');
-            $lastModifiedDate = is_array($lastModified) ? reset($lastModified) : $lastModified;
+            $ifModifiedSince = $request->getHeader('If-Modified-Since')[0];
+            $ifModifiedSinceDate = \DateTime::createFromFormat(DATE_RFC2822, $ifModifiedSince);
+            $lastModified = $response->getHeader('Last-Modified')[0];
+            $lastModifiedDate = \DateTime::createFromFormat(DATE_RFC2822, $lastModified);
             if ($lastModifiedDate <= $ifModifiedSinceDate) {
                 $response = $response->withStatus(304);
             }
         } elseif ($request->hasHeader('If-Unmodified-Since') && $response->hasHeader('Last-Modified')
-            && (($statusCode >= 200 && $$statusCode <= 299) || $statusCode === 412)) {
-            $unmodifiedSince = $request->getHeader('If-Unmodified-Since');
-            $unmodifiedSinceDate = is_array($unmodifiedSince) ? reset($unmodifiedSince) : $unmodifiedSince;
-            $lastModified = $response->getHeader('Last-Modified');
-            $lastModifiedDate = is_array($lastModified) ? reset($lastModified) : $lastModified;
+            && (($statusCode >= 200 && $statusCode <= 299) || $statusCode === 412)) {
+            $unmodifiedSince = $request->getHeader('If-Unmodified-Since')[0];
+            $unmodifiedSinceDate = \DateTime::createFromFormat(DATE_RFC2822, $unmodifiedSince);
+            $lastModified = $response->getHeader('Last-Modified')[0];
+            $lastModifiedDate = \DateTime::createFromFormat(DATE_RFC2822, $lastModified);
             if ($lastModifiedDate > $unmodifiedSinceDate) {
                 $response = $response->withStatus(412);
             }
         }
 
         if (in_array($response->getStatusCode(), [100, 101, 204, 304])) {
-            $response = $response->withBody(ArgumentsHelper::createContentStreamFromString(''));
+            $response = $response->withBody(ContentStream::fromContents(''));
         }
 
         $cacheControlHeaderLine = $response->getHeaderLine('Cache-Control');
 
-        if (!empty($cacheControlHeaderLine) && strpos('no-cache', $cacheControlHeaderLine) !== false || $response->hasHeader('Expires')) {
+        if ((!empty($cacheControlHeaderLine) && strpos('no-cache', $cacheControlHeaderLine) !== false)
+            || $response->hasHeader('Expires')) {
             $cacheControlHeaderValue = trim(substr($cacheControlHeaderLine, 14));
             $cacheControlHeaderValue = str_replace('max-age', '', $cacheControlHeaderValue);
             $cacheControlHeaderValue = trim($cacheControlHeaderValue, ' ,');
@@ -243,7 +229,7 @@ abstract class ResponseInformationHelper
         }
 
         if ($request->getMethod() === 'HEAD') {
-            $response = $response->withBody(ArgumentsHelper::createContentStreamFromString(''));
+            $response = $response->withBody(ContentStream::fromContents(''));
         }
 
         if ($response->hasHeader('Transfer-Encoding')) {
