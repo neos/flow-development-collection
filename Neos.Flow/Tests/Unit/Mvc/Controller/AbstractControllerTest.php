@@ -11,12 +11,12 @@ namespace Neos\Flow\Tests\Unit\Mvc\Controller;
  * source code.
  */
 
+use GuzzleHttp\Psr7\ServerRequest;
+use Psr\Http\Message\ServerRequestInterface;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Controller\AbstractController;
 use Neos\Flow\Mvc\Controller\Arguments;
-use Neos\Flow\Http\Request;
-use Neos\Flow\Http\Response;
 use Neos\Flow\Http\Uri;
 use Neos\Flow\Mvc\Exception\ForwardException;
 use Neos\Flow\Mvc\Exception\StopActionException;
@@ -34,12 +34,12 @@ use Neos\Error\Messages as FlowError;
 class AbstractControllerTest extends UnitTestCase
 {
     /**
-     * @var Request
+     * @var ServerRequestInterface
      */
     protected $mockHttpRequest;
 
     /**
-     * @var Response
+     * @var ActionResponse
      */
     protected $actionResponse;
 
@@ -50,8 +50,7 @@ class AbstractControllerTest extends UnitTestCase
 
     public function setUp()
     {
-        $this->mockHttpRequest = $this->getMockBuilder(Request::class)->disableOriginalConstructor()->getMock();
-        $this->mockHttpRequest->expects($this->any())->method('getNegotiatedMediaType')->will($this->returnValue('text/html'));
+        $this->mockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
 
         $this->actionResponse = new ActionResponse();
 
@@ -77,7 +76,7 @@ class AbstractControllerTest extends UnitTestCase
      */
     public function initializeControllerInitializesRequestUriBuilderArgumentsAndContext()
     {
-        $request = new ActionRequest(Request::create(new Uri('http://localhost/foo')));
+        $request = new ActionRequest(new ServerRequest('GET', new Uri('http://localhost/foo')));
 
         $controller = $this->getAccessibleMock(AbstractController::class, ['processRequest']);
         $this->inject($controller, 'flashMessageContainer', new FlashMessageContainer());

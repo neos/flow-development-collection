@@ -2,7 +2,7 @@
 namespace Neos\Flow\Mvc\ActionResponseRenderer;
 
 use Neos\Flow\Http\Component\ComponentContext;
-use Neos\Flow\Http\Helper\ArgumentsHelper;
+use Neos\Flow\Http\ContentStream;
 use Neos\Flow\Mvc\ActionReponseRendererInterface;
 
 /**
@@ -37,7 +37,7 @@ class IntoComponentContext implements ActionReponseRendererInterface
             ->withStatus($this->statusCode);
 
         if ($this->content !== null) {
-            $httpResponse = $httpResponse->withBody(ArgumentsHelper::createContentStreamFromString($this->content));
+            $httpResponse = $httpResponse->withBody(ContentStream::fromContents($this->content));
         }
 
 

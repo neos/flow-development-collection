@@ -11,7 +11,7 @@ namespace Neos\Flow\Mvc\Controller;
  * source code.
  */
 
-use GuzzleHttp\Psr7\Uri;
+use GuzzleHttp\Psr7\Response;
 use Neos\Flow\Http\Helper\MediaTypeHelper;
 use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Exception\ForwardException;
@@ -19,8 +19,6 @@ use Neos\Flow\Mvc\Exception\RequiredArgumentMissingException;
 use Neos\Flow\Mvc\Exception\StopActionException;
 use Neos\Flow\Mvc\Exception\UnsupportedRequestTypeException;
 use Neos\Flow\Mvc\FlashMessageContainer;
-use Neos\Flow\Mvc\RequestInterface;
-use Neos\Flow\Mvc\ResponseInterface;
 use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Annotations as Flow;
@@ -328,7 +326,7 @@ abstract class AbstractController implements ControllerInterface
             $this->response->setRedirectUri($uri, $statusCode);
         } else {
             $escapedUri = htmlentities($uri, ENT_QUOTES, 'utf-8');
-            $this->response->setStatus($statusCode);
+            $this->response->setStatusCode($statusCode);
             $this->response->setContent('<html><head><meta http-equiv="refresh" content="' . (int)$delay . ';url=' . $escapedUri . '"/></head></html>');
         }
         throw new StopActionException();
@@ -339,20 +337,17 @@ abstract class AbstractController implements ControllerInterface
      *
      * NOTE: This method only supports web requests and will throw an exception if used with other request types.
      *
-     * TODO: statusMessage argument is deprecated and will no longer be used from 6.0
-     *
      * @param integer $statusCode The HTTP status code
      * @param string $statusMessage A custom HTTP status message
      * @param string $content Body content which further explains the status
-     * @throws UnsupportedRequestTypeException If the request is not a web request
      * @throws StopActionException
      * @api
      */
     protected function throwStatus($statusCode, $statusMessage = null, $content = null)
     {
-        $this->response->setStatus($statusCode, $statusMessage);
+        $this->response->setStatusCode($statusCode);
         if ($content === null) {
-            $content = $this->response->getStatus();
+            $content = $statusCode . ' ' . (new Response())->withStatus($statusCode)->getReasonPhrase();
         }
         $this->response->setContent($content);
         throw new StopActionException();
