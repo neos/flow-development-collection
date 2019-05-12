@@ -11,6 +11,7 @@ namespace Neos\Flow\Security;
  * source code.
  */
 
+use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\RequestInterface;
 
 /**
@@ -31,8 +32,8 @@ interface RequestPatternInterface
     /**
      * Matches a \Neos\Flow\Mvc\RequestInterface against its set pattern rules
      *
-     * @param RequestInterface $request The request that should be matched
+     * @param ActionRequest $request The request that should be matched
      * @return boolean true if the pattern matched, false otherwise
      */
-    public function matchRequest(RequestInterface $request);
+    public function matchRequest(ActionRequest $request);
 }

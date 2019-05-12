@@ -322,10 +322,10 @@ class UriBuilder
      * )
      *
      * @param array $arguments arguments
-     * @param RequestInterface $currentRequest
+     * @param ActionRequest $currentRequest
      * @return array arguments with namespace
      */
-    protected function addNamespaceToArguments(array $arguments, RequestInterface $currentRequest)
+    protected function addNamespaceToArguments(array $arguments, ActionRequest $currentRequest)
     {
         while (!$currentRequest->isMainRequest()) {
             $argumentNamespace = $currentRequest->getArgumentNamespace();

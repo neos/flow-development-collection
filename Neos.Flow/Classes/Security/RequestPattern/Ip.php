@@ -12,7 +12,6 @@ namespace Neos\Flow\Security\RequestPattern;
  */
 
 use Neos\Flow\Mvc\ActionRequest;
-use Neos\Flow\Mvc\RequestInterface;
 use Neos\Flow\Security\Exception\InvalidRequestPatternException;
 use Neos\Flow\Security\RequestPatternInterface;
 use Neos\Flow\Utility\Ip as IpUtility;
@@ -52,11 +51,11 @@ class Ip implements RequestPatternInterface
     /**
      * Matches a \Neos\Flow\Mvc\RequestInterface against the set IP pattern rules
      *
-     * @param RequestInterface $request The request that should be matched
+     * @param ActionRequest $request The request that should be matched
      * @return boolean true if the pattern matched, false otherwise
      * @throws InvalidRequestPatternException
      */
-    public function matchRequest(RequestInterface $request)
+    public function matchRequest(ActionRequest $request)
     {
         if (!isset($this->options['cidrPattern'])) {
             throw new InvalidRequestPatternException('Missing option "cidrPattern" in the Ip request pattern configuration', 1446224520);

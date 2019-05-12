@@ -11,7 +11,7 @@ namespace Neos\Flow\Security\Authorization;
  * source code.
  */
 
-use Neos\Flow\Mvc\RequestInterface;
+use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Security\RequestPatternInterface;
 
 /**
@@ -66,10 +66,10 @@ class RequestFilter
     /**
      * Tries to match the given request against this filter and calls the set security interceptor on success.
      *
-     * @param RequestInterface $request The request to be matched
+     * @param ActionRequest $request The request to be matched
      * @return boolean Returns true if the filter matched, false otherwise
      */
-    public function filterRequest(RequestInterface $request)
+    public function filterRequest(ActionRequest $request)
     {
         if ($this->pattern->matchRequest($request)) {
             $this->securityInterceptor->invoke();

@@ -15,7 +15,6 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Core\LockManager;
 use Neos\Flow\Core\RequestHandlerInterface;
-use Neos\Flow\Mvc\Dispatcher;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Security\Context;
 
@@ -105,9 +104,15 @@ class CommandRequestHandler implements RequestHandlerInterface
             /** @var Context $securityContext */
             $securityContext = $this->objectManager->get(Context::class);
             $securityContext->withoutAuthorizationChecks(function () {
+                if (!$this->request instanceof Request) {
+                    die($this->request);
+                }
                 $this->dispatcher->dispatch($this->request, $this->response);
             });
         } else {
+            if (!$this->request instanceof Request) {
+                            die($this->request);
+            }
             $this->dispatcher->dispatch($this->request, $this->response);
         }
 

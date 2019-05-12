@@ -12,7 +12,6 @@ namespace Neos\Flow\Security\RequestPattern;
  */
 
 use Neos\Flow\Mvc\ActionRequest;
-use Neos\Flow\Mvc\RequestInterface;
 use Neos\Flow\Security\Exception\InvalidRequestPatternException;
 use Neos\Flow\Security\RequestPatternInterface;
 
@@ -39,11 +38,11 @@ class Uri implements RequestPatternInterface
     /**
      * Matches a \Neos\Flow\Mvc\RequestInterface against its set URL pattern rules
      *
-     * @param RequestInterface $request The request that should be matched
+     * @param ActionRequest $request The request that should be matched
      * @return boolean true if the pattern matched, false otherwise
      * @throws InvalidRequestPatternException
      */
-    public function matchRequest(RequestInterface $request)
+    public function matchRequest(ActionRequest $request)
     {
         if (!$request instanceof ActionRequest) {
             return false;

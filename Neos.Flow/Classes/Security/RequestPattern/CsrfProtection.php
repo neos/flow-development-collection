@@ -15,7 +15,6 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Helper\RequestInformationHelper;
 use Neos\Flow\Http\Helper\SecurityHelper;
 use Neos\Flow\Mvc\ActionRequest;
-use Neos\Flow\Mvc\RequestInterface;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Security\Authentication\AuthenticationManagerInterface;
@@ -82,11 +81,11 @@ class CsrfProtection implements RequestPatternInterface
      * Matches a \Neos\Flow\Mvc\RequestInterface against the configured CSRF pattern rules and
      * searches for invalid csrf tokens. If this returns true, the request is invalid!
      *
-     * @param RequestInterface $request The request that should be matched
+     * @param ActionRequest $request The request that should be matched
      * @return boolean true if the pattern matched, false otherwise
      * @throws AuthenticationRequiredException
      */
-    public function matchRequest(RequestInterface $request)
+    public function matchRequest(ActionRequest $request)
     {
         if (!$request instanceof ActionRequest || SecurityHelper::hasSafeMethod($request->getHttpRequest())) {
             $this->logger->debug('CSRF: No token required, safe request');

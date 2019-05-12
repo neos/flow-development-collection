@@ -27,6 +27,7 @@ use Neos\Flow\Mvc\Exception\UnsupportedRequestTypeException;
  * Controllers implementing this interface are compatible with the MVC Dispatcher.
  *
  * @api
+ * FIXME: Probably split between Mvc and Command Interface to be able to add typehints again
  */
 interface ControllerInterface
 {
@@ -41,5 +42,5 @@ interface ControllerInterface
      * @throws ForwardException
      * @api
      */
-    public function processRequest(ActionRequest $request, ActionResponse $response);
+    public function processRequest($request, $response);
 }

@@ -187,7 +187,7 @@ class ActionController extends AbstractController
      * @throws UnsupportedRequestTypeException
      * @api
      */
-    public function processRequest(ActionRequest $request, ActionResponse $response)
+    public function processRequest($request, $response)
     {
         $this->initializeController($request, $response);
 
