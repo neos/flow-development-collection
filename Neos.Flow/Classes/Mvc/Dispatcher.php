@@ -12,7 +12,6 @@ namespace Neos\Flow\Mvc;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Cli\Request as CliRequest;
 use Neos\Flow\Configuration\Exception\NoSuchOptionException;
 use Neos\Flow\Http\Component\SecurityEntryPointComponent;
 use Neos\Flow\Log\PsrLoggerFactoryInterface;
@@ -46,6 +45,16 @@ class Dispatcher
     protected $objectManager;
 
     /**
+     * @var Context
+     */
+    protected $securityContext;
+
+    /**
+     * @var FirewallInterface
+     */
+    protected $firewall;
+
+    /**
      * Inject the Object Manager through setter injection because property injection
      * is not available during compile time.
      *
@@ -55,6 +64,22 @@ class Dispatcher
     public function injectObjectManager(ObjectManagerInterface $objectManager)
     {
         $this->objectManager = $objectManager;
+    }
+
+    /**
+     * @param Context $context
+     */
+    public function injectSecurityContext(Context $context)
+    {
+        $this->securityContext = $context;
+    }
+
+    /**
+     * @param FirewallInterface $firewall
+     */
+    public function injectFirewall(FirewallInterface $firewall)
+    {
+        $this->firewall = $firewall;
     }
 
     /**
@@ -70,32 +95,19 @@ class Dispatcher
      * @throws NoSuchOptionException
      * @throws MissingConfigurationException
      * @api
-     * FIXME: Type hints and CLI vs Web
      */
     public function dispatch(ActionRequest $request, ActionResponse $response)
     {
-        if ($request instanceof CliRequest) {
-            $this->initiateDispatchLoop($request, $response);
-            return;
-        }
-
         // NOTE: The dispatcher is used for both Action- and CLI-Requests. For the latter case dispatching might happen during compile-time, that's why we can't inject the following dependencies
 
-        /** @var Context $securityContext */
-        $securityContext = $this->objectManager->get(Context::class);
-        if ($securityContext->areAuthorizationChecksDisabled()) {
+        if ($this->securityContext->areAuthorizationChecksDisabled()) {
             $this->initiateDispatchLoop($request, $response);
             return;
         }
-
-        /** @var FirewallInterface $firewall */
-        $firewall = $this->objectManager->get(FirewallInterface::class);
-        /** @var PsrLoggerFactoryInterface $securityLogger */
-        $securityLogger = $this->objectManager->get(PsrLoggerFactoryInterface::class)->get('securityLogger');
 
         try {
             /** @var ActionRequest $request */
-            $firewall->blockIllegalRequests($request);
+            $this->firewall->blockIllegalRequests($request);
             $this->initiateDispatchLoop($request, $response);
         } catch (AuthenticationRequiredException $exception) {
             /** @var ActionResponse $response */
@@ -106,6 +118,8 @@ class Dispatcher
             );
             return;
         } catch (AccessDeniedException $exception) {
+            /** @var PsrLoggerFactoryInterface $securityLogger */
+            $securityLogger = $this->objectManager->get(PsrLoggerFactoryInterface::class)->get('securityLogger');
             $securityLogger->warning('Access denied', LogEnvironment::fromMethodName(__METHOD__));
             throw $exception;
         }

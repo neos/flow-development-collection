@@ -15,6 +15,8 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Security\Exception\AccessDeniedException;
+use Neos\Flow\Security\Exception\AuthenticationRequiredException;
+use Neos\Flow\Security\Exception\NoTokensAuthenticatedException;
 use Neos\Flow\Security\RequestPatternInterface;
 use Neos\Flow\Security\RequestPatternResolver;
 
@@ -86,7 +88,7 @@ class FilterFirewall implements FirewallInterface
      *
      * @param ActionRequest $request The request to be analyzed
      * @return void
-     * @throws AccessDeniedException if the
+     * @throws AccessDeniedException
      */
     public function blockIllegalRequests(ActionRequest $request)
     {
