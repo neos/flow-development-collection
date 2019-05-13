@@ -33,7 +33,7 @@ class IfAccessViewHelperTest extends ViewHelperBaseTestcase
      */
     protected $mockPrivilegeManager;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->mockPrivilegeManager = $this->getMockBuilder(\Neos\Flow\Security\Authorization\PrivilegeManagerInterface::class)->disableOriginalConstructor()->getMock();
 

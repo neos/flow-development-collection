@@ -14,6 +14,7 @@ namespace Neos\Flow\Tests\Unit\I18n\Cldr\Reader;
 use Neos\Cache\Frontend\VariableFrontend;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Flow\I18n;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Testcase for the DatesReader
@@ -30,7 +31,7 @@ class DatesReaderTest extends UnitTestCase
     /**
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->sampleLocale = new I18n\Locale('en');
     }
@@ -39,10 +40,10 @@ class DatesReaderTest extends UnitTestCase
      * Setting cache expectations is partially same for many tests, so it's been
      * extracted to this method.
      *
-     * @param \PHPUnit_Framework_MockObject_MockObject $mockCache
+     * @param MockObject $mockCache
      * @return array
      */
-    public function createCacheExpectations(\PHPUnit_Framework_MockObject_MockObject $mockCache)
+    public function createCacheExpectations(MockObject $mockCache)
     {
         $mockCache->expects($this->at(0))->method('has')->with('parsedFormats')->will($this->returnValue(true));
         $mockCache->expects($this->at(1))->method('has')->with('parsedFormatsIndices')->will($this->returnValue(true));

@@ -50,7 +50,7 @@ class SchemaValidationTest extends FunctionalTestCase
      */
     protected $schemaValidator;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->schemaValidator = new SchemaValidator();

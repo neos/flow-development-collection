@@ -16,6 +16,7 @@ use Neos\Flow\Security\Authentication\Token\PasswordToken;
 use Neos\Flow\Security\Authentication\TokenInterface;
 use Neos\Flow\Security\Cryptography\FileBasedSimpleKeyService;
 use Neos\Flow\Security\Cryptography\HashService;
+use Neos\Flow\Security\Exception\UnsupportedAuthenticationTokenException;
 use Neos\Flow\Security\Policy\PolicyService;
 use Neos\Flow\Security\Policy\Role;
 use Neos\Flow\Tests\UnitTestCase;
@@ -61,7 +62,7 @@ class FileBasedSimpleKeyProviderTest extends UnitTestCase
      */
     protected $mockToken;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->mockRole = $this->getMockBuilder(Role::class)->disableOriginalConstructor()->getMock();
         $this->mockRole->expects($this->any())->method('getIdentifier')->will($this->returnValue('Neos.Flow:TestRoleIdentifier'));
@@ -161,10 +162,10 @@ class FileBasedSimpleKeyProviderTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Security\Exception\UnsupportedAuthenticationTokenException
      */
     public function authenticatingAnUnsupportedTokenThrowsAnException()
     {
+        $this->expectException(UnsupportedAuthenticationTokenException::class);
         $someInvalidToken = $this->createMock(TokenInterface::class);
 
         $authenticationProvider = FileBasedSimpleKeyProvider::create('myProvider', []);

@@ -13,6 +13,7 @@ namespace Neos\Flow\Tests\Functional\Persistence\Doctrine;
 
 use Neos\Flow\Persistence\Doctrine\PersistenceManager;
 use Neos\Flow\Persistence\Doctrine\Repository;
+use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
 use Neos\Flow\Persistence\QueryResultInterface;
 use Neos\Flow\Tests\Functional\Persistence\Fixtures;
 use Neos\Flow\Tests\FunctionalTestCase;
@@ -45,7 +46,7 @@ class RepositoryTest extends FunctionalTestCase
     /**
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         if (!$this->persistenceManager instanceof PersistenceManager) {
@@ -274,10 +275,10 @@ class RepositoryTest extends FunctionalTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Persistence\Exception\IllegalObjectTypeException
      */
     public function addingASuperTypeToAMoreSpecificRepositoryThrowsAnException()
     {
+        $this->expectException(IllegalObjectTypeException::class);
         $this->subSubEntityRepository = $this->objectManager->get(Fixtures\SubSubEntityRepository::class);
 
         $subEntity = new Fixtures\SubEntity();

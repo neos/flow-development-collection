@@ -11,6 +11,7 @@ namespace Neos\Flow\Tests\Functional\Property\TypeConverter;
  * source code.
  */
 
+use Neos\Flow\Property\Exception\InvalidTargetException;
 use Neos\Flow\Property\PropertyMappingConfiguration;
 use Neos\Flow\Property\TypeConverter\ObjectConverter;
 use Neos\Utility\ObjectAccess;
@@ -26,7 +27,7 @@ class ObjectConverterTest extends FunctionalTestCase
      */
     protected $converter;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->converter = $this->objectManager->get(ObjectConverter::class);
@@ -79,11 +80,11 @@ class ObjectConverterTest extends FunctionalTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Property\Exception\InvalidTargetException
-     * @expectedExceptionCode 1406821818
      */
     public function getTypeOfChildPropertyThrowsExceptionIfThatPropertyIsPubliclyPresentButHasNoProperTypeAnnotation()
     {
+        $this->expectExceptionCode(1406821818);
+        $this->expectException(InvalidTargetException::class);
         $this->converter->getTypeOfChildProperty(
             Fixtures\TestClass::class,
             'somePublicPropertyWithoutVarAnnotation',
@@ -172,10 +173,10 @@ class ObjectConverterTest extends FunctionalTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Property\Exception\InvalidTargetException
      */
     public function convertFromThrowsMeaningfulExceptionWhenTheTargetExpectsAnUnknownDependencyThatIsNotSpecifiedInTheSource()
     {
+        $this->expectException(InvalidTargetException::class);
         $this->converter->convertFrom(
             'irrelevant',
             \Neos\Flow\Tests\Functional\Property\Fixtures\TestClassWithThirdPartyClassConstructorInjection::class

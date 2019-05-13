@@ -13,6 +13,7 @@ namespace Neos\Flow\Tests\Unit\Security\Authentication;
 
 use Neos\Flow\ObjectManagement\ObjectManager;
 use Neos\Flow\Security\Authentication\AuthenticationProviderResolver;
+use Neos\Flow\Security\Exception\NoAuthenticationProviderFoundException;
 use Neos\Flow\Tests\UnitTestCase;
 
 /**
@@ -22,10 +23,10 @@ class AuthenticationProviderResolverTest extends UnitTestCase
 {
     /**
      * @test
-     * @expectedException \Neos\Flow\Security\Exception\NoAuthenticationProviderFoundException
      */
     public function resolveProviderObjectNameThrowsAnExceptionIfNoProviderIsAvailable()
     {
+        $this->expectException(NoAuthenticationProviderFoundException::class);
         $mockObjectManager = $this->getMockBuilder(ObjectManager::class)->disableOriginalConstructor()->getMock();
         $mockObjectManager->expects($this->any())->method('getClassNameByObjectName')->will($this->returnValue(false));
 

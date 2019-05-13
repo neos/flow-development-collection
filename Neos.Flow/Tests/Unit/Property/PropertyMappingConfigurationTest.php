@@ -32,7 +32,7 @@ class PropertyMappingConfigurationTest extends UnitTestCase
     /**
      * Initialization
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->propertyMappingConfiguration = new PropertyMappingConfiguration();
     }

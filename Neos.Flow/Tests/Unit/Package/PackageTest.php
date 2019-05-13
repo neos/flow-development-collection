@@ -12,6 +12,7 @@ namespace Neos\Flow\Tests\Unit\Package;
  */
 
 use Neos\Flow\Composer\ComposerUtility;
+use Neos\Flow\Composer\Exception\MissingPackageManifestException;
 use Neos\Flow\Package\Package;
 use org\bovigo\vfs\vfsStream;
 use Neos\Flow\Package\PackageManager;
@@ -31,7 +32,7 @@ class PackageTest extends UnitTestCase
 
     /**
      */
-    public function setUp()
+    protected function setUp(): void
     {
         ComposerUtility::flushCaches();
         vfsStream::setup('Packages');
@@ -87,10 +88,10 @@ class PackageTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Composer\Exception\MissingPackageManifestException
      */
     public function throwExceptionWhenSpecifyingAPathWithMissingComposerManifest()
     {
+        $this->expectException(MissingPackageManifestException::class);
         $packagePath = 'vfs://Packages/Some/Path/Some.Package/';
         mkdir($packagePath, 0777, true);
         $package = new Package('Some.Package', 'some/package', 'vfs://Packages/Some/Path/Some.Package/', []);

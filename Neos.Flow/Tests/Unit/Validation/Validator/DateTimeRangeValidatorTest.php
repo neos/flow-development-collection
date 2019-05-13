@@ -34,7 +34,7 @@ class DateTimeRangeValidatorTest extends AbstractValidatorTestcase
     /**
      * Sets up this test case
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->accessibleValidator = $this->getAccessibleMock(DateTimeRangeValidator::class, ['dummy']);
     }

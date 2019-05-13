@@ -87,7 +87,7 @@ class TextIteratorTest extends \PHPUnit\Framework\TestCase
             new TextIterator('Some string', 948);
             $this->fail('Constructor did not reject invalid TextIterator type.');
         } catch (Unicode\Exception $exception) {
-            $this->assertContains('Invalid iterator type in TextIterator constructor', $exception->getMessage(), 'Wrong error message.');
+            $this->assertStringContainsString('Invalid iterator type in TextIterator constructor', $exception->getMessage(), 'Wrong error message.');
         }
     }
 

@@ -12,6 +12,7 @@ namespace Neos\Flow\Tests\Unit\Core;
  */
 
 use Neos\Flow\Core\ApplicationContext;
+use Neos\Flow\Exception;
 use Neos\Flow\Tests\UnitTestCase;
 
 /**
@@ -65,10 +66,10 @@ class ApplicationContextTest extends UnitTestCase
     /**
      * @test
      * @dataProvider forbiddenContexts
-     * @expectedException \Neos\Flow\Exception
      */
     public function constructorThrowsExceptionIfMainContextIsForbidden($forbiddenContext)
     {
+        $this->expectException(Exception::class);
         new ApplicationContext($forbiddenContext);
     }
 

@@ -34,7 +34,7 @@ class XliffFileProviderTest extends FunctionalTestCase
     /**
      * Initialize dependencies
      */
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $cacheManager = $this->objectManager->get(CacheManager::class);

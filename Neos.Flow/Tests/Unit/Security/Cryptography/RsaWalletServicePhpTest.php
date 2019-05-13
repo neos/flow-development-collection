@@ -11,6 +11,7 @@ namespace Neos\Flow\Tests\Unit\Security\Cryptography;
  * source code.
  */
 
+use Neos\Flow\Security\Exception\DecryptionNotAllowedException;
 use org\bovigo\vfs\vfsStream;
 use Neos\Flow\Security\Cryptography\RsaWalletServicePhp;
 use Neos\Flow\Tests\UnitTestCase;
@@ -38,7 +39,7 @@ class RsaWalletServicePhpTest extends UnitTestCase
      *
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         vfsStream::setup('Foo');
         $settings['security']['cryptography']['RSAWalletServicePHP']['keystorePath'] = 'vfs://Foo/EncryptionKey';
@@ -105,10 +106,10 @@ class RsaWalletServicePhpTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Security\Exception\DecryptionNotAllowedException
      */
     public function decryptingWithAKeypairUUIDMarkedForPasswordUsageThrowsAnException()
     {
+        $this->expectException(DecryptionNotAllowedException::class);
         $this->keyPairUuid = $this->rsaWalletService->generateNewKeypair(true);
         $this->rsaWalletService->decrypt('some cipher', $this->keyPairUuid);
     }

@@ -24,7 +24,7 @@ class ResultTest extends \PHPUnit\Framework\TestCase
      */
     protected $result;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->result = new Result();
     }

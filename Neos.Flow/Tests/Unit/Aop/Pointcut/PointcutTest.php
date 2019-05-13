@@ -39,10 +39,10 @@ class PointcutTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Aop\Exception\CircularPointcutReferenceException
      */
     public function matchesDetectsCircularMatchesAndThrowsAndException()
     {
+        $this->expectException(Aop\Exception\CircularPointcutReferenceException::class);
         $pointcutExpression = 'ThePointcutExpression';
         $aspectClassName = 'TheAspect';
         $className = 'TheClass';

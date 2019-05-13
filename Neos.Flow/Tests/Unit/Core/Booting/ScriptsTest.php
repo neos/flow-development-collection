@@ -26,7 +26,7 @@ class ScriptsTest extends UnitTestCase
 
     /**
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->scriptsMock = $this->getAccessibleMock(Scripts::class, ['dummy']);
@@ -44,22 +44,22 @@ class ScriptsTest extends UnitTestCase
 
         $message = 'The command must contain the current ini because it is not explicitly set in settings.';
         $actual = $this->scriptsMock->_call('buildSubprocessCommand', 'flow:foo:identifier', $settings);
-        $this->assertContains(sprintf(' -c %s ', escapeshellarg(php_ini_loaded_file())), $actual, $message);
+        $this->assertStringContainsString(sprintf(' -c %s ', escapeshellarg(php_ini_loaded_file())), $actual, $message);
 
         $settings['core']['subRequestPhpIniPathAndFilename'] = null;
         $message = 'The command must contain the current ini because it is explicitly set, but NULL, in settings.';
         $actual = $this->scriptsMock->_call('buildSubprocessCommand', 'flow:foo:identifier', $settings);
-        $this->assertContains(sprintf(' -c %s ', escapeshellarg(php_ini_loaded_file())), $actual, $message);
+        $this->assertStringContainsString(sprintf(' -c %s ', escapeshellarg(php_ini_loaded_file())), $actual, $message);
 
         $settings['core']['subRequestPhpIniPathAndFilename'] = '/foo/ini/path';
         $message = 'The command must contain a specified ini file path because it is set in settings.';
         $actual = $this->scriptsMock->_call('buildSubprocessCommand', 'flow:foo:identifier', $settings);
-        $this->assertContains(sprintf(' -c %s ', escapeshellarg('/foo/ini/path')), $actual, $message);
+        $this->assertStringContainsString(sprintf(' -c %s ', escapeshellarg('/foo/ini/path')), $actual, $message);
 
         $settings['core']['subRequestPhpIniPathAndFilename'] = false;
         $message = 'The command must not contain an ini file path because it is set to false in settings.';
         $actual = $this->scriptsMock->_call('buildSubprocessCommand', 'flow:foo:identifier', $settings);
-        $this->assertNotContains(' -c ', $actual, $message);
+        $this->assertStringNotContainsString(' -c ', $actual, $message);
     }
 
     /**
@@ -74,7 +74,7 @@ class ScriptsTest extends UnitTestCase
         ]];
         $actual = $this->scriptsMock->_call('buildSubprocessCommand', 'flow:foo:identifier', $settings);
 
-        $this->assertContains(sprintf(' -d %s=%s ', escapeshellarg('someSetting'), escapeshellarg('withValue')), $actual);
-        $this->assertContains(sprintf(' -d %s ', escapeshellarg('someFlagSettingWithoutValue')), $actual);
+        $this->assertStringContainsString(sprintf(' -d %s=%s ', escapeshellarg('someSetting'), escapeshellarg('withValue')), $actual);
+        $this->assertStringContainsString(sprintf(' -d %s ', escapeshellarg('someFlagSettingWithoutValue')), $actual);
     }
 }

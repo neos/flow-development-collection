@@ -35,7 +35,7 @@ class RoutingTest extends FunctionalTestCase
     /**
      * Validate that test routes are loaded
      */
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

@@ -25,7 +25,7 @@ class TypedArrayConverterTest extends UnitTestCase
      */
     protected $converter;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->converter = new TypedArrayConverter();
     }

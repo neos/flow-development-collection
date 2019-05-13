@@ -12,6 +12,7 @@ namespace Neos\Flow\Tests\Unit\Validation\Validator;
  */
 
 use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Validation\Exception\NoSuchValidatorException;
 use Neos\Flow\Validation\Validator\ConjunctionValidator;
 use Neos\Flow\Validation\Validator\ValidatorInterface;
 use Neos\Error\Messages as Error;
@@ -115,10 +116,10 @@ class ConjunctionValidatorTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Validation\Exception\NoSuchValidatorException
      */
     public function removingANotExistingValidatorIndexThrowsException()
     {
+        $this->expectException(NoSuchValidatorException::class);
         $validatorConjunction = new ConjunctionValidator([]);
         $validator = $this->createMock(ValidatorInterface::class);
         $validatorConjunction->removeValidator($validator);

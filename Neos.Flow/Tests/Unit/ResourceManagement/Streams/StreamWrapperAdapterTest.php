@@ -31,7 +31,7 @@ class StreamWrapperAdapterTest extends UnitTestCase
     protected $mockStreamWrapper;
 
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->streamWrapperAdapter = $this->getAccessibleMock(StreamWrapperAdapter::class, ['createStreamWrapper']);
         $this->mockStreamWrapper = $this->createMock(StreamWrapperInterface::class);

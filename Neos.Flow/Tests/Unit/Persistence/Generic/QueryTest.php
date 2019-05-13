@@ -40,7 +40,7 @@ class QueryTest extends UnitTestCase
      * Sets up this test case
      *
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->reflectionService = $this->createMock(ReflectionService::class);
         $this->objectManager = $this->createMock(ObjectManagerInterface::class);
@@ -59,37 +59,37 @@ class QueryTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
      */
     public function setLimitAcceptsOnlyIntegers()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $this->query->setLimit(1.5);
     }
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
      */
     public function setLimitRejectsIntegersLessThanOne()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $this->query->setLimit(0);
     }
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
      */
     public function setOffsetAcceptsOnlyIntegers()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $this->query->setOffset(1.5);
     }
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
      */
     public function setOffsetRejectsIntegersLessThanZero()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $this->query->setOffset(-1);
     }
 }
