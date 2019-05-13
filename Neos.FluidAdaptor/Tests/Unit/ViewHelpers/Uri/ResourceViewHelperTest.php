@@ -57,7 +57,7 @@ class ResourceViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\V
             [Service::class, $this->mockI18nService],
             [ResourceManager::class, $this->mockResourceManager]
         ]));
-        $this->viewHelper = $this->getAccessibleMock(ResourceViewHelper::class, ['renderChildren', 'registerRenderMethodArguments'], [], '', false);
+        $this->viewHelper = $this->getAccessibleMock(ResourceViewHelper::class, ['renderChildren'], [], '', false);
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
         $this->renderingContext->injectObjectManager($this->objectManagerMock);
     }
