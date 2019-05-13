@@ -14,8 +14,6 @@ namespace Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Security;
 use GuzzleHttp\Psr7\ServerRequest;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\FluidAdaptor\Core\Rendering\RenderingContext;
-use Neos\Flow\Http\Request;
-use Neos\Flow\Http\Uri;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Security\Context;
 use Neos\Flow\Security\Policy\PolicyService;

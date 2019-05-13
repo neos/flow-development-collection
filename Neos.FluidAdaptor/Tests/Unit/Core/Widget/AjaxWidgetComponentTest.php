@@ -14,7 +14,6 @@ namespace Neos\FluidAdaptor\Tests\Unit\Core\Widget;
 use GuzzleHttp\Psr7\Response;
 use Neos\Flow\Http\Component\ComponentChain;
 use Neos\Flow\Http\Component\ComponentContext;
-use Neos\Flow\Http;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\DispatchComponent;
 use Neos\Flow\Mvc\Dispatcher;

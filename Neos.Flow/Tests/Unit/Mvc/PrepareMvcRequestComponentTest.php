@@ -298,5 +298,4 @@ class PrepareMvcRequestComponentTest extends UnitTestCase
         ]);
         $this->prepareMvcRequestComponent->handle($this->mockComponentContext);
     }
-
 }
