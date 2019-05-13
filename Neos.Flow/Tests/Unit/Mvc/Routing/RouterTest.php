@@ -14,6 +14,7 @@ namespace Neos\Flow\Tests\Unit\Mvc\Routing;
 use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Http\ServerRequestAttributes;
+use Neos\Flow\Mvc\Exception\InvalidRouteSetupException;
 use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
 use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
 use Neos\Flow\Mvc\Routing\Dto\ResolveContext;
@@ -67,7 +68,7 @@ class RouterTest extends UnitTestCase
     /**
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->router = $this->getAccessibleMock(Router::class, ['dummy']);
 
@@ -163,10 +164,10 @@ class RouterTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Mvc\Exception\InvalidRouteSetupException
      */
     public function createRoutesFromConfigurationThrowsExceptionIfOnlySomeRoutesWithTheSameUriPatternHaveHttpMethodConstraints()
     {
+        $this->expectException(InvalidRouteSetupException::class);
         $routesConfiguration = [
             [
                 'uriPattern' => 'somePattern'
@@ -213,10 +214,10 @@ class RouterTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Mvc\Exception\NoMatchingRouteException
      */
     public function resolveThrowsExceptionIfNoMatchingRouteWasFound()
     {
+        $this->expectException(NoMatchingRouteException::class);
         /** @var Router|\PHPUnit_Framework_MockObject_MockObject $router */
         $router = $this->getAccessibleMock(Router::class, ['createRoutesFromConfiguration']);
         $this->inject($router, 'routerCachingService', $this->mockRouterCachingService);

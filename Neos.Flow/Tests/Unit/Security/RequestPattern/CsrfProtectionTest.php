@@ -40,7 +40,7 @@ class CsrfProtectionTest extends UnitTestCase
      */
     protected $mockSystemLogger;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

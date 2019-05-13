@@ -23,7 +23,7 @@ class JsonFileBackendTest extends UnitTestCase
 {
     /**
      */
-    public function setUp()
+    protected function setUp(): void
     {
         vfsStream::setup('testDirectory');
     }

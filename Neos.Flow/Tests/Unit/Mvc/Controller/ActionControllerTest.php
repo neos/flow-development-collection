@@ -52,7 +52,7 @@ class ActionControllerTest extends UnitTestCase
      */
     protected $mockControllerContext;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->actionController = $this->getAccessibleMock(ActionController::class, ['dummy']);
 
@@ -128,10 +128,10 @@ class ActionControllerTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException  \Neos\Flow\Mvc\Exception\NoSuchActionException
      */
     public function processRequestThrowsExceptionIfRequestedActionIsNotCallable()
     {
+        $this->expectException(Mvc\Exception\NoSuchActionException::class);
         $this->actionController = new ActionController();
 
         $this->inject($this->actionController, 'objectManager', $this->mockObjectManager);
@@ -152,10 +152,10 @@ class ActionControllerTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException  \Neos\Flow\Mvc\Exception\InvalidActionVisibilityException
      */
     public function processRequestThrowsExceptionIfRequestedActionIsNotPublic()
     {
+        $this->expectException(Mvc\Exception\InvalidActionVisibilityException::class);
         $this->actionController = new ActionController();
 
         $this->inject($this->actionController, 'objectManager', $this->mockObjectManager);
@@ -248,10 +248,10 @@ class ActionControllerTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Mvc\Exception\ViewNotFoundException
      */
     public function resolveViewThrowsExceptionIfResolvedViewDoesNotImplementViewInterface()
     {
+        $this->expectException(Mvc\Exception\ViewNotFoundException::class);
         $this->mockObjectManager->expects($this->any())->method('getCaseSensitiveObjectName')->will($this->returnValue(false));
         $this->actionController->_set('defaultViewObjectName', 'ViewDefaultObjectName');
         $this->actionController->_call('resolveView');

@@ -33,7 +33,7 @@ class UniqueEntityValidatorTest extends \Neos\Flow\Tests\FunctionalTestCase
     /**
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         if (!$this->persistenceManager instanceof \Neos\Flow\Persistence\Doctrine\PersistenceManager) {

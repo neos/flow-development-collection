@@ -23,7 +23,7 @@ class RadioViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Form
      */
     protected $viewHelper;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\Form\RadioViewHelper::class, ['setErrorClassAttribute', 'getName', 'getValueAttribute', 'isObjectAccessorMode', 'getPropertyValue', 'registerFieldNameForFormTokenGeneration', 'registerRenderMethodArguments']);

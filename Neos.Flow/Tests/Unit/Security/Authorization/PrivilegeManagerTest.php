@@ -67,7 +67,7 @@ class PrivilegeManagerTest extends UnitTestCase
     /**
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->mockSecurityContext = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
         $this->mockObjectManager = $this->getMockBuilder(ObjectManagerInterface::class)->getMock();

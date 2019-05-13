@@ -42,7 +42,7 @@ class IfHasRoleViewHelperTest extends ViewHelperBaseTestcase
      */
     protected $mockPolicyService;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->mockViewHelper = $this->getMockBuilder(\Neos\FluidAdaptor\ViewHelpers\Security\IfHasRoleViewHelper::class)->setMethods([

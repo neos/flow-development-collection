@@ -40,7 +40,7 @@ class JsonViewTest extends UnitTestCase
      * Sets up this test case
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->view = $this->getMockBuilder(Mvc\View\JsonView::class)->setMethods(['loadConfigurationFromYamlFile'])->getMock();
         $this->controllerContext = $this->getMockBuilder(Mvc\Controller\ControllerContext::class)->disableOriginalConstructor()->getMock();

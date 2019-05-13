@@ -82,10 +82,10 @@ class ArraysTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
      */
     public function getValueByPathThrowsExceptionIfPathIsNoArrayOrString()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $array = ['Foo' => ['Bar' => ['Baz' => [2 => 'the value']]]];
         Arrays::getValueByPath($array, null);
     }
@@ -174,30 +174,30 @@ class ArraysTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
      */
     public function setValueByPathThrowsExceptionIfPathIsNoArrayOrString()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $array = ['Foo' => ['Bar' => ['Baz' => [2 => 'the value']]]];
         Arrays::setValueByPath($array, null, 'Some Value');
     }
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
      */
     public function setValueByPathThrowsExceptionIfSubjectIsNoArray()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $subject = 'foobar';
         Arrays::setValueByPath($subject, 'foo', 'bar');
     }
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
      */
     public function setValueByPathThrowsExceptionIfSubjectIsNoArrayAccess()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $subject = new \stdClass();
         Arrays::setValueByPath($subject, 'foo', 'bar');
     }
@@ -265,10 +265,10 @@ class ArraysTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
      */
     public function unsetValueByPathThrowsExceptionIfPathIsNoArrayOrString()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $array = ['Foo' => ['Bar' => ['Baz' => [2 => 'the value']]]];
         Arrays::unsetValueByPath($array, null);
     }

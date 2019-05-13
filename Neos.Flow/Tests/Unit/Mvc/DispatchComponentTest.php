@@ -78,7 +78,7 @@ class DispatchComponentTest extends UnitTestCase
     /**
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->dispatchComponent = new DispatchComponent();
 

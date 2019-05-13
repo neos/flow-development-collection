@@ -10,6 +10,9 @@ namespace Neos\Flow\Tests\Unit\Mvc\Routing;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+use Neos\Flow\Mvc\Exception\InfiniteLoopException;
+use Neos\Flow\Mvc\Exception\InvalidUriPatternException;
 use Neos\Flow\Mvc\Routing\IdentityRoutePart;
 use Neos\Flow\Mvc\Routing\ObjectPathMapping;
 use Neos\Flow\Mvc\Routing\ObjectPathMappingRepository;
@@ -51,7 +54,7 @@ class IdentityRoutePartTest extends UnitTestCase
     /**
      * Sets up this test case
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->identityRoutePart = $this->getAccessibleMock(IdentityRoutePart::class, ['createPathSegmentForObject']);
 
@@ -470,10 +473,10 @@ class IdentityRoutePartTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Mvc\Exception\InfiniteLoopException
      */
     public function resolveValueThrowsInfiniteLoopExceptionIfNoUniquePathSegmentCantBeFound()
     {
+        $this->expectException(InfiniteLoopException::class);
         $object = new \stdClass();
         $this->mockPersistenceManager->expects($this->atLeastOnce())->method('getIdentifierByObject')->with($object)->will($this->returnValue('TheIdentifier'));
         $this->mockPersistenceManager->expects($this->atLeastOnce())->method('getObjectByIdentifier')->with('TheIdentifier')->will($this->returnValue($object));
@@ -538,10 +541,10 @@ class IdentityRoutePartTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Mvc\Exception\InvalidUriPatternException
      */
     public function createPathSegmentForObjectThrowsInvalidUriPatterExceptionIfItSpecifiedPropertiesContainObjects()
     {
+        $this->expectException(InvalidUriPatternException::class);
         $identityRoutePart = $this->getAccessibleMock(IdentityRoutePart::class, ['dummy']);
         $object = new \stdClass();
         $object->objectProperty = new \stdClass();

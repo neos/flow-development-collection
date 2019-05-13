@@ -29,7 +29,7 @@ class AbstractConditionViewHelperTest extends ViewHelperBaseTestcase
      */
     protected $viewHelper;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->viewHelper = $this->getAccessibleMock(AbstractConditionViewHelper::class, ['getRenderingContext', 'renderChildren', 'hasArgument']);

@@ -36,10 +36,10 @@ class PropertyReflectionTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Reflection\Exception
      */
     public function getValueThrowsAnExceptionOnReflectingANonObject()
     {
+        $this->expectException(Reflection\Exception::class);
         $reflectionProperty = new Reflection\PropertyReflection(__CLASS__, 'protectedProperty');
         $reflectionProperty->getValue(__CLASS__);
     }

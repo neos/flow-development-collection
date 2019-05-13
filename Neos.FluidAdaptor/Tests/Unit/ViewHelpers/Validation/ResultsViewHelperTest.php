@@ -24,7 +24,7 @@ class ResultsViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Vi
      */
     protected $viewHelper;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->viewHelper = $this->getMockBuilder(\Neos\FluidAdaptor\ViewHelpers\Validation\ResultsViewHelper::class)

@@ -62,10 +62,10 @@ class CookieTest extends UnitTestCase
      * @param string  $cookieName
      * @test
      * @dataProvider invalidCookieNames
-     * @expectedException \InvalidArgumentException
      */
     public function constructorThrowsExceptionOnInvalidCookieNames($cookieName)
     {
+        $this->expectException(\InvalidArgumentException::class);
         new Cookie($cookieName);
     }
 
@@ -117,10 +117,10 @@ class CookieTest extends UnitTestCase
      * @param mixed $parameter
      * @test
      * @dataProvider invalidExpiresParameters
-     * @expectedException \InvalidArgumentException
      */
     public function constructorThrowsExceptionOnInvalidExpiresParameter($parameter)
     {
+        $this->expectException(\InvalidArgumentException::class);
         new Cookie('foo', 'bar', $parameter);
     }
 
@@ -141,10 +141,10 @@ class CookieTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
      */
     public function constructorThrowsExceptionOnInvalidMaximumAgeParameter()
     {
+        $this->expectException(\InvalidArgumentException::class);
         new Cookie('foo', 'bar', 0, 'urks');
     }
 
@@ -179,10 +179,10 @@ class CookieTest extends UnitTestCase
      * @param mixed $domain
      * @test
      * @dataProvider invalidDomains
-     * @expectedException \InvalidArgumentException
      */
     public function constructorThrowsExceptionOnInvalidDomain($domain)
     {
+        $this->expectException(\InvalidArgumentException::class);
         new Cookie('foo', 'bar', 0, null, $domain);
     }
 
@@ -212,10 +212,10 @@ class CookieTest extends UnitTestCase
      * @param mixed $path
      * @test
      * @dataProvider invalidPaths
-     * @expectedException \InvalidArgumentException
      */
     public function constructorThrowsExceptionOnInvalidPath($path)
     {
+        $this->expectException(\InvalidArgumentException::class);
         new Cookie('foo', 'bar', 0, null, null, $path);
     }
 

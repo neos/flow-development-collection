@@ -44,7 +44,7 @@ class RouteContextTest extends UnitTestCase
      */
     private $mockUri2;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->mockHttpRequest1 = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
 

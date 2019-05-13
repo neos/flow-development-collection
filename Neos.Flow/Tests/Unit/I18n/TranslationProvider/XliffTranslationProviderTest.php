@@ -52,7 +52,7 @@ class XliffTranslationProviderTest extends UnitTestCase
     /**
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->samplePackageKey = 'Neos.Flow';
         $this->sampleSourceName = 'Foo';
@@ -113,10 +113,10 @@ class XliffTranslationProviderTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\I18n\TranslationProvider\Exception\InvalidPluralFormException
      */
     public function getTranslationByOriginalLabelThrowsExceptionWhenInvalidPluralFormProvided()
     {
+        $this->expectException(I18n\TranslationProvider\Exception\InvalidPluralFormException::class);
         $this->mockPluralsReader->expects($this->any())
             ->method('getPluralForms')
             ->with($this->sampleLocale)
@@ -130,10 +130,10 @@ class XliffTranslationProviderTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\I18n\TranslationProvider\Exception\InvalidPluralFormException
      */
     public function getTranslationByIdThrowsExceptionWhenInvalidPluralFormProvided()
     {
+        $this->expectException(I18n\TranslationProvider\Exception\InvalidPluralFormException::class);
         $this->mockPluralsReader->expects($this->any())
             ->method('getPluralForms')
             ->with($this->sampleLocale)

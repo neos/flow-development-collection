@@ -34,10 +34,10 @@ class XliffParserTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\I18n\Xliff\Exception\InvalidXliffDataException
      */
     public function missingIdInSingularTransUnitCausesException()
     {
+        $this->expectException(I18n\Xliff\Exception\InvalidXliffDataException::class);
         $mockFilenamePath = __DIR__ . '/../../Fixtures/MockInvalidXliffData.xlf';
 
         $parser = new I18n\Xliff\V12\XliffParser();
@@ -46,10 +46,10 @@ class XliffParserTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\I18n\Xliff\Exception\InvalidXliffDataException
      */
     public function missingIdInPluralTransUnitCausesException()
     {
+        $this->expectException(I18n\Xliff\Exception\InvalidXliffDataException::class);
         $mockFilenamePath = __DIR__ . '/../../Fixtures/MockInvalidPluralXliffData.xlf';
 
         $parser = new I18n\Xliff\V12\XliffParser();

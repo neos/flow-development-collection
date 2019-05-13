@@ -29,7 +29,7 @@ class HtmlentitiesViewHelperTest extends ViewHelperBaseTestcase
      */
     protected $viewHelper;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->viewHelper = $this->getMockBuilder(\Neos\FluidAdaptor\ViewHelpers\Format\HtmlentitiesViewHelper::class)->setMethods(['renderChildren', 'registerRenderMethodArguments'])->getMock();
@@ -162,10 +162,10 @@ class HtmlentitiesViewHelperTest extends ViewHelperBaseTestcase
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
      */
     public function renderDoesNotModifySourceIfItIsAnObjectThatCantBeConvertedToAString()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $user = new UserWithoutToString('Xaver <b>Cross-Site</b>');
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['value' => $user]);
         $this->viewHelper->render();

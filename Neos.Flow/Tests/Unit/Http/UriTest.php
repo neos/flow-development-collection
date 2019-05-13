@@ -149,10 +149,10 @@ class UriTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
      */
     public function settingInvalidHostThrowsException()
     {
+        $this->expectException(\InvalidArgumentException::class);
         (new Uri(''))->withHost('an#invalid.host');
     }
 
@@ -177,19 +177,19 @@ class UriTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
      */
     public function constructingWithNotAStringThrowsException()
     {
+        $this->expectException(\InvalidArgumentException::class);
         new Uri(42);
     }
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
      */
     public function unparsableUriStringThrowsException()
     {
+        $this->expectException(\InvalidArgumentException::class);
         new Uri('http:////localhost');
     }
 }

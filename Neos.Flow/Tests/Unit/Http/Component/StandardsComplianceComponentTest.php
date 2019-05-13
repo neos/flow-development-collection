@@ -39,7 +39,7 @@ class StandardsComplianceComponentTest extends UnitTestCase
      */
     protected $mockHttpResponse;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->mockHttpRequest = $this->getMockBuilder(Http\Request::class)->disableOriginalConstructor()->getMock();
         $this->response = new Http\Response();

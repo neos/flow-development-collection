@@ -13,6 +13,8 @@ namespace Neos\Flow\Tests\Unit\Session;
 
 use Neos\Http\Factories\ServerRequestFactory;
 use Neos\Http\Factories\UriFactory;
+use Neos\Flow\Session\Exception\DataNotSerializableException;
+use Neos\Flow\Session\Exception\OperationNotSupportedException;
 use org\bovigo\vfs\vfsStream;
 use Neos\Cache\Backend\FileBackend;
 use Neos\Cache\EnvironmentConfiguration;
@@ -84,7 +86,7 @@ class SessionTest extends UnitTestCase
     /**
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setup();
 
@@ -122,10 +124,10 @@ class SessionTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
      */
     public function constructRequiresAStorageIdentifierIfASessionIdentifierWasGiven()
     {
+        $this->expectException(\InvalidArgumentException::class);
         new Session('ZPjPj3A0Opd7JeDoe7rzUQYCoDMcxscb');
     }
 
@@ -328,10 +330,10 @@ class SessionTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Session\Exception\SessionNotStartedException
      */
     public function renewIdThrowsExceptionIfCalledOnNonStartedSession()
     {
+        $this->expectException(SessionNotStartedException::class);
         $session = new Session();
         $this->inject($session, 'settings', $this->settings);
         $this->inject($session, 'metaDataCache', $this->createCache('Meta'));
@@ -342,10 +344,10 @@ class SessionTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Session\Exception\OperationNotSupportedException
      */
     public function renewIdThrowsExceptionIfCalledOnRemoteSession()
     {
+        $this->expectException(OperationNotSupportedException::class);
         $storageIdentifier = '6e988eaa-7010-4ee8-bfb8-96ea4b40ec16';
         $session = new Session('ZPjPj3A0Opd7JeDoe7rzUQYCoDMcxscb', $storageIdentifier, 1354293259, []);
         $this->inject($session, 'settings', $this->settings);
@@ -391,30 +393,30 @@ class SessionTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Session\Exception\SessionNotStartedException
      */
     public function getDataThrowsExceptionIfSessionIsNotStarted()
     {
+        $this->expectException(SessionNotStartedException::class);
         $session = new Session();
         $session->getData('some key');
     }
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Session\Exception\SessionNotStartedException
      */
     public function putDataThrowsExceptionIfSessionIsNotStarted()
     {
+        $this->expectException(SessionNotStartedException::class);
         $session = new Session();
         $session->putData('some key', 'some value');
     }
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Session\Exception\DataNotSerializableException
      */
     public function putDataThrowsExceptionIfTryingToPersistAResource()
     {
+        $this->expectException(DataNotSerializableException::class);
         $session = new Session();
         $this->inject($session, 'settings', $this->settings);
         $this->inject($session, 'metaDataCache', $this->createCache('Meta'));
@@ -447,10 +449,10 @@ class SessionTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Session\Exception\SessionNotStartedException
      */
     public function hasKeyThrowsExceptionIfCalledOnNonStartedSession()
     {
+        $this->expectException(SessionNotStartedException::class);
         $session = new Session();
         $session->hasKey('foo');
     }
@@ -486,10 +488,10 @@ class SessionTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Session\Exception\SessionNotStartedException
      */
     public function getLastActivityTimestampThrowsExceptionIfCalledOnNonStartedSession()
     {
+        $this->expectException(SessionNotStartedException::class);
         $session = new Session();
         $session->getLastActivityTimestamp();
     }
@@ -524,20 +526,20 @@ class SessionTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Session\Exception\SessionNotStartedException
      */
     public function addTagThrowsExceptionIfCalledOnNonStartedSession()
     {
+        $this->expectException(SessionNotStartedException::class);
         $session = new Session();
         $session->addTag('MyTag');
     }
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
      */
     public function addTagThrowsExceptionIfTagIsNotValid()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $taggedSession = new Session();
         $this->inject($taggedSession, 'settings', $this->settings);
         $this->inject($taggedSession, 'metaDataCache', $this->createCache('Meta'));
@@ -665,20 +667,20 @@ class SessionTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Session\Exception\SessionNotStartedException
      */
     public function getTagsThrowsExceptionIfCalledOnNonStartedSession()
     {
+        $this->expectException(SessionNotStartedException::class);
         $session = new Session();
         $session->getTags();
     }
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Session\Exception\SessionNotStartedException
      */
     public function removeTagThrowsExceptionIfCalledOnNonStartedSession()
     {
+        $this->expectException(SessionNotStartedException::class);
         $session = new Session();
         $session->removeTag('MyTag');
     }
@@ -709,10 +711,10 @@ class SessionTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Session\Exception\SessionNotStartedException
      */
     public function touchThrowsExceptionIfCalledOnNonStartedSession()
     {
+        $this->expectException(SessionNotStartedException::class);
         $session = new Session();
         $session->touch();
     }
@@ -859,10 +861,10 @@ class SessionTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Session\Exception\SessionNotStartedException
      */
     public function destroyThrowsExceptionIfSessionIsNotStarted()
     {
+        $this->expectException(SessionNotStartedException::class);
         $session = new Session();
         $session->destroy();
     }

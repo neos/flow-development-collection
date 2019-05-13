@@ -17,6 +17,7 @@ use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Http\ServerRequestAttributes;
 use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Flow\Security\Authentication\EntryPoint\WebRedirect;
+use Neos\Flow\Security\Exception\MissingConfigurationException;
 use Neos\Flow\Tests\UnitTestCase;
 
 /**
@@ -26,10 +27,10 @@ class WebRedirectTest extends UnitTestCase
 {
     /**
      * @test
-     * @expectedException \Neos\Flow\Security\Exception\MissingConfigurationException
      */
     public function startAuthenticationThrowsAnExceptionIfTheConfigurationOptionsAreMissing()
     {
+        $this->expectException(MissingConfigurationException::class);
         $request = new ServerRequest('GET', new Uri('http://robertlemke.com/admin'));
         $response = new Response();
 
@@ -75,10 +76,10 @@ class WebRedirectTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Security\Exception\MissingConfigurationException
      */
     public function startAuthenticationThrowsAnExceptionIfTheConfiguredRoutePartsAreInvalid()
     {
+        $this->expectException(MissingConfigurationException::class);
         $request = new ServerRequest('GET', new Uri('http://robertlemke.com/admin'));
         $response = new Response();
 

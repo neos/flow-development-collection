@@ -27,7 +27,7 @@ class StringConverterTest extends UnitTestCase
      */
     protected $converter;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->converter = new StringConverter();
     }

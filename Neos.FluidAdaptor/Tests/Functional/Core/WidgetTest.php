@@ -21,7 +21,7 @@ class WidgetTest extends \Neos\Flow\Tests\FunctionalTestCase
     /**
      * Additional setup: Routes
      */
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

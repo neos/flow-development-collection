@@ -46,7 +46,7 @@ class DatetimeFormatterTest extends UnitTestCase
     /**
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->sampleLocale = new I18n\Locale('en');
         $this->sampleLocalizedLiterals = require(__DIR__ . '/../Fixtures/MockLocalizedLiteralsArray.php');

@@ -15,7 +15,10 @@ use Neos\Flow\Cache\CacheManager;
 use Neos\Flow\Http\Uri;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Tests\FunctionalTestCase;
+use Neos\FluidAdaptor\Core\ViewHelper\Exception\WrongEnctypeException;
 use Neos\FluidAdaptor\Tests\Functional\View\Fixtures\View\StandaloneView;
+use Neos\FluidAdaptor\View\Exception\InvalidTemplateResourceException;
+use TYPO3Fluid\Fluid\Core\Parser\UnknownNamespaceException;
 
 /**
  * Testcase for Standalone View
@@ -78,10 +81,10 @@ class StandaloneViewTest extends FunctionalTestCase
 
     /**
      * @test
-     * @expectedException \Neos\FluidAdaptor\View\Exception\InvalidTemplateResourceException
      */
     public function renderThrowsExceptionIfNeitherTemplateSourceNorTemplatePathAndFilenameAreSpecified()
     {
+        $this->expectException(InvalidTemplateResourceException::class);
         $httpRequest = new Request('GET', new Uri('http://localhost'));
         $actionRequest = new ActionRequest($httpRequest);
 
@@ -91,10 +94,10 @@ class StandaloneViewTest extends FunctionalTestCase
 
     /**
      * @test
-     * @expectedException \Neos\FluidAdaptor\View\Exception\InvalidTemplateResourceException
      */
     public function renderThrowsExceptionSpecifiedTemplatePathAndFilenameDoesNotExist()
     {
+        $this->expectException(InvalidTemplateResourceException::class);
         $httpRequest = new Request('GET', new Uri('http://localhost'));
         $actionRequest = new ActionRequest($httpRequest);
 
@@ -105,10 +108,10 @@ class StandaloneViewTest extends FunctionalTestCase
 
     /**
      * @test
-     * @expectedException \Neos\FluidAdaptor\Core\ViewHelper\Exception\WrongEnctypeException
      */
     public function renderThrowsExceptionIfWrongEnctypeIsSetForFormUpload()
     {
+        $this->expectException(WrongEnctypeException::class);
         $httpRequest = new Request('GET', new Uri('http://localhost'));
         $actionRequest = new ActionRequest($httpRequest);
 
@@ -119,10 +122,10 @@ class StandaloneViewTest extends FunctionalTestCase
 
     /**
      * @test
-     * @expectedException \Neos\FluidAdaptor\View\Exception\InvalidTemplateResourceException
      */
     public function renderThrowsExceptionIfSpecifiedTemplatePathAndFilenamePointsToADirectory()
     {
+        $this->expectException(InvalidTemplateResourceException::class);
         $request = new Request('GET', new Uri('http://localhost'));
         $actionRequest = new ActionRequest($request);
 
@@ -248,10 +251,10 @@ class StandaloneViewTest extends FunctionalTestCase
 
     /**
      * @test
-     * @expectedException \TYPO3Fluid\Fluid\Core\Parser\UnknownNamespaceException
      */
     public function viewThrowsExceptionWhenUnknownViewHelperIsCalled()
     {
+        $this->expectException(UnknownNamespaceException::class);
         $httpRequest = new Request('GET', new Uri('http://localhost'));
         $actionRequest = new ActionRequest($httpRequest);
         $actionRequest->setFormat('txt');

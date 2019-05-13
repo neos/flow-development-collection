@@ -46,7 +46,7 @@ class MathHelperTest extends \Neos\Flow\Tests\UnitTestCase
         if ($expected === static::NAN) {
             $this->assertTrue(is_nan($result), 'Expected NAN');
         } else {
-            $this->assertEquals($expected, $result, 'Rounded value did not match', 0.0001);
+            $this->assertEqualsWithDelta($expected, $result, 0.0001, 'Rounded value did not match');
         }
     }
 
@@ -76,7 +76,7 @@ class MathHelperTest extends \Neos\Flow\Tests\UnitTestCase
             'Math' => $helper
         ]);
         $result = $evaluator->evaluate($method, $context);
-        $this->assertEquals($expected, $result, 'Rounded value did not match', 0.001);
+        $this->assertEqualsWithDelta($expected, $result, 0.001, 'Rounded value did not match');
     }
 
     public function trigonometricExamples()
@@ -110,7 +110,7 @@ class MathHelperTest extends \Neos\Flow\Tests\UnitTestCase
             'Math' => $helper
         ]);
         $result = $evaluator->evaluate($method, $context);
-        $this->assertEquals($expected, $result, 'Rounded value did not match', 0.001);
+        $this->assertEqualsWithDelta($expected, $result, 0.001, 'Rounded value did not match');
     }
 
     public function variousExamples()
@@ -213,7 +213,7 @@ class MathHelperTest extends \Neos\Flow\Tests\UnitTestCase
         if ($expected === static::NAN) {
             $this->assertTrue(is_nan($result), 'Expected NAN, got value "' . $result . '"');
         } else {
-            $this->assertEquals($expected, $result, 'Rounded value did not match', 0.001);
+            $this->assertEqualsWithDelta($expected, $result, 0.001, 'Rounded value did not match');
         }
     }
 

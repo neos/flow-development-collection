@@ -22,10 +22,10 @@ class InterceptorResolverTest extends UnitTestCase
 {
     /**
      * @test
-     * @expectedException \Neos\Flow\Security\Exception\NoInterceptorFoundException
      */
     public function resolveInterceptorClassThrowsAnExceptionIfNoInterceptorIsAvailable()
     {
+        $this->expectException(Security\Exception\NoInterceptorFoundException::class);
         $mockObjectManager = $this->getMockBuilder(ObjectManager::class)->disableOriginalConstructor()->getMock();
         $mockObjectManager->expects($this->any())->method('getClassNameByObjectName')->will($this->returnValue(false));
 

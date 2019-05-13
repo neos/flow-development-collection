@@ -91,7 +91,7 @@ class AjaxWidgetComponentTest extends UnitTestCase
 
     /**
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->ajaxWidgetComponent = new AjaxWidgetComponent();
 

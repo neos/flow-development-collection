@@ -33,10 +33,10 @@ class RouteParametersTest extends UnitTestCase
     /**
      * @test
      * @dataProvider withParameterThrowsExceptionForInvalidParameterValuesDataProvider
-     * @expectedException \InvalidArgumentException
      */
     public function withParameterThrowsExceptionForInvalidParameterValues($parameterValue)
     {
+        $this->expectException(\InvalidArgumentException::class);
         RouteParameters::createEmpty()->withParameter('someParameter', $parameterValue);
     }
 

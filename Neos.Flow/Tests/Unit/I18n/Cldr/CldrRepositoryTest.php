@@ -33,7 +33,7 @@ class CldrRepositoryTest extends UnitTestCase
     /**
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         vfsStream::setup('Foo');
 

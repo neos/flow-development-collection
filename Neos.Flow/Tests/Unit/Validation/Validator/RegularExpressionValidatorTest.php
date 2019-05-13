@@ -27,16 +27,16 @@ class RegularExpressionValidatorTest extends AbstractValidatorTestcase
     /**
      * Looks empty - and that's the purpose: do not run the parent's setUp().
      */
-    public function setUp()
+    protected function setUp(): void
     {
     }
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Validation\Exception\InvalidValidationOptionsException
      */
     public function validateThrowsExceptionIfExpressionIsEmpty()
     {
+        $this->expectException(Validation\Exception\InvalidValidationOptionsException::class);
         $this->validatorOptions([]);
         $this->validator->validate('foo');
     }

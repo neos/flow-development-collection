@@ -132,9 +132,17 @@ class ResponseTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
      */
     public function createFromRawThrowsExceptionOnFirstLine()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        Response::createFromRaw('No valid response');
+    }
+
+    /**
+     * @test
+     */
+    public function startLineEqualsStatusLine()
     {
         ResponseInformationHelper::createFromRaw('No valid response');
     }
@@ -175,6 +183,16 @@ class ResponseTest extends UnitTestCase
     /**
      * @test
      */
+    public function setStatusThrowsExceptionOnNonNumericCode()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $response = new Response();
+        $response->setStatus('400');
+    }
+
+    /**
+     * @test
+     */
     public function getStatusReturnsTheStatusCodeAndMessage()
     {
         $response = new \GuzzleHttp\Psr7\Response();
@@ -209,6 +227,8 @@ class ResponseTest extends UnitTestCase
             'MyHeader: MyValue',
             'OtherHeader: OtherValue',
         ];
+
+
 
         $this->assertEquals($expectedHeaders, ResponseInformationHelper::prepareHeaders($response));
     }
@@ -424,7 +444,6 @@ class ResponseTest extends UnitTestCase
 
         $response = $response->withHeader('Cache-Control', 'no-cache, max-age=240');
         $response = Http\Helper\ResponseInformationHelper::makeStandardsCompliant($response, $request);
-
         $this->assertEquals('no-cache', $response->getHeaderLine('Cache-Control'));
     }
 

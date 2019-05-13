@@ -27,7 +27,7 @@ class AbstractBackendTest extends UnitTestCase
     /**
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->backendClassName = 'ConcreteBackend_' . md5(uniqid(mt_rand(), true));
         eval('

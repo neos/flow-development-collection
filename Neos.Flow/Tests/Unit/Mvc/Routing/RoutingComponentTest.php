@@ -60,7 +60,7 @@ class RoutingComponentTest extends UnitTestCase
      * Sets up this test case
      *
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->routingComponent = new RoutingComponent([]);
 

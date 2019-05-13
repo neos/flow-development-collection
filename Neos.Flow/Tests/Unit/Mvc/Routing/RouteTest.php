@@ -13,7 +13,10 @@ namespace Neos\Flow\Tests\Unit\Mvc\Routing;
 
 use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Http\ServerRequestAttributes;
+use Neos\Flow\Mvc\Exception\InvalidRoutePartHandlerException;
 use Neos\Flow\Mvc\Exception\InvalidRoutePartValueException;
+use Neos\Flow\Mvc\Exception\InvalidRouteSetupException;
+use Neos\Flow\Mvc\Exception\InvalidUriPatternException;
 use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
 use Neos\Flow\Mvc\Routing\Dto\RouteContext;
 use Neos\Flow\Mvc\Routing\Fixtures\MockRoutePartHandler;
@@ -55,7 +58,7 @@ class RouteTest extends UnitTestCase
      * Sets up this test case
      *
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->mockObjectManager = $this->createMock(ObjectManagerInterface::class);
         $this->route = $this->getAccessibleMock(Routing\Route::class, ['dummy']);
@@ -143,10 +146,10 @@ class RouteTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Mvc\Exception\InvalidRoutePartHandlerException
      */
     public function settingInvalidRoutePartHandlerThrowsException()
     {
+        $this->expectException(InvalidRoutePartHandlerException::class);
         $this->route->setUriPattern('{key1}/{key2}');
         $this->route->setRoutePartsConfiguration(
             [
@@ -203,60 +206,60 @@ class RouteTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Mvc\Exception\InvalidUriPatternException
      */
     public function uriPatternWithTrailingSlashThrowsException()
     {
+        $this->expectException(InvalidUriPatternException::class);
         $this->route->setUriPattern('some/uri/pattern/');
         $this->route->parse();
     }
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Mvc\Exception\InvalidUriPatternException
      */
     public function uriPatternWithLeadingSlashThrowsException()
     {
+        $this->expectException(InvalidUriPatternException::class);
         $this->route->setUriPattern('/some/uri/pattern');
         $this->route->parse();
     }
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Mvc\Exception\InvalidUriPatternException
      */
     public function uriPatternWithSuccessiveDynamicRoutepartsThrowsException()
     {
+        $this->expectException(InvalidUriPatternException::class);
         $this->route->setUriPattern('{key1}{key2}');
         $this->route->parse();
     }
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Mvc\Exception\InvalidUriPatternException
      */
     public function uriPatternWithSuccessiveOptionalSectionsThrowsException()
     {
+        $this->expectException(InvalidUriPatternException::class);
         $this->route->setUriPattern('(foo/bar)(/bar/foo)');
         $this->route->parse();
     }
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Mvc\Exception\InvalidUriPatternException
      */
     public function uriPatternWithUnterminatedOptionalSectionsThrowsException()
     {
+        $this->expectException(InvalidUriPatternException::class);
         $this->route->setUriPattern('foo/(bar');
         $this->route->parse();
     }
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Mvc\Exception\InvalidUriPatternException
      */
     public function uriPatternWithUnopenedOptionalSectionsThrowsException()
     {
+        $this->expectException(InvalidUriPatternException::class);
         $this->route->setUriPattern('foo)/bar');
         $this->route->parse();
     }
@@ -566,10 +569,10 @@ class RouteTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Mvc\Exception\InvalidRouteSetupException
      */
     public function routeThrowsExceptionIfUriPatternContainsOneOptionalDynamicRoutePartWithoutDefaultValue()
     {
+        $this->expectException(InvalidRouteSetupException::class);
         $this->route->setUriPattern('({optional})');
 
         $this->assertFalse($this->routeMatchesPath(''));
@@ -1056,10 +1059,10 @@ class RouteTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Mvc\Exception\InvalidRoutePartValueException
      */
     public function resolvesThrowsExceptionIfRoutePartValueIsNoString()
     {
+        $this->expectException(InvalidRoutePartValueException::class);
         $mockRoutePart = $this->createMock(Routing\RoutePartInterface::class);
         $mockRoutePart->method('resolve')->willReturn(true);
         $mockRoutePart->method('hasValue')->willReturn(true);
@@ -1073,10 +1076,10 @@ class RouteTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Mvc\Exception\InvalidRoutePartValueException
      */
     public function resolvesThrowsExceptionIfRoutePartDefaultValueIsNoString()
     {
+        $this->expectException(InvalidRoutePartValueException::class);
         $mockRoutePart = $this->createMock(Routing\RoutePartInterface::class);
         $mockRoutePart->method('resolve')->willReturn(true);
         $mockRoutePart->method('hasValue')->willReturn(false);

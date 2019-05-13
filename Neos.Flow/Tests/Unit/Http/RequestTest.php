@@ -12,6 +12,7 @@ namespace Neos\Flow\Tests\Unit\Http;
  */
 
 use GuzzleHttp\Psr7\ServerRequest;
+use Neos\Flow\Http\Exception;
 use Neos\Flow\Http\Helper\UploadedFilesHelper;
 use Neos\Flow\Http\Request;
 use Neos\Flow\Http\Uri;
@@ -343,10 +344,10 @@ class RequestTest extends UnitTestCase
 
     /**
      * @test_disabled
-     * @expectedException \Neos\Flow\Http\Exception
      */
     public function getContentThrowsAnExceptionOnTryingToRetrieveContentAsResourceAlthoughItHasBeenRetrievedPreviously()
     {
+        $this->expectException(Exception::class);
         vfsStream::setup('Foo');
 
         file_put_contents('vfs://Foo/content.txt', 'xy');

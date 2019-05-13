@@ -36,7 +36,7 @@ class AuthenticationTest extends FunctionalTestCase
     /**
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -163,7 +163,7 @@ class AuthenticationTest extends FunctionalTestCase
     public function failedAuthenticationCallsOnAuthenticationFailureMethod()
     {
         $response = $this->browser->request('http://localhost/test/security/authentication');
-        $this->assertContains('Uncaught Exception in Flow #42: Failure Method Exception', $response->getContent());
+        $this->assertStringContainsString('Uncaught Exception in Flow #42: Failure Method Exception', $response->getContent());
     }
 
     /**

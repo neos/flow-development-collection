@@ -44,7 +44,7 @@ class UploadViewHelperTest extends FormFieldViewHelperBaseTestcase
      */
     protected $mockMappingResult;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->viewHelper = $this->getAccessibleMock(UploadViewHelper::class, ['setErrorClassAttribute', 'registerFieldNameForFormTokenGeneration', 'getMappingResultsForProperty']);

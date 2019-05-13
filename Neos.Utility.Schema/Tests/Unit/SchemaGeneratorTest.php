@@ -23,7 +23,7 @@ class SchemaGeneratorTest extends \PHPUnit\Framework\TestCase
      */
     private $configurationGenerator;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->configurationGenerator = new SchemaGenerator();
     }

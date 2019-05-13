@@ -119,7 +119,7 @@ abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
      *
      * @return void
      */
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         self::$bootstrap = \Neos\Flow\Core\Bootstrap::$staticObjectManager->get(\Neos\Flow\Core\Bootstrap::class);
         self::setupSuperGlobals();
@@ -133,7 +133,7 @@ abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
      *
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->objectManager = self::$bootstrap->getObjectManager();
 
@@ -234,7 +234,7 @@ abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
      *
      * @return void
      */
-    public function tearDown()
+    protected function tearDown(): void
     {
         $this->tearDownSecurity();
 

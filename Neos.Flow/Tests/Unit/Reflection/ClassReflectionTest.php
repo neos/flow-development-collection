@@ -77,7 +77,7 @@ class ClassReflectionTest extends UnitTestCase implements Fixture\DummyInterface
         $class = new ClassReflection(__CLASS__);
         $methods = $class->getMethods();
         foreach (array_keys($methods) as $key) {
-            $this->assertInternalType('integer', $key, 'The index was not an integer.');
+            $this->assertIsInt($key, 'The index was not an integer.');
         }
     }
 

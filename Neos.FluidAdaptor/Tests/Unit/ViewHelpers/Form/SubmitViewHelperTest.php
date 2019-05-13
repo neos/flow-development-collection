@@ -23,7 +23,7 @@ class SubmitViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\For
      */
     protected $viewHelper;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->viewHelper = new \Neos\FluidAdaptor\ViewHelpers\Form\SubmitViewHelper();

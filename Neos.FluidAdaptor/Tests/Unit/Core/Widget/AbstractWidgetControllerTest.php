@@ -15,6 +15,7 @@ use GuzzleHttp\Psr7\ServerRequest;
 use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Tests\UnitTestCase;
+use Neos\FluidAdaptor\Core\Widget\Exception\WidgetContextNotFoundException;
 use Neos\FluidAdaptor\Core\Widget\WidgetContext;
 
 /**
@@ -24,10 +25,10 @@ class AbstractWidgetControllerTest extends UnitTestCase
 {
     /**
      * @test
-     * @expectedException \Neos\FluidAdaptor\Core\Widget\Exception\WidgetContextNotFoundException
      */
     public function processRequestShouldThrowExceptionIfWidgetContextNotFound()
     {
+        $this->expectException(WidgetContextNotFoundException::class);
         /** @var \Neos\Flow\Mvc\ActionRequest $mockActionRequest */
         $mockActionRequest = $this->createMock(\Neos\Flow\Mvc\ActionRequest::class);
         $mockActionRequest->expects($this->atLeastOnce())->method('getInternalArgument')->with('__widgetContext')->will($this->returnValue(null));
