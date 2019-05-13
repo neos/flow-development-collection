@@ -5,9 +5,9 @@
   "homepage": "http://flow.neos.io",
   "license": "MIT",
   "require": {
+    "php": "^7.2",
     "neos/flow": "*",
-    "neos/utility-files": "*",
-    "php": "~7.1"
+    "neos/utility-files": "*"
   },
   "require-dev": {
     "mikey179/vfsstream": "~1.6",
