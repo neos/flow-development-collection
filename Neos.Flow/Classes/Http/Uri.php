@@ -13,7 +13,6 @@ namespace Neos\Flow\Http;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Error\Exception as ErrorException;
-use Neos\Flow\Http\Helper\UriHelper;
 use Neos\Utility\Unicode;
 use Psr\Http\Message\UriInterface;
 
@@ -136,89 +135,9 @@ class Uri implements UriInterface
      * @return string URI scheme / protocol
      * @api
      */
-    public function getScheme()
+    public function getScheme(): ?string
     {
         return $this->scheme;
-    }
-
-    /**
-     * Sets the URI's scheme / protocol
-     *
-     * @param  string $scheme The scheme. Allowed values are "http" and "https"
-     * @return void
-     * @throws \InvalidArgumentException
-     * @deprecated Since Flow 5.1, use withScheme
-     * @see withScheme()
-     */
-    public function setScheme($scheme)
-    {
-        if (preg_match(self::PATTERN_MATCH_SCHEME, $scheme) === 1) {
-            $this->scheme = strtolower($scheme);
-        } else {
-            throw new \InvalidArgumentException('"' . $scheme . '" is not a valid scheme.', 1184071237);
-        }
-    }
-
-    /**
-     * Returns the username of a login
-     *
-     * @return string User name of the login
-     * @deprecated Since Flow 5.1, use getUserInfo and extract via UriHelper::getUsername()
-     * @see getUserInfo()
-     * @see UriHelper::getUsername()
-     */
-    public function getUsername()
-    {
-        return $this->username;
-    }
-
-    /**
-     * Sets the URI's username
-     *
-     * @param string $username User name of the login
-     * @return void
-     * @throws \InvalidArgumentException
-     * @deprecated Since Flow 5.1, use withUserInfo instead
-     * @see withUserInfo()
-     */
-    public function setUsername($username)
-    {
-        if (preg_match(self::PATTERN_MATCH_USERNAME, $username) !== 1) {
-            throw new \InvalidArgumentException('"' . $username . '" is not a valid username.', 1184071238);
-        }
-
-        $this->username = $username;
-    }
-
-    /**
-     * Returns the password of a login
-     *
-     * @return string Password of the login
-     * @deprecated Since Flow 5.1, use getUserInfo instead and extract via UriHelper::getPassword()
-     * @see getUserInfo()
-     * @see UriHelper::getPassword()
-     */
-    public function getPassword()
-    {
-        return $this->password;
-    }
-
-    /**
-     * Sets the URI's password
-     *
-     * @param string $password Password of the login
-     * @return void
-     * @throws \InvalidArgumentException
-     * @deprecated Since Flow 5.1, use withUserInfo instead
-     * @see withUserInfo()
-     */
-    public function setPassword($password)
-    {
-        if (preg_match(self::PATTERN_MATCH_PASSWORD, $password) !== 1) {
-            throw new \InvalidArgumentException('The specified password is not valid as part of a URI.', 1184071239);
-        }
-
-        $this->password = $password;
     }
 
     /**
@@ -227,27 +146,9 @@ class Uri implements UriInterface
      * @return string The hostname(s)
      * @api
      */
-    public function getHost()
+    public function getHost(): ?string
     {
         return trim($this->host);
-    }
-
-    /**
-     * Sets the host(s) of the URI
-     *
-     * @param string $host The hostname(s)
-     * @return void
-     * @throws \InvalidArgumentException
-     * @deprecated Since Flow 5.1, use withHost instead
-     * @see withHost()
-     */
-    public function setHost($host)
-    {
-        if (preg_match(self::PATTERN_MATCH_HOST, $host) !== 1) {
-            throw new \InvalidArgumentException('"' . $host . '" is not valid host as part of a URI.', 1184071240);
-        }
-
-        $this->host = $host;
     }
 
     /**
@@ -256,27 +157,9 @@ class Uri implements UriInterface
      * @return integer Port
      * @api
      */
-    public function getPort()
+    public function getPort(): ?int
     {
         return $this->port;
-    }
-
-    /**
-     * Sets the port in the URI
-     *
-     * @param string $port The port number
-     * @return void
-     * @throws \InvalidArgumentException
-     * @deprecated Since Flow 5.1, use withPort instead
-     * @see withPort()
-     */
-    public function setPort($port)
-    {
-        if (preg_match(self::PATTERN_MATCH_PORT, $port) !== 1) {
-            throw new \InvalidArgumentException('"' . $port . '" is not valid port number as part of a URI.', 1184071241);
-        }
-
-        $this->port = (integer)$port;
     }
 
     /**
@@ -285,27 +168,9 @@ class Uri implements UriInterface
      * @return string URI path
      * @api
      */
-    public function getPath()
+    public function getPath(): ?string
     {
         return $this->path;
-    }
-
-    /**
-     * Sets the path of the URI
-     *
-     * @param string $path The path
-     * @return void
-     * @throws \InvalidArgumentException
-     * @deprecated Since Flow 5.1, use withPath instead
-     * @see withPath()
-     */
-    public function setPath($path)
-    {
-        if (preg_match(self::PATTERN_MATCH_PATH, $path) !== 1) {
-            throw new \InvalidArgumentException('"' . $path . '" is not valid path as part of a URI.', 1184071242);
-        }
-
-        $this->path = $path;
     }
 
     /**
@@ -314,22 +179,9 @@ class Uri implements UriInterface
      * @return string The query part
      * @api
      */
-    public function getQuery()
+    public function getQuery(): ?string
     {
         return $this->query;
-    }
-
-    /**
-     * Sets the URI's query part.
-     *
-     * @param string $query The query string.
-     * @return void
-     * @deprecated Since Flow 5.1, use withQuery instead
-     * @see withQuery()
-     */
-    public function setQuery($query)
-    {
-        $this->query = $query;
     }
 
     /**
@@ -338,33 +190,15 @@ class Uri implements UriInterface
      * @return string The fragment
      * @api
      */
-    public function getFragment()
+    public function getFragment(): ?string
     {
         return $this->fragment;
     }
 
     /**
-     * Sets the fragment in the URI
-     *
-     * @param string $fragment The fragment (aka "anchor")
-     * @return void
-     * @throws \InvalidArgumentException
-     * @deprecated Since Flow 5.1, use withFragment instead
-     * @see withFragment()
-     */
-    public function setFragment($fragment)
-    {
-        if (preg_match(self::PATTERN_MATCH_FRAGMENT, $fragment) !== 1) {
-            throw new \InvalidArgumentException('"' . $fragment . '" is not valid fragment as part of a URI.', 1184071252);
-        }
-
-        $this->fragment = $fragment;
-    }
-
-    /**
      * @return string
      */
-    protected function getHostAndOptionalPort()
+    protected function getHostAndOptionalPort(): string
     {
         $hostAndPort = (string)$this->host;
         if ($this->port === null) {
@@ -396,7 +230,7 @@ class Uri implements UriInterface
      * @return string The URI authority, in "[user-info@]host[:port]" format.
      * @api PSR-7
      */
-    public function getAuthority()
+    public function getAuthority(): string
     {
         $result = '';
 
@@ -431,7 +265,7 @@ class Uri implements UriInterface
      * @return string The URI user information, in "username[:password]" format.
      * @api PSR-7
      */
-    public function getUserInfo()
+    public function getUserInfo(): string
     {
         $result = '';
         $username = $this->username;
@@ -467,7 +301,7 @@ class Uri implements UriInterface
      * @throws \InvalidArgumentException for invalid or unsupported schemes.
      * @api PSR-7
      */
-    public function withScheme($scheme)
+    public function withScheme($scheme): self
     {
         if (preg_match(self::PATTERN_MATCH_SCHEME, $scheme) !== 1) {
             throw new \InvalidArgumentException('"' . $scheme . '" is not a valid scheme.', 1184071237);
@@ -493,7 +327,7 @@ class Uri implements UriInterface
      * @return self A new instance with the specified user information.
      * @api PSR-7
      */
-    public function withUserInfo($user, $password = null)
+    public function withUserInfo($user, $password = null): self
     {
         $newUri = clone $this;
         $newUri->username = $user;
@@ -514,7 +348,7 @@ class Uri implements UriInterface
      * @throws \InvalidArgumentException for invalid hostnames.
      * @api PSR-7
      */
-    public function withHost($host)
+    public function withHost($host): self
     {
         if (preg_match(self::PATTERN_MATCH_HOST, $host) !== 1) {
             throw new \InvalidArgumentException('"' . $host . '" is not valid host as part of a URI.', 1184071240);
@@ -542,7 +376,7 @@ class Uri implements UriInterface
      * @throws \InvalidArgumentException for invalid ports.
      * @api PSR-7
      */
-    public function withPort($port = null)
+    public function withPort($port = null): self
     {
         if (preg_match(self::PATTERN_MATCH_PORT, $port) !== 1) {
             throw new \InvalidArgumentException('"' . $port . '" is not valid port number as part of a URI.', 1184071241);
@@ -575,7 +409,7 @@ class Uri implements UriInterface
      * @throws \InvalidArgumentException for invalid paths.
      * @api PSR-7
      */
-    public function withPath($path)
+    public function withPath($path): self
     {
         $newUri = clone $this;
         $newUri->path = $path;
@@ -598,7 +432,7 @@ class Uri implements UriInterface
      * @throws \InvalidArgumentException for invalid query strings.
      * @api PSR-7
      */
-    public function withQuery($query)
+    public function withQuery($query): self
     {
         $newUri = clone $this;
         $newUri->query = $query;
@@ -620,7 +454,7 @@ class Uri implements UriInterface
      * @return self A new instance with the specified fragment.
      * @api PSR-7
      */
-    public function withFragment($fragment)
+    public function withFragment($fragment): self
     {
         $newUri = clone $this;
         $newUri->fragment = $fragment;
@@ -631,7 +465,7 @@ class Uri implements UriInterface
      * @param string $scheme
      * @return integer
      */
-    private function resolveDefaultPortForScheme($scheme)
+    private function resolveDefaultPortForScheme($scheme): ?int
     {
         return $this->defaultPortsForScheme[$scheme] ?? null;
     }
@@ -642,7 +476,7 @@ class Uri implements UriInterface
      * @return string This URI as a string
      * @api
      */
-    public function __toString()
+    public function __toString(): string
     {
         $uriString = '';
 

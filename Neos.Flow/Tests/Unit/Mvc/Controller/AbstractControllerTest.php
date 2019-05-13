@@ -363,7 +363,7 @@ class AbstractControllerTest extends UnitTestCase
         }
 
         $arrayResponse = $this->actionResponse->prepareRendering(new ToArray())->render();
-        $this->assertSame($uri, $arrayResponse['redirectUri']);
+        $this->assertSame($uri, (string)$arrayResponse['redirectUri']);
     }
 
     /**
@@ -415,7 +415,7 @@ class AbstractControllerTest extends UnitTestCase
         $arrayResponse = $this->actionResponse->prepareRendering(new ToArray())->render();
         $this->assertSame(404, $arrayResponse['statusCode']);
         //$this->assertSame('404 File Really Not Found', $this->actionResponse->getStatus());
-        $this->assertSame($message, $arrayResponse['content']);
+        $this->assertSame($message, $arrayResponse['content']->getContents());
     }
 
     /**
@@ -434,7 +434,7 @@ class AbstractControllerTest extends UnitTestCase
         $arrayResponse = $this->actionResponse->prepareRendering(new ToArray())->render();
         $this->assertSame(404, $arrayResponse['statusCode']);
         //$this->assertSame('404 Not Found', $this->actionResponse->getStatus());
-        $this->assertSame('404 Not Found', $arrayResponse['content']);
+        $this->assertSame('404 Not Found', $arrayResponse['content']->getContents());
     }
 
     /**

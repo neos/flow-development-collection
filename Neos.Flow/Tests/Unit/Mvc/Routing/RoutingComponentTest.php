@@ -73,10 +73,10 @@ class RoutingComponentTest extends UnitTestCase
         $this->mockComponentContext = $this->getMockBuilder(ComponentContext::class)->disableOriginalConstructor()->getMock();
 
         $this->mockHttpRequest = $this->getMockBuilder(Request::class)->disableOriginalConstructor()->getMock();
-        $this->mockComponentContext->expects($this->any())->method('getHttpRequest')->will($this->returnValue($this->mockHttpRequest));
+        $this->mockComponentContext->method('getHttpRequest')->willReturn($this->mockHttpRequest);
 
         $this->mockRequestUri = $this->getMockBuilder(UriInterface::class)->getMock();
-        $this->mockHttpRequest->expects($this->any())->method('getUri')->will($this->returnValue($this->mockRequestUri));
+        $this->mockHttpRequest->method('getUri')->willReturn($this->mockRequestUri);
     }
 
     /**
@@ -87,7 +87,7 @@ class RoutingComponentTest extends UnitTestCase
         $mockMatchResults = ['someRouterMatchResults'];
         $routeContext = new RouteContext($this->mockHttpRequest, RouteParameters::createEmpty());
 
-        $this->mockRouter->expects($this->atLeastOnce())->method('route')->with($routeContext)->will($this->returnValue($mockMatchResults));
+        $this->mockRouter->expects($this->atLeastOnce())->method('route')->with($routeContext)->willReturn($mockMatchResults);
         $this->mockComponentContext->expects($this->atLeastOnce())->method('setParameter')->with(RoutingComponent::class, 'matchResults', $mockMatchResults);
 
         $this->routingComponent->handle($this->mockComponentContext);

@@ -113,7 +113,7 @@ class WebRedirectTest extends UnitTestCase
 
         $entryPoint->startAuthentication($request, $response);
 
-        $this->assertEquals('303', substr($response->getStatus(), 0, 3));
+        $this->assertEquals('303', substr($response->getStatusCode(), 0, 3));
         $this->assertEquals('http://resolved/redirect/uri', $response->getHeader('Location'));
     }
 }

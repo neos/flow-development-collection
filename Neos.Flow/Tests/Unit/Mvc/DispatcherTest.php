@@ -11,12 +11,14 @@ namespace Neos\Flow\Tests\Unit\Mvc;
  * source code.
  */
 
-use Neos\Flow\Cli\Request;
+use GuzzleHttp\Psr7\Response;
+use Neos\Flow\Http\Component\ComponentContext;
 use Neos\Flow\Http\Component\SecurityEntryPointComponent;
 use Neos\Flow\Http\Request as HttpRequest;
 use Neos\Flow\Log\PsrLoggerFactoryInterface;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
+use Neos\Flow\Mvc\ActionResponseRenderer\IntoComponentContext;
 use Neos\Flow\Mvc\Controller\ControllerInterface;
 use Neos\Flow\Mvc\Dispatcher;
 use Neos\Flow\Mvc\Exception\ForwardException;
@@ -29,7 +31,6 @@ use Neos\Flow\Security\Context;
 use Neos\Flow\Security\Exception\AccessDeniedException;
 use Neos\Flow\Security\Exception\AuthenticationRequiredException;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Utility\ObjectAccess;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -262,10 +263,6 @@ class DispatcherTest extends UnitTestCase
     {
         $this->mockActionRequest->method('isDispatched')->willReturn(true);
 
-        $mockAuthenticationToken = $this->getMockBuilder(TokenInterface::class)->getMock();
-        $mockAuthenticationToken->method('getAuthenticationEntryPoint')->willReturn(null);
-        $this->mockSecurityContext->expects($this->atLeastOnce())->method('getAuthenticationTokens')->willReturn([$mockAuthenticationToken]);
-
         $this->mockSecurityContext->expects($this->never())->method('setInterceptedRequest')->with($this->mockMainRequest);
 
         $this->mockFirewall->expects($this->once())->method('blockIllegalRequests')->will($this->throwException(new AuthenticationRequiredException()));
@@ -275,10 +272,10 @@ class DispatcherTest extends UnitTestCase
         } catch (AuthenticationRequiredException $exception) {
         }
 
-        $componentParameters = ObjectAccess::getProperty($this->actionResponse, 'componentParameters');
-        $this->assertArrayHasKey(SecurityEntryPointComponent::class, $componentParameters);
-        $securityEntryPointParameters = $componentParameters[SecurityEntryPointComponent::class];
-        $this->assertArrayHasKey(SecurityEntryPointComponent::AUTHENTICATION_EXCEPTION, $securityEntryPointParameters);
+        $componentContext = new ComponentContext($this->mockHttpRequest, new Response());
+        $this->actionResponse->prepareRendering(new IntoComponentContext($componentContext))->render();
+        $this->assertNotNull($componentContext->getAllParametersFor(SecurityEntryPointComponent::class));
+        $this->assertNotEmpty($componentContext->getParameter(SecurityEntryPointComponent::class,SecurityEntryPointComponent::AUTHENTICATION_EXCEPTION));
     }
 
     /**

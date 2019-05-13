@@ -31,15 +31,13 @@ class UriTest extends UnitTestCase
         $uri = new Uri($uriString);
 
         $check = (
-            $uri->getScheme() == 'http' &&
-            $uri->getUsername() == 'username' &&
-            $uri->getPassword() == 'password' &&
-            $uri->getHost() == 'subdomain.domain.com' &&
+            $uri->getScheme() === 'http' &&
+            $uri->getUserInfo() === 'username:password' &&
+            $uri->getHost() === 'subdomain.domain.com' &&
             $uri->getPort() === 8080 &&
-            $uri->getPath() == '/path1/path2/index.php' &&
-            $uri->getQuery() == 'argument1=value1&argument2=value2&argument3[subargument1]=subvalue1' &&
-            $uri->getArguments() == ['argument1' => 'value1', 'argument2' => 'value2', 'argument3' => ['subargument1' => 'subvalue1']] &&
-            $uri->getFragment() == 'anchor'
+            $uri->getPath() === '/path1/path2/index.php' &&
+            $uri->getQuery() === 'argument1=value1&argument2=value2&argument3[subargument1]=subvalue1' &&
+            $uri->getFragment() === 'anchor'
         );
         $this->assertTrue($check, 'The valid and complete URI has not been correctly transformed to an URI object');
     }
@@ -67,7 +65,7 @@ class UriTest extends UnitTestCase
      * @dataProvider uriStrings
      * @test
      */
-    public function urisCanBeConvertedForthAndBackWithoutLoss($uriString)
+    public function urisCanBeConvertedForthAndBackWithoutLoss(string $uriString)
     {
         $uri = new Uri($uriString);
         $this->assertSame($uriString, (string)$uri);
@@ -81,8 +79,8 @@ class UriTest extends UnitTestCase
     public function settingSchemeAndHostOnUriDoesNotConfuseToString()
     {
         $uri = new Uri('/no/scheme/or/host');
-        $uri->setScheme('http');
-        $uri->setHost('localhost');
+        $uri = $uri->withScheme('http')
+                   ->withHost('localhost');
         $this->assertSame('http://localhost/no/scheme/or/host', (string)$uri);
     }
 
@@ -109,11 +107,10 @@ class UriTest extends UnitTestCase
         $uri = new Uri($uriString);
 
         $check = (
-            $uri->getScheme() == 'http' &&
-            $uri->getHost() == 'www.neos.io' &&
-            $uri->getPath() == '/path1/' &&
-            $uri->getQuery() == 'argumentäöü1=value%C3%A5%C3%B8%E2%82%AC%C5%93' &&
-            $uri->getArguments() == ['argumentäöü1' => 'valueåø€œ']
+            $uri->getScheme() === 'http' &&
+            $uri->getHost() === 'www.neos.io' &&
+            $uri->getPath() === '/path1/' &&
+            $uri->getQuery() === 'argumentäöü1=value%C3%A5%C3%B8%E2%82%AC%C5%93'
         );
         $this->assertTrue($check, 'The URI with special arguments has not been correctly transformed to an URI object');
     }
@@ -134,7 +131,7 @@ class UriTest extends UnitTestCase
      * @dataProvider hostTestUris
      * @test
      */
-    public function constructorParsesHostCorrectly($uriString, $expectedHost)
+    public function constructorParsesHostCorrectly(string $uriString, string $expectedHost)
     {
         $uri = new Uri($uriString);
         $this->assertSame($expectedHost, $uri->getHost());
@@ -144,10 +141,9 @@ class UriTest extends UnitTestCase
      * @dataProvider hostTestUris
      * @test
      */
-    public function settingValidHostPassesRegexCheck($uriString, $plainHost)
+    public function settingValidHostPassesRegexCheck(string $uriString, string $plainHost)
     {
-        $uri = new Uri('');
-        $uri->setHost($plainHost);
+        $uri = (new Uri(''))->withHost($plainHost);
         $this->assertEquals($plainHost, $uri->getHost());
     }
 
@@ -157,8 +153,7 @@ class UriTest extends UnitTestCase
      */
     public function settingInvalidHostThrowsException()
     {
-        $uri = new Uri('');
-        $uri->setHost('an#invalid.host');
+        (new Uri(''))->withHost('an#invalid.host');
     }
 
     public function uriStringTestUris()
@@ -174,7 +169,7 @@ class UriTest extends UnitTestCase
      * @test
      * @dataProvider uriStringTestUris
      */
-    public function stringRepresentationIsCorrect($uriString)
+    public function stringRepresentationIsCorrect(string $uriString)
     {
         $uri = new Uri($uriString);
         $this->assertEquals($uriString, (string)$uri, 'The string representation of the URI is not equal to the original URI string.');

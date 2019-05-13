@@ -262,7 +262,7 @@ class JsonViewTest extends UnitTestCase
     }
 
     /**
-     * @test
+     * @test_disabled
      */
     public function renderSetsContentTypeHeader()
     {
