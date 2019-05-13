@@ -11,6 +11,7 @@ namespace Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Security;
  * source code.
  */
 
+use GuzzleHttp\Psr7\ServerRequest;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\FluidAdaptor\Core\Rendering\RenderingContext;
 use Neos\Flow\Http\Request;
@@ -89,7 +90,7 @@ class IfHasRoleViewHelperTest extends ViewHelperBaseTestcase
      */
     protected function getMockControllerContext()
     {
-        $httpRequest = Request::create(new Uri('http://robertlemke.com/blog'));
+        $httpRequest = new ServerRequest('GET', 'http://robertlemke.com/blog');
         $mockRequest = $this->getMockBuilder(\Neos\Flow\Mvc\ActionRequest::class)->setConstructorArgs([$httpRequest])->getMock();
         $mockRequest->expects($this->any())->method('getControllerPackageKey')->will($this->returnValue('Acme.Demo'));
 

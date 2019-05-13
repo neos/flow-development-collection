@@ -11,6 +11,7 @@ namespace Neos\Flow\Tests\Unit\Mvc\Routing;
  * source code.
  */
 
+use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Http\ServerRequestAttributes;
 use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
@@ -407,6 +408,9 @@ class RouterTest extends UnitTestCase
         $this->inject($router, 'routerCachingService', $this->mockRouterCachingService);
         $this->inject($router, 'logger', $this->mockSystemLogger);
 
+        $uri = new Uri('http://localhost/');
+        $this->mockHttpRequest->expects($this->any())->method('getUri')->willReturn($uri);
+
         $routesConfiguration = [
             [
                 'uriPattern' => 'some/uri/pattern',
@@ -440,6 +444,9 @@ class RouterTest extends UnitTestCase
         $router = $this->getAccessibleMock(Router::class, ['dummy']);
         $this->inject($router, 'routerCachingService', $this->mockRouterCachingService);
         $this->inject($router, 'logger', $this->mockSystemLogger);
+
+        $uri = new Uri('http://localhost/');
+        $this->mockHttpRequest->expects($this->any())->method('getUri')->willReturn($uri);
 
         $routesConfiguration = [
             [

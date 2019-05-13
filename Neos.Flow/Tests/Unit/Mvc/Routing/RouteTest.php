@@ -12,8 +12,7 @@ namespace Neos\Flow\Tests\Unit\Mvc\Routing;
  */
 
 use GuzzleHttp\Psr7\Uri;
-use Neos\Flow\Http;
-use Neos\Flow\Http\Request;
+use Neos\Flow\Http\ServerRequestAttributes;
 use Neos\Flow\Mvc\Exception\InvalidRoutePartValueException;
 use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
 use Neos\Flow\Mvc\Routing\Dto\RouteContext;
@@ -23,6 +22,7 @@ use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Tests\UnitTestCase;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\UriInterface;
 
 require_once(__DIR__ . '/Fixtures/MockRoutePartHandler.php');
 
@@ -747,22 +747,18 @@ class RouteTest extends UnitTestCase
         $this->route->setUriPattern('');
         $this->route->setHttpMethods(['POST', 'PUT']);
 
-        /** @var Request|\PHPUnit_Framework_MockObject_MockObject $mockHttpRequest */
-        $mockHttpRequest = $this->getMockBuilder(Http\Request::class)->disableOriginalConstructor()->getMock();
+        /** @var ServerRequestInterface|\PHPUnit_Framework_MockObject_MockObject $mockHttpRequest */
+        $mockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
 
-        $mockUri = $this->getMockBuilder(Http\Uri::class)->disableOriginalConstructor()->getMock();
-        $mockUri->method('getPath')->willReturn('/');
+        $mockUri = $this->getMockBuilder(UriInterface::class)->disableOriginalConstructor()->getMock();
+        $mockUri->expects($this->any())->method('getPath')->will($this->returnValue('/'));
         $mockUri->method('withQuery')->willReturn($mockUri);
         $mockUri->method('withFragment')->willReturn($mockUri);
         $mockUri->method('withPath')->willReturn($mockUri);
         $mockHttpRequest->method('getUri')->willReturn($mockUri);
 
-        $mockBaseUri = $this->getMockBuilder(Http\Uri::class)->disableOriginalConstructor()->getMock();
-        $mockBaseUri->method('getPath')->willReturn('/');
-        $mockBaseUri->method('withQuery')->willReturn($mockBaseUri);
-        $mockBaseUri->method('withFragment')->willReturn($mockBaseUri);
-        $mockBaseUri->method('withPath')->willReturn($mockBaseUri);
-        $mockHttpRequest->method('getBaseUri')->willReturn($mockBaseUri);
+        $mockBaseUri = new Uri('http://localhost/');
+        $mockHttpRequest->expects($this->any())->method('getAttribute')->with(ServerRequestAttributes::ATTRIBUTE_BASE_URI)->will($this->returnValue($mockBaseUri));
 
         $mockHttpRequest->expects($this->atLeastOnce())->method('getMethod')->willReturn('GET');
         $this->assertFalse($this->route->matches(new RouteContext($mockHttpRequest, RouteParameters::createEmpty())), 'Route must not match GET requests if only POST or PUT requests are accepted.');
@@ -776,22 +772,18 @@ class RouteTest extends UnitTestCase
         $this->route->setUriPattern('');
         $this->route->setHttpMethods(['POST', 'PUT']);
 
-        /** @var Request|\PHPUnit_Framework_MockObject_MockObject $mockHttpRequest */
-        $mockHttpRequest = $this->getMockBuilder(Http\Request::class)->disableOriginalConstructor()->getMock();
+        /** @var ServerRequestInterface|\PHPUnit_Framework_MockObject_MockObject $mockHttpRequest */
+        $mockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
 
-        $mockUri = $this->getMockBuilder(Http\Uri::class)->disableOriginalConstructor()->getMock();
-        $mockUri->method('getPath')->willReturn('/');
+        $mockUri = $this->getMockBuilder(Uri::class)->disableOriginalConstructor()->getMock();
+        $mockUri->expects($this->any())->method('getPath')->will($this->returnValue('/'));
         $mockUri->method('withQuery')->willReturn($mockUri);
         $mockUri->method('withFragment')->willReturn($mockUri);
         $mockUri->method('withPath')->willReturn($mockUri);
         $mockHttpRequest->method('getUri')->willReturn($mockUri);
 
-        $mockBaseUri = $this->getMockBuilder(Http\Uri::class)->disableOriginalConstructor()->getMock();
-        $mockBaseUri->method('getPath')->willReturn('/');
-        $mockBaseUri->method('withQuery')->willReturn($mockBaseUri);
-        $mockBaseUri->method('withFragment')->willReturn($mockBaseUri);
-        $mockBaseUri->method('withPath')->willReturn($mockBaseUri);
-        $mockHttpRequest->method('getBaseUri')->willReturn($mockBaseUri);
+        $mockBaseUri = new Uri('http://localhost/');
+        $mockHttpRequest->expects($this->any())->method('getAttribute')->with(ServerRequestAttributes::ATTRIBUTE_BASE_URI)->will($this->returnValue($mockBaseUri));
 
         $mockHttpRequest->expects($this->atLeastOnce())->method('getMethod')->willReturn('PUT');
 

@@ -13,12 +13,12 @@ namespace Neos\Flow\Tests\Unit\Mvc\Routing;
 
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Http\Component\ComponentContext;
-use Neos\Flow\Http\Request;
 use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
 use Neos\Flow\Mvc\Routing\Dto\RouteContext;
 use Neos\Flow\Mvc\Routing\Router;
 use Neos\Flow\Mvc\Routing\RoutingComponent;
 use Neos\Flow\Tests\UnitTestCase;
+use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
 
 /**
@@ -47,7 +47,7 @@ class RoutingComponentTest extends UnitTestCase
     protected $mockComponentContext;
 
     /**
-     * @var Request|\PHPUnit_Framework_MockObject_MockObject
+     * @var ServerRequestInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $mockHttpRequest;
 
@@ -72,7 +72,7 @@ class RoutingComponentTest extends UnitTestCase
 
         $this->mockComponentContext = $this->getMockBuilder(ComponentContext::class)->disableOriginalConstructor()->getMock();
 
-        $this->mockHttpRequest = $this->getMockBuilder(Request::class)->disableOriginalConstructor()->getMock();
+        $this->mockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
         $this->mockComponentContext->method('getHttpRequest')->willReturn($this->mockHttpRequest);
 
         $this->mockRequestUri = $this->getMockBuilder(UriInterface::class)->getMock();

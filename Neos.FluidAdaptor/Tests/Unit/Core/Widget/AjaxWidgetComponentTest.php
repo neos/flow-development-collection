@@ -11,10 +11,10 @@ namespace Neos\FluidAdaptor\Tests\Unit\Core\Widget;
  * source code.
  */
 
+use GuzzleHttp\Psr7\Response;
 use Neos\Flow\Http\Component\ComponentChain;
 use Neos\Flow\Http\Component\ComponentContext;
 use Neos\Flow\Http;
-use Neos\Flow\Http\Response;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\DispatchComponent;
 use Neos\Flow\Mvc\Dispatcher;
@@ -51,12 +51,12 @@ class AjaxWidgetComponentTest extends UnitTestCase
     protected $mockComponentContext;
 
     /**
-     * @var Http\Request|\PHPUnit_Framework_MockObject_MockObject
+     * @var ServerRequestInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $mockHttpRequest;
 
     /**
-     * @var Response|\PHPUnit_Framework_MockObject_MockObject
+     * @var ResponseInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $mockHttpResponse;
 
@@ -101,12 +101,11 @@ class AjaxWidgetComponentTest extends UnitTestCase
         $this->mockComponentContext = $this->getMockBuilder(ComponentContext::class)->disableOriginalConstructor()->getMock();
 
         $this->mockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
-        $this->mockHttpRequest->expects($this->any())->method('getQueryParams')->will($this->returnValue([]));
-        $this->mockHttpRequest->expects($this->any())->method('getUploadedFiles')->will($this->returnValue([]));
+        $this->mockHttpResponse = new Response();
+        $this->mockHttpRequest->expects($this->any())->method('getQueryParams')->willreturn([]);
+        $this->mockHttpRequest->expects($this->any())->method('getUploadedFiles')->willreturn([]);
         $this->mockComponentContext->expects($this->any())->method('getHttpRequest')->will($this->returnValue($this->mockHttpRequest));
-
-        $this->mockHttpResponse = $this->getMockBuilder(ResponseInterface::class)->disableOriginalConstructor()->getMock();
-        $this->mockComponentContext->expects($this->any())->method('getHttpResponse')->will($this->returnValue($this->mockHttpResponse));
+        $this->mockComponentContext->expects($this->any())->method('getHttpResponse')->willReturn($this->mockHttpResponse);
 
         $this->mockAjaxWidgetContextHolder = $this->getMockBuilder(AjaxWidgetContextHolder::class)->getMock();
         $this->inject($this->ajaxWidgetComponent, 'ajaxWidgetContextHolder', $this->mockAjaxWidgetContextHolder);
@@ -156,7 +155,7 @@ class AjaxWidgetComponentTest extends UnitTestCase
             [DispatchComponent::class, 'actionRequest', $mockActionRequest]
         ]);
 
-        $mockActionRequest->expects($this->once())->method('setArgument')->with('__widgetContext', $mockWidgetContext);
+        $mockActionRequest->expects($this->once())->method('setArguments')->with(['__widgetContext' =>  $mockWidgetContext, '__widgetId' => 'SomeWidgetId']);
         $mockActionRequest->expects($this->once())->method('setControllerObjectName')->with($mockControllerObjectName);
 
         $this->ajaxWidgetComponent->handle($this->mockComponentContext);
@@ -207,10 +206,7 @@ class AjaxWidgetComponentTest extends UnitTestCase
             [RoutingComponent::class, 'matchResults', []],
             [DispatchComponent::class, 'actionRequest', $mockActionRequest]
         ]);
-        $this->mockComponentContext->expects($this->any())->method('setParameter')->withConsecutive(
-            [DispatchComponent::class, 'actionRequest', $mockActionRequest],
-            [ComponentChain::class, 'cancel', true]
-        );
+        $this->mockComponentContext->expects($this->any())->method('setParameter')->with(ComponentChain::class, 'cancel', true);
 
         $this->ajaxWidgetComponent->handle($this->mockComponentContext);
     }

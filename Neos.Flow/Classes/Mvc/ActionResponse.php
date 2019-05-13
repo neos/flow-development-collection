@@ -19,17 +19,17 @@ final class ActionResponse
     /**
      * @var string
      */
-    private $content;
+    protected $content;
 
     /**
      * @var array
      */
-    private $componentParameters = [];
+    protected $componentParameters = [];
 
     /**
      * @var UriInterface
      */
-    private $redirectUri;
+    protected $redirectUri;
 
     /**
      * The HTTP status code
@@ -41,7 +41,7 @@ final class ActionResponse
     /**
      * @var string
      */
-    private $contentType;
+    protected $contentType;
 
     /**
      * @param string|StreamInterface $content
