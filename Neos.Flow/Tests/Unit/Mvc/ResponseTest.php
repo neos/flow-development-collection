@@ -12,6 +12,7 @@ namespace Neos\Flow\Tests\Unit\Mvc;
  */
 
 use Neos\Flow\Mvc\ActionResponse;
+use Neos\Flow\Mvc\ActionResponseRenderer\Content;
 use Neos\Flow\Tests\UnitTestCase;
 
 /**
@@ -28,7 +29,7 @@ class ResponseTest extends UnitTestCase
         $response->setContent('SomeContent');
 
         $expected = 'SomeContent';
-        $actual = $response->__toString();
+        $actual = $response->prepareRendering(new Content())->render();
         $this->assertEquals($expected, $actual);
     }
 }

@@ -76,13 +76,6 @@ class Uri implements UriInterface
     protected $query;
 
     /**
-     * Array representation of the URI query
-     * @var array
-     * @deprecated Since Flow 5.1, can be removed together with the respective method.
-     */
-    protected $arguments;
-
-    /**
      * Fragment / anchor, if one was specified.
      * @var string
      */
@@ -327,7 +320,7 @@ class Uri implements UriInterface
     }
 
     /**
-     * Sets the URI's query part. Updates (= overwrites) the arguments accordingly!
+     * Sets the URI's query part.
      *
      * @param string $query The query string.
      * @return void
@@ -337,21 +330,6 @@ class Uri implements UriInterface
     public function setQuery($query)
     {
         $this->query = $query;
-    }
-
-    /**
-     * Returns the arguments from the URI's query part
-     *
-     * @return array Associative array of arguments and values of the URI's query part
-     * @deprecated Since Flow 5.1, use UriHelper::parseQueryIntoArguments
-     * @see UriHelper::parseQueryIntoArguments()
-     */
-    public function getArguments()
-    {
-        if ($this->arguments === null) {
-            $this->arguments = UriHelper::parseQueryIntoArguments($this);
-        }
-        return $this->arguments;
     }
 
     /**
@@ -623,7 +601,6 @@ class Uri implements UriInterface
     public function withQuery($query)
     {
         $newUri = clone $this;
-        $newUri->arguments = null;
         $newUri->query = $query;
         return $newUri;
     }
