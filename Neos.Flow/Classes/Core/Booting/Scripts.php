@@ -30,7 +30,6 @@ use Neos\Flow\Http\HttpRequestHandlerInterface;
 use Neos\Flow\Log\LoggerBackendConfigurationHelper;
 use Neos\Flow\Log\PsrLoggerFactory;
 use Neos\Flow\Log\PsrLoggerFactoryInterface;
-use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\Log\ThrowableStorage\FileStorage;
 use Neos\Flow\Log\ThrowableStorageInterface;
 use Neos\Flow\Monitor\FileMonitor;
