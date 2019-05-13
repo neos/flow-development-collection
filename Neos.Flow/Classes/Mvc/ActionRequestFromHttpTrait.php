@@ -31,7 +31,8 @@ trait ActionRequestFromHttpTrait
         $arguments = ArgumentsHelper::mergeArgumentArrays($arguments, $uploadedFiles);
 
         /** @var $actionRequest ActionRequest */
-        $actionRequest = new ActionRequest($httpRequest);
+        $actionRequest = $this->objectManager->get(ActionRequest::class);
+        //new ActionRequest($httpRequest);
         if (!empty($additionalArguments)) {
             $arguments = Arrays::arrayMergeRecursiveOverrule($arguments, $additionalArguments);
         }

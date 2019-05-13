@@ -117,6 +117,8 @@ class AjaxWidgetComponentTest extends UnitTestCase
         $this->mockDispatcher = $this->getMockBuilder(Dispatcher::class)->getMock();
         $this->inject($this->ajaxWidgetComponent, 'dispatcher', $this->mockDispatcher);
 
+        $this->inject($this->ajaxWidgetComponent, 'objectManager', $this->mockObjectManager);
+
         $this->mockSecurityContext = $this->getMockBuilder(Context::class)->getMock();
         $this->inject($this->ajaxWidgetComponent, 'securityContext', $this->mockSecurityContext);
     }

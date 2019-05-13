@@ -11,7 +11,7 @@ namespace Neos\Flow\Tests\Functional\Mvc;
  * source code.
  */
 
-use Neos\Flow\Http\Request;
+use GuzzleHttp\Psr7\ServerRequest;
 use Neos\Flow\Http\Uri;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Tests\FunctionalTestCase;
@@ -26,7 +26,7 @@ class ActionRequestTest extends FunctionalTestCase
      */
     public function actionRequestStripsParentHttpRequest()
     {
-        $httpRequest = Request::create(new Uri('http://neos.io'));
+        $httpRequest = new ServerRequest('GET', new Uri('http://neos.io'));
 
         $actionRequest = new ActionRequest($httpRequest);
         $actionRequest->setControllerActionName('foo');
@@ -43,7 +43,7 @@ class ActionRequestTest extends FunctionalTestCase
      */
     public function actionRequestDoesNotStripParentActionRequest()
     {
-        $httpRequest = Request::create(new Uri('http://neos.io'));
+        $httpRequest = new ServerRequest('GET', new Uri('http://neos.io'));
 
         $parentActionRequest = new ActionRequest($httpRequest);
         $actionRequest = new ActionRequest($parentActionRequest);

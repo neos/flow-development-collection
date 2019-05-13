@@ -11,18 +11,15 @@ namespace Neos\Flow\Tests\Unit\Mvc;
  * source code.
  */
 
+use GuzzleHttp\Psr7\Response;
 use Neos\Flow\Http\Component\ComponentContext;
-use Neos\Flow\Http\Request;
-use Neos\Flow\Http\Response;
 use Neos\Flow\Mvc\ActionRequest;
-use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\DispatchComponent;
 use Neos\Flow\Mvc\Dispatcher;
 use Neos\Flow\Mvc\Routing\RoutingComponent;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Property\PropertyMappingConfiguration;
-use Neos\Flow\Property\TypeConverter\MediaTypeConverterInterface;
 use Neos\Flow\Security;
 use Neos\Flow\Tests\UnitTestCase;
 use Psr\Http\Message\ResponseInterface;
@@ -49,7 +46,7 @@ class DispatchComponentTest extends UnitTestCase
     protected $mockComponentContext;
 
     /**
-     * @var Request|\PHPUnit_Framework_MockObject_MockObject
+     * @var ServerRequestInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $mockHttpRequest;
 
@@ -98,27 +95,6 @@ class DispatchComponentTest extends UnitTestCase
         $this->inject($this->dispatchComponent, 'dispatcher', $this->mockDispatcher);
 
         $this->mockActionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
-//
-//        $mockMediaTypeConverter = $this->createMock(MediaTypeConverterInterface::class);
-//        $this->mockObjectManager = $this->createMock(ObjectManagerInterface::class);
-//        $this->mockObjectManager->expects($this->any())->method('get')->willReturnCallback(function ($className) use ($mockMediaTypeConverter) {
-//            switch ($className) {
-//                case ActionRequest::class:
-//                    return $this->mockActionRequest;
-//                case MediaTypeConverterInterface::class:
-//                    return $mockMediaTypeConverter;
-//            }
-//
-//            return null;
-//        });
-
-//        $this->inject($this->dispatchComponent, 'objectManager', $this->mockObjectManager);
-
-//        $this->mockSecurityContext = $this->getMockBuilder(Security\Context::class)->getMock();
-//        $this->inject($this->dispatchComponent, 'securityContext', $this->mockSecurityContext);
-//
-//        $this->mockPropertyMapper = $this->getMockBuilder(PropertyMapper::class)->disableOriginalConstructor()->getMock();
-//        $this->inject($this->dispatchComponent, 'propertyMapper', $this->mockPropertyMapper);
     }
 
     /**

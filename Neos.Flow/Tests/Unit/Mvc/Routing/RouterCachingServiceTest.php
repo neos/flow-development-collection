@@ -25,6 +25,7 @@ use Neos\Flow\Mvc\Routing\RouterCachingService;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Tests\UnitTestCase;
+use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -104,11 +105,9 @@ class RouterCachingServiceTest extends UnitTestCase
 
         $this->inject($this->routerCachingService, 'objectManager', $this->mockObjectManager);
 
-        $this->mockHttpRequest = $this->getMockBuilder(Request::class)->disableOriginalConstructor()->getMock();
+        $this->mockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
         $this->mockHttpRequest->expects($this->any())->method('getMethod')->will($this->returnValue('GET'));
-        $this->mockHttpRequest->expects($this->any())->method('getRelativePath')->will($this->returnValue('some/route/path'));
-        $this->mockUri = $this->getMockBuilder(Uri::class)->disableOriginalConstructor()->getMock();
-        $this->mockUri->expects($this->any())->method('getHost')->will($this->returnValue('subdomain.domain.com'));
+        $this->mockUri = new \GuzzleHttp\Psr7\Uri('http://subdomain.domain.com/some/route/path');
         $this->mockHttpRequest->expects($this->any())->method('getUri')->will($this->returnValue($this->mockUri));
     }
 

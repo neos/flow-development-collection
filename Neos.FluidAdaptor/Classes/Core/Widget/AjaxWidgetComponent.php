@@ -13,12 +13,15 @@ namespace Neos\FluidAdaptor\Core\Widget;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Component\ComponentChain;
+use Neos\Flow\Http\Component\ComponentInterface;
 use Neos\Flow\Http\Component\Exception as ComponentException;
 use Neos\Flow\Http\Helper\ArgumentsHelper;
 use Neos\Flow\Http\Component\ComponentContext;
 use Neos\Flow\Mvc\ActionRequestFromHttpTrait;
 use Neos\Flow\Mvc\ActionResponse;
-use Neos\Flow\Mvc\DispatchComponent;
+use Neos\Flow\Mvc\ActionResponseRenderer\IntoComponentContext;
+use Neos\Flow\Mvc\Dispatcher;
+use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Security\Context;
 use Neos\Flow\Security\Cryptography\HashService;
 use Psr\Http\Message\RequestInterface;
@@ -28,7 +31,7 @@ use Psr\Http\Message\RequestInterface;
  * It's task is to interrupt the default dispatching as soon as possible if the current request is an AJAX request
  * triggered by a Fluid widget (e.g. contains the arguments "__widgetId" or "__widgetContext").
  */
-class AjaxWidgetComponent extends DispatchComponent
+class AjaxWidgetComponent implements ComponentInterface
 {
     use ActionRequestFromHttpTrait;
 
@@ -49,6 +52,18 @@ class AjaxWidgetComponent extends DispatchComponent
      * @var Context
      */
     protected $securityContext;
+
+    /**
+     * @Flow\Inject(lazy=false)
+     * @var ObjectManagerInterface
+     */
+    protected $objectManager;
+
+    /**
+     * @Flow\Inject
+     * @var Dispatcher
+     */
+    protected $dispatcher;
 
     /**
      * Check if the current request contains a widget context.
@@ -74,7 +89,10 @@ class AjaxWidgetComponent extends DispatchComponent
         $actionResponse = new ActionResponse();
 
         $this->dispatcher->dispatch($actionRequest, $actionResponse);
-        $componentContext->replaceHttpResponse($actionResponse);
+
+        $intoComponentContext = new IntoComponentContext($componentContext);
+        $componentContext = $actionResponse->prepareRendering($intoComponentContext)->render();
+
         // stop processing the current component chain
         $componentContext->setParameter(ComponentChain::class, 'cancel', true);
     }

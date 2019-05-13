@@ -135,7 +135,6 @@ class DispatcherTest extends UnitTestCase
         $this->dispatcher->injectObjectManager($this->mockObjectManager);
         $this->dispatcher->injectSecurityContext($this->mockSecurityContext);
         $this->dispatcher->injectFirewall($this->mockFirewall);
-
     }
 
     /**

@@ -12,6 +12,7 @@ namespace Neos\Flow\Http\Helper;
  */
 
 use Neos\Flow\Http\Headers;
+use Neos\Flow\Http\ServerRequestAttributes;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
@@ -61,8 +62,10 @@ abstract class RequestInformationHelper
 
     public static function getRelativeRequestPath(ServerRequestInterface $request): string
     {
-        $baseUri = clone $request->getUri();
-        $baseUri = $baseUri->withQuery('')->withFragment('')->withPath(self::getScriptRequestPath($request));
+        $baseUri = $request->getAttribute(ServerRequestAttributes::ATTRIBUTE_BASE_URI);
+        if (empty($baseUri)) {
+            $baseUri = self::generateBaseUri($request);
+        }
         return UriHelper::getRelativePath($baseUri, $request->getUri());
     }
 

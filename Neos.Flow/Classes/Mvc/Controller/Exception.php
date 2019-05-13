@@ -12,7 +12,6 @@ namespace Neos\Flow\Mvc\Controller;
  */
 
 use Neos\Flow\Mvc\ActionRequest;
-use Neos\Flow\Mvc\RequestInterface;
 
 /**
  * A generic Controller exception
