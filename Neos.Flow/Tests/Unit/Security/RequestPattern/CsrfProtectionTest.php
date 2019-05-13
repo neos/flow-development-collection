@@ -11,8 +11,8 @@ namespace Neos\Flow\Tests\Unit\Security\RequestPattern;
  * source code.
  */
 
-use Neos\Flow\Http\Request;
-use Neos\Flow\Http\Uri;
+use GuzzleHttp\Psr7\ServerRequest;
+use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\RequestInterface;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
@@ -57,7 +57,7 @@ class CsrfProtectionTest extends UnitTestCase
         $controllerObjectName = 'SomeControllerObjectName';
         $controllerActionName = 'list';
 
-        $httpRequest = Request::create(new Uri('http://localhost'), 'POST');
+        $httpRequest = new ServerRequest('POST', new Uri('http://localhost'));
 
         $this->mockActionRequest->expects($this->atLeastOnce())->method('getControllerObjectName')->will($this->returnValue($controllerObjectName));
         $this->mockActionRequest->expects($this->once())->method('getControllerActionName')->will($this->returnValue($controllerActionName));
@@ -99,7 +99,7 @@ class CsrfProtectionTest extends UnitTestCase
         $controllerObjectName = 'SomeControllerObjectName';
         $controllerActionName = 'list';
 
-        $httpRequest = Request::create(new Uri('http://localhost'), 'POST');
+        $httpRequest = new ServerRequest('POST', new Uri('http://localhost'));
 
         $this->mockActionRequest->expects($this->atLeastOnce())->method('getControllerObjectName')->will($this->returnValue($controllerObjectName));
         $this->mockActionRequest->expects($this->once())->method('getControllerActionName')->will($this->returnValue($controllerActionName));
@@ -134,7 +134,7 @@ class CsrfProtectionTest extends UnitTestCase
         $controllerObjectName = 'SomeControllerObjectName';
         $controllerActionName = 'list';
 
-        $httpRequest = Request::create(new Uri('http://localhost'), 'POST');
+        $httpRequest = new ServerRequest('POST', new Uri('http://localhost'));
 
         $this->mockActionRequest->expects($this->atLeastOnce())->method('getControllerObjectName')->will($this->returnValue($controllerObjectName));
         $this->mockActionRequest->expects($this->any())->method('getControllerActionName')->will($this->returnValue($controllerActionName));
@@ -178,7 +178,7 @@ class CsrfProtectionTest extends UnitTestCase
         $controllerObjectName = 'SomeControllerObjectName';
         $controllerActionName = 'list';
 
-        $httpRequest = Request::create(new Uri('http://localhost'), 'POST');
+        $httpRequest = new ServerRequest('POST', new Uri('http://localhost'));
 
         $this->mockActionRequest->expects($this->atLeastOnce())->method('getControllerObjectName')->will($this->returnValue($controllerObjectName));
         $this->mockActionRequest->expects($this->any())->method('getControllerActionName')->will($this->returnValue($controllerActionName));
@@ -224,7 +224,7 @@ class CsrfProtectionTest extends UnitTestCase
         $controllerObjectName = 'SomeControllerObjectName';
         $controllerActionName = 'list';
 
-        $httpRequest = Request::create(new Uri('http://localhost'), 'POST');
+        $httpRequest = new ServerRequest('POST', new Uri('http://localhost'));
 
         $this->mockActionRequest->expects($this->atLeastOnce())->method('getControllerObjectName')->will($this->returnValue($controllerObjectName));
         $this->mockActionRequest->expects($this->any())->method('getControllerActionName')->will($this->returnValue($controllerActionName));
@@ -270,8 +270,8 @@ class CsrfProtectionTest extends UnitTestCase
         $controllerObjectName = 'SomeControllerObjectName';
         $controllerActionName = 'list';
 
-        $httpRequest = Request::create(new Uri('http://localhost'), 'POST');
-        $httpRequest->setHeader('X-Flow-Csrftoken', 'validToken');
+        $httpRequest = new ServerRequest('POST', new Uri('http://localhost'));
+        $httpRequest = $httpRequest->withHeader('X-Flow-Csrftoken', 'validToken');
 
         $this->mockActionRequest->expects($this->atLeastOnce())->method('getControllerObjectName')->will($this->returnValue($controllerObjectName));
         $this->mockActionRequest->expects($this->any())->method('getControllerActionName')->will($this->returnValue($controllerActionName));
@@ -314,7 +314,7 @@ class CsrfProtectionTest extends UnitTestCase
      */
     public function matchRequestReturnsFalseIfNobodyIsAuthenticated()
     {
-        $httpRequest = Request::create(new Uri('http://localhost'), 'POST');
+        $httpRequest = new ServerRequest('POST', new Uri('http://localhost'));
 
         $this->mockActionRequest->expects($this->any())->method('getHttpRequest')->will($this->returnValue($httpRequest));
 
@@ -333,7 +333,7 @@ class CsrfProtectionTest extends UnitTestCase
      */
     public function matchRequestReturnsFalseIfRequestMethodIsSafe()
     {
-        $httpRequest = Request::create(new Uri('http://localhost'), 'GET');
+        $httpRequest = new ServerRequest('GET', new Uri('http://localhost'));
 
         $this->mockActionRequest->expects($this->any())->method('getHttpRequest')->will($this->returnValue($httpRequest));
 
@@ -346,22 +346,9 @@ class CsrfProtectionTest extends UnitTestCase
     /**
      * @test
      */
-    public function matchRequestReturnsFalseIfRequestIsNoActionRequest()
-    {
-        $mockRequest = $this->createMock(RequestInterface::class);
-
-        $mockCsrfProtectionPattern = $this->getAccessibleMock(Security\RequestPattern\CsrfProtection::class, ['dummy']);
-        $mockCsrfProtectionPattern->_set('logger', $this->mockSystemLogger);
-
-        $this->assertFalse($mockCsrfProtectionPattern->matchRequest($mockRequest));
-    }
-
-    /**
-     * @test
-     */
     public function matchRequestReturnsFalseIfAuthorizationChecksAreDisabled()
     {
-        $httpRequest = Request::create(new Uri('http://localhost'), 'POST');
+        $httpRequest = new ServerRequest('POST', new Uri('http://localhost'));
 
         $this->mockActionRequest->expects($this->any())->method('getHttpRequest')->will($this->returnValue($httpRequest));
 

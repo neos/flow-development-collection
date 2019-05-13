@@ -14,6 +14,8 @@ namespace Neos\FluidAdaptor\Tests\Unit\Core\Widget;
 use Neos\Flow\Http\Component\ComponentChain;
 use Neos\Flow\Http\Component\ComponentContext;
 use Neos\Flow\Http;
+use Neos\Flow\Http\Response;
+use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\DispatchComponent;
 use Neos\Flow\Mvc\Dispatcher;
 use Neos\Flow\Mvc\Routing\RoutingComponent;
@@ -23,6 +25,9 @@ use Neos\Flow\Security\Cryptography\HashService;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\FluidAdaptor\Core\Widget\AjaxWidgetComponent;
 use Neos\FluidAdaptor\Core\Widget\AjaxWidgetContextHolder;
+use Neos\FluidAdaptor\Core\Widget\WidgetContext;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Testcase for AjaxWidgetComponent
@@ -51,7 +56,7 @@ class AjaxWidgetComponentTest extends UnitTestCase
     protected $mockHttpRequest;
 
     /**
-     * @var Http\Response|\PHPUnit_Framework_MockObject_MockObject
+     * @var Response|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $mockHttpResponse;
 
@@ -91,33 +96,29 @@ class AjaxWidgetComponentTest extends UnitTestCase
     {
         $this->ajaxWidgetComponent = new AjaxWidgetComponent();
 
-        $this->mockObjectManager = $this->createMock(\Neos\Flow\ObjectManagement\ObjectManagerInterface::class);
-        $this->inject($this->ajaxWidgetComponent, 'objectManager', $this->mockObjectManager);
+        $this->mockObjectManager = $this->createMock(ObjectManagerInterface::class);
 
-        $this->mockComponentContext = $this->getMockBuilder(\Neos\Flow\Http\Component\ComponentContext::class)->disableOriginalConstructor()->getMock();
+        $this->mockComponentContext = $this->getMockBuilder(ComponentContext::class)->disableOriginalConstructor()->getMock();
 
-        $this->mockHttpRequest = $this->getMockBuilder(\Neos\Flow\Http\Request::class)->disableOriginalConstructor()->getMock();
-        $this->mockHttpRequest->expects($this->any())->method('getArguments')->will($this->returnValue([]));
+        $this->mockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
+        $this->mockHttpRequest->expects($this->any())->method('getQueryParams')->will($this->returnValue([]));
+        $this->mockHttpRequest->expects($this->any())->method('getUploadedFiles')->will($this->returnValue([]));
         $this->mockComponentContext->expects($this->any())->method('getHttpRequest')->will($this->returnValue($this->mockHttpRequest));
 
-        $this->mockHttpResponse = $this->getMockBuilder(\Neos\Flow\Http\Response::class)->disableOriginalConstructor()->getMock();
+        $this->mockHttpResponse = $this->getMockBuilder(ResponseInterface::class)->disableOriginalConstructor()->getMock();
         $this->mockComponentContext->expects($this->any())->method('getHttpResponse')->will($this->returnValue($this->mockHttpResponse));
 
-        $this->mockAjaxWidgetContextHolder = $this->getMockBuilder(\Neos\FluidAdaptor\Core\Widget\AjaxWidgetContextHolder::class)->getMock();
+        $this->mockAjaxWidgetContextHolder = $this->getMockBuilder(AjaxWidgetContextHolder::class)->getMock();
         $this->inject($this->ajaxWidgetComponent, 'ajaxWidgetContextHolder', $this->mockAjaxWidgetContextHolder);
 
-        $this->mockHashService = $this->getMockBuilder(\Neos\Flow\Security\Cryptography\HashService::class)->getMock();
+        $this->mockHashService = $this->getMockBuilder(HashService::class)->getMock();
         $this->inject($this->ajaxWidgetComponent, 'hashService', $this->mockHashService);
 
-        $this->mockDispatcher = $this->getMockBuilder(\Neos\Flow\Mvc\Dispatcher::class)->getMock();
+        $this->mockDispatcher = $this->getMockBuilder(Dispatcher::class)->getMock();
         $this->inject($this->ajaxWidgetComponent, 'dispatcher', $this->mockDispatcher);
 
-        $this->mockSecurityContext = $this->getMockBuilder(\Neos\Flow\Security\Context::class)->getMock();
+        $this->mockSecurityContext = $this->getMockBuilder(Context::class)->getMock();
         $this->inject($this->ajaxWidgetComponent, 'securityContext', $this->mockSecurityContext);
-
-        $this->mockPropertyMapper = $this->getMockBuilder(\Neos\Flow\Property\PropertyMapper::class)->disableOriginalConstructor()->getMock();
-        $this->mockPropertyMapper->expects($this->any())->method('convert')->with('', 'array', $this->mockPropertyMappingConfiguration)->will($this->returnValue([]));
-        $this->inject($this->ajaxWidgetComponent, 'propertyMapper', $this->mockPropertyMapper);
     }
 
     /**
@@ -125,8 +126,7 @@ class AjaxWidgetComponentTest extends UnitTestCase
      */
     public function handleDoesNotCreateActionRequestIfHttpRequestContainsNoWidgetContext()
     {
-        $this->mockHttpRequest->expects($this->at(0))->method('hasArgument')->with('__widgetId')->will($this->returnValue(false));
-        $this->mockHttpRequest->expects($this->at(1))->method('hasArgument')->with('__widgetContext')->will($this->returnValue(false));
+        $this->mockHttpRequest->expects($this->any())->method('getParsedBody')->willReturn([]);
 
         $this->mockObjectManager->expects($this->never())->method('get');
 
@@ -140,13 +140,15 @@ class AjaxWidgetComponentTest extends UnitTestCase
     {
         $mockWidgetId = 'SomeWidgetId';
         $mockControllerObjectName = 'SomeControllerObjectName';
-        $this->mockHttpRequest->expects($this->at(0))->method('hasArgument')->with('__widgetId')->will($this->returnValue(true));
-        $this->mockHttpRequest->expects($this->atLeastOnce())->method('getArgument')->with('__widgetId')->will($this->returnValue($mockWidgetId));
-        $mockWidgetContext = $this->getMockBuilder(\Neos\FluidAdaptor\Core\Widget\WidgetContext::class)->getMock();
+        $this->mockHttpRequest->expects($this->any())->method('getParsedBody')->willReturn([
+            '__widgetId' => $mockWidgetId,
+        ]);
+
+        $mockWidgetContext = $this->getMockBuilder(WidgetContext::class)->getMock();
         $mockWidgetContext->expects($this->atLeastOnce())->method('getControllerObjectName')->will($this->returnValue($mockControllerObjectName));
         $this->mockAjaxWidgetContextHolder->expects($this->atLeastOnce())->method('get')->with($mockWidgetId)->will($this->returnValue($mockWidgetContext));
-        $mockActionRequest = $this->getMockBuilder(\Neos\Flow\Mvc\ActionRequest::class)->disableOriginalConstructor()->getMock();
-        $this->mockObjectManager->expects($this->atLeastOnce())->method('get')->with(\Neos\Flow\Mvc\ActionRequest::class)->will($this->returnValue($mockActionRequest));
+        $mockActionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
+        $this->mockObjectManager->expects($this->atLeastOnce())->method('get')->with(ActionRequest::class)->will($this->returnValue($mockActionRequest));
         $this->mockComponentContext->expects($this->any())->method('getParameter')->willReturnMap([
             [RoutingComponent::class, 'matchResults', []],
             [DispatchComponent::class, 'actionRequest', $mockActionRequest]
@@ -165,13 +167,15 @@ class AjaxWidgetComponentTest extends UnitTestCase
     {
         $mockWidgetId = 'SomeWidgetId';
         $mockControllerObjectName = 'SomeControllerObjectName';
-        $this->mockHttpRequest->expects($this->at(0))->method('hasArgument')->with('__widgetId')->will($this->returnValue(true));
-        $this->mockHttpRequest->expects($this->atLeastOnce())->method('getArgument')->with('__widgetId')->will($this->returnValue($mockWidgetId));
-        $mockWidgetContext = $this->getMockBuilder(\Neos\FluidAdaptor\Core\Widget\WidgetContext::class)->getMock();
+        $this->mockHttpRequest->expects($this->any())->method('getParsedBody')->willReturn([
+            '__widgetId' => $mockWidgetId,
+        ]);
+
+        $mockWidgetContext = $this->getMockBuilder(WidgetContext::class)->getMock();
         $mockWidgetContext->expects($this->atLeastOnce())->method('getControllerObjectName')->will($this->returnValue($mockControllerObjectName));
         $this->mockAjaxWidgetContextHolder->expects($this->atLeastOnce())->method('get')->with($mockWidgetId)->will($this->returnValue($mockWidgetContext));
-        $mockActionRequest = $this->getMockBuilder(\Neos\Flow\Mvc\ActionRequest::class)->disableOriginalConstructor()->getMock();
-        $this->mockObjectManager->expects($this->atLeastOnce())->method('get')->with(\Neos\Flow\Mvc\ActionRequest::class)->will($this->returnValue($mockActionRequest));
+        $mockActionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
+        $this->mockObjectManager->expects($this->atLeastOnce())->method('get')->with(ActionRequest::class)->will($this->returnValue($mockActionRequest));
         $this->mockComponentContext->expects($this->any())->method('getParameter')->willReturnMap([
             [RoutingComponent::class, 'matchResults', []],
             [DispatchComponent::class, 'actionRequest', $mockActionRequest]
@@ -188,13 +192,15 @@ class AjaxWidgetComponentTest extends UnitTestCase
     {
         $mockWidgetId = 'SomeWidgetId';
         $mockControllerObjectName = 'SomeControllerObjectName';
-        $this->mockHttpRequest->expects($this->at(0))->method('hasArgument')->with('__widgetId')->will($this->returnValue(true));
-        $this->mockHttpRequest->expects($this->atLeastOnce())->method('getArgument')->with('__widgetId')->will($this->returnValue($mockWidgetId));
-        $mockWidgetContext = $this->getMockBuilder(\Neos\FluidAdaptor\Core\Widget\WidgetContext::class)->getMock();
+        $this->mockHttpRequest->expects($this->any())->method('getParsedBody')->willReturn([
+            '__widgetId' => $mockWidgetId,
+        ]);
+
+        $mockWidgetContext = $this->getMockBuilder(WidgetContext::class)->getMock();
         $mockWidgetContext->expects($this->atLeastOnce())->method('getControllerObjectName')->will($this->returnValue($mockControllerObjectName));
         $this->mockAjaxWidgetContextHolder->expects($this->atLeastOnce())->method('get')->with($mockWidgetId)->will($this->returnValue($mockWidgetContext));
-        $mockActionRequest = $this->getMockBuilder(\Neos\Flow\Mvc\ActionRequest::class)->disableOriginalConstructor()->getMock();
-        $this->mockObjectManager->expects($this->atLeastOnce())->method('get')->with(\Neos\Flow\Mvc\ActionRequest::class)->will($this->returnValue($mockActionRequest));
+        $mockActionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
+        $this->mockObjectManager->expects($this->atLeastOnce())->method('get')->with(ActionRequest::class)->will($this->returnValue($mockActionRequest));
         $this->mockComponentContext->expects($this->any())->method('getParameter')->willReturnMap([
             [RoutingComponent::class, 'matchResults', []],
             [DispatchComponent::class, 'actionRequest', $mockActionRequest]
@@ -214,13 +220,15 @@ class AjaxWidgetComponentTest extends UnitTestCase
     {
         $mockWidgetId = 'SomeWidgetId';
         $mockControllerObjectName = 'SomeControllerObjectName';
-        $this->mockHttpRequest->expects($this->at(0))->method('hasArgument')->with('__widgetId')->will($this->returnValue(true));
-        $this->mockHttpRequest->expects($this->atLeastOnce())->method('getArgument')->with('__widgetId')->will($this->returnValue($mockWidgetId));
-        $mockWidgetContext = $this->getMockBuilder(\Neos\FluidAdaptor\Core\Widget\WidgetContext::class)->getMock();
+        $this->mockHttpRequest->expects($this->any())->method('getParsedBody')->willReturn([
+            '__widgetId' => $mockWidgetId,
+        ]);
+
+        $mockWidgetContext = $this->getMockBuilder(WidgetContext::class)->getMock();
         $mockWidgetContext->expects($this->atLeastOnce())->method('getControllerObjectName')->will($this->returnValue($mockControllerObjectName));
         $this->mockAjaxWidgetContextHolder->expects($this->atLeastOnce())->method('get')->with($mockWidgetId)->will($this->returnValue($mockWidgetContext));
-        $mockActionRequest = $this->getMockBuilder(\Neos\Flow\Mvc\ActionRequest::class)->disableOriginalConstructor()->getMock();
-        $this->mockObjectManager->expects($this->atLeastOnce())->method('get')->with(\Neos\Flow\Mvc\ActionRequest::class)->will($this->returnValue($mockActionRequest));
+        $mockActionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
+        $this->mockObjectManager->expects($this->atLeastOnce())->method('get')->with(ActionRequest::class)->will($this->returnValue($mockActionRequest));
         $this->mockComponentContext->expects($this->any())->method('getParameter')->willReturnMap([
             [RoutingComponent::class, 'matchResults', []],
             [DispatchComponent::class, 'actionRequest', $mockActionRequest]
@@ -242,9 +250,12 @@ class AjaxWidgetComponentTest extends UnitTestCase
         $mockWidgetContext = 'SomeWidgetContext';
         $mockSerializedWidgetContext = base64_encode(serialize($mockWidgetContext));
         $mockSerializedWidgetContextWithHmac = $mockSerializedWidgetContext . 'HMAC';
-        $this->mockHttpRequest->expects($this->at(0))->method('hasArgument')->with('__widgetId')->will($this->returnValue(false));
-        $this->mockHttpRequest->expects($this->at(1))->method('hasArgument')->with('__widgetContext')->will($this->returnValue(true));
-        $this->mockHttpRequest->expects($this->atLeastOnce())->method('getArgument')->with('__widgetContext')->will($this->returnValue($mockSerializedWidgetContextWithHmac));
+
+        $this->mockHttpRequest->expects($this->any())->method('getParsedBody')->willReturn([
+            '__widgetContext' => $mockSerializedWidgetContextWithHmac
+        ]);
+
+
         $this->mockHashService->expects($this->atLeastOnce())->method('validateAndStripHmac')->with($mockSerializedWidgetContextWithHmac)->will($this->returnValue($mockSerializedWidgetContext));
 
         $actualResult = $ajaxWidgetComponent->_call('extractWidgetContext', $this->mockHttpRequest);

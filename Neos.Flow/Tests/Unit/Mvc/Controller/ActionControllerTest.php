@@ -146,7 +146,7 @@ class ActionControllerTest extends UnitTestCase
         $mockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
         $mockRequest->expects($this->any())->method('getHttpRequest')->will($this->returnValue($mockHttpRequest));
 
-        $mockResponse = $this->createMock(Mvc\ActionResponse::class);
+        $mockResponse = new Mvc\ActionResponse;
 
         $this->actionController->processRequest($mockRequest, $mockResponse);
     }
@@ -186,7 +186,7 @@ class ActionControllerTest extends UnitTestCase
         $mockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
         $mockRequest->expects($this->any())->method('getHttpRequest')->will($this->returnValue($mockHttpRequest));
 
-        $mockResponse = $this->createMock(Mvc\ActionResponse::class);
+        $mockResponse = new Mvc\ActionResponse;
 
         $this->actionController->processRequest($mockRequest, $mockResponse);
     }
@@ -210,7 +210,7 @@ class ActionControllerTest extends UnitTestCase
         $mockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
         $this->mockRequest->expects($this->any())->method('getHttpRequest')->will($this->returnValue($mockHttpRequest));
 
-        $mockResponse = $this->createMock(Mvc\ActionResponse::class);
+        $mockResponse = new Mvc\ActionResponse;
 
         $mockView = $this->createMock(Mvc\View\ViewInterface::class);
         $mockView->expects($this->once())->method('setControllerContext')->with($this->mockControllerContext);
@@ -238,7 +238,7 @@ class ActionControllerTest extends UnitTestCase
         $mockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
         $this->mockRequest->expects($this->any())->method('getHttpRequest')->will($this->returnValue($mockHttpRequest));
 
-        $mockResponse = $this->createMock(Mvc\ActionResponse::class);
+        $mockResponse = new Mvc\ActionResponse;
 
         $mockView = $this->createMock(Mvc\View\ViewInterface::class);
         $mockView->expects($this->once())->method('assign')->with('settings', $mockSettings);

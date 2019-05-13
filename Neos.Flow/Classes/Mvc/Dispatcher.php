@@ -98,16 +98,10 @@ class Dispatcher
      */
     public function dispatch(ActionRequest $request, ActionResponse $response)
     {
-        // NOTE: The dispatcher is used for both Action- and CLI-Requests. For the latter case dispatching might happen during compile-time, that's why we can't inject the following dependencies
-
-        if ($this->securityContext->areAuthorizationChecksDisabled()) {
-            $this->initiateDispatchLoop($request, $response);
-            return;
-        }
-
         try {
-            /** @var ActionRequest $request */
-            $this->firewall->blockIllegalRequests($request);
+            if ($this->securityContext->areAuthorizationChecksDisabled() !== true) {
+                $this->firewall->blockIllegalRequests($request);
+            }
             $this->initiateDispatchLoop($request, $response);
         } catch (AuthenticationRequiredException $exception) {
             /** @var ActionResponse $response */

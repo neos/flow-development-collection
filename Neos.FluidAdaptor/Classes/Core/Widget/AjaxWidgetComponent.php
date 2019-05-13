@@ -89,7 +89,7 @@ class AjaxWidgetComponent extends DispatchComponent
      */
     protected function extractWidgetContext(RequestInterface $httpRequest)
     {
-        $arguments = ArgumentsHelper::buildUnifiedArguments($httpRequest->getQueryParams(), $httpRequest->getParsedBody(), []);
+        $arguments = ArgumentsHelper::mergeArgumentArrays($httpRequest->getQueryParams(), $httpRequest->getParsedBody());
         if (isset($arguments['__widgetId'])) {
             return $this->ajaxWidgetContextHolder->get($arguments['__widgetId']);
         }

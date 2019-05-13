@@ -12,8 +12,6 @@ namespace Neos\Flow\Http\Helper;
  */
 
 use Neos\Flow\Http\ContentStream;
-use Neos\Flow\Http\Cookie;
-use Neos\Flow\Http\Headers;
 use Neos\Http\Factories\ResponseFactory;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -34,7 +32,6 @@ abstract class ResponseInformationHelper
     public static function createFromRaw(string $rawResponse): ResponseInterface
     {
         $response = (new ResponseFactory())->createResponse();
-
         if (!$response instanceof ResponseInterface) {
             throw new \InvalidArgumentException(sprintf('The given response class name "%s" does not implement the "%s" and cannot be created with this method.', get_class($response), ResponseInterface::class));
         }

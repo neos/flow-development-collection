@@ -12,7 +12,6 @@ namespace Neos\Flow\Security;
  */
 
 use Neos\Flow\Mvc\ActionRequest;
-use Neos\Flow\Mvc\RequestInterface;
 
 /**
  * Contract for a request pattern.

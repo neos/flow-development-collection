@@ -11,6 +11,7 @@ namespace Neos\Flow\Tests\Unit\Mvc\Routing;
  * source code.
  */
 
+use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Http;
 use Neos\Flow\Http\Request;
 use Neos\Flow\Mvc\Exception\InvalidRoutePartValueException;
@@ -21,6 +22,7 @@ use Neos\Flow\Mvc\Routing;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Tests\UnitTestCase;
+use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
 
 require_once(__DIR__ . '/Fixtures/MockRoutePartHandler.php');
@@ -73,11 +75,9 @@ class RouteTest extends UnitTestCase
      */
     protected function routeMatchesPath($routePath)
     {
-        $mockUri = $this->getMockBuilder(UriInterface::class)->getMock();
-
+        $mockUri = new Uri('http://localhost/' . $routePath);
         /** @var Http\Request|\PHPUnit_Framework_MockObject_MockObject $mockHttpRequest */
-        $mockHttpRequest = $this->getMockBuilder(Http\Request::class)->disableOriginalConstructor()->getMock();
-        $mockHttpRequest->expects($this->any())->method('getRelativePath')->will($this->returnValue($routePath));
+        $mockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
         $mockHttpRequest->expects($this->any())->method('getUri')->will($this->returnValue($mockUri));
 
         $routeContext = new RouteContext($mockHttpRequest, RouteParameters::createEmpty());

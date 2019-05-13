@@ -17,6 +17,7 @@ use Neos\Flow\Mvc\Routing\Dto\ResolveContext;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Flow\Mvc;
 use Neos\Flow\Utility;
+use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
 
 /**
@@ -65,10 +66,10 @@ class UriBuilderTest extends UnitTestCase
      */
     public function setUp()
     {
-        $this->mockHttpRequest = $this->getMockBuilder(Http\Request::class)->disableOriginalConstructor()->getMock();
+        $this->mockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
 
         $this->mockBaseUri = $this->getMockBuilder(UriInterface::class)->getMock();
-        $this->mockHttpRequest->expects($this->any())->method('getBaseUri')->will($this->returnValue($this->mockBaseUri));
+        $this->mockHttpRequest->expects($this->any())->method('getAttribute')->with(Http\ServerRequestAttributes::ATTRIBUTE_BASE_URI)->willReturn($this->mockBaseUri);
 
         $this->mockRouter = $this->createMock(Mvc\Routing\RouterInterface::class);
 
@@ -719,8 +720,6 @@ class UriBuilderTest extends UnitTestCase
      */
     public function buildPassesBaseUriToRouter()
     {
-        $this->mockHttpRequest->expects($this->atLeastOnce())->method('getBaseUri')->will($this->returnValue($this->mockBaseUri));
-
         $this->mockRouter->expects($this->once())->method('resolve')->willReturnCallback(function (ResolveContext $resolveContext) {
             $this->assertSame($this->mockBaseUri, $resolveContext->getBaseUri());
             return $this->getMockBuilder(UriInterface::class)->getMock();
@@ -748,7 +747,6 @@ class UriBuilderTest extends UnitTestCase
      */
     public function buildDoesNotSetAbsoluteUriFlagByDefault()
     {
-        $this->mockHttpRequest->expects($this->atLeastOnce())->method('getScriptRequestPath')->will($this->returnValue('/document-root/'));
         $this->mockRouter->expects($this->once())->method('resolve')->willReturnCallback(function (ResolveContext $resolveContext) {
             $this->assertFalse($resolveContext->isForceAbsoluteUri());
             return $this->getMockBuilder(UriInterface::class)->getMock();
@@ -762,7 +760,6 @@ class UriBuilderTest extends UnitTestCase
      */
     public function buildForwardsForceAbsoluteUriFlagToRouter()
     {
-        $this->mockHttpRequest->expects($this->atLeastOnce())->method('getScriptRequestPath')->will($this->returnValue('/document-root/'));
         $this->mockRouter->expects($this->once())->method('resolve')->willReturnCallback(function (ResolveContext $resolveContext) {
             $this->assertTrue($resolveContext->isForceAbsoluteUri());
             return $this->getMockBuilder(UriInterface::class)->getMock();
@@ -778,7 +775,7 @@ class UriBuilderTest extends UnitTestCase
      */
     public function buildPrependsScriptRequestPathByDefaultIfCreateAbsoluteUriIsFalse()
     {
-        $this->mockHttpRequest->expects($this->atLeastOnce())->method('getScriptRequestPath')->will($this->returnValue('/document-root/'));
+        $this->mockHttpRequest->expects($this->atLeastOnce())->method('getServerParams')->willReturn(['SCRIPT_NAME' => '/document-root/']);
         $this->mockRouter->expects($this->once())->method('resolve')->willReturnCallback(function (ResolveContext $resolveContext) {
             $this->assertSame('/document-root/', $resolveContext->getUriPathPrefix());
             return $this->getMockBuilder(UriInterface::class)->getMock();
@@ -798,7 +795,7 @@ class UriBuilderTest extends UnitTestCase
         $this->inject($this->uriBuilder, 'environment', $mockEnvironment);
 
         $this->mockRouter->expects($this->once())->method('resolve')->willReturnCallback(function (ResolveContext $resolveContext) {
-            $this->assertSame('index.php/', $resolveContext->getUriPathPrefix());
+            $this->assertSame('/index.php/', $resolveContext->getUriPathPrefix());
             return $this->getMockBuilder(UriInterface::class)->getMock();
         });
 

@@ -42,22 +42,22 @@ class WebRedirect extends AbstractEntryPoint
      */
     public function startAuthentication(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
+        $uri = null;
+
+        if (isset($this->options['uri'])) {
+            $uri = strpos($this->options['uri'], '://') !== false ? $this->options['uri'] : $request->getAttribute(ServerRequestAttributes::ATTRIBUTE_BASE_URI) . $this->options['uri'];
+        }
+
         if (isset($this->options['routeValues'])) {
             $routeValues = $this->options['routeValues'];
             if (!is_array($routeValues)) {
                 throw new MissingConfigurationException(sprintf('The configuration for the WebRedirect authentication entry point is incorrect. "routeValues" must be an array, got "%s".', gettype($routeValues)), 1345040415);
             }
-            $actionRequest = new ActionRequest($request);
-            $this->uriBuilder->setRequest($actionRequest);
 
-            $actionName = $this->extractRouteValue($routeValues, '@action');
-            $controllerName = $this->extractRouteValue($routeValues, '@controller');
-            $packageKey = $this->extractRouteValue($routeValues, '@package');
-            $subPackageKey = $this->extractRouteValue($routeValues, '@subpackage');
-            $uri = $this->uriBuilder->setCreateAbsoluteUri(true)->uriFor($actionName, $routeValues, $controllerName, $packageKey, $subPackageKey);
-        } elseif (isset($this->options['uri'])) {
-            $uri = strpos($this->options['uri'], '://') !== false ? $this->options['uri'] : $request->getAttribute(ServerRequestAttributes::ATTRIBUTE_BASE_URI) . $this->options['uri'];
-        } else {
+            $uri = $this->generateUriFromRouteValues($this->options['routeValues'], $request);
+        }
+
+        if ($uri === null) {
             throw new MissingConfigurationException('The configuration for the WebRedirect authentication entry point is incorrect or missing. You need to specify either the target "uri" or "routeValues".', 1237282583);
         }
 
@@ -65,6 +65,24 @@ class WebRedirect extends AbstractEntryPoint
             ->withBody(ArgumentsHelper::createContentStreamFromString(sprintf('<html><head><meta http-equiv="refresh" content="0;url=%s"/></head></html>', htmlentities($uri, ENT_QUOTES, 'utf-8'))))
             ->withStatus(303)
             ->withHeader('Location', $uri);
+    }
+
+    /**
+     * @param array $routeValues
+     * @param ServerRequestInterface $request
+     * @return string
+     * @throws \Neos\Flow\Mvc\Routing\Exception\MissingActionNameException
+     */
+    protected function generateUriFromRouteValues(array $routeValues, ServerRequestInterface $request): string
+    {
+        $actionRequest = new ActionRequest($request);
+        $this->uriBuilder->setRequest($actionRequest);
+
+        $actionName = $this->extractRouteValue($routeValues, '@action');
+        $controllerName = $this->extractRouteValue($routeValues, '@controller');
+        $packageKey = $this->extractRouteValue($routeValues, '@package');
+        $subPackageKey = $this->extractRouteValue($routeValues, '@subpackage');
+        return $this->uriBuilder->setCreateAbsoluteUri(true)->uriFor($actionName, $routeValues, $controllerName, $packageKey, $subPackageKey);
     }
 
     /**

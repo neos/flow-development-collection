@@ -13,8 +13,6 @@ namespace Neos\Flow\Cli;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Command\HelpCommandController;
-use Neos\Flow\Mvc\ActionRequest;
-use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Controller\Argument;
 use Neos\Flow\Mvc\Controller\ControllerInterface;
 use Neos\Flow\Mvc\Controller\Arguments;

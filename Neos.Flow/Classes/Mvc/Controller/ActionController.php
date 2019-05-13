@@ -24,8 +24,6 @@ use Neos\Flow\Mvc\Exception\InvalidArgumentTypeException;
 use Neos\Flow\Mvc\Exception\NoSuchActionException;
 use Neos\Flow\Mvc\Exception\UnsupportedRequestTypeException;
 use Neos\Flow\Mvc\Exception\ViewNotFoundException;
-use Neos\Flow\Mvc\RequestInterface;
-use Neos\Flow\Mvc\ResponseInterface;
 use Neos\Flow\Mvc\View\ViewInterface;
 use Neos\Flow\Mvc\ViewConfigurationManager;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;

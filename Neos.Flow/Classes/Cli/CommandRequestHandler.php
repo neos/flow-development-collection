@@ -104,15 +104,9 @@ class CommandRequestHandler implements RequestHandlerInterface
             /** @var Context $securityContext */
             $securityContext = $this->objectManager->get(Context::class);
             $securityContext->withoutAuthorizationChecks(function () {
-                if (!$this->request instanceof Request) {
-                    die($this->request);
-                }
                 $this->dispatcher->dispatch($this->request, $this->response);
             });
         } else {
-            if (!$this->request instanceof Request) {
-                            die($this->request);
-            }
             $this->dispatcher->dispatch($this->request, $this->response);
         }
 
@@ -135,19 +129,22 @@ class CommandRequestHandler implements RequestHandlerInterface
         if ($runlevel === Bootstrap::RUNLEVEL_COMPILETIME) {
             return;
         }
+
         $command = $this->request->getCommand();
-        if ($this->bootstrap->isCompiletimeCommand($command->getCommandIdentifier())) {
-            $this->response->appendContent(sprintf(
+        if (!$this->bootstrap->isCompiletimeCommand($command->getCommandIdentifier())) {
+            return;
+        }
+
+        $this->response->appendContent(sprintf(
                 "<b>Unrecognized Command</b>\n\n" .
                 "Sorry, but the command \"%s\" must be specified by its full command\n" .
                 "identifier because it is a compile time command which cannot be resolved\n" .
                 "from an abbreviated command identifier.\n\n",
                 $command->getCommandIdentifier())
-            );
-            $this->response->send();
-            $this->shutdown($runlevel);
-            exit(1);
-        }
+        );
+        $this->response->send();
+        $this->shutdown($runlevel);
+        exit(1);
     }
 
     /**

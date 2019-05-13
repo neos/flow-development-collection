@@ -51,7 +51,7 @@ final class ActionResponse
     public function setContent($content): void
     {
         if (is_string($content)) {
-            $content = new Stream(fopen('data://text/plain,' . $content,'rb'));
+            $content = new Stream(fopen('data://text/plain,' . $content, 'rb'));
         }
         $this->content = $content;
     }

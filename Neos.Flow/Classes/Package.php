@@ -12,12 +12,10 @@ namespace Neos\Flow;
  */
 
 use Neos\Flow\Core\Booting\Step;
-use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Http\Helper\SecurityHelper;
 use Neos\Flow\ObjectManagement\CompileTimeObjectManager;
 use Neos\Flow\Package\Package as BasePackage;
 use Neos\Flow\Package\PackageManager;
-use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Flow\ResourceManagement\ResourceRepository;
 use Neos\Flow\Security\Authentication\AuthenticationProviderManager;

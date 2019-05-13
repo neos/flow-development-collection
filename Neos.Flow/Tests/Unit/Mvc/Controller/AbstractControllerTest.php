@@ -60,7 +60,6 @@ class AbstractControllerTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Mvc\Exception\UnsupportedRequestTypeException
      */
     public function initializeControllerWillThrowAnExceptionIfTheGivenRequestIsNotSupported()
     {
@@ -68,7 +67,11 @@ class AbstractControllerTest extends UnitTestCase
         $response = new Cli\Response();
 
         $controller = $this->getAccessibleMock(AbstractController::class, ['processRequest']);
-        $controller->_call('initializeController', $request, $response);
+        try {
+            $controller->_call('initializeController', $request, $response);
+        } catch (\TypeError $error) {
+            $this->assertInstanceOf(\TypeError::class, $error);
+        }
     }
 
     /**

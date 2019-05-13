@@ -15,6 +15,7 @@ use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Cli\CommandManager;
 use Neos\Flow\Cli\ConsoleOutput;
 use Neos\Flow\Cli\Request;
+use Neos\Flow\Cli\Response;
 use Neos\Flow\Mvc\Controller\Arguments;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Tests\UnitTestCase;
@@ -65,7 +66,7 @@ class CommandControllerTest extends UnitTestCase
     public function processRequestThrowsExceptionIfGivenRequestIsNoCliRequest()
     {
         $mockRequest = $this->createMock(Mvc\ActionRequest::class);
-        $mockResponse = $this->createMock(Mvc\ActionResponse::class);
+        $mockResponse = new Mvc\ActionResponse();
 
         $this->commandController->processRequest($mockRequest, $mockResponse);
     }
@@ -75,8 +76,8 @@ class CommandControllerTest extends UnitTestCase
      */
     public function processRequestMarksRequestDispatched()
     {
-        $mockRequest = $this->getMockBuilder(Mvc\ActionRequest::class)->disableOriginalConstructor()->getMock();
-        $mockResponse = $this->getMockBuilder(Mvc\ActionResponse::class)->getMock();
+        $mockRequest = $this->getMockBuilder(Request::class)->disableOriginalConstructor()->getMock();
+        $mockResponse = $this->getMockBuilder(Response::class)->getMock();
 
         $mockRequest->expects($this->once())->method('setDispatched')->with(true);
 
@@ -88,8 +89,8 @@ class CommandControllerTest extends UnitTestCase
      */
     public function processRequestResetsCommandMethodArguments()
     {
-        $mockRequest = $this->getMockBuilder(Mvc\ActionRequest::class)->disableOriginalConstructor()->getMock();
-        $mockResponse = $this->getMockBuilder(Mvc\ActionResponse::class)->getMock();
+        $mockRequest = $this->getMockBuilder(Request::class)->disableOriginalConstructor()->getMock();
+        $mockResponse = $this->getMockBuilder(Response::class)->getMock();
 
         $mockArguments = new Arguments();
         $mockArguments->addNewArgument('foo');

@@ -15,7 +15,6 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Helper\RequestInformationHelper;
 use Neos\Flow\Http\ServerRequestAttributes;
 use Neos\Flow\Mvc\ActionRequest;
-use Neos\Flow\Mvc\RequestInterface;
 use Neos\Flow\Mvc\Routing\Dto\ResolveContext;
 use Neos\Utility\Arrays;
 use Psr\Http\Message\ServerRequestInterface;

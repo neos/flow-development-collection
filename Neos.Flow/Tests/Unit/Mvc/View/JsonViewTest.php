@@ -44,7 +44,7 @@ class JsonViewTest extends UnitTestCase
     {
         $this->view = $this->getMockBuilder(Mvc\View\JsonView::class)->setMethods(['loadConfigurationFromYamlFile'])->getMock();
         $this->controllerContext = $this->getMockBuilder(Mvc\Controller\ControllerContext::class)->disableOriginalConstructor()->getMock();
-        $this->response = $this->createMock(Http\Response::class);
+        $this->response = new Mvc\ActionResponse();
         $this->controllerContext->expects($this->any())->method('getResponse')->will($this->returnValue($this->response));
         $this->view->setControllerContext($this->controllerContext);
     }
