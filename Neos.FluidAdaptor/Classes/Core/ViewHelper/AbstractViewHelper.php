@@ -13,7 +13,6 @@ namespace Neos\FluidAdaptor\Core\ViewHelper;
 
 use Neos\FluidAdaptor\Core\Rendering\FlowAwareRenderingContextInterface;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Reflection\ReflectionService;
@@ -42,13 +41,6 @@ abstract class AbstractViewHelper extends FluidAbstractViewHelper
     protected $objectManager;
 
     /**
-     * @var SystemLoggerInterface
-     * @deprecated
-     * @see logger
-     */
-    protected $systemLogger;
-
-    /**
      * @var LoggerInterface
      */
     protected $logger;
@@ -73,15 +65,6 @@ abstract class AbstractViewHelper extends FluidAbstractViewHelper
     public function injectObjectManager(ObjectManagerInterface $objectManager)
     {
         $this->objectManager = $objectManager;
-    }
-
-    /**
-     * @param SystemLoggerInterface $systemLogger
-     * @return void
-     */
-    public function injectSystemLogger(SystemLoggerInterface $systemLogger)
-    {
-        $this->systemLogger = $systemLogger;
     }
 
     /**

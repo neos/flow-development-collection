@@ -246,13 +246,8 @@ class Scripts
         /** @var PsrLoggerFactoryInterface $psrLoggerFactoryName */
         $psrLoggerFactoryName = $settings['log']['psr3']['loggerFactory'];
         $psrLogConfigurations = $settings['log']['psr3'][$psrLoggerFactoryName] ?? [];
-        if ($psrLoggerFactoryName === 'legacy') {
-            $psrLoggerFactoryName = PsrLoggerFactory::class;
-            $psrLogConfigurations = (new LoggerBackendConfigurationHelper($settings['log']))->getNormalizedLegacyConfiguration();
-        }
         $psrLogFactory = $psrLoggerFactoryName::create($psrLogConfigurations);
 
-        // This is all deprecated and can be removed with the removal of respective interfaces and classes.
         $bootstrap->setEarlyInstance($psrLoggerFactoryName, $psrLogFactory);
         $bootstrap->setEarlyInstance(PsrLoggerFactoryInterface::class, $psrLogFactory);
     }
