@@ -16,6 +16,7 @@
         "ext-reflection": "*",
         "ext-xml": "*",
         "psr/http-message": "^1.0",
+        "psr/http-factory": "^1.0",
         "psr/container": "^1.0",
         "ramsey/uuid": "^3.0",
         "doctrine/orm": "^2.6",
@@ -27,6 +28,7 @@
         "symfony/console": "^4.2",
         "neos/composer-plugin": "^2.0",
         "typo3fluid/fluid": "^2.5",
+        "guzzlehttp/psr7": "^1.4",
         "ext-mbstring": "*"
     },
     "replace": {
@@ -39,6 +41,7 @@
         "neos/flow-log": "self.version",
         "neos/flow": "self.version",
         "neos/fluid-adaptor": "self.version",
+        "neos/http-factories": "self.version",
         "neos/kickstarter": "self.version",
         "neos/utility-arrays": "self.version",
         "neos/utility-files": "self.version",
@@ -48,8 +51,7 @@
         "neos/utility-opcodecache": "self.version",
         "neos/utility-pdo": "self.version",
         "neos/utility-schema": "self.version",
-        "neos/utility-unicode": "self.version",
-        "neos/http-factories": "self.version"
+        "neos/utility-unicode": "self.version"
     },
     "suggest": {
         "ext-memcache": "If you have a memcache server and want to use it for caching.",
@@ -83,6 +85,9 @@
             "Neos\\FluidAdaptor\\": [
                 "Neos.FluidAdaptor/Classes/"
             ],
+            "Neos\\Http\\Factories\\": [
+                "Neos.Http.Factories/Classes"
+            ],
             "Neos\\Kickstarter\\": [
                 "Neos.Kickstarter/Classes"
             ],
@@ -100,9 +105,6 @@
             ],
             "Neos\\Utility\\Unicode\\": [
                 "Neos.Utility.Unicode/Classes"
-            ],
-            "Neos\\Http\\Factories\\": [
-                "Neos.Http.Factories/Classes"
             ]
         }
     },
@@ -136,6 +138,9 @@
             "Neos\\Flow\\Tests\\": [
                 "Neos.Flow/Tests"
             ],
+            "Neos\\Http\\Factories\\Tests\\": [
+                "Neos.Http.Factories/Tests"
+            ],
             "Neos\\Kickstarter\\Tests\\": [
                 "Neos.Kickstarter/Tests"
             ],
@@ -159,9 +164,6 @@
             ],
             "Neos\\Flow\\Utility\\Unicode\\Tests\\": [
                 "Neos.Utility.Unicode/Tests"
-            ],
-            "Neos\\Http\\Factories\\Tests\\": [
-                "Neos.Http.Factories/Tests"
             ]
         }
     }

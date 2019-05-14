@@ -13,6 +13,7 @@ namespace Neos\Flow\Tests\Unit\Mvc\Routing;
 
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Http\Component\ComponentContext;
+use Neos\Flow\Http\ServerRequestAttributes;
 use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
 use Neos\Flow\Mvc\Routing\Dto\RouteContext;
 use Neos\Flow\Mvc\Routing\Router;
@@ -73,6 +74,7 @@ class RoutingComponentTest extends UnitTestCase
         $this->mockComponentContext = $this->getMockBuilder(ComponentContext::class)->disableOriginalConstructor()->getMock();
 
         $this->mockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
+        $this->mockHttpRequest->method('withAttribute')->with(ServerRequestAttributes::ATTRIBUTE_ROUTING_RESULTS)->willReturn($this->mockHttpRequest);
         $this->mockComponentContext->method('getHttpRequest')->willReturn($this->mockHttpRequest);
 
         $this->mockRequestUri = $this->getMockBuilder(UriInterface::class)->getMock();
