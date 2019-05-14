@@ -30,7 +30,7 @@ trait ActionRequestFromHttpTrait
         $arguments = Arrays::arrayMergeRecursiveOverrule($arguments, $uploadedFiles);
 
         /** @var $actionRequest ActionRequest */
-        $actionRequest = $this->objectManager->get(ActionRequest::class);
+        $actionRequest = $this->objectManager->get(ActionRequest::class, $httpRequest);
         //new ActionRequest($httpRequest);
         if (!empty($additionalArguments)) {
             $arguments = Arrays::arrayMergeRecursiveOverrule($arguments, $additionalArguments);

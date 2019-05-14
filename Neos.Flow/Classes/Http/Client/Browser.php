@@ -15,8 +15,8 @@ use GuzzleHttp\Psr7\ServerRequest;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Headers;
 use Neos\Flow\Http\Response;
+use Neos\Flow\Http\ServerRequestAttributes;
 use Neos\Flow\Http\Uri;
-use Neos\Flow\Http\Request;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UploadedFileInterface;
 use Symfony\Component\DomCrawler\Crawler;
@@ -242,7 +242,7 @@ class Browser
      */
     public function getCrawler()
     {
-        $crawler = new Crawler(null, $this->lastRequest->getAttribute(Request::ATTRIBUTE_BASE_URI));
+        $crawler = new Crawler(null, $this->lastRequest->getAttribute(ServerRequestAttributes::ATTRIBUTE_BASE_URI));
         $crawler->addContent($this->lastResponse->getContent(), $this->lastResponse->getHeader('Content-Type'));
 
         return $crawler;

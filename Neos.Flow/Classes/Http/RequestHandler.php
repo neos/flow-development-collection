@@ -17,6 +17,8 @@ use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Http\Component\ComponentChain;
 use Neos\Flow\Http\Component\ComponentContext;
 use Neos\Flow\Http\Helper\ResponseInformationHelper;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * A request handler which can handle HTTP requests.
@@ -111,7 +113,7 @@ class RequestHandler implements HttpRequestHandlerInterface
     /**
      * Returns the currently handled HTTP request
      *
-     * @return Request
+     * @return ServerRequestInterface
      * @api
      */
     public function getHttpRequest()
@@ -122,7 +124,7 @@ class RequestHandler implements HttpRequestHandlerInterface
     /**
      * Returns the HTTP response corresponding to the currently handled request
      *
-     * @return Response
+     * @return ResponseInterface
      * @api
      */
     public function getHttpResponse()
