@@ -26,7 +26,7 @@ return [
             'key3' => [
                 0 => [
                     'source' => 'No target',
-                    'target' => '',
+                    'target' => 'No target',
                 ],
             ],
         ]
