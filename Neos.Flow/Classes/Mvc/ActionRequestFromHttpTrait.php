@@ -1,7 +1,6 @@
 <?php
 namespace Neos\Flow\Mvc;
 
-use Neos\Flow\Http\Helper\ArgumentsHelper;
 use Neos\Flow\Http\Helper\UploadedFilesHelper;
 use Neos\Utility\Arrays;
 use Psr\Http\Message\ServerRequestInterface;
@@ -24,11 +23,11 @@ trait ActionRequestFromHttpTrait
     {
         $arguments = $httpRequest->getQueryParams();
         if (is_array($httpRequest->getParsedBody())) {
-            $arguments = ArgumentsHelper::mergeArgumentArrays($arguments, $httpRequest->getParsedBody());
+            $arguments = Arrays::arrayMergeRecursiveOverrule($arguments, $httpRequest->getParsedBody());
         }
 
         $uploadedFiles = UploadedFilesHelper::upcastUploadedFiles($httpRequest->getUploadedFiles(), $arguments);
-        $arguments = ArgumentsHelper::mergeArgumentArrays($arguments, $uploadedFiles);
+        $arguments = Arrays::arrayMergeRecursiveOverrule($arguments, $uploadedFiles);
 
         /** @var $actionRequest ActionRequest */
         $actionRequest = $this->objectManager->get(ActionRequest::class);

@@ -577,7 +577,7 @@ class TrustedProxiesComponentTest extends UnitTestCase
      * @test
      * @dataProvider forwardHeaderTestsDataProvider
      */
-    public function forwardHeaderTests(?string $forwardedProtocol, ?int $forwardedPort, string $requestUri, string $expectedUri)
+    public function forwardHeaderTests(?string $forwardedProtocol, $forwardedPort, string $requestUri, string $expectedUri)
     {
         $server = [];
         if ($forwardedProtocol !== null) {

@@ -112,7 +112,7 @@ class WebRedirectTest extends UnitTestCase
         $mockUriBuilder->expects($this->once())->method('uriFor')->with('someAction', ['otherArguments' => ['foo' => 'bar'], '@format' => 'someFormat'], 'SomeController', 'SomePackage', 'SomeSubPackage')->will($this->returnValue('http://resolved/redirect/uri'));
         $entryPoint->_set('uriBuilder', $mockUriBuilder);
 
-        $entryPoint->startAuthentication($request, $response);
+        $response = $entryPoint->startAuthentication($request, $response);
 
         $this->assertEquals('303', substr($response->getStatusCode(), 0, 3));
         $this->assertEquals('http://resolved/redirect/uri', $response->getHeaderLine('Location'));

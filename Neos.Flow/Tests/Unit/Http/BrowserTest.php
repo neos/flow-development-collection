@@ -69,8 +69,8 @@ class BrowserTest extends UnitTestCase
         $this->browser->request('http://localhost/foo');
 
         $this->assertTrue($this->browser->getLastRequest()->hasHeader('X-Test-Header'));
-        $this->assertSame('Acme', $this->browser->getLastRequest()->getHeader('X-Test-Header'));
-        $this->assertStringContainsString('text/plain', $this->browser->getLastRequest()->getHeader('Content-Type'));
+        $this->assertSame('Acme', $this->browser->getLastRequest()->getHeaderLine('X-Test-Header'));
+        $this->assertStringContainsString('text/plain', $this->browser->getLastRequest()->getHeaderLine('Content-Type'));
     }
 
     /**

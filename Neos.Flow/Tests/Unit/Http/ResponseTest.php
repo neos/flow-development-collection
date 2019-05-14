@@ -144,6 +144,7 @@ class ResponseTest extends UnitTestCase
      */
     public function startLineEqualsStatusLine()
     {
+        $this->expectException(\InvalidArgumentException::class);
         ResponseInformationHelper::createFromRaw('No valid response');
     }
 

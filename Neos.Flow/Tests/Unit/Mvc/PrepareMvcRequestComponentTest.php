@@ -57,15 +57,14 @@ class PrepareMvcRequestComponentTest extends UnitTestCase
     /**
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         $this->prepareMvcRequestComponent = new PrepareMvcRequestComponent();
 
         $this->mockComponentContext = $this->getMockBuilder(ComponentContext::class)->disableOriginalConstructor()->getMock();
 
         $this->mockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
-        $this->mockHttpRequest->method('getQueryParams')->willReturn([]);
-        $this->mockHttpRequest->method('getParsedBody')->willReturn([]);
+
         $this->mockHttpRequest->method('withParsedBody')->willReturn($this->mockHttpRequest);
         $this->mockHttpRequest->method('getUploadedFiles')->willReturn([]);
         $this->mockComponentContext->method('getHttpRequest')->willReturn($this->mockHttpRequest);
@@ -96,12 +95,10 @@ class PrepareMvcRequestComponentTest extends UnitTestCase
             '__internalArgument3' => 'request'
         ]);
 
-        $this->mockHttpRequest->expects(self::any())->method('getBody')->willReturn('requestBody');
-
-        $this->mockPropertyMapper->method('convert')->will($this->returnValue([
+        $this->mockHttpRequest->method('getParsedBody')->willReturn([
             '__internalArgument2' => 'requestBody',
             '__internalArgument3' => 'requestBody'
-        ]));
+        ]);
 
         $this->mockComponentContext->method('getParameter')->willReturnMap([
             [RoutingComponent::class, 'matchResults', ['__internalArgument3' => 'routing']],
@@ -123,6 +120,8 @@ class PrepareMvcRequestComponentTest extends UnitTestCase
     public function handleStoresTheActionRequestInTheComponentContext()
     {
         $this->mockPropertyMapper->method('convert')->with('', 'array', new PropertyMappingConfiguration())->willReturn([]);
+        $this->mockHttpRequest->method('getQueryParams')->willReturn([]);
+        $this->mockHttpRequest->method('getParsedBody')->willReturn([]);
 
         $this->mockComponentContext->expects($this->atLeastOnce())->method('setParameter')->with(DispatchComponent::class, 'actionRequest', $this->mockActionRequest);
         $this->mockComponentContext->method('getParameter')->willReturnMap([
@@ -201,9 +200,10 @@ class PrepareMvcRequestComponentTest extends UnitTestCase
      */
     public function handleMergesArgumentsWithRoutingMatchResults(array $requestArguments, array $requestBodyArguments, array $routingMatchResults = null, array $expectedArguments)
     {
-        $this->mockPropertyMapper->method('convert')->willReturn($requestBodyArguments);
         $this->mockActionRequest->expects($this->once())->method('setArguments')->with($expectedArguments);
         $this->mockSecurityContext->expects($this->once())->method('setRequest')->with($this->mockActionRequest);
+        $this->mockHttpRequest->method('getQueryParams')->willReturn($requestArguments);
+        $this->mockHttpRequest->method('getParsedBody')->willReturn($requestBodyArguments);
 
         $this->mockComponentContext->expects($this->atLeastOnce())->method('setParameter')->with(DispatchComponent::class, 'actionRequest', $this->mockActionRequest);
         $this->mockComponentContext->method('getParameter')->willReturnMap([
@@ -219,6 +219,8 @@ class PrepareMvcRequestComponentTest extends UnitTestCase
      */
     public function handleSetsRequestInSecurityContext()
     {
+        $this->mockHttpRequest->method('getQueryParams')->willReturn([]);
+        $this->mockHttpRequest->method('getParsedBody')->willReturn([]);
         $this->mockPropertyMapper->method('convert')->with('', 'array', new PropertyMappingConfiguration())->willReturn([]);
         $this->mockComponentContext->method('getParameter')->willReturnMap([
             [RoutingComponent::class, 'matchResults', []],
@@ -234,6 +236,8 @@ class PrepareMvcRequestComponentTest extends UnitTestCase
      */
     public function handleSetsDefaultControllerAndActionNameIfTheyAreNotSetYet()
     {
+        $this->mockHttpRequest->method('getQueryParams')->willReturn([]);
+        $this->mockHttpRequest->method('getParsedBody')->willReturn([]);
         $this->mockPropertyMapper->method('convert')->with('', 'array', new PropertyMappingConfiguration())->willReturn([]);
 
         $this->mockActionRequest->expects($this->once())->method('getControllerName')->willReturn(null);

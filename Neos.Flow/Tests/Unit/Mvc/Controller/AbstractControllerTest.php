@@ -66,7 +66,6 @@ class AbstractControllerTest extends UnitTestCase
      */
     public function initializeControllerWillThrowAnExceptionIfTheGivenRequestIsNotSupported()
     {
-        $this->expectException(UnsupportedRequestTypeException::class);
         $request = new Cli\Request();
         $response = new Cli\Response();
 
