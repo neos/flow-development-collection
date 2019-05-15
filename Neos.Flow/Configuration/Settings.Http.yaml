@@ -55,6 +55,9 @@ Neos:
               component: 'Neos\Flow\Mvc\PrepareMvcRequestComponent'
             'dispatching':
               component: 'Neos\Flow\Mvc\DispatchComponent'
+            'replaceHttpResponse':
+              position: 'after dispatching'
+              component: 'Neos\Flow\Http\Component\ReplaceHttpResponseComponent'
             'setHeader':
               position: 'after dispatching'
               component: 'Neos\Flow\Http\Component\SetHeaderComponent'

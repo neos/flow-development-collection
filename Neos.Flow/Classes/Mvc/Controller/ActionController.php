@@ -14,6 +14,7 @@ namespace Neos\Flow\Mvc\Controller;
 use Neos\Error\Messages\Result;
 use Neos\Flow\Annotations as Flow;
 use Neos\Error\Messages as Error;
+use Neos\Flow\Http\Component\ReplaceHttpResponseComponent;
 use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Mvc\ActionRequest;
@@ -31,6 +32,7 @@ use Neos\Flow\Property\Exception\TargetNotFoundException;
 use Neos\Flow\Property\TypeConverter\Error\TargetNotFoundError;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Utility\TypeHandling;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -493,7 +495,7 @@ class ActionController extends AbstractController
         }
 
         if ($actionResult === null && $this->view instanceof ViewInterface) {
-            $this->response->setContent($this->view->render());
+            $this->renderView();
         } elseif (is_string($actionResult) && strlen($actionResult) > 0) {
             $this->response->setContent($actionResult);
         } elseif (is_object($actionResult) && method_exists($actionResult, '__toString')) {
@@ -741,5 +743,29 @@ class ActionController extends AbstractController
     protected function getErrorFlashMessage()
     {
         return new Error\Error('An error occurred while trying to call %1$s->%2$s()', null, [get_class($this), $this->actionMethodName]);
+    }
+
+    /**
+     * Renders the view and applies the result to the response object.
+     */
+    protected function renderView()
+    {
+        $result = $this->view->render();
+
+        if (is_string($result)) {
+            $this->response->setContent($result);
+        }
+
+        if ($result instanceof ActionResponse) {
+            $result->mergeIntoParentResponse($this->response);
+        }
+
+        if ($result instanceof ResponseInterface) {
+            $this->response->setComponentParameter(ReplaceHttpResponseComponent::class, ReplaceHttpResponseComponent::PARAMETER_RESPONSE, $result);
+        }
+
+        if (is_object($result) && is_callable([$result, '__toString'])) {
+            $this->response->setContent((string)$result);
+        }
     }
 }

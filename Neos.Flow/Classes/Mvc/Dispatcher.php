@@ -104,6 +104,7 @@ class Dispatcher
             }
             $this->initiateDispatchLoop($request, $response);
         } catch (AuthenticationRequiredException $exception) {
+            // This case does exist!
             /** @var ActionResponse $response */
             $response->setComponentParameter(
                 SecurityEntryPointComponent::class,
