@@ -148,9 +148,17 @@ class Dispatcher
                 } elseif (!$request->isMainRequest()) {
                     $request = $request->getParentRequest();
                 }
+            } catch (AuthenticationRequiredException $exception) {
+                $response->setStatusCode(403);
+                $response->setComponentParameter(
+                    SecurityEntryPointComponent::class,
+                    SecurityEntryPointComponent::AUTHENTICATION_EXCEPTION,
+                    $exception
+                );
+
+                return;
             } finally {
-                $intoParentResponse = new IntoActionResponse($parentResponse);
-                $parentResponse = $response->prepareRendering($intoParentResponse)->render();
+                $parentResponse = $response->mergeIntoParentResponse($parentResponse);
             }
         }
         return $parentResponse;

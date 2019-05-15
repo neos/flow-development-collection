@@ -15,6 +15,9 @@ use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Component\ComponentContext;
+use Neos\Http\Factories\ResponseFactory;
+use Neos\Http\Factories\ServerRequestFactory;
+use Neos\Http\Factories\UriFactory;
 use Psr\Http\Message\ServerRequestInterface as HttpRequest;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
@@ -424,9 +427,12 @@ abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
         $this->router = $this->browser->getRequestEngine()->getRouter();
         $this->router->setRoutesConfiguration(null);
 
+        $serverRequestFactory = new ServerRequestFactory(new UriFactory());
+        $responseFactory = new ResponseFactory();
+
         $requestHandler = self::$bootstrap->getActiveRequestHandler();
-        $request = \Neos\Flow\Http\Request::create(new \Neos\Flow\Http\Uri('http://localhost/typo3/flow/test'));
-        $componentContext = new ComponentContext($request, new \Neos\Flow\Http\Response());
+        $request = $serverRequestFactory->createServerRequest('GET','http://localhost/typo3/flow/test');
+        $componentContext = new ComponentContext($request, $responseFactory->createResponse());
         $requestHandler->setComponentContext($componentContext);
     }
 

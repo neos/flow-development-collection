@@ -111,11 +111,11 @@ class ComponentContext
 
     /**
      * @param string $componentClassName
-     * @return mixed
+     * @return array
      */
-    public function getAllParametersFor($componentClassName)
+    public function getAllParametersFor($componentClassName): array
     {
-        return $this->parameters[$componentClassName] ?? null;
+        return $this->parameters[$componentClassName] ?? [];
     }
 
     /**

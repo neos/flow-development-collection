@@ -275,7 +275,7 @@ class DispatcherTest extends UnitTestCase
         }
 
         $componentContext = new ComponentContext($this->mockHttpRequest, new Response());
-        $this->actionResponse->prepareRendering(new IntoComponentContext($componentContext))->render();
+        $this->actionResponse->mergeIntoComponentContext($componentContext);
         $this->assertNotNull($componentContext->getAllParametersFor(SecurityEntryPointComponent::class));
         $this->assertNotEmpty($componentContext->getParameter(SecurityEntryPointComponent::class, SecurityEntryPointComponent::AUTHENTICATION_EXCEPTION));
     }

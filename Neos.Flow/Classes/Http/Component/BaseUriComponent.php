@@ -42,6 +42,7 @@ class BaseUriComponent implements ComponentInterface
      * @param ObjectManagerInterface $objectManager
      * @return string
      * @throws \Neos\Flow\Configuration\Exception\InvalidConfigurationTypeException
+     * @Flow\CompileStatic
      */
     public static function getConfiguredBaseUri(ObjectManagerInterface $objectManager): string
     {

@@ -15,7 +15,6 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Component\ComponentChain;
 use Neos\Flow\Http\Component\ComponentInterface;
 use Neos\Flow\Http\Component\Exception as ComponentException;
-use Neos\Flow\Http\Helper\ArgumentsHelper;
 use Neos\Flow\Http\Component\ComponentContext;
 use Neos\Flow\Mvc\ActionRequestFromHttpTrait;
 use Neos\Flow\Mvc\ActionResponse;
@@ -24,7 +23,8 @@ use Neos\Flow\Mvc\Dispatcher;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Security\Context;
 use Neos\Flow\Security\Cryptography\HashService;
-use Psr\Http\Message\RequestInterface;
+use Neos\Utility\Arrays;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * A HTTP component specifically for Ajax widgets
@@ -90,8 +90,7 @@ class AjaxWidgetComponent implements ComponentInterface
 
         $this->dispatcher->dispatch($actionRequest, $actionResponse);
 
-        $intoComponentContext = new IntoComponentContext($componentContext);
-        $componentContext = $actionResponse->prepareRendering($intoComponentContext)->render();
+        $componentContext = $actionResponse->mergeIntoComponentContext($componentContext);
 
         // stop processing the current component chain
         $componentContext->setParameter(ComponentChain::class, 'cancel', true);
@@ -102,12 +101,18 @@ class AjaxWidgetComponent implements ComponentInterface
      * If the request contains an argument "__widgetId" the context is fetched from the session (AjaxWidgetContextHolder).
      * Otherwise the argument "__widgetContext" is expected to contain the serialized WidgetContext (protected by a HMAC suffix)
      *
-     * @param RequestInterface $httpRequest
+     * @param ServerRequestInterface $httpRequest
      * @return WidgetContext
+     * @throws Exception\WidgetContextNotFoundException
+     * @throws \Neos\Flow\Security\Exception\InvalidArgumentForHashGenerationException
+     * @throws \Neos\Flow\Security\Exception\InvalidHashException
      */
-    protected function extractWidgetContext(RequestInterface $httpRequest)
+    protected function extractWidgetContext(ServerRequestInterface $httpRequest):? WidgetContext
     {
-        $arguments = ArgumentsHelper::mergeArgumentArrays($httpRequest->getQueryParams(), $httpRequest->getParsedBody());
+        $arguments = $httpRequest->getQueryParams();
+        if (is_array($httpRequest->getParsedBody())) {
+            $arguments = Arrays::arrayMergeRecursiveOverrule($arguments, $httpRequest->getParsedBody());
+        }
         if (isset($arguments['__widgetId'])) {
             return $this->ajaxWidgetContextHolder->get($arguments['__widgetId']);
         }

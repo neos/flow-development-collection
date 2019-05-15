@@ -6,7 +6,7 @@ use Neos\Utility\Arrays;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
- *
+ * FIXME: Make me a factory instead
  */
 trait ActionRequestFromHttpTrait
 {

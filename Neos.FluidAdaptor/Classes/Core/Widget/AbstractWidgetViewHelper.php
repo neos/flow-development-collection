@@ -238,7 +238,7 @@ abstract class AbstractWidgetViewHelper extends AbstractViewHelper implements Ch
             }
         }
 
-        return $subResponse->prepareRendering(new Content())->render();
+        return $subResponse->getContent();
     }
 
     /**

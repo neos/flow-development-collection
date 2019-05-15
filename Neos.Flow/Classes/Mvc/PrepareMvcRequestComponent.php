@@ -37,8 +37,6 @@ class PrepareMvcRequestComponent implements ComponentInterface
         $routingMatchResults = $componentContext->getParameter(RoutingComponent::class, 'matchResults');
         $actionRequest = $this->createActionRequest($httpRequest, $routingMatchResults ?? []);
         $this->securityContext->setRequest($actionRequest);
-        $componentContext->replaceHttpRequest($httpRequest);
-
         $componentContext->setParameter(DispatchComponent::class, 'actionRequest', $actionRequest);
 
         return $componentContext;

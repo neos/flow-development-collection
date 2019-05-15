@@ -38,7 +38,6 @@ class DispatchComponent implements ComponentInterface
         $actionRequest = $componentContext->getParameter(DispatchComponent::class, 'actionRequest');
         $actionResponse = new ActionResponse();
         $this->dispatcher->dispatch($actionRequest, $actionResponse);
-        $intoComponentContext = new IntoComponentContext($componentContext);
-        $componentContext = $actionResponse->prepareRendering($intoComponentContext)->render();
+        $actionResponse->mergeIntoComponentContext($componentContext);
     }
 }

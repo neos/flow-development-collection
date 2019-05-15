@@ -29,7 +29,6 @@ class ResponseTest extends UnitTestCase
         $response->setContent('SomeContent');
 
         $expected = 'SomeContent';
-        $actual = $response->prepareRendering(new Content())->render();
-        $this->assertEquals($expected, $actual);
+        $this->assertEquals($expected, $response->getContent());
     }
 }

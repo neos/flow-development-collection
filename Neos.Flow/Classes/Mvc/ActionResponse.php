@@ -2,6 +2,8 @@
 namespace Neos\Flow\Mvc;
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Http\Component\ComponentContext;
+use Neos\Flow\Http\ContentStream;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
 use GuzzleHttp\Psr7\Stream;
@@ -13,6 +15,8 @@ use GuzzleHttp\Psr7\Stream;
  *
  * @Flow\Proxy(false)
  * @api
+ *
+ * TODO: getters + merge methods instead of renderer.
  */
 final class ActionResponse
 {
@@ -114,17 +118,105 @@ final class ActionResponse
     }
 
     /**
-     * @param ActionReponseRendererInterface $renderer
-     * @return ActionReponseRendererInterface
+     * @return string
      */
-    public function prepareRendering(ActionReponseRendererInterface $renderer): ActionReponseRendererInterface
+    public function getContent(): string
     {
-        $renderer->setContent($this->content);
-        $renderer->setContentType($this->contentType);
-        $renderer->setRedirectUri($this->redirectUri);
-        $renderer->setStatusCode($this->statusCode);
-        $renderer->setComponentParameters($this->componentParameters);
+        return $this->content;
+    }
 
-        return $renderer;
+    /**
+     * @return array
+     */
+    public function getComponentParameters(): array
+    {
+        return $this->componentParameters;
+    }
+
+    /**
+     * @return UriInterface
+     */
+    public function getRedirectUri():? UriInterface
+    {
+        return $this->redirectUri;
+    }
+
+    /**
+     * @return int
+     */
+    public function getStatusCode(): int
+    {
+        return $this->statusCode;
+    }
+
+    /**
+     * @return string
+     */
+    public function getContentType(): string
+    {
+        return $this->contentType;
+    }
+
+    /**
+     * @param ActionResponse $actionResponse
+     * @return ActionResponse
+     */
+    public function mergeIntoParentResponse(ActionResponse $actionResponse): ActionResponse
+    {
+        if (!empty($this->content)) {
+            $actionResponse->setContent($this->content);
+        }
+        if ($this->contentType !== null) {
+            $actionResponse->setContentType($this->contentType);
+        }
+
+        if ($this->statusCode !== null) {
+            $actionResponse->setStatusCode($this->statusCode);
+        }
+
+        if ($this->redirectUri !== null) {
+            $actionResponse->setRedirectUri($this->redirectUri);
+        }
+
+        foreach ($this->componentParameters as $componentClass => $parameters) {
+            foreach ($parameters as $parameterName => $parameterValue) {
+                $actionResponse->setComponentParameter($componentClass, $parameterName, $parameterValue);
+            }
+        }
+
+        return $actionResponse;
+    }
+
+    /**
+     * @param ComponentContext $componentContext
+     * @return ComponentContext
+     */
+    public function mergeIntoComponentContext(ComponentContext $componentContext): ComponentContext
+    {
+        $httpResponse = $componentContext->getHttpResponse();
+        $httpResponse = $httpResponse
+            ->withStatus($this->statusCode);
+
+        if ($this->content !== null) {
+            $httpResponse = $httpResponse->withBody(ContentStream::fromContents($this->content));
+        }
+
+        if ($this->contentType) {
+            $httpResponse = $httpResponse->withHeader('Content-Type', $this->contentType);
+        }
+
+        if ($this->redirectUri) {
+            $httpResponse = $httpResponse->withHeader('Location', $this->redirectUri);
+        }
+
+        foreach ($this->componentParameters as $componentClassName => $componentParameterGroup) {
+            foreach ($componentParameterGroup as $parameterName => $parameterValue) {
+                $componentContext->setParameter($componentClassName, $parameterName, $parameterValue);
+            }
+        }
+
+        $componentContext->replaceHttpResponse($httpResponse);
+
+        return $componentContext;
     }
 }

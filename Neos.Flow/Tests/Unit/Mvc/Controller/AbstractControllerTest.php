@@ -344,8 +344,7 @@ class AbstractControllerTest extends UnitTestCase
         } catch (StopActionException $e) {
         }
 
-        $arrayResponse = $this->actionResponse->prepareRendering(new ToArray())->render();
-        $this->assertSame(303, $arrayResponse['statusCode']);
+        $this->assertSame(303, $this->actionResponse->getStatusCode());
     }
 
     /**
@@ -363,8 +362,7 @@ class AbstractControllerTest extends UnitTestCase
         } catch (StopActionException $e) {
         }
 
-        $arrayResponse = $this->actionResponse->prepareRendering(new ToArray())->render();
-        $this->assertSame($uri, (string)$arrayResponse['redirectUri']);
+        $this->assertSame($uri, (string)$this->actionResponse->getRedirectUri());
     }
 
     /**
@@ -382,8 +380,7 @@ class AbstractControllerTest extends UnitTestCase
         } catch (StopActionException $e) {
         }
 
-        $arrayResponse = $this->actionResponse->prepareRendering(new ToArray())->render();
-        $this->assertNull($arrayResponse['redirectUri']);
+        $this->assertNull($this->actionResponse->getRedirectUri());
     }
 
     /**
@@ -413,10 +410,9 @@ class AbstractControllerTest extends UnitTestCase
         } catch (StopActionException $e) {
         }
 
-        $arrayResponse = $this->actionResponse->prepareRendering(new ToArray())->render();
-        $this->assertSame(404, $arrayResponse['statusCode']);
+        $this->assertSame(404, $this->actionResponse->getStatusCode());
         //$this->assertSame('404 File Really Not Found', $this->actionResponse->getStatus());
-        $this->assertSame($message, $arrayResponse['content']->getContents());
+        $this->assertSame($message, $this->actionResponse->getContent());
     }
 
     /**
@@ -432,10 +428,8 @@ class AbstractControllerTest extends UnitTestCase
         } catch (StopActionException $e) {
         }
 
-        $arrayResponse = $this->actionResponse->prepareRendering(new ToArray())->render();
-        $this->assertSame(404, $arrayResponse['statusCode']);
-        //$this->assertSame('404 Not Found', $this->actionResponse->getStatus());
-        $this->assertSame('404 Not Found', $arrayResponse['content']->getContents());
+        $this->assertSame(404, $this->actionResponse->getStatusCode());
+        $this->assertSame('404 Not Found', $this->actionResponse->getContent());
     }
 
     /**

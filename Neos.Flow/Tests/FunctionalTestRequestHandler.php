@@ -11,10 +11,14 @@ namespace Neos\Flow\Tests;
  * source code.
  */
 
+use GuzzleHttp\Psr7\ServerRequest;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Http\Component\ComponentContext;
 use Neos\Flow\Http;
+use Neos\Http\Factories\ResponseFactory;
+use Neos\Http\Factories\ServerRequestFactory;
+use Neos\Http\Factories\UriFactory;
 
 /**
  * A request handler which boots up Flow into a basic runtime level and then returns
@@ -132,7 +136,8 @@ class FunctionalTestRequestHandler implements \Neos\Flow\Http\HttpRequestHandler
     protected function getComponentContext()
     {
         if ($this->componentContext === null) {
-            $this->componentContext = new ComponentContext(Http\Request::createFromEnvironment(), new Http\Response());
+            $responseFactory = new ResponseFactory();
+            $this->componentContext = new ComponentContext(ServerRequest::fromGlobals(), $responseFactory->createResponse());
         }
         return $this->componentContext;
     }
