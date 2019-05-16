@@ -17,6 +17,7 @@ use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Mvc\Controller\MvcPropertyMappingConfigurationService;
 use Neos\Flow\Tests\Functional\Persistence\Fixtures\TestEntity;
 use Neos\Flow\Tests\FunctionalTestCase;
+use Psr\Http\Message\ServerRequestFactoryInterface;
 
 class ActionControllerTest extends FunctionalTestCase
 {
@@ -24,6 +25,11 @@ class ActionControllerTest extends FunctionalTestCase
      * @var boolean
      */
     protected static $testablePersistenceEnabled = true;
+
+    /**
+     * @var ServerRequestFactoryInterface
+     */
+    protected $serverRequestFactory;
 
     /**
      * Additional setup: Routes
@@ -60,6 +66,8 @@ class ActionControllerTest extends FunctionalTestCase
                 'objectType' => TestEntity::class
             ]
         ]);
+
+        $this->serverRequestFactory = $this->objectManager->get(ServerRequestFactoryInterface::class);
     }
 
     /**
@@ -73,7 +81,7 @@ class ActionControllerTest extends FunctionalTestCase
     {
         $response = $this->browser->request('http://localhost/test/mvc/actioncontrollertesta');
         $this->assertEquals('First action was called', $response->getBody()->getContents());
-        $this->assertEquals('200 OK', $response->getStatusCode());
+        $this->assertEquals(200, $response->getStatusCode());
     }
 
     /**
@@ -86,7 +94,7 @@ class ActionControllerTest extends FunctionalTestCase
     {
         $response = $this->browser->request('http://localhost/test/mvc/actioncontrollertesta/second');
         $this->assertEquals('Second action was called', $response->getBody()->getContents());
-        $this->assertEquals('200 OK', $response->getStatusCode());
+        $this->assertEquals(200, $response->getStatusCode());
     }
 
     /**
@@ -117,7 +125,7 @@ class ActionControllerTest extends FunctionalTestCase
      */
     public function argumentsOfPutRequestArePassedToAction()
     {
-        $request = new ServerRequest('PUT', new Uri('http://localhost/test/mvc/actioncontrollertesta/put?getArgument=getValue'));
+        $request = $this->serverRequestFactory->createServerRequest('PUT', new Uri('http://localhost/test/mvc/actioncontrollertesta/put?getArgument=getValue'));
         $request = $request
             ->withBody(ContentStream::fromContents('putArgument=first value'))
             ->withHeader('Content-Type', 'application/x-www-form-urlencoded')
@@ -148,8 +156,7 @@ class ActionControllerTest extends FunctionalTestCase
      */
     public function notAcceptableStatusIsReturnedIfMediaTypeDoesNotMatchSupportedMediaTypes()
     {
-        $request = new ServerRequest('GET', new Uri('http://localhost/test/mvc/actioncontrollertesta'));
-        $request = $request
+        $request = $this->serverRequestFactory->createServerRequest('GET', new Uri('http://localhost/test/mvc/actioncontrollertesta'))
             ->withHeader('Content-Type', 'application/xml')
             ->withHeader('Accept', 'application/xml')
             ->withBody(ContentStream::fromContents('<xml></xml>'));
@@ -190,8 +197,7 @@ class ActionControllerTest extends FunctionalTestCase
      */
     public function argumentsOfPutRequestWithJsonOrXmlTypeAreAlsoPassedToAction()
     {
-        $request = new ServerRequest('PUT', new Uri('http://localhost/test/mvc/actioncontrollertesta/put?getArgument=getValue'));
-        $request = $request
+        $request = $this->serverRequestFactory->createServerRequest('PUT', new Uri('http://localhost/test/mvc/actioncontrollertesta/put?getArgument=getValue'))
             ->withHeader('Content-Type', 'application/json')
             ->withHeader('Content-Length', 29)
             ->withBody(ContentStream::fromContents('{"putArgument":"first value"}'));
@@ -473,7 +479,9 @@ class ActionControllerTest extends FunctionalTestCase
             ],
             '__trustedProperties' => $trustedProperties
         ];
-        $request = new ServerRequest($form, new Uri('http://localhost/test/mvc/actioncontrollertestc/' . $identifier . '/update'), 'POST');
+
+        $request = $this->serverRequestFactory->createServerRequest('POST', new Uri('http://localhost/test/mvc/actioncontrollertestc/' . $identifier . '/update'))
+            ->withParsedBody($form);
 
         $response = $this->browser->sendRequest($request);
         $this->assertSame('Entity "Foo" updated', $response->getBody()->getContents());

@@ -28,7 +28,7 @@ abstract class MediaTypeHelper
      */
     public static function determineAcceptedMediaTypes(RequestInterface $request): array
     {
-        $rawValues = $request->getHeader('Accept');
+        $rawValues = $request->getHeaderLine('Accept');
         if (empty($rawValues) || !is_string($rawValues)) {
             return ['*/*'];
         }

@@ -127,7 +127,7 @@ class StandaloneViewTest extends FunctionalTestCase
     {
         $this->expectException(InvalidTemplateResourceException::class);
         $httpRequest = $this->objectManager->get(ServerRequestFactoryInterface::class)->createServerRequest('GET', 'http://localhost');
-        $actionRequest = new ActionRequest($request);
+        $actionRequest = new ActionRequest($httpRequest);
 
         $standaloneView = new StandaloneView($actionRequest, $this->standaloneViewNonce);
         $standaloneView->setTemplatePathAndFilename(__DIR__ . '/Fixtures');
