@@ -208,7 +208,7 @@ final class ActionResponse
         }
 
         if ($this->redirectUri) {
-            $httpResponse = $httpResponse->withHeader('Location', $this->redirectUri);
+            $httpResponse = $httpResponse->withHeader('Location', (string)$this->redirectUri);
         }
 
         foreach ($this->componentParameters as $componentClassName => $componentParameterGroup) {

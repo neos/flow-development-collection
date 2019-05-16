@@ -326,9 +326,8 @@ abstract class AbstractController implements ControllerInterface
             }
             $this->response->setRedirectUri($uri, $statusCode);
         } else {
-            $escapedUri = htmlentities($uri, ENT_QUOTES, 'utf-8');
             $this->response->setStatusCode($statusCode);
-            $this->response->setContent('<html><head><meta http-equiv="refresh" content="' . (int)$delay . ';url=' . $escapedUri . '"/></head></html>');
+            $this->response->setContent('<html><head><meta http-equiv="refresh" content="' . (int)$delay . ';url=' . $uri . '"/></head></html>');
         }
         throw new StopActionException();
     }

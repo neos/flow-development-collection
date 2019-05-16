@@ -154,7 +154,6 @@ class Browser
         if (!$uri instanceof UriInterface) {
             throw new \InvalidArgumentException('$uri must be a URI object or a valid string representation of a URI.', 1333443624);
         }
-
         $request = $this->serverRequestFactory->createServerRequest($method, $uri, $server);
         if ($content) {
             $request = $request->withBody($this->contentStreamFactory->createStream($content));
@@ -171,6 +170,7 @@ class Browser
 
         $location = $response->getHeaderLine('Location');
         if ($this->followRedirects && !empty($location) && $response->getStatusCode() >= 300 && $response->getStatusCode() <= 399) {
+            $location = urldecode($location);
             if (strpos($location, '/') === 0) {
                 // Location header is a host-absolute URL; so we need to prepend the hostname to create a full URL.
                 $location = $request->getAttribute(ServerRequestAttributes::ATTRIBUTE_BASE_URI) . ltrim($location, '/');

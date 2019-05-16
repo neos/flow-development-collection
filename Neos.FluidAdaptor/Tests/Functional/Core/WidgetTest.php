@@ -80,8 +80,7 @@ class WidgetTest extends FunctionalTestCase
     {
         $this->browser->request('http://localhost/test/widget/redirecttest');
         $redirectTriggerUri = $this->browser->getCrawler()->filterXPath('//*[@id="redirect-no-delay-no-param"]')->attr('href');
-
-        $response = $this->browser->request($redirectTriggerUri);
+        $response = $this->browser->request(urldecode($redirectTriggerUri));
         $response->getBody()->rewind();
         $this->assertSame('<div id="parameter"></div>', trim($response->getBody()->getContents()));
     }
@@ -108,7 +107,6 @@ class WidgetTest extends FunctionalTestCase
 
         $this->browser->setFollowRedirects(false);
         $this->browser->request($redirectTriggerUri);
-//        var_dump($this->browser->getLastResponse()->getHeaders());
         $this->browser->setFollowRedirects(true);
         $redirectHeader = $this->browser->getCrawler()->filterXPath('//meta[@http-equiv="refresh"]')->attr('content');
         $this->assertSame('2;url=', substr($redirectHeader, 0, 6));
