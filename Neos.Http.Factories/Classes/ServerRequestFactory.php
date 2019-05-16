@@ -85,7 +85,7 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
 
         $serverRequest = new ServerRequest($method, $uri, $headers, null, $this->defaultHttpVersion, $serverParams);
         if ($uri->getQuery()) {
-            $queryParams = parse_query($uri->getQuery());
+            parse_str($uri->getQuery(), $queryParams);
             $serverRequest = $serverRequest->withQueryParams($queryParams);
         }
 

@@ -55,6 +55,6 @@ class InternalRequestEngineTest extends FunctionalTestCase
     public function securityContextContainsTokens()
     {
         $response = $this->browser->request('http://localhost/test/security/restricted');
-        $this->assertEquals('1222268609', $response->getHeader('X-Flow-ExceptionCode'));
+        $this->assertEquals('1222268609', $response->getHeaderLine('X-Flow-ExceptionCode'));
     }
 }

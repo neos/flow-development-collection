@@ -52,7 +52,6 @@ class AutocompleteViewHelper extends AbstractWidgetViewHelper
      */
     public function render(QueryResultInterface $objects, $for, $searchProperty, array $configuration = ['limit' => 10])
     {
-        $response = $this->initiateSubRequest();
-        return $response->prepareRendering(new Content())->render();
+        return $this->initiateSubRequest();
     }
 }

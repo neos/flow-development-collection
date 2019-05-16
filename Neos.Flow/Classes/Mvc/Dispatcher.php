@@ -156,10 +156,9 @@ class Dispatcher
                     $exception
                 );
 
-                return;
-            } finally {
-                $parentResponse = $response->mergeIntoParentResponse($parentResponse);
+                return $response;
             }
+            $parentResponse = $response->mergeIntoParentResponse($parentResponse);
         }
         return $parentResponse;
     }

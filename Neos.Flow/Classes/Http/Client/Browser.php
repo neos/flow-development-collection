@@ -262,6 +262,7 @@ class Browser
     public function getCrawler()
     {
         $crawler = new Crawler(null, (string)$this->lastRequest->getUri(), (string)$this->lastRequest->getAttribute(ServerRequestAttributes::ATTRIBUTE_BASE_URI));
+        $this->lastResponse->getBody()->rewind();
         $crawler->addContent($this->lastResponse->getBody()->getContents(), $this->lastResponse->getHeaderLine('Content-Type'));
 
         return $crawler;

@@ -12,11 +12,12 @@ namespace Neos\FluidAdaptor\Tests\Functional\Core;
  */
 
 use Neos\Flow\Mvc\Routing\Route;
+use Neos\Flow\Tests\FunctionalTestCase;
 
 /**
  * Testcase for the widget mechanism
  */
-class WidgetTest extends \Neos\Flow\Tests\FunctionalTestCase
+class WidgetTest extends FunctionalTestCase
 {
     /**
      * Additional setup: Routes
@@ -81,6 +82,7 @@ class WidgetTest extends \Neos\Flow\Tests\FunctionalTestCase
         $redirectTriggerUri = $this->browser->getCrawler()->filterXPath('//*[@id="redirect-no-delay-no-param"]')->attr('href');
 
         $response = $this->browser->request($redirectTriggerUri);
+        $response->getBody()->rewind();
         $this->assertSame('<div id="parameter"></div>', trim($response->getBody()->getContents()));
     }
 
@@ -144,7 +146,7 @@ class WidgetTest extends \Neos\Flow\Tests\FunctionalTestCase
 
         $response = $this->browser->request($redirectTriggerUri);
         $this->assertSame(500, $response->getStatusCode());
-        $this->assertSame(1380284579, $response->getHeader('X-Flow-ExceptionCode'));
+        $this->assertSame('1380284579', $response->getHeaderLine('X-Flow-ExceptionCode'));
     }
 
     /**
@@ -181,6 +183,6 @@ class WidgetTest extends \Neos\Flow\Tests\FunctionalTestCase
 
         $response = $this->browser->request($redirectTriggerUri);
         $this->assertSame(500, $response->getStatusCode());
-        $this->assertSame(1380284579, $response->getHeader('X-Flow-ExceptionCode'));
+        $this->assertSame('1380284579', $response->getHeaderLine('X-Flow-ExceptionCode'));
     }
 }

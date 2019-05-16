@@ -34,7 +34,6 @@ class RedirectViewHelper extends AbstractWidgetViewHelper
      */
     public function render()
     {
-        $response = $this->initiateSubRequest();
-        return $response->prepareRendering(new Content())->render();
+        return $this->initiateSubRequest();
     }
 }
