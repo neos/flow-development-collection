@@ -23,5 +23,4 @@ class FooController extends AbstractController
         $this->initializeController($request, $response);
         $response->setContent('FooController responded');
     }
-
 }

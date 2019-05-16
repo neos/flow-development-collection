@@ -12,13 +12,12 @@ namespace Neos\Flow\Tests\Unit\Mvc\Controller;
  */
 
 use GuzzleHttp\Psr7\ServerRequest;
-use Neos\Flow\Mvc\ActionResponseRenderer\ToArray;
+use GuzzleHttp\Psr7\Uri;
 use Psr\Http\Message\ServerRequestInterface;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Controller\AbstractController;
 use Neos\Flow\Mvc\Controller\Arguments;
-use Neos\Flow\Http\Uri;
 use Neos\Flow\Mvc\Exception\ForwardException;
 use Neos\Flow\Mvc\Exception\RequiredArgumentMissingException;
 use Neos\Flow\Mvc\Exception\StopActionException;

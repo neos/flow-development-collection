@@ -11,7 +11,6 @@ namespace Neos\Flow\Http\Client;
  * source code.
  */
 
-use GuzzleHttp\Psr7\ServerRequest;
 use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Headers;
@@ -156,7 +155,7 @@ class Browser
             throw new \InvalidArgumentException('$uri must be a URI object or a valid string representation of a URI.', 1333443624);
         }
 
-        $request = $this->serverRequestFactory->createServerRequest($uri, $uri, $server);
+        $request = $this->serverRequestFactory->createServerRequest($method, $uri, $server);
         if ($content) {
             $request = $request->withBody($this->contentStreamFactory->createStream($content));
         }

@@ -8,7 +8,7 @@ use Psr\Http\Message\ResponseInterface;
  */
 class ReplaceHttpResponseComponent implements ComponentInterface
 {
-    CONST PARAMETER_RESPONSE = 'response';
+    const PARAMETER_RESPONSE = 'response';
 
     /**
      * @inheritDoc

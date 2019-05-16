@@ -14,7 +14,6 @@ namespace Neos\Flow\Mvc;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Component\ComponentContext;
 use Neos\Flow\Http\Component\ComponentInterface;
-use Neos\Flow\Mvc\ActionResponseRenderer\IntoComponentContext;
 
 /**
  * A dispatch component

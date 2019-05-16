@@ -14,7 +14,6 @@ namespace Neos\Flow\Tests\Unit\Http;
 use GuzzleHttp\Psr7\Stream;
 use Neos\Flow\Http\ContentStream;
 use Neos\Flow\Http\Helper\ResponseInformationHelper;
-use Neos\Flow\Http\Request;
 use Neos\Flow\Http\Response;
 use Neos\Flow\Http\Uri;
 use Neos\Flow\Http;

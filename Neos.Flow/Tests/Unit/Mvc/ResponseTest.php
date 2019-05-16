@@ -12,7 +12,6 @@ namespace Neos\Flow\Tests\Unit\Mvc;
  */
 
 use Neos\Flow\Mvc\ActionResponse;
-use Neos\Flow\Mvc\ActionResponseRenderer\Content;
 use Neos\Flow\Tests\UnitTestCase;
 
 /**
