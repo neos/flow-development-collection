@@ -104,6 +104,25 @@ class TranslatorTest extends UnitTestCase
     /**
      * @test
      */
+    public function translateByOriginalLabelInterpolatesArgumentsIntoOriginalLabelWhenTranslationNotAvailable()
+    {
+        $mockTranslationProvider = $this->createMock(XliffTranslationProvider::class);
+        $mockTranslationProvider
+            ->expects($this->exactly(\count($this->defaultLocaleChain)))
+            ->method('getTranslationByOriginalLabel')
+            ->with('original {0}', $this->isInstanceOf(I18n\Locale::class), null, 'source', 'packageKey')
+            ->will($this->returnValue(false))
+        ;
+
+        $this->translator->injectTranslationProvider($mockTranslationProvider);
+
+        $result = $this->translator->translateByOriginalLabel('original {0}', ['label'], null, null, 'source', 'packageKey');
+        $this->assertEquals('original label', $result);
+    }
+
+    /**
+     * @test
+     */
     public function translateByOriginalLabelUsesLocaleChain()
     {
         $mockTranslationProvider = $this->createMock(XliffTranslationProvider::class);
