@@ -25,7 +25,7 @@ class FlashMessageContainerTest extends UnitTestCase
      */
     protected $flashMessageContainer;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->flashMessageContainer = new Mvc\FlashMessageContainer();
     }

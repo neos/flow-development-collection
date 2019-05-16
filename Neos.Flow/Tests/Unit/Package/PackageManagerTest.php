@@ -16,6 +16,8 @@ use Neos\Flow\Core\ApplicationContext;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Package\Exception\InvalidPackageKeyException;
+use Neos\Flow\Package\Exception\PackageKeyAlreadyExistsException;
+use Neos\Flow\Package\Exception\UnknownPackageException;
 use Neos\Flow\Package\FlowPackageInterface;
 use Neos\Flow\Package\PackageFactory;
 use Neos\Flow\Package\PackageInterface;
@@ -56,7 +58,7 @@ class PackageManagerTest extends UnitTestCase
      * Sets up this test case
      *
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         ComposerUtility::flushCaches();
         vfsStream::setup('Test');
@@ -101,10 +103,10 @@ class PackageManagerTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Package\Exception\UnknownPackageException
      */
     public function getPackageThrowsExceptionOnUnknownPackage()
     {
+        $this->expectException(UnknownPackageException::class);
         $this->packageManager->getPackage('PrettyUnlikelyThatThisPackageExists');
     }
 
@@ -343,10 +345,10 @@ class PackageManagerTest extends UnitTestCase
      * Makes sure that duplicate package keys are detected.
      *
      * @test
-     * @expectedException \Neos\Flow\Package\Exception\PackageKeyAlreadyExistsException
      */
     public function createPackageThrowsExceptionForExistingPackageKey()
     {
+        $this->expectException(PackageKeyAlreadyExistsException::class);
         $this->packageManager->createPackage('Acme.YetAnotherTestPackage', [], 'vfs://Test/Packages/Application');
         $this->packageManager->createPackage('Acme.YetAnotherTestPackage', [], 'vfs://Test/Packages/Application');
     }
@@ -400,10 +402,10 @@ class PackageManagerTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Package\Exception\PackageKeyAlreadyExistsException
      */
     public function registeringTheSamePackageKeyWithDifferentCaseShouldThrowException()
     {
+        $this->expectException(PackageKeyAlreadyExistsException::class);
         $this->packageManager->createPackage('doctrine.instantiator', [], 'vfs://Test/Packages/Application');
         $this->packageManager->createPackage('doctrine.Instantiator', [], 'vfs://Test/Packages/Application');
     }

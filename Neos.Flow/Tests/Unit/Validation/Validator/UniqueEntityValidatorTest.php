@@ -13,6 +13,7 @@ namespace Neos\Flow\Tests\Unit\Validation\Validator;
 
 use Neos\Flow\Reflection\ClassSchema;
 use Neos\Flow\Reflection\ReflectionService;
+use Neos\Flow\Validation\Exception\InvalidValidationOptionsException;
 use Neos\Flow\Validation\Validator\UniqueEntityValidator;
 
 /**
@@ -36,7 +37,7 @@ class UniqueEntityValidatorTest extends AbstractValidatorTestcase
 
     /**
      */
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->classSchema = $this->getMockBuilder(ClassSchema::class)->disableOriginalConstructor()->getMock();
@@ -48,21 +49,21 @@ class UniqueEntityValidatorTest extends AbstractValidatorTestcase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Validation\Exception\InvalidValidationOptionsException
-     * @expectedExceptionCode 1358454270
      */
     public function validatorThrowsExceptionIfValueIsNotAnObject()
     {
+        $this->expectException(InvalidValidationOptionsException::class);
+        $this->expectExceptionCode(1358454270);
         $this->validator->validate('a string');
     }
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Validation\Exception\InvalidValidationOptionsException
-     * @expectedExceptionCode 1358454284
      */
     public function validatorThrowsExceptionIfValueIsNotReflectedAtAll()
     {
+        $this->expectException(InvalidValidationOptionsException::class);
+        $this->expectExceptionCode(1358454284);
         $this->classSchema->expects($this->once())->method('getModelType')->will($this->returnValue(null));
 
         $this->validator->validate(new \stdClass());
@@ -70,11 +71,11 @@ class UniqueEntityValidatorTest extends AbstractValidatorTestcase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Validation\Exception\InvalidValidationOptionsException
-     * @expectedExceptionCode 1358454284
      */
     public function validatorThrowsExceptionIfValueIsNotAFlowEntity()
     {
+        $this->expectException(InvalidValidationOptionsException::class);
+        $this->expectExceptionCode(1358454284);
         $this->classSchema->expects($this->once())->method('getModelType')->will($this->returnValue(ClassSchema::MODELTYPE_VALUEOBJECT));
 
         $this->validator->validate(new \stdClass());
@@ -82,11 +83,11 @@ class UniqueEntityValidatorTest extends AbstractValidatorTestcase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Validation\Exception\InvalidValidationOptionsException
-     * @expectedExceptionCode 1358960500
      */
     public function validatorThrowsExceptionIfSetupPropertiesAreNotPresentInActualClass()
     {
+        $this->expectException(InvalidValidationOptionsException::class);
+        $this->expectExceptionCode(1358960500);
         $this->prepareMockExpectations();
         $this->inject($this->validator, 'options', ['identityProperties' => ['propertyWhichDoesntExist']]);
         $this->classSchema
@@ -100,11 +101,11 @@ class UniqueEntityValidatorTest extends AbstractValidatorTestcase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Validation\Exception\InvalidValidationOptionsException
-     * @expectedExceptionCode 1358459831
      */
     public function validatorThrowsExceptionIfThereIsNoIdentityProperty()
     {
+        $this->expectException(InvalidValidationOptionsException::class);
+        $this->expectExceptionCode(1358459831);
         $this->prepareMockExpectations();
         $this->classSchema
             ->expects($this->once())
@@ -116,11 +117,11 @@ class UniqueEntityValidatorTest extends AbstractValidatorTestcase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Validation\Exception\InvalidValidationOptionsException
-     * @expectedExceptionCode 1358501745
      */
     public function validatorThrowsExceptionOnMultipleOrmIdAnnotations()
     {
+        $this->expectException(InvalidValidationOptionsException::class);
+        $this->expectExceptionCode(1358501745);
         $this->prepareMockExpectations();
         $this->classSchema
             ->expects($this->once())

@@ -11,6 +11,7 @@ namespace Neos\Utility\ObjectHandling\Tests\Unit;
  * source code.
  */
 
+use Neos\Utility\Exception\InvalidTypeException;
 use Neos\Utility\TypeHandling;
 
 /**
@@ -20,19 +21,19 @@ class TypeHandlingTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @test
-     * @expectedException \Neos\Utility\Exception\InvalidTypeException
      */
     public function parseTypeThrowsExceptionOnInvalidType()
     {
+        $this->expectException(InvalidTypeException::class);
         TypeHandling::parseType('$something');
     }
 
     /**
      * @test
-     * @expectedException \Neos\Utility\Exception\InvalidTypeException
      */
     public function parseTypeThrowsExceptionOnInvalidElementTypeHint()
     {
+        $this->expectException(InvalidTypeException::class);
         TypeHandling::parseType('string<integer>');
     }
 

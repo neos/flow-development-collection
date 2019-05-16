@@ -45,7 +45,7 @@ class CacheFactoryTest extends UnitTestCase
     /**
      * Creates the mocked filesystem used in the tests
      */
-    public function setUp()
+    protected function setUp(): void
     {
         vfsStream::setup('Foo');
 

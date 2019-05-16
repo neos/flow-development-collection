@@ -58,7 +58,7 @@ class ClassLoaderTest extends UnitTestCase
 
     /**
      */
-    public function setUp()
+    protected function setUp(): void
     {
         if (FLOW_ONLY_COMPOSER_LOADER) {
             $this->markTestSkipped('Not testing if composer-only loading is requested.');

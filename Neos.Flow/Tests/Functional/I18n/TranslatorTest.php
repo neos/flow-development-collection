@@ -28,7 +28,7 @@ class TranslatorTest extends FunctionalTestCase
     /**
      * Initialize dependencies
      */
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->translator = $this->objectManager->get(I18n\Translator::class);

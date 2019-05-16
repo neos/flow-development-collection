@@ -15,6 +15,7 @@ include_once(__DIR__ . '/../../BaseTestCase.php');
 
 use Neos\Cache\Backend\ApcuBackend;
 use Neos\Cache\EnvironmentConfiguration;
+use Neos\Cache\Exception;
 use Neos\Cache\Tests\BaseTestCase;
 use Neos\Cache\Frontend\FrontendInterface;
 use Neos\Cache\Frontend\VariableFrontend;
@@ -31,7 +32,7 @@ class ApcuBackendTest extends BaseTestCase
      *
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         if (ini_get('apc.enabled') == 0 || ini_get('apc.enable_cli') == 0) {
             $this->markTestSkipped('APCu is disabled (for CLI).');
@@ -43,10 +44,10 @@ class ApcuBackendTest extends BaseTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Cache\Exception
      */
     public function setThrowsExceptionIfNoFrontEndHasBeenSet()
     {
+        $this->expectException(Exception::class);
         $backend = new ApcuBackend($this->getEnvironmentConfiguration(), []);
         $data = 'Some data';
         $identifier = 'MyIdentifier' . md5(uniqid(mt_rand(), true));

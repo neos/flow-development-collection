@@ -29,7 +29,7 @@ class PluralsReaderTest extends UnitTestCase
     /**
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $samplePluralRulesData = [
             'pluralRules[@locales="ro mo"]' => [

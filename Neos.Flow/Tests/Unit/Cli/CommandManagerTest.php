@@ -14,6 +14,8 @@ namespace Neos\Flow\Tests\Unit\Cli;
 use Neos\Flow\Cli\CommandManager;
 use Neos\Flow\Cli;
 use Neos\Flow\Core\Bootstrap;
+use Neos\Flow\Mvc\Exception\AmbiguousCommandIdentifierException;
+use Neos\Flow\Mvc\Exception\NoSuchCommandException;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Tests\UnitTestCase;
@@ -40,7 +42,7 @@ class CommandManagerTest extends UnitTestCase
      */
     protected $commandManager;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->mockReflectionService = $this->createMock(ReflectionService::class);
         $this->commandManager = $this->getMockBuilder(Cli\CommandManager::class)->setMethods(['getAvailableCommands'])->getMock();
@@ -110,10 +112,10 @@ class CommandManagerTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Mvc\Exception\NoSuchCommandException
      */
     public function getCommandByIdentifierThrowsExceptionIfNoMatchingCommandWasFound()
     {
+        $this->expectException(NoSuchCommandException::class);
         $mockCommand = $this->getMockBuilder(Cli\Command::class)->disableOriginalConstructor()->getMock();
         $mockCommand->expects($this->once())->method('getCommandIdentifier')->will($this->returnValue('package.key:controller:command'));
         $mockCommands = [$mockCommand];
@@ -124,10 +126,10 @@ class CommandManagerTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Mvc\Exception\AmbiguousCommandIdentifierException
      */
     public function getCommandByIdentifierThrowsExceptionIfMoreThanOneMatchingCommandWasFound()
     {
+        $this->expectException(AmbiguousCommandIdentifierException::class);
         $mockCommand1 = $this->getMockBuilder(Cli\Command::class)->disableOriginalConstructor()->getMock();
         $mockCommand1->expects($this->once())->method('getCommandIdentifier')->will($this->returnValue('package.key:controller:command'));
         $mockCommand2 = $this->getMockBuilder(Cli\Command::class)->disableOriginalConstructor()->getMock();
@@ -140,10 +142,10 @@ class CommandManagerTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Mvc\Exception\AmbiguousCommandIdentifierException
      */
     public function getCommandByIdentifierThrowsExceptionIfOnlyPackageKeyIsSpecifiedAndContainsMoreThanOneCommand()
     {
+        $this->expectException(AmbiguousCommandIdentifierException::class);
         $mockCommand1 = $this->getMockBuilder(Cli\Command::class)->disableOriginalConstructor()->getMock();
         $mockCommand1->expects($this->atLeastOnce())->method('getCommandIdentifier')->will($this->returnValue('package.key:controller:command'));
         $mockCommand2 = $this->getMockBuilder(Cli\Command::class)->disableOriginalConstructor()->getMock();

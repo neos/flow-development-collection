@@ -29,7 +29,7 @@ class DebuggerTest extends FunctionalTestCase
     protected $configurationManager;
 
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->configurationManager = $this->objectManager->get(ConfigurationManager::class);
@@ -51,6 +51,6 @@ class DebuggerTest extends FunctionalTestCase
         $newConfiguration = Arrays::arrayMergeRecursiveOverrule($currentConfiguration, $configurationOverwrite);
         ObjectAccess::setProperty($this->configurationManager, 'configurations', $newConfiguration, true);
 
-        $this->assertContains('rootContextString', Debugger::renderDump($object, 0, true));
+        $this->assertStringContainsString('rootContextString', Debugger::renderDump($object, 0, true));
     }
 }

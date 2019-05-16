@@ -47,7 +47,7 @@ class PolicyEnforcementAspectTest extends UnitTestCase
      */
     protected $policyEnforcementAspect;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->mockJoinPoint = $this->getMockBuilder(JoinPointInterface::class)->disableOriginalConstructor()->getMock();
         $this->mockAdviceChain = $this->getMockBuilder(AdviceChain::class)->disableOriginalConstructor()->getMock();

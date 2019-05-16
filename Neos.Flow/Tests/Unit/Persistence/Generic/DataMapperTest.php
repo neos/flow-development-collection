@@ -24,10 +24,10 @@ class DataMapperTest extends UnitTestCase
 {
     /**
      * @test
-     * @expectedException \Neos\Flow\Persistence\Generic\Exception\InvalidObjectDataException
      */
     public function mapToObjectThrowsExceptionOnEmptyInput()
     {
+        $this->expectException(Persistence\Generic\Exception\InvalidObjectDataException::class);
         $objectData = [];
 
         $dataMapper = $this->getAccessibleMock(Persistence\Generic\DataMapper::class, ['dummy']);

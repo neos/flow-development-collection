@@ -13,6 +13,7 @@ namespace Neos\Eel\Tests\Unit;
 
 use Neos\Cache\Frontend\StringFrontend;
 use Neos\Eel\CompilingEvaluator;
+use Neos\Eel\NotAllowedException;
 use Neos\Eel\ProtectedContext;
 use Neos\Eel\Tests\Unit\Fixtures\TestObject;
 use Neos\Flow\Tests\UnitTestCase;
@@ -24,10 +25,10 @@ class ProtectedContextTest extends UnitTestCase
 {
     /**
      * @test
-     * @expectedException \Neos\Eel\NotAllowedException
      */
     public function methodCallToAnyValueIsNotAllowed()
     {
+        $this->expectException(NotAllowedException::class);
         $securedObject = new TestObject();
 
         $context = new ProtectedContext([
@@ -40,10 +41,10 @@ class ProtectedContextTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Eel\NotAllowedException
      */
     public function arrayAccessResultIsStillUntrusted()
     {
+        $this->expectException(NotAllowedException::class);
         $securedObject = new TestObject();
 
         $context = new ProtectedContext([
@@ -92,10 +93,10 @@ class ProtectedContextTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Eel\NotAllowedException
      */
     public function firstLevelFunctionsHaveToBeWhitelisted()
     {
+        $this->expectException(NotAllowedException::class);
         $context = new ProtectedContext([
             'ident' => function ($value) {
                 return $value;
@@ -109,10 +110,10 @@ class ProtectedContextTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Eel\NotAllowedException
      */
     public function resultOfFirstLevelMethodCallIsProtected()
     {
+        $this->expectException(NotAllowedException::class);
         $securedObject = new TestObject();
 
         $context = new ProtectedContext([
@@ -133,10 +134,10 @@ class ProtectedContextTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Eel\NotAllowedException
      */
     public function resultOfWhitelistedMethodCallIsProtected()
     {
+        $this->expectException(NotAllowedException::class);
         $securedObject = new TestObject();
 
         $context = new ProtectedContext([

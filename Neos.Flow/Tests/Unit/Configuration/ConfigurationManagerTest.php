@@ -12,6 +12,9 @@ namespace Neos\Flow\Tests\Unit\Configuration;
  */
 
 use Neos\Flow\Configuration\ConfigurationManager;
+use Neos\Flow\Configuration\Exception\InvalidConfigurationTypeException;
+use Neos\Flow\Configuration\Exception\ParseErrorException;
+use Neos\Flow\Configuration\Exception\RecursionException;
 use Neos\Flow\Configuration\RouteConfigurationProcessor;
 use Neos\Flow\Configuration\Source\YamlSource;
 use Neos\Flow\Core\ApplicationContext;
@@ -31,7 +34,7 @@ class ConfigurationManagerTest extends UnitTestCase
      */
     protected $mockContext;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->mockContext = $this->getMockBuilder(ApplicationContext::class)->disableOriginalConstructor()->getMock();
     }
@@ -146,10 +149,10 @@ class ConfigurationManagerTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Configuration\Exception\InvalidConfigurationTypeException
      */
     public function gettingUnregisteredConfigurationTypeFails()
     {
+        $this->expectException(InvalidConfigurationTypeException::class);
         $configurationManager = new ConfigurationManager(new ApplicationContext('Testing'));
         $configurationManager->getConfiguration('Custom');
     }
@@ -178,11 +181,11 @@ class ConfigurationManagerTest extends UnitTestCase
     }
 
     /**
-     * @expectedException \InvalidArgumentException
      * @test
      */
     public function registerConfigurationTypeThrowsExceptionOnInvalidConfigurationProcessingType()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $configurationManager = $this->getAccessibleMock(ConfigurationManager::class, ['loadConfiguration'], [], '', false);
         $configurationManager->registerConfigurationType('MyCustomType', 'Nonsense');
     }
@@ -685,8 +688,8 @@ EOD;
         $settingsPhpString = var_export($settings, true);
         $configurationManager = $this->getAccessibleMock(ConfigurationManager::class, ['dummy'], [], '', false);
         $processedPhpString = $configurationManager->_call('replaceVariablesInPhpString', $settingsPhpString);
-        $this->assertContains("'baz' => (defined('PHP_VERSION') ? constant('PHP_VERSION') : null)", $processedPhpString);
-        $this->assertContains("'to' => (defined('FLOW_PATH_ROOT') ? constant('FLOW_PATH_ROOT') : null)", $processedPhpString);
+        $this->assertStringContainsString("'baz' => (defined('PHP_VERSION') ? constant('PHP_VERSION') : null)", $processedPhpString);
+        $this->assertStringContainsString("'to' => (defined('FLOW_PATH_ROOT') ? constant('FLOW_PATH_ROOT') : null)", $processedPhpString);
     }
 
     /**
@@ -708,10 +711,10 @@ EOD;
         $configurationManager = $this->getAccessibleMock(ConfigurationManager::class, ['dummy'], [], '', false);
         $processedPhpString = $configurationManager->_call('replaceVariablesInPhpString', $settingsPhpString);
         $settings = eval('return ' . $processedPhpString . ';');
-        $this->assertInternalType('integer', $settings['anIntegerConstant']);
+        $this->assertIsInt($settings['anIntegerConstant']);
         $this->assertSame(PHP_VERSION_ID, $settings['anIntegerConstant']);
 
-        $this->assertInternalType('string', $settings['casted']['to']['string']);
+        $this->assertIsString($settings['casted']['to']['string']);
         $this->assertSame('Version id is ' . PHP_VERSION_ID, $settings['casted']['to']['string']);
     }
 
@@ -1176,10 +1179,10 @@ EOD;
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Configuration\Exception\RecursionException
      */
     public function loadConfigurationForRoutesThrowsExceptionIfSubRoutesContainCircularReferences()
     {
+        $this->expectException(RecursionException::class);
         $mockSubRouteConfiguration =
             [
                 'name' => 'SomeRouteOrSubRoute',
@@ -1203,10 +1206,10 @@ EOD;
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Configuration\Exception\ParseErrorException
      */
     public function mergeRoutesWithSubRoutesThrowsExceptionIfRouteRefersToNonExistingOrInactivePackages()
     {
+        $this->expectException(ParseErrorException::class);
         $routesConfiguration = [
             [
                 'name' => 'Welcome',

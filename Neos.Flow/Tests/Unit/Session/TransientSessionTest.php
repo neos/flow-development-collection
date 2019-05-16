@@ -40,10 +40,10 @@ class TransientSessionTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Session\Exception\SessionNotStartedException
      */
     public function tryingToGetTheSessionIdWithoutStartingTheSessionThrowsAnException()
     {
+        $this->expectException(Session\Exception\SessionNotStartedException::class);
         $session = new Session\TransientSession();
         $session->getId();
     }

@@ -16,7 +16,7 @@ class OperationResolverTest extends FunctionalTestCase
     protected $operationResolver;
 
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->operationResolver = $this->objectManager->get(OperationResolver::class);

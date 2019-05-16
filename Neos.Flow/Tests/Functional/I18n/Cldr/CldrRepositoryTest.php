@@ -35,7 +35,7 @@ class CldrRepositoryTest extends FunctionalTestCase
     /**
      * Initialize dependencies
      */
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->cldrRepository = $this->objectManager->get(CldrRepository::class);

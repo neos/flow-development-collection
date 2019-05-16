@@ -55,7 +55,7 @@ class NumbersReaderTest extends UnitTestCase
     /**
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->sampleLocale = new I18n\Locale('en');
     }
@@ -140,10 +140,10 @@ class NumbersReaderTest extends UnitTestCase
     /**
      * @test
      * @dataProvider unsupportedFormats
-     * @expectedException \Neos\Flow\I18n\Cldr\Reader\Exception\UnsupportedNumberFormatException
      */
     public function throwsExceptionWhenUnsupportedFormatsEncountered($format)
     {
+        $this->expectException(I18n\Cldr\Reader\Exception\UnsupportedNumberFormatException::class);
         $reader = $this->getAccessibleMock(I18n\Cldr\Reader\NumbersReader::class, ['dummy']);
 
         $reader->_call('parseFormat', $format);

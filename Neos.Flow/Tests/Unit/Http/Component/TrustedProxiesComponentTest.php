@@ -48,7 +48,7 @@ class TrustedProxiesComponentTest extends UnitTestCase
      */
     protected $mockHttpResponse;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->mockHttpRequest = $this->getMockBuilder(Request::class)->disableOriginalConstructor()->getMock();
         $this->mockHttpResponse = $this->getMockBuilder(Response::class)->disableOriginalConstructor()->getMock();

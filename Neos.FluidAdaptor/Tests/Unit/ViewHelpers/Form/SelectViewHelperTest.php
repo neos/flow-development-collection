@@ -12,6 +12,7 @@ namespace Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Form;
  */
 
 use Neos\Flow\Persistence\PersistenceManagerInterface;
+use Neos\FluidAdaptor\Core\ViewHelper\Exception;
 use TYPO3Fluid\Fluid\Core\ViewHelper\TagBuilder;
 
 require_once(__DIR__ . '/Fixtures/EmptySyntaxTreeNode.php');
@@ -28,7 +29,7 @@ class SelectViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\For
      */
     protected $viewHelper;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->arguments['name'] = '';
@@ -378,10 +379,10 @@ class SelectViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\For
 
     /**
      * @test
-     * @expectedException \Neos\FluidAdaptor\Core\ViewHelper\Exception
      */
     public function selectOnDomainObjectsThrowsExceptionIfNoValueCanBeFound()
     {
+        $this->expectException(Exception::class);
         $mockPersistenceManager = $this->createMock(\Neos\Flow\Persistence\PersistenceManagerInterface::class);
         $mockPersistenceManager->expects($this->any())->method('getIdentifierByObject')->will($this->returnValue(null));
         $this->viewHelper->injectPersistenceManager($mockPersistenceManager);
@@ -542,10 +543,10 @@ class SelectViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\For
 
     /**
      * @test
-     * @expectedException \Neos\FluidAdaptor\Core\ViewHelper\Exception
      */
     public function getTranslatedLabelThrowsExceptionForInvalidLocales()
     {
+        $this->expectException(Exception::class);
         $this->arguments['translate'] = ['locale' => 'invalid-locale'];
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
 
@@ -554,10 +555,10 @@ class SelectViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\For
 
     /**
      * @test
-     * @expectedException \Neos\FluidAdaptor\Core\ViewHelper\Exception
      */
     public function getTranslatedLabelThrowsExceptionForUnknownTranslateBy()
     {
+        $this->expectException(Exception::class);
         $this->arguments['translate'] = ['by' => 'foo'];
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
 

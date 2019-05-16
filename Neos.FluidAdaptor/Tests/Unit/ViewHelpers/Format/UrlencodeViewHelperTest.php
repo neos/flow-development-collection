@@ -27,7 +27,7 @@ class UrlencodeViewHelperTest extends ViewHelperBaseTestcase
      */
     protected $viewHelper;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->viewHelper = $this->getMockBuilder(UrlencodeViewHelper::class)->setMethods(['renderChildren', 'registerRenderMethodArguments'])->getMock();
@@ -89,10 +89,10 @@ class UrlencodeViewHelperTest extends ViewHelperBaseTestcase
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
      */
     public function renderThrowsExceptionIfItIsNoStringAndHasNoToStringMethod()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $source = new \stdClass();
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['value' => $source]);
         $this->viewHelper->render();

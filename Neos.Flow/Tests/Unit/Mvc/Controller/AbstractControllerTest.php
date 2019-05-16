@@ -19,7 +19,9 @@ use Neos\Flow\Http\Request;
 use Neos\Flow\Http\Response;
 use Neos\Flow\Http\Uri;
 use Neos\Flow\Mvc\Exception\ForwardException;
+use Neos\Flow\Mvc\Exception\RequiredArgumentMissingException;
 use Neos\Flow\Mvc\Exception\StopActionException;
+use Neos\Flow\Mvc\Exception\UnsupportedRequestTypeException;
 use Neos\Flow\Mvc\FlashMessage\FlashMessageContainer;
 use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
@@ -48,7 +50,7 @@ class AbstractControllerTest extends UnitTestCase
      */
     protected $mockActionRequest;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->mockHttpRequest = $this->getMockBuilder(Request::class)->disableOriginalConstructor()->getMock();
         $this->mockHttpRequest->expects($this->any())->method('getNegotiatedMediaType')->will($this->returnValue('text/html'));
@@ -61,10 +63,10 @@ class AbstractControllerTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Mvc\Exception\UnsupportedRequestTypeException
      */
     public function initializeControllerWillThrowAnExceptionIfTheGivenRequestIsNotSupported()
     {
+        $this->expectException(UnsupportedRequestTypeException::class);
         $request = new Cli\Request();
         $response = new Cli\Response();
 
@@ -136,10 +138,10 @@ class AbstractControllerTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
      */
     public function addFlashMessageThrowsExceptionOnInvalidMessageBody()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $flashMessageContainer = new FlashMessageContainer();
         $controller = $this->getAccessibleMock(AbstractController::class, ['processRequest']);
         $this->inject($controller, 'flashMessageContainer', $flashMessageContainer);
@@ -316,10 +318,10 @@ class AbstractControllerTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Mvc\Exception\StopActionException
      */
     public function redirectToUriThrowsStopActionException()
     {
+        $this->expectException(StopActionException::class);
         $controller = $this->getAccessibleMock(AbstractController::class, ['processRequest']);
         $controller->_call('initializeController', $this->mockActionRequest, $this->actionResponse);
 
@@ -381,10 +383,10 @@ class AbstractControllerTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Mvc\Exception\StopActionException
      */
     public function throwStatusSetsThrowsStopActionException()
     {
+        $this->expectException(StopActionException::class);
         $controller = $this->getAccessibleMock(AbstractController::class, ['processRequest']);
         $controller->_call('initializeController', $this->mockActionRequest, $this->actionResponse);
 
@@ -461,10 +463,10 @@ class AbstractControllerTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Mvc\Exception\RequiredArgumentMissingException
      */
     public function mapRequestArgumentsToControllerArgumentsThrowsExceptionIfRequiredArgumentWasNotSet()
     {
+        $this->expectException(RequiredArgumentMissingException::class);
         $mockPropertyMapper = $this->getMockBuilder(PropertyMapper::class)->disableOriginalConstructor()->setMethods(['convert'])->getMock();
         $mockPropertyMapper->expects($this->atLeastOnce())->method('convert')->will($this->returnArgument(0));
 

@@ -81,7 +81,7 @@ class RouterCachingServiceTest extends UnitTestCase
     /**
      * Sets up this test case
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->routerCachingService = $this->getAccessibleMock(RouterCachingService::class, ['dummy']);
 

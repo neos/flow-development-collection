@@ -41,7 +41,7 @@ class DateHelperTest extends \Neos\Flow\Tests\UnitTestCase
         $helper = new DateHelper();
         $result = $helper->parse($string, $format);
         $this->assertInstanceOf(\DateTime::class, $result);
-        $this->assertEquals((float)$expected->format('U'), (float)$result->format('U'), 'Timestamps should match', 60);
+        $this->assertEqualsWithDelta((float)$expected->format('U'), (float)$result->format('U'), 60, 'Timestamps should match');
     }
 
     /**
@@ -132,7 +132,7 @@ class DateHelperTest extends \Neos\Flow\Tests\UnitTestCase
         $helper = new DateHelper();
         $result = $helper->now();
         $this->assertInstanceOf(\DateTime::class, $result);
-        $this->assertEquals(time(), (integer)$result->format('U'), 'Now should be now', 1);
+        $this->assertEqualsWithDelta(time(), (integer)$result->format('U'), 1, 'Now should be now');
     }
 
     /**
@@ -144,7 +144,7 @@ class DateHelperTest extends \Neos\Flow\Tests\UnitTestCase
         $result = $helper->create('yesterday noon');
         $expected = new \DateTime('yesterday noon');
         $this->assertInstanceOf(\DateTime::class, $result);
-        $this->assertEquals($expected->getTimestamp(), $result->getTimestamp(), 'Created DateTime object should match expected', 1);
+        $this->assertEqualsWithDelta($expected->getTimestamp(), $result->getTimestamp(), 1, 'Created DateTime object should match expected');
     }
 
     /**
@@ -156,7 +156,7 @@ class DateHelperTest extends \Neos\Flow\Tests\UnitTestCase
         $result = $helper->today();
         $this->assertInstanceOf(\DateTime::class, $result);
         $today = new \DateTime('today');
-        $this->assertEquals($today->getTimestamp(), $result->getTimestamp(), 'Today should be today', 1);
+        $this->assertEqualsWithDelta($today->getTimestamp(), $result->getTimestamp(), 1, 'Today should be today');
     }
 
     /**

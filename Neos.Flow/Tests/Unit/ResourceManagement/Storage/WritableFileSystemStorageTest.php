@@ -38,7 +38,7 @@ class WritableFileSystemStorageTest extends UnitTestCase
      */
     protected $mockEnvironment;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->mockDirectory = vfsStream::setup('WritableFileSystemStorageTest');
 

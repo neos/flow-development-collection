@@ -28,7 +28,7 @@ class FileAdapterTest extends UnitTestCase
     /**
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $mockParsedXliffData = require(__DIR__ . '/../../Fixtures/MockParsedXliffData.php');
         $this->mockParsedXliffFile = $mockParsedXliffData[0];
