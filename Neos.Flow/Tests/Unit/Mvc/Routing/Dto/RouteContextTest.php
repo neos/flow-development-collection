@@ -98,8 +98,8 @@ class RouteContextTest extends UnitTestCase
      */
     public function getCacheEntryIdentifierChangesWithNewRelativePath()
     {
-        $this->mockHttpRequest1->expects($this->any())->method('getAttribute')->with(ServerRequestAttributes::ATTRIBUTE_BASE_URI)->willReturn(new Uri('http://neos.io/'));
-        $this->mockHttpRequest2->expects($this->any())->method('getAttribute')->with(ServerRequestAttributes::ATTRIBUTE_BASE_URI)->willReturn(new Uri('http://neos.io/'));
+        $this->mockHttpRequest1->expects($this->any())->method('getAttribute')->with(ServerRequestAttributes::BASE_URI)->willReturn(new Uri('http://neos.io/'));
+        $this->mockHttpRequest2->expects($this->any())->method('getAttribute')->with(ServerRequestAttributes::BASE_URI)->willReturn(new Uri('http://neos.io/'));
 
         $this->mockUri1->expects($this->any())->method('getPath')->willReturn('relative/path1');
         $cacheIdentifier1 = (new RouteContext($this->mockHttpRequest1, RouteParameters::createEmpty()))->getCacheEntryIdentifier();

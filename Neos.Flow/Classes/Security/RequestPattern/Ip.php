@@ -64,6 +64,6 @@ class Ip implements RequestPatternInterface
         if (!$request instanceof ActionRequest) {
             return false;
         }
-        return (boolean)IpUtility::cidrMatch($request->getHttpRequest()->getAttribute(ServerRequestAttributes::ATTRIBUTE_CLIENT_IP), $this->options['cidrPattern']);
+        return (boolean)IpUtility::cidrMatch($request->getHttpRequest()->getAttribute(ServerRequestAttributes::CLIENT_IP), $this->options['cidrPattern']);
     }
 }

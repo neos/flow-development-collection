@@ -78,7 +78,7 @@ class RoutingComponent implements ComponentInterface
         }
 
         $componentContext->setParameter(RoutingComponent::class, 'matchResults', $matchResults);
-        $httpRequest = $componentContext->getHttpRequest()->withAttribute(ServerRequestAttributes::ATTRIBUTE_ROUTING_RESULTS, $matchResults);
+        $httpRequest = $componentContext->getHttpRequest()->withAttribute(ServerRequestAttributes::ROUTING_RESULTS, $matchResults);
         $componentContext->replaceHttpRequest($httpRequest);
     }
 }

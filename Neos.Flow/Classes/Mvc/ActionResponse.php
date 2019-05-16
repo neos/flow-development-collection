@@ -1,9 +1,9 @@
 <?php
 namespace Neos\Flow\Mvc;
 
+use function GuzzleHttp\Psr7\stream_for;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Component\ComponentContext;
-use Neos\Flow\Http\ContentStream;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
 use GuzzleHttp\Psr7\Stream;
@@ -54,9 +54,10 @@ final class ActionResponse
      */
     public function setContent($content): void
     {
-        if (is_string($content)) {
-            $content = new Stream(fopen('data://text/plain,' . $content, 'rb'));
+        if (!$content instanceof StreamInterface) {
+            $content = stream_for($content);
         }
+
         $this->content = $content;
     }
 
@@ -166,7 +167,7 @@ final class ActionResponse
     public function mergeIntoParentResponse(ActionResponse $actionResponse): ActionResponse
     {
         if (!empty($this->content)) {
-            $actionResponse->setContent($this->getContent());
+            $actionResponse->setContent($this->content);
         }
         if ($this->contentType !== null) {
             $actionResponse->setContentType($this->contentType);
@@ -200,7 +201,7 @@ final class ActionResponse
             ->withStatus($this->statusCode);
 
         if ($this->content !== null) {
-            $httpResponse = $httpResponse->withBody(ContentStream::fromContents($this->getContent()));
+            $httpResponse = $httpResponse->withBody($this->content);
         }
 
         if ($this->contentType) {

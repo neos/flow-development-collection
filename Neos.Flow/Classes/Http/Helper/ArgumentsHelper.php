@@ -11,7 +11,6 @@ namespace Neos\Flow\Http\Helper;
  * source code.
  */
 
-use Neos\Flow\Http\ContentStream;
 use Neos\Utility\Arrays;
 
 /**
@@ -51,15 +50,5 @@ abstract class ArgumentsHelper
         }
 
         return $arguments;
-    }
-
-    /**
-     * @param string $content
-     * @return ContentStream
-     * @deprecated since Flow 5.2, use ContentStream::fromContents()
-     */
-    public static function createContentStreamFromString(string $content): ContentStream
-    {
-        return ContentStream::fromContents($content);
     }
 }

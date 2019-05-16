@@ -46,7 +46,7 @@ class WebRedirectTest extends UnitTestCase
     public function startAuthenticationSetsTheCorrectValuesInTheResponseObjectIfUriIsSpecified()
     {
         $request = new ServerRequest('GET', new Uri('http://robertlemke.com/admin'));
-        $request = $request->withAttribute(ServerRequestAttributes::ATTRIBUTE_BASE_URI, 'http://robertlemke.com/');
+        $request = $request->withAttribute(ServerRequestAttributes::BASE_URI, 'http://robertlemke.com/');
         $response = new Response();
 
         $entryPoint = new WebRedirect();

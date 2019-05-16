@@ -69,7 +69,7 @@ class UriBuilderTest extends UnitTestCase
         $this->mockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
 
         $this->mockBaseUri = $this->getMockBuilder(UriInterface::class)->getMock();
-        $this->mockHttpRequest->expects($this->any())->method('getAttribute')->with(Http\ServerRequestAttributes::ATTRIBUTE_BASE_URI)->willReturn($this->mockBaseUri);
+        $this->mockHttpRequest->expects($this->any())->method('getAttribute')->with(Http\ServerRequestAttributes::BASE_URI)->willReturn($this->mockBaseUri);
 
         $this->mockRouter = $this->createMock(Mvc\Routing\RouterInterface::class);
 

@@ -3,7 +3,7 @@ namespace Neos\Flow\Tests\Unit\Http\Helper;
 
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Psr7\ServerRequest;
-use Neos\Flow\Http\Helper\ArgumentsHelper;
+use function GuzzleHttp\Psr7\stream_for;
 use Neos\Flow\Http\Helper\ResponseInformationHelper;
 use Neos\Flow\Tests\UnitTestCase;
 
@@ -19,7 +19,7 @@ class ResponseInformationHelperTest extends UnitTestCase
     {
         $request = ServerRequest::fromGlobals();
         $response = new Response();
-        $response = $response->withBody(ArgumentsHelper::createContentStreamFromString('12345'));
+        $response = $response->withBody(stream_for('12345'));
         self::assertFalse($response->hasHeader('Content-Length'));
 
         $compliantResponse = ResponseInformationHelper::makeStandardsCompliant($response, $request);

@@ -34,7 +34,7 @@ class BaseUriComponent implements ComponentInterface
             $baseUri = new Uri($baseUriSetting);
         }
 
-        $request = $request->withAttribute(ServerRequestAttributes::ATTRIBUTE_BASE_URI, $baseUri);
+        $request = $request->withAttribute(ServerRequestAttributes::BASE_URI, $baseUri);
         $componentContext->replaceHttpRequest($request);
     }
 

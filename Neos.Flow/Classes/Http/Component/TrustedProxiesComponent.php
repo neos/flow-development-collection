@@ -46,9 +46,9 @@ class TrustedProxiesComponent implements ComponentInterface
     {
         $request = $componentContext->getHttpRequest();
 
-        $trustedRequest = $request->withAttribute(ServerRequestAttributes::ATTRIBUTE_TRUSTED_PROXY, $this->isFromTrustedProxy($request));
+        $trustedRequest = $request->withAttribute(ServerRequestAttributes::TRUSTED_PROXY, $this->isFromTrustedProxy($request));
 
-        $trustedRequest = $trustedRequest->withAttribute(ServerRequestAttributes::ATTRIBUTE_CLIENT_IP, $this->getTrustedClientIpAddress($trustedRequest));
+        $trustedRequest = $trustedRequest->withAttribute(ServerRequestAttributes::CLIENT_IP, $this->getTrustedClientIpAddress($trustedRequest));
 
         $protocolHeader = $this->getFirstTrustedProxyHeaderValue(self::HEADER_PROTOCOL, $trustedRequest);
         if ($protocolHeader !== null) {
@@ -130,7 +130,7 @@ class TrustedProxiesComponent implements ComponentInterface
         } else {
             $trustedHeaders = $this->settings['headers'][$type] ?? '';
         }
-        if ($trustedHeaders === '' || !$request->getAttribute(ServerRequestAttributes::ATTRIBUTE_TRUSTED_PROXY)) {
+        if ($trustedHeaders === '' || !$request->getAttribute(ServerRequestAttributes::TRUSTED_PROXY)) {
             yield null;
             return;
         }

@@ -184,7 +184,7 @@ class TrustedProxiesComponentTest extends UnitTestCase
         $server = array_replace($defaultServerEnvironment, $serverEnvironment);
         $request = $this->serverRequestFactory->createServerRequest('GET', new Uri('http://flow.neos.io'), $server);
         $trustedRequest = $this->callWithRequest($request);
-        $this->assertSame($expectedIpAddress, $trustedRequest->getAttribute(ServerRequestAttributes::ATTRIBUTE_CLIENT_IP));
+        $this->assertSame($expectedIpAddress, $trustedRequest->getAttribute(ServerRequestAttributes::CLIENT_IP));
     }
 
     /**
@@ -223,7 +223,7 @@ class TrustedProxiesComponentTest extends UnitTestCase
         $server = array_replace($defaultServerEnvironment, $serverEnvironment);
         $request = $this->serverRequestFactory->createServerRequest('GET', new Uri('http://flow.neos.io'), $server);
         $trustedRequest = $this->callWithRequest($request);
-        $this->assertSame($expectedIpAddress, $trustedRequest->getAttribute(ServerRequestAttributes::ATTRIBUTE_CLIENT_IP));
+        $this->assertSame($expectedIpAddress, $trustedRequest->getAttribute(ServerRequestAttributes::CLIENT_IP));
         $this->assertSame($expectedProto, $trustedRequest->getUri()->getScheme());
         $this->assertSame($expectedHost, $trustedRequest->getUri()->getHost());
         $this->assertSame($expectedPort, $trustedRequest->getUri()->getPort());
@@ -270,7 +270,7 @@ class TrustedProxiesComponentTest extends UnitTestCase
     {
         $request = $this->serverRequestFactory->createServerRequest('GET', new Uri('https://acme.com'));
         $trustedRequest = $this->callWithRequest($request);
-        $this->assertTrue($trustedRequest->getAttribute(ServerRequestAttributes::ATTRIBUTE_TRUSTED_PROXY));
+        $this->assertTrue($trustedRequest->getAttribute(ServerRequestAttributes::TRUSTED_PROXY));
     }
 
     /**
@@ -281,7 +281,7 @@ class TrustedProxiesComponentTest extends UnitTestCase
         $this->withTrustedProxiesSettings(['proxies' => ['127.0.0.0/24']]);
         $request = $this->serverRequestFactory->createServerRequest('GET', new Uri('https://acme.com'));
         $trustedRequest = $this->callWithRequest($request);
-        $this->assertTrue($trustedRequest->getAttribute(ServerRequestAttributes::ATTRIBUTE_TRUSTED_PROXY));
+        $this->assertTrue($trustedRequest->getAttribute(ServerRequestAttributes::TRUSTED_PROXY));
     }
 
     /**
@@ -292,7 +292,7 @@ class TrustedProxiesComponentTest extends UnitTestCase
         $this->withTrustedProxiesSettings(['proxies' => []]);
         $request = $this->serverRequestFactory->createServerRequest('GET', new Uri('https://acme.com'));
         $trustedRequest = $this->callWithRequest($request);
-        $this->assertFalse($trustedRequest->getAttribute(ServerRequestAttributes::ATTRIBUTE_TRUSTED_PROXY));
+        $this->assertFalse($trustedRequest->getAttribute(ServerRequestAttributes::TRUSTED_PROXY));
     }
 
     /**
@@ -303,7 +303,7 @@ class TrustedProxiesComponentTest extends UnitTestCase
         $this->withTrustedProxiesSettings(['proxies' => ['10.0.0.1/24']]);
         $request = $this->serverRequestFactory->createServerRequest('GET', new Uri('https://acme.com'));
         $trustedRequest = $this->callWithRequest($request);
-        $this->assertFalse($trustedRequest->getAttribute(ServerRequestAttributes::ATTRIBUTE_TRUSTED_PROXY));
+        $this->assertFalse($trustedRequest->getAttribute(ServerRequestAttributes::TRUSTED_PROXY));
     }
 
     /**
@@ -314,7 +314,7 @@ class TrustedProxiesComponentTest extends UnitTestCase
         $this->withTrustedProxiesSettings(['proxies' => [], 'headers' => [TrustedProxiesComponent::HEADER_CLIENT_IP => 'X-Forwarded-For']]);
         $request = $this->serverRequestFactory->createServerRequest('GET', new Uri('https://acme.com'), [], null, '1.1', ['HTTP_X_FORWARDED_FOR' => '10.0.0.1']);
         $trustedRequest = $this->callWithRequest($request);
-        $this->assertEquals('127.0.0.1', $trustedRequest->getAttribute(ServerRequestAttributes::ATTRIBUTE_CLIENT_IP));
+        $this->assertEquals('127.0.0.1', $trustedRequest->getAttribute(ServerRequestAttributes::CLIENT_IP));
     }
 
     /**
@@ -325,7 +325,7 @@ class TrustedProxiesComponentTest extends UnitTestCase
         $this->withTrustedProxiesSettings(['proxies' => ['127.0.0.1'], 'headers' => []]);
         $request = $this->serverRequestFactory->createServerRequest('GET', new Uri('https://acme.com'), ['HTTP_X_FORWARDED_FOR' => '10.0.0.1']);
         $trustedRequest = $this->callWithRequest($request);
-        $this->assertEquals('127.0.0.1', $trustedRequest->getAttribute(ServerRequestAttributes::ATTRIBUTE_CLIENT_IP));
+        $this->assertEquals('127.0.0.1', $trustedRequest->getAttribute(ServerRequestAttributes::CLIENT_IP));
     }
 
     /**
@@ -336,7 +336,7 @@ class TrustedProxiesComponentTest extends UnitTestCase
         $this->withTrustedProxiesSettings(['proxies' => ['127.0.0.1'], 'headers' => [TrustedProxiesComponent::HEADER_CLIENT_IP => 'X-Forwarded-For']]);
         $request = $this->serverRequestFactory->createServerRequest('GET', new Uri('https://acme.com'), ['HTTP_X_FORWARDED_FOR' => '13.0.0.1']);
         $trustedRequest = $this->callWithRequest($request);
-        $this->assertEquals('13.0.0.1', $trustedRequest->getAttribute(ServerRequestAttributes::ATTRIBUTE_CLIENT_IP));
+        $this->assertEquals('13.0.0.1', $trustedRequest->getAttribute(ServerRequestAttributes::CLIENT_IP));
     }
 
     /**
@@ -347,7 +347,7 @@ class TrustedProxiesComponentTest extends UnitTestCase
         $this->withTrustedProxiesSettings(['proxies' => '*', 'headers' => [TrustedProxiesComponent::HEADER_CLIENT_IP => 'X-Forwarded-For']]);
         $request = $this->serverRequestFactory->createServerRequest('GET', new Uri('https://acme.com'), ['HTTP_X_FORWARDED_FOR' => '13.0.0.1, 13.0.0.2, 13.0.0.3']);
         $trustedRequest = $this->callWithRequest($request);
-        $this->assertEquals('13.0.0.1', $trustedRequest->getAttribute(ServerRequestAttributes::ATTRIBUTE_CLIENT_IP));
+        $this->assertEquals('13.0.0.1', $trustedRequest->getAttribute(ServerRequestAttributes::CLIENT_IP));
     }
 
     /**
@@ -358,7 +358,7 @@ class TrustedProxiesComponentTest extends UnitTestCase
         $this->withTrustedProxiesSettings(['proxies' => ['127.0.0.1','10.0.0.1/24'], 'headers' => [TrustedProxiesComponent::HEADER_CLIENT_IP => 'X-Forwarded-For']]);
         $request = $this->serverRequestFactory->createServerRequest('GET', new Uri('https://acme.com'), ['HTTP_X_FORWARDED_FOR' => '198.155.23.17, 215.0.0.1, 10.0.0.1, 10.0.0.2']);
         $trustedRequest = $this->callWithRequest($request);
-        $this->assertEquals('215.0.0.1', $trustedRequest->getAttribute(ServerRequestAttributes::ATTRIBUTE_CLIENT_IP));
+        $this->assertEquals('215.0.0.1', $trustedRequest->getAttribute(ServerRequestAttributes::CLIENT_IP));
     }
 
     /**
@@ -369,7 +369,7 @@ class TrustedProxiesComponentTest extends UnitTestCase
         $this->withTrustedProxiesSettings(['proxies' => '*', 'headers' => [TrustedProxiesComponent::HEADER_CLIENT_IP => 'X-Forwarded-Ip']]);
         $request = $this->serverRequestFactory->createServerRequest('GET', new Uri('https://acme.com'), ['HTTP_X_FORWARDED_FOR' => '10.0.0.1']);
         $trustedRequest = $this->callWithRequest($request);
-        $this->assertEquals('127.0.0.1', $trustedRequest->getAttribute(ServerRequestAttributes::ATTRIBUTE_CLIENT_IP));
+        $this->assertEquals('127.0.0.1', $trustedRequest->getAttribute(ServerRequestAttributes::CLIENT_IP));
     }
 
     /**

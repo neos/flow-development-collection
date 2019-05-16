@@ -62,7 +62,7 @@ class FileSystemTargetTest extends UnitTestCase
         $this->mockRequestHandler = $this->createMock(HttpRequestHandlerInterface::class);
 
         $this->mockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
-        $this->mockHttpRequest->expects($this->any())->method('getAttribute')->with(ServerRequestAttributes::ATTRIBUTE_BASE_URI)->will($this->returnValue(new Uri('http://detected/base/uri/')));
+        $this->mockHttpRequest->expects($this->any())->method('getAttribute')->with(ServerRequestAttributes::BASE_URI)->will($this->returnValue(new Uri('http://detected/base/uri/')));
         $this->mockRequestHandler->expects($this->any())->method('getHttpRequest')->will($this->returnValue($this->mockHttpRequest));
 
         $this->mockBootstrap->expects($this->any())->method('getActiveRequestHandler')->will($this->returnValue($this->mockRequestHandler));

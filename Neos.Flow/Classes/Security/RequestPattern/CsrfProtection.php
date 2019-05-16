@@ -114,7 +114,7 @@ class CsrfProtection implements RequestPatternInterface
 
         $httpRequest = $request->getHttpRequest();
         if ($httpRequest->hasHeader('X-Flow-Csrftoken')) {
-            $csrfToken = RequestInformationHelper::getFirstRequestHeaderValue($httpRequest, 'X-Flow-Csrftoken');
+            $csrfToken = $httpRequest->getHeaderLine('X-Flow-Csrftoken');
         } else {
             $internalArguments = $request->getMainRequest()->getInternalArguments();
             $csrfToken = isset($internalArguments['__csrfToken']) ? $internalArguments['__csrfToken'] : null;

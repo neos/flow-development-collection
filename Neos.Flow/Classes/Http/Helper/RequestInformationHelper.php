@@ -11,7 +11,6 @@ namespace Neos\Flow\Http\Helper;
  * source code.
  */
 
-use Neos\Flow\Http\Headers;
 use Neos\Flow\Http\ServerRequestAttributes;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -60,9 +59,16 @@ abstract class RequestInformationHelper
         return implode('/', $requestPathSegments) . '/';
     }
 
+    /**
+     * Constructs a relative path for this request,
+     * that is the path segments left after removing the baseUri.
+     *
+     * @param ServerRequestInterface $request
+     * @return string
+     */
     public static function getRelativeRequestPath(ServerRequestInterface $request): string
     {
-        $baseUri = $request->getAttribute(ServerRequestAttributes::ATTRIBUTE_BASE_URI);
+        $baseUri = $request->getAttribute(ServerRequestAttributes::BASE_URI);
         if (empty($baseUri)) {
             $baseUri = self::generateBaseUri($request);
         }
@@ -110,22 +116,11 @@ abstract class RequestInformationHelper
     {
         $renderedHeaders = '';
         $headers = $request->getHeaders();
-        if ($headers instanceof Headers) {
-            $renderedHeaders .= $headers->__toString();
-        } else {
-            foreach (array_keys($headers) as $name) {
-                $renderedHeaders .= $request->getHeaderLine($name);
-            }
+        foreach (array_keys($headers) as $name) {
+            $renderedHeaders .= $request->getHeaderLine($name);
         }
 
         return $renderedHeaders;
-    }
-
-    public static function renderRequest(RequestInterface $request): string
-    {
-        return self::generateRequestLine($request)
-               . self::renderRequestHeaders($request)
-               . "\r\n" . $request->getBody()->getContents();
     }
 
     /**
@@ -142,21 +137,6 @@ abstract class RequestInformationHelper
         }
 
         return '';
-    }
-
-    /**
-     * @param RequestInterface $request
-     * @param string $headerName
-     * @return string
-     * @deprecated use RequestInterface::getHeaderLine
-     * @see RequestInterface::getHeaderLine()
-     */
-    public static function getFirstRequestHeaderValue(RequestInterface $request, string $headerName):? string
-    {
-        $headerValues = $request->getHeader($headerName);
-        $firstHeaderValue = reset($headerValues);
-
-        return $firstHeaderValue;
     }
 
     /**

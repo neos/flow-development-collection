@@ -761,7 +761,7 @@ class RouteTest extends UnitTestCase
         $mockHttpRequest->method('getUri')->willReturn($mockUri);
 
         $mockBaseUri = new Uri('http://localhost/');
-        $mockHttpRequest->expects($this->any())->method('getAttribute')->with(ServerRequestAttributes::ATTRIBUTE_BASE_URI)->will($this->returnValue($mockBaseUri));
+        $mockHttpRequest->expects($this->any())->method('getAttribute')->with(ServerRequestAttributes::BASE_URI)->will($this->returnValue($mockBaseUri));
 
         $mockHttpRequest->expects($this->atLeastOnce())->method('getMethod')->willReturn('GET');
         $this->assertFalse($this->route->matches(new RouteContext($mockHttpRequest, RouteParameters::createEmpty())), 'Route must not match GET requests if only POST or PUT requests are accepted.');
@@ -786,7 +786,7 @@ class RouteTest extends UnitTestCase
         $mockHttpRequest->method('getUri')->willReturn($mockUri);
 
         $mockBaseUri = new Uri('http://localhost/');
-        $mockHttpRequest->expects($this->any())->method('getAttribute')->with(ServerRequestAttributes::ATTRIBUTE_BASE_URI)->will($this->returnValue($mockBaseUri));
+        $mockHttpRequest->expects($this->any())->method('getAttribute')->with(ServerRequestAttributes::BASE_URI)->will($this->returnValue($mockBaseUri));
 
         $mockHttpRequest->expects($this->atLeastOnce())->method('getMethod')->willReturn('PUT');
 

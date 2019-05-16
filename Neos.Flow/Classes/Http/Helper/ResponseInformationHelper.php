@@ -11,8 +11,9 @@ namespace Neos\Flow\Http\Helper;
  * source code.
  */
 
+use function GuzzleHttp\Psr7\parse_response;
+use function GuzzleHttp\Psr7\stream_for;
 use Neos\Flow\Http\ContentStream;
-use Neos\Http\Factories\ResponseFactory;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
@@ -31,52 +32,7 @@ abstract class ResponseInformationHelper
      */
     public static function createFromRaw(string $rawResponse): ResponseInterface
     {
-        $response = (new ResponseFactory())->createResponse();
-        if (!$response instanceof ResponseInterface) {
-            throw new \InvalidArgumentException(sprintf('The given response class name "%s" does not implement the "%s" and cannot be created with this method.', get_class($response), ResponseInterface::class));
-        }
-
-        // see https://tools.ietf.org/html/rfc7230#section-3.5
-        $lines = explode(chr(10), $rawResponse);
-        $statusLine = array_shift($lines);
-
-        if (substr($statusLine, 0, 5) !== 'HTTP/') {
-            throw new \InvalidArgumentException('The given raw HTTP message is not a valid response.', 1335175601);
-        }
-        list($httpAndVersion, $statusCode, $reasonPhrase) = explode(' ', $statusLine, 3);
-        $version = explode('/', $httpAndVersion)[1];
-        if (strlen($statusCode) !== 3) {
-            // See https://tools.ietf.org/html/rfc7230#section-3.1.2
-            throw new \InvalidArgumentException('The given raw HTTP message contains an invalid status code.', 1502981352);
-        }
-        $response = $response->withStatus((integer)$statusCode, trim($reasonPhrase));
-        $response = $response->withProtocolVersion($version);
-
-        $parsingHeader = true;
-        $contentLines = [];
-        foreach ($lines as $line) {
-            if ($parsingHeader) {
-                if (trim($line) === '') {
-                    $parsingHeader = false;
-                    continue;
-                }
-                $headerSeparatorIndex = strpos($line, ':');
-                if ($headerSeparatorIndex === false) {
-                    throw new \InvalidArgumentException('The given raw HTTP message contains an invalid header.', 1502984804);
-                }
-                $fieldName = trim(substr($line, 0, $headerSeparatorIndex));
-                $fieldValue = trim(substr($line, strlen($fieldName) + 1));
-                $response = $response->withHeader($fieldName, $fieldValue);
-            } else {
-                $contentLines[] = $line;
-            }
-        }
-        if ($parsingHeader === true) {
-            throw new \InvalidArgumentException('The given raw HTTP message contains no separating empty line between header and body.', 1502984823);
-        }
-        $content = implode(chr(10), $contentLines);
-
-        return $response->withBody(ContentStream::fromContents($content));
+        return parse_response($rawResponse);
     }
 
     /**
@@ -208,7 +164,7 @@ abstract class ResponseInformationHelper
         }
 
         if (in_array($response->getStatusCode(), [100, 101, 204, 304])) {
-            $response = $response->withBody(ContentStream::fromContents(''));
+            $response = $response->withBody(stream_for(''));
         }
 
         $cacheControlHeaderLine = $response->getHeaderLine('Cache-Control');
@@ -226,7 +182,7 @@ abstract class ResponseInformationHelper
         }
 
         if ($request->getMethod() === 'HEAD') {
-            $response = $response->withBody(ContentStream::fromContents(''));
+            $response = $response->withBody(stream_for(''));
         }
 
         if ($response->hasHeader('Transfer-Encoding')) {

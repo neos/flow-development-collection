@@ -352,7 +352,7 @@ class UriBuilder
 
         $uriPathPrefix = $this->environment->isRewriteEnabled() ? '' : 'index.php/';
         $uriPathPrefix = RequestInformationHelper::getScriptRequestPath($httpRequest) . $uriPathPrefix;
-        $resolveContext = new ResolveContext($httpRequest->getAttribute(ServerRequestAttributes::ATTRIBUTE_BASE_URI), $arguments, $this->createAbsoluteUri, $uriPathPrefix);
+        $resolveContext = new ResolveContext($httpRequest->getAttribute(ServerRequestAttributes::BASE_URI), $arguments, $this->createAbsoluteUri, $uriPathPrefix);
         $resolvedUri = $this->router->resolve($resolveContext);
         if ($this->section !== '') {
             $resolvedUri = $resolvedUri->withFragment($this->section);

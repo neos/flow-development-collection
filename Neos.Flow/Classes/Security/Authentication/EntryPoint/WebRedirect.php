@@ -11,8 +11,8 @@ namespace Neos\Flow\Security\Authentication\EntryPoint;
  * source code.
  */
 
+use function GuzzleHttp\Psr7\stream_for;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Http\Helper\ArgumentsHelper;
 use Neos\Flow\Http\ServerRequestAttributes;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Routing\UriBuilder;
@@ -45,7 +45,7 @@ class WebRedirect extends AbstractEntryPoint
         $uri = null;
 
         if (isset($this->options['uri'])) {
-            $uri = strpos($this->options['uri'], '://') !== false ? $this->options['uri'] : $request->getAttribute(ServerRequestAttributes::ATTRIBUTE_BASE_URI) . $this->options['uri'];
+            $uri = strpos($this->options['uri'], '://') !== false ? $this->options['uri'] : $request->getAttribute(ServerRequestAttributes::BASE_URI) . $this->options['uri'];
         }
 
         if (isset($this->options['routeValues'])) {
@@ -62,7 +62,7 @@ class WebRedirect extends AbstractEntryPoint
         }
 
         return $response
-            ->withBody(ArgumentsHelper::createContentStreamFromString(sprintf('<html><head><meta http-equiv="refresh" content="0;url=%s"/></head></html>', htmlentities($uri, ENT_QUOTES, 'utf-8'))))
+            ->withBody(stream_for(sprintf('<html><head><meta http-equiv="refresh" content="0;url=%s"/></head></html>', htmlentities($uri, ENT_QUOTES, 'utf-8'))))
             ->withStatus(303)
             ->withHeader('Location', $uri);
     }

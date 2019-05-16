@@ -2,7 +2,6 @@
 namespace Neos\Flow\Http\Component;
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Http\Helper\RequestInformationHelper;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Property\PropertyMappingConfiguration;
@@ -56,7 +55,7 @@ class RequestBodyParsingComponent implements ComponentInterface
         $mediaTypeConverter = $this->objectManager->get(MediaTypeConverterInterface::class);
         $propertyMappingConfiguration = new PropertyMappingConfiguration();
         $propertyMappingConfiguration->setTypeConverter($mediaTypeConverter);
-        $requestedContentType = RequestInformationHelper::getFirstRequestHeaderValue($httpRequest, 'Content-Type');
+        $requestedContentType = $httpRequest->getHeaderLine('Content-Type');
         $propertyMappingConfiguration->setTypeConverterOption(MediaTypeConverterInterface::class, MediaTypeConverterInterface::CONFIGURATION_MEDIA_TYPE, $requestedContentType);
         $arguments = $this->propertyMapper->convert($requestBody, 'array', $propertyMappingConfiguration);
 
