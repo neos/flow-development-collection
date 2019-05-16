@@ -103,5 +103,5 @@ properties:
         required: true
         properties:
           'keystorePath': { type: string, required: true }
-          'paddingAlgorithm': { type: string, required: true }
+          'paddingAlgorithm': { type: [string, integer], required: true }
           'openSSLConfiguration': { type: dictionary, required: true }
