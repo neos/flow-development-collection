@@ -114,7 +114,11 @@ class TranslatorTest extends UnitTestCase
             ->will($this->returnValue(false))
         ;
 
+        $mockFormatResolver = $this->createMock(I18n\FormatResolver::class);
+        $mockFormatResolver->expects($this->once())->method('resolvePlaceholders')->with('original {0}', ['label'], $this->defaultLocale)->willReturn('original label');
+
         $this->translator->injectTranslationProvider($mockTranslationProvider);
+        $this->translator->injectFormatResolver($mockFormatResolver);
 
         $result = $this->translator->translateByOriginalLabel('original {0}', ['label'], null, null, 'source', 'packageKey');
         $this->assertEquals('original label', $result);
