@@ -12,13 +12,15 @@ namespace Neos\Flow\Http\Client;
  */
 
 use GuzzleHttp\Psr7\ServerRequest;
+use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Headers;
-use Neos\Flow\Http\Response;
+use Neos\Flow\Http\Helper\RequestInformationHelper;
 use Neos\Flow\Http\ServerRequestAttributes;
-use Neos\Flow\Http\Uri;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UploadedFileInterface;
+use Psr\Http\Message\UriInterface;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Form;
 
@@ -35,7 +37,7 @@ class Browser
     protected $lastRequest;
 
     /**
-     * @var Response
+     * @var ResponseInterface
      */
     protected $lastResponse;
 
@@ -120,13 +122,13 @@ class Browser
      * If a Location header was given and the status code is of response type 3xx
      * (see http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html, 14.30 Location)
      *
-     * @param string|Uri $uri
+     * @param string|UriInterface $uri
      * @param string $method Request method, for example "GET"
      * @param array $arguments Arguments to send in the request body
      * @param UploadedFileInterface[] $files
      * @param array $server
      * @param string $content
-     * @return Response The HTTP response
+     * @return ResponseInterface The HTTP response
      * @throws \InvalidArgumentException
      * @throws InfiniteRedirectionException
      * @api
@@ -136,11 +138,12 @@ class Browser
         if (is_string($uri)) {
             $uri = new Uri($uri);
         }
-        if (!$uri instanceof Uri) {
+        if (!$uri instanceof UriInterface) {
             throw new \InvalidArgumentException('$uri must be a URI object or a valid string representation of a URI.', 1333443624);
         }
 
         $request = new ServerRequest($method, $uri, [], $content, '1.1', $server);
+        $request = $request->withAttribute(ServerRequestAttributes::ATTRIBUTE_BASE_URI, RequestInformationHelper::generateBaseUri($request));
         if (!empty($arguments)) {
             $request = $request->withQueryParams($arguments);
         }
@@ -150,14 +153,14 @@ class Browser
 
         $response = $this->sendRequest($request);
 
-        $location = $response->getHeader('Location');
+        $location = $response->getHeaderLine('Location');
         if ($this->followRedirects && $location !== null && $response->getStatusCode() >= 300 && $response->getStatusCode() <= 399) {
             if (substr($location, 0, 1) === '/') {
                 // Location header is a host-absolute URL; so we need to prepend the hostname to create a full URL.
-                $location = $request->getBaseUri() . ltrim($location, '/');
+                $location = $request->getAttribute(ServerRequestAttributes::ATTRIBUTE_BASE_URI) . ltrim($location, '/');
             }
 
-            if (in_array($location, $this->redirectionStack) || count($this->redirectionStack) >= $this->maximumRedirections) {
+            if (in_array($location, $this->redirectionStack, true) || count($this->redirectionStack) >= $this->maximumRedirections) {
                 throw new InfiniteRedirectionException('The Location "' . $location . '" to follow for a redirect will probably result into an infinite loop.', 1350391699);
             }
             $this->redirectionStack[] = $location;
@@ -182,7 +185,7 @@ class Browser
      * Sends a prepared request and returns the respective response.
      *
      * @param ServerRequestInterface $request
-     * @return Response
+     * @return ResponseInterface
      * @api
      */
     public function sendRequest(ServerRequestInterface $request)
@@ -199,7 +202,7 @@ class Browser
     /**
      * Returns the response received after the last request.
      *
-     * @return Response The HTTP response or NULL if there wasn't a response yet
+     * @return ResponseInterface The HTTP response or NULL if there wasn't a response yet
      * @api
      */
     public function getLastResponse()
@@ -243,7 +246,7 @@ class Browser
     public function getCrawler()
     {
         $crawler = new Crawler(null, $this->lastRequest->getAttribute(ServerRequestAttributes::ATTRIBUTE_BASE_URI));
-        $crawler->addContent($this->lastResponse->getContent(), $this->lastResponse->getHeader('Content-Type'));
+        $crawler->addContent($this->lastResponse->getBody()->getContents(), $this->lastResponse->getHeaderLine('Content-Type'));
 
         return $crawler;
     }
@@ -265,7 +268,7 @@ class Browser
      * Submit a form
      *
      * @param \Symfony\Component\DomCrawler\Form $form
-     * @return Response
+     * @return ResponseInterface
      * @api
      */
     public function submit(Form $form)

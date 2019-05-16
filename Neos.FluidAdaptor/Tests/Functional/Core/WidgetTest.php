@@ -49,7 +49,7 @@ class WidgetTest extends \Neos\Flow\Tests\FunctionalTestCase
     public function ifIncludedInATemplateTheWidgetReturnsResultOfItsOwnIndexAction()
     {
         $response = $this->browser->request('http://localhost/test/widget/ajaxtest');
-        list($confirmation, ) = explode(chr(10), $response->getContent());
+        list($confirmation, ) = explode(chr(10), $response->getBody()->getContents());
         $this->assertSame('SomeAjaxController::indexAction()', $confirmation);
     }
 
@@ -66,10 +66,10 @@ class WidgetTest extends \Neos\Flow\Tests\FunctionalTestCase
     public function theGeneratedUriLeadsToASpecificActionOfTheAjaxController()
     {
         $response = $this->browser->request('http://localhost/test/widget/ajaxtest');
-        list(, $ajaxWidgetUri) = explode(chr(10), $response->getContent());
+        list(, $ajaxWidgetUri) = explode(chr(10), $response->getBody()->getContents());
 
         $response = $this->browser->request('http://localhost/' . $ajaxWidgetUri);
-        $this->assertSame('SomeAjaxController::ajaxAction("value1", "value2")', trim($response->getContent()));
+        $this->assertSame('SomeAjaxController::ajaxAction("value1", "value2")', trim($response->getBody()->getContents()));
     }
 
     /**
@@ -81,7 +81,7 @@ class WidgetTest extends \Neos\Flow\Tests\FunctionalTestCase
         $redirectTriggerUri = $this->browser->getCrawler()->filterXPath('//*[@id="redirect-no-delay-no-param"]')->attr('href');
 
         $response = $this->browser->request($redirectTriggerUri);
-        $this->assertSame('<div id="parameter"></div>', trim($response->getContent()));
+        $this->assertSame('<div id="parameter"></div>', trim($response->getBody()->getContents()));
     }
 
     /**
@@ -93,7 +93,7 @@ class WidgetTest extends \Neos\Flow\Tests\FunctionalTestCase
         $redirectTriggerUri = $this->browser->getCrawler()->filterXPath('//*[@id="redirect-no-delay-with-param"]')->attr('href');
 
         $response = $this->browser->request($redirectTriggerUri);
-        $this->assertSame('<div id="parameter">foo, via redirect</div>', trim($response->getContent()));
+        $this->assertSame('<div id="parameter">foo, via redirect</div>', trim($response->getBody()->getContents()));
     }
 
     /**
@@ -112,7 +112,7 @@ class WidgetTest extends \Neos\Flow\Tests\FunctionalTestCase
 
         $redirectTargetUri = substr($redirectHeader, 6);
         $response = $this->browser->request($redirectTargetUri);
-        $this->assertSame('<div id="parameter"></div>', trim($response->getContent()));
+        $this->assertSame('<div id="parameter"></div>', trim($response->getBody()->getContents()));
     }
 
     /**
@@ -131,7 +131,7 @@ class WidgetTest extends \Neos\Flow\Tests\FunctionalTestCase
 
         $redirectTargetUri = substr($redirectHeader, 6);
         $response = $this->browser->request($redirectTargetUri);
-        $this->assertSame('<div id="parameter">bar, via redirect</div>', trim($response->getContent()));
+        $this->assertSame('<div id="parameter">bar, via redirect</div>', trim($response->getBody()->getContents()));
     }
 
     /**
@@ -156,7 +156,7 @@ class WidgetTest extends \Neos\Flow\Tests\FunctionalTestCase
         $redirectTriggerUri = $this->browser->getCrawler()->filterXPath('//*[@id="forward-no-param"]')->attr('href');
 
         $response = $this->browser->request($redirectTriggerUri);
-        $this->assertSame('<div id="parameter"></div>', trim($response->getContent()));
+        $this->assertSame('<div id="parameter"></div>', trim($response->getBody()->getContents()));
     }
 
     /**
@@ -168,7 +168,7 @@ class WidgetTest extends \Neos\Flow\Tests\FunctionalTestCase
         $redirectTriggerUri = $this->browser->getCrawler()->filterXPath('//*[@id="forward-with-param"]')->attr('href');
 
         $response = $this->browser->request($redirectTriggerUri);
-        $this->assertSame('<div id="parameter">baz, via forward</div>', trim($response->getContent()));
+        $this->assertSame('<div id="parameter">baz, via forward</div>', trim($response->getBody()->getContents()));
     }
 
     /**

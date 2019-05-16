@@ -12,7 +12,8 @@ namespace Neos\Flow\Http\Client;
  */
 
 use Neos\Flow\Http;
-use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Interface for a Request Engine which can be used by a HTTP Client implementation
@@ -23,9 +24,9 @@ interface RequestEngineInterface
     /**
      * Sends the given HTTP request
      *
-     * @param RequestInterface $request
-     * @return Http\Response
+     * @param ServerRequestInterface $request
+     * @return ResponseInterface
      * @throws Http\Exception
      */
-    public function sendRequest(RequestInterface $request);
+    public function sendRequest(ServerRequestInterface $request);
 }

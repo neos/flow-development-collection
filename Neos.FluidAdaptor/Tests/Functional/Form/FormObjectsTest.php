@@ -11,6 +11,8 @@ namespace Neos\FluidAdaptor\Tests\Functional\Form;
  * source code.
  */
 
+use Neos\Flow\Mvc\Routing\Route;
+
 /**
  * Testcase for Standalone View
  *
@@ -35,7 +37,7 @@ class FormObjectsTest extends \Neos\Flow\Tests\FunctionalTestCase
     {
         parent::setUp();
 
-        $route = new \Neos\Flow\Mvc\Routing\Route();
+        $route = new Route();
         $route->setUriPattern('test/fluid/formobjects(/{@action})');
         $route->setDefaults([
             '@package' => 'Neos.FluidAdaptor',
@@ -60,7 +62,7 @@ class FormObjectsTest extends \Neos\Flow\Tests\FunctionalTestCase
         $form['post']['author']['emailAddress']->setValue('hello@neos.io');
 
         $response = $this->browser->submit($form);
-        $this->assertSame('Neos Team|hello@neos.io', $response->getContent());
+        $this->assertSame('Neos Team|hello@neos.io', $response->getBody()->getContents());
     }
 
     /**
@@ -108,7 +110,7 @@ class FormObjectsTest extends \Neos\Flow\Tests\FunctionalTestCase
         $form['post']['author']['emailAddress']->setValue('another@email.org');
 
         $response = $this->browser->submit($form);
-        $this->assertSame('Neos Team|another@email.org', $response->getContent());
+        $this->assertSame('Neos Team|another@email.org', $response->getBody()->getContents());
     }
 
     /**
@@ -133,7 +135,7 @@ class FormObjectsTest extends \Neos\Flow\Tests\FunctionalTestCase
         $form['post']['author']['emailAddress']->setValue('another@email.org');
 
         $response = $this->browser->submit($form);
-        $this->assertSame('Egon Olsen|another@email.org', $response->getContent());
+        $this->assertSame('Egon Olsen|another@email.org', $response->getBody()->getContents());
     }
 
     /**
@@ -179,7 +181,7 @@ class FormObjectsTest extends \Neos\Flow\Tests\FunctionalTestCase
         $form['__trustedProperties']->setValue($form['__trustedProperties']->getValue() . 'a');
         $this->browser->submit($form);
 
-        $this->assertSame('500 Internal Server Error', $this->browser->getLastResponse()->getStatus());
+        $this->assertSame(500, $this->browser->getLastResponse()->getStatusCode());
     }
 
     /**
@@ -196,7 +198,7 @@ class FormObjectsTest extends \Neos\Flow\Tests\FunctionalTestCase
 
         $this->browser->submit($form);
 
-        $this->assertSame('500 Internal Server Error', $this->browser->getLastResponse()->getStatus());
+        $this->assertSame(500, $this->browser->getLastResponse()->getStatusCode());
     }
 
     /**
@@ -212,7 +214,7 @@ class FormObjectsTest extends \Neos\Flow\Tests\FunctionalTestCase
 
         $this->browser->submit($form);
 
-        $this->assertSame('500 Internal Server Error', $this->browser->getLastResponse()->getStatus());
+        $this->assertSame(500, $this->browser->getLastResponse()->getStatusCode());
     }
 
     /**
@@ -226,7 +228,7 @@ class FormObjectsTest extends \Neos\Flow\Tests\FunctionalTestCase
         unset($form['__trustedProperties']);
         $this->browser->submit($form);
 
-        $this->assertSame('500 Internal Server Error', $this->browser->getLastResponse()->getStatus());
+        $this->assertSame(500, $this->browser->getLastResponse()->getStatusCode());
     }
 
     /**
@@ -242,7 +244,7 @@ class FormObjectsTest extends \Neos\Flow\Tests\FunctionalTestCase
         $form['post']['author']['emailAddress']->setValue('test_noValidEmail');
 
         $response = $this->browser->submit($form);
-        $this->assertNotSame('Hello World|test_noValidEmail', $response->getContent());
+        $this->assertNotSame('Hello World|test_noValidEmail', $response->getBody()->getContents());
 
         $this->persistenceManager->clearState();
         $post = $this->persistenceManager->getObjectByIdentifier($postIdentifier, \Neos\FluidAdaptor\Tests\Functional\Form\Fixtures\Domain\Model\Post::class);
@@ -268,7 +270,7 @@ class FormObjectsTest extends \Neos\Flow\Tests\FunctionalTestCase
         $form['post']['name']->setValue('Hello World');
         $form['post']['author']['emailAddress']->setValue('foo@bar.org');
         $response = $this->browser->submit($form);
-        $this->assertSame('Hello World|foo@bar.org', $response->getContent());
+        $this->assertSame('Hello World|foo@bar.org', $response->getBody()->getContents());
 
         $post = $this->persistenceManager->getObjectByIdentifier($postIdentifier, \Neos\FluidAdaptor\Tests\Functional\Form\Fixtures\Domain\Model\Post::class);
         $this->assertSame('foo@bar.org', $post->getAuthor()->getEmailAddress());
@@ -288,7 +290,7 @@ class FormObjectsTest extends \Neos\Flow\Tests\FunctionalTestCase
 
         $form['post']['name']->setValue('Hello World');
         $response = $this->browser->submit($form);
-        $this->assertSame('Hello World|foo@bar.org', $response->getContent());
+        $this->assertSame('Hello World|foo@bar.org', $response->getBody()->getContents());
     }
 
     /**
@@ -304,7 +306,7 @@ class FormObjectsTest extends \Neos\Flow\Tests\FunctionalTestCase
         $form['__trustedProperties']->setValue($form['__trustedProperties']->getValue() . 'a');
         $this->browser->submit($form);
 
-        $this->assertSame('500 Internal Server Error', $this->browser->getLastResponse()->getStatus());
+        $this->assertSame(500, $this->browser->getLastResponse()->getStatusCode());
     }
 
     /**
@@ -320,7 +322,7 @@ class FormObjectsTest extends \Neos\Flow\Tests\FunctionalTestCase
 
         $this->browser->submit($form);
 
-        $this->assertSame('500 Internal Server Error', $this->browser->getLastResponse()->getStatus());
+        $this->assertSame(500, $this->browser->getLastResponse()->getStatusCode());
     }
 
     /**
@@ -338,7 +340,7 @@ class FormObjectsTest extends \Neos\Flow\Tests\FunctionalTestCase
 
         $this->browser->submit($form);
 
-        $this->assertSame('500 Internal Server Error', $this->browser->getLastResponse()->getStatus());
+        $this->assertSame(500, $this->browser->getLastResponse()->getStatusCode());
     }
 
     /**
@@ -354,7 +356,7 @@ class FormObjectsTest extends \Neos\Flow\Tests\FunctionalTestCase
         unset($form['__trustedProperties']);
         $this->browser->submit($form);
 
-        $this->assertSame('500 Internal Server Error', $this->browser->getLastResponse()->getStatus());
+        $this->assertSame(500, $this->browser->getLastResponse()->getStatusCode());
     }
 
     /**

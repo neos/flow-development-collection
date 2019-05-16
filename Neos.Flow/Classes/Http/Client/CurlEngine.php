@@ -11,9 +11,11 @@ namespace Neos\Flow\Http\Client;
  * source code.
  */
 
+use function GuzzleHttp\Psr7\parse_response;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http;
-use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * A Request Engine which uses cURL in order to send requests to external
@@ -47,13 +49,13 @@ class CurlEngine implements RequestEngineInterface
     /**
      * Sends the given HTTP request
      *
-     * @param RequestInterface $request
-     * @return Http\Response The response or false
+     * @param ServerRequestInterface $request
+     * @return ResponseInterface The response or false
      * @api
      * @throws Http\Exception
      * @throws CurlEngineException
      */
-    public function sendRequest(RequestInterface $request)
+    public function sendRequest(ServerRequestInterface $request)
     {
         if (!extension_loaded('curl')) {
             throw new Http\Exception('CurlEngine requires the PHP CURL extension to be installed and loaded.', 1346319808);
@@ -135,13 +137,13 @@ class CurlEngine implements RequestEngineInterface
         curl_close($curlHandle);
 
         // TODO: Create proper Psr Response from raw data
-        $response = Http\Helper\ResponseInformationHelper::createFromRaw($curlResult);
-        try {
-            while (substr($response->getContent(), 0, 5) === 'HTTP/' || $response->getStatusCode() === 100) {
-                $response = Http\Response::createFromRaw($response->getContent(), $response);
-            }
-        } catch (\InvalidArgumentException $e) {
-        }
+        $response = parse_response($curlResult);
+//        try {
+//            while (substr($response->getContent(), 0, 5) === 'HTTP/' || $response->getStatusCode() === 100) {
+//                $response = Http\Response::createFromRaw($response->getContent(), $response);
+//            }
+//        } catch (\InvalidArgumentException $e) {
+//        }
 
         return $response;
     }
