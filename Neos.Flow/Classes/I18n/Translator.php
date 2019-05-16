@@ -148,7 +148,10 @@ class Translator
             }
         }
 
-        return $originalLabel;
+        return $arguments === []
+            ? $originalLabel
+            : $this->formatResolver->resolvePlaceholders($originalLabel, $arguments, $locale)
+        ;
     }
 
     /**
