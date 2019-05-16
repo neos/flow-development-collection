@@ -13,6 +13,7 @@ namespace Neos\Flow\Mvc\Routing\Dto;
 
 use Neos\Flow\Annotations as Flow;
 use GuzzleHttp\Psr7\Uri;
+use Neos\Flow\Http\Helper\UriHelper;
 use Psr\Http\Message\UriInterface;
 
 /**
@@ -283,11 +284,12 @@ final class UriConstraints
             if (empty($uri->getScheme())) {
                 $uri = $uri->withScheme($templateUri->getScheme());
             }
-            if (empty($uri->getHost())) {
+            if (empty($uri->getHost()) || $uri->getHost() === Uri::HTTP_DEFAULT_HOST) {
                 $uri = $uri->withHost($templateUri->getHost());
             }
-            if (empty($uri->getPort()) && $templateUri->getPort() !== null) {
-                $uri = $uri->withPort($templateUri->getPort());
+            if (empty($uri->getPort()) && !isset($this->constraints[self::CONSTRAINT_PORT])) {
+                $port = $templateUri->getPort() ?? UriHelper::getDefaultPortForScheme($templateUri->getScheme());
+                $uri = $uri->withPort($port);
             }
         }
 

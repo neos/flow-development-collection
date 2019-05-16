@@ -89,7 +89,7 @@ class CsrfProtectionTest extends FunctionalTestCase
         $cookie = Cookie::createFromRawSetCookieHeader($cookieHeader);
 
         $request = $serverRequestFactory->createServerRequest('GET', new Uri('http://localhost/test/security/restricted/admin'));
-        $request = $request->withHeader('Cookie',  (string)$cookie);
+        $request = $request->withHeader('Cookie', (string)$cookie);
         $response = $this->browser->sendRequest($request);
 
         // Expect an exception because no account is authenticated:
@@ -102,7 +102,7 @@ class CsrfProtectionTest extends FunctionalTestCase
 
         // Expect that it works after you logged in
         $csrfToken = $this->securityContext->getCsrfProtectionToken();
-        $request = $serverRequestFactory->createServerRequest('POST','http://localhost/test/security/restricted/customer');
+        $request = $serverRequestFactory->createServerRequest('POST', 'http://localhost/test/security/restricted/customer');
         // ...
     }
 }

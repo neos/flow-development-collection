@@ -37,7 +37,7 @@ class TemplateViewTest extends UnitTestCase
     {
         $controllerObjectName = 'Neos\\' . $packageKey . '\\' . ($subPackageKey != $subPackageKey . '\\' ? : '') . 'Controller\\' . $controllerName . 'Controller';
 
-         $httpRequest = new ServerRequest('GET', new Uri('http://robertlemke.com/blog'));
+        $httpRequest = new ServerRequest('GET', new Uri('http://robertlemke.com/blog'));
         $mockRequest = $this->createMock(\Neos\Flow\Mvc\ActionRequest::class, [], [$httpRequest]);
         $mockRequest->expects($this->any())->method('getControllerPackageKey')->will($this->returnValue($packageKey));
         $mockRequest->expects($this->any())->method('getControllerSubPackageKey')->will($this->returnValue($subPackageKey));

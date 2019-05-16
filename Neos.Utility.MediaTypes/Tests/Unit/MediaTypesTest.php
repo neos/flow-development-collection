@@ -13,7 +13,6 @@ namespace Neos\Utility\MediaTypes\Tests\Unit;
 
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Utility\MediaTypes;
-use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Testcase for the Utility Media Types class

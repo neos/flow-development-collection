@@ -36,9 +36,10 @@ class UriTest extends UnitTestCase
             $uri->getHost() === 'subdomain.domain.com' &&
             $uri->getPort() === 8080 &&
             $uri->getPath() === '/path1/path2/index.php' &&
-            $uri->getQuery() === 'argument1=value1&argument2=value2&argument3[subargument1]=subvalue1' &&
+            urldecode($uri->getQuery()) === 'argument1=value1&argument2=value2&argument3[subargument1]=subvalue1' &&
             $uri->getFragment() === 'anchor'
         );
+
         $this->assertTrue($check, 'The valid and complete URI has not been correctly transformed to an URI object');
     }
 
@@ -91,11 +92,11 @@ class UriTest extends UnitTestCase
     {
         $uri = new Uri('http://flow.neos.io');
         $this->assertSame('http://flow.neos.io', (string)$uri);
-        $this->assertSame(80, $uri->getPort());
+        $this->assertNull($uri->getPort());
 
         $uri = new Uri('https://flow.neos.io');
         $this->assertSame('https://flow.neos.io', (string)$uri);
-        $this->assertSame(443, $uri->getPort());
+        $this->assertNull($uri->getPort());
     }
 
     /**
@@ -110,7 +111,7 @@ class UriTest extends UnitTestCase
             $uri->getScheme() === 'http' &&
             $uri->getHost() === 'www.neos.io' &&
             $uri->getPath() === '/path1/' &&
-            $uri->getQuery() === 'argumentäöü1=value%C3%A5%C3%B8%E2%82%AC%C5%93'
+            $uri->getQuery() === 'argument%C3%A4%C3%B6%C3%BC1=value%C3%A5%C3%B8%E2%82%AC%C5%93'
         );
         $this->assertTrue($check, 'The URI with special arguments has not been correctly transformed to an URI object');
     }
@@ -152,6 +153,7 @@ class UriTest extends UnitTestCase
      */
     public function settingInvalidHostThrowsException()
     {
+        $this->markTestSkipped('This is no longer the case with PSR-7 URIs');
         $this->expectException(\InvalidArgumentException::class);
         (new Uri(''))->withHost('an#invalid.host');
     }
@@ -159,8 +161,8 @@ class UriTest extends UnitTestCase
     public function uriStringTestUris()
     {
         return [
-            ['http://username:password@subdomain.domain.com:1234/pathx1/pathx2/index.php?argument1=value1&argument2=value2&argument3[subargument1]=subvalue1#anchorman'],
-            ['http://username:password@[2a00:f48:1008::212:183:10]:1234/pathx1/pathx2/index.php?argument1=value1&argument2=value2&argument3[subargument1]=subvalue1#anchorman'],
+            ['http://username:password@subdomain.domain.com:1234/pathx1/pathx2/index.php?argument1=value1&argument2=value2&argument3%5Bsubargument1%5D=subvalue1#anchorman'],
+            ['http://username:password@[2a00:f48:1008::212:183:10]:1234/pathx1/pathx2/index.php?argument1=value1&argument2=value2&argument3%5Bsubargument1%5D=subvalue1#anchorman'],
         ];
     }
     /**
@@ -180,8 +182,12 @@ class UriTest extends UnitTestCase
      */
     public function constructingWithNotAStringThrowsException()
     {
-        $this->expectException(\InvalidArgumentException::class);
-        new Uri(42);
+        $error = null;
+        try {
+            new Uri(['foo']);
+        } catch (\Throwable $error) {
+        }
+        $this->assertNotEmpty($error);
     }
 
     /**

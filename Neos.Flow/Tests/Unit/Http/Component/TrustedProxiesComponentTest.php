@@ -193,8 +193,8 @@ class TrustedProxiesComponentTest extends UnitTestCase
     public function serverEnvironmentsForForwardedHeader()
     {
         return [
-            [['HTTP_FORWARDED' => 'for=209.85.148.101; proto=https; host=www.acme.org'], '209.85.148.101', 'https', 'www.acme.org', 443],
-            [['HTTP_FORWARDED' => 'For=123.123.123.123, for=209.85.148.101'], '123.123.123.123', 'http', 'flow.neos.io', 80],
+            [['HTTP_FORWARDED' => 'for=209.85.148.101; proto=https; host=www.acme.org'], '209.85.148.101', 'https', 'www.acme.org', null],
+            [['HTTP_FORWARDED' => 'For=123.123.123.123, for=209.85.148.101'], '123.123.123.123', 'http', 'flow.neos.io', null],
             [['HTTP_FORWARDED' => 'FOR=192.0.2.60, for=209.85.148.101; proto=https; HOST="123.123.123.123:4711", host=www.acme.org:8080; by=203.0.113.43'], '192.0.2.60', 'https', '123.123.123.123', 4711],
             [['HTTP_FORWARDED' => 'for=192.0.2.60; proto=https; host=www.acme.org:8080; by=203.0.113.43'], '192.0.2.60', 'https', 'www.acme.org', 8080],
         ];
@@ -380,7 +380,7 @@ class TrustedProxiesComponentTest extends UnitTestCase
         $this->withTrustedProxiesSettings(['proxies' => '*', 'headers' => []]);
         $request = $this->serverRequestFactory->createServerRequest('GET', new Uri('http://acme.com'), ['HTTP_X_FORWARDED_PORT' => '443']);
         $trustedRequest = $this->callWithRequest($request);
-        $this->assertEquals(80, $trustedRequest->getUri()->getPort());
+        $this->assertEquals(null, $trustedRequest->getUri()->getPort());
     }
 
     /**
@@ -566,7 +566,7 @@ class TrustedProxiesComponentTest extends UnitTestCase
             [
                 'forwardedProtocol' => 'http',
                 'forwardedPort' => 80,
-                'requestUri' => '[2a00:f48:1008::212:183:10]',
+                'requestUri' => 'http://[2a00:f48:1008::212:183:10]',
                 'expectedUri' => 'http://[2a00:f48:1008::212:183:10]',
             ],
         ];
