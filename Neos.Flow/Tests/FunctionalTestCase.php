@@ -431,7 +431,7 @@ abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
         $responseFactory = new ResponseFactory();
 
         $requestHandler = self::$bootstrap->getActiveRequestHandler();
-        $request = $serverRequestFactory->createServerRequest('GET','http://localhost/typo3/flow/test');
+        $request = $serverRequestFactory->createServerRequest('GET', 'http://localhost/typo3/flow/test');
         $componentContext = new ComponentContext($request, $responseFactory->createResponse());
         $requestHandler->setComponentContext($componentContext);
     }

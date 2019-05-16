@@ -11,15 +11,12 @@ namespace Neos\FluidAdaptor\Core\Widget;
  * source code.
  */
 
-use Neos\Flow\Http\Component\SecurityEntryPointComponent;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
-use Neos\Flow\Mvc\ActionResponseRenderer\Content;
 use Neos\Flow\Mvc\Exception\ForwardException;
 use Neos\Flow\Mvc\Exception\InfiniteLoopException;
 use Neos\Flow\Mvc\Exception\StopActionException;
 use Neos\Flow\ObjectManagement\DependencyInjection\DependencyProxy;
-use Neos\Flow\Security\Exception\AuthenticationRequiredException;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use Neos\FluidAdaptor\Core\ViewHelper\Facets\ChildNodeAccessInterface;
 use TYPO3Fluid\Fluid\Core\Compiler\TemplateCompiler;

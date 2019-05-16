@@ -241,17 +241,16 @@ class AjaxWidgetComponentTest extends UnitTestCase
      */
     public function extractWidgetContextDecodesSerializedWidgetContextIfPresent()
     {
-        $ajaxWidgetComponent = $this->getAccessibleMock(\Neos\FluidAdaptor\Core\Widget\AjaxWidgetComponent::class, ['dummy']);
+        $ajaxWidgetComponent = $this->getAccessibleMock(AjaxWidgetComponent::class, ['dummy']);
         $this->inject($ajaxWidgetComponent, 'hashService', $this->mockHashService);
 
-        $mockWidgetContext = 'SomeWidgetContext';
+        $mockWidgetContext = new WidgetContext();
         $mockSerializedWidgetContext = base64_encode(serialize($mockWidgetContext));
         $mockSerializedWidgetContextWithHmac = $mockSerializedWidgetContext . 'HMAC';
 
         $this->mockHttpRequest->expects($this->any())->method('getParsedBody')->willReturn([
             '__widgetContext' => $mockSerializedWidgetContextWithHmac
         ]);
-
 
         $this->mockHashService->expects($this->atLeastOnce())->method('validateAndStripHmac')->with($mockSerializedWidgetContextWithHmac)->will($this->returnValue($mockSerializedWidgetContext));
 
