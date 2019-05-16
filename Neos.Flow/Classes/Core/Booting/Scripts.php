@@ -701,7 +701,6 @@ class Scripts
     /**
      * @param array $settings The Neos.Flow settings
      * @return string A command line command for PHP, which can be extended and then exec()uted
-     *
      * @throws Exception
      */
     public static function buildPhpCommand(array $settings)
