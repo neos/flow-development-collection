@@ -11,6 +11,9 @@ namespace Neos\Flow\Tests\Unit\Session;
  * source code.
  */
 
+use GuzzleHttp\Psr7\Response;
+use GuzzleHttp\Psr7\Uri;
+use Neos\Flow\Http\RequestHandler;
 use Neos\Http\Factories\ServerRequestFactory;
 use Neos\Http\Factories\UriFactory;
 use Neos\Flow\Session\Exception\DataNotSerializableException;
@@ -25,11 +28,12 @@ use Neos\Flow\Session\Exception\SessionNotStartedException;
 use Neos\Flow\Session\Session;
 use Neos\Flow\Session\SessionManager;
 use Neos\Cache\Frontend\VariableFrontend;
-use Neos\Flow\Http;
 use Neos\Flow\Security\Authentication\Token\UsernamePassword;
 use Neos\Flow\Security\Authentication\TokenInterface;
 use Neos\Flow\Security\Account;
 use Neos\Flow\Tests\UnitTestCase;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -38,12 +42,12 @@ use Psr\Log\LoggerInterface;
 class SessionTest extends UnitTestCase
 {
     /**
-     * @var Http\Request
+     * @var ServerRequestInterface
      */
     protected $httpRequest;
 
     /**
-     * @var Http\Response
+     * @var ResponseInterface
      */
     protected $httpResponse;
 
@@ -93,10 +97,10 @@ class SessionTest extends UnitTestCase
         vfsStream::setup('Foo');
 
         $serverRequestFactory = new ServerRequestFactory(new UriFactory());
-        $this->httpRequest = $serverRequestFactory->createServerRequest('GET', new Http\Uri('http://localhost'));
-        $this->httpResponse = new Http\Response();
+        $this->httpRequest = $serverRequestFactory->createServerRequest('GET', new Uri('http://localhost'));
+        $this->httpResponse = new Response();
 
-        $mockRequestHandler = $this->createMock(Http\RequestHandler::class);
+        $mockRequestHandler = $this->createMock(RequestHandler::class);
         $mockRequestHandler->expects($this->any())->method('getHttpRequest')->will($this->returnValue($this->httpRequest));
         $mockRequestHandler->expects($this->any())->method('getHttpResponse')->will($this->returnValue($this->httpResponse));
 

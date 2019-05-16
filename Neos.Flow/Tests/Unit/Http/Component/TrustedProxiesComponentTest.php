@@ -13,9 +13,8 @@ namespace Neos\Flow\Tests\Unit\Http\Component;
 
 use Neos\Flow\Http\Component\ComponentContext;
 use Neos\Flow\Http\Component\TrustedProxiesComponent;
-use Neos\Flow\Http\Response;
 use Neos\Flow\Http\ServerRequestAttributes;
-use Neos\Flow\Http\Uri;
+use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Http\Factories\ServerRequestFactory;
 use Neos\Http\Factories\UriFactory;
@@ -44,7 +43,7 @@ class TrustedProxiesComponentTest extends UnitTestCase
     protected $mockHttpRequest;
 
     /**
-     * @var Response|\PHPUnit_Framework_MockObject_MockObject
+     * @var ResponseInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $mockHttpResponse;
 

@@ -12,7 +12,7 @@ namespace Neos\Flow\Tests\Functional\Mvc;
  */
 
 use GuzzleHttp\Psr7\ServerRequest;
-use Neos\Flow\Http\Uri;
+use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Tests\FunctionalTestCase;
 

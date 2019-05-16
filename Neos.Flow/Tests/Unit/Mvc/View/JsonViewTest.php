@@ -14,7 +14,6 @@ namespace Neos\Flow\Tests\Unit\Mvc\View;
 use Neos\Flow\Mvc;
 use Neos\Flow\Persistence\Generic\PersistenceManager;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Flow\Http;
 
 /**
  * Testcase for the JSON view
@@ -32,7 +31,7 @@ class JsonViewTest extends UnitTestCase
     protected $controllerContext;
 
     /**
-     * @var Http\Response
+     * @var Mvc\ActionResponse
      */
     protected $response;
 

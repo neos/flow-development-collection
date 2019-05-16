@@ -36,7 +36,7 @@ class UriBuilderTest extends UnitTestCase
     protected $mockRouter;
 
     /**
-     * @var Http\Request|\PHPUnit_Framework_MockObject_MockObject
+     * @var ServerRequestInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $mockHttpRequest;
 

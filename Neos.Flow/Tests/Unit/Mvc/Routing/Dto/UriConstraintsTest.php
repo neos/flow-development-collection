@@ -11,7 +11,7 @@ namespace Neos\Flow\Tests\Unit\Mvc\Routing\Dto;
  * source code.
  */
 
-use Neos\Flow\Http\Uri;
+use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Utility\ObjectAccess;
@@ -94,7 +94,6 @@ class UriConstraintsTest extends UnitTestCase
     {
         $uriConstraints = UriConstraints::create();
         $this->inject($uriConstraints, 'constraints', $constraints);
-
         $resultingUri = $uriConstraints->applyTo(new Uri($templateUri), $forceAbsoluteUri);
         $this->assertSame($expectedUri, (string)$resultingUri);
     }

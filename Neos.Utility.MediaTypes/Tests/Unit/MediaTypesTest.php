@@ -11,9 +11,9 @@ namespace Neos\Utility\MediaTypes\Tests\Unit;
  * source code.
  */
 
-use Neos\Flow\Http\Request;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Utility\MediaTypes;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Testcase for the Utility Media Types class
@@ -120,7 +120,6 @@ class MediaTypesTest extends UnitTestCase
      */
     public function parseMediaTypeReturnsAssociativeArrayWithIndividualPartsOfTheMediaType(string $mediaType, array $expectedPieces)
     {
-        $request = $this->getAccessibleMock(Request::class, ['dummy'], [], '', false);
         $actualPieces = MediaTypes::parseMediaType($mediaType);
         $this->assertSame($expectedPieces, $actualPieces);
     }

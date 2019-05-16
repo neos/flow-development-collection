@@ -2,11 +2,11 @@
 namespace Neos\Flow\Http\Component;
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Http\Response as HttpResponse;
 use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Mvc\DispatchComponent;
 use Neos\Flow\Security\Authentication\TokenInterface;
 use Neos\Flow\Security\Context;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -50,7 +50,7 @@ class SecurityEntryPointComponent implements ComponentInterface
 
         $this->securityLogger->info(sprintf('Starting authentication with entry point of type "%s"', get_class($entryPoint)), LogEnvironment::fromMethodName(__METHOD__));
         $this->securityContext->setInterceptedRequest($actionRequest->getMainRequest());
-        /** @var HttpResponse $response */
+        /** @var ResponseInterface $response */
         $response = $entryPoint->startAuthentication($componentContext->getHttpRequest(), $componentContext->getHttpResponse());
         $componentContext->replaceHttpResponse($response);
     }

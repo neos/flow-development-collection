@@ -16,6 +16,8 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Http\Component\ComponentContext;
 use Neos\Http\Factories\ResponseFactory;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * A request handler which boots up Flow into a basic runtime level and then returns
@@ -94,9 +96,9 @@ class FunctionalTestRequestHandler implements \Neos\Flow\Http\HttpRequestHandler
     /**
      * Returns the currently processed HTTP request
      *
-     * @return \Neos\Flow\Http\Request
+     * @return ServerRequestInterface
      */
-    public function getHttpRequest()
+    public function getHttpRequest(): ServerRequestInterface
     {
         return $this->getComponentContext()->getHttpRequest();
     }
@@ -104,7 +106,7 @@ class FunctionalTestRequestHandler implements \Neos\Flow\Http\HttpRequestHandler
     /**
      * Returns the HTTP response corresponding to the currently handled request
      *
-     * @return \Neos\Flow\Http\Response
+     * @return ResponseInterface
      * @api
      */
     public function getHttpResponse()

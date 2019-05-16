@@ -12,7 +12,7 @@ namespace Neos\Flow\Mvc\Routing\Dto;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Http\Uri;
+use GuzzleHttp\Psr7\Uri;
 use Psr\Http\Message\UriInterface;
 
 /**
@@ -303,7 +303,7 @@ final class UriConstraints
      */
     private function stringStartsWith(string $string, string $prefix): bool
     {
-        return substr($string, 0, strlen($prefix)) === $prefix;
+        return strpos($string, $prefix) === 0;
     }
 
     /**

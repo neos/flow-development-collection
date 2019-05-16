@@ -11,6 +11,7 @@ namespace Neos\Flow\Security\RequestPattern;
  * source code.
  */
 
+use Neos\Flow\Http\ServerRequestAttributes;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Security\Exception\InvalidRequestPatternException;
 use Neos\Flow\Security\RequestPatternInterface;
@@ -63,6 +64,6 @@ class Ip implements RequestPatternInterface
         if (!$request instanceof ActionRequest) {
             return false;
         }
-        return (boolean)IpUtility::cidrMatch($request->getHttpRequest()->getClientIpAddress(), $this->options['cidrPattern']);
+        return (boolean)IpUtility::cidrMatch($request->getHttpRequest()->getAttribute(ServerRequestAttributes::ATTRIBUTE_CLIENT_IP), $this->options['cidrPattern']);
     }
 }

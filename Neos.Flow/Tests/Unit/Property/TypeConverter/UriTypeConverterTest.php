@@ -11,10 +11,11 @@ namespace Neos\Flow\Tests\Unit\Property\TypeConverter;
  * source code.
  */
 
+use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Property\TypeConverter\UriTypeConverter;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Flow\Http;
 use Neos\Error\Messages as FlowError;
+use Psr\Http\Message\UriInterface;
 
 /**
  * Testcase for the URI type converter
@@ -49,7 +50,7 @@ class UriTypeConverterTest extends UnitTestCase
      */
     public function targetTypeIsUri()
     {
-        $this->assertSame(Http\Uri::class, $this->typeConverter->getSupportedTargetType());
+        $this->assertSame(UriInterface::class, $this->typeConverter->getSupportedTargetType());
     }
 
     /**
@@ -57,7 +58,7 @@ class UriTypeConverterTest extends UnitTestCase
      */
     public function typeConverterReturnsUriOnValidUri()
     {
-        $this->assertInstanceOf(Http\Uri::class, $this->typeConverter->convertFrom('http://localhost/foo', Http\Uri::class));
+        $this->assertInstanceOf(Uri::class, $this->typeConverter->convertFrom('http://localhost/foo', Uri::class));
     }
 
     /**
@@ -65,7 +66,7 @@ class UriTypeConverterTest extends UnitTestCase
      */
     public function typeConverterReturnsErrorOnMalformedUri()
     {
-        $actual = $this->typeConverter->convertFrom('http:////localhost', Http\Uri::class);
+        $actual = $this->typeConverter->convertFrom('http:////localhost', Uri::class);
         $this->assertInstanceOf(FlowError\Error::class, $actual);
     }
 }

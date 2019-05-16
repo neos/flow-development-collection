@@ -3,7 +3,6 @@ namespace Neos\Flow\Tests\Behavior\Features\Bootstrap;
 
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Exception;
-use Neos\Flow\Http\Request;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\ObjectManagement\Exception\UnknownObjectException;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
@@ -19,6 +18,7 @@ use Neos\Flow\Security\Policy\PolicyService;
 use Neos\Flow\Tests\Functional\Security\Fixtures\Controller\AuthenticationController;
 use Neos\Utility\Arrays;
 use PHPUnit\Framework\Assert;
+use Psr\Http\Message\ServerRequestFactoryInterface;
 
 /**
  * A trait with shared step definitions for testing compile time security privilege types
@@ -219,7 +219,7 @@ trait SecurityOperationsTrait
 
         $this->securityContext = $this->objectManager->get(Security\Context::class);
         $this->securityContext->clearContext();
-        $httpRequest = Request::createFromEnvironment();
+        $httpRequest = $this->objectManager->get(ServerRequestFactoryInterface::class)->createServerRequest('GET', 'http://localhost/');
         $this->mockActionRequest = new ActionRequest($httpRequest);
         $this->mockActionRequest->setControllerObjectName(AuthenticationController::class);
         $this->securityContext->setRequest($this->mockActionRequest);

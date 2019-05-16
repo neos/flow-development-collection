@@ -148,6 +148,8 @@ abstract class RequestInformationHelper
      * @param RequestInterface $request
      * @param string $headerName
      * @return string
+     * @deprecated use RequestInterface::getHeaderLine
+     * @see RequestInterface::getHeaderLine()
      */
     public static function getFirstRequestHeaderValue(RequestInterface $request, string $headerName):? string
     {

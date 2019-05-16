@@ -11,8 +11,7 @@ namespace Neos\Flow\Tests\Functional\Mvc;
  * source code.
  */
 
-use Neos\Flow\Http\Request;
-use Neos\Flow\Http\Uri;
+use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
 use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
@@ -23,6 +22,8 @@ use Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestACont
 use Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller\RoutingTestAController;
 use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\Utility\Arrays;
+use Psr\Http\Message\ServerRequestFactoryInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Functional tests for the Router
@@ -33,11 +34,17 @@ use Neos\Utility\Arrays;
 class RoutingTest extends FunctionalTestCase
 {
     /**
+     * @var ServerRequestFactoryInterface
+     */
+    protected $serverRequestFactory;
+
+    /**
      * Validate that test routes are loaded
      */
     protected function setUp(): void
     {
         parent::setUp();
+        $this->serverRequestFactory = $this->objectManager->get(ServerRequestFactoryInterface::class);
 
         $foundRoute = false;
         /** @var $route Route */
@@ -55,11 +62,11 @@ class RoutingTest extends FunctionalTestCase
     }
 
     /**
-     * @param Request $httpRequest
+     * @param ServerRequestInterface $httpRequest
      * @param array $matchResults
      * @return ActionRequest
      */
-    protected function createActionRequest(Request $httpRequest, array $matchResults = null)
+    protected function createActionRequest(ServerRequestInterface $httpRequest, array $matchResults = null)
     {
         $actionRequest = new ActionRequest($httpRequest);
         if ($matchResults !== null) {
@@ -76,7 +83,7 @@ class RoutingTest extends FunctionalTestCase
     public function httpMethodsAreRespectedForGetRequests()
     {
         $requestUri = 'http://localhost/neos/flow/test/httpmethods';
-        $request = Request::create(new Uri($requestUri), 'GET');
+        $request = $this->serverRequestFactory->createServerRequest('GET', new Uri($requestUri));
         $matchResults = $this->router->route(new RouteContext($request, RouteParameters::createEmpty()));
         $actionRequest = $this->createActionRequest($request, $matchResults);
         $this->assertEquals(ActionControllerTestAController::class, $actionRequest->getControllerObjectName());
@@ -89,7 +96,7 @@ class RoutingTest extends FunctionalTestCase
     public function httpMethodsAreRespectedForPostRequests()
     {
         $requestUri = 'http://localhost/neos/flow/test/httpmethods';
-        $request = Request::create(new Uri($requestUri), 'POST');
+        $request = $this->serverRequestFactory->createServerRequest('POST', new Uri($requestUri));
         $matchResults = $this->router->route(new RouteContext($request, RouteParameters::createEmpty()));
         $actionRequest = $this->createActionRequest($request, $matchResults);
         $this->assertEquals(ActionControllerTestAController::class, $actionRequest->getControllerObjectName());
@@ -198,7 +205,7 @@ class RoutingTest extends FunctionalTestCase
      */
     public function routeTests($requestUri, $expectedMatchingRouteName, $expectedControllerObjectName = null, array $expectedArguments = null)
     {
-        $request = Request::create(new Uri($requestUri));
+        $request = $this->serverRequestFactory->createServerRequest('GET', new Uri($requestUri));
         try {
             $matchResults = $this->router->route(new RouteContext($request, RouteParameters::createEmpty()));
         } catch (NoMatchingRouteException $exception) {

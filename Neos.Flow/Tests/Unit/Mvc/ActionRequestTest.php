@@ -12,7 +12,6 @@ namespace Neos\Flow\Tests\Unit\Mvc;
  */
 
 use Neos\Flow\Mvc\ActionRequest;
-use Neos\Flow\Http;
 use Neos\Flow\Mvc\Exception\InvalidActionNameException;
 use Neos\Flow\Mvc\Exception\InvalidArgumentNameException;
 use Neos\Flow\Mvc\Exception\InvalidArgumentTypeException;
@@ -24,6 +23,7 @@ use Neos\Flow\Security\Cryptography\HashService;
 use Neos\Flow\Security\Exception\InvalidHashException;
 use Neos\Flow\SignalSlot\Dispatcher;
 use Neos\Flow\Tests\UnitTestCase;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Testcase for the MVC ActionRequest class
@@ -36,13 +36,13 @@ class ActionRequestTest extends UnitTestCase
     protected $actionRequest;
 
     /**
-     * @var Http\Request|\PHPUnit_Framework_MockObject_MockObject
+     * @var ServerRequestInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $mockHttpRequest;
 
     protected function setUp(): void
     {
-        $this->mockHttpRequest = $this->getMockBuilder(Http\Request::class)->disableOriginalConstructor()->getMock();
+        $this->mockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
         $this->actionRequest = new ActionRequest($this->mockHttpRequest);
     }
 

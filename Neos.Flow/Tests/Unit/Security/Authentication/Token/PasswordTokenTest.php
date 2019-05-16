@@ -11,11 +11,11 @@ namespace Neos\Flow\Tests\Unit\Security\Authentication\Token;
  * source code.
  */
 
-use Neos\Flow\Http;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Security\Authentication\TokenInterface;
 use Neos\Flow\Security\Authentication\Token\PasswordToken;
 use Neos\Flow\Tests\UnitTestCase;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Testcase for password authentication token
@@ -33,7 +33,7 @@ class PasswordTokenTest extends UnitTestCase
     protected $mockActionRequest;
 
     /**
-     * @var Http\Request
+     * @var ServerRequestInterface
      */
     protected $mockHttpRequest;
 
@@ -46,7 +46,7 @@ class PasswordTokenTest extends UnitTestCase
 
         $this->mockActionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
 
-        $this->mockHttpRequest = $this->getMockBuilder(Http\Request::class)->disableOriginalConstructor()->getMock();
+        $this->mockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
         $this->mockActionRequest->expects($this->any())->method('getHttpRequest')->will($this->returnValue($this->mockHttpRequest));
     }
 
@@ -100,7 +100,7 @@ class PasswordTokenTest extends UnitTestCase
         $secondToken = new PasswordToken();
         $secondMockActionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
 
-        $secondMockHttpRequest = $this->getMockBuilder(Http\Request::class)->disableOriginalConstructor()->getMock();
+        $secondMockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
         $secondMockActionRequest->expects($this->any())->method('getHttpRequest')->will($this->returnValue($secondMockHttpRequest));
         $secondMockHttpRequest->expects($this->atLeastOnce())->method('getMethod')->will($this->returnValue('GET'));
         $secondToken->updateCredentials($secondMockActionRequest);

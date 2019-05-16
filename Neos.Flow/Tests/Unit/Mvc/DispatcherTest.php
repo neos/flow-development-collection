@@ -14,7 +14,6 @@ namespace Neos\Flow\Tests\Unit\Mvc;
 use GuzzleHttp\Psr7\Response;
 use Neos\Flow\Http\Component\ComponentContext;
 use Neos\Flow\Http\Component\SecurityEntryPointComponent;
-use Neos\Flow\Http\Request as HttpRequest;
 use Neos\Flow\Log\PsrLoggerFactoryInterface;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
@@ -32,6 +31,7 @@ use Neos\Flow\Security\Context;
 use Neos\Flow\Security\Exception\AccessDeniedException;
 use Neos\Flow\Security\Exception\AuthenticationRequiredException;
 use Neos\Flow\Tests\UnitTestCase;
+use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -60,7 +60,7 @@ class DispatcherTest extends UnitTestCase
     protected $mockMainRequest;
 
     /**
-     * @var HttpRequest|\PHPUnit_Framework_MockObject_MockObject
+     * @var ServerRequestInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $mockHttpRequest;
 
@@ -110,7 +110,7 @@ class DispatcherTest extends UnitTestCase
         $this->mockMainRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
         $this->mockActionRequest->method('getMainRequest')->willReturn($this->mockMainRequest);
 
-        $this->mockHttpRequest = $this->getMockBuilder(HttpRequest::class)->disableOriginalConstructor()->getMock();
+        $this->mockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
         $this->mockActionRequest->method('getHttpRequest')->willReturn($this->mockHttpRequest);
 
         $this->actionResponse = new ActionResponse();
@@ -394,7 +394,7 @@ class DispatcherTest extends UnitTestCase
     public function resolveControllerThrowsAnInvalidControllerExceptionIfTheResolvedControllerDoesNotExist()
     {
         $this->expectException(InvalidControllerException::class);
-        $mockHttpRequest = $this->getMockBuilder(HttpRequest::class)->disableOriginalConstructor()->getMock();
+        $mockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
         $mockRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->setMethods(['getControllerObjectName', 'getHttpRequest'])->getMock();
         $mockRequest->method('getControllerObjectName')->willReturn('');
         $mockRequest->method('getHttpRequest')->willReturn($mockHttpRequest);

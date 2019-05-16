@@ -11,6 +11,7 @@ namespace Neos\FluidAdaptor\Tests\Unit\ViewHelpers;
  * source code.
  */
 
+use GuzzleHttp\Psr7\Uri;
 use Neos\FluidAdaptor\Core\ViewHelper\TemplateVariableContainer;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractTagBasedViewHelper;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
@@ -94,7 +95,7 @@ abstract class ViewHelperBaseTestcase extends \Neos\Flow\Tests\UnitTestCase
         $this->uriBuilder->expects($this->any())->method('setArgumentsToBeExcludedFromQueryString')->will($this->returnValue($this->uriBuilder));
 
         $httpRequestFactory = new ServerRequestFactory(new UriFactory());
-        $httpRequest = $httpRequestFactory->createServerRequest('GET', new \Neos\Flow\Http\Uri('http://localhost/foo'));
+        $httpRequest = $httpRequestFactory->createServerRequest('GET', new Uri('http://localhost/foo'));
 
         $this->request = $this->getMockBuilder(\Neos\Flow\Mvc\ActionRequest::class)->setConstructorArgs([$httpRequest])->getMock();
         $this->request->expects($this->any())->method('isMainRequest')->will($this->returnValue(true));

@@ -14,9 +14,8 @@ namespace Neos\Flow\Tests\Unit\ResourceManagement\Streams;
 use Neos\Flow\Cli\CommandRequestHandler;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Http\HttpRequestHandlerInterface;
-use Neos\Flow\Http\Request;
 use Neos\Flow\Http\ServerRequestAttributes;
-use Neos\Flow\Http\Uri;
+use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Package\PackageManager;
 use Neos\Flow\ResourceManagement\Collection;
@@ -50,7 +49,7 @@ class FileSystemTargetTest extends UnitTestCase
     protected $mockRequestHandler;
 
     /**
-     * @var Request|\PHPUnit_Framework_MockObject_MockObject
+     * @var ServerRequestInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $mockHttpRequest;
 

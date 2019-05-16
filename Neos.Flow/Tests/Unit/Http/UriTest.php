@@ -11,7 +11,7 @@ namespace Neos\Flow\Tests\Unit\Http;
  * source code.
  */
 
-use Neos\Flow\Http\Uri;
+use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Tests\UnitTestCase;
 
 /**
