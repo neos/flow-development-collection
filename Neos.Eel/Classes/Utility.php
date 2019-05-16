@@ -52,7 +52,7 @@ class Utility
     /**
      * Create a closure to be used as Helper for eel.
      *
-     * @param $objectConfiguration string className followed by two colone and the method name
+     * @param string $objectConfiguration className followed by two colone and the method name
      * @return callable
      */
     private static function createClosureFromConfiguration(string $objectConfiguration): callable

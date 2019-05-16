@@ -122,7 +122,7 @@ class FlowQuery implements ProtectedContextAwareInterface, \IteratorAggregate, \
 
     /**
      * The q function from eel
-     * @param $element mixed
+     * @param mixed $element
      * @return FlowQuery
      * @throws Exception
      */
