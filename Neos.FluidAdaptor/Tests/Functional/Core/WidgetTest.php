@@ -108,6 +108,7 @@ class WidgetTest extends FunctionalTestCase
 
         $this->browser->setFollowRedirects(false);
         $this->browser->request($redirectTriggerUri);
+//        var_dump($this->browser->getLastResponse()->getHeaders());
         $this->browser->setFollowRedirects(true);
         $redirectHeader = $this->browser->getCrawler()->filterXPath('//meta[@http-equiv="refresh"]')->attr('content');
         $this->assertSame('2;url=', substr($redirectHeader, 0, 6));

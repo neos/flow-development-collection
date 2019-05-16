@@ -40,6 +40,7 @@ abstract class AbstractWidgetController extends ActionController
      * @param ActionResponse $response The response, modified by this handler
      * @return void
      * @throws WidgetContextNotFoundException
+     * @throws \Neos\Flow\Mvc\Exception\UnsupportedRequestTypeException
      * @api
      */
     public function processRequest($request, $response)

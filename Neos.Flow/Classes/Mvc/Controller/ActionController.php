@@ -184,7 +184,12 @@ class ActionController extends AbstractController
      * @param ActionRequest $request The request object
      * @param ActionResponse $response The response, modified by this handler
      * @return void
+     * @throws InvalidActionVisibilityException
+     * @throws InvalidArgumentTypeException
+     * @throws NoSuchActionException
      * @throws UnsupportedRequestTypeException
+     * @throws ViewNotFoundException
+     * @throws \Neos\Flow\Mvc\Exception\RequiredArgumentMissingException
      * @api
      */
     public function processRequest($request, $response)

@@ -146,7 +146,7 @@ class Browser
      * @throws InfiniteRedirectionException
      * @api
      */
-    public function request($uri, $method = 'GET', array $arguments = [], array $files = [], array $server = [], $content = null)
+    public function request($uri, $method = 'GET', array $arguments = [], array $files = [], array $server = [], $content = null): ResponseInterface
     {
         if (is_string($uri)) {
             $uri = new Uri($uri);
@@ -170,8 +170,8 @@ class Browser
         $response = $this->sendRequest($request);
 
         $location = $response->getHeaderLine('Location');
-        if ($this->followRedirects && $location !== null && $response->getStatusCode() >= 300 && $response->getStatusCode() <= 399) {
-            if (substr($location, 0, 1) === '/') {
+        if ($this->followRedirects && !empty($location) && $response->getStatusCode() >= 300 && $response->getStatusCode() <= 399) {
+            if (strpos($location, '/') === 0) {
                 // Location header is a host-absolute URL; so we need to prepend the hostname to create a full URL.
                 $location = $request->getAttribute(ServerRequestAttributes::ATTRIBUTE_BASE_URI) . ltrim($location, '/');
             }
@@ -183,6 +183,7 @@ class Browser
             return $this->request($location);
         }
         $this->redirectionStack = [];
+
         return $response;
     }
 
@@ -264,6 +265,7 @@ class Browser
         $crawler = new Crawler(null, (string)$this->lastRequest->getUri(), (string)$this->lastRequest->getAttribute(ServerRequestAttributes::ATTRIBUTE_BASE_URI));
         $this->lastResponse->getBody()->rewind();
         $crawler->addContent($this->lastResponse->getBody()->getContents(), $this->lastResponse->getHeaderLine('Content-Type'));
+        $this->lastResponse->getBody()->rewind();
 
         return $crawler;
     }

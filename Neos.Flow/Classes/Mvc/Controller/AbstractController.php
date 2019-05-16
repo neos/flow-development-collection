@@ -12,6 +12,7 @@ namespace Neos\Flow\Mvc\Controller;
  */
 
 use GuzzleHttp\Psr7\Response;
+use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Http\Helper\MediaTypeHelper;
 use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Exception\ForwardException;
@@ -321,7 +322,7 @@ abstract class AbstractController implements ControllerInterface
     {
         if ($delay === 0) {
             if (!$uri instanceof UriInterface) {
-                $uri = new \Neos\Flow\Http\Uri($uri);
+                $uri = new Uri($uri);
             }
             $this->response->setRedirectUri($uri, $statusCode);
         } else {

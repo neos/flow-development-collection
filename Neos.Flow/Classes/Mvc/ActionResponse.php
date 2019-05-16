@@ -21,7 +21,7 @@ use GuzzleHttp\Psr7\Stream;
 final class ActionResponse
 {
     /**
-     * @var string
+     * @var Stream
      */
     protected $content;
 
@@ -122,7 +122,9 @@ final class ActionResponse
      */
     public function getContent(): string
     {
-        return $this->content;
+        $content = $this->content->getContents();
+        $this->content->rewind();
+        return $content;
     }
 
     /**
@@ -164,7 +166,7 @@ final class ActionResponse
     public function mergeIntoParentResponse(ActionResponse $actionResponse): ActionResponse
     {
         if (!empty($this->content)) {
-            $actionResponse->setContent($this->content);
+            $actionResponse->setContent($this->getContent());
         }
         if ($this->contentType !== null) {
             $actionResponse->setContentType($this->contentType);
@@ -198,7 +200,7 @@ final class ActionResponse
             ->withStatus($this->statusCode);
 
         if ($this->content !== null) {
-            $httpResponse = $httpResponse->withBody(ContentStream::fromContents($this->content));
+            $httpResponse = $httpResponse->withBody(ContentStream::fromContents($this->getContent()));
         }
 
         if ($this->contentType) {

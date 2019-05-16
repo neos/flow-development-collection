@@ -11,6 +11,7 @@ namespace Neos\FluidAdaptor\Core\Widget;
  * source code.
  */
 
+use Neos\Flow\Http\Component\SecurityEntryPointComponent;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\ActionResponseRenderer\Content;
@@ -18,6 +19,7 @@ use Neos\Flow\Mvc\Exception\ForwardException;
 use Neos\Flow\Mvc\Exception\InfiniteLoopException;
 use Neos\Flow\Mvc\Exception\StopActionException;
 use Neos\Flow\ObjectManagement\DependencyInjection\DependencyProxy;
+use Neos\Flow\Security\Exception\AuthenticationRequiredException;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use Neos\FluidAdaptor\Core\ViewHelper\Facets\ChildNodeAccessInterface;
 use TYPO3Fluid\Fluid\Core\Compiler\TemplateCompiler;
@@ -210,9 +212,6 @@ abstract class AbstractWidgetViewHelper extends AbstractViewHelper implements Ch
         /** @var $subRequest ActionRequest */
         $subRequest = $this->objectManager->get(ActionRequest::class, $this->controllerContext->getRequest());
 
-        // TODO: For next major with the PSR-7 / ActionResponse rework this must be re-evaluated and adjusted.
-        $subResponse = new ActionResponse();
-
         $this->passArgumentsToSubRequest($subRequest);
         $subRequest->setArgument('__widgetContext', $this->widgetContext);
         $subRequest->setArgumentNamespace('--' . $this->widgetContext->getWidgetIdentifier());
@@ -222,6 +221,8 @@ abstract class AbstractWidgetViewHelper extends AbstractViewHelper implements Ch
             if ($dispatchLoopCount++ > 99) {
                 throw new InfiniteLoopException('Could not ultimately dispatch the widget request after '  . $dispatchLoopCount . ' iterations.', 1380282310);
             }
+            $subResponse = new ActionResponse();
+
             $widgetControllerObjectName = $this->widgetContext->getControllerObjectName();
             if ($subRequest->getControllerObjectName() !== '' && $subRequest->getControllerObjectName() !== $widgetControllerObjectName) {
                 throw new Exception\InvalidControllerException(sprintf('You are not allowed to initiate requests to different controllers from a widget.' . chr(10) . 'widget controller: "%s", requested controller: "%s".', $widgetControllerObjectName, $subRequest->getControllerObjectName()), 1380284579);
@@ -234,8 +235,10 @@ abstract class AbstractWidgetViewHelper extends AbstractViewHelper implements Ch
                     $subRequest = $exception->getNextRequest();
                     continue;
                 }
+                $subResponse->mergeIntoParentResponse($this->controllerContext->getResponse());
                 throw $exception;
             }
+            $subResponse->mergeIntoParentResponse($this->controllerContext->getResponse());
         }
 
         return $subResponse->getContent();
