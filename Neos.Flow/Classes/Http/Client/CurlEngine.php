@@ -138,12 +138,16 @@ class CurlEngine implements RequestEngineInterface
 
         // TODO: Create proper Psr Response from raw data
         $response = parse_response($curlResult);
-//        try {
-//            while (substr($response->getContent(), 0, 5) === 'HTTP/' || $response->getStatusCode() === 100) {
-//                $response = Http\Response::createFromRaw($response->getContent(), $response);
-//            }
-//        } catch (\InvalidArgumentException $e) {
-//        }
+        try {
+            $responseBody = $response->getBody()->getContents();
+            while (strpos($responseBody, 'HTTP/') === 0 || $response->getStatusCode() === 100) {
+                $response = parse_response($responseBody);
+                $responseBody = $response->getBody()->getContents();
+            }
+        } catch (\InvalidArgumentException $e) {
+        } finally {
+            $response->getBody()->rewind();
+        }
 
         return $response;
     }

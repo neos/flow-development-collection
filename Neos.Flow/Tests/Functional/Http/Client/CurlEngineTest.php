@@ -46,6 +46,7 @@ class CurlEngineTest extends FunctionalTestCase
         $this->browser->getRequestEngine()->setOption(CURLOPT_FOLLOWLOCATION, true);
         $this->browser->setFollowRedirects(false);
         $response = $this->browser->request('http://www.neos.io');
+
         $this->assertStringStartsWith('<!DOCTYPE html>', $response->getBody()->getContents());
     }
 
