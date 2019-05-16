@@ -1,6 +1,7 @@
 <?php
 namespace Neos\Http\Factories;
 
+use function GuzzleHttp\Psr7\parse_query;
 use GuzzleHttp\Psr7\ServerRequest;
 use Neos\Flow\Http\Helper\RequestInformationHelper;
 use Psr\Http\Message\ServerRequestFactoryInterface;
@@ -81,6 +82,13 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
         $serverParams = array_replace($defaultServerEnvironment, $serverParams);
         $headers = RequestInformationHelper::extractHeadersFromServerVariables($serverParams);
 
-        return new ServerRequest($method, $uri, $headers, null, $this->defaultHttpVersion, $serverParams);
+
+        $serverRequest = new ServerRequest($method, $uri, $headers, null, $this->defaultHttpVersion, $serverParams);
+        if ($uri->getQuery()) {
+            $queryParams = parse_query($uri->getQuery());
+            $serverRequest = $serverRequest->withQueryParams($queryParams);
+        }
+
+        return $serverRequest;
     }
 }

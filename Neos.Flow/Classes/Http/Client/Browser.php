@@ -18,7 +18,9 @@ use Neos\Flow\Http\Headers;
 use Neos\Flow\Http\Helper\RequestInformationHelper;
 use Neos\Flow\Http\ServerRequestAttributes;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestFactoryInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\StreamFactoryInterface;
 use Psr\Http\Message\UploadedFileInterface;
 use Psr\Http\Message\UriInterface;
 use Symfony\Component\DomCrawler\Crawler;
@@ -73,6 +75,18 @@ class Browser
      * @var RequestEngineInterface
      */
     protected $requestEngine;
+
+    /**
+     * @Flow\Inject
+     * @var ServerRequestFactoryInterface
+     */
+    protected $serverRequestFactory;
+
+    /**
+     * @Flow\Inject
+     * @var StreamFactoryInterface
+     */
+    protected $contentStreamFactory;
 
     /**
      * Construct the Browser instance.
@@ -142,7 +156,10 @@ class Browser
             throw new \InvalidArgumentException('$uri must be a URI object or a valid string representation of a URI.', 1333443624);
         }
 
-        $request = new ServerRequest($method, $uri, [], $content, '1.1', $server);
+        $request = $this->serverRequestFactory->createServerRequest($uri, $uri, $server);
+        if ($content) {
+            $request = $request->withBody($this->contentStreamFactory->createStream($content));
+        }
         $request = $request->withAttribute(ServerRequestAttributes::ATTRIBUTE_BASE_URI, RequestInformationHelper::generateBaseUri($request));
         if (!empty($arguments)) {
             $request = $request->withQueryParams($arguments);
@@ -245,7 +262,7 @@ class Browser
      */
     public function getCrawler()
     {
-        $crawler = new Crawler(null, $this->lastRequest->getAttribute(ServerRequestAttributes::ATTRIBUTE_BASE_URI));
+        $crawler = new Crawler(null, (string)$this->lastRequest->getUri(), (string)$this->lastRequest->getAttribute(ServerRequestAttributes::ATTRIBUTE_BASE_URI));
         $crawler->addContent($this->lastResponse->getBody()->getContents(), $this->lastResponse->getHeaderLine('Content-Type'));
 
         return $crawler;

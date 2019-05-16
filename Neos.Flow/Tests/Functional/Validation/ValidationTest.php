@@ -69,11 +69,11 @@ class ValidationTest extends FunctionalTestCase
         $entityIdentifier = $this->persistenceManager->getIdentifierByObject($entity);
         $validArguments = ['entity' => ['__identity' => $entityIdentifier, 'name' => 'long enough name']];
         $response = $this->browser->request('http://localhost/test/validation/entity/update', 'POST', $validArguments);
-        $this->assertSame('Entity "long enough name" updated', $response->getContent());
+        $this->assertSame('Entity "long enough name" updated', $response->getBody()->getContents());
 
         $invalidArguments = ['entity' => ['__identity' => $entityIdentifier, 'name' => 'xx']];
         $response = $this->browser->request('http://localhost/test/validation/entity/update', 'POST', $invalidArguments);
-        $this->assertSame('An error occurred while trying to call Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller\EntityController->updateAction().' . PHP_EOL . 'Error for entity.name:  This field must contain at least 3 characters.' . PHP_EOL, $response->getContent());
+        $this->assertSame('An error occurred while trying to call Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller\EntityController->updateAction().' . PHP_EOL . 'Error for entity.name:  This field must contain at least 3 characters.' . PHP_EOL, $response->getBody()->getContents());
     }
 
     /**
@@ -98,7 +98,7 @@ class ValidationTest extends FunctionalTestCase
 
         $invalidArguments = ['entity' => ['__identity' => $entityIdentifier, 'name' => 'long enough name', 'subEntities' => [['__identity' => $subEntityIdentifier, 'content' => '']]]];
         $response = $this->browser->request('http://localhost/test/validation/entity/update', 'POST', $invalidArguments);
-        $this->assertSame('An error occurred while trying to call Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller\EntityController->updateAction().' . PHP_EOL . 'Error for entity.subEntities.0.content:  This property is required.' . PHP_EOL, $response->getContent());
+        $this->assertSame('An error occurred while trying to call Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller\EntityController->updateAction().' . PHP_EOL . 'Error for entity.subEntities.0.content:  This property is required.' . PHP_EOL, $response->getBody()->getContents());
     }
 
     /**
@@ -133,7 +133,7 @@ class ValidationTest extends FunctionalTestCase
             ]
         ];
         $response = $this->browser->request('http://localhost/test/validation/entity/update', 'POST', $invalidArguments);
-        $this->assertSame('An error occurred while trying to call Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller\EntityController->updateAction().' . PHP_EOL . 'Error for entity.name:  This field must contain at least 3 characters.' . PHP_EOL, $response->getContent());
+        $this->assertSame('An error occurred while trying to call Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller\EntityController->updateAction().' . PHP_EOL . 'Error for entity.name:  This field must contain at least 3 characters.' . PHP_EOL, $response->getBody()->getContents());
     }
 
     /**
@@ -169,7 +169,7 @@ class ValidationTest extends FunctionalTestCase
             ]
         ];
         $response = $this->browser->request('http://localhost/test/validation/entity/update', 'POST', $invalidArguments);
-        $this->assertNotSame('An error occurred while trying to call Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller\EntityController->updateAction().' . PHP_EOL . 'Error for entity.relatedEntity.name:  This field must contain at least 3 characters.' . PHP_EOL, $response->getContent());
+        $this->assertNotSame('An error occurred while trying to call Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller\EntityController->updateAction().' . PHP_EOL . 'Error for entity.relatedEntity.name:  This field must contain at least 3 characters.' . PHP_EOL, $response->getBody()->getContents());
         $this->assertSame(200, $response->getStatusCode());
     }
 }
