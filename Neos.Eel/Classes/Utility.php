@@ -37,8 +37,8 @@ class Utility
                 $currentPathBase = & $currentPathBase[$pathName];
             }
 
-            if (strpos($objectType, '::')) {
-                if (strpos($variableName, '.')) {
+            if (strpos($objectType, '::') !== false) {
+                if (strpos($variableName, '.') !== false) {
                     throw new Exception(sprintf('Function helpers are only allowed on root level, "%s" was given?', $variableName), 1557911015);
                 }
                 $currentPathBase = self::createClosureFromConfiguration($objectType);
