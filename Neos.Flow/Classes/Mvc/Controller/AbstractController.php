@@ -344,13 +344,13 @@ abstract class AbstractController implements ControllerInterface
      * @throws StopActionException
      * @api
      */
-    protected function throwStatus($statusCode, $statusMessage = null, $content = null)
+    protected function throwStatus(int $statusCode, $statusMessage = null, $content = null)
     {
         $this->response->setStatusCode($statusCode);
         if ($content === null) {
-            $content = $statusCode
-                . ' '
-                . $statusMessage ?? ResponseInformationHelper::getStatusMessageByCode($statusCode);
+            $content = sprintf(
+                '%s %s', $statusCode, $statusMessage ?? ResponseInformationHelper::getStatusMessageByCode($statusCode)
+            );
         }
         $this->response->setContent($content);
         throw new StopActionException($content, 1558088618);

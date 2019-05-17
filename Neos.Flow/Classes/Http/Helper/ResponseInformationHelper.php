@@ -13,7 +13,6 @@ namespace Neos\Flow\Http\Helper;
 
 use function GuzzleHttp\Psr7\parse_response;
 use function GuzzleHttp\Psr7\stream_for;
-use Neos\Flow\Http\ContentStream;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 

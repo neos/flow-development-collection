@@ -12,7 +12,6 @@ namespace Neos\Flow\Security\RequestPattern;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Http\Helper\RequestInformationHelper;
 use Neos\Flow\Http\Helper\SecurityHelper;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
