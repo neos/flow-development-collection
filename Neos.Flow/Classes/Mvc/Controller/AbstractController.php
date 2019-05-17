@@ -14,6 +14,7 @@ namespace Neos\Flow\Mvc\Controller;
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Http\Helper\MediaTypeHelper;
+use Neos\Flow\Http\Helper\ResponseInformationHelper;
 use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Exception\ForwardException;
 use Neos\Flow\Mvc\Exception\RequiredArgumentMissingException;
@@ -347,10 +348,12 @@ abstract class AbstractController implements ControllerInterface
     {
         $this->response->setStatusCode($statusCode);
         if ($content === null) {
-            $content = $statusCode . ' ' . (new Response())->withStatus($statusCode)->getReasonPhrase();
+            $content = $statusCode
+                . ' '
+                . $statusMessage ?? ResponseInformationHelper::getStatusMessageByCode($statusCode);
         }
         $this->response->setContent($content);
-        throw new StopActionException();
+        throw new StopActionException($content, 1558088618);
     }
 
     /**
