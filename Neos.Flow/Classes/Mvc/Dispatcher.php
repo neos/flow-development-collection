@@ -130,7 +130,6 @@ class Dispatcher
     protected function initiateDispatchLoop(ActionRequest $request, ActionResponse $parentResponse)
     {
         $dispatchLoopCount = 0;
-        /** @var ActionRequest $request */
         while (!$request->isDispatched()) {
             if ($dispatchLoopCount++ > 99) {
                 throw new Exception\InfiniteLoopException(sprintf('Could not ultimately dispatch the request after %d iterations.', $dispatchLoopCount), 1217839467);

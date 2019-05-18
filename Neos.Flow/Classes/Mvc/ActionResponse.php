@@ -15,8 +15,6 @@ use GuzzleHttp\Psr7\Stream;
  *
  * @Flow\Proxy(false)
  * @api
- *
- * TODO: getters + merge methods instead of renderer.
  */
 final class ActionResponse
 {

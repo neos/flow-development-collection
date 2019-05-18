@@ -31,7 +31,6 @@ trait ActionRequestFromHttpTrait
 
         /** @var $actionRequest ActionRequest */
         $actionRequest = $this->objectManager->get(ActionRequest::class, $httpRequest);
-        //new ActionRequest($httpRequest);
         if (!empty($additionalArguments)) {
             $arguments = Arrays::arrayMergeRecursiveOverrule($arguments, $additionalArguments);
         }
@@ -52,10 +51,10 @@ trait ActionRequestFromHttpTrait
      */
     protected function setDefaultControllerAndActionNameIfNoneSpecified(ActionRequest $actionRequest): ActionRequest
     {
-        if ($actionRequest->getControllerName() === null) {
+        if ($actionRequest->getControllerName() === '') {
             $actionRequest->setControllerName('Standard');
         }
-        if ($actionRequest->getControllerActionName() === null) {
+        if ($actionRequest->getControllerActionName() === '') {
             $actionRequest->setControllerActionName('index');
         }
 

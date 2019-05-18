@@ -15,7 +15,7 @@ namespace Neos\Flow\Cli;
  * A CLI specific response implementation
  *
  */
-class Response extends \Neos\Flow\Mvc\Response
+class Response
 {
     /**
      * Constants for output styles

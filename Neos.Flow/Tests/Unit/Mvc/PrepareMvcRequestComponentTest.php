@@ -240,8 +240,8 @@ class PrepareMvcRequestComponentTest extends UnitTestCase
         $this->mockHttpRequest->method('getParsedBody')->willReturn([]);
         $this->mockPropertyMapper->method('convert')->with('', 'array', new PropertyMappingConfiguration())->willReturn([]);
 
-        $this->mockActionRequest->expects($this->once())->method('getControllerName')->willReturn(null);
-        $this->mockActionRequest->expects($this->once())->method('getControllerActionName')->willReturn(null);
+        $this->mockActionRequest->expects($this->once())->method('getControllerName')->willReturn('');
+        $this->mockActionRequest->expects($this->once())->method('getControllerActionName')->willReturn('');
         $this->mockActionRequest->expects($this->once())->method('setControllerName')->with('Standard');
         $this->mockActionRequest->expects($this->once())->method('setControllerActionName')->with('index');
 

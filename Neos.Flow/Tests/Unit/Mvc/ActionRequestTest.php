@@ -342,8 +342,8 @@ class ActionRequestTest extends UnitTestCase
     public function invalidControllerNames()
     {
         return [
-            [42],
-            [false],
+            //[42],
+            //[false],
             ['foo_bar_baz'],
         ];
     }
@@ -378,7 +378,7 @@ class ActionRequestTest extends UnitTestCase
     public function invalidActionNames()
     {
         return [
-            [42],
+            //[42],
             [''],
             ['FooBar'],
         ];
