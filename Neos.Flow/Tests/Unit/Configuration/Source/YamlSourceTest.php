@@ -11,6 +11,7 @@ namespace Neos\Flow\Tests\Unit\Configuration\Source;
  * source code.
  */
 
+use Neos\Flow\Configuration\Exception;
 use org\bovigo\vfs\vfsStream;
 use Neos\Flow\Configuration\Source\YamlSource;
 use Neos\Flow\Tests\UnitTestCase;
@@ -25,7 +26,7 @@ class YamlSourceTest extends UnitTestCase
      * Sets up this test case
      *
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         vfsStream::setup('testDirectory');
     }
@@ -67,7 +68,7 @@ class YamlSourceTest extends UnitTestCase
         $configurationSource->save($pathAndFilename, $mockConfiguration);
 
         $yaml = 'configurationFileHasBeenLoaded: true' . chr(10) . 'foo:' . chr(10) . '  bar: Baz' . chr(10);
-        $this->assertContains($yaml, file_get_contents($pathAndFilename . '.yaml'), 'Configuration was not written to the file as expected.');
+        $this->assertStringContainsString($yaml, file_get_contents($pathAndFilename . '.yaml'), 'Configuration was not written to the file as expected.');
     }
 
     /**
@@ -77,16 +78,16 @@ class YamlSourceTest extends UnitTestCase
     {
         $pathAndFilename = vfsStream::url('testDirectory') . '/YAMLConfiguration';
         $configurationSource = new YamlSource();
-        $mockConfiguration = array(
+        $mockConfiguration = [
             'configurationFileHasBeenLoaded' => true,
-            'foo' => array(
+            'foo' => [
                 'Foo.Bar:Baz' => 'a quoted key'
-            )
-        );
+            ]
+        ];
         $configurationSource->save($pathAndFilename, $mockConfiguration);
 
         $yaml = 'configurationFileHasBeenLoaded: true' . chr(10) . 'foo:' . chr(10) . '  \'Foo.Bar:Baz\': \'a quoted key\'' . chr(10);
-        $this->assertContains($yaml, file_get_contents($pathAndFilename . '.yaml'), 'Configuration was not written to the file as expected.');
+        $this->assertStringContainsString($yaml, file_get_contents($pathAndFilename . '.yaml'), 'Configuration was not written to the file as expected.');
     }
 
     /**
@@ -102,8 +103,8 @@ class YamlSourceTest extends UnitTestCase
         $configurationSource->save($pathAndFilename, ['configurationFileHasBeenLoaded' => true]);
 
         $yaml = file_get_contents($pathAndFilename . '.yaml');
-        $this->assertContains('# This comment should stay' . chr(10) . chr(10), $yaml, 'Header comment was removed from file.');
-        $this->assertNotContains('Test: foo', $yaml);
+        $this->assertStringContainsString('# This comment should stay' . chr(10) . chr(10), $yaml, 'Header comment was removed from file.');
+        $this->assertStringNotContainsString('Test: foo', $yaml);
     }
 
     /**
@@ -149,5 +150,16 @@ class YamlSourceTest extends UnitTestCase
         $configurationSource = new YamlSource();
         $configuration = $configurationSource->load($pathAndFilename, true);
         $this->assertSame($expectedConfiguration, $configuration);
+    }
+
+    /**
+     * @test
+     */
+    public function configurationFileWithYmlExtensionResultsInException()
+    {
+        $this->expectException(Exception::class);
+        $pathAndFilename = __DIR__ . '/../Fixture/YmlThrowsException';
+        $configurationSource = new YamlSource();
+        $configurationSource->load($pathAndFilename, true);
     }
 }

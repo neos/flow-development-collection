@@ -11,10 +11,8 @@ namespace Neos\Flow\ObjectManagement\Proxy;
  * source code.
  */
 
-use Doctrine\ORM\Mapping as ORM;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Reflection\ReflectionService;
-use Neos\Flow\Utility\TypeHandling;
 
 /**
  * Representation of a method within a proxy class
@@ -150,11 +148,13 @@ class ProxyMethod
         $methodParametersCode = ($this->methodParametersCode !== '' ? $this->methodParametersCode : $this->buildMethodParametersCode($this->fullOriginalClassName, $this->methodName));
         $callParentMethodCode = $this->buildCallParentMethodCode($this->fullOriginalClassName, $this->methodName);
 
+        $finalKeyword = $this->reflectionService->isMethodFinal($this->fullOriginalClassName, $this->methodName) ? 'final ' : '';
         $staticKeyword = $this->reflectionService->isMethodStatic($this->fullOriginalClassName, $this->methodName) ? 'static ' : '';
 
         $visibility = ($this->visibility === null ? $this->getMethodVisibilityString() : $this->visibility);
 
         $returnType = $this->reflectionService->getMethodDeclaredReturnType($this->fullOriginalClassName, $this->methodName);
+        $returnTypeIsVoid = $returnType === 'void';
         $returnTypeDeclaration = ($returnType !== null ? ' : ' . $returnType : '');
 
 
@@ -162,17 +162,27 @@ class ProxyMethod
         if ($this->addedPreParentCallCode !== '' || $this->addedPostParentCallCode !== '' || $this->methodBody !== '') {
             $code = "\n" .
                 $methodDocumentation .
-                '    ' . $staticKeyword . $visibility . ' function ' . $this->methodName . '(' . $methodParametersCode . ")$returnTypeDeclaration\n    {\n";
+                '    ' . $finalKeyword . $staticKeyword . $visibility . ' function ' . $this->methodName . '(' . $methodParametersCode . ")$returnTypeDeclaration\n    {\n";
             if ($this->methodBody !== '') {
                 $code .= "\n" . $this->methodBody . "\n";
             } else {
                 $code .= $this->addedPreParentCallCode;
                 if ($this->addedPostParentCallCode !== '') {
-                    $code .= '            $result = ' . ($callParentMethodCode === '' ? "NULL;\n" : $callParentMethodCode);
+                    if ($returnTypeIsVoid) {
+                        if ($callParentMethodCode !== '') {
+                            $code .= '            ' . $callParentMethodCode;
+                        }
+                    } else {
+                        $code .= '            $result = ' . ($callParentMethodCode === '' ? "NULL;\n" : $callParentMethodCode);
+                    }
                     $code .= $this->addedPostParentCallCode;
-                    $code .= "        return \$result;\n";
+                    if (!$returnTypeIsVoid) {
+                        $code .= "        return \$result;\n";
+                    }
                 } else {
-                    $code .= ($callParentMethodCode === '' ? '' : '        return ' . $callParentMethodCode . ";\n");
+                    if (!$returnTypeIsVoid && $callParentMethodCode !== '') {
+                        $code .= '        return ' . $callParentMethodCode . ";\n";
+                    }
                 }
             }
             $code .= "    }\n";
@@ -184,7 +194,7 @@ class ProxyMethod
      * Tells if enough code was provided (yet) so that this method would actually be rendered
      * if render() is called.
      *
-     * @return boolean TRUE if there is any code to render, otherwise FALSE
+     * @return boolean true if there is any code to render, otherwise false
      */
     public function willBeRendered()
     {
@@ -239,6 +249,7 @@ class ProxyMethod
     {
         $methodParametersCode = '';
         $methodParameterTypeName = '';
+        $nullableSign = '';
         $defaultValue = '';
         $byReferenceSign = '';
 
@@ -255,15 +266,20 @@ class ProxyMethod
                         $methodParameterTypeName = 'array';
                     } elseif ($methodParameterInfo['scalarDeclaration']) {
                         $methodParameterTypeName = $methodParameterInfo['type'];
+                    } elseif ($methodParameterInfo['class'] !== null) {
+                        $methodParameterTypeName = '\\' . $methodParameterInfo['class'];
                     } else {
-                        $methodParameterTypeName = ($methodParameterInfo['class'] === null) ? '' : '\\' . $methodParameterInfo['class'];
+                        $methodParameterTypeName = '';
+                    }
+                    if (\PHP_MAJOR_VERSION >= 7 && \PHP_MINOR_VERSION >= 1) {
+                        $nullableSign = $methodParameterInfo['allowsNull'] ? '?' : '';
                     }
                     if ($methodParameterInfo['optional'] === true) {
-                        $rawDefaultValue = (isset($methodParameterInfo['defaultValue']) ? $methodParameterInfo['defaultValue'] : null);
+                        $rawDefaultValue = $methodParameterInfo['defaultValue'] ?? null;
                         if ($rawDefaultValue === null) {
                             $defaultValue = ' = NULL';
                         } elseif (is_bool($rawDefaultValue)) {
-                            $defaultValue = ($rawDefaultValue ? ' = TRUE' : ' = FALSE');
+                            $defaultValue = ($rawDefaultValue ? ' = true' : ' = false');
                         } elseif (is_numeric($rawDefaultValue)) {
                             $defaultValue = ' = ' . $rawDefaultValue;
                         } elseif (is_string($rawDefaultValue)) {
@@ -275,7 +291,13 @@ class ProxyMethod
                     $byReferenceSign = ($methodParameterInfo['byReference'] ? '&' : '');
                 }
 
-                $methodParametersCode .= ($methodParametersCount > 0 ? ', ' : '') . ($methodParameterTypeName ? $methodParameterTypeName . ' ' : '') . $byReferenceSign . '$' . $methodParameterName . $defaultValue;
+                $methodParametersCode .= ($methodParametersCount > 0 ? ', ' : '')
+                    . ($methodParameterTypeName ? $nullableSign . $methodParameterTypeName . ' ' : '')
+                    . $byReferenceSign
+                    . '$'
+                    . $methodParameterName
+                    . $defaultValue
+                ;
                 $methodParametersCount++;
             }
         }
@@ -313,7 +335,7 @@ class ProxyMethod
             if ($value === null) {
                 $code .= 'NULL';
             } elseif (is_bool($value)) {
-                $code .= ($value ? 'TRUE' : 'FALSE');
+                $code .= ($value ? 'true' : 'false');
             } elseif (is_numeric($value)) {
                 $code .= $value;
             } elseif (is_string($value)) {

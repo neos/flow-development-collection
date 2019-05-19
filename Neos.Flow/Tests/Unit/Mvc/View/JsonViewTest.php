@@ -40,7 +40,7 @@ class JsonViewTest extends UnitTestCase
      * Sets up this test case
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->view = $this->getMockBuilder(Mvc\View\JsonView::class)->setMethods(['loadConfigurationFromYamlFile'])->getMock();
         $this->controllerContext = $this->getMockBuilder(Mvc\Controller\ControllerContext::class)->disableOriginalConstructor()->getMock();
@@ -180,7 +180,7 @@ class JsonViewTest extends UnitTestCase
         ];
 
         $expected = ['value1' => ['__identity' => $dummyIdentifier]];
-        $output[] = [$object, $configuration, $expected, $dummyIdentifier, 'boolean TRUE should result in __identity key'];
+        $output[] = [$object, $configuration, $expected, $dummyIdentifier, 'boolean true should result in __identity key'];
 
         $configuration['_descend']['value1']['_exposedObjectIdentifierKey'] = 'guid';
         $expected = ['value1' => ['guid' => $dummyIdentifier]];

@@ -27,7 +27,7 @@ class ActionControllerTest extends FunctionalTestCase
     /**
      * Additional setup: Routes
      */
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -56,7 +56,7 @@ class ActionControllerTest extends FunctionalTestCase
         ]);
         $route->setRoutePartsConfiguration([
             'entity' => [
-                'objectType' => \Neos\Flow\Tests\Functional\Persistence\Fixtures\TestEntity::class
+                'objectType' => TestEntity::class
             ]
         ]);
     }
@@ -68,7 +68,7 @@ class ActionControllerTest extends FunctionalTestCase
      *
      * @test
      */
-    public function defaultActionSpecifiedInrouteIsCalledAndResponseIsReturned()
+    public function defaultActionSpecifiedInRouteIsCalledAndResponseIsReturned()
     {
         $response = $this->browser->request('http://localhost/test/mvc/actioncontrollertesta');
         $this->assertEquals('First action was called', $response->getContent());
@@ -244,12 +244,66 @@ class ActionControllerTest extends FunctionalTestCase
     /**
      * @test
      */
+    public function optionalObjectArgumentsCanBeAnnotatedNullable()
+    {
+        $response = $this->browser->request('http://localhost/test/mvc/actioncontrollertestb/optionalannotatedobject');
+
+        $expectedResult = 'null';
+        $this->assertEquals($expectedResult, $response->getContent());
+    }
+
+    /**
+     * @test
+     */
     public function notValidatedGroupObjectArgumentsAreNotValidated()
     {
         $arguments = [
             'argument' => [
                 'name' => 'Foo',
                 'emailAddress' => '-invalid-'
+            ]
+        ];
+        $response = $this->browser->request('http://localhost/test/mvc/actioncontrollertestb/notvalidatedgroupobject', 'POST', $arguments);
+
+        $expectedResult = '-invalid-';
+        $this->assertEquals($expectedResult, $response->getContent());
+    }
+
+    /**
+     * @test
+     */
+    public function notValidatedGroupCollectionsAreNotValidated()
+    {
+        $arguments = [
+            'argument' => [
+                'name' => 'Foo',
+                'collection' => [
+                    [
+                        'name' => 'Bar',
+                        'emailAddress' => '-invalid-'
+                    ]
+                ]
+            ]
+        ];
+        $response = $this->browser->request('http://localhost/test/mvc/actioncontrollertestb/notvalidatedgroupcollection', 'POST', $arguments);
+
+        $expectedResult = '-invalid-';
+        $this->assertEquals($expectedResult, $response->getContent());
+    }
+
+    /**
+     * @test
+     */
+    public function notValidatedGroupModelRelationIsNotValidated()
+    {
+        $arguments = [
+            'argument' => [
+                'name' => 'Foo',
+                'emailAddress' => '-invalid-',
+                'related' => [
+                    'name' => 'Bar',
+                    'emailAddress' => '-invalid-'
+                ]
             ]
         ];
         $response = $this->browser->request('http://localhost/test/mvc/actioncontrollertestb/notvalidatedgroupobject', 'POST', $arguments);
@@ -276,10 +330,49 @@ class ActionControllerTest extends FunctionalTestCase
     }
 
     /**
+     * @test
+     */
+    public function validatedGroupCollectionsAreValidated()
+    {
+        $arguments = [
+            'argument' => [
+                'name' => 'Foo',
+                'collection' => [
+                    [
+                        'name' => 'Bar',
+                        'emailAddress' => '-invalid-'
+                    ]
+                ]
+            ]
+        ];
+        $response = $this->browser->request('http://localhost/test/mvc/actioncontrollertestb/validatedgroupcollection', 'POST', $arguments);
+
+        $expectedResult = 'Validation failed while trying to call Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController->validatedGroupCollectionAction().' . PHP_EOL;
+        $this->assertEquals($expectedResult, $response->getContent());
+    }
+
+    /**
+     * @test
+     */
+    public function validatedGroupModelRelationIsValidated()
+    {
+        $arguments = [
+            'argument' => [
+                'name' => 'Foo',
+                'related' => [
+                    'name' => 'Bar',
+                    'emailAddress' => '-invalid-'
+                ]
+            ]
+        ];
+        $response = $this->browser->request('http://localhost/test/mvc/actioncontrollertestb/validatedgroupobject', 'POST', $arguments);
+
+        $expectedResult = 'Validation failed while trying to call Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController->validatedGroupObjectAction().' . PHP_EOL;
+        $this->assertEquals($expectedResult, $response->getContent());
+    }
+
+    /**
      * Data provider for argumentTests()
-     *
-     * @TODO Using 'optional float - default value'    => array('optionalFloat', NULL, 12.34),
-     * this fails (on some machines) because the value is 12.33999999...
      *
      * @return array
      */
@@ -291,6 +384,7 @@ class ActionControllerTest extends FunctionalTestCase
             'required string - missing value'   => ['requiredString', null, $requiredArgumentExceptionText],
             'optional string'                   => ['optionalString', '123', '\'123\''],
             'optional string - default'         => ['optionalString', null, '\'default\''],
+            'optional string - nullable'        => ['optionalNullableString', null, 'NULL'],
             'required integer'                  => ['requiredInteger', '234', 234],
             'required integer - missing value'  => ['requiredInteger', null, $requiredArgumentExceptionText],
             'required integer - mapping error'  => ['requiredInteger', 'not an integer', 'Validation failed while trying to call Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController->requiredIntegerAction().'],
@@ -299,6 +393,7 @@ class ActionControllerTest extends FunctionalTestCase
             'optional integer - default value'  => ['optionalInteger', null, 123],
             'optional integer - mapping error'  => ['optionalInteger', 'not an integer', 'Validation failed while trying to call Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController->optionalIntegerAction().'],
             'optional integer - empty value'    => ['optionalInteger', '', 123],
+            'optional integer - nullable'       => ['optionalNullableInteger', null, 'NULL'],
             'required float'                    => ['requiredFloat', 34.56, 34.56],
             'required float - integer'          => ['requiredFloat', 485, '485'],
             'required float - integer2'         => ['requiredFloat', '888', '888'],
@@ -309,22 +404,18 @@ class ActionControllerTest extends FunctionalTestCase
             'optional float - default value'    => ['optionalFloat', null, 112.34],
             'optional float - mapping error'    => ['optionalFloat', 'not a float', 'Validation failed while trying to call Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController->optionalFloatAction().'],
             'optional float - empty value'      => ['optionalFloat', '', 112.34],
+            'optional float - nullable'         => ['optionalNullableFloat', null, 'NULL'],
             'required date'                     => ['requiredDate', ['date' => '1980-12-13', 'dateFormat' => 'Y-m-d'], '1980-12-13'],
             'required date string'              => ['requiredDate', '1980-12-13T14:22:12+02:00', '1980-12-13'],
             'required date - missing value'     => ['requiredDate', null, $requiredArgumentExceptionText],
             'required date - mapping error'     => ['requiredDate', 'no date', 'Validation failed while trying to call Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController->requiredDateAction().'],
+            'required date - empty value'       => ['requiredDate', '', 'Uncaught Exception in Flow Argument 1 passed to Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController_Original::requiredDateAction() must be an instance of DateTime, null given'],
             'optional date string'              => ['optionalDate', '1980-12-13T14:22:12+02:00', '1980-12-13'],
             'optional date - default value'     => ['optionalDate', null, 'null'],
             'optional date - mapping error'     => ['optionalDate', 'no date', 'Validation failed while trying to call Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController->optionalDateAction().'],
             'optional date - missing value'     => ['optionalDate', null, 'null'],
-            'optional date - empty value'       => ['optionalDate', '', 'null']
+            'optional date - empty value'       => ['optionalDate', '', 'null'],
         ];
-
-        if (version_compare(PHP_VERSION, '6.0.0') >= 0) {
-            $data['required date - empty value'] = ['requiredDate', '', 'Uncaught Exception in Flow Argument 1 passed to Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController_Original::requiredDateAction() must be an instance of DateTime, null given'];
-        } else {
-            $data['required date - empty value'] = ['requiredDate', '', 'Uncaught Exception in Flow #1: Catchable Fatal Error: Argument 1 passed to Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController_Original::requiredDateAction() must be an instance of DateTime, null given'];
-        }
 
         return $data;
     }

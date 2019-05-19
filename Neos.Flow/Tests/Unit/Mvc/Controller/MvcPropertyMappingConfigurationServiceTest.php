@@ -14,6 +14,7 @@ namespace Neos\Flow\Tests\Unit\Mvc\Controller;
 use Neos\Flow\Property\PropertyMappingConfiguration;
 use Neos\Flow\Property\TypeConverter\PersistentObjectConverter;
 use Neos\Flow\Security\Cryptography\HashService;
+use Neos\Flow\Security\Exception\InvalidArgumentForHashGenerationException;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Flow\Mvc;
 
@@ -123,10 +124,10 @@ class MvcPropertyMappingConfigurationServiceTest extends UnitTestCase
     /**
      * @test
      * @dataProvider dataProviderForgenerateTrustedPropertiesTokenWithUnallowedValues
-     * @expectedException \Neos\Flow\Security\Exception\InvalidArgumentForHashGenerationException
      */
     public function generateTrustedPropertiesTokenThrowsExceptionInWrongCases($input)
     {
+        $this->expectException(InvalidArgumentForHashGenerationException::class);
         $requestHashService = $this->getMockBuilder(Mvc\Controller\MvcPropertyMappingConfigurationService::class)->setMethods(['serializeAndHashFormFieldArray'])->getMock();
         $requestHashService->generateTrustedPropertiesToken($input);
     }
@@ -157,6 +158,7 @@ class MvcPropertyMappingConfigurationServiceTest extends UnitTestCase
 
     /**
      * @test
+     * @doesNotPerformAssertions
      */
     public function initializePropertyMappingConfigurationDoesNothingIfTrustedPropertiesAreNotSet()
     {
@@ -166,9 +168,6 @@ class MvcPropertyMappingConfigurationServiceTest extends UnitTestCase
 
         $requestHashService = new Mvc\Controller\MvcPropertyMappingConfigurationService();
         $requestHashService->initializePropertyMappingConfigurationFromRequest($request, $arguments);
-
-        // dummy assertion to avoid PHPUnit warning
-        $this->assertTrue(true);
     }
 
     /**

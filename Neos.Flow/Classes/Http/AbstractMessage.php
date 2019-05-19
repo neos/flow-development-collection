@@ -12,14 +12,18 @@ namespace Neos\Flow\Http;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Utility\TypeHandling;
+use Psr\Http\Message\MessageInterface;
+use Psr\Http\Message\StreamInterface;
 
 /**
  * Represents a HTTP message
  *
  * @api
  * @Flow\Proxy(false)
+ * @deprecated Since Flow 5.3, to be removed with 6.0. The whole Flow HTTP implementation will use PSR-7 compatible implementations only from then.
  */
-abstract class AbstractMessage
+abstract class AbstractMessage implements MessageInterface
 {
     /**
      * The HTTP version value of this message, for example "HTTP/1.1"
@@ -56,8 +60,9 @@ abstract class AbstractMessage
     /**
      * Returns the HTTP headers of this request
      *
-     * @return Headers
+     * @return Headers|iteratable
      * @api
+     * Note: This method will return an array of headers after next major according to PSR-7, prepare for that. To help the headers object is iteratable now.
      */
     public function getHeaders()
     {
@@ -76,6 +81,7 @@ abstract class AbstractMessage
      * @param string $name Name of the header
      * @return array|string An array of field values if multiple headers of that name exist, a string value if only one value exists and NULL if there is no such header.
      * @api
+     * NOTE: This method signature will change in next major of Flow according to PSR-7. It will ALWAYS return an array of strings and nothing else.
      */
     public function getHeader($name)
     {
@@ -106,10 +112,12 @@ abstract class AbstractMessage
      *
      * @param string $name Name of the header, for example "Location", "Content-Description" etc.
      * @param array|string|\DateTime $values An array of values or a single value for the specified header field
-     * @param boolean $replaceExistingHeader If a header with the same name should be replaced. Default is TRUE.
+     * @param boolean $replaceExistingHeader If a header with the same name should be replaced. Default is true.
      * @return self This message, for method chaining
      * @throws \InvalidArgumentException
-     * @api
+     * @deprecated Since Flow 5.1, use withHeader or withAddedHeader instead
+     * @see withHeader()
+     * @see withAddedHeader()
      */
     public function setHeader($name, $values, $replaceExistingHeader = true)
     {
@@ -136,11 +144,23 @@ abstract class AbstractMessage
      *
      * @param string $content The body content
      * @return self This message, for method chaining
-     * @api
+     * @see withBody()
      */
     public function setContent($content)
     {
-        $this->content = $content;
+        $this->content = null;
+        if ($content === null) {
+            return;
+        }
+
+        if (TypeHandling::isSimpleType(gettype($content)) && !is_array($content)) {
+            $this->content = (string)$content;
+        }
+
+        if (is_resource($content)) {
+            $this->content = $content;
+        }
+
         return $this;
     }
 
@@ -148,7 +168,8 @@ abstract class AbstractMessage
      * Returns the content of the message body
      *
      * @return string The response content
-     * @api
+     * @deprecated Since Flow 5.1, use getBody
+     * @see getBody()
      */
     public function getContent()
     {
@@ -164,7 +185,7 @@ abstract class AbstractMessage
      * @param string $charset A valid IANA character set identifier
      * @return self This message, for method chaining
      * @see http://www.iana.org/assignments/character-sets
-     * @api
+     * @deprecated Since Flow 5.1, just set the full Content-Type header
      */
     public function setCharset($charset)
     {
@@ -190,7 +211,8 @@ abstract class AbstractMessage
      * Note that the default character in Flow is UTF-8.
      *
      * @return string An IANA character set identifier
-     * @api
+     * @deprecated Since Flow 5.1, parse it from the "Content-Type" header via RequestInformationHelper::getContentCharset
+     * @see RequestInformationHelper::getContentCharset()
      */
     public function getCharset()
     {
@@ -202,7 +224,8 @@ abstract class AbstractMessage
      *
      * @param string $version
      * @return void
-     * @api
+     * @deprecated Since Flow 5.1, use withProtocolVersion
+     * @see withProtocolVersion()
      */
     public function setVersion($version)
     {
@@ -213,7 +236,8 @@ abstract class AbstractMessage
      * Returns the HTTP version value of this message, for example "HTTP/1.1"
      *
      * @return string
-     * @api
+     * @deprecated Since Flow 5.1, use getProtocolVersion which gives ONLY the actual version, eg. "1.1"
+     * @see getProtocolVersion()
      */
     public function getVersion()
     {
@@ -227,7 +251,8 @@ abstract class AbstractMessage
      *
      * @param Cookie $cookie The cookie to set
      * @return void
-     * @api
+     * @deprecated Since Flow 5.1, replacement only on ServerRequestInterface
+     * @see Request::withCookieParams()
      */
     public function setCookie(Cookie $cookie)
     {
@@ -241,7 +266,8 @@ abstract class AbstractMessage
      *
      * @param string $name Name of the cookie
      * @return Cookie The cookie or NULL if no such cookie exists
-     * @api
+     * @deprecated Since Flow 5.1, replacement only on ServerRequestInterface
+     * @see Request::getCookieParams()
      */
     public function getCookie($name)
     {
@@ -254,7 +280,8 @@ abstract class AbstractMessage
      * This is a shortcut for $message->getHeaders()->getCookies();
      *
      * @return array An array of Cookie objects
-     * @api
+     * @deprecated Since Flow 5.1, replacement only on ServerRequestInterface
+     * @see Request::getCookieParams()
      */
     public function getCookies()
     {
@@ -268,7 +295,8 @@ abstract class AbstractMessage
      *
      * @param string $name Name of the cookie
      * @return boolean
-     * @api
+     * @deprecated Since Flow 5.1, replacement only on ServerRequestInterface
+     * @see Request::getCookieParams()
      */
     public function hasCookie($name)
     {
@@ -287,7 +315,8 @@ abstract class AbstractMessage
      *
      * @param string $name Name of the cookie to remove
      * @return void
-     * @api
+     * @deprecated Since Flow 5.1, replacement only on ServerRequestInterface
+     * @see Request::withCookieParams()
      */
     public function removeCookie($name)
     {
@@ -295,11 +324,195 @@ abstract class AbstractMessage
     }
 
     /**
+     * Retrieves the HTTP protocol version as a string.
+     *
+     * The string MUST contain only the HTTP version number (e.g., "1.1", "1.0").
+     *
+     * PSR-7 MessageInterface
+     *
+     * @return string HTTP protocol version.
+     */
+    public function getProtocolVersion()
+    {
+        return explode('/', $this->version)[1];
+    }
+
+    /**
+     * Return an instance with the specified HTTP protocol version.
+     *
+     * The version string MUST contain only the HTTP version number (e.g.,
+     * "1.1", "1.0").
+     *
+     * This method MUST be implemented in such a way as to retain the
+     * immutability of the message, and MUST return an instance that has the
+     * new protocol version.
+     *
+     * PSR-7 MessageInterface
+     *
+     * @param string $version HTTP protocol version
+     * @return self
+     */
+    public function withProtocolVersion($version)
+    {
+        $newMessage = clone $this;
+        $newMessage->setVersion('HTTP/' . $version);
+
+        return $newMessage;
+    }
+
+    /**
+     * Retrieves a comma-separated string of the values for a single header.
+     *
+     * This method returns all of the header values of the given
+     * case-insensitive header name as a string concatenated together using
+     * a comma.
+     *
+     * NOTE: Not all header values may be appropriately represented using
+     * comma concatenation. For such headers, use getHeader() instead
+     * and supply your own delimiter when concatenating.
+     *
+     * If the header does not appear in the message, this method MUST return
+     * an empty string.
+     *
+     * @param string $name Case-insensitive header field name.
+     * @return string A string of values as provided for the given header
+     *    concatenated together using a comma. If the header does not appear in
+     *    the message, this method MUST return an empty string.
+     */
+    public function getHeaderLine($name)
+    {
+        $headerLine = $this->headers->get($name);
+        if ($headerLine === null) {
+            $headerLine = '';
+        }
+
+        if (is_array($headerLine)) {
+            $headerLine = implode(', ', $headerLine);
+        }
+
+        return $headerLine;
+    }
+
+    /**
+     * Return an instance with the provided value replacing the specified header.
+     *
+     * While header names are case-insensitive, the casing of the header will
+     * be preserved by this function, and returned from getHeaders().
+     *
+     * This method MUST be implemented in such a way as to retain the
+     * immutability of the message, and MUST return an instance that has the
+     * new and/or updated header and value.
+     *
+     * @param string $name Case-insensitive header field name.
+     * @param string|string[] $value Header value(s).
+     * @return self
+     * @throws \InvalidArgumentException for invalid header names or values.
+     */
+    public function withHeader($name, $value)
+    {
+        $newMessage = clone $this;
+        $newMessage->setHeader($name, $value, true);
+        return $newMessage;
+    }
+
+    /**
+     * Return an instance with the specified header appended with the given value.
+     *
+     * Existing values for the specified header will be maintained. The new
+     * value(s) will be appended to the existing list. If the header did not
+     * exist previously, it will be added.
+     *
+     * This method MUST be implemented in such a way as to retain the
+     * immutability of the message, and MUST return an instance that has the
+     * new header and/or value.
+     *
+     * @param string $name Case-insensitive header field name to add.
+     * @param string|string[] $value Header value(s).
+     * @return self
+     * @throws \InvalidArgumentException for invalid header names or values.
+     */
+    public function withAddedHeader($name, $value)
+    {
+        $newMessage = clone $this;
+        $newMessage->setHeader($name, $value);
+
+        return $newMessage;
+    }
+
+    /**
+     * Return an instance without the specified header.
+     *
+     * Header resolution MUST be done without case-sensitivity.
+     *
+     * This method MUST be implemented in such a way as to retain the
+     * immutability of the message, and MUST return an instance that removes
+     * the named header.
+     *
+     * @param string $name Case-insensitive header field name to remove.
+     * @return self
+     */
+    public function withoutHeader($name)
+    {
+        $newMessage = clone $this;
+        $newMessage->getHeaders()->remove($name);
+
+        return $newMessage;
+    }
+
+    /**
+     * Gets the body of the message.
+     *
+     * @return StreamInterface Returns the body as a stream.
+     */
+    public function getBody()
+    {
+        $streamResource = fopen('php://memory', 'r+');
+        if (is_resource($this->content)) {
+            stream_copy_to_stream($this->content, $streamResource);
+        } else {
+            fwrite($streamResource, $this->content);
+        }
+        rewind($streamResource);
+
+        return new ContentStream($streamResource);
+    }
+
+    /**
+     * Return an instance with the specified message body.
+     *
+     * The body MUST be a StreamInterface object.
+     *
+     * This method MUST be implemented in such a way as to retain the
+     * immutability of the message, and MUST return a new instance that has the
+     * new body stream.
+     *
+     * @param StreamInterface $body Body.
+     * @return self
+     * @throws \InvalidArgumentException When the body is not valid.
+     */
+    public function withBody(StreamInterface $body)
+    {
+        $newMessage = clone $this;
+        $newMessage->setContent($body->getContents());
+
+        return $newMessage;
+    }
+
+    /**
+     * Headers should also be cloned when the message is cloned.
+     */
+    public function __clone()
+    {
+        $this->headers = clone $this->headers;
+    }
+
+    /**
      * Returns the first line of this message, which is the Request's Request-Line or the Response's Status-Line.
      *
      * @return string The first line of the message
      * @see http://www.w3.org/Protocols/rfc2616/rfc2616-sec4.html chapter 4.1 "Message Types"
-     * @api
-     */
+     * @deprecated Since Flow 5.1, use the RequestInformationHelper instead
+     * @see RequestInformationHelper::generateRequestLine()
+    */
     abstract public function getStartLine();
 }

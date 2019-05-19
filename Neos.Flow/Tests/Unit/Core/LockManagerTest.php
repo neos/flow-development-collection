@@ -43,7 +43,7 @@ class LockManagerTest extends UnitTestCase
     protected $mockLockFlagFile;
 
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->mockLockDirectory = vfsStream::setup('LockPath');
         $this->mockLockFile = vfsStream::newFile(md5(FLOW_PATH_ROOT) . '_Flow.lock')->at($this->mockLockDirectory);

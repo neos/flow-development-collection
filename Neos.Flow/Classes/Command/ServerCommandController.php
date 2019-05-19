@@ -41,7 +41,7 @@ class ServerCommandController extends CommandController
      * @param integer $port The server port to listen on
      * @return void
      */
-    public function runCommand($host = '127.0.0.1', $port = 8081)
+    public function runCommand(string $host = '127.0.0.1', int $port = 8081)
     {
         $command = Scripts::buildPhpCommand($this->settings);
 

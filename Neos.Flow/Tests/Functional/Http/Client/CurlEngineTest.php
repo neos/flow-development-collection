@@ -29,11 +29,24 @@ class CurlEngineTest extends FunctionalTestCase
     /**
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $curlEngine = $this->objectManager->get(CurlEngine::class);
         $this->browser->setRequestEngine($curlEngine);
+    }
+
+    /**
+     * Check if the curl engine can handle redirects
+     *
+     * @test
+     */
+    public function redirectsAreFollowed()
+    {
+        $this->browser->getRequestEngine()->setOption(CURLOPT_FOLLOWLOCATION, true);
+        $this->browser->setFollowRedirects(false);
+        $response = $this->browser->request('http://www.neos.io');
+        $this->assertStringStartsWith('<!DOCTYPE html>', $response->getContent());
     }
 
     /**
@@ -44,6 +57,6 @@ class CurlEngineTest extends FunctionalTestCase
     public function getRequestReturnsResponse()
     {
         $response = $this->browser->request('http://www.neos.io');
-        $this->assertContains('This website is powered by Neos', $response->getContent());
+        $this->assertStringContainsString('This website is powered by Neos', $response->getContent());
     }
 }

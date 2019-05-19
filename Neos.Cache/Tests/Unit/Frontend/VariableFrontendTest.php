@@ -27,11 +27,11 @@ use Neos\Cache\Frontend\VariableFrontend;
 class VariableFrontendTest extends BaseTestCase
 {
     /**
-     * @expectedException \InvalidArgumentException
      * @test
      */
     public function setChecksIfTheIdentifierIsValid()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $cache = $this->getMockBuilder(StringFrontend::class)
             ->setMethods(['isValidEntryIdentifier'])
             ->disableOriginalConstructor()
@@ -129,7 +129,7 @@ class VariableFrontendTest extends BaseTestCase
         $backend->expects($this->once())->method('get')->will($this->returnValue(serialize(false)));
 
         $cache = new VariableFrontend('VariableFrontend', $backend);
-        $this->assertFalse($cache->get('VariableCacheTest'), 'The returned value was not the FALSE.');
+        $this->assertFalse($cache->get('VariableCacheTest'), 'The returned value was not the false.');
     }
 
     /**
@@ -157,7 +157,7 @@ class VariableFrontendTest extends BaseTestCase
         $backend->expects($this->once())->method('has')->with($this->equalTo('VariableCacheTest'))->will($this->returnValue(true));
 
         $cache = new VariableFrontend('VariableFrontend', $backend);
-        $this->assertTrue($cache->has('VariableCacheTest'), 'has() did not return TRUE.');
+        $this->assertTrue($cache->has('VariableCacheTest'), 'has() did not return true.');
     }
 
     /**
@@ -171,15 +171,15 @@ class VariableFrontendTest extends BaseTestCase
         $backend->expects($this->once())->method('remove')->with($this->equalTo($cacheIdentifier))->will($this->returnValue(true));
 
         $cache = new VariableFrontend('VariableFrontend', $backend);
-        $this->assertTrue($cache->remove($cacheIdentifier), 'remove() did not return TRUE');
+        $this->assertTrue($cache->remove($cacheIdentifier), 'remove() did not return true');
     }
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
      */
     public function getByTagRejectsInvalidTags()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $backend = $this->createMock(TaggableBackendInterface::class);
         $backend->expects($this->never())->method('findIdentifiersByTag');
 
@@ -189,10 +189,10 @@ class VariableFrontendTest extends BaseTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Cache\Exception\NotSupportedByBackendException
      */
     public function getByTagThrowAnExceptionWithoutTaggableBackend()
     {
+        $this->expectException(NotSupportedByBackendException::class);
         $backend = $this->prepareDefaultBackend();
         $cache = new VariableFrontend('VariableFrontend', $backend);
         $cache->getByTag('foo');
@@ -224,7 +224,7 @@ class VariableFrontendTest extends BaseTestCase
         $tag = 'sometag';
         $identifiers = ['one', 'two'];
         $entries = ['one' => 'one value', 'two' => 'two value'];
-        $backend = $this->prepareDefaultBackend();
+        $backend = $this->prepareTaggableBackend();
 
         $backend->expects($this->once())->method('findIdentifiersByTag')->with($this->equalTo($tag))->will($this->returnValue($identifiers));
         $backend->expects($this->exactly(2))->method('get')->will($this->onConsecutiveCalls(igbinary_serialize('one value'), igbinary_serialize('two value')));

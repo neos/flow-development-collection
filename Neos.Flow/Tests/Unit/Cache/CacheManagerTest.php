@@ -15,10 +15,10 @@ use org\bovigo\vfs\vfsStream;
 use Neos\Cache;
 use Neos\Flow\Cache\CacheManager;
 use Neos\Flow\Configuration\ConfigurationManager;
-use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Flow\Utility\Environment;
+use Psr\Log\LoggerInterface;
 
 /**
  * Testcase for the Cache Manager
@@ -36,7 +36,7 @@ class CacheManagerTest extends UnitTestCase
     protected $mockConfigurationManager;
 
     /**
-     * @var SystemLoggerInterface
+     * @var LoggerInterface
      */
     protected $mockSystemLogger;
 
@@ -45,7 +45,7 @@ class CacheManagerTest extends UnitTestCase
      */
     protected $mockEnvironment;
 
-    public function setUp()
+    protected function setUp(): void
     {
         vfsStream::setup('Foo');
         $this->cacheManager = new CacheManager();
@@ -54,8 +54,8 @@ class CacheManagerTest extends UnitTestCase
         $this->mockEnvironment->expects($this->any())->method('getPathToTemporaryDirectory')->will($this->returnValue('vfs://Foo/'));
         $this->cacheManager->injectEnvironment($this->mockEnvironment);
 
-        $this->mockSystemLogger = $this->createMock(SystemLoggerInterface::class);
-        $this->cacheManager->injectSystemLogger($this->mockSystemLogger);
+        $this->mockSystemLogger = $this->createMock(LoggerInterface::class);
+        $this->cacheManager->injectLogger($this->mockSystemLogger);
         $this->mockConfigurationManager = $this->getMockBuilder(ConfigurationManager::class)->disableOriginalConstructor()->getMock();
         $this->cacheManager->injectConfigurationManager($this->mockConfigurationManager);
     }
@@ -77,10 +77,10 @@ class CacheManagerTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Cache\Exception\DuplicateIdentifierException
      */
     public function managerThrowsExceptionOnCacheRegistrationWithAlreadyExistingIdentifier()
     {
+        $this->expectException(Cache\Exception\DuplicateIdentifierException::class);
         $cache1 = $this->getMockBuilder(Cache\Frontend\AbstractFrontend::class)->disableOriginalConstructor()->getMock();
         $cache1->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('test'));
 
@@ -110,10 +110,10 @@ class CacheManagerTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Cache\Exception\NoSuchCacheException
      */
     public function getCacheThrowsExceptionForNonExistingIdentifier()
     {
+        $this->expectException(Cache\Exception\NoSuchCacheException::class);
         $cache = $this->getMockBuilder(Cache\Frontend\AbstractFrontend::class)->disableOriginalConstructor()->getMock();
         $cache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('someidentifier'));
 
@@ -132,8 +132,8 @@ class CacheManagerTest extends UnitTestCase
         $cache1->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('cache1'));
         $this->cacheManager->registerCache($cache1);
 
-        $this->assertTrue($this->cacheManager->hasCache('cache1'), 'hasCache() did not return TRUE.');
-        $this->assertFalse($this->cacheManager->hasCache('cache2'), 'hasCache() did not return FALSE.');
+        $this->assertTrue($this->cacheManager->hasCache('cache1'), 'hasCache() did not return true.');
+        $this->assertFalse($this->cacheManager->hasCache('cache2'), 'hasCache() did not return false.');
     }
 
     /**

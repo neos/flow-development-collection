@@ -12,7 +12,6 @@ namespace Neos\Flow\Tests\Functional\Aop;
  */
 
 use Neos\Flow\Tests\FunctionalTestCase;
-use Neos\Flow\Tests\Functional\Aop\Fixtures;
 
 /**
  * Testcase for the AOP Framework class
@@ -200,7 +199,7 @@ class FrameworkTest extends FunctionalTestCase
     {
         $targetClass = new Fixtures\TargetClass01();
 
-        $this->assertEquals('I\'m the traitor', call_user_func(array($targetClass, 'introducedTraitMethod')));
+        $this->assertEquals('I\'m the traitor', call_user_func([$targetClass, 'introducedTraitMethod']));
     }
 
     /**
@@ -287,6 +286,24 @@ class FrameworkTest extends FunctionalTestCase
     /**
      * @test
      */
+    public function finalMethodsCanBeAdvised()
+    {
+        $targetClass = new Fixtures\TargetClass01();
+        $this->assertSame('I am final. But, as said, nothing is final!', $targetClass->someFinalMethod());
+    }
+
+    /**
+     * @test
+     */
+    public function finalMethodsStayFinalEvenIfTheyAreNotAdvised()
+    {
+        $targetClass = new Fixtures\TargetClass01();
+        $this->assertTrue((new \ReflectionMethod($targetClass, 'someOtherFinalMethod'))->isFinal());
+    }
+
+    /**
+     * @test
+     */
     public function methodWithStaticScalarReturnTypeDeclarationCanBeAdviced()
     {
         if (version_compare(PHP_VERSION, '7.0.0') < 0) {
@@ -313,34 +330,34 @@ class FrameworkTest extends FunctionalTestCase
     }
 
 
-//  NOTE: The following tests are commented out for now because they break compatibility with PHP < 7.1
-//        We should re-activate them as soon as 7.1 is the minimal required PHP version for Flow
-//
-//    /**
-//     * @test
-//     */
-//    public function methodWithNullableScalarReturnTypeDeclarationCanBeAdviced()
-//    {
-//        if (version_compare(PHP_VERSION, '7.1.0') < 0) {
-//            $this->markTestSkipped('Requires PHP 7.1');
-//        }
-//
-//        $targetClass = new Fixtures\TargetClassWithPhp71Features();
-//
-//        $this->assertSame('adviced: NULL', $targetClass->methodWithNullableScalarReturnTypeDeclaration());
-//    }
-//
-//    /**
-//     * @test
-//     */
-//    public function methodWithNullableObjectReturnTypeDeclarationCanBeAdviced()
-//    {
-//        if (version_compare(PHP_VERSION, '7.1.0') < 0) {
-//            $this->markTestSkipped('Requires PHP 7.1');
-//        }
-//
-//        $targetClass = new Fixtures\TargetClassWithPhp71Features();
-//
-//        $this->assertNull($targetClass->methodWithNullableObjectReturnTypeDeclaration());
-//    }
+    //  NOTE: The following tests are commented out for now because they break compatibility with PHP < 7.1
+    //        We should re-activate them as soon as 7.1 is the minimal required PHP version for Flow
+    //
+    //    /**
+    //     * @test
+    //     */
+    //    public function methodWithNullableScalarReturnTypeDeclarationCanBeAdviced()
+    //    {
+    //        if (version_compare(PHP_VERSION, '7.1.0') < 0) {
+    //            $this->markTestSkipped('Requires PHP 7.1');
+    //        }
+    //
+    //        $targetClass = new Fixtures\TargetClassWithPhp71Features();
+    //
+    //        $this->assertSame('adviced: NULL', $targetClass->methodWithNullableScalarReturnTypeDeclaration());
+    //    }
+    //
+    //    /**
+    //     * @test
+    //     */
+    //    public function methodWithNullableObjectReturnTypeDeclarationCanBeAdviced()
+    //    {
+    //        if (version_compare(PHP_VERSION, '7.1.0') < 0) {
+    //            $this->markTestSkipped('Requires PHP 7.1');
+    //        }
+    //
+    //        $targetClass = new Fixtures\TargetClassWithPhp71Features();
+    //
+    //        $this->assertNull($targetClass->methodWithNullableObjectReturnTypeDeclaration());
+    //    }
 }

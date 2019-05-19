@@ -1,7 +1,25 @@
 type: dictionary
+properties:
+  throwables:
+    type: dictionary
+    properties:
+      fileStorage:
+        type: dictionary
+        properties:
+          path: { type: string, required: true }
+  psr3:
+    type: dictionary
+    properties:
+      loggerFactory: { type: string }
+    additionalProperties:
+      type: dictionary
+      properties:
+        'class': { type: string, format: class-name }
+        'options':
+          type: dictionary
 additionalProperties:
   type: dictionary
-  additionalProperties: FALSE
+  additionalProperties: false
   properties:
     'logger': { type: string, format: class-name }
     'backend': { type: string, format: class-name }

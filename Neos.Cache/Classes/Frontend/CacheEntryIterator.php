@@ -73,7 +73,7 @@ class CacheEntryIterator implements \Iterator
      * @return string
      * @api
      */
-    public function key()
+    public function key(): string
     {
         return $this->backend->key();
     }
@@ -81,10 +81,10 @@ class CacheEntryIterator implements \Iterator
     /**
      * Checks if current position of the cache entry iterator is valid
      *
-     * @return boolean TRUE if the current element of the iterator is valid, otherwise FALSE
+     * @return boolean true if the current element of the iterator is valid, otherwise false
      * @api
      */
-    public function valid()
+    public function valid(): bool
     {
         return $this->backend->valid();
     }

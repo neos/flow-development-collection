@@ -45,9 +45,9 @@ class Lock
 
     /**
      * @param string $subject
-     * @param boolean $exclusiveLock TRUE to, acquire an exclusive (write) lock, FALSE for a shared (read) lock. An exclusive lock ist the default.
+     * @param boolean $exclusiveLock true to, acquire an exclusive (write) lock, false for a shared (read) lock. An exclusive lock ist the default.
      */
-    public function __construct($subject, $exclusiveLock = true)
+    public function __construct(string $subject, bool $exclusiveLock = true)
     {
         if (self::$lockManager === null) {
             return;
@@ -59,7 +59,7 @@ class Lock
     /**
      * @return LockStrategyInterface
      */
-    public function getLockStrategy()
+    public function getLockStrategy(): LockStrategyInterface
     {
         return $this->lockStrategy;
     }
@@ -78,9 +78,9 @@ class Lock
 
     /**
      * Releases the lock
-     * @return boolean TRUE on success, FALSE otherwise
+     * @return boolean true on success, false otherwise
      */
-    public function release()
+    public function release(): bool
     {
         if ($this->lockStrategy instanceof LockStrategyInterface) {
             return $this->lockStrategy->release();

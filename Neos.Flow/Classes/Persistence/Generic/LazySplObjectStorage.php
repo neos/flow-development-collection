@@ -67,7 +67,7 @@ class LazySplObjectStorage extends \SplObjectStorage
     }
 
     /**
-     * Returns TRUE if the LazySplObjectStorage has been initialized.
+     * Returns true if the LazySplObjectStorage has been initialized.
      *
      * @return boolean
      */
@@ -149,10 +149,10 @@ class LazySplObjectStorage extends \SplObjectStorage
         return parent::offsetGet($object);
     }
 
-    public function offsetSet($object, $info)
+    public function offsetSet($object, $data = null)
     {
         $this->initialize();
-        parent::offsetSet($object, $info);
+        parent::offsetSet($object, $data);
     }
 
     public function offsetUnset($object)

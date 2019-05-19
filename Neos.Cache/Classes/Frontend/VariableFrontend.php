@@ -51,9 +51,10 @@ class VariableFrontend extends AbstractFrontend
      * @param integer $lifetime Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited lifetime.
      * @return void
      * @throws \InvalidArgumentException
+     * @throws \Neos\Cache\Exception
      * @api
      */
-    public function set($entryIdentifier, $variable, array $tags = [], $lifetime = null)
+    public function set(string $entryIdentifier, $variable, array $tags = [], int $lifetime = null)
     {
         if (!$this->isValidEntryIdentifier($entryIdentifier)) {
             throw new \InvalidArgumentException('"' . $entryIdentifier . '" is not a valid cache entry identifier.', 1233058264);
@@ -78,7 +79,7 @@ class VariableFrontend extends AbstractFrontend
      * @throws \InvalidArgumentException
      * @api
      */
-    public function get($entryIdentifier)
+    public function get(string $entryIdentifier)
     {
         if (!$this->isValidEntryIdentifier($entryIdentifier)) {
             throw new \InvalidArgumentException('"' . $entryIdentifier . '" is not a valid cache entry identifier.', 1233058294);
@@ -100,7 +101,7 @@ class VariableFrontend extends AbstractFrontend
      * @throws \InvalidArgumentException
      * @api
      */
-    public function getByTag($tag)
+    public function getByTag(string $tag): array
     {
         if (!$this->backend instanceof TaggableBackendInterface) {
             throw new NotSupportedByBackendException('The backend must implement TaggableBackendInterface. Please choose a different cache backend or adjust the code using this cache.', 1483487409);
@@ -126,7 +127,7 @@ class VariableFrontend extends AbstractFrontend
      * @return \Neos\Cache\Frontend\CacheEntryIterator
      * @throws NotSupportedByBackendException
      */
-    public function getIterator()
+    public function getIterator(): CacheEntryIterator
     {
         if (!$this->backend instanceof IterableBackendInterface) {
             throw new NotSupportedByBackendException('The cache backend (%s) configured for cache "%s" cannot be used as an iterator. Please choose a different cache backend or adjust the code using this cache.', 1371463860);

@@ -143,7 +143,7 @@ class FizzleParserTest extends \Neos\Flow\Tests\UnitTestCase
         $actual = $parser->match('Filter', 'foo[foo=true]');
         $this->assertSame(true, $actual['AttributeFilters'][0]['Operand']);
 
-        $actual = $parser->match('Filter', 'foo[foo= FALSE]');
+        $actual = $parser->match('Filter', 'foo[foo= false]');
         $this->assertSame(false, $actual['AttributeFilters'][0]['Operand']);
     }
 }

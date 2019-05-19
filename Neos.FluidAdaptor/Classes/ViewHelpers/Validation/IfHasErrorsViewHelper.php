@@ -12,7 +12,6 @@ namespace Neos\FluidAdaptor\ViewHelpers\Validation;
  */
 
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Error\Messages\Result;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\FluidAdaptor\Core\Rendering\FlowAwareRenderingContextInterface;

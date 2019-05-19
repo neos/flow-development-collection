@@ -38,7 +38,7 @@ class WritableFileSystemStorageTest extends UnitTestCase
      */
     protected $mockEnvironment;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->mockDirectory = vfsStream::setup('WritableFileSystemStorageTest');
 
@@ -51,6 +51,7 @@ class WritableFileSystemStorageTest extends UnitTestCase
 
     /**
      * @test
+     * @doesNotPerformAssertions
      */
     public function importTemporaryFileFixesPermissionsForTemporaryFile()
     {
@@ -58,9 +59,6 @@ class WritableFileSystemStorageTest extends UnitTestCase
             ->withContent('fixture')
             ->at($this->mockDirectory);
         $this->writableFileSystemStorage->_call('importTemporaryFile', $mockTempFile->url(), 'default');
-
-        // dummy assertion to suppress PHPUnit warning
-        $this->assertTrue(true);
     }
 
     /**

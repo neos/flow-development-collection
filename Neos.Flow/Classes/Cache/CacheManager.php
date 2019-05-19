@@ -18,10 +18,11 @@ use Neos\Cache\Exception\NoSuchCacheException;
 use Neos\Cache\Frontend\FrontendInterface;
 use Neos\Cache\Frontend\VariableFrontend;
 use Neos\Flow\Configuration\ConfigurationManager;
-use Neos\Flow\Log\SystemLoggerInterface;
+use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Utility\Environment;
 use Neos\Utility\Files;
 use Neos\Flow\Utility\PhpAnalyzer;
+use Psr\Log\LoggerInterface;
 
 /**
  * The Cache Manager
@@ -42,9 +43,9 @@ class CacheManager
     protected $configurationManager;
 
     /**
-     * @var SystemLoggerInterface
+     * @var LoggerInterface
      */
-    protected $systemLogger;
+    protected $logger;
 
     /**
      * @var Environment
@@ -74,19 +75,21 @@ class CacheManager
     ];
 
     /**
-     * @param SystemLoggerInterface $systemLogger
+     * Injects the (system) logger based on PSR-3.
+     *
+     * @param LoggerInterface $logger
      * @return void
      */
-    public function injectSystemLogger(SystemLoggerInterface $systemLogger)
+    public function injectLogger(LoggerInterface $logger)
     {
-        $this->systemLogger = $systemLogger;
+        $this->logger = $logger;
     }
 
     /**
      * @param CacheFactory $cacheFactory
      * @return void
      */
-    public function injectCacheFactory(CacheFactory $cacheFactory)
+    public function injectCacheFactory(CacheFactory $cacheFactory): void
     {
         $this->cacheFactory = $cacheFactory;
     }
@@ -95,7 +98,7 @@ class CacheManager
      * @param ConfigurationManager $configurationManager
      * @return void
      */
-    public function injectConfigurationManager(ConfigurationManager $configurationManager)
+    public function injectConfigurationManager(ConfigurationManager $configurationManager): void
     {
         $this->configurationManager = $configurationManager;
     }
@@ -104,7 +107,7 @@ class CacheManager
      * @param Environment $environment
      * @return void
      */
-    public function injectEnvironment(Environment $environment)
+    public function injectEnvironment(Environment $environment): void
     {
         $this->environment = $environment;
     }
@@ -126,7 +129,7 @@ class CacheManager
      * @return void
      * @throws \InvalidArgumentException
      */
-    public function setCacheConfigurations(array $cacheConfigurations)
+    public function setCacheConfigurations(array $cacheConfigurations): void
     {
         foreach ($cacheConfigurations as $identifier => $configuration) {
             if (!is_array($configuration)) {
@@ -145,7 +148,7 @@ class CacheManager
      * @throws DuplicateIdentifierException if a cache with the given identifier has already been registered.
      * @api
      */
-    public function registerCache(FrontendInterface $cache, $persistent = false)
+    public function registerCache(FrontendInterface $cache, bool $persistent = false): void
     {
         $identifier = $cache->getIdentifier();
         if (isset($this->caches[$identifier])) {
@@ -161,11 +164,11 @@ class CacheManager
      * Returns the cache specified by $identifier
      *
      * @param string $identifier Identifies which cache to return
-     * @return \Neos\Cache\Frontend\FrontendInterface The specified cache frontend
+     * @return FrontendInterface The specified cache frontend
      * @throws NoSuchCacheException
      * @api
      */
-    public function getCache($identifier)
+    public function getCache(string $identifier): FrontendInterface
     {
         if ($this->hasCache($identifier) === false) {
             throw new NoSuchCacheException('A cache with identifier "' . $identifier . '" does not exist.', 1203699034);
@@ -181,10 +184,10 @@ class CacheManager
      * Checks if the specified cache has been registered.
      *
      * @param string $identifier The identifier of the cache
-     * @return boolean TRUE if a cache with the given identifier exists, otherwise FALSE
+     * @return boolean true if a cache with the given identifier exists, otherwise false
      * @api
      */
-    public function hasCache($identifier)
+    public function hasCache(string $identifier): bool
     {
         return isset($this->caches[$identifier]) || isset($this->cacheConfigurations[$identifier]);
     }
@@ -193,9 +196,9 @@ class CacheManager
      * Checks if the specified cache is marked as "persistent".
      *
      * @param string $identifier The identifier of the cache
-     * @return boolean TRUE if the specified cache is persistent, FALSE if it is not, or if the cache does not exist
+     * @return boolean true if the specified cache is persistent, false if it is not, or if the cache does not exist
      */
-    public function isCachePersistent($identifier)
+    public function isCachePersistent(string $identifier): bool
     {
         return isset($this->persistentCaches[$identifier]);
     }
@@ -203,11 +206,11 @@ class CacheManager
     /**
      * Flushes all registered caches
      *
-     * @param boolean $flushPersistentCaches If set to TRUE, even those caches which are flagged as "persistent" will be flushed
+     * @param boolean $flushPersistentCaches If set to true, even those caches which are flagged as "persistent" will be flushed
      * @return void
      * @api
      */
-    public function flushCaches($flushPersistentCaches = false)
+    public function flushCaches(bool $flushPersistentCaches = false): void
     {
         $this->createAllCaches();
         /** @var FrontendInterface $cache */
@@ -227,11 +230,11 @@ class CacheManager
      * caches.
      *
      * @param string $tag Tag to search for
-     * @param boolean $flushPersistentCaches If set to TRUE, even those caches which are flagged as "persistent" will be flushed
+     * @param boolean $flushPersistentCaches If set to true, even those caches which are flagged as "persistent" will be flushed
      * @return void
      * @api
      */
-    public function flushCachesByTag($tag, $flushPersistentCaches = false)
+    public function flushCachesByTag(string $tag, bool $flushPersistentCaches = false): void
     {
         $this->createAllCaches();
         /** @var FrontendInterface $cache */
@@ -248,7 +251,7 @@ class CacheManager
      *
      * @return array
      */
-    public function getCacheConfigurations()
+    public function getCacheConfigurations(): array
     {
         return $this->cacheConfigurations;
     }
@@ -268,7 +271,7 @@ class CacheManager
      * @param array $changedFiles A list of full paths to changed files
      * @return void
      */
-    public function flushSystemCachesByChangedFiles($fileMonitorIdentifier, array $changedFiles)
+    public function flushSystemCachesByChangedFiles(string $fileMonitorIdentifier, array $changedFiles): void
     {
         switch ($fileMonitorIdentifier) {
             case 'Flow_ClassFiles':
@@ -290,7 +293,7 @@ class CacheManager
      * @return void
      * @see flushSystemCachesByChangedFiles()
      */
-    protected function flushClassCachesByChangedFiles(array $changedFiles)
+    protected function flushClassCachesByChangedFiles(array $changedFiles): void
     {
         $objectClassesCache = $this->getCache('Flow_Object_Classes');
         $objectConfigurationCache = $this->getCache('Flow_Object_Configuration');
@@ -333,16 +336,16 @@ class CacheManager
             $objectConfigurationCache->remove('allCompiledCodeUpToDate');
         }
         if (count($modifiedAspectClassNamesWithUnderscores) > 0) {
-            $this->systemLogger->log('Aspect classes have been modified, flushing the whole proxy classes cache.', LOG_INFO);
+            $this->logger->info('Aspect classes have been modified, flushing the whole proxy classes cache.', LogEnvironment::fromMethodName(__METHOD__));
             $objectClassesCache->flush();
         }
         if ($flushDoctrineProxyCache === true) {
-            $this->systemLogger->log('Domain model changes have been detected, triggering Doctrine 2 proxy rebuilding.', LOG_INFO);
+            $this->logger->info('Domain model changes have been detected, triggering Doctrine 2 proxy rebuilding.', LogEnvironment::fromMethodName(__METHOD__));
             $this->getCache('Flow_Persistence_Doctrine')->flush();
             $objectConfigurationCache->remove('doctrineProxyCodeUpToDate');
         }
         if ($flushPolicyCache === true) {
-            $this->systemLogger->log('Controller changes have been detected, trigger AOP rebuild.', LOG_INFO);
+            $this->logger->info('Controller changes have been detected, trigger AOP rebuild.', LogEnvironment::fromMethodName(__METHOD__));
             $this->getCache('Flow_Security_Authorization_Privilege_Method')->flush();
             $objectConfigurationCache->remove('allAspectClassesUpToDate');
             $objectConfigurationCache->remove('allCompiledCodeUpToDate');
@@ -356,7 +359,7 @@ class CacheManager
      * @return void
      * @see flushSystemCachesByChangedFiles()
      */
-    protected function flushConfigurationCachesByChangedFiles(array $changedFiles)
+    protected function flushConfigurationCachesByChangedFiles(array $changedFiles): void
     {
         $aopProxyClassRebuildIsNeeded = false;
         $aopProxyClassInfluencers = '/(?:Policy|Objects|Settings)(?:\..*)*\.yaml/';
@@ -384,15 +387,15 @@ class CacheManager
         }
 
         foreach ($cachesToFlush as $cacheName => $cacheFilePattern) {
-            $this->systemLogger->log(sprintf('A configuration file matching the pattern "%s" has been changed, flushing related cache "%s"', $cacheFilePattern, $cacheName), LOG_INFO);
+            $this->logger->info(sprintf('A configuration file matching the pattern "%s" has been changed, flushing related cache "%s"', $cacheFilePattern, $cacheName), LogEnvironment::fromMethodName(__METHOD__));
             $this->getCache($cacheName)->flush();
         }
 
-        $this->systemLogger->log('A configuration file has been changed, refreshing compiled configuration cache', LOG_INFO);
+        $this->logger->info('A configuration file has been changed, refreshing compiled configuration cache', LogEnvironment::fromMethodName(__METHOD__));
         $this->configurationManager->refreshConfiguration();
 
         if ($aopProxyClassRebuildIsNeeded) {
-            $this->systemLogger->log('The configuration has changed, triggering an AOP proxy class rebuild.', LOG_INFO);
+            $this->logger->info('The configuration has changed, triggering an AOP proxy class rebuild.', LogEnvironment::fromMethodName(__METHOD__));
             $objectConfigurationCache->remove('allAspectClassesUpToDate');
             $objectConfigurationCache->remove('allCompiledCodeUpToDate');
             $objectClassesCache->flush();
@@ -406,11 +409,11 @@ class CacheManager
      * @return void
      * @see flushSystemCachesByChangedFiles()
      */
-    protected function flushTranslationCachesByChangedFiles(array $changedFiles)
+    protected function flushTranslationCachesByChangedFiles(array $changedFiles): void
     {
         foreach ($changedFiles as $pathAndFilename => $status) {
             if (preg_match('/\/Translations\/.+\.xlf/', $pathAndFilename) === 1) {
-                $this->systemLogger->log('The localization files have changed, thus flushing the I18n XML model cache.', LOG_INFO);
+                $this->logger->info('The localization files have changed, thus flushing the I18n XML model cache.', LogEnvironment::fromMethodName(__METHOD__));
                 $this->getCache('Flow_I18n_XmlModelCache')->flush();
                 break;
             }
@@ -422,7 +425,7 @@ class CacheManager
      *
      * @return void
      */
-    protected function createAllCaches()
+    protected function createAllCaches(): void
     {
         foreach (array_keys($this->cacheConfigurations) as $identifier) {
             if ($identifier !== 'Default' && !isset($this->caches[$identifier])) {
@@ -437,7 +440,7 @@ class CacheManager
      * @param string $identifier
      * @return void
      */
-    protected function createCache($identifier)
+    protected function createCache(string $identifier): void
     {
         $frontend = isset($this->cacheConfigurations[$identifier]['frontend']) ? $this->cacheConfigurations[$identifier]['frontend'] : $this->cacheConfigurations['Default']['frontend'];
         $backend = isset($this->cacheConfigurations[$identifier]['backend']) ? $this->cacheConfigurations[$identifier]['backend'] : $this->cacheConfigurations['Default']['backend'];

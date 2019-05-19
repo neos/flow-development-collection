@@ -17,6 +17,7 @@ use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Reflection\ReflectionService;
+use Psr\Log\LoggerInterface;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper as FluidAbstractViewHelper;
 
@@ -42,8 +43,15 @@ abstract class AbstractViewHelper extends FluidAbstractViewHelper
 
     /**
      * @var SystemLoggerInterface
+     * @deprecated
+     * @see logger
      */
     protected $systemLogger;
+
+    /**
+     * @var LoggerInterface
+     */
+    protected $logger;
 
     /**
      * @param RenderingContextInterface $renderingContext
@@ -77,6 +85,17 @@ abstract class AbstractViewHelper extends FluidAbstractViewHelper
     }
 
     /**
+     * Injects the (system) logger based on PSR-3.
+     *
+     * @param LoggerInterface $logger
+     * @return void
+     */
+    public function injectLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
+
+    /**
      * @return boolean
      */
     public function isEscapingInterceptorEnabled()
@@ -102,16 +121,15 @@ abstract class AbstractViewHelper extends FluidAbstractViewHelper
         try {
             return call_user_func_array([$this, 'render'], $renderMethodParameters);
         } catch (Exception $exception) {
-            if ($this->objectManager->getContext()->isProduction()) {
-                $this->systemLogger->log(
-                    'A Fluid ViewHelper Exception was captured: ' . $exception->getMessage() . ' (' . $exception->getCode() . ')',
-                    LOG_ERR,
-                    ['exception' => $exception]
-                );
-                return '';
-            } else {
+            if (!$this->objectManager->getContext()->isProduction()) {
                 throw $exception;
             }
+
+            $this->logger->error('A Fluid ViewHelper Exception was captured: ' . $exception->getMessage() . ' (' . $exception->getCode() . ')',
+                ['exception' => $exception]
+            );
+
+            return '';
         }
     }
 
@@ -135,7 +153,7 @@ abstract class AbstractViewHelper extends FluidAbstractViewHelper
      * @param string $name Name of the argument
      * @param string $type Type of the argument
      * @param string $description Description of the argument
-     * @param boolean $required If TRUE, argument is required. Defaults to FALSE.
+     * @param boolean $required If true, argument is required. Defaults to false.
      * @param mixed $defaultValue Default value of argument
      * @return FluidAbstractViewHelper $this, to allow chaining.
      * @throws Exception
@@ -158,7 +176,7 @@ abstract class AbstractViewHelper extends FluidAbstractViewHelper
      * @param string $name Name of the argument
      * @param string $type Type of the argument
      * @param string $description Description of the argument
-     * @param boolean $required If TRUE, argument is required. Defaults to FALSE.
+     * @param boolean $required If true, argument is required. Defaults to false.
      * @param mixed $defaultValue Default value of argument
      * @return FluidAbstractViewHelper $this, to allow chaining.
      * @throws Exception

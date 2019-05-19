@@ -56,6 +56,7 @@ defined in their own dedicated file:
 ``Settings.yaml``
   Contains user-level settings, i.e. configuration options the users or administrators
   are meant to change. Settings are the highest level of system configuration.
+  Settings have `Split configuration sources`_ enabled.
 
 ``Routes.yaml``
   Contains routes configuration. This routing information is parsed and used by the MVC

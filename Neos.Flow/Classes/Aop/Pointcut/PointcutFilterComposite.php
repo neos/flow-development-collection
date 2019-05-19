@@ -52,9 +52,9 @@ class PointcutFilterComposite implements PointcutFilterInterface
      * @param string $methodName Name of the method to check against
      * @param string $methodDeclaringClassName Name of the class the method was originally declared in
      * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
-     * @return boolean TRUE if class and method match the pattern, otherwise FALSE
+     * @return boolean true if class and method match the pattern, otherwise false
      */
-    public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier)
+    public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier): bool
     {
         $this->runtimeEvaluationsDefinition = [];
         $matches = true;
@@ -122,7 +122,7 @@ class PointcutFilterComposite implements PointcutFilterInterface
      * @param PointcutFilterInterface $filter A configured class filter
      * @return void
      */
-    public function addFilter($operator, PointcutFilterInterface $filter)
+    public function addFilter($operator, PointcutFilterInterface $filter): void
     {
         $this->filters[] = [$operator, $filter];
         if ($operator !== '&&' && $operator !== '&&!') {
@@ -131,9 +131,9 @@ class PointcutFilterComposite implements PointcutFilterInterface
     }
 
     /**
-     * Returns TRUE if this filter holds runtime evaluations for a previously matched pointcut
+     * Returns true if this filter holds runtime evaluations for a previously matched pointcut
      *
-     * @return boolean TRUE if this filter has runtime evaluations
+     * @return boolean true if this filter has runtime evaluations
      */
     public function hasRuntimeEvaluationsDefinition()
     {
@@ -157,7 +157,7 @@ class PointcutFilterComposite implements PointcutFilterInterface
      * @param array $runtimeEvaluations Runtime evaluations to be added
      * @return void
      */
-    public function setGlobalRuntimeEvaluationsDefinition(array $runtimeEvaluations)
+    public function setGlobalRuntimeEvaluationsDefinition(array $runtimeEvaluations): void
     {
         $this->globalRuntimeEvaluationsDefinition = $runtimeEvaluations;
     }
@@ -173,14 +173,14 @@ class PointcutFilterComposite implements PointcutFilterInterface
         $conditionCode = $this->buildRuntimeEvaluationsConditionCode('', $this->getRuntimeEvaluationsDefinition(), $useGlobalObjects);
 
         if ($conditionCode !== '') {
-            $code = "\n\t\t\t\t\t\tfunction(\\Neos\\Flow\\Aop\\JoinPointInterface \$joinPoint, \$objectManager) {\n" .
-                    "\t\t\t\t\t\t\t\$currentObject = \$joinPoint->getProxy();\n";
+            $code = "function(\\Neos\\Flow\\Aop\\JoinPointInterface \$joinPoint, \$objectManager) {\n" .
+                    "    \$currentObject = \$joinPoint->getProxy();\n";
             if ($useGlobalObjects) {
-                $code .= "\t\t\t\t\t\t\t\$globalObjectNames = \$objectManager->getSettingsByPath(array('Neos', 'Flow', 'aop', 'globalObjects'));\n";
-                $code .= "\t\t\t\t\t\t\t\$globalObjects = array_map(function(\$objectName) use (\$objectManager) { return \$objectManager->get(\$objectName); }, \$globalObjectNames);\n";
+                $code .= "    \$globalObjectNames = \$objectManager->getSettingsByPath(array('Neos', 'Flow', 'aop', 'globalObjects'));\n";
+                $code .= "    \$globalObjects = array_map(function(\$objectName) use (\$objectManager) { return \$objectManager->get(\$objectName); }, \$globalObjectNames);\n";
             }
-            $code .= "\t\t\t\t\t\t\treturn " . $conditionCode . ';' .
-                    "\n\t\t\t\t\t\t}";
+            $code .= "    return " . $conditionCode . ';' .
+                    "\n}";
             return $code;
         } else {
             return 'NULL';
@@ -217,7 +217,7 @@ class PointcutFilterComposite implements PointcutFilterInterface
      *
      * @param string $operator The operator for the given condition
      * @param array $conditions Condition array
-     * @param boolean &$useGlobalObjects Set to TRUE if global objects are used by the condition
+     * @param boolean &$useGlobalObjects Set to true if global objects are used by the condition
      * @return string The condition code
      */
     protected function buildRuntimeEvaluationsConditionCode($operator, array $conditions, &$useGlobalObjects = false)
@@ -292,7 +292,7 @@ class PointcutFilterComposite implements PointcutFilterInterface
      * Returns the PHP code of the conditions used argument runtime evaluations
      *
      * @param array $conditions Condition array
-     * @param boolean &$useGlobalObjects Set to TRUE if global objects are used by the condition
+     * @param boolean &$useGlobalObjects Set to true if global objects are used by the condition
      * @return string The arguments condition code
      */
     protected function buildMethodArgumentsEvaluationConditionCode(array $conditions, &$useGlobalObjects = false)
@@ -332,7 +332,7 @@ class PointcutFilterComposite implements PointcutFilterInterface
      * Returns the PHP code of the conditions used for global runtime evaluations
      *
      * @param array $conditions Condition array
-     * @param boolean &$useGlobalObjects Set to TRUE if global objects are used by the condition
+     * @param boolean &$useGlobalObjects Set to true if global objects are used by the condition
      * @return string The condition code
      */
     protected function buildGlobalRuntimeEvaluationsConditionCode(array $conditions, &$useGlobalObjects = false)
@@ -364,7 +364,7 @@ class PointcutFilterComposite implements PointcutFilterInterface
      * Returns the PHP code used to access one argument of a runtime evaluation
      *
      * @param mixed $argumentAccess The unparsed argument access, might be string or array
-     * @param boolean &$useGlobalObjects Set to TRUE if global objects are used by the condition
+     * @param boolean &$useGlobalObjects Set to true if global objects are used by the condition
      * @return string The condition code
      */
     protected function buildArgumentEvaluationAccessCode($argumentAccess, &$useGlobalObjects = false)

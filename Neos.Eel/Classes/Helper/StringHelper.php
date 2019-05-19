@@ -11,9 +11,9 @@ namespace Neos\Eel\Helper;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Eel\EvaluationException;
 use Neos\Eel\ProtectedContextAwareInterface;
+use Neos\Flow\Annotations as Flow;
 use Neos\Utility\Unicode\Functions as UnicodeFunctions;
 use Neos\Utility\Unicode\TextIterator;
 
@@ -64,7 +64,7 @@ class StringHelper implements ProtectedContextAwareInterface
      * @param integer $end End index
      * @return string The substring
      */
-    public function substring(string $string, int $start, int $end = null): string
+    public function substring(string $string, int $start, ?int $end = null): string
     {
         if ($end === null) {
             $end = mb_strlen($string, 'UTF-8');
@@ -109,13 +109,49 @@ class StringHelper implements ProtectedContextAwareInterface
      * @param string $string The string
      * @param string $search A string to search
      * @param integer $position Optional position for limiting the string
-     * @return boolean TRUE if the string ends with the given search
+     * @return boolean true if the string ends with the given search
      */
-    public function endsWith(string $string, string $search, int $position = null): bool
+    public function endsWith(string $string, string $search, ?int $position = null): bool
     {
         $position = $position !== null ? $position : mb_strlen($string, 'UTF-8');
         $position = $position - mb_strlen($search, 'UTF-8');
         return mb_strrpos($string, $search, null, 'UTF-8') === $position;
+    }
+
+    /**
+     * Generate a single-byte string from a number
+     *
+     * Example::
+     *
+     *     String.chr(65) == "A"
+     *
+     * This is a wrapper for the chr() PHP function.
+     * @see ord()
+     *
+     * @param int|string $value An integer between 0 and 255
+     * @return string A single-character string containing the specified byte
+     */
+    public function chr($value): string
+    {
+        return chr((int)$value);
+    }
+
+    /**
+     * Convert the first byte of a string to a value between 0 and 255
+     *
+     * Example::
+     *
+     *     String.ord('A') == 65
+     *
+     * This is a wrapper for the ord() PHP function.
+     * @see chr()
+     *
+     * @param string $string A character
+     * @return int An integer between 0 and 255
+     */
+    public function ord(string $string): int
+    {
+        return ord($string);
     }
 
     /**
@@ -130,7 +166,7 @@ class StringHelper implements ProtectedContextAwareInterface
      * @param integer $fromIndex The index where the search should start, defaults to the beginning
      * @return integer The index of the substring (>= 0) or -1 if the substring was not found
      */
-    public function indexOf(string $string, string $search, int $fromIndex = null): int
+    public function indexOf(string $string, string $search, ?int $fromIndex = null): int
     {
         $fromIndex = max(0, $fromIndex);
         if ($search === '') {
@@ -152,10 +188,10 @@ class StringHelper implements ProtectedContextAwareInterface
      *
      * @param string $string The input string
      * @param string $search The substring to search for
-     * @param integer $toIndex The position where the backwards search should start, defaults to the end
+     * @param integer|null $toIndex The position where the backwards search should start, defaults to the end
      * @return integer The last index of the substring (>=0) or -1 if the substring was not found
      */
-    public function lastIndexOf(string $string, string $search, int $toIndex = null): int
+    public function lastIndexOf(string $string, string $search, ?int $toIndex = null): int
     {
         $length = mb_strlen($string, 'UTF-8');
         if ($toIndex === null) {
@@ -183,12 +219,37 @@ class StringHelper implements ProtectedContextAwareInterface
      *
      * @param string $string The input string
      * @param string $pattern A PREG pattern
-     * @return array The matches as array or NULL if not matched
+     * @return array|null The matches as array or NULL if not matched
      * @throws EvaluationException
      */
-    public function pregMatch(string $string, string $pattern)
+    public function pregMatch(string $string, string $pattern): ?array
     {
         $number = preg_match($pattern, $string, $matches);
+        if ($number === false) {
+            throw new EvaluationException('Error evaluating regular expression ' . $pattern . ': ' . preg_last_error(), 1372793595);
+        }
+        if ($number === 0) {
+            return null;
+        }
+        return $matches;
+    }
+
+    /**
+     * Perform a global regular expression match (PREG style)
+     *
+     * Example::
+     *
+     *     String.pregMatchAll("<hr id="icon-one" /><hr id="icon-two" />", '/id="icon-(.+?)"/')
+     *       == [['id="icon-one"', 'id="icon-two"'],['one','two']]
+     *
+     * @param string $string The input string
+     * @param string $pattern A PREG pattern
+     * @return array|null The matches as array or NULL if not matched
+     * @throws EvaluationException
+     */
+    public function pregMatchAll(string $string, string $pattern): ?array
+    {
+        $number = preg_match_all($pattern, $string, $matches);
         if ($number === false) {
             throw new EvaluationException('Error evaluating regular expression ' . $pattern . ': ' . preg_last_error(), 1372793595);
         }
@@ -213,7 +274,11 @@ class StringHelper implements ProtectedContextAwareInterface
      */
     public function pregReplace(string $string, string $pattern, string $replace): string
     {
-        return preg_replace($pattern, $replace, $string);
+        $result = preg_replace($pattern, $replace, $string);
+        if ($result === null) {
+            throw new EvaluationException('Error evaluating regular expression ' . $pattern . ': ' . preg_last_error(), 1372793596);
+        }
+        return $result;
     }
 
     /**
@@ -226,12 +291,16 @@ class StringHelper implements ProtectedContextAwareInterface
      *
      * @param string $string The input string
      * @param string $pattern A PREG pattern
-     * @param integer $limit The maximum amount of items to return, in contrast to split() this will return all remaining characters in the last item (see example)
+     * @param integer|null $limit The maximum amount of items to return, in contrast to split() this will return all remaining characters in the last item (see example)
      * @return array An array of the splitted parts, excluding the matched pattern
      */
-    public function pregSplit(string $string, string $pattern, int $limit = null): array
+    public function pregSplit(string $string, string $pattern, ?int $limit = null): array
     {
-        return preg_split($pattern, $string, $limit);
+        $result = preg_split($pattern, $string, $limit);
+        if ($result === false) {
+            throw new EvaluationException('Error evaluating regular expression ' . $pattern . ': ' . preg_last_error(), 1372793597);
+        }
+        return $result;
     }
 
     /**
@@ -264,18 +333,18 @@ class StringHelper implements ProtectedContextAwareInterface
      * Node: This implementation follows JavaScript semantics without support of regular expressions.
      *
      * @param string $string The string to split
-     * @param string $separator The separator where the string should be splitted
-     * @param integer $limit The maximum amount of items to split (exceeding items will be discarded)
+     * @param string|null $separator The separator where the string should be splitted
+     * @param integer|null $limit The maximum amount of items to split (exceeding items will be discarded)
      * @return array An array of the splitted parts, excluding the separators
      */
-    public function split(string $string, string $separator = null, int $limit = null): array
+    public function split(string $string, ?string $separator = null, ?int $limit = null): array
     {
         if ($separator === null) {
             return [$string];
         }
         if ($separator === '') {
             $result = str_split($string);
-            if ($limit !== null) {
+            if ($limit !== null && $limit > 0) {
                 $result = array_slice($result, 0, $limit);
             }
             return $result;
@@ -299,10 +368,10 @@ class StringHelper implements ProtectedContextAwareInterface
      *
      * @param string $string The input string
      * @param string $search The string to search for
-     * @param integer $position The position to test (defaults to the beginning of the string)
+     * @param integer|null $position The position to test (defaults to the beginning of the string)
      * @return boolean
      */
-    public function startsWith(string $string, string $search, int $position = null): bool
+    public function startsWith(string $string, string $search, ?int $position = null): bool
     {
         $position = $position !== null ? $position : 0;
         return mb_strpos($string, $search, null, 'UTF-8') === $position;
@@ -373,9 +442,26 @@ class StringHelper implements ProtectedContextAwareInterface
      * @param string $allowableTags Specify tags which should not be stripped
      * @return string The string with tags stripped
      */
-    public function stripTags(string $string, string $allowableTags = null): string
+    public function stripTags(string $string, ?string $allowableTags = null): string
     {
         return strip_tags($string, $allowableTags);
+    }
+
+    /**
+     * Insert HTML line breaks before all newlines in a string
+     *
+     * Example::
+     *
+     *     String.nl2br(someStingWithLinebreaks) == 'line1<br />line2'
+     *
+     * This is a wrapper for the nl2br() PHP function.
+     *
+     * @param string $string The input string
+     * @return string The string with new lines replaced
+     */
+    public function nl2br(string $string): string
+    {
+        return nl2br($string);
     }
 
     /**
@@ -389,7 +475,7 @@ class StringHelper implements ProtectedContextAwareInterface
      * @param string $string The string to test
      * @return boolean ``true`` if the given string is blank
      */
-    public function isBlank(string $string = null): bool
+    public function isBlank(?string $string = null): bool
     {
         return trim((string)$string) === '';
     }
@@ -401,12 +487,14 @@ class StringHelper implements ProtectedContextAwareInterface
      * @param string $charlist List of characters that should be trimmed, defaults to whitespace
      * @return string The trimmed string
      */
-    public function trim(string $string = null, string $charlist = null): string
+    public function trim(?string $string = null, ?string $charlist = null): string
     {
+        $string = (string)$string;
+
         if ($charlist === null) {
-            return trim((string)$string);
+            return trim($string);
         }
-        return trim((string)$string, $charlist);
+        return trim($string, $charlist);
     }
 
     /**
@@ -445,7 +533,7 @@ class StringHelper implements ProtectedContextAwareInterface
     /**
      * Convert a string to boolean
      *
-     * A value is ``true``, if it is either the string ``"TRUE"`` or ``"true"`` or the number ``1``.
+     * A value is ``true``, if it is either the string ``"true"`` or ``"true"`` or the number ``1``.
      *
      * @param string $string The string to convert
      * @return boolean The boolean value of the string (``true`` or ``false``)
@@ -550,6 +638,10 @@ class StringHelper implements ProtectedContextAwareInterface
     /**
      * Calculate the MD5 checksum of the given string
      *
+     * Example::
+     *
+     *     String.md5("joh316") == "bacb98acf97e0b6112b1d1b650b84971"
+     *
      * @param string $string The string to hash
      * @return string The MD5 hash of ``string``
      */
@@ -559,14 +651,29 @@ class StringHelper implements ProtectedContextAwareInterface
     }
 
     /**
+     * Calculate the SHA1 checksum of the given string
+     *
+     * Example::
+     *
+     *     String.sha1("joh316") == "063b3d108bed9f88fa618c6046de0dccadcf3158"
+     *
+     * @param string $string The string to hash
+     * @return string The SHA1 hash of ``string``
+     */
+    public function sha1(string $string): string
+    {
+        return sha1($string);
+    }
+
+    /**
      * Get the length of a string
      *
-     * @param string $string The input string
+     * @param string|null $string The input string
      * @return integer Length of the string
      */
-    public function length(string $string = null): int
+    public function length(?string $string = null): int
     {
-        return $string === null ? 0 : UnicodeFunctions::strlen($string);
+        return UnicodeFunctions::strlen((string)$string);
     }
 
     /**
@@ -582,6 +689,44 @@ class StringHelper implements ProtectedContextAwareInterface
         $unicodeString = preg_replace('/[[:punct:][:digit:]]/', '', $unicodeString);
 
         return count(preg_split('/[[:space:]]+/', $unicodeString, 0, PREG_SPLIT_NO_EMPTY));
+    }
+
+    /**
+     * Implementation of the PHP base64_encode function
+     * @see https://php.net/manual/en/function.base64-encode.php
+     *
+     * @param string $string The data to encode.
+     * @return string The encoded data
+     */
+    public function base64encode(string $string): string
+    {
+        return base64_encode($string);
+    }
+
+    /**
+     * Implementation of the PHP base64_decode function
+     * @see https://php.net/manual/en/function.base64-decode.php
+     *
+     * @param string $string The encoded data.
+     * @param bool $strict If TRUE this function will return FALSE if the input contains character from outside the base64 alphabet.
+     * @return string|bool The decoded data or FALSE on failure. The returned data may be binary.
+     */
+    public function base64decode(string $string, bool $strict = false)
+    {
+        return base64_decode($string, $strict);
+    }
+
+    /**
+     * Implementation of the PHP vsprintf function
+     * @see https://php.net/manual/en/function.vsprintf.php
+     *
+     * @param string $format A formatting string containing directives
+     * @param array $args An array of values to be inserted according to the formatting string $format
+     * @return string A string produced according to the formatting string $format
+     */
+    public function format(string $format, array $args): string
+    {
+        return vsprintf($format, $args);
     }
 
     /**

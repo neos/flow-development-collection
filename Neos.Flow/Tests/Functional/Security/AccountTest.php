@@ -31,7 +31,7 @@ class AccountTest extends FunctionalTestCase
      */
     protected $account;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

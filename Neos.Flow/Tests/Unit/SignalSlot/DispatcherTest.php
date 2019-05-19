@@ -13,6 +13,7 @@ namespace Neos\Flow\Tests\Unit\SignalSlot;
 
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\SignalSlot\Dispatcher;
+use Neos\Flow\SignalSlot\Exception\InvalidSlotException;
 use Neos\Flow\Tests\UnitTestCase;
 
 /**
@@ -159,10 +160,10 @@ class DispatcherTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\SignalSlot\Exception\InvalidSlotException
      */
     public function dispatchThrowsAnExceptionIfTheSpecifiedClassOfASlotIsUnknown()
     {
+        $this->expectException(InvalidSlotException::class);
         $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
         $mockObjectManager->expects($this->once())->method('isRegistered')->with('NonExistingClassName')->will($this->returnValue(false));
 
@@ -174,10 +175,10 @@ class DispatcherTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\SignalSlot\Exception\InvalidSlotException
      */
     public function dispatchThrowsAnExceptionIfTheSpecifiedSlotMethodDoesNotExist()
     {
+        $this->expectException(InvalidSlotException::class);
         $slotClassName = 'Mock_' . md5(uniqid(mt_rand(), true));
         eval('class ' . $slotClassName . ' { function slot($foo, $baz) { $this->arguments = array($foo, $baz); } }');
         $mockSlot = new $slotClassName();
@@ -216,10 +217,10 @@ class DispatcherTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
      */
     public function connectWithSignalNameStartingWithEmitShouldNotBeAllowed()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $mockSignal = $this->getMockBuilder('stdClass')->setMethods(['emitSomeSignal'])->getMock();
         $mockSlot = $this->getMockBuilder('stdClass')->setMethods(['someSlotMethod'])->getMock();
 

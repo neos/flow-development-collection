@@ -14,7 +14,6 @@ namespace Neos\Eel\FlowQuery\Operations\Object;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\FlowQueryException;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
-use Neos\Flow\Annotations as Flow;
 use Neos\Utility\ObjectAccess;
 
 /**
@@ -49,7 +48,7 @@ class PropertyOperation extends AbstractOperation
      */
     public function evaluate(FlowQuery $flowQuery, array $arguments)
     {
-        if (!isset($arguments[0]) || empty($arguments[0])) {
+        if (!isset($arguments[0]) || empty($arguments[0]) || !is_string($arguments[0])) {
             throw new FlowQueryException('property() must be given an attribute name when used on objects, fetching all attributes is not supported.', 1332492263);
         }
 

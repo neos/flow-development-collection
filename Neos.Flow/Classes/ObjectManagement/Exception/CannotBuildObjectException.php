@@ -11,11 +11,13 @@ namespace Neos\Flow\ObjectManagement\Exception;
  * source code.
  */
 
+use Psr\Container\ContainerExceptionInterface;
+
 /**
  * "Cannot build object" Exception
  *
  * @api
  */
-class CannotBuildObjectException extends \Neos\Flow\ObjectManagement\Exception
+class CannotBuildObjectException extends \Neos\Flow\ObjectManagement\Exception implements ContainerExceptionInterface
 {
 }

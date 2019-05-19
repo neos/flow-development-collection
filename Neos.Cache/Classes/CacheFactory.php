@@ -25,6 +25,8 @@ use Neos\Cache\Frontend\FrontendInterface;
  */
 class CacheFactory implements CacheFactoryInterface
 {
+    use BackendInstantiationTrait;
+
     /**
      * @var EnvironmentConfiguration
      */
@@ -53,29 +55,13 @@ class CacheFactory implements CacheFactoryInterface
      * @throws InvalidCacheException
      * @api
      */
-    public function create($cacheIdentifier, $cacheObjectName, $backendObjectName, array $backendOptions = [])
+    public function create(string $cacheIdentifier, string $cacheObjectName, string $backendObjectName, array $backendOptions = []): FrontendInterface
     {
-        $backend = $this->instantiateBackend($backendObjectName, $backendOptions);
+        $backend = $this->instantiateBackend($backendObjectName, $backendOptions, $this->environmentConfiguration);
         $cache = $this->instantiateCache($cacheIdentifier, $cacheObjectName, $backend);
         $backend->setCache($cache);
 
         return $cache;
-    }
-
-    /**
-     * @param string $backendObjectName
-     * @param array $backendOptions
-     * @return BackendInterface
-     * @throws InvalidBackendException
-     */
-    protected function instantiateBackend($backendObjectName, $backendOptions)
-    {
-        $backend = new $backendObjectName($this->environmentConfiguration, $backendOptions);
-        if (!$backend instanceof BackendInterface) {
-            throw new InvalidBackendException('"' . $backendObjectName . '" is not a valid cache backend object.', 1216304302);
-        }
-
-        return $backend;
     }
 
     /**
@@ -85,7 +71,7 @@ class CacheFactory implements CacheFactoryInterface
      * @return FrontendInterface
      * @throws InvalidCacheException
      */
-    protected function instantiateCache($cacheIdentifier, $cacheObjectName, $backend)
+    protected function instantiateCache(string $cacheIdentifier, string $cacheObjectName, BackendInterface $backend): FrontendInterface
     {
         $cache = new $cacheObjectName($cacheIdentifier, $backend);
         if (!$cache instanceof FrontendInterface) {

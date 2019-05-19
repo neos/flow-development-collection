@@ -36,7 +36,7 @@ class CommandTest extends UnitTestCase
     /**
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->command = $this->getAccessibleMock(Cli\Command::class, ['getCommandMethodReflection'], [], '', false);
         $this->methodReflection = $this->createMock(MethodReflection::class, [], [__CLASS__, 'dummyMethod']);

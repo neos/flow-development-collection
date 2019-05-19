@@ -13,8 +13,8 @@ namespace Neos\Flow\I18n;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Cache\Frontend\VariableFrontend;
-use Neos\Flow\Package\PackageInterface;
-use Neos\Flow\Package\PackageManagerInterface;
+use Neos\Flow\Package\FlowPackageInterface;
+use Neos\Flow\Package\PackageManager;
 use Neos\Utility\Files;
 
 /**
@@ -33,7 +33,7 @@ class Service
 
     /**
      * @Flow\Inject
-     * @var PackageManagerInterface
+     * @var PackageManager
      */
     protected $packageManager;
 
@@ -85,6 +85,9 @@ class Service
 
         if ($this->cache->has('availableLocales')) {
             $this->localeCollection = $this->cache->get('availableLocales');
+        } elseif (isset($this->settings['availableLocales']) && !empty($this->settings['availableLocales'])) {
+            $this->generateAvailableLocalesCollectionFromSettings();
+            $this->cache->set('availableLocales', $this->localeCollection);
         } else {
             $this->generateAvailableLocalesCollectionByScanningFilesystem();
             $this->cache->set('availableLocales', $this->localeCollection);
@@ -116,7 +119,7 @@ class Service
      *
      * @param string $pathAndFilename Path to the file
      * @param Locale $locale Desired locale of localized file
-     * @param boolean $strict Whether to match only provided locale (TRUE) or search for best-matching locale (FALSE)
+     * @param boolean $strict Whether to match only provided locale (true) or search for best-matching locale (false)
      * @return array Path to the localized file (or $filename when no localized file was found) and the matched locale
      * @see Configuration::setFallbackRule()
      * @api
@@ -252,12 +255,27 @@ class Service
     }
 
     /**
-     * Returns a regex pattern including enclosing characters, that matches any of the configured
-     * blacklist paths inside "Neos.Flow.i18n.scan.excludePatterns".
+     * Generates the available Locales Collection from the configuration setting
+     * `Neos.Flow.i18n.availableLocales`.
      *
-     * @return string The regex pattern matching the configured blacklist
+     * Note: result of this method invocation is cached
+     *
+     * @return void
      */
-    protected function getScanBlacklistPattern()
+    protected function generateAvailableLocalesCollectionFromSettings()
+    {
+        foreach ($this->settings['availableLocales'] as $localeIdentifier) {
+            $this->localeCollection->addLocale(new Locale($localeIdentifier));
+        }
+    }
+
+    /**
+     * Returns a regex pattern including enclosing characters, that matches any of the configured
+     * exclude list configured inside "Neos.Flow.i18n.scan.excludePatterns".
+     *
+     * @return string The regex pattern matching the configured exclude list
+     */
+    protected function getScanExcludePattern()
     {
         $pattern = implode('|', array_keys(array_filter((array)$this->settings['scan']['excludePatterns'])));
         if ($pattern !== '') {
@@ -286,14 +304,14 @@ class Service
      */
     protected function generateAvailableLocalesCollectionByScanningFilesystem()
     {
-        $whitelistPaths = array_keys(array_filter((array)$this->settings['scan']['includePaths']));
-        if ($whitelistPaths === []) {
+        $includePaths = array_keys(array_filter((array)$this->settings['scan']['includePaths']));
+        if ($includePaths === []) {
             return;
         }
-        $blacklistPattern = $this->getScanBlacklistPattern();
+        $excludePattern = $this->getScanExcludePattern();
 
-        /** @var PackageInterface $activePackage */
-        foreach ($this->packageManager->getActivePackages() as $activePackage) {
+        /** @var FlowPackageInterface $activePackage */
+        foreach ($this->packageManager->getFlowPackages() as $activePackage) {
             $packageResourcesPath = Files::getNormalizedPath($activePackage->getResourcesPath());
 
             if (!is_dir($packageResourcesPath)) {
@@ -301,8 +319,8 @@ class Service
             }
 
             $directories = [];
-            foreach ($whitelistPaths as $path) {
-                $scanPath = Files::concatenatePaths(array($packageResourcesPath, $path));
+            foreach ($includePaths as $path) {
+                $scanPath = Files::concatenatePaths([$packageResourcesPath, $path]);
                 if (is_dir($scanPath)) {
                     array_push($directories, Files::getNormalizedPath($scanPath));
                 }
@@ -311,7 +329,7 @@ class Service
             while ($directories !== []) {
                 $currentDirectory = array_pop($directories);
                 $relativeDirectory = '/' . str_replace($packageResourcesPath, '', $currentDirectory);
-                if ($blacklistPattern !== '' && preg_match($blacklistPattern, $relativeDirectory) === 1) {
+                if ($excludePattern !== '' && preg_match($excludePattern, $relativeDirectory) === 1) {
                     continue;
                 }
 

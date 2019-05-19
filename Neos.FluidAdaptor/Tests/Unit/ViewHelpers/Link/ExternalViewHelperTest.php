@@ -25,12 +25,11 @@ class ExternalViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\V
      */
     protected $viewHelper;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
-        $this->viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\Link\ExternalViewHelper::class, array('renderChildren'));
+        $this->viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\Link\ExternalViewHelper::class, ['renderChildren', 'registerRenderMethodArguments']);
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
-        $this->viewHelper->initializeArguments();
     }
 
     /**
@@ -38,7 +37,7 @@ class ExternalViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\V
      */
     public function renderCorrectlySetsTagNameAndAttributesAndContent()
     {
-        $mockTagBuilder = $this->createMock(TagBuilder::class, array('setTagName', 'addAttribute', 'setContent'));
+        $mockTagBuilder = $this->createMock(TagBuilder::class, ['setTagName', 'addAttribute', 'setContent']);
         $mockTagBuilder->expects($this->any())->method('setTagName')->with('a');
         $mockTagBuilder->expects($this->once())->method('addAttribute')->with('href', 'http://www.some-domain.tld');
         $mockTagBuilder->expects($this->once())->method('setContent')->with('some content');
@@ -46,8 +45,8 @@ class ExternalViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\V
 
         $this->viewHelper->expects($this->any())->method('renderChildren')->will($this->returnValue('some content'));
 
-        $this->viewHelper->initialize();
-        $this->viewHelper->render('http://www.some-domain.tld');
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['uri' => 'http://www.some-domain.tld']);
+        $this->viewHelper->render();
     }
 
     /**
@@ -55,7 +54,7 @@ class ExternalViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\V
      */
     public function renderAddsHttpPrefixIfSpecifiedUriDoesNotContainScheme()
     {
-        $mockTagBuilder = $this->createMock(TagBuilder::class, array('setTagName', 'addAttribute', 'setContent'));
+        $mockTagBuilder = $this->createMock(TagBuilder::class, ['setTagName', 'addAttribute', 'setContent']);
         $mockTagBuilder->expects($this->any())->method('setTagName')->with('a');
         $mockTagBuilder->expects($this->once())->method('addAttribute')->with('href', 'http://www.some-domain.tld');
         $mockTagBuilder->expects($this->once())->method('setContent')->with('some content');
@@ -63,8 +62,8 @@ class ExternalViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\V
 
         $this->viewHelper->expects($this->any())->method('renderChildren')->will($this->returnValue('some content'));
 
-        $this->viewHelper->initialize();
-        $this->viewHelper->render('www.some-domain.tld');
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['uri' => 'www.some-domain.tld']);
+        $this->viewHelper->render();
     }
 
     /**
@@ -72,7 +71,7 @@ class ExternalViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\V
      */
     public function renderAddsSpecifiedSchemeIfUriDoesNotContainScheme()
     {
-        $mockTagBuilder = $this->createMock(TagBuilder::class, array('setTagName', 'addAttribute', 'setContent'));
+        $mockTagBuilder = $this->createMock(TagBuilder::class, ['setTagName', 'addAttribute', 'setContent']);
         $mockTagBuilder->expects($this->any())->method('setTagName')->with('a');
         $mockTagBuilder->expects($this->once())->method('addAttribute')->with('href', 'ftp://some-domain.tld');
         $mockTagBuilder->expects($this->once())->method('setContent')->with('some content');
@@ -80,8 +79,8 @@ class ExternalViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\V
 
         $this->viewHelper->expects($this->any())->method('renderChildren')->will($this->returnValue('some content'));
 
-        $this->viewHelper->initialize();
-        $this->viewHelper->render('some-domain.tld', 'ftp');
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['uri' => 'some-domain.tld', 'defaultScheme' => 'ftp']);
+        $this->viewHelper->render();
     }
 
     /**
@@ -89,7 +88,7 @@ class ExternalViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\V
      */
     public function renderDoesNotAddEmptyScheme()
     {
-        $mockTagBuilder = $this->createMock(TagBuilder::class, array('setTagName', 'addAttribute', 'setContent'));
+        $mockTagBuilder = $this->createMock(TagBuilder::class, ['setTagName', 'addAttribute', 'setContent']);
         $mockTagBuilder->expects($this->any())->method('setTagName')->with('a');
         $mockTagBuilder->expects($this->once())->method('addAttribute')->with('href', 'some-domain.tld');
         $mockTagBuilder->expects($this->once())->method('setContent')->with('some content');
@@ -97,7 +96,7 @@ class ExternalViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\V
 
         $this->viewHelper->expects($this->any())->method('renderChildren')->will($this->returnValue('some content'));
 
-        $this->viewHelper->initialize();
-        $this->viewHelper->render('some-domain.tld', '');
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['uri' => 'some-domain.tld', 'defaultScheme' => '']);
+        $this->viewHelper->render();
     }
 }

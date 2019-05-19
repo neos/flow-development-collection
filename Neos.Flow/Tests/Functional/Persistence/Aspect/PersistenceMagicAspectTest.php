@@ -11,7 +11,7 @@ namespace Neos\Flow\Tests\Functional\Persistence\Aspect;
  * source code.
  */
 
-use Neos\Flow\Persistence\Generic\PersistenceManager;
+use Neos\Flow\Persistence\Doctrine\PersistenceManager;
 use Neos\Flow\Tests\Functional\Persistence\Fixtures;
 use Neos\Flow\Tests\FunctionalTestCase;
 
@@ -28,7 +28,7 @@ class PersistenceMagicAspectTest extends FunctionalTestCase
     /**
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         if (!$this->persistenceManager instanceof PersistenceManager) {

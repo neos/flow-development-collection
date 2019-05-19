@@ -15,6 +15,7 @@ include_once(__DIR__ . '/../../BaseTestCase.php');
 use Neos\Cache\Backend\AbstractBackend;
 use Neos\Cache\Backend\NullBackend;
 use Neos\Cache\Backend\TaggableBackendInterface;
+use Neos\Cache\Exception\InvalidDataException;
 use Neos\Cache\Exception\NotSupportedByBackendException;
 use Neos\Cache\Frontend\StringFrontend;
 use Neos\Cache\Tests\BaseTestCase;
@@ -26,11 +27,11 @@ use Neos\Cache\Tests\BaseTestCase;
 class StringFrontendTest extends BaseTestCase
 {
     /**
-     * @expectedException \InvalidArgumentException
      * @test
      */
     public function setChecksIfTheIdentifierIsValid()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $cache = $this->getMockBuilder(StringFrontend::class)
             ->setMethods(['isValidEntryIdentifier'])
             ->disableOriginalConstructor()
@@ -69,10 +70,10 @@ class StringFrontendTest extends BaseTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Cache\Exception\InvalidDataException
      */
     public function setThrowsInvalidDataExceptionOnNonStringValues()
     {
+        $this->expectException(InvalidDataException::class);
         $backend = $this->prepareDefaultBackend();
 
         $cache = new StringFrontend('StringFrontend', $backend);
@@ -101,7 +102,7 @@ class StringFrontendTest extends BaseTestCase
         $backend->expects($this->once())->method('has')->with($this->equalTo('StringCacheTest'))->will($this->returnValue(true));
 
         $cache = new StringFrontend('StringFrontend', $backend);
-        $this->assertTrue($cache->has('StringCacheTest'), 'has() did not return TRUE.');
+        $this->assertTrue($cache->has('StringCacheTest'), 'has() did not return true.');
     }
 
     /**
@@ -115,15 +116,15 @@ class StringFrontendTest extends BaseTestCase
         $backend->expects($this->once())->method('remove')->with($this->equalTo($cacheIdentifier))->will($this->returnValue(true));
 
         $cache = new StringFrontend('StringFrontend', $backend);
-        $this->assertTrue($cache->remove($cacheIdentifier), 'remove() did not return TRUE');
+        $this->assertTrue($cache->remove($cacheIdentifier), 'remove() did not return true');
     }
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
      */
     public function getByTagRejectsInvalidTags()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $backend = $this->createMock(TaggableBackendInterface::class);
         $backend->expects($this->never())->method('findIdentifiersByTag');
 
@@ -133,10 +134,10 @@ class StringFrontendTest extends BaseTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Cache\Exception\NotSupportedByBackendException
      */
     public function getByTagThrowAnExceptionWithoutTaggableBackend()
     {
+        $this->expectException(NotSupportedByBackendException::class);
         $backend = $this->prepareDefaultBackend();
         $cache = new StringFrontend('VariableFrontend', $backend);
         $cache->getByTag('foo');

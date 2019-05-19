@@ -11,6 +11,7 @@ namespace Neos\Eel\Tests\Unit\FlowQuery;
  * source code.
  */
 
+use Neos\Eel\FlowQuery\FizzleException;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\OperationResolver;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
@@ -85,6 +86,66 @@ class FlowQueryTest extends UnitTestCase
         $this->assertSame([$myObject, $myObject2], iterator_to_array($query->slice(0, 2)));
         $this->assertSame([$myObject3], $query->slice(2)->get());
         $this->assertSame([$myObject3], iterator_to_array($query->slice(2)));
+    }
+
+    /**
+     * @test
+     */
+    public function filterOperationFiltersArrays()
+    {
+        $myObject = new \stdClass();
+        $myObject->arrayProperty = ['foo','bar','baz'];
+        $myObject2 = new \stdClass();
+        $myObject2->arrayProperty = ['foo','zang','zong'];
+        $myObject3 = new \stdClass();
+        $myObject3->arrayProperty = ['zing','zang','zong'];
+
+        $query = $this->createFlowQuery([$myObject, $myObject2, $myObject3]);
+
+
+        $this->assertInstanceOf(FlowQuery::class, $query->filter('[arrayProperty *= bar]'));
+        $this->assertSame([$myObject], $query->filter('[arrayProperty *= bar]')->get());
+
+        $this->assertInstanceOf(FlowQuery::class, $query->filter('[arrayProperty *= foo]'));
+        $this->assertSame([$myObject, $myObject2], $query->filter('[arrayProperty *= foo]')->get());
+
+        $this->assertInstanceOf(FlowQuery::class, $query->filter('[arrayProperty *= ding]'));
+        $this->assertSame([], $query->filter('[arrayProperty *= ding]')->get());
+
+        $this->assertInstanceOf(FlowQuery::class, $query->filter('[arrayProperty *= fo]'));
+        $this->assertSame([], $query->filter('[arrayProperty *= fo]')->get());
+
+
+        $this->assertInstanceOf(FlowQuery::class, $query->filter('[arrayProperty ^= zing]'));
+        $this->assertSame([$myObject3], $query->filter('[arrayProperty ^= zing]')->get());
+
+        $this->assertInstanceOf(FlowQuery::class, $query->filter('[arrayProperty ^= foo]'));
+        $this->assertSame([$myObject, $myObject2], $query->filter('[arrayProperty ^= foo]')->get());
+
+        $this->assertInstanceOf(FlowQuery::class, $query->filter('[arrayProperty ^= ding]'));
+        $this->assertSame([], $query->filter('[arrayProperty ^= ding]')->get());
+
+        $this->assertInstanceOf(FlowQuery::class, $query->filter('[arrayProperty ^= zi]'));
+        $this->assertSame([], $query->filter('[arrayProperty ^= zi]')->get());
+
+        $this->assertInstanceOf(FlowQuery::class, $query->filter('[arrayProperty ^= bar]'));
+        $this->assertSame([], $query->filter('[arrayProperty ^= bar]')->get());
+
+
+        $this->assertInstanceOf(FlowQuery::class, $query->filter('[arrayProperty $= baz]'));
+        $this->assertSame([$myObject], $query->filter('[arrayProperty $= baz]')->get());
+
+        $this->assertInstanceOf(FlowQuery::class, $query->filter('[arrayProperty $= zong]'));
+        $this->assertSame([$myObject2, $myObject3], $query->filter('[arrayProperty $= zong]')->get());
+
+        $this->assertInstanceOf(FlowQuery::class, $query->filter('[arrayProperty $= ding]'));
+        $this->assertSame([], $query->filter('[arrayProperty $= ding]')->get());
+
+        $this->assertInstanceOf(FlowQuery::class, $query->filter('[arrayProperty $= az]'));
+        $this->assertSame([], $query->filter('[arrayProperty $= az]')->get());
+
+        $this->assertInstanceOf(FlowQuery::class, $query->filter('[arrayProperty $= bar]'));
+        $this->assertSame([], $query->filter('[arrayProperty $= bar]')->get());
     }
 
     /**
@@ -365,6 +426,35 @@ class FlowQueryTest extends UnitTestCase
     }
 
     /**
+     * @test
+     */
+    public function filterOperationFiltersNumbersCorrectly()
+    {
+        $myObject = new \stdClass();
+        $myObject->stringProperty = '1foo bar baz2';
+        $myObject2 = new \stdClass();
+        $myObject2->stringProperty = "1zing zang zong";
+        $myObject3 = new \stdClass();
+        $myObject3->stringProperty = "fing', 'fan33g', 'fong";
+        $query = $this->createFlowQuery([$myObject, $myObject2, $myObject3]);
+
+        $this->assertInstanceOf(FlowQuery::class, $query->filter('[stringProperty $= 2]'));
+        $this->assertSame([$myObject], $query->filter('[stringProperty $= 2]')->get());
+
+        $this->assertInstanceOf(FlowQuery::class, $query->filter('[stringProperty *= 33]'));
+        $this->assertSame([$myObject3], $query->filter('[stringProperty *= 33]')->get());
+
+        $this->assertInstanceOf(FlowQuery::class, $query->filter('[stringProperty *= "n33g"]'));
+        $this->assertSame([$myObject3], $query->filter('[stringProperty *= "n33g"]')->get());
+
+        $this->assertInstanceOf(FlowQuery::class, $query->filter('[stringProperty $= "2"]'));
+        $this->assertSame([$myObject], $query->filter('[stringProperty $= "2"]')->get());
+
+        $this->assertInstanceOf(FlowQuery::class, $query->filter('[stringProperty *= 2]'));
+        $this->assertSame([$myObject], $query->filter('[stringProperty *= 2]')->get());
+    }
+
+    /**
      * @return array
      */
     public function dataProviderForChildrenAndFilterAndProperty()
@@ -489,10 +579,11 @@ class FlowQueryTest extends UnitTestCase
     /**
      * @dataProvider dataProviderForErrorQueries
      * @test
-     * @expectedException \Neos\Eel\FlowQuery\FizzleException
      */
     public function errorQueriesThrowError($expression)
     {
+        $this->expectException(FizzleException::class);
+
         $x = new \stdClass();
         $x->foo = new \stdClass();
         $x->foo->foo = 'asdf';
@@ -510,7 +601,7 @@ class FlowQueryTest extends UnitTestCase
     {
         $flowQuery = $this->getAccessibleMock(FlowQuery::class, ['dummy'], [$elements]);
 
-            // Set up mock persistence manager to return dummy object identifiers
+        // Set up mock persistence manager to return dummy object identifiers
         $this->mockPersistenceManager = $this->createMock(PersistenceManagerInterface::class);
         $this->mockPersistenceManager->expects($this->any())->method('getIdentifierByObject')->will($this->returnCallback(function ($object) {
             if (isset($object->__identity)) {

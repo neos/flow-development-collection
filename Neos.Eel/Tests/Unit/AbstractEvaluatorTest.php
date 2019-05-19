@@ -13,6 +13,8 @@ namespace Neos\Eel\Tests\Unit;
 
 use Neos\Eel\Context;
 use Neos\Eel\EelEvaluatorInterface;
+use Neos\Eel\EvaluationException;
+use Neos\Eel\ParserException;
 use Neos\Flow\Tests\UnitTestCase;
 
 /**
@@ -202,20 +204,20 @@ abstract class AbstractEvaluatorTest extends UnitTestCase
         return [
             // Boolean literals work
             ['false', $c, false],
-            ['TRUE', $c, true],
+            ['true', $c, true],
             // Conjunction before Disjunction
-            ['TRUE && TRUE || FALSE && FALSE', $c, true],
-            ['TRUE && FALSE || FALSE && TRUE', $c, false],
+            ['true && true || false && false', $c, true],
+            ['true && false || false && true', $c, false],
             ['1 < 2 && 2 > 1', $c, true],
             ['!1 < 2', $c, true],
             ['!(1 < 2)', $c, false],
             // Named and symbolic operators can be mixed
-            ['TRUE && true and FALSE or false', $c, false],
+            ['true && true and false or false', $c, false],
             // Using variables and literals
-            ['trueVar || FALSE', $c, true],
-            ['trueVar && TRUE', $c, true],
-            ['falseVar || FALSE', $c, false],
-            ['falseVar && TRUE', $c, false],
+            ['trueVar || false', $c, true],
+            ['trueVar && true', $c, true],
+            ['falseVar || false', $c, false],
+            ['falseVar && true', $c, false],
             // JavaScript semantics of boolean operators
             ['null || "foo"', $c, 'foo'],
             ['0 || "foo"', $c, 'foo'],
@@ -364,6 +366,14 @@ abstract class AbstractEvaluatorTest extends UnitTestCase
             ['[[1, 2], 3, 4]', $c, [[1, 2], 3, 4]],
             // Nested expressions in array literal
             ['[[foo[bar], 2], test("a"), 4]', $c, [['Hello', 2], 'test|a|', 4]],
+            // Simple array, padded with whitespace
+            ['[ 1, 2, 3 ]', $c, [1, 2, 3]],
+            // Simple multiline array
+            ['[
+                1,
+                2,
+                3
+            ]', $c, [1, 2, 3]],
         ];
     }
 
@@ -383,6 +393,13 @@ abstract class AbstractEvaluatorTest extends UnitTestCase
             ['{"foo": "bar", \'bar\': "baz"}', $c, ['foo' => 'bar', 'bar' => 'baz']],
             // Nested object literals with unquoted key
             ['{foo: "bar", bar: {baz: "quux"}}', $c, ['foo' => 'bar', 'bar' => ['baz' => 'quux']]],
+            // Simple object literal, padded with whitespace
+            ['{ foo: "bar", bar: "baz" }', $c, ['foo' => 'bar', 'bar' => 'baz']],
+            // Simple multiline object literal
+            ['{
+                foo: "bar",
+                bar: "baz"
+            }', $c, ['foo' => 'bar', 'bar' => 'baz']],
         ];
     }
 
@@ -399,10 +416,10 @@ abstract class AbstractEvaluatorTest extends UnitTestCase
         ]);
         return [
             // Simple ternary operator expression (condition)
-            ['TRUE ? 1 : 2', $c, 1],
+            ['true ? 1 : 2', $c, 1],
             // Ternary operator using variables
-            ['trueVar ? answer : FALSE', $c, 42],
-            ['!trueVar ? FALSE : answer', $c, 42],
+            ['trueVar ? answer : false', $c, 42],
+            ['!trueVar ? false : answer', $c, 42],
             ['a < b ? 1 : 2', $c, 1],
             // Ternary operator with nested expressions
             ['a < b ? 1 + a : 2 + b', $c, 6],
@@ -555,10 +572,10 @@ abstract class AbstractEvaluatorTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Eel\EvaluationException
      */
     public function methodCallOfUndefinedFunctionThrowsException()
     {
+        $this->expectException(EvaluationException::class);
         $c = new Context([
             'arr' => [
                 'func' => function ($arg) {
@@ -571,10 +588,10 @@ abstract class AbstractEvaluatorTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Eel\EvaluationException
      */
     public function methodCallOfUnknownMethodThrowsException()
     {
+        $this->expectException(EvaluationException::class);
         $o = new \Neos\Eel\Tests\Unit\Fixtures\TestObject();
 
         $c = new Context([
@@ -656,10 +673,10 @@ abstract class AbstractEvaluatorTest extends UnitTestCase
     /**
      * @test
      * @dataProvider invalidExpressions
-     * @expectedException \Neos\Eel\ParserException
      */
     public function invalidExpressionsThrowExceptions($expression)
     {
+        $this->expectException(ParserException::class);
         $this->assertEvaluated(false, $expression, new Context());
     }
 

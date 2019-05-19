@@ -81,12 +81,12 @@ class SubProcess
     /**
      * Launch sub process
      *
-     * @return array The new sub process and its STDIN, STDOUT, STDERR pipes – or FALSE if an error occurred.
+     * @return array|bool The new sub process and its STDIN, STDOUT, STDERR pipes – or false if an error occurred.
      * @throws \RuntimeException
      */
     protected function launchSubProcess()
     {
-        $systemCommand = 'FLOW_ROOTPATH=' . FLOW_PATH_ROOT . ' FLOW_PATH_TEMPORARY_BASE=' . escapeshellarg(FLOW_PATH_TEMPORARY_BASE) . ' FLOW_CONTEXT=' . (string)$this->context . ' ' . PHP_BINARY . ' -c ' . php_ini_loaded_file() . ' ' . FLOW_PATH_FLOW . 'Scripts/flow.php' . ' --start-slave';
+        $systemCommand = 'FLOW_ROOTPATH=' . escapeshellarg(FLOW_PATH_ROOT) . ' FLOW_PATH_TEMPORARY_BASE=' . escapeshellarg(FLOW_PATH_TEMPORARY_BASE) . ' FLOW_CONTEXT=' . (string)$this->context . ' ' . PHP_BINARY . ' -c ' . php_ini_loaded_file() . ' ' . escapeshellarg(FLOW_PATH_FLOW . 'Scripts/flow.php') . ' --start-slave';
         $descriptorSpecification = [['pipe', 'r'], ['pipe', 'w'], ['pipe', 'a']];
         $this->subProcess = proc_open($systemCommand, $descriptorSpecification, $this->pipes);
         if (!is_resource($this->subProcess)) {

@@ -15,11 +15,14 @@ include_once(__DIR__ . '/../../BaseTestCase.php');
 
 use Neos\Cache\Backend\FileBackend;
 use Neos\Cache\EnvironmentConfiguration;
+use Neos\Cache\Exception;
 use Neos\Cache\Tests\BaseTestCase;
 use org\bovigo\vfs\vfsStream;
 use Neos\Cache\Frontend\AbstractFrontend;
 use Neos\Cache\Frontend\PhpFrontend;
 use Neos\Cache\Frontend\VariableFrontend;
+use PHPUnit\Framework\Error\Notice;
+use PHPUnit\Framework\Error\Warning;
 
 /**
  * Test case for the cache to file backend
@@ -28,17 +31,17 @@ class FileBackendTest extends BaseTestCase
 {
     /**
      */
-    public function setUp()
+    protected function setUp(): void
     {
         vfsStream::setup('Foo');
     }
 
     /**
      * @test
-     * @expectedException \Neos\Cache\Exception
      */
     public function setCacheThrowsExceptionOnNonWritableDirectory()
     {
+        $this->expectException(Exception::class);
         $mockCache = $this->createMock(AbstractFrontend::class);
 
         $mockEnvironmentConfiguration = $this->createEnvironmentConfigurationMock([__DIR__ . '~Testing', 'http://localhost/', PHP_MAXPATHLEN]);
@@ -115,18 +118,6 @@ class FileBackendTest extends BaseTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Cache\Exception\InvalidDataException
-     */
-    public function setThrowsExceptionIfDataIsNotAString()
-    {
-        $mockCache = $this->createMock(AbstractFrontend::class);
-        $backend = $this->prepareDefaultBackend();
-        $backend->setCache($mockCache);
-        $backend->set('SomeIdentifier', ['not a string']);
-    }
-
-    /**
-     * @test
      */
     public function setReallySavesToTheSpecifiedDirectory()
     {
@@ -195,11 +186,11 @@ class FileBackendTest extends BaseTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Cache\Exception
-     * @expectedExceptionCode 1248710426
      */
     public function setThrowsExceptionIfCachePathLengthExceedsMaximumPathLength()
     {
+        $this->expectExceptionCode(1248710426);
+        $this->expectException(Exception::class);
         $cachePath = 'vfs://Foo';
 
         $mockEnvironmentConfiguration = $this->createEnvironmentConfigurationMock([
@@ -354,8 +345,8 @@ class FileBackendTest extends BaseTestCase
         $data = 'some data' . microtime();
         $backend->set($entryIdentifier, $data);
 
-        $this->assertTrue($backend->has($entryIdentifier), 'has() did not return TRUE.');
-        $this->assertFalse($backend->has($entryIdentifier . 'Not'), 'has() did not return FALSE.');
+        $this->assertTrue($backend->has($entryIdentifier), 'has() did not return true.');
+        $this->assertFalse($backend->has($entryIdentifier . 'Not'), 'has() did not return false.');
     }
 
     /**
@@ -439,10 +430,10 @@ class FileBackendTest extends BaseTestCase
     /**
      * @test
      * @dataProvider invalidEntryIdentifiers
-     * @expectedException \InvalidArgumentException
      */
     public function setThrowsExceptionForInvalidIdentifier($identifier)
     {
+        $this->expectException(\InvalidArgumentException::class);
         $mockCache = $this->createMock(AbstractFrontend::class);
         $mockCache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
         $backend = $this->prepareDefaultBackend();
@@ -454,10 +445,10 @@ class FileBackendTest extends BaseTestCase
     /**
      * @test
      * @dataProvider invalidEntryIdentifiers
-     * @expectedException \InvalidArgumentException
      */
     public function getThrowsExceptionForInvalidIdentifier($identifier)
     {
+        $this->expectException(\InvalidArgumentException::class);
         $mockCache = $this->createMock(AbstractFrontend::class);
         $mockCache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
 
@@ -470,10 +461,10 @@ class FileBackendTest extends BaseTestCase
     /**
      * @test
      * @dataProvider invalidEntryIdentifiers
-     * @expectedException \InvalidArgumentException
      */
     public function hasThrowsExceptionForInvalidIdentifier($identifier)
     {
+        $this->expectException(\InvalidArgumentException::class);
         $backend = $this->prepareDefaultBackend(['dummy']);
 
         $backend->has($identifier);
@@ -482,10 +473,10 @@ class FileBackendTest extends BaseTestCase
     /**
      * @test
      * @dataProvider invalidEntryIdentifiers
-     * @expectedException \InvalidArgumentException
      */
     public function removeThrowsExceptionForInvalidIdentifier($identifier)
     {
+        $this->expectException(\InvalidArgumentException::class);
         $mockCache = $this->createMock(AbstractFrontend::class);
         $mockCache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
 
@@ -498,10 +489,10 @@ class FileBackendTest extends BaseTestCase
     /**
      * @test
      * @dataProvider invalidEntryIdentifiers
-     * @expectedException \InvalidArgumentException
      */
     public function requireOnceThrowsExceptionForInvalidIdentifier($identifier)
     {
+        $this->expectException(\InvalidArgumentException::class);
         $mockCache = $this->createMock(AbstractFrontend::class);
         $mockCache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
 
@@ -555,10 +546,10 @@ class FileBackendTest extends BaseTestCase
 
     /**
      * @test
-     * @expectedException \Exception
      */
     public function requireOnceDoesNotSwallowExceptionsOfTheIncludedFile()
     {
+        $this->expectException(\Exception::class);
         $mockCache = $this->createMock(AbstractFrontend::class);
         $mockCache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
 
@@ -572,10 +563,10 @@ class FileBackendTest extends BaseTestCase
 
     /**
      * @test
-     * @expectedException \PHPUnit\Framework\Error\Warning
      */
     public function requireOnceDoesNotSwallowPhpWarningsOfTheIncludedFile()
     {
+        $this->expectException(Warning::class);
         $mockCache = $this->createMock(AbstractFrontend::class);
         $mockCache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
 
@@ -589,10 +580,10 @@ class FileBackendTest extends BaseTestCase
 
     /**
      * @test
-     * @expectedException \PHPUnit\Framework\Error\Notice
      */
     public function requireOnceDoesNotSwallowPhpNoticesOfTheIncludedFile()
     {
+        $this->expectException(Notice::class);
         $mockCache = $this->createMock(AbstractFrontend::class);
         $mockCache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
 
@@ -623,7 +614,7 @@ class FileBackendTest extends BaseTestCase
         $expectedEntry = 'BackendFileTest2';
 
         $actualEntries = $backend->findIdentifiersByTag('UnitTestTag%special');
-        $this->assertInternalType('array', $actualEntries);
+        $this->assertIsArray($actualEntries);
 
         $this->assertEquals($expectedEntry, array_pop($actualEntries));
     }

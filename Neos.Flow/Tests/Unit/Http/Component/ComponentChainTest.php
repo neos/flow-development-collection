@@ -29,22 +29,20 @@ class ComponentChainTest extends UnitTestCase
      */
     protected $mockComponentContext;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->mockComponentContext = $this->getMockBuilder(Http\Component\ComponentContext::class)->disableOriginalConstructor()->getMock();
     }
 
     /**
      * @test
+     * @doesNotPerformAssertions
      */
     public function handleReturnsIfNoComponentsAreConfigured()
     {
         $options = [];
         $this->componentChain = new Http\Component\ComponentChain($options);
         $this->componentChain->handle($this->mockComponentContext);
-
-        // dummy assertion to silence PHPUnit warning
-        $this->assertTrue(true);
     }
 
     /**

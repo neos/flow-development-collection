@@ -56,7 +56,7 @@ class Dispatcher
      * @param string $signalName Name of the signal
      * @param mixed $slotClassNameOrObject Name of the class containing the slot or the instantiated class or a Closure object
      * @param string $slotMethodName Name of the method to be used as a slot. If $slotClassNameOrObject is a Closure object, this parameter is ignored
-     * @param boolean $passSignalInformation If set to TRUE, the last argument passed to the slot will be information about the signal (EmitterClassName::signalName)
+     * @param boolean $passSignalInformation If set to true, the last argument passed to the slot will be information about the signal (EmitterClassName::signalName)
      * @return void
      * @throws \InvalidArgumentException
      * @api
@@ -107,6 +107,7 @@ class Dispatcher
         }
 
         foreach ($this->slots[$signalClassName][$signalName] as $slotInformation) {
+            $finalSignalArguments = $signalArguments;
             if (isset($slotInformation['object'])) {
                 $object = $slotInformation['object'];
             } elseif (substr($slotInformation['method'], 0, 2) === '::') {
@@ -130,12 +131,12 @@ class Dispatcher
                 $object = $this->objectManager->get($slotInformation['class']);
             }
             if ($slotInformation['passSignalInformation'] === true) {
-                $signalArguments[] = $signalClassName . '::' . $signalName;
+                $finalSignalArguments[] = $signalClassName . '::' . $signalName;
             }
             if (!method_exists($object, $slotInformation['method'])) {
                 throw new Exception\InvalidSlotException('The slot method ' . get_class($object) . '->' . $slotInformation['method'] . '() does not exist.', 1245673368);
             }
-            call_user_func_array([$object, $slotInformation['method']], $signalArguments);
+            call_user_func_array([$object, $slotInformation['method']], $finalSignalArguments);
         }
     }
 

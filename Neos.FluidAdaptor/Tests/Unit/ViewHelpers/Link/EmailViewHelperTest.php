@@ -22,12 +22,11 @@ class EmailViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\View
      */
     protected $viewHelper;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
-        $this->viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\Link\EmailViewHelper::class, array('renderChildren'));
+        $this->viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\Link\EmailViewHelper::class, ['renderChildren', 'registerRenderMethodArguments']);
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
-        $this->viewHelper->initializeArguments();
     }
 
     /**
@@ -43,8 +42,8 @@ class EmailViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\View
 
         $this->viewHelper->expects($this->any())->method('renderChildren')->will($this->returnValue('some content'));
 
-        $this->viewHelper->initialize();
-        $this->viewHelper->render('some@email.tld');
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['email' => 'some@email.tld']);
+        $this->viewHelper->render();
     }
 
     /**
@@ -58,7 +57,7 @@ class EmailViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\View
 
         $this->viewHelper->expects($this->any())->method('renderChildren')->will($this->returnValue(null));
 
-        $this->viewHelper->initialize();
-        $this->viewHelper->render('some@email.tld');
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['email' => 'some@email.tld']);
+        $this->viewHelper->render();
     }
 }

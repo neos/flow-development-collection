@@ -16,6 +16,7 @@ use Neos\Flow\ObjectManagement\Configuration\Configuration;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Validation\Exception\InvalidValidationConfigurationException;
 use Neos\Flow\Validation\Validator\CollectionValidator;
 use Neos\Flow\Validation\Validator\ConjunctionValidator;
 use Neos\Flow\Validation\Validator\DateTimeValidator;
@@ -47,7 +48,7 @@ class ValidatorResolverTest extends UnitTestCase
      */
     protected $mockReflectionService;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->mockObjectManager = $this->createMock(ObjectManagerInterface::class);
         $this->mockReflectionService = $this->createMock(ReflectionService::class);
@@ -215,10 +216,10 @@ class ValidatorResolverTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Validation\Exception\InvalidValidationConfigurationException
      */
     public function createValidatorThrowsExceptionForSingletonValidatorsWithOptions()
     {
+        $this->expectException(InvalidValidationConfigurationException::class);
         $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
         $mockObjectManager->expects($this->once())->method('getScope')->with('FooType')->will($this->returnValue(Configuration::SCOPE_SINGLETON));
 
@@ -361,10 +362,10 @@ class ValidatorResolverTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Validation\Exception\InvalidValidationConfigurationException
      */
     public function buildMethodArgumentsValidatorConjunctionsThrowsExceptionIfValidationAnnotationForNonExistingArgumentExists()
     {
+        $this->expectException(InvalidValidationConfigurationException::class);
         $mockObject = new \stdClass();
 
         $methodParameters = [
@@ -491,7 +492,7 @@ class ValidatorResolverTest extends UnitTestCase
         $validatorResolver = $this->getAccessibleMock(ValidatorResolver::class, ['resolveValidatorObjectName', 'createValidator', 'getBaseValidatorConjunction']);
         $validatorResolver->_set('objectManager', $mockObjectManager);
         $validatorResolver->_set('reflectionService', $mockReflectionService);
-        $validatorResolver->expects($this->once())->method('getBaseValidatorConjunction')->will($this->returnValue($this->createMock(ValidatorInterface::class)));
+        $validatorResolver->expects($this->once())->method('getBaseValidatorConjunction')->will($this->returnValue($this->getMockBuilder(ConjunctionValidator::class)->getMock()));
 
         $validatorResolver->_call('buildBaseValidatorConjunction', $modelClassName, $modelClassName, ['Default']);
     }

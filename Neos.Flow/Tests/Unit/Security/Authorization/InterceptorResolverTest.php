@@ -22,12 +22,12 @@ class InterceptorResolverTest extends UnitTestCase
 {
     /**
      * @test
-     * @expectedException \Neos\Flow\Security\Exception\NoInterceptorFoundException
      */
     public function resolveInterceptorClassThrowsAnExceptionIfNoInterceptorIsAvailable()
     {
+        $this->expectException(Security\Exception\NoInterceptorFoundException::class);
         $mockObjectManager = $this->getMockBuilder(ObjectManager::class)->disableOriginalConstructor()->getMock();
-        $mockObjectManager->expects($this->any())->method('getCaseSensitiveObjectName')->will($this->returnValue(false));
+        $mockObjectManager->expects($this->any())->method('getClassNameByObjectName')->will($this->returnValue(false));
 
         $interceptorResolver = new Security\Authorization\InterceptorResolver($mockObjectManager);
 
@@ -52,7 +52,7 @@ class InterceptorResolverTest extends UnitTestCase
         };
 
         $mockObjectManager = $this->getMockBuilder(ObjectManager::class)->disableOriginalConstructor()->getMock();
-        $mockObjectManager->expects($this->any())->method('getCaseSensitiveObjectName')->will($this->returnCallback($getCaseSensitiveObjectNameCallback));
+        $mockObjectManager->expects($this->any())->method('getClassNameByObjectName')->will($this->returnCallback($getCaseSensitiveObjectNameCallback));
 
 
         $interceptorResolver = new Security\Authorization\InterceptorResolver($mockObjectManager);
@@ -67,7 +67,7 @@ class InterceptorResolverTest extends UnitTestCase
     public function resolveInterceptorReturnsTheCorrectInterceptorForACompleteClassName()
     {
         $mockObjectManager = $this->getMockBuilder(ObjectManager::class)->disableOriginalConstructor()->getMock();
-        $mockObjectManager->expects($this->any())->method('getCaseSensitiveObjectName')->with('ExistingInterceptorClass')->will($this->returnValue('ExistingInterceptorClass'));
+        $mockObjectManager->expects($this->any())->method('getClassNameByObjectName')->with('ExistingInterceptorClass')->will($this->returnValue('ExistingInterceptorClass'));
 
         $interceptorResolver = new Security\Authorization\InterceptorResolver($mockObjectManager);
         $interceptorClass = $interceptorResolver->resolveInterceptorClass('ExistingInterceptorClass');

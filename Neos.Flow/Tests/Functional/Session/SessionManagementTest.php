@@ -11,7 +11,6 @@ namespace Neos\Flow\Tests\Functional\Session;
  * source code.
  */
 
-use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Mvc\Routing\Route;
 use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\Flow\Session;
@@ -21,7 +20,7 @@ class SessionManagementTest extends FunctionalTestCase
     /**
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -83,13 +82,12 @@ class SessionManagementTest extends FunctionalTestCase
      * See bug #43590
      *
      * @test
+     * @doesNotPerformAssertions
      */
     public function aSessionCanBeStartedInAFunctionalTest()
     {
         $session = $this->objectManager->get(Session\SessionInterface::class);
         $session->start();
-        // dummy assertion to avoid PHPUnit warning
-        $this->assertTrue(true);
     }
 
     /**
@@ -102,9 +100,11 @@ class SessionManagementTest extends FunctionalTestCase
     public function aSessionUsedInAFunctionalTestVirtualBrowserSendsCookiesOnEachRequest()
     {
         $response = $this->browser->request('http://localhost/test/session');
-        $this->assertTrue($response->hasCookie('Flow_Testing_Session'), 'Available Cookies are: ' . implode(', ', array_keys($response->getCookies())));
+        $this->assertTrue($response->hasHeader('Set-Cookie'), 'Available Cookies are: ' . implode(', ', array_keys($response->getHeader('Set-Cookie'))));
+        $this->assertStringContainsString('Flow_Testing_Session', implode(',', $response->getHeader('Set-Cookie')));
 
         $response = $this->browser->request('http://localhost/test/session');
-        $this->assertTrue($response->hasCookie('Flow_Testing_Session'), 'Available Cookies are: ' . implode(', ', array_keys($response->getCookies())));
+        $this->assertTrue($response->hasHeader('Set-Cookie'), 'Available Cookies are: ' . implode(', ', array_keys($response->getHeader('Set-Cookie'))));
+        $this->assertStringContainsString('Flow_Testing_Session', implode(',', $response->getHeader('Set-Cookie')));
     }
 }

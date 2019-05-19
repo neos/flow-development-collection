@@ -12,8 +12,8 @@ namespace Neos\Flow\ResourceManagement\Storage;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Package\PackageInterface;
-use Neos\Flow\Package\PackageManagerInterface;
+use Neos\Flow\Package\FlowPackageInterface;
+use Neos\Flow\Package\PackageManager;
 use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\Utility\Files;
 use Neos\Utility\Unicode\Functions as UnicodeFunctions;
@@ -25,7 +25,7 @@ class PackageStorage extends FileSystemStorage
 {
     /**
      * @Flow\Inject
-     * @var PackageManagerInterface
+     * @var PackageManager
      */
     protected $packageManager;
 
@@ -68,10 +68,8 @@ class PackageStorage extends FileSystemStorage
             $directoryPattern = '*';
         }
         // $packageKeyPattern can be used in a future implementation to filter by package key
-
-        $packages = $this->packageManager->getActivePackages();
+        $packages = $this->packageManager->getFlowPackages();
         foreach ($packages as $packageKey => $package) {
-            /** @var PackageInterface $package */
             if ($directoryPattern === '*') {
                 $directories[$packageKey][] = $package->getPackagePath();
             } else {
@@ -83,20 +81,7 @@ class PackageStorage extends FileSystemStorage
         foreach ($directories as $packageKey => $packageDirectories) {
             foreach ($packageDirectories as $directoryPath) {
                 foreach (Files::getRecursiveDirectoryGenerator($directoryPath) as $resourcePathAndFilename) {
-                    $pathInfo = UnicodeFunctions::pathinfo($resourcePathAndFilename);
-
-                    $object = new StorageObject();
-                    $object->setFilename($pathInfo['basename']);
-                    $object->setSha1(sha1_file($resourcePathAndFilename));
-                    $object->setMd5(md5_file($resourcePathAndFilename));
-                    $object->setFileSize(filesize($resourcePathAndFilename));
-                    if (isset($pathInfo['dirname'])) {
-                        list(, $path) = explode('/', str_replace($packages[$packageKey]->getResourcesPath(), '', $pathInfo['dirname']), 2);
-                        $object->setRelativePublicationPath($packageKey . '/' . $path . '/');
-                    }
-                    $object->setStream(function () use ($resourcePathAndFilename) {
-                        return fopen($resourcePathAndFilename, 'r');
-                    });
+                    $object = $this->createStorageObject($resourcePathAndFilename, $packages[$packageKey]);
                     yield $object;
                     if (is_callable($callback)) {
                         call_user_func($callback, $iteration, $object);
@@ -108,10 +93,55 @@ class PackageStorage extends FileSystemStorage
     }
 
     /**
-     * Because we cannot store persistent resources in a PackageStorage, this method always returns FALSE.
+     * Create a storage object for the given static resource path.
+     *
+     * @param string $resourcePathAndFilename
+     * @param FlowPackageInterface $resourcePackage
+     * @return StorageObject
+     */
+    protected function createStorageObject($resourcePathAndFilename, FlowPackageInterface $resourcePackage)
+    {
+        $pathInfo = UnicodeFunctions::pathinfo($resourcePathAndFilename);
+
+        $object = new StorageObject();
+        $object->setFilename($pathInfo['basename']);
+        $object->setSha1(sha1_file($resourcePathAndFilename));
+        $object->setMd5(md5_file($resourcePathAndFilename));
+        $object->setFileSize(filesize($resourcePathAndFilename));
+        if (isset($pathInfo['dirname'])) {
+            $object->setRelativePublicationPath($this->prepareRelativePublicationPath($pathInfo['dirname'], $resourcePackage->getPackageKey(), $resourcePackage->getResourcesPath()));
+        }
+        $object->setStream(function () use ($resourcePathAndFilename) {
+            return fopen($resourcePathAndFilename, 'r');
+        });
+
+        return $object;
+    }
+
+    /**
+     * Prepares a relative publication path for a package resource.
+     *
+     * @param string $objectPath
+     * @param string $packageKey
+     * @param string $packageResourcePath
+     * @return string
+     */
+    protected function prepareRelativePublicationPath($objectPath, $packageKey, $packageResourcePath)
+    {
+        $relativePathParts = explode('/', str_replace($packageResourcePath, '', $objectPath), 2);
+        $relativePath = '';
+        if (isset($relativePathParts[1])) {
+            $relativePath = $relativePathParts[1];
+        }
+
+        return Files::concatenatePaths([$packageKey, $relativePath]) . '/';
+    }
+
+    /**
+     * Because we cannot store persistent resources in a PackageStorage, this method always returns false.
      *
      * @param PersistentResource $resource The resource stored in this storage
-     * @return resource | boolean The resource stream or FALSE if the stream could not be obtained
+     * @return resource | boolean The resource stream or false if the stream could not be obtained
      */
     public function getStreamByResource(PersistentResource $resource)
     {
@@ -127,9 +157,7 @@ class PackageStorage extends FileSystemStorage
     public function getPublicResourcePaths()
     {
         $paths = [];
-        $packages = $this->packageManager->getActivePackages();
-        foreach ($packages as $packageKey => $package) {
-            /** @var PackageInterface $package */
+        foreach ($this->packageManager->getFlowPackages() as $packageKey => $package) {
             $publicResourcesPath = Files::concatenatePaths([$package->getResourcesPath(), 'Public']);
             if (is_dir($publicResourcesPath)) {
                 $paths[$packageKey] = $publicResourcesPath;

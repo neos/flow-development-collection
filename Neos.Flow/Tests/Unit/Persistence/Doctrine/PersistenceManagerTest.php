@@ -12,12 +12,15 @@ namespace Neos\Flow\Tests\Unit\Persistence\Doctrine;
  */
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\DBALException;
+use Doctrine\DBAL\Exception\ConnectionException;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\UnitOfWork;
-use Neos\Flow\Log\SystemLoggerInterface;
+use Neos\Flow\Log\ThrowableStorageInterface;
 use Neos\Flow\Persistence\Doctrine\PersistenceManager;
+use Neos\Flow\Persistence\Exception;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Flow\Error as FlowError;
+use Psr\Log\LoggerInterface;
 
 /**
  * Testcase for the doctrine persistence manager
@@ -45,26 +48,35 @@ class PersistenceManagerTest extends UnitTestCase
     protected $mockConnection;
 
     /**
-     * @var SystemLoggerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $mockSystemLogger;
 
-    public function setUp()
+    /**
+     * @var \PHPUnit_Framework_MockObject_InvocationMocker
+     */
+    protected $mockPing;
+
+    protected function setUp(): void
     {
         $this->persistenceManager = $this->getMockBuilder(\Neos\Flow\Persistence\Doctrine\PersistenceManager::class)->setMethods(['emitAllObjectsPersisted'])->getMock();
 
         $this->mockEntityManager = $this->getMockBuilder(\Doctrine\ORM\EntityManager::class)->disableOriginalConstructor()->getMock();
-        $this->mockEntityManager->expects($this->any())->method('isOpen')->will($this->returnValue(true));
+        $this->mockEntityManager->expects($this->any())->method('isOpen')->willReturn(true);
         $this->inject($this->persistenceManager, 'entityManager', $this->mockEntityManager);
 
         $this->mockUnitOfWork = $this->getMockBuilder(\Doctrine\ORM\UnitOfWork::class)->disableOriginalConstructor()->getMock();
-        $this->mockEntityManager->expects($this->any())->method('getUnitOfWork')->will($this->returnValue($this->mockUnitOfWork));
+        $this->mockEntityManager->expects($this->any())->method('getUnitOfWork')->willReturn($this->mockUnitOfWork);
 
         $this->mockConnection = $this->getMockBuilder(\Doctrine\DBAL\Connection::class)->disableOriginalConstructor()->getMock();
-        $this->mockEntityManager->expects($this->any())->method('getConnection')->will($this->returnValue($this->mockConnection));
+        $this->mockPing = $this->mockConnection->expects($this->atMost(1))->method('ping');
+        $this->mockPing->willReturn(true);
+        $this->mockEntityManager->expects($this->any())->method('getConnection')->willReturn($this->mockConnection);
 
-        $this->mockSystemLogger = $this->createMock(\Neos\Flow\Log\SystemLoggerInterface::class);
-        $this->inject($this->persistenceManager, 'systemLogger', $this->mockSystemLogger);
+        $this->mockSystemLogger = $this->createMock(LoggerInterface::class);
+        $this->persistenceManager->injectLogger($this->mockSystemLogger);
+
+        $this->inject($this->persistenceManager, 'throwableStorage', $this->getMockBuilder(ThrowableStorageInterface::class)->getMock());
     }
 
     /**
@@ -76,26 +88,26 @@ class PersistenceManagerTest extends UnitTestCase
             'Persistence_Object_Identifier' => null
         ];
 
-        $this->mockEntityManager->expects($this->any())->method('contains')->with($entity)->will($this->returnValue(true));
-        $this->mockUnitOfWork->expects($this->any())->method('getEntityIdentifier')->with($entity)->will($this->returnValue(['SomeIdentifier']));
+        $this->mockEntityManager->expects($this->any())->method('contains')->with($entity)->willReturn(true);
+        $this->mockUnitOfWork->expects($this->any())->method('getEntityIdentifier')->with($entity)->willReturn(['SomeIdentifier']);
 
         $this->assertEquals('SomeIdentifier', $this->persistenceManager->getIdentifierByObject($entity));
     }
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Persistence\Exception
-     * @expectedExceptionMessageRegExp /^Detected modified or new objects/
      */
     public function persistAllThrowsExceptionIfTryingToPersistNonWhitelistedObjectsAndOnlyWhitelistedObjectsFlagIsTrue()
     {
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessageRegExp('/^Detected modified or new objects/');
         $mockObject = new \stdClass();
         $scheduledEntityUpdates = [spl_object_hash($mockObject) => $mockObject];
         $scheduledEntityDeletes = [];
         $scheduledEntityInsertions = [];
-        $this->mockUnitOfWork->expects($this->any())->method('getScheduledEntityUpdates')->will($this->returnValue($scheduledEntityUpdates));
-        $this->mockUnitOfWork->expects($this->any())->method('getScheduledEntityDeletions')->will($this->returnValue($scheduledEntityDeletes));
-        $this->mockUnitOfWork->expects($this->any())->method('getScheduledEntityInsertions')->will($this->returnValue($scheduledEntityInsertions));
+        $this->mockUnitOfWork->expects($this->any())->method('getScheduledEntityUpdates')->willReturn($scheduledEntityUpdates);
+        $this->mockUnitOfWork->expects($this->any())->method('getScheduledEntityDeletions')->willReturn($scheduledEntityDeletes);
+        $this->mockUnitOfWork->expects($this->any())->method('getScheduledEntityInsertions')->willReturn($scheduledEntityInsertions);
 
         $this->mockEntityManager->expects($this->never())->method('flush');
 
@@ -111,9 +123,9 @@ class PersistenceManagerTest extends UnitTestCase
         $scheduledEntityUpdates = [spl_object_hash($mockObject) => $mockObject];
         $scheduledEntityDeletes = [];
         $scheduledEntityInsertions = [];
-        $this->mockUnitOfWork->expects($this->any())->method('getScheduledEntityUpdates')->will($this->returnValue($scheduledEntityUpdates));
-        $this->mockUnitOfWork->expects($this->any())->method('getScheduledEntityDeletions')->will($this->returnValue($scheduledEntityDeletes));
-        $this->mockUnitOfWork->expects($this->any())->method('getScheduledEntityInsertions')->will($this->returnValue($scheduledEntityInsertions));
+        $this->mockUnitOfWork->expects($this->any())->method('getScheduledEntityUpdates')->willReturn($scheduledEntityUpdates);
+        $this->mockUnitOfWork->expects($this->any())->method('getScheduledEntityDeletions')->willReturn($scheduledEntityDeletes);
+        $this->mockUnitOfWork->expects($this->any())->method('getScheduledEntityInsertions')->willReturn($scheduledEntityInsertions);
 
         $this->mockEntityManager->expects($this->once())->method('flush');
 
@@ -127,7 +139,7 @@ class PersistenceManagerTest extends UnitTestCase
     public function persistAllAbortsIfConnectionIsClosed()
     {
         $mockEntityManager = $this->getMockBuilder(\Doctrine\ORM\EntityManager::class)->disableOriginalConstructor()->getMock();
-        $mockEntityManager->expects($this->atLeastOnce())->method('isOpen')->will($this->returnValue(false));
+        $mockEntityManager->expects($this->atLeastOnce())->method('isOpen')->willReturn(false);
         $this->inject($this->persistenceManager, 'entityManager', $mockEntityManager);
 
         $mockEntityManager->expects($this->never())->method('flush');
@@ -148,9 +160,11 @@ class PersistenceManagerTest extends UnitTestCase
     /**
      * @test
      */
-    public function persistAllReconnectsConnectionOnFailure()
+    public function persistAllReconnectsConnectionWhenConnectionLost()
     {
-        $this->mockEntityManager->expects($this->exactly(2))->method('flush')->willReturnOnConsecutiveCalls($this->throwException(new \Doctrine\DBAL\DBALException('Dummy connection error')), null);
+        $this->mockPing->willReturn(false);
+        $this->mockEntityManager->expects($this->exactly(1))->method('flush')->willReturn(null);
+
         $this->mockConnection->expects($this->at(0))->method('close');
         $this->mockConnection->expects($this->at(1))->method('connect');
 
@@ -159,18 +173,24 @@ class PersistenceManagerTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Doctrine\DBAL\DBALException
      */
     public function persistAllThrowsOriginalExceptionWhenEntityManagerGotClosed()
     {
-        $mockEntityManager = $this->getMockBuilder(\Doctrine\ORM\EntityManager::class)->disableOriginalConstructor()->getMock();
-        $mockEntityManager->expects($this->exactly(2))->method('isOpen')->willReturnOnConsecutiveCalls(true, false);
-        $mockEntityManager->expects($this->exactly(1))->method('flush')->willThrowException(new \Doctrine\DBAL\DBALException('Dummy error that closed the entity manager'));
-        $this->inject($this->persistenceManager, 'entityManager', $mockEntityManager);
+        $this->expectException(DBALException::class);
+        $this->mockEntityManager->expects($this->exactly(1))->method('flush')->willThrowException(new \Doctrine\DBAL\DBALException('Dummy error that closed the entity manager'));
 
         $this->mockConnection->expects($this->never())->method('close');
         $this->mockConnection->expects($this->never())->method('connect');
 
+        $this->persistenceManager->persistAll();
+    }
+
+    /**
+     * @test
+     */
+    public function persistAllCatchesConnectionExceptions()
+    {
+        $this->mockPing->willThrowException($this->getMockBuilder(ConnectionException::class)->disableOriginalConstructor()->getMock());
         $this->persistenceManager->persistAll();
     }
 }

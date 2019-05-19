@@ -126,10 +126,10 @@ class ResponseTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
      */
     public function createFromRawThrowsExceptionOnFirstLine()
     {
+        $this->expectException(\InvalidArgumentException::class);
         Response::createFromRaw('No valid response');
     }
 
@@ -177,10 +177,10 @@ class ResponseTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
      */
     public function setStatusThrowsExceptionOnNonNumericCode()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $response = new Response();
         $response->setStatus('400');
     }

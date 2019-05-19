@@ -27,7 +27,7 @@ class LockTest extends \PHPUnit\Framework\TestCase
      */
     protected $lockFileName;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         vfsStream::setup('Lock');
 
@@ -37,14 +37,14 @@ class LockTest extends \PHPUnit\Framework\TestCase
         Lock::setLockManager($lockManager);
     }
 
-    public function setUp()
+    protected function setUp(): void
     {
         $lock = new Lock('testLock');
         $this->lockFileName = $lock->getLockStrategy()->getLockFileName();
         $lock->release();
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         Lock::setLockManager(null);
     }
@@ -71,11 +71,11 @@ class LockTest extends \PHPUnit\Framework\TestCase
     public function writeLockLocksExclusively()
     {
         $lock = new Lock('testLock');
-        $this->assertExclusivelyLocked($lock);
+        $this->assertExclusivelyLocked('Failed to exclusively lock file.');
         $this->assertTrue($lock->release());
 
         $lock = new Lock('testLock');
-        $this->assertExclusivelyLocked($lock);
+        $this->assertExclusivelyLocked('Failed to exclusively lock file.');
         $this->assertTrue($lock->release());
     }
 
@@ -94,7 +94,7 @@ class LockTest extends \PHPUnit\Framework\TestCase
     /**
      * @param string $message
      */
-    protected function assertExclusivelyLocked($message = '')
+    protected function assertExclusivelyLocked(string $message = '')
     {
         $lockFilePointer = fopen($this->lockFileName, 'w');
         $this->assertFalse(flock($lockFilePointer, LOCK_EX | LOCK_NB), $message);

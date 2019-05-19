@@ -1,0 +1,25 @@
+#
+# Object configuration for the Flow Framework
+#
+
+Neos:
+  Flow:
+    object:
+      # If enabled, the Object Manager will - additionally to the class files found
+      # in the "Classes" directory - also register class files found in the directory
+      # "Tests/Functional/". Enabling this feature obviously only makes sense in a
+      # testing context.
+      registerFunctionalTestClasses: false
+
+      # Explicitly include classes to object management (Reflection and Configuration building).
+      # Sequence of package keys with an array of regular expressions.
+      # The package key must match the key found in PackageStates.php regarding case.
+      #
+      # Each regular expression will be tested against the list of fully qualified
+      # class names in the package and classes will be included if matching.
+      #
+      # For Flow packages (type = "neos-*") this setting is not required as they're
+      # reflected by default. You can however exclude specific (or all) classes from Flow packages
+      # by specifying corresponding regular expressions that don't match classes to exclude.
+      #
+      includeClasses: []

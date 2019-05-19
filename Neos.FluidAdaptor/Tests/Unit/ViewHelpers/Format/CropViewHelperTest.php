@@ -25,12 +25,11 @@ class CropViewHelperTest extends ViewHelperBaseTestcase
      */
     protected $viewHelper;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
-        $this->viewHelper = $this->getMockBuilder(\Neos\FluidAdaptor\ViewHelpers\Format\CropViewHelper::class)->setMethods(array('renderChildren'))->getMock();
+        $this->viewHelper = $this->getMockBuilder(\Neos\FluidAdaptor\ViewHelpers\Format\CropViewHelper::class)->setMethods(['renderChildren', 'registerRenderMethodArguments'])->getMock();
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
-        $this->viewHelper->initializeArguments();
     }
 
     /**
@@ -39,7 +38,8 @@ class CropViewHelperTest extends ViewHelperBaseTestcase
     public function viewHelperDoesNotCropTextIfMaxCharactersIsLargerThanNumberOfCharacters()
     {
         $this->viewHelper->expects($this->once())->method('renderChildren')->will($this->returnValue('some text'));
-        $actualResult = $this->viewHelper->render(50);
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['maxCharacters' => 50]);
+        $actualResult = $this->viewHelper->render();
         $this->assertEquals('some text', $actualResult);
     }
 
@@ -49,7 +49,8 @@ class CropViewHelperTest extends ViewHelperBaseTestcase
     public function viewHelperAppendsEllipsisToTruncatedText()
     {
         $this->viewHelper->expects($this->once())->method('renderChildren')->will($this->returnValue('some text'));
-        $actualResult = $this->viewHelper->render(5);
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['maxCharacters' => 5]);
+        $actualResult = $this->viewHelper->render();
         $this->assertEquals('some ...', $actualResult);
     }
 
@@ -59,7 +60,8 @@ class CropViewHelperTest extends ViewHelperBaseTestcase
     public function viewHelperAppendsCustomSuffix()
     {
         $this->viewHelper->expects($this->once())->method('renderChildren')->will($this->returnValue('some text'));
-        $actualResult = $this->viewHelper->render(3, '[custom suffix]');
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['maxCharacters' => 3, 'append' => '[custom suffix]']);
+        $actualResult = $this->viewHelper->render();
         $this->assertEquals('som[custom suffix]', $actualResult);
     }
 
@@ -69,7 +71,8 @@ class CropViewHelperTest extends ViewHelperBaseTestcase
     public function viewHelperAppendsSuffixEvenIfResultingTextIsLongerThanMaxCharacters()
     {
         $this->viewHelper->expects($this->once())->method('renderChildren')->will($this->returnValue('some text'));
-        $actualResult = $this->viewHelper->render(8);
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['maxCharacters' => 8]);
+        $actualResult = $this->viewHelper->render();
         $this->assertEquals('some tex...', $actualResult);
     }
 
@@ -79,7 +82,8 @@ class CropViewHelperTest extends ViewHelperBaseTestcase
     public function viewHelperUsesProvidedValueInsteadOfRenderingChildren()
     {
         $this->viewHelper->expects($this->never())->method('renderChildren');
-        $actualResult = $this->viewHelper->render(8, '...', 'some text');
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['maxCharacters' => 8, 'append' => '...', 'value' => 'some text']);
+        $actualResult = $this->viewHelper->render();
         $this->assertEquals('some tex...', $actualResult);
     }
 
@@ -89,7 +93,8 @@ class CropViewHelperTest extends ViewHelperBaseTestcase
     public function viewHelperDoesNotFallbackToRenderChildNodesIfEmptyValueArgumentIsProvided()
     {
         $this->viewHelper->expects($this->never())->method('renderChildren');
-        $actualResult = $this->viewHelper->render(8, '...', '');
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['maxCharacters' => 8, 'append' => '...', 'value' => '']);
+        $actualResult = $this->viewHelper->render();
         $this->assertEquals('', $actualResult);
     }
 
@@ -99,7 +104,8 @@ class CropViewHelperTest extends ViewHelperBaseTestcase
     public function viewHelperHandlesMultiByteValuesCorrectly()
     {
         $this->viewHelper->expects($this->never())->method('renderChildren');
-        $actualResult = $this->viewHelper->render(3, '...', 'Äßütest');
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['maxCharacters' => 3, 'append' => '...', 'value' => 'Äßütest']);
+        $actualResult = $this->viewHelper->render();
         $this->assertEquals('Äßü...', $actualResult);
     }
 }

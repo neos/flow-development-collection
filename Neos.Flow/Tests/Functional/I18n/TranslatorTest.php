@@ -28,7 +28,7 @@ class TranslatorTest extends FunctionalTestCase
     /**
      * Initialize dependencies
      */
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->translator = $this->objectManager->get(I18n\Translator::class);
@@ -75,6 +75,27 @@ class TranslatorTest extends FunctionalTestCase
     public function simpleTranslationByLabelWorks($label, $locale, $translation)
     {
         $result = $this->translator->translateByOriginalLabel($label, [], null, $locale, 'Main', 'Neos.Flow');
+        $this->assertEquals($translation, $result);
+    }
+
+    /**
+     * @return array
+     */
+    public function labelAndArgumentsForTranslation()
+    {
+        return [
+            ['The given value is expected to be {0}.', ['foo'], 'The given value is expected to be foo.'],
+            ['Untranslated label value is expected to be {0}.', ['foo'], 'Untranslated label value is expected to be foo.']
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider labelAndArgumentsForTranslation
+     */
+    public function translationByLabelUsesPlaceholders($label, $arguments, $translation)
+    {
+        $result = $this->translator->translateByOriginalLabel($label, $arguments, null, new I18n\Locale('en'), 'ValidationErrors', 'Neos.Flow');
         $this->assertEquals($translation, $result);
     }
 

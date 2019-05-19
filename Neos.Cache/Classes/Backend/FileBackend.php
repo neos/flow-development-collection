@@ -12,7 +12,6 @@ namespace Neos\Cache\Backend;
  */
 
 use Neos\Cache\Exception;
-use Neos\Cache\Exception\InvalidDataException;
 use Neos\Cache\Frontend\FrontendInterface;
 use Neos\Utility\Files;
 use Neos\Utility\OpcodeCacheHelper;
@@ -100,7 +99,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
      *
      * @return boolean
      */
-    public function isFrozen()
+    public function isFrozen(): bool
     {
         return $this->frozen;
     }
@@ -141,16 +140,12 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
      * @param integer $lifetime Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited lifetime.
      * @return void
      * @throws \RuntimeException
-     * @throws InvalidDataException
      * @throws Exception if the directory does not exist or is not writable or exceeds the maximum allowed path length, or if no cache frontend has been set.
      * @throws \InvalidArgumentException
      * @api
      */
-    public function set($entryIdentifier, $data, array $tags = [], $lifetime = null)
+    public function set(string $entryIdentifier, string $data, array $tags = [], int $lifetime = null)
     {
-        if (!is_string($data)) {
-            throw new InvalidDataException('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1204481674);
-        }
         if ($entryIdentifier !== basename($entryIdentifier)) {
             throw new \InvalidArgumentException('The specified entry identifier must not contain a path segment.', 1282073032);
         }
@@ -182,11 +177,11 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
      * Loads data from a cache file.
      *
      * @param string $entryIdentifier An identifier which describes the cache entry to load
-     * @return mixed The cache entry's content as a string or FALSE if the cache entry could not be loaded
+     * @return mixed The cache entry's content as a string or false if the cache entry could not be loaded
      * @throws \InvalidArgumentException
      * @api
      */
-    public function get($entryIdentifier)
+    public function get(string $entryIdentifier)
     {
         return $this->internalGet($entryIdentifier);
     }
@@ -195,11 +190,11 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
      * Checks if a cache entry with the specified identifier exists.
      *
      * @param string $entryIdentifier
-     * @return boolean TRUE if such an entry exists, FALSE if not
+     * @return boolean true if such an entry exists, false if not
      * @throws \InvalidArgumentException
      * @api
      */
-    public function has($entryIdentifier)
+    public function has(string $entryIdentifier): bool
     {
         if ($this->frozen === true) {
             return isset($this->cacheEntryIdentifiers[$entryIdentifier]);
@@ -215,12 +210,12 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
      * Usually this only affects one entry.
      *
      * @param string $entryIdentifier Specifies the cache entry to remove
-     * @return boolean TRUE if (at least) an entry could be removed or FALSE if no entry was found
+     * @return boolean true if (at least) an entry could be removed or false if no entry was found
      * @throws \RuntimeException
      * @throws \InvalidArgumentException
      * @api
      */
-    public function remove($entryIdentifier)
+    public function remove(string $entryIdentifier): bool
     {
         if ($this->frozen === true) {
             throw new \RuntimeException(sprintf('Cannot remove cache entry because the backend of cache "%s" is frozen.', $this->cacheIdentifier), 1323344193);
@@ -237,7 +232,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
      * @return array An array with identifiers of all matching entries. An empty array if no entries matched
      * @api
      */
-    public function findIdentifiersByTag($searchedTag)
+    public function findIdentifiersByTag(string $searchedTag): array
     {
         $entryIdentifiers = [];
         $now = $_SERVER['REQUEST_TIME'];
@@ -269,10 +264,11 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
     }
 
     /**
-     * Removes all cache entries of this cache and sets the frozen flag to FALSE.
+     * Removes all cache entries of this cache and sets the frozen flag to false.
      *
      * @return void
      * @api
+     * @throws \Neos\Utility\Exception\FilesException
      */
     public function flush()
     {
@@ -290,7 +286,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
      * @return integer The number of entries which have been affected by this flush
      * @api
      */
-    public function flushByTag($tag)
+    public function flushByTag(string $tag): int
     {
         $identifiers = $this->findIdentifiersByTag($tag);
         if (count($identifiers) === 0) {
@@ -312,7 +308,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
      * @return boolean
      * @api
      */
-    protected function isCacheFileExpired($cacheEntryPathAndFilename, $acquireLock = true)
+    protected function isCacheFileExpired(string $cacheEntryPathAndFilename, bool $acquireLock = true): bool
     {
         if (is_file($cacheEntryPathAndFilename) === false) {
             return true;
@@ -357,10 +353,9 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
      * is due to some error or crash.
      *
      * @param string $entryIdentifier The cache entry identifier
-     * @return mixed The filenames (including path) as an array if one or more entries could be found, otherwise FALSE
-     * @throws Exception if no frontend has been set
+     * @return mixed The filenames (including path) as an array if one or more entries could be found, otherwise false
      */
-    protected function findCacheFilesByIdentifier($entryIdentifier)
+    protected function findCacheFilesByIdentifier(string $entryIdentifier)
     {
         $pattern = $this->cacheDirectory . $entryIdentifier;
         $filesFound = glob($pattern);
@@ -378,7 +373,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
      * @return mixed Potential return value from the include operation
      * @api
      */
-    public function requireOnce($entryIdentifier)
+    public function requireOnce(string $entryIdentifier)
     {
         if ($this->frozen === true) {
             if (isset($this->cacheEntryIdentifiers[$entryIdentifier])) {
@@ -402,7 +397,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
      * @return bool|string
      * @throws \InvalidArgumentException
      */
-    protected function internalGet($entryIdentifier, $acquireLock = true)
+    protected function internalGet(string $entryIdentifier, bool $acquireLock = true)
     {
         if ($entryIdentifier !== basename($entryIdentifier)) {
             throw new \InvalidArgumentException('The specified entry identifier must not contain a path segment.', 1282073033);

@@ -47,7 +47,7 @@ class CurlEngine implements RequestEngineInterface
      * Sends the given HTTP request
      *
      * @param Http\Request $request
-     * @return Http\Response The response or FALSE
+     * @return Http\Response The response or false
      * @api
      * @throws Http\Exception
      * @throws CurlEngineException
@@ -137,7 +137,13 @@ class CurlEngine implements RequestEngineInterface
             curl_setopt($curlHandle, CURLOPT_PORT, $requestUri->getPort());
         }
 
-        // CURLOPT_COOKIE
+        if (count($request->getCookies()) > 0) {
+            $cookies = [];
+            foreach ($request->getCookies() as $cookie) {
+                $cookies[] = $cookie->getName() . '=' . $cookie->getValue();
+            }
+            curl_setopt($curlHandle, CURLOPT_COOKIE, implode('; ', $cookies));
+        }
 
         $curlResult = curl_exec($curlHandle);
         if ($curlResult === false) {
@@ -147,10 +153,14 @@ class CurlEngine implements RequestEngineInterface
         }
         curl_close($curlHandle);
 
-        $response = Http\Response::createFromRaw($curlResult);
-        if ($response->getStatusCode() === 100) {
-            $response = Http\Response::createFromRaw($response->getContent(), $response);
+        $response = Http\Helper\ResponseInformationHelper::createFromRaw($curlResult);
+        try {
+            while (substr($response->getContent(), 0, 5) === 'HTTP/' || $response->getStatusCode() === 100) {
+                $response = Http\Response::createFromRaw($response->getContent(), $response);
+            }
+        } catch (\InvalidArgumentException $e) {
         }
+
         return $response;
     }
 }

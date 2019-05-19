@@ -59,11 +59,8 @@ class Response extends \Neos\Flow\Mvc\Response
      * @throws \InvalidArgumentException
      * @api
      */
-    public function setExitCode($exitCode)
+    public function setExitCode(int $exitCode)
     {
-        if (!is_integer($exitCode)) {
-            throw new \InvalidArgumentException(sprintf('Tried to set invalid exit code. The value must be integer, %s given.', gettype($exitCode)), 1312222064);
-        }
         $this->exitCode = $exitCode;
     }
 
@@ -73,7 +70,7 @@ class Response extends \Neos\Flow\Mvc\Response
      * @return integer
      * @api
      */
-    public function getExitCode()
+    public function getExitCode(): int
     {
         return $this->exitCode;
     }
@@ -81,10 +78,10 @@ class Response extends \Neos\Flow\Mvc\Response
     /**
      * Sets color support / styled output to yes, no or auto detection
      *
-     * @param boolean $colorSupport TRUE, FALSE or NULL (= autodetection)
+     * @param boolean $colorSupport true, false or NULL (= autodetection)
      * @return void
      */
-    public function setColorSupport($colorSupport)
+    public function setColorSupport(bool $colorSupport)
     {
         $this->colorSupport = $colorSupport;
     }
@@ -95,9 +92,9 @@ class Response extends \Neos\Flow\Mvc\Response
      * Regardless of this setting content will only be styled with output format
      * set to "styled".
      *
-     * @return boolean TRUE if the terminal support ANSI colors, otherwise FALSE
+     * @return boolean true if the terminal support ANSI colors, otherwise false
      */
-    public function hasColorSupport()
+    public function hasColorSupport(): bool
     {
         if ($this->colorSupport !== null) {
             return $this->colorSupport;
@@ -115,7 +112,7 @@ class Response extends \Neos\Flow\Mvc\Response
      * @param integer $outputFormat One of the OUTPUTFORMAT_* constants
      * @return void
      */
-    public function setOutputFormat($outputFormat)
+    public function setOutputFormat(int $outputFormat)
     {
         $this->outputFormat = $outputFormat;
     }
@@ -125,7 +122,7 @@ class Response extends \Neos\Flow\Mvc\Response
      *
      * @return integer One of the OUTPUTFORMAT_* constants
      */
-    public function getOutputFormat()
+    public function getOutputFormat(): int
     {
         return $this->outputFormat;
     }

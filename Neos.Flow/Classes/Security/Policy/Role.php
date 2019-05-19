@@ -19,6 +19,8 @@ use Neos\Flow\Security\Authorization\Privilege\PrivilegeInterface;
  */
 class Role
 {
+    const ROLE_IDENTIFIER_PATTERN = '/^(\w+(?:\.\w+)*)\:(\w+)$/';   // Vendor(.Package)?:RoleName
+
     /**
      * The identifier of this role
      *
@@ -68,9 +70,7 @@ class Role
         if (!is_string($identifier)) {
             throw new \InvalidArgumentException('The role identifier must be a string, "' . gettype($identifier) . '" given. Please check the code or policy configuration creating or defining this role.', 1296509556);
         }
-        if (preg_match('/^[\w]+((\.[\w]+)*\:[\w]+)?$/', $identifier) !== 1) {
-        }
-        if (preg_match('/^([\w]+(?:\.[\w]+)*)\:([\w]+)+$/', $identifier, $matches) !== 1) {
+        if (preg_match(self::ROLE_IDENTIFIER_PATTERN, $identifier, $matches) !== 1) {
             throw new \InvalidArgumentException('The role identifier must follow the pattern "Vendor.Package:RoleName", but "' . $identifier . '" was given. Please check the code or policy configuration creating or defining this role.', 1365446549);
         }
         $this->identifier = $identifier;
@@ -159,23 +159,12 @@ class Role
      */
     public function getAllParentRoles()
     {
-        $result = [];
+        $reducer = function (array $result, Role $role) {
+            $result[$role->getIdentifier()] = $role;
+            return array_merge($result, $role->getAllParentRoles());
+        };
 
-        foreach ($this->parentRoles as $parentRoleIdentifier => $currentParentRole) {
-            if (isset($result[$parentRoleIdentifier])) {
-                continue;
-            }
-            $result[$parentRoleIdentifier] = $currentParentRole;
-
-            $currentGrandParentRoles = $currentParentRole->getAllParentRoles();
-            foreach ($currentGrandParentRoles as $currentGrandParentRoleIdentifier => $currentGrandParentRole) {
-                if (!isset($result[$currentGrandParentRoleIdentifier])) {
-                    $result[$currentGrandParentRoleIdentifier] = $currentGrandParentRole;
-                }
-            }
-        }
-
-        return $result;
+        return array_reduce($this->parentRoles, $reducer, []);
     }
 
     /**
@@ -193,7 +182,7 @@ class Role
     }
 
     /**
-     * Returns TRUE if the given role is a directly assigned parent of this role.
+     * Returns true if the given role is a directly assigned parent of this role.
      *
      * @param Role $role
      * @return boolean

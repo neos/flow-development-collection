@@ -11,6 +11,7 @@ namespace Neos\Flow\Tests\Unit\Utility;
  * source code.
  */
 
+use Neos\Utility\Exception\FilesException;
 use org\bovigo\vfs\vfsStream;
 use Neos\Utility\Files;
 
@@ -24,7 +25,7 @@ class FilesTest extends \PHPUnit\Framework\TestCase
      */
     protected $temporaryDirectory;
 
-    public function setUp()
+    protected function setUp(): void
     {
         vfsStream::setup('Foo');
 
@@ -35,9 +36,28 @@ class FilesTest extends \PHPUnit\Framework\TestCase
         $this->temporaryDirectory = realpath($intendedTemporaryDirectory);
     }
 
-    public function tearDown()
+    protected function tearDown(): void
     {
         Files::removeDirectoryRecursively($this->temporaryDirectory);
+    }
+
+    /**
+     * @param string $target
+     * @param string $link
+     * @return boolean
+     * @throws \Exception
+     */
+    protected function trySymlink($target, $link)
+    {
+        try {
+            return symlink($target, $link);
+        } catch (\Exception $e) {
+            if (DIRECTORY_SEPARATOR !== '/') {
+                $this->markTestSkipped('Your Windows Installation does not allow the PHP process to create symlinks. Try running tests from an admin elevated command line.');
+                return false;
+            }
+            throw $e;
+        }
     }
 
     /**
@@ -200,7 +220,7 @@ class FilesTest extends \PHPUnit\Framework\TestCase
         if (file_exists($linkPathAndFilename)) {
             @unlink($linkPathAndFilename);
         }
-        symlink($targetPathAndFilename, $linkPathAndFilename);
+        $this->trySymlink($targetPathAndFilename, $linkPathAndFilename);
         $this->assertTrue(Files::is_link($linkPathAndFilename));
     }
 
@@ -229,7 +249,7 @@ class FilesTest extends \PHPUnit\Framework\TestCase
         if (is_dir($linkPath)) {
             Files::removeDirectoryRecursively($linkPath);
         }
-        symlink($targetPath, $linkPath);
+        $this->trySymlink($targetPath, $linkPath);
         $this->assertTrue(Files::is_link($linkPath));
     }
 
@@ -247,19 +267,19 @@ class FilesTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @test
-     * @expectedException \Neos\Utility\Exception\FilesException
      */
     public function emptyDirectoryRecursivelyThrowsExceptionIfSpecifiedPathDoesNotExist()
     {
+        $this->expectException(FilesException::class);
         Files::emptyDirectoryRecursively('NonExistingPath');
     }
 
     /**
      * @test
-     * @expectedException \Neos\Utility\Exception\FilesException
      */
     public function removeDirectoryRecursivelyThrowsExceptionIfSpecifiedPathDoesNotExist()
     {
+        $this->expectException(FilesException::class);
         Files::removeDirectoryRecursively('NonExistingPath');
     }
 
@@ -327,10 +347,10 @@ class FilesTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @test
-     * @expectedException \Neos\Utility\Exception\FilesException
      */
     public function removeEmptyDirectoriesOnPathThrowsExceptionIfBasePathIsNotParentOfPath()
     {
+        $this->expectException(FilesException::class);
         Files::createDirectoryRecursively('vfs://Foo/Bar/Baz/Quux');
         Files::removeEmptyDirectoriesOnPath('vfs://Foo/Bar/Baz/Quux', 'vfs://Other/Bar');
     }
@@ -346,7 +366,7 @@ class FilesTest extends \PHPUnit\Framework\TestCase
         if (file_exists($linkPathAndFilename)) {
             @unlink($linkPathAndFilename);
         }
-        symlink($targetPathAndFilename, $linkPathAndFilename);
+        $this->trySymlink($targetPathAndFilename, $linkPathAndFilename);
         $this->assertTrue(Files::unlink($linkPathAndFilename));
         $this->assertTrue(file_exists($targetPathAndFilename));
         $this->assertFalse(file_exists($linkPathAndFilename));
@@ -365,7 +385,7 @@ class FilesTest extends \PHPUnit\Framework\TestCase
         if (is_dir($linkPath)) {
             Files::removeDirectoryRecursively($linkPath);
         }
-        symlink($targetPath, $linkPath);
+        $this->trySymlink($targetPath, $linkPath);
         $this->assertTrue(Files::unlink($linkPath));
         $this->assertTrue(file_exists($targetPath));
         $this->assertFalse(file_exists($linkPath));
@@ -635,10 +655,10 @@ class FilesTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @test
-     * @expectedException \Neos\Utility\Exception\FilesException
      */
     public function sizeStringThrowsExceptionIfTheSpecifiedUnitIsUnknown()
     {
+        $this->expectException(FilesException::class);
         Files::sizeStringToBytes('123 UnknownUnit');
     }
 }

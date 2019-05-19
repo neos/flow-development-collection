@@ -15,10 +15,13 @@ include_once(__DIR__ . '/../../BaseTestCase.php');
 
 use Neos\Cache\Backend\SimpleFileBackend;
 use Neos\Cache\EnvironmentConfiguration;
+use Neos\Cache\Exception;
 use Neos\Cache\Tests\BaseTestCase;
 use org\bovigo\vfs\vfsStream;
 use Neos\Cache\Frontend\FrontendInterface;
 use Neos\Cache\Frontend\PhpFrontend;
+use PHPUnit\Framework\Error\Notice;
+use PHPUnit\Framework\Error\Warning;
 
 /**
  * Test case for the SimpleFileBackend
@@ -38,7 +41,7 @@ class SimpleFileBackendTest extends BaseTestCase
     /**
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         vfsStream::setup('Temporary/Directory/');
 
@@ -75,10 +78,10 @@ class SimpleFileBackendTest extends BaseTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Cache\Exception
      */
     public function setCacheThrowsExceptionOnNonWritableDirectory()
     {
+        $this->expectException(Exception::class);
         $mockEnvironmentConfiguration = $this->getMockBuilder(EnvironmentConfiguration::class)
             ->setMethods(null)
             ->setConstructorArgs([
@@ -95,11 +98,11 @@ class SimpleFileBackendTest extends BaseTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Cache\Exception
-     * @expectedExceptionCode 1248710426
      */
     public function setThrowsExceptionIfCachePathLengthExceedsMaximumPathLength()
     {
+        $this->expectException(Exception::class);
+        $this->expectExceptionCode(1248710426);
         $mockEnvironmentConfiguration = new EnvironmentConfiguration(
             __DIR__ . '~Testing',
             'vfs://Temporary/Directory/',
@@ -161,16 +164,6 @@ class SimpleFileBackendTest extends BaseTestCase
 
         $simpleFileBackend = $this->getSimpleFileBackend([], $mockPhpCacheFrontend);
         $this->assertEquals('vfs://Temporary/Directory/Cache/Code/SomePhpCache/', $simpleFileBackend->getCacheDirectory());
-    }
-
-    /**
-     * @test
-     * @expectedException \Neos\Cache\Exception\InvalidDataException
-     */
-    public function setThrowsExceptionIfDataIsNotAString()
-    {
-        $simpleFileBackend = $this->getSimpleFileBackend();
-        $simpleFileBackend->set('SomeIdentifier', ['not a string']);
     }
 
     /**
@@ -320,10 +313,10 @@ class SimpleFileBackendTest extends BaseTestCase
      * @test
      * @param string $identifier
      * @dataProvider invalidEntryIdentifiers
-     * @expectedException \InvalidArgumentException
      */
     public function setThrowsExceptionForInvalidIdentifier($identifier)
     {
+        $this->expectException(\InvalidArgumentException::class);
         $simpleFileBackend = $this->getSimpleFileBackend();
         $simpleFileBackend->set($identifier, 'some data');
     }
@@ -332,10 +325,10 @@ class SimpleFileBackendTest extends BaseTestCase
      * @test
      * @param string $identifier
      * @dataProvider invalidEntryIdentifiers
-     * @expectedException \InvalidArgumentException
      */
     public function getThrowsExceptionForInvalidIdentifier($identifier)
     {
+        $this->expectException(\InvalidArgumentException::class);
         $simpleFileBackend = $this->getSimpleFileBackend();
         $simpleFileBackend->get($identifier);
     }
@@ -344,10 +337,10 @@ class SimpleFileBackendTest extends BaseTestCase
      * @test
      * @param string $identifier
      * @dataProvider invalidEntryIdentifiers
-     * @expectedException \InvalidArgumentException
      */
     public function hasThrowsExceptionForInvalidIdentifier($identifier)
     {
+        $this->expectException(\InvalidArgumentException::class);
         $simpleFileBackend = $this->getSimpleFileBackend();
         $simpleFileBackend->has($identifier);
     }
@@ -356,10 +349,10 @@ class SimpleFileBackendTest extends BaseTestCase
      * @test
      * @param string $identifier
      * @dataProvider invalidEntryIdentifiers
-     * @expectedException \InvalidArgumentException
      */
     public function removeThrowsExceptionForInvalidIdentifier($identifier)
     {
+        $this->expectException(\InvalidArgumentException::class);
         $simpleFileBackend = $this->getSimpleFileBackend();
         $simpleFileBackend->remove($identifier);
     }
@@ -368,10 +361,10 @@ class SimpleFileBackendTest extends BaseTestCase
      * @test
      * @param string $identifier
      * @dataProvider invalidEntryIdentifiers
-     * @expectedException \InvalidArgumentException
      */
     public function requireOnceThrowsExceptionForInvalidIdentifier($identifier)
     {
+        $this->expectException(\InvalidArgumentException::class);
         $simpleFileBackend = $this->getSimpleFileBackend();
         $simpleFileBackend->requireOnce($identifier);
     }
@@ -394,10 +387,10 @@ class SimpleFileBackendTest extends BaseTestCase
 
     /**
      * @test
-     * @expectedException \Exception
      */
     public function requireOnceDoesNotSwallowExceptionsOfTheIncludedFile()
     {
+        $this->expectException(\Exception::class);
         $entryIdentifier = 'SomePhpEntryWithException';
 
         $simpleFileBackend = $this->getSimpleFileBackend();
@@ -407,10 +400,10 @@ class SimpleFileBackendTest extends BaseTestCase
 
     /**
      * @test
-     * @expectedException \PHPUnit\Framework\Error\Warning
      */
     public function requireOnceDoesNotSwallowPhpWarningsOfTheIncludedFile()
     {
+        $this->expectException(Warning::class);
         $entryIdentifier = 'SomePhpEntryWithPhpWarning';
 
         $simpleFileBackend = $this->getSimpleFileBackend();
@@ -420,10 +413,10 @@ class SimpleFileBackendTest extends BaseTestCase
 
     /**
      * @test
-     * @expectedException \PHPUnit\Framework\Error\Notice
      */
     public function requireOnceDoesNotSwallowPhpNoticesOfTheIncludedFile()
     {
+        $this->expectException(Notice::class);
         $entryIdentifier = 'SomePhpEntryWithPhpNotice';
 
         $simpleFileBackend = $this->getSimpleFileBackend();

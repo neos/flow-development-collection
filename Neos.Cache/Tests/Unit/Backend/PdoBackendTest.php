@@ -15,7 +15,10 @@ include_once(__DIR__ . '/../../BaseTestCase.php');
 
 use Neos\Cache\Backend\PdoBackend;
 use Neos\Cache\EnvironmentConfiguration;
+use Neos\Cache\Exception;
+use Neos\Cache\Frontend\FrontendInterface;
 use Neos\Cache\Tests\BaseTestCase;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Testcase for the PDO cache backend
@@ -36,10 +39,10 @@ class PdoBackendTest extends BaseTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Cache\Exception
      */
     public function setThrowsExceptionIfNoFrontEndHasBeenSet()
     {
+        $this->expectException(Exception::class);
         $backend = new PdoBackend(new EnvironmentConfiguration('SomeApplication Testing', '/some/path', PHP_MAXPATHLEN));
         $data = 'Some data';
         $identifier = 'MyIdentifier';
@@ -196,12 +199,12 @@ class PdoBackendTest extends BaseTestCase
      */
     public function flushRemovesOnlyOwnEntries()
     {
-        $thisCache = $this->getMockBuilder(\Neos\Cache\Frontend\FrontendInterface::class)->disableOriginalConstructor()->getMock();
+        $thisCache = $this->getMockBuilder(FrontendInterface::class)->disableOriginalConstructor()->getMock();
         $thisCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('thisCache'));
         $thisBackend = $this->setUpBackend();
         $thisBackend->setCache($thisCache);
 
-        $thatCache = $this->getMockBuilder(\Neos\Cache\Frontend\FrontendInterface::class)->disableOriginalConstructor()->getMock();
+        $thatCache = $this->getMockBuilder(FrontendInterface::class)->disableOriginalConstructor()->getMock();
         $thatCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('thatCache'));
         $thatBackend = $this->setUpBackend();
         $thatBackend->setCache($thatCache);
@@ -221,19 +224,18 @@ class PdoBackendTest extends BaseTestCase
      */
     protected function setUpBackend()
     {
-        $mockCache = $this->getMockBuilder(\Neos\Cache\Frontend\FrontendInterface::class)->disableOriginalConstructor()->getMock();
+        /** @var FrontendInterface|MockObject $mockCache */
+        $mockCache = $this->getMockBuilder(FrontendInterface::class)->disableOriginalConstructor()->getMock();
         $mockCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('TestCache'));
 
-        $mockEnvironmentConfiguration = $this->getMockBuilder(\Neos\Cache\EnvironmentConfiguration::class)->setConstructorArgs([
+        $mockEnvironmentConfiguration = $this->getMockBuilder(EnvironmentConfiguration::class)->setConstructorArgs([
             __DIR__ . '~Testing',
             'vfs://Foo/',
             255
         ])->getMock();
 
-        $backend = new PdoBackend($mockEnvironmentConfiguration);
+        $backend = new PdoBackend($mockEnvironmentConfiguration, ['dataSourceName' => 'sqlite::memory:']);
         $backend->setCache($mockCache);
-        $backend->setDataSourceName('sqlite::memory:');
-        $backend->initializeObject();
 
         return $backend;
     }

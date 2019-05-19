@@ -16,15 +16,16 @@ use Neos\Flow\Annotations as Flow;
 /**
  * Container for HTTP header fields
  *
- * @api
+ * @deprecated Headers will be only accessed via request in the future, if this class stays, then as internal implementation detail.
  * @Flow\Proxy(false)
+ * TODO: case-insensitive header name matching
  */
-class Headers
+class Headers implements \Iterator
 {
     /**
      * @var array
      */
-    protected $fields = [];
+    protected $fields = ['Cache-Control' => []];
 
     /**
      * @var array
@@ -95,17 +96,13 @@ class Headers
      *
      * @param string $name Name of the header, for example "Location", "Content-Description" etc.
      * @param array|string|\DateTime $values An array of values or a single value for the specified header field
-     * @param boolean $replaceExistingHeader If a header with the same name should be replaced. Default is TRUE.
+     * @param boolean $replaceExistingHeader If a header with the same name should be replaced. Default is true.
      * @return void
      * @throws \InvalidArgumentException
      * @api
      */
     public function set($name, $values, $replaceExistingHeader = true)
     {
-        if (strtoupper(substr($name, 0, 10)) === 'SET-COOKIE') {
-            throw new \InvalidArgumentException('The "Set-Cookie" headers must be set via setCookie().', 1345128153);
-        }
-
         if ($values instanceof \DateTimeInterface) {
             $date = clone $values;
             $date->setTimezone(new \DateTimeZone('GMT'));
@@ -115,11 +112,16 @@ class Headers
         }
 
         switch ($name) {
-            case 'Cache-Control':
-                if (count($values) !== 1) {
-                    throw new \InvalidArgumentException('The "Cache-Control" header must be unique and thus only one field value may be specified.', 1337849415);
+            case 'Host':
+                if (count($values) > 1) {
+                    throw new \InvalidArgumentException('The "Host" header must be unique and thus only one field value may be specified.', 1478206019);
                 }
-                $this->setCacheControlDirectivesFromRawHeader(array_pop($values));
+                // Ensure Host is the first header.
+                // See: http://tools.ietf.org/html/rfc7230#section-5.4
+                $this->fields = ['Host' => $values] + $this->fields;
+            break;
+            case 'Cache-Control':
+                $this->setCacheControlDirectivesFromRawHeader(implode(', ', $values));
             break;
             case 'Cookie':
                 if (count($values) !== 1) {
@@ -137,6 +139,33 @@ class Headers
     }
 
     /**
+     * Get raw header values
+     *
+     * @param string $name
+     * @return string[]
+     */
+    public function getRaw(string $name): array
+    {
+        if (strtolower($name) === 'cache-control') {
+            return $this->getCacheControlDirectives();
+        }
+
+        if (strtolower($name) === 'set-cookie') {
+            $cookies = $this->fields['Set-Cookie'] ?? [];
+            foreach ($this->cookies as $cookie) {
+                $cookies[] = (string)$cookie;
+            }
+
+            return $cookies;
+        }
+        if (!isset($this->fields[$name])) {
+            return [];
+        }
+
+        return $this->fields[$name];
+    }
+
+    /**
      * Returns the specified HTTP header
      *
      * Dates are returned as DateTime objects with the timezone set to GMT.
@@ -147,9 +176,19 @@ class Headers
      */
     public function get($name)
     {
-        if ($name === 'Cache-Control') {
+        if (strtolower($name) === 'cache-control') {
             return $this->getCacheControlHeader();
         }
+
+        if (strtolower($name) === 'set-cookie') {
+            $cookies = $this->fields['Set-Cookie'] ?? [];
+            foreach ($this->cookies as $cookie) {
+                $cookies[] = (string)$cookie;
+            }
+
+            return $cookies;
+        }
+
         if (!isset($this->fields[$name])) {
             return null;
         }
@@ -178,8 +217,9 @@ class Headers
     {
         $fields = $this->fields;
         $cacheControlHeader = $this->getCacheControlHeader();
-        if (!empty($cacheControlHeader)) {
-            $fields['Cache-Control'] = [$cacheControlHeader];
+        $fields['Cache-Control'] = [$cacheControlHeader];
+        if (empty($cacheControlHeader)) {
+            unset($fields['Cache-Control']);
         }
         return $fields;
     }
@@ -238,7 +278,7 @@ class Headers
     /**
      * Returns all cookies
      *
-     * @return array
+     * @return Cookie[]
      * @api
      */
     public function getCookies()
@@ -348,7 +388,7 @@ class Headers
      * Returns the value of the specified Cache-Control directive.
      *
      * If the cache directive is not present, NULL is returned. If the specified
-     * directive is present but contains no value, this method returns TRUE. Finally,
+     * directive is present but contains no value, this method returns true. Finally,
      * if the directive is present and does contain a value, the value is returned.
      *
      * @param string $name Name of the cache directive, for example "max-age"
@@ -419,6 +459,14 @@ class Headers
     }
 
     /**
+     * @return array
+     */
+    private function getCacheControlDirectives(): array
+    {
+        return array_values(array_filter($this->cacheDirectives));
+    }
+
+    /**
      * Renders and returns a Cache-Control header, based on the previously set
      * cache control directives.
      *
@@ -456,5 +504,101 @@ class Headers
                 $this->setCookie(new Cookie($trimmedName, urldecode(trim($value, "\t ;\""))));
             }
         }
+    }
+
+    /**
+     * Get all header lines prepared as "name: value" strings.
+     *
+     * @return array
+     */
+    public function getPreparedValues()
+    {
+        $preparedValues = [];
+        foreach ($this->getAll() as $name => $values) {
+            $preparedValues = array_merge($preparedValues, $this->prepareValues($name, $values));
+        }
+
+        return $preparedValues;
+    }
+
+    /**
+     * @param string $headerName
+     * @param array $values
+     * @return array
+     */
+    private function prepareValues($headerName, array $values)
+    {
+        $preparedValues = [];
+        foreach ($values as $value) {
+            $preparedValues[] = sprintf("%s: %s", $headerName, $value);
+        }
+
+        return $preparedValues;
+    }
+
+    /**
+     * @param string $headerName
+     * @param array $values
+     * @return string
+     */
+    private function renderValuesFor($headerName, array $values)
+    {
+        return implode("\r\n", $this->prepareValues($headerName, $values));
+    }
+
+    /**
+     * Renders this headers object as string, with lines separated by "\r\n" as required by RFC 2616 sec 5.
+     *
+     * @return string
+     * @api
+     */
+    public function __toString()
+    {
+        $headers = '';
+        foreach ($this->getAll() as $name => $values) {
+            $headers .= $this->renderValuesFor($name, $values) . "\r\n";
+        }
+
+        return $headers;
+    }
+
+    /**
+     * @return string[]|mixed
+     */
+    public function current()
+    {
+        return $this->getRaw($this>key());
+    }
+
+    /**
+     * @return void
+     */
+    public function next()
+    {
+        next($this->fields);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function key()
+    {
+        return key($this->fields);
+    }
+
+    /**
+     * @return bool
+     */
+    public function valid()
+    {
+        return !(key($this->fields) === null && current($this->fields) === false);
+    }
+
+    /**
+     * @return void
+     */
+    public function rewind()
+    {
+        reset($this->fields);
     }
 }

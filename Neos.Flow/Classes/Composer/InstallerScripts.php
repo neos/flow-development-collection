@@ -43,13 +43,16 @@ class InstallerScripts
         if (!defined('FLOW_PATH_CONFIGURATION')) {
             define('FLOW_PATH_CONFIGURATION', Files::getUnixStylePath(getcwd()) . '/Configuration/');
         }
+        if (!defined('FLOW_PATH_TEMPORARY_BASE')) {
+            define('FLOW_PATH_TEMPORARY_BASE', Files::getUnixStylePath(getcwd()) . '/Data/Temporary');
+        }
 
         Files::createDirectoryRecursively('Configuration');
         Files::createDirectoryRecursively('Data');
 
         Files::copyDirectoryRecursively('Packages/Framework/Neos.Flow/Resources/Private/Installer/Distribution/Essentials', './', false, true);
         Files::copyDirectoryRecursively('Packages/Framework/Neos.Flow/Resources/Private/Installer/Distribution/Defaults', './', true, true);
-        $packageManager = new PackageManager();
+        $packageManager = new PackageManager(PackageManager::DEFAULT_PACKAGE_INFORMATION_CACHE_FILEPATH, FLOW_PATH_PACKAGES);
         $packageManager->rescanPackages();
 
         chmod('flow', 0755);
@@ -110,7 +113,7 @@ class InstallerScripts
      * @param string $installerResourcesDirectory Path to the installer directory that contains the Distribution/Essentials and/or Distribution/Defaults directories.
      * @return void
      */
-    protected static function copyDistributionFiles($installerResourcesDirectory)
+    protected static function copyDistributionFiles(string $installerResourcesDirectory)
     {
         $essentialsPath = $installerResourcesDirectory . 'Distribution/Essentials';
         if (is_dir($essentialsPath)) {
@@ -130,7 +133,7 @@ class InstallerScripts
      * @return void
      * @throws Exception\InvalidConfigurationException
      */
-    protected static function runPackageScripts($staticMethodReference)
+    protected static function runPackageScripts(string $staticMethodReference)
     {
         $className = substr($staticMethodReference, 0, strpos($staticMethodReference, '::'));
         $methodName = substr($staticMethodReference, strpos($staticMethodReference, '::') + 2);

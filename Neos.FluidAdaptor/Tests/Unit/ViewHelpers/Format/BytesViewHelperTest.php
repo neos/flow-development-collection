@@ -25,13 +25,12 @@ class BytesViewHelperTest extends ViewHelperBaseTestcase
      */
     protected $viewHelper;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
-        $this->viewHelper = $this->getMockBuilder(\Neos\FluidAdaptor\ViewHelpers\Format\BytesViewHelper::class)->setMethods(array('renderChildren'))->getMock();
+        $this->viewHelper = $this->getMockBuilder(\Neos\FluidAdaptor\ViewHelpers\Format\BytesViewHelper::class)->setMethods(['renderChildren', 'registerRenderMethodArguments'])->getMock();
 
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
-        $this->viewHelper->initializeArguments();
     }
 
     /**
@@ -39,82 +38,82 @@ class BytesViewHelperTest extends ViewHelperBaseTestcase
      */
     public function valueDataProvider()
     {
-        return array(
+        return [
 
             // invalid values
-            array(
+            [
                 'value' => 'invalid',
                 'decimals' => null,
                 'decimalSeparator' => null,
                 'thousandsSeparator' => null,
                 'expected' => '0 B'
-            ),
-            array(
+            ],
+            [
                 'value' => '',
                 'decimals' => 2,
                 'decimalSeparator' => null,
                 'thousandsSeparator' => null,
                 'expected' => '0.00 B'
-            ),
-            array(
-                'value' => array(),
+            ],
+            [
+                'value' => [],
                 'decimals' => 2,
                 'decimalSeparator' => ',',
                 'thousandsSeparator' => null,
                 'expected' => '0,00 B'
-            ),
+            ],
 
             // valid values
-            array(
+            [
                 'value' => 123,
                 'decimals' => null,
                 'decimalSeparator' => null,
                 'thousandsSeparator' => null,
                 'expected' => '123 B'
-            ),
-            array(
+            ],
+            [
                 'value' => '43008',
                 'decimals' => 1,
                 'decimalSeparator' => null,
                 'thousandsSeparator' => null,
                 'expected' => '42.0 KB'
-            ),
-            array(
+            ],
+            [
                 'value' => 1024,
                 'decimals' => 1,
                 'decimalSeparator' => null,
                 'thousandsSeparator' => null,
                 'expected' => '1.0 KB'
-            ),
-            array(
+            ],
+            [
                 'value' => 1023,
                 'decimals' => 2,
                 'decimalSeparator' => null,
                 'thousandsSeparator' => null,
                 'expected' => '1,023.00 B'
-            ),
-            array(
+            ],
+            [
                 'value' => 1073741823,
                 'decimals' => 1,
                 'decimalSeparator' => null,
                 'thousandsSeparator' => '.',
                 'expected' => '1.024.0 MB'
-            ),
-            array(
+            ],
+            [
                 'value' => pow(1024, 5),
                 'decimals' => 1,
                 'decimalSeparator' => null,
                 'thousandsSeparator' => null,
                 'expected' => '1.0 PB'
-            ),
-            array(
+            ],
+            [
                 'value' => pow(1024, 8),
                 'decimals' => 1,
                 'decimalSeparator' => null,
                 'thousandsSeparator' => null,
                 'expected' => '1.0 YB'
-            )
-        );
+            ]
+        ];
     }
 
     /**
@@ -128,7 +127,8 @@ class BytesViewHelperTest extends ViewHelperBaseTestcase
      */
     public function renderCorrectlyConvertsAValue($value, $decimals, $decimalSeparator, $thousandsSeparator, $expected)
     {
-        $actualResult = $this->viewHelper->render($value, $decimals, $decimalSeparator, $thousandsSeparator);
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['value' => $value, 'decimals' => $decimals, 'decimalSeparator' => $decimalSeparator, 'thousandsSeparator' => $thousandsSeparator]);
+        $actualResult = $this->viewHelper->render();
         $this->assertEquals($expected, $actualResult);
     }
 
@@ -138,6 +138,7 @@ class BytesViewHelperTest extends ViewHelperBaseTestcase
     public function renderUsesChildNodesIfValueArgumentIsOmitted()
     {
         $this->viewHelper->expects($this->once())->method('renderChildren')->will($this->returnValue(12345));
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, []);
         $actualResult = $this->viewHelper->render();
         $this->assertEquals('12 KB', $actualResult);
     }

@@ -74,11 +74,13 @@ class FileBasedSimpleKeyProvider extends AbstractProvider
     }
 
     /**
-     * Sets isAuthenticated to TRUE for all tokens.
+     * Sets isAuthenticated to true for all tokens.
      *
      * @param TokenInterface $authenticationToken The token to be authenticated
      * @return void
      * @throws UnsupportedAuthenticationTokenException
+     * @throws \Neos\Flow\Security\Exception
+     * @throws \Neos\Flow\Security\Exception\InvalidAuthenticationStatusException
      */
     public function authenticate(TokenInterface $authenticationToken)
     {
@@ -88,20 +90,32 @@ class FileBasedSimpleKeyProvider extends AbstractProvider
 
         $credentials = $authenticationToken->getCredentials();
         if (is_array($credentials) && isset($credentials['password'])) {
-            if ($this->hashService->validatePassword($credentials['password'], $this->fileBasedSimpleKeyService->getKey($this->options['keyName']))) {
-                $authenticationToken->setAuthenticationStatus(TokenInterface::AUTHENTICATION_SUCCESSFUL);
-                $account = new Account();
-                $roles = [];
-                foreach ($this->options['authenticateRoles'] as $roleIdentifier) {
-                    $roles[] = $this->policyService->getRole($roleIdentifier);
-                }
-                $account->setRoles($roles);
-                $authenticationToken->setAccount($account);
-            } else {
-                $authenticationToken->setAuthenticationStatus(TokenInterface::WRONG_CREDENTIALS);
-            }
-        } elseif ($authenticationToken->getAuthenticationStatus() !== TokenInterface::AUTHENTICATION_SUCCESSFUL) {
+            $this->validateCredentials($authenticationToken, $credentials);
+            return;
+        }
+
+        if ($authenticationToken->getAuthenticationStatus() !== TokenInterface::AUTHENTICATION_SUCCESSFUL) {
             $authenticationToken->setAuthenticationStatus(TokenInterface::NO_CREDENTIALS_GIVEN);
         }
+    }
+
+    /**
+     * @param TokenInterface $authenticationToken
+     * @param array $credentials
+     * @return void
+     * @throws \Neos\Flow\Security\Exception
+     */
+    protected function validateCredentials(TokenInterface $authenticationToken, $credentials): void
+    {
+        if (!$this->hashService->validatePassword($credentials['password'], $this->fileBasedSimpleKeyService->getKey($this->options['keyName']))) {
+            $authenticationToken->setAuthenticationStatus(TokenInterface::WRONG_CREDENTIALS);
+            return;
+        }
+
+        $authenticationToken->setAuthenticationStatus(TokenInterface::AUTHENTICATION_SUCCESSFUL);
+        $account = new Account();
+        $roles = array_map([$this->policyService, 'getRole'], $this->options['authenticateRoles']);
+        $account->setRoles($roles);
+        $authenticationToken->setAccount($account);
     }
 }

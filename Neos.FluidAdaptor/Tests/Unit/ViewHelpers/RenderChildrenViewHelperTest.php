@@ -11,6 +11,8 @@ namespace Neos\FluidAdaptor\Tests\Unit\ViewHelpers;
  * source code.
  */
 
+use Neos\FluidAdaptor\Core\Widget\Exception\RenderingContextNotFoundException;
+use Neos\FluidAdaptor\Core\Widget\Exception\WidgetContextNotFoundException;
 use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\RootNode;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 
@@ -29,10 +31,10 @@ class RenderChildrenViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHel
 
     /**
      */
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
-        $this->viewHelper = $this->getMockBuilder(\Neos\FluidAdaptor\ViewHelpers\RenderChildrenViewHelper::class)->setMethods(array('renderChildren'))->getMock();
+        $this->viewHelper = $this->getMockBuilder(\Neos\FluidAdaptor\ViewHelpers\RenderChildrenViewHelper::class)->setMethods(['renderChildren'])->getMock();
     }
 
     /**
@@ -61,16 +63,16 @@ class RenderChildrenViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHel
 
         $rootNode->expects($this->any())->method('evaluate')->with($renderingContext)->will($this->returnValue('Rendered Results'));
 
-        $output = $this->viewHelper->render(array('k1' => 'v1', 'k2' => 'v2'));
+        $output = $this->viewHelper->render(['k1' => 'v1', 'k2' => 'v2']);
         $this->assertEquals('Rendered Results', $output);
     }
 
     /**
      * @test
-     * @expectedException \Neos\FluidAdaptor\Core\Widget\Exception\WidgetContextNotFoundException
      */
     public function renderThrowsExceptionIfTheRequestIsNotAWidgetRequest()
     {
+        $this->expectException(WidgetContextNotFoundException::class);
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
         $this->viewHelper->initializeArguments();
 
@@ -79,10 +81,10 @@ class RenderChildrenViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHel
 
     /**
      * @test
-     * @expectedException \Neos\FluidAdaptor\Core\Widget\Exception\RenderingContextNotFoundException
      */
     public function renderThrowsExceptionIfTheChildNodeRenderingContextIsNotThere()
     {
+        $this->expectException(RenderingContextNotFoundException::class);
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
         $this->viewHelper->initializeArguments();
 

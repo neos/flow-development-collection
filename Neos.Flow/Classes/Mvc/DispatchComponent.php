@@ -14,6 +14,7 @@ namespace Neos\Flow\Mvc;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Component\ComponentContext;
 use Neos\Flow\Http\Component\ComponentInterface;
+use Neos\Flow\Http\Helper\ResponseInformationHelper;
 use Neos\Flow\Http\Request as HttpRequest;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Property\PropertyMapper;
@@ -74,37 +75,50 @@ class DispatchComponent implements ComponentInterface
      */
     public function handle(ComponentContext $componentContext)
     {
-        $httpRequest = $componentContext->getHttpRequest();
-        /** @var $actionRequest ActionRequest */
-        $actionRequest = $this->objectManager->get(ActionRequest::class, $httpRequest);
-        $this->securityContext->setRequest($actionRequest);
-
-        $routingMatchResults = $componentContext->getParameter(Routing\RoutingComponent::class, 'matchResults');
-
-        $actionRequest->setArguments($this->mergeArguments($httpRequest, $routingMatchResults));
+        $componentContext = $this->prepareActionRequest($componentContext);
+        $actionRequest = $componentContext->getParameter(DispatchComponent::class, 'actionRequest');
         $this->setDefaultControllerAndActionNameIfNoneSpecified($actionRequest);
-
-        $componentContext->setParameter(self::class, 'actionRequest', $actionRequest);
-        $this->dispatcher->dispatch($actionRequest, $componentContext->getHttpResponse());
+        $actionResponse = $this->prepareActionResponse($componentContext->getHttpResponse());
+        $this->dispatcher->dispatch($actionRequest, $actionResponse);
+        // TODO: This should change in next major when the action response is no longer a HTTP response for backward compatibility.
+        $componentContext->replaceHttpResponse($actionResponse);
     }
 
     /**
-     * @param HttpRequest $httpRequest
-     * @param array $routingMatchResults
-     * @return array
+     * Create ActionRequest with arguments from body and routing merged and add it to the component context.
+     *
+     * TODO: This could be a separate HTTP component (ActionRequestFactoryComponent) that sits in the chain before the DispatchComponent.
+     *
+     * @param ComponentContext $componentContext
+     * @return ComponentContext
      */
-    protected function mergeArguments(HttpRequest $httpRequest, array $routingMatchResults = null)
+    protected function prepareActionRequest(ComponentContext $componentContext)
     {
-        $arguments = $this->parseRequestBody($httpRequest);
+        $httpRequest = $componentContext->getHttpRequest();
+        $arguments = $httpRequest->getArguments();
 
-        // HTTP arguments (e.g. GET parameters)
-        $arguments = Arrays::arrayMergeRecursiveOverrule($httpRequest->getArguments(), $arguments);
+        $parsedBody = $this->parseRequestBody($httpRequest);
+        if ($parsedBody !== []) {
+            $arguments = Arrays::arrayMergeRecursiveOverrule($arguments, $parsedBody);
+            $httpRequest = $httpRequest->withParsedBody($parsedBody);
+        }
 
-        // Routing results
+
+        $routingMatchResults = $componentContext->getParameter(Routing\RoutingComponent::class, 'matchResults');
         if ($routingMatchResults !== null) {
             $arguments = Arrays::arrayMergeRecursiveOverrule($arguments, $routingMatchResults);
         }
-        return $arguments;
+
+        /** @var $actionRequest ActionRequest */
+        $actionRequest = $this->objectManager->get(ActionRequest::class, $httpRequest);
+
+        $actionRequest->setArguments($arguments);
+        $this->securityContext->setRequest($actionRequest);
+        $componentContext->replaceHttpRequest($httpRequest);
+
+        $componentContext->setParameter(DispatchComponent::class, 'actionRequest', $actionRequest);
+
+        return $componentContext;
     }
 
     /**
@@ -143,5 +157,22 @@ class DispatchComponent implements ComponentInterface
         if ($actionRequest->getControllerActionName() === null) {
             $actionRequest->setControllerActionName('index');
         }
+    }
+
+    /**
+     * Prepares the ActionResponse to be dispatched
+     *
+     * TODO: Needs to be adapted for next major when we only deliver an action response inside the dispatch.
+     *
+     * @param \Psr\Http\Message\ResponseInterface $httpResponse
+     * @return ActionResponse|\Psr\Http\Message\ResponseInterface
+     */
+    protected function prepareActionResponse(\Psr\Http\Message\ResponseInterface $httpResponse): ActionResponse
+    {
+        $rawResponse = implode("\r\n", ResponseInformationHelper::prepareHeaders($httpResponse));
+        $rawResponse .= "\r\n\r\n";
+        $rawResponse .= $httpResponse->getBody()->getContents();
+
+        return ActionResponse::createFromRaw($rawResponse);
     }
 }

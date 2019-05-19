@@ -1,12 +1,12 @@
 <?php
 namespace Neos\FluidAdaptor\Tests\Unit\View;
 
+use Neos\FluidAdaptor\View\Exception\InvalidTemplateResourceException;
 use org\bovigo\vfs\vfsStreamWrapper;
 use Neos\Flow\Http\Request;
 use Neos\Flow\Http\Uri;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Controller\ControllerContext;
-use Neos\Flow\Tests\Functional\Mvc\ViewsConfiguration\Fixtures\TemplateView;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\FluidAdaptor\View\TemplatePaths;
 
@@ -643,10 +643,10 @@ class TemplatePathsTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\FluidAdaptor\View\Exception\InvalidTemplateResourceException
      */
     public function getTemplatePathAndFilenameThrowsExceptionIfNoPathCanBeResolved()
     {
+        $this->expectException(InvalidTemplateResourceException::class);
         vfsStreamWrapper::register();
         $paths = [
             'vfs://NonExistentDir/UnknownFile.html',
@@ -670,10 +670,10 @@ class TemplatePathsTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\FluidAdaptor\View\Exception\InvalidTemplateResourceException
      */
     public function getTemplatePathAndFilenameThrowsExceptionIfResolvedPathPointsToADirectory()
     {
+        $this->expectException(InvalidTemplateResourceException::class);
         vfsStreamWrapper::register();
         mkdir('vfs://MyTemplates/NotAFile');
         $paths = [
@@ -712,10 +712,10 @@ class TemplatePathsTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\FluidAdaptor\View\Exception\InvalidTemplateResourceException
      */
     public function getLayoutPathAndFilenameThrowsExceptionIfNoPathCanBeResolved()
     {
+        $this->expectException(InvalidTemplateResourceException::class);
         vfsStreamWrapper::register();
         $paths = [
             'vfs://NonExistentDir/UnknownFile.html',
@@ -739,10 +739,10 @@ class TemplatePathsTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\FluidAdaptor\View\Exception\InvalidTemplateResourceException
      */
     public function getLayoutPathAndFilenameThrowsExceptionIfResolvedPathPointsToADirectory()
     {
+        $this->expectException(InvalidTemplateResourceException::class);
         vfsStreamWrapper::register();
         mkdir('vfs://MyTemplates/NotAFile');
         $paths = [
@@ -767,10 +767,10 @@ class TemplatePathsTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\FluidAdaptor\View\Exception\InvalidTemplateResourceException
      */
     public function getPartialPathAndFilenameThrowsExceptionIfNoPathCanBeResolved()
     {
+        $this->expectException(InvalidTemplateResourceException::class);
         vfsStreamWrapper::register();
         $paths = [
             'vfs://NonExistentDir/UnknownFile.html',
@@ -794,10 +794,10 @@ class TemplatePathsTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\FluidAdaptor\View\Exception\InvalidTemplateResourceException
      */
     public function getPartialPathAndFilenameThrowsExceptionIfResolvedPathPointsToADirectory()
     {
+        $this->expectException(InvalidTemplateResourceException::class);
         vfsStreamWrapper::register();
         mkdir('vfs://MyTemplates/NotAFile');
         $paths = [

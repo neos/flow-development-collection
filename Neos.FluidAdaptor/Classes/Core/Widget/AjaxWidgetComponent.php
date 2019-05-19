@@ -16,6 +16,7 @@ use Neos\Flow\Http\Component\Exception as ComponentException;
 use Neos\Flow\Http\Request;
 use Neos\Flow\Http\Component\ComponentContext;
 use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\DispatchComponent;
 use Neos\Flow\Security\Cryptography\HashService;
 
@@ -53,16 +54,18 @@ class AjaxWidgetComponent extends DispatchComponent
         if ($widgetContext === null) {
             return;
         }
+
+        $componentContext = $this->prepareActionRequest($componentContext);
         /** @var $actionRequest ActionRequest */
-        $actionRequest = $this->objectManager->get(\Neos\Flow\Mvc\ActionRequest::class, $httpRequest);
-        $actionRequest->setArguments($this->mergeArguments($httpRequest, array()));
+        $actionRequest = $componentContext->getParameter(DispatchComponent::class, 'actionRequest');
         $actionRequest->setArgument('__widgetContext', $widgetContext);
         $actionRequest->setControllerObjectName($widgetContext->getControllerObjectName());
         $this->setDefaultControllerAndActionNameIfNoneSpecified($actionRequest);
 
-        $this->securityContext->setRequest($actionRequest);
+        $actionResponse = new ActionResponse($componentContext->getHttpResponse());
 
-        $this->dispatcher->dispatch($actionRequest, $componentContext->getHttpResponse());
+        $this->dispatcher->dispatch($actionRequest, $actionResponse);
+        $componentContext->replaceHttpResponse($actionResponse);
         // stop processing the current component chain
         $componentContext->setParameter(\Neos\Flow\Http\Component\ComponentChain::class, 'cancel', true);
     }

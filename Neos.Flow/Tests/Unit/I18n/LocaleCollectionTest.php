@@ -32,7 +32,7 @@ class LocaleCollectionTest extends UnitTestCase
     /**
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->locales = [
             new I18n\Locale('en'),

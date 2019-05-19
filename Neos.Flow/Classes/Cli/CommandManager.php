@@ -12,8 +12,6 @@ namespace Neos\Flow\Cli;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Cli\Command;
-use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Mvc\Exception\AmbiguousCommandIdentifierException;
 use Neos\Flow\Mvc\Exception\CommandException;
@@ -72,7 +70,7 @@ class CommandManager
      * @return array<Command>
      * @api
      */
-    public function getAvailableCommands()
+    public function getAvailableCommands(): array
     {
         if ($this->availableCommands === null) {
             $this->availableCommands = [];
@@ -98,7 +96,7 @@ class CommandManager
      * @throws AmbiguousCommandIdentifierException if more than one Command matches the identifier (the exception contains the matched commands)
      * @api
      */
-    public function getCommandByIdentifier($commandIdentifier)
+    public function getCommandByIdentifier(string $commandIdentifier): Command
     {
         $commandIdentifier = strtolower(trim($commandIdentifier));
         if ($commandIdentifier === 'help') {
@@ -127,7 +125,7 @@ class CommandManager
      * @return array<Command>
      * @api
      */
-    public function getCommandsByIdentifier($commandIdentifier)
+    public function getCommandsByIdentifier(string $commandIdentifier): array
     {
         $availableCommands = $this->getAvailableCommands();
         $matchedCommands = [];
@@ -147,7 +145,7 @@ class CommandManager
      * @return string The shortest possible command identifier
      * @api
      */
-    public function getShortestIdentifierForCommand(Command $command)
+    public function getShortestIdentifierForCommand(Command $command): string
     {
         if ($command->getCommandIdentifier() === 'neos.flow:help:help') {
             return 'help';
@@ -165,9 +163,10 @@ class CommandManager
      *
      * @return array in the format array('full.command:identifier1' => 'alias1', 'full.command:identifier2' => 'alias2')
      */
-    protected function getShortCommandIdentifiers()
+    protected function getShortCommandIdentifiers(): array
     {
         if ($this->shortCommandIdentifiers === null) {
+            $this->shortCommandIdentifiers = [];
             $commandsByCommandName = [];
             /** @var Command $availableCommand */
             foreach ($this->getAvailableCommands() as $availableCommand) {
@@ -203,7 +202,7 @@ class CommandManager
     }
 
     /**
-     * Returns TRUE if the specified command identifier matches the identifier of the specified command.
+     * Returns true if the specified command identifier matches the identifier of the specified command.
      * This is the case, if
      *  - the identifiers are the same
      *  - if at least the last two command parts match (case sensitive) or
@@ -212,9 +211,9 @@ class CommandManager
      *
      * @param Command $command
      * @param string $commandIdentifier command identifier in the format foo:bar:baz (all lower case)
-     * @return boolean TRUE if the specified command identifier matches this commands identifier
+     * @return boolean true if the specified command identifier matches this commands identifier
      */
-    protected function commandMatchesIdentifier(Command $command, $commandIdentifier)
+    protected function commandMatchesIdentifier(Command $command, string $commandIdentifier): bool
     {
         $commandIdentifierParts = explode(':', $command->getCommandIdentifier());
         $searchedCommandIdentifierParts = explode(':', $commandIdentifier);
@@ -244,7 +243,7 @@ class CommandManager
      * @param string $commandMethodName
      * @return array
      */
-    public function getCommandMethodParameters($controllerObjectName, $commandMethodName)
+    public function getCommandMethodParameters(string $controllerObjectName, string $commandMethodName): array
     {
         $commandControllerMethodArgumentMap = static::getCommandControllerMethodArguments($this->objectManager);
 
@@ -256,7 +255,7 @@ class CommandManager
      * @return array Array of method arguments per controller and method.
      * @Flow\CompileStatic
      */
-    public static function getCommandControllerMethodArguments($objectManager)
+    public static function getCommandControllerMethodArguments(ObjectManagerInterface $objectManager): array
     {
         /** @var ReflectionService $reflectionService */
         $reflectionService = $objectManager->get(ReflectionService::class);

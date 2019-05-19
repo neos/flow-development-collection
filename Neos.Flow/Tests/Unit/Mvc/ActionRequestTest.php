@@ -13,9 +13,13 @@ namespace Neos\Flow\Tests\Unit\Mvc;
 
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Http;
+use Neos\Flow\Mvc\Exception\InvalidActionNameException;
+use Neos\Flow\Mvc\Exception\InvalidArgumentNameException;
+use Neos\Flow\Mvc\Exception\InvalidArgumentTypeException;
+use Neos\Flow\Mvc\Exception\InvalidControllerNameException;
+use Neos\Flow\ObjectManagement\Exception\UnknownObjectException;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Package\PackageManager;
-use Neos\Flow\Package\PackageManagerInterface;
 use Neos\Flow\Security\Cryptography\HashService;
 use Neos\Flow\Security\Exception\InvalidHashException;
 use Neos\Flow\SignalSlot\Dispatcher;
@@ -36,7 +40,7 @@ class ActionRequestTest extends UnitTestCase
      */
     protected $mockHttpRequest;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->mockHttpRequest = $this->getMockBuilder(Http\Request::class)->disableOriginalConstructor()->getMock();
         $this->actionRequest = new ActionRequest($this->mockHttpRequest);
@@ -58,11 +62,11 @@ class ActionRequestTest extends UnitTestCase
     }
 
     /**
-     * @expectedException \InvalidArgumentException
      * @test
      */
     public function constructorThrowsAnExceptionIfNoValidRequestIsPassed()
     {
+        $this->expectException(\InvalidArgumentException::class);
         new ActionRequest(new \stdClass());
     }
 
@@ -238,10 +242,10 @@ class ActionRequestTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\ObjectManagement\Exception\UnknownObjectException
      */
     public function setControllerObjectNameThrowsExceptionOnUnknownObjectName()
     {
+        $this->expectException(UnknownObjectException::class);
         $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
         $mockObjectManager->expects($this->any())->method('getCaseSensitiveObjectName')->will($this->returnValue(false));
 
@@ -285,8 +289,8 @@ class ActionRequestTest extends UnitTestCase
         $actionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->setMethods(['getControllerObjectName'])->getMock();
         $actionRequest->expects($this->once())->method('getControllerObjectName')->will($this->returnValue('Neos\MyPackage\Some\SubPackage\Controller\Foo\BarController'));
 
-        /** @var PackageManagerInterface|\PHPUnit_Framework_MockObject_MockObject $mockPackageManager */
-        $mockPackageManager = $this->createMock(PackageManagerInterface::class);
+        /** @var PackageManager|\PHPUnit_Framework_MockObject_MockObject $mockPackageManager */
+        $mockPackageManager = $this->createMock(PackageManager::class);
         $mockPackageManager->expects($this->any())->method('getCaseSensitivePackageKey')->with('neos.mypackage')->will($this->returnValue('Neos.MyPackage'));
         $this->inject($actionRequest, 'packageManager', $mockPackageManager);
 
@@ -304,8 +308,8 @@ class ActionRequestTest extends UnitTestCase
         $actionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->setMethods(['getControllerObjectName'])->getMock();
         $actionRequest->expects($this->any())->method('getControllerObjectName')->will($this->returnValue('Neos\MyPackage\Controller\Foo\BarController'));
 
-        /** @var PackageManagerInterface|\PHPUnit_Framework_MockObject_MockObject $mockPackageManager */
-        $mockPackageManager = $this->createMock(PackageManagerInterface::class);
+        /** @var PackageManager|\PHPUnit_Framework_MockObject_MockObject $mockPackageManager */
+        $mockPackageManager = $this->createMock(PackageManager::class);
         $mockPackageManager->expects($this->any())->method('getCaseSensitivePackageKey')->with('neos.mypackage')->will($this->returnValue('Neos.MyPackage'));
         $this->inject($actionRequest, 'packageManager', $mockPackageManager);
 
@@ -322,8 +326,8 @@ class ActionRequestTest extends UnitTestCase
         $actionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->setMethods(['getControllerObjectName'])->getMock();
         $actionRequest->expects($this->once())->method('getControllerObjectName')->will($this->returnValue(''));
 
-        /** @var PackageManagerInterface|\PHPUnit_Framework_MockObject_MockObject $mockPackageManager */
-        $mockPackageManager = $this->createMock(PackageManagerInterface::class);
+        /** @var PackageManager|\PHPUnit_Framework_MockObject_MockObject $mockPackageManager */
+        $mockPackageManager = $this->createMock(PackageManager::class);
         $mockPackageManager->expects($this->any())->method('getCaseSensitivePackageKey')->with('neos.mypackage')->will($this->returnValue(false));
         $this->inject($actionRequest, 'packageManager', $mockPackageManager);
 
@@ -348,10 +352,10 @@ class ActionRequestTest extends UnitTestCase
      * @test
      * @param mixed $invalidControllerName
      * @dataProvider invalidControllerNames
-     * @expectedException \Neos\Flow\Mvc\Exception\InvalidControllerNameException
      */
     public function setControllerNameThrowsExceptionOnInvalidControllerNames($invalidControllerName)
     {
+        $this->expectException(InvalidControllerNameException::class);
         $this->actionRequest->setControllerName($invalidControllerName);
     }
 
@@ -384,10 +388,10 @@ class ActionRequestTest extends UnitTestCase
      * @test
      * @param mixed $invalidActionName
      * @dataProvider invalidActionNames
-     * @expectedException \Neos\Flow\Mvc\Exception\InvalidActionNameException
      */
     public function setControllerActionNameThrowsExceptionOnInvalidActionNames($invalidActionName)
     {
+        $this->expectException(InvalidActionNameException::class);
         $this->actionRequest->setControllerActionName($invalidActionName);
     }
 
@@ -430,19 +434,19 @@ class ActionRequestTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Mvc\Exception\InvalidArgumentNameException
      */
     public function setArgumentThrowsAnExceptionOnInvalidArgumentNames()
     {
+        $this->expectException(InvalidArgumentNameException::class);
         $this->actionRequest->setArgument('', 'theValue');
     }
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Mvc\Exception\InvalidArgumentTypeException
      */
     public function setArgumentDoesNotAllowObjectValuesForRegularArguments()
     {
+        $this->expectException(InvalidArgumentTypeException::class);
         $this->actionRequest->setArgument('foo', new \stdClass());
     }
 
@@ -534,10 +538,10 @@ class ActionRequestTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Security\Exception\InvalidHashException
      */
     public function getReferringRequestThrowsAnExceptionIfTheHmacOfTheArgumentsCouldNotBeValid()
     {
+        $this->expectException(InvalidHashException::class);
         $serializedArguments = base64_encode('some manipulated arguments string without valid HMAC');
         $referrer = [
             '@controller' => 'Foo',

@@ -12,6 +12,7 @@ namespace Neos\Flow\Tests\Unit\Reflection;
  */
 
 use Neos\Flow\Reflection\ClassSchema;
+use Neos\Flow\Reflection\Exception\ClassSchemaConstraintViolationException;
 use Neos\Flow\Tests\UnitTestCase;
 
 /**
@@ -83,10 +84,10 @@ class ClassSchemaTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
      */
     public function markAsIdentityPropertyRejectsUnknownProperties()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $classSchema = new ClassSchema('SomeClass');
 
         $classSchema->markAsIdentityProperty('unknownProperty');
@@ -94,10 +95,10 @@ class ClassSchemaTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
      */
     public function markAsIdentityPropertyRejectsLazyLoadedProperties()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $classSchema = new ClassSchema('SomeClass');
         $classSchema->addProperty('lazyProperty', 'Neos\Flow\SomeObject', true);
 
@@ -146,13 +147,12 @@ class ClassSchemaTest extends UnitTestCase
     /**
      * @dataProvider validPropertyTypes()
      * @test
+     * @doesNotPerformAssertions
      */
     public function addPropertyAcceptsValidPropertyTypes($propertyType)
     {
         $classSchema = new ClassSchema('SomeClass');
         $classSchema->addProperty('a', $propertyType);
-        // dummy assertion to avoid incomplete  test detection
-        $this->assertNull(null);
     }
 
     /**
@@ -169,10 +169,10 @@ class ClassSchemaTest extends UnitTestCase
     /**
      * @dataProvider invalidPropertyTypes()
      * @test
-     * @expectedException \InvalidArgumentException
      */
     public function addPropertyRejectsInvalidPropertyTypes($propertyType)
     {
+        $this->expectException(\InvalidArgumentException::class);
         $classSchema = new ClassSchema('SomeClass');
         $classSchema->addProperty('a', $propertyType);
     }
@@ -194,10 +194,10 @@ class ClassSchemaTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Reflection\Exception\ClassSchemaConstraintViolationException
      */
     public function markAsIdentityPropertyThrowsExceptionForValueObjects()
     {
+        $this->expectException(ClassSchemaConstraintViolationException::class);
         $classSchema = new ClassSchema('SomeClass');
         $classSchema->setModelType(ClassSchema::MODELTYPE_VALUEOBJECT);
         $classSchema->markAsIdentityProperty('foo');

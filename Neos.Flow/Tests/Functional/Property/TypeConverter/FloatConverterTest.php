@@ -11,6 +11,7 @@ namespace Neos\Flow\Tests\Functional\Property\TypeConverter;
  * source code.
  */
 
+use Neos\Flow\I18n\Exception\InvalidLocaleIdentifierException;
 use Neos\Flow\I18n\Locale;
 use Neos\Flow\Property\PropertyMappingConfiguration;
 use Neos\Flow\Property\TypeConverter\FloatConverter;
@@ -28,7 +29,7 @@ class FloatConverterTest extends FunctionalTestCase
      */
     protected $converter;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->converter = $this->objectManager->get(\Neos\Flow\Property\TypeConverter\FloatConverter::class);
@@ -83,10 +84,10 @@ class FloatConverterTest extends FunctionalTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\I18n\Exception\InvalidLocaleIdentifierException
      */
     public function convertFromThrowsExceptionIfLocaleIsInvalid()
     {
+        $this->expectException(InvalidLocaleIdentifierException::class);
         $configuration = new PropertyMappingConfiguration();
         $configuration->setTypeConverterOption(FloatConverter::class, 'locale', 'some-non-existent-locale-identifier');
 

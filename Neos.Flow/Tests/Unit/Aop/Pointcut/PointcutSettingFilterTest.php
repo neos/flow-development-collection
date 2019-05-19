@@ -52,10 +52,10 @@ class PointcutSettingFilterTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Aop\Exception\InvalidPointcutExpressionException
      */
     public function filterThrowsAnExceptionForNotExistingConfigurationSetting()
     {
+        $this->expectException(Aop\Exception\InvalidPointcutExpressionException::class);
         $mockConfigurationManager = $this->getMockBuilder(ConfigurationManager::class)->disableOriginalConstructor()->getMock();
 
         $settings['foo']['bar']['baz']['value'] = true;
@@ -142,10 +142,11 @@ class PointcutSettingFilterTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Aop\Exception\InvalidPointcutExpressionException
+     *
      */
     public function filterThrowsAnExceptionForAnIncorectCondition()
     {
+        $this->expectException(Aop\Exception\InvalidPointcutExpressionException::class);
         $mockConfigurationManager = $this->getMockBuilder(ConfigurationManager::class)->disableOriginalConstructor()->getMock();
 
         $settings['foo']['bar']['baz']['value'] = 'option value';

@@ -11,13 +11,15 @@ namespace Neos\FluidAdaptor\Tests\Functional\View;
  * source code.
  */
 
-use Neos\FluidAdaptor\View\TemplatePaths;
 use Neos\Flow\Cache\CacheManager;
 use Neos\Flow\Http\Request;
 use Neos\Flow\Http\Uri;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Tests\FunctionalTestCase;
+use Neos\FluidAdaptor\Core\ViewHelper\Exception\WrongEnctypeException;
 use Neos\FluidAdaptor\Tests\Functional\View\Fixtures\View\StandaloneView;
+use Neos\FluidAdaptor\View\Exception\InvalidTemplateResourceException;
+use TYPO3Fluid\Fluid\Core\Parser\UnknownNamespaceException;
 
 /**
  * Testcase for Standalone View
@@ -35,7 +37,7 @@ class StandaloneViewTest extends FunctionalTestCase
      * $standaloneViewNonce is initialized to some random value which is used inside
      * an overridden version of StandaloneView::createIdentifierForFile.
      */
-    public function runBare()
+    public function runBare(): void
     {
         $this->standaloneViewNonce = uniqid();
         parent::runBare();
@@ -80,10 +82,10 @@ class StandaloneViewTest extends FunctionalTestCase
 
     /**
      * @test
-     * @expectedException \Neos\FluidAdaptor\View\Exception\InvalidTemplateResourceException
      */
     public function renderThrowsExceptionIfNeitherTemplateSourceNorTemplatePathAndFilenameAreSpecified()
     {
+        $this->expectException(InvalidTemplateResourceException::class);
         $httpRequest = Request::create(new Uri('http://localhost'));
         $actionRequest = new ActionRequest($httpRequest);
 
@@ -93,10 +95,10 @@ class StandaloneViewTest extends FunctionalTestCase
 
     /**
      * @test
-     * @expectedException \Neos\FluidAdaptor\View\Exception\InvalidTemplateResourceException
      */
     public function renderThrowsExceptionSpecifiedTemplatePathAndFilenameDoesNotExist()
     {
+        $this->expectException(InvalidTemplateResourceException::class);
         $httpRequest = Request::create(new Uri('http://localhost'));
         $actionRequest = new ActionRequest($httpRequest);
 
@@ -107,10 +109,24 @@ class StandaloneViewTest extends FunctionalTestCase
 
     /**
      * @test
-     * @expectedException \Neos\FluidAdaptor\View\Exception\InvalidTemplateResourceException
+     */
+    public function renderThrowsExceptionIfWrongEnctypeIsSetForFormUpload()
+    {
+        $this->expectException(WrongEnctypeException::class);
+        $httpRequest = Request::create(new Uri('http://localhost'));
+        $actionRequest = new ActionRequest($httpRequest);
+
+        $standaloneView = new StandaloneView($actionRequest, $this->standaloneViewNonce);
+        $standaloneView->setTemplatePathAndFilename(__DIR__ . '/Fixtures/TestTemplateWithFormUpload.txt');
+        $standaloneView->render();
+    }
+
+    /**
+     * @test
      */
     public function renderThrowsExceptionIfSpecifiedTemplatePathAndFilenamePointsToADirectory()
     {
+        $this->expectException(InvalidTemplateResourceException::class);
         $request = Request::create(new Uri('http://localhost'));
         $actionRequest = new ActionRequest($request);
 
@@ -236,10 +252,10 @@ class StandaloneViewTest extends FunctionalTestCase
 
     /**
      * @test
-     * @expectedException \TYPO3Fluid\Fluid\Core\Parser\UnknownNamespaceException
      */
     public function viewThrowsExceptionWhenUnknownViewHelperIsCalled()
     {
+        $this->expectException(UnknownNamespaceException::class);
         $httpRequest = Request::create(new Uri('http://localhost'));
         $actionRequest = new ActionRequest($httpRequest);
         $actionRequest->setFormat('txt');
@@ -325,5 +341,23 @@ class StandaloneViewTest extends FunctionalTestCase
         $standaloneView->setTemplatePathAndFilename($templatePathAndFilename);
 
         $this->assertSame($templatePathAndFilename, $standaloneView->getTemplatePathAndFilename());
+    }
+
+    /**
+     * @test
+     */
+    public function formViewHelpersOutsideOfFormWork()
+    {
+        $httpRequest = Request::create(new Uri('http://localhost'));
+        $actionRequest = new ActionRequest($httpRequest);
+
+        $standaloneView = new StandaloneView($actionRequest, $this->standaloneViewNonce);
+        $standaloneView->assign('name', 'Karsten');
+        $standaloneView->assign('name', 'Robert');
+        $standaloneView->setTemplatePathAndFilename(__DIR__ . '/Fixtures/TestTemplateWithFormField.txt');
+
+        $expected = 'This is a test template.<input type="checkbox" name="checkbox-outside" value="1" />';
+        $actual = $standaloneView->render();
+        $this->assertSame($expected, $actual);
     }
 }

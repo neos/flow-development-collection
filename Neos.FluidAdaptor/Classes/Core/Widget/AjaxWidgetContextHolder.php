@@ -39,7 +39,7 @@ class AjaxWidgetContextHolder
      *
      * @var array
      */
-    protected $widgetContexts = array();
+    protected $widgetContexts = [];
 
     /**
      * Get the widget context for the given $ajaxWidgetId.

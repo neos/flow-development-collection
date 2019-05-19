@@ -13,7 +13,7 @@ namespace Neos\Flow\Command;
 
 use Neos\Error\Messages\Result;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Package\PackageManagerInterface;
+use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Cli\CommandController;
 use Neos\Error\Messages\Error;
 use Neos\Error\Messages\Notice;
@@ -30,14 +30,14 @@ class SchemaCommandController extends CommandController
 {
 
     /**
-     * @Flow\Inject(lazy = FALSE)
+     * @Flow\Inject(lazy = false)
      * @var SchemaValidator
      */
     protected $schemaValidator;
 
     /**
      * @Flow\Inject
-     * @var PackageManagerInterface
+     * @var PackageManager
      */
     protected $packageManager;
 
@@ -46,25 +46,25 @@ class SchemaCommandController extends CommandController
      *
      * @param string $configurationFile path to the validated configuration file
      * @param string $schemaFile path to the schema file
-     * @param boolean $verbose if TRUE, output more verbose information on the schema files which were used
+     * @param boolean $verbose if true, output more verbose information on the schema files which were used
      * @return void
      */
-    public function validateCommand($configurationFile = null, $schemaFile = 'resource://Neos.Utility.Schema/Private/Schema/Schema.schema.yaml', $verbose = false)
+    public function validateCommand(string $configurationFile = null, string $schemaFile = 'resource://Neos.Flow/Private/Schema/Schema.schema.yaml', bool $verbose = false)
     {
         $this->outputLine('Validating <b>' . $configurationFile . '</b> with schema  <b>' . $schemaFile . '</b>');
         $this->outputLine();
 
-        $schema = Yaml::parse($schemaFile);
+        $schema = Yaml::parseFile($schemaFile);
 
         if (is_null($configurationFile)) {
             $result = new Result();
-            $activePackages = $this->packageManager->getActivePackages();
+            $activePackages = $this->packageManager->getAvailablePackages();
             foreach ($activePackages as $package) {
                 $packageKey = $package->getPackageKey();
                 $packageSchemaPath = Files::concatenatePaths([$package->getResourcesPath(), 'Private/Schema']);
                 if (is_dir($packageSchemaPath) && $packageKey !== 'Neos.Utility.Schema') {
                     foreach (Files::getRecursiveDirectoryGenerator($packageSchemaPath, '.schema.yaml') as $schemaFile) {
-                        $configuration = Yaml::parse($schemaFile);
+                        $configuration = Yaml::parseFile($schemaFile);
                         $schemaPath = str_replace(FLOW_PATH_ROOT, '', $schemaFile);
                         $configurationResult = $this->schemaValidator->validate($configuration, $schema);
                         $result->forProperty($schemaPath)->merge($configurationResult);
@@ -72,7 +72,7 @@ class SchemaCommandController extends CommandController
                 }
             }
         } else {
-            $configuration = Yaml::parse($configurationFile);
+            $configuration = Yaml::parseFile($configurationFile);
             $result = $this->schemaValidator->validate($configuration, $schema);
         }
 
@@ -80,11 +80,11 @@ class SchemaCommandController extends CommandController
             $this->outputLine();
             if ($result->hasNotices()) {
                 $notices = $result->getFlattenedNotices();
-                $this->outputLine('<b>%d notices:</b>', array(count($notices)));
+                $this->outputLine('<b>%d notices:</b>', [count($notices)]);
                 /** @var Notice $notice */
                 foreach ($notices as $path => $pathNotices) {
                     foreach ($pathNotices as $notice) {
-                        $this->outputLine(' - %s -> %s', array($path, $notice->render()));
+                        $this->outputLine(' - %s -> %s', [$path, $notice->render()]);
                     }
                 }
                 $this->outputLine();
@@ -93,11 +93,11 @@ class SchemaCommandController extends CommandController
 
         if ($result->hasErrors()) {
             $errors = $result->getFlattenedErrors();
-            $this->outputLine('<b>%d errors were found:</b>', array(count($errors)));
+            $this->outputLine('<b>%d errors were found:</b>', [count($errors)]);
             /** @var Error $error */
             foreach ($errors as $path => $pathErrors) {
                 foreach ($pathErrors as $error) {
-                    $this->outputLine(' - %s -> %s', array($path, $error->render()));
+                    $this->outputLine(' - %s -> %s', [$path, $error->render()]);
                 }
             }
             $this->quit(1);
@@ -111,16 +111,16 @@ class SchemaCommandController extends CommandController
      *
      * @param string $configurationFile path to the validated configuration file
      * @param string $schemaFile path to the schema file
-     * @param boolean $verbose if TRUE, output more verbose information on the schema files which were used
+     * @param boolean $verbose if true, output more verbose information on the schema files which were used
      * @return void
      */
-    public function validateSchemaCommand($configurationFile, $schemaFile = 'resource://Neos.Utility.Schema/Private/Schema/Schema.schema.yaml', $verbose = false)
+    public function validateSchemaCommand(string $configurationFile, string $schemaFile = 'resource://Neos.Flow/Private/Schema/Schema.schema.yaml', bool $verbose = false)
     {
         $this->outputLine('Validating <b>' . $configurationFile . '</b> with schema  <b>' . $schemaFile . '</b>');
         $this->outputLine();
 
-        $configuration = Yaml::parse($configurationFile);
-        $schema = Yaml::parse($schemaFile);
+        $configuration = Yaml::parseFile($configurationFile);
+        $schema = Yaml::parseFile($schemaFile);
 
         $result = $this->schemaValidator->validate($configuration, $schema);
 
@@ -128,11 +128,11 @@ class SchemaCommandController extends CommandController
             $this->outputLine();
             if ($result->hasNotices()) {
                 $notices = $result->getFlattenedNotices();
-                $this->outputLine('<b>%d notices:</b>', array(count($notices)));
+                $this->outputLine('<b>%d notices:</b>', [count($notices)]);
                 /** @var Notice $notice */
                 foreach ($notices as $path => $pathNotices) {
                     foreach ($pathNotices as $notice) {
-                        $this->outputLine(' - %s -> %s', array($path, $notice->render()));
+                        $this->outputLine(' - %s -> %s', [$path, $notice->render()]);
                     }
                 }
                 $this->outputLine();
@@ -141,11 +141,11 @@ class SchemaCommandController extends CommandController
 
         if ($result->hasErrors()) {
             $errors = $result->getFlattenedErrors();
-            $this->outputLine('<b>%d errors were found:</b>', array(count($errors)));
+            $this->outputLine('<b>%d errors were found:</b>', [count($errors)]);
             /** @var Error $error */
             foreach ($errors as $path => $pathErrors) {
                 foreach ($pathErrors as $error) {
-                    $this->outputLine(' - %s', array($error->render()));
+                    $this->outputLine(' - %s', [$error->render()]);
                 }
             }
             $this->quit(1);

@@ -248,7 +248,7 @@ function outputLine($text = '', array $arguments = [], $indention = 0, $style = 
 }
 
 /**
- * @return boolean TRUE if the terminal support ANSI colors, otherwise FALSE
+ * @return boolean true if the terminal support ANSI colors, otherwise false
  */
 function hasColorSupport()
 {

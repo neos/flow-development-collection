@@ -20,7 +20,7 @@
 
 $mediaTypesClassPathAndFilename = __DIR__ . '/../Classes/MediaTypes.php';
 
-$rawList = file_get_contents('http://svn.apache.org/viewvc/httpd/httpd/branches/2.4.x/docs/conf/mime.types?revision=HEAD&view=co');
+$rawList = file_get_contents('https://svn.apache.org/viewvc/httpd/httpd/branches/2.4.x/docs/conf/mime.types?revision=HEAD&view=co');
 
 $mediaTypesAndFileExtensions = array();
 
@@ -30,6 +30,10 @@ foreach (explode("\n", $rawList) as $line) {
         $mediaTypesAndFileExtensions[$matches[0][1]] = preg_split('/\s+/', $matches[0][2]);
     }
 }
+
+// Add non-registered mime types that we still want to support:
+$mediaTypesAndFileExtensions['application/vnd.apple.pkpass'] = ['pkpass'];
+$mediaTypesAndFileExtensions['image/jp2'] = ['jp2', 'jpg2'];
 
 ksort($mediaTypesAndFileExtensions);
 
@@ -51,6 +55,6 @@ foreach ($fileExtensionsAndMediaType as $fileExtension => $mediaType) {
 }
 
 $classCode = file_get_contents($mediaTypesClassPathAndFilename);
-$classCode = preg_replace('/(extensionToMediaType = \[\n)([^\)]+)(\t\];)/', '$1' . $fileExtensionsToMediaTypeCode . "    ];", $classCode);
-$classCode = preg_replace('/(mediaTypeToFileExtension = \[\n)([^\;]+)(;)/', '$1' . $mediaTypesToFileExtensionsCode . "    ];", $classCode);
+$classCode = preg_replace('/(extensionToMediaType = \[\n)([^;]+)(;)/', '$1' . $fileExtensionsToMediaTypeCode . "    ];", $classCode);
+$classCode = preg_replace('/(mediaTypeToFileExtension = \[\n)([^;]+)(;)/', '$1' . $mediaTypesToFileExtensionsCode . "    ];", $classCode);
 file_put_contents($mediaTypesClassPathAndFilename, $classCode);

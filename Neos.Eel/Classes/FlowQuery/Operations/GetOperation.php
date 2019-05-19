@@ -12,7 +12,6 @@ namespace Neos\Eel\FlowQuery\Operations;
  */
 
 use Neos\Eel\FlowQuery\FlowQuery;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * Get a (non-wrapped) element from the context.

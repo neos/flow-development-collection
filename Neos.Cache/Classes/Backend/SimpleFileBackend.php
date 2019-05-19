@@ -13,9 +13,11 @@ namespace Neos\Cache\Backend;
 
 use Neos\Cache\Backend\AbstractBackend as IndependentAbstractBackend;
 use Neos\Cache\EnvironmentConfiguration;
+use Neos\Error\Messages\Error;
+use Neos\Error\Messages\Notice;
+use Neos\Error\Messages\Result;
 use Neos\Utility\Files;
 use Neos\Cache\Exception;
-use Neos\Cache\Exception\InvalidDataException;
 use Neos\Cache\Frontend\PhpFrontend;
 use Neos\Cache\Frontend\FrontendInterface;
 use Neos\Utility\Exception\FilesException;
@@ -27,7 +29,7 @@ use Neos\Utility\OpcodeCacheHelper;
  *
  * @api
  */
-class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapableBackendInterface, IterableBackendInterface
+class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapableBackendInterface, IterableBackendInterface, WithSetupInterface, WithStatusInterface
 {
     const SEPARATOR = '^';
 
@@ -113,7 +115,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
      * @return void
      * @api
      */
-    public function setCacheDirectory($cacheDirectory)
+    public function setCacheDirectory(string $cacheDirectory)
     {
         $this->cacheDirectory = rtrim($cacheDirectory, '/') . '/';
     }
@@ -124,7 +126,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
      * @return string Full path of the cache directory
      * @api
      */
-    public function getCacheDirectory()
+    public function getCacheDirectory(): string
     {
         return $this->cacheDirectory;
     }
@@ -138,15 +140,11 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
      * @param integer $lifetime Ignored in this type of cache backend
      * @return void
      * @throws Exception if the directory does not exist or is not writable or exceeds the maximum allowed path length, or if no cache frontend has been set.
-     * @throws InvalidDataException
      * @throws \InvalidArgumentException
      * @api
      */
-    public function set($entryIdentifier, $data, array $tags = [], $lifetime = null)
+    public function set(string $entryIdentifier, string $data, array $tags = [], int $lifetime = null)
     {
-        if (!is_string($data)) {
-            throw new InvalidDataException('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1334756734);
-        }
         if ($entryIdentifier !== basename($entryIdentifier)) {
             throw new \InvalidArgumentException('The specified entry identifier must not contain a path segment.', 1334756735);
         }
@@ -172,11 +170,11 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
      * Loads data from a cache file.
      *
      * @param string $entryIdentifier An identifier which describes the cache entry to load
-     * @return mixed The cache entry's content as a string or FALSE if the cache entry could not be loaded
+     * @return mixed The cache entry's content as a string or false if the cache entry could not be loaded
      * @throws \InvalidArgumentException
      * @api
      */
-    public function get($entryIdentifier)
+    public function get(string $entryIdentifier)
     {
         if ($entryIdentifier !== basename($entryIdentifier)) {
             throw new \InvalidArgumentException('The specified entry identifier must not contain a path segment.', 1334756877);
@@ -195,11 +193,11 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
      * Checks if a cache entry with the specified identifier exists.
      *
      * @param string $entryIdentifier
-     * @return boolean TRUE if such an entry exists, FALSE if not
+     * @return boolean true if such an entry exists, false if not
      * @throws \InvalidArgumentException
      * @api
      */
-    public function has($entryIdentifier)
+    public function has(string $entryIdentifier): bool
     {
         if ($entryIdentifier !== basename($entryIdentifier)) {
             throw new \InvalidArgumentException('The specified entry identifier must not contain a path segment.', 1334756878);
@@ -213,7 +211,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
      * @param string $fileName The full filename of the file to remove.
      * @return bool True if the file was removed successfully or false otherwise
      */
-    private function tryRemoveWithLock($fileName)
+    private function tryRemoveWithLock(string $fileName): bool
     {
         if (strncasecmp(PHP_OS, 'WIN', 3) == 0) {
             // On Windows, unlinking a locked/opened file will not work, so we just attempt the delete straight away.
@@ -240,11 +238,11 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
      * Usually this only affects one entry.
      *
      * @param string $entryIdentifier Specifies the cache entry to remove
-     * @return boolean TRUE if (at least) an entry could be removed or FALSE if no entry was found
+     * @return boolean true if (at least) an entry could be removed or false if no entry was found
      * @throws \InvalidArgumentException
      * @api
      */
-    public function remove($entryIdentifier)
+    public function remove(string $entryIdentifier): bool
     {
         if ($entryIdentifier !== basename($entryIdentifier)) {
             throw new \InvalidArgumentException('The specified entry identifier must not contain a path segment.', 1334756960);
@@ -274,6 +272,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
      *
      * @return void
      * @api
+     * @throws FilesException
      */
     public function flush()
     {
@@ -288,7 +287,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
      * @return boolean
      * @api
      */
-    protected function isCacheFileExpired($cacheEntryPathAndFilename)
+    protected function isCacheFileExpired(string $cacheEntryPathAndFilename): bool
     {
         return (file_exists($cacheEntryPathAndFilename) === false);
     }
@@ -307,10 +306,9 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
      * Tries to find the cache entry for the specified identifier.
      *
      * @param string $entryIdentifier The cache entry identifier
-     * @return mixed The filenames (including path) as an array if one or more entries could be found, otherwise FALSE
-     * @throws Exception if no frontend has been set
+     * @return mixed The filenames (including path) as an array if one or more entries could be found, otherwise false
      */
-    protected function findCacheFilesByIdentifier($entryIdentifier)
+    protected function findCacheFilesByIdentifier(string $entryIdentifier)
     {
         $pathAndFilename = $this->cacheDirectory . $entryIdentifier . $this->cacheEntryFileExtension;
         return (file_exists($pathAndFilename) ? [$pathAndFilename] : false);
@@ -324,7 +322,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
      * @throws \InvalidArgumentException
      * @api
      */
-    public function requireOnce($entryIdentifier)
+    public function requireOnce(string $entryIdentifier)
     {
         $pathAndFilename = $this->cacheDirectory . $entryIdentifier . $this->cacheEntryFileExtension;
         if ($entryIdentifier !== basename($entryIdentifier)) {
@@ -378,7 +376,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
      * @return string
      * @api
      */
-    public function key()
+    public function key(): string
     {
         if ($this->cacheFilesIterator === null) {
             $this->rewind();
@@ -389,10 +387,10 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
     /**
      * Checks if the current position of the cache entry iterator is valid
      *
-     * @return boolean TRUE if the current position is valid, otherwise FALSE
+     * @return boolean true if the current position is valid, otherwise false
      * @api
      */
-    public function valid()
+    public function valid(): bool
     {
         if ($this->cacheFilesIterator === null) {
             $this->rewind();
@@ -422,7 +420,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
      * @return void
      * @throws Exception
      */
-    protected function throwExceptionIfPathExceedsMaximumLength($cacheEntryPathAndFilename)
+    protected function throwExceptionIfPathExceedsMaximumLength(string $cacheEntryPathAndFilename)
     {
         if (strlen($cacheEntryPathAndFilename) > $this->environmentConfiguration->getMaximumPathLength()) {
             throw new Exception('The length of the cache entry path "' . $cacheEntryPathAndFilename . '" exceeds the maximum path length of ' . $this->environmentConfiguration->getMaximumPathLength() . '. Please consider setting the FLOW_PATH_TEMPORARY_BASE environment variable to a shorter path. ', 1248710426);
@@ -432,7 +430,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
     /**
      * @return string
      */
-    public function getBaseDirectory()
+    public function getBaseDirectory(): string
     {
         return $this->baseDirectory;
     }
@@ -440,7 +438,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
     /**
      * @param string $baseDirectory
      */
-    public function setBaseDirectory($baseDirectory)
+    public function setBaseDirectory(string $baseDirectory)
     {
         $this->baseDirectory = $baseDirectory;
     }
@@ -464,14 +462,22 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
                 throw new Exception('The cache directory "' . $cacheDirectory . '" could not be created.', 1264426237);
             }
         }
-        if (!is_dir($cacheDirectory) && !is_link($cacheDirectory)) {
-            throw new Exception('The cache directory "' . $cacheDirectory . '" does not exist.', 1203965199);
-        }
-        if (!is_writable($cacheDirectory)) {
-            throw new Exception('The cache directory "' . $cacheDirectory . '" is not writable.', 1203965200);
-        }
 
         $this->cacheDirectory = $cacheDirectory;
+        $this->verifyCacheDirectory();
+    }
+
+    /**
+     * @throws Exception
+     */
+    protected function verifyCacheDirectory()
+    {
+        if (!is_dir($this->cacheDirectory) && !is_link($this->cacheDirectory)) {
+            throw new Exception('The cache directory "' . $this->cacheDirectory . '" does not exist.', 1203965199);
+        }
+        if (!is_writable($this->cacheDirectory)) {
+            throw new Exception('The cache directory "' . $this->cacheDirectory . '" is not writable.', 1203965200);
+        }
     }
 
     /**
@@ -480,9 +486,9 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
      * @param string $cacheEntryPathAndFilename
      * @param int|null $offset
      * @param int|null $maxlen
-     * @return boolean|string The contents of the cache file or FALSE on error
+     * @return boolean|string The contents of the cache file or false on error
      */
-    protected function readCacheFile($cacheEntryPathAndFilename, $offset = null, $maxlen = null)
+    protected function readCacheFile(string $cacheEntryPathAndFilename, int $offset = null, int $maxlen = null)
     {
         for ($i = 0; $i < 3; $i++) {
             $data = false;
@@ -518,7 +524,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
      * @param string $data
      * @return boolean|integer Return value of file_put_contents
      */
-    protected function writeCacheFile($cacheEntryPathAndFilename, $data)
+    protected function writeCacheFile(string $cacheEntryPathAndFilename, string $data)
     {
         for ($i = 0; $i < 3; $i++) {
             // This can be replaced by a simple file_put_contents($cacheEntryPathAndFilename, $data, LOCK_EX) once vfs
@@ -544,5 +550,42 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
         }
 
         return false;
+    }
+
+    /**
+     * Sets up this backend by creating the required cache directory if it doesn't exist yet
+     *
+     * @return Result
+     * @api
+     */
+    public function setup(): Result
+    {
+        $result = new Result();
+        try {
+            $this->configureCacheDirectory();
+        } catch (Exception $exception) {
+            $result->addError(new Error('Failed to configure cache directory: %s', $exception->getCode(), [$exception->getMessage()], 'Cache Directory'));
+        }
+        return $result;
+    }
+
+    /**
+     * Validates that the configured cache directory exists and is writeable and returns some details about its configuration if that's the case
+     *
+     * @return Result
+     * @api
+     */
+    public function getStatus(): Result
+    {
+        $result = new Result();
+        try {
+            $this->verifyCacheDirectory();
+        } catch (Exception $exception) {
+            $result->addError(new Error($exception->getMessage(), $exception->getCode(), [], 'Cache Directory'));
+            return $result;
+        }
+        $result->addNotice(new Notice($this->baseDirectory ?? '-', null, [], 'Base Directory'));
+        $result->addNotice(new Notice($this->getCacheDirectory(), null, [], 'Cache Directory'));
+        return $result;
     }
 }

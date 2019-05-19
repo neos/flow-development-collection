@@ -45,12 +45,12 @@ class CommandControllerTest extends UnitTestCase
      */
     protected $mockConsoleOutput;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->commandController = $this->getAccessibleMock(CommandController::class, ['resolveCommandMethodName', 'callCommandMethod']);
 
         $this->mockCommandManager = $this->getMockBuilder(CommandManager::class)->disableOriginalConstructor()->getMock();
-        $this->mockCommandManager->expects($this->any())->method('getCommandMethodParameters')->will($this->returnValue(array()));
+        $this->mockCommandManager->expects($this->any())->method('getCommandMethodParameters')->will($this->returnValue([]));
         $this->inject($this->commandController, 'commandManager', $this->mockCommandManager);
 
         $this->mockConsoleOutput = $this->getMockBuilder(ConsoleOutput::class)->disableOriginalConstructor()->getMock();
@@ -60,10 +60,10 @@ class CommandControllerTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Mvc\Exception\UnsupportedRequestTypeException
      */
     public function processRequestThrowsExceptionIfGivenRequestIsNoCliRequest()
     {
+        $this->expectException(Mvc\Exception\UnsupportedRequestTypeException::class);
         $mockRequest = $this->createMock(Mvc\RequestInterface::class);
         $mockResponse = $this->createMock(Mvc\ResponseInterface::class);
 

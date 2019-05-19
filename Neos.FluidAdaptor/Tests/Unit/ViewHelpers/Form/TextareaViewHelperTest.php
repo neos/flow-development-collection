@@ -27,10 +27,10 @@ class TextareaViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\F
      */
     protected $viewHelper;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
-        $this->viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\Form\TextareaViewHelper::class, array('setErrorClassAttribute', 'registerFieldNameForFormTokenGeneration'));
+        $this->viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\Form\TextareaViewHelper::class, ['setErrorClassAttribute', 'registerFieldNameForFormTokenGeneration']);
         $this->arguments['name'] = '';
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
         $this->viewHelper->initializeArguments();
@@ -61,10 +61,10 @@ class TextareaViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\F
         $mockTagBuilder->expects($this->once())->method('render');
         $this->viewHelper->injectTagBuilder($mockTagBuilder);
 
-        $arguments = array(
+        $arguments = [
             'name' => 'NameOfTextarea',
             'value' => 'Current value'
-        );
+        ];
         $this->viewHelper->setArguments($arguments);
 
         $this->viewHelper->setViewHelperNode(new \Neos\FluidAdaptor\ViewHelpers\Fixtures\EmptySyntaxTreeNode());
@@ -93,10 +93,10 @@ class TextareaViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\F
         $mockTagBuilder->expects($this->once())->method('render');
         $this->viewHelper->injectTagBuilder($mockTagBuilder);
 
-        $arguments = array(
+        $arguments = [
             'name' => 'NameOfTextarea',
             'value' => 'some <tag> & "quotes"'
-        );
+        ];
         $this->viewHelper->setArguments($arguments);
 
         $this->viewHelper->setViewHelperNode(new \Neos\FluidAdaptor\ViewHelpers\Fixtures\EmptySyntaxTreeNode());

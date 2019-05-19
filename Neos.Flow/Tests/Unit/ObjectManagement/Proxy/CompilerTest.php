@@ -31,7 +31,7 @@ class CompilerTest extends UnitTestCase
      */
     protected $compiler;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->compiler = $this->getAccessibleMock(Compiler::class, null);
     }

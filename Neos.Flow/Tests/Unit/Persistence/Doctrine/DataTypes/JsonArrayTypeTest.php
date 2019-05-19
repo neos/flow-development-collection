@@ -29,7 +29,7 @@ class JsonArrayTypeTest extends UnitTestCase
     /**
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->jsonArrayTypeMock = $this->getMockBuilder(JsonArrayType::class)
             ->setMethods(['initializeDependencies'])

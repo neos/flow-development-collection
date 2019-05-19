@@ -30,7 +30,7 @@ class CollectionValidatorTest extends AbstractValidatorTestcase
 
     protected $mockValidatorResolver;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->mockValidatorResolver = $this->getMockBuilder(ValidatorResolver::class)->setMethods(['createValidator', 'buildBaseValidatorConjunction'])->getMock();

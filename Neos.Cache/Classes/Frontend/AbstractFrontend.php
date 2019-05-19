@@ -39,7 +39,7 @@ abstract class AbstractFrontend implements FrontendInterface
      * @param BackendInterface $backend Backend to be used for this cache
      * @throws \InvalidArgumentException if the identifier doesn't match PATTERN_ENTRYIDENTIFIER
      */
-    public function __construct($identifier, BackendInterface $backend)
+    public function __construct(string $identifier, BackendInterface $backend)
     {
         if (preg_match(self::PATTERN_ENTRYIDENTIFIER, $identifier) !== 1) {
             throw new \InvalidArgumentException('"' . $identifier . '" is not a valid cache identifier.', 1203584729);
@@ -70,7 +70,7 @@ abstract class AbstractFrontend implements FrontendInterface
      * @return string The identifier for this cache
      * @api
      */
-    public function getIdentifier()
+    public function getIdentifier(): string
     {
         return $this->identifier;
     }
@@ -81,7 +81,7 @@ abstract class AbstractFrontend implements FrontendInterface
      * @return BackendInterface The backend used by this cache
      * @api
      */
-    public function getBackend()
+    public function getBackend(): BackendInterface
     {
         return $this->backend;
     }
@@ -90,11 +90,11 @@ abstract class AbstractFrontend implements FrontendInterface
      * Checks if a cache entry with the specified identifier exists.
      *
      * @param string $entryIdentifier An identifier specifying the cache entry
-     * @return boolean TRUE if such an entry exists, FALSE if not
+     * @return boolean true if such an entry exists, false if not
      * @throws \InvalidArgumentException
      * @api
      */
-    public function has($entryIdentifier)
+    public function has(string $entryIdentifier): bool
     {
         if (!$this->isValidEntryIdentifier($entryIdentifier)) {
             throw new \InvalidArgumentException('"' . $entryIdentifier . '" is not a valid cache entry identifier.', 1233058486);
@@ -107,11 +107,11 @@ abstract class AbstractFrontend implements FrontendInterface
      * Removes the given cache entry from the cache.
      *
      * @param string $entryIdentifier An identifier specifying the cache entry
-     * @return boolean TRUE if such an entry exists, FALSE if not
+     * @return boolean true if such an entry exists, false if not
      * @throws \InvalidArgumentException
      * @api
      */
-    public function remove($entryIdentifier)
+    public function remove(string $entryIdentifier): bool
     {
         if (!$this->isValidEntryIdentifier($entryIdentifier)) {
             throw new \InvalidArgumentException('"' . $entryIdentifier . '" is not a valid cache entry identifier.', 1233058495);
@@ -135,11 +135,11 @@ abstract class AbstractFrontend implements FrontendInterface
      * Removes all cache entries of this cache which are tagged by the specified tag.
      *
      * @param string $tag The tag the entries must have
-     * @return integer The number of entries which have been affected by this flush or NULL if the number is unknown
+     * @return integer The number of entries which have been affected by this flush
      * @throws \InvalidArgumentException
      * @api
      */
-    public function flushByTag($tag)
+    public function flushByTag(string $tag): int
     {
         if (!$this->isValidTag($tag)) {
             throw new \InvalidArgumentException('"' . $tag . '" is not a valid tag for a cache entry.', 1233057359);
@@ -147,6 +147,7 @@ abstract class AbstractFrontend implements FrontendInterface
         if ($this->backend instanceof TaggableBackendInterface) {
             return $this->backend->flushByTag($tag);
         }
+        return 0;
     }
 
     /**
@@ -167,7 +168,7 @@ abstract class AbstractFrontend implements FrontendInterface
      * @return boolean
      * @api
      */
-    public function isValidEntryIdentifier($identifier)
+    public function isValidEntryIdentifier(string $identifier): bool
     {
         return preg_match(self::PATTERN_ENTRYIDENTIFIER, $identifier) === 1;
     }
@@ -179,7 +180,7 @@ abstract class AbstractFrontend implements FrontendInterface
      * @return boolean
      * @api
      */
-    public function isValidTag($tag)
+    public function isValidTag(string $tag): bool
     {
         return preg_match(self::PATTERN_TAG, $tag) === 1;
     }

@@ -28,7 +28,7 @@ class CldrModelTest extends UnitTestCase
     /**
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $samplePaths = ['foo', 'bar', 'baz'];
         $sampleParsedFile1 = require(__DIR__ . '/../Fixtures/MockParsedCldrFile1.php');
@@ -82,7 +82,7 @@ class CldrModelTest extends UnitTestCase
     }
 
     /**
-     * When the path points to a leaf, getRawArray() should return FALSE.
+     * When the path points to a leaf, getRawArray() should return false.
      *
      * @test
      */

@@ -11,6 +11,7 @@ namespace Neos\Flow\Tests\Functional\Property;
  * source code.
  */
 
+use Neos\Flow\Property\Exception;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Property\PropertyMappingConfiguration;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
@@ -18,7 +19,6 @@ use Neos\Flow\Property\TypeConverter\ObjectConverter;
 use Neos\Flow\Property\TypeConverter\PersistentObjectConverter;
 use Neos\Flow\Security\Account;
 use Neos\Flow\Tests\FunctionalTestCase;
-use Neos\Flow\Tests\Functional\Property\Fixtures;
 
 /**
  * Test case for Property Mapper
@@ -36,7 +36,7 @@ class PropertyMapperTest extends FunctionalTestCase
     /**
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->propertyMapper = $this->objectManager->get(PropertyMapper::class);
@@ -84,7 +84,8 @@ class PropertyMapperTest extends FunctionalTestCase
         $source = [
             'name' => 'Christopher',
             'size' => '187',
-            'signedCla' => true
+            'signedCla' => true,
+            'signedClaBool' => true
         ];
 
         $result = $this->propertyMapper->convert($source, Fixtures\TestClass::class);
@@ -114,10 +115,10 @@ class PropertyMapperTest extends FunctionalTestCase
      */
     public function embeddedValueobjectCanBeMapped()
     {
-        $source = array(
+        $source = [
             'name' => 'Christopher',
             'age' => '28'
-        );
+        ];
 
         $result = $this->propertyMapper->convert($source, \Neos\Flow\Tests\Functional\Property\Fixtures\TestEmbeddedValueobject::class);
         $this->assertSame('Christopher', $result->getName());
@@ -159,10 +160,10 @@ class PropertyMapperTest extends FunctionalTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Property\Exception
      */
     public function overriddenTargetTypeForEntityMustBeASubclass()
     {
+        $this->expectException(Exception::class);
         $source = [
             '__type' => Fixtures\TestClass::class,
             'name' => 'A horse'
@@ -193,10 +194,10 @@ class PropertyMapperTest extends FunctionalTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Property\Exception
      */
     public function overriddenTargetTypeForSimpleObjectMustBeASubclass()
     {
+        $this->expectException(Exception::class);
         $source = [
             '__type' => Fixtures\TestEntity::class,
             'name' => 'A horse'
@@ -350,10 +351,10 @@ class PropertyMapperTest extends FunctionalTestCase
     /**
      * @test
      * @dataProvider invalidTypeConverterConfigurationsForOverridingTargetTypes
-     * @expectedException \Neos\Flow\Property\Exception
      */
     public function mappingToFieldsFromSubclassThrowsExceptionIfTypeConverterOptionIsInvalidOrNotSet(PropertyMappingConfigurationInterface $configuration = null)
     {
+        $this->expectException(Exception::class);
         $source = [
             '__type' => Fixtures\TestEntitySubclassWithNewField::class,
             'testField' => 'A horse'
@@ -383,10 +384,10 @@ class PropertyMapperTest extends FunctionalTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Property\Exception
      */
     public function convertFromShouldThrowExceptionIfGivenSourceTypeIsNotATargetType()
     {
+        $this->expectException(Exception::class);
         $source = [
             '__type' => Fixtures\TestClass::class,
             'testField' => 'A horse'
@@ -458,5 +459,14 @@ class PropertyMapperTest extends FunctionalTestCase
 
         $this->assertNull($defaultConfiguration->getConfigurationFor('foo')->getConfigurationValue(\Neos\Flow\Property\TypeConverter\PersistentObjectConverter::class, \Neos\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED));
         $this->assertNull($defaultConfiguration->getConfigurationFor('foo')->getConfigurationValue(\Neos\Flow\Property\TypeConverter\PersistentObjectConverter::class, \Neos\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED));
+    }
+
+    /**
+     * @test
+     */
+    public function foo()
+    {
+        $actualResult = $this->propertyMapper->convert(true, 'int');
+        $this->assertSame(42, $actualResult);
     }
 }

@@ -11,6 +11,7 @@ namespace Neos\Flow\Tests\Unit\Validation\Validator;
  * source code.
  */
 
+use Neos\Flow\Validation\Exception\InvalidValidationOptionsException;
 use Neos\Flow\Validation\Validator\StringLengthValidator;
 
 require_once('AbstractValidatorTestcase.php');
@@ -136,10 +137,10 @@ class StringLengthValidatorTest extends AbstractValidatorTestcase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Validation\Exception\InvalidValidationOptionsException
      */
     public function stringLengthValidatorThrowsAnExceptionIfMinLengthIsGreaterThanMaxLength()
     {
+        $this->expectException(InvalidValidationOptionsException::class);
         $this->validator = $this->getMockBuilder(StringLengthValidator::class)->disableOriginalConstructor()->setMethods(['addError'])->getMock();
         $this->validatorOptions(['minimum' => 101, 'maximum' => 100]);
         $this->validator->validate('1234567890');

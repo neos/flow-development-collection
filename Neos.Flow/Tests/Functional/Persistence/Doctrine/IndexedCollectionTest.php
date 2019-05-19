@@ -11,7 +11,6 @@ namespace Neos\Flow\Tests\Functional\Persistence\Doctrine;
  * source code.
  */
 
-use Doctrine\ORM\Mapping as ORM;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\Doctrine\PersistenceManager;
 use Neos\Flow\Tests\Functional\Persistence\Fixtures;
@@ -28,7 +27,7 @@ class IndexedCollectionTest extends FunctionalTestCase
     /**
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         if (!$this->persistenceManager instanceof PersistenceManager) {

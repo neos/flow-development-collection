@@ -14,8 +14,6 @@ namespace Neos\Cache\Backend;
 // @codeCoverageIgnoreStart
 
 use Neos\Cache\Backend\AbstractBackend as AbstractCacheBackend;
-use Neos\Cache\Backend\PhpCapableBackendInterface;
-use Neos\Cache\Backend\TaggableBackendInterface;
 
 /**
  * A caching backend which forgets everything immediately
@@ -34,7 +32,7 @@ class NullBackend extends AbstractCacheBackend implements PhpCapableBackendInter
      * @return void
      * @api
      */
-    public function set($entryIdentifier, $data, array $tags = [], $lifetime = null)
+    public function set(string $entryIdentifier, string $data, array $tags = [], int $lifetime = null)
     {
     }
 
@@ -42,10 +40,10 @@ class NullBackend extends AbstractCacheBackend implements PhpCapableBackendInter
      * Returns False
      *
      * @param string $entryIdentifier ignored
-     * @return boolean FALSE
+     * @return boolean false
      * @api
      */
-    public function get($entryIdentifier)
+    public function get(string $entryIdentifier)
     {
         return false;
     }
@@ -54,10 +52,10 @@ class NullBackend extends AbstractCacheBackend implements PhpCapableBackendInter
      * Returns False
      *
      * @param string $entryIdentifier ignored
-     * @return boolean FALSE
+     * @return boolean false
      * @api
      */
-    public function has($entryIdentifier)
+    public function has(string $entryIdentifier): bool
     {
         return false;
     }
@@ -66,10 +64,10 @@ class NullBackend extends AbstractCacheBackend implements PhpCapableBackendInter
      * Does nothing
      *
      * @param string $entryIdentifier ignored
-     * @return boolean FALSE
+     * @return boolean false
      * @api
      */
-    public function remove($entryIdentifier)
+    public function remove(string $entryIdentifier): bool
     {
         return false;
     }
@@ -81,7 +79,7 @@ class NullBackend extends AbstractCacheBackend implements PhpCapableBackendInter
      * @return array An empty array
      * @api
      */
-    public function findIdentifiersByTag($tag)
+    public function findIdentifiersByTag(string $tag): array
     {
         return [];
     }
@@ -100,11 +98,12 @@ class NullBackend extends AbstractCacheBackend implements PhpCapableBackendInter
      * Does nothing
      *
      * @param string $tag ignored
-     * @return void
+     * @return integer
      * @api
      */
-    public function flushByTag($tag)
+    public function flushByTag(string $tag): int
     {
+        return 0;
     }
 
     /**
@@ -124,7 +123,7 @@ class NullBackend extends AbstractCacheBackend implements PhpCapableBackendInter
      * @return void
      * @api
      */
-    public function requireOnce($identifier)
+    public function requireOnce(string $identifier)
     {
     }
 }

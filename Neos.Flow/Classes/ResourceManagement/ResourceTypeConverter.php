@@ -11,14 +11,17 @@ namespace Neos\Flow\ResourceManagement;
  * source code.
  */
 
+use Neos\Flow\Log\Utility\LogEnvironment;
+use Psr\Http\Message\UploadedFileInterface;
 use Neos\Flow\Annotations as Flow;
-use Neos\Error\Messages\Error as FlowError;
-use Neos\Flow\Log\SystemLoggerInterface;
+use Neos\Error\Messages as FlowError;
+use Neos\Flow\Http\FlowUploadedFile;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Property\Exception\InvalidPropertyMappingConfigurationException;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;
 use Neos\Utility\Files;
+use Psr\Log\LoggerInterface;
 
 /**
  * A type converter for converting strings, array and uploaded files to PersistentResource objects.
@@ -79,7 +82,7 @@ class ResourceTypeConverter extends AbstractTypeConverter
     /**
      * @var array<string>
      */
-    protected $sourceTypes = ['string', 'array'];
+    protected $sourceTypes = ['string', 'array', UploadedFileInterface::class];
 
     /**
      * @var string
@@ -110,15 +113,25 @@ class ResourceTypeConverter extends AbstractTypeConverter
     protected $persistenceManager;
 
     /**
-     * @Flow\Inject
-     * @var SystemLoggerInterface
+     * @var LoggerInterface
      */
-    protected $systemLogger;
+    protected $logger;
 
     /**
      * @var array
      */
     protected $convertedResources = [];
+
+    /**
+     * Injects the (system) logger based on PSR-3.
+     *
+     * @param LoggerInterface $logger
+     * @return void
+     */
+    public function injectLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
 
     /**
      * Converts the given string or array to a PersistentResource object.
@@ -135,11 +148,18 @@ class ResourceTypeConverter extends AbstractTypeConverter
      * @param array $convertedChildProperties
      * @param PropertyMappingConfigurationInterface $configuration
      * @return PersistentResource|FlowError if the input format is not supported or could not be converted for other reasons
+     * @throws Exception
+     * @throws Exception\InvalidResourceDataException
+     * @throws InvalidPropertyMappingConfigurationException
      */
     public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null)
     {
         if (empty($source)) {
             return null;
+        }
+
+        if ($source instanceof UploadedFileInterface) {
+            return $this->handleUploadedFile($source, $configuration);
         }
 
         if (is_string($source)) {
@@ -175,10 +195,10 @@ class ResourceTypeConverter extends AbstractTypeConverter
                 case \UPLOAD_ERR_INI_SIZE:
                 case \UPLOAD_ERR_FORM_SIZE:
                 case \UPLOAD_ERR_PARTIAL:
-                    return new FlowError(Files::getUploadErrorMessage($source['error']), 1264440823);
+                    return new FlowError\Error(Files::getUploadErrorMessage($source['error']), 1264440823);
                 default:
-                    $this->systemLogger->log(sprintf('A server error occurred while converting an uploaded resource: "%s"', Files::getUploadErrorMessage($source['error'])), LOG_ERR);
-                    return new FlowError('An error occurred while uploading. Please try again or contact the administrator if the problem remains', 1340193849);
+                    $this->logger->error(sprintf('A server error occurred while converting an uploaded resource: "%s"', Files::getUploadErrorMessage($source['error'])), LogEnvironment::fromMethodName(__METHOD__));
+                    return new FlowError\Error('An error occurred while uploading. Please try again or contact the administrator if the problem remains', 1340193849);
             }
         }
 
@@ -191,9 +211,8 @@ class ResourceTypeConverter extends AbstractTypeConverter
             $this->convertedResources[$source['tmp_name']] = $resource;
             return $resource;
         } catch (\Exception $exception) {
-            $this->systemLogger->log('Could not import an uploaded file', LOG_WARNING);
-            $this->systemLogger->logException($exception);
-            return new FlowError('During import of an uploaded file an error occurred. See log for more details.', 1264517906);
+            $this->logger->warning('Could not import an uploaded file', ['exception' => $exception] + LogEnvironment::fromMethodName(__METHOD__));
+            return new FlowError\Error('During import of an uploaded file an error occurred. See log for more details.', 1264517906);
         }
     }
 
@@ -201,6 +220,8 @@ class ResourceTypeConverter extends AbstractTypeConverter
      * @param array $source
      * @param PropertyMappingConfigurationInterface $configuration
      * @return PersistentResource|FlowError
+     * @throws Exception
+     * @throws Exception\InvalidResourceDataException
      * @throws InvalidPropertyMappingConfigurationException
      */
     protected function handleHashAndData(array $source, PropertyMappingConfigurationInterface $configuration = null)
@@ -217,7 +238,7 @@ class ResourceTypeConverter extends AbstractTypeConverter
             }
 
             if ($configuration->getConfigurationValue(ResourceTypeConverter::class, self::CONFIGURATION_IDENTITY_CREATION_ALLOWED) !== true) {
-                throw new InvalidPropertyMappingConfigurationException('Creation of resource objects with identity not allowed. To enable this, you need to set the PropertyMappingConfiguration Value "CONFIGURATION_IDENTITY_CREATION_ALLOWED" to TRUE');
+                throw new InvalidPropertyMappingConfigurationException('Creation of resource objects with identity not allowed. To enable this, you need to set the PropertyMappingConfiguration Value "CONFIGURATION_IDENTITY_CREATION_ALLOWED" to true');
             }
         }
 
@@ -247,16 +268,60 @@ class ResourceTypeConverter extends AbstractTypeConverter
         if ($resource instanceof PersistentResource) {
             return $resource;
         } else {
-            return new FlowError('The resource manager could not create a PersistentResource instance.', 1404312901);
+            return new FlowError\Error('The resource manager could not create a PersistentResource instance.', 1404312901);
         }
     }
 
     /**
+     * @param UploadedFileInterface $source
+     * @param PropertyMappingConfigurationInterface|null $configuration
+     * @return Resource|FlowError
+     */
+    protected function handleUploadedFile(UploadedFileInterface $source, PropertyMappingConfigurationInterface $configuration = null)
+    {
+        if ($source->getError() === UPLOAD_ERR_NO_FILE && $source instanceof FlowUploadedFile && $source->getOriginallySubmittedResource() !== null) {
+            $identifier = is_array($source->getOriginallySubmittedResource()) ? $source->getOriginallySubmittedResource()['__identity'] : $source->getOriginallySubmittedResource();
+            return $this->persistenceManager->getObjectByIdentifier($identifier, PersistentResource::class);
+        }
+
+        switch ($source->getError()) {
+            case \UPLOAD_ERR_OK:
+                break;
+            case UPLOAD_ERR_NO_FILE:
+                return null;
+            case \UPLOAD_ERR_INI_SIZE:
+            case \UPLOAD_ERR_FORM_SIZE:
+            case \UPLOAD_ERR_PARTIAL:
+                return new FlowError\Error(Files::getUploadErrorMessage($source->getError()), 1264440823);
+            default:
+                $this->logger->error(sprintf('A server error occurred while converting an uploaded resource: "%s"', Files::getUploadErrorMessage($source['error'])), LogEnvironment::fromMethodName(__METHOD__));
+
+                return new FlowError\Error('An error occurred while uploading. Please try again or contact the administrator if the problem remains', 1340193849);
+        }
+
+        if (isset($this->convertedResources[spl_object_hash($source)])) {
+            return $this->convertedResources[spl_object_hash($source)];
+        }
+
+        try {
+            $resource = $this->resourceManager->importResource($source->getStream()->detach(), $this->getCollectionName($source, $configuration));
+            $resource->setFilename($source->getClientFilename());
+            $this->convertedResources[spl_object_hash($source)] = $resource;
+            return $resource;
+        } catch (\Exception $exception) {
+            $this->logger->warning('Could not import an uploaded file', ['exception' => $exception] + LogEnvironment::fromMethodName(__METHOD__));
+
+            return new FlowError\Error('During import of an uploaded file an error occurred. See log for more details.', 1264517906);
+        }
+    }
+
+
+    /**
      * Get the collection name this resource will be stored in. Default will be ResourceManager::DEFAULT_PERSISTENT_COLLECTION_NAME
-     * The propertyMappingConfiguration CONFIGURATION_COLLECTION_NAME will directly override the default. Then if CONFIGURATION_ALLOW_COLLECTION_OVERRIDE is TRUE
+     * The propertyMappingConfiguration CONFIGURATION_COLLECTION_NAME will directly override the default. Then if CONFIGURATION_ALLOW_COLLECTION_OVERRIDE is true
      * and __collectionName is in the $source this will finally be the value.
      *
-     * @param array $source
+     * @param array|UploadedFileInterface $source
      * @param PropertyMappingConfigurationInterface $configuration
      * @return string
      * @throws InvalidPropertyMappingConfigurationException
@@ -267,7 +332,12 @@ class ResourceTypeConverter extends AbstractTypeConverter
             return ResourceManager::DEFAULT_PERSISTENT_COLLECTION_NAME;
         }
         $collectionName = $configuration->getConfigurationValue(ResourceTypeConverter::class, self::CONFIGURATION_COLLECTION_NAME) ?: ResourceManager::DEFAULT_PERSISTENT_COLLECTION_NAME;
-        if (isset($source['__collectionName']) && $source['__collectionName'] !== '') {
+
+        if ($source instanceof FlowUploadedFile && $source->getCollectionName() !== null) {
+            $collectionName = $source->getCollectionName();
+        }
+
+        if (is_array($source) && isset($source['__collectionName']) && $source['__collectionName'] !== '') {
             $collectionName = $source['__collectionName'];
         }
 

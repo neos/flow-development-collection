@@ -11,7 +11,10 @@ namespace Neos\Flow\Mvc\Routing;
  * source code.
  */
 
-use Neos\Flow\Http\Request;
+use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
+use Neos\Flow\Mvc\Routing\Dto\ResolveContext;
+use Neos\Flow\Mvc\Routing\Dto\RouteContext;
+use Psr\Http\Message\UriInterface;
 
 /**
  * Contract for a Web Router
@@ -20,20 +23,21 @@ interface RouterInterface
 {
     /**
      * Iterates through all configured routes and calls matches() on them.
-     * Returns the matchResults of the matching route or NULL if no matching
-     * route could be found.
+     * Returns the matchResults of the matching route.
      *
-     * @param Request $httpRequest
-     * @return array The results of the matching route or NULL if no route matched
+     * @param RouteContext $routeContext The Route Context containing the current HTTP Request and, optional, Routing RouteParameters
+     * @return array The results of the matching route
+     * @throws NoMatchingRouteException if no route matched the $routeContext
      */
-    public function route(Request $httpRequest);
+    public function route(RouteContext $routeContext): array;
 
     /**
      * Walks through all configured routes and calls their respective resolves-method.
      * When a matching route is found, the corresponding URI is returned.
      *
-     * @param array $routeValues
-     * @return string URI
+     * @param ResolveContext $resolveContext The Resolve Context containing the route values, the request URI and some flags to be resolved
+     * @return UriInterface The resolved Uri
+     * @throws NoMatchingRouteException if no route could resolve the given $resolveContext
      */
-    public function resolve(array $routeValues);
+    public function resolve(ResolveContext $resolveContext): UriInterface;
 }

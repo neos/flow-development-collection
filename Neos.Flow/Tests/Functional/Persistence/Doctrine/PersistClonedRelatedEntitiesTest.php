@@ -33,7 +33,7 @@ class PersistClonedRelatedEntitiesTest extends FunctionalTestCase
     /**
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         if (!$this->persistenceManager instanceof PersistenceManager) {
@@ -76,7 +76,6 @@ class PersistClonedRelatedEntitiesTest extends FunctionalTestCase
      */
     public function embeddablesInsideClonedProxiedEntitiesAreCorrectlyLoaded()
     {
-        $this->markTestSkipped('This is possibly a bug of Doctrine');
         $entity = new Fixtures\TestEntity();
         $entity->setName('Andi');
         $relatedEntity = new Fixtures\TestEntity();

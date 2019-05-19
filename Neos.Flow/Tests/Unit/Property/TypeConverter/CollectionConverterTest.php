@@ -25,7 +25,7 @@ class CollectionConverterTest extends UnitTestCase
      */
     protected $converter;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->converter = new CollectionConverter();
     }

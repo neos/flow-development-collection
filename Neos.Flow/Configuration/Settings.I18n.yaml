@@ -1,0 +1,46 @@
+#
+# I18n configuration for the Flow Framework
+#
+
+Neos:
+  Flow:
+    i18n:
+      # The default locale identifier.
+      defaultLocale: en
+
+      # The fallback rule to use for locale resolution
+      fallbackRule:
+        # Strictly use the defined order (without implicit locale fallback)
+        strict: false
+        # The locales identifiers to use in their desired order
+        order: []
+
+      globalTranslationPath: '%FLOW_PATH_DATA%Translations/'
+
+      # You can provide a list of available Locales here, which will override the automatic scanning for locales.
+      # If this is an empty array, the scanning for Locales will be triggered, which can be configured below.
+      availableLocales: []
+
+      scan:
+        # You can list any paths that you want to include in scanning for locales relative to the "Resources"
+        # directory of each package. Setting a path to false will skip scanning this folder.
+        # Additionally, you can define patterns that you want to further skip inside the scanned paths.
+        #
+        # Example:
+        #   includePaths:
+        #     '/Public/': true
+        #     '/Private/images/': true
+        #   excludePatterns:
+        #     '/node_modules/': true
+        #
+        #   This will scan all of the Public Resources folder, as well as the 'images' sub-folder inside the Private
+        #   Resources, except any 'node_modules' sub-folder in either one.
+        includePaths:
+          '/Public/': true
+          '/Private/Translations/': true
+
+        excludePatterns:
+          '/node_modules/': true
+          '/bower_components/': true
+          # skip folders starting with a dot (e.g. '.git', '.sass-cache', etc.)
+          '/\..*/': true
