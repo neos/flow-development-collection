@@ -511,11 +511,11 @@ class ActionRequest implements RequestInterface
      * Returns the value of the specified argument
      *
      * @param string $argumentName Name of the argument
-     * @return string Value of the argument
+     * @return string|array Value of the argument
      * @throws Exception\NoSuchArgumentException if such an argument does not exist
      * @api
      */
-    public function getArgument(string $argumentName): string
+    public function getArgument(string $argumentName)
     {
         if (!isset($this->arguments[$argumentName])) {
             throw new Exception\NoSuchArgumentException('An argument "' . $argumentName . '" does not exist for this request.', 1176558158);
