@@ -55,7 +55,7 @@ class CurlEngine implements RequestEngineInterface
      * @throws Http\Exception
      * @throws CurlEngineException
      */
-    public function sendRequest(ServerRequestInterface $request)
+    public function sendRequest(ServerRequestInterface $request): ResponseInterface
     {
         if (!extension_loaded('curl')) {
             throw new Http\Exception('CurlEngine requires the PHP CURL extension to be installed and loaded.', 1346319808);

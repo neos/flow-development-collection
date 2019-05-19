@@ -265,8 +265,8 @@ class PrepareMvcRequestComponentTest extends UnitTestCase
         $this->mockHttpRequest->method('getUploadedFiles')->willReturn([]);
         $this->mockHttpRequest->method('withParsedBody')->willReturn($this->mockHttpRequest);
 
-        $this->mockActionRequest->expects($this->once())->method('getControllerName')->willReturn('SomeController');
-        $this->mockActionRequest->expects($this->once())->method('getControllerActionName')->willReturn('someAction');
+        $this->mockActionRequest->method('getControllerName')->willReturn('SomeController');
+        $this->mockActionRequest->method('getControllerActionName')->willReturn('someAction');
         $this->mockActionRequest->expects($this->never())->method('setControllerName');
         $this->mockActionRequest->expects($this->never())->method('setControllerActionName');
 

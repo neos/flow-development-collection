@@ -15,7 +15,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Error\Debugger;
-use Neos\Flow\Exception;
+use Neos\Flow\Exception as FlowException;
 use Neos\Flow\Http\Component\ComponentChain;
 use Neos\Flow\Http\Component\ComponentContext;
 use Neos\Flow\Http;
@@ -98,10 +98,11 @@ class InternalRequestEngine implements RequestEngineInterface
      *
      * @param ServerRequestInterface $httpRequest
      * @return ResponseInterface
+     * @throws FlowException
      * @throws Http\Exception
      * @api
      */
-    public function sendRequest(ServerRequestInterface $httpRequest)
+    public function sendRequest(ServerRequestInterface $httpRequest): ResponseInterface
     {
         $requestHandler = $this->bootstrap->getActiveRequestHandler();
         if (!$requestHandler instanceof FunctionalTestRequestHandler) {
@@ -122,8 +123,6 @@ class InternalRequestEngine implements RequestEngineInterface
             $baseComponentChain->handle($componentContext);
         } catch (\Throwable $throwable) {
             $componentContext->replaceHttpResponse($this->prepareErrorResponse($throwable, $componentContext->getHttpResponse()));
-        } catch (\Exception $exception) {
-            $componentContext->replaceHttpResponse($this->prepareErrorResponse($exception, $componentContext->getHttpResponse()));
         }
         $session = $this->bootstrap->getObjectManager()->get(SessionInterface::class);
         if ($session->isStarted()) {
@@ -138,7 +137,7 @@ class InternalRequestEngine implements RequestEngineInterface
      *
      * @return RouterInterface
      */
-    public function getRouter()
+    public function getRouter(): RouterInterface
     {
         return $this->router;
     }
@@ -160,7 +159,7 @@ class InternalRequestEngine implements RequestEngineInterface
         $content .= 'in line ' . $exception->getLine() . PHP_EOL . PHP_EOL;
         $content .= Debugger::getBacktraceCode($exception->getTrace(), false, true) . PHP_EOL;
 
-        if ($exception instanceof Exception) {
+        if ($exception instanceof FlowException) {
             $statusCode = $exception->getStatusCode();
         } else {
             $statusCode = 500;

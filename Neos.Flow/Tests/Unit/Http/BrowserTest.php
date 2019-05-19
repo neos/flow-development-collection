@@ -18,6 +18,7 @@ use Neos\Flow\Tests\UnitTestCase;
 use Neos\Http\Factories\ServerRequestFactory;
 use Neos\Http\Factories\UriFactory;
 use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Test case for the Http Cookie class
@@ -109,17 +110,17 @@ class BrowserTest extends UnitTestCase
         $requestEngine
             ->expects($this->at(0))
             ->method('sendRequest')
-            ->with($this->callback(function (Http\Request $request) use ($initialUri) {
-                return $request->getUri() == $initialUri;
+            ->with($this->callback(function (ServerRequestInterface $request) use ($initialUri) {
+                return $request->getUri() === $initialUri;
             }))
-            ->will($this->returnValue($firstResponse));
+            ->willReturn($firstResponse);
         $requestEngine
             ->expects($this->at(1))
             ->method('sendRequest')
-            ->with($this->callback(function (Http\Request $request) use ($redirectUri) {
-                return $request->getUri() == $redirectUri;
+            ->with($this->callback(function (ServerRequestInterface $request) use ($redirectUri) {
+                return $request->getUri() === $redirectUri;
             }))
-            ->will($this->returnValue($secondResponse));
+            ->willReturn($secondResponse);
 
         $this->browser->setRequestEngine($requestEngine);
         $actual = $this->browser->request($initialUri);
