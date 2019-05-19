@@ -36,10 +36,34 @@ class Utility
                 }
                 $currentPathBase = & $currentPathBase[$pathName];
             }
-            $currentPathBase = new $objectType();
-        }
 
+            if (strpos($objectType, '::') !== false) {
+                if (strpos($variableName, '.') !== false) {
+                    throw new Exception(sprintf('Function helpers are only allowed on root level, "%s" was given?', $variableName), 1557911015);
+                }
+                $currentPathBase = self::createClosureFromConfiguration($objectType);
+            } else {
+                $currentPathBase = new $objectType();
+            }
+        }
         return $defaultContextVariables;
+    }
+
+    /**
+     * Create a closure to be used as Helper for eel.
+     *
+     * @param string $objectConfiguration className followed by two colone and the method name
+     * @return callable
+     */
+    private static function createClosureFromConfiguration(string $objectConfiguration): callable
+    {
+        list($className, $methodName) = explode('::', $objectConfiguration, 2);
+        return function (...$arguments) use ($className, $methodName) {
+            return call_user_func_array(
+                [$className, $methodName],
+                $arguments
+            );
+        };
     }
 
     /**
@@ -62,16 +86,15 @@ class Utility
         $defaultContextVariables = self::getDefaultContextVariables($defaultContextConfiguration);
         $contextVariables = array_merge($defaultContextVariables, $contextVariables);
 
-        if (isset($contextVariables['q'])) {
-            throw new Exception('Context variable "q" not allowed, as it is already reserved for FlowQuery use.', 1410441819);
-        }
-
-        $contextVariables['q'] = function ($element) {
-            return new FlowQuery\FlowQuery(is_array($element) || $element instanceof \Traversable ? $element : [$element]);
-        };
-
         $context = new ProtectedContext($contextVariables);
-        $context->whitelist('q');
+
+        // Whitelist functions on the uppermost context level to allow calling them without
+        // implementing ProtectedContextAwareInterface which is impossible for functions
+        foreach ($contextVariables as $key => $value) {
+            if (is_callable($value)) {
+                $context->whitelist($key);
+            }
+        }
 
         return $eelEvaluator->evaluate($matches['exp'], $context);
     }

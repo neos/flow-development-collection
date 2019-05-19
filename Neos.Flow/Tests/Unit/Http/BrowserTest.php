@@ -109,12 +109,16 @@ class BrowserTest extends UnitTestCase
         $requestEngine
             ->expects($this->at(0))
             ->method('sendRequest')
-            ->with($this->attributeEqualTo('uri', $initialUri))
+            ->with($this->callback(function (Http\Request $request) use ($initialUri) {
+                return $request->getUri() == $initialUri;
+            }))
             ->will($this->returnValue($firstResponse));
         $requestEngine
             ->expects($this->at(1))
             ->method('sendRequest')
-            ->with($this->attributeEqualTo('uri', $redirectUri))
+            ->with($this->callback(function (Http\Request $request) use ($redirectUri) {
+                return $request->getUri() == $redirectUri;
+            }))
             ->will($this->returnValue($secondResponse));
 
         $this->browser->setRequestEngine($requestEngine);

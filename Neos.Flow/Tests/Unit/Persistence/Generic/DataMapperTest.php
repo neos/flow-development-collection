@@ -16,6 +16,7 @@ use Neos\Flow\Reflection\ClassSchema;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Flow\Persistence;
+use Neos\Utility\ObjectAccess;
 
 /**
  * Testcase for \Neos\Flow\Persistence\DataMapper
@@ -141,10 +142,10 @@ class DataMapperTest extends UnitTestCase
         $dataMapper = $this->getAccessibleMock(Persistence\Generic\DataMapper::class, ['dummy']);
         $dataMapper->injectReflectionService($mockReflectionService);
         $dataMapper->_call('thawProperties', $object, 1234, $objectData);
-        $this->assertAttributeEquals('firstValue', 'firstProperty', $object);
-        $this->assertAttributeEquals(1234, 'secondProperty', $object);
-        $this->assertAttributeEquals(1.234, 'thirdProperty', $object);
-        $this->assertAttributeEquals(false, 'fourthProperty', $object);
+        $this->assertEquals('firstValue', ObjectAccess::getProperty($object, 'firstProperty'));
+        $this->assertEquals(1234, ObjectAccess::getProperty($object, 'secondProperty'));
+        $this->assertEquals(1.234, ObjectAccess::getProperty($object, 'thirdProperty'));
+        $this->assertEquals(false, ObjectAccess::getProperty($object, 'fourthProperty'));
     }
 
     /**
@@ -174,7 +175,7 @@ class DataMapperTest extends UnitTestCase
         $dataMapper->injectReflectionService($mockReflectionService);
         $dataMapper->_call('thawProperties', $object, $objectData['identifier'], $objectData);
 
-        $this->assertAttributeEquals('c254d2e0-825a-11de-8a39-0800200c9a66', 'Persistence_Object_Identifier', $object);
+        $this->assertEquals('c254d2e0-825a-11de-8a39-0800200c9a66', ObjectAccess::getProperty($object, 'Persistence_Object_Identifier'));
     }
 
     /**
@@ -277,7 +278,7 @@ class DataMapperTest extends UnitTestCase
 
         // the order of setting those is important, but cannot be tested for now (static setProperty)
         $expected = [['secondProperty' => 'secondValue'],['firstProperty' => 'firstValue'],['thirdProperty' => 'thirdValue'],['Persistence_Object_Identifier' => '1234']];
-        $this->assertAttributeSame($expected, 'properties', $object);
+        $this->assertSame($expected, ObjectAccess::getProperty($object, 'properties', true));
     }
 
     /**
@@ -356,7 +357,7 @@ class DataMapperTest extends UnitTestCase
         $dataMapper->injectReflectionService($mockReflectionService);
         $dataMapper->_call('thawProperties', $object, $objectData['identifier'], $objectData);
 
-        $this->assertAttributeEquals(['My_Metadata' => 'Test'], 'Flow_Persistence_Metadata', $object);
+        $this->assertEquals(['My_Metadata' => 'Test'], ObjectAccess::getProperty($object, 'Flow_Persistence_Metadata'));
     }
 
     /**
