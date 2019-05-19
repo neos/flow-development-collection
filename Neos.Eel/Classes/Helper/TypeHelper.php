@@ -47,10 +47,10 @@ class TypeHelper implements ProtectedContextAwareInterface
     /**
      * Get the class name of the given variable or NULL if it wasn't an object
      *
-     * @param object $variable
-     * @return string|NULL
+     * @param mixed $variable
+     * @return string|null
      */
-    public function className($variable)
+    public function className($variable): ?string
     {
         if (!is_object($variable)) {
             return null;
