@@ -103,9 +103,7 @@
     },
     "require-dev": {
         "mikey179/vfsstream": "~1.6",
-        "phpunit/phpunit": "~6.0",
-        "doctrine/orm": "~2.5.0",
-        "doctrine/common": ">=2.4,<2.8-dev"
+        "phpunit/phpunit": "~6.0"
     },
     "autoload-dev": {
         "psr-4": {
