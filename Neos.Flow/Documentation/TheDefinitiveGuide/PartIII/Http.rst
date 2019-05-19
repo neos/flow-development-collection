@@ -339,7 +339,13 @@ By default, no proxies are trusted (unless the environment variable ``FLOW_HTTP_
 direct request informations will be used.
 If you specify trusted proxy addresses, by default only the ``X-Forwarded-*`` headers are accepted.
 
-You can specify the list of IP addresses or address ranges in comma separated format, which is useful for using the
+.. note::
+
+	On some container environments like ddev, the container acts as a proxy to provide port mapping and hence needs
+	to be allowed in this setting. To ease the development setup, Flow trusts all proxies by default in Development context.
+	You still need to configure the trustedProxies manually for Production.
+
+You can also specify the list of IP addresses or address ranges in comma separated format, which is useful for using the
 environment variable::
 
 	Neos:
