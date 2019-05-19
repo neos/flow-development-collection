@@ -51,7 +51,7 @@ trait ActionRequestFromHttpTrait
      */
     protected function setDefaultControllerAndActionNameIfNoneSpecified(ActionRequest $actionRequest): ActionRequest
     {
-        if ($actionRequest->getControllerName() === '') {
+        if ($actionRequest->getControllerName() === '' || $actionRequest->getControllerName() === null) {
             $actionRequest->setControllerName('Standard');
         }
         if ($actionRequest->getControllerActionName() === '') {

@@ -38,7 +38,7 @@ class TrustedProxiesComponentTest extends UnitTestCase
     protected $trustedProxiesSettings;
 
     /**
-     * @var Request|\PHPUnit_Framework_MockObject_MockObject
+     * @var ServerRequestInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $mockHttpRequest;
 

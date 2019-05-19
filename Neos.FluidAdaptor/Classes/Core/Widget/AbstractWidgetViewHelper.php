@@ -260,7 +260,7 @@ abstract class AbstractWidgetViewHelper extends AbstractViewHelper implements Ch
             }
             $subRequest->setArguments($arguments[$widgetIdentifier]);
         }
-        if ($subRequest->getControllerActionName() === null) {
+        if ($subRequest->getControllerActionName() === '') {
             $subRequest->setControllerActionName($controllerActionName);
         }
     }

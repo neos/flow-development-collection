@@ -13,7 +13,6 @@ namespace Neos\Flow\Cli;
 
 use Neos\Flow\Mvc\Exception\InvalidArgumentNameException;
 use Neos\Flow\Mvc\Exception\NoSuchArgumentException;
-use Neos\Flow\Mvc\RequestInterface;
 
 /**
  * Represents a CLI request.

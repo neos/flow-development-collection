@@ -24,9 +24,8 @@ class ResponseInformationHelperTest extends UnitTestCase
 
         $compliantResponse = ResponseInformationHelper::makeStandardsCompliant($response, $request);
         self::assertTrue($compliantResponse->hasHeader('Content-Length'));
-        $contentLengthHeaderValues = $compliantResponse->getHeader('Content-Length');
-        // FIXME: After deprecation of non PSR-7 http this should always be an array.
-        $contentLengthHeaderValues = is_array($contentLengthHeaderValues) ? reset($contentLengthHeaderValues) : $contentLengthHeaderValues;
-        self::assertEquals(5, $contentLengthHeaderValues);
+        $contentLengthHeaderValues = $compliantResponse->getHeaderLine('Content-Length');
+
+        self::assertEquals('5', $contentLengthHeaderValues);
     }
 }

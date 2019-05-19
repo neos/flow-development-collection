@@ -28,5 +28,5 @@ interface RequestEngineInterface
      * @return ResponseInterface
      * @throws Http\Exception
      */
-    public function sendRequest(ServerRequestInterface $request);
+    public function sendRequest(ServerRequestInterface $request): ResponseInterface;
 }
