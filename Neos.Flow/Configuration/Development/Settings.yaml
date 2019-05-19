@@ -2,7 +2,7 @@
 # Configuration for the Flow Framework                                   #
 #                                                                        #
 # This file contains additions to the base configuration for the         #
-# Flow Framework when it runs in Testing context.                        #
+# Flow Framework when it runs in Development context.                        #
 #                                                                        #
 # Don't modify this file - instead put your own additions into the       #
 # global Configuration directory and its sub directories.                #
@@ -43,3 +43,7 @@ Neos:
         backendOptions:
           logFileURL: '%FLOW_PATH_DATA%Logs/I18n_Development.log'
           severityThreshold: '%LOG_DEBUG%'
+
+    http:
+      trustedProxies:
+        proxies: "*"
