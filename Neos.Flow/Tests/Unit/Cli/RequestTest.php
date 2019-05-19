@@ -11,7 +11,7 @@ namespace Neos\Flow\Tests\Unit\Cli;
  * source code.
  */
 
-use Neos\Flow\Cli\Request;
+use Neos\Flow\Cli\CommandRequest;
 use Neos\Flow\Command\CacheCommandController;
 use Neos\Flow\Tests\UnitTestCase;
 
@@ -25,7 +25,7 @@ class RequestTest extends UnitTestCase
      */
     public function getCommandReturnsTheCommandObjectReflectingTheRequestInformation()
     {
-        $request = new Request();
+        $request = new CommandRequest();
         $request->setControllerObjectName(CacheCommandController::class);
         $request->setControllerCommandName('flush');
 
@@ -38,7 +38,7 @@ class RequestTest extends UnitTestCase
      */
     public function setControllerObjectNameAndSetControllerCommandNameUnsetTheBuiltCommandObject()
     {
-        $request = new Request();
+        $request = new CommandRequest();
         $request->setControllerObjectName(CacheCommandController::class);
         $request->setControllerCommandName('flush');
         $request->getCommand();

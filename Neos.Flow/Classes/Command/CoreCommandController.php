@@ -22,7 +22,7 @@ use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Cli\CommandManager;
 use Neos\Flow\Cli\Dispatcher;
 use Neos\Flow\Cli\RequestBuilder;
-use Neos\Flow\Cli\Response;
+use Neos\Flow\Cli\CommandResponse;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Log\PsrLoggerFactoryInterface;
 use Neos\Flow\ObjectManagement\DependencyInjection\ProxyClassBuilder;
@@ -303,7 +303,7 @@ class CoreCommandController extends CommandController
             readline_write_history($historyPathAndFilename);
 
             $request = $this->requestBuilder->build($commandLine);
-            $response = new Response();
+            $response = new CommandResponse();
             $command = $request->getCommand();
 
             if ($request === false || $command->getCommandIdentifier() === false) {

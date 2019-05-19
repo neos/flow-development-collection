@@ -31,13 +31,13 @@ use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 class CommandController implements ControllerInterface
 {
     /**
-     * @var Request
+     * @var CommandRequest
      * @api
      */
     protected $request;
 
     /**
-     * @var Response
+     * @var CommandResponse
      * @api
      */
     protected $response;
@@ -104,15 +104,15 @@ class CommandController implements ControllerInterface
     /**
      * Processes a command line request.
      *
-     * @param Request $request The request object
-     * @param Response $response The response, modified by this handler
+     * @param CommandRequest $request The request object
+     * @param CommandResponse $response The response, modified by this handler
      * @return void
      * @throws UnsupportedRequestTypeException if the controller doesn't support the current request type
      * @api
      */
     public function processRequest($request, $response)
     {
-        if (!$request instanceof Request) {
+        if (!$request instanceof CommandRequest) {
             throw new UnsupportedRequestTypeException(sprintf('%s only supports command line requests – requests of type "%s" given.', get_class($this), get_class($request)), 1300787096);
         }
 

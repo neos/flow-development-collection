@@ -64,8 +64,8 @@ class AbstractControllerTest extends UnitTestCase
      */
     public function initializeControllerWillThrowAnExceptionIfTheGivenRequestIsNotSupported()
     {
-        $request = new Cli\Request();
-        $response = new Cli\Response();
+        $request = new Cli\CommandRequest();
+        $response = new Cli\CommandResponse();
 
         $controller = $this->getAccessibleMock(AbstractController::class, ['processRequest']);
         try {

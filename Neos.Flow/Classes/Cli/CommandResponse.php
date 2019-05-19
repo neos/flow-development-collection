@@ -15,7 +15,7 @@ namespace Neos\Flow\Cli;
  * A CLI specific response implementation
  *
  */
-class Response
+class CommandResponse
 {
     /**
      * Constants for output styles

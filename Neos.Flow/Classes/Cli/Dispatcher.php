@@ -45,15 +45,15 @@ class Dispatcher
     /**
      * Try processing the request until it is successfully marked "dispatched"
      *
-     * @param Request $request
-     * @param Response $response
-     * @return Response
+     * @param CommandRequest $request
+     * @param CommandResponse $response
+     * @return CommandResponse
      * @throws InvalidControllerException|InfiniteLoopException|NoSuchOptionException|UnsupportedRequestTypeException
      */
-    public function dispatch(Request $request, Response $response)
+    public function dispatch(CommandRequest $request, CommandResponse $response)
     {
         $dispatchLoopCount = 0;
-        /** @var Request $request */
+        /** @var CommandRequest $request */
         while (!$request->isDispatched()) {
             if ($dispatchLoopCount++ > 99) {
                 throw new InfiniteLoopException(sprintf('Could not ultimately dispatch the request after %d iterations.', $dispatchLoopCount), 1217839467);
@@ -79,12 +79,12 @@ class Dispatcher
     /**
      * This signal is emitted directly before the request is been dispatched to a controller.
      *
-     * @param Request $request
-     * @param Response $response
+     * @param CommandRequest $request
+     * @param CommandResponse $response
      * @param ControllerInterface $controller
      * @return void
      */
-    protected function emitBeforeControllerInvocation(Request $request, Response $response, ControllerInterface $controller)
+    protected function emitBeforeControllerInvocation(CommandRequest $request, CommandResponse $response, ControllerInterface $controller)
     {
         $this->signalDispatcher->dispatch(\Neos\Flow\Mvc\Dispatcher::class, 'beforeControllerInvocation', [
             'request' => $request,
@@ -97,12 +97,12 @@ class Dispatcher
      * This signal is emitted directly after the request has been dispatched to a controller and the controller
      * returned control back to the dispatcher.
      *
-     * @param Request $request
-     * @param Response $response
+     * @param CommandRequest $request
+     * @param CommandResponse $response
      * @param ControllerInterface $controller
      * @return void
      */
-    protected function emitAfterControllerInvocation(Request $request, Response $response, ControllerInterface $controller)
+    protected function emitAfterControllerInvocation(CommandRequest $request, CommandResponse $response, ControllerInterface $controller)
     {
         $this->signalDispatcher->dispatch(\Neos\Flow\Mvc\Dispatcher::class, 'afterControllerInvocation', [
             'request' => $request,
@@ -115,12 +115,12 @@ class Dispatcher
      * Finds and instantiates a controller that matches the current request.
      * If no controller can be found, an instance of NotFoundControllerInterface is returned.
      *
-     * @param Request $request The request to dispatch
+     * @param CommandRequest $request The request to dispatch
      * @return ControllerInterface
      * @throws NoSuchOptionException
      * @throws Controller\Exception\InvalidControllerException
      */
-    protected function resolveController(Request $request)
+    protected function resolveController(CommandRequest $request)
     {
         $controllerObjectName = $request->getControllerObjectName();
         if ($controllerObjectName === '') {

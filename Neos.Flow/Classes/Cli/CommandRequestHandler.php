@@ -42,12 +42,12 @@ class CommandRequestHandler implements RequestHandlerInterface
     protected $dispatcher;
 
     /**
-     * @var Request
+     * @var CommandRequest
      */
     protected $request;
 
     /**
-     * @var Response
+     * @var CommandResponse
      */
     protected $response;
 
@@ -96,7 +96,7 @@ class CommandRequestHandler implements RequestHandlerInterface
 
         $commandLine = isset($_SERVER['argv']) ? $_SERVER['argv'] : [];
         $this->request = $this->objectManager->get(RequestBuilder::class)->build(array_slice($commandLine, 1));
-        $this->response = new Response();
+        $this->response = new CommandResponse();
 
         $this->exitIfCompiletimeCommandWasNotCalledCorrectly($runLevel);
 

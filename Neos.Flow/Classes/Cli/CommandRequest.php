@@ -20,7 +20,7 @@ use Neos\Flow\Mvc\RequestInterface;
  *
  * @api
  */
-class Request implements RequestInterface
+class CommandRequest
 {
     /**
      * @var string
@@ -110,10 +110,10 @@ class Request implements RequestInterface
     /**
      * Returns the this request, as CLI request nesting is not supported.
      *
-     * @return Request
+     * @return CommandRequest
      * @api
      */
-    public function getMainRequest(): Request
+    public function getMainRequest(): CommandRequest
     {
         return $this;
     }
@@ -174,7 +174,7 @@ class Request implements RequestInterface
      * @return void
      * @throws InvalidArgumentNameException
      */
-    public function setArgument(string $argumentName, $value)
+    public function setArgument(string $argumentName, $value): void
     {
         if ($argumentName === '') {
             throw new InvalidArgumentNameException('Invalid argument name.', 1300893885);
