@@ -256,7 +256,7 @@ class FlowQuery implements ProtectedContextAwareInterface, \IteratorAggregate, \
      *
      * @return string|null the next operation name or NULL if no next operation found.
      */
-    public function peekOperationName()
+    public function peekOperationName(): ?string
     {
         if (isset($this->operations[0])) {
             return $this->operations[0]['name'];
