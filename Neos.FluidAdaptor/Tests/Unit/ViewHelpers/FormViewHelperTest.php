@@ -535,7 +535,7 @@ class FormViewHelperTest extends ViewHelperBaseTestcase
     public function renderThrowsExceptionIfNeitherActionNorActionUriArgumentIsSpecified()
     {
         $this->expectException(Exception::class);
-        $viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\FormViewHelper::class, ['renderChildren', 'registerRenderMethodArguments'], [], '', false);
+        $viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\FormViewHelper::class, ['renderChildren'], [], '', false);
         $this->injectDependenciesIntoViewHelper($viewHelper);
         $viewHelper = $this->prepareArguments($viewHelper, []);
         $viewHelper->render();
@@ -548,7 +548,7 @@ class FormViewHelperTest extends ViewHelperBaseTestcase
     {
         $this->expectException(Exception::class);
         $this->expectExceptionCode(1361354942);
-        $viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\FormViewHelper::class, ['renderChildren', 'registerRenderMethodArguments'], [], '', false);
+        $viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\FormViewHelper::class, ['renderChildren'], [], '', false);
         $this->arguments['useParentRequest'] = true;
         $this->arguments['action'] = 'index';
         $this->injectDependenciesIntoViewHelper($viewHelper);

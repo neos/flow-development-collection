@@ -27,7 +27,7 @@ class NumberViewHelperTest extends ViewHelperBaseTestcase
 
     protected function setUp(): void
     {
-        $this->viewHelper = $this->getMockBuilder(\Neos\FluidAdaptor\ViewHelpers\Format\NumberViewHelper::class)->setMethods(['renderChildren', 'registerRenderMethodArguments'])->getMock();
+        $this->viewHelper = $this->getMockBuilder(\Neos\FluidAdaptor\ViewHelpers\Format\NumberViewHelper::class)->setMethods(['renderChildren'])->getMock();
     }
 
     /**
