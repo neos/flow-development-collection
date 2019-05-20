@@ -19,6 +19,7 @@ use Neos\Flow\Persistence\Doctrine\QueryResult;
 use Neos\Flow\Persistence\Exception;
 use Neos\Flow\Persistence\Exception\ObjectValidationFailedException;
 use Neos\Flow\Tests\FunctionalTestCase;
+use Neos\Utility\ObjectAccess;
 
 /**
  * Testcase for persistence
@@ -76,11 +77,11 @@ class PersistenceTest extends FunctionalTestCase
 
         $allResults = $this->testEntityRepository->findAll();
         $this->assertInstanceOf(QueryResult::class, $allResults);
-        $this->assertAttributeInternalType('null', 'rows', $allResults, 'Query Result did not load the result collection lazily.');
+        $this->assertNull(ObjectAccess::getProperty($allResults, 'rows', true), 'Query Result did not load the result collection lazily.');
 
         $allResultsArray = $allResults->toArray();
         $this->assertStringContainsString('Flow', $allResultsArray[0]->getName());
-        $this->assertAttributeInternalType('array', 'rows', $allResults);
+        $this->assertIsArray(ObjectAccess::getProperty($allResults, 'rows', true));
     }
 
     /**
@@ -94,7 +95,7 @@ class PersistenceTest extends FunctionalTestCase
         $allResults = $this->testEntityRepository->findAll();
 
         $unserializedResults = unserialize(serialize($allResults));
-        $this->assertAttributeInternalType('null', 'rows', $unserializedResults, 'Query Result did not flush the result collection after serialization.');
+        $this->assertNull(ObjectAccess::getProperty($unserializedResults, 'rows', true), 'Query Result did not flush the result collection after serialization.');
     }
 
     /**

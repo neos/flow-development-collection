@@ -16,6 +16,7 @@ use Neos\Utility\ObjectHandling\Tests\Unit\Fixture\DummyClassWithGettersAndSette
 use Neos\Utility\ObjectHandling\Tests\Unit\Fixture\Model\EntityWithDoctrineProxy;
 use Neos\Utility\ObjectHandling\Tests\Unit\Fixture\ArrayAccessClass;
 use Neos\Utility\ObjectAccess;
+use Neos\Utility\TypeHandling;
 
 require_once('Fixture/DummyClassWithGettersAndSetters.php');
 require_once('Fixture/ArrayAccessClass.php');
@@ -170,7 +171,10 @@ class ObjectAccessTest extends \PHPUnit\Framework\TestCase
     public function setPropertySetsValueIfPropertyIsNotAccessibleWhenForceDirectAccessIsTrue()
     {
         $this->assertTrue(ObjectAccess::setProperty($this->dummyObject, 'unexposedProperty', 'was set anyway', true));
-        $this->assertAttributeEquals('was set anyway', 'unexposedProperty', $this->dummyObject);
+        $className = TypeHandling::getTypeForValue($this->dummyObject);
+        $propertyReflection = new \ReflectionProperty($className, 'unexposedProperty');
+        $propertyReflection->setAccessible(true);
+        $this->assertEquals('was set anyway', $propertyReflection->getValue($this->dummyObject));
     }
 
     /**
@@ -179,7 +183,7 @@ class ObjectAccessTest extends \PHPUnit\Framework\TestCase
     public function setPropertySetsValueIfPropertyDoesNotExistWhenForceDirectAccessIsTrue()
     {
         $this->assertTrue(ObjectAccess::setProperty($this->dummyObject, 'unknownProperty', 'was set anyway', true));
-        $this->assertAttributeEquals('was set anyway', 'unknownProperty', $this->dummyObject);
+        $this->assertEquals('was set anyway', $this->dummyObject->unknownProperty);
     }
 
     /**
