@@ -14,7 +14,6 @@ namespace Neos\Flow\Mvc\Controller;
 use Neos\Error\Messages\Result;
 use Neos\Flow\Annotations as Flow;
 use Neos\Error\Messages as Error;
-use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Exception\ForwardException;
@@ -143,14 +142,6 @@ class ActionController extends AbstractController
      * @var array
      */
     protected $settings;
-
-    /**
-     * @var SystemLoggerInterface
-     * @Flow\Inject
-     * @deprecated
-     * @see logger
-     */
-    protected $systemLogger;
 
     /**
      * @var LoggerInterface
