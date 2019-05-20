@@ -24,9 +24,9 @@ class Utility
      *
      * @return bool
      */
-    public static function isEelExpression($expression)
+    public static function parseEelExpression($expression)
     {
-        return preg_match(Package::EelExpressionRecognizer, $expression) === 1;
+        return preg_match(Package::EelExpressionRecognizer, $expression, $matches) === 1 ? $matches : null;
     }
 
     /**
@@ -66,7 +66,8 @@ class Utility
      */
     public static function evaluateEelExpression($expression, EelEvaluatorInterface $eelEvaluator, array $contextVariables, array $defaultContextConfiguration = [])
     {
-        if (!self::isEelExpression($expression)) {
+        $eelExpression = self::parseEelExpression($expression);
+        if ($eelExpression === null) {
             throw new Exception('The EEL expression "' . $expression . '" was not a valid EEL expression. Perhaps you forgot to wrap it in ${...}?', 1410441849);
         }
 
