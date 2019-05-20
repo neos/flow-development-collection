@@ -18,7 +18,7 @@ namespace Neos\Eel;
 class Utility
 {
     /**
-     * Check if expression is an Eel expression.
+     * Return the expression if it is an valid EEL expression, otherwise return null.
      *
      * @param string $expression
      *
@@ -26,7 +26,7 @@ class Utility
      */
     public static function parseEelExpression($expression)
     {
-        return preg_match(Package::EelExpressionRecognizer, $expression, $matches) === 1 ? $matches : null;
+        return preg_match(Package::EelExpressionRecognizer, $expression, $matches) === 1 ? $matches['exp'] : null;
     }
 
     /**
@@ -71,8 +71,6 @@ class Utility
             throw new Exception('The EEL expression "' . $expression . '" was not a valid EEL expression. Perhaps you forgot to wrap it in ${...}?', 1410441849);
         }
 
-        preg_match(Package::EelExpressionRecognizer, $expression, $matches);
-
         $defaultContextVariables = self::getDefaultContextVariables($defaultContextConfiguration);
         $contextVariables = array_merge($defaultContextVariables, $contextVariables);
 
@@ -87,6 +85,6 @@ class Utility
         $context = new ProtectedContext($contextVariables);
         $context->whitelist('q');
 
-        return $eelEvaluator->evaluate($matches['exp'], $context);
+        return $eelEvaluator->evaluate($eelExpression, $context);
     }
 }
