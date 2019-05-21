@@ -176,7 +176,7 @@ class PointcutFilterComposite implements PointcutFilterInterface
             $code = "function(\\Neos\\Flow\\Aop\\JoinPointInterface \$joinPoint, \$objectManager) {\n" .
                 "    \$currentObject = \$joinPoint->getProxy();\n";
             if ($useGlobalObjects) {
-                $code .= "    \$globalObjectNames = \$objectManager->getSettingsByPath(array('Neos', 'Flow', 'aop', 'globalObjects'));\n";
+                $code .= "    \$globalObjectNames = \$objectManager->get(\Neos\Flow\Configuration\ConfigurationManager::class)->getConfiguration(\Neos\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.Flow.aop.globalObjects');\n";
                 $code .= "    \$globalObjects = array_map(function(\$objectName) use (\$objectManager) { return \$objectManager->get(\$objectName); }, \$globalObjectNames);\n";
             }
             $code .= '    return ' . $conditionCode . ';' .
