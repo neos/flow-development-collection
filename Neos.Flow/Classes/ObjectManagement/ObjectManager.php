@@ -477,18 +477,6 @@ class ObjectManager implements ObjectManagerInterface
     }
 
     /**
-     * Returns the an array of package settings or a single setting value by the given path.
-     *
-     * @param array $settingsPath Path to the setting(s) as an array, for example array('Neos', 'Flow', 'persistence', 'backendOptions')
-     * @return mixed Either an array of settings or the value of a single setting
-     * @deprecated Use settings injection or the ConfigurationManager to get settings.
-     */
-    public function getSettingsByPath(array $settingsPath)
-    {
-        return Arrays::getValueByPath($this->allSettings, $settingsPath);
-    }
-
-    /**
      * Returns all current object configurations.
      * For internal use in bootstrap only. Can change anytime.
      *
