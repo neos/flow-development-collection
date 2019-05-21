@@ -27,7 +27,7 @@ use Neos\Flow\Package\Exception as PackageException;
  * @api
  * @Flow\Scope("singleton")
  */
-class PackageManager implements PackageManagerInterface
+class PackageManager
 {
     /**
      * The current format version for PackageStates.php files
