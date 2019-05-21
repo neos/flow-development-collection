@@ -21,8 +21,7 @@ class Utility
      * Return the expression if it is an valid EEL expression, otherwise return null.
      *
      * @param string $expression
-     *
-     * @return bool
+     * @return string|null
      */
     public static function parseEelExpression($expression)
     {
