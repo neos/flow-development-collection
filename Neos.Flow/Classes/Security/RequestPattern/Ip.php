@@ -18,7 +18,7 @@ use Neos\Flow\Security\RequestPatternInterface;
 use Neos\Flow\Utility\Ip as IpUtility;
 
 /**
- * This class holds a CIDR IP pattern an decides, if a \Neos\Flow\Mvc\RequestInterface object matches against this pattern,
+ * This class holds a CIDR IP pattern an decides, if an ActionRequest object matches against this pattern,
  * comparing the client IP address.
  *
  * The pattern can contain IPv4 and IPv6 addresses (including IPv6 wrapped IPv4 addresses).
@@ -50,7 +50,7 @@ class Ip implements RequestPatternInterface
     }
 
     /**
-     * Matches a \Neos\Flow\Mvc\RequestInterface against the set IP pattern rules
+     * Matches an ActionRequest against the set IP pattern rules
      *
      * @param ActionRequest $request The request that should be matched
      * @return boolean true if the pattern matched, false otherwise
@@ -61,9 +61,6 @@ class Ip implements RequestPatternInterface
         if (!isset($this->options['cidrPattern'])) {
             throw new InvalidRequestPatternException('Missing option "cidrPattern" in the Ip request pattern configuration', 1446224520);
         }
-        if (!$request instanceof ActionRequest) {
-            return false;
-        }
-        return (boolean)IpUtility::cidrMatch($request->getHttpRequest()->getAttribute(ServerRequestAttributes::CLIENT_IP), $this->options['cidrPattern']);
+        return IpUtility::cidrMatch($request->getHttpRequest()->getAttribute(ServerRequestAttributes::CLIENT_IP), $this->options['cidrPattern']);
     }
 }

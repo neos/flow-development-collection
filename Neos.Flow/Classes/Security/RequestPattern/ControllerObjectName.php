@@ -36,7 +36,7 @@ class ControllerObjectName implements RequestPatternInterface
     }
 
     /**
-     * Matches a \Neos\Flow\Mvc\RequestInterface against its set controller object name pattern rules
+     * Matches an ActionRequest against its set controller object name pattern rules
      *
      * @param ActionRequest $request The request that should be matched
      * @return boolean true if the pattern matched, false otherwise

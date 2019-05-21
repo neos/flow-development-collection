@@ -29,7 +29,7 @@ interface RequestPatternInterface
     // public function __construct(array $options);
 
     /**
-     * Matches a \Neos\Flow\Mvc\RequestInterface against its set pattern rules
+     * Matches an ActionRequest against its set pattern rules
      *
      * @param ActionRequest $request The request that should be matched
      * @return boolean true if the pattern matched, false otherwise

@@ -18,7 +18,7 @@ use Neos\Flow\Security\Exception\NoTokensAuthenticatedException;
 use Neos\Flow\Security\RequestPatternInterface;
 
 /**
- * A RequestFilter is configured to match specific \Neos\Flow\Mvc\RequestInterfaces and call
+ * A RequestFilter is configured to match specific ActionRequests and call
  * a InterceptorInterface if needed.
  *
  */

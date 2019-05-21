@@ -77,7 +77,7 @@ class CsrfProtection implements RequestPatternInterface
     }
 
     /**
-     * Matches a \Neos\Flow\Mvc\RequestInterface against the configured CSRF pattern rules and
+     * Matches an ActionRequest against the configured CSRF pattern rules and
      * searches for invalid csrf tokens. If this returns true, the request is invalid!
      *
      * @param ActionRequest $request The request that should be matched
@@ -86,7 +86,7 @@ class CsrfProtection implements RequestPatternInterface
      */
     public function matchRequest(ActionRequest $request)
     {
-        if (!$request instanceof ActionRequest || SecurityHelper::hasSafeMethod($request->getHttpRequest())) {
+        if (SecurityHelper::hasSafeMethod($request->getHttpRequest())) {
             $this->logger->debug('CSRF: No token required, safe request');
             return false;
         }
@@ -116,7 +116,7 @@ class CsrfProtection implements RequestPatternInterface
             $csrfToken = $httpRequest->getHeaderLine('X-Flow-Csrftoken');
         } else {
             $internalArguments = $request->getMainRequest()->getInternalArguments();
-            $csrfToken = isset($internalArguments['__csrfToken']) ? $internalArguments['__csrfToken'] : null;
+            $csrfToken = $internalArguments['__csrfToken'] ?? null;
         }
 
         if (empty($csrfToken)) {
