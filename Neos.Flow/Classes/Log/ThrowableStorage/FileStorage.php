@@ -42,9 +42,7 @@ class FileStorage implements ThrowableStorageInterface
     public static function createWithOptions(array $options): ThrowableStorageInterface
     {
         $storagePath = $options['storagePath'] ?? (FLOW_PATH_DATA . 'Logs/Exceptions');
-        $storage = new static($storagePath);
-
-        return $storage;
+        return new static($storagePath);
     }
 
     /**
