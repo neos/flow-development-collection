@@ -54,6 +54,11 @@ trait SecurityOperationsTrait
     protected $authenticationManager;
 
     /**
+     * @var Security\Authentication\TokenAndProviderFactoryInterface
+     */
+    protected $tokenAndProviderFactory;
+
+    /**
      * @var PolicyService
      */
     protected $policyService;
@@ -210,9 +215,10 @@ trait SecurityOperationsTrait
         $this->policyService = $this->objectManager->get(PolicyService::class);
         $this->accountRepository = $this->objectManager->get(Security\AccountRepository::class);
         $this->authenticationManager = $this->objectManager->get(AuthenticationProviderManager::class);
+        $this->tokenAndProviderFactory = $this->objectManager->get(Security\Authentication\TokenAndProviderFactoryInterface::class);
 
         // Making sure providers and tokens were actually build, so the singleton TestingProvider exists.
-        $this->authenticationManager->getProviders();
+        $this->tokenAndProviderFactory->getProviders();
 
         $this->testingProvider = $this->objectManager->get(TestingProvider::class);
         $this->testingProvider->setName('TestingProvider');
