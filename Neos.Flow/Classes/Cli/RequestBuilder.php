@@ -109,13 +109,13 @@ class RequestBuilder
      * name (like in $argv) but start with command right away.
      *
      * @param mixed $commandLine The command line, either as a string or as an array
-     * @return CommandRequest The CLI request as an object
+     * @return Request The CLI request as an object
      * @throws InvalidArgumentMixingException
      * @throws InvalidArgumentNameException
      */
-    public function build($commandLine): CommandRequest
+    public function build($commandLine): Request
     {
-        $request = new CommandRequest();
+        $request = new Request();
         $request->setControllerObjectName(HelpCommandController::class);
 
         if (is_array($commandLine) === true) {

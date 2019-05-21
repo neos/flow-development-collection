@@ -13,7 +13,7 @@ namespace Neos\Flow\Error;
 
 use GuzzleHttp\Psr7\ServerRequest;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Cli\CommandResponse;
+use Neos\Flow\Cli\Response;
 use Neos\Flow\Exception as FlowException;
 use Neos\Flow\Http\Helper\ResponseInformationHelper;
 use Neos\Flow\Log\SystemLoggerInterface;
@@ -272,7 +272,7 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
      */
     protected function echoExceptionCli(\Throwable $exception)
     {
-        $response = new CommandResponse();
+        $response = new Response();
 
         $exceptionMessage = $this->renderSingleExceptionCli($exception);
         $exceptionMessage = $this->renderNestedExceptonsCli($exception, $exceptionMessage);

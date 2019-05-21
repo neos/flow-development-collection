@@ -19,7 +19,7 @@ use Neos\Flow\Mvc\Exception\NoSuchArgumentException;
  *
  * @api
  */
-class CommandRequest
+class Request
 {
     /**
      * @var string
@@ -109,10 +109,10 @@ class CommandRequest
     /**
      * Returns the this request, as CLI request nesting is not supported.
      *
-     * @return CommandRequest
+     * @return Request
      * @api
      */
-    public function getMainRequest(): CommandRequest
+    public function getMainRequest(): Request
     {
         return $this;
     }

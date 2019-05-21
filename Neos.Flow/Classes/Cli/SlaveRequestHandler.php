@@ -91,9 +91,9 @@ class SlaveRequestHandler implements RequestHandlerInterface
                 if ($commandLine === "QUIT\n") {
                     break;
                 }
-                /** @var CommandRequest $request */
+                /** @var Request $request */
                 $request = $objectManager->get(RequestBuilder::class)->build($trimmedCommandLine);
-                $response = new CommandResponse();
+                $response = new Response();
                 if ($this->bootstrap->isCompiletimeCommand($request->getCommand()->getCommandIdentifier())) {
                     echo "This command must be executed during compiletime.\n";
                 } else {
@@ -133,7 +133,7 @@ class SlaveRequestHandler implements RequestHandlerInterface
      */
     protected function handleException(\Exception $exception)
     {
-        $response = new CommandResponse();
+        $response = new Response();
 
         $exceptionMessage = '';
         $exceptionReference = "\n<b>More Information</b>\n";
