@@ -11,6 +11,7 @@ namespace Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Format;
  * source code.
  */
 
+use Neos\FluidAdaptor\Core\ViewHelper\Exception;
 use Neos\FluidAdaptor\ViewHelpers\Format;
 use Neos\Flow\I18n;
 
@@ -23,10 +24,10 @@ use Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase;
  */
 class DateViewHelperTest extends ViewHelperBaseTestcase
 {
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
-        $this->viewHelper = $this->getMockBuilder(\Neos\FluidAdaptor\ViewHelpers\Format\DateViewHelper::class)->setMethods(['renderChildren', 'registerRenderMethodArguments'])->getMock();
+        $this->viewHelper = $this->getMockBuilder(\Neos\FluidAdaptor\ViewHelpers\Format\DateViewHelper::class)->setMethods(['renderChildren'])->getMock();
     }
 
     /**
@@ -72,10 +73,10 @@ class DateViewHelperTest extends ViewHelperBaseTestcase
 
     /**
      * @test
-     * @expectedException \Neos\FluidAdaptor\Core\ViewHelper\Exception
      */
     public function viewHelperThrowsExceptionIfDateStringCantBeParsed()
     {
+        $this->expectException(Exception::class);
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['date' => 'foo']);
         $actualResult = $this->viewHelper->render();
     }
@@ -104,10 +105,10 @@ class DateViewHelperTest extends ViewHelperBaseTestcase
 
     /**
      * @test
-     * @expectedException \Neos\FluidAdaptor\Core\ViewHelper\Exception\InvalidVariableException
      */
     public function viewHelperThrowsExceptionIfInvalidLocaleIdentifierIsGiven()
     {
+        $this->expectException(Exception\InvalidVariableException::class);
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['date' => new \DateTime(), 'forceLocale' => '123-not-existing-locale']);
         $this->viewHelper->render();
     }
@@ -154,10 +155,10 @@ class DateViewHelperTest extends ViewHelperBaseTestcase
 
     /**
      * @test
-     * @expectedException \Neos\FluidAdaptor\Core\ViewHelper\Exception
      */
     public function viewHelperConvertsI18nExceptionsIntoViewHelperExceptions()
     {
+        $this->expectException(Exception::class);
         $localizationConfiguration = new I18n\Configuration('de_DE');
 
         $mockLocalizationService = $this->getMockBuilder(\Neos\Flow\I18n\Service::class)->setMethods(['getConfiguration'])->getMock();

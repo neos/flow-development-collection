@@ -15,6 +15,7 @@ include_once(__DIR__ . '/../../BaseTestCase.php');
 
 use Neos\Cache\Backend\PdoBackend;
 use Neos\Cache\EnvironmentConfiguration;
+use Neos\Cache\Exception;
 use Neos\Cache\Frontend\FrontendInterface;
 use Neos\Cache\Tests\BaseTestCase;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -38,10 +39,10 @@ class PdoBackendTest extends BaseTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Cache\Exception
      */
     public function setThrowsExceptionIfNoFrontEndHasBeenSet()
     {
+        $this->expectException(Exception::class);
         $backend = new PdoBackend(new EnvironmentConfiguration('SomeApplication Testing', '/some/path', PHP_MAXPATHLEN));
         $data = 'Some data';
         $identifier = 'MyIdentifier';

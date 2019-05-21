@@ -12,16 +12,17 @@ namespace Neos\FluidAdaptor\Tests\Functional\Core;
  */
 
 use Neos\Flow\Mvc\Routing\Route;
+use Neos\Flow\Tests\FunctionalTestCase;
 
 /**
  * Testcase for the widget mechanism
  */
-class WidgetTest extends \Neos\Flow\Tests\FunctionalTestCase
+class WidgetTest extends FunctionalTestCase
 {
     /**
      * Additional setup: Routes
      */
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -46,10 +47,10 @@ class WidgetTest extends \Neos\Flow\Tests\FunctionalTestCase
      *
      * @test
      */
-    public function ifIncludedInATemplateTheWidgetReturnsResultOfItsOwnIndexAction()
+    public function ifIncludedInATemplateTheWidgetReturnsResultOfItsOwnIndexAction(): void
     {
         $response = $this->browser->request('http://localhost/test/widget/ajaxtest');
-        list($confirmation, ) = explode(chr(10), $response->getContent());
+        [$confirmation,] = explode(chr(10), $response->getContent());
         $this->assertSame('SomeAjaxController::indexAction()', $confirmation);
     }
 
@@ -63,10 +64,10 @@ class WidgetTest extends \Neos\Flow\Tests\FunctionalTestCase
      *
      * @test
      */
-    public function theGeneratedUriLeadsToASpecificActionOfTheAjaxController()
+    public function theGeneratedUriLeadsToASpecificActionOfTheAjaxController(): void
     {
         $response = $this->browser->request('http://localhost/test/widget/ajaxtest');
-        list(, $ajaxWidgetUri) = explode(chr(10), $response->getContent());
+        [, $ajaxWidgetUri] = explode(chr(10), $response->getContent());
 
         $response = $this->browser->request('http://localhost/' . $ajaxWidgetUri);
         $this->assertSame('SomeAjaxController::ajaxAction("value1", "value2")', trim($response->getContent()));
@@ -75,7 +76,7 @@ class WidgetTest extends \Neos\Flow\Tests\FunctionalTestCase
     /**
      * @test
      */
-    public function redirectWithoutDelayAndNoParameterImmediatelyRedirectsToTargetAction()
+    public function redirectWithoutDelayAndNoParameterImmediatelyRedirectsToTargetAction(): void
     {
         $this->browser->request('http://localhost/test/widget/redirecttest');
         $redirectTriggerUri = $this->browser->getCrawler()->filterXPath('//*[@id="redirect-no-delay-no-param"]')->attr('href');
@@ -87,7 +88,7 @@ class WidgetTest extends \Neos\Flow\Tests\FunctionalTestCase
     /**
      * @test
      */
-    public function redirectWithoutDelayAndWithParameterImmediatelyRedirectsToTargetAction()
+    public function redirectWithoutDelayAndWithParameterImmediatelyRedirectsToTargetAction(): void
     {
         $this->browser->request('http://localhost/test/widget/redirecttest');
         $redirectTriggerUri = $this->browser->getCrawler()->filterXPath('//*[@id="redirect-no-delay-with-param"]')->attr('href');
@@ -99,7 +100,7 @@ class WidgetTest extends \Neos\Flow\Tests\FunctionalTestCase
     /**
      * @test
      */
-    public function redirectWithDelayAndNoParameterOutputsRefreshMetaHeader()
+    public function redirectWithDelayAndNoParameterOutputsRefreshMetaHeader(): void
     {
         $this->browser->request('http://localhost/test/widget/redirecttest');
         $redirectTriggerUri = $this->browser->getCrawler()->filterXPath('//*[@id="redirect-with-delay-no-param"]')->attr('href');
@@ -118,7 +119,7 @@ class WidgetTest extends \Neos\Flow\Tests\FunctionalTestCase
     /**
      * @test
      */
-    public function redirectWithDelayAndWithParameterOutputsRefreshMetaHeader()
+    public function redirectWithDelayAndWithParameterOutputsRefreshMetaHeader(): void
     {
         $this->browser->request('http://localhost/test/widget/redirecttest');
         $redirectTriggerUri = $this->browser->getCrawler()->filterXPath('//*[@id="redirect-with-delay-with-param"]')->attr('href');
@@ -137,7 +138,7 @@ class WidgetTest extends \Neos\Flow\Tests\FunctionalTestCase
     /**
      * @test
      */
-    public function redirectToDifferentControllerThrowsException()
+    public function redirectToDifferentControllerThrowsException(): void
     {
         $this->browser->request('http://localhost/test/widget/redirecttest');
         $redirectTriggerUri = $this->browser->getCrawler()->filterXPath('//*[@id="redirect-other-controller"]')->attr('href');
@@ -150,7 +151,7 @@ class WidgetTest extends \Neos\Flow\Tests\FunctionalTestCase
     /**
      * @test
      */
-    public function forwardWithoutParameterTriggersTargetAction()
+    public function forwardWithoutParameterTriggersTargetAction(): void
     {
         $this->browser->request('http://localhost/test/widget/redirecttest');
         $redirectTriggerUri = $this->browser->getCrawler()->filterXPath('//*[@id="forward-no-param"]')->attr('href');
@@ -162,7 +163,7 @@ class WidgetTest extends \Neos\Flow\Tests\FunctionalTestCase
     /**
      * @test
      */
-    public function forwardWithParameterTriggersTargetAction()
+    public function forwardWithParameterTriggersTargetAction(): void
     {
         $this->browser->request('http://localhost/test/widget/redirecttest');
         $redirectTriggerUri = $this->browser->getCrawler()->filterXPath('//*[@id="forward-with-param"]')->attr('href');
@@ -174,7 +175,7 @@ class WidgetTest extends \Neos\Flow\Tests\FunctionalTestCase
     /**
      * @test
      */
-    public function forwardToDifferentControllerThrowsException()
+    public function forwardToDifferentControllerThrowsException(): void
     {
         $this->browser->request('http://localhost/test/widget/redirecttest');
         $redirectTriggerUri = $this->browser->getCrawler()->filterXPath('//*[@id="forward-other-controller"]')->attr('href');

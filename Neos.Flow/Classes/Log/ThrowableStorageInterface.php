@@ -8,7 +8,7 @@ namespace Neos\Flow\Log;
  */
 interface ThrowableStorageInterface
 {
-    /** TODO: Factory method to create an instance, should officially become part of the interface in next major.
+    /**
      *
      * A factory method to create an instance of the throwable storage.
      * Note that throwable storages must work without proxy so all dependencies need to be resolved manually or via options.
@@ -16,7 +16,7 @@ interface ThrowableStorageInterface
      * @param array $options
      * @return ThrowableStorageInterface
      */
-//    public static function createWithOptions(array $options): ThrowableStorageInterface;
+    public static function createWithOptions(array $options): ThrowableStorageInterface;
 
 
     /**

@@ -30,7 +30,7 @@ class CompileTimeObjectManagerTest extends UnitTestCase
      */
     protected $compileTimeObjectManager;
 
-    public function setUp()
+    protected function setUp(): void
     {
         vfsStream::setup('Packages');
         $this->mockPackageManager = $this->getMockBuilder(PackageManager::class)->disableOriginalConstructor()->getMock();

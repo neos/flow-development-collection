@@ -21,6 +21,7 @@ use Neos\Flow\Package\PackageManager;
 use Neos\Flow\ResourceManagement\Collection;
 use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\Flow\ResourceManagement\Storage\PackageStorage;
+use Neos\Flow\ResourceManagement\Target\Exception;
 use Neos\Flow\ResourceManagement\Target\FileSystemTarget;
 use Neos\Flow\Tests\UnitTestCase;
 use org\bovigo\vfs\vfsStream;
@@ -51,7 +52,7 @@ class FileSystemTargetTest extends UnitTestCase
      */
     protected $mockHttpRequest;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->fileSystemTarget = new FileSystemTarget('test');
 
@@ -118,10 +119,10 @@ class FileSystemTargetTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\ResourceManagement\Target\Exception
      */
     public function getPublicStaticResourceUriThrowsExceptionIfBaseUriCantBeResolved()
     {
+        $this->expectException(Exception::class);
         $mockBootstrap = $this->getMockBuilder(Bootstrap::class)->disableOriginalConstructor()->getMock();
         $mockCommandRequestHandler = $this->getMockBuilder(CommandRequestHandler::class)->disableOriginalConstructor()->getMock();
         $mockBootstrap->expects($this->any())->method('getActiveRequestHandler')->will($this->returnValue($mockCommandRequestHandler));
@@ -186,10 +187,10 @@ class FileSystemTargetTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\ResourceManagement\Target\Exception
      */
     public function getPublicPersistentResourceUriThrowsExceptionIfBaseUriCantBeResolved()
     {
+        $this->expectException(Exception::class);
         $mockBootstrap = $this->getMockBuilder(Bootstrap::class)->disableOriginalConstructor()->getMock();
         $mockCommandRequestHandler = $this->getMockBuilder(CommandRequestHandler::class)->disableOriginalConstructor()->getMock();
         $mockBootstrap->expects($this->any())->method('getActiveRequestHandler')->will($this->returnValue($mockCommandRequestHandler));

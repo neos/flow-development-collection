@@ -29,7 +29,7 @@ class BrowserTest extends UnitTestCase
     /**
      *
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->browser = new Client\Browser();
@@ -68,7 +68,7 @@ class BrowserTest extends UnitTestCase
 
         $this->assertTrue($this->browser->getLastRequest()->hasHeader('X-Test-Header'));
         $this->assertSame('Acme', $this->browser->getLastRequest()->getHeader('X-Test-Header'));
-        $this->assertContains('text/plain', $this->browser->getLastRequest()->getHeader('Content-Type'));
+        $this->assertStringContainsString('text/plain', $this->browser->getLastRequest()->getHeader('Content-Type'));
     }
 
     /**
@@ -108,12 +108,16 @@ class BrowserTest extends UnitTestCase
         $requestEngine
             ->expects($this->at(0))
             ->method('sendRequest')
-            ->with($this->attributeEqualTo('uri', $initialUri))
+            ->with($this->callback(function (Http\Request $request) use ($initialUri) {
+                return $request->getUri() == $initialUri;
+            }))
             ->will($this->returnValue($firstResponse));
         $requestEngine
             ->expects($this->at(1))
             ->method('sendRequest')
-            ->with($this->attributeEqualTo('uri', $redirectUri))
+            ->with($this->callback(function (Http\Request $request) use ($redirectUri) {
+                return $request->getUri() == $redirectUri;
+            }))
             ->will($this->returnValue($secondResponse));
 
         $this->browser->setRequestEngine($requestEngine);
@@ -143,10 +147,10 @@ class BrowserTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Http\Client\InfiniteRedirectionException
      */
     public function browserHaltsOnAttemptedInfiniteRedirectionLoop()
     {
+        $this->expectException(Client\InfiniteRedirectionException::class);
         $wildResponses = [];
         $wildResponses[0] = new Http\Response();
         $wildResponses[0]->setStatus(301);
@@ -175,10 +179,10 @@ class BrowserTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Http\Client\InfiniteRedirectionException
      */
     public function browserHaltsOnExceedingMaximumRedirections()
     {
+        $this->expectException(Client\InfiniteRedirectionException::class);
         $requestEngine = $this->createMock(Client\RequestEngineInterface::class);
         for ($i=0; $i<=10; $i++) {
             $response = new Http\Response();

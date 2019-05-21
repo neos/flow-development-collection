@@ -11,6 +11,7 @@ namespace Neos\Flow\Tests\Unit\Http;
  * source code.
  */
 
+use Neos\Flow\Http\Exception;
 use Neos\Flow\Http\Helper\UploadedFilesHelper;
 use Neos\Flow\Http\Request;
 use Neos\Flow\Http\Uri;
@@ -342,10 +343,10 @@ class RequestTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Http\Exception
      */
     public function getContentThrowsAnExceptionOnTryingToRetrieveContentAsResourceAlthoughItHasBeenRetrievedPreviously()
     {
+        $this->expectException(Exception::class);
         vfsStream::setup('Foo');
 
         file_put_contents('vfs://Foo/content.txt', 'xy');

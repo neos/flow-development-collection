@@ -29,10 +29,10 @@ class StripTagsViewHelperTest extends ViewHelperBaseTestcase
      */
     protected $viewHelper;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
-        $this->viewHelper = $this->getMockBuilder(\Neos\FluidAdaptor\ViewHelpers\Format\StripTagsViewHelper::class)->setMethods(['buildRenderChildrenClosure', 'renderChildren', 'registerRenderMethodArguments'])->getMock();
+        $this->viewHelper = $this->getMockBuilder(\Neos\FluidAdaptor\ViewHelpers\Format\StripTagsViewHelper::class)->setMethods(['buildRenderChildrenClosure', 'renderChildren'])->getMock();
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
     }
 
@@ -129,10 +129,10 @@ class StripTagsViewHelperTest extends ViewHelperBaseTestcase
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
      */
     public function renderDoesNotModifySourceIfItIsAnObjectThatCantBeConvertedToAString()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $user = new UserWithoutToString('Xaver <b>Cross-Site</b>');
         $this->viewHelper->expects(self::any())->method('buildRenderChildrenClosure')->willReturn(function () {
             throw new \Exception('renderChildrenClosure was invoked but should not have been');

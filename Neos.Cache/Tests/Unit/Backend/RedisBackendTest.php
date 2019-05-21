@@ -45,7 +45,7 @@ class RedisBackendTest extends BaseTestCase
      * Set up test case
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $phpredisVersion = phpversion('redis');
         if (version_compare($phpredisVersion, '1.2.0', '<')) {
@@ -194,11 +194,11 @@ class RedisBackendTest extends BaseTestCase
     /**
      * @test
      * @dataProvider writingOperationsProvider
-     * @expectedException \RuntimeException
      * @param string $method
      */
     public function writingOperationsThrowAnExceptionIfCacheIsFrozen($method)
     {
+        $this->expectException(\RuntimeException::class);
         $this->inject($this->backend, 'frozen', null);
         $this->redis->expects($this->once())
             ->method('exists')

@@ -12,6 +12,7 @@ namespace Neos\Flow\Tests\Unit\Cli;
  */
 
 use Neos\Flow\Command\HelpCommandController;
+use Neos\Flow\Mvc\Exception\InvalidArgumentMixingException;
 use Neos\Flow\Mvc\Exception\NoSuchCommandException;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Reflection\ReflectionService;
@@ -52,7 +53,7 @@ class RequestBuilderTest extends UnitTestCase
      * Sets up this test case
      *
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->mockObjectManager = $this->createMock(ObjectManagerInterface::class);
         $this->mockObjectManager->expects($this->any())->method('getObjectNameByClassName')->with('Acme\Test\Command\DefaultCommandController')->will($this->returnValue('Acme\Test\Command\DefaultCommandController'));
@@ -299,10 +300,10 @@ class RequestBuilderTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Mvc\Exception\InvalidArgumentMixingException
      */
     public function ifNamedArgumentsAreUsedAllRequiredArgumentsMustBeNamed()
     {
+        $this->expectException(InvalidArgumentMixingException::class);
         $methodParameters = [
             'testArgument1' => ['optional' => false, 'type' => 'string'],
             'testArgument2' => ['optional' => false, 'type' => 'string'],
@@ -314,10 +315,10 @@ class RequestBuilderTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Mvc\Exception\InvalidArgumentMixingException
      */
     public function ifUnnamedArgumentsAreUsedAllRequiredArgumentsMustBeUnnamed()
     {
+        $this->expectException(InvalidArgumentMixingException::class);
         $methodParameters = [
             'requiredArgument1' => ['optional' => false, 'type' => 'string'],
             'requiredArgument2' => ['optional' => false, 'type' => 'string'],

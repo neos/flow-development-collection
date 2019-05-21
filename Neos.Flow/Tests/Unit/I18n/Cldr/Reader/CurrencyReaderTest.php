@@ -29,7 +29,7 @@ class CurrencyReaderTest extends UnitTestCase
     /**
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $sampleCurrencyFractionsData = [
             'fractions' => [

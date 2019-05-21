@@ -14,6 +14,7 @@ namespace Neos\Flow\Tests\Unit\Persistence;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Flow\Persistence;
 use Neos\Flow\Tests\Persistence\Fixture;
+use PHPUnit\Framework\Error\Error;
 
 require_once('Fixture/Repository/NonstandardEntityRepository.php');
 
@@ -237,20 +238,20 @@ class RepositoryTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \PHPUnit\Framework\Error\Error
      */
     public function magicCallMethodTriggersAnErrorIfUnknownMethodsAreCalled()
     {
+        $this->expectException(Error::class);
         $repository = $this->getMockBuilder(Persistence\Repository::class)->setMethods(['createQuery'])->getMock();
         $repository->__call('foo', []);
     }
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Persistence\Exception\IllegalObjectTypeException
      */
     public function addChecksObjectType()
     {
+        $this->expectException(Persistence\Exception\IllegalObjectTypeException::class);
         $repository = $this->getAccessibleMock(Persistence\Repository::class, ['dummy']);
         $repository->_set('entityClassName', 'ExpectedObjectType');
 
@@ -259,10 +260,10 @@ class RepositoryTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Persistence\Exception\IllegalObjectTypeException
      */
     public function removeChecksObjectType()
     {
+        $this->expectException(Persistence\Exception\IllegalObjectTypeException::class);
         $repository = $this->getAccessibleMock(Persistence\Repository::class, ['dummy']);
         $repository->_set('entityClassName', 'ExpectedObjectType');
 
@@ -270,10 +271,10 @@ class RepositoryTest extends UnitTestCase
     }
     /**
      * @test
-     * @expectedException \Neos\Flow\Persistence\Exception\IllegalObjectTypeException
      */
     public function updateChecksObjectType()
     {
+        $this->expectException(Persistence\Exception\IllegalObjectTypeException::class);
         $repository = $this->getAccessibleMock(Persistence\Repository::class, ['dummy']);
         $repository->_set('entityClassName', 'ExpectedObjectType');
 

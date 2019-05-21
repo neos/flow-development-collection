@@ -30,11 +30,11 @@ class RouteTagsTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
      * @dataProvider createFromTagThrowsExceptionForInvalidTagsDataProvider
      */
     public function createFromTagThrowsExceptionForInvalidTags($tag)
     {
+        $this->expectException(\InvalidArgumentException::class);
         RouteTags::createFromTag($tag);
     }
 
@@ -58,19 +58,19 @@ class RouteTagsTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
      */
     public function createFromArrayDoesNotAcceptIntegerValues()
     {
+        $this->expectException(\InvalidArgumentException::class);
         RouteTags::createFromArray([123]);
     }
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
      */
     public function createFromArrayDoesNotAcceptObjectValues()
     {
+        $this->expectException(\InvalidArgumentException::class);
         RouteTags::createFromArray([new \stdClass()]);
     }
 

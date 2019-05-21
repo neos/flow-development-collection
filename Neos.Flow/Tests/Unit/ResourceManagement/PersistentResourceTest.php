@@ -93,10 +93,10 @@ class PersistentResourceTest extends UnitTestCase
     /**
      * @test
      * @dataProvider invalidSha1Values
-     * @expectedException \InvalidArgumentException
      */
     public function setSha1RejectsInvalidValues($invalidValue)
     {
+        $this->expectException(\InvalidArgumentException::class);
         $resource = new PersistentResource();
         $resource->setSha1($invalidValue);
         $this->assertSame('d0be2dc421be4fcd0172e5afceea3970e2f3d940', $resource->getSha1());

@@ -149,10 +149,10 @@ class ArgumentsTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \LogicException
      */
     public function callingInvalidMethodThrowsException()
     {
+        $this->expectException(\LogicException::class);
         $arguments = new Arguments();
         $arguments->nonExistingMethod();
     }

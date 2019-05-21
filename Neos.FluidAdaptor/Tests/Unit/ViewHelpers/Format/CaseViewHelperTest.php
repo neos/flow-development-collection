@@ -14,6 +14,7 @@ namespace Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Format;
 require_once(__DIR__ . '/../ViewHelperBaseTestcase.php');
 
 use Neos\FluidAdaptor\Core\Rendering\RenderingContext;
+use Neos\FluidAdaptor\Core\ViewHelper\Exception\InvalidVariableException;
 use Neos\FluidAdaptor\ViewHelpers\Format\CaseViewHelper;
 use Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase;
 
@@ -38,11 +39,11 @@ class CaseViewHelperTest extends ViewHelperBaseTestcase
      */
     protected $originalMbEncodingValue;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->renderingContext = $this->getMockBuilder(RenderingContext::class)->disableOriginalConstructor()->getMock();
-        $this->viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\Format\CaseViewHelper::class, ['registerRenderMethodArguments']);
+        $this->viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\Format\CaseViewHelper::class, ['dummy']);
         $this->viewHelper->setRenderingContext($this->renderingContext);
         //$this->getMockBuilder(\Neos\FluidAdaptor\ViewHelpers\Format\CaseViewHelper::class)->setMethods(array('renderChildren'))->getMock();
         $this->originalMbEncodingValue = mb_internal_encoding();
@@ -50,7 +51,7 @@ class CaseViewHelperTest extends ViewHelperBaseTestcase
 
     /**
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         parent::tearDown();
         mb_internal_encoding($this->originalMbEncodingValue);
@@ -95,10 +96,10 @@ class CaseViewHelperTest extends ViewHelperBaseTestcase
 
     /**
      * @test
-     * @expectedException \Neos\FluidAdaptor\Core\ViewHelper\Exception\InvalidVariableException
      */
     public function viewHelperThrowsExceptionIfIncorrectModeIsGiven()
     {
+        $this->expectException(InvalidVariableException::class);
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['value' => 'Foo', 'mode' => 'incorrectMode']);
         $this->viewHelper->render('Foo', 'incorrectMode');
     }
@@ -116,10 +117,10 @@ class CaseViewHelperTest extends ViewHelperBaseTestcase
 
     /**
      * @test
-     * @expectedException \Neos\FluidAdaptor\Core\ViewHelper\Exception\InvalidVariableException
      */
     public function viewHelperRestoresMbInternalEncodingAfterExceptionOccurred()
     {
+        $this->expectException(InvalidVariableException::class);
         mb_internal_encoding('ASCII');
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['value' => 'dummy', 'mode' => 'incorrectModeResultingInException']);
         $this->viewHelper->render();

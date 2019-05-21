@@ -16,6 +16,7 @@ use Neos\Flow\Security\Authentication\AuthenticationManagerInterface;
 use Neos\Flow\Security\Context;
 use Neos\Flow\Security\Cryptography\HashService;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
+use Neos\FluidAdaptor\Core\ViewHelper\Exception;
 use Neos\FluidAdaptor\ViewHelpers\FormViewHelper;
 
 /**
@@ -46,7 +47,7 @@ class FormViewHelperTest extends ViewHelperBaseTestcase
     /**
      * Set up test dependencies
      */
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->arguments['action'] = '';
@@ -530,11 +531,11 @@ class FormViewHelperTest extends ViewHelperBaseTestcase
 
     /**
      * @test
-     * @expectedException \Neos\FluidAdaptor\Core\ViewHelper\Exception
      */
     public function renderThrowsExceptionIfNeitherActionNorActionUriArgumentIsSpecified()
     {
-        $viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\FormViewHelper::class, ['renderChildren', 'registerRenderMethodArguments'], [], '', false);
+        $this->expectException(Exception::class);
+        $viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\FormViewHelper::class, ['renderChildren'], [], '', false);
         $this->injectDependenciesIntoViewHelper($viewHelper);
         $viewHelper = $this->prepareArguments($viewHelper, []);
         $viewHelper->render();
@@ -542,12 +543,12 @@ class FormViewHelperTest extends ViewHelperBaseTestcase
 
     /**
      * @test
-     * @expectedException \Neos\FluidAdaptor\Core\ViewHelper\Exception
-     * @expectedExceptionCode 1361354942
      */
     public function renderThrowsExceptionIfUseParentRequestIsSetAndTheCurrentRequestHasNoParentRequest()
     {
-        $viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\FormViewHelper::class, ['renderChildren', 'registerRenderMethodArguments'], [], '', false);
+        $this->expectException(Exception::class);
+        $this->expectExceptionCode(1361354942);
+        $viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\FormViewHelper::class, ['renderChildren'], [], '', false);
         $this->arguments['useParentRequest'] = true;
         $this->arguments['action'] = 'index';
         $this->injectDependenciesIntoViewHelper($viewHelper);

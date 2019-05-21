@@ -36,10 +36,10 @@ class CheckboxViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\F
      */
     protected $mockTagBuilder;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
-        $this->viewHelper = $this->getAccessibleMock(CheckboxViewHelper::class, ['setErrorClassAttribute', 'getName', 'getValueAttribute', 'isObjectAccessorMode', 'getPropertyValue', 'registerFieldNameForFormTokenGeneration', 'registerRenderMethodArguments']);
+        $this->viewHelper = $this->getAccessibleMock(CheckboxViewHelper::class, ['setErrorClassAttribute', 'getName', 'getValueAttribute', 'isObjectAccessorMode', 'getPropertyValue', 'registerFieldNameForFormTokenGeneration']);
         $this->arguments['property'] = '';
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
 

@@ -14,6 +14,8 @@ namespace Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Format;
 
 require_once(__DIR__ . '/../ViewHelperBaseTestcase.php');
 
+use Neos\FluidAdaptor\Core\ViewHelper\Exception;
+use Neos\FluidAdaptor\Core\ViewHelper\Exception\InvalidVariableException;
 use Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase;
 
 /**
@@ -21,10 +23,10 @@ use Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase;
  */
 class CurrencyViewHelperTest extends ViewHelperBaseTestcase
 {
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
-        $this->viewHelper = $this->getMockBuilder(\Neos\FluidAdaptor\ViewHelpers\Format\CurrencyViewHelper::class)->setMethods(['renderChildren', 'registerRenderMethodArguments'])->getMock();
+        $this->viewHelper = $this->getMockBuilder(\Neos\FluidAdaptor\ViewHelpers\Format\CurrencyViewHelper::class)->setMethods(['renderChildren'])->getMock();
     }
 
     /**
@@ -129,10 +131,10 @@ class CurrencyViewHelperTest extends ViewHelperBaseTestcase
 
     /**
      * @test
-     * @expectedException \Neos\FluidAdaptor\Core\ViewHelper\Exception\InvalidVariableException
      */
     public function viewHelperThrowsExceptionIfLocaleIsUsedWithoutExplicitCurrencySign()
     {
+        $this->expectException(InvalidVariableException::class);
         $localizationConfiguration = new \Neos\Flow\I18n\Configuration('de_DE');
 
         $mockLocalizationService = $this->getMockBuilder(\Neos\Flow\I18n\Service::class)->setMethods(['getConfiguration'])->getMock();
@@ -146,10 +148,10 @@ class CurrencyViewHelperTest extends ViewHelperBaseTestcase
 
     /**
      * @test
-     * @expectedException \Neos\FluidAdaptor\Core\ViewHelper\Exception
      */
     public function viewHelperConvertsI18nExceptionsIntoViewHelperExceptions()
     {
+        $this->expectException(Exception::class);
         $localizationConfiguration = new \Neos\Flow\I18n\Configuration('de_DE');
 
         $mockLocalizationService = $this->getMockBuilder(\Neos\Flow\I18n\Service::class)->setMethods(['getConfiguration'])->getMock();

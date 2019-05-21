@@ -32,7 +32,7 @@ class ViewsConfigurationTest extends FunctionalTestCase
     /**
      * Additional setup: Routes
      */
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

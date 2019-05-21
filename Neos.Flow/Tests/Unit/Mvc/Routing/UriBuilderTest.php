@@ -63,7 +63,7 @@ class UriBuilderTest extends UnitTestCase
      * Sets up the test case
      *
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->mockHttpRequest = $this->getMockBuilder(Http\Request::class)->disableOriginalConstructor()->getMock();
 
@@ -139,10 +139,10 @@ class UriBuilderTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Mvc\Routing\Exception\MissingActionNameException
      */
     public function uriForThrowsExceptionIfActionNameIsNotSpecified()
     {
+        $this->expectException(Mvc\Routing\Exception\MissingActionNameException::class);
         $this->uriBuilder->uriFor(null, [], 'SomeController', 'SomePackage');
     }
 

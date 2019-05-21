@@ -20,7 +20,7 @@ use Neos\Flow\Tests\UnitTestCase;
  */
 class DebuggerTest extends UnitTestCase
 {
-    public function setUp()
+    protected function setUp(): void
     {
         Debugger::clearState();
     }
@@ -51,7 +51,7 @@ class DebuggerTest extends UnitTestCase
     public function ignoredClassesRegexContainsFallback()
     {
         $ignoredClassesRegex = Debugger::getIgnoredClassesRegex();
-        $this->assertContains('Neos\\\\Flow\\\\Core\\\\.*', $ignoredClassesRegex);
+        $this->assertStringContainsString('Neos\\\\Flow\\\\Core\\\\.*', $ignoredClassesRegex);
     }
 
     /**

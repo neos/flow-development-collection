@@ -13,6 +13,7 @@ namespace Neos\FluidAdaptor\Tests\Unit\ViewHelpers;
 
 use Neos\Flow\I18n\Locale;
 use Neos\Flow\I18n\Translator;
+use Neos\FluidAdaptor\Core\ViewHelper\Exception;
 use Neos\FluidAdaptor\ViewHelpers\TranslateViewHelper;
 
 require_once(__DIR__ . '/ViewHelperBaseTestcase.php');
@@ -37,11 +38,11 @@ class TranslateViewHelperTest extends ViewHelperBaseTestcase
      */
     protected $mockTranslator;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
-        $this->translateViewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\TranslateViewHelper::class, ['renderChildren', 'registerRenderMethodArguments']);
+        $this->translateViewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\TranslateViewHelper::class, ['renderChildren']);
 
         $this->request->expects($this->any())->method('getControllerPackageKey')->will($this->returnValue('Neos.FluidAdaptor'));
 
@@ -118,20 +119,20 @@ class TranslateViewHelperTest extends ViewHelperBaseTestcase
 
     /**
      * @test
-     * @expectedException \Neos\FluidAdaptor\Core\ViewHelper\Exception
      */
     public function renderThrowsExceptionIfGivenLocaleIdentifierIsInvalid()
     {
+        $this->expectException(Exception::class);
         $this->translateViewHelper = $this->prepareArguments($this->translateViewHelper, ['id' => 'some.label', 'value' => null, 'arguments' => [], 'source' => 'Main', 'package' => null, 'quantity' => null, 'locale' => 'INVALIDLOCALE']);
         $this->translateViewHelper->render();
     }
 
     /**
      * @test
-     * @expectedException \Neos\FluidAdaptor\Core\ViewHelper\Exception
      */
     public function renderThrowsExceptionIfNoPackageCouldBeResolved()
     {
+        $this->expectException(Exception::class);
         $mockRequest = $this->getMockBuilder(\Neos\Flow\Mvc\ActionRequest::class)->disableOriginalConstructor()->getMock();
         $mockRequest->expects($this->any())->method('getControllerPackageKey')->will($this->returnValue(null));
 

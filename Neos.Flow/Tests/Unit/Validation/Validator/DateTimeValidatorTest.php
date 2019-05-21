@@ -34,7 +34,7 @@ class DateTimeValidatorTest extends AbstractValidatorTestcase
     /**
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->sampleLocale = new Locale('en_GB');

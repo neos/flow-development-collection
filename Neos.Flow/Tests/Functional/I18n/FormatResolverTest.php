@@ -29,7 +29,7 @@ class FormatResolverTest extends FunctionalTestCase
     /**
      * Initialize dependencies
      */
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->formatResolver = $this->objectManager->get(FormatResolver::class);

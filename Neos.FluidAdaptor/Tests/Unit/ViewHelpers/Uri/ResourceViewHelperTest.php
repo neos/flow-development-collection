@@ -17,6 +17,7 @@ use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\ResourceManagement\Exception;
 use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\Flow\ResourceManagement\ResourceManager;
+use Neos\FluidAdaptor\Core\ViewHelper\Exception\InvalidVariableException;
 use Neos\FluidAdaptor\ViewHelpers\Uri\ResourceViewHelper;
 
 require_once(__DIR__ . '/../ViewHelperBaseTestcase.php');
@@ -46,7 +47,7 @@ class ResourceViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\V
      */
     protected $mockResourceManager;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->mockI18nService = $this->createMock(Service::class);
@@ -56,7 +57,7 @@ class ResourceViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\V
             [Service::class, $this->mockI18nService],
             [ResourceManager::class, $this->mockResourceManager]
         ]));
-        $this->viewHelper = $this->getAccessibleMock(ResourceViewHelper::class, ['renderChildren', 'registerRenderMethodArguments'], [], '', false);
+        $this->viewHelper = $this->getAccessibleMock(ResourceViewHelper::class, ['renderChildren'], [], '', false);
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
         $this->renderingContext->injectObjectManager($this->objectManagerMock);
     }
@@ -201,10 +202,10 @@ class ResourceViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\V
 
     /**
      * @test
-     * @expectedException \Neos\FluidAdaptor\Core\ViewHelper\Exception\InvalidVariableException
      */
     public function renderThrowsExceptionIfNeitherResourceNorPathWereGiven()
     {
+        $this->expectException(InvalidVariableException::class);
         $this->viewHelper = $this->prepareArguments($this->viewHelper, [
             'path' => null,
             'package' => 'SomePackage',
@@ -215,10 +216,10 @@ class ResourceViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\V
 
     /**
      * @test
-     * @expectedException \Neos\FluidAdaptor\Core\ViewHelper\Exception\InvalidVariableException
      */
     public function renderThrowsExceptionIfResourceUriNotPointingToPublicWasGivenAsPath()
     {
+        $this->expectException(InvalidVariableException::class);
         $this->mockResourceManager
             ->expects($this->once())
             ->method('getPackageAndPathByPublicPath')

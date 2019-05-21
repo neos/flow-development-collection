@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Flow\Security\Aspect;
 
 /*
@@ -14,7 +16,6 @@ namespace Neos\Flow\Security\Aspect;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Aop\JoinPointInterface;
 use Neos\Flow\Log\PsrSecurityLoggerInterface;
-use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Security\Authentication\AuthenticationManagerInterface;
 use Neos\Flow\Security\Authentication\TokenInterface;
 use Neos\Flow\Security\Exception\NoTokensAuthenticatedException;
@@ -51,7 +52,7 @@ class LoggingAspect
         if ($joinPoint->hasException()) {
             $exception = $joinPoint->getException();
             if (!$exception instanceof NoTokensAuthenticatedException) {
-                $this->securityLogger->notice(sprintf('Authentication failed: "%s" #%d', $exception->getMessage(), $exception->getCode()));
+                $this->securityLogger->notice(sprintf('Authentication failed: "%s" #%d', $exception->getMessage(), $exception->getCode()), $this->getLogEnvironmentFromJoinPoint($joinPoint));
             }
             throw $exception;
         }
@@ -68,7 +69,7 @@ class LoggingAspect
             $logMessage = sprintf('Successfully re-authenticated tokens for account "%s"', $authenticationManager->getSecurityContext()->getAccount()->getAccountIdentifier());
         }
 
-        $this->securityLogger->info($logMessage, LogEnvironment::fromMethodName(__METHOD__));
+        $this->securityLogger->info($logMessage, $this->getLogEnvironmentFromJoinPoint($joinPoint));
     }
 
     /**
@@ -95,7 +96,7 @@ class LoggingAspect
             }
         }
 
-        $this->securityLogger->info(sprintf('Logged out %d account(s). (%s)', count($accountIdentifiers), implode(', ', $accountIdentifiers)), LogEnvironment::fromMethodName(__METHOD__));
+        $this->securityLogger->info(sprintf('Logged out %d account(s). (%s)', count($accountIdentifiers), implode(', ', $accountIdentifiers)), $this->getLogEnvironmentFromJoinPoint($joinPoint));
     }
 
     /**
@@ -126,27 +127,15 @@ class LoggingAspect
 
         switch ($token->getAuthenticationStatus()) {
             case TokenInterface::AUTHENTICATION_SUCCESSFUL:
-                $this->securityLogger->notice(sprintf('Successfully authenticated token: %s', $token), [
-                    'packageKey' => 'Neos.Flow',
-                    'className' => $joinPoint->getClassName(),
-                    'methodName' => $joinPoint->getMethodName()
-                ]);
+                $this->securityLogger->notice(sprintf('Successfully authenticated token: %s', $token), $this->getLogEnvironmentFromJoinPoint($joinPoint));
                 $this->alreadyLoggedAuthenticateCall = true;
-            break;
+                break;
             case TokenInterface::WRONG_CREDENTIALS:
-                $this->securityLogger->warning(sprintf('Wrong credentials given for token: %s', $token), [
-                    'packageKey' => 'Neos.Flow',
-                    'className' => $joinPoint->getClassName(),
-                    'methodName' => $joinPoint->getMethodName()
-                ]);
-            break;
+                $this->securityLogger->warning(sprintf('Wrong credentials given for token: %s', $token), $this->getLogEnvironmentFromJoinPoint($joinPoint));
+                break;
             case TokenInterface::NO_CREDENTIALS_GIVEN:
-                $this->securityLogger->warning(sprintf('No credentials given or no account found for token: %s', $token), [
-                    'packageKey' => 'Neos.Flow',
-                    'className' => $joinPoint->getClassName(),
-                    'methodName' => $joinPoint->getMethodName()
-                ]);
-            break;
+                $this->securityLogger->warning(sprintf('No credentials given or no account found for token: %s', $token), $this->getLogEnvironmentFromJoinPoint($joinPoint));
+                break;
         }
     }
 
@@ -162,7 +151,7 @@ class LoggingAspect
         $subjectJoinPoint = $joinPoint->getMethodArgument('subject');
         $decision = $joinPoint->getResult() === true ? 'GRANTED' : 'DENIED';
         $message = sprintf('Decided "%s" on method call %s::%s().', $decision, $subjectJoinPoint->getClassName(), $subjectJoinPoint->getMethodName());
-        $this->securityLogger->info($message, LogEnvironment::fromMethodName(__METHOD__));
+        $this->securityLogger->info($message, $this->getLogEnvironmentFromJoinPoint($joinPoint));
     }
 
     /**
@@ -176,6 +165,19 @@ class LoggingAspect
     {
         $decision = $joinPoint->getResult() === true ? 'GRANTED' : 'DENIED';
         $message = sprintf('Decided "%s" on privilege "%s".', $decision, $joinPoint->getMethodArgument('privilegeTargetIdentifier'));
-        $this->securityLogger->info($message, LogEnvironment::fromMethodName(__METHOD__));
+        $this->securityLogger->info($message, $this->getLogEnvironmentFromJoinPoint($joinPoint));
+    }
+
+    /**
+     * @param JoinPointInterface $joinPoint
+     * @return array
+     */
+    protected function getLogEnvironmentFromJoinPoint(JoinPointInterface $joinPoint): array
+    {
+        return ['FLOW_LOG_ENVIRONMENT' => [
+            'packageKey' => 'Neos.Flow',
+            'className' => $joinPoint->getClassName(),
+            'methodName' => $joinPoint->getMethodName()
+        ]];
     }
 }

@@ -35,7 +35,7 @@ class QueryResultTest extends UnitTestCase
      * Sets up this test case
      *
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->query = $this->getMockBuilder(Query::class)->disableOriginalConstructor()->disableOriginalClone()->getMock();
         $this->query->expects($this->any())->method('getResult')->will($this->returnValue(['First result', 'second result', 'third result']));

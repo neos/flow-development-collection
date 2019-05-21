@@ -34,7 +34,7 @@ class MediaTypeConverterTest extends UnitTestCase
     /**
      * Set up this test case
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->mediaTypeConverter = new MediaTypeConverter();
 

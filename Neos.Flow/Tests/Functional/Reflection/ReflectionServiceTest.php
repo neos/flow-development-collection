@@ -26,7 +26,7 @@ class ReflectionServiceTest extends FunctionalTestCase
      */
     protected $reflectionService;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->reflectionService = $this->objectManager->get(ReflectionService::class);

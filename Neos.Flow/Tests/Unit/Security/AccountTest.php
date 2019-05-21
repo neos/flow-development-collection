@@ -40,7 +40,7 @@ class AccountTest extends UnitTestCase
     /**
      * Setup function for the test case
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $administratorRole = new Role('Neos.Flow:Administrator');
         $this->administratorRole = $administratorRole;

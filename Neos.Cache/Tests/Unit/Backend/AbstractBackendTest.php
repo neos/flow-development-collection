@@ -31,7 +31,7 @@ class AbstractBackendTest extends BaseTestCase
     /**
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         class_exists(AbstractBackend::class);
         $className = 'ConcreteBackend_' . md5(uniqid(mt_rand(), true));

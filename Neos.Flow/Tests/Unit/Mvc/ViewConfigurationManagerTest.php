@@ -46,7 +46,7 @@ class ViewConfigurationManagerTest extends \Neos\Flow\Tests\UnitTestCase
     protected $mockCache;
 
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->viewConfigurationManager = new ViewConfigurationManager();
 

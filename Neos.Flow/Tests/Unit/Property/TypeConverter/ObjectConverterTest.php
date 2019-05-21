@@ -40,7 +40,7 @@ class ObjectConverterTest extends UnitTestCase
      */
     protected $mockObjectManager;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->mockReflectionService = $this->createMock(ReflectionService::class);
         $this->mockObjectManager = $this->createMock(ObjectManagerInterface::class);

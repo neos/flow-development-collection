@@ -12,6 +12,7 @@ namespace Neos\FluidAdaptor\Tests\Unit\View;
  */
 
 
+use Neos\FluidAdaptor\View\Exception\InvalidTemplateResourceException;
 use org\bovigo\vfs\vfsStreamWrapper;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Controller\ControllerContext;
@@ -38,7 +39,7 @@ class StandaloneViewTest extends UnitTestCase
      */
     protected $mockRequest;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->standaloneView = $this->getAccessibleMock(\Neos\FluidAdaptor\View\StandaloneView::class, ['dummy']);
 
@@ -50,10 +51,10 @@ class StandaloneViewTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\FluidAdaptor\View\Exception\InvalidTemplateResourceException
      */
     public function getLayoutPathAndFilenameThrowsExceptionIfSpecifiedLayoutRootPathIsNoDirectory()
     {
+        $this->expectException(InvalidTemplateResourceException::class);
         vfsStreamWrapper::register();
         mkdir('vfs://MyLayouts');
         \file_put_contents('vfs://MyLayouts/NotAFolder', 'foo');
@@ -63,10 +64,10 @@ class StandaloneViewTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\FluidAdaptor\View\Exception\InvalidTemplateResourceException
      */
     public function getLayoutPathAndFilenameThrowsExceptionIfLayoutFileIsADirectory()
     {
+        $this->expectException(InvalidTemplateResourceException::class);
         vfsStreamWrapper::register();
         mkdir('vfs://MyLayouts/NotAFile');
         $this->standaloneView->setLayoutRootPath('vfs://MyLayouts');
@@ -75,10 +76,10 @@ class StandaloneViewTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\FluidAdaptor\View\Exception\InvalidTemplateResourceException
      */
     public function getPartialPathAndFilenameThrowsExceptionIfSpecifiedPartialRootPathIsNoDirectory()
     {
+        $this->expectException(InvalidTemplateResourceException::class);
         vfsStreamWrapper::register();
         mkdir('vfs://MyPartials');
         \file_put_contents('vfs://MyPartials/NotAFolder', 'foo');
@@ -88,10 +89,10 @@ class StandaloneViewTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\FluidAdaptor\View\Exception\InvalidTemplateResourceException
      */
     public function getPartialPathAndFilenameThrowsExceptionIfPartialFileIsADirectory()
     {
+        $this->expectException(InvalidTemplateResourceException::class);
         vfsStreamWrapper::register();
         mkdir('vfs://MyPartials/NotAFile');
         $this->standaloneView->setPartialRootPath('vfs://MyPartials');

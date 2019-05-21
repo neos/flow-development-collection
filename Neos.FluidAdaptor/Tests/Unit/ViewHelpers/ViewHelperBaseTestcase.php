@@ -75,7 +75,7 @@ abstract class ViewHelperBaseTestcase extends \Neos\Flow\Tests\UnitTestCase
     /**
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->viewHelperVariableContainer = $this->createMock(\TYPO3Fluid\Fluid\Core\ViewHelper\ViewHelperVariableContainer::class);
         $this->viewHelperVariableContainer->expects($this->any())->method('exists')->will($this->returnCallback([$this, 'viewHelperVariableContainerExistsCallback']));

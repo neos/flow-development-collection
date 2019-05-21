@@ -15,6 +15,7 @@ include_once(__DIR__ . '/../../BaseTestCase.php');
 
 use Neos\Cache\Backend\TransientMemoryBackend;
 use Neos\Cache\EnvironmentConfiguration;
+use Neos\Cache\Exception;
 use Neos\Cache\Tests\BaseTestCase;
 use Neos\Cache\Frontend\FrontendInterface;
 
@@ -25,11 +26,11 @@ use Neos\Cache\Frontend\FrontendInterface;
 class TransientMemoryBackendTest extends BaseTestCase
 {
     /**
-     * @expectedException \Neos\Cache\Exception
      * @test
      */
     public function setThrowsExceptionIfNoFrontEndHasBeenSet()
     {
+        $this->expectException(Exception::class);
         $backend = new TransientMemoryBackend($this->getEnvironmentConfiguration());
 
         $data = 'Some data';

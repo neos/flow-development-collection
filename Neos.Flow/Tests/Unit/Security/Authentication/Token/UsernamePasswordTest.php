@@ -41,7 +41,7 @@ class UsernamePasswordTest extends UnitTestCase
     /**
      * Set up this test case
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->token = new UsernamePassword();
 

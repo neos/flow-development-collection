@@ -21,10 +21,10 @@ class PointcutFilterTest extends UnitTestCase
 {
     /**
      * @test
-     * @expectedException \Neos\Flow\Aop\Exception\UnknownPointcutException
      */
     public function matchesThrowsAnExceptionIfTheSpecifiedPointcutDoesNotExist()
     {
+        $this->expectException(Aop\Exception\UnknownPointcutException::class);
         $className = 'Foo';
         $methodName = 'bar';
         $methodDeclaringClassName = 'Baz';

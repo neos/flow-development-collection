@@ -28,7 +28,7 @@ class CldrModelTest extends UnitTestCase
     /**
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $samplePaths = ['foo', 'bar', 'baz'];
         $sampleParsedFile1 = require(__DIR__ . '/../Fixtures/MockParsedCldrFile1.php');

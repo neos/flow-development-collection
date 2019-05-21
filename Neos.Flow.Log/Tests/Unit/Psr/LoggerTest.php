@@ -46,6 +46,7 @@ class LoggerTest extends UnitTestCase
      * @param string $psrLogLevel
      * @param int $legacyLogLevel
      * @param bool $willError
+     * @throws \ReflectionException
      */
     public function logAcceptsOnlyValidLogLevels($psrLogLevel, $legacyLogLevel, $willError)
     {
@@ -69,6 +70,7 @@ class LoggerTest extends UnitTestCase
      * @param string $psrLogLevel
      * @param int $legacyLogLevel
      * @param bool $willError
+     * @throws \ReflectionException
      */
     public function levelSpecificMethodsAreSupported($psrLogLevel, $legacyLogLevel, $willError)
     {

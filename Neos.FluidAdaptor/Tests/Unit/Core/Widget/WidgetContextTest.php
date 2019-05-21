@@ -26,7 +26,7 @@ class WidgetContextTest extends \Neos\Flow\Tests\UnitTestCase
 
     /**
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->widgetContext = new \Neos\FluidAdaptor\Core\Widget\WidgetContext();
     }

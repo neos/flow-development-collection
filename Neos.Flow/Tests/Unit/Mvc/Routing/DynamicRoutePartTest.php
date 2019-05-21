@@ -31,7 +31,7 @@ class DynamicRoutePartTest extends UnitTestCase
      */
     protected $mockPersistenceManager;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->dynamicRoutPart = $this->getAccessibleMock(DynamicRoutePart::class, ['dummy']);
 

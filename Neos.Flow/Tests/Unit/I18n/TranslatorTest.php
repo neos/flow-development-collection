@@ -34,7 +34,7 @@ class TranslatorTest extends UnitTestCase
     /**
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->defaultLocale = new I18n\Locale('en_GB');
 

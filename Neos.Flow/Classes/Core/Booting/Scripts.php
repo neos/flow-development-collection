@@ -17,6 +17,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cache\CacheFactory;
 use Neos\Flow\Cache\CacheManager;
 use Neos\Flow\Configuration\ConfigurationManager;
+use Neos\Flow\Configuration\Exception\InvalidConfigurationTypeException;
 use Neos\Flow\Configuration\Source\YamlSource;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Core\ClassLoader;
@@ -26,12 +27,7 @@ use Neos\Flow\Error\Debugger;
 use Neos\Flow\Error\ErrorHandler;
 use Neos\Flow\Error\ProductionExceptionHandler;
 use Neos\Flow\Http\HttpRequestHandlerInterface;
-use Neos\Flow\Log\Logger;
-use Neos\Flow\Log\LoggerBackendConfigurationHelper;
-use Neos\Flow\Log\LoggerFactory;
-use Neos\Flow\Log\PsrLoggerFactory;
 use Neos\Flow\Log\PsrLoggerFactoryInterface;
-use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\Log\ThrowableStorage\FileStorage;
 use Neos\Flow\Log\ThrowableStorageInterface;
 use Neos\Flow\Monitor\FileMonitor;
@@ -234,8 +230,10 @@ class Scripts
      *
      * @param Bootstrap $bootstrap
      * @return void
+     * @throws FlowException
+     * @throws InvalidConfigurationTypeException
      */
-    public static function initializeSystemLogger(Bootstrap $bootstrap)
+    public static function initializeSystemLogger(Bootstrap $bootstrap): void
     {
         $configurationManager = $bootstrap->getEarlyInstance(ConfigurationManager::class);
         $settings = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.Flow');
@@ -246,22 +244,10 @@ class Scripts
         /** @var PsrLoggerFactoryInterface $psrLoggerFactoryName */
         $psrLoggerFactoryName = $settings['log']['psr3']['loggerFactory'];
         $psrLogConfigurations = $settings['log']['psr3'][$psrLoggerFactoryName] ?? [];
-        if ($psrLoggerFactoryName === 'legacy') {
-            $psrLoggerFactoryName = PsrLoggerFactory::class;
-            $psrLogConfigurations = (new LoggerBackendConfigurationHelper($settings['log']))->getNormalizedLegacyConfiguration();
-        }
         $psrLogFactory = $psrLoggerFactoryName::create($psrLogConfigurations);
 
-        // This is all deprecated and can be removed with the removal of respective interfaces and classes.
-        $loggerFactory = new LoggerFactory($psrLogFactory, $throwableStorage);
         $bootstrap->setEarlyInstance($psrLoggerFactoryName, $psrLogFactory);
         $bootstrap->setEarlyInstance(PsrLoggerFactoryInterface::class, $psrLogFactory);
-        $bootstrap->setEarlyInstance(LoggerFactory::class, $loggerFactory);
-        $deprecatedLogger = $settings['log']['systemLogger']['logger'] ?? Logger::class;
-        $deprecatedLoggerBackend = $settings['log']['systemLogger']['backend'] ?? '';
-        $deprecatedLoggerBackendOptions = $settings['log']['systemLogger']['backendOptions'] ?? [];
-        $systemLogger = $loggerFactory->create('SystemLogger', $deprecatedLogger, $deprecatedLoggerBackend, $deprecatedLoggerBackendOptions);
-        $bootstrap->setEarlyInstance(SystemLoggerInterface::class, $systemLogger);
     }
 
     /**
@@ -270,7 +256,7 @@ class Scripts
      * @param Bootstrap $bootstrap
      * @return ThrowableStorageInterface
      * @throws FlowException
-     * @throws \Neos\Flow\Configuration\Exception\InvalidConfigurationTypeException
+     * @throws InvalidConfigurationTypeException
      */
     protected static function initializeExceptionStorage(Bootstrap $bootstrap): ThrowableStorageInterface
     {
@@ -325,6 +311,8 @@ class Scripts
      *
      * @param Bootstrap $bootstrap
      * @return void
+     * @throws FlowException
+     * @throws InvalidConfigurationTypeException
      */
     public static function initializeErrorHandling(Bootstrap $bootstrap)
     {
@@ -334,9 +322,6 @@ class Scripts
         $errorHandler = new ErrorHandler();
         $errorHandler->setExceptionalErrors($settings['error']['errorHandler']['exceptionalErrors']);
         $exceptionHandler = class_exists($settings['error']['exceptionHandler']['className']) ? new $settings['error']['exceptionHandler']['className'] : new ProductionExceptionHandler();
-        if (is_callable([$exceptionHandler, 'injectSystemLogger'])) {
-            $exceptionHandler->injectSystemLogger($bootstrap->getEarlyInstance(SystemLoggerInterface::class));
-        }
 
         if (is_callable([$exceptionHandler, 'injectLogger'])) {
             $exceptionHandler->injectLogger($bootstrap->getEarlyInstance(PsrLoggerFactoryInterface::class)->get('systemLogger'));
@@ -354,6 +339,8 @@ class Scripts
      *
      * @param Bootstrap $bootstrap
      * @return void
+     * @throws FlowException
+     * @throws InvalidConfigurationTypeException
      */
     public static function initializeCacheManagement(Bootstrap $bootstrap)
     {

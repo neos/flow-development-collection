@@ -28,7 +28,7 @@ class DependencyInjectionTest extends FunctionalTestCase
      */
     protected $configurationManager;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

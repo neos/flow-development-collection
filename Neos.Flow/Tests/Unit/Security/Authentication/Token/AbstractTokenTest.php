@@ -14,6 +14,7 @@ namespace Neos\Flow\Tests\Unit\Security\Authentication\Token;
 use Neos\Flow\Security\Authentication\EntryPoint\WebRedirect;
 use Neos\Flow\Security\Authentication\Token\AbstractToken;
 use Neos\Flow\Security\Authentication\TokenInterface;
+use Neos\Flow\Security\Exception\InvalidAuthenticationStatusException;
 use Neos\Flow\Security\RequestPattern\Uri as UriRequestPattern;
 use Neos\Flow\Tests\UnitTestCase;
 
@@ -28,7 +29,7 @@ class AbstractTokenTest extends UnitTestCase
      */
     protected $token;
 
-    public function setup()
+    protected function setUp(): void
     {
         $this->token = $this->getMockForAbstractClass(AbstractToken::class);
     }
@@ -91,10 +92,10 @@ class AbstractTokenTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Security\Exception\InvalidAuthenticationStatusException
      */
     public function setAuthenticationStatusThrowsAnExceptionForAnInvalidStatus()
     {
+        $this->expectException(InvalidAuthenticationStatusException::class);
         $this->token->setAuthenticationStatus(-1);
     }
 
@@ -114,10 +115,10 @@ class AbstractTokenTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
      */
     public function setRequestPatternsOnlyAcceptsRequestPatterns()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $uriRequestPattern = new UriRequestPattern(['uriPattern' => 'http://mydomain.com/some/path/pattern']);
         $this->token->setRequestPatterns([$uriRequestPattern, 'no valid pattern']);
     }
