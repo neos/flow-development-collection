@@ -61,7 +61,6 @@ class PointcutFilterComposite implements PointcutFilterInterface
         $this->runtimeEvaluationsDefinition = [];
         $matches = true;
         foreach ($this->filters as [$operator, $filter]) {
-
             $currentFilterMatches = $filter->matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier);
             $currentRuntimeEvaluationsDefinition = $filter->getRuntimeEvaluationsDefinition();
 
@@ -198,7 +197,6 @@ class PointcutFilterComposite implements PointcutFilterInterface
     {
         $result = clone $classNameIndex;
         foreach ($this->filters as [$operator, $filter]) {
-
             switch ($operator) {
                 case '&&':
                     $result->applyIntersect($filter->reduceTargetClassNames($result));
