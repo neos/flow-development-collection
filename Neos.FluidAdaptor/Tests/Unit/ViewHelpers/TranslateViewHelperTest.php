@@ -44,7 +44,7 @@ class TranslateViewHelperTest extends ViewHelperBaseTestcase
     {
         parent::setUp();
 
-        $this->translateViewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\TranslateViewHelper::class, ['renderChildren', 'registerRenderMethodArguments']);
+        $this->translateViewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\TranslateViewHelper::class, ['renderChildren']);
 
         $this->request->expects($this->any())->method('getControllerPackageKey')->will($this->returnValue('Neos.FluidAdaptor'));
 

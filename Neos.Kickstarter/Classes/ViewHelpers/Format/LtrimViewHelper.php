@@ -30,12 +30,23 @@ use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 class LtrimViewHelper extends AbstractViewHelper
 {
     /**
-     * @param string $charlist
+     * Initialize the arguments.
+     *
+     * @return void
+     * @throws \Neos\FluidAdaptor\Core\ViewHelper\Exception
+     */
+    public function initializeArguments()
+    {
+        parent::initializeArguments();
+        $this->registerArgument('charlist', 'string', 'Characters to trim');
+    }
+
+    /**
      * @return string The altered string.
      */
-    public function render($charlist = null)
+    public function render(): string
     {
         $content = $this->renderChildren();
-        return ltrim($content, $charlist);
+        return ltrim($content, $this->arguments['charlist']);
     }
 }

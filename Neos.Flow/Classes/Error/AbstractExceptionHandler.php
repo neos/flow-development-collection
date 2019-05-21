@@ -16,7 +16,6 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\Response;
 use Neos\Flow\Exception as FlowException;
 use Neos\Flow\Http\Helper\ResponseInformationHelper;
-use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\Log\ThrowableStorageInterface;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
@@ -33,13 +32,6 @@ use Psr\Log\LoggerInterface;
  */
 abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
 {
-    /**
-     * @var SystemLoggerInterface
-     * @deprecated Use the PSR logger
-     * @see logger
-     */
-    protected $systemLogger;
-
     /**
      * @var LoggerInterface
      */
@@ -59,17 +51,6 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
      * @var array
      */
     protected $renderingOptions;
-
-    /**
-     * Injects the system logger
-     *
-     * @param SystemLoggerInterface $systemLogger
-     * @return void
-     */
-    public function injectSystemLogger(SystemLoggerInterface $systemLogger)
-    {
-        $this->systemLogger = $systemLogger;
-    }
 
     /**
      * @param LoggerInterface $logger

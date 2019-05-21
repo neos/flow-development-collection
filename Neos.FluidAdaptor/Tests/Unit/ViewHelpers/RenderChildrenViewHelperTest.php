@@ -13,6 +13,8 @@ namespace Neos\FluidAdaptor\Tests\Unit\ViewHelpers;
 
 use Neos\FluidAdaptor\Core\Widget\Exception\RenderingContextNotFoundException;
 use Neos\FluidAdaptor\Core\Widget\Exception\WidgetContextNotFoundException;
+use Neos\FluidAdaptor\Core\Widget\WidgetContext;
+use Neos\FluidAdaptor\ViewHelpers\RenderChildrenViewHelper;
 use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\RootNode;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 
@@ -22,10 +24,10 @@ require_once(__DIR__ . '/ViewHelperBaseTestcase.php');
  * Testcase for CycleViewHelper
  *
  */
-class RenderChildrenViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase
+class RenderChildrenViewHelperTest extends ViewHelperBaseTestcase
 {
     /**
-     * var \Neos\FluidAdaptor\ViewHelpers\RenderChildrenViewHelper
+     * @var RenderChildrenViewHelper
      */
     protected $viewHelper;
 
@@ -34,43 +36,36 @@ class RenderChildrenViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHel
     protected function setUp(): void
     {
         parent::setUp();
-        $this->viewHelper = $this->getMockBuilder(\Neos\FluidAdaptor\ViewHelpers\RenderChildrenViewHelper::class)->setMethods(['renderChildren'])->getMock();
+        $this->viewHelper = $this->getMockBuilder(RenderChildrenViewHelper::class)->setMethods(['renderChildren'])->getMock();
     }
 
     /**
      * @test
      */
-    public function renderCallsEvaluateOnTheRootNodeAndRegistersTheArguments()
+    public function renderCallsEvaluateOnTheRootNode(): void
     {
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
-        $this->viewHelper->initializeArguments();
-
-        $templateVariableContainer = $this->createMock(\Neos\FluidAdaptor\Core\ViewHelper\TemplateVariableContainer::class);
-        $templateVariableContainer->expects($this->at(0))->method('add')->with('k1', 'v1');
-        $templateVariableContainer->expects($this->at(1))->method('add')->with('k2', 'v2');
-        $templateVariableContainer->expects($this->at(2))->method('remove')->with('k1');
-        $templateVariableContainer->expects($this->at(3))->method('remove')->with('k2');
 
         $renderingContext = $this->createMock(RenderingContextInterface::class);
-        $renderingContext->expects($this->any())->method('getVariableProvider')->will($this->returnValue($templateVariableContainer));
 
         $rootNode = $this->createMock(RootNode::class);
 
-        $widgetContext = $this->createMock(\Neos\FluidAdaptor\Core\Widget\WidgetContext::class);
-        $this->request->expects($this->any())->method('getInternalArgument')->with('__widgetContext')->will($this->returnValue($widgetContext));
-        $widgetContext->expects($this->any())->method('getViewHelperChildNodeRenderingContext')->will($this->returnValue($renderingContext));
-        $widgetContext->expects($this->any())->method('getViewHelperChildNodes')->will($this->returnValue($rootNode));
+        $widgetContext = $this->createMock(WidgetContext::class);
+        $this->request->expects($this->any())->method('getInternalArgument')->with('__widgetContext')->willReturn($widgetContext);
+        $widgetContext->expects($this->any())->method('getViewHelperChildNodeRenderingContext')->willReturn($renderingContext);
+        $widgetContext->expects($this->any())->method('getViewHelperChildNodes')->willReturn($rootNode);
 
-        $rootNode->expects($this->any())->method('evaluate')->with($renderingContext)->will($this->returnValue('Rendered Results'));
+        $rootNode->expects($this->any())->method('evaluate')->with($renderingContext)->willReturn('Rendered Results');
 
-        $output = $this->viewHelper->render(['k1' => 'v1', 'k2' => 'v2']);
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['k1' => 'v1', 'k2' => 'v2']);
+        $output = $this->viewHelper->render();
         $this->assertEquals('Rendered Results', $output);
     }
 
     /**
      * @test
      */
-    public function renderThrowsExceptionIfTheRequestIsNotAWidgetRequest()
+    public function renderThrowsExceptionIfTheRequestIsNotAWidgetRequest(): void
     {
         $this->expectException(WidgetContextNotFoundException::class);
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
@@ -82,16 +77,16 @@ class RenderChildrenViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHel
     /**
      * @test
      */
-    public function renderThrowsExceptionIfTheChildNodeRenderingContextIsNotThere()
+    public function renderThrowsExceptionIfTheChildNodeRenderingContextIsNotThere(): void
     {
         $this->expectException(RenderingContextNotFoundException::class);
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
         $this->viewHelper->initializeArguments();
 
-        $widgetContext = $this->createMock(\Neos\FluidAdaptor\Core\Widget\WidgetContext::class);
-        $this->request->expects($this->any())->method('getInternalArgument')->with('__widgetContext')->will($this->returnValue($widgetContext));
-        $widgetContext->expects($this->any())->method('getViewHelperChildNodeRenderingContext')->will($this->returnValue(null));
-        $widgetContext->expects($this->any())->method('getViewHelperChildNodes')->will($this->returnValue(null));
+        $widgetContext = $this->createMock(WidgetContext::class);
+        $this->request->expects($this->any())->method('getInternalArgument')->with('__widgetContext')->willReturn($widgetContext);
+        $widgetContext->expects($this->any())->method('getViewHelperChildNodeRenderingContext')->willReturn(null);
+        $widgetContext->expects($this->any())->method('getViewHelperChildNodes')->willReturn(null);
 
         $this->viewHelper->render();
     }
