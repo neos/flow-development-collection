@@ -72,18 +72,4 @@ abstract class AbstractBackend implements BackendInterface
     {
         $this->logIpAddress = $logIpAddress;
     }
-
-    /**
-     * Returns a suitable form of a variable (be it a string, array, object ...) for logfile output
-     *
-     * @param mixed $var The variable
-     * @param integer $spaces Number of spaces to add before a line
-     * @return string text output
-     * @deprecated Use the PlainTextFormatter directly
-     * @see PlainTextFormatter
-     */
-    protected function getFormattedVarDump($var, $spaces = 4)
-    {
-        return (new PlainTextFormatter($var))->format($spaces);
-    }
 }
