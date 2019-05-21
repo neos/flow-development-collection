@@ -224,9 +224,9 @@ class RoutingCommandController extends CommandController
      * @param string $packageKey the package key of the controller
      * @param string $subPackageKey the subpackage key of the controller
      * @param string $controllerName the controller name excluding the "Controller" suffix
-     * @return string The controller's Object Name or NULL if the controller does not exist
+     * @return string|null The controller's Object Name or NULL if the controller does not exist
      */
-    protected function getControllerObjectName(string $packageKey, string $subPackageKey, string $controllerName): string
+    protected function getControllerObjectName(string $packageKey, string $subPackageKey, string $controllerName): ?string
     {
         $possibleObjectName = '@package\@subpackage\Controller\@controllerController';
         $possibleObjectName = str_replace('@package', str_replace('.', '\\', $packageKey), $possibleObjectName);
