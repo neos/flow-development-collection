@@ -305,13 +305,6 @@ Neos\Flow\ObjectManagement\CompileTimeObjectManager:
   autowiring: off
 
 #                                                                          #
-# Package Management                                                       #
-#                                                                          #
-
-Neos\Flow\Package\PackageManagerInterface:
-  scope: singleton
-
-#                                                                          #
 # Persistence                                                              #
 #                                                                          #
 

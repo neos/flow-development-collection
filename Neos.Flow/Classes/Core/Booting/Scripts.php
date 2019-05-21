@@ -36,7 +36,6 @@ use Neos\Flow\ObjectManagement\ObjectManager;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Package\FlowPackageInterface;
 use Neos\Flow\Package\PackageManager;
-use Neos\Flow\Package\PackageManagerInterface;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Reflection\ReflectionServiceFactory;
 use Neos\Flow\ResourceManagement\Streams\StreamWrapperAdapter;
@@ -173,7 +172,6 @@ class Scripts
     public static function initializePackageManagement(Bootstrap $bootstrap)
     {
         $packageManager = new PackageManager(PackageManager::DEFAULT_PACKAGE_INFORMATION_CACHE_FILEPATH, FLOW_PATH_PACKAGES);
-        $bootstrap->setEarlyInstance(PackageManagerInterface::class, $packageManager);
         $bootstrap->setEarlyInstance(PackageManager::class, $packageManager);
 
         // The package:rescan must happen as early as possible, compiletime alone is not enough.
