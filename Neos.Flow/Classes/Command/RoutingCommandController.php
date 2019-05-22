@@ -113,7 +113,7 @@ class RoutingCommandController extends CommandController
     {
         $packageParts = explode('\\', $package, 2);
         $package = $packageParts[0];
-        $subpackage = isset($packageParts[1]) ? $packageParts[1] : null;
+        $subpackage = $packageParts[1] ?? '';
 
         $routeValues = [
             '@package' => $package,
@@ -201,7 +201,7 @@ class RoutingCommandController extends CommandController
                 $this->outputLine('  Action: ' . (isset($routeValues['@action']) ? $routeValues['@action'] : '-'));
                 $this->outputLine('  Format: ' . (isset($routeValues['@format']) ? $routeValues['@format'] : '-'));
 
-                $controllerObjectName = $this->getControllerObjectName($routeValues['@package'], (isset($routeValues['@subpackage']) ? $routeValues['@subpackage'] : null), $routeValues['@controller']);
+                $controllerObjectName = $this->getControllerObjectName($routeValues['@package'], $routeValues['@subpackage'] ?? '', $routeValues['@controller']);
                 if ($controllerObjectName === null) {
                     $this->outputLine('<b>Controller Error:</b>');
                     $this->outputLine('  !!! No Controller Object found !!!');
