@@ -113,7 +113,7 @@ class RoutingCommandController extends CommandController
     {
         $packageParts = explode('\\', $package, 2);
         $package = $packageParts[0];
-        $subpackage = $packageParts[1] ?? '';
+        $subpackage = isset($packageParts[1]) ? $packageParts[1] : null;
 
         $routeValues = [
             '@package' => $package,
@@ -201,7 +201,7 @@ class RoutingCommandController extends CommandController
                 $this->outputLine('  Action: ' . (isset($routeValues['@action']) ? $routeValues['@action'] : '-'));
                 $this->outputLine('  Format: ' . (isset($routeValues['@format']) ? $routeValues['@format'] : '-'));
 
-                $controllerObjectName = $this->getControllerObjectName($routeValues['@package'], $routeValues['@subpackage'] ?? '', $routeValues['@controller']);
+                $controllerObjectName = $this->getControllerObjectName($routeValues['@package'], (isset($routeValues['@subpackage']) ? $routeValues['@subpackage'] : null), $routeValues['@controller']);
                 if ($controllerObjectName === null) {
                     $this->outputLine('<b>Controller Error:</b>');
                     $this->outputLine('  !!! No Controller Object found !!!');
@@ -221,11 +221,11 @@ class RoutingCommandController extends CommandController
      * controller name or NULL if the controller does not exist
      *
      * @param string $packageKey the package key of the controller
-     * @param string $subPackageKey the subpackage key of the controller
+     * @param string|null $subPackageKey the subpackage key of the controller
      * @param string $controllerName the controller name excluding the "Controller" suffix
      * @return string|null The controller's Object Name or NULL if the controller does not exist
      */
-    protected function getControllerObjectName(string $packageKey, string $subPackageKey, string $controllerName): ?string
+    protected function getControllerObjectName(string $packageKey, ?string $subPackageKey, string $controllerName): ?string
     {
         $possibleObjectName = '@package\@subpackage\Controller\@controllerController';
         $possibleObjectName = str_replace('@package', str_replace('.', '\\', $packageKey), $possibleObjectName);
