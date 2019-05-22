@@ -18,6 +18,17 @@ namespace Neos\Eel;
 class Utility
 {
     /**
+     * Return the expression if it is an valid EEL expression, otherwise return null.
+     *
+     * @param string $expression
+     * @return string|null
+     */
+    public static function parseEelExpression($expression)
+    {
+        return preg_match(Package::EelExpressionRecognizer, $expression, $matches) === 1 ? $matches['exp'] : null;
+    }
+
+    /**
      * Get variables from configuration that should be set in the context by default.
      * For example Eel helpers are made available by this.
      *
@@ -78,8 +89,8 @@ class Utility
      */
     public static function evaluateEelExpression($expression, EelEvaluatorInterface $eelEvaluator, array $contextVariables, array $defaultContextConfiguration = [])
     {
-        $matches = null;
-        if (!preg_match(Package::EelExpressionRecognizer, $expression, $matches)) {
+        $eelExpression = self::parseEelExpression($expression);
+        if ($eelExpression === null) {
             throw new Exception('The EEL expression "' . $expression . '" was not a valid EEL expression. Perhaps you forgot to wrap it in ${...}?', 1410441849);
         }
 
@@ -96,6 +107,6 @@ class Utility
             }
         }
 
-        return $eelEvaluator->evaluate($matches['exp'], $context);
+        return $eelEvaluator->evaluate($eelExpression, $context);
     }
 }
