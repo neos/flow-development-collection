@@ -19,7 +19,6 @@ use Neos\Flow\Mvc\Exception\InvalidRoutePartValueException;
 use Neos\Flow\Mvc\Exception\StopActionException;
 use Neos\Flow\Mvc\Routing\Dto\RouteContext;
 use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
-use Neos\Flow\Mvc\Routing\Exception\InvalidControllerException;
 use Neos\Flow\Mvc\Routing\Route;
 use Neos\Flow\Mvc\Routing\Router;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
@@ -107,7 +106,6 @@ class RoutingCommandController extends CommandController
      * @param string $action Action name, default is 'index'
      * @param string $format Requested Format name default is 'html'
      * @return void
-     * @throws InvalidRoutePartValueException
      */
     public function getPathCommand(string $package, string $controller = 'Standard', string $action = 'index', string $format = 'html')
     {
@@ -136,7 +134,7 @@ class RoutingCommandController extends CommandController
             try {
                 $resolves = $route->resolves($routeValues);
                 $controllerObjectName = $this->getControllerObjectName($package, $subpackage, $controller);
-            } catch (InvalidControllerException $exception) {
+            } catch (InvalidRoutePartValueException $exception) {
                 $resolves = false;
             }
 
