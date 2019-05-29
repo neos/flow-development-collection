@@ -22,5 +22,5 @@ interface ProtectedContextAwareInterface
      * @param string $methodName
      * @return boolean
      */
-    public function allowsCallOfMethod(string $methodName) : bool;
+    public function allowsCallOfMethod(string $methodName): bool;
 }

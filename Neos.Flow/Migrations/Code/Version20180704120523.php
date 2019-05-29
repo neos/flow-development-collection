@@ -19,7 +19,7 @@ class Version20180704120523 extends AbstractMigration
     /**
      * @return string
      */
-    public function getIdentifier() : string
+    public function getIdentifier(): string
     {
         return 'Neos.Flow-20180704120523';
     }
@@ -27,8 +27,8 @@ class Version20180704120523 extends AbstractMigration
     /**
      * @return void
      */
-    public function up() : void
+    public function up(): void
     {
-        $this->searchAndReplace('public function allowsCallOfMethod($methodName)', 'public function allowsCallOfMethod(string $methodName) : bool', ['php']);
+        $this->searchAndReplace('public function allowsCallOfMethod($methodName)', 'public function allowsCallOfMethod(string $methodName): bool', ['php']);
     }
 }
