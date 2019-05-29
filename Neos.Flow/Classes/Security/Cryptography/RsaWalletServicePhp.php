@@ -88,7 +88,7 @@ class RsaWalletServicePhp implements RsaWalletServiceInterface
     public function initializeObject()
     {
         if (file_exists($this->keystorePathAndFilename)) {
-            $this->keys = unserialize(file_get_contents($this->keystorePathAndFilename));
+            $this->keys = unserialize(file_get_contents($this->keystorePathAndFilename), ['allowed_classes' => [OpenSslRsaKey::class]]);
         }
         $this->saveKeysOnShutdown = false;
     }
