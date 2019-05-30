@@ -121,14 +121,16 @@ class Arguments extends \ArrayObject
      * @param string $dataType Name of one of the built-in data types
      * @param boolean $isRequired true if this argument should be marked as required
      * @param mixed $defaultValue Default value of the argument. Only makes sense if $isRequired==false
+     * @param bool $mapRequestBody If the request body should be mapped into this argument
      * @return Argument The new argument
      * @api
      */
-    public function addNewArgument($name, $dataType = 'string', $isRequired = true, $defaultValue = null)
+    public function addNewArgument($name, $dataType = 'string', $isRequired = true, $defaultValue = null, $mapRequestBody = false)
     {
         $argument = new Argument($name, $dataType);
         $argument->setRequired($isRequired);
         $argument->setDefaultValue($defaultValue);
+        $argument->setMapRequestBody($mapRequestBody);
 
         $this->addArgument($argument);
         return $argument;

@@ -374,9 +374,12 @@ abstract class AbstractController implements ControllerInterface
      */
     protected function mapRequestArgumentsToControllerArguments()
     {
+        /* @var $argument \Neos\Flow\Mvc\Controller\Argument */
         foreach ($this->arguments as $argument) {
             $argumentName = $argument->getName();
-            if ($this->request->hasArgument($argumentName)) {
+            if ($argument->getMapRequestBody()) {
+                $argument->setValue($this->request->getHttpRequest()->getParsedBody());
+            } elseif ($this->request->hasArgument($argumentName)) {
                 $argument->setValue($this->request->getArgument($argumentName));
             } elseif ($argument->isRequired()) {
                 throw new RequiredArgumentMissingException('Required argument "' . $argumentName  . '" is not set.', 1298012500);
