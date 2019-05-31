@@ -107,7 +107,7 @@ class PsrLoggerFactory implements PsrLoggerFactoryInterface
      */
     protected function instantiateBackend(string $class, array $options = []): BackendInterface
     {
-        if(!class_exists($class)) {
+        if (!class_exists($class)) {
             throw new \Exception(sprintf('The log backend class "%s" does not exist', htmlspecialchars($class)), 1559318313);
         }
 
