@@ -343,8 +343,8 @@ If you specify trusted proxy addresses, by default only the ``X-Forwarded-*`` he
 
 	On some container environments like ddev, the container acts as a proxy to provide port mapping and hence needs
 	to be allowed in this setting. Otherwise the URLs generated will likely not work and end up with something along
-  the lines of 'https://flow.ddev.local:80'. Therefore you probably need to set ``Neos.Flow.http.trustedProxies.proxies``
-  setting to '*' in your Development environment ``Settings.yaml``.
+	the lines of 'https://flow.ddev.local:80'. Therefore you probably need to set ``Neos.Flow.http.trustedProxies.proxies``
+	setting to '*' in your Development environment ``Settings.yaml``.
 
 You can also specify the list of IP addresses or address ranges in comma separated format, which is useful for using in the
 environment variable ``FLOW_HTTP_TRUSTED_PROXIES``::
