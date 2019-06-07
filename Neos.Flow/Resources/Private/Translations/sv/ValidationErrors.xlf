@@ -26,14 +26,14 @@
 				<source>The given value is not a valid date</source>
 			<target state="translated">Det angivna värdet är inte ett giltigt datum</target></trans-unit>
       <trans-unit id="1325615630" xml:space="preserve">
-				<source>The given date must be between {0} and {1}</source>
-			<target state="translated">Det angivna datumet måste vara mellan {0} och {1}</target><alt-trans><target>Det givna datumet måste vara mellan {0} och {1}</target></alt-trans></trans-unit>
+				<source>The given date must be between {0,datetime,datetime} and {1,datetime,datetime}</source>
+			<target state="translated">Det angivna datumet måste vara mellan {0,datetime,datetime} och {1,datetime,datetime}</target><alt-trans><target>Det givna datumet måste vara mellan {0,datetime,datetime} och {1,datetime,datetime}</target></alt-trans></trans-unit>
       <trans-unit id="1324315107" xml:space="preserve">
-				<source>The given date must be after {0}</source>
-			<target state="translated">Det angivna datumet måste vara efter {0}</target><alt-trans><target>Det givna datumet måste vara efter {0}</target></alt-trans></trans-unit>
+				<source>The given date must be after {0,datetime,datetime}</source>
+			<target state="translated">Det angivna datumet måste vara efter {0,datetime,datetime}</target><alt-trans><target>Det givna datumet måste vara efter {0,datetime,datetime}</target></alt-trans></trans-unit>
       <trans-unit id="1324315115" xml:space="preserve">
-				<source>The given date must be before {0}</source>
-			<target state="translated">Det angivna datumet måste vara innan {0}</target><alt-trans><target>Det givna datumet måste vara innan {0}</target></alt-trans></trans-unit>
+				<source>The given date must be before {0,datetime,datetime}</source>
+			<target state="translated">Det angivna datumet måste vara innan {0,datetime,datetime}</target><alt-trans><target>Det givna datumet måste vara innan {0,datetime,datetime}</target></alt-trans></trans-unit>
       <!-- DateTimeValidator -->
       <trans-unit id="1281454676" xml:space="preserve">
 				<source>The "locale" option can be only set to string identifier, or Locale object</source>
