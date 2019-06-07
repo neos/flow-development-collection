@@ -11,6 +11,7 @@
         "ext-SPL": "*",
         "ext-json": ">=1.2.0",
         "ext-reflection": "*",
+        "ext-xml": "*",
         "psr/http-message": "~1.0.0",
         "ramsey/uuid": "^3.0.0",
         "doctrine/orm": "~2.5.0",
