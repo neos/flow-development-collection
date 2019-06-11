@@ -13,8 +13,6 @@ use Neos\Flow\Security\Context;
  */
 class PrepareMvcRequestComponent implements ComponentInterface
 {
-    use ActionRequestFromHttpTrait;
-
     /**
      * @Flow\Inject(lazy=false)
      * @var Context
@@ -28,6 +26,12 @@ class PrepareMvcRequestComponent implements ComponentInterface
     protected $objectManager;
 
     /**
+     * @Flow\Inject
+     * @var ActionRequestFactory
+     */
+    protected $actionRequestFactory;
+
+    /**
      * @inheritDoc
      */
     public function handle(ComponentContext $componentContext)
@@ -35,7 +39,7 @@ class PrepareMvcRequestComponent implements ComponentInterface
         $httpRequest = $componentContext->getHttpRequest();
 
         $routingMatchResults = $componentContext->getParameter(RoutingComponent::class, 'matchResults');
-        $actionRequest = $this->createActionRequest($httpRequest, $routingMatchResults ?? []);
+        $actionRequest = $this->actionRequestFactory->createActionRequest($httpRequest, $routingMatchResults ?? []);
         $this->securityContext->setRequest($actionRequest);
         $componentContext->setParameter(DispatchComponent::class, 'actionRequest', $actionRequest);
 

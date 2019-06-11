@@ -1,15 +1,23 @@
 <?php
 namespace Neos\Flow\Mvc;
 
+use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Helper\UploadedFilesHelper;
+use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Utility\Arrays;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
- * FIXME: Make me a factory instead
+ * Creates an ActionRequest from a PSR-7 http request and sets appropriate defaults.
  */
-trait ActionRequestFromHttpTrait
+class ActionRequestFactory
 {
+    /**
+     * @Flow\Inject
+     * @var ObjectManagerInterface
+     */
+    protected $objectManager;
+
     /**
      * @param ServerRequestInterface $httpRequest
      * @param array $additionalArguments
@@ -19,7 +27,7 @@ trait ActionRequestFromHttpTrait
      * @throws Exception\InvalidArgumentTypeException
      * @throws Exception\InvalidControllerNameException
      */
-    protected function createActionRequest(ServerRequestInterface $httpRequest, array $additionalArguments = []): ActionRequest
+    public function createActionRequest(ServerRequestInterface $httpRequest, array $additionalArguments = []): ActionRequest
     {
         $arguments = $httpRequest->getQueryParams();
         if (is_array($httpRequest->getParsedBody())) {

@@ -16,7 +16,7 @@ use Neos\Flow\Http\Component\ComponentChain;
 use Neos\Flow\Http\Component\ComponentInterface;
 use Neos\Flow\Http\Component\Exception as ComponentException;
 use Neos\Flow\Http\Component\ComponentContext;
-use Neos\Flow\Mvc\ActionRequestFromHttpTrait;
+use Neos\Flow\Mvc\ActionRequestFactory;
 use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Dispatcher;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
@@ -32,7 +32,11 @@ use Psr\Http\Message\ServerRequestInterface;
  */
 class AjaxWidgetComponent implements ComponentInterface
 {
-    use ActionRequestFromHttpTrait;
+    /**
+     * @Flow\Inject
+     * @var ActionRequestFactory
+     */
+    protected $actionRequestFactory;
 
     /**
      * @Flow\Inject
@@ -80,7 +84,7 @@ class AjaxWidgetComponent implements ComponentInterface
             return;
         }
 
-        $actionRequest = $this->createActionRequest($httpRequest, ['__widgetContext' => $widgetContext]);
+        $actionRequest = $this->actionRequestFactory->createActionRequest($httpRequest, ['__widgetContext' => $widgetContext]);
         $actionRequest->setControllerObjectName($widgetContext->getControllerObjectName());
         $this->setDefaultControllerAndActionNameIfNoneSpecified($actionRequest);
         $this->securityContext->setRequest($actionRequest);
