@@ -522,7 +522,7 @@ class Route
             unset($routeValues['@format']);
         }
 
-        // add query string
+        $queryString = '';
         if (count($routeValues) > 0) {
             $routeValues = Arrays::removeEmptyElementsRecursively($routeValues);
             $routeValues = $this->persistenceManager->convertObjectsToIdentityArrays($routeValues);
@@ -534,10 +534,9 @@ class Route
                 $routeValues = $internalArguments;
             }
             $queryString = http_build_query($routeValues, null, '&');
-            if ($queryString !== '') {
-                $resolvedUriPath .= strpos($resolvedUriPath, '?') !== false ? '&' . $queryString : '?' . $queryString;
-            }
         }
+
+        $this->resolvedUriConstraints = $this->resolvedUriConstraints->withQueryString($queryString);
         $this->resolvedUriConstraints = $this->resolvedUriConstraints->withPath($resolvedUriPath);
         return true;
     }
