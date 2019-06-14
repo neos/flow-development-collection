@@ -12,6 +12,7 @@
         "ext-SPL": "*",
         "ext-json": ">=1.2.0",
         "ext-reflection": "*",
+        "ext-xml": "*",
 
         "neos/cache": "~5.1.0",
         "neos/eel": "~5.1.0",
