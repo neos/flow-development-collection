@@ -12,10 +12,10 @@ namespace Neos\Utility\ObjectHandling\Tests\Unit;
  */
 
 use Neos\Utility\Exception\PropertyNotAccessibleException;
+use Neos\Utility\ObjectAccess;
+use Neos\Utility\ObjectHandling\Tests\Unit\Fixture\ArrayAccessClass;
 use Neos\Utility\ObjectHandling\Tests\Unit\Fixture\DummyClassWithGettersAndSetters;
 use Neos\Utility\ObjectHandling\Tests\Unit\Fixture\Model\EntityWithDoctrineProxy;
-use Neos\Utility\ObjectHandling\Tests\Unit\Fixture\ArrayAccessClass;
-use Neos\Utility\ObjectAccess;
 use Neos\Utility\TypeHandling;
 
 require_once('Fixture/DummyClassWithGettersAndSetters.php');
@@ -379,7 +379,8 @@ class ObjectAccessTest extends \PHPUnit\Framework\TestCase
             'property' => 'string1',
             'property2' => null,
             'publicProperty' => null,
-            'publicProperty2' => 42];
+            'publicProperty2' => 42
+        ];
         $actualProperties = ObjectAccess::getGettableProperties($this->dummyObject);
         $this->assertEquals($expectedProperties, $actualProperties, 'expectedProperties did not return the right values for the properties.');
     }
@@ -396,7 +397,8 @@ class ObjectAccessTest extends \PHPUnit\Framework\TestCase
         $expectedProperties = [
             'property' => 'string1',
             'property2' => null,
-            'publicProperty2' => 42];
+            'publicProperty2' => 42
+        ];
         $actualProperties = ObjectAccess::getGettableProperties($stdClassObject);
         $this->assertEquals($expectedProperties, $actualProperties, 'expectedProperties did not return the right values for the properties.');
     }
