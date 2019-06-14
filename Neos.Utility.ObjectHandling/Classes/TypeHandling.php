@@ -34,7 +34,7 @@ abstract class TypeHandling
     /**
      * @var array
      */
-    protected static $collectionTypes = ['array', 'ArrayObject', 'SplObjectStorage', Collection::class];
+    protected static $collectionTypes = ['array', \ArrayObject::class, \SplObjectStorage::class, Collection::class];
 
     /**
      * Returns an array with type information, including element type for
@@ -48,14 +48,14 @@ abstract class TypeHandling
     {
         $matches = [];
         if (preg_match(self::PARSE_TYPE_PATTERN, $type, $matches) === 0) {
-            throw new InvalidTypeException('Found an invalid element type declaration in %s. A type "' . var_export($type, true) . '" does not exist.', 1264093630);
+            throw new InvalidTypeException('Found an invalid element type declaration. A type "' . var_export($type, true) . '" does not exist.', 1264093630);
         }
 
         $type = self::normalizeType($matches['type']);
         $elementType = isset($matches['elementType']) ? self::normalizeType($matches['elementType']) : null;
 
         if ($elementType !== null && !self::isCollectionType($type)) {
-            throw new InvalidTypeException('Found an invalid element type declaration in %s. Type "' . $type . '" must not have an element type hint (' . $elementType . ').', 1264093642);
+            throw new InvalidTypeException('Found an invalid element type declaration. Type "' . $type . '" must not have an element type hint (' . $elementType . ').', 1264093642);
         }
 
         return [
@@ -78,13 +78,13 @@ abstract class TypeHandling
         switch ($type) {
             case 'int':
                 $type = 'integer';
-                break;
+            break;
             case 'bool':
                 $type = 'boolean';
-                break;
+            break;
             case 'double':
                 $type = 'float';
-                break;
+            break;
         }
         return $type;
     }
