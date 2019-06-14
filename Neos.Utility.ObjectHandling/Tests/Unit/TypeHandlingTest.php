@@ -100,7 +100,6 @@ class TypeHandlingTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-
     /**
      * @test
      * @dataProvider compositeTypes
