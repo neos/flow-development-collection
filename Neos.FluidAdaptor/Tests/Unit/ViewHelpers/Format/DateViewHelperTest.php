@@ -11,7 +11,6 @@ namespace Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Format;
  * source code.
  */
 
-use Neos\FluidAdaptor\ViewHelpers\Format;
 use Neos\Flow\I18n;
 
 require_once(__DIR__ . '/../ViewHelperBaseTestcase.php');
