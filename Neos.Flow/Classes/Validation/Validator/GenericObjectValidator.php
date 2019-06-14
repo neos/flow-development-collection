@@ -25,7 +25,7 @@ class GenericObjectValidator extends AbstractValidator implements ObjectValidato
      * @var array
      */
     protected $supportedOptions = [
-        'skipUnInitializedProxies' => [false, 'The minimum value to accept', 'boolean']
+        'skipUnInitializedProxies' => [false, 'Whether proxies not yet initialized should be skipped during validation', 'boolean']
     ];
 
     /**
