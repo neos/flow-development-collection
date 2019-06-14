@@ -59,6 +59,22 @@ class XliffParser extends AbstractXmlParser
      */
     protected function getFileData(\SimpleXMLElement $file): array
     {
+        /**
+         * If an XLIFF file has no target-language set the source element of a trans-unit is
+         * used to fill the target element, if the target element is left out (as is common
+         * for "source" XLIFF files.)
+         *
+         * @param \SimpleXMLElement $element
+         * @return string
+         */
+        $getTarget = function (\SimpleXMLElement $element) use ($file): string {
+            $hasTargetLanguage = ((string)$file['target-language']) !== '';
+            if ($hasTargetLanguage) {
+                return (string)$element->target;
+            }
+            return (string)($element->target ?? $element->source);
+        };
+
         $parsedFile = [
             'sourceLocale' => new Locale((string)$file['source-language'])
         ];
@@ -72,7 +88,7 @@ class XliffParser extends AbstractXmlParser
                         }
                         $parsedFile['translationUnits'][(string)$translationElement['id']][0] = array(
                             'source' => (string)$translationElement->source,
-                            'target' => (string)$translationElement->target,
+                            'target' => $getTarget($translationElement),
                         );
                     }
                     break;
@@ -86,7 +102,7 @@ class XliffParser extends AbstractXmlParser
 
                                 $parsedTranslationElement[(int)$formIndex] = array(
                                     'source' => (string)$translationPluralForm->source,
-                                    'target' => (string)$translationPluralForm->target,
+                                    'target' => $getTarget($translationPluralForm),
                                 );
                             }
                         }
