@@ -572,4 +572,43 @@ class ArraysTest extends \PHPUnit\Framework\TestCase
         });
         $this->assertSame($expected, $actual);
     }
+
+    /**
+     * @test
+     */
+    public function arrayMergeRecursiveCallbackOverrideFirstArrayValuesGivenClosure()
+    {
+        $inputArray1 = [
+            'k1' => 'v1',
+            'k2' => [
+                'k2.1' => 'v2.1'
+            ],
+        ];
+        $inputArray2 = [
+            'k2' => [
+                'k2.2' => 'v2.2'
+            ],
+            'k3' => 'v3'
+        ];
+        $expected = [
+            'k1' => 'v1',
+            'k2' => [
+                'k2.2' => 'v2.2'
+            ],
+            'k3' => 'v3'
+        ];
+
+        $actual = Arrays::arrayMergeRecursiveOverruleWithCallback(
+            $inputArray1,
+            $inputArray2,
+            function ($simpleType) {
+                return array('__convertedValue' => $simpleType);
+            },
+            function ($value) {
+                return true;
+            }
+        );
+
+        $this->assertSame($expected, $actual);
+    }
 }
