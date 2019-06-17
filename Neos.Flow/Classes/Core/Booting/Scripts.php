@@ -25,7 +25,6 @@ use Neos\Flow\Core\ProxyClassLoader;
 use Neos\Flow\Error\Debugger;
 use Neos\Flow\Error\ErrorHandler;
 use Neos\Flow\Error\ProductionExceptionHandler;
-use Neos\Flow\Exception;
 use Neos\Flow\Http\HttpRequestHandlerInterface;
 use Neos\Flow\Log\Logger;
 use Neos\Flow\Log\LoggerBackendConfigurationHelper;
@@ -779,7 +778,7 @@ class Scripts
     /**
      * @param array $settings The Neos.Flow settings
      * @return string A command line command for PHP, which can be extended and then exec()uted
-     * @throws Exception
+     * @throws FlowException
      */
     public static function buildPhpCommand(array $settings): string
     {
@@ -828,7 +827,7 @@ class Scripts
      * This avoids config errors where users forget to set Neos.Flow.core.phpBinaryPathAndFilename in CLI.
      *
      * @param string phpBinaryPathAndFilename
-     * @throws Exception
+     * @throws FlowException
      */
     protected static function ensureCLISubrequestsUseCurrentlyRunningPhpBinary($phpBinaryPathAndFilename)
     {
@@ -846,7 +845,7 @@ class Scripts
         }
 
         if (strcmp(PHP_BINARY, $configuredPhpBinaryPathAndFilename) !== 0) {
-            throw new Exception(sprintf('You are running the Flow CLI with a PHP binary different from the one Flow is configured to use internally. ' .
+            throw new FlowException(sprintf('You are running the Flow CLI with a PHP binary different from the one Flow is configured to use internally. ' .
                 'Flow has been run with "%s", while the PHP version Flow is configured to use for subrequests is "%s". Make sure to configure Flow to ' .
                 'use the same PHP binary by setting the "Neos.Flow.core.phpBinaryPathAndFilename" configuration option to "%s". Flush the ' .
                 'caches by removing the folder Data/Temporary before running ./flow again.',
@@ -860,7 +859,7 @@ class Scripts
      * server.
      *
      * @param string $phpCommand the completely build php string that is used to execute subrequests
-     * @throws Exception
+     * @throws FlowException
      */
     protected static function ensureWebSubrequestsUseCurrentlyRunningPhpVersion($phpCommand)
     {
@@ -877,7 +876,7 @@ class Scripts
 
         $configuredPHPVersion = $output[0];
         if (array_slice(explode('.', $configuredPHPVersion), 0, 2) !== array_slice(explode('.', PHP_VERSION), 0, 2)) {
-            throw new Exception(sprintf('You are executing Neos/Flow with a PHP version different from the one Flow is configured to use internally. ' .
+            throw new FlowException(sprintf('You are executing Neos/Flow with a PHP version different from the one Flow is configured to use internally. ' .
                 'Flow is running with with PHP "%s", while the PHP version Flow is configured to use for subrequests is "%s". Make sure to configure Flow to ' .
                 'use the same PHP version by setting the "Neos.Flow.core.phpBinaryPathAndFilename" configuration option to a PHP-CLI binary of the version ' .
                 '%s. Flush the caches by removing the folder Data/Temporary before executing Flow/Neos again.',
