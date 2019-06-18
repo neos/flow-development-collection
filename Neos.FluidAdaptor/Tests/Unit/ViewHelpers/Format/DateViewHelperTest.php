@@ -12,7 +12,6 @@ namespace Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Format;
  */
 
 use Neos\FluidAdaptor\Core\ViewHelper\Exception;
-use Neos\FluidAdaptor\ViewHelpers\Format;
 use Neos\Flow\I18n;
 
 require_once(__DIR__ . '/../ViewHelperBaseTestcase.php');

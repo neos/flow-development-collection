@@ -13,7 +13,6 @@ namespace Neos\Flow\Tests\Unit\Persistence;
 
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Flow\Persistence;
-use Neos\Flow\Tests\Persistence\Fixture;
 use PHPUnit\Framework\Error\Error;
 
 require_once('Fixture/Repository/NonstandardEntityRepository.php');
