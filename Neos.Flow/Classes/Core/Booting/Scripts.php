@@ -758,8 +758,15 @@ class Scripts
             return;
         }
 
-        // Resolve any symlinks that the configured php might be pointing to
-        $configuredPhpBinaryPathAndFilename = realpath($phpBinaryPathAndFilename);
+        // Try to resolve which binary file PHP is pointing to
+        exec($phpBinaryPathAndFilename . ' -r "echo PHP_BINARY;"', $output, $result);
+        if ($result === 0 && sizeof($output) === 1) {
+            // Resolve any wrapper
+            $configuredPhpBinaryPathAndFilename = $output[0];
+        } else {
+            // Resolve any symlinks that the configured php might be pointing to
+            $configuredPhpBinaryPathAndFilename = realpath($phpBinaryPathAndFilename);
+        }
 
         // if the configured PHP binary is empty here, the file does not exist. We ignore that here because it is checked later in the script.
         if ($configuredPhpBinaryPathAndFilename === false || strlen($configuredPhpBinaryPathAndFilename) === 0) {
