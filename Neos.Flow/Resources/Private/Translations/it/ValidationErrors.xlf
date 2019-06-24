@@ -146,7 +146,7 @@
       <!-- UuidValidator -->
       <trans-unit id="1221565853" xml:space="preserve">
 				<source>The given subject is not a valid UUID</source>
-			<target state="needs-translation">The given subject is not a valid UUID</target></trans-unit>
+			<target state="translated">L'oggetto specificato non è un UUID valido</target></trans-unit>
       <!-- ElectronicAddressValidator -->
       <trans-unit id="1268676030" xml:space="preserve">
 				<source>No validator found for electronic address of type "{0}"</source>
@@ -175,19 +175,19 @@
 			<target state="translated">La larghezza attuale dell'immagine di {0,number} è inferiore alla larghezza minima consentita di {1,number}</target></trans-unit>
       <trans-unit id="1319801859" xml:space="preserve">
 				<source>The actual image width of {0,number} is higher than the allowed maximum width of {1,number}</source>
-			<target state="needs-translation">The actual image width of {0,number} is higher than the allowed maximum width of {1,number}</target></trans-unit>
+			<target state="translated">La larghezza di {0,number} dell'immagine attuale è maggiore della larghezza massima consentita di {1,number}</target></trans-unit>
       <trans-unit id="1319801925" xml:space="preserve">
 				<source>The actual image height of {0,number} is lower than the allowed minimum height of {1,number}</source>
-			<target state="needs-translation">The actual image height of {0,number} is lower than the allowed minimum height of {1,number}</target></trans-unit>
+			<target state="translated">L'altezza di {0,number} dell'immagine attuale è minore dell'altezza minima consentita di {1,number}</target></trans-unit>
       <trans-unit id="1319801929" xml:space="preserve">
 				<source>The actual image height of {0,number} is higher than the allowed maximum height of {1,number}</source>
-			<target state="needs-translation">The actual image height of {0,number} is higher than the allowed maximum height of {1,number}</target></trans-unit>
+			<target state="translated">L'altezza di {0,number} dell'immagine attuale è maggiore dell'altezza massima consentita di {1,number}</target></trans-unit>
       <trans-unit id="1319813336" xml:space="preserve">
 				<source>The given image size of {0,number} x {1,number} is too low for the required minimum resolution of {2,number}</source>
 			<target state="translated">La grandezza delle immagini di {0,number} x {1,number} è troppo bassa per la risoluzione minima richiesta di {2,number}</target></trans-unit>
       <trans-unit id="1319813355" xml:space="preserve">
 				<source>The given image size of {0,number} x {1,number} is too high for the required maximum resolution of {2,number}</source>
-			<target state="needs-translation">The given image size of {0,number} x {1,number} is too high for the required maximum resolution of {2,number}</target></trans-unit>
+			<target state="translated">Le dimensioni di {0,number} x {1,number} dell'immagine attuale sono troppo alte per la risoluzione massima consentita di {2,number}</target></trans-unit>
       <!-- ImageOrientationValidator -->
       <trans-unit id="1328028604" xml:space="preserve">
 				<source>The given value is not a Image instance</source>
