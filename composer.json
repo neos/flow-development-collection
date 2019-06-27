@@ -111,9 +111,7 @@
     "require-dev": {
         "mikey179/vfsstream": "~1.6",
         "phpunit/phpunit": "~8.1",
-        "neos/flow": "*",
-        "doctrine/orm": "~2.6.0",
-        "doctrine/common": ">=2.4,<2.8-dev"
+        "vimeo/psalm": "^3.4"
     },
     "autoload-dev": {
         "psr-4": {
