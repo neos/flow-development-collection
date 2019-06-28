@@ -12,7 +12,6 @@ namespace Neos\FluidAdaptor\ViewHelpers\Security;
  */
 
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Account;
 use Neos\Flow\Security\Context;
 use Neos\Flow\Security\Policy\PolicyService;
