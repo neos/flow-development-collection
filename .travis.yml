@@ -69,7 +69,7 @@ before_script:
   - if [ "$BEHAT" = "true" ]; then FLOW_CONTEXT=Testing/Behat ./flow behat:setup ; fi
   - if [ "$DB" = "mysql" ]; then echo "MariaDB version ${TRAVIS_MARIADB_VERSION}"; fi
 script:
-  - if [ "$STAN" = "true" ]; then bin/psalm --show-info=false --config=Packages/Framework/psalm.xml; fi
+  - if [ "$STAN" = "true" ]; then bin/psalm --config=Packages/Framework/psalm.xml --threads=8; fi
   - if [ "$STAN" != "true" ] && [ "$BEHAT" != "true" ]; then sh ./unittest.sh ; fi
   - if [ "$STAN" != "true" ] && [ "$BEHAT" != "true" ]; then bin/phpunit --colors --stop-on-failure -c Build/BuildEssentials/PhpUnit/FunctionalTests.xml --testsuite "Framework tests"; fi
   - if [ "$BEHAT" = "true" ]; then FLOW_CONTEXT=Testing/Behat ./flow doctrine:create; fi
