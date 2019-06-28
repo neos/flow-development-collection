@@ -6,10 +6,10 @@
     xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
 >
     <projectFiles>
-        <directory name="Packages/Framework/*" />
+        <directory name="Packages/Framework/**" />
         <ignoreFiles>
             <directory name="Packages/Libraries" />
-            <directory name="**/Tests" />
+            <directory name="Packages/Framework/**/Tests" />
             <file name="Packages/Framework/Neos.Flow/.phpstorm.meta.php" />
         </ignoreFiles>
     </projectFiles>
