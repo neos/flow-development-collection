@@ -35,14 +35,21 @@
         <InternalClass errorLevel="info" />
 
         <MissingClosureReturnType errorLevel="info" />
-        <MissingReturnType errorLevel="info" />
-        <MissingPropertyType errorLevel="info" />
-        <InvalidDocblock errorLevel="info" />
-        <MisplacedRequiredParam errorLevel="info" />
-
-        <PropertyNotSetInConstructor errorLevel="info" />
+        <MissingParamType errorLevel="error" />
         <MissingConstructor errorLevel="info" />
         <MissingClosureParamType errorLevel="info" />
+        <MissingReturnType errorLevel="error" />
+        <MissingPropertyType errorLevel="error" />
+        <MisplacedRequiredParam errorLevel="error" />
+
+        <PossiblyNullReference errorLevel="error" />
+        <InvalidReturnStatement errorLevel="error" />
+        <InvalidReturnType errorLevel="error" />
+        <InvalidNullableReturnType errorLevel="error" />
+        <InvalidDocblock errorLevel="error" />
+        <DocblockTypeContradiction errorLevel="error" />
+
+        <PropertyNotSetInConstructor errorLevel="suppress" />
 
         <MissingFile>
             <errorLevel type="suppress">
@@ -54,6 +61,7 @@
             <errorLevel type="suppress">
                 <directory name="Packages/Framework/Neos.Flow/Migrations/" />
                 <directory name="Packages/Framework/Neos.Flow/Scripts/" />
+                <file name="Packages/Framework/Neos.Utility.OpcodeCache/Classes/OpcodeCacheHelper.php" />
                 <file name="Packages/Framework/Neos.Flow/Classes/Core/Bootstrap.php" />
             </errorLevel>
         </UndefinedConstant>
@@ -67,7 +75,8 @@
 
         <RedundantConditionGivenDocblockType errorLevel="info" />
 
-        <UnresolvableInclude errorLevel="info" />
+        <MoreSpecificImplementedParamType errorLevel="suppress" />
+        <UnresolvableInclude errorLevel="suppress" />
 
         <RawObjectIteration errorLevel="info" />
 
