@@ -43,7 +43,7 @@
         <PropertyNotSetInConstructor errorLevel="info" />
         <MissingConstructor errorLevel="info" />
         <MissingClosureParamType errorLevel="info" />
-        <MissingParamType errorLevel="info" />
+
         <MissingFile>
             <errorLevel type="suppress">
                 <file name="Packages/Framework/Neos.Flow/Scripts/flow.php" />
@@ -65,7 +65,6 @@
 
         <RedundantCondition errorLevel="info" />
 
-        <DocblockTypeContradiction errorLevel="info" />
         <RedundantConditionGivenDocblockType errorLevel="info" />
 
         <UnresolvableInclude errorLevel="info" />
