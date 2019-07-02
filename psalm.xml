@@ -54,8 +54,14 @@
             <errorLevel type="suppress">
                 <directory name="Packages/Framework/Neos.Flow/Migrations/" />
                 <directory name="Packages/Framework/Neos.Flow/Scripts/" />
+                <file name="Packages/Framework/Neos.Flow/Classes/Core/Bootstrap.php" />
             </errorLevel>
         </UndefinedConstant>
+        <PossiblyFalseArgument>
+            <errorLevel type="suppress">
+                <file name="Packages/Framework/Neos.Flow/Scripts/flow.php" />
+            </errorLevel>
+        </PossiblyFalseArgument>
 
         <RedundantCondition errorLevel="info" />
 
