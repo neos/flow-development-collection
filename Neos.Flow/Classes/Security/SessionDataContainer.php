@@ -3,6 +3,7 @@ namespace Neos\Flow\Security;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\RequestInterface;
+use Neos\Flow\Security\Authentication\Token\SessionlessTokenInterface;
 
 /**
  * @Flow\Scope("session")
@@ -48,7 +49,12 @@ class SessionDataContainer
      */
     public function setSecurityTokens(array $securityTokens)
     {
-        $this->securityTokens = $securityTokens;
+        $this->securityTokens = array_filter(
+            $securityTokens,
+            function ($token) {
+                return (!$token instanceof SessionlessTokenInterface);
+            }
+        );
     }
 
     /**
