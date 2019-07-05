@@ -18,6 +18,7 @@ use Neos\Flow\Mvc\RequestInterface;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Security\Authentication\TokenInterface;
 use Neos\Flow\Security\Policy\Role;
+use Neos\Flow\Security\Authentication\Token\SessionlessTokenInterface;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Session\SessionManagerInterface;
 use Neos\Flow\Utility\Algorithms;
@@ -782,7 +783,12 @@ class Context
      */
     public function shutdownObject()
     {
-        $this->tokens = array_merge($this->inactiveTokens, $this->activeTokens);
+        $this->tokens = array_filter(
+            array_merge($this->inactiveTokens, $this->activeTokens),
+            function ($token) {
+                return (!$token instanceof SessionlessTokenInterface);
+            }
+        );
         $this->initialized = false;
     }
 
