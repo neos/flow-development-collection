@@ -248,10 +248,10 @@ class Argument
     }
 
     /**
-     * @return Result Validation errors which have occurred.
+     * @return Result|null Validation errors which have occurred.
      * @api
      */
-    public function getValidationResults(): Result
+    public function getValidationResults(): ?Result
     {
         return $this->validationResults;
     }
