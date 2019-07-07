@@ -245,7 +245,7 @@ class StandaloneView extends AbstractTemplateView
      *
      * @return array Fluid layout root path
      * @throws InvalidTemplateResourceException
-     * @api 
+     * @api
      */
     public function getLayoutRootPaths(): array
     {
@@ -282,7 +282,7 @@ class StandaloneView extends AbstractTemplateView
      *
      * @return array Fluid partial root path
      * @throws InvalidTemplateResourceException
-     * @api 
+     * @api
      */
     public function getPartialRootPaths(): array
     {

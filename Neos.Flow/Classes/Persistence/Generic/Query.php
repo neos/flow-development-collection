@@ -468,7 +468,7 @@ class Query implements QueryInterface
      * @param string $propertyName The name of the multivalued property to check
      * @return Qom\Comparison
      * @throws InvalidQueryException if used on a single-valued property
-     * @api 
+     * @api
      */
     public function isEmpty($propertyName): Qom\Comparison
     {

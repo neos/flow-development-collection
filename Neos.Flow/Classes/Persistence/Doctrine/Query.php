@@ -473,7 +473,7 @@ class Query implements QueryInterface
      * @param mixed $operand The value to compare with
      * @param boolean $caseSensitive Whether the equality test should be done case-sensitive for strings
      * @return string|\Doctrine\ORM\Query\Expr\Comparison
-     * @api 
+     * @api
      */
     public function equals($propertyName, $operand, $caseSensitive = true)
     {
@@ -521,7 +521,7 @@ class Query implements QueryInterface
      * @param mixed $operand The value to compare with
      * @return string
      * @throws InvalidQueryException if used on a single-valued property
-     * @api 
+     * @api
      */
     public function contains($propertyName, $operand): string
     {
@@ -535,7 +535,7 @@ class Query implements QueryInterface
      * @param string $propertyName The name of the multivalued property to compare against
      * @return string
      * @throws InvalidQueryException if used on a single-valued property
-     * @api 
+     * @api
      */
     public function isEmpty($propertyName): string
     {
