@@ -47,10 +47,10 @@ class KickstartCommandController extends CommandController
      *
      * @param string $packageKey The package key, for example "MyCompany.MyPackageName"
      * @param string $packageType Optional package type, e.g. "neos-plugin"
-     * @return string
+     * @return void
      * @see neos.flow:package:create
      */
-    public function packageCommand($packageKey, $packageType = PackageInterface::DEFAULT_COMPOSER_TYPE)
+    public function packageCommand($packageKey, $packageType = PackageInterface::DEFAULT_COMPOSER_TYPE): void
     {
         $this->validatePackageKey($packageKey);
 
@@ -98,10 +98,10 @@ class KickstartCommandController extends CommandController
      * @param boolean $generateTemplates Also generate the templates for each action.
      * @param boolean $generateRelated Also create the mentioned package, related model and repository if neccessary.
      * @param boolean $force Overwrite any existing controller or template code. Regardless of this flag, the package, model and repository will never be overwritten.
-     * @return string
+     * @return void
      * @see neos.kickstarter:kickstart:commandcontroller
      */
-    public function actionControllerCommand($packageKey, $controllerName, $generateActions = false, $generateTemplates = true, $generateRelated = false, $force = false)
+    public function actionControllerCommand($packageKey, $controllerName, $generateActions = false, $generateTemplates = true, $generateRelated = false, $force = false): void
     {
         $subpackageName = '';
         if (strpos($packageKey, '/') !== false) {
@@ -182,10 +182,10 @@ class KickstartCommandController extends CommandController
      * @param string $packageKey The package key of the package for the new controller
      * @param string $controllerName The name for the new controller. This may also be a comma separated list of controller names.
      * @param boolean $force Overwrite any existing controller.
-     * @return string
+     * @return void
      * @see neos.kickstarter:kickstart:actioncontroller
      */
-    public function commandControllerCommand($packageKey, $controllerName, $force = false)
+    public function commandControllerCommand($packageKey, $controllerName, $force = false): void
     {
         $this->validatePackageKey($packageKey);
         if (!$this->packageManager->isPackageAvailable($packageKey)) {
@@ -210,10 +210,10 @@ class KickstartCommandController extends CommandController
      * @param string $packageKey The package key of the package for the domain model
      * @param string $modelName The name of the new domain model class
      * @param boolean $force Overwrite any existing model.
-     * @return string
+     * @return void
      * @see neos.kickstarter:kickstart:repository
      */
-    public function modelCommand($packageKey, $modelName, $force = false)
+    public function modelCommand($packageKey, $modelName, $force = false): void
     {
         $this->validatePackageKey($packageKey);
         if (!$this->packageManager->isPackageAvailable($packageKey)) {
@@ -253,10 +253,10 @@ class KickstartCommandController extends CommandController
      * @param string $packageKey The package key
      * @param string $modelName The name of the domain model class
      * @param boolean $force Overwrite any existing repository.
-     * @return string
+     * @return void
      * @see neos.kickstarter:kickstart:model
      */
-    public function repositoryCommand($packageKey, $modelName, $force = false)
+    public function repositoryCommand($packageKey, $modelName, $force = false): void
     {
         $this->validatePackageKey($packageKey);
         if (!$this->packageManager->isPackageAvailable($packageKey)) {
@@ -274,9 +274,9 @@ class KickstartCommandController extends CommandController
      * Generates a documentation skeleton for the given package.
      *
      * @param string $packageKey The package key of the package for the documentation
-     * @return string
+     * @return void
      */
-    public function documentationCommand($packageKey)
+    public function documentationCommand($packageKey): void
     {
         $this->validatePackageKey($packageKey);
         if (!$this->packageManager->isPackageAvailable($packageKey)) {
@@ -330,10 +330,10 @@ class KickstartCommandController extends CommandController
      * Check the given model name to be not one of the reserved words of PHP.
      *
      * @param string $modelName
-     * @return boolean
+     * @return void
      * @see http://www.php.net/manual/en/reserved.keywords.php
      */
-    protected function validateModelName($modelName)
+    protected function validateModelName($modelName): void
     {
         if (Validation::isReservedKeyword($modelName)) {
             $this->outputLine('The name of the model cannot be one of the reserved words of PHP!');

@@ -472,8 +472,8 @@ class Query implements QueryInterface
      * @param string $propertyName The name of the property to compare against
      * @param mixed $operand The value to compare with
      * @param boolean $caseSensitive Whether the equality test should be done case-sensitive for strings
-     * @return object
-     * @api
+     * @return string|\Doctrine\ORM\Query\Expr\Comparison
+     * @api 
      */
     public function equals($propertyName, $operand, $caseSensitive = true)
     {
@@ -519,11 +519,11 @@ class Query implements QueryInterface
      *
      * @param string $propertyName The name of the multivalued property to compare against
      * @param mixed $operand The value to compare with
-     * @return object
+     * @return string
      * @throws InvalidQueryException if used on a single-valued property
-     * @api
+     * @api 
      */
-    public function contains($propertyName, $operand)
+    public function contains($propertyName, $operand): string
     {
         return '(' . $this->getParamNeedle($operand) . ' MEMBER OF ' . $this->getPropertyNameWithAlias($propertyName) . ')';
     }
@@ -533,11 +533,11 @@ class Query implements QueryInterface
      * It matches if the multivalued property contains no values or is NULL.
      *
      * @param string $propertyName The name of the multivalued property to compare against
-     * @return boolean
+     * @return string
      * @throws InvalidQueryException if used on a single-valued property
-     * @api
+     * @api 
      */
-    public function isEmpty($propertyName)
+    public function isEmpty($propertyName): string
     {
         return '(' . $this->getPropertyNameWithAlias($propertyName) . ' IS EMPTY)';
     }
@@ -632,9 +632,9 @@ class Query implements QueryInterface
     /**
      * Gets all defined query parameters for the query being constructed.
      *
-     * @return array
+     * @return \Doctrine\Common\Collections\ArrayCollection
      */
-    public function getParameters()
+    public function getParameters(): \Doctrine\Common\Collections\ArrayCollection
     {
         return $this->queryBuilder->getParameters();
     }

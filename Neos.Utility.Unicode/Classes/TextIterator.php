@@ -199,9 +199,9 @@ class TextIterator implements \Iterator
      * given by its offset
      *
      * @param integer $offset The offset of the character
-     * @return string The element following this character
+     * @return integer The offset of the element following this character
      */
-    public function following(int $offset): string
+    public function following(int $offset): int
     {
         $this->rewind();
         while ($this->valid()) {

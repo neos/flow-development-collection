@@ -149,7 +149,7 @@ class FlowQuery implements ProtectedContextAwareInterface, \IteratorAggregate, \
      *
      * @param string $operationName
      * @param array $arguments
-     * @return FlowQuery
+     * @return FlowQuery|mixed
      */
     public function __call($operationName, array $arguments)
     {
@@ -270,9 +270,11 @@ class FlowQuery implements ProtectedContextAwareInterface, \IteratorAggregate, \
      *
      * Should only be called inside an operation.
      *
-     * @return array|\Traversable
+     * @return iterable
+     *
+     * @psalm-return iterable<array-key|mixed, mixed>
      */
-    public function getContext()
+    public function getContext(): iterable
     {
         return $this->context;
     }

@@ -44,7 +44,7 @@ class HttpsInterceptor implements InterceptorInterface
     /**
      * Redirects the current request to HTTP or HTTPS depending on $this->useSSL;
      *
-     * @return boolean true if the security checks was passed
+     * @return void
      */
     public function invoke()
     {

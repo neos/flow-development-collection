@@ -76,9 +76,9 @@ class ConfigurationArgument
     /**
      * Returns the index (position) of the argument
      *
-     * @return string Index of the argument
+     * @return integer Index of the argument
      */
-    public function getIndex()
+    public function getIndex(): int
     {
         return $this->index;
     }

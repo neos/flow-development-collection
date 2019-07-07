@@ -466,11 +466,11 @@ class Query implements QueryInterface
      * It matches if the multivalued property contains no values or is NULL.
      *
      * @param string $propertyName The name of the multivalued property to check
-     * @return boolean
+     * @return Qom\Comparison
      * @throws InvalidQueryException if used on a single-valued property
-     * @api
+     * @api 
      */
-    public function isEmpty($propertyName)
+    public function isEmpty($propertyName): Qom\Comparison
     {
         if (!$this->classSchema->isMultiValuedProperty($propertyName)) {
             throw new InvalidQueryException('Property "' . $propertyName . '" must be multi-valued', 1276853547);

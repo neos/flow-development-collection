@@ -146,6 +146,7 @@ class MethodPrivilege extends AbstractPrivilege implements MethodPrivilegeInterf
             $this->pointcutFilter = $methodTargetExpressionParser->parse($this->getParsedMatcher(), 'Policy privilege "' . $this->getPrivilegeTargetIdentifier() . '"');
         }
 
+        assert($this->pointcutFilter instanceof PointcutFilterComposite);
         return $this->pointcutFilter;
     }
 }

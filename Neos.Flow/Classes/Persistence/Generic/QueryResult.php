@@ -45,7 +45,7 @@ class QueryResult implements QueryResultInterface
     protected $queryResult;
 
     /**
-     * @var array
+     * @var integer|null
      * @Flow\Transient
      */
     protected $numberOfResults;

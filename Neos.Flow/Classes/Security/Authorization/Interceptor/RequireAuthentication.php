@@ -41,7 +41,7 @@ class RequireAuthentication implements InterceptorInterface
     /**
      * Invokes the the authentication, if needed.
      *
-     * @return boolean true if the security checks was passed
+     * @return void
      */
     public function invoke()
     {

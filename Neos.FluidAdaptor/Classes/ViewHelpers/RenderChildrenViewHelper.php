@@ -114,9 +114,8 @@ class RenderChildrenViewHelper extends AbstractViewHelper
     {
         /** @var ActionRequest $request */
         $request = $this->controllerContext->getRequest();
-        /** @var $widgetContext WidgetContext */
         $widgetContext = $request->getInternalArgument('__widgetContext');
-        if ($widgetContext === null) {
+        if (!$widgetContext instanceof WidgetContext) {
             throw new WidgetContextNotFoundException('The Request does not contain a widget context! <f:renderChildren> must be called inside a Widget Template.', 1284986120);
         }
 

@@ -90,7 +90,7 @@ class RouterCachingService
      * Checks the cache for the given RouteContext and returns the result or false if no matching ache entry was found
      *
      * @param RouteContext $routeContext
-     * @return array|boolean the cached route values or false if no cache entry was found
+     * @return array|false the cached route values or false if no cache entry was found
      */
     public function getCachedMatchResults(RouteContext $routeContext)
     {

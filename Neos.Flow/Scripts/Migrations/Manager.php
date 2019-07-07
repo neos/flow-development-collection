@@ -266,9 +266,9 @@ class Manager
      * Whether or not the given migration has been applied in the given path
      *
      * @param AbstractMigration $migration
-     * @return boolean
+     * @return void
      */
-    protected function markMigrationApplied(AbstractMigration $migration)
+    protected function markMigrationApplied(AbstractMigration $migration): void
     {
         if (!isset($this->currentPackageData['composerManifest']['extra']['applied-flow-migrations'])) {
             $this->currentPackageData['composerManifest']['extra']['applied-flow-migrations'] = [];

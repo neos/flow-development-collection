@@ -282,10 +282,9 @@ abstract class AbstractWidgetViewHelper extends AbstractViewHelper implements Ch
      * The widget identifier is unique on the current page, and is used
      * in the URI as a namespace for the widget's arguments.
      *
-     * @return string the widget identifier for this widget
      * @return void
      */
-    private function initializeWidgetIdentifier()
+    private function initializeWidgetIdentifier(): void
     {
         $widgetIdentifier = ($this->hasArgument('widgetId') ? $this->arguments['widgetId'] : strtolower(str_replace('\\', '-', get_class($this))));
         $this->widgetContext->setWidgetIdentifier($widgetIdentifier);

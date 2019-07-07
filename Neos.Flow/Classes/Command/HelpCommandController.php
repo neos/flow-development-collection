@@ -271,7 +271,7 @@ class HelpCommandController extends CommandController
      * @param array<Command> $commands
      * @return array in the format array('<packageKey>' => array('<CommandControllerClassName>', array('<command1>' => $command1, '<command2>' => $command2)))
      */
-    protected function buildCommandsIndex(array $commands)
+    protected function buildCommandsIndex(array $commands): array
     {
         $commandsByPackagesAndControllers = [];
         /** @var Command $command */
