@@ -45,9 +45,9 @@ class LoggingAspect
      *
      * @Flow\After("within(Neos\Flow\Session\SessionInterface) && method(.*->start())")
      * @param JoinPointInterface $joinPoint The current joinpoint
-     * @return mixed The result of the target method if it has not been intercepted
+     * @return void
      */
-    public function logStart(JoinPointInterface $joinPoint)
+    public function logStart(JoinPointInterface $joinPoint): void
     {
         $session = $joinPoint->getProxy();
         if ($session->isStarted()) {
@@ -64,9 +64,9 @@ class LoggingAspect
      *
      * @Flow\After("within(Neos\Flow\Session\SessionInterface) && method(.*->resume())")
      * @param JoinPointInterface $joinPoint The current joinpoint
-     * @return mixed The result of the target method if it has not been intercepted
+     * @return void
      */
-    public function logResume(JoinPointInterface $joinPoint)
+    public function logResume(JoinPointInterface $joinPoint): void
     {
         $session = $joinPoint->getProxy();
         if ($session->isStarted()) {
@@ -91,9 +91,9 @@ class LoggingAspect
      *
      * @Flow\Before("within(Neos\Flow\Session\SessionInterface) && method(.*->destroy())")
      * @param JoinPointInterface $joinPoint The current joinpoint
-     * @return mixed The result of the target method if it has not been intercepted
+     * @return void
      */
-    public function logDestroy(JoinPointInterface $joinPoint)
+    public function logDestroy(JoinPointInterface $joinPoint): void
     {
         $session = $joinPoint->getProxy();
         if ($session->isStarted()) {

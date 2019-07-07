@@ -107,12 +107,12 @@ class Router implements RouterInterface
      * route could be found.
      *
      * @param RouteContext $routeContext The Route Context containing the current HTTP Request and, optional, Routing RouteParameters
-     * @return array The results of the matching route or NULL if no route matched
+     * @return array The results of the matching route
      * @throws InvalidRouteSetupException
      * @throws NoMatchingRouteException if no route matched the given $routeContext
      * @throws InvalidRoutePartValueException
      */
-    public function route(RouteContext $routeContext): array
+    public function route(RouteContext $routeContext)
     {
         $this->lastMatchedRoute = null;
         $cachedRouteResult = $this->routerCachingService->getCachedMatchResults($routeContext);

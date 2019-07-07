@@ -152,7 +152,7 @@ class Collection implements CollectionInterface
      * Returns all internal data objects of the storage attached to this collection.
      *
      * @param callable $callback Function called after each object
-     * @return \Generator<Storage\Object>
+     * @return \Generator<Storage\Object>|\AppendIterator<Storage\Object>
      */
     public function getObjects(callable $callback = null)
     {

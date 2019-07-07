@@ -119,9 +119,9 @@ class LoggingAspect
      *
      * @Flow\AfterReturning("within(Neos\Flow\Security\Authentication\AuthenticationProviderInterface) && method(.*->authenticate())")
      * @param JoinPointInterface $joinPoint The current joinpoint
-     * @return mixed The result of the target method if it has not been intercepted
+     * @return void
      */
-    public function logPersistedUsernamePasswordProviderAuthenticate(JoinPointInterface $joinPoint)
+    public function logPersistedUsernamePasswordProviderAuthenticate(JoinPointInterface $joinPoint): void
     {
         $token = $joinPoint->getMethodArgument('authenticationToken');
 

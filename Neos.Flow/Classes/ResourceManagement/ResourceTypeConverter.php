@@ -147,7 +147,7 @@ class ResourceTypeConverter extends AbstractTypeConverter
      * @param string $targetType
      * @param array $convertedChildProperties
      * @param PropertyMappingConfigurationInterface $configuration
-     * @return PersistentResource|FlowError if the input format is not supported or could not be converted for other reasons
+     * @return null|PersistentResource|FlowError if the input format is not supported or could not be converted for other reasons
      * @throws Exception
      * @throws Exception\InvalidResourceDataException
      * @throws InvalidPropertyMappingConfigurationException
@@ -217,9 +217,13 @@ class ResourceTypeConverter extends AbstractTypeConverter
     }
 
     /**
+     * \InvalidResourceDataException
+     *
      * @param array $source
      * @param PropertyMappingConfigurationInterface $configuration
-     * @return PersistentResource|FlowError
+     *
+     * @return PersistentResource|FlowError\Error
+     *
      * @throws Exception
      * @throws Exception\InvalidResourceDataException
      * @throws InvalidPropertyMappingConfigurationException
@@ -275,7 +279,7 @@ class ResourceTypeConverter extends AbstractTypeConverter
     /**
      * @param UploadedFileInterface $source
      * @param PropertyMappingConfigurationInterface|null $configuration
-     * @return Resource|FlowError
+     * @return PersistentResource|FlowError
      */
     protected function handleUploadedFile(UploadedFileInterface $source, PropertyMappingConfigurationInterface $configuration = null)
     {

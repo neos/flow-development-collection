@@ -87,10 +87,10 @@ class Service
      * exist, this will throw an exception.
      *
      * @param string $outputPathAndFilename A file to write SQL to, instead of executing it
-     * @return string
+     * @return void
      * @throws ToolsException
      */
-    public function createSchema($outputPathAndFilename = null)
+    public function createSchema($outputPathAndFilename = null): void
     {
         $schemaTool = new SchemaTool($this->entityManager);
         $allMetaData = $this->entityManager->getMetadataFactory()->getAllMetadata();
@@ -108,9 +108,9 @@ class Service
      *
      * @param boolean $safeMode
      * @param string $outputPathAndFilename A file to write SQL to, instead of executing it
-     * @return string
+     * @return void
      */
-    public function updateSchema($safeMode = true, $outputPathAndFilename = null)
+    public function updateSchema($safeMode = true, $outputPathAndFilename = null): void
     {
         $schemaTool = new SchemaTool($this->entityManager);
         $allMetaData = $this->entityManager->getMetadataFactory()->getAllMetadata();

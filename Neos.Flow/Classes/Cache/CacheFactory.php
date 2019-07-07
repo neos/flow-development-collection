@@ -160,15 +160,14 @@ class CacheFactory extends \Neos\Cache\CacheFactory implements CacheFactoryInter
      * @return FlowAbstractBackend
      * @throws InvalidBackendException
      */
-    protected function instantiateFlowSpecificBackend(string $backendObjectName, array $backendOptions)
+    protected function instantiateFlowSpecificBackend(string $backendObjectName, array $backendOptions): FlowAbstractBackend
     {
         $backend = new $backendObjectName($this->context, $backendOptions);
 
-        if (!$backend instanceof BackendInterface) {
+        if (!$backend instanceof FlowAbstractBackend) {
             throw new InvalidBackendException('"' . $backendObjectName . '" is not a valid cache backend object.', 1216304301);
         }
 
-        /** @var FlowAbstractBackend $backend */
         $backend->injectEnvironment($this->environment);
 
         if (is_callable([$backend, 'injectCacheManager'])) {

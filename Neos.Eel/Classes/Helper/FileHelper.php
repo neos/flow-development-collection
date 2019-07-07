@@ -43,7 +43,7 @@ class FileHelper implements ProtectedContextAwareInterface
      * Get file name and path information
      *
      * @param string $filepath
-     * @return array with keys dirname, basename, extension (if any), and filename
+     * @return array|string with keys dirname, basename, extension (if any), and filename
      */
     public function fileInfo(string $filepath)
     {

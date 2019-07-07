@@ -243,11 +243,11 @@ class StandaloneView extends AbstractTemplateView
     /**
      * Resolves the layout root to be used inside other paths.
      *
-     * @return string Fluid layout root path
+     * @return array Fluid layout root path
      * @throws InvalidTemplateResourceException
-     * @api
+     * @api 
      */
-    public function getLayoutRootPaths()
+    public function getLayoutRootPaths(): array
     {
         return $this->baseRenderingContext->getTemplatePaths()->getLayoutRootPaths();
     }
@@ -280,11 +280,11 @@ class StandaloneView extends AbstractTemplateView
     /**
      * Returns the absolute path to the folder that contains Fluid partial files
      *
-     * @return string Fluid partial root path
+     * @return array Fluid partial root path
      * @throws InvalidTemplateResourceException
-     * @api
+     * @api 
      */
-    public function getPartialRootPaths()
+    public function getPartialRootPaths(): array
     {
         return $this->baseRenderingContext->getTemplatePaths()->getPartialRootPaths();
     }

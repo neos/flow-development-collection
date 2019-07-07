@@ -275,7 +275,7 @@ class PersistenceManager extends AbstractPersistenceManager
      *
      * @param string $identifier
      * @param string $objectType
-     * @return object The object data for the identifier if it is known, or false
+     * @return array|false The object data for the identifier if it is known, or false
      */
     public function getObjectDataByIdentifier($identifier, $objectType = null)
     {

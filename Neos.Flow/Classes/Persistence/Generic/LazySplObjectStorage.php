@@ -107,7 +107,7 @@ class LazySplObjectStorage extends \SplObjectStorage
         }
     }
 
-    public function current()
+    public function current(): object
     {
         $this->initialize();
         return parent::current();

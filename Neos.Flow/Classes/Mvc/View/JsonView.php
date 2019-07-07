@@ -268,47 +268,47 @@ class JsonView extends AbstractView
      *
      * @param object $object Object to traverse
      * @param array $configuration Configuration for transforming the given object or NULL
-     * @return array Object structure as an array
+     * @return array|string Object structure as an array
      */
     protected function transformObject($object, array $configuration)
     {
         if ($object instanceof \DateTimeInterface) {
             return $object->format(\DateTime::ISO8601);
-        } else {
-            $propertyNames = ObjectAccess::getGettablePropertyNames($object);
-
-            $propertiesToRender = [];
-            foreach ($propertyNames as $propertyName) {
-                if (isset($configuration['_only']) && is_array($configuration['_only']) && !in_array($propertyName, $configuration['_only'])) {
-                    continue;
-                }
-                if (isset($configuration['_exclude']) && is_array($configuration['_exclude']) && in_array($propertyName, $configuration['_exclude'])) {
-                    continue;
-                }
-
-                $propertyValue = ObjectAccess::getProperty($object, $propertyName);
-
-                if (!is_array($propertyValue) && !is_object($propertyValue)) {
-                    $propertiesToRender[$propertyName] = $propertyValue;
-                } elseif (isset($configuration['_descend']) && array_key_exists($propertyName, $configuration['_descend'])) {
-                    $propertiesToRender[$propertyName] = $this->transformValue($propertyValue, $configuration['_descend'][$propertyName]);
-                }
-            }
-            if (isset($configuration['_exposeObjectIdentifier']) && $configuration['_exposeObjectIdentifier'] === true) {
-                if (isset($configuration['_exposedObjectIdentifierKey']) && strlen($configuration['_exposedObjectIdentifierKey']) > 0) {
-                    $identityKey = $configuration['_exposedObjectIdentifierKey'];
-                } else {
-                    $identityKey = '__identity';
-                }
-                $propertiesToRender[$identityKey] = $this->persistenceManager->getIdentifierByObject($object);
-            }
-            if (isset($configuration['_exposeClassName']) && ($configuration['_exposeClassName'] === self::EXPOSE_CLASSNAME_FULLY_QUALIFIED || $configuration['_exposeClassName'] === self::EXPOSE_CLASSNAME_UNQUALIFIED)) {
-                $className = TypeHandling::getTypeForValue($object);
-                $classNameParts = explode('\\', $className);
-                $propertiesToRender['__class'] = ($configuration['_exposeClassName'] === self::EXPOSE_CLASSNAME_FULLY_QUALIFIED ? $className : array_pop($classNameParts));
-            }
-
-            return $propertiesToRender;
         }
+
+        $propertyNames = ObjectAccess::getGettablePropertyNames($object);
+
+        $propertiesToRender = [];
+        foreach ($propertyNames as $propertyName) {
+            if (isset($configuration['_only']) && is_array($configuration['_only']) && !in_array($propertyName, $configuration['_only'])) {
+                continue;
+            }
+            if (isset($configuration['_exclude']) && is_array($configuration['_exclude']) && in_array($propertyName, $configuration['_exclude'])) {
+                continue;
+            }
+
+            $propertyValue = ObjectAccess::getProperty($object, $propertyName);
+
+            if (!is_array($propertyValue) && !is_object($propertyValue)) {
+                $propertiesToRender[$propertyName] = $propertyValue;
+            } elseif (isset($configuration['_descend']) && array_key_exists($propertyName, $configuration['_descend'])) {
+                $propertiesToRender[$propertyName] = $this->transformValue($propertyValue, $configuration['_descend'][$propertyName]);
+            }
+        }
+        if (isset($configuration['_exposeObjectIdentifier']) && $configuration['_exposeObjectIdentifier'] === true) {
+            if (isset($configuration['_exposedObjectIdentifierKey']) && strlen($configuration['_exposedObjectIdentifierKey']) > 0) {
+                $identityKey = $configuration['_exposedObjectIdentifierKey'];
+            } else {
+                $identityKey = '__identity';
+            }
+            $propertiesToRender[$identityKey] = $this->persistenceManager->getIdentifierByObject($object);
+        }
+        if (isset($configuration['_exposeClassName']) && ($configuration['_exposeClassName'] === self::EXPOSE_CLASSNAME_FULLY_QUALIFIED || $configuration['_exposeClassName'] === self::EXPOSE_CLASSNAME_UNQUALIFIED)) {
+            $className = TypeHandling::getTypeForValue($object);
+            $classNameParts = explode('\\', $className);
+            $propertiesToRender['__class'] = ($configuration['_exposeClassName'] === self::EXPOSE_CLASSNAME_FULLY_QUALIFIED ? $className : array_pop($classNameParts));
+        }
+
+        return $propertiesToRender;
     }
 }
