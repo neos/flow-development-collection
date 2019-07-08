@@ -11,13 +11,12 @@ namespace Neos\Utility\MediaTypes\Tests\Unit;
  * source code.
  */
 
-use Neos\Flow\Tests\UnitTestCase;
 use Neos\Utility\MediaTypes;
 
 /**
  * Testcase for the Utility Media Types class
  */
-class MediaTypesTest extends UnitTestCase
+class MediaTypesTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * Data Provider
@@ -62,7 +61,7 @@ class MediaTypesTest extends UnitTestCase
      * @test
      * @dataProvider filesAndMediaTypes
      */
-    public function getMediaTypeFromFilename(string $filename, string $expectedMediaType)
+    public function getMediaTypeFromFileContent(string $filename, string $expectedMediaType)
     {
         $filePath = __DIR__ . '/Fixtures/' . $filename;
         $fileContent = is_file($filePath) ? file_get_contents($filePath) : '';

@@ -68,15 +68,4 @@ class ObjectManagerTest extends FunctionalTestCase
 
         $this->assertTrue($entity->isDestructed());
     }
-
-    /**
-     * XXX: Remove this with Flow 6.0
-     * @test
-     */
-    public function deprecatedDoctrineObjectManagerInjectsSameInstanceAsEntityManagerInterface()
-    {
-        $classWithInjections = $this->objectManager->get(Fixtures\ClassWithDoctrineInjections::class);
-
-        $this->assertSame($classWithInjections->entityManager, $classWithInjections->objectManager);
-    }
 }
