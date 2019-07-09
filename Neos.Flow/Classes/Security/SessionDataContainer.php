@@ -49,12 +49,12 @@ class SessionDataContainer
      */
     public function setSecurityTokens(array $securityTokens)
     {
-        $this->securityTokens = array_filter(
-            $securityTokens,
-            function ($token) {
-                return (!$token instanceof SessionlessTokenInterface);
+        foreach ($securityTokens as $token) {
+            if ($token instanceof SessionlessTokenInterface) {
+                throw new \InvalidArgumentException(sprintf('Tokens implementing the SessionlessTokenInterface must not be stored in the session. Got: %s', get_class($token)), 1562670555);
             }
-        );
+        }
+        $this->securityTokens = $securityTokens;
     }
 
     /**
