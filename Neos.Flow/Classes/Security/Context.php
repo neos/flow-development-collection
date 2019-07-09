@@ -785,7 +785,7 @@ class Context
     {
         $this->tokens = array_filter(
             array_merge($this->inactiveTokens, $this->activeTokens),
-            function ($token) {
+            static function ($token) {
                 return (!$token instanceof SessionlessTokenInterface);
             }
         );
