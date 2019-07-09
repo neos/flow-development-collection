@@ -11,24 +11,11 @@ namespace Neos\Flow\Tests\Unit\Security;
  * source code.
  */
 
-use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\RequestInterface;
-use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use Neos\Flow\Security\Authentication\AuthenticationManagerInterface;
-use Neos\Flow\Security\Account;
 use Neos\Flow\Security\Authentication\Token\SessionlessTokenInterface;
-use Neos\Flow\Security\Authentication\TokenAndProviderFactory;
-use Neos\Flow\Security\Authentication\TokenAndProviderFactoryInterface;
 use Neos\Flow\Security\Authentication\TokenInterface;
-use Neos\Flow\Security\Context;
-use Neos\Flow\Security\Policy;
-use Neos\Flow\Security\RequestPatternInterface;
 use Neos\Flow\Security\SessionDataContainer;
-use Neos\Flow\Session\SessionInterface;
-use Neos\Flow\Session\SessionManagerInterface;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Flow\Security\Policy\Role;
-use Psr\Log\LoggerInterface;
 
 /**
  * Testcase for the SessionDataContainer

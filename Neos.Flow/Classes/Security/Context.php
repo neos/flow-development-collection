@@ -784,7 +784,7 @@ class Context
             $token->updateCredentials($this->request);
         }
 
-        $tokensForSession = array_filter(array_merge($this->inactiveTokens, $this->activeTokens), static function(TokenInterface $token) {
+        $tokensForSession = array_filter(array_merge($this->inactiveTokens, $this->activeTokens), static function (TokenInterface $token) {
             return !$token instanceof SessionlessTokenInterface;
         });
         if ($tokensForSession !== []) {
