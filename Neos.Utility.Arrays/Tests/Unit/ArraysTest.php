@@ -602,7 +602,7 @@ class ArraysTest extends \PHPUnit\Framework\TestCase
             $inputArray1,
             $inputArray2,
             function ($simpleType) {
-                return array('__convertedValue' => $simpleType);
+                return ['__convertedValue' => $simpleType];
             },
             function ($value) {
                 return true;
