@@ -16,6 +16,7 @@ use Neos\Cache\CacheAwareInterface;
 use Neos\Flow\Log\PsrSecurityLoggerInterface;
 use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
+use Neos\Flow\Security\Authentication\Token\SessionlessTokenInterface;
 use Neos\Flow\Security\Authentication\TokenAndProviderFactoryInterface;
 use Neos\Flow\Security\Authentication\TokenInterface;
 use Neos\Flow\Security\Policy\Role;
@@ -783,8 +784,11 @@ class Context
             $token->updateCredentials($this->request);
         }
 
+        $tokensForSession = array_filter(array_merge($this->inactiveTokens, $this->activeTokens), static function (TokenInterface $token) {
+            return !$token instanceof SessionlessTokenInterface;
+        });
         $sessionDataContainer = $this->objectManager->get(SessionDataContainer::class);
-        $sessionDataContainer->setSecurityTokens(array_merge($this->inactiveTokens, $this->activeTokens));
+        $sessionDataContainer->setSecurityTokens($tokensForSession);
     }
 
     /**
