@@ -47,6 +47,8 @@ class NamespaceDetectionTemplateProcessor extends FluidNamespaceDetectionTemplat
 			)
 		)/xs';
 
+    const SPLIT_PATTERN_TEMPLATE_OPEN_NAMESPACETAG = '/xmlns:([a-z0-9\.]+)=("[^"]+"|\'[^\']+\')*/xi';
+
     /**
      * Pre-process the template source before it is
      * returned to the TemplateParser or passed to
