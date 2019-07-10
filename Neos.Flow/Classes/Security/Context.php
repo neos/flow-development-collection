@@ -787,10 +787,8 @@ class Context
         $tokensForSession = array_filter(array_merge($this->inactiveTokens, $this->activeTokens), static function (TokenInterface $token) {
             return !$token instanceof SessionlessTokenInterface;
         });
-        if ($tokensForSession !== []) {
-            $sessionDataContainer = $this->objectManager->get(SessionDataContainer::class);
-            $sessionDataContainer->setSecurityTokens($tokensForSession);
-        }
+        $sessionDataContainer = $this->objectManager->get(SessionDataContainer::class);
+        $sessionDataContainer->setSecurityTokens($tokensForSession);
     }
 
     /**
