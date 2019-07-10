@@ -15,6 +15,7 @@ use Neos\Flow\Log\SecurityLoggerInterface;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Security\Authentication\AuthenticationManagerInterface;
 use Neos\Flow\Security\Account;
+use Neos\Flow\Security\Authentication\Token\SessionlessTokenInterface;
 use Neos\Flow\Security\Authentication\TokenInterface;
 use Neos\Flow\Security\Context;
 use Neos\Flow\Security\Policy;
@@ -1068,5 +1069,45 @@ class ContextTest extends UnitTestCase
         $securityContext->expects($this->atLeastOnce())->method('canBeInitialized')->will($this->returnValue(false));
         $securityContext->expects($this->never())->method('initialize');
         $this->assertSame(Context::CONTEXT_HASH_UNINITIALIZED, $securityContext->getContextHash());
+    }
+
+    /**
+     * @test
+     */
+    public function shutdownObjectSavesSessionAwareTokens()
+    {
+        $mockAuthenticationManager = $this->createMock(AuthenticationManagerInterface::class);
+
+        $notMatchingRequestPattern = $this->createMock(RequestPatternInterface::class);
+        $notMatchingRequestPattern->method('matchRequest')->willReturn(false);
+
+        $inactiveToken = $this->createMock(TokenInterface::class);
+        $inactiveToken->method('getAuthenticationProviderName')->willReturn('inactiveTokenProvider');
+        $inactiveToken->expects($this->atLeastOnce())->method('hasRequestPatterns')->willReturn(true);
+        $inactiveToken->expects($this->atLeastOnce())->method('getRequestPatterns')->willReturn([$notMatchingRequestPattern]);
+
+        $activeToken = $this->createMock(TokenInterface::class);
+        $activeToken->method('getAuthenticationProviderName')->willReturn('activeTokenProvider');
+        $activeToken->expects($this->atLeastOnce())->method('hasRequestPatterns')->willReturn(false);
+
+        $sessionlessToken = $this->createMock([SessionlessTokenInterface::class, TokenInterface::class]);
+        $sessionlessToken->method('getAuthenticationProviderName')->willReturn('sessionlessTokenProvider');
+        $sessionlessToken->expects($this->atLeastOnce())->method('hasRequestPatterns')->willReturn(false);
+
+        $mockAuthenticationManager->expects($this->once())->method('getTokens')->willReturn([$inactiveToken, $activeToken, $sessionlessToken]);
+
+        /** @var Context $securityContext */
+        $securityContext = $this->getAccessibleMock(Context::class, ['dummy']);
+        $securityContext->setRequest($this->mockActionRequest);
+        $securityContext->_set('authenticationManager', $mockAuthenticationManager);
+        $securityContext->initialize();
+
+        $securityContext->shutdownObject();
+
+        $expectedTokens = [
+            'inactiveTokenProvider' => $inactiveToken,
+            'activeTokenProvider' => $activeToken,
+        ];
+        $this->assertSame($expectedTokens, $securityContext->_get('tokens'));
     }
 }
