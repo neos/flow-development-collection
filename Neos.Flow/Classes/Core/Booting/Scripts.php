@@ -758,6 +758,11 @@ class Scripts
             return;
         }
 
+        // Ensure the actual PHP binary is known before checking if it is correct. If empty, we ignore it because it is checked later in the script.
+        if (strlen($phpBinaryPathAndFilename) === 0) {
+            return;
+        }
+
         // Try to resolve which binary file PHP is pointing to
         exec($phpBinaryPathAndFilename . ' -r "echo PHP_BINARY;"', $output, $result);
         if ($result === 0 && sizeof($output) === 1) {
