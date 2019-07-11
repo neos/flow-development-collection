@@ -27,13 +27,13 @@
 			<target state="translated">A megadott érték nem érvényes dátum</target></trans-unit>
       <trans-unit id="1325615630" xml:space="preserve">
 				<source>The given date must be between {0,datetime,datetime} and {1,datetime,datetime}</source>
-			<target state="translated">A megadott dátumnak {0,datetime,datetime} és {1,datetime,datetime} között kell lennie</target></trans-unit>
+			<target state="needs-translation">The given date must be between {0,datetime,datetime} and {1,datetime,datetime}</target></trans-unit>
       <trans-unit id="1324315107" xml:space="preserve">
 				<source>The given date must be after {0,datetime,datetime}</source>
-			<target state="translated">A megadott dátumnak {0,datetime,datetime} után kell lennie</target></trans-unit>
+			<target state="needs-translation">The given date must be after {0,datetime,datetime}</target></trans-unit>
       <trans-unit id="1324315115" xml:space="preserve">
 				<source>The given date must be before {0,datetime,datetime}</source>
-			<target state="translated">A megadott dátumnak {0,datetime,datetime} előtt kell lennie</target></trans-unit>
+			<target state="needs-translation">The given date must be before {0,datetime,datetime}</target></trans-unit>
       <!-- DateTimeValidator -->
       <trans-unit id="1281454676" xml:space="preserve">
 				<source>The "locale" option can be only set to string identifier, or Locale object</source>
