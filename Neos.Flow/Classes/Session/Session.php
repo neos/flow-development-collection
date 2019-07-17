@@ -612,7 +612,6 @@ class Session implements CookieEnabledInterface
      * @return integer The number of outdated entries removed
      * @throws \Neos\Cache\Exception
      * @throws NotSupportedByBackendException
-     * @throws Exception\SessionMetadataCorruptedException
      * @api
      */
     public function collectGarbage()
