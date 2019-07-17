@@ -729,6 +729,7 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
 
                 if (!isset($mapping['type'])) {
                     switch ($propertyMetaData['type']) {
+                        case 'DateTimeInterface': // fall through b/c fix for #1640
                         case 'DateTime':
                             $mapping['type'] = 'datetime';
                             break;
