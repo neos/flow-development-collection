@@ -80,6 +80,7 @@ class ExtendedTypesEntity
     /**
      * This is possible for b/c - see #1673
      * @var \DateTimeInterface
+     * @ORM\Column(nullable=true)
      */
     protected $dateTimeInterface;
 
