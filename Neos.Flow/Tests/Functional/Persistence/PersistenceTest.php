@@ -559,7 +559,7 @@ class PersistenceTest extends FunctionalTestCase
     }
 
     /**
-     * This test covers a b/c "feature" that automatically maps @var \DateTimeInterface to doctrine `datetime` type without a @ORM\Column annotation
+     * This test covers a b/c "feature" that automatically maps var \DateTimeInterface to doctrine `datetime` type without a ORM\Column annotation
      * See #1673
      * @test
      */
