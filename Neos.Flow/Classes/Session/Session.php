@@ -612,6 +612,7 @@ class Session implements CookieEnabledInterface
      * @return integer The number of outdated entries removed
      * @throws \Neos\Cache\Exception
      * @throws NotSupportedByBackendException
+     * @throws Exception\SessionMetadataCorruptedException
      * @api
      */
     public function collectGarbage()
@@ -633,6 +634,9 @@ class Session implements CookieEnabledInterface
             $lastActivitySecondsAgo = $this->now - $sessionInfo['lastActivityTimestamp'];
             if ($lastActivitySecondsAgo > $this->inactivityTimeout) {
                 if ($sessionInfo['storageIdentifier'] === null) {
+                    if (!is_array($sessionInfo)) {
+                        $sessionInfo = ['sessionMetaData' => $sessionInfo];
+                    }
                     $this->logger->warning('SESSION INFO INVALID: ' . $sessionIdentifier, $sessionInfo + LogEnvironment::fromMethodName(__METHOD__));
                 } else {
                     $this->storageCache->flushByTag($sessionInfo['storageIdentifier']);
