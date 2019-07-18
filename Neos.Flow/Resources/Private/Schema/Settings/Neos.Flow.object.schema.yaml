@@ -4,4 +4,7 @@ properties:
   'registerFunctionalTestClasses': { type: boolean, required: TRUE }
   'includeClasses':
     type: array
-    items: { type: string, required: TRUE }
+    items:
+      type: array
+      required: TRUE
+      items: { type: string, required: true }
