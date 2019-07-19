@@ -293,7 +293,7 @@ class FlowQuery implements ProtectedContextAwareInterface, \IteratorAggregate, \
      * @param string $methodName
      * @return boolean
      */
-    public function allowsCallOfMethod($methodName)
+    public function allowsCallOfMethod(string $methodName): bool
     {
         return $this->operationResolver->hasOperation($methodName);
     }

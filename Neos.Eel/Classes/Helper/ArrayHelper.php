@@ -497,7 +497,7 @@ class ArrayHelper implements ProtectedContextAwareInterface
      * @param string $methodName
      * @return bool
      */
-    public function allowsCallOfMethod($methodName): bool
+    public function allowsCallOfMethod(string $methodName): bool
     {
         return true;
     }
