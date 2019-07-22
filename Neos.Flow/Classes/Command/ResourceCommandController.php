@@ -222,7 +222,7 @@ class ResourceCommandController extends CommandController
             /* @var PersistentResource $resource */
             $stream = $resource->getStream();
             if (!is_resource($stream)) {
-                $brokenResources[] = $resource->getSha1();
+                $brokenResources[] = $this->persistenceManager->getIdentifierByObject($resource);
             }
         }
 
@@ -235,8 +235,8 @@ class ResourceCommandController extends CommandController
             /* @var ThumbnailRepository $thumbnailRepository */
             $thumbnailRepository = $this->objectManager->get(ThumbnailRepository::class);
 
-            foreach ($brokenResources as $key => $resourceSha1) {
-                $resource = $this->resourceRepository->findOneBySha1($resourceSha1);
+            foreach ($brokenResources as $key => $resourceIdentifier) {
+                $resource = $this->resourceRepository->findByIdentifier($resourceIdentifier);
                 $brokenResources[$key] = $resource;
                 $assets = $assetRepository->findByResource($resource);
                 if ($assets !== null) {
