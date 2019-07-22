@@ -270,7 +270,7 @@ class ResourceCommandController extends CommandController
                 case 'y':
                     $brokenAssetCounter = 0;
                     $brokenThumbnailCounter = 0;
-                    foreach ($brokenResources as $sha1 => $resource) {
+                    foreach ($brokenResources as $resource) {
                         $this->outputLine('- delete %s (%s) from "%s" collection', [
                             $resource->getFilename(),
                             $resource->getSha1(),
