@@ -482,7 +482,7 @@ class PropertyConditionGenerator implements SqlGeneratorInterface
                     }
                 }
                 $parameter = implode(',', $parameters);
-            } elseif ($this->getRawParameterValue($operandDefinition) !== null) {
+            } elseif ($this->getRawParameterValue($operandDefinition) !== null && $this->getRawParameterValue($operandDefinition) !== []) {
                 $parameter = $sqlFilter->getParameter($operandDefinition);
             }
         } catch (\InvalidArgumentException $exception) {
