@@ -1035,6 +1035,27 @@ class SessionTest extends UnitTestCase
     }
 
     /**
+     * @test for #1674
+     */
+    public function garbageCollectionWorksCorrectlyWithInvalidMetadataEntry()
+    {
+        $settings = $this->settings;
+
+        $metaDataCache = $this->createCache('Meta');
+        $metaDataCache->set('foo', null);
+        $storageCache = $this->createCache('Storage');
+
+        $session = new Session();
+        $this->inject($session, 'objectManager', $this->mockObjectManager);
+        $this->inject($session, 'metaDataCache', $metaDataCache);
+        $this->inject($session, 'storageCache', $storageCache);
+        $session->injectSettings($settings);
+        $session->initializeObject();
+
+        $this->assertSame(0, $session->collectGarbage());
+    }
+
+    /**
      * @test
      */
     public function garbageCollectionIsOmittedIfInactivityTimeoutIsSetToZero()
