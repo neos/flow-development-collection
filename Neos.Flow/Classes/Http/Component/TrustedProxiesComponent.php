@@ -124,7 +124,7 @@ class TrustedProxiesComponent implements ComponentInterface
         if (filter_var($ipAddress, FILTER_VALIDATE_IP) === false) {
             return false;
         }
-        if ($this->settings['proxies'] === '*') {
+        if ($this->settings['proxies'] === '*' || $this->settings['proxies'] === ['*']) {
             return true;
         }
         foreach ($this->settings['proxies'] as $ipPattern) {
@@ -182,7 +182,7 @@ class TrustedProxiesComponent implements ComponentInterface
             $trustedIpHeaders->next();
         }
 
-        if ($this->settings['proxies'] === '*') {
+        if ($this->settings['proxies'] === '*' || $this->settings['proxies'] === ['*']) {
             return $ipAddress;
         }
 
