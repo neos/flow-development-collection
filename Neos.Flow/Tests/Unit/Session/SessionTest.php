@@ -1049,6 +1049,7 @@ class SessionTest extends UnitTestCase
         $this->inject($session, 'objectManager', $this->mockObjectManager);
         $this->inject($session, 'metaDataCache', $metaDataCache);
         $this->inject($session, 'storageCache', $storageCache);
+        $this->inject($session, 'logger', $this->createMock(LoggerInterface::class));
         $session->injectSettings($settings);
         $session->initializeObject();
 
