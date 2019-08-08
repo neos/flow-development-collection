@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\FluidAdaptor\View;
 
 /*
@@ -486,9 +488,9 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
      * @param array $patterns
      * @param string $search
      * @param array $replacements
-     * @return void
+     * @return array
      */
-    protected function expandPatterns(array $patterns, $search, array $replacements)
+    protected function expandPatterns(array $patterns, string $search, array $replacements): array
     {
         if ($replacements === []) {
             return $patterns;
