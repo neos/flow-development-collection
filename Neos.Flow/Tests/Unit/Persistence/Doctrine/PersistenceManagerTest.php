@@ -91,7 +91,7 @@ class PersistenceManagerTest extends UnitTestCase
         $this->mockEntityManager->expects($this->any())->method('contains')->with($entity)->willReturn(true);
         $this->mockUnitOfWork->expects($this->any())->method('getEntityIdentifier')->with($entity)->willReturn(['SomeIdentifier']);
 
-        $this->assertEquals('SomeIdentifier', $this->persistenceManager->getIdentifierByObject($entity));
+        self::assertEquals('SomeIdentifier', $this->persistenceManager->getIdentifierByObject($entity));
     }
 
     /**

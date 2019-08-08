@@ -59,7 +59,7 @@ class LoggerTest extends UnitTestCase
         try {
             $psrLogger->log($psrLogLevel, 'some message');
         } catch (\Throwable $throwable) {
-            $this->assertTrue($willError, $throwable->getMessage());
+            self::assertTrue($willError, $throwable->getMessage());
         }
     }
 

@@ -23,7 +23,7 @@ class SecurityHelperTest extends \Neos\Flow\Tests\UnitTestCase
         $helper = new SecurityHelper();
         $this->inject($helper, 'securityContext', $mockSecurityContext);
 
-        $this->assertEquals('TheCsrfToken', $helper->csrfToken());
+        self::assertEquals('TheCsrfToken', $helper->csrfToken());
     }
 
     /**
@@ -48,7 +48,7 @@ class SecurityHelperTest extends \Neos\Flow\Tests\UnitTestCase
         $helper = new SecurityHelper();
         $this->inject($helper, 'securityContext', $mockSecurityContext);
 
-        $this->assertTrue($helper->isAuthenticated());
+        self::assertTrue($helper->isAuthenticated());
     }
 
     /**
@@ -69,7 +69,7 @@ class SecurityHelperTest extends \Neos\Flow\Tests\UnitTestCase
         $helper = new SecurityHelper();
         $this->inject($helper, 'securityContext', $mockSecurityContext);
 
-        $this->assertFalse($helper->isAuthenticated());
+        self::assertFalse($helper->isAuthenticated());
     }
 
     /**
@@ -85,7 +85,7 @@ class SecurityHelperTest extends \Neos\Flow\Tests\UnitTestCase
         $helper = new SecurityHelper();
         $this->inject($helper, 'securityContext', $mockSecurityContext);
 
-        $this->assertFalse($helper->isAuthenticated());
+        self::assertFalse($helper->isAuthenticated());
     }
 
     /**
@@ -100,7 +100,7 @@ class SecurityHelperTest extends \Neos\Flow\Tests\UnitTestCase
         $helper = new SecurityHelper();
         $this->inject($helper, 'securityContext', $mockSecurityContext);
 
-        $this->assertFalse($helper->isAuthenticated());
+        self::assertFalse($helper->isAuthenticated());
     }
 
     /**
@@ -118,7 +118,7 @@ class SecurityHelperTest extends \Neos\Flow\Tests\UnitTestCase
         $this->inject($helper, 'securityContext', $mockSecurityContext);
         $this->inject($helper, 'privilegeManager', $mockPrivilegeManager);
 
-        $this->assertTrue($helper->hasAccess('somePrivilegeTarget', []));
+        self::assertTrue($helper->hasAccess('somePrivilegeTarget', []));
     }
 
     /**
@@ -136,7 +136,7 @@ class SecurityHelperTest extends \Neos\Flow\Tests\UnitTestCase
         $this->inject($helper, 'securityContext', $mockSecurityContext);
         $this->inject($helper, 'privilegeManager', $mockPrivilegeManager);
 
-        $this->assertFalse($helper->hasAccess('somePrivilegeTarget', []));
+        self::assertFalse($helper->hasAccess('somePrivilegeTarget', []));
     }
 
     /**
@@ -153,7 +153,7 @@ class SecurityHelperTest extends \Neos\Flow\Tests\UnitTestCase
         $this->inject($helper, 'securityContext', $mockSecurityContext);
         $this->inject($helper, 'privilegeManager', $mockPrivilegeManager);
 
-        $this->assertFalse($helper->hasAccess('somePrivilegeTarget', []));
+        self::assertFalse($helper->hasAccess('somePrivilegeTarget', []));
     }
 
     /**
@@ -167,7 +167,7 @@ class SecurityHelperTest extends \Neos\Flow\Tests\UnitTestCase
         $helper = new SecurityHelper();
         $this->inject($helper, 'securityContext', $mockSecurityContext);
 
-        $this->assertNull($helper->getAccount());
+        self::assertNull($helper->getAccount());
     }
 
     /**
@@ -182,7 +182,7 @@ class SecurityHelperTest extends \Neos\Flow\Tests\UnitTestCase
         $helper = new SecurityHelper();
         $this->inject($helper, 'securityContext', $mockSecurityContext);
 
-        $this->assertSame('this would be an account instance', $helper->getAccount());
+        self::assertSame('this would be an account instance', $helper->getAccount());
     }
 
     /**
@@ -191,7 +191,7 @@ class SecurityHelperTest extends \Neos\Flow\Tests\UnitTestCase
     public function hasRoleReturnsTrueForEverybodyRole()
     {
         $helper = new SecurityHelper();
-        $this->assertTrue($helper->hasRole('Neos.Flow:Everybody'));
+        self::assertTrue($helper->hasRole('Neos.Flow:Everybody'));
     }
 
     /**
@@ -205,7 +205,7 @@ class SecurityHelperTest extends \Neos\Flow\Tests\UnitTestCase
         $helper = new SecurityHelper();
         $this->inject($helper, 'securityContext', $mockSecurityContext);
 
-        $this->assertFalse($helper->hasRole('Acme.Com:DummyRole'));
+        self::assertFalse($helper->hasRole('Acme.Com:DummyRole'));
     }
 
     /**
@@ -220,6 +220,6 @@ class SecurityHelperTest extends \Neos\Flow\Tests\UnitTestCase
         $helper = new SecurityHelper();
         $this->inject($helper, 'securityContext', $mockSecurityContext);
 
-        $this->assertTrue($helper->hasRole('Acme.Com:GrantsAccess'));
+        self::assertTrue($helper->hasRole('Acme.Com:GrantsAccess'));
     }
 }

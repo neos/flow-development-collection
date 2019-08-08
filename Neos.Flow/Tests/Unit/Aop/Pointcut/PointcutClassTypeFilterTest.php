@@ -54,7 +54,7 @@ class PointcutClassTypeFilterTest extends UnitTestCase
 
         $result = $classTypeFilter->reduceTargetClassNames($availableClassNamesIndex);
 
-        $this->assertEquals($expectedClassNamesIndex, $result, 'The wrong class names have been filtered');
+        self::assertEquals($expectedClassNamesIndex, $result, 'The wrong class names have been filtered');
     }
 
     /**
@@ -93,6 +93,6 @@ class PointcutClassTypeFilterTest extends UnitTestCase
 
         $result = $classTypeFilter->reduceTargetClassNames($availableClassNamesIndex);
 
-        $this->assertEquals($expectedClassNamesIndex, $result, 'The wrong class names have been filtered');
+        self::assertEquals($expectedClassNamesIndex, $result, 'The wrong class names have been filtered');
     }
 }

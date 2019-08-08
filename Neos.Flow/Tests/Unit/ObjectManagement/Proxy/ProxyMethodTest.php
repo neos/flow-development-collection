@@ -48,7 +48,7 @@ class ProxyMethodTest extends \Neos\Flow\Tests\UnitTestCase
             '     * @\Neos\Flow\Annotations\Validate(type="bar2", argumentName="foo2")' . chr(10) .
             '     * @\Neos\Flow\Annotations\SkipCsrfProtection' . chr(10) .
             '     */' . chr(10);
-        $this->assertEquals($expected, $methodDocumentation);
+        self::assertEquals($expected, $methodDocumentation);
     }
 
     /**
@@ -134,7 +134,7 @@ class ProxyMethodTest extends \Neos\Flow\Tests\UnitTestCase
         $builder->injectReflectionService($mockReflectionService);
 
         $actualCode = $builder->buildMethodParametersCode($className, 'foo', true);
-        $this->assertSame($expectedCode, $actualCode);
+        self::assertSame($expectedCode, $actualCode);
     }
 
     /**
@@ -164,7 +164,7 @@ class ProxyMethodTest extends \Neos\Flow\Tests\UnitTestCase
         $builder->injectReflectionService($mockReflectionService);
 
         $actualCode = $builder->buildMethodParametersCode($className, 'foo', false);
-        $this->assertSame($expectedCode, $actualCode);
+        self::assertSame($expectedCode, $actualCode);
     }
 
     /**
@@ -175,6 +175,6 @@ class ProxyMethodTest extends \Neos\Flow\Tests\UnitTestCase
         $builder = $this->getMockBuilder(ProxyMethod::class)->disableOriginalConstructor()->setMethods(['dummy'])->getMock();
 
         $actualCode = $builder->buildMethodParametersCode(null, 'foo', true);
-        $this->assertSame('', $actualCode);
+        self::assertSame('', $actualCode);
     }
 }

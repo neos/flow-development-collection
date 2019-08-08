@@ -49,7 +49,7 @@ class ServiceTest extends UnitTestCase
         $service->expects($this->atLeastOnce())->method('getLocaleChain')->with($desiredLocale)->will($this->returnValue($localeChain));
 
         list($result, ) = $service->getLocalizedFilename($filename, $desiredLocale);
-        $this->assertEquals($expectedFilename, $result);
+        self::assertEquals($expectedFilename, $result);
     }
 
     /**
@@ -71,7 +71,7 @@ class ServiceTest extends UnitTestCase
         $service->expects($this->atLeastOnce())->method('getLocaleChain')->with($desiredLocale)->will($this->returnValue($localeChain));
 
         list($result, ) = $service->getLocalizedFilename($filename, $desiredLocale);
-        $this->assertEquals($expectedFilename, $result);
+        self::assertEquals($expectedFilename, $result);
     }
 
     /**
@@ -88,7 +88,7 @@ class ServiceTest extends UnitTestCase
         $service = new I18n\Service();
 
         list($result, ) = $service->getLocalizedFilename($filename, new I18n\Locale('en_GB'), true);
-        $this->assertEquals($expectedFilename, $result);
+        self::assertEquals($expectedFilename, $result);
     }
 
     /**
@@ -105,7 +105,7 @@ class ServiceTest extends UnitTestCase
         $service = new I18n\Service();
 
         list($result, ) = $service->getLocalizedFilename($filename, new I18n\Locale('en_GB'), true);
-        $this->assertEquals($expectedFilename, $result);
+        self::assertEquals($expectedFilename, $result);
     }
 
     /**
@@ -118,7 +118,7 @@ class ServiceTest extends UnitTestCase
         $service = new I18n\Service();
 
         list($result, ) = $service->getLocalizedFilename($filename, new I18n\Locale('pl'), true);
-        $this->assertEquals($filename, $result);
+        self::assertEquals($filename, $result);
     }
 
     /**
@@ -134,7 +134,7 @@ class ServiceTest extends UnitTestCase
         $service->expects($this->atLeastOnce())->method('getLocaleChain')->with($desiredLocale)->will($this->returnValue($localeChain));
 
         list($result, ) = $service->getLocalizedFilename($filename, $desiredLocale);
-        $this->assertEquals($filename, $result);
+        self::assertEquals($filename, $result);
     }
 
     /**

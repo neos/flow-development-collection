@@ -66,8 +66,8 @@ class PackageTest extends UnitTestCase
 
         $package = new Package('Acme.MyPackage', 'acme/mypackage', $packagePath, $composerManifest['autoload']);
         foreach ($package->getClassFiles() as $className => $classPath) {
-            $this->assertArrayHasKey($className, $expectedClassFilesArray);
-            $this->assertEquals($expectedClassFilesArray[$className], $classPath);
+            self::assertArrayHasKey($className, $expectedClassFilesArray);
+            self::assertEquals($expectedClassFilesArray[$className], $classPath);
         }
     }
 
@@ -83,7 +83,7 @@ class PackageTest extends UnitTestCase
         $package = new Package('Acme.MyPackage', 'acme/mypackage', $packagePath, ['psr-0' => ['acme\\MyPackage' => 'Classes/']]);
 
         $packageType = $package->getComposerManifest('type');
-        $this->assertEquals('flow-test', $packageType);
+        self::assertEquals('flow-test', $packageType);
     }
 
     /**
@@ -107,6 +107,6 @@ class PackageTest extends UnitTestCase
         $package = $this->getMockBuilder(\Neos\Flow\Package\Package::class)->setMethods(['getComposerManifest'])->setConstructorArgs(['Some.Package', 'some/package', 'vfs://Packages/Some/Path/Some.Package/', []])->getMock();
         $package->method('getComposerManifest')->willReturn('1.2.3');
 
-        $this->assertEquals('1.2.3', $package->getInstalledVersion('some/package'));
+        self::assertEquals('1.2.3', $package->getInstalledVersion('some/package'));
     }
 }

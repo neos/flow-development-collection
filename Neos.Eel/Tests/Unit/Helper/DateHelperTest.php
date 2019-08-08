@@ -40,8 +40,8 @@ class DateHelperTest extends \Neos\Flow\Tests\UnitTestCase
     {
         $helper = new DateHelper();
         $result = $helper->parse($string, $format);
-        $this->assertInstanceOf(\DateTime::class, $result);
-        $this->assertEqualsWithDelta((float)$expected->format('U'), (float)$result->format('U'), 60, 'Timestamps should match');
+        self::assertInstanceOf(\DateTime::class, $result);
+        self::assertEqualsWithDelta((float)$expected->format('U'), (float)$result->format('U'), 60, 'Timestamps should match');
     }
 
     /**
@@ -66,7 +66,7 @@ class DateHelperTest extends \Neos\Flow\Tests\UnitTestCase
     {
         $helper = new DateHelper();
         $result = $helper->format($dateOrString, $format);
-        $this->assertSame($expected, $result);
+        self::assertSame($expected, $result);
     }
 
     /**
@@ -131,8 +131,8 @@ class DateHelperTest extends \Neos\Flow\Tests\UnitTestCase
     {
         $helper = new DateHelper();
         $result = $helper->now();
-        $this->assertInstanceOf(\DateTime::class, $result);
-        $this->assertEqualsWithDelta(time(), (integer)$result->format('U'), 1, 'Now should be now');
+        self::assertInstanceOf(\DateTime::class, $result);
+        self::assertEqualsWithDelta(time(), (integer)$result->format('U'), 1, 'Now should be now');
     }
 
     /**
@@ -143,8 +143,8 @@ class DateHelperTest extends \Neos\Flow\Tests\UnitTestCase
         $helper = new DateHelper();
         $result = $helper->create('yesterday noon');
         $expected = new \DateTime('yesterday noon');
-        $this->assertInstanceOf(\DateTime::class, $result);
-        $this->assertEqualsWithDelta($expected->getTimestamp(), $result->getTimestamp(), 1, 'Created DateTime object should match expected');
+        self::assertInstanceOf(\DateTime::class, $result);
+        self::assertEqualsWithDelta($expected->getTimestamp(), $result->getTimestamp(), 1, 'Created DateTime object should match expected');
     }
 
     /**
@@ -154,9 +154,9 @@ class DateHelperTest extends \Neos\Flow\Tests\UnitTestCase
     {
         $helper = new DateHelper();
         $result = $helper->today();
-        $this->assertInstanceOf(\DateTime::class, $result);
+        self::assertInstanceOf(\DateTime::class, $result);
         $today = new \DateTime('today');
-        $this->assertEqualsWithDelta($today->getTimestamp(), $result->getTimestamp(), 1, 'Today should be today');
+        self::assertEqualsWithDelta($today->getTimestamp(), $result->getTimestamp(), 1, 'Today should be today');
     }
 
     /**
@@ -184,8 +184,8 @@ class DateHelperTest extends \Neos\Flow\Tests\UnitTestCase
         $helper = new DateHelper();
         $result = $helper->$method($dateTime, $interval);
 
-        $this->assertEquals($timestamp, $dateTime->getTimeStamp(), 'DateTime should not be modified');
-        $this->assertEquals($expected, $result->format('Y-m-d H:i:s'));
+        self::assertEquals($timestamp, $dateTime->getTimeStamp(), 'DateTime should not be modified');
+        self::assertEquals($expected, $result->format('Y-m-d H:i:s'));
     }
 
     /**
@@ -198,9 +198,9 @@ class DateHelperTest extends \Neos\Flow\Tests\UnitTestCase
 
         $helper = new DateHelper();
         $result = $helper->diff($earlierTime, $futureTime);
-        $this->assertEquals(6, $result->d);
-        $this->assertEquals(23, $result->h);
-        $this->assertEquals(59, $result->i);
+        self::assertEquals(6, $result->d);
+        self::assertEquals(23, $result->h);
+        self::assertEquals(59, $result->i);
     }
 
     /**
@@ -211,12 +211,12 @@ class DateHelperTest extends \Neos\Flow\Tests\UnitTestCase
         $helper = new DateHelper();
         $date = new \DateTime('2013-10-16 14:59:27');
 
-        $this->assertSame(2013, $helper->year($date));
-        $this->assertSame(10, $helper->month($date));
-        $this->assertSame(16, $helper->dayOfMonth($date));
+        self::assertSame(2013, $helper->year($date));
+        self::assertSame(10, $helper->month($date));
+        self::assertSame(16, $helper->dayOfMonth($date));
 
-        $this->assertSame(14, $helper->hour($date));
-        $this->assertSame(59, $helper->minute($date));
-        $this->assertSame(27, $helper->second($date));
+        self::assertSame(14, $helper->hour($date));
+        self::assertSame(59, $helper->minute($date));
+        self::assertSame(27, $helper->second($date));
     }
 }

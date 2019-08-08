@@ -85,7 +85,7 @@ class XliffTranslationProviderTest extends UnitTestCase
         $translationProvider->injectFileProvider($this->mockFileProvider);
 
         $result = $translationProvider->getTranslationByOriginalLabel('Source string', $this->sampleLocale, I18n\Cldr\Reader\PluralsReader::RULE_ONE, $this->sampleSourceName, $this->samplePackageKey);
-        $this->assertEquals('Übersetzte Zeichenkette', $result);
+        self::assertEquals('Übersetzte Zeichenkette', $result);
     }
 
     /**
@@ -108,7 +108,7 @@ class XliffTranslationProviderTest extends UnitTestCase
         $translationProvider->injectFileProvider($this->mockFileProvider);
 
         $result = $translationProvider->getTranslationById('key1', $this->sampleLocale, I18n\Cldr\Reader\PluralsReader::RULE_ONE, $this->sampleSourceName, $this->samplePackageKey);
-        $this->assertEquals('Übersetzte Zeichenkette', $result);
+        self::assertEquals('Übersetzte Zeichenkette', $result);
     }
 
     /**

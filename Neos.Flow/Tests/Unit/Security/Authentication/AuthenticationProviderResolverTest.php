@@ -58,7 +58,7 @@ class AuthenticationProviderResolverTest extends UnitTestCase
         $providerResolver = new AuthenticationProviderResolver($mockObjectManager);
         $providerClass = $providerResolver->resolveProviderClass('ValidShortName');
 
-        $this->assertEquals($longClassNameForTest, $providerClass, 'The wrong classname has been resolved');
+        self::assertEquals($longClassNameForTest, $providerClass, 'The wrong classname has been resolved');
     }
 
     /**
@@ -72,6 +72,6 @@ class AuthenticationProviderResolverTest extends UnitTestCase
         $providerResolver = new AuthenticationProviderResolver($mockObjectManager);
         $providerClass = $providerResolver->resolveProviderClass('existingProviderClass');
 
-        $this->assertEquals('existingProviderClass', $providerClass, 'The wrong classname has been resolved');
+        self::assertEquals('existingProviderClass', $providerClass, 'The wrong classname has been resolved');
     }
 }

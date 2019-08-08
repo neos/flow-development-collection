@@ -32,7 +32,7 @@ class ConjunctionValidatorTest extends UnitTestCase
 
         $mockValidator = $this->createMock(ValidatorInterface::class);
         $conjunctionValidator->addValidator($mockValidator);
-        $this->assertTrue($conjunctionValidator->_get('validators')->contains($mockValidator));
+        self::assertTrue($conjunctionValidator->_get('validators')->contains($mockValidator));
     }
 
     /**
@@ -74,7 +74,7 @@ class ConjunctionValidatorTest extends UnitTestCase
         $validatorConjunction->addValidator($validatorObject);
         $validatorConjunction->addValidator($secondValidatorObject);
 
-        $this->assertFalse($validatorConjunction->validate('some subject')->hasErrors());
+        self::assertFalse($validatorConjunction->validate('some subject')->hasErrors());
     }
 
     /**
@@ -92,7 +92,7 @@ class ConjunctionValidatorTest extends UnitTestCase
 
         $validatorConjunction->addValidator($validatorObject);
 
-        $this->assertTrue($validatorConjunction->validate('some subject')->hasErrors());
+        self::assertTrue($validatorConjunction->validate('some subject')->hasErrors());
     }
 
     /**
@@ -110,8 +110,8 @@ class ConjunctionValidatorTest extends UnitTestCase
 
         $validatorConjunction->removeValidator($validator1);
 
-        $this->assertFalse($validatorConjunction->_get('validators')->contains($validator1));
-        $this->assertTrue($validatorConjunction->_get('validators')->contains($validator2));
+        self::assertFalse($validatorConjunction->_get('validators')->contains($validator1));
+        self::assertTrue($validatorConjunction->_get('validators')->contains($validator2));
     }
 
     /**
@@ -135,11 +135,11 @@ class ConjunctionValidatorTest extends UnitTestCase
         $validator1 = $this->createMock(ValidatorInterface::class);
         $validator2 = $this->createMock(ValidatorInterface::class);
 
-        $this->assertSame(0, count($validatorConjunction));
+        self::assertSame(0, count($validatorConjunction));
 
         $validatorConjunction->addValidator($validator1);
         $validatorConjunction->addValidator($validator2);
 
-        $this->assertSame(2, count($validatorConjunction));
+        self::assertSame(2, count($validatorConjunction));
     }
 }

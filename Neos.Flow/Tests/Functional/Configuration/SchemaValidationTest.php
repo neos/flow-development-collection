@@ -100,6 +100,6 @@ class SchemaValidationTest extends FunctionalTestCase
         $hasErrors = $result->hasErrors();
 
         $message = sprintf('Schema-file "%s" is not valid: %s', $schemaFile, $result->getFirstError());
-        $this->assertFalse($hasErrors, $message);
+        self::assertFalse($hasErrors, $message);
     }
 }

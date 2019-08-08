@@ -40,7 +40,7 @@ class Nl2brViewHelperTest extends ViewHelperBaseTestcase
         $this->viewHelper->expects($this->once())->method('renderChildren')->will($this->returnValue('<p class="bodytext">Some Text without line breaks</p>'));
         $this->viewHelper = $this->prepareArguments($this->viewHelper, []);
         $actualResult = $this->viewHelper->render();
-        $this->assertEquals('<p class="bodytext">Some Text without line breaks</p>', $actualResult);
+        self::assertEquals('<p class="bodytext">Some Text without line breaks</p>', $actualResult);
     }
 
     /**
@@ -51,7 +51,7 @@ class Nl2brViewHelperTest extends ViewHelperBaseTestcase
         $this->viewHelper->expects($this->once())->method('renderChildren')->will($this->returnValue('Line 1' . chr(10) . 'Line 2'));
         $this->viewHelper = $this->prepareArguments($this->viewHelper, []);
         $actualResult = $this->viewHelper->render();
-        $this->assertEquals('Line 1<br />' . chr(10) . 'Line 2', $actualResult);
+        self::assertEquals('Line 1<br />' . chr(10) . 'Line 2', $actualResult);
     }
 
     /**
@@ -62,6 +62,6 @@ class Nl2brViewHelperTest extends ViewHelperBaseTestcase
         $this->viewHelper->expects($this->once())->method('renderChildren')->will($this->returnValue('Line 1' . chr(13) . chr(10) . 'Line 2'));
         $this->viewHelper = $this->prepareArguments($this->viewHelper, []);
         $actualResult = $this->viewHelper->render();
-        $this->assertEquals('Line 1<br />' . chr(13) . chr(10) . 'Line 2', $actualResult);
+        self::assertEquals('Line 1<br />' . chr(13) . chr(10) . 'Line 2', $actualResult);
     }
 }

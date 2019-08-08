@@ -40,7 +40,7 @@ class AbstractTokenTest extends UnitTestCase
     public function authenticationProviderNameCanBeSetAndRetrieved()
     {
         $this->token->setAuthenticationProviderName('My Cool Provider');
-        $this->assertEquals('My Cool Provider', $this->token->getAuthenticationProviderName());
+        self::assertEquals('My Cool Provider', $this->token->getAuthenticationProviderName());
     }
 
     /**
@@ -50,7 +50,7 @@ class AbstractTokenTest extends UnitTestCase
     {
         $entryPoint = new WebRedirect();
         $this->token->setAuthenticationEntryPoint($entryPoint);
-        $this->assertSame($entryPoint, $this->token->getAuthenticationEntryPoint());
+        self::assertSame($entryPoint, $this->token->getAuthenticationEntryPoint());
     }
 
     /**
@@ -58,7 +58,7 @@ class AbstractTokenTest extends UnitTestCase
      */
     public function theAuthenticationStatusIsCorrectlyInitialized()
     {
-        $this->assertSame(TokenInterface::NO_CREDENTIALS_GIVEN, $this->token->getAuthenticationStatus());
+        self::assertSame(TokenInterface::NO_CREDENTIALS_GIVEN, $this->token->getAuthenticationStatus());
     }
 
     /**
@@ -81,13 +81,13 @@ class AbstractTokenTest extends UnitTestCase
     public function isAuthenticatedReturnsTheCorrectValueForAGivenStatus($status, $isAuthenticated)
     {
         $this->token->setAuthenticationStatus($status);
-        $this->assertEquals($isAuthenticated, $this->token->isAuthenticated());
+        self::assertEquals($isAuthenticated, $this->token->isAuthenticated());
         $this->token->setAuthenticationStatus($status);
-        $this->assertEquals($isAuthenticated, $this->token->isAuthenticated());
+        self::assertEquals($isAuthenticated, $this->token->isAuthenticated());
         $this->token->setAuthenticationStatus($status);
-        $this->assertEquals($isAuthenticated, $this->token->isAuthenticated());
+        self::assertEquals($isAuthenticated, $this->token->isAuthenticated());
         $this->token->setAuthenticationStatus($status);
-        $this->assertEquals($isAuthenticated, $this->token->isAuthenticated());
+        self::assertEquals($isAuthenticated, $this->token->isAuthenticated());
     }
 
     /**
@@ -104,13 +104,13 @@ class AbstractTokenTest extends UnitTestCase
      */
     public function requestPatternsCanBeSetRetrievedAndChecked()
     {
-        $this->assertFalse($this->token->hasRequestPatterns());
+        self::assertFalse($this->token->hasRequestPatterns());
 
         $uriRequestPattern = new UriRequestPattern(['uriPattern' => 'http://mydomain.com/some/path/pattern']);
         $this->token->setRequestPatterns([$uriRequestPattern]);
 
-        $this->assertTrue($this->token->hasRequestPatterns());
-        $this->assertEquals([$uriRequestPattern], $this->token->getRequestPatterns());
+        self::assertTrue($this->token->hasRequestPatterns());
+        self::assertEquals([$uriRequestPattern], $this->token->getRequestPatterns());
     }
 
     /**

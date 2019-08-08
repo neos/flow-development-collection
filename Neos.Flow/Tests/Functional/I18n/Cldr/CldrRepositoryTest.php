@@ -65,9 +65,9 @@ class CldrRepositoryTest extends FunctionalTestCase
         $localeImplementingChaining = new I18n\Locale('de_DE');
 
         $cldrModel = $this->cldrRepository->getModelForLocale($localeImplementingChaining);
-        
-        $this->assertContains(Files::concatenatePaths([$this->cldrBasePath, 'main/root.xml']), ObjectAccess::getProperty($cldrModel, 'sourcePaths', true));
-        $this->assertContains(Files::concatenatePaths([$this->cldrBasePath, 'main/de_DE.xml']), ObjectAccess::getProperty($cldrModel, 'sourcePaths', true));
-        $this->assertContains(Files::concatenatePaths([$this->cldrBasePath, 'main/de.xml']), ObjectAccess::getProperty($cldrModel, 'sourcePaths', true));
+
+        self::assertContains(Files::concatenatePaths([$this->cldrBasePath, 'main/root.xml']), ObjectAccess::getProperty($cldrModel, 'sourcePaths', true));
+        self::assertContains(Files::concatenatePaths([$this->cldrBasePath, 'main/de_DE.xml']), ObjectAccess::getProperty($cldrModel, 'sourcePaths', true));
+        self::assertContains(Files::concatenatePaths([$this->cldrBasePath, 'main/de.xml']), ObjectAccess::getProperty($cldrModel, 'sourcePaths', true));
     }
 }

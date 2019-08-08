@@ -49,7 +49,7 @@ class ObjectAccessTest extends \PHPUnit\Framework\TestCase
     public function getPropertyReturnsExpectedValueForGetterProperty()
     {
         $property = ObjectAccess::getProperty($this->dummyObject, 'property');
-        $this->assertEquals($property, 'string1');
+        self::assertEquals($property, 'string1');
     }
 
     /**
@@ -58,7 +58,7 @@ class ObjectAccessTest extends \PHPUnit\Framework\TestCase
     public function getPropertyReturnsExpectedValueForPublicProperty()
     {
         $property = ObjectAccess::getProperty($this->dummyObject, 'publicProperty2');
-        $this->assertEquals($property, 42, 'A property of a given object was not returned correctly.');
+        self::assertEquals($property, 42, 'A property of a given object was not returned correctly.');
     }
 
     /**
@@ -67,7 +67,7 @@ class ObjectAccessTest extends \PHPUnit\Framework\TestCase
     public function getPropertyReturnsExpectedValueForUnexposedPropertyIfForceDirectAccessIsTrue()
     {
         $property = ObjectAccess::getProperty($this->dummyObject, 'unexposedProperty', true);
-        $this->assertEquals($property, 'unexposed', 'A property of a given object was not returned correctly.');
+        self::assertEquals($property, 'unexposed', 'A property of a given object was not returned correctly.');
     }
 
     /**
@@ -77,7 +77,7 @@ class ObjectAccessTest extends \PHPUnit\Framework\TestCase
     {
         $this->dummyObject->unknownProperty = 'unknown';
         $property = ObjectAccess::getProperty($this->dummyObject, 'unknownProperty', true);
-        $this->assertEquals($property, 'unknown', 'A property of a given object was not returned correctly.');
+        self::assertEquals($property, 'unknown', 'A property of a given object was not returned correctly.');
     }
 
     /**
@@ -113,7 +113,7 @@ class ObjectAccessTest extends \PHPUnit\Framework\TestCase
     public function getPropertyTriesToCallABooleanIsGetterMethodIfItExists()
     {
         $property = ObjectAccess::getProperty($this->dummyObject, 'booleanProperty');
-        $this->assertSame('method called 1', $property);
+        self::assertSame('method called 1', $property);
     }
 
     /**
@@ -122,11 +122,11 @@ class ObjectAccessTest extends \PHPUnit\Framework\TestCase
     public function getPropertyTriesToCallABooleanHasGetterMethodIfItExists()
     {
         $property = ObjectAccess::getProperty($this->dummyObject, 'anotherBooleanProperty');
-        $this->assertSame(false, $property);
+        self::assertSame(false, $property);
 
         $this->dummyObject->setAnotherBooleanProperty(true);
         $property = ObjectAccess::getProperty($this->dummyObject, 'anotherBooleanProperty');
-        $this->assertSame(true, $property);
+        self::assertSame(true, $property);
     }
 
     /**
@@ -154,7 +154,7 @@ class ObjectAccessTest extends \PHPUnit\Framework\TestCase
     {
         $array = new \ArrayObject();
         ObjectAccess::setProperty($array, 42, 'Test');
-        $this->assertSame('Test', $array[42]);
+        self::assertSame('Test', $array[42]);
     }
 
     /**
@@ -162,7 +162,7 @@ class ObjectAccessTest extends \PHPUnit\Framework\TestCase
      */
     public function setPropertyReturnsFalseIfPropertyIsNotAccessible()
     {
-        $this->assertFalse(ObjectAccess::setProperty($this->dummyObject, 'protectedProperty', 42));
+        self::assertFalse(ObjectAccess::setProperty($this->dummyObject, 'protectedProperty', 42));
     }
 
     /**
@@ -170,11 +170,11 @@ class ObjectAccessTest extends \PHPUnit\Framework\TestCase
      */
     public function setPropertySetsValueIfPropertyIsNotAccessibleWhenForceDirectAccessIsTrue()
     {
-        $this->assertTrue(ObjectAccess::setProperty($this->dummyObject, 'unexposedProperty', 'was set anyway', true));
+        self::assertTrue(ObjectAccess::setProperty($this->dummyObject, 'unexposedProperty', 'was set anyway', true));
         $className = TypeHandling::getTypeForValue($this->dummyObject);
         $propertyReflection = new \ReflectionProperty($className, 'unexposedProperty');
         $propertyReflection->setAccessible(true);
-        $this->assertEquals('was set anyway', $propertyReflection->getValue($this->dummyObject));
+        self::assertEquals('was set anyway', $propertyReflection->getValue($this->dummyObject));
     }
 
     /**
@@ -182,8 +182,8 @@ class ObjectAccessTest extends \PHPUnit\Framework\TestCase
      */
     public function setPropertySetsValueIfPropertyDoesNotExistWhenForceDirectAccessIsTrue()
     {
-        $this->assertTrue(ObjectAccess::setProperty($this->dummyObject, 'unknownProperty', 'was set anyway', true));
-        $this->assertEquals('was set anyway', $this->dummyObject->unknownProperty);
+        self::assertTrue(ObjectAccess::setProperty($this->dummyObject, 'unknownProperty', 'was set anyway', true));
+        self::assertEquals('was set anyway', $this->dummyObject->unknownProperty);
     }
 
     /**
@@ -192,7 +192,7 @@ class ObjectAccessTest extends \PHPUnit\Framework\TestCase
     public function setPropertyCallsASetterMethodToSetThePropertyValueIfOneIsAvailable()
     {
         ObjectAccess::setProperty($this->dummyObject, 'property', 4242);
-        $this->assertEquals($this->dummyObject->getProperty(), 4242, 'setProperty does not work with setter.');
+        self::assertEquals($this->dummyObject->getProperty(), 4242, 'setProperty does not work with setter.');
     }
 
     /**
@@ -201,7 +201,7 @@ class ObjectAccessTest extends \PHPUnit\Framework\TestCase
     public function setPropertyWorksWithPublicProperty()
     {
         ObjectAccess::setProperty($this->dummyObject, 'publicProperty', 4242);
-        $this->assertEquals($this->dummyObject->publicProperty, 4242, 'setProperty does not work with public property.');
+        self::assertEquals($this->dummyObject->publicProperty, 4242, 'setProperty does not work with public property.');
     }
 
     /**
@@ -215,8 +215,8 @@ class ObjectAccessTest extends \PHPUnit\Framework\TestCase
         ObjectAccess::setProperty($arrayObject, 'publicProperty', 4242);
         ObjectAccess::setProperty($array, 'key', 'value');
 
-        $this->assertEquals(4242, $arrayObject['publicProperty']);
-        $this->assertEquals('value', $array['key']);
+        self::assertEquals(4242, $arrayObject['publicProperty']);
+        self::assertEquals('value', $array['key']);
     }
 
     /**
@@ -227,7 +227,7 @@ class ObjectAccessTest extends \PHPUnit\Framework\TestCase
         $arrayObject = new \ArrayObject(['key' => 'value']);
         $expectedResult = 'value';
         $actualResult = ObjectAccess::getProperty($arrayObject, 'key');
-        $this->assertEquals($expectedResult, $actualResult, 'getProperty does not work with ArrayObject property.');
+        self::assertEquals($expectedResult, $actualResult, 'getProperty does not work with ArrayObject property.');
     }
 
     /**
@@ -238,7 +238,7 @@ class ObjectAccessTest extends \PHPUnit\Framework\TestCase
         $arrayObject = new \ArrayObject();
         $expectedResult = 'ArrayIterator';
         $actualResult = ObjectAccess::getProperty($arrayObject, 'iteratorClass');
-        $this->assertEquals($expectedResult, $actualResult, 'getProperty does not call existing getter of object implementing ArrayAccess.');
+        self::assertEquals($expectedResult, $actualResult, 'getProperty does not call existing getter of object implementing ArrayAccess.');
     }
 
     /**
@@ -249,7 +249,7 @@ class ObjectAccessTest extends \PHPUnit\Framework\TestCase
         $arrayObject = new \ArrayObject(['iteratorClass' => 'This should be ignored']);
         $expectedResult = 'ArrayIterator';
         $actualResult = ObjectAccess::getProperty($arrayObject, 'iteratorClass');
-        $this->assertEquals($expectedResult, $actualResult, 'getProperty does not call existing getter of object implementing ArrayAccess.');
+        self::assertEquals($expectedResult, $actualResult, 'getProperty does not call existing getter of object implementing ArrayAccess.');
     }
 
     /**
@@ -280,7 +280,7 @@ class ObjectAccessTest extends \PHPUnit\Framework\TestCase
         $arrayAccessInstance = new ArrayAccessClass(['key' => 'value']);
         $expectedResult = 'value';
         $actualResult = ObjectAccess::getProperty($arrayAccessInstance, 'key');
-        $this->assertEquals($expectedResult, $actualResult, 'getPropertyPath does not work with Array Access property.');
+        self::assertEquals($expectedResult, $actualResult, 'getPropertyPath does not work with Array Access property.');
     }
 
     /**
@@ -290,7 +290,7 @@ class ObjectAccessTest extends \PHPUnit\Framework\TestCase
     {
         $arrayAccessInstance = new ArrayAccessClass(['key' => 'value']);
         $actualResult = ObjectAccess::getProperty($arrayAccessInstance, 'internalProperty', true);
-        $this->assertEquals('access through forceDirectAccess', $actualResult, 'getPropertyPath does not respect ForceDirectAccess for ArrayAccess implementations.');
+        self::assertEquals('access through forceDirectAccess', $actualResult, 'getPropertyPath does not respect ForceDirectAccess for ArrayAccess implementations.');
     }
 
     /**
@@ -300,7 +300,7 @@ class ObjectAccessTest extends \PHPUnit\Framework\TestCase
     {
         $array = ['key' => 'value'];
         $actualResult = ObjectAccess::getProperty($array, 'key');
-        $this->assertEquals('value', $actualResult, 'getProperty does not work with Array property.');
+        self::assertEquals('value', $actualResult, 'getProperty does not work with Array property.');
     }
 
     /**
@@ -310,7 +310,7 @@ class ObjectAccessTest extends \PHPUnit\Framework\TestCase
     {
         $array = ['key' => null];
         $actualResult = ObjectAccess::getProperty($array, 'key');
-        $this->assertNull($actualResult, 'getProperty should allow access to NULL properties.');
+        self::assertNull($actualResult, 'getProperty should allow access to NULL properties.');
     }
 
     /**
@@ -320,7 +320,7 @@ class ObjectAccessTest extends \PHPUnit\Framework\TestCase
     {
         $array = ['parent' => ['key' => 'value']];
         $actualResult = ObjectAccess::getPropertyPath($array, 'parent.key');
-        $this->assertEquals('value', $actualResult, 'getPropertyPath does not work with Array property.');
+        self::assertEquals('value', $actualResult, 'getPropertyPath does not work with Array property.');
     }
 
     /**
@@ -330,7 +330,7 @@ class ObjectAccessTest extends \PHPUnit\Framework\TestCase
     {
         $array = ['parent' => new \ArrayObject(['key' => 'value'])];
         $actualResult = ObjectAccess::getPropertyPath($array, 'parent.key');
-        $this->assertEquals('value', $actualResult, 'getPropertyPath does not work with Array Access property.');
+        self::assertEquals('value', $actualResult, 'getPropertyPath does not work with Array Access property.');
     }
 
     /**
@@ -340,7 +340,7 @@ class ObjectAccessTest extends \PHPUnit\Framework\TestCase
     {
         $expectedPropertyNames = ['anotherBooleanProperty', 'anotherProperty', 'booleanProperty', 'property', 'property2', 'publicProperty', 'publicProperty2'];
         $actualPropertyNames = ObjectAccess::getGettablePropertyNames($this->dummyObject);
-        $this->assertEquals($expectedPropertyNames, $actualPropertyNames, 'getGettablePropertyNames returns not all gettable properties.');
+        self::assertEquals($expectedPropertyNames, $actualPropertyNames, 'getGettablePropertyNames returns not all gettable properties.');
     }
 
     /**
@@ -350,7 +350,7 @@ class ObjectAccessTest extends \PHPUnit\Framework\TestCase
     {
         $expectedPropertyNames = ['anotherBooleanProperty', 'anotherProperty', 'property', 'property2', 'publicProperty', 'publicProperty2', 'writeOnlyMagicProperty'];
         $actualPropertyNames = ObjectAccess::getSettablePropertyNames($this->dummyObject);
-        $this->assertEquals($expectedPropertyNames, $actualPropertyNames, 'getSettablePropertyNames returns not all settable properties.');
+        self::assertEquals($expectedPropertyNames, $actualPropertyNames, 'getSettablePropertyNames returns not all settable properties.');
     }
 
     /**
@@ -364,7 +364,7 @@ class ObjectAccessTest extends \PHPUnit\Framework\TestCase
 
         $expectedPropertyNames = ['property', 'property2'];
         $actualPropertyNames = ObjectAccess::getSettablePropertyNames($stdClassObject);
-        $this->assertEquals($expectedPropertyNames, $actualPropertyNames, 'getSettablePropertyNames returns not all settable properties.');
+        self::assertEquals($expectedPropertyNames, $actualPropertyNames, 'getSettablePropertyNames returns not all settable properties.');
     }
 
     /**
@@ -382,7 +382,7 @@ class ObjectAccessTest extends \PHPUnit\Framework\TestCase
             'publicProperty2' => 42
         ];
         $actualProperties = ObjectAccess::getGettableProperties($this->dummyObject);
-        $this->assertEquals($expectedProperties, $actualProperties, 'expectedProperties did not return the right values for the properties.');
+        self::assertEquals($expectedProperties, $actualProperties, 'expectedProperties did not return the right values for the properties.');
     }
 
     /**
@@ -400,7 +400,7 @@ class ObjectAccessTest extends \PHPUnit\Framework\TestCase
             'publicProperty2' => 42
         ];
         $actualProperties = ObjectAccess::getGettableProperties($stdClassObject);
-        $this->assertEquals($expectedProperties, $actualProperties, 'expectedProperties did not return the right values for the properties.');
+        self::assertEquals($expectedProperties, $actualProperties, 'expectedProperties did not return the right values for the properties.');
     }
 
     /**
@@ -412,7 +412,7 @@ class ObjectAccessTest extends \PHPUnit\Framework\TestCase
 
         $expectedProperties = [];
         $actualProperties = ObjectAccess::getGettableProperties($proxyObject);
-        $this->assertEquals($expectedProperties, $actualProperties, 'expectedProperties did not return the right values for the properties.');
+        self::assertEquals($expectedProperties, $actualProperties, 'expectedProperties did not return the right values for the properties.');
     }
 
     /**
@@ -420,12 +420,12 @@ class ObjectAccessTest extends \PHPUnit\Framework\TestCase
      */
     public function isPropertySettableTellsIfAPropertyCanBeSet()
     {
-        $this->assertTrue(ObjectAccess::isPropertySettable($this->dummyObject, 'writeOnlyMagicProperty'));
-        $this->assertTrue(ObjectAccess::isPropertySettable($this->dummyObject, 'publicProperty'));
-        $this->assertTrue(ObjectAccess::isPropertySettable($this->dummyObject, 'property'));
+        self::assertTrue(ObjectAccess::isPropertySettable($this->dummyObject, 'writeOnlyMagicProperty'));
+        self::assertTrue(ObjectAccess::isPropertySettable($this->dummyObject, 'publicProperty'));
+        self::assertTrue(ObjectAccess::isPropertySettable($this->dummyObject, 'property'));
 
-        $this->assertFalse(ObjectAccess::isPropertySettable($this->dummyObject, 'privateProperty'));
-        $this->assertFalse(ObjectAccess::isPropertySettable($this->dummyObject, 'shouldNotBePickedUp'));
+        self::assertFalse(ObjectAccess::isPropertySettable($this->dummyObject, 'privateProperty'));
+        self::assertFalse(ObjectAccess::isPropertySettable($this->dummyObject, 'shouldNotBePickedUp'));
     }
 
     /**
@@ -436,9 +436,9 @@ class ObjectAccessTest extends \PHPUnit\Framework\TestCase
         $stdClassObject = new \stdClass();
         $stdClassObject->property = 'foo';
 
-        $this->assertTrue(ObjectAccess::isPropertySettable($stdClassObject, 'property'));
+        self::assertTrue(ObjectAccess::isPropertySettable($stdClassObject, 'property'));
 
-        $this->assertFalse(ObjectAccess::isPropertySettable($stdClassObject, 'undefinedProperty'));
+        self::assertFalse(ObjectAccess::isPropertySettable($stdClassObject, 'undefinedProperty'));
     }
 
     /**
@@ -446,14 +446,14 @@ class ObjectAccessTest extends \PHPUnit\Framework\TestCase
      */
     public function isPropertyGettableTellsIfAPropertyCanBeRetrieved()
     {
-        $this->assertTrue(ObjectAccess::isPropertyGettable($this->dummyObject, 'publicProperty'));
-        $this->assertTrue(ObjectAccess::isPropertyGettable($this->dummyObject, 'property'));
-        $this->assertTrue(ObjectAccess::isPropertyGettable($this->dummyObject, 'booleanProperty'));
-        $this->assertTrue(ObjectAccess::isPropertyGettable($this->dummyObject, 'anotherBooleanProperty'));
+        self::assertTrue(ObjectAccess::isPropertyGettable($this->dummyObject, 'publicProperty'));
+        self::assertTrue(ObjectAccess::isPropertyGettable($this->dummyObject, 'property'));
+        self::assertTrue(ObjectAccess::isPropertyGettable($this->dummyObject, 'booleanProperty'));
+        self::assertTrue(ObjectAccess::isPropertyGettable($this->dummyObject, 'anotherBooleanProperty'));
 
-        $this->assertFalse(ObjectAccess::isPropertyGettable($this->dummyObject, 'privateProperty'));
-        $this->assertFalse(ObjectAccess::isPropertyGettable($this->dummyObject, 'writeOnlyMagicProperty'));
-        $this->assertFalse(ObjectAccess::isPropertyGettable($this->dummyObject, 'shouldNotBePickedUp'));
+        self::assertFalse(ObjectAccess::isPropertyGettable($this->dummyObject, 'privateProperty'));
+        self::assertFalse(ObjectAccess::isPropertyGettable($this->dummyObject, 'writeOnlyMagicProperty'));
+        self::assertFalse(ObjectAccess::isPropertyGettable($this->dummyObject, 'shouldNotBePickedUp'));
     }
 
     /**
@@ -464,8 +464,8 @@ class ObjectAccessTest extends \PHPUnit\Framework\TestCase
         $arrayObject = new \ArrayObject();
         $arrayObject['key'] = 'v';
 
-        $this->assertTrue(ObjectAccess::isPropertyGettable($arrayObject, 'key'));
-        $this->assertFalse(ObjectAccess::isPropertyGettable($arrayObject, 'undefinedKey'));
+        self::assertTrue(ObjectAccess::isPropertyGettable($arrayObject, 'key'));
+        self::assertFalse(ObjectAccess::isPropertyGettable($arrayObject, 'undefinedKey'));
     }
 
     /**
@@ -476,9 +476,9 @@ class ObjectAccessTest extends \PHPUnit\Framework\TestCase
         $stdClassObject = new \stdClass();
         $stdClassObject->property = 'foo';
 
-        $this->assertTrue(ObjectAccess::isPropertyGettable($stdClassObject, 'property'));
+        self::assertTrue(ObjectAccess::isPropertyGettable($stdClassObject, 'property'));
 
-        $this->assertFalse(ObjectAccess::isPropertyGettable($stdClassObject, 'undefinedProperty'));
+        self::assertFalse(ObjectAccess::isPropertyGettable($stdClassObject, 'undefinedProperty'));
     }
 
     /**
@@ -492,7 +492,7 @@ class ObjectAccessTest extends \PHPUnit\Framework\TestCase
 
         $expected = 'test';
         $actual = ObjectAccess::getPropertyPath($this->dummyObject, 'property2.property');
-        $this->assertEquals($expected, $actual);
+        self::assertEquals($expected, $actual);
     }
 
     /**
@@ -504,7 +504,7 @@ class ObjectAccessTest extends \PHPUnit\Framework\TestCase
         $alternativeObject->setProperty(new \stdClass());
         $this->dummyObject->setProperty2($alternativeObject);
 
-        $this->assertNull(ObjectAccess::getPropertyPath($this->dummyObject, 'property2.property.not.existing'));
+        self::assertNull(ObjectAccess::getPropertyPath($this->dummyObject, 'property2.property.not.existing'));
     }
 
     /**
@@ -514,7 +514,7 @@ class ObjectAccessTest extends \PHPUnit\Framework\TestCase
     {
         $string = 'Hello world';
 
-        $this->assertNull(ObjectAccess::getPropertyPath($string, 'property2'));
+        self::assertNull(ObjectAccess::getPropertyPath($string, 'property2'));
     }
 
     /**
@@ -525,7 +525,7 @@ class ObjectAccessTest extends \PHPUnit\Framework\TestCase
         $object = new \stdClass();
         $object->foo = 'Hello World';
 
-        $this->assertNull(ObjectAccess::getPropertyPath($object, 'foo.bar'));
+        self::assertNull(ObjectAccess::getPropertyPath($object, 'foo.bar'));
     }
 
     /**
@@ -538,7 +538,7 @@ class ObjectAccessTest extends \PHPUnit\Framework\TestCase
         $object1->property = 'booh!';
         $object2 = new \stdClass();
 
-        $this->assertEquals('booh!', ObjectAccess::getProperty($object1, 'property'));
+        self::assertEquals('booh!', ObjectAccess::getProperty($object1, 'property'));
         ObjectAccess::getProperty($object2, 'property');
     }
 }

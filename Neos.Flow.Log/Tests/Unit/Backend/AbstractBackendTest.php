@@ -52,6 +52,6 @@ class AbstractBackendTest extends UnitTestCase
     {
         $className = $this->backendClassName;
         $backend = new $className(['someOption' => 'someValue']);
-        $this->assertSame('someValue', $backend->getSomeOption());
+        self::assertSame('someValue', $backend->getSomeOption());
     }
 }

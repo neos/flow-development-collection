@@ -71,7 +71,7 @@ class ProtectedContextTest extends UnitTestCase
         $evaluator = $this->createEvaluator();
         $result = $evaluator->evaluate('value.foo', $context);
 
-        $this->assertEquals('Bar', $result);
+        self::assertEquals('Bar', $result);
     }
 
     /**
@@ -88,7 +88,7 @@ class ProtectedContextTest extends UnitTestCase
 
         $result = $evaluator->evaluate('String.substr("Hello World", 6, 5)', $context);
 
-        $this->assertEquals('World', $result);
+        self::assertEquals('World', $result);
     }
 
     /**
@@ -127,7 +127,7 @@ class ProtectedContextTest extends UnitTestCase
         $evaluator = $this->createEvaluator();
 
         $result = $evaluator->evaluate('ident(value)', $context);
-        $this->assertEquals($securedObject, $result);
+        self::assertEquals($securedObject, $result);
 
         $evaluator->evaluate('ident(value).callMe("Foo")', $context);
     }
@@ -153,7 +153,7 @@ class ProtectedContextTest extends UnitTestCase
         $evaluator = $this->createEvaluator();
 
         $result = $evaluator->evaluate('Array.reverse(value)[0]', $context);
-        $this->assertEquals($securedObject, $result);
+        self::assertEquals($securedObject, $result);
 
         $evaluator->evaluate('Array.reverse(value)[0].callMe("Foo")', $context);
     }
@@ -179,7 +179,7 @@ class ProtectedContextTest extends UnitTestCase
         $evaluator = $this->createEvaluator();
 
         $result = $evaluator->evaluate('q(value).count()', $context);
-        $this->assertEquals(2, $result);
+        self::assertEquals(2, $result);
     }
 
     /**
@@ -198,7 +198,7 @@ class ProtectedContextTest extends UnitTestCase
         $evaluator = $this->createEvaluator();
 
         $result = $evaluator->evaluate('value.callMe("Foo")', $context);
-        $this->assertEquals('Hello, Foo!', $result);
+        self::assertEquals('Hello, Foo!', $result);
     }
 
     /**
@@ -212,7 +212,7 @@ class ProtectedContextTest extends UnitTestCase
 
         $evaluator = $this->createEvaluator();
         $result = $evaluator->evaluate('unknown.someMethod()', $context);
-        $this->assertEquals(null, $result);
+        self::assertEquals(null, $result);
     }
 
     /**

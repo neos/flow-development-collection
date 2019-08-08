@@ -79,8 +79,8 @@ class RequestTest extends UnitTestCase
 
         $request = Request::createFromEnvironment();
 
-        $this->assertEquals('GET', $request->getMethod());
-        $this->assertEquals('http://dev.blog.rob/posts/2011/11/28/laboriosam-soluta-est-minus-molestiae?getKey1=getValue1&getKey2=getValue2', (string)$request->getUri());
+        self::assertEquals('GET', $request->getMethod());
+        self::assertEquals('http://dev.blog.rob/posts/2011/11/28/laboriosam-soluta-est-minus-molestiae?getKey1=getValue1&getKey2=getValue2', (string)$request->getUri());
 
         $_SERVER = $server;
     }
@@ -101,7 +101,7 @@ class RequestTest extends UnitTestCase
 
         $request = Request::createFromEnvironment();
 
-        $this->assertEquals('http://localhost/', (string)$request->getUri());
+        self::assertEquals('http://localhost/', (string)$request->getUri());
 
         $_SERVER = $server;
     }
@@ -129,8 +129,8 @@ class RequestTest extends UnitTestCase
         ];
 
         $request = new Request($get, $post, $files, $server);
-        $this->assertEquals('https', $request->getUri()->getScheme());
-        $this->assertTrue($request->isSecure());
+        self::assertEquals('https', $request->getUri()->getScheme());
+        self::assertTrue($request->isSecure());
     }
 
     /**
@@ -141,20 +141,20 @@ class RequestTest extends UnitTestCase
         $uri = new Uri('http://flow.neos.io/foo/bar?baz=1&quux=true#at-the-very-bottom');
         $request = Request::create($uri);
 
-        $this->assertEquals('GET', $request->getMethod());
-        $this->assertEquals($uri, $request->getUri());
-        $this->assertEquals('HTTP/1.1', $request->getVersion());
+        self::assertEquals('GET', $request->getMethod());
+        self::assertEquals($uri, $request->getUri());
+        self::assertEquals('HTTP/1.1', $request->getVersion());
 
         $uri = new Uri('https://flow.neos.io/foo/bar?baz=1&quux=true#at-the-very-bottom');
         $request = Request::create($uri);
 
-        $this->assertEquals($uri, $request->getUri());
+        self::assertEquals($uri, $request->getUri());
 
         $uri = new Uri('http://flow.neos.io/foo/bar?baz=1&quux=true#at-the-very-bottom');
         $request = Request::create($uri, 'POST');
 
-        $this->assertEquals('POST', $request->getMethod());
-        $this->assertEquals($uri, $request->getUri());
+        self::assertEquals('POST', $request->getMethod());
+        self::assertEquals($uri, $request->getUri());
     }
 
     /**
@@ -166,8 +166,8 @@ class RequestTest extends UnitTestCase
         $request = Request::create($uri);
         $request->setVersion('HTTP/1.0');
 
-        $this->assertEquals('HTTP/1.0', $request->getVersion());
-        $this->assertStringEndsWith("HTTP/1.0\r\n", $request->getRequestLine());
+        self::assertEquals('HTTP/1.0', $request->getVersion());
+        self::assertStringEndsWith("HTTP/1.0\r\n", $request->getRequestLine());
     }
 
     /**
@@ -229,7 +229,7 @@ class RequestTest extends UnitTestCase
     {
         $uri = new Uri('http://flow.neos.io');
         $request = Request::create($uri, $originalMethod, $arguments, [], $server);
-        $this->assertEquals($expectedMethod, $request->getMethod());
+        self::assertEquals($expectedMethod, $request->getMethod());
     }
 
     /**
@@ -243,7 +243,7 @@ class RequestTest extends UnitTestCase
         $uri = new Uri('http://flow.neos.io/foo');
         $request = Request::create($uri, 'POST');
 
-        $this->assertEquals('application/x-www-form-urlencoded', $request->getHeaders()->get('Content-Type'));
+        self::assertEquals('application/x-www-form-urlencoded', $request->getHeaders()->get('Content-Type'));
     }
 
     /**
@@ -255,8 +255,8 @@ class RequestTest extends UnitTestCase
         $request = Request::create($uri);
 
         $subRequest = new ActionRequest($request);
-        $this->assertInstanceOf(ActionRequest::class, $subRequest);
-        $this->assertSame($request, $subRequest->getParentRequest());
+        self::assertInstanceOf(ActionRequest::class, $subRequest);
+        self::assertSame($request, $subRequest->getParentRequest());
     }
 
     /**
@@ -280,7 +280,7 @@ class RequestTest extends UnitTestCase
     {
         $request = Request::create(new Uri('http://flow.neos.io'));
         $request->setMethod($validMethod);
-        $this->assertSame($validMethod, $request->getMethod());
+        self::assertSame($validMethod, $request->getMethod());
     }
 
     /**
@@ -300,7 +300,7 @@ class RequestTest extends UnitTestCase
 
         $uri = new Uri('http://dev.blog.rob/foo/bar');
         $request = new Request([], [], [], $server);
-        $this->assertEquals($uri, $request->getUri());
+        self::assertEquals($uri, $request->getUri());
     }
 
     /**
@@ -318,7 +318,7 @@ class RequestTest extends UnitTestCase
         $this->inject($request, 'inputStreamUri', 'vfs://Foo/content.txt');
 
         $actualContent = $request->getContent();
-        $this->assertEquals($expectedContent, $actualContent);
+        self::assertEquals($expectedContent, $actualContent);
     }
 
     /**
@@ -338,7 +338,7 @@ class RequestTest extends UnitTestCase
         $resource = $request->getContent(true);
         $actualContent = fread($resource, strlen($expectedContent));
 
-        $this->assertSame($expectedContent, $actualContent);
+        self::assertSame($expectedContent, $actualContent);
     }
 
     /**
@@ -379,7 +379,7 @@ class RequestTest extends UnitTestCase
             'User-Agent: Flow/' . FLOW_VERSION_BRANCH . ".x\r\n" .
             "Content-Type: application/x-www-form-urlencoded\r\n";
 
-        $this->assertEquals($expectedHeaders, $request->renderHeaders());
+        self::assertEquals($expectedHeaders, $request->renderHeaders());
     }
 
     /**
@@ -405,7 +405,7 @@ class RequestTest extends UnitTestCase
             "\r\n" .
             'putArgument=first value';
 
-        $this->assertEquals($expectedRawRequest, (string)$request);
+        self::assertEquals($expectedRawRequest, (string)$request);
     }
 
     /**
@@ -437,7 +437,7 @@ class RequestTest extends UnitTestCase
         if ($rawValues !== null) {
             $request->setHeader('Accept', $rawValues);
         }
-        $this->assertSame($expectedMediaTypes, $request->getAcceptedMediaTypes());
+        self::assertSame($expectedMediaTypes, $request->getAcceptedMediaTypes());
     }
 
     /**
@@ -470,7 +470,7 @@ class RequestTest extends UnitTestCase
         if ($preferredTypes !== null) {
             $request->setHeader('Accept', $preferredTypes);
         }
-        $this->assertSame($negotiatedType, $request->getNegotiatedMediaType($supportedTypes));
+        self::assertSame($negotiatedType, $request->getNegotiatedMediaType($supportedTypes));
     }
 
     /**
@@ -487,7 +487,7 @@ class RequestTest extends UnitTestCase
         ];
 
         $request = new Request([], [], [], $server);
-        $this->assertEquals('http://dev.blog.rob/', (string)$request->getBaseUri());
+        self::assertEquals('http://dev.blog.rob/', (string)$request->getBaseUri());
 
         $server = [
             'HTTP_HOST' => 'dev.blog.rob',
@@ -498,7 +498,7 @@ class RequestTest extends UnitTestCase
         ];
 
         $request = new Request([], [], [], $server);
-        $this->assertEquals('http://dev.blog.rob/', (string)$request->getBaseUri());
+        self::assertEquals('http://dev.blog.rob/', (string)$request->getBaseUri());
 
         $server = [
             'HTTP_HOST' => 'dev.blog.rob',
@@ -508,7 +508,7 @@ class RequestTest extends UnitTestCase
         ];
 
         $request = new Request([], [], [], $server);
-        $this->assertEquals('http://dev.blog.rob/', (string)$request->getBaseUri());
+        self::assertEquals('http://dev.blog.rob/', (string)$request->getBaseUri());
     }
 
     /**
@@ -528,7 +528,7 @@ class RequestTest extends UnitTestCase
 
         $baseUri = new Uri('http://prod.blog.rob/');
         $request->setBaseUri($baseUri);
-        $this->assertEquals('http://prod.blog.rob/', (string)$request->getBaseUri());
+        self::assertEquals('http://prod.blog.rob/', (string)$request->getBaseUri());
     }
 
     /**
@@ -550,7 +550,7 @@ class RequestTest extends UnitTestCase
     public function getArgumentsReturnsGetAndPostArguments($method, $uriString, $postArguments, $filesArguments, $expectedArguments)
     {
         $request = Request::create(new Uri($uriString), $method, $postArguments, [], $filesArguments);
-        $this->assertEquals($expectedArguments, $request->getArguments());
+        self::assertEquals($expectedArguments, $request->getArguments());
     }
 
     /**
@@ -559,10 +559,10 @@ class RequestTest extends UnitTestCase
     public function singleArgumentsCanBeCheckedAndRetrieved()
     {
         $request = Request::create(new Uri('http://dev.blog.rob/foo/bar?baz=quux&coffee=due'));
-        $this->assertTrue($request->hasArgument('baz'));
-        $this->assertEquals('quux', $request->getArgument('baz'));
-        $this->assertFalse($request->hasArgument('tea'));
-        $this->assertNull($request->getArgument('tea'));
+        self::assertTrue($request->hasArgument('baz'));
+        self::assertEquals('quux', $request->getArgument('baz'));
+        self::assertFalse($request->hasArgument('tea'));
+        self::assertNull($request->getArgument('tea'));
     }
 
     /**
@@ -571,7 +571,7 @@ class RequestTest extends UnitTestCase
     public function httpHostIsNotAppendedByColonIfNoExplicitPortIsGiven()
     {
         $request = Request::create(new Uri('http://dev.blog.rob/noPort/isGivenHere'));
-        $this->assertEquals('dev.blog.rob', $request->getHeader('Host'));
+        self::assertEquals('dev.blog.rob', $request->getHeader('Host'));
     }
 
     /**
@@ -581,8 +581,8 @@ class RequestTest extends UnitTestCase
     public function standardPortsAreRecognizedCorrectly()
     {
         $request = Request::create(new Uri('http://dev.blog.rob:80/foo/bar?baz=quux&coffee=due'));
-        $this->assertSame(80, $request->getUri()->getPort());
-        $this->assertSame(80, $request->getPort());
+        self::assertSame(80, $request->getUri()->getPort());
+        self::assertSame(80, $request->getPort());
     }
 
     /**
@@ -592,8 +592,8 @@ class RequestTest extends UnitTestCase
     public function nonStandardPortIsRecognizedCorrectly()
     {
         $request = Request::create(new Uri('http://dev.blog.rob:8080/foo/bar?baz=quux&coffee=due'));
-        $this->assertSame(8080, $request->getUri()->getPort());
-        $this->assertSame(8080, $request->getPort());
+        self::assertSame(8080, $request->getUri()->getPort());
+        self::assertSame(8080, $request->getPort());
     }
 
     /**
@@ -606,7 +606,7 @@ class RequestTest extends UnitTestCase
         $reflectedServerProperty = new \ReflectionProperty(get_class($request), 'server');
         $reflectedServerProperty->setAccessible(true);
         $serverValue = $reflectedServerProperty->getValue($request);
-        $this->assertSame(8080, $serverValue['SERVER_PORT']);
+        self::assertSame(8080, $serverValue['SERVER_PORT']);
     }
 
     /**
@@ -616,7 +616,7 @@ class RequestTest extends UnitTestCase
     public function nonStandardHttpsPortIsAddedToHttpHost()
     {
         $request = Request::create(new Uri('https://dev.blog.rob:44343/foo/bar?baz=quux&coffee=due'));
-        $this->assertSame(44343, $request->getUri()->getPort());
+        self::assertSame(44343, $request->getUri()->getPort());
     }
 
     /**
@@ -626,7 +626,7 @@ class RequestTest extends UnitTestCase
     public function standardHttpsPortIsRecognizedCorrectly()
     {
         $request = Request::create(new Uri('https://dev.blog.rob/foo/bar?baz=quux&coffee=due'));
-        $this->assertSame(443, $request->getUri()->getPort());
+        self::assertSame(443, $request->getUri()->getPort());
     }
 
     /**
@@ -639,7 +639,7 @@ class RequestTest extends UnitTestCase
         $reflectedServerProperty = new \ReflectionProperty(get_class($request), 'server');
         $reflectedServerProperty->setAccessible(true);
         $serverValue = $reflectedServerProperty->getValue($request);
-        $this->assertSame(44343, $serverValue['SERVER_PORT']);
+        self::assertSame(44343, $serverValue['SERVER_PORT']);
     }
 
     /**
@@ -652,7 +652,7 @@ class RequestTest extends UnitTestCase
         $request = Request::create(new Uri('http://dev.blog.rob/?foo=bar'), 'POST');
         $request->setContent($fileHandler);
 
-        $this->assertSame($fileHandler, $request->getContent());
+        self::assertSame($fileHandler, $request->getContent());
     }
 
     /**
@@ -665,9 +665,9 @@ class RequestTest extends UnitTestCase
         $request = Request::create(new Uri('http://dev.blog.rob/?foo=bar'), 'POST');
         $request->setContent($streamHandler);
 
-        $this->assertSame($streamHandler, $request->getContent());
-        $this->assertEquals('application/octet-stream', $request->getHeader('Content-Type'));
-        $this->assertEquals(filesize(__FILE__), $request->getHeader('Content-Length'));
+        self::assertSame($streamHandler, $request->getContent());
+        self::assertEquals('application/octet-stream', $request->getHeader('Content-Type'));
+        self::assertEquals(filesize(__FILE__), $request->getHeader('Content-Length'));
     }
 
     /**
@@ -678,19 +678,19 @@ class RequestTest extends UnitTestCase
     public function isMethodSafeReturnsTrueIfTheRequestMethodIsGetOrHead()
     {
         $request = Request::create(new Uri('http://acme.com'), 'GET');
-        $this->assertTrue($request->isMethodSafe());
+        self::assertTrue($request->isMethodSafe());
 
         $request = Request::create(new Uri('http://acme.com'), 'HEAD');
-        $this->assertTrue($request->isMethodSafe());
+        self::assertTrue($request->isMethodSafe());
 
         $request = Request::create(new Uri('http://acme.com'), 'POST');
-        $this->assertFalse($request->isMethodSafe());
+        self::assertFalse($request->isMethodSafe());
 
         $request = Request::create(new Uri('http://acme.com'), 'PUT');
-        $this->assertFalse($request->isMethodSafe());
+        self::assertFalse($request->isMethodSafe());
 
         $request = Request::create(new Uri('http://acme.com'), 'DELETE');
-        $this->assertFalse($request->isMethodSafe());
+        self::assertFalse($request->isMethodSafe());
     }
 
     /**
@@ -883,7 +883,7 @@ class RequestTest extends UnitTestCase
         ];
 
         $result = UploadedFilesHelper::untangleFilesArray($convolutedFiles);
-        $this->assertSame($untangledFiles, $result);
+        self::assertSame($untangledFiles, $result);
     }
 
     /**
@@ -941,7 +941,7 @@ class RequestTest extends UnitTestCase
         ];
 
         $result = UploadedFilesHelper::untangleFilesArray($convolutedFiles);
-        $this->assertSame($untangledFiles, $result);
+        self::assertSame($untangledFiles, $result);
     }
 
     /**
@@ -982,7 +982,7 @@ class RequestTest extends UnitTestCase
         ];
 
         $result = UploadedFilesHelper::untangleFilesArray($convolutedFiles);
-        $this->assertSame($untangledFiles, $result);
+        self::assertSame($untangledFiles, $result);
     }
 
     /**
@@ -1012,7 +1012,7 @@ class RequestTest extends UnitTestCase
     {
         $request = $this->getAccessibleMock(Request::class, ['dummy'], [], '', false);
         $actualValues = $request->_call('parseContentNegotiationQualityValues', $rawValues);
-        $this->assertSame($expectedValues, $actualValues);
+        self::assertSame($expectedValues, $actualValues);
     }
 
     /**
@@ -1023,7 +1023,7 @@ class RequestTest extends UnitTestCase
         $request = Request::create(new Uri('http://dev.blog.rob/amnesia/spray'), 'GET');
         $relativePath = $request->getRelativePath();
 
-        $this->assertSame($relativePath, 'amnesia/spray');
+        self::assertSame($relativePath, 'amnesia/spray');
     }
 
     /**
@@ -1034,7 +1034,7 @@ class RequestTest extends UnitTestCase
         $request = Request::create(new Uri('http://dev.blog.rob/'), 'GET');
         $relativePath = $request->getRelativePath();
 
-        $this->assertSame($relativePath, '');
+        self::assertSame($relativePath, '');
     }
 
     /**
@@ -1065,7 +1065,7 @@ class RequestTest extends UnitTestCase
             'REQUEST_URI' => $requestUri
         ];
         $request = new Request([], [], [], $server);
-        $this->assertEquals($expectedUri, (string)$request->getUri());
+        self::assertEquals($expectedUri, (string)$request->getUri());
     }
 
     /**

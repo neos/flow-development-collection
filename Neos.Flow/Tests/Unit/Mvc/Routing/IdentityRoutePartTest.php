@@ -76,7 +76,7 @@ class IdentityRoutePartTest extends UnitTestCase
     public function getUriPatternReturnsTheSpecifiedUriPatternIfItsNotEmpty()
     {
         $this->identityRoutePart->setUriPattern('SomeUriPattern');
-        $this->assertSame('SomeUriPattern', $this->identityRoutePart->getUriPattern());
+        self::assertSame('SomeUriPattern', $this->identityRoutePart->getUriPattern());
     }
 
     /**
@@ -87,7 +87,7 @@ class IdentityRoutePartTest extends UnitTestCase
         $this->mockClassSchema->expects($this->once())->method('getIdentityProperties')->will($this->returnValue([]));
 
         $this->identityRoutePart->setObjectType('SomeObjectType');
-        $this->assertSame('', $this->identityRoutePart->getUriPattern());
+        self::assertSame('', $this->identityRoutePart->getUriPattern());
     }
 
     /**
@@ -97,7 +97,7 @@ class IdentityRoutePartTest extends UnitTestCase
     {
         $this->mockClassSchema->expects($this->once())->method('getIdentityProperties')->will($this->returnValue(['property1' => 'string', 'property2' => 'integer', 'property3' => 'DateTime']));
         $this->identityRoutePart->setObjectType('SomeObjectType');
-        $this->assertSame('{property1}/{property2}/{property3}', $this->identityRoutePart->getUriPattern());
+        self::assertSame('{property1}/{property2}/{property3}', $this->identityRoutePart->getUriPattern());
     }
 
     /**
@@ -105,8 +105,8 @@ class IdentityRoutePartTest extends UnitTestCase
      */
     public function matchValueReturnsFalseIfTheGivenValueIsEmptyOrNull()
     {
-        $this->assertFalse($this->identityRoutePart->_call('matchValue', ''));
-        $this->assertFalse($this->identityRoutePart->_call('matchValue', null));
+        self::assertFalse($this->identityRoutePart->_call('matchValue', ''));
+        self::assertFalse($this->identityRoutePart->_call('matchValue', null));
     }
 
     /**
@@ -117,7 +117,7 @@ class IdentityRoutePartTest extends UnitTestCase
         $this->mockObjectPathMappingRepository->expects($this->once())->method('findOneByObjectTypeUriPatternAndPathSegment')->with('SomeObjectType', 'SomeUriPattern', 'TheRoutePath', false)->will($this->returnValue(null));
         $this->identityRoutePart->setObjectType('SomeObjectType');
         $this->identityRoutePart->setUriPattern('SomeUriPattern');
-        $this->assertFalse($this->identityRoutePart->_call('matchValue', 'TheRoutePath'));
+        self::assertFalse($this->identityRoutePart->_call('matchValue', 'TheRoutePath'));
     }
 
     /**
@@ -131,10 +131,10 @@ class IdentityRoutePartTest extends UnitTestCase
         $this->identityRoutePart->setObjectType('SomeObjectType');
         $this->identityRoutePart->setUriPattern('SomeUriPattern');
 
-        $this->assertTrue($this->identityRoutePart->_call('matchValue', 'TheRoutePath'));
+        self::assertTrue($this->identityRoutePart->_call('matchValue', 'TheRoutePath'));
         $expectedResult = ['__identity' => 'TheIdentifier'];
         $actualResult = $this->identityRoutePart->getValue();
-        $this->assertSame($expectedResult, $actualResult);
+        self::assertSame($expectedResult, $actualResult);
     }
 
     /**
@@ -150,10 +150,10 @@ class IdentityRoutePartTest extends UnitTestCase
 
         $this->identityRoutePart->setObjectType('stdClass');
 
-        $this->assertTrue($this->identityRoutePart->_call('matchValue', 'The%20Identifier'));
+        self::assertTrue($this->identityRoutePart->_call('matchValue', 'The%20Identifier'));
         $expectedResult = ['__identity' => 'The Identifier'];
         $actualResult = $this->identityRoutePart->getValue();
-        $this->assertSame($expectedResult, $actualResult);
+        self::assertSame($expectedResult, $actualResult);
     }
 
     /**
@@ -174,9 +174,9 @@ class IdentityRoutePartTest extends UnitTestCase
      */
     public function findValueToMatchReturnsAnEmptyStringIfTheRoutePathIsEmpty()
     {
-        $this->assertSame('', $this->identityRoutePart->_call('findValueToMatch', null));
-        $this->assertSame('', $this->identityRoutePart->_call('findValueToMatch', ''));
-        $this->assertSame('', $this->identityRoutePart->_call('findValueToMatch', '/'));
+        self::assertSame('', $this->identityRoutePart->_call('findValueToMatch', null));
+        self::assertSame('', $this->identityRoutePart->_call('findValueToMatch', ''));
+        self::assertSame('', $this->identityRoutePart->_call('findValueToMatch', '/'));
     }
 
     /**
@@ -186,7 +186,7 @@ class IdentityRoutePartTest extends UnitTestCase
     {
         $this->identityRoutePart->setUriPattern('');
         $this->identityRoutePart->setSplitString('SplitStringThatIsNotInTheCurrentRoutePath');
-        $this->assertSame('', $this->identityRoutePart->_call('findValueToMatch', 'The/Complete/RoutPath'));
+        self::assertSame('', $this->identityRoutePart->_call('findValueToMatch', 'The/Complete/RoutPath'));
     }
 
     /**
@@ -196,7 +196,7 @@ class IdentityRoutePartTest extends UnitTestCase
     {
         $this->identityRoutePart->setUriPattern('');
         $this->identityRoutePart->setSplitString('TheSplitString');
-        $this->assertSame('', $this->identityRoutePart->_call('findValueToMatch', 'First/Part/Of/The/Complete/RoutPath/TheSplitString/SomeThingElse'));
+        self::assertSame('', $this->identityRoutePart->_call('findValueToMatch', 'First/Part/Of/The/Complete/RoutPath/TheSplitString/SomeThingElse'));
     }
 
     /**
@@ -232,7 +232,7 @@ class IdentityRoutePartTest extends UnitTestCase
     {
         $this->identityRoutePart->setUriPattern($uriPattern);
         $this->identityRoutePart->setSplitString($splitString);
-        $this->assertSame($expectedResult, $this->identityRoutePart->_call('findValueToMatch', $routePath));
+        self::assertSame($expectedResult, $this->identityRoutePart->_call('findValueToMatch', $routePath));
     }
 
     /**
@@ -248,8 +248,8 @@ class IdentityRoutePartTest extends UnitTestCase
 
         $this->identityRoutePart->setObjectType('stdClass');
         $this->identityRoutePart->setUriPattern('SomeUriPattern');
-        $this->assertTrue($this->identityRoutePart->_call('resolveValue', $value));
-        $this->assertSame('thepathsegment', $this->identityRoutePart->getValue());
+        self::assertTrue($this->identityRoutePart->_call('resolveValue', $value));
+        self::assertSame('thepathsegment', $this->identityRoutePart->getValue());
     }
 
     /**
@@ -262,7 +262,7 @@ class IdentityRoutePartTest extends UnitTestCase
 
         $this->identityRoutePart->setObjectType('stdClass');
         $this->identityRoutePart->setUriPattern('SomeUriPattern');
-        $this->assertFalse($this->identityRoutePart->_call('resolveValue', $value));
+        self::assertFalse($this->identityRoutePart->_call('resolveValue', $value));
     }
 
     /**
@@ -281,8 +281,8 @@ class IdentityRoutePartTest extends UnitTestCase
         $this->identityRoutePart->setObjectType('stdClass');
 
         $this->identityRoutePart->_call('resolveValue', $value);
-        $this->assertSame('Some%20Identifier', $this->identityRoutePart->getValue());
-        $this->assertNotSame('Some+Identifier', $this->identityRoutePart->getValue());
+        self::assertSame('Some%20Identifier', $this->identityRoutePart->getValue());
+        self::assertNotSame('Some+Identifier', $this->identityRoutePart->getValue());
     }
 
     /**
@@ -300,7 +300,7 @@ class IdentityRoutePartTest extends UnitTestCase
         $this->identityRoutePart->setLowerCase(true);
 
         $this->identityRoutePart->_call('resolveValue', $value);
-        $this->assertSame('thepathsegment', $this->identityRoutePart->getValue());
+        self::assertSame('thepathsegment', $this->identityRoutePart->getValue());
     }
 
     /**
@@ -318,7 +318,7 @@ class IdentityRoutePartTest extends UnitTestCase
         $this->identityRoutePart->setLowerCase(false);
 
         $this->identityRoutePart->_call('resolveValue', $value);
-        $this->assertSame('ThePathSegment', $this->identityRoutePart->getValue());
+        self::assertSame('ThePathSegment', $this->identityRoutePart->getValue());
     }
 
     /**
@@ -327,7 +327,7 @@ class IdentityRoutePartTest extends UnitTestCase
     public function resolveValueReturnsFalseIfTheGivenValueIsNotOfTheSpecifiedType()
     {
         $this->identityRoutePart->setObjectType('SomeObjectType');
-        $this->assertFalse($this->identityRoutePart->_call('resolveValue', new \stdClass()));
+        self::assertFalse($this->identityRoutePart->_call('resolveValue', new \stdClass()));
     }
 
     /**
@@ -343,8 +343,8 @@ class IdentityRoutePartTest extends UnitTestCase
 
         $this->identityRoutePart->setObjectType('stdClass');
         $this->identityRoutePart->setUriPattern('SomeUriPattern');
-        $this->assertTrue($this->identityRoutePart->_call('resolveValue', $object));
-        $this->assertSame('thepathsegment', $this->identityRoutePart->getValue());
+        self::assertTrue($this->identityRoutePart->_call('resolveValue', $object));
+        self::assertSame('thepathsegment', $this->identityRoutePart->getValue());
     }
 
     /**
@@ -370,8 +370,8 @@ class IdentityRoutePartTest extends UnitTestCase
 
         $this->identityRoutePart->setObjectType('stdClass');
         $this->identityRoutePart->setUriPattern('SomeUriPattern');
-        $this->assertTrue($this->identityRoutePart->_call('resolveValue', $object));
-        $this->assertSame('the/path/segment', $this->identityRoutePart->getValue());
+        self::assertTrue($this->identityRoutePart->_call('resolveValue', $object));
+        self::assertSame('the/path/segment', $this->identityRoutePart->getValue());
     }
 
     /**
@@ -405,8 +405,8 @@ class IdentityRoutePartTest extends UnitTestCase
 
         $this->identityRoutePart->setObjectType('stdClass');
         $this->identityRoutePart->setUriPattern('SomeUriPattern');
-        $this->assertTrue($this->identityRoutePart->_call('resolveValue', $object));
-        $this->assertSame('the/path/segment-2', $this->identityRoutePart->getValue());
+        self::assertTrue($this->identityRoutePart->_call('resolveValue', $object));
+        self::assertSame('the/path/segment-2', $this->identityRoutePart->getValue());
     }
 
     /**
@@ -440,8 +440,8 @@ class IdentityRoutePartTest extends UnitTestCase
         $this->identityRoutePart->setObjectType('stdClass');
         $this->identityRoutePart->setUriPattern('SomeUriPattern');
         $this->identityRoutePart->setLowerCase(false);
-        $this->assertTrue($this->identityRoutePart->_call('resolveValue', $object));
-        $this->assertSame('The/Path/Segment-1', $this->identityRoutePart->getValue());
+        self::assertTrue($this->identityRoutePart->_call('resolveValue', $object));
+        self::assertSame('The/Path/Segment-1', $this->identityRoutePart->getValue());
     }
 
     /**
@@ -467,8 +467,8 @@ class IdentityRoutePartTest extends UnitTestCase
 
         $this->identityRoutePart->setObjectType('stdClass');
         $this->identityRoutePart->setUriPattern('SomeUriPattern');
-        $this->assertTrue($this->identityRoutePart->_call('resolveValue', $object));
-        $this->assertSame('-1', $this->identityRoutePart->getValue());
+        self::assertTrue($this->identityRoutePart->_call('resolveValue', $object));
+        self::assertSame('-1', $this->identityRoutePart->getValue());
     }
 
     /**
@@ -536,7 +536,7 @@ class IdentityRoutePartTest extends UnitTestCase
         $identityRoutePart = $this->getAccessibleMock(IdentityRoutePart::class, ['dummy']);
         $identityRoutePart->setUriPattern($uriPattern);
         $actualResult = $identityRoutePart->_call('createPathSegmentForObject', $object);
-        $this->assertSame($expectedResult, $actualResult);
+        self::assertSame($expectedResult, $actualResult);
     }
 
     /**

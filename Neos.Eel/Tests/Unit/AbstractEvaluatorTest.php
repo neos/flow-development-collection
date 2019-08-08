@@ -710,10 +710,10 @@ abstract class AbstractEvaluatorTest extends UnitTestCase
     protected function assertEvaluated($expected, $expression, $context)
     {
         $evaluator = $this->createEvaluator();
-        $this->assertSame($expected, $evaluator->evaluate($expression, $context));
+        self::assertSame($expected, $evaluator->evaluate($expression, $context));
 
         $wrappedExpression = '${' . $expression . '}';
-        $this->assertSame(1, preg_match(\Neos\Eel\Package::EelExpressionRecognizer, $wrappedExpression), 'The wrapped expression ' . $wrappedExpression . ' was not detected as Eel expression');
+        self::assertSame(1, preg_match(\Neos\Eel\Package::EelExpressionRecognizer, $wrappedExpression), 'The wrapped expression ' . $wrappedExpression . ' was not detected as Eel expression');
     }
 
     /**

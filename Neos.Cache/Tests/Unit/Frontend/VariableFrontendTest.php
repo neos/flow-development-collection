@@ -104,7 +104,7 @@ class VariableFrontendTest extends BaseTestCase
         $backend->expects($this->once())->method('get')->will($this->returnValue(serialize('Just some value')));
 
         $cache = new VariableFrontend('VariableFrontend', $backend);
-        $this->assertEquals('Just some value', $cache->get('VariableCacheTest'), 'The returned value was not the expected string.');
+        self::assertEquals('Just some value', $cache->get('VariableCacheTest'), 'The returned value was not the expected string.');
     }
 
     /**
@@ -117,7 +117,7 @@ class VariableFrontendTest extends BaseTestCase
         $backend->expects($this->once())->method('get')->will($this->returnValue(serialize($theArray)));
 
         $cache = new VariableFrontend('VariableFrontend', $backend);
-        $this->assertEquals($theArray, $cache->get('VariableCacheTest'), 'The returned value was not the expected unserialized array.');
+        self::assertEquals($theArray, $cache->get('VariableCacheTest'), 'The returned value was not the expected unserialized array.');
     }
 
     /**
@@ -129,7 +129,7 @@ class VariableFrontendTest extends BaseTestCase
         $backend->expects($this->once())->method('get')->will($this->returnValue(serialize(false)));
 
         $cache = new VariableFrontend('VariableFrontend', $backend);
-        $this->assertFalse($cache->get('VariableCacheTest'), 'The returned value was not the false.');
+        self::assertFalse($cache->get('VariableCacheTest'), 'The returned value was not the false.');
     }
 
     /**
@@ -145,7 +145,7 @@ class VariableFrontendTest extends BaseTestCase
         $cache = new VariableFrontend('VariableFrontend', $backend);
         $cache->initializeObject();
 
-        $this->assertEquals($theArray, $cache->get('VariableCacheTest'), 'The returned value was not the expected unserialized array.');
+        self::assertEquals($theArray, $cache->get('VariableCacheTest'), 'The returned value was not the expected unserialized array.');
     }
 
     /**
@@ -157,7 +157,7 @@ class VariableFrontendTest extends BaseTestCase
         $backend->expects($this->once())->method('has')->with($this->equalTo('VariableCacheTest'))->will($this->returnValue(true));
 
         $cache = new VariableFrontend('VariableFrontend', $backend);
-        $this->assertTrue($cache->has('VariableCacheTest'), 'has() did not return true.');
+        self::assertTrue($cache->has('VariableCacheTest'), 'has() did not return true.');
     }
 
     /**
@@ -171,7 +171,7 @@ class VariableFrontendTest extends BaseTestCase
         $backend->expects($this->once())->method('remove')->with($this->equalTo($cacheIdentifier))->will($this->returnValue(true));
 
         $cache = new VariableFrontend('VariableFrontend', $backend);
-        $this->assertTrue($cache->remove($cacheIdentifier), 'remove() did not return true');
+        self::assertTrue($cache->remove($cacheIdentifier), 'remove() did not return true');
     }
 
     /**
@@ -212,7 +212,7 @@ class VariableFrontendTest extends BaseTestCase
         $backend->expects($this->exactly(2))->method('get')->will($this->onConsecutiveCalls(serialize('one value'), serialize('two value')));
 
         $cache = new VariableFrontend('VariableFrontend', $backend);
-        $this->assertEquals($entries, $cache->getByTag($tag), 'Did not receive the expected entries');
+        self::assertEquals($entries, $cache->getByTag($tag), 'Did not receive the expected entries');
     }
 
     /**
@@ -232,7 +232,7 @@ class VariableFrontendTest extends BaseTestCase
         $cache = new VariableFrontend('VariableFrontend', $backend);
         $cache->initializeObject();
 
-        $this->assertEquals($entries, $cache->getByTag($tag), 'Did not receive the expected entries');
+        self::assertEquals($entries, $cache->getByTag($tag), 'Did not receive the expected entries');
     }
 
     /**

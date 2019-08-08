@@ -49,7 +49,7 @@ class ObjectConverterTest extends FunctionalTestCase
                 $expectedTargetType);
 
         $actual = $this->converter->getTypeOfChildProperty('irrelevant', $propertyName, $configuration);
-        $this->assertEquals($expectedTargetType, $actual);
+        self::assertEquals($expectedTargetType, $actual);
     }
 
     /**
@@ -62,7 +62,7 @@ class ObjectConverterTest extends FunctionalTestCase
             'dummy',
             new PropertyMappingConfiguration()
         );
-        $this->assertEquals('float', $actual);
+        self::assertEquals('float', $actual);
     }
 
     /**
@@ -75,7 +75,7 @@ class ObjectConverterTest extends FunctionalTestCase
             'attributeWithStringTypeAnnotation',
             new PropertyMappingConfiguration()
         );
-        $this->assertEquals('string', $actual);
+        self::assertEquals('string', $actual);
     }
 
     /**
@@ -103,7 +103,7 @@ class ObjectConverterTest extends FunctionalTestCase
             'somePublicProperty',
             $configuration
         );
-        $this->assertEquals('float', $actual);
+        self::assertEquals('float', $actual);
     }
 
     /**
@@ -122,9 +122,9 @@ class ObjectConverterTest extends FunctionalTestCase
             new PropertyMappingConfiguration()
         );
 
-        $this->assertEquals('theValue set via Constructor', ObjectAccess::getProperty($convertedObject, 'propertyMeantForConstructorUsage', true));
-        $this->assertEquals('theValue set via Setter', ObjectAccess::getProperty($convertedObject, 'propertyMeantForSetterUsage', true));
-        $this->assertEquals('theValue', ObjectAccess::getProperty($convertedObject, 'propertyMeantForPublicUsage', true));
+        self::assertEquals('theValue set via Constructor', ObjectAccess::getProperty($convertedObject, 'propertyMeantForConstructorUsage', true));
+        self::assertEquals('theValue set via Setter', ObjectAccess::getProperty($convertedObject, 'propertyMeantForSetterUsage', true));
+        self::assertEquals('theValue', ObjectAccess::getProperty($convertedObject, 'propertyMeantForPublicUsage', true));
     }
 
     /**
@@ -140,7 +140,7 @@ class ObjectConverterTest extends FunctionalTestCase
             'someUnknownProperty',
             $configuration
         );
-        $this->assertNull($result);
+        self::assertNull($result);
     }
 
     /**
@@ -156,7 +156,7 @@ class ObjectConverterTest extends FunctionalTestCase
             'someUnknownProperty',
             $configuration
         );
-        $this->assertNull($result);
+        self::assertNull($result);
     }
 
     /**
@@ -168,7 +168,7 @@ class ObjectConverterTest extends FunctionalTestCase
             'irrelevant',
             \Neos\Flow\Tests\Functional\Property\Fixtures\TestClassWithSingletonConstructorInjection::class
         );
-        $this->assertInstanceOf(\Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\InterfaceAImplementation::class, $convertedObject->getSingletonClass());
+        self::assertInstanceOf(\Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\InterfaceAImplementation::class, $convertedObject->getSingletonClass());
     }
 
     /**

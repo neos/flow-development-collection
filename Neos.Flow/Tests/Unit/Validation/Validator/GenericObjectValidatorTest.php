@@ -31,7 +31,7 @@ class GenericObjectValidatorTest extends AbstractValidatorTestcase
      */
     public function validateReturnsNoErrorIfTheGivenValueIsAnEmptyString()
     {
-        $this->assertFalse($this->validator->validate('')->hasErrors());
+        self::assertFalse($this->validator->validate('')->hasErrors());
     }
 
     /**
@@ -39,7 +39,7 @@ class GenericObjectValidatorTest extends AbstractValidatorTestcase
      */
     public function validatorShouldReturnErrorsIfTheValueIsNoObjectAndNotNull()
     {
-        $this->assertTrue($this->validator->validate('foo')->hasErrors());
+        self::assertTrue($this->validator->validate('foo')->hasErrors());
     }
 
     /**
@@ -47,7 +47,7 @@ class GenericObjectValidatorTest extends AbstractValidatorTestcase
      */
     public function validatorShouldReturnNoErrorsIfTheValueIsNull()
     {
-        $this->assertFalse($this->validator->validate(null)->hasErrors());
+        self::assertFalse($this->validator->validate(null)->hasErrors());
     }
 
     /**
@@ -94,7 +94,7 @@ class GenericObjectValidatorTest extends AbstractValidatorTestcase
 
         $this->validator->addPropertyValidator('foo', $validatorForFoo);
         $this->validator->addPropertyValidator('bar', $validatorForBar);
-        $this->assertEquals($errors, $this->validator->validate($mockObject)->getFlattenedErrors());
+        self::assertEquals($errors, $this->validator->validate($mockObject)->getFlattenedErrors());
     }
 
     /**
@@ -116,7 +116,7 @@ class GenericObjectValidatorTest extends AbstractValidatorTestcase
         $aValidator->addPropertyValidator('b', $bValidator);
         $bValidator->addPropertyValidator('a', $aValidator);
 
-        $this->assertFalse($aValidator->validate($A)->hasErrors());
+        self::assertFalse($aValidator->validate($A)->hasErrors());
     }
 
     /**
@@ -146,7 +146,7 @@ class GenericObjectValidatorTest extends AbstractValidatorTestcase
         $mockUuidValidator->expects($this->any())->method('validate')->with(0xF)->will($this->returnValue($result));
         $bValidator->addPropertyValidator('uuid', $mockUuidValidator);
 
-        $this->assertSame(['b.uuid' => [$error]], $aValidator->validate($A)->getFlattenedErrors());
+        self::assertSame(['b.uuid' => [$error]], $aValidator->validate($A)->getFlattenedErrors());
     }
 
     /**
@@ -177,7 +177,7 @@ class GenericObjectValidatorTest extends AbstractValidatorTestcase
         $aValidator->addPropertyValidator('uuid', $mockUuidValidator);
         $bValidator->addPropertyValidator('uuid', $mockUuidValidator);
 
-        $this->assertSame(['b.uuid' => [$error1], 'uuid' => [$error1]], $aValidator->validate($A)->getFlattenedErrors());
+        self::assertSame(['b.uuid' => [$error1], 'uuid' => [$error1]], $aValidator->validate($A)->getFlattenedErrors());
     }
 
     /**
@@ -200,6 +200,6 @@ class GenericObjectValidatorTest extends AbstractValidatorTestcase
         $validator->validate($object);
         $validator->validate($object);
 
-        $this->assertEquals(1, $matcher->getInvocationCount());
+        self::assertEquals(1, $matcher->getInvocationCount());
     }
 }

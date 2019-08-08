@@ -95,7 +95,7 @@ class AbstractBackendTest extends UnitTestCase
     public function getTypeNormalizesDoubleToFloat()
     {
         $backend = $this->getAccessibleMockForAbstractClass(Persistence\Generic\Backend\AbstractBackend::class);
-        $this->assertEquals('float', $backend->_call('getType', 1.234));
+        self::assertEquals('float', $backend->_call('getType', 1.234));
     }
 
     /**
@@ -104,7 +104,7 @@ class AbstractBackendTest extends UnitTestCase
     public function getTypeReturnsClassNameForObjects()
     {
         $backend = $this->getAccessibleMockForAbstractClass(Persistence\Generic\Backend\AbstractBackend::class);
-        $this->assertEquals('stdClass', $backend->_call('getType', new \stdClass()));
+        self::assertEquals('stdClass', $backend->_call('getType', new \stdClass()));
     }
 
     /**
@@ -119,7 +119,7 @@ class AbstractBackendTest extends UnitTestCase
         $backend = $this->getAccessibleMockForAbstractClass(Persistence\Generic\Backend\AbstractBackend::class);
         $backend->injectPersistenceSession($mockSession);
 
-        $this->assertTrue($backend->_call('arrayContainsObject', [$object], $object, 'fakeUuid'));
+        self::assertTrue($backend->_call('arrayContainsObject', [$object], $object, 'fakeUuid'));
     }
 
     /**
@@ -133,7 +133,7 @@ class AbstractBackendTest extends UnitTestCase
         $backend = $this->getAccessibleMockForAbstractClass(Persistence\Generic\Backend\AbstractBackend::class);
         $backend->injectPersistenceSession($mockSession);
 
-        $this->assertFalse($backend->_call('arrayContainsObject', [new \stdClass()], new \stdClass(), 'uuid1'));
+        self::assertFalse($backend->_call('arrayContainsObject', [new \stdClass()], new \stdClass(), 'uuid1'));
     }
 
     /**
@@ -150,6 +150,6 @@ class AbstractBackendTest extends UnitTestCase
         $backend = $this->getAccessibleMockForAbstractClass(Persistence\Generic\Backend\AbstractBackend::class);
         $backend->injectPersistenceSession($mockSession);
 
-        $this->assertFalse($backend->_call('arrayContainsObject', [$object], $clone, 'clonedFakeUuid'));
+        self::assertFalse($backend->_call('arrayContainsObject', [$object], $clone, 'clonedFakeUuid'));
     }
 }

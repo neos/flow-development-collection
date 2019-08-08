@@ -41,7 +41,7 @@ class HtmlentitiesViewHelperTest extends ViewHelperBaseTestcase
      */
     public function viewHelperDeactivatesEscapingInterceptor()
     {
-        $this->assertFalse($this->viewHelper->isEscapingInterceptorEnabled());
+        self::assertFalse($this->viewHelper->isEscapingInterceptorEnabled());
     }
 
     /**
@@ -52,7 +52,7 @@ class HtmlentitiesViewHelperTest extends ViewHelperBaseTestcase
         $this->viewHelper->expects($this->never())->method('renderChildren');
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['value' => 'Some string']);
         $actualResult = $this->viewHelper->render();
-        $this->assertEquals('Some string', $actualResult);
+        self::assertEquals('Some string', $actualResult);
     }
 
     /**
@@ -63,7 +63,7 @@ class HtmlentitiesViewHelperTest extends ViewHelperBaseTestcase
         $this->viewHelper->expects($this->atLeastOnce())->method('renderChildren')->will($this->returnValue('Some string'));
         $this->viewHelper = $this->prepareArguments($this->viewHelper, []);
         $actualResult = $this->viewHelper->render();
-        $this->assertEquals('Some string', $actualResult);
+        self::assertEquals('Some string', $actualResult);
     }
 
     /**
@@ -74,7 +74,7 @@ class HtmlentitiesViewHelperTest extends ViewHelperBaseTestcase
         $source = 'This is a sample text without special characters.';
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['value' => $source]);
         $actualResult = $this->viewHelper->render();
-        $this->assertSame($source, $actualResult);
+        self::assertSame($source, $actualResult);
     }
 
     /**
@@ -86,7 +86,7 @@ class HtmlentitiesViewHelperTest extends ViewHelperBaseTestcase
         $expectedResult = 'Some special characters: &amp;&copy;&quot;\'';
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['value' => $source]);
         $actualResult = $this->viewHelper->render();
-        $this->assertEquals($expectedResult, $actualResult);
+        self::assertEquals($expectedResult, $actualResult);
     }
 
     /**
@@ -98,7 +98,7 @@ class HtmlentitiesViewHelperTest extends ViewHelperBaseTestcase
         $expectedResult = 'Some special characters: &amp;&copy;"\'';
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['value' => $source, 'keepQuotes' => true]);
         $actualResult = $this->viewHelper->render();
-        $this->assertEquals($expectedResult, $actualResult);
+        self::assertEquals($expectedResult, $actualResult);
     }
 
     /**
@@ -110,7 +110,7 @@ class HtmlentitiesViewHelperTest extends ViewHelperBaseTestcase
         $expectedResult = 'Some special characters: &amp;&copy;&quot;\'';
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['value' => $source, 'keepQuotes' => false, 'encoding' => 'ISO-8859-1']);
         $actualResult = $this->viewHelper->render();
-        $this->assertEquals($expectedResult, $actualResult);
+        self::assertEquals($expectedResult, $actualResult);
     }
 
     /**
@@ -122,7 +122,7 @@ class HtmlentitiesViewHelperTest extends ViewHelperBaseTestcase
         $expectedResult = 'already &amp;quot;encoded&amp;quot;';
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['value' => $source]);
         $actualResult = $this->viewHelper->render();
-        $this->assertEquals($expectedResult, $actualResult);
+        self::assertEquals($expectedResult, $actualResult);
     }
 
     /**
@@ -134,7 +134,7 @@ class HtmlentitiesViewHelperTest extends ViewHelperBaseTestcase
         $expectedResult = 'already &quot;encoded&quot;';
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['value' => $source, 'keepQuotes' => false, 'encoding' => 'UTF-8', 'doubleEncode' => false]);
         $actualResult = $this->viewHelper->render();
-        $this->assertEquals($expectedResult, $actualResult);
+        self::assertEquals($expectedResult, $actualResult);
     }
 
     /**
@@ -145,7 +145,7 @@ class HtmlentitiesViewHelperTest extends ViewHelperBaseTestcase
         $source = 123.45;
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['value' => $source]);
         $actualResult = $this->viewHelper->render();
-        $this->assertSame($source, $actualResult);
+        self::assertSame($source, $actualResult);
     }
 
     /**
@@ -157,7 +157,7 @@ class HtmlentitiesViewHelperTest extends ViewHelperBaseTestcase
         $expectedResult = 'Xaver &lt;b&gt;Cross-Site&lt;/b&gt;';
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['value' => $user]);
         $actualResult = $this->viewHelper->render();
-        $this->assertSame($expectedResult, $actualResult);
+        self::assertSame($expectedResult, $actualResult);
     }
 
     /**

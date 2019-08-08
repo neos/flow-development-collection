@@ -73,7 +73,7 @@ class FileSystemTargetTest extends UnitTestCase
      */
     public function getNameReturnsTargetName()
     {
-        $this->assertSame('test', $this->fileSystemTarget->getName());
+        self::assertSame('test', $this->fileSystemTarget->getName());
     }
 
     /**
@@ -100,7 +100,7 @@ class FileSystemTargetTest extends UnitTestCase
     public function getPublicStaticResourceUriTests($baseUri, $relativePathAndFilename, $expectedResult)
     {
         $this->inject($this->fileSystemTarget, 'baseUri', $baseUri);
-        $this->assertSame($expectedResult, $this->fileSystemTarget->getPublicStaticResourceUri($relativePathAndFilename));
+        self::assertSame($expectedResult, $this->fileSystemTarget->getPublicStaticResourceUri($relativePathAndFilename));
     }
 
     /**
@@ -114,7 +114,7 @@ class FileSystemTargetTest extends UnitTestCase
         $this->inject($this->fileSystemTarget, 'bootstrap', $mockBootstrap);
         $this->inject($this->fileSystemTarget, 'httpBaseUri', 'http://configured/http/base/uri/');
 
-        $this->assertStringStartsWith('http://configured/http/base/uri/', $this->fileSystemTarget->getPublicStaticResourceUri('some/path/SomeFilename.jpg'));
+        self::assertStringStartsWith('http://configured/http/base/uri/', $this->fileSystemTarget->getPublicStaticResourceUri('some/path/SomeFilename.jpg'));
     }
 
     /**
@@ -165,7 +165,7 @@ class FileSystemTargetTest extends UnitTestCase
         $mockResource->expects($this->any())->method('getFilename')->will($this->returnValue($filename));
         $mockResource->expects($this->any())->method('getSha1')->will($this->returnValue($sha1));
 
-        $this->assertSame($expectedResult, $this->fileSystemTarget->getPublicPersistentResourceUri($mockResource));
+        self::assertSame($expectedResult, $this->fileSystemTarget->getPublicPersistentResourceUri($mockResource));
     }
 
     /**
@@ -182,7 +182,7 @@ class FileSystemTargetTest extends UnitTestCase
         /** @var PersistentResource|\PHPUnit_Framework_MockObject_MockObject $mockResource */
         $mockResource = $this->getMockBuilder(PersistentResource::class)->disableOriginalConstructor()->getMock();
 
-        $this->assertStringStartsWith('http://configured/http/base/uri/', $this->fileSystemTarget->getPublicPersistentResourceUri($mockResource));
+        self::assertStringStartsWith('http://configured/http/base/uri/', $this->fileSystemTarget->getPublicPersistentResourceUri($mockResource));
     }
 
     /**
@@ -233,6 +233,6 @@ class FileSystemTargetTest extends UnitTestCase
         $fileSystemTarget->injectLogger($mockSystemLogger);
         $fileSystemTarget->publishCollection($staticCollection, $_publicationCallback);
 
-        $this->assertTrue($oneResourcePublished);
+        self::assertTrue($oneResourcePublished);
     }
 }

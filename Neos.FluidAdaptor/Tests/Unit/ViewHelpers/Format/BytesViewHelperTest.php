@@ -129,7 +129,7 @@ class BytesViewHelperTest extends ViewHelperBaseTestcase
     {
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['value' => $value, 'decimals' => $decimals, 'decimalSeparator' => $decimalSeparator, 'thousandsSeparator' => $thousandsSeparator]);
         $actualResult = $this->viewHelper->render();
-        $this->assertEquals($expected, $actualResult);
+        self::assertEquals($expected, $actualResult);
     }
 
     /**
@@ -140,6 +140,6 @@ class BytesViewHelperTest extends ViewHelperBaseTestcase
         $this->viewHelper->expects($this->once())->method('renderChildren')->will($this->returnValue(12345));
         $this->viewHelper = $this->prepareArguments($this->viewHelper, []);
         $actualResult = $this->viewHelper->render();
-        $this->assertEquals('12 KB', $actualResult);
+        self::assertEquals('12 KB', $actualResult);
     }
 }

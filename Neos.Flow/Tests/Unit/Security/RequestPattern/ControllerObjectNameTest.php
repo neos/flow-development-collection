@@ -31,7 +31,7 @@ class ControllerObjectNameTest extends UnitTestCase
 
         $requestPattern = new ControllerObjectName(['controllerObjectNamePattern' => 'Neos\Flow\Security\.*']);
 
-        $this->assertTrue($requestPattern->matchRequest($request));
+        self::assertTrue($requestPattern->matchRequest($request));
     }
 
     /**
@@ -44,6 +44,6 @@ class ControllerObjectNameTest extends UnitTestCase
 
         $requestPattern = new ControllerObjectName(['controllerObjectNamePattern' => 'Neos\Flow\Security\.*']);
 
-        $this->assertFalse($requestPattern->matchRequest($request));
+        self::assertFalse($requestPattern->matchRequest($request));
     }
 }

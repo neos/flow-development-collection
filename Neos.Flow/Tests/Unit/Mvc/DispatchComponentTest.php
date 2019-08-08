@@ -214,7 +214,7 @@ class DispatchComponentTest extends UnitTestCase
         $componentContext->setParameter(DispatchComponent::class, 'actionRequest', $this->mockActionRequest);
         $this->dispatchComponent->handle($componentContext);
         // TODO: This can be cleaned for next major when ActionResponse and HttpResponse are cleanly separated.
-        $this->assertInstanceOf(ActionResponse::class, $componentContext->getHttpResponse());
+        self::assertInstanceOf(ActionResponse::class, $componentContext->getHttpResponse());
     }
 
     /**

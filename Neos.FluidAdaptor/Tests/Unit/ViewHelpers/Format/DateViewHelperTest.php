@@ -36,7 +36,7 @@ class DateViewHelperTest extends ViewHelperBaseTestcase
     {
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['date' => new \DateTime('1980-12-13')]);
         $actualResult = $this->viewHelper->render();
-        $this->assertEquals('1980-12-13', $actualResult);
+        self::assertEquals('1980-12-13', $actualResult);
     }
 
     /**
@@ -46,7 +46,7 @@ class DateViewHelperTest extends ViewHelperBaseTestcase
     {
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['date' => '1980-12-13']);
         $actualResult = $this->viewHelper->render();
-        $this->assertEquals('1980-12-13', $actualResult);
+        self::assertEquals('1980-12-13', $actualResult);
     }
 
     /**
@@ -56,7 +56,7 @@ class DateViewHelperTest extends ViewHelperBaseTestcase
     {
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['date' => new \DateTime('1980-02-01'), 'format' => 'd.m.Y']);
         $actualResult = $this->viewHelper->render();
-        $this->assertEquals('01.02.1980', $actualResult);
+        self::assertEquals('01.02.1980', $actualResult);
     }
 
     /**
@@ -67,7 +67,7 @@ class DateViewHelperTest extends ViewHelperBaseTestcase
         $this->viewHelper->expects($this->once())->method('renderChildren')->will($this->returnValue(null));
         $this->viewHelper = $this->prepareArguments($this->viewHelper, []);
         $actualResult = $this->viewHelper->render();
-        $this->assertEquals('', $actualResult);
+        self::assertEquals('', $actualResult);
     }
 
     /**
@@ -88,7 +88,7 @@ class DateViewHelperTest extends ViewHelperBaseTestcase
         $this->viewHelper->expects($this->once())->method('renderChildren')->will($this->returnValue(new \DateTime('1980-12-13')));
         $this->viewHelper = $this->prepareArguments($this->viewHelper, []);
         $actualResult = $this->viewHelper->render();
-        $this->assertEquals('1980-12-13', $actualResult);
+        self::assertEquals('1980-12-13', $actualResult);
     }
 
     /**
@@ -99,7 +99,7 @@ class DateViewHelperTest extends ViewHelperBaseTestcase
         $this->viewHelper->expects($this->never())->method('renderChildren');
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['date' => '1980-12-12']);
         $actualResult = $this->viewHelper->render();
-        $this->assertEquals('1980-12-12', $actualResult);
+        self::assertEquals('1980-12-12', $actualResult);
     }
 
     /**

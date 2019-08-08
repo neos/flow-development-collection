@@ -204,7 +204,7 @@ class RouterCachingServiceTest extends UnitTestCase
     public function containsObjectDetectsObjectsInVariousSituations($expectedResult, $subject)
     {
         $actualResult = $this->routerCachingService->_call('containsObject', $subject);
-        $this->assertSame($expectedResult, $actualResult);
+        self::assertSame($expectedResult, $actualResult);
     }
 
     /**
@@ -217,7 +217,7 @@ class RouterCachingServiceTest extends UnitTestCase
         $this->mockRouteCache->expects($this->once())->method('get')->with($cacheIdentifier)->will($this->returnValue($expectedResult));
 
         $actualResult = $this->routerCachingService->getCachedMatchResults(new RouteContext($this->mockHttpRequest, RouteParameters::createEmpty()));
-        $this->assertEquals($expectedResult, $actualResult);
+        self::assertEquals($expectedResult, $actualResult);
     }
 
     /**
@@ -230,7 +230,7 @@ class RouterCachingServiceTest extends UnitTestCase
         $this->mockRouteCache->expects($this->once())->method('get')->with($cacheIdentifier)->will($this->returnValue(false));
 
         $actualResult = $this->routerCachingService->getCachedMatchResults(new RouteContext($this->mockHttpRequest, RouteParameters::createEmpty()));
-        $this->assertEquals($expectedResult, $actualResult);
+        self::assertEquals($expectedResult, $actualResult);
     }
 
     /**
@@ -271,7 +271,7 @@ class RouterCachingServiceTest extends UnitTestCase
         $this->mockResolveCache->expects($this->once())->method('get')->will($this->returnValue($expectedResult));
 
         $actualResult = $this->routerCachingService->getCachedResolvedUriConstraints(new ResolveContext($this->mockUri, $routeValues, false));
-        $this->assertSame($expectedResult, $actualResult);
+        self::assertSame($expectedResult, $actualResult);
     }
 
     /**
