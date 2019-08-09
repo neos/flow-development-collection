@@ -11,18 +11,12 @@ namespace Neos\Cache\Backend;
  * source code.
  */
 
-use Doctrine\DBAL\DBALException;
-use Doctrine\DBAL\DriverManager;
-use Doctrine\DBAL\Schema\Comparator;
-use Doctrine\DBAL\Schema\Schema;
-use Doctrine\DBAL\Types\Type;
 use Neos\Cache\Backend\AbstractBackend as IndependentAbstractBackend;
 use Neos\Cache\Exception;
 use Neos\Cache\Frontend\FrontendInterface;
 use Neos\Error\Messages\Error;
 use Neos\Error\Messages\Notice;
 use Neos\Error\Messages\Result;
-use Neos\Error\Messages\Warning;
 use Neos\Utility\Exception\FilesException;
 use Neos\Utility\Files;
 use Neos\Utility\PdoHelper;
@@ -357,7 +351,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
      *
      * @return void
      * @throws Exception if the connection cannot be established
-     * @throws FilesException
+     * throws FilesException
      */
     protected function connect()
     {
@@ -370,7 +364,11 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
 
             if ($this->pdoDriver === 'sqlite' && !file_exists($splitdsn[1])) {
                 if (!file_exists(dirname($splitdsn[1]))) {
-                    Files::createDirectoryRecursively(dirname($splitdsn[1]));
+                    try {
+                        Files::createDirectoryRecursively(dirname($splitdsn[1]));
+                    } catch (FilesException $exception) {
+                        throw new Exception(sprintf('Could not create directory for sqlite file "%s"', $splitdsn[1]) , 1565359792, $exception);
+                    }
                 }
                 $this->databaseHandle = new \PDO($this->dataSourceName, $this->username, $this->password);
                 $this->createCacheTables();
@@ -383,7 +381,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
                 $this->databaseHandle->exec('SET SESSION sql_mode=\'ANSI\';');
             }
         } catch (\PDOException $exception) {
-            throw new Exception('Could not connect to cache table with DSN "' . $this->dataSourceName . '". PDO error: ' . $exception->getMessage(), 1334736164);
+            throw new Exception(sprintf('Could not connect to cache table with DSN "%s". PDO error: %s', $this->dataSourceName, $exception->getMessage()), 1334736164, $exception);
         }
     }
 
@@ -392,7 +390,6 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
      *
      * @return void
      * @throws Exception if something goes wrong
-     * @throws FilesException
      */
     protected function createCacheTables()
     {
@@ -515,52 +512,11 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
     public function setup(): Result
     {
         $result = new Result();
+        $result->addNotice(new Notice('Creating database tables "%s" & "%s"...', null, [$this->cacheTableName, $this->tagsTableName]));
         try {
-            $this->connect();
-            $connection = DriverManager::getConnection(['pdo' => $this->databaseHandle]);
-        } catch (Exception | FilesException |DBALException $exception) {
-            $result->addError(new Error($exception->getMessage(), $exception->getCode(), [], 'Connection failed'));
-            return $result;
-        }
-
-        try {
-            $tablesExist = $connection->getSchemaManager()->tablesExist([$this->cacheTableName, $this->tagsTableName]);
-        } /** @noinspection PhpRedundantCatchClauseInspection */ catch (DBALException $exception) {
-            $result->addError(new Error($exception->getMessage(), $exception->getCode(), [], 'Connection failed'));
-            return $result;
-        }
-        if ($tablesExist) {
-            $result->addNotice(new Notice('Tables "%s" and "%s" (already exists)', null, [$this->cacheTableName, $this->tagsTableName]));
-        } else {
-            $result->addNotice(new Notice('Creating database tables "%s" & "%s"...', null, [$this->cacheTableName, $this->tagsTableName]));
-        }
-
-        $fromSchema = $connection->getSchemaManager()->createSchema();
-        $schemaDiff = (new Comparator())->compare($fromSchema, $this->getCacheTablesSchema());
-
-        try {
-            $statements = $schemaDiff->toSaveSql($connection->getDatabasePlatform());
-        } catch (DBALException $exception) {
-            $result->addError(new Error($exception->getMessage(), $exception->getCode(), [], 'Connection failed'));
-            return $result;
-        }
-        if ($statements === []) {
-            $result->addNotice(new Notice('Table schema is up to date, no migration required'));
-            return $result;
-        }
-        $connection->beginTransaction();
-        try {
-            foreach ($statements as $statement) {
-                $result->addNotice(new Notice('<info>++</info> %s', null, [$statement]));
-                $connection->exec($statement);
-            }
-            $connection->commit();
-        } catch (\Exception $exception) {
-            try {
-                $connection->rollBack();
-            } catch (\Exception $exception) {
-            }
-            $result->addError(new Error('Exception while trying to setup PdoBackend: %s', $exception->getCode(), [$exception->getMessage()]));
+            $this->createCacheTables();
+        } catch (Exception $exception) {
+            $result->addError(new Error($exception->getMessage(), $exception->getCode(), [], 'Failed'));
         }
         return $result;
     }
@@ -576,76 +532,34 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
         $result = new Result();
         try {
             $this->connect();
-            $connection = DriverManager::getConnection(['pdo' => $this->databaseHandle]);
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             $result->addError(new Error($exception->getMessage(), $exception->getCode(), [], 'Connection failed'));
             return $result;
         }
-        try {
-            $cacheTableExists = $connection->getSchemaManager()->tablesExist([$this->cacheTableName]);
-            $tagsTableExists = $connection->getSchemaManager()->tablesExist([$this->tagsTableName]);
-        } /** @noinspection PhpRedundantCatchClauseInspection */ catch (DBALException $exception) {
-            $result->addError(new Error($exception->getMessage(), $exception->getCode(), [], 'Connection failed'));
-            return $result;
-        }
-        $result->addNotice(new Notice((string)$connection->getDatabase(), null, [], 'Database'));
-        $result->addNotice(new Notice((string)$connection->getDriver()->getName(), null, [], 'Driver'));
-
-        if (!$cacheTableExists) {
+        $result->addNotice(new Notice($this->pdoDriver, null, [], 'Driver'));
+        if (!$this->tableExists($this->cacheTableName)) {
             $result->addError(new Error('%s (missing)', null, [$this->cacheTableName], 'Table'));
         }
-        if (!$tagsTableExists) {
+        if (!$this->tableExists($this->tagsTableName)) {
             $result->addError(new Error('%s (missing)', null, [$this->tagsTableName], 'Table'));
         }
-        if (!$cacheTableExists || !$tagsTableExists) {
-            return $result;
-        }
-        $fromSchema = $connection->getSchemaManager()->createSchema();
-        $schemaDiff = (new Comparator())->compare($fromSchema, $this->getCacheTablesSchema());
-        try {
-            $statements = $schemaDiff->toSaveSql($connection->getDatabasePlatform());
-        } catch (DBALException $exception) {
-            $result->addError(new Error($exception->getMessage(), $exception->getCode(), [], 'Connection failed'));
-            return $result;
-        }
-        if ($statements !== []) {
-            $result->addError(new Error('The schema of the cache tables is not up-to-date', null, [], 'Table schema'));
-            foreach ($statements as $statement) {
-                $result->addWarning(new Warning($statement, null, [], 'Required statement'));
-            }
-        }
+
         return $result;
     }
 
     /**
-     * Returns the Doctrine DBAL schema of the configured cache and tag tables
+     * Returns true if the given $tableName exists, otherwise false
      *
-     * @return Schema
+     * @param string $tableName
+     * @return bool
      */
-    private function getCacheTablesSchema(): Schema
+    private function tableExists(string $tableName): bool
     {
-        $schema = new Schema();
-        $cacheTable = $schema->createTable($this->cacheTableName);
-
-        $cacheTable->addColumn('identifier', Type::STRING, ['length' => 250]);
-        $cacheTable->addColumn('cache', Type::STRING, ['length' => 250]);
-        $cacheTable->addColumn('context', Type::STRING, ['length' => 150]);
-        $cacheTable->addColumn('created', Type::INTEGER, ['unsigned' => true, 'default' => 0]);
-        $cacheTable->addColumn('lifetime', Type::INTEGER, ['unsigned' => true, 'default' => 0]);
-        $cacheTable->addColumn('content', Type::TEXT);
-
-        $cacheTable->setPrimaryKey(['identifier', 'cache', 'context']);
-
-        $tagsTable = $schema->createTable($this->tagsTableName);
-
-        $tagsTable->addColumn('identifier', Type::STRING, ['length' => 255]);
-        $tagsTable->addColumn('cache', Type::STRING, ['length' => 250]);
-        $tagsTable->addColumn('context', Type::STRING, ['length' => 150]);
-        $tagsTable->addColumn('tag', Type::STRING, ['length' => 255]);
-
-        $tagsTable->addIndex(['identifier', 'cache', 'context'], 'identifier');
-        $tagsTable->addIndex(['tag'], 'tag');
-
-        return $schema;
+        try {
+            $this->databaseHandle->prepare('SELECT 1 FROM "' . $tableName . '" LIMIT 1')->execute();
+        } catch (\PDOException $exception) {
+            return false;
+        }
+        return true;
     }
 }
