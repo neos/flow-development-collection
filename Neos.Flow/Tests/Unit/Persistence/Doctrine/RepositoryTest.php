@@ -66,6 +66,6 @@ class RepositoryTest extends UnitTestCase
 
         /** @var Repository $repository */
         $repository = new $mockClassName($this->mockEntityManager);
-        $this->assertEquals($modelClassName, $repository->getEntityClassName());
+        self::assertEquals($modelClassName, $repository->getEntityClassName());
     }
 }

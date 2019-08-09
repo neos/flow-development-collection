@@ -103,7 +103,7 @@ class PackageFactoryTest extends UnitTestCase
         require($packageFilePath);
 
         $package = $this->packageFactory->create('vfs://Packages/', 'Some/Path/Some.Package/', 'Some.Package', 'some/package');
-        $this->assertSame('Neos\Flow\Fixtures\CustomPackage2', get_class($package));
+        self::assertSame('Neos\Flow\Fixtures\CustomPackage2', get_class($package));
     }
 
     /**
@@ -122,7 +122,7 @@ class PackageFactoryTest extends UnitTestCase
         require($packageFilePath);
 
         $package = $this->packageFactory->create('vfs://Packages/', 'Some/Path/Some.Package/', 'Some.Package', 'some/package', $composerManifest['autoload']);
-        $this->assertSame('Neos\Flow\Fixtures\CustomPackage3', get_class($package));
+        self::assertSame('Neos\Flow\Fixtures\CustomPackage3', get_class($package));
     }
 
     /**
@@ -135,6 +135,6 @@ class PackageFactoryTest extends UnitTestCase
         file_put_contents($packagePath . 'composer.json', '{"name": "some/package", "type": "neos-test"}');
 
         $package = $this->packageFactory->create('vfs://Packages/', 'Some/Path/Some.Package/', 'Some.Package', 'some/package');
-        $this->assertSame(Package::class, get_class($package));
+        self::assertSame(Package::class, get_class($package));
     }
 }

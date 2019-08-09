@@ -43,7 +43,7 @@ class DebuggerTest extends FunctionalTestCase
     public function ignoredClassesCanBeOverwrittenBySettings()
     {
         $object = new ApplicationContext('Development');
-        $this->assertEquals(sprintf('%s prototype object', ApplicationContext::class), Debugger::renderDump($object, 0, true));
+        self::assertEquals(sprintf('%s prototype object', ApplicationContext::class), Debugger::renderDump($object, 0, true));
         Debugger::clearState();
 
         $currentConfiguration = ObjectAccess::getProperty($this->configurationManager, 'configurations', true);
@@ -51,6 +51,6 @@ class DebuggerTest extends FunctionalTestCase
         $newConfiguration = Arrays::arrayMergeRecursiveOverrule($currentConfiguration, $configurationOverwrite);
         ObjectAccess::setProperty($this->configurationManager, 'configurations', $newConfiguration, true);
 
-        $this->assertStringContainsString('rootContextString', Debugger::renderDump($object, 0, true));
+        self::assertStringContainsString('rootContextString', Debugger::renderDump($object, 0, true));
     }
 }

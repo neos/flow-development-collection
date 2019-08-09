@@ -32,8 +32,8 @@ class TokenAndProviderFactoryTest extends UnitTestCase
 
         $tokenAndProviderFactory = new TokenAndProviderFactory($mockProviderResolver, $mockRequestPatternResolver);
 
-        $this->assertEquals([], $tokenAndProviderFactory->getProviders(), 'The array of providers should be empty.');
-        $this->assertEquals([], $tokenAndProviderFactory->getTokens(), 'The array of tokens should be empty.');
+        self::assertEquals([], $tokenAndProviderFactory->getProviders(), 'The array of providers should be empty.');
+        self::assertEquals([], $tokenAndProviderFactory->getTokens(), 'The array of tokens should be empty.');
     }
 
     /**

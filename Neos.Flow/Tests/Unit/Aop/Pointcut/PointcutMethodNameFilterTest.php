@@ -37,7 +37,7 @@ class PointcutMethodNameFilterTest extends UnitTestCase
         $mockReflectionService->expects($this->any())->method('isMethodFinal')->with($className, 'someFinalMethod')->will($this->returnValue(true));
         $methodNameFilter = new Aop\Pointcut\PointcutMethodNameFilter('someFinalMethod');
         $methodNameFilter->injectReflectionService($mockReflectionService);
-        $this->assertTrue($methodNameFilter->matches($className, 'someFinalMethod', $className, 1));
+        self::assertTrue($methodNameFilter->matches($className, 'someFinalMethod', $className, 1));
     }
 
     /**
@@ -61,17 +61,17 @@ class PointcutMethodNameFilterTest extends UnitTestCase
 
         $methodNameFilter = new Aop\Pointcut\PointcutMethodNameFilter('some.*', 'public');
         $methodNameFilter->injectReflectionService($mockReflectionService);
-        $this->assertTrue($methodNameFilter->matches(__CLASS__, 'somePublicMethod', $className, 1));
-        $this->assertFalse($methodNameFilter->matches(__CLASS__, 'someProtectedMethod', $className, 1));
-        $this->assertFalse($methodNameFilter->matches(__CLASS__, 'somePrivateMethod', $className, 1));
-        $this->assertFalse($methodNameFilter->matches(__CLASS__, 'somePublicMethod', null, 1));
+        self::assertTrue($methodNameFilter->matches(__CLASS__, 'somePublicMethod', $className, 1));
+        self::assertFalse($methodNameFilter->matches(__CLASS__, 'someProtectedMethod', $className, 1));
+        self::assertFalse($methodNameFilter->matches(__CLASS__, 'somePrivateMethod', $className, 1));
+        self::assertFalse($methodNameFilter->matches(__CLASS__, 'somePublicMethod', null, 1));
 
         $methodNameFilter = new Aop\Pointcut\PointcutMethodNameFilter('some.*', 'protected');
         $methodNameFilter->injectReflectionService($mockReflectionService);
-        $this->assertFalse($methodNameFilter->matches(__CLASS__, 'somePublicMethod', $className, 1));
-        $this->assertTrue($methodNameFilter->matches(__CLASS__, 'someProtectedMethod', $className, 1));
-        $this->assertFalse($methodNameFilter->matches(__CLASS__, 'somePrivateMethod', $className, 1));
-        $this->assertFalse($methodNameFilter->matches(__CLASS__, 'someProtectedMethod', null, 1));
+        self::assertFalse($methodNameFilter->matches(__CLASS__, 'somePublicMethod', $className, 1));
+        self::assertTrue($methodNameFilter->matches(__CLASS__, 'someProtectedMethod', $className, 1));
+        self::assertFalse($methodNameFilter->matches(__CLASS__, 'somePrivateMethod', $className, 1));
+        self::assertFalse($methodNameFilter->matches(__CLASS__, 'someProtectedMethod', null, 1));
     }
 
     /**
@@ -117,8 +117,8 @@ class PointcutMethodNameFilterTest extends UnitTestCase
 
         $methodNameFilter->matches(__CLASS__, 'somePublicMethod', $className, 1);
 
-        $this->assertTrue($methodNameFilter->matches(__CLASS__, 'someOtherPublicMethod', $className, 1));
-        $this->assertTrue($methodNameFilter->matches(__CLASS__, 'someThirdMethod', $className, 1));
+        self::assertTrue($methodNameFilter->matches(__CLASS__, 'someOtherPublicMethod', $className, 1));
+        self::assertTrue($methodNameFilter->matches(__CLASS__, 'someThirdMethod', $className, 1));
     }
 
     /**
@@ -139,6 +139,6 @@ class PointcutMethodNameFilterTest extends UnitTestCase
 
         $methodNameFilter = new Aop\Pointcut\PointcutMethodNameFilter('some.*', null, $argumentConstraints);
 
-        $this->assertEquals($expectedRuntimeEvaluations, $methodNameFilter->getRuntimeEvaluationsDefinition(), 'The argument constraint definitions have not been returned as expected.');
+        self::assertEquals($expectedRuntimeEvaluations, $methodNameFilter->getRuntimeEvaluationsDefinition(), 'The argument constraint definitions have not been returned as expected.');
     }
 }

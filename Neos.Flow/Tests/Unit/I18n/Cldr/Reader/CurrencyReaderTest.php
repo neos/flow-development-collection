@@ -76,7 +76,7 @@ class CurrencyReaderTest extends UnitTestCase
     public function returnsCorrectFraction($currencyCode, $digits, $rounding)
     {
         $result = $this->reader->getFraction($currencyCode);
-        $this->assertSame($digits, $result['digits']);
-        $this->assertSame($rounding, $result['rounding']);
+        self::assertSame($digits, $result['digits']);
+        self::assertSame($rounding, $result['rounding']);
     }
 }

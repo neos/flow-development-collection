@@ -29,7 +29,7 @@ class ResponseTest extends UnitTestCase
     {
         $response = new Response();
         $headers = $response->renderHeaders();
-        $this->assertEquals('HTTP/1.1 200 OK', $headers[0]);
+        self::assertEquals('HTTP/1.1 200 OK', $headers[0]);
     }
 
     /**
@@ -81,20 +81,20 @@ class ResponseTest extends UnitTestCase
     public function createFromRawSetsHeadersAndStatusCodeCorrectly($rawResponse, $expectedHeaders, $expectedStatusCode)
     {
         $response = Response::createFromRaw($rawResponse);
-        $this->assertEquals('HTTP/1.1', $response->getVersion());
+        self::assertEquals('HTTP/1.1', $response->getVersion());
 
         foreach ($expectedHeaders as $fieldName => $fieldValue) {
-            $this->assertTrue($response->hasHeader($fieldName), sprintf('Response does not have expected header %s', $fieldName));
-            $this->assertEquals($fieldValue, $response->getHeader($fieldName));
+            self::assertTrue($response->hasHeader($fieldName), sprintf('Response does not have expected header %s', $fieldName));
+            self::assertEquals($fieldValue, $response->getHeader($fieldName));
         }
         foreach ($response->getHeaders()->getAll() as $fieldName => $fieldValue) {
-            $this->assertTrue(isset($expectedHeaders[$fieldName]), sprintf('Response has unexpected header %s', $fieldName));
+            self::assertTrue(isset($expectedHeaders[$fieldName]), sprintf('Response has unexpected header %s', $fieldName));
         }
 
-        $this->assertEquals($expectedStatusCode, $response->getStatusCode());
+        self::assertEquals($expectedStatusCode, $response->getStatusCode());
 
         $expectedContent = "<!DOCTYPE html>\n<html>\nthe body\n</html>";
-        $this->assertEquals($expectedContent, $response->getContent());
+        self::assertEquals($expectedContent, $response->getContent());
     }
 
     /**
@@ -103,24 +103,24 @@ class ResponseTest extends UnitTestCase
     public function createFromRawSetsCookiesCorrectly()
     {
         $response = Response::createFromRaw(file_get_contents(__DIR__ . '/../Fixtures/RawResponse-1.txt'));
-        $this->assertCount(4, $response->getCookies());
+        self::assertCount(4, $response->getCookies());
 
-        $this->assertInstanceOf(Http\Cookie::class, $response->getCookie('tg'));
-        $this->assertEquals('426148', $response->getCookie('tg')->getValue());
-        $this->assertEquals(1665942816, $response->getCookie('tg')->getExpires());
+        self::assertInstanceOf(Http\Cookie::class, $response->getCookie('tg'));
+        self::assertEquals('426148', $response->getCookie('tg')->getValue());
+        self::assertEquals(1665942816, $response->getCookie('tg')->getExpires());
 
-        $this->assertInstanceOf(Http\Cookie::class, $response->getCookie('dmvk'));
-        $this->assertEquals('507d9f20317a5', $response->getCookie('dmvk')->getValue());
-        $this->assertEquals('example.org', $response->getCookie('dmvk')->getDomain());
+        self::assertInstanceOf(Http\Cookie::class, $response->getCookie('dmvk'));
+        self::assertEquals('507d9f20317a5', $response->getCookie('dmvk')->getValue());
+        self::assertEquals('example.org', $response->getCookie('dmvk')->getDomain());
 
-        $this->assertInstanceOf(Http\Cookie::class, $response->getCookie('ql_n'));
-        $this->assertEquals('0', $response->getCookie('ql_n')->getValue());
+        self::assertInstanceOf(Http\Cookie::class, $response->getCookie('ql_n'));
+        self::assertEquals('0', $response->getCookie('ql_n')->getValue());
 
-        $this->assertInstanceOf(Http\Cookie::class, $response->getCookie('masscast'));
-        $this->assertEquals('null', $response->getCookie('masscast')->getValue());
+        self::assertInstanceOf(Http\Cookie::class, $response->getCookie('masscast'));
+        self::assertEquals('null', $response->getCookie('masscast')->getValue());
 
         foreach ($response->getCookies() as $cookie) {
-            $this->assertEquals('/', $cookie->getPath());
+            self::assertEquals('/', $cookie->getPath());
         }
     }
 
@@ -139,7 +139,7 @@ class ResponseTest extends UnitTestCase
     public function startLineEqualsStatusLine()
     {
         $response = Response::createFromRaw(file_get_contents(__DIR__ . '/../Fixtures/RawResponse-1.txt'));
-        $this->assertEquals($response->getStartLine(), $response->getStatusLine());
+        self::assertEquals($response->getStartLine(), $response->getStatusLine());
     }
 
     /**
@@ -150,8 +150,8 @@ class ResponseTest extends UnitTestCase
         $response = Response::createFromRaw(file_get_contents(__DIR__ . '/../Fixtures/RawResponse-1.txt'));
         $response->setVersion('HTTP/1.0');
 
-        $this->assertEquals('HTTP/1.0', $response->getVersion());
-        $this->assertStringStartsWith('HTTP/1.0', $response->getStatusLine());
+        self::assertEquals('HTTP/1.0', $response->getVersion());
+        self::assertStringStartsWith('HTTP/1.0', $response->getStatusLine());
     }
 
     /**
@@ -162,7 +162,7 @@ class ResponseTest extends UnitTestCase
         $response = new Response();
         $response->setStatus(400, 'Really Bad Request');
         $headers = $response->renderHeaders();
-        $this->assertEquals('HTTP/1.1 400 Really Bad Request', $headers[0]);
+        self::assertEquals('HTTP/1.1 400 Really Bad Request', $headers[0]);
     }
 
     /**
@@ -172,7 +172,7 @@ class ResponseTest extends UnitTestCase
     {
         $response = new Response();
         $response->setStatus(924);
-        $this->assertEquals('924 Unknown Status', $response->getStatus());
+        self::assertEquals('924 Unknown Status', $response->getStatus());
     }
 
     /**
@@ -192,7 +192,7 @@ class ResponseTest extends UnitTestCase
     {
         $response = new Response();
         $response->setStatus(418);
-        $this->assertEquals('418 Sono Vibiemme', $response->getStatus());
+        self::assertEquals('418 Sono Vibiemme', $response->getStatus());
     }
 
     /**
@@ -203,7 +203,7 @@ class ResponseTest extends UnitTestCase
         $response = new Response();
 
         $response->setStatus(418);
-        $this->assertEquals(418, $response->getStatusCode());
+        self::assertEquals(418, $response->getStatusCode());
     }
 
     /**
@@ -225,7 +225,7 @@ class ResponseTest extends UnitTestCase
 
 
 
-        $this->assertEquals($expectedHeaders, $response->renderHeaders());
+        self::assertEquals($expectedHeaders, $response->renderHeaders());
     }
 
     /**
@@ -245,7 +245,7 @@ class ResponseTest extends UnitTestCase
             'MyHeader: MyValue-3',
         ];
 
-        $this->assertEquals($expectedHeaders, $response->renderHeaders());
+        self::assertEquals($expectedHeaders, $response->renderHeaders());
     }
 
     /**
@@ -256,7 +256,7 @@ class ResponseTest extends UnitTestCase
     public function contentTypeHeaderWithMediaTypeTextHtmlIsAddedByDefault()
     {
         $response = new Response();
-        $this->assertEquals('text/html; charset=UTF-8', $response->getHeader('Content-Type'));
+        self::assertEquals('text/html; charset=UTF-8', $response->getHeader('Content-Type'));
     }
 
     /**
@@ -269,7 +269,7 @@ class ResponseTest extends UnitTestCase
         $response = new Response();
         $response->setNow($now);
 
-        $this->assertEquals('Tue, 22 May 2012 10:00:00 +0000', $response->getHeader('Date')->format(DATE_RFC2822));
+        self::assertEquals('Tue, 22 May 2012 10:00:00 +0000', $response->getHeader('Date')->format(DATE_RFC2822));
     }
 
     /**
@@ -284,7 +284,7 @@ class ResponseTest extends UnitTestCase
         $response->setNow($now);
 
         $date = $response->getHeader('Date');
-        $this->assertEquals($now->getTimestamp(), $date->getTimestamp());
+        self::assertEquals($now->getTimestamp(), $date->getTimestamp());
     }
 
     /**
@@ -296,10 +296,10 @@ class ResponseTest extends UnitTestCase
         $response = new Response();
 
         $response->setDate($now);
-        $this->assertEquals($now, $response->getDate());
+        self::assertEquals($now, $response->getDate());
 
         $response->setDate('Tue, 22 May 2012 12:00:00 GMT');
-        $this->assertEquals($now, $response->getDate());
+        self::assertEquals($now, $response->getDate());
     }
 
     /**
@@ -312,9 +312,9 @@ class ResponseTest extends UnitTestCase
         $response = new Response();
         $response->setNow($date);
 
-        $this->assertNull($response->getLastModified());
+        self::assertNull($response->getLastModified());
         $response->setLastModified($fig);
-        $this->assertEquals($fig, $response->getLastModified());
+        self::assertEquals($fig, $response->getLastModified());
     }
 
     /**
@@ -330,7 +330,7 @@ class ResponseTest extends UnitTestCase
         $response = new Response();
         $response->setNow($now);
         $response->setExpires($later);
-        $this->assertEquals($later, $response->getExpires());
+        self::assertEquals($later, $response->getExpires());
     }
 
     /**
@@ -345,7 +345,7 @@ class ResponseTest extends UnitTestCase
         $response->setNow($now);
         $response->setHeader('Date', $sixtySecondsAgo);
 
-        $this->assertEquals(60, $response->getAge());
+        self::assertEquals(60, $response->getAge());
     }
 
     /**
@@ -359,7 +359,7 @@ class ResponseTest extends UnitTestCase
         $response->setNow($now);
         $response->setHeader('Age', 123);
 
-        $this->assertSame(123, $response->getAge());
+        self::assertSame(123, $response->getAge());
     }
 
     /**
@@ -373,7 +373,7 @@ class ResponseTest extends UnitTestCase
         $response->setNow(new \DateTime());
 
         $response->setPublic();
-        $this->assertEquals('public', $response->getHeader('Cache-Control'));
+        self::assertEquals('public', $response->getHeader('Cache-Control'));
     }
 
     /**
@@ -387,7 +387,7 @@ class ResponseTest extends UnitTestCase
         $response->setNow(new \DateTime());
 
         $response->setPrivate();
-        $this->assertEquals('private', $response->getHeader('Cache-Control'));
+        self::assertEquals('private', $response->getHeader('Cache-Control'));
     }
 
     /**
@@ -401,8 +401,8 @@ class ResponseTest extends UnitTestCase
         $response->setNow(new \DateTime());
 
         $response->setMaximumAge(60);
-        $this->assertEquals('max-age=60', $response->getHeader('Cache-Control'));
-        $this->assertSame(60, $response->getMaximumAge());
+        self::assertEquals('max-age=60', $response->getHeader('Cache-Control'));
+        self::assertSame(60, $response->getMaximumAge());
     }
 
     /**
@@ -416,8 +416,8 @@ class ResponseTest extends UnitTestCase
         $response->setNow(new \DateTime());
 
         $response->setSharedMaximumAge(60);
-        $this->assertEquals('s-maxage=60', $response->getHeader('Cache-Control'));
-        $this->assertSame(60, $response->getSharedMaximumAge());
+        self::assertEquals('s-maxage=60', $response->getHeader('Cache-Control'));
+        self::assertSame(60, $response->getSharedMaximumAge());
     }
 
     /**
@@ -432,7 +432,7 @@ class ResponseTest extends UnitTestCase
 
         $response->setHeader('Cache-Control', 'no-cache, max-age=240');
         $response->makeStandardsCompliant($request);
-        $this->assertEquals('no-cache', $response->getHeader('Cache-Control'));
+        self::assertEquals('no-cache', $response->getHeader('Cache-Control'));
     }
 
     /**
@@ -454,7 +454,7 @@ class ResponseTest extends UnitTestCase
             $response->setStatus($statusCode);
             $response->setContent('Body Language');
             $response->makeStandardsCompliant($request);
-            $this->assertEquals('', $response->getContent());
+            self::assertEquals('', $response->getContent());
         }
     }
 
@@ -474,7 +474,7 @@ class ResponseTest extends UnitTestCase
         $response->setHeader('Transfer-Encoding', 'chunked');
         $response->setHeader('Content-Length', strlen($content));
         $response->makeStandardsCompliant($request);
-        $this->assertFalse($response->hasHeader('Content-Length'));
+        self::assertFalse($response->hasHeader('Content-Length'));
     }
 
     /**
@@ -498,7 +498,7 @@ class ResponseTest extends UnitTestCase
 
         $response->setContent($content);
         $response->makeStandardsCompliant($request);
-        $this->assertEquals(strlen($content), $response->getHeader('Content-Length'));
+        self::assertEquals(strlen($content), $response->getHeader('Content-Length'));
     }
 
     /**
@@ -522,13 +522,13 @@ class ResponseTest extends UnitTestCase
         $response = new Response();
         $response->setContent($content);
         $response->makeStandardsCompliant($request);
-        $this->assertEquals('', $response->getContent());
-        $this->assertEquals(strlen($content), $response->getHeader('Content-Length'));
+        self::assertEquals('', $response->getContent());
+        self::assertEquals(strlen($content), $response->getHeader('Content-Length'));
 
         $response = new Response();
         $response->setHeader('Content-Length', 275);
         $response->makeStandardsCompliant($request);
-        $this->assertEquals(275, $response->getHeader('Content-Length'));
+        self::assertEquals(275, $response->getHeader('Content-Length'));
     }
 
     /**
@@ -548,8 +548,8 @@ class ResponseTest extends UnitTestCase
         $response->setMaximumAge(60);
         $response->setExpires($later);
         $response->makeStandardsCompliant($request);
-        $this->assertSame(null, $response->getHeaders()->getCacheControlDirective('max-age'));
-        $this->assertEquals($later, $response->getExpires());
+        self::assertSame(null, $response->getHeaders()->getCacheControlDirective('max-age'));
+        self::assertEquals($later, $response->getExpires());
     }
 
     /**
@@ -570,8 +570,8 @@ class ResponseTest extends UnitTestCase
         $response->setContent('Some Content');
         $response->makeStandardsCompliant($request);
 
-        $this->assertSame(304, $response->getStatusCode());
-        $this->assertSame('', $response->getContent());
+        self::assertSame(304, $response->getStatusCode());
+        self::assertSame('', $response->getContent());
     }
 
     /**
@@ -589,7 +589,7 @@ class ResponseTest extends UnitTestCase
         $request->setHeader('If-Unmodified-Since', $unmodifiedSince);
         $response->setHeader('Last-Modified', $lastModified);
         $response->makeStandardsCompliant($request);
-        $this->assertSame(412, $response->getStatusCode());
+        self::assertSame(412, $response->getStatusCode());
 
         $response = new Response();
         $unmodifiedSince = \DateTime::createFromFormat(DATE_RFC2822, 'Tue, 15 May 2012 09:00:00 GMT');
@@ -598,7 +598,7 @@ class ResponseTest extends UnitTestCase
         $response->setHeader('Last-Modified', $lastModified);
         $response->makeStandardsCompliant($request);
 
-        $this->assertSame(200, $response->getStatusCode());
+        self::assertSame(200, $response->getStatusCode());
     }
 
     /**
@@ -609,7 +609,7 @@ class ResponseTest extends UnitTestCase
         $parentResponse = new Response();
 
         $response = new Response($parentResponse);
-        $this->assertSame($parentResponse, $response->getParentResponse());
+        self::assertSame($parentResponse, $response->getParentResponse());
     }
 
     /**
@@ -622,11 +622,11 @@ class ResponseTest extends UnitTestCase
         $response->setContent('Two households, both alike in dignity, ');
         $response->appendContent('In fair Verona, where we lay our scene');
 
-        $this->assertEquals('Two households, both alike in dignity, In fair Verona, where we lay our scene', $response->getContent());
+        self::assertEquals('Two households, both alike in dignity, In fair Verona, where we lay our scene', $response->getContent());
 
         $response->setContent('For never was a story of more woe, Than this of Juliet and her Romeo.');
-        $this->assertEquals('For never was a story of more woe, Than this of Juliet and her Romeo.', $response->getContent());
-        $this->assertEquals('For never was a story of more woe, Than this of Juliet and her Romeo.', (string)$response);
+        self::assertEquals('For never was a story of more woe, Than this of Juliet and her Romeo.', $response->getContent());
+        self::assertEquals('For never was a story of more woe, Than this of Juliet and her Romeo.', (string)$response);
     }
 
     /**
@@ -635,7 +635,7 @@ class ResponseTest extends UnitTestCase
     public function setterMethodsAreChainable()
     {
         $response = new Response();
-        $this->assertSame($response,
+        self::assertSame($response,
             $response->setContent('Foo')
                 ->appendContent('Bar')
                 ->setStatus(404)
@@ -671,6 +671,6 @@ class ResponseTest extends UnitTestCase
     {
         $response = new Response();
         $response->setContent($content);
-        $this->assertSame($expectedString, (string)$response);
+        self::assertSame($expectedString, (string)$response);
     }
 }

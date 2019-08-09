@@ -40,8 +40,8 @@ class UriTypeConverterTest extends UnitTestCase
     public function sourceTypeIsStringOnly()
     {
         $sourceTypes = $this->typeConverter->getSupportedSourceTypes();
-        $this->assertCount(1, $sourceTypes);
-        $this->assertSame('string', $sourceTypes[0]);
+        self::assertCount(1, $sourceTypes);
+        self::assertSame('string', $sourceTypes[0]);
     }
 
     /**
@@ -49,7 +49,7 @@ class UriTypeConverterTest extends UnitTestCase
      */
     public function targetTypeIsUri()
     {
-        $this->assertSame(Http\Uri::class, $this->typeConverter->getSupportedTargetType());
+        self::assertSame(Http\Uri::class, $this->typeConverter->getSupportedTargetType());
     }
 
     /**
@@ -57,7 +57,7 @@ class UriTypeConverterTest extends UnitTestCase
      */
     public function typeConverterReturnsUriOnValidUri()
     {
-        $this->assertInstanceOf(Http\Uri::class, $this->typeConverter->convertFrom('http://localhost/foo', Http\Uri::class));
+        self::assertInstanceOf(Http\Uri::class, $this->typeConverter->convertFrom('http://localhost/foo', Http\Uri::class));
     }
 
     /**
@@ -66,6 +66,6 @@ class UriTypeConverterTest extends UnitTestCase
     public function typeConverterReturnsErrorOnMalformedUri()
     {
         $actual = $this->typeConverter->convertFrom('http:////localhost', Http\Uri::class);
-        $this->assertInstanceOf(FlowError\Error::class, $actual);
+        self::assertInstanceOf(FlowError\Error::class, $actual);
     }
 }

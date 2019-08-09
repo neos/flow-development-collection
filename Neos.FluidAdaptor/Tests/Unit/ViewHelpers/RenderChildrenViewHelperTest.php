@@ -59,7 +59,7 @@ class RenderChildrenViewHelperTest extends ViewHelperBaseTestcase
 
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['k1' => 'v1', 'k2' => 'v2']);
         $output = $this->viewHelper->render();
-        $this->assertEquals('Rendered Results', $output);
+        self::assertEquals('Rendered Results', $output);
     }
 
     /**

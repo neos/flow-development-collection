@@ -38,6 +38,6 @@ class EmailViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\View
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['email' => 'some@email.tld']);
         $actualResult = $this->viewHelper->render();
 
-        $this->assertEquals('mailto:some@email.tld', $actualResult);
+        self::assertEquals('mailto:some@email.tld', $actualResult);
     }
 }

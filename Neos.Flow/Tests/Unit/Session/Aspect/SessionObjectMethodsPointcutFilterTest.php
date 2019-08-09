@@ -53,6 +53,6 @@ class SessionObjectMethodsPointcutFilterTest extends UnitTestCase
 
         $result = $sessionObjectMethodsPointcutFilter->reduceTargetClassNames($availableClassNamesIndex);
 
-        $this->assertEquals($expectedClassNamesIndex, $result, 'The wrong class names have been filtered');
+        self::assertEquals($expectedClassNamesIndex, $result, 'The wrong class names have been filtered');
     }
 }

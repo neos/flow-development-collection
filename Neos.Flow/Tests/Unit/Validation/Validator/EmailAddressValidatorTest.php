@@ -28,7 +28,7 @@ class EmailAddressValidatorTest extends AbstractValidatorTestcase
      */
     public function validateReturnsNoErrorIfTheGivenValueIsNull()
     {
-        $this->assertFalse($this->validator->validate(null)->hasErrors());
+        self::assertFalse($this->validator->validate(null)->hasErrors());
     }
 
     /**
@@ -36,7 +36,7 @@ class EmailAddressValidatorTest extends AbstractValidatorTestcase
      */
     public function validateReturnsNoErrorIfTheGivenValueIsAnEmptyString()
     {
-        $this->assertFalse($this->validator->validate('')->hasErrors());
+        self::assertFalse($this->validator->validate('')->hasErrors());
     }
 
     /**
@@ -61,7 +61,7 @@ class EmailAddressValidatorTest extends AbstractValidatorTestcase
      */
     public function emailAddressValidatorReturnsNoErrorsForAValidEmailAddress($address)
     {
-        $this->assertFalse($this->validator->validate($address)->hasErrors());
+        self::assertFalse($this->validator->validate($address)->hasErrors());
     }
 
     /**
@@ -90,7 +90,7 @@ class EmailAddressValidatorTest extends AbstractValidatorTestcase
      */
     public function emailAddressValidatorReturnsFalseForAnInvalidEmailAddress($address)
     {
-        $this->assertTrue($this->validator->validate($address)->hasErrors());
+        self::assertTrue($this->validator->validate($address)->hasErrors());
     }
 
     /**
@@ -98,6 +98,6 @@ class EmailAddressValidatorTest extends AbstractValidatorTestcase
      */
     public function emailValidatorCreatesTheCorrectErrorForAnInvalidEmailAddress()
     {
-        $this->assertEquals(1, count($this->validator->validate('notAValidMail@Address')->getErrors()));
+        self::assertEquals(1, count($this->validator->validate('notAValidMail@Address')->getErrors()));
     }
 }

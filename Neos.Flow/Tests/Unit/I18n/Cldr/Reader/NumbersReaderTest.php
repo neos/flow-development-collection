@@ -89,7 +89,7 @@ class NumbersReaderTest extends UnitTestCase
         $reader->initializeObject();
 
         $result = $reader->parseFormatFromCldr($this->sampleLocale, I18n\Cldr\Reader\NumbersReader::FORMAT_TYPE_DECIMAL);
-        $this->assertEquals('mockParsedFormat', $result);
+        self::assertEquals('mockParsedFormat', $result);
 
         $reader->shutdownObject();
     }
@@ -118,7 +118,7 @@ class NumbersReaderTest extends UnitTestCase
         $reader = $this->getAccessibleMock(I18n\Cldr\Reader\NumbersReader::class, ['dummy']);
 
         $result = $reader->_call('parseFormat', $format);
-        $this->assertEquals($expectedResult, $result);
+        self::assertEquals($expectedResult, $result);
     }
 
     /**

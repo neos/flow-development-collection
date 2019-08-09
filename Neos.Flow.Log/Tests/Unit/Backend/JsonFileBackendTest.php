@@ -41,7 +41,7 @@ class JsonFileBackendTest extends UnitTestCase
 
         $logLine = file_get_contents('vfs://testDirectory/test.log');
         $actualData = json_decode($logLine, true);
-        $this->assertNotFalse($actualData);
+        self::assertNotFalse($actualData);
 
         $expectedOrigin = [
             'packageKey' => 'Neos.Flow.Log',
@@ -49,16 +49,16 @@ class JsonFileBackendTest extends UnitTestCase
             'methodName' => __FUNCTION__
         ];
 
-        $this->assertGreaterThanOrEqual((new \DateTime($actualData['timestamp']))->getTimestamp(), time());
-        $this->assertEquals($actualData['severity'], 'warning');
-        $this->assertEquals($actualData['origin'], $expectedOrigin);
-        $this->assertEquals($actualData['message'], 'the log message');
-        $this->assertEquals($actualData['additionalData'], ['foo' => 'bar']);
-        $this->assertEquals($actualData['remoteIp'], '');
+        self::assertGreaterThanOrEqual((new \DateTime($actualData['timestamp']))->getTimestamp(), time());
+        self::assertEquals($actualData['severity'], 'warning');
+        self::assertEquals($actualData['origin'], $expectedOrigin);
+        self::assertEquals($actualData['message'], 'the log message');
+        self::assertEquals($actualData['additionalData'], ['foo' => 'bar']);
+        self::assertEquals($actualData['remoteIp'], '');
 
 
         if (function_exists('posix_getpid')) {
-            $this->assertEquals($actualData['processId'], posix_getpid());
+            self::assertEquals($actualData['processId'], posix_getpid());
         }
     }
 }

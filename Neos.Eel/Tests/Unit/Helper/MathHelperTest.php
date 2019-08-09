@@ -44,9 +44,9 @@ class MathHelperTest extends \Neos\Flow\Tests\UnitTestCase
         $helper = new MathHelper();
         $result = $helper->round($value, $precision);
         if ($expected === static::NAN) {
-            $this->assertTrue(is_nan($result), 'Expected NAN');
+            self::assertTrue(is_nan($result), 'Expected NAN');
         } else {
-            $this->assertEqualsWithDelta($expected, $result, 0.0001, 'Rounded value did not match');
+            self::assertEqualsWithDelta($expected, $result, 0.0001, 'Rounded value did not match');
         }
     }
 
@@ -76,7 +76,7 @@ class MathHelperTest extends \Neos\Flow\Tests\UnitTestCase
             'Math' => $helper
         ]);
         $result = $evaluator->evaluate($method, $context);
-        $this->assertEqualsWithDelta($expected, $result, 0.001, 'Rounded value did not match');
+        self::assertEqualsWithDelta($expected, $result, 0.001, 'Rounded value did not match');
     }
 
     public function trigonometricExamples()
@@ -110,7 +110,7 @@ class MathHelperTest extends \Neos\Flow\Tests\UnitTestCase
             'Math' => $helper
         ]);
         $result = $evaluator->evaluate($method, $context);
-        $this->assertEqualsWithDelta($expected, $result, 0.001, 'Rounded value did not match');
+        self::assertEqualsWithDelta($expected, $result, 0.001, 'Rounded value did not match');
     }
 
     public function variousExamples()
@@ -211,9 +211,9 @@ class MathHelperTest extends \Neos\Flow\Tests\UnitTestCase
         ]);
         $result = $evaluator->evaluate($method, $context);
         if ($expected === static::NAN) {
-            $this->assertTrue(is_nan($result), 'Expected NAN, got value "' . $result . '"');
+            self::assertTrue(is_nan($result), 'Expected NAN, got value "' . $result . '"');
         } else {
-            $this->assertEqualsWithDelta($expected, $result, 0.001, 'Rounded value did not match');
+            self::assertEqualsWithDelta($expected, $result, 0.001, 'Rounded value did not match');
         }
     }
 
@@ -250,7 +250,7 @@ class MathHelperTest extends \Neos\Flow\Tests\UnitTestCase
         $helper = new MathHelper();
         $result = $helper->$method($value);
 
-        $this->assertSame($expected, $result);
+        self::assertSame($expected, $result);
     }
 
     /**
@@ -266,10 +266,10 @@ class MathHelperTest extends \Neos\Flow\Tests\UnitTestCase
             if ($ri !== $r1) {
                 $atLeastOneRandomResult = true;
             }
-            $this->assertLessThan(1.0, $ri, 'Result should be less than 1');
-            $this->assertGreaterThanOrEqual(0.0, $ri, 'Result should be greater than 0');
+            self::assertLessThan(1.0, $ri, 'Result should be less than 1');
+            self::assertGreaterThanOrEqual(0.0, $ri, 'Result should be greater than 0');
         }
-        $this->assertTrue($atLeastOneRandomResult, 'random() should return a random result');
+        self::assertTrue($atLeastOneRandomResult, 'random() should return a random result');
     }
 
     /**
@@ -287,9 +287,9 @@ class MathHelperTest extends \Neos\Flow\Tests\UnitTestCase
             if ($ri !== $r1) {
                 $atLeastOneRandomResult = true;
             }
-            $this->assertLessThanOrEqual($max, $ri);
-            $this->assertGreaterThanOrEqual($min, $ri);
+            self::assertLessThanOrEqual($max, $ri);
+            self::assertGreaterThanOrEqual($min, $ri);
         }
-        $this->assertTrue($atLeastOneRandomResult, 'random() should return a random result');
+        self::assertTrue($atLeastOneRandomResult, 'random() should return a random result');
     }
 }

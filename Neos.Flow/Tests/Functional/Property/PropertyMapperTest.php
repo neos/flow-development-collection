@@ -54,9 +54,9 @@ class PropertyMapperTest extends FunctionalTestCase
         ];
 
         $result = $this->propertyMapper->convert($source, Fixtures\TestEntity::class);
-        $this->assertSame('Robert Skaarhoj', $result->getName());
-        $this->assertSame(25, $result->getAge());
-        $this->assertSame(1.5, $result->getAverageNumberOfKids());
+        self::assertSame('Robert Skaarhoj', $result->getName());
+        self::assertSame(25, $result->getAge());
+        self::assertSame(1.5, $result->getAverageNumberOfKids());
     }
 
     /**
@@ -71,9 +71,9 @@ class PropertyMapperTest extends FunctionalTestCase
         ];
 
         $result = $this->propertyMapper->convert($source, Fixtures\TestEntity::class);
-        $this->assertSame('Robert Skaarhoj', $result->getName());
-        $this->assertSame(25, $result->getAge());
-        $this->assertSame(1.5, $result->getAverageNumberOfKids());
+        self::assertSame('Robert Skaarhoj', $result->getName());
+        self::assertSame(25, $result->getAge());
+        self::assertSame(1.5, $result->getAverageNumberOfKids());
     }
 
     /**
@@ -89,9 +89,9 @@ class PropertyMapperTest extends FunctionalTestCase
         ];
 
         $result = $this->propertyMapper->convert($source, Fixtures\TestClass::class);
-        $this->assertSame('Christopher', $result->getName());
-        $this->assertSame(187, $result->getSize());
-        $this->assertSame(true, $result->getSignedCla());
+        self::assertSame('Christopher', $result->getName());
+        self::assertSame(187, $result->getSize());
+        self::assertSame(true, $result->getSignedCla());
     }
 
     /**
@@ -106,8 +106,8 @@ class PropertyMapperTest extends FunctionalTestCase
         ];
 
         $result = $this->propertyMapper->convert($source, Fixtures\TestValueobject::class);
-        $this->assertSame('Christopher', $result->getName());
-        $this->assertSame(28, $result->getAge());
+        self::assertSame('Christopher', $result->getName());
+        self::assertSame(28, $result->getAge());
     }
 
     /**
@@ -121,8 +121,8 @@ class PropertyMapperTest extends FunctionalTestCase
         ];
 
         $result = $this->propertyMapper->convert($source, \Neos\Flow\Tests\Functional\Property\Fixtures\TestEmbeddedValueobject::class);
-        $this->assertSame('Christopher', $result->getName());
-        $this->assertSame(28, $result->getAge());
+        self::assertSame('Christopher', $result->getName());
+        self::assertSame(28, $result->getAge());
     }
 
     /**
@@ -136,8 +136,8 @@ class PropertyMapperTest extends FunctionalTestCase
         ];
 
         $result = $this->propertyMapper->convert($source, Fixtures\TestClass::class);
-        $this->assertSame('42', $result->getName());
-        $this->assertSame(23, $result->getSize());
+        self::assertSame('42', $result->getName());
+        self::assertSame(23, $result->getSize());
     }
 
     /**
@@ -155,7 +155,7 @@ class PropertyMapperTest extends FunctionalTestCase
         $configuration->setTypeConverterOption(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED, true);
 
         $result = $this->propertyMapper->convert($source, Fixtures\TestEntity::class, $configuration);
-        $this->assertInstanceOf(Fixtures\TestEntitySubclass::class, $result);
+        self::assertInstanceOf(Fixtures\TestEntitySubclass::class, $result);
     }
 
     /**
@@ -189,7 +189,7 @@ class PropertyMapperTest extends FunctionalTestCase
         $configuration->setTypeConverterOption(ObjectConverter::class, ObjectConverter::CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED, true);
 
         $result = $this->propertyMapper->convert($source, Fixtures\TestClass::class, $configuration);
-        $this->assertInstanceOf(Fixtures\TestSubclass::class, $result);
+        self::assertInstanceOf(Fixtures\TestSubclass::class, $result);
     }
 
     /**
@@ -222,9 +222,9 @@ class PropertyMapperTest extends FunctionalTestCase
         ];
 
         $result = $this->propertyMapper->convert($source, Fixtures\TestEntity::class);
-        $this->assertSame('Egon Olsen', $result->getName());
-        $this->assertSame(42, $result->getAge());
-        $this->assertSame(5.5, $result->getAverageNumberOfKids());
+        self::assertSame('Egon Olsen', $result->getName());
+        self::assertSame(42, $result->getAge());
+        self::assertSame(5.5, $result->getAverageNumberOfKids());
     }
 
     /**
@@ -240,9 +240,9 @@ class PropertyMapperTest extends FunctionalTestCase
         ];
 
         $result = $this->propertyMapper->convert($source, Fixtures\TestEntity::class);
-        $this->assertSame('Egon Olsen', $result->getName());
-        $this->assertSame(42, $result->getAge());
-        $this->assertSame(null, $result->getAverageNumberOfKids());
+        self::assertSame('Egon Olsen', $result->getName());
+        self::assertSame(42, $result->getAge());
+        self::assertSame(null, $result->getAverageNumberOfKids());
     }
 
     /**
@@ -256,7 +256,7 @@ class PropertyMapperTest extends FunctionalTestCase
             'relatedEntity' => $relatedEntity,
         ];
         $result = $this->propertyMapper->convert($source, Fixtures\TestEntity::class);
-        $this->assertSame($relatedEntity, $result->getRelatedEntity());
+        self::assertSame($relatedEntity, $result->getRelatedEntity());
     }
 
     /**
@@ -271,7 +271,7 @@ class PropertyMapperTest extends FunctionalTestCase
         $entity->setName('Egon Olsen');
 
         $result = $this->propertyMapper->convert($entity, Fixtures\TestEntity::class);
-        $this->assertSame($entity, $result);
+        self::assertSame($entity, $result);
     }
 
     /**
@@ -285,7 +285,7 @@ class PropertyMapperTest extends FunctionalTestCase
         $entity->setName('Egon Olsen');
 
         $result = $this->propertyMapper->convert([$entity], 'array<Neos\Flow\Tests\Functional\Property\Fixtures\TestEntity>');
-        $this->assertSame([$entity], $result);
+        self::assertSame([$entity], $result);
     }
 
     /**
@@ -305,7 +305,7 @@ class PropertyMapperTest extends FunctionalTestCase
         $configuration->skipUnknownProperties();
 
         $mappingResult = $this->propertyMapper->convert($source, Fixtures\TestClass::class, $configuration);
-        $this->assertInstanceOf(Fixtures\TestClass::class, $mappingResult);
+        self::assertInstanceOf(Fixtures\TestClass::class, $mappingResult);
     }
 
     /**
@@ -345,7 +345,7 @@ class PropertyMapperTest extends FunctionalTestCase
         $configuration->setTypeConverterOption(PersistentObjectConverter::class, ObjectConverter::CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED, true);
 
         $theHorse = $this->propertyMapper->convert($source, Fixtures\TestEntity::class, $configuration);
-        $this->assertInstanceOf(Fixtures\TestEntitySubclassWithNewField::class, $theHorse);
+        self::assertInstanceOf(Fixtures\TestEntitySubclassWithNewField::class, $theHorse);
     }
 
     /**
@@ -420,9 +420,9 @@ class PropertyMapperTest extends FunctionalTestCase
 
         $account = $this->propertyMapper->convert($source, Account::class, $configuration);
 
-        $this->assertInstanceOf(Account::class, $account);
-        $this->assertEquals(2, count($account->getRoles()));
-        $this->assertEquals($expectedRoleIdentifiers, array_keys($account->getRoles()));
+        self::assertInstanceOf(Account::class, $account);
+        self::assertEquals(2, count($account->getRoles()));
+        self::assertEquals($expectedRoleIdentifiers, array_keys($account->getRoles()));
     }
 
     /**
@@ -445,7 +445,7 @@ class PropertyMapperTest extends FunctionalTestCase
 
         $result = $this->propertyMapper->convert($source, 'string');
 
-        $this->assertSame($entityIdentifier, $result);
+        self::assertSame($entityIdentifier, $result);
     }
 
     /**
@@ -454,11 +454,11 @@ class PropertyMapperTest extends FunctionalTestCase
     public function getTargetPropertyNameShouldReturnTheUnmodifiedPropertyNameWithoutConfiguration()
     {
         $defaultConfiguration = $this->propertyMapper->buildPropertyMappingConfiguration();
-        $this->assertTrue($defaultConfiguration->getConfigurationValue(\Neos\Flow\Property\TypeConverter\PersistentObjectConverter::class, \Neos\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED));
-        $this->assertTrue($defaultConfiguration->getConfigurationValue(\Neos\Flow\Property\TypeConverter\PersistentObjectConverter::class, \Neos\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED));
+        self::assertTrue($defaultConfiguration->getConfigurationValue(\Neos\Flow\Property\TypeConverter\PersistentObjectConverter::class, \Neos\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED));
+        self::assertTrue($defaultConfiguration->getConfigurationValue(\Neos\Flow\Property\TypeConverter\PersistentObjectConverter::class, \Neos\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED));
 
-        $this->assertNull($defaultConfiguration->getConfigurationFor('foo')->getConfigurationValue(\Neos\Flow\Property\TypeConverter\PersistentObjectConverter::class, \Neos\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED));
-        $this->assertNull($defaultConfiguration->getConfigurationFor('foo')->getConfigurationValue(\Neos\Flow\Property\TypeConverter\PersistentObjectConverter::class, \Neos\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED));
+        self::assertNull($defaultConfiguration->getConfigurationFor('foo')->getConfigurationValue(\Neos\Flow\Property\TypeConverter\PersistentObjectConverter::class, \Neos\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED));
+        self::assertNull($defaultConfiguration->getConfigurationFor('foo')->getConfigurationValue(\Neos\Flow\Property\TypeConverter\PersistentObjectConverter::class, \Neos\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED));
     }
 
     /**
@@ -467,6 +467,6 @@ class PropertyMapperTest extends FunctionalTestCase
     public function foo()
     {
         $actualResult = $this->propertyMapper->convert(true, 'int');
-        $this->assertSame(42, $actualResult);
+        self::assertSame(42, $actualResult);
     }
 }

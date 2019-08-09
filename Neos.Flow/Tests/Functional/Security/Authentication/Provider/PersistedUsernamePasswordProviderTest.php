@@ -66,11 +66,11 @@ class PersistedUsernamePasswordProviderTest extends FunctionalTestCase
 
         $this->persistedUsernamePasswordProvider->authenticate($this->authenticationToken);
 
-        $this->assertTrue($this->authenticationToken->isAuthenticated());
+        self::assertTrue($this->authenticationToken->isAuthenticated());
 
         $account = $this->accountRepository->findActiveByAccountIdentifierAndAuthenticationProviderName('username', 'myTestProvider');
-        $this->assertEquals((new \DateTime())->format(\DateTime::W3C), $account->getLastSuccessfulAuthenticationDate()->format(\DateTime::W3C));
-        $this->assertEquals(0, $account->getFailedAuthenticationCount());
+        self::assertEquals((new \DateTime())->format(\DateTime::W3C), $account->getLastSuccessfulAuthenticationDate()->format(\DateTime::W3C));
+        self::assertEquals(0, $account->getFailedAuthenticationCount());
     }
 
     /**
@@ -82,10 +82,10 @@ class PersistedUsernamePasswordProviderTest extends FunctionalTestCase
 
         $this->persistedUsernamePasswordProvider->authenticate($this->authenticationToken);
 
-        $this->assertFalse($this->authenticationToken->isAuthenticated());
+        self::assertFalse($this->authenticationToken->isAuthenticated());
 
         $account = $this->accountRepository->findActiveByAccountIdentifierAndAuthenticationProviderName('username', 'myTestProvider');
-        $this->assertEquals(1, $account->getFailedAuthenticationCount());
+        self::assertEquals(1, $account->getFailedAuthenticationCount());
     }
 
 
@@ -98,7 +98,7 @@ class PersistedUsernamePasswordProviderTest extends FunctionalTestCase
 
         $this->persistedUsernamePasswordProvider->authenticate($this->authenticationToken);
 
-        $this->assertFalse($this->authenticationToken->isAuthenticated());
+        self::assertFalse($this->authenticationToken->isAuthenticated());
     }
 
 
@@ -111,7 +111,7 @@ class PersistedUsernamePasswordProviderTest extends FunctionalTestCase
         $this->persistedUsernamePasswordProvider->authenticate($this->authenticationToken);
 
         $account = $this->accountRepository->findActiveByAccountIdentifierAndAuthenticationProviderName('username', 'myTestProvider');
-        $this->assertEquals(1, $account->getFailedAuthenticationCount());
+        self::assertEquals(1, $account->getFailedAuthenticationCount());
 
         $expectedResetDateTime = new \DateTimeImmutable();
 
@@ -119,7 +119,7 @@ class PersistedUsernamePasswordProviderTest extends FunctionalTestCase
         $this->persistedUsernamePasswordProvider->authenticate($this->authenticationToken);
 
         $account = $this->accountRepository->findActiveByAccountIdentifierAndAuthenticationProviderName('username', 'myTestProvider');
-        $this->assertGreaterThanOrEqual($expectedResetDateTime->format('U'), $account->getLastSuccessfulAuthenticationDate()->format('U'));
-        $this->assertEquals(0, $account->getFailedAuthenticationCount());
+        self::assertGreaterThanOrEqual($expectedResetDateTime->format('U'), $account->getLastSuccessfulAuthenticationDate()->format('U'));
+        self::assertEquals(0, $account->getFailedAuthenticationCount());
     }
 }

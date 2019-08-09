@@ -79,7 +79,7 @@ class TranslatorTest extends UnitTestCase
         $this->translator->injectFormatResolver($mockFormatResolver);
 
         $result = $this->translator->translateByOriginalLabel('Untranslated label', ['value1', 'value2'], 1, null, 'source', 'packageKey');
-        $this->assertEquals('Formatted and translated label', $result);
+        self::assertEquals('Formatted and translated label', $result);
     }
 
     /**
@@ -98,7 +98,7 @@ class TranslatorTest extends UnitTestCase
         $this->translator->injectTranslationProvider($mockTranslationProvider);
 
         $result = $this->translator->translateByOriginalLabel('original label', [], null, null, 'source', 'packageKey');
-        $this->assertEquals('original label', $result);
+        self::assertEquals('original label', $result);
     }
 
     /**
@@ -121,7 +121,7 @@ class TranslatorTest extends UnitTestCase
         $this->translator->injectFormatResolver($mockFormatResolver);
 
         $result = $this->translator->translateByOriginalLabel('original {0}', ['label'], null, null, 'source', 'packageKey');
-        $this->assertEquals('original label', $result);
+        self::assertEquals('original label', $result);
     }
 
     /**
@@ -143,7 +143,7 @@ class TranslatorTest extends UnitTestCase
         $this->translator->injectTranslationProvider($mockTranslationProvider);
 
         $result = $this->translator->translateByOriginalLabel('original label', [], null, null, 'source', 'packageKey');
-        $this->assertEquals('translated label', $result);
+        self::assertEquals('translated label', $result);
     }
 
     /**
@@ -162,7 +162,7 @@ class TranslatorTest extends UnitTestCase
         $this->translator->injectTranslationProvider($mockTranslationProvider);
 
         $result = $this->translator->translateById('id', [], null, $this->defaultLocale, 'source', 'packageKey');
-        $this->assertNull($result);
+        self::assertNull($result);
     }
 
     /**
@@ -184,7 +184,7 @@ class TranslatorTest extends UnitTestCase
         $this->translator->injectTranslationProvider($mockTranslationProvider);
 
         $result = $this->translator->translateById('id', [], null, $this->defaultLocale, 'source', 'packageKey');
-        $this->assertEquals('translatedId', $result);
+        self::assertEquals('translatedId', $result);
     }
 
     /**
@@ -198,7 +198,7 @@ class TranslatorTest extends UnitTestCase
         $this->translator->injectTranslationProvider($mockTranslationProvider);
 
         $result = $this->translator->translateById('id', [], null, $this->defaultLocale, 'source', 'packageKey');
-        $this->assertEquals('translatedId', $result);
+        self::assertEquals('translatedId', $result);
     }
 
     /**
@@ -220,7 +220,7 @@ class TranslatorTest extends UnitTestCase
         $this->translator->injectPluralsReader($mockPluralsReader);
 
         $result = $this->translator->translateByOriginalLabel('Untranslated label', [1.0], null, null, 'source', 'packageKey');
-        $this->assertEquals('Formatted and translated label', $result);
+        self::assertEquals('Formatted and translated label', $result);
     }
 
     /**
@@ -242,7 +242,7 @@ class TranslatorTest extends UnitTestCase
         $this->translator->injectPluralsReader($mockPluralsReader);
 
         $result = $this->translator->translateById('id', [1.0], null, null, 'source', 'packageKey');
-        $this->assertEquals('Formatted and translated label', $result);
+        self::assertEquals('Formatted and translated label', $result);
     }
 
     /**
@@ -275,7 +275,7 @@ class TranslatorTest extends UnitTestCase
 
         $this->translator->injectTranslationProvider($mockTranslationProvider);
         $actualResult = $this->translator->translateByOriginalLabel($originalLabel);
-        $this->assertSame($expectedResult, $actualResult);
+        self::assertSame($expectedResult, $actualResult);
     }
 
     /**
@@ -308,6 +308,6 @@ class TranslatorTest extends UnitTestCase
 
         $this->translator->injectTranslationProvider($mockTranslationProvider);
         $actualResult = $this->translator->translateById($id);
-        $this->assertSame($expectedResult, $actualResult);
+        self::assertSame($expectedResult, $actualResult);
     }
 }

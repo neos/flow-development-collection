@@ -44,7 +44,7 @@ class RouteTagsTest extends UnitTestCase
     public function createFromTagCreatesANewInstanceWithTheGivenTag()
     {
         $tags = RouteTags::createFromTag('foo');
-        $this->assertSame(['foo'], $tags->getTags());
+        self::assertSame(['foo'], $tags->getTags());
     }
 
     /**
@@ -53,7 +53,7 @@ class RouteTagsTest extends UnitTestCase
     public function createFromArrayCreatesAnInstanceWithAllGivenTags()
     {
         $tags = RouteTags::createFromArray(['foo', 'bar', 'baz']);
-        $this->assertSame(['foo', 'bar', 'baz'], $tags->getTags());
+        self::assertSame(['foo', 'bar', 'baz'], $tags->getTags());
     }
 
     /**
@@ -82,7 +82,7 @@ class RouteTagsTest extends UnitTestCase
         $tags1 = RouteTags::createEmpty()->withTag('foo')->withTag('bar');
         $tags2 = RouteTags::createEmpty()->withTag('foo')->withTag('baz');
         $mergedTags = $tags1->merge($tags2);
-        $this->assertSame(['foo', 'bar', 'baz'], $mergedTags->getTags());
+        self::assertSame(['foo', 'bar', 'baz'], $mergedTags->getTags());
     }
 
     /**
@@ -93,7 +93,7 @@ class RouteTagsTest extends UnitTestCase
         $tags1 = RouteTags::createEmpty()->withTag('foo');
         $tags2 = $tags1->withTag('foo');
 
-        $this->assertSame($tags1, $tags2);
+        self::assertSame($tags1, $tags2);
     }
 
     /**
@@ -104,7 +104,7 @@ class RouteTagsTest extends UnitTestCase
         $tags1 = RouteTags::createEmpty()->withTag('foo');
         $tags2 = $tags1->withTag('bar');
 
-        $this->assertTrue($tags2->has('bar'));
+        self::assertTrue($tags2->has('bar'));
     }
 
     /**
@@ -115,6 +115,6 @@ class RouteTagsTest extends UnitTestCase
         $tags1 = RouteTags::createEmpty()->withTag('foo');
         $tags1->withTag('bar');
 
-        $this->assertFalse($tags1->has('bar'));
+        self::assertFalse($tags1->has('bar'));
     }
 }

@@ -102,7 +102,7 @@ class AbstractViewHelperTest extends UnitTestCase
         $expected = new ArgumentDefinition($name, $type, $description, $isRequired);
 
         $viewHelper->_call('registerArgument', $name, $type, $description, $isRequired);
-        $this->assertEquals([$name => $expected], $viewHelper->prepareArguments(), 'Argument definitions not returned correctly.');
+        self::assertEquals([$name => $expected], $viewHelper->prepareArguments(), 'Argument definitions not returned correctly.');
     }
 
     /**
@@ -142,7 +142,7 @@ class AbstractViewHelperTest extends UnitTestCase
 
         $viewHelper->_call('registerArgument', $name, $type, $description, $isRequired);
         $viewHelper->_call('overrideArgument', $name, $overriddenType, $overriddenDescription, $isRequired);
-        $this->assertEquals($viewHelper->prepareArguments(), [$name => $expected], 'Argument definitions not returned correctly. The original ArgumentDefinition could not be overridden.');
+        self::assertEquals($viewHelper->prepareArguments(), [$name => $expected], 'Argument definitions not returned correctly. The original ArgumentDefinition could not be overridden.');
     }
 
     /**
@@ -244,7 +244,7 @@ class AbstractViewHelperTest extends UnitTestCase
 
         $expectedOutput = 'Output';
         $actualOutput = $viewHelper->initializeArgumentsAndRender(['argument1' => 'value1']);
-        $this->assertEquals($expectedOutput, $actualOutput);
+        self::assertEquals($expectedOutput, $actualOutput);
     }
 
     /**
@@ -266,8 +266,8 @@ class AbstractViewHelperTest extends UnitTestCase
 
         $viewHelper->setRenderingContext($renderingContext);
 
-        $this->assertSame($viewHelper->_get('templateVariableContainer'), $templateVariableContainer);
-        $this->assertSame($viewHelper->_get('viewHelperVariableContainer'), $viewHelperVariableContainer);
-        $this->assertSame($viewHelper->_get('controllerContext'), $controllerContext);
+        self::assertSame($viewHelper->_get('templateVariableContainer'), $templateVariableContainer);
+        self::assertSame($viewHelper->_get('viewHelperVariableContainer'), $viewHelperVariableContainer);
+        self::assertSame($viewHelper->_get('controllerContext'), $controllerContext);
     }
 }

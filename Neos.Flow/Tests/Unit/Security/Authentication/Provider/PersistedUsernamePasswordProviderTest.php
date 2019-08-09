@@ -151,7 +151,7 @@ class PersistedUsernamePasswordProviderTest extends UnitTestCase
 
         $usernamePasswordProvider = Security\Authentication\Provider\PersistedUsernamePasswordProvider::create('myProvider', []);
 
-        $this->assertTrue($usernamePasswordProvider->canAuthenticate($mockToken1));
-        $this->assertFalse($usernamePasswordProvider->canAuthenticate($mockToken2));
+        self::assertTrue($usernamePasswordProvider->canAuthenticate($mockToken1));
+        self::assertFalse($usernamePasswordProvider->canAuthenticate($mockToken2));
     }
 }

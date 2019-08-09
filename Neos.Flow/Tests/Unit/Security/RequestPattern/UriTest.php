@@ -51,9 +51,9 @@ class UriTest extends UnitTestCase
         $requestPattern = new UriPattern(['uriPattern' => $pattern]);
 
         if ($shouldMatch) {
-            $this->assertTrue($requestPattern->matchRequest($mockActionRequest));
+            self::assertTrue($requestPattern->matchRequest($mockActionRequest));
         } else {
-            $this->assertFalse($requestPattern->matchRequest($mockActionRequest));
+            self::assertFalse($requestPattern->matchRequest($mockActionRequest));
         }
     }
 }

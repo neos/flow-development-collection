@@ -41,7 +41,7 @@ class AroundAdviceTest extends UnitTestCase
         });
         $result = $advice->invoke($mockJoinPoint);
 
-        $this->assertEquals($result, 'result', 'The around advice did not return the result value as expected.');
+        self::assertEquals($result, 'result', 'The around advice did not return the result value as expected.');
     }
 
     /**
@@ -69,6 +69,6 @@ class AroundAdviceTest extends UnitTestCase
         });
         $result = $advice->invoke($mockJoinPoint);
 
-        $this->assertEquals($result, 'result', 'The around advice did not return the result value as expected.');
+        self::assertEquals($result, 'result', 'The around advice did not return the result value as expected.');
     }
 }

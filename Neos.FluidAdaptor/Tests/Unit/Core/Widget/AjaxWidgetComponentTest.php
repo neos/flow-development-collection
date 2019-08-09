@@ -248,6 +248,6 @@ class AjaxWidgetComponentTest extends UnitTestCase
         $this->mockHashService->expects($this->atLeastOnce())->method('validateAndStripHmac')->with($mockSerializedWidgetContextWithHmac)->will($this->returnValue($mockSerializedWidgetContext));
 
         $actualResult = $ajaxWidgetComponent->_call('extractWidgetContext', $this->mockHttpRequest);
-        $this->assertEquals($mockWidgetContext, $actualResult);
+        self::assertEquals($mockWidgetContext, $actualResult);
     }
 }

@@ -83,7 +83,7 @@ class RedisBackendTest extends BaseTestCase
             ->with('Foo_Cache:tag:some_tag')
             ->will($this->returnValue(['entry_1', 'entry_2']));
 
-        $this->assertEquals(['entry_1', 'entry_2'], $this->backend->findIdentifiersByTag('some_tag'));
+        self::assertEquals(['entry_1', 'entry_2'], $this->backend->findIdentifiersByTag('some_tag'));
     }
 
     /**
@@ -175,7 +175,7 @@ class RedisBackendTest extends BaseTestCase
             ->with('Foo_Cache:entry:foo')
             ->will($this->returnValue('bar'));
 
-        $this->assertEquals('bar', $this->backend->get('foo'));
+        self::assertEquals('bar', $this->backend->get('foo'));
     }
 
     /**
@@ -188,7 +188,7 @@ class RedisBackendTest extends BaseTestCase
             ->with('Foo_Cache:entry:foo')
             ->will($this->returnValue(true));
 
-        $this->assertEquals(true, $this->backend->has('foo'));
+        self::assertEquals(true, $this->backend->has('foo'));
     }
 
     /**

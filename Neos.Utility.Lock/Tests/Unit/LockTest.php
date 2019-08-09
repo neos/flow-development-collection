@@ -62,7 +62,7 @@ class LockTest extends \PHPUnit\Framework\TestCase
             $this->fail('Lock could not be acquired after it was released');
         }
 
-        $this->assertTrue($lock->release());
+        self::assertTrue($lock->release());
     }
 
     /**
@@ -72,11 +72,11 @@ class LockTest extends \PHPUnit\Framework\TestCase
     {
         $lock = new Lock('testLock');
         $this->assertExclusivelyLocked('Failed to exclusively lock file.');
-        $this->assertTrue($lock->release());
+        self::assertTrue($lock->release());
 
         $lock = new Lock('testLock');
         $this->assertExclusivelyLocked('Failed to exclusively lock file.');
-        $this->assertTrue($lock->release());
+        self::assertTrue($lock->release());
     }
 
     /**
@@ -87,8 +87,8 @@ class LockTest extends \PHPUnit\Framework\TestCase
         $lock1 = new Lock('testLock', false);
         $lock2 = new Lock('testLock', false);
 
-        $this->assertTrue($lock1->release(), 'Lock 1 could not be released');
-        $this->assertTrue($lock2->release(), 'Lock 2 could not be released');
+        self::assertTrue($lock1->release(), 'Lock 1 could not be released');
+        self::assertTrue($lock2->release(), 'Lock 2 could not be released');
     }
 
     /**
@@ -97,7 +97,7 @@ class LockTest extends \PHPUnit\Framework\TestCase
     protected function assertExclusivelyLocked(string $message = '')
     {
         $lockFilePointer = fopen($this->lockFileName, 'w');
-        $this->assertFalse(flock($lockFilePointer, LOCK_EX | LOCK_NB), $message);
+        self::assertFalse(flock($lockFilePointer, LOCK_EX | LOCK_NB), $message);
         fclose($lockFilePointer);
     }
 }
