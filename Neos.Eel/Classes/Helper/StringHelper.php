@@ -579,7 +579,7 @@ class StringHelper implements ProtectedContextAwareInterface
      */
     public function htmlSpecialChars($string, $preserveEntities = false)
     {
-        return htmlspecialchars((string)$string, ENT_COMPAT | ENT_HTML401, 'UTF-8', !$preserveEntities);
+        return htmlspecialchars((string)$string, ENT_NOQUOTES | ENT_HTML401, ini_get("default_charset"), !$preserveEntities);
     }
 
     /**
