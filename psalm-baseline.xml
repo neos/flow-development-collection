@@ -410,7 +410,7 @@
       <code>$iterator-&gt;preceding($maximumCharacters)</code>
       <code>$iterator-&gt;preceding($maximumCharacters)</code>
     </InvalidScalarArgument>
-    <NullArgument occurrences="3">
+    <NullArgument occurrences="2">
       <code>null</code>
       <code>null</code>
       <code>null</code>
@@ -978,20 +978,6 @@
     <PossiblyUndefinedVariable occurrences="1">
       <code>$suitableRequestHandlers</code>
     </PossiblyUndefinedVariable>
-    <UndefinedConstant occurrences="12">
-      <code>FLOW_PATH_DATA</code>
-      <code>FLOW_PATH_DATA</code>
-      <code>FLOW_PATH_DATA</code>
-      <code>FLOW_PATH_DATA</code>
-      <code>FLOW_PATH_DATA</code>
-      <code>FLOW_PATH_DATA</code>
-      <code>FLOW_PATH_DATA</code>
-      <code>FLOW_PATH_DATA</code>
-      <code>FLOW_PATH_TEMPORARY</code>
-      <code>FLOW_PATH_TEMPORARY</code>
-      <code>FLOW_PATH_TEMPORARY</code>
-      <code>FLOW_PATH_TEMPORARY</code>
-    </UndefinedConstant>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Core/ClassLoader.php">
     <TooManyArguments occurrences="1">
@@ -3711,27 +3697,12 @@
     </PossiblyNullPropertyAssignmentValue>
   </file>
   <file src="Packages/Framework/Neos.FluidAdaptor/Classes/View/TemplatePaths.php">
-    <AssignmentToVoid occurrences="2">
-      <code>$paths</code>
-      <code>$paths</code>
-    </AssignmentToVoid>
-    <InvalidReturnStatement occurrences="2">
-      <code>$patterns</code>
-      <code>$patternsWithReplacements</code>
-    </InvalidReturnStatement>
-    <InvalidReturnType occurrences="1">
-      <code>void</code>
-    </InvalidReturnType>
     <LessSpecificImplementedReturnType occurrences="1">
       <code>mixed|string</code>
     </LessSpecificImplementedReturnType>
     <MoreSpecificImplementedParamType occurrences="1">
       <code>$path</code>
     </MoreSpecificImplementedParamType>
-    <NullArgument occurrences="2">
-      <code>$paths</code>
-      <code>$paths</code>
-    </NullArgument>
     <UndefinedInterfaceMethod occurrences="2">
       <code>getResourcesPath</code>
       <code>getResourcesPath</code>
@@ -4042,9 +4013,6 @@
     </PossiblyFalseOperand>
   </file>
   <file src="Packages/Framework/Neos.Utility.Arrays/Classes/Arrays.php">
-    <MismatchingDocblockParamType occurrences="1">
-      <code>callable</code>
-    </MismatchingDocblockParamType>
     <PossiblyNullArgument occurrences="1">
       <code>$sortFlags</code>
     </PossiblyNullArgument>
