@@ -47,7 +47,7 @@ class ComponentContextTest extends UnitTestCase
      */
     public function getHttpRequestReturnsTheCurrentRequest()
     {
-        $this->assertSame($this->mockHttpRequest, $this->componentContext->getHttpRequest());
+        self::assertSame($this->mockHttpRequest, $this->componentContext->getHttpRequest());
     }
 
     /**
@@ -58,7 +58,7 @@ class ComponentContextTest extends UnitTestCase
         /** @var Http\Request $mockNewHttpRequest */
         $mockNewHttpRequest = $this->getMockBuilder(Http\Request::class)->disableOriginalConstructor()->getMock();
         $this->componentContext->replaceHttpRequest($mockNewHttpRequest);
-        $this->assertSame($mockNewHttpRequest, $this->componentContext->getHttpRequest());
+        self::assertSame($mockNewHttpRequest, $this->componentContext->getHttpRequest());
     }
 
     /**
@@ -66,7 +66,7 @@ class ComponentContextTest extends UnitTestCase
      */
     public function getHttpResponseReturnsTheCurrentResponse()
     {
-        $this->assertSame($this->mockHttpResponse, $this->componentContext->getHttpResponse());
+        self::assertSame($this->mockHttpResponse, $this->componentContext->getHttpResponse());
     }
 
     /**
@@ -77,7 +77,7 @@ class ComponentContextTest extends UnitTestCase
         /** @var Http\Response $mockNewHttpResponse */
         $mockNewHttpResponse = $this->getMockBuilder(Http\Response::class)->disableOriginalConstructor()->getMock();
         $this->componentContext->replaceHttpResponse($mockNewHttpResponse);
-        $this->assertSame($mockNewHttpResponse, $this->componentContext->getHttpResponse());
+        self::assertSame($mockNewHttpResponse, $this->componentContext->getHttpResponse());
     }
 
 
@@ -86,7 +86,7 @@ class ComponentContextTest extends UnitTestCase
      */
     public function getParameterReturnsNullIfTheSpecifiedParameterIsNotDefined()
     {
-        $this->assertNull($this->componentContext->getParameter('Some\Component\ClassName', 'nonExistingParameter'));
+        self::assertNull($this->componentContext->getParameter('Some\Component\ClassName', 'nonExistingParameter'));
     }
 
     /**
@@ -95,6 +95,6 @@ class ComponentContextTest extends UnitTestCase
     public function setParameterStoresTheGivenParameter()
     {
         $this->componentContext->setParameter('Some\Component\ClassName', 'someParameter', 'someParameterValue');
-        $this->assertSame('someParameterValue', $this->componentContext->getParameter('Some\Component\ClassName', 'someParameter'));
+        self::assertSame('someParameterValue', $this->componentContext->getParameter('Some\Component\ClassName', 'someParameter'));
     }
 }

@@ -37,7 +37,7 @@ class CurrencyViewHelperTest extends ViewHelperBaseTestcase
         $this->viewHelper->expects($this->once())->method('renderChildren')->will($this->returnValue(123.456));
         $this->viewHelper = $this->prepareArguments($this->viewHelper, []);
         $actualResult = $this->viewHelper->render();
-        $this->assertEquals('123,46', $actualResult);
+        self::assertEquals('123,46', $actualResult);
     }
 
     /**
@@ -48,7 +48,7 @@ class CurrencyViewHelperTest extends ViewHelperBaseTestcase
         $this->viewHelper->expects($this->once())->method('renderChildren')->will($this->returnValue(123));
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['currencySign' => 'foo']);
         $actualResult = $this->viewHelper->render();
-        $this->assertEquals('123,00 foo', $actualResult);
+        self::assertEquals('123,00 foo', $actualResult);
     }
 
     /**
@@ -59,7 +59,7 @@ class CurrencyViewHelperTest extends ViewHelperBaseTestcase
         $this->viewHelper->expects($this->once())->method('renderChildren')->will($this->returnValue(12345));
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['currencySign' => '', 'decimalSeparator' => '|']);
         $actualResult = $this->viewHelper->render();
-        $this->assertEquals('12.345|00', $actualResult);
+        self::assertEquals('12.345|00', $actualResult);
     }
 
     /**
@@ -70,7 +70,7 @@ class CurrencyViewHelperTest extends ViewHelperBaseTestcase
         $this->viewHelper->expects($this->once())->method('renderChildren')->will($this->returnValue(12345));
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['currencySign' => '', 'decimalSeparator' => ',', 'thousandsSeparator' => '|']);
         $actualResult = $this->viewHelper->render();
-        $this->assertEquals('12|345,00', $actualResult);
+        self::assertEquals('12|345,00', $actualResult);
     }
 
     /**
@@ -81,7 +81,7 @@ class CurrencyViewHelperTest extends ViewHelperBaseTestcase
         $this->viewHelper->expects($this->once())->method('renderChildren')->will($this->returnValue(null));
         $this->viewHelper = $this->prepareArguments($this->viewHelper, []);
         $actualResult = $this->viewHelper->render();
-        $this->assertEquals('0,00', $actualResult);
+        self::assertEquals('0,00', $actualResult);
     }
 
     /**
@@ -92,7 +92,7 @@ class CurrencyViewHelperTest extends ViewHelperBaseTestcase
         $this->viewHelper->expects($this->once())->method('renderChildren')->will($this->returnValue(-123.456));
         $this->viewHelper = $this->prepareArguments($this->viewHelper, []);
         $actualResult = $this->viewHelper->render();
-        $this->assertEquals('-123,46', $actualResult);
+        self::assertEquals('-123,46', $actualResult);
     }
 
     /**
@@ -175,7 +175,7 @@ class CurrencyViewHelperTest extends ViewHelperBaseTestcase
         $this->viewHelper->expects($this->once())->method('renderChildren')->will($this->returnValue(12345));
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['currencySign' => '€', 'decimalSeparator' => ',', 'thousandsSeparator' => '.', 'prependCurrency' => true]);
         $actualResult = $this->viewHelper->render();
-        $this->assertEquals('€ 12.345,00', $actualResult);
+        self::assertEquals('€ 12.345,00', $actualResult);
     }
 
     /**
@@ -186,7 +186,7 @@ class CurrencyViewHelperTest extends ViewHelperBaseTestcase
         $this->viewHelper->expects($this->once())->method('renderChildren')->will($this->returnValue(12345));
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['currencySign' => '€', 'decimalSeparator' => ',', 'thousandsSeparator' => '.', 'prependCurrency' => false, 'separateCurrency' => false]);
         $actualResult = $this->viewHelper->render();
-        $this->assertEquals('12.345,00€', $actualResult);
+        self::assertEquals('12.345,00€', $actualResult);
     }
 
     /**
@@ -197,7 +197,7 @@ class CurrencyViewHelperTest extends ViewHelperBaseTestcase
         $this->viewHelper->expects($this->once())->method('renderChildren')->will($this->returnValue(12345));
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['currencySign' => '€', 'decimalSeparator' => ',', 'thousandsSeparator' => '.', 'prependCurrency' => false, 'separateCurrency' => true, 'decimals' => 4]);
         $actualResult = $this->viewHelper->render();
-        $this->assertEquals('12.345,0000 €', $actualResult);
+        self::assertEquals('12.345,0000 €', $actualResult);
     }
 
     /**
@@ -208,6 +208,6 @@ class CurrencyViewHelperTest extends ViewHelperBaseTestcase
         $this->viewHelper->expects($this->once())->method('renderChildren')->will($this->returnValue(12345));
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['currencySign' => '', 'decimalSeparator' => ',', 'thousandsSeparator' => '.', 'prependCurrency' => false, 'separateCurrency' => true, 'decimals' => 2]);
         $actualResult = $this->viewHelper->render();
-        $this->assertEquals('12.345,00', $actualResult);
+        self::assertEquals('12.345,00', $actualResult);
     }
 }

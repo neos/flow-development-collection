@@ -76,7 +76,7 @@ class ResourceViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\V
             'localize' => false
         ]);
         $resourceUri = $this->viewHelper->render();
-        $this->assertEquals('TheCorrectResourceUri', $resourceUri);
+        self::assertEquals('TheCorrectResourceUri', $resourceUri);
     }
 
     /**
@@ -92,7 +92,7 @@ class ResourceViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\V
             'localize' => false
         ]);
         $resourceUri = $this->viewHelper->render();
-        $this->assertEquals('TheCorrectResourceUri', $resourceUri);
+        self::assertEquals('TheCorrectResourceUri', $resourceUri);
     }
 
     /**
@@ -109,7 +109,7 @@ class ResourceViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\V
             'localize' => false
         ]);
         $resourceUri = $this->viewHelper->render();
-        $this->assertEquals('TheCorrectResourceUri', $resourceUri);
+        self::assertEquals('TheCorrectResourceUri', $resourceUri);
     }
 
     /**
@@ -126,7 +126,7 @@ class ResourceViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\V
             'localize' => false
         ]);
         $resourceUri = $this->viewHelper->render();
-        $this->assertEquals('404-Resource-Not-Found', $resourceUri);
+        self::assertEquals('404-Resource-Not-Found', $resourceUri);
     }
 
     /**
@@ -141,7 +141,7 @@ class ResourceViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\V
             'package' => 'ThePackageKey'
         ]);
         $resourceUri = $this->viewHelper->render();
-        $this->assertEquals('TheCorrectResourceUri', $resourceUri);
+        self::assertEquals('TheCorrectResourceUri', $resourceUri);
     }
 
     /**
@@ -167,7 +167,7 @@ class ResourceViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\V
             'localize' => true
         ]);
         $resourceUri = $this->viewHelper->render();
-        $this->assertEquals('TheCorrectResourceUri', $resourceUri);
+        self::assertEquals('TheCorrectResourceUri', $resourceUri);
     }
 
     /**

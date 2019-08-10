@@ -90,7 +90,7 @@ class StringFrontendTest extends BaseTestCase
         $backend->expects($this->once())->method('get')->will($this->returnValue('Just some value'));
 
         $cache = new StringFrontend('StringFrontend', $backend);
-        $this->assertEquals('Just some value', $cache->get('StringCacheTest'), 'The returned value was not the expected string.');
+        self::assertEquals('Just some value', $cache->get('StringCacheTest'), 'The returned value was not the expected string.');
     }
 
     /**
@@ -102,7 +102,7 @@ class StringFrontendTest extends BaseTestCase
         $backend->expects($this->once())->method('has')->with($this->equalTo('StringCacheTest'))->will($this->returnValue(true));
 
         $cache = new StringFrontend('StringFrontend', $backend);
-        $this->assertTrue($cache->has('StringCacheTest'), 'has() did not return true.');
+        self::assertTrue($cache->has('StringCacheTest'), 'has() did not return true.');
     }
 
     /**
@@ -116,7 +116,7 @@ class StringFrontendTest extends BaseTestCase
         $backend->expects($this->once())->method('remove')->with($this->equalTo($cacheIdentifier))->will($this->returnValue(true));
 
         $cache = new StringFrontend('StringFrontend', $backend);
-        $this->assertTrue($cache->remove($cacheIdentifier), 'remove() did not return true');
+        self::assertTrue($cache->remove($cacheIdentifier), 'remove() did not return true');
     }
 
     /**
@@ -157,7 +157,7 @@ class StringFrontendTest extends BaseTestCase
         $backend->expects($this->exactly(2))->method('get')->will($this->onConsecutiveCalls('one value', 'two value'));
 
         $cache = new StringFrontend('StringFrontend', $backend);
-        $this->assertEquals($entries, $cache->getByTag($tag), 'Did not receive the expected entries');
+        self::assertEquals($entries, $cache->getByTag($tag), 'Did not receive the expected entries');
     }
 
     /**

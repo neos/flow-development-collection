@@ -45,7 +45,7 @@ class ResultsViewHelperTest extends ViewHelperBaseTestcase
         $this->viewHelper->expects($this->once())->method('renderChildren')->will($this->returnValue('child nodes'));
 
         $this->viewHelper = $this->prepareArguments($this->viewHelper, []);
-        $this->assertSame('child nodes', $this->viewHelper->render());
+        self::assertSame('child nodes', $this->viewHelper->render());
     }
 
     /**

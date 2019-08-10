@@ -123,7 +123,7 @@ class AbstractWidgetViewHelperTest extends \Neos\Flow\Tests\UnitTestCase
         $this->viewHelper->expects($this->once())->method('initialize');
         $this->viewHelper->expects($this->once())->method('callRenderMethod')->will($this->returnValue('renderedResult'));
         $output = $this->viewHelper->initializeArgumentsAndRender(['arg1' => 'val1']);
-        $this->assertEquals('renderedResult', $output);
+        self::assertEquals('renderedResult', $output);
     }
 
     /**
@@ -148,7 +148,7 @@ class AbstractWidgetViewHelperTest extends \Neos\Flow\Tests\UnitTestCase
 
         $this->viewHelper->setChildNodes([$node1, $node2, $node3]);
 
-        $this->assertEquals($rootNode, $this->widgetContext->getViewHelperChildNodes());
+        self::assertEquals($rootNode, $this->widgetContext->getViewHelperChildNodes());
     }
 
     /**

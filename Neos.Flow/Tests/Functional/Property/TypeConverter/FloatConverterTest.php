@@ -65,7 +65,7 @@ class FloatConverterTest extends FunctionalTestCase
         $configuration->setTypeConverterOption(FloatConverter::class, 'locale', $locale);
 
         $actualResult = $this->converter->convertFrom($source, 'float', [], $configuration);
-        $this->assertEquals($expectedResult, $actualResult);
+        self::assertEquals($expectedResult, $actualResult);
     }
 
     /**
@@ -77,9 +77,9 @@ class FloatConverterTest extends FunctionalTestCase
         $configuration->setTypeConverterOption(FloatConverter::class, 'locale', 'de');
 
         $actualResult = $this->converter->convertFrom('12,777777', 'float', [], $configuration);
-        $this->assertInstanceOf(FlowError::class, $actualResult);
+        self::assertInstanceOf(FlowError::class, $actualResult);
 
-        $this->assertInstanceOf(FlowError::class, $this->converter->convertFrom('84,00', 'float'));
+        self::assertInstanceOf(FlowError::class, $this->converter->convertFrom('84,00', 'float'));
     }
 
     /**
@@ -99,7 +99,7 @@ class FloatConverterTest extends FunctionalTestCase
      */
     public function convertFromDoesntUseLocaleParserIfNoConfigurationGiven()
     {
-        $this->assertEquals(84, $this->converter->convertFrom('84.000', 'float'));
-        $this->assertEquals(84.42, $this->converter->convertFrom('84.42', 'float'));
+        self::assertEquals(84, $this->converter->convertFrom('84.000', 'float'));
+        self::assertEquals(84.42, $this->converter->convertFrom('84.42', 'float'));
     }
 }

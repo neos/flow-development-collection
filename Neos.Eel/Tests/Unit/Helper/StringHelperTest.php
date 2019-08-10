@@ -43,7 +43,7 @@ class StringHelperTest extends UnitTestCase
     {
         $helper = new StringHelper();
         $result = $helper->substr($string, $start, $length);
-        $this->assertSame($expected, $result);
+        self::assertSame($expected, $result);
     }
 
     public function substringExamples()
@@ -68,7 +68,7 @@ class StringHelperTest extends UnitTestCase
     {
         $helper = new StringHelper();
         $result = $helper->substring($string, $start, $end);
-        $this->assertSame($expected, $result);
+        self::assertSame($expected, $result);
     }
 
     public function charAtExamples()
@@ -89,7 +89,7 @@ class StringHelperTest extends UnitTestCase
     {
         $helper = new StringHelper();
         $result = $helper->charAt($string, $index);
-        $this->assertSame($expected, $result);
+        self::assertSame($expected, $result);
     }
 
     public function endsWithExamples()
@@ -110,7 +110,7 @@ class StringHelperTest extends UnitTestCase
     {
         $helper = new StringHelper();
         $result = $helper->endsWith($string, $search, $position);
-        $this->assertSame($expected, $result);
+        self::assertSame($expected, $result);
     }
 
     public function chrExamples()
@@ -131,7 +131,7 @@ class StringHelperTest extends UnitTestCase
     {
         $helper = new StringHelper();
         $result = $helper->chr($value);
-        $this->assertSame($expected, $result);
+        self::assertSame($expected, $result);
     }
 
     public function ordExamples()
@@ -152,7 +152,7 @@ class StringHelperTest extends UnitTestCase
     {
         $helper = new StringHelper();
         $result = $helper->ord($value);
-        $this->assertSame($expected, $result);
+        self::assertSame($expected, $result);
     }
 
     public function indexOfExamples()
@@ -179,7 +179,7 @@ class StringHelperTest extends UnitTestCase
     {
         $helper = new StringHelper();
         $result = $helper->indexOf($string, $search, $fromIndex);
-        $this->assertSame($expected, $result);
+        self::assertSame($expected, $result);
     }
 
     public function lastIndexOfExamples()
@@ -201,7 +201,7 @@ class StringHelperTest extends UnitTestCase
     {
         $helper = new StringHelper();
         $result = $helper->lastIndexOf($string, $search, $fromIndex);
-        $this->assertSame($expected, $result);
+        self::assertSame($expected, $result);
     }
 
     public function pregMatchExamples()
@@ -219,7 +219,7 @@ class StringHelperTest extends UnitTestCase
     {
         $helper = new StringHelper();
         $result = $helper->pregMatch($string, $pattern);
-        $this->assertSame($expected, $result);
+        self::assertSame($expected, $result);
     }
 
     public function pregMatchAllExamples()
@@ -237,7 +237,7 @@ class StringHelperTest extends UnitTestCase
     {
         $helper = new StringHelper();
         $result = $helper->pregMatchAll($string, $pattern);
-        $this->assertSame($expected, $result);
+        self::assertSame($expected, $result);
     }
 
     public function pregReplaceExamples()
@@ -258,7 +258,7 @@ class StringHelperTest extends UnitTestCase
     {
         $helper = new StringHelper();
         $result = $helper->pregReplace($string, $pattern, $replace);
-        $this->assertSame($expected, $result);
+        self::assertSame($expected, $result);
     }
 
     public function pregSplitExamples()
@@ -277,7 +277,7 @@ class StringHelperTest extends UnitTestCase
     {
         $helper = new StringHelper();
         $result = $helper->pregSplit($string, $pattern, $limit);
-        $this->assertSame($expected, $result);
+        self::assertSame($expected, $result);
     }
 
     public function replaceExamples()
@@ -297,7 +297,7 @@ class StringHelperTest extends UnitTestCase
     {
         $helper = new StringHelper();
         $result = $helper->replace($string, $search, $replace);
-        $this->assertSame($expected, $result);
+        self::assertSame($expected, $result);
     }
 
 
@@ -319,7 +319,7 @@ class StringHelperTest extends UnitTestCase
     {
         $helper = new StringHelper();
         $result = $helper->split($string, $separator, $limit);
-        $this->assertSame($expected, $result);
+        self::assertSame($expected, $result);
     }
 
     public function startsWithExamples()
@@ -341,7 +341,7 @@ class StringHelperTest extends UnitTestCase
     {
         $helper = new StringHelper();
         $result = $helper->startsWith($string, $search, $position);
-        $this->assertSame($expected, $result);
+        self::assertSame($expected, $result);
     }
 
     public function firstLetterToUpperCaseExamples()
@@ -360,7 +360,7 @@ class StringHelperTest extends UnitTestCase
     {
         $helper = new StringHelper();
         $result = $helper->firstLetterToUpperCase($string);
-        $this->assertSame($expected, $result);
+        self::assertSame($expected, $result);
     }
 
     public function firstLetterToLowerCaseExamples()
@@ -379,7 +379,7 @@ class StringHelperTest extends UnitTestCase
     {
         $helper = new StringHelper();
         $result = $helper->firstLetterToLowerCase($string);
-        $this->assertSame($expected, $result);
+        self::assertSame($expected, $result);
     }
 
     public function toLowerCaseExamples()
@@ -397,7 +397,7 @@ class StringHelperTest extends UnitTestCase
     {
         $helper = new StringHelper();
         $result = $helper->toLowerCase($string);
-        $this->assertSame($expected, $result);
+        self::assertSame($expected, $result);
     }
 
     public function toUpperCaseExamples()
@@ -415,7 +415,7 @@ class StringHelperTest extends UnitTestCase
     {
         $helper = new StringHelper();
         $result = $helper->toUpperCase($string);
-        $this->assertSame($expected, $result);
+        self::assertSame($expected, $result);
     }
 
     public function isBlankExamples()
@@ -436,7 +436,7 @@ class StringHelperTest extends UnitTestCase
     {
         $helper = new StringHelper();
         $result = $helper->isBlank($string);
-        $this->assertSame($expected, $result);
+        self::assertSame($expected, $result);
     }
 
     public function trimExamples()
@@ -457,7 +457,7 @@ class StringHelperTest extends UnitTestCase
     {
         $helper = new StringHelper();
         $result = $helper->trim($string, $charlist);
-        $this->assertSame($expected, $result);
+        self::assertSame($expected, $result);
     }
 
     public function typeConversionExamples()
@@ -491,7 +491,7 @@ class StringHelperTest extends UnitTestCase
     {
         $helper = new StringHelper();
         $result = $helper->$method($string);
-        $this->assertSame($expected, $result);
+        self::assertSame($expected, $result);
     }
 
     public function stripTagsExamples()
@@ -511,7 +511,7 @@ class StringHelperTest extends UnitTestCase
     {
         $helper = new StringHelper();
         $result = $helper->stripTags($string, $allowedTags);
-        $this->assertSame($expected, $result);
+        self::assertSame($expected, $result);
     }
 
     /**
@@ -521,7 +521,7 @@ class StringHelperTest extends UnitTestCase
     {
         $helper = new StringHelper();
         $result = $helper->nl2br('some' . chr(10) . 'string');
-        $this->assertSame('some<br />' . chr(10) . 'string', $result);
+        self::assertSame('some<br />' . chr(10) . 'string', $result);
     }
 
     /**
@@ -531,7 +531,7 @@ class StringHelperTest extends UnitTestCase
     {
         $helper = new StringHelper();
         $result = $helper->rawUrlEncode('&foo|bar');
-        $this->assertSame('%26foo%7Cbar', $result);
+        self::assertSame('%26foo%7Cbar', $result);
     }
 
     public function htmlSpecialCharsExamples()
@@ -550,7 +550,7 @@ class StringHelperTest extends UnitTestCase
     {
         $helper = new StringHelper();
         $result = $helper->htmlSpecialChars($string, $preserveEntities);
-        $this->assertSame($expected, $result);
+        self::assertSame($expected, $result);
     }
 
     public function cropExamples()
@@ -602,7 +602,7 @@ class StringHelperTest extends UnitTestCase
     {
         $helper = new StringHelper();
         $result = $helper->$methodName($text, $maximumCharacters, $suffixString);
-        $this->assertSame($expected, $result);
+        self::assertSame($expected, $result);
     }
 
     /**
@@ -612,7 +612,7 @@ class StringHelperTest extends UnitTestCase
     {
         $helper = new StringHelper();
         $result = $helper->md5('joh316');
-        $this->assertSame('bacb98acf97e0b6112b1d1b650b84971', $result);
+        self::assertSame('bacb98acf97e0b6112b1d1b650b84971', $result);
     }
 
     /**
@@ -622,7 +622,7 @@ class StringHelperTest extends UnitTestCase
     {
         $helper = new StringHelper();
         $result = $helper->sha1('joh316');
-        $this->assertSame('063b3d108bed9f88fa618c6046de0dccadcf3158', $result);
+        self::assertSame('063b3d108bed9f88fa618c6046de0dccadcf3158', $result);
     }
 
     public function lengthExamples()
@@ -643,7 +643,7 @@ class StringHelperTest extends UnitTestCase
     {
         $helper = new StringHelper();
         $result = $helper->length($input);
-        $this->assertSame($expected, $result);
+        self::assertSame($expected, $result);
     }
 
     public function wordCountExamples()
@@ -668,7 +668,7 @@ class StringHelperTest extends UnitTestCase
     {
         $helper = new StringHelper();
         $result = $helper->wordCount($input);
-        $this->assertSame($expected, $result);
+        self::assertSame($expected, $result);
     }
 
     public function base64encodeEncodesDataProvider()
@@ -691,7 +691,7 @@ class StringHelperTest extends UnitTestCase
     public function base64encodeEncodesTests($input, $expectedResult)
     {
         $helper = new StringHelper();
-        $this->assertSame($expectedResult, $helper->base64encode($input));
+        self::assertSame($expectedResult, $helper->base64encode($input));
     }
 
     public function base64decodeEncodesDataProvider()
@@ -713,7 +713,7 @@ class StringHelperTest extends UnitTestCase
     public function base64decodeEncodesTests($input, $expectedResult)
     {
         $helper = new StringHelper();
-        $this->assertSame($expectedResult, $helper->base64decode($input));
+        self::assertSame($expectedResult, $helper->base64decode($input));
     }
 
     /**
@@ -722,6 +722,6 @@ class StringHelperTest extends UnitTestCase
     public function base64decodeReturnsFalseIfGivenStringIsInvalidAndStrictModeIsSet()
     {
         $helper = new StringHelper();
-        $this->assertFalse($helper->base64decode('invälid input', true));
+        self::assertFalse($helper->base64decode('invälid input', true));
     }
 }

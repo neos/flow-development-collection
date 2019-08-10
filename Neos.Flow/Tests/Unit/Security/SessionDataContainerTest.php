@@ -55,9 +55,9 @@ class SessionDataContainerTest extends UnitTestCase
 
         $this->sessionDataContainer->reset();
 
-        $this->assertSame([], $this->sessionDataContainer->getCsrfProtectionTokens());
-        $this->assertNull($this->sessionDataContainer->getInterceptedRequest());
-        $this->assertSame([], $this->sessionDataContainer->getSecurityTokens());
+        self::assertSame([], $this->sessionDataContainer->getCsrfProtectionTokens());
+        self::assertNull($this->sessionDataContainer->getInterceptedRequest());
+        self::assertSame([], $this->sessionDataContainer->getSecurityTokens());
     }
 
     /**

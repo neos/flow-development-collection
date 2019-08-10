@@ -104,7 +104,7 @@ class UploadViewHelperTest extends FormFieldViewHelperBaseTestcase
         $expectedResult = '';
         $this->viewHelper->initialize();
         $actualResult = $this->viewHelper->render();
-        $this->assertSame($expectedResult, $actualResult);
+        self::assertSame($expectedResult, $actualResult);
     }
 
     /**
@@ -125,7 +125,7 @@ class UploadViewHelperTest extends FormFieldViewHelperBaseTestcase
         $expectedResult = '<input type="hidden" name="[foo][originallySubmittedResource][__identity]" value="79ecda60-1a27-69ca-17bf-a5d9e80e6c39" />';
         $actualResult = $this->viewHelper->render();
 
-        $this->assertSame($expectedResult, $actualResult);
+        self::assertSame($expectedResult, $actualResult);
     }
 
     /**
@@ -166,7 +166,7 @@ class UploadViewHelperTest extends FormFieldViewHelperBaseTestcase
         $expectedResult = '<input type="hidden" name="foo[bar][originallySubmittedResource][__identity]" value="' . $mockResourceUuid . '" />';
         $this->viewHelper->initialize();
         $actualResult = $this->viewHelper->render();
-        $this->assertSame($expectedResult, $actualResult);
+        self::assertSame($expectedResult, $actualResult);
     }
 
     /**
@@ -200,7 +200,7 @@ class UploadViewHelperTest extends FormFieldViewHelperBaseTestcase
 
         $expectedResult = '<input type="hidden" name="someObject[foo][originallySubmittedResource][__identity]" value="' . $mockValueResourceUuid . '" />';
         $actualResult = $this->viewHelper->render();
-        $this->assertSame($expectedResult, $actualResult);
+        self::assertSame($expectedResult, $actualResult);
     }
 
     /**
@@ -233,6 +233,6 @@ class UploadViewHelperTest extends FormFieldViewHelperBaseTestcase
 
         $expectedResult = '<input type="hidden" name="someObject[foo][originallySubmittedResource][__identity]" value="' . $mockResourceUuid . '" />';
         $actualResult = $this->viewHelper->render();
-        $this->assertSame($expectedResult, $actualResult);
+        self::assertSame($expectedResult, $actualResult);
     }
 }

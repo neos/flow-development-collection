@@ -44,7 +44,7 @@ class FlowAnnotationDriverTest extends UnitTestCase
     {
         $driver = $this->getAccessibleMock(FlowAnnotationDriver::class, ['getMaxIdentifierLength']);
         $driver->expects($this->any())->method('getMaxIdentifierLength')->will($this->returnValue(64));
-        $this->assertEquals($tableName, $driver->inferTableNameFromClassName($className));
+        self::assertEquals($tableName, $driver->inferTableNameFromClassName($className));
     }
 
     /**
@@ -75,8 +75,8 @@ class FlowAnnotationDriverTest extends UnitTestCase
         $driver->expects($this->any())->method('getMaxIdentifierLength')->will($this->returnValue($maxIdentifierLength));
 
         $actualTableName = $driver->_call('inferJoinTableNameFromClassAndPropertyName', $className, $propertyName);
-        $this->assertEquals($expectedTableName, $actualTableName);
-        $this->assertTrue(strlen($actualTableName) <= $maxIdentifierLength);
+        self::assertEquals($expectedTableName, $actualTableName);
+        self::assertTrue(strlen($actualTableName) <= $maxIdentifierLength);
     }
 
     /**
@@ -93,6 +93,6 @@ class FlowAnnotationDriverTest extends UnitTestCase
 
         $driver = $this->getAccessibleMock(FlowAnnotationDriver::class, ['dummy']);
         $driver->_set('entityManager', $mockEntityManager);
-        $this->assertEquals(2048, $driver->_call('getMaxIdentifierLength'));
+        self::assertEquals(2048, $driver->_call('getMaxIdentifierLength'));
     }
 }

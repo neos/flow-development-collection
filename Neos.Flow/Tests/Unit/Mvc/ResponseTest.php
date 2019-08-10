@@ -29,6 +29,6 @@ class ResponseTest extends UnitTestCase
 
         $expected = 'SomeContent';
         $actual = $response->__toString();
-        $this->assertEquals($expected, $actual);
+        self::assertEquals($expected, $actual);
     }
 }

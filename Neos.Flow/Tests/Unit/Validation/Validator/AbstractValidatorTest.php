@@ -39,7 +39,7 @@ class AbstractValidatorTest extends UnitTestCase
     {
         $this->validator->__construct(['thirdPlaceHolder' => 'dummy']);
 
-        $this->assertInstanceOf(AbstractValidator::class, $this->validator);
+        self::assertInstanceOf(AbstractValidator::class, $this->validator);
     }
 
     /**

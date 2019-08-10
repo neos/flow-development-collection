@@ -39,9 +39,9 @@ class SchemaValidatorTest extends \PHPUnit\Framework\TestCase
     protected function assertError(Error\Result $result, bool $expectError = true)
     {
         if ($expectError === true) {
-            $this->assertTrue($result->hasErrors());
+            self::assertTrue($result->hasErrors());
         } else {
-            $this->assertFalse($result->hasErrors());
+            self::assertFalse($result->hasErrors());
         }
     }
 
@@ -55,9 +55,9 @@ class SchemaValidatorTest extends \PHPUnit\Framework\TestCase
     protected function assertSuccess(Error\Result $result, bool $expectSuccess = true)
     {
         if ($expectSuccess === true) {
-            $this->assertFalse($result->hasErrors());
+            self::assertFalse($result->hasErrors());
         } else {
-            $this->assertTrue($result->hasErrors());
+            self::assertTrue($result->hasErrors());
         }
     }
 
@@ -180,12 +180,12 @@ class SchemaValidatorTest extends \PHPUnit\Framework\TestCase
         $this->assertError($result);
 
         $allErrors = $result->getFlattenedErrors();
-        $this->assertTrue(array_key_exists('foo.bar.baz', $allErrors));
+        self::assertTrue(array_key_exists('foo.bar.baz', $allErrors));
 
         $pathErrors = $result->forProperty('foo.bar.baz')->getErrors();
         $firstPathError = $pathErrors[0];
-        $this->assertEquals($firstPathError->getCode(), 1328557141);
-        $this->assertEquals($firstPathError->getArguments(), ['type=number', 'type=string']);
+        self::assertEquals($firstPathError->getCode(), 1328557141);
+        self::assertEquals($firstPathError->getArguments(), ['type=number', 'type=string']);
     }
 
     /**

@@ -48,6 +48,6 @@ class PersistentResourceTest extends FunctionalTestCase
     public function fileGetContentsReturnFixtureContentForResourceUri()
     {
         $resource = $this->resourceManager->importResourceFromContent('fixture', 'fixture.txt');
-        $this->assertEquals('fixture', file_get_contents('resource://' . $resource->getSha1()));
+        self::assertEquals('fixture', file_get_contents('resource://' . $resource->getSha1()));
     }
 }

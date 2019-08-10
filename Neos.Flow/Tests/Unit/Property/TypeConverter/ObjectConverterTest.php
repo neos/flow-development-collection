@@ -55,9 +55,9 @@ class ObjectConverterTest extends UnitTestCase
      */
     public function checkMetadata()
     {
-        $this->assertEquals(['array'], $this->converter->getSupportedSourceTypes(), 'Source types do not match');
-        $this->assertEquals('object', $this->converter->getSupportedTargetType(), 'Target type does not match');
-        $this->assertEquals(0, $this->converter->getPriority(), 'Priority does not match');
+        self::assertEquals(['array'], $this->converter->getSupportedSourceTypes(), 'Source types do not match');
+        self::assertEquals('object', $this->converter->getSupportedTargetType(), 'Target type does not match');
+        self::assertEquals(0, $this->converter->getPriority(), 'Priority does not match');
     }
 
     public function dataProviderForCanConvert()
@@ -82,7 +82,7 @@ class ObjectConverterTest extends UnitTestCase
             $this->mockReflectionService->expects($this->at(1))->method('isClassAnnotatedWith')->with('TheTargetType', Flow\ValueObject::class)->will($this->returnValue($isValueObject));
         }
 
-        $this->assertEquals($expected, $this->converter->canConvertFrom('myInputData', 'TheTargetType'));
+        self::assertEquals($expected, $this->converter->canConvertFrom('myInputData', 'TheTargetType'));
     }
 
     /**
@@ -99,7 +99,7 @@ class ObjectConverterTest extends UnitTestCase
         ]));
         $configuration = new PropertyMappingConfiguration();
         $configuration->setTypeConverterOptions(ObjectConverter::class, []);
-        $this->assertEquals('TheTypeOfSubObject', $this->converter->getTypeOfChildProperty('TheTargetType', 'thePropertyName', $configuration));
+        self::assertEquals('TheTypeOfSubObject', $this->converter->getTypeOfChildProperty('TheTargetType', 'thePropertyName', $configuration));
     }
 
     /**
@@ -117,6 +117,6 @@ class ObjectConverterTest extends UnitTestCase
         ]));
         $configuration = new PropertyMappingConfiguration();
         $configuration->setTypeConverterOptions(ObjectConverter::class, []);
-        $this->assertEquals('TheTypeOfSubObject', $this->converter->getTypeOfChildProperty('TheTargetType', 'thePropertyName', $configuration));
+        self::assertEquals('TheTypeOfSubObject', $this->converter->getTypeOfChildProperty('TheTargetType', 'thePropertyName', $configuration));
     }
 }

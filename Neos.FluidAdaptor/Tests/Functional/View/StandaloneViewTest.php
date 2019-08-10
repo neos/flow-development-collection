@@ -60,7 +60,7 @@ class StandaloneViewTest extends FunctionalTestCase
 
         $expected = 'This is my cool bar template!';
         $actual = $standaloneView->render();
-        $this->assertSame($expected, $actual);
+        self::assertSame($expected, $actual);
     }
 
     /**
@@ -77,7 +77,7 @@ class StandaloneViewTest extends FunctionalTestCase
 
         $expected = 'test bar';
         $actual = $standaloneView->renderSection('innerSection');
-        $this->assertSame($expected, $actual);
+        self::assertSame($expected, $actual);
     }
 
     /**
@@ -150,7 +150,7 @@ class StandaloneViewTest extends FunctionalTestCase
 
         $expected = 'This is a test template. Hello Robert.';
         $actual = $standaloneView->render();
-        $this->assertSame($expected, $actual);
+        self::assertSame($expected, $actual);
     }
 
     /**
@@ -164,7 +164,7 @@ class StandaloneViewTest extends FunctionalTestCase
 
         $expected = 'Hello Sebastian &lt;script&gt;alert(&quot;dangerous&quot;);&lt;/script&gt;.';
         $actual = $standaloneView->render();
-        $this->assertSame($expected, $actual);
+        self::assertSame($expected, $actual);
     }
 
     /**
@@ -178,7 +178,7 @@ class StandaloneViewTest extends FunctionalTestCase
 
         $expected = 'Hello Sebastian <script>alert("dangerous");</script>.';
         $actual = $standaloneView->render();
-        $this->assertSame($expected, $actual);
+        self::assertSame($expected, $actual);
     }
 
     /**
@@ -195,7 +195,7 @@ class StandaloneViewTest extends FunctionalTestCase
 
         $expected = 'This is a test template. Hello Robert.';
         $actual = $standaloneView->render();
-        $this->assertSame($expected, $actual);
+        self::assertSame($expected, $actual);
     }
 
     /**
@@ -213,7 +213,7 @@ class StandaloneViewTest extends FunctionalTestCase
 
         $expected = 'This is a test template. Hello Karsten.';
         $actual = $standaloneView->render();
-        $this->assertSame($expected, $actual);
+        self::assertSame($expected, $actual);
     }
 
     /**
@@ -230,7 +230,7 @@ class StandaloneViewTest extends FunctionalTestCase
 
         $expected = 'Hey HEY HO';
         $actual = $standaloneView->render();
-        $this->assertSame($expected, $actual);
+        self::assertSame($expected, $actual);
     }
 
     /**
@@ -247,7 +247,7 @@ class StandaloneViewTest extends FunctionalTestCase
 
         $expected = 'Hey -- overridden -- HEY HO';
         $actual = $standaloneView->render();
-        $this->assertSame($expected, $actual);
+        self::assertSame($expected, $actual);
     }
 
     /**
@@ -280,7 +280,7 @@ class StandaloneViewTest extends FunctionalTestCase
 
         $expected = '<foo:bar /><bar:foo></bar:foo><foo.bar:baz />foobar';
         $actual = $standaloneView->render();
-        $this->assertSame($expected, $actual);
+        self::assertSame($expected, $actual);
     }
 
     /**
@@ -303,7 +303,7 @@ class StandaloneViewTest extends FunctionalTestCase
 
         $expected = 'Christian uses &lt;h1&gt;HACK&lt;/h1&gt;';
         $actual = trim($standaloneView->renderSection('test'));
-        $this->assertSame($expected, $actual, 'First rendering was not escaped.');
+        self::assertSame($expected, $actual, 'First rendering was not escaped.');
 
         $partialCacheIdentifier = $standaloneView->getTemplatePaths()->getPartialIdentifier('Test');
         $templateCache = $this->objectManager->get(CacheManager::class)->getCache('Fluid_TemplateCache');
@@ -315,7 +315,7 @@ class StandaloneViewTest extends FunctionalTestCase
 
         $expected = 'Christian uses &lt;h1&gt;HACK&lt;/h1&gt;';
         $actual = trim($standaloneView->renderSection('test'));
-        $this->assertSame($expected, $actual, 'Second rendering was not escaped.');
+        self::assertSame($expected, $actual, 'Second rendering was not escaped.');
     }
 
     /**
@@ -327,8 +327,8 @@ class StandaloneViewTest extends FunctionalTestCase
         $standaloneView = new StandaloneView();
         $standaloneView->setFormat($formatToBeSet);
 
-        $this->assertSame($formatToBeSet, $standaloneView->getFormat());
-        $this->assertSame($formatToBeSet, $standaloneView->getRenderingContext()->getTemplatePaths()->getFormat());
+        self::assertSame($formatToBeSet, $standaloneView->getFormat());
+        self::assertSame($formatToBeSet, $standaloneView->getRenderingContext()->getTemplatePaths()->getFormat());
     }
 
     /**
@@ -340,7 +340,7 @@ class StandaloneViewTest extends FunctionalTestCase
         $standaloneView = new StandaloneView();
         $standaloneView->setTemplatePathAndFilename($templatePathAndFilename);
 
-        $this->assertSame($templatePathAndFilename, $standaloneView->getTemplatePathAndFilename());
+        self::assertSame($templatePathAndFilename, $standaloneView->getTemplatePathAndFilename());
     }
 
     /**
@@ -358,6 +358,6 @@ class StandaloneViewTest extends FunctionalTestCase
 
         $expected = 'This is a test template.<input type="checkbox" name="checkbox-outside" value="1" />';
         $actual = $standaloneView->render();
-        $this->assertSame($expected, $actual);
+        self::assertSame($expected, $actual);
     }
 }

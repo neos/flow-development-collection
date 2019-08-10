@@ -38,6 +38,6 @@ class HttpBasicTest extends UnitTestCase
 
         $entryPoint->startAuthentication($mockHttpRequest, $mockResponse);
 
-        $this->assertEquals(['realm' => 'realm string'], $entryPoint->getOptions());
+        self::assertEquals(['realm' => 'realm string'], $entryPoint->getOptions());
     }
 }

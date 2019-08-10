@@ -51,7 +51,7 @@ class TransientMemoryBackendTest extends BaseTestCase
         $identifier = 'MyIdentifier';
         $backend->set($identifier, $data);
         $inCache = $backend->has($identifier);
-        $this->assertTrue($inCache);
+        self::assertTrue($inCache);
     }
 
     /**
@@ -67,7 +67,7 @@ class TransientMemoryBackendTest extends BaseTestCase
         $identifier = 'MyIdentifier';
         $backend->set($identifier, $data);
         $fetchedData = $backend->get($identifier);
-        $this->assertEquals($data, $fetchedData);
+        self::assertEquals($data, $fetchedData);
     }
 
     /**
@@ -84,7 +84,7 @@ class TransientMemoryBackendTest extends BaseTestCase
         $backend->set($identifier, $data);
         $backend->remove($identifier);
         $inCache = $backend->has($identifier);
-        $this->assertFalse($inCache);
+        self::assertFalse($inCache);
     }
 
     /**
@@ -102,7 +102,7 @@ class TransientMemoryBackendTest extends BaseTestCase
         $otherData = 'some other data';
         $backend->set($identifier, $otherData);
         $fetchedData = $backend->get($identifier);
-        $this->assertEquals($otherData, $fetchedData);
+        self::assertEquals($otherData, $fetchedData);
     }
 
     /**
@@ -119,10 +119,10 @@ class TransientMemoryBackendTest extends BaseTestCase
         $backend->set($entryIdentifier, $data, ['UnitTestTag%tag1', 'UnitTestTag%tag2']);
 
         $retrieved = $backend->findIdentifiersByTag('UnitTestTag%tag1');
-        $this->assertEquals($entryIdentifier, $retrieved[0]);
+        self::assertEquals($entryIdentifier, $retrieved[0]);
 
         $retrieved = $backend->findIdentifiersByTag('UnitTestTag%tag2');
-        $this->assertEquals($entryIdentifier, $retrieved[0]);
+        self::assertEquals($entryIdentifier, $retrieved[0]);
     }
 
     /**
@@ -136,7 +136,7 @@ class TransientMemoryBackendTest extends BaseTestCase
 
         $identifier = 'NonExistingIdentifier';
         $inCache = $backend->has($identifier);
-        $this->assertFalse($inCache);
+        self::assertFalse($inCache);
     }
 
     /**
@@ -150,7 +150,7 @@ class TransientMemoryBackendTest extends BaseTestCase
 
         $identifier = 'NonExistingIdentifier';
         $inCache = $backend->remove($identifier);
-        $this->assertFalse($inCache);
+        self::assertFalse($inCache);
     }
 
     /**
@@ -169,9 +169,9 @@ class TransientMemoryBackendTest extends BaseTestCase
 
         $backend->flushByTag('UnitTestTag%special');
 
-        $this->assertTrue($backend->has('TransientMemoryBackendTest1'), 'TransientMemoryBackendTest1');
-        $this->assertFalse($backend->has('TransientMemoryBackendTest2'), 'TransientMemoryBackendTest2');
-        $this->assertTrue($backend->has('TransientMemoryBackendTest3'), 'TransientMemoryBackendTest3');
+        self::assertTrue($backend->has('TransientMemoryBackendTest1'), 'TransientMemoryBackendTest1');
+        self::assertFalse($backend->has('TransientMemoryBackendTest2'), 'TransientMemoryBackendTest2');
+        self::assertTrue($backend->has('TransientMemoryBackendTest3'), 'TransientMemoryBackendTest3');
     }
 
     /**
@@ -190,9 +190,9 @@ class TransientMemoryBackendTest extends BaseTestCase
 
         $backend->flush();
 
-        $this->assertFalse($backend->has('TransientMemoryBackendTest1'), 'TransientMemoryBackendTest1');
-        $this->assertFalse($backend->has('TransientMemoryBackendTest2'), 'TransientMemoryBackendTest2');
-        $this->assertFalse($backend->has('TransientMemoryBackendTest3'), 'TransientMemoryBackendTest3');
+        self::assertFalse($backend->has('TransientMemoryBackendTest1'), 'TransientMemoryBackendTest1');
+        self::assertFalse($backend->has('TransientMemoryBackendTest2'), 'TransientMemoryBackendTest2');
+        self::assertFalse($backend->has('TransientMemoryBackendTest3'), 'TransientMemoryBackendTest3');
     }
 
     /**

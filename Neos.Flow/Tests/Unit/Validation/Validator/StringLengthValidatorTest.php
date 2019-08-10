@@ -34,7 +34,7 @@ class StringLengthValidatorTest extends AbstractValidatorTestcase
      */
     public function validateReturnsNoErrorIfTheGivenValueIsNull()
     {
-        $this->assertFalse($this->validator->validate(null)->hasErrors());
+        self::assertFalse($this->validator->validate(null)->hasErrors());
     }
 
     /**
@@ -42,7 +42,7 @@ class StringLengthValidatorTest extends AbstractValidatorTestcase
      */
     public function validateReturnsNoErrorIfTheGivenValueIsAnEmptyString()
     {
-        $this->assertFalse($this->validator->validate('')->hasErrors());
+        self::assertFalse($this->validator->validate('')->hasErrors());
     }
 
     /**
@@ -51,7 +51,7 @@ class StringLengthValidatorTest extends AbstractValidatorTestcase
     public function stringLengthValidatorReturnsNoErrorForAStringShorterThanMaxLengthAndLongerThanMinLength()
     {
         $this->validatorOptions(['minimum' => 0, 'maximum' => 50]);
-        $this->assertFalse($this->validator->validate('this is a very simple string')->hasErrors());
+        self::assertFalse($this->validator->validate('this is a very simple string')->hasErrors());
     }
 
     /**
@@ -60,7 +60,7 @@ class StringLengthValidatorTest extends AbstractValidatorTestcase
     public function stringLengthValidatorReturnsErrorForAStringShorterThanThanMinLength()
     {
         $this->validatorOptions(['minimum' => 50, 'maximum' => 100]);
-        $this->assertTrue($this->validator->validate('this is a very short string')->hasErrors());
+        self::assertTrue($this->validator->validate('this is a very short string')->hasErrors());
     }
 
     /**
@@ -69,7 +69,7 @@ class StringLengthValidatorTest extends AbstractValidatorTestcase
     public function stringLengthValidatorReturnsErrorsForAStringLongerThanThanMaxLength()
     {
         $this->validatorOptions(['minimum' => 5, 'maximum' => 10]);
-        $this->assertTrue($this->validator->validate('this is a very short string')->hasErrors());
+        self::assertTrue($this->validator->validate('this is a very short string')->hasErrors());
     }
 
     /**
@@ -78,7 +78,7 @@ class StringLengthValidatorTest extends AbstractValidatorTestcase
     public function stringLengthValidatorReturnsNoErrorsForAStringLongerThanThanMinLengthAndMaxLengthNotSpecified()
     {
         $this->validatorOptions(['minimum' => 5]);
-        $this->assertFalse($this->validator->validate('this is a very short string')->hasErrors());
+        self::assertFalse($this->validator->validate('this is a very short string')->hasErrors());
     }
 
     /**
@@ -87,7 +87,7 @@ class StringLengthValidatorTest extends AbstractValidatorTestcase
     public function stringLengthValidatorReturnsNoErrorsForAStringShorterThanThanMaxLengthAndMinLengthNotSpecified()
     {
         $this->validatorOptions(['maximum' => 100]);
-        $this->assertFalse($this->validator->validate('this is a very short string')->hasErrors());
+        self::assertFalse($this->validator->validate('this is a very short string')->hasErrors());
     }
 
     /**
@@ -96,7 +96,7 @@ class StringLengthValidatorTest extends AbstractValidatorTestcase
     public function stringLengthValidatorReturnsNoErrorsForAStringLengthEqualToMaxLengthAndMinLengthNotSpecified()
     {
         $this->validatorOptions(['maximum' => 10]);
-        $this->assertFalse($this->validator->validate('1234567890')->hasErrors());
+        self::assertFalse($this->validator->validate('1234567890')->hasErrors());
     }
 
     /**
@@ -105,7 +105,7 @@ class StringLengthValidatorTest extends AbstractValidatorTestcase
     public function stringLengthValidatorReturnsNoErrorForAStringLengthEqualToMinLengthAndMaxLengthNotSpecified()
     {
         $this->validatorOptions(['minimum' => 10]);
-        $this->assertFalse($this->validator->validate('1234567890')->hasErrors());
+        self::assertFalse($this->validator->validate('1234567890')->hasErrors());
     }
 
     /**
@@ -114,7 +114,7 @@ class StringLengthValidatorTest extends AbstractValidatorTestcase
     public function stringLengthValidatorReturnsNoErrorIfMinLengthAndMaxLengthAreEqualAndTheGivenStringMatchesThisValue()
     {
         $this->validatorOptions(['minimum' => 10, 'maximum' => 10]);
-        $this->assertFalse($this->validator->validate('1234567890')->hasErrors());
+        self::assertFalse($this->validator->validate('1234567890')->hasErrors());
     }
 
     /**
@@ -123,7 +123,7 @@ class StringLengthValidatorTest extends AbstractValidatorTestcase
     public function stringLengthValidatorReturnsNoErrorsfTheStringLengthIsEqualToMaxLength()
     {
         $this->validatorOptions(['minimum' => 1, 'maximum' => 10]);
-        $this->assertFalse($this->validator->validate('1234567890')->hasErrors());
+        self::assertFalse($this->validator->validate('1234567890')->hasErrors());
     }
 
     /**
@@ -132,7 +132,7 @@ class StringLengthValidatorTest extends AbstractValidatorTestcase
     public function stringLengthValidatorReturnsNoErrorIfTheStringLengthIsEqualToMinLength()
     {
         $this->validatorOptions(['minimum' => 10, 'maximum' => 100]);
-        $this->assertFalse($this->validator->validate('1234567890')->hasErrors());
+        self::assertFalse($this->validator->validate('1234567890')->hasErrors());
     }
 
     /**
@@ -153,7 +153,7 @@ class StringLengthValidatorTest extends AbstractValidatorTestcase
     {
         $this->validatorOptions(['minimum' => 50, 'maximum' => 100]);
 
-        $this->assertEquals(1, count($this->validator->validate('this is a very short string')->getErrors()));
+        self::assertEquals(1, count($this->validator->validate('this is a very short string')->getErrors()));
     }
 
     /**
@@ -175,7 +175,7 @@ class StringLengthValidatorTest extends AbstractValidatorTestcase
 		');
 
         $object = new $className();
-        $this->assertFalse($this->validator->validate($object)->hasErrors());
+        self::assertFalse($this->validator->validate($object)->hasErrors());
     }
 
     /**
@@ -195,7 +195,7 @@ class StringLengthValidatorTest extends AbstractValidatorTestcase
 		');
 
         $object = new $className();
-        $this->assertTrue($this->validator->validate($object)->hasErrors());
+        self::assertTrue($this->validator->validate($object)->hasErrors());
     }
 
     /**
@@ -204,6 +204,6 @@ class StringLengthValidatorTest extends AbstractValidatorTestcase
     public function validateRegardsMultibyteStringsCorrectly()
     {
         $this->validatorOptions(['maximum' => 8]);
-        $this->assertFalse($this->validator->validate('überlang')->hasErrors());
+        self::assertFalse($this->validator->validate('überlang')->hasErrors());
     }
 }

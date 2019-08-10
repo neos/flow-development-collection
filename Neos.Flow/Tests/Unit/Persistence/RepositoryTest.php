@@ -28,7 +28,7 @@ class RepositoryTest extends UnitTestCase
     public function abstractRepositoryImplementsRepositoryInterface()
     {
         $repository = $this->createMock(Persistence\Repository::class);
-        $this->assertTrue($repository instanceof Persistence\RepositoryInterface);
+        self::assertTrue($repository instanceof Persistence\RepositoryInterface);
     }
 
     /**
@@ -54,7 +54,7 @@ class RepositoryTest extends UnitTestCase
         eval('namespace ' . $repositoryNamespace . '; class ' . $repositoryClassName . ' extends \Neos\Flow\Persistence\Repository {}');
 
         $repository = new $mockClassName();
-        $this->assertEquals($modelClassName, $repository->getEntityClassName());
+        self::assertEquals($modelClassName, $repository->getEntityClassName());
     }
 
     /**
@@ -68,7 +68,7 @@ class RepositoryTest extends UnitTestCase
         $fullRepositoryClassName = $repositoryNamespace . '\\' . $repositoryClassName;
 
         $repository = new $fullRepositoryClassName();
-        $this->assertEquals($modelClassName, $repository->getEntityClassName());
+        self::assertEquals($modelClassName, $repository->getEntityClassName());
     }
 
     /**
@@ -120,7 +120,7 @@ class RepositoryTest extends UnitTestCase
         $repository = $this->getMockBuilder(Persistence\Repository::class)->setMethods(['createQuery'])->getMock();
         $repository->expects($this->once())->method('createQuery')->will($this->returnValue($mockQuery));
 
-        $this->assertSame($expectedResult, $repository->findAll());
+        self::assertSame($expectedResult, $repository->findAll());
     }
 
     /**
@@ -138,7 +138,7 @@ class RepositoryTest extends UnitTestCase
         $this->inject($repository, 'persistenceManager', $mockPersistenceManager);
         $repository->_set('entityClassName', 'stdClass');
 
-        $this->assertSame($object, $repository->findByIdentifier($identifier));
+        self::assertSame($object, $repository->findByIdentifier($identifier));
     }
 
     /**
@@ -197,7 +197,7 @@ class RepositoryTest extends UnitTestCase
         $repository = $this->getMockBuilder(Persistence\Repository::class)->setMethods(['createQuery'])->getMock();
         $repository->expects($this->once())->method('createQuery')->will($this->returnValue($mockQuery));
 
-        $this->assertSame($mockQueryResult, $repository->findByFoo('bar'));
+        self::assertSame($mockQueryResult, $repository->findByFoo('bar'));
     }
 
     /**
@@ -216,7 +216,7 @@ class RepositoryTest extends UnitTestCase
         $repository = $this->getMockBuilder(Persistence\Repository::class)->setMethods(['createQuery'])->getMock();
         $repository->expects($this->once())->method('createQuery')->will($this->returnValue($mockQuery));
 
-        $this->assertSame($object, $repository->findOneByFoo('bar'));
+        self::assertSame($object, $repository->findOneByFoo('bar'));
     }
 
     /**
@@ -232,7 +232,7 @@ class RepositoryTest extends UnitTestCase
         $repository = $this->getMockBuilder(Persistence\Repository::class)->setMethods(['createQuery'])->getMock();
         $repository->expects($this->once())->method('createQuery')->will($this->returnValue($mockQuery));
 
-        $this->assertSame(2, $repository->countByFoo('bar'));
+        self::assertSame(2, $repository->countByFoo('bar'));
     }
 
     /**

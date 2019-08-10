@@ -64,7 +64,7 @@ class PasswordTokenTest extends UnitTestCase
         $this->token->updateCredentials($this->mockActionRequest);
 
         $expectedCredentials = ['password' => 'verysecurepassword'];
-        $this->assertEquals($expectedCredentials, $this->token->getCredentials(), 'The credentials have not been extracted correctly from the POST arguments');
+        self::assertEquals($expectedCredentials, $this->token->getCredentials(), 'The credentials have not been extracted correctly from the POST arguments');
     }
 
     /**
@@ -80,7 +80,7 @@ class PasswordTokenTest extends UnitTestCase
 
         $this->token->updateCredentials($this->mockActionRequest);
 
-        $this->assertSame(TokenInterface::AUTHENTICATION_NEEDED, $this->token->getAuthenticationStatus());
+        self::assertSame(TokenInterface::AUTHENTICATION_NEEDED, $this->token->getAuthenticationStatus());
     }
 
     /**
@@ -95,7 +95,7 @@ class PasswordTokenTest extends UnitTestCase
         $this->mockActionRequest->expects($this->atLeastOnce())->method('getInternalArguments')->will($this->returnValue($arguments));
 
         $this->token->updateCredentials($this->mockActionRequest);
-        $this->assertEquals(['password' => 'verysecurepassword'], $this->token->getCredentials());
+        self::assertEquals(['password' => 'verysecurepassword'], $this->token->getCredentials());
 
         $secondToken = new PasswordToken();
         $secondMockActionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
@@ -104,6 +104,6 @@ class PasswordTokenTest extends UnitTestCase
         $secondMockActionRequest->expects($this->any())->method('getHttpRequest')->will($this->returnValue($secondMockHttpRequest));
         $secondMockHttpRequest->expects($this->atLeastOnce())->method('getMethod')->will($this->returnValue('GET'));
         $secondToken->updateCredentials($secondMockActionRequest);
-        $this->assertEquals(['password' => ''], $secondToken->getCredentials());
+        self::assertEquals(['password' => ''], $secondToken->getCredentials());
     }
 }

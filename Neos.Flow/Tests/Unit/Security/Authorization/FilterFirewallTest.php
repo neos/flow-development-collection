@@ -64,10 +64,10 @@ class FilterFirewallTest extends UnitTestCase
             $args = func_get_args();
 
             if ($args[0] === 'mockPatternURI') {
-                $this->assertSame(['uriPattern' => '/some/url/.*'], $args[1]);
+                self::assertSame(['uriPattern' => '/some/url/.*'], $args[1]);
                 return $mockRequestPattern1;
             } elseif ($args[0] === 'mockPatternTest') {
-                $this->assertSame(['uriPattern' => '/some/url/blocked.*'], $args[1]);
+                self::assertSame(['uriPattern' => '/some/url/blocked.*'], $args[1]);
                 return $mockRequestPattern2;
             } elseif ($args[0] === 'mockInterceptorAccessGrant') {
                 return $accessGrant;

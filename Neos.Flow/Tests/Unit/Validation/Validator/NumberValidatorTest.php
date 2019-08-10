@@ -48,7 +48,7 @@ class NumberValidatorTest extends AbstractValidatorTestcase
      */
     public function validateReturnsNoErrorIfTheGivenValueIsNull()
     {
-        $this->assertFalse($this->validator->validate(null)->hasErrors());
+        self::assertFalse($this->validator->validate(null)->hasErrors());
     }
 
     /**
@@ -56,7 +56,7 @@ class NumberValidatorTest extends AbstractValidatorTestcase
      */
     public function validateReturnsNoErrorIfTheGivenValueIsAnEmptyString()
     {
-        $this->assertFalse($this->validator->validate('')->hasErrors());
+        self::assertFalse($this->validator->validate('')->hasErrors());
     }
 
     /**
@@ -71,7 +71,7 @@ class NumberValidatorTest extends AbstractValidatorTestcase
         $this->validatorOptions(['locale' => $this->sampleLocale]);
         $this->inject($this->validator, 'numberParser', $this->mockNumberParser);
 
-        $this->assertEquals(1, count($this->validator->validate($sampleInvalidNumber)->getErrors()));
+        self::assertEquals(1, count($this->validator->validate($sampleInvalidNumber)->getErrors()));
     }
 
     /**
@@ -86,6 +86,6 @@ class NumberValidatorTest extends AbstractValidatorTestcase
         $this->validatorOptions(['locale' => 'en_GB', 'formatLength' => NumbersReader::FORMAT_LENGTH_DEFAULT, 'formatType' => NumbersReader::FORMAT_TYPE_PERCENT]);
         $this->inject($this->validator, 'numberParser', $this->mockNumberParser);
 
-        $this->assertEquals(1, count($this->validator->validate($sampleInvalidNumber)->getErrors()));
+        self::assertEquals(1, count($this->validator->validate($sampleInvalidNumber)->getErrors()));
     }
 }

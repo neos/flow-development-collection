@@ -48,8 +48,8 @@ class AbstractFormFieldViewHelperTest extends FormFieldViewHelperBaseTestcase
         $formViewHelper->_set('arguments', $arguments);
         $formViewHelper->expects($this->any())->method('isObjectAccessorMode')->willReturn(false);
 
-        $this->assertSame('foo[__identity]', $formViewHelper->_call('getName'));
-        $this->assertSame('6f487e40-4483-11de-8a39-0800200c9a66', $formViewHelper->_call('getValueAttribute'));
+        self::assertSame('foo[__identity]', $formViewHelper->_call('getName'));
+        self::assertSame('6f487e40-4483-11de-8a39-0800200c9a66', $formViewHelper->_call('getValueAttribute'));
     }
 
     /**
@@ -73,7 +73,7 @@ class AbstractFormFieldViewHelperTest extends FormFieldViewHelperBaseTestcase
         $formViewHelper->_set('arguments', $arguments);
         $expected = 'formPrefix[myObjectName][bla]';
         $actual = $formViewHelper->_call('getName');
-        $this->assertSame($expected, $actual);
+        self::assertSame($expected, $actual);
     }
 
     /**
@@ -97,7 +97,7 @@ class AbstractFormFieldViewHelperTest extends FormFieldViewHelperBaseTestcase
         $formViewHelper->_set('arguments', $arguments);
         $expected = 'formPrefix[myObjectName][bla][blubb]';
         $actual = $formViewHelper->_call('getName');
-        $this->assertSame($expected, $actual);
+        self::assertSame($expected, $actual);
     }
 
     /**
@@ -120,7 +120,7 @@ class AbstractFormFieldViewHelperTest extends FormFieldViewHelperBaseTestcase
         $formViewHelper->_set('arguments', $arguments);
         $expected = 'formPrefix[bla]';
         $actual = $formViewHelper->_call('getName');
-        $this->assertSame($expected, $actual);
+        self::assertSame($expected, $actual);
     }
 
     /**
@@ -143,7 +143,7 @@ class AbstractFormFieldViewHelperTest extends FormFieldViewHelperBaseTestcase
         $formViewHelper->_set('arguments', $arguments);
         $expected = 'formPrefix[some][property][path]';
         $actual = $formViewHelper->_call('getName');
-        $this->assertSame($expected, $actual);
+        self::assertSame($expected, $actual);
     }
 
     /**
@@ -165,7 +165,7 @@ class AbstractFormFieldViewHelperTest extends FormFieldViewHelperBaseTestcase
         $formViewHelper->_set('arguments', $arguments);
         $expected = 'formPrefix[fieldName]';
         $actual = $formViewHelper->_call('getName');
-        $this->assertSame($expected, $actual);
+        self::assertSame($expected, $actual);
     }
 
 
@@ -212,7 +212,7 @@ class AbstractFormFieldViewHelperTest extends FormFieldViewHelperBaseTestcase
         $formViewHelper->_set('arguments', $arguments);
         $expected = 'MyString';
         $actual = $formViewHelper->_call('getValueAttribute');
-        $this->assertSame($expected, $actual);
+        self::assertSame($expected, $actual);
     }
 
     /**
@@ -227,7 +227,7 @@ class AbstractFormFieldViewHelperTest extends FormFieldViewHelperBaseTestcase
         $mockArguments = [];
         $formViewHelper->_set('arguments', $mockArguments);
 
-        $this->assertNull($formViewHelper->_call('getValueAttribute'));
+        self::assertNull($formViewHelper->_call('getValueAttribute'));
     }
 
     /**
@@ -242,7 +242,7 @@ class AbstractFormFieldViewHelperTest extends FormFieldViewHelperBaseTestcase
         $mockArguments = ['value' => 'someValue'];
         $formViewHelper->_set('arguments', $mockArguments);
 
-        $this->assertEquals('someValue', $formViewHelper->_call('getValueAttribute'));
+        self::assertEquals('someValue', $formViewHelper->_call('getValueAttribute'));
     }
 
     /**
@@ -263,7 +263,7 @@ class AbstractFormFieldViewHelperTest extends FormFieldViewHelperBaseTestcase
         $mockArguments = ['value' => $mockObject];
         $formViewHelper->_set('arguments', $mockArguments);
 
-        $this->assertSame('6f487e40-4483-11de-8a39-0800200c9a66', $formViewHelper->_call('getValueAttribute'));
+        self::assertSame('6f487e40-4483-11de-8a39-0800200c9a66', $formViewHelper->_call('getValueAttribute'));
     }
 
     /**
@@ -284,7 +284,7 @@ class AbstractFormFieldViewHelperTest extends FormFieldViewHelperBaseTestcase
         $mockArguments = ['value' => $mockObject];
         $formViewHelper->_set('arguments', $mockArguments);
 
-        $this->assertSame($mockObject, $formViewHelper->_call('getValueAttribute'));
+        self::assertSame($mockObject, $formViewHelper->_call('getValueAttribute'));
     }
 
     /**
@@ -302,10 +302,10 @@ class AbstractFormFieldViewHelperTest extends FormFieldViewHelperBaseTestcase
         ];
 
         $formViewHelper->_set('arguments', ['name' => null, 'value' => null, 'property' => 'bla']);
-        $this->assertTrue($formViewHelper->_call('isObjectAccessorMode'));
+        self::assertTrue($formViewHelper->_call('isObjectAccessorMode'));
 
         $formViewHelper->_set('arguments', ['name' => null, 'value' => null, 'property' => null]);
-        $this->assertFalse($formViewHelper->_call('isObjectAccessorMode'));
+        self::assertFalse($formViewHelper->_call('isObjectAccessorMode'));
     }
 
     /**
@@ -332,7 +332,7 @@ class AbstractFormFieldViewHelperTest extends FormFieldViewHelperBaseTestcase
         $this->request->expects($this->once())->method('getInternalArgument')->with('__submittedArgumentValidationResults')->willReturn($mockFormResult);
 
         $actualResult = $formViewHelper->_call('getMappingResultsForProperty');
-        $this->assertEquals($expectedResult, $actualResult);
+        self::assertEquals($expectedResult, $actualResult);
     }
 
     /**
@@ -359,7 +359,7 @@ class AbstractFormFieldViewHelperTest extends FormFieldViewHelperBaseTestcase
 
         $formViewHelper = $this->prepareArguments($formViewHelper, ['property' => 'bar']);
         $actualResult = $formViewHelper->_call('getMappingResultsForProperty');
-        $this->assertEquals($expectedResult, $actualResult);
+        self::assertEquals($expectedResult, $actualResult);
     }
 
     /**
@@ -372,7 +372,7 @@ class AbstractFormFieldViewHelperTest extends FormFieldViewHelperBaseTestcase
         $formViewHelper->expects($this->any())->method('isObjectAccessorMode')->willReturn(true);
 
         $actualResult = $formViewHelper->_call('getMappingResultsForProperty');
-        $this->assertEmpty($actualResult->getFlattenedErrors());
+        self::assertEmpty($actualResult->getFlattenedErrors());
     }
 
     /**
@@ -385,7 +385,7 @@ class AbstractFormFieldViewHelperTest extends FormFieldViewHelperBaseTestcase
         $formViewHelper->expects($this->any())->method('isObjectAccessorMode')->willReturn(false);
 
         $actualResult = $formViewHelper->_call('getMappingResultsForProperty');
-        $this->assertEmpty($actualResult->getFlattenedErrors());
+        self::assertEmpty($actualResult->getFlattenedErrors());
     }
 
     /**

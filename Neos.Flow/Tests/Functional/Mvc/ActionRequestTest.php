@@ -34,8 +34,8 @@ class ActionRequestTest extends FunctionalTestCase
 
         /* @var $unserializedActionRequest ActionRequest */
         $unserializedActionRequest = unserialize($serializedActionRequest);
-        $this->assertNull($unserializedActionRequest->getParentRequest(), 'Parent HTTP request should be NULL after deserialization');
-        $this->assertSame('foo', $unserializedActionRequest->getControllerActionName());
+        self::assertNull($unserializedActionRequest->getParentRequest(), 'Parent HTTP request should be NULL after deserialization');
+        self::assertSame('foo', $unserializedActionRequest->getControllerActionName());
     }
 
     /**
@@ -51,6 +51,6 @@ class ActionRequestTest extends FunctionalTestCase
 
         /* @var $unserializedActionRequest ActionRequest */
         $unserializedActionRequest = unserialize($serializedActionRequest);
-        $this->assertNotNull($unserializedActionRequest->getParentRequest(), 'Parent action request should not be NULL after deserialization');
+        self::assertNotNull($unserializedActionRequest->getParentRequest(), 'Parent action request should not be NULL after deserialization');
     }
 }

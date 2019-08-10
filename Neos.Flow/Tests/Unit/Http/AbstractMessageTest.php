@@ -27,12 +27,12 @@ class AbstractMessageTest extends UnitTestCase
     {
         $message = $this->getAbstractMessageMock();
 
-        $this->assertFalse($message->hasHeader('MyHeader'));
+        self::assertFalse($message->hasHeader('MyHeader'));
 
         $message->setHeader('MyHeader', 'MyValue');
-        $this->assertTrue($message->hasHeader('MyHeader'));
+        self::assertTrue($message->hasHeader('MyHeader'));
 
-        $this->assertEquals('MyValue', $message->getHeader('MyHeader'));
+        self::assertEquals('MyValue', $message->getHeader('MyHeader'));
     }
 
     /**
@@ -45,7 +45,7 @@ class AbstractMessageTest extends UnitTestCase
         $message->setHeader('MyHeader', 'OtherValue');
 
         $expectedHeaders = ['MyHeader' => ['OtherValue']];
-        $this->assertEquals($expectedHeaders, $message->getHeaders()->getAll());
+        self::assertEquals($expectedHeaders, $message->getHeaders()->getAll());
     }
 
     /**
@@ -58,7 +58,7 @@ class AbstractMessageTest extends UnitTestCase
         $message->setHeader('MyHeader', 'OtherValue', false);
 
         $expectedHeaders = ['MyHeader' => ['MyValue', 'OtherValue']];
-        $this->assertEquals($expectedHeaders, $message->getHeaders()->getAll());
+        self::assertEquals($expectedHeaders, $message->getHeaders()->getAll());
     }
 
     /**
@@ -69,10 +69,10 @@ class AbstractMessageTest extends UnitTestCase
         $message = $this->getAbstractMessageMock();
 
         $message->setHeader('MyHeader', 'MyValue');
-        $this->assertEquals('MyValue', $message->getHeader('MyHeader'));
+        self::assertEquals('MyValue', $message->getHeader('MyHeader'));
 
         $message->setHeader('MyHeader', 'OtherValue', false);
-        $this->assertEquals(['MyValue', 'OtherValue'], $message->getHeader('MyHeader'));
+        self::assertEquals(['MyValue', 'OtherValue'], $message->getHeader('MyHeader'));
     }
 
     /**
@@ -85,16 +85,16 @@ class AbstractMessageTest extends UnitTestCase
         $message = $this->getAbstractMessageMock();
 
         $message->setHeader('Content-Type', 'text/plain', true);
-        $this->assertEquals('text/plain; charset=UTF-8', $message->getHeader('Content-Type'));
+        self::assertEquals('text/plain; charset=UTF-8', $message->getHeader('Content-Type'));
 
         $message->setHeader('Content-Type', 'text/plain', true);
         $message->setCharset('Shift_JIS');
-        $this->assertEquals('text/plain; charset=Shift_JIS', $message->getHeader('Content-Type'));
-        $this->assertEquals('Shift_JIS', $message->getCharset());
+        self::assertEquals('text/plain; charset=Shift_JIS', $message->getHeader('Content-Type'));
+        self::assertEquals('Shift_JIS', $message->getCharset());
 
         $message->setHeader('Content-Type', 'image/jpeg', true);
         $message->setCharset('Shift_JIS');
-        $this->assertEquals('image/jpeg', $message->getHeader('Content-Type'));
+        self::assertEquals('image/jpeg', $message->getHeader('Content-Type'));
     }
 
     /**
@@ -104,7 +104,7 @@ class AbstractMessageTest extends UnitTestCase
     {
         $message = $this->getAbstractMessageMock();
 
-        $this->assertEquals('UTF-8', $message->getCharset());
+        self::assertEquals('UTF-8', $message->getCharset());
     }
 
     /**
@@ -118,18 +118,18 @@ class AbstractMessageTest extends UnitTestCase
         $message->setHeader('Content-Type', 'text/html; charset=UTF-8');
 
         $message->setCharset('UTF-16');
-        $this->assertEquals('text/html; charset=UTF-16', $message->getHeader('Content-Type'));
+        self::assertEquals('text/html; charset=UTF-16', $message->getHeader('Content-Type'));
 
         $message->setHeader('Content-Type', 'text/plain; charset=UTF-16');
         $message->setCharset('ISO-8859-1');
-        $this->assertEquals('text/plain; charset=ISO-8859-1', $message->getHeader('Content-Type'));
+        self::assertEquals('text/plain; charset=ISO-8859-1', $message->getHeader('Content-Type'));
 
         $message->setHeader('Content-Type', 'image/png');
         $message->setCharset('UTF-8');
-        $this->assertEquals('image/png', $message->getHeader('Content-Type'));
+        self::assertEquals('image/png', $message->getHeader('Content-Type'));
 
         $message->setHeader('Content-Type', 'Text/Plain');
-        $this->assertEquals('Text/Plain; charset=UTF-8', $message->getHeader('Content-Type'));
+        self::assertEquals('Text/Plain; charset=UTF-8', $message->getHeader('Content-Type'));
     }
 
     /**
@@ -143,7 +143,7 @@ class AbstractMessageTest extends UnitTestCase
 
         $message->setHeader('Content-Type', 'text/plain;charset=UTF-16');
         $message->setCharset('ISO-8859-1');
-        $this->assertEquals('text/plain; charset=ISO-8859-1', $message->getHeader('Content-Type'));
+        self::assertEquals('text/plain; charset=ISO-8859-1', $message->getHeader('Content-Type'));
     }
 
     /**
@@ -157,7 +157,7 @@ class AbstractMessageTest extends UnitTestCase
 
         $message->setHeader('Content-Type', 'text/plain; charSet=UTF-16; x-foo=bar');
         $message->setCharset('ISO-8859-1');
-        $this->assertEquals('text/plain; charset=ISO-8859-1; x-foo=bar', $message->getHeader('Content-Type'));
+        self::assertEquals('text/plain; charset=ISO-8859-1; x-foo=bar', $message->getHeader('Content-Type'));
     }
 
     /**
@@ -168,7 +168,7 @@ class AbstractMessageTest extends UnitTestCase
         $message = $this->getAbstractMessageMock();
 
         $message->setContent('Two households, both alike in dignity, In fair Verona, where we lay our scene');
-        $this->assertEquals('Two households, both alike in dignity, In fair Verona, where we lay our scene', $message->getContent());
+        self::assertEquals('Two households, both alike in dignity, In fair Verona, where we lay our scene', $message->getContent());
     }
 
     /**
@@ -177,7 +177,7 @@ class AbstractMessageTest extends UnitTestCase
     public function setterMethodsAreChainable()
     {
         $message = $this->getAbstractMessageMock();
-        $this->assertSame($message,
+        self::assertSame($message,
             $message->setContent('Foo')->setCharset('UTF-8')->setHeader('X-Foo', 'Bar')
         );
     }
@@ -191,12 +191,12 @@ class AbstractMessageTest extends UnitTestCase
         $message = $this->getAbstractMessageMock();
         $message->setCookie($cookie);
 
-        $this->assertSame($cookie, $message->getCookie('foo'));
-        $this->assertSame($cookie, $message->getHeaders()->getCookie('foo'));
-        $this->assertSame(['foo' => $cookie], $message->getCookies());
-        $this->assertTrue($message->hasCookie('foo'));
+        self::assertSame($cookie, $message->getCookie('foo'));
+        self::assertSame($cookie, $message->getHeaders()->getCookie('foo'));
+        self::assertSame(['foo' => $cookie], $message->getCookies());
+        self::assertTrue($message->hasCookie('foo'));
         $message->removeCookie('foo');
-        $this->assertFalse($message->hasCookie('foo'));
+        self::assertFalse($message->hasCookie('foo'));
     }
 
     /**

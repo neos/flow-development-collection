@@ -45,7 +45,7 @@ class AbstractConditionViewHelperTest extends ViewHelperBaseTestcase
         $this->viewHelper->expects($this->any())->method('renderChildren')->will($this->returnValue('foo'));
 
         $actualResult = $this->viewHelper->_call('renderThenChild');
-        $this->assertEquals('foo', $actualResult);
+        self::assertEquals('foo', $actualResult);
     }
 
     /**
@@ -59,7 +59,7 @@ class AbstractConditionViewHelperTest extends ViewHelperBaseTestcase
 
         $this->viewHelper->setChildNodes([$mockThenViewHelperNode]);
         $actualResult = $this->viewHelper->_call('renderThenChild');
-        $this->assertEquals('ThenViewHelperResults', $actualResult);
+        self::assertEquals('ThenViewHelperResults', $actualResult);
     }
 
     /**
@@ -72,7 +72,7 @@ class AbstractConditionViewHelperTest extends ViewHelperBaseTestcase
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
 
         $actualResult = $this->viewHelper->_call('renderThenChild');
-        $this->assertEquals('ThenArgument', $actualResult);
+        self::assertEquals('ThenArgument', $actualResult);
     }
 
     /**
@@ -86,7 +86,7 @@ class AbstractConditionViewHelperTest extends ViewHelperBaseTestcase
         $this->viewHelper->expects($this->never())->method('renderChildren')->will($this->returnValue('Child nodes'));
 
         $actualResult = $this->viewHelper->_call('renderThenChild');
-        $this->assertEquals('', $actualResult);
+        self::assertEquals('', $actualResult);
     }
 
     /**
@@ -95,7 +95,7 @@ class AbstractConditionViewHelperTest extends ViewHelperBaseTestcase
     public function renderElseChildReturnsEmptyStringIfConditionIsFalseAndNoElseViewHelperChildExists()
     {
         $actualResult = $this->viewHelper->_call('renderElseChild');
-        $this->assertEquals('', $actualResult);
+        self::assertEquals('', $actualResult);
     }
 
     /**
@@ -109,7 +109,7 @@ class AbstractConditionViewHelperTest extends ViewHelperBaseTestcase
 
         $this->viewHelper->setChildNodes([$mockElseViewHelperNode]);
         $actualResult = $this->viewHelper->_call('renderElseChild');
-        $this->assertEquals('ElseViewHelperResults', $actualResult);
+        self::assertEquals('ElseViewHelperResults', $actualResult);
     }
 
     /**
@@ -128,7 +128,7 @@ class AbstractConditionViewHelperTest extends ViewHelperBaseTestcase
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
 
         $actualResult = $this->viewHelper->_call('renderThenChild');
-        $this->assertEquals('ThenArgument', $actualResult);
+        self::assertEquals('ThenArgument', $actualResult);
     }
 
     /**
@@ -141,7 +141,7 @@ class AbstractConditionViewHelperTest extends ViewHelperBaseTestcase
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
 
         $actualResult = $this->viewHelper->_call('renderElseChild');
-        $this->assertEquals('ElseArgument', $actualResult);
+        self::assertEquals('ElseArgument', $actualResult);
     }
 
     /**
@@ -160,6 +160,6 @@ class AbstractConditionViewHelperTest extends ViewHelperBaseTestcase
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
 
         $actualResult = $this->viewHelper->_call('renderElseChild');
-        $this->assertEquals('ElseArgument', $actualResult);
+        self::assertEquals('ElseArgument', $actualResult);
     }
 }

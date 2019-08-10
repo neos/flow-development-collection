@@ -64,7 +64,7 @@ class TranslationHelperTest extends UnitTestCase
 
 
         $result = $mockTranslationHelper->translate('SomeId', 'SomeValue', ['a', 'couple', 'of', 'arguments'], 'SomeSource', 'Some.PackageKey', 42, 'SomeLocale');
-        $this->assertEquals('I am a translation result', $result);
+        self::assertEquals('I am a translation result', $result);
     }
 
     /**
@@ -94,7 +94,7 @@ class TranslationHelperTest extends UnitTestCase
             ->willReturn($mockTranslationParameterToken);
 
         $result = $mockTranslationHelper->translate('Some.PackageKey:SomeSource:SomeId');
-        $this->assertEquals('I am a translation result', $result);
+        self::assertEquals('I am a translation result', $result);
     }
 
     /**
@@ -108,7 +108,7 @@ class TranslationHelperTest extends UnitTestCase
             ->willReturn('TranslationParameterTokenWithPreconfiguredId');
 
         $result = $mockTranslationHelper->id('SomeId');
-        $this->assertEquals('TranslationParameterTokenWithPreconfiguredId', $result);
+        self::assertEquals('TranslationParameterTokenWithPreconfiguredId', $result);
     }
 
     /**
@@ -122,6 +122,6 @@ class TranslationHelperTest extends UnitTestCase
             ->willReturn('TranslationParameterTokenWithPreconfiguredValue');
 
         $result = $mockTranslationHelper->value('SomeValue');
-        $this->assertEquals('TranslationParameterTokenWithPreconfiguredValue', $result);
+        self::assertEquals('TranslationParameterTokenWithPreconfiguredValue', $result);
     }
 }

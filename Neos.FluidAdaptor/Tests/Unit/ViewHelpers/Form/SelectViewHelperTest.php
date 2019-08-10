@@ -169,7 +169,7 @@ class SelectViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\For
             '<option value="value2">label2</option>' . chr(10) .
             '<option value="value3" selected="selected">label3</option>' . chr(10) .
             '</select>';
-        $this->assertSame($expected, $result);
+        self::assertSame($expected, $result);
     }
 
     /**
@@ -211,7 +211,7 @@ class SelectViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\For
             '<option value="value2">label2</option>' . chr(10) .
             '<option value="value3" selected="selected">label3</option>' . chr(10) .
             '</select>';
-        $this->assertSame($expected, $result);
+        self::assertSame($expected, $result);
     }
 
     /**
@@ -281,7 +281,7 @@ class SelectViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\For
             '<option value="2">Kurfuerst</option>' . chr(10) .
             '<option value="3" selected="selected">Lemke</option>' . chr(10) .
             '</select>';
-        $this->assertSame($expected, $actual);
+        self::assertSame($expected, $actual);
     }
 
     /**
@@ -321,7 +321,7 @@ class SelectViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\For
             '<option value="2">Kurfuerst</option>' . chr(10) .
             '<option value="3" selected="selected">Lemke</option>' . chr(10) .
             '</select>';
-        $this->assertSame($expected, $actual);
+        self::assertSame($expected, $actual);
     }
 
     /**
@@ -624,7 +624,7 @@ class SelectViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\For
         $this->inject($this->viewHelper, 'translator', $mockTranslator);
 
         $actualResult = $this->viewHelper->_call('getTranslatedLabel', 'someValue', 'Some label');
-        $this->assertSame($expectedResult, $actualResult);
+        self::assertSame($expectedResult, $actualResult);
     }
 
     /**

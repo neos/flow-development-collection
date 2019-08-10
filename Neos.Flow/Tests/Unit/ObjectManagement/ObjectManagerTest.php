@@ -64,9 +64,9 @@ class ObjectManagerTest extends UnitTestCase
         $object2 = $objectManager->get(BasicClass::class);
 
         if ($scope == ObjectConfiguration::SCOPE_PROTOTYPE) {
-            $this->assertNotSame($object1, $object2);
+            self::assertNotSame($object1, $object2);
         } else {
-            $this->assertSame($object1, $object2);
+            self::assertSame($object1, $object2);
         }
     }
 }
