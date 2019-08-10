@@ -110,6 +110,7 @@ class Dispatcher
                 } else {
                     $securityLogger->info(sprintf('Starting authentication with entry point of type "%s"', get_class($entryPoint)), LogEnvironment::fromMethodName(__METHOD__));
                 }
+                // TODO: We should only prevent storage of intercepted request in the session here, but we don't have a different storage mechanism yet.
                 if (!$token instanceof SessionlessTokenInterface) {
                     $securityContext->setInterceptedRequest($request->getMainRequest());
                 }
