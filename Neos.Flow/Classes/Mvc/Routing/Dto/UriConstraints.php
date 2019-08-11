@@ -225,7 +225,10 @@ final class UriConstraints
      */
     public function getPathConstraint()
     {
-        return $this->constraints[self::CONSTRAINT_PATH] ?? null;
+        if (!($this->constraints[self::CONSTRAINT_PATH] ?? null) && !($this->constraints[self::CONSTRAINT_QUERY_STRING] ?? null)) {
+            return null;
+        }
+        return $this->constraints[self::CONSTRAINT_PATH] . ($this->constraints[self::CONSTRAINT_QUERY_STRING] ? '?' . $this->constraints[self::CONSTRAINT_QUERY_STRING] : '');
     }
 
     /**
