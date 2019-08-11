@@ -29,7 +29,7 @@ class XliffParserTest extends UnitTestCase
 
         $parser = new I18n\Xliff\V12\XliffParser();
         $result = $parser->getParsedData($mockFilenamePath);
-        $this->assertEquals($mockParsedData, $result);
+        self::assertEquals($mockParsedData, $result);
     }
 
     /**

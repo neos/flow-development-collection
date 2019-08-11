@@ -56,6 +56,6 @@ class IpTest extends UnitTestCase
 
         $requestPattern = new Ip(['cidrPattern' => $pattern]);
 
-        $this->assertEquals($expected, $requestPattern->matchRequest($actionRequestMock));
+        self::assertEquals($expected, $requestPattern->matchRequest($actionRequestMock));
     }
 }

@@ -47,10 +47,10 @@ class FormatResolverTest extends UnitTestCase
         $formatResolver->expects($this->exactly(2))->method('getFormatter')->with('number')->will($this->returnValue($mockNumberFormatter));
 
         $result = $formatResolver->resolvePlaceholders('Foo {0,number}, bar {1,number,percent}', [1, 2], $this->sampleLocale);
-        $this->assertEquals('Foo 1.0, bar 200%', $result);
+        self::assertEquals('Foo 1.0, bar 200%', $result);
 
         $result = $formatResolver->resolvePlaceHolders('Foo {0}{1} Bar', ['{', '}'], $this->sampleLocale);
-        $this->assertEquals('Foo {} Bar', $result);
+        self::assertEquals('Foo {} Bar', $result);
     }
 
     /**
@@ -60,7 +60,7 @@ class FormatResolverTest extends UnitTestCase
     {
         $formatResolver = new I18n\FormatResolver();
         $result = $formatResolver->resolvePlaceholders('{0}', [123], $this->sampleLocale);
-        $this->assertEquals('123', $result);
+        self::assertEquals('123', $result);
     }
 
     /**
@@ -167,7 +167,7 @@ class FormatResolverTest extends UnitTestCase
         $formatResolver->injectObjectManager($mockObjectManager);
         $this->inject($formatResolver, 'reflectionService', $mockReflectionService);
         $actual = $formatResolver->resolvePlaceholders('{0,Acme\Foobar\Formatter\SampleFormatter}', [123], $this->sampleLocale);
-        $this->assertEquals('FormatterOutput42', $actual);
+        self::assertEquals('FormatterOutput42', $actual);
     }
 
     /**
@@ -204,7 +204,7 @@ class FormatResolverTest extends UnitTestCase
         $formatResolver->injectObjectManager($mockObjectManager);
         $this->inject($formatResolver, 'reflectionService', $mockReflectionService);
         $actual = $formatResolver->resolvePlaceholders('{0,acme\Foo\SampleFormatter}', [123], $this->sampleLocale);
-        $this->assertEquals('FormatterOutput42', $actual);
+        self::assertEquals('FormatterOutput42', $actual);
     }
 
     /**
@@ -215,6 +215,6 @@ class FormatResolverTest extends UnitTestCase
         $formatResolver = $this->getMockBuilder(I18n\FormatResolver::class)->setMethods(['dummy'])->getMock();
 
         $result = $formatResolver->resolvePlaceholders('Key {keyName} is {valueName}', ['keyName' => 'foo', 'valueName' => 'bar'], $this->sampleLocale);
-        $this->assertEquals('Key foo is bar', $result);
+        self::assertEquals('Key foo is bar', $result);
     }
 }

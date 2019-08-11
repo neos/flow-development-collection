@@ -142,10 +142,10 @@ class DataMapperTest extends UnitTestCase
         $dataMapper = $this->getAccessibleMock(Persistence\Generic\DataMapper::class, ['dummy']);
         $dataMapper->injectReflectionService($mockReflectionService);
         $dataMapper->_call('thawProperties', $object, 1234, $objectData);
-        $this->assertEquals('firstValue', ObjectAccess::getProperty($object, 'firstProperty'));
-        $this->assertEquals(1234, ObjectAccess::getProperty($object, 'secondProperty'));
-        $this->assertEquals(1.234, ObjectAccess::getProperty($object, 'thirdProperty'));
-        $this->assertEquals(false, ObjectAccess::getProperty($object, 'fourthProperty'));
+        self::assertEquals('firstValue', ObjectAccess::getProperty($object, 'firstProperty'));
+        self::assertEquals(1234, ObjectAccess::getProperty($object, 'secondProperty'));
+        self::assertEquals(1.234, ObjectAccess::getProperty($object, 'thirdProperty'));
+        self::assertEquals(false, ObjectAccess::getProperty($object, 'fourthProperty'));
     }
 
     /**
@@ -175,7 +175,7 @@ class DataMapperTest extends UnitTestCase
         $dataMapper->injectReflectionService($mockReflectionService);
         $dataMapper->_call('thawProperties', $object, $objectData['identifier'], $objectData);
 
-        $this->assertEquals('c254d2e0-825a-11de-8a39-0800200c9a66', ObjectAccess::getProperty($object, 'Persistence_Object_Identifier'));
+        self::assertEquals('c254d2e0-825a-11de-8a39-0800200c9a66', ObjectAccess::getProperty($object, 'Persistence_Object_Identifier'));
     }
 
     /**
@@ -278,7 +278,7 @@ class DataMapperTest extends UnitTestCase
 
         // the order of setting those is important, but cannot be tested for now (static setProperty)
         $expected = [['secondProperty' => 'secondValue'],['firstProperty' => 'firstValue'],['thirdProperty' => 'thirdValue'],['Persistence_Object_Identifier' => '1234']];
-        $this->assertSame($expected, ObjectAccess::getProperty($object, 'properties', true));
+        self::assertSame($expected, ObjectAccess::getProperty($object, 'properties', true));
     }
 
     /**
@@ -326,7 +326,7 @@ class DataMapperTest extends UnitTestCase
         $dataMapper->injectReflectionService($mockReflectionService);
         $dataMapper->_call('thawProperties', $object, 1234, $objectData);
 
-        $this->assertObjectNotHasAttribute('secondProperty', $object);
+        self::assertObjectNotHasAttribute('secondProperty', $object);
     }
 
     /**
@@ -357,7 +357,7 @@ class DataMapperTest extends UnitTestCase
         $dataMapper->injectReflectionService($mockReflectionService);
         $dataMapper->_call('thawProperties', $object, $objectData['identifier'], $objectData);
 
-        $this->assertEquals(['My_Metadata' => 'Test'], ObjectAccess::getProperty($object, 'Flow_Persistence_Metadata'));
+        self::assertEquals(['My_Metadata' => 'Test'], ObjectAccess::getProperty($object, 'Flow_Persistence_Metadata'));
     }
 
     /**
@@ -386,7 +386,7 @@ class DataMapperTest extends UnitTestCase
     {
         $expected = new \DateTime();
         $dataMapper = $this->getAccessibleMock(Persistence\Generic\DataMapper::class, ['dummy']);
-        $this->assertEquals($dataMapper->_call('mapDateTime', $expected->getTimestamp())->format(\DateTime::W3C), $expected->format(\DateTime::W3C));
+        self::assertEquals($dataMapper->_call('mapDateTime', $expected->getTimestamp())->format(\DateTime::W3C), $expected->format(\DateTime::W3C));
     }
 
     /**
@@ -450,7 +450,7 @@ class DataMapperTest extends UnitTestCase
         $dataMapper->expects($this->once())->method('mapDateTime')->with($arrayValues['five']['value'])->will($this->returnValue($dateTime));
         $dataMapper->expects($this->once())->method('mapToObject')->with($arrayValues['six']['value'])->will($this->returnValue($object));
         $dataMapper->expects($this->once())->method('mapSplObjectStorage')->with($arrayValues['seven']['value'])->will($this->returnValue($splObjectStorage));
-        $this->assertEquals($dataMapper->_call('mapArray', $arrayValues), $expected);
+        self::assertEquals($dataMapper->_call('mapArray', $arrayValues), $expected);
     }
 
 
@@ -481,6 +481,6 @@ class DataMapperTest extends UnitTestCase
         $expected = ['foo' => ['bar' => 'baz', 'quux' => null]];
 
         $dataMapper = $this->getAccessibleMock(Persistence\Generic\DataMapper::class, ['dummy']);
-        $this->assertEquals($expected, $dataMapper->_call('mapArray', $arrayValues));
+        self::assertEquals($expected, $dataMapper->_call('mapArray', $arrayValues));
     }
 }

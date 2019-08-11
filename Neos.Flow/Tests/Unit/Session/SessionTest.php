@@ -120,10 +120,10 @@ class SessionTest extends UnitTestCase
     {
         $storageIdentifier = '6e988eaa-7010-4ee8-bfb8-96ea4b40ec16';
         $session = new Session('ZPjPj3A0Opd7JeDoe7rzUQYCoDMcxscb', $storageIdentifier, 1354293259);
-        $this->assertTrue($session->isRemote());
+        self::assertTrue($session->isRemote());
 
         $session = new Session();
-        $this->assertFalse($session->isRemote());
+        self::assertFalse($session->isRemote());
     }
 
     /**
@@ -150,13 +150,13 @@ class SessionTest extends UnitTestCase
         $this->inject($session, 'storageCache', $storageCache);
         $session->initializeObject();
 
-        $this->assertFalse($session->hasKey('some key'));
+        self::assertFalse($session->hasKey('some key'));
         $session->putData('some key', 'some value');
 
-        $this->assertEquals('some value', $session->getData('some key'));
-        $this->assertTrue($session->hasKey('some key'));
+        self::assertEquals('some value', $session->getData('some key'));
+        self::assertTrue($session->hasKey('some key'));
 
-        $this->assertTrue($storageCache->has($storageIdentifier . md5('some key')));
+        self::assertTrue($storageCache->has($storageIdentifier . md5('some key')));
     }
 
     /**
@@ -165,7 +165,7 @@ class SessionTest extends UnitTestCase
     public function canBeResumedReturnsFalseIfNoSessionCookieExists()
     {
         $session = new Session();
-        $this->assertFalse($session->canBeResumed());
+        self::assertFalse($session->canBeResumed());
     }
 
     /**
@@ -181,7 +181,7 @@ class SessionTest extends UnitTestCase
 
         $session->start();
 
-        $this->assertFalse($session->canBeResumed());
+        self::assertFalse($session->canBeResumed());
     }
 
     /**
@@ -203,12 +203,12 @@ class SessionTest extends UnitTestCase
         $sessionIdentifier = $session->getId();
         $session->close();
 
-        $this->assertTrue($session->canBeResumed());
+        self::assertTrue($session->canBeResumed());
 
         $sessionInfo = $metaDataCache->get($sessionIdentifier);
         $sessionInfo['lastActivityTimestamp'] = time() - 4000;
         $metaDataCache->set($sessionIdentifier, $sessionInfo, [$sessionInfo['storageIdentifier'], 'session'], 0);
-        $this->assertFalse($session->canBeResumed());
+        self::assertFalse($session->canBeResumed());
     }
 
     /**
@@ -217,7 +217,7 @@ class SessionTest extends UnitTestCase
     public function isStartedReturnsFalseByDefault()
     {
         $session = new Session();
-        $this->assertFalse($session->isStarted());
+        self::assertFalse($session->isStarted());
     }
 
     /**
@@ -231,7 +231,7 @@ class SessionTest extends UnitTestCase
         $this->inject($session, 'storageCache', $this->createCache('Storage'));
         $session->initializeObject();
         $session->start();
-        $this->assertTrue($session->isStarted());
+        self::assertTrue($session->isStarted());
     }
 
     /**
@@ -253,8 +253,8 @@ class SessionTest extends UnitTestCase
 
         $session->resume();
 
-        $this->assertNotNull($session->getSessionCookie());
-        $this->assertEquals($sessionIdentifier, $session->getSessionCookie()->getValue());
+        self::assertNotNull($session->getSessionCookie());
+        self::assertEquals($sessionIdentifier, $session->getSessionCookie()->getValue());
     }
 
     /**
@@ -274,7 +274,7 @@ class SessionTest extends UnitTestCase
 
         $session->resume();
 
-        $this->assertTrue(true);
+        self::assertTrue(true);
     }
 
     /**
@@ -290,8 +290,8 @@ class SessionTest extends UnitTestCase
 
         $session->start();
 
-        $this->assertNotNull($session->getSessionCookie());
-        $this->assertEquals($session->getId(), $session->getSessionCookie()->getValue());
+        self::assertNotNull($session->getSessionCookie());
+        self::assertEquals($session->getId(), $session->getSessionCookie()->getValue());
     }
 
     /**
@@ -310,7 +310,7 @@ class SessionTest extends UnitTestCase
             $this->fail('No exception thrown although the session was not started yet.');
         } catch (SessionNotStartedException $e) {
             $session->start();
-            $this->assertEquals(32, strlen($session->getId()));
+            self::assertEquals(32, strlen($session->getId()));
         }
     }
 
@@ -329,7 +329,7 @@ class SessionTest extends UnitTestCase
         $oldSessionId = $session->getId();
         $session->renewId();
         $newSessionId = $session->getId();
-        $this->assertNotEquals($oldSessionId, $newSessionId);
+        self::assertNotEquals($oldSessionId, $newSessionId);
     }
 
     /**
@@ -392,7 +392,7 @@ class SessionTest extends UnitTestCase
 
         $session->resume();
 
-        $this->assertEquals('bar', $session->getData('foo'));
+        self::assertEquals('bar', $session->getData('foo'));
     }
 
     /**
@@ -445,10 +445,10 @@ class SessionTest extends UnitTestCase
 
         $session->start();
 
-        $this->assertFalse($session->hasKey('some key'));
+        self::assertFalse($session->hasKey('some key'));
         $session->putData('some key', 'some value');
-        $this->assertEquals('some value', $session->getData('some key'));
-        $this->assertTrue($session->hasKey('some key'));
+        self::assertEquals('some value', $session->getData('some key'));
+        self::assertTrue($session->hasKey('some key'));
     }
 
     /**
@@ -486,8 +486,8 @@ class SessionTest extends UnitTestCase
         $session1->putData('foo', 'bar');
         $session2->putData('foo', 'baz');
 
-        $this->assertEquals('bar', $session1->getData('foo'));
-        $this->assertEquals('baz', $session2->getData('foo'));
+        self::assertEquals('bar', $session1->getData('foo'));
+        self::assertEquals('baz', $session2->getData('foo'));
     }
 
     /**
@@ -520,12 +520,12 @@ class SessionTest extends UnitTestCase
 
         $session->start();
         $sessionIdentifier = $session->getId();
-        $this->assertEquals($now, $session->getLastActivityTimestamp());
+        self::assertEquals($now, $session->getLastActivityTimestamp());
 
         $session->close();
 
         $sessionInfo = $metaDataCache->get($sessionIdentifier);
-        $this->assertEquals($now, $sessionInfo['lastActivityTimestamp']);
+        self::assertEquals($now, $sessionInfo['lastActivityTimestamp']);
     }
 
     /**
@@ -593,8 +593,8 @@ class SessionTest extends UnitTestCase
         $this->inject($sessionManager, 'metaDataCache', $metaDataCache);
 
         $retrievedSessions = $sessionManager->getSessionsByTag('SampleTag');
-        $this->assertSame($taggedSessionId, $retrievedSessions[0]->getId());
-        $this->assertEquals(['SampleTag', 'AnotherTag'], $retrievedSessions[0]->getTags());
+        self::assertSame($taggedSessionId, $retrievedSessions[0]->getId());
+        self::assertEquals(['SampleTag', 'AnotherTag'], $retrievedSessions[0]->getTags());
     }
 
     /**
@@ -625,13 +625,13 @@ class SessionTest extends UnitTestCase
 
         $activeSessions = $sessionManager->getActiveSessions();
 
-        $this->assertCount(5, $activeSessions);
+        self::assertCount(5, $activeSessions);
 
         /* @var $randomActiveSession Session */
         $randomActiveSession = $activeSessions[array_rand($activeSessions)];
         $randomActiveSession->resume();
 
-        $this->assertContains($randomActiveSession->getId(), $sessionIDs);
+        self::assertContains($randomActiveSession->getId(), $sessionIDs);
     }
 
     /**
@@ -664,9 +664,9 @@ class SessionTest extends UnitTestCase
         $this->inject($session, 'metaDataCache', $metaDataCache);
         $this->inject($session, 'storageCache', $storageCache);
         $session->initializeObject();
-        $this->assertNotNull($session->resume(), 'The session was not properly resumed.');
+        self::assertNotNull($session->resume(), 'The session was not properly resumed.');
 
-        $this->assertEquals(['SampleTag', 'AnotherTag'], $session->getTags());
+        self::assertEquals(['SampleTag', 'AnotherTag'], $session->getTags());
     }
 
     /**
@@ -710,7 +710,7 @@ class SessionTest extends UnitTestCase
 
         $taggedSession->removeTag('DoesntExistButDoesNotAnyHarm');
 
-        $this->assertEquals(['AnotherTag', 'YetAnotherTag'], array_values($taggedSession->getTags()));
+        self::assertEquals(['AnotherTag', 'YetAnotherTag'], array_values($taggedSession->getTags()));
     }
 
     /**
@@ -743,8 +743,8 @@ class SessionTest extends UnitTestCase
         $session->touch();
 
         $sessionInfo = $metaDataCache->get('ZPjPj3A0Opd7JeDoe7rzUQYCoDMcxscb');
-        $this->assertEquals(2220000000, $sessionInfo['lastActivityTimestamp']);
-        $this->assertEquals($storageIdentifier, $sessionInfo['storageIdentifier']);
+        self::assertEquals(2220000000, $sessionInfo['lastActivityTimestamp']);
+        self::assertEquals($storageIdentifier, $sessionInfo['storageIdentifier']);
     }
 
     /**
@@ -760,10 +760,10 @@ class SessionTest extends UnitTestCase
         $session->initializeObject();
 
         $session->start();
-        $this->assertTrue($session->isStarted());
+        self::assertTrue($session->isStarted());
 
         $session->close();
-        $this->assertFalse($session->isStarted());
+        self::assertFalse($session->isStarted());
     }
 
     /**
@@ -780,10 +780,10 @@ class SessionTest extends UnitTestCase
         $session->initializeObject();
 
         $session->start();
-        $this->assertTrue($session->isStarted());
+        self::assertTrue($session->isStarted());
 
         $session->close();
-        $this->assertTrue($session->isStarted());
+        self::assertTrue($session->isStarted());
     }
 
     /**
@@ -815,7 +815,7 @@ class SessionTest extends UnitTestCase
         $session->close();
 
         $session->resume();
-        $this->assertEquals(['MyProvider:admin'], $session->getData('Neos_Flow_Security_Accounts'));
+        self::assertEquals(['MyProvider:admin'], $session->getData('Neos_Flow_Security_Accounts'));
     }
 
     /**
@@ -850,7 +850,7 @@ class SessionTest extends UnitTestCase
         $remoteSession->initializeObject();
 
         // Resume the local session and add more data:
-        $this->assertTrue($metaDataCache->has($sessionIdentifier));
+        self::assertTrue($metaDataCache->has($sessionIdentifier));
         $session->resume();
         $session->putData('baz', 'quux');
 
@@ -860,7 +860,7 @@ class SessionTest extends UnitTestCase
         // Close the local session – this must not write any data because the session doesn't exist anymore:
         $session->close();
 
-        $this->assertFalse($metaDataCache->has($sessionIdentifier));
+        self::assertFalse($metaDataCache->has($sessionIdentifier));
     }
 
     /**
@@ -904,9 +904,9 @@ class SessionTest extends UnitTestCase
 
         $this->inject($session1, 'started', true);
         $this->inject($session2, 'started', true);
-        $this->assertFalse($session1->hasKey('session 1 key 1'));
-        $this->assertFalse($session1->hasKey('session 1 key 2'));
-        $this->assertTrue($session2->hasKey('session 2 key'), 'Entry in session was also removed.');
+        self::assertFalse($session1->hasKey('session 1 key 1'));
+        self::assertFalse($session1->hasKey('session 1 key 2'));
+        self::assertTrue($session2->hasKey('session 2 key'), 'Entry in session was also removed.');
     }
 
     /**
@@ -930,8 +930,8 @@ class SessionTest extends UnitTestCase
         $session->destroy(__METHOD__);
 
         $this->inject($session, 'started', true);
-        $this->assertFalse($session->hasKey('session 1 key 1'));
-        $this->assertFalse($session->hasKey('session 1 key 2'));
+        self::assertFalse($session->hasKey('session 1 key 1'));
+        self::assertFalse($session->hasKey('session 1 key 2'));
     }
 
     /**
@@ -958,8 +958,8 @@ class SessionTest extends UnitTestCase
         $session->putData('session 1 key 1', 'some value');
         $session->putData('session 1 key 2', 'some other value');
 
-        $this->assertTrue($storageCache->has($storageIdentifier . md5('session 1 key 1')));
-        $this->assertTrue($storageCache->has($storageIdentifier . md5('session 1 key 2')));
+        self::assertTrue($storageCache->has($storageIdentifier . md5('session 1 key 1')));
+        self::assertTrue($storageCache->has($storageIdentifier . md5('session 1 key 2')));
 
         $session->close();
 
@@ -968,10 +968,10 @@ class SessionTest extends UnitTestCase
         $metaDataCache->set($sessionIdentifier, $sessionInfo, [$storageIdentifier, 'session'], 0);
 
         // canBeResumed implicitly calls autoExpire():
-        $this->assertFalse($session->canBeResumed(), 'canBeResumed');
+        self::assertFalse($session->canBeResumed(), 'canBeResumed');
 
-        $this->assertFalse($storageCache->has($storageIdentifier . md5('session 1 key 1')));
-        $this->assertFalse($storageCache->has($storageIdentifier . md5('session 1 key 2')));
+        self::assertFalse($storageCache->has($storageIdentifier . md5('session 1 key 1')));
+        self::assertFalse($storageCache->has($storageIdentifier . md5('session 1 key 2')));
     }
 
     /**
@@ -1002,8 +1002,8 @@ class SessionTest extends UnitTestCase
         $session->close();
 
         $session->resume();
-        $this->assertTrue($session->isStarted());
-        $this->assertTrue($metaDataCache->has($sessionIdentifier1), 'session 1 meta entry doesnt exist');
+        self::assertTrue($session->isStarted());
+        self::assertTrue($metaDataCache->has($sessionIdentifier1), 'session 1 meta entry doesnt exist');
         $session->close();
 
         $sessionInfo1 = $metaDataCache->get($sessionIdentifier1);
@@ -1036,11 +1036,11 @@ class SessionTest extends UnitTestCase
         $sessionInfo2 = $metaDataCache->get($sessionIdentifier2);
 
         // Check how the cache looks like - data of session 1 should be gone:
-        $this->assertFalse($metaDataCache->has($sessionIdentifier1), 'session 1 meta entry still there');
-        $this->assertFalse($storageCache->has($sessionInfo1['storageIdentifier'] . md5('session 1 key 1')), 'session 1 key 1 still there');
-        $this->assertFalse($storageCache->has($sessionInfo1['storageIdentifier'] . md5('session 1 key 2')), 'session 1 key 2 still there');
-        $this->assertTrue($storageCache->has($sessionInfo2['storageIdentifier'] . md5('session 2 key 1')), 'session 2 key 1 not there');
-        $this->assertTrue($storageCache->has($sessionInfo2['storageIdentifier'] . md5('session 2 key 2')), 'session 2 key 2 not there');
+        self::assertFalse($metaDataCache->has($sessionIdentifier1), 'session 1 meta entry still there');
+        self::assertFalse($storageCache->has($sessionInfo1['storageIdentifier'] . md5('session 1 key 1')), 'session 1 key 1 still there');
+        self::assertFalse($storageCache->has($sessionInfo1['storageIdentifier'] . md5('session 1 key 2')), 'session 1 key 2 still there');
+        self::assertTrue($storageCache->has($sessionInfo2['storageIdentifier'] . md5('session 2 key 1')), 'session 2 key 1 not there');
+        self::assertTrue($storageCache->has($sessionInfo2['storageIdentifier'] . md5('session 2 key 2')), 'session 2 key 2 not there');
     }
 
     /**
@@ -1061,7 +1061,7 @@ class SessionTest extends UnitTestCase
         $session->injectSettings($settings);
         $session->initializeObject();
 
-        $this->assertSame(0, $session->collectGarbage());
+        self::assertSame(0, $session->collectGarbage());
     }
 
     /**
@@ -1084,12 +1084,12 @@ class SessionTest extends UnitTestCase
         $session->initializeObject();
 
         // No sessions need to be removed:
-        $this->assertSame(0, $session->collectGarbage());
+        self::assertSame(0, $session->collectGarbage());
 
         $metaDataCache->set('_garbage-collection-running', true, [], 120);
 
         // Session garbage collection is omitted:
-        $this->assertFalse($session->collectGarbage());
+        self::assertFalse($session->collectGarbage());
     }
 
     /**
@@ -1124,7 +1124,7 @@ class SessionTest extends UnitTestCase
             $metaDataCache->set($sessionIdentifier, $sessionInfo, ['session'], 0);
         }
 
-        $this->assertLessThanOrEqual(5, $session->collectGarbage());
+        self::assertLessThanOrEqual(5, $session->collectGarbage());
     }
 
     /**

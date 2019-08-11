@@ -31,7 +31,7 @@ class SessionTest extends UnitTestCase
         $session->registerReconstitutedEntity($someObject, ['identifier' => 'fakeUuid']);
 
         $ReconstitutedEntities = $session->getReconstitutedEntities();
-        $this->assertTrue($ReconstitutedEntities->contains($someObject));
+        self::assertTrue($ReconstitutedEntities->contains($someObject));
     }
 
     /**
@@ -46,7 +46,7 @@ class SessionTest extends UnitTestCase
         $session->unregisterReconstitutedEntity($someObject);
 
         $ReconstitutedEntities = $session->getReconstitutedEntities();
-        $this->assertFalse($ReconstitutedEntities->contains($someObject));
+        self::assertFalse($ReconstitutedEntities->contains($someObject));
     }
 
     /**
@@ -59,8 +59,8 @@ class SessionTest extends UnitTestCase
         $session = new Persistence\Generic\Session();
         $session->registerObject($object1, 12345);
 
-        $this->assertTrue($session->hasObject($object1), 'Session claims it does not have registered object.');
-        $this->assertFalse($session->hasObject($object2), 'Session claims it does have unregistered object.');
+        self::assertTrue($session->hasObject($object1), 'Session claims it does not have registered object.');
+        self::assertFalse($session->hasObject($object2), 'Session claims it does have unregistered object.');
     }
 
     /**
@@ -71,8 +71,8 @@ class SessionTest extends UnitTestCase
         $session = new Persistence\Generic\Session();
         $session->registerObject(new \stdClass(), 12345);
 
-        $this->assertTrue($session->hasIdentifier('12345'), 'Session claims it does not have registered object.');
-        $this->assertFalse($session->hasIdentifier('67890'), 'Session claims it does have unregistered object.');
+        self::assertTrue($session->hasIdentifier('12345'), 'Session claims it does not have registered object.');
+        self::assertFalse($session->hasIdentifier('67890'), 'Session claims it does have unregistered object.');
     }
 
     /**
@@ -84,7 +84,7 @@ class SessionTest extends UnitTestCase
         $session = new Persistence\Generic\Session();
         $session->registerObject($object, 12345);
 
-        $this->assertEquals($session->getIdentifierByObject($object), 12345, 'Did not get UUID registered for object.');
+        self::assertEquals($session->getIdentifierByObject($object), 12345, 'Did not get UUID registered for object.');
     }
 
     /**
@@ -96,7 +96,7 @@ class SessionTest extends UnitTestCase
         $session = new Persistence\Generic\Session();
         $session->registerObject($object, 12345);
 
-        $this->assertSame($session->getObjectByIdentifier('12345'), $object, 'Did not get object registered for UUID.');
+        self::assertSame($session->getObjectByIdentifier('12345'), $object, 'Did not get object registered for UUID.');
     }
 
     /**
@@ -110,17 +110,17 @@ class SessionTest extends UnitTestCase
         $session->registerObject($object1, 12345);
         $session->registerObject($object2, 67890);
 
-        $this->assertTrue($session->hasObject($object1), 'Session claims it does not have registered object.');
-        $this->assertTrue($session->hasIdentifier('12345'), 'Session claims it does not have registered object.');
-        $this->assertTrue($session->hasObject($object1), 'Session claims it does not have registered object.');
-        $this->assertTrue($session->hasIdentifier('67890'), 'Session claims it does not have registered object.');
+        self::assertTrue($session->hasObject($object1), 'Session claims it does not have registered object.');
+        self::assertTrue($session->hasIdentifier('12345'), 'Session claims it does not have registered object.');
+        self::assertTrue($session->hasObject($object1), 'Session claims it does not have registered object.');
+        self::assertTrue($session->hasIdentifier('67890'), 'Session claims it does not have registered object.');
 
         $session->unregisterObject($object1);
 
-        $this->assertFalse($session->hasObject($object1), 'Session claims it does have unregistered object.');
-        $this->assertFalse($session->hasIdentifier('12345'), 'Session claims it does not have registered object.');
-        $this->assertTrue($session->hasObject($object2), 'Session claims it does not have registered object.');
-        $this->assertTrue($session->hasIdentifier('67890'), 'Session claims it does not have registered object.');
+        self::assertFalse($session->hasObject($object1), 'Session claims it does have unregistered object.');
+        self::assertFalse($session->hasIdentifier('12345'), 'Session claims it does not have registered object.');
+        self::assertTrue($session->hasObject($object2), 'Session claims it does not have registered object.');
+        self::assertTrue($session->hasIdentifier('67890'), 'Session claims it does not have registered object.');
     }
 
     /**
@@ -129,7 +129,7 @@ class SessionTest extends UnitTestCase
     public function newObjectsAreConsideredDirty()
     {
         $session = new Persistence\Generic\Session();
-        $this->assertTrue($session->isDirty(new \stdClass(), 'foo'));
+        self::assertTrue($session->isDirty(new \stdClass(), 'foo'));
     }
 
     /**
@@ -139,7 +139,7 @@ class SessionTest extends UnitTestCase
     {
         $session = $this->getMockBuilder(Persistence\Generic\Session::class)->setMethods(['isReconstitutedEntity'])->getMock();
         $session->expects($this->once())->method('isReconstitutedEntity')->will($this->returnValue(false));
-        $this->assertTrue($session->isDirty(new \stdClass(), 'foo'));
+        self::assertTrue($session->isDirty(new \stdClass(), 'foo'));
     }
 
     /**
@@ -155,7 +155,7 @@ class SessionTest extends UnitTestCase
         $session->registerReconstitutedEntity($object, ['identifier' => 'fakeUuid']);
         $session->expects($this->once())->method('getIdentifierByObject')->will($this->returnValue('fakeUuid'));
 
-        $this->assertFalse($session->isDirty($object, 'foo'));
+        self::assertFalse($session->isDirty($object, 'foo'));
     }
 
     /**
@@ -183,7 +183,7 @@ class SessionTest extends UnitTestCase
         $session->expects($this->once())->method('getIdentifierByObject')->will($this->returnValue('fakeUuid'));
         $session->expects($this->once())->method('isSingleValuedPropertyDirty')->with('string', 'bar', 'different')->will($this->returnValue(true));
 
-        $this->assertTrue($session->isDirty($object, 'foo'));
+        self::assertTrue($session->isDirty($object, 'foo'));
     }
 
     /**
@@ -198,7 +198,7 @@ class SessionTest extends UnitTestCase
 
         $session = $this->getMockBuilder(Persistence\Generic\Session::class)->setMethods(['dummy'])->getMock();
         $session->registerReconstitutedEntity($object, ['identifier' => 'fakeUuid']);
-        $this->assertFalse($session->isDirty($object, 'foo'));
+        self::assertFalse($session->isDirty($object, 'foo'));
     }
 
     /**
@@ -225,7 +225,7 @@ class SessionTest extends UnitTestCase
         $session->registerReconstitutedEntity($object, $cleanData);
         $session->expects($this->once())->method('getIdentifierByObject')->will($this->returnValue('fakeUuid'));
 
-        $this->assertTrue($session->isDirty($object, 'foo'));
+        self::assertTrue($session->isDirty($object, 'foo'));
     }
 
     /**
@@ -259,7 +259,7 @@ class SessionTest extends UnitTestCase
         $session->registerReconstitutedEntity($object, $cleanData);
         $session->expects($this->once())->method('getIdentifierByObject')->will($this->returnValue('fakeUuid'));
 
-        $this->assertTrue($session->isDirty($object, 'foo'));
+        self::assertTrue($session->isDirty($object, 'foo'));
     }
 
     /**
@@ -294,7 +294,7 @@ class SessionTest extends UnitTestCase
         $session->registerReconstitutedEntity($parent, $cleanData);
         $session->expects($this->atLeastOnce())->method('getIdentifierByObject')->will($this->returnValue('fakeUuid'));
 
-        $this->assertTrue($session->isDirty($parent, 'splObjectStorage'));
+        self::assertTrue($session->isDirty($parent, 'splObjectStorage'));
     }
 
     /**
@@ -332,7 +332,7 @@ class SessionTest extends UnitTestCase
         $session->expects($this->once())->method('getIdentifierByObject')->will($this->returnValue('fakeUuid'));
         $session->expects($this->once())->method('isSingleValuedPropertyDirty')->will($this->returnValue(true));
 
-        $this->assertTrue($session->isDirty($parent, 'array'));
+        self::assertTrue($session->isDirty($parent, 'array'));
     }
 
     /**
@@ -370,7 +370,7 @@ class SessionTest extends UnitTestCase
         $session->expects($this->once())->method('getIdentifierByObject')->will($this->returnValue('fakeUuid'));
         $session->expects($this->once())->method('isSingleValuedPropertyDirty')->with('Some\Object', ['identifier' => 'cleanHash'], $object)->will($this->returnValue(false));
 
-        $this->assertFalse($session->isDirty($parent, 'array'));
+        self::assertFalse($session->isDirty($parent, 'array'));
     }
 
     /**
@@ -413,7 +413,7 @@ class SessionTest extends UnitTestCase
         $session->expects($this->once())->method('getIdentifierByObject')->will($this->returnValue('fakeUuid'));
         $session->expects($this->once())->method('isSingleValuedPropertyDirty')->will($this->returnValue(false));
 
-        $this->assertFalse($session->isDirty($parent, 'array'));
+        self::assertFalse($session->isDirty($parent, 'array'));
     }
 
     /**
@@ -450,7 +450,7 @@ class SessionTest extends UnitTestCase
         $session->registerReconstitutedEntity($parent, $cleanData);
         $session->expects($this->once())->method('getIdentifierByObject')->will($this->returnValue('fakeUuid'));
 
-        $this->assertTrue($session->isDirty($parent, 'array'));
+        self::assertTrue($session->isDirty($parent, 'array'));
     }
 
     /**
@@ -488,7 +488,7 @@ class SessionTest extends UnitTestCase
     public function isSingleValuedPropertyDirtyWorksAsExpected($type, $current, $clean, $expected)
     {
         $session = $this->getAccessibleMock(Persistence\Generic\Session::class, ['getIdentifierByObject']);
-        $this->assertEquals($session->_call('isSingleValuedPropertyDirty', $type, $clean, $current), $expected);
+        self::assertEquals($session->_call('isSingleValuedPropertyDirty', $type, $clean, $current), $expected);
     }
 
     /**
@@ -513,7 +513,7 @@ class SessionTest extends UnitTestCase
         $session->expects($this->any())->method('getIdentifierByObject')->with($entity)->will($this->returnValue('abc'));
 
         $state = $session->getCleanStateOfProperty($entity, 'bar');
-        $this->assertNull($state);
+        self::assertNull($state);
     }
 
     /**
@@ -528,7 +528,7 @@ class SessionTest extends UnitTestCase
         $session->expects($this->any())->method('isReconstitutedEntity')->with($entity)->will($this->returnValue(false));
 
         $state = $session->getCleanStateOfProperty($entity, 'bar');
-        $this->assertNull($state);
+        self::assertNull($state);
     }
 
     /**
@@ -553,7 +553,7 @@ class SessionTest extends UnitTestCase
         $session->expects($this->any())->method('getIdentifierByObject')->with($entity)->will($this->returnValue('abc'));
 
         $state = $session->getCleanStateOfProperty($entity, 'foo');
-        $this->assertEquals(['type' => 'string'], $state);
+        self::assertEquals(['type' => 'string'], $state);
     }
 
     /**
@@ -569,7 +569,7 @@ class SessionTest extends UnitTestCase
         $session = new Persistence\Generic\Session();
         $session->registerObject($knownObject, $fakeUUID);
 
-        $this->assertEquals($fakeUUID, $session->getIdentifierByObject($knownObject));
+        self::assertEquals($fakeUUID, $session->getIdentifierByObject($knownObject));
     }
 
     /**
@@ -589,7 +589,7 @@ class SessionTest extends UnitTestCase
         $session = new Persistence\Generic\Session();
         $session->injectReflectionService($mockReflectionService);
 
-        $this->assertEquals('fakeUuid', $session->getIdentifierByObject($knownObject));
+        self::assertEquals('fakeUuid', $session->getIdentifierByObject($knownObject));
     }
 
     /**
@@ -609,7 +609,7 @@ class SessionTest extends UnitTestCase
         $session = new Persistence\Generic\Session();
         $session->injectReflectionService($mockReflectionService);
 
-        $this->assertEquals('fakeHash', $session->getIdentifierByObject($knownObject));
+        self::assertEquals('fakeHash', $session->getIdentifierByObject($knownObject));
     }
 
     /**
@@ -628,7 +628,7 @@ class SessionTest extends UnitTestCase
         $session = new Persistence\Generic\Session();
         $session->injectReflectionService($mockReflectionService);
 
-        $this->assertNull($session->getIdentifierByObject($unknownObject));
+        self::assertNull($session->getIdentifierByObject($unknownObject));
     }
 
     /**
@@ -646,6 +646,6 @@ class SessionTest extends UnitTestCase
         $session = new Persistence\Generic\Session();
         $session->injectReflectionService($mockReflectionService);
 
-        $this->assertEquals('customId', $session->getIdentifierByObject($object));
+        self::assertEquals('customId', $session->getIdentifierByObject($object));
     }
 }

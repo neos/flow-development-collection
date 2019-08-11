@@ -64,6 +64,6 @@ class AbstractWidgetControllerTest extends UnitTestCase
         $abstractWidgetController->processRequest($mockActionRequest, $mockResponse);
 
         $actualWidgetConfiguration = $abstractWidgetController->_get('widgetConfiguration');
-        $this->assertEquals($expectedWidgetConfiguration, $actualWidgetConfiguration);
+        self::assertEquals($expectedWidgetConfiguration, $actualWidgetConfiguration);
     }
 }

@@ -70,7 +70,7 @@ class CommandTest extends UnitTestCase
     public function constructRendersACommandIdentifierByTheGivenControllerAndCommandName($controllerClassName, $commandName, $expectedCommandIdentifier)
     {
         $command = new Cli\Command($controllerClassName, $commandName);
-        $this->assertEquals($expectedCommandIdentifier, $command->getCommandIdentifier());
+        self::assertEquals($expectedCommandIdentifier, $command->getCommandIdentifier());
     }
 
     /**
@@ -79,7 +79,7 @@ class CommandTest extends UnitTestCase
     public function hasArgumentsReturnsFalseIfCommandExpectsNoArguments()
     {
         $this->methodReflection->expects($this->atLeastOnce())->method('getParameters')->will($this->returnValue([]));
-        $this->assertFalse($this->command->hasArguments());
+        self::assertFalse($this->command->hasArguments());
     }
 
     /**
@@ -89,7 +89,7 @@ class CommandTest extends UnitTestCase
     {
         $parameterReflection = $this->createMock(ParameterReflection::class, [], [[__CLASS__, 'dummyMethod'], 'arg']);
         $this->methodReflection->expects($this->atLeastOnce())->method('getParameters')->will($this->returnValue([$parameterReflection]));
-        $this->assertTrue($this->command->hasArguments());
+        self::assertTrue($this->command->hasArguments());
     }
 
     /**
@@ -98,7 +98,7 @@ class CommandTest extends UnitTestCase
     public function getArgumentDefinitionsReturnsEmptyArrayIfCommandExpectsNoArguments()
     {
         $this->methodReflection->expects($this->atLeastOnce())->method('getParameters')->will($this->returnValue([]));
-        $this->assertSame([], $this->command->getArgumentDefinitions());
+        self::assertSame([], $this->command->getArgumentDefinitions());
     }
 
     /**
@@ -119,6 +119,6 @@ class CommandTest extends UnitTestCase
             new Cli\CommandArgumentDefinition('argument2', false, 'argument2 description')
         ];
         $actualResult = $this->command->getArgumentDefinitions();
-        $this->assertEquals($expectedResult, $actualResult);
+        self::assertEquals($expectedResult, $actualResult);
     }
 }

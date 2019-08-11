@@ -48,6 +48,6 @@ class HostTest extends UnitTestCase
 
         $requestPattern = new Host(['hostPattern' => $pattern]);
 
-        $this->assertEquals($expected, $requestPattern->matchRequest($request), $message);
+        self::assertEquals($expected, $requestPattern->matchRequest($request), $message);
     }
 }

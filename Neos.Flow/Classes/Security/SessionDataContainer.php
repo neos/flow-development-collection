@@ -3,6 +3,7 @@ namespace Neos\Flow\Security;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Security\Authentication\Token\SessionlessTokenInterface;
 
 /**
  * @Flow\Scope("session")
@@ -48,6 +49,11 @@ class SessionDataContainer
      */
     public function setSecurityTokens(array $securityTokens)
     {
+        foreach ($securityTokens as $token) {
+            if ($token instanceof SessionlessTokenInterface) {
+                throw new \InvalidArgumentException(sprintf('Tokens implementing the SessionlessTokenInterface must not be stored in the session. Got: %s', get_class($token)), 1562670555);
+            }
+        }
         $this->securityTokens = $securityTokens;
     }
 

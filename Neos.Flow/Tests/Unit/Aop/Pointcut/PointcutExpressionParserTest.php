@@ -214,7 +214,7 @@ class PointcutExpressionParserTest extends UnitTestCase
         foreach ($filters as $operatorAndFilter) {
             list(, $filter) = $operatorAndFilter;
             if ($filter instanceof Aop\Pointcut\PointcutMethodNameFilter) {
-                $this->assertEquals('protected', $filter->getMethodVisibility());
+                self::assertEquals('protected', $filter->getMethodVisibility());
                 return;
             }
         }
@@ -267,7 +267,7 @@ class PointcutExpressionParserTest extends UnitTestCase
         $parser = $this->getAccessibleMock(PointcutExpressionParser::class, ['dummy'], [], '', false);
 
         $result = $parser->_call('getArgumentConstraintsFromMethodArgumentsPattern', $methodArgumentsPattern);
-        $this->assertEquals($expectedConditions, $result, 'The argument condition string has not been parsed as expected.');
+        self::assertEquals($expectedConditions, $result, 'The argument condition string has not been parsed as expected.');
     }
 
     /**
@@ -380,7 +380,7 @@ class PointcutExpressionParserTest extends UnitTestCase
         $parser = $this->getAccessibleMock(PointcutExpressionParser::class, ['dummy'], [], '', false);
         $result = $parser->_call('getRuntimeEvaluationConditionsFromEvaluateString', $evaluateString);
 
-        $this->assertEquals($result, $expectedRuntimeEvaluationsDefinition, 'The string has not been parsed correctly.');
+        self::assertEquals($result, $expectedRuntimeEvaluationsDefinition, 'The string has not been parsed correctly.');
     }
 
     /**
@@ -417,8 +417,8 @@ class PointcutExpressionParserTest extends UnitTestCase
         $filter = $filters[0][1];
         $annotation = ObjectAccess::getProperty($filter, 'annotation', true);
         $annotationValueConstraints = ObjectAccess::getProperty($filter, 'annotationValueConstraints', true);
-        $this->assertEquals($expectedAnnotation, $annotation);
-        $this->assertEquals($expectedAnnotationValueConstraints, $annotationValueConstraints);
+        self::assertEquals($expectedAnnotation, $annotation);
+        self::assertEquals($expectedAnnotationValueConstraints, $annotationValueConstraints);
     }
 
     /**
@@ -455,7 +455,7 @@ class PointcutExpressionParserTest extends UnitTestCase
         $filter = $filters[0][1];
         $annotation = ObjectAccess::getProperty($filter, 'annotation', true);
         $annotationValueConstraints = ObjectAccess::getProperty($filter, 'annotationValueConstraints', true);
-        $this->assertEquals($expectedAnnotation, $annotation);
-        $this->assertEquals($expectedAnnotationValueConstraints, $annotationValueConstraints);
+        self::assertEquals($expectedAnnotation, $annotation);
+        self::assertEquals($expectedAnnotationValueConstraints, $annotationValueConstraints);
     }
 }

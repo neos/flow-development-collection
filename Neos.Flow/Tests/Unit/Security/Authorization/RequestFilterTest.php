@@ -64,7 +64,7 @@ class RequestFilterTest extends UnitTestCase
         $requestPattern->expects($this->once())->method('matchRequest')->will($this->returnValue(true));
 
         $requestFilter = new Security\Authorization\RequestFilter($requestPattern, $interceptor);
-        $this->assertTrue($requestFilter->filterRequest($request));
+        self::assertTrue($requestFilter->filterRequest($request));
     }
 
     /**
@@ -79,6 +79,6 @@ class RequestFilterTest extends UnitTestCase
         $requestPattern->expects($this->once())->method('matchRequest')->will($this->returnValue(false));
 
         $requestFilter = new Security\Authorization\RequestFilter($requestPattern, $interceptor);
-        $this->assertFalse($requestFilter->filterRequest($request));
+        self::assertFalse($requestFilter->filterRequest($request));
     }
 }

@@ -35,7 +35,7 @@ class HttpBasicTest extends UnitTestCase
         $mockResponse = $entryPoint->startAuthentication($mockHttpRequest, $mockResponse);
 
         $this->assertEquals(401, $mockResponse->getStatusCode());
-        $this->assertEquals('Basic realm="realm string"', $mockResponse->getHeaderLine('WWW-Authenticate'));
+        self::assertEquals('Basic realm="realm string"', $mockResponse->getHeaderLine('WWW-Authenticate'));
         $this->assertEquals('Authorization required', $mockResponse->getBody()->getContents());
     }
 }

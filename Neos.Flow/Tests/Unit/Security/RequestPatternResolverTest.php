@@ -58,7 +58,7 @@ class RequestPatternResolverTest extends UnitTestCase
         $requestPatternResolver = new RequestPatternResolver($mockObjectManager);
         $requestPatternClass = $requestPatternResolver->resolveRequestPatternClass('ValidShortName');
 
-        $this->assertEquals($longNameForTest, $requestPatternClass, 'The wrong classname has been resolved');
+        self::assertEquals($longNameForTest, $requestPatternClass, 'The wrong classname has been resolved');
     }
 
     /**
@@ -72,6 +72,6 @@ class RequestPatternResolverTest extends UnitTestCase
         $requestPatternResolver = new RequestPatternResolver($mockObjectManager);
         $requestPatternClass = $requestPatternResolver->resolveRequestPatternClass('ExistingRequestPatternClass');
 
-        $this->assertEquals('ExistingRequestPatternClass', $requestPatternClass, 'The wrong classname has been resolved');
+        self::assertEquals('ExistingRequestPatternClass', $requestPatternClass, 'The wrong classname has been resolved');
     }
 }

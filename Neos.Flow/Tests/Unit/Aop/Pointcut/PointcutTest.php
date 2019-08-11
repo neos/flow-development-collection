@@ -34,7 +34,7 @@ class PointcutTest extends UnitTestCase
         $mockPointcutFilterComposite->expects($this->once())->method('matches')->with($className, $methodName, $className, 1)->will($this->returnValue(true));
 
         $pointcut = $this->getMockBuilder(Pointcut\Pointcut::class)->setMethods(['dummy'])->setConstructorArgs([$pointcutExpression, $mockPointcutFilterComposite, $aspectClassName])->getMock();
-        $this->assertTrue($pointcut->matches($className, $methodName, $className, 1));
+        self::assertTrue($pointcut->matches($className, $methodName, $className, 1));
     }
 
     /**
@@ -67,7 +67,7 @@ class PointcutTest extends UnitTestCase
         $mockPointcutFilterComposite = $this->getMockBuilder(Pointcut\PointcutFilterComposite::class)->disableOriginalConstructor()->setMethods(['matches'])->getMock();
 
         $pointcut = $this->getMockBuilder(Pointcut\Pointcut::class)->setMethods(['dummy'])->setConstructorArgs([$pointcutExpression, $mockPointcutFilterComposite, $aspectClassName])->getMock();
-        $this->assertSame($pointcutExpression, $pointcut->getPointcutExpression());
+        self::assertSame($pointcutExpression, $pointcut->getPointcutExpression());
     }
 
     /**
@@ -81,7 +81,7 @@ class PointcutTest extends UnitTestCase
         $mockPointcutFilterComposite = $this->getMockBuilder(Pointcut\PointcutFilterComposite::class)->disableOriginalConstructor()->setMethods(['matches'])->getMock();
 
         $pointcut = $this->getMockBuilder(Pointcut\Pointcut::class)->setMethods(['dummy'])->setConstructorArgs([$pointcutExpression, $mockPointcutFilterComposite, $aspectClassName])->getMock();
-        $this->assertSame($aspectClassName, $pointcut->getAspectClassName());
+        self::assertSame($aspectClassName, $pointcut->getAspectClassName());
     }
 
     /**
@@ -95,7 +95,7 @@ class PointcutTest extends UnitTestCase
         $mockPointcutFilterComposite = $this->getMockBuilder(Pointcut\PointcutFilterComposite::class)->disableOriginalConstructor()->setMethods(['matches'])->getMock();
 
         $pointcut = $this->getMockBuilder(Pointcut\Pointcut::class)->setMethods(['dummy'])->setConstructorArgs([$pointcutExpression, $mockPointcutFilterComposite, $aspectClassName, 'PointcutMethod'])->getMock();
-        $this->assertSame('PointcutMethod', $pointcut->getPointcutMethodName());
+        self::assertSame('PointcutMethod', $pointcut->getPointcutMethodName());
     }
 
     /**
@@ -112,7 +112,7 @@ class PointcutTest extends UnitTestCase
 
         $pointcut = new Pointcut\Pointcut($pointcutExpression, $mockPointcutFilterComposite, $aspectClassName, $className);
 
-        $this->assertEquals(['runtimeEvaluationsDefinition'], $pointcut->getRuntimeEvaluationsDefinition(), 'The runtime evaluations definition has not been returned as expected.');
+        self::assertEquals(['runtimeEvaluationsDefinition'], $pointcut->getRuntimeEvaluationsDefinition(), 'The runtime evaluations definition has not been returned as expected.');
     }
 
     /**
@@ -132,6 +132,6 @@ class PointcutTest extends UnitTestCase
 
         $pointcut = new Pointcut\Pointcut($pointcutExpression, $mockPointcutFilterComposite, $aspectClassName, $className);
 
-        $this->assertEquals($resultClassNameIndex, $pointcut->reduceTargetClassNames($targetClassNameIndex));
+        self::assertEquals($resultClassNameIndex, $pointcut->reduceTargetClassNames($targetClassNameIndex));
     }
 }

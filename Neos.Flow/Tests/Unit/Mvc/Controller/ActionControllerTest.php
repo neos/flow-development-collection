@@ -81,7 +81,7 @@ class ActionControllerTest extends UnitTestCase
     {
         $this->mockObjectManager->expects($this->once())->method('getCaseSensitiveObjectName')->with('some\package\subpackage\view\thecontroller\theactiontheformat')->will($this->returnValue('ResolvedObjectName'));
 
-        $this->assertSame('ResolvedObjectName', $this->actionController->_call('resolveViewObjectName'));
+        self::assertSame('ResolvedObjectName', $this->actionController->_call('resolveViewObjectName'));
     }
 
     /**
@@ -92,7 +92,7 @@ class ActionControllerTest extends UnitTestCase
         $this->mockObjectManager->expects($this->at(0))->method('getCaseSensitiveObjectName')->with('some\package\subpackage\view\thecontroller\theactiontheformat')->will($this->returnValue(false));
         $this->mockObjectManager->expects($this->at(1))->method('getCaseSensitiveObjectName')->with('some\package\subpackage\view\thecontroller\theaction')->will($this->returnValue('ResolvedObjectName'));
 
-        $this->assertSame('ResolvedObjectName', $this->actionController->_call('resolveViewObjectName'));
+        self::assertSame('ResolvedObjectName', $this->actionController->_call('resolveViewObjectName'));
     }
 
     /**
@@ -104,7 +104,7 @@ class ActionControllerTest extends UnitTestCase
         $this->mockObjectManager->expects($this->at(0))->method('getCaseSensitiveObjectName')->with('some\package\subpackage\view\thecontroller\theactiontheformat')->will($this->returnValue(false));
         $this->mockObjectManager->expects($this->at(1))->method('getCaseSensitiveObjectName')->with('some\package\subpackage\view\thecontroller\theaction')->will($this->returnValue(false));
 
-        $this->assertSame('Some\Custom\View\Object\Name', $this->actionController->_call('resolveViewObjectName'));
+        self::assertSame('Some\Custom\View\Object\Name', $this->actionController->_call('resolveViewObjectName'));
     }
 
     /**
@@ -113,7 +113,7 @@ class ActionControllerTest extends UnitTestCase
     public function resolveViewReturnsViewResolvedByResolveViewObjectName()
     {
         $this->mockObjectManager->expects($this->atLeastOnce())->method('getCaseSensitiveObjectName')->with('some\package\subpackage\view\thecontroller\theactiontheformat')->will($this->returnValue(SimpleTemplateView::class));
-        $this->assertInstanceOf(SimpleTemplateView::class, $this->actionController->_call('resolveView'));
+        self::assertInstanceOf(SimpleTemplateView::class, $this->actionController->_call('resolveView'));
     }
 
     /**
@@ -123,7 +123,7 @@ class ActionControllerTest extends UnitTestCase
     {
         $this->mockObjectManager->expects($this->any())->method('getCaseSensitiveObjectName')->will($this->returnValue(false));
         $this->actionController->_set('defaultViewObjectName', SimpleTemplateView::class);
-        $this->assertInstanceOf(SimpleTemplateView::class, $this->actionController->_call('resolveView'));
+        self::assertInstanceOf(SimpleTemplateView::class, $this->actionController->_call('resolveView'));
     }
 
     /**

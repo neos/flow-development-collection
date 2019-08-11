@@ -31,6 +31,6 @@ class AfterInvocationTest extends UnitTestCase
 
         $interceptor = new Security\Authorization\Interceptor\AfterInvocation($mockSecurityContext, $mockAfterInvocationManager);
         $interceptor->setResult($theResult);
-        $this->assertSame($theResult, $interceptor->invoke());
+        self::assertSame($theResult, $interceptor->invoke());
     }
 }

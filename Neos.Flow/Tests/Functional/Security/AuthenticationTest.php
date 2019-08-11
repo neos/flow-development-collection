@@ -143,7 +143,7 @@ class AuthenticationTest extends FunctionalTestCase
         $request = $this->serverRequestFactory->createServerRequest('GET', $uri);
         $request = $request->withHeader('Authorization', 'Basic ' . base64_encode('functional_test_account:a_very_secure_long_password'));
         $response = $this->browser->sendRequest($request);
-        $this->assertSame(
+        self::assertSame(
             'HttpBasicTestController success!' . chr(10) . 'Neos.Flow:Everybody' . chr(10) . 'Neos.Flow:AuthenticatedUser' . chr(10) . 'Neos.Flow:Administrator' . chr(10),
             $response->getBody()->getContents()
         );
@@ -159,7 +159,7 @@ class AuthenticationTest extends FunctionalTestCase
         $arguments['__authentication']['Neos']['Flow']['Security']['Authentication']['Token']['UsernamePassword']['password'] = 'a_very_secure_long_password';
 
         $response = $this->browser->request('http://localhost/test/security/authentication/usernamepassword', 'POST', $arguments);
-        $this->assertSame(
+        self::assertSame(
             'UsernamePasswordTestController success!' . chr(10) . 'Neos.Flow:Everybody' . chr(10) . 'Neos.Flow:AuthenticatedUser' . chr(10) . 'Neos.Flow:Administrator' . chr(10),
             $response->getBody()->getContents()
         );
@@ -171,7 +171,7 @@ class AuthenticationTest extends FunctionalTestCase
     public function failedAuthenticationCallsOnAuthenticationFailureMethod()
     {
         $response = $this->browser->request('http://localhost/test/security/authentication');
-        $this->assertStringContainsString('Uncaught Exception in Flow #42: Failure Method Exception', $response->getBody()->getContents());
+        self::assertStringContainsString('Uncaught Exception in Flow #42: Failure Method Exception', $response->getBody()->getContents());
     }
 
     /**
@@ -183,7 +183,7 @@ class AuthenticationTest extends FunctionalTestCase
         $request = $this->serverRequestFactory->createServerRequest('GET', $uri);
         $request = $request->withHeader('Authorization', 'Basic ' . base64_encode('functional_test_account:a_very_secure_long_password'));
         $response = $this->browser->sendRequest($request);
-        $this->assertEmpty($response->getHeader('Set-Cookie'));
+        self::assertEmpty($response->getHeader('Set-Cookie'));
     }
 
     /**
@@ -196,7 +196,7 @@ class AuthenticationTest extends FunctionalTestCase
         $arguments['__authentication']['Neos']['Flow']['Security']['Authentication']['Token']['UsernamePassword']['password'] = 'a_very_secure_long_password';
 
         $response = $this->browser->request('http://localhost/test/security/authentication/usernamepassword', 'POST', $arguments);
-        $this->assertNotEmpty($response->getHeaderLine('Set-Cookie'));
+        self::assertNotEmpty($response->getHeaderLine('Set-Cookie'));
     }
 
     /**
@@ -205,6 +205,6 @@ class AuthenticationTest extends FunctionalTestCase
     public function noSessionIsStartedIfAUnrestrictedActionIsCalled()
     {
         $response = $this->browser->request('http://localhost/test/security/restricted/public');
-        $this->assertEmpty($response->getHeader('Set-Cookie'));
+        self::assertEmpty($response->getHeader('Set-Cookie'));
     }
 }

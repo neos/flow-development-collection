@@ -105,7 +105,7 @@ class CacheManagerTest extends UnitTestCase
         $this->cacheManager->registerCache($cache1);
         $this->cacheManager->registerCache($cache2);
 
-        $this->assertSame($cache2, $this->cacheManager->getCache('cache2'), 'The cache returned by getCache() was not the same I registered.');
+        self::assertSame($cache2, $this->cacheManager->getCache('cache2'), 'The cache returned by getCache() was not the same I registered.');
     }
 
     /**
@@ -132,8 +132,8 @@ class CacheManagerTest extends UnitTestCase
         $cache1->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('cache1'));
         $this->cacheManager->registerCache($cache1);
 
-        $this->assertTrue($this->cacheManager->hasCache('cache1'), 'hasCache() did not return true.');
-        $this->assertFalse($this->cacheManager->hasCache('cache2'), 'hasCache() did not return false.');
+        self::assertTrue($this->cacheManager->hasCache('cache1'), 'hasCache() did not return true.');
+        self::assertFalse($this->cacheManager->hasCache('cache2'), 'hasCache() did not return false.');
     }
 
     /**
@@ -149,8 +149,8 @@ class CacheManagerTest extends UnitTestCase
         $cache2->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('cache2'));
         $this->cacheManager->registerCache($cache2, true);
 
-        $this->assertFalse($this->cacheManager->isCachePersistent('cache1'));
-        $this->assertTrue($this->cacheManager->isCachePersistent('cache2'));
+        self::assertFalse($this->cacheManager->isCachePersistent('cache1'));
+        self::assertTrue($this->cacheManager->isCachePersistent('cache2'));
     }
 
     /**
@@ -216,7 +216,7 @@ class CacheManagerTest extends UnitTestCase
     {
         file_put_contents('vfs://Foo/AvailableProxyClasses.php', '// dummy');
         $this->cacheManager->flushCaches();
-        $this->assertFileNotExists('vfs://Foo/AvailableProxyClasses.php');
+        self::assertFileNotExists('vfs://Foo/AvailableProxyClasses.php');
     }
 
     /**

@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\FluidAdaptor\View;
 
 /*
@@ -450,11 +451,11 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
     /**
      * @param array $paths
      * @param string $controllerName
-     * @param null $subPackageKey
-     * @param boolean $bubbleControllerAndSubpackage
+     * @param string $subPackageKey
+     * @param bool $bubbleControllerAndSubpackage
      * @return array
      */
-    protected function expandSubPackageAndController($paths, $controllerName, $subPackageKey = null, $bubbleControllerAndSubpackage = false)
+    protected function expandSubPackageAndController(array $paths, string $controllerName, string $subPackageKey = '', bool $bubbleControllerAndSubpackage = false): array
     {
         if ($bubbleControllerAndSubpackage === false) {
             $paths = $this->expandPatterns($paths, '@subpackage', [$subPackageKey]);
@@ -463,7 +464,7 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
         }
 
         $numberOfPathsBeforeSubpackageExpansion = count($paths);
-        $subpackageKeyParts = ($subPackageKey !== null) ? explode('\\', $subPackageKey) : [];
+        $subpackageKeyParts = ($subPackageKey !== '') ? explode('\\', $subPackageKey) : [];
         $numberOfSubpackageParts = count($subpackageKeyParts);
         $subpackageReplacements = [];
         for ($i = 0; $i <= $numberOfSubpackageParts; $i++) {
@@ -486,9 +487,9 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
      * @param array $patterns
      * @param string $search
      * @param array $replacements
-     * @return void
+     * @return array
      */
-    protected function expandPatterns(array $patterns, $search, array $replacements)
+    protected function expandPatterns(array $patterns, string $search, array $replacements): array
     {
         if ($replacements === []) {
             return $patterns;

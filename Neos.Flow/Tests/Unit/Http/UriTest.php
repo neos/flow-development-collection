@@ -40,7 +40,7 @@ class UriTest extends UnitTestCase
             $uri->getFragment() === 'anchor'
         );
 
-        $this->assertTrue($check, 'The valid and complete URI has not been correctly transformed to an URI object');
+        self::assertTrue($check, 'The valid and complete URI has not been correctly transformed to an URI object');
     }
 
     /**
@@ -69,7 +69,7 @@ class UriTest extends UnitTestCase
     public function urisCanBeConvertedForthAndBackWithoutLoss(string $uriString)
     {
         $uri = new Uri($uriString);
-        $this->assertSame($uriString, (string)$uri);
+        self::assertSame($uriString, (string)$uri);
     }
 
     /**
@@ -82,7 +82,7 @@ class UriTest extends UnitTestCase
         $uri = new Uri('/no/scheme/or/host');
         $uri = $uri->withScheme('http')
                    ->withHost('localhost');
-        $this->assertSame('http://localhost/no/scheme/or/host', (string)$uri);
+        self::assertSame('http://localhost/no/scheme/or/host', (string)$uri);
     }
 
     /**
@@ -91,12 +91,12 @@ class UriTest extends UnitTestCase
     public function toStringOmitsStandardPorts()
     {
         $uri = new Uri('http://flow.neos.io');
-        $this->assertSame('http://flow.neos.io', (string)$uri);
-        $this->assertNull($uri->getPort());
+        self::assertSame('http://flow.neos.io', (string)$uri);
+        self::assertNull($uri->getPort());
 
         $uri = new Uri('https://flow.neos.io');
-        $this->assertSame('https://flow.neos.io', (string)$uri);
-        $this->assertNull($uri->getPort());
+        self::assertSame('https://flow.neos.io', (string)$uri);
+        self::assertNull($uri->getPort());
     }
 
     /**
@@ -113,7 +113,7 @@ class UriTest extends UnitTestCase
             $uri->getPath() === '/path1/' &&
             $uri->getQuery() === 'argument%C3%A4%C3%B6%C3%BC1=value%C3%A5%C3%B8%E2%82%AC%C5%93'
         );
-        $this->assertTrue($check, 'The URI with special arguments has not been correctly transformed to an URI object');
+        self::assertTrue($check, 'The URI with special arguments has not been correctly transformed to an URI object');
     }
 
     /**
@@ -135,7 +135,7 @@ class UriTest extends UnitTestCase
     public function constructorParsesHostCorrectly(string $uriString, string $expectedHost)
     {
         $uri = new Uri($uriString);
-        $this->assertSame($expectedHost, $uri->getHost());
+        self::assertSame($expectedHost, $uri->getHost());
     }
 
     /**
@@ -145,7 +145,7 @@ class UriTest extends UnitTestCase
     public function settingValidHostPassesRegexCheck(string $uriString, string $plainHost)
     {
         $uri = (new Uri(''))->withHost($plainHost);
-        $this->assertEquals($plainHost, $uri->getHost());
+        self::assertEquals($plainHost, $uri->getHost());
     }
 
     /**
@@ -174,7 +174,7 @@ class UriTest extends UnitTestCase
     public function stringRepresentationIsCorrect(string $uriString)
     {
         $uri = new Uri($uriString);
-        $this->assertEquals($uriString, (string)$uri, 'The string representation of the URI is not equal to the original URI string.');
+        self::assertEquals($uriString, (string)$uri, 'The string representation of the URI is not equal to the original URI string.');
     }
 
     /**

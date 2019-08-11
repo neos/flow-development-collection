@@ -80,8 +80,8 @@ class ActionControllerTest extends FunctionalTestCase
     public function defaultActionSpecifiedInRouteIsCalledAndResponseIsReturned()
     {
         $response = $this->browser->request('http://localhost/test/mvc/actioncontrollertesta');
-        $this->assertEquals('First action was called', $response->getBody()->getContents());
-        $this->assertEquals(200, $response->getStatusCode());
+        self::assertEquals('First action was called', $response->getBody()->getContents());
+        self::assertEquals(200, $response->getStatusCode());
     }
 
     /**
@@ -93,8 +93,8 @@ class ActionControllerTest extends FunctionalTestCase
     public function actionSpecifiedInActionRequestIsCalledAndResponseIsReturned()
     {
         $response = $this->browser->request('http://localhost/test/mvc/actioncontrollertesta/second');
-        $this->assertEquals('Second action was called', $response->getBody()->getContents());
-        $this->assertEquals(200, $response->getStatusCode());
+        self::assertEquals('Second action was called', $response->getBody()->getContents());
+        self::assertEquals(200, $response->getStatusCode());
     }
 
     /**
@@ -106,7 +106,7 @@ class ActionControllerTest extends FunctionalTestCase
     public function queryStringOfAGetRequestIsParsedAndPassedToActionAsArguments()
     {
         $response = $this->browser->request('http://localhost/test/mvc/actioncontrollertesta/third?secondArgument=bar&firstArgument=foo&third=baz');
-        $this->assertEquals('thirdAction-foo-bar-baz-default', $response->getBody()->getContents());
+        self::assertEquals('thirdAction-foo-bar-baz-default', $response->getBody()->getContents());
     }
 
     /**
@@ -115,7 +115,7 @@ class ActionControllerTest extends FunctionalTestCase
     public function defaultTemplateIsResolvedAndUsedAccordingToConventions()
     {
         $response = $this->browser->request('http://localhost/test/mvc/actioncontrollertesta/fourth?emailAddress=example@neos.io');
-        $this->assertEquals('Fourth action <b>example@neos.io</b>', $response->getBody()->getContents());
+        self::assertEquals('Fourth action <b>example@neos.io</b>', $response->getBody()->getContents());
     }
 
     /**
@@ -132,7 +132,7 @@ class ActionControllerTest extends FunctionalTestCase
             ->withHeader('Content-Length', 54);
 
         $response = $this->browser->sendRequest($request);
-        $this->assertEquals('putAction-first value-getValue', $response->getBody()->getContents());
+        self::assertEquals('putAction-first value-getValue', $response->getBody()->getContents());
     }
 
     /**
@@ -145,7 +145,7 @@ class ActionControllerTest extends FunctionalTestCase
         $request = new ServerRequest('GET', new Uri('http://localhost/test/mvc/actioncontrollertestc/non-existing-id'));
 
         $response = $this->browser->sendRequest($request);
-        $this->assertSame(404, $response->getStatusCode());
+        self::assertSame(404, $response->getStatusCode());
     }
 
 
@@ -162,7 +162,7 @@ class ActionControllerTest extends FunctionalTestCase
             ->withBody(ContentStream::fromContents('<xml></xml>'));
 
         $response = $this->browser->sendRequest($request);
-        $this->assertSame(406, $response->getStatusCode());
+        self::assertSame(406, $response->getStatusCode());
     }
 
     /**
@@ -179,7 +179,7 @@ class ActionControllerTest extends FunctionalTestCase
         $response = $this->browser->request('http://localhost/test/mvc/actioncontrollertestb/showobjectargument', 'POST', $arguments);
 
         $expectedResult = '-invalid-';
-        $this->assertEquals($expectedResult, $response->getBody()->getContents());
+        self::assertEquals($expectedResult, $response->getBody()->getContents());
     }
 
     /**
@@ -189,7 +189,7 @@ class ActionControllerTest extends FunctionalTestCase
     public function ignoreValidationAnnotationIsObservedWithAndWithoutDollarSign()
     {
         $response = $this->browser->request('http://localhost/test/mvc/actioncontrollertesta/ignorevalidation?brokenArgument1=toolong&brokenArgument2=tooshort');
-        $this->assertEquals('action was called', $response->getBody()->getContents());
+        self::assertEquals('action was called', $response->getBody()->getContents());
     }
 
     /**
@@ -203,7 +203,7 @@ class ActionControllerTest extends FunctionalTestCase
             ->withBody(ContentStream::fromContents('{"putArgument":"first value"}'));
 
         $response = $this->browser->sendRequest($request);
-        $this->assertEquals('putAction-first value-getValue', $response->getBody()->getContents());
+        self::assertEquals('putAction-first value-getValue', $response->getBody()->getContents());
     }
 
     /**
@@ -220,7 +220,7 @@ class ActionControllerTest extends FunctionalTestCase
         $response = $this->browser->request('http://localhost/test/mvc/actioncontrollertestb/requiredobject', 'POST', $arguments);
 
         $expectedResult = 'Validation failed while trying to call Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController->requiredObjectAction().' . PHP_EOL;
-        $this->assertEquals($expectedResult, $response->getBody()->getContents());
+        self::assertEquals($expectedResult, $response->getBody()->getContents());
     }
 
     /**
@@ -237,7 +237,7 @@ class ActionControllerTest extends FunctionalTestCase
         $response = $this->browser->request('http://localhost/test/mvc/actioncontrollertestb/optionalobject', 'POST', $arguments);
 
         $expectedResult = 'Validation failed while trying to call Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController->optionalObjectAction().' . PHP_EOL;
-        $this->assertEquals($expectedResult, $response->getBody()->getContents());
+        self::assertEquals($expectedResult, $response->getBody()->getContents());
     }
 
     /**
@@ -248,7 +248,7 @@ class ActionControllerTest extends FunctionalTestCase
         $response = $this->browser->request('http://localhost/test/mvc/actioncontrollertestb/optionalobject');
 
         $expectedResult = 'null';
-        $this->assertEquals($expectedResult, $response->getBody()->getContents());
+        self::assertEquals($expectedResult, $response->getBody()->getContents());
     }
 
     /**
@@ -259,7 +259,7 @@ class ActionControllerTest extends FunctionalTestCase
         $response = $this->browser->request('http://localhost/test/mvc/actioncontrollertestb/optionalannotatedobject');
 
         $expectedResult = 'null';
-        $this->assertEquals($expectedResult, $response->getBody()->getContents());
+        self::assertEquals($expectedResult, $response->getBody()->getContents());
     }
 
     /**
@@ -276,7 +276,7 @@ class ActionControllerTest extends FunctionalTestCase
         $response = $this->browser->request('http://localhost/test/mvc/actioncontrollertestb/notvalidatedgroupobject', 'POST', $arguments);
 
         $expectedResult = '-invalid-';
-        $this->assertEquals($expectedResult, $response->getBody()->getContents());
+        self::assertEquals($expectedResult, $response->getBody()->getContents());
     }
 
     /**
@@ -298,7 +298,7 @@ class ActionControllerTest extends FunctionalTestCase
         $response = $this->browser->request('http://localhost/test/mvc/actioncontrollertestb/notvalidatedgroupcollection', 'POST', $arguments);
 
         $expectedResult = '-invalid-';
-        $this->assertEquals($expectedResult, $response->getBody()->getContents());
+        self::assertEquals($expectedResult, $response->getBody()->getContents());
     }
 
     /**
@@ -319,7 +319,7 @@ class ActionControllerTest extends FunctionalTestCase
         $response = $this->browser->request('http://localhost/test/mvc/actioncontrollertestb/notvalidatedgroupobject', 'POST', $arguments);
 
         $expectedResult = '-invalid-';
-        $this->assertEquals($expectedResult, $response->getBody()->getContents());
+        self::assertEquals($expectedResult, $response->getBody()->getContents());
     }
 
     /**
@@ -336,7 +336,7 @@ class ActionControllerTest extends FunctionalTestCase
         $response = $this->browser->request('http://localhost/test/mvc/actioncontrollertestb/validatedgroupobject', 'POST', $arguments);
 
         $expectedResult = 'Validation failed while trying to call Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController->validatedGroupObjectAction().' . PHP_EOL;
-        $this->assertEquals($expectedResult, $response->getBody()->getContents());
+        self::assertEquals($expectedResult, $response->getBody()->getContents());
     }
 
     /**
@@ -358,7 +358,7 @@ class ActionControllerTest extends FunctionalTestCase
         $response = $this->browser->request('http://localhost/test/mvc/actioncontrollertestb/validatedgroupcollection', 'POST', $arguments);
 
         $expectedResult = 'Validation failed while trying to call Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController->validatedGroupCollectionAction().' . PHP_EOL;
-        $this->assertEquals($expectedResult, $response->getBody()->getContents());
+        self::assertEquals($expectedResult, $response->getBody()->getContents());
     }
 
     /**
@@ -378,7 +378,7 @@ class ActionControllerTest extends FunctionalTestCase
         $response = $this->browser->request('http://localhost/test/mvc/actioncontrollertestb/validatedgroupobject', 'POST', $arguments);
 
         $expectedResult = 'Validation failed while trying to call Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController->validatedGroupObjectAction().' . PHP_EOL;
-        $this->assertEquals($expectedResult, $response->getBody()->getContents());
+        self::assertEquals($expectedResult, $response->getBody()->getContents());
     }
 
     /**
@@ -447,7 +447,7 @@ class ActionControllerTest extends FunctionalTestCase
 
         $uri = str_replace('{@action}', strtolower($action), 'http://localhost/test/mvc/actioncontrollertestb/{@action}');
         $response = $this->browser->request($uri, 'POST', $arguments);
-        $this->assertTrue(strpos(trim($response->getBody()->getContents()), (string)$expectedResult) === 0, sprintf('The resulting string did not start with the expected string. Expected: "%s", Actual: "%s"', $expectedResult, $response->getBody()->getContents()));
+        self::assertTrue(strpos(trim($response->getBody()->getContents()), (string)$expectedResult) === 0, sprintf('The resulting string did not start with the expected string. Expected: "%s", Actual: "%s"', $expectedResult, $response->getBody()->getContents()));
     }
 
     /**
@@ -484,6 +484,6 @@ class ActionControllerTest extends FunctionalTestCase
             ->withParsedBody($form);
 
         $response = $this->browser->sendRequest($request);
-        $this->assertSame('Entity "Foo" updated', $response->getBody()->getContents());
+        self::assertSame('Entity "Foo" updated', $response->getBody()->getContents());
     }
 }

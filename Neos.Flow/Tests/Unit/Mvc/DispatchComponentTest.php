@@ -108,6 +108,6 @@ class DispatchComponentTest extends UnitTestCase
         $componentContext->setParameter(RoutingComponent::class, 'matchResults', []);
         $componentContext->setParameter(DispatchComponent::class, 'actionRequest', $this->mockActionRequest);
         $this->dispatchComponent->handle($componentContext);
-        $this->assertInstanceOf(ResponseInterface::class, $componentContext->getHttpResponse());
+        self::assertInstanceOf(ResponseInterface::class, $componentContext->getHttpResponse());
     }
 }

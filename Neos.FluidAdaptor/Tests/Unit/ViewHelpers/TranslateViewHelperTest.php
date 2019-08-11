@@ -66,7 +66,7 @@ class TranslateViewHelperTest extends ViewHelperBaseTestcase
         $this->translateViewHelper->expects($this->once())->method('renderChildren')->will($this->returnValue('Untranslated Label'));
         $this->translateViewHelper = $this->prepareArguments($this->translateViewHelper, ['id' => null, 'value' => null, 'arguments' => [], 'source' => 'Main', 'package' => null, 'quantity' => null, 'locale' => 'de_DE']);
         $result = $this->translateViewHelper->render();
-        $this->assertEquals('Translated Label', $result);
+        self::assertEquals('Translated Label', $result);
     }
 
     /**
@@ -78,7 +78,7 @@ class TranslateViewHelperTest extends ViewHelperBaseTestcase
 
         $this->translateViewHelper = $this->prepareArguments($this->translateViewHelper, ['id' => 'some.label', 'value' => null, 'arguments' => [], 'source' => 'Main', 'package' => null, 'quantity' => null, 'locale' => 'de_DE']);
         $result = $this->translateViewHelper->render();
-        $this->assertEquals('Translated Label', $result);
+        self::assertEquals('Translated Label', $result);
     }
 
     /**
@@ -90,7 +90,7 @@ class TranslateViewHelperTest extends ViewHelperBaseTestcase
 
         $this->translateViewHelper = $this->prepareArguments($this->translateViewHelper, ['id' => 'some.label', 'value' => 'Default from value', 'arguments' => [], 'source' => 'Main', 'package' => null, 'quantity' => null, 'locale' => 'de_DE']);
         $result = $this->translateViewHelper->render();
-        $this->assertEquals('Default from value', $result);
+        self::assertEquals('Default from value', $result);
     }
 
     /**
@@ -102,7 +102,7 @@ class TranslateViewHelperTest extends ViewHelperBaseTestcase
 
         $this->translateViewHelper = $this->prepareArguments($this->translateViewHelper, ['id' => 'some.label', 'value' => null, 'arguments' => [], 'source' => 'Main', 'package' => null, 'quantity' => null, 'locale' => 'de_DE']);
         $result = $this->translateViewHelper->render();
-        $this->assertEquals('Default from renderChildren', $result);
+        self::assertEquals('Default from renderChildren', $result);
     }
 
     /**
@@ -116,7 +116,7 @@ class TranslateViewHelperTest extends ViewHelperBaseTestcase
 
         $this->translateViewHelper = $this->prepareArguments($this->translateViewHelper, ['id' => 'some.label', 'value' => null, 'arguments' => [], 'source' => 'Main', 'package' => null, 'quantity' => null, 'locale' => 'de_DE']);
         $result = $this->translateViewHelper->render();
-        $this->assertEquals('some.label', $result);
+        self::assertEquals('some.label', $result);
     }
 
     /**
@@ -197,6 +197,6 @@ class TranslateViewHelperTest extends ViewHelperBaseTestcase
 
         $this->translateViewHelper = $this->prepareArguments($this->translateViewHelper, ['id' => $id, 'value' => $value]);
         $actualResult = $this->translateViewHelper->render();
-        $this->assertSame($expectedResult, $actualResult);
+        self::assertSame($expectedResult, $actualResult);
     }
 }

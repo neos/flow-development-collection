@@ -55,10 +55,10 @@ class ActionRequestTest extends UnitTestCase
      */
     public function anHttpRequestOrActionRequestIsRequiredAsParentRequest()
     {
-        $this->assertSame($this->mockHttpRequest, $this->actionRequest->getParentRequest());
+        self::assertSame($this->mockHttpRequest, $this->actionRequest->getParentRequest());
 
         $anotherActionRequest = new ActionRequest($this->actionRequest);
-        $this->assertSame($this->actionRequest, $anotherActionRequest->getParentRequest());
+        self::assertSame($this->actionRequest, $anotherActionRequest->getParentRequest());
     }
 
     /**
@@ -78,9 +78,9 @@ class ActionRequestTest extends UnitTestCase
         $anotherActionRequest = new ActionRequest($this->actionRequest);
         $yetAnotherActionRequest = new ActionRequest($anotherActionRequest);
 
-        $this->assertSame($this->mockHttpRequest, $this->actionRequest->getHttpRequest());
-        $this->assertSame($this->mockHttpRequest, $yetAnotherActionRequest->getHttpRequest());
-        $this->assertSame($this->mockHttpRequest, $anotherActionRequest->getHttpRequest());
+        self::assertSame($this->mockHttpRequest, $this->actionRequest->getHttpRequest());
+        self::assertSame($this->mockHttpRequest, $yetAnotherActionRequest->getHttpRequest());
+        self::assertSame($this->mockHttpRequest, $anotherActionRequest->getHttpRequest());
     }
 
     /**
@@ -91,9 +91,9 @@ class ActionRequestTest extends UnitTestCase
         $anotherActionRequest = new ActionRequest($this->actionRequest);
         $yetAnotherActionRequest = new ActionRequest($anotherActionRequest);
 
-        $this->assertSame($this->actionRequest, $this->actionRequest->getMainRequest());
-        $this->assertSame($this->actionRequest, $yetAnotherActionRequest->getMainRequest());
-        $this->assertSame($this->actionRequest, $anotherActionRequest->getMainRequest());
+        self::assertSame($this->actionRequest, $this->actionRequest->getMainRequest());
+        self::assertSame($this->actionRequest, $yetAnotherActionRequest->getMainRequest());
+        self::assertSame($this->actionRequest, $anotherActionRequest->getMainRequest());
     }
 
     /**
@@ -104,9 +104,9 @@ class ActionRequestTest extends UnitTestCase
         $anotherActionRequest = new ActionRequest($this->actionRequest);
         $yetAnotherActionRequest = new ActionRequest($anotherActionRequest);
 
-        $this->assertTrue($this->actionRequest->isMainRequest());
-        $this->assertFalse($anotherActionRequest->isMainRequest());
-        $this->assertFalse($yetAnotherActionRequest->isMainRequest());
+        self::assertTrue($this->actionRequest->isMainRequest());
+        self::assertFalse($anotherActionRequest->isMainRequest());
+        self::assertFalse($yetAnotherActionRequest->isMainRequest());
     }
 
     /**
@@ -120,11 +120,11 @@ class ActionRequestTest extends UnitTestCase
         $mockObjectManager->expects($this->any())->method('get')->will($this->returnValue($mockDispatcher));
         $this->inject($this->actionRequest, 'objectManager', $mockObjectManager);
 
-        $this->assertFalse($this->actionRequest->isDispatched());
+        self::assertFalse($this->actionRequest->isDispatched());
         $this->actionRequest->setDispatched(true);
-        $this->assertTrue($this->actionRequest->isDispatched());
+        self::assertTrue($this->actionRequest->isDispatched());
         $this->actionRequest->setDispatched(false);
-        $this->assertFalse($this->actionRequest->isDispatched());
+        self::assertFalse($this->actionRequest->isDispatched());
     }
 
     /**
@@ -146,7 +146,7 @@ class ActionRequestTest extends UnitTestCase
         $this->actionRequest->setControllerSubPackageKey('Some\Subpackage');
         $this->actionRequest->setControllerName('SomeController');
 
-        $this->assertEquals('SomePackage\Some\SubPackage\Controller\SomeControllerController', $this->actionRequest->getControllerObjectName());
+        self::assertEquals('SomePackage\Some\SubPackage\Controller\SomeControllerController', $this->actionRequest->getControllerObjectName());
     }
 
     /**
@@ -168,7 +168,7 @@ class ActionRequestTest extends UnitTestCase
         $this->actionRequest->setControllerSubPackageKey('Some\Subpackage');
         $this->actionRequest->setControllerName('SomeController');
 
-        $this->assertEquals('', $this->actionRequest->getControllerObjectName());
+        self::assertEquals('', $this->actionRequest->getControllerObjectName());
     }
 
     /**
@@ -235,9 +235,9 @@ class ActionRequestTest extends UnitTestCase
         $this->inject($this->actionRequest, 'objectManager', $mockObjectManager);
 
         $this->actionRequest->setControllerObjectName($objectName);
-        $this->assertSame($parts['controllerPackageKey'], $this->actionRequest->getControllerPackageKey());
-        $this->assertSame($parts['controllerSubpackageKey'], $this->actionRequest->getControllerSubpackageKey());
-        $this->assertSame($parts['controllerName'], $this->actionRequest->getControllerName());
+        self::assertSame($parts['controllerPackageKey'], $this->actionRequest->getControllerPackageKey());
+        self::assertSame($parts['controllerSubpackageKey'], $this->actionRequest->getControllerSubpackageKey());
+        self::assertSame($parts['controllerName'], $this->actionRequest->getControllerName());
     }
 
     /**
@@ -264,7 +264,7 @@ class ActionRequestTest extends UnitTestCase
         $actionRequest->expects($this->once())->method('getControllerObjectName')->will($this->returnValue('Neos\MyPackage\Controller\Foo\BarController'));
 
         $actionRequest->setControllerName('foo\bar');
-        $this->assertEquals('Foo\Bar', $actionRequest->getControllerName());
+        self::assertEquals('Foo\Bar', $actionRequest->getControllerName());
     }
 
     /**
@@ -277,7 +277,7 @@ class ActionRequestTest extends UnitTestCase
         $actionRequest->expects($this->once())->method('getControllerObjectName')->will($this->returnValue(''));
 
         $actionRequest->setControllerName('foo\bar');
-        $this->assertEquals('foo\bar', $actionRequest->getControllerName());
+        self::assertEquals('foo\bar', $actionRequest->getControllerName());
     }
 
     /**
@@ -296,7 +296,7 @@ class ActionRequestTest extends UnitTestCase
 
         $actionRequest->setControllerPackageKey('neos.mypackage');
         $actionRequest->setControllerSubpackageKey('some\subpackage');
-        $this->assertEquals('Some\SubPackage', $actionRequest->getControllerSubpackageKey());
+        self::assertEquals('Some\SubPackage', $actionRequest->getControllerSubpackageKey());
     }
 
     /**
@@ -314,7 +314,7 @@ class ActionRequestTest extends UnitTestCase
         $this->inject($actionRequest, 'packageManager', $mockPackageManager);
 
         $actionRequest->setControllerPackageKey('neos.mypackage');
-        $this->assertNull($actionRequest->getControllerSubpackageKey());
+        self::assertNull($actionRequest->getControllerSubpackageKey());
     }
 
     /**
@@ -333,7 +333,7 @@ class ActionRequestTest extends UnitTestCase
 
         $actionRequest->setControllerPackageKey('neos.mypackage');
         $actionRequest->setControllerSubpackageKey('some\subpackage');
-        $this->assertEquals('some\subpackage', $actionRequest->getControllerSubpackageKey());
+        self::assertEquals('some\subpackage', $actionRequest->getControllerSubpackageKey());
     }
 
     /**
@@ -369,7 +369,7 @@ class ActionRequestTest extends UnitTestCase
         $actionRequest->expects($this->once())->method('getControllerObjectName')->will($this->returnValue(''));
 
         $actionRequest->setControllerActionName('theAction');
-        $this->assertEquals('theAction', $actionRequest->getControllerActionName());
+        self::assertEquals('theAction', $actionRequest->getControllerActionName());
     }
 
     /**
@@ -420,7 +420,7 @@ class ActionRequestTest extends UnitTestCase
         $actionRequest->_set('objectManager', $mockObjectManager);
 
         $actionRequest->setControllerActionName('somegreat');
-        $this->assertEquals('someGreat', $actionRequest->getControllerActionName());
+        self::assertEquals('someGreat', $actionRequest->getControllerActionName());
     }
 
     /**
@@ -429,7 +429,7 @@ class ActionRequestTest extends UnitTestCase
     public function aSingleArgumentCanBeSetWithSetArgumentAndRetrievedWithGetArgument()
     {
         $this->actionRequest->setArgument('someArgumentName', 'theValue');
-        $this->assertEquals('theValue', $this->actionRequest->getArgument('someArgumentName'));
+        self::assertEquals('theValue', $this->actionRequest->getArgument('someArgumentName'));
     }
 
     /**
@@ -461,7 +461,7 @@ class ActionRequestTest extends UnitTestCase
         ];
 
         $this->actionRequest->setArguments($arguments);
-        $this->assertEquals($arguments, $this->actionRequest->getArguments());
+        self::assertEquals($arguments, $this->actionRequest->getArguments());
     }
 
     /**
@@ -471,9 +471,9 @@ class ActionRequestTest extends UnitTestCase
     {
         $this->actionRequest->setArgument('__someInternalArgument', 'theValue');
 
-        $this->assertFalse($this->actionRequest->hasArgument('__someInternalArgument'));
-        $this->assertEquals('theValue', $this->actionRequest->getInternalArgument('__someInternalArgument'));
-        $this->assertEquals(['__someInternalArgument' => 'theValue'], $this->actionRequest->getInternalArguments());
+        self::assertFalse($this->actionRequest->hasArgument('__someInternalArgument'));
+        self::assertEquals('theValue', $this->actionRequest->getInternalArgument('__someInternalArgument'));
+        self::assertEquals(['__someInternalArgument' => 'theValue'], $this->actionRequest->getInternalArguments());
     }
 
     /**
@@ -485,7 +485,7 @@ class ActionRequestTest extends UnitTestCase
 
         $this->actionRequest->setArgument('__someInternalArgument', $someObject);
 
-        $this->assertSame($someObject, $this->actionRequest->getInternalArgument('__someInternalArgument'));
+        self::assertSame($someObject, $this->actionRequest->getInternalArgument('__someInternalArgument'));
     }
 
     /**
@@ -495,8 +495,8 @@ class ActionRequestTest extends UnitTestCase
     {
         $this->actionRequest->setArgument('--typo3-flow-foo-viewhelper-paginate', ['@controller' => 'Foo', 'page' => 5]);
 
-        $this->assertFalse($this->actionRequest->hasArgument('--typo3-flow-foo-viewhelper-paginate'));
-        $this->assertEquals(['typo3-flow-foo-viewhelper-paginate' => ['@controller' => 'Foo', 'page' => 5]], $this->actionRequest->getPluginArguments());
+        self::assertFalse($this->actionRequest->hasArgument('--typo3-flow-foo-viewhelper-paginate'));
+        self::assertEquals(['typo3-flow-foo-viewhelper-paginate' => ['@controller' => 'Foo', 'page' => 5]], $this->actionRequest->getPluginArguments());
     }
 
     /**
@@ -504,9 +504,9 @@ class ActionRequestTest extends UnitTestCase
      */
     public function argumentNamespaceCanBeSpecified()
     {
-        $this->assertSame('', $this->actionRequest->getArgumentNamespace());
+        self::assertSame('', $this->actionRequest->getArgumentNamespace());
         $this->actionRequest->setArgumentNamespace('someArgumentNamespace');
-        $this->assertSame('someArgumentNamespace', $this->actionRequest->getArgumentNamespace());
+        self::assertSame('someArgumentNamespace', $this->actionRequest->getArgumentNamespace());
     }
 
     /**
@@ -515,13 +515,13 @@ class ActionRequestTest extends UnitTestCase
     public function theRepresentationFormatCanBeSetAndRetrieved()
     {
         $this->actionRequest->setFormat('html');
-        $this->assertEquals('html', $this->actionRequest->getFormat());
+        self::assertEquals('html', $this->actionRequest->getFormat());
 
         $this->actionRequest->setFormat('doc');
-        $this->assertEquals('doc', $this->actionRequest->getFormat());
+        self::assertEquals('doc', $this->actionRequest->getFormat());
 
         $this->actionRequest->setFormat('hTmL');
-        $this->assertEquals('html', $this->actionRequest->getFormat());
+        self::assertEquals('html', $this->actionRequest->getFormat());
     }
 
     /**
@@ -532,8 +532,8 @@ class ActionRequestTest extends UnitTestCase
         $this->actionRequest->setDispatched(true);
         $cloneRequest = clone $this->actionRequest;
 
-        $this->assertTrue($this->actionRequest->isDispatched());
-        $this->assertFalse($cloneRequest->isDispatched());
+        self::assertTrue($this->actionRequest->isDispatched());
+        self::assertFalse($cloneRequest->isDispatched());
     }
 
     /**
@@ -584,7 +584,7 @@ class ActionRequestTest extends UnitTestCase
         $this->inject($this->actionRequest, 'packageManager', $mockPackageManager);
         $this->actionRequest->setControllerPackageKey('acme.testpackage');
 
-        $this->assertEquals('Acme.Testpackage', $this->actionRequest->getControllerPackageKey());
+        self::assertEquals('Acme.Testpackage', $this->actionRequest->getControllerPackageKey());
     }
 
     /**
@@ -595,7 +595,7 @@ class ActionRequestTest extends UnitTestCase
         $this->actionRequest->setArguments(['__internalArgument' => 'action request']);
 
         $expectedResult = ['__internalArgument' => 'action request'];
-        $this->assertSame($expectedResult, $this->actionRequest->getInternalArguments());
+        self::assertSame($expectedResult, $this->actionRequest->getInternalArguments());
     }
 
     /**
@@ -606,7 +606,7 @@ class ActionRequestTest extends UnitTestCase
         $this->actionRequest->setArguments(['--pluginArgument' => 'action request']);
 
         $expectedResult = ['pluginArgument' => 'action request'];
-        $this->assertSame($expectedResult, $this->actionRequest->getPluginArguments());
+        self::assertSame($expectedResult, $this->actionRequest->getPluginArguments());
     }
 
     /**
@@ -616,7 +616,7 @@ class ActionRequestTest extends UnitTestCase
     {
         $argumentValue = 'amnesia spray';
         $this->actionRequest->setArgument(123, $argumentValue);
-        $this->assertTrue($this->actionRequest->hasArgument('123'));
-        $this->assertEquals($argumentValue, $this->actionRequest->getArgument('123'));
+        self::assertTrue($this->actionRequest->hasArgument('123'));
+        self::assertEquals($argumentValue, $this->actionRequest->getArgument('123'));
     }
 }

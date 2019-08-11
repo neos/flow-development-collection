@@ -146,20 +146,20 @@ class RouterTest extends UnitTestCase
         /** @var Route[] $createdRoutes */
         $createdRoutes = $this->router->_get('routes');
 
-        $this->assertEquals('number1', $createdRoutes[0]->getUriPattern());
-        $this->assertTrue($createdRoutes[0]->isLowerCase());
-        $this->assertFalse($createdRoutes[0]->getAppendExceedingArguments());
-        $this->assertEquals('number2', $createdRoutes[1]->getUriPattern());
-        $this->assertFalse($createdRoutes[1]->hasHttpMethodConstraints());
-        $this->assertEquals([], $createdRoutes[1]->getHttpMethods());
-        $this->assertEquals('route3', $createdRoutes[2]->getName());
-        $this->assertEquals(['foodefault'], $createdRoutes[2]->getDefaults());
-        $this->assertEquals(['fooroutepart'], $createdRoutes[2]->getRoutePartsConfiguration());
-        $this->assertEquals('number3', $createdRoutes[2]->getUriPattern());
-        $this->assertFalse($createdRoutes[2]->isLowerCase());
-        $this->assertTrue($createdRoutes[2]->getAppendExceedingArguments());
-        $this->assertTrue($createdRoutes[2]->hasHttpMethodConstraints());
-        $this->assertEquals(['POST', 'PUT'], $createdRoutes[2]->getHttpMethods());
+        self::assertEquals('number1', $createdRoutes[0]->getUriPattern());
+        self::assertTrue($createdRoutes[0]->isLowerCase());
+        self::assertFalse($createdRoutes[0]->getAppendExceedingArguments());
+        self::assertEquals('number2', $createdRoutes[1]->getUriPattern());
+        self::assertFalse($createdRoutes[1]->hasHttpMethodConstraints());
+        self::assertEquals([], $createdRoutes[1]->getHttpMethods());
+        self::assertEquals('route3', $createdRoutes[2]->getName());
+        self::assertEquals(['foodefault'], $createdRoutes[2]->getDefaults());
+        self::assertEquals(['fooroutepart'], $createdRoutes[2]->getRoutePartsConfiguration());
+        self::assertEquals('number3', $createdRoutes[2]->getUriPattern());
+        self::assertFalse($createdRoutes[2]->isLowerCase());
+        self::assertTrue($createdRoutes[2]->getAppendExceedingArguments());
+        self::assertTrue($createdRoutes[2]->hasHttpMethodConstraints());
+        self::assertEquals(['POST', 'PUT'], $createdRoutes[2]->getHttpMethods());
     }
 
     /**
@@ -209,7 +209,7 @@ class RouterTest extends UnitTestCase
         $router->_set('routes', $mockRoutes);
 
         $resolvedUri = $router->resolve(new ResolveContext($this->mockBaseUri, $routeValues, false));
-        $this->assertSame('route2', $resolvedUri->getPath());
+        self::assertSame('route2', $resolvedUri->getPath());
     }
 
     /**
@@ -241,7 +241,7 @@ class RouterTest extends UnitTestCase
      */
     public function getLastResolvedRouteReturnsNullByDefault()
     {
-        $this->assertNull($this->router->getLastResolvedRoute());
+        self::assertNull($this->router->getLastResolvedRoute());
     }
 
     /**
@@ -267,7 +267,7 @@ class RouterTest extends UnitTestCase
 
         $router->resolve($resolveContext);
 
-        $this->assertSame($mockRoute2, $router->getLastResolvedRoute());
+        self::assertSame($mockRoute2, $router->getLastResolvedRoute());
     }
 
     /**
@@ -290,7 +290,7 @@ class RouterTest extends UnitTestCase
         $router->_set('routerCachingService', $mockRouterCachingService);
 
         $router->expects($this->never())->method('createRoutesFromConfiguration');
-        $this->assertSame('cached/path', (string)$router->resolve($resolveContext));
+        self::assertSame('cached/path', (string)$router->resolve($resolveContext));
     }
 
     /**
@@ -316,7 +316,7 @@ class RouterTest extends UnitTestCase
         $router->_set('routes', [$mockRoute1, $mockRoute2]);
 
         $this->mockRouterCachingService->expects($this->once())->method('storeResolvedUriConstraints')->with($resolveContext, $mockResolvedUriConstraints);
-        $this->assertSame('resolved/path', (string)$router->resolve($resolveContext));
+        self::assertSame('resolved/path', (string)$router->resolve($resolveContext));
     }
 
     /**
@@ -337,7 +337,7 @@ class RouterTest extends UnitTestCase
 
         $router->expects($this->never())->method('createRoutesFromConfiguration');
 
-        $this->assertSame($cachedMatchResults, $router->route($routeContext));
+        self::assertSame($cachedMatchResults, $router->route($routeContext));
     }
 
     /**
@@ -363,7 +363,7 @@ class RouterTest extends UnitTestCase
 
         $this->mockRouterCachingService->expects($this->once())->method('storeMatchResults')->with($routeContext, $matchResults);
 
-        $this->assertSame($matchResults, $router->route($routeContext));
+        self::assertSame($matchResults, $router->route($routeContext));
     }
 
     /**
@@ -371,7 +371,7 @@ class RouterTest extends UnitTestCase
      */
     public function getLastMatchedRouteReturnsNullByDefault()
     {
-        $this->assertNull($this->router->getLastMatchedRoute());
+        self::assertNull($this->router->getLastMatchedRoute());
     }
 
     /**
@@ -396,7 +396,7 @@ class RouterTest extends UnitTestCase
 
         $router->route($routeContext);
 
-        $this->assertSame($mockRoute2, $router->getLastMatchedRoute());
+        self::assertSame($mockRoute2, $router->getLastMatchedRoute());
     }
 
     /**
@@ -433,7 +433,7 @@ class RouterTest extends UnitTestCase
 
         $routes = $router->getRoutes();
         $firstRoute = reset($routes);
-        $this->assertSame('some/uri/pattern', $firstRoute->getUriPattern());
+        self::assertSame('some/uri/pattern', $firstRoute->getUriPattern());
     }
 
     /**
@@ -471,6 +471,6 @@ class RouterTest extends UnitTestCase
 
         $routes = $router->getRoutes();
         $firstRoute = reset($routes);
-        $this->assertSame('some/uri/pattern', $firstRoute->getUriPattern());
+        self::assertSame('some/uri/pattern', $firstRoute->getUriPattern());
     }
 }

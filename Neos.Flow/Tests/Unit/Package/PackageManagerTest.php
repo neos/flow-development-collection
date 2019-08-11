@@ -98,7 +98,7 @@ class PackageManagerTest extends UnitTestCase
         $this->packageManager->createPackage('Some.Test.Package', [], 'vfs://Test/Packages/Application');
 
         $package = $this->packageManager->getPackage('Some.Test.Package');
-        $this->assertInstanceOf(PackageInterface::class, $package, 'The result of getPackage() was no valid package object.');
+        self::assertInstanceOf(PackageInterface::class, $package, 'The result of getPackage() was no valid package object.');
     }
 
     /**
@@ -141,7 +141,7 @@ class PackageManagerTest extends UnitTestCase
     {
         $packageManager = $this->getAccessibleMock(PackageManager::class, ['dummy'], ['', '']);
         $packageManager->_set('packageKeys', ['acme.testpackage' => 'Acme.TestPackage']);
-        $this->assertEquals('Acme.TestPackage', $packageManager->getCaseSensitivePackageKey('acme.testpackage'));
+        self::assertEquals('Acme.TestPackage', $packageManager->getCaseSensitivePackageKey('acme.testpackage'));
     }
 
     /**
@@ -174,7 +174,7 @@ class PackageManagerTest extends UnitTestCase
 
         $packageStates = require('vfs://Test/Configuration/PackageStates.php');
         $actualPackageKeys = array_keys($packageStates['packages']);
-        $this->assertEquals(sort($expectedPackageKeys), sort($actualPackageKeys));
+        self::assertEquals(sort($expectedPackageKeys), sort($actualPackageKeys));
     }
 
     /**
@@ -218,7 +218,7 @@ class PackageManagerTest extends UnitTestCase
             ];
         }
 
-        $this->assertEquals($expectedPackageStatesConfiguration, $actualPackageStatesConfiguration['packages']);
+        self::assertEquals($expectedPackageStatesConfiguration, $actualPackageStatesConfiguration['packages']);
     }
 
     /**
@@ -243,10 +243,10 @@ class PackageManagerTest extends UnitTestCase
         $actualPackage = $this->packageManager->createPackage($packageKey, [], 'vfs://Test/Packages/Application');
         $actualPackagePath = $actualPackage->getPackagePath();
 
-        $this->assertEquals($expectedPackagePath, $actualPackagePath);
-        $this->assertTrue(is_dir($actualPackagePath), 'Package path should exist after createPackage()');
-        $this->assertEquals($packageKey, $actualPackage->getPackageKey());
-        $this->assertTrue($this->packageManager->isPackageAvailable($packageKey));
+        self::assertEquals($expectedPackagePath, $actualPackagePath);
+        self::assertTrue(is_dir($actualPackagePath), 'Package path should exist after createPackage()');
+        self::assertEquals($packageKey, $actualPackage->getPackageKey());
+        self::assertTrue($this->packageManager->isPackageAvailable($packageKey));
     }
 
     /**
@@ -268,8 +268,8 @@ class PackageManagerTest extends UnitTestCase
         $json = file_get_contents($package->getPackagePath() . '/composer.json');
         $composerManifest = json_decode($json);
 
-        $this->assertEquals('acme/yetanothertestpackage', $composerManifest->name);
-        $this->assertEquals('Yet Another Test Package', $composerManifest->description);
+        self::assertEquals('acme/yetanothertestpackage', $composerManifest->name);
+        self::assertEquals('Yet Another Test Package', $composerManifest->description);
     }
 
     /**
@@ -293,7 +293,7 @@ class PackageManagerTest extends UnitTestCase
         $json = file_get_contents($package->getPackagePath() . '/composer.json');
         $composerManifest = json_decode($json);
 
-        $this->assertEquals('flow-custom-package', $composerManifest->type);
+        self::assertEquals('flow-custom-package', $composerManifest->type);
     }
 
 
@@ -307,7 +307,7 @@ class PackageManagerTest extends UnitTestCase
         $json = file_get_contents($package->getPackagePath() . '/composer.json');
         $composerManifest = json_decode($json);
 
-        $this->assertEquals('neos-package', $composerManifest->type);
+        self::assertEquals('neos-package', $composerManifest->type);
     }
 
     /**
@@ -320,11 +320,11 @@ class PackageManagerTest extends UnitTestCase
         $package = $this->packageManager->createPackage('Acme.YetAnotherTestPackage', [], 'vfs://Test/Packages/Application');
         $packagePath = $package->getPackagePath();
 
-        $this->assertTrue(is_dir($packagePath . FlowPackageInterface::DIRECTORY_CLASSES), 'Classes directory was not created');
-        $this->assertTrue(is_dir($packagePath . FlowPackageInterface::DIRECTORY_CONFIGURATION), 'Configuration directory was not created');
-        $this->assertTrue(is_dir($packagePath . FlowPackageInterface::DIRECTORY_RESOURCES), 'Resources directory was not created');
-        $this->assertTrue(is_dir($packagePath . FlowPackageInterface::DIRECTORY_TESTS_UNIT), 'Tests/Unit directory was not created');
-        $this->assertTrue(is_dir($packagePath . FlowPackageInterface::DIRECTORY_TESTS_FUNCTIONAL), 'Tests/Functional directory was not created');
+        self::assertTrue(is_dir($packagePath . FlowPackageInterface::DIRECTORY_CLASSES), 'Classes directory was not created');
+        self::assertTrue(is_dir($packagePath . FlowPackageInterface::DIRECTORY_CONFIGURATION), 'Configuration directory was not created');
+        self::assertTrue(is_dir($packagePath . FlowPackageInterface::DIRECTORY_RESOURCES), 'Resources directory was not created');
+        self::assertTrue(is_dir($packagePath . FlowPackageInterface::DIRECTORY_TESTS_UNIT), 'Tests/Unit directory was not created');
+        self::assertTrue(is_dir($packagePath . FlowPackageInterface::DIRECTORY_TESTS_FUNCTIONAL), 'Tests/Functional directory was not created');
     }
 
     /**
@@ -338,7 +338,7 @@ class PackageManagerTest extends UnitTestCase
             $this->packageManager->createPackage('Invalid_PackageKey', [], 'vfs://Test/Packages/Application');
         } catch (InvalidPackageKeyException $exception) {
         }
-        $this->assertFalse(is_dir('vfs://Test/Packages/Application/Invalid_PackageKey'), 'Package folder with invalid package key was created');
+        self::assertFalse(is_dir('vfs://Test/Packages/Application/Invalid_PackageKey'), 'Package folder with invalid package key was created');
     }
 
     /**
@@ -359,7 +359,7 @@ class PackageManagerTest extends UnitTestCase
     public function createPackageMakesTheNewlyCreatedPackageAvailable()
     {
         $this->packageManager->createPackage('Acme.YetAnotherTestPackage', [], 'vfs://Test/Packages/Application');
-        $this->assertTrue($this->packageManager->isPackageAvailable('Acme.YetAnotherTestPackage'));
+        self::assertTrue($this->packageManager->isPackageAvailable('Acme.YetAnotherTestPackage'));
     }
 
     /**
@@ -397,7 +397,7 @@ class PackageManagerTest extends UnitTestCase
         $packageManager = $this->getAccessibleMock(PackageManager::class, ['resolvePackageDependencies'], ['', '']);
         $packageManager->_set('packageStatesConfiguration', $packageStatesConfiguration);
 
-        $this->assertEquals($packageKey, $packageManager->_call('getPackageKeyFromComposerName', $composerName));
+        self::assertEquals($packageKey, $packageManager->_call('getPackageKeyFromComposerName', $composerName));
     }
 
     /**

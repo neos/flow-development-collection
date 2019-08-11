@@ -96,9 +96,9 @@ class CommandControllerTest extends UnitTestCase
         $mockArguments->addNewArgument('foo');
         $this->inject($this->commandController, 'arguments', $mockArguments);
 
-        $this->assertCount(1, $this->commandController->_get('arguments'));
+        self::assertCount(1, $this->commandController->_get('arguments'));
         $this->commandController->processRequest($mockRequest, $mockResponse);
-        $this->assertCount(0, $this->commandController->_get('arguments'));
+        self::assertCount(0, $this->commandController->_get('arguments'));
     }
 
     /**

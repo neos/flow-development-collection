@@ -39,7 +39,7 @@ class DisjunctionValidatorTest extends UnitTestCase
         $validatorDisjunction->addValidator($validatorObject);
         $validatorDisjunction->addValidator($secondValidatorObject);
 
-        $this->assertFalse($validatorDisjunction->validate('some subject')->hasErrors());
+        self::assertFalse($validatorDisjunction->validate('some subject')->hasErrors());
     }
 
     /**
@@ -65,6 +65,6 @@ class DisjunctionValidatorTest extends UnitTestCase
         $validatorDisjunction->addValidator($validatorObject);
         $validatorDisjunction->addValidator($secondValidatorObject);
 
-        $this->assertEquals([$error1, $error2], $validatorDisjunction->validate('some subject')->getErrors());
+        self::assertEquals([$error1, $error2], $validatorDisjunction->validate('some subject')->getErrors());
     }
 }

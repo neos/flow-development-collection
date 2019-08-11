@@ -54,8 +54,8 @@ class WebRedirectTest extends UnitTestCase
 
         $response = $entryPoint->startAuthentication($request, $response);
 
-        $this->assertEquals(303, substr($response->getStatusCode(), 0, 3));
-        $this->assertEquals('http://robertlemke.com/some/page', $response->getHeaderLine('Location'));
+        self::assertEquals(303, substr($response->getStatusCode(), 0, 3));
+        self::assertEquals('http://robertlemke.com/some/page', $response->getHeaderLine('Location'));
     }
 
     /**
@@ -71,7 +71,7 @@ class WebRedirectTest extends UnitTestCase
 
         $response = $entryPoint->startAuthentication($request, $response);
 
-        $this->assertEquals('http://some.abs/olute/url', $response->getHeaderLine('Location'));
+        self::assertEquals('http://some.abs/olute/url', $response->getHeaderLine('Location'));
     }
 
     /**
@@ -114,7 +114,7 @@ class WebRedirectTest extends UnitTestCase
 
         $response = $entryPoint->startAuthentication($request, $response);
 
-        $this->assertEquals('303', substr($response->getStatusCode(), 0, 3));
-        $this->assertEquals('http://resolved/redirect/uri', $response->getHeaderLine('Location'));
+        self::assertEquals('303', substr($response->getStatusCode(), 0, 3));
+        self::assertEquals('http://resolved/redirect/uri', $response->getHeaderLine('Location'));
     }
 }

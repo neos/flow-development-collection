@@ -86,6 +86,6 @@ class PhpFrontendTest extends BaseTestCase
         $this->inject($cache, 'backend', $mockBackend);
 
         $result = $cache->requireOnce('Foo-Bar');
-        $this->assertSame('hello world!', $result);
+        self::assertSame('hello world!', $result);
     }
 }

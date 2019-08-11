@@ -86,7 +86,7 @@ class RedisBackendTest extends BaseTestCase
     public function setAddsCacheEntry()
     {
         $this->backend->set('some_entry', 'foo');
-        $this->assertEquals('foo', $this->backend->get('some_entry'));
+        self::assertEquals('foo', $this->backend->get('some_entry'));
     }
 
     /**
@@ -97,7 +97,7 @@ class RedisBackendTest extends BaseTestCase
         $this->backend->set('some_entry', 'foo', ['tag1', 'tag2']);
         $this->backend->set('some_other_entry', 'foo', ['tag2', 'tag3']);
 
-        $this->assertEquals(['some_entry'], $this->backend->findIdentifiersByTag('tag1'));
+        self::assertEquals(['some_entry'], $this->backend->findIdentifiersByTag('tag1'));
         $expected = ['some_entry', 'some_other_entry'];
         $actual = $this->backend->findIdentifiersByTag('tag2');
 
@@ -105,8 +105,8 @@ class RedisBackendTest extends BaseTestCase
         natsort($actual);
         $actual = array_values($actual);
 
-        $this->assertEquals($expected, $actual);
-        $this->assertEquals(['some_other_entry'], $this->backend->findIdentifiersByTag('tag3'));
+        self::assertEquals($expected, $actual);
+        self::assertEquals(['some_other_entry'], $this->backend->findIdentifiersByTag('tag3'));
     }
 
     /**
@@ -122,7 +122,7 @@ class RedisBackendTest extends BaseTestCase
             $entryIdentifiers[] = $entryIdentifier;
         }
 
-        $this->assertEquals(['some_entry'], $entryIdentifiers);
+        self::assertEquals(['some_entry'], $entryIdentifiers);
     }
 
     /**
@@ -138,10 +138,10 @@ class RedisBackendTest extends BaseTestCase
             $actualEntries[] = $key;
         }
 
-        $this->assertCount(100, $actualEntries);
+        self::assertCount(100, $actualEntries);
 
         for ($i = 0; $i < 100; $i++) {
-            $this->assertContains('entry_' . $i, $actualEntries);
+            self::assertContains('entry_' . $i, $actualEntries);
         }
     }
 
@@ -150,12 +150,12 @@ class RedisBackendTest extends BaseTestCase
      */
     public function freezeFreezesTheCache()
     {
-        $this->assertFalse($this->backend->isFrozen());
+        self::assertFalse($this->backend->isFrozen());
         for ($i = 0; $i < 10; $i++) {
             $this->backend->set('entry_' . $i, 'foo');
         }
         $this->backend->freeze();
-        $this->assertTrue($this->backend->isFrozen());
+        self::assertTrue($this->backend->isFrozen());
     }
 
     /**
@@ -169,13 +169,13 @@ class RedisBackendTest extends BaseTestCase
         for ($i = 10; $i < 20; $i++) {
             $this->backend->set('entry_' . $i, 'foo', ['tag2']);
         }
-        $this->assertCount(10, $this->backend->findIdentifiersByTag('tag1'));
-        $this->assertCount(20, $this->backend->findIdentifiersByTag('tag2'));
+        self::assertCount(10, $this->backend->findIdentifiersByTag('tag1'));
+        self::assertCount(20, $this->backend->findIdentifiersByTag('tag2'));
 
         $count = $this->backend->flushByTag('tag1');
-        $this->assertEquals(10, $count, 'flushByTag returns amount of flushed entries');
-        $this->assertCount(0, $this->backend->findIdentifiersByTag('tag1'));
-        $this->assertCount(10, $this->backend->findIdentifiersByTag('tag2'));
+        self::assertEquals(10, $count, 'flushByTag returns amount of flushed entries');
+        self::assertCount(0, $this->backend->findIdentifiersByTag('tag1'));
+        self::assertCount(10, $this->backend->findIdentifiersByTag('tag2'));
     }
 
     /**
@@ -192,7 +192,7 @@ class RedisBackendTest extends BaseTestCase
             $entryIdentifiers[] = $entryIdentifier;
         }
 
-        $this->assertEquals([], $entryIdentifiers);
+        self::assertEquals([], $entryIdentifiers);
     }
 
     /**
@@ -203,9 +203,9 @@ class RedisBackendTest extends BaseTestCase
         for ($i = 0; $i < 10; $i++) {
             $this->backend->set('entry_' . $i, 'foo', ['tag1']);
         }
-        $this->assertTrue($this->backend->has('entry_5'));
+        self::assertTrue($this->backend->has('entry_5'));
         $this->backend->flush();
-        $this->assertFalse($this->backend->has('entry_5'));
+        self::assertFalse($this->backend->has('entry_5'));
     }
 
     /**
@@ -216,22 +216,22 @@ class RedisBackendTest extends BaseTestCase
         for ($i = 0; $i < 10; $i++) {
             $this->backend->set('entry_' . $i, 'foo', ['tag1']);
         }
-        $this->assertCount(10, $this->backend->findIdentifiersByTag('tag1'));
-        $this->assertEquals('foo', $this->backend->get('entry_1'));
+        self::assertCount(10, $this->backend->findIdentifiersByTag('tag1'));
+        self::assertEquals('foo', $this->backend->get('entry_1'));
         $actualEntries = [];
         foreach ($this->backend as $key => $value) {
             $actualEntries[] = $key;
         }
-        $this->assertCount(10, $actualEntries);
+        self::assertCount(10, $actualEntries);
 
         $this->backend->remove('entry_3');
-        $this->assertCount(9, $this->backend->findIdentifiersByTag('tag1'));
-        $this->assertFalse($this->backend->get('entry_3'));
+        self::assertCount(9, $this->backend->findIdentifiersByTag('tag1'));
+        self::assertFalse($this->backend->get('entry_3'));
         $actualEntries = [];
         foreach ($this->backend as $key => $value) {
             $actualEntries[] = $key;
         }
-        $this->assertCount(9, $actualEntries);
+        self::assertCount(9, $actualEntries);
     }
 
     /**
@@ -241,12 +241,12 @@ class RedisBackendTest extends BaseTestCase
     {
         $this->backend->set('entry1', 'foo', [], 1);
         sleep(2);
-        $this->assertFalse($this->backend->has('entry1'));
+        self::assertFalse($this->backend->has('entry1'));
 
         $actualEntries = [];
         foreach ($this->backend as $key => $value) {
             $actualEntries[] = $key;
         }
-        $this->assertEmpty($actualEntries, 'Entries should be empty');
+        self::assertEmpty($actualEntries, 'Entries should be empty');
     }
 }

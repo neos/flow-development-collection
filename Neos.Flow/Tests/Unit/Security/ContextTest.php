@@ -16,6 +16,7 @@ use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Security\Authentication\AuthenticationManagerInterface;
 use Neos\Flow\Security\Account;
+use Neos\Flow\Security\Authentication\Token\SessionlessTokenInterface;
 use Neos\Flow\Security\Authentication\TokenAndProviderFactory;
 use Neos\Flow\Security\Authentication\TokenAndProviderFactoryInterface;
 use Neos\Flow\Security\Authentication\TokenInterface;
@@ -85,7 +86,7 @@ class ContextTest extends UnitTestCase
     public function currentRequestIsSetInTheSecurityContext()
     {
         $this->securityContext->initialize();
-        $this->assertSame($this->mockActionRequest, $this->securityContext->_get('request'));
+        self::assertSame($this->mockActionRequest, $this->securityContext->_get('request'));
     }
 
     /**
@@ -93,9 +94,9 @@ class ContextTest extends UnitTestCase
      */
     public function securityContextIsSetToInitialized()
     {
-        $this->assertFalse($this->securityContext->isInitialized());
+        self::assertFalse($this->securityContext->isInitialized());
         $this->securityContext->initialize();
-        $this->assertTrue($this->securityContext->isInitialized());
+        self::assertTrue($this->securityContext->isInitialized());
     }
 
     /**
@@ -201,8 +202,56 @@ class ContextTest extends UnitTestCase
         $securityContext->_set('tokens', [$token1, $token3, $token4]);
         $securityContext->initialize();
 
-        $this->assertEquals([$token1, $token2, $token4], array_values($securityContext->_get('activeTokens')));
-        $this->assertEquals([$token3, $token5], array_values($securityContext->_get('inactiveTokens')));
+        self::assertEquals([$token1, $token2, $token4], array_values($securityContext->_get('activeTokens')));
+        self::assertEquals([$token3, $token5], array_values($securityContext->_get('inactiveTokens')));
+    }
+
+    /**
+     * @test
+     */
+    public function initializeStoresSessionCompatibleTokensInSessionDataContainer()
+    {
+        /** @var Context $securityContext */
+        $securityContext = $this->getAccessibleMock(Context::class, ['dummy']);
+        $this->inject($securityContext, 'objectManager', $this->mockObjectManager);
+
+        $securityContext->injectSettings(['security' => ['authentication' => ['authenticationStrategy' => 'allTokens']]]);
+
+        $matchingRequestPattern = $this->getMockBuilder(RequestPatternInterface::class)->setMockClassName('SomeRequestPattern')->getMock();
+        $matchingRequestPattern->method('matchRequest')->willReturn(true);
+
+        $notMatchingRequestPattern = $this->getMockBuilder(RequestPatternInterface::class)->setMockClassName('SomeOtherRequestPattern')->getMock();
+        $notMatchingRequestPattern->method('matchRequest')->willReturn(false);
+
+        $inactiveToken = $this->createMock(TokenInterface::class);
+        $inactiveToken->expects($this->once())->method('hasRequestPatterns')->willReturn(true);
+        $inactiveToken->expects($this->once())->method('getRequestPatterns')->willReturn([$notMatchingRequestPattern]);
+        $inactiveToken->method('getAuthenticationProviderName')->willReturn('inactiveTokenProvider');
+        $inactiveToken->method('getAuthenticationStatus')->willReturn(TokenInterface::AUTHENTICATION_NEEDED);
+
+        $activeToken = $this->createMock(TokenInterface::class);
+        $activeToken->expects($this->once())->method('hasRequestPatterns')->willReturn(false);
+        $activeToken->method('getAuthenticationProviderName')->willReturn('activeTokenProvider');
+        $activeToken->method('getAuthenticationStatus')->willReturn(TokenInterface::AUTHENTICATION_NEEDED);
+
+        $sessionlessToken = $this->createMock([TokenInterface::class, SessionlessTokenInterface::class]);
+        $sessionlessToken->expects($this->once())->method('hasRequestPatterns')->willReturn(false);
+        $sessionlessToken->method('getAuthenticationProviderName')->willReturn('sessionlessTokenProvider');
+        $sessionlessToken->method('getAuthenticationStatus')->willReturn(TokenInterface::AUTHENTICATION_NEEDED);
+
+        $this->mockTokenAndProviderFactory = $this->createMock(TokenAndProviderFactoryInterface::class);
+        $this->mockTokenAndProviderFactory->expects($this->once())->method('getTokens')->willReturn([
+            $inactiveToken,
+            $activeToken,
+            $sessionlessToken,
+        ]);
+        $securityContext->_set('tokenAndProviderFactory', $this->mockTokenAndProviderFactory);
+        $securityContext->setRequest($this->mockActionRequest);
+
+        $expectedTokens = ['inactiveTokenProvider' => $inactiveToken, 'activeTokenProvider' => $activeToken];
+        $this->mockSessionDataContainer->expects($this->once())->method('setSecurityTokens')->with($expectedTokens);
+
+        $securityContext->initialize();
     }
 
     /**
@@ -302,9 +351,9 @@ class ContextTest extends UnitTestCase
 
         $this->securityContext->initialize();
         if ($expectedActive) {
-            $this->assertContains($mockToken, $this->securityContext->_get('activeTokens'));
+            self::assertContains($mockToken, $this->securityContext->_get('activeTokens'));
         } else {
-            $this->assertContains($mockToken, $this->securityContext->_get('inactiveTokens'));
+            self::assertContains($mockToken, $this->securityContext->_get('inactiveTokens'));
         }
     }
 
@@ -368,7 +417,7 @@ class ContextTest extends UnitTestCase
 //        $securityContext->_call('initialize');
 
         $expectedMergedTokens = [$token1Clone, $token2Clone, $token3];
-        $this->assertEquals($expectedMergedTokens, array_values($securityContext->_get('activeTokens')));
+        self::assertEquals($expectedMergedTokens, array_values($securityContext->_get('activeTokens')));
     }
 
     /**
@@ -434,7 +483,7 @@ class ContextTest extends UnitTestCase
         $this->inject($securityContext, 'objectManager', $this->mockObjectManager);
         $securityContext->injectSettings($settings);
 
-        $this->assertEquals($expectedAuthenticationStrategy, $securityContext->getAuthenticationStrategy());
+        self::assertEquals($expectedAuthenticationStrategy, $securityContext->getAuthenticationStrategy());
     }
 
     /**
@@ -479,7 +528,7 @@ class ContextTest extends UnitTestCase
         $this->inject($securityContext, 'objectManager', $this->mockObjectManager);
         $securityContext->injectSettings($settings);
 
-        $this->assertEquals($expectedCsrfProtectionStrategy, $securityContext->_get('csrfProtectionStrategy'));
+        self::assertEquals($expectedCsrfProtectionStrategy, $securityContext->_get('csrfProtectionStrategy'));
     }
 
     /**
@@ -532,7 +581,7 @@ class ContextTest extends UnitTestCase
         $securityContext->_set('policyService', $mockPolicyService);
 
         $expectedResult = ['Neos.Flow:Everybody' => $everybodyRole, 'Neos.Flow:AuthenticatedUser' => $authenticatedUserRole, 'Acme.Demo:TestRole' => $testRole];
-        $this->assertEquals($expectedResult, $securityContext->getRoles());
+        self::assertEquals($expectedResult, $securityContext->getRoles());
     }
 
     /**
@@ -623,7 +672,7 @@ class ContextTest extends UnitTestCase
         ksort($expectedResult);
         ksort($result);
 
-        $this->assertSame(array_keys($expectedResult), array_keys($result));
+        self::assertSame(array_keys($expectedResult), array_keys($result));
     }
 
     /**
@@ -641,8 +690,8 @@ class ContextTest extends UnitTestCase
         $securityContext->_set('policyService', $mockPolicyService);
 
         $result = $securityContext->getRoles();
-        $this->assertInstanceOf(Policy\Role::class, $result['Neos.Flow:Everybody']);
-        $this->assertEquals('Neos.Flow:Everybody', $result['Neos.Flow:Everybody']->getIdentifier());
+        self::assertInstanceOf(Policy\Role::class, $result['Neos.Flow:Everybody']);
+        self::assertEquals('Neos.Flow:Everybody', $result['Neos.Flow:Everybody']->getIdentifier());
     }
 
     /**
@@ -660,8 +709,8 @@ class ContextTest extends UnitTestCase
         $securityContext->_set('policyService', $mockPolicyService);
 
         $result = $securityContext->getRoles();
-        $this->assertInstanceOf(Policy\Role::class, $result['Neos.Flow:Anonymous']);
-        $this->assertEquals('Neos.Flow:Anonymous', (string)($result['Neos.Flow:Anonymous']));
+        self::assertInstanceOf(Policy\Role::class, $result['Neos.Flow:Anonymous']);
+        self::assertEquals('Neos.Flow:Anonymous', (string)($result['Neos.Flow:Anonymous']));
     }
 
     /**
@@ -682,8 +731,8 @@ class ContextTest extends UnitTestCase
         $securityContext->_set('policyService', $mockPolicyService);
 
         $result = $securityContext->getRoles();
-        $this->assertInstanceOf(Policy\Role::class, $result['Neos.Flow:AuthenticatedUser']);
-        $this->assertEquals('Neos.Flow:AuthenticatedUser', (string)($result['Neos.Flow:AuthenticatedUser']));
+        self::assertInstanceOf(Policy\Role::class, $result['Neos.Flow:AuthenticatedUser']);
+        self::assertEquals('Neos.Flow:AuthenticatedUser', (string)($result['Neos.Flow:AuthenticatedUser']));
     }
 
     /**
@@ -701,7 +750,7 @@ class ContextTest extends UnitTestCase
         $this->inject($securityContext, 'objectManager', $this->mockObjectManager);
         $securityContext->_set('policyService', $mockPolicyService);
 
-        $this->assertTrue($securityContext->hasRole('Neos.Flow:Everybody'));
+        self::assertTrue($securityContext->hasRole('Neos.Flow:Everybody'));
     }
 
     /**
@@ -723,7 +772,7 @@ class ContextTest extends UnitTestCase
         $this->inject($securityContext, 'objectManager', $this->mockObjectManager);
         $securityContext->_set('policyService', $mockPolicyService);
 
-        $this->assertTrue($securityContext->hasRole('Neos.Flow:Anonymous'));
+        self::assertTrue($securityContext->hasRole('Neos.Flow:Anonymous'));
     }
 
     /**
@@ -745,7 +794,7 @@ class ContextTest extends UnitTestCase
         $this->inject($securityContext, 'objectManager', $this->mockObjectManager);
         $this->inject($securityContext, 'policyService', $mockPolicyService);
 
-        $this->assertFalse($securityContext->hasRole('Neos.Flow:Anonymous'));
+        self::assertFalse($securityContext->hasRole('Neos.Flow:Anonymous'));
     }
 
     /**
@@ -780,8 +829,8 @@ class ContextTest extends UnitTestCase
         $securityContext->_set('activeTokens', [$mockToken]);
         $securityContext->_set('policyService', $mockPolicyService);
 
-        $this->assertTrue($securityContext->hasRole('Acme.Demo:TestRole'));
-        $this->assertFalse($securityContext->hasRole('Foo.Bar:Baz'));
+        self::assertTrue($securityContext->hasRole('Acme.Demo:TestRole'));
+        self::assertFalse($securityContext->hasRole('Foo.Bar:Baz'));
     }
 
     /**
@@ -828,7 +877,7 @@ class ContextTest extends UnitTestCase
         $securityContext->_set('activeTokens', [$mockToken]);
         $securityContext->_set('policyService', $mockPolicyService);
 
-        $this->assertTrue($securityContext->hasRole('Acme.Demo:TestRole2'));
+        self::assertTrue($securityContext->hasRole('Acme.Demo:TestRole2'));
     }
 
     /**
@@ -856,7 +905,7 @@ class ContextTest extends UnitTestCase
         $securityContext->_set('initialized', true);
         $securityContext->expects($this->once())->method('getAuthenticationTokens')->will($this->returnValue([$token1, $token2, $token3]));
 
-        $this->assertEquals($mockAccount, $securityContext->getAccount());
+        self::assertEquals($mockAccount, $securityContext->getAccount());
     }
 
     /**
@@ -885,7 +934,7 @@ class ContextTest extends UnitTestCase
         $securityContext->_set('activeTokens', ['SomeOhterProvider' => $token1, 'SecondProvider' => $token2, 'MatchingProvider' => $token3]);
         $securityContext->_set('initialized', true);
 
-        $this->assertSame($mockAccount2, $securityContext->getAccountByAuthenticationProviderName('MatchingProvider'));
+        self::assertSame($mockAccount2, $securityContext->getAccountByAuthenticationProviderName('MatchingProvider'));
     }
 
     /**
@@ -900,7 +949,7 @@ class ContextTest extends UnitTestCase
         $securityContext->_set('activeTokens', []);
         $securityContext->_set('initialized', true);
 
-        $this->assertSame(null, $securityContext->getAccountByAuthenticationProviderName('UnknownProvider'));
+        self::assertSame(null, $securityContext->getAccountByAuthenticationProviderName('UnknownProvider'));
     }
 
     /**
@@ -915,7 +964,7 @@ class ContextTest extends UnitTestCase
         $securityContext->_set('csrfTokens', []);
         $securityContext->_set('initialized', true);
 
-        $this->assertNotEmpty($securityContext->getCsrfProtectionToken());
+        self::assertNotEmpty($securityContext->getCsrfProtectionToken());
     }
 
     /**
@@ -930,7 +979,7 @@ class ContextTest extends UnitTestCase
         $this->securityContext->_set('csrfTokens', $existingTokens);
         $this->securityContext->_set('csrfStrategy', Context::CSRF_ONE_PER_URI);
 
-        $this->assertFalse(array_key_exists($this->securityContext->getCsrfProtectionToken(), $existingTokens));
+        self::assertFalse(array_key_exists($this->securityContext->getCsrfProtectionToken(), $existingTokens));
     }
 
     /**
@@ -946,8 +995,8 @@ class ContextTest extends UnitTestCase
         $this->securityContext->_set('objectManager', $this->mockObjectManager);
         $this->securityContext->_set('csrfProtectionTokens', $existingTokens);
 
-        $this->assertTrue($this->securityContext->isCsrfProtectionTokenValid('csrfToken12345'));
-        $this->assertFalse($this->securityContext->isCsrfProtectionTokenValid('csrfToken'));
+        self::assertTrue($this->securityContext->isCsrfProtectionTokenValid('csrfToken12345'));
+        self::assertFalse($this->securityContext->isCsrfProtectionTokenValid('csrfToken'));
     }
 
     /**
@@ -969,8 +1018,8 @@ class ContextTest extends UnitTestCase
         $this->securityContext->_set('initialized', true);
         $this->securityContext->_set('csrfProtectionStrategy', Context::CSRF_ONE_PER_URI);
 
-        $this->assertTrue($this->securityContext->isCsrfProtectionTokenValid('csrfToken12345'));
-        $this->assertFalse($this->securityContext->isCsrfProtectionTokenValid('csrfToken12345'));
+        self::assertTrue($this->securityContext->isCsrfProtectionTokenValid('csrfToken12345'));
+        self::assertFalse($this->securityContext->isCsrfProtectionTokenValid('csrfToken12345'));
     }
 
     /**
@@ -979,7 +1028,7 @@ class ContextTest extends UnitTestCase
     public function authorizationChecksAreEnabledByDefault()
     {
         $securityContext = $this->getAccessibleMock(Context::class, ['initialize']);
-        $this->assertFalse($securityContext->areAuthorizationChecksDisabled());
+        self::assertFalse($securityContext->areAuthorizationChecksDisabled());
     }
 
     /**
@@ -1003,7 +1052,7 @@ class ContextTest extends UnitTestCase
         $securityContext = $this->getAccessibleMock(Context::class, ['initialize']);
         $securityContext->withoutAuthorizationChecks(function () {
         });
-        $this->assertFalse($securityContext->areAuthorizationChecksDisabled());
+        self::assertFalse($securityContext->areAuthorizationChecksDisabled());
     }
 
     /**
@@ -1019,7 +1068,7 @@ class ContextTest extends UnitTestCase
             });
         } catch (\Exception $exception) {
         }
-        $this->assertFalse($securityContext->areAuthorizationChecksDisabled());
+        self::assertFalse($securityContext->areAuthorizationChecksDisabled());
     }
 
     /**
@@ -1036,7 +1085,7 @@ class ContextTest extends UnitTestCase
             });
             $self->assertTrue($securityContext->areAuthorizationChecksDisabled());
         });
-        $this->assertFalse($securityContext->areAuthorizationChecksDisabled());
+        self::assertFalse($securityContext->areAuthorizationChecksDisabled());
     }
 
     /**
@@ -1079,7 +1128,7 @@ class ContextTest extends UnitTestCase
         $securityContext->expects($this->atLeastOnce())->method('getRoles')->will($this->returnValue($mockRoles));
 
         $expectedHash = md5(implode('|', array_keys($mockRoles)));
-        $this->assertSame($expectedHash, $securityContext->getContextHash());
+        self::assertSame($expectedHash, $securityContext->getContextHash());
     }
 
     /**
@@ -1091,7 +1140,7 @@ class ContextTest extends UnitTestCase
         $securityContext = $this->getAccessibleMock(Context::class, ['initialize', 'canBeInitialized']);
         $securityContext->expects($this->atLeastOnce())->method('canBeInitialized')->will($this->returnValue(false));
         $securityContext->expects($this->never())->method('initialize');
-        $this->assertSame(Context::CONTEXT_HASH_UNINITIALIZED, $securityContext->getContextHash());
+        self::assertSame(Context::CONTEXT_HASH_UNINITIALIZED, $securityContext->getContextHash());
     }
 
     /**
@@ -1104,7 +1153,7 @@ class ContextTest extends UnitTestCase
         $account2 = $this->createMock(Account::class);
         $account2->expects($this->any())->method('getAccountIdentifier')->willReturn('Account2');
 
-        $this->assertNotSame($this->securityContext->getSessionTagForAccount($account1), $this->securityContext->getSessionTagForAccount($account2));
+        self::assertNotSame($this->securityContext->getSessionTagForAccount($account1), $this->securityContext->getSessionTagForAccount($account2));
     }
 
     /**

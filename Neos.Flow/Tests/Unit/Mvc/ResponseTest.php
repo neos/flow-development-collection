@@ -28,6 +28,6 @@ class ResponseTest extends UnitTestCase
         $response->setContent('SomeContent');
 
         $expected = 'SomeContent';
-        $this->assertEquals($expected, $response->getContent());
+        self::assertEquals($expected, $response->getContent());
     }
 }

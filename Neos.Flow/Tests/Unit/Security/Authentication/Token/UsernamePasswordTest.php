@@ -66,7 +66,7 @@ class UsernamePasswordTest extends UnitTestCase
         $this->token->updateCredentials($this->mockActionRequest);
 
         $expectedCredentials = ['username' => 'johndoe', 'password' => 'verysecurepassword'];
-        $this->assertEquals($expectedCredentials, $this->token->getCredentials(), 'The credentials have not been extracted correctly from the POST arguments');
+        self::assertEquals($expectedCredentials, $this->token->getCredentials(), 'The credentials have not been extracted correctly from the POST arguments');
     }
 
     /**
@@ -83,7 +83,7 @@ class UsernamePasswordTest extends UnitTestCase
 
         $this->token->updateCredentials($this->mockActionRequest);
 
-        $this->assertSame(TokenInterface::AUTHENTICATION_NEEDED, $this->token->getAuthenticationStatus());
+        self::assertSame(TokenInterface::AUTHENTICATION_NEEDED, $this->token->getAuthenticationStatus());
     }
 
     /**
@@ -99,7 +99,7 @@ class UsernamePasswordTest extends UnitTestCase
         $this->mockActionRequest->expects($this->atLeastOnce())->method('getInternalArguments')->will($this->returnValue($arguments));
 
         $this->token->updateCredentials($this->mockActionRequest);
-        $this->assertEquals(['username' => 'Neos.Flow', 'password' => 'verysecurepassword'], $this->token->getCredentials());
+        self::assertEquals(['username' => 'Neos.Flow', 'password' => 'verysecurepassword'], $this->token->getCredentials());
 
         $secondToken = new UsernamePassword();
         $secondMockActionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
@@ -109,7 +109,7 @@ class UsernamePasswordTest extends UnitTestCase
         $secondMockActionRequest->expects($this->any())->method('getHttpRequest')->will($this->returnValue($secondMockHttpRequest));
         $secondMockHttpRequest->expects($this->atLeastOnce())->method('getMethod')->will($this->returnValue('GET'));
         $secondToken->updateCredentials($secondMockActionRequest);
-        $this->assertEquals(['username' => '', 'password' => ''], $secondToken->getCredentials());
+        self::assertEquals(['username' => '', 'password' => ''], $secondToken->getCredentials());
     }
 
     /**
@@ -126,6 +126,6 @@ class UsernamePasswordTest extends UnitTestCase
 
         $this->token->updateCredentials($this->mockActionRequest);
 
-        $this->assertEquals('Username: "Neos.Flow"', (string)$this->token);
+        self::assertEquals('Username: "Neos.Flow"', (string)$this->token);
     }
 }

@@ -93,7 +93,7 @@ class ViewConfigurationManagerTest extends \Neos\Flow\Tests\UnitTestCase
         $this->mockConfigurationManager->expects($this->any())->method('getConfiguration')->with('Views')->will($this->returnValue($viewConfigurations));
         $calculatedConfiguration = $this->viewConfigurationManager->getViewConfiguration($this->mockActionRequest);
 
-        $this->assertEquals($calculatedConfiguration, $matchingConfiguration);
+        self::assertEquals($calculatedConfiguration, $matchingConfiguration);
     }
 
     /**
@@ -121,7 +121,7 @@ class ViewConfigurationManagerTest extends \Neos\Flow\Tests\UnitTestCase
         $this->mockConfigurationManager->expects($this->any())->method('getConfiguration')->with('Views')->will($this->returnValue($viewConfigurations));
         $calculatedConfiguration = $this->viewConfigurationManager->getViewConfiguration($this->mockActionRequest);
 
-        $this->assertEquals($calculatedConfiguration, $matchingConfigurationTwo);
+        self::assertEquals($calculatedConfiguration, $matchingConfigurationTwo);
     }
 
     /**
