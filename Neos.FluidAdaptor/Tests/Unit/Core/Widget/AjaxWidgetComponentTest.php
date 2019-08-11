@@ -15,6 +15,7 @@ use GuzzleHttp\Psr7\Response;
 use Neos\Flow\Http\Component\ComponentChain;
 use Neos\Flow\Http\Component\ComponentContext;
 use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\ActionRequestFactory;
 use Neos\Flow\Mvc\DispatchComponent;
 use Neos\Flow\Mvc\Dispatcher;
 use Neos\Flow\Mvc\Routing\RoutingComponent;
@@ -109,13 +110,16 @@ class AjaxWidgetComponentTest extends UnitTestCase
         $this->mockAjaxWidgetContextHolder = $this->getMockBuilder(AjaxWidgetContextHolder::class)->getMock();
         $this->inject($this->ajaxWidgetComponent, 'ajaxWidgetContextHolder', $this->mockAjaxWidgetContextHolder);
 
+        $mockActionRequestFactory = $this->getMockBuilder(ActionRequestFactory::class)->disableOriginalConstructor()->setMethods(null)->getMock();
+        $this->inject($mockActionRequestFactory, 'objectManager', $this->mockObjectManager);
+
+        $this->inject($this->ajaxWidgetComponent, 'actionRequestFactory', $mockActionRequestFactory);
+
         $this->mockHashService = $this->getMockBuilder(HashService::class)->getMock();
         $this->inject($this->ajaxWidgetComponent, 'hashService', $this->mockHashService);
 
         $this->mockDispatcher = $this->getMockBuilder(Dispatcher::class)->getMock();
         $this->inject($this->ajaxWidgetComponent, 'dispatcher', $this->mockDispatcher);
-
-        $this->inject($this->ajaxWidgetComponent, 'objectManager', $this->mockObjectManager);
 
         $this->mockSecurityContext = $this->getMockBuilder(Context::class)->getMock();
         $this->inject($this->ajaxWidgetComponent, 'securityContext', $this->mockSecurityContext);

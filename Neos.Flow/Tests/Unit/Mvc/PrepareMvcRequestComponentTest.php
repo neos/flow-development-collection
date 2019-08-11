@@ -3,6 +3,7 @@ namespace Neos\Flow\Tests\Unit\Mvc;
 
 use Neos\Flow\Http\Component\ComponentContext;
 use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\ActionRequestFactory;
 use Neos\Flow\Mvc\DispatchComponent;
 use Neos\Flow\Mvc\PrepareMvcRequestComponent;
 use Neos\Flow\Mvc\Routing\RoutingComponent;
@@ -50,6 +51,11 @@ class PrepareMvcRequestComponentTest extends UnitTestCase
     protected $mockActionRequest;
 
     /**
+     * @var ActionRequestFactory
+     */
+    protected $mockActionRequestFactory;
+
+    /**
      * @var Context
      */
     protected $mockSecurityContext;
@@ -76,7 +82,11 @@ class PrepareMvcRequestComponentTest extends UnitTestCase
 
         $this->mockObjectManager = $this->getMockBuilder(ObjectManagerInterface::class)->getMock();
         $this->mockObjectManager->method('get')->with(ActionRequest::class)->willReturn($this->mockActionRequest);
-        $this->inject($this->prepareMvcRequestComponent, 'objectManager', $this->mockObjectManager);
+
+        $this->mockActionRequestFactory = $this->getMockBuilder(ActionRequestFactory::class)->disableOriginalConstructor()->setMethods(null)->getMock();
+        $this->inject($this->mockActionRequestFactory, 'objectManager', $this->mockObjectManager);
+
+        $this->inject($this->prepareMvcRequestComponent, 'actionRequestFactory', $this->mockActionRequestFactory);
 
         $this->mockSecurityContext = $this->getMockBuilder(Context::class)->getMock();
         $this->inject($this->prepareMvcRequestComponent, 'securityContext', $this->mockSecurityContext);

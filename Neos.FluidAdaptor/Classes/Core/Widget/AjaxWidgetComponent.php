@@ -19,7 +19,6 @@ use Neos\Flow\Http\Component\ComponentContext;
 use Neos\Flow\Mvc\ActionRequestFactory;
 use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Dispatcher;
-use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Security\Context;
 use Neos\Flow\Security\Cryptography\HashService;
 use Neos\Utility\Arrays;
@@ -57,12 +56,6 @@ class AjaxWidgetComponent implements ComponentInterface
     protected $securityContext;
 
     /**
-     * @Flow\Inject(lazy=false)
-     * @var ObjectManagerInterface
-     */
-    protected $objectManager;
-
-    /**
      * @Flow\Inject
      * @var Dispatcher
      */
@@ -86,7 +79,6 @@ class AjaxWidgetComponent implements ComponentInterface
 
         $actionRequest = $this->actionRequestFactory->createActionRequest($httpRequest, ['__widgetContext' => $widgetContext]);
         $actionRequest->setControllerObjectName($widgetContext->getControllerObjectName());
-        $this->setDefaultControllerAndActionNameIfNoneSpecified($actionRequest);
         $this->securityContext->setRequest($actionRequest);
 
         $actionResponse = new ActionResponse();

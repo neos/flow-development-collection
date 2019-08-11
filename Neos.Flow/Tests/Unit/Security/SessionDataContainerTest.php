@@ -11,7 +11,7 @@ namespace Neos\Flow\Tests\Unit\Security;
  * source code.
  */
 
-use Neos\Flow\Mvc\RequestInterface;
+use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Security\Authentication\Token\SessionlessTokenInterface;
 use Neos\Flow\Security\Authentication\TokenInterface;
 use Neos\Flow\Security\SessionDataContainer;
@@ -44,8 +44,8 @@ class SessionDataContainerTest extends UnitTestCase
 
         $this->sessionDataContainer->setCsrfProtectionTokens($mockCsrfProtectionTokens);
 
-        /** @var RequestInterface $mockRequest */
-        $mockRequest = $this->getMockBuilder(RequestInterface::class)->getMock();
+        /** @var ActionRequest $mockRequest */
+        $mockRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
         $this->sessionDataContainer->setInterceptedRequest($mockRequest);
 
         $mockSecurityTokens = [

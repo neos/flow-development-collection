@@ -20,12 +20,6 @@ class PrepareMvcRequestComponent implements ComponentInterface
     protected $securityContext;
 
     /**
-     * @Flow\Inject(lazy=false)
-     * @var ObjectManagerInterface
-     */
-    protected $objectManager;
-
-    /**
      * @Flow\Inject
      * @var ActionRequestFactory
      */
