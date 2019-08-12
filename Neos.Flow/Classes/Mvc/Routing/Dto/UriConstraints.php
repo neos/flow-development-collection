@@ -219,16 +219,18 @@ final class UriConstraints
     }
 
     /**
-     * Returns the URI path constraint, or NULL if none was set
+     * Returns the URI path constraint, which consists of the path and query string parts, or NULL if none was set
      *
      * @return string|null
      */
-    public function getPathConstraint()
+    public function getPathConstraint(): ?string
     {
-        if (!($this->constraints[self::CONSTRAINT_PATH] ?? null) && !($this->constraints[self::CONSTRAINT_QUERY_STRING] ?? null)) {
+        $pathPart = $this->constraints[self::CONSTRAINT_PATH] ?? null;
+        $queryPart = $this->constraints[self::CONSTRAINT_QUERY_STRING] ?? null;
+        if ($pathPart === null && $queryPart === null) {
             return null;
         }
-        return $this->constraints[self::CONSTRAINT_PATH] . ($this->constraints[self::CONSTRAINT_QUERY_STRING] ? '?' . $this->constraints[self::CONSTRAINT_QUERY_STRING] : '');
+        return $pathPart . ($queryPart ? '?' . $queryPart : '');
     }
 
     /**
