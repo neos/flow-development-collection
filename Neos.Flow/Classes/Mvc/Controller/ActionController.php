@@ -32,6 +32,7 @@ use Neos\Flow\Property\TypeConverter\Error\TargetNotFoundError;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Utility\TypeHandling;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\StreamInterface;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -762,6 +763,10 @@ class ActionController extends AbstractController
 
         if (is_object($result) && is_callable([$result, '__toString'])) {
             $this->response->setContent((string)$result);
+        }
+
+        if ($result instanceof StreamInterface) {
+            $this->response->setContent($result);
         }
     }
 }
