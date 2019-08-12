@@ -12,13 +12,16 @@ namespace Neos\Flow\Tests\Unit\Mvc\Controller;
  */
 
 use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Controller\AbstractController;
 use Neos\Flow\Mvc\Controller\Arguments;
 use Neos\Flow\Http\Request;
 use Neos\Flow\Http\Response;
 use Neos\Flow\Http\Uri;
 use Neos\Flow\Mvc\Exception\ForwardException;
+use Neos\Flow\Mvc\Exception\RequiredArgumentMissingException;
 use Neos\Flow\Mvc\Exception\StopActionException;
+use Neos\Flow\Mvc\Exception\UnsupportedRequestTypeException;
 use Neos\Flow\Mvc\FlashMessageContainer;
 use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
@@ -40,19 +43,19 @@ class AbstractControllerTest extends UnitTestCase
     /**
      * @var Response
      */
-    protected $mockHttpResponse;
+    protected $actionResponse;
 
     /**
      * @var ActionRequest
      */
     protected $mockActionRequest;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->mockHttpRequest = $this->getMockBuilder(Request::class)->disableOriginalConstructor()->getMock();
         $this->mockHttpRequest->expects($this->any())->method('getNegotiatedMediaType')->will($this->returnValue('text/html'));
 
-        $this->mockHttpResponse = $this->getMockBuilder(Response::class)->getMock();
+        $this->actionResponse = new ActionResponse();
 
         $this->mockActionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
         $this->mockActionRequest->expects($this->any())->method('getHttpRequest')->will($this->returnValue($this->mockHttpRequest));
@@ -60,10 +63,10 @@ class AbstractControllerTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Mvc\Exception\UnsupportedRequestTypeException
      */
     public function initializeControllerWillThrowAnExceptionIfTheGivenRequestIsNotSupported()
     {
+        $this->expectException(UnsupportedRequestTypeException::class);
         $request = new Cli\Request();
         $response = new Cli\Response();
 
@@ -81,13 +84,13 @@ class AbstractControllerTest extends UnitTestCase
         $controller = $this->getAccessibleMock(AbstractController::class, ['processRequest']);
         $this->inject($controller, 'flashMessageContainer', new FlashMessageContainer());
 
-        $this->assertFalse($request->isDispatched());
-        $controller->_call('initializeController', $request, $this->mockHttpResponse);
+        self::assertFalse($request->isDispatched());
+        $controller->_call('initializeController', $request, $this->actionResponse);
 
-        $this->assertTrue($request->isDispatched());
-        $this->assertInstanceOf(Arguments::class, $controller->_get('arguments'));
-        $this->assertSame($request, $controller->_get('uriBuilder')->getRequest());
-        $this->assertSame($request, $controller->getControllerContext()->getRequest());
+        self::assertTrue($request->isDispatched());
+        self::assertInstanceOf(Arguments::class, $controller->_get('arguments'));
+        self::assertSame($request, $controller->_get('uriBuilder')->getRequest());
+        self::assertSame($request, $controller->getControllerContext()->getRequest());
     }
 
     /**
@@ -130,15 +133,15 @@ class AbstractControllerTest extends UnitTestCase
         $this->inject($controller, 'flashMessageContainer', $flashMessageContainer);
 
         $controller->addFlashMessage($messageBody, $messageTitle, $severity, $messageArguments, $messageCode);
-        $this->assertEquals([$expectedMessage], $flashMessageContainer->getMessages());
+        self::assertEquals([$expectedMessage], $flashMessageContainer->getMessages());
     }
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
      */
     public function addFlashMessageThrowsExceptionOnInvalidMessageBody()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $flashMessageContainer = new FlashMessageContainer();
         $controller = $this->getAccessibleMock(AbstractController::class, ['processRequest']);
         $this->inject($controller, 'flashMessageContainer', $flashMessageContainer);
@@ -156,7 +159,7 @@ class AbstractControllerTest extends UnitTestCase
 
         $controller = $this->getAccessibleMock(AbstractController::class, ['processRequest']);
         $this->inject($controller, 'persistenceManager', $mockPersistenceManager);
-        $controller->_call('initializeController', $this->mockActionRequest, $this->mockHttpResponse);
+        $controller->_call('initializeController', $this->mockActionRequest, $this->actionResponse);
 
         $this->mockActionRequest->expects($this->atLeastOnce())->method('setControllerActionName')->with('theTarget');
         $this->mockActionRequest->expects($this->atLeastOnce())->method('setControllerName')->with('Bar');
@@ -183,7 +186,7 @@ class AbstractControllerTest extends UnitTestCase
 
         $controller = $this->getAccessibleMock(AbstractController::class, ['processRequest']);
         $this->inject($controller, 'persistenceManager', $mockPersistenceManager);
-        $controller->_call('initializeController', $this->mockActionRequest, $this->mockHttpResponse);
+        $controller->_call('initializeController', $this->mockActionRequest, $this->actionResponse);
 
         try {
             $controller->_call('forward', 'theTarget', 'Bar', 'MyPackage', ['foo' => 'bar']);
@@ -196,7 +199,7 @@ class AbstractControllerTest extends UnitTestCase
 
         // all arguments of the current controller must be reset, in case the controller is called again later:
         $arguments = $controller->_get('arguments');
-        $this->assertFalse($arguments->hasArgument('foo'));
+        self::assertFalse($arguments->hasArgument('foo'));
     }
 
     /**
@@ -209,7 +212,7 @@ class AbstractControllerTest extends UnitTestCase
 
         $controller = $this->getAccessibleMock(AbstractController::class, ['processRequest']);
         $this->inject($controller, 'persistenceManager', $mockPersistenceManager);
-        $controller->_call('initializeController', $this->mockActionRequest, $this->mockHttpResponse);
+        $controller->_call('initializeController', $this->mockActionRequest, $this->actionResponse);
 
         $this->mockActionRequest->expects($this->atLeastOnce())->method('setControllerActionName')->with('theTarget');
         $this->mockActionRequest->expects($this->atLeastOnce())->method('setControllerName')->with('Bar');
@@ -232,7 +235,7 @@ class AbstractControllerTest extends UnitTestCase
 
         $controller = $this->getAccessibleMock(AbstractController::class, ['processRequest']);
         $this->inject($controller, 'persistenceManager', $mockPersistenceManager);
-        $controller->_call('initializeController', $this->mockActionRequest, $this->mockHttpResponse);
+        $controller->_call('initializeController', $this->mockActionRequest, $this->actionResponse);
 
         $this->mockActionRequest->expects($this->atLeastOnce())->method('setControllerActionName')->with('theTarget');
         $this->mockActionRequest->expects($this->atLeastOnce())->method('setControllerName')->with('Bar');
@@ -258,7 +261,7 @@ class AbstractControllerTest extends UnitTestCase
 
         $controller = $this->getAccessibleMock(AbstractController::class, ['processRequest']);
         $this->inject($controller, 'persistenceManager', $mockPersistenceManager);
-        $controller->_call('initializeController', $this->mockActionRequest, $this->mockHttpResponse);
+        $controller->_call('initializeController', $this->mockActionRequest, $this->actionResponse);
 
         $this->mockActionRequest->expects($this->atLeastOnce())->method('setArguments')->with($convertedArguments);
 
@@ -283,7 +286,7 @@ class AbstractControllerTest extends UnitTestCase
 
         $controller = $this->getAccessibleMock(AbstractController::class, ['processRequest', 'redirectToUri']);
         $this->inject($controller, 'flashMessageContainer', new FlashMessageContainer());
-        $controller->_call('initializeController', $this->mockActionRequest, $this->mockHttpResponse);
+        $controller->_call('initializeController', $this->mockActionRequest, $this->actionResponse);
         $this->inject($controller, 'uriBuilder', $mockUriBuilder);
 
         $controller->expects($this->once())->method('redirectToUri')->with('the uri');
@@ -306,7 +309,7 @@ class AbstractControllerTest extends UnitTestCase
         $mockUriBuilder->expects($this->once())->method('uriFor')->with('show', $arguments, 'Stuff', 'Super', null)->will($this->returnValue('the uri'));
 
         $controller = $this->getAccessibleMock(AbstractController::class, ['processRequest', 'redirectToUri']);
-        $controller->_call('initializeController', $this->mockActionRequest, $this->mockHttpResponse);
+        $controller->_call('initializeController', $this->mockActionRequest, $this->actionResponse);
         $this->inject($controller, 'uriBuilder', $mockUriBuilder);
 
         $controller->expects($this->once())->method('redirectToUri')->with('the uri');
@@ -315,12 +318,12 @@ class AbstractControllerTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Mvc\Exception\StopActionException
      */
     public function redirectToUriThrowsStopActionException()
     {
+        $this->expectException(StopActionException::class);
         $controller = $this->getAccessibleMock(AbstractController::class, ['processRequest']);
-        $controller->_call('initializeController', $this->mockActionRequest, $this->mockHttpResponse);
+        $controller->_call('initializeController', $this->mockActionRequest, $this->actionResponse);
 
         $controller->_call('redirectToUri', 'http://some.uri');
     }
@@ -330,15 +333,16 @@ class AbstractControllerTest extends UnitTestCase
      */
     public function redirectToUriSetsStatus()
     {
+        /** @var AbstractController $controller */
         $controller = $this->getAccessibleMock(AbstractController::class, ['processRequest']);
-        $controller->_call('initializeController', $this->mockActionRequest, $this->mockHttpResponse);
-
-        $this->mockHttpResponse->expects($this->atLeastOnce())->method('setStatus')->with(303);
+        $controller->_call('initializeController', $this->mockActionRequest, $this->actionResponse);
 
         try {
             $controller->_call('redirectToUri', 'http://some.uri');
         } catch (StopActionException $e) {
         }
+
+        self::assertSame(303, $this->actionResponse->getStatusCode());
     }
 
     /**
@@ -349,14 +353,14 @@ class AbstractControllerTest extends UnitTestCase
         $uri = 'http://flow.neos.io/awesomeness';
 
         $controller = $this->getAccessibleMock(AbstractController::class, ['processRequest']);
-        $controller->_call('initializeController', $this->mockActionRequest, $this->mockHttpResponse);
-
-        $this->mockHttpResponse->expects($this->atLeastOnce())->method('setHeader')->with('Location', $uri);
+        $controller->_call('initializeController', $this->mockActionRequest, $this->actionResponse);
 
         try {
             $controller->_call('redirectToUri', $uri);
         } catch (StopActionException $e) {
         }
+
+        self::assertSame($uri, $this->actionResponse->getHeader('Location'));
     }
 
     /**
@@ -367,24 +371,24 @@ class AbstractControllerTest extends UnitTestCase
         $uri = 'http://flow.neos.io/awesomeness';
 
         $controller = $this->getAccessibleMock(AbstractController::class, ['processRequest']);
-        $controller->_call('initializeController', $this->mockActionRequest, $this->mockHttpResponse);
-
-        $this->mockHttpResponse->expects($this->never())->method('setHeader');
+        $controller->_call('initializeController', $this->mockActionRequest, $this->actionResponse);
 
         try {
             $controller->_call('redirectToUri', $uri, 10);
         } catch (StopActionException $e) {
         }
+
+        self::assertNull($this->actionResponse->getHeader('Location'));
     }
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Mvc\Exception\StopActionException
      */
     public function throwStatusSetsThrowsStopActionException()
     {
+        $this->expectException(StopActionException::class);
         $controller = $this->getAccessibleMock(AbstractController::class, ['processRequest']);
-        $controller->_call('initializeController', $this->mockActionRequest, $this->mockHttpResponse);
+        $controller->_call('initializeController', $this->mockActionRequest, $this->actionResponse);
 
         $controller->_call('throwStatus', 404);
     }
@@ -395,17 +399,18 @@ class AbstractControllerTest extends UnitTestCase
     public function throwStatusSetsTheSpecifiedStatusHeaderAndStopsTheCurrentAction()
     {
         $controller = $this->getAccessibleMock(AbstractController::class, ['processRequest']);
-        $controller->_call('initializeController', $this->mockActionRequest, $this->mockHttpResponse);
+        $controller->_call('initializeController', $this->mockActionRequest, $this->actionResponse);
 
         $message = '<h1>All wrong!</h1><p>Sorry, the file does not exist.</p>';
-
-        $this->mockHttpResponse->expects($this->atLeastOnce())->method('setStatus')->with(404, 'File Really Not Found');
-        $this->mockHttpResponse->expects($this->atLeastOnce())->method('setContent')->with($message);
 
         try {
             $controller->_call('throwStatus', 404, 'File Really Not Found', $message);
         } catch (StopActionException $e) {
         }
+
+        self::assertSame(404, $this->actionResponse->getStatusCode());
+        self::assertSame('404 File Really Not Found', $this->actionResponse->getStatus());
+        self::assertSame($message, $this->actionResponse->getContent());
     }
 
     /**
@@ -414,16 +419,16 @@ class AbstractControllerTest extends UnitTestCase
     public function throwStatusSetsTheStatusMessageAsContentIfNoFurtherContentIsProvided()
     {
         $controller = $this->getAccessibleMock(AbstractController::class, ['processRequest']);
-        $controller->_call('initializeController', $this->mockActionRequest, $this->mockHttpResponse);
-
-        $this->mockHttpResponse->expects($this->atLeastOnce())->method('setStatus')->with(404, null);
-        $this->mockHttpResponse->expects($this->atLeastOnce())->method('getStatus')->will($this->returnValue('404 Not Found'));
-        $this->mockHttpResponse->expects($this->atLeastOnce())->method('setContent')->with('404 Not Found');
+        $controller->_call('initializeController', $this->mockActionRequest, $this->actionResponse);
 
         try {
             $controller->_call('throwStatus', 404);
         } catch (StopActionException $e) {
         }
+
+        self::assertSame(404, $this->actionResponse->getStatusCode());
+        self::assertSame('404 Not Found', $this->actionResponse->getStatus());
+        self::assertSame('404 Not Found', $this->actionResponse->getContent());
     }
 
     /**
@@ -443,7 +448,7 @@ class AbstractControllerTest extends UnitTestCase
         }
 
         $controller = $this->getAccessibleMock(AbstractController::class, ['processRequest']);
-        $controller->_call('initializeController', $this->mockActionRequest, $this->mockHttpResponse);
+        $controller->_call('initializeController', $this->mockActionRequest, $this->actionResponse);
         $controller->_set('arguments', $controllerArguments);
 
         $this->mockActionRequest->expects($this->at(0))->method('hasArgument')->with('foo')->will($this->returnValue(true));
@@ -452,16 +457,16 @@ class AbstractControllerTest extends UnitTestCase
         $this->mockActionRequest->expects($this->at(3))->method('getArgument')->with('baz')->will($this->returnValue('quux'));
 
         $controller->_call('mapRequestArgumentsToControllerArguments');
-        $this->assertEquals('bar', $controllerArguments['foo']->getValue());
-        $this->assertEquals('quux', $controllerArguments['baz']->getValue());
+        self::assertEquals('bar', $controllerArguments['foo']->getValue());
+        self::assertEquals('quux', $controllerArguments['baz']->getValue());
     }
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Mvc\Exception\RequiredArgumentMissingException
      */
     public function mapRequestArgumentsToControllerArgumentsThrowsExceptionIfRequiredArgumentWasNotSet()
     {
+        $this->expectException(RequiredArgumentMissingException::class);
         $mockPropertyMapper = $this->getMockBuilder(PropertyMapper::class)->disableOriginalConstructor()->setMethods(['convert'])->getMock();
         $mockPropertyMapper->expects($this->atLeastOnce())->method('convert')->will($this->returnArgument(0));
 
@@ -474,7 +479,7 @@ class AbstractControllerTest extends UnitTestCase
         }
 
         $controller = $this->getAccessibleMock(AbstractController::class, ['processRequest']);
-        $controller->_call('initializeController', $this->mockActionRequest, $this->mockHttpResponse);
+        $controller->_call('initializeController', $this->mockActionRequest, $this->actionResponse);
         $controller->_set('arguments', $controllerArguments);
 
         $this->mockActionRequest->expects($this->at(0))->method('hasArgument')->with('foo')->will($this->returnValue(true));

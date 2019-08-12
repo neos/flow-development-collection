@@ -40,14 +40,14 @@ class FlashMessagesViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelp
      *
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->mockFlashMessageContainer = $this->createMock(\Neos\Flow\Mvc\FlashMessageContainer::class);
         $mockControllerContext = $this->getMockBuilder(\Neos\Flow\Mvc\Controller\ControllerContext::class)->disableOriginalConstructor()->getMock();
         $mockControllerContext->expects($this->any())->method('getFlashMessageContainer')->will($this->returnValue($this->mockFlashMessageContainer));
 
         $this->mockTagBuilder = $this->createMock(TagBuilder::class);
-        $this->viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\FlashMessagesViewHelper::class, array('dummy', 'registerRenderMethodArguments'));
+        $this->viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\FlashMessagesViewHelper::class, ['dummy']);
         $this->viewHelper->_set('controllerContext', $mockControllerContext);
         $this->viewHelper->_set('tag', $this->mockTagBuilder);
     }
@@ -59,7 +59,7 @@ class FlashMessagesViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelp
     {
         $this->mockFlashMessageContainer->expects($this->once())->method('getMessagesAndFlush')->will($this->returnValue([]));
         $this->viewHelper = $this->prepareArguments($this->viewHelper, []);
-        $this->assertEmpty($this->viewHelper->render());
+        self::assertEmpty($this->viewHelper->render());
     }
 
     /**
@@ -67,29 +67,29 @@ class FlashMessagesViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelp
      */
     public function renderDataProvider()
     {
-        return array(
-            array(
+        return [
+            [
                 '<li class="flashmessages-ok">Some Flash Message</li>',
-                array(new \Neos\Error\Messages\Message('Some Flash Message'))
-            ),
-            array(
+                [new \Neos\Error\Messages\Message('Some Flash Message')]
+            ],
+            [
                 '<li class="flashmessages-error">Error &quot;dynamic&quot; Flash Message</li>',
-                array(new \Neos\Error\Messages\Error('Error %s Flash Message', null, array('"dynamic"')))
-            ),
-            array(
+                [new \Neos\Error\Messages\Error('Error %s Flash Message', null, ['"dynamic"'])]
+            ],
+            [
                 '<li class="flashmessages-error">Error Flash &quot;Message&quot;</li><li class="flashmessages-notice">Notice Flash Message</li>',
-                array(new \Neos\Error\Messages\Error('Error Flash "Message"'), new \Neos\Error\Messages\Notice('Notice Flash Message'))
-            ),
-            array(
+                [new \Neos\Error\Messages\Error('Error Flash "Message"'), new \Neos\Error\Messages\Notice('Notice Flash Message')]
+            ],
+            [
                 '<li class="flashmessages-warning"><h3>Some &quot;Warning&quot;</h3>Warning message body</li><li class="flashmessages-notice">Notice Flash Message</li>',
-                array(new \Neos\Error\Messages\Warning('Warning message body', null, array(), 'Some "Warning"'), new \Neos\Error\Messages\Notice('Notice Flash Message'))
-            ),
-            array(
+                [new \Neos\Error\Messages\Warning('Warning message body', null, [], 'Some "Warning"'), new \Neos\Error\Messages\Notice('Notice Flash Message')]
+            ],
+            [
                 '<li class="customClass-ok">Message 01</li><li class="customClass-notice">Message 02</li>',
-                array(new \Neos\Error\Messages\Message('Message 01'), new \Neos\Error\Messages\Notice('Message 02')),
+                [new \Neos\Error\Messages\Message('Message 01'), new \Neos\Error\Messages\Notice('Message 02')],
                 'customClass'
-            ),
-        );
+            ],
+        ];
     }
 
     /**

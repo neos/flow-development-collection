@@ -68,9 +68,9 @@ class PluralsReader
      * also be NULL ruleset, used by languages which don't have plurals.
      *
      * A rule is an array with following elements:
-     * 'modulo' => $x | FALSE,
+     * 'modulo' => $x | false,
      * 'condition' => array(0 => 'conditionName', 1 => $x, 2 => $y),
-     * 'logicalOperator' => 'and' | 'or' | FALSE
+     * 'logicalOperator' => 'and' | 'or' | false
      *
      * Legend:
      * - if 'modulo' key has an integer value, tested variable (call it $n) has
@@ -82,7 +82,7 @@ class PluralsReader
      *   is used only for tests where range is needed (last 4 from the list above)
      * - 'logicalOperator' represents a logical operation to be done with next
      *   subrule in chain. If current subrule is a last one (or only one), this
-     *   element is set to FALSE.
+     *   element is set to false.
      *
      * @var array
      */
@@ -150,7 +150,7 @@ class PluralsReader
             return self::RULE_OTHER;
         }
 
-        $ruleset = $this->rulesets[$locale->getLanguage()][$this->rulesetsIndices[$locale->getLanguage()]];
+        $ruleset = $this->rulesets[$locale->getLanguage()][$this->rulesetsIndices[$locale->getLanguage()]] ?? null;
 
         if ($ruleset === null) {
             return self::RULE_OTHER;
@@ -160,19 +160,21 @@ class PluralsReader
             foreach ($rule as $subrule) {
                 $subrulePassed = false;
 
+                $processedQuantity = $quantity;
+
                 if ($subrule['modulo'] !== false) {
-                    $quantity = fmod($quantity, $subrule['modulo']);
+                    $processedQuantity = fmod($processedQuantity, $subrule['modulo']);
                 }
 
-                if ($quantity == floor($quantity)) {
-                    $quantity = (int)$quantity;
+                if ($processedQuantity == floor($processedQuantity)) {
+                    $processedQuantity = (int)$processedQuantity;
                 }
 
                 $condition = $subrule['condition'];
                 switch ($condition[0]) {
                     case 'is':
                     case 'isnot':
-                        if (is_int($quantity) && $quantity === $condition[1]) {
+                        if (is_int($processedQuantity) && $processedQuantity === $condition[1]) {
                             $subrulePassed = true;
                         }
                         if ($condition[0] === 'isnot') {
@@ -181,7 +183,7 @@ class PluralsReader
                         break;
                     case 'in':
                     case 'notin':
-                        if (is_int($quantity) && $quantity >= $condition[1] && $quantity <= $condition[2]) {
+                        if (is_int($processedQuantity) && $processedQuantity >= $condition[1] && $processedQuantity <= $condition[2]) {
                             $subrulePassed = true;
                         }
                         if ($condition[0] === 'notin') {
@@ -190,7 +192,7 @@ class PluralsReader
                         break;
                     case 'within':
                     case 'notwithin':
-                        if ($quantity >= $condition[1] && $quantity <= $condition[2]) {
+                        if ($processedQuantity >= $condition[1] && $processedQuantity <= $condition[2]) {
                             $subrulePassed = true;
                         }
                         if ($condition[0] === 'notwithin') {
@@ -224,7 +226,13 @@ class PluralsReader
             return [self::RULE_OTHER];
         }
 
-        return array_merge(array_keys($this->rulesets[$locale->getLanguage()][$this->rulesetsIndices[$locale->getLanguage()]]), [self::RULE_OTHER]);
+        $ruleset = $this->rulesets[$locale->getLanguage()][$this->rulesetsIndices[$locale->getLanguage()]] ?? null;
+
+        if ($ruleset === null) {
+            return [self::RULE_OTHER];
+        }
+
+        return array_merge(array_keys($ruleset), [self::RULE_OTHER]);
     }
 
     /**

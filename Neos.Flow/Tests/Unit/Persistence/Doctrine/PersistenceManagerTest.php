@@ -12,13 +12,15 @@ namespace Neos\Flow\Tests\Unit\Persistence\Doctrine;
  */
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\Exception\ConnectionException;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\UnitOfWork;
-use Neos\Flow\Log\SystemLoggerInterface;
+use Neos\Flow\Log\ThrowableStorageInterface;
 use Neos\Flow\Persistence\Doctrine\PersistenceManager;
+use Neos\Flow\Persistence\Exception;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Flow\Error as FlowError;
+use Psr\Log\LoggerInterface;
 
 /**
  * Testcase for the doctrine persistence manager
@@ -46,7 +48,7 @@ class PersistenceManagerTest extends UnitTestCase
     protected $mockConnection;
 
     /**
-     * @var SystemLoggerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $mockSystemLogger;
 
@@ -55,7 +57,7 @@ class PersistenceManagerTest extends UnitTestCase
      */
     protected $mockPing;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->persistenceManager = $this->getMockBuilder(\Neos\Flow\Persistence\Doctrine\PersistenceManager::class)->setMethods(['emitAllObjectsPersisted'])->getMock();
 
@@ -71,8 +73,10 @@ class PersistenceManagerTest extends UnitTestCase
         $this->mockPing->willReturn(true);
         $this->mockEntityManager->expects($this->any())->method('getConnection')->willReturn($this->mockConnection);
 
-        $this->mockSystemLogger = $this->createMock(\Neos\Flow\Log\SystemLoggerInterface::class);
-        $this->inject($this->persistenceManager, 'systemLogger', $this->mockSystemLogger);
+        $this->mockSystemLogger = $this->createMock(LoggerInterface::class);
+        $this->persistenceManager->injectLogger($this->mockSystemLogger);
+
+        $this->inject($this->persistenceManager, 'throwableStorage', $this->getMockBuilder(ThrowableStorageInterface::class)->getMock());
     }
 
     /**
@@ -87,16 +91,16 @@ class PersistenceManagerTest extends UnitTestCase
         $this->mockEntityManager->expects($this->any())->method('contains')->with($entity)->willReturn(true);
         $this->mockUnitOfWork->expects($this->any())->method('getEntityIdentifier')->with($entity)->willReturn(['SomeIdentifier']);
 
-        $this->assertEquals('SomeIdentifier', $this->persistenceManager->getIdentifierByObject($entity));
+        self::assertEquals('SomeIdentifier', $this->persistenceManager->getIdentifierByObject($entity));
     }
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Persistence\Exception
-     * @expectedExceptionMessageRegExp /^Detected modified or new objects/
      */
     public function persistAllThrowsExceptionIfTryingToPersistNonWhitelistedObjectsAndOnlyWhitelistedObjectsFlagIsTrue()
     {
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessageRegExp('/^Detected modified or new objects/');
         $mockObject = new \stdClass();
         $scheduledEntityUpdates = [spl_object_hash($mockObject) => $mockObject];
         $scheduledEntityDeletes = [];
@@ -169,10 +173,10 @@ class PersistenceManagerTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Doctrine\DBAL\DBALException
      */
     public function persistAllThrowsOriginalExceptionWhenEntityManagerGotClosed()
     {
+        $this->expectException(DBALException::class);
         $this->mockEntityManager->expects($this->exactly(1))->method('flush')->willThrowException(new \Doctrine\DBAL\DBALException('Dummy error that closed the entity manager'));
 
         $this->mockConnection->expects($this->never())->method('close');

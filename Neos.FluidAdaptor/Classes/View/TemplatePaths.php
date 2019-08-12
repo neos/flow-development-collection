@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\FluidAdaptor\View;
 
 /*
@@ -12,8 +13,7 @@ namespace Neos\FluidAdaptor\View;
  */
 
 use Neos\FluidAdaptor\View\Exception\InvalidTemplateResourceException;
-use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Package\PackageManagerInterface;
+use Neos\Flow\Package\PackageManager;
 use Neos\Utility\ObjectAccess;
 use Neos\Utility\Files;
 
@@ -56,7 +56,7 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
     protected $options = [];
 
     /**
-     * @var PackageManagerInterface
+     * @var PackageManager
      */
     protected $packageManager;
 
@@ -68,9 +68,9 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
     }
 
     /**
-     * @param PackageManagerInterface $packageManager
+     * @param PackageManager $packageManager
      */
-    public function injectPackageManager(PackageManagerInterface $packageManager)
+    public function injectPackageManager(PackageManager $packageManager)
     {
         $this->packageManager = $packageManager;
     }
@@ -377,15 +377,15 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
      *
      * This method is used to generate "fallback chains" for file system locations where a certain Partial can reside.
      *
-     * If $bubbleControllerAndSubpackage is FALSE and $formatIsOptional is FALSE, then the resulting array will only have one element
+     * If $bubbleControllerAndSubpackage is false and $formatIsOptional is false, then the resulting array will only have one element
      * with all the above placeholders replaced.
      *
-     * If you set $bubbleControllerAndSubpackage to TRUE, then you will get an array with potentially many elements:
+     * If you set $bubbleControllerAndSubpackage to true, then you will get an array with potentially many elements:
      * The first element of the array is like above. The second element has the @ controller part set to "" (the empty string)
      * The third element now has the @ controller part again stripped off, and has the last subpackage part stripped off as well.
      * This continues until both "@subpackage" and "@controller" are empty.
      *
-     * Example for $bubbleControllerAndSubpackage is TRUE, we have the MyCompany\MyPackage\MySubPackage\Controller\MyController
+     * Example for $bubbleControllerAndSubpackage is true, we have the MyCompany\MyPackage\MySubPackage\Controller\MyController
      * as Controller Object Name and the current format is "html"
      *
      * If pattern is "@templateRoot/@subpackage/@controller/@action.@format", then the resulting array is:
@@ -393,13 +393,13 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
      *  - "Resources/Private/Templates/MySubPackage/@action.html"
      *  - "Resources/Private/Templates/@action.html"
      *
-     * If you set $formatIsOptional to TRUE, then for any of the above arrays, every element will be duplicated  - once with "@format"
+     * If you set $formatIsOptional to true, then for any of the above arrays, every element will be duplicated  - once with "@format"
      * replaced by the current request format, and once with ."@format" stripped off.
      *
      * @param string $pattern Pattern to be resolved
      * @param array $patternReplacementVariables The variables to replace in the pattern
-     * @param boolean $bubbleControllerAndSubpackage if TRUE, then we successively split off parts from "@controller" and "@subpackage" until both are empty.
-     * @param boolean $formatIsOptional if TRUE, then half of the resulting strings will have ."@format" stripped off, and the other half will have it.
+     * @param boolean $bubbleControllerAndSubpackage if true, then we successively split off parts from "@controller" and "@subpackage" until both are empty.
+     * @param boolean $formatIsOptional if true, then half of the resulting strings will have ."@format" stripped off, and the other half will have it.
      * @return array unix style paths
      */
     protected function expandGenericPathPattern($pattern, array $patternReplacementVariables, $bubbleControllerAndSubpackage, $formatIsOptional)
@@ -451,11 +451,11 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
     /**
      * @param array $paths
      * @param string $controllerName
-     * @param null $subPackageKey
-     * @param boolean $bubbleControllerAndSubpackage
+     * @param string $subPackageKey
+     * @param bool $bubbleControllerAndSubpackage
      * @return array
      */
-    protected function expandSubPackageAndController($paths, $controllerName, $subPackageKey = null, $bubbleControllerAndSubpackage = false)
+    protected function expandSubPackageAndController(array $paths, string $controllerName, string $subPackageKey = '', bool $bubbleControllerAndSubpackage = false): array
     {
         if ($bubbleControllerAndSubpackage === false) {
             $paths = $this->expandPatterns($paths, '@subpackage', [$subPackageKey]);
@@ -464,7 +464,7 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
         }
 
         $numberOfPathsBeforeSubpackageExpansion = count($paths);
-        $subpackageKeyParts = ($subPackageKey !== null) ? explode('\\', $subPackageKey) : [];
+        $subpackageKeyParts = ($subPackageKey !== '') ? explode('\\', $subPackageKey) : [];
         $numberOfSubpackageParts = count($subpackageKeyParts);
         $subpackageReplacements = [];
         for ($i = 0; $i <= $numberOfSubpackageParts; $i++) {
@@ -487,9 +487,9 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
      * @param array $patterns
      * @param string $search
      * @param array $replacements
-     * @return void
+     * @return array
      */
-    protected function expandPatterns(array $patterns, $search, array $replacements)
+    protected function expandPatterns(array $patterns, string $search, array $replacements): array
     {
         if ($replacements === []) {
             return $patterns;

@@ -10,7 +10,6 @@ namespace Neos\Flow\Validation\Validator;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use Neos\Error\Messages\Result;
 
 /**
  * A validator which will not validate Aggregates that are lazy loaded and uninitialized.
@@ -27,12 +26,11 @@ class AggregateBoundaryValidator extends GenericObjectValidator
      * an uninitialized lazy loading proxy.
      *
      * @param mixed $value The value that should be validated
-     * @return \Neos\Error\Messages\Result
+     * @return void
      * @api
      */
-    public function validate($value)
+    public function isValid($value)
     {
-        $this->result = new Result();
         /**
          * The idea is that Aggregates form a consistency boundary, and an Aggregate only needs to be
          * validated if it changed state. Also since all entity relations are lazy loaded by default,
@@ -42,8 +40,8 @@ class AggregateBoundaryValidator extends GenericObjectValidator
          * relations. Therefore proper Aggregate Design becomes a performance optimization.
          */
         if ($value instanceof \Doctrine\ORM\Proxy\Proxy && !$value->__isInitialized()) {
-            return $this->result;
+            return;
         }
-        return parent::validate($value);
+        parent::isValid($value);
     }
 }

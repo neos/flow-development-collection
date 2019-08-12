@@ -12,7 +12,6 @@ namespace Neos\FluidAdaptor\ViewHelpers\Security;
  */
 
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Account;
 use Neos\Flow\Security\Context;
 use Neos\Flow\Security\Policy\PolicyService;
@@ -81,6 +80,7 @@ class IfHasRoleViewHelper extends AbstractConditionViewHelper
      */
     public function initializeArguments()
     {
+        parent::initializeArguments();
         $this->registerArgument('role', 'mixed', 'The role or role identifier.', true);
         $this->registerArgument('packageKey', 'string', 'PackageKey of the package defining the role.', false, null);
         $this->registerArgument('account', Account::class, 'If specified, this subject of this check is the given Account instead of the currently authenticated account', false, null);

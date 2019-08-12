@@ -396,7 +396,7 @@ class SchemaValidator
      * - properties : array of keys and schemas that have to validate
      * - formatProperties : dictionary of schemas, the schemas are used to validate all keys that match the string-format
      * - patternProperties : dictionary of schemas, the schemas are used to validate all keys that match the string-pattern
-     * - additionalProperties : if FALSE is given all additionalProperties are forbidden, if a schema is given all additional properties have to match the schema
+     * - additionalProperties : if false is given all additionalProperties are forbidden, if a schema is given all additional properties have to match the schema
      *
      * @param mixed $value
      * @param array $schema

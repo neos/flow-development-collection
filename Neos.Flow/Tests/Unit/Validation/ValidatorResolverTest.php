@@ -16,6 +16,7 @@ use Neos\Flow\ObjectManagement\Configuration\Configuration;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Validation\Exception\InvalidValidationConfigurationException;
 use Neos\Flow\Validation\Validator\CollectionValidator;
 use Neos\Flow\Validation\Validator\ConjunctionValidator;
 use Neos\Flow\Validation\Validator\DateTimeValidator;
@@ -47,7 +48,7 @@ class ValidatorResolverTest extends UnitTestCase
      */
     protected $mockReflectionService;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->mockObjectManager = $this->createMock(ObjectManagerInterface::class);
         $this->mockReflectionService = $this->createMock(ReflectionService::class);
@@ -67,7 +68,7 @@ class ValidatorResolverTest extends UnitTestCase
         $this->mockObjectManager->expects($this->at(1))->method('isRegistered')->with('Foo')->will($this->returnValue(false));
         $this->mockObjectManager->expects($this->at(2))->method('isRegistered')->with('Neos\Flow\Validation\Validator\FooValidator')->will($this->returnValue(false));
 
-        $this->assertSame(false, $this->validatorResolver->_call('resolveValidatorObjectName', 'Foo'));
+        self::assertSame(false, $this->validatorResolver->_call('resolveValidatorObjectName', 'Foo'));
     }
 
     /**
@@ -79,7 +80,7 @@ class ValidatorResolverTest extends UnitTestCase
         $this->mockObjectManager->expects($this->any())->method('isRegistered')->with('Foo')->will($this->returnValue(true));
         $this->mockReflectionService->expects($this->any())->method('getAllImplementationClassNamesForInterface')->with(ValidatorInterface::class)->will($this->returnValue(['Foo']));
 
-        $this->assertSame('Foo', $this->validatorResolver->_call('resolveValidatorObjectName', 'Foo'));
+        self::assertSame('Foo', $this->validatorResolver->_call('resolveValidatorObjectName', 'Foo'));
     }
 
     /**
@@ -92,7 +93,7 @@ class ValidatorResolverTest extends UnitTestCase
         $this->mockObjectManager->expects($this->at(2))->method('isRegistered')->with('Neos\Flow\Validation\Validator\FooValidator')->will($this->returnValue(false));
         $this->mockReflectionService->expects($this->any())->method('getAllImplementationClassNamesForInterface')->with(ValidatorInterface::class)->will($this->returnValue(['Bar']));
 
-        $this->assertFalse($this->validatorResolver->_call('resolveValidatorObjectName', 'Foo'));
+        self::assertFalse($this->validatorResolver->_call('resolveValidatorObjectName', 'Foo'));
     }
 
     /**
@@ -105,7 +106,7 @@ class ValidatorResolverTest extends UnitTestCase
         $this->mockObjectManager->expects($this->at(2))->method('isRegistered')->with(DateTimeValidator::class)->will($this->returnValue(true));
         $this->mockReflectionService->expects($this->any())->method('getAllImplementationClassNamesForInterface')->with(ValidatorInterface::class)->will($this->returnValue([DateTimeValidator::class]));
 
-        $this->assertSame(DateTimeValidator::class, $this->validatorResolver->_call('resolveValidatorObjectName', 'DateTime'));
+        self::assertSame(DateTimeValidator::class, $this->validatorResolver->_call('resolveValidatorObjectName', 'DateTime'));
     }
 
     /**
@@ -117,7 +118,7 @@ class ValidatorResolverTest extends UnitTestCase
         $this->mockObjectManager->expects($this->any())->method('isRegistered')->with('Foo\Bar')->will($this->returnValue(true));
         $this->mockReflectionService->expects($this->any())->method('getAllImplementationClassNamesForInterface')->with(ValidatorInterface::class)->will($this->returnValue(['Foo\Bar']));
 
-        $this->assertSame('Foo\Bar', $this->validatorResolver->_call('resolveValidatorObjectName', '\Foo\Bar'));
+        self::assertSame('Foo\Bar', $this->validatorResolver->_call('resolveValidatorObjectName', '\Foo\Bar'));
     }
 
     /**
@@ -131,7 +132,7 @@ class ValidatorResolverTest extends UnitTestCase
 
         $this->mockReflectionService->expects($this->any())->method('getAllImplementationClassNamesForInterface')->with(ValidatorInterface::class)->will($this->returnValue(['Mypkg\Validation\Validator\MyValidator']));
 
-        $this->assertSame('Mypkg\Validation\Validator\MyValidator', $this->validatorResolver->_call('resolveValidatorObjectName', 'Mypkg:My'));
+        self::assertSame('Mypkg\Validation\Validator\MyValidator', $this->validatorResolver->_call('resolveValidatorObjectName', 'Mypkg:My'));
     }
 
     /**
@@ -145,7 +146,7 @@ class ValidatorResolverTest extends UnitTestCase
 
         $this->mockReflectionService->expects($this->any())->method('getAllImplementationClassNamesForInterface')->with(ValidatorInterface::class)->will($this->returnValue(['Mypkg\Foo\Validation\Validator\MyValidator']));
 
-        $this->assertSame('Mypkg\Foo\Validation\Validator\MyValidator', $this->validatorResolver->_call('resolveValidatorObjectName', 'Mypkg.Foo:My'));
+        self::assertSame('Mypkg\Foo\Validation\Validator\MyValidator', $this->validatorResolver->_call('resolveValidatorObjectName', 'Mypkg.Foo:My'));
     }
 
     /**
@@ -157,7 +158,7 @@ class ValidatorResolverTest extends UnitTestCase
         $this->mockObjectManager->expects($this->at(1))->method('isRegistered')->with('Foo')->will($this->returnValue(false));
         $this->mockObjectManager->expects($this->at(2))->method('isRegistered')->with('Neos\Flow\Validation\Validator\FooValidator')->will($this->returnValue(true));
         $this->mockReflectionService->expects($this->any())->method('getAllImplementationClassNamesForInterface')->with(ValidatorInterface::class)->will($this->returnValue(['Neos\Flow\Validation\Validator\FooValidator']));
-        $this->assertSame('Neos\Flow\Validation\Validator\FooValidator', $this->validatorResolver->_call('resolveValidatorObjectName', 'Foo'));
+        self::assertSame('Neos\Flow\Validation\Validator\FooValidator', $this->validatorResolver->_call('resolveValidatorObjectName', 'Foo'));
     }
 
     /**
@@ -198,8 +199,8 @@ class ValidatorResolverTest extends UnitTestCase
         $validatorResolver->_set('objectManager', $mockObjectManager);
         $validatorResolver->expects($this->once())->method('resolveValidatorObjectName')->with($className)->will($this->returnValue($className));
         $validator = $validatorResolver->createValidator($className, ['foo' => 'bar']);
-        $this->assertInstanceOf($className, $validator);
-        $this->assertEquals(['foo' => 'bar'], $validator->getOptions());
+        self::assertInstanceOf($className, $validator);
+        self::assertEquals(['foo' => 'bar'], $validator->getOptions());
     }
 
     /**
@@ -210,15 +211,15 @@ class ValidatorResolverTest extends UnitTestCase
         $validatorResolver = $this->getMockBuilder(ValidatorResolver::class)->setMethods(['resolveValidatorObjectName'])->getMock();
         $validatorResolver->expects($this->once())->method('resolveValidatorObjectName')->with('Foo')->will($this->returnValue(false));
         $validator = $validatorResolver->createValidator('Foo', ['foo' => 'bar']);
-        $this->assertNull($validator);
+        self::assertNull($validator);
     }
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Validation\Exception\InvalidValidationConfigurationException
      */
     public function createValidatorThrowsExceptionForSingletonValidatorsWithOptions()
     {
+        $this->expectException(InvalidValidationConfigurationException::class);
         $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
         $mockObjectManager->expects($this->once())->method('getScope')->with('FooType')->will($this->returnValue(Configuration::SCOPE_SINGLETON));
 
@@ -242,10 +243,10 @@ class ValidatorResolverTest extends UnitTestCase
         $this->validatorResolver->_set('reflectionService', $mockReflectionService);
 
         $result1 = $this->validatorResolver->getBaseValidatorConjunction('TYPO3\Virtual\Foo');
-        $this->assertInstanceOf(ConjunctionValidator::class, $result1, '#1');
+        self::assertInstanceOf(ConjunctionValidator::class, $result1, '#1');
 
         $result2 = $this->validatorResolver->getBaseValidatorConjunction('TYPO3\Virtual\Foo');
-        $this->assertSame($result1, $result2, '#2');
+        self::assertSame($result1, $result2, '#2');
     }
 
     /**
@@ -262,7 +263,7 @@ class ValidatorResolverTest extends UnitTestCase
         $this->validatorResolver->_set('reflectionService', $mockReflectionService);
 
         $result = $this->validatorResolver->buildMethodArgumentsValidatorConjunctions(get_class($mockController), 'fooAction');
-        $this->assertSame([], $result);
+        self::assertSame([], $result);
     }
 
     /**
@@ -328,7 +329,7 @@ class ValidatorResolverTest extends UnitTestCase
         $validatorResolver->_set('reflectionService', $mockReflectionService);
 
         $result = $validatorResolver->buildMethodArgumentsValidatorConjunctions(get_class($mockObject), 'fooAction');
-        $this->assertEquals(['arg1' => $conjunction1, 'arg2' => $conjunction2], $result);
+        self::assertEquals(['arg1' => $conjunction1, 'arg2' => $conjunction2], $result);
     }
 
     /**
@@ -361,10 +362,10 @@ class ValidatorResolverTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Validation\Exception\InvalidValidationConfigurationException
      */
     public function buildMethodArgumentsValidatorConjunctionsThrowsExceptionIfValidationAnnotationForNonExistingArgumentExists()
     {
+        $this->expectException(InvalidValidationConfigurationException::class);
         $mockObject = new \stdClass();
 
         $methodParameters = [
@@ -422,8 +423,8 @@ class ValidatorResolverTest extends UnitTestCase
         $validatorResolver->_call('buildBaseValidatorConjunction', $modelClassName, $modelClassName, ['Default']);
         $builtValidators = $validatorResolver->_get('baseValidatorConjunctions');
 
-        $this->assertFalse($builtValidators[$modelClassName]->validate('foo@example.com')->hasErrors());
-        $this->assertTrue($builtValidators[$modelClassName]->validate('foo')->hasErrors());
+        self::assertFalse($builtValidators[$modelClassName]->validate('foo@example.com')->hasErrors());
+        self::assertTrue($builtValidators[$modelClassName]->validate('foo')->hasErrors());
     }
 
     /**
@@ -535,7 +536,7 @@ class ValidatorResolverTest extends UnitTestCase
         $validatorResolver->_set('objectManager', $mockObjectManager);
         $validatorResolver->_set('reflectionService', $mockReflectionService);
 
-        $this->assertNull($validatorResolver->_call('buildBaseValidatorConjunction', 'NonExistingClassName', 'NonExistingClassName', ['Default']));
+        self::assertNull($validatorResolver->_call('buildBaseValidatorConjunction', 'NonExistingClassName', 'NonExistingClassName', ['Default']));
     }
 
     /**
@@ -607,7 +608,7 @@ class ValidatorResolverTest extends UnitTestCase
 
         $validatorResolver->_call('buildBaseValidatorConjunction', $className . 'Default', $className, ['Default']);
         $builtValidators = $validatorResolver->_get('baseValidatorConjunctions');
-        $this->assertInstanceOf(ConjunctionValidator::class, $builtValidators[$className . 'Default']);
+        self::assertInstanceOf(ConjunctionValidator::class, $builtValidators[$className . 'Default']);
     }
 
     /**
@@ -656,19 +657,19 @@ class ValidatorResolverTest extends UnitTestCase
         /* @var $validatorChain ConjunctionValidator */
         $validatorChain = $validatorResolver->getBaseValidatorConjunction($fooClassName);
         $fooValidators = $validatorChain->getValidators();
-        $this->assertGreaterThan(0, $fooValidators->count());
+        self::assertGreaterThan(0, $fooValidators->count());
 
         // ugh, it's so cumbersome to work with SplObjectStorage outside of iterations...
         $fooValidators->rewind();
         $barValidators = $fooValidators->current()->getPropertyValidators('bar');
-        $this->assertGreaterThan(0, $barValidators->count());
+        self::assertGreaterThan(0, $barValidators->count());
 
         $barValidators->rewind();
         $barValidators = $barValidators->current()->getValidators();
-        $this->assertGreaterThan(0, $barValidators->count());
+        self::assertGreaterThan(0, $barValidators->count());
         $barValidators->rewind();
 
-        $this->assertGreaterThan(0, $barValidators->current()->getPropertyValidators('foo')->count());
+        self::assertGreaterThan(0, $barValidators->current()->getPropertyValidators('foo')->count());
     }
 
     /**
@@ -680,16 +681,16 @@ class ValidatorResolverTest extends UnitTestCase
         $validatorResolver = $this->getAccessibleMock(ValidatorResolver::class, ['dummy']);
         $validatorResolver->_set('objectManager', $mockObjectManager);
 
-        $this->assertEquals('Integer', $validatorResolver->_call('getValidatorType', 'integer'));
-        $this->assertEquals('Integer', $validatorResolver->_call('getValidatorType', 'int'));
-        $this->assertEquals('String', $validatorResolver->_call('getValidatorType', 'string'));
-        $this->assertEquals('Array', $validatorResolver->_call('getValidatorType', 'array'));
-        $this->assertEquals('Float', $validatorResolver->_call('getValidatorType', 'float'));
-        $this->assertEquals('Float', $validatorResolver->_call('getValidatorType', 'double'));
-        $this->assertEquals('Boolean', $validatorResolver->_call('getValidatorType', 'boolean'));
-        $this->assertEquals('Boolean', $validatorResolver->_call('getValidatorType', 'bool'));
-        $this->assertEquals('Number', $validatorResolver->_call('getValidatorType', 'number'));
-        $this->assertEquals('Number', $validatorResolver->_call('getValidatorType', 'numeric'));
+        self::assertEquals('Integer', $validatorResolver->_call('getValidatorType', 'integer'));
+        self::assertEquals('Integer', $validatorResolver->_call('getValidatorType', 'int'));
+        self::assertEquals('String', $validatorResolver->_call('getValidatorType', 'string'));
+        self::assertEquals('Array', $validatorResolver->_call('getValidatorType', 'array'));
+        self::assertEquals('Float', $validatorResolver->_call('getValidatorType', 'float'));
+        self::assertEquals('Float', $validatorResolver->_call('getValidatorType', 'double'));
+        self::assertEquals('Boolean', $validatorResolver->_call('getValidatorType', 'boolean'));
+        self::assertEquals('Boolean', $validatorResolver->_call('getValidatorType', 'bool'));
+        self::assertEquals('Number', $validatorResolver->_call('getValidatorType', 'number'));
+        self::assertEquals('Number', $validatorResolver->_call('getValidatorType', 'numeric'));
     }
 
     /**
@@ -700,7 +701,7 @@ class ValidatorResolverTest extends UnitTestCase
         $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
         $validatorResolver = $this->getAccessibleMock(ValidatorResolver::class, ['dummy']);
         $validatorResolver->_set('objectManager', $mockObjectManager);
-        $this->assertEquals('Raw', $validatorResolver->_call('getValidatorType', 'mixed'));
+        self::assertEquals('Raw', $validatorResolver->_call('getValidatorType', 'mixed'));
     }
 
     /**
@@ -713,6 +714,6 @@ class ValidatorResolverTest extends UnitTestCase
         $validatorResolver->_set('baseValidatorConjunctions', ['SomeId##' => $mockConjunctionValidator]);
 
         $validatorResolver->reset();
-        $this->assertEmpty($validatorResolver->_get('baseValidatorConjunctions'));
+        self::assertEmpty($validatorResolver->_get('baseValidatorConjunctions'));
     }
 }

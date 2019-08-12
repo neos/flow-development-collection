@@ -27,11 +27,11 @@ use Neos\Cache\Frontend\VariableFrontend;
 class VariableFrontendTest extends BaseTestCase
 {
     /**
-     * @expectedException \InvalidArgumentException
      * @test
      */
     public function setChecksIfTheIdentifierIsValid()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $cache = $this->getMockBuilder(StringFrontend::class)
             ->setMethods(['isValidEntryIdentifier'])
             ->disableOriginalConstructor()
@@ -104,7 +104,7 @@ class VariableFrontendTest extends BaseTestCase
         $backend->expects($this->once())->method('get')->will($this->returnValue(serialize('Just some value')));
 
         $cache = new VariableFrontend('VariableFrontend', $backend);
-        $this->assertEquals('Just some value', $cache->get('VariableCacheTest'), 'The returned value was not the expected string.');
+        self::assertEquals('Just some value', $cache->get('VariableCacheTest'), 'The returned value was not the expected string.');
     }
 
     /**
@@ -117,7 +117,7 @@ class VariableFrontendTest extends BaseTestCase
         $backend->expects($this->once())->method('get')->will($this->returnValue(serialize($theArray)));
 
         $cache = new VariableFrontend('VariableFrontend', $backend);
-        $this->assertEquals($theArray, $cache->get('VariableCacheTest'), 'The returned value was not the expected unserialized array.');
+        self::assertEquals($theArray, $cache->get('VariableCacheTest'), 'The returned value was not the expected unserialized array.');
     }
 
     /**
@@ -129,7 +129,7 @@ class VariableFrontendTest extends BaseTestCase
         $backend->expects($this->once())->method('get')->will($this->returnValue(serialize(false)));
 
         $cache = new VariableFrontend('VariableFrontend', $backend);
-        $this->assertFalse($cache->get('VariableCacheTest'), 'The returned value was not the FALSE.');
+        self::assertFalse($cache->get('VariableCacheTest'), 'The returned value was not the false.');
     }
 
     /**
@@ -145,7 +145,7 @@ class VariableFrontendTest extends BaseTestCase
         $cache = new VariableFrontend('VariableFrontend', $backend);
         $cache->initializeObject();
 
-        $this->assertEquals($theArray, $cache->get('VariableCacheTest'), 'The returned value was not the expected unserialized array.');
+        self::assertEquals($theArray, $cache->get('VariableCacheTest'), 'The returned value was not the expected unserialized array.');
     }
 
     /**
@@ -157,7 +157,7 @@ class VariableFrontendTest extends BaseTestCase
         $backend->expects($this->once())->method('has')->with($this->equalTo('VariableCacheTest'))->will($this->returnValue(true));
 
         $cache = new VariableFrontend('VariableFrontend', $backend);
-        $this->assertTrue($cache->has('VariableCacheTest'), 'has() did not return TRUE.');
+        self::assertTrue($cache->has('VariableCacheTest'), 'has() did not return true.');
     }
 
     /**
@@ -171,15 +171,15 @@ class VariableFrontendTest extends BaseTestCase
         $backend->expects($this->once())->method('remove')->with($this->equalTo($cacheIdentifier))->will($this->returnValue(true));
 
         $cache = new VariableFrontend('VariableFrontend', $backend);
-        $this->assertTrue($cache->remove($cacheIdentifier), 'remove() did not return TRUE');
+        self::assertTrue($cache->remove($cacheIdentifier), 'remove() did not return true');
     }
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
      */
     public function getByTagRejectsInvalidTags()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $backend = $this->createMock(TaggableBackendInterface::class);
         $backend->expects($this->never())->method('findIdentifiersByTag');
 
@@ -189,10 +189,10 @@ class VariableFrontendTest extends BaseTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Cache\Exception\NotSupportedByBackendException
      */
     public function getByTagThrowAnExceptionWithoutTaggableBackend()
     {
+        $this->expectException(NotSupportedByBackendException::class);
         $backend = $this->prepareDefaultBackend();
         $cache = new VariableFrontend('VariableFrontend', $backend);
         $cache->getByTag('foo');
@@ -212,7 +212,7 @@ class VariableFrontendTest extends BaseTestCase
         $backend->expects($this->exactly(2))->method('get')->will($this->onConsecutiveCalls(serialize('one value'), serialize('two value')));
 
         $cache = new VariableFrontend('VariableFrontend', $backend);
-        $this->assertEquals($entries, $cache->getByTag($tag), 'Did not receive the expected entries');
+        self::assertEquals($entries, $cache->getByTag($tag), 'Did not receive the expected entries');
     }
 
     /**
@@ -232,7 +232,7 @@ class VariableFrontendTest extends BaseTestCase
         $cache = new VariableFrontend('VariableFrontend', $backend);
         $cache->initializeObject();
 
-        $this->assertEquals($entries, $cache->getByTag($tag), 'Did not receive the expected entries');
+        self::assertEquals($entries, $cache->getByTag($tag), 'Did not receive the expected entries');
     }
 
     /**

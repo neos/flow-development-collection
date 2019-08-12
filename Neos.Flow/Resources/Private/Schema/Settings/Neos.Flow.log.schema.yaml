@@ -6,21 +6,14 @@ properties:
       fileStorage:
         type: dictionary
         properties:
-          path: { type: string, required: TRUE }
-
-additionalProperties:
-  type: dictionary
-  additionalProperties: FALSE
-  properties:
-    'logger': { type: string, format: class-name }
-    'backend': { type: string, format: class-name }
-    'backendOptions':
+          path: { type: string, required: true }
+  psr3:
+    type: dictionary
+    properties:
+      loggerFactory: { type: string }
+    additionalProperties:
       type: dictionary
       properties:
-        'logFileURL':  { type: string }
-        'createParentDirectories':  { type: boolean }
-        'severityThreshold': { type: [string, integer] }
-        'maximumLogFileSize': { type: integer }
-        'logFilesToKeep': { type: integer }
-        'logMessageOrigin': { type: boolean }
-        'logIpAddress': { type: boolean }
+        'class': { type: string, format: class-name }
+        'options':
+          type: dictionary

@@ -41,16 +41,16 @@ class ResourceInterceptorTest extends UnitTestCase
 				background-repeat: no-repeat;
 			}';
         $originalText = $originalText1 . $originalText2 . $originalText3;
-        $mockTextNode = $this->getMockBuilder(TextNode::class)->setMethods(array('evaluateChildNodes'))->setConstructorArgs(array($originalText))->getMock();
-        $this->assertEquals($originalText, $mockTextNode->evaluate($this->createMock(RenderingContextInterface::class)));
+        $mockTextNode = $this->getMockBuilder(TextNode::class)->setMethods(['evaluateChildNodes'])->setConstructorArgs([$originalText])->getMock();
+        self::assertEquals($originalText, $mockTextNode->evaluate($this->createMock(RenderingContextInterface::class)));
 
         $interceptor = new ResourceInterceptor();
         $resultingNodeTree = $interceptor->process($mockTextNode, InterceptorInterface::INTERCEPT_TEXT, $this->createMock(ParsingState::class));
-        $this->assertInstanceOf(RootNode::class, $resultingNodeTree);
-        $this->assertCount(3, $resultingNodeTree->getChildNodes());
+        self::assertInstanceOf(RootNode::class, $resultingNodeTree);
+        self::assertCount(3, $resultingNodeTree->getChildNodes());
         foreach ($resultingNodeTree->getChildNodes() as $parserNode) {
             if ($parserNode instanceof ResourceUriNode) {
-                $this->assertEquals([
+                self::assertEquals([
                     'path' => $path
                 ], $parserNode->getArguments());
             }
@@ -65,43 +65,43 @@ class ResourceInterceptorTest extends UnitTestCase
      */
     public function supportedUrls()
     {
-        return array(
-            array( // mostly harmless
+        return [
+            [ // mostly harmless
                 '<link rel="stylesheet" type="text/css" href="',
                 '../../../Public/Backend/Styles/Login.css',
                 '">',
                 'Backend/Styles/Login.css',
                 'Acme.Demo'
-            ),
-            array( // refer to another package
+            ],
+            [ // refer to another package
                 '<link rel="stylesheet" type="text/css" href="',
                 '../../../../Acme.OtherPackage/Resources/Public/Backend/Styles/FromOtherPackage.css',
                 '">',
                 'Backend/Styles/FromOtherPackage.css',
                 'Acme.OtherPackage'
-            ),
-            array( // refer to another package in different category
+            ],
+            [ // refer to another package in different category
                 '<link rel="stylesheet" type="text/css" href="',
                 '../../../Plugins/Acme.OtherPackage/Resources/Public/Backend/Styles/FromOtherPackage.css',
                 '">',
                 'Backend/Styles/FromOtherPackage.css',
                 'Acme.OtherPackage'
-            ),
-            array( // path with spaces (ugh!)
+            ],
+            [ // path with spaces (ugh!)
                 '<link rel="stylesheet" type="text/css" href="',
                 '../../Public/Backend/Styles/With Spaces.css',
                 '">',
                 'Backend/Styles/With Spaces.css',
                 'Acme.Demo'
-            ),
-            array( // single quote around url and spaces
+            ],
+            [ // single quote around url and spaces
                 '<link rel="stylesheet" type="text/css" href=\'',
                 '../Public/Backend/Styles/With Spaces.css',
                 '\'>',
                 'Backend/Styles/With Spaces.css',
                 'Acme.Demo'
-            )
-        );
+            ]
+        ];
     }
 
     /**
@@ -111,18 +111,18 @@ class ResourceInterceptorTest extends UnitTestCase
     public function supportedUrlsAreDetected($part1, $part2, $part3, $expectedPath, $expectedPackageKey)
     {
         $originalText = $part1 . $part2 . $part3;
-        $mockTextNode = $this->getMockBuilder(TextNode::class)->setMethods(array('evaluateChildNodes'))->setConstructorArgs(array($originalText))->getMock();
-        $this->assertEquals($originalText, $mockTextNode->evaluate($this->createMock(RenderingContextInterface::class)));
+        $mockTextNode = $this->getMockBuilder(TextNode::class)->setMethods(['evaluateChildNodes'])->setConstructorArgs([$originalText])->getMock();
+        self::assertEquals($originalText, $mockTextNode->evaluate($this->createMock(RenderingContextInterface::class)));
 
         $interceptor = new ResourceInterceptor();
         $interceptor->setDefaultPackageKey('Acme.Demo');
         $resultingNodeTree = $interceptor->process($mockTextNode, InterceptorInterface::INTERCEPT_TEXT, $this->createMock(ParsingState::class));
 
-        $this->assertInstanceOf(RootNode::class, $resultingNodeTree);
-        $this->assertCount(3, $resultingNodeTree->getChildNodes());
+        self::assertInstanceOf(RootNode::class, $resultingNodeTree);
+        self::assertCount(3, $resultingNodeTree->getChildNodes());
         foreach ($resultingNodeTree->getChildNodes() as $parserNode) {
             if ($parserNode instanceof ResourceUriNode) {
-                $this->assertEquals([
+                self::assertEquals([
                     'path' => $expectedPath,
                     'package' => $expectedPackageKey
                 ], $parserNode->getArguments());

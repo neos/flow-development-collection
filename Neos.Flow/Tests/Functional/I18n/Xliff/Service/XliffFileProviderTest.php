@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Tests\Functional\I18n\Xliff\Service;
 
 /*
@@ -33,24 +34,27 @@ class XliffFileProviderTest extends FunctionalTestCase
     /**
      * Initialize dependencies
      */
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
-        $this->fileProvider = $this->objectManager->get(XliffFileProvider::class);
+        $cacheManager = $this->objectManager->get(CacheManager::class);
+        $cacheManager->getCache('Flow_I18n_XmlModelCache')->flush();
 
         $packages = $this->setUpPackages();
+        $this->fileProvider = $this->objectManager->get(XliffFileProvider::class);
+        // the folder Resources/Private/GlobalTranslations of the base package is used as globalTranslationPath
+        $this->inject($this->fileProvider, 'globalTranslationPath', $packages['Vendor.BasePackage']->getResourcesPath() . '/Private/GlobalTranslations/');
+        $this->fileProvider->initializeObject();
+
         ComposerUtility::flushCaches();
 
         $mockPackageManager = $this->getMockBuilder(PackageManager::class)
             ->disableOriginalConstructor()
             ->getMock();
         $mockPackageManager->expects($this->any())
-            ->method('getAvailablePackages')
+            ->method('getFlowPackages')
             ->will($this->returnValue($packages));
         $this->inject($this->fileProvider, 'packageManager', $mockPackageManager);
-
-        $cacheManager = $this->objectManager->get(CacheManager::class);
-        $cacheManager->getCache('Flow_I18n_XmlModelCache')->flush();
     }
 
     /**
@@ -63,7 +67,9 @@ class XliffFileProviderTest extends FunctionalTestCase
         $basePackage = $this->setUpPackage('BasePackage', [
             'de/BasePackage.Unmerged.xlf' => 'Resources/Private/Translations/de/Unmerged.xlf',
             'de/BasePackage.Main.xlf' => 'Resources/Private/Translations/de/Main.xlf',
-            'de/BasePackage.DependentMain.xlf' => 'Resources/Private/Translations/de/DependentMain.xlf'
+            'de/BasePackage.DependentMain.xlf' => 'Resources/Private/Translations/de/DependentMain.xlf',
+            'de/BasePackage.GlobalOverride.xlf' => 'Resources/Private/Translations/de/GlobalOverride.xlf',
+            'en/BasePackage.GlobalOverride.Global.xlf' => 'Resources/Private/GlobalTranslations/en/BasePackage.GlobalOverride.xlf'
         ]);
         $packages[$basePackage->getPackageKey()] = $basePackage;
 
@@ -91,6 +97,8 @@ class XliffFileProviderTest extends FunctionalTestCase
         mkdir($packagePath, 0700, true);
         mkdir($packagePath . 'Resources/Private/Translations/en/', 0700, true);
         mkdir($packagePath . 'Resources/Private/Translations/de/', 0700, true);
+        mkdir($packagePath . 'Resources/Private/GlobalTranslations/de/', 0700, true);
+        mkdir($packagePath . 'Resources/Private/GlobalTranslations/en/', 0700, true);
         file_put_contents($packagePath . 'composer.json', '{"name": "' . $composerName . '", "type": "flow-test"}');
 
         $fixtureBasePath = __DIR__ . '/../Fixtures/';
@@ -107,7 +115,7 @@ class XliffFileProviderTest extends FunctionalTestCase
     public function fileProviderReturnsUnchangedContentForFileWithoutOverride()
     {
         $fileData = $this->fileProvider->getMergedFileData('Vendor.BasePackage:Unmerged', new Locale('de'));
-        $this->assertSame([
+        self::assertSame([
             'key1' => [
                 [
                     'source' => 'Source string',
@@ -123,7 +131,7 @@ class XliffFileProviderTest extends FunctionalTestCase
     public function fileProviderMergesOverrideFromLaterLoadedPackageDeclaredByOriginalAndProductName()
     {
         $fileData = $this->fileProvider->getMergedFileData('Vendor.BasePackage:Main', new Locale('de'));
-        $this->assertSame([
+        self::assertSame([
             'key1' => [
                 [
                     'source' => 'Source string',
@@ -139,7 +147,7 @@ class XliffFileProviderTest extends FunctionalTestCase
     public function fileProviderReturnsLaterLoadedPackageDeclarationByOriginalAndProductNameIfNoOriginalPresent()
     {
         $fileData = $this->fileProvider->getMergedFileData('Vendor.BasePackage:WithoutBase', new Locale('de'));
-        $this->assertSame([
+        self::assertSame([
             'key1' => [
                 [
                     'source' => 'Additional source string',
@@ -155,7 +163,41 @@ class XliffFileProviderTest extends FunctionalTestCase
     public function fileProviderDoesNotMergeOverrideFromEarlierLoadedPackageDeclaredByOriginalAndProductName()
     {
         $fileData = $this->fileProvider->getMergedFileData('Vendor.DependentPackage:Main', new Locale('de'));
-        $this->assertSame([
+        self::assertSame([
+            'key1' => [
+                [
+                    'source' => 'Source string',
+                    'target' => 'Übersetzte Zeichenkette'
+                ]
+            ]
+        ], $fileData['translationUnits']);
+    }
+
+    /**
+     * @test
+     */
+    public function fileProviderMergesTranslationsFromGlobalDataFolder()
+    {
+        $fileData = $this->fileProvider->getMergedFileData('Vendor.BasePackage:GlobalOverride', new Locale('en'));
+
+        self::assertSame([
+            'key1' => [
+                [
+                    'source' => 'Source string',
+                    'target' => 'Global differently translated string'
+                ]
+            ]
+        ], $fileData['translationUnits']);
+    }
+
+    /**
+     * @test
+     */
+    public function fileProviderMergesMoreSpecificPackageTranslationsOverGlobalFallbackTranslations()
+    {
+        $fileData = $this->fileProvider->getMergedFileData('Vendor.BasePackage:GlobalOverride', new Locale('de'));
+
+        self::assertSame([
             'key1' => [
                 [
                     'source' => 'Source string',

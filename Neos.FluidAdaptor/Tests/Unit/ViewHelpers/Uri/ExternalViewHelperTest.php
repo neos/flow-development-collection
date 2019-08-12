@@ -24,10 +24,10 @@ class ExternalViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\V
      */
     protected $viewHelper;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
-        $this->viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\Uri\ExternalViewHelper::class, array('renderChildren', 'registerRenderMethodArguments'));
+        $this->viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\Uri\ExternalViewHelper::class, ['renderChildren']);
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
     }
 
@@ -39,7 +39,7 @@ class ExternalViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\V
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['uri' => 'http://www.some-domain.tld']);
         $actualResult = $this->viewHelper->render();
 
-        $this->assertEquals('http://www.some-domain.tld', $actualResult);
+        self::assertEquals('http://www.some-domain.tld', $actualResult);
     }
 
     /**
@@ -50,7 +50,7 @@ class ExternalViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\V
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['uri' => 'www.some-domain.tld']);
         $actualResult = $this->viewHelper->render();
 
-        $this->assertEquals('http://www.some-domain.tld', $actualResult);
+        self::assertEquals('http://www.some-domain.tld', $actualResult);
     }
 
     /**
@@ -61,7 +61,7 @@ class ExternalViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\V
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['uri' => 'some-domain.tld', 'defaultScheme' => 'ftp']);
         $actualResult = $this->viewHelper->render();
 
-        $this->assertEquals('ftp://some-domain.tld', $actualResult);
+        self::assertEquals('ftp://some-domain.tld', $actualResult);
     }
 
     /**
@@ -72,6 +72,6 @@ class ExternalViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\V
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['uri' => 'some-domain.tld', 'defaultScheme' => '']);
         $actualResult = $this->viewHelper->render();
 
-        $this->assertEquals('some-domain.tld', $actualResult);
+        self::assertEquals('some-domain.tld', $actualResult);
     }
 }

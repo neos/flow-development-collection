@@ -12,6 +12,8 @@ namespace Neos\Flow\Security\Authentication;
  */
 
 use Neos\Flow\Security\Context as SecurityContext;
+use Neos\Flow\Security\Exception\AuthenticationRequiredException;
+use Neos\Flow\Security\Exception\NoTokensAuthenticatedException;
 
 /**
  * Contract for an authentication manager.
@@ -22,54 +24,33 @@ use Neos\Flow\Security\Context as SecurityContext;
 interface AuthenticationManagerInterface
 {
     /**
-     * Returns the tokens this manager is responsible for.
-     * Note: The order of the tokens in the array is important, as the tokens will be authenticated in the given order.
-     *
-     * @return array<TokenInterface> An array of tokens this manager is responsible for
-     */
-    public function getTokens();
-
-    /**
-     * Returns all configured authentication providers
-     *
-     * @return array Array of \Neos\Flow\Security\Authentication\AuthenticationProviderInterface
-     */
-    public function getProviders();
-
-    /**
-     * Sets the security context
-     *
-     * @param SecurityContext $securityContext The security context of the current request
-     * @return void
-     */
-    public function setSecurityContext(SecurityContext $securityContext);
-
-    /**
      * Returns the security context
      *
      * @return SecurityContext $securityContext The security context of the current request
      */
-    public function getSecurityContext();
+    public function getSecurityContext(): SecurityContext;
 
     /**
      * Tries to authenticate the tokens in the security context, if needed.
      * (Have a look at the Authentication\TokenManager for an implementation example)
      *
      * @return void
+     * @throws AuthenticationRequiredException
+     * @throws NoTokensAuthenticatedException
      */
-    public function authenticate();
+    public function authenticate(): void;
 
     /**
      * Checks if at least one token is authenticated
      *
-     * @return boolean
+     * @return bool
      */
-    public function isAuthenticated();
+    public function isAuthenticated(): bool;
 
     /**
      * Logs all active authentication tokens out
      *
      * @return void
      */
-    public function logout();
+    public function logout(): void;
 }

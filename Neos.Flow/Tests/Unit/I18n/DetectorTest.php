@@ -27,7 +27,7 @@ class DetectorTest extends UnitTestCase
     /**
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $findBestMatchingLocaleCallback = function () {
             $args = func_get_args();
@@ -77,7 +77,7 @@ class DetectorTest extends UnitTestCase
     public function detectingBestMatchingLocaleFromHttpAcceptLanguageHeaderWorksCorrectly($acceptLanguageHeader, $expectedResult)
     {
         $locale = $this->detector->detectLocaleFromHttpHeader($acceptLanguageHeader);
-        $this->assertEquals($expectedResult, $locale);
+        self::assertEquals($expectedResult, $locale);
     }
 
     /**
@@ -101,6 +101,6 @@ class DetectorTest extends UnitTestCase
     public function detectingBestMatchingLocaleFromLocaleIdentifierWorksCorrectly($localeIdentifier, $expectedResult)
     {
         $locale = $this->detector->detectLocaleFromLocaleTag($localeIdentifier);
-        $this->assertEquals($expectedResult, $locale);
+        self::assertEquals($expectedResult, $locale);
     }
 }

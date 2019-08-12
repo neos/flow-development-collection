@@ -59,6 +59,22 @@ class XliffParser extends AbstractXmlParser
      */
     protected function getFileData(\SimpleXMLElement $file): array
     {
+        /**
+         * If an XLIFF file has no target-language set the source element of a trans-unit is
+         * used to fill the target element, if the target element is left out (as is common
+         * for "source" XLIFF files.)
+         *
+         * @param \SimpleXMLElement $element
+         * @return string
+         */
+        $getTarget = function (\SimpleXMLElement $element) use ($file): string {
+            $hasTargetLanguage = ((string)$file['target-language']) !== '';
+            if ($hasTargetLanguage) {
+                return (string)$element->target;
+            }
+            return (string)($element->target ?? $element->source);
+        };
+
         $parsedFile = [
             'sourceLocale' => new Locale((string)$file['source-language'])
         ];
@@ -70,24 +86,24 @@ class XliffParser extends AbstractXmlParser
                         if (!isset($translationElement['id'])) {
                             throw new InvalidXliffDataException('A trans-unit tag without id attribute was found, validate your XLIFF files.', 1329399257);
                         }
-                        $parsedFile['translationUnits'][(string)$translationElement['id']][0] = array(
+                        $parsedFile['translationUnits'][(string)$translationElement['id']][0] = [
                             'source' => (string)$translationElement->source,
-                            'target' => (string)$translationElement->target,
-                        );
+                            'target' => $getTarget($translationElement),
+                        ];
                     }
                     break;
                 case 'group':
                     if (isset($translationElement['restype']) && (string)$translationElement['restype'] === 'x-gettext-plurals') {
-                        $parsedTranslationElement = array();
+                        $parsedTranslationElement = [];
                         foreach ($translationElement->children() as $translationPluralForm) {
                             if ($translationPluralForm->getName() === 'trans-unit') {
                                 // When using plural forms, ID looks like this: 1[0], 1[1] etc
                                 $formIndex = substr((string)$translationPluralForm['id'], strpos((string)$translationPluralForm['id'], '[') + 1, -1);
 
-                                $parsedTranslationElement[(int)$formIndex] = array(
+                                $parsedTranslationElement[(int)$formIndex] = [
                                     'source' => (string)$translationPluralForm->source,
-                                    'target' => (string)$translationPluralForm->target,
-                                );
+                                    'target' => $getTarget($translationPluralForm),
+                                ];
                             }
                         }
 

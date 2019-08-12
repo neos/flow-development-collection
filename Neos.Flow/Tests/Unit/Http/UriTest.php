@@ -41,7 +41,7 @@ class UriTest extends UnitTestCase
             $uri->getArguments() == ['argument1' => 'value1', 'argument2' => 'value2', 'argument3' => ['subargument1' => 'subvalue1']] &&
             $uri->getFragment() == 'anchor'
         );
-        $this->assertTrue($check, 'The valid and complete URI has not been correctly transformed to an URI object');
+        self::assertTrue($check, 'The valid and complete URI has not been correctly transformed to an URI object');
     }
 
     /**
@@ -56,6 +56,8 @@ class UriTest extends UnitTestCase
             ['http://127.0.0.1/bar.baz.com/foo.js'],
             ['http://localhost:8080?foo=bar'],
             ['http://localhost:443#hashme!x'],
+            ['http://[3b00:f59:1008::212:183:20]'],
+            ['http://[3b00:f59:1008::212:183:20]:443#hashme!x'],
         ];
     }
 
@@ -68,7 +70,7 @@ class UriTest extends UnitTestCase
     public function urisCanBeConvertedForthAndBackWithoutLoss($uriString)
     {
         $uri = new Uri($uriString);
-        $this->assertSame($uriString, (string)$uri);
+        self::assertSame($uriString, (string)$uri);
     }
 
     /**
@@ -81,7 +83,7 @@ class UriTest extends UnitTestCase
         $uri = new Uri('/no/scheme/or/host');
         $uri->setScheme('http');
         $uri->setHost('localhost');
-        $this->assertSame('http://localhost/no/scheme/or/host', (string)$uri);
+        self::assertSame('http://localhost/no/scheme/or/host', (string)$uri);
     }
 
     /**
@@ -90,12 +92,12 @@ class UriTest extends UnitTestCase
     public function toStringOmitsStandardPorts()
     {
         $uri = new Uri('http://flow.neos.io');
-        $this->assertSame('http://flow.neos.io', (string)$uri);
-        $this->assertSame(80, $uri->getPort());
+        self::assertSame('http://flow.neos.io', (string)$uri);
+        self::assertSame(80, $uri->getPort());
 
         $uri = new Uri('https://flow.neos.io');
-        $this->assertSame('https://flow.neos.io', (string)$uri);
-        $this->assertSame(443, $uri->getPort());
+        self::assertSame('https://flow.neos.io', (string)$uri);
+        self::assertSame(443, $uri->getPort());
     }
 
     /**
@@ -113,7 +115,7 @@ class UriTest extends UnitTestCase
             $uri->getQuery() == 'argumentäöü1=value%C3%A5%C3%B8%E2%82%AC%C5%93' &&
             $uri->getArguments() == ['argumentäöü1' => 'valueåø€œ']
         );
-        $this->assertTrue($check, 'The URI with special arguments has not been correctly transformed to an URI object');
+        self::assertTrue($check, 'The URI with special arguments has not been correctly transformed to an URI object');
     }
 
     /**
@@ -123,7 +125,8 @@ class UriTest extends UnitTestCase
     {
         return [
             ['http://www.neos.io/about/project', 'www.neos.io'],
-            ['http://flow.neos.io/foo', 'flow.neos.io']
+            ['http://flow.neos.io/foo', 'flow.neos.io'],
+            ['http://[3b00:f59:1008::212:183:20]', '[3b00:f59:1008::212:183:20]'],
         ];
     }
 
@@ -134,7 +137,7 @@ class UriTest extends UnitTestCase
     public function constructorParsesHostCorrectly($uriString, $expectedHost)
     {
         $uri = new Uri($uriString);
-        $this->assertSame($expectedHost, $uri->getHost());
+        self::assertSame($expectedHost, $uri->getHost());
     }
 
     /**
@@ -145,46 +148,53 @@ class UriTest extends UnitTestCase
     {
         $uri = new Uri('');
         $uri->setHost($plainHost);
-        $this->assertEquals($plainHost, $uri->getHost());
+        self::assertEquals($plainHost, $uri->getHost());
     }
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
      */
     public function settingInvalidHostThrowsException()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $uri = new Uri('');
         $uri->setHost('an#invalid.host');
     }
 
+    public function uriStringTestUris()
+    {
+        return [
+            ['http://username:password@subdomain.domain.com:1234/pathx1/pathx2/index.php?argument1=value1&argument2=value2&argument3[subargument1]=subvalue1#anchorman'],
+            ['http://username:password@[2a00:f48:1008::212:183:10]:1234/pathx1/pathx2/index.php?argument1=value1&argument2=value2&argument3[subargument1]=subvalue1#anchorman'],
+        ];
+    }
     /**
      * Checks if a complete URI with all parts is transformed into an object correctly.
      *
      * @test
+     * @dataProvider uriStringTestUris
      */
-    public function stringRepresentationIsCorrect()
+    public function stringRepresentationIsCorrect($uriString)
     {
-        $uriString = 'http://username:password@subdomain.domain.com:1234/pathx1/pathx2/index.php?argument1=value1&argument2=value2&argument3[subargument1]=subvalue1#anchorman';
         $uri = new Uri($uriString);
-        $this->assertEquals($uriString, (string)$uri, 'The string representation of the URI is not equal to the original URI string.');
+        self::assertEquals($uriString, (string)$uri, 'The string representation of the URI is not equal to the original URI string.');
     }
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
      */
     public function constructingWithNotAStringThrowsException()
     {
+        $this->expectException(\InvalidArgumentException::class);
         new Uri(42);
     }
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
      */
     public function unparsableUriStringThrowsException()
     {
+        $this->expectException(\InvalidArgumentException::class);
         new Uri('http:////localhost');
     }
 }

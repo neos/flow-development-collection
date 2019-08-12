@@ -33,7 +33,7 @@ class IfAccessViewHelperTest extends ViewHelperBaseTestcase
      */
     protected $mockPrivilegeManager;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->mockPrivilegeManager = $this->getMockBuilder(\Neos\Flow\Security\Authorization\PrivilegeManagerInterface::class)->disableOriginalConstructor()->getMock();
 
@@ -49,7 +49,7 @@ class IfAccessViewHelperTest extends ViewHelperBaseTestcase
         $renderingContext = $this->getMockBuilder(RenderingContext::class)->disableOriginalConstructor()->getMock();
         $renderingContext->expects($this->any())->method('getObjectManager')->willReturn($objectManager);
 
-        $this->ifAccessViewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\Security\IfAccessViewHelper::class, array('renderThenChild', 'renderElseChild'));
+        $this->ifAccessViewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\Security\IfAccessViewHelper::class, ['renderThenChild', 'renderElseChild']);
         $this->inject($this->ifAccessViewHelper, 'renderingContext', $renderingContext);
     }
 
@@ -67,7 +67,7 @@ class IfAccessViewHelperTest extends ViewHelperBaseTestcase
         ];
         $this->ifAccessViewHelper->setArguments($arguments);
         $actualResult = $this->ifAccessViewHelper->render();
-        $this->assertEquals('foo', $actualResult);
+        self::assertEquals('foo', $actualResult);
     }
 
     /**
@@ -84,6 +84,6 @@ class IfAccessViewHelperTest extends ViewHelperBaseTestcase
         ];
         $this->ifAccessViewHelper->setArguments($arguments);
         $actualResult = $this->ifAccessViewHelper->render();
-        $this->assertEquals('ElseViewHelperResults', $actualResult);
+        self::assertEquals('ElseViewHelperResults', $actualResult);
     }
 }

@@ -33,10 +33,10 @@ class AbstractXmlParserTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\I18n\Exception\InvalidXmlFileException
      */
     public function throwsExceptionWhenBadFilenameGiven()
     {
+        $this->expectException(I18n\Exception\InvalidXmlFileException::class);
         $mockFilenamePath = 'foo';
 
         $parser = $this->getAccessibleMock(I18n\AbstractXmlParser::class, ['doParsingFromRoot']);

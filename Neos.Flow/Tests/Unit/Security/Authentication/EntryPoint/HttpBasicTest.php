@@ -13,7 +13,6 @@ namespace Neos\Flow\Tests\Unit\Security\Authentication\EntryPoint;
 
 use Neos\Flow\Http\Request;
 use Neos\Flow\Http\Response;
-use Neos\Flow\Http\Uri;
 use Neos\Flow\Security\Authentication\EntryPoint\HttpBasic;
 use Neos\Flow\Tests\UnitTestCase;
 
@@ -39,6 +38,6 @@ class HttpBasicTest extends UnitTestCase
 
         $entryPoint->startAuthentication($mockHttpRequest, $mockResponse);
 
-        $this->assertEquals(['realm' => 'realm string'], $entryPoint->getOptions());
+        self::assertEquals(['realm' => 'realm string'], $entryPoint->getOptions());
     }
 }

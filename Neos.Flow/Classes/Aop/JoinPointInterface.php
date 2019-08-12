@@ -54,11 +54,11 @@ interface JoinPointInterface
     public function getMethodArgument($argumentName);
 
     /**
-     * Returns TRUE if the argument with the specified name exists in the
+     * Returns true if the argument with the specified name exists in the
      * method call this joinpoint refers to.
      *
      * @param string $argumentName Name of the argument to check
-     * @return boolean TRUE if the argument exists
+     * @return boolean true if the argument exists
      */
     public function isMethodArgument($argumentName);
 

@@ -35,7 +35,7 @@ abstract class ViewHelperBaseTestcase extends \Neos\Flow\Tests\UnitTestCase
      *
      * @var array
      */
-    protected $viewHelperVariableContainerData = array();
+    protected $viewHelperVariableContainerData = [];
 
     /**
      * @var \Neos\FluidAdaptor\Core\ViewHelper\TemplateVariableContainer|\PHPUnit_Framework_MockObject_MockObject
@@ -75,11 +75,12 @@ abstract class ViewHelperBaseTestcase extends \Neos\Flow\Tests\UnitTestCase
     /**
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->viewHelperVariableContainer = $this->createMock(\TYPO3Fluid\Fluid\Core\ViewHelper\ViewHelperVariableContainer::class);
-        $this->viewHelperVariableContainer->expects($this->any())->method('exists')->will($this->returnCallback(array($this, 'viewHelperVariableContainerExistsCallback')));
-        $this->viewHelperVariableContainer->expects($this->any())->method('get')->will($this->returnCallback(array($this, 'viewHelperVariableContainerGetCallback')));
+        $this->viewHelperVariableContainer->expects($this->any())->method('exists')->will($this->returnCallback([$this, 'viewHelperVariableContainerExistsCallback']));
+        $this->viewHelperVariableContainer->expects($this->any())->method('get')->will($this->returnCallback([$this, 'viewHelperVariableContainerGetCallback']));
+        $this->viewHelperVariableContainer->expects($this->any())->method('addOrUpdate')->will($this->returnCallback([$this, 'viewHelperVariableContainerAddOrUpdateCallback']));
         $this->templateVariableContainer = $this->createMock(TemplateVariableContainer::class);
         $this->uriBuilder = $this->createMock(\Neos\Flow\Mvc\Routing\UriBuilder::class);
         $this->uriBuilder->expects($this->any())->method('reset')->will($this->returnValue($this->uriBuilder));
@@ -91,13 +92,13 @@ abstract class ViewHelperBaseTestcase extends \Neos\Flow\Tests\UnitTestCase
         $this->uriBuilder->expects($this->any())->method('setArgumentsToBeExcludedFromQueryString')->will($this->returnValue($this->uriBuilder));
         // BACKPORTER TOKEN #1
         $httpRequest = \Neos\Flow\Http\Request::create(new \Neos\Flow\Http\Uri('http://localhost/foo'));
-        $this->request = $this->getMockBuilder(\Neos\Flow\Mvc\ActionRequest::class)->setConstructorArgs(array($httpRequest))->getMock();
+        $this->request = $this->getMockBuilder(\Neos\Flow\Mvc\ActionRequest::class)->setConstructorArgs([$httpRequest])->getMock();
         $this->request->expects($this->any())->method('isMainRequest')->will($this->returnValue(true));
         $this->controllerContext = $this->getMockBuilder(\Neos\Flow\Mvc\Controller\ControllerContext::class)->disableOriginalConstructor()->getMock();
         $this->controllerContext->expects($this->any())->method('getUriBuilder')->will($this->returnValue($this->uriBuilder));
         $this->controllerContext->expects($this->any())->method('getRequest')->will($this->returnValue($this->request));
         $this->tagBuilder = $this->createMock(TagBuilder::class);
-        $this->arguments = array();
+        $this->arguments = [];
         $this->renderingContext = new \Neos\FluidAdaptor\Core\Rendering\RenderingContext(new StandaloneView(), []);
         $this->renderingContext->setVariableProvider($this->templateVariableContainer);
         $this->renderingContext->setViewHelperVariableContainer($this->viewHelperVariableContainer);
@@ -122,6 +123,17 @@ abstract class ViewHelperBaseTestcase extends \Neos\Flow\Tests\UnitTestCase
     public function viewHelperVariableContainerGetCallback($viewHelperName, $key)
     {
         return $this->viewHelperVariableContainerData[$viewHelperName][$key];
+    }
+
+    /**
+     * @param string $viewHelperName
+     * @param string $key
+     * @param mixed $value
+     * @return void
+     */
+    public function viewHelperVariableContainerAddOrUpdateCallback($viewHelperName, $key, $value)
+    {
+        $this->viewHelperVariableContainerData[$viewHelperName][$key] = $value;
     }
 
     /**

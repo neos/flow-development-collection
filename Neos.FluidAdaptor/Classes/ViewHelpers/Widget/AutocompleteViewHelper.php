@@ -42,14 +42,28 @@ class AutocompleteViewHelper extends AbstractWidgetViewHelper
     protected $controller;
 
     /**
+     * Initialize the arguments.
      *
-     * @param QueryResultInterface $objects
-     * @param string $for
-     * @param string $searchProperty
-     * @param array $configuration
-     * @return string
+     * @return void
+     * @throws \Neos\FluidAdaptor\Core\ViewHelper\Exception
      */
-    public function render(QueryResultInterface $objects, $for, $searchProperty, array $configuration = array('limit' => 10))
+    public function initializeArguments()
+    {
+        parent::initializeArguments();
+        $this->registerArgument('objects', QueryResultInterface::class, 'Objects', true);
+        $this->registerArgument('for', 'string', 'for', true);
+        $this->registerArgument('searchProperty', 'string', 'Property to search', true);
+        $this->registerArgument('configuration', 'array', 'Widget configuration', false, ['limit' => 10]);
+    }
+
+    /**
+     *
+     * @return string
+     * @throws \Neos\Flow\Mvc\Exception\InfiniteLoopException
+     * @throws \Neos\FluidAdaptor\Core\Widget\Exception\InvalidControllerException
+     * @throws \Neos\FluidAdaptor\Core\Widget\Exception\MissingControllerException
+     */
+    public function render(): string
     {
         return $this->initiateSubRequest();
     }

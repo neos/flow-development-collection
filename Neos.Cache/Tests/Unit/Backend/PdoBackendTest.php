@@ -15,7 +15,10 @@ include_once(__DIR__ . '/../../BaseTestCase.php');
 
 use Neos\Cache\Backend\PdoBackend;
 use Neos\Cache\EnvironmentConfiguration;
+use Neos\Cache\Exception;
+use Neos\Cache\Frontend\FrontendInterface;
 use Neos\Cache\Tests\BaseTestCase;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Testcase for the PDO cache backend
@@ -36,10 +39,10 @@ class PdoBackendTest extends BaseTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Cache\Exception
      */
     public function setThrowsExceptionIfNoFrontEndHasBeenSet()
     {
+        $this->expectException(Exception::class);
         $backend = new PdoBackend(new EnvironmentConfiguration('SomeApplication Testing', '/some/path', PHP_MAXPATHLEN));
         $data = 'Some data';
         $identifier = 'MyIdentifier';
@@ -55,7 +58,7 @@ class PdoBackendTest extends BaseTestCase
         $data = 'Some data';
         $identifier = 'MyIdentifier';
         $backend->set($identifier, $data);
-        $this->assertTrue($backend->has($identifier));
+        self::assertTrue($backend->has($identifier));
     }
 
     /**
@@ -68,7 +71,7 @@ class PdoBackendTest extends BaseTestCase
         $identifier = 'MyIdentifier';
         $backend->set($identifier, $data);
         $fetchedData = $backend->get($identifier);
-        $this->assertEquals($data, $fetchedData);
+        self::assertEquals($data, $fetchedData);
     }
 
     /**
@@ -81,7 +84,7 @@ class PdoBackendTest extends BaseTestCase
         $identifier = 'MyIdentifier';
         $backend->set($identifier, $data);
         $backend->remove($identifier);
-        $this->assertFalse($backend->has($identifier));
+        self::assertFalse($backend->has($identifier));
     }
 
     /**
@@ -96,7 +99,7 @@ class PdoBackendTest extends BaseTestCase
         $otherData = 'some other data';
         $backend->set($identifier, $otherData);
         $fetchedData = $backend->get($identifier);
-        $this->assertEquals($otherData, $fetchedData);
+        self::assertEquals($otherData, $fetchedData);
     }
 
     /**
@@ -111,10 +114,10 @@ class PdoBackendTest extends BaseTestCase
         $backend->set($entryIdentifier, $data, ['UnitTestTag%tag1', 'UnitTestTag%tag2']);
 
         $retrieved = $backend->findIdentifiersByTag('UnitTestTag%tag1');
-        $this->assertEquals($entryIdentifier, $retrieved[0]);
+        self::assertEquals($entryIdentifier, $retrieved[0]);
 
         $retrieved = $backend->findIdentifiersByTag('UnitTestTag%tag2');
-        $this->assertEquals($entryIdentifier, $retrieved[0]);
+        self::assertEquals($entryIdentifier, $retrieved[0]);
     }
 
     /**
@@ -130,7 +133,7 @@ class PdoBackendTest extends BaseTestCase
         $backend->set($entryIdentifier, $data, ['UnitTestTag%tag3']);
 
         $retrieved = $backend->findIdentifiersByTag('UnitTestTag%tag2');
-        $this->assertEquals([], $retrieved);
+        self::assertEquals([], $retrieved);
     }
 
     /**
@@ -140,7 +143,7 @@ class PdoBackendTest extends BaseTestCase
     {
         $backend = $this->setUpBackend();
         $identifier = 'NonExistingIdentifier';
-        $this->assertFalse($backend->has($identifier));
+        self::assertFalse($backend->has($identifier));
     }
 
     /**
@@ -150,7 +153,7 @@ class PdoBackendTest extends BaseTestCase
     {
         $backend = $this->setUpBackend();
         $identifier = 'NonExistingIdentifier';
-        $this->assertFalse($backend->remove($identifier));
+        self::assertFalse($backend->remove($identifier));
     }
 
     /**
@@ -167,9 +170,9 @@ class PdoBackendTest extends BaseTestCase
 
         $backend->flushByTag('UnitTestTag%special');
 
-        $this->assertTrue($backend->has('PdoBackendTest1'), 'PdoBackendTest1');
-        $this->assertFalse($backend->has('PdoBackendTest2'), 'PdoBackendTest2');
-        $this->assertTrue($backend->has('PdoBackendTest3'), 'PdoBackendTest3');
+        self::assertTrue($backend->has('PdoBackendTest1'), 'PdoBackendTest1');
+        self::assertFalse($backend->has('PdoBackendTest2'), 'PdoBackendTest2');
+        self::assertTrue($backend->has('PdoBackendTest3'), 'PdoBackendTest3');
     }
 
     /**
@@ -186,9 +189,9 @@ class PdoBackendTest extends BaseTestCase
 
         $backend->flush();
 
-        $this->assertFalse($backend->has('PdoBackendTest1'), 'PdoBackendTest1');
-        $this->assertFalse($backend->has('PdoBackendTest2'), 'PdoBackendTest2');
-        $this->assertFalse($backend->has('PdoBackendTest3'), 'PdoBackendTest3');
+        self::assertFalse($backend->has('PdoBackendTest1'), 'PdoBackendTest1');
+        self::assertFalse($backend->has('PdoBackendTest2'), 'PdoBackendTest2');
+        self::assertFalse($backend->has('PdoBackendTest3'), 'PdoBackendTest3');
     }
 
     /**
@@ -196,12 +199,12 @@ class PdoBackendTest extends BaseTestCase
      */
     public function flushRemovesOnlyOwnEntries()
     {
-        $thisCache = $this->getMockBuilder(\Neos\Cache\Frontend\FrontendInterface::class)->disableOriginalConstructor()->getMock();
+        $thisCache = $this->getMockBuilder(FrontendInterface::class)->disableOriginalConstructor()->getMock();
         $thisCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('thisCache'));
         $thisBackend = $this->setUpBackend();
         $thisBackend->setCache($thisCache);
 
-        $thatCache = $this->getMockBuilder(\Neos\Cache\Frontend\FrontendInterface::class)->disableOriginalConstructor()->getMock();
+        $thatCache = $this->getMockBuilder(FrontendInterface::class)->disableOriginalConstructor()->getMock();
         $thatCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('thatCache'));
         $thatBackend = $this->setUpBackend();
         $thatBackend->setCache($thatCache);
@@ -210,8 +213,8 @@ class PdoBackendTest extends BaseTestCase
         $thatBackend->set('thatEntry', 'World!');
         $thatBackend->flush();
 
-        $this->assertEquals('Hello', $thisBackend->get('thisEntry'));
-        $this->assertFalse($thatBackend->has('thatEntry'));
+        self::assertEquals('Hello', $thisBackend->get('thisEntry'));
+        self::assertFalse($thatBackend->has('thatEntry'));
     }
 
     /**
@@ -221,19 +224,18 @@ class PdoBackendTest extends BaseTestCase
      */
     protected function setUpBackend()
     {
-        $mockCache = $this->getMockBuilder(\Neos\Cache\Frontend\FrontendInterface::class)->disableOriginalConstructor()->getMock();
+        /** @var FrontendInterface|MockObject $mockCache */
+        $mockCache = $this->getMockBuilder(FrontendInterface::class)->disableOriginalConstructor()->getMock();
         $mockCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('TestCache'));
 
-        $mockEnvironmentConfiguration = $this->getMockBuilder(\Neos\Cache\EnvironmentConfiguration::class)->setConstructorArgs([
+        $mockEnvironmentConfiguration = $this->getMockBuilder(EnvironmentConfiguration::class)->setConstructorArgs([
             __DIR__ . '~Testing',
             'vfs://Foo/',
             255
         ])->getMock();
 
-        $backend = new PdoBackend($mockEnvironmentConfiguration);
+        $backend = new PdoBackend($mockEnvironmentConfiguration, ['dataSourceName' => 'sqlite::memory:']);
         $backend->setCache($mockCache);
-        $backend->setDataSourceName('sqlite::memory:');
-        $backend->initializeObject();
 
         return $backend;
     }

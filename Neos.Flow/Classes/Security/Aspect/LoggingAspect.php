@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Flow\Security\Aspect;
 
 /*
@@ -13,8 +15,7 @@ namespace Neos\Flow\Security\Aspect;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Aop\JoinPointInterface;
-use Neos\Flow\Log\SecurityLoggerInterface;
-use Neos\Flow\Security\Account;
+use Neos\Flow\Log\PsrSecurityLoggerInterface;
 use Neos\Flow\Security\Authentication\AuthenticationManagerInterface;
 use Neos\Flow\Security\Authentication\TokenInterface;
 use Neos\Flow\Security\Exception\NoTokensAuthenticatedException;
@@ -28,7 +29,7 @@ use Neos\Flow\Security\Exception\NoTokensAuthenticatedException;
 class LoggingAspect
 {
     /**
-     * @var SecurityLoggerInterface
+     * @var PsrSecurityLoggerInterface
      * @Flow\Inject
      */
     protected $securityLogger;
@@ -51,19 +52,24 @@ class LoggingAspect
         if ($joinPoint->hasException()) {
             $exception = $joinPoint->getException();
             if (!$exception instanceof NoTokensAuthenticatedException) {
-                $this->securityLogger->log(sprintf('Authentication failed: "%s" #%d', $exception->getMessage(), $exception->getCode()), LOG_NOTICE);
+                $this->securityLogger->notice(sprintf('Authentication failed: "%s" #%d', $exception->getMessage(), $exception->getCode()), $this->getLogEnvironmentFromJoinPoint($joinPoint));
             }
             throw $exception;
-        } elseif ($this->alreadyLoggedAuthenticateCall === false) {
-            /** @var AuthenticationManagerInterface $authenticationManager */
-            $authenticationManager = $joinPoint->getProxy();
-            if ($authenticationManager->getSecurityContext()->getAccount() !== null) {
-                $this->securityLogger->log(sprintf('Successfully re-authenticated tokens for account "%s"', $authenticationManager->getSecurityContext()->getAccount()->getAccountIdentifier()), LOG_INFO);
-            } else {
-                $this->securityLogger->log('No account authenticated', LOG_INFO);
-            }
-            $this->alreadyLoggedAuthenticateCall = true;
         }
+
+        if ($this->alreadyLoggedAuthenticateCall) {
+            return;
+        }
+
+        $this->alreadyLoggedAuthenticateCall = true;
+        /** @var AuthenticationManagerInterface $authenticationManager */
+        $authenticationManager = $joinPoint->getProxy();
+        $logMessage = 'No account authenticated';
+        if ($authenticationManager->getSecurityContext()->getAccount() !== null) {
+            $logMessage = sprintf('Successfully re-authenticated tokens for account "%s"', $authenticationManager->getSecurityContext()->getAccount()->getAccountIdentifier());
+        }
+
+        $this->securityLogger->info($logMessage, $this->getLogEnvironmentFromJoinPoint($joinPoint));
     }
 
     /**
@@ -81,15 +87,31 @@ class LoggingAspect
         if (!$securityContext->isInitialized()) {
             return;
         }
+
         $accountIdentifiers = [];
         foreach ($securityContext->getAuthenticationTokens() as $token) {
-            /** @var $account Account */
             $account = $token->getAccount();
             if ($account !== null) {
                 $accountIdentifiers[] = $account->getAccountIdentifier();
             }
         }
-        $this->securityLogger->log(sprintf('Logged out %d account(s). (%s)', count($accountIdentifiers), implode(', ', $accountIdentifiers)), LOG_INFO);
+
+        $this->securityLogger->info(sprintf('Logged out %d account(s). (%s)', count($accountIdentifiers), implode(', ', $accountIdentifiers)), $this->getLogEnvironmentFromJoinPoint($joinPoint));
+    }
+
+    /**
+     * @param array $collectedIdentifiers
+     * @param TokenInterface $token
+     * @return array
+     */
+    protected function reduceTokenToAccountIdentifier(array $collectedIdentifiers, TokenInterface $token): array
+    {
+        $account = $token->getAccount();
+        if ($account !== null) {
+            $collectedIdentifiers[] = $account->getAccountIdentifier();
+        }
+
+        return $collectedIdentifiers;
     }
 
     /**
@@ -105,15 +127,15 @@ class LoggingAspect
 
         switch ($token->getAuthenticationStatus()) {
             case TokenInterface::AUTHENTICATION_SUCCESSFUL:
-                $this->securityLogger->log(sprintf('Successfully authenticated token: %s', $token), LOG_NOTICE, [], 'Neos.Flow', $joinPoint->getClassName(), $joinPoint->getMethodName());
+                $this->securityLogger->notice(sprintf('Successfully authenticated token: %s', $token), $this->getLogEnvironmentFromJoinPoint($joinPoint));
                 $this->alreadyLoggedAuthenticateCall = true;
-            break;
+                break;
             case TokenInterface::WRONG_CREDENTIALS:
-                $this->securityLogger->log(sprintf('Wrong credentials given for token: %s', $token), LOG_WARNING, [], 'Neos.Flow', $joinPoint->getClassName(), $joinPoint->getMethodName());
-            break;
+                $this->securityLogger->warning(sprintf('Wrong credentials given for token: %s', $token), $this->getLogEnvironmentFromJoinPoint($joinPoint));
+                break;
             case TokenInterface::NO_CREDENTIALS_GIVEN:
-                $this->securityLogger->log(sprintf('No credentials given or no account found for token: %s', $token), LOG_WARNING, [], 'Neos.Flow', $joinPoint->getClassName(), $joinPoint->getMethodName());
-            break;
+                $this->securityLogger->warning(sprintf('No credentials given or no account found for token: %s', $token), $this->getLogEnvironmentFromJoinPoint($joinPoint));
+                break;
         }
     }
 
@@ -129,7 +151,7 @@ class LoggingAspect
         $subjectJoinPoint = $joinPoint->getMethodArgument('subject');
         $decision = $joinPoint->getResult() === true ? 'GRANTED' : 'DENIED';
         $message = sprintf('Decided "%s" on method call %s::%s().', $decision, $subjectJoinPoint->getClassName(), $subjectJoinPoint->getMethodName());
-        $this->securityLogger->log($message, \LOG_INFO);
+        $this->securityLogger->info($message, $this->getLogEnvironmentFromJoinPoint($joinPoint));
     }
 
     /**
@@ -143,6 +165,19 @@ class LoggingAspect
     {
         $decision = $joinPoint->getResult() === true ? 'GRANTED' : 'DENIED';
         $message = sprintf('Decided "%s" on privilege "%s".', $decision, $joinPoint->getMethodArgument('privilegeTargetIdentifier'));
-        $this->securityLogger->log($message, \LOG_INFO);
+        $this->securityLogger->info($message, $this->getLogEnvironmentFromJoinPoint($joinPoint));
+    }
+
+    /**
+     * @param JoinPointInterface $joinPoint
+     * @return array
+     */
+    protected function getLogEnvironmentFromJoinPoint(JoinPointInterface $joinPoint): array
+    {
+        return ['FLOW_LOG_ENVIRONMENT' => [
+            'packageKey' => 'Neos.Flow',
+            'className' => $joinPoint->getClassName(),
+            'methodName' => $joinPoint->getMethodName()
+        ]];
     }
 }

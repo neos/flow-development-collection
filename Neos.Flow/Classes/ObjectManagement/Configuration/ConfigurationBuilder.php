@@ -11,17 +11,16 @@ namespace Neos\Flow\ObjectManagement\Configuration;
  * source code.
  */
 
-use Doctrine\ORM\Mapping as ORM;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Annotations\Inject;
 use Neos\Flow\Annotations\InjectConfiguration;
 use Neos\Flow\Configuration\ConfigurationManager;
-use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\ObjectManagement\Exception as ObjectException;
 use Neos\Flow\ObjectManagement\Exception\InvalidObjectConfigurationException;
 use Neos\Flow\ObjectManagement\Exception\UnknownClassException;
 use Neos\Flow\ObjectManagement\Exception\UnresolvedDependenciesException;
 use Neos\Flow\Reflection\ReflectionService;
+use Psr\Log\LoggerInterface;
 
 /**
  * Object Configuration Builder which can build object configuration objects
@@ -39,9 +38,9 @@ class ConfigurationBuilder
     protected $reflectionService;
 
     /**
-     * @var SystemLoggerInterface
+     * @var LoggerInterface
      */
-    protected $systemLogger;
+    protected $logger;
 
     /**
      * @param ReflectionService $reflectionService
@@ -53,12 +52,14 @@ class ConfigurationBuilder
     }
 
     /**
-     * @param SystemLoggerInterface $systemLogger
+     * Injects the (system) logger based on PSR-3.
+     *
+     * @param LoggerInterface $logger
      * @return void
      */
-    public function injectSystemLogger(SystemLoggerInterface $systemLogger)
+    public function injectLogger(LoggerInterface $logger)
     {
-        $this->systemLogger = $systemLogger;
+        $this->logger = $logger;
     }
 
     /**
@@ -368,13 +369,22 @@ class ConfigurationBuilder
                 continue;
             }
 
+            if ($objectConfiguration->getAutowiring() === Configuration::AUTOWIRING_MODE_OFF) {
+                continue;
+            }
+
+
             $className = $objectConfiguration->getClassName();
             if (!$this->reflectionService->hasMethod($className, '__construct')) {
                 continue;
             }
 
-            $arguments = $objectConfiguration->getArguments();
             $autowiringAnnotation = $this->reflectionService->getMethodAnnotation($className, '__construct', Flow\Autowiring::class);
+            if ($autowiringAnnotation !== null && $autowiringAnnotation->enabled === false) {
+                continue;
+            }
+
+            $arguments = $objectConfiguration->getArguments();
             foreach ($this->reflectionService->getMethodParameters($className, '__construct') as $parameterName => $parameterInformation) {
                 $debuggingHint = '';
                 $index = $parameterInformation['position'] + 1;
@@ -390,11 +400,6 @@ class ConfigurationBuilder
                         $arguments[$index]->setAutowiring(Configuration::AUTOWIRING_MODE_OFF);
                     } elseif (interface_exists($parameterInformation['class'])) {
                         $debuggingHint = sprintf('No default implementation for the required interface %s was configured, therefore no specific class name could be used for this dependency. ', $parameterInformation['class']);
-                    }
-
-                    if (isset($arguments[$index]) && ($objectConfiguration->getAutowiring() === Configuration::AUTOWIRING_MODE_OFF || $autowiringAnnotation !== null && $autowiringAnnotation->enabled === false)) {
-                        $arguments[$index]->setAutowiring(Configuration::AUTOWIRING_MODE_OFF);
-                        $arguments[$index]->set($index, null);
                     }
                 }
 
@@ -424,6 +429,10 @@ class ConfigurationBuilder
             if ($className === '') {
                 continue;
             }
+            if ($objectConfiguration->getAutowiring() === Configuration::AUTOWIRING_MODE_OFF) {
+                continue;
+            }
+
             $classMethodNames = get_class_methods($className);
             if (!is_array($classMethodNames)) {
                 if (!class_exists($className)) {
@@ -452,12 +461,12 @@ class ConfigurationBuilder
                         }
                         $methodParameters = $this->reflectionService->getMethodParameters($className, $methodName);
                         if (count($methodParameters) !== 1) {
-                            $this->systemLogger->log(sprintf('Could not autowire property %s because %s() expects %s instead of exactly 1 parameter.', $className . '::' . $propertyName, $methodName, (count($methodParameters) ?: 'none')), LOG_DEBUG);
+                            $this->logger->debug(sprintf('Could not autowire property %s because %s() expects %s instead of exactly 1 parameter.', $className . '::' . $propertyName, $methodName, (count($methodParameters) ?: 'none')));
                             continue;
                         }
                         $methodParameter = array_pop($methodParameters);
                         if ($methodParameter['class'] === null) {
-                            $this->systemLogger->log(sprintf('Could not autowire property %s because the method parameter in %s() contained no class type hint.', $className . '::' . $propertyName, $methodName), LOG_DEBUG);
+                            $this->logger->debug(sprintf('Could not autowire property %s because the method parameter in %s() contained no class type hint.', $className . '::' . $propertyName, $methodName));
                             continue;
                         }
                         $properties[$propertyName] = new ConfigurationProperty($propertyName, $methodParameter['class'], ConfigurationProperty::PROPERTY_TYPES_OBJECT);
@@ -467,7 +476,7 @@ class ConfigurationBuilder
 
             foreach ($this->reflectionService->getPropertyNamesByAnnotation($className, Inject::class) as $propertyName) {
                 if ($this->reflectionService->isPropertyPrivate($className, $propertyName)) {
-                    throw new ObjectException(sprintf('The property "%%s" in class "%s" must not be private when annotated for injection.', $propertyName, $className), 1328109641);
+                    throw new ObjectException(sprintf('The property "%s" in class "%s" must not be private when annotated for injection.', $propertyName, $className), 1328109641);
                 }
                 if (!array_key_exists($propertyName, $properties)) {
                     /** @var Inject $injectAnnotation */

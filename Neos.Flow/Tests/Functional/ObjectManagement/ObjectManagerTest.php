@@ -26,8 +26,8 @@ class ObjectManagerTest extends FunctionalTestCase
         $objectByInterface = $this->objectManager->get(Fixtures\InterfaceA::class);
         $objectByClassName = $this->objectManager->get(Fixtures\InterfaceAImplementation::class);
 
-        $this->assertInstanceOf(Fixtures\InterfaceAImplementation::class, $objectByInterface);
-        $this->assertInstanceOf(Fixtures\InterfaceAImplementation::class, $objectByClassName);
+        self::assertInstanceOf(Fixtures\InterfaceAImplementation::class, $objectByInterface);
+        self::assertInstanceOf(Fixtures\InterfaceAImplementation::class, $objectByClassName);
     }
 
     /**
@@ -38,7 +38,7 @@ class ObjectManagerTest extends FunctionalTestCase
         $instanceA = new Fixtures\PrototypeClassB();
         $instanceB = new Fixtures\PrototypeClassB();
 
-        $this->assertNotSame($instanceA, $instanceB);
+        self::assertNotSame($instanceA, $instanceB);
     }
 
     /**
@@ -49,7 +49,7 @@ class ObjectManagerTest extends FunctionalTestCase
         $objectByInterface = $this->objectManager->get(Fixtures\InterfaceA::class);
         $objectByClassName = $this->objectManager->get(Fixtures\InterfaceAImplementation::class);
 
-        $this->assertSame($objectByInterface, $objectByClassName);
+        self::assertSame($objectByInterface, $objectByClassName);
     }
 
     /**
@@ -62,10 +62,10 @@ class ObjectManagerTest extends FunctionalTestCase
 
         /**
          * When shutting down the ObjectManager shutdownObject() on Fixtures\TestEntityWithShutdown is called
-         * and sets $destructed property to TRUE
+         * and sets $destructed property to true
          */
         \Neos\Flow\Core\Bootstrap::$staticObjectManager->shutdown();
 
-        $this->assertTrue($entity->isDestructed());
+        self::assertTrue($entity->isDestructed());
     }
 }

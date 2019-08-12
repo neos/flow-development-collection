@@ -27,9 +27,9 @@ class Pbkdf2HashingStrategyTest extends UnitTestCase
         $strategy = new Pbkdf2HashingStrategy(8, 1000, 64, 'sha256');
         $derivedKeyWithSalt = $strategy->hashPassword('password', 'MyStaticSalt');
 
-        $this->assertTrue($strategy->validatePassword('password', $derivedKeyWithSalt, 'MyStaticSalt'));
-        $this->assertFalse($strategy->validatePassword('pass', $derivedKeyWithSalt, 'MyStaticSalt'));
-        $this->assertFalse($strategy->validatePassword('password', $derivedKeyWithSalt, 'SomeSalt'));
+        self::assertTrue($strategy->validatePassword('password', $derivedKeyWithSalt, 'MyStaticSalt'));
+        self::assertFalse($strategy->validatePassword('pass', $derivedKeyWithSalt, 'MyStaticSalt'));
+        self::assertFalse($strategy->validatePassword('password', $derivedKeyWithSalt, 'SomeSalt'));
     }
 
     /**
@@ -40,10 +40,10 @@ class Pbkdf2HashingStrategyTest extends UnitTestCase
         $strategy = new Pbkdf2HashingStrategy(8, 1000, 64, 'sha256');
         $derivedKeyWithSalt = $strategy->hashPassword('password', 'MyStaticSalt');
 
-        $this->assertFalse($strategy->validatePassword('pass', $derivedKeyWithSalt, 'MyStaticSalt'), 'Different password should not match');
-        $this->assertFalse($strategy->validatePassword('password', $derivedKeyWithSalt, 'SomeSalt'), 'Different static salt should not match');
+        self::assertFalse($strategy->validatePassword('pass', $derivedKeyWithSalt, 'MyStaticSalt'), 'Different password should not match');
+        self::assertFalse($strategy->validatePassword('password', $derivedKeyWithSalt, 'SomeSalt'), 'Different static salt should not match');
 
         $strategy = new Pbkdf2HashingStrategy(8, 99, 64, 'sha256');
-        $this->assertFalse($strategy->validatePassword('password', $derivedKeyWithSalt, 'MyStaticSalt'), 'Different iteration should not match');
+        self::assertFalse($strategy->validatePassword('password', $derivedKeyWithSalt, 'MyStaticSalt'), 'Different iteration should not match');
     }
 }

@@ -16,7 +16,7 @@ use Neos\Flow\Cli\CommandController;
 use Neos\Error\Messages\Message;
 use Neos\Flow\Exception;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use Neos\Flow\Package\PackageManagerInterface;
+use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\ResourceManagement\CollectionInterface;
 use Neos\Flow\ResourceManagement\Publishing\MessageCollector;
@@ -54,7 +54,7 @@ class ResourceCommandController extends CommandController
 
     /**
      * @Flow\Inject
-     * @var PackageManagerInterface
+     * @var PackageManager
      */
     protected $packageManager;
 
@@ -150,27 +150,26 @@ class ResourceCommandController extends CommandController
         $sourceCollectionName = $sourceCollection;
         $sourceCollection = $this->resourceManager->getCollection($sourceCollectionName);
         if ($sourceCollection === null) {
-            $this->outputLine('The source collection "%s" does not exist.', array($sourceCollectionName));
+            $this->outputLine('The source collection "%s" does not exist.', [$sourceCollectionName]);
             $this->quit(1);
         }
 
         $targetCollectionName = $targetCollection;
         $targetCollection = $this->resourceManager->getCollection($targetCollection);
         if ($targetCollection === null) {
-            $this->outputLine('The target collection "%s" does not exist.', array($targetCollectionName));
+            $this->outputLine('The target collection "%s" does not exist.', [$targetCollectionName]);
             $this->quit(1);
         }
 
         if (!empty($targetCollection->getObjects())) {
-            $this->outputLine('The target collection "%s" is not empty.', array($targetCollectionName));
+            $this->outputLine('The target collection "%s" is not empty.', [$targetCollectionName]);
             $this->quit(1);
         }
 
-        $sourceObjects = $sourceCollection->getObjects();
         $this->outputLine('Copying resource objects from collection "%s" to collection "%s" ...', [$sourceCollectionName, $targetCollectionName]);
         $this->outputLine();
 
-        $this->output->progressStart(count($sourceObjects));
+        $this->output->progressStart();
         foreach ($sourceCollection->getObjects() as $resource) {
             /** @var \Neos\Flow\ResourceManagement\Storage\StorageObject $resource */
             $this->output->progressAdvance();

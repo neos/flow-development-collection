@@ -12,8 +12,6 @@ namespace Neos\Flow\Cli;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Cli\Command;
-use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Mvc\Exception\AmbiguousCommandIdentifierException;
 use Neos\Flow\Mvc\Exception\CommandException;
@@ -204,25 +202,29 @@ class CommandManager
     }
 
     /**
-     * Returns TRUE if the specified command identifier matches the identifier of the specified command.
+     * Returns true if the specified command identifier matches the identifier of the specified command.
      * This is the case, if
      *  - the identifiers are the same
-     *  - if at least the last two command parts match (case sensitive) or
-     *  - if only the package key is specified and matches the commands package key
+     *  - if at least the last two command parts match (case sensitive)
+     *  - if only the package key is specified and matches the commands package key (case insensitive) or
+     *  - if the commandIdentifier matches the second command part (CommandController name, case insensitive)
      * The first part (package key) can be reduced to the last subpackage, as long as the result is unambiguous.
      *
      * @param Command $command
      * @param string $commandIdentifier command identifier in the format foo:bar:baz (all lower case)
-     * @return boolean TRUE if the specified command identifier matches this commands identifier
+     * @return boolean true if the specified command identifier matches this commands identifier
      */
     protected function commandMatchesIdentifier(Command $command, string $commandIdentifier): bool
     {
         $commandIdentifierParts = explode(':', $command->getCommandIdentifier());
+        if (strpos($commandIdentifier, ':') === false && strpos($commandIdentifier, '.') === false) {
+            return $commandIdentifier === $commandIdentifierParts[1];
+        }
         $searchedCommandIdentifierParts = explode(':', $commandIdentifier);
-        $packageKey = array_shift($commandIdentifierParts);
+        $packageKey = strtolower(array_shift($commandIdentifierParts));
         $searchedCommandIdentifierPartsCount = count($searchedCommandIdentifierParts);
         if ($searchedCommandIdentifierPartsCount === 3 || $searchedCommandIdentifierPartsCount === 1) {
-            $searchedPackageKey = array_shift($searchedCommandIdentifierParts);
+            $searchedPackageKey = strtolower(array_shift($searchedCommandIdentifierParts));
             if ($searchedPackageKey !== $packageKey
                 && substr($packageKey, -(strlen($searchedPackageKey) + 1)) !== '.' . $searchedPackageKey
             ) {

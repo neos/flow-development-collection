@@ -12,7 +12,9 @@ namespace Neos\FluidAdaptor\Core\Widget;
  */
 
 use Neos\Flow\Http\Response;
+use Neos\Flow\Http\Uri;
 use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Exception\ForwardException;
 use Neos\Flow\Mvc\Exception\InfiniteLoopException;
 use Neos\Flow\Mvc\Exception\StopActionException;
@@ -44,7 +46,7 @@ abstract class AbstractWidgetViewHelper extends AbstractViewHelper implements Ch
     protected $controller;
 
     /**
-     * If set to TRUE, it is an AJAX widget.
+     * If set to true, it is an AJAX widget.
      *
      * @var boolean
      * @api
@@ -52,10 +54,10 @@ abstract class AbstractWidgetViewHelper extends AbstractViewHelper implements Ch
     protected $ajaxWidget = false;
 
     /**
-     * If set to FALSE, this widget won't create a session (only relevant for AJAX widgets).
+     * If set to false, this widget won't create a session (only relevant for AJAX widgets).
      *
      * You then need to manually add the serialized configuration data to your links, by
-     * setting "includeWidgetContext" to TRUE in the widget link and URI ViewHelpers.
+     * setting "includeWidgetContext" to true in the widget link and URI ViewHelpers.
      *
      * @var boolean
      * @api
@@ -208,8 +210,9 @@ abstract class AbstractWidgetViewHelper extends AbstractViewHelper implements Ch
 
         /** @var $subRequest ActionRequest */
         $subRequest = $this->objectManager->get(ActionRequest::class, $this->controllerContext->getRequest());
-        /** @var $subResponse Response */
-        $subResponse = $this->objectManager->get(Response::class, $this->controllerContext->getResponse());
+
+        // TODO: For next major with the PSR-7 / ActionResponse rework this must be re-evaluated and adjusted.
+        $subResponse = new ActionResponse($this->controllerContext->getResponse());
 
         $this->passArgumentsToSubRequest($subRequest);
         $subRequest->setArgument('__widgetContext', $this->widgetContext);
@@ -232,12 +235,19 @@ abstract class AbstractWidgetViewHelper extends AbstractViewHelper implements Ch
                     $subRequest = $exception->getNextRequest();
                     continue;
                 }
-                /** @var $parentResponse Response */
+
+                /** @var $parentResponse ActionResponse */
                 $parentResponse = $this->controllerContext->getResponse();
-                $parentResponse
-                    ->setStatus($subResponse->getStatusCode())
-                    ->setContent($subResponse->getContent())
-                    ->setHeader('Location', $subResponse->getHeader('Location'));
+                $parentResponse->setContent($subResponse->getContent());
+                $parentResponse->setStatusCode($subResponse->getStatusCode());
+                try {
+                    // TODO: With next major this part should just apply the sub (action) response to the parent (action) response
+                    $redirectUri = new Uri($subResponse->getHeader('Location'));
+                    $parentResponse->setRedirectUri($redirectUri, $subResponse->getStatusCode());
+                } catch (\InvalidArgumentException $innerException) {
+                    // FIXME: What do we do in this case? (probably nothing because there might not have been a location header).
+                }
+
                 throw $exception;
             }
         }

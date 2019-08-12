@@ -159,6 +159,10 @@ class DateTimeConverter extends AbstractTypeConverter
             } catch (\Exception $exception) {
                 throw new TypeConverterException('The specified timezone "' . $source['timezone'] . '" is invalid.', 1308240974);
             }
+            if (isset($source['timezone_type'])) {
+                // DateTime internal format when being serialized with json_encode
+                $dateFormat = "Y-m-d H:i:s.u";
+            }
             $date = $targetType::createFromFormat($dateFormat, $dateAsString, $timezone);
         } else {
             $date = $targetType::createFromFormat($dateFormat, $dateAsString);

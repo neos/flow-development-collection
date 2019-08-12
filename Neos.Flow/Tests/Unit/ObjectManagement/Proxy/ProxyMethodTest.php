@@ -48,7 +48,7 @@ class ProxyMethodTest extends \Neos\Flow\Tests\UnitTestCase
             '     * @\Neos\Flow\Annotations\Validate(type="bar2", argumentName="foo2")' . chr(10) .
             '     * @\Neos\Flow\Annotations\SkipCsrfProtection' . chr(10) .
             '     */' . chr(10);
-        $this->assertEquals($expected, $methodDocumentation);
+        self::assertEquals($expected, $methodDocumentation);
     }
 
     /**
@@ -62,7 +62,7 @@ class ProxyMethodTest extends \Neos\Flow\Tests\UnitTestCase
              * @param string $arg1 Arg1
              */
             class ' . $className . ' {
-                public function foo($arg1, array $arg2, \ArrayObject $arg3, $arg4= "foo", $arg5 = TRUE, array $arg6 = array(TRUE, \'foo\' => \'bar\', NULL, 3 => 1, 2.3)) {}
+                public function foo($arg1, array $arg2, \ArrayObject $arg3, $arg4= "foo", $arg5 = true, array $arg6 = array(true, \'foo\' => \'bar\', NULL, 3 => 1, 2.3)) {}
             }
         ');
         $methodParameters = [
@@ -80,7 +80,7 @@ class ProxyMethodTest extends \Neos\Flow\Tests\UnitTestCase
                 'byReference' => false,
                 'array' => true,
                 'optional' => false,
-                'allowsNull' => true,
+                'allowsNull' => false,
                 'class' => null,
                 'scalarDeclaration' => false
             ],
@@ -89,7 +89,7 @@ class ProxyMethodTest extends \Neos\Flow\Tests\UnitTestCase
                 'byReference' => false,
                 'array' => false,
                 'optional' => false,
-                'allowsNull' => true,
+                'allowsNull' => false,
                 'class' => 'ArrayObject',
                 'scalarDeclaration' => false
             ],
@@ -118,7 +118,7 @@ class ProxyMethodTest extends \Neos\Flow\Tests\UnitTestCase
                 'byReference' => false,
                 'array' => true,
                 'optional' => true,
-                'allowsNull' => true,
+                'allowsNull' => false,
                 'class' => null,
                 'defaultValue' => [0 => true, 'foo' => 'bar', 1 => null, 3 => 1, 4 => 2.3],
                 'scalarDeclaration' => false
@@ -128,13 +128,13 @@ class ProxyMethodTest extends \Neos\Flow\Tests\UnitTestCase
         $mockReflectionService = $this->createMock(ReflectionService::class);
         $mockReflectionService->expects($this->atLeastOnce())->method('getMethodParameters')->will($this->returnValue($methodParameters));
 
-        $expectedCode = '$arg1, array $arg2, \ArrayObject $arg3, $arg4 = \'foo\', $arg5 = TRUE, array $arg6 = array(0 => TRUE, \'foo\' => \'bar\', 1 => NULL, 3 => 1, 4 => 2.3)';
+        $expectedCode = '$arg1, array $arg2, \ArrayObject $arg3, $arg4 = \'foo\', $arg5 = true, array $arg6 = array(0 => true, \'foo\' => \'bar\', 1 => NULL, 3 => 1, 4 => 2.3)';
 
         $builder = $this->getMockBuilder(ProxyMethod::class)->disableOriginalConstructor()->setMethods(['dummy'])->getMock();
         $builder->injectReflectionService($mockReflectionService);
 
         $actualCode = $builder->buildMethodParametersCode($className, 'foo', true);
-        $this->assertSame($expectedCode, $actualCode);
+        self::assertSame($expectedCode, $actualCode);
     }
 
     /**
@@ -145,7 +145,7 @@ class ProxyMethodTest extends \Neos\Flow\Tests\UnitTestCase
         $className = 'TestClass' . md5(uniqid(mt_rand(), true));
         eval('
             class ' . $className . ' {
-                public function foo($arg1, array $arg2, \ArrayObject $arg3, $arg4= "foo", $arg5 = TRUE) {}
+                public function foo($arg1, array $arg2, \ArrayObject $arg3, $arg4= "foo", $arg5 = true) {}
             }
         ');
 
@@ -164,7 +164,7 @@ class ProxyMethodTest extends \Neos\Flow\Tests\UnitTestCase
         $builder->injectReflectionService($mockReflectionService);
 
         $actualCode = $builder->buildMethodParametersCode($className, 'foo', false);
-        $this->assertSame($expectedCode, $actualCode);
+        self::assertSame($expectedCode, $actualCode);
     }
 
     /**
@@ -175,6 +175,6 @@ class ProxyMethodTest extends \Neos\Flow\Tests\UnitTestCase
         $builder = $this->getMockBuilder(ProxyMethod::class)->disableOriginalConstructor()->setMethods(['dummy'])->getMock();
 
         $actualCode = $builder->buildMethodParametersCode(null, 'foo', true);
-        $this->assertSame('', $actualCode);
+        self::assertSame('', $actualCode);
     }
 }

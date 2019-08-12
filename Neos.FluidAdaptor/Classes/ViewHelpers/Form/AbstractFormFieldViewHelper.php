@@ -13,6 +13,7 @@ namespace Neos\FluidAdaptor\ViewHelpers\Form;
 
 use Neos\Error\Messages\Result;
 use Neos\Flow\Mvc\ActionRequest;
+use Neos\FluidAdaptor\ViewHelpers\FormViewHelper;
 use Neos\Utility\ObjectAccess;
 
 /**
@@ -27,6 +28,7 @@ abstract class AbstractFormFieldViewHelper extends AbstractFormViewHelper
 {
     /**
      * @return void
+     * @throws \Neos\FluidAdaptor\Core\ViewHelper\Exception
      * @api
      */
     public function initializeArguments()
@@ -45,7 +47,7 @@ abstract class AbstractFormFieldViewHelper extends AbstractFormViewHelper
      *
      * @return string Name
      */
-    protected function getName()
+    protected function getName(): string
     {
         $name = $this->getNameWithoutPrefix();
         return $this->prefixFieldName($name);
@@ -56,7 +58,7 @@ abstract class AbstractFormFieldViewHelper extends AbstractFormViewHelper
      *
      * @return ActionRequest
      */
-    protected function getRequest()
+    protected function getRequest(): ActionRequest
     {
         return $this->controllerContext->getRequest();
     }
@@ -66,11 +68,11 @@ abstract class AbstractFormFieldViewHelper extends AbstractFormViewHelper
      *
      * @return string name
      */
-    protected function getNameWithoutPrefix()
+    protected function getNameWithoutPrefix(): string
     {
         if ($this->isObjectAccessorMode()) {
             $propertySegments = explode('.', $this->arguments['property']);
-            $formObjectName = $this->viewHelperVariableContainer->get(\Neos\FluidAdaptor\ViewHelpers\FormViewHelper::class, 'formObjectName');
+            $formObjectName = $this->viewHelperVariableContainer->get(FormViewHelper::class, 'formObjectName');
             if (!empty($formObjectName)) {
                 array_unshift($propertySegments, $formObjectName);
             }
@@ -93,7 +95,7 @@ abstract class AbstractFormFieldViewHelper extends AbstractFormViewHelper
             }
         }
 
-        return $name;
+        return (string)$name;
     }
 
     /**
@@ -132,9 +134,9 @@ abstract class AbstractFormFieldViewHelper extends AbstractFormViewHelper
     /**
      * Checks if a property mapping error has occurred in the last request.
      *
-     * @return boolean TRUE if a mapping error occurred, FALSE otherwise
+     * @return boolean true if a mapping error occurred, false otherwise
      */
-    protected function hasMappingErrorOccurred()
+    protected function hasMappingErrorOccurred(): bool
     {
         /** @var $validationResults Result */
         $validationResults = $this->getRequest()->getInternalArgument('__submittedArgumentValidationResults');
@@ -150,10 +152,9 @@ abstract class AbstractFormFieldViewHelper extends AbstractFormViewHelper
     protected function getLastSubmittedFormData()
     {
         $submittedArguments = $this->getRequest()->getInternalArgument('__submittedArguments');
-        if ($submittedArguments === null) {
-            return;
+        if ($submittedArguments !== null) {
+            return ObjectAccess::getPropertyPath($submittedArguments, $this->getPropertyPath());
         }
-        return ObjectAccess::getPropertyPath($submittedArguments, $this->getPropertyPath());
     }
 
     /**
@@ -162,12 +163,12 @@ abstract class AbstractFormFieldViewHelper extends AbstractFormViewHelper
      *
      * @return void
      */
-    protected function addAdditionalIdentityPropertiesIfNeeded()
+    protected function addAdditionalIdentityPropertiesIfNeeded(): void
     {
         if (!$this->isObjectAccessorMode()) {
             return;
         }
-        if (!$this->viewHelperVariableContainer->exists(\Neos\FluidAdaptor\ViewHelpers\FormViewHelper::class, 'formObject')) {
+        if (!$this->viewHelperVariableContainer->exists(FormViewHelper::class, 'formObject')) {
             return;
         }
         $propertySegments = explode('.', $this->arguments['property']);
@@ -175,19 +176,19 @@ abstract class AbstractFormFieldViewHelper extends AbstractFormViewHelper
         if (count($propertySegments) < 2) {
             return;
         }
-        $formObject = $this->viewHelperVariableContainer->get(\Neos\FluidAdaptor\ViewHelpers\FormViewHelper::class, 'formObject');
-        $objectName = $this->viewHelperVariableContainer->get(\Neos\FluidAdaptor\ViewHelpers\FormViewHelper::class, 'formObjectName');
+        $formObject = $this->viewHelperVariableContainer->get(FormViewHelper::class, 'formObject');
+        $objectName = $this->viewHelperVariableContainer->get(FormViewHelper::class, 'formObjectName');
 
         // If count == 2 -> we need to go through the for-loop exactly once
-        for ($i = 1; $i < count($propertySegments); $i++) {
+        for ($i = 1, $segmentCount = count($propertySegments); $i < $segmentCount; $i++) {
             $object = ObjectAccess::getPropertyPath($formObject, implode('.', array_slice($propertySegments, 0, $i)));
             $objectName .= '[' . $propertySegments[$i - 1] . ']';
             $hiddenIdentityField = $this->renderHiddenIdentityField($object, $objectName);
 
             // Add the hidden identity field to the ViewHelperVariableContainer
-            $additionalIdentityProperties = $this->viewHelperVariableContainer->get(\Neos\FluidAdaptor\ViewHelpers\FormViewHelper::class, 'additionalIdentityProperties');
+            $additionalIdentityProperties = $this->viewHelperVariableContainer->get(FormViewHelper::class, 'additionalIdentityProperties');
             $additionalIdentityProperties[$objectName] = $hiddenIdentityField;
-            $this->viewHelperVariableContainer->addOrUpdate(\Neos\FluidAdaptor\ViewHelpers\FormViewHelper::class, 'additionalIdentityProperties', $additionalIdentityProperties);
+            $this->viewHelperVariableContainer->addOrUpdate(FormViewHelper::class, 'additionalIdentityProperties', $additionalIdentityProperties);
         }
     }
 
@@ -198,10 +199,10 @@ abstract class AbstractFormFieldViewHelper extends AbstractFormViewHelper
      */
     protected function getPropertyValue()
     {
-        if (!$this->viewHelperVariableContainer->exists(\Neos\FluidAdaptor\ViewHelpers\FormViewHelper::class, 'formObject')) {
+        if (!$this->viewHelperVariableContainer->exists(FormViewHelper::class, 'formObject')) {
             return null;
         }
-        $formObject = $this->viewHelperVariableContainer->get(\Neos\FluidAdaptor\ViewHelpers\FormViewHelper::class, 'formObject');
+        $formObject = $this->viewHelperVariableContainer->get(FormViewHelper::class, 'formObject');
         $propertyNameOrPath = $this->arguments['property'];
         return ObjectAccess::getPropertyPath($formObject, $propertyNameOrPath);
     }
@@ -213,15 +214,15 @@ abstract class AbstractFormFieldViewHelper extends AbstractFormViewHelper
      *
      * @return string
      */
-    protected function getPropertyPath()
+    protected function getPropertyPath(): string
     {
         if ($this->isObjectAccessorMode()) {
-            $formObjectName = $this->viewHelperVariableContainer->get(\Neos\FluidAdaptor\ViewHelpers\FormViewHelper::class, 'formObjectName');
-            if (strlen($formObjectName) === 0) {
+            $formObjectName = (string)$this->viewHelperVariableContainer->get(FormViewHelper::class, 'formObjectName');
+            if ($formObjectName === '') {
                 return $this->arguments['property'];
-            } else {
-                return $formObjectName . '.' . $this->arguments['property'];
             }
+
+            return $formObjectName . '.' . $this->arguments['property'];
         }
         return rtrim(preg_replace('/(\]\[|\[|\])/', '.', $this->getNameWithoutPrefix()), '.');
     }
@@ -229,12 +230,11 @@ abstract class AbstractFormFieldViewHelper extends AbstractFormViewHelper
     /**
      * Internal method which checks if we should evaluate a domain object or just output arguments['name'] and arguments['value']
      *
-     * @return boolean TRUE if we should evaluate the domain object, FALSE otherwise.
+     * @return boolean true if we should evaluate the domain object, false otherwise.
      */
-    protected function isObjectAccessorMode()
+    protected function isObjectAccessorMode(): bool
     {
-        return $this->hasArgument('property')
-            && $this->viewHelperVariableContainer->exists(\Neos\FluidAdaptor\ViewHelpers\FormViewHelper::class, 'formObjectName');
+        return $this->hasArgument('property') && $this->viewHelperVariableContainer->exists(FormViewHelper::class, 'formObjectName');
     }
 
     /**
@@ -242,7 +242,7 @@ abstract class AbstractFormFieldViewHelper extends AbstractFormViewHelper
      *
      * @return void
      */
-    protected function setErrorClassAttribute()
+    protected function setErrorClassAttribute(): void
     {
         if ($this->hasArgument('class')) {
             $cssClass = $this->arguments['class'] . ' ';
@@ -265,7 +265,7 @@ abstract class AbstractFormFieldViewHelper extends AbstractFormViewHelper
      *
      * @return Result
      */
-    protected function getMappingResultsForProperty()
+    protected function getMappingResultsForProperty(): Result
     {
         /** @var $validationResults Result */
         $validationResults = $this->getRequest()->getInternalArgument('__submittedArgumentValidationResults');
@@ -281,11 +281,11 @@ abstract class AbstractFormFieldViewHelper extends AbstractFormViewHelper
      *
      * @return void
      */
-    protected function renderHiddenFieldForEmptyValue()
+    protected function renderHiddenFieldForEmptyValue(): void
     {
-        $emptyHiddenFieldNames = array();
-        if ($this->viewHelperVariableContainer->exists(\Neos\FluidAdaptor\ViewHelpers\FormViewHelper::class, 'emptyHiddenFieldNames')) {
-            $emptyHiddenFieldNames = $this->viewHelperVariableContainer->get(\Neos\FluidAdaptor\ViewHelpers\FormViewHelper::class, 'emptyHiddenFieldNames');
+        $emptyHiddenFieldNames = [];
+        if ($this->viewHelperVariableContainer->exists(FormViewHelper::class, 'emptyHiddenFieldNames')) {
+            $emptyHiddenFieldNames = $this->viewHelperVariableContainer->get(FormViewHelper::class, 'emptyHiddenFieldNames');
         }
 
         $fieldName = $this->getName();
@@ -298,7 +298,7 @@ abstract class AbstractFormFieldViewHelper extends AbstractFormViewHelper
                 $disabled = $this->tag->getAttribute('disabled');
             }
             $emptyHiddenFieldNames[$fieldName] = $disabled;
-            $this->viewHelperVariableContainer->addOrUpdate(\Neos\FluidAdaptor\ViewHelpers\FormViewHelper::class, 'emptyHiddenFieldNames', $emptyHiddenFieldNames);
+            $this->viewHelperVariableContainer->addOrUpdate(FormViewHelper::class, 'emptyHiddenFieldNames', $emptyHiddenFieldNames);
         }
     }
 }

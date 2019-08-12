@@ -44,7 +44,7 @@ class ConfigurationSchemaValidator
 
     /**
      * @Flow\Inject
-     * @var \Neos\Flow\Package\PackageManagerInterface
+     * @var \Neos\Flow\Package\PackageManager
      */
     protected $packageManager;
 
@@ -63,7 +63,7 @@ class ConfigurationSchemaValidator
      * @return \Neos\Error\Messages\Result the result of the validation
      * @throws Exception\SchemaValidationException
      */
-    public function validate($configurationType = null, $path = null, &$loadedSchemaFiles = [])
+    public function validate(string $configurationType = null, string $path = null, array &$loadedSchemaFiles = []): Result
     {
         if ($configurationType === null) {
             $configurationTypes = $this->configurationManager->getAvailableConfigurationTypes();
@@ -88,7 +88,7 @@ class ConfigurationSchemaValidator
      * @return \Neos\Error\Messages\Result
      * @throws Exception\SchemaValidationException
      */
-    protected function validateSingleType($configurationType, $path, &$loadedSchemaFiles)
+    protected function validateSingleType(string $configurationType, string $path = null, array&$loadedSchemaFiles = []): Result
     {
         $availableConfigurationTypes = $this->configurationManager->getAvailableConfigurationTypes();
         if (in_array($configurationType, $availableConfigurationTypes) === false) {
@@ -99,8 +99,7 @@ class ConfigurationSchemaValidator
 
         // find schema files for the given type and path
         $schemaFileInfos = [];
-        $activePackages = $this->packageManager->getAvailablePackages();
-        foreach ($activePackages as $package) {
+        foreach ($this->packageManager->getFlowPackages() as $package) {
             $packageKey = $package->getPackageKey();
             $packageSchemaPath = Files::concatenatePaths([$package->getResourcesPath(), 'Private/Schema']);
             if (is_dir($packageSchemaPath)) {

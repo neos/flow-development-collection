@@ -29,7 +29,7 @@ class JsonArrayTypeTest extends UnitTestCase
     /**
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->jsonArrayTypeMock = $this->getMockBuilder(JsonArrayType::class)
             ->setMethods(['initializeDependencies'])
@@ -45,7 +45,7 @@ class JsonArrayTypeTest extends UnitTestCase
     public function jsonConversionReturnsNullIfArrayIsNull()
     {
         $json = $this->jsonArrayTypeMock->convertToDatabaseValue(null, $this->abstractPlatformMock);
-        $this->assertEquals(null, $json);
+        self::assertEquals(null, $json);
     }
 
     /**
@@ -54,6 +54,6 @@ class JsonArrayTypeTest extends UnitTestCase
     public function passSimpleArrayAndConvertToJson()
     {
         $json = $this->jsonArrayTypeMock->convertToDatabaseValue(['simplestring',1,['nestedArray']], $this->abstractPlatformMock);
-        $this->assertEquals("{\n    \"0\": \"simplestring\",\n    \"1\": 1,\n    \"2\": {\n        \"0\": \"nestedArray\"\n    }\n}", $json);
+        self::assertEquals("{\n    \"0\": \"simplestring\",\n    \"1\": 1,\n    \"2\": {\n        \"0\": \"nestedArray\"\n    }\n}", $json);
     }
 }

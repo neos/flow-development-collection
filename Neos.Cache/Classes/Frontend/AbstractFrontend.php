@@ -90,7 +90,7 @@ abstract class AbstractFrontend implements FrontendInterface
      * Checks if a cache entry with the specified identifier exists.
      *
      * @param string $entryIdentifier An identifier specifying the cache entry
-     * @return boolean TRUE if such an entry exists, FALSE if not
+     * @return boolean true if such an entry exists, false if not
      * @throws \InvalidArgumentException
      * @api
      */
@@ -107,7 +107,7 @@ abstract class AbstractFrontend implements FrontendInterface
      * Removes the given cache entry from the cache.
      *
      * @param string $entryIdentifier An identifier specifying the cache entry
-     * @return boolean TRUE if such an entry exists, FALSE if not
+     * @return boolean true if such an entry exists, false if not
      * @throws \InvalidArgumentException
      * @api
      */
@@ -135,7 +135,7 @@ abstract class AbstractFrontend implements FrontendInterface
      * Removes all cache entries of this cache which are tagged by the specified tag.
      *
      * @param string $tag The tag the entries must have
-     * @return integer The number of entries which have been affected by this flush or NULL if the number is unknown
+     * @return integer The number of entries which have been affected by this flush
      * @throws \InvalidArgumentException
      * @api
      */
@@ -147,6 +147,7 @@ abstract class AbstractFrontend implements FrontendInterface
         if ($this->backend instanceof TaggableBackendInterface) {
             return $this->backend->flushByTag($tag);
         }
+        return 0;
     }
 
     /**

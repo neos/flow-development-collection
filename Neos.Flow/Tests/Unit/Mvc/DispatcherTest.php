@@ -14,11 +14,13 @@ namespace Neos\Flow\Tests\Unit\Mvc;
 use Neos\Flow\Cli\Request;
 use Neos\Flow\Http\Response as HttpResponse;
 use Neos\Flow\Http\Request as HttpRequest;
-use Neos\Flow\Log\SecurityLoggerInterface;
+use Neos\Flow\Log\PsrLoggerFactoryInterface;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Controller\ControllerInterface;
+use Neos\Flow\Mvc\Controller\Exception\InvalidControllerException;
 use Neos\Flow\Mvc\Dispatcher;
 use Neos\Flow\Mvc\Exception\ForwardException;
+use Neos\Flow\Mvc\Exception\InfiniteLoopException;
 use Neos\Flow\Mvc\Exception\StopActionException;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Security\Authentication\EntryPointInterface;
@@ -28,6 +30,7 @@ use Neos\Flow\Security\Context;
 use Neos\Flow\Security\Exception\AccessDeniedException;
 use Neos\Flow\Security\Exception\AuthenticationRequiredException;
 use Neos\Flow\Tests\UnitTestCase;
+use Psr\Log\LoggerInterface;
 
 /**
  * Testcase for the MVC Dispatcher
@@ -85,14 +88,14 @@ class DispatcherTest extends UnitTestCase
     protected $mockFirewall;
 
     /**
-     * @var SecurityLoggerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $mockSecurityLogger;
 
     /**
      * Sets up this test case
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->dispatcher = $this->getMockBuilder(Dispatcher::class)->disableOriginalConstructor()->setMethods(['resolveController'])->getMock();
 
@@ -117,16 +120,18 @@ class DispatcherTest extends UnitTestCase
 
         $this->mockFirewall = $this->getMockBuilder(FirewallInterface::class)->getMock();
 
-        $this->mockSecurityLogger = $this->getMockBuilder(SecurityLoggerInterface::class)->getMock();
+        $this->mockSecurityLogger = $this->getMockBuilder(LoggerInterface::class)->getMock();
+        $mockLoggerFactory = $this->getMockBuilder(PsrLoggerFactoryInterface::class)->getMock();
+        $mockLoggerFactory->expects(self::any())->method('get')->with('securityLogger')->willReturn($this->mockSecurityLogger);
 
         $this->mockObjectManager = $this->getMockBuilder(ObjectManagerInterface::class)->getMock();
-        $this->mockObjectManager->expects($this->any())->method('get')->will($this->returnCallback(function ($className) {
+        $this->mockObjectManager->expects($this->any())->method('get')->will($this->returnCallback(function ($className) use ($mockLoggerFactory) {
             if ($className === Context::class) {
                 return $this->mockSecurityContext;
             } elseif ($className === FirewallInterface::class) {
                 return $this->mockFirewall;
-            } elseif ($className === SecurityLoggerInterface::class) {
-                return $this->mockSecurityLogger;
+            } elseif ($className === PsrLoggerFactoryInterface::class) {
+                return $mockLoggerFactory;
             }
             return null;
         }));
@@ -196,10 +201,10 @@ class DispatcherTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Mvc\Exception\InfiniteLoopException
      */
     public function dispatchThrowsAnInfiniteLoopExceptionIfTheRequestCouldNotBeDispachedAfter99Iterations()
     {
+        $this->expectException(InfiniteLoopException::class);
         $requestCallCounter = 0;
         $requestCallBack = function () use (&$requestCallCounter) {
             return ($requestCallCounter++ < 101) ? false : true;
@@ -251,10 +256,10 @@ class DispatcherTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Security\Exception\AuthenticationRequiredException
      */
     public function dispatchRethrowsAuthenticationRequiredExceptionIfSecurityContextDoesNotContainAnyAuthenticationToken()
     {
+        $this->expectException(AuthenticationRequiredException::class);
         $this->mockActionRequest->expects($this->any())->method('isDispatched')->will($this->returnValue(true));
 
         $this->mockSecurityContext->expects($this->atLeastOnce())->method('getAuthenticationTokens')->will($this->returnValue([]));
@@ -338,10 +343,10 @@ class DispatcherTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Security\Exception\AccessDeniedException
      */
     public function dispatchRethrowsAccessDeniedException()
     {
+        $this->expectException(AccessDeniedException::class);
         $this->mockActionRequest->expects($this->any())->method('isDispatched')->will($this->returnValue(true));
 
         $this->mockFirewall->expects($this->once())->method('blockIllegalRequests')->will($this->throwException(new AccessDeniedException()));
@@ -367,15 +372,15 @@ class DispatcherTest extends UnitTestCase
         $dispatcher = $this->getAccessibleMock(Dispatcher::class, null);
         $dispatcher->injectObjectManager($mockObjectManager);
 
-        $this->assertEquals($mockController, $dispatcher->_call('resolveController', $mockRequest));
+        self::assertEquals($mockController, $dispatcher->_call('resolveController', $mockRequest));
     }
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Mvc\Controller\Exception\InvalidControllerException
      */
     public function resolveControllerThrowsAnInvalidControllerExceptionIfTheResolvedControllerDoesNotImplementTheControllerInterface()
     {
+        $this->expectException(InvalidControllerException::class);
         $mockController = $this->createMock('stdClass');
 
         /** @var ObjectManagerInterface|\PHPUnit_Framework_MockObject_MockObject $mockObjectManager */
@@ -389,15 +394,15 @@ class DispatcherTest extends UnitTestCase
         $dispatcher = $this->getAccessibleMock(Dispatcher::class, ['dummy']);
         $dispatcher->injectObjectManager($mockObjectManager);
 
-        $this->assertEquals($mockController, $dispatcher->_call('resolveController', $mockRequest));
+        self::assertEquals($mockController, $dispatcher->_call('resolveController', $mockRequest));
     }
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Mvc\Controller\Exception\InvalidControllerException
      */
     public function resolveControllerThrowsAnInvalidControllerExceptionIfTheResolvedControllerDoesNotExist()
     {
+        $this->expectException(InvalidControllerException::class);
         $mockHttpRequest = $this->getMockBuilder(HttpRequest::class)->disableOriginalConstructor()->getMock();
         $mockRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->setMethods(['getControllerObjectName', 'getHttpRequest'])->getMock();
         $mockRequest->expects($this->any())->method('getControllerObjectName')->will($this->returnValue(''));

@@ -16,16 +16,16 @@ use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Http\HttpRequestHandlerInterface;
 use Neos\Flow\Http\Request;
 use Neos\Flow\Http\Uri;
-use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use Neos\Flow\Package;
 use Neos\Flow\Package\PackageManager;
 use Neos\Flow\ResourceManagement\Collection;
 use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\Flow\ResourceManagement\Storage\PackageStorage;
+use Neos\Flow\ResourceManagement\Target\Exception;
 use Neos\Flow\ResourceManagement\Target\FileSystemTarget;
 use Neos\Flow\Tests\UnitTestCase;
 use org\bovigo\vfs\vfsStream;
+use Psr\Log\LoggerInterface;
 
 /**
  * Tests for the FileSystemTarget class
@@ -52,7 +52,7 @@ class FileSystemTargetTest extends UnitTestCase
      */
     protected $mockHttpRequest;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->fileSystemTarget = new FileSystemTarget('test');
 
@@ -73,7 +73,7 @@ class FileSystemTargetTest extends UnitTestCase
      */
     public function getNameReturnsTargetName()
     {
-        $this->assertSame('test', $this->fileSystemTarget->getName());
+        self::assertSame('test', $this->fileSystemTarget->getName());
     }
 
     /**
@@ -100,7 +100,7 @@ class FileSystemTargetTest extends UnitTestCase
     public function getPublicStaticResourceUriTests($baseUri, $relativePathAndFilename, $expectedResult)
     {
         $this->inject($this->fileSystemTarget, 'baseUri', $baseUri);
-        $this->assertSame($expectedResult, $this->fileSystemTarget->getPublicStaticResourceUri($relativePathAndFilename));
+        self::assertSame($expectedResult, $this->fileSystemTarget->getPublicStaticResourceUri($relativePathAndFilename));
     }
 
     /**
@@ -114,15 +114,15 @@ class FileSystemTargetTest extends UnitTestCase
         $this->inject($this->fileSystemTarget, 'bootstrap', $mockBootstrap);
         $this->inject($this->fileSystemTarget, 'httpBaseUri', 'http://configured/http/base/uri/');
 
-        $this->assertStringStartsWith('http://configured/http/base/uri/', $this->fileSystemTarget->getPublicStaticResourceUri('some/path/SomeFilename.jpg'));
+        self::assertStringStartsWith('http://configured/http/base/uri/', $this->fileSystemTarget->getPublicStaticResourceUri('some/path/SomeFilename.jpg'));
     }
 
     /**
      * @test
-     * @expectedException \Neos\Flow\ResourceManagement\Target\Exception
      */
     public function getPublicStaticResourceUriThrowsExceptionIfBaseUriCantBeResolved()
     {
+        $this->expectException(Exception::class);
         $mockBootstrap = $this->getMockBuilder(Bootstrap::class)->disableOriginalConstructor()->getMock();
         $mockCommandRequestHandler = $this->getMockBuilder(CommandRequestHandler::class)->disableOriginalConstructor()->getMock();
         $mockBootstrap->expects($this->any())->method('getActiveRequestHandler')->will($this->returnValue($mockCommandRequestHandler));
@@ -165,7 +165,7 @@ class FileSystemTargetTest extends UnitTestCase
         $mockResource->expects($this->any())->method('getFilename')->will($this->returnValue($filename));
         $mockResource->expects($this->any())->method('getSha1')->will($this->returnValue($sha1));
 
-        $this->assertSame($expectedResult, $this->fileSystemTarget->getPublicPersistentResourceUri($mockResource));
+        self::assertSame($expectedResult, $this->fileSystemTarget->getPublicPersistentResourceUri($mockResource));
     }
 
     /**
@@ -182,15 +182,15 @@ class FileSystemTargetTest extends UnitTestCase
         /** @var PersistentResource|\PHPUnit_Framework_MockObject_MockObject $mockResource */
         $mockResource = $this->getMockBuilder(PersistentResource::class)->disableOriginalConstructor()->getMock();
 
-        $this->assertStringStartsWith('http://configured/http/base/uri/', $this->fileSystemTarget->getPublicPersistentResourceUri($mockResource));
+        self::assertStringStartsWith('http://configured/http/base/uri/', $this->fileSystemTarget->getPublicPersistentResourceUri($mockResource));
     }
 
     /**
      * @test
-     * @expectedException \Neos\Flow\ResourceManagement\Target\Exception
      */
     public function getPublicPersistentResourceUriThrowsExceptionIfBaseUriCantBeResolved()
     {
+        $this->expectException(Exception::class);
         $mockBootstrap = $this->getMockBuilder(Bootstrap::class)->disableOriginalConstructor()->getMock();
         $mockCommandRequestHandler = $this->getMockBuilder(CommandRequestHandler::class)->disableOriginalConstructor()->getMock();
         $mockBootstrap->expects($this->any())->method('getActiveRequestHandler')->will($this->returnValue($mockCommandRequestHandler));
@@ -211,12 +211,12 @@ class FileSystemTargetTest extends UnitTestCase
         mkdir('vfs://Test/Configuration');
         $packageManager = new PackageManager('vfs://Test/Configuration/PackageStates.php', 'vfs://Test/Packages/');
 
-        $packageManager->createPackage("Neos.Flow");
+        $packageManager->createPackage("Some.Testing.Package", [], 'vfs://Test/Packages/Application');
 
         $packageStorage = new PackageStorage('testStorage');
         $packageStorage->initializeObject(ObjectManagerInterface::INITIALIZATIONCAUSE_CREATED);
 
-        $mockSystemLogger = $this->getMockBuilder(SystemLoggerInterface::class)->getMock();
+        $mockSystemLogger = $this->getMockBuilder(LoggerInterface::class)->getMock();
 
         $this->inject($packageStorage, 'packageManager', $packageManager);
 
@@ -230,9 +230,9 @@ class FileSystemTargetTest extends UnitTestCase
 
         $fileSystemTarget = new FileSystemTarget('test', ['path' => 'vfs://Test/Publish']);
         $fileSystemTarget->initializeObject(ObjectManagerInterface::INITIALIZATIONCAUSE_CREATED);
-        $this->inject($fileSystemTarget, 'systemLogger', $mockSystemLogger);
+        $fileSystemTarget->injectLogger($mockSystemLogger);
         $fileSystemTarget->publishCollection($staticCollection, $_publicationCallback);
 
-        $this->assertTrue($oneResourcePublished);
+        self::assertTrue($oneResourcePublished);
     }
 }

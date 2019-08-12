@@ -11,11 +11,11 @@ namespace Neos\Flow\Tests\Unit\Cli;
  * source code.
  */
 
-use Neos\Flow\Cli;
 use Neos\Flow\Cli\ConsoleOutput;
 use Neos\Flow\Tests\UnitTestCase;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\StreamOutput;
+use Symfony\Component\Console\Exception\RuntimeException;
 
 /**
  * Test cases for CLI console output helpers
@@ -23,7 +23,7 @@ use Symfony\Component\Console\Output\StreamOutput;
 class ConsoleOutputTest extends UnitTestCase
 {
     /**
-     * @var Cli\ConsoleOutput
+     * @var ConsoleOutput
      */
     private $consoleOutput;
 
@@ -40,7 +40,7 @@ class ConsoleOutputTest extends UnitTestCase
     /**
      * @return void
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->input = new ArrayInput([]);
         $this->answerNothing();
@@ -60,7 +60,7 @@ class ConsoleOutputTest extends UnitTestCase
         $string = 'simple output';
         $this->consoleOutput->output($string);
 
-        $this->assertSame($string, $this->getActualConsoleOutput());
+        self::assertSame($string, $this->getActualConsoleOutput());
     }
 
     /**
@@ -71,7 +71,7 @@ class ConsoleOutputTest extends UnitTestCase
         $string = 'simple line';
         $this->consoleOutput->outputLine($string);
 
-        $this->assertSame($string . PHP_EOL, $this->getActualConsoleOutput());
+        self::assertSame($string . PHP_EOL, $this->getActualConsoleOutput());
     }
 
     /**
@@ -92,7 +92,7 @@ class ConsoleOutputTest extends UnitTestCase
             '  content and one line is longer than 79 characters, it\'s exactly this line to' . PHP_EOL .
             '  be precice ' . PHP_EOL;
 
-        $this->assertSame($formattedString, $this->getActualConsoleOutput());
+        self::assertSame($formattedString, $this->getActualConsoleOutput());
     }
 
     /**
@@ -103,7 +103,7 @@ class ConsoleOutputTest extends UnitTestCase
         $this->answerNo();
         $userAnswer = $this->consoleOutput->askConfirmation('Is this a test?');
 
-        $this->assertSame(false, $userAnswer);
+        self::assertSame(false, $userAnswer);
     }
 
     /**
@@ -114,7 +114,7 @@ class ConsoleOutputTest extends UnitTestCase
         $this->answerYes();
         $userAnswer = $this->consoleOutput->askConfirmation('Are you lying?');
 
-        $this->assertSame(true, $userAnswer);
+        self::assertSame(true, $userAnswer);
     }
 
     /**
@@ -125,7 +125,7 @@ class ConsoleOutputTest extends UnitTestCase
         $this->answerYes();
         $this->consoleOutput->ask('Is this a test?');
 
-        $this->assertSame('Is this a test?', $this->getActualConsoleOutput());
+        self::assertSame('Is this a test?', $this->getActualConsoleOutput());
     }
 
     /**
@@ -136,7 +136,44 @@ class ConsoleOutputTest extends UnitTestCase
         $this->answerYes();
         $this->consoleOutput->ask(['First line', 'Second line']);
 
-        $this->assertSame('First line'.PHP_EOL.'Second line', $this->getActualConsoleOutput());
+        self::assertSame('First line'.PHP_EOL.'Second line', $this->getActualConsoleOutput());
+    }
+
+    /**
+     * @test
+     */
+    public function askAndValidateWillReturnAnswerIfValidationSuccessful()
+    {
+        $this->answerCustom(5);
+        $validator = function ($answer) {
+            if ($answer > 4) {
+                return $answer;
+            }
+
+            throw new RuntimeException('Number is not higher than 4');
+        };
+
+        $userAnswer = $this->consoleOutput->askAndValidate('Enter a number higher than 4', $validator);
+
+        self::assertSame('5', $userAnswer);
+    }
+
+    /**
+     * @test
+     */
+    public function askAndValidateWillThrowExceptionIfNotSuccessful()
+    {
+        $this->expectException('RuntimeException');
+
+        $this->answerCustom(5);
+        $validator = function ($answer) {
+            if ($answer > 6) {
+                return $answer;
+            }
+            throw new RuntimeException('Number is not higher than 4');
+        };
+
+        $userAnswer = $this->consoleOutput->askAndValidate('Enter a number higher than 4', $validator);
     }
 
     /**
@@ -144,7 +181,7 @@ class ConsoleOutputTest extends UnitTestCase
      */
     public function questionWasAskedFallBackToDefaultAnswer()
     {
-        $this->assertSame('Not Sure', $this->consoleOutput->ask('Enter your name', 'Not Sure'));
+        self::assertSame('Not Sure', $this->consoleOutput->ask('Enter your name', 'Not Sure'));
     }
 
     /**
@@ -154,7 +191,7 @@ class ConsoleOutputTest extends UnitTestCase
     {
         $this->consoleOutput->outputTable([['column1', 'column2']], ['header 1', 'header 2']);
 
-        $this->assertSame(
+        self::assertSame(
             '+----------+----------+' . PHP_EOL .
             '| header 1 | header 2 |' . PHP_EOL .
             '+----------+----------+' . PHP_EOL .
@@ -162,20 +199,6 @@ class ConsoleOutputTest extends UnitTestCase
             '+----------+----------+' . PHP_EOL, $this->getActualConsoleOutput());
     }
 
-    /**
-     * @test
-     */
-    public function askAndValidate()
-    {
-        $this->answerCustom(5);
-        $validator = function ($number) {
-            return $number > 4;
-        };
-
-        $userAnswer = $this->consoleOutput->askAndValidate('Enter a number higher than 4', $validator);
-
-        $this->assertSame(true, $userAnswer);
-    }
 
     /**
      * @test
@@ -186,7 +209,7 @@ class ConsoleOutputTest extends UnitTestCase
         $this->consoleOutput->progressAdvance();
         $this->consoleOutput->progressSet(50);
         $this->consoleOutput->progressFinish();
-        $this->assertSame(
+        self::assertSame(
             '   0/100 [>---------------------------]   0%' . PHP_EOL .
             '   1/100 [>---------------------------]   1%' . PHP_EOL .
             '  50/100 [==============>-------------]  50%' . PHP_EOL .
@@ -196,38 +219,63 @@ class ConsoleOutputTest extends UnitTestCase
     /**
      * @test
      */
-    public function selectAnChoosableeAnswer()
+    public function selectWithStringTypeChoiceKeys()
     {
-        $this->answerCustom('no');
+        $this->answerCustom('y');
         $choices = [
-            'yes' => 'No',
-            'no' => 'Yes'
+            'n' => 'No',
+            'y' => 'Yes'
         ];
-        $userAnswer = $this->consoleOutput->select('Is this a good test?', $choices, 'no', true);
+        $userAnswer = $this->consoleOutput->select('Is this a good test?', $choices, 'yes', true);
 
-        $this->assertSame(['no'], $userAnswer);
+        self::assertEquals(
+            'Is this a good test?' . PHP_EOL .
+            '  [n] No' . PHP_EOL .
+            '  [y] Yes' . PHP_EOL .
+            ' > y',
+            $this->getActualConsoleOutput()
+        );
+
+        self::assertSame(['y'], $userAnswer, 'The answer is the key, NOT the value from the choices');
     }
 
     /**
      * @test
      */
-    public function selectAnswerIsDisplayed()
+    public function selectWithIntegerTypeChoiceKeys()
     {
-        $userAnswer = 1;
-        $this->answerCustom($userAnswer);
+        $givenAnswer = 2;
+        $this->answerCustom($givenAnswer);
         $choices = [
             1 => 'No',
             2 => 'Yes'
         ];
-        $this->consoleOutput->select('Is this a good test?', $choices, 1, true);
+        $userAnswer = $this->consoleOutput->select('Is this a good test?', $choices, 1, true);
 
-        $this->assertSame(
+        self::assertEquals(
             'Is this a good test?' . PHP_EOL .
             '  [1] No' . PHP_EOL .
             '  [2] Yes' . PHP_EOL .
-            ' > ' . $userAnswer,
+            ' > ' . $givenAnswer,
             $this->getActualConsoleOutput()
         );
+
+        self::assertSame(['Yes'], $userAnswer, 'The answer is the value, NOT the key from the choices');
+    }
+
+    /**
+     * @test
+     */
+    public function selectTheDefaultWhenAnswerIsNothing()
+    {
+        $this->answerNothing();
+        $choices = [
+            'yes' => 'Yes',
+            'no' => 'No'
+        ];
+        $userAnswer = $this->consoleOutput->select('Is this a good test?', $choices, 'yes', true);
+
+        self::assertSame(['yes'], $userAnswer, 'The default value is returned');
     }
 
     /**
@@ -276,7 +324,7 @@ class ConsoleOutputTest extends UnitTestCase
 
         // remove control characters for cursor manipulation
         if ($removeControlCharacters === true) {
-            $cursorCommandCharacters = ["\u{001b}[K", "\u{001b}[1P", "\u{001b}[1X", "\u{001b}[1@", "\u{001b}[1L",  "\u{001b}[1M"];
+            $cursorCommandCharacters = ["\u{001b}[K", "\u{001b}[1P", "\u{001b}[1X", "\u{001b}[1@", "\u{001b}[1L", "\u{001b}[1M", "\u{001b}7", "\u{001b}8"];
             $streamContent = str_replace($cursorCommandCharacters, '', $streamContent);
         }
 

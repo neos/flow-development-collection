@@ -11,10 +11,10 @@ namespace Neos\Flow\Tests\Unit\I18n;
  * source code.
  */
 
+use Neos\Flow\Package\FlowPackageInterface;
+use Neos\Flow\Package\PackageManager;
 use org\bovigo\vfs\vfsStream;
 use Neos\Cache\Frontend\VariableFrontend;
-use Neos\Flow\Package\PackageInterface;
-use Neos\Flow\Package\PackageManagerInterface;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Flow\I18n;
 
@@ -26,7 +26,7 @@ class ServiceTest extends UnitTestCase
     /**
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         vfsStream::setup('Foo');
     }
@@ -49,7 +49,7 @@ class ServiceTest extends UnitTestCase
         $service->expects($this->atLeastOnce())->method('getLocaleChain')->with($desiredLocale)->will($this->returnValue($localeChain));
 
         list($result, ) = $service->getLocalizedFilename($filename, $desiredLocale);
-        $this->assertEquals($expectedFilename, $result);
+        self::assertEquals($expectedFilename, $result);
     }
 
     /**
@@ -71,7 +71,7 @@ class ServiceTest extends UnitTestCase
         $service->expects($this->atLeastOnce())->method('getLocaleChain')->with($desiredLocale)->will($this->returnValue($localeChain));
 
         list($result, ) = $service->getLocalizedFilename($filename, $desiredLocale);
-        $this->assertEquals($expectedFilename, $result);
+        self::assertEquals($expectedFilename, $result);
     }
 
     /**
@@ -88,7 +88,7 @@ class ServiceTest extends UnitTestCase
         $service = new I18n\Service();
 
         list($result, ) = $service->getLocalizedFilename($filename, new I18n\Locale('en_GB'), true);
-        $this->assertEquals($expectedFilename, $result);
+        self::assertEquals($expectedFilename, $result);
     }
 
     /**
@@ -105,7 +105,7 @@ class ServiceTest extends UnitTestCase
         $service = new I18n\Service();
 
         list($result, ) = $service->getLocalizedFilename($filename, new I18n\Locale('en_GB'), true);
-        $this->assertEquals($expectedFilename, $result);
+        self::assertEquals($expectedFilename, $result);
     }
 
     /**
@@ -118,7 +118,7 @@ class ServiceTest extends UnitTestCase
         $service = new I18n\Service();
 
         list($result, ) = $service->getLocalizedFilename($filename, new I18n\Locale('pl'), true);
-        $this->assertEquals($filename, $result);
+        self::assertEquals($filename, $result);
     }
 
     /**
@@ -134,7 +134,7 @@ class ServiceTest extends UnitTestCase
         $service->expects($this->atLeastOnce())->method('getLocaleChain')->with($desiredLocale)->will($this->returnValue($localeChain));
 
         list($result, ) = $service->getLocalizedFilename($filename, $desiredLocale);
-        $this->assertEquals($filename, $result);
+        self::assertEquals($filename, $result);
     }
 
     /**
@@ -150,16 +150,16 @@ class ServiceTest extends UnitTestCase
         foreach (['en_GB', 'sr'] as $localeIdentifier) {
             file_put_contents('vfs://Foo/Bar/Private/Translations/' . $localeIdentifier . '.xlf', 'FooBar');
         }
-        foreach (array('de_DE', 'de_CH') as $localeIdentifier) {
+        foreach (['de_DE', 'de_CH'] as $localeIdentifier) {
             mkdir('vfs://Foo/Bar/Private/Translations/' . $localeIdentifier, 0777, true);
             file_put_contents('vfs://Foo/Bar/Private/Translations/' . $localeIdentifier . '/Main.xlf', 'FooBar');
         }
 
-        $mockPackage = $this->createMock(PackageInterface::class);
+        $mockPackage = $this->createMock(FlowPackageInterface::class);
         $mockPackage->expects($this->any())->method('getResourcesPath')->will($this->returnValue('vfs://Foo/Bar/'));
 
-        $mockPackageManager = $this->createMock(PackageManagerInterface::class);
-        $mockPackageManager->expects($this->any())->method('getAvailablePackages')->will($this->returnValue([$mockPackage]));
+        $mockPackageManager = $this->createMock(PackageManager::class);
+        $mockPackageManager->expects($this->any())->method('getFlowPackages')->will($this->returnValue([$mockPackage]));
 
         $mockLocaleCollection = $this->createMock(I18n\LocaleCollection::class);
         $mockLocaleCollection->expects($this->exactly(4))->method('addLocale');
@@ -202,11 +202,11 @@ class ServiceTest extends UnitTestCase
             file_put_contents('vfs://Foo/Bar/Private/Translations/' . $localeIdentifier . '.xlf', 'FooBar');
         }
 
-        $mockPackage = $this->createMock(PackageInterface::class);
+        $mockPackage = $this->createMock(FlowPackageInterface::class);
         $mockPackage->expects($this->any())->method('getResourcesPath')->will($this->returnValue('vfs://Foo/Bar/'));
 
-        $mockPackageManager = $this->createMock(PackageManagerInterface::class);
-        $mockPackageManager->expects($this->any())->method('getAvailablePackages')->will($this->returnValue([$mockPackage]));
+        $mockPackageManager = $this->createMock(PackageManager::class);
+        $mockPackageManager->expects($this->any())->method('getFlowPackages')->will($this->returnValue([$mockPackage]));
 
         $mockLocaleCollection = $this->createMock(I18n\LocaleCollection::class);
         $mockLocaleCollection->expects($this->exactly(2))->method('addLocale');

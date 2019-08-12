@@ -43,7 +43,7 @@ class IfHasRoleViewHelperTest extends ViewHelperBaseTestcase
      */
     protected $mockPolicyService;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->mockViewHelper = $this->getMockBuilder(\Neos\FluidAdaptor\ViewHelpers\Security\IfHasRoleViewHelper::class)->setMethods([
@@ -90,10 +90,10 @@ class IfHasRoleViewHelperTest extends ViewHelperBaseTestcase
     protected function getMockControllerContext()
     {
         $httpRequest = Request::create(new Uri('http://robertlemke.com/blog'));
-        $mockRequest = $this->getMockBuilder(\Neos\Flow\Mvc\ActionRequest::class)->setConstructorArgs(array($httpRequest))->getMock();
+        $mockRequest = $this->getMockBuilder(\Neos\Flow\Mvc\ActionRequest::class)->setConstructorArgs([$httpRequest])->getMock();
         $mockRequest->expects($this->any())->method('getControllerPackageKey')->will($this->returnValue('Acme.Demo'));
 
-        $mockControllerContext = $this->getMockBuilder(\Neos\Flow\Mvc\Controller\ControllerContext::class)->setMethods(array('getRequest'))->disableOriginalConstructor()->getMock();
+        $mockControllerContext = $this->getMockBuilder(\Neos\Flow\Mvc\Controller\ControllerContext::class)->setMethods(['getRequest'])->disableOriginalConstructor()->getMock();
         $mockControllerContext->expects($this->any())->method('getRequest')->will($this->returnValue($mockRequest));
 
         return $mockControllerContext;
@@ -117,7 +117,7 @@ class IfHasRoleViewHelperTest extends ViewHelperBaseTestcase
         ];
         $this->mockViewHelper = $this->prepareArguments($this->mockViewHelper, $arguments);
         $actualResult = $this->mockViewHelper->render();
-        $this->assertEquals('then-child', $actualResult);
+        self::assertEquals('then-child', $actualResult);
     }
 
     /**
@@ -143,7 +143,7 @@ class IfHasRoleViewHelperTest extends ViewHelperBaseTestcase
         ];
         $this->mockViewHelper = $this->prepareArguments($this->mockViewHelper, $arguments);
         $actualResult = $this->mockViewHelper->render();
-        $this->assertEquals('true', $actualResult, 'Full role identifier in role argument is accepted');
+        self::assertEquals('true', $actualResult, 'Full role identifier in role argument is accepted');
 
         $arguments = [
             'role' => new Role('Neos.FluidAdaptor:User'),
@@ -152,7 +152,7 @@ class IfHasRoleViewHelperTest extends ViewHelperBaseTestcase
         ];
         $this->mockViewHelper = $this->prepareArguments($this->mockViewHelper, $arguments);
         $actualResult = $this->mockViewHelper->render();
-        $this->assertEquals('false', $actualResult);
+        self::assertEquals('false', $actualResult);
     }
 
     /**
@@ -178,6 +178,6 @@ class IfHasRoleViewHelperTest extends ViewHelperBaseTestcase
         ];
         $this->mockViewHelper = $this->prepareArguments($this->mockViewHelper, $arguments);
         $actualResult = $this->mockViewHelper->render();
-        $this->assertEquals('true', $actualResult, 'Full role identifier in role argument is accepted');
+        self::assertEquals('true', $actualResult, 'Full role identifier in role argument is accepted');
     }
 }

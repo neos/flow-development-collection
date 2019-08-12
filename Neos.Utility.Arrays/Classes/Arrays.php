@@ -109,11 +109,20 @@ abstract class Arrays
      *
      * @param array $firstArray First array
      * @param array $secondArray Second array, overruling the first array
-     * @param callable $toArray The given closure will get a value that is not an array and has to return an array. This is to allow custom merging of simple types with (sub) arrays
+     * @param \Closure $toArray The given callable will get a value that is not an array and has to return an array.
+     *                          This is to allow custom merging of simple types with (sub) arrays
+     * @param \Closure|null $overrideFirst The given callable will determine whether the value of the first array should be overridden.
+     *                                     It should have the following signature $callable($key, ?array $firstValue = null, ?array $secondValue = null): bool
      * @return array Resulting array where $secondArray values has overruled $firstArray values
      */
-    public static function arrayMergeRecursiveOverruleWithCallback(array $firstArray, array $secondArray, \Closure $toArray): array
+    public static function arrayMergeRecursiveOverruleWithCallback(array $firstArray, array $secondArray, \Closure $toArray, ?\Closure $overrideFirst = null): array
     {
+        if (!$overrideFirst instanceof \Closure) {
+            $overrideFirst = function ($key, ?array $firstValue = null, ?array $secondValue = null): bool {
+                return false;
+            };
+        }
+
         $data = [&$firstArray, $secondArray];
         $entryCount = 1;
         for ($i = 0; $i < $entryCount; $i++) {
@@ -126,11 +135,16 @@ abstract class Arrays
                     if (!is_array($value)) {
                         $value = $toArray($value);
                     }
+
                     if (!is_array($firstArrayInner[$key])) {
                         $firstArrayInner[$key] = $toArray($firstArrayInner[$key]);
                     }
 
                     if (is_array($firstArrayInner[$key]) && is_array($value)) {
+                        if ($overrideFirst($key, $firstArrayInner[$key], $value)) {
+                            $firstArrayInner[$key] = $value;
+                        }
+
                         $data[] = &$firstArrayInner[$key];
                         $data[] = $value;
                         $entryCount++;
@@ -145,7 +159,7 @@ abstract class Arrays
     }
 
     /**
-     * Returns TRUE if the given array contains elements of varying types
+     * Returns true if the given array contains elements of varying types
      *
      * @param array $array
      * @return boolean
@@ -273,7 +287,7 @@ abstract class Arrays
      *
      * @param array $array the array to sort
      * @param integer $sortFlags may be used to modify the sorting behavior using these values (see http://www.php.net/manual/en/function.sort.php)
-     * @return boolean TRUE on success, FALSE on failure
+     * @return boolean true on success, false on failure
      * @see asort()
      */
     public static function sortKeysRecursively(array &$array, int $sortFlags = null): bool

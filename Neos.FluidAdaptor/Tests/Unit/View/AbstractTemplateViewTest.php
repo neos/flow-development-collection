@@ -45,14 +45,14 @@ class AbstractTemplateViewTest extends \Neos\Flow\Tests\UnitTestCase
      *
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
-        $this->templateVariableContainer = $this->getMockBuilder(TemplateVariableContainer::class)->setMethods(array('exists', 'remove', 'add'))->getMock();
-        $this->viewHelperVariableContainer = $this->getMockBuilder(ViewHelperVariableContainer::class)->setMethods(array('setView'))->getMock();
-        $this->renderingContext = $this->getMockBuilder(RenderingContext::class)->setMethods(array('getViewHelperVariableContainer', 'getVariableProvider'))->disableOriginalConstructor()->getMock();
+        $this->templateVariableContainer = $this->getMockBuilder(TemplateVariableContainer::class)->setMethods(['exists', 'remove', 'add'])->getMock();
+        $this->viewHelperVariableContainer = $this->getMockBuilder(ViewHelperVariableContainer::class)->setMethods(['setView'])->getMock();
+        $this->renderingContext = $this->getMockBuilder(RenderingContext::class)->setMethods(['getViewHelperVariableContainer', 'getVariableProvider'])->disableOriginalConstructor()->getMock();
         $this->renderingContext->expects($this->any())->method('getViewHelperVariableContainer')->will($this->returnValue($this->viewHelperVariableContainer));
         $this->renderingContext->expects($this->any())->method('getVariableProvider')->will($this->returnValue($this->templateVariableContainer));
-        $this->view = $this->getMockBuilder(AbstractTemplateView::class)->setMethods(array('getTemplateSource', 'getLayoutSource', 'getPartialSource', 'canRender', 'getTemplateIdentifier', 'getLayoutIdentifier', 'getPartialIdentifier'))->getMock();
+        $this->view = $this->getMockBuilder(AbstractTemplateView::class)->setMethods(['getTemplateSource', 'getLayoutSource', 'getPartialSource', 'canRender', 'getTemplateIdentifier', 'getLayoutIdentifier', 'getPartialIdentifier'])->getMock();
         $this->view->setRenderingContext($this->renderingContext);
     }
 
@@ -100,8 +100,8 @@ class AbstractTemplateViewTest extends \Neos\Flow\Tests\UnitTestCase
         $this->templateVariableContainer->expects($this->at(2))->method('add')->with('baz', 'BazValue');
 
         $this->view
-            ->assignMultiple(array('foo' => 'FooValue', 'bar' => 'BarValue'))
-            ->assignMultiple(array('baz' => 'BazValue'));
+            ->assignMultiple(['foo' => 'FooValue', 'bar' => 'BarValue'])
+            ->assignMultiple(['baz' => 'BazValue']);
     }
 
     /**
@@ -114,6 +114,6 @@ class AbstractTemplateViewTest extends \Neos\Flow\Tests\UnitTestCase
         $this->templateVariableContainer->expects($this->at(2))->method('add')->with('bar', 'BarValue');
 
         $this->view->assign('foo', 'FooValue');
-        $this->view->assignMultiple(array('foo' => 'FooValueOverridden', 'bar' => 'BarValue'));
+        $this->view->assignMultiple(['foo' => 'FooValueOverridden', 'bar' => 'BarValue']);
     }
 }

@@ -15,7 +15,8 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\Request as CliRequest;
 use Neos\Flow\Configuration\Exception\NoSuchOptionException;
 use Neos\Flow\Http\Response as HttpResponse;
-use Neos\Flow\Log\SecurityLoggerInterface;
+use Neos\Flow\Log\PsrLoggerFactoryInterface;
+use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Mvc\Controller\ControllerInterface;
 use Neos\Flow\Mvc\Controller\Exception\InvalidControllerException;
 use Neos\Flow\Mvc\Exception\InfiniteLoopException;
@@ -28,6 +29,7 @@ use Neos\Flow\Security\Authorization\FirewallInterface;
 use Neos\Flow\Security\Context;
 use Neos\Flow\Security\Exception\AccessDeniedException;
 use Neos\Flow\Security\Exception\AuthenticationRequiredException;
+use Neos\Flow\Security\Exception\MissingConfigurationException;
 
 /**
  * Dispatches requests to the controller which was specified by the request and
@@ -44,11 +46,6 @@ class Dispatcher
     protected $objectManager;
 
     /**
-     * @var array
-     */
-    protected $settings = [];
-
-    /**
      * Inject the Object Manager through setter injection because property injection
      * is not available during compile time.
      *
@@ -61,23 +58,17 @@ class Dispatcher
     }
 
     /**
-     * Injects the Flow settings
-     *
-     * @param array $settings The Flow settings
-     * @return void
-     */
-    public function injectSettings(array $settings)
-    {
-        $this->settings = $settings;
-    }
-
-    /**
      * Dispatches a request to a controller
      *
      * @param RequestInterface $request The request to dispatch
      * @param ResponseInterface $response The response, to be modified by the controller
      * @return void
-     * @throws AuthenticationRequiredException|AccessDeniedException
+     * @throws AccessDeniedException
+     * @throws AuthenticationRequiredException
+     * @throws InfiniteLoopException
+     * @throws InvalidControllerException
+     * @throws NoSuchOptionException
+     * @throws MissingConfigurationException
      * @api
      */
     public function dispatch(RequestInterface $request, ResponseInterface $response)
@@ -98,8 +89,8 @@ class Dispatcher
 
         /** @var FirewallInterface $firewall */
         $firewall = $this->objectManager->get(FirewallInterface::class);
-        /** @var SecurityLoggerInterface $securityLogger */
-        $securityLogger = $this->objectManager->get(SecurityLoggerInterface::class);
+        /** @var PsrLoggerFactoryInterface $securityLogger */
+        $securityLogger = $this->objectManager->get(PsrLoggerFactoryInterface::class)->get('securityLogger');
 
         try {
             /** @var ActionRequest $request */
@@ -115,20 +106,20 @@ class Dispatcher
                 }
                 $entryPointFound = true;
                 if ($entryPoint instanceof WebRedirect) {
-                    $securityLogger->log('Redirecting to authentication entry point', LOG_INFO, $entryPoint->getOptions());
+                    $securityLogger->info('Redirecting to authentication entry point', $entryPoint->getOptions(), LogEnvironment::fromMethodName(__METHOD__));
                 } else {
-                    $securityLogger->log(sprintf('Starting authentication with entry point of type "%s"', get_class($entryPoint)), LOG_INFO);
+                    $securityLogger->info(sprintf('Starting authentication with entry point of type "%s"', get_class($entryPoint)), LogEnvironment::fromMethodName(__METHOD__));
                 }
                 $securityContext->setInterceptedRequest($request->getMainRequest());
                 /** @var HttpResponse $response */
                 $entryPoint->startAuthentication($request->getHttpRequest(), $response);
             }
             if ($entryPointFound === false) {
-                $securityLogger->log('No authentication entry point found for active tokens, therefore cannot authenticate or redirect to authentication automatically.', LOG_NOTICE);
+                $securityLogger->notice('No authentication entry point found for active tokens, therefore cannot authenticate or redirect to authentication automatically.');
                 throw $exception;
             }
         } catch (AccessDeniedException $exception) {
-            $securityLogger->log('Access denied', LOG_WARNING);
+            $securityLogger->warning('Access denied', LogEnvironment::fromMethodName(__METHOD__));
             throw $exception;
         }
     }
@@ -139,6 +130,8 @@ class Dispatcher
      * @param RequestInterface $request
      * @param ResponseInterface $response
      * @throws InvalidControllerException|InfiniteLoopException|NoSuchOptionException
+     *
+     * TODO: From next major we might want to create one ActionResponse PER controller invocation and then merge results here
      */
     protected function initiateDispatchLoop(RequestInterface $request, ResponseInterface $response)
     {

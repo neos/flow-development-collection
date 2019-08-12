@@ -92,7 +92,7 @@ abstract class ObjectAccess
      * @param mixed $subject Object or array to get the property from
      * @param string $propertyName name of the property to retrieve
      * @param boolean $forceDirectAccess directly access property using reflection(!)
-     * @param boolean $propertyExists (by reference) will be set to TRUE if the specified property exists and is gettable
+     * @param boolean $propertyExists (by reference) will be set to true if the specified property exists and is gettable
      * @return mixed Value of the property
      * @throws PropertyNotAccessibleException
      * @see getProperty()
@@ -223,13 +223,13 @@ abstract class ObjectAccess
      * - if public property exists, set it directly.
      * - if the target object is an instance of ArrayAccess, it sets the property
      *   on it without checking if it existed.
-     * - else, return FALSE
+     * - else, return false
      *
      * @param mixed $subject The target object or array
      * @param string|integer $propertyName Name or index of the property to set
      * @param mixed $propertyValue Value of the property
      * @param boolean $forceDirectAccess directly access property using reflection(!)
-     * @return boolean TRUE if the property could be set, FALSE otherwise
+     * @return boolean true if the property could be set, false otherwise
      * @throws \InvalidArgumentException in case $object was not an object or $propertyName was not a string
      */
     public static function setProperty(&$subject, $propertyName, $propertyValue, bool $forceDirectAccess = false): bool
@@ -450,25 +450,25 @@ abstract class ObjectAccess
         switch (count($arguments)) {
             case 0:
                 $object = new $className();
-                break;
+            break;
             case 1:
                 $object = new $className($arguments[0]);
-                break;
+            break;
             case 2:
                 $object = new $className($arguments[0], $arguments[1]);
-                break;
+            break;
             case 3:
                 $object = new $className($arguments[0], $arguments[1], $arguments[2]);
-                break;
+            break;
             case 4:
                 $object = new $className($arguments[0], $arguments[1], $arguments[2], $arguments[3]);
-                break;
+            break;
             case 5:
                 $object = new $className($arguments[0], $arguments[1], $arguments[2], $arguments[3], $arguments[4]);
-                break;
+            break;
             case 6:
                 $object = new $className($arguments[0], $arguments[1], $arguments[2], $arguments[3], $arguments[4], $arguments[5]);
-                break;
+            break;
             default:
                 $class = new \ReflectionClass($className);
                 $object = $class->newInstanceArgs($arguments);

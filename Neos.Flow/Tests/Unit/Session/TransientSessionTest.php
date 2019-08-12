@@ -25,7 +25,7 @@ class TransientSessionTest extends UnitTestCase
     public function theTransientSessionImplementsTheSessionInterface()
     {
         $session = new Session\TransientSession();
-        $this->assertInstanceOf(Session\SessionInterface::class, $session);
+        self::assertInstanceOf(Session\SessionInterface::class, $session);
     }
 
     /**
@@ -35,15 +35,15 @@ class TransientSessionTest extends UnitTestCase
     {
         $session = new Session\TransientSession();
         $session->start();
-        $this->assertTrue(strlen($session->getId()) == 13);
+        self::assertTrue(strlen($session->getId()) == 13);
     }
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Session\Exception\SessionNotStartedException
      */
     public function tryingToGetTheSessionIdWithoutStartingTheSessionThrowsAnException()
     {
+        $this->expectException(Session\Exception\SessionNotStartedException::class);
         $session = new Session\TransientSession();
         $session->getId();
     }
@@ -56,7 +56,7 @@ class TransientSessionTest extends UnitTestCase
         $session = new Session\TransientSession();
         $session->start();
         $session->putData('theKey', 'some data');
-        $this->assertEquals('some data', $session->getData('theKey'));
+        self::assertEquals('some data', $session->getData('theKey'));
     }
 
     /**
@@ -69,7 +69,7 @@ class TransientSessionTest extends UnitTestCase
         $session->putData('theKey', 'some data');
         $session->destroy();
         $session->start();
-        $this->assertNull($session->getData('theKey'));
+        self::assertNull($session->getData('theKey'));
     }
 
     /**
@@ -80,7 +80,7 @@ class TransientSessionTest extends UnitTestCase
         $session = new Session\TransientSession();
         $session->start();
         $session->putData('theKey', 'some data');
-        $this->assertTrue($session->hasKey('theKey'));
-        $this->assertFalse($session->hasKey('noKey'));
+        self::assertTrue($session->hasKey('theKey'));
+        self::assertFalse($session->hasKey('noKey'));
     }
 }

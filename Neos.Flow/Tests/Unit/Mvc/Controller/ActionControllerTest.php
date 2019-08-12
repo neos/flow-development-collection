@@ -18,7 +18,6 @@ use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Flow\Http;
-use Neos\Flow\Mvc\View\ViewInterface;
 use Neos\Flow\Validation\Validator\ConjunctionValidator;
 use Neos\Flow\Validation\Validator\ValidatorInterface;
 use Neos\Flow\Validation\ValidatorResolver;
@@ -53,7 +52,7 @@ class ActionControllerTest extends UnitTestCase
      */
     protected $mockControllerContext;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->actionController = $this->getAccessibleMock(ActionController::class, ['dummy']);
 
@@ -82,7 +81,7 @@ class ActionControllerTest extends UnitTestCase
     {
         $this->mockObjectManager->expects($this->once())->method('getCaseSensitiveObjectName')->with('some\package\subpackage\view\thecontroller\theactiontheformat')->will($this->returnValue('ResolvedObjectName'));
 
-        $this->assertSame('ResolvedObjectName', $this->actionController->_call('resolveViewObjectName'));
+        self::assertSame('ResolvedObjectName', $this->actionController->_call('resolveViewObjectName'));
     }
 
     /**
@@ -93,7 +92,7 @@ class ActionControllerTest extends UnitTestCase
         $this->mockObjectManager->expects($this->at(0))->method('getCaseSensitiveObjectName')->with('some\package\subpackage\view\thecontroller\theactiontheformat')->will($this->returnValue(false));
         $this->mockObjectManager->expects($this->at(1))->method('getCaseSensitiveObjectName')->with('some\package\subpackage\view\thecontroller\theaction')->will($this->returnValue('ResolvedObjectName'));
 
-        $this->assertSame('ResolvedObjectName', $this->actionController->_call('resolveViewObjectName'));
+        self::assertSame('ResolvedObjectName', $this->actionController->_call('resolveViewObjectName'));
     }
 
     /**
@@ -105,7 +104,7 @@ class ActionControllerTest extends UnitTestCase
         $this->mockObjectManager->expects($this->at(0))->method('getCaseSensitiveObjectName')->with('some\package\subpackage\view\thecontroller\theactiontheformat')->will($this->returnValue(false));
         $this->mockObjectManager->expects($this->at(1))->method('getCaseSensitiveObjectName')->with('some\package\subpackage\view\thecontroller\theaction')->will($this->returnValue(false));
 
-        $this->assertSame('Some\Custom\View\Object\Name', $this->actionController->_call('resolveViewObjectName'));
+        self::assertSame('Some\Custom\View\Object\Name', $this->actionController->_call('resolveViewObjectName'));
     }
 
     /**
@@ -114,7 +113,7 @@ class ActionControllerTest extends UnitTestCase
     public function resolveViewReturnsViewResolvedByResolveViewObjectName()
     {
         $this->mockObjectManager->expects($this->atLeastOnce())->method('getCaseSensitiveObjectName')->with('some\package\subpackage\view\thecontroller\theactiontheformat')->will($this->returnValue(SimpleTemplateView::class));
-        $this->assertInstanceOf(SimpleTemplateView::class, $this->actionController->_call('resolveView'));
+        self::assertInstanceOf(SimpleTemplateView::class, $this->actionController->_call('resolveView'));
     }
 
     /**
@@ -124,15 +123,15 @@ class ActionControllerTest extends UnitTestCase
     {
         $this->mockObjectManager->expects($this->any())->method('getCaseSensitiveObjectName')->will($this->returnValue(false));
         $this->actionController->_set('defaultViewObjectName', SimpleTemplateView::class);
-        $this->assertInstanceOf(SimpleTemplateView::class, $this->actionController->_call('resolveView'));
+        self::assertInstanceOf(SimpleTemplateView::class, $this->actionController->_call('resolveView'));
     }
 
     /**
      * @test
-     * @expectedException  \Neos\Flow\Mvc\Exception\NoSuchActionException
      */
     public function processRequestThrowsExceptionIfRequestedActionIsNotCallable()
     {
+        $this->expectException(Mvc\Exception\NoSuchActionException::class);
         $this->actionController = new ActionController();
 
         $this->inject($this->actionController, 'objectManager', $this->mockObjectManager);
@@ -154,10 +153,10 @@ class ActionControllerTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException  \Neos\Flow\Mvc\Exception\InvalidActionVisibilityException
      */
     public function processRequestThrowsExceptionIfRequestedActionIsNotPublic()
     {
+        $this->expectException(Mvc\Exception\InvalidActionVisibilityException::class);
         $this->actionController = new ActionController();
 
         $this->inject($this->actionController, 'objectManager', $this->mockObjectManager);
@@ -253,10 +252,10 @@ class ActionControllerTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Mvc\Exception\ViewNotFoundException
      */
     public function resolveViewThrowsExceptionIfResolvedViewDoesNotImplementViewInterface()
     {
+        $this->expectException(Mvc\Exception\ViewNotFoundException::class);
         $this->mockObjectManager->expects($this->any())->method('getCaseSensitiveObjectName')->will($this->returnValue(false));
         $this->actionController->_set('defaultViewObjectName', 'ViewDefaultObjectName');
         $this->actionController->_call('resolveView');

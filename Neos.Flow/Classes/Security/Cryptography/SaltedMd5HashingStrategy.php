@@ -15,7 +15,7 @@ use Neos\Flow\Utility;
 
 /**
  * A salted MD5 based password hashing strategy
- *
+ * @deprecated since Flow 6.0, will be removed with Flow 7.0
  */
 class SaltedMd5HashingStrategy implements PasswordHashingStrategyInterface
 {
@@ -37,7 +37,7 @@ class SaltedMd5HashingStrategy implements PasswordHashingStrategyInterface
      *
      * @param string $clearString
      * @param string $hashedStringAndSalt
-     * @return boolean TRUE if the clear string matches, otherwise FALSE
+     * @return boolean true if the clear string matches, otherwise false
      * @throws \InvalidArgumentException
      */
     public static function validateSaltedMd5($clearString, $hashedStringAndSalt)
@@ -67,7 +67,7 @@ class SaltedMd5HashingStrategy implements PasswordHashingStrategyInterface
      * @param string $password The cleartext password
      * @param string $hashedPasswordAndSalt The hashed password with salt
      * @param string $staticSalt ignored parameter
-     * @return boolean TRUE if the given password matches the hashed password
+     * @return boolean true if the given password matches the hashed password
      */
     public function validatePassword($password, $hashedPasswordAndSalt, $staticSalt = null)
     {

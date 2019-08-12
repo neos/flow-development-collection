@@ -16,6 +16,7 @@ use Neos\Flow\Security\Authentication\Token\PasswordToken;
 use Neos\Flow\Security\Authentication\TokenInterface;
 use Neos\Flow\Security\Cryptography\FileBasedSimpleKeyService;
 use Neos\Flow\Security\Cryptography\HashService;
+use Neos\Flow\Security\Exception\UnsupportedAuthenticationTokenException;
 use Neos\Flow\Security\Policy\PolicyService;
 use Neos\Flow\Security\Policy\Role;
 use Neos\Flow\Tests\UnitTestCase;
@@ -61,7 +62,7 @@ class FileBasedSimpleKeyProviderTest extends UnitTestCase
      */
     protected $mockToken;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->mockRole = $this->getMockBuilder(Role::class)->disableOriginalConstructor()->getMock();
         $this->mockRole->expects($this->any())->method('getIdentifier')->will($this->returnValue('Neos.Flow:TestRoleIdentifier'));
@@ -115,7 +116,7 @@ class FileBasedSimpleKeyProviderTest extends UnitTestCase
         $authenticationProvider->authenticate($this->mockToken);
 
         $authenticatedRoles = $this->mockToken->getAccount()->getRoles();
-        $this->assertTrue(in_array('Neos.Flow:TestRoleIdentifier', array_keys($authenticatedRoles)));
+        self::assertTrue(in_array('Neos.Flow:TestRoleIdentifier', array_keys($authenticatedRoles)));
     }
 
     /**
@@ -156,15 +157,15 @@ class FileBasedSimpleKeyProviderTest extends UnitTestCase
     public function getTokenClassNameReturnsCorrectClassNames()
     {
         $authenticationProvider = FileBasedSimpleKeyProvider::create('myProvider', []);
-        $this->assertSame($authenticationProvider->getTokenClassNames(), [PasswordToken::class]);
+        self::assertSame($authenticationProvider->getTokenClassNames(), [PasswordToken::class]);
     }
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Security\Exception\UnsupportedAuthenticationTokenException
      */
     public function authenticatingAnUnsupportedTokenThrowsAnException()
     {
+        $this->expectException(UnsupportedAuthenticationTokenException::class);
         $someInvalidToken = $this->createMock(TokenInterface::class);
 
         $authenticationProvider = FileBasedSimpleKeyProvider::create('myProvider', []);
@@ -184,7 +185,7 @@ class FileBasedSimpleKeyProviderTest extends UnitTestCase
 
         $authenticationProvider = FileBasedSimpleKeyProvider::create('myProvider', []);
 
-        $this->assertTrue($authenticationProvider->canAuthenticate($mockToken1));
-        $this->assertFalse($authenticationProvider->canAuthenticate($mockToken2));
+        self::assertTrue($authenticationProvider->canAuthenticate($mockToken1));
+        self::assertFalse($authenticationProvider->canAuthenticate($mockToken2));
     }
 }

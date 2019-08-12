@@ -194,7 +194,10 @@ It is very common that a full Domain Model should be validated instead of only a
 To make this use-case more easy, the ``ValidatorResolver`` has a method ``getBaseValidatorConjunction``
 which returns a fully-configured validator for an arbitrary Domain Object::
 
-    $commentValidator = $validatorResolver->getBaseValidatorConjunction('YourPackage\Domain\Model\Comment');
+    $commentValidator = $validatorResolver->getBaseValidatorConjunction(
+        \YourPackage\Domain\Model\Comment::class, // class name of the object to validate
+        ['Default']                               // optional validation groups to use during validation
+    );
     $result = $commentValidator->validate($comment);
 
 The returned validator checks the following things:
@@ -224,6 +227,44 @@ The returned validator checks the following things:
   Validator* exists; i.e. for the Domain Model ``YourPackage\Domain\Model\Comment`` it is checked
   whether ``YourPackage\Domain\Validator\CommentValidator`` exists. If it exists, it is automatically
   called on validation.
+
+  These *Domain Model Validators* can also mark some specific properties as failed and add specific error messages:
+
+  .. code-block::php
+
+    class CommentValidator extends AbstractValidator
+    {
+        public function isValid($value)
+        {
+            if ($value instanceof \YourPackage\Domain\Model\Comment) {
+                $this->pushResult()->forProperty('text')->addError(
+                                new Error('text can´t be empty.', 1221560910)
+                            );
+            }
+        }
+    }
+
+Normally, you would need to annotate Collection and Model type properties, so that the collection elements and
+the model would be validated like this:
+
+.. code-block::php
+
+  	    /**
+  	     * @var SomeDomainModel
+  	     * @Flow\Validate(type="GenericObject")
+  	     */
+  	    protected $someRelatedModel;
+
+  	    /**
+  	     * @var Collection<SomeOtherDomainModel>
+  	     * @Flow\Validate(type="Collection")
+  	     */
+  	    protected $someOtherRelatedModels;
+
+For convenience, those validators will be added automatically if they are left out, because Flow will always validate
+Model hierarchies. In some cases, it might be necessary to override validation behaviour of those properties,
+e.g. when you want to limit validation with Validation Groups (see below). In that case, you can just explicitly annotate
+the property with additional options and this will then override the automatically generated validator.
 
 When specifying a Domain Model as an argument of a controller action, all the above validations will be
 automatically executed. This is explained in detail in the following section.
@@ -324,6 +365,10 @@ The following example demonstrates this::
 If interacting with the ``ValidatorResolver`` directly, the to-be-used validation groups
 can be specified as the last argument of ``getBaseValidatorConjunction()``.
 
+.. note::
+  When trying to set the validation groups of a collection or a whole model, which are normally not annotated for
+  you can explicitly specify a "Collection" or "GenericObject" type validator on the property and set the according validationGroup.
+
 Avoiding Duplicate Validation and Recursion
 ===========================================
 
@@ -343,7 +388,7 @@ against it. See ``AbstractCompositeValidator`` and ``isValidatedAlready`` in the
 for examples of how to do this.
 
 Writing Validators
-======================
+==================
 
 Usually, when writing your own validator, you will not directly implement ``ValidatorInterface``, but
 rather subclass ``AbstractValidator``. You only need to specify any options your validator might use and
@@ -386,6 +431,10 @@ implement the ``isValid()`` method then::
 In the above example, the ``isValid()`` method has been implemented, and the parameter ``$value`` is the
 data we want to check for validity. In case the data is valid, nothing needs to be done.
 
+.. warning:: You should avoid overwriting ``validate()`` and if you do, you should never overwrite ``$this->result``
+			 instance variable of the validator. Instead, use ``pushResult()`` to create a new result object and at
+			 the end of your validator, return ``popResult()``.
+
 In case the data is invalid, ``$this->addError()`` should be used to add an error message, an error code
 (which should be the unix timestamp of the current time) and optional arguments which are inserted into
 the error message.
@@ -399,7 +448,7 @@ is an array with the following numerically indexed elements:
 # type of the option (used for documentation rendering)
 # required option flag (optional, defaults to FALSE)
 
-The default values are set in the constructor of the abstract validators provided with FLOW3. If the
+The default values are set in the constructor of the abstract validators provided with Flow. If the
 required flag is set, missing options will cause an ``InvalidValidationOptionsException`` to be thrown
 when the validator is instantiated.
 

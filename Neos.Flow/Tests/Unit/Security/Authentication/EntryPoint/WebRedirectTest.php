@@ -16,6 +16,7 @@ use Neos\Flow\Http\Response;
 use Neos\Flow\Http\Uri;
 use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Flow\Security\Authentication\EntryPoint\WebRedirect;
+use Neos\Flow\Security\Exception\MissingConfigurationException;
 use Neos\Flow\Tests\UnitTestCase;
 
 /**
@@ -25,10 +26,10 @@ class WebRedirectTest extends UnitTestCase
 {
     /**
      * @test
-     * @expectedException \Neos\Flow\Security\Exception\MissingConfigurationException
      */
     public function startAuthenticationThrowsAnExceptionIfTheConfigurationOptionsAreMissing()
     {
+        $this->expectException(MissingConfigurationException::class);
         $request = Request::create(new Uri('http://robertlemke.com/admin'));
         $response = new Response();
 
@@ -51,8 +52,8 @@ class WebRedirectTest extends UnitTestCase
 
         $entryPoint->startAuthentication($request, $response);
 
-        $this->assertEquals('303', substr($response->getStatus(), 0, 3));
-        $this->assertEquals('http://robertlemke.com/some/page', $response->getHeader('Location'));
+        self::assertEquals('303', substr($response->getStatus(), 0, 3));
+        self::assertEquals('http://robertlemke.com/some/page', $response->getHeader('Location'));
     }
 
     /**
@@ -68,15 +69,15 @@ class WebRedirectTest extends UnitTestCase
 
         $entryPoint->startAuthentication($request, $response);
 
-        $this->assertEquals('http://some.abs/olute/url', $response->getHeader('Location'));
+        self::assertEquals('http://some.abs/olute/url', $response->getHeader('Location'));
     }
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Security\Exception\MissingConfigurationException
      */
     public function startAuthenticationThrowsAnExceptionIfTheConfiguredRoutePartsAreInvalid()
     {
+        $this->expectException(MissingConfigurationException::class);
         $request = Request::create(new Uri('http://robertlemke.com/admin'));
         $response = new Response();
 
@@ -111,7 +112,7 @@ class WebRedirectTest extends UnitTestCase
 
         $entryPoint->startAuthentication($request, $response);
 
-        $this->assertEquals('303', substr($response->getStatus(), 0, 3));
-        $this->assertEquals('http://resolved/redirect/uri', $response->getHeader('Location'));
+        self::assertEquals('303', substr($response->getStatus(), 0, 3));
+        self::assertEquals('http://resolved/redirect/uri', $response->getHeader('Location'));
     }
 }

@@ -11,16 +11,17 @@ namespace Neos\Flow\ResourceManagement;
  * source code.
  */
 
+use Neos\Flow\Log\Utility\LogEnvironment;
 use Psr\Http\Message\UploadedFileInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Error\Messages as FlowError;
 use Neos\Flow\Http\FlowUploadedFile;
-use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Property\Exception\InvalidPropertyMappingConfigurationException;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;
 use Neos\Utility\Files;
+use Psr\Log\LoggerInterface;
 
 /**
  * A type converter for converting strings, array and uploaded files to PersistentResource objects.
@@ -112,15 +113,25 @@ class ResourceTypeConverter extends AbstractTypeConverter
     protected $persistenceManager;
 
     /**
-     * @Flow\Inject
-     * @var SystemLoggerInterface
+     * @var LoggerInterface
      */
-    protected $systemLogger;
+    protected $logger;
 
     /**
      * @var array
      */
     protected $convertedResources = [];
+
+    /**
+     * Injects the (system) logger based on PSR-3.
+     *
+     * @param LoggerInterface $logger
+     * @return void
+     */
+    public function injectLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
 
     /**
      * Converts the given string or array to a PersistentResource object.
@@ -137,6 +148,9 @@ class ResourceTypeConverter extends AbstractTypeConverter
      * @param array $convertedChildProperties
      * @param PropertyMappingConfigurationInterface $configuration
      * @return PersistentResource|FlowError if the input format is not supported or could not be converted for other reasons
+     * @throws Exception
+     * @throws Exception\InvalidResourceDataException
+     * @throws InvalidPropertyMappingConfigurationException
      */
     public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null)
     {
@@ -183,7 +197,7 @@ class ResourceTypeConverter extends AbstractTypeConverter
                 case \UPLOAD_ERR_PARTIAL:
                     return new FlowError\Error(Files::getUploadErrorMessage($source['error']), 1264440823);
                 default:
-                    $this->systemLogger->log(sprintf('A server error occurred while converting an uploaded resource: "%s"', Files::getUploadErrorMessage($source['error'])), LOG_ERR);
+                    $this->logger->error(sprintf('A server error occurred while converting an uploaded resource: "%s"', Files::getUploadErrorMessage($source['error'])), LogEnvironment::fromMethodName(__METHOD__));
                     return new FlowError\Error('An error occurred while uploading. Please try again or contact the administrator if the problem remains', 1340193849);
             }
         }
@@ -197,8 +211,7 @@ class ResourceTypeConverter extends AbstractTypeConverter
             $this->convertedResources[$source['tmp_name']] = $resource;
             return $resource;
         } catch (\Exception $exception) {
-            $this->systemLogger->log('Could not import an uploaded file', LOG_WARNING);
-            $this->systemLogger->logException($exception);
+            $this->logger->warning('Could not import an uploaded file', ['exception' => $exception] + LogEnvironment::fromMethodName(__METHOD__));
             return new FlowError\Error('During import of an uploaded file an error occurred. See log for more details.', 1264517906);
         }
     }
@@ -207,6 +220,8 @@ class ResourceTypeConverter extends AbstractTypeConverter
      * @param array $source
      * @param PropertyMappingConfigurationInterface $configuration
      * @return PersistentResource|FlowError
+     * @throws Exception
+     * @throws Exception\InvalidResourceDataException
      * @throws InvalidPropertyMappingConfigurationException
      */
     protected function handleHashAndData(array $source, PropertyMappingConfigurationInterface $configuration = null)
@@ -223,7 +238,7 @@ class ResourceTypeConverter extends AbstractTypeConverter
             }
 
             if ($configuration->getConfigurationValue(ResourceTypeConverter::class, self::CONFIGURATION_IDENTITY_CREATION_ALLOWED) !== true) {
-                throw new InvalidPropertyMappingConfigurationException('Creation of resource objects with identity not allowed. To enable this, you need to set the PropertyMappingConfiguration Value "CONFIGURATION_IDENTITY_CREATION_ALLOWED" to TRUE');
+                throw new InvalidPropertyMappingConfigurationException('Creation of resource objects with identity not allowed. To enable this, you need to set the PropertyMappingConfiguration Value "CONFIGURATION_IDENTITY_CREATION_ALLOWED" to true');
             }
         }
 
@@ -279,7 +294,7 @@ class ResourceTypeConverter extends AbstractTypeConverter
             case \UPLOAD_ERR_PARTIAL:
                 return new FlowError\Error(Files::getUploadErrorMessage($source->getError()), 1264440823);
             default:
-                $this->systemLogger->log(sprintf('A server error occurred while converting an uploaded resource: "%s"', Files::getUploadErrorMessage($source['error'])), LOG_ERR);
+                $this->logger->error(sprintf('A server error occurred while converting an uploaded resource: "%s"', Files::getUploadErrorMessage($source['error'])), LogEnvironment::fromMethodName(__METHOD__));
 
                 return new FlowError\Error('An error occurred while uploading. Please try again or contact the administrator if the problem remains', 1340193849);
         }
@@ -294,8 +309,7 @@ class ResourceTypeConverter extends AbstractTypeConverter
             $this->convertedResources[spl_object_hash($source)] = $resource;
             return $resource;
         } catch (\Exception $exception) {
-            $this->systemLogger->log('Could not import an uploaded file', LOG_WARNING);
-            $this->systemLogger->logException($exception);
+            $this->logger->warning('Could not import an uploaded file', ['exception' => $exception] + LogEnvironment::fromMethodName(__METHOD__));
 
             return new FlowError\Error('During import of an uploaded file an error occurred. See log for more details.', 1264517906);
         }
@@ -304,7 +318,7 @@ class ResourceTypeConverter extends AbstractTypeConverter
 
     /**
      * Get the collection name this resource will be stored in. Default will be ResourceManager::DEFAULT_PERSISTENT_COLLECTION_NAME
-     * The propertyMappingConfiguration CONFIGURATION_COLLECTION_NAME will directly override the default. Then if CONFIGURATION_ALLOW_COLLECTION_OVERRIDE is TRUE
+     * The propertyMappingConfiguration CONFIGURATION_COLLECTION_NAME will directly override the default. Then if CONFIGURATION_ALLOW_COLLECTION_OVERRIDE is true
      * and __collectionName is in the $source this will finally be the value.
      *
      * @param array|UploadedFileInterface $source

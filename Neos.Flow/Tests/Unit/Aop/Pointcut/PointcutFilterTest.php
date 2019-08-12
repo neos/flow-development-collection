@@ -21,10 +21,10 @@ class PointcutFilterTest extends UnitTestCase
 {
     /**
      * @test
-     * @expectedException \Neos\Flow\Aop\Exception\UnknownPointcutException
      */
     public function matchesThrowsAnExceptionIfTheSpecifiedPointcutDoesNotExist()
     {
+        $this->expectException(Aop\Exception\UnknownPointcutException::class);
         $className = 'Foo';
         $methodName = 'bar';
         $methodDeclaringClassName = 'Baz';
@@ -56,7 +56,7 @@ class PointcutFilterTest extends UnitTestCase
 
         $pointcutFilter = new Aop\Pointcut\PointcutFilter('Aspect', 'pointcut');
         $pointcutFilter->injectProxyClassBuilder($mockProxyClassBuilder);
-        $this->assertTrue($pointcutFilter->matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier));
+        self::assertTrue($pointcutFilter->matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier));
     }
 
     /**
@@ -72,7 +72,7 @@ class PointcutFilterTest extends UnitTestCase
 
         $pointcutFilter = new Aop\Pointcut\PointcutFilter('Aspect', 'pointcut');
         $pointcutFilter->injectProxyClassBuilder($mockProxyClassBuilder);
-        $this->assertEquals(['evaluations'], $pointcutFilter->getRuntimeEvaluationsDefinition(), 'Something different from an array was returned.');
+        self::assertEquals(['evaluations'], $pointcutFilter->getRuntimeEvaluationsDefinition(), 'Something different from an array was returned.');
     }
 
     /**
@@ -85,7 +85,7 @@ class PointcutFilterTest extends UnitTestCase
 
         $pointcutFilter = new Aop\Pointcut\PointcutFilter('Aspect', 'pointcut');
         $pointcutFilter->injectProxyClassBuilder($mockProxyClassBuilder);
-        $this->assertEquals([], $pointcutFilter->getRuntimeEvaluationsDefinition(), 'The definition array has not been returned as exptected.');
+        self::assertEquals([], $pointcutFilter->getRuntimeEvaluationsDefinition(), 'The definition array has not been returned as exptected.');
     }
 
     /**
@@ -103,7 +103,7 @@ class PointcutFilterTest extends UnitTestCase
         $pointcutFilter = new Aop\Pointcut\PointcutFilter('Aspect', 'pointcut');
         $pointcutFilter->injectProxyClassBuilder($mockProxyClassBuilder);
 
-        $this->assertEquals($resultClassNameIndex, $pointcutFilter->reduceTargetClassNames(new Aop\Builder\ClassNameIndex()));
+        self::assertEquals($resultClassNameIndex, $pointcutFilter->reduceTargetClassNames(new Aop\Builder\ClassNameIndex()));
     }
 
     /**
@@ -119,6 +119,6 @@ class PointcutFilterTest extends UnitTestCase
 
         $inputClassNameIndex = new Aop\Builder\ClassNameIndex();
 
-        $this->assertSame($inputClassNameIndex, $pointcutFilter->reduceTargetClassNames($inputClassNameIndex));
+        self::assertSame($inputClassNameIndex, $pointcutFilter->reduceTargetClassNames($inputClassNameIndex));
     }
 }

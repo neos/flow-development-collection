@@ -79,7 +79,7 @@ class NumberFormatterTest extends UnitTestCase
     /**
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->sampleLocale = new I18n\Locale('en');
     }
@@ -96,10 +96,10 @@ class NumberFormatterTest extends UnitTestCase
         $formatter->expects($this->at(1))->method('formatPercentNumber')->with($sampleNumber, $this->sampleLocale, NumbersReader::FORMAT_LENGTH_DEFAULT)->will($this->returnValue('bar2'));
 
         $result = $formatter->format($sampleNumber, $this->sampleLocale);
-        $this->assertEquals('bar1', $result);
+        self::assertEquals('bar1', $result);
 
         $result = $formatter->format($sampleNumber, $this->sampleLocale, ['percent']);
-        $this->assertEquals('bar2', $result);
+        self::assertEquals('bar2', $result);
     }
 
     /**
@@ -128,7 +128,7 @@ class NumberFormatterTest extends UnitTestCase
     {
         $formatter = $this->getAccessibleMock(I18n\Formatter\NumberFormatter::class, ['dummy']);
         $result = $formatter->_call('doFormattingWithParsedFormat', $number, $parsedFormat, $this->sampleLocalizedSymbols);
-        $this->assertEquals($expectedResult, $result);
+        self::assertEquals($expectedResult, $result);
     }
 
     /**
@@ -171,7 +171,7 @@ class NumberFormatterTest extends UnitTestCase
         $formatter->injectNumbersReader($mockNumbersReader);
 
         $result = $formatter->formatNumberWithCustomPattern($number, $format, $this->sampleLocale);
-        $this->assertEquals($expectedResult, $result);
+        self::assertEquals($expectedResult, $result);
     }
 
     /**
@@ -248,6 +248,6 @@ class NumberFormatterTest extends UnitTestCase
             $methodName = 'format' . ucfirst($formatType) . 'Number';
             $result = $formatter->$methodName($number, $this->sampleLocale);
         }
-        $this->assertEquals($expectedResult, $result);
+        self::assertEquals($expectedResult, $result);
     }
 }

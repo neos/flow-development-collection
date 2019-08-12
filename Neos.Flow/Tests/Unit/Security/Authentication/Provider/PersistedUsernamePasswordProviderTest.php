@@ -56,7 +56,7 @@ class PersistedUsernamePasswordProviderTest extends UnitTestCase
     protected $persistedUsernamePasswordProvider;
 
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->mockHashService = $this->createMock(Security\Cryptography\HashService::class);
         $this->mockAccount = $this->getMockBuilder(Security\Account::class)->disableOriginalConstructor()->getMock();
@@ -69,7 +69,7 @@ class PersistedUsernamePasswordProviderTest extends UnitTestCase
             return $callback->__invoke();
         }));
 
-        $this->persistedUsernamePasswordProvider = $this->getAccessibleMock(Security\Authentication\Provider\PersistedUsernamePasswordProvider::class, array('dummy'), [], '', false);
+        $this->persistedUsernamePasswordProvider = $this->getAccessibleMock(Security\Authentication\Provider\PersistedUsernamePasswordProvider::class, ['dummy'], [], '', false);
         $this->persistedUsernamePasswordProvider->_set('name', 'myProvider');
         $this->persistedUsernamePasswordProvider->_set('options', []);
         $this->persistedUsernamePasswordProvider->_set('hashService', $this->mockHashService);
@@ -103,7 +103,7 @@ class PersistedUsernamePasswordProviderTest extends UnitTestCase
      */
     public function authenticatingAnUsernamePasswordTokenFetchesAccountWithDisabledAuthorization()
     {
-        $this->mockToken->expects($this->once())->method('getCredentials')->will($this->returnValue(array('username' => 'admin', 'password' => 'password')));
+        $this->mockToken->expects($this->once())->method('getCredentials')->will($this->returnValue(['username' => 'admin', 'password' => 'password']));
         $this->mockSecurityContext->expects($this->once())->method('withoutAuthorizationChecks');
         $this->persistedUsernamePasswordProvider->authenticate($this->mockToken);
     }
@@ -128,13 +128,13 @@ class PersistedUsernamePasswordProviderTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Security\Exception\UnsupportedAuthenticationTokenException
      */
     public function authenticatingAnUnsupportedTokenThrowsAnException()
     {
+        $this->expectException(Security\Exception\UnsupportedAuthenticationTokenException::class);
         $someNiceToken = $this->createMock(Security\Authentication\TokenInterface::class);
 
-        $usernamePasswordProvider = Security\Authentication\Provider\PersistedUsernamePasswordProvider::create('myProvider', array());
+        $usernamePasswordProvider = Security\Authentication\Provider\PersistedUsernamePasswordProvider::create('myProvider', []);
 
         $usernamePasswordProvider->authenticate($someNiceToken);
     }
@@ -149,9 +149,9 @@ class PersistedUsernamePasswordProviderTest extends UnitTestCase
         $mockToken2 = $this->createMock(Security\Authentication\TokenInterface::class);
         $mockToken2->expects($this->once())->method('getAuthenticationProviderName')->will($this->returnValue('someOtherProvider'));
 
-        $usernamePasswordProvider = Security\Authentication\Provider\PersistedUsernamePasswordProvider::create('myProvider', array());
+        $usernamePasswordProvider = Security\Authentication\Provider\PersistedUsernamePasswordProvider::create('myProvider', []);
 
-        $this->assertTrue($usernamePasswordProvider->canAuthenticate($mockToken1));
-        $this->assertFalse($usernamePasswordProvider->canAuthenticate($mockToken2));
+        self::assertTrue($usernamePasswordProvider->canAuthenticate($mockToken1));
+        self::assertFalse($usernamePasswordProvider->canAuthenticate($mockToken2));
     }
 }

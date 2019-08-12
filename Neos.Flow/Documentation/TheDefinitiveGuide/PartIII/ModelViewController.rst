@@ -623,7 +623,10 @@ The general syntax of a view configuration looks like this:
 	  requestFilter: 'isPackage("Foreign.Package") && isController("Standard")'
 	  viewObjectName: 'Neos\Fusion\View\FusionView'
 	  options:
-	    fusionPathPattern: 'resource://My.Package/Private/Fusion'
+	    fusionPathPatterns:
+	      - 'resource://Neos.Fusion/Private/Fusion'
+	      - 'resource://My.Package/Private/Fusion'
+	    fusionPath: 'yourProtoype'
 
 The requestFilter is based on Neos.Eel allowing you to match arbitrary requests
 so that you can override View configuration for various scenarios.
@@ -678,6 +681,8 @@ If the package is "My.Foo" and the Format is "html" the result will be 10001
 	Previously the configuration of all matching ``Views.yaml`` filters was merged.
 	From version 4.0 on only the matching filter with the highest weight is respected
 	in order to reduce ambiguity.
+
+The fusionPathPatterns has to contain the Root-Fusion and the path to Fusion-Folder which contains your Prototype. Your Prototype gets searched recursively by fusionPath.
 
 Controller Context
 ~~~~~~~~~~~~~~~~~~
@@ -763,7 +768,7 @@ in a special object, the *mapping results*. These mapping results can be
 conveniently access through a Fluid view helper in order to display warnings and
 errors along the submitted form or on top of it::
 
-	<f:form.validationResults>
+	<f:validation.results>
 		<f:if condition="{validationResults.flattenedErrors}">
 			<ul class="errors">
 				<f:for each="{validationResults.flattenedErrors}" as="errors" key="propertyPath">
@@ -777,7 +782,7 @@ errors along the submitted form or on top of it::
 				</f:for>
 			</ul>
 		</f:if>
-	</f:form.validationResults>
+	</f:validation.results>
 
 Besides using the view helper to display the validation results, you can also
 completely replace the ``errorAction()`` method with your own custom method.

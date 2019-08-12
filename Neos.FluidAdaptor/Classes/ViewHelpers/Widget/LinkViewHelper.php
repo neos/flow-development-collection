@@ -60,27 +60,29 @@ class LinkViewHelper extends AbstractTagBasedViewHelper
         $this->registerTagAttribute('rel', 'string', 'Specifies the relationship between the current document and the linked document');
         $this->registerTagAttribute('rev', 'string', 'Specifies the relationship between the linked document and the current document');
         $this->registerTagAttribute('target', 'string', 'Specifies where to open the linked document');
+
+        $this->registerArgument('action', 'string', 'Target action');
+        $this->registerArgument('arguments', 'array', 'Arguments', false, []);
+        $this->registerArgument('section', 'string', 'The anchor to be added to the URI', false, '');
+        $this->registerArgument('format', 'string', 'The requested format, e.g. ".html"', false, '');
+        $this->registerArgument('ajax', 'boolean', 'true if the URI should be to an AJAX widget, false otherwise', false, false);
+        $this->registerArgument('includeWidgetContext', 'boolean', 'true if the URI should contain the serialized widget context (only useful for stateless AJAX widgets)', false, false);
     }
 
     /**
      * Render the link.
      *
-     * @param string $action Target action
-     * @param array $arguments Arguments
-     * @param string $section The anchor to be added to the URI
-     * @param string $format The requested format, e.g. ".html"
-     * @param boolean $ajax TRUE if the URI should be to an AJAX widget, FALSE otherwise.
-     * @param boolean $includeWidgetContext TRUE if the URI should contain the serialized widget context (only useful for stateless AJAX widgets)
      * @return string The rendered link
-     * @throws ViewHelper\Exception if $action argument is not specified and $ajax is FALSE
+     * @throws ViewHelper\Exception if $action argument is not specified and $ajax is false
+     * @throws WidgetContextNotFoundException
      * @api
      */
-    public function render($action = null, $arguments = array(), $section = '', $format = '', $ajax = false, $includeWidgetContext = false)
+    public function render(): string
     {
-        if ($ajax === true) {
+        if ($this->hasArgument('ajax') && $this->arguments['ajax'] === true) {
             $uri = $this->getAjaxUri();
         } else {
-            if ($action === null) {
+            if (!$this->hasArgument('action')) {
                 throw new ViewHelper\Exception('You have to specify the target action when creating a widget URI with the widget.link ViewHelper', 1357648227);
             }
             $uri = $this->getWidgetUri();
@@ -98,16 +100,14 @@ class LinkViewHelper extends AbstractTagBasedViewHelper
      * @return string the AJAX URI
      * @throws WidgetContextNotFoundException
      */
-    protected function getAjaxUri()
+    protected function getAjaxUri(): string
     {
-        $action = $this->arguments['action'];
-        $arguments = $this->arguments['arguments'];
+        $arguments = $this->arguments['arguments'] ?? $this->argumentDefinitions['arguments']->getDefaultValue();
 
-        if ($action === null) {
-            $action = $this->controllerContext->getRequest()->getControllerActionName();
+        if (!$this->hasArgument('action')) {
+            $arguments['@action'] = $this->controllerContext->getRequest()->getControllerActionName();
         }
-        $arguments['@action'] = $action;
-        if (strlen($this->arguments['format']) > 0) {
+        if ($this->hasArgument('format')) {
             $arguments['@format'] = $this->arguments['format'];
         }
         /** @var $widgetContext WidgetContext */
@@ -115,7 +115,7 @@ class LinkViewHelper extends AbstractTagBasedViewHelper
         if ($widgetContext === null) {
             throw new WidgetContextNotFoundException('Widget context not found in <f:widget.link>', 1307450686);
         }
-        if ($this->arguments['includeWidgetContext'] === true) {
+        if ($this->hasArgument('includeWidgetContext') && $this->arguments['includeWidgetContext'] === true) {
             $serializedWidgetContext = serialize($widgetContext);
             $arguments['__widgetContext'] = $this->hashService->appendHmac($serializedWidgetContext);
         } else {
@@ -131,24 +131,24 @@ class LinkViewHelper extends AbstractTagBasedViewHelper
      * @throws ViewHelper\Exception
      * @todo argumentsToBeExcludedFromQueryString does not work yet, needs to be fixed.
      */
-    protected function getWidgetUri()
+    protected function getWidgetUri(): string
     {
         $uriBuilder = $this->controllerContext->getUriBuilder();
 
-        $argumentsToBeExcludedFromQueryString = array(
+        $argumentsToBeExcludedFromQueryString = [
             '@package',
             '@subpackage',
             '@controller'
-        );
+        ];
 
         $uriBuilder
             ->reset()
-            ->setSection($this->arguments['section'])
+            ->setSection($this->arguments['section'] ?? $this->argumentDefinitions['section']->getDefaultValue())
             ->setCreateAbsoluteUri(true)
             ->setArgumentsToBeExcludedFromQueryString($argumentsToBeExcludedFromQueryString)
-            ->setFormat($this->arguments['format']);
+            ->setFormat($this->arguments['format'] ?? $this->argumentDefinitions['format']->getDefaultValue());
         try {
-            $uri = $uriBuilder->uriFor($this->arguments['action'], $this->arguments['arguments'], '', '', '');
+            $uri = $uriBuilder->uriFor($this->arguments['action'] ?? $this->argumentDefinitions['action']->getDefaultValue(), $this->arguments['arguments'] ?? $this->argumentDefinitions['arguments']->getDefaultValue(), '', '', '');
         } catch (\Exception $exception) {
             throw new ViewHelper\Exception($exception->getMessage(), $exception->getCode(), $exception);
         }

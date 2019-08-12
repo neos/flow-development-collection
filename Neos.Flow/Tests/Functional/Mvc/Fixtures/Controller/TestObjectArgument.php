@@ -11,6 +11,8 @@ namespace Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller;
  * source code.
  */
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -31,6 +33,23 @@ class TestObjectArgument
     protected $emailAddress;
 
     /**
+     * @var Collection<TestObjectArgument>
+     * @Flow\Validate(type="Collection",validationGroups={"validatedGroup"})
+     */
+    protected $collection;
+
+    /**
+     * @var TestObjectArgument
+     * @Flow\Validate(type="GenericObject",validationGroups={"validatedGroup"})
+     */
+    protected $related;
+
+    public function __construct()
+    {
+        $this->collection = new ArrayCollection();
+    }
+
+    /**
      * @return string
      */
     public function getName()
@@ -47,6 +66,22 @@ class TestObjectArgument
     }
 
     /**
+     * @param Collection<TestObjectArgument> $collection
+     */
+    public function setCollection(Collection $collection)
+    {
+        $this->collection = $collection;
+    }
+
+    /**
+     * @return Collection<TestObjectArgument>
+     */
+    public function getCollection()
+    {
+        return clone $this->collection;
+    }
+
+    /**
      * @return string
      */
     public function getEmailAddress()
@@ -60,5 +95,21 @@ class TestObjectArgument
     public function setEmailAddress($emailAddress)
     {
         $this->emailAddress = $emailAddress;
+    }
+
+    /**
+     * @return TestObjectArgument
+     */
+    public function getRelated()
+    {
+        return $this->related;
+    }
+
+    /**
+     * @param TestObjectArgument $related
+     */
+    public function setRelated($related)
+    {
+        $this->related = $related;
     }
 }

@@ -39,14 +39,14 @@ class StandardsComplianceComponentTest extends UnitTestCase
      */
     protected $mockHttpResponse;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->mockHttpRequest = $this->getMockBuilder(Http\Request::class)->disableOriginalConstructor()->getMock();
-        $this->mockHttpResponse = $this->getMockBuilder(Http\Response::class)->disableOriginalConstructor()->getMock();
+        $this->response = new Http\Response();
 
         $this->mockComponentContext = $this->getMockBuilder(Http\Component\ComponentContext::class)->disableOriginalConstructor()->getMock();
         $this->mockComponentContext->expects($this->any())->method('getHttpRequest')->will($this->returnValue($this->mockHttpRequest));
-        $this->mockComponentContext->expects($this->any())->method('getHttpResponse')->will($this->returnValue($this->mockHttpResponse));
+        $this->mockComponentContext->expects($this->any())->method('getHttpResponse')->will($this->returnValue($this->response));
 
         $this->standardsComplianceComponent = new Http\Component\StandardsComplianceComponent([]);
     }
@@ -56,8 +56,7 @@ class StandardsComplianceComponentTest extends UnitTestCase
      */
     public function handleCallsMakeStandardsCompliantOnTheCurrentResponse()
     {
-        $this->mockHttpResponse->expects($this->once())->method('makeStandardsCompliant')->with($this->mockHttpRequest);
-
+        $this->mockComponentContext->expects(self::once())->method('replaceHttpResponse');
         $this->standardsComplianceComponent->handle($this->mockComponentContext);
     }
 }

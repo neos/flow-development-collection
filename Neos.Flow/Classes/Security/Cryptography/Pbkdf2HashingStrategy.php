@@ -82,7 +82,7 @@ class Pbkdf2HashingStrategy implements PasswordHashingStrategyInterface
      * @param string $password The cleartext password
      * @param string $hashedPasswordAndSalt The derived key and salt in Base64 encoding as returned by hashPassword for verification
      * @param string $staticSalt Static salt that will be appended to the dynamic salt
-     * @return boolean TRUE if the given password matches the hashed password
+     * @return boolean true if the given password matches the hashed password
      * @throws \InvalidArgumentException
      */
     public function validatePassword($password, $hashedPasswordAndSalt, $staticSalt = null)

@@ -160,7 +160,7 @@ class PackageOrderResolver
      * Check whether the given package requirement (like "neos/flow" or "php") is a composer package or not
      *
      * @param string $requirement the composer requirement string
-     * @return boolean TRUE if $requirement is a composer package (contains a slash), FALSE otherwise
+     * @return boolean true if $requirement is a composer package (contains a slash), false otherwise
      */
     protected function packageRequirementIsComposerPackage($requirement)
     {

@@ -12,7 +12,6 @@ namespace Neos\Eel\Tests\Unit\FlowQuery\Operations;
  */
 
 use Neos\Eel\FlowQuery\FlowQuery;
-use Neos\Eel\FlowQuery\Operations\AddOperation;
 use Neos\Eel\FlowQuery\Operations\RemoveOperation;
 
 /**
@@ -38,7 +37,7 @@ class RemoveOperationTest extends \Neos\Flow\Tests\UnitTestCase
         $operation = new RemoveOperation();
         $operation->evaluate($flowQuery, $arguments);
 
-        $this->assertSame([$object1], $flowQuery->getContext());
+        self::assertSame([$object1], $flowQuery->getContext());
     }
 
     /**
@@ -59,7 +58,7 @@ class RemoveOperationTest extends \Neos\Flow\Tests\UnitTestCase
         $operation = new RemoveOperation();
         $operation->evaluate($flowQuery, $arguments);
 
-        $this->assertSame([$object1], $flowQuery->getContext());
+        self::assertSame([$object1], $flowQuery->getContext());
     }
 
     /**
@@ -80,6 +79,6 @@ class RemoveOperationTest extends \Neos\Flow\Tests\UnitTestCase
         $operation = new RemoveOperation();
         $operation->evaluate($flowQuery, $arguments);
 
-        $this->assertSame([$object1], $flowQuery->getContext());
+        self::assertSame([$object1], $flowQuery->getContext());
     }
 }

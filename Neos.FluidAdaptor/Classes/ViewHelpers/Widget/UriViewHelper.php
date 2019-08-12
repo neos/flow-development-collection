@@ -40,28 +40,40 @@ class UriViewHelper extends AbstractViewHelper
     protected $hashService;
 
     /**
+     * Initialize the arguments.
+     *
+     * @return void
+     * @throws \Neos\FluidAdaptor\Core\ViewHelper\Exception
+     */
+    public function initializeArguments()
+    {
+        parent::initializeArguments();
+        $this->registerArgument('action', 'string', 'Target action', true);
+        $this->registerArgument('arguments', 'array', 'Arguments', false, []);
+        $this->registerArgument('section', 'string', 'The anchor to be added to the URI', false, '');
+        $this->registerArgument('format', 'string', 'The requested format, e.g. ".html"', false, '');
+        $this->registerArgument('ajax', 'boolean', 'true if the URI should be to an AJAX widget, false otherwise', false, false);
+        $this->registerArgument('includeWidgetContext', 'boolean', 'true if the URI should contain the serialized widget context (only useful for stateless AJAX widgets)', false, false);
+    }
+
+    /**
      * Render the Uri.
      *
-     * @param string $action Target action
-     * @param array $arguments Arguments
-     * @param string $section The anchor to be added to the URI
-     * @param string $format The requested format, e.g. ".html"
-     * @param boolean $ajax TRUE if the URI should be to an AJAX widget, FALSE otherwise.
-     * @param boolean $includeWidgetContext TRUE if the URI should contain the serialized widget context (only useful for stateless AJAX widgets)
      * @return string The rendered link
-     * @throws ViewHelper\Exception if $action argument is not specified and $ajax is FALSE
+     * @throws ViewHelper\Exception if $action argument is not specified and $ajax is false
+     * @throws WidgetContextNotFoundException
      * @api
      */
-    public function render($action = null, $arguments = array(), $section = '', $format = '', $ajax = false, $includeWidgetContext = false)
+    public function render(): string
     {
-        if ($ajax === true) {
+        if ($this->arguments['ajax'] === true) {
             return $this->getAjaxUri();
-        } else {
-            if ($action === null) {
-                throw new ViewHelper\Exception('You have to specify the target action when creating a widget URI with the widget.uri ViewHelper', 1357648232);
-            }
-            return $this->getWidgetUri();
         }
+
+        if (!$this->hasArgument('action')) {
+            throw new ViewHelper\Exception('You have to specify the target action when creating a widget URI with the widget.uri ViewHelper', 1357648232);
+        }
+        return $this->getWidgetUri();
     }
 
     /**
@@ -70,7 +82,7 @@ class UriViewHelper extends AbstractViewHelper
      * @return string the AJAX URI
      * @throws WidgetContextNotFoundException
      */
-    protected function getAjaxUri()
+    protected function getAjaxUri(): string
     {
         $action = $this->arguments['action'];
         $arguments = $this->arguments['arguments'];
@@ -79,7 +91,7 @@ class UriViewHelper extends AbstractViewHelper
             $action = $this->controllerContext->getRequest()->getControllerActionName();
         }
         $arguments['@action'] = $action;
-        if (strlen($this->arguments['format']) > 0) {
+        if ($this->arguments['format'] !== '') {
             $arguments['@format'] = $this->arguments['format'];
         }
         /** @var $widgetContext WidgetContext */
@@ -103,15 +115,15 @@ class UriViewHelper extends AbstractViewHelper
      * @throws ViewHelper\Exception
      * @todo argumentsToBeExcludedFromQueryString does not work yet, needs to be fixed.
      */
-    protected function getWidgetUri()
+    protected function getWidgetUri(): string
     {
         $uriBuilder = $this->controllerContext->getUriBuilder();
 
-        $argumentsToBeExcludedFromQueryString = array(
+        $argumentsToBeExcludedFromQueryString = [
             '@package',
             '@subpackage',
             '@controller'
-        );
+        ];
 
         $uriBuilder
             ->reset()

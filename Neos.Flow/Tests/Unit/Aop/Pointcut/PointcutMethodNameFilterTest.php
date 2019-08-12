@@ -14,6 +14,7 @@ namespace Neos\Flow\Tests\Unit\Aop\Pointcut;
 use Neos\Flow\Aop;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Tests\UnitTestCase;
+use Psr\Log\LoggerInterface;
 
 /**
  * Testcase for the Pointcut Method Name Filter
@@ -36,7 +37,7 @@ class PointcutMethodNameFilterTest extends UnitTestCase
         $mockReflectionService->expects($this->any())->method('isMethodFinal')->with($className, 'someFinalMethod')->will($this->returnValue(true));
         $methodNameFilter = new Aop\Pointcut\PointcutMethodNameFilter('someFinalMethod');
         $methodNameFilter->injectReflectionService($mockReflectionService);
-        $this->assertTrue($methodNameFilter->matches($className, 'someFinalMethod', $className, 1));
+        self::assertTrue($methodNameFilter->matches($className, 'someFinalMethod', $className, 1));
     }
 
     /**
@@ -60,17 +61,17 @@ class PointcutMethodNameFilterTest extends UnitTestCase
 
         $methodNameFilter = new Aop\Pointcut\PointcutMethodNameFilter('some.*', 'public');
         $methodNameFilter->injectReflectionService($mockReflectionService);
-        $this->assertTrue($methodNameFilter->matches(__CLASS__, 'somePublicMethod', $className, 1));
-        $this->assertFalse($methodNameFilter->matches(__CLASS__, 'someProtectedMethod', $className, 1));
-        $this->assertFalse($methodNameFilter->matches(__CLASS__, 'somePrivateMethod', $className, 1));
-        $this->assertFalse($methodNameFilter->matches(__CLASS__, 'somePublicMethod', null, 1));
+        self::assertTrue($methodNameFilter->matches(__CLASS__, 'somePublicMethod', $className, 1));
+        self::assertFalse($methodNameFilter->matches(__CLASS__, 'someProtectedMethod', $className, 1));
+        self::assertFalse($methodNameFilter->matches(__CLASS__, 'somePrivateMethod', $className, 1));
+        self::assertFalse($methodNameFilter->matches(__CLASS__, 'somePublicMethod', null, 1));
 
         $methodNameFilter = new Aop\Pointcut\PointcutMethodNameFilter('some.*', 'protected');
         $methodNameFilter->injectReflectionService($mockReflectionService);
-        $this->assertFalse($methodNameFilter->matches(__CLASS__, 'somePublicMethod', $className, 1));
-        $this->assertTrue($methodNameFilter->matches(__CLASS__, 'someProtectedMethod', $className, 1));
-        $this->assertFalse($methodNameFilter->matches(__CLASS__, 'somePrivateMethod', $className, 1));
-        $this->assertFalse($methodNameFilter->matches(__CLASS__, 'someProtectedMethod', null, 1));
+        self::assertFalse($methodNameFilter->matches(__CLASS__, 'somePublicMethod', $className, 1));
+        self::assertTrue($methodNameFilter->matches(__CLASS__, 'someProtectedMethod', $className, 1));
+        self::assertFalse($methodNameFilter->matches(__CLASS__, 'somePrivateMethod', $className, 1));
+        self::assertFalse($methodNameFilter->matches(__CLASS__, 'someProtectedMethod', null, 1));
     }
 
     /**
@@ -89,13 +90,13 @@ class PointcutMethodNameFilterTest extends UnitTestCase
 
         $mockReflectionService = $this->createMock(ReflectionService::class);
         $mockReflectionService->expects($this->exactly(3))->method('getMethodParameters')->will($this->onConsecutiveCalls(
-            ['arg1' => []],
-            ['arg1' => [], 'arg2' => []],
-            ['arg1' => [], 'arg2' => [], 'arg3' => []]
+                ['arg1' => []],
+                ['arg1' => [], 'arg2' => []],
+                ['arg1' => [], 'arg2' => [], 'arg3' => []]
         ));
 
-        $mockSystemLogger = $this->getMockBuilder(\Neos\Flow\Log\Logger::class)->setMethods(['log'])->getMock();
-        $mockSystemLogger->expects($this->once())->method('log')->with($this->equalTo(
+        $mockSystemLogger = $this->getMockBuilder(LoggerInterface::class)->setMethods([])->getMock();
+        $mockSystemLogger->expects($this->once())->method('notice')->with($this->equalTo(
             'The argument "arg2" declared in pointcut does not exist in method ' . $className . '->somePublicMethod'
         ));
 
@@ -112,12 +113,12 @@ class PointcutMethodNameFilterTest extends UnitTestCase
 
         $methodNameFilter = new Aop\Pointcut\PointcutMethodNameFilter('some.*', null, $argumentConstraints);
         $methodNameFilter->injectReflectionService($mockReflectionService);
-        $methodNameFilter->injectSystemLogger($mockSystemLogger);
+        $methodNameFilter->injectLogger($mockSystemLogger);
 
         $methodNameFilter->matches(__CLASS__, 'somePublicMethod', $className, 1);
 
-        $this->assertTrue($methodNameFilter->matches(__CLASS__, 'someOtherPublicMethod', $className, 1));
-        $this->assertTrue($methodNameFilter->matches(__CLASS__, 'someThirdMethod', $className, 1));
+        self::assertTrue($methodNameFilter->matches(__CLASS__, 'someOtherPublicMethod', $className, 1));
+        self::assertTrue($methodNameFilter->matches(__CLASS__, 'someThirdMethod', $className, 1));
     }
 
     /**
@@ -138,6 +139,6 @@ class PointcutMethodNameFilterTest extends UnitTestCase
 
         $methodNameFilter = new Aop\Pointcut\PointcutMethodNameFilter('some.*', null, $argumentConstraints);
 
-        $this->assertEquals($expectedRuntimeEvaluations, $methodNameFilter->getRuntimeEvaluationsDefinition(), 'The argument constraint definitions have not been returned as expected.');
+        self::assertEquals($expectedRuntimeEvaluations, $methodNameFilter->getRuntimeEvaluationsDefinition(), 'The argument constraint definitions have not been returned as expected.');
     }
 }

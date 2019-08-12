@@ -12,6 +12,7 @@ namespace Neos\Flow\Tests\Unit\Security;
  */
 
 use Neos\Flow\ObjectManagement\ObjectManager;
+use Neos\Flow\Security\Exception\NoRequestPatternFoundException;
 use Neos\Flow\Security\RequestPatternResolver;
 use Neos\Flow\Tests\UnitTestCase;
 
@@ -22,10 +23,10 @@ class RequestPatternResolverTest extends UnitTestCase
 {
     /**
      * @test
-     * @expectedException \Neos\Flow\Security\Exception\NoRequestPatternFoundException
      */
     public function resolveRequestPatternClassThrowsAnExceptionIfNoRequestPatternIsAvailable()
     {
+        $this->expectException(NoRequestPatternFoundException::class);
         $mockObjectManager = $this->getMockBuilder(ObjectManager::class)->disableOriginalConstructor()->getMock();
         $mockObjectManager->expects($this->any())->method('getClassNameByObjectName')->will($this->returnValue(false));
 
@@ -57,7 +58,7 @@ class RequestPatternResolverTest extends UnitTestCase
         $requestPatternResolver = new RequestPatternResolver($mockObjectManager);
         $requestPatternClass = $requestPatternResolver->resolveRequestPatternClass('ValidShortName');
 
-        $this->assertEquals($longNameForTest, $requestPatternClass, 'The wrong classname has been resolved');
+        self::assertEquals($longNameForTest, $requestPatternClass, 'The wrong classname has been resolved');
     }
 
     /**
@@ -71,6 +72,6 @@ class RequestPatternResolverTest extends UnitTestCase
         $requestPatternResolver = new RequestPatternResolver($mockObjectManager);
         $requestPatternClass = $requestPatternResolver->resolveRequestPatternClass('ExistingRequestPatternClass');
 
-        $this->assertEquals('ExistingRequestPatternClass', $requestPatternClass, 'The wrong classname has been resolved');
+        self::assertEquals('ExistingRequestPatternClass', $requestPatternClass, 'The wrong classname has been resolved');
     }
 }

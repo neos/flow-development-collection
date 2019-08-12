@@ -87,7 +87,7 @@ class AjaxWidgetComponentTest extends UnitTestCase
 
     /**
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->ajaxWidgetComponent = new AjaxWidgetComponent();
 
@@ -97,7 +97,7 @@ class AjaxWidgetComponentTest extends UnitTestCase
         $this->mockComponentContext = $this->getMockBuilder(\Neos\Flow\Http\Component\ComponentContext::class)->disableOriginalConstructor()->getMock();
 
         $this->mockHttpRequest = $this->getMockBuilder(\Neos\Flow\Http\Request::class)->disableOriginalConstructor()->getMock();
-        $this->mockHttpRequest->expects($this->any())->method('getArguments')->will($this->returnValue(array()));
+        $this->mockHttpRequest->expects($this->any())->method('getArguments')->will($this->returnValue([]));
         $this->mockComponentContext->expects($this->any())->method('getHttpRequest')->will($this->returnValue($this->mockHttpRequest));
 
         $this->mockHttpResponse = $this->getMockBuilder(\Neos\Flow\Http\Response::class)->disableOriginalConstructor()->getMock();
@@ -116,7 +116,7 @@ class AjaxWidgetComponentTest extends UnitTestCase
         $this->inject($this->ajaxWidgetComponent, 'securityContext', $this->mockSecurityContext);
 
         $this->mockPropertyMapper = $this->getMockBuilder(\Neos\Flow\Property\PropertyMapper::class)->disableOriginalConstructor()->getMock();
-        $this->mockPropertyMapper->expects($this->any())->method('convert')->with('', 'array', $this->mockPropertyMappingConfiguration)->will($this->returnValue(array()));
+        $this->mockPropertyMapper->expects($this->any())->method('convert')->with('', 'array', $this->mockPropertyMappingConfiguration)->will($this->returnValue([]));
         $this->inject($this->ajaxWidgetComponent, 'propertyMapper', $this->mockPropertyMapper);
     }
 
@@ -176,7 +176,7 @@ class AjaxWidgetComponentTest extends UnitTestCase
             [RoutingComponent::class, 'matchResults', []],
             [DispatchComponent::class, 'actionRequest', $mockActionRequest]
         ]);
-        $this->mockDispatcher->expects($this->once())->method('dispatch')->with($mockActionRequest, $this->mockHttpResponse);
+        $this->mockDispatcher->expects($this->once())->method('dispatch');
 
         $this->ajaxWidgetComponent->handle($this->mockComponentContext);
     }
@@ -236,7 +236,7 @@ class AjaxWidgetComponentTest extends UnitTestCase
      */
     public function extractWidgetContextDecodesSerializedWidgetContextIfPresent()
     {
-        $ajaxWidgetComponent = $this->getAccessibleMock(\Neos\FluidAdaptor\Core\Widget\AjaxWidgetComponent::class, array('dummy'));
+        $ajaxWidgetComponent = $this->getAccessibleMock(\Neos\FluidAdaptor\Core\Widget\AjaxWidgetComponent::class, ['dummy']);
         $this->inject($ajaxWidgetComponent, 'hashService', $this->mockHashService);
 
         $mockWidgetContext = 'SomeWidgetContext';
@@ -248,6 +248,6 @@ class AjaxWidgetComponentTest extends UnitTestCase
         $this->mockHashService->expects($this->atLeastOnce())->method('validateAndStripHmac')->with($mockSerializedWidgetContextWithHmac)->will($this->returnValue($mockSerializedWidgetContext));
 
         $actualResult = $ajaxWidgetComponent->_call('extractWidgetContext', $this->mockHttpRequest);
-        $this->assertEquals($mockWidgetContext, $actualResult);
+        self::assertEquals($mockWidgetContext, $actualResult);
     }
 }
