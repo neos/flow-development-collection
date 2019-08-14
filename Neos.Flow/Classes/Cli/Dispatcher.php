@@ -125,12 +125,12 @@ class Dispatcher
         $controllerObjectName = $request->getControllerObjectName();
         if ($controllerObjectName === '') {
             $exceptionMessage = 'No controller could be resolved which would match your request';
-            throw new \Neos\Flow\Mvc\Routing\Exception\InvalidControllerException($exceptionMessage, 1303209195, null, $request);
+            throw new \Neos\Flow\Mvc\Routing\Exception\InvalidControllerException($exceptionMessage, 1303209195);
         }
 
         $controller = $this->objectManager->get($controllerObjectName);
         if (!$controller instanceof ControllerInterface) {
-            throw new \Neos\Flow\Mvc\Routing\Exception\InvalidControllerException('Invalid controller "' . $request->getControllerObjectName() . '". The controller must be a valid request handling controller, ' . (is_object($controller) ? get_class($controller) : gettype($controller)) . ' given.', 1202921619, null, $request);
+            throw new \Neos\Flow\Mvc\Routing\Exception\InvalidControllerException('Invalid controller "' . $request->getControllerObjectName() . '". The controller must be a valid request handling controller, ' . (is_object($controller) ? get_class($controller) : gettype($controller)) . ' given.', 1202921619);
         }
 
         return $controller;

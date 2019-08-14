@@ -303,7 +303,7 @@ class FormViewHelper extends AbstractFormViewHelper
                 'arguments' => $this->hashService->appendHmac(base64_encode(serialize($request->getArguments())))
             ];
             foreach ($referrer as $referrerKey => $referrerValue) {
-                $referrerValue = htmlspecialchars($referrerValue);
+                $referrerValue = $referrerValue ? htmlspecialchars($referrerValue) : '';
                 $result .= '<input type="hidden" name="' . $argumentNamespace . '[__referrer][' . $referrerKey . ']" value="' . $referrerValue . '" />' . chr(10);
             }
             $request = $request->getParentRequest();
@@ -436,9 +436,8 @@ class FormViewHelper extends AbstractFormViewHelper
         if (!$request->isMainRequest()) {
             if ($this->arguments['useParentRequest'] === true) {
                 return $request->getParentRequest()->getArgumentNamespace();
-            } else {
-                return $request->getArgumentNamespace();
             }
+            return $request->getArgumentNamespace();
         }
         return '';
     }

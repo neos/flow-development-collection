@@ -207,7 +207,7 @@ class Dispatcher
             if ($request instanceof ActionRequest) {
                 $exceptionMessage .= sprintf('. Package key: "%s", controller name: "%s"', $request->getControllerPackageKey(), $request->getControllerName());
                 if ($request->getControllerSubpackageKey() !== null) {
-                    $exceptionMessage .= sprintf(', SubPackage key: "%s"', $request->getControllerSubpackageKey());
+                    $exceptionMessage .= sprintf(', SubPackage key: "%s"', (string)$request->getControllerSubpackageKey());
                 }
                 $exceptionMessage .= sprintf('. (%s %s)', $request->getHttpRequest()->getMethod(), $request->getHttpRequest()->getUri());
             }

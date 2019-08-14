@@ -37,7 +37,7 @@ class WebRedirect extends AbstractEntryPoint
      *
      * @param ServerRequestInterface $request The current request
      * @param ResponseInterface $response The current response
-     * @return void
+     * @return ResponseInterface
      * @throws MissingConfigurationException
      */
     public function startAuthentication(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface

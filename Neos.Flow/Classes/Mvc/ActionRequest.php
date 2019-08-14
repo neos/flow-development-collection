@@ -47,9 +47,9 @@ class ActionRequest implements RequestInterface
 
     /**
      * Package key of the controller which is supposed to handle this request.
-     * @var string|null
+     * @var string
      */
-    protected $controllerPackageKey = null;
+    protected $controllerPackageKey = '';
 
     /**
      * Subpackage key of the controller which is supposed to handle this request.
@@ -59,9 +59,9 @@ class ActionRequest implements RequestInterface
 
     /**
      * Object name of the controller which is supposed to handle this request.
-     * @var string|null
+     * @var string
      */
-    protected $controllerName = null;
+    protected $controllerName = '';
 
     /**
      * Name of the action the controller is supposed to take.
@@ -327,11 +327,11 @@ class ActionRequest implements RequestInterface
      * If the Package Manager does not know the specified package, the package key
      * cannot be verified or corrected and is stored as is.
      *
-     * @param string|null $packageKey The package key
+     * @param string $packageKey The package key
      * @return void
      * @api
      */
-    public function setControllerPackageKey(?string $packageKey): void
+    public function setControllerPackageKey(string $packageKey): void
     {
         $correctlyCasedPackageKey = $this->packageManager->getCaseSensitivePackageKey($packageKey);
         $this->controllerPackageKey = ($correctlyCasedPackageKey !== false) ? $correctlyCasedPackageKey : $packageKey;
@@ -340,10 +340,10 @@ class ActionRequest implements RequestInterface
     /**
      * Returns the package key of the specified controller.
      *
-     * @return string|null The package key
+     * @return string The package key
      * @api
      */
-    public function getControllerPackageKey(): ?string
+    public function getControllerPackageKey(): string
     {
         return $this->controllerPackageKey;
     }
@@ -371,7 +371,7 @@ class ActionRequest implements RequestInterface
         $controllerObjectName = $this->getControllerObjectName();
         if ($this->controllerSubpackageKey !== null && $controllerObjectName !== '') {
             // Extract the subpackage key from the controller object name to assure that the case is correct.
-            return substr($controllerObjectName, strlen($this->controllerPackageKey) + 1, strlen($this->controllerSubpackageKey));
+            return substr($controllerObjectName, strlen($this->controllerPackageKey) + 1, strlen((string)$this->controllerSubpackageKey));
         }
         return $this->controllerSubpackageKey;
     }
@@ -382,11 +382,11 @@ class ActionRequest implements RequestInterface
      *
      * Examples: "Standard", "Account", ...
      *
-     * @param string|null $controllerName Name of the controller
+     * @param string $controllerName Name of the controller
      * @return void
      * @throws Exception\InvalidControllerNameException
      */
-    public function setControllerName(?string $controllerName): void
+    public function setControllerName(string $controllerName): void
     {
         if (strpos($controllerName, '_') !== false) {
             throw new Exception\InvalidControllerNameException('The controller name must not contain underscores.', 1217846412);
@@ -398,10 +398,10 @@ class ActionRequest implements RequestInterface
      * Returns the object name of the controller supposed to handle this request, if one
      * was set already (if not, the name of the default controller is returned)
      *
-     * @return string|null Name of the controller
+     * @return string Name of the controller
      * @api
      */
-    public function getControllerName(): ?string
+    public function getControllerName(): string
     {
         $controllerObjectName = $this->getControllerObjectName();
         if ($controllerObjectName !== '') {
