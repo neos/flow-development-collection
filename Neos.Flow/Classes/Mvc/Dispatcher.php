@@ -119,9 +119,12 @@ class Dispatcher
                 } else {
                     $securityLogger->log(sprintf('Starting authentication with entry point of type "%s"', get_class($entryPoint)), LOG_INFO);
                 }
-                $securityContext->setInterceptedRequest($request->getMainRequest());
+                $httpRequest = $request->getHttpRequest();
+                if ($httpRequest->getMethod() === 'GET') {
+                    $securityContext->setInterceptedRequest($request->getMainRequest());
+                }
                 /** @var HttpResponse $response */
-                $entryPoint->startAuthentication($request->getHttpRequest(), $response);
+                $entryPoint->startAuthentication($httpRequest, $response);
             }
             if ($entryPointFound === false) {
                 $securityLogger->log('No authentication entry point found for active tokens, therefore cannot authenticate or redirect to authentication automatically.', LOG_NOTICE);
