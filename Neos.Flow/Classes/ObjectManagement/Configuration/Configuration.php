@@ -59,7 +59,7 @@ class Configuration
     protected $factoryMethodName = 'create';
 
     /**
-     * @var string
+     * @var integer
      */
     protected $scope = self::SCOPE_PROTOTYPE;
 
@@ -252,7 +252,7 @@ class Configuration
     /**
      * Returns the scope for this object
      *
-     * @return string The scope, one of the SCOPE constants
+     * @return integer The scope, one of the SCOPE constants
      */
     public function getScope()
     {
