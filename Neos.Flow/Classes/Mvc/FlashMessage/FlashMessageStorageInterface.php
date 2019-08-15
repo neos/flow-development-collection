@@ -11,8 +11,8 @@ namespace Neos\Flow\Mvc\FlashMessage;
  * source code.
  */
 
-use Neos\Flow\Http\Request as HttpRequest;
-use Neos\Flow\Http\Response as HttpResponse;
+use Psr\Http\Message\ServerRequestInterface as HttpRequestInterface;
+use Psr\Http\Message\ResponseInterface as HttpResponseInterface;
 
 /**
  * Contract for FlashMessage storages
@@ -29,14 +29,14 @@ interface FlashMessageStorageInterface
     // public function __construct(array $options = []);
 
     /**
-     * @param HttpRequest $request The current HTTP request for storages that persist the FlashMessages via HTTP
+     * @param HttpRequestInterface $request The current HTTP request for storages that persist the FlashMessages via HTTP
      * @return FlashMessageContainer
      */
-    public function load(HttpRequest $request): FlashMessageContainer;
+    public function load(HttpRequestInterface $request): FlashMessageContainer;
 
     /**
-     * @param HttpResponse $response The current HTTP response for storages that persist the FlashMessages via HTTP
-     * @return void
+     * @param HttpResponseInterface $response The current HTTP response for storages that persist the FlashMessages via HTTP
+     * @return HttpResponseInterface
      */
-    public function persist(HttpResponse $response);
+    public function persist(HttpResponseInterface $response): HttpResponseInterface;
 }

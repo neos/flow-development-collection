@@ -33,6 +33,7 @@ class FlashMessageComponent implements ComponentInterface
      */
     public function handle(ComponentContext $componentContext)
     {
-        $this->flashMessageService->persistFlashMessages($componentContext->getHttpResponse());
+        $response = $this->flashMessageService->persistFlashMessages($componentContext->getHttpResponse());
+        $componentContext->replaceHttpResponse($response);
     }
 }

@@ -12,11 +12,11 @@ namespace Neos\Flow\Mvc\FlashMessage\Storage;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Http\Request as HttpRequest;
-use Neos\Flow\Http\Response as HttpResponse;
 use Neos\Flow\Mvc\FlashMessage\FlashMessageContainer;
 use Neos\Flow\Mvc\FlashMessage\FlashMessageStorageInterface;
 use Neos\Flow\Session\SessionInterface;
+use Psr\Http\Message\ServerRequestInterface as HttpRequestInterface;
+use Psr\Http\Message\ResponseInterface as HttpResponseInterface;
 
 class FlashMessageSessionStorage implements FlashMessageStorageInterface
 {
@@ -39,7 +39,7 @@ class FlashMessageSessionStorage implements FlashMessageStorageInterface
     private $sessionKey;
 
     /**
-     * @var FlashMessageContainer
+     * @var FlashMessageContainer|null
      */
     private $flashMessageContainer;
 
@@ -49,14 +49,14 @@ class FlashMessageSessionStorage implements FlashMessageStorageInterface
     public function __construct(array $options = [])
     {
         $this->options = $options;
-        $this->sessionKey = isset($this->options['sessionKey']) ? $this->options['sessionKey'] : self::DEFAULT_SESSION_KEY;
+        $this->sessionKey = $this->options['sessionKey'] ?? self::DEFAULT_SESSION_KEY;
     }
 
     /**
-     * @param HttpRequest $_ Not used in this implementation
+     * @param HttpRequestInterface $_ Not used in this implementation
      * @return FlashMessageContainer
      */
-    public function load(HttpRequest $_): FlashMessageContainer
+    public function load(HttpRequestInterface $_): FlashMessageContainer
     {
         if ($this->flashMessageContainer === null) {
             $this->flashMessageContainer = $this->restoreFlashMessageContainerFromSession();
@@ -70,7 +70,7 @@ class FlashMessageSessionStorage implements FlashMessageStorageInterface
     /**
      * @return FlashMessageContainer|null
      */
-    private function restoreFlashMessageContainerFromSession()
+    private function restoreFlashMessageContainerFromSession(): ?FlashMessageContainer
     {
         if ($this->session->canBeResumed()) {
             $this->session->resume();
@@ -87,21 +87,22 @@ class FlashMessageSessionStorage implements FlashMessageStorageInterface
     }
 
     /**
-     * @param HttpResponse $_ Not used in this implementation
-     * @return void
+     * @param HttpResponseInterface $response Not used in this implementation
+     * @return HttpResponseInterface
      */
-    public function persist(HttpResponse $_)
+    public function persist(HttpResponseInterface $response): HttpResponseInterface
     {
         if ($this->flashMessageContainer === null) {
-            return;
+            return $response;
         }
         if (!$this->session->isStarted()) {
             // Don't start a new session if the FlashMessageContainer is empty
             if (!$this->flashMessageContainer->hasMessages()) {
-                return;
+                return $response;
             }
             $this->session->start();
         }
         $this->session->putData($this->sessionKey, $this->flashMessageContainer);
+        return $response;
     }
 }

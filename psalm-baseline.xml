@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="3.4.7@caf7737bbe5a5e9cbdfcc1ada83ea576ca07c9ff" php-version="php:7.3.1; bcmath:7.3.1; bz2:7.3.1; calendar:7.3.1; Core:7.3.1; ctype:7.3.1; curl:7.3.1; date:7.3.1; dom:20031129; exif:7.3.1; fileinfo:7.3.1; filter:7.3.1; ftp:7.3.1; gd:7.3.1; gettext:7.3.1; hash:7.3.1; iconv:7.3.1; json:1.7.0; libxml:7.3.1; mbstring:7.3.1; mysqli:7.3.1; mysqlnd:mysqlnd 5.0.12-dev - 20150407 - $Id: 401a40ebd5e281cf22215acdc170723a1519aaa9 $; openssl:7.3.1; pcre:7.3.1; PDO:7.3.1; pdo_mysql:7.3.1; pdo_sqlite:7.3.1; Phar:7.3.1; readline:7.3.1; Reflection:7.3.1; session:7.3.1; SimpleXML:7.3.1; SPL:7.3.1; standard:7.3.1; tokenizer:7.3.1; wddx:7.3.1; xml:7.3.1; xmlreader:7.3.1; xmlwriter:7.3.1; zip:1.15.4; zlib:7.3.1">
+<files psalm-version="3.4.11@85c9b6bb442039c773120059ae35a31f8ef9d488">
   <file src="Packages/Framework/Neos.Cache/Classes/Backend/AbstractBackend.php">
     <PossiblyInvalidArgument occurrences="1">
       <code>$options</code>
@@ -411,7 +411,6 @@
       <code>$iterator-&gt;preceding($maximumCharacters)</code>
     </InvalidScalarArgument>
     <NullArgument occurrences="2">
-      <code>null</code>
       <code>null</code>
       <code>null</code>
     </NullArgument>
@@ -969,9 +968,6 @@
     </UndefinedInterfaceMethod>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Core/Bootstrap.php">
-    <MissingFile occurrences="1">
-      <code>require(__DIR__ . '/../../../../Libraries/autoload.php')</code>
-    </MissingFile>
     <NullableReturnStatement occurrences="1">
       <code>null</code>
     </NullableReturnStatement>
@@ -1728,6 +1724,12 @@
       <code>getParentRequest</code>
     </UndefinedInterfaceMethod>
   </file>
+  <file src="Packages/Framework/Neos.Flow/Classes/Mvc/FlashMessage/FlashMessageService.php">
+    <TooManyArguments occurrences="2">
+      <code>get</code>
+      <code>get</code>
+    </TooManyArguments>
+  </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Mvc/RequestMatcher.php">
     <PossiblyInvalidArgument occurrences="1">
       <code>$this-&gt;request-&gt;getParentRequest()</code>
@@ -1970,10 +1972,6 @@
       <code>getMethod</code>
       <code>getConstructor</code>
     </PossiblyInvalidMethodCall>
-    <PossiblyNullArgument occurrences="2">
-      <code>$this-&gt;configurationManager-&gt;getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS)</code>
-      <code>$this-&gt;configurationManager-&gt;getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS)</code>
-    </PossiblyNullArgument>
     <PossiblyUndefinedVariable occurrences="1">
       <code>$commands</code>
     </PossiblyUndefinedVariable>
@@ -3859,9 +3857,8 @@
     <NullArgument occurrences="1">
       <code>$arguments['privilegeTarget']</code>
     </NullArgument>
-    <NullArrayAccess occurrences="2">
+    <NullArrayAccess occurrences="1">
       <code>$arguments['privilegeTarget']</code>
-      <code>$arguments['parameters']</code>
     </NullArrayAccess>
     <UndefinedInterfaceMethod occurrences="1">
       <code>getObjectManager</code>
@@ -4093,9 +4090,8 @@
     <InvalidFalsableReturnType occurrences="1">
       <code>integer</code>
     </InvalidFalsableReturnType>
-    <InvalidScalarArgument occurrences="2">
+    <InvalidScalarArgument occurrences="1">
       <code>$enc</code>
-      <code>0</code>
     </InvalidScalarArgument>
   </file>
   <file src="Packages/Framework/Neos.Utility.Unicode/Classes/TextIterator.php">

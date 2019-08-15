@@ -12,7 +12,6 @@ namespace Neos\Flow\Mvc\FlashMessage;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Http\Response as HttpResponse;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Exception\InvalidFlashMessageConfigurationException;
 use Neos\Flow\Mvc\RequestInterface;
@@ -21,6 +20,7 @@ use Neos\Flow\Security\Exception\InvalidRequestPatternException;
 use Neos\Flow\Security\RequestPatternInterface;
 use Neos\Flow\Security\RequestPatternResolver;
 use Neos\Utility\PositionalArraySorter;
+use Psr\Http\Message\ResponseInterface as HttpResponseInterface;
 
 /**
  * @Flow\Scope("singleton")
@@ -56,14 +56,15 @@ class FlashMessageService
     /**
      * Persist all FlashMessageContainers that have been instantiated during the current request cycle
      *
-     * @param HttpResponse $response
-     * @return void
+     * @param HttpResponseInterface $response
+     * @return HttpResponseInterface
      */
-    public function persistFlashMessages(HttpResponse $response)
+    public function persistFlashMessages(HttpResponseInterface $response): HttpResponseInterface
     {
         foreach ($this->instantiatedStorages as $containerName => $flashMessageStorage) {
-            $flashMessageStorage->persist($response);
+            $response = $flashMessageStorage->persist($response);
         }
+        return $response;
     }
 
     /**
@@ -71,6 +72,9 @@ class FlashMessageService
      *
      * @param RequestInterface $request
      * @return FlashMessageContainer
+     * @throws InvalidFlashMessageConfigurationException
+     * @throws InvalidRequestPatternException
+     * @throws \Neos\Flow\Security\Exception\NoRequestPatternFoundException
      */
     public function getFlashMessageContainerForRequest(RequestInterface $request): FlashMessageContainer
     {
@@ -86,12 +90,13 @@ class FlashMessageService
      * @param RequestInterface $request
      * @return FlashMessageStorageInterface
      * @throws InvalidFlashMessageConfigurationException|InvalidRequestPatternException
+     * @throws \Neos\Flow\Security\Exception\NoRequestPatternFoundException
      */
     private function getStorageByRequest(RequestInterface $request): FlashMessageStorageInterface
     {
         $sortedContainerConfiguration = (new PositionalArraySorter($this->flashMessageContainerConfiguration))->toArray();
         foreach ($sortedContainerConfiguration as $containerName => $containerConfiguration) {
-            if (isset($this->flashMessageContainers[$containerName])) {
+            if (isset($this->instantiatedStorages[$containerName])) {
                 return $this->instantiatedStorages[$containerName];
             }
             if (!isset($containerConfiguration['storage'])) {
@@ -109,11 +114,11 @@ class FlashMessageService
                     }
                 }
             }
-            $this->instantiatedStorages[$containerName] = $this->objectManager->get($containerConfiguration['storage'], $containerConfiguration['storageOptions'] ?? []);
-            if (!$this->instantiatedStorages[$containerName] instanceof FlashMessageStorageInterface) {
+            $instantiatedStorage = $this->objectManager->get($containerConfiguration['storage'], $containerConfiguration['storageOptions'] ?? []);
+            if (!$instantiatedStorage instanceof FlashMessageStorageInterface) {
                 throw new InvalidFlashMessageConfigurationException(sprintf('The configured "storage" for FlashMessage container "%s" does not implement the FlashMessageStorageInterface', $containerName), 1502966423);
             }
-            return $this->instantiatedStorages[$containerName];
+            return $this->instantiatedStorages[$containerName] = $instantiatedStorage;
         }
         throw new InvalidFlashMessageConfigurationException('No FlashMessage Storage could be resolved for the current request', 1502966545);
     }

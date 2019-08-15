@@ -16,10 +16,10 @@ use Neos\Error\Messages\Message;
 use Neos\Error\Messages\Notice;
 use Neos\Error\Messages\Warning;
 use Neos\Flow\Http\Cookie;
-use Neos\Flow\Http\Request as HttpRequest;
-use Neos\Flow\Http\Response;
 use Neos\Flow\Mvc\FlashMessage\FlashMessageContainer;
 use Neos\Flow\Mvc\FlashMessage\FlashMessageStorageInterface;
+use Psr\Http\Message\ServerRequestInterface as HttpRequestInterface;
+use Psr\Http\Message\ResponseInterface as HttpResponseInterface;
 
 class FlashMessageCookieStorage implements FlashMessageStorageInterface
 {
@@ -36,7 +36,7 @@ class FlashMessageCookieStorage implements FlashMessageStorageInterface
     private $cookieName;
 
     /**
-     * @var FlashMessageContainer
+     * @var FlashMessageContainer|null
      */
     private $flashMessageContainer;
 
@@ -50,10 +50,10 @@ class FlashMessageCookieStorage implements FlashMessageStorageInterface
     }
 
     /**
-     * @param HttpRequest $request The current HTTP request for storages that persist the FlashMessages via HTTP
+     * @param HttpRequestInterface $request The current HTTP request for storages that persist the FlashMessages via HTTP
      * @return FlashMessageContainer
      */
-    public function load(HttpRequest $request): FlashMessageContainer
+    public function load(HttpRequestInterface $request): FlashMessageContainer
     {
         if ($this->flashMessageContainer === null) {
             $this->flashMessageContainer = $this->restoreFlashMessageContainerFromCookie($request);
@@ -65,14 +65,16 @@ class FlashMessageCookieStorage implements FlashMessageStorageInterface
     }
 
     /**
+     * @param HttpRequestInterface $request
      * @return FlashMessageContainer|null
      */
-    private function restoreFlashMessageContainerFromCookie(HttpRequest $request)
+    private function restoreFlashMessageContainerFromCookie(HttpRequestInterface $request): ?FlashMessageContainer
     {
-        if (!$request->hasCookie($this->cookieName)) {
+        $cookies = $request->getCookieParams();
+        if (empty($cookies[$this->cookieName])) {
             return null;
         }
-        $cookieValue = $request->getCookie($this->cookieName)->getValue();
+        $cookieValue = $cookies[$this->cookieName];
         $flashMessagesArray = json_decode($cookieValue, true);
         $flashMessageContainer = new FlashMessageContainer();
         foreach ($flashMessagesArray as $flashMessageArray) {
@@ -82,25 +84,30 @@ class FlashMessageCookieStorage implements FlashMessageStorageInterface
     }
 
     /**
-     * @param Response $response The current HTTP response for storages that persist the FlashMessages via HTTP
-     * @return void
+     * @param HttpResponseInterface $response The current HTTP response for storages that persist the FlashMessages via HTTP
+     * @return HttpResponseInterface
      */
-    public function persist(Response $response)
+    public function persist(HttpResponseInterface $response): HttpResponseInterface
     {
         if ($this->flashMessageContainer === null) {
-            return;
+            return $response;
         }
         if (!$this->flashMessageContainer->hasMessages()) {
-            $response->setCookie(new Cookie($this->cookieName, null, 1502980557, 0));
-            return;
+            $cookie = new Cookie($this->cookieName, null, 1502980557, 0);
+            return $response->withAddedHeader('Set-Cookie', (string)$cookie);
         }
         $serializedMessages = [];
         foreach ($this->flashMessageContainer->getMessagesAndFlush() as $flashMessage) {
             $serializedMessages[] = $this->serializeMessage($flashMessage);
         }
-        $response->setCookie(new Cookie($this->cookieName, json_encode($serializedMessages), 0, null, null, '/', false, false));
+        $cookie = new Cookie($this->cookieName, json_encode($serializedMessages), 0, null, null, '/', false, false);
+        return $response->withAddedHeader('Set-Cookie', (string)$cookie);
     }
 
+    /**
+     * @param Message $message
+     * @return array
+     */
     private function serializeMessage(Message $message): array
     {
         return [
@@ -113,6 +120,10 @@ class FlashMessageCookieStorage implements FlashMessageStorageInterface
         ];
     }
 
+    /**
+     * @param array $messageArray
+     * @return Message
+     */
     private function deserializeMessage(array $messageArray): Message
     {
         $messageBody = $messageArray['message'] ?? '';
