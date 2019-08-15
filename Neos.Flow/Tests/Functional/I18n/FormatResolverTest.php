@@ -56,7 +56,7 @@ class FormatResolverTest extends FunctionalTestCase
     public function formatResolverWithDatetimeReplacesCorrectValues($stringWithPlaceholders, $arguments, $locale, $expected)
     {
         $result = $this->formatResolver->resolvePlaceholders($stringWithPlaceholders, $arguments, $locale);
-        $this->assertEquals($expected, $result);
+        self::assertEquals($expected, $result);
     }
 
     /**
@@ -67,6 +67,6 @@ class FormatResolverTest extends FunctionalTestCase
         $actualFormatter = new Fixtures\SampleFormatter;
         $locale = new I18n\Locale('de');
         $testResult = $this->formatResolver->resolvePlaceholders(sprintf('{0,%s}', Fixtures\SampleFormatter::class), ['foo'], $locale);
-        $this->assertEquals($actualFormatter->format('foo', $locale), $testResult);
+        self::assertEquals($actualFormatter->format('foo', $locale), $testResult);
     }
 }

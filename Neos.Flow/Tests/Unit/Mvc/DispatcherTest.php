@@ -372,7 +372,7 @@ class DispatcherTest extends UnitTestCase
         $dispatcher = $this->getAccessibleMock(Dispatcher::class, null);
         $dispatcher->injectObjectManager($mockObjectManager);
 
-        $this->assertEquals($mockController, $dispatcher->_call('resolveController', $mockRequest));
+        self::assertEquals($mockController, $dispatcher->_call('resolveController', $mockRequest));
     }
 
     /**
@@ -394,7 +394,7 @@ class DispatcherTest extends UnitTestCase
         $dispatcher = $this->getAccessibleMock(Dispatcher::class, ['dummy']);
         $dispatcher->injectObjectManager($mockObjectManager);
 
-        $this->assertEquals($mockController, $dispatcher->_call('resolveController', $mockRequest));
+        self::assertEquals($mockController, $dispatcher->_call('resolveController', $mockRequest));
     }
 
     /**

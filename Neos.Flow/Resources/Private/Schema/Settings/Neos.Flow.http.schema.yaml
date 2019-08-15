@@ -43,6 +43,9 @@ properties:
            -
              type: 'string'
            -
+             # in case an env var is used but not set this will be false
+             type: 'boolean'
+           -
              type: dictionary
              additionalProperties:
                type: string

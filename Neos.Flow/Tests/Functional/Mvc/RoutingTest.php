@@ -79,8 +79,8 @@ class RoutingTest extends FunctionalTestCase
         $request = Request::create(new Uri($requestUri), 'GET');
         $matchResults = $this->router->route(new RouteContext($request, RouteParameters::createEmpty()));
         $actionRequest = $this->createActionRequest($request, $matchResults);
-        $this->assertEquals(ActionControllerTestAController::class, $actionRequest->getControllerObjectName());
-        $this->assertEquals('first', $actionRequest->getControllerActionName());
+        self::assertEquals(ActionControllerTestAController::class, $actionRequest->getControllerObjectName());
+        self::assertEquals('first', $actionRequest->getControllerActionName());
     }
 
     /**
@@ -92,8 +92,8 @@ class RoutingTest extends FunctionalTestCase
         $request = Request::create(new Uri($requestUri), 'POST');
         $matchResults = $this->router->route(new RouteContext($request, RouteParameters::createEmpty()));
         $actionRequest = $this->createActionRequest($request, $matchResults);
-        $this->assertEquals(ActionControllerTestAController::class, $actionRequest->getControllerObjectName());
-        $this->assertEquals('second', $actionRequest->getControllerActionName());
+        self::assertEquals(ActionControllerTestAController::class, $actionRequest->getControllerObjectName());
+        self::assertEquals('second', $actionRequest->getControllerActionName());
     }
 
     /**
@@ -214,12 +214,12 @@ class RoutingTest extends FunctionalTestCase
             if ($matchedRoute === null) {
                 $this->fail('Expected route "' . $expectedMatchingRouteName . '" to match, but no route matched request URI "' . $requestUri . '"');
             } else {
-                $this->assertEquals('Neos.Flow :: Functional Test: ' . $expectedMatchingRouteName, $matchedRoute->getName());
+                self::assertEquals('Neos.Flow :: Functional Test: ' . $expectedMatchingRouteName, $matchedRoute->getName());
             }
         }
-        $this->assertEquals($expectedControllerObjectName, $actionRequest->getControllerObjectName());
+        self::assertEquals($expectedControllerObjectName, $actionRequest->getControllerObjectName());
         if ($expectedArguments !== null) {
-            $this->assertEquals($expectedArguments, $actionRequest->getArguments());
+            self::assertEquals($expectedArguments, $actionRequest->getArguments());
         }
     }
 
@@ -297,10 +297,10 @@ class RoutingTest extends FunctionalTestCase
             if ($resolvedRoute === null) {
                 $this->fail('Expected route "' . $expectedResolvedRouteName . '" to resolve');
             } else {
-                $this->assertEquals('Neos.Flow :: Functional Test: ' . $expectedResolvedRouteName, $resolvedRoute->getName());
+                self::assertEquals('Neos.Flow :: Functional Test: ' . $expectedResolvedRouteName, $resolvedRoute->getName());
             }
         }
-        $this->assertEquals($expectedResolvedUriPath, $resolvedUriPath);
+        self::assertEquals($expectedResolvedUriPath, $resolvedUriPath);
     }
 
     /**
@@ -337,7 +337,7 @@ class RoutingTest extends FunctionalTestCase
         );
 
         $response = $this->browser->request('http://localhost/http-method-test/', $requestMethod);
-        $this->assertEquals($expectedStatus, $response->getStatus());
+        self::assertEquals($expectedStatus, $response->getStatus());
     }
 
     /**
@@ -355,7 +355,7 @@ class RoutingTest extends FunctionalTestCase
         $baseUri = new Uri('http://localhost');
         $actualResult = $this->router->resolve(new ResolveContext($baseUri, $routeValues, false));
 
-        $this->assertSame('neos/flow/test/http/foo', (string)$actualResult);
+        self::assertSame('neos/flow/test/http/foo', (string)$actualResult);
     }
 
     /**
@@ -385,7 +385,7 @@ class RoutingTest extends FunctionalTestCase
         $this->router->setRoutesConfiguration($routesConfiguration);
         $baseUri = new Uri('http://localhost');
         $actualResult = $this->router->resolve(new ResolveContext($baseUri, $routeValues, false));
-        $this->assertSame('custom/uri/pattern', (string)$actualResult);
+        self::assertSame('custom/uri/pattern', (string)$actualResult);
 
         // reset router configuration for following tests
         $this->router->setRoutesConfiguration(null);

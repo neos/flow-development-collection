@@ -12,7 +12,6 @@ namespace Neos\Flow\Tests\Unit\Error;
  */
 use Neos\Flow\Error\AbstractExceptionHandler;
 use Neos\Flow\Exception;
-use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\Log\ThrowableStorageInterface;
 use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
 use Neos\Flow\Tests\UnitTestCase;
@@ -79,14 +78,14 @@ class AbstractExceptionHandlerTest extends UnitTestCase
         /** @var Exception|\PHPUnit_Framework_MockObject_MockObject $exception */
         $exception = new NoMatchingRouteException();
 
-        /** @var SystemLoggerInterface|\PHPUnit_Framework_MockObject_MockObject $mockSystemLogger */
-        $mockSystemLogger = $this->getMockBuilder(SystemLoggerInterface::class)->getMock();
-        $mockSystemLogger->expects($this->never())->method('logException');
+        /** @var ThrowableStorageInterface|\PHPUnit_Framework_MockObject_MockObject $mockThrowableStorage */
+        $mockThrowableStorage = $this->getMockBuilder(ThrowableStorageInterface::class)->getMock();
+        $mockThrowableStorage->expects($this->never())->method('logThrowable');
 
         $exceptionHandler = $this->getMockForAbstractClass(AbstractExceptionHandler::class, [], '', false, true, true, ['echoExceptionCli']);
         /** @var AbstractExceptionHandler $exceptionHandler */
         $exceptionHandler->setOptions($options);
-        $exceptionHandler->injectSystemLogger($mockSystemLogger);
+        $exceptionHandler->injectThrowableStorage($mockThrowableStorage);
         $exceptionHandler->handleException($exception);
     }
 }

@@ -17,6 +17,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cache\CacheFactory;
 use Neos\Flow\Cache\CacheManager;
 use Neos\Flow\Configuration\ConfigurationManager;
+use Neos\Flow\Configuration\Exception\InvalidConfigurationTypeException;
 use Neos\Flow\Configuration\Source\YamlSource;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Core\ClassLoader;
@@ -26,12 +27,7 @@ use Neos\Flow\Error\Debugger;
 use Neos\Flow\Error\ErrorHandler;
 use Neos\Flow\Error\ProductionExceptionHandler;
 use Neos\Flow\Http\HttpRequestHandlerInterface;
-use Neos\Flow\Log\Logger;
-use Neos\Flow\Log\LoggerBackendConfigurationHelper;
-use Neos\Flow\Log\LoggerFactory;
-use Neos\Flow\Log\PsrLoggerFactory;
 use Neos\Flow\Log\PsrLoggerFactoryInterface;
-use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\Log\ThrowableStorage\FileStorage;
 use Neos\Flow\Log\ThrowableStorageInterface;
 use Neos\Flow\Monitor\FileMonitor;
@@ -40,7 +36,6 @@ use Neos\Flow\ObjectManagement\ObjectManager;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Package\FlowPackageInterface;
 use Neos\Flow\Package\PackageManager;
-use Neos\Flow\Package\PackageManagerInterface;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Reflection\ReflectionServiceFactory;
 use Neos\Flow\ResourceManagement\Streams\StreamWrapperAdapter;
@@ -177,7 +172,6 @@ class Scripts
     public static function initializePackageManagement(Bootstrap $bootstrap)
     {
         $packageManager = new PackageManager(PackageManager::DEFAULT_PACKAGE_INFORMATION_CACHE_FILEPATH, FLOW_PATH_PACKAGES);
-        $bootstrap->setEarlyInstance(PackageManagerInterface::class, $packageManager);
         $bootstrap->setEarlyInstance(PackageManager::class, $packageManager);
 
         // The package:rescan must happen as early as possible, compiletime alone is not enough.
@@ -234,8 +228,10 @@ class Scripts
      *
      * @param Bootstrap $bootstrap
      * @return void
+     * @throws FlowException
+     * @throws InvalidConfigurationTypeException
      */
-    public static function initializeSystemLogger(Bootstrap $bootstrap)
+    public static function initializeSystemLogger(Bootstrap $bootstrap): void
     {
         $configurationManager = $bootstrap->getEarlyInstance(ConfigurationManager::class);
         $settings = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.Flow');
@@ -246,22 +242,10 @@ class Scripts
         /** @var PsrLoggerFactoryInterface $psrLoggerFactoryName */
         $psrLoggerFactoryName = $settings['log']['psr3']['loggerFactory'];
         $psrLogConfigurations = $settings['log']['psr3'][$psrLoggerFactoryName] ?? [];
-        if ($psrLoggerFactoryName === 'legacy') {
-            $psrLoggerFactoryName = PsrLoggerFactory::class;
-            $psrLogConfigurations = (new LoggerBackendConfigurationHelper($settings['log']))->getNormalizedLegacyConfiguration();
-        }
         $psrLogFactory = $psrLoggerFactoryName::create($psrLogConfigurations);
 
-        // This is all deprecated and can be removed with the removal of respective interfaces and classes.
-        $loggerFactory = new LoggerFactory($psrLogFactory, $throwableStorage);
         $bootstrap->setEarlyInstance($psrLoggerFactoryName, $psrLogFactory);
         $bootstrap->setEarlyInstance(PsrLoggerFactoryInterface::class, $psrLogFactory);
-        $bootstrap->setEarlyInstance(LoggerFactory::class, $loggerFactory);
-        $deprecatedLogger = $settings['log']['systemLogger']['logger'] ?? Logger::class;
-        $deprecatedLoggerBackend = $settings['log']['systemLogger']['backend'] ?? '';
-        $deprecatedLoggerBackendOptions = $settings['log']['systemLogger']['backendOptions'] ?? [];
-        $systemLogger = $loggerFactory->create('SystemLogger', $deprecatedLogger, $deprecatedLoggerBackend, $deprecatedLoggerBackendOptions);
-        $bootstrap->setEarlyInstance(SystemLoggerInterface::class, $systemLogger);
     }
 
     /**
@@ -270,7 +254,7 @@ class Scripts
      * @param Bootstrap $bootstrap
      * @return ThrowableStorageInterface
      * @throws FlowException
-     * @throws \Neos\Flow\Configuration\Exception\InvalidConfigurationTypeException
+     * @throws InvalidConfigurationTypeException
      */
     protected static function initializeExceptionStorage(Bootstrap $bootstrap): ThrowableStorageInterface
     {
@@ -325,6 +309,8 @@ class Scripts
      *
      * @param Bootstrap $bootstrap
      * @return void
+     * @throws FlowException
+     * @throws InvalidConfigurationTypeException
      */
     public static function initializeErrorHandling(Bootstrap $bootstrap)
     {
@@ -334,9 +320,6 @@ class Scripts
         $errorHandler = new ErrorHandler();
         $errorHandler->setExceptionalErrors($settings['error']['errorHandler']['exceptionalErrors']);
         $exceptionHandler = class_exists($settings['error']['exceptionHandler']['className']) ? new $settings['error']['exceptionHandler']['className'] : new ProductionExceptionHandler();
-        if (is_callable([$exceptionHandler, 'injectSystemLogger'])) {
-            $exceptionHandler->injectSystemLogger($bootstrap->getEarlyInstance(SystemLoggerInterface::class));
-        }
 
         if (is_callable([$exceptionHandler, 'injectLogger'])) {
             $exceptionHandler->injectLogger($bootstrap->getEarlyInstance(PsrLoggerFactoryInterface::class)->get('systemLogger'));
@@ -354,6 +337,8 @@ class Scripts
      *
      * @param Bootstrap $bootstrap
      * @return void
+     * @throws FlowException
+     * @throws InvalidConfigurationTypeException
      */
     public static function initializeCacheManagement(Bootstrap $bootstrap)
     {
@@ -777,6 +762,7 @@ class Scripts
     /**
      * @param array $settings The Neos.Flow settings
      * @return string A command line command for PHP, which can be extended and then exec()uted
+     * @throws FlowException
      */
     public static function buildPhpCommand(array $settings): string
     {
@@ -788,6 +774,8 @@ class Scripts
         if (isset($settings['core']['subRequestEnvironmentVariables'])) {
             $subRequestEnvironmentVariables = array_merge($subRequestEnvironmentVariables, $settings['core']['subRequestEnvironmentVariables']);
         }
+
+        self::ensureCLISubrequestsUseCurrentlyRunningPhpBinary($settings['core']['phpBinaryPathAndFilename']);
 
         $command = '';
         foreach ($subRequestEnvironmentVariables as $argumentKey => $argumentValue) {
@@ -813,7 +801,71 @@ class Scripts
             $command .= ' -c ' . escapeshellarg($useIniFile);
         }
 
+        self::ensureWebSubrequestsUseCurrentlyRunningPhpVersion($command);
+
         return $command;
+    }
+
+    /**
+     * Compares the realpath of the configured PHP binary (if any) with the one flow was called with in a CLI request.
+     * This avoids config errors where users forget to set Neos.Flow.core.phpBinaryPathAndFilename in CLI.
+     *
+     * @param string phpBinaryPathAndFilename
+     * @throws FlowException
+     */
+    protected static function ensureCLISubrequestsUseCurrentlyRunningPhpBinary($phpBinaryPathAndFilename)
+    {
+        // Do nothing for non-CLI requests
+        if (PHP_SAPI !== 'cli') {
+            return;
+        }
+
+        // Resolve any symlinks that the configured php might be pointing to
+        $configuredPhpBinaryPathAndFilename = realpath($phpBinaryPathAndFilename);
+
+        // if the configured PHP binary is empty here, the file does not exist. We ignore that here because it is checked later in the script.
+        if ($configuredPhpBinaryPathAndFilename === false || strlen($configuredPhpBinaryPathAndFilename) === 0) {
+            return;
+        }
+
+        if (strcmp(PHP_BINARY, $configuredPhpBinaryPathAndFilename) !== 0) {
+            throw new FlowException(sprintf('You are running the Flow CLI with a PHP binary different from the one Flow is configured to use internally. ' .
+                'Flow has been run with "%s", while the PHP version Flow is configured to use for subrequests is "%s". Make sure to configure Flow to ' .
+                'use the same PHP binary by setting the "Neos.Flow.core.phpBinaryPathAndFilename" configuration option to "%s". Flush the ' .
+                'caches by removing the folder Data/Temporary before running ./flow again.',
+                PHP_BINARY, $configuredPhpBinaryPathAndFilename, PHP_BINARY), 1536303119);
+        }
+    }
+
+    /**
+     * Compares the actual version of the configured PHP binary (if any) with the one flow was called with in a non-CLI request.
+     * This avoids config errors where users forget to set Neos.Flow.core.phpBinaryPathAndFilename in connection with a web
+     * server.
+     *
+     * @param string $phpCommand the completely build php string that is used to execute subrequests
+     * @throws FlowException
+     */
+    protected static function ensureWebSubrequestsUseCurrentlyRunningPhpVersion($phpCommand)
+    {
+        // Do nothing for CLI requests
+        if (PHP_SAPI === 'cli') {
+            return;
+        }
+
+        exec($phpCommand . ' -r "echo PHP_VERSION;"', $output, $result);
+
+        if ($result !== 0) {
+            return;
+        }
+
+        $configuredPHPVersion = $output[0];
+        if (array_slice(explode('.', $configuredPHPVersion), 0, 2) !== array_slice(explode('.', PHP_VERSION), 0, 2)) {
+            throw new FlowException(sprintf('You are executing Neos/Flow with a PHP version different from the one Flow is configured to use internally. ' .
+                'Flow is running with with PHP "%s", while the PHP version Flow is configured to use for subrequests is "%s". Make sure to configure Flow to ' .
+                'use the same PHP version by setting the "Neos.Flow.core.phpBinaryPathAndFilename" configuration option to a PHP-CLI binary of the version ' .
+                '%s. Flush the caches by removing the folder Data/Temporary before executing Flow/Neos again.',
+                PHP_VERSION, $configuredPHPVersion, PHP_VERSION), 1536563428);
+        }
     }
 
     /**

@@ -66,9 +66,9 @@ class BrowserTest extends UnitTestCase
         $this->browser->addAutomaticRequestHeader('Content-Type', 'text/plain');
         $this->browser->request('http://localhost/foo');
 
-        $this->assertTrue($this->browser->getLastRequest()->hasHeader('X-Test-Header'));
-        $this->assertSame('Acme', $this->browser->getLastRequest()->getHeader('X-Test-Header'));
-        $this->assertStringContainsString('text/plain', $this->browser->getLastRequest()->getHeader('Content-Type'));
+        self::assertTrue($this->browser->getLastRequest()->hasHeader('X-Test-Header'));
+        self::assertSame('Acme', $this->browser->getLastRequest()->getHeader('X-Test-Header'));
+        self::assertStringContainsString('text/plain', $this->browser->getLastRequest()->getHeader('Content-Type'));
     }
 
     /**
@@ -87,7 +87,7 @@ class BrowserTest extends UnitTestCase
         $this->browser->addAutomaticRequestHeader('X-Test-Header', 'Acme');
         $this->browser->removeAutomaticRequestHeader('X-Test-Header');
         $this->browser->request('http://localhost/foo');
-        $this->assertFalse($this->browser->getLastRequest()->hasHeader('X-Test-Header'));
+        self::assertFalse($this->browser->getLastRequest()->hasHeader('X-Test-Header'));
     }
 
     /**
@@ -108,17 +108,21 @@ class BrowserTest extends UnitTestCase
         $requestEngine
             ->expects($this->at(0))
             ->method('sendRequest')
-            ->with($this->attributeEqualTo('uri', $initialUri))
+            ->with($this->callback(function (Http\Request $request) use ($initialUri) {
+                return $request->getUri() == $initialUri;
+            }))
             ->will($this->returnValue($firstResponse));
         $requestEngine
             ->expects($this->at(1))
             ->method('sendRequest')
-            ->with($this->attributeEqualTo('uri', $redirectUri))
+            ->with($this->callback(function (Http\Request $request) use ($redirectUri) {
+                return $request->getUri() == $redirectUri;
+            }))
             ->will($this->returnValue($secondResponse));
 
         $this->browser->setRequestEngine($requestEngine);
         $actual = $this->browser->request($initialUri);
-        $this->assertSame($secondResponse, $actual);
+        self::assertSame($secondResponse, $actual);
     }
 
     /**
@@ -138,7 +142,7 @@ class BrowserTest extends UnitTestCase
 
         $this->browser->setRequestEngine($requestEngine);
         $actual = $this->browser->request('http://localhost/createSomeResource');
-        $this->assertSame($twoZeroOneResponse, $actual);
+        self::assertSame($twoZeroOneResponse, $actual);
     }
 
     /**

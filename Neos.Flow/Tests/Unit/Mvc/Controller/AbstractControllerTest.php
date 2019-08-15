@@ -84,13 +84,13 @@ class AbstractControllerTest extends UnitTestCase
 
         $controller = $this->getAccessibleMock(AbstractController::class, ['processRequest']);
 
-        $this->assertFalse($request->isDispatched());
+        self::assertFalse($request->isDispatched());
         $controller->_call('initializeController', $request, $this->actionResponse);
 
-        $this->assertTrue($request->isDispatched());
-        $this->assertInstanceOf(Arguments::class, $controller->_get('arguments'));
-        $this->assertSame($request, $controller->_get('uriBuilder')->getRequest());
-        $this->assertSame($request, $controller->getControllerContext()->getRequest());
+        self::assertTrue($request->isDispatched());
+        self::assertInstanceOf(Arguments::class, $controller->_get('arguments'));
+        self::assertSame($request, $controller->_get('uriBuilder')->getRequest());
+        self::assertSame($request, $controller->getControllerContext()->getRequest());
     }
 
     /**
@@ -136,7 +136,7 @@ class AbstractControllerTest extends UnitTestCase
         $this->inject($controller, 'controllerContext', $controllerContext);
 
         $controller->addFlashMessage($messageBody, $messageTitle, $severity, $messageArguments, $messageCode);
-        $this->assertEquals([$expectedMessage], $flashMessageContainer->getMessages());
+        self::assertEquals([$expectedMessage], $flashMessageContainer->getMessages());
     }
 
     /**
@@ -205,7 +205,7 @@ class AbstractControllerTest extends UnitTestCase
 
         // all arguments of the current controller must be reset, in case the controller is called again later:
         $arguments = $controller->_get('arguments');
-        $this->assertFalse($arguments->hasArgument('foo'));
+        self::assertFalse($arguments->hasArgument('foo'));
     }
 
     /**
@@ -348,7 +348,7 @@ class AbstractControllerTest extends UnitTestCase
         } catch (StopActionException $e) {
         }
 
-        $this->assertSame(303, $this->actionResponse->getStatusCode());
+        self::assertSame(303, $this->actionResponse->getStatusCode());
     }
 
     /**
@@ -366,7 +366,7 @@ class AbstractControllerTest extends UnitTestCase
         } catch (StopActionException $e) {
         }
 
-        $this->assertSame($uri, $this->actionResponse->getHeader('Location'));
+        self::assertSame($uri, $this->actionResponse->getHeader('Location'));
     }
 
     /**
@@ -384,7 +384,7 @@ class AbstractControllerTest extends UnitTestCase
         } catch (StopActionException $e) {
         }
 
-        $this->assertNull($this->actionResponse->getHeader('Location'));
+        self::assertNull($this->actionResponse->getHeader('Location'));
     }
 
     /**
@@ -414,9 +414,9 @@ class AbstractControllerTest extends UnitTestCase
         } catch (StopActionException $e) {
         }
 
-        $this->assertSame(404, $this->actionResponse->getStatusCode());
-        $this->assertSame('404 File Really Not Found', $this->actionResponse->getStatus());
-        $this->assertSame($message, $this->actionResponse->getContent());
+        self::assertSame(404, $this->actionResponse->getStatusCode());
+        self::assertSame('404 File Really Not Found', $this->actionResponse->getStatus());
+        self::assertSame($message, $this->actionResponse->getContent());
     }
 
     /**
@@ -432,9 +432,9 @@ class AbstractControllerTest extends UnitTestCase
         } catch (StopActionException $e) {
         }
 
-        $this->assertSame(404, $this->actionResponse->getStatusCode());
-        $this->assertSame('404 Not Found', $this->actionResponse->getStatus());
-        $this->assertSame('404 Not Found', $this->actionResponse->getContent());
+        self::assertSame(404, $this->actionResponse->getStatusCode());
+        self::assertSame('404 Not Found', $this->actionResponse->getStatus());
+        self::assertSame('404 Not Found', $this->actionResponse->getContent());
     }
 
     /**
@@ -463,8 +463,8 @@ class AbstractControllerTest extends UnitTestCase
         $this->mockActionRequest->expects($this->at(3))->method('getArgument')->with('baz')->will($this->returnValue('quux'));
 
         $controller->_call('mapRequestArgumentsToControllerArguments');
-        $this->assertEquals('bar', $controllerArguments['foo']->getValue());
-        $this->assertEquals('quux', $controllerArguments['baz']->getValue());
+        self::assertEquals('bar', $controllerArguments['foo']->getValue());
+        self::assertEquals('quux', $controllerArguments['baz']->getValue());
     }
 
     /**

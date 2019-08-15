@@ -58,7 +58,7 @@ class InterceptorResolverTest extends UnitTestCase
         $interceptorResolver = new Security\Authorization\InterceptorResolver($mockObjectManager);
         $interceptorClass = $interceptorResolver->resolveInterceptorClass('ValidShortName');
 
-        $this->assertEquals($longClassNameForTest, $interceptorClass, 'The wrong classname has been resolved');
+        self::assertEquals($longClassNameForTest, $interceptorClass, 'The wrong classname has been resolved');
     }
 
     /**
@@ -72,6 +72,6 @@ class InterceptorResolverTest extends UnitTestCase
         $interceptorResolver = new Security\Authorization\InterceptorResolver($mockObjectManager);
         $interceptorClass = $interceptorResolver->resolveInterceptorClass('ExistingInterceptorClass');
 
-        $this->assertEquals('ExistingInterceptorClass', $interceptorClass, 'The wrong classname has been resolved');
+        self::assertEquals('ExistingInterceptorClass', $interceptorClass, 'The wrong classname has been resolved');
     }
 }

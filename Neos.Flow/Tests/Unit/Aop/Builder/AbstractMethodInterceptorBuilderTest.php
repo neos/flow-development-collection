@@ -96,7 +96,7 @@ class AbstractMethodInterceptorBuilderTest extends UnitTestCase
         $builder->injectReflectionService($mockReflectionService);
 
         $actualCode = $builder->_call('buildMethodArgumentsArrayCode', $className, 'foo');
-        $this->assertSame($expectedCode, $actualCode);
+        self::assertSame($expectedCode, $actualCode);
     }
 
     /**
@@ -107,7 +107,7 @@ class AbstractMethodInterceptorBuilderTest extends UnitTestCase
         $builder = $this->getAccessibleMock(AbstractMethodInterceptorBuilder::class, ['build'], [], '', false);
 
         $actualCode = $builder->_call('buildMethodArgumentsArrayCode', null, 'foo');
-        $this->assertSame('', $actualCode);
+        self::assertSame('', $actualCode);
     }
 
     /**
@@ -168,6 +168,6 @@ class AbstractMethodInterceptorBuilderTest extends UnitTestCase
         $expectedCode = '$this->Flow_Aop_Proxy_originalConstructorArguments[\'arg1\'], $this->Flow_Aop_Proxy_originalConstructorArguments[\'arg2\'], $this->Flow_Aop_Proxy_originalConstructorArguments[\'arg3\'], $this->Flow_Aop_Proxy_originalConstructorArguments[\'arg4\'], $this->Flow_Aop_Proxy_originalConstructorArguments[\'arg5\']';
         $actualCode = $builder->_call('buildSavedConstructorParametersCode', $className);
 
-        $this->assertSame($expectedCode, $actualCode);
+        self::assertSame($expectedCode, $actualCode);
     }
 }

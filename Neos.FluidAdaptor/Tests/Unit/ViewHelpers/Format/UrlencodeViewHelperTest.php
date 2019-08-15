@@ -30,7 +30,7 @@ class UrlencodeViewHelperTest extends ViewHelperBaseTestcase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->viewHelper = $this->getMockBuilder(UrlencodeViewHelper::class)->setMethods(['renderChildren', 'registerRenderMethodArguments'])->getMock();
+        $this->viewHelper = $this->getMockBuilder(UrlencodeViewHelper::class)->setMethods(['renderChildren'])->getMock();
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
     }
 
@@ -39,7 +39,7 @@ class UrlencodeViewHelperTest extends ViewHelperBaseTestcase
      */
     public function viewHelperDeactivatesEscapingInterceptor()
     {
-        $this->assertFalse($this->viewHelper->isEscapingInterceptorEnabled());
+        self::assertFalse($this->viewHelper->isEscapingInterceptorEnabled());
     }
 
     /**
@@ -50,7 +50,7 @@ class UrlencodeViewHelperTest extends ViewHelperBaseTestcase
         $this->viewHelper->expects($this->never())->method('renderChildren');
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['value' => 'Source']);
         $actualResult = $this->viewHelper->render();
-        $this->assertEquals('Source', $actualResult);
+        self::assertEquals('Source', $actualResult);
     }
 
     /**
@@ -61,7 +61,7 @@ class UrlencodeViewHelperTest extends ViewHelperBaseTestcase
         $this->viewHelper->expects($this->atLeastOnce())->method('renderChildren')->will($this->returnValue('Source'));
         $this->viewHelper = $this->prepareArguments($this->viewHelper, []);
         $actualResult = $this->viewHelper->render();
-        $this->assertEquals('Source', $actualResult);
+        self::assertEquals('Source', $actualResult);
     }
 
     /**
@@ -72,7 +72,7 @@ class UrlencodeViewHelperTest extends ViewHelperBaseTestcase
         $source = 'StringWithoutSpecialCharacters';
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['value' => $source]);
         $actualResult = $this->viewHelper->render();
-        $this->assertSame($source, $actualResult);
+        self::assertSame($source, $actualResult);
     }
 
     /**
@@ -84,7 +84,7 @@ class UrlencodeViewHelperTest extends ViewHelperBaseTestcase
         $expectedResult = 'Foo%20%40%2B%25%2F%20%22';
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['value' => $source]);
         $actualResult = $this->viewHelper->render();
-        $this->assertEquals($expectedResult, $actualResult);
+        self::assertEquals($expectedResult, $actualResult);
     }
 
     /**
@@ -106,6 +106,6 @@ class UrlencodeViewHelperTest extends ViewHelperBaseTestcase
         $source = new Uri('http://typo3.com/foo&bar=1');
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['value' => $source]);
         $actualResult = $this->viewHelper->render();
-        $this->assertEquals(urlencode('http://typo3.com/foo&bar=1'), $actualResult);
+        self::assertEquals(urlencode('http://typo3.com/foo&bar=1'), $actualResult);
     }
 }

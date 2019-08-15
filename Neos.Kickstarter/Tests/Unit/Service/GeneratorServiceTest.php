@@ -29,7 +29,7 @@ class GeneratorServiceTest extends \Neos\Flow\Tests\UnitTestCase
             )
         );
         $normalizedFieldDefinitions = $service->_call('normalizeFieldDefinitions', $fieldDefinitions);
-        $this->assertEquals('boolean', $normalizedFieldDefinitions['field']['type']);
+        self::assertEquals('boolean', $normalizedFieldDefinitions['field']['type']);
     }
 
     /**
@@ -44,7 +44,7 @@ class GeneratorServiceTest extends \Neos\Flow\Tests\UnitTestCase
             )
         );
         $normalizedFieldDefinitions = $service->_call('normalizeFieldDefinitions', $fieldDefinitions);
-        $this->assertEquals('\DateTime', $normalizedFieldDefinitions['field']['type']);
+        self::assertEquals('\DateTime', $normalizedFieldDefinitions['field']['type']);
     }
 
     /**
@@ -60,6 +60,6 @@ class GeneratorServiceTest extends \Neos\Flow\Tests\UnitTestCase
             )
         );
         $normalizedFieldDefinitions = $service->_call('normalizeFieldDefinitions', $fieldDefinitions, 'TYPO3\Testing\Domain\Model');
-        $this->assertEquals('\TYPO3\Testing\Domain\Model\\' . $uniqueClassName, $normalizedFieldDefinitions['field']['type']);
+        self::assertEquals('\TYPO3\Testing\Domain\Model\\' . $uniqueClassName, $normalizedFieldDefinitions['field']['type']);
     }
 }

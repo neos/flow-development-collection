@@ -116,7 +116,7 @@ class FileBasedSimpleKeyProviderTest extends UnitTestCase
         $authenticationProvider->authenticate($this->mockToken);
 
         $authenticatedRoles = $this->mockToken->getAccount()->getRoles();
-        $this->assertTrue(in_array('Neos.Flow:TestRoleIdentifier', array_keys($authenticatedRoles)));
+        self::assertTrue(in_array('Neos.Flow:TestRoleIdentifier', array_keys($authenticatedRoles)));
     }
 
     /**
@@ -157,7 +157,7 @@ class FileBasedSimpleKeyProviderTest extends UnitTestCase
     public function getTokenClassNameReturnsCorrectClassNames()
     {
         $authenticationProvider = FileBasedSimpleKeyProvider::create('myProvider', []);
-        $this->assertSame($authenticationProvider->getTokenClassNames(), [PasswordToken::class]);
+        self::assertSame($authenticationProvider->getTokenClassNames(), [PasswordToken::class]);
     }
 
     /**
@@ -185,7 +185,7 @@ class FileBasedSimpleKeyProviderTest extends UnitTestCase
 
         $authenticationProvider = FileBasedSimpleKeyProvider::create('myProvider', []);
 
-        $this->assertTrue($authenticationProvider->canAuthenticate($mockToken1));
-        $this->assertFalse($authenticationProvider->canAuthenticate($mockToken2));
+        self::assertTrue($authenticationProvider->canAuthenticate($mockToken1));
+        self::assertFalse($authenticationProvider->canAuthenticate($mockToken2));
     }
 }

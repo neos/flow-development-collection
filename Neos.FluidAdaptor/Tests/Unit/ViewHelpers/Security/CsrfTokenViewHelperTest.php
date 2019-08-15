@@ -53,6 +53,6 @@ class CsrfTokenViewHelperTest extends ViewHelperBaseTestcase
         $this->objectManagerMock->expects(self::any())->method('get')->willReturn($mockSecurityContext);
 
         $actualResult = $this->viewHelper->render();
-        $this->assertEquals('TheCsrfToken', $actualResult);
+        self::assertEquals('TheCsrfToken', $actualResult);
     }
 }

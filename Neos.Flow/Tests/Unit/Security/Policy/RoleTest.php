@@ -41,8 +41,8 @@ class RoleTest extends UnitTestCase
     {
         $role = new Role($roleIdentifier);
 
-        $this->assertEquals($name, $role->getName());
-        $this->assertEquals($packageKey, $role->getPackageKey());
+        self::assertEquals($name, $role->getName());
+        self::assertEquals($packageKey, $role->getPackageKey());
     }
 
     /**
@@ -66,7 +66,7 @@ class RoleTest extends UnitTestCase
             'Acme.Demo:Parent2' => $parentRole2
         ];
 
-        $this->assertEquals(2, count($role->getParentRoles()));
-        $this->assertEquals($expectedParentRoles, $role->getParentRoles());
+        self::assertEquals(2, count($role->getParentRoles()));
+        self::assertEquals($expectedParentRoles, $role->getParentRoles());
     }
 }

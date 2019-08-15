@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\FluidAdaptor\Core\ViewHelper;
 
 /*
@@ -12,11 +14,8 @@ namespace Neos\FluidAdaptor\Core\ViewHelper;
  */
 
 use Neos\FluidAdaptor\Core\Rendering\FlowAwareRenderingContextInterface;
-use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use Neos\Flow\Reflection\ReflectionService;
 use Psr\Log\LoggerInterface;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper as FluidAbstractViewHelper;
@@ -42,13 +41,6 @@ abstract class AbstractViewHelper extends FluidAbstractViewHelper
     protected $objectManager;
 
     /**
-     * @var SystemLoggerInterface
-     * @deprecated
-     * @see logger
-     */
-    protected $systemLogger;
-
-    /**
      * @var LoggerInterface
      */
     protected $logger;
@@ -70,18 +62,9 @@ abstract class AbstractViewHelper extends FluidAbstractViewHelper
     /**
      * @param ObjectManagerInterface $objectManager
      */
-    public function injectObjectManager(ObjectManagerInterface $objectManager)
+    public function injectObjectManager(ObjectManagerInterface $objectManager): void
     {
         $this->objectManager = $objectManager;
-    }
-
-    /**
-     * @param SystemLoggerInterface $systemLogger
-     * @return void
-     */
-    public function injectSystemLogger(SystemLoggerInterface $systemLogger)
-    {
-        $this->systemLogger = $systemLogger;
     }
 
     /**
@@ -90,65 +73,16 @@ abstract class AbstractViewHelper extends FluidAbstractViewHelper
      * @param LoggerInterface $logger
      * @return void
      */
-    public function injectLogger(LoggerInterface $logger)
+    public function injectLogger(LoggerInterface $logger): void
     {
         $this->logger = $logger;
     }
 
     /**
-     * @return boolean
-     */
-    public function isEscapingInterceptorEnabled()
-    {
-        return $this->isChildrenEscapingEnabled();
-    }
-
-    /**
-     * Call the render() method and handle errors.
-     *
-     * @return string the rendered ViewHelper
-     * @throws Exception
-     */
-    protected function callRenderMethod()
-    {
-        $renderMethodParameters = [];
-        foreach ($this->argumentDefinitions as $argumentName => $argumentDefinition) {
-            if ($argumentDefinition instanceof ArgumentDefinition && $argumentDefinition->isMethodParameter()) {
-                $renderMethodParameters[$argumentName] = $this->arguments[$argumentName];
-            }
-        }
-
-        try {
-            return call_user_func_array([$this, 'render'], $renderMethodParameters);
-        } catch (Exception $exception) {
-            if (!$this->objectManager->getContext()->isProduction()) {
-                throw $exception;
-            }
-
-            $this->logger->error('A Fluid ViewHelper Exception was captured: ' . $exception->getMessage() . ' (' . $exception->getCode() . ')',
-                ['exception' => $exception]
-            );
-
-            return '';
-        }
-    }
-
-    /**
-     * @return \TYPO3Fluid\Fluid\Core\ViewHelper\ArgumentDefinition[]
-     * @throws \TYPO3Fluid\Fluid\Core\Parser\Exception
-     */
-    public function prepareArguments()
-    {
-        if (method_exists($this, 'registerRenderMethodArguments')) {
-            $this->registerRenderMethodArguments();
-        }
-
-        return parent::prepareArguments();
-    }
-
-    /**
      * Register a new argument. Call this method from your ViewHelper subclass
      * inside the initializeArguments() method.
+     *
+     * This exists only to throw our own exception!
      *
      * @param string $name Name of the argument
      * @param string $type Type of the argument
@@ -171,6 +105,8 @@ abstract class AbstractViewHelper extends FluidAbstractViewHelper
      * Overrides a registered argument. Call this method from your ViewHelper subclass
      * inside the initializeArguments() method if you want to override a previously registered argument.
      *
+     * This exists only to throw our own exception!
+     *
      * @see registerArgument()
      *
      * @param string $name Name of the argument
@@ -191,70 +127,10 @@ abstract class AbstractViewHelper extends FluidAbstractViewHelper
     }
 
     /**
-     * Registers render method arguments
-     *
-     * @return void
-     * @deprecated Render method should no longer expect arguments, instead all arguments should be registered in "initializeArguments"
+     * @return boolean
      */
-    protected function registerRenderMethodArguments()
+    public function isEscapingInterceptorEnabled(): bool
     {
-        foreach (static::getRenderMethodArgumentDefinitions($this->objectManager) as $argumentName => $definition) {
-            $this->argumentDefinitions[$argumentName] = new ArgumentDefinition($definition[0], $definition[1], $definition[2], $definition[3], $definition[4], $definition[5]);
-        }
-    }
-
-    /**
-     * @param ObjectManagerInterface $objectManager
-     * @return ArgumentDefinition[]
-     * @throws \Neos\FluidAdaptor\Core\Exception
-     * @Flow\CompileStatic
-     */
-    public static function getRenderMethodArgumentDefinitions(ObjectManagerInterface $objectManager)
-    {
-        $methodArgumentDefinitions = [];
-        $reflectionService = $objectManager->get(ReflectionService::class);
-        $methodParameters = $reflectionService->getMethodParameters(static::class, 'render');
-        if (count($methodParameters) === 0) {
-            return $methodArgumentDefinitions;
-        }
-
-        $methodTags = $reflectionService->getMethodTagsValues(static::class, 'render');
-
-        $paramAnnotations = [];
-        if (isset($methodTags['param'])) {
-            $paramAnnotations = $methodTags['param'];
-        }
-
-        $i = 0;
-        foreach ($methodParameters as $parameterName => $parameterInfo) {
-            $dataType = null;
-            $dataType = 'mixed';
-            if (isset($parameterInfo['type']) && strpos($parameterInfo['type'], '|') === false) {
-                $dataType = isset($parameterInfo['array']) && (bool)$parameterInfo['array'] ? 'array' : $parameterInfo['type'];
-            }
-
-            $description = '';
-            if (isset($paramAnnotations[$i])) {
-                $explodedAnnotation = explode(' ', $paramAnnotations[$i]);
-                array_shift($explodedAnnotation);
-                array_shift($explodedAnnotation);
-                $description = implode(' ', $explodedAnnotation);
-            }
-            $defaultValue = null;
-            if (isset($parameterInfo['defaultValue'])) {
-                $defaultValue = $parameterInfo['defaultValue'];
-            }
-            $methodArgumentDefinitions[$parameterName] = [
-                $parameterName,
-                $dataType,
-                $description,
-                ($parameterInfo['optional'] === false),
-                $defaultValue,
-                true
-            ];
-            $i++;
-        }
-
-        return $methodArgumentDefinitions;
+        return $this->isChildrenEscapingEnabled();
     }
 }

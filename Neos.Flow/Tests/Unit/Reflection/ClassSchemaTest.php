@@ -32,9 +32,9 @@ class ClassSchemaTest extends UnitTestCase
         $classSchema->addProperty('a', 'string');
         $classSchema->addProperty('b', 'integer');
 
-        $this->assertTrue($classSchema->hasProperty('a'));
-        $this->assertTrue($classSchema->hasProperty('b'));
-        $this->assertFalse($classSchema->hasProperty('c'));
+        self::assertTrue($classSchema->hasProperty('a'));
+        self::assertTrue($classSchema->hasProperty('b'));
+        self::assertFalse($classSchema->hasProperty('c'));
     }
 
     /**
@@ -53,7 +53,7 @@ class ClassSchemaTest extends UnitTestCase
         $classSchema->addProperty('b', 'Neos\Flow\SomeObject', true);
         $classSchema->addProperty('c', 'Neos\Flow\SomeOtherObject', true, true);
 
-        $this->assertSame($expectedProperties, $classSchema->getProperties());
+        self::assertSame($expectedProperties, $classSchema->getProperties());
     }
 
     /**
@@ -65,8 +65,8 @@ class ClassSchemaTest extends UnitTestCase
         $classSchema->addProperty('a', 'Neos\Flow\SomeObject');
         $classSchema->addProperty('b', 'Neos\Flow\SomeObject', true);
 
-        $this->assertFalse($classSchema->isPropertyLazy('a'));
-        $this->assertTrue($classSchema->isPropertyLazy('b'));
+        self::assertFalse($classSchema->isPropertyLazy('a'));
+        self::assertTrue($classSchema->isPropertyLazy('b'));
     }
 
     /**
@@ -78,8 +78,8 @@ class ClassSchemaTest extends UnitTestCase
         $classSchema->addProperty('a', 'Neos\Flow\SomeObject');
         $classSchema->addProperty('b', 'Neos\Flow\SomeObject', false, true);
 
-        $this->assertFalse($classSchema->isPropertyTransient('a'));
-        $this->assertTrue($classSchema->isPropertyTransient('b'));
+        self::assertFalse($classSchema->isPropertyTransient('a'));
+        self::assertTrue($classSchema->isPropertyTransient('b'));
     }
 
     /**
@@ -116,7 +116,7 @@ class ClassSchemaTest extends UnitTestCase
 
         $classSchema->markAsIdentityProperty('a');
 
-        $this->assertSame(['a' => 'string'], $classSchema->getIdentityProperties());
+        self::assertSame(['a' => 'string'], $classSchema->getIdentityProperties());
     }
 
     /**
@@ -188,8 +188,8 @@ class ClassSchemaTest extends UnitTestCase
         $classSchema->addProperty('a', 'array<\Neos\Flow\Foo>');
 
         $properties = $classSchema->getProperties();
-        $this->assertEquals('array', $properties['a']['type']);
-        $this->assertEquals('Neos\Flow\Foo', $properties['a']['elementType']);
+        self::assertEquals('array', $properties['a']['type']);
+        self::assertEquals('Neos\Flow\Foo', $properties['a']['elementType']);
     }
 
     /**
@@ -214,12 +214,12 @@ class ClassSchemaTest extends UnitTestCase
         $classSchema->addProperty('bar', 'string');
         $classSchema->markAsIdentityProperty('bar');
         $classSchema->setRepositoryClassName('Some\Repository');
-        $this->assertSame(['bar' => 'string'], $classSchema->getIdentityProperties());
+        self::assertSame(['bar' => 'string'], $classSchema->getIdentityProperties());
 
         $classSchema->setModelType(ClassSchema::MODELTYPE_VALUEOBJECT);
 
-        $this->assertSame([], $classSchema->getIdentityProperties());
-        $this->assertFalse($classSchema->isAggregateRoot());
+        self::assertSame([], $classSchema->getIdentityProperties());
+        self::assertFalse($classSchema->isAggregateRoot());
     }
 
     /**
@@ -244,6 +244,6 @@ class ClassSchemaTest extends UnitTestCase
     {
         $classSchema = new ClassSchema('SomeClass');
         $classSchema->addProperty('testProperty', $type);
-        $this->assertTrue($classSchema->isMultiValuedProperty('testProperty'));
+        self::assertTrue($classSchema->isMultiValuedProperty('testProperty'));
     }
 }

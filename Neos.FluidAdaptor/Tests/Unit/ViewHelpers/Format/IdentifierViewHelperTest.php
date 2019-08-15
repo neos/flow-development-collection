@@ -36,7 +36,7 @@ class IdentifierViewHelperTest extends ViewHelperBaseTestcase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\Format\IdentifierViewHelper::class, ['renderChildren', 'registerRenderMethodArguments']);
+        $this->viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\Format\IdentifierViewHelper::class, ['renderChildren']);
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
         $this->mockPersistenceManager = $this->createMock(\Neos\Flow\Persistence\PersistenceManagerInterface::class);
         $this->viewHelper->_set('persistenceManager', $this->mockPersistenceManager);
@@ -59,7 +59,7 @@ class IdentifierViewHelperTest extends ViewHelperBaseTestcase
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['value' => $object]);
         $actualResult = $this->viewHelper->render();
 
-        $this->assertEquals($expectedResult, $actualResult);
+        self::assertEquals($expectedResult, $actualResult);
     }
 
     /**
@@ -80,7 +80,7 @@ class IdentifierViewHelperTest extends ViewHelperBaseTestcase
             ->will($this->returnValue('b59292c5-1a28-4b36-8615-10d3c5b3a4d8'));
 
         $this->viewHelper = $this->prepareArguments($this->viewHelper, []);
-        $this->assertEquals('b59292c5-1a28-4b36-8615-10d3c5b3a4d8', $this->viewHelper->render());
+        self::assertEquals('b59292c5-1a28-4b36-8615-10d3c5b3a4d8', $this->viewHelper->render());
     }
 
     /**
@@ -94,7 +94,7 @@ class IdentifierViewHelperTest extends ViewHelperBaseTestcase
             ->will($this->returnValue(null));
 
         $this->viewHelper = $this->prepareArguments($this->viewHelper, []);
-        $this->assertEquals(null, $this->viewHelper->render());
+        self::assertEquals(null, $this->viewHelper->render());
     }
 
     /**

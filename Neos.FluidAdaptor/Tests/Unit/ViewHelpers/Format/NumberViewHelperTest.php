@@ -27,7 +27,7 @@ class NumberViewHelperTest extends ViewHelperBaseTestcase
 
     protected function setUp(): void
     {
-        $this->viewHelper = $this->getMockBuilder(\Neos\FluidAdaptor\ViewHelpers\Format\NumberViewHelper::class)->setMethods(['renderChildren', 'registerRenderMethodArguments'])->getMock();
+        $this->viewHelper = $this->getMockBuilder(\Neos\FluidAdaptor\ViewHelpers\Format\NumberViewHelper::class)->setMethods(['renderChildren'])->getMock();
     }
 
     /**
@@ -38,7 +38,7 @@ class NumberViewHelperTest extends ViewHelperBaseTestcase
         $this->viewHelper->expects($this->once())->method('renderChildren')->will($this->returnValue(10000.0 / 3.0));
         $this->viewHelper = $this->prepareArguments($this->viewHelper, []);
         $actualResult = $this->viewHelper->render();
-        $this->assertEquals('3,333.33', $actualResult);
+        self::assertEquals('3,333.33', $actualResult);
     }
 
     /**
@@ -49,7 +49,7 @@ class NumberViewHelperTest extends ViewHelperBaseTestcase
         $this->viewHelper->expects($this->once())->method('renderChildren')->will($this->returnValue(10000.0 / 3.0));
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['decimals' => 3, 'decimalSeparator' => ',', 'thousandsSeparator' => '.']);
         $actualResult = $this->viewHelper->render();
-        $this->assertEquals('3.333,333', $actualResult);
+        self::assertEquals('3.333,333', $actualResult);
     }
 
     /**

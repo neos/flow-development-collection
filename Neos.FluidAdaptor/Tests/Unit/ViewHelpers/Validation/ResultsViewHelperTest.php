@@ -11,24 +11,27 @@ namespace Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Validation;
  * source code.
  */
 
+use Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase;
+use Neos\FluidAdaptor\ViewHelpers\Validation\ResultsViewHelper;
+
 require_once(__DIR__ . '/../ViewHelperBaseTestcase.php');
 
 /**
  * Test for the Validation Results view helper
  *
  */
-class ResultsViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase
+class ResultsViewHelperTest extends ViewHelperBaseTestcase
 {
     /**
-     * @var \Neos\FluidAdaptor\ViewHelpers\Validation\ResultsViewHelper
+     * @var ResultsViewHelper
      */
     protected $viewHelper;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->viewHelper = $this->getMockBuilder(\Neos\FluidAdaptor\ViewHelpers\Validation\ResultsViewHelper::class)
-            ->setMethods(['renderChildren', 'registerRenderMethodArguments'])
+        $this->viewHelper = $this->getMockBuilder(ResultsViewHelper::class)
+            ->setMethods(['renderChildren'])
             ->getMock();
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
     }
@@ -42,7 +45,7 @@ class ResultsViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Vi
         $this->viewHelper->expects($this->once())->method('renderChildren')->will($this->returnValue('child nodes'));
 
         $this->viewHelper = $this->prepareArguments($this->viewHelper, []);
-        $this->assertSame('child nodes', $this->viewHelper->render());
+        self::assertSame('child nodes', $this->viewHelper->render());
     }
 
     /**

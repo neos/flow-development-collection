@@ -179,7 +179,7 @@ class ConfigurationValidationTest extends FunctionalTestCase
             }
             $this->fail($output);
         }
-        $this->assertFalse($validationResult->hasErrors());
+        self::assertFalse($validationResult->hasErrors());
     }
 
     /**

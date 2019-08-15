@@ -54,7 +54,7 @@ class FileMonitorTest extends UnitTestCase
     {
         $monitor = new FileMonitor('Flow_Test');
         $monitor->monitorFile(__FILE__);
-        $this->assertSame([$this->unixStylePathAndFilename], $monitor->getMonitoredFiles());
+        self::assertSame([$this->unixStylePathAndFilename], $monitor->getMonitoredFiles());
     }
 
     /**
@@ -65,7 +65,7 @@ class FileMonitorTest extends UnitTestCase
         $monitor = new FileMonitor('Flow_Test');
         $monitor->monitorFile(__FILE__);
         $monitor->monitorFile(__FILE__);
-        $this->assertSame([$this->unixStylePathAndFilename], $monitor->getMonitoredFiles());
+        self::assertSame([$this->unixStylePathAndFilename], $monitor->getMonitoredFiles());
     }
 
     /**
@@ -75,7 +75,7 @@ class FileMonitorTest extends UnitTestCase
     {
         $monitor = new FileMonitor('Flow_Test');
         $monitor->monitorDirectory(__DIR__);
-        $this->assertSame([Files::getNormalizedPath($this->unixStylePath)], $monitor->getMonitoredDirectories());
+        self::assertSame([Files::getNormalizedPath($this->unixStylePath)], $monitor->getMonitoredDirectories());
     }
 
     /**
@@ -86,7 +86,7 @@ class FileMonitorTest extends UnitTestCase
         $monitor = new FileMonitor('Flow_Test');
         $monitor->monitorDirectory(__DIR__);
         $monitor->monitorDirectory(__DIR__ . '/');
-        $this->assertSame([Files::getNormalizedPath($this->unixStylePath)], $monitor->getMonitoredDirectories());
+        self::assertSame([Files::getNormalizedPath($this->unixStylePath)], $monitor->getMonitoredDirectories());
     }
 
     /**
@@ -141,7 +141,7 @@ class FileMonitorTest extends UnitTestCase
         $mockMonitor->injectChangeDetectionStrategy($mockStrategy);
         $result = $mockMonitor->_call('detectChangedFiles', [__FILE__ . '1', __FILE__ . '2']);
 
-        $this->assertEquals([__FILE__ . '1' => ChangeDetectionStrategyInterface::STATUS_CREATED], $result);
+        self::assertEquals([__FILE__ . '1' => ChangeDetectionStrategyInterface::STATUS_CREATED], $result);
     }
 
     /**
@@ -267,10 +267,10 @@ class FileMonitorTest extends UnitTestCase
         $fileMonitor->monitorDirectory($testPath);
         $fileMonitor->detectChanges();
 
-        $this->assertEquals([
+        self::assertEquals([
             $testPath . '/test.txt' => ChangeDetectionStrategyInterface::STATUS_CREATED
         ], $fileMonitor->_get('changedFiles'));
-        $this->assertCount(1, $fileMonitor->_get('changedPaths'));
+        self::assertCount(1, $fileMonitor->_get('changedPaths'));
     }
 
     /**

@@ -29,8 +29,8 @@ class UuidValidatorTest extends AbstractValidatorTestcase
      */
     public function validatorAcceptsCorrectUUIDs()
     {
-        $this->assertFalse($this->validator->validate('e104e469-9030-4b98-babf-3990f07dd3f1')->hasErrors());
-        $this->assertFalse($this->validator->validate('533548ca-8914-4a19-9404-ef390a6ce387')->hasErrors());
+        self::assertFalse($this->validator->validate('e104e469-9030-4b98-babf-3990f07dd3f1')->hasErrors());
+        self::assertFalse($this->validator->validate('533548ca-8914-4a19-9404-ef390a6ce387')->hasErrors());
     }
 
     /**
@@ -38,7 +38,7 @@ class UuidValidatorTest extends AbstractValidatorTestcase
      */
     public function tooShortUUIDIsRejected()
     {
-        $this->assertTrue($this->validator->validate('e104e469-9030-4b98-babf-3990f07')->hasErrors());
+        self::assertTrue($this->validator->validate('e104e469-9030-4b98-babf-3990f07')->hasErrors());
     }
 
     /**
@@ -46,8 +46,8 @@ class UuidValidatorTest extends AbstractValidatorTestcase
      */
     public function tooLongButValidUUIDIsRejected()
     {
-        $this->assertTrue($this->validator->validate('e104e469-9030-4b98-babf-3990f07dd3f1-3990f07dd3f1')->hasErrors());
-        $this->assertTrue($this->validator->validate('abcde-533548ca-8914-4a19-9404-ef390a6ce387-xyz')->hasErrors());
+        self::assertTrue($this->validator->validate('e104e469-9030-4b98-babf-3990f07dd3f1-3990f07dd3f1')->hasErrors());
+        self::assertTrue($this->validator->validate('abcde-533548ca-8914-4a19-9404-ef390a6ce387-xyz')->hasErrors());
     }
 
     /**
@@ -55,7 +55,7 @@ class UuidValidatorTest extends AbstractValidatorTestcase
      */
     public function UUIDWithOtherThanHexValuesIsRejected()
     {
-        $this->assertTrue($this->validator->validate('e104e469-9030-4g98-babf-3990f07dd3f1')->hasErrors());
+        self::assertTrue($this->validator->validate('e104e469-9030-4g98-babf-3990f07dd3f1')->hasErrors());
     }
 
     /**
@@ -64,6 +64,6 @@ class UuidValidatorTest extends AbstractValidatorTestcase
     public function UUIDValidatorCreatesTheCorrectErrorIfTheSubjectIsInvalid()
     {
         $expected = [new Validation\Error('The given subject was not a valid UUID.', 1221565853)];
-        $this->assertEquals($expected, $this->validator->validate('e104e469-9030-4b98-babf-3990f07')->getErrors());
+        self::assertEquals($expected, $this->validator->validate('e104e469-9030-4b98-babf-3990f07')->getErrors());
     }
 }

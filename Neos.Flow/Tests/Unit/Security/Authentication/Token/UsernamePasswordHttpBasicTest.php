@@ -54,8 +54,8 @@ class UsernamePasswordHttpBasicTest extends UnitTestCase
         $this->token->updateCredentials($mockActionRequest);
 
         $expectedCredentials = ['username' => 'robert', 'password' => 'mysecretpassword, containing a : colon ;-)'];
-        $this->assertEquals($expectedCredentials, $this->token->getCredentials());
-        $this->assertSame(TokenInterface::AUTHENTICATION_NEEDED, $this->token->getAuthenticationStatus());
+        self::assertEquals($expectedCredentials, $this->token->getCredentials());
+        self::assertSame(TokenInterface::AUTHENTICATION_NEEDED, $this->token->getAuthenticationStatus());
     }
 
     /**
@@ -74,8 +74,8 @@ class UsernamePasswordHttpBasicTest extends UnitTestCase
         $mockActionRequest->expects($this->atLeastOnce())->method('getHttpRequest')->will($this->returnValue($httpRequest));
         $this->token->updateCredentials($mockActionRequest);
 
-        $this->assertEquals($expectedCredentials, $this->token->getCredentials());
-        $this->assertSame(TokenInterface::AUTHENTICATION_NEEDED, $this->token->getAuthenticationStatus());
+        self::assertEquals($expectedCredentials, $this->token->getCredentials());
+        self::assertSame(TokenInterface::AUTHENTICATION_NEEDED, $this->token->getAuthenticationStatus());
     }
 
     /**
@@ -88,6 +88,6 @@ class UsernamePasswordHttpBasicTest extends UnitTestCase
         $mockActionRequest->expects($this->atLeastOnce())->method('getHttpRequest')->will($this->returnValue($httpRequest));
         $this->token->updateCredentials($mockActionRequest);
 
-        $this->assertSame(TokenInterface::NO_CREDENTIALS_GIVEN, $this->token->getAuthenticationStatus());
+        self::assertSame(TokenInterface::NO_CREDENTIALS_GIVEN, $this->token->getAuthenticationStatus());
     }
 }

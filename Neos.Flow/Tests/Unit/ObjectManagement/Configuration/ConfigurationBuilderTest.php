@@ -56,7 +56,7 @@ class ConfigurationBuilderTest extends UnitTestCase
 
         $configurationBuilder = $this->getAccessibleMock(ConfigurationBuilder::class, ['dummy']);
         $builtObjectConfiguration = $configurationBuilder->_call('parseConfigurationArray', 'TestObject', $configurationArray, __CLASS__);
-        $this->assertEquals($objectConfiguration, $builtObjectConfiguration, 'The manually created and the built object configuration don\'t match.');
+        self::assertEquals($objectConfiguration, $builtObjectConfiguration, 'The manually created and the built object configuration don\'t match.');
     }
 
     /**
@@ -76,7 +76,7 @@ class ConfigurationBuilderTest extends UnitTestCase
 
         $configurationBuilder = $this->getAccessibleMock(ConfigurationBuilder::class, ['dummy']);
         $builtObjectConfiguration = $configurationBuilder->_call('parseConfigurationArray', 'TestObject', $configurationArray, __CLASS__);
-        $this->assertEquals($objectConfiguration, $builtObjectConfiguration);
+        self::assertEquals($objectConfiguration, $builtObjectConfiguration);
     }
 
     /**
@@ -96,7 +96,7 @@ class ConfigurationBuilderTest extends UnitTestCase
 
         $configurationBuilder = $this->getAccessibleMock(ConfigurationBuilder::class, ['dummy']);
         $builtObjectConfiguration = $configurationBuilder->_call('parseConfigurationArray', 'TestObject', $configurationArray, __CLASS__);
-        $this->assertEquals($objectConfiguration, $builtObjectConfiguration);
+        self::assertEquals($objectConfiguration, $builtObjectConfiguration);
     }
 
     /**
@@ -114,7 +114,7 @@ class ConfigurationBuilderTest extends UnitTestCase
 
         $configurationBuilder = $this->getAccessibleMock(ConfigurationBuilder::class, ['dummy']);
         $builtObjectConfiguration = $configurationBuilder->_call('parseConfigurationArray', 'TestObject', $configurationArray, __CLASS__);
-        $this->assertEquals($objectConfiguration, $builtObjectConfiguration);
+        self::assertEquals($objectConfiguration, $builtObjectConfiguration);
     }
 
     /**
@@ -188,7 +188,7 @@ class ConfigurationBuilderTest extends UnitTestCase
         $builtObjectConfiguration = $configurationBuilder->_call('parseConfigurationArray', 'TestObject', $configurationArray, __CLASS__);
 
         $expectedConfigurationProperty = new ConfigurationProperty('someProperty', ['type' => ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'path' => 'Neos.Foo.Bar'], ConfigurationProperty::PROPERTY_TYPES_CONFIGURATION);
-        $this->assertEquals($expectedConfigurationProperty, $builtObjectConfiguration->getProperties()['someProperty']);
+        self::assertEquals($expectedConfigurationProperty, $builtObjectConfiguration->getProperties()['someProperty']);
     }
 
     /**
@@ -205,6 +205,6 @@ class ConfigurationBuilderTest extends UnitTestCase
         $builtObjectConfiguration = $configurationBuilder->_call('parseConfigurationArray', 'TestObject', $configurationArray, __CLASS__);
 
         $expectedConfigurationArgument = new ConfigurationArgument(1, 'Neos.Foo.Bar', ConfigurationArgument::ARGUMENT_TYPES_SETTING);
-        $this->assertEquals($expectedConfigurationArgument, $builtObjectConfiguration->getArguments()[1]);
+        self::assertEquals($expectedConfigurationArgument, $builtObjectConfiguration->getArguments()[1]);
     }
 }

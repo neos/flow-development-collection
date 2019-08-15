@@ -19,6 +19,7 @@ use Neos\Flow\Persistence\Doctrine\QueryResult;
 use Neos\Flow\Persistence\Exception;
 use Neos\Flow\Persistence\Exception\ObjectValidationFailedException;
 use Neos\Flow\Tests\FunctionalTestCase;
+use Neos\Utility\ObjectAccess;
 
 /**
  * Testcase for persistence
@@ -63,7 +64,7 @@ class PersistenceTest extends FunctionalTestCase
         $this->insertExampleEntity();
 
         $testEntity = $this->testEntityRepository->findAll()->getFirst();
-        $this->assertEquals('Flow', $testEntity->getName());
+        self::assertEquals('Flow', $testEntity->getName());
     }
 
     /**
@@ -75,12 +76,12 @@ class PersistenceTest extends FunctionalTestCase
         $this->insertExampleEntity();
 
         $allResults = $this->testEntityRepository->findAll();
-        $this->assertInstanceOf(QueryResult::class, $allResults);
-        $this->assertAttributeInternalType('null', 'rows', $allResults, 'Query Result did not load the result collection lazily.');
+        self::assertInstanceOf(QueryResult::class, $allResults);
+        self::assertNull(ObjectAccess::getProperty($allResults, 'rows', true), 'Query Result did not load the result collection lazily.');
 
         $allResultsArray = $allResults->toArray();
-        $this->assertStringContainsString('Flow', $allResultsArray[0]->getName());
-        $this->assertAttributeInternalType('array', 'rows', $allResults);
+        self::assertStringContainsString('Flow', $allResultsArray[0]->getName());
+        self::assertIsArray(ObjectAccess::getProperty($allResults, 'rows', true));
     }
 
     /**
@@ -94,7 +95,7 @@ class PersistenceTest extends FunctionalTestCase
         $allResults = $this->testEntityRepository->findAll();
 
         $unserializedResults = unserialize(serialize($allResults));
-        $this->assertAttributeInternalType('null', 'rows', $unserializedResults, 'Query Result did not flush the result collection after serialization.');
+        self::assertNull(ObjectAccess::getProperty($unserializedResults, 'rows', true), 'Query Result did not flush the result collection after serialization.');
     }
 
     /**
@@ -106,11 +107,11 @@ class PersistenceTest extends FunctionalTestCase
         $this->insertExampleEntity();
 
         $allResults = $this->testEntityRepository->findAll();
-        $this->assertEquals(1, count($allResults->toArray()), 'Not correct number of entities found before running test.');
+        self::assertEquals(1, count($allResults->toArray()), 'Not correct number of entities found before running test.');
 
         $unserializedResults = unserialize(serialize($allResults));
-        $this->assertEquals(1, count($unserializedResults->toArray()));
-        $this->assertEquals('Flow', $unserializedResults[0]->getName());
+        self::assertEquals(1, count($unserializedResults->toArray()));
+        self::assertEquals('Flow', $unserializedResults[0]->getName());
     }
 
     /**
@@ -123,10 +124,10 @@ class PersistenceTest extends FunctionalTestCase
         $this->insertExampleEntity('Neos');
 
         $allResults = $this->testEntityRepository->findAll();
-        $this->assertEquals('Flow', $allResults->getFirst()->getName());
+        self::assertEquals('Flow', $allResults->getFirst()->getName());
 
         $numberOfTotalResults = count($allResults->toArray());
-        $this->assertEquals(2, $numberOfTotalResults);
+        self::assertEquals(2, $numberOfTotalResults);
     }
 
     /**
@@ -139,7 +140,7 @@ class PersistenceTest extends FunctionalTestCase
 
         $clonedEntity = clone $testEntity;
         $secondIdentifier = $this->persistenceManager->getIdentifierByObject($clonedEntity);
-        $this->assertNotEquals($firstIdentifier, $secondIdentifier);
+        self::assertNotEquals($firstIdentifier, $secondIdentifier);
     }
 
     /**
@@ -175,8 +176,8 @@ class PersistenceTest extends FunctionalTestCase
         $testEntityWithArrayPropertyUnserialized = unserialize($serializedData);
         $arrayPropertyAfterUnserialize = $testEntityWithArrayPropertyUnserialized->getArrayProperty();
 
-        $this->assertNotSame($testEntityWithArrayProperty, $testEntityWithArrayPropertyUnserialized);
-        $this->assertEquals('Neos', $arrayPropertyAfterUnserialize['some']['nestedArray']['key']->getName(), 'The entity inside the array property has not been updated to the current persistend state after wakeup.');
+        self::assertNotSame($testEntityWithArrayProperty, $testEntityWithArrayPropertyUnserialized);
+        self::assertEquals('Neos', $arrayPropertyAfterUnserialize['some']['nestedArray']['key']->getName(), 'The entity inside the array property has not been updated to the current persistend state after wakeup.');
     }
 
     /**
@@ -187,7 +188,7 @@ class PersistenceTest extends FunctionalTestCase
         $expectedEntity = new Fixtures\TestEntity();
         $uuid = $this->persistenceManager->getIdentifierByObject($expectedEntity);
         $actualEntity = $this->persistenceManager->getObjectByIdentifier($uuid, Fixtures\TestEntity::class);
-        $this->assertSame($expectedEntity, $actualEntity);
+        self::assertSame($expectedEntity, $actualEntity);
     }
 
     /**
@@ -211,7 +212,7 @@ class PersistenceTest extends FunctionalTestCase
 
         $testEntities = $this->testEntityRepository->findAll();
 
-        $this->assertSame($testEntities[0]->getRelatedValueObject(), $testEntities[1]->getRelatedValueObject());
+        self::assertSame($testEntities[0]->getRelatedValueObject(), $testEntities[1]->getRelatedValueObject());
     }
 
     /**
@@ -244,8 +245,8 @@ class PersistenceTest extends FunctionalTestCase
 
         $testEntities = $this->testEntityRepository->findAll();
 
-        $this->assertSame($testEntities[0]->getRelatedValueObject(), $testEntities[1]->getRelatedValueObject());
-        $this->assertSame($testEntities[1]->getRelatedValueObject(), $testEntities[2]->getRelatedValueObject());
+        self::assertSame($testEntities[0]->getRelatedValueObject(), $testEntities[1]->getRelatedValueObject());
+        self::assertSame($testEntities[1]->getRelatedValueObject(), $testEntities[2]->getRelatedValueObject());
     }
 
     /**
@@ -257,9 +258,9 @@ class PersistenceTest extends FunctionalTestCase
         $entityManager = $this->objectManager->get(\Doctrine\ORM\EntityManagerInterface::class);
         $schemaTool = new SchemaTool($entityManager);
         $classMetaData = $entityManager->getClassMetadata(Fixtures\TestEntity::class);
-        $this->assertTrue($classMetaData->hasField('embeddedValueObject.value'), 'ClassMetadata is not correctly embedded');
+        self::assertTrue($classMetaData->hasField('embeddedValueObject.value'), 'ClassMetadata is not correctly embedded');
         $schema = $schemaTool->getSchemaFromMetadata([$classMetaData]);
-        $this->assertTrue($schema->getTable('persistence_testentity')->hasColumn('embeddedvalueobjectvalue'), 'Database schema is missing embedded field');
+        self::assertTrue($schema->getTable('persistence_testentity')->hasColumn('embeddedvalueobjectvalue'), 'Database schema is missing embedded field');
 
         $valueObject = new Fixtures\TestEmbeddedValueObject('someValue');
         $testEntity = new Fixtures\TestEntity();
@@ -272,7 +273,7 @@ class PersistenceTest extends FunctionalTestCase
 
         /* @var $testEntity Fixtures\TestEntity */
         $testEntity = $this->testEntityRepository->findAll()->getFirst();
-        $this->assertEquals('someValue', $testEntity->getEmbeddedValueObject()->getValue());
+        self::assertEquals('someValue', $testEntity->getEmbeddedValueObject()->getValue());
     }
 
     /**
@@ -355,9 +356,9 @@ class PersistenceTest extends FunctionalTestCase
         $this->insertExampleEntity();
         $this->persistenceManager->persistAll();
         $eventSubscriber = $this->objectManager->get(Fixtures\EventSubscriber::class);
-        $this->assertTrue($eventSubscriber->preFlushCalled, 'Assert that preFlush event was triggered.');
-        $this->assertTrue($eventSubscriber->onFlushCalled, 'Assert that onFlush event was triggered.');
-        $this->assertTrue($eventSubscriber->postFlushCalled, 'Assert that postFlush event was triggered.');
+        self::assertTrue($eventSubscriber->preFlushCalled, 'Assert that preFlush event was triggered.');
+        self::assertTrue($eventSubscriber->onFlushCalled, 'Assert that onFlush event was triggered.');
+        self::assertTrue($eventSubscriber->postFlushCalled, 'Assert that postFlush event was triggered.');
     }
 
     /**
@@ -369,9 +370,9 @@ class PersistenceTest extends FunctionalTestCase
         $this->insertExampleEntity();
         $this->persistenceManager->persistAll();
         $eventSubscriber = $this->objectManager->get(Fixtures\EventListener::class);
-        $this->assertTrue($eventSubscriber->preFlushCalled, 'Assert that preFlush event was triggered.');
-        $this->assertTrue($eventSubscriber->onFlushCalled, 'Assert that onFlush event was triggered.');
-        $this->assertTrue($eventSubscriber->postFlushCalled, 'Assert that postFlush event was triggered.');
+        self::assertTrue($eventSubscriber->preFlushCalled, 'Assert that preFlush event was triggered.');
+        self::assertTrue($eventSubscriber->onFlushCalled, 'Assert that onFlush event was triggered.');
+        self::assertTrue($eventSubscriber->postFlushCalled, 'Assert that postFlush event was triggered.');
     }
 
     /**
@@ -414,7 +415,7 @@ class PersistenceTest extends FunctionalTestCase
 
         $this->persistenceManager->whitelistObject($testEntity);
         $this->persistenceManager->persistAll(true);
-        $this->assertTrue(true);
+        self::assertTrue(true);
     }
 
     /**
@@ -431,16 +432,16 @@ class PersistenceTest extends FunctionalTestCase
         /**  @var Fixtures\ExtendedTypesEntity $persistedExtendedTypesEntity */
         $persistedExtendedTypesEntity = $this->extendedTypesEntityRepository->findAll()->getFirst();
 
-        $this->assertInstanceOf(Fixtures\ExtendedTypesEntity::class, $persistedExtendedTypesEntity);
-        $this->assertNull($persistedExtendedTypesEntity->getCommonObject(), 'Common Object');
-        $this->assertNull($persistedExtendedTypesEntity->getDateTime(), 'DateTime');
-        $this->assertNull($persistedExtendedTypesEntity->getDateTimeTz(), 'DateTimeTz');
-        $this->assertNull($persistedExtendedTypesEntity->getDate(), 'Date');
-        $this->assertNull($persistedExtendedTypesEntity->getTime(), 'Time');
+        self::assertInstanceOf(Fixtures\ExtendedTypesEntity::class, $persistedExtendedTypesEntity);
+        self::assertNull($persistedExtendedTypesEntity->getCommonObject(), 'Common Object');
+        self::assertNull($persistedExtendedTypesEntity->getDateTime(), 'DateTime');
+        self::assertNull($persistedExtendedTypesEntity->getDateTimeTz(), 'DateTimeTz');
+        self::assertNull($persistedExtendedTypesEntity->getDate(), 'Date');
+        self::assertNull($persistedExtendedTypesEntity->getTime(), 'Time');
 
         // These types always returns an array, never NULL, even if the property is nullable
-        $this->assertEquals([], $persistedExtendedTypesEntity->getSimpleArray(), 'Simple Array');
-        $this->assertEquals([], $persistedExtendedTypesEntity->getJsonArray(), 'Json Array');
+        self::assertEquals([], $persistedExtendedTypesEntity->getSimpleArray(), 'Simple Array');
+        self::assertEquals([], $persistedExtendedTypesEntity->getJsonArray(), 'Json Array');
     }
 
     /**
@@ -465,9 +466,9 @@ class PersistenceTest extends FunctionalTestCase
         /**  @var Fixtures\ExtendedTypesEntity $persistedExtendedTypesEntity */
         $persistedExtendedTypesEntity = $this->extendedTypesEntityRepository->findAll()->getFirst();
 
-        $this->assertInstanceOf(Fixtures\ExtendedTypesEntity::class, $persistedExtendedTypesEntity);
-        $this->assertInstanceOf(Fixtures\CommonObject::class, $persistedExtendedTypesEntity->getCommonObject());
-        $this->assertEquals('foo', $persistedExtendedTypesEntity->getCommonObject()->getFoo());
+        self::assertInstanceOf(Fixtures\ExtendedTypesEntity::class, $persistedExtendedTypesEntity);
+        self::assertInstanceOf(Fixtures\CommonObject::class, $persistedExtendedTypesEntity->getCommonObject());
+        self::assertEquals('foo', $persistedExtendedTypesEntity->getCommonObject()->getFoo());
     }
 
     /**
@@ -485,8 +486,8 @@ class PersistenceTest extends FunctionalTestCase
         /**  @var Fixtures\ExtendedTypesEntity $persistedExtendedTypesEntity */
         $persistedExtendedTypesEntity = $this->extendedTypesEntityRepository->findAll()->getFirst();
 
-        $this->assertInstanceOf(Fixtures\ExtendedTypesEntity::class, $persistedExtendedTypesEntity);
-        $this->assertEquals(['foo' => 'bar'], $persistedExtendedTypesEntity->getJsonArray());
+        self::assertInstanceOf(Fixtures\ExtendedTypesEntity::class, $persistedExtendedTypesEntity);
+        self::assertEquals(['foo' => 'bar'], $persistedExtendedTypesEntity->getJsonArray());
     }
 
     /**
@@ -511,10 +512,10 @@ class PersistenceTest extends FunctionalTestCase
         // Restore test env timezone
         ini_restore('date.timezone');
 
-        $this->assertInstanceOf(Fixtures\ExtendedTypesEntity::class, $persistedExtendedTypesEntity);
-        $this->assertInstanceOf('DateTime', $persistedExtendedTypesEntity->getDateTime());
-        $this->assertNotEquals($dateTimeTz->getTimestamp(), $persistedExtendedTypesEntity->getDateTime()->getTimestamp());
-        $this->assertEquals('Arctic/Longyearbyen', $persistedExtendedTypesEntity->getDateTime()->getTimezone()->getName());
+        self::assertInstanceOf(Fixtures\ExtendedTypesEntity::class, $persistedExtendedTypesEntity);
+        self::assertInstanceOf('DateTime', $persistedExtendedTypesEntity->getDateTime());
+        self::assertNotEquals($dateTimeTz->getTimestamp(), $persistedExtendedTypesEntity->getDateTime()->getTimestamp());
+        self::assertEquals('Arctic/Longyearbyen', $persistedExtendedTypesEntity->getDateTime()->getTimezone()->getName());
     }
 
     /**
@@ -531,10 +532,10 @@ class PersistenceTest extends FunctionalTestCase
 
         /**  @var Fixtures\ExtendedTypesEntity $persistedExtendedTypesEntity */
         $persistedExtendedTypesEntity = $this->extendedTypesEntityRepository->findAll()->getFirst();
-        $this->assertInstanceOf(Fixtures\ExtendedTypesEntity::class, $persistedExtendedTypesEntity);
-        $this->assertInstanceOf('DateTime', $persistedExtendedTypesEntity->getDateTime());
-        $this->assertEquals($dateTimeTz->getTimestamp(), $persistedExtendedTypesEntity->getDateTime()->getTimestamp());
-        $this->assertEquals(ini_get('date.timezone'), $persistedExtendedTypesEntity->getDateTime()->getTimezone()->getName());
+        self::assertInstanceOf(Fixtures\ExtendedTypesEntity::class, $persistedExtendedTypesEntity);
+        self::assertInstanceOf('DateTime', $persistedExtendedTypesEntity->getDateTime());
+        self::assertEquals($dateTimeTz->getTimestamp(), $persistedExtendedTypesEntity->getDateTime()->getTimestamp());
+        self::assertEquals(ini_get('date.timezone'), $persistedExtendedTypesEntity->getDateTime()->getTimezone()->getName());
     }
 
     /**
@@ -551,10 +552,33 @@ class PersistenceTest extends FunctionalTestCase
 
         /**  @var Fixtures\ExtendedTypesEntity $persistedExtendedTypesEntity */
         $persistedExtendedTypesEntity = $this->extendedTypesEntityRepository->findAll()->getFirst();
-        $this->assertInstanceOf(Fixtures\ExtendedTypesEntity::class, $persistedExtendedTypesEntity);
-        $this->assertInstanceOf('DateTimeImmutable', $persistedExtendedTypesEntity->getDateTimeImmutable());
-        $this->assertEquals($dateTimeTz->getTimestamp(), $persistedExtendedTypesEntity->getDateTimeImmutable()->getTimestamp());
-        $this->assertEquals(ini_get('date.timezone'), $persistedExtendedTypesEntity->getDateTimeImmutable()->getTimezone()->getName());
+        self::assertInstanceOf(Fixtures\ExtendedTypesEntity::class, $persistedExtendedTypesEntity);
+        self::assertInstanceOf('DateTimeImmutable', $persistedExtendedTypesEntity->getDateTimeImmutable());
+        self::assertEquals($dateTimeTz->getTimestamp(), $persistedExtendedTypesEntity->getDateTimeImmutable()->getTimestamp());
+        self::assertEquals(ini_get('date.timezone'), $persistedExtendedTypesEntity->getDateTimeImmutable()->getTimezone()->getName());
+    }
+
+    /**
+     * This test covers a b/c "feature" that automatically maps var \DateTimeInterface to doctrine `datetime` type without a ORM\Column annotation
+     * See #1673
+     * @test
+     */
+    public function dateTimeInterfaceIsPersistedAndIsReconstitutedAsDateTime()
+    {
+        $dateTimeTz = new \DateTimeImmutable('2008-11-16 19:03:30', new \DateTimeZone(ini_get('date.timezone')));
+        $extendedTypesEntity = new Fixtures\ExtendedTypesEntity();
+        $extendedTypesEntity->setDateTimeInterface($dateTimeTz);
+        $this->persistenceManager->add($extendedTypesEntity);
+        $this->persistenceManager->persistAll();
+        $this->persistenceManager->clearState();
+
+        /**  @var Fixtures\ExtendedTypesEntity $persistedExtendedTypesEntity */
+        $persistedExtendedTypesEntity = $this->extendedTypesEntityRepository->findAll()->getFirst();
+        self::assertInstanceOf(Fixtures\ExtendedTypesEntity::class, $persistedExtendedTypesEntity);
+        // We don't get the same instance out that we put in.
+        self::assertInstanceOf('DateTime', $persistedExtendedTypesEntity->getDateTimeInterface());
+        self::assertEquals($dateTimeTz->getTimestamp(), $persistedExtendedTypesEntity->getDateTimeInterface()->getTimestamp());
+        self::assertEquals(ini_get('date.timezone'), $persistedExtendedTypesEntity->getDateTimeInterface()->getTimezone()->getName());
     }
 
     /**
@@ -585,10 +609,10 @@ class PersistenceTest extends FunctionalTestCase
         // Restore test env timezone
         ini_restore('date.timezone');
 
-        $this->assertInstanceOf(Fixtures\ExtendedTypesEntity::class, $persistedExtendedTypesEntity);
-        $this->assertInstanceOf('DateTime', $persistedExtendedTypesEntity->getDateTimeTz());
-        $this->assertNotEquals($dateTimeTz->getTimestamp(), $persistedExtendedTypesEntity->getDateTimeTz()->getTimestamp());
-        $this->assertEquals(ini_get('datetime.timezone'), $persistedExtendedTypesEntity->getDateTimeTz()->getTimezone()->getName());
+        self::assertInstanceOf(Fixtures\ExtendedTypesEntity::class, $persistedExtendedTypesEntity);
+        self::assertInstanceOf('DateTime', $persistedExtendedTypesEntity->getDateTimeTz());
+        self::assertNotEquals($dateTimeTz->getTimestamp(), $persistedExtendedTypesEntity->getDateTimeTz()->getTimestamp());
+        self::assertEquals(ini_get('datetime.timezone'), $persistedExtendedTypesEntity->getDateTimeTz()->getTimezone()->getName());
     }
 
     /**
@@ -605,8 +629,8 @@ class PersistenceTest extends FunctionalTestCase
 
         /**  @var Fixtures\ExtendedTypesEntity $persistedExtendedTypesEntity */
         $persistedExtendedTypesEntity = $this->extendedTypesEntityRepository->findAll()->getFirst();
-        $this->assertInstanceOf(Fixtures\ExtendedTypesEntity::class, $persistedExtendedTypesEntity);
-        $this->assertEquals('2008-11-16', $persistedExtendedTypesEntity->getDate()->format('Y-m-d'));
+        self::assertInstanceOf(Fixtures\ExtendedTypesEntity::class, $persistedExtendedTypesEntity);
+        self::assertEquals('2008-11-16', $persistedExtendedTypesEntity->getDate()->format('Y-m-d'));
     }
 
     /**
@@ -623,8 +647,8 @@ class PersistenceTest extends FunctionalTestCase
 
         /**  @var Fixtures\ExtendedTypesEntity $persistedExtendedTypesEntity */
         $persistedExtendedTypesEntity = $this->extendedTypesEntityRepository->findAll()->getFirst();
-        $this->assertInstanceOf(Fixtures\ExtendedTypesEntity::class, $persistedExtendedTypesEntity);
-        $this->assertEquals('19:03:30', $persistedExtendedTypesEntity->getTime()->format('H:i:s'));
+        self::assertInstanceOf(Fixtures\ExtendedTypesEntity::class, $persistedExtendedTypesEntity);
+        self::assertEquals('19:03:30', $persistedExtendedTypesEntity->getTime()->format('H:i:s'));
     }
 
     /**
@@ -642,8 +666,8 @@ class PersistenceTest extends FunctionalTestCase
         /**  @var Fixtures\ExtendedTypesEntity $persistedExtendedTypesEntity */
         $persistedExtendedTypesEntity = $this->extendedTypesEntityRepository->findAll()->getFirst();
 
-        $this->assertInstanceOf(Fixtures\ExtendedTypesEntity::class, $persistedExtendedTypesEntity);
-        $this->assertEquals(['bar'], $persistedExtendedTypesEntity->getSimpleArray());
+        self::assertInstanceOf(Fixtures\ExtendedTypesEntity::class, $persistedExtendedTypesEntity);
+        self::assertEquals(['bar'], $persistedExtendedTypesEntity->getSimpleArray());
     }
 
     /**
@@ -659,7 +683,7 @@ class PersistenceTest extends FunctionalTestCase
         $testEntity = $this->testEntityRepository->findAll()->getFirst();
         $testEntity->setName('Another name');
         $this->testEntityRepository->update($testEntity);
-        $this->assertTrue($this->persistenceManager->hasUnpersistedChanges());
+        self::assertTrue($this->persistenceManager->hasUnpersistedChanges());
     }
 
     /**
@@ -696,9 +720,9 @@ class PersistenceTest extends FunctionalTestCase
         $entityManager = $this->objectManager->get(EntityManagerInterface::class);
         $schemaTool = new SchemaTool($entityManager);
         $metaData = $entityManager->getClassMetadata(Fixtures\TestEntity::class);
-        $this->assertTrue($metaData->hasField('embedded.value'), 'ClassMetadata does not contain embedded value');
+        self::assertTrue($metaData->hasField('embedded.value'), 'ClassMetadata does not contain embedded value');
         $schema = $schemaTool->getSchemaFromMetadata([$metaData]);
-        $this->assertTrue($schema->getTable('persistence_testentity')->hasColumn('embedded_value'), 'Database schema does not contain embedded value field');
+        self::assertTrue($schema->getTable('persistence_testentity')->hasColumn('embedded_value'), 'Database schema does not contain embedded value field');
 
         $embeddable = new Fixtures\TestEmbeddable('someValue');
         $testEntity = new Fixtures\TestEntity();
@@ -711,6 +735,6 @@ class PersistenceTest extends FunctionalTestCase
 
         /* @var $testEntity Fixtures\TestEntity */
         $testEntity = $this->testEntityRepository->findAll()->getFirst();
-        $this->assertEquals('someValue', $testEntity->getEmbedded()->getValue());
+        self::assertEquals('someValue', $testEntity->getEmbedded()->getValue());
     }
 }

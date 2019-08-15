@@ -64,7 +64,7 @@ class ApcuBackendTest extends BaseTestCase
         $identifier = 'MyIdentifier' . md5(uniqid(mt_rand(), true));
         $backend->set($identifier, $data);
         $inCache = $backend->has($identifier);
-        $this->assertTrue($inCache, 'APCu backend failed to set and check entry');
+        self::assertTrue($inCache, 'APCu backend failed to set and check entry');
     }
 
     /**
@@ -77,7 +77,7 @@ class ApcuBackendTest extends BaseTestCase
         $identifier = 'MyIdentifier' . md5(uniqid(mt_rand(), true));
         $backend->set($identifier, $data);
         $fetchedData = $backend->get($identifier);
-        $this->assertEquals($data, $fetchedData, 'APCu backend failed to set and retrieve data');
+        self::assertEquals($data, $fetchedData, 'APCu backend failed to set and retrieve data');
     }
 
     /**
@@ -91,7 +91,7 @@ class ApcuBackendTest extends BaseTestCase
         $backend->set($identifier, $data);
         $backend->remove($identifier);
         $inCache = $backend->has($identifier);
-        $this->assertFalse($inCache, 'Failed to set and remove data from APCu backend');
+        self::assertFalse($inCache, 'Failed to set and remove data from APCu backend');
     }
 
     /**
@@ -106,7 +106,7 @@ class ApcuBackendTest extends BaseTestCase
         $otherData = 'some other data';
         $backend->set($identifier, $otherData);
         $fetchedData = $backend->get($identifier);
-        $this->assertEquals($otherData, $fetchedData, 'APCu backend failed to overwrite and retrieve data');
+        self::assertEquals($otherData, $fetchedData, 'APCu backend failed to overwrite and retrieve data');
     }
 
     /**
@@ -121,10 +121,10 @@ class ApcuBackendTest extends BaseTestCase
         $backend->set($identifier, $data, ['UnitTestTag%tag1', 'UnitTestTag%tag2']);
 
         $retrieved = $backend->findIdentifiersByTag('UnitTestTag%tag1');
-        $this->assertEquals($identifier, $retrieved[0], 'Could not retrieve expected entry by tag.');
+        self::assertEquals($identifier, $retrieved[0], 'Could not retrieve expected entry by tag.');
 
         $retrieved = $backend->findIdentifiersByTag('UnitTestTag%tag2');
-        $this->assertEquals($identifier, $retrieved[0], 'Could not retrieve expected entry by tag.');
+        self::assertEquals($identifier, $retrieved[0], 'Could not retrieve expected entry by tag.');
     }
 
     /**
@@ -140,7 +140,7 @@ class ApcuBackendTest extends BaseTestCase
         $backend->set($identifier, $data, ['UnitTestTag%tag3']);
 
         $retrieved = $backend->findIdentifiersByTag('UnitTestTag%tagX');
-        $this->assertEquals([], $retrieved, 'Found entry which should no longer exist.');
+        self::assertEquals([], $retrieved, 'Found entry which should no longer exist.');
     }
 
     /**
@@ -151,7 +151,7 @@ class ApcuBackendTest extends BaseTestCase
         $backend = $this->setUpBackend();
         $identifier = 'NonExistingIdentifier' . md5(uniqid(mt_rand(), true));
         $inCache = $backend->has($identifier);
-        $this->assertFalse($inCache, '"has" did not return false when checking on non existing identifier');
+        self::assertFalse($inCache, '"has" did not return false when checking on non existing identifier');
     }
 
     /**
@@ -162,7 +162,7 @@ class ApcuBackendTest extends BaseTestCase
         $backend = $this->setUpBackend();
         $identifier = 'NonExistingIdentifier' . md5(uniqid(mt_rand(), true));
         $inCache = $backend->remove($identifier);
-        $this->assertFalse($inCache, '"remove" did not return false when checking on non existing identifier');
+        self::assertFalse($inCache, '"remove" did not return false when checking on non existing identifier');
     }
 
     /**
@@ -179,9 +179,9 @@ class ApcuBackendTest extends BaseTestCase
 
         $backend->flushByTag('UnitTestTag%special');
 
-        $this->assertTrue($backend->has('BackendAPCUTest1'), 'BackendAPCUTest1');
-        $this->assertFalse($backend->has('BackendAPCUTest2'), 'BackendAPCUTest2');
-        $this->assertTrue($backend->has('BackendAPCUTest3'), 'BackendAPCUTest3');
+        self::assertTrue($backend->has('BackendAPCUTest1'), 'BackendAPCUTest1');
+        self::assertFalse($backend->has('BackendAPCUTest2'), 'BackendAPCUTest2');
+        self::assertTrue($backend->has('BackendAPCUTest3'), 'BackendAPCUTest3');
     }
 
     /**
@@ -198,9 +198,9 @@ class ApcuBackendTest extends BaseTestCase
 
         $backend->flush();
 
-        $this->assertFalse($backend->has('BackendAPCUTest1'), 'BackendAPCUTest1');
-        $this->assertFalse($backend->has('BackendAPCUTest2'), 'BackendAPCUTest2');
-        $this->assertFalse($backend->has('BackendAPCUTest3'), 'BackendAPCUTest3');
+        self::assertFalse($backend->has('BackendAPCUTest1'), 'BackendAPCUTest1');
+        self::assertFalse($backend->has('BackendAPCUTest2'), 'BackendAPCUTest2');
+        self::assertFalse($backend->has('BackendAPCUTest3'), 'BackendAPCUTest3');
     }
 
     /**
@@ -222,8 +222,8 @@ class ApcuBackendTest extends BaseTestCase
         $thatBackend->set('thatEntry', 'World!');
         $thatBackend->flush();
 
-        $this->assertEquals('Hello', $thisBackend->get('thisEntry'));
-        $this->assertFalse($thatBackend->has('thatEntry'));
+        self::assertEquals('Hello', $thisBackend->get('thisEntry'));
+        self::assertFalse($thatBackend->has('thatEntry'));
     }
 
     /**
@@ -239,8 +239,8 @@ class ApcuBackendTest extends BaseTestCase
         $identifier = 'tooLargeData' . md5(uniqid(mt_rand(), true));
         $backend->set($identifier, $data);
 
-        $this->assertTrue($backend->has($identifier));
-        $this->assertEquals($backend->get($identifier), $data);
+        self::assertTrue($backend->has($identifier));
+        self::assertEquals($backend->get($identifier), $data);
     }
 
     /**
@@ -266,11 +266,11 @@ class ApcuBackendTest extends BaseTestCase
         natsort($entries);
         $i = 0;
         foreach ($entries as $entryIdentifier => $data) {
-            $this->assertEquals(sprintf('entry-%s', $i), $entryIdentifier);
-            $this->assertEquals('some data ' . $i, $data);
+            self::assertEquals(sprintf('entry-%s', $i), $entryIdentifier);
+            self::assertEquals('some data ' . $i, $data);
             $i++;
         }
-        $this->assertEquals(100, $i);
+        self::assertEquals(100, $i);
     }
 
     /**

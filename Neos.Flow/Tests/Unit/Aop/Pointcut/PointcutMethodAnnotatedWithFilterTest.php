@@ -31,8 +31,8 @@ class PointcutMethodAnnotatedWithFilterTest extends UnitTestCase
         $filter = new Aop\Pointcut\PointcutMethodAnnotatedWithFilter('Acme\Some\Annotation');
         $filter->injectReflectionService($mockReflectionService);
 
-        $this->assertTrue($filter->matches(__CLASS__, __FUNCTION__, __CLASS__, 1234));
-        $this->assertFalse($filter->matches(__CLASS__, __FUNCTION__, __CLASS__, 1234));
+        self::assertTrue($filter->matches(__CLASS__, __FUNCTION__, __CLASS__, 1234));
+        self::assertFalse($filter->matches(__CLASS__, __FUNCTION__, __CLASS__, 1234));
     }
 
     /**
@@ -45,8 +45,8 @@ class PointcutMethodAnnotatedWithFilterTest extends UnitTestCase
         $filter = new Aop\Pointcut\PointcutMethodAnnotatedWithFilter('Acme\Some\Annotation');
         $filter->injectReflectionService($mockReflectionService);
 
-        $this->assertFalse($filter->matches(__CLASS__, __FUNCTION__, null, 1234));
-        $this->assertFalse($filter->matches(__CLASS__, 'foo', __CLASS__, 1234));
+        self::assertFalse($filter->matches(__CLASS__, __FUNCTION__, null, 1234));
+        self::assertFalse($filter->matches(__CLASS__, 'foo', __CLASS__, 1234));
     }
 
     /**
@@ -80,6 +80,6 @@ class PointcutMethodAnnotatedWithFilterTest extends UnitTestCase
 
         $result = $methodAnnotatedWithFilter->reduceTargetClassNames($availableClassNamesIndex);
 
-        $this->assertEquals($expectedClassNamesIndex, $result, 'The wrong class names have been filtered');
+        self::assertEquals($expectedClassNamesIndex, $result, 'The wrong class names have been filtered');
     }
 }
