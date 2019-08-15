@@ -217,7 +217,7 @@ abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
      */
     protected function route(HttpRequest $httpRequest)
     {
-        $actionRequest = new ActionRequest($httpRequest);
+        $actionRequest = ActionRequest::fromHttpRequest($httpRequest);
         $matchResults = $this->router->route(new RouteContext($httpRequest, RouteParameters::createEmpty()));
         if ($matchResults !== null) {
             $requestArguments = $actionRequest->getArguments();

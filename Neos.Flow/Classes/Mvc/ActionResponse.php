@@ -45,6 +45,11 @@ final class ActionResponse
      */
     protected $contentType;
 
+    public function __construct()
+    {
+        $this->content = stream_for('');
+    }
+
     /**
      * @param string|StreamInterface $content
      * @return void

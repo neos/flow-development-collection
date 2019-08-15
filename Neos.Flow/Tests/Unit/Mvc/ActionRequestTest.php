@@ -43,7 +43,7 @@ class ActionRequestTest extends UnitTestCase
     protected function setUp(): void
     {
         $this->mockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
-        $this->actionRequest = new ActionRequest($this->mockHttpRequest);
+        $this->actionRequest = ActionRequest::fromHttpRequest($this->mockHttpRequest);
     }
 
     /**
@@ -57,7 +57,7 @@ class ActionRequestTest extends UnitTestCase
     {
         self::assertSame($this->mockHttpRequest, $this->actionRequest->getParentRequest());
 
-        $anotherActionRequest = new ActionRequest($this->actionRequest);
+        $anotherActionRequest = $this->actionRequest->createSubRequest();
         self::assertSame($this->actionRequest, $anotherActionRequest->getParentRequest());
     }
 
@@ -75,8 +75,8 @@ class ActionRequestTest extends UnitTestCase
      */
     public function getHttpRequestReturnsTheHttpRequestWhichIsTheRootOfAllActionRequests()
     {
-        $anotherActionRequest = new ActionRequest($this->actionRequest);
-        $yetAnotherActionRequest = new ActionRequest($anotherActionRequest);
+        $anotherActionRequest = $this->actionRequest->createSubRequest();
+        $yetAnotherActionRequest = $anotherActionRequest->createSubRequest();
 
         self::assertSame($this->mockHttpRequest, $this->actionRequest->getHttpRequest());
         self::assertSame($this->mockHttpRequest, $yetAnotherActionRequest->getHttpRequest());
@@ -88,8 +88,8 @@ class ActionRequestTest extends UnitTestCase
      */
     public function getMainRequestReturnsTheTopLevelActionRequestWhoseParentIsTheHttpRequest()
     {
-        $anotherActionRequest = new ActionRequest($this->actionRequest);
-        $yetAnotherActionRequest = new ActionRequest($anotherActionRequest);
+        $anotherActionRequest = $this->actionRequest->createSubRequest();
+        $yetAnotherActionRequest = $anotherActionRequest->createSubRequest();
 
         self::assertSame($this->actionRequest, $this->actionRequest->getMainRequest());
         self::assertSame($this->actionRequest, $yetAnotherActionRequest->getMainRequest());
@@ -101,8 +101,8 @@ class ActionRequestTest extends UnitTestCase
      */
     public function isMainRequestChecksIfTheParentRequestIsNotAnHttpRequest()
     {
-        $anotherActionRequest = new ActionRequest($this->actionRequest);
-        $yetAnotherActionRequest = new ActionRequest($anotherActionRequest);
+        $anotherActionRequest = $this->actionRequest->createSubRequest();
+        $yetAnotherActionRequest = $anotherActionRequest->createSubRequest();
 
         self::assertTrue($this->actionRequest->isMainRequest());
         self::assertFalse($anotherActionRequest->isMainRequest());

@@ -75,7 +75,7 @@ class WebRedirect extends AbstractEntryPoint
      */
     protected function generateUriFromRouteValues(array $routeValues, ServerRequestInterface $request): string
     {
-        $actionRequest = new ActionRequest($request);
+        $actionRequest = ActionRequest::fromHttpRequest($request);
         $this->uriBuilder->setRequest($actionRequest);
 
         $actionName = $this->extractRouteValue($routeValues, '@action');

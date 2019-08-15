@@ -80,7 +80,7 @@ class AbstractControllerTest extends UnitTestCase
      */
     public function initializeControllerInitializesRequestUriBuilderArgumentsAndContext()
     {
-        $request = new ActionRequest(new ServerRequest('GET', new Uri('http://localhost/foo')));
+        $request = ActionRequest::fromHttpRequest(new ServerRequest('GET', new Uri('http://localhost/foo')));
 
         $controller = $this->getAccessibleMock(AbstractController::class, ['processRequest']);
         $this->inject($controller, 'flashMessageContainer', new FlashMessageContainer());

@@ -68,7 +68,7 @@ class RoutingTest extends FunctionalTestCase
      */
     protected function createActionRequest(ServerRequestInterface $httpRequest, array $matchResults = null)
     {
-        $actionRequest = new ActionRequest($httpRequest);
+        $actionRequest = ActionRequest::fromHttpRequest($httpRequest);
         if ($matchResults !== null) {
             $requestArguments = $actionRequest->getArguments();
             $mergedArguments = Arrays::arrayMergeRecursiveOverrule($requestArguments, $matchResults);

@@ -148,7 +148,7 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
         $view = $this->applyLegacyViewOptions($view, $renderingOptions);
 
         $httpRequest = ServerRequest::fromGlobals();
-        $request = new ActionRequest($httpRequest);
+        $request = ActionRequest::fromHttpRequest($httpRequest);
         $request->setControllerPackageKey('Neos.Flow');
         $uriBuilder = new UriBuilder();
         $uriBuilder->setRequest($request);

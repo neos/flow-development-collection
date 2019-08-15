@@ -44,7 +44,7 @@ class HostTest extends UnitTestCase
     public function requestMatchingBasicallyWorks($uri, $pattern, $expected, $message)
     {
         $httpRequest = new ServerRequest('GET', new Uri($uri));
-        $request = new ActionRequest($httpRequest);
+        $request = ActionRequest::fromHttpRequest($httpRequest);
 
         $requestPattern = new Host(['hostPattern' => $pattern]);
 

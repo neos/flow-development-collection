@@ -458,12 +458,14 @@ class UriBuilder
      * @param ActionRequest $request
      * @return string
      */
-    protected function getRequestNamespacePath($request)
+    protected function getRequestNamespacePath(ActionRequest $request): string
     {
-        if (!$request instanceof ServerRequestInterface) {
-            $parentPath = $this->getRequestNamespacePath($request->getParentRequest());
-            return $parentPath . ($parentPath !== '' && $request->getArgumentNamespace() !== '' ? '.' : '') . $request->getArgumentNamespace();
+        $namespaceParts = [];
+        while (!$request->isMainRequest()) {
+            $namespaceParts[] = $request->getArgumentNamespace();
+            $request = $request->getParentRequest();
         }
-        return '';
+
+        return implode('.', $namespaceParts);
     }
 }

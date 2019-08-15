@@ -28,7 +28,7 @@ class ActionRequestTest extends FunctionalTestCase
     {
         $httpRequest = new ServerRequest('GET', new Uri('http://neos.io'));
 
-        $actionRequest = new ActionRequest($httpRequest);
+        $actionRequest = ActionRequest::fromHttpRequest($httpRequest);
         $actionRequest->setControllerActionName('foo');
         $serializedActionRequest = serialize($actionRequest);
 
@@ -45,8 +45,8 @@ class ActionRequestTest extends FunctionalTestCase
     {
         $httpRequest = new ServerRequest('GET', new Uri('http://neos.io'));
 
-        $parentActionRequest = new ActionRequest($httpRequest);
-        $actionRequest = new ActionRequest($parentActionRequest);
+        $parentActionRequest = ActionRequest::fromHttpRequest($httpRequest);
+        $actionRequest = $parentActionRequest->createSubRequest();
         $serializedActionRequest = serialize($actionRequest);
 
         /* @var $unserializedActionRequest ActionRequest */

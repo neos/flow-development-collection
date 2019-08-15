@@ -113,10 +113,10 @@ class StandaloneView extends AbstractTemplateView
         if ($this->request === null) {
             $requestHandler = $this->bootstrap->getActiveRequestHandler();
             if ($requestHandler instanceof HttpRequestHandlerInterface) {
-                $this->request = new ActionRequest($requestHandler->getHttpRequest());
+                $this->request = ActionRequest::fromHttpRequest($requestHandler->getHttpRequest());
             } else {
                 $httpRequest = ServerRequest::fromGlobals();
-                $this->request = new ActionRequest($httpRequest);
+                $this->request = ActionRequest::fromHttpRequest($httpRequest);
             }
         }
 

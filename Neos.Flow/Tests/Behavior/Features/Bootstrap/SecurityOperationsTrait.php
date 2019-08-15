@@ -226,7 +226,7 @@ trait SecurityOperationsTrait
         $this->securityContext = $this->objectManager->get(Security\Context::class);
         $this->securityContext->clearContext();
         $httpRequest = $this->objectManager->get(ServerRequestFactoryInterface::class)->createServerRequest('GET', 'http://localhost/');
-        $this->mockActionRequest = new ActionRequest($httpRequest);
+        $this->mockActionRequest = ActionRequest::fromHttpRequest($httpRequest);
         $this->mockActionRequest->setControllerObjectName(AuthenticationController::class);
         $this->securityContext->setRequest($this->mockActionRequest);
 

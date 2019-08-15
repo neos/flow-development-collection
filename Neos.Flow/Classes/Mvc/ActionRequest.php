@@ -136,7 +136,7 @@ class ActionRequest implements RequestInterface
      * @throws \InvalidArgumentException
      * @api
      */
-    public function __construct($parentRequest)
+    protected function __construct($parentRequest)
     {
         if (!$parentRequest instanceof HttpRequestInterface && !$parentRequest instanceof ActionRequest) {
             throw new \InvalidArgumentException('The parent request passed to ActionRequest::__construct() must be either an HTTP request or another ActionRequest', 1327846149);
@@ -145,13 +145,36 @@ class ActionRequest implements RequestInterface
     }
 
     /**
+     * @param HttpRequestInterface $request
+     * @return ActionRequest
+     */
+    public static function fromHttpRequest(HttpRequestInterface $request): ActionRequest
+    {
+        return new ActionRequest($request);
+    }
+
+    /**
+     * Create a sub request from this action request.
+     *
+     * @return ActionRequest
+     */
+    public function createSubRequest(): ActionRequest
+    {
+        return new ActionRequest($this);
+    }
+
+    /**
      * Returns the parent request
      *
-     * @return ActionRequest|HttpRequestInterface
+     * @return ActionRequest
      * @api
      */
-    public function getParentRequest()
+    public function getParentRequest():? ActionRequest
     {
+        if ($this->isMainRequest()) {
+            return null;
+        }
+
         return $this->parentRequest;
     }
 
@@ -218,7 +241,7 @@ class ActionRequest implements RequestInterface
         if (is_array($this->internalArguments['__referrer'])) {
             $referrerArray = $this->internalArguments['__referrer'];
 
-            $referringRequest = new ActionRequest($this->getHttpRequest());
+            $referringRequest = ActionRequest::fromHttpRequest($this->getHttpRequest());
 
             $arguments = [];
             if (isset($referrerArray['arguments'])) {
