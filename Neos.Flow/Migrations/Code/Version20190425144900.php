@@ -15,7 +15,7 @@ namespace Neos\Flow\Core\Migrations;
  * Adjusts code to FlashMessageContainer renaming from "\Neos\Flow\Mvc" to "\Neos\Flow\Mvc\FlashMessage".
  *
  */
-class Version20161130112935 extends AbstractMigration
+class Version20190425144900 extends AbstractMigration
 {
     /**
      * @return string
