@@ -54,12 +54,6 @@ class Request
     protected $dispatched = false;
 
     /**
-     *
-     * @var array
-     */
-    protected $commandLineArguments;
-
-    /**
      * Sets the dispatched flag
      *
      * @param boolean $flag If this request has been dispatched
@@ -110,7 +104,7 @@ class Request
      * Returns the this request, as CLI request nesting is not supported.
      *
      * @return Request
-     * @api
+     * @deprecated
      */
     public function getMainRequest(): Request
     {
@@ -121,7 +115,7 @@ class Request
      * Returns true, as CLI request nesting is not supported.
      *
      * @return boolean
-     * @api
+     * @deprecated
      */
     public function isMainRequest(): bool
     {
