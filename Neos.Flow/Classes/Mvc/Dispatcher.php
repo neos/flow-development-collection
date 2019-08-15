@@ -155,7 +155,7 @@ class Dispatcher
                     $exception
                 );
 
-                return $response;
+                $request->setDispatched(true);
             }
             $parentResponse = $response->mergeIntoParentResponse($parentResponse);
         }
