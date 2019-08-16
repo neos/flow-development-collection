@@ -46,7 +46,7 @@ abstract class MediaTypeHelper
      * @param bool $trim If TRUE, only the type/subtype of the media type is returned. If FALSE, the full original media type string is returned.
      * @return string The media type and sub type which matched, NULL if none matched
      */
-    public static function negotiateMediaType(array $acceptedMediaTypes, array $supportedMediaTypes, bool $trim = true):? string
+    public static function negotiateMediaType(array $acceptedMediaTypes, array $supportedMediaTypes, bool $trim = true): ?string
     {
         $negotiatedMediaType = null;
         foreach ($acceptedMediaTypes as $acceptedMediaType) {

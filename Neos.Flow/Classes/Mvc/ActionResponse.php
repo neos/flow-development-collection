@@ -142,7 +142,7 @@ final class ActionResponse
     /**
      * @return UriInterface
      */
-    public function getRedirectUri():? UriInterface
+    public function getRedirectUri(): ?UriInterface
     {
         return $this->redirectUri;
     }

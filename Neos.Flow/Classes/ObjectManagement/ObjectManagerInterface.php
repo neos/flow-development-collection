@@ -90,8 +90,7 @@ interface ObjectManagerInterface extends ContainerInterface
      * rare cases.
      *
      * @param  string $caseInsensitiveObjectName The object name in lower-, upper- or mixed case
-     * @return string|false Either the mixed case object name or false if no object of that name was found.
-     * @api
+     * @return string|null Either the mixed case object name or false if no object of that name was found.
      */
     public function getCaseSensitiveObjectName($caseInsensitiveObjectName);
 

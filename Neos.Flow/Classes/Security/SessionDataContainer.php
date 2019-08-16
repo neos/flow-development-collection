@@ -82,7 +82,7 @@ class SessionDataContainer
      *
      * @return ActionRequest
      */
-    public function getInterceptedRequest():?ActionRequest
+    public function getInterceptedRequest(): ?ActionRequest
     {
         return $this->interceptedRequest;
     }

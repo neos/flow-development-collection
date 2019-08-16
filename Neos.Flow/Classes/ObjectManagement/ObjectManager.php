@@ -252,7 +252,7 @@ class ObjectManager implements ObjectManagerInterface
      * @return string|null Either the mixed case object name or false if no object of that name was found.
      * @internal
      */
-    public function getCaseSensitiveObjectName($caseInsensitiveObjectName):? string
+    public function getCaseSensitiveObjectName($caseInsensitiveObjectName): ?string
     {
         $lowerCasedObjectName = strtolower(ltrim($caseInsensitiveObjectName, '\\'));
         if (isset($this->cachedLowerCasedObjectNames[$lowerCasedObjectName])) {

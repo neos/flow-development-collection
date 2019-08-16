@@ -108,7 +108,7 @@ abstract class UriHelper
      * @param string $scheme
      * @return int|null
      */
-    public static function getDefaultPortForScheme(string $scheme):? int
+    public static function getDefaultPortForScheme(string $scheme): ?int
     {
         return self::$defaultPortsByScheme[strtolower($scheme)] ?? null;
     }

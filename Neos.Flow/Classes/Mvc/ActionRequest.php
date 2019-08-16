@@ -178,7 +178,7 @@ class ActionRequest implements RequestInterface
      * @return ActionRequest
      * @api
      */
-    public function getParentRequest():? ActionRequest
+    public function getParentRequest(): ?ActionRequest
     {
         if ($this->isMainRequest()) {
             return null;
