@@ -131,13 +131,12 @@ class CurlEngine implements RequestEngineInterface
         $curlResult = curl_exec($curlHandle);
         if ($curlResult === false) {
             throw new CurlEngineException(sprintf('cURL reported error code %s with message "%s". Last requested URL was "%s" (%s).', curl_errno($curlHandle), curl_error($curlHandle), curl_getinfo($curlHandle, CURLINFO_EFFECTIVE_URL), $request->getMethod()), 1338906040);
-        } elseif (strlen($curlResult) === 0) {
-            return false;
         }
+
         curl_close($curlHandle);
 
-        // TODO: Create proper Psr Response from raw data
         $response = parse_response($curlResult);
+
         try {
             $responseBody = $response->getBody()->getContents();
             while (strpos($responseBody, 'HTTP/') === 0 || $response->getStatusCode() === 100) {

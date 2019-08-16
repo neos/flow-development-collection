@@ -84,15 +84,15 @@ class PoweredByComponent implements ComponentInterface
             return 'Flow' . ($applicationIsNotFlow ? ' ' . $applicationName : '');
         }
 
+        // At this point the $tokenSetting must be either "MinorVersion" or "MajorVersion" so lets use it.
+        $versionRenderer = 'render' . $tokenSetting;
+
         $packageManager = $objectManager->get(PackageManager::class);
         $flowPackage = $packageManager->getPackage('Neos.Flow');
-        $applicationPackage = $applicationIsNotFlow ? $packageManager->getPackage($applicationPackageKey) : null;
-
-        // At this point the $tokenSetting must be either "MinorVersion" or "MajorVersion" so lets use it.
-
-        $versionRenderer = 'render' . $tokenSetting;
         $flowVersion = static::$versionRenderer($flowPackage->getInstalledVersion());
-        $applicationVersion = $applicationIsNotFlow ? static::$versionRenderer($applicationPackage->getInstalledVersion()) : null;
+
+        $applicationPackage = $applicationIsNotFlow ? $packageManager->getPackage($applicationPackageKey) : null;
+        $applicationVersion = ($applicationIsNotFlow && $applicationPackage !== null) ? static::$versionRenderer($applicationPackage->getInstalledVersion()) : null;
 
         return 'Flow/' . ($flowVersion ?: 'dev') . ($applicationIsNotFlow ? ' ' . $applicationName . '/' . ($applicationVersion ?: 'dev') : '');
     }

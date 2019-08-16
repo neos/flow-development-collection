@@ -162,7 +162,7 @@ class RequestHandler implements HttpRequestHandlerInterface
     protected function sendResponse()
     {
         $response = $this->componentContext->getHttpResponse();
-        ob_implicit_flush(true);
+        ob_implicit_flush(1);
         foreach (ResponseInformationHelper::prepareHeaders($response) as $prepareHeader) {
             header($prepareHeader);
         }

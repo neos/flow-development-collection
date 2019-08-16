@@ -52,6 +52,7 @@ class RequestBodyParsingComponent implements ComponentInterface
             return [];
         }
 
+        /** @var MediaTypeConverterInterface $mediaTypeConverter */
         $mediaTypeConverter = $this->objectManager->get(MediaTypeConverterInterface::class);
         $propertyMappingConfiguration = new PropertyMappingConfiguration();
         $propertyMappingConfiguration->setTypeConverter($mediaTypeConverter);

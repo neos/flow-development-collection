@@ -22,7 +22,8 @@ abstract class UploadedFilesHelper
     /**
      * @param UploadedFileInterface[] $uploadedFiles
      * @param array $arguments
-     * @return FlowUploadedFile[]
+     * @param array $currentPath internal argument for recursion
+     * @return array The nested array of paths and uploaded files
      */
     public static function upcastUploadedFiles(array $uploadedFiles, array $arguments, array $currentPath = []): array
     {
@@ -31,8 +32,8 @@ abstract class UploadedFilesHelper
         foreach ($uploadedFiles as $key => $value) {
             $currentPath[] = $key;
             if ($value instanceof UploadedFileInterface) {
-                $originallySubmittedResourcePath = array_merge($currentPath, 'originallySubmittedResource');
-                $collectionNamePath = array_merge($currentPath, '__collectionName');
+                $originallySubmittedResourcePath = array_merge($currentPath, ['originallySubmittedResource']);
+                $collectionNamePath = array_merge($currentPath, ['__collectionName']);
                 $upcastedUploads[$key] = self::upcastUploadedFile(
                     $value,
                     Arrays::getValueByPath($arguments, $originallySubmittedResourcePath),
@@ -56,7 +57,7 @@ abstract class UploadedFilesHelper
      */
     protected static function upcastUploadedFile(UploadedFileInterface $uploadedFile, $originallySubmittedResource = null, string $collectionName = null): FlowUploadedFile
     {
-        $flowUploadedFile = new FlowUploadedFile($uploadedFile->getStream(), $uploadedFile->getSize(), $uploadedFile->getError(), $uploadedFile->getClientFilename(), $uploadedFile->getClientMediaType());
+        $flowUploadedFile = new FlowUploadedFile($uploadedFile->getStream(), ($uploadedFile->getSize() ?: 0), $uploadedFile->getError(), $uploadedFile->getClientFilename(), $uploadedFile->getClientMediaType());
         if ($originallySubmittedResource) {
             $flowUploadedFile->setOriginallySubmittedResource($originallySubmittedResource);
         }

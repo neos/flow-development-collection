@@ -119,7 +119,7 @@ class ActionRequest implements RequestInterface
 
     /**
      * Cached pointer to the root request (usually an HTTP request)
-     * @var object
+     * @var HttpRequestInterface
      */
     protected $rootRequest;
 
@@ -141,7 +141,16 @@ class ActionRequest implements RequestInterface
         if (!$parentRequest instanceof HttpRequestInterface && !$parentRequest instanceof ActionRequest) {
             throw new \InvalidArgumentException('The parent request passed to ActionRequest::__construct() must be either an HTTP request or another ActionRequest', 1327846149);
         }
-        $this->parentRequest = $parentRequest;
+
+
+        // TODO: Cleaner constructor now that it is protected
+        if ($parentRequest instanceof HttpRequestInterface) {
+            $this->rootRequest = $parentRequest;
+        }
+
+        if ($parentRequest instanceof ActionRequest) {
+            $this->parentRequest = $parentRequest;
+        }
     }
 
     /**
@@ -186,9 +195,10 @@ class ActionRequest implements RequestInterface
      */
     public function getHttpRequest(): HttpRequestInterface
     {
-        if ($this->rootRequest === null) {
-            $this->rootRequest = ($this->parentRequest instanceof HttpRequestInterface) ? $this->parentRequest : $this->parentRequest->getHttpRequest();
+        if ($this->rootRequest === null && $this->isMainRequest() === false) {
+            $this->rootRequest = $this->getMainRequest()->getHttpRequest();
         }
+
         return $this->rootRequest;
     }
 
@@ -200,7 +210,12 @@ class ActionRequest implements RequestInterface
      */
     public function getMainRequest(): ActionRequest
     {
-        return ($this->parentRequest instanceof HttpRequestInterface) ? $this : $this->parentRequest->getMainRequest();
+        $parentRequest = $this->getParentRequest();
+        if ($parentRequest instanceof ActionRequest) {
+            return $parentRequest->getMainRequest();
+        }
+
+        return $this;
     }
 
     /**
@@ -212,7 +227,7 @@ class ActionRequest implements RequestInterface
      */
     public function isMainRequest(): bool
     {
-        return ($this->parentRequest instanceof HttpRequestInterface);
+        return ($this->parentRequest === null);
     }
 
     /**
