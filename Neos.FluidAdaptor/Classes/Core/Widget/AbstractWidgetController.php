@@ -43,7 +43,7 @@ abstract class AbstractWidgetController extends ActionController
      * @throws \Neos\Flow\Mvc\Exception\UnsupportedRequestTypeException
      * @api
      */
-    public function processRequest($request, $response)
+    public function processRequest(ActionRequest $request, ActionResponse $response)
     {
         /** @var $widgetContext WidgetContext */
         $widgetContext = $request->getInternalArgument('__widgetContext');

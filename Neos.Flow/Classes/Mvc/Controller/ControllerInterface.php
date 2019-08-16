@@ -11,7 +11,6 @@ namespace Neos\Flow\Mvc\Controller;
  * source code.
  */
 
-use Neos\Flow\Cli;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Exception\ForwardException;
@@ -28,20 +27,19 @@ use Neos\Flow\Mvc\Exception\UnsupportedRequestTypeException;
  * Controllers implementing this interface are compatible with the MVC Dispatcher.
  *
  * @api
- * FIXME: Probably split between Mvc and Command Interface to be able to add typehints again
  */
 interface ControllerInterface
 {
     /**
      * Processes a general request. The result can be returned by altering the given response.
      *
-     * @param ActionRequest|Cli\Request $request The request object
-     * @param ActionResponse|Cli\Response $response The response, modified by the controller
+     * @param ActionRequest $request The request object
+     * @param ActionResponse $response The response, modified by the controller
      * @return void
      * @throws UnsupportedRequestTypeException if the controller doesn't support the current request type
      * @throws StopActionException
      * @throws ForwardException
      * @api
      */
-    public function processRequest($request, $response);
+    public function processRequest(ActionRequest $request, ActionResponse $response);
 }

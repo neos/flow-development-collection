@@ -184,7 +184,7 @@ class ActionController extends AbstractController
      * @throws \Neos\Flow\Mvc\Exception\RequiredArgumentMissingException
      * @api
      */
-    public function processRequest($request, $response)
+    public function processRequest(ActionRequest $request, ActionResponse $response)
     {
         $this->initializeController($request, $response);
 

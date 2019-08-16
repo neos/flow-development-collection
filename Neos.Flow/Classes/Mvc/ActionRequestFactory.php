@@ -29,6 +29,22 @@ class ActionRequestFactory
      */
     public function createActionRequest(ServerRequestInterface $httpRequest, array $additionalArguments = []): ActionRequest
     {
+        $arguments = $this->mergeHttpRequestArguments($httpRequest);
+        $arguments = $this->mergeHttpRequestArgumentsWithAdditionalArguments($arguments, $additionalArguments);
+        $actionRequest = $this->prepareActionRequest($httpRequest);
+
+        $actionRequest->setArguments($arguments);
+        $actionRequest = $this->setDefaultControllerAndActionNameIfNoneSpecified($actionRequest);
+
+        return $actionRequest;
+    }
+
+    /**
+     * @param ServerRequestInterface $httpRequest
+     * @return array
+     */
+    protected function mergeHttpRequestArguments(ServerRequestInterface $httpRequest): array
+    {
         $arguments = $httpRequest->getQueryParams();
         if (is_array($httpRequest->getParsedBody())) {
             $arguments = Arrays::arrayMergeRecursiveOverrule($arguments, $httpRequest->getParsedBody());
@@ -37,16 +53,30 @@ class ActionRequestFactory
         $uploadedFiles = UploadedFilesHelper::upcastUploadedFiles($httpRequest->getUploadedFiles(), $arguments);
         $arguments = Arrays::arrayMergeRecursiveOverrule($arguments, $uploadedFiles);
 
-        /** @var $actionRequest ActionRequest */
-        $actionRequest = $this->objectManager->get(ActionRequest::class, $httpRequest);
+        return $arguments;
+    }
+
+    /**
+     * @param array $arguments
+     * @param array $additionalArguments
+     * @return array
+     */
+    protected function mergeHttpRequestArgumentsWithAdditionalArguments(array $arguments, array $additionalArguments): array
+    {
         if (!empty($additionalArguments)) {
             $arguments = Arrays::arrayMergeRecursiveOverrule($arguments, $additionalArguments);
         }
 
-        $actionRequest->setArguments($arguments);
-        $actionRequest = $this->setDefaultControllerAndActionNameIfNoneSpecified($actionRequest);
+        return $arguments;
+    }
 
-        return $actionRequest;
+    /**
+     * @param ServerRequestInterface $httpRequest
+     * @return ActionRequest
+     */
+    protected function prepareActionRequest(ServerRequestInterface $httpRequest): ActionRequest
+    {
+        return ActionRequest::fromHttpRequest($httpRequest);
     }
 
     /**
@@ -59,7 +89,7 @@ class ActionRequestFactory
      */
     protected function setDefaultControllerAndActionNameIfNoneSpecified(ActionRequest $actionRequest): ActionRequest
     {
-        if ($actionRequest->getControllerName() === '' || $actionRequest->getControllerName() === null) {
+        if ($actionRequest->getControllerName() === '') {
             $actionRequest->setControllerName('Standard');
         }
         if ($actionRequest->getControllerActionName() === '') {
