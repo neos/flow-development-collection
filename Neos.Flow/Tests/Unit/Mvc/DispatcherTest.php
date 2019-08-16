@@ -148,7 +148,7 @@ class DispatcherTest extends UnitTestCase
         $this->mockActionRequest->expects($this->at(1))->method('isDispatched')->willReturn(false);
         $this->mockActionRequest->expects($this->at(2))->method('isDispatched')->willReturn(true);
 
-        $this->mockController->expects($this->exactly(2))->method('processRequest')->with($this->mockActionRequest, $this->actionResponse);
+        $this->mockController->expects($this->exactly(2))->method('processRequest')->with($this->mockActionRequest);
 
         $this->dispatcher->dispatch($this->mockActionRequest, $this->actionResponse);
     }

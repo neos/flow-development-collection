@@ -53,9 +53,9 @@ class ActionRequestTest extends UnitTestCase
      *
      * @test
      */
-    public function anHttpRequestOrActionRequestIsRequiredAsParentRequest()
+    public function anActionRequestIsRequiredAsParentRequest()
     {
-        self::assertSame($this->mockHttpRequest, $this->actionRequest->getParentRequest());
+        self::assertSame(null, $this->actionRequest->getParentRequest());
 
         $anotherActionRequest = $this->actionRequest->createSubRequest();
         self::assertSame($this->actionRequest, $anotherActionRequest->getParentRequest());
@@ -66,7 +66,7 @@ class ActionRequestTest extends UnitTestCase
      */
     public function constructorThrowsAnExceptionIfNoValidRequestIsPassed()
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(\Error::class);
         new ActionRequest(new \stdClass());
     }
 
@@ -156,7 +156,7 @@ class ActionRequestTest extends UnitTestCase
     {
         $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
         $mockObjectManager->expects($this->at(0))->method('getCaseSensitiveObjectName')->with('SomePackage\Some\Subpackage\Controller\SomeControllerController')
-            ->will($this->returnValue(false));
+            ->will($this->returnValue(null));
 
         $mockPackageManager = $this->createMock(PackageManager::class);
         $mockPackageManager->expects($this->any())->method('getCaseSensitivePackageKey')->with('somepackage')->will($this->returnValue('SomePackage'));
@@ -247,7 +247,7 @@ class ActionRequestTest extends UnitTestCase
     {
         $this->expectException(UnknownObjectException::class);
         $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
-        $mockObjectManager->expects($this->any())->method('getCaseSensitiveObjectName')->will($this->returnValue(false));
+        $mockObjectManager->expects($this->any())->method('getCaseSensitiveObjectName')->will($this->returnValue(null));
 
         $this->inject($this->actionRequest, 'objectManager', $mockObjectManager);
 

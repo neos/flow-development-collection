@@ -100,3 +100,8 @@ Neos:
           host: 'X-Forwarded-Host'
           port: 'X-Forwarded-Port'
           proto: 'X-Forwarded-Proto'
+
+      serverRequestDefaults:
+        userAgent: 'Flow/%FLOW_VERSION_BRANCH%.x'
+        scriptPath: '%FLOW_PATH_WEB%index.php'
+        protocolVersion: '1.1'

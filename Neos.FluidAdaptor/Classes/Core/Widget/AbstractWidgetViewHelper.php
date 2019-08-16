@@ -214,6 +214,7 @@ abstract class AbstractWidgetViewHelper extends AbstractViewHelper implements Ch
         $subRequest->setArgumentNamespace('--' . $this->widgetContext->getWidgetIdentifier());
 
         $dispatchLoopCount = 0;
+        $subResponse = new ActionResponse();
         while (!$subRequest->isDispatched()) {
             if ($dispatchLoopCount++ > 99) {
                 throw new InfiniteLoopException('Could not ultimately dispatch the widget request after '  . $dispatchLoopCount . ' iterations.', 1380282310);

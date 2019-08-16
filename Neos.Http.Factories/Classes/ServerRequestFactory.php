@@ -43,8 +43,8 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
      */
     public function __construct(
         UriFactoryInterface $uriFactory,
-        string $defaultUserAgent = 'Flow/' . FLOW_VERSION_BRANCH . '.x',
-        string $scriptPath = FLOW_PATH_WEB . 'index.php',
+        string $defaultUserAgent = 'Flow/unkown-version',
+        string $scriptPath = 'index.php',
         string $defaultHttpVersion = '1.1'
     )
     {

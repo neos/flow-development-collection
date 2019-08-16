@@ -91,6 +91,11 @@ class AjaxWidgetComponentTest extends UnitTestCase
     protected $mockPropertyMappingConfiguration;
 
     /**
+     * @var \PHPUnit\Framework\MockObject\MockObject|ActionRequestFactory
+     */
+    protected $mockActionRequestFactory;
+
+    /**
      */
     protected function setUp(): void
     {
@@ -110,10 +115,9 @@ class AjaxWidgetComponentTest extends UnitTestCase
         $this->mockAjaxWidgetContextHolder = $this->getMockBuilder(AjaxWidgetContextHolder::class)->getMock();
         $this->inject($this->ajaxWidgetComponent, 'ajaxWidgetContextHolder', $this->mockAjaxWidgetContextHolder);
 
-        $mockActionRequestFactory = $this->getMockBuilder(ActionRequestFactory::class)->disableOriginalConstructor()->setMethods(null)->getMock();
-        $this->inject($mockActionRequestFactory, 'objectManager', $this->mockObjectManager);
+        $this->mockActionRequestFactory = $this->getMockBuilder(ActionRequestFactory::class)->disableOriginalConstructor()->setMethods(['prepareActionRequest'])->getMock();
 
-        $this->inject($this->ajaxWidgetComponent, 'actionRequestFactory', $mockActionRequestFactory);
+        $this->inject($this->ajaxWidgetComponent, 'actionRequestFactory', $this->mockActionRequestFactory);
 
         $this->mockHashService = $this->getMockBuilder(HashService::class)->getMock();
         $this->inject($this->ajaxWidgetComponent, 'hashService', $this->mockHashService);
@@ -152,7 +156,7 @@ class AjaxWidgetComponentTest extends UnitTestCase
         $mockWidgetContext->expects($this->atLeastOnce())->method('getControllerObjectName')->will($this->returnValue($mockControllerObjectName));
         $this->mockAjaxWidgetContextHolder->expects($this->atLeastOnce())->method('get')->with($mockWidgetId)->will($this->returnValue($mockWidgetContext));
         $mockActionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
-        $this->mockObjectManager->expects($this->atLeastOnce())->method('get')->with(ActionRequest::class)->will($this->returnValue($mockActionRequest));
+        $this->mockActionRequestFactory->expects(self::any())->method('prepareActionRequest')->willReturn($mockActionRequest);
         $this->mockComponentContext->expects($this->any())->method('getParameter')->willReturnMap([
             [RoutingComponent::class, 'matchResults', []],
             [DispatchComponent::class, 'actionRequest', $mockActionRequest]
@@ -179,7 +183,7 @@ class AjaxWidgetComponentTest extends UnitTestCase
         $mockWidgetContext->expects($this->atLeastOnce())->method('getControllerObjectName')->will($this->returnValue($mockControllerObjectName));
         $this->mockAjaxWidgetContextHolder->expects($this->atLeastOnce())->method('get')->with($mockWidgetId)->will($this->returnValue($mockWidgetContext));
         $mockActionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
-        $this->mockObjectManager->expects($this->atLeastOnce())->method('get')->with(ActionRequest::class)->will($this->returnValue($mockActionRequest));
+        $this->mockActionRequestFactory->expects(self::any())->method('prepareActionRequest')->willReturn($mockActionRequest);
         $this->mockComponentContext->expects($this->any())->method('getParameter')->willReturnMap([
             [RoutingComponent::class, 'matchResults', []],
             [DispatchComponent::class, 'actionRequest', $mockActionRequest]
@@ -204,7 +208,7 @@ class AjaxWidgetComponentTest extends UnitTestCase
         $mockWidgetContext->expects($this->atLeastOnce())->method('getControllerObjectName')->will($this->returnValue($mockControllerObjectName));
         $this->mockAjaxWidgetContextHolder->expects($this->atLeastOnce())->method('get')->with($mockWidgetId)->will($this->returnValue($mockWidgetContext));
         $mockActionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
-        $this->mockObjectManager->expects($this->atLeastOnce())->method('get')->with(ActionRequest::class)->will($this->returnValue($mockActionRequest));
+        $this->mockActionRequestFactory->expects(self::any())->method('prepareActionRequest')->willReturn($mockActionRequest);
         $this->mockComponentContext->expects($this->any())->method('getParameter')->willReturnMap([
             [RoutingComponent::class, 'matchResults', []],
             [DispatchComponent::class, 'actionRequest', $mockActionRequest]
@@ -229,7 +233,7 @@ class AjaxWidgetComponentTest extends UnitTestCase
         $mockWidgetContext->expects($this->atLeastOnce())->method('getControllerObjectName')->will($this->returnValue($mockControllerObjectName));
         $this->mockAjaxWidgetContextHolder->expects($this->atLeastOnce())->method('get')->with($mockWidgetId)->will($this->returnValue($mockWidgetContext));
         $mockActionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
-        $this->mockObjectManager->expects($this->atLeastOnce())->method('get')->with(ActionRequest::class)->will($this->returnValue($mockActionRequest));
+        $this->mockActionRequestFactory->expects(self::any())->method('prepareActionRequest')->willReturn($mockActionRequest);
         $this->mockComponentContext->expects($this->any())->method('getParameter')->willReturnMap([
             [RoutingComponent::class, 'matchResults', []],
             [DispatchComponent::class, 'actionRequest', $mockActionRequest]

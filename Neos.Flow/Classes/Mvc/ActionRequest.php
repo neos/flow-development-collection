@@ -315,13 +315,21 @@ class ActionRequest implements RequestInterface
     public function getControllerObjectName(): string
     {
         $possibleObjectName = '@package\@subpackage\Controller\@controllerController';
-        $possibleObjectName = str_replace('@package', str_replace('.', '\\', $this->controllerPackageKey), $possibleObjectName);
-        $possibleObjectName = str_replace('@subpackage', $this->controllerSubpackageKey, $possibleObjectName);
-        $possibleObjectName = str_replace('@controller', $this->controllerName, $possibleObjectName);
-        $possibleObjectName = str_replace('\\\\', '\\', $possibleObjectName);
+
+        $possibleObjectName = str_replace([
+            '@package',
+            '@subpackage',
+            '@controller',
+            '\\\\'
+        ], [
+            str_replace('.', '\\', $this->controllerPackageKey),
+            $this->controllerSubpackageKey ?? '',
+            $this->controllerName,
+            '\\'
+        ], $possibleObjectName);
 
         $controllerObjectName = $this->objectManager->getCaseSensitiveObjectName($possibleObjectName);
-        return ($controllerObjectName !== false) ? $controllerObjectName : '';
+        return $controllerObjectName ?: '';
     }
 
     /**
@@ -336,7 +344,7 @@ class ActionRequest implements RequestInterface
     {
         $controllerObjectName = $this->objectManager->getCaseSensitiveObjectName($unknownCasedControllerObjectName);
 
-        if ($controllerObjectName === false) {
+        if ($controllerObjectName === null) {
             throw new UnknownObjectException('The object "' . $unknownCasedControllerObjectName . '" is not registered.', 1268844071);
         }
 

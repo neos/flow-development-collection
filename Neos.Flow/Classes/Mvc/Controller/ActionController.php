@@ -608,10 +608,10 @@ class ActionController extends AbstractController
         $possibleViewObjectName = str_replace('@action', $this->request->getControllerActionName(), $possibleViewObjectName);
 
         $viewObjectName = $this->objectManager->getCaseSensitiveObjectName(strtolower(str_replace('@format', $format, $possibleViewObjectName)));
-        if ($viewObjectName === false) {
+        if ($viewObjectName === null) {
             $viewObjectName = $this->objectManager->getCaseSensitiveObjectName(strtolower(str_replace('@format', '', $possibleViewObjectName)));
         }
-        if ($viewObjectName === false && isset($this->viewFormatToObjectNameMap[$format])) {
+        if ($viewObjectName === null && isset($this->viewFormatToObjectNameMap[$format])) {
             $viewObjectName = $this->viewFormatToObjectNameMap[$format];
         }
         return $viewObjectName;

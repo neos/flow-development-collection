@@ -1,9 +1,7 @@
 <?php
 namespace Neos\Flow\Mvc;
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Helper\UploadedFilesHelper;
-use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Utility\Arrays;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -12,12 +10,6 @@ use Psr\Http\Message\ServerRequestInterface;
  */
 class ActionRequestFactory
 {
-    /**
-     * @Flow\Inject
-     * @var ObjectManagerInterface
-     */
-    protected $objectManager;
-
     /**
      * @param ServerRequestInterface $httpRequest
      * @param array $additionalArguments
@@ -46,8 +38,9 @@ class ActionRequestFactory
     protected function mergeHttpRequestArguments(ServerRequestInterface $httpRequest): array
     {
         $arguments = $httpRequest->getQueryParams();
-        if (is_array($httpRequest->getParsedBody())) {
-            $arguments = Arrays::arrayMergeRecursiveOverrule($arguments, $httpRequest->getParsedBody());
+        $parsedBody = $httpRequest->getParsedBody();
+        if (is_array($parsedBody)) {
+            $arguments = Arrays::arrayMergeRecursiveOverrule($arguments, $parsedBody);
         }
 
         $uploadedFiles = UploadedFilesHelper::upcastUploadedFiles($httpRequest->getUploadedFiles(), $arguments);

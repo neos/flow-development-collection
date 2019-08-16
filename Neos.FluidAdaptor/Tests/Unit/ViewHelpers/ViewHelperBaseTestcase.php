@@ -97,7 +97,7 @@ abstract class ViewHelperBaseTestcase extends \Neos\Flow\Tests\UnitTestCase
         $httpRequestFactory = new ServerRequestFactory(new UriFactory());
         $httpRequest = $httpRequestFactory->createServerRequest('GET', new Uri('http://localhost/foo'));
 
-        $this->request = $this->getMockBuilder(\Neos\Flow\Mvc\ActionRequest::class)->setConstructorArgs([$httpRequest])->getMock();
+        $this->request = $this->getMockBuilder(\Neos\Flow\Mvc\ActionRequest::class)->disableOriginalConstructor()->getMock();
         $this->request->expects($this->any())->method('isMainRequest')->will($this->returnValue(true));
         $this->controllerContext = $this->getMockBuilder(\Neos\Flow\Mvc\Controller\ControllerContext::class)->disableOriginalConstructor()->getMock();
         $this->controllerContext->expects($this->any())->method('getUriBuilder')->will($this->returnValue($this->uriBuilder));

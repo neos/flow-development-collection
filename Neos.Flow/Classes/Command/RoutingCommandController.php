@@ -232,7 +232,6 @@ class RoutingCommandController extends CommandController
         $possibleObjectName = str_replace('@controller', $controllerName, $possibleObjectName);
         $possibleObjectName = str_replace('\\\\', '\\', $possibleObjectName);
 
-        $controllerObjectName = $this->objectManager->getCaseSensitiveObjectName($possibleObjectName);
-        return ($controllerObjectName !== false) ? $controllerObjectName : null;
+        return $this->objectManager->getCaseSensitiveObjectName($possibleObjectName);
     }
 }

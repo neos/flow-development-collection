@@ -11,6 +11,7 @@ namespace Neos\Flow\Mvc\Routing;
  * source code.
  */
 
+use Doctrine\Tests\Models\Cache\Action;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Helper\RequestInformationHelper;
 use Neos\Flow\Http\ServerRequestAttributes;
@@ -325,7 +326,7 @@ class UriBuilder
      */
     protected function addNamespaceToArguments(array $arguments, ActionRequest $currentRequest)
     {
-        while (!$currentRequest->isMainRequest()) {
+        while ($currentRequest instanceof ActionRequest && !$currentRequest->isMainRequest()) {
             $argumentNamespace = $currentRequest->getArgumentNamespace();
             if ($argumentNamespace !== '') {
                 $arguments = [$argumentNamespace => $arguments];
@@ -465,6 +466,6 @@ class UriBuilder
             $request = $request->getParentRequest();
         }
 
-        return implode('.', $namespaceParts);
+        return implode('.', array_reverse($namespaceParts));
     }
 }

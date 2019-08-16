@@ -36,11 +36,6 @@ class PrepareMvcRequestComponentTest extends UnitTestCase
     protected $mockHttpRequest;
 
     /**
-     * @var ObjectManagerInterface
-     */
-    protected $mockObjectManager;
-
-    /**
      * @var PropertyMapper
      */
     protected $mockPropertyMapper;
@@ -80,11 +75,8 @@ class PrepareMvcRequestComponentTest extends UnitTestCase
 
         $this->mockActionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
 
-        $this->mockObjectManager = $this->getMockBuilder(ObjectManagerInterface::class)->getMock();
-        $this->mockObjectManager->method('get')->with(ActionRequest::class)->willReturn($this->mockActionRequest);
-
-        $this->mockActionRequestFactory = $this->getMockBuilder(ActionRequestFactory::class)->disableOriginalConstructor()->setMethods(null)->getMock();
-        $this->inject($this->mockActionRequestFactory, 'objectManager', $this->mockObjectManager);
+        $this->mockActionRequestFactory = $this->getMockBuilder(ActionRequestFactory::class)->disableOriginalConstructor()->setMethods(['prepareActionRequest'])->getMock();
+        $this->mockActionRequestFactory->expects(self::any())->method('prepareActionRequest')->willReturn($this->mockActionRequest);
 
         $this->inject($this->prepareMvcRequestComponent, 'actionRequestFactory', $this->mockActionRequestFactory);
 
