@@ -118,14 +118,12 @@ class FileAdapter
             return false;
         }
 
-        if ($this->fileData['translationUnits'][$transUnitId][$pluralFormIndex]['target']) {
-            return $this->fileData['translationUnits'][$transUnitId][$pluralFormIndex]['target'];
-        } elseif ($this->requestedLocale->getLanguage() === $this->fileData['sourceLocale']->getLanguage()) {
-            return $this->fileData['translationUnits'][$transUnitId][$pluralFormIndex]['source'] ?: false;
-        } else {
-            $this->i18nLogger->debug('The target translation was empty and the source translation language (' . $this->fileData['sourceLocale']->getLanguage() . ') does not match the current locale (' . $this->requestedLocale->getLanguage() . ') for the trans-unit element with the id "' . $transUnitId . '" in ' . $this->fileData['fileIdentifier']);
-            return false;
+        if (!isset($this->fileData['translationUnits'][$transUnitId][$pluralFormIndex]['target'])) {
+            $this->i18nLogger->log('The target translation was empty for the trans-unit element with the id "' . $transUnitId . '" and the plural form index "' . $pluralFormIndex . '" in ' . $this->fileData['fileIdentifier'],
+                LOG_DEBUG);
         }
+
+        return $this->fileData['translationUnits'][$transUnitId][$pluralFormIndex]['target'];
     }
 
     /**

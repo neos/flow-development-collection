@@ -23,6 +23,6 @@ class DependencyProxyTest extends UnitTestCase
     {
         $proxy = new DependencyProxy('SomeClass', function () {
         });
-        $this->assertSame('SomeClass', $proxy->_getClassName());
+        self::assertSame('SomeClass', $proxy->_getClassName());
     }
 }

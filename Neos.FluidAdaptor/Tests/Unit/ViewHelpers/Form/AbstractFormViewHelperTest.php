@@ -41,7 +41,7 @@ class AbstractFormViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpe
         $viewHelper->_set('persistenceManager', $mockPersistenceManager);
 
         $actualResult = $viewHelper->_call('renderHiddenIdentityField', $object, 'theName');
-        $this->assertSame($expectedResult, $actualResult);
+        self::assertSame($expectedResult, $actualResult);
     }
 
     /**
@@ -66,7 +66,7 @@ class AbstractFormViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpe
         $viewHelper->_set('persistenceManager', $mockPersistenceManager);
 
         $actualResult = $viewHelper->_call('renderHiddenIdentityField', $object, 'theName');
-        $this->assertSame($expectedResult, $actualResult);
+        self::assertSame($expectedResult, $actualResult);
     }
 
     /**
@@ -90,7 +90,7 @@ class AbstractFormViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpe
         $viewHelper->_set('persistenceManager', $mockPersistenceManager);
 
         $actualResult = $viewHelper->_call('renderHiddenIdentityField', $object, 'theName');
-        $this->assertSame($expectedResult, $actualResult);
+        self::assertSame($expectedResult, $actualResult);
     }
 
     /**
@@ -101,7 +101,7 @@ class AbstractFormViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpe
         $viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\Form\AbstractFormViewHelper::class, ['dummy'], [], '', false);
         $this->injectDependenciesIntoViewHelper($viewHelper);
 
-        $this->assertSame('', $viewHelper->_call('prefixFieldName', null));
+        self::assertSame('', $viewHelper->_call('prefixFieldName', null));
     }
 
     /**
@@ -112,7 +112,7 @@ class AbstractFormViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpe
         $viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\Form\AbstractFormViewHelper::class, ['dummy'], [], '', false);
         $this->injectDependenciesIntoViewHelper($viewHelper);
 
-        $this->assertSame('', $viewHelper->_call('prefixFieldName', ''));
+        self::assertSame('', $viewHelper->_call('prefixFieldName', ''));
     }
 
     /**
@@ -128,7 +128,7 @@ class AbstractFormViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpe
             ]
         ];
 
-        $this->assertSame('someFieldName', $viewHelper->_call('prefixFieldName', 'someFieldName'));
+        self::assertSame('someFieldName', $viewHelper->_call('prefixFieldName', 'someFieldName'));
     }
 
     /**
@@ -144,7 +144,7 @@ class AbstractFormViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpe
             ]
         ];
 
-        $this->assertSame('somePrefix[someFieldName]', $viewHelper->_call('prefixFieldName', 'someFieldName'));
+        self::assertSame('somePrefix[someFieldName]', $viewHelper->_call('prefixFieldName', 'someFieldName'));
     }
 
     /**
@@ -160,6 +160,6 @@ class AbstractFormViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpe
             ]
         ];
 
-        $this->assertSame('somePrefix[foo][someFieldName][bar]', $viewHelper->_call('prefixFieldName', 'someFieldName[bar]'));
+        self::assertSame('somePrefix[foo][someFieldName][bar]', $viewHelper->_call('prefixFieldName', 'someFieldName[bar]'));
     }
 }

@@ -56,7 +56,7 @@ class PersistedUsernamePasswordProviderTest extends UnitTestCase
     protected $persistedUsernamePasswordProvider;
 
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->mockHashService = $this->createMock(Security\Cryptography\HashService::class);
         $this->mockAccount = $this->getMockBuilder(Security\Account::class)->disableOriginalConstructor()->getMock();
@@ -128,10 +128,10 @@ class PersistedUsernamePasswordProviderTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Security\Exception\UnsupportedAuthenticationTokenException
      */
     public function authenticatingAnUnsupportedTokenThrowsAnException()
     {
+        $this->expectException(Security\Exception\UnsupportedAuthenticationTokenException::class);
         $someNiceToken = $this->createMock(Security\Authentication\TokenInterface::class);
 
         $usernamePasswordProvider = Security\Authentication\Provider\PersistedUsernamePasswordProvider::create('myProvider', []);
@@ -151,7 +151,7 @@ class PersistedUsernamePasswordProviderTest extends UnitTestCase
 
         $usernamePasswordProvider = Security\Authentication\Provider\PersistedUsernamePasswordProvider::create('myProvider', []);
 
-        $this->assertTrue($usernamePasswordProvider->canAuthenticate($mockToken1));
-        $this->assertFalse($usernamePasswordProvider->canAuthenticate($mockToken2));
+        self::assertTrue($usernamePasswordProvider->canAuthenticate($mockToken1));
+        self::assertFalse($usernamePasswordProvider->canAuthenticate($mockToken2));
     }
 }

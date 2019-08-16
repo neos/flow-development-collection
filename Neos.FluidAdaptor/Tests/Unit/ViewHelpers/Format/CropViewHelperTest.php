@@ -25,10 +25,10 @@ class CropViewHelperTest extends ViewHelperBaseTestcase
      */
     protected $viewHelper;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
-        $this->viewHelper = $this->getMockBuilder(\Neos\FluidAdaptor\ViewHelpers\Format\CropViewHelper::class)->setMethods(['renderChildren', 'registerRenderMethodArguments'])->getMock();
+        $this->viewHelper = $this->getMockBuilder(\Neos\FluidAdaptor\ViewHelpers\Format\CropViewHelper::class)->setMethods(['renderChildren'])->getMock();
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
     }
 
@@ -40,7 +40,7 @@ class CropViewHelperTest extends ViewHelperBaseTestcase
         $this->viewHelper->expects($this->once())->method('renderChildren')->will($this->returnValue('some text'));
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['maxCharacters' => 50]);
         $actualResult = $this->viewHelper->render();
-        $this->assertEquals('some text', $actualResult);
+        self::assertEquals('some text', $actualResult);
     }
 
     /**
@@ -51,7 +51,7 @@ class CropViewHelperTest extends ViewHelperBaseTestcase
         $this->viewHelper->expects($this->once())->method('renderChildren')->will($this->returnValue('some text'));
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['maxCharacters' => 5]);
         $actualResult = $this->viewHelper->render();
-        $this->assertEquals('some ...', $actualResult);
+        self::assertEquals('some ...', $actualResult);
     }
 
     /**
@@ -62,7 +62,7 @@ class CropViewHelperTest extends ViewHelperBaseTestcase
         $this->viewHelper->expects($this->once())->method('renderChildren')->will($this->returnValue('some text'));
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['maxCharacters' => 3, 'append' => '[custom suffix]']);
         $actualResult = $this->viewHelper->render();
-        $this->assertEquals('som[custom suffix]', $actualResult);
+        self::assertEquals('som[custom suffix]', $actualResult);
     }
 
     /**
@@ -73,7 +73,7 @@ class CropViewHelperTest extends ViewHelperBaseTestcase
         $this->viewHelper->expects($this->once())->method('renderChildren')->will($this->returnValue('some text'));
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['maxCharacters' => 8]);
         $actualResult = $this->viewHelper->render();
-        $this->assertEquals('some tex...', $actualResult);
+        self::assertEquals('some tex...', $actualResult);
     }
 
     /**
@@ -84,7 +84,7 @@ class CropViewHelperTest extends ViewHelperBaseTestcase
         $this->viewHelper->expects($this->never())->method('renderChildren');
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['maxCharacters' => 8, 'append' => '...', 'value' => 'some text']);
         $actualResult = $this->viewHelper->render();
-        $this->assertEquals('some tex...', $actualResult);
+        self::assertEquals('some tex...', $actualResult);
     }
 
     /**
@@ -95,7 +95,7 @@ class CropViewHelperTest extends ViewHelperBaseTestcase
         $this->viewHelper->expects($this->never())->method('renderChildren');
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['maxCharacters' => 8, 'append' => '...', 'value' => '']);
         $actualResult = $this->viewHelper->render();
-        $this->assertEquals('', $actualResult);
+        self::assertEquals('', $actualResult);
     }
 
     /**
@@ -106,6 +106,6 @@ class CropViewHelperTest extends ViewHelperBaseTestcase
         $this->viewHelper->expects($this->never())->method('renderChildren');
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['maxCharacters' => 3, 'append' => '...', 'value' => 'Äßütest']);
         $actualResult = $this->viewHelper->render();
-        $this->assertEquals('Äßü...', $actualResult);
+        self::assertEquals('Äßü...', $actualResult);
     }
 }

@@ -45,7 +45,7 @@ class RedisBackendTest extends BaseTestCase
      * Set up test case
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $phpredisVersion = phpversion('redis');
         if (version_compare($phpredisVersion, '1.2.0', '<')) {
@@ -83,7 +83,7 @@ class RedisBackendTest extends BaseTestCase
             ->with('Foo_Cache:tag:some_tag')
             ->will($this->returnValue(['entry_1', 'entry_2']));
 
-        $this->assertEquals(['entry_1', 'entry_2'], $this->backend->findIdentifiersByTag('some_tag'));
+        self::assertEquals(['entry_1', 'entry_2'], $this->backend->findIdentifiersByTag('some_tag'));
     }
 
     /**
@@ -175,7 +175,7 @@ class RedisBackendTest extends BaseTestCase
             ->with('Foo_Cache:entry:foo')
             ->will($this->returnValue('bar'));
 
-        $this->assertEquals('bar', $this->backend->get('foo'));
+        self::assertEquals('bar', $this->backend->get('foo'));
     }
 
     /**
@@ -188,17 +188,17 @@ class RedisBackendTest extends BaseTestCase
             ->with('Foo_Cache:entry:foo')
             ->will($this->returnValue(true));
 
-        $this->assertEquals(true, $this->backend->has('foo'));
+        self::assertEquals(true, $this->backend->has('foo'));
     }
 
     /**
      * @test
      * @dataProvider writingOperationsProvider
-     * @expectedException \RuntimeException
      * @param string $method
      */
     public function writingOperationsThrowAnExceptionIfCacheIsFrozen($method)
     {
+        $this->expectException(\RuntimeException::class);
         $this->inject($this->backend, 'frozen', null);
         $this->redis->expects($this->once())
             ->method('exists')

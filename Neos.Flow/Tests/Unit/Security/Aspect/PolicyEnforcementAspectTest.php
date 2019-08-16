@@ -47,7 +47,7 @@ class PolicyEnforcementAspectTest extends UnitTestCase
      */
     protected $policyEnforcementAspect;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->mockJoinPoint = $this->getMockBuilder(JoinPointInterface::class)->disableOriginalConstructor()->getMock();
         $this->mockAdviceChain = $this->getMockBuilder(AdviceChain::class)->disableOriginalConstructor()->getMock();
@@ -144,7 +144,7 @@ class PolicyEnforcementAspectTest extends UnitTestCase
         $this->mockAdviceChain->expects($this->once())->method('proceed')->will($this->returnValue($someResult));
         // $this->mockAfterInvocationInterceptor->expects($this->once())->method('invoke')->will($this->returnValue($someResult));
 
-        $this->assertEquals($someResult, $this->policyEnforcementAspect->enforcePolicy($this->mockJoinPoint));
+        self::assertEquals($someResult, $this->policyEnforcementAspect->enforcePolicy($this->mockJoinPoint));
     }
 
     /**

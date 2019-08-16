@@ -15,6 +15,10 @@ use Neos\Flow\Fixtures\ClassWithSetters;
 use Neos\Flow\Fixtures\ClassWithSettersAndConstructor;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Persistence;
+use Neos\Flow\Property\Exception\DuplicateObjectException;
+use Neos\Flow\Property\Exception\InvalidPropertyMappingConfigurationException;
+use Neos\Flow\Property\Exception\InvalidSourceException;
+use Neos\Flow\Property\Exception\InvalidTargetException;
 use Neos\Flow\Property\PropertyMappingConfiguration;
 use Neos\Flow\Property\TypeConverter\Error\TargetNotFoundError;
 use Neos\Flow\Property\TypeConverter\PersistentObjectConverter;
@@ -52,7 +56,7 @@ class PersistentObjectConverterTest extends UnitTestCase
      */
     protected $mockObjectManager;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->converter = new PersistentObjectConverter();
         $this->mockReflectionService = $this->createMock(ReflectionService::class);
@@ -70,9 +74,9 @@ class PersistentObjectConverterTest extends UnitTestCase
      */
     public function checkMetadata()
     {
-        $this->assertEquals(['string', 'array'], $this->converter->getSupportedSourceTypes(), 'Source types do not match');
-        $this->assertEquals('object', $this->converter->getSupportedTargetType(), 'Target type does not match');
-        $this->assertEquals(1, $this->converter->getPriority(), 'Priority does not match');
+        self::assertEquals(['string', 'array'], $this->converter->getSupportedSourceTypes(), 'Source types do not match');
+        self::assertEquals('object', $this->converter->getSupportedTargetType(), 'Target type does not match');
+        self::assertEquals(1, $this->converter->getPriority(), 'Priority does not match');
     }
 
     /**
@@ -103,7 +107,7 @@ class PersistentObjectConverterTest extends UnitTestCase
             $this->mockReflectionService->expects($this->at(1))->method('isClassAnnotatedWith')->with('TheTargetType', Flow\ValueObject::class)->will($this->returnValue($isValueObject));
         }
 
-        $this->assertEquals($expected, $this->converter->canConvertFrom('myInputData', 'TheTargetType'));
+        self::assertEquals($expected, $this->converter->canConvertFrom('myInputData', 'TheTargetType'));
     }
 
     /**
@@ -120,7 +124,7 @@ class PersistentObjectConverterTest extends UnitTestCase
             'k1' => 'v1',
             'k2' => 'v2'
         ];
-        $this->assertEquals($expected, $this->converter->getSourceChildPropertiesToBeConverted($source));
+        self::assertEquals($expected, $this->converter->getSourceChildPropertiesToBeConverted($source));
     }
 
     /**
@@ -137,7 +141,7 @@ class PersistentObjectConverterTest extends UnitTestCase
             'elementType' => null
         ]));
         $configuration = $this->buildConfiguration([]);
-        $this->assertEquals('TheTypeOfSubObject', $this->converter->getTypeOfChildProperty('TheTargetType', 'thePropertyName', $configuration));
+        self::assertEquals('TheTypeOfSubObject', $this->converter->getTypeOfChildProperty('TheTargetType', 'thePropertyName', $configuration));
     }
 
     /**
@@ -149,7 +153,7 @@ class PersistentObjectConverterTest extends UnitTestCase
 
         $configuration = $this->buildConfiguration([]);
         $configuration->forProperty('thePropertyName')->setTypeConverterOption(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_TARGET_TYPE, 'Foo\Bar');
-        $this->assertEquals('Foo\Bar', $this->converter->getTypeOfChildProperty('foo', 'thePropertyName', $configuration));
+        self::assertEquals('Foo\Bar', $this->converter->getTypeOfChildProperty('foo', 'thePropertyName', $configuration));
     }
 
     /**
@@ -180,7 +184,7 @@ class PersistentObjectConverterTest extends UnitTestCase
                 ['type' => 'TheTypeOfSubObject']
             ]));
         $configuration = $this->buildConfiguration([]);
-        $this->assertEquals('TheTypeOfSubObject', $this->converter->getTypeOfChildProperty('TheTargetType', 'virtualPropertyName', $configuration));
+        self::assertEquals('TheTypeOfSubObject', $this->converter->getTypeOfChildProperty('TheTargetType', 'virtualPropertyName', $configuration));
     }
 
     /**
@@ -199,7 +203,7 @@ class PersistentObjectConverterTest extends UnitTestCase
             ]));
 
         $configuration = $this->buildConfiguration([]);
-        $this->assertEquals('string', $this->converter->getTypeOfChildProperty('TheTargetType', 'anotherProperty', $configuration));
+        self::assertEquals('string', $this->converter->getTypeOfChildProperty('TheTargetType', 'anotherProperty', $configuration));
     }
 
 
@@ -212,7 +216,7 @@ class PersistentObjectConverterTest extends UnitTestCase
         $object = new \stdClass();
 
         $this->mockPersistenceManager->expects($this->once())->method('getObjectByIdentifier')->with($identifier)->will($this->returnValue($object));
-        $this->assertSame($object, $this->converter->convertFrom($identifier, 'MySpecialType'));
+        self::assertSame($object, $this->converter->convertFrom($identifier, 'MySpecialType'));
     }
 
     /**
@@ -224,7 +228,7 @@ class PersistentObjectConverterTest extends UnitTestCase
         $object = new \stdClass();
 
         $this->mockPersistenceManager->expects($this->once())->method('getObjectByIdentifier')->with($identifier)->will($this->returnValue($object));
-        $this->assertSame($object, $this->converter->convertFrom($identifier, 'MySpecialType'));
+        self::assertSame($object, $this->converter->convertFrom($identifier, 'MySpecialType'));
     }
 
     /**
@@ -239,15 +243,15 @@ class PersistentObjectConverterTest extends UnitTestCase
             '__identity' => $identifier
         ];
         $this->mockPersistenceManager->expects($this->once())->method('getObjectByIdentifier')->with($identifier)->will($this->returnValue($object));
-        $this->assertSame($object, $this->converter->convertFrom($source, 'MySpecialType'));
+        self::assertSame($object, $this->converter->convertFrom($source, 'MySpecialType'));
     }
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Property\Exception\InvalidPropertyMappingConfigurationException
      */
     public function convertFromShouldThrowExceptionIfObjectNeedsToBeModifiedButConfigurationIsNotSet()
     {
+        $this->expectException(InvalidPropertyMappingConfigurationException::class);
         $identifier = '550e8400-e29b-11d4-a716-446655440000';
         $object = new \stdClass();
         $object->someProperty = 'asdf';
@@ -276,7 +280,7 @@ class PersistentObjectConverterTest extends UnitTestCase
         $this->mockPersistenceManager->expects($this->once())->method('getObjectByIdentifier')->with($identifier)->will($this->returnValue(null));
         $actualResult = $this->converter->convertFrom($source, 'MySpecialType', ['foo' => 'bar']);
 
-        $this->assertInstanceOf(TargetNotFoundError::class, $actualResult);
+        self::assertInstanceOf(TargetNotFoundError::class, $actualResult);
     }
 
     /**
@@ -295,7 +299,7 @@ class PersistentObjectConverterTest extends UnitTestCase
      * @param \PHPUnit_Framework_MockObject_Matcher_Invocation $howOftenIsGetFirstCalled
      * @return \stdClass
      */
-    public function setupMockQuery($numberOfResults, $howOftenIsGetFirstCalled)
+    protected function setUpMockQuery($numberOfResults, $howOftenIsGetFirstCalled)
     {
         $mockClassSchema = $this->createMock(ClassSchema::class, [], ['Dummy']);
         $mockClassSchema->expects($this->once())->method('getIdentityProperties')->will($this->returnValue(['key1' => 'someType']));
@@ -328,7 +332,7 @@ class PersistentObjectConverterTest extends UnitTestCase
             '__identity' => ['key1' => 'value1', 'key2' => 'value2']
         ];
         $actual = $this->converter->convertFrom($source, 'SomeType');
-        $this->assertSame($mockObject, $actual);
+        self::assertSame($mockObject, $actual);
     }
 
     /**
@@ -342,15 +346,15 @@ class PersistentObjectConverterTest extends UnitTestCase
             '__identity' => ['key1' => 'value1', 'key2' => 'value2']
         ];
         $actual = $this->converter->convertFrom($source, 'SomeType');
-        $this->assertInstanceOf(TargetNotFoundError::class, $actual);
+        self::assertInstanceOf(TargetNotFoundError::class, $actual);
     }
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Property\Exception\InvalidSourceException
      */
     public function convertFromShouldThrowExceptionIfIdentityIsOfInvalidType()
     {
+        $this->expectException(InvalidSourceException::class);
         $source = [
             '__identity' => new \stdClass(),
         ];
@@ -359,10 +363,10 @@ class PersistentObjectConverterTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Property\Exception\DuplicateObjectException
      */
     public function convertFromShouldThrowExceptionIfMoreThanOneObjectWasFound()
     {
+        $this->expectException(DuplicateObjectException::class);
         $this->setupMockQuery(2, $this->never());
 
         $source = [
@@ -373,10 +377,10 @@ class PersistentObjectConverterTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Property\Exception\InvalidPropertyMappingConfigurationException
      */
     public function convertFromShouldThrowExceptionIfObjectNeedsToBeCreatedButConfigurationIsNotSet()
     {
+        $this->expectException(InvalidPropertyMappingConfigurationException::class);
         $source = [
             'foo' => 'bar'
         ];
@@ -401,15 +405,15 @@ class PersistentObjectConverterTest extends UnitTestCase
         $this->mockObjectManager->expects($this->once())->method('getClassNameByObjectName')->with(ClassWithSetters::class)->will($this->returnValue(ClassWithSetters::class));
         $configuration = $this->buildConfiguration([PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED => true]);
         $result = $this->converter->convertFrom($source, ClassWithSetters::class, $convertedChildProperties, $configuration);
-        $this->assertEquals($expectedObject, $result);
+        self::assertEquals($expectedObject, $result);
     }
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Property\Exception\InvalidTargetException
      */
     public function convertFromShouldThrowExceptionIfPropertyOnTargetObjectCouldNotBeSet()
     {
+        $this->expectException(InvalidTargetException::class);
         $source = [
             'propertyX' => 'bar'
         ];
@@ -422,7 +426,7 @@ class PersistentObjectConverterTest extends UnitTestCase
         $this->mockObjectManager->expects($this->once())->method('getClassNameByObjectName')->with(ClassWithSetters::class)->will($this->returnValue(ClassWithSetters::class));
         $configuration = $this->buildConfiguration([PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED => true]);
         $result = $this->converter->convertFrom($source, ClassWithSetters::class, $convertedChildProperties, $configuration);
-        $this->assertSame($object, $result);
+        self::assertSame($object, $result);
     }
 
     /**
@@ -447,8 +451,8 @@ class PersistentObjectConverterTest extends UnitTestCase
         $this->mockObjectManager->expects($this->once())->method('getClassNameByObjectName')->with(ClassWithSettersAndConstructor::class)->will($this->returnValue(ClassWithSettersAndConstructor::class));
         $configuration = $this->buildConfiguration([PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED => true]);
         $result = $this->converter->convertFrom($source, ClassWithSettersAndConstructor::class, $convertedChildProperties, $configuration);
-        $this->assertEquals($expectedObject, $result);
-        $this->assertEquals('bar', $expectedObject->getProperty2());
+        self::assertEquals($expectedObject, $result);
+        self::assertEquals('bar', $expectedObject->getProperty2());
     }
 
     /**
@@ -468,15 +472,15 @@ class PersistentObjectConverterTest extends UnitTestCase
         $this->mockObjectManager->expects($this->once())->method('getClassNameByObjectName')->with(ClassWithSettersAndConstructor::class)->will($this->returnValue(ClassWithSettersAndConstructor::class));
         $configuration = $this->buildConfiguration([PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED => true]);
         $result = $this->converter->convertFrom($source, ClassWithSettersAndConstructor::class, [], $configuration);
-        $this->assertEquals($expectedObject, $result);
+        self::assertEquals($expectedObject, $result);
     }
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Property\Exception\InvalidTargetException
      */
     public function convertFromShouldThrowExceptionIfRequiredConstructorParameterWasNotFound()
     {
+        $this->expectException(InvalidTargetException::class);
         $source = [
             'propertyX' => 'bar'
         ];
@@ -492,7 +496,7 @@ class PersistentObjectConverterTest extends UnitTestCase
         $this->mockObjectManager->expects($this->once())->method('getClassNameByObjectName')->with(ClassWithSettersAndConstructor::class)->will($this->returnValue(ClassWithSettersAndConstructor::class));
         $configuration = $this->buildConfiguration([PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED => true]);
         $result = $this->converter->convertFrom($source, ClassWithSettersAndConstructor::class, $convertedChildProperties, $configuration);
-        $this->assertSame($object, $result);
+        self::assertSame($object, $result);
     }
 
     /**
@@ -502,6 +506,6 @@ class PersistentObjectConverterTest extends UnitTestCase
     {
         $source = '';
         $result = $this->converter->convertFrom($source, ClassWithSettersAndConstructor::class);
-        $this->assertNull($result);
+        self::assertNull($result);
     }
 }

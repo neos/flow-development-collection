@@ -12,6 +12,8 @@ namespace Neos\Flow\Tests\Unit\ResourceManagement\Streams;
  */
 
 use Neos\Flow\Package\FlowPackageInterface;
+use Neos\Flow\ResourceManagement\Exception;
+use Neos\Utility\ObjectAccess;
 use org\bovigo\vfs\vfsStream;
 use Neos\Flow\Package\PackageManager;
 use Neos\Flow\ResourceManagement\PersistentResource;
@@ -39,7 +41,7 @@ class ResourceStreamWrapperTest extends UnitTestCase
      */
     protected $mockResourceManager;
 
-    public function setUp()
+    protected function setUp(): void
     {
         vfsStream::setup('Foo');
 
@@ -54,10 +56,10 @@ class ResourceStreamWrapperTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
      */
     public function openThrowsExceptionForInvalidScheme()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $openedPathAndFilename = '';
         $this->resourceStreamWrapper->open('invalid-scheme://foo/bar', 'r', 0, $openedPathAndFilename);
     }
@@ -76,8 +78,8 @@ class ResourceStreamWrapperTest extends UnitTestCase
         $this->mockResourceManager->expects($this->once())->method('getStreamByResource')->with($mockResource)->will($this->returnValue($tempFile));
 
         $openedPathAndFilename = '';
-        $this->assertTrue($this->resourceStreamWrapper->open('resource://' . $sha1Hash, 'r', 0, $openedPathAndFilename));
-        $this->assertAttributeSame($tempFile, 'handle', $this->resourceStreamWrapper);
+        self::assertTrue($this->resourceStreamWrapper->open('resource://' . $sha1Hash, 'r', 0, $openedPathAndFilename));
+        self::assertSame($tempFile, ObjectAccess::getProperty($this->resourceStreamWrapper, 'handle', true));
     }
 
     /**
@@ -94,16 +96,16 @@ class ResourceStreamWrapperTest extends UnitTestCase
         $this->mockResourceManager->expects($this->once())->method('getStreamByResource')->with($mockResource)->will($this->returnValue($tempFile));
 
         $openedPathAndFilename = '';
-        $this->assertTrue($this->resourceStreamWrapper->open('resource://' . $sha1Hash, 'r', 0, $openedPathAndFilename));
-        $this->assertAttributeSame($tempFile, 'handle', $this->resourceStreamWrapper);
+        self::assertTrue($this->resourceStreamWrapper->open('resource://' . $sha1Hash, 'r', 0, $openedPathAndFilename));
+        self::assertSame($tempFile, ObjectAccess::getProperty($this->resourceStreamWrapper, 'handle', true));
     }
 
     /**
      * @test
-     * @expectedException \Neos\Flow\ResourceManagement\Exception
      */
     public function openThrowsExceptionForNonExistingPackages()
     {
+        $this->expectException(Exception::class);
         $packageKey = 'Non.Existing.Package';
         $this->mockPackageManager->expects(self::once())->method('getPackage')->willThrowException(new \Neos\Flow\Package\Exception\UnknownPackageException('Test exception'));
 
@@ -125,8 +127,8 @@ class ResourceStreamWrapperTest extends UnitTestCase
         $this->mockPackageManager->expects($this->once())->method('getPackage')->with($packageKey)->will($this->returnValue($mockPackage));
 
         $openedPathAndFilename = '';
-        $this->assertTrue($this->resourceStreamWrapper->open('resource://' . $packageKey . '/Some/Path', 'r', 0, $openedPathAndFilename));
-        $this->assertSame($openedPathAndFilename, 'vfs://Foo/Some/Path');
+        self::assertTrue($this->resourceStreamWrapper->open('resource://' . $packageKey . '/Some/Path', 'r', 0, $openedPathAndFilename));
+        self::assertSame($openedPathAndFilename, 'vfs://Foo/Some/Path');
     }
 
     /**
@@ -137,13 +139,13 @@ class ResourceStreamWrapperTest extends UnitTestCase
         $packageKey = 'Some.PackageKey.Containing.40.Characters';
         mkdir('vfs://Foo/Some/');
         file_put_contents('vfs://Foo/Some/Path', 'fixture');
-        
+
         $mockPackage = $this->createMock(FlowPackageInterface::class);
         $mockPackage->expects($this->any())->method('getResourcesPath')->will($this->returnValue('vfs://Foo'));
         $this->mockPackageManager->expects($this->once())->method('getPackage')->with($packageKey)->will($this->returnValue($mockPackage));
 
         $openedPathAndFilename = '';
-        $this->assertTrue($this->resourceStreamWrapper->open('resource://' . $packageKey . '/Some/Path', 'r', 0, $openedPathAndFilename));
-        $this->assertSame($openedPathAndFilename, 'vfs://Foo/Some/Path');
+        self::assertTrue($this->resourceStreamWrapper->open('resource://' . $packageKey . '/Some/Path', 'r', 0, $openedPathAndFilename));
+        self::assertSame($openedPathAndFilename, 'vfs://Foo/Some/Path');
     }
 }

@@ -194,7 +194,10 @@ It is very common that a full Domain Model should be validated instead of only a
 To make this use-case more easy, the ``ValidatorResolver`` has a method ``getBaseValidatorConjunction``
 which returns a fully-configured validator for an arbitrary Domain Object::
 
-    $commentValidator = $validatorResolver->getBaseValidatorConjunction('YourPackage\Domain\Model\Comment');
+    $commentValidator = $validatorResolver->getBaseValidatorConjunction(
+        \YourPackage\Domain\Model\Comment::class, // class name of the object to validate
+        ['Default']                               // optional validation groups to use during validation
+    );
     $result = $commentValidator->validate($comment);
 
 The returned validator checks the following things:
@@ -224,6 +227,22 @@ The returned validator checks the following things:
   Validator* exists; i.e. for the Domain Model ``YourPackage\Domain\Model\Comment`` it is checked
   whether ``YourPackage\Domain\Validator\CommentValidator`` exists. If it exists, it is automatically
   called on validation.
+
+  These *Domain Model Validators* can also mark some specific properties as failed and add specific error messages:
+
+  .. code-block::php
+
+    class CommentValidator extends AbstractValidator
+    {
+        public function isValid($value)
+        {
+            if ($value instanceof \YourPackage\Domain\Model\Comment) {
+                $this->pushResult()->forProperty('text')->addError(
+                                new Error('text can´t be empty.', 1221560910)
+                            );
+            }
+        }
+    }
 
 Normally, you would need to annotate Collection and Model type properties, so that the collection elements and
 the model would be validated like this:

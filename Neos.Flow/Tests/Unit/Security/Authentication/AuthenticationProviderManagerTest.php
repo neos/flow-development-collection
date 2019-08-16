@@ -13,6 +13,7 @@ namespace Neos\Flow\Tests\Unit\Security\Authentication;
 
 use Neos\Flow\Security\Authentication\AuthenticationProviderInterface;
 use Neos\Flow\Security\Authentication\TokenAndProviderFactoryInterface;
+use Neos\Flow\Security\Exception\AuthenticationRequiredException;
 use Neos\Flow\Session\SessionManager;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Flow\Security\Account;
@@ -54,7 +55,7 @@ class AuthenticationProviderManagerTest extends UnitTestCase
     /**
      * Sets up this test case
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->tokenAndProviderFactory = $this->getMockBuilder(TokenAndProviderFactoryInterface::class)->getMock();
         $this->authenticationProviderManager = $this->getAccessibleMock(AuthenticationProviderManager::class, ['dummy'], [$this->tokenAndProviderFactory], '', true);
@@ -159,10 +160,10 @@ class AuthenticationProviderManagerTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Security\Exception\AuthenticationRequiredException
      */
     public function authenticateThrowsAnExceptionIfNoTokenCouldBeAuthenticated()
     {
+        $this->expectException(AuthenticationRequiredException::class);
         $token1 = $this->createMock(TokenInterface::class);
         $token2 = $this->createMock(TokenInterface::class);
 
@@ -176,10 +177,10 @@ class AuthenticationProviderManagerTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Security\Exception\AuthenticationRequiredException
      */
     public function authenticateThrowsAnExceptionIfAuthenticateAllTokensIsTrueButATokenCouldNotBeAuthenticated()
     {
+        $this->expectException(AuthenticationRequiredException::class);
         $token1 = $this->createMock(TokenInterface::class);
         $token2 = $this->createMock(TokenInterface::class);
 
@@ -202,7 +203,7 @@ class AuthenticationProviderManagerTest extends UnitTestCase
 
         $this->mockSecurityContext->expects($this->once())->method('getAuthenticationTokens')->will($this->returnValue([$mockToken]));
 
-        $this->assertTrue($this->authenticationProviderManager->isAuthenticated());
+        self::assertTrue($this->authenticationProviderManager->isAuthenticated());
     }
 
     /**
@@ -219,7 +220,7 @@ class AuthenticationProviderManagerTest extends UnitTestCase
 
         $this->mockSecurityContext->expects($this->atLeastOnce())->method('getAuthenticationTokens')->will($this->returnValue($authenticationTokens));
 
-        $this->assertFalse($this->authenticationProviderManager->isAuthenticated());
+        self::assertFalse($this->authenticationProviderManager->isAuthenticated());
     }
 
     /**
@@ -236,7 +237,7 @@ class AuthenticationProviderManagerTest extends UnitTestCase
 
         $this->mockSecurityContext->expects($this->atLeastOnce())->method('getAuthenticationTokens')->will($this->returnValue($authenticationTokens));
 
-        $this->assertTrue($this->authenticationProviderManager->isAuthenticated());
+        self::assertTrue($this->authenticationProviderManager->isAuthenticated());
     }
 
     /**
@@ -254,7 +255,7 @@ class AuthenticationProviderManagerTest extends UnitTestCase
         $this->mockSecurityContext->expects($this->any())->method('getAuthenticationStrategy')->will($this->returnValue(Context::AUTHENTICATE_ANY_TOKEN));
         $this->mockSecurityContext->expects($this->atLeastOnce())->method('getAuthenticationTokens')->will($this->returnValue($authenticationTokens));
 
-        $this->assertFalse($this->authenticationProviderManager->isAuthenticated());
+        self::assertFalse($this->authenticationProviderManager->isAuthenticated());
     }
 
     /**
@@ -272,7 +273,7 @@ class AuthenticationProviderManagerTest extends UnitTestCase
         $this->mockSecurityContext->expects($this->any())->method('getAuthenticationStrategy')->will($this->returnValue(Context::AUTHENTICATE_ANY_TOKEN));
         $this->mockSecurityContext->expects($this->atLeastOnce())->method('getAuthenticationTokens')->will($this->returnValue($authenticationTokens));
 
-        $this->assertTrue($this->authenticationProviderManager->isAuthenticated());
+        self::assertTrue($this->authenticationProviderManager->isAuthenticated());
     }
 
     /**

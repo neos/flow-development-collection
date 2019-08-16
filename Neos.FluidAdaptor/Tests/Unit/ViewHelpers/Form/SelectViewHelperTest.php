@@ -12,6 +12,7 @@ namespace Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Form;
  */
 
 use Neos\Flow\Persistence\PersistenceManagerInterface;
+use Neos\FluidAdaptor\Core\ViewHelper\Exception;
 use TYPO3Fluid\Fluid\Core\ViewHelper\TagBuilder;
 
 require_once(__DIR__ . '/Fixtures/EmptySyntaxTreeNode.php');
@@ -28,7 +29,7 @@ class SelectViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\For
      */
     protected $viewHelper;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->arguments['name'] = '';
@@ -168,7 +169,7 @@ class SelectViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\For
             '<option value="value2">label2</option>' . chr(10) .
             '<option value="value3" selected="selected">label3</option>' . chr(10) .
             '</select>';
-        $this->assertSame($expected, $result);
+        self::assertSame($expected, $result);
     }
 
     /**
@@ -210,7 +211,7 @@ class SelectViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\For
             '<option value="value2">label2</option>' . chr(10) .
             '<option value="value3" selected="selected">label3</option>' . chr(10) .
             '</select>';
-        $this->assertSame($expected, $result);
+        self::assertSame($expected, $result);
     }
 
     /**
@@ -280,7 +281,7 @@ class SelectViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\For
             '<option value="2">Kurfuerst</option>' . chr(10) .
             '<option value="3" selected="selected">Lemke</option>' . chr(10) .
             '</select>';
-        $this->assertSame($expected, $actual);
+        self::assertSame($expected, $actual);
     }
 
     /**
@@ -320,7 +321,7 @@ class SelectViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\For
             '<option value="2">Kurfuerst</option>' . chr(10) .
             '<option value="3" selected="selected">Lemke</option>' . chr(10) .
             '</select>';
-        $this->assertSame($expected, $actual);
+        self::assertSame($expected, $actual);
     }
 
     /**
@@ -378,10 +379,10 @@ class SelectViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\For
 
     /**
      * @test
-     * @expectedException \Neos\FluidAdaptor\Core\ViewHelper\Exception
      */
     public function selectOnDomainObjectsThrowsExceptionIfNoValueCanBeFound()
     {
+        $this->expectException(Exception::class);
         $mockPersistenceManager = $this->createMock(\Neos\Flow\Persistence\PersistenceManagerInterface::class);
         $mockPersistenceManager->expects($this->any())->method('getIdentifierByObject')->will($this->returnValue(null));
         $this->viewHelper->injectPersistenceManager($mockPersistenceManager);
@@ -542,10 +543,10 @@ class SelectViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\For
 
     /**
      * @test
-     * @expectedException \Neos\FluidAdaptor\Core\ViewHelper\Exception
      */
     public function getTranslatedLabelThrowsExceptionForInvalidLocales()
     {
+        $this->expectException(Exception::class);
         $this->arguments['translate'] = ['locale' => 'invalid-locale'];
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
 
@@ -554,10 +555,10 @@ class SelectViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\For
 
     /**
      * @test
-     * @expectedException \Neos\FluidAdaptor\Core\ViewHelper\Exception
      */
     public function getTranslatedLabelThrowsExceptionForUnknownTranslateBy()
     {
+        $this->expectException(Exception::class);
         $this->arguments['translate'] = ['by' => 'foo'];
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
 
@@ -623,7 +624,7 @@ class SelectViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\For
         $this->inject($this->viewHelper, 'translator', $mockTranslator);
 
         $actualResult = $this->viewHelper->_call('getTranslatedLabel', 'someValue', 'Some label');
-        $this->assertSame($expectedResult, $actualResult);
+        self::assertSame($expectedResult, $actualResult);
     }
 
     /**

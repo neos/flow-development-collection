@@ -67,7 +67,7 @@ class PrivilegeManagerTest extends UnitTestCase
     /**
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->mockSecurityContext = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
         $this->mockObjectManager = $this->getMockBuilder(ObjectManagerInterface::class)->getMock();
@@ -113,7 +113,7 @@ class PrivilegeManagerTest extends UnitTestCase
 
         $this->mockSecurityContext->expects($this->once())->method('getRoles')->will($this->returnValue([$mockRoleAdministrator, $mockRoleCustomer]));
 
-        $this->assertTrue($this->privilegeManager->isGranted(MethodPrivilegeInterface::class, $this->mockJoinPoint));
+        self::assertTrue($this->privilegeManager->isGranted(MethodPrivilegeInterface::class, $this->mockJoinPoint));
     }
 
     /**
@@ -123,7 +123,7 @@ class PrivilegeManagerTest extends UnitTestCase
     {
         $this->mockSecurityContext->expects($this->once())->method('getRoles')->will($this->returnValue([]));
 
-        $this->assertTrue($this->privilegeManager->isGranted(MethodPrivilegeInterface::class, $this->mockJoinPoint));
+        self::assertTrue($this->privilegeManager->isGranted(MethodPrivilegeInterface::class, $this->mockJoinPoint));
     }
 
     /**
@@ -136,7 +136,7 @@ class PrivilegeManagerTest extends UnitTestCase
 
         $this->mockSecurityContext->expects($this->once())->method('getRoles')->will($this->returnValue([$testRole1]));
 
-        $this->assertTrue($this->privilegeManager->isGranted(MethodPrivilegeInterface::class, $this->mockJoinPoint));
+        self::assertTrue($this->privilegeManager->isGranted(MethodPrivilegeInterface::class, $this->mockJoinPoint));
     }
 
     /**
@@ -155,7 +155,7 @@ class PrivilegeManagerTest extends UnitTestCase
 
         $this->mockSecurityContext->expects($this->once())->method('getRoles')->will($this->returnValue([$mockRoleAdministrator, $mockRoleCustomer]));
 
-        $this->assertFalse($this->privilegeManager->isGranted(MethodPrivilegeInterface::class, new MethodPrivilegeSubject($this->mockJoinPoint)));
+        self::assertFalse($this->privilegeManager->isGranted(MethodPrivilegeInterface::class, new MethodPrivilegeSubject($this->mockJoinPoint)));
     }
 
     /**
@@ -174,7 +174,7 @@ class PrivilegeManagerTest extends UnitTestCase
 
         $this->mockSecurityContext->expects($this->once())->method('getRoles')->will($this->returnValue([$mockRoleAdministrator, $mockRoleCustomer]));
 
-        $this->assertTrue($this->privilegeManager->isGranted(MethodPrivilegeInterface::class, new MethodPrivilegeSubject($this->mockJoinPoint)));
+        self::assertTrue($this->privilegeManager->isGranted(MethodPrivilegeInterface::class, new MethodPrivilegeSubject($this->mockJoinPoint)));
     }
 
     /**
@@ -191,7 +191,7 @@ class PrivilegeManagerTest extends UnitTestCase
 
         $this->mockSecurityContext->expects($this->any())->method('getRoles')->will($this->returnValue([$mockRole1, $mockRole2, $mockRole3]));
 
-        $this->assertFalse($this->privilegeManager->isPrivilegeTargetGranted('somePrivilegeTargetIdentifier'));
+        self::assertFalse($this->privilegeManager->isPrivilegeTargetGranted('somePrivilegeTargetIdentifier'));
     }
 
     /**
@@ -208,7 +208,7 @@ class PrivilegeManagerTest extends UnitTestCase
 
         $this->mockSecurityContext->expects($this->any())->method('getRoles')->will($this->returnValue([$mockRole1, $mockRole2, $mockRole3]));
 
-        $this->assertFalse($this->privilegeManager->isPrivilegeTargetGranted('somePrivilegeTargetIdentifier'));
+        self::assertFalse($this->privilegeManager->isPrivilegeTargetGranted('somePrivilegeTargetIdentifier'));
     }
 
     /**
@@ -227,7 +227,7 @@ class PrivilegeManagerTest extends UnitTestCase
 
         $this->mockSecurityContext->expects($this->any())->method('getRoles')->will($this->returnValue([$mockRole1, $mockRole2, $mockRole3]));
 
-        $this->assertTrue($this->privilegeManager->isPrivilegeTargetGranted('somePrivilegeTargetIdentifier'));
+        self::assertTrue($this->privilegeManager->isPrivilegeTargetGranted('somePrivilegeTargetIdentifier'));
     }
 
     /**
@@ -244,6 +244,6 @@ class PrivilegeManagerTest extends UnitTestCase
 
         $this->mockSecurityContext->expects($this->any())->method('getRoles')->will($this->returnValue([$mockRole1, $mockRole2, $mockRole3]));
 
-        $this->assertTrue($this->privilegeManager->isPrivilegeTargetGranted('somePrivilegeTargetIdentifier'));
+        self::assertTrue($this->privilegeManager->isPrivilegeTargetGranted('somePrivilegeTargetIdentifier'));
     }
 }

@@ -45,7 +45,7 @@ class CacheFactoryTest extends UnitTestCase
     /**
      * Creates the mocked filesystem used in the tests
      */
-    public function setUp()
+    protected function setUp(): void
     {
         vfsStream::setup('Foo');
 
@@ -79,7 +79,7 @@ class CacheFactoryTest extends UnitTestCase
         $factory->injectEnvironmentConfiguration($this->mockEnvironmentConfiguration);
 
         $cache = $factory->create('TYPO3_Flow_Cache_FactoryTest_Cache', VariableFrontend::class, NullBackend::class);
-        $this->assertInstanceOf(VariableFrontend::class, $cache);
+        self::assertInstanceOf(VariableFrontend::class, $cache);
     }
 
     /**
@@ -91,7 +91,7 @@ class CacheFactoryTest extends UnitTestCase
         $factory->injectEnvironmentConfiguration($this->mockEnvironmentConfiguration);
 
         $cache = $factory->create('TYPO3_Flow_Cache_FactoryTest_Cache', VariableFrontend::class, FileBackend::class);
-        $this->assertInstanceOf(FileBackend::class, $cache->getBackend());
+        self::assertInstanceOf(FileBackend::class, $cache->getBackend());
     }
 
     /**
@@ -110,6 +110,6 @@ class CacheFactoryTest extends UnitTestCase
         // createDirectoryRecursively() in the setCache method.
         mkdir('vfs://Temporary/Directory/Cache');
 
-        $this->assertEquals(FLOW_PATH_DATA . 'Persistent/Cache/Data/Persistent_Cache/', $cache->getBackend()->getCacheDirectory());
+        self::assertEquals(FLOW_PATH_DATA . 'Persistent/Cache/Data/Persistent_Cache/', $cache->getBackend()->getCacheDirectory());
     }
 }

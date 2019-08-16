@@ -12,6 +12,9 @@ namespace Neos\Flow\Tests\Unit\Configuration;
  */
 
 use Neos\Flow\Configuration\ConfigurationManager;
+use Neos\Flow\Configuration\Exception\InvalidConfigurationTypeException;
+use Neos\Flow\Configuration\Exception\ParseErrorException;
+use Neos\Flow\Configuration\Exception\RecursionException;
 use Neos\Flow\Configuration\RouteConfigurationProcessor;
 use Neos\Flow\Configuration\Source\YamlSource;
 use Neos\Flow\Core\ApplicationContext;
@@ -31,7 +34,7 @@ class ConfigurationManagerTest extends UnitTestCase
      */
     protected $mockContext;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->mockContext = $this->getMockBuilder(ApplicationContext::class)->disableOriginalConstructor()->getMock();
     }
@@ -68,7 +71,7 @@ class ConfigurationManagerTest extends UnitTestCase
         $configurationManager->_set('configurations', $configurations);
 
         $actualConfiguration = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'SomePackage');
-        $this->assertSame($expectedConfiguration, $actualConfiguration);
+        self::assertSame($expectedConfiguration, $actualConfiguration);
     }
 
     /**
@@ -140,16 +143,16 @@ class ConfigurationManagerTest extends UnitTestCase
 
         foreach ($expectedConfigurations as $configurationType => $expectedConfiguration) {
             $actualConfiguration = $configurationManager->getConfiguration($configurationType);
-            $this->assertSame($expectedConfiguration, $actualConfiguration);
+            self::assertSame($expectedConfiguration, $actualConfiguration);
         }
     }
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Configuration\Exception\InvalidConfigurationTypeException
      */
     public function gettingUnregisteredConfigurationTypeFails()
     {
+        $this->expectException(InvalidConfigurationTypeException::class);
         $configurationManager = new ConfigurationManager(new ApplicationContext('Testing'));
         $configurationManager->getConfiguration('Custom');
     }
@@ -170,19 +173,19 @@ class ConfigurationManagerTest extends UnitTestCase
         foreach ($expectedConfigurations as $configurationType => $expectedConfiguration) {
             $configurationManager->registerConfigurationType($configurationType, ConfigurationManager::CONFIGURATION_PROCESSING_TYPE_SETTINGS);
             $actualConfiguration = $configurationManager->getConfiguration($configurationType);
-            $this->assertSame($expectedConfiguration, $actualConfiguration);
+            self::assertSame($expectedConfiguration, $actualConfiguration);
         }
 
         $expectedConfigurationTypes = ['Caches', 'Objects', 'Routes', 'Policy', 'Settings', 'Custom'];
-        $this->assertEquals($expectedConfigurationTypes, $configurationManager->getAvailableConfigurationTypes());
+        self::assertEquals($expectedConfigurationTypes, $configurationManager->getAvailableConfigurationTypes());
     }
 
     /**
-     * @expectedException \InvalidArgumentException
      * @test
      */
     public function registerConfigurationTypeThrowsExceptionOnInvalidConfigurationProcessingType()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $configurationManager = $this->getAccessibleMock(ConfigurationManager::class, ['loadConfiguration'], [], '', false);
         $configurationManager->registerConfigurationType('MyCustomType', 'Nonsense');
     }
@@ -214,7 +217,7 @@ class ConfigurationManagerTest extends UnitTestCase
             'bar' => 'A'
         ];
 
-        $this->assertSame($expectedSettings, $actualConfigurations[ConfigurationManager::CONFIGURATION_TYPE_SETTINGS]['PackageA']);
+        self::assertSame($expectedSettings, $actualConfigurations[ConfigurationManager::CONFIGURATION_TYPE_SETTINGS]['PackageA']);
     }
 
     /**
@@ -242,7 +245,7 @@ class ConfigurationManagerTest extends UnitTestCase
             ]
         ];
 
-        $this->assertSame($expectedSettings, $actualConfigurations[ConfigurationManager::CONFIGURATION_TYPE_SETTINGS]);
+        self::assertSame($expectedSettings, $actualConfigurations[ConfigurationManager::CONFIGURATION_TYPE_SETTINGS]);
     }
 
     /**
@@ -378,7 +381,7 @@ class ConfigurationManagerTest extends UnitTestCase
             ]
         ];
 
-        $this->assertSame($expectedSettings, $actualConfigurations[ConfigurationManager::CONFIGURATION_TYPE_OBJECTS]);
+        self::assertSame($expectedSettings, $actualConfigurations[ConfigurationManager::CONFIGURATION_TYPE_OBJECTS]);
     }
 
     /**
@@ -489,7 +492,7 @@ class ConfigurationManagerTest extends UnitTestCase
             ]
         ];
 
-        $this->assertSame($expectedCachesConfiguration, $actualConfigurations[ConfigurationManager::CONFIGURATION_TYPE_CACHES]);
+        self::assertSame($expectedCachesConfiguration, $actualConfigurations[ConfigurationManager::CONFIGURATION_TYPE_CACHES]);
     }
 
     /**
@@ -594,10 +597,10 @@ EOD;
         $configurationManager->expects($this->any())->method('constructConfigurationCachePath')->willReturn('notfound.php', $cachedConfigurationsPathAndFilename);
         $configurationManager->_set('configurations', ['foo' => 'untouched']);
         $configurationManager->_call('loadConfigurationCache');
-        $this->assertSame(['foo' => 'untouched'], $configurationManager->_get('configurations'));
+        self::assertSame(['foo' => 'untouched'], $configurationManager->_get('configurations'));
 
         $configurationManager->_call('loadConfigurationCache');
-        $this->assertSame(['bar' => 'touched'], $configurationManager->_get('configurations'));
+        self::assertSame(['bar' => 'touched'], $configurationManager->_get('configurations'));
     }
 
     /**
@@ -622,7 +625,7 @@ EOD;
                 ]
             ]
         ];
-        $this->assertEquals($expectedConfiguration, $actualConfigurations[ConfigurationManager::CONFIGURATION_TYPE_SETTINGS]);
+        self::assertEquals($expectedConfiguration, $actualConfigurations[ConfigurationManager::CONFIGURATION_TYPE_SETTINGS]);
     }
 
     /**
@@ -685,8 +688,8 @@ EOD;
         $settingsPhpString = var_export($settings, true);
         $configurationManager = $this->getAccessibleMock(ConfigurationManager::class, ['dummy'], [], '', false);
         $processedPhpString = $configurationManager->_call('replaceVariablesInPhpString', $settingsPhpString);
-        $this->assertContains("'baz' => (defined('PHP_VERSION') ? constant('PHP_VERSION') : null)", $processedPhpString);
-        $this->assertContains("'to' => (defined('FLOW_PATH_ROOT') ? constant('FLOW_PATH_ROOT') : null)", $processedPhpString);
+        self::assertStringContainsString("'baz' => (defined('PHP_VERSION') ? constant('PHP_VERSION') : null)", $processedPhpString);
+        self::assertStringContainsString("'to' => (defined('FLOW_PATH_ROOT') ? constant('FLOW_PATH_ROOT') : null)", $processedPhpString);
     }
 
     /**
@@ -708,11 +711,11 @@ EOD;
         $configurationManager = $this->getAccessibleMock(ConfigurationManager::class, ['dummy'], [], '', false);
         $processedPhpString = $configurationManager->_call('replaceVariablesInPhpString', $settingsPhpString);
         $settings = eval('return ' . $processedPhpString . ';');
-        $this->assertInternalType('integer', $settings['anIntegerConstant']);
-        $this->assertSame(PHP_VERSION_ID, $settings['anIntegerConstant']);
+        $this->assertIsInt($settings['anIntegerConstant']);
+        self::assertSame(PHP_VERSION_ID, $settings['anIntegerConstant']);
 
-        $this->assertInternalType('string', $settings['casted']['to']['string']);
-        $this->assertSame('Version id is ' . PHP_VERSION_ID, $settings['casted']['to']['string']);
+        $this->assertIsString($settings['casted']['to']['string']);
+        self::assertSame('Version id is ' . PHP_VERSION_ID, $settings['casted']['to']['string']);
     }
 
     /**
@@ -736,9 +739,9 @@ EOD;
         $processedPhpString = $configurationManager->_call('replaceVariablesInPhpString', $settingsPhpString);
         $settings = eval('return ' . $processedPhpString . ';');
 
-        $this->assertSame(ConfigurationManager::CONFIGURATION_TYPE_POLICY, $settings['baz']);
-        $this->assertSame(Bootstrap::MINIMUM_PHP_VERSION, $settings['inspiring']['people']['to']);
-        $this->assertSame(FlowPackageInterface::DIRECTORY_CLASSES, $settings['inspiring']['people']['share']);
+        self::assertSame(ConfigurationManager::CONFIGURATION_TYPE_POLICY, $settings['baz']);
+        self::assertSame(Bootstrap::MINIMUM_PHP_VERSION, $settings['inspiring']['people']['to']);
+        self::assertSame(FlowPackageInterface::DIRECTORY_CLASSES, $settings['inspiring']['people']['share']);
     }
 
     /**
@@ -768,10 +771,10 @@ EOD;
         $processedPhpString = $configurationManager->_call('replaceVariablesInPhpString', $settingsPhpString);
         $settings = eval('return ' . $processedPhpString . ';');
 
-        $this->assertSame($envVarValue, $settings['bar']);
-        $this->assertSame($envVarValue . ' inspiring people ' . $envVarValue . ' to share', $settings['baz']);
-        $this->assertSame($envVarValue, $settings['inspiring']['people']['to']);
-        $this->assertSame('foo ' . $envVarValue . ' bar', $settings['inspiring']['people']['share']);
+        self::assertSame($envVarValue, $settings['bar']);
+        self::assertSame($envVarValue . ' inspiring people ' . $envVarValue . ' to share', $settings['baz']);
+        self::assertSame($envVarValue, $settings['inspiring']['people']['to']);
+        self::assertSame('foo ' . $envVarValue . ' bar', $settings['inspiring']['people']['share']);
 
         putenv($envVarName);
     }
@@ -840,7 +843,7 @@ EOD;
             ]
         ];
 
-        $this->assertSame($expectedRoutesConfiguration, $actualConfigurations[ConfigurationManager::CONFIGURATION_TYPE_ROUTES]);
+        self::assertSame($expectedRoutesConfiguration, $actualConfigurations[ConfigurationManager::CONFIGURATION_TYPE_ROUTES]);
     }
 
     /**
@@ -976,7 +979,7 @@ EOD;
             ],
         ];
 
-        $this->assertSame($expectedRoutesConfiguration, $actualConfigurations[ConfigurationManager::CONFIGURATION_TYPE_ROUTES]);
+        self::assertSame($expectedRoutesConfiguration, $actualConfigurations[ConfigurationManager::CONFIGURATION_TYPE_ROUTES]);
     }
 
     /**
@@ -1108,7 +1111,7 @@ EOD;
             ],
         ];
 
-        $this->assertSame($expectedRoutesConfiguration, $actualConfigurations[ConfigurationManager::CONFIGURATION_TYPE_ROUTES]);
+        self::assertSame($expectedRoutesConfiguration, $actualConfigurations[ConfigurationManager::CONFIGURATION_TYPE_ROUTES]);
     }
 
     /**
@@ -1176,10 +1179,10 @@ EOD;
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Configuration\Exception\RecursionException
      */
     public function loadConfigurationForRoutesThrowsExceptionIfSubRoutesContainCircularReferences()
     {
+        $this->expectException(RecursionException::class);
         $mockSubRouteConfiguration =
             [
                 'name' => 'SomeRouteOrSubRoute',
@@ -1203,10 +1206,10 @@ EOD;
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Configuration\Exception\ParseErrorException
      */
     public function mergeRoutesWithSubRoutesThrowsExceptionIfRouteRefersToNonExistingOrInactivePackages()
     {
+        $this->expectException(ParseErrorException::class);
         $routesConfiguration = [
             [
                 'name' => 'Welcome',
@@ -1344,7 +1347,7 @@ EOD;
         $RouteConfigurationProcessor = $this->getAccessibleMock(RouteConfigurationProcessor::class, ['dummy'], [], '', false);
         $actualResult = $RouteConfigurationProcessor->_call('buildSubrouteConfigurations', $routesConfiguration, $subRoutesConfiguration, 'WelcomeSubroutes', []);
 
-        $this->assertEquals($expectedResult, $actualResult);
+        self::assertEquals($expectedResult, $actualResult);
     }
 
     /**
@@ -1423,7 +1426,7 @@ EOD;
         $routeConfigurationProcessor = $this->getAccessibleMock(RouteConfigurationProcessor::class, ['dummy'], [], '', false);
         $actualResult = $routeConfigurationProcessor->_call('buildSubrouteConfigurations', $routesConfiguration, $subRoutesConfiguration, 'WelcomeSubroutes', $subRouteOptions);
 
-        $this->assertEquals($expectedResult, $actualResult);
+        self::assertEquals($expectedResult, $actualResult);
     }
 
     /**
@@ -1461,7 +1464,7 @@ EOD;
             ],
         ];
 
-        $this->assertSame($expectedRoutesConfiguration, $actualConfigurations['Views']);
+        self::assertSame($expectedRoutesConfiguration, $actualConfigurations['Views']);
     }
 
 
@@ -1532,7 +1535,7 @@ EOD;
         $configurationManager->registerConfigurationType('MyCustomConfiguration', ConfigurationManager::CONFIGURATION_PROCESSING_TYPE_SETTINGS);
         $configurationManager->_call('loadConfiguration', 'MyCustomConfiguration', $this->getMockPackages());
         $configuration = $configurationManager->getConfiguration('MyCustomConfiguration');
-        $this->assertArrayHasKey('SomeKey', $configuration);
+        self::assertArrayHasKey('SomeKey', $configuration);
     }
 
     /**

@@ -29,7 +29,7 @@ class PluralsReaderTest extends UnitTestCase
     /**
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $samplePluralRulesData = [
             'pluralRules[@locales="ro mo"]' => [
@@ -102,7 +102,7 @@ class PluralsReaderTest extends UnitTestCase
         foreach ($quantities as $value) {
             list($quantity, $pluralForm) = $value;
             $result = $this->reader->getPluralForm($quantity, $locale);
-            $this->assertEquals($pluralForm, $result);
+            self::assertEquals($pluralForm, $result);
         }
     }
 }

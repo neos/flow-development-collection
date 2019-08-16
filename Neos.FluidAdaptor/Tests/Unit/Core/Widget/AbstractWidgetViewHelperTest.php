@@ -11,6 +11,7 @@ namespace Neos\FluidAdaptor\Tests\Unit\Core\Widget;
  * source code.
  */
 
+use Neos\FluidAdaptor\Core\Widget\Exception\MissingControllerException;
 use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\AbstractNode;
 use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\RootNode;
 use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\TextNode;
@@ -53,7 +54,7 @@ class AbstractWidgetViewHelperTest extends \Neos\Flow\Tests\UnitTestCase
 
     /**
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\Core\Widget\AbstractWidgetViewHelper::class, ['validateArguments', 'initialize', 'callRenderMethod', 'getWidgetConfiguration', 'getRenderingContext']);
 
@@ -122,7 +123,7 @@ class AbstractWidgetViewHelperTest extends \Neos\Flow\Tests\UnitTestCase
         $this->viewHelper->expects($this->once())->method('initialize');
         $this->viewHelper->expects($this->once())->method('callRenderMethod')->will($this->returnValue('renderedResult'));
         $output = $this->viewHelper->initializeArgumentsAndRender(['arg1' => 'val1']);
-        $this->assertEquals('renderedResult', $output);
+        self::assertEquals('renderedResult', $output);
     }
 
     /**
@@ -147,15 +148,15 @@ class AbstractWidgetViewHelperTest extends \Neos\Flow\Tests\UnitTestCase
 
         $this->viewHelper->setChildNodes([$node1, $node2, $node3]);
 
-        $this->assertEquals($rootNode, $this->widgetContext->getViewHelperChildNodes());
+        self::assertEquals($rootNode, $this->widgetContext->getViewHelperChildNodes());
     }
 
     /**
      * @test
-     * @expectedException \Neos\FluidAdaptor\Core\Widget\Exception\MissingControllerException
      */
     public function initiateSubRequestThrowsExceptionIfControllerIsNoWidgetController()
     {
+        $this->expectException(MissingControllerException::class);
         $controller = $this->createMock(\Neos\Flow\Mvc\Controller\ControllerInterface::class);
         $this->viewHelper->_set('controller', $controller);
 

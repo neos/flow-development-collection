@@ -17,7 +17,7 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\TagBuilder;
  */
 class AbstractTagBasedViewHelperTest extends \Neos\Flow\Tests\UnitTestCase
 {
-    public function setUp()
+    protected function setUp(): void
     {
         $this->viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\Core\ViewHelper\AbstractTagBasedViewHelper::class, ['dummy'], [], '', false);
     }

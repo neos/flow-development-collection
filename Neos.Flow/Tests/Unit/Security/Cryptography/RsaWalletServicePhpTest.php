@@ -11,6 +11,7 @@ namespace Neos\Flow\Tests\Unit\Security\Cryptography;
  * source code.
  */
 
+use Neos\Flow\Security\Exception\DecryptionNotAllowedException;
 use org\bovigo\vfs\vfsStream;
 use Neos\Flow\Security\Cryptography\RsaWalletServicePhp;
 use Neos\Flow\Tests\UnitTestCase;
@@ -38,12 +39,13 @@ class RsaWalletServicePhpTest extends UnitTestCase
      *
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         vfsStream::setup('Foo');
         $settings['security']['cryptography']['RSAWalletServicePHP']['keystorePath'] = 'vfs://Foo/EncryptionKey';
+        $settings['security']['cryptography']['RSAWalletServicePHP']['paddingAlgorithm'] = OPENSSL_PKCS1_OAEP_PADDING;
         $settings['security']['cryptography']['RSAWalletServicePHP']['openSSLConfiguration']['digest_alg'] = 'sha1';
-        $settings['security']['cryptography']['RSAWalletServicePHP']['openSSLConfiguration']['private_key_bits'] = 384;
+        $settings['security']['cryptography']['RSAWalletServicePHP']['openSSLConfiguration']['private_key_bits'] = 1024;
         $settings['security']['cryptography']['RSAWalletServicePHP']['openSSLConfiguration']['private_key_type'] = OPENSSL_KEYTYPE_RSA;
 
         $this->rsaWalletService = $this->getAccessibleMock(RsaWalletServicePhp::class, ['dummy']);
@@ -60,8 +62,8 @@ class RsaWalletServicePhpTest extends UnitTestCase
         $plaintext = 'some very sensitive data!';
         $ciphertext = $this->rsaWalletService->encryptWithPublicKey($plaintext, $this->keyPairUuid);
 
-        $this->assertNotEquals($ciphertext, $plaintext);
-        $this->assertEquals($plaintext, $this->rsaWalletService->decrypt($ciphertext, $this->keyPairUuid));
+        self::assertNotEquals($ciphertext, $plaintext);
+        self::assertEquals($plaintext, $this->rsaWalletService->decrypt($ciphertext, $this->keyPairUuid));
     }
 
     /**
@@ -72,8 +74,8 @@ class RsaWalletServicePhpTest extends UnitTestCase
         $plaintext = 'trustworthy data!';
         $signature = $this->rsaWalletService->sign($plaintext, $this->keyPairUuid);
 
-        $this->assertTrue($this->rsaWalletService->verifySignature($plaintext, $signature, $this->keyPairUuid));
-        $this->assertFalse($this->rsaWalletService->verifySignature('modified data!', $signature, $this->keyPairUuid));
+        self::assertTrue($this->rsaWalletService->verifySignature($plaintext, $signature, $this->keyPairUuid));
+        self::assertFalse($this->rsaWalletService->verifySignature('modified data!', $signature, $this->keyPairUuid));
     }
 
     /**
@@ -86,7 +88,7 @@ class RsaWalletServicePhpTest extends UnitTestCase
         $passwordHash = 'af1e8a52451786a6b3bf78838e03a0a2';
         $salt = 'a709157e66e0197cafa0c2ba99f6e252';
 
-        $this->assertTrue($this->rsaWalletService->checkRSAEncryptedPassword($encryptedPassword, $passwordHash, $salt, $this->keyPairUuid));
+        self::assertTrue($this->rsaWalletService->checkRSAEncryptedPassword($encryptedPassword, $passwordHash, $salt, $this->keyPairUuid));
     }
 
     /**
@@ -99,15 +101,15 @@ class RsaWalletServicePhpTest extends UnitTestCase
         $passwordHash = 'af1e8a52451786a6b3bf78838e03a0a2';
         $salt = 'a709157e66e0197cafa0c2ba99f6e252';
 
-        $this->assertFalse($this->rsaWalletService->checkRSAEncryptedPassword($encryptedPassword, $passwordHash, $salt, $this->keyPairUuid));
+        self::assertFalse($this->rsaWalletService->checkRSAEncryptedPassword($encryptedPassword, $passwordHash, $salt, $this->keyPairUuid));
     }
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Security\Exception\DecryptionNotAllowedException
      */
     public function decryptingWithAKeypairUUIDMarkedForPasswordUsageThrowsAnException()
     {
+        $this->expectException(DecryptionNotAllowedException::class);
         $this->keyPairUuid = $this->rsaWalletService->generateNewKeypair(true);
         $this->rsaWalletService->decrypt('some cipher', $this->keyPairUuid);
     }
@@ -117,11 +119,11 @@ class RsaWalletServicePhpTest extends UnitTestCase
      */
     public function shutdownSavesKeysToKeystoreFileIfKeysWereModified()
     {
-        $this->assertFalse(file_exists('vfs://Foo/EncryptionKey'));
+        self::assertFalse(file_exists('vfs://Foo/EncryptionKey'));
         $keyPairUuid = $this->rsaWalletService->generateNewKeypair(true);
         $this->rsaWalletService->shutdownObject();
 
-        $this->assertTrue(file_exists('vfs://Foo/EncryptionKey'));
+        self::assertTrue(file_exists('vfs://Foo/EncryptionKey'));
 
         $this->rsaWalletService->destroyKeypair($keyPairUuid);
         $this->rsaWalletService->initializeObject();
@@ -134,10 +136,10 @@ class RsaWalletServicePhpTest extends UnitTestCase
      */
     public function shutdownDoesNotSavesKeysToKeystoreFileIfKeysWereNotModified()
     {
-        $this->assertFalse(file_exists('vfs://Foo/EncryptionKey'));
+        self::assertFalse(file_exists('vfs://Foo/EncryptionKey'));
         $keyPairUuid = $this->rsaWalletService->generateNewKeypair(true);
         $this->rsaWalletService->shutdownObject();
-        $this->assertTrue(file_exists('vfs://Foo/EncryptionKey'));
+        self::assertTrue(file_exists('vfs://Foo/EncryptionKey'));
 
         $this->rsaWalletService->initializeObject();
         $this->rsaWalletService->getPublicKey($keyPairUuid);
@@ -146,7 +148,7 @@ class RsaWalletServicePhpTest extends UnitTestCase
         unlink('vfs://Foo/EncryptionKey');
 
         $this->rsaWalletService->shutdownObject();
-        $this->assertFalse(file_exists('vfs://Foo/EncryptionKey'));
+        self::assertFalse(file_exists('vfs://Foo/EncryptionKey'));
     }
 
     /**
@@ -161,7 +163,7 @@ HofCDIScx7AMgIB7hRB9ZMDEyWN/1vgSm8+4K4jUcD6OGLJYTSAlaQ7e2ZGaAY5h
 p2P76gIh+wUlPjsr/QIDAQAB
 -----END PUBLIC KEY-----';
 
-        $this->assertEquals('cfa6879e3dfcf709db4cfd8e61fdd782', $this->rsaWalletService->getFingerprintByPublicKey($keyString));
+        self::assertEquals('cfa6879e3dfcf709db4cfd8e61fdd782', $this->rsaWalletService->getFingerprintByPublicKey($keyString));
     }
 
     /**
@@ -176,6 +178,6 @@ HofCDIScx7AMgIB7hRB9ZMDEyWN/1vgSm8+4K4jUcD6OGLJYTSAlaQ7e2ZGaAY5h
 p2P76gIh+wUlPjsr/QIDAQAB
 -----END PUBLIC KEY-----';
 
-        $this->assertEquals('cfa6879e3dfcf709db4cfd8e61fdd782', $this->rsaWalletService->registerPublicKeyFromString($keyString));
+        self::assertEquals('cfa6879e3dfcf709db4cfd8e61fdd782', $this->rsaWalletService->registerPublicKeyFromString($keyString));
     }
 }

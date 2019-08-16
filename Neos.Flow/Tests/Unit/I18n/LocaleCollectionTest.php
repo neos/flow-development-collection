@@ -32,7 +32,7 @@ class LocaleCollectionTest extends UnitTestCase
     /**
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->locales = [
             new I18n\Locale('en'),
@@ -53,7 +53,7 @@ class LocaleCollectionTest extends UnitTestCase
             $this->localeCollection->addLocale($locale);
         }
 
-        $this->assertEquals($this->locales[3], $this->localeCollection->getParentLocaleOf($this->locales[1]));
+        self::assertEquals($this->locales[3], $this->localeCollection->getParentLocaleOf($this->locales[1]));
     }
 
     /**
@@ -63,8 +63,8 @@ class LocaleCollectionTest extends UnitTestCase
     {
         $localeShouldBeAdded = $this->localeCollection->addLocale($this->locales[0]);
         $localeShouldNotBeAdded = $this->localeCollection->addLocale(new I18n\Locale('en'));
-        $this->assertTrue($localeShouldBeAdded);
-        $this->assertFalse($localeShouldNotBeAdded);
+        self::assertTrue($localeShouldBeAdded);
+        self::assertFalse($localeShouldNotBeAdded);
     }
 
     /**
@@ -76,9 +76,9 @@ class LocaleCollectionTest extends UnitTestCase
             $this->localeCollection->addLocale($locale);
         }
 
-        $this->assertEquals($this->locales[1], $this->localeCollection->findBestMatchingLocale($this->locales[1]));
-        $this->assertEquals($this->locales[1], $this->localeCollection->findBestMatchingLocale(new I18n\Locale('pl_PL_DVORAK')));
-        $this->assertNull($this->localeCollection->findBestMatchingLocale(new I18n\Locale('sv')));
+        self::assertEquals($this->locales[1], $this->localeCollection->findBestMatchingLocale($this->locales[1]));
+        self::assertEquals($this->locales[1], $this->localeCollection->findBestMatchingLocale(new I18n\Locale('pl_PL_DVORAK')));
+        self::assertNull($this->localeCollection->findBestMatchingLocale(new I18n\Locale('sv')));
     }
 
     /**
@@ -90,7 +90,7 @@ class LocaleCollectionTest extends UnitTestCase
             $this->localeCollection->addLocale($locale);
         }
 
-        $this->assertNull($this->localeCollection->getParentLocaleOf(new I18n\Locale('sv')));
-        $this->assertNull($this->localeCollection->getParentLocaleOf($this->locales[0]));
+        self::assertNull($this->localeCollection->getParentLocaleOf(new I18n\Locale('sv')));
+        self::assertNull($this->localeCollection->getParentLocaleOf($this->locales[0]));
     }
 }

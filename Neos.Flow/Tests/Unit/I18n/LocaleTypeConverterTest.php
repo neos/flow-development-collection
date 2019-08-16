@@ -28,7 +28,7 @@ class LocaleTypeConverterTest extends UnitTestCase
      */
     protected $converter;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->converter = new LocaleTypeConverter();
     }
@@ -38,9 +38,9 @@ class LocaleTypeConverterTest extends UnitTestCase
      */
     public function checkMetadata()
     {
-        $this->assertEquals(['string'], $this->converter->getSupportedSourceTypes(), 'Source types do not match');
-        $this->assertEquals(I18n\Locale::class, $this->converter->getSupportedTargetType(), 'Target type does not match');
-        $this->assertEquals(1, $this->converter->getPriority(), 'Priority does not match');
+        self::assertEquals(['string'], $this->converter->getSupportedSourceTypes(), 'Source types do not match');
+        self::assertEquals(I18n\Locale::class, $this->converter->getSupportedTargetType(), 'Target type does not match');
+        self::assertEquals(1, $this->converter->getPriority(), 'Priority does not match');
     }
 
     /**
@@ -48,7 +48,7 @@ class LocaleTypeConverterTest extends UnitTestCase
      */
     public function convertFromShouldReturnLocale()
     {
-        $this->assertInstanceOf(I18n\Locale::class, $this->converter->convertFrom('de', 'irrelevant'));
+        self::assertInstanceOf(I18n\Locale::class, $this->converter->convertFrom('de', 'irrelevant'));
     }
 
     /**
@@ -56,7 +56,7 @@ class LocaleTypeConverterTest extends UnitTestCase
      */
     public function canConvertFromShouldReturnTrue()
     {
-        $this->assertTrue($this->converter->canConvertFrom('de', I18n\Locale::class));
+        self::assertTrue($this->converter->canConvertFrom('de', I18n\Locale::class));
     }
 
     /**
@@ -64,6 +64,6 @@ class LocaleTypeConverterTest extends UnitTestCase
      */
     public function getSourceChildPropertiesToBeConvertedShouldReturnEmptyArray()
     {
-        $this->assertEmpty($this->converter->getSourceChildPropertiesToBeConverted('something'));
+        self::assertEmpty($this->converter->getSourceChildPropertiesToBeConverted('something'));
     }
 }

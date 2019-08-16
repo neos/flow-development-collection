@@ -29,7 +29,7 @@ class IfHasErrorsViewHelperTest extends ViewHelperBaseTestcase
 
     /**
      */
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\Validation\IfHasErrorsViewHelper::class, ['renderThenChild', 'renderElseChild']);
@@ -46,7 +46,7 @@ class IfHasErrorsViewHelperTest extends ViewHelperBaseTestcase
 
         $this->request->expects($this->once())->method('getInternalArgument')->with('__submittedArgumentValidationResults')->will($this->returnValue($result));
         $this->viewHelper->expects($this->once())->method('renderThenChild')->will($this->returnValue('ThenChild'));
-        $this->assertEquals('ThenChild', $this->viewHelper->render());
+        self::assertEquals('ThenChild', $this->viewHelper->render());
     }
 
     /**
@@ -55,7 +55,7 @@ class IfHasErrorsViewHelperTest extends ViewHelperBaseTestcase
     public function returnsAndRendersElseChildIfNoValidationResultsArePresentAtAll()
     {
         $this->viewHelper->expects($this->once())->method('renderElseChild')->will($this->returnValue('ElseChild'));
-        $this->assertEquals('ElseChild', $this->viewHelper->render());
+        self::assertEquals('ElseChild', $this->viewHelper->render());
     }
 
     /**

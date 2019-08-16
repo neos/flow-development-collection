@@ -12,21 +12,15 @@ namespace Neos\Flow\Tests\Functional\Http\Fixtures\Controller;
  */
 
 use Neos\Flow\Mvc\Controller\AbstractController;
-use Neos\Flow\Mvc\RequestInterface;
-use Neos\Flow\Mvc\ResponseInterface;
 
 class FooController extends AbstractController
 {
     /**
-     * Process Request
-     *
-     * @param RequestInterface $request
-     * @param ResponseInterface $response
-     * @return void
+     * @inheritDoc
      */
-    public function processRequest(RequestInterface $request, ResponseInterface $response)
+    public function processRequest($request, $response)
     {
         $this->initializeController($request, $response);
-        $response->appendContent('FooController responded');
+        $response->setContent('FooController responded');
     }
 }

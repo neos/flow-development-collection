@@ -30,7 +30,7 @@ class CollectionValidatorTest extends AbstractValidatorTestcase
 
     protected $mockValidatorResolver;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->mockValidatorResolver = $this->getMockBuilder(ValidatorResolver::class)->setMethods(['createValidator', 'buildBaseValidatorConjunction'])->getMock();
@@ -42,7 +42,7 @@ class CollectionValidatorTest extends AbstractValidatorTestcase
      */
     public function collectionValidatorReturnsNoErrorsForANullValue()
     {
-        $this->assertFalse($this->validator->validate(null)->hasErrors());
+        self::assertFalse($this->validator->validate(null)->hasErrors());
     }
 
     /**
@@ -50,7 +50,7 @@ class CollectionValidatorTest extends AbstractValidatorTestcase
      */
     public function collectionValidatorFailsForAValueNotBeingACollection()
     {
-        $this->assertTrue($this->validator->validate(new \StdClass())->hasErrors());
+        self::assertTrue($this->validator->validate(new \StdClass())->hasErrors());
     }
 
     /**
@@ -70,8 +70,8 @@ class CollectionValidatorTest extends AbstractValidatorTestcase
 
         $result = $this->validator->validate($arrayOfEmailAddresses);
 
-        $this->assertTrue($result->hasErrors());
-        $this->assertEquals(2, count($result->getFlattenedErrors()));
+        self::assertTrue($result->hasErrors());
+        self::assertEquals(2, count($result->getFlattenedErrors()));
     }
 
     /**
@@ -102,7 +102,7 @@ class CollectionValidatorTest extends AbstractValidatorTestcase
         $aValidator->addPropertyValidator('integer', $integerValidator);
 
         $result = $aValidator->validate($A)->getFlattenedErrors();
-        $this->assertEquals('A valid integer number is expected.', $result['b.0'][0]->getMessage());
+        self::assertEquals('A valid integer number is expected.', $result['b.0'][0]->getMessage());
     }
 
     /**
@@ -130,6 +130,6 @@ class CollectionValidatorTest extends AbstractValidatorTestcase
 
         $result = $this->validator->validate([5, 6, 1]);
 
-        $this->assertCount(1, $result->getFlattenedErrors());
+        self::assertCount(1, $result->getFlattenedErrors());
     }
 }

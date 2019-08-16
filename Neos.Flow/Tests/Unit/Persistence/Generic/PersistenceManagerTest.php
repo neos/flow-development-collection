@@ -20,6 +20,7 @@ use Neos\Flow\Persistence\Aspect\PersistenceMagicInterface;
 use Neos\Flow\Persistence\Generic;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Flow\Tests\Persistence\Fixture;
+use Neos\Utility\ObjectAccess;
 
 /**
  * Testcase for the Persistence Manager
@@ -76,7 +77,7 @@ class PersistenceManagerTest extends UnitTestCase
         $manager = new Generic\PersistenceManager();
         $manager->injectPersistenceSession($mockSession);
 
-        $this->assertEquals($manager->getIdentifierByObject($object), $fakeUuid);
+        self::assertEquals($manager->getIdentifierByObject($object), $fakeUuid);
     }
 
     /**
@@ -94,7 +95,7 @@ class PersistenceManagerTest extends UnitTestCase
         $manager = new Generic\PersistenceManager();
         $manager->injectPersistenceSession($mockSession);
 
-        $this->assertEquals($manager->getObjectByIdentifier($fakeUuid), $object);
+        self::assertEquals($manager->getObjectByIdentifier($fakeUuid), $object);
     }
 
     /**
@@ -119,7 +120,7 @@ class PersistenceManagerTest extends UnitTestCase
         $manager->injectBackend($mockBackend);
         $manager->injectDataMapper($mockDataMapper);
 
-        $this->assertEquals($manager->getObjectByIdentifier($fakeUuid), $object);
+        self::assertEquals($manager->getObjectByIdentifier($fakeUuid), $object);
     }
 
     /**
@@ -139,7 +140,7 @@ class PersistenceManagerTest extends UnitTestCase
         $manager->injectPersistenceSession($mockSession);
         $manager->injectBackend($mockBackend);
 
-        $this->assertNull($manager->getObjectByIdentifier($fakeUuid));
+        self::assertNull($manager->getObjectByIdentifier($fakeUuid));
     }
 
     /**
@@ -151,7 +152,7 @@ class PersistenceManagerTest extends UnitTestCase
         $persistenceManager = new Generic\PersistenceManager();
         $persistenceManager->add($someObject);
 
-        $this->assertAttributeContains($someObject, 'addedObjects', $persistenceManager);
+        self::assertContains($someObject, ObjectAccess::getProperty($persistenceManager, 'addedObjects', true));
     }
 
     /**
@@ -170,9 +171,9 @@ class PersistenceManagerTest extends UnitTestCase
 
         $persistenceManager->remove($object2);
 
-        $this->assertAttributeContains($object1, 'addedObjects', $persistenceManager);
-        $this->assertAttributeNotContains($object2, 'addedObjects', $persistenceManager);
-        $this->assertAttributeContains($object3, 'addedObjects', $persistenceManager);
+        self::assertContains($object1, ObjectAccess::getProperty($persistenceManager, 'addedObjects', true));
+        self::assertNotContains($object2, ObjectAccess::getProperty($persistenceManager, 'addedObjects', true));
+        self::assertContains($object3, ObjectAccess::getProperty($persistenceManager, 'addedObjects', true));
     }
 
     /**
@@ -194,9 +195,9 @@ class PersistenceManagerTest extends UnitTestCase
 
         $persistenceManager->remove($object2);
 
-        $this->assertAttributeContains($object1, 'addedObjects', $persistenceManager);
-        $this->assertAttributeNotContains($object2, 'addedObjects', $persistenceManager);
-        $this->assertAttributeContains($object3, 'addedObjects', $persistenceManager);
+        self::assertContains($object1, ObjectAccess::getProperty($persistenceManager, 'addedObjects', true));
+        self::assertNotContains($object2, ObjectAccess::getProperty($persistenceManager, 'addedObjects', true));
+        self::assertContains($object3, ObjectAccess::getProperty($persistenceManager, 'addedObjects', true));
     }
 
     /**
@@ -211,7 +212,7 @@ class PersistenceManagerTest extends UnitTestCase
         $persistenceManager = new Generic\PersistenceManager();
         $persistenceManager->remove($object);
 
-        $this->assertAttributeContains($object, 'removedObjects', $persistenceManager);
+        self::assertContains($object, ObjectAccess::getProperty($persistenceManager, 'removedObjects', true));
     }
 
     /**
@@ -223,9 +224,9 @@ class PersistenceManagerTest extends UnitTestCase
         $persistenceManager = $this->getMockBuilder(\Neos\Flow\Persistence\Generic\PersistenceManager::class)->setMethods(['isNewObject'])->getMock();
         $persistenceManager->expects($this->any())->method('isNewObject')->willReturn(false);
 
-        $this->assertAttributeNotContains($object, 'changedObjects', $persistenceManager);
+        self::assertNotContains($object, ObjectAccess::getProperty($persistenceManager, 'changedObjects', true));
         $persistenceManager->update($object);
-        $this->assertAttributeContains($object, 'changedObjects', $persistenceManager);
+        self::assertContains($object, ObjectAccess::getProperty($persistenceManager, 'changedObjects', true));
     }
 
     /**
@@ -249,7 +250,7 @@ class PersistenceManagerTest extends UnitTestCase
         $persistenceManager->clearState();
 
         $object = $persistenceManager->getObjectByIdentifier('abcdefg');
-        $this->assertNull($object);
+        self::assertNull($object);
     }
 
     /**

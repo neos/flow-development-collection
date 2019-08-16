@@ -39,7 +39,7 @@ class PersistenceMagicAspectTest extends UnitTestCase
     /**
      * Sets up this test case
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->persistenceMagicAspect = $this->getAccessibleMock(PersistenceMagicAspect::class, ['dummy'], []);
 
@@ -59,7 +59,7 @@ class PersistenceMagicAspectTest extends UnitTestCase
         $this->mockJoinPoint->expects($this->any())->method('getProxy')->will($this->returnValue($object));
 
         $this->persistenceMagicAspect->cloneObject($this->mockJoinPoint);
-        $this->assertTrue($object->Flow_Persistence_clone);
+        self::assertTrue($object->Flow_Persistence_clone);
     }
 
     /**
@@ -76,6 +76,6 @@ class PersistenceMagicAspectTest extends UnitTestCase
         $this->mockPersistenceManager->expects($this->atLeastOnce())->method('registerNewObject')->with($object);
         $this->persistenceMagicAspect->generateUuid($this->mockJoinPoint);
 
-        $this->assertEquals(36, strlen($object->Persistence_Object_Identifier));
+        self::assertEquals(36, strlen($object->Persistence_Object_Identifier));
     }
 }

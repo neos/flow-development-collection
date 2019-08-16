@@ -29,7 +29,7 @@ class ComponentChainTest extends UnitTestCase
      */
     protected $mockComponentContext;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->mockComponentContext = $this->getMockBuilder(Http\Component\ComponentContext::class)->disableOriginalConstructor()->getMock();
     }

@@ -18,6 +18,7 @@ use Neos\Flow\Security\Authorization\Interceptor\AccessGrant;
 use Neos\Flow\Security\Authorization\InterceptorInterface;
 use Neos\Flow\Security\Authorization\InterceptorResolver;
 use Neos\Flow\Security\Authorization\RequestFilter;
+use Neos\Flow\Security\Exception\AccessDeniedException;
 use Neos\Flow\Security\RequestPattern\Uri;
 use Neos\Flow\Security\RequestPatternResolver;
 use Neos\Flow\Tests\UnitTestCase;
@@ -63,10 +64,10 @@ class FilterFirewallTest extends UnitTestCase
             $args = func_get_args();
 
             if ($args[0] === 'mockPatternURI') {
-                $this->assertSame(['uriPattern' => '/some/url/.*'], $args[1]);
+                self::assertSame(['uriPattern' => '/some/url/.*'], $args[1]);
                 return $mockRequestPattern1;
             } elseif ($args[0] === 'mockPatternTest') {
-                $this->assertSame(['uriPattern' => '/some/url/blocked.*'], $args[1]);
+                self::assertSame(['uriPattern' => '/some/url/blocked.*'], $args[1]);
                 return $mockRequestPattern2;
             } elseif ($args[0] === 'mockInterceptorAccessGrant') {
                 return $accessGrant;
@@ -144,10 +145,10 @@ class FilterFirewallTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Security\Exception\AccessDeniedException
      */
     public function ifRejectAllIsSetAndNoFilterExplicitlyAllowsTheRequestAPermissionDeniedExceptionIsThrown()
     {
+        $this->expectException(AccessDeniedException::class);
         $mockActionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
 
         $mockFilter1 = $this->getMockBuilder(RequestFilter::class)->disableOriginalConstructor()->getMock();

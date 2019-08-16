@@ -41,7 +41,7 @@ class ResourceTypeConverterTest extends UnitTestCase
      */
     protected $mockResourceManager;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->resourceTypeConverter = $this->getAccessibleMock(ResourceTypeConverter::class, ['dummy']);
 
@@ -57,9 +57,9 @@ class ResourceTypeConverterTest extends UnitTestCase
      */
     public function checkMetadata()
     {
-        $this->assertEquals(['string', 'array', UploadedFileInterface::class], $this->resourceTypeConverter->getSupportedSourceTypes(), 'Source types do not match');
-        $this->assertEquals(PersistentResource::class, $this->resourceTypeConverter->getSupportedTargetType(), 'Target type does not match');
-        $this->assertEquals(1, $this->resourceTypeConverter->getPriority(), 'Priority does not match');
+        self::assertEquals(['string', 'array', UploadedFileInterface::class], $this->resourceTypeConverter->getSupportedSourceTypes(), 'Source types do not match');
+        self::assertEquals(PersistentResource::class, $this->resourceTypeConverter->getSupportedTargetType(), 'Target type does not match');
+        self::assertEquals(1, $this->resourceTypeConverter->getPriority(), 'Priority does not match');
     }
 
     /**
@@ -67,7 +67,7 @@ class ResourceTypeConverterTest extends UnitTestCase
      */
     public function canConvertFromReturnsTrueIfSourceTypeIsAnArrayWithErrorSet()
     {
-        $this->assertTrue($this->resourceTypeConverter->canConvertFrom(['error' => \UPLOAD_ERR_OK], PersistentResource::class));
+        self::assertTrue($this->resourceTypeConverter->canConvertFrom(['error' => \UPLOAD_ERR_OK], PersistentResource::class));
     }
 
     /**
@@ -75,7 +75,7 @@ class ResourceTypeConverterTest extends UnitTestCase
      */
     public function canConvertFromReturnsTrueIfSourceTypeIsAnArrayWithOriginallySubmittedResourceSet()
     {
-        $this->assertTrue($this->resourceTypeConverter->canConvertFrom(['originallySubmittedResource' => 'SomeResource'], PersistentResource::class));
+        self::assertTrue($this->resourceTypeConverter->canConvertFrom(['originallySubmittedResource' => 'SomeResource'], PersistentResource::class));
     }
 
     /**
@@ -83,7 +83,7 @@ class ResourceTypeConverterTest extends UnitTestCase
      */
     public function convertFromReturnsNullIfSourceArrayIsEmpty()
     {
-        $this->assertNull($this->resourceTypeConverter->convertFrom([], PersistentResource::class));
+        self::assertNull($this->resourceTypeConverter->convertFrom([], PersistentResource::class));
     }
 
     /**
@@ -92,7 +92,7 @@ class ResourceTypeConverterTest extends UnitTestCase
     public function convertFromReturnsNullIfNoFileWasUploaded()
     {
         $source = ['error' => \UPLOAD_ERR_NO_FILE];
-        $this->assertNull($this->resourceTypeConverter->convertFrom($source, PersistentResource::class));
+        self::assertNull($this->resourceTypeConverter->convertFrom($source, PersistentResource::class));
     }
 
     /**
@@ -101,7 +101,7 @@ class ResourceTypeConverterTest extends UnitTestCase
     public function convertFromReturnsNullIfNoFileWasUploadedAndEmptyHashIsSet()
     {
         $source = ['error' => \UPLOAD_ERR_NO_FILE, 'hash' => ''];
-        $this->assertNull($this->resourceTypeConverter->convertFrom($source, PersistentResource::class));
+        self::assertNull($this->resourceTypeConverter->convertFrom($source, PersistentResource::class));
     }
 
     /**
@@ -122,8 +122,8 @@ class ResourceTypeConverterTest extends UnitTestCase
 
         $actualResource = $this->resourceTypeConverter->convertFrom($source, PersistentResource::class);
 
-        $this->assertInstanceOf(PersistentResource::class, $actualResource);
-        $this->assertSame($expectedResource, $actualResource);
+        self::assertInstanceOf(PersistentResource::class, $actualResource);
+        self::assertSame($expectedResource, $actualResource);
     }
 
     /**
@@ -143,7 +143,7 @@ class ResourceTypeConverterTest extends UnitTestCase
 
         $actualResource = $this->resourceTypeConverter->convertFrom($source, PersistentResource::class);
 
-        $this->assertNull($actualResource);
+        self::assertNull($actualResource);
     }
 
     /**
@@ -156,7 +156,7 @@ class ResourceTypeConverterTest extends UnitTestCase
         ];
 
         $actualResult = $this->resourceTypeConverter->convertFrom($source, PersistentResource::class);
-        $this->assertInstanceOf(FlowError\Error::class, $actualResult);
+        self::assertInstanceOf(FlowError\Error::class, $actualResult);
     }
 
     /**
@@ -188,7 +188,7 @@ class ResourceTypeConverterTest extends UnitTestCase
         $this->mockResourceManager->expects($this->once())->method('importUploadedResource')->with($source)->will($this->returnValue($mockResource));
 
         $actualResult = $this->resourceTypeConverter->convertFrom($source, PersistentResource::class);
-        $this->assertSame($mockResource, $actualResult);
+        self::assertSame($mockResource, $actualResult);
     }
 
     /**
@@ -205,6 +205,6 @@ class ResourceTypeConverterTest extends UnitTestCase
         $this->mockResourceManager->expects($this->once())->method('importUploadedResource')->with($source)->will($this->throwException(new Exception()));
 
         $actualResult = $this->resourceTypeConverter->convertFrom($source, PersistentResource::class);
-        $this->assertInstanceOf(FlowError\Error::class, $actualResult);
+        self::assertInstanceOf(FlowError\Error::class, $actualResult);
     }
 }

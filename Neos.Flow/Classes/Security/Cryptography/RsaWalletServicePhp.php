@@ -42,6 +42,12 @@ class RsaWalletServicePhp implements RsaWalletServiceInterface
     protected $openSSLConfiguration = [];
 
     /**
+     * The padding to use for OpenSSL encryption/decryption
+     * @var int
+     */
+    protected $paddingAlgorithm;
+
+    /**
      * @var boolean
      */
     protected $saveKeysOnShutdown = true;
@@ -52,6 +58,7 @@ class RsaWalletServicePhp implements RsaWalletServiceInterface
      * @param array $settings
      * @return void
      * @throws MissingConfigurationException
+     * @throws SecurityException
      */
     public function injectSettings(array $settings)
     {
@@ -65,6 +72,12 @@ class RsaWalletServicePhp implements RsaWalletServiceInterface
         } else {
             throw new MissingConfigurationException('The configuration setting Neos.Flow.security.cryptography.RSAWalletServicePHP.keystorePath is missing. Please specify it in your Settings.yaml file. Beware: This file must not be accessible by the public!', 1305711354);
         }
+
+        if (isset($settings['security']['cryptography']['RSAWalletServicePHP']['paddingAlgorithm']) && is_int($settings['security']['cryptography']['RSAWalletServicePHP']['paddingAlgorithm'])) {
+            $this->paddingAlgorithm = $settings['security']['cryptography']['RSAWalletServicePHP']['paddingAlgorithm'];
+        } else {
+            throw new SecurityException('The padding algorithm given in security.cryptography.RSAWalletServicePHP.paddingAlgorithm is not available.', 1556785429);
+        }
     }
 
     /**
@@ -75,7 +88,7 @@ class RsaWalletServicePhp implements RsaWalletServiceInterface
     public function initializeObject()
     {
         if (file_exists($this->keystorePathAndFilename)) {
-            $this->keys = unserialize(file_get_contents($this->keystorePathAndFilename));
+            $this->keys = unserialize(file_get_contents($this->keystorePathAndFilename), ['allowed_classes' => [OpenSslRsaKey::class]]);
         }
         $this->saveKeysOnShutdown = false;
     }
@@ -165,11 +178,18 @@ class RsaWalletServicePhp implements RsaWalletServiceInterface
      * @param string $plaintext The plaintext to encrypt
      * @param string $fingerprint The fingerprint to identify to correct public key
      * @return string The ciphertext
+     * @throws SecurityException If encryption failed for some other reason
      */
     public function encryptWithPublicKey($plaintext, $fingerprint)
     {
         $cipher = '';
-        openssl_public_encrypt($plaintext, $cipher, $this->getPublicKey($fingerprint)->getKeyString());
+        if (openssl_public_encrypt($plaintext, $cipher, $this->getPublicKey($fingerprint)->getKeyString(), $this->paddingAlgorithm) === false) {
+            $openSslErrors = [];
+            while (($errorMessage = openssl_error_string()) !== false) {
+                $openSslErrors[] = $errorMessage;
+            }
+            throw new SecurityException(sprintf('Encryption failed, OpenSSL error: %s', implode(chr(10), $openSslErrors)), 1556609369);
+        }
 
         return $cipher;
     }
@@ -184,6 +204,7 @@ class RsaWalletServicePhp implements RsaWalletServiceInterface
      * @return string The decrypted text
      * @throws InvalidKeyPairIdException If the given fingerprint identifies no valid keypair
      * @throws DecryptionNotAllowedException If the given fingerprint identifies a keypair for encrypted passwords
+     * @throws SecurityException If decryption failed for some other reason
      */
     public function decrypt($cipher, $fingerprint)
     {
@@ -323,12 +344,25 @@ class RsaWalletServicePhp implements RsaWalletServiceInterface
      * @param string $cipher The ciphertext to decrypt
      * @param OpenSslRsaKey $privateKey The private key
      * @return string The decrypted plaintext
+     * @throws SecurityException
      */
     private function decryptWithPrivateKey($cipher, OpenSslRsaKey $privateKey)
     {
         $decrypted = '';
         $key = openssl_pkey_get_private($privateKey->getKeyString());
-        openssl_private_decrypt($cipher, $decrypted, $key);
+        if (openssl_private_decrypt($cipher, $decrypted, $key, $this->paddingAlgorithm) === false) {
+            // Fallback for data that was encrypted with old default OPENSSL_PKCS1_PADDING
+            if ($this->paddingAlgorithm !== OPENSSL_PKCS1_PADDING) {
+                if (openssl_private_decrypt($cipher, $decrypted, $key, OPENSSL_PKCS1_PADDING) !== false) {
+                    return $decrypted;
+                }
+            }
+            $openSslErrors = [];
+            while (($errorMessage = openssl_error_string()) !== false) {
+                $openSslErrors[] = $errorMessage;
+            }
+            throw new SecurityException(sprintf('Decryption failed, OpenSSL error: %s', implode(chr(10), $openSslErrors)), 1556609762);
+        }
 
         return $decrypted;
     }

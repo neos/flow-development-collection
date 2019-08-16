@@ -31,7 +31,7 @@ class StreamWrapperAdapterTest extends UnitTestCase
     protected $mockStreamWrapper;
 
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->streamWrapperAdapter = $this->getAccessibleMock(StreamWrapperAdapter::class, ['createStreamWrapper']);
         $this->mockStreamWrapper = $this->createMock(StreamWrapperInterface::class);
@@ -51,8 +51,8 @@ class StreamWrapperAdapterTest extends UnitTestCase
         StreamWrapperAdapter::registerStreamWrapper('mockScheme2', $mockStreamWrapper2ClassName);
 
         $registeredStreamWrappers = StreamWrapperAdapter::getRegisteredStreamWrappers();
-        $this->assertSame($mockStreamWrapper1ClassName, $registeredStreamWrappers['mockScheme1']);
-        $this->assertSame($mockStreamWrapper2ClassName, $registeredStreamWrappers['mockScheme2']);
+        self::assertSame($mockStreamWrapper1ClassName, $registeredStreamWrappers['mockScheme1']);
+        self::assertSame($mockStreamWrapper2ClassName, $registeredStreamWrappers['mockScheme2']);
     }
 
     /**
@@ -61,7 +61,7 @@ class StreamWrapperAdapterTest extends UnitTestCase
     public function dir_closedirTest()
     {
         $this->mockStreamWrapper->expects($this->once())->method('closeDirectory')->will($this->returnValue(true));
-        $this->assertTrue($this->streamWrapperAdapter->dir_closedir());
+        self::assertTrue($this->streamWrapperAdapter->dir_closedir());
     }
 
     /**
@@ -74,7 +74,7 @@ class StreamWrapperAdapterTest extends UnitTestCase
 
         $this->streamWrapperAdapter->expects($this->once())->method('createStreamWrapper')->with($path);
         $this->mockStreamWrapper->expects($this->once())->method('openDirectory')->with($path, $options)->will($this->returnValue(true));
-        $this->assertTrue($this->streamWrapperAdapter->dir_opendir($path, $options));
+        self::assertTrue($this->streamWrapperAdapter->dir_opendir($path, $options));
     }
 
     /**
@@ -83,7 +83,7 @@ class StreamWrapperAdapterTest extends UnitTestCase
     public function dir_readdirTest()
     {
         $this->mockStreamWrapper->expects($this->once())->method('readDirectory')->will($this->returnValue(true));
-        $this->assertTrue($this->streamWrapperAdapter->dir_readdir());
+        self::assertTrue($this->streamWrapperAdapter->dir_readdir());
     }
 
     /**
@@ -92,7 +92,7 @@ class StreamWrapperAdapterTest extends UnitTestCase
     public function dir_rewinddirTest()
     {
         $this->mockStreamWrapper->expects($this->once())->method('rewindDirectory')->will($this->returnValue(true));
-        $this->assertTrue($this->streamWrapperAdapter->dir_rewinddir());
+        self::assertTrue($this->streamWrapperAdapter->dir_rewinddir());
     }
 
     /**
@@ -106,7 +106,7 @@ class StreamWrapperAdapterTest extends UnitTestCase
 
         $this->streamWrapperAdapter->expects($this->once())->method('createStreamWrapper')->with($path);
         $this->mockStreamWrapper->expects($this->once())->method('makeDirectory')->with($path, $mode, $options)->will($this->returnValue(true));
-        $this->assertTrue($this->streamWrapperAdapter->mkdir($path, $mode, $options));
+        self::assertTrue($this->streamWrapperAdapter->mkdir($path, $mode, $options));
     }
 
     /**
@@ -119,7 +119,7 @@ class StreamWrapperAdapterTest extends UnitTestCase
 
         $this->streamWrapperAdapter->expects($this->once())->method('createStreamWrapper')->with($fromPath);
         $this->mockStreamWrapper->expects($this->once())->method('rename')->with($fromPath, $toPath)->will($this->returnValue(true));
-        $this->assertTrue($this->streamWrapperAdapter->rename($fromPath, $toPath));
+        self::assertTrue($this->streamWrapperAdapter->rename($fromPath, $toPath));
     }
 
     /**
@@ -132,7 +132,7 @@ class StreamWrapperAdapterTest extends UnitTestCase
 
         $this->streamWrapperAdapter->expects($this->once())->method('createStreamWrapper')->with($path);
         $this->mockStreamWrapper->expects($this->once())->method('removeDirectory')->with($path, $options)->will($this->returnValue(true));
-        $this->assertTrue($this->streamWrapperAdapter->rmdir($path, $options));
+        self::assertTrue($this->streamWrapperAdapter->rmdir($path, $options));
     }
 
     /**
@@ -146,7 +146,7 @@ class StreamWrapperAdapterTest extends UnitTestCase
         $castAs = STREAM_CAST_FOR_SELECT;
 
         $this->mockStreamWrapper->expects($this->once())->method('cast')->with($castAs)->will($this->returnValue(true));
-        $this->assertTrue($this->streamWrapperAdapter->stream_cast($castAs));
+        self::assertTrue($this->streamWrapperAdapter->stream_cast($castAs));
     }
 
     /**
@@ -164,7 +164,7 @@ class StreamWrapperAdapterTest extends UnitTestCase
     public function stream_eofTest()
     {
         $this->mockStreamWrapper->expects($this->once())->method('isAtEof')->will($this->returnValue(true));
-        $this->assertTrue($this->streamWrapperAdapter->stream_eof());
+        self::assertTrue($this->streamWrapperAdapter->stream_eof());
     }
 
     /**
@@ -173,7 +173,7 @@ class StreamWrapperAdapterTest extends UnitTestCase
     public function stream_flushTest()
     {
         $this->mockStreamWrapper->expects($this->once())->method('flush')->will($this->returnValue(true));
-        $this->assertTrue($this->streamWrapperAdapter->stream_flush());
+        self::assertTrue($this->streamWrapperAdapter->stream_flush());
     }
 
     /**
@@ -184,7 +184,7 @@ class StreamWrapperAdapterTest extends UnitTestCase
         $operation = LOCK_SH;
 
         $this->mockStreamWrapper->expects($this->once())->method('lock')->with($operation)->will($this->returnValue(true));
-        $this->assertTrue($this->streamWrapperAdapter->stream_lock($operation));
+        self::assertTrue($this->streamWrapperAdapter->stream_lock($operation));
     }
 
     /**
@@ -195,7 +195,7 @@ class StreamWrapperAdapterTest extends UnitTestCase
         $operation = LOCK_UN;
 
         $this->mockStreamWrapper->expects($this->once())->method('unlock')->will($this->returnValue(true));
-        $this->assertTrue($this->streamWrapperAdapter->stream_lock($operation));
+        self::assertTrue($this->streamWrapperAdapter->stream_lock($operation));
     }
 
     /**
@@ -210,7 +210,7 @@ class StreamWrapperAdapterTest extends UnitTestCase
 
         $this->streamWrapperAdapter->expects($this->once())->method('createStreamWrapper')->with($path);
         $this->mockStreamWrapper->expects($this->once())->method('open')->with($path, $mode, $options, $openedPath)->will($this->returnValue(true));
-        $this->assertTrue($this->streamWrapperAdapter->stream_open($path, $mode, $options, $openedPath));
+        self::assertTrue($this->streamWrapperAdapter->stream_open($path, $mode, $options, $openedPath));
     }
 
     /**
@@ -221,7 +221,7 @@ class StreamWrapperAdapterTest extends UnitTestCase
         $count = 123;
 
         $this->mockStreamWrapper->expects($this->once())->method('read')->with($count)->will($this->returnValue(true));
-        $this->assertTrue($this->streamWrapperAdapter->stream_read($count));
+        self::assertTrue($this->streamWrapperAdapter->stream_read($count));
     }
 
     /**
@@ -232,7 +232,7 @@ class StreamWrapperAdapterTest extends UnitTestCase
         $offset = 123;
 
         $this->mockStreamWrapper->expects($this->once())->method('seek')->with($offset, SEEK_SET)->will($this->returnValue(true));
-        $this->assertTrue($this->streamWrapperAdapter->stream_seek($offset));
+        self::assertTrue($this->streamWrapperAdapter->stream_seek($offset));
     }
 
     /**
@@ -244,7 +244,7 @@ class StreamWrapperAdapterTest extends UnitTestCase
         $whence = SEEK_END;
 
         $this->mockStreamWrapper->expects($this->once())->method('seek')->with($offset, $whence)->will($this->returnValue(true));
-        $this->assertTrue($this->streamWrapperAdapter->stream_seek($offset, $whence));
+        self::assertTrue($this->streamWrapperAdapter->stream_seek($offset, $whence));
     }
 
     /**
@@ -260,7 +260,7 @@ class StreamWrapperAdapterTest extends UnitTestCase
         $arg2 = 123000000;
 
         $this->mockStreamWrapper->expects($this->once())->method('setOption')->with($option, $arg1, $arg2)->will($this->returnValue(true));
-        $this->assertTrue($this->streamWrapperAdapter->stream_set_option($option, $arg1, $arg2));
+        self::assertTrue($this->streamWrapperAdapter->stream_set_option($option, $arg1, $arg2));
     }
 
     /**
@@ -269,7 +269,7 @@ class StreamWrapperAdapterTest extends UnitTestCase
     public function stream_statTest()
     {
         $this->mockStreamWrapper->expects($this->once())->method('resourceStat')->will($this->returnValue(true));
-        $this->assertTrue($this->streamWrapperAdapter->stream_stat());
+        self::assertTrue($this->streamWrapperAdapter->stream_stat());
     }
 
     /**
@@ -278,7 +278,7 @@ class StreamWrapperAdapterTest extends UnitTestCase
     public function stream_tellTest()
     {
         $this->mockStreamWrapper->expects($this->once())->method('tell')->will($this->returnValue(true));
-        $this->assertTrue($this->streamWrapperAdapter->stream_tell());
+        self::assertTrue($this->streamWrapperAdapter->stream_tell());
     }
 
     /**
@@ -289,7 +289,7 @@ class StreamWrapperAdapterTest extends UnitTestCase
         $data = 'foo bar';
 
         $this->mockStreamWrapper->expects($this->once())->method('write')->with($data)->will($this->returnValue(true));
-        $this->assertTrue($this->streamWrapperAdapter->stream_write($data));
+        self::assertTrue($this->streamWrapperAdapter->stream_write($data));
     }
 
     /**
@@ -301,7 +301,7 @@ class StreamWrapperAdapterTest extends UnitTestCase
 
         $this->streamWrapperAdapter->expects($this->once())->method('createStreamWrapper')->with($path);
         $this->mockStreamWrapper->expects($this->once())->method('unlink')->with($path)->will($this->returnValue(true));
-        $this->assertTrue($this->streamWrapperAdapter->unlink($path));
+        self::assertTrue($this->streamWrapperAdapter->unlink($path));
     }
 
     /**
@@ -314,6 +314,6 @@ class StreamWrapperAdapterTest extends UnitTestCase
 
         $this->streamWrapperAdapter->expects($this->once())->method('createStreamWrapper')->with($path);
         $this->mockStreamWrapper->expects($this->once())->method('pathStat')->with($path, $flags)->will($this->returnValue(true));
-        $this->assertTrue($this->streamWrapperAdapter->url_stat($path, $flags));
+        self::assertTrue($this->streamWrapperAdapter->url_stat($path, $flags));
     }
 }

@@ -17,10 +17,10 @@ use Neos\Flow\Mvc;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Flow\Http;
 use Neos\Flow\Validation\Validator\ConjunctionValidator;
 use Neos\Flow\Validation\Validator\ValidatorInterface;
 use Neos\Flow\Validation\ValidatorResolver;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Testcase for the MVC Action Controller
@@ -52,7 +52,7 @@ class ActionControllerTest extends UnitTestCase
      */
     protected $mockControllerContext;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->actionController = $this->getAccessibleMock(ActionController::class, ['dummy']);
 
@@ -81,7 +81,7 @@ class ActionControllerTest extends UnitTestCase
     {
         $this->mockObjectManager->expects($this->once())->method('getCaseSensitiveObjectName')->with('some\package\subpackage\view\thecontroller\theactiontheformat')->will($this->returnValue('ResolvedObjectName'));
 
-        $this->assertSame('ResolvedObjectName', $this->actionController->_call('resolveViewObjectName'));
+        self::assertSame('ResolvedObjectName', $this->actionController->_call('resolveViewObjectName'));
     }
 
     /**
@@ -89,10 +89,10 @@ class ActionControllerTest extends UnitTestCase
      */
     public function resolveViewObjectNameReturnsObjectNameOfCustomViewWithoutFormatSuffixIfItExists()
     {
-        $this->mockObjectManager->expects($this->at(0))->method('getCaseSensitiveObjectName')->with('some\package\subpackage\view\thecontroller\theactiontheformat')->will($this->returnValue(false));
+        $this->mockObjectManager->expects($this->at(0))->method('getCaseSensitiveObjectName')->with('some\package\subpackage\view\thecontroller\theactiontheformat')->will($this->returnValue(null));
         $this->mockObjectManager->expects($this->at(1))->method('getCaseSensitiveObjectName')->with('some\package\subpackage\view\thecontroller\theaction')->will($this->returnValue('ResolvedObjectName'));
 
-        $this->assertSame('ResolvedObjectName', $this->actionController->_call('resolveViewObjectName'));
+        self::assertSame('ResolvedObjectName', $this->actionController->_call('resolveViewObjectName'));
     }
 
     /**
@@ -101,10 +101,10 @@ class ActionControllerTest extends UnitTestCase
     public function resolveViewObjectNameRespectsViewFormatToObjectNameMap()
     {
         $this->actionController->_set('viewFormatToObjectNameMap', ['html' => 'Foo', 'theFormat' => 'Some\Custom\View\Object\Name']);
-        $this->mockObjectManager->expects($this->at(0))->method('getCaseSensitiveObjectName')->with('some\package\subpackage\view\thecontroller\theactiontheformat')->will($this->returnValue(false));
-        $this->mockObjectManager->expects($this->at(1))->method('getCaseSensitiveObjectName')->with('some\package\subpackage\view\thecontroller\theaction')->will($this->returnValue(false));
+        $this->mockObjectManager->expects($this->at(0))->method('getCaseSensitiveObjectName')->with('some\package\subpackage\view\thecontroller\theactiontheformat')->will($this->returnValue(null));
+        $this->mockObjectManager->expects($this->at(1))->method('getCaseSensitiveObjectName')->with('some\package\subpackage\view\thecontroller\theaction')->will($this->returnValue(null));
 
-        $this->assertSame('Some\Custom\View\Object\Name', $this->actionController->_call('resolveViewObjectName'));
+        self::assertSame('Some\Custom\View\Object\Name', $this->actionController->_call('resolveViewObjectName'));
     }
 
     /**
@@ -113,7 +113,7 @@ class ActionControllerTest extends UnitTestCase
     public function resolveViewReturnsViewResolvedByResolveViewObjectName()
     {
         $this->mockObjectManager->expects($this->atLeastOnce())->method('getCaseSensitiveObjectName')->with('some\package\subpackage\view\thecontroller\theactiontheformat')->will($this->returnValue(SimpleTemplateView::class));
-        $this->assertInstanceOf(SimpleTemplateView::class, $this->actionController->_call('resolveView'));
+        self::assertInstanceOf(SimpleTemplateView::class, $this->actionController->_call('resolveView'));
     }
 
     /**
@@ -121,17 +121,17 @@ class ActionControllerTest extends UnitTestCase
      */
     public function resolveViewReturnsDefaultViewIfNoViewObjectNameCouldBeResolved()
     {
-        $this->mockObjectManager->expects($this->any())->method('getCaseSensitiveObjectName')->will($this->returnValue(false));
+        $this->mockObjectManager->expects($this->any())->method('getCaseSensitiveObjectName')->will($this->returnValue(null));
         $this->actionController->_set('defaultViewObjectName', SimpleTemplateView::class);
-        $this->assertInstanceOf(SimpleTemplateView::class, $this->actionController->_call('resolveView'));
+        self::assertInstanceOf(SimpleTemplateView::class, $this->actionController->_call('resolveView'));
     }
 
     /**
      * @test
-     * @expectedException  \Neos\Flow\Mvc\Exception\NoSuchActionException
      */
     public function processRequestThrowsExceptionIfRequestedActionIsNotCallable()
     {
+        $this->expectException(Mvc\Exception\NoSuchActionException::class);
         $this->actionController = new ActionController();
 
         $this->inject($this->actionController, 'objectManager', $this->mockObjectManager);
@@ -142,21 +142,20 @@ class ActionControllerTest extends UnitTestCase
 
         $this->inject($this->actionController, 'arguments', new Arguments([]));
 
-        $mockHttpRequest = $this->getMockBuilder(Http\Request::class)->disableOriginalConstructor()->getMock();
-        $mockHttpRequest->expects($this->any())->method('getNegotiatedMediaType')->will($this->returnValue('*/*'));
+        $mockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
         $mockRequest->expects($this->any())->method('getHttpRequest')->will($this->returnValue($mockHttpRequest));
 
-        $mockResponse = $this->createMock(Http\Response::class);
+        $mockResponse = new Mvc\ActionResponse;
 
         $this->actionController->processRequest($mockRequest, $mockResponse);
     }
 
     /**
      * @test
-     * @expectedException  \Neos\Flow\Mvc\Exception\InvalidActionVisibilityException
      */
     public function processRequestThrowsExceptionIfRequestedActionIsNotPublic()
     {
+        $this->expectException(Mvc\Exception\InvalidActionVisibilityException::class);
         $this->actionController = new ActionController();
 
         $this->inject($this->actionController, 'objectManager', $this->mockObjectManager);
@@ -183,11 +182,10 @@ class ActionControllerTest extends UnitTestCase
             return $this->createMock($classname);
         }));
 
-        $mockHttpRequest = $this->getMockBuilder(Http\Request::class)->disableOriginalConstructor()->getMock();
-        $mockHttpRequest->expects($this->any())->method('getNegotiatedMediaType')->will($this->returnValue('*/*'));
+        $mockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
         $mockRequest->expects($this->any())->method('getHttpRequest')->will($this->returnValue($mockHttpRequest));
 
-        $mockResponse = $this->createMock(Http\Response::class);
+        $mockResponse = new Mvc\ActionResponse;
 
         $this->actionController->processRequest($mockRequest, $mockResponse);
     }
@@ -208,11 +206,10 @@ class ActionControllerTest extends UnitTestCase
         $mockMvcPropertyMappingConfigurationService = $this->createMock(Mvc\Controller\MvcPropertyMappingConfigurationService::class);
         $this->inject($this->actionController, 'mvcPropertyMappingConfigurationService', $mockMvcPropertyMappingConfigurationService);
 
-        $mockHttpRequest = $this->getMockBuilder(Http\Request::class)->disableOriginalConstructor()->getMock();
-        $mockHttpRequest->expects($this->any())->method('getNegotiatedMediaType')->will($this->returnValue('*/*'));
+        $mockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
         $this->mockRequest->expects($this->any())->method('getHttpRequest')->will($this->returnValue($mockHttpRequest));
 
-        $mockResponse = $this->createMock(Http\Response::class);
+        $mockResponse = new Mvc\ActionResponse;
 
         $mockView = $this->createMock(Mvc\View\ViewInterface::class);
         $mockView->expects($this->once())->method('setControllerContext')->with($this->mockControllerContext);
@@ -237,11 +234,10 @@ class ActionControllerTest extends UnitTestCase
         $mockMvcPropertyMappingConfigurationService = $this->createMock(Mvc\Controller\MvcPropertyMappingConfigurationService::class);
         $this->inject($this->actionController, 'mvcPropertyMappingConfigurationService', $mockMvcPropertyMappingConfigurationService);
 
-        $mockHttpRequest = $this->getMockBuilder(Http\Request::class)->disableOriginalConstructor()->getMock();
-        $mockHttpRequest->expects($this->any())->method('getNegotiatedMediaType')->will($this->returnValue('*/*'));
+        $mockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
         $this->mockRequest->expects($this->any())->method('getHttpRequest')->will($this->returnValue($mockHttpRequest));
 
-        $mockResponse = $this->createMock(Http\Response::class);
+        $mockResponse = new Mvc\ActionResponse;
 
         $mockView = $this->createMock(Mvc\View\ViewInterface::class);
         $mockView->expects($this->once())->method('assign')->with('settings', $mockSettings);
@@ -252,11 +248,11 @@ class ActionControllerTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Mvc\Exception\ViewNotFoundException
      */
     public function resolveViewThrowsExceptionIfResolvedViewDoesNotImplementViewInterface()
     {
-        $this->mockObjectManager->expects($this->any())->method('getCaseSensitiveObjectName')->will($this->returnValue(false));
+        $this->expectException(Mvc\Exception\ViewNotFoundException::class);
+        $this->mockObjectManager->expects($this->any())->method('getCaseSensitiveObjectName')->will($this->returnValue(null));
         $this->actionController->_set('defaultViewObjectName', 'ViewDefaultObjectName');
         $this->actionController->_call('resolveView');
     }

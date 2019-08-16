@@ -305,7 +305,7 @@ class ProxyClassBuilder
                         break;
 
                     case ConfigurationArgument::ARGUMENT_TYPES_SETTING:
-                        $assignments[$argumentPosition] = $assignmentPrologue . '\Neos\Flow\Core\Bootstrap::$staticObjectManager->getSettingsByPath(explode(\'.\', \'' . $argumentValue . '\'))';
+                        $assignments[$argumentPosition] = $assignmentPrologue . '\Neos\Flow\Core\Bootstrap::$staticObjectManager->get(\Neos\Flow\Configuration\ConfigurationManager::class)->getConfiguration(\Neos\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, \'' . $argumentValue . '\')';
                         break;
                 }
             }
@@ -646,7 +646,7 @@ class ProxyClassBuilder
                         break;
 
                     case ConfigurationArgument::ARGUMENT_TYPES_SETTING:
-                        $preparedArguments[] = '\Neos\Flow\Core\Bootstrap::$staticObjectManager->getSettingsByPath(explode(\'.\', \'' . $argumentValue . '\'))';
+                        $preparedArguments[] = '\Neos\Flow\Core\Bootstrap::$staticObjectManager->get(\Neos\Flow\Configuration\ConfigurationManager::class)->getConfiguration(\Neos\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, \'' . $argumentValue . '\')';
                         break;
                 }
             }

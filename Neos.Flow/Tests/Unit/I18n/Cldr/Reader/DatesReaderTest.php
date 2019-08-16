@@ -14,6 +14,7 @@ namespace Neos\Flow\Tests\Unit\I18n\Cldr\Reader;
 use Neos\Cache\Frontend\VariableFrontend;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Flow\I18n;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Testcase for the DatesReader
@@ -30,7 +31,7 @@ class DatesReaderTest extends UnitTestCase
     /**
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->sampleLocale = new I18n\Locale('en');
     }
@@ -39,10 +40,10 @@ class DatesReaderTest extends UnitTestCase
      * Setting cache expectations is partially same for many tests, so it's been
      * extracted to this method.
      *
-     * @param \PHPUnit_Framework_MockObject_MockObject $mockCache
+     * @param MockObject $mockCache
      * @return array
      */
-    public function createCacheExpectations(\PHPUnit_Framework_MockObject_MockObject $mockCache)
+    public function createCacheExpectations(MockObject $mockCache)
     {
         $mockCache->expects($this->at(0))->method('has')->with('parsedFormats')->will($this->returnValue(true));
         $mockCache->expects($this->at(1))->method('has')->with('parsedFormatsIndices')->will($this->returnValue(true));
@@ -77,7 +78,7 @@ class DatesReaderTest extends UnitTestCase
         $reader->initializeObject();
 
         $result = $reader->parseFormatFromCldr($this->sampleLocale, I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_DATE, I18n\Cldr\Reader\DatesReader::FORMAT_LENGTH_DEFAULT);
-        $this->assertEquals('mockParsedFormat', $result);
+        self::assertEquals('mockParsedFormat', $result);
 
         $reader->shutdownObject();
     }
@@ -104,7 +105,7 @@ class DatesReaderTest extends UnitTestCase
         $reader->initializeObject();
 
         $result = $reader->parseFormatFromCldr($this->sampleLocale, I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_DATETIME, I18n\Cldr\Reader\DatesReader::FORMAT_LENGTH_FULL);
-        $this->assertEquals([['foo '], 'h', 'm', 's', [' '], 'd', 'M', 'y', [' bar']], $result);
+        self::assertEquals([['foo '], 'h', 'm', 's', [' '], 'd', 'M', 'y', [' bar']], $result);
         $reader->shutdownObject();
     }
 
@@ -141,11 +142,11 @@ class DatesReaderTest extends UnitTestCase
         $reader->initializeObject();
 
         $result = $reader->getLocalizedLiteralsForLocale($this->sampleLocale);
-        $this->assertEquals('January', $result['months']['format']['wide'][1]);
-        $this->assertEquals('Sat', $result['days']['format']['abbreviated']['sat']);
-        $this->assertEquals('1', $result['quarters']['format']['narrow'][1]);
-        $this->assertEquals('a.m.', $result['dayPeriods']['stand-alone']['wide']['am']);
-        $this->assertEquals('Anno Domini', $result['eras']['eraNames'][1]);
+        self::assertEquals('January', $result['months']['format']['wide'][1]);
+        self::assertEquals('Sat', $result['days']['format']['abbreviated']['sat']);
+        self::assertEquals('1', $result['quarters']['format']['narrow'][1]);
+        self::assertEquals('a.m.', $result['dayPeriods']['stand-alone']['wide']['am']);
+        self::assertEquals('Anno Domini', $result['eras']['eraNames'][1]);
 
         $reader->shutdownObject();
     }
@@ -177,6 +178,6 @@ class DatesReaderTest extends UnitTestCase
         $reader = $this->getAccessibleMock(I18n\Cldr\Reader\DatesReader::class, ['dummy']);
 
         $result = $reader->_call('parseFormat', $format);
-        $this->assertEquals($expectedResult, $result);
+        self::assertEquals($expectedResult, $result);
     }
 }

@@ -28,7 +28,7 @@ class PersistenceMagicAspectTest extends FunctionalTestCase
     /**
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         if (!$this->persistenceManager instanceof PersistenceManager) {
@@ -51,7 +51,7 @@ class PersistenceMagicAspectTest extends FunctionalTestCase
     public function aspectDoesNotIntroduceUuidIdentifierToEntitiesWithCustomIdProperties()
     {
         $entity = new Fixtures\AnnotatedIdEntity();
-        $this->assertNull($this->persistenceManager->getIdentifierByObject($entity));
+        self::assertNull($this->persistenceManager->getIdentifierByObject($entity));
     }
 
     /**
@@ -61,9 +61,9 @@ class PersistenceMagicAspectTest extends FunctionalTestCase
     {
         $entity = new Fixtures\AnnotatedIdEntity();
         $clonedEntity = clone $entity;
-        $this->assertObjectNotHasAttribute('Flow_Persistence_clone', $entity);
+        self::assertObjectNotHasAttribute('Flow_Persistence_clone', $entity);
         $this->assertObjectHasAttribute('Flow_Persistence_clone', $clonedEntity);
-        $this->assertTrue($clonedEntity->Flow_Persistence_clone);
+        self::assertTrue($clonedEntity->Flow_Persistence_clone);
     }
 
     /**
@@ -74,7 +74,7 @@ class PersistenceMagicAspectTest extends FunctionalTestCase
         $valueObject = new Fixtures\TestValueObject('value');
 
         $this->assertObjectHasAttribute('Persistence_Object_Identifier', $valueObject);
-        $this->assertNotEmpty($this->persistenceManager->getIdentifierByObject($valueObject));
+        self::assertNotEmpty($this->persistenceManager->getIdentifierByObject($valueObject));
     }
 
     /**
@@ -83,7 +83,7 @@ class PersistenceMagicAspectTest extends FunctionalTestCase
      */
     public function valueObjectsWithTheSamePropertyValuesAreEqual($valueObject1, $valueObject2)
     {
-        $this->assertEquals($this->persistenceManager->getIdentifierByObject($valueObject1), $this->persistenceManager->getIdentifierByObject($valueObject2));
+        self::assertEquals($this->persistenceManager->getIdentifierByObject($valueObject1), $this->persistenceManager->getIdentifierByObject($valueObject2));
     }
 
     public function sameValueObjectDataProvider()
@@ -101,7 +101,7 @@ class PersistenceMagicAspectTest extends FunctionalTestCase
      */
     public function valueObjectWithDifferentPropertyValuesAreNotEqual($valueObject1, $valueObject2)
     {
-        $this->assertNotEquals($this->persistenceManager->getIdentifierByObject($valueObject1), $this->persistenceManager->getIdentifierByObject($valueObject2));
+        self::assertNotEquals($this->persistenceManager->getIdentifierByObject($valueObject1), $this->persistenceManager->getIdentifierByObject($valueObject2));
     }
 
     public function differentValueObjectDataProvider()
@@ -121,7 +121,7 @@ class PersistenceMagicAspectTest extends FunctionalTestCase
         $valueObject1 = new Fixtures\TestValueObjectWithConstructorLogic('value1', 'value2');
         $valueObject2 = new Fixtures\TestValueObjectWithConstructorLogicAndInversedPropertyOrder('value2', 'value1');
 
-        $this->assertNotEquals($this->persistenceManager->getIdentifierByObject($valueObject1), $this->persistenceManager->getIdentifierByObject($valueObject2));
+        self::assertNotEquals($this->persistenceManager->getIdentifierByObject($valueObject1), $this->persistenceManager->getIdentifierByObject($valueObject2));
     }
 
     /**
@@ -132,7 +132,7 @@ class PersistenceMagicAspectTest extends FunctionalTestCase
         $valueObject1 = new Fixtures\TestValueObjectWithTransientProperties('value1', 'thisDoesntRegardPersistenceWhatSoEver');
         $valueObject2 = new Fixtures\TestValueObjectWithTransientProperties('value1', 'reallyThisPropertyIsTransient');
 
-        $this->assertEquals($this->persistenceManager->getIdentifierByObject($valueObject1), $this->persistenceManager->getIdentifierByObject($valueObject2));
+        self::assertEquals($this->persistenceManager->getIdentifierByObject($valueObject1), $this->persistenceManager->getIdentifierByObject($valueObject2));
     }
 
     /**
@@ -144,8 +144,8 @@ class PersistenceMagicAspectTest extends FunctionalTestCase
         $valueObject2 = new Fixtures\TestValueObjectWithDateTimeProperty(new \DateTime('01.01.2013 00:00', new \DateTimeZone('CEST')));
         $valueObject3 = new Fixtures\TestValueObjectWithDateTimeProperty(new \DateTime('01.01.2013 00:00', new \DateTimeZone('GMT')));
 
-        $this->assertNotEquals($this->persistenceManager->getIdentifierByObject($valueObject1), $this->persistenceManager->getIdentifierByObject($valueObject2));
-        $this->assertEquals($this->persistenceManager->getIdentifierByObject($valueObject1), $this->persistenceManager->getIdentifierByObject($valueObject3));
+        self::assertNotEquals($this->persistenceManager->getIdentifierByObject($valueObject1), $this->persistenceManager->getIdentifierByObject($valueObject2));
+        self::assertEquals($this->persistenceManager->getIdentifierByObject($valueObject1), $this->persistenceManager->getIdentifierByObject($valueObject3));
     }
 
     /**
@@ -161,7 +161,7 @@ class PersistenceMagicAspectTest extends FunctionalTestCase
         $valueObject2 = new Fixtures\TestValueObjectWithSubValueObjectProperties($subValueObject2, 'test');
         $valueObject3 = new Fixtures\TestValueObjectWithSubValueObjectProperties($subValueObject3, 'test');
 
-        $this->assertEquals($this->persistenceManager->getIdentifierByObject($valueObject1), $this->persistenceManager->getIdentifierByObject($valueObject2));
-        $this->assertNotEquals($this->persistenceManager->getIdentifierByObject($valueObject1), $this->persistenceManager->getIdentifierByObject($valueObject3));
+        self::assertEquals($this->persistenceManager->getIdentifierByObject($valueObject1), $this->persistenceManager->getIdentifierByObject($valueObject2));
+        self::assertNotEquals($this->persistenceManager->getIdentifierByObject($valueObject1), $this->persistenceManager->getIdentifierByObject($valueObject3));
     }
 }

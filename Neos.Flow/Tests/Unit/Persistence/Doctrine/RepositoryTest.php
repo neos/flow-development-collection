@@ -34,7 +34,7 @@ class RepositoryTest extends UnitTestCase
     /**
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->mockEntityManager = $this->getMockBuilder(EntityManagerInterface::class)->disableOriginalConstructor()->getMock();
 
@@ -66,6 +66,6 @@ class RepositoryTest extends UnitTestCase
 
         /** @var Repository $repository */
         $repository = new $mockClassName($this->mockEntityManager);
-        $this->assertEquals($modelClassName, $repository->getEntityClassName());
+        self::assertEquals($modelClassName, $repository->getEntityClassName());
     }
 }

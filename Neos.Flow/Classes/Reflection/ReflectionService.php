@@ -1453,6 +1453,12 @@ class ReflectionService
             return $this->expandType($class, $type) . '<' . $this->expandType($class, $elementType) . '>' . ($isNullable ? '|null' : '');
         }
 
+        // expand SomeElementType[]" to "array<\ElementTypeNamespace\SomeElementType>"
+        if (substr_compare($typeWithoutNull, '[]', -2, 2) === 0) {
+            $elementType = substr($typeWithoutNull, 0, -2);
+            return 'array<' . $this->expandType($class, $elementType) . '>' . ($isNullable ? '|null' : '');
+        }
+
         // skip simple types and types with fully qualified namespaces
         if ($type === 'mixed' || $type[0] === '\\' || TypeHandling::isSimpleType($type)) {
             return TypeHandling::normalizeType($type) . ($isNullable ? '|null' : '');
@@ -1824,7 +1830,7 @@ class ReflectionService
         if (!isset($parameterInformation[self::DATA_PARAMETER_TYPE]) && $parameterClass !== null) {
             $parameterInformation[self::DATA_PARAMETER_TYPE] = $this->cleanClassName($parameterClass->getName());
         } elseif (!isset($parameterInformation[self::DATA_PARAMETER_TYPE])) {
-            $parameterInformation[self::DATA_PARAMETER_TYPE] = 'mixed';
+            $parameterInformation[self::DATA_PARAMETER_TYPE] = $parameter->isArray() ? 'array' : 'mixed';
         }
 
         return $parameterInformation;

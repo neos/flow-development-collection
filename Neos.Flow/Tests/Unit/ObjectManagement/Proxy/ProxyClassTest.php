@@ -86,6 +86,6 @@ class ProxyClassTest extends UnitTestCase
 
         $proxyCode = $mockProxyClass->render();
 
-        $this->assertEquals($expectedProxyCode, $proxyCode);
+        self::assertEquals($expectedProxyCode, $proxyCode);
     }
 }

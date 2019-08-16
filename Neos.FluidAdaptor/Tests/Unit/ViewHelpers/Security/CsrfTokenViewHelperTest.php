@@ -33,7 +33,7 @@ class CsrfTokenViewHelperTest extends ViewHelperBaseTestcase
     /**
      *
      */
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->viewHelper = $this->getMockBuilder(CsrfTokenViewHelper::class)->setMethods(['buildRenderChildrenClosure'])->getMock();
@@ -53,6 +53,6 @@ class CsrfTokenViewHelperTest extends ViewHelperBaseTestcase
         $this->objectManagerMock->expects(self::any())->method('get')->willReturn($mockSecurityContext);
 
         $actualResult = $this->viewHelper->render();
-        $this->assertEquals('TheCsrfToken', $actualResult);
+        self::assertEquals('TheCsrfToken', $actualResult);
     }
 }
