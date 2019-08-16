@@ -236,11 +236,14 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
             ]), false, false);
         }
 
-        foreach ($paths as $path) {
-            if (is_file($path)) {
-                return $path;
+        try {
+            foreach ($paths as $path) {
+                if (is_file($path)) {
+                    return $path;
+                }
             }
-        }
+        } catch (\Neos\Flow\ResourceManagement\Exception $resourceException) {/* ignoring to throw the exception below */}
+
 
         throw new Exception\InvalidTemplateResourceException('Template could not be loaded. I tried "' . implode('", "', $paths) . '"', 1225709595);
     }
