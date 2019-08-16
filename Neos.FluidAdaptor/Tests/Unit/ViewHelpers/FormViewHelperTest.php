@@ -443,11 +443,11 @@ class FormViewHelperTest extends ViewHelperBaseTestcase
     {
         $expectedPrefix = 'someArgumentPrefix';
         $mockSubRequest = $this->getMockBuilder(\Neos\Flow\Mvc\ActionRequest::class)->disableOriginalConstructor()->getMock();
-        $mockSubRequest->expects($this->once())->method('getArgumentNamespace')->will($this->returnValue($expectedPrefix));
+        $mockSubRequest->expects($this->once())->method('getArgumentNamespace')->willReturn($expectedPrefix);
 
         $viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\FormViewHelper::class, ['getFormActionUri', 'renderChildren', 'renderHiddenIdentityField', 'renderHiddenReferrerFields', 'addFormFieldNamesToViewHelperVariableContainer', 'removeFormFieldNamesFromViewHelperVariableContainer', 'addEmptyHiddenFieldNamesToViewHelperVariableContainer', 'removeEmptyHiddenFieldNamesFromViewHelperVariableContainer', 'renderEmptyHiddenFields', 'renderTrustedPropertiesField'], [], '', false);
         $this->controllerContext = $this->getMockBuilder(\Neos\Flow\Mvc\Controller\ControllerContext::class)->disableOriginalConstructor()->getMock();
-        $this->controllerContext->expects($this->any())->method('getRequest')->will($this->returnValue($mockSubRequest));
+        $this->controllerContext->expects($this->any())->method('getRequest')->willReturn($mockSubRequest);
         $this->renderingContext->setControllerContext($this->controllerContext);
         $this->injectDependenciesIntoViewHelper($viewHelper);
 

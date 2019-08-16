@@ -13,8 +13,8 @@ namespace Neos\FluidAdaptor\Tests\Unit\View;
 
 include_once(__DIR__ . '/Fixtures/TemplateViewFixture.php');
 
-use Neos\Flow\Http\Request;
-use Neos\Flow\Http\Uri;
+use GuzzleHttp\Psr7\ServerRequest;
+use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\FluidAdaptor\View\TemplateView;
@@ -37,7 +37,7 @@ class TemplateViewTest extends UnitTestCase
     {
         $controllerObjectName = 'Neos\\' . $packageKey . '\\' . ($subPackageKey != $subPackageKey . '\\' ? : '') . 'Controller\\' . $controllerName . 'Controller';
 
-        $httpRequest = Request::create(new Uri('http://robertlemke.com/blog'));
+        $httpRequest = new ServerRequest('GET', new Uri('http://robertlemke.com/blog'));
         $mockRequest = $this->createMock(\Neos\Flow\Mvc\ActionRequest::class, [], [$httpRequest]);
         $mockRequest->expects($this->any())->method('getControllerPackageKey')->will($this->returnValue($packageKey));
         $mockRequest->expects($this->any())->method('getControllerSubPackageKey')->will($this->returnValue($subPackageKey));

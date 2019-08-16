@@ -792,7 +792,7 @@ class PackageManager
      * if no such package is available.
      *
      * @param string $unknownCasedPackageKey The package key to convert
-     * @return mixed The upper camel cased package key or false if no such package exists
+     * @return string|false The upper camel cased package key or false if no such package exists
      * @api
      */
     public function getCaseSensitivePackageKey($unknownCasedPackageKey)

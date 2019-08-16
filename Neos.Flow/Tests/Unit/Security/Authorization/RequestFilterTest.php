@@ -11,7 +11,7 @@ namespace Neos\Flow\Tests\Unit\Security\Authorization;
  * source code.
  */
 
-use Neos\Flow\Mvc\RequestInterface;
+use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Flow\Security;
 
@@ -25,7 +25,7 @@ class RequestFilterTest extends UnitTestCase
      */
     public function theSetIncerceptorIsCalledIfTheRequestPatternMatches()
     {
-        $request = $this->createMock(RequestInterface::class);
+        $request = $this->createMock(ActionRequest::class);
         $requestPattern = $this->createMock(Security\RequestPatternInterface::class);
         $interceptor = $this->createMock(Security\Authorization\InterceptorInterface::class);
 
@@ -41,7 +41,7 @@ class RequestFilterTest extends UnitTestCase
      */
     public function theSetIncerceptorIsNotCalledIfTheRequestPatternDoesNotMatch()
     {
-        $request = $this->createMock(RequestInterface::class);
+        $request = $this->createMock(ActionRequest::class);
         $requestPattern = $this->createMock(Security\RequestPatternInterface::class);
         $interceptor = $this->createMock(Security\Authorization\InterceptorInterface::class);
 
@@ -57,7 +57,7 @@ class RequestFilterTest extends UnitTestCase
      */
     public function theFilterReturnsTrueIfThePatternMatched()
     {
-        $request = $this->createMock(RequestInterface::class);
+        $request = $this->createMock(ActionRequest::class);
         $requestPattern = $this->createMock(Security\RequestPatternInterface::class);
         $interceptor = $this->createMock(Security\Authorization\InterceptorInterface::class);
 
@@ -72,7 +72,7 @@ class RequestFilterTest extends UnitTestCase
      */
     public function theFilterReturnsFalseIfThePatternDidNotMatch()
     {
-        $request = $this->createMock(RequestInterface::class);
+        $request = $this->createMock(ActionRequest::class);
         $requestPattern = $this->createMock(Security\RequestPatternInterface::class);
         $interceptor = $this->createMock(Security\Authorization\InterceptorInterface::class);
 

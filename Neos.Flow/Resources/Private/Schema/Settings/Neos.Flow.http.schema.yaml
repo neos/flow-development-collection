@@ -62,3 +62,17 @@ properties:
               'host': { type: string, required: true }
               'port': { type: string, required: true }
               'proto': { type: string, required: true }
+  'serverRequestDefaults':
+    type: dictionary
+    required: true
+    additionalProperties: false
+    properties:
+      'userAgent':
+        required: true
+        type: string
+      'scriptPath':
+        required: true
+        type: string
+      'protocolVersion':
+        required: true
+        type: string

@@ -140,7 +140,7 @@ abstract class AbstractFormFieldViewHelper extends AbstractFormViewHelper
     {
         /** @var $validationResults Result */
         $validationResults = $this->getRequest()->getInternalArgument('__submittedArgumentValidationResults');
-        return ($validationResults !== null && $validationResults->hasErrors());
+        return ($validationResults instanceof Result && $validationResults->hasErrors());
     }
 
     /**
@@ -269,7 +269,7 @@ abstract class AbstractFormFieldViewHelper extends AbstractFormViewHelper
     {
         /** @var $validationResults Result */
         $validationResults = $this->getRequest()->getInternalArgument('__submittedArgumentValidationResults');
-        if ($validationResults === null) {
+        if (!$validationResults instanceof Result) {
             return new Result();
         }
         return $validationResults->forProperty($this->getPropertyPath());

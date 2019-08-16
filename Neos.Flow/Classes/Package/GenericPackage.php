@@ -210,7 +210,17 @@ class GenericPackage implements PackageInterface, PackageKeyAwareInterface
      */
     public function getInstalledVersion()
     {
-        return ComposerUtility::getPackageVersion($this->composerName) ?: $this->getComposerManifest('version');
+        $version = ComposerUtility::getPackageVersion($this->composerName);
+        if (!empty($version)) {
+            return $version;
+        }
+
+        $version = $this->getComposerManifest('version');
+        if (!empty($version)) {
+            return $version;
+        }
+
+        return '';
     }
 
     /**

@@ -50,7 +50,7 @@ class BrowserTest extends FunctionalTestCase
     public function redirectsAreFollowed()
     {
         $response = $this->browser->request('http://localhost/test/http/redirecting');
-        self::assertEquals('arrived.', $response->getContent());
+        self::assertEquals('arrived.', $response->getBody()->getContents());
     }
 
     /**
@@ -62,8 +62,8 @@ class BrowserTest extends FunctionalTestCase
     {
         $this->browser->setFollowRedirects(false);
         $response = $this->browser->request('http://localhost/test/http/redirecting');
-        self::assertStringNotContainsString('arrived.', $response->getContent());
+        self::assertStringNotContainsString('arrived.', $response->getBody()->getContents());
         self::assertEquals(303, $response->getStatusCode());
-        self::assertEquals('http://localhost/test/http/redirecting/tohere', $response->getHeader('Location'));
+        self::assertEquals('http://localhost/test/http/redirecting/tohere', $response->getHeaderLine('Location'));
     }
 }

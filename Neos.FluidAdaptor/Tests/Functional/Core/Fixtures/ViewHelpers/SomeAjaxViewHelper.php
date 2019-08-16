@@ -55,6 +55,7 @@ class SomeAjaxViewHelper extends AbstractWidgetViewHelper
      */
     public function render(): string
     {
-        return $this->initiateSubRequest();
+        $response = $this->initiateSubRequest();
+        return $response;
     }
 }
