@@ -105,8 +105,9 @@ class AjaxWidgetComponent implements ComponentInterface
     protected function extractWidgetContext(ServerRequestInterface $httpRequest):? WidgetContext
     {
         $arguments = $httpRequest->getQueryParams();
-        if (is_array($httpRequest->getParsedBody())) {
-            $arguments = Arrays::arrayMergeRecursiveOverrule($arguments, $httpRequest->getParsedBody());
+        $parsedBody  = $httpRequest->getParsedBody();
+        if (is_array($parsedBody)) {
+            $arguments = Arrays::arrayMergeRecursiveOverrule($arguments, $parsedBody);
         }
         if (isset($arguments['__widgetId'])) {
             return $this->ajaxWidgetContextHolder->get($arguments['__widgetId']);

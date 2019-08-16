@@ -65,6 +65,8 @@ abstract class UploadedFilesHelper
         if ($collectionName) {
             $flowUploadedFile->setCollectionName($collectionName);
         }
+
+        return $flowUploadedFile;
     }
 
     /**

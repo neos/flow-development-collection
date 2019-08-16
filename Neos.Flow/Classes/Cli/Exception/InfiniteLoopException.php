@@ -8,5 +8,4 @@ namespace Neos\Flow\Cli\Exception;
  */
 class InfiniteLoopException extends \Exception
 {
-
 }

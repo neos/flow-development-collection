@@ -113,7 +113,7 @@ class ActionRequest implements RequestInterface
 
     /**
      * The parent request – either another ActionRequest or Http Request
-     * @var ActionRequest|HttpRequestInterface
+     * @var ActionRequest
      */
     protected $parentRequest;
 

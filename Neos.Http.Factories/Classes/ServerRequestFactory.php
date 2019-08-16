@@ -62,12 +62,14 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
         if (is_string($uri)) {
             $uri = $this->uriFactory->createUri($uri);
         }
-        $isDefaultPort = $uri->getScheme() === 'https' ? ($uri->getPort() === 443) : ($uri->getPort() === 80);
+
+        $uriPort = $uri->getPort();
+        $isDefaultPort = $uri->getScheme() === 'https' ? ($uriPort === 443) : ($uriPort === 80);
         $scriptName = '/' . basename($this->scriptPath);
 
         $defaultServerEnvironment = [
             'HTTP_USER_AGENT' => $this->defaultUserAgent,
-            'HTTP_HOST' => $uri->getHost() . ($isDefaultPort !== true && $uri->getPort() !== null ? ':' . $uri->getPort() : ''),
+            'HTTP_HOST' => $uri->getHost() . ($isDefaultPort !== true && $uriPort !== null ? ':' . $uriPort : ''),
             'SERVER_NAME' => $uri->getHost(),
             'SERVER_ADDR' => '127.0.0.1',
             'SERVER_PORT' => $uri->getPort() ?: 80,

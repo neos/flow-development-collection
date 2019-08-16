@@ -47,7 +47,7 @@ abstract class AbstractWidgetController extends ActionController
     {
         /** @var $widgetContext WidgetContext */
         $widgetContext = $request->getInternalArgument('__widgetContext');
-        if ($widgetContext === null) {
+        if (!$widgetContext instanceof WidgetContext) {
             throw new WidgetContextNotFoundException('The widget context could not be found in the request.', 1307450180);
         }
         $this->widgetConfiguration = $widgetContext->getWidgetConfiguration();

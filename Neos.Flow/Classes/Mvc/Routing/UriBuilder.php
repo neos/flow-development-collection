@@ -17,7 +17,6 @@ use Neos\Flow\Http\ServerRequestAttributes;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Routing\Dto\ResolveContext;
 use Neos\Utility\Arrays;
-use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * An URI Builder
@@ -461,7 +460,7 @@ class UriBuilder
     protected function getRequestNamespacePath(ActionRequest $request): string
     {
         $namespaceParts = [];
-        while (!$request->isMainRequest()) {
+        while ($request !== null && $request->isMainRequest() === false) {
             $namespaceParts[] = $request->getArgumentNamespace();
             $request = $request->getParentRequest();
         }

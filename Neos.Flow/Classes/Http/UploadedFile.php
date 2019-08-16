@@ -77,9 +77,13 @@ class UploadedFile implements UploadedFileInterface
      */
     protected function setStreamOrFile($streamOrFile)
     {
-        if (is_string($streamOrFile) || $streamOrFile instanceof StreamInterface) {
+        if (is_string($streamOrFile)) {
             $this->file = $streamOrFile;
             return;
+        }
+
+        if ($streamOrFile instanceof StreamInterface) {
+            $this->stream = $streamOrFile;
         }
 
         if (is_resource($streamOrFile)) {
@@ -131,7 +135,7 @@ class UploadedFile implements UploadedFileInterface
             return $this->stream;
         }
 
-        return new Stream($this->file);
+        return new Stream(fopen($this->file, 'rb+'));
     }
 
     /**

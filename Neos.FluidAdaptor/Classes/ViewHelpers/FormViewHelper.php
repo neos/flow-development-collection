@@ -12,6 +12,8 @@ namespace Neos\FluidAdaptor\ViewHelpers;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Controller\MvcPropertyMappingConfigurationService;
 use Neos\Flow\Security\Authentication\AuthenticationManagerInterface;
 use Neos\Flow\Security\Context;
@@ -292,7 +294,7 @@ class FormViewHelper extends AbstractFormViewHelper
         $result = chr(10);
         $request = $this->controllerContext->getRequest();
         $argumentNamespace = null;
-        if (!$request->isMainRequest()) {
+        if ($request instanceof ActionRequest && $request->isMainRequest() === false) {
             $argumentNamespace = $request->getArgumentNamespace();
 
             $referrer = [
@@ -307,6 +309,10 @@ class FormViewHelper extends AbstractFormViewHelper
                 $result .= '<input type="hidden" name="' . $argumentNamespace . '[__referrer][' . $referrerKey . ']" value="' . $referrerValue . '" />' . chr(10);
             }
             $request = $request->getParentRequest();
+        }
+
+        if ($request === null) {
+            throw new \RuntimeException('No ActionRequest could be found to evaluate form argument namespace.', 1565945918);
         }
 
         $arguments = $request->getArguments();
