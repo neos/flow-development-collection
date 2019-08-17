@@ -15,6 +15,7 @@ use Neos\Error\Messages as Error;
 use Neos\Flow\Annotations as Flow;
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Psr7\Uri;
+use Psr\Http\Message\UriInterface;
 use Neos\Flow\Http\Helper\MediaTypeHelper;
 use Neos\Flow\Http\Helper\ResponseInformationHelper;
 use Neos\Flow\Mvc\ActionRequest;
@@ -28,8 +29,6 @@ use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Validation\ValidatorResolver;
 use Neos\Utility\MediaTypes;
-use Neos\Flow\Http\Helper\MediaTypeHelper;
-use Psr\Http\Message\UriInterface;
 
 /**
  * An abstract base class for HTTP based controllers
