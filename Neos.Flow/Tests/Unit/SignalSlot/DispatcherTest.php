@@ -35,7 +35,7 @@ class DispatcherTest extends UnitTestCase
         $expectedSlots = [
             ['class' => get_class($mockSlot), 'method' => 'someSlotMethod', 'object' => null, 'passSignalInformation' => false]
         ];
-        $this->assertSame($expectedSlots, $dispatcher->getSlots(get_class($mockSignal), 'someSignal'));
+        self::assertSame($expectedSlots, $dispatcher->getSlots(get_class($mockSignal), 'someSignal'));
     }
 
     /**
@@ -52,7 +52,7 @@ class DispatcherTest extends UnitTestCase
         $expectedSlots = [
             ['class' => null, 'method' => 'someSlotMethod', 'object' => $mockSlot, 'passSignalInformation' => false]
         ];
-        $this->assertSame($expectedSlots, $dispatcher->getSlots(get_class($mockSignal), 'someSignal'));
+        self::assertSame($expectedSlots, $dispatcher->getSlots(get_class($mockSignal), 'someSignal'));
     }
 
     /**
@@ -70,7 +70,7 @@ class DispatcherTest extends UnitTestCase
         $expectedSlots = [
             ['class' => null, 'method' => '__invoke', 'object' => $mockSlot, 'passSignalInformation' => false]
         ];
-        $this->assertSame($expectedSlots, $dispatcher->getSlots(get_class($mockSignal), 'someSignal'));
+        self::assertSame($expectedSlots, $dispatcher->getSlots(get_class($mockSignal), 'someSignal'));
     }
 
     /**
@@ -90,7 +90,7 @@ class DispatcherTest extends UnitTestCase
         $dispatcher->injectObjectManager($mockObjectManager);
 
         $dispatcher->dispatch('Foo', 'bar', ['foo' => 'bar', 'baz' => 'quux']);
-        $this->assertSame(['bar', 'quux'], $arguments);
+        self::assertSame(['bar', 'quux'], $arguments);
     }
 
     /**
@@ -106,7 +106,7 @@ class DispatcherTest extends UnitTestCase
         $dispatcher->injectObjectManager($mockObjectManager);
 
         $dispatcher->dispatch('Foo', 'bar', ['foo' => 'bar', 'baz' => 'quux']);
-        $this->assertSame(['bar', 'quux'], self::$arguments);
+        self::assertSame(['bar', 'quux'], self::$arguments);
     }
 
     /**
@@ -118,7 +118,7 @@ class DispatcherTest extends UnitTestCase
         $dispatcher->connect('Foo', 'bar', get_class($this), '::staticSlot', false);
 
         $dispatcher->dispatch('Foo', 'bar', ['no' => 'object', 'manager' => 'exists']);
-        $this->assertSame(['object', 'exists'], self::$arguments);
+        self::assertSame(['object', 'exists'], self::$arguments);
     }
 
     /**
@@ -155,7 +155,7 @@ class DispatcherTest extends UnitTestCase
         $dispatcher->connect('Foo', 'bar', $slotClassName, 'slot', false);
 
         $dispatcher->dispatch('Foo', 'bar', ['foo' => 'bar', 'baz' => 'quux']);
-        $this->assertSame($mockSlot->arguments, ['bar', 'quux']);
+        self::assertSame($mockSlot->arguments, ['bar', 'quux']);
     }
 
     /**
@@ -192,7 +192,7 @@ class DispatcherTest extends UnitTestCase
         $dispatcher->connect('Foo', 'bar', $slotClassName, 'unknownMethodName', true);
 
         $dispatcher->dispatch('Foo', 'bar', ['foo' => 'bar', 'baz' => 'quux']);
-        $this->assertSame($mockSlot->arguments, ['bar', 'quux']);
+        self::assertSame($mockSlot->arguments, ['bar', 'quux']);
     }
 
     /**
@@ -212,7 +212,7 @@ class DispatcherTest extends UnitTestCase
         $dispatcher->injectObjectManager($mockObjectManager);
 
         $dispatcher->dispatch('SignalClassName', 'methodName', ['foo' => 'bar', 'baz' => 'quux']);
-        $this->assertSame(['bar', 'quux', 'SignalClassName::methodName'], $arguments);
+        self::assertSame(['bar', 'quux', 'SignalClassName::methodName'], $arguments);
     }
 
     /**

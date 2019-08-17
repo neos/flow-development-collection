@@ -76,6 +76,6 @@ class WritableFileSystemStorageTest extends UnitTestCase
 
         $this->writableFileSystemStorage->_call('importTemporaryFile', $mockTempFile->url(), 'default');
 
-        $this->assertSame('existing file', file_get_contents($finalTargetPathAndFilename));
+        self::assertSame('existing file', file_get_contents($finalTargetPathAndFilename));
     }
 }

@@ -43,7 +43,7 @@ class ActionViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Vie
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['action' => 'index']);
         $actualResult = $this->viewHelper->render();
 
-        $this->assertEquals('some/uri', $actualResult);
+        self::assertEquals('some/uri', $actualResult);
     }
 
     /**
@@ -92,7 +92,7 @@ class ActionViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Vie
             $this->viewHelper->render();
         } catch (\Neos\FluidAdaptor\Core\ViewHelper\Exception $exception) {
         }
-        $this->assertEquals(12345, $exception->getPrevious()->getCode());
+        self::assertEquals(12345, $exception->getPrevious()->getCode());
     }
 
     /**

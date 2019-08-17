@@ -108,7 +108,7 @@ class ClassLoaderTest extends UnitTestCase
         file_put_contents('vfs://Test/Packages/Application/Acme.MyApp/Classes/Acme/MyApp/SubDirectory/ClassInSubDirectory.php', '<?php ' . __CLASS__ . '::$testClassWasLoaded = true; ?>');
 
         $this->classLoader->loadClass('Acme\MyApp\SubDirectory\ClassInSubDirectory');
-        $this->assertTrue(self::$testClassWasLoaded);
+        self::assertTrue(self::$testClassWasLoaded);
     }
 
     /**
@@ -125,7 +125,7 @@ class ClassLoaderTest extends UnitTestCase
         $this->classLoader->setPackages($this->mockPackages);
 
         $this->classLoader->loadClass('Acme\MyApp\Tests\Functional\Essentials\LawnMowerTest');
-        $this->assertTrue(self::$testClassWasLoaded);
+        self::assertTrue(self::$testClassWasLoaded);
     }
 
     /**
@@ -137,7 +137,7 @@ class ClassLoaderTest extends UnitTestCase
         file_put_contents('vfs://Test/Packages/Application/Acme.MyApp/Classes/Acme/MyApp/SubDirectory/A/B/C/D/E.php', '<?php ' . __CLASS__ . '::$testClassWasLoaded = true; ?>');
 
         $this->classLoader->loadClass('Acme\MyApp\SubDirectory\A\B\C\D\E');
-        $this->assertTrue(self::$testClassWasLoaded);
+        self::assertTrue(self::$testClassWasLoaded);
     }
 
     /**
@@ -152,7 +152,7 @@ class ClassLoaderTest extends UnitTestCase
         file_put_contents('vfs://Test/Packages/Application/Acme.MyAppAddon/Classes/Acme/MyAppAddon/Class.php', '<?php ' . __CLASS__ . '::$testClassWasLoaded = true; ?>');
 
         $this->classLoader->loadClass('Acme\MyAppAddon\Class');
-        $this->assertTrue(self::$testClassWasLoaded);
+        self::assertTrue(self::$testClassWasLoaded);
     }
 
     /**
@@ -166,7 +166,7 @@ class ClassLoaderTest extends UnitTestCase
         file_put_contents('vfs://Test/Packages/Application/Acme.MyApp/Classes/Acme/MyApp/Foo.php', '<?php ' . __CLASS__ . '::$testClassWasLoaded = true; ?>');
 
         $this->classLoader->loadClass('Acme\MyApp_Foo');
-        $this->assertTrue(self::$testClassWasLoaded);
+        self::assertTrue(self::$testClassWasLoaded);
     }
 
     /**
@@ -180,7 +180,7 @@ class ClassLoaderTest extends UnitTestCase
         file_put_contents('vfs://Test/Packages/Application/Acme.MyApp/Classes/Acme/MyApp/My_Underscore/Foo.php', '<?php ' . __CLASS__ . '::$testClassWasLoaded = true; ?>');
 
         $this->classLoader->loadClass('Acme\MyApp\My_Underscore\Foo');
-        $this->assertTrue(self::$testClassWasLoaded);
+        self::assertTrue(self::$testClassWasLoaded);
     }
 
     /**
@@ -194,7 +194,7 @@ class ClassLoaderTest extends UnitTestCase
         file_put_contents('vfs://Test/Packages/Application/Acme.MyApp/Classes/Acme/MyApp/Foo1.php', '<?php ' . __CLASS__ . '::$testClassWasLoaded = true; ?>');
 
         $this->classLoader->loadClass('Acme_MyApp_Foo1');
-        $this->assertTrue(self::$testClassWasLoaded);
+        self::assertTrue(self::$testClassWasLoaded);
     }
 
     /**
@@ -206,7 +206,7 @@ class ClassLoaderTest extends UnitTestCase
         file_put_contents('vfs://Test/Packages/Application/Acme.MyApp/Classes/Acme/MyApp/Foo2.php', '<?php ' . __CLASS__ . '::$testClassWasLoaded = true; ?>');
 
         $this->classLoader->loadClass('\Acme\MyApp\Foo2');
-        $this->assertTrue(self::$testClassWasLoaded);
+        self::assertTrue(self::$testClassWasLoaded);
     }
 
     /**
@@ -222,7 +222,7 @@ class ClassLoaderTest extends UnitTestCase
         file_put_contents('vfs://Test/Packages/Application/Acme.MyAppAddon/Classes/Acme/MyAppAddon/Class.php', '<?php ' . __CLASS__ . '::$testClassWasLoaded = true; ?>');
 
         $this->classLoader->loadClass('Acme\MyAppAddon\Class');
-        $this->assertFalse(self::$testClassWasLoaded);
+        self::assertFalse(self::$testClassWasLoaded);
     }
 
     /**
@@ -247,7 +247,7 @@ class ClassLoaderTest extends UnitTestCase
         $this->mockPackages['Acme.MyApp'] = $this->mockPackage1;
         $this->classLoader->setPackages($this->mockPackages);
         $this->classLoader->loadClass('Acme\MyApp\Foo');
-        $this->assertTrue(self::$testClassWasLoaded);
+        self::assertTrue(self::$testClassWasLoaded);
     }
 
     /**
@@ -285,12 +285,12 @@ class ClassLoaderTest extends UnitTestCase
         $this->classLoader->setPackages($packages);
 
         $this->classLoader->loadClass('TestPackage\Subscriber\Foo');
-        $this->assertTrue(self::$testClassWasLoaded);
+        self::assertTrue(self::$testClassWasLoaded);
 
         self::$testClassWasLoaded = false;
 
         $this->classLoader->loadClass('TestPackage\Subscriber\Log\Bar');
-        $this->assertTrue(self::$testClassWasLoaded);
+        self::assertTrue(self::$testClassWasLoaded);
     }
 
     /**
@@ -330,6 +330,6 @@ class ClassLoaderTest extends UnitTestCase
 
 
         $this->classLoader->loadClass('TestPackage\Foo\Bar3');
-        $this->assertTrue(self::$testClassWasOverwritten);
+        self::assertTrue(self::$testClassWasOverwritten);
     }
 }

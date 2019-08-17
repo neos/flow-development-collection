@@ -54,7 +54,7 @@ class QueryTest extends UnitTestCase
     public function executeReturnsQueryResultInstance()
     {
         $result = $this->query->execute();
-        $this->assertInstanceOf(Persistence\Generic\QueryResult::class, $result);
+        self::assertInstanceOf(Persistence\Generic\QueryResult::class, $result);
     }
 
     /**

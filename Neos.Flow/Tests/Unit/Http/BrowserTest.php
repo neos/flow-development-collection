@@ -11,10 +11,14 @@ namespace Neos\Flow\Tests\Unit\Http;
  * source code.
  */
 
-use Neos\Flow\Http\Uri;
+use GuzzleHttp\Psr7\Response;
+use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Http\Client;
-use Neos\Flow\Http;
 use Neos\Flow\Tests\UnitTestCase;
+use Neos\Http\Factories\ServerRequestFactory;
+use Neos\Http\Factories\UriFactory;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Test case for the Http Cookie class
@@ -33,6 +37,7 @@ class BrowserTest extends UnitTestCase
     {
         parent::setUp();
         $this->browser = new Client\Browser();
+        $this->inject($this->browser, 'serverRequestFactory', new ServerRequestFactory(new UriFactory()));
     }
 
     /**
@@ -44,8 +49,8 @@ class BrowserTest extends UnitTestCase
         $requestEngine
             ->expects($this->once())
             ->method('sendRequest')
-            ->with($this->isInstanceOf(Http\Request::class))
-            ->will($this->returnValue(new Http\Response()));
+            ->with($this->isInstanceOf(RequestInterface::class))
+            ->will($this->returnValue(new Response()));
         $this->browser->setRequestEngine($requestEngine);
         $this->browser->request('http://localhost/foo');
     }
@@ -59,16 +64,16 @@ class BrowserTest extends UnitTestCase
         $requestEngine
             ->expects($this->any())
             ->method('sendRequest')
-            ->will($this->returnValue(new Http\Response()));
+            ->willReturn(new Response());
         $this->browser->setRequestEngine($requestEngine);
 
         $this->browser->addAutomaticRequestHeader('X-Test-Header', 'Acme');
         $this->browser->addAutomaticRequestHeader('Content-Type', 'text/plain');
         $this->browser->request('http://localhost/foo');
 
-        $this->assertTrue($this->browser->getLastRequest()->hasHeader('X-Test-Header'));
-        $this->assertSame('Acme', $this->browser->getLastRequest()->getHeader('X-Test-Header'));
-        $this->assertStringContainsString('text/plain', $this->browser->getLastRequest()->getHeader('Content-Type'));
+        self::assertTrue($this->browser->getLastRequest()->hasHeader('X-Test-Header'));
+        self::assertSame('Acme', $this->browser->getLastRequest()->getHeaderLine('X-Test-Header'));
+        self::assertStringContainsString('text/plain', $this->browser->getLastRequest()->getHeaderLine('Content-Type'));
     }
 
     /**
@@ -81,13 +86,13 @@ class BrowserTest extends UnitTestCase
         $requestEngine
             ->expects($this->once())
             ->method('sendRequest')
-            ->will($this->returnValue(new Http\Response()));
+            ->will($this->returnValue(new Response()));
         $this->browser->setRequestEngine($requestEngine);
 
         $this->browser->addAutomaticRequestHeader('X-Test-Header', 'Acme');
         $this->browser->removeAutomaticRequestHeader('X-Test-Header');
         $this->browser->request('http://localhost/foo');
-        $this->assertFalse($this->browser->getLastRequest()->hasHeader('X-Test-Header'));
+        self::assertFalse($this->browser->getLastRequest()->hasHeader('X-Test-Header'));
     }
 
     /**
@@ -98,31 +103,28 @@ class BrowserTest extends UnitTestCase
         $initialUri = new Uri('http://localhost/foo');
         $redirectUri = new Uri('http://localhost/goToAnotherFoo');
 
-        $firstResponse = new Http\Response();
-        $firstResponse->setStatus(301);
-        $firstResponse->setHeader('Location', (string)$redirectUri);
-        $secondResponse = new Http\Response();
-        $secondResponse->setStatus(202);
+        $firstResponse = new Response(301, ['Location' => (string)$redirectUri]);
+        $secondResponse = new Response(202);
 
         $requestEngine = $this->createMock(Client\RequestEngineInterface::class);
         $requestEngine
             ->expects($this->at(0))
             ->method('sendRequest')
-            ->with($this->callback(function (Http\Request $request) use ($initialUri) {
-                return $request->getUri() == $initialUri;
+            ->with($this->callback(function (ServerRequestInterface $request) use ($initialUri) {
+                return (string)$request->getUri() === (string)$initialUri;
             }))
-            ->will($this->returnValue($firstResponse));
+            ->willReturn($firstResponse);
         $requestEngine
             ->expects($this->at(1))
             ->method('sendRequest')
-            ->with($this->callback(function (Http\Request $request) use ($redirectUri) {
-                return $request->getUri() == $redirectUri;
+            ->with($this->callback(function (ServerRequestInterface $request) use ($redirectUri) {
+                return (string)$request->getUri() === (string)$redirectUri;
             }))
-            ->will($this->returnValue($secondResponse));
+            ->willReturn($secondResponse);
 
         $this->browser->setRequestEngine($requestEngine);
         $actual = $this->browser->request($initialUri);
-        $this->assertSame($secondResponse, $actual);
+        self::assertSame($secondResponse, $actual);
     }
 
     /**
@@ -130,9 +132,7 @@ class BrowserTest extends UnitTestCase
      */
     public function browserDoesNotRedirectOnLocationHeaderButNot3xxResponseCode()
     {
-        $twoZeroOneResponse = new Http\Response();
-        $twoZeroOneResponse->setStatus(201);
-        $twoZeroOneResponse->setHeader('Location', 'http://localhost/createdResource/isHere');
+        $twoZeroOneResponse = new Response(201, ['Location' => 'http://localhost/createdResource/isHere']);
 
         $requestEngine = $this->createMock(Client\RequestEngineInterface::class);
         $requestEngine
@@ -142,7 +142,7 @@ class BrowserTest extends UnitTestCase
 
         $this->browser->setRequestEngine($requestEngine);
         $actual = $this->browser->request('http://localhost/createSomeResource');
-        $this->assertSame($twoZeroOneResponse, $actual);
+        self::assertSame($twoZeroOneResponse, $actual);
     }
 
     /**
@@ -152,18 +152,10 @@ class BrowserTest extends UnitTestCase
     {
         $this->expectException(Client\InfiniteRedirectionException::class);
         $wildResponses = [];
-        $wildResponses[0] = new Http\Response();
-        $wildResponses[0]->setStatus(301);
-        $wildResponses[0]->setHeader('Location', 'http://localhost/pleaseGoThere');
-        $wildResponses[1] = new Http\Response();
-        $wildResponses[1]->setStatus(301);
-        $wildResponses[1]->setHeader('Location', 'http://localhost/ahNoPleaseRatherGoThere');
-        $wildResponses[2] = new Http\Response();
-        $wildResponses[2]->setStatus(301);
-        $wildResponses[2]->setHeader('Location', 'http://localhost/youNoWhatISendYouHere');
-        $wildResponses[3] = new Http\Response();
-        $wildResponses[3]->setStatus(301);
-        $wildResponses[3]->setHeader('Location', 'http://localhost/ahNoPleaseRatherGoThere');
+        $wildResponses[0] = new Response(301, ['Location' => 'http://localhost/pleaseGoThere']);
+        $wildResponses[1] = new Response(301, ['Location' => 'http://localhost/ahNoPleaseRatherGoThere']);
+        $wildResponses[2] = new Response(301, ['Location' => 'http://localhost/youNoWhatISendYouHere']);
+        $wildResponses[3] = new Response(301, ['Location' => 'http://localhost/ahNoPleaseRatherGoThere']);
 
         $requestEngine = $this->createMock(Client\RequestEngineInterface::class);
         for ($i=0; $i<=3; $i++) {
@@ -185,9 +177,7 @@ class BrowserTest extends UnitTestCase
         $this->expectException(Client\InfiniteRedirectionException::class);
         $requestEngine = $this->createMock(Client\RequestEngineInterface::class);
         for ($i=0; $i<=10; $i++) {
-            $response = new Http\Response();
-            $response->setHeader('Location', 'http://localhost/this/willLead/you/knowhere/' . $i);
-            $response->setStatus(301);
+            $response = new Response(301, ['Location' => 'http://localhost/this/willLead/you/knowhere/' . $i]);
             $requestEngine
                 ->expects($this->at($i))
                 ->method('sendRequest')

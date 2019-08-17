@@ -38,7 +38,7 @@ class YamlSourceTest extends UnitTestCase
     {
         $configurationSource = new YamlSource();
         $configuration = $configurationSource->load('/ThisFileDoesNotExist');
-        $this->assertEquals([], $configuration, 'No empty array was returned.');
+        self::assertEquals([], $configuration, 'No empty array was returned.');
     }
 
     /**
@@ -49,7 +49,7 @@ class YamlSourceTest extends UnitTestCase
         $pathAndFilename = __DIR__ . '/../Fixture/YAMLConfigurationFile';
         $configurationSource = new YamlSource();
         $configuration = $configurationSource->load($pathAndFilename);
-        $this->assertTrue($configuration['configurationFileHasBeenLoaded'], 'The option has not been set by the fixture.');
+        self::assertTrue($configuration['configurationFileHasBeenLoaded'], 'The option has not been set by the fixture.');
     }
 
     /**
@@ -68,7 +68,7 @@ class YamlSourceTest extends UnitTestCase
         $configurationSource->save($pathAndFilename, $mockConfiguration);
 
         $yaml = 'configurationFileHasBeenLoaded: true' . chr(10) . 'foo:' . chr(10) . '  bar: Baz' . chr(10);
-        $this->assertStringContainsString($yaml, file_get_contents($pathAndFilename . '.yaml'), 'Configuration was not written to the file as expected.');
+        self::assertStringContainsString($yaml, file_get_contents($pathAndFilename . '.yaml'), 'Configuration was not written to the file as expected.');
     }
 
     /**
@@ -87,7 +87,7 @@ class YamlSourceTest extends UnitTestCase
         $configurationSource->save($pathAndFilename, $mockConfiguration);
 
         $yaml = 'configurationFileHasBeenLoaded: true' . chr(10) . 'foo:' . chr(10) . '  \'Foo.Bar:Baz\': \'a quoted key\'' . chr(10);
-        $this->assertStringContainsString($yaml, file_get_contents($pathAndFilename . '.yaml'), 'Configuration was not written to the file as expected.');
+        self::assertStringContainsString($yaml, file_get_contents($pathAndFilename . '.yaml'), 'Configuration was not written to the file as expected.');
     }
 
     /**
@@ -103,8 +103,8 @@ class YamlSourceTest extends UnitTestCase
         $configurationSource->save($pathAndFilename, ['configurationFileHasBeenLoaded' => true]);
 
         $yaml = file_get_contents($pathAndFilename . '.yaml');
-        $this->assertStringContainsString('# This comment should stay' . chr(10) . chr(10), $yaml, 'Header comment was removed from file.');
-        $this->assertStringNotContainsString('Test: foo', $yaml);
+        self::assertStringContainsString('# This comment should stay' . chr(10) . chr(10), $yaml, 'Header comment was removed from file.');
+        self::assertStringNotContainsString('Test: foo', $yaml);
     }
 
     /**
@@ -126,7 +126,7 @@ class YamlSourceTest extends UnitTestCase
         $pathAndFilename = __DIR__ . '/../Fixture/YAMLConfigurationFile';
         $configurationSource = new YamlSource();
         $configuration = $configurationSource->load($pathAndFilename);
-        $this->assertSame($expectedConfiguration, $configuration);
+        self::assertSame($expectedConfiguration, $configuration);
     }
 
     /**
@@ -149,7 +149,7 @@ class YamlSourceTest extends UnitTestCase
         $pathAndFilename = __DIR__ . '/../Fixture/SplitYamlConfigurationFile';
         $configurationSource = new YamlSource();
         $configuration = $configurationSource->load($pathAndFilename, true);
-        $this->assertSame($expectedConfiguration, $configuration);
+        self::assertSame($expectedConfiguration, $configuration);
     }
 
     /**

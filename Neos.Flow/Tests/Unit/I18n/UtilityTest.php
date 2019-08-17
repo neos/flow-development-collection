@@ -41,7 +41,7 @@ class UtilityTest extends UnitTestCase
     public function httpAcceptLanguageHeadersAreParsedCorrectly($acceptLanguageHeader, array $expectedResult)
     {
         $languages = I18n\Utility::parseAcceptLanguageHeader($acceptLanguageHeader);
-        $this->assertEquals($expectedResult, $languages);
+        self::assertEquals($expectedResult, $languages);
     }
 
     /**
@@ -69,7 +69,7 @@ class UtilityTest extends UnitTestCase
     public function localeIdentifiersAreCorrectlyExtractedFromFilename($filename, $expectedResult)
     {
         $result = I18n\Utility::extractLocaleTagFromFilename($filename);
-        $this->assertEquals($expectedResult, $result);
+        self::assertEquals($expectedResult, $result);
     }
 
     /**
@@ -98,7 +98,7 @@ class UtilityTest extends UnitTestCase
     {
         $expectedResult = ($comparison === 'beginning' || $comparison === 'both') ? true : false;
         $result = I18n\Utility::stringBeginsWith($haystack, $needle);
-        $this->assertEquals($expectedResult, $result);
+        self::assertEquals($expectedResult, $result);
     }
 
     /**
@@ -109,6 +109,6 @@ class UtilityTest extends UnitTestCase
     {
         $expectedResult = ($comparison === 'ending' || $comparison === 'both') ? true : false;
         $result = I18n\Utility::stringEndsWith($haystack, $needle);
-        $this->assertEquals($expectedResult, $result);
+        self::assertEquals($expectedResult, $result);
     }
 }

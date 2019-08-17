@@ -39,7 +39,7 @@ class AbstractFrontendTest extends BaseTestCase
     {
         foreach (['x', 'someValue', '123fivesixseveneight', 'some&', 'ab_cd%', rawurlencode('resource://some/äöü$&% sadf'), str_repeat('x', 250)] as $identifier) {
             $cache = new StringFrontend($identifier, $this->mockBackend);
-            $this->assertInstanceOf(StringFrontend::class, $cache);
+            self::assertInstanceOf(StringFrontend::class, $cache);
         }
     }
 
@@ -53,7 +53,7 @@ class AbstractFrontendTest extends BaseTestCase
                 new StringFrontend($identifier, $this->mockBackend);
                 $this->fail('Identifier "' . $identifier . '" was not rejected.');
             } catch (\Exception $exception) {
-                $this->assertInstanceOf(\InvalidArgumentException::class, $exception);
+                self::assertInstanceOf(\InvalidArgumentException::class, $exception);
             }
         }
     }
@@ -142,7 +142,7 @@ class AbstractFrontendTest extends BaseTestCase
             ->getMock();
 
         foreach (['', 'abc def', 'foo!', 'bar:', 'some/', 'bla*', 'one+', 'äöü', str_repeat('x', 251), 'x$', '\\a', 'b#'] as $entryIdentifier) {
-            $this->assertFalse($cache->isValidEntryIdentifier($entryIdentifier), 'Invalid identifier "' . $entryIdentifier . '" was not rejected.');
+            self::assertFalse($cache->isValidEntryIdentifier($entryIdentifier), 'Invalid identifier "' . $entryIdentifier . '" was not rejected.');
         }
     }
 
@@ -159,7 +159,7 @@ class AbstractFrontendTest extends BaseTestCase
             ->getMock();
 
         foreach (['_', 'abc-def', 'foo', 'bar123', '3some', '_bl_a', 'some&', 'one%TWO', str_repeat('x', 250)] as $entryIdentifier) {
-            $this->assertTrue($cache->isValidEntryIdentifier($entryIdentifier), 'Valid identifier "' . $entryIdentifier . '" was not accepted.');
+            self::assertTrue($cache->isValidEntryIdentifier($entryIdentifier), 'Valid identifier "' . $entryIdentifier . '" was not accepted.');
         }
     }
 
@@ -176,7 +176,7 @@ class AbstractFrontendTest extends BaseTestCase
             ->getMock();
 
         foreach (['', 'abc def', 'foo!', 'bar:', 'some/', 'bla*', 'one+', 'äöü', str_repeat('x', 251), 'x$', '\\a', 'b#'] as $tag) {
-            $this->assertFalse($cache->isValidTag($tag), 'Invalid tag "' . $tag . '" was not rejected.');
+            self::assertFalse($cache->isValidTag($tag), 'Invalid tag "' . $tag . '" was not rejected.');
         }
     }
 
@@ -193,7 +193,7 @@ class AbstractFrontendTest extends BaseTestCase
             ->getMock();
 
         foreach (['abcdef', 'foo-bar', 'foo_baar', 'bar123', '3some', 'file%Thing', 'some&', '%x%', str_repeat('x', 250)] as $tag) {
-            $this->assertTrue($cache->isValidTag($tag), 'Valid tag "' . $tag . '" was not accepted.');
+            self::assertTrue($cache->isValidTag($tag), 'Valid tag "' . $tag . '" was not accepted.');
         }
     }
 }

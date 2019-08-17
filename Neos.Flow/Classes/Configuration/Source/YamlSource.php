@@ -116,7 +116,7 @@ class YamlSource
         }
 
         if ($wrongPathsAndFileNames !== []) {
-            throw new \Neos\Flow\Configuration\Exception(sprintf('The files "%s" exist with "yml" extension, but that is not supported by Flow. Please use "yaml" as file extension for configuration files.', implode(', ', $wrongPathsAndFileNames)), 1516893322579);
+            throw new \Neos\Flow\Configuration\Exception(sprintf('The files "%s" exist with "yml" extension, but that is not supported by Flow. Please use "yaml" as file extension for configuration files.', implode(', ', $wrongPathsAndFileNames)), 1516893322);
         }
     }
 

@@ -249,10 +249,10 @@ class ObjectManager implements ObjectManagerInterface
      * rare cases.
      *
      * @param  string $caseInsensitiveObjectName The object name in lower-, upper- or mixed case
-     * @return mixed Either the mixed case object name or false if no object of that name was found.
-     * @api
+     * @return string|null Either the mixed case object name or false if no object of that name was found.
+     * @internal
      */
-    public function getCaseSensitiveObjectName($caseInsensitiveObjectName)
+    public function getCaseSensitiveObjectName($caseInsensitiveObjectName): ?string
     {
         $lowerCasedObjectName = strtolower(ltrim($caseInsensitiveObjectName, '\\'));
         if (isset($this->cachedLowerCasedObjectNames[$lowerCasedObjectName])) {
@@ -266,7 +266,7 @@ class ObjectManager implements ObjectManagerInterface
             }
         }
 
-        return false;
+        return null;
     }
 
     /**
@@ -315,7 +315,7 @@ class ObjectManager implements ObjectManagerInterface
      *
      * @param string $objectName The object name
      * @return string The package key or false if no such object exists
-     * @api
+     * @internal
      */
     public function getPackageKeyByObjectName($objectName)
     {

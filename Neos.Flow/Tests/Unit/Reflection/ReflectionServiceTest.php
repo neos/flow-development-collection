@@ -76,7 +76,7 @@ class ReflectionServiceTest extends UnitTestCase
         $settings = ['reflection' => ['ignoredTags' => ['ignored' => true]]];
         $this->reflectionService->injectSettings($settings);
 
-        $this->assertTrue($this->reflectionService->_call('isTagIgnored', 'ignored'));
+        self::assertTrue($this->reflectionService->_call('isTagIgnored', 'ignored'));
     }
 
     /**
@@ -87,7 +87,7 @@ class ReflectionServiceTest extends UnitTestCase
         $settings = ['reflection' => ['ignoredTags' => ['notignored' => false]]];
         $this->reflectionService->injectSettings($settings);
 
-        $this->assertFalse($this->reflectionService->_call('isTagIgnored', 'notignored'));
+        self::assertFalse($this->reflectionService->_call('isTagIgnored', 'notignored'));
     }
 
     /**
@@ -98,7 +98,7 @@ class ReflectionServiceTest extends UnitTestCase
         $settings = ['reflection' => ['ignoredTags' => ['ignored' => true, 'notignored' => false]]];
         $this->reflectionService->injectSettings($settings);
 
-        $this->assertFalse($this->reflectionService->_call('isTagIgnored', 'notconfigured'));
+        self::assertFalse($this->reflectionService->_call('isTagIgnored', 'notconfigured'));
     }
 
     /**
@@ -109,7 +109,7 @@ class ReflectionServiceTest extends UnitTestCase
         $settings = ['reflection' => ['ignoredTags' => ['ignored']]];
         $this->reflectionService->injectSettings($settings);
 
-        $this->assertTrue($this->reflectionService->_call('isTagIgnored', 'ignored'));
-        $this->assertFalse($this->reflectionService->_call('isTagIgnored', 'notignored'));
+        self::assertTrue($this->reflectionService->_call('isTagIgnored', 'ignored'));
+        self::assertFalse($this->reflectionService->_call('isTagIgnored', 'notignored'));
     }
 }

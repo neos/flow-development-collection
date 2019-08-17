@@ -30,7 +30,7 @@ class ClassNameIndexTest extends UnitTestCase
         $index2->setClassNames(['\Foo\Baz', '\Foo\Blubb']);
         $intersectedIndex = $index1->intersect($index2);
 
-        $this->assertEquals(['\Foo\Baz'], $intersectedIndex->getClassNames());
+        self::assertEquals(['\Foo\Baz'], $intersectedIndex->getClassNames());
     }
 
     /**
@@ -44,7 +44,7 @@ class ClassNameIndexTest extends UnitTestCase
         $index2->setClassNames(['\Foo\Baz', '\Foo\Blubb']);
         $index1->applyIntersect($index2);
 
-        $this->assertEquals(['\Foo\Baz'], $index1->getClassNames());
+        self::assertEquals(['\Foo\Baz'], $index1->getClassNames());
     }
 
     /**
@@ -59,7 +59,7 @@ class ClassNameIndexTest extends UnitTestCase
         $intersectedIndex = $index1->union($index2);
         $intersectedIndex->sort();
 
-        $this->assertEquals(['\Foo\Bar', '\Foo\Baz', '\Foo\Blubb'], $intersectedIndex->getClassNames());
+        self::assertEquals(['\Foo\Bar', '\Foo\Baz', '\Foo\Blubb'], $intersectedIndex->getClassNames());
     }
 
     /**
@@ -74,7 +74,7 @@ class ClassNameIndexTest extends UnitTestCase
         $index1->applyUnion($index2);
         $index1->sort();
 
-        $this->assertEquals(['\Foo\Bar', '\Foo\Baz', '\Foo\Blubb'], $index1->getClassNames());
+        self::assertEquals(['\Foo\Bar', '\Foo\Baz', '\Foo\Blubb'], $index1->getClassNames());
     }
 
     /**
@@ -89,6 +89,6 @@ class ClassNameIndexTest extends UnitTestCase
 
         $filteredIndex = $index1->filterByPrefix('\Foo');
 
-        $this->assertEquals(['\Foo\Bar', '\Foo\Baz', '\Foo\Blubb'], $filteredIndex->getClassNames());
+        self::assertEquals(['\Foo\Bar', '\Foo\Baz', '\Foo\Blubb'], $filteredIndex->getClassNames());
     }
 }

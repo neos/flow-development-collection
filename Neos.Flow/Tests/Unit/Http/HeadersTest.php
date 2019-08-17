@@ -26,9 +26,9 @@ class HeadersTest extends UnitTestCase
     public function headerFieldsCanBeSpecifiedToTheConstructor()
     {
         $headers = new Headers(['User-Agent' => 'Espresso Machine', 'Server' => ['Foo', 'Bar']]);
-        $this->assertSame('Espresso Machine', $headers->get('User-Agent'));
-        $this->assertSame(['Foo', 'Bar'], $headers->get('Server'));
-        $this->assertTrue($headers->has('Server'));
+        self::assertSame('Espresso Machine', $headers->get('User-Agent'));
+        self::assertSame(['Foo', 'Bar'], $headers->get('Server'));
+        self::assertTrue($headers->has('Server'));
     }
 
     /**
@@ -43,8 +43,8 @@ class HeadersTest extends UnitTestCase
 
         $headers = Headers::createFromServer($server);
 
-        $this->assertEquals('Robusta', $headers->get('Foo'));
-        $this->assertEquals('Arabica', $headers->get('Bar-Baz'));
+        self::assertEquals('Robusta', $headers->get('Foo'));
+        self::assertEquals('Arabica', $headers->get('Bar-Baz'));
     }
 
     /**
@@ -60,8 +60,8 @@ class HeadersTest extends UnitTestCase
         $headers = Headers::createFromServer($server);
 
         $expectedValue = 'Basic ' . base64_encode('robert:mysecretpassword, containing a : colon ;-)');
-        $this->assertEquals($expectedValue, $headers->get('Authorization'));
-        $this->assertFalse($headers->has('User'));
+        self::assertEquals($expectedValue, $headers->get('Authorization'));
+        self::assertFalse($headers->has('User'));
     }
 
     /**
@@ -72,7 +72,7 @@ class HeadersTest extends UnitTestCase
         $headers = new Headers();
         $headers->set('Host', 'myhost.com');
         $headers->set('Host', 'yourhost.com');
-        $this->assertSame('yourhost.com', $headers->get('Host'));
+        self::assertSame('yourhost.com', $headers->get('Host'));
     }
 
     /**
@@ -83,7 +83,7 @@ class HeadersTest extends UnitTestCase
         $headers = new Headers();
         $headers->set('X-Powered-By', 'Flow');
         $headers->set('X-Powered-By', 'Neos', false);
-        $this->assertSame(['Flow', 'Neos'], $headers->get('X-Powered-By'));
+        self::assertSame(['Flow', 'Neos'], $headers->get('X-Powered-By'));
     }
 
     /**
@@ -93,8 +93,8 @@ class HeadersTest extends UnitTestCase
     {
         $headers = new Headers();
         $headers->set('X-Powered-By', 'Flow');
-        $this->assertFalse($headers->has('X-Empowered-By'));
-        $this->assertNull($headers->get('X-Empowered-By'));
+        self::assertFalse($headers->has('X-Empowered-By'));
+        self::assertNull($headers->get('X-Empowered-By'));
     }
 
     /**
@@ -106,7 +106,7 @@ class HeadersTest extends UnitTestCase
         $headers = new Headers($specifiedFields);
 
         $expectedFields = ['X-Coffee' => ['Arabica'], 'Host' => ['myhost.com']];
-        $this->assertEquals($expectedFields, $headers->getAll());
+        self::assertEquals($expectedFields, $headers->getAll());
     }
 
     /**
@@ -117,12 +117,12 @@ class HeadersTest extends UnitTestCase
         $expectedFields = ['Last-Modified' => ['Tue, 24 May 2012 12:00:00 +0000']];
         $headers = new Headers($expectedFields);
 
-        $this->assertEquals($expectedFields, $headers->getAll());
+        self::assertEquals($expectedFields, $headers->getAll());
 
         $expectedFields['Cache-Control'] = ['public, max-age=60'];
         $headers->setCacheControlDirective('public');
         $headers->setCacheControlDirective('max-age', 60);
-        $this->assertEquals($expectedFields, $headers->getAll());
+        self::assertEquals($expectedFields, $headers->getAll());
     }
 
     /**
@@ -143,10 +143,10 @@ class HeadersTest extends UnitTestCase
         $headers = new Headers();
 
         $headers->set('Last-Modified', $now);
-        $this->assertEquals($nowInGmt->format(DATE_RFC2822), $headers->get('Last-Modified')->format(DATE_RFC2822));
+        self::assertEquals($nowInGmt->format(DATE_RFC2822), $headers->get('Last-Modified')->format(DATE_RFC2822));
 
         $headers->set('X-Test-Run-At', $now);
-        $this->assertEquals($nowInGmt->format(DATE_RFC2822), $headers->get('X-Test-Run-At')->format(DATE_RFC2822));
+        self::assertEquals($nowInGmt->format(DATE_RFC2822), $headers->get('X-Test-Run-At')->format(DATE_RFC2822));
     }
 
     /**
@@ -160,7 +160,7 @@ class HeadersTest extends UnitTestCase
         $headers->remove('X-Coffee');
         $headers->remove('X-This-Does-Not-Exist-Anyway');
 
-        $this->assertEquals(['Host' => ['myhost.com']], $headers->getAll());
+        self::assertEquals(['Host' => ['myhost.com']], $headers->getAll());
     }
 
     /**
@@ -171,7 +171,7 @@ class HeadersTest extends UnitTestCase
         $headers = new Headers();
         $cookie = new Cookie('Dark-Chocolate-Chip');
         $headers->setCookie($cookie);
-        $this->assertSame($cookie, $headers->getCookie('Dark-Chocolate-Chip'));
+        self::assertSame($cookie, $headers->getCookie('Dark-Chocolate-Chip'));
     }
 
     /**
@@ -182,9 +182,9 @@ class HeadersTest extends UnitTestCase
         $headers = new Headers();
         $headers->setCookie(new Cookie('Dark-Chocolate-Chip'));
 
-        $this->assertTrue($headers->hasCookie('Dark-Chocolate-Chip'));
+        self::assertTrue($headers->hasCookie('Dark-Chocolate-Chip'));
         $headers->removeCookie('Dark-Chocolate-Chip');
-        $this->assertFalse($headers->hasCookie('Dark-Chocolate-Chip'));
+        self::assertFalse($headers->hasCookie('Dark-Chocolate-Chip'));
     }
 
     /**
@@ -206,7 +206,7 @@ class HeadersTest extends UnitTestCase
         $headers->eatCookie('Coffee-Fudge-Mess');
         unset($cookies['Coffee-Fudge-Mess']);
 
-        $this->assertEquals($cookies, $headers->getCookies());
+        self::assertEquals($cookies, $headers->getCookies());
     }
 
     /**
@@ -217,13 +217,13 @@ class HeadersTest extends UnitTestCase
         $headers = new Headers();
         $headers->set('Cookie', ['cookie1=the+value+number+1; cookie2=the+value+number+2;  Cookie-Thing3="' . urlencode('Fön + x = \'test\'') . '"']);
 
-        $this->assertTrue($headers->hasCookie('cookie1'));
-        $this->assertEquals('the value number 1', $headers->getCookie('cookie1')->getValue());
+        self::assertTrue($headers->hasCookie('cookie1'));
+        self::assertEquals('the value number 1', $headers->getCookie('cookie1')->getValue());
 
-        $this->assertTrue($headers->hasCookie('cookie2'));
-        $this->assertEquals('the value number 2', $headers->getCookie('cookie2')->getValue());
+        self::assertTrue($headers->hasCookie('cookie2'));
+        self::assertEquals('the value number 2', $headers->getCookie('cookie2')->getValue());
 
-        $this->assertEquals('Fön + x = \'test\'', $headers->getCookie('Cookie-Thing3')->getValue());
+        self::assertEquals('Fön + x = \'test\'', $headers->getCookie('Cookie-Thing3')->getValue());
     }
 
     /**
@@ -236,8 +236,8 @@ class HeadersTest extends UnitTestCase
         $headers = new Headers();
         $headers->set('Cookie', ['cookie1=the+value+number+1; =foo']);
 
-        $this->assertTrue($headers->hasCookie('cookie1'));
-        $this->assertEquals('the value number 1', $headers->getCookie('cookie1')->getValue());
+        self::assertTrue($headers->hasCookie('cookie1'));
+        self::assertEquals('the value number 1', $headers->getCookie('cookie1')->getValue());
     }
 
     /**
@@ -248,8 +248,8 @@ class HeadersTest extends UnitTestCase
         $headers = new Headers();
         $headers->set('Cookie', ['cookie-valid=this+is+valid; cookie[invalid]=this+is+invalid']);
 
-        $this->assertTrue($headers->hasCookie('cookie-valid'));
-        $this->assertFalse($headers->hasCookie('cookie[invalid]'));
+        self::assertTrue($headers->hasCookie('cookie-valid'));
+        self::assertFalse($headers->hasCookie('cookie[invalid]'));
     }
 
     /**
@@ -277,10 +277,10 @@ class HeadersTest extends UnitTestCase
     {
         $headers = new Headers();
 
-        $this->assertFalse($headers->has('Cache-Control'));
+        self::assertFalse($headers->has('Cache-Control'));
         $headers->set('Cache-Control', $rawFieldValue);
-        $this->assertTrue($headers->has('Cache-Control'));
-        $this->assertEquals($renderedFieldValue, $headers->get('Cache-Control'));
+        self::assertTrue($headers->has('Cache-Control'));
+        self::assertEquals($renderedFieldValue, $headers->get('Cache-Control'));
     }
 
     /**
@@ -292,7 +292,7 @@ class HeadersTest extends UnitTestCase
 
         $headers->setCacheControlDirective('public');
         $headers->set('Cache-Control', 'max-age=600, must-revalidate');
-        $this->assertEquals('max-age=600, must-revalidate', $headers->get('Cache-Control'));
+        self::assertEquals('max-age=600, must-revalidate', $headers->get('Cache-Control'));
     }
 
     /**
@@ -305,19 +305,19 @@ class HeadersTest extends UnitTestCase
         $headers = new Headers();
 
         $headers->setCacheControlDirective('public');
-        $this->assertEquals('public', $headers->get('Cache-Control'));
+        self::assertEquals('public', $headers->get('Cache-Control'));
 
         $headers->setCacheControlDirective('private');
-        $this->assertEquals('private', $headers->get('Cache-Control'));
+        self::assertEquals('private', $headers->get('Cache-Control'));
 
         $headers->setCacheControlDirective('private', 'X-Flow-Powered');
-        $this->assertEquals('private="X-Flow-Powered"', $headers->get('Cache-Control'));
+        self::assertEquals('private="X-Flow-Powered"', $headers->get('Cache-Control'));
 
         $headers->setCacheControlDirective('no-cache', 'X-Flow-Powered');
-        $this->assertEquals('no-cache="X-Flow-Powered"', $headers->get('Cache-Control'));
+        self::assertEquals('no-cache="X-Flow-Powered"', $headers->get('Cache-Control'));
 
         $headers->setCacheControlDirective('no-cache');
-        $this->assertEquals('no-cache', $headers->get('Cache-Control'));
+        self::assertEquals('no-cache', $headers->get('Cache-Control'));
     }
 
     /**
@@ -344,15 +344,15 @@ class HeadersTest extends UnitTestCase
 
         $headers->setCacheControlDirective('private');
         $headers->removeCacheControlDirective('private');
-        $this->assertEquals(null, $headers->get('Cache-Control'));
+        self::assertEquals(null, $headers->get('Cache-Control'));
 
         $headers->setCacheControlDirective('public');
         $headers->removeCacheControlDirective('public');
-        $this->assertEquals(null, $headers->get('Cache-Control'));
+        self::assertEquals(null, $headers->get('Cache-Control'));
 
         $headers->setCacheControlDirective('no-cache');
         $headers->removeCacheControlDirective('no-cache');
-        $this->assertEquals(null, $headers->get('Cache-Control'));
+        self::assertEquals(null, $headers->get('Cache-Control'));
     }
 
     /**
@@ -365,13 +365,13 @@ class HeadersTest extends UnitTestCase
         $headers = new Headers();
 
         $headers->setCacheControlDirective('no-store');
-        $this->assertEquals('no-store', $headers->get('Cache-Control'));
+        self::assertEquals('no-store', $headers->get('Cache-Control'));
 
         $headers->setCacheControlDirective('public');
-        $this->assertEquals('public, no-store', $headers->get('Cache-Control'));
+        self::assertEquals('public, no-store', $headers->get('Cache-Control'));
 
         $headers->removeCacheControlDirective('no-store');
-        $this->assertEquals('public', $headers->get('Cache-Control'));
+        self::assertEquals('public', $headers->get('Cache-Control'));
     }
 
     /**
@@ -384,16 +384,16 @@ class HeadersTest extends UnitTestCase
         $headers = new Headers();
 
         $headers->setCacheControlDirective('max-age', 120);
-        $this->assertEquals('max-age=120', $headers->get('Cache-Control'));
+        self::assertEquals('max-age=120', $headers->get('Cache-Control'));
 
         $headers->setCacheControlDirective('s-maxage', 60);
-        $this->assertEquals('max-age=120, s-maxage=60', $headers->get('Cache-Control'));
+        self::assertEquals('max-age=120, s-maxage=60', $headers->get('Cache-Control'));
 
         $headers->removeCacheControlDirective('max-age');
-        $this->assertEquals('s-maxage=60', $headers->get('Cache-Control'));
+        self::assertEquals('s-maxage=60', $headers->get('Cache-Control'));
 
         $headers->removeCacheControlDirective('s-maxage');
-        $this->assertEquals(null, $headers->get('Cache-Control'));
+        self::assertEquals(null, $headers->get('Cache-Control'));
     }
 
     /**
@@ -408,11 +408,11 @@ class HeadersTest extends UnitTestCase
         $headers->setCacheControlDirective('no-transform');
         $headers->setCacheControlDirective('public');
 
-        $this->assertEquals('public, no-transform', $headers->get('Cache-Control'));
+        self::assertEquals('public, no-transform', $headers->get('Cache-Control'));
 
         $headers->removeCacheControlDirective('no-transform');
 
-        $this->assertEquals('public', $headers->get('Cache-Control'));
+        self::assertEquals('public', $headers->get('Cache-Control'));
     }
 
     /**
@@ -425,11 +425,11 @@ class HeadersTest extends UnitTestCase
         $headers = new Headers();
 
         $headers->setCacheControlDirective('must-revalidate');
-        $this->assertEquals('must-revalidate', $headers->get('Cache-Control'));
+        self::assertEquals('must-revalidate', $headers->get('Cache-Control'));
 
         $headers->removeCacheControlDirective('must-revalidate');
         $headers->setCacheControlDirective('proxy-revalidate');
-        $this->assertEquals('proxy-revalidate', $headers->get('Cache-Control'));
+        self::assertEquals('proxy-revalidate', $headers->get('Cache-Control'));
     }
 
     /**
@@ -461,12 +461,12 @@ class HeadersTest extends UnitTestCase
     public function getCacheControlDirectiveReturnsTheSpecifiedDirectiveValueIfPresent($name, $value)
     {
         $headers = new Headers();
-        $this->assertNull($headers->getCacheControlDirective($name));
+        self::assertNull($headers->getCacheControlDirective($name));
         if ($value === true) {
             $headers->setCacheControlDirective($name);
         } else {
             $headers->setCacheControlDirective($name, $value);
         }
-        $this->assertEquals($value, $headers->getCacheControlDirective($name));
+        self::assertEquals($value, $headers->getCacheControlDirective($name));
     }
 }

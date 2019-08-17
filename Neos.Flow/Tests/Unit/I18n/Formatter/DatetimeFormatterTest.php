@@ -65,13 +65,13 @@ class DatetimeFormatterTest extends UnitTestCase
         $formatter->expects($this->at(2))->method('formatTime')->with($this->sampleDateTime, $this->sampleLocale, I18n\Cldr\Reader\DatesReader::FORMAT_LENGTH_FULL)->will($this->returnValue('bar3'));
 
         $result = $formatter->format($this->sampleDateTime, $this->sampleLocale);
-        $this->assertEquals('bar1', $result);
+        self::assertEquals('bar1', $result);
 
         $result = $formatter->format($this->sampleDateTime, $this->sampleLocale, [I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_DATE]);
-        $this->assertEquals('bar2', $result);
+        self::assertEquals('bar2', $result);
 
         $result = $formatter->format($this->sampleDateTime, $this->sampleLocale, [I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_TIME, I18n\Cldr\Reader\DatesReader::FORMAT_LENGTH_FULL]);
-        $this->assertEquals('bar3', $result);
+        self::assertEquals('bar3', $result);
     }
 
     /**
@@ -101,7 +101,7 @@ class DatetimeFormatterTest extends UnitTestCase
         $formatter = $this->getAccessibleMock(I18n\Formatter\DatetimeFormatter::class, ['dummy']);
 
         $result = $formatter->_call('doFormattingWithParsedFormat', $this->sampleDateTime, $parsedFormat, $this->sampleLocalizedLiterals);
-        $this->assertEquals($expectedResult, $result);
+        self::assertEquals($expectedResult, $result);
     }
 
     /**
@@ -131,7 +131,7 @@ class DatetimeFormatterTest extends UnitTestCase
         $formatter->injectDatesReader($mockDatesReader);
 
         $result = $formatter->formatDateTimeWithCustomPattern($this->sampleDateTime, $format, $this->sampleLocale);
-        $this->assertEquals($expectedResult, $result);
+        self::assertEquals($expectedResult, $result);
     }
 
     /**
@@ -176,6 +176,6 @@ class DatetimeFormatterTest extends UnitTestCase
 
         $methodName = 'format' . ucfirst($formatType);
         $result = $formatter->$methodName($this->sampleDateTime, $this->sampleLocale, $formatLength);
-        $this->assertEquals($expectedResult, $result);
+        self::assertEquals($expectedResult, $result);
     }
 }

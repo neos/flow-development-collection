@@ -15,6 +15,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Error\Messages\Error;
 use Neos\Flow\Http\HttpRequestHandlerInterface;
+use Neos\Flow\Http\ServerRequestAttributes;
 use Neos\Flow\ResourceManagement\CollectionInterface;
 use Neos\Flow\ResourceManagement\Publishing\MessageCollector;
 use Neos\Flow\ResourceManagement\PersistentResource;
@@ -401,7 +402,7 @@ class FileSystemTarget implements TargetInterface
 
         $requestHandler = $this->bootstrap->getActiveRequestHandler();
         if ($requestHandler instanceof HttpRequestHandlerInterface) {
-            return $requestHandler->getHttpRequest()->getBaseUri() . $this->baseUri;
+            return $requestHandler->getHttpRequest()->getAttribute(ServerRequestAttributes::BASE_URI) . $this->baseUri;
         }
 
         if ($this->httpBaseUri === null) {

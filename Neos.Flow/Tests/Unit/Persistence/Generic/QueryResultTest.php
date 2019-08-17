@@ -70,7 +70,7 @@ class QueryResultTest extends UnitTestCase
      */
     public function getQueryReturnsQueryObject()
     {
-        $this->assertInstanceOf(QueryInterface::class, $this->queryResult->getQuery());
+        self::assertInstanceOf(QueryInterface::class, $this->queryResult->getQuery());
     }
 
     /**
@@ -78,7 +78,7 @@ class QueryResultTest extends UnitTestCase
      */
     public function getQueryReturnsAClone()
     {
-        $this->assertNotSame($this->query, $this->queryResult->getQuery());
+        self::assertNotSame($this->query, $this->queryResult->getQuery());
     }
 
     /**
@@ -86,9 +86,9 @@ class QueryResultTest extends UnitTestCase
      */
     public function offsetExistsWorksAsExpected()
     {
-        $this->assertTrue($this->queryResult->offsetExists(0));
-        $this->assertFalse($this->queryResult->offsetExists(2));
-        $this->assertFalse($this->queryResult->offsetExists('foo'));
+        self::assertTrue($this->queryResult->offsetExists(0));
+        self::assertFalse($this->queryResult->offsetExists(2));
+        self::assertFalse($this->queryResult->offsetExists('foo'));
     }
 
     /**
@@ -96,9 +96,9 @@ class QueryResultTest extends UnitTestCase
      */
     public function offsetGetWorksAsExpected()
     {
-        $this->assertEquals(['foo' => 'Foo1', 'bar' => 'Bar1'], $this->queryResult->offsetGet(0));
-        $this->assertNull($this->queryResult->offsetGet(2));
-        $this->assertNull($this->queryResult->offsetGet('foo'));
+        self::assertEquals(['foo' => 'Foo1', 'bar' => 'Bar1'], $this->queryResult->offsetGet(0));
+        self::assertNull($this->queryResult->offsetGet(2));
+        self::assertNull($this->queryResult->offsetGet('foo'));
     }
 
     /**
@@ -107,7 +107,7 @@ class QueryResultTest extends UnitTestCase
     public function offsetSetWorksAsExpected()
     {
         $this->queryResult->offsetSet(0, ['foo' => 'FooOverridden', 'bar' => 'BarOverridden']);
-        $this->assertEquals(['foo' => 'FooOverridden', 'bar' => 'BarOverridden'], $this->queryResult->offsetGet(0));
+        self::assertEquals(['foo' => 'FooOverridden', 'bar' => 'BarOverridden'], $this->queryResult->offsetGet(0));
     }
 
     /**
@@ -116,7 +116,7 @@ class QueryResultTest extends UnitTestCase
     public function offsetUnsetWorksAsExpected()
     {
         $this->queryResult->offsetUnset(0);
-        $this->assertFalse($this->queryResult->offsetExists(0));
+        self::assertFalse($this->queryResult->offsetExists(0));
     }
 
     /**
@@ -136,7 +136,7 @@ class QueryResultTest extends UnitTestCase
     public function countCallsGetObjectCountByQueryOnPersistenceManager()
     {
         $this->persistenceManager->expects($this->once())->method('getObjectCountByQuery')->will($this->returnValue(2));
-        $this->assertEquals(2, $this->queryResult->count());
+        self::assertEquals(2, $this->queryResult->count());
     }
 
     /**
@@ -146,7 +146,7 @@ class QueryResultTest extends UnitTestCase
     {
         $this->persistenceManager->expects($this->never())->method('getObjectCountByQuery');
         $this->queryResult->toArray();
-        $this->assertEquals(2, $this->queryResult->count());
+        self::assertEquals(2, $this->queryResult->count());
     }
 
     /**
@@ -156,7 +156,7 @@ class QueryResultTest extends UnitTestCase
     {
         $this->persistenceManager->expects($this->once())->method('getObjectCountByQuery')->will($this->returnValue(2));
         $this->queryResult->count();
-        $this->assertEquals(2, $this->queryResult->count());
+        self::assertEquals(2, $this->queryResult->count());
     }
 
     /**
@@ -166,19 +166,19 @@ class QueryResultTest extends UnitTestCase
     {
         $array1 = ['foo' => 'Foo1', 'bar' => 'Bar1'];
         $array2 = ['foo' => 'Foo2', 'bar' => 'Bar2'];
-        $this->assertEquals($array1, $this->queryResult->current());
-        $this->assertTrue($this->queryResult->valid());
+        self::assertEquals($array1, $this->queryResult->current());
+        self::assertTrue($this->queryResult->valid());
         $this->queryResult->next();
-        $this->assertEquals($array2, $this->queryResult->current());
-        $this->assertTrue($this->queryResult->valid());
-        $this->assertEquals(1, $this->queryResult->key());
+        self::assertEquals($array2, $this->queryResult->current());
+        self::assertTrue($this->queryResult->valid());
+        self::assertEquals(1, $this->queryResult->key());
         $this->queryResult->next();
-        $this->assertFalse($this->queryResult->current());
-        $this->assertFalse($this->queryResult->valid());
-        $this->assertNull($this->queryResult->key());
+        self::assertFalse($this->queryResult->current());
+        self::assertFalse($this->queryResult->valid());
+        self::assertNull($this->queryResult->key());
         $this->queryResult->rewind();
-        $this->assertEquals(0, $this->queryResult->key());
-        $this->assertEquals($array1, $this->queryResult->current());
+        self::assertEquals(0, $this->queryResult->key());
+        self::assertEquals($array1, $this->queryResult->current());
     }
 
     /**
@@ -207,7 +207,7 @@ class QueryResultTest extends UnitTestCase
 
         $expectedResult = $initializedQueryResult[0];
         $actualResult = $queryResult->getFirst();
-        $this->assertSame($expectedResult, $actualResult);
+        self::assertSame($expectedResult, $actualResult);
     }
 
     /**
@@ -219,7 +219,7 @@ class QueryResultTest extends UnitTestCase
         $queryResult = $this->getAccessibleMock(QueryResult::class, ['dummy'], [$this->query]);
         $queryResult->_set('queryResult', $initializedQueryResult);
 
-        $this->assertNull($queryResult->getFirst());
+        self::assertNull($queryResult->getFirst());
     }
 
     /**
@@ -242,7 +242,7 @@ class QueryResultTest extends UnitTestCase
 
         $expectedResult = $initializedQueryResult[0];
         $actualResult = $queryResult->getFirst();
-        $this->assertSame($expectedResult, $actualResult);
+        self::assertSame($expectedResult, $actualResult);
     }
 
     /**
@@ -260,6 +260,6 @@ class QueryResultTest extends UnitTestCase
         $mockDataMapper->expects($this->once())->method('mapToObjects')->with(['one', 'two'])->will($this->returnValue($initializedQueryResult));
         $queryResult->injectDataMapper($mockDataMapper);
 
-        $this->assertNull($queryResult->getFirst());
+        self::assertNull($queryResult->getFirst());
     }
 }

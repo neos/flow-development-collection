@@ -93,7 +93,7 @@ class ActionViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Vie
             $this->viewHelper->render();
         } catch (\Neos\FluidAdaptor\Core\ViewHelper\Exception $exception) {
         }
-        $this->assertEquals(12345, $exception->getPrevious()->getCode());
+        self::assertEquals(12345, $exception->getPrevious()->getCode());
     }
 
     /**

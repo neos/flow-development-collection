@@ -450,25 +450,25 @@ abstract class ObjectAccess
         switch (count($arguments)) {
             case 0:
                 $object = new $className();
-                break;
+            break;
             case 1:
                 $object = new $className($arguments[0]);
-                break;
+            break;
             case 2:
                 $object = new $className($arguments[0], $arguments[1]);
-                break;
+            break;
             case 3:
                 $object = new $className($arguments[0], $arguments[1], $arguments[2]);
-                break;
+            break;
             case 4:
                 $object = new $className($arguments[0], $arguments[1], $arguments[2], $arguments[3]);
-                break;
+            break;
             case 5:
                 $object = new $className($arguments[0], $arguments[1], $arguments[2], $arguments[3], $arguments[4]);
-                break;
+            break;
             case 6:
                 $object = new $className($arguments[0], $arguments[1], $arguments[2], $arguments[3], $arguments[4], $arguments[5]);
-                break;
+            break;
             default:
                 $class = new \ReflectionClass($className);
                 $object = $class->newInstanceArgs($arguments);

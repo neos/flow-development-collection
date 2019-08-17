@@ -45,7 +45,7 @@ class ApplicationContextTest extends UnitTestCase
     public function contextStringCanBeSetInConstructorAndReadByCallingToString($allowedContext)
     {
         $context = new ApplicationContext($allowedContext);
-        $this->assertSame($allowedContext, (string)$context);
+        self::assertSame($allowedContext, (string)$context);
     }
 
     /**
@@ -135,10 +135,10 @@ class ApplicationContextTest extends UnitTestCase
     public function contextMethodsReturnTheCorrectValues($contextName, $isDevelopment, $isProduction, $isTesting, $parentContext)
     {
         $context = new ApplicationContext($contextName);
-        $this->assertSame($isDevelopment, $context->isDevelopment());
-        $this->assertSame($isProduction, $context->isProduction());
-        $this->assertSame($isTesting, $context->isTesting());
-        $this->assertSame((string)$parentContext, (string)$context->getParent());
+        self::assertSame($isDevelopment, $context->isDevelopment());
+        self::assertSame($isProduction, $context->isProduction());
+        self::assertSame($isTesting, $context->isTesting());
+        self::assertSame((string)$parentContext, (string)$context->getParent());
     }
 
     /**
@@ -148,9 +148,9 @@ class ApplicationContextTest extends UnitTestCase
     {
         $context = new ApplicationContext('Production/Foo/Bar');
         $parentContext = $context->getParent();
-        $this->assertSame('Production/Foo', (string) $parentContext);
+        self::assertSame('Production/Foo', (string) $parentContext);
 
         $rootContext = $parentContext->getParent();
-        $this->assertSame('Production', (string) $rootContext);
+        self::assertSame('Production', (string) $rootContext);
     }
 }

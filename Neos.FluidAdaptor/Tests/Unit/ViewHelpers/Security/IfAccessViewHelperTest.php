@@ -67,7 +67,7 @@ class IfAccessViewHelperTest extends ViewHelperBaseTestcase
         ];
         $this->ifAccessViewHelper->setArguments($arguments);
         $actualResult = $this->ifAccessViewHelper->render();
-        $this->assertEquals('foo', $actualResult);
+        self::assertEquals('foo', $actualResult);
     }
 
     /**
@@ -84,6 +84,6 @@ class IfAccessViewHelperTest extends ViewHelperBaseTestcase
         ];
         $this->ifAccessViewHelper->setArguments($arguments);
         $actualResult = $this->ifAccessViewHelper->render();
-        $this->assertEquals('ElseViewHelperResults', $actualResult);
+        self::assertEquals('ElseViewHelperResults', $actualResult);
     }
 }

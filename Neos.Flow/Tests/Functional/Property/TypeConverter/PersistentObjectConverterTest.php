@@ -47,8 +47,8 @@ class PersistentObjectConverterTest extends FunctionalTestCase
     public function entityWithImmutablePropertyIsCreatedCorrectly()
     {
         $result = $this->propertyMapper->convert($this->sourceProperties, Fixtures\TestEntityWithImmutableProperty::class);
-        $this->assertInstanceOf(Fixtures\TestEntityWithImmutableProperty::class, $result);
-        $this->assertEquals('Christian M', $result->getName());
+        self::assertInstanceOf(Fixtures\TestEntityWithImmutableProperty::class, $result);
+        self::assertEquals('Christian M', $result->getName());
     }
 
     /**
@@ -69,8 +69,8 @@ class PersistentObjectConverterTest extends FunctionalTestCase
 
         $result = $this->propertyMapper->convert($update, Fixtures\TestEntityWithImmutableProperty::class);
 
-        $this->assertInstanceOf(Fixtures\TestEntityWithImmutableProperty::class, $result);
-        $this->assertEquals('Christian M', $result->getName());
+        self::assertInstanceOf(Fixtures\TestEntityWithImmutableProperty::class, $result);
+        self::assertEquals('Christian M', $result->getName());
     }
 
     /**
@@ -92,8 +92,8 @@ class PersistentObjectConverterTest extends FunctionalTestCase
 
         $result = $this->propertyMapper->convert($update, Fixtures\TestEntityWithImmutableProperty::class);
 
-        $this->assertInstanceOf(Fixtures\TestEntityWithImmutableProperty::class, $result);
-        $this->assertEquals('Christian M', $result->getName());
+        self::assertInstanceOf(Fixtures\TestEntityWithImmutableProperty::class, $result);
+        self::assertEquals('Christian M', $result->getName());
     }
 
     /**
@@ -116,7 +116,7 @@ class PersistentObjectConverterTest extends FunctionalTestCase
 
         $result = $this->propertyMapper->convert($update, Fixtures\TestEntityWithImmutableProperty::class);
 
-        $this->assertInstanceOf(Fixtures\TestEntityWithImmutableProperty::class, $result);
-        $this->assertEquals('Christian M', $result->getName());
+        self::assertInstanceOf(Fixtures\TestEntityWithImmutableProperty::class, $result);
+        self::assertEquals('Christian M', $result->getName());
     }
 }

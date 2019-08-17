@@ -120,7 +120,7 @@ class NumberParserTest extends UnitTestCase
     {
         $parser = $this->getAccessibleMock(I18n\Parser\NumberParser::class, ['dummy']);
         $result = $parser->_call('doParsingInStrictMode', $numberToParse, $parsedFormat, $this->sampleLocalizedSymbols);
-        $this->assertEquals($expectedParsedNumber, $result);
+        self::assertEquals($expectedParsedNumber, $result);
     }
 
     /**
@@ -131,7 +131,7 @@ class NumberParserTest extends UnitTestCase
     {
         $parser = $this->getAccessibleMock(I18n\Parser\NumberParser::class, ['dummy']);
         $result = $parser->_call('doParsingInStrictMode', $numberToParse, $parsedFormat, $this->sampleLocalizedSymbols);
-        $this->assertEquals(false, $result);
+        self::assertEquals(false, $result);
     }
 
     /**
@@ -142,7 +142,7 @@ class NumberParserTest extends UnitTestCase
     {
         $parser = $this->getAccessibleMock(I18n\Parser\NumberParser::class, ['dummy']);
         $result = $parser->_call('doParsingInLenientMode', $numberToParse, $parsedFormat, $this->sampleLocalizedSymbols);
-        $this->assertEquals($expectedParsedNumber, $result);
+        self::assertEquals($expectedParsedNumber, $result);
     }
 
     /**
@@ -153,7 +153,7 @@ class NumberParserTest extends UnitTestCase
     {
         $parser = $this->getAccessibleMock(I18n\Parser\NumberParser::class, ['dummy']);
         $result = $parser->_call('doParsingInLenientMode', $numberToParse, $parsedFormat, $this->sampleLocalizedSymbols);
-        $this->assertEquals($expectedParsedNumber, $result);
+        self::assertEquals($expectedParsedNumber, $result);
     }
 
     /**
@@ -170,7 +170,7 @@ class NumberParserTest extends UnitTestCase
         $parser->injectNumbersReader($mockNumbersReader);
 
         $result = $parser->parseNumberWithCustomPattern($numberToParse, $stringFormat, $this->sampleLocale, true);
-        $this->assertEquals($expectedParsedNumber, $result);
+        self::assertEquals($expectedParsedNumber, $result);
     }
 
     /**
@@ -189,6 +189,6 @@ class NumberParserTest extends UnitTestCase
         $methodName = 'parse' . ucfirst($formatType) . 'Number';
         $result = $formatter->$methodName($numberToParse, $this->sampleLocale);
 
-        $this->assertEquals($expectedParsedNumber, $result);
+        self::assertEquals($expectedParsedNumber, $result);
     }
 }

@@ -334,7 +334,7 @@ class FormViewHelperTest extends ViewHelperBaseTestcase
         $expected = chr(10) . '<input type="hidden" name="object1[object2][__identity]" value="42" />' . chr(10) .
             '<input type="hidden" name="object1[object2][subobject][__identity]" value="21" />';
         $actual = $viewHelper->_call('renderAdditionalIdentityFields');
-        $this->assertEquals($expected, $actual);
+        self::assertEquals($expected, $actual);
     }
 
     /**
@@ -357,7 +357,7 @@ class FormViewHelperTest extends ViewHelperBaseTestcase
             '<input type="hidden" name="__referrer[@controller]" value="controllerName" />' . chr(10) .
             '<input type="hidden" name="__referrer[@action]" value="controllerActionName" />' . chr(10) .
             '<input type="hidden" name="__referrer[arguments]" value="" />' . chr(10);
-        $this->assertEquals($expectedResult, $hiddenFields);
+        self::assertEquals($expectedResult, $hiddenFields);
     }
 
     /**
@@ -400,7 +400,7 @@ class FormViewHelperTest extends ViewHelperBaseTestcase
             '<input type="hidden" name="__referrer[@action]" value="controllerActionName" />' . chr(10) .
             '<input type="hidden" name="__referrer[arguments]" value="" />' . chr(10);
 
-        $this->assertEquals($expectedResult, $hiddenFields);
+        self::assertEquals($expectedResult, $hiddenFields);
     }
 
     /**
@@ -443,11 +443,11 @@ class FormViewHelperTest extends ViewHelperBaseTestcase
     {
         $expectedPrefix = 'someArgumentPrefix';
         $mockSubRequest = $this->getMockBuilder(\Neos\Flow\Mvc\ActionRequest::class)->disableOriginalConstructor()->getMock();
-        $mockSubRequest->expects($this->once())->method('getArgumentNamespace')->will($this->returnValue($expectedPrefix));
+        $mockSubRequest->expects($this->once())->method('getArgumentNamespace')->willReturn($expectedPrefix);
 
         $viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\FormViewHelper::class, ['getFormActionUri', 'renderChildren', 'renderHiddenIdentityField', 'renderHiddenReferrerFields', 'addFormFieldNamesToViewHelperVariableContainer', 'removeFormFieldNamesFromViewHelperVariableContainer', 'addEmptyHiddenFieldNamesToViewHelperVariableContainer', 'removeEmptyHiddenFieldNamesFromViewHelperVariableContainer', 'renderEmptyHiddenFields', 'renderTrustedPropertiesField'], [], '', false);
         $this->controllerContext = $this->getMockBuilder(\Neos\Flow\Mvc\Controller\ControllerContext::class)->disableOriginalConstructor()->getMock();
-        $this->controllerContext->expects($this->any())->method('getRequest')->will($this->returnValue($mockSubRequest));
+        $this->controllerContext->expects($this->any())->method('getRequest')->willReturn($mockSubRequest);
         $this->renderingContext->setControllerContext($this->controllerContext);
         $this->injectDependenciesIntoViewHelper($viewHelper);
 
@@ -488,7 +488,7 @@ class FormViewHelperTest extends ViewHelperBaseTestcase
         $this->injectDependenciesIntoViewHelper($viewHelper);
         $expected = '';
         $actual = $viewHelper->_call('renderEmptyHiddenFields');
-        $this->assertEquals($expected, $actual);
+        self::assertEquals($expected, $actual);
     }
 
     /**
@@ -507,7 +507,7 @@ class FormViewHelperTest extends ViewHelperBaseTestcase
 
         $expected = '<input type="hidden" name="fieldName1" value="" />' . chr(10) . '<input type="hidden" name="fieldName2" value="" />' . chr(10);
         $actual = $viewHelper->_call('renderEmptyHiddenFields');
-        $this->assertEquals($expected, $actual);
+        self::assertEquals($expected, $actual);
     }
 
     /**
@@ -526,7 +526,7 @@ class FormViewHelperTest extends ViewHelperBaseTestcase
         ];
 
         $viewHelper->render('index');
-        $this->assertNull($viewHelper->_get('formActionUri'));
+        self::assertNull($viewHelper->_get('formActionUri'));
     }
 
     /**
@@ -600,7 +600,7 @@ class FormViewHelperTest extends ViewHelperBaseTestcase
         $this->injectDependenciesIntoViewHelper($viewHelper);
         $this->securityContext->expects($this->never())->method('getCsrfProtectionToken');
 
-        $this->assertEquals('', $viewHelper->_call('renderCsrfTokenField'));
+        self::assertEquals('', $viewHelper->_call('renderCsrfTokenField'));
     }
 
     /**
@@ -615,7 +615,7 @@ class FormViewHelperTest extends ViewHelperBaseTestcase
         $this->mockAuthenticationManager->expects($this->any())->method('isAuthenticated')->will($this->returnValue(true));
         $this->securityContext->expects($this->never())->method('getCsrfProtectionToken');
 
-        $this->assertEquals('', $viewHelper->_call('renderCsrfTokenField'));
+        self::assertEquals('', $viewHelper->_call('renderCsrfTokenField'));
     }
 
     /**
@@ -630,7 +630,7 @@ class FormViewHelperTest extends ViewHelperBaseTestcase
         $this->mockAuthenticationManager->expects($this->atLeastOnce())->method('isAuthenticated')->will($this->returnValue(false));
         $this->securityContext->expects($this->never())->method('getCsrfProtectionToken');
 
-        $this->assertEquals('', $viewHelper->_call('renderCsrfTokenField'));
+        self::assertEquals('', $viewHelper->_call('renderCsrfTokenField'));
     }
 
     /**
@@ -646,6 +646,6 @@ class FormViewHelperTest extends ViewHelperBaseTestcase
 
         $this->securityContext->expects($this->atLeastOnce())->method('getCsrfProtectionToken')->will($this->returnValue('CSRFTOKEN'));
 
-        $this->assertEquals('<input type="hidden" name="__csrfToken" value="CSRFTOKEN" />' . chr(10), $viewHelper->_call('renderCsrfTokenField'));
+        self::assertEquals('<input type="hidden" name="__csrfToken" value="CSRFTOKEN" />' . chr(10), $viewHelper->_call('renderCsrfTokenField'));
     }
 }

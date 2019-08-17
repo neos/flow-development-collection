@@ -131,7 +131,7 @@ class SimpleFileBackendTest extends BaseTestCase
         mkdir('vfs://Temporary/Directory/OtherDirectory');
 
         $simpleFileBackend = $this->getSimpleFileBackend(['cacheDirectory' => 'vfs://Temporary/Directory/OtherDirectory']);
-        $this->assertEquals('vfs://Temporary/Directory/OtherDirectory/', $simpleFileBackend->getCacheDirectory());
+        self::assertEquals('vfs://Temporary/Directory/OtherDirectory/', $simpleFileBackend->getCacheDirectory());
     }
 
     /**
@@ -146,7 +146,7 @@ class SimpleFileBackendTest extends BaseTestCase
         mkdir('vfs://Temporary/Directory/Cache');
 
         $simpleFileBackend = $this->getSimpleFileBackend();
-        $this->assertEquals('vfs://Temporary/Directory/Cache/Data/SomeCache/', $simpleFileBackend->getCacheDirectory());
+        self::assertEquals('vfs://Temporary/Directory/Cache/Data/SomeCache/', $simpleFileBackend->getCacheDirectory());
     }
 
     /**
@@ -163,7 +163,7 @@ class SimpleFileBackendTest extends BaseTestCase
         mkdir('vfs://Temporary/Directory/Cache');
 
         $simpleFileBackend = $this->getSimpleFileBackend([], $mockPhpCacheFrontend);
-        $this->assertEquals('vfs://Temporary/Directory/Cache/Code/SomePhpCache/', $simpleFileBackend->getCacheDirectory());
+        self::assertEquals('vfs://Temporary/Directory/Cache/Code/SomePhpCache/', $simpleFileBackend->getCacheDirectory());
     }
 
     /**
@@ -180,9 +180,9 @@ class SimpleFileBackendTest extends BaseTestCase
         $simpleFileBackend = $this->getSimpleFileBackend();
         $simpleFileBackend->set($entryIdentifier, $data);
 
-        $this->assertFileExists($pathAndFilename);
+        self::assertFileExists($pathAndFilename);
         $retrievedData = file_get_contents($pathAndFilename);
-        $this->assertEquals($data, $retrievedData);
+        self::assertEquals($data, $retrievedData);
     }
 
     /**
@@ -201,9 +201,9 @@ class SimpleFileBackendTest extends BaseTestCase
         $simpleFileBackend->set($entryIdentifier, $data1);
         $simpleFileBackend->set($entryIdentifier, $data2);
 
-        $this->assertFileExists($pathAndFilename);
+        self::assertFileExists($pathAndFilename);
         $retrievedData = file_get_contents($pathAndFilename);
-        $this->assertEquals($data2, $retrievedData);
+        self::assertEquals($data2, $retrievedData);
     }
 
     /**
@@ -221,7 +221,7 @@ class SimpleFileBackendTest extends BaseTestCase
         $simpleFileBackend->set($entryIdentifier, $data1);
         $simpleFileBackend->set($entryIdentifier, $data2);
 
-        $this->assertSame($data2, $simpleFileBackend->get($entryIdentifier));
+        self::assertSame($data2, $simpleFileBackend->get($entryIdentifier));
     }
 
     /**
@@ -239,7 +239,7 @@ class SimpleFileBackendTest extends BaseTestCase
 
         unlink($pathAndFilename);
 
-        $this->assertFalse($simpleFileBackend->get($entryIdentifier));
+        self::assertFalse($simpleFileBackend->get($entryIdentifier));
     }
 
     /**
@@ -252,7 +252,7 @@ class SimpleFileBackendTest extends BaseTestCase
         $simpleFileBackend = $this->getSimpleFileBackend();
         $simpleFileBackend->set($entryIdentifier, 'some data');
 
-        $this->assertTrue($simpleFileBackend->has($entryIdentifier));
+        self::assertTrue($simpleFileBackend->has($entryIdentifier));
     }
 
     /**
@@ -263,7 +263,7 @@ class SimpleFileBackendTest extends BaseTestCase
         $simpleFileBackend = $this->getSimpleFileBackend();
         $simpleFileBackend->set('SomeEntryIdentifier', 'some data');
 
-        $this->assertFalse($simpleFileBackend->has('SomeNonExistingEntryIdentifier'));
+        self::assertFalse($simpleFileBackend->has('SomeNonExistingEntryIdentifier'));
     }
 
     /**
@@ -279,13 +279,13 @@ class SimpleFileBackendTest extends BaseTestCase
         $simpleFileBackend = $this->getSimpleFileBackend();
         $simpleFileBackend->set($entryIdentifier, 'some data');
 
-        $this->assertFileExists($pathAndFilename);
-        $this->assertTrue($simpleFileBackend->has($entryIdentifier));
+        self::assertFileExists($pathAndFilename);
+        self::assertTrue($simpleFileBackend->has($entryIdentifier));
 
         $simpleFileBackend->remove($entryIdentifier);
 
-        $this->assertFileNotExists($pathAndFilename);
-        $this->assertFalse($simpleFileBackend->has($entryIdentifier));
+        self::assertFileNotExists($pathAndFilename);
+        self::assertFalse($simpleFileBackend->has($entryIdentifier));
     }
 
     /**
@@ -382,7 +382,7 @@ class SimpleFileBackendTest extends BaseTestCase
         $simpleFileBackend->set($entryIdentifier, $data);
 
         $loadedData = $simpleFileBackend->requireOnce($entryIdentifier);
-        $this->assertEquals('foo', $loadedData);
+        self::assertEquals('foo', $loadedData);
     }
 
     /**
@@ -440,17 +440,17 @@ class SimpleFileBackendTest extends BaseTestCase
         $simpleFileBackend->set($entryIdentifier1, 'some data');
         $simpleFileBackend->set($entryIdentifier2, 'some more data');
 
-        $this->assertFileExists($pathAndFilename1);
-        $this->assertFileExists($pathAndFilename2);
-        $this->assertTrue($simpleFileBackend->has($entryIdentifier1));
-        $this->assertTrue($simpleFileBackend->has($entryIdentifier2));
+        self::assertFileExists($pathAndFilename1);
+        self::assertFileExists($pathAndFilename2);
+        self::assertTrue($simpleFileBackend->has($entryIdentifier1));
+        self::assertTrue($simpleFileBackend->has($entryIdentifier2));
 
         $simpleFileBackend->flush();
 
-        $this->assertFileNotExists($pathAndFilename1);
-        $this->assertFalse($simpleFileBackend->has($entryIdentifier1));
-        $this->assertFileNotExists($pathAndFilename2);
-        $this->assertFalse($simpleFileBackend->has($entryIdentifier2));
+        self::assertFileNotExists($pathAndFilename1);
+        self::assertFalse($simpleFileBackend->has($entryIdentifier1));
+        self::assertFileNotExists($pathAndFilename2);
+        self::assertFalse($simpleFileBackend->has($entryIdentifier2));
     }
 
     /**
@@ -473,10 +473,10 @@ class SimpleFileBackendTest extends BaseTestCase
         natsort($entries);
         $i = 0;
         foreach ($entries as $entryIdentifier => $data) {
-            $this->assertEquals(sprintf('entry-%s', $i), $entryIdentifier);
-            $this->assertEquals('some data ' . $i, $data);
+            self::assertEquals(sprintf('entry-%s', $i), $entryIdentifier);
+            self::assertEquals('some data ' . $i, $data);
             $i++;
         }
-        $this->assertEquals(100, $i);
+        self::assertEquals(100, $i);
     }
 }

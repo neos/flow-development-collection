@@ -36,22 +36,42 @@ Neos:
             'trustedProxies':
               position: 'start'
               component: 'Neos\Flow\Http\Component\TrustedProxiesComponent'
-            'getSessionCookieFromRequest':
+            'baseUri':
               position: 'after trustedProxies'
+              component: 'Neos\Flow\Http\Component\BaseUriComponent'
+            'getSessionCookieFromRequest':
+              position: 'after baseUri'
               component: 'Neos\Flow\Session\Http\SessionRequestComponent'
         'process':
           chain:
             'routing':
               position: 'start'
               component: 'Neos\Flow\Mvc\Routing\RoutingComponent'
+            'parseBody':
+              position: 'before dispatching'
+              component: 'Neos\Flow\Http\Component\RequestBodyParsingComponent'
+            'prepareActionRequest':
+              position: 'after parseBody'
+              component: 'Neos\Flow\Mvc\PrepareMvcRequestComponent'
             'dispatching':
               component: 'Neos\Flow\Mvc\DispatchComponent'
+            'replaceHttpResponse':
+              position: 'after dispatching'
+              component: 'Neos\Flow\Http\Component\ReplaceHttpResponseComponent'
+            'setHeader':
+              position: 'after dispatching'
+              component: 'Neos\Flow\Http\Component\SetHeaderComponent'
+            'securityEntryPoint':
+              position: 'after setHeaders'
+              component: 'Neos\Flow\Http\Component\SecurityEntryPointComponent'
 
         'postprocess':
           chain:
             'setSessionCookie':
               position: 'start'
               component: 'Neos\Flow\Session\Http\SessionResponseComponent'
+            'poweredByHeader':
+              component: 'Neos\Flow\Http\Component\PoweredByComponent'
             'standardsCompliance':
               position: 'end'
               component: 'Neos\Flow\Http\Component\StandardsComplianceComponent'
@@ -80,3 +100,8 @@ Neos:
           host: 'X-Forwarded-Host'
           port: 'X-Forwarded-Port'
           proto: 'X-Forwarded-Proto'
+
+      serverRequestDefaults:
+        userAgent: 'Flow/%FLOW_VERSION_BRANCH%.x'
+        scriptPath: '%FLOW_PATH_WEB%index.php'
+        protocolVersion: '1.1'

@@ -40,7 +40,7 @@ class AbstractPersistenceManagerTest extends UnitTestCase
 
         $expectedResult = ['__identity' => 123];
         $actualResult = $this->abstractPersistenceManager->convertObjectToIdentityArray($someObject);
-        $this->assertEquals($expectedResult, $actualResult);
+        self::assertEquals($expectedResult, $actualResult);
     }
 
     /**
@@ -69,7 +69,7 @@ class AbstractPersistenceManagerTest extends UnitTestCase
         $expectedResult = ['foo' => 'bar', 'object1' => ['__identity' => 'identifier1'], 'baz' => ['object2' => ['__identity' => 'identifier2']]];
 
         $actualResult = $this->abstractPersistenceManager->convertObjectsToIdentityArrays($originalArray);
-        $this->assertEquals($expectedResult, $actualResult);
+        self::assertEquals($expectedResult, $actualResult);
     }
 
     /**
@@ -86,6 +86,6 @@ class AbstractPersistenceManagerTest extends UnitTestCase
         $expectedResult = ['foo' => 'bar', 'object1' => ['__identity' => 'identifier1'], 'baz' => ['object2' => ['__identity' => 'identifier2']]];
 
         $actualResult = $this->abstractPersistenceManager->convertObjectsToIdentityArrays($originalArray);
-        $this->assertEquals($expectedResult, $actualResult);
+        self::assertEquals($expectedResult, $actualResult);
     }
 }

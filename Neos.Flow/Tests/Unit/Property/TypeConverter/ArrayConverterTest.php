@@ -36,9 +36,9 @@ class ArrayConverterTest extends UnitTestCase
      */
     public function checkMetadata()
     {
-        $this->assertEquals(['array', 'string', PersistentResource::class], $this->converter->getSupportedSourceTypes(), 'Source types do not match');
-        $this->assertEquals('array', $this->converter->getSupportedTargetType(), 'Target type does not match');
-        $this->assertEquals(1, $this->converter->getPriority(), 'Priority does not match');
+        self::assertEquals(['array', 'string', PersistentResource::class], $this->converter->getSupportedSourceTypes(), 'Source types do not match');
+        self::assertEquals('array', $this->converter->getSupportedTargetType(), 'Target type does not match');
+        self::assertEquals(1, $this->converter->getPriority(), 'Priority does not match');
     }
 
     /**
@@ -47,7 +47,7 @@ class ArrayConverterTest extends UnitTestCase
     public function convertFromDoesNotModifyTheSourceArray()
     {
         $sourceArray = ['Foo' => 'Bar', 'Baz'];
-        $this->assertEquals($sourceArray, $this->converter->convertFrom($sourceArray, 'array'));
+        self::assertEquals($sourceArray, $this->converter->convertFrom($sourceArray, 'array'));
     }
 
     public function stringToArrayDataProvider()
@@ -79,6 +79,6 @@ class ArrayConverterTest extends UnitTestCase
             ->method('getConfigurationValue')
             ->will($this->returnValueMap($configurationValueMap));
 
-        $this->assertEquals($expectedResult, $this->converter->convertFrom($source, 'array', [], $propertyMappingConfiguration));
+        self::assertEquals($expectedResult, $this->converter->convertFrom($source, 'array', [], $propertyMappingConfiguration));
     }
 }

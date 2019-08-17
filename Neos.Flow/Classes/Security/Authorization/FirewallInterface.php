@@ -12,6 +12,7 @@ namespace Neos\Flow\Security\Authorization;
  */
 
 use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Security\Exception\AccessDeniedException;
 
 /**
  * Contract for firewall
@@ -25,6 +26,7 @@ interface FirewallInterface
      *
      * @param ActionRequest $request The request to be analyzed
      * @return void
+     * @throws AccessDeniedException
      */
     public function blockIllegalRequests(ActionRequest $request);
 }

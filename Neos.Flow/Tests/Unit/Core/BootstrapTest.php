@@ -49,7 +49,7 @@ class BootstrapTest extends UnitTestCase
             $bootstrap->registerCompiletimeCommand($compiletimeCommandControllerIdentifier);
         }
 
-        $this->assertSame($expectedResult, $bootstrap->isCompiletimeCommand($givenCommandIdentifier));
+        self::assertSame($expectedResult, $bootstrap->isCompiletimeCommand($givenCommandIdentifier));
     }
 
     /**
