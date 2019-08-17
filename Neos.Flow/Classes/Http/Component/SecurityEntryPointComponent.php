@@ -71,5 +71,6 @@ class SecurityEntryPointComponent implements ComponentInterface
                 return $token;
             }
         }
+        return null;
     }
 }
