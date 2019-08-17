@@ -56,7 +56,7 @@ class Argument
 
     /**
      * A custom validator, used supplementary to the base validation
-     * @var ValidatorInterface
+     * @var ValidatorInterface|null
      */
     protected $validator = null;
 
@@ -186,10 +186,10 @@ class Argument
     /**
      * Returns the set validator
      *
-     * @return ValidatorInterface The set validator, NULL if none was set
+     * @return ValidatorInterface|null The set validator, NULL if none was set
      * @api
      */
-    public function getValidator(): ValidatorInterface
+    public function getValidator(): ?ValidatorInterface
     {
         return $this->validator;
     }
