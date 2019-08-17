@@ -46,7 +46,8 @@ class CurlEngineTest extends FunctionalTestCase
         $this->browser->getRequestEngine()->setOption(CURLOPT_FOLLOWLOCATION, true);
         $this->browser->setFollowRedirects(false);
         $response = $this->browser->request('http://www.neos.io');
-        self::assertStringStartsWith('<!DOCTYPE html>', $response->getContent());
+
+        self::assertStringStartsWith('<!DOCTYPE html>', $response->getBody()->getContents());
     }
 
     /**
@@ -57,6 +58,6 @@ class CurlEngineTest extends FunctionalTestCase
     public function getRequestReturnsResponse()
     {
         $response = $this->browser->request('http://www.neos.io');
-        self::assertStringContainsString('This website is powered by Neos', $response->getContent());
+        self::assertStringContainsString('This website is powered by Neos', $response->getBody()->getContents());
     }
 }

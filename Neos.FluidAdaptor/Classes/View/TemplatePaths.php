@@ -131,7 +131,7 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
         }
 
         $templateRootPath = $this->templateRootPathPattern;
-        if (isset($this->patternReplacementVariables['packageKey'])) {
+        if (!empty($this->patternReplacementVariables['packageKey'])) {
             $templateRootPath = str_replace('@packageResourcesPath', 'resource://' . $this->patternReplacementVariables['packageKey'], $templateRootPath);
         }
 
@@ -152,7 +152,7 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
         }
 
         $layoutRootPath = $this->layoutRootPathPattern;
-        if (isset($this->patternReplacementVariables['packageKey'])) {
+        if (!empty($this->patternReplacementVariables['packageKey'])) {
             $layoutRootPath = str_replace('@packageResourcesPath', 'resource://' . $this->patternReplacementVariables['packageKey'], $layoutRootPath);
         }
 
@@ -170,7 +170,7 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
         }
 
         $partialRootPath = $this->partialRootPathPattern;
-        if (isset($this->patternReplacementVariables['packageKey'])) {
+        if (!empty($this->patternReplacementVariables['packageKey'])) {
             $partialRootPath = str_replace('@packageResourcesPath', 'resource://' . $this->patternReplacementVariables['packageKey'], $partialRootPath);
         }
 
@@ -236,11 +236,15 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
             ]), false, false);
         }
 
-        foreach ($paths as $path) {
-            if (is_file($path)) {
-                return $path;
+        try {
+            foreach ($paths as $path) {
+                if (is_file($path)) {
+                    return $path;
+                }
             }
+        } catch (\Neos\Flow\ResourceManagement\Exception $resourceException) {/* ignoring to throw the exception below */
         }
+
 
         throw new Exception\InvalidTemplateResourceException('Template could not be loaded. I tried "' . implode('", "', $paths) . '"', 1225709595);
     }
@@ -404,6 +408,10 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
      */
     protected function expandGenericPathPattern($pattern, array $patternReplacementVariables, $bubbleControllerAndSubpackage, $formatIsOptional)
     {
+        if (strpos($pattern, 'resource://') === 0 && empty($patternReplacementVariables['packageKey'])) {
+            return [];
+        }
+
         $paths = [$pattern];
         $paths = $this->expandPatterns($paths, '@templateRoot', isset($patternReplacementVariables['templateRoot']) ? [$patternReplacementVariables['templateRoot']] : $this->getTemplateRootPaths());
         $paths = $this->expandPatterns($paths, '@partialRoot', isset($patternReplacementVariables['partialRoot']) ? [$patternReplacementVariables['partialRoot']] : $this->getPartialRootPaths());

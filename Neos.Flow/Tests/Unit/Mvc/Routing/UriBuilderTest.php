@@ -17,6 +17,7 @@ use Neos\Flow\Mvc\Routing\Dto\ResolveContext;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Flow\Mvc;
 use Neos\Flow\Utility;
+use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
 
 /**
@@ -35,7 +36,7 @@ class UriBuilderTest extends UnitTestCase
     protected $mockRouter;
 
     /**
-     * @var Http\Request|\PHPUnit_Framework_MockObject_MockObject
+     * @var ServerRequestInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $mockHttpRequest;
 
@@ -65,32 +66,32 @@ class UriBuilderTest extends UnitTestCase
      */
     protected function setUp(): void
     {
-        $this->mockHttpRequest = $this->getMockBuilder(Http\Request::class)->disableOriginalConstructor()->getMock();
+        $this->mockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
 
         $this->mockBaseUri = $this->getMockBuilder(UriInterface::class)->getMock();
-        $this->mockHttpRequest->expects($this->any())->method('getBaseUri')->will($this->returnValue($this->mockBaseUri));
+        $this->mockHttpRequest->expects($this->any())->method('getAttribute')->with(Http\ServerRequestAttributes::BASE_URI)->willReturn($this->mockBaseUri);
 
         $this->mockRouter = $this->createMock(Mvc\Routing\RouterInterface::class);
 
-        $this->mockMainRequest = $this->createMock(Mvc\ActionRequest::class, [], [$this->mockHttpRequest]);
-        $this->mockMainRequest->expects($this->any())->method('getHttpRequest')->will($this->returnValue($this->mockHttpRequest));
-        $this->mockMainRequest->expects($this->any())->method('getParentRequest')->will($this->returnValue($this->mockHttpRequest));
-        $this->mockMainRequest->expects($this->any())->method('getMainRequest')->will($this->returnValue($this->mockMainRequest));
-        $this->mockMainRequest->expects($this->any())->method('isMainRequest')->will($this->returnValue(true));
-        $this->mockMainRequest->expects($this->any())->method('getArgumentNamespace')->will($this->returnValue(''));
+        $this->mockMainRequest = $this->createMock(Mvc\ActionRequest::class);
+        $this->mockMainRequest->expects($this->any())->method('getHttpRequest')->willReturn($this->mockHttpRequest);
+        $this->mockMainRequest->expects($this->any())->method('getParentRequest')->willReturn(null);
+        $this->mockMainRequest->expects($this->any())->method('getMainRequest')->willReturn($this->mockMainRequest);
+        $this->mockMainRequest->expects($this->any())->method('isMainRequest')->willReturn(true);
+        $this->mockMainRequest->expects($this->any())->method('getArgumentNamespace')->willReturn('');
 
-        $this->mockSubRequest = $this->createMock(Mvc\ActionRequest::class, [], [$this->mockMainRequest]);
-        $this->mockSubRequest->expects($this->any())->method('getHttpRequest')->will($this->returnValue($this->mockHttpRequest));
-        $this->mockSubRequest->expects($this->any())->method('getMainRequest')->will($this->returnValue($this->mockMainRequest));
-        $this->mockSubRequest->expects($this->any())->method('isMainRequest')->will($this->returnValue(false));
-        $this->mockSubRequest->expects($this->any())->method('getParentRequest')->will($this->returnValue($this->mockMainRequest));
-        $this->mockSubRequest->expects($this->any())->method('getArgumentNamespace')->will($this->returnValue('SubNamespace'));
+        $this->mockSubRequest = $this->createMock(Mvc\ActionRequest::class);
+        $this->mockSubRequest->expects($this->any())->method('getHttpRequest')->willReturn($this->mockHttpRequest);
+        $this->mockSubRequest->expects($this->any())->method('getMainRequest')->willReturn($this->mockMainRequest);
+        $this->mockSubRequest->expects($this->any())->method('isMainRequest')->willReturn(false);
+        $this->mockSubRequest->expects($this->any())->method('getParentRequest')->willReturn($this->mockMainRequest);
+        $this->mockSubRequest->expects($this->any())->method('getArgumentNamespace')->willReturn('SubNamespace');
 
-        $this->mockSubSubRequest = $this->createMock(Mvc\ActionRequest::class, [], [$this->mockSubRequest]);
-        $this->mockSubSubRequest->expects($this->any())->method('getHttpRequest')->will($this->returnValue($this->mockHttpRequest));
-        $this->mockSubSubRequest->expects($this->any())->method('getMainRequest')->will($this->returnValue($this->mockMainRequest));
-        $this->mockSubSubRequest->expects($this->any())->method('isMainRequest')->will($this->returnValue(false));
-        $this->mockSubSubRequest->expects($this->any())->method('getParentRequest')->will($this->returnValue($this->mockSubRequest));
+        $this->mockSubSubRequest = $this->createMock(Mvc\ActionRequest::class);
+        $this->mockSubSubRequest->expects($this->any())->method('getHttpRequest')->willReturn($this->mockHttpRequest);
+        $this->mockSubSubRequest->expects($this->any())->method('getMainRequest')->willReturn($this->mockMainRequest);
+        $this->mockSubSubRequest->expects($this->any())->method('isMainRequest')->willReturn(false);
+        $this->mockSubSubRequest->expects($this->any())->method('getParentRequest')->willReturn($this->mockSubRequest);
 
         $environment = $this->getMockBuilder(Utility\Environment::class)->disableOriginalConstructor()->setMethods(['isRewriteEnabled'])->getMock();
         $environment->expects($this->any())->method('isRewriteEnabled')->will($this->returnValue(true));
@@ -203,7 +204,7 @@ class UriBuilderTest extends UnitTestCase
     public function uriForInSubRequestWithExplicitEmptySubpackageKeyDoesNotUseRequestSubpackageKey()
     {
         /** @var ActionRequest|\PHPUnit_Framework_MockObject_MockObject $mockSubRequest */
-        $mockSubRequest = $this->getMockBuilder(Mvc\ActionRequest::class)->setMethods([])->setConstructorArgs([$this->mockMainRequest])->getMock();
+        $mockSubRequest = $this->getMockBuilder(Mvc\ActionRequest::class)->setMethods([])->disableOriginalConstructor()->getMock();
         $mockSubRequest->expects($this->any())->method('getHttpRequest')->will($this->returnValue($this->mockHttpRequest));
         $mockSubRequest->expects($this->any())->method('getMainRequest')->will($this->returnValue($this->mockMainRequest));
         $mockSubRequest->expects($this->any())->method('isMainRequest')->will($this->returnValue(false));
@@ -719,8 +720,6 @@ class UriBuilderTest extends UnitTestCase
      */
     public function buildPassesBaseUriToRouter()
     {
-        $this->mockHttpRequest->expects($this->atLeastOnce())->method('getBaseUri')->will($this->returnValue($this->mockBaseUri));
-
         $this->mockRouter->expects($this->once())->method('resolve')->willReturnCallback(function (ResolveContext $resolveContext) {
             self::assertSame($this->mockBaseUri, $resolveContext->getBaseUri());
             return $this->getMockBuilder(UriInterface::class)->getMock();
@@ -748,7 +747,6 @@ class UriBuilderTest extends UnitTestCase
      */
     public function buildDoesNotSetAbsoluteUriFlagByDefault()
     {
-        $this->mockHttpRequest->expects($this->atLeastOnce())->method('getScriptRequestPath')->will($this->returnValue('/document-root/'));
         $this->mockRouter->expects($this->once())->method('resolve')->willReturnCallback(function (ResolveContext $resolveContext) {
             self::assertFalse($resolveContext->isForceAbsoluteUri());
             return $this->getMockBuilder(UriInterface::class)->getMock();
@@ -762,7 +760,6 @@ class UriBuilderTest extends UnitTestCase
      */
     public function buildForwardsForceAbsoluteUriFlagToRouter()
     {
-        $this->mockHttpRequest->expects($this->atLeastOnce())->method('getScriptRequestPath')->will($this->returnValue('/document-root/'));
         $this->mockRouter->expects($this->once())->method('resolve')->willReturnCallback(function (ResolveContext $resolveContext) {
             self::assertTrue($resolveContext->isForceAbsoluteUri());
             return $this->getMockBuilder(UriInterface::class)->getMock();
@@ -778,7 +775,7 @@ class UriBuilderTest extends UnitTestCase
      */
     public function buildPrependsScriptRequestPathByDefaultIfCreateAbsoluteUriIsFalse()
     {
-        $this->mockHttpRequest->expects($this->atLeastOnce())->method('getScriptRequestPath')->will($this->returnValue('/document-root/'));
+        $this->mockHttpRequest->expects($this->atLeastOnce())->method('getServerParams')->willReturn(['SCRIPT_NAME' => '/document-root/']);
         $this->mockRouter->expects($this->once())->method('resolve')->willReturnCallback(function (ResolveContext $resolveContext) {
             self::assertSame('/document-root/', $resolveContext->getUriPathPrefix());
             return $this->getMockBuilder(UriInterface::class)->getMock();
@@ -798,7 +795,7 @@ class UriBuilderTest extends UnitTestCase
         $this->inject($this->uriBuilder, 'environment', $mockEnvironment);
 
         $this->mockRouter->expects($this->once())->method('resolve')->willReturnCallback(function (ResolveContext $resolveContext) {
-            self::assertSame('index.php/', $resolveContext->getUriPathPrefix());
+            self::assertSame('/index.php/', $resolveContext->getUriPathPrefix());
             return $this->getMockBuilder(UriInterface::class)->getMock();
         });
 

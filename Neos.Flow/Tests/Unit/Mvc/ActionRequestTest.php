@@ -12,7 +12,6 @@ namespace Neos\Flow\Tests\Unit\Mvc;
  */
 
 use Neos\Flow\Mvc\ActionRequest;
-use Neos\Flow\Http;
 use Neos\Flow\Mvc\Exception\InvalidActionNameException;
 use Neos\Flow\Mvc\Exception\InvalidArgumentNameException;
 use Neos\Flow\Mvc\Exception\InvalidArgumentTypeException;
@@ -24,6 +23,7 @@ use Neos\Flow\Security\Cryptography\HashService;
 use Neos\Flow\Security\Exception\InvalidHashException;
 use Neos\Flow\SignalSlot\Dispatcher;
 use Neos\Flow\Tests\UnitTestCase;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Testcase for the MVC ActionRequest class
@@ -36,14 +36,14 @@ class ActionRequestTest extends UnitTestCase
     protected $actionRequest;
 
     /**
-     * @var Http\Request|\PHPUnit_Framework_MockObject_MockObject
+     * @var ServerRequestInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $mockHttpRequest;
 
     protected function setUp(): void
     {
-        $this->mockHttpRequest = $this->getMockBuilder(Http\Request::class)->disableOriginalConstructor()->getMock();
-        $this->actionRequest = new ActionRequest($this->mockHttpRequest);
+        $this->mockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
+        $this->actionRequest = ActionRequest::fromHttpRequest($this->mockHttpRequest);
     }
 
     /**
@@ -53,11 +53,11 @@ class ActionRequestTest extends UnitTestCase
      *
      * @test
      */
-    public function anHttpRequestOrActionRequestIsRequiredAsParentRequest()
+    public function anActionRequestIsRequiredAsParentRequest()
     {
-        self::assertSame($this->mockHttpRequest, $this->actionRequest->getParentRequest());
+        self::assertSame(null, $this->actionRequest->getParentRequest());
 
-        $anotherActionRequest = new ActionRequest($this->actionRequest);
+        $anotherActionRequest = $this->actionRequest->createSubRequest();
         self::assertSame($this->actionRequest, $anotherActionRequest->getParentRequest());
     }
 
@@ -66,7 +66,7 @@ class ActionRequestTest extends UnitTestCase
      */
     public function constructorThrowsAnExceptionIfNoValidRequestIsPassed()
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(\Error::class);
         new ActionRequest(new \stdClass());
     }
 
@@ -75,8 +75,8 @@ class ActionRequestTest extends UnitTestCase
      */
     public function getHttpRequestReturnsTheHttpRequestWhichIsTheRootOfAllActionRequests()
     {
-        $anotherActionRequest = new ActionRequest($this->actionRequest);
-        $yetAnotherActionRequest = new ActionRequest($anotherActionRequest);
+        $anotherActionRequest = $this->actionRequest->createSubRequest();
+        $yetAnotherActionRequest = $anotherActionRequest->createSubRequest();
 
         self::assertSame($this->mockHttpRequest, $this->actionRequest->getHttpRequest());
         self::assertSame($this->mockHttpRequest, $yetAnotherActionRequest->getHttpRequest());
@@ -88,8 +88,8 @@ class ActionRequestTest extends UnitTestCase
      */
     public function getMainRequestReturnsTheTopLevelActionRequestWhoseParentIsTheHttpRequest()
     {
-        $anotherActionRequest = new ActionRequest($this->actionRequest);
-        $yetAnotherActionRequest = new ActionRequest($anotherActionRequest);
+        $anotherActionRequest = $this->actionRequest->createSubRequest();
+        $yetAnotherActionRequest = $anotherActionRequest->createSubRequest();
 
         self::assertSame($this->actionRequest, $this->actionRequest->getMainRequest());
         self::assertSame($this->actionRequest, $yetAnotherActionRequest->getMainRequest());
@@ -101,8 +101,8 @@ class ActionRequestTest extends UnitTestCase
      */
     public function isMainRequestChecksIfTheParentRequestIsNotAnHttpRequest()
     {
-        $anotherActionRequest = new ActionRequest($this->actionRequest);
-        $yetAnotherActionRequest = new ActionRequest($anotherActionRequest);
+        $anotherActionRequest = $this->actionRequest->createSubRequest();
+        $yetAnotherActionRequest = $anotherActionRequest->createSubRequest();
 
         self::assertTrue($this->actionRequest->isMainRequest());
         self::assertFalse($anotherActionRequest->isMainRequest());
@@ -156,7 +156,7 @@ class ActionRequestTest extends UnitTestCase
     {
         $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
         $mockObjectManager->expects($this->at(0))->method('getCaseSensitiveObjectName')->with('SomePackage\Some\Subpackage\Controller\SomeControllerController')
-            ->will($this->returnValue(false));
+            ->will($this->returnValue(null));
 
         $mockPackageManager = $this->createMock(PackageManager::class);
         $mockPackageManager->expects($this->any())->method('getCaseSensitivePackageKey')->with('somepackage')->will($this->returnValue('SomePackage'));
@@ -247,7 +247,7 @@ class ActionRequestTest extends UnitTestCase
     {
         $this->expectException(UnknownObjectException::class);
         $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
-        $mockObjectManager->expects($this->any())->method('getCaseSensitiveObjectName')->will($this->returnValue(false));
+        $mockObjectManager->expects($this->any())->method('getCaseSensitiveObjectName')->will($this->returnValue(null));
 
         $this->inject($this->actionRequest, 'objectManager', $mockObjectManager);
 
@@ -342,8 +342,8 @@ class ActionRequestTest extends UnitTestCase
     public function invalidControllerNames()
     {
         return [
-            [42],
-            [false],
+            //[42],
+            //[false],
             ['foo_bar_baz'],
         ];
     }
@@ -378,7 +378,7 @@ class ActionRequestTest extends UnitTestCase
     public function invalidActionNames()
     {
         return [
-            [42],
+            //[42],
             [''],
             ['FooBar'],
         ];

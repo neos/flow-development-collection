@@ -11,14 +11,11 @@ namespace Neos\Flow\Mvc\Controller;
  * source code.
  */
 
-
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Http\Response;
 use Neos\Flow\Mvc\FlashMessage\FlashMessageContainer;
 use Neos\Flow\Mvc\FlashMessage\FlashMessageService;
+use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
-use Neos\Flow\Mvc\RequestInterface;
-use Neos\Flow\Mvc\ResponseInterface;
 use Neos\Flow\Mvc\Routing\UriBuilder;
 
 /**
@@ -28,13 +25,11 @@ use Neos\Flow\Mvc\Routing\UriBuilder;
  * views being views or view helpers.
  *
  * @api
- *
- * TODO: From next major this will use the ActionResponse
  */
 class ControllerContext
 {
     /**
-     * @var RequestInterface
+     * @var ActionRequest
      */
     protected $request;
 
@@ -62,12 +57,12 @@ class ControllerContext
     /**
      * Constructs this context
      *
-     * @param RequestInterface $request
-     * @param Response $response
+     * @param ActionRequest $request
+     * @param ActionResponse $response
      * @param Arguments $arguments
      * @param UriBuilder $uriBuilder
      */
-    public function __construct(RequestInterface $request, Response $response, Arguments $arguments, UriBuilder $uriBuilder)
+    public function __construct(ActionRequest $request, ActionResponse $response, Arguments $arguments, UriBuilder $uriBuilder)
     {
         $this->request = $request;
         $this->response = $response;
@@ -78,7 +73,7 @@ class ControllerContext
     /**
      * Get the request of the controller
      *
-     * @return RequestInterface
+     * @return ActionRequest
      * @api
      */
     public function getRequest()
@@ -89,7 +84,7 @@ class ControllerContext
     /**
      * Get the response of the controller
      *
-     * @return ResponseInterface|ActionResponse
+     * @return ActionResponse
      * @api
      */
     public function getResponse()
