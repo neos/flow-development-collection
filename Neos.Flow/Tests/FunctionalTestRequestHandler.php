@@ -16,7 +16,9 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Http\Component\ComponentContext;
 use Neos\Http\Factories\ResponseFactory;
+use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestFactoryInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
@@ -132,7 +134,7 @@ class FunctionalTestRequestHandler implements \Neos\Flow\Http\HttpRequestHandler
      *
      * @return ComponentContext
      */
-    protected function getComponentContext()
+    public function getComponentContext()
     {
         // FIXME: Use PSR-15 factories
         if ($this->componentContext === null) {
