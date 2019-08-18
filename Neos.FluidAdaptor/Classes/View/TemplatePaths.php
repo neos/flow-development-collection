@@ -408,10 +408,6 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
      */
     protected function expandGenericPathPattern($pattern, array $patternReplacementVariables, $bubbleControllerAndSubpackage, $formatIsOptional)
     {
-        if (strpos($pattern, 'resource://') === 0 && empty($patternReplacementVariables['packageKey'])) {
-            return [];
-        }
-
         $paths = [$pattern];
         $paths = $this->expandPatterns($paths, '@templateRoot', isset($patternReplacementVariables['templateRoot']) ? [$patternReplacementVariables['templateRoot']] : $this->getTemplateRootPaths());
         $paths = $this->expandPatterns($paths, '@partialRoot', isset($patternReplacementVariables['partialRoot']) ? [$patternReplacementVariables['partialRoot']] : $this->getPartialRootPaths());
