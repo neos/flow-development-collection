@@ -20,7 +20,7 @@
         "psr/container": "^1.0",
         "ramsey/uuid": "^3.0",
         "doctrine/orm": "^2.6",
-        "doctrine/migrations": "^1.8",
+        "doctrine/migrations": "^2.1",
         "doctrine/dbal": "^2.9",
         "doctrine/common": "^2.4",
         "symfony/yaml": "^4.2",
