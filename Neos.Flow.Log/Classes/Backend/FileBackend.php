@@ -235,7 +235,7 @@ class FileBackend extends AbstractBackend
         }
 
         if (function_exists('posix_getpid')) {
-            $processId = ' ' . str_pad(posix_getpid(), 10);
+            $processId = ' ' . str_pad((string)posix_getpid(), 10);
         } else {
             $processId = ' ';
         }
