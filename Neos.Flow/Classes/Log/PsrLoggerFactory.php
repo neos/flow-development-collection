@@ -71,7 +71,7 @@ class PsrLoggerFactory implements PsrLoggerFactoryInterface
      * @return static
      * @api
      */
-    public static function create(array $configuration)
+    public static function create(array $configuration): PsrLoggerFactory
     {
         return new self($configuration);
     }
@@ -83,7 +83,7 @@ class PsrLoggerFactory implements PsrLoggerFactoryInterface
      * @return BackendInterface[]
      * @throws \Exception
      */
-    protected function instantiateBackends(array $configuration)
+    protected function instantiateBackends(array $configuration): array
     {
         $backends = [];
         foreach ($configuration as $backendConfiguration) {
@@ -103,7 +103,7 @@ class PsrLoggerFactory implements PsrLoggerFactoryInterface
      * @return BackendInterface
      * @throws \Exception
      */
-    protected function instantiateBackend(string $class, array $options = [])
+    protected function instantiateBackend(string $class, array $options = []): BackendInterface
     {
         $backend = new $class($options);
         if (!($backend instanceof BackendInterface)) {

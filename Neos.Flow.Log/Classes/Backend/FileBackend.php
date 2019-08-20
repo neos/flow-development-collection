@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Flow\Log\Backend;
 
 /*
@@ -13,6 +15,7 @@ namespace Neos\Flow\Log\Backend;
 
 use Neos\Flow\Log\Exception\CouldNotOpenResourceException;
 use Neos\Flow\Log\PlainTextFormatter;
+use Neos\Utility\Exception\FilesException;
 use Neos\Utility\Files;
 
 /**
@@ -66,7 +69,7 @@ class FileBackend extends AbstractBackend
      * @return void
      * @api
      */
-    public function setLogFileURL($logFileUrl)
+    public function setLogFileURL(string $logFileUrl): void
     {
         $this->logFileUrl = $logFileUrl;
     }
@@ -81,7 +84,7 @@ class FileBackend extends AbstractBackend
      * @return void
      * @api
      */
-    public function setCreateParentDirectories($flag)
+    public function setCreateParentDirectories(bool $flag): void
     {
         $this->createParentDirectories = ($flag === true);
     }
@@ -90,12 +93,12 @@ class FileBackend extends AbstractBackend
      * Sets the maximum log file size, if the logfile is bigger, a new one
      * is started.
      *
-     * @param integer $maximumLogFileSize Maximum size in bytes
+     * @param int $maximumLogFileSize Maximum size in bytes
      * @return void
      * @api
      * @see setLogFilesToKeep()
      */
-    public function setMaximumLogFileSize($maximumLogFileSize)
+    public function setMaximumLogFileSize(int $maximumLogFileSize): void
     {
         $this->maximumLogFileSize = $maximumLogFileSize;
     }
@@ -103,12 +106,12 @@ class FileBackend extends AbstractBackend
     /**
      * If a new log file is started, keep this number of old log files.
      *
-     * @param integer $logFilesToKeep Number of old log files to keep
+     * @param int $logFilesToKeep Number of old log files to keep
      * @return void
      * @api
      * @see setMaximumLogFileSize()
      */
-    public function setLogFilesToKeep($logFilesToKeep)
+    public function setLogFilesToKeep(int $logFilesToKeep): void
     {
         $this->logFilesToKeep = $logFilesToKeep;
     }
@@ -121,7 +124,7 @@ class FileBackend extends AbstractBackend
      * @return void
      * @api
      */
-    public function setLogMessageOrigin($flag)
+    public function setLogMessageOrigin(bool $flag): void
     {
         $this->logMessageOrigin = ($flag === true);
     }
@@ -132,19 +135,20 @@ class FileBackend extends AbstractBackend
      *
      * @return void
      * @throws CouldNotOpenResourceException
+     * @throws FilesException
      * @api
      */
-    public function open()
+    public function open(): void
     {
         $this->severityLabels = [
-            LOG_EMERG   => 'EMERGENCY',
-            LOG_ALERT   => 'ALERT    ',
-            LOG_CRIT    => 'CRITICAL ',
-            LOG_ERR     => 'ERROR    ',
+            LOG_EMERG => 'EMERGENCY',
+            LOG_ALERT => 'ALERT    ',
+            LOG_CRIT => 'CRITICAL ',
+            LOG_ERR => 'ERROR    ',
             LOG_WARNING => 'WARNING  ',
-            LOG_NOTICE  => 'NOTICE   ',
-            LOG_INFO    => 'INFO     ',
-            LOG_DEBUG   => 'DEBUG    ',
+            LOG_NOTICE => 'NOTICE   ',
+            LOG_INFO => 'INFO     ',
+            LOG_DEBUG => 'DEBUG    ',
         ];
 
         if (file_exists($this->logFileUrl) && $this->maximumLogFileSize > 0 && filesize($this->logFileUrl) > $this->maximumLogFileSize) {
@@ -185,7 +189,7 @@ class FileBackend extends AbstractBackend
      *
      * @return void
      */
-    protected function rotateLogFile()
+    protected function rotateLogFile(): void
     {
         if (file_exists($this->logFileUrl . '.lock')) {
             return;
@@ -197,7 +201,7 @@ class FileBackend extends AbstractBackend
             unlink($this->logFileUrl);
         } else {
             for ($logFileCount = $this->logFilesToKeep; $logFileCount > 0; --$logFileCount) {
-                $rotatedLogFileUrl =  $this->logFileUrl . '.' . $logFileCount;
+                $rotatedLogFileUrl = $this->logFileUrl . '.' . $logFileCount;
                 if (file_exists($rotatedLogFileUrl)) {
                     if ($logFileCount == $this->logFilesToKeep) {
                         unlink($rotatedLogFileUrl);
@@ -216,7 +220,7 @@ class FileBackend extends AbstractBackend
      * Appends the given message along with the additional information into the log.
      *
      * @param string $message The message to log
-     * @param integer $severity One of the LOG_* constants
+     * @param int $severity One of the LOG_* constants
      * @param mixed $additionalData A variable containing more information about the event to be logged
      * @param string $packageKey Key of the package triggering the log (determined automatically if not specified)
      * @param string $className Name of the class triggering the log (determined automatically if not specified)
@@ -224,7 +228,7 @@ class FileBackend extends AbstractBackend
      * @return void
      * @api
      */
-    public function append($message, $severity = LOG_INFO, $additionalData = null, $packageKey = null, $className = null, $methodName = null)
+    public function append(string $message, int $severity = LOG_INFO, $additionalData = null, string $packageKey = null, string $className = null, string $methodName = null): void
     {
         if ($severity > $this->severityThreshold) {
             return;
@@ -260,7 +264,7 @@ class FileBackend extends AbstractBackend
      * @return void
      * @api
      */
-    public function close()
+    public function close(): void
     {
     }
 }
