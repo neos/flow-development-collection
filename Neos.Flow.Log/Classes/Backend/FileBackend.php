@@ -237,11 +237,11 @@ class FileBackend extends AbstractBackend
         if (function_exists('posix_getpid')) {
             $processId = ' ' . str_pad((string)posix_getpid(), 10);
         } else {
-            $processId = ' ';
+            $processId = ' ' . str_pad((string)getmypid(), 10);
         }
-        $ipAddress = ($this->logIpAddress === true) ? str_pad((isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : ''), 15) : '';
-        $severityLabel = (isset($this->severityLabels[$severity])) ? $this->severityLabels[$severity] : 'UNKNOWN  ';
-        $output = strftime('%y-%m-%d %H:%M:%S', time()) . $processId . ' ' . $ipAddress . $severityLabel . ' ' . str_pad($packageKey, 20) . ' ' . $message;
+        $ipAddress = ($this->logIpAddress === true) ? str_pad(($_SERVER['REMOTE_ADDR'] ?? ''), 15) : '';
+        $severityLabel = $this->severityLabels[$severity] ?? 'UNKNOWN  ';
+        $output = strftime('%y-%m-%d %H:%M:%S', time()) . $processId . ' ' . $ipAddress . $severityLabel . ' ' . str_pad((string)$packageKey, 20) . ' ' . $message;
 
         if ($this->logMessageOrigin === true && ($className !== null || $methodName !== null)) {
             $output .= ' [logged in ' . $className . '::' . $methodName . '()]';
