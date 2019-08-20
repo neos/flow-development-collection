@@ -12,7 +12,9 @@ namespace Neos\Flow\Mvc;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Psr\Http\Message\UriInterface;
 use Psr\Http\Message\ServerRequestInterface as HttpRequestInterface;
+use Neos\Flow\Http\ServerRequestAttributes;
 use Neos\Flow\ObjectManagement\Exception\UnknownObjectException;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Package\PackageManager;
@@ -693,6 +695,17 @@ class ActionRequest implements RequestInterface
     public function getFormat(): string
     {
         return $this->format;
+    }
+
+    /**
+     * Returns the base Uri of the request.
+     *
+     * @return UriInterface The base URI of the request
+     * @api
+     */
+    public function getBaseUri(): UriInterface
+    {
+        return $this->getHttpRequest()->getAttribute(ServerRequestAttributes::BASE_URI);
     }
 
     /**
