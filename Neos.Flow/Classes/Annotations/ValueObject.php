@@ -27,5 +27,5 @@ final class ValueObject
      * Whether the value object should be embedded.
      * @var boolean
      */
-    public $embedded = false;
+    public $embedded = true;
 }
