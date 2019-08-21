@@ -199,7 +199,7 @@ class SelectViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\For
 
         /** @var PersistenceManagerInterface|\PHPUnit\Framework\MockObject\MockObject $mockPersistenceManager */
         $mockPersistenceManager = $this->createMock(\Neos\Flow\Persistence\PersistenceManagerInterface::class);
-        $mockPersistenceManager->expects($this->any())->method('getIdentifierByObject')->with($user->getInterests())->will(self::returnValue(null));
+        $mockPersistenceManager->expects(self::any())->method('getIdentifierByObject')->with($user->getInterests())->will(self::returnValue(null));
         $this->viewHelper->injectPersistenceManager($mockPersistenceManager);
 
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
@@ -220,7 +220,7 @@ class SelectViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\For
     public function selectOnDomainObjectsCreatesExpectedOptions()
     {
         $mockPersistenceManager = $this->createMock(\Neos\Flow\Persistence\PersistenceManagerInterface::class);
-        $mockPersistenceManager->expects($this->any())->method('getIdentifierByObject')->will(self::returnValue(2));
+        $mockPersistenceManager->expects(self::any())->method('getIdentifierByObject')->will(self::returnValue(2));
         $this->viewHelper->injectPersistenceManager($mockPersistenceManager);
 
         $this->tagBuilder->expects(self::once())->method('addAttribute')->with('name', 'myName[__identity]');
@@ -290,7 +290,7 @@ class SelectViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\For
     public function multipleSelectOnDomainObjectsCreatesExpectedOptionsWithoutOptionValueField()
     {
         $mockPersistenceManager = $this->createMock(\Neos\Flow\Persistence\PersistenceManagerInterface::class);
-        $mockPersistenceManager->expects($this->any())->method('getIdentifierByObject')->will(self::returnCallBack(
+        $mockPersistenceManager->expects(self::any())->method('getIdentifierByObject')->will(self::returnCallBack(
             function ($object) {
                 return $object->getId();
             }
@@ -330,7 +330,7 @@ class SelectViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\For
     public function selectWithoutFurtherConfigurationOnDomainObjectsUsesUuidForValueAndLabel()
     {
         $mockPersistenceManager = $this->createMock(\Neos\Flow\Persistence\PersistenceManagerInterface::class);
-        $mockPersistenceManager->expects($this->any())->method('getIdentifierByObject')->will(self::returnValue('fakeUUID'));
+        $mockPersistenceManager->expects(self::any())->method('getIdentifierByObject')->will(self::returnValue('fakeUUID'));
         $this->viewHelper->injectPersistenceManager($mockPersistenceManager);
 
         $this->tagBuilder->expects(self::once())->method('addAttribute')->with('name', 'myName');
@@ -356,7 +356,7 @@ class SelectViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\For
     public function selectWithoutFurtherConfigurationOnDomainObjectsUsesToStringForLabelIfAvailable()
     {
         $mockPersistenceManager = $this->createMock(\Neos\Flow\Persistence\PersistenceManagerInterface::class);
-        $mockPersistenceManager->expects($this->any())->method('getIdentifierByObject')->will(self::returnValue('fakeUUID'));
+        $mockPersistenceManager->expects(self::any())->method('getIdentifierByObject')->will(self::returnValue('fakeUUID'));
         $this->viewHelper->injectPersistenceManager($mockPersistenceManager);
 
         $this->tagBuilder->expects(self::once())->method('addAttribute')->with('name', 'myName');
@@ -384,7 +384,7 @@ class SelectViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\For
     {
         $this->expectException(Exception::class);
         $mockPersistenceManager = $this->createMock(\Neos\Flow\Persistence\PersistenceManagerInterface::class);
-        $mockPersistenceManager->expects($this->any())->method('getIdentifierByObject')->will(self::returnValue(null));
+        $mockPersistenceManager->expects(self::any())->method('getIdentifierByObject')->will(self::returnValue(null));
         $this->viewHelper->injectPersistenceManager($mockPersistenceManager);
 
         $user = new \Neos\FluidAdaptor\ViewHelpers\Fixtures\UserDomainClass(1, 'Ingmar', 'Schlecht');

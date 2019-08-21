@@ -39,15 +39,15 @@ class TemplateViewTest extends UnitTestCase
 
         $httpRequest = new ServerRequest('GET', new Uri('http://robertlemke.com/blog'));
         $mockRequest = $this->createMock(\Neos\Flow\Mvc\ActionRequest::class, [], [$httpRequest]);
-        $mockRequest->expects($this->any())->method('getControllerPackageKey')->will(self::returnValue($packageKey));
-        $mockRequest->expects($this->any())->method('getControllerSubPackageKey')->will(self::returnValue($subPackageKey));
-        $mockRequest->expects($this->any())->method('getControllerName')->will(self::returnValue($controllerName));
-        $mockRequest->expects($this->any())->method('getControllerObjectName')->will(self::returnValue($controllerObjectName));
-        $mockRequest->expects($this->any())->method('getFormat')->will(self::returnValue($format));
+        $mockRequest->expects(self::any())->method('getControllerPackageKey')->will(self::returnValue($packageKey));
+        $mockRequest->expects(self::any())->method('getControllerSubPackageKey')->will(self::returnValue($subPackageKey));
+        $mockRequest->expects(self::any())->method('getControllerName')->will(self::returnValue($controllerName));
+        $mockRequest->expects(self::any())->method('getControllerObjectName')->will(self::returnValue($controllerObjectName));
+        $mockRequest->expects(self::any())->method('getFormat')->will(self::returnValue($format));
 
         /** @var $mockControllerContext ControllerContext */
         $mockControllerContext = $this->createMock(\Neos\Flow\Mvc\Controller\ControllerContext::class, ['getRequest'], [], '', false);
-        $mockControllerContext->expects($this->any())->method('getRequest')->will(self::returnValue($mockRequest));
+        $mockControllerContext->expects(self::any())->method('getRequest')->will(self::returnValue($mockRequest));
 
         return $mockControllerContext;
     }

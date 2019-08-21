@@ -38,7 +38,7 @@ class ActionViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Vie
      */
     public function renderReturnsUriReturnedFromUriBuilder()
     {
-        $this->uriBuilder->expects($this->any())->method('uriFor')->will(self::returnValue('some/uri'));
+        $this->uriBuilder->expects(self::any())->method('uriFor')->will(self::returnValue('some/uri'));
 
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['action' => 'index']);
         $actualResult = $this->viewHelper->render();
@@ -85,7 +85,7 @@ class ActionViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Vie
      */
     public function renderThrowsViewHelperExceptionIfUriBuilderThrowsFlowException()
     {
-        $this->uriBuilder->expects($this->any())->method('uriFor')->will(self::throwException(new \Neos\Flow\Exception('Mock Exception', 12345)));
+        $this->uriBuilder->expects(self::any())->method('uriFor')->will(self::throwException(new \Neos\Flow\Exception('Mock Exception', 12345)));
 
         try {
             $this->viewHelper = $this->prepareArguments($this->viewHelper, ['action' => 'someAction']);
@@ -119,8 +119,8 @@ class ActionViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Vie
         $this->request->expects(self::atLeastOnce())->method('getParentRequest')->will(self::returnValue($parentRequest));
 
         $this->controllerContext = $this->getMockBuilder(\Neos\Flow\Mvc\Controller\ControllerContext::class)->disableOriginalConstructor()->getMock();
-        $this->controllerContext->expects($this->any())->method('getUriBuilder')->will(self::returnValue($this->uriBuilder));
-        $this->controllerContext->expects($this->any())->method('getRequest')->will(self::returnValue($this->request));
+        $this->controllerContext->expects(self::any())->method('getUriBuilder')->will(self::returnValue($this->uriBuilder));
+        $this->controllerContext->expects(self::any())->method('getRequest')->will(self::returnValue($this->request));
 
         $this->uriBuilder->expects(self::atLeastOnce())->method('setRequest')->with($parentRequest);
 
@@ -145,8 +145,8 @@ class ActionViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Vie
         $this->request->expects(self::atLeastOnce())->method('getMainRequest')->will(self::returnValue($mainRequest));
 
         $this->controllerContext = $this->getMockBuilder(\Neos\Flow\Mvc\Controller\ControllerContext::class)->disableOriginalConstructor()->getMock();
-        $this->controllerContext->expects($this->any())->method('getUriBuilder')->will(self::returnValue($this->uriBuilder));
-        $this->controllerContext->expects($this->any())->method('getRequest')->will(self::returnValue($this->request));
+        $this->controllerContext->expects(self::any())->method('getUriBuilder')->will(self::returnValue($this->uriBuilder));
+        $this->controllerContext->expects(self::any())->method('getRequest')->will(self::returnValue($this->request));
 
         $this->uriBuilder->expects(self::atLeastOnce())->method('setRequest')->with($mainRequest);
 

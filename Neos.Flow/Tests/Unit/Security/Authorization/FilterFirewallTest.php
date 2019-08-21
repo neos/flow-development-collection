@@ -84,11 +84,11 @@ class FilterFirewallTest extends UnitTestCase
         };
 
         $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
-        $mockObjectManager->expects($this->any())->method('get')->will(self::returnCallBack($getObjectCallback));
+        $mockObjectManager->expects(self::any())->method('get')->will(self::returnCallBack($getObjectCallback));
         $mockPatternResolver = $this->getMockBuilder(RequestPatternResolver::class)->disableOriginalConstructor()->getMock();
-        $mockPatternResolver->expects($this->any())->method('resolveRequestPatternClass')->will(self::returnCallBack($resolveRequestPatternClassCallback));
+        $mockPatternResolver->expects(self::any())->method('resolveRequestPatternClass')->will(self::returnCallBack($resolveRequestPatternClassCallback));
         $mockInterceptorResolver = $this->getMockBuilder(InterceptorResolver::class)->disableOriginalConstructor()->getMock();
-        $mockInterceptorResolver->expects($this->any())->method('resolveInterceptorClass')->will(self::returnCallBack($resolveInterceptorClassCallback));
+        $mockInterceptorResolver->expects(self::any())->method('resolveInterceptorClass')->will(self::returnCallBack($resolveInterceptorClassCallback));
 
         $settings = [
             'Some.Package:AllowedUris' => [

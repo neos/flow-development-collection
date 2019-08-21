@@ -48,9 +48,9 @@ class TranslatorTest extends UnitTestCase
         ];
 
         $mockLocalizationService = $this->createMock(I18n\Service::class);
-        $mockLocalizationService->expects($this->any())->method('getConfiguration')->will(self::returnValue(new I18n\Configuration('en_GB')));
+        $mockLocalizationService->expects(self::any())->method('getConfiguration')->will(self::returnValue(new I18n\Configuration('en_GB')));
         $mockLocalizationService
-            ->expects($this->any())
+            ->expects(self::any())
             ->method('getLocaleChain')
             ->with($this->defaultLocale)
             ->will(self::returnValue($this->defaultLocaleChain))

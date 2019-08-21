@@ -45,7 +45,7 @@ class WritableFileSystemStorageTest extends UnitTestCase
         $this->writableFileSystemStorage = $this->getAccessibleMock(WritableFileSystemStorage::class, null, ['testStorage', ['path' => 'vfs://WritableFileSystemStorageTest/']]);
 
         $this->mockEnvironment = $this->getMockBuilder(Environment::class)->disableOriginalConstructor()->getMock();
-        $this->mockEnvironment->expects($this->any())->method('getPathToTemporaryDirectory')->will(self::returnValue('vfs://WritableFileSystemStorageTest/'));
+        $this->mockEnvironment->expects(self::any())->method('getPathToTemporaryDirectory')->will(self::returnValue('vfs://WritableFileSystemStorageTest/'));
         $this->inject($this->writableFileSystemStorage, 'environment', $this->mockEnvironment);
     }
 

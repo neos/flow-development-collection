@@ -136,7 +136,7 @@ class PointcutExpressionParserTest extends UnitTestCase
         $mockPsrLoggerFactory = $this->getMockBuilder(PsrLoggerFactoryInterface::class)->getMock();
         $mockPsrLoggerFactory->expects(self::any())->method('get')->willReturn($this->createMock(LoggerInterface::class));
 
-        $this->mockObjectManager->expects($this->any())->method('get')->willReturn($mockPsrLoggerFactory);
+        $this->mockObjectManager->expects(self::any())->method('get')->willReturn($mockPsrLoggerFactory);
 
         $mockPointcutFilterComposite = $this->getMockBuilder(PointcutFilterComposite::class)->disableOriginalConstructor()->getMock();
         $mockPointcutFilterComposite->expects(self::once())->method('addFilter')->with('&&');
@@ -170,7 +170,7 @@ class PointcutExpressionParserTest extends UnitTestCase
         $mockPsrLoggerFactory = $this->getMockBuilder(PsrLoggerFactoryInterface::class)->getMock();
         $mockPsrLoggerFactory->expects(self::any())->method('get')->willReturn($this->createMock(LoggerInterface::class));
 
-        $this->mockObjectManager->expects($this->any())->method('get')->willReturn($mockPsrLoggerFactory);
+        $this->mockObjectManager->expects(self::any())->method('get')->willReturn($mockPsrLoggerFactory);
 
         $mockPointcutFilterComposite = $this->getMockBuilder(PointcutFilterComposite::class)->disableOriginalConstructor()->getMock();
         $mockPointcutFilterComposite->expects(self::once())->method('addFilter')->with('&&');
@@ -203,7 +203,7 @@ class PointcutExpressionParserTest extends UnitTestCase
         $mockPsrLoggerFactory = $this->getMockBuilder(PsrLoggerFactoryInterface::class)->getMock();
         $mockPsrLoggerFactory->expects(self::any())->method('get')->willReturn($this->createMock(LoggerInterface::class));
 
-        $this->mockObjectManager->expects($this->any())->method('get')->willReturn($mockPsrLoggerFactory);
+        $this->mockObjectManager->expects(self::any())->method('get')->willReturn($mockPsrLoggerFactory);
 
         $parser = $this->getAccessibleMock(PointcutExpressionParser::class, ['dummy'], [], '', false);
         $parser->injectReflectionService($this->mockReflectionService);
@@ -391,7 +391,7 @@ class PointcutExpressionParserTest extends UnitTestCase
         $mockPsrLoggerFactory = $this->getMockBuilder(PsrLoggerFactoryInterface::class)->getMock();
         $mockPsrLoggerFactory->expects(self::any())->method('get')->willReturn($this->createMock(LoggerInterface::class));
 
-        $this->mockObjectManager->expects($this->any())->method('get')->willReturn($mockPsrLoggerFactory);
+        $this->mockObjectManager->expects(self::any())->method('get')->willReturn($mockPsrLoggerFactory);
 
         $pointcutFilterComposite = new PointcutFilterComposite();
 
@@ -429,7 +429,7 @@ class PointcutExpressionParserTest extends UnitTestCase
         $mockPsrLoggerFactory = $this->getMockBuilder(PsrLoggerFactoryInterface::class)->getMock();
         $mockPsrLoggerFactory->expects(self::any())->method('get')->willReturn($this->createMock(LoggerInterface::class));
 
-        $this->mockObjectManager->expects($this->any())->method('get')->willReturn($mockPsrLoggerFactory);
+        $this->mockObjectManager->expects(self::any())->method('get')->willReturn($mockPsrLoggerFactory);
 
         $pointcutFilterComposite = new PointcutFilterComposite();
 

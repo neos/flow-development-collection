@@ -49,8 +49,8 @@ class StandardsComplianceComponentTest extends UnitTestCase
         $this->response = new Response();
 
         $this->mockComponentContext = $this->getMockBuilder(ComponentContext::class)->disableOriginalConstructor()->getMock();
-        $this->mockComponentContext->expects($this->any())->method('getHttpRequest')->will(self::returnValue($this->mockHttpRequest));
-        $this->mockComponentContext->expects($this->any())->method('getHttpResponse')->will(self::returnValue($this->response));
+        $this->mockComponentContext->expects(self::any())->method('getHttpRequest')->will(self::returnValue($this->mockHttpRequest));
+        $this->mockComponentContext->expects(self::any())->method('getHttpResponse')->will(self::returnValue($this->response));
 
         $this->standardsComplianceComponent = new StandardsComplianceComponent([]);
     }

@@ -128,7 +128,7 @@ class AbstractBackendTest extends UnitTestCase
     public function arrayContainsObjectReturnsFalseForDifferentObject()
     {
         $mockSession = $this->createMock(Persistence\Generic\Session::class);
-        $mockSession->expects($this->any())->method('getIdentifierByObject')->will(self::returnValue('uuid2'));
+        $mockSession->expects(self::any())->method('getIdentifierByObject')->will(self::returnValue('uuid2'));
 
         $backend = $this->getAccessibleMockForAbstractClass(Persistence\Generic\Backend\AbstractBackend::class);
         $backend->injectPersistenceSession($mockSession);
@@ -145,7 +145,7 @@ class AbstractBackendTest extends UnitTestCase
         $clone = clone $object;
 
         $mockSession = $this->createMock(Persistence\Generic\Session::class);
-        $mockSession->expects($this->any())->method('getIdentifierByObject')->with($object)->will(self::returnValue('fakeUuid'));
+        $mockSession->expects(self::any())->method('getIdentifierByObject')->with($object)->will(self::returnValue('fakeUuid'));
 
         $backend = $this->getAccessibleMockForAbstractClass(Persistence\Generic\Backend\AbstractBackend::class);
         $backend->injectPersistenceSession($mockSession);

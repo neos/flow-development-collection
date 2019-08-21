@@ -44,7 +44,7 @@ class FlashMessagesViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelp
     {
         $this->mockFlashMessageContainer = $this->createMock(\Neos\Flow\Mvc\FlashMessageContainer::class);
         $mockControllerContext = $this->getMockBuilder(\Neos\Flow\Mvc\Controller\ControllerContext::class)->disableOriginalConstructor()->getMock();
-        $mockControllerContext->expects($this->any())->method('getFlashMessageContainer')->will(self::returnValue($this->mockFlashMessageContainer));
+        $mockControllerContext->expects(self::any())->method('getFlashMessageContainer')->will(self::returnValue($this->mockFlashMessageContainer));
 
         $this->mockTagBuilder = $this->createMock(TagBuilder::class);
         $this->viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\FlashMessagesViewHelper::class, ['dummy']);

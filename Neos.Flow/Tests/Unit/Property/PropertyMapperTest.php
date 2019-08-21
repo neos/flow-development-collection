@@ -100,11 +100,11 @@ class PropertyMapperTest extends UnitTestCase
     {
         $mockTypeConverter = $this->createMock(TypeConverterInterface::class);
         $mockTypeConverter->_name = $name;
-        $mockTypeConverter->expects($this->any())->method('canConvertFrom')->will(self::returnValue($canConvertFrom));
-        $mockTypeConverter->expects($this->any())->method('convertFrom')->will(self::returnValue($name));
-        $mockTypeConverter->expects($this->any())->method('getSourceChildPropertiesToBeConverted')->will(self::returnValue($properties));
+        $mockTypeConverter->expects(self::any())->method('canConvertFrom')->will(self::returnValue($canConvertFrom));
+        $mockTypeConverter->expects(self::any())->method('convertFrom')->will(self::returnValue($name));
+        $mockTypeConverter->expects(self::any())->method('getSourceChildPropertiesToBeConverted')->will(self::returnValue($properties));
 
-        $mockTypeConverter->expects($this->any())->method('getTypeOfChildProperty')->will(self::returnValue($typeOfSubObject));
+        $mockTypeConverter->expects(self::any())->method('getTypeOfChildProperty')->will(self::returnValue($typeOfSubObject));
         return $mockTypeConverter;
     }
 
@@ -114,7 +114,7 @@ class PropertyMapperTest extends UnitTestCase
     public function findTypeConverterShouldReturnTypeConverterFromConfigurationIfItIsSet()
     {
         $mockTypeConverter = $this->getMockTypeConverter();
-        $this->mockConfiguration->expects($this->any())->method('getTypeConverter')->will(self::returnValue($mockTypeConverter));
+        $this->mockConfiguration->expects(self::any())->method('getTypeConverter')->will(self::returnValue($mockTypeConverter));
 
         $propertyMapper = $this->getAccessibleMock(PropertyMapper::class, ['dummy']);
         self::assertSame($mockTypeConverter, $propertyMapper->_call('findTypeConverter', 'someSource', 'someTargetType', $this->mockConfiguration));

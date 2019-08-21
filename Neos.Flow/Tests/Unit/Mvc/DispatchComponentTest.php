@@ -85,11 +85,11 @@ class DispatchComponentTest extends UnitTestCase
         $this->mockComponentContext = $this->getMockBuilder(ComponentContext::class)->disableOriginalConstructor()->getMock();
 
         $this->mockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
-        $this->mockHttpRequest->expects($this->any())->method('withParsedBody')->willReturn($this->mockHttpRequest);
-        $this->mockComponentContext->expects($this->any())->method('getHttpRequest')->will(self::returnValue($this->mockHttpRequest));
+        $this->mockHttpRequest->expects(self::any())->method('withParsedBody')->willReturn($this->mockHttpRequest);
+        $this->mockComponentContext->expects(self::any())->method('getHttpRequest')->will(self::returnValue($this->mockHttpRequest));
 
         $httpResponse = new Response();
-        $this->mockComponentContext->expects($this->any())->method('getHttpResponse')->willReturn($httpResponse);
+        $this->mockComponentContext->expects(self::any())->method('getHttpResponse')->willReturn($httpResponse);
 
         $this->mockDispatcher = $this->getMockBuilder(Dispatcher::class)->getMock();
         $this->inject($this->dispatchComponent, 'dispatcher', $this->mockDispatcher);

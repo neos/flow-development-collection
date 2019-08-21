@@ -754,14 +754,14 @@ class RouteTest extends UnitTestCase
         $mockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
 
         $mockUri = $this->getMockBuilder(UriInterface::class)->disableOriginalConstructor()->getMock();
-        $mockUri->expects($this->any())->method('getPath')->will(self::returnValue('/'));
+        $mockUri->expects(self::any())->method('getPath')->will(self::returnValue('/'));
         $mockUri->method('withQuery')->willReturn($mockUri);
         $mockUri->method('withFragment')->willReturn($mockUri);
         $mockUri->method('withPath')->willReturn($mockUri);
         $mockHttpRequest->method('getUri')->willReturn($mockUri);
 
         $mockBaseUri = new Uri('http://localhost/');
-        $mockHttpRequest->expects($this->any())->method('getAttribute')->with(ServerRequestAttributes::BASE_URI)->will(self::returnValue($mockBaseUri));
+        $mockHttpRequest->expects(self::any())->method('getAttribute')->with(ServerRequestAttributes::BASE_URI)->will(self::returnValue($mockBaseUri));
 
         $mockHttpRequest->expects(self::atLeastOnce())->method('getMethod')->willReturn('GET');
         self::assertFalse($this->route->matches(new RouteContext($mockHttpRequest, RouteParameters::createEmpty())), 'Route must not match GET requests if only POST or PUT requests are accepted.');
@@ -779,14 +779,14 @@ class RouteTest extends UnitTestCase
         $mockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
 
         $mockUri = $this->getMockBuilder(Uri::class)->disableOriginalConstructor()->getMock();
-        $mockUri->expects($this->any())->method('getPath')->will(self::returnValue('/'));
+        $mockUri->expects(self::any())->method('getPath')->will(self::returnValue('/'));
         $mockUri->method('withQuery')->willReturn($mockUri);
         $mockUri->method('withFragment')->willReturn($mockUri);
         $mockUri->method('withPath')->willReturn($mockUri);
         $mockHttpRequest->method('getUri')->willReturn($mockUri);
 
         $mockBaseUri = new Uri('http://localhost/');
-        $mockHttpRequest->expects($this->any())->method('getAttribute')->with(ServerRequestAttributes::BASE_URI)->will(self::returnValue($mockBaseUri));
+        $mockHttpRequest->expects(self::any())->method('getAttribute')->with(ServerRequestAttributes::BASE_URI)->will(self::returnValue($mockBaseUri));
 
         $mockHttpRequest->expects(self::atLeastOnce())->method('getMethod')->willReturn('PUT');
 

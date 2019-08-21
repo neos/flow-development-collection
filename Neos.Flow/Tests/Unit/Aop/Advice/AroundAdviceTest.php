@@ -54,13 +54,13 @@ class AroundAdviceTest extends UnitTestCase
         $mockAdviceChain->expects(self::once())->method('proceed')->will(self::returnValue('result'));
 
         $mockJoinPoint = $this->getMockBuilder(Aop\JoinPointInterface::class)->disableOriginalConstructor()->getMock();
-        $mockJoinPoint->expects($this->any())->method('getAdviceChain')->will(self::returnValue($mockAdviceChain));
+        $mockJoinPoint->expects(self::any())->method('getAdviceChain')->will(self::returnValue($mockAdviceChain));
 
         $mockAspect = $this->createMock(Fixtures\SomeClass::class);
         $mockAspect->expects(self::never())->method('someMethod');
 
         $mockObjectManager = $this->getMockBuilder(ObjectManagerInterface::class)->disableOriginalConstructor()->getMock();
-        $mockObjectManager->expects($this->any())->method('get')->will(self::returnValue($mockAspect));
+        $mockObjectManager->expects(self::any())->method('get')->will(self::returnValue($mockAspect));
 
         $advice = new Aop\Advice\AroundAdvice('aspectObjectName', 'someMethod', $mockObjectManager, function (Aop\JoinPointInterface $joinPoint) {
             if ($joinPoint !== null) {

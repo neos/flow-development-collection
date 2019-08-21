@@ -34,7 +34,7 @@ class PointcutMethodNameFilterTest extends UnitTestCase
         );
         /** @var ReflectionService|\PHPUnit\Framework\MockObject\MockObject $mockReflectionService */
         $mockReflectionService = $this->createMock(ReflectionService::class);
-        $mockReflectionService->expects($this->any())->method('isMethodFinal')->with($className, 'someFinalMethod')->will(self::returnValue(true));
+        $mockReflectionService->expects(self::any())->method('isMethodFinal')->with($className, 'someFinalMethod')->will(self::returnValue(true));
         $methodNameFilter = new Aop\Pointcut\PointcutMethodNameFilter('someFinalMethod');
         $methodNameFilter->injectReflectionService($mockReflectionService);
         self::assertTrue($methodNameFilter->matches($className, 'someFinalMethod', $className, 1));

@@ -48,7 +48,7 @@ class UsernamePasswordTest extends UnitTestCase
         $this->mockActionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
 
         $this->mockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
-        $this->mockActionRequest->expects($this->any())->method('getHttpRequest')->will(self::returnValue($this->mockHttpRequest));
+        $this->mockActionRequest->expects(self::any())->method('getHttpRequest')->will(self::returnValue($this->mockHttpRequest));
     }
 
     /**
@@ -106,7 +106,7 @@ class UsernamePasswordTest extends UnitTestCase
 
         /** @var ActionRequest|\PHPUnit\Framework\MockObject\MockObject $secondMockActionRequest */
         $secondMockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
-        $secondMockActionRequest->expects($this->any())->method('getHttpRequest')->will(self::returnValue($secondMockHttpRequest));
+        $secondMockActionRequest->expects(self::any())->method('getHttpRequest')->will(self::returnValue($secondMockHttpRequest));
         $secondMockHttpRequest->expects(self::atLeastOnce())->method('getMethod')->will(self::returnValue('GET'));
         $secondToken->updateCredentials($secondMockActionRequest);
         self::assertEquals(['username' => '', 'password' => ''], $secondToken->getCredentials());

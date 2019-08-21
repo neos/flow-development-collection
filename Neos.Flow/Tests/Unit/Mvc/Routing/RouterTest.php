@@ -410,7 +410,7 @@ class RouterTest extends UnitTestCase
         $this->inject($router, 'logger', $this->mockSystemLogger);
 
         $uri = new Uri('http://localhost/');
-        $this->mockHttpRequest->expects($this->any())->method('getUri')->willReturn($uri);
+        $this->mockHttpRequest->expects(self::any())->method('getUri')->willReturn($uri);
 
         $routesConfiguration = [
             [
@@ -447,7 +447,7 @@ class RouterTest extends UnitTestCase
         $this->inject($router, 'logger', $this->mockSystemLogger);
 
         $uri = new Uri('http://localhost/');
-        $this->mockHttpRequest->expects($this->any())->method('getUri')->willReturn($uri);
+        $this->mockHttpRequest->expects(self::any())->method('getUri')->willReturn($uri);
 
         $routesConfiguration = [
             [

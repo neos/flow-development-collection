@@ -59,7 +59,7 @@ class AbstractAdviceTest extends UnitTestCase
         $mockAspect->expects(self::never())->method('someMethod');
 
         $mockObjectManager = $this->getMockBuilder(ObjectManagerInterface::class)->disableOriginalConstructor()->getMock();
-        $mockObjectManager->expects($this->any())->method('get')->will(self::returnValue($mockAspect));
+        $mockObjectManager->expects(self::any())->method('get')->will(self::returnValue($mockAspect));
 
         $mockDispatcher = $this->createMock(SignalSlot\Dispatcher::class);
 

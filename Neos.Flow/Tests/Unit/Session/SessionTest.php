@@ -101,16 +101,16 @@ class SessionTest extends UnitTestCase
         $this->httpResponse = new Response();
 
         $mockRequestHandler = $this->createMock(RequestHandler::class);
-        $mockRequestHandler->expects($this->any())->method('getHttpRequest')->will(self::returnValue($this->httpRequest));
-        $mockRequestHandler->expects($this->any())->method('getHttpResponse')->will(self::returnValue($this->httpResponse));
+        $mockRequestHandler->expects(self::any())->method('getHttpRequest')->will(self::returnValue($this->httpRequest));
+        $mockRequestHandler->expects(self::any())->method('getHttpResponse')->will(self::returnValue($this->httpResponse));
 
         $this->mockBootstrap = $this->createMock(Bootstrap::class);
-        $this->mockBootstrap->expects($this->any())->method('getActiveRequestHandler')->will(self::returnValue($mockRequestHandler));
+        $this->mockBootstrap->expects(self::any())->method('getActiveRequestHandler')->will(self::returnValue($mockRequestHandler));
 
         $this->mockSecurityContext = $this->createMock(Context::class);
 
         $this->mockObjectManager = $this->createMock(ObjectManagerInterface::class);
-        $this->mockObjectManager->expects($this->any())->method('get')->with(Context::class)->will(self::returnValue($this->mockSecurityContext));
+        $this->mockObjectManager->expects(self::any())->method('get')->with(Context::class)->will(self::returnValue($this->mockSecurityContext));
     }
 
     /**
@@ -808,8 +808,8 @@ class SessionTest extends UnitTestCase
         $token->setAuthenticationStatus(TokenInterface::AUTHENTICATION_SUCCESSFUL);
         $token->setAccount($account);
 
-        $this->mockSecurityContext->expects($this->any())->method('isInitialized')->will(self::returnValue(true));
-        $this->mockSecurityContext->expects($this->any())->method('getAuthenticationTokens')->will(self::returnValue([$token]));
+        $this->mockSecurityContext->expects(self::any())->method('isInitialized')->will(self::returnValue(true));
+        $this->mockSecurityContext->expects(self::any())->method('getAuthenticationTokens')->will(self::returnValue([$token]));
 
         $sessionCookie = $session->getSessionCookie();
         $session->close();

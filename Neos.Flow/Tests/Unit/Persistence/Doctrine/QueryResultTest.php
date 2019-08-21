@@ -38,7 +38,7 @@ class QueryResultTest extends UnitTestCase
     protected function setUp(): void
     {
         $this->query = $this->getMockBuilder(Query::class)->disableOriginalConstructor()->disableOriginalClone()->getMock();
-        $this->query->expects($this->any())->method('getResult')->will(self::returnValue(['First result', 'second result', 'third result']));
+        $this->query->expects(self::any())->method('getResult')->will(self::returnValue(['First result', 'second result', 'third result']));
         $this->queryResult = new QueryResult($this->query);
     }
 

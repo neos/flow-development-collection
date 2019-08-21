@@ -39,7 +39,7 @@ class RepositoryTest extends UnitTestCase
         $this->mockEntityManager = $this->getMockBuilder(EntityManagerInterface::class)->disableOriginalConstructor()->getMock();
 
         $this->mockClassMetadata = $this->getMockBuilder(ClassMetadata::class)->disableOriginalConstructor()->getMock();
-        $this->mockEntityManager->expects($this->any())->method('getClassMetadata')->will(self::returnValue($this->mockClassMetadata));
+        $this->mockEntityManager->expects(self::any())->method('getClassMetadata')->will(self::returnValue($this->mockClassMetadata));
     }
 
     /**

@@ -62,7 +62,7 @@ class BrowserTest extends UnitTestCase
     {
         $requestEngine = $this->createMock(Client\RequestEngineInterface::class);
         $requestEngine
-            ->expects($this->any())
+            ->expects(self::any())
             ->method('sendRequest')
             ->willReturn(new Response());
         $this->browser->setRequestEngine($requestEngine);

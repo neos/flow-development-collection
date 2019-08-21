@@ -45,7 +45,7 @@ class StandaloneViewTest extends UnitTestCase
 
         $this->mockRequest = $this->getMockBuilder(\Neos\Flow\Mvc\ActionRequest::class)->disableOriginalConstructor()->getMock();
         $this->mockControllerContext = $this->getMockBuilder(\Neos\Flow\Mvc\Controller\ControllerContext::class)->disableOriginalConstructor()->getMock();
-        $this->mockControllerContext->expects($this->any())->method('getRequest')->will(self::returnValue($this->mockRequest));
+        $this->mockControllerContext->expects(self::any())->method('getRequest')->will(self::returnValue($this->mockRequest));
         $this->inject($this->standaloneView, 'controllerContext', $this->mockControllerContext);
     }
 

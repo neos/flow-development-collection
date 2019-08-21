@@ -222,7 +222,7 @@ class PersistenceManagerTest extends UnitTestCase
     {
         $object = new \ArrayObject(['val' => '1']);
         $persistenceManager = $this->getMockBuilder(\Neos\Flow\Persistence\Generic\PersistenceManager::class)->setMethods(['isNewObject'])->getMock();
-        $persistenceManager->expects($this->any())->method('isNewObject')->willReturn(false);
+        $persistenceManager->expects(self::any())->method('isNewObject')->willReturn(false);
 
         self::assertNotContains($object, ObjectAccess::getProperty($persistenceManager, 'changedObjects', true));
         $persistenceManager->update($object);
@@ -238,9 +238,9 @@ class PersistenceManagerTest extends UnitTestCase
         $mockObject->Persistence_Object_Identifier = 'abcdefg';
 
         $mockSession = $this->createMock(Generic\Session::class);
-        $mockSession->expects($this->any())->method('hasIdentifier')->will(self::returnValue(false));
+        $mockSession->expects(self::any())->method('hasIdentifier')->will(self::returnValue(false));
         $mockBackend = $this->createMock(Generic\Backend\BackendInterface::class);
-        $mockBackend->expects($this->any())->method('getObjectDataByIdentifier')->will(self::returnValue(false));
+        $mockBackend->expects(self::any())->method('getObjectDataByIdentifier')->will(self::returnValue(false));
 
         $persistenceManager = new Generic\PersistenceManager();
         $persistenceManager->injectPersistenceSession($mockSession);

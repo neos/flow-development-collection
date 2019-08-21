@@ -46,7 +46,7 @@ class TranslateViewHelperTest extends ViewHelperBaseTestcase
 
         $this->translateViewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\TranslateViewHelper::class, ['renderChildren']);
 
-        $this->request->expects($this->any())->method('getControllerPackageKey')->will(self::returnValue('Neos.FluidAdaptor'));
+        $this->request->expects(self::any())->method('getControllerPackageKey')->will(self::returnValue('Neos.FluidAdaptor'));
 
         $this->dummyLocale = new Locale('de_DE');
 
@@ -192,8 +192,8 @@ class TranslateViewHelperTest extends ViewHelperBaseTestcase
      */
     public function translationFallbackTests($id, $value, $translatedId, $translatedValue, $expectedResult)
     {
-        $this->mockTranslator->expects($this->any())->method('translateById', $id)->will(self::returnValue($translatedId));
-        $this->mockTranslator->expects($this->any())->method('translateByOriginalLabel', $value)->will(self::returnValue($translatedValue));
+        $this->mockTranslator->expects(self::any())->method('translateById', $id)->will(self::returnValue($translatedId));
+        $this->mockTranslator->expects(self::any())->method('translateByOriginalLabel', $value)->will(self::returnValue($translatedValue));
 
         $this->translateViewHelper = $this->prepareArguments($this->translateViewHelper, ['id' => $id, 'value' => $value]);
         $actualResult = $this->translateViewHelper->render();

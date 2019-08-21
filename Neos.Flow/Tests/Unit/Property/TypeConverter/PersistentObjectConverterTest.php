@@ -133,10 +133,10 @@ class PersistentObjectConverterTest extends UnitTestCase
     public function getTypeOfChildPropertyShouldUseReflectionServiceToDetermineType()
     {
         $mockSchema = $this->getMockBuilder(ClassSchema::class)->disableOriginalConstructor()->getMock();
-        $this->mockReflectionService->expects($this->any())->method('getClassSchema')->with('TheTargetType')->will(self::returnValue($mockSchema));
+        $this->mockReflectionService->expects(self::any())->method('getClassSchema')->with('TheTargetType')->will(self::returnValue($mockSchema));
 
-        $mockSchema->expects($this->any())->method('hasProperty')->with('thePropertyName')->will(self::returnValue(true));
-        $mockSchema->expects($this->any())->method('getProperty')->with('thePropertyName')->will(self::returnValue([
+        $mockSchema->expects(self::any())->method('hasProperty')->with('thePropertyName')->will(self::returnValue(true));
+        $mockSchema->expects(self::any())->method('getProperty')->with('thePropertyName')->will(self::returnValue([
             'type' => 'TheTypeOfSubObject',
             'elementType' => null
         ]));
@@ -162,17 +162,17 @@ class PersistentObjectConverterTest extends UnitTestCase
     public function getTypeOfChildPropertyShouldConsiderSetters()
     {
         $mockSchema = $this->getMockBuilder(ClassSchema::class)->disableOriginalConstructor()->getMock();
-        $this->mockReflectionService->expects($this->any())->method('getClassSchema')->with('TheTargetType')->will(self::returnValue($mockSchema));
+        $this->mockReflectionService->expects(self::any())->method('getClassSchema')->with('TheTargetType')->will(self::returnValue($mockSchema));
 
-        $mockSchema->expects($this->any())->method('hasProperty')->with('virtualPropertyName')->will(self::returnValue(false));
+        $mockSchema->expects(self::any())->method('hasProperty')->with('virtualPropertyName')->will(self::returnValue(false));
 
-        $this->mockReflectionService->expects($this->any())->method('hasMethod')->with('TheTargetType', 'setVirtualPropertyName')->will(self::returnValue(true));
-        $this->mockReflectionService->expects($this->any())->method('getMethodParameters')->will($this->returnValueMap([
+        $this->mockReflectionService->expects(self::any())->method('hasMethod')->with('TheTargetType', 'setVirtualPropertyName')->will(self::returnValue(true));
+        $this->mockReflectionService->expects(self::any())->method('getMethodParameters')->will($this->returnValueMap([
             ['TheTargetType', '__construct', []],
             ['TheTargetType', 'setVirtualPropertyName', [['type' => 'TheTypeOfSubObject']]]
         ]));
 
-        $this->mockReflectionService->expects($this->any())->method('hasMethod')->with('TheTargetType', 'setVirtualPropertyName')->will(self::returnValue(true));
+        $this->mockReflectionService->expects(self::any())->method('hasMethod')->with('TheTargetType', 'setVirtualPropertyName')->will(self::returnValue(true));
         $this->mockReflectionService
             ->expects(self::exactly(2))
             ->method('getMethodParameters')
@@ -193,7 +193,7 @@ class PersistentObjectConverterTest extends UnitTestCase
     public function getTypeOfChildPropertyShouldConsiderConstructors()
     {
         $mockSchema = $this->getMockBuilder(ClassSchema::class)->disableOriginalConstructor()->getMock();
-        $this->mockReflectionService->expects($this->any())->method('getClassSchema')->with('TheTargetType')->will(self::returnValue($mockSchema));
+        $this->mockReflectionService->expects(self::any())->method('getClassSchema')->with('TheTargetType')->will(self::returnValue($mockSchema));
         $this->mockReflectionService
             ->expects(self::exactly(1))
             ->method('getMethodParameters')

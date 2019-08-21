@@ -63,7 +63,7 @@ class IdentityRoutePartTest extends UnitTestCase
 
         $this->mockReflectionService = $this->createMock(ReflectionService::class);
         $this->mockClassSchema = $this->getMockBuilder(ClassSchema::class)->disableOriginalConstructor()->getMock();
-        $this->mockReflectionService->expects($this->any())->method('getClassSchema')->will(self::returnValue($this->mockClassSchema));
+        $this->mockReflectionService->expects(self::any())->method('getClassSchema')->will(self::returnValue($this->mockClassSchema));
         $this->identityRoutePart->_set('reflectionService', $this->mockReflectionService);
 
         $this->mockObjectPathMappingRepository = $this->createMock(ObjectPathMappingRepository::class);
@@ -142,7 +142,7 @@ class IdentityRoutePartTest extends UnitTestCase
      */
     public function matchValueSetsTheRouteValueToTheUrlDecodedPathSegmentIfNoUriPatternIsSpecified()
     {
-        $this->mockClassSchema->expects($this->any())->method('getIdentityProperties')->will(self::returnValue([]));
+        $this->mockClassSchema->expects(self::any())->method('getIdentityProperties')->will(self::returnValue([]));
 
         $this->mockPersistenceManager->expects(self::once())->method('getObjectByIdentifier')->with('The Identifier', 'stdClass')->will(self::returnValue(new \stdClass()));
 
@@ -273,7 +273,7 @@ class IdentityRoutePartTest extends UnitTestCase
      */
     public function resolveValueSetsTheRouteValueToTheUrlEncodedIdentifierIfNoUriPatternIsSpecified()
     {
-        $this->mockClassSchema->expects($this->any())->method('getIdentityProperties')->will(self::returnValue([]));
+        $this->mockClassSchema->expects(self::any())->method('getIdentityProperties')->will(self::returnValue([]));
 
         $value = ['__identity' => 'Some Identifier'];
         $this->mockObjectPathMappingRepository->expects(self::never())->method('findOneByObjectTypeUriPatternAndIdentifier');

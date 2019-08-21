@@ -65,7 +65,7 @@ class PersistedUsernamePasswordProviderTest extends UnitTestCase
         $this->mockToken = $this->getMockBuilder(Security\Authentication\Token\UsernamePassword::class)->disableOriginalConstructor()->getMock();
 
         $this->mockSecurityContext = $this->createMock(Security\Context::class);
-        $this->mockSecurityContext->expects($this->any())->method('withoutAuthorizationChecks')->will(self::returnCallBack(function ($callback) {
+        $this->mockSecurityContext->expects(self::any())->method('withoutAuthorizationChecks')->will(self::returnCallBack(function ($callback) {
             return $callback->__invoke();
         }));
 

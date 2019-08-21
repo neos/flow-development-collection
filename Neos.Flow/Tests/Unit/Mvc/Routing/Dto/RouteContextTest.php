@@ -49,18 +49,18 @@ class RouteContextTest extends UnitTestCase
         $this->mockHttpRequest1 = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
 
         $this->mockUri1 = $this->getMockBuilder(UriInterface::class)->getMock();
-        $this->mockUri1->expects($this->any())->method('withFragment')->willReturn($this->mockUri1);
-        $this->mockUri1->expects($this->any())->method('withQuery')->willReturn($this->mockUri1);
-        $this->mockUri1->expects($this->any())->method('withPath')->willReturn($this->mockUri1);
-        $this->mockHttpRequest1->expects($this->any())->method('getUri')->willReturn($this->mockUri1);
+        $this->mockUri1->expects(self::any())->method('withFragment')->willReturn($this->mockUri1);
+        $this->mockUri1->expects(self::any())->method('withQuery')->willReturn($this->mockUri1);
+        $this->mockUri1->expects(self::any())->method('withPath')->willReturn($this->mockUri1);
+        $this->mockHttpRequest1->expects(self::any())->method('getUri')->willReturn($this->mockUri1);
 
         $this->mockHttpRequest2 = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
 
         $this->mockUri2 = $this->getMockBuilder(UriInterface::class)->getMock();
-        $this->mockUri2->expects($this->any())->method('withFragment')->willReturn($this->mockUri2);
-        $this->mockUri2->expects($this->any())->method('withQuery')->willReturn($this->mockUri2);
-        $this->mockUri2->expects($this->any())->method('withPath')->willReturn($this->mockUri2);
-        $this->mockHttpRequest2->expects($this->any())->method('getUri')->will(self::returnValue($this->mockUri2));
+        $this->mockUri2->expects(self::any())->method('withFragment')->willReturn($this->mockUri2);
+        $this->mockUri2->expects(self::any())->method('withQuery')->willReturn($this->mockUri2);
+        $this->mockUri2->expects(self::any())->method('withPath')->willReturn($this->mockUri2);
+        $this->mockHttpRequest2->expects(self::any())->method('getUri')->will(self::returnValue($this->mockUri2));
     }
 
     /**
@@ -98,13 +98,13 @@ class RouteContextTest extends UnitTestCase
      */
     public function getCacheEntryIdentifierChangesWithNewRelativePath()
     {
-        $this->mockHttpRequest1->expects($this->any())->method('getAttribute')->with(ServerRequestAttributes::BASE_URI)->willReturn(new Uri('http://neos.io/'));
-        $this->mockHttpRequest2->expects($this->any())->method('getAttribute')->with(ServerRequestAttributes::BASE_URI)->willReturn(new Uri('http://neos.io/'));
+        $this->mockHttpRequest1->expects(self::any())->method('getAttribute')->with(ServerRequestAttributes::BASE_URI)->willReturn(new Uri('http://neos.io/'));
+        $this->mockHttpRequest2->expects(self::any())->method('getAttribute')->with(ServerRequestAttributes::BASE_URI)->willReturn(new Uri('http://neos.io/'));
 
-        $this->mockUri1->expects($this->any())->method('getPath')->willReturn('relative/path1');
+        $this->mockUri1->expects(self::any())->method('getPath')->willReturn('relative/path1');
         $cacheIdentifier1 = (new RouteContext($this->mockHttpRequest1, RouteParameters::createEmpty()))->getCacheEntryIdentifier();
 
-        $this->mockUri2->expects($this->any())->method('getPath')->willReturn('relative/path2');
+        $this->mockUri2->expects(self::any())->method('getPath')->willReturn('relative/path2');
         $cacheIdentifier2 = (new RouteContext($this->mockHttpRequest2, RouteParameters::createEmpty()))->getCacheEntryIdentifier();
 
         self::assertNotSame($cacheIdentifier1, $cacheIdentifier2);
@@ -129,10 +129,10 @@ class RouteContextTest extends UnitTestCase
      */
     public function getCacheEntryIdentifierDoesNotChangeWithNewScheme()
     {
-        $this->mockUri1->expects($this->any())->method('getScheme')->will(self::returnValue('http'));
+        $this->mockUri1->expects(self::any())->method('getScheme')->will(self::returnValue('http'));
         $cacheIdentifier1 = (new RouteContext($this->mockHttpRequest1, RouteParameters::createEmpty()))->getCacheEntryIdentifier();
 
-        $this->mockUri2->expects($this->any())->method('getScheme')->will(self::returnValue('https'));
+        $this->mockUri2->expects(self::any())->method('getScheme')->will(self::returnValue('https'));
         $cacheIdentifier2 = (new RouteContext($this->mockHttpRequest2, RouteParameters::createEmpty()))->getCacheEntryIdentifier();
 
         self::assertSame($cacheIdentifier1, $cacheIdentifier2);
@@ -143,10 +143,10 @@ class RouteContextTest extends UnitTestCase
      */
     public function getCacheEntryIdentifierDoesNotChangeWithNewQuery()
     {
-        $this->mockUri1->expects($this->any())->method('getQuery')->will(self::returnValue('query1'));
+        $this->mockUri1->expects(self::any())->method('getQuery')->will(self::returnValue('query1'));
         $cacheIdentifier1 = (new RouteContext($this->mockHttpRequest1, RouteParameters::createEmpty()))->getCacheEntryIdentifier();
 
-        $this->mockUri2->expects($this->any())->method('getQuery')->will(self::returnValue('query2'));
+        $this->mockUri2->expects(self::any())->method('getQuery')->will(self::returnValue('query2'));
         $cacheIdentifier2 = (new RouteContext($this->mockHttpRequest2, RouteParameters::createEmpty()))->getCacheEntryIdentifier();
 
         self::assertSame($cacheIdentifier1, $cacheIdentifier2);
@@ -157,10 +157,10 @@ class RouteContextTest extends UnitTestCase
      */
     public function getCacheEntryIdentifierDoesNotChangeWithNewFragment()
     {
-        $this->mockUri1->expects($this->any())->method('getFragment')->will(self::returnValue('fragment1'));
+        $this->mockUri1->expects(self::any())->method('getFragment')->will(self::returnValue('fragment1'));
         $cacheIdentifier1 = (new RouteContext($this->mockHttpRequest1, RouteParameters::createEmpty()))->getCacheEntryIdentifier();
 
-        $this->mockUri2->expects($this->any())->method('getFragment')->will(self::returnValue('fragment2'));
+        $this->mockUri2->expects(self::any())->method('getFragment')->will(self::returnValue('fragment2'));
         $cacheIdentifier2 = (new RouteContext($this->mockHttpRequest2, RouteParameters::createEmpty()))->getCacheEntryIdentifier();
 
         self::assertSame($cacheIdentifier1, $cacheIdentifier2);

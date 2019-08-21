@@ -60,7 +60,7 @@ class CommandManagerTest extends UnitTestCase
         $mockCommandControllerClassNames = [Fixtures\Command\MockACommandController::class, Fixtures\Command\MockBCommandController::class];
         $this->mockReflectionService->expects(self::once())->method('getAllSubClassNamesForClass')->with(Cli\CommandController::class)->will(self::returnValue($mockCommandControllerClassNames));
         $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
-        $mockObjectManager->expects($this->any())->method('get')->with(ReflectionService::class)->willReturn($this->mockReflectionService);
+        $mockObjectManager->expects(self::any())->method('get')->with(ReflectionService::class)->willReturn($this->mockReflectionService);
         $commandManager->injectObjectManager($mockObjectManager);
 
         $commands = $commandManager->getAvailableCommands();

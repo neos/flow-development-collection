@@ -26,11 +26,11 @@ class ProxyMethodTest extends \Neos\Flow\Tests\UnitTestCase
         $validateFoo2 = new Flow\Validate(['value' => 'foo2', 'type' => 'bar2']);
 
         $mockReflectionService = $this->getMockBuilder(ReflectionService::class)->disableOriginalConstructor()->getMock();
-        $mockReflectionService->expects($this->any())->method('hasMethod')->will(self::returnValue(true));
-        $mockReflectionService->expects($this->any())->method('getMethodTagsValues')->with('My\Class\Name', 'myMethod')->will(self::returnValue([
+        $mockReflectionService->expects(self::any())->method('hasMethod')->will(self::returnValue(true));
+        $mockReflectionService->expects(self::any())->method('getMethodTagsValues')->with('My\Class\Name', 'myMethod')->will(self::returnValue([
             'param' => ['string $name']
         ]));
-        $mockReflectionService->expects($this->any())->method('getMethodAnnotations')->with('My\Class\Name', 'myMethod')->will(self::returnValue([
+        $mockReflectionService->expects(self::any())->method('getMethodAnnotations')->with('My\Class\Name', 'myMethod')->will(self::returnValue([
             $validateFoo1,
             $validateFoo2,
             new Flow\SkipCsrfProtection([])

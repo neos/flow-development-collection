@@ -54,7 +54,7 @@ class RedisBackendTest extends BaseTestCase
 
         $this->redis = $this->getMockBuilder(\Redis::class)->disableOriginalConstructor()->getMock();
         $this->cache = $this->createMock(FrontendInterface::class);
-        $this->cache->expects($this->any())
+        $this->cache->expects(self::any())
             ->method('getIdentifier')
             ->will(self::returnValue('Foo_Cache'));
 
@@ -115,7 +115,7 @@ class RedisBackendTest extends BaseTestCase
         $this->backend->setDefaultLifetime($defaultLifetime);
         $expected = ['ex' => $defaultLifetime];
 
-        $this->redis->expects($this->any())
+        $this->redis->expects(self::any())
             ->method('multi')
             ->willReturn($this->redis);
 
@@ -136,7 +136,7 @@ class RedisBackendTest extends BaseTestCase
         $this->backend->setDefaultLifetime($defaultLifetime);
         $expected = ['ex' => 1600];
 
-        $this->redis->expects($this->any())
+        $this->redis->expects(self::any())
             ->method('multi')
             ->willReturn($this->redis);
 
@@ -153,7 +153,7 @@ class RedisBackendTest extends BaseTestCase
      */
     public function setAddsEntryToRedis()
     {
-        $this->redis->expects($this->any())
+        $this->redis->expects(self::any())
             ->method('multi')
             ->willReturn($this->redis);
 

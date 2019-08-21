@@ -82,8 +82,8 @@ class AuthenticationProviderManagerTest extends UnitTestCase
 
         $mockToken1->expects(self::atLeastOnce())->method('isAuthenticated')->will(self::returnValue(true));
         $mockToken2->expects(self::atLeastOnce())->method('isAuthenticated')->will(self::returnValue(true));
-        $mockToken1->expects($this->any())->method('getAuthenticationStatus')->will(self::returnValue(TokenInterface::AUTHENTICATION_NEEDED));
-        $mockToken2->expects($this->any())->method('getAuthenticationStatus')->will(self::returnValue(TokenInterface::AUTHENTICATION_NEEDED));
+        $mockToken1->expects(self::any())->method('getAuthenticationStatus')->will(self::returnValue(TokenInterface::AUTHENTICATION_NEEDED));
+        $mockToken2->expects(self::any())->method('getAuthenticationStatus')->will(self::returnValue(TokenInterface::AUTHENTICATION_NEEDED));
 
         $mockProvider1->expects(self::atLeastOnce())->method('canAuthenticate')->will($this->onConsecutiveCalls(true, false));
         $mockProvider2->expects(self::atLeastOnce())->method('canAuthenticate')->will(self::returnValue(true));
@@ -114,7 +114,7 @@ class AuthenticationProviderManagerTest extends UnitTestCase
         $securityContext = $this->getMockBuilder(Context::class)->setMethods(['getAuthenticationStrategy', 'getAuthenticationTokens', 'refreshTokens', 'refreshRoles'])->getMock();
 
         $token = $this->createMock(TokenInterface::class);
-        $token->expects($this->any())->method('getAccount')->will(self::returnValue($account));
+        $token->expects(self::any())->method('getAccount')->will(self::returnValue($account));
 
         $token->expects(self::atLeastOnce())->method('isAuthenticated')->will(self::returnValue(true));
         $securityContext->expects(self::atLeastOnce())->method('getAuthenticationTokens')->will(self::returnValue([$token]));
@@ -136,15 +136,15 @@ class AuthenticationProviderManagerTest extends UnitTestCase
         $mockToken2 = $this->createMock(TokenInterface::class);
         $mockToken3 = $this->createMock(TokenInterface::class);
 
-        $mockToken1->expects($this->any())->method('isAuthenticated')->will(self::returnValue(false));
-        $mockToken2->expects($this->any())->method('isAuthenticated')->will(self::returnValue(false));
-        $mockToken3->expects($this->any())->method('isAuthenticated')->will(self::returnValue(true));
+        $mockToken1->expects(self::any())->method('isAuthenticated')->will(self::returnValue(false));
+        $mockToken2->expects(self::any())->method('isAuthenticated')->will(self::returnValue(false));
+        $mockToken3->expects(self::any())->method('isAuthenticated')->will(self::returnValue(true));
 
-        $mockToken1->expects($this->any())->method('getAuthenticationStatus')->will(self::returnValue(TokenInterface::WRONG_CREDENTIALS));
-        $mockToken2->expects($this->any())->method('getAuthenticationStatus')->will(self::returnValue(TokenInterface::NO_CREDENTIALS_GIVEN));
-        $mockToken3->expects($this->any())->method('getAuthenticationStatus')->will(self::returnValue(TokenInterface::AUTHENTICATION_NEEDED));
+        $mockToken1->expects(self::any())->method('getAuthenticationStatus')->will(self::returnValue(TokenInterface::WRONG_CREDENTIALS));
+        $mockToken2->expects(self::any())->method('getAuthenticationStatus')->will(self::returnValue(TokenInterface::NO_CREDENTIALS_GIVEN));
+        $mockToken3->expects(self::any())->method('getAuthenticationStatus')->will(self::returnValue(TokenInterface::AUTHENTICATION_NEEDED));
 
-        $mockProvider->expects($this->any())->method('canAuthenticate')->will(self::returnValue(true));
+        $mockProvider->expects(self::any())->method('canAuthenticate')->will(self::returnValue(true));
         $mockProvider->expects(self::once())->method('authenticate')->with($mockToken3);
 
         $this->mockSecurityContext->expects(self::atLeastOnce())->method('getAuthenticationTokens')->will(self::returnValue([$mockToken1, $mockToken2, $mockToken3]));
@@ -252,7 +252,7 @@ class AuthenticationProviderManagerTest extends UnitTestCase
 
         $authenticationTokens = [$token1, $token2];
 
-        $this->mockSecurityContext->expects($this->any())->method('getAuthenticationStrategy')->will(self::returnValue(Context::AUTHENTICATE_ANY_TOKEN));
+        $this->mockSecurityContext->expects(self::any())->method('getAuthenticationStrategy')->will(self::returnValue(Context::AUTHENTICATE_ANY_TOKEN));
         $this->mockSecurityContext->expects(self::atLeastOnce())->method('getAuthenticationTokens')->will(self::returnValue($authenticationTokens));
 
         self::assertFalse($this->authenticationProviderManager->isAuthenticated());
@@ -270,7 +270,7 @@ class AuthenticationProviderManagerTest extends UnitTestCase
 
         $authenticationTokens = [$token1, $token2];
 
-        $this->mockSecurityContext->expects($this->any())->method('getAuthenticationStrategy')->will(self::returnValue(Context::AUTHENTICATE_ANY_TOKEN));
+        $this->mockSecurityContext->expects(self::any())->method('getAuthenticationStrategy')->will(self::returnValue(Context::AUTHENTICATE_ANY_TOKEN));
         $this->mockSecurityContext->expects(self::atLeastOnce())->method('getAuthenticationTokens')->will(self::returnValue($authenticationTokens));
 
         self::assertTrue($this->authenticationProviderManager->isAuthenticated());
@@ -316,13 +316,13 @@ class AuthenticationProviderManagerTest extends UnitTestCase
         $this->inject($this->authenticationProviderManager, 'sessionManager', $this->mockSessionManager);
         $this->inject($this->authenticationProviderManager, 'isInitialized', true);
 
-        $this->mockSession->expects($this->any())->method('canBeResumed')->will(self::returnValue(true));
-        $this->mockSession->expects($this->any())->method('isStarted')->will(self::returnValue(true));
+        $this->mockSession->expects(self::any())->method('canBeResumed')->will(self::returnValue(true));
+        $this->mockSession->expects(self::any())->method('isStarted')->will(self::returnValue(true));
 
         $token = $this->getMockBuilder(TokenInterface::class)->disableOriginalConstructor()->getMock();
-        $token->expects($this->any())->method('isAuthenticated')->will(self::returnValue(true));
+        $token->expects(self::any())->method('isAuthenticated')->will(self::returnValue(true));
 
-        $this->mockSecurityContext->expects($this->any())->method('getAuthenticationTokens')->will(self::returnValue([$token]));
+        $this->mockSecurityContext->expects(self::any())->method('getAuthenticationTokens')->will(self::returnValue([$token]));
 
         $this->mockSession->expects(self::once())->method('destroy');
 
@@ -340,9 +340,9 @@ class AuthenticationProviderManagerTest extends UnitTestCase
         $this->inject($this->authenticationProviderManager, 'isInitialized', true);
 
         $token = $this->getMockBuilder(TokenInterface::class)->disableOriginalConstructor()->getMock();
-        $token->expects($this->any())->method('isAuthenticated')->will(self::returnValue(true));
+        $token->expects(self::any())->method('isAuthenticated')->will(self::returnValue(true));
 
-        $this->mockSecurityContext->expects($this->any())->method('getAuthenticationTokens')->will(self::returnValue([$token]));
+        $this->mockSecurityContext->expects(self::any())->method('getAuthenticationTokens')->will(self::returnValue([$token]));
 
         $this->mockSession->expects(self::never())->method('destroy');
 
@@ -359,13 +359,13 @@ class AuthenticationProviderManagerTest extends UnitTestCase
         $this->inject($this->authenticationProviderManager, 'sessionManager', $this->mockSessionManager);
         $this->inject($this->authenticationProviderManager, 'isInitialized', true);
 
-        $this->mockSession->expects($this->any())->method('canBeResumed')->will(self::returnValue(true));
-        $this->mockSession->expects($this->any())->method('isStarted')->will(self::returnValue(true));
+        $this->mockSession->expects(self::any())->method('canBeResumed')->will(self::returnValue(true));
+        $this->mockSession->expects(self::any())->method('isStarted')->will(self::returnValue(true));
 
         $token = $this->getMockBuilder(TokenInterface::class)->disableOriginalConstructor()->getMock();
-        $token->expects($this->any())->method('isAuthenticated')->will(self::returnValue(true));
+        $token->expects(self::any())->method('isAuthenticated')->will(self::returnValue(true));
 
-        $this->mockSecurityContext->expects($this->any())->method('getAuthenticationTokens')->will(self::returnValue([$token]));
+        $this->mockSecurityContext->expects(self::any())->method('getAuthenticationTokens')->will(self::returnValue([$token]));
 
         $loggedOutEmitted = false;
         $this->authenticationProviderManager->expects(self::once())->method('emitLoggedOut')->will(self::returnCallBack(function () use (&$loggedOutEmitted) {
@@ -390,13 +390,13 @@ class AuthenticationProviderManagerTest extends UnitTestCase
         $this->inject($this->authenticationProviderManager, 'sessionManager', $this->mockSessionManager);
         $this->inject($this->authenticationProviderManager, 'isInitialized', true);
 
-        $this->mockSession->expects($this->any())->method('canBeResumed')->will(self::returnValue(true));
-        $this->mockSession->expects($this->any())->method('isStarted')->will(self::returnValue(true));
+        $this->mockSession->expects(self::any())->method('canBeResumed')->will(self::returnValue(true));
+        $this->mockSession->expects(self::any())->method('isStarted')->will(self::returnValue(true));
 
         $token = $this->getMockBuilder(TokenInterface::class)->disableOriginalConstructor()->getMock();
-        $token->expects($this->any())->method('isAuthenticated')->will(self::returnValue(true));
+        $token->expects(self::any())->method('isAuthenticated')->will(self::returnValue(true));
 
-        $this->mockSecurityContext->expects($this->any())->method('getAuthenticationTokens')->will(self::returnValue([$token]));
+        $this->mockSecurityContext->expects(self::any())->method('getAuthenticationTokens')->will(self::returnValue([$token]));
 
         $this->authenticationProviderManager->expects(self::once())->method('emitLoggedOut');
 

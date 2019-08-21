@@ -43,7 +43,7 @@ class UniqueEntityValidatorTest extends AbstractValidatorTestcase
         $this->classSchema = $this->getMockBuilder(ClassSchema::class)->disableOriginalConstructor()->getMock();
 
         $this->reflectionService = $this->createMock(ReflectionService::class);
-        $this->reflectionService->expects($this->any())->method('getClassSchema')->will(self::returnValue($this->classSchema));
+        $this->reflectionService->expects(self::any())->method('getClassSchema')->will(self::returnValue($this->classSchema));
         $this->inject($this->validator, 'reflectionService', $this->reflectionService);
     }
 
@@ -142,7 +142,7 @@ class UniqueEntityValidatorTest extends AbstractValidatorTestcase
     {
         $this->classSchema->expects(self::once())->method('getModelType')->will(self::returnValue(ClassSchema::MODELTYPE_ENTITY));
         $this->classSchema
-            ->expects($this->any())
+            ->expects(self::any())
             ->method('getClassName')
             ->will(self::returnValue('FooClass'));
     }

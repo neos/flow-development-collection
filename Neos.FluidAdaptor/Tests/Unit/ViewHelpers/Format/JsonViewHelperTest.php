@@ -67,7 +67,7 @@ class JsonViewHelperTest extends ViewHelperBaseTestcase
     public function viewHelperOutputsArrayOnIndexedArrayInputAndObjectIfSetSo()
     {
         $this->viewHelper
-                ->expects($this->any())
+                ->expects(self::any())
                 ->method('renderChildren')
                 ->will(self::returnValue(['foo', 'bar', 42]));
         $this->viewHelper = $this->prepareArguments($this->viewHelper, []);

@@ -123,7 +123,7 @@ class ResourceStreamWrapperTest extends UnitTestCase
         file_put_contents('vfs://Foo/Some/Path', 'fixture');
 
         $mockPackage = $this->createMock(FlowPackageInterface::class);
-        $mockPackage->expects($this->any())->method('getResourcesPath')->will(self::returnValue('vfs://Foo'));
+        $mockPackage->expects(self::any())->method('getResourcesPath')->will(self::returnValue('vfs://Foo'));
         $this->mockPackageManager->expects(self::once())->method('getPackage')->with($packageKey)->will(self::returnValue($mockPackage));
 
         $openedPathAndFilename = '';
@@ -141,7 +141,7 @@ class ResourceStreamWrapperTest extends UnitTestCase
         file_put_contents('vfs://Foo/Some/Path', 'fixture');
 
         $mockPackage = $this->createMock(FlowPackageInterface::class);
-        $mockPackage->expects($this->any())->method('getResourcesPath')->will(self::returnValue('vfs://Foo'));
+        $mockPackage->expects(self::any())->method('getResourcesPath')->will(self::returnValue('vfs://Foo'));
         $this->mockPackageManager->expects(self::once())->method('getPackage')->with($packageKey)->will(self::returnValue($mockPackage));
 
         $openedPathAndFilename = '';

@@ -80,9 +80,9 @@ class DataMapperTest extends UnitTestCase
         $objectData = ['identifier' => '1234', 'classname' => $mockEntityClassName, 'properties' => ['foo']];
 
         $mockClassSchema = $this->getMockBuilder(ClassSchema::class)->disableOriginalConstructor()->getMock();
-        $mockClassSchema->expects($this->any())->method('getModelType')->will(self::returnValue(ClassSchema::MODELTYPE_ENTITY));
+        $mockClassSchema->expects(self::any())->method('getModelType')->will(self::returnValue(ClassSchema::MODELTYPE_ENTITY));
         $mockReflectionService = $this->getMockBuilder(ReflectionService::class)->disableOriginalConstructor()->getMock();
-        $mockReflectionService->expects($this->any())->method('getClassSchema')->with($mockEntityClassName)->will(self::returnValue($mockClassSchema));
+        $mockReflectionService->expects(self::any())->method('getClassSchema')->with($mockEntityClassName)->will(self::returnValue($mockClassSchema));
         $mockSession = $this->createMock(Persistence\Generic\Session::class);
         $mockSession->expects(self::once())->method('registerReconstitutedEntity')->with($mockEntity, $objectData);
         $mockSession->expects(self::once())->method('registerObject')->with($mockEntity, '1234');

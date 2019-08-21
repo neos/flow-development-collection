@@ -49,7 +49,7 @@ class AbstractWidgetControllerTest extends UnitTestCase
         $mockResponse = new ActionResponse();
 
         $httpRequest = new ServerRequest('GET', new Uri('http://localhost'));
-        $mockActionRequest->expects($this->any())->method('getHttpRequest')->will(self::returnValue($httpRequest));
+        $mockActionRequest->expects(self::any())->method('getHttpRequest')->will(self::returnValue($httpRequest));
 
         $expectedWidgetConfiguration = ['foo' => uniqid()];
 

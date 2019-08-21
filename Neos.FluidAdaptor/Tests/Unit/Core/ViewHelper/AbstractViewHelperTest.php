@@ -82,7 +82,7 @@ class AbstractViewHelperTest extends UnitTestCase
     {
         $this->mockReflectionService = $this->getMockBuilder(ReflectionService::class)->disableOriginalConstructor()->getMock();
         $this->mockObjectManager = $this->createMock(ObjectManagerInterface::class);
-        $this->mockObjectManager->expects($this->any())->method('get')->with(ReflectionService::class)->willReturn($this->mockReflectionService);
+        $this->mockObjectManager->expects(self::any())->method('get')->with(ReflectionService::class)->willReturn($this->mockReflectionService);
     }
 
     /**
@@ -90,7 +90,7 @@ class AbstractViewHelperTest extends UnitTestCase
      */
     public function argumentsCanBeRegistered(): void
     {
-        $this->mockReflectionService->expects($this->any())->method('getMethodParameters')->willReturn([]);
+        $this->mockReflectionService->expects(self::any())->method('getMethodParameters')->willReturn([]);
 
         $viewHelper = $this->getAccessibleMock(AbstractViewHelper::class, ['render'], [], '', false);
         $viewHelper->injectObjectManager($this->mockObjectManager);
@@ -127,7 +127,7 @@ class AbstractViewHelperTest extends UnitTestCase
      */
     public function overrideArgumentOverwritesExistingArgumentDefinition(): void
     {
-        $this->mockReflectionService->expects($this->any())->method('getMethodParameters')->willReturn([]);
+        $this->mockReflectionService->expects(self::any())->method('getMethodParameters')->willReturn([]);
 
         $viewHelper = $this->getAccessibleMock(AbstractViewHelper::class, ['render'], [], '', false);
         $viewHelper->injectObjectManager($this->mockObjectManager);
@@ -162,7 +162,7 @@ class AbstractViewHelperTest extends UnitTestCase
      */
     public function prepareArgumentsCallsInitializeArguments(): void
     {
-        $this->mockReflectionService->expects($this->any())->method('getMethodParameters')->willReturn([]);
+        $this->mockReflectionService->expects(self::any())->method('getMethodParameters')->willReturn([]);
 
         $viewHelper = $this->getAccessibleMock(AbstractViewHelper::class, ['render', 'initializeArguments'], [], '', false);
         $viewHelper->injectObjectManager($this->mockObjectManager);
