@@ -129,4 +129,13 @@ class ProxyCompilerTest extends FunctionalTestCase
         $reflectionClass = new ClassReflection(Fixtures\FinalClassWithDependencies::class);
         self::assertTrue($reflectionClass->isFinal());
     }
+
+    /**
+     * @test
+     */
+    public function classesWithUnderscoresAreSupported()
+    {
+        $class = $this->objectManager->get(Fixtures\ClassWithUnderscoreClassDependencies::class);
+        $this->assertInstanceOf(Fixtures\SubNamespace_Underscores::class, $class->classWithUnderscores);
+    }
 }
