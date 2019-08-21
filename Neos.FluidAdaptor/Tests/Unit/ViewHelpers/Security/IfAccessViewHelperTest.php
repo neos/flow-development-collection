@@ -38,7 +38,7 @@ class IfAccessViewHelperTest extends ViewHelperBaseTestcase
         $this->mockPrivilegeManager = $this->getMockBuilder(\Neos\Flow\Security\Authorization\PrivilegeManagerInterface::class)->disableOriginalConstructor()->getMock();
 
         $objectManager = $this->getMockBuilder(ObjectManagerInterface::class)->disableOriginalConstructor()->getMock();
-        $objectManager->expects($this->any())->method('get')->willReturnCallback(function ($objectName) {
+        $objectManager->expects(self::any())->method('get')->willReturnCallback(function ($objectName) {
             switch ($objectName) {
                 case PrivilegeManagerInterface::class:
                     return $this->mockPrivilegeManager;
@@ -47,7 +47,7 @@ class IfAccessViewHelperTest extends ViewHelperBaseTestcase
         });
 
         $renderingContext = $this->getMockBuilder(RenderingContext::class)->disableOriginalConstructor()->getMock();
-        $renderingContext->expects($this->any())->method('getObjectManager')->willReturn($objectManager);
+        $renderingContext->expects(self::any())->method('getObjectManager')->willReturn($objectManager);
 
         $this->ifAccessViewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\Security\IfAccessViewHelper::class, ['renderThenChild', 'renderElseChild']);
         $this->inject($this->ifAccessViewHelper, 'renderingContext', $renderingContext);

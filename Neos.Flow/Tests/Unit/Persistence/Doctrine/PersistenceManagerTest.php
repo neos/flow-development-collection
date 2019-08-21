@@ -62,16 +62,16 @@ class PersistenceManagerTest extends UnitTestCase
         $this->persistenceManager = $this->getMockBuilder(\Neos\Flow\Persistence\Doctrine\PersistenceManager::class)->setMethods(['emitAllObjectsPersisted'])->getMock();
 
         $this->mockEntityManager = $this->getMockBuilder(\Doctrine\ORM\EntityManager::class)->disableOriginalConstructor()->getMock();
-        $this->mockEntityManager->expects($this->any())->method('isOpen')->willReturn(true);
+        $this->mockEntityManager->expects(self::any())->method('isOpen')->willReturn(true);
         $this->inject($this->persistenceManager, 'entityManager', $this->mockEntityManager);
 
         $this->mockUnitOfWork = $this->getMockBuilder(\Doctrine\ORM\UnitOfWork::class)->disableOriginalConstructor()->getMock();
-        $this->mockEntityManager->expects($this->any())->method('getUnitOfWork')->willReturn($this->mockUnitOfWork);
+        $this->mockEntityManager->expects(self::any())->method('getUnitOfWork')->willReturn($this->mockUnitOfWork);
 
         $this->mockConnection = $this->getMockBuilder(\Doctrine\DBAL\Connection::class)->disableOriginalConstructor()->getMock();
         $this->mockPing = $this->mockConnection->expects($this->atMost(1))->method('ping');
         $this->mockPing->willReturn(true);
-        $this->mockEntityManager->expects($this->any())->method('getConnection')->willReturn($this->mockConnection);
+        $this->mockEntityManager->expects(self::any())->method('getConnection')->willReturn($this->mockConnection);
 
         $this->mockSystemLogger = $this->createMock(LoggerInterface::class);
         $this->persistenceManager->injectLogger($this->mockSystemLogger);
@@ -88,8 +88,8 @@ class PersistenceManagerTest extends UnitTestCase
             'Persistence_Object_Identifier' => null
         ];
 
-        $this->mockEntityManager->expects($this->any())->method('contains')->with($entity)->willReturn(true);
-        $this->mockUnitOfWork->expects($this->any())->method('getEntityIdentifier')->with($entity)->willReturn(['SomeIdentifier']);
+        $this->mockEntityManager->expects(self::any())->method('contains')->with($entity)->willReturn(true);
+        $this->mockUnitOfWork->expects(self::any())->method('getEntityIdentifier')->with($entity)->willReturn(['SomeIdentifier']);
 
         self::assertEquals('SomeIdentifier', $this->persistenceManager->getIdentifierByObject($entity));
     }
@@ -105,9 +105,9 @@ class PersistenceManagerTest extends UnitTestCase
         $scheduledEntityUpdates = [spl_object_hash($mockObject) => $mockObject];
         $scheduledEntityDeletes = [];
         $scheduledEntityInsertions = [];
-        $this->mockUnitOfWork->expects($this->any())->method('getScheduledEntityUpdates')->willReturn($scheduledEntityUpdates);
-        $this->mockUnitOfWork->expects($this->any())->method('getScheduledEntityDeletions')->willReturn($scheduledEntityDeletes);
-        $this->mockUnitOfWork->expects($this->any())->method('getScheduledEntityInsertions')->willReturn($scheduledEntityInsertions);
+        $this->mockUnitOfWork->expects(self::any())->method('getScheduledEntityUpdates')->willReturn($scheduledEntityUpdates);
+        $this->mockUnitOfWork->expects(self::any())->method('getScheduledEntityDeletions')->willReturn($scheduledEntityDeletes);
+        $this->mockUnitOfWork->expects(self::any())->method('getScheduledEntityInsertions')->willReturn($scheduledEntityInsertions);
 
         $this->mockEntityManager->expects(self::never())->method('flush');
 
@@ -123,9 +123,9 @@ class PersistenceManagerTest extends UnitTestCase
         $scheduledEntityUpdates = [spl_object_hash($mockObject) => $mockObject];
         $scheduledEntityDeletes = [];
         $scheduledEntityInsertions = [];
-        $this->mockUnitOfWork->expects($this->any())->method('getScheduledEntityUpdates')->willReturn($scheduledEntityUpdates);
-        $this->mockUnitOfWork->expects($this->any())->method('getScheduledEntityDeletions')->willReturn($scheduledEntityDeletes);
-        $this->mockUnitOfWork->expects($this->any())->method('getScheduledEntityInsertions')->willReturn($scheduledEntityInsertions);
+        $this->mockUnitOfWork->expects(self::any())->method('getScheduledEntityUpdates')->willReturn($scheduledEntityUpdates);
+        $this->mockUnitOfWork->expects(self::any())->method('getScheduledEntityDeletions')->willReturn($scheduledEntityDeletes);
+        $this->mockUnitOfWork->expects(self::any())->method('getScheduledEntityInsertions')->willReturn($scheduledEntityInsertions);
 
         $this->mockEntityManager->expects(self::once())->method('flush');
 

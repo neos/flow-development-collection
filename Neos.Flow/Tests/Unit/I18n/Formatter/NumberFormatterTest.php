@@ -236,7 +236,7 @@ class NumberFormatterTest extends UnitTestCase
         $mockNumbersReader->expects(self::once())->method('getLocalizedSymbolsForLocale')->with($this->sampleLocale)->will(self::returnValue($this->sampleLocalizedSymbols));
 
         $mockCurrencyReader = $this->createMock(CurrencyReader::class);
-        $mockCurrencyReader->expects($this->any())->method('getFraction')->with($currencyCode)->will(self::returnValue($this->sampleCurrencyFractions[$currencyCode]));
+        $mockCurrencyReader->expects(self::any())->method('getFraction')->with($currencyCode)->will(self::returnValue($this->sampleCurrencyFractions[$currencyCode]));
 
         $formatter = new I18n\Formatter\NumberFormatter();
         $formatter->injectNumbersReader($mockNumbersReader);

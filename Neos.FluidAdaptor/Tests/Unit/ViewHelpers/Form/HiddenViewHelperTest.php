@@ -39,7 +39,7 @@ class HiddenViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\For
     public function renderCorrectlySetsTagNameAndDefaultAttributes()
     {
         $mockTagBuilder = $this->getMockBuilder(TagBuilder::class)->setMethods(['setTagName', 'addAttribute'])->getMock();
-        $mockTagBuilder->expects($this->any())->method('setTagName')->with('input');
+        $mockTagBuilder->expects(self::any())->method('setTagName')->with('input');
         $mockTagBuilder->expects(self::at(2))->method('addAttribute')->with('type', 'hidden');
         $mockTagBuilder->expects(self::at(3))->method('addAttribute')->with('name', 'foo');
         $this->viewHelper->expects(self::once())->method('registerFieldNameForFormTokenGeneration')->with('foo');

@@ -60,10 +60,10 @@ class CsrfProtectionTest extends UnitTestCase
 
         $this->mockActionRequest->expects(self::atLeastOnce())->method('getControllerObjectName')->will(self::returnValue($controllerObjectName));
         $this->mockActionRequest->expects(self::once())->method('getControllerActionName')->will(self::returnValue($controllerActionName));
-        $this->mockActionRequest->expects($this->any())->method('getHttpRequest')->will(self::returnValue($httpRequest));
+        $this->mockActionRequest->expects(self::any())->method('getHttpRequest')->will(self::returnValue($httpRequest));
 
         $mockAuthenticationManager = $this->getMockBuilder(AuthenticationManagerInterface::class)->disableOriginalConstructor()->getMock();
-        $mockAuthenticationManager->expects($this->any())->method('isAuthenticated')->will(self::returnValue(true));
+        $mockAuthenticationManager->expects(self::any())->method('isAuthenticated')->will(self::returnValue(true));
 
         $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
         $mockObjectManager->expects(self::once())->method('getClassNameByObjectName')->with($controllerObjectName)->will(self::returnValue($controllerObjectName));
@@ -102,10 +102,10 @@ class CsrfProtectionTest extends UnitTestCase
 
         $this->mockActionRequest->expects(self::atLeastOnce())->method('getControllerObjectName')->will(self::returnValue($controllerObjectName));
         $this->mockActionRequest->expects(self::once())->method('getControllerActionName')->will(self::returnValue($controllerActionName));
-        $this->mockActionRequest->expects($this->any())->method('getHttpRequest')->will(self::returnValue($httpRequest));
+        $this->mockActionRequest->expects(self::any())->method('getHttpRequest')->will(self::returnValue($httpRequest));
 
         $mockAuthenticationManager = $this->getMockBuilder(AuthenticationManagerInterface::class)->disableOriginalConstructor()->getMock();
-        $mockAuthenticationManager->expects($this->any())->method('isAuthenticated')->will(self::returnValue(true));
+        $mockAuthenticationManager->expects(self::any())->method('isAuthenticated')->will(self::returnValue(true));
 
         $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
         $mockObjectManager->expects(self::once())->method('getClassNameByObjectName')->with($controllerObjectName)->will(self::returnValue($controllerObjectName));
@@ -136,13 +136,13 @@ class CsrfProtectionTest extends UnitTestCase
         $httpRequest = new ServerRequest('POST', new Uri('http://localhost'));
 
         $this->mockActionRequest->expects(self::atLeastOnce())->method('getControllerObjectName')->will(self::returnValue($controllerObjectName));
-        $this->mockActionRequest->expects($this->any())->method('getControllerActionName')->will(self::returnValue($controllerActionName));
-        $this->mockActionRequest->expects($this->any())->method('getInternalArguments')->will(self::returnValue([]));
-        $this->mockActionRequest->expects($this->any())->method('getMainRequest')->will(self::returnValue($this->mockActionRequest));
-        $this->mockActionRequest->expects($this->any())->method('getHttpRequest')->will(self::returnValue($httpRequest));
+        $this->mockActionRequest->expects(self::any())->method('getControllerActionName')->will(self::returnValue($controllerActionName));
+        $this->mockActionRequest->expects(self::any())->method('getInternalArguments')->will(self::returnValue([]));
+        $this->mockActionRequest->expects(self::any())->method('getMainRequest')->will(self::returnValue($this->mockActionRequest));
+        $this->mockActionRequest->expects(self::any())->method('getHttpRequest')->will(self::returnValue($httpRequest));
 
         $mockAuthenticationManager = $this->getMockBuilder(AuthenticationManagerInterface::class)->disableOriginalConstructor()->getMock();
-        $mockAuthenticationManager->expects($this->any())->method('isAuthenticated')->will(self::returnValue(true));
+        $mockAuthenticationManager->expects(self::any())->method('isAuthenticated')->will(self::returnValue(true));
 
         $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
         $mockObjectManager->expects(self::once())->method('getClassNameByObjectName')->with($controllerObjectName)->will(self::returnValue($controllerObjectName));
@@ -180,13 +180,13 @@ class CsrfProtectionTest extends UnitTestCase
         $httpRequest = new ServerRequest('POST', new Uri('http://localhost'));
 
         $this->mockActionRequest->expects(self::atLeastOnce())->method('getControllerObjectName')->will(self::returnValue($controllerObjectName));
-        $this->mockActionRequest->expects($this->any())->method('getControllerActionName')->will(self::returnValue($controllerActionName));
-        $this->mockActionRequest->expects($this->any())->method('getInternalArguments')->will(self::returnValue(['__csrfToken' => 'invalidCsrfToken']));
-        $this->mockActionRequest->expects($this->any())->method('getMainRequest')->will(self::returnValue($this->mockActionRequest));
-        $this->mockActionRequest->expects($this->any())->method('getHttpRequest')->will(self::returnValue($httpRequest));
+        $this->mockActionRequest->expects(self::any())->method('getControllerActionName')->will(self::returnValue($controllerActionName));
+        $this->mockActionRequest->expects(self::any())->method('getInternalArguments')->will(self::returnValue(['__csrfToken' => 'invalidCsrfToken']));
+        $this->mockActionRequest->expects(self::any())->method('getMainRequest')->will(self::returnValue($this->mockActionRequest));
+        $this->mockActionRequest->expects(self::any())->method('getHttpRequest')->will(self::returnValue($httpRequest));
 
         $mockAuthenticationManager = $this->getMockBuilder(AuthenticationManagerInterface::class)->disableOriginalConstructor()->getMock();
-        $mockAuthenticationManager->expects($this->any())->method('isAuthenticated')->will(self::returnValue(true));
+        $mockAuthenticationManager->expects(self::any())->method('isAuthenticated')->will(self::returnValue(true));
 
         $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
         $mockObjectManager->expects(self::once())->method('getClassNameByObjectName')->with($controllerObjectName)->will(self::returnValue($controllerObjectName));
@@ -201,8 +201,8 @@ class CsrfProtectionTest extends UnitTestCase
         $mockPolicyService->expects(self::once())->method('getAllPrivilegesByType')->will(self::returnValue([$mockPrivilege]));
 
         $mockSecurityContext = $this->createMock(Security\Context::class);
-        $mockSecurityContext->expects($this->any())->method('isCsrfProtectionTokenValid')->with('invalidCsrfToken')->will(self::returnValue(false));
-        $mockSecurityContext->expects($this->any())->method('hasCsrfProtectionTokens')->will(self::returnValue(true));
+        $mockSecurityContext->expects(self::any())->method('isCsrfProtectionTokenValid')->with('invalidCsrfToken')->will(self::returnValue(false));
+        $mockSecurityContext->expects(self::any())->method('hasCsrfProtectionTokens')->will(self::returnValue(true));
 
         $mockCsrfProtectionPattern = $this->getAccessibleMock(Security\RequestPattern\CsrfProtection::class, ['dummy']);
         $mockCsrfProtectionPattern->_set('authenticationManager', $mockAuthenticationManager);
@@ -226,13 +226,13 @@ class CsrfProtectionTest extends UnitTestCase
         $httpRequest = new ServerRequest('POST', new Uri('http://localhost'));
 
         $this->mockActionRequest->expects(self::atLeastOnce())->method('getControllerObjectName')->will(self::returnValue($controllerObjectName));
-        $this->mockActionRequest->expects($this->any())->method('getControllerActionName')->will(self::returnValue($controllerActionName));
-        $this->mockActionRequest->expects($this->any())->method('getInternalArguments')->will(self::returnValue(['__csrfToken' => 'validToken']));
-        $this->mockActionRequest->expects($this->any())->method('getMainRequest')->will(self::returnValue($this->mockActionRequest));
-        $this->mockActionRequest->expects($this->any())->method('getHttpRequest')->will(self::returnValue($httpRequest));
+        $this->mockActionRequest->expects(self::any())->method('getControllerActionName')->will(self::returnValue($controllerActionName));
+        $this->mockActionRequest->expects(self::any())->method('getInternalArguments')->will(self::returnValue(['__csrfToken' => 'validToken']));
+        $this->mockActionRequest->expects(self::any())->method('getMainRequest')->will(self::returnValue($this->mockActionRequest));
+        $this->mockActionRequest->expects(self::any())->method('getHttpRequest')->will(self::returnValue($httpRequest));
 
         $mockAuthenticationManager = $this->getMockBuilder(AuthenticationManagerInterface::class)->disableOriginalConstructor()->getMock();
-        $mockAuthenticationManager->expects($this->any())->method('isAuthenticated')->will(self::returnValue(true));
+        $mockAuthenticationManager->expects(self::any())->method('isAuthenticated')->will(self::returnValue(true));
 
         $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
         $mockObjectManager->expects(self::once())->method('getClassNameByObjectName')->with($controllerObjectName)->will(self::returnValue($controllerObjectName));
@@ -247,8 +247,8 @@ class CsrfProtectionTest extends UnitTestCase
         $mockPolicyService->expects(self::once())->method('getAllPrivilegesByType')->will(self::returnValue([$mockPrivilege]));
 
         $mockSecurityContext = $this->createMock(Security\Context::class);
-        $mockSecurityContext->expects($this->any())->method('isCsrfProtectionTokenValid')->with('validToken')->will(self::returnValue(true));
-        $mockSecurityContext->expects($this->any())->method('hasCsrfProtectionTokens')->will(self::returnValue(true));
+        $mockSecurityContext->expects(self::any())->method('isCsrfProtectionTokenValid')->with('validToken')->will(self::returnValue(true));
+        $mockSecurityContext->expects(self::any())->method('hasCsrfProtectionTokens')->will(self::returnValue(true));
 
         $mockCsrfProtectionPattern = $this->getAccessibleMock(Security\RequestPattern\CsrfProtection::class, ['dummy']);
         $mockCsrfProtectionPattern->_set('authenticationManager', $mockAuthenticationManager);
@@ -273,13 +273,13 @@ class CsrfProtectionTest extends UnitTestCase
         $httpRequest = $httpRequest->withHeader('X-Flow-Csrftoken', 'validToken');
 
         $this->mockActionRequest->expects(self::atLeastOnce())->method('getControllerObjectName')->will(self::returnValue($controllerObjectName));
-        $this->mockActionRequest->expects($this->any())->method('getControllerActionName')->will(self::returnValue($controllerActionName));
-        $this->mockActionRequest->expects($this->any())->method('getInternalArguments')->will(self::returnValue([]));
-        $this->mockActionRequest->expects($this->any())->method('getMainRequest')->will(self::returnValue($this->mockActionRequest));
-        $this->mockActionRequest->expects($this->any())->method('getHttpRequest')->will(self::returnValue($httpRequest));
+        $this->mockActionRequest->expects(self::any())->method('getControllerActionName')->will(self::returnValue($controllerActionName));
+        $this->mockActionRequest->expects(self::any())->method('getInternalArguments')->will(self::returnValue([]));
+        $this->mockActionRequest->expects(self::any())->method('getMainRequest')->will(self::returnValue($this->mockActionRequest));
+        $this->mockActionRequest->expects(self::any())->method('getHttpRequest')->will(self::returnValue($httpRequest));
 
         $mockAuthenticationManager = $this->getMockBuilder(AuthenticationManagerInterface::class)->disableOriginalConstructor()->getMock();
-        $mockAuthenticationManager->expects($this->any())->method('isAuthenticated')->will(self::returnValue(true));
+        $mockAuthenticationManager->expects(self::any())->method('isAuthenticated')->will(self::returnValue(true));
 
         $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
         $mockObjectManager->expects(self::once())->method('getClassNameByObjectName')->with($controllerObjectName)->will(self::returnValue($controllerObjectName));
@@ -294,8 +294,8 @@ class CsrfProtectionTest extends UnitTestCase
         $mockPolicyService->expects(self::once())->method('getAllPrivilegesByType')->will(self::returnValue([$mockPrivilege]));
 
         $mockSecurityContext = $this->createMock(Security\Context::class);
-        $mockSecurityContext->expects($this->any())->method('isCsrfProtectionTokenValid')->with('validToken')->will(self::returnValue(true));
-        $mockSecurityContext->expects($this->any())->method('hasCsrfProtectionTokens')->will(self::returnValue(true));
+        $mockSecurityContext->expects(self::any())->method('isCsrfProtectionTokenValid')->with('validToken')->will(self::returnValue(true));
+        $mockSecurityContext->expects(self::any())->method('hasCsrfProtectionTokens')->will(self::returnValue(true));
 
         $mockCsrfProtectionPattern = $this->getAccessibleMock(Security\RequestPattern\CsrfProtection::class, ['dummy']);
         $mockCsrfProtectionPattern->_set('authenticationManager', $mockAuthenticationManager);
@@ -315,10 +315,10 @@ class CsrfProtectionTest extends UnitTestCase
     {
         $httpRequest = new ServerRequest('POST', new Uri('http://localhost'));
 
-        $this->mockActionRequest->expects($this->any())->method('getHttpRequest')->will(self::returnValue($httpRequest));
+        $this->mockActionRequest->expects(self::any())->method('getHttpRequest')->will(self::returnValue($httpRequest));
 
         $mockAuthenticationManager = $this->getMockBuilder(AuthenticationManagerInterface::class)->disableOriginalConstructor()->getMock();
-        $mockAuthenticationManager->expects($this->any())->method('isAuthenticated')->will(self::returnValue(false));
+        $mockAuthenticationManager->expects(self::any())->method('isAuthenticated')->will(self::returnValue(false));
 
         $mockCsrfProtectionPattern = $this->getAccessibleMock(Security\RequestPattern\CsrfProtection::class, ['dummy']);
         $mockCsrfProtectionPattern->_set('authenticationManager', $mockAuthenticationManager);
@@ -334,7 +334,7 @@ class CsrfProtectionTest extends UnitTestCase
     {
         $httpRequest = new ServerRequest('GET', new Uri('http://localhost'));
 
-        $this->mockActionRequest->expects($this->any())->method('getHttpRequest')->will(self::returnValue($httpRequest));
+        $this->mockActionRequest->expects(self::any())->method('getHttpRequest')->will(self::returnValue($httpRequest));
 
         $mockCsrfProtectionPattern = $this->getAccessibleMock(Security\RequestPattern\CsrfProtection::class, ['dummy']);
         $mockCsrfProtectionPattern->_set('logger', $this->mockSystemLogger);
@@ -349,10 +349,10 @@ class CsrfProtectionTest extends UnitTestCase
     {
         $httpRequest = new ServerRequest('POST', new Uri('http://localhost'));
 
-        $this->mockActionRequest->expects($this->any())->method('getHttpRequest')->will(self::returnValue($httpRequest));
+        $this->mockActionRequest->expects(self::any())->method('getHttpRequest')->will(self::returnValue($httpRequest));
 
         $mockAuthenticationManager = $this->getMockBuilder(AuthenticationManagerInterface::class)->disableOriginalConstructor()->getMock();
-        $mockAuthenticationManager->expects($this->any())->method('isAuthenticated')->will(self::returnValue(true));
+        $mockAuthenticationManager->expects(self::any())->method('isAuthenticated')->will(self::returnValue(true));
 
         $mockSecurityContext = $this->createMock(Security\Context::class);
         $mockSecurityContext->expects(self::atLeastOnce())->method('areAuthorizationChecksDisabled')->will(self::returnValue(true));

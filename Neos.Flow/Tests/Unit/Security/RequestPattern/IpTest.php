@@ -52,7 +52,7 @@ class IpTest extends UnitTestCase
         $requestMock = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
         $requestMock->expects(self::once())->method('getAttribute')->with(ServerRequestAttributes::CLIENT_IP)->willReturn($ip);
         $actionRequestMock = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
-        $actionRequestMock->expects($this->any())->method('getHttpRequest')->will(self::returnValue($requestMock));
+        $actionRequestMock->expects(self::any())->method('getHttpRequest')->will(self::returnValue($requestMock));
 
         $requestPattern = new Ip(['cidrPattern' => $pattern]);
 

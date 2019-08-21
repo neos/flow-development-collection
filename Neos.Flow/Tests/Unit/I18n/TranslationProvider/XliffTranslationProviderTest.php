@@ -76,7 +76,7 @@ class XliffTranslationProviderTest extends UnitTestCase
             ->with($this->samplePackageKey . ':' . $this->sampleSourceName, $this->sampleLocale)
             ->willReturn($fileAdapter);
 
-        $this->mockPluralsReader->expects($this->any())->method('getPluralForms')
+        $this->mockPluralsReader->expects(self::any())->method('getPluralForms')
             ->with($this->sampleLocale)
             ->will(self::returnValue([I18n\Cldr\Reader\PluralsReader::RULE_ONE, I18n\Cldr\Reader\PluralsReader::RULE_OTHER]));
 
@@ -99,7 +99,7 @@ class XliffTranslationProviderTest extends UnitTestCase
             ->with($this->samplePackageKey . ':' . $this->sampleSourceName, $this->sampleLocale)
             ->willReturn($fileAdapter);
 
-        $this->mockPluralsReader->expects($this->any())->method('getPluralForms')
+        $this->mockPluralsReader->expects(self::any())->method('getPluralForms')
             ->with($this->sampleLocale)
             ->will(self::returnValue([I18n\Cldr\Reader\PluralsReader::RULE_ONE, I18n\Cldr\Reader\PluralsReader::RULE_OTHER]));
 
@@ -117,7 +117,7 @@ class XliffTranslationProviderTest extends UnitTestCase
     public function getTranslationByOriginalLabelThrowsExceptionWhenInvalidPluralFormProvided()
     {
         $this->expectException(I18n\TranslationProvider\Exception\InvalidPluralFormException::class);
-        $this->mockPluralsReader->expects($this->any())
+        $this->mockPluralsReader->expects(self::any())
             ->method('getPluralForms')
             ->with($this->sampleLocale)
             ->will(self::returnValue([I18n\Cldr\Reader\PluralsReader::RULE_ONE, I18n\Cldr\Reader\PluralsReader::RULE_OTHER]));
@@ -134,7 +134,7 @@ class XliffTranslationProviderTest extends UnitTestCase
     public function getTranslationByIdThrowsExceptionWhenInvalidPluralFormProvided()
     {
         $this->expectException(I18n\TranslationProvider\Exception\InvalidPluralFormException::class);
-        $this->mockPluralsReader->expects($this->any())
+        $this->mockPluralsReader->expects(self::any())
             ->method('getPluralForms')
             ->with($this->sampleLocale)
             ->will(self::returnValue([I18n\Cldr\Reader\PluralsReader::RULE_ONE, I18n\Cldr\Reader\PluralsReader::RULE_OTHER]));

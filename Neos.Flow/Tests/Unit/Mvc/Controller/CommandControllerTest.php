@@ -51,7 +51,7 @@ class CommandControllerTest extends UnitTestCase
         $this->commandController = $this->getAccessibleMock(CommandController::class, ['resolveCommandMethodName', 'callCommandMethod']);
 
         $this->mockCommandManager = $this->getMockBuilder(CommandManager::class)->disableOriginalConstructor()->getMock();
-        $this->mockCommandManager->expects($this->any())->method('getCommandMethodParameters')->will(self::returnValue([]));
+        $this->mockCommandManager->expects(self::any())->method('getCommandMethodParameters')->will(self::returnValue([]));
         $this->inject($this->commandController, 'commandManager', $this->mockCommandManager);
 
         $this->mockConsoleOutput = $this->getMockBuilder(ConsoleOutput::class)->disableOriginalConstructor()->getMock();

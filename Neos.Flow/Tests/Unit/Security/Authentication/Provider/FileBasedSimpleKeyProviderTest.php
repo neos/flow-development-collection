@@ -65,21 +65,21 @@ class FileBasedSimpleKeyProviderTest extends UnitTestCase
     protected function setUp(): void
     {
         $this->mockRole = $this->getMockBuilder(Role::class)->disableOriginalConstructor()->getMock();
-        $this->mockRole->expects($this->any())->method('getIdentifier')->will(self::returnValue('Neos.Flow:TestRoleIdentifier'));
+        $this->mockRole->expects(self::any())->method('getIdentifier')->will(self::returnValue('Neos.Flow:TestRoleIdentifier'));
 
         $this->mockPolicyService = $this->getMockBuilder(PolicyService::class)->disableOriginalConstructor()->getMock();
-        $this->mockPolicyService->expects($this->any())->method('getRole')->with('Neos.Flow:TestRoleIdentifier')->will(self::returnValue($this->mockRole));
+        $this->mockPolicyService->expects(self::any())->method('getRole')->with('Neos.Flow:TestRoleIdentifier')->will(self::returnValue($this->mockRole));
 
         $this->mockHashService = $this->getMockBuilder(HashService::class)->disableOriginalConstructor()->getMock();
 
         $expectedPassword = $this->testKeyClearText;
         $expectedHashedPasswordAndSalt = $this->testKeyHashed;
-        $this->mockHashService->expects($this->any())->method('validatePassword')->will(self::returnCallBack(function ($password, $hashedPasswordAndSalt) use ($expectedPassword, $expectedHashedPasswordAndSalt) {
+        $this->mockHashService->expects(self::any())->method('validatePassword')->will(self::returnCallBack(function ($password, $hashedPasswordAndSalt) use ($expectedPassword, $expectedHashedPasswordAndSalt) {
             return $hashedPasswordAndSalt === $expectedHashedPasswordAndSalt && $password === $expectedPassword;
         }));
 
         $this->mockFileBasedSimpleKeyService = $this->getMockBuilder(FileBasedSimpleKeyService::class)->disableOriginalConstructor()->getMock();
-        $this->mockFileBasedSimpleKeyService->expects($this->any())->method('getKey')->with('testKey')->will(self::returnValue($this->testKeyHashed));
+        $this->mockFileBasedSimpleKeyService->expects(self::any())->method('getKey')->with('testKey')->will(self::returnValue($this->testKeyHashed));
 
         $this->mockToken = $this->getMockBuilder(PasswordToken::class)->disableOriginalConstructor()->getMock();
     }

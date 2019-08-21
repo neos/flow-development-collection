@@ -43,7 +43,7 @@ class FlowAnnotationDriverTest extends UnitTestCase
     public function testInferTableNameFromClassName($className, $tableName)
     {
         $driver = $this->getAccessibleMock(FlowAnnotationDriver::class, ['getMaxIdentifierLength']);
-        $driver->expects($this->any())->method('getMaxIdentifierLength')->will(self::returnValue(64));
+        $driver->expects(self::any())->method('getMaxIdentifierLength')->will(self::returnValue(64));
         self::assertEquals($tableName, $driver->inferTableNameFromClassName($className));
     }
 
@@ -72,7 +72,7 @@ class FlowAnnotationDriverTest extends UnitTestCase
     public function testInferJoinTableNameFromClassAndPropertyName($maxIdentifierLength, $className, $propertyName, $expectedTableName)
     {
         $driver = $this->getAccessibleMock(FlowAnnotationDriver::class, ['getMaxIdentifierLength']);
-        $driver->expects($this->any())->method('getMaxIdentifierLength')->will(self::returnValue($maxIdentifierLength));
+        $driver->expects(self::any())->method('getMaxIdentifierLength')->will(self::returnValue($maxIdentifierLength));
 
         $actualTableName = $driver->_call('inferJoinTableNameFromClassAndPropertyName', $className, $propertyName);
         self::assertEquals($expectedTableName, $actualTableName);

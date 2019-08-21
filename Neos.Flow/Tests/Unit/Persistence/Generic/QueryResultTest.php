@@ -55,14 +55,14 @@ class QueryResultTest extends UnitTestCase
     protected function setUp(): void
     {
         $this->persistenceManager = $this->getMockBuilder(PersistenceManager::class)->disableOriginalConstructor()->getMock();
-        $this->persistenceManager->expects($this->any())->method('getObjectDataByQuery')->will(self::returnValue(['one', 'two']));
+        $this->persistenceManager->expects(self::any())->method('getObjectDataByQuery')->will(self::returnValue(['one', 'two']));
         $this->dataMapper = $this->createMock(DataMapper::class);
         $this->query = $this->createMock(QueryInterface::class);
         $this->queryResult = new QueryResult($this->query);
         $this->queryResult->injectPersistenceManager($this->persistenceManager);
         $this->queryResult->injectDataMapper($this->dataMapper);
         $this->sampleResult = [['foo' => 'Foo1', 'bar' => 'Bar1'], ['foo' => 'Foo2', 'bar' => 'Bar2']];
-        $this->dataMapper->expects($this->any())->method('mapToObjects')->will(self::returnValue($this->sampleResult));
+        $this->dataMapper->expects(self::any())->method('mapToObjects')->will(self::returnValue($this->sampleResult));
     }
 
     /**

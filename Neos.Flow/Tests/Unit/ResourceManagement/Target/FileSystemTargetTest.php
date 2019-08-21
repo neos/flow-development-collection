@@ -62,10 +62,10 @@ class FileSystemTargetTest extends UnitTestCase
         $this->mockRequestHandler = $this->createMock(HttpRequestHandlerInterface::class);
 
         $this->mockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
-        $this->mockHttpRequest->expects($this->any())->method('getAttribute')->with(ServerRequestAttributes::BASE_URI)->will(self::returnValue(new Uri('http://detected/base/uri/')));
-        $this->mockRequestHandler->expects($this->any())->method('getHttpRequest')->will(self::returnValue($this->mockHttpRequest));
+        $this->mockHttpRequest->expects(self::any())->method('getAttribute')->with(ServerRequestAttributes::BASE_URI)->will(self::returnValue(new Uri('http://detected/base/uri/')));
+        $this->mockRequestHandler->expects(self::any())->method('getHttpRequest')->will(self::returnValue($this->mockHttpRequest));
 
-        $this->mockBootstrap->expects($this->any())->method('getActiveRequestHandler')->will(self::returnValue($this->mockRequestHandler));
+        $this->mockBootstrap->expects(self::any())->method('getActiveRequestHandler')->will(self::returnValue($this->mockRequestHandler));
         $this->inject($this->fileSystemTarget, 'bootstrap', $this->mockBootstrap);
     }
 
@@ -111,7 +111,7 @@ class FileSystemTargetTest extends UnitTestCase
     {
         $mockBootstrap = $this->getMockBuilder(Bootstrap::class)->disableOriginalConstructor()->getMock();
         $mockCommandRequestHandler = $this->getMockBuilder(CommandRequestHandler::class)->disableOriginalConstructor()->getMock();
-        $mockBootstrap->expects($this->any())->method('getActiveRequestHandler')->will(self::returnValue($mockCommandRequestHandler));
+        $mockBootstrap->expects(self::any())->method('getActiveRequestHandler')->will(self::returnValue($mockCommandRequestHandler));
         $this->inject($this->fileSystemTarget, 'bootstrap', $mockBootstrap);
         $this->inject($this->fileSystemTarget, 'httpBaseUri', 'http://configured/http/base/uri/');
 
@@ -126,7 +126,7 @@ class FileSystemTargetTest extends UnitTestCase
         $this->expectException(Exception::class);
         $mockBootstrap = $this->getMockBuilder(Bootstrap::class)->disableOriginalConstructor()->getMock();
         $mockCommandRequestHandler = $this->getMockBuilder(CommandRequestHandler::class)->disableOriginalConstructor()->getMock();
-        $mockBootstrap->expects($this->any())->method('getActiveRequestHandler')->will(self::returnValue($mockCommandRequestHandler));
+        $mockBootstrap->expects(self::any())->method('getActiveRequestHandler')->will(self::returnValue($mockCommandRequestHandler));
         $this->inject($this->fileSystemTarget, 'bootstrap', $mockBootstrap);
 
         $this->fileSystemTarget->getPublicStaticResourceUri('some/path/SomeFilename.jpg');
@@ -162,9 +162,9 @@ class FileSystemTargetTest extends UnitTestCase
         $this->inject($this->fileSystemTarget, 'baseUri', $baseUri);
         /** @var PersistentResource|\PHPUnit\Framework\MockObject\MockObject $mockResource */
         $mockResource = $this->getMockBuilder(PersistentResource::class)->disableOriginalConstructor()->getMock();
-        $mockResource->expects($this->any())->method('getRelativePublicationPath')->will(self::returnValue($relativePublicationPath));
-        $mockResource->expects($this->any())->method('getFilename')->will(self::returnValue($filename));
-        $mockResource->expects($this->any())->method('getSha1')->will(self::returnValue($sha1));
+        $mockResource->expects(self::any())->method('getRelativePublicationPath')->will(self::returnValue($relativePublicationPath));
+        $mockResource->expects(self::any())->method('getFilename')->will(self::returnValue($filename));
+        $mockResource->expects(self::any())->method('getSha1')->will(self::returnValue($sha1));
 
         self::assertSame($expectedResult, $this->fileSystemTarget->getPublicPersistentResourceUri($mockResource));
     }
@@ -176,7 +176,7 @@ class FileSystemTargetTest extends UnitTestCase
     {
         $mockBootstrap = $this->getMockBuilder(Bootstrap::class)->disableOriginalConstructor()->getMock();
         $mockCommandRequestHandler = $this->getMockBuilder(CommandRequestHandler::class)->disableOriginalConstructor()->getMock();
-        $mockBootstrap->expects($this->any())->method('getActiveRequestHandler')->will(self::returnValue($mockCommandRequestHandler));
+        $mockBootstrap->expects(self::any())->method('getActiveRequestHandler')->will(self::returnValue($mockCommandRequestHandler));
         $this->inject($this->fileSystemTarget, 'bootstrap', $mockBootstrap);
         $this->inject($this->fileSystemTarget, 'httpBaseUri', 'http://configured/http/base/uri/');
 
@@ -194,7 +194,7 @@ class FileSystemTargetTest extends UnitTestCase
         $this->expectException(Exception::class);
         $mockBootstrap = $this->getMockBuilder(Bootstrap::class)->disableOriginalConstructor()->getMock();
         $mockCommandRequestHandler = $this->getMockBuilder(CommandRequestHandler::class)->disableOriginalConstructor()->getMock();
-        $mockBootstrap->expects($this->any())->method('getActiveRequestHandler')->will(self::returnValue($mockCommandRequestHandler));
+        $mockBootstrap->expects(self::any())->method('getActiveRequestHandler')->will(self::returnValue($mockCommandRequestHandler));
         $this->inject($this->fileSystemTarget, 'bootstrap', $mockBootstrap);
 
         /** @var PersistentResource|\PHPUnit\Framework\MockObject\MockObject $mockResource */

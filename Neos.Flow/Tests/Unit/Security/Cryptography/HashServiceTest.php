@@ -164,8 +164,8 @@ class HashServiceTest extends UnitTestCase
     public function hashPasswordWillIncludeStrategyIdentifierInHashedPassword()
     {
         $mockStrategy = $this->createMock(PasswordHashingStrategyInterface::class);
-        $mockStrategy->expects($this->any())->method('hashPassword')->will(self::returnValue('---hashed-password---'));
-        $this->mockObjectManager->expects($this->any())->method('get')->will(self::returnValue($mockStrategy));
+        $mockStrategy->expects(self::any())->method('hashPassword')->will(self::returnValue('---hashed-password---'));
+        $this->mockObjectManager->expects(self::any())->method('get')->will(self::returnValue($mockStrategy));
 
         $result = $this->hashService->hashPassword('myTestPassword', 'TestStrategy');
         self::assertEquals('TestStrategy=>---hashed-password---', $result);
@@ -206,7 +206,7 @@ class HashServiceTest extends UnitTestCase
     public function validatePasswordWillUseStrategyIdentifierFromHashedPassword()
     {
         $mockStrategy = $this->createMock(PasswordHashingStrategyInterface::class);
-        $this->mockObjectManager->expects($this->any())->method('get')->will(self::returnValue($mockStrategy));
+        $this->mockObjectManager->expects(self::any())->method('get')->will(self::returnValue($mockStrategy));
 
         $mockStrategy->expects(self::atLeastOnce())->method('validatePassword')->with('myTestPassword', '---hashed-password---')->will(self::returnValue(true));
 

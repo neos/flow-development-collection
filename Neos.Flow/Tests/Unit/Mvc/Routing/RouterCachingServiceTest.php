@@ -100,15 +100,15 @@ class RouterCachingServiceTest extends UnitTestCase
 
         $this->mockObjectManager  = $this->createMock(ObjectManagerInterface::class);
         $this->mockApplicationContext = $this->getMockBuilder(ApplicationContext::class)->disableOriginalConstructor()->getMock();
-        $this->mockObjectManager->expects($this->any())->method('getContext')->will(self::returnValue($this->mockApplicationContext));
+        $this->mockObjectManager->expects(self::any())->method('getContext')->will(self::returnValue($this->mockApplicationContext));
         $this->inject($this->routerCachingService, 'objectManager', $this->mockObjectManager);
 
         $this->inject($this->routerCachingService, 'objectManager', $this->mockObjectManager);
 
         $this->mockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
-        $this->mockHttpRequest->expects($this->any())->method('getMethod')->will(self::returnValue('GET'));
+        $this->mockHttpRequest->expects(self::any())->method('getMethod')->will(self::returnValue('GET'));
         $this->mockUri = new Uri('http://subdomain.domain.com/some/route/path');
-        $this->mockHttpRequest->expects($this->any())->method('getUri')->will(self::returnValue($this->mockUri));
+        $this->mockHttpRequest->expects(self::any())->method('getUri')->will(self::returnValue($this->mockUri));
     }
 
     /**

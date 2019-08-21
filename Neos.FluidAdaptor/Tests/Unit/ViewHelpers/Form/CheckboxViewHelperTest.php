@@ -51,14 +51,14 @@ class CheckboxViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\F
      */
     public function renderCorrectlySetsTagNameAndDefaultAttributes()
     {
-        $this->mockTagBuilder->expects($this->any())->method('setTagName')->with('input');
+        $this->mockTagBuilder->expects(self::any())->method('setTagName')->with('input');
         $this->mockTagBuilder->expects(self::at(2))->method('addAttribute')->with('type', 'checkbox');
         $this->mockTagBuilder->expects(self::at(3))->method('addAttribute')->with('name', 'foo');
         $this->viewHelper->expects(self::once())->method('registerFieldNameForFormTokenGeneration')->with('foo');
         $this->mockTagBuilder->expects(self::at(4))->method('addAttribute')->with('value', 'bar');
 
-        $this->viewHelper->expects($this->any())->method('getName')->will(self::returnValue('foo'));
-        $this->viewHelper->expects($this->any())->method('getValueAttribute')->will(self::returnValue('bar'));
+        $this->viewHelper->expects(self::any())->method('getName')->will(self::returnValue('foo'));
+        $this->viewHelper->expects(self::any())->method('getValueAttribute')->will(self::returnValue('bar'));
         $this->viewHelper->injectTagBuilder($this->mockTagBuilder);
 
         $this->viewHelper = $this->prepareArguments($this->viewHelper, []);
@@ -75,8 +75,8 @@ class CheckboxViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\F
         $this->mockTagBuilder->expects(self::at(4))->method('addAttribute')->with('value', 'bar');
         $this->mockTagBuilder->expects(self::at(5))->method('addAttribute')->with('checked', '');
 
-        $this->viewHelper->expects($this->any())->method('getName')->will(self::returnValue('foo'));
-        $this->viewHelper->expects($this->any())->method('getValueAttribute')->will(self::returnValue('bar'));
+        $this->viewHelper->expects(self::any())->method('getName')->will(self::returnValue('foo'));
+        $this->viewHelper->expects(self::any())->method('getValueAttribute')->will(self::returnValue('bar'));
         $this->viewHelper->injectTagBuilder($this->mockTagBuilder);
 
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['checked' => true]);
@@ -92,10 +92,10 @@ class CheckboxViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\F
         $this->mockTagBuilder->expects(self::at(3))->method('addAttribute')->with('name', 'foo');
         $this->mockTagBuilder->expects(self::at(4))->method('addAttribute')->with('value', 'bar');
 
-        $this->viewHelper->expects($this->any())->method('getName')->will(self::returnValue('foo'));
-        $this->viewHelper->expects($this->any())->method('getValueAttribute')->will(self::returnValue('bar'));
-        $this->viewHelper->expects($this->any())->method('isObjectAccessorMode')->will(self::returnValue(true));
-        $this->viewHelper->expects($this->any())->method('getPropertyValue')->will(self::returnValue(true));
+        $this->viewHelper->expects(self::any())->method('getName')->will(self::returnValue('foo'));
+        $this->viewHelper->expects(self::any())->method('getValueAttribute')->will(self::returnValue('bar'));
+        $this->viewHelper->expects(self::any())->method('isObjectAccessorMode')->will(self::returnValue(true));
+        $this->viewHelper->expects(self::any())->method('getPropertyValue')->will(self::returnValue(true));
         $this->viewHelper->injectTagBuilder($this->mockTagBuilder);
 
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['checked' => true]);
@@ -115,10 +115,10 @@ class CheckboxViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\F
         $this->mockTagBuilder->expects(self::at(4))->method('addAttribute')->with('value', 'bar');
         $this->mockTagBuilder->expects(self::at(5))->method('addAttribute')->with('checked', '');
 
-        $this->viewHelper->expects($this->any())->method('getName')->will(self::returnValue('foo'));
-        $this->viewHelper->expects($this->any())->method('getValueAttribute')->will(self::returnValue('bar'));
-        $this->viewHelper->expects($this->any())->method('isObjectAccessorMode')->will(self::returnValue(true));
-        $this->viewHelper->expects($this->any())->method('getPropertyValue')->will(self::returnValue(true));
+        $this->viewHelper->expects(self::any())->method('getName')->will(self::returnValue('foo'));
+        $this->viewHelper->expects(self::any())->method('getValueAttribute')->will(self::returnValue('bar'));
+        $this->viewHelper->expects(self::any())->method('isObjectAccessorMode')->will(self::returnValue(true));
+        $this->viewHelper->expects(self::any())->method('getPropertyValue')->will(self::returnValue(true));
         $this->viewHelper->injectTagBuilder($this->mockTagBuilder);
 
         $this->viewHelper = $this->prepareArguments($this->viewHelper, []);
@@ -135,10 +135,10 @@ class CheckboxViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\F
         $this->viewHelper->expects(self::once())->method('registerFieldNameForFormTokenGeneration')->with('foo[]');
         $this->mockTagBuilder->expects(self::at(4))->method('addAttribute')->with('value', 'bar');
 
-        $this->viewHelper->expects($this->any())->method('getName')->will(self::returnValue('foo'));
-        $this->viewHelper->expects($this->any())->method('getValueAttribute')->will(self::returnValue('bar'));
-        $this->viewHelper->expects($this->any())->method('isObjectAccessorMode')->will(self::returnValue(true));
-        $this->viewHelper->expects($this->any())->method('getPropertyValue')->will(self::returnValue([]));
+        $this->viewHelper->expects(self::any())->method('getName')->will(self::returnValue('foo'));
+        $this->viewHelper->expects(self::any())->method('getValueAttribute')->will(self::returnValue('bar'));
+        $this->viewHelper->expects(self::any())->method('isObjectAccessorMode')->will(self::returnValue(true));
+        $this->viewHelper->expects(self::any())->method('getPropertyValue')->will(self::returnValue([]));
         $this->viewHelper->injectTagBuilder($this->mockTagBuilder);
 
         $this->viewHelper = $this->prepareArguments($this->viewHelper, []);
@@ -155,10 +155,10 @@ class CheckboxViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\F
         $this->mockTagBuilder->expects(self::at(4))->method('addAttribute')->with('value', 'bar');
         $this->mockTagBuilder->expects(self::at(5))->method('addAttribute')->with('checked', '');
 
-        $this->viewHelper->expects($this->any())->method('getName')->will(self::returnValue('foo'));
-        $this->viewHelper->expects($this->any())->method('getValueAttribute')->will(self::returnValue('bar'));
-        $this->viewHelper->expects($this->any())->method('isObjectAccessorMode')->will(self::returnValue(true));
-        $this->viewHelper->expects($this->any())->method('getPropertyValue')->will(self::returnValue(['foo', 'bar', 'baz']));
+        $this->viewHelper->expects(self::any())->method('getName')->will(self::returnValue('foo'));
+        $this->viewHelper->expects(self::any())->method('getValueAttribute')->will(self::returnValue('bar'));
+        $this->viewHelper->expects(self::any())->method('isObjectAccessorMode')->will(self::returnValue(true));
+        $this->viewHelper->expects(self::any())->method('getPropertyValue')->will(self::returnValue(['foo', 'bar', 'baz']));
         $this->viewHelper->injectTagBuilder($this->mockTagBuilder);
 
         $this->viewHelper = $this->prepareArguments($this->viewHelper, []);
@@ -175,10 +175,10 @@ class CheckboxViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\F
         $this->mockTagBuilder->expects(self::at(4))->method('addAttribute')->with('value', 'bar');
         $this->mockTagBuilder->expects(self::at(5))->method('addAttribute')->with('checked', '');
 
-        $this->viewHelper->expects($this->any())->method('getName')->will(self::returnValue('foo'));
-        $this->viewHelper->expects($this->any())->method('getValueAttribute')->will(self::returnValue('bar'));
-        $this->viewHelper->expects($this->any())->method('isObjectAccessorMode')->will(self::returnValue(true));
-        $this->viewHelper->expects($this->any())->method('getPropertyValue')->will(self::returnValue(new \ArrayObject(['foo', 'bar', 'baz'])));
+        $this->viewHelper->expects(self::any())->method('getName')->will(self::returnValue('foo'));
+        $this->viewHelper->expects(self::any())->method('getValueAttribute')->will(self::returnValue('bar'));
+        $this->viewHelper->expects(self::any())->method('isObjectAccessorMode')->will(self::returnValue(true));
+        $this->viewHelper->expects(self::any())->method('getPropertyValue')->will(self::returnValue(new \ArrayObject(['foo', 'bar', 'baz'])));
         $this->viewHelper->injectTagBuilder($this->mockTagBuilder);
 
         $this->viewHelper = $this->prepareArguments($this->viewHelper, []);
@@ -202,15 +202,15 @@ class CheckboxViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\F
 
         /** @var PersistenceManagerInterface|\PHPUnit\Framework\MockObject\MockObject $mockPersistenceManager */
         $mockPersistenceManager = $this->createMock(PersistenceManagerInterface::class);
-        $mockPersistenceManager->expects($this->any())->method('getIdentifierByObject')->willReturnCallback(function (UserDomainClass $user) {
+        $mockPersistenceManager->expects(self::any())->method('getIdentifierByObject')->willReturnCallback(function (UserDomainClass $user) {
             return (string)$user->getId();
         });
         $this->viewHelper->injectPersistenceManager($mockPersistenceManager);
 
-        $this->viewHelper->expects($this->any())->method('getName')->will(self::returnValue('foo'));
-        $this->viewHelper->expects($this->any())->method('getValueAttribute')->will(self::returnValue('1'));
-        $this->viewHelper->expects($this->any())->method('isObjectAccessorMode')->will(self::returnValue(true));
-        $this->viewHelper->expects($this->any())->method('getPropertyValue')->will(self::returnValue($userCollection));
+        $this->viewHelper->expects(self::any())->method('getName')->will(self::returnValue('foo'));
+        $this->viewHelper->expects(self::any())->method('getValueAttribute')->will(self::returnValue('1'));
+        $this->viewHelper->expects(self::any())->method('isObjectAccessorMode')->will(self::returnValue(true));
+        $this->viewHelper->expects(self::any())->method('getPropertyValue')->will(self::returnValue($userCollection));
         $this->viewHelper->injectTagBuilder($this->mockTagBuilder);
 
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['checked' => true]);
@@ -227,10 +227,10 @@ class CheckboxViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\F
         $this->mockTagBuilder->expects(self::at(4))->method('addAttribute')->with('value', 'bar');
         $this->mockTagBuilder->expects(self::at(5))->method('addAttribute')->with('checked', '');
 
-        $this->viewHelper->expects($this->any())->method('getName')->will(self::returnValue('foo'));
-        $this->viewHelper->expects($this->any())->method('getValueAttribute')->will(self::returnValue('bar'));
-        $this->viewHelper->expects($this->any())->method('isObjectAccessorMode')->will(self::returnValue(true));
-        $this->viewHelper->expects($this->any())->method('getPropertyValue')->will(self::returnValue(new \stdClass()));
+        $this->viewHelper->expects(self::any())->method('getName')->will(self::returnValue('foo'));
+        $this->viewHelper->expects(self::any())->method('getValueAttribute')->will(self::returnValue('bar'));
+        $this->viewHelper->expects(self::any())->method('isObjectAccessorMode')->will(self::returnValue(true));
+        $this->viewHelper->expects(self::any())->method('getPropertyValue')->will(self::returnValue(new \stdClass()));
         $this->viewHelper->injectTagBuilder($this->mockTagBuilder);
 
         $this->viewHelper = $this->prepareArguments($this->viewHelper, []);

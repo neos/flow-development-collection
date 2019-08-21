@@ -99,7 +99,7 @@ class DispatcherTest extends UnitTestCase
     public function dispatchPassesTheSignalArgumentsToTheStaticSlotMethod()
     {
         $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
-        $mockObjectManager->expects($this->any())->method('getClassNameByObjectName')->with(DispatcherTest::class)->will(self::returnValue(DispatcherTest::class));
+        $mockObjectManager->expects(self::any())->method('getClassNameByObjectName')->with(DispatcherTest::class)->will(self::returnValue(DispatcherTest::class));
 
         $dispatcher = new Dispatcher();
         $dispatcher->connect('Foo', 'bar', get_class($this), '::staticSlot', false);

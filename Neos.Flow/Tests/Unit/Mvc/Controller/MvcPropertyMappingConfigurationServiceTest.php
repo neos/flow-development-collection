@@ -163,7 +163,7 @@ class MvcPropertyMappingConfigurationServiceTest extends UnitTestCase
     public function initializePropertyMappingConfigurationDoesNothingIfTrustedPropertiesAreNotSet()
     {
         $request = $this->getMockBuilder(Mvc\ActionRequest::class)->setMethods(['getInternalArgument'])->disableOriginalConstructor()->getMock();
-        $request->expects($this->any())->method('getInternalArgument')->with('__trustedProperties')->will(self::returnValue(null));
+        $request->expects(self::any())->method('getInternalArgument')->with('__trustedProperties')->will(self::returnValue(null));
         $arguments = new Mvc\Controller\Arguments();
 
         $requestHashService = new Mvc\Controller\MvcPropertyMappingConfigurationService();
@@ -283,7 +283,7 @@ class MvcPropertyMappingConfigurationServiceTest extends UnitTestCase
     protected function initializePropertyMappingConfiguration(array $trustedProperties)
     {
         $request = $this->getMockBuilder(Mvc\ActionRequest::class)->setMethods(['getInternalArgument'])->disableOriginalConstructor()->getMock();
-        $request->expects($this->any())->method('getInternalArgument')->with('__trustedProperties')->will(self::returnValue('fooTrustedProperties'));
+        $request->expects(self::any())->method('getInternalArgument')->with('__trustedProperties')->will(self::returnValue('fooTrustedProperties'));
         $arguments = new Mvc\Controller\Arguments();
         $mockHashService = $this->getMockBuilder(HashService::class)->setMethods(['validateAndStripHmac'])->getMock();
         $mockHashService->expects(self::once())->method('validateAndStripHmac')->with('fooTrustedProperties')->will(self::returnValue(serialize($trustedProperties)));

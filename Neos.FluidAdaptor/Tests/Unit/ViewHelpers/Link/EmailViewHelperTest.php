@@ -35,12 +35,12 @@ class EmailViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\View
     public function renderCorrectlySetsTagNameAndAttributesAndContent()
     {
         $mockTagBuilder = $this->createMock(\TYPO3Fluid\Fluid\Core\ViewHelper\TagBuilder::class);
-        $mockTagBuilder->expects($this->any())->method('setTagName')->with('a');
+        $mockTagBuilder->expects(self::any())->method('setTagName')->with('a');
         $mockTagBuilder->expects(self::once())->method('addAttribute')->with('href', 'mailto:some@email.tld');
         $mockTagBuilder->expects(self::once())->method('setContent')->with('some content');
         $this->viewHelper->injectTagBuilder($mockTagBuilder);
 
-        $this->viewHelper->expects($this->any())->method('renderChildren')->will(self::returnValue('some content'));
+        $this->viewHelper->expects(self::any())->method('renderChildren')->will(self::returnValue('some content'));
 
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['email' => 'some@email.tld']);
         $this->viewHelper->render();
@@ -55,7 +55,7 @@ class EmailViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\View
         $mockTagBuilder->expects(self::once())->method('setContent')->with('some@email.tld');
         $this->viewHelper->injectTagBuilder($mockTagBuilder);
 
-        $this->viewHelper->expects($this->any())->method('renderChildren')->will(self::returnValue(null));
+        $this->viewHelper->expects(self::any())->method('renderChildren')->will(self::returnValue(null));
 
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['email' => 'some@email.tld']);
         $this->viewHelper->render();

@@ -38,7 +38,7 @@ class SubmitViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\For
     public function renderCorrectlySetsTagNameAndDefaultAttributes()
     {
         $mockTagBuilder = $this->getMockBuilder(\TYPO3Fluid\Fluid\Core\ViewHelper\TagBuilder::class)->setMethods(['setTagName', 'addAttribute'])->getMock();
-        $mockTagBuilder->expects($this->any())->method('setTagName')->with('input');
+        $mockTagBuilder->expects(self::any())->method('setTagName')->with('input');
         $mockTagBuilder->expects(self::at(2))->method('addAttribute')->with('type', 'submit');
 
         $this->viewHelper->injectTagBuilder($mockTagBuilder);

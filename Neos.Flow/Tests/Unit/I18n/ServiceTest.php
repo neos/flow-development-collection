@@ -156,10 +156,10 @@ class ServiceTest extends UnitTestCase
         }
 
         $mockPackage = $this->createMock(FlowPackageInterface::class);
-        $mockPackage->expects($this->any())->method('getResourcesPath')->will(self::returnValue('vfs://Foo/Bar/'));
+        $mockPackage->expects(self::any())->method('getResourcesPath')->will(self::returnValue('vfs://Foo/Bar/'));
 
         $mockPackageManager = $this->createMock(PackageManager::class);
-        $mockPackageManager->expects($this->any())->method('getFlowPackages')->will(self::returnValue([$mockPackage]));
+        $mockPackageManager->expects(self::any())->method('getFlowPackages')->will(self::returnValue([$mockPackage]));
 
         $mockLocaleCollection = $this->createMock(I18n\LocaleCollection::class);
         $mockLocaleCollection->expects(self::exactly(4))->method('addLocale');
@@ -203,10 +203,10 @@ class ServiceTest extends UnitTestCase
         }
 
         $mockPackage = $this->createMock(FlowPackageInterface::class);
-        $mockPackage->expects($this->any())->method('getResourcesPath')->will(self::returnValue('vfs://Foo/Bar/'));
+        $mockPackage->expects(self::any())->method('getResourcesPath')->will(self::returnValue('vfs://Foo/Bar/'));
 
         $mockPackageManager = $this->createMock(PackageManager::class);
-        $mockPackageManager->expects($this->any())->method('getFlowPackages')->will(self::returnValue([$mockPackage]));
+        $mockPackageManager->expects(self::any())->method('getFlowPackages')->will(self::returnValue([$mockPackage]));
 
         $mockLocaleCollection = $this->createMock(I18n\LocaleCollection::class);
         $mockLocaleCollection->expects(self::exactly(2))->method('addLocale');

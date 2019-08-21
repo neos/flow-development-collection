@@ -51,7 +51,7 @@ class CacheManagerTest extends UnitTestCase
         $this->cacheManager = new CacheManager();
 
         $this->mockEnvironment = $this->getMockBuilder(Environment::class)->disableOriginalConstructor()->getMock();
-        $this->mockEnvironment->expects($this->any())->method('getPathToTemporaryDirectory')->will(self::returnValue('vfs://Foo/'));
+        $this->mockEnvironment->expects(self::any())->method('getPathToTemporaryDirectory')->will(self::returnValue('vfs://Foo/'));
         $this->cacheManager->injectEnvironment($this->mockEnvironment);
 
         $this->mockSystemLogger = $this->createMock(LoggerInterface::class);
@@ -69,7 +69,7 @@ class CacheManagerTest extends UnitTestCase
     protected function registerCache($cacheIdentifier)
     {
         $cache = $this->createMock(Cache\Frontend\FrontendInterface::class);
-        $cache->expects($this->any())->method('getIdentifier')->will(self::returnValue($cacheIdentifier));
+        $cache->expects(self::any())->method('getIdentifier')->will(self::returnValue($cacheIdentifier));
         $this->cacheManager->registerCache($cache);
 
         return $cache;

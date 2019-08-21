@@ -63,15 +63,15 @@ class PackageManagerTest extends UnitTestCase
         ComposerUtility::flushCaches();
         vfsStream::setup('Test');
         $this->mockBootstrap = $this->getMockBuilder(Bootstrap::class)->disableOriginalConstructor()->getMock();
-        $this->mockBootstrap->expects($this->any())->method('getSignalSlotDispatcher')->will(self::returnValue($this->createMock(Dispatcher::class)));
+        $this->mockBootstrap->expects(self::any())->method('getSignalSlotDispatcher')->will(self::returnValue($this->createMock(Dispatcher::class)));
 
         $this->mockApplicationContext = $this->getMockBuilder(ApplicationContext::class)->disableOriginalConstructor()->getMock();
-        $this->mockBootstrap->expects($this->any())->method('getContext')->will(self::returnValue($this->mockApplicationContext));
+        $this->mockBootstrap->expects(self::any())->method('getContext')->will(self::returnValue($this->mockApplicationContext));
 
         $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
-        $this->mockBootstrap->expects($this->any())->method('getObjectManager')->will(self::returnValue($mockObjectManager));
+        $this->mockBootstrap->expects(self::any())->method('getObjectManager')->will(self::returnValue($mockObjectManager));
         $mockReflectionService = $this->createMock(ReflectionService::class);
-        $mockObjectManager->expects($this->any())->method('get')->with(ReflectionService::class)->will(self::returnValue($mockReflectionService));
+        $mockObjectManager->expects(self::any())->method('get')->with(ReflectionService::class)->will(self::returnValue($mockReflectionService));
 
         mkdir('vfs://Test/Packages/Application', 0700, true);
         mkdir('vfs://Test/Configuration');

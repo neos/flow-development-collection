@@ -56,7 +56,7 @@ class PersistenceMagicAspectTest extends UnitTestCase
     public function cloneObjectMarksTheObjectAsCloned()
     {
         $object = new \stdClass();
-        $this->mockJoinPoint->expects($this->any())->method('getProxy')->will(self::returnValue($object));
+        $this->mockJoinPoint->expects(self::any())->method('getProxy')->will(self::returnValue($object));
 
         $this->persistenceMagicAspect->cloneObject($this->mockJoinPoint);
         self::assertTrue($object->Flow_Persistence_clone);

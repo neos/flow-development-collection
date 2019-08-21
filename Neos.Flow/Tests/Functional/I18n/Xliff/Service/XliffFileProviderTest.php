@@ -51,7 +51,7 @@ class XliffFileProviderTest extends FunctionalTestCase
         $mockPackageManager = $this->getMockBuilder(PackageManager::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $mockPackageManager->expects($this->any())
+        $mockPackageManager->expects(self::any())
             ->method('getFlowPackages')
             ->will(self::returnValue($packages));
         $this->inject($this->fileProvider, 'packageManager', $mockPackageManager);

@@ -40,7 +40,7 @@ class CommandTest extends UnitTestCase
     {
         $this->command = $this->getAccessibleMock(Cli\Command::class, ['getCommandMethodReflection'], [], '', false);
         $this->methodReflection = $this->createMock(MethodReflection::class, [], [__CLASS__, 'dummyMethod']);
-        $this->command->expects($this->any())->method('getCommandMethodReflection')->will(self::returnValue($this->methodReflection));
+        $this->command->expects(self::any())->method('getCommandMethodReflection')->will(self::returnValue($this->methodReflection));
     }
 
     /**

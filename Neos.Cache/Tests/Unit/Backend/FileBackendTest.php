@@ -62,7 +62,7 @@ class FileBackendTest extends BaseTestCase
     public function setCacheDirectoryAllowsToSetTheCurrentCacheDirectory()
     {
         $mockCache = $this->createMock(AbstractFrontend::class);
-        $mockCache->expects($this->any())->method('getIdentifier')->will(self::returnValue('SomeCache'));
+        $mockCache->expects(self::any())->method('getIdentifier')->will(self::returnValue('SomeCache'));
 
         $mockEnvironmentConfiguration = $this->createEnvironmentConfigurationMock([
             __DIR__ . '~Testing',
@@ -87,7 +87,7 @@ class FileBackendTest extends BaseTestCase
     public function getCacheDirectoryReturnsTheCurrentCacheDirectory()
     {
         $mockCache = $this->createMock(AbstractFrontend::class);
-        $mockCache->expects($this->any())->method('getIdentifier')->will(self::returnValue('SomeCache'));
+        $mockCache->expects(self::any())->method('getIdentifier')->will(self::returnValue('SomeCache'));
 
         // We need to create the directory here because vfs doesn't support touch() which is used by
         // createDirectoryRecursively() in the setCache method.

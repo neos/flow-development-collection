@@ -89,8 +89,8 @@ class CollectionValidatorTest extends AbstractValidatorTestcase
         $B->a = $A;
         $B->c = [$A];
 
-        $this->mockValidatorResolver->expects($this->any())->method('createValidator')->with('Integer')->will(self::returnValue(new IntegerValidator()));
-        $this->mockValidatorResolver->expects($this->any())->method('buildBaseValidatorConjunction')->will(self::returnValue(new GenericObjectValidator()));
+        $this->mockValidatorResolver->expects(self::any())->method('createValidator')->with('Integer')->will(self::returnValue(new IntegerValidator()));
+        $this->mockValidatorResolver->expects(self::any())->method('buildBaseValidatorConjunction')->will(self::returnValue(new GenericObjectValidator()));
 
         // Create validators
         $aValidator = new GenericObjectValidator([]);
@@ -126,7 +126,7 @@ class CollectionValidatorTest extends AbstractValidatorTestcase
     {
         $elementValidatorOptions = ['minimum' => 5];
         $this->validator->_set('options', ['elementValidator' => 'NumberRange', 'elementValidatorOptions' => $elementValidatorOptions]);
-        $this->mockValidatorResolver->expects($this->any())->method('createValidator')->with('NumberRange', $elementValidatorOptions)->will(self::returnValue(new NumberRangeValidator($elementValidatorOptions)));
+        $this->mockValidatorResolver->expects(self::any())->method('createValidator')->with('NumberRange', $elementValidatorOptions)->will(self::returnValue(new NumberRangeValidator($elementValidatorOptions)));
 
         $result = $this->validator->validate([5, 6, 1]);
 

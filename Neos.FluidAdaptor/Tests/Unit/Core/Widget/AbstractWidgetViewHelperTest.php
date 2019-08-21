@@ -111,7 +111,7 @@ class AbstractWidgetViewHelperTest extends \Neos\Flow\Tests\UnitTestCase
      */
     public function callViewHelper()
     {
-        $this->viewHelper->expects($this->any())->method('getWidgetConfiguration')->will(self::returnValue(['Some Widget Configuration']));
+        $this->viewHelper->expects(self::any())->method('getWidgetConfiguration')->will(self::returnValue(['Some Widget Configuration']));
         $this->widgetContext->expects(self::once())->method('setNonAjaxWidgetConfiguration')->with(['Some Widget Configuration']);
 
         $this->widgetContext->expects(self::once())->method('setWidgetIdentifier')->with(strtolower(str_replace('\\', '-', get_class($this->viewHelper))));

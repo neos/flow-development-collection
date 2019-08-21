@@ -37,7 +37,7 @@ class AbstractFormViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpe
         $expectedResult = chr(10) . '<input type="hidden" name="prefix[theName][__identity]" value="123" />' . chr(10);
 
         $viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\FormViewHelper::class, ['prefixFieldName', 'registerFieldNameForFormTokenGeneration'], [], '', false);
-        $viewHelper->expects($this->any())->method('prefixFieldName')->with('theName')->will(self::returnValue('prefix[theName]'));
+        $viewHelper->expects(self::any())->method('prefixFieldName')->with('theName')->will(self::returnValue('prefix[theName]'));
         $viewHelper->_set('persistenceManager', $mockPersistenceManager);
 
         $actualResult = $viewHelper->_call('renderHiddenIdentityField', $object, 'theName');
@@ -62,7 +62,7 @@ class AbstractFormViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpe
         $expectedResult = chr(10) . '<input type="hidden" name="prefix[theName][__identity]" value="123" />' . chr(10);
 
         $viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\FormViewHelper::class, ['prefixFieldName', 'registerFieldNameForFormTokenGeneration'], [], '', false);
-        $viewHelper->expects($this->any())->method('prefixFieldName')->with('theName')->will(self::returnValue('prefix[theName]'));
+        $viewHelper->expects(self::any())->method('prefixFieldName')->with('theName')->will(self::returnValue('prefix[theName]'));
         $viewHelper->_set('persistenceManager', $mockPersistenceManager);
 
         $actualResult = $viewHelper->_call('renderHiddenIdentityField', $object, 'theName');

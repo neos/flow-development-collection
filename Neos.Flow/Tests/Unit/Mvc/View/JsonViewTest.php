@@ -44,7 +44,7 @@ class JsonViewTest extends UnitTestCase
         $this->view = $this->getMockBuilder(Mvc\View\JsonView::class)->setMethods(['loadConfigurationFromYamlFile'])->getMock();
         $this->controllerContext = $this->getMockBuilder(Mvc\Controller\ControllerContext::class)->disableOriginalConstructor()->getMock();
         $this->response = new Mvc\ActionResponse();
-        $this->controllerContext->expects($this->any())->method('getResponse')->will(self::returnValue($this->response));
+        $this->controllerContext->expects(self::any())->method('getResponse')->will(self::returnValue($this->response));
         $this->view->setControllerContext($this->controllerContext);
     }
 
@@ -105,9 +105,9 @@ class JsonViewTest extends UnitTestCase
 
         $properties = ['foo' => 'bar', 'prohibited' => 'xxx'];
         $nestedObject = $this->createMock(Fixtures\NestedTestObject::class);
-        $nestedObject->expects($this->any())->method('getName')->will(self::returnValue('name'));
-        $nestedObject->expects($this->any())->method('getPath')->will(self::returnValue('path'));
-        $nestedObject->expects($this->any())->method('getProperties')->will(self::returnValue($properties));
+        $nestedObject->expects(self::any())->method('getName')->will(self::returnValue('name'));
+        $nestedObject->expects(self::any())->method('getPath')->will(self::returnValue('path'));
+        $nestedObject->expects(self::any())->method('getProperties')->will(self::returnValue($properties));
         $nestedObject->expects(self::never())->method('getOther');
         $object = $nestedObject;
         $configuration = [
@@ -435,7 +435,7 @@ class JsonViewTest extends UnitTestCase
     public function renderTransformsJsonSerializableValues()
     {
         $value = $this->getMockBuilder('JsonSerializable')->setMethods(['jsonSerialize'])->getMock();
-        $value->expects($this->any())->method('jsonSerialize')->will(self::returnValue(['name' => 'Foo', 'age' => 42]));
+        $value->expects(self::any())->method('jsonSerialize')->will(self::returnValue(['name' => 'Foo', 'age' => 42]));
 
         $this->view->assign('value', $value);
         $this->view->setConfiguration([

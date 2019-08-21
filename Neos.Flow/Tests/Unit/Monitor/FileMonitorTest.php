@@ -282,7 +282,7 @@ class FileMonitorTest extends UnitTestCase
     protected function setUpFileMonitorForDetection(array $changeDetectionResult, array $expectedEmittedChanges, array $knownDirectoriesAndFiles)
     {
         $mockChangeDetectionStrategy = $this->createMock(ChangeDetectionStrategyInterface::class);
-        $mockChangeDetectionStrategy->expects($this->any())->method('getFileStatus')->will(self::returnCallBack(function ($pathAndFilename) use ($changeDetectionResult) {
+        $mockChangeDetectionStrategy->expects(self::any())->method('getFileStatus')->will(self::returnCallBack(function ($pathAndFilename) use ($changeDetectionResult) {
             if (isset($changeDetectionResult[$pathAndFilename])) {
                 return $changeDetectionResult[$pathAndFilename];
             } else {

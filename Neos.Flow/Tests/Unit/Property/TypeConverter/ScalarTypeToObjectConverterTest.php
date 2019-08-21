@@ -40,7 +40,7 @@ class ScalarTypeToObjectConverterTest extends UnitTestCase
         parent::setUp();
 
         $this->reflectionMock = $this->createMock(ReflectionService::class);
-        $this->reflectionMock->expects($this->any())
+        $this->reflectionMock->expects(self::any())
             ->method('isClassAnnotatedWith')
             ->willReturn(false);
     }
