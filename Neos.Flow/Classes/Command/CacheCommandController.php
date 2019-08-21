@@ -450,7 +450,7 @@ class CacheCommandController extends CommandController
         if ($result->hasNotices()) {
             /** @var Notice $notice */
             foreach ($result->getNotices() as $notice) {
-                if (!empty($notice->getTitle())) {
+                if ($notice->hasTitle()) {
                     $this->outputLine('<b>%s</b>: %s', [$notice->getTitle(), $notice->render()]);
                 } else {
                     $this->outputLine($notice->render());
@@ -467,7 +467,7 @@ class CacheCommandController extends CommandController
         if ($result->hasWarnings()) {
             /** @var Warning $warning */
             foreach ($result->getWarnings() as $warning) {
-                if (!empty($warning->getTitle())) {
+                if ($warning->hasTitle()) {
                     $this->outputLine('<b>%s</b>: <comment>%s</comment>', [$warning->getTitle(), $warning->render()]);
                 } else {
                     $this->outputLine('<comment>%s</comment>', [$warning->render()]);
