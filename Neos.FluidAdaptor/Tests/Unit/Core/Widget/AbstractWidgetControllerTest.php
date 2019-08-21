@@ -31,7 +31,7 @@ class AbstractWidgetControllerTest extends UnitTestCase
         $this->expectException(WidgetContextNotFoundException::class);
         /** @var \Neos\Flow\Mvc\ActionRequest $mockActionRequest */
         $mockActionRequest = $this->createMock(\Neos\Flow\Mvc\ActionRequest::class);
-        $mockActionRequest->expects($this->atLeastOnce())->method('getInternalArgument')->with('__widgetContext')->will($this->returnValue(null));
+        $mockActionRequest->expects(self::atLeastOnce())->method('getInternalArgument')->with('__widgetContext')->will(self::returnValue(null));
         $response = new ActionResponse();
 
         /** @var \Neos\FluidAdaptor\Core\Widget\AbstractWidgetController $abstractWidgetController */
@@ -49,14 +49,14 @@ class AbstractWidgetControllerTest extends UnitTestCase
         $mockResponse = new ActionResponse();
 
         $httpRequest = new ServerRequest('GET', new Uri('http://localhost'));
-        $mockActionRequest->expects($this->any())->method('getHttpRequest')->will($this->returnValue($httpRequest));
+        $mockActionRequest->expects($this->any())->method('getHttpRequest')->will(self::returnValue($httpRequest));
 
         $expectedWidgetConfiguration = ['foo' => uniqid()];
 
         $widgetContext = new WidgetContext();
         $widgetContext->setAjaxWidgetConfiguration($expectedWidgetConfiguration);
 
-        $mockActionRequest->expects($this->atLeastOnce())->method('getInternalArgument')->with('__widgetContext')->will($this->returnValue($widgetContext));
+        $mockActionRequest->expects(self::atLeastOnce())->method('getInternalArgument')->with('__widgetContext')->will(self::returnValue($widgetContext));
 
         $abstractWidgetController = $this->getAccessibleMock(\Neos\FluidAdaptor\Core\Widget\AbstractWidgetController::class, ['resolveActionMethodName', 'initializeActionMethodArguments', 'initializeActionMethodValidators', 'mapRequestArgumentsToControllerArguments', 'detectFormat', 'resolveView', 'callActionMethod']);
         $abstractWidgetController->_set('mvcPropertyMappingConfigurationService', $this->createMock(\Neos\Flow\Mvc\Controller\MvcPropertyMappingConfigurationService::class));

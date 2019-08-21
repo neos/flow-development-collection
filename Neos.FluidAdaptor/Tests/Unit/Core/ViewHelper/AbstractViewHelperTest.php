@@ -167,7 +167,7 @@ class AbstractViewHelperTest extends UnitTestCase
         $viewHelper = $this->getAccessibleMock(AbstractViewHelper::class, ['render', 'initializeArguments'], [], '', false);
         $viewHelper->injectObjectManager($this->mockObjectManager);
 
-        $viewHelper->expects($this->once())->method('initializeArguments');
+        $viewHelper->expects(self::once())->method('initializeArguments');
 
         $viewHelper->prepareArguments();
     }
@@ -180,7 +180,7 @@ class AbstractViewHelperTest extends UnitTestCase
         $viewHelper = $this->getAccessibleMock(AbstractViewHelper::class, ['render', 'prepareArguments'], [], '', false);
         $viewHelper->injectObjectManager($this->mockObjectManager);
 
-        $viewHelper->expects($this->once())->method('prepareArguments')->willReturn([]);
+        $viewHelper->expects(self::once())->method('prepareArguments')->willReturn([]);
 
         $viewHelper->validateArguments();
     }
@@ -193,7 +193,7 @@ class AbstractViewHelperTest extends UnitTestCase
         $viewHelper = $this->getAccessibleMock(AbstractViewHelper::class, ['render', 'prepareArguments'], [], '', false);
 
         $viewHelper->setArguments(['test' => new \ArrayObject]);
-        $viewHelper->expects($this->once())->method('prepareArguments')->willReturn(['test' => new ArgumentDefinition('test', 'array', false, 'documentation')]);
+        $viewHelper->expects(self::once())->method('prepareArguments')->willReturn(['test' => new ArgumentDefinition('test', 'array', false, 'documentation')]);
         $viewHelper->validateArguments();
     }
 
@@ -207,7 +207,7 @@ class AbstractViewHelperTest extends UnitTestCase
 
         $viewHelper->setArguments(['test' => 'Value of argument']);
 
-        $viewHelper->expects($this->once())->method('prepareArguments')->willReturn([
+        $viewHelper->expects(self::once())->method('prepareArguments')->willReturn([
             'test' => new ArgumentDefinition('test', 'string', false, 'documentation')
         ]);
 
@@ -225,7 +225,7 @@ class AbstractViewHelperTest extends UnitTestCase
 
         $viewHelper->setArguments(['test' => 'test']);
 
-        $viewHelper->expects($this->once())->method('prepareArguments')->willReturn([
+        $viewHelper->expects(self::once())->method('prepareArguments')->willReturn([
             'test' => new ArgumentDefinition('test', 'stdClass', false, 'documentation')
         ]);
 
@@ -238,9 +238,9 @@ class AbstractViewHelperTest extends UnitTestCase
     public function initializeArgumentsAndRenderCallsTheCorrectSequenceOfMethods(): void
     {
         $viewHelper = $this->getAccessibleMock(AbstractViewHelper::class, ['validateArguments', 'initialize', 'callRenderMethod']);
-        $viewHelper->expects($this->at(0))->method('validateArguments');
-        $viewHelper->expects($this->at(1))->method('initialize');
-        $viewHelper->expects($this->at(2))->method('callRenderMethod')->willReturn('Output');
+        $viewHelper->expects(self::at(0))->method('validateArguments');
+        $viewHelper->expects(self::at(1))->method('initialize');
+        $viewHelper->expects(self::at(2))->method('callRenderMethod')->willReturn('Output');
 
         $expectedOutput = 'Output';
         $actualOutput = $viewHelper->initializeArgumentsAndRender(['argument1' => 'value1']);

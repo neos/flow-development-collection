@@ -31,6 +31,7 @@ use Neos\Flow\Security\Context;
 use Neos\Flow\Security\Exception\AccessDeniedException;
 use Neos\Flow\Security\Exception\AuthenticationRequiredException;
 use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
 
@@ -45,22 +46,22 @@ class DispatcherTest extends UnitTestCase
     protected $dispatcher;
 
     /**
-     * @var ActionRequest|\PHPUnit_Framework_MockObject_MockObject
+     * @var ActionRequest|MockObject
      */
     protected $mockParentRequest;
 
     /**
-     * @var ActionRequest|\PHPUnit_Framework_MockObject_MockObject
+     * @var ActionRequest|MockObject
      */
     protected $mockActionRequest;
 
     /**
-     * @var ActionRequest|\PHPUnit_Framework_MockObject_MockObject
+     * @var ActionRequest|MockObject
      */
     protected $mockMainRequest;
 
     /**
-     * @var ServerRequestInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ServerRequestInterface|MockObject
      */
     protected $mockHttpRequest;
 
@@ -70,27 +71,27 @@ class DispatcherTest extends UnitTestCase
     protected $actionResponse;
 
     /**
-     * @var ControllerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ControllerInterface|MockObject
      */
     protected $mockController;
 
     /**
-     * @var ObjectManagerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ObjectManagerInterface|MockObject
      */
     protected $mockObjectManager;
 
     /**
-     * @var Context|\PHPUnit_Framework_MockObject_MockObject
+     * @var Context|MockObject
      */
     protected $mockSecurityContext;
 
     /**
-     * @var FirewallInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var FirewallInterface|MockObject
      */
     protected $mockFirewall;
 
     /**
-     * @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var LoggerInterface|MockObject
      */
     protected $mockSecurityLogger;
 
@@ -127,7 +128,7 @@ class DispatcherTest extends UnitTestCase
         $mockLoggerFactory->expects(self::any())->method('get')->with('securityLogger')->willReturn($this->mockSecurityLogger);
 
         $this->mockObjectManager = $this->getMockBuilder(ObjectManagerInterface::class)->getMock();
-        $this->mockObjectManager->method('get')->will($this->returnCallback(function ($className) use ($mockLoggerFactory) {
+        $this->mockObjectManager->method('get')->will(self::returnCallBack(function ($className) use ($mockLoggerFactory) {
             if ($className === PsrLoggerFactoryInterface::class) {
                 return $mockLoggerFactory;
             }
@@ -144,11 +145,11 @@ class DispatcherTest extends UnitTestCase
      */
     public function dispatchCallsTheControllersProcessRequestMethodUntilTheIsDispatchedFlagInTheRequestObjectIsSet()
     {
-        $this->mockActionRequest->expects($this->at(0))->method('isDispatched')->willReturn(false);
-        $this->mockActionRequest->expects($this->at(1))->method('isDispatched')->willReturn(false);
-        $this->mockActionRequest->expects($this->at(2))->method('isDispatched')->willReturn(true);
+        $this->mockActionRequest->expects(self::at(0))->method('isDispatched')->willReturn(false);
+        $this->mockActionRequest->expects(self::at(1))->method('isDispatched')->willReturn(false);
+        $this->mockActionRequest->expects(self::at(2))->method('isDispatched')->willReturn(true);
 
-        $this->mockController->expects($this->exactly(2))->method('processRequest')->with($this->mockActionRequest);
+        $this->mockController->expects(self::exactly(2))->method('processRequest')->with($this->mockActionRequest);
 
         $this->dispatcher->dispatch($this->mockActionRequest, $this->actionResponse);
     }
@@ -158,11 +159,11 @@ class DispatcherTest extends UnitTestCase
      */
     public function dispatchIgnoresStopExceptionsForFirstLevelActionRequests()
     {
-        $this->mockParentRequest->expects($this->at(0))->method('isDispatched')->willReturn(false);
-        $this->mockParentRequest->expects($this->at(2))->method('isDispatched')->willReturn(true);
-        $this->mockParentRequest->expects($this->atLeastOnce())->method('isMainRequest')->willReturn(true);
+        $this->mockParentRequest->expects(self::at(0))->method('isDispatched')->willReturn(false);
+        $this->mockParentRequest->expects(self::at(2))->method('isDispatched')->willReturn(true);
+        $this->mockParentRequest->expects(self::atLeastOnce())->method('isMainRequest')->willReturn(true);
 
-        $this->mockController->expects($this->atLeastOnce())->method('processRequest')->will($this->throwException(new StopActionException()));
+        $this->mockController->expects(self::atLeastOnce())->method('processRequest')->will(self::throwException(new StopActionException()));
 
         $this->dispatcher->dispatch($this->mockParentRequest, $this->actionResponse);
     }
@@ -172,10 +173,10 @@ class DispatcherTest extends UnitTestCase
      */
     public function dispatchCatchesStopExceptionOfActionRequestsAndRollsBackToTheParentRequest()
     {
-        $this->mockActionRequest->expects($this->atLeastOnce())->method('isDispatched')->willReturn(false);
-        $this->mockParentRequest->expects($this->atLeastOnce())->method('isDispatched')->willReturn(true);
+        $this->mockActionRequest->expects(self::atLeastOnce())->method('isDispatched')->willReturn(false);
+        $this->mockParentRequest->expects(self::atLeastOnce())->method('isDispatched')->willReturn(true);
 
-        $this->mockController->expects($this->atLeastOnce())->method('processRequest')->will($this->throwException(new StopActionException()));
+        $this->mockController->expects(self::atLeastOnce())->method('processRequest')->will(self::throwException(new StopActionException()));
 
         $this->dispatcher->dispatch($this->mockActionRequest, $this->actionResponse);
     }
@@ -185,17 +186,17 @@ class DispatcherTest extends UnitTestCase
      */
     public function dispatchContinuesWithNextRequestFoundInAForwardException()
     {
-        /** @var ActionRequest|\PHPUnit_Framework_MockObject_MockObject $nextRequest */
+        /** @var ActionRequest|MockObject $nextRequest */
         $nextRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
-        $nextRequest->expects($this->atLeastOnce())->method('isDispatched')->willReturn(true);
+        $nextRequest->expects(self::atLeastOnce())->method('isDispatched')->willReturn(true);
 
-        $this->mockParentRequest->expects($this->atLeastOnce())->method('isDispatched')->willReturn(false);
+        $this->mockParentRequest->expects(self::atLeastOnce())->method('isDispatched')->willReturn(false);
 
-        $this->mockController->expects($this->at(0))->method('processRequest')->with($this->mockActionRequest)->will($this->throwException(new StopActionException()));
+        $this->mockController->expects(self::at(0))->method('processRequest')->with($this->mockActionRequest)->will(self::throwException(new StopActionException()));
 
         $forwardException = new ForwardException();
         $forwardException->setNextRequest($nextRequest);
-        $this->mockController->expects($this->at(1))->method('processRequest')->with($this->mockParentRequest)->will($this->throwException($forwardException));
+        $this->mockController->expects(self::at(1))->method('processRequest')->with($this->mockParentRequest)->will(self::throwException($forwardException));
 
         $this->dispatcher->dispatch($this->mockActionRequest, $this->actionResponse);
     }
@@ -210,7 +211,7 @@ class DispatcherTest extends UnitTestCase
         $requestCallBack = function () use (&$requestCallCounter) {
             return ($requestCallCounter++ < 101) ? false : true;
         };
-        $this->mockParentRequest->method('isDispatched')->will($this->returnCallBack($requestCallBack, '__invoke'));
+        $this->mockParentRequest->method('isDispatched')->will(self::returnCallback($requestCallBack, '__invoke'));
 
         $this->dispatcher->dispatch($this->mockParentRequest, $this->actionResponse);
     }
@@ -223,7 +224,7 @@ class DispatcherTest extends UnitTestCase
         $this->mockActionRequest->method('isDispatched')->willReturn(true);
 
         $this->mockSecurityContext->method('areAuthorizationChecksDisabled')->willReturn(true);
-        $this->mockFirewall->expects($this->never())->method('blockIllegalRequests');
+        $this->mockFirewall->expects(self::never())->method('blockIllegalRequests');
 
         $this->dispatcher->dispatch($this->mockActionRequest, $this->actionResponse);
     }
@@ -235,7 +236,7 @@ class DispatcherTest extends UnitTestCase
     {
         $this->mockActionRequest->method('isDispatched')->willReturn(true);
 
-        $this->mockFirewall->expects($this->once())->method('blockIllegalRequests')->with($this->mockActionRequest);
+        $this->mockFirewall->expects(self::once())->method('blockIllegalRequests')->with($this->mockActionRequest);
 
         $this->dispatcher->dispatch($this->mockActionRequest, $this->actionResponse);
     }
@@ -250,9 +251,9 @@ class DispatcherTest extends UnitTestCase
         $this->expectException(AuthenticationRequiredException::class);
         $this->mockActionRequest->method('isDispatched')->willReturn(true);
 
-        $this->mockSecurityContext->expects($this->atLeastOnce())->method('getAuthenticationTokens')->willReturn([]);
+        $this->mockSecurityContext->expects(self::atLeastOnce())->method('getAuthenticationTokens')->willReturn([]);
 
-        $this->mockFirewall->expects($this->once())->method('blockIllegalRequests')->will($this->throwException(new AuthenticationRequiredException()));
+        $this->mockFirewall->expects(self::once())->method('blockIllegalRequests')->will(self::throwException(new AuthenticationRequiredException()));
 
         $this->dispatcher->dispatch($this->mockActionRequest, $this->actionResponse);
     }
@@ -264,9 +265,9 @@ class DispatcherTest extends UnitTestCase
     {
         $this->mockActionRequest->method('isDispatched')->willReturn(true);
 
-        $this->mockSecurityContext->expects($this->never())->method('setInterceptedRequest')->with($this->mockMainRequest);
+        $this->mockSecurityContext->expects(self::never())->method('setInterceptedRequest')->with($this->mockMainRequest);
 
-        $this->mockFirewall->expects($this->once())->method('blockIllegalRequests')->will($this->throwException(new AuthenticationRequiredException()));
+        $this->mockFirewall->expects(self::once())->method('blockIllegalRequests')->will(self::throwException(new AuthenticationRequiredException()));
 
         try {
             $this->dispatcher->dispatch($this->mockActionRequest, $this->actionResponse);
@@ -275,8 +276,8 @@ class DispatcherTest extends UnitTestCase
 
         $componentContext = new ComponentContext($this->mockHttpRequest, new Response());
         $this->actionResponse->mergeIntoComponentContext($componentContext);
-        $this->assertNotNull($componentContext->getAllParametersFor(SecurityEntryPointComponent::class));
-        $this->assertNotEmpty($componentContext->getParameter(SecurityEntryPointComponent::class, SecurityEntryPointComponent::AUTHENTICATION_EXCEPTION));
+        self::assertNotNull($componentContext->getAllParametersFor(SecurityEntryPointComponent::class));
+        self::assertNotEmpty($componentContext->getParameter(SecurityEntryPointComponent::class, SecurityEntryPointComponent::AUTHENTICATION_EXCEPTION));
     }
 
     /**
@@ -291,11 +292,11 @@ class DispatcherTest extends UnitTestCase
 
         $mockAuthenticationToken = $this->getMockBuilder(TokenInterface::class)->getMock();
         $mockAuthenticationToken->method('getAuthenticationEntryPoint')->willReturn($mockEntryPoint);
-        $this->mockSecurityContext->expects($this->atLeastOnce())->method('getAuthenticationTokens')->willReturn([$mockAuthenticationToken]);
+        $this->mockSecurityContext->expects(self::atLeastOnce())->method('getAuthenticationTokens')->willReturn([$mockAuthenticationToken]);
 
-        $this->mockSecurityContext->expects($this->atLeastOnce())->method('setInterceptedRequest')->with($this->mockMainRequest);
+        $this->mockSecurityContext->expects(self::atLeastOnce())->method('setInterceptedRequest')->with($this->mockMainRequest);
 
-        $this->mockFirewall->expects($this->once())->method('blockIllegalRequests')->will($this->throwException(new AuthenticationRequiredException()));
+        $this->mockFirewall->expects(self::once())->method('blockIllegalRequests')->will(self::throwException(new AuthenticationRequiredException()));
 
         $this->mockHttpRequest->method('getMethod')->willReturn('GET');
 
@@ -346,12 +347,12 @@ class DispatcherTest extends UnitTestCase
         $mockEntryPoint2 = $this->getMockBuilder(EntryPointInterface::class)->getMock();
         $mockAuthenticationToken2->method('getAuthenticationEntryPoint')->willReturn($mockEntryPoint2);
 
-        $this->mockSecurityContext->expects($this->atLeastOnce())->method('getAuthenticationTokens')->willReturn([$mockAuthenticationToken1, $mockAuthenticationToken2]);
+        $this->mockSecurityContext->expects(self::atLeastOnce())->method('getAuthenticationTokens')->willReturn([$mockAuthenticationToken1, $mockAuthenticationToken2]);
 
-        $this->mockFirewall->expects($this->once())->method('blockIllegalRequests')->will($this->throwException(new AuthenticationRequiredException()));
+        $this->mockFirewall->expects(self::once())->method('blockIllegalRequests')->will(self::throwException(new AuthenticationRequiredException()));
 
-        $mockEntryPoint1->expects($this->once())->method('startAuthentication')->with($this->mockHttpRequest, $this->actionResponse);
-        $mockEntryPoint2->expects($this->once())->method('startAuthentication')->with($this->mockHttpRequest, $this->actionResponse);
+        $mockEntryPoint1->expects(self::once())->method('startAuthentication')->with($this->mockHttpRequest, $this->actionResponse);
+        $mockEntryPoint2->expects(self::once())->method('startAuthentication')->with($this->mockHttpRequest, $this->actionResponse);
 
         try {
             $this->dispatcher->dispatch($this->mockActionRequest, $this->actionResponse);
@@ -367,7 +368,7 @@ class DispatcherTest extends UnitTestCase
         $this->expectException(AccessDeniedException::class);
         $this->mockActionRequest->method('isDispatched')->willReturn(true);
 
-        $this->mockFirewall->expects($this->once())->method('blockIllegalRequests')->will($this->throwException(new AccessDeniedException()));
+        $this->mockFirewall->expects(self::once())->method('blockIllegalRequests')->will(self::throwException(new AccessDeniedException()));
 
         $this->dispatcher->dispatch($this->mockActionRequest, $this->actionResponse);
     }
@@ -379,14 +380,14 @@ class DispatcherTest extends UnitTestCase
     {
         $mockController = $this->createMock(ControllerInterface::class);
 
-        /** @var ObjectManagerInterface|\PHPUnit_Framework_MockObject_MockObject $mockObjectManager */
+        /** @var ObjectManagerInterface|MockObject $mockObjectManager */
         $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
-        $mockObjectManager->expects($this->once())->method('get')->with($this->equalTo('Flow\TestPackage\SomeController'))->willReturn($mockController);
+        $mockObjectManager->expects(self::once())->method('get')->with(self::equalTo('Flow\TestPackage\SomeController'))->willReturn($mockController);
 
         $mockRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->setMethods(['getControllerPackageKey', 'getControllerObjectName'])->getMock();
         $mockRequest->method('getControllerObjectName')->willReturn('Flow\TestPackage\SomeController');
 
-        /** @var Dispatcher|\PHPUnit_Framework_MockObject_MockObject $dispatcher */
+        /** @var Dispatcher|MockObject $dispatcher */
         $dispatcher = $this->getAccessibleMock(Dispatcher::class, null);
         $dispatcher->injectObjectManager($mockObjectManager);
 
@@ -401,14 +402,14 @@ class DispatcherTest extends UnitTestCase
         $this->expectException(InvalidControllerException::class);
         $mockController = $this->createMock('stdClass');
 
-        /** @var ObjectManagerInterface|\PHPUnit_Framework_MockObject_MockObject $mockObjectManager */
+        /** @var ObjectManagerInterface|MockObject $mockObjectManager */
         $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
-        $mockObjectManager->expects($this->once())->method('get')->with($this->equalTo('Flow\TestPackage\SomeController'))->willReturn($mockController);
+        $mockObjectManager->expects(self::once())->method('get')->with(self::equalTo('Flow\TestPackage\SomeController'))->willReturn($mockController);
 
         $mockRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->setMethods(['getControllerPackageKey', 'getControllerObjectName'])->getMock();
         $mockRequest->method('getControllerObjectName')->willReturn('Flow\TestPackage\SomeController');
 
-        /** @var Dispatcher|\PHPUnit_Framework_MockObject_MockObject $dispatcher */
+        /** @var Dispatcher|MockObject $dispatcher */
         $dispatcher = $this->getAccessibleMock(Dispatcher::class, ['dummy']);
         $dispatcher->injectObjectManager($mockObjectManager);
 

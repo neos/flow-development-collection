@@ -65,7 +65,7 @@ class PointcutMethodAnnotatedWithFilterTest extends UnitTestCase
         $availableClassNamesIndex->setClassNames($availableClassNames);
 
         $mockReflectionService = $this->getMockBuilder(ReflectionService::class)->disableOriginalConstructor()->getMock();
-        $mockReflectionService->expects($this->any())->method('getClassesContainingMethodsAnnotatedWith')->with('SomeAnnotationClass')->will($this->returnValue(['TestPackage\Subpackage\Class1', 'TestPackage\Subpackage\SubSubPackage\Class3', 'SomeMoreClass']));
+        $mockReflectionService->expects($this->any())->method('getClassesContainingMethodsAnnotatedWith')->with('SomeAnnotationClass')->will(self::returnValue(['TestPackage\Subpackage\Class1', 'TestPackage\Subpackage\SubSubPackage\Class3', 'SomeMoreClass']));
 
         $methodAnnotatedWithFilter = new Aop\Pointcut\PointcutMethodAnnotatedWithFilter('SomeAnnotationClass');
         $methodAnnotatedWithFilter->injectReflectionService($mockReflectionService);

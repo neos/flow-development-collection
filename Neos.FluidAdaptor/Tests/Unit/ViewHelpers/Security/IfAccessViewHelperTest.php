@@ -29,7 +29,7 @@ class IfAccessViewHelperTest extends ViewHelperBaseTestcase
     protected $ifAccessViewHelper;
 
     /**
-     * @var PrivilegeManagerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var PrivilegeManagerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $mockPrivilegeManager;
 
@@ -58,8 +58,8 @@ class IfAccessViewHelperTest extends ViewHelperBaseTestcase
      */
     public function viewHelperRendersThenIfHasAccessToPrivilegeTargetReturnsTrue()
     {
-        $this->mockPrivilegeManager->expects($this->once())->method('isPrivilegeTargetGranted')->with('somePrivilegeTarget')->will($this->returnValue(true));
-        $this->ifAccessViewHelper->expects($this->once())->method('renderThenChild')->will($this->returnValue('foo'));
+        $this->mockPrivilegeManager->expects(self::once())->method('isPrivilegeTargetGranted')->with('somePrivilegeTarget')->will(self::returnValue(true));
+        $this->ifAccessViewHelper->expects(self::once())->method('renderThenChild')->will(self::returnValue('foo'));
 
         $arguments = [
             'privilegeTarget' => 'somePrivilegeTarget',
@@ -75,8 +75,8 @@ class IfAccessViewHelperTest extends ViewHelperBaseTestcase
      */
     public function viewHelperRendersElseIfHasAccessToPrivilegeTargetReturnsFalse()
     {
-        $this->mockPrivilegeManager->expects($this->once())->method('isPrivilegeTargetGranted')->with('somePrivilegeTarget')->will($this->returnValue(false));
-        $this->ifAccessViewHelper->expects($this->once())->method('renderElseChild')->will($this->returnValue('ElseViewHelperResults'));
+        $this->mockPrivilegeManager->expects(self::once())->method('isPrivilegeTargetGranted')->with('somePrivilegeTarget')->will(self::returnValue(false));
+        $this->ifAccessViewHelper->expects(self::once())->method('renderElseChild')->will(self::returnValue('ElseViewHelperResults'));
 
         $arguments = [
             'privilegeTarget' => 'somePrivilegeTarget',

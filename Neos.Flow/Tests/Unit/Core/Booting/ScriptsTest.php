@@ -20,7 +20,7 @@ use Neos\Flow\Tests\UnitTestCase;
 class ScriptsTest extends UnitTestCase
 {
     /**
-     * @var Scripts|\PHPUnit_Framework_MockObject_MockObject
+     * @var Scripts|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $scriptsMock;
 
