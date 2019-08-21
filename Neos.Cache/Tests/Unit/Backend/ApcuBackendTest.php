@@ -209,12 +209,12 @@ class ApcuBackendTest extends BaseTestCase
     public function flushRemovesOnlyOwnEntries()
     {
         $thisCache = $this->createMock(FrontendInterface::class);
-        $thisCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('thisCache'));
+        $thisCache->expects($this->any())->method('getIdentifier')->will(self::returnValue('thisCache'));
         $thisBackend = new ApcuBackend($this->getEnvironmentConfiguration(), []);
         $thisBackend->setCache($thisCache);
 
         $thatCache = $this->createMock(FrontendInterface::class);
-        $thatCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('thatCache'));
+        $thatCache->expects($this->any())->method('getIdentifier')->will(self::returnValue('thatCache'));
         $thatBackend = new ApcuBackend($this->getEnvironmentConfiguration(), []);
         $thatBackend->setCache($thatCache);
 
@@ -289,7 +289,7 @@ class ApcuBackendTest extends BaseTestCase
     }
 
     /**
-     * @return EnvironmentConfiguration|\PHPUnit_Framework_MockObject_MockObject
+     * @return EnvironmentConfiguration|\PHPUnit\Framework\MockObject\MockObject
      */
     public function getEnvironmentConfiguration()
     {

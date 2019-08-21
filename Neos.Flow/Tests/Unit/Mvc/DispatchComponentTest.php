@@ -36,42 +36,42 @@ class DispatchComponentTest extends UnitTestCase
     protected $dispatchComponent;
 
     /**
-     * @var Security\Context|\PHPUnit_Framework_MockObject_MockObject
+     * @var Security\Context|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $mockSecurityContext;
 
     /**
-     * @var ComponentContext|\PHPUnit_Framework_MockObject_MockObject
+     * @var ComponentContext|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $mockComponentContext;
 
     /**
-     * @var ServerRequestInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ServerRequestInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $mockHttpRequest;
 
     /**
-     * @var Dispatcher|\PHPUnit_Framework_MockObject_MockObject
+     * @var Dispatcher|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $mockDispatcher;
 
     /**
-     * @var ActionRequest|\PHPUnit_Framework_MockObject_MockObject
+     * @var ActionRequest|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $mockActionRequest;
 
     /**
-     * @var ObjectManagerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ObjectManagerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $mockObjectManager;
 
     /**
-     * @var PropertyMapper|\PHPUnit_Framework_MockObject_MockObject
+     * @var PropertyMapper|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $mockPropertyMapper;
 
     /**
-     * @var PropertyMappingConfiguration|\PHPUnit_Framework_MockObject_MockObject
+     * @var PropertyMappingConfiguration|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $mockPropertyMappingConfiguration;
 
@@ -86,7 +86,7 @@ class DispatchComponentTest extends UnitTestCase
 
         $this->mockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
         $this->mockHttpRequest->expects($this->any())->method('withParsedBody')->willReturn($this->mockHttpRequest);
-        $this->mockComponentContext->expects($this->any())->method('getHttpRequest')->will($this->returnValue($this->mockHttpRequest));
+        $this->mockComponentContext->expects($this->any())->method('getHttpRequest')->will(self::returnValue($this->mockHttpRequest));
 
         $httpResponse = new Response();
         $this->mockComponentContext->expects($this->any())->method('getHttpResponse')->willReturn($httpResponse);
@@ -102,7 +102,7 @@ class DispatchComponentTest extends UnitTestCase
      */
     public function handleDispatchesTheRequest()
     {
-        $this->mockDispatcher->expects($this->once())->method('dispatch')->with($this->mockActionRequest);
+        $this->mockDispatcher->expects(self::once())->method('dispatch')->with($this->mockActionRequest);
 
         $componentContext = new ComponentContext($this->mockHttpRequest, new Response());
         $componentContext->setParameter(RoutingComponent::class, 'matchResults', []);

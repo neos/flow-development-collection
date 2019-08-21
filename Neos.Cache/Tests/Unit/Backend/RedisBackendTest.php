@@ -27,7 +27,7 @@ use Neos\Cache\Frontend\FrontendInterface;
 class RedisBackendTest extends BaseTestCase
 {
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
+     * @var \PHPUnit\Framework\MockObject\MockObject
      */
     private $redis;
 
@@ -37,7 +37,7 @@ class RedisBackendTest extends BaseTestCase
     private $backend;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
+     * @var \PHPUnit\Framework\MockObject\MockObject
      */
     private $cache;
 
@@ -56,7 +56,7 @@ class RedisBackendTest extends BaseTestCase
         $this->cache = $this->createMock(FrontendInterface::class);
         $this->cache->expects($this->any())
             ->method('getIdentifier')
-            ->will($this->returnValue('Foo_Cache'));
+            ->will(self::returnValue('Foo_Cache'));
 
         $mockEnvironmentConfiguration = $this->getMockBuilder(EnvironmentConfiguration::class)->setConstructorArgs([
             __DIR__ . '~Testing',
@@ -78,10 +78,10 @@ class RedisBackendTest extends BaseTestCase
      */
     public function findIdentifiersByTagInvokesRedis()
     {
-        $this->redis->expects($this->once())
+        $this->redis->expects(self::once())
             ->method('sMembers')
             ->with('Foo_Cache:tag:some_tag')
-            ->will($this->returnValue(['entry_1', 'entry_2']));
+            ->will(self::returnValue(['entry_1', 'entry_2']));
 
         self::assertEquals(['entry_1', 'entry_2'], $this->backend->findIdentifiersByTag('some_tag'));
     }
@@ -91,15 +91,15 @@ class RedisBackendTest extends BaseTestCase
      */
     public function freezeInvokesRedis()
     {
-        $this->redis->expects($this->once())
+        $this->redis->expects(self::once())
             ->method('lRange')
             ->with('Foo_Cache:entries', 0, -1)
-            ->will($this->returnValue(['entry_1', 'entry_2']));
+            ->will(self::returnValue(['entry_1', 'entry_2']));
 
-        $this->redis->expects($this->exactly(2))
+        $this->redis->expects(self::exactly(2))
             ->method('persist');
 
-        $this->redis->expects($this->once())
+        $this->redis->expects(self::once())
             ->method('set')
             ->with('Foo_Cache:frozen', true);
 
@@ -119,7 +119,7 @@ class RedisBackendTest extends BaseTestCase
             ->method('multi')
             ->willReturn($this->redis);
 
-        $this->redis->expects($this->once())
+        $this->redis->expects(self::once())
             ->method('set')
             ->with($this->anything(), $this->anything(), $expected)
             ->willReturn($this->redis);
@@ -140,7 +140,7 @@ class RedisBackendTest extends BaseTestCase
             ->method('multi')
             ->willReturn($this->redis);
 
-        $this->redis->expects($this->once())
+        $this->redis->expects(self::once())
             ->method('set')
             ->with($this->anything(), $this->anything(), $expected)
             ->willReturn($this->redis);
@@ -157,7 +157,7 @@ class RedisBackendTest extends BaseTestCase
             ->method('multi')
             ->willReturn($this->redis);
 
-        $this->redis->expects($this->once())
+        $this->redis->expects(self::once())
             ->method('set')
             ->with('Foo_Cache:entry:entry_1', 'foo')
             ->willReturn($this->redis);
@@ -170,10 +170,10 @@ class RedisBackendTest extends BaseTestCase
      */
     public function getInvokesRedis()
     {
-        $this->redis->expects($this->once())
+        $this->redis->expects(self::once())
             ->method('get')
             ->with('Foo_Cache:entry:foo')
-            ->will($this->returnValue('bar'));
+            ->will(self::returnValue('bar'));
 
         self::assertEquals('bar', $this->backend->get('foo'));
     }
@@ -183,10 +183,10 @@ class RedisBackendTest extends BaseTestCase
      */
     public function hasInvokesRedis()
     {
-        $this->redis->expects($this->once())
+        $this->redis->expects(self::once())
             ->method('exists')
             ->with('Foo_Cache:entry:foo')
-            ->will($this->returnValue(true));
+            ->will(self::returnValue(true));
 
         self::assertEquals(true, $this->backend->has('foo'));
     }
@@ -200,10 +200,10 @@ class RedisBackendTest extends BaseTestCase
     {
         $this->expectException(\RuntimeException::class);
         $this->inject($this->backend, 'frozen', null);
-        $this->redis->expects($this->once())
+        $this->redis->expects(self::once())
             ->method('exists')
             ->with('Foo_Cache:frozen')
-            ->will($this->returnValue(true));
+            ->will(self::returnValue(true));
 
         $this->backend->$method('foo', 'bar');
     }

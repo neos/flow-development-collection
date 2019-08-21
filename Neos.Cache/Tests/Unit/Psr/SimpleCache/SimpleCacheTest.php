@@ -13,7 +13,7 @@ use Neos\Cache\Tests\BaseTestCase;
 class SimpleCacheTest extends BaseTestCase
 {
     /**
-     * @var BackendInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var BackendInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $mockBackend;
 

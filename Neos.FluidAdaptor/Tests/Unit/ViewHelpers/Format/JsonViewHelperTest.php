@@ -38,9 +38,9 @@ class JsonViewHelperTest extends ViewHelperBaseTestcase
     public function viewHelperConvertsSimpleAssociativeArrayGivenAsChildren()
     {
         $this->viewHelper
-                ->expects($this->once())
+                ->expects(self::once())
                 ->method('renderChildren')
-                ->will($this->returnValue(['foo' => 'bar']));
+                ->will(self::returnValue(['foo' => 'bar']));
 
         $this->viewHelper = $this->prepareArguments($this->viewHelper, []);
         $actualResult = $this->viewHelper->render();
@@ -53,7 +53,7 @@ class JsonViewHelperTest extends ViewHelperBaseTestcase
     public function viewHelperConvertsSimpleAssociativeArrayGivenAsDataArgument()
     {
         $this->viewHelper
-                ->expects($this->never())
+                ->expects(self::never())
                 ->method('renderChildren');
 
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['value' => ['foo' => 'bar']]);
@@ -69,7 +69,7 @@ class JsonViewHelperTest extends ViewHelperBaseTestcase
         $this->viewHelper
                 ->expects($this->any())
                 ->method('renderChildren')
-                ->will($this->returnValue(['foo', 'bar', 42]));
+                ->will(self::returnValue(['foo', 'bar', 42]));
         $this->viewHelper = $this->prepareArguments($this->viewHelper, []);
         self::assertEquals('["foo","bar",42]', $this->viewHelper->render());
 

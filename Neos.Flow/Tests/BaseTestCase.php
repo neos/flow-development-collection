@@ -48,7 +48,7 @@ abstract class BaseTestCase extends \PHPUnit\Framework\TestCase
      * @param boolean $cloneArguments
      * @param boolean $callOriginalMethods
      * @param object $proxyTarget
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      * @api
      */
     protected function getAccessibleMock($originalClassName, $methods = [], array $arguments = [], $mockClassName = '', $callOriginalConstructor = true, $callOriginalClone = true, $callAutoload = true, $cloneArguments = false, $callOriginalMethods = false, $proxyTarget = null)
@@ -96,7 +96,7 @@ abstract class BaseTestCase extends \PHPUnit\Framework\TestCase
      * @param boolean $callAutoload
      * @param array $mockedMethods
      * @param boolean $cloneArguments
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      * @api
      */
     protected function getAccessibleMockForAbstractClass($originalClassName, array $arguments = [], $mockClassName = '', $callOriginalConstructor = true, $callOriginalClone = true, $callAutoload = true, $mockedMethods = [], $cloneArguments = false)

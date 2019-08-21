@@ -82,7 +82,7 @@ class ScalarTypeToObjectConverterTest extends UnitTestCase
     {
         $converter = new ScalarTypeToObjectConverter();
 
-        $this->reflectionMock->expects($this->once())
+        $this->reflectionMock->expects(self::once())
             ->method('getMethodParameters')
             ->willReturn([[
                 'type' => 'bool'
@@ -99,7 +99,7 @@ class ScalarTypeToObjectConverterTest extends UnitTestCase
     {
         $converter = new ScalarTypeToObjectConverter();
 
-        $this->reflectionMock->expects($this->once())
+        $this->reflectionMock->expects(self::once())
             ->method('getMethodParameters')
             ->willReturn([[
                 'type' => 'int'

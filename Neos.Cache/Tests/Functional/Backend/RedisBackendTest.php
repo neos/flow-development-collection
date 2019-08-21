@@ -37,7 +37,7 @@ class RedisBackendTest extends BaseTestCase
     private $backend;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|FrontendInterface
+     * @var \PHPUnit\Framework\MockObject\MockObject|FrontendInterface
      */
     private $cache;
 
@@ -63,7 +63,7 @@ class RedisBackendTest extends BaseTestCase
             new EnvironmentConfiguration('Redis a wonderful color Testing', '/some/path', PHP_MAXPATHLEN), ['hostname' => '127.0.0.1', 'database' => 0]
         );
         $this->cache = $this->createMock(FrontendInterface::class);
-        $this->cache->expects($this->any())->method('getIdentifier')->will($this->returnValue('TestCache'));
+        $this->cache->expects($this->any())->method('getIdentifier')->will(self::returnValue('TestCache'));
         $this->backend->setCache($this->cache);
         $this->backend->flush();
     }

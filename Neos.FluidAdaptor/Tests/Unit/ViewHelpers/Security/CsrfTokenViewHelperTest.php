@@ -21,12 +21,12 @@ use Neos\FluidAdaptor\ViewHelpers\Security\CsrfTokenViewHelper;
 class CsrfTokenViewHelperTest extends ViewHelperBaseTestcase
 {
     /**
-     * @var CsrfTokenViewHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var CsrfTokenViewHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $viewHelper;
 
     /**
-     * @var ObjectManagerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ObjectManagerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $objectManagerMock;
 
@@ -49,7 +49,7 @@ class CsrfTokenViewHelperTest extends ViewHelperBaseTestcase
     public function viewHelperRendersTheCsrfTokenReturnedFromTheSecurityContext()
     {
         $mockSecurityContext = $this->createMock(\Neos\Flow\Security\Context::class);
-        $mockSecurityContext->expects($this->once())->method('getCsrfProtectionToken')->will($this->returnValue('TheCsrfToken'));
+        $mockSecurityContext->expects(self::once())->method('getCsrfProtectionToken')->will(self::returnValue('TheCsrfToken'));
         $this->objectManagerMock->expects(self::any())->method('get')->willReturn($mockSecurityContext);
 
         $actualResult = $this->viewHelper->render();

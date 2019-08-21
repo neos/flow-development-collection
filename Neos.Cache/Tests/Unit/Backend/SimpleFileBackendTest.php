@@ -29,12 +29,12 @@ use PHPUnit\Framework\Error\Warning;
 class SimpleFileBackendTest extends BaseTestCase
 {
     /**
-     * @var FrontendInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var FrontendInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $mockCacheFrontend;
 
     /**
-     * @var EnvironmentConfiguration|\PHPUnit_Framework_MockObject_MockObject
+     * @var EnvironmentConfiguration|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $mockEnvironmentConfiguration;
 
@@ -112,7 +112,7 @@ class SimpleFileBackendTest extends BaseTestCase
         $entryIdentifier = 'BackendFileTest';
 
         $backend = $this->getMockBuilder(SimpleFileBackend::class)->setMethods(['setTag', 'writeCacheFile'])->disableOriginalConstructor()->getMock();
-        $backend->expects($this->once())->method('writeCacheFile')->willReturn(false);
+        $backend->expects(self::once())->method('writeCacheFile')->willReturn(false);
         $this->inject($backend, 'environmentConfiguration', $mockEnvironmentConfiguration);
 
         $backend->set($entryIdentifier, 'cache data');
@@ -123,7 +123,7 @@ class SimpleFileBackendTest extends BaseTestCase
      */
     public function setCacheDirectoryAllowsToSetTheCurrentCacheDirectory()
     {
-        $this->mockCacheFrontend->expects($this->any())->method('getIdentifier')->will($this->returnValue('SomeCache'));
+        $this->mockCacheFrontend->expects($this->any())->method('getIdentifier')->will(self::returnValue('SomeCache'));
 
         // We need to create the directory here because vfs doesn't support touch() which is used by
         // createDirectoryRecursively() in the setCache method.
@@ -139,7 +139,7 @@ class SimpleFileBackendTest extends BaseTestCase
      */
     public function getCacheDirectoryReturnsTheCurrentCacheDirectory()
     {
-        $this->mockCacheFrontend->expects($this->any())->method('getIdentifier')->will($this->returnValue('SomeCache'));
+        $this->mockCacheFrontend->expects($this->any())->method('getIdentifier')->will(self::returnValue('SomeCache'));
 
         // We need to create the directory here because vfs doesn't support touch() which is used by
         // createDirectoryRecursively() in the setCache method.
@@ -154,9 +154,9 @@ class SimpleFileBackendTest extends BaseTestCase
      */
     public function aDedicatedCacheDirectoryIsUsedForCodeCaches()
     {
-        /** @var PhpFrontend|\PHPUnit_Framework_MockObject_MockObject $mockPhpCacheFrontend */
+        /** @var PhpFrontend|\PHPUnit\Framework\MockObject\MockObject $mockPhpCacheFrontend */
         $mockPhpCacheFrontend = $this->getMockBuilder(\Neos\Cache\Frontend\PhpFrontend::class)->disableOriginalConstructor()->getMock();
-        $mockPhpCacheFrontend->expects($this->any())->method('getIdentifier')->will($this->returnValue('SomePhpCache'));
+        $mockPhpCacheFrontend->expects($this->any())->method('getIdentifier')->will(self::returnValue('SomePhpCache'));
 
         // We need to create the directory here because vfs doesn't support touch() which is used by
         // createDirectoryRecursively() in the setCache method.
@@ -171,7 +171,7 @@ class SimpleFileBackendTest extends BaseTestCase
      */
     public function setReallySavesToTheSpecifiedDirectory()
     {
-        $this->mockCacheFrontend->expects($this->any())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
+        $this->mockCacheFrontend->expects($this->any())->method('getIdentifier')->will(self::returnValue('UnitTestCache'));
 
         $data = uniqid('some data');
         $entryIdentifier = 'SimpleFileBackendTest';
@@ -190,7 +190,7 @@ class SimpleFileBackendTest extends BaseTestCase
      */
     public function setOverwritesAnAlreadyExistingCacheEntryForTheSameIdentifier()
     {
-        $this->mockCacheFrontend->expects($this->any())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
+        $this->mockCacheFrontend->expects($this->any())->method('getIdentifier')->will(self::returnValue('UnitTestCache'));
 
         $data1 = uniqid('some data');
         $data2 = uniqid('some other data');
@@ -211,7 +211,7 @@ class SimpleFileBackendTest extends BaseTestCase
      */
     public function getReturnsContentOfTheCorrectCacheFile()
     {
-        $this->mockCacheFrontend->expects($this->any())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
+        $this->mockCacheFrontend->expects($this->any())->method('getIdentifier')->will(self::returnValue('UnitTestCache'));
 
         $data1 = uniqid('some data');
         $data2 = uniqid('some other data');
@@ -229,7 +229,7 @@ class SimpleFileBackendTest extends BaseTestCase
      */
     public function getReturnsFalseForDeletedFiles()
     {
-        $this->mockCacheFrontend->expects($this->any())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
+        $this->mockCacheFrontend->expects($this->any())->method('getIdentifier')->will(self::returnValue('UnitTestCache'));
 
         $entryIdentifier = 'SimpleFileBackendTest';
         $pathAndFilename = 'vfs://Temporary/Directory/Cache/Data/UnitTestCache/' . $entryIdentifier;
@@ -271,7 +271,7 @@ class SimpleFileBackendTest extends BaseTestCase
      */
     public function removeReallyRemovesACacheEntry()
     {
-        $this->mockCacheFrontend->expects($this->any())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
+        $this->mockCacheFrontend->expects($this->any())->method('getIdentifier')->will(self::returnValue('UnitTestCache'));
 
         $entryIdentifier = 'SimpleFileBackendTest';
         $pathAndFilename = 'vfs://Temporary/Directory/Cache/Data/UnitTestCache/' . $entryIdentifier;
@@ -429,7 +429,7 @@ class SimpleFileBackendTest extends BaseTestCase
      */
     public function flushRemovesAllCacheEntries()
     {
-        $this->mockCacheFrontend->expects($this->any())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
+        $this->mockCacheFrontend->expects($this->any())->method('getIdentifier')->will(self::returnValue('UnitTestCache'));
 
         $entryIdentifier1 = 'SimpleFileBackendTest1';
         $pathAndFilename1 = 'vfs://Temporary/Directory/Cache/Data/UnitTestCache/' . $entryIdentifier1;
