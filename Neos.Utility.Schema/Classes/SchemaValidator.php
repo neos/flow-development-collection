@@ -352,8 +352,12 @@ class SchemaValidator
     protected function validateArrayType($value, array $schema, array $types = []): ErrorResult
     {
         $result = new ErrorResult();
-        if (is_array($value) === false || $this->isNumericallyIndexedArray($value) === false) {
+        if (is_array($value) === false) {
             $result->addError($this->createError('type=array', 'type=' . gettype($value)));
+            return $result;
+        }
+        if ($this->isNumericallyIndexedArray($value) === false) {
+            $result->addError($this->createError('type=array', 'type=dictionary'));
             return $result;
         }
 

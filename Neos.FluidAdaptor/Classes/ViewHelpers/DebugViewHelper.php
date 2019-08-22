@@ -78,10 +78,6 @@ class DebugViewHelper extends AbstractViewHelper
             $expressionToExamine = (is_object($expressionToExamine) ? get_class($expressionToExamine) : gettype($expressionToExamine));
         }
 
-        ob_start();
-        \Neos\Flow\var_dump($expressionToExamine, $this->arguments['title']);
-        $output = ob_get_contents();
-        ob_end_clean();
-        return $output;
+        return \Neos\Flow\var_dump($expressionToExamine, $this->arguments['title'], true);
     }
 }
