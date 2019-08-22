@@ -62,6 +62,15 @@ final class ResolveContext
         $this->routeValues = $routeValues;
         $this->forceAbsoluteUri = $forceAbsoluteUri;
         $this->uriPathPrefix = $uriPathPrefix;
+
+        // Only add base uri path for absolute uri, in case of relative uri the uri has to be relative to the given base uri
+        if ($forceAbsoluteUri) {
+            $this->uriPathPrefix = '/' . ltrim($this->uriPathPrefix, '/');
+
+            if ($baseUri->getPath() !== '') {
+                $this->uriPathPrefix = rtrim($baseUri->getPath(), '/') . $this->uriPathPrefix;
+            }
+        }
     }
 
     /**
