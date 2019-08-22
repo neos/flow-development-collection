@@ -435,7 +435,7 @@ The cookie value can be updated and re-assigned to the response::
 	public function myAction() {
 		$httpRequest = $this->request->getHttpRequest();
 		$counter = $httpRequest->getCookieParams()['myCounter'] ?? 0;
-		$this->view->assign('counter', $cookie->getValue());
+		$this->view->assign('counter', $counter);
 
 		$cookie = new Cookie('myCounter', $counter + 1);
 		$this->response->setCookie($cookie);
