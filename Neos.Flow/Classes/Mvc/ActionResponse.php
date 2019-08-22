@@ -118,7 +118,7 @@ final class ActionResponse
      */
     public function setCookie(Cookie $cookie): void
     {
-        $this->cookies[$cookie->getName()] = $cookie;
+        $this->cookies[$cookie->getName()] = clone $cookie;
     }
 
     /**
