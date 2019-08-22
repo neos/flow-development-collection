@@ -396,7 +396,6 @@
     <NullArgument occurrences="2">
       <code>null</code>
       <code>null</code>
-      <code>null</code>
     </NullArgument>
     <NullableReturnStatement occurrences="3">
       <code>min(mb_strlen($string, 'UTF-8'), $fromIndex)</code>
@@ -444,25 +443,19 @@
   </file>
   <file src="Packages/Framework/Neos.Flow.Log/Classes/Backend/ConsoleBackend.php">
     <DuplicateArrayKey occurrences="4">
-      <code>LOG_ALERT   =&gt; 'ALERT    '</code>
-      <code>LOG_CRIT    =&gt; 'CRITICAL '</code>
-      <code>LOG_INFO    =&gt; 'INFO     '</code>
-      <code>LOG_DEBUG   =&gt; 'DEBUG    '</code>
+      <code>LOG_ALERT =&gt; 'ALERT    '</code>
+      <code>LOG_CRIT =&gt; 'CRITICAL '</code>
+      <code>LOG_INFO =&gt; 'INFO     '</code>
+      <code>LOG_DEBUG =&gt; 'DEBUG    '</code>
     </DuplicateArrayKey>
   </file>
   <file src="Packages/Framework/Neos.Flow.Log/Classes/Backend/FileBackend.php">
     <DuplicateArrayKey occurrences="4">
-      <code>LOG_ALERT   =&gt; 'ALERT    '</code>
-      <code>LOG_CRIT    =&gt; 'CRITICAL '</code>
-      <code>LOG_INFO    =&gt; 'INFO     '</code>
-      <code>LOG_DEBUG   =&gt; 'DEBUG    '</code>
+      <code>LOG_ALERT =&gt; 'ALERT    '</code>
+      <code>LOG_CRIT =&gt; 'CRITICAL '</code>
+      <code>LOG_INFO =&gt; 'INFO     '</code>
+      <code>LOG_DEBUG =&gt; 'DEBUG    '</code>
     </DuplicateArrayKey>
-    <InvalidScalarArgument occurrences="1">
-      <code>posix_getpid()</code>
-    </InvalidScalarArgument>
-    <PossiblyNullArgument occurrences="1">
-      <code>$packageKey</code>
-    </PossiblyNullArgument>
     <PossiblyNullOperand occurrences="2">
       <code>$className</code>
       <code>$methodName</code>
@@ -3103,11 +3096,6 @@
       <code>$validator-&gt;setValidatedInstancesContainer</code>
     </NoInterfaceProperties>
   </file>
-  <file src="Packages/Framework/Neos.Flow/Classes/Validation/Validator/StringLengthValidator.php">
-    <PossiblyInvalidArgument occurrences="1">
-      <code>$value</code>
-    </PossiblyInvalidArgument>
-  </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Validation/ValidatorResolver.php">
     <InvalidNullableReturnType occurrences="1">
       <code>ValidatorInterface</code>
@@ -3337,7 +3325,7 @@
   </file>
   <file src="Packages/Framework/Neos.FluidAdaptor/Classes/ViewHelpers/DebugViewHelper.php">
     <UndefinedFunction occurrences="1">
-      <code>\Neos\Flow\var_dump($expressionToExamine, $this-&gt;arguments['title'])</code>
+      <code>\Neos\Flow\var_dump($expressionToExamine, $this-&gt;arguments['title'], true)</code>
     </UndefinedFunction>
   </file>
   <file src="Packages/Framework/Neos.FluidAdaptor/Classes/ViewHelpers/FlashMessagesViewHelper.php">
@@ -3371,11 +3359,6 @@
       <code>null</code>
     </PossiblyNullPropertyAssignmentValue>
   </file>
-  <file src="Packages/Framework/Neos.FluidAdaptor/Classes/ViewHelpers/Format/Base64DecodeViewHelper.php">
-    <PossiblyInvalidArgument occurrences="1">
-      <code>$value</code>
-    </PossiblyInvalidArgument>
-  </file>
   <file src="Packages/Framework/Neos.FluidAdaptor/Classes/ViewHelpers/Format/CaseViewHelper.php">
     <InvalidScalarArgument occurrences="2">
       <code>$originalEncoding</code>
@@ -3386,26 +3369,6 @@
     <InvalidOperand occurrences="1">
       <code>$date</code>
     </InvalidOperand>
-  </file>
-  <file src="Packages/Framework/Neos.FluidAdaptor/Classes/ViewHelpers/Format/HtmlentitiesDecodeViewHelper.php">
-    <PossiblyInvalidArgument occurrences="1">
-      <code>$value</code>
-    </PossiblyInvalidArgument>
-  </file>
-  <file src="Packages/Framework/Neos.FluidAdaptor/Classes/ViewHelpers/Format/HtmlentitiesViewHelper.php">
-    <PossiblyInvalidArgument occurrences="1">
-      <code>$value</code>
-    </PossiblyInvalidArgument>
-  </file>
-  <file src="Packages/Framework/Neos.FluidAdaptor/Classes/ViewHelpers/Format/StripTagsViewHelper.php">
-    <PossiblyInvalidArgument occurrences="1">
-      <code>$value</code>
-    </PossiblyInvalidArgument>
-  </file>
-  <file src="Packages/Framework/Neos.FluidAdaptor/Classes/ViewHelpers/Format/UrlencodeViewHelper.php">
-    <PossiblyInvalidArgument occurrences="1">
-      <code>$value</code>
-    </PossiblyInvalidArgument>
   </file>
   <file src="Packages/Framework/Neos.FluidAdaptor/Classes/ViewHelpers/Link/ActionViewHelper.php">
     <InvalidScalarArgument occurrences="1">
