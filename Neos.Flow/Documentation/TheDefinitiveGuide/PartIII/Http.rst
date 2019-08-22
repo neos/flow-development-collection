@@ -407,7 +407,7 @@ Cookies
 -------
 
 The HTTP foundation provides a very convenient way to deal with cookies. Instead of calling the PHP cookie functions
-(like ``setcookie()``), we recommend using the respective methods available in the ``Request`` and ``Response`` classes.
+(like ``setcookie()``), we recommend using the respective methods available in the ``ResponseInterface`` and ``ActionResponse`` classes.
 
 Like requests and responses, a cookie also is represented by a PHP class. Instead of working on arrays with values,
 instances of the ``Cookie`` class are used.
@@ -424,9 +424,9 @@ will send the cookie through the ``Cookie`` header. These headers are parsed aut
 
 	public function myAction() {
 		$httpRequest = $this->request->getHttpRequest();
-		if ($httpRequest->hasCookie('myCounter')) {
-			$cookie = $httpRequest->getCookie('myCounter');
-			$this->view->assign('counter', $cookie->getValue());
+		$cookieParams = $httpRequest->getCookieParams();
+		if (isset($cookieParams['myCounter']) {
+			$this->view->assign('counter', (int)$cookieParams['myCounter']);
 		}
 	}
 
@@ -434,24 +434,17 @@ The cookie value can be updated and re-assigned to the response::
 
 	public function myAction() {
 		$httpRequest = $this->request->getHttpRequest();
-		if ($httpRequest->hasCookie('myCounter')) {
-			$cookie = $httpRequest->getCookie('myCounter');
-		} else {
-			$cookie = new Cookie('myCounter', 1);
-		}
+		$counter = $httpRequest->getCookieParams()['myCounter'] ?? 0;
 		$this->view->assign('counter', $cookie->getValue());
 
-		$cookie->setValue((integer)$cookie->getValue() + 1);
+		$cookie = new Cookie('myCounter', $counter + 1);
 		$this->response->setCookie($cookie);
 	}
 
-Finally, a cookie can be deleted by calling the ``expire()`` method::
+Finally, a cookie can be deleted by calling the ``deleteCookie()`` method::
 
 	public function myAction() {
-		$httpRequest = $this->request->getHttpRequest();
-		$cookie = $httpRequest->getCookie('myCounter');
-		$cookie->expire();
-		$this->response->setCookie($cookie);
+		$this->response->deleteCookie('myCounter');
 	}
 
 Uri

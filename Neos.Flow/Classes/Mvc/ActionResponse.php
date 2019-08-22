@@ -1,6 +1,7 @@
 <?php
 namespace Neos\Flow\Mvc;
 
+use Neos\Flow\Http\Cookie;
 use function GuzzleHttp\Psr7\stream_for;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Component\ComponentContext;
@@ -45,9 +46,14 @@ final class ActionResponse
      */
     protected $contentType;
 
+    /**
+     * @var Cookie[]
+     */
+    protected $cookies = [];
+
     public function __construct()
     {
-        $this->content = stream_for('');
+        $this->content = stream_for();
     }
 
     /**
@@ -101,6 +107,32 @@ final class ActionResponse
     public function setStatusCode(int $statusCode): void
     {
         $this->statusCode = $statusCode;
+    }
+
+    /**
+     * Set a cookie in the HTTP response
+     * This leads to a corresponding `Set-Cookie` header to be set in the HTTP response
+     *
+     * @param Cookie $cookie Cookie to be set in the HTTP response
+     * @api
+     */
+    public function setCookie(Cookie $cookie): void
+    {
+        $this->cookies[$cookie->getName()] = $cookie;
+    }
+
+    /**
+     * Delete a cooke from the HTTP response
+     * This leads to a corresponding `Set-Cookie` header with an expired Cookie to be set in the HTTP response
+     *
+     * @param string $cookieName Name of the cookie to delete
+     * @api
+     */
+    public function deleteCookie(string $cookieName): void
+    {
+        $cookie = new Cookie($cookieName);
+        $cookie->expire();
+        $this->cookies[$cookie->getName()] = $cookie;
     }
 
     /**
@@ -189,6 +221,9 @@ final class ActionResponse
                 $actionResponse->setComponentParameter($componentClass, $parameterName, $parameterValue);
             }
         }
+        foreach ($this->cookies as $cookie) {
+            $actionResponse->setCookie($cookie);
+        }
 
         return $actionResponse;
     }
@@ -221,8 +256,13 @@ final class ActionResponse
             }
         }
 
+        foreach ($this->cookies as $cookie) {
+            $httpResponse = $httpResponse->withAddedHeader('Set-Cookie', (string)$cookie);
+        }
+
         $componentContext->replaceHttpResponse($httpResponse);
 
         return $componentContext;
     }
+
 }
