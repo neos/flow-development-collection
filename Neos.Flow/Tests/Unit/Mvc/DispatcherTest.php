@@ -297,6 +297,33 @@ class DispatcherTest extends UnitTestCase
 
         $this->mockFirewall->expects($this->once())->method('blockIllegalRequests')->will($this->throwException(new AuthenticationRequiredException()));
 
+        $this->mockHttpRequest->method('getMethod')->willReturn('GET');
+
+        try {
+            $this->dispatcher->dispatch($this->mockActionRequest, $this->mockHttpResponse);
+        } catch (AuthenticationRequiredException $exception) {
+        }
+    }
+
+    /**
+     * @test
+     */
+    public function dispatchDoesNotSetInterceptedRequestIfRequestMethodIsNotGET()
+    {
+        $this->mockActionRequest->expects($this->any())->method('isDispatched')->will($this->returnValue(true));
+
+        $mockEntryPoint = $this->getMockBuilder(EntryPointInterface::class)->getMock();
+
+        $mockAuthenticationToken = $this->getMockBuilder(TokenInterface::class)->getMock();
+        $mockAuthenticationToken->expects($this->any())->method('getAuthenticationEntryPoint')->will($this->returnValue($mockEntryPoint));
+        $this->mockSecurityContext->expects($this->atLeastOnce())->method('getAuthenticationTokens')->will($this->returnValue([$mockAuthenticationToken]));
+
+        $this->mockSecurityContext->expects($this->never())->method('setInterceptedRequest');
+
+        $this->mockFirewall->expects($this->once())->method('blockIllegalRequests')->will($this->throwException(new AuthenticationRequiredException()));
+
+        $this->mockHttpRequest->method('getMethod')->willReturn('POST');
+
         try {
             $this->dispatcher->dispatch($this->mockActionRequest, $this->actionResponse);
         } catch (AuthenticationRequiredException $exception) {
