@@ -264,5 +264,4 @@ final class ActionResponse
 
         return $componentContext;
     }
-
 }
