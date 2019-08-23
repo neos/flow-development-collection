@@ -314,7 +314,7 @@ class QueryTest extends FunctionalTestCase
         $this->persistenceManager->persistAll();
 
         $query = new Query(Fixtures\TestEntity::class);
-        $entities = $query->matching($query->equals('embeddedValueObject.value', 'vo'))->setLimit(1)->execute()->toArray();
+        $entities = $query->matching($query->equals('embeddedValueObject.value', 'vo'))->execute()->toArray();
 
         $this->assertEquals(2, count($entities));
     }
