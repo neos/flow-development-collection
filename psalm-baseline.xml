@@ -21,9 +21,6 @@
       <code>$this-&gt;cacheEntriesIterator === null</code>
       <code>$this-&gt;cacheEntriesIterator === null</code>
     </DocblockTypeContradiction>
-    <InvalidScalarArgument occurrences="1">
-      <code>1519241835065</code>
-    </InvalidScalarArgument>
     <UndefinedClass occurrences="1">
       <code>\APCUIterator</code>
     </UndefinedClass>
@@ -194,13 +191,6 @@
     </PropertyTypeCoercion>
   </file>
   <file src="Packages/Framework/Neos.Cache/Classes/Psr/SimpleCache/SimpleCache.php">
-    <InvalidScalarArgument occurrences="5">
-      <code>1515192811703</code>
-      <code>1515193492062</code>
-      <code>1515193339722</code>
-      <code>1515193384076</code>
-      <code>1515192768083</code>
-    </InvalidScalarArgument>
     <MissingParamType occurrences="1">
       <code>$key</code>
     </MissingParamType>
@@ -1425,9 +1415,6 @@
     </MissingParamType>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Configuration/Source/YamlSource.php">
-    <InvalidScalarArgument occurrences="1">
-      <code>1516893322579</code>
-    </InvalidScalarArgument>
     <MissingReturnType occurrences="1">
       <code>detectFilesWithWrongExtension</code>
     </MissingReturnType>
