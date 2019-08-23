@@ -163,8 +163,8 @@ class NumberParserTest extends UnitTestCase
     public function parsingUsingCustomPatternWorks($formatType, $numberToParse, $expectedParsedNumber, $stringFormat, array $parsedFormat)
     {
         $mockNumbersReader = $this->createMock(I18n\Cldr\Reader\NumbersReader::class);
-        $mockNumbersReader->expects($this->once())->method('parseCustomFormat')->with($stringFormat)->will($this->returnValue($parsedFormat));
-        $mockNumbersReader->expects($this->once())->method('getLocalizedSymbolsForLocale')->with($this->sampleLocale)->will($this->returnValue($this->sampleLocalizedSymbols));
+        $mockNumbersReader->expects(self::once())->method('parseCustomFormat')->with($stringFormat)->will(self::returnValue($parsedFormat));
+        $mockNumbersReader->expects(self::once())->method('getLocalizedSymbolsForLocale')->with($this->sampleLocale)->will(self::returnValue($this->sampleLocalizedSymbols));
 
         $parser = new I18n\Parser\NumberParser();
         $parser->injectNumbersReader($mockNumbersReader);
@@ -180,8 +180,8 @@ class NumberParserTest extends UnitTestCase
     public function specificFormattingMethodsWork($formatType, $numberToParse, $expectedParsedNumber, $stringFormat, array $parsedFormat)
     {
         $mockNumbersReader = $this->createMock(I18n\Cldr\Reader\NumbersReader::class);
-        $mockNumbersReader->expects($this->once())->method('parseFormatFromCldr')->with($this->sampleLocale, $formatType, I18n\Cldr\Reader\NumbersReader::FORMAT_LENGTH_DEFAULT)->will($this->returnValue($parsedFormat));
-        $mockNumbersReader->expects($this->once())->method('getLocalizedSymbolsForLocale')->with($this->sampleLocale)->will($this->returnValue($this->sampleLocalizedSymbols));
+        $mockNumbersReader->expects(self::once())->method('parseFormatFromCldr')->with($this->sampleLocale, $formatType, I18n\Cldr\Reader\NumbersReader::FORMAT_LENGTH_DEFAULT)->will(self::returnValue($parsedFormat));
+        $mockNumbersReader->expects(self::once())->method('getLocalizedSymbolsForLocale')->with($this->sampleLocale)->will(self::returnValue($this->sampleLocalizedSymbols));
 
         $formatter = new I18n\Parser\NumberParser();
         $formatter->injectNumbersReader($mockNumbersReader);

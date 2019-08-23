@@ -44,7 +44,7 @@ class DataMapperTest extends UnitTestCase
         $object = new \stdClass();
 
         $dataMapper = $this->getMockBuilder(Persistence\Generic\DataMapper::class)->setMethods(['mapToObject'])->getMock();
-        $dataMapper->expects($this->once())->method('mapToObject')->with($objectData[0])->will($this->returnValue($object));
+        $dataMapper->expects(self::once())->method('mapToObject')->with($objectData[0])->will(self::returnValue($object));
 
         $dataMapper->mapToObjects($objectData);
     }
@@ -58,8 +58,8 @@ class DataMapperTest extends UnitTestCase
         $object = new \stdClass();
 
         $mockSession = $this->createMock(Persistence\Generic\Session::class);
-        $mockSession->expects($this->once())->method('hasIdentifier')->with('1234')->will($this->returnValue(true));
-        $mockSession->expects($this->once())->method('getObjectByIdentifier')->with('1234')->will($this->returnValue($object));
+        $mockSession->expects(self::once())->method('hasIdentifier')->with('1234')->will(self::returnValue(true));
+        $mockSession->expects(self::once())->method('getObjectByIdentifier')->with('1234')->will(self::returnValue($object));
 
         $dataMapper = $this->getAccessibleMock(Persistence\Generic\DataMapper::class, ['dummy']);
         $dataMapper->injectPersistenceSession($mockSession);
@@ -80,15 +80,15 @@ class DataMapperTest extends UnitTestCase
         $objectData = ['identifier' => '1234', 'classname' => $mockEntityClassName, 'properties' => ['foo']];
 
         $mockClassSchema = $this->getMockBuilder(ClassSchema::class)->disableOriginalConstructor()->getMock();
-        $mockClassSchema->expects($this->any())->method('getModelType')->will($this->returnValue(ClassSchema::MODELTYPE_ENTITY));
+        $mockClassSchema->expects(self::any())->method('getModelType')->will(self::returnValue(ClassSchema::MODELTYPE_ENTITY));
         $mockReflectionService = $this->getMockBuilder(ReflectionService::class)->disableOriginalConstructor()->getMock();
-        $mockReflectionService->expects($this->any())->method('getClassSchema')->with($mockEntityClassName)->will($this->returnValue($mockClassSchema));
+        $mockReflectionService->expects(self::any())->method('getClassSchema')->with($mockEntityClassName)->will(self::returnValue($mockClassSchema));
         $mockSession = $this->createMock(Persistence\Generic\Session::class);
-        $mockSession->expects($this->once())->method('registerReconstitutedEntity')->with($mockEntity, $objectData);
-        $mockSession->expects($this->once())->method('registerObject')->with($mockEntity, '1234');
+        $mockSession->expects(self::once())->method('registerReconstitutedEntity')->with($mockEntity, $objectData);
+        $mockSession->expects(self::once())->method('registerObject')->with($mockEntity, '1234');
 
         $dataMapper = $this->getAccessibleMock(Persistence\Generic\DataMapper::class, ['thawProperties']);
-        $dataMapper->expects($this->once())->method('thawProperties')->with($mockEntity, $objectData['identifier'], $objectData);
+        $dataMapper->expects(self::once())->method('thawProperties')->with($mockEntity, $objectData['identifier'], $objectData);
         $dataMapper->injectPersistenceSession($mockSession);
         $dataMapper->injectReflectionService($mockReflectionService);
         $dataMapper->_call('mapToObject', $objectData);
@@ -137,7 +137,7 @@ class DataMapperTest extends UnitTestCase
         $classSchema->addProperty('fourthProperty', 'boolean');
 
         $mockReflectionService = $this->createMock(ReflectionService::class);
-        $mockReflectionService->expects($this->once())->method('getClassSchema')->will($this->returnValue($classSchema));
+        $mockReflectionService->expects(self::once())->method('getClassSchema')->will(self::returnValue($classSchema));
 
         $dataMapper = $this->getAccessibleMock(Persistence\Generic\DataMapper::class, ['dummy']);
         $dataMapper->injectReflectionService($mockReflectionService);
@@ -169,7 +169,7 @@ class DataMapperTest extends UnitTestCase
         $classSchema = new ClassSchema('TYPO3\Post');
 
         $mockReflectionService = $this->createMock(ReflectionService::class);
-        $mockReflectionService->expects($this->once())->method('getClassSchema')->will($this->returnValue($classSchema));
+        $mockReflectionService->expects(self::once())->method('getClassSchema')->will(self::returnValue($classSchema));
 
         $dataMapper = $this->getAccessibleMock(Persistence\Generic\DataMapper::class, ['dummy']);
         $dataMapper->injectReflectionService($mockReflectionService);
@@ -221,14 +221,14 @@ class DataMapperTest extends UnitTestCase
         $classSchema->addProperty('fourthProperty', 'Neos\Some\Domain\Model');
 
         $mockReflectionService = $this->createMock(ReflectionService::class);
-        $mockReflectionService->expects($this->once())->method('getClassSchema')->will($this->returnValue($classSchema));
+        $mockReflectionService->expects(self::once())->method('getClassSchema')->will(self::returnValue($classSchema));
 
         $dataMapper = $this->getAccessibleMock(Persistence\Generic\DataMapper::class, ['mapDateTime', 'mapArray', 'mapSplObjectStorage', 'mapToObject']);
         $dataMapper->injectReflectionService($mockReflectionService);
-        $dataMapper->expects($this->at(0))->method('mapArray')->with($objectData['properties']['firstProperty']['value']);
-        $dataMapper->expects($this->at(1))->method('mapSplObjectStorage')->with($objectData['properties']['secondProperty']['value']);
-        $dataMapper->expects($this->at(2))->method('mapDateTime')->with($objectData['properties']['thirdProperty']['value']);
-        $dataMapper->expects($this->at(3))->method('mapToObject')->with($objectData['properties']['fourthProperty']['value']);
+        $dataMapper->expects(self::at(0))->method('mapArray')->with($objectData['properties']['firstProperty']['value']);
+        $dataMapper->expects(self::at(1))->method('mapSplObjectStorage')->with($objectData['properties']['secondProperty']['value']);
+        $dataMapper->expects(self::at(2))->method('mapDateTime')->with($objectData['properties']['thirdProperty']['value']);
+        $dataMapper->expects(self::at(3))->method('mapToObject')->with($objectData['properties']['fourthProperty']['value']);
         $dataMapper->_call('thawProperties', $object, $objectData['identifier'], $objectData);
     }
 
@@ -270,7 +270,7 @@ class DataMapperTest extends UnitTestCase
         $classSchema->addProperty('thirdProperty', 'string');
 
         $mockReflectionService = $this->createMock(ReflectionService::class);
-        $mockReflectionService->expects($this->once())->method('getClassSchema')->will($this->returnValue($classSchema));
+        $mockReflectionService->expects(self::once())->method('getClassSchema')->will(self::returnValue($classSchema));
 
         $dataMapper = $this->getAccessibleMock(Persistence\Generic\DataMapper::class, ['dummy']);
         $dataMapper->injectReflectionService($mockReflectionService);
@@ -320,7 +320,7 @@ class DataMapperTest extends UnitTestCase
         $classSchema->addProperty('thirdProperty', 'string');
 
         $mockReflectionService = $this->createMock(ReflectionService::class);
-        $mockReflectionService->expects($this->once())->method('getClassSchema')->will($this->returnValue($classSchema));
+        $mockReflectionService->expects(self::once())->method('getClassSchema')->will(self::returnValue($classSchema));
 
         $dataMapper = $this->getAccessibleMock(Persistence\Generic\DataMapper::class, ['dummy']);
         $dataMapper->injectReflectionService($mockReflectionService);
@@ -351,7 +351,7 @@ class DataMapperTest extends UnitTestCase
         $classSchema = new ClassSchema('TYPO3\Post');
 
         $mockReflectionService = $this->createMock(ReflectionService::class);
-        $mockReflectionService->expects($this->once())->method('getClassSchema')->will($this->returnValue($classSchema));
+        $mockReflectionService->expects(self::once())->method('getClassSchema')->will(self::returnValue($classSchema));
 
         $dataMapper = $this->getAccessibleMock(Persistence\Generic\DataMapper::class, ['dummy']);
         $dataMapper->injectReflectionService($mockReflectionService);
@@ -374,8 +374,8 @@ class DataMapperTest extends UnitTestCase
         $classSchema->addProperty('firstProperty', 'SplObjectStorage');
 
         $dataMapper = $this->getAccessibleMock(Persistence\Generic\DataMapper::class, ['mapToObject']);
-        $dataMapper->expects($this->at(0))->method('mapToObject')->with($objectData[0]['value'])->will($this->returnValue(new \stdClass()));
-        $dataMapper->expects($this->at(1))->method('mapToObject')->with($objectData[1]['value'])->will($this->returnValue(new \stdClass()));
+        $dataMapper->expects(self::at(0))->method('mapToObject')->with($objectData[0]['value'])->will(self::returnValue(new \stdClass()));
+        $dataMapper->expects(self::at(1))->method('mapToObject')->with($objectData[1]['value'])->will(self::returnValue(new \stdClass()));
         $dataMapper->_call('mapSplObjectStorage', $objectData);
     }
 
@@ -447,9 +447,9 @@ class DataMapperTest extends UnitTestCase
         ];
 
         $dataMapper = $this->getAccessibleMock(Persistence\Generic\DataMapper::class, ['mapDateTime', 'mapToObject', 'mapSplObjectStorage']);
-        $dataMapper->expects($this->once())->method('mapDateTime')->with($arrayValues['five']['value'])->will($this->returnValue($dateTime));
-        $dataMapper->expects($this->once())->method('mapToObject')->with($arrayValues['six']['value'])->will($this->returnValue($object));
-        $dataMapper->expects($this->once())->method('mapSplObjectStorage')->with($arrayValues['seven']['value'])->will($this->returnValue($splObjectStorage));
+        $dataMapper->expects(self::once())->method('mapDateTime')->with($arrayValues['five']['value'])->will(self::returnValue($dateTime));
+        $dataMapper->expects(self::once())->method('mapToObject')->with($arrayValues['six']['value'])->will(self::returnValue($object));
+        $dataMapper->expects(self::once())->method('mapSplObjectStorage')->with($arrayValues['seven']['value'])->will(self::returnValue($splObjectStorage));
         self::assertEquals($dataMapper->_call('mapArray', $arrayValues), $expected);
     }
 

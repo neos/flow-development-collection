@@ -22,12 +22,12 @@ use Neos\Flow\Tests\UnitTestCase;
 class RepositoryTest extends UnitTestCase
 {
     /**
-     * @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $mockEntityManager;
 
     /**
-     * @var ClassMetadata|\PHPUnit_Framework_MockObject_MockObject
+     * @var ClassMetadata|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $mockClassMetadata;
 
@@ -39,7 +39,7 @@ class RepositoryTest extends UnitTestCase
         $this->mockEntityManager = $this->getMockBuilder(EntityManagerInterface::class)->disableOriginalConstructor()->getMock();
 
         $this->mockClassMetadata = $this->getMockBuilder(ClassMetadata::class)->disableOriginalConstructor()->getMock();
-        $this->mockEntityManager->expects($this->any())->method('getClassMetadata')->will($this->returnValue($this->mockClassMetadata));
+        $this->mockEntityManager->expects(self::any())->method('getClassMetadata')->will(self::returnValue($this->mockClassMetadata));
     }
 
     /**

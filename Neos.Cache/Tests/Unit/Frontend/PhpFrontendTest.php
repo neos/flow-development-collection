@@ -35,7 +35,7 @@ class PhpFrontendTest extends BaseTestCase
             ->setMethods(['isValidEntryIdentifier'])
             ->disableOriginalConstructor()
             ->getMock();
-        $cache->expects($this->once())->method('isValidEntryIdentifier')->with('foo')->will($this->returnValue(false));
+        $cache->expects(self::once())->method('isValidEntryIdentifier')->with('foo')->will(self::returnValue(false));
         $cache->set('foo', 'bar');
     }
 
@@ -48,7 +48,7 @@ class PhpFrontendTest extends BaseTestCase
         $modifiedSourceCode = '<?php ' . $originalSourceCode . chr(10) . '#';
 
         $mockBackend = $this->createMock(PhpCapableBackendInterface::class);
-        $mockBackend->expects($this->once())->method('set')->with('Foo-Bar', $modifiedSourceCode, ['tags'], 1234);
+        $mockBackend->expects(self::once())->method('set')->with('Foo-Bar', $modifiedSourceCode, ['tags'], 1234);
 
         $cache = $this->getMockBuilder(PhpFrontend::class)
             ->setMethods(null)
@@ -77,7 +77,7 @@ class PhpFrontendTest extends BaseTestCase
     public function requireOnceCallsTheBackendsRequireOnceMethod()
     {
         $mockBackend = $this->createMock(PhpCapableBackendInterface::class);
-        $mockBackend->expects($this->once())->method('requireOnce')->with('Foo-Bar')->will($this->returnValue('hello world!'));
+        $mockBackend->expects(self::once())->method('requireOnce')->with('Foo-Bar')->will(self::returnValue('hello world!'));
 
         $cache = $this->getMockBuilder(PhpFrontend::class)
             ->setMethods(null)
