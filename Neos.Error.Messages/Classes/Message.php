@@ -57,15 +57,15 @@ class Message
      * Constructs this error
      *
      * @param string $message An english error message which is used if no other error message can be resolved
-     * @param integer $code A unique error code
+     * @param integer|null $code A unique error code
      * @param array $arguments Array of arguments to be replaced in message
      * @param string $title optional title for the message
      * @api
      */
-    public function __construct(string $message, int $code = 0, array $arguments = [], string $title = '')
+    public function __construct(string $message, ?int $code = null, array $arguments = [], string $title = '')
     {
         $this->message = $message;
-        $this->code = $code;
+        $this->code = $code ?? 0;
         $this->arguments = $arguments;
         $this->title = $title;
     }
