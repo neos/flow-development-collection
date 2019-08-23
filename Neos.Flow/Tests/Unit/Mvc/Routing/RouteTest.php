@@ -11,8 +11,8 @@ namespace Neos\Flow\Tests\Unit\Mvc\Routing;
  * source code.
  */
 
-use Neos\Flow\Http;
-use Neos\Flow\Http\Request;
+use GuzzleHttp\Psr7\Uri;
+use Neos\Flow\Http\ServerRequestAttributes;
 use Neos\Flow\Mvc\Exception\InvalidRoutePartHandlerException;
 use Neos\Flow\Mvc\Exception\InvalidRoutePartValueException;
 use Neos\Flow\Mvc\Exception\InvalidRouteSetupException;
@@ -24,6 +24,7 @@ use Neos\Flow\Mvc\Routing;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Tests\UnitTestCase;
+use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
 
 require_once(__DIR__ . '/Fixtures/MockRoutePartHandler.php');
@@ -39,12 +40,12 @@ class RouteTest extends UnitTestCase
     protected $route;
 
     /**
-     * @var ObjectManagerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ObjectManagerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $mockObjectManager;
 
     /**
-     * @var PersistenceManagerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var PersistenceManagerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $mockPersistenceManager;
 
@@ -64,7 +65,7 @@ class RouteTest extends UnitTestCase
         $this->route->_set('objectManager', $this->mockObjectManager);
 
         $this->mockPersistenceManager = $this->createMock(PersistenceManagerInterface::class);
-        $this->mockPersistenceManager->expects($this->any())->method('convertObjectsToIdentityArrays')->will($this->returnCallback(function ($array) {
+        $this->mockPersistenceManager->method('convertObjectsToIdentityArrays')->will(self::returnCallBack(function ($array) {
             return $array;
         }));
         $this->inject($this->route, 'persistenceManager', $this->mockPersistenceManager);
@@ -76,12 +77,10 @@ class RouteTest extends UnitTestCase
      */
     protected function routeMatchesPath($routePath)
     {
-        $mockUri = $this->getMockBuilder(UriInterface::class)->getMock();
-
-        /** @var Http\Request|\PHPUnit_Framework_MockObject_MockObject $mockHttpRequest */
-        $mockHttpRequest = $this->getMockBuilder(Http\Request::class)->disableOriginalConstructor()->getMock();
-        $mockHttpRequest->expects($this->any())->method('getRelativePath')->will($this->returnValue($routePath));
-        $mockHttpRequest->expects($this->any())->method('getUri')->will($this->returnValue($mockUri));
+        $mockUri = new Uri('http://localhost/' . $routePath);
+        /** @var Http\Request|\PHPUnit\Framework\MockObject\MockObject $mockHttpRequest */
+        $mockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
+        $mockHttpRequest->method('getUri')->willReturn($mockUri);
 
         $routeContext = new RouteContext($mockHttpRequest, RouteParameters::createEmpty());
         return $this->route->matches($routeContext);
@@ -140,7 +139,7 @@ class RouteTest extends UnitTestCase
             ]
         );
         $mockRoutePartHandler = $this->createMock(Routing\DynamicRoutePartInterface::class);
-        $this->mockObjectManager->expects($this->once())->method('get')->with('SomeRoutePartHandler')->will($this->returnValue($mockRoutePartHandler));
+        $this->mockObjectManager->expects(self::once())->method('get')->with('SomeRoutePartHandler')->willReturn($mockRoutePartHandler);
 
         $this->route->parse();
     }
@@ -160,7 +159,7 @@ class RouteTest extends UnitTestCase
             ]
         );
         $mockRoutePartHandler = $this->createMock(Routing\StaticRoutePart::class);
-        $this->mockObjectManager->expects($this->once())->method('get')->with(Routing\StaticRoutePart::class)->will($this->returnValue($mockRoutePartHandler));
+        $this->mockObjectManager->expects(self::once())->method('get')->with(Routing\StaticRoutePart::class)->willReturn($mockRoutePartHandler);
 
         $this->route->parse();
     }
@@ -430,7 +429,7 @@ class RouteTest extends UnitTestCase
             ]
         );
         $mockRoutePartHandler = new MockRoutePartHandler();
-        $this->mockObjectManager->expects($this->once())->method('get')->with(MockRoutePartHandler::class)->will($this->returnValue($mockRoutePartHandler));
+        $this->mockObjectManager->expects(self::once())->method('get')->with(MockRoutePartHandler::class)->willReturn($mockRoutePartHandler);
         $this->routeMatchesPath('foo/bar');
 
         self::assertEquals(['key1' => '_match_invoked_', 'key2' => 'bar'], $this->route->getMatchResults());
@@ -448,9 +447,9 @@ class RouteTest extends UnitTestCase
             $this->expectException(InvalidRoutePartValueException::class);
         }
         $mockRoutePart = $this->createMock(Routing\RoutePartInterface::class);
-        $mockRoutePart->expects($this->once())->method('match')->with('foo')->will($this->returnValue(true));
-        $mockRoutePart->expects($this->any())->method('getName')->will($this->returnValue('TestRoutePart'));
-        $mockRoutePart->expects($this->once())->method('getValue')->will($this->returnValue($routePartValue));
+        $mockRoutePart->expects(self::once())->method('match')->with('foo')->willReturn(true);
+        $mockRoutePart->method('getName')->willReturn('TestRoutePart');
+        $mockRoutePart->expects(self::once())->method('getValue')->willReturn($routePartValue);
 
         $this->route->setUriPattern('foo');
         $this->route->_set('routeParts', [$mockRoutePart]);
@@ -480,19 +479,19 @@ class RouteTest extends UnitTestCase
     public function matchesRecursivelyMergesMatchResults()
     {
         $mockRoutePart1 = $this->createMock(Routing\RoutePartInterface::class);
-        $mockRoutePart1->expects($this->once())->method('match')->will($this->returnValue(true));
-        $mockRoutePart1->expects($this->atLeastOnce())->method('getName')->will($this->returnValue('firstLevel.secondLevel.routePart1'));
-        $mockRoutePart1->expects($this->once())->method('getValue')->will($this->returnValue('foo'));
+        $mockRoutePart1->expects(self::once())->method('match')->willReturn(true);
+        $mockRoutePart1->expects(self::atLeastOnce())->method('getName')->willReturn('firstLevel.secondLevel.routePart1');
+        $mockRoutePart1->expects(self::once())->method('getValue')->willReturn('foo');
 
         $mockRoutePart2 = $this->createMock(Routing\RoutePartInterface::class);
-        $mockRoutePart2->expects($this->once())->method('match')->will($this->returnValue(true));
-        $mockRoutePart2->expects($this->atLeastOnce())->method('getName')->will($this->returnValue('someOtherRoutePart'));
-        $mockRoutePart2->expects($this->once())->method('getValue')->will($this->returnValue('bar'));
+        $mockRoutePart2->expects(self::once())->method('match')->willReturn(true);
+        $mockRoutePart2->expects(self::atLeastOnce())->method('getName')->willReturn('someOtherRoutePart');
+        $mockRoutePart2->expects(self::once())->method('getValue')->willReturn('bar');
 
         $mockRoutePart3 = $this->createMock(Routing\RoutePartInterface::class);
-        $mockRoutePart3->expects($this->once())->method('match')->will($this->returnValue(true));
-        $mockRoutePart3->expects($this->atLeastOnce())->method('getName')->will($this->returnValue('firstLevel.secondLevel.routePart2'));
-        $mockRoutePart3->expects($this->once())->method('getValue')->will($this->returnValue('baz'));
+        $mockRoutePart3->expects(self::once())->method('match')->willReturn(true);
+        $mockRoutePart3->expects(self::atLeastOnce())->method('getName')->willReturn('firstLevel.secondLevel.routePart2');
+        $mockRoutePart3->expects(self::once())->method('getValue')->willReturn('baz');
 
         $this->route->setUriPattern('');
         $this->route->_set('routeParts', [$mockRoutePart1, $mockRoutePart2, $mockRoutePart3]);
@@ -751,18 +750,20 @@ class RouteTest extends UnitTestCase
         $this->route->setUriPattern('');
         $this->route->setHttpMethods(['POST', 'PUT']);
 
-        /** @var Request|\PHPUnit_Framework_MockObject_MockObject $mockHttpRequest */
-        $mockHttpRequest = $this->getMockBuilder(Http\Request::class)->disableOriginalConstructor()->getMock();
+        /** @var ServerRequestInterface|\PHPUnit\Framework\MockObject\MockObject $mockHttpRequest */
+        $mockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
 
-        $mockUri = $this->getMockBuilder(Http\Uri::class)->disableOriginalConstructor()->getMock();
-        $mockUri->expects($this->any())->method('getPath')->will($this->returnValue('/'));
-        $mockHttpRequest->expects($this->any())->method('getUri')->will($this->returnValue($mockUri));
+        $mockUri = $this->getMockBuilder(UriInterface::class)->disableOriginalConstructor()->getMock();
+        $mockUri->expects(self::any())->method('getPath')->will(self::returnValue('/'));
+        $mockUri->method('withQuery')->willReturn($mockUri);
+        $mockUri->method('withFragment')->willReturn($mockUri);
+        $mockUri->method('withPath')->willReturn($mockUri);
+        $mockHttpRequest->method('getUri')->willReturn($mockUri);
 
-        $mockBaseUri = $this->getMockBuilder(Http\Uri::class)->disableOriginalConstructor()->getMock();
-        $mockBaseUri->expects($this->any())->method('getPath')->will($this->returnValue('/'));
-        $mockHttpRequest->expects($this->any())->method('getBaseUri')->will($this->returnValue($mockBaseUri));
+        $mockBaseUri = new Uri('http://localhost/');
+        $mockHttpRequest->expects(self::any())->method('getAttribute')->with(ServerRequestAttributes::BASE_URI)->will(self::returnValue($mockBaseUri));
 
-        $mockHttpRequest->expects($this->atLeastOnce())->method('getMethod')->will($this->returnValue('GET'));
+        $mockHttpRequest->expects(self::atLeastOnce())->method('getMethod')->willReturn('GET');
         self::assertFalse($this->route->matches(new RouteContext($mockHttpRequest, RouteParameters::createEmpty())), 'Route must not match GET requests if only POST or PUT requests are accepted.');
     }
 
@@ -774,18 +775,20 @@ class RouteTest extends UnitTestCase
         $this->route->setUriPattern('');
         $this->route->setHttpMethods(['POST', 'PUT']);
 
-        /** @var Request|\PHPUnit_Framework_MockObject_MockObject $mockHttpRequest */
-        $mockHttpRequest = $this->getMockBuilder(Http\Request::class)->disableOriginalConstructor()->getMock();
+        /** @var ServerRequestInterface|\PHPUnit\Framework\MockObject\MockObject $mockHttpRequest */
+        $mockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
 
-        $mockUri = $this->getMockBuilder(Http\Uri::class)->disableOriginalConstructor()->getMock();
-        $mockUri->expects($this->any())->method('getPath')->will($this->returnValue('/'));
-        $mockHttpRequest->expects($this->any())->method('getUri')->will($this->returnValue($mockUri));
+        $mockUri = $this->getMockBuilder(Uri::class)->disableOriginalConstructor()->getMock();
+        $mockUri->expects(self::any())->method('getPath')->will(self::returnValue('/'));
+        $mockUri->method('withQuery')->willReturn($mockUri);
+        $mockUri->method('withFragment')->willReturn($mockUri);
+        $mockUri->method('withPath')->willReturn($mockUri);
+        $mockHttpRequest->method('getUri')->willReturn($mockUri);
 
-        $mockBaseUri = $this->getMockBuilder(Http\Uri::class)->disableOriginalConstructor()->getMock();
-        $mockBaseUri->expects($this->any())->method('getPath')->will($this->returnValue('/'));
-        $mockHttpRequest->expects($this->any())->method('getBaseUri')->will($this->returnValue($mockBaseUri));
+        $mockBaseUri = new Uri('http://localhost/');
+        $mockHttpRequest->expects(self::any())->method('getAttribute')->with(ServerRequestAttributes::BASE_URI)->will(self::returnValue($mockBaseUri));
 
-        $mockHttpRequest->expects($this->atLeastOnce())->method('getMethod')->will($this->returnValue('PUT'));
+        $mockHttpRequest->expects(self::atLeastOnce())->method('getMethod')->willReturn('PUT');
 
         self::assertTrue($this->route->matches(new RouteContext($mockHttpRequest, RouteParameters::createEmpty())), 'Route should match PUT requests if POST and PUT requests are accepted.');
     }
@@ -981,7 +984,7 @@ class RouteTest extends UnitTestCase
         );
         $this->routeValues = ['key2' => 'value2'];
         $mockRoutePartHandler = new MockRoutePartHandler();
-        $this->mockObjectManager->expects($this->once())->method('get')->with(MockRoutePartHandler::class)->will($this->returnValue($mockRoutePartHandler));
+        $this->mockObjectManager->expects(self::once())->method('get')->with(MockRoutePartHandler::class)->willReturn($mockRoutePartHandler);
         $this->route->resolves($this->routeValues);
 
         self::assertEquals('_resolve_invoked_/value2', $this->route->getResolvedUriConstraints()->getPathConstraint());
@@ -1028,7 +1031,7 @@ class RouteTest extends UnitTestCase
 
 
         $mockPersistenceManager = $this->createMock(PersistenceManagerInterface::class);
-        $mockPersistenceManager->expects($this->once())->method('convertObjectsToIdentityArrays')->with($originalArray)->will($this->returnValue($convertedArray));
+        $mockPersistenceManager->expects(self::once())->method('convertObjectsToIdentityArrays')->with($originalArray)->willReturn($convertedArray);
         $this->inject($this->route, 'persistenceManager', $mockPersistenceManager);
 
         $this->route->setUriPattern('foo');
@@ -1061,9 +1064,9 @@ class RouteTest extends UnitTestCase
     {
         $this->expectException(InvalidRoutePartValueException::class);
         $mockRoutePart = $this->createMock(Routing\RoutePartInterface::class);
-        $mockRoutePart->expects($this->any())->method('resolve')->will($this->returnValue(true));
-        $mockRoutePart->expects($this->any())->method('hasValue')->will($this->returnValue(true));
-        $mockRoutePart->expects($this->once())->method('getValue')->will($this->returnValue(['not a' => 'string']));
+        $mockRoutePart->method('resolve')->willReturn(true);
+        $mockRoutePart->method('hasValue')->willReturn(true);
+        $mockRoutePart->expects(self::once())->method('getValue')->willReturn(['not a' => 'string']);
 
         $this->route->setUriPattern('foo');
         $this->route->_set('isParsed', true);
@@ -1078,9 +1081,9 @@ class RouteTest extends UnitTestCase
     {
         $this->expectException(InvalidRoutePartValueException::class);
         $mockRoutePart = $this->createMock(Routing\RoutePartInterface::class);
-        $mockRoutePart->expects($this->any())->method('resolve')->will($this->returnValue(true));
-        $mockRoutePart->expects($this->any())->method('hasValue')->will($this->returnValue(false));
-        $mockRoutePart->expects($this->once())->method('getDefaultValue')->will($this->returnValue(['not a' => 'string']));
+        $mockRoutePart->method('resolve')->willReturn(true);
+        $mockRoutePart->method('hasValue')->willReturn(false);
+        $mockRoutePart->expects(self::once())->method('getDefaultValue')->willReturn(['not a' => 'string']);
 
         $this->route->setUriPattern('foo');
         $this->route->_set('isParsed', true);
@@ -1097,11 +1100,11 @@ class RouteTest extends UnitTestCase
         $routeValues = ['bar' => 'baz'];
 
         $mockRoutePart = $this->createMock(Routing\RoutePartInterface::class);
-        $mockRoutePart->expects($this->any())->method('resolve')->will($this->returnValue(true));
-        $mockRoutePart->expects($this->any())->method('hasValue')->will($this->returnValue(false));
-        $mockRoutePart->expects($this->once())->method('getDefaultValue')->will($this->returnValue('defaultValue'));
+        $mockRoutePart->method('resolve')->willReturn(true);
+        $mockRoutePart->method('hasValue')->willReturn(false);
+        $mockRoutePart->expects(self::once())->method('getDefaultValue')->willReturn('defaultValue');
 
-        /** @var Route|\PHPUnit_Framework_MockObject_MockObject $route */
+        /** @var Route|\PHPUnit\Framework\MockObject\MockObject $route */
         $route = $this->getAccessibleMock(Routing\Route::class, ['compareAndRemoveMatchingDefaultValues']);
         $route->setAppendExceedingArguments(true);
         $this->inject($route, 'persistenceManager', $this->mockPersistenceManager);
@@ -1110,7 +1113,7 @@ class RouteTest extends UnitTestCase
         $route->_set('isParsed', true);
         $route->_set('routeParts', [$mockRoutePart]);
 
-        $route->expects($this->once())->method('compareAndRemoveMatchingDefaultValues')->with($defaultValues, $routeValues)->will($this->returnValue(true));
+        $route->expects(self::once())->method('compareAndRemoveMatchingDefaultValues')->with($defaultValues, $routeValues)->willReturn(true);
 
         self::assertTrue($route->resolves($routeValues));
     }
@@ -1222,8 +1225,8 @@ class RouteTest extends UnitTestCase
             ]
         );
         $mockRoutePartHandler = $this->createMock(Routing\DynamicRoutePartInterface::class);
-        $mockRoutePartHandler->expects($this->once())->method('setDefaultValue')->with('SomeDefaultValue');
-        $this->mockObjectManager->expects($this->once())->method('get')->with('SomeRoutePartHandler')->will($this->returnValue($mockRoutePartHandler));
+        $mockRoutePartHandler->expects(self::once())->method('setDefaultValue')->with('SomeDefaultValue');
+        $this->mockObjectManager->expects(self::once())->method('get')->with('SomeRoutePartHandler')->willReturn($mockRoutePartHandler);
 
         $this->route->parse();
     }
@@ -1249,8 +1252,8 @@ class RouteTest extends UnitTestCase
             ]
         );
         $mockRoutePartHandler = $this->createMock(Routing\DynamicRoutePartInterface::class);
-        $mockRoutePartHandler->expects($this->once())->method('setDefaultValue')->with('SomeDefaultValue');
-        $this->mockObjectManager->expects($this->once())->method('get')->with('SomeRoutePartHandler')->will($this->returnValue($mockRoutePartHandler));
+        $mockRoutePartHandler->expects(self::once())->method('setDefaultValue')->with('SomeDefaultValue');
+        $this->mockObjectManager->expects(self::once())->method('get')->with('SomeRoutePartHandler')->willReturn($mockRoutePartHandler);
 
         $this->route->parse();
     }

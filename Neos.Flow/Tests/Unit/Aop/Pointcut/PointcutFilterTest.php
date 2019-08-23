@@ -31,7 +31,7 @@ class PointcutFilterTest extends UnitTestCase
         $pointcutQueryIdentifier = 42;
 
         $mockProxyClassBuilder = $this->getMockBuilder(Aop\Builder\ProxyClassBuilder::class)->disableOriginalConstructor()->setMethods(['findPointcut'])->getMock();
-        $mockProxyClassBuilder->expects($this->once())->method('findPointcut')->with('Aspect', 'pointcut')->will($this->returnValue(false));
+        $mockProxyClassBuilder->expects(self::once())->method('findPointcut')->with('Aspect', 'pointcut')->will(self::returnValue(false));
 
         $pointcutFilter = new Aop\Pointcut\PointcutFilter('Aspect', 'pointcut');
         $pointcutFilter->injectProxyClassBuilder($mockProxyClassBuilder);
@@ -49,10 +49,10 @@ class PointcutFilterTest extends UnitTestCase
         $pointcutQueryIdentifier = 42;
 
         $mockPointcut = $this->getMockBuilder(Aop\Pointcut\Pointcut::class)->disableOriginalConstructor()->setMethods(['matches'])->getMock();
-        $mockPointcut->expects($this->once())->method('matches')->with($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier)->willReturn(true);
+        $mockPointcut->expects(self::once())->method('matches')->with($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier)->willReturn(true);
 
         $mockProxyClassBuilder = $this->getMockBuilder(Aop\Builder\ProxyClassBuilder::class)->disableOriginalConstructor()->setMethods(['findPointcut'])->getMock();
-        $mockProxyClassBuilder->expects($this->once())->method('findPointcut')->with('Aspect', 'pointcut')->will($this->returnValue($mockPointcut));
+        $mockProxyClassBuilder->expects(self::once())->method('findPointcut')->with('Aspect', 'pointcut')->will(self::returnValue($mockPointcut));
 
         $pointcutFilter = new Aop\Pointcut\PointcutFilter('Aspect', 'pointcut');
         $pointcutFilter->injectProxyClassBuilder($mockProxyClassBuilder);
@@ -65,10 +65,10 @@ class PointcutFilterTest extends UnitTestCase
     public function getRuntimeEvaluationsDefinitionReturnsTheDefinitionArrayFromThePointcut()
     {
         $mockPointcut = $this->getMockBuilder(Aop\Pointcut\Pointcut::class)->disableOriginalConstructor()->getMock();
-        $mockPointcut->expects($this->once())->method('getRuntimeEvaluationsDefinition')->will($this->returnValue(['evaluations']));
+        $mockPointcut->expects(self::once())->method('getRuntimeEvaluationsDefinition')->will(self::returnValue(['evaluations']));
 
         $mockProxyClassBuilder = $this->getMockBuilder(Aop\Builder\ProxyClassBuilder::class)->disableOriginalConstructor()->setMethods(['findPointcut'])->getMock();
-        $mockProxyClassBuilder->expects($this->once())->method('findPointcut')->with('Aspect', 'pointcut')->will($this->returnValue($mockPointcut));
+        $mockProxyClassBuilder->expects(self::once())->method('findPointcut')->with('Aspect', 'pointcut')->will(self::returnValue($mockPointcut));
 
         $pointcutFilter = new Aop\Pointcut\PointcutFilter('Aspect', 'pointcut');
         $pointcutFilter->injectProxyClassBuilder($mockProxyClassBuilder);
@@ -81,7 +81,7 @@ class PointcutFilterTest extends UnitTestCase
     public function getRuntimeEvaluationsDefinitionReturnsAnEmptyArrayIfThePointcutDoesNotExist()
     {
         $mockProxyClassBuilder = $this->getMockBuilder(Aop\Builder\ProxyClassBuilder::class)->disableOriginalConstructor()->setMethods(['findPointcut'])->getMock();
-        $mockProxyClassBuilder->expects($this->once())->method('findPointcut')->with('Aspect', 'pointcut')->will($this->returnValue(false));
+        $mockProxyClassBuilder->expects(self::once())->method('findPointcut')->with('Aspect', 'pointcut')->will(self::returnValue(false));
 
         $pointcutFilter = new Aop\Pointcut\PointcutFilter('Aspect', 'pointcut');
         $pointcutFilter->injectProxyClassBuilder($mockProxyClassBuilder);
@@ -95,10 +95,10 @@ class PointcutFilterTest extends UnitTestCase
     {
         $resultClassNameIndex = new Aop\Builder\ClassNameIndex();
         $mockPointcut = $this->getMockBuilder(Aop\Pointcut\Pointcut::class)->disableOriginalConstructor()->getMock();
-        $mockPointcut->expects($this->once())->method('reduceTargetClassNames')->willReturn($resultClassNameIndex);
+        $mockPointcut->expects(self::once())->method('reduceTargetClassNames')->willReturn($resultClassNameIndex);
 
         $mockProxyClassBuilder = $this->getMockBuilder(Aop\Builder\ProxyClassBuilder::class)->disableOriginalConstructor()->setMethods(['findPointcut'])->getMock();
-        $mockProxyClassBuilder->expects($this->once())->method('findPointcut')->with('Aspect', 'pointcut')->will($this->returnValue($mockPointcut));
+        $mockProxyClassBuilder->expects(self::once())->method('findPointcut')->with('Aspect', 'pointcut')->will(self::returnValue($mockPointcut));
 
         $pointcutFilter = new Aop\Pointcut\PointcutFilter('Aspect', 'pointcut');
         $pointcutFilter->injectProxyClassBuilder($mockProxyClassBuilder);
@@ -112,7 +112,7 @@ class PointcutFilterTest extends UnitTestCase
     public function reduceTargetClassNamesReturnsTheInputClassNameIndexIfThePointcutCouldNotBeResolved()
     {
         $mockProxyClassBuilder = $this->getMockBuilder(Aop\Builder\ProxyClassBuilder::class)->disableOriginalConstructor()->setMethods(['findPointcut'])->getMock();
-        $mockProxyClassBuilder->expects($this->once())->method('findPointcut')->with('Aspect', 'pointcut')->will($this->returnValue(false));
+        $mockProxyClassBuilder->expects(self::once())->method('findPointcut')->with('Aspect', 'pointcut')->will(self::returnValue(false));
 
         $pointcutFilter = new Aop\Pointcut\PointcutFilter('Aspect', 'pointcut');
         $pointcutFilter->injectProxyClassBuilder($mockProxyClassBuilder);

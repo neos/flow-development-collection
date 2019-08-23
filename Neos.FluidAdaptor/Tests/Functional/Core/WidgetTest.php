@@ -50,7 +50,7 @@ class WidgetTest extends FunctionalTestCase
     public function ifIncludedInATemplateTheWidgetReturnsResultOfItsOwnIndexAction(): void
     {
         $response = $this->browser->request('http://localhost/test/widget/ajaxtest');
-        [$confirmation,] = explode(chr(10), $response->getContent());
+        [$confirmation,] = explode(chr(10), $response->getBody()->getContents());
         self::assertSame('SomeAjaxController::indexAction()', $confirmation);
     }
 
@@ -67,10 +67,10 @@ class WidgetTest extends FunctionalTestCase
     public function theGeneratedUriLeadsToASpecificActionOfTheAjaxController(): void
     {
         $response = $this->browser->request('http://localhost/test/widget/ajaxtest');
-        [, $ajaxWidgetUri] = explode(chr(10), $response->getContent());
+        [, $ajaxWidgetUri] = explode(chr(10), $response->getBody()->getContents());
 
         $response = $this->browser->request('http://localhost/' . $ajaxWidgetUri);
-        self::assertSame('SomeAjaxController::ajaxAction("value1", "value2")', trim($response->getContent()));
+        self::assertSame('SomeAjaxController::ajaxAction("value1", "value2")', trim($response->getBody()->getContents()));
     }
 
     /**
@@ -80,9 +80,9 @@ class WidgetTest extends FunctionalTestCase
     {
         $this->browser->request('http://localhost/test/widget/redirecttest');
         $redirectTriggerUri = $this->browser->getCrawler()->filterXPath('//*[@id="redirect-no-delay-no-param"]')->attr('href');
-
-        $response = $this->browser->request($redirectTriggerUri);
-        self::assertSame('<div id="parameter"></div>', trim($response->getContent()));
+        $response = $this->browser->request(urldecode($redirectTriggerUri));
+        $response->getBody()->rewind();
+        self::assertSame('<div id="parameter"></div>', trim($response->getBody()->getContents()));
     }
 
     /**
@@ -92,9 +92,8 @@ class WidgetTest extends FunctionalTestCase
     {
         $this->browser->request('http://localhost/test/widget/redirecttest');
         $redirectTriggerUri = $this->browser->getCrawler()->filterXPath('//*[@id="redirect-no-delay-with-param"]')->attr('href');
-
-        $response = $this->browser->request($redirectTriggerUri);
-        self::assertSame('<div id="parameter">foo, via redirect</div>', trim($response->getContent()));
+        $response = $this->browser->request(urldecode($redirectTriggerUri));
+        self::assertSame('<div id="parameter">foo, via redirect</div>', trim($response->getBody()->getContents()));
     }
 
     /**
@@ -106,14 +105,14 @@ class WidgetTest extends FunctionalTestCase
         $redirectTriggerUri = $this->browser->getCrawler()->filterXPath('//*[@id="redirect-with-delay-no-param"]')->attr('href');
 
         $this->browser->setFollowRedirects(false);
-        $this->browser->request($redirectTriggerUri);
+        $this->browser->request(urldecode($redirectTriggerUri));
         $this->browser->setFollowRedirects(true);
         $redirectHeader = $this->browser->getCrawler()->filterXPath('//meta[@http-equiv="refresh"]')->attr('content');
         self::assertSame('2;url=', substr($redirectHeader, 0, 6));
 
         $redirectTargetUri = substr($redirectHeader, 6);
-        $response = $this->browser->request($redirectTargetUri);
-        self::assertSame('<div id="parameter"></div>', trim($response->getContent()));
+        $response = $this->browser->request(urldecode($redirectTargetUri));
+        self::assertSame('<div id="parameter"></div>', trim($response->getBody()->getContents()));
     }
 
     /**
@@ -125,14 +124,14 @@ class WidgetTest extends FunctionalTestCase
         $redirectTriggerUri = $this->browser->getCrawler()->filterXPath('//*[@id="redirect-with-delay-with-param"]')->attr('href');
 
         $this->browser->setFollowRedirects(false);
-        $this->browser->request($redirectTriggerUri);
+        $this->browser->request(urldecode($redirectTriggerUri));
         $this->browser->setFollowRedirects(true);
         $redirectHeader = $this->browser->getCrawler()->filterXPath('//meta[@http-equiv="refresh"]')->attr('content');
         self::assertSame('2;url=', substr($redirectHeader, 0, 6));
 
         $redirectTargetUri = substr($redirectHeader, 6);
-        $response = $this->browser->request($redirectTargetUri);
-        self::assertSame('<div id="parameter">bar, via redirect</div>', trim($response->getContent()));
+        $response = $this->browser->request(urldecode($redirectTargetUri));
+        self::assertSame('<div id="parameter">bar, via redirect</div>', trim($response->getBody()->getContents()));
     }
 
     /**
@@ -143,9 +142,9 @@ class WidgetTest extends FunctionalTestCase
         $this->browser->request('http://localhost/test/widget/redirecttest');
         $redirectTriggerUri = $this->browser->getCrawler()->filterXPath('//*[@id="redirect-other-controller"]')->attr('href');
 
-        $response = $this->browser->request($redirectTriggerUri);
+        $response = $this->browser->request(urldecode($redirectTriggerUri));
         self::assertSame(500, $response->getStatusCode());
-        self::assertSame(1380284579, $response->getHeader('X-Flow-ExceptionCode'));
+        self::assertSame('1380284579', $response->getHeaderLine('X-Flow-ExceptionCode'));
     }
 
     /**
@@ -156,8 +155,8 @@ class WidgetTest extends FunctionalTestCase
         $this->browser->request('http://localhost/test/widget/redirecttest');
         $redirectTriggerUri = $this->browser->getCrawler()->filterXPath('//*[@id="forward-no-param"]')->attr('href');
 
-        $response = $this->browser->request($redirectTriggerUri);
-        self::assertSame('<div id="parameter"></div>', trim($response->getContent()));
+        $response = $this->browser->request(urldecode($redirectTriggerUri));
+        self::assertSame('<div id="parameter"></div>', trim($response->getBody()->getContents()));
     }
 
     /**
@@ -168,8 +167,8 @@ class WidgetTest extends FunctionalTestCase
         $this->browser->request('http://localhost/test/widget/redirecttest');
         $redirectTriggerUri = $this->browser->getCrawler()->filterXPath('//*[@id="forward-with-param"]')->attr('href');
 
-        $response = $this->browser->request($redirectTriggerUri);
-        self::assertSame('<div id="parameter">baz, via forward</div>', trim($response->getContent()));
+        $response = $this->browser->request(urldecode($redirectTriggerUri));
+        self::assertSame('<div id="parameter">baz, via forward</div>', trim($response->getBody()->getContents()));
     }
 
     /**
@@ -180,8 +179,8 @@ class WidgetTest extends FunctionalTestCase
         $this->browser->request('http://localhost/test/widget/redirecttest');
         $redirectTriggerUri = $this->browser->getCrawler()->filterXPath('//*[@id="forward-other-controller"]')->attr('href');
 
-        $response = $this->browser->request($redirectTriggerUri);
+        $response = $this->browser->request(urldecode($redirectTriggerUri));
         self::assertSame(500, $response->getStatusCode());
-        self::assertSame(1380284579, $response->getHeader('X-Flow-ExceptionCode'));
+        self::assertSame('1380284579', $response->getHeaderLine('X-Flow-ExceptionCode'));
     }
 }

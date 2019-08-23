@@ -26,6 +26,7 @@ use Neos\Flow\Core\ProxyClassLoader;
 use Neos\Flow\Error\Debugger;
 use Neos\Flow\Error\ErrorHandler;
 use Neos\Flow\Error\ProductionExceptionHandler;
+use Neos\Flow\Http\Helper\RequestInformationHelper;
 use Neos\Flow\Http\HttpRequestHandlerInterface;
 use Neos\Flow\Log\PsrLoggerFactoryInterface;
 use Neos\Flow\Log\ThrowableStorage\FileStorage;
@@ -294,8 +295,9 @@ class Scripts
 
             $request = $requestHandler->getHttpRequest();
             $response = $requestHandler->getHttpResponse();
-            $output .= PHP_EOL . 'HTTP REQUEST:' . PHP_EOL . ($request == '' ? '[request was empty]' : $request) . PHP_EOL;
-            $output .= PHP_EOL . 'HTTP RESPONSE:' . PHP_EOL . ($response == '' ? '[response was empty]' : $response) . PHP_EOL;
+            // TODO: Sensible error output
+            $output .= PHP_EOL . 'HTTP REQUEST:' . PHP_EOL . ($request ? '[request was empty]' : RequestInformationHelper::renderRequestHeaders($request)) . PHP_EOL;
+            $output .= PHP_EOL . 'HTTP RESPONSE:' . PHP_EOL . ($response ? '[response was empty]' : $response->getStatusCode()) . PHP_EOL;
             $output .= PHP_EOL . 'PHP PROCESS:' . PHP_EOL . 'Inode: ' . getmyinode() . PHP_EOL . 'PID: ' . getmypid() . PHP_EOL . 'UID: ' . getmyuid() . PHP_EOL . 'GID: ' . getmygid() . PHP_EOL . 'User: ' . get_current_user() . PHP_EOL;
 
             return $output;
@@ -820,8 +822,20 @@ class Scripts
             return;
         }
 
-        // Resolve any symlinks that the configured php might be pointing to
-        $configuredPhpBinaryPathAndFilename = realpath($phpBinaryPathAndFilename);
+        // Ensure the actual PHP binary is known before checking if it is correct. If empty, we ignore it because it is checked later in the script.
+        if (strlen($phpBinaryPathAndFilename) === 0) {
+            return;
+        }
+
+        // Try to resolve which binary file PHP is pointing to
+        exec($phpBinaryPathAndFilename . ' -r "echo PHP_BINARY;"', $output, $result);
+        if ($result === 0 && sizeof($output) === 1) {
+            // Resolve any wrapper
+            $configuredPhpBinaryPathAndFilename = $output[0];
+        } else {
+            // Resolve any symlinks that the configured php might be pointing to
+            $configuredPhpBinaryPathAndFilename = realpath($phpBinaryPathAndFilename);
+        }
 
         // if the configured PHP binary is empty here, the file does not exist. We ignore that here because it is checked later in the script.
         if ($configuredPhpBinaryPathAndFilename === false || strlen($configuredPhpBinaryPathAndFilename) === 0) {

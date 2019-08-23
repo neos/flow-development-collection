@@ -11,8 +11,7 @@ namespace Neos\Flow\Tests\Functional\Mvc;
  * source code.
  */
 
-use Neos\Flow\Http\Request;
-use Neos\Flow\Http\Uri;
+use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
 use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
@@ -23,6 +22,8 @@ use Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestACont
 use Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller\RoutingTestAController;
 use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\Utility\Arrays;
+use Psr\Http\Message\ServerRequestFactoryInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Functional tests for the Router
@@ -33,11 +34,17 @@ use Neos\Utility\Arrays;
 class RoutingTest extends FunctionalTestCase
 {
     /**
+     * @var ServerRequestFactoryInterface
+     */
+    protected $serverRequestFactory;
+
+    /**
      * Validate that test routes are loaded
      */
     protected function setUp(): void
     {
         parent::setUp();
+        $this->serverRequestFactory = $this->objectManager->get(ServerRequestFactoryInterface::class);
 
         $foundRoute = false;
         /** @var $route Route */
@@ -55,13 +62,13 @@ class RoutingTest extends FunctionalTestCase
     }
 
     /**
-     * @param Request $httpRequest
+     * @param ServerRequestInterface $httpRequest
      * @param array $matchResults
      * @return ActionRequest
      */
-    protected function createActionRequest(Request $httpRequest, array $matchResults = null)
+    protected function createActionRequest(ServerRequestInterface $httpRequest, array $matchResults = null)
     {
-        $actionRequest = new ActionRequest($httpRequest);
+        $actionRequest = ActionRequest::fromHttpRequest($httpRequest);
         if ($matchResults !== null) {
             $requestArguments = $actionRequest->getArguments();
             $mergedArguments = Arrays::arrayMergeRecursiveOverrule($requestArguments, $matchResults);
@@ -76,7 +83,7 @@ class RoutingTest extends FunctionalTestCase
     public function httpMethodsAreRespectedForGetRequests()
     {
         $requestUri = 'http://localhost/neos/flow/test/httpmethods';
-        $request = Request::create(new Uri($requestUri), 'GET');
+        $request = $this->serverRequestFactory->createServerRequest('GET', new Uri($requestUri));
         $matchResults = $this->router->route(new RouteContext($request, RouteParameters::createEmpty()));
         $actionRequest = $this->createActionRequest($request, $matchResults);
         self::assertEquals(ActionControllerTestAController::class, $actionRequest->getControllerObjectName());
@@ -89,7 +96,7 @@ class RoutingTest extends FunctionalTestCase
     public function httpMethodsAreRespectedForPostRequests()
     {
         $requestUri = 'http://localhost/neos/flow/test/httpmethods';
-        $request = Request::create(new Uri($requestUri), 'POST');
+        $request = $this->serverRequestFactory->createServerRequest('POST', new Uri($requestUri));
         $matchResults = $this->router->route(new RouteContext($request, RouteParameters::createEmpty()));
         $actionRequest = $this->createActionRequest($request, $matchResults);
         self::assertEquals(ActionControllerTestAController::class, $actionRequest->getControllerObjectName());
@@ -198,7 +205,7 @@ class RoutingTest extends FunctionalTestCase
      */
     public function routeTests($requestUri, $expectedMatchingRouteName, $expectedControllerObjectName = null, array $expectedArguments = null)
     {
-        $request = Request::create(new Uri($requestUri));
+        $request = $this->serverRequestFactory->createServerRequest('GET', new Uri($requestUri));
         try {
             $matchResults = $this->router->route(new RouteContext($request, RouteParameters::createEmpty()));
         } catch (NoMatchingRouteException $exception) {
@@ -356,6 +363,114 @@ class RoutingTest extends FunctionalTestCase
         $actualResult = $this->router->resolve(new ResolveContext($baseUri, $routeValues, false));
 
         self::assertSame('neos/flow/test/http/foo', (string)$actualResult);
+    }
+
+    /**
+     * @test
+     */
+    public function uriPathPrefixIsRespectedInRoute()
+    {
+        $routeValues = [
+            '@package' => 'Neos.Flow',
+            '@subpackage' => 'Tests\Functional\Http\Fixtures',
+            '@controller' => 'Foo',
+            '@action' => 'index',
+            '@format' => 'html'
+        ];
+        $baseUri = new Uri('http://localhost');
+        $actualResult = $this->router->resolve(new ResolveContext($baseUri, $routeValues, false, 'index.php/'));
+
+        $this->assertSame('index.php/neos/flow/test/http/foo', (string)$actualResult);
+    }
+
+    /**
+     * @test
+     */
+    public function uriPathPrefixIsRespectedInAbsoluteRoute()
+    {
+        $routeValues = [
+            '@package' => 'Neos.Flow',
+            '@subpackage' => 'Tests\Functional\Http\Fixtures',
+            '@controller' => 'Foo',
+            '@action' => 'index',
+            '@format' => 'html'
+        ];
+        $baseUri = new Uri('http://localhost');
+        $actualResult = $this->router->resolve(new ResolveContext($baseUri, $routeValues, true, 'index.php/'));
+
+        $this->assertSame('http://localhost/index.php/neos/flow/test/http/foo', (string)$actualResult);
+    }
+
+    /**
+     * @test
+     */
+    public function pathOfBaseUriIsRespectedInAbsoluteRoute()
+    {
+        $routeValues = [
+            '@package' => 'Neos.Flow',
+            '@subpackage' => 'Tests\Functional\Http\Fixtures',
+            '@controller' => 'Foo',
+            '@action' => 'index',
+            '@format' => 'html'
+        ];
+        $baseUri = new Uri('http://localhost/baz');
+        $actualResult = $this->router->resolve(new ResolveContext($baseUri, $routeValues, true));
+
+        $this->assertSame('http://localhost/baz/neos/flow/test/http/foo', (string)$actualResult);
+    }
+
+    /**
+     * @test
+     */
+    public function pathOfBaseUriIsRespectedInRoute()
+    {
+        $routeValues = [
+            '@package' => 'Neos.Flow',
+            '@subpackage' => 'Tests\Functional\Http\Fixtures',
+            '@controller' => 'Foo',
+            '@action' => 'index',
+            '@format' => 'html'
+        ];
+        $baseUri = new Uri('http://localhost/baz');
+        $actualResult = $this->router->resolve(new ResolveContext($baseUri, $routeValues, false));
+
+        $this->assertSame('neos/flow/test/http/foo', (string)$actualResult);
+    }
+
+    /**
+     * @test
+     */
+    public function pathOfBaseUriWithoutRewriteIsRespectedInRoute()
+    {
+        $routeValues = [
+            '@package' => 'Neos.Flow',
+            '@subpackage' => 'Tests\Functional\Http\Fixtures',
+            '@controller' => 'Foo',
+            '@action' => 'index',
+            '@format' => 'html'
+        ];
+        $baseUri = new Uri('http://localhost/baz');
+        $actualResult = $this->router->resolve(new ResolveContext($baseUri, $routeValues, false, 'index.php/'));
+
+        $this->assertSame('index.php/neos/flow/test/http/foo', (string)$actualResult);
+    }
+
+    /**
+     * @test
+     */
+    public function pathOfBaseUriWithoutRewriteIsRespectedInAbsoluteRoute()
+    {
+        $routeValues = [
+            '@package' => 'Neos.Flow',
+            '@subpackage' => 'Tests\Functional\Http\Fixtures',
+            '@controller' => 'Foo',
+            '@action' => 'index',
+            '@format' => 'html'
+        ];
+        $baseUri = new Uri('http://localhost/baz');
+        $actualResult = $this->router->resolve(new ResolveContext($baseUri, $routeValues, true, 'index.php/'));
+
+        $this->assertSame('http://localhost/baz/index.php/neos/flow/test/http/foo', (string)$actualResult);
     }
 
     /**

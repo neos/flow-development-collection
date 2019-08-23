@@ -11,6 +11,11 @@ namespace Neos\Flow\Tests\Unit\Session;
  * source code.
  */
 
+use GuzzleHttp\Psr7\Response;
+use GuzzleHttp\Psr7\Uri;
+use Neos\Flow\Http\RequestHandler;
+use Neos\Http\Factories\ServerRequestFactory;
+use Neos\Http\Factories\UriFactory;
 use Neos\Flow\Session\Exception\DataNotSerializableException;
 use Neos\Flow\Session\Exception\OperationNotSupportedException;
 use org\bovigo\vfs\vfsStream;
@@ -23,11 +28,12 @@ use Neos\Flow\Session\Exception\SessionNotStartedException;
 use Neos\Flow\Session\Session;
 use Neos\Flow\Session\SessionManager;
 use Neos\Cache\Frontend\VariableFrontend;
-use Neos\Flow\Http;
 use Neos\Flow\Security\Authentication\Token\UsernamePassword;
 use Neos\Flow\Security\Authentication\TokenInterface;
 use Neos\Flow\Security\Account;
 use Neos\Flow\Tests\UnitTestCase;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -36,17 +42,17 @@ use Psr\Log\LoggerInterface;
 class SessionTest extends UnitTestCase
 {
     /**
-     * @var Http\Request
+     * @var ServerRequestInterface
      */
     protected $httpRequest;
 
     /**
-     * @var Http\Response
+     * @var ResponseInterface
      */
     protected $httpResponse;
 
     /**
-     * @var Context|\PHPUnit_Framework_MockObject_MockObject
+     * @var Context|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $mockSecurityContext;
 
@@ -90,20 +96,21 @@ class SessionTest extends UnitTestCase
 
         vfsStream::setup('Foo');
 
-        $this->httpRequest = Http\Request::create(new Http\Uri('http://localhost'));
-        $this->httpResponse = new Http\Response();
+        $serverRequestFactory = new ServerRequestFactory(new UriFactory());
+        $this->httpRequest = $serverRequestFactory->createServerRequest('GET', new Uri('http://localhost'));
+        $this->httpResponse = new Response();
 
-        $mockRequestHandler = $this->createMock(Http\RequestHandler::class);
-        $mockRequestHandler->expects($this->any())->method('getHttpRequest')->will($this->returnValue($this->httpRequest));
-        $mockRequestHandler->expects($this->any())->method('getHttpResponse')->will($this->returnValue($this->httpResponse));
+        $mockRequestHandler = $this->createMock(RequestHandler::class);
+        $mockRequestHandler->expects(self::any())->method('getHttpRequest')->will(self::returnValue($this->httpRequest));
+        $mockRequestHandler->expects(self::any())->method('getHttpResponse')->will(self::returnValue($this->httpResponse));
 
         $this->mockBootstrap = $this->createMock(Bootstrap::class);
-        $this->mockBootstrap->expects($this->any())->method('getActiveRequestHandler')->will($this->returnValue($mockRequestHandler));
+        $this->mockBootstrap->expects(self::any())->method('getActiveRequestHandler')->will(self::returnValue($mockRequestHandler));
 
         $this->mockSecurityContext = $this->createMock(Context::class);
 
         $this->mockObjectManager = $this->createMock(ObjectManagerInterface::class);
-        $this->mockObjectManager->expects($this->any())->method('get')->with(Context::class)->will($this->returnValue($this->mockSecurityContext));
+        $this->mockObjectManager->expects(self::any())->method('get')->with(Context::class)->will(self::returnValue($this->mockSecurityContext));
     }
 
     /**
@@ -801,8 +808,8 @@ class SessionTest extends UnitTestCase
         $token->setAuthenticationStatus(TokenInterface::AUTHENTICATION_SUCCESSFUL);
         $token->setAccount($account);
 
-        $this->mockSecurityContext->expects($this->any())->method('isInitialized')->will($this->returnValue(true));
-        $this->mockSecurityContext->expects($this->any())->method('getAuthenticationTokens')->will($this->returnValue([$token]));
+        $this->mockSecurityContext->expects(self::any())->method('isInitialized')->will(self::returnValue(true));
+        $this->mockSecurityContext->expects(self::any())->method('getAuthenticationTokens')->will(self::returnValue([$token]));
 
         $sessionCookie = $session->getSessionCookie();
         $session->close();
@@ -1034,6 +1041,28 @@ class SessionTest extends UnitTestCase
         self::assertFalse($storageCache->has($sessionInfo1['storageIdentifier'] . md5('session 1 key 2')), 'session 1 key 2 still there');
         self::assertTrue($storageCache->has($sessionInfo2['storageIdentifier'] . md5('session 2 key 1')), 'session 2 key 1 not there');
         self::assertTrue($storageCache->has($sessionInfo2['storageIdentifier'] . md5('session 2 key 2')), 'session 2 key 2 not there');
+    }
+
+    /**
+     * @test for #1674
+     */
+    public function garbageCollectionWorksCorrectlyWithInvalidMetadataEntry()
+    {
+        $settings = $this->settings;
+
+        $metaDataCache = $this->createCache('Meta');
+        $metaDataCache->set('foo', null);
+        $storageCache = $this->createCache('Storage');
+
+        $session = new Session();
+        $this->inject($session, 'objectManager', $this->mockObjectManager);
+        $this->inject($session, 'metaDataCache', $metaDataCache);
+        $this->inject($session, 'storageCache', $storageCache);
+        $this->inject($session, 'logger', $this->createMock(LoggerInterface::class));
+        $session->injectSettings($settings);
+        $session->initializeObject();
+
+        $this->assertSame(0, $session->collectGarbage());
     }
 
     /**

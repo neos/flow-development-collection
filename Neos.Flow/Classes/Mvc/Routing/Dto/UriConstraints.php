@@ -12,7 +12,8 @@ namespace Neos\Flow\Mvc\Routing\Dto;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Http\Uri;
+use GuzzleHttp\Psr7\Uri;
+use Neos\Flow\Http\Helper\UriHelper;
 use Psr\Http\Message\UriInterface;
 
 /**
@@ -41,6 +42,7 @@ final class UriConstraints
     const CONSTRAINT_PATH = 'path';
     const CONSTRAINT_PATH_PREFIX = 'pathPrefix';
     const CONSTRAINT_PATH_SUFFIX = 'pathSuffix';
+    const CONSTRAINT_QUERY_STRING = 'queryString';
 
     /**
      * @var array
@@ -165,6 +167,19 @@ final class UriConstraints
     }
 
     /**
+     * Create a new instance with the query string constraint added
+     *
+     * @param string $queryString
+     * @return UriConstraints
+     */
+    public function withQueryString(string $queryString): self
+    {
+        $newConstraints = $this->constraints;
+        $newConstraints[self::CONSTRAINT_QUERY_STRING] = $queryString;
+        return new static($newConstraints);
+    }
+
+    /**
      * Create a new instance with the path prefix constraint added
      * This can be applied multiple times, later prefixes will be prepended to the start
      *
@@ -204,13 +219,18 @@ final class UriConstraints
     }
 
     /**
-     * Returns the URI path constraint, or NULL if none was set
+     * Returns the URI path constraint, which consists of the path and query string parts, or NULL if none was set
      *
      * @return string|null
      */
-    public function getPathConstraint()
+    public function getPathConstraint(): ?string
     {
-        return $this->constraints[self::CONSTRAINT_PATH] ?? null;
+        $pathPart = $this->constraints[self::CONSTRAINT_PATH] ?? null;
+        $queryPart = $this->constraints[self::CONSTRAINT_QUERY_STRING] ?? null;
+        if ($pathPart === null && $queryPart === null) {
+            return null;
+        }
+        return $pathPart . ($queryPart ? '?' . $queryPart : '');
     }
 
     /**
@@ -278,16 +298,20 @@ final class UriConstraints
         if (isset($this->constraints[self::CONSTRAINT_PATH_SUFFIX])) {
             $uri = $uri->withPath($uri->getPath() . $this->constraints[self::CONSTRAINT_PATH_SUFFIX]);
         }
+        if (isset($this->constraints[self::CONSTRAINT_QUERY_STRING])) {
+            $uri = $uri->withQuery($this->constraints[self::CONSTRAINT_QUERY_STRING]);
+        }
 
         if ($forceAbsoluteUri) {
             if (empty($uri->getScheme())) {
                 $uri = $uri->withScheme($templateUri->getScheme());
             }
-            if (empty($uri->getHost())) {
+            if (empty($uri->getHost()) || $uri->getHost() === Uri::HTTP_DEFAULT_HOST) {
                 $uri = $uri->withHost($templateUri->getHost());
             }
-            if (empty($uri->getPort()) && $templateUri->getPort() !== null) {
-                $uri = $uri->withPort($templateUri->getPort());
+            if (empty($uri->getPort()) && !isset($this->constraints[self::CONSTRAINT_PORT])) {
+                $port = $templateUri->getPort() ?? UriHelper::getDefaultPortForScheme($templateUri->getScheme());
+                $uri = $uri->withPort($port);
             }
         }
 
@@ -303,7 +327,7 @@ final class UriConstraints
      */
     private function stringStartsWith(string $string, string $prefix): bool
     {
-        return substr($string, 0, strlen($prefix)) === $prefix;
+        return strpos($string, $prefix) === 0;
     }
 
     /**

@@ -40,14 +40,14 @@ class CurrencyReaderTest extends UnitTestCase
         ];
 
         $mockModel = $this->getAccessibleMock(I18n\Cldr\CldrModel::class, ['getRawArray'], [['fake/path']]);
-        $mockModel->expects($this->once())->method('getRawArray')->with('currencyData')->will($this->returnValue($sampleCurrencyFractionsData));
+        $mockModel->expects(self::once())->method('getRawArray')->with('currencyData')->will(self::returnValue($sampleCurrencyFractionsData));
 
         $mockRepository = $this->createMock(I18n\Cldr\CldrRepository::class);
-        $mockRepository->expects($this->once())->method('getModel')->with('supplemental/supplementalData')->will($this->returnValue($mockModel));
+        $mockRepository->expects(self::once())->method('getModel')->with('supplemental/supplementalData')->will(self::returnValue($mockModel));
 
         $mockCache = $this->getMockBuilder(VariableFrontend::class)->disableOriginalConstructor()->getMock();
-        $mockCache->expects($this->at(0))->method('has')->with('fractions')->will($this->returnValue(false));
-        $mockCache->expects($this->at(1))->method('set')->with('fractions');
+        $mockCache->expects(self::at(0))->method('has')->with('fractions')->will(self::returnValue(false));
+        $mockCache->expects(self::at(1))->method('set')->with('fractions');
 
         $this->reader = new CurrencyReader();
         $this->reader->injectCldrRepository($mockRepository);

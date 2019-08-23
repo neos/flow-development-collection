@@ -134,7 +134,7 @@ abstract class AbstractTemplateView extends \TYPO3Fluid\Fluid\View\AbstractTempl
         $context = new RenderingContext($this, $this->options);
         $context->setControllerName('Default');
         $context->setControllerAction('Default');
-        $this->setRenderingContext($context);
+        parent::__construct($context);
     }
 
     /**

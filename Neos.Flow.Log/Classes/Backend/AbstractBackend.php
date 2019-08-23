@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Flow\Log\Backend;
 
 /*
@@ -53,11 +55,11 @@ abstract class AbstractBackend implements BackendInterface
     /**
      * The maximum severity to log, anything less severe will not be logged.
      *
-     * @param integer $severityThreshold One of the LOG_* constants
+     * @param int $severityThreshold One of the LOG_* constants
      * @return void
      * @api
      */
-    public function setSeverityThreshold($severityThreshold)
+    public function setSeverityThreshold(int $severityThreshold): void
     {
         $this->severityThreshold = $severityThreshold;
     }
@@ -65,10 +67,10 @@ abstract class AbstractBackend implements BackendInterface
     /**
      * Enables or disables logging of IP addresses.
      *
-     * @param boolean $logIpAddress Set to true to enable logging of IP address, or false to disable
+     * @param bool $logIpAddress Set to true to enable logging of IP address, or false to disable
      * @return void
      */
-    public function setLogIpAddress($logIpAddress)
+    public function setLogIpAddress(bool $logIpAddress): void
     {
         $this->logIpAddress = $logIpAddress;
     }

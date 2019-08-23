@@ -224,6 +224,33 @@ Neos\Flow\Monitor\FileMonitor:
 # HTTP                                                                     #
 #                                                                          #
 
+Psr\Http\Message\ServerRequestFactoryInterface:
+  className: Neos\Http\Factories\ServerRequestFactory
+
+Neos\Http\Factories\ServerRequestFactory:
+  arguments:
+    2:
+      setting: Neos.Flow.http.serverRequestDefaults.userAgent
+    3:
+      setting: Neos.Flow.http.serverRequestDefaults.scriptPath
+    4:
+      setting: Neos.Flow.http.serverRequestDefaults.protocolVersion
+
+Psr\Http\Message\RequestFactoryInterface:
+  className: Neos\Http\Factories\RequestFactory
+
+Psr\Http\Message\ResponseFactoryInterface:
+  className: Neos\Http\Factories\ResponseFactory
+
+Psr\Http\Message\StreamFactoryInterface:
+  className: Neos\Http\Factories\StreamFactory
+
+Psr\Http\Message\UploadedFileFactoryInterface:
+  className: Neos\Http\Factories\UploadedFileFactory
+
+Psr\Http\Message\UriFactoryInterface:
+  className: Neos\Http\Factories\UriFactory
+
 Neos\Flow\Http\Component\ComponentChain:
   factoryObjectName: Neos\Flow\Http\Component\ComponentChainFactory
   arguments:
@@ -239,6 +266,16 @@ Neos\Flow\Http\ContentStream:
         arguments:
           1:
             value: systemLogger
+
+Neos\Flow\Http\Component\SecurityEntryPointComponent:
+  properties:
+    securityLogger:
+      object:
+        factoryObjectName: Neos\Flow\Log\PsrLoggerFactoryInterface
+        factoryMethodName: get
+        arguments:
+          1:
+            value: securityLogger
 
 #                                                                          #
 # MVC                                                                      #

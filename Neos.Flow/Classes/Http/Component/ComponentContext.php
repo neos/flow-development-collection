@@ -12,7 +12,7 @@ namespace Neos\Flow\Http\Component;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
 /**
@@ -31,7 +31,7 @@ class ComponentContext
     /**
      * The current HTTP request
      *
-     * @var RequestInterface
+     * @var ServerRequestInterface
      */
     protected $httpRequest;
 
@@ -51,17 +51,17 @@ class ComponentContext
     protected $parameters = [];
 
     /**
-     * @param RequestInterface $httpRequest
+     * @param ServerRequestInterface $httpRequest
      * @param ResponseInterface $httpResponse
      */
-    public function __construct(RequestInterface $httpRequest, ResponseInterface $httpResponse)
+    public function __construct(ServerRequestInterface $httpRequest, ResponseInterface $httpResponse)
     {
         $this->httpRequest = $httpRequest;
         $this->httpResponse = $httpResponse;
     }
 
     /**
-     * @return RequestInterface
+     * @return ServerRequestInterface
      * @api
      */
     public function getHttpRequest()
@@ -70,11 +70,11 @@ class ComponentContext
     }
 
     /**
-     * @param RequestInterface $httpRequest
+     * @param ServerRequestInterface $httpRequest
      * @return void
      * @api
      */
-    public function replaceHttpRequest(RequestInterface $httpRequest)
+    public function replaceHttpRequest(ServerRequestInterface $httpRequest)
     {
         $this->httpRequest = $httpRequest;
     }
@@ -107,6 +107,15 @@ class ComponentContext
     public function getParameter($componentClassName, $parameterName)
     {
         return isset($this->parameters[$componentClassName][$parameterName]) ? $this->parameters[$componentClassName][$parameterName] : null;
+    }
+
+    /**
+     * @param string $componentClassName
+     * @return array
+     */
+    public function getAllParametersFor($componentClassName): array
+    {
+        return $this->parameters[$componentClassName] ?? [];
     }
 
     /**

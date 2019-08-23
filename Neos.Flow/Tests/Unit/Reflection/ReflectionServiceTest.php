@@ -28,7 +28,7 @@ class ReflectionServiceTest extends UnitTestCase
     protected $reflectionService;
 
     /**
-     * @var Reader|\PHPUnit_Framework_MockObject_MockObject
+     * @var Reader|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $mockAnnotationReader;
 
@@ -37,7 +37,7 @@ class ReflectionServiceTest extends UnitTestCase
         $this->reflectionService = $this->getAccessibleMock(ReflectionService::class, null);
 
         $this->mockAnnotationReader = $this->getMockBuilder('Doctrine\Common\Annotations\Reader')->disableOriginalConstructor()->getMock();
-        $this->mockAnnotationReader->expects($this->any())->method('getClassAnnotations')->will($this->returnValue([]));
+        $this->mockAnnotationReader->expects(self::any())->method('getClassAnnotations')->will(self::returnValue([]));
         $this->inject($this->reflectionService, 'annotationReader', $this->mockAnnotationReader);
     }
 
