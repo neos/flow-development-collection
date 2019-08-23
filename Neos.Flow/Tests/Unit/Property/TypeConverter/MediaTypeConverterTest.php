@@ -27,7 +27,7 @@ class MediaTypeConverterTest extends UnitTestCase
     protected $mediaTypeConverter;
 
     /**
-     * @var PropertyMappingConfigurationInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var PropertyMappingConfigurationInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $mockPropertyMappingConfiguration;
 
@@ -66,7 +66,7 @@ class MediaTypeConverterTest extends UnitTestCase
      */
     public function convertReturnsEmptyArrayIfGivenMediaTypeIsInvalid()
     {
-        $this->mockPropertyMappingConfiguration->expects($this->atLeastOnce())->method('getConfigurationValue')->with(MediaTypeConverterInterface::class, MediaTypeConverterInterface::CONFIGURATION_MEDIA_TYPE)->will($this->returnValue('someInvalidMediaType'));
+        $this->mockPropertyMappingConfiguration->expects(self::atLeastOnce())->method('getConfigurationValue')->with(MediaTypeConverterInterface::class, MediaTypeConverterInterface::CONFIGURATION_MEDIA_TYPE)->will(self::returnValue('someInvalidMediaType'));
 
         $actualResult = $this->mediaTypeConverter->convertFrom('{"jsonArgument":"jsonValue"}', 'array', [], $this->mockPropertyMappingConfiguration);
         $expectedResult = [];
@@ -102,7 +102,7 @@ class MediaTypeConverterTest extends UnitTestCase
      */
     public function convertTests($mediaType, $requestBody, array $expectedResult)
     {
-        $this->mockPropertyMappingConfiguration->expects($this->atLeastOnce())->method('getConfigurationValue')->with(MediaTypeConverterInterface::class, MediaTypeConverterInterface::CONFIGURATION_MEDIA_TYPE)->will($this->returnValue($mediaType));
+        $this->mockPropertyMappingConfiguration->expects(self::atLeastOnce())->method('getConfigurationValue')->with(MediaTypeConverterInterface::class, MediaTypeConverterInterface::CONFIGURATION_MEDIA_TYPE)->will(self::returnValue($mediaType));
 
         $actualResult = $this->mediaTypeConverter->convertFrom($requestBody, 'array', [], $this->mockPropertyMappingConfiguration);
         self::assertSame($expectedResult, $actualResult);

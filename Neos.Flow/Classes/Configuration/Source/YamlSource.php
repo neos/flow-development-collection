@@ -111,7 +111,7 @@ class YamlSource
         }
 
         if ($allowSplitSource === true) {
-            $wrongSplitSourcePathsAndFileNames = glob($pathAndFilename . '.*.yml') ?? [];
+            $wrongSplitSourcePathsAndFileNames = glob($pathAndFilename . '.*.yml') ?: [];
             $wrongPathsAndFileNames = array_merge($wrongPathsAndFileNames, $wrongSplitSourcePathsAndFileNames);
         }
 

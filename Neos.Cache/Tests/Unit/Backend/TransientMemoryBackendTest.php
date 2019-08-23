@@ -196,7 +196,7 @@ class TransientMemoryBackendTest extends BaseTestCase
     }
 
     /**
-     * @return EnvironmentConfiguration|\PHPUnit_Framework_MockObject_MockObject
+     * @return EnvironmentConfiguration|\PHPUnit\Framework\MockObject\MockObject
      */
     public function getEnvironmentConfiguration()
     {

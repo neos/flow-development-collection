@@ -36,7 +36,7 @@ class PersistenceManagerTest extends UnitTestCase
         $objectStorage = new \SplObjectStorage();
         $objectStorage->attach($entity2);
         $mockBackend = $this->createMock(Generic\Backend\BackendInterface::class);
-        $mockBackend->expects($this->once())->method('setAggregateRootObjects')->with($objectStorage);
+        $mockBackend->expects(self::once())->method('setAggregateRootObjects')->with($objectStorage);
 
         $manager = new Generic\PersistenceManager();
         $manager->injectBackend($mockBackend);
@@ -54,7 +54,7 @@ class PersistenceManagerTest extends UnitTestCase
         $objectStorage = new \SplObjectStorage();
         $objectStorage->attach($entity2);
         $mockBackend = $this->createMock(Generic\Backend\BackendInterface::class);
-        $mockBackend->expects($this->once())->method('setDeletedEntities')->with($objectStorage);
+        $mockBackend->expects(self::once())->method('setDeletedEntities')->with($objectStorage);
 
         $manager = new Generic\PersistenceManager();
         $manager->injectBackend($mockBackend);
@@ -72,7 +72,7 @@ class PersistenceManagerTest extends UnitTestCase
         $object = new \stdClass();
 
         $mockSession = $this->createMock(Generic\Session::class);
-        $mockSession->expects($this->once())->method('getIdentifierByObject')->with($object)->will($this->returnValue($fakeUuid));
+        $mockSession->expects(self::once())->method('getIdentifierByObject')->with($object)->will(self::returnValue($fakeUuid));
 
         $manager = new Generic\PersistenceManager();
         $manager->injectPersistenceSession($mockSession);
@@ -89,8 +89,8 @@ class PersistenceManagerTest extends UnitTestCase
         $object = new \stdClass();
 
         $mockSession = $this->createMock(Generic\Session::class);
-        $mockSession->expects($this->once())->method('hasIdentifier')->with($fakeUuid)->will($this->returnValue(true));
-        $mockSession->expects($this->once())->method('getObjectByIdentifier')->with($fakeUuid)->will($this->returnValue($object));
+        $mockSession->expects(self::once())->method('hasIdentifier')->with($fakeUuid)->will(self::returnValue(true));
+        $mockSession->expects(self::once())->method('getObjectByIdentifier')->with($fakeUuid)->will(self::returnValue($object));
 
         $manager = new Generic\PersistenceManager();
         $manager->injectPersistenceSession($mockSession);
@@ -107,13 +107,13 @@ class PersistenceManagerTest extends UnitTestCase
         $object = new \stdClass();
 
         $mockSession = $this->createMock(Generic\Session::class);
-        $mockSession->expects($this->once())->method('hasIdentifier')->with($fakeUuid)->will($this->returnValue(false));
+        $mockSession->expects(self::once())->method('hasIdentifier')->with($fakeUuid)->will(self::returnValue(false));
 
         $mockBackend = $this->createMock(Generic\Backend\BackendInterface::class);
-        $mockBackend->expects($this->once())->method('getObjectDataByIdentifier')->with($fakeUuid)->will($this->returnValue([]));
+        $mockBackend->expects(self::once())->method('getObjectDataByIdentifier')->with($fakeUuid)->will(self::returnValue([]));
 
         $mockDataMapper = $this->createMock(Generic\DataMapper::class);
-        $mockDataMapper->expects($this->once())->method('mapToObject')->will($this->returnValue($object));
+        $mockDataMapper->expects(self::once())->method('mapToObject')->will(self::returnValue($object));
 
         $manager = new Generic\PersistenceManager();
         $manager->injectPersistenceSession($mockSession);
@@ -131,10 +131,10 @@ class PersistenceManagerTest extends UnitTestCase
         $fakeUuid = 'fakeUuid';
 
         $mockSession = $this->createMock(Generic\Session::class);
-        $mockSession->expects($this->once())->method('hasIdentifier')->with($fakeUuid)->will($this->returnValue(false));
+        $mockSession->expects(self::once())->method('hasIdentifier')->with($fakeUuid)->will(self::returnValue(false));
 
         $mockBackend = $this->createMock(Generic\Backend\BackendInterface::class);
-        $mockBackend->expects($this->once())->method('getObjectDataByIdentifier')->with($fakeUuid)->will($this->returnValue(false));
+        $mockBackend->expects(self::once())->method('getObjectDataByIdentifier')->with($fakeUuid)->will(self::returnValue(false));
 
         $manager = new Generic\PersistenceManager();
         $manager->injectPersistenceSession($mockSession);
@@ -222,7 +222,7 @@ class PersistenceManagerTest extends UnitTestCase
     {
         $object = new \ArrayObject(['val' => '1']);
         $persistenceManager = $this->getMockBuilder(\Neos\Flow\Persistence\Generic\PersistenceManager::class)->setMethods(['isNewObject'])->getMock();
-        $persistenceManager->expects($this->any())->method('isNewObject')->willReturn(false);
+        $persistenceManager->expects(self::any())->method('isNewObject')->willReturn(false);
 
         self::assertNotContains($object, ObjectAccess::getProperty($persistenceManager, 'changedObjects', true));
         $persistenceManager->update($object);
@@ -238,9 +238,9 @@ class PersistenceManagerTest extends UnitTestCase
         $mockObject->Persistence_Object_Identifier = 'abcdefg';
 
         $mockSession = $this->createMock(Generic\Session::class);
-        $mockSession->expects($this->any())->method('hasIdentifier')->will($this->returnValue(false));
+        $mockSession->expects(self::any())->method('hasIdentifier')->will(self::returnValue(false));
         $mockBackend = $this->createMock(Generic\Backend\BackendInterface::class);
-        $mockBackend->expects($this->any())->method('getObjectDataByIdentifier')->will($this->returnValue(false));
+        $mockBackend->expects(self::any())->method('getObjectDataByIdentifier')->will(self::returnValue(false));
 
         $persistenceManager = new Generic\PersistenceManager();
         $persistenceManager->injectPersistenceSession($mockSession);
@@ -260,7 +260,7 @@ class PersistenceManagerTest extends UnitTestCase
     {
         $methods = array_merge(get_class_methods(Generic\Backend\BackendInterface::class), ['tearDown']);
         $mockBackend = $this->getMockBuilder(Generic\Backend\BackendInterface::class)->setMethods($methods)->getMock();
-        $mockBackend->expects($this->once())->method('tearDown');
+        $mockBackend->expects(self::once())->method('tearDown');
 
         $persistenceManager = new Generic\PersistenceManager();
         $persistenceManager->injectBackend($mockBackend);

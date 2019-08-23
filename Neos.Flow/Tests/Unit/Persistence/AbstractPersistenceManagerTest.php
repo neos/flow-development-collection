@@ -36,7 +36,7 @@ class AbstractPersistenceManagerTest extends UnitTestCase
     public function convertObjectToIdentityArrayConvertsAnObject()
     {
         $someObject = new \stdClass();
-        $this->abstractPersistenceManager->expects($this->once())->method('getIdentifierByObject')->with($someObject)->will($this->returnValue(123));
+        $this->abstractPersistenceManager->expects(self::once())->method('getIdentifierByObject')->with($someObject)->will(self::returnValue(123));
 
         $expectedResult = ['__identity' => 123];
         $actualResult = $this->abstractPersistenceManager->convertObjectToIdentityArray($someObject);
@@ -50,7 +50,7 @@ class AbstractPersistenceManagerTest extends UnitTestCase
     {
         $this->expectException(UnknownObjectException::class);
         $someObject = new \stdClass();
-        $this->abstractPersistenceManager->expects($this->once())->method('getIdentifierByObject')->with($someObject)->will($this->returnValue(null));
+        $this->abstractPersistenceManager->expects(self::once())->method('getIdentifierByObject')->with($someObject)->will(self::returnValue(null));
 
         $this->abstractPersistenceManager->convertObjectToIdentityArray($someObject);
     }
@@ -62,8 +62,8 @@ class AbstractPersistenceManagerTest extends UnitTestCase
     {
         $object1 = new \stdClass();
         $object2 = new \stdClass();
-        $this->abstractPersistenceManager->expects($this->at(0))->method('getIdentifierByObject')->with($object1)->will($this->returnValue('identifier1'));
-        $this->abstractPersistenceManager->expects($this->at(1))->method('getIdentifierByObject')->with($object2)->will($this->returnValue('identifier2'));
+        $this->abstractPersistenceManager->expects(self::at(0))->method('getIdentifierByObject')->with($object1)->will(self::returnValue('identifier1'));
+        $this->abstractPersistenceManager->expects(self::at(1))->method('getIdentifierByObject')->with($object2)->will(self::returnValue('identifier2'));
 
         $originalArray = ['foo' => 'bar', 'object1' => $object1, 'baz' => ['object2' => $object2]];
         $expectedResult = ['foo' => 'bar', 'object1' => ['__identity' => 'identifier1'], 'baz' => ['object2' => ['__identity' => 'identifier2']]];
@@ -79,8 +79,8 @@ class AbstractPersistenceManagerTest extends UnitTestCase
     {
         $object1 = new \stdClass();
         $object2 = new \stdClass();
-        $this->abstractPersistenceManager->expects($this->at(0))->method('getIdentifierByObject')->with($object1)->will($this->returnValue('identifier1'));
-        $this->abstractPersistenceManager->expects($this->at(1))->method('getIdentifierByObject')->with($object2)->will($this->returnValue('identifier2'));
+        $this->abstractPersistenceManager->expects(self::at(0))->method('getIdentifierByObject')->with($object1)->will(self::returnValue('identifier1'));
+        $this->abstractPersistenceManager->expects(self::at(1))->method('getIdentifierByObject')->with($object2)->will(self::returnValue('identifier2'));
 
         $originalArray = ['foo' => 'bar', 'object1' => $object1, 'baz' => new \ArrayObject(['object2' => $object2])];
         $expectedResult = ['foo' => 'bar', 'object1' => ['__identity' => 'identifier1'], 'baz' => ['object2' => ['__identity' => 'identifier2']]];

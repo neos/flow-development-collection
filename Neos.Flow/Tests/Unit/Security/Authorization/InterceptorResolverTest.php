@@ -27,7 +27,7 @@ class InterceptorResolverTest extends UnitTestCase
     {
         $this->expectException(Security\Exception\NoInterceptorFoundException::class);
         $mockObjectManager = $this->getMockBuilder(ObjectManager::class)->disableOriginalConstructor()->getMock();
-        $mockObjectManager->expects($this->any())->method('getClassNameByObjectName')->will($this->returnValue(false));
+        $mockObjectManager->expects(self::any())->method('getClassNameByObjectName')->will(self::returnValue(false));
 
         $interceptorResolver = new Security\Authorization\InterceptorResolver($mockObjectManager);
 
@@ -52,7 +52,7 @@ class InterceptorResolverTest extends UnitTestCase
         };
 
         $mockObjectManager = $this->getMockBuilder(ObjectManager::class)->disableOriginalConstructor()->getMock();
-        $mockObjectManager->expects($this->any())->method('getClassNameByObjectName')->will($this->returnCallback($getCaseSensitiveObjectNameCallback));
+        $mockObjectManager->expects(self::any())->method('getClassNameByObjectName')->will(self::returnCallBack($getCaseSensitiveObjectNameCallback));
 
 
         $interceptorResolver = new Security\Authorization\InterceptorResolver($mockObjectManager);
@@ -67,7 +67,7 @@ class InterceptorResolverTest extends UnitTestCase
     public function resolveInterceptorReturnsTheCorrectInterceptorForACompleteClassName()
     {
         $mockObjectManager = $this->getMockBuilder(ObjectManager::class)->disableOriginalConstructor()->getMock();
-        $mockObjectManager->expects($this->any())->method('getClassNameByObjectName')->with('ExistingInterceptorClass')->will($this->returnValue('ExistingInterceptorClass'));
+        $mockObjectManager->expects(self::any())->method('getClassNameByObjectName')->with('ExistingInterceptorClass')->will(self::returnValue('ExistingInterceptorClass'));
 
         $interceptorResolver = new Security\Authorization\InterceptorResolver($mockObjectManager);
         $interceptorClass = $interceptorResolver->resolveInterceptorClass('ExistingInterceptorClass');

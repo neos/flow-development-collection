@@ -26,12 +26,12 @@ class ComponentChainFactoryTest extends UnitTestCase
     protected $componentChainFactory;
 
     /**
-     * @var ObjectManagerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ObjectManagerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $mockObjectManager;
 
     /**
-     * @var Http\Component\ComponentInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var Http\Component\ComponentInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $mockComponent;
 
@@ -64,9 +64,9 @@ class ComponentChainFactoryTest extends UnitTestCase
             ],
         ];
 
-        $this->mockObjectManager->expects($this->at(0))->method('get')->with('Bar\Component\ClassName')->will($this->returnValue($this->mockComponent));
-        $this->mockObjectManager->expects($this->at(1))->method('get')->with('Baz\Component\ClassName')->will($this->returnValue($this->mockComponent));
-        $this->mockObjectManager->expects($this->at(2))->method('get')->with('Foo\Component\ClassName')->will($this->returnValue($this->mockComponent));
+        $this->mockObjectManager->expects(self::at(0))->method('get')->with('Bar\Component\ClassName')->will(self::returnValue($this->mockComponent));
+        $this->mockObjectManager->expects(self::at(1))->method('get')->with('Baz\Component\ClassName')->will(self::returnValue($this->mockComponent));
+        $this->mockObjectManager->expects(self::at(2))->method('get')->with('Foo\Component\ClassName')->will(self::returnValue($this->mockComponent));
 
         $this->componentChainFactory->create($chainConfiguration);
     }
@@ -98,7 +98,7 @@ class ComponentChainFactoryTest extends UnitTestCase
             ],
         ];
 
-        $this->mockObjectManager->expects($this->at(0))->method('get')->with('Foo\Component\ClassName')->will($this->returnValue(new \stdClass()));
+        $this->mockObjectManager->expects(self::at(0))->method('get')->with('Foo\Component\ClassName')->will(self::returnValue(new \stdClass()));
         $this->componentChainFactory->create($chainConfiguration);
     }
 }

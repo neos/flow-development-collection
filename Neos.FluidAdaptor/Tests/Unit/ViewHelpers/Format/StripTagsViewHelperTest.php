@@ -25,7 +25,7 @@ use Neos\FluidAdaptor\ViewHelpers\Fixtures\UserWithToString;
 class StripTagsViewHelperTest extends ViewHelperBaseTestcase
 {
     /**
-     * @var \Neos\FluidAdaptor\ViewHelpers\Format\StripTagsViewHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var \Neos\FluidAdaptor\ViewHelpers\Format\StripTagsViewHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $viewHelper;
 
@@ -64,7 +64,7 @@ class StripTagsViewHelperTest extends ViewHelperBaseTestcase
     public function renderUsesChildnodesAsSourceIfSpecified()
     {
         $string = 'Some string';
-        $this->viewHelper->expects($this->once())->method('renderChildren')->willReturn($string);
+        $this->viewHelper->expects(self::once())->method('renderChildren')->willReturn($string);
         $this->viewHelper = $this->prepareArguments($this->viewHelper, []);
         $actualResult = $this->viewHelper->render();
         self::assertEquals($string, $actualResult);

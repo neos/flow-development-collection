@@ -115,7 +115,7 @@ class StringConverterTest extends UnitTestCase
 
         $propertyMappingConfiguration = $this->createMock(PropertyMappingConfiguration::class);
         $propertyMappingConfiguration
-            ->expects($this->any())
+            ->expects(self::any())
             ->method('getConfigurationValue')
             ->will($this->returnValueMap($configurationValueMap));
 
