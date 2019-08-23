@@ -99,7 +99,7 @@ class DispatcherTest extends UnitTestCase
     public function dispatchPassesTheSignalArgumentsToTheStaticSlotMethod()
     {
         $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
-        $mockObjectManager->expects($this->any())->method('getClassNameByObjectName')->with(DispatcherTest::class)->will($this->returnValue(DispatcherTest::class));
+        $mockObjectManager->expects(self::any())->method('getClassNameByObjectName')->with(DispatcherTest::class)->will(self::returnValue(DispatcherTest::class));
 
         $dispatcher = new Dispatcher();
         $dispatcher->connect('Foo', 'bar', get_class($this), '::staticSlot', false);
@@ -147,8 +147,8 @@ class DispatcherTest extends UnitTestCase
         $mockSlot = new $slotClassName();
 
         $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
-        $mockObjectManager->expects($this->once())->method('isRegistered')->with($slotClassName)->will($this->returnValue(true));
-        $mockObjectManager->expects($this->once())->method('get')->with($slotClassName)->will($this->returnValue($mockSlot));
+        $mockObjectManager->expects(self::once())->method('isRegistered')->with($slotClassName)->will(self::returnValue(true));
+        $mockObjectManager->expects(self::once())->method('get')->with($slotClassName)->will(self::returnValue($mockSlot));
 
         $dispatcher = new Dispatcher();
         $dispatcher->injectObjectManager($mockObjectManager);
@@ -165,7 +165,7 @@ class DispatcherTest extends UnitTestCase
     {
         $this->expectException(InvalidSlotException::class);
         $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
-        $mockObjectManager->expects($this->once())->method('isRegistered')->with('NonExistingClassName')->will($this->returnValue(false));
+        $mockObjectManager->expects(self::once())->method('isRegistered')->with('NonExistingClassName')->will(self::returnValue(false));
 
         $dispatcher = new Dispatcher();
         $dispatcher->injectObjectManager($mockObjectManager);
@@ -184,8 +184,8 @@ class DispatcherTest extends UnitTestCase
         $mockSlot = new $slotClassName();
 
         $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
-        $mockObjectManager->expects($this->once())->method('isRegistered')->with($slotClassName)->will($this->returnValue(true));
-        $mockObjectManager->expects($this->once())->method('get')->with($slotClassName)->will($this->returnValue($mockSlot));
+        $mockObjectManager->expects(self::once())->method('isRegistered')->with($slotClassName)->will(self::returnValue(true));
+        $mockObjectManager->expects(self::once())->method('get')->with($slotClassName)->will(self::returnValue($mockSlot));
 
         $dispatcher = new Dispatcher();
         $dispatcher->injectObjectManager($mockObjectManager);

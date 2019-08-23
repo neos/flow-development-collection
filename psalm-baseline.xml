@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="3.4.11@85c9b6bb442039c773120059ae35a31f8ef9d488">
+<files psalm-version="3.4.12@86e5e50c1bb492045e70f2ebe1da3cad06e4e9b2">
   <file src="Packages/Framework/Neos.Cache/Classes/Backend/AbstractBackend.php">
     <PossiblyInvalidArgument occurrences="1">
       <code>$options</code>
@@ -287,14 +287,12 @@
     </ArgumentTypeCoercion>
   </file>
   <file src="Packages/Framework/Neos.Eel/Classes/FlowQuery/Operations/FirstOperation.php">
-    <UndefinedInterfaceMethod occurrences="2">
-      <code>$context</code>
+    <UndefinedInterfaceMethod occurrences="1">
       <code>$context</code>
     </UndefinedInterfaceMethod>
   </file>
   <file src="Packages/Framework/Neos.Eel/Classes/FlowQuery/Operations/GetOperation.php">
-    <UndefinedInterfaceMethod occurrences="2">
-      <code>$context</code>
+    <UndefinedInterfaceMethod occurrences="1">
       <code>$context</code>
     </UndefinedInterfaceMethod>
   </file>
@@ -319,15 +317,9 @@
       <code>$filter['PropertyNameFilter']</code>
       <code>$filter['AttributeFilters']</code>
     </InvalidArrayOffset>
-    <ParadoxicalCondition occurrences="3">
-      <code>isset($filter['IdentifierFilter']) &amp;&amp; !$this-&gt;matchesIdentifierFilter($element, $filter['IdentifierFilter'])</code>
-      <code>isset($filter['PropertyNameFilter']) &amp;&amp; !$this-&gt;matchesPropertyNameFilter($element, $filter['PropertyNameFilter'])</code>
-      <code>isset($filter['AttributeFilters'])</code>
-    </ParadoxicalCondition>
   </file>
   <file src="Packages/Framework/Neos.Eel/Classes/FlowQuery/Operations/Object/PropertyOperation.php">
-    <UndefinedInterfaceMethod occurrences="2">
-      <code>$context</code>
+    <UndefinedInterfaceMethod occurrences="1">
       <code>$context</code>
     </UndefinedInterfaceMethod>
   </file>
@@ -441,21 +433,7 @@
       <code>$additionalData</code>
     </MoreSpecificImplementedParamType>
   </file>
-  <file src="Packages/Framework/Neos.Flow.Log/Classes/Backend/ConsoleBackend.php">
-    <DuplicateArrayKey occurrences="4">
-      <code>LOG_ALERT =&gt; 'ALERT    '</code>
-      <code>LOG_CRIT =&gt; 'CRITICAL '</code>
-      <code>LOG_INFO =&gt; 'INFO     '</code>
-      <code>LOG_DEBUG =&gt; 'DEBUG    '</code>
-    </DuplicateArrayKey>
-  </file>
   <file src="Packages/Framework/Neos.Flow.Log/Classes/Backend/FileBackend.php">
-    <DuplicateArrayKey occurrences="4">
-      <code>LOG_ALERT =&gt; 'ALERT    '</code>
-      <code>LOG_CRIT =&gt; 'CRITICAL '</code>
-      <code>LOG_INFO =&gt; 'INFO     '</code>
-      <code>LOG_DEBUG =&gt; 'DEBUG    '</code>
-    </DuplicateArrayKey>
     <PossiblyNullOperand occurrences="2">
       <code>$className</code>
       <code>$methodName</code>
@@ -656,11 +634,6 @@
     <UndefinedClass occurrences="1">
       <code>FileBackend</code>
     </UndefinedClass>
-  </file>
-  <file src="Packages/Framework/Neos.Flow/Classes/Cli/CommandController.php">
-    <InvalidCast occurrences="1">
-      <code>$commandResult</code>
-    </InvalidCast>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Cli/CommandManager.php">
     <PossiblyNullPropertyAssignmentValue occurrences="2">
@@ -1320,6 +1293,12 @@
     <PossiblyFalseOperand occurrences="1">
       <code>strpos((string)$translationPluralForm['id'], '[')</code>
     </PossiblyFalseOperand>
+    <PossiblyInvalidMethodCall occurrences="1">
+      <code>children</code>
+    </PossiblyInvalidMethodCall>
+    <PossiblyUndefinedMethod occurrences="1">
+      <code>children</code>
+    </PossiblyUndefinedMethod>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Log/ThrowableStorage/FileStorage.php">
     <InvalidScalarArgument occurrences="1">
@@ -1364,9 +1343,6 @@
     </PossiblyNullArgument>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Mvc/Controller/ActionController.php">
-    <InvalidCast occurrences="1">
-      <code>$actionResult</code>
-    </InvalidCast>
     <PossiblyNullArgument occurrences="1">
       <code>$targetNotFoundError-&gt;getCode()</code>
     </PossiblyNullArgument>
@@ -2566,9 +2542,6 @@
     </UndefinedVariable>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Security/Account.php">
-    <PossiblyInvalidArrayOffset occurrences="1">
-      <code>$this-&gt;roleIdentifiers[$identifierIndex]</code>
-    </PossiblyInvalidArrayOffset>
     <PossiblyNullPropertyAssignmentValue occurrences="1">
       <code>$expirationDate</code>
     </PossiblyNullPropertyAssignmentValue>
@@ -3343,11 +3316,7 @@
     </MissingDocblockType>
   </file>
   <file src="Packages/Framework/Neos.FluidAdaptor/Classes/ViewHelpers/Form/SelectViewHelper.php">
-    <InvalidCast occurrences="5">
-      <code>$key</code>
-      <code>$value</code>
-      <code>$value</code>
-      <code>$value</code>
+    <InvalidCast occurrences="1">
       <code>$valueElement</code>
     </InvalidCast>
   </file>

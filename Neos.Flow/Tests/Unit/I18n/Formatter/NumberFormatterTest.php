@@ -92,8 +92,8 @@ class NumberFormatterTest extends UnitTestCase
         $sampleNumber = 123.456;
 
         $formatter = $this->getAccessibleMock(I18n\Formatter\NumberFormatter::class, ['formatDecimalNumber', 'formatPercentNumber']);
-        $formatter->expects($this->at(0))->method('formatDecimalNumber')->with($sampleNumber, $this->sampleLocale, NumbersReader::FORMAT_LENGTH_DEFAULT)->will($this->returnValue('bar1'));
-        $formatter->expects($this->at(1))->method('formatPercentNumber')->with($sampleNumber, $this->sampleLocale, NumbersReader::FORMAT_LENGTH_DEFAULT)->will($this->returnValue('bar2'));
+        $formatter->expects(self::at(0))->method('formatDecimalNumber')->with($sampleNumber, $this->sampleLocale, NumbersReader::FORMAT_LENGTH_DEFAULT)->will(self::returnValue('bar1'));
+        $formatter->expects(self::at(1))->method('formatPercentNumber')->with($sampleNumber, $this->sampleLocale, NumbersReader::FORMAT_LENGTH_DEFAULT)->will(self::returnValue('bar2'));
 
         $result = $formatter->format($sampleNumber, $this->sampleLocale);
         self::assertEquals('bar1', $result);
@@ -164,8 +164,8 @@ class NumberFormatterTest extends UnitTestCase
     public function formattingUsingCustomPatternWorks($number, $format, array $parsedFormat, $expectedResult)
     {
         $mockNumbersReader = $this->createMock(NumbersReader::class);
-        $mockNumbersReader->expects($this->once())->method('parseCustomFormat')->with($format)->will($this->returnValue($parsedFormat));
-        $mockNumbersReader->expects($this->once())->method('getLocalizedSymbolsForLocale')->with($this->sampleLocale)->will($this->returnValue($this->sampleLocalizedSymbols));
+        $mockNumbersReader->expects(self::once())->method('parseCustomFormat')->with($format)->will(self::returnValue($parsedFormat));
+        $mockNumbersReader->expects(self::once())->method('getLocalizedSymbolsForLocale')->with($this->sampleLocale)->will(self::returnValue($this->sampleLocalizedSymbols));
 
         $formatter = new I18n\Formatter\NumberFormatter();
         $formatter->injectNumbersReader($mockNumbersReader);
@@ -232,11 +232,11 @@ class NumberFormatterTest extends UnitTestCase
     public function specificFormattingMethodsWork($number, array $parsedFormat, $expectedResult, $formatType, $currencySign = null, $currencyCode = 'DEFAULT')
     {
         $mockNumbersReader = $this->createMock(NumbersReader::class);
-        $mockNumbersReader->expects($this->once())->method('parseFormatFromCldr')->with($this->sampleLocale, $formatType, 'default')->will($this->returnValue($parsedFormat));
-        $mockNumbersReader->expects($this->once())->method('getLocalizedSymbolsForLocale')->with($this->sampleLocale)->will($this->returnValue($this->sampleLocalizedSymbols));
+        $mockNumbersReader->expects(self::once())->method('parseFormatFromCldr')->with($this->sampleLocale, $formatType, 'default')->will(self::returnValue($parsedFormat));
+        $mockNumbersReader->expects(self::once())->method('getLocalizedSymbolsForLocale')->with($this->sampleLocale)->will(self::returnValue($this->sampleLocalizedSymbols));
 
         $mockCurrencyReader = $this->createMock(CurrencyReader::class);
-        $mockCurrencyReader->expects($this->any())->method('getFraction')->with($currencyCode)->will($this->returnValue($this->sampleCurrencyFractions[$currencyCode]));
+        $mockCurrencyReader->expects(self::any())->method('getFraction')->with($currencyCode)->will(self::returnValue($this->sampleCurrencyFractions[$currencyCode]));
 
         $formatter = new I18n\Formatter\NumberFormatter();
         $formatter->injectNumbersReader($mockNumbersReader);

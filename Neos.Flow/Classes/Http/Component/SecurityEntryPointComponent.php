@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Flow\Http\Component;
 
 use Neos\Flow\Annotations as Flow;
@@ -50,9 +52,10 @@ class SecurityEntryPointComponent implements ComponentInterface
         $this->securityLogger->info(sprintf('Starting authentication with entry point of type "%s"', get_class($entryPoint)), LogEnvironment::fromMethodName(__METHOD__));
 
         // TODO: We should only prevent storage of intercepted request in the session here, but we don't have a different storage mechanism yet.
-        if (!$firstTokenWithEntryPoint instanceof SessionlessTokenInterface) {
+        if (!$firstTokenWithEntryPoint instanceof SessionlessTokenInterface && $componentContext->getHttpRequest()->getMethod() === 'GET') {
             $this->securityContext->setInterceptedRequest($actionRequest->getMainRequest());
         }
+
 
         /** @var ResponseInterface $response */
         $response = $entryPoint->startAuthentication($componentContext->getHttpRequest(), $componentContext->getHttpResponse());

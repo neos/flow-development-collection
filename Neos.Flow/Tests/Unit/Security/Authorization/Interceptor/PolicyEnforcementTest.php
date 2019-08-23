@@ -30,7 +30,7 @@ class PolicyEnforcementTest extends UnitTestCase
         $privilegeManager = $this->createMock(Security\Authorization\PrivilegeManagerInterface::class);
         $joinPoint = $this->createMock(JoinPointInterface::class);
 
-        $authenticationManager->expects($this->once())->method('authenticate');
+        $authenticationManager->expects(self::once())->method('authenticate');
 
         $interceptor = new Security\Authorization\Interceptor\PolicyEnforcement($securityContext, $authenticationManager, $privilegeManager);
         $interceptor->setJoinPoint($joinPoint);
@@ -48,7 +48,7 @@ class PolicyEnforcementTest extends UnitTestCase
         $privilegeManager = $this->createMock(Security\Authorization\PrivilegeManagerInterface::class);
         $joinPoint = $this->createMock(JoinPointInterface::class);
 
-        $privilegeManager->expects($this->once())->method('isGranted')->with(Security\Authorization\Privilege\Method\MethodPrivilegeInterface::class);
+        $privilegeManager->expects(self::once())->method('isGranted')->with(Security\Authorization\Privilege\Method\MethodPrivilegeInterface::class);
 
         $interceptor = new Security\Authorization\Interceptor\PolicyEnforcement($securityContext, $authenticationManager, $privilegeManager);
         $interceptor->setJoinPoint($joinPoint);

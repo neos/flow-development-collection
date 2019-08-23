@@ -39,7 +39,7 @@ class PointcutClassTypeFilterTest extends UnitTestCase
         $availableClassNamesIndex->setClassNames($availableClassNames);
 
         $mockReflectionService = $this->getMockBuilder(ReflectionService::class)->disableOriginalConstructor()->getMock();
-        $mockReflectionService->expects($this->any())->method('getAllImplementationClassNamesForInterface')->with($interfaceName)->will($this->returnValue(['TestPackage\Subpackage\Class1', 'TestPackage\Subpackage\SubSubPackage\Class3', 'SomeMoreClass']));
+        $mockReflectionService->expects(self::any())->method('getAllImplementationClassNamesForInterface')->with($interfaceName)->will(self::returnValue(['TestPackage\Subpackage\Class1', 'TestPackage\Subpackage\SubSubPackage\Class3', 'SomeMoreClass']));
 
         $classTypeFilter = new Aop\Pointcut\PointcutClassTypeFilter($interfaceName);
         $classTypeFilter->injectReflectionService($mockReflectionService);
@@ -77,7 +77,7 @@ class PointcutClassTypeFilterTest extends UnitTestCase
         $availableClassNamesIndex->setClassNames($availableClassNames);
 
         $mockReflectionService = $this->getMockBuilder(ReflectionService::class)->disableOriginalConstructor()->getMock();
-        $mockReflectionService->expects($this->any())->method('getAllSubClassNamesForClass')->with($testClassName)->will($this->returnValue(['TestPackage\Subpackage\Class1', 'TestPackage\Subpackage\SubSubPackage\Class3', 'SomeMoreClass']));
+        $mockReflectionService->expects(self::any())->method('getAllSubClassNamesForClass')->with($testClassName)->will(self::returnValue(['TestPackage\Subpackage\Class1', 'TestPackage\Subpackage\SubSubPackage\Class3', 'SomeMoreClass']));
 
         $classTypeFilter = new Aop\Pointcut\PointcutClassTypeFilter($testClassName);
         $classTypeFilter->injectReflectionService($mockReflectionService);
