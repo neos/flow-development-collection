@@ -310,6 +310,12 @@ class ValidatorResolver
                     continue;
                 }
 
+                if ($classSchema->isPropertyTransient($classPropertyName)) {
+                    // Prevent transient properties to be validated for persistence
+                    $propertyValidationGroups = array_diff($validationGroups, ['Persistence', 'Default']);
+                } else {
+                    $propertyValidationGroups = $validationGroups;
+                }
                 $propertyTargetClassName = $parsedType['type'];
                 $needsCollectionValidator = TypeHandling::isCollectionType($propertyTargetClassName);
                 $needsObjectValidator = (!TypeHandling::isSimpleType($propertyTargetClassName) && $this->objectManager->isRegistered($propertyTargetClassName) && $this->objectManager->getScope($propertyTargetClassName) === Configuration::SCOPE_PROTOTYPE);
@@ -320,7 +326,7 @@ class ValidatorResolver
                         $needsCollectionValidator = false;
                         $validateAnnotation->options = array_merge(['elementType' => $parsedType['elementType'], 'validationGroups' => $validationGroups], $validateAnnotation->options);
                     }
-                    if (count(array_intersect($validateAnnotation->validationGroups, $validationGroups)) === 0) {
+                    if (count(array_intersect($validateAnnotation->validationGroups, $propertyValidationGroups)) === 0) {
                         if ($validateAnnotation->type === 'GenericObject') {
                             $needsObjectValidator = false;
                         }
@@ -338,11 +344,11 @@ class ValidatorResolver
                 }
 
                 if ($needsCollectionValidator) {
-                    $collectionValidator = $this->createValidator(Validator\CollectionValidator::class, ['elementType' => $parsedType['elementType'], 'validationGroups' => $validationGroups]);
+                    $collectionValidator = $this->createValidator(Validator\CollectionValidator::class, ['elementType' => $parsedType['elementType'], 'validationGroups' => $propertyValidationGroups]);
                     $objectValidator->addPropertyValidator($classPropertyName, $collectionValidator);
                 }
                 if ($needsObjectValidator) {
-                    $validatorForProperty = $this->getBaseValidatorConjunction($propertyTargetClassName, $validationGroups);
+                    $validatorForProperty = $this->getBaseValidatorConjunction($propertyTargetClassName, $propertyValidationGroups);
                     if (count($validatorForProperty) > 0) {
                         $objectValidator->addPropertyValidator($classPropertyName, $validatorForProperty);
                     }
