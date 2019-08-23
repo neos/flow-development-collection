@@ -121,6 +121,17 @@ class FlowQuery implements ProtectedContextAwareInterface, \IteratorAggregate, \
     }
 
     /**
+     * The q function from eel
+     * @param mixed $element
+     * @return FlowQuery
+     * @throws Exception
+     */
+    public static function q($element): self
+    {
+        return new static(is_array($element) || $element instanceof \Traversable ? $element : [$element]);
+    }
+
+    /**
      * Setter for setting the operation resolver from the outside, only needed
      * to successfully run unit tests (hacky!)
      *

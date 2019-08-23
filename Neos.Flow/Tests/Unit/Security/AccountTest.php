@@ -40,7 +40,7 @@ class AccountTest extends UnitTestCase
     /**
      * Setup function for the test case
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $administratorRole = new Role('Neos.Flow:Administrator');
         $this->administratorRole = $administratorRole;
@@ -48,7 +48,7 @@ class AccountTest extends UnitTestCase
         $this->customerRole = $customerRole;
 
         $mockPolicyService = $this->createMock(PolicyService::class);
-        $mockPolicyService->expects($this->any())->method('getRole')->will($this->returnCallback(function ($roleIdentifier) use ($administratorRole, $customerRole) {
+        $mockPolicyService->expects(self::any())->method('getRole')->will(self::returnCallBack(function ($roleIdentifier) use ($administratorRole, $customerRole) {
             switch ($roleIdentifier) {
                 case 'Neos.Flow:Administrator':
                     return $administratorRole;
@@ -58,7 +58,7 @@ class AccountTest extends UnitTestCase
                     throw new NoSuchRoleException();
             }
         }));
-        $mockPolicyService->expects($this->any())->method('hasRole')->will($this->returnCallback(function ($roleIdentifier) use ($administratorRole, $customerRole) {
+        $mockPolicyService->expects(self::any())->method('hasRole')->will(self::returnCallBack(function ($roleIdentifier) use ($administratorRole, $customerRole) {
             switch ($roleIdentifier) {
                 case 'Neos.Flow:Administrator':
                 case 'Neos.Flow:Customer':
@@ -79,7 +79,7 @@ class AccountTest extends UnitTestCase
     {
         $this->account->setRoles([$this->administratorRole]);
         $this->account->addRole($this->customerRole);
-        $this->assertCount(2, $this->account->getRoles());
+        self::assertCount(2, $this->account->getRoles());
     }
 
     /**
@@ -90,7 +90,7 @@ class AccountTest extends UnitTestCase
         $this->account->setRoles([$this->administratorRole]);
         $this->account->addRole($this->administratorRole);
 
-        $this->assertCount(1, $this->account->getRoles());
+        self::assertCount(1, $this->account->getRoles());
     }
 
     /**
@@ -101,7 +101,7 @@ class AccountTest extends UnitTestCase
         $this->account->setRoles([$this->administratorRole, $this->customerRole]);
         $this->account->removeRole($this->customerRole);
 
-        $this->assertCount(1, $this->account->getRoles());
+        self::assertCount(1, $this->account->getRoles());
     }
 
     /**
@@ -112,7 +112,7 @@ class AccountTest extends UnitTestCase
         $this->account->setRoles([$this->administratorRole]);
         $this->account->removeRole($this->customerRole);
 
-        $this->assertCount(1, $this->account->getRoles());
+        self::assertCount(1, $this->account->getRoles());
     }
 
     /**
@@ -122,8 +122,8 @@ class AccountTest extends UnitTestCase
     {
         $this->account->setRoles([$this->administratorRole]);
 
-        $this->assertTrue($this->account->hasRole($this->administratorRole));
-        $this->assertFalse($this->account->hasRole($this->customerRole));
+        self::assertTrue($this->account->hasRole($this->administratorRole));
+        self::assertFalse($this->account->hasRole($this->customerRole));
     }
 
     /**
@@ -134,8 +134,9 @@ class AccountTest extends UnitTestCase
         $this->inject($this->account, 'roleIdentifiers', ['Acme.Demo:NoLongerThere', $this->administratorRole->getIdentifier()]);
 
         $roles = $this->account->getRoles();
-        $this->assertCount(1, $roles);
-        $this->assertTrue($roles->has($this->administratorRole));
+
+        self::assertCount(1, $roles);
+        self::assertTrue($roles->has($this->administratorRole));
     }
 
     /**
@@ -145,8 +146,8 @@ class AccountTest extends UnitTestCase
     {
         $this->inject($this->account, 'roleIdentifiers', ['Acme.Demo:NoLongerThere', $this->administratorRole->getIdentifier()]);
 
-        $this->assertTrue($this->account->hasRole($this->administratorRole));
-        $this->assertFalse($this->account->hasRole(new Role('Acme.Demo:NoLongerThere')));
+        self::assertTrue($this->account->hasRole($this->administratorRole));
+        self::assertFalse($this->account->hasRole(new Role('Acme.Demo:NoLongerThere')));
     }
 
     /**
@@ -157,8 +158,8 @@ class AccountTest extends UnitTestCase
         $roles = [$this->administratorRole, $this->customerRole];
         $this->account->setRoles($roles);
 
-        $this->assertTrue($this->account->getRoles()->has($this->administratorRole));
-        $this->assertTrue($this->account->getRoles()->has($this->customerRole));
+        self::assertTrue($this->account->getRoles()->has($this->administratorRole));
+        self::assertTrue($this->account->getRoles()->has($this->customerRole));
     }
 
     /**
@@ -169,7 +170,7 @@ class AccountTest extends UnitTestCase
         $this->account->setExpirationDate(new \DateTime());
         $this->account->setExpirationDate(null);
 
-        $this->assertEquals(null, $this->account->getExpirationDate());
+        self::assertEquals(null, $this->account->getExpirationDate());
     }
 
     /**
@@ -178,7 +179,7 @@ class AccountTest extends UnitTestCase
     public function isActiveReturnsTrueIfTheAccountHasNoExpirationDate()
     {
         $this->account->setExpirationDate(null);
-        $this->assertTrue($this->account->isActive());
+        self::assertTrue($this->account->isActive());
     }
 
     /**
@@ -189,7 +190,7 @@ class AccountTest extends UnitTestCase
         $this->inject($this->account, 'now', new \DateTime());
 
         $this->account->setExpirationDate(new \DateTime('tomorrow'));
-        $this->assertTrue($this->account->isActive());
+        self::assertTrue($this->account->isActive());
     }
 
     /**
@@ -200,6 +201,6 @@ class AccountTest extends UnitTestCase
         $this->inject($this->account, 'now', new \DateTime());
 
         $this->account->setExpirationDate(new \DateTime('yesterday'));
-        $this->assertFalse($this->account->isActive());
+        self::assertFalse($this->account->isActive());
     }
 }

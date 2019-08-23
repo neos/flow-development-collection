@@ -11,7 +11,7 @@ namespace Neos\Flow\Tests\Unit\Mvc\Routing\Dto;
  * source code.
  */
 
-use Neos\Flow\Http\Uri;
+use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Utility\ObjectAccess;
@@ -30,7 +30,7 @@ class UriConstraintsTest extends UnitTestCase
         $uriConstraints2 = UriConstraints::create()->withPath('some/overridden/path');
 
         $mergedUriConstraints = $uriConstraints1->merge($uriConstraints2);
-        $this->assertSame('some/overridden/path', $mergedUriConstraints->getPathConstraint());
+        self::assertSame('some/overridden/path', $mergedUriConstraints->getPathConstraint());
     }
 
     public function applyToDataProvider()
@@ -67,7 +67,7 @@ class UriConstraintsTest extends UnitTestCase
             ['constraints' => [UriConstraints::CONSTRAINT_HOST_SUFFIX => ['suffix' => '', 'replaceSuffixes' => ['.com']]], 'templateUri' => 'http://some-domain.tld', 'forceAbsoluteUri' => false, 'expectedUri' => ''],
             ['constraints' => [UriConstraints::CONSTRAINT_HOST_SUFFIX => ['suffix' => '', 'replaceSuffixes' => ['.tld']]], 'templateUri' => 'http://some-domain.tld', 'forceAbsoluteUri' => false, 'expectedUri' => 'http://some-domain'],
 
-            ['constraints' => [UriConstraints::CONSTRAINT_PORT => 80], 'templateUri' => 'http://some-domain.tld', 'forceAbsoluteUri' => false, 'expectedUri' => ''],
+            ['constraints' => [UriConstraints::CONSTRAINT_PORT => 80], 'templateUri' => 'http://some-domain.tld', 'forceAbsoluteUri' => false, 'expectedUri' => 'http://some-domain.tld'],
             ['constraints' => [UriConstraints::CONSTRAINT_PORT => 8080], 'templateUri' => 'http://some-domain.tld', 'forceAbsoluteUri' => false, 'expectedUri' => 'http://some-domain.tld:8080'],
             ['constraints' => [UriConstraints::CONSTRAINT_SCHEME => 'https', UriConstraints::CONSTRAINT_PORT => 443], 'templateUri' => 'http://some-domain.tld', 'forceAbsoluteUri' => false, 'expectedUri' => 'https://some-domain.tld'],
 
@@ -80,7 +80,7 @@ class UriConstraintsTest extends UnitTestCase
             ['constraints' => [UriConstraints::CONSTRAINT_PATH_PREFIX => '/prefix', UriConstraints::CONSTRAINT_PATH => '/some/path'], 'templateUri' => 'http://some-domain.tld', 'forceAbsoluteUri' => true, 'expectedUri' => 'http://some-domain.tld/prefix/some/path'],
 
             ['constraints' => [UriConstraints::CONSTRAINT_PATH_SUFFIX => 'suffix'], 'templateUri' => 'http://some-domain.tld', 'forceAbsoluteUri' => false, 'expectedUri' => 'suffix'],
-            ['constraints' => [UriConstraints::CONSTRAINT_PATH_SUFFIX => 'suffix'], 'templateUri' => 'http://some-domain.tld', 'forceAbsoluteUri' => true, 'expectedUri' => 'http://some-domain.tldsuffix'],
+            ['constraints' => [UriConstraints::CONSTRAINT_PATH_SUFFIX => 'suffix'], 'templateUri' => 'http://some-domain.tld', 'forceAbsoluteUri' => true, 'expectedUri' => 'http://some-domain.tld/suffix'],
             ['constraints' => [UriConstraints::CONSTRAINT_PATH_SUFFIX => 'suffix', UriConstraints::CONSTRAINT_PATH => '/some/path'], 'templateUri' => 'http://some-domain.tld', 'forceAbsoluteUri' => false, 'expectedUri' => '/some/pathsuffix'],
             ['constraints' => [UriConstraints::CONSTRAINT_PATH_SUFFIX => 'suffix', UriConstraints::CONSTRAINT_PATH => '/some/path'], 'templateUri' => 'http://some-domain.tld', 'forceAbsoluteUri' => true, 'expectedUri' => 'http://some-domain.tld/some/pathsuffix'],
         ];
@@ -94,9 +94,8 @@ class UriConstraintsTest extends UnitTestCase
     {
         $uriConstraints = UriConstraints::create();
         $this->inject($uriConstraints, 'constraints', $constraints);
-
         $resultingUri = $uriConstraints->applyTo(new Uri($templateUri), $forceAbsoluteUri);
-        $this->assertSame($expectedUri, (string)$resultingUri);
+        self::assertSame($expectedUri, (string)$resultingUri);
     }
 
     /**
@@ -108,7 +107,7 @@ class UriConstraintsTest extends UnitTestCase
         $expectedResult = [
             UriConstraints::CONSTRAINT_SCHEME => 'scheme-constraint'
         ];
-        $this->assertSame($expectedResult, ObjectAccess::getProperty($uriConstraints, 'constraints', true));
+        self::assertSame($expectedResult, ObjectAccess::getProperty($uriConstraints, 'constraints', true));
     }
 
     /**
@@ -120,7 +119,7 @@ class UriConstraintsTest extends UnitTestCase
         $expectedResult = [
             UriConstraints::CONSTRAINT_HOST => 'host-constraint'
         ];
-        $this->assertSame($expectedResult, ObjectAccess::getProperty($uriConstraints, 'constraints', true));
+        self::assertSame($expectedResult, ObjectAccess::getProperty($uriConstraints, 'constraints', true));
     }
 
     /**
@@ -135,7 +134,7 @@ class UriConstraintsTest extends UnitTestCase
                 'replacePrefixes' => ['replace', 'prefixes'],
             ]
         ];
-        $this->assertSame($expectedResult, ObjectAccess::getProperty($uriConstraints, 'constraints', true));
+        self::assertSame($expectedResult, ObjectAccess::getProperty($uriConstraints, 'constraints', true));
     }
 
     /**
@@ -150,7 +149,7 @@ class UriConstraintsTest extends UnitTestCase
                 'replaceSuffixes' => ['replace', 'suffixes'],
             ]
         ];
-        $this->assertSame($expectedResult, ObjectAccess::getProperty($uriConstraints, 'constraints', true));
+        self::assertSame($expectedResult, ObjectAccess::getProperty($uriConstraints, 'constraints', true));
     }
 
 
@@ -163,7 +162,7 @@ class UriConstraintsTest extends UnitTestCase
         $expectedResult = [
             UriConstraints::CONSTRAINT_PORT => 1234
         ];
-        $this->assertSame($expectedResult, ObjectAccess::getProperty($uriConstraints, 'constraints', true));
+        self::assertSame($expectedResult, ObjectAccess::getProperty($uriConstraints, 'constraints', true));
     }
 
     /**
@@ -175,7 +174,7 @@ class UriConstraintsTest extends UnitTestCase
         $expectedResult = [
             UriConstraints::CONSTRAINT_PATH => 'path-constraint'
         ];
-        $this->assertSame($expectedResult, ObjectAccess::getProperty($uriConstraints, 'constraints', true));
+        self::assertSame($expectedResult, ObjectAccess::getProperty($uriConstraints, 'constraints', true));
     }
 
     /**
@@ -187,7 +186,7 @@ class UriConstraintsTest extends UnitTestCase
         $expectedResult = [
             UriConstraints::CONSTRAINT_PATH_PREFIX => 'path-prefix-constraint'
         ];
-        $this->assertSame($expectedResult, ObjectAccess::getProperty($uriConstraints, 'constraints', true));
+        self::assertSame($expectedResult, ObjectAccess::getProperty($uriConstraints, 'constraints', true));
     }
 
     /**
@@ -199,7 +198,7 @@ class UriConstraintsTest extends UnitTestCase
         $expectedResult = [
             UriConstraints::CONSTRAINT_PATH_PREFIX => 'prefix2prefix1'
         ];
-        $this->assertSame($expectedResult, ObjectAccess::getProperty($uriConstraints, 'constraints', true));
+        self::assertSame($expectedResult, ObjectAccess::getProperty($uriConstraints, 'constraints', true));
     }
 
     /**
@@ -211,7 +210,7 @@ class UriConstraintsTest extends UnitTestCase
         $expectedResult = [
             UriConstraints::CONSTRAINT_PATH_PREFIX => 'prefix1prefix2'
         ];
-        $this->assertSame($expectedResult, ObjectAccess::getProperty($uriConstraints, 'constraints', true));
+        self::assertSame($expectedResult, ObjectAccess::getProperty($uriConstraints, 'constraints', true));
     }
 
     /**
@@ -223,7 +222,7 @@ class UriConstraintsTest extends UnitTestCase
         $expectedResult = [
             UriConstraints::CONSTRAINT_PATH_SUFFIX => 'path-suffix-constraint'
         ];
-        $this->assertSame($expectedResult, ObjectAccess::getProperty($uriConstraints, 'constraints', true));
+        self::assertSame($expectedResult, ObjectAccess::getProperty($uriConstraints, 'constraints', true));
     }
 
     /**
@@ -235,7 +234,7 @@ class UriConstraintsTest extends UnitTestCase
         $expectedResult = [
             UriConstraints::CONSTRAINT_PATH_SUFFIX => 'suffix1suffix2'
         ];
-        $this->assertSame($expectedResult, ObjectAccess::getProperty($uriConstraints, 'constraints', true));
+        self::assertSame($expectedResult, ObjectAccess::getProperty($uriConstraints, 'constraints', true));
     }
 
     /**
@@ -247,7 +246,7 @@ class UriConstraintsTest extends UnitTestCase
         $expectedResult = [
             UriConstraints::CONSTRAINT_PATH_SUFFIX => 'suffix2suffix1'
         ];
-        $this->assertSame($expectedResult, ObjectAccess::getProperty($uriConstraints, 'constraints', true));
+        self::assertSame($expectedResult, ObjectAccess::getProperty($uriConstraints, 'constraints', true));
     }
 
     /**
@@ -255,7 +254,7 @@ class UriConstraintsTest extends UnitTestCase
      */
     public function getPathConstraintReturnsNullByDefault()
     {
-        $this->assertNull(UriConstraints::create()->getPathConstraint());
+        self::assertNull(UriConstraints::create()->getPathConstraint());
     }
 
     /**
@@ -267,6 +266,6 @@ class UriConstraintsTest extends UnitTestCase
             ->withPath('some/path')
             ->withPathPrefix('prefix')
             ->withPathSuffix('suffix');
-        $this->assertSame('some/path', $uriConstraints->getPathConstraint());
+        self::assertSame('some/path', $uriConstraints->getPathConstraint());
     }
 }

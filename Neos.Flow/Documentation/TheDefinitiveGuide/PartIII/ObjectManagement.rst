@@ -1217,7 +1217,7 @@ rather than the Object Builder. Consider the following configuration:
 	  factoryMethodName: get
 
 From now on the LoggerFactory's ``get`` method will be called each time an object of
-type ``SystemLoggerInterface`` needs to be instantiated. If arguments were passed to the
+type ``PsrSystemLoggerInterface`` needs to be instantiated. If arguments were passed to the
 ``ObjectManagerInterface::get()`` method or defined in the configuration, they will be
 passed through to the custom factory method:
 

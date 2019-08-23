@@ -32,29 +32,29 @@ class PointcutFilterCompositeTest extends UnitTestCase
         $runtimeEvaluations5 = ['methodArgumentConstraint' => ['arg5' => 'eval5', 'arg6' => 'eval6']];
 
         $mockPointcutFilter1 = $this->getMockBuilder(Pointcut\PointcutFilterInterface::class)->disableOriginalConstructor()->getMock();
-        $mockPointcutFilter1->expects($this->once())->method('getRuntimeEvaluationsDefinition')->will($this->returnValue($runtimeEvaluations1));
-        $mockPointcutFilter1->expects($this->any())->method('matches')->will($this->returnValue(true));
-        $mockPointcutFilter1->expects($this->any())->method('hasRuntimeEvaluationsDefinition')->will($this->returnValue(true));
+        $mockPointcutFilter1->expects(self::once())->method('getRuntimeEvaluationsDefinition')->will(self::returnValue($runtimeEvaluations1));
+        $mockPointcutFilter1->expects(self::any())->method('matches')->will(self::returnValue(true));
+        $mockPointcutFilter1->expects(self::any())->method('hasRuntimeEvaluationsDefinition')->will(self::returnValue(true));
 
         $mockPointcutFilter2 = $this->getMockBuilder(Pointcut\PointcutFilterInterface::class)->disableOriginalConstructor()->getMock();
-        $mockPointcutFilter2->expects($this->once())->method('getRuntimeEvaluationsDefinition')->will($this->returnValue($runtimeEvaluations2));
-        $mockPointcutFilter2->expects($this->any())->method('matches')->will($this->returnValue(false));
-        $mockPointcutFilter2->expects($this->any())->method('hasRuntimeEvaluationsDefinition')->will($this->returnValue(true));
+        $mockPointcutFilter2->expects(self::once())->method('getRuntimeEvaluationsDefinition')->will(self::returnValue($runtimeEvaluations2));
+        $mockPointcutFilter2->expects(self::any())->method('matches')->will(self::returnValue(false));
+        $mockPointcutFilter2->expects(self::any())->method('hasRuntimeEvaluationsDefinition')->will(self::returnValue(true));
 
         $mockPointcutFilter3 = $this->getMockBuilder(Pointcut\PointcutFilterInterface::class)->disableOriginalConstructor()->getMock();
-        $mockPointcutFilter3->expects($this->once())->method('getRuntimeEvaluationsDefinition')->will($this->returnValue($runtimeEvaluations3));
-        $mockPointcutFilter3->expects($this->any())->method('matches')->will($this->returnValue(true));
-        $mockPointcutFilter3->expects($this->any())->method('hasRuntimeEvaluationsDefinition')->will($this->returnValue(true));
+        $mockPointcutFilter3->expects(self::once())->method('getRuntimeEvaluationsDefinition')->will(self::returnValue($runtimeEvaluations3));
+        $mockPointcutFilter3->expects(self::any())->method('matches')->will(self::returnValue(true));
+        $mockPointcutFilter3->expects(self::any())->method('hasRuntimeEvaluationsDefinition')->will(self::returnValue(true));
 
         $mockPointcutFilter4 = $this->getMockBuilder(Pointcut\PointcutFilterInterface::class)->disableOriginalConstructor()->getMock();
-        $mockPointcutFilter4->expects($this->once())->method('getRuntimeEvaluationsDefinition')->will($this->returnValue($runtimeEvaluations4));
-        $mockPointcutFilter4->expects($this->any())->method('matches')->will($this->returnValue(true));
-        $mockPointcutFilter4->expects($this->any())->method('hasRuntimeEvaluationsDefinition')->will($this->returnValue(true));
+        $mockPointcutFilter4->expects(self::once())->method('getRuntimeEvaluationsDefinition')->will(self::returnValue($runtimeEvaluations4));
+        $mockPointcutFilter4->expects(self::any())->method('matches')->will(self::returnValue(true));
+        $mockPointcutFilter4->expects(self::any())->method('hasRuntimeEvaluationsDefinition')->will(self::returnValue(true));
 
         $mockPointcutFilter5 = $this->getMockBuilder(Pointcut\PointcutFilterInterface::class)->disableOriginalConstructor()->getMock();
-        $mockPointcutFilter5->expects($this->once())->method('getRuntimeEvaluationsDefinition')->will($this->returnValue($runtimeEvaluations5));
-        $mockPointcutFilter5->expects($this->any())->method('matches')->will($this->returnValue(true));
-        $mockPointcutFilter5->expects($this->any())->method('hasRuntimeEvaluationsDefinition')->will($this->returnValue(true));
+        $mockPointcutFilter5->expects(self::once())->method('getRuntimeEvaluationsDefinition')->will(self::returnValue($runtimeEvaluations5));
+        $mockPointcutFilter5->expects(self::any())->method('matches')->will(self::returnValue(true));
+        $mockPointcutFilter5->expects(self::any())->method('hasRuntimeEvaluationsDefinition')->will(self::returnValue(true));
 
         $pointcutFilterComposite = new Pointcut\PointcutFilterComposite();
         $pointcutFilterComposite->addFilter('&&', $mockPointcutFilter1);
@@ -77,7 +77,7 @@ class PointcutFilterCompositeTest extends UnitTestCase
 
         $pointcutFilterComposite->matches('className', 'methodName', 'methodDeclaringClassName', 1);
 
-        $this->assertEquals($expectedRuntimeEvaluations, $pointcutFilterComposite->getRuntimeEvaluationsDefinition());
+        self::assertEquals($expectedRuntimeEvaluations, $pointcutFilterComposite->getRuntimeEvaluationsDefinition());
     }
 
     /**
@@ -86,20 +86,20 @@ class PointcutFilterCompositeTest extends UnitTestCase
     public function matchesReturnsTrueForNegatedSubfiltersWithRuntimeEvaluations()
     {
         $mockPointcutFilter1 = $this->getMockBuilder(Pointcut\PointcutFilterInterface::class)->disableOriginalConstructor()->getMock();
-        $mockPointcutFilter1->expects($this->any())->method('getRuntimeEvaluationsDefinition')->will($this->returnValue(['eval']));
-        $mockPointcutFilter1->expects($this->once())->method('matches')->will($this->returnValue(true));
+        $mockPointcutFilter1->expects(self::any())->method('getRuntimeEvaluationsDefinition')->will(self::returnValue(['eval']));
+        $mockPointcutFilter1->expects(self::once())->method('matches')->will(self::returnValue(true));
 
         $mockPointcutFilter2 = $this->getMockBuilder(Pointcut\PointcutFilterInterface::class)->disableOriginalConstructor()->getMock();
-        $mockPointcutFilter2->expects($this->any())->method('getRuntimeEvaluationsDefinition')->will($this->returnValue(['eval']));
-        $mockPointcutFilter2->expects($this->once())->method('matches')->will($this->returnValue(true));
+        $mockPointcutFilter2->expects(self::any())->method('getRuntimeEvaluationsDefinition')->will(self::returnValue(['eval']));
+        $mockPointcutFilter2->expects(self::once())->method('matches')->will(self::returnValue(true));
 
         $mockPointcutFilter3 = $this->getMockBuilder(Pointcut\PointcutFilterInterface::class)->disableOriginalConstructor()->getMock();
-        $mockPointcutFilter3->expects($this->any())->method('getRuntimeEvaluationsDefinition')->will($this->returnValue(['eval']));
-        $mockPointcutFilter3->expects($this->any())->method('matches')->will($this->returnValue(true));
+        $mockPointcutFilter3->expects(self::any())->method('getRuntimeEvaluationsDefinition')->will(self::returnValue(['eval']));
+        $mockPointcutFilter3->expects(self::any())->method('matches')->will(self::returnValue(true));
 
         $mockPointcutFilter4 = $this->getMockBuilder(Pointcut\PointcutFilterInterface::class)->disableOriginalConstructor()->getMock();
-        $mockPointcutFilter4->expects($this->any())->method('getRuntimeEvaluationsDefinition')->will($this->returnValue(['eval']));
-        $mockPointcutFilter4->expects($this->once())->method('matches')->will($this->returnValue(true));
+        $mockPointcutFilter4->expects(self::any())->method('getRuntimeEvaluationsDefinition')->will(self::returnValue(['eval']));
+        $mockPointcutFilter4->expects(self::once())->method('matches')->will(self::returnValue(true));
 
         $pointcutFilterComposite = new Pointcut\PointcutFilterComposite();
         $pointcutFilterComposite->addFilter('&&', $mockPointcutFilter1);
@@ -107,7 +107,7 @@ class PointcutFilterCompositeTest extends UnitTestCase
         $pointcutFilterComposite->addFilter('||', $mockPointcutFilter3);
         $pointcutFilterComposite->addFilter('||!', $mockPointcutFilter4);
 
-        $this->assertTrue($pointcutFilterComposite->matches('someClass', 'someMethod', 'someDeclaringClass', 1));
+        self::assertTrue($pointcutFilterComposite->matches('someClass', 'someMethod', 'someDeclaringClass', 1));
     }
 
     /**
@@ -116,18 +116,18 @@ class PointcutFilterCompositeTest extends UnitTestCase
     public function matchesReturnsTrueForNegatedSubfilter()
     {
         $mockPointcutFilter1 = $this->getMockBuilder(Pointcut\PointcutFilterInterface::class)->disableOriginalConstructor()->getMock();
-        $mockPointcutFilter1->expects($this->any())->method('getRuntimeEvaluationsDefinition')->will($this->returnValue(['eval']));
-        $mockPointcutFilter1->expects($this->once())->method('matches')->will($this->returnValue(true));
+        $mockPointcutFilter1->expects(self::any())->method('getRuntimeEvaluationsDefinition')->will(self::returnValue(['eval']));
+        $mockPointcutFilter1->expects(self::once())->method('matches')->will(self::returnValue(true));
 
         $mockPointcutFilter2 = $this->getMockBuilder(Pointcut\PointcutFilterInterface::class)->disableOriginalConstructor()->getMock();
-        $mockPointcutFilter2->expects($this->any())->method('getRuntimeEvaluationsDefinition')->will($this->returnValue(['eval']));
-        $mockPointcutFilter2->expects($this->once())->method('matches')->will($this->returnValue(false));
+        $mockPointcutFilter2->expects(self::any())->method('getRuntimeEvaluationsDefinition')->will(self::returnValue(['eval']));
+        $mockPointcutFilter2->expects(self::once())->method('matches')->will(self::returnValue(false));
 
         $pointcutFilterComposite = new Pointcut\PointcutFilterComposite();
         $pointcutFilterComposite->addFilter('&&', $mockPointcutFilter1);
         $pointcutFilterComposite->addFilter('&&!', $mockPointcutFilter2);
 
-        $this->assertTrue($pointcutFilterComposite->matches('someClass', 'someMethod', 'someDeclaringClass', 1));
+        self::assertTrue($pointcutFilterComposite->matches('someClass', 'someMethod', 'someDeclaringClass', 1));
     }
 
     /**
@@ -136,18 +136,18 @@ class PointcutFilterCompositeTest extends UnitTestCase
     public function matchesReturnsFalseEarlyForAndedSubfilters()
     {
         $mockPointcutFilter1 = $this->getMockBuilder(Pointcut\PointcutFilterInterface::class)->disableOriginalConstructor()->getMock();
-        $mockPointcutFilter1->expects($this->any())->method('getRuntimeEvaluationsDefinition')->will($this->returnValue(['eval']));
-        $mockPointcutFilter1->expects($this->once())->method('matches')->will($this->returnValue(false));
+        $mockPointcutFilter1->expects(self::any())->method('getRuntimeEvaluationsDefinition')->will(self::returnValue(['eval']));
+        $mockPointcutFilter1->expects(self::once())->method('matches')->will(self::returnValue(false));
 
         $mockPointcutFilter2 = $this->getMockBuilder(Pointcut\PointcutFilterInterface::class)->disableOriginalConstructor()->getMock();
-        $mockPointcutFilter2->expects($this->any())->method('getRuntimeEvaluationsDefinition')->will($this->returnValue(['eval']));
-        $mockPointcutFilter2->expects($this->never())->method('matches')->will($this->returnValue(false));
+        $mockPointcutFilter2->expects(self::any())->method('getRuntimeEvaluationsDefinition')->will(self::returnValue(['eval']));
+        $mockPointcutFilter2->expects(self::never())->method('matches')->will(self::returnValue(false));
 
         $pointcutFilterComposite = new Pointcut\PointcutFilterComposite();
         $pointcutFilterComposite->addFilter('&&', $mockPointcutFilter1);
         $pointcutFilterComposite->addFilter('&&!', $mockPointcutFilter2);
 
-        $this->assertFalse($pointcutFilterComposite->matches('someClass', 'someMethod', 'someDeclaringClass', 1));
+        self::assertFalse($pointcutFilterComposite->matches('someClass', 'someMethod', 'someDeclaringClass', 1));
     }
 
     /**
@@ -156,18 +156,18 @@ class PointcutFilterCompositeTest extends UnitTestCase
     public function matchesReturnsFalseEarlyForAndedNegatedSubfilters()
     {
         $mockPointcutFilter1 = $this->getMockBuilder(Pointcut\PointcutFilterInterface::class)->disableOriginalConstructor()->getMock();
-        $mockPointcutFilter1->expects($this->any())->method('getRuntimeEvaluationsDefinition')->will($this->returnValue(['eval']));
-        $mockPointcutFilter1->expects($this->once())->method('matches')->will($this->returnValue(true));
+        $mockPointcutFilter1->expects(self::any())->method('getRuntimeEvaluationsDefinition')->will(self::returnValue(['eval']));
+        $mockPointcutFilter1->expects(self::once())->method('matches')->will(self::returnValue(true));
 
         $mockPointcutFilter2 = $this->getMockBuilder(Pointcut\PointcutFilterInterface::class)->disableOriginalConstructor()->getMock();
-        $mockPointcutFilter2->expects($this->any())->method('getRuntimeEvaluationsDefinition')->will($this->returnValue(['eval']));
-        $mockPointcutFilter2->expects($this->never())->method('matches')->will($this->returnValue(true));
+        $mockPointcutFilter2->expects(self::any())->method('getRuntimeEvaluationsDefinition')->will(self::returnValue(['eval']));
+        $mockPointcutFilter2->expects(self::never())->method('matches')->will(self::returnValue(true));
 
         $pointcutFilterComposite = new Pointcut\PointcutFilterComposite();
         $pointcutFilterComposite->addFilter('&&!', $mockPointcutFilter1);
         $pointcutFilterComposite->addFilter('&&', $mockPointcutFilter2);
 
-        $this->assertFalse($pointcutFilterComposite->matches('someClass', 'someMethod', 'someDeclaringClass', 1));
+        self::assertFalse($pointcutFilterComposite->matches('someClass', 'someMethod', 'someDeclaringClass', 1));
     }
 
     /**
@@ -225,7 +225,7 @@ class PointcutFilterCompositeTest extends UnitTestCase
                             ]
         ];
 
-        $this->assertEquals($expectedResult, $pointcutFilterComposite->getRuntimeEvaluationsDefinition(), 'The runtime evaluations definition has not been added correctly to the pointcut filter composite.');
+        self::assertEquals($expectedResult, $pointcutFilterComposite->getRuntimeEvaluationsDefinition(), 'The runtime evaluations definition has not been added correctly to the pointcut filter composite.');
     }
 
     /**
@@ -264,7 +264,7 @@ class PointcutFilterCompositeTest extends UnitTestCase
 
         $expectedResult = "function(\\Neos\\Flow\\Aop\\JoinPointInterface \$joinPoint, \$objectManager) {\n" .
                                 "    \$currentObject = \$joinPoint->getProxy();\n" .
-                                "    \$globalObjectNames = \$objectManager->getSettingsByPath(array('Neos', 'Flow', 'aop', 'globalObjects'));\n" .
+                                "    \$globalObjectNames = \$objectManager->get(\Neos\Flow\Configuration\ConfigurationManager::class)->getConfiguration(\Neos\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.Flow.aop.globalObjects');\n" .
                                 "    \$globalObjects = array_map(function(\$objectName) use (\$objectManager) { return \$objectManager->get(\$objectName); }, \$globalObjectNames);\n" .
                                 "    return (((\Neos\Utility\ObjectAccess::getPropertyPath(\$currentObject, 'some.thing') != \Neos\Utility\ObjectAccess::getPropertyPath(\$globalObjects['party'], 'name')) && (\$joinPoint->getMethodArgument('identifier') > 3 && \$joinPoint->getMethodArgument('identifier') <= 5)) || (\$joinPoint->getMethodArgument('identifier') == 42));\n" .
                                 "}";
@@ -274,8 +274,8 @@ class PointcutFilterCompositeTest extends UnitTestCase
 
         $result = $pointcutFilterComposite->getRuntimeEvaluationsClosureCode();
 
-        $this->assertTrue($pointcutFilterComposite->_call('hasRuntimeEvaluationsDefinition'));
-        $this->assertEquals($expectedResult, $result, 'The wrong Code has been built.');
+        self::assertTrue($pointcutFilterComposite->_call('hasRuntimeEvaluationsDefinition'));
+        self::assertEquals($expectedResult, $result, 'The wrong Code has been built.');
     }
 
     /**
@@ -314,7 +314,7 @@ class PointcutFilterCompositeTest extends UnitTestCase
 
         $expectedResult = "function(\\Neos\\Flow\\Aop\\JoinPointInterface \$joinPoint, \$objectManager) {\n" .
                                 "    \$currentObject = \$joinPoint->getProxy();\n" .
-                                "    \$globalObjectNames = \$objectManager->getSettingsByPath(array('Neos', 'Flow', 'aop', 'globalObjects'));\n" .
+                                "    \$globalObjectNames = \$objectManager->get(\Neos\Flow\Configuration\ConfigurationManager::class)->getConfiguration(\Neos\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.Flow.aop.globalObjects');\n" .
                                 "    \$globalObjects = array_map(function(\$objectName) use (\$objectManager) { return \$objectManager->get(\$objectName); }, \$globalObjectNames);\n" .
                                 "    return (((\Neos\Utility\ObjectAccess::getPropertyPath(\$currentObject, 'some.thing') != \Neos\Utility\ObjectAccess::getPropertyPath(\$globalObjects['party'], 'name')) && (!(\$joinPoint->getMethodArgument('identifier') > 3 && \$joinPoint->getMethodArgument('identifier') <= 5))) || (!(\$joinPoint->getMethodArgument('identifier') == 42)));\n" .
                                 "}";
@@ -324,8 +324,8 @@ class PointcutFilterCompositeTest extends UnitTestCase
 
         $result = $pointcutFilterComposite->getRuntimeEvaluationsClosureCode();
 
-        $this->assertTrue($pointcutFilterComposite->_call('hasRuntimeEvaluationsDefinition'));
-        $this->assertEquals($expectedResult, $result, 'The wrong Code has been built.');
+        self::assertTrue($pointcutFilterComposite->_call('hasRuntimeEvaluationsDefinition'));
+        self::assertEquals($expectedResult, $result, 'The wrong Code has been built.');
     }
 
     /**
@@ -340,8 +340,8 @@ class PointcutFilterCompositeTest extends UnitTestCase
 
         $result = $pointcutFilterComposite->getRuntimeEvaluationsClosureCode();
 
-        $this->assertFalse($pointcutFilterComposite->_call('hasRuntimeEvaluationsDefinition'));
-        $this->assertEquals($expectedResult, $result, 'The wrong Code has been built.');
+        self::assertFalse($pointcutFilterComposite->_call('hasRuntimeEvaluationsDefinition'));
+        self::assertEquals($expectedResult, $result, 'The wrong Code has been built.');
     }
 
     /**
@@ -368,7 +368,7 @@ class PointcutFilterCompositeTest extends UnitTestCase
 
         $expectedResult = '($joinPoint->getMethodArgument(\'identifier\') > 3 && $joinPoint->getMethodArgument(\'identifier\') <= 5)';
 
-        $this->assertEquals($expectedResult, $result, 'The wrong Code has been built.');
+        self::assertEquals($expectedResult, $result, 'The wrong Code has been built.');
     }
 
     /**
@@ -403,7 +403,7 @@ class PointcutFilterCompositeTest extends UnitTestCase
 
         $expectedResult = '($joinPoint->getMethodArgument(\'identifier\') == \Neos\Utility\ObjectAccess::getPropertyPath($currentObject, \'bar.baz\') && $joinPoint->getMethodArgument(\'identifier\') != \Neos\Utility\ObjectAccess::getPropertyPath($globalObjects[\'party\'], \'bar.baz\') && \Neos\Utility\ObjectAccess::getPropertyPath($joinPoint->getMethodArgument(\'some\'), \'object.property\') != \Neos\Utility\ObjectAccess::getPropertyPath($currentObject, \'object.with.another.property\'))';
 
-        $this->assertEquals($expectedResult, $result, 'The wrong Code has been built.');
+        self::assertEquals($expectedResult, $result, 'The wrong Code has been built.');
     }
 
     /**
@@ -428,7 +428,7 @@ class PointcutFilterCompositeTest extends UnitTestCase
 
         $expectedResult = '((array(\'usage1\', \'usage2\', "usage3") instanceof \SplObjectStorage || array(\'usage1\', \'usage2\', "usage3") instanceof \Doctrine\Common\Collections\Collection ? $joinPoint->getMethodArgument(\'identifier\') !== NULL && array(\'usage1\', \'usage2\', "usage3")->contains($joinPoint->getMethodArgument(\'identifier\')) : in_array($joinPoint->getMethodArgument(\'identifier\'), array(\'usage1\', \'usage2\', "usage3"))))';
 
-        $this->assertEquals($expectedResult, $result, 'The wrong Code has been built.');
+        self::assertEquals($expectedResult, $result, 'The wrong Code has been built.');
     }
 
     /**
@@ -455,7 +455,7 @@ class PointcutFilterCompositeTest extends UnitTestCase
 
         $expectedResult = '((!empty(array_intersect($joinPoint->getMethodArgument(\'identifier\'), array(\'usage1\', \'usage2\', "usage3")))) && (!empty(array_intersect($joinPoint->getMethodArgument(\'identifier\'), \Neos\Utility\ObjectAccess::getPropertyPath($currentObject, \'accounts\')))))';
 
-        $this->assertEquals($expectedResult, $result, 'The wrong Code has been built.');
+        self::assertEquals($expectedResult, $result, 'The wrong Code has been built.');
     }
 
     /**
@@ -482,7 +482,7 @@ class PointcutFilterCompositeTest extends UnitTestCase
 
         $expectedResult = '(\Neos\Utility\ObjectAccess::getPropertyPath($currentObject, \'some.thing\') != \Neos\Utility\ObjectAccess::getPropertyPath($globalObjects[\'party\'], \'name\') && \Neos\Utility\ObjectAccess::getPropertyPath($globalObjects[\'party\'], \'account.accountIdentifier\') == "admin")';
 
-        $this->assertEquals($expectedResult, $result, 'The wrong Code has been built.');
+        self::assertEquals($expectedResult, $result, 'The wrong Code has been built.');
     }
 
     /**
@@ -504,7 +504,7 @@ class PointcutFilterCompositeTest extends UnitTestCase
 
         $expectedResult = '((array("foo", \Neos\Utility\ObjectAccess::getPropertyPath($globalObjects[\'party\'], \'name\'), 5) instanceof \SplObjectStorage || array("foo", \Neos\Utility\ObjectAccess::getPropertyPath($globalObjects[\'party\'], \'name\'), 5) instanceof \Doctrine\Common\Collections\Collection ? \Neos\Utility\ObjectAccess::getPropertyPath($currentObject, \'some.thing\') !== NULL && array("foo", \Neos\Utility\ObjectAccess::getPropertyPath($globalObjects[\'party\'], \'name\'), 5)->contains(\Neos\Utility\ObjectAccess::getPropertyPath($currentObject, \'some.thing\')) : in_array(\Neos\Utility\ObjectAccess::getPropertyPath($currentObject, \'some.thing\'), array("foo", \Neos\Utility\ObjectAccess::getPropertyPath($globalObjects[\'party\'], \'name\'), 5))))';
 
-        $this->assertEquals($expectedResult, $result, 'The wrong Code has been built.');
+        self::assertEquals($expectedResult, $result, 'The wrong Code has been built.');
     }
 
     /**
@@ -531,7 +531,7 @@ class PointcutFilterCompositeTest extends UnitTestCase
 
         $expectedResult = '((!empty(array_intersect(\Neos\Utility\ObjectAccess::getPropertyPath($currentObject, \'some.thing\'), array("foo", \Neos\Utility\ObjectAccess::getPropertyPath($globalObjects[\'party\'], \'name\'), 5)))) && (!empty(array_intersect(\Neos\Utility\ObjectAccess::getPropertyPath($currentObject, \'some.thing\'), \Neos\Utility\ObjectAccess::getPropertyPath($globalObjects[\'party\'], \'accounts\')))))';
 
-        $this->assertEquals($expectedResult, $result, 'The wrong Code has been built.');
+        self::assertEquals($expectedResult, $result, 'The wrong Code has been built.');
     }
 
     /**
@@ -540,15 +540,15 @@ class PointcutFilterCompositeTest extends UnitTestCase
     public function hasRuntimeEvaluationsDefinitionConsidersGlobalAndFilterRuntimeEvaluationsDefinitions()
     {
         $pointcutFilterComposite = $this->getAccessibleMock(Pointcut\PointcutFilterComposite::class, ['dummy'], [], '', false);
-        $this->assertFalse($pointcutFilterComposite->hasRuntimeEvaluationsDefinition());
+        self::assertFalse($pointcutFilterComposite->hasRuntimeEvaluationsDefinition());
 
         $pointcutFilterComposite->_set('globalRuntimeEvaluationsDefinition', ['foo', 'bar']);
         $pointcutFilterComposite->_set('runtimeEvaluationsDefinition', []);
-        $this->assertTrue($pointcutFilterComposite->hasRuntimeEvaluationsDefinition());
+        self::assertTrue($pointcutFilterComposite->hasRuntimeEvaluationsDefinition());
 
         $pointcutFilterComposite->_set('globalRuntimeEvaluationsDefinition', []);
         $pointcutFilterComposite->_set('runtimeEvaluationsDefinition', ['bar']);
-        $this->assertTrue($pointcutFilterComposite->hasRuntimeEvaluationsDefinition());
+        self::assertTrue($pointcutFilterComposite->hasRuntimeEvaluationsDefinition());
     }
 
     /**
@@ -585,6 +585,6 @@ class PointcutFilterCompositeTest extends UnitTestCase
 
         $result = $pointcutFilterComposite->reduceTargetClassNames($availableClassNamesIndex);
 
-        $this->assertEquals($expectedClassNamesIndex, $result, 'The wrong class names have been filtered');
+        self::assertEquals($expectedClassNamesIndex, $result, 'The wrong class names have been filtered');
     }
 }

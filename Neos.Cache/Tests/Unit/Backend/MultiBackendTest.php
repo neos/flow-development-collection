@@ -39,10 +39,10 @@ class MultiBackendTest extends BaseTestCase
 
     /**
      * @test
-     * @expectedException \Throwable
      */
     public function debugModeWillBubbleExceptions()
     {
+        $this->expectException(\Throwable::class);
         $backendOptions = [
             'debug' => true,
             'backendConfigurations' => [
@@ -102,7 +102,7 @@ class MultiBackendTest extends BaseTestCase
     }
 
     /**
-     * @return EnvironmentConfiguration|\PHPUnit_Framework_MockObject_MockObject
+     * @return EnvironmentConfiguration|\PHPUnit\Framework\MockObject\MockObject
      */
     public function getEnvironmentConfiguration()
     {

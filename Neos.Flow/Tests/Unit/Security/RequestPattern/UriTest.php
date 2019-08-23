@@ -11,11 +11,11 @@ namespace Neos\Flow\Tests\Unit\Security\RequestPattern;
  * source code.
  */
 
-use Neos\Flow\Http\Request;
-use Neos\Flow\Http\Uri;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Security\RequestPattern\Uri as UriPattern;
 use Neos\Flow\Tests\UnitTestCase;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\UriInterface;
 
 /**
  * Testcase for the URI request pattern
@@ -40,20 +40,20 @@ class UriTest extends UnitTestCase
     {
         $mockActionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
 
-        $mockHttpRequest = $this->getMockBuilder(Request::class)->disableOriginalConstructor()->getMock();
-        $mockActionRequest->expects($this->atLeastOnce())->method('getHttpRequest')->will($this->returnValue($mockHttpRequest));
+        $mockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
+        $mockActionRequest->expects(self::atLeastOnce())->method('getHttpRequest')->will(self::returnValue($mockHttpRequest));
 
-        $mockUri = $this->getMockBuilder(Uri::class)->disableOriginalConstructor()->getMock();
-        $mockHttpRequest->expects($this->atLeastOnce())->method('getUri')->will($this->returnValue($mockUri));
+        $mockUri = $this->getMockBuilder(UriInterface::class)->disableOriginalConstructor()->getMock();
+        $mockHttpRequest->expects(self::atLeastOnce())->method('getUri')->will(self::returnValue($mockUri));
 
-        $mockUri->expects($this->atLeastOnce())->method('getPath')->will($this->returnValue($uriPath));
+        $mockUri->expects(self::atLeastOnce())->method('getPath')->will(self::returnValue($uriPath));
 
         $requestPattern = new UriPattern(['uriPattern' => $pattern]);
 
         if ($shouldMatch) {
-            $this->assertTrue($requestPattern->matchRequest($mockActionRequest));
+            self::assertTrue($requestPattern->matchRequest($mockActionRequest));
         } else {
-            $this->assertFalse($requestPattern->matchRequest($mockActionRequest));
+            self::assertFalse($requestPattern->matchRequest($mockActionRequest));
         }
     }
 }

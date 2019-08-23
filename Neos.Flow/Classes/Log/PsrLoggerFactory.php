@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Flow\Log;
 
 use Neos\Flow\Log\Backend\BackendInterface;
@@ -71,7 +73,7 @@ class PsrLoggerFactory implements PsrLoggerFactoryInterface
      * @return static
      * @api
      */
-    public static function create(array $configuration)
+    public static function create(array $configuration): PsrLoggerFactory
     {
         return new self($configuration);
     }
@@ -83,7 +85,7 @@ class PsrLoggerFactory implements PsrLoggerFactoryInterface
      * @return BackendInterface[]
      * @throws \Exception
      */
-    protected function instantiateBackends(array $configuration)
+    protected function instantiateBackends(array $configuration): array
     {
         $backends = [];
         foreach ($configuration as $backendConfiguration) {
@@ -103,11 +105,15 @@ class PsrLoggerFactory implements PsrLoggerFactoryInterface
      * @return BackendInterface
      * @throws \Exception
      */
-    protected function instantiateBackend(string $class, array $options = [])
+    protected function instantiateBackend(string $class, array $options = []): BackendInterface
     {
+        if (!class_exists($class)) {
+            throw new \Exception(sprintf('The log backend class "%s" does not exist', htmlspecialchars($class)), 1559318313);
+        }
+
         $backend = new $class($options);
         if (!($backend instanceof BackendInterface)) {
-            throw new \Exception(sprintf('The log backend class "%s" does not implement the BackendInterface', htmlspecialchars($class)), 1515355501615);
+            throw new \Exception(sprintf('The log backend class "%s" does not implement the BackendInterface', htmlspecialchars($class)), 1515355501);
         }
 
         return $backend;

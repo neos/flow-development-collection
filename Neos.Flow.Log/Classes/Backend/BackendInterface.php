@@ -1,4 +1,7 @@
 <?php
+declare(strict_types=1);
+
+
 namespace Neos\Flow\Log\Backend;
 
 /*
@@ -25,7 +28,7 @@ interface BackendInterface
      * @return void
      * @api
      */
-    public function open();
+    public function open(): void;
 
     /**
      * Appends the given message along with the additional information into the log.
@@ -39,7 +42,7 @@ interface BackendInterface
      * @return void
      * @api
      */
-    public function append($message, $severity = LOG_INFO, $additionalData = null, $packageKey = null, $className = null, $methodName = null);
+    public function append(string $message, int $severity = LOG_INFO, $additionalData = null, string $packageKey = null, string $className = null, string $methodName = null): void;
 
     /**
      * Carries out all actions necessary to cleanly close the logging backend, such as
@@ -48,5 +51,5 @@ interface BackendInterface
      * @return void
      * @api
      */
-    public function close();
+    public function close(): void;
 }

@@ -27,7 +27,7 @@ class IndexedCollectionTest extends FunctionalTestCase
     /**
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         if (!$this->persistenceManager instanceof PersistenceManager) {
@@ -62,12 +62,12 @@ class IndexedCollectionTest extends FunctionalTestCase
 
         $entityWithIndexedRelation = $this->persistenceManager->getObjectByIdentifier($id, Fixtures\EntityWithIndexedRelation::class);
         for ($i = 0; $i < 3; $i++) {
-            $this->assertArrayHasKey('Author' . (string) $i, $entityWithIndexedRelation->getAnnotatedIdentitiesEntities());
+            self::assertArrayHasKey('Author' . (string) $i, $entityWithIndexedRelation->getAnnotatedIdentitiesEntities());
         }
-        $this->assertArrayNotHasKey(0, $entityWithIndexedRelation->getAnnotatedIdentitiesEntities());
+        self::assertArrayNotHasKey(0, $entityWithIndexedRelation->getAnnotatedIdentitiesEntities());
 
-        $this->assertArrayHasKey('test', $entityWithIndexedRelation->getRelatedIndexEntities());
-        $this->assertArrayNotHasKey(0, $entityWithIndexedRelation->getRelatedIndexEntities());
-        $this->assertInstanceOf(Fixtures\RelatedIndexEntity::class, $entityWithIndexedRelation->getRelatedIndexEntities()->get('test'));
+        self::assertArrayHasKey('test', $entityWithIndexedRelation->getRelatedIndexEntities());
+        self::assertArrayNotHasKey(0, $entityWithIndexedRelation->getRelatedIndexEntities());
+        self::assertInstanceOf(Fixtures\RelatedIndexEntity::class, $entityWithIndexedRelation->getRelatedIndexEntities()->get('test'));
     }
 }

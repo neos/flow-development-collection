@@ -29,10 +29,10 @@ class RawValidatorTest extends AbstractValidatorTestcase
     {
         $rawValidator = new RawValidator([]);
 
-        $this->assertFalse($rawValidator->validate('simple1expression')->hasErrors());
-        $this->assertFalse($rawValidator->validate('')->hasErrors());
-        $this->assertFalse($rawValidator->validate(null)->hasErrors());
-        $this->assertFalse($rawValidator->validate(false)->hasErrors());
-        $this->assertFalse($rawValidator->validate(new \ArrayObject())->hasErrors());
+        self::assertFalse($rawValidator->validate('simple1expression')->hasErrors());
+        self::assertFalse($rawValidator->validate('')->hasErrors());
+        self::assertFalse($rawValidator->validate(null)->hasErrors());
+        self::assertFalse($rawValidator->validate(false)->hasErrors());
+        self::assertFalse($rawValidator->validate(new \ArrayObject())->hasErrors());
     }
 }

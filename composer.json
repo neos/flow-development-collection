@@ -6,7 +6,7 @@
     ],
     "type": "neos-package-collection",
     "require": {
-        "php": "~7.1",
+        "php": "^7.2",
         "psr/simple-cache": "^1.0",
         "psr/cache": "~1.0",
         "psr/log": "^1.0",
@@ -16,6 +16,7 @@
         "ext-reflection": "*",
         "ext-xml": "*",
         "psr/http-message": "^1.0",
+        "psr/http-factory": "^1.0",
         "psr/container": "^1.0",
         "ramsey/uuid": "^3.0",
         "doctrine/orm": "^2.6",
@@ -27,6 +28,7 @@
         "symfony/console": "^4.2",
         "neos/composer-plugin": "^2.0",
         "typo3fluid/fluid": "^2.5",
+        "guzzlehttp/psr7": "^1.4",
         "ext-mbstring": "*"
     },
     "replace": {
@@ -39,6 +41,7 @@
         "neos/flow-log": "self.version",
         "neos/flow": "self.version",
         "neos/fluid-adaptor": "self.version",
+        "neos/http-factories": "self.version",
         "neos/kickstarter": "self.version",
         "neos/utility-arrays": "self.version",
         "neos/utility-files": "self.version",
@@ -82,6 +85,9 @@
             "Neos\\FluidAdaptor\\": [
                 "Neos.FluidAdaptor/Classes/"
             ],
+            "Neos\\Http\\Factories\\": [
+                "Neos.Http.Factories/Classes"
+            ],
             "Neos\\Kickstarter\\": [
                 "Neos.Kickstarter/Classes"
             ],
@@ -110,10 +116,8 @@
     },
     "require-dev": {
         "mikey179/vfsstream": "~1.6",
-        "phpunit/phpunit": "~7.1",
-        "neos/flow": "*",
-        "doctrine/orm": "~2.6.0",
-        "doctrine/common": ">=2.4,<2.8-dev"
+        "phpunit/phpunit": "~8.1",
+        "vimeo/psalm": "^3.4"
     },
     "autoload-dev": {
         "psr-4": {
@@ -131,6 +135,9 @@
             ],
             "Neos\\Flow\\Tests\\": [
                 "Neos.Flow/Tests"
+            ],
+            "Neos\\Http\\Factories\\Tests\\": [
+                "Neos.Http.Factories/Tests"
             ],
             "Neos\\Kickstarter\\Tests\\": [
                 "Neos.Kickstarter/Tests"

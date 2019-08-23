@@ -27,7 +27,7 @@ class MvcPropertyMappingConfigurationTest extends UnitTestCase
     /**
      *
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->mvcPropertyMappingConfiguration = new MvcPropertyMappingConfiguration();
     }
@@ -52,6 +52,6 @@ class MvcPropertyMappingConfigurationTest extends UnitTestCase
     public function respectiveMethodsProvideFluentInterface($methodToTestForFluentInterface, array $argumentsForMethod = [])
     {
         $actualResult = call_user_func_array([$this->mvcPropertyMappingConfiguration, $methodToTestForFluentInterface], $argumentsForMethod);
-        $this->assertSame($this->mvcPropertyMappingConfiguration, $actualResult);
+        self::assertSame($this->mvcPropertyMappingConfiguration, $actualResult);
     }
 }

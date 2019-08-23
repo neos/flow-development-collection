@@ -28,7 +28,7 @@ class NotEmptyValidatorTest extends AbstractValidatorTestcase
      */
     public function notEmptyValidatorReturnsNoErrorForASimpleString()
     {
-        $this->assertFalse($this->validator->validate('a not empty string')->hasErrors());
+        self::assertFalse($this->validator->validate('a not empty string')->hasErrors());
     }
 
     /**
@@ -36,7 +36,7 @@ class NotEmptyValidatorTest extends AbstractValidatorTestcase
      */
     public function notEmptyValidatorReturnsErrorForAnEmptyString()
     {
-        $this->assertTrue($this->validator->validate('')->hasErrors());
+        self::assertTrue($this->validator->validate('')->hasErrors());
     }
 
     /**
@@ -44,7 +44,7 @@ class NotEmptyValidatorTest extends AbstractValidatorTestcase
      */
     public function notEmptyValidatorReturnsErrorForANullValue()
     {
-        $this->assertTrue($this->validator->validate(null)->hasErrors());
+        self::assertTrue($this->validator->validate(null)->hasErrors());
     }
 
     /**
@@ -52,7 +52,7 @@ class NotEmptyValidatorTest extends AbstractValidatorTestcase
      */
     public function notEmptyValidatorReturnsErrorForAnEmptyArray()
     {
-        $this->assertTrue($this->validator->validate([])->hasErrors());
+        self::assertTrue($this->validator->validate([])->hasErrors());
     }
 
     /**
@@ -60,7 +60,7 @@ class NotEmptyValidatorTest extends AbstractValidatorTestcase
      */
     public function notEmptyValidatorReturnsErrorForAnEmptyCountableObject()
     {
-        $this->assertTrue($this->validator->validate(new \SplObjectStorage())->hasErrors());
+        self::assertTrue($this->validator->validate(new \SplObjectStorage())->hasErrors());
     }
 
     /**
@@ -68,7 +68,7 @@ class NotEmptyValidatorTest extends AbstractValidatorTestcase
      */
     public function notEmptyValidatorCreatesTheCorrectErrorForAnEmptySubject()
     {
-        $this->assertEquals(1, count($this->validator->validate('')->getErrors()));
+        self::assertEquals(1, count($this->validator->validate('')->getErrors()));
     }
 
     /**
@@ -76,6 +76,6 @@ class NotEmptyValidatorTest extends AbstractValidatorTestcase
      */
     public function notEmptyValidatorCreatesTheCorrectErrorForANullValue()
     {
-        $this->assertEquals(1, count($this->validator->validate(null)->getErrors()));
+        self::assertEquals(1, count($this->validator->validate(null)->getErrors()));
     }
 }

@@ -12,6 +12,7 @@ namespace Neos\FluidAdaptor\ViewHelpers;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Controller\MvcPropertyMappingConfigurationService;
 use Neos\Flow\Security\Authentication\AuthenticationManagerInterface;
 use Neos\Flow\Security\Context;
@@ -212,8 +213,13 @@ class FormViewHelper extends AbstractFormViewHelper
                 if ($request->isMainRequest()) {
                     throw new ViewHelper\Exception('You can\'t use the parent Request, you are already in the MainRequest.', 1361354942);
                 }
+                $parentRequest = $request->getParentRequest();
+                if (!$parentRequest instanceof ActionRequest) {
+                    throw new ViewHelper\Exception('The parent requests was unexpectedly empty, probably the current request is broken.', 1565947917);
+                }
+
                 $uriBuilder = clone $uriBuilder;
-                $uriBuilder->setRequest($request->getParentRequest());
+                $uriBuilder->setRequest($parentRequest);
             }
             $uriBuilder
                 ->reset()
@@ -292,7 +298,7 @@ class FormViewHelper extends AbstractFormViewHelper
         $result = chr(10);
         $request = $this->controllerContext->getRequest();
         $argumentNamespace = null;
-        if (!$request->isMainRequest()) {
+        if ($request instanceof ActionRequest && $request->isMainRequest() === false) {
             $argumentNamespace = $request->getArgumentNamespace();
 
             $referrer = [
@@ -303,10 +309,14 @@ class FormViewHelper extends AbstractFormViewHelper
                 'arguments' => $this->hashService->appendHmac(base64_encode(serialize($request->getArguments())))
             ];
             foreach ($referrer as $referrerKey => $referrerValue) {
-                $referrerValue = htmlspecialchars($referrerValue);
+                $referrerValue = $referrerValue ? htmlspecialchars($referrerValue) : '';
                 $result .= '<input type="hidden" name="' . $argumentNamespace . '[__referrer][' . $referrerKey . ']" value="' . $referrerValue . '" />' . chr(10);
             }
             $request = $request->getParentRequest();
+        }
+
+        if ($request === null) {
+            throw new \RuntimeException('No ActionRequest could be found to evaluate form argument namespace.', 1565945918);
         }
 
         $arguments = $request->getArguments();
@@ -325,7 +335,7 @@ class FormViewHelper extends AbstractFormViewHelper
         ];
 
         foreach ($referrer as $referrerKey => $referrerValue) {
-            $result .= '<input type="hidden" name="__referrer[' . $referrerKey . ']" value="' . htmlspecialchars($referrerValue) . '" />' . chr(10);
+            $result .= '<input type="hidden" name="__referrer[' . $referrerKey . ']" value="' . htmlspecialchars($referrerValue ?? '') . '" />' . chr(10);
         }
         return $result;
     }
@@ -433,14 +443,12 @@ class FormViewHelper extends AbstractFormViewHelper
     protected function getDefaultFieldNamePrefix()
     {
         $request = $this->controllerContext->getRequest();
-        if (!$request->isMainRequest()) {
-            if ($this->arguments['useParentRequest'] === true) {
-                return $request->getParentRequest()->getArgumentNamespace();
-            } else {
-                return $request->getArgumentNamespace();
-            }
+        $parentRequest = $request->getParentRequest();
+        if ($this->arguments['useParentRequest'] === true && $parentRequest instanceof ActionRequest) {
+            return $parentRequest->getArgumentNamespace();
         }
-        return '';
+
+        return $request->getArgumentNamespace();
     }
 
     /**

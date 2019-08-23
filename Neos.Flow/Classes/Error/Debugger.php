@@ -493,7 +493,7 @@ class Debugger
         $flowRoot = defined('FLOW_PATH_ROOT') ? FLOW_PATH_ROOT : '';
         $originalPath = $file;
         $proxyClassPathPosition = strpos($file, 'Flow_Object_Classes/');
-        if ($proxyClassPathPosition) {
+        if ($proxyClassPathPosition && is_file($file)) {
             $fileContent = @file($file);
             $originalPath = trim(substr($fileContent[count($fileContent) - 2], 19));
         }

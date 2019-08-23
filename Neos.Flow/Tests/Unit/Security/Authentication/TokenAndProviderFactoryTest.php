@@ -13,6 +13,7 @@ namespace Neos\Flow\Tests\Unit\Security\Authentication;
 
 use Neos\Flow\Security\Authentication\AuthenticationProviderResolver;
 use Neos\Flow\Security\Authentication\TokenAndProviderFactory;
+use Neos\Flow\Security\Exception\InvalidAuthenticationProviderException;
 use Neos\Flow\Security\RequestPatternResolver;
 use Neos\Flow\Tests\UnitTestCase;
 
@@ -31,16 +32,16 @@ class TokenAndProviderFactoryTest extends UnitTestCase
 
         $tokenAndProviderFactory = new TokenAndProviderFactory($mockProviderResolver, $mockRequestPatternResolver);
 
-        $this->assertEquals([], $tokenAndProviderFactory->getProviders(), 'The array of providers should be empty.');
-        $this->assertEquals([], $tokenAndProviderFactory->getTokens(), 'The array of tokens should be empty.');
+        self::assertEquals([], $tokenAndProviderFactory->getProviders(), 'The array of providers should be empty.');
+        self::assertEquals([], $tokenAndProviderFactory->getTokens(), 'The array of tokens should be empty.');
     }
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Security\Exception\InvalidAuthenticationProviderException
      */
     public function anExceptionIsThrownIfTheConfiguredProviderDoesNotExist()
     {
+        $this->expectException(InvalidAuthenticationProviderException::class);
         $providerConfiguration = [
             'NotExistingProvider' => [
                 'providerClass' => 'NotExistingProviderClass'

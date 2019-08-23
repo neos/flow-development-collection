@@ -12,6 +12,7 @@ namespace Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Form;
  */
 
 use Neos\Flow\Persistence\PersistenceManagerInterface;
+use Neos\FluidAdaptor\Core\ViewHelper\Exception;
 use TYPO3Fluid\Fluid\Core\ViewHelper\TagBuilder;
 
 require_once(__DIR__ . '/Fixtures/EmptySyntaxTreeNode.php');
@@ -28,7 +29,7 @@ class SelectViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\For
      */
     protected $viewHelper;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->arguments['name'] = '';
@@ -41,7 +42,7 @@ class SelectViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\For
      */
     public function selectCorrectlySetsTagName()
     {
-        $this->tagBuilder->expects($this->atLeastOnce())->method('setTagName')->with('select');
+        $this->tagBuilder->expects(self::atLeastOnce())->method('setTagName')->with('select');
 
         $this->arguments['options'] = [];
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
@@ -55,10 +56,10 @@ class SelectViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\For
      */
     public function selectCreatesExpectedOptions()
     {
-        $this->tagBuilder->expects($this->once())->method('addAttribute')->with('name', 'myName');
-        $this->viewHelper->expects($this->once())->method('registerFieldNameForFormTokenGeneration')->with('myName');
-        $this->tagBuilder->expects($this->once())->method('setContent')->with('<option value="value1">label1</option>' . chr(10) . '<option value="value2" selected="selected">label2</option>' . chr(10));
-        $this->tagBuilder->expects($this->once())->method('render');
+        $this->tagBuilder->expects(self::once())->method('addAttribute')->with('name', 'myName');
+        $this->viewHelper->expects(self::once())->method('registerFieldNameForFormTokenGeneration')->with('myName');
+        $this->tagBuilder->expects(self::once())->method('setContent')->with('<option value="value1">label1</option>' . chr(10) . '<option value="value2" selected="selected">label2</option>' . chr(10));
+        $this->tagBuilder->expects(self::once())->method('render');
 
         $this->arguments['options'] = [
             'value1' => 'label1',
@@ -77,10 +78,10 @@ class SelectViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\For
      */
     public function anEmptyOptionTagIsRenderedIfOptionsArrayIsEmptyToAssureXhtmlCompatibility()
     {
-        $this->tagBuilder->expects($this->once())->method('addAttribute')->with('name', 'myName');
-        $this->viewHelper->expects($this->once())->method('registerFieldNameForFormTokenGeneration')->with('myName');
-        $this->tagBuilder->expects($this->once())->method('setContent')->with('<option value=""></option>' . chr(10));
-        $this->tagBuilder->expects($this->once())->method('render');
+        $this->tagBuilder->expects(self::once())->method('addAttribute')->with('name', 'myName');
+        $this->viewHelper->expects(self::once())->method('registerFieldNameForFormTokenGeneration')->with('myName');
+        $this->tagBuilder->expects(self::once())->method('setContent')->with('<option value=""></option>' . chr(10));
+        $this->tagBuilder->expects(self::once())->method('render');
 
         $this->arguments['options'] = [];
         $this->arguments['value'] = 'value2';
@@ -96,10 +97,10 @@ class SelectViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\For
      */
     public function orderOfOptionsIsNotAlteredByDefault()
     {
-        $this->tagBuilder->expects($this->once())->method('addAttribute')->with('name', 'myName');
-        $this->viewHelper->expects($this->once())->method('registerFieldNameForFormTokenGeneration')->with('myName');
-        $this->tagBuilder->expects($this->once())->method('setContent')->with('<option value="value3">label3</option>' . chr(10) . '<option value="value1">label1</option>' . chr(10) . '<option value="value2" selected="selected">label2</option>' . chr(10));
-        $this->tagBuilder->expects($this->once())->method('render');
+        $this->tagBuilder->expects(self::once())->method('addAttribute')->with('name', 'myName');
+        $this->viewHelper->expects(self::once())->method('registerFieldNameForFormTokenGeneration')->with('myName');
+        $this->tagBuilder->expects(self::once())->method('setContent')->with('<option value="value3">label3</option>' . chr(10) . '<option value="value1">label1</option>' . chr(10) . '<option value="value2" selected="selected">label2</option>' . chr(10));
+        $this->tagBuilder->expects(self::once())->method('render');
 
         $this->arguments['options'] = [
             'value3' => 'label3',
@@ -121,10 +122,10 @@ class SelectViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\For
      */
     public function optionsAreSortedByLabelIfSortByOptionLabelIsSet()
     {
-        $this->tagBuilder->expects($this->once())->method('addAttribute')->with('name', 'myName');
-        $this->viewHelper->expects($this->once())->method('registerFieldNameForFormTokenGeneration')->with('myName');
-        $this->tagBuilder->expects($this->once())->method('setContent')->with('<option value="value1">label1</option>' . chr(10) . '<option value="value2" selected="selected">label2</option>' . chr(10) . '<option value="value3">label3</option>' . chr(10));
-        $this->tagBuilder->expects($this->once())->method('render');
+        $this->tagBuilder->expects(self::once())->method('addAttribute')->with('name', 'myName');
+        $this->viewHelper->expects(self::once())->method('registerFieldNameForFormTokenGeneration')->with('myName');
+        $this->tagBuilder->expects(self::once())->method('setContent')->with('<option value="value1">label1</option>' . chr(10) . '<option value="value2" selected="selected">label2</option>' . chr(10) . '<option value="value3">label3</option>' . chr(10));
+        $this->tagBuilder->expects(self::once())->method('render');
 
         $this->arguments['options'] = [
             'value3' => 'label3',
@@ -168,7 +169,7 @@ class SelectViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\For
             '<option value="value2">label2</option>' . chr(10) .
             '<option value="value3" selected="selected">label3</option>' . chr(10) .
             '</select>';
-        $this->assertSame($expected, $result);
+        self::assertSame($expected, $result);
     }
 
     /**
@@ -196,9 +197,9 @@ class SelectViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\For
         $this->arguments['multiple'] = 'multiple';
         $this->arguments['selectAllByDefault'] = null;
 
-        /** @var PersistenceManagerInterface|\PHPUnit_Framework_MockObject_MockObject $mockPersistenceManager */
+        /** @var PersistenceManagerInterface|\PHPUnit\Framework\MockObject\MockObject $mockPersistenceManager */
         $mockPersistenceManager = $this->createMock(\Neos\Flow\Persistence\PersistenceManagerInterface::class);
-        $mockPersistenceManager->expects($this->any())->method('getIdentifierByObject')->with($user->getInterests())->will($this->returnValue(null));
+        $mockPersistenceManager->expects(self::any())->method('getIdentifierByObject')->with($user->getInterests())->will(self::returnValue(null));
         $this->viewHelper->injectPersistenceManager($mockPersistenceManager);
 
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
@@ -210,7 +211,7 @@ class SelectViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\For
             '<option value="value2">label2</option>' . chr(10) .
             '<option value="value3" selected="selected">label3</option>' . chr(10) .
             '</select>';
-        $this->assertSame($expected, $result);
+        self::assertSame($expected, $result);
     }
 
     /**
@@ -219,13 +220,13 @@ class SelectViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\For
     public function selectOnDomainObjectsCreatesExpectedOptions()
     {
         $mockPersistenceManager = $this->createMock(\Neos\Flow\Persistence\PersistenceManagerInterface::class);
-        $mockPersistenceManager->expects($this->any())->method('getIdentifierByObject')->will($this->returnValue(2));
+        $mockPersistenceManager->expects(self::any())->method('getIdentifierByObject')->will(self::returnValue(2));
         $this->viewHelper->injectPersistenceManager($mockPersistenceManager);
 
-        $this->tagBuilder->expects($this->once())->method('addAttribute')->with('name', 'myName[__identity]');
-        $this->viewHelper->expects($this->once())->method('registerFieldNameForFormTokenGeneration')->with('myName[__identity]');
-        $this->tagBuilder->expects($this->once())->method('setContent')->with('<option value="1">Ingmar</option>' . chr(10) . '<option value="2" selected="selected">Sebastian</option>' . chr(10) . '<option value="3">Robert</option>' . chr(10));
-        $this->tagBuilder->expects($this->once())->method('render');
+        $this->tagBuilder->expects(self::once())->method('addAttribute')->with('name', 'myName[__identity]');
+        $this->viewHelper->expects(self::once())->method('registerFieldNameForFormTokenGeneration')->with('myName[__identity]');
+        $this->tagBuilder->expects(self::once())->method('setContent')->with('<option value="1">Ingmar</option>' . chr(10) . '<option value="2" selected="selected">Sebastian</option>' . chr(10) . '<option value="3">Robert</option>' . chr(10));
+        $this->tagBuilder->expects(self::once())->method('render');
 
         $user_is = new \Neos\FluidAdaptor\ViewHelpers\Fixtures\UserDomainClass(1, 'Ingmar', 'Schlecht');
         $user_sk = new \Neos\FluidAdaptor\ViewHelpers\Fixtures\UserDomainClass(2, 'Sebastian', 'Kurfuerst');
@@ -253,7 +254,7 @@ class SelectViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\For
     public function multipleSelectOnDomainObjectsCreatesExpectedOptions()
     {
         $this->tagBuilder = new TagBuilder();
-        $this->viewHelper->expects($this->exactly(3))->method('registerFieldNameForFormTokenGeneration')->with('myName[]');
+        $this->viewHelper->expects(self::exactly(3))->method('registerFieldNameForFormTokenGeneration')->with('myName[]');
 
         $user_is = new \Neos\FluidAdaptor\ViewHelpers\Fixtures\UserDomainClass(1, 'Ingmar', 'Schlecht');
         $user_sk = new \Neos\FluidAdaptor\ViewHelpers\Fixtures\UserDomainClass(2, 'Sebastian', 'Kurfuerst');
@@ -280,7 +281,7 @@ class SelectViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\For
             '<option value="2">Kurfuerst</option>' . chr(10) .
             '<option value="3" selected="selected">Lemke</option>' . chr(10) .
             '</select>';
-        $this->assertSame($expected, $actual);
+        self::assertSame($expected, $actual);
     }
 
     /**
@@ -289,7 +290,7 @@ class SelectViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\For
     public function multipleSelectOnDomainObjectsCreatesExpectedOptionsWithoutOptionValueField()
     {
         $mockPersistenceManager = $this->createMock(\Neos\Flow\Persistence\PersistenceManagerInterface::class);
-        $mockPersistenceManager->expects($this->any())->method('getIdentifierByObject')->will($this->returnCallback(
+        $mockPersistenceManager->expects(self::any())->method('getIdentifierByObject')->will(self::returnCallBack(
             function ($object) {
                 return $object->getId();
             }
@@ -297,7 +298,7 @@ class SelectViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\For
         $this->viewHelper->injectPersistenceManager($mockPersistenceManager);
 
         $this->tagBuilder = new TagBuilder();
-        $this->viewHelper->expects($this->exactly(3))->method('registerFieldNameForFormTokenGeneration')->with('myName[]');
+        $this->viewHelper->expects(self::exactly(3))->method('registerFieldNameForFormTokenGeneration')->with('myName[]');
 
         $user_is = new \Neos\FluidAdaptor\ViewHelpers\Fixtures\UserDomainClass(1, 'Ingmar', 'Schlecht');
         $user_sk = new \Neos\FluidAdaptor\ViewHelpers\Fixtures\UserDomainClass(2, 'Sebastian', 'Kurfuerst');
@@ -320,7 +321,7 @@ class SelectViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\For
             '<option value="2">Kurfuerst</option>' . chr(10) .
             '<option value="3" selected="selected">Lemke</option>' . chr(10) .
             '</select>';
-        $this->assertSame($expected, $actual);
+        self::assertSame($expected, $actual);
     }
 
     /**
@@ -329,13 +330,13 @@ class SelectViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\For
     public function selectWithoutFurtherConfigurationOnDomainObjectsUsesUuidForValueAndLabel()
     {
         $mockPersistenceManager = $this->createMock(\Neos\Flow\Persistence\PersistenceManagerInterface::class);
-        $mockPersistenceManager->expects($this->any())->method('getIdentifierByObject')->will($this->returnValue('fakeUUID'));
+        $mockPersistenceManager->expects(self::any())->method('getIdentifierByObject')->will(self::returnValue('fakeUUID'));
         $this->viewHelper->injectPersistenceManager($mockPersistenceManager);
 
-        $this->tagBuilder->expects($this->once())->method('addAttribute')->with('name', 'myName');
-        $this->viewHelper->expects($this->once())->method('registerFieldNameForFormTokenGeneration')->with('myName');
-        $this->tagBuilder->expects($this->once())->method('setContent')->with('<option value="fakeUUID">fakeUUID</option>' . chr(10));
-        $this->tagBuilder->expects($this->once())->method('render');
+        $this->tagBuilder->expects(self::once())->method('addAttribute')->with('name', 'myName');
+        $this->viewHelper->expects(self::once())->method('registerFieldNameForFormTokenGeneration')->with('myName');
+        $this->tagBuilder->expects(self::once())->method('setContent')->with('<option value="fakeUUID">fakeUUID</option>' . chr(10));
+        $this->tagBuilder->expects(self::once())->method('render');
 
         $user = new \Neos\FluidAdaptor\ViewHelpers\Fixtures\UserDomainClass(1, 'Ingmar', 'Schlecht');
 
@@ -355,16 +356,16 @@ class SelectViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\For
     public function selectWithoutFurtherConfigurationOnDomainObjectsUsesToStringForLabelIfAvailable()
     {
         $mockPersistenceManager = $this->createMock(\Neos\Flow\Persistence\PersistenceManagerInterface::class);
-        $mockPersistenceManager->expects($this->any())->method('getIdentifierByObject')->will($this->returnValue('fakeUUID'));
+        $mockPersistenceManager->expects(self::any())->method('getIdentifierByObject')->will(self::returnValue('fakeUUID'));
         $this->viewHelper->injectPersistenceManager($mockPersistenceManager);
 
-        $this->tagBuilder->expects($this->once())->method('addAttribute')->with('name', 'myName');
-        $this->viewHelper->expects($this->once())->method('registerFieldNameForFormTokenGeneration')->with('myName');
-        $this->tagBuilder->expects($this->once())->method('setContent')->with('<option value="fakeUUID">toStringResult</option>' . chr(10));
-        $this->tagBuilder->expects($this->once())->method('render');
+        $this->tagBuilder->expects(self::once())->method('addAttribute')->with('name', 'myName');
+        $this->viewHelper->expects(self::once())->method('registerFieldNameForFormTokenGeneration')->with('myName');
+        $this->tagBuilder->expects(self::once())->method('setContent')->with('<option value="fakeUUID">toStringResult</option>' . chr(10));
+        $this->tagBuilder->expects(self::once())->method('render');
 
         $user = $this->getMockBuilder(\Neos\FluidAdaptor\ViewHelpers\Fixtures\UserDomainClass::class)->setMethods(['__toString'])->setConstructorArgs([1, 'Ingmar', 'Schlecht'])->getMock();
-        $user->expects($this->atLeastOnce())->method('__toString')->will($this->returnValue('toStringResult'));
+        $user->expects(self::atLeastOnce())->method('__toString')->will(self::returnValue('toStringResult'));
 
         $this->arguments['options'] = [
             $user
@@ -378,12 +379,12 @@ class SelectViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\For
 
     /**
      * @test
-     * @expectedException \Neos\FluidAdaptor\Core\ViewHelper\Exception
      */
     public function selectOnDomainObjectsThrowsExceptionIfNoValueCanBeFound()
     {
+        $this->expectException(Exception::class);
         $mockPersistenceManager = $this->createMock(\Neos\Flow\Persistence\PersistenceManagerInterface::class);
-        $mockPersistenceManager->expects($this->any())->method('getIdentifierByObject')->will($this->returnValue(null));
+        $mockPersistenceManager->expects(self::any())->method('getIdentifierByObject')->will(self::returnValue(null));
         $this->viewHelper->injectPersistenceManager($mockPersistenceManager);
 
         $user = new \Neos\FluidAdaptor\ViewHelpers\Fixtures\UserDomainClass(1, 'Ingmar', 'Schlecht');
@@ -407,7 +408,7 @@ class SelectViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\For
 
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
 
-        $this->viewHelper->expects($this->once())->method('setErrorClassAttribute');
+        $this->viewHelper->expects(self::once())->method('setErrorClassAttribute');
         $this->viewHelper->render();
     }
 
@@ -416,7 +417,7 @@ class SelectViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\For
      */
     public function allOptionsAreSelectedIfSelectAllIsTrue()
     {
-        $this->tagBuilder->expects($this->once())->method('setContent')->with('<option value="value1" selected="selected">label1</option>' . chr(10) . '<option value="value2" selected="selected">label2</option>' . chr(10) . '<option value="value3" selected="selected">label3</option>' . chr(10));
+        $this->tagBuilder->expects(self::once())->method('setContent')->with('<option value="value1" selected="selected">label1</option>' . chr(10) . '<option value="value2" selected="selected">label2</option>' . chr(10) . '<option value="value3" selected="selected">label3</option>' . chr(10));
 
         $this->arguments['options'] = [
             'value1' => 'label1',
@@ -438,7 +439,7 @@ class SelectViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\For
      */
     public function selectAllHasNoEffectIfValueIsSet()
     {
-        $this->tagBuilder->expects($this->once())->method('setContent')->with('<option value="value1" selected="selected">label1</option>' . chr(10) . '<option value="value2" selected="selected">label2</option>' . chr(10) . '<option value="value3">label3</option>' . chr(10));
+        $this->tagBuilder->expects(self::once())->method('setContent')->with('<option value="value1" selected="selected">label1</option>' . chr(10) . '<option value="value2" selected="selected">label2</option>' . chr(10) . '<option value="value3">label3</option>' . chr(10));
 
         $this->arguments['options'] = [
             'value1' => 'label1',
@@ -466,7 +467,7 @@ class SelectViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\For
         $viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\Form\SelectViewHelper::class, ['getTranslatedLabel', 'setErrorClassAttribute', 'registerFieldNameForFormTokenGeneration']);
         $this->injectDependenciesIntoViewHelper($viewHelper);
 
-        $viewHelper->expects($this->once())->method('getTranslatedLabel')->with('foo', 'bar');
+        $viewHelper->expects(self::once())->method('getTranslatedLabel')->with('foo', 'bar');
         $viewHelper->render();
     }
 
@@ -479,7 +480,7 @@ class SelectViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\For
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
 
         $mockTranslator = $this->createMock(\Neos\Flow\I18n\Translator::class);
-        $mockTranslator->expects($this->once())->method('translateById')->with('value1', [], null, null, 'Main', '');
+        $mockTranslator->expects(self::once())->method('translateById')->with('value1', [], null, null, 'Main', '');
         $this->viewHelper->_set('translator', $mockTranslator);
         $this->viewHelper->_call('getTranslatedLabel', 'value1', 'label1');
     }
@@ -493,7 +494,7 @@ class SelectViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\For
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
 
         $mockTranslator = $this->createMock(\Neos\Flow\I18n\Translator::class);
-        $mockTranslator->expects($this->once())->method('translateByOriginalLabel')->with('label1', [], null, null, 'Main', '');
+        $mockTranslator->expects(self::once())->method('translateByOriginalLabel')->with('label1', [], null, null, 'Main', '');
         $this->viewHelper->_set('translator', $mockTranslator);
         $this->viewHelper->_call('getTranslatedLabel', 'value1', 'label1');
     }
@@ -507,7 +508,7 @@ class SelectViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\For
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
 
         $mockTranslator = $this->createMock(\Neos\Flow\I18n\Translator::class);
-        $mockTranslator->expects($this->once())->method('translateByOriginalLabel')->with('value1', [], null, null, 'Main', '');
+        $mockTranslator->expects(self::once())->method('translateByOriginalLabel')->with('value1', [], null, null, 'Main', '');
         $this->viewHelper->_set('translator', $mockTranslator);
         $this->viewHelper->_call('getTranslatedLabel', 'value1', 'label1');
     }
@@ -521,7 +522,7 @@ class SelectViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\For
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
 
         $mockTranslator = $this->createMock(\Neos\Flow\I18n\Translator::class);
-        $mockTranslator->expects($this->once())->method('translateById')->with('label1', [], null, null, 'Main', '');
+        $mockTranslator->expects(self::once())->method('translateById')->with('label1', [], null, null, 'Main', '');
         $this->viewHelper->_set('translator', $mockTranslator);
         $this->viewHelper->_call('getTranslatedLabel', 'value1', 'label1');
     }
@@ -535,17 +536,17 @@ class SelectViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\For
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
 
         $mockTranslator = $this->createMock(\Neos\Flow\I18n\Translator::class);
-        $mockTranslator->expects($this->once())->method('translateById')->with('somePrefix.label1', [], null, new \Neos\Flow\I18n\Locale('dk'), 'WeirdMessageCatalog', 'Foo.Bar');
+        $mockTranslator->expects(self::once())->method('translateById')->with('somePrefix.label1', [], null, new \Neos\Flow\I18n\Locale('dk'), 'WeirdMessageCatalog', 'Foo.Bar');
         $this->viewHelper->_set('translator', $mockTranslator);
         $this->viewHelper->_call('getTranslatedLabel', 'value1', 'label1');
     }
 
     /**
      * @test
-     * @expectedException \Neos\FluidAdaptor\Core\ViewHelper\Exception
      */
     public function getTranslatedLabelThrowsExceptionForInvalidLocales()
     {
+        $this->expectException(Exception::class);
         $this->arguments['translate'] = ['locale' => 'invalid-locale'];
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
 
@@ -554,10 +555,10 @@ class SelectViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\For
 
     /**
      * @test
-     * @expectedException \Neos\FluidAdaptor\Core\ViewHelper\Exception
      */
     public function getTranslatedLabelThrowsExceptionForUnknownTranslateBy()
     {
+        $this->expectException(Exception::class);
         $this->arguments['translate'] = ['by' => 'foo'];
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
 
@@ -614,16 +615,16 @@ class SelectViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\For
 
         $mockTranslator = $this->createMock(\Neos\Flow\I18n\Translator::class);
         if ($by === 'label') {
-            $mockTranslator->expects($this->once())->method('translateByOriginalLabel')->will($this->returnCallback(function ($label) use ($translatedLabel) {
+            $mockTranslator->expects(self::once())->method('translateByOriginalLabel')->will(self::returnCallBack(function ($label) use ($translatedLabel) {
                 return $translatedLabel !== null ? $translatedLabel : $label;
             }));
         } else {
-            $mockTranslator->expects($this->once())->method('translateById')->will($this->returnValue($translatedId));
+            $mockTranslator->expects(self::once())->method('translateById')->will(self::returnValue($translatedId));
         }
         $this->inject($this->viewHelper, 'translator', $mockTranslator);
 
         $actualResult = $this->viewHelper->_call('getTranslatedLabel', 'someValue', 'Some label');
-        $this->assertSame($expectedResult, $actualResult);
+        self::assertSame($expectedResult, $actualResult);
     }
 
     /**
@@ -631,10 +632,10 @@ class SelectViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\For
      */
     public function optionsContainPrependedItemWithEmptyValueIfPrependOptionLabelIsSet()
     {
-        $this->tagBuilder->expects($this->once())->method('addAttribute')->with('name', 'myName');
-        $this->viewHelper->expects($this->once())->method('registerFieldNameForFormTokenGeneration')->with('myName');
-        $this->tagBuilder->expects($this->once())->method('setContent')->with('<option value="">please choose</option>' . chr(10) . '<option value="value1">label1</option>' . chr(10) . '<option value="value2">label2</option>' . chr(10) . '<option value="value3">label3</option>' . chr(10));
-        $this->tagBuilder->expects($this->once())->method('render');
+        $this->tagBuilder->expects(self::once())->method('addAttribute')->with('name', 'myName');
+        $this->viewHelper->expects(self::once())->method('registerFieldNameForFormTokenGeneration')->with('myName');
+        $this->tagBuilder->expects(self::once())->method('setContent')->with('<option value="">please choose</option>' . chr(10) . '<option value="value1">label1</option>' . chr(10) . '<option value="value2">label2</option>' . chr(10) . '<option value="value3">label3</option>' . chr(10));
+        $this->tagBuilder->expects(self::once())->method('render');
         $this->arguments['options'] = [
             'value1' => 'label1',
             'value2' => 'label2',
@@ -652,10 +653,10 @@ class SelectViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\For
      */
     public function optionsContainPrependedItemWithCorrectValueIfPrependOptionLabelAndPrependOptionValueAreSet()
     {
-        $this->tagBuilder->expects($this->once())->method('addAttribute')->with('name', 'myName');
-        $this->viewHelper->expects($this->once())->method('registerFieldNameForFormTokenGeneration')->with('myName');
-        $this->tagBuilder->expects($this->once())->method('setContent')->with('<option value="-1">please choose</option>' . chr(10) . '<option value="value1">label1</option>' . chr(10) . '<option value="value2">label2</option>' . chr(10) . '<option value="value3">label3</option>' . chr(10));
-        $this->tagBuilder->expects($this->once())->method('render');
+        $this->tagBuilder->expects(self::once())->method('addAttribute')->with('name', 'myName');
+        $this->viewHelper->expects(self::once())->method('registerFieldNameForFormTokenGeneration')->with('myName');
+        $this->tagBuilder->expects(self::once())->method('setContent')->with('<option value="-1">please choose</option>' . chr(10) . '<option value="value1">label1</option>' . chr(10) . '<option value="value2">label2</option>' . chr(10) . '<option value="value3">label3</option>' . chr(10));
+        $this->tagBuilder->expects(self::once())->method('render');
         $this->arguments['options'] = [
             'value1' => 'label1',
             'value2' => 'label2',
@@ -674,17 +675,17 @@ class SelectViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\For
      */
     public function prependedOptionLabelIsTranslatedIfTranslateArgumentIsSet()
     {
-        $this->tagBuilder->expects($this->once())->method('addAttribute')->with('name', 'myName');
-        $this->viewHelper->expects($this->once())->method('registerFieldNameForFormTokenGeneration')->with('myName');
-        $this->tagBuilder->expects($this->once())->method('setContent')->with('<option value="">translated label</option>' . chr(10));
-        $this->tagBuilder->expects($this->once())->method('render');
+        $this->tagBuilder->expects(self::once())->method('addAttribute')->with('name', 'myName');
+        $this->viewHelper->expects(self::once())->method('registerFieldNameForFormTokenGeneration')->with('myName');
+        $this->tagBuilder->expects(self::once())->method('setContent')->with('<option value="">translated label</option>' . chr(10));
+        $this->tagBuilder->expects(self::once())->method('render');
         $this->arguments['options'] = [];
         $this->arguments['name'] = 'myName';
         $this->arguments['prependOptionLabel'] = 'select';
         $this->arguments['translate'] = ['by' => 'id', 'using' => 'label'];
 
         $mockTranslator = $this->createMock(\Neos\Flow\I18n\Translator::class);
-        $mockTranslator->expects($this->at(0))->method('translateById')->with('select', [], null, null, 'Main', '')->will($this->returnValue('translated label'));
+        $mockTranslator->expects(self::at(0))->method('translateById')->with('select', [], null, null, 'Main', '')->will(self::returnValue('translated label'));
         $this->viewHelper->_set('translator', $mockTranslator);
 
         $this->injectDependenciesIntoViewHelper($this->viewHelper);

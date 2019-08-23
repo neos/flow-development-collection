@@ -93,7 +93,7 @@ class ResultsViewHelper extends AbstractViewHelper
         $request = $this->controllerContext->getRequest();
         /** @var $validationResults Result */
         $validationResults = $request->getInternalArgument('__submittedArgumentValidationResults');
-        if ($validationResults !== null && $for !== '') {
+        if ($validationResults instanceof Result && $for !== '') {
             $validationResults = $validationResults->forProperty($for);
         }
         $this->templateVariableContainer->add($as, $validationResults);

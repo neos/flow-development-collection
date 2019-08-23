@@ -13,6 +13,7 @@ namespace Neos\Flow\Tests\Functional\Persistence\Doctrine;
 
 use Neos\Flow\Persistence\Doctrine\PersistenceManager;
 use Neos\Flow\Persistence\Doctrine\Repository;
+use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
 use Neos\Flow\Persistence\QueryResultInterface;
 use Neos\Flow\Tests\Functional\Persistence\Fixtures;
 use Neos\Flow\Tests\FunctionalTestCase;
@@ -45,7 +46,7 @@ class RepositoryTest extends FunctionalTestCase
     /**
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         if (!$this->persistenceManager instanceof PersistenceManager) {
@@ -74,14 +75,14 @@ class RepositoryTest extends FunctionalTestCase
         unset($post);
 
         $post = $this->postRepository->findOneByTitle('Modified Sample');
-        $this->assertNull($post);
+        self::assertNull($post);
 
         // The following assertions won't work because findOneByTitle() will get the _modified_ post
         // because it is still in Doctrine's identity map:
 
         // $post = $this->postRepository->findOneByTitle('Sample');
-        // $this->assertNotNull($post);
-        // $this->assertEquals('Sample', $post->getTitle());
+        // self::assertNotNull($post);
+        // self::assertEquals('Sample', $post->getTitle());
     }
 
     /**
@@ -104,8 +105,8 @@ class RepositoryTest extends FunctionalTestCase
         $this->persistenceManager->persistAll();
 
         $post = $this->postRepository->findOneByTitle('Modified Sample');
-        $this->assertNotNull($post);
-        $this->assertEquals('Modified Sample', $post->getTitle());
+        self::assertNotNull($post);
+        self::assertEquals('Modified Sample', $post->getTitle());
     }
 
     /**
@@ -122,7 +123,7 @@ class RepositoryTest extends FunctionalTestCase
         $this->persistenceManager->persistAll();
 
         $superEntity = $this->superEntityRepository->findOneByContent('this is the super entity');
-        $this->assertEquals('this is the super entity', $superEntity->getContent());
+        self::assertEquals('this is the super entity', $superEntity->getContent());
     }
 
     /**
@@ -139,7 +140,7 @@ class RepositoryTest extends FunctionalTestCase
         $this->persistenceManager->persistAll();
 
         $subEntity = $this->superEntityRepository->findOneByContent('this is the sub entity');
-        $this->assertEquals('this is the sub entity', $subEntity->getContent());
+        self::assertEquals('this is the sub entity', $subEntity->getContent());
     }
 
     /**
@@ -160,7 +161,7 @@ class RepositoryTest extends FunctionalTestCase
         $this->persistenceManager->persistAll();
 
         $subEntity = $this->superEntityRepository->findOneByContent('this is the sub entity');
-        $this->assertNull($subEntity);
+        self::assertNull($subEntity);
     }
 
     /**
@@ -183,8 +184,8 @@ class RepositoryTest extends FunctionalTestCase
         $this->persistenceManager->persistAll();
 
         $subEntity = $this->superEntityRepository->findOneByContent('updated sub entity content');
-        $this->assertNotNull($subEntity);
-        $this->assertEquals('updated sub entity content', $subEntity->getContent());
+        self::assertNotNull($subEntity);
+        self::assertEquals('updated sub entity content', $subEntity->getContent());
     }
 
     /**
@@ -204,7 +205,7 @@ class RepositoryTest extends FunctionalTestCase
 
         $this->persistenceManager->persistAll();
 
-        $this->assertEquals(2, $this->superEntityRepository->countAll());
+        self::assertEquals(2, $this->superEntityRepository->countAll());
     }
 
     /**
@@ -224,7 +225,7 @@ class RepositoryTest extends FunctionalTestCase
 
         $this->persistenceManager->persistAll();
 
-        $this->assertEquals(2, $this->superEntityRepository->findAll()->count());
+        self::assertEquals(2, $this->superEntityRepository->findAll()->count());
     }
 
     /**
@@ -251,7 +252,7 @@ class RepositoryTest extends FunctionalTestCase
             $expectedCount++;
         }
 
-        $this->assertEquals(2, $expectedCount);
+        self::assertEquals(2, $expectedCount);
     }
 
     /**
@@ -269,15 +270,15 @@ class RepositoryTest extends FunctionalTestCase
         $this->persistenceManager->persistAll();
 
         $subEntity = $this->superEntityRepository->findByIdentifier($identifier);
-        $this->assertEquals('this is the sub entity', $subEntity->getContent());
+        self::assertEquals('this is the sub entity', $subEntity->getContent());
     }
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Persistence\Exception\IllegalObjectTypeException
      */
     public function addingASuperTypeToAMoreSpecificRepositoryThrowsAnException()
     {
+        $this->expectException(IllegalObjectTypeException::class);
         $this->subSubEntityRepository = $this->objectManager->get(Fixtures\SubSubEntityRepository::class);
 
         $subEntity = new Fixtures\SubEntity();
@@ -299,10 +300,10 @@ class RepositoryTest extends FunctionalTestCase
         $this->persistenceManager->persistAll();
 
         $subSubEntity = $this->superEntityRepository->findAll()->getFirst();
-        $this->assertEquals('this is the sub sub entity', $subSubEntity->getContent());
+        self::assertEquals('this is the sub sub entity', $subSubEntity->getContent());
 
         $subSubEntity = $this->subSubEntityRepository->findAll()->getFirst();
-        $this->assertEquals('this is the sub sub entity - touched by SubSubEntityRepository', $subSubEntity->getContent());
+        self::assertEquals('this is the sub sub entity - touched by SubSubEntityRepository', $subSubEntity->getContent());
     }
 
     /**
@@ -311,9 +312,9 @@ class RepositoryTest extends FunctionalTestCase
     public function findAllReturnsQueryResult()
     {
         $this->postRepository = $this->objectManager->get(Fixtures\PostRepository::class);
-        $this->assertInstanceOf(Repository::class, $this->postRepository, 'Repository under test should be a Doctrine Repository');
+        self::assertInstanceOf(Repository::class, $this->postRepository, 'Repository under test should be a Doctrine Repository');
 
         $result = $this->postRepository->findAll();
-        $this->assertInstanceOf(QueryResultInterface::class, $result, 'findAll should return a QueryResult object');
+        self::assertInstanceOf(QueryResultInterface::class, $result, 'findAll should return a QueryResult object');
     }
 }

@@ -28,11 +28,11 @@ class PointcutSettingFilterTest extends UnitTestCase
         $mockConfigurationManager = $this->getMockBuilder(ConfigurationManager::class)->disableOriginalConstructor()->getMock();
 
         $settings['foo']['bar']['baz']['value'] = true;
-        $mockConfigurationManager->expects($this->atLeastOnce())->method('getConfiguration')->with(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'package')->will($this->returnValue($settings));
+        $mockConfigurationManager->expects(self::atLeastOnce())->method('getConfiguration')->with(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'package')->will(self::returnValue($settings));
 
         $filter = new Aop\Pointcut\PointcutSettingFilter('package.foo.bar.baz.value');
         $filter->injectConfigurationManager($mockConfigurationManager);
-        $this->assertTrue($filter->matches('', '', '', 1));
+        self::assertTrue($filter->matches('', '', '', 1));
     }
 
     /**
@@ -43,23 +43,23 @@ class PointcutSettingFilterTest extends UnitTestCase
         $mockConfigurationManager = $this->getMockBuilder(ConfigurationManager::class)->disableOriginalConstructor()->getMock();
 
         $settings['foo']['bar']['baz']['value'] = false;
-        $mockConfigurationManager->expects($this->atLeastOnce())->method('getConfiguration')->with(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'package')->will($this->returnValue($settings));
+        $mockConfigurationManager->expects(self::atLeastOnce())->method('getConfiguration')->with(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'package')->will(self::returnValue($settings));
 
         $filter = new Aop\Pointcut\PointcutSettingFilter('package.foo.bar.baz.value');
         $filter->injectConfigurationManager($mockConfigurationManager);
-        $this->assertFalse($filter->matches('', '', '', 1));
+        self::assertFalse($filter->matches('', '', '', 1));
     }
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Aop\Exception\InvalidPointcutExpressionException
      */
     public function filterThrowsAnExceptionForNotExistingConfigurationSetting()
     {
+        $this->expectException(Aop\Exception\InvalidPointcutExpressionException::class);
         $mockConfigurationManager = $this->getMockBuilder(ConfigurationManager::class)->disableOriginalConstructor()->getMock();
 
         $settings['foo']['bar']['baz']['value'] = true;
-        $mockConfigurationManager->expects($this->atLeastOnce())->method('getConfiguration')->with(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'package')->will($this->returnValue($settings));
+        $mockConfigurationManager->expects(self::atLeastOnce())->method('getConfiguration')->with(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'package')->will(self::returnValue($settings));
 
         $filter = new Aop\Pointcut\PointcutSettingFilter('package.foo.foozy.baz.value');
         $filter->injectConfigurationManager($mockConfigurationManager);
@@ -73,11 +73,11 @@ class PointcutSettingFilterTest extends UnitTestCase
         $mockConfigurationManager = $this->getMockBuilder(ConfigurationManager::class)->disableOriginalConstructor()->getMock();
 
         $settings['foo']['bar']['baz']['value'] = 'not boolean';
-        $mockConfigurationManager->expects($this->atLeastOnce())->method('getConfiguration')->with(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'package')->will($this->returnValue($settings));
+        $mockConfigurationManager->expects(self::atLeastOnce())->method('getConfiguration')->with(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'package')->will(self::returnValue($settings));
 
         $filter = new Aop\Pointcut\PointcutSettingFilter('package.foo.bar.baz.value');
         $filter->injectConfigurationManager($mockConfigurationManager);
-        $this->assertFalse($filter->matches('', '', '', 1));
+        self::assertFalse($filter->matches('', '', '', 1));
     }
 
     /**
@@ -88,11 +88,11 @@ class PointcutSettingFilterTest extends UnitTestCase
         $mockConfigurationManager = $this->getMockBuilder(ConfigurationManager::class)->disableOriginalConstructor()->getMock();
 
         $settings['foo']['bar']['baz']['value'] = true;
-        $mockConfigurationManager->expects($this->atLeastOnce())->method('getConfiguration')->with(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'package')->will($this->returnValue($settings));
+        $mockConfigurationManager->expects(self::atLeastOnce())->method('getConfiguration')->with(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'package')->will(self::returnValue($settings));
 
         $filter = new Aop\Pointcut\PointcutSettingFilter('package.foo.bar.baz.value');
         $filter->injectConfigurationManager($mockConfigurationManager);
-        $this->assertTrue($filter->matches('', '', '', 1));
+        self::assertTrue($filter->matches('', '', '', 1));
     }
 
     /**
@@ -103,11 +103,11 @@ class PointcutSettingFilterTest extends UnitTestCase
         $mockConfigurationManager = $this->getMockBuilder(ConfigurationManager::class)->disableOriginalConstructor()->getMock();
 
         $settings['foo']['bar']['baz']['value'] = 'option value';
-        $mockConfigurationManager->expects($this->atLeastOnce())->method('getConfiguration')->with(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'package')->will($this->returnValue($settings));
+        $mockConfigurationManager->expects(self::atLeastOnce())->method('getConfiguration')->with(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'package')->will(self::returnValue($settings));
 
         $filter = new Aop\Pointcut\PointcutSettingFilter('package.foo.bar.baz.value = \'option value\'');
         $filter->injectConfigurationManager($mockConfigurationManager);
-        $this->assertTrue($filter->matches('', '', '', 1));
+        self::assertTrue($filter->matches('', '', '', 1));
     }
 
     /**
@@ -118,11 +118,11 @@ class PointcutSettingFilterTest extends UnitTestCase
         $mockConfigurationManager = $this->getMockBuilder(ConfigurationManager::class)->disableOriginalConstructor()->getMock();
 
         $settings['foo']['bar']['baz']['value'] = 'option value';
-        $mockConfigurationManager->expects($this->atLeastOnce())->method('getConfiguration')->with(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'package')->will($this->returnValue($settings));
+        $mockConfigurationManager->expects(self::atLeastOnce())->method('getConfiguration')->with(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'package')->will(self::returnValue($settings));
 
         $filter = new Aop\Pointcut\PointcutSettingFilter('package.foo.bar.baz.value = "option value"');
         $filter->injectConfigurationManager($mockConfigurationManager);
-        $this->assertTrue($filter->matches('', '', '', 1));
+        self::assertTrue($filter->matches('', '', '', 1));
     }
 
     /**
@@ -133,19 +133,20 @@ class PointcutSettingFilterTest extends UnitTestCase
         $mockConfigurationManager = $this->getMockBuilder(ConfigurationManager::class)->disableOriginalConstructor()->getMock();
 
         $settings['foo']['bar']['baz']['value'] = 'some other value';
-        $mockConfigurationManager->expects($this->atLeastOnce())->method('getConfiguration')->with(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'package')->will($this->returnValue($settings));
+        $mockConfigurationManager->expects(self::atLeastOnce())->method('getConfiguration')->with(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'package')->will(self::returnValue($settings));
 
         $filter = new Aop\Pointcut\PointcutSettingFilter('package.foo.bar.baz.value = \'some value\'');
         $filter->injectConfigurationManager($mockConfigurationManager);
-        $this->assertFalse($filter->matches('', '', '', 1));
+        self::assertFalse($filter->matches('', '', '', 1));
     }
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Aop\Exception\InvalidPointcutExpressionException
+     *
      */
     public function filterThrowsAnExceptionForAnIncorectCondition()
     {
+        $this->expectException(Aop\Exception\InvalidPointcutExpressionException::class);
         $mockConfigurationManager = $this->getMockBuilder(ConfigurationManager::class)->disableOriginalConstructor()->getMock();
 
         $settings['foo']['bar']['baz']['value'] = 'option value';

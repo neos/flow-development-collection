@@ -46,6 +46,7 @@ class LoggerTest extends UnitTestCase
      * @param string $psrLogLevel
      * @param int $legacyLogLevel
      * @param bool $willError
+     * @throws \ReflectionException
      */
     public function logAcceptsOnlyValidLogLevels($psrLogLevel, $legacyLogLevel, $willError)
     {
@@ -58,7 +59,7 @@ class LoggerTest extends UnitTestCase
         try {
             $psrLogger->log($psrLogLevel, 'some message');
         } catch (\Throwable $throwable) {
-            $this->assertTrue($willError, $throwable->getMessage());
+            self::assertTrue($willError, $throwable->getMessage());
         }
     }
 
@@ -69,11 +70,12 @@ class LoggerTest extends UnitTestCase
      * @param string $psrLogLevel
      * @param int $legacyLogLevel
      * @param bool $willError
+     * @throws \ReflectionException
      */
     public function levelSpecificMethodsAreSupported($psrLogLevel, $legacyLogLevel, $willError)
     {
         $mockBackend = $this->createMock(BackendInterface::class);
-        $mockBackend->expects(self::once())->method('append')->with('some message', $legacyLogLevel)->willReturn(null);
+        $mockBackend->expects(self::once())->method('append')->with('some message', $legacyLogLevel);
 
         $psrLogger = new Logger([$mockBackend]);
 
