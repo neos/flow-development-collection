@@ -317,12 +317,8 @@ class DispatcherTest extends UnitTestCase
 
         $mockAuthenticationToken = $this->getMockBuilder(TokenInterface::class)->getMock();
         $mockAuthenticationToken->expects(self::any())->method('getAuthenticationEntryPoint')->will(self::returnValue($mockEntryPoint));
-        $this->mockSecurityContext->expects(self::atLeastOnce())->method('getAuthenticationTokens')->will(self::returnValue([$mockAuthenticationToken]));
 
         $this->mockSecurityContext->expects(self::never())->method('setInterceptedRequest');
-
-        $this->mockFirewall->expects(self::once())->method('blockIllegalRequests')->will(self::throwException(new AuthenticationRequiredException()));
-
         $this->mockHttpRequest->method('getMethod')->willReturn('POST');
 
         try {

@@ -48,9 +48,8 @@ class SecurityEntryPointComponent implements ComponentInterface
 
         $entryPoint = $firstTokenWithEntryPoint->getAuthenticationEntryPoint();
         $this->securityLogger->info(sprintf('Starting authentication with entry point of type "%s"', get_class($entryPoint)), LogEnvironment::fromMethodName(__METHOD__));
-
-        // TODO: We should only prevent storage of intercepted request in the session here, but we don't have a different storage mechanism yet.
-        if (!$firstTokenWithEntryPoint instanceof SessionlessTokenInterface) {
+        
+        if ($componentContext->getHttpRequest()->getMethod() === 'GET') {
             $this->securityContext->setInterceptedRequest($actionRequest->getMainRequest());
         }
 
