@@ -66,12 +66,12 @@ class MessageCollector
     /**
      * @param string $message The message to log
      * @param string $severity An integer value, one of the Error::SEVERITY_* constants
-     * @param integer $code A unique error code
+     * @param integer|null $code A unique error code
      * @return void
      * @throws Exception
      * @api
      */
-    public function append(string $message, string $severity = Error::SEVERITY_ERROR, int $code = 0): void
+    public function append(string $message, string $severity = Error::SEVERITY_ERROR, ?int $code = null): void
     {
         switch ($severity) {
             case Error::SEVERITY_ERROR:
