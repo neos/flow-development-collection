@@ -49,7 +49,9 @@ class SecurityEntryPointComponent implements ComponentInterface
         }
 
         $this->securityLogger->info(sprintf('Starting authentication with entry point of type "%s"', get_class($entryPoint)), LogEnvironment::fromMethodName(__METHOD__));
-        $this->securityContext->setInterceptedRequest($actionRequest->getMainRequest());
+        if ($componentContext->getHttpRequest()->getMethod() === 'GET') {
+            $this->securityContext->setInterceptedRequest($actionRequest->getMainRequest());
+        }
         /** @var ResponseInterface $response */
         $response = $entryPoint->startAuthentication($componentContext->getHttpRequest(), $componentContext->getHttpResponse());
         $componentContext->replaceHttpResponse($response);
