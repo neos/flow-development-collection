@@ -88,13 +88,13 @@ class DateHelperTest extends \Neos\Flow\Tests\UnitTestCase
         $expected = 'whatever-value';
 
         $configurationMock = $this->createMock(\Neos\Flow\I18n\Configuration::class);
-        $configurationMock->expects($this->atLeastOnce())->method('getCurrentLocale')->willReturn($locale);
+        $configurationMock->expects(self::atLeastOnce())->method('getCurrentLocale')->willReturn($locale);
 
         $localizationServiceMock = $this->createMock(\Neos\Flow\I18n\Service::class);
-        $localizationServiceMock->expects($this->atLeastOnce())->method('getConfiguration')->willReturn($configurationMock);
+        $localizationServiceMock->expects(self::atLeastOnce())->method('getConfiguration')->willReturn($configurationMock);
 
         $formatMock = $this->createMock(\Neos\Flow\I18n\Formatter\DatetimeFormatter::class);
-        $formatMock->expects($this->atLeastOnce())->method('formatDateTimeWithCustomPattern')->willReturn($expected);
+        $formatMock->expects(self::atLeastOnce())->method('formatDateTimeWithCustomPattern')->willReturn($expected);
 
         $helper = new DateHelper();
         $this->inject($helper, 'datetimeFormatter', $formatMock);
@@ -116,7 +116,7 @@ class DateHelperTest extends \Neos\Flow\Tests\UnitTestCase
         $expected = '2013-07-03 12:34:56';
 
         $formatMock = $this->createMock(\Neos\Flow\I18n\Formatter\DatetimeFormatter::class);
-        $formatMock->expects($this->atLeastOnce())->method('formatDateTimeWithCustomPattern');
+        $formatMock->expects(self::atLeastOnce())->method('formatDateTimeWithCustomPattern');
 
         $helper = new DateHelper();
         $this->inject($helper, 'datetimeFormatter', $formatMock);

@@ -143,16 +143,16 @@ class ConfigurationBuilderTest extends UnitTestCase
 
         $reflectionServiceMock = $this->createMock(ReflectionService::class);
         $reflectionServiceMock
-                ->expects($this->once())
+                ->expects(self::once())
                 ->method('getPropertyNamesByAnnotation')
                 ->with(__CLASS__, Flow\Inject::class)
-                ->will($this->returnValue(['dummyProperty']));
+                ->will(self::returnValue(['dummyProperty']));
 
         $reflectionServiceMock
-                ->expects($this->once())
+                ->expects(self::once())
                 ->method('isPropertyPrivate')
                 ->with(__CLASS__, 'dummyProperty')
-                ->will($this->returnValue(true));
+                ->will(self::returnValue(true));
 
         $configurationBuilder->injectReflectionService($reflectionServiceMock);
         $configurationBuilder->_callRef('autowireProperties', $dummyObjectConfiguration);

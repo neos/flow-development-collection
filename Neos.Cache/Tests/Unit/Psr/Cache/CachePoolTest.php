@@ -29,7 +29,7 @@ class CachePoolTest extends BaseTestCase
     public function getItemChecksIfTheIdentifierIsValid()
     {
         $this->expectException(InvalidArgumentException::class);
-        /** @var PsrFrontend|\PHPUnit_Framework_MockObject_MockObject $cache */
+        /** @var PsrFrontend|\PHPUnit\Framework\MockObject\MockObject $cache */
         $cache = $this->getMockBuilder(CachePool::class)
             ->setMethods(['isValidEntryIdentifier'])
             ->disableOriginalConstructor()
@@ -138,7 +138,7 @@ class CachePoolTest extends BaseTestCase
     }
 
     /**
-     * @return AbstractBackend|\PHPUnit_Framework_MockObject_MockObject
+     * @return AbstractBackend|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function prepareDefaultBackend()
     {

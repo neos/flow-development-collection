@@ -27,7 +27,7 @@ use Neos\Flow\Tests\UnitTestCase;
 class CompilerTest extends UnitTestCase
 {
     /**
-     * @var Compiler|\PHPUnit_Framework_MockObject_MockObject
+     * @var Compiler|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $compiler;
 

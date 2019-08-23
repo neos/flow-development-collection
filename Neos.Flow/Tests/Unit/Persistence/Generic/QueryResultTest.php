@@ -24,12 +24,12 @@ use Neos\Flow\Tests\UnitTestCase;
 class QueryResultTest extends UnitTestCase
 {
     /**
-     * @var PersistenceManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var PersistenceManager|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $persistenceManager;
 
     /**
-     * @var DataMapper|\PHPUnit_Framework_MockObject_MockObject
+     * @var DataMapper|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $dataMapper;
 
@@ -44,7 +44,7 @@ class QueryResultTest extends UnitTestCase
     protected $query;
 
     /**
-     * @var QueryResult|\PHPUnit_Framework_MockObject_MockObject
+     * @var QueryResult|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $sampleResult;
 
@@ -55,14 +55,14 @@ class QueryResultTest extends UnitTestCase
     protected function setUp(): void
     {
         $this->persistenceManager = $this->getMockBuilder(PersistenceManager::class)->disableOriginalConstructor()->getMock();
-        $this->persistenceManager->expects($this->any())->method('getObjectDataByQuery')->will($this->returnValue(['one', 'two']));
+        $this->persistenceManager->expects(self::any())->method('getObjectDataByQuery')->will(self::returnValue(['one', 'two']));
         $this->dataMapper = $this->createMock(DataMapper::class);
         $this->query = $this->createMock(QueryInterface::class);
         $this->queryResult = new QueryResult($this->query);
         $this->queryResult->injectPersistenceManager($this->persistenceManager);
         $this->queryResult->injectDataMapper($this->dataMapper);
         $this->sampleResult = [['foo' => 'Foo1', 'bar' => 'Bar1'], ['foo' => 'Foo2', 'bar' => 'Bar2']];
-        $this->dataMapper->expects($this->any())->method('mapToObjects')->will($this->returnValue($this->sampleResult));
+        $this->dataMapper->expects(self::any())->method('mapToObjects')->will(self::returnValue($this->sampleResult));
     }
 
     /**
@@ -126,7 +126,7 @@ class QueryResultTest extends UnitTestCase
     {
         $queryResult = $this->getMockBuilder(QueryResult::class)->setMethods(['initialize'])->setConstructorArgs([$this->query])->getMock();
         $queryResult->injectPersistenceManager($this->persistenceManager);
-        $queryResult->expects($this->never())->method('initialize');
+        $queryResult->expects(self::never())->method('initialize');
         $queryResult->count();
     }
 
@@ -135,7 +135,7 @@ class QueryResultTest extends UnitTestCase
      */
     public function countCallsGetObjectCountByQueryOnPersistenceManager()
     {
-        $this->persistenceManager->expects($this->once())->method('getObjectCountByQuery')->will($this->returnValue(2));
+        $this->persistenceManager->expects(self::once())->method('getObjectCountByQuery')->will(self::returnValue(2));
         self::assertEquals(2, $this->queryResult->count());
     }
 
@@ -144,7 +144,7 @@ class QueryResultTest extends UnitTestCase
      */
     public function countCountsQueryResultDirectlyIfAlreadyInitialized()
     {
-        $this->persistenceManager->expects($this->never())->method('getObjectCountByQuery');
+        $this->persistenceManager->expects(self::never())->method('getObjectCountByQuery');
         $this->queryResult->toArray();
         self::assertEquals(2, $this->queryResult->count());
     }
@@ -154,7 +154,7 @@ class QueryResultTest extends UnitTestCase
      */
     public function countOnlyCallsGetObjectCountByQueryOnPersistenceManagerOnce()
     {
-        $this->persistenceManager->expects($this->once())->method('getObjectCountByQuery')->will($this->returnValue(2));
+        $this->persistenceManager->expects(self::once())->method('getObjectCountByQuery')->will(self::returnValue(2));
         $this->queryResult->count();
         self::assertEquals(2, $this->queryResult->count());
     }
@@ -189,7 +189,7 @@ class QueryResultTest extends UnitTestCase
         $queryResult = $this->getAccessibleMock(QueryResult::class, ['dummy'], [$this->query]);
         $queryResult->injectPersistenceManager($this->persistenceManager);
         $queryResult->injectDataMapper($this->dataMapper);
-        $this->persistenceManager->expects($this->once())->method('getObjectDataByQuery')->with($this->query)->will($this->returnValue(['FAKERESULT']));
+        $this->persistenceManager->expects(self::once())->method('getObjectDataByQuery')->with($this->query)->will(self::returnValue(['FAKERESULT']));
         $queryResult->_call('initialize');
     }
 
@@ -232,12 +232,12 @@ class QueryResultTest extends UnitTestCase
             new \stdClass()
         ];
         $queryResult = $this->getAccessibleMock(QueryResult::class, ['dummy'], [$this->query]);
-        $this->query->expects($this->once())->method('setLimit')->with(1);
+        $this->query->expects(self::once())->method('setLimit')->with(1);
 
         $queryResult->injectPersistenceManager($this->persistenceManager);
 
         $mockDataMapper = $this->createMock(DataMapper::class);
-        $mockDataMapper->expects($this->once())->method('mapToObjects')->with(['one', 'two'])->will($this->returnValue($initializedQueryResult));
+        $mockDataMapper->expects(self::once())->method('mapToObjects')->with(['one', 'two'])->will(self::returnValue($initializedQueryResult));
         $queryResult->injectDataMapper($mockDataMapper);
 
         $expectedResult = $initializedQueryResult[0];
@@ -252,12 +252,12 @@ class QueryResultTest extends UnitTestCase
     {
         $initializedQueryResult = [];
         $queryResult = $this->getAccessibleMock(QueryResult::class, ['dummy'], [$this->query]);
-        $this->query->expects($this->once())->method('setLimit')->with(1);
+        $this->query->expects(self::once())->method('setLimit')->with(1);
 
         $queryResult->injectPersistenceManager($this->persistenceManager);
 
         $mockDataMapper = $this->createMock(DataMapper::class);
-        $mockDataMapper->expects($this->once())->method('mapToObjects')->with(['one', 'two'])->will($this->returnValue($initializedQueryResult));
+        $mockDataMapper->expects(self::once())->method('mapToObjects')->with(['one', 'two'])->will(self::returnValue($initializedQueryResult));
         $queryResult->injectDataMapper($mockDataMapper);
 
         self::assertNull($queryResult->getFirst());
