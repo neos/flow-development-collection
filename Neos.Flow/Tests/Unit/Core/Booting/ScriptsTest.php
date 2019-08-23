@@ -14,7 +14,8 @@ namespace Neos\Flow\Tests\Unit\Core\Booting;
 use Neos\Flow\Core\Booting\Scripts;
 use Neos\Flow\Tests\UnitTestCase;
 
-class ScriptsMock extends Scripts {
+class ScriptsMock extends Scripts
+{
     protected static function ensureCLISubrequestsUseCurrentlyRunningPhpBinary($phpBinaryPathAndFilename)
     {
     }
