@@ -6,6 +6,7 @@ namespace Neos\Flow\Http\Component;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Mvc\DispatchComponent;
+use Neos\Flow\Security\Authentication\Token\SessionlessTokenInterface;
 use Neos\Flow\Security\Authentication\TokenInterface;
 use Neos\Flow\Security\Context;
 use Psr\Http\Message\ResponseInterface;
