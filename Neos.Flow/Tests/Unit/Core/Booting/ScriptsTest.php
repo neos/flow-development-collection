@@ -14,6 +14,14 @@ namespace Neos\Flow\Tests\Unit\Core\Booting;
 use Neos\Flow\Core\Booting\Scripts;
 use Neos\Flow\Tests\UnitTestCase;
 
+/**
+ * This is something that PHPUnit would have to do in order to support stubbing static methods. And
+ * it would only work if those static methods are called with `static::`, otherwise it breaks badly
+ * without a way to work around it. And that's the reason why PHPUnit doesn't support mocking static
+ * classes since ages any more and why you shouldn't use static methods for anything but trivial
+ * methods that do not do any IO. Unfortunately, we do that in the Scripts.
+ * TODO: Refactor Scripts class to be more testable.
+ */
 class ScriptsMock extends Scripts
 {
     protected static function ensureCLISubrequestsUseCurrentlyRunningPhpBinary($phpBinaryPathAndFilename)
@@ -23,7 +31,7 @@ class ScriptsMock extends Scripts
     protected static function ensureWebSubrequestsUseCurrentlyRunningPhpVersion($phpCommand)
     {
     }
-    
+
     public static function buildSubprocessCommand(...$arguments)
     {
         return parent::buildSubprocessCommand(...$arguments);
