@@ -88,7 +88,7 @@ class SecurityEntryPointComponentTest extends UnitTestCase
         $this->mockComponentContext->method('getHttpResponse')->willReturn($this->mockHttpResponse);
         $this->mockActionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
         $this->mockActionRequest->method('getMainRequest')->willReturn($this->mockActionRequest);
-        $this->mockComponentContext->method('getParameter')->willReturnCallback(function($componentClassName, $parameterName) {
+        $this->mockComponentContext->method('getParameter')->willReturnCallback(function ($componentClassName, $parameterName) {
             if ($componentClassName === SecurityEntryPointComponent::class && $parameterName === SecurityEntryPointComponent::AUTHENTICATION_EXCEPTION) {
                 return $this->mockAuthenticationRequiredException;
             }

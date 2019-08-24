@@ -42,7 +42,7 @@ class SecurityEntryPointComponent implements ComponentInterface
         }
 
         /** @var TokenInterface[] $tokensWithEntryPoint */
-        $tokensWithEntryPoint = array_filter($this->securityContext->getAuthenticationTokens(), static function(TokenInterface $token) {
+        $tokensWithEntryPoint = array_filter($this->securityContext->getAuthenticationTokens(), static function (TokenInterface $token) {
             return $token->getAuthenticationEntryPoint() !== null;
         });
 
