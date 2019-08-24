@@ -23,6 +23,11 @@ class ScriptsMock extends Scripts
     protected static function ensureWebSubrequestsUseCurrentlyRunningPhpVersion($phpCommand)
     {
     }
+    
+    public static function buildSubprocessCommand(...$arguments)
+    {
+        return parent::buildSubprocessCommand(...$arguments);
+    }
 }
 
 /**
