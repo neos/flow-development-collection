@@ -26,14 +26,14 @@
 				<source>The given value is not a valid date</source>
 			<target state="translated">給予的值不是有效日期</target></trans-unit>
       <trans-unit id="1325615630" xml:space="preserve">
-				<source>The given date must be between {0} and {1}</source>
-			<target state="translated">給予的日期必須在 {0} 和 {1} 之間</target></trans-unit>
+				<source>The given date must be between {0,datetime,datetime} and {1,datetime,datetime}</source>
+			<target state="needs-translation">The given date must be between {0,datetime,datetime} and {1,datetime,datetime}</target></trans-unit>
       <trans-unit id="1324315107" xml:space="preserve">
-				<source>The given date must be after {0}</source>
-			<target state="translated">給予的日期必須晚於 {0}</target></trans-unit>
+				<source>The given date must be after {0,datetime,datetime}</source>
+			<target state="needs-translation">The given date must be after {0,datetime,datetime}</target></trans-unit>
       <trans-unit id="1324315115" xml:space="preserve">
-				<source>The given date must be before {0}</source>
-			<target state="translated">給予的日期必須早於 {0}</target></trans-unit>
+				<source>The given date must be before {0,datetime,datetime}</source>
+			<target state="needs-translation">The given date must be before {0,datetime,datetime}</target></trans-unit>
       <!-- DateTimeValidator -->
       <trans-unit id="1281454676" xml:space="preserve">
 				<source>The "locale" option can be only set to string identifier, or Locale object</source>

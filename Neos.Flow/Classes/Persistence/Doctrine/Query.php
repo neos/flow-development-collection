@@ -264,7 +264,7 @@ class Query implements QueryInterface
             $this->logger->error($message, LogEnvironment::fromMethodName(__METHOD__));
             return 0;
         } catch (\PDOException $pdoException) {
-            throw new Exception\DatabaseConnectionException($pdoException->getMessage(), $pdoException->getCode());
+            throw new Exception\DatabaseConnectionException($pdoException->getMessage(), (int)$pdoException->getCode());
         }
     }
 

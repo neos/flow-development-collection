@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Flow\Utility;
 
 /*
@@ -11,6 +13,7 @@ namespace Neos\Flow\Utility;
  * source code.
  */
 
+use Neos\Utility\Unicode\Functions;
 use Ramsey\Uuid\Uuid;
 use Neos\Flow\Annotations as Flow;
 
@@ -28,9 +31,10 @@ class Algorithms
      * If php-uuid was installed it will be used instead to speed up the process.
      *
      * @return string The universally unique id
+     * @throws \Exception
      * @todo Optionally generate type 1 and type 5 UUIDs.
      */
-    public static function generateUUID()
+    public static function generateUUID(): string
     {
         if (is_callable('uuid_create')) {
             return strtolower(uuid_create(UUID_TYPE_RANDOM));
@@ -42,10 +46,11 @@ class Algorithms
     /**
      * Returns a string of random bytes.
      *
-     * @param integer $count Number of bytes to generate
+     * @param int $count Number of bytes to generate
      * @return string Random bytes
+     * @throws \Exception
      */
-    public static function generateRandomBytes($count)
+    public static function generateRandomBytes(int $count): string
     {
         return random_bytes($count);
     }
@@ -53,10 +58,11 @@ class Algorithms
     /**
      * Returns a random token in hex format.
      *
-     * @param integer $count Token length
+     * @param int $count Token length
      * @return string A random token
+     * @throws \Exception
      */
-    public static function generateRandomToken($count)
+    public static function generateRandomToken(int $count): string
     {
         return bin2hex(random_bytes($count));
     }
@@ -67,13 +73,14 @@ class Algorithms
      * @param integer $count Number of characters to generate
      * @param string $characters Allowed characters, defaults to alpha-numeric (a-zA-Z0-9)
      * @return string A random string
+     * @throws \Exception
      */
-    public static function generateRandomString($count, $characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789')
+    public static function generateRandomString(int $count, string $characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'): string
     {
-        $characterCount = \Neos\Utility\Unicode\Functions::strlen($characters);
+        $characterCount = Functions::strlen($characters);
         $string = '';
         for ($i = 0; $i < $count; $i++) {
-            $string .= \Neos\Utility\Unicode\Functions::substr($characters, random_int(0, ($characterCount - 1)), 1);
+            $string .= Functions::substr($characters, random_int(0, ($characterCount - 1)), 1);
         }
 
         return $string;

@@ -1,9 +1,13 @@
 <?php
 namespace Neos\Flow\Mvc;
 
+use Neos\Flow\Http\Cookie;
+use function GuzzleHttp\Psr7\stream_for;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Http\Component\ComponentContext;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
+use GuzzleHttp\Psr7\Stream;
 
 /**
  * The minimal MVC response object.
@@ -13,24 +17,44 @@ use Psr\Http\Message\UriInterface;
  * @Flow\Proxy(false)
  * @api
  */
-final class ActionResponse extends \Neos\Flow\Http\Response
+final class ActionResponse
 {
-    use ResponseDeprecationTrait;
+    /**
+     * @var Stream
+     */
+    protected $content;
 
     /**
      * @var array
      */
-    private $componentParameters = [];
+    protected $componentParameters = [];
 
     /**
      * @var UriInterface
      */
-    private $redirectUri;
+    protected $redirectUri;
+
+    /**
+     * The HTTP status code
+     *
+     * @var integer
+     */
+    protected $statusCode = 200;
 
     /**
      * @var string
      */
-    private $contentType = '';
+    protected $contentType;
+
+    /**
+     * @var Cookie[]
+     */
+    protected $cookies = [];
+
+    public function __construct()
+    {
+        $this->content = stream_for();
+    }
 
     /**
      * @param string|StreamInterface $content
@@ -39,8 +63,11 @@ final class ActionResponse extends \Neos\Flow\Http\Response
      */
     public function setContent($content): void
     {
-        // TODO: For next major specific handling of StreamInterface arguments should be done to keep them intact.
-        $this->content = (string)$content;
+        if (!$content instanceof StreamInterface) {
+            $content = stream_for($content);
+        }
+
+        $this->content = $content;
     }
 
     /**
@@ -53,8 +80,6 @@ final class ActionResponse extends \Neos\Flow\Http\Response
     public function setContentType(string $contentType): void
     {
         $this->contentType = $contentType;
-        // TODO: This can be removed after the full changes are done for next major.
-        $this->headers->set('Content-Type', $contentType, true);
     }
 
     /**
@@ -69,9 +94,6 @@ final class ActionResponse extends \Neos\Flow\Http\Response
     {
         $this->redirectUri = $uri;
         $this->statusCode = $statusCode;
-        // TODO: This can be removed after the full changes are done for next major.
-        $this->headers->set('Location', (string)$uri, true);
-        $this->setStatusCode($statusCode);
     }
 
     /**
@@ -85,6 +107,32 @@ final class ActionResponse extends \Neos\Flow\Http\Response
     public function setStatusCode(int $statusCode): void
     {
         $this->statusCode = $statusCode;
+    }
+
+    /**
+     * Set a cookie in the HTTP response
+     * This leads to a corresponding `Set-Cookie` header to be set in the HTTP response
+     *
+     * @param Cookie $cookie Cookie to be set in the HTTP response
+     * @api
+     */
+    public function setCookie(Cookie $cookie): void
+    {
+        $this->cookies[$cookie->getName()] = clone $cookie;
+    }
+
+    /**
+     * Delete a cooke from the HTTP response
+     * This leads to a corresponding `Set-Cookie` header with an expired Cookie to be set in the HTTP response
+     *
+     * @param string $cookieName Name of the cookie to delete
+     * @api
+     */
+    public function deleteCookie(string $cookieName): void
+    {
+        $cookie = new Cookie($cookieName);
+        $cookie->expire();
+        $this->cookies[$cookie->getName()] = $cookie;
     }
 
     /**
@@ -103,5 +151,117 @@ final class ActionResponse extends \Neos\Flow\Http\Response
             $this->componentParameters[$componentClassName] = [];
         }
         $this->componentParameters[$componentClassName][$parameterName] = $value;
+    }
+
+    /**
+     * @return string
+     */
+    public function getContent(): string
+    {
+        $content = $this->content->getContents();
+        $this->content->rewind();
+        return $content;
+    }
+
+    /**
+     * @return array
+     */
+    public function getComponentParameters(): array
+    {
+        return $this->componentParameters;
+    }
+
+    /**
+     * @return UriInterface
+     */
+    public function getRedirectUri(): ?UriInterface
+    {
+        return $this->redirectUri;
+    }
+
+    /**
+     * @return int
+     */
+    public function getStatusCode(): int
+    {
+        return $this->statusCode;
+    }
+
+    /**
+     * @return string
+     */
+    public function getContentType(): string
+    {
+        return $this->contentType;
+    }
+
+    /**
+     * @param ActionResponse $actionResponse
+     * @return ActionResponse
+     */
+    public function mergeIntoParentResponse(ActionResponse $actionResponse): ActionResponse
+    {
+        if (!empty($this->content)) {
+            $actionResponse->setContent($this->content);
+        }
+        if ($this->contentType !== null) {
+            $actionResponse->setContentType($this->contentType);
+        }
+
+        if ($this->statusCode !== null) {
+            $actionResponse->setStatusCode($this->statusCode);
+        }
+
+        if ($this->redirectUri !== null) {
+            $actionResponse->setRedirectUri($this->redirectUri);
+        }
+
+        foreach ($this->componentParameters as $componentClass => $parameters) {
+            foreach ($parameters as $parameterName => $parameterValue) {
+                $actionResponse->setComponentParameter($componentClass, $parameterName, $parameterValue);
+            }
+        }
+        foreach ($this->cookies as $cookie) {
+            $actionResponse->setCookie($cookie);
+        }
+
+        return $actionResponse;
+    }
+
+    /**
+     * @param ComponentContext $componentContext
+     * @return ComponentContext
+     */
+    public function mergeIntoComponentContext(ComponentContext $componentContext): ComponentContext
+    {
+        $httpResponse = $componentContext->getHttpResponse();
+        $httpResponse = $httpResponse
+            ->withStatus($this->statusCode);
+
+        if ($this->content !== null) {
+            $httpResponse = $httpResponse->withBody($this->content);
+        }
+
+        if ($this->contentType) {
+            $httpResponse = $httpResponse->withHeader('Content-Type', $this->contentType);
+        }
+
+        if ($this->redirectUri) {
+            $httpResponse = $httpResponse->withHeader('Location', (string)$this->redirectUri);
+        }
+
+        foreach ($this->componentParameters as $componentClassName => $componentParameterGroup) {
+            foreach ($componentParameterGroup as $parameterName => $parameterValue) {
+                $componentContext->setParameter($componentClassName, $parameterName, $parameterValue);
+            }
+        }
+
+        foreach ($this->cookies as $cookie) {
+            $httpResponse = $httpResponse->withAddedHeader('Set-Cookie', (string)$cookie);
+        }
+
+        $componentContext->replaceHttpResponse($httpResponse);
+
+        return $componentContext;
     }
 }

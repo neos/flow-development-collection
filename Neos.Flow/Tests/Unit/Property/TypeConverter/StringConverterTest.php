@@ -27,7 +27,7 @@ class StringConverterTest extends UnitTestCase
      */
     protected $converter;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->converter = new StringConverter();
     }
@@ -37,9 +37,9 @@ class StringConverterTest extends UnitTestCase
      */
     public function checkMetadata()
     {
-        $this->assertEquals(['string', 'integer', 'float', 'boolean', 'array', \DateTimeInterface::class], $this->converter->getSupportedSourceTypes(), 'Source types do not match');
-        $this->assertEquals('string', $this->converter->getSupportedTargetType(), 'Target type does not match');
-        $this->assertEquals(1, $this->converter->getPriority(), 'Priority does not match');
+        self::assertEquals(['string', 'integer', 'float', 'boolean', 'array', \DateTimeInterface::class], $this->converter->getSupportedSourceTypes(), 'Source types do not match');
+        self::assertEquals('string', $this->converter->getSupportedTargetType(), 'Target type does not match');
+        self::assertEquals(1, $this->converter->getPriority(), 'Priority does not match');
     }
 
     /**
@@ -47,7 +47,7 @@ class StringConverterTest extends UnitTestCase
      */
     public function convertFromShouldReturnSourceString()
     {
-        $this->assertEquals('myString', $this->converter->convertFrom('myString', 'string'));
+        self::assertEquals('myString', $this->converter->convertFrom('myString', 'string'));
     }
 
     /**
@@ -58,7 +58,7 @@ class StringConverterTest extends UnitTestCase
         $date = new \DateTime('1980-12-13');
         $propertyMappingConfiguration = new PropertyMappingConfiguration();
         $propertyMappingConfiguration->setTypeConverterOption(StringConverter::class, StringConverter::CONFIGURATION_DATE_FORMAT, 'd.m.Y');
-        $this->assertEquals('13.12.1980', $this->converter->convertFrom($date, 'string', [], $propertyMappingConfiguration));
+        self::assertEquals('13.12.1980', $this->converter->convertFrom($date, 'string', [], $propertyMappingConfiguration));
     }
 
     /**
@@ -69,7 +69,7 @@ class StringConverterTest extends UnitTestCase
         $date = new \DateTimeImmutable('1980-12-13');
         $propertyMappingConfiguration = new PropertyMappingConfiguration();
         $propertyMappingConfiguration->setTypeConverterOption(StringConverter::class, StringConverter::CONFIGURATION_DATE_FORMAT, 'd.m.Y');
-        $this->assertEquals('13.12.1980', $this->converter->convertFrom($date, 'string', [], $propertyMappingConfiguration));
+        self::assertEquals('13.12.1980', $this->converter->convertFrom($date, 'string', [], $propertyMappingConfiguration));
     }
 
 
@@ -78,7 +78,7 @@ class StringConverterTest extends UnitTestCase
      */
     public function canConvertFromShouldReturnTrue()
     {
-        $this->assertTrue($this->converter->canConvertFrom('myString', 'string'));
+        self::assertTrue($this->converter->canConvertFrom('myString', 'string'));
     }
 
     /**
@@ -86,7 +86,7 @@ class StringConverterTest extends UnitTestCase
      */
     public function getSourceChildPropertiesToBeConvertedShouldReturnEmptyArray()
     {
-        $this->assertEquals([], $this->converter->getSourceChildPropertiesToBeConverted('myString'));
+        self::assertEquals([], $this->converter->getSourceChildPropertiesToBeConverted('myString'));
     }
 
 
@@ -115,10 +115,10 @@ class StringConverterTest extends UnitTestCase
 
         $propertyMappingConfiguration = $this->createMock(PropertyMappingConfiguration::class);
         $propertyMappingConfiguration
-            ->expects($this->any())
+            ->expects(self::any())
             ->method('getConfigurationValue')
             ->will($this->returnValueMap($configurationValueMap));
 
-        $this->assertEquals($expectedResult, $this->converter->convertFrom($source, 'array', [], $propertyMappingConfiguration));
+        self::assertEquals($expectedResult, $this->converter->convertFrom($source, 'array', [], $propertyMappingConfiguration));
     }
 }

@@ -26,8 +26,8 @@ class ObjectManagerTest extends FunctionalTestCase
         $objectByInterface = $this->objectManager->get(Fixtures\InterfaceA::class);
         $objectByClassName = $this->objectManager->get(Fixtures\InterfaceAImplementation::class);
 
-        $this->assertInstanceOf(Fixtures\InterfaceAImplementation::class, $objectByInterface);
-        $this->assertInstanceOf(Fixtures\InterfaceAImplementation::class, $objectByClassName);
+        self::assertInstanceOf(Fixtures\InterfaceAImplementation::class, $objectByInterface);
+        self::assertInstanceOf(Fixtures\InterfaceAImplementation::class, $objectByClassName);
     }
 
     /**
@@ -38,7 +38,7 @@ class ObjectManagerTest extends FunctionalTestCase
         $instanceA = new Fixtures\PrototypeClassB();
         $instanceB = new Fixtures\PrototypeClassB();
 
-        $this->assertNotSame($instanceA, $instanceB);
+        self::assertNotSame($instanceA, $instanceB);
     }
 
     /**
@@ -49,7 +49,7 @@ class ObjectManagerTest extends FunctionalTestCase
         $objectByInterface = $this->objectManager->get(Fixtures\InterfaceA::class);
         $objectByClassName = $this->objectManager->get(Fixtures\InterfaceAImplementation::class);
 
-        $this->assertSame($objectByInterface, $objectByClassName);
+        self::assertSame($objectByInterface, $objectByClassName);
     }
 
     /**
@@ -66,17 +66,6 @@ class ObjectManagerTest extends FunctionalTestCase
          */
         \Neos\Flow\Core\Bootstrap::$staticObjectManager->shutdown();
 
-        $this->assertTrue($entity->isDestructed());
-    }
-
-    /**
-     * XXX: Remove this with Flow 6.0
-     * @test
-     */
-    public function deprecatedDoctrineObjectManagerInjectsSameInstanceAsEntityManagerInterface()
-    {
-        $classWithInjections = $this->objectManager->get(Fixtures\ClassWithDoctrineInjections::class);
-
-        $this->assertSame($classWithInjections->entityManager, $classWithInjections->objectManager);
+        self::assertTrue($entity->isDestructed());
     }
 }

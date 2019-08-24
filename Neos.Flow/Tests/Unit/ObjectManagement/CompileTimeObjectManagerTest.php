@@ -30,7 +30,7 @@ class CompileTimeObjectManagerTest extends UnitTestCase
      */
     protected $compileTimeObjectManager;
 
-    public function setUp()
+    protected function setUp(): void
     {
         vfsStream::setup('Packages');
         $this->mockPackageManager = $this->getMockBuilder(PackageManager::class)->disableOriginalConstructor()->getMock();
@@ -69,8 +69,8 @@ class CompileTimeObjectManagerTest extends UnitTestCase
 
         $objectManagementEnabledClasses = $this->compileTimeObjectManager->_call('registerClassFiles', ['Vendor.TestPackage' => $testPackage]);
         // Count is at least 1 as '' => 'DateTime' is hardcoded
-        $this->assertCount(2, $objectManagementEnabledClasses);
-        $this->assertArrayHasKey('Vendor.TestPackage', $objectManagementEnabledClasses);
+        self::assertCount(2, $objectManagementEnabledClasses);
+        self::assertArrayHasKey('Vendor.TestPackage', $objectManagementEnabledClasses);
     }
 
     /**
@@ -87,7 +87,7 @@ class CompileTimeObjectManagerTest extends UnitTestCase
 
         $objectManagementEnabledClasses = $this->compileTimeObjectManager->_call('registerClassFiles', ['NonFlow.TestPackage' => $testPackage]);
         // Count is at least 1 as '' => 'DateTime' is hardcoded
-        $this->assertCount(1, $objectManagementEnabledClasses);
+        self::assertCount(1, $objectManagementEnabledClasses);
     }
 
     /**
@@ -104,8 +104,8 @@ class CompileTimeObjectManagerTest extends UnitTestCase
 
         $objectManagementEnabledClasses = $this->compileTimeObjectManager->_call('registerClassFiles', ['NonFlow.IncludeAllClasses' => $testPackage]);
         // Count is at least 1 as '' => 'DateTime' is hardcoded
-        $this->assertCount(2, $objectManagementEnabledClasses);
-        $this->assertArrayHasKey('NonFlow.IncludeAllClasses', $objectManagementEnabledClasses);
+        self::assertCount(2, $objectManagementEnabledClasses);
+        self::assertArrayHasKey('NonFlow.IncludeAllClasses', $objectManagementEnabledClasses);
     }
 
     /**
@@ -122,7 +122,7 @@ class CompileTimeObjectManagerTest extends UnitTestCase
 
         $objectManagementEnabledClasses = $this->compileTimeObjectManager->_call('registerClassFiles', ['NonFlow.IncludeAndExclude' => $testPackage]);
         // Count is at least 1 as '' => 'DateTime' is hardcoded
-        $this->assertCount(1, $objectManagementEnabledClasses);
+        self::assertCount(1, $objectManagementEnabledClasses);
     }
 
     /**
@@ -139,6 +139,6 @@ class CompileTimeObjectManagerTest extends UnitTestCase
 
         $objectManagementEnabledClasses = $this->compileTimeObjectManager->_call('registerClassFiles', ['Vendor.AnotherPackage' => $testPackage]);
         // Count is at least 1 as '' => 'DateTime' is hardcoded
-        $this->assertCount(1, $objectManagementEnabledClasses);
+        self::assertCount(1, $objectManagementEnabledClasses);
     }
 }

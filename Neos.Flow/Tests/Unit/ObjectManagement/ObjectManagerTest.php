@@ -47,8 +47,8 @@ class ObjectManagerTest extends UnitTestCase
         $objectManager = $this->getMockBuilder(ObjectManager::class)
             ->disableOriginalConstructor()
             ->setMethods(['buildObjectByFactory'])->getMock();
-        $objectManager->expects($this->exactly($factoryCalls))
-            ->method('buildObjectByFactory')->will($this->returnCallback(function () {
+        $objectManager->expects(self::exactly($factoryCalls))
+            ->method('buildObjectByFactory')->will(self::returnCallBack(function () {
                 return new BasicClass();
             }));
 
@@ -64,9 +64,9 @@ class ObjectManagerTest extends UnitTestCase
         $object2 = $objectManager->get(BasicClass::class);
 
         if ($scope == ObjectConfiguration::SCOPE_PROTOTYPE) {
-            $this->assertNotSame($object1, $object2);
+            self::assertNotSame($object1, $object2);
         } else {
-            $this->assertSame($object1, $object2);
+            self::assertSame($object1, $object2);
         }
     }
 }

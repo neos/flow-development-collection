@@ -13,6 +13,7 @@ namespace Neos\Eel\Tests\Unit;
 
 use Neos\Cache\Frontend\StringFrontend;
 use Neos\Eel\CompilingEvaluator;
+use Neos\Eel\NotAllowedException;
 use Neos\Eel\ProtectedContext;
 use Neos\Eel\Tests\Unit\Fixtures\TestObject;
 use Neos\Flow\Tests\UnitTestCase;
@@ -24,10 +25,10 @@ class ProtectedContextTest extends UnitTestCase
 {
     /**
      * @test
-     * @expectedException \Neos\Eel\NotAllowedException
      */
     public function methodCallToAnyValueIsNotAllowed()
     {
+        $this->expectException(NotAllowedException::class);
         $securedObject = new TestObject();
 
         $context = new ProtectedContext([
@@ -40,10 +41,10 @@ class ProtectedContextTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Eel\NotAllowedException
      */
     public function arrayAccessResultIsStillUntrusted()
     {
+        $this->expectException(NotAllowedException::class);
         $securedObject = new TestObject();
 
         $context = new ProtectedContext([
@@ -70,7 +71,7 @@ class ProtectedContextTest extends UnitTestCase
         $evaluator = $this->createEvaluator();
         $result = $evaluator->evaluate('value.foo', $context);
 
-        $this->assertEquals('Bar', $result);
+        self::assertEquals('Bar', $result);
     }
 
     /**
@@ -87,15 +88,15 @@ class ProtectedContextTest extends UnitTestCase
 
         $result = $evaluator->evaluate('String.substr("Hello World", 6, 5)', $context);
 
-        $this->assertEquals('World', $result);
+        self::assertEquals('World', $result);
     }
 
     /**
      * @test
-     * @expectedException \Neos\Eel\NotAllowedException
      */
     public function firstLevelFunctionsHaveToBeWhitelisted()
     {
+        $this->expectException(NotAllowedException::class);
         $context = new ProtectedContext([
             'ident' => function ($value) {
                 return $value;
@@ -109,10 +110,10 @@ class ProtectedContextTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Eel\NotAllowedException
      */
     public function resultOfFirstLevelMethodCallIsProtected()
     {
+        $this->expectException(NotAllowedException::class);
         $securedObject = new TestObject();
 
         $context = new ProtectedContext([
@@ -126,17 +127,17 @@ class ProtectedContextTest extends UnitTestCase
         $evaluator = $this->createEvaluator();
 
         $result = $evaluator->evaluate('ident(value)', $context);
-        $this->assertEquals($securedObject, $result);
+        self::assertEquals($securedObject, $result);
 
         $evaluator->evaluate('ident(value).callMe("Foo")', $context);
     }
 
     /**
      * @test
-     * @expectedException \Neos\Eel\NotAllowedException
      */
     public function resultOfWhitelistedMethodCallIsProtected()
     {
+        $this->expectException(NotAllowedException::class);
         $securedObject = new TestObject();
 
         $context = new ProtectedContext([
@@ -152,7 +153,7 @@ class ProtectedContextTest extends UnitTestCase
         $evaluator = $this->createEvaluator();
 
         $result = $evaluator->evaluate('Array.reverse(value)[0]', $context);
-        $this->assertEquals($securedObject, $result);
+        self::assertEquals($securedObject, $result);
 
         $evaluator->evaluate('Array.reverse(value)[0].callMe("Foo")', $context);
     }
@@ -178,7 +179,7 @@ class ProtectedContextTest extends UnitTestCase
         $evaluator = $this->createEvaluator();
 
         $result = $evaluator->evaluate('q(value).count()', $context);
-        $this->assertEquals(2, $result);
+        self::assertEquals(2, $result);
     }
 
     /**
@@ -197,7 +198,7 @@ class ProtectedContextTest extends UnitTestCase
         $evaluator = $this->createEvaluator();
 
         $result = $evaluator->evaluate('value.callMe("Foo")', $context);
-        $this->assertEquals('Hello, Foo!', $result);
+        self::assertEquals('Hello, Foo!', $result);
     }
 
     /**
@@ -211,7 +212,7 @@ class ProtectedContextTest extends UnitTestCase
 
         $evaluator = $this->createEvaluator();
         $result = $evaluator->evaluate('unknown.someMethod()', $context);
-        $this->assertEquals(null, $result);
+        self::assertEquals(null, $result);
     }
 
     /**

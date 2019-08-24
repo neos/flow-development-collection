@@ -12,6 +12,7 @@ namespace Neos\Kickstarter\ViewHelpers\Inflect;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 
 /**
  * Humanize a camel cased value
@@ -26,7 +27,7 @@ use Neos\Flow\Annotations as Flow;
  * Camel cased model name
  *
  */
-class HumanizeCamelCaseViewHelper extends \Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper
+class HumanizeCamelCaseViewHelper extends AbstractViewHelper
 {
     /**
      * @var \Neos\Kickstarter\Utility\Inflector
@@ -35,14 +36,25 @@ class HumanizeCamelCaseViewHelper extends \Neos\FluidAdaptor\Core\ViewHelper\Abs
     protected $inflector;
 
     /**
+     * Initialize the arguments.
+     *
+     * @return void
+     * @throws \Neos\FluidAdaptor\Core\ViewHelper\Exception
+     */
+    public function initializeArguments()
+    {
+        parent::initializeArguments();
+        $this->registerArgument('lowercase', 'bool', 'Whether the result should be lowercased', false, false);
+    }
+
+    /**
      * Humanize a model name
      *
-     * @param boolean $lowercase Wether the result should be lowercased
      * @return string The humanized string
      */
-    public function render($lowercase = false)
+    public function render(): string
     {
         $content = $this->renderChildren();
-        return $this->inflector->humanizeCamelCase($content, $lowercase);
+        return $this->inflector->humanizeCamelCase($content, $this->arguments['lowercase']);
     }
 }
