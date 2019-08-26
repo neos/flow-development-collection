@@ -83,6 +83,7 @@ class Account implements AccountInterface
 
     /**
      * @Flow\Transient
+     * @Flow\IgnoreValidation
      * @var array<Role>
      */
     protected $roles;
