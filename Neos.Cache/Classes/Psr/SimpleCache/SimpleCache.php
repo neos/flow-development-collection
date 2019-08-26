@@ -99,7 +99,7 @@ class SimpleCache implements CacheInterface
             return $defaultValue;
         }
 
-        return unserialize($rawResult);
+        return unserialize((string)$rawResult);
     }
 
     /**

@@ -161,7 +161,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
         $cacheEntryPathAndFilename = $this->cacheDirectory . $entryIdentifier . $this->cacheEntryFileExtension;
         $lifetime = $lifetime === null ? $this->defaultLifetime : $lifetime;
         $expiryTime = ($lifetime === 0) ? 0 : (time() + $lifetime);
-        $metaData = implode(' ', $tags) . str_pad($expiryTime, self::EXPIRYTIME_LENGTH) . str_pad(strlen($data), self::DATASIZE_DIGITS);
+        $metaData = implode(' ', $tags) . str_pad((string)$expiryTime, self::EXPIRYTIME_LENGTH) . str_pad((string)strlen($data), self::DATASIZE_DIGITS);
 
         $result = $this->writeCacheFile($cacheEntryPathAndFilename, $data . $metaData);
         if ($result !== false) {
@@ -320,7 +320,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
         if ($acquireLock) {
             $expiryTime = (integer)$this->readCacheFile($cacheEntryPathAndFilename, $expiryTimeOffset, self::EXPIRYTIME_LENGTH);
         } else {
-            $expiryTime = (integer)file_get_contents($cacheEntryPathAndFilename, null, null, $expiryTimeOffset, self::EXPIRYTIME_LENGTH);
+            $expiryTime = (integer)file_get_contents($cacheEntryPathAndFilename, false, null, $expiryTimeOffset, self::EXPIRYTIME_LENGTH);
         }
 
         return ($expiryTime !== 0 && $expiryTime < time());

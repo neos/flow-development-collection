@@ -459,7 +459,7 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
      * @param \Redis $redis
      * @return null
      */
-    public function setRedis(\Redis $redis = null): null
+    public function setRedis(\Redis $redis = null): void
     {
         $this->redis = $redis;
     }

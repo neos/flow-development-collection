@@ -41,7 +41,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
     /**
      * @var string
      */
-    protected $dataSourceName;
+    protected $dataSourceName = '';
 
     /**
      * @var string
