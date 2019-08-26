@@ -95,6 +95,7 @@ class SecurityEntryPointComponentTest extends UnitTestCase
             if ($componentClassName === DispatchComponent::class && $parameterName === 'actionRequest') {
                 return $this->mockActionRequest;
             }
+            return null;
         });
 
         $this->mockAuthenticationRequiredException = new AuthenticationRequiredException();
@@ -130,20 +131,60 @@ class SecurityEntryPointComponentTest extends UnitTestCase
      */
     public function handleCallsStartAuthenticationOnAllActiveEntryPoints(): void
     {
-        $mockAuthenticationToken1 = $this->getMockBuilder(TokenInterface::class)->getMock();
-        $mockEntryPoint1 = $this->getMockBuilder(EntryPointInterface::class)->getMock();
-        $mockAuthenticationToken1->method('getAuthenticationEntryPoint')->willReturn($mockEntryPoint1);
-
-        $mockAuthenticationToken2 = $this->getMockBuilder(TokenInterface::class)->getMock();
-        $mockEntryPoint2 = $this->getMockBuilder(EntryPointInterface::class)->getMock();
-        $mockAuthenticationToken2->method('getAuthenticationEntryPoint')->willReturn($mockEntryPoint2);
-
+        $mockAuthenticationToken1 = $this->createMockTokenWithEntryPoint();
+        $mockAuthenticationToken2 = $this->createMockTokenWithEntryPoint();
         $this->mockSecurityContext->expects(self::atLeastOnce())->method('getAuthenticationTokens')->willReturn([$mockAuthenticationToken1, $mockAuthenticationToken2]);
 
-        $mockEntryPoint1->expects(self::once())->method('startAuthentication')->with($this->mockHttpRequest, $this->mockHttpResponse);
-        $mockEntryPoint2->expects(self::once())->method('startAuthentication')->with($this->mockHttpRequest, $this->mockHttpResponse);
+        /** @var EntryPointInterface|MockObject $mockEntryPoint1 */
+        $mockEntryPoint1 = $mockAuthenticationToken1->getAuthenticationEntryPoint();
+        $mockEntryPoint1->expects(self::once())->method('startAuthentication')->with($this->mockHttpRequest, $this->mockHttpResponse)->willReturn($this->mockHttpResponse);
+
+        /** @var EntryPointInterface|MockObject $mockEntryPoint2 */
+        $mockEntryPoint2 = $mockAuthenticationToken2->getAuthenticationEntryPoint();
+        $mockEntryPoint2->expects(self::once())->method('startAuthentication')->with($this->mockHttpRequest, $this->mockHttpResponse)->willReturn($this->mockHttpResponse);
 
         $this->securityEntryPointComponent->handle($this->mockComponentContext);
+    }
+
+    /**
+     * @test
+     */
+    public function handleAllowsAllEntryPointsToModifyTheHttpResponse(): void
+    {
+        $mockAuthenticationToken1 = $this->createMockTokenWithEntryPoint();
+        $mockAuthenticationToken2 = $this->createMockTokenWithEntryPoint();
+        $this->mockSecurityContext->expects(self::atLeastOnce())->method('getAuthenticationTokens')->willReturn([$mockAuthenticationToken1, $mockAuthenticationToken2]);
+
+        $mockHttpResponse1 = $this->getMockBuilder(ResponseInterface::class)->getMock();
+        $this->mockHttpResponse->expects(self::once())->method('withAddedHeader')->with('X-Entry-Point', '1')->willReturn($mockHttpResponse1);
+        $mockHttpResponse2 = $this->getMockBuilder(ResponseInterface::class)->getMock();
+        $mockHttpResponse1->expects(self::once())->method('withAddedHeader')->with('X-Entry-Point', '2')->willReturn($mockHttpResponse2);
+
+        /** @var EntryPointInterface|MockObject $mockEntryPoint1 */
+        $mockEntryPoint1 = $mockAuthenticationToken1->getAuthenticationEntryPoint();
+        $mockEntryPoint1->method('startAuthentication')->willReturnCallback(static function (ServerRequestInterface $_, ResponseInterface $response) {
+            return $response->withAddedHeader('X-Entry-Point', '1');
+        });
+        /** @var EntryPointInterface|MockObject $mockEntryPoint2 */
+        $mockEntryPoint2 = $mockAuthenticationToken2->getAuthenticationEntryPoint();
+        $mockEntryPoint2->method('startAuthentication')->willReturnCallback(static function (ServerRequestInterface $_, ResponseInterface $response) {
+            return $response->withAddedHeader('X-Entry-Point', '2');
+        });
+
+        $this->mockComponentContext->expects(self::once())->method('replaceHttpResponse')->with($mockHttpResponse2);
+
+        $this->securityEntryPointComponent->handle($this->mockComponentContext);
+    }
+
+    /**
+     * @return TokenInterface|MockObject
+     */
+    private function createMockTokenWithEntryPoint(): MockObject
+    {
+        $mockAuthenticationToken = $this->getMockBuilder(TokenInterface::class)->getMock();
+        $mockEntryPoint = $this->getMockBuilder(EntryPointInterface::class)->getMock();
+        $mockAuthenticationToken->method('getAuthenticationEntryPoint')->willReturn($mockEntryPoint);
+        return $mockAuthenticationToken;
     }
 
     /**

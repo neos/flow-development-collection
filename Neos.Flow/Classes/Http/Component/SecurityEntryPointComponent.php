@@ -63,7 +63,7 @@ class SecurityEntryPointComponent implements ComponentInterface
                 $actionRequest = $componentContext->getParameter(DispatchComponent::class, 'actionRequest');
                 $this->securityContext->setInterceptedRequest($actionRequest->getMainRequest());
             }
-            $response = $entryPoint->startAuthentication($componentContext->getHttpRequest(), $componentContext->getHttpResponse());
+            $response = $entryPoint->startAuthentication($componentContext->getHttpRequest(), $response);
         }
         $componentContext->replaceHttpResponse($response);
     }
