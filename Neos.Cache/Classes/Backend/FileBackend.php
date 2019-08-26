@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Cache\Backend;
 
 /*
@@ -60,7 +62,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
      * @return void
      * @throws \RuntimeException
      */
-    public function freeze()
+    public function freeze(): void
     {
         if ($this->frozen === true) {
             throw new \RuntimeException(sprintf('The cache "%s" is already frozen.', $this->cacheIdentifier), 1323353176);
@@ -115,7 +117,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
      * @return void
      * @throws Exception
      */
-    public function setCache(FrontendInterface $cache)
+    public function setCache(FrontendInterface $cache): void
     {
         parent::setCache($cache);
 
@@ -144,7 +146,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
      * @throws \InvalidArgumentException
      * @api
      */
-    public function set(string $entryIdentifier, string $data, array $tags = [], int $lifetime = null)
+    public function set(string $entryIdentifier, string $data, array $tags = [], int $lifetime = null): void
     {
         if ($entryIdentifier !== basename($entryIdentifier)) {
             throw new \InvalidArgumentException('The specified entry identifier must not contain a path segment.', 1282073032);
@@ -267,10 +269,10 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
      * Removes all cache entries of this cache and sets the frozen flag to false.
      *
      * @return void
-     * @api
      * @throws \Neos\Utility\Exception\FilesException
+     * @api
      */
-    public function flush()
+    public function flush(): void
     {
         Files::emptyDirectoryRecursively($this->cacheDirectory);
         if ($this->frozen === true) {
@@ -330,7 +332,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
      * @return void
      * @api
      */
-    public function collectGarbage()
+    public function collectGarbage(): void
     {
         if ($this->frozen === true) {
             return;
@@ -369,8 +371,8 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
      * Loads PHP code from the cache and require_onces it right away.
      *
      * @param string $entryIdentifier An identifier which describes the cache entry to load
-     * @throws \InvalidArgumentException
      * @return mixed Potential return value from the include operation
+     * @throws \InvalidArgumentException
      * @api
      */
     public function requireOnce(string $entryIdentifier)

@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Cache\Backend;
 
 /*
@@ -24,7 +26,7 @@ class MultiBackend extends AbstractBackend implements BackendInterface
     /**
      * Configuration for all sub backends (each with the keys "backend" and "backendOptions")
      *
-     * @var array
+     * @var mixed[]
      */
     protected $backendConfigurations = [];
 
@@ -65,7 +67,7 @@ class MultiBackend extends AbstractBackend implements BackendInterface
      * @return void
      * @throws \Throwable
      */
-    protected function prepareBackends()
+    protected function prepareBackends(): void
     {
         if ($this->initialized === true) {
             return;
@@ -107,7 +109,7 @@ class MultiBackend extends AbstractBackend implements BackendInterface
      * @param int|null $lifetime
      * @throws \Throwable
      */
-    public function set(string $entryIdentifier, string $data, array $tags = [], int $lifetime = null)
+    public function set(string $entryIdentifier, string $data, array $tags = [], int $lifetime = null): void
     {
         $this->prepareBackends();
         foreach ($this->backends as $backend) {
@@ -192,7 +194,7 @@ class MultiBackend extends AbstractBackend implements BackendInterface
      * @return void
      * @throws \Throwable
      */
-    public function flush()
+    public function flush(): void
     {
         $this->prepareBackends();
         foreach ($this->backends as $backend) {
@@ -208,7 +210,7 @@ class MultiBackend extends AbstractBackend implements BackendInterface
      * @return void
      * @throws \Throwable
      */
-    public function collectGarbage()
+    public function collectGarbage(): void
     {
         $this->prepareBackends();
         foreach ($this->backends as $backend) {
@@ -221,10 +223,10 @@ class MultiBackend extends AbstractBackend implements BackendInterface
     }
 
     /**
-     * @param array $backendConfigurations
+     * @param mixed[] $backendConfigurations
      * @return void
      */
-    protected function setBackendConfigurations(array $backendConfigurations)
+    protected function setBackendConfigurations(array $backendConfigurations): void
     {
         $this->backendConfigurations = $backendConfigurations;
     }
@@ -233,7 +235,7 @@ class MultiBackend extends AbstractBackend implements BackendInterface
      * @param bool $setInAllBackends
      * @return void
      */
-    protected function setSetInAllBackends(bool $setInAllBackends)
+    protected function setSetInAllBackends(bool $setInAllBackends): void
     {
         $this->setInAllBackends = $setInAllBackends;
     }
@@ -242,7 +244,7 @@ class MultiBackend extends AbstractBackend implements BackendInterface
      * @param bool $debug
      * @return void
      */
-    protected function setDebug(bool $debug)
+    protected function setDebug(bool $debug): void
     {
         $this->debug = $debug;
     }
@@ -256,7 +258,7 @@ class MultiBackend extends AbstractBackend implements BackendInterface
      * @return void
      * @throws \Neos\Cache\Exception
      */
-    protected function setInBackend(BackendInterface $backend, string $entryIdentifier, string $data, array $tags = [], int $lifetime = null)
+    protected function setInBackend(BackendInterface $backend, string $entryIdentifier, string $data, array $tags = [], int $lifetime = null): void
     {
         $backend->set($entryIdentifier, $data, $tags, $lifetime);
     }
@@ -276,7 +278,7 @@ class MultiBackend extends AbstractBackend implements BackendInterface
      * @param string $entryIdentifier
      * @return bool
      */
-    protected function backendHas(BackendInterface $backend, string $entryIdentifier)
+    protected function backendHas(BackendInterface $backend, string $entryIdentifier): bool
     {
         return $backend->has($entryIdentifier);
     }
@@ -286,7 +288,7 @@ class MultiBackend extends AbstractBackend implements BackendInterface
      * @param string $entryIdentifier
      * @return bool
      */
-    protected function removeFromBackend(BackendInterface $backend, string $entryIdentifier)
+    protected function removeFromBackend(BackendInterface $backend, string $entryIdentifier): bool
     {
         return $backend->remove($entryIdentifier);
     }
@@ -294,7 +296,7 @@ class MultiBackend extends AbstractBackend implements BackendInterface
     /**
      * @param BackendInterface $backend
      */
-    protected function flushBackend(BackendInterface $backend)
+    protected function flushBackend(BackendInterface $backend): void
     {
         $backend->flush();
     }
@@ -303,7 +305,7 @@ class MultiBackend extends AbstractBackend implements BackendInterface
      * @param \Throwable $throwable
      * @throws \Throwable
      */
-    protected function handleError(\Throwable $throwable)
+    protected function handleError(\Throwable $throwable): void
     {
         if ($this->debug) {
             throw $throwable;

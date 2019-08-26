@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Cache\Frontend;
 
 /*
@@ -52,7 +54,7 @@ class CacheEntryIterator implements \Iterator
      */
     public function current()
     {
-        return $this->frontend->get($this->backend->key());
+        return $this->frontend->get((string) $this->backend->key());
     }
 
     /**
@@ -75,7 +77,7 @@ class CacheEntryIterator implements \Iterator
      */
     public function key(): string
     {
-        return $this->backend->key();
+        return (string) $this->backend->key();
     }
 
     /**

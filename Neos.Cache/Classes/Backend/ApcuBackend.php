@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Cache\Backend;
 
 /*
@@ -77,7 +79,7 @@ class ApcuBackend extends IndependentAbstractBackend implements TaggableBackendI
      * @param FrontendInterface $cache
      * @return void
      */
-    public function setCache(FrontendInterface $cache)
+    public function setCache(FrontendInterface $cache): void
     {
         parent::setCache($cache);
 
@@ -115,7 +117,7 @@ class ApcuBackend extends IndependentAbstractBackend implements TaggableBackendI
      * @throws \InvalidArgumentException if the identifier is not valid
      * @api
      */
-    public function set(string $entryIdentifier, string $data, array $tags = [], int $lifetime = null)
+    public function set(string $entryIdentifier, string $data, array $tags = [], int $lifetime = null): void
     {
         if (!$this->cache instanceof FrontendInterface) {
             throw new Exception('No cache frontend has been set yet via setCache().', 1232986818);
@@ -191,7 +193,7 @@ class ApcuBackend extends IndependentAbstractBackend implements TaggableBackendI
         if ($success === false) {
             return [];
         }
-        return (array) $identifiers;
+        return (array)$identifiers;
     }
 
     /**
@@ -199,7 +201,7 @@ class ApcuBackend extends IndependentAbstractBackend implements TaggableBackendI
      * index to search for tags.
      *
      * @param string $identifier Identifier to find tags by
-     * @return array Array with tags
+     * @return string[] Array with tags
      */
     protected function findTagsByIdentifier(string $identifier): array
     {
@@ -215,7 +217,7 @@ class ApcuBackend extends IndependentAbstractBackend implements TaggableBackendI
      * @throws Exception
      * @api
      */
-    public function flush()
+    public function flush(): void
     {
         if (!$this->cache instanceof FrontendInterface) {
             throw new Exception('Yet no cache frontend has been set via setCache().', 1232986971);
@@ -302,7 +304,7 @@ class ApcuBackend extends IndependentAbstractBackend implements TaggableBackendI
      * @return void
      * @api
      */
-    public function collectGarbage()
+    public function collectGarbage(): void
     {
     }
 
