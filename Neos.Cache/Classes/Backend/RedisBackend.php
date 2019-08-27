@@ -457,7 +457,7 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
 
     /**
      * @param \Redis $redis
-     * @return null
+     * @return void
      */
     public function setRedis(\Redis $redis = null): void
     {
@@ -473,7 +473,7 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
         if ($value === false || empty($value)) {
             return $value;
         }
-        return $this->useCompression() ? gzdecode($value) : $value;
+        return $this->useCompression() ? gzdecode((string) $value) : $value;
     }
 
     /**
@@ -553,7 +553,7 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
         try {
             $this->verifyRedisVersionIsSupported();
         } catch (CacheException $exception) {
-            $result->addError(new Error($exception->getMessage(), $exception->getCode(), [], 'Redis Version'));
+            $result->addError(new Error($exception->getMessage(), (int)$exception->getCode(), [], 'Redis Version'));
             return $result;
         }
         $serverInfo = (array)$this->redis->info('SERVER');

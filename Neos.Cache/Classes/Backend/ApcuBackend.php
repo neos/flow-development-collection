@@ -183,7 +183,7 @@ class ApcuBackend extends IndependentAbstractBackend implements TaggableBackendI
      * specified tag.
      *
      * @param string $tag The tag to search for
-     * @return array An array with identifiers of all matching entries. An empty array if no entries matched
+     * @return string[] An array with identifiers of all matching entries. An empty array if no entries matched
      * @api
      */
     public function findIdentifiersByTag(string $tag): array
@@ -349,7 +349,7 @@ class ApcuBackend extends IndependentAbstractBackend implements TaggableBackendI
         if ($this->cacheEntriesIterator === null) {
             $this->rewind();
         }
-        return substr($this->cacheEntriesIterator->key(), strlen($this->identifierPrefix . 'entry_'));
+        return substr((string)$this->cacheEntriesIterator->key(), strlen($this->identifierPrefix . 'entry_'));
     }
 
     /**

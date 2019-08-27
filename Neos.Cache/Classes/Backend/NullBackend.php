@@ -78,7 +78,7 @@ class NullBackend extends AbstractCacheBackend implements PhpCapableBackendInter
      * Returns an empty array
      *
      * @param string $tag ignored
-     * @return array An empty array
+     * @return string[] An empty array
      * @api
      */
     public function findIdentifiersByTag(string $tag): array

@@ -521,14 +521,14 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
             $this->connect();
             $connection = DriverManager::getConnection(['pdo' => $this->databaseHandle]);
         } catch (Exception | FilesException |DBALException $exception) {
-            $result->addError(new Error($exception->getMessage(), $exception->getCode(), [], 'Connection failed'));
+            $result->addError(new Error($exception->getMessage(), (int)$exception->getCode(), [], 'Connection failed'));
             return $result;
         }
 
         try {
             $tablesExist = $connection->getSchemaManager()->tablesExist([$this->cacheTableName, $this->tagsTableName]);
         } /** @noinspection PhpRedundantCatchClauseInspection */ catch (DBALException $exception) {
-            $result->addError(new Error($exception->getMessage(), $exception->getCode(), [], 'Connection failed'));
+            $result->addError(new Error($exception->getMessage(), (int)$exception->getCode(), [], 'Connection failed'));
             return $result;
         }
         if ($tablesExist) {
@@ -543,7 +543,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
         try {
             $statements = $schemaDiff->toSaveSql($connection->getDatabasePlatform());
         } catch (DBALException $exception) {
-            $result->addError(new Error($exception->getMessage(), $exception->getCode(), [], 'Connection failed'));
+            $result->addError(new Error($exception->getMessage(), (int)$exception->getCode(), [], 'Connection failed'));
             return $result;
         }
         if ($statements === []) {
@@ -562,7 +562,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
                 $connection->rollBack();
             } catch (\Exception $exception) {
             }
-            $result->addError(new Error('Exception while trying to setup PdoBackend: %s', $exception->getCode(), [$exception->getMessage()]));
+            $result->addError(new Error('Exception while trying to setup PdoBackend', (int)$exception->getCode(), [$exception->getMessage()]));
         }
         return $result;
     }
@@ -580,14 +580,14 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
             $this->connect();
             $connection = DriverManager::getConnection(['pdo' => $this->databaseHandle]);
         } catch (\Exception $exception) {
-            $result->addError(new Error($exception->getMessage(), $exception->getCode(), [], 'Connection failed'));
+            $result->addError(new Error($exception->getMessage(), (int)$exception->getCode(), [], 'Connection failed'));
             return $result;
         }
         try {
             $cacheTableExists = $connection->getSchemaManager()->tablesExist([$this->cacheTableName]);
             $tagsTableExists = $connection->getSchemaManager()->tablesExist([$this->tagsTableName]);
         } /** @noinspection PhpRedundantCatchClauseInspection */ catch (DBALException $exception) {
-            $result->addError(new Error($exception->getMessage(), $exception->getCode(), [], 'Connection failed'));
+            $result->addError(new Error($exception->getMessage(), (int)$exception->getCode(), [], 'Connection failed'));
             return $result;
         }
         $result->addNotice(new Notice((string)$connection->getDatabase(), null, [], 'Database'));
@@ -607,7 +607,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
         try {
             $statements = $schemaDiff->toSaveSql($connection->getDatabasePlatform());
         } catch (DBALException $exception) {
-            $result->addError(new Error($exception->getMessage(), $exception->getCode(), [], 'Connection failed'));
+            $result->addError(new Error($exception->getMessage(), (int)$exception->getCode(), [], 'Connection failed'));
             return $result;
         }
         if ($statements !== []) {

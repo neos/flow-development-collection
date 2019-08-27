@@ -82,7 +82,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
             $this->cacheEntryIdentifiers[$entryIdentifier] = true;
 
             $cacheEntryPathAndFilename = $this->cacheDirectory . $entryIdentifier . $this->cacheEntryFileExtension;
-            $this->writeCacheFile($cacheEntryPathAndFilename, $this->internalGet($entryIdentifier, false));
+            $this->writeCacheFile($cacheEntryPathAndFilename, (string)$this->internalGet($entryIdentifier, false));
         }
 
         $cachePathAndFileName = $this->cacheDirectory . 'FrozenCache.data';
@@ -126,9 +126,9 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
             $cachePathAndFileName = $this->cacheDirectory . 'FrozenCache.data';
             $data = $this->readCacheFile($cachePathAndFileName);
             if ($this->useIgBinary === true) {
-                $this->cacheEntryIdentifiers = igbinary_unserialize($data);
+                $this->cacheEntryIdentifiers = igbinary_unserialize((string)$data);
             } else {
-                $this->cacheEntryIdentifiers = unserialize($data);
+                $this->cacheEntryIdentifiers = unserialize((string)$data);
             }
         }
     }
@@ -231,7 +231,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
      * specified tag.
      *
      * @param string $searchedTag The tag to search for
-     * @return array An array with identifiers of all matching entries. An empty array if no entries matched
+     * @return string[] An array with identifiers of all matching entries. An empty array if no entries matched
      * @api
      */
     public function findIdentifiersByTag(string $searchedTag): array
@@ -248,11 +248,11 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
             $fileSize = filesize($cacheEntryPathAndFilename);
             $index = (integer)$this->readCacheFile($cacheEntryPathAndFilename, $fileSize - self::DATASIZE_DIGITS, self::DATASIZE_DIGITS);
             $metaData = $this->readCacheFile($cacheEntryPathAndFilename, $index, $fileSize - $index - self::DATASIZE_DIGITS);
-            $expiryTime = (integer)substr($metaData, -self::EXPIRYTIME_LENGTH, self::EXPIRYTIME_LENGTH);
+            $expiryTime = (integer)substr((string)$metaData, -self::EXPIRYTIME_LENGTH, self::EXPIRYTIME_LENGTH);
             if ($expiryTime !== 0 && $expiryTime < $now) {
                 continue;
             }
-            if (!in_array($searchedTag, explode(' ', substr($metaData, 0, -self::EXPIRYTIME_LENGTH)))) {
+            if (!in_array($searchedTag, explode(' ', substr((string)$metaData, 0, -self::EXPIRYTIME_LENGTH)))) {
                 continue;
             }
 
@@ -423,15 +423,15 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
             return false;
         }
 
-        $cacheData = null;
+        $cacheData = '';
         if ($acquireLock) {
             $cacheData = $this->readCacheFile($pathAndFilename);
         } else {
             $cacheData = file_get_contents($pathAndFilename);
         }
 
-        $dataSize = (integer)substr($cacheData, -(self::DATASIZE_DIGITS));
+        $dataSize = (integer)substr((string)$cacheData, -(self::DATASIZE_DIGITS));
 
-        return substr($cacheData, 0, $dataSize);
+        return substr((string)$cacheData, 0, $dataSize);
     }
 }

@@ -524,9 +524,9 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
      *
      * @param string $cacheEntryPathAndFilename
      * @param string $data
-     * @return boolean|integer Return value of file_put_contents
+     * @return bool Return value of file_put_contents
      */
-    protected function writeCacheFile(string $cacheEntryPathAndFilename, string $data)
+    protected function writeCacheFile(string $cacheEntryPathAndFilename, string $data): bool
     {
         for ($i = 0; $i < 3; $i++) {
             // This can be replaced by a simple file_put_contents($cacheEntryPathAndFilename, $data, LOCK_EX) once vfs
@@ -538,7 +538,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
                     continue;
                 }
                 if (flock($file, LOCK_EX) !== false) {
-                    $result = fwrite($file, $data);
+                    $result = fwrite($file, $data) === false ?: true;
                     flock($file, LOCK_UN);
                 }
                 fclose($file);
@@ -566,7 +566,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
         try {
             $this->configureCacheDirectory();
         } catch (Exception $exception) {
-            $result->addError(new Error('Failed to configure cache directory: %s', $exception->getCode(), [$exception->getMessage()], 'Cache Directory'));
+            $result->addError(new Error('Failed to configure cache directory', (int)$exception->getCode(), [$exception->getMessage()], 'Cache Directory'));
         }
         return $result;
     }
@@ -583,7 +583,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
         try {
             $this->verifyCacheDirectory();
         } catch (Exception $exception) {
-            $result->addError(new Error($exception->getMessage(), $exception->getCode(), [], 'Cache Directory'));
+            $result->addError(new Error($exception->getMessage(), (int)$exception->getCode(), [], 'Cache Directory'));
             return $result;
         }
         $result->addNotice(new Notice($this->baseDirectory ?? '-', null, [], 'Base Directory'));
