@@ -24,8 +24,6 @@ use Neos\Flow\Mvc\Exception\ForwardException;
 use Neos\Flow\Mvc\Exception\InfiniteLoopException;
 use Neos\Flow\Mvc\Exception\StopActionException;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use Neos\Flow\Security\Authentication\EntryPointInterface;
-use Neos\Flow\Security\Authentication\TokenInterface;
 use Neos\Flow\Security\Authorization\FirewallInterface;
 use Neos\Flow\Security\Context;
 use Neos\Flow\Security\Exception\AccessDeniedException;
@@ -242,23 +240,6 @@ class DispatcherTest extends UnitTestCase
     }
 
     /**
-     * @test_disabled
-     *
-     * FIXME: move to test class for SecurityEntryPointComponent
-     */
-    public function dispatchRethrowsAuthenticationRequiredExceptionIfSecurityContextDoesNotContainAnyAuthenticationToken()
-    {
-        $this->expectException(AuthenticationRequiredException::class);
-        $this->mockActionRequest->method('isDispatched')->willReturn(true);
-
-        $this->mockSecurityContext->expects(self::atLeastOnce())->method('getAuthenticationTokens')->willReturn([]);
-
-        $this->mockFirewall->expects(self::once())->method('blockIllegalRequests')->will(self::throwException(new AuthenticationRequiredException()));
-
-        $this->dispatcher->dispatch($this->mockActionRequest, $this->actionResponse);
-    }
-
-    /**
      * @test
      */
     public function dispatchSetsAuthenticationExceptions()
@@ -278,82 +259,6 @@ class DispatcherTest extends UnitTestCase
         $this->actionResponse->mergeIntoComponentContext($componentContext);
         self::assertNotNull($componentContext->getAllParametersFor(SecurityEntryPointComponent::class));
         self::assertNotEmpty($componentContext->getParameter(SecurityEntryPointComponent::class, SecurityEntryPointComponent::AUTHENTICATION_EXCEPTION));
-    }
-
-    /**
-     * @test_disabled
-     * FIXME: move to test class for SecurityEntryPointComponent
-     */
-    public function dispatchSetsInterceptedRequestIfSecurityContextContainsAuthenticationTokensWithEntryPoints()
-    {
-        $this->mockActionRequest->method('isDispatched')->willReturn(true);
-
-        $mockEntryPoint = $this->getMockBuilder(EntryPointInterface::class)->getMock();
-
-        $mockAuthenticationToken = $this->getMockBuilder(TokenInterface::class)->getMock();
-        $mockAuthenticationToken->method('getAuthenticationEntryPoint')->willReturn($mockEntryPoint);
-        $this->mockSecurityContext->expects(self::atLeastOnce())->method('getAuthenticationTokens')->willReturn([$mockAuthenticationToken]);
-
-        $this->mockSecurityContext->expects(self::atLeastOnce())->method('setInterceptedRequest')->with($this->mockMainRequest);
-
-        $this->mockFirewall->expects(self::once())->method('blockIllegalRequests')->will(self::throwException(new AuthenticationRequiredException()));
-
-        $this->mockHttpRequest->method('getMethod')->willReturn('GET');
-
-        try {
-            $this->dispatcher->dispatch($this->mockActionRequest, $this->mockHttpResponse);
-        } catch (AuthenticationRequiredException $exception) {
-        }
-    }
-
-    /**
-     * @test
-     */
-    public function dispatchDoesNotSetInterceptedRequestIfRequestMethodIsNotGET()
-    {
-        $this->mockActionRequest->expects(self::any())->method('isDispatched')->will(self::returnValue(true));
-
-        $mockEntryPoint = $this->getMockBuilder(EntryPointInterface::class)->getMock();
-
-        $mockAuthenticationToken = $this->getMockBuilder(TokenInterface::class)->getMock();
-        $mockAuthenticationToken->expects(self::any())->method('getAuthenticationEntryPoint')->will(self::returnValue($mockEntryPoint));
-
-        $this->mockSecurityContext->expects(self::never())->method('setInterceptedRequest');
-        $this->mockHttpRequest->method('getMethod')->willReturn('POST');
-
-        try {
-            $this->dispatcher->dispatch($this->mockActionRequest, $this->actionResponse);
-        } catch (AuthenticationRequiredException $exception) {
-        }
-    }
-
-    /**
-     * @test_disabled
-     * FIXME: move to test class for SecurityEntryPointComponent
-     */
-    public function dispatchCallsStartAuthenticationOnAllActiveEntryPoints()
-    {
-        $this->mockActionRequest->method('isDispatched')->willReturn(true);
-
-        $mockAuthenticationToken1 = $this->getMockBuilder(TokenInterface::class)->getMock();
-        $mockEntryPoint1 = $this->getMockBuilder(EntryPointInterface::class)->getMock();
-        $mockAuthenticationToken1->method('getAuthenticationEntryPoint')->willReturn($mockEntryPoint1);
-
-        $mockAuthenticationToken2 = $this->getMockBuilder(TokenInterface::class)->getMock();
-        $mockEntryPoint2 = $this->getMockBuilder(EntryPointInterface::class)->getMock();
-        $mockAuthenticationToken2->method('getAuthenticationEntryPoint')->willReturn($mockEntryPoint2);
-
-        $this->mockSecurityContext->expects(self::atLeastOnce())->method('getAuthenticationTokens')->willReturn([$mockAuthenticationToken1, $mockAuthenticationToken2]);
-
-        $this->mockFirewall->expects(self::once())->method('blockIllegalRequests')->will(self::throwException(new AuthenticationRequiredException()));
-
-        $mockEntryPoint1->expects(self::once())->method('startAuthentication')->with($this->mockHttpRequest, $this->actionResponse);
-        $mockEntryPoint2->expects(self::once())->method('startAuthentication')->with($this->mockHttpRequest, $this->actionResponse);
-
-        try {
-            $this->dispatcher->dispatch($this->mockActionRequest, $this->actionResponse);
-        } catch (AuthenticationRequiredException $exception) {
-        }
     }
 
     /**

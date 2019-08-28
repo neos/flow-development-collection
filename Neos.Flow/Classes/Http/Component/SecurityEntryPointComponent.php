@@ -1,6 +1,5 @@
 <?php
 declare(strict_types=1);
-
 namespace Neos\Flow\Http\Component;
 
 use Neos\Flow\Annotations as Flow;
@@ -9,15 +8,16 @@ use Neos\Flow\Mvc\DispatchComponent;
 use Neos\Flow\Security\Authentication\Token\SessionlessTokenInterface;
 use Neos\Flow\Security\Authentication\TokenInterface;
 use Neos\Flow\Security\Context;
-use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
 
 /**
- *
+ * A HTTP component that handles authentication exceptions that were thrown by the dispatcher (@see \Neos\Flow\Mvc\Dispatcher::dispatch()) and
+ * * rethrows the exception if not token with Entry Point is authenticated
+ * * or otherwise invokes the Entry Point of all authenticated tokens
  */
 class SecurityEntryPointComponent implements ComponentInterface
 {
-    const AUTHENTICATION_EXCEPTION = 'authenticationException';
+    public const AUTHENTICATION_EXCEPTION = 'authenticationException';
 
     /**
      * @Flow\Inject
@@ -34,46 +34,37 @@ class SecurityEntryPointComponent implements ComponentInterface
     /**
      * @inheritDoc
      */
-    public function handle(ComponentContext $componentContext)
+    public function handle(ComponentContext $componentContext): void
     {
-        $authenticationException = $componentContext->getParameter(SecurityEntryPointComponent::class, SecurityEntryPointComponent::AUTHENTICATION_EXCEPTION);
+        $authenticationException = $componentContext->getParameter(self::class, self::AUTHENTICATION_EXCEPTION);
         if ($authenticationException === null) {
             return;
         }
 
-        $actionRequest = $componentContext->getParameter(DispatchComponent::class, 'actionRequest');
-        $firstTokenWithEntryPoint = $this->getFirstTokenWithEntryPoint();
-        if ($firstTokenWithEntryPoint === null) {
+        /** @var TokenInterface[] $tokensWithEntryPoint */
+        $tokensWithEntryPoint = array_filter($this->securityContext->getAuthenticationTokens(), static function (TokenInterface $token) {
+            return $token->getAuthenticationEntryPoint() !== null;
+        });
+
+        if ($tokensWithEntryPoint === []) {
             $this->securityLogger->notice('No authentication entry point found for active tokens, therefore cannot authenticate or redirect to authentication automatically.');
             throw $authenticationException;
         }
 
-        $entryPoint = $firstTokenWithEntryPoint->getAuthenticationEntryPoint();
-        $this->securityLogger->info(sprintf('Starting authentication with entry point of type "%s"', get_class($entryPoint)), LogEnvironment::fromMethodName(__METHOD__));
+        $response = $componentContext->getHttpResponse();
+        foreach ($tokensWithEntryPoint as $token) {
+            $entryPoint = $token->getAuthenticationEntryPoint();
+            $this->securityLogger->info(sprintf('Starting authentication with entry point of type "%s"', \get_class($entryPoint)), LogEnvironment::fromMethodName(__METHOD__));
 
-        // TODO: We should only prevent storage of intercepted request in the session here, but we don't have a different storage mechanism yet.
-        if (!$firstTokenWithEntryPoint instanceof SessionlessTokenInterface && $componentContext->getHttpRequest()->getMethod() === 'GET') {
-            $this->securityContext->setInterceptedRequest($actionRequest->getMainRequest());
-        }
-
-
-        /** @var ResponseInterface $response */
-        $response = $entryPoint->startAuthentication($componentContext->getHttpRequest(), $componentContext->getHttpResponse());
-        $componentContext->replaceHttpResponse($response);
-    }
-
-    /**
-     * Returns the first authenticated token that has an Authentication Entry Point configured, or NULL if none exists
-     *
-     * @return TokenInterface|null
-     */
-    private function getFirstTokenWithEntryPoint(): ?TokenInterface
-    {
-        foreach ($this->securityContext->getAuthenticationTokens() as $token) {
-            if ($token->getAuthenticationEntryPoint() !== null) {
-                return $token;
+            // Only store the intercepted request if it is a GET request (otherwise it can't be resumed properly)
+            // We also don't store the request for "sessionless authentications" because that would implicitly start a session
+            // TODO: Adjust when a session-independent storing mechanism is possible (see https://github.com/neos/flow-development-collection/issues/1693)
+            if (!$token instanceof SessionlessTokenInterface && $componentContext->getHttpRequest()->getMethod() === 'GET') {
+                $actionRequest = $componentContext->getParameter(DispatchComponent::class, 'actionRequest');
+                $this->securityContext->setInterceptedRequest($actionRequest->getMainRequest());
             }
+            $response = $entryPoint->startAuthentication($componentContext->getHttpRequest(), $response);
         }
-        return null;
+        $componentContext->replaceHttpResponse($response);
     }
 }
