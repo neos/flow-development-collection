@@ -66,6 +66,7 @@ class UriConstraintsTest extends UnitTestCase
             ['constraints' => [UriConstraints::CONSTRAINT_HOST_SUFFIX => ['suffix' => '', 'replaceSuffixes' => []]], 'templateUri' => 'http://some-domain.tld', 'forceAbsoluteUri' => false, 'expectedUri' => ''],
             ['constraints' => [UriConstraints::CONSTRAINT_HOST_SUFFIX => ['suffix' => '', 'replaceSuffixes' => ['.com']]], 'templateUri' => 'http://some-domain.tld', 'forceAbsoluteUri' => false, 'expectedUri' => ''],
             ['constraints' => [UriConstraints::CONSTRAINT_HOST_SUFFIX => ['suffix' => '', 'replaceSuffixes' => ['.tld']]], 'templateUri' => 'http://some-domain.tld', 'forceAbsoluteUri' => false, 'expectedUri' => 'http://some-domain'],
+            ['constraints' => [UriConstraints::CONSTRAINT_HOST_SUFFIX => ['suffix' => '.com', 'replaceSuffixes' => ['.tld']]], 'templateUri' => 'http://some-domain.net', 'forceAbsoluteUri' => true, 'expectedUri' => 'http://some-domain.net'],
 
             ['constraints' => [UriConstraints::CONSTRAINT_PORT => 80], 'templateUri' => 'http://some-domain.tld', 'forceAbsoluteUri' => false, 'expectedUri' => ''],
             ['constraints' => [UriConstraints::CONSTRAINT_PORT => 8080], 'templateUri' => 'http://some-domain.tld', 'forceAbsoluteUri' => false, 'expectedUri' => 'http://some-domain.tld:8080'],
