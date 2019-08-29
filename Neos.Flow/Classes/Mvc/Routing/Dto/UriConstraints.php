@@ -252,13 +252,17 @@ final class UriConstraints
             $originalHost = $host = !empty($uri->getHost()) ? $uri->getHost() : $templateUri->getHost();
             $suffix = $this->constraints[self::CONSTRAINT_HOST_SUFFIX]['suffix'];
             $replaceSuffixes = $this->constraints[self::CONSTRAINT_HOST_SUFFIX]['replaceSuffixes'];
-            foreach ($replaceSuffixes as $replaceSuffix) {
-                if ($this->stringEndsWith($host, $replaceSuffix)) {
-                    $host = substr($host, 0, -strlen($replaceSuffix));
-                    break;
+
+            if ($replaceSuffixes === []) {
+                $host .= $suffix;
+            } else {
+                foreach ($replaceSuffixes as $replaceSuffix) {
+                    if ($this->stringEndsWith($host, $replaceSuffix)) {
+                        $host = preg_replace(sprintf('/%s$/i', $replaceSuffix), $suffix, $host);
+                        break;
+                    }
                 }
             }
-            $host = $host . $suffix;
             if ($host !== $originalHost) {
                 $forceAbsoluteUri = true;
                 $uri = $uri->withHost($host);
