@@ -36,7 +36,7 @@ class SecurityEntryPointComponent implements ComponentInterface
      */
     public function handle(ComponentContext $componentContext): void
     {
-        $authenticationException = $componentContext->getParameter(self::class, self::AUTHENTICATION_EXCEPTION);
+        $authenticationException = $componentContext->getParameter(static::class, static::AUTHENTICATION_EXCEPTION);
         if ($authenticationException === null) {
             return;
         }
