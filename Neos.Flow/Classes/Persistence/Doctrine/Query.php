@@ -663,7 +663,9 @@ class Query implements QueryInterface
     {
         $aliases = $this->queryBuilder->getRootAliases();
         $previousJoinAlias = $aliases[0];
-        if (strpos($propertyPath, '.') === false) {
+        if (strpos($propertyPath, '.') === false
+            || $this->entityManager->getClassMetadata($this->entityClassName)->hasField($propertyPath)
+        ) {
             return $previousJoinAlias . '.' . $propertyPath;
         }
 
