@@ -26,7 +26,7 @@ class MultiBackend extends AbstractBackend implements BackendInterface
     /**
      * Configuration for all sub backends (each with the keys "backend" and "backendOptions")
      *
-     * @var mixed[]
+     * @var array
      */
     protected $backendConfigurations = [];
 
@@ -223,7 +223,7 @@ class MultiBackend extends AbstractBackend implements BackendInterface
     }
 
     /**
-     * @param mixed[] $backendConfigurations
+     * @param array $backendConfigurations
      * @return void
      */
     protected function setBackendConfigurations(array $backendConfigurations): void
