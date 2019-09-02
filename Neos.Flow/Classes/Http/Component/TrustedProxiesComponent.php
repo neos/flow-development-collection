@@ -46,6 +46,11 @@ class TrustedProxiesComponent implements ComponentInterface
     public function injectSettings(array $settings)
     {
         $this->settings = $settings['http']['trustedProxies'];
+
+        if ($this->settings['proxies'] === false) {
+            $this->settings['proxies'] = [];
+        }
+
         if ($this->settings['proxies'] === ['*']) {
             $this->settings['proxies'] = '*';
         }
