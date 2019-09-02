@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Cache\Backend;
 
 /*
@@ -66,7 +68,7 @@ class TaggableMultiBackend extends MultiBackend implements TaggableBackendInterf
 
     /**
      * @param string $tag
-     * @return array
+     * @return string[]
      */
     public function findIdentifiersByTag(string $tag): array
     {
