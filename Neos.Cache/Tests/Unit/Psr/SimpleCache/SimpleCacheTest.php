@@ -69,7 +69,7 @@ class SimpleCacheTest extends BaseTestCase
      */
     public function setWillSetInBackendAndReturnBackendResponse()
     {
-        $this->mockBackend->expects(self::any())->method('set')->willReturn(true);
+        $this->mockBackend->expects(self::any())->method('set');
         $simpleCache = $this->createSimpleCache();
         $result = $simpleCache->set('validkey', 'valid data');
         self::assertEquals(true, $result);
