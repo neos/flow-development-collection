@@ -777,7 +777,7 @@ class Scripts
             $subRequestEnvironmentVariables = array_merge($subRequestEnvironmentVariables, $settings['core']['subRequestEnvironmentVariables']);
         }
 
-        self::ensureCLISubrequestsUseCurrentlyRunningPhpBinary($settings['core']['phpBinaryPathAndFilename']);
+        static::ensureCLISubrequestsUseCurrentlyRunningPhpBinary($settings['core']['phpBinaryPathAndFilename']);
 
         $command = '';
         foreach ($subRequestEnvironmentVariables as $argumentKey => $argumentValue) {
@@ -803,7 +803,7 @@ class Scripts
             $command .= ' -c ' . escapeshellarg($useIniFile);
         }
 
-        self::ensureWebSubrequestsUseCurrentlyRunningPhpVersion($command);
+        static::ensureWebSubrequestsUseCurrentlyRunningPhpVersion($command);
 
         return $command;
     }

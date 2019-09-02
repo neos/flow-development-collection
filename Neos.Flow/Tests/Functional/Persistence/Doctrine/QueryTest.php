@@ -291,6 +291,37 @@ class QueryTest extends FunctionalTestCase
     /**
      * @test
      */
+    public function embeddedValueObjectQueryingWorks()
+    {
+        $testEntityRepository = new Fixtures\TestEntityRepository();
+        $testEntityRepository->removeAll();
+
+        $testEntity = new Fixtures\TestEntity();
+        $testEntity->setName('Flow1');
+
+        $valueObject1 = new Fixtures\TestEmbeddedValueObject('vo');
+        $testEntity->setEmbeddedValueObject($valueObject1);
+        $testEntityRepository->add($testEntity);
+
+        $testEntity2 = new Fixtures\TestEntity();
+        $testEntity2->setName('Flow2');
+
+        $valueObject2 = new Fixtures\TestEmbeddedValueObject('vo');
+        $testEntity2->setEmbeddedValueObject($valueObject2);
+
+        $testEntityRepository->add($testEntity2);
+
+        $this->persistenceManager->persistAll();
+
+        $query = new Query(Fixtures\TestEntity::class);
+        $entities = $query->matching($query->equals('embeddedValueObject.value', 'vo'))->execute()->toArray();
+
+        $this->assertEquals(2, count($entities));
+    }
+
+    /**
+     * @test
+     */
     public function comlexQueryWithJoinsCanBeExecutedAfterDeserialization()
     {
         $postEntityRepository = new Fixtures\PostRepository();
