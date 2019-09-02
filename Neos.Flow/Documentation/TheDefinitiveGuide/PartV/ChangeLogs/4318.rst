@@ -1,0 +1,8 @@
+`4.3.18 (2019-09-02) <https://github.com/neos/flow-development-collection/releases/tag/4.3.18>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/4.3.17...4.3.18>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
