@@ -13,7 +13,7 @@ namespace Neos\Eel\Helper;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Eel\ProtectedContextAwareInterface;
-use Neos\Flow\Security\Account;
+use Neos\Flow\Security\AccountInterface;
 use Neos\Flow\Security\Context as SecurityContext;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Flow\Security\Authentication\TokenInterface;
@@ -39,7 +39,7 @@ class SecurityHelper implements ProtectedContextAwareInterface
     /**
      * Get the account of the first authenticated token.
      *
-     * @return Account|NULL
+     * @return AccountInterface|NULL
      */
     public function getAccount()
     {

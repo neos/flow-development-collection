@@ -60,7 +60,7 @@ final class Roles implements \JsonSerializable, \IteratorAggregate, \Countable, 
     }
 
     /**
-     * @return Role[]|\ArrayIterator<Role>
+     * @return \ArrayIterator<Role>
      */
     public function getIterator(): \ArrayIterator
     {
