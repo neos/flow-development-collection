@@ -6,7 +6,7 @@ namespace Neos\Flow\Security\Policy;
 use Neos\Flow\Annotations as Flow;
 
 /*
-* This file is part of the Neos.FluidAdaptor package.
+* This file is part of the Neos.Flow package.
 *
 * (c) Contributors of the Neos Project - www.neos.io
 *
