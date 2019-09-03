@@ -16,7 +16,7 @@ use Neos\Flow\Annotations as Flow;
 */
 
 /**
- * A collection class containing all roles for a account
+ * A collection class containing all roles for an account
  *
  * @Flow\Proxy(false)
  */
@@ -54,7 +54,11 @@ final class Roles implements \JsonSerializable, \IteratorAggregate, \Countable, 
         return count($this->roles);
     }
 
-    public function has(Role $role): bool
+    /**
+     * @param string|Role $role
+     * @return bool If the given role is within this collection
+     */
+    public function has($role): bool
     {
         return array_key_exists((string)$role, $this->roles);
     }
@@ -74,11 +78,7 @@ final class Roles implements \JsonSerializable, \IteratorAggregate, \Countable, 
 
     public function offsetSet($offset, $value)
     {
-        if ($offset === null) {
-            $this->roles[] = $value;
-        } else {
-            $this->roles[$offset] = $value;
-        }
+        throw new BadMethodCallException('Roles class does not support setting elements via array access.');
     }
 
     public function offsetExists($offset)
@@ -88,11 +88,29 @@ final class Roles implements \JsonSerializable, \IteratorAggregate, \Countable, 
 
     public function offsetUnset($offset)
     {
-        unset($this->roles[$offset]);
+        throw new BadMethodCallException('Roles class does not support unsetting elements via array access.');
     }
 
     public function offsetGet($offset)
     {
         return $this->roles[$offset] ?? null;
+    }
+
+    /**
+     * @param Role $role The new role to add
+     * @return Roles A new instance containing the roles of this instance and the given role
+     */
+    public function withRole(Role $role)
+    {
+        return new self(array_merge($this->roles, [(string)$role => $role]));
+    }
+
+    /**
+     * @param Role $role The role to remove
+     * @return Roles A new instance containing the roles of this instance without the given role
+     */
+    public function withoutRole(Role $role)
+    {
+        return new self(array_diff($this->roles, [(string)$role => $role]));
     }
 }
