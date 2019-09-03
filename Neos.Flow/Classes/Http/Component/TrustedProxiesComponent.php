@@ -54,10 +54,13 @@ class TrustedProxiesComponent implements ComponentInterface
         if ($this->settings['proxies'] === ['*']) {
             $this->settings['proxies'] = '*';
         }
+        if (is_string($this->settings['proxies'])) {
+            $this->settings['proxies'] = array_map('trim', explode(',', $this->settings['proxies']));
+        }
         if (!is_array($this->settings['proxies']) && $this->settings['proxies'] !== '*') {
             throw new InvalidConfigurationException('The Neos.Flow.http.trustedProxies.proxies setting may only be an array of IP addresses or the single string "*". Got "' . var_export($this->settings['proxies'], true) . '" instead.', 1564659249);
         }
-        if (is_array($this->settings['proxies']) && array_search('*', $this->settings['proxies'], true) !== false) {
+        if (is_array($this->settings['proxies']) && in_array('*', $this->settings['proxies'], true)) {
             throw new InvalidConfigurationException('The Neos.Flow.http.trustedProxies.proxies setting is an array of IP addresses but also contains the string "*". Did you intend to allow all proxies? If so set the setting to the explicit string "*".', 1564659250);
         }
     }
@@ -204,12 +207,6 @@ class TrustedProxiesComponent implements ComponentInterface
         $allowedProxies = $this->settings['proxies'];
         if ($allowedProxies === '*') {
             return true;
-        }
-        if (is_string($allowedProxies)) {
-            $allowedProxies = array_map('trim', explode(',', $allowedProxies));
-        }
-        if (!is_array($allowedProxies)) {
-            return false;
         }
         foreach ($allowedProxies as $ipPattern) {
             if (IpUtility::cidrMatch($ipAddress, $ipPattern)) {
