@@ -52,7 +52,7 @@ class LoggerTest extends UnitTestCase
     {
         $mockBackend = $this->createMock(BackendInterface::class);
         if (!$willError) {
-            $mockBackend->expects(self::once())->method('append')->with('some message', $legacyLogLevel)->willReturn(null);
+            $mockBackend->expects(self::once())->method('append')->with('some message', $legacyLogLevel);
         }
         $psrLogger = new Logger([$mockBackend]);
 
@@ -75,7 +75,7 @@ class LoggerTest extends UnitTestCase
     public function levelSpecificMethodsAreSupported($psrLogLevel, $legacyLogLevel, $willError)
     {
         $mockBackend = $this->createMock(BackendInterface::class);
-        $mockBackend->expects(self::once())->method('append')->with('some message', $legacyLogLevel)->willReturn(null);
+        $mockBackend->expects(self::once())->method('append')->with('some message', $legacyLogLevel);
 
         $psrLogger = new Logger([$mockBackend]);
 
@@ -94,7 +94,7 @@ class LoggerTest extends UnitTestCase
         $message = 'some message';
         $context = ['something' => 123, 'else' => true];
         $mockBackend = $this->createMock(BackendInterface::class);
-        $mockBackend->expects(self::once())->method('append')->with('some message', LOG_INFO, $context)->willReturn(null);
+        $mockBackend->expects(self::once())->method('append')->with('some message', LOG_INFO, $context);
 
         $psrLogger = new Logger([$mockBackend]);
         $psrLogger->log(LogLevel::INFO, $message, $context);

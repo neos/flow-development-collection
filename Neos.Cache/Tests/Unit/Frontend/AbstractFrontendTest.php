@@ -66,7 +66,7 @@ class AbstractFrontendTest extends BaseTestCase
         $identifier = 'someCacheIdentifier';
         $backend = $this->getMockBuilder(AbstractBackend::class)
             ->setMethods(['get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'])->disableOriginalConstructor()->getMock();
-        $backend->expects($this->once())->method('flush');
+        $backend->expects(self::once())->method('flush');
 
         $cache = $this->getMockBuilder(StringFrontend::class)
             ->setMethods(['__construct', 'get', 'set', 'has', 'remove', 'getByTag'])
@@ -83,7 +83,7 @@ class AbstractFrontendTest extends BaseTestCase
         $this->expectException(\InvalidArgumentException::class);
         $identifier = 'someCacheIdentifier';
         $backend = $this->createMock(TaggableBackendInterface::class);
-        $backend->expects($this->never())->method('flushByTag');
+        $backend->expects(self::never())->method('flushByTag');
 
         $cache = $this->getMockBuilder(StringFrontend::class)
             ->setMethods(['__construct', 'get', 'set', 'has', 'remove', 'getByTag'])
@@ -100,7 +100,7 @@ class AbstractFrontendTest extends BaseTestCase
         $tag = 'sometag';
         $identifier = 'someCacheIdentifier';
         $backend = $this->createMock(TaggableBackendInterface::class);
-        $backend->expects($this->once())->method('flushByTag')->with($tag);
+        $backend->expects(self::once())->method('flushByTag')->with($tag);
 
         $cache = $this->getMockBuilder(StringFrontend::class)
             ->setMethods(['__construct', 'get', 'set', 'has', 'remove', 'getByTag'])
@@ -119,7 +119,7 @@ class AbstractFrontendTest extends BaseTestCase
             ->setMethods(['get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'])
             ->disableOriginalConstructor()
             ->getMock();
-        $backend->expects($this->once())->method('collectGarbage');
+        $backend->expects(self::once())->method('collectGarbage');
 
         $cache = $this->getMockBuilder(StringFrontend::class)
             ->setMethods(['__construct', 'get', 'set', 'has', 'remove', 'getByTag'])

@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Cache\Backend;
 
 /*
@@ -68,7 +70,7 @@ abstract class AbstractBackend implements BackendInterface
      * @return void
      * @throws \InvalidArgumentException
      */
-    protected function setProperties(array $properties, bool $throwExceptionIfPropertyNotSettable = true)
+    protected function setProperties(array $properties, bool $throwExceptionIfPropertyNotSettable = true): void
     {
         foreach ($properties as $propertyName => $propertyValue) {
             $propertyWasSet = $this->setProperty($propertyName, $propertyValue);
@@ -105,7 +107,7 @@ abstract class AbstractBackend implements BackendInterface
      * @return void
      * @api
      */
-    public function setCache(FrontendInterface $cache)
+    public function setCache(FrontendInterface $cache): void
     {
         $this->cache = $cache;
         $this->cacheIdentifier = $this->cache->getIdentifier();
@@ -140,7 +142,7 @@ abstract class AbstractBackend implements BackendInterface
      * @throws \InvalidArgumentException
      * @api
      */
-    public function setDefaultLifetime(int $defaultLifetime)
+    public function setDefaultLifetime(int $defaultLifetime): void
     {
         if ($defaultLifetime < 0) {
             throw new \InvalidArgumentException('The default lifetime must be given as a positive integer.', 1233072774);

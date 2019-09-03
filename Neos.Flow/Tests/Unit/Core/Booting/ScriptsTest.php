@@ -15,23 +15,34 @@ use Neos\Flow\Core\Booting\Scripts;
 use Neos\Flow\Tests\UnitTestCase;
 
 /**
+ * This is something that PHPUnit would have to do in order to support stubbing static methods. And
+ * it would only work if those static methods are called with `static::`, otherwise it breaks badly
+ * without a way to work around it. And that's the reason why PHPUnit doesn't support mocking static
+ * classes since ages any more and why you shouldn't use static methods for anything but trivial
+ * methods that do not do any IO. Unfortunately, we do that in the Scripts.
+ * TODO: Refactor Scripts class to be more testable.
+ */
+class ScriptsMock extends Scripts
+{
+    protected static function ensureCLISubrequestsUseCurrentlyRunningPhpBinary($phpBinaryPathAndFilename)
+    {
+    }
+
+    protected static function ensureWebSubrequestsUseCurrentlyRunningPhpVersion($phpCommand)
+    {
+    }
+
+    public static function buildSubprocessCommand($commandIdentifier, array $settings, array $commandArguments = []): string
+    {
+        return parent::buildSubprocessCommand($commandIdentifier, $settings, $commandArguments);
+    }
+}
+
+/**
  * Testcase for the initialization scripts
  */
 class ScriptsTest extends UnitTestCase
 {
-    /**
-     * @var Scripts|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $scriptsMock;
-
-    /**
-     */
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->scriptsMock = $this->getAccessibleMock(Scripts::class, ['dummy']);
-    }
-
     /**
      * @test
      */
@@ -43,22 +54,22 @@ class ScriptsTest extends UnitTestCase
         ]];
 
         $message = 'The command must contain the current ini because it is not explicitly set in settings.';
-        $actual = $this->scriptsMock->_call('buildSubprocessCommand', 'flow:foo:identifier', $settings);
+        $actual = ScriptsMock::buildSubprocessCommand('flow:foo:identifier', $settings);
         self::assertStringContainsString(sprintf(' -c %s ', escapeshellarg(php_ini_loaded_file())), $actual, $message);
 
         $settings['core']['subRequestPhpIniPathAndFilename'] = null;
         $message = 'The command must contain the current ini because it is explicitly set, but NULL, in settings.';
-        $actual = $this->scriptsMock->_call('buildSubprocessCommand', 'flow:foo:identifier', $settings);
+        $actual = ScriptsMock::buildSubprocessCommand('flow:foo:identifier', $settings);
         self::assertStringContainsString(sprintf(' -c %s ', escapeshellarg(php_ini_loaded_file())), $actual, $message);
 
         $settings['core']['subRequestPhpIniPathAndFilename'] = '/foo/ini/path';
         $message = 'The command must contain a specified ini file path because it is set in settings.';
-        $actual = $this->scriptsMock->_call('buildSubprocessCommand', 'flow:foo:identifier', $settings);
+        $actual = ScriptsMock::buildSubprocessCommand('flow:foo:identifier', $settings);
         self::assertStringContainsString(sprintf(' -c %s ', escapeshellarg('/foo/ini/path')), $actual, $message);
 
         $settings['core']['subRequestPhpIniPathAndFilename'] = false;
-        $message = 'The command must not contain an ini file path because it is set to false in settings.';
-        $actual = $this->scriptsMock->_call('buildSubprocessCommand', 'flow:foo:identifier', $settings);
+        $message = 'The command must not contain an ini file path because it is set to FALSE in settings.';
+        $actual = ScriptsMock::buildSubprocessCommand('flow:foo:identifier', $settings);
         self::assertStringNotContainsString(' -c ', $actual, $message);
     }
 
@@ -72,7 +83,7 @@ class ScriptsTest extends UnitTestCase
             'phpBinaryPathAndFilename' => '/must/be/set/according/to/schema',
             'subRequestIniEntries' => ['someSetting' => 'withValue', 'someFlagSettingWithoutValue' => '']
         ]];
-        $actual = $this->scriptsMock->_call('buildSubprocessCommand', 'flow:foo:identifier', $settings);
+        $actual = ScriptsMock::buildSubprocessCommand('flow:foo:identifier', $settings);
 
         self::assertStringContainsString(sprintf(' -d %s=%s ', escapeshellarg('someSetting'), escapeshellarg('withValue')), $actual);
         self::assertStringContainsString(sprintf(' -d %s ', escapeshellarg('someFlagSettingWithoutValue')), $actual);

@@ -777,7 +777,7 @@ class Scripts
             $subRequestEnvironmentVariables = array_merge($subRequestEnvironmentVariables, $settings['core']['subRequestEnvironmentVariables']);
         }
 
-        self::ensureCLISubrequestsUseCurrentlyRunningPhpBinary($settings['core']['phpBinaryPathAndFilename']);
+        static::ensureCLISubrequestsUseCurrentlyRunningPhpBinary($settings['core']['phpBinaryPathAndFilename']);
 
         $command = '';
         foreach ($subRequestEnvironmentVariables as $argumentKey => $argumentValue) {
@@ -803,7 +803,7 @@ class Scripts
             $command .= ' -c ' . escapeshellarg($useIniFile);
         }
 
-        self::ensureWebSubrequestsUseCurrentlyRunningPhpVersion($command);
+        static::ensureWebSubrequestsUseCurrentlyRunningPhpVersion($command);
 
         return $command;
     }
@@ -822,8 +822,20 @@ class Scripts
             return;
         }
 
-        // Resolve any symlinks that the configured php might be pointing to
-        $configuredPhpBinaryPathAndFilename = realpath($phpBinaryPathAndFilename);
+        // Ensure the actual PHP binary is known before checking if it is correct. If empty, we ignore it because it is checked later in the script.
+        if (strlen($phpBinaryPathAndFilename) === 0) {
+            return;
+        }
+
+        // Try to resolve which binary file PHP is pointing to
+        exec($phpBinaryPathAndFilename . ' -r "echo PHP_BINARY;"', $output, $result);
+        if ($result === 0 && sizeof($output) === 1) {
+            // Resolve any wrapper
+            $configuredPhpBinaryPathAndFilename = $output[0];
+        } else {
+            // Resolve any symlinks that the configured php might be pointing to
+            $configuredPhpBinaryPathAndFilename = realpath($phpBinaryPathAndFilename);
+        }
 
         // if the configured PHP binary is empty here, the file does not exist. We ignore that here because it is checked later in the script.
         if ($configuredPhpBinaryPathAndFilename === false || strlen($configuredPhpBinaryPathAndFilename) === 0) {

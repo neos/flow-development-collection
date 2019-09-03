@@ -136,7 +136,7 @@ class UriBuilder
      */
     public function setSection($section)
     {
-        $this->section = $section;
+        $this->section = (string)$section;
         return $this;
     }
 

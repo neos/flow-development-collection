@@ -137,7 +137,7 @@ class BytesViewHelperTest extends ViewHelperBaseTestcase
      */
     public function renderUsesChildNodesIfValueArgumentIsOmitted()
     {
-        $this->viewHelper->expects($this->once())->method('renderChildren')->will($this->returnValue(12345));
+        $this->viewHelper->expects(self::once())->method('renderChildren')->will(self::returnValue(12345));
         $this->viewHelper = $this->prepareArguments($this->viewHelper, []);
         $actualResult = $this->viewHelper->render();
         self::assertEquals('12 KB', $actualResult);

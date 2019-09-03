@@ -30,17 +30,21 @@ The basic walk through a Flow-based web application is as follows:
   request handler
 * by default, the :abbr:`HTTP Request Handler (\\Neos\\Flow\\Http\\RequestHandler)` takes over and runs a boot sequence
   which initializes all important parts of Flow
-* the HTTP Request Handler builds an HTTP Request and Response object. The
+* the HTTP Request Handler builds an PSR-7 HTTP Request and Response object. The
   :abbr:`Request object (\\Neos\\Flow\\Http\\Request)` contains all important properties of the real HTTP request.
   The :abbr:`Response object (\\Neos\\Flow\\Http\\Response)` in turn is empty and will be filled with information by a
   controller at a later point
+  Both are stored in the so-called :abbr:`ComponentContext (\\Neos\\Flow\\Http\\Component\\ComponentContext)`, which you need to use to access and/or replace any of the two.
 * the HTTP Request Handler initializes the
   :abbr:`HTTP Component Chain (\\Neos\\Flow\\Http\\Component\\ComponentChain)`, a set of independent units that have
   access to the current HTTP request and response and can share information amongst each other.
-  The chain is fully configurable, but by default it consists of the following steps:
+  The `chain`_ is fully configurable, but by default it consists of the following steps:
+* the ``trusted proxies`` component verifies headers that override request information, like the host, port or client IP address to
+  come from a server (reverse proxy) who's IP address is safe-listed in the settings.
+* the ``session cookie`` component, which restores the session from a cookie and later sets the session cookie in the response.
 * the ``routing`` component invokes the :abbr:`Router (\\Neos\\Flow\\Mvc\\Routing\\Router)` to determine which
   controller and action is responsible for processing the request. This information (controller name, action name,
-  arguments) is stored in the :abbr:`ComponentContext (\\Neos\\Flow\\Http\\Component\\ComponentContext)`
+  arguments) is stored in the ``ComponentContext``
 * the ``dispatching`` component tries to invoke the corresponding controller action via the
   :abbr:`Dispatcher (Neos\\Flow\\Mvc\\Dispatcher)`
 * the controller, usually an :abbr:`Action Controller (\\Neos\\Flow\\Mvc\\Controller\\ActionController)`, processes the
@@ -151,7 +155,8 @@ that defines the ``handle()`` method::
 				return;
 			}
 			$httpResponse = $componentContext->getHttpResponse();
-			$httpResponse->setContent('bar');
+      $modifiedResponse = $httpResponse->withContent('bar');
+			$componentContext->replaceHttpResponse($modifiedResponse);
 		}
 	}
 
@@ -220,6 +225,9 @@ using these instead of the low-level constructor method.
 	wrong protocol, host or client IP address.
 	If you need access to the **current** HTTP ``Request`` or ``Response``, instead inject the ``Bootstrap`` and
 	get the ``HttpRequest`` and ``HttpResponse`` through the ``getActiveRequestHandler()``.
+  Note though that those two objects are immutable, so if you need to change them, you need to in turn tell the current
+  ``ComponentContext`` that they need to be replaced through the ``->replaceHttpRequest(..)`` and ``->replaceHttpResponse(..)``
+  methods respectively. You can get the current ``ComponentContext`` from the active ``RequestHandler``.
 
 create()
 ~~~~~~~~
@@ -407,7 +415,7 @@ Cookies
 -------
 
 The HTTP foundation provides a very convenient way to deal with cookies. Instead of calling the PHP cookie functions
-(like ``setcookie()``), we recommend using the respective methods available in the ``Request`` and ``Response`` classes.
+(like ``setcookie()``), we recommend using the respective methods available in the ``ResponseInterface`` and ``ActionResponse`` classes.
 
 Like requests and responses, a cookie also is represented by a PHP class. Instead of working on arrays with values,
 instances of the ``Cookie`` class are used.
@@ -424,9 +432,9 @@ will send the cookie through the ``Cookie`` header. These headers are parsed aut
 
 	public function myAction() {
 		$httpRequest = $this->request->getHttpRequest();
-		if ($httpRequest->hasCookie('myCounter')) {
-			$cookie = $httpRequest->getCookie('myCounter');
-			$this->view->assign('counter', $cookie->getValue());
+		$cookieParams = $httpRequest->getCookieParams();
+		if (isset($cookieParams['myCounter']) {
+			$this->view->assign('counter', (int)$cookieParams['myCounter']);
 		}
 	}
 
@@ -434,24 +442,17 @@ The cookie value can be updated and re-assigned to the response::
 
 	public function myAction() {
 		$httpRequest = $this->request->getHttpRequest();
-		if ($httpRequest->hasCookie('myCounter')) {
-			$cookie = $httpRequest->getCookie('myCounter');
-		} else {
-			$cookie = new Cookie('myCounter', 1);
-		}
-		$this->view->assign('counter', $cookie->getValue());
+		$counter = $httpRequest->getCookieParams()['myCounter'] ?? 0;
+		$this->view->assign('counter', $counter);
 
-		$cookie->setValue((integer)$cookie->getValue() + 1);
+		$cookie = new Cookie('myCounter', $counter + 1);
 		$this->response->setCookie($cookie);
 	}
 
-Finally, a cookie can be deleted by calling the ``expire()`` method::
+Finally, a cookie can be deleted by calling the ``deleteCookie()`` method::
 
 	public function myAction() {
-		$httpRequest = $this->request->getHttpRequest();
-		$cookie = $httpRequest->getCookie('myCounter');
-		$cookie->expire();
-		$this->response->setCookie($cookie);
+		$this->response->deleteCookie('myCounter');
 	}
 
 Uri
@@ -579,3 +580,4 @@ other application parts which are accessible via HTTP. This browser has the ``In
 .. _Coordinated Universal Time: http://en.wikipedia.org/wiki/Coordinated_Universal_Time
 .. _Greenwich Mean Time: http://en.wikipedia.org/wiki/Greenwich_Mean_Time
 .. _Forwarded Header: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Forwarded
+.. _chain: https://github.com/neos/flow-development-collection/blob/5.3/Neos.Flow/Configuration/Settings.Http.yaml#L31-L57

@@ -12,6 +12,7 @@ namespace Neos\Flow\Mvc;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Http\Factories\FlowUploadedFile;
 use Psr\Http\Message\ServerRequestInterface as HttpRequestInterface;
 use Neos\Flow\ObjectManagement\Exception\UnknownObjectException;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
@@ -523,7 +524,8 @@ class ActionRequest implements RequestInterface
             return;
         }
 
-        if (is_object($value)) {
+        // Allowing FlowUploadedFile because that already comes from the HTTP request.
+        if (is_object($value) && !($value instanceof FlowUploadedFile)) {
             throw new Exception\InvalidArgumentTypeException('You are not allowed to store objects in the request arguments. Please convert the object of type "' . get_class($value) . '" given for argument "' . $argumentName . '" to a simple type first.', 1302783022);
         }
 

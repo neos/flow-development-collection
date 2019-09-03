@@ -95,8 +95,7 @@ Neos:
         # Defines request headers which are trusted from proxies to override important request information
         # Each value can be a single header or a comma separated list of headers
         headers:
-          # This is a list mainly for backwards-compatibility. You should only set a single header, e.g. 'X-Forwarded-For'
-          clientIp: 'Client-Ip,X-Forwarded-For,X-Forwarded,X-Cluster-Client-Ip,Forwarded-For,Forwarded'
+          clientIp: 'X-Forwarded-For'
           host: 'X-Forwarded-Host'
           port: 'X-Forwarded-Port'
           proto: 'X-Forwarded-Proto'

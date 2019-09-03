@@ -47,7 +47,7 @@ class UrlencodeViewHelperTest extends ViewHelperBaseTestcase
      */
     public function renderUsesValueAsSourceIfSpecified()
     {
-        $this->viewHelper->expects($this->never())->method('renderChildren');
+        $this->viewHelper->expects(self::never())->method('renderChildren');
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['value' => 'Source']);
         $actualResult = $this->viewHelper->render();
         self::assertEquals('Source', $actualResult);
@@ -58,7 +58,7 @@ class UrlencodeViewHelperTest extends ViewHelperBaseTestcase
      */
     public function renderUsesChildnodesAsSourceIfSpecified()
     {
-        $this->viewHelper->expects($this->atLeastOnce())->method('renderChildren')->will($this->returnValue('Source'));
+        $this->viewHelper->expects(self::atLeastOnce())->method('renderChildren')->will(self::returnValue('Source'));
         $this->viewHelper = $this->prepareArguments($this->viewHelper, []);
         $actualResult = $this->viewHelper->render();
         self::assertEquals('Source', $actualResult);

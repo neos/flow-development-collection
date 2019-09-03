@@ -26,7 +26,7 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\TagBuilder;
 abstract class ViewHelperBaseTestcase extends \Neos\Flow\Tests\UnitTestCase
 {
     /**
-     * @var \TYPO3Fluid\Fluid\Core\ViewHelper\ViewHelperVariableContainer|\PHPUnit_Framework_MockObject_MockObject
+     * @var \TYPO3Fluid\Fluid\Core\ViewHelper\ViewHelperVariableContainer|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $viewHelperVariableContainer;
 
@@ -41,22 +41,22 @@ abstract class ViewHelperBaseTestcase extends \Neos\Flow\Tests\UnitTestCase
     protected $viewHelperVariableContainerData = [];
 
     /**
-     * @var \Neos\FluidAdaptor\Core\ViewHelper\TemplateVariableContainer|\PHPUnit_Framework_MockObject_MockObject
+     * @var \Neos\FluidAdaptor\Core\ViewHelper\TemplateVariableContainer|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $templateVariableContainer;
 
     /**
-     * @var \Neos\Flow\Mvc\Routing\UriBuilder|\PHPUnit_Framework_MockObject_MockObject
+     * @var \Neos\Flow\Mvc\Routing\UriBuilder|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $uriBuilder;
 
     /**
-     * @var \Neos\Flow\Mvc\Controller\ControllerContext|\PHPUnit_Framework_MockObject_MockObject
+     * @var \Neos\Flow\Mvc\Controller\ControllerContext|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $controllerContext;
 
     /**
-     * @var TagBuilder|\PHPUnit_Framework_MockObject_MockObject
+     * @var TagBuilder|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $tagBuilder;
 
@@ -66,12 +66,12 @@ abstract class ViewHelperBaseTestcase extends \Neos\Flow\Tests\UnitTestCase
     protected $arguments;
 
     /**
-     * @var \Neos\Flow\Mvc\ActionRequest|\PHPUnit_Framework_MockObject_MockObject
+     * @var \Neos\Flow\Mvc\ActionRequest|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $request;
 
     /**
-     * @var \Neos\FluidAdaptor\Core\Rendering\RenderingContext|\PHPUnit_Framework_MockObject_MockObject
+     * @var \Neos\FluidAdaptor\Core\Rendering\RenderingContext|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $renderingContext;
 
@@ -86,22 +86,22 @@ abstract class ViewHelperBaseTestcase extends \Neos\Flow\Tests\UnitTestCase
         $this->viewHelperVariableContainer->expects($this->any())->method('addOrUpdate')->will($this->returnCallback([$this, 'viewHelperVariableContainerAddOrUpdateCallback']));
         $this->templateVariableContainer = $this->createMock(TemplateVariableContainer::class);
         $this->uriBuilder = $this->createMock(\Neos\Flow\Mvc\Routing\UriBuilder::class);
-        $this->uriBuilder->expects($this->any())->method('reset')->will($this->returnValue($this->uriBuilder));
-        $this->uriBuilder->expects($this->any())->method('setArguments')->will($this->returnValue($this->uriBuilder));
-        $this->uriBuilder->expects($this->any())->method('setSection')->will($this->returnValue($this->uriBuilder));
-        $this->uriBuilder->expects($this->any())->method('setFormat')->will($this->returnValue($this->uriBuilder));
-        $this->uriBuilder->expects($this->any())->method('setCreateAbsoluteUri')->will($this->returnValue($this->uriBuilder));
-        $this->uriBuilder->expects($this->any())->method('setAddQueryString')->will($this->returnValue($this->uriBuilder));
-        $this->uriBuilder->expects($this->any())->method('setArgumentsToBeExcludedFromQueryString')->will($this->returnValue($this->uriBuilder));
+        $this->uriBuilder->expects($this->any())->method('reset')->will(self::returnValue($this->uriBuilder));
+        $this->uriBuilder->expects($this->any())->method('setArguments')->will(self::returnValue($this->uriBuilder));
+        $this->uriBuilder->expects($this->any())->method('setSection')->will(self::returnValue($this->uriBuilder));
+        $this->uriBuilder->expects($this->any())->method('setFormat')->will(self::returnValue($this->uriBuilder));
+        $this->uriBuilder->expects($this->any())->method('setCreateAbsoluteUri')->will(self::returnValue($this->uriBuilder));
+        $this->uriBuilder->expects($this->any())->method('setAddQueryString')->will(self::returnValue($this->uriBuilder));
+        $this->uriBuilder->expects($this->any())->method('setArgumentsToBeExcludedFromQueryString')->will(self::returnValue($this->uriBuilder));
 
         $httpRequestFactory = new ServerRequestFactory(new UriFactory());
         $httpRequest = $httpRequestFactory->createServerRequest('GET', new Uri('http://localhost/foo'));
 
         $this->request = $this->getMockBuilder(\Neos\Flow\Mvc\ActionRequest::class)->disableOriginalConstructor()->getMock();
-        $this->request->expects($this->any())->method('isMainRequest')->will($this->returnValue(true));
+        $this->request->expects($this->any())->method('isMainRequest')->will(self::returnValue(true));
         $this->controllerContext = $this->getMockBuilder(\Neos\Flow\Mvc\Controller\ControllerContext::class)->disableOriginalConstructor()->getMock();
-        $this->controllerContext->expects($this->any())->method('getUriBuilder')->will($this->returnValue($this->uriBuilder));
-        $this->controllerContext->expects($this->any())->method('getRequest')->will($this->returnValue($this->request));
+        $this->controllerContext->expects($this->any())->method('getUriBuilder')->will(self::returnValue($this->uriBuilder));
+        $this->controllerContext->expects($this->any())->method('getRequest')->will(self::returnValue($this->request));
         $this->tagBuilder = $this->createMock(TagBuilder::class);
         $this->arguments = [];
         $this->renderingContext = new \Neos\FluidAdaptor\Core\Rendering\RenderingContext(new StandaloneView(), []);

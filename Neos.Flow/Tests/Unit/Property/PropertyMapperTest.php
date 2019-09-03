@@ -94,17 +94,17 @@ class PropertyMapperTest extends UnitTestCase
      * @param boolean $canConvertFrom
      * @param array $properties
      * @param string $typeOfSubObject
-     * @return TypeConverterInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return TypeConverterInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function getMockTypeConverter($name = '', $canConvertFrom = true, array $properties = [], $typeOfSubObject = '')
     {
         $mockTypeConverter = $this->createMock(TypeConverterInterface::class);
         $mockTypeConverter->_name = $name;
-        $mockTypeConverter->expects($this->any())->method('canConvertFrom')->will($this->returnValue($canConvertFrom));
-        $mockTypeConverter->expects($this->any())->method('convertFrom')->will($this->returnValue($name));
-        $mockTypeConverter->expects($this->any())->method('getSourceChildPropertiesToBeConverted')->will($this->returnValue($properties));
+        $mockTypeConverter->expects(self::any())->method('canConvertFrom')->will(self::returnValue($canConvertFrom));
+        $mockTypeConverter->expects(self::any())->method('convertFrom')->will(self::returnValue($name));
+        $mockTypeConverter->expects(self::any())->method('getSourceChildPropertiesToBeConverted')->will(self::returnValue($properties));
 
-        $mockTypeConverter->expects($this->any())->method('getTypeOfChildProperty')->will($this->returnValue($typeOfSubObject));
+        $mockTypeConverter->expects(self::any())->method('getTypeOfChildProperty')->will(self::returnValue($typeOfSubObject));
         return $mockTypeConverter;
     }
 
@@ -114,7 +114,7 @@ class PropertyMapperTest extends UnitTestCase
     public function findTypeConverterShouldReturnTypeConverterFromConfigurationIfItIsSet()
     {
         $mockTypeConverter = $this->getMockTypeConverter();
-        $this->mockConfiguration->expects($this->any())->method('getTypeConverter')->will($this->returnValue($mockTypeConverter));
+        $this->mockConfiguration->expects(self::any())->method('getTypeConverter')->will(self::returnValue($mockTypeConverter));
 
         $propertyMapper = $this->getAccessibleMock(PropertyMapper::class, ['dummy']);
         self::assertSame($mockTypeConverter, $propertyMapper->_call('findTypeConverter', 'someSource', 'someTargetType', $this->mockConfiguration));
@@ -180,10 +180,10 @@ class PropertyMapperTest extends UnitTestCase
     public function findEligibleConverterWithHighestPrioritySkipsConvertersWithNegativePriorities()
     {
         $internalTypeConverter1 = $this->getMockTypeConverter('string2string,prio-1');
-        $internalTypeConverter1->expects($this->atLeastOnce())->method('getPriority')->will($this->returnValue(-1));
+        $internalTypeConverter1->expects(self::atLeastOnce())->method('getPriority')->will(self::returnValue(-1));
 
         $internalTypeConverter2 = $this->getMockTypeConverter('string2string,prio-1');
-        $internalTypeConverter2->expects($this->atLeastOnce())->method('getPriority')->will($this->returnValue(-2));
+        $internalTypeConverter2->expects(self::atLeastOnce())->method('getPriority')->will(self::returnValue(-2));
 
         $propertyMapper = $this->getAccessibleMock(PropertyMapper::class, ['dummy']);
         $mockTypeConverters = [
@@ -200,10 +200,10 @@ class PropertyMapperTest extends UnitTestCase
     {
         $this->expectException(TypeConverterException::class);
         $internalTypeConverter1 = $this->getMockTypeConverter('string2string,prio-1');
-        $internalTypeConverter1->expects($this->atLeastOnce())->method('getPriority')->will($this->returnValue(-1));
+        $internalTypeConverter1->expects(self::atLeastOnce())->method('getPriority')->will(self::returnValue(-1));
 
         $internalTypeConverter2 = $this->getMockTypeConverter('string2string,prio-1');
-        $internalTypeConverter2->expects($this->atLeastOnce())->method('getPriority')->will($this->returnValue(-2));
+        $internalTypeConverter2->expects(self::atLeastOnce())->method('getPriority')->will(self::returnValue(-2));
 
         $propertyMapper = $this->getAccessibleMock(PropertyMapper::class, ['dummy']);
         $propertyMapper->_set('typeConverters', [
@@ -395,7 +395,7 @@ class PropertyMapperTest extends UnitTestCase
     {
         $this->expectException(Exception::class);
         $propertyMapper = $this->getAccessibleMock(PropertyMapper::class, ['doMapping']);
-        $propertyMapper->expects($this->once())->method('doMapping')->with('sourceType', 'targetType', $this->mockConfiguration)->will($this->throwException(new Exception()));
+        $propertyMapper->expects(self::once())->method('doMapping')->with('sourceType', 'targetType', $this->mockConfiguration)->will(self::throwException(new Exception()));
 
         $propertyMapper->convert('sourceType', 'targetType', $this->mockConfiguration);
     }
@@ -500,7 +500,7 @@ class PropertyMapperTest extends UnitTestCase
     public function convertCallsCanConvertFromWithTheFullNormalizedTargetType($source, $fullTargetType)
     {
         $mockTypeConverter = $this->getMockTypeConverter();
-        $mockTypeConverter->expects($this->atLeastOnce())->method('canConvertFrom')->with($source, $fullTargetType);
+        $mockTypeConverter->expects(self::atLeastOnce())->method('canConvertFrom')->with($source, $fullTargetType);
         $truncatedTargetType = TypeHandling::truncateElementType($fullTargetType);
         $mockTypeConverters = [
             gettype($source) => [
@@ -536,7 +536,7 @@ class PropertyMapperTest extends UnitTestCase
     {
         $fullTargetTypeWithoutNull = TypeHandling::stripNullableType($fullTargetType);
         $mockTypeConverter = $this->getMockTypeConverter();
-        $mockTypeConverter->expects($this->atLeastOnce())->method('canConvertFrom')->with($source, $fullTargetTypeWithoutNull);
+        $mockTypeConverter->expects(self::atLeastOnce())->method('canConvertFrom')->with($source, $fullTargetTypeWithoutNull);
         $truncatedTargetType = TypeHandling::truncateElementType($fullTargetTypeWithoutNull);
         $mockTypeConverters = [
             gettype($source) => [
