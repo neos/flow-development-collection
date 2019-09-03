@@ -2,7 +2,7 @@
 declare(strict_types=1);
 
 /*
- * This file is part of the Neos.FluidAdaptor package.
+ * This file is part of the Neos.Flow package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
