@@ -61,10 +61,10 @@ class TrustedProxiesComponent implements ComponentInterface
         }
 
         if (!is_array($this->settings['proxies']) && $this->settings['proxies'] !== '*') {
-            throw new InvalidConfigurationException('The Neos.Flow.http.trustedProxies.proxies setting may only be an array of IP addresses or the single string "*". Got "' . var_export($this->settings['proxies'], true) . '" instead.', 1564659249);
+            throw new InvalidConfigurationException('The Neos.Flow.http.trustedProxies.proxies setting may only be the single string "*" or a list of IP addresses or address ranges (in CIDR notation) given as an array or comma separated string. Got "' . var_export($this->settings['proxies'], true) . '" instead.', 1564659249);
         }
         if (is_array($this->settings['proxies']) && in_array('*', $this->settings['proxies'], true)) {
-            throw new InvalidConfigurationException('The Neos.Flow.http.trustedProxies.proxies setting is an array of IP addresses but also contains the string "*". Did you intend to allow all proxies? If so set the setting to the explicit string "*".', 1564659250);
+            throw new InvalidConfigurationException('The Neos.Flow.http.trustedProxies.proxies setting is an array of IP addresses or address ranges (in CIDR notation) but also contains the string "*". Did you intend to allow all proxies? If so set the setting to the explicit string "*".', 1564659250);
         }
     }
 
