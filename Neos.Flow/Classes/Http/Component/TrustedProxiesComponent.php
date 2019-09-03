@@ -49,14 +49,17 @@ class TrustedProxiesComponent implements ComponentInterface
 
         if ($this->settings['proxies'] === false) {
             $this->settings['proxies'] = [];
+            return;
         }
 
         if ($this->settings['proxies'] === ['*']) {
             $this->settings['proxies'] = '*';
         }
-        if (is_string($this->settings['proxies'])) {
+
+        if (is_string($this->settings['proxies']) && $this->settings['proxies'] !== '*') {
             $this->settings['proxies'] = array_map('trim', explode(',', $this->settings['proxies']));
         }
+
         if (!is_array($this->settings['proxies']) && $this->settings['proxies'] !== '*') {
             throw new InvalidConfigurationException('The Neos.Flow.http.trustedProxies.proxies setting may only be an array of IP addresses or the single string "*". Got "' . var_export($this->settings['proxies'], true) . '" instead.', 1564659249);
         }
