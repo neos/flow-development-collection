@@ -68,6 +68,7 @@ abstract class RequestInformationHelper
      */
     public static function getRelativeRequestPath(ServerRequestInterface $request): string
     {
+        // TODO: How to fix this? Probably give base URI to method, but how to get it in usages.
         $baseUri = $request->getAttribute(ServerRequestAttributes::BASE_URI);
         if (empty($baseUri)) {
             $baseUri = self::generateBaseUri($request);
