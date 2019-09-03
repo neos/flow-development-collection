@@ -187,7 +187,6 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
      * @param string $entryIdentifier An identifier which describes the cache entry to load
      * @return mixed The cache entry's content as a string or false if the cache entry could not be loaded
      * @throws Exception
-     * @throws FilesException
      * @api
      */
     public function get(string $entryIdentifier)
@@ -213,7 +212,6 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
      * @param string $entryIdentifier An identifier specifying the cache entry
      * @return boolean true if such an entry exists, false if not
      * @throws Exception
-     * @throws FilesException
      * @api
      */
     public function has(string $entryIdentifier): bool
@@ -233,7 +231,6 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
      * @param string $entryIdentifier Specifies the cache entry to remove
      * @return boolean true if (at least) an entry could be removed or false if no entry was found
      * @throws Exception
-     * @throws FilesException
      * @api
      */
     public function remove(string $entryIdentifier): bool
@@ -254,7 +251,6 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
      *
      * @return void
      * @throws Exception
-     * @throws FilesException
      * @api
      */
     public function flush()
@@ -280,7 +276,6 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
      * @param string $tag The tag the entries must have
      * @return integer
      * @throws Exception
-     * @throws FilesException
      * @api
      */
     public function flushByTag(string $tag): int
@@ -305,7 +300,6 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
      * @param string $tag The tag to search for
      * @return array An array with identifiers of all matching entries. An empty array if no entries matched
      * @throws Exception
-     * @throws FilesException
      * @api
      */
     public function findIdentifiersByTag(string $tag): array
@@ -322,7 +316,6 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
      *
      * @return void
      * @throws Exception
-     * @throws FilesException
      * @api
      */
     public function collectGarbage()
@@ -351,7 +344,6 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
      *
      * @return void
      * @throws Exception if the connection cannot be established
-     * throws FilesException
      */
     protected function connect()
     {
