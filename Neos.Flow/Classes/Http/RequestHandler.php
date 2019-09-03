@@ -167,6 +167,8 @@ class RequestHandler implements HttpRequestHandlerInterface
             header($prepareHeader);
         }
         echo $response->getBody()->getContents();
-        ob_end_flush();
+        while (ob_get_level() > 0) {
+            ob_end_flush();
+        }
     }
 }
