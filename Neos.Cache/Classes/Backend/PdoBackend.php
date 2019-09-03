@@ -367,7 +367,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
                     try {
                         Files::createDirectoryRecursively(dirname($splitdsn[1]));
                     } catch (FilesException $exception) {
-                        throw new Exception(sprintf('Could not create directory for sqlite file "%s"', $splitdsn[1]) , 1565359792, $exception);
+                        throw new Exception(sprintf('Could not create directory for sqlite file "%s"', $splitdsn[1]), 1565359792, $exception);
                     }
                 }
                 $this->databaseHandle = new \PDO($this->dataSourceName, $this->username, $this->password);
