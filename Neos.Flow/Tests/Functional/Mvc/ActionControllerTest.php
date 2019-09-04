@@ -453,6 +453,40 @@ class ActionControllerTest extends FunctionalTestCase
     /**
      * @test
      */
+    public function wholeRequestBodyCanBeMapped()
+    {
+        $arguments = [
+            'name' => 'Foo',
+            'emailAddress' => 'foo@bar.org'
+        ];
+        $body = json_encode($arguments, JSON_PRETTY_PRINT);
+        $this->browser->addAutomaticRequestHeader('Content-Type', 'application/json');
+        $response = $this->browser->request('http://localhost/test/mvc/actioncontrollertestb/mappedrequestbody', 'POST', [], [], [], $body);
+
+        $expectedResult = 'Foo-foo@bar.org';
+        self::assertEquals($expectedResult, $response->getBody()->getContents());
+    }
+
+    /**
+     * @test
+     */
+    public function wholeRequestBodyCanBeMappedWithoutAnnotation()
+    {
+        $arguments = [
+            'name' => 'Foo',
+            'emailAddress' => 'foo@bar.org'
+        ];
+        $body = json_encode($arguments, JSON_PRETTY_PRINT);
+        $this->browser->addAutomaticRequestHeader('Content-Type', 'application/json');
+        $response = $this->browser->request('http://localhost/test/mvc/actioncontrollertestb/mappedrequestbodywithoutannotation', 'POST', [], [], [], $body);
+
+        $expectedResult = 'Foo-foo@bar.org';
+        self::assertEquals($expectedResult, $response->getBody()->getContents());
+    }
+
+    /**
+     * @test
+     */
     public function trustedPropertiesConfigurationDoesNotIgnoreWildcardConfigurationInController()
     {
         $entity = new TestEntity();

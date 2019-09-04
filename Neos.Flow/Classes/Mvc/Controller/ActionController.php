@@ -292,6 +292,7 @@ class ActionController extends AbstractController
             if (strlen($methodName) > 6 && strpos($methodName, 'Action', strlen($methodName) - 6) !== false) {
                 $result[$methodName] = $reflectionService->getMethodParameters($className, $methodName);
 
+                /* @var $requestBodyAnnotation Flow\MapRequestBody */
                 $requestBodyAnnotation = $reflectionService->getMethodAnnotation($className, $methodName, Flow\MapRequestBody::class);
                 if ($requestBodyAnnotation !== null) {
                     $requestBodyArgument = $requestBodyAnnotation->argumentName;

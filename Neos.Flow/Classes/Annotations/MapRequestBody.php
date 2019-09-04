@@ -34,7 +34,7 @@ final class MapRequestBody
      */
     public function __construct(array $values)
     {
-        if (isset($values['argumentName'])) {
+        if (isset($values['value']) || isset($values['argumentName'])) {
             $this->argumentName = ltrim($values['argumentName'] ?? $values['value'], '$');
         }
     }
