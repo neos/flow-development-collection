@@ -316,10 +316,10 @@ class RoutingTest extends FunctionalTestCase
     public function requestMethodAcceptArray()
     {
         return [
-            ['GET', '404 Not Found'],
-            ['PUT', '404 Not Found'],
-            ['POST', '200 OK'],
-            ['DELETE', '200 OK']
+            ['GET', 404],
+            ['PUT', 404],
+            ['POST', 200],
+            ['DELETE', 200]
         ];
     }
 
@@ -344,7 +344,7 @@ class RoutingTest extends FunctionalTestCase
         );
 
         $response = $this->browser->request('http://localhost/http-method-test/', $requestMethod);
-        self::assertEquals($expectedStatus, $response->getStatus());
+        self::assertEquals($expectedStatus, $response->getStatusCode());
     }
 
     /**
