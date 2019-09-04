@@ -11,10 +11,9 @@ namespace Neos\Flow\Security\Authentication\EntryPoint;
  * source code.
  */
 
-use Neos\Flow\Http\BaseUriProvider;
 use function GuzzleHttp\Psr7\stream_for;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Http\ServerRequestAttributes;
+use Neos\Flow\Http\BaseUriProvider;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Flow\Security\Exception\MissingConfigurationException;

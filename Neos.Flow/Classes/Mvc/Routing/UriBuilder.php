@@ -11,11 +11,9 @@ namespace Neos\Flow\Mvc\Routing;
  * source code.
  */
 
-use Doctrine\Tests\Models\Cache\Action;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\BaseUriProvider;
 use Neos\Flow\Http\Helper\RequestInformationHelper;
-use Neos\Flow\Http\ServerRequestAttributes;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Routing\Dto\ResolveContext;
 use Neos\Utility\Arrays;

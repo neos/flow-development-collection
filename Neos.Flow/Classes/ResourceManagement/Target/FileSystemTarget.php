@@ -15,8 +15,6 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Error\Messages\Error;
 use Neos\Flow\Http\BaseUriProvider;
-use Neos\Flow\Http\HttpRequestHandlerInterface;
-use Neos\Flow\Http\ServerRequestAttributes;
 use Neos\Flow\ResourceManagement\CollectionInterface;
 use Neos\Flow\ResourceManagement\Publishing\MessageCollector;
 use Neos\Flow\ResourceManagement\PersistentResource;

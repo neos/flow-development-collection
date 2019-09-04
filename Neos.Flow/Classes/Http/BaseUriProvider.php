@@ -17,7 +17,7 @@ class BaseUriProvider
     /**
      * THe possibly configured Flow base URI.
      *
-     * @Flow\InjectConfiguration(package="Neos.Flow" path="http.baseUri")
+     * @Flow\InjectConfiguration(package="Neos.Flow", path="http.baseUri")
      * @var string|null
      */
     protected $configuredBaseUri;

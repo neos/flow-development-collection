@@ -262,7 +262,6 @@ class Browser
      */
     public function getCrawler()
     {
-
         $crawler = new Crawler(null, (string)$this->lastRequest->getUri(), (string)RequestInformationHelper::generateBaseUri($this->lastRequest));
         $this->lastResponse->getBody()->rewind();
         $crawler->addContent($this->lastResponse->getBody()->getContents(), $this->lastResponse->getHeaderLine('Content-Type'));
