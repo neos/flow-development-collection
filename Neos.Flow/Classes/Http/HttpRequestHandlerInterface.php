@@ -35,7 +35,7 @@ interface HttpRequestHandlerInterface extends RequestHandlerInterface
      * Returns the HTTP response corresponding to the currently handled request
      *
      * @return ResponseInterface
-     * @deprecated
+     * @deprecated since 6.0 use getComponentContext()->getHttpResponse() instead
      */
     public function getHttpResponse();
 
