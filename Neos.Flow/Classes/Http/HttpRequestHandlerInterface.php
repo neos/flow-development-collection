@@ -27,7 +27,7 @@ interface HttpRequestHandlerInterface extends RequestHandlerInterface
      * Returns the currently processed HTTP request
      *
      * @return ServerRequestInterface
-     * @deprecated
+     * @deprecated since 6.0 use getComponentContext()->getHttpRequest() instead
      */
     public function getHttpRequest();
 
