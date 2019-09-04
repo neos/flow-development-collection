@@ -52,11 +52,8 @@ abstract class RequestInformationHelper
      */
     public static function getScriptRequestPath(ServerRequestInterface $request): string
     {
-        // FIXME: Shouldn't this be a simple dirname on getScriptRequestPathAndFilename
-        $requestPathSegments = explode('/', self::getScriptRequestPathAndFilename($request));
-        array_pop($requestPathSegments);
-
-        return implode('/', $requestPathSegments) . '/';
+        $requestPath = dirname(self::getScriptRequestPathAndFilename($request));
+        return rtrim($requestPath, '/') . '/';
     }
 
     /**
@@ -68,11 +65,7 @@ abstract class RequestInformationHelper
      */
     public static function getRelativeRequestPath(ServerRequestInterface $request): string
     {
-        // TODO: How to fix this? Probably give base URI to method, but how to get it in usages.
-        $baseUri = $request->getAttribute(ServerRequestAttributes::BASE_URI);
-        if (empty($baseUri)) {
-            $baseUri = self::generateBaseUri($request);
-        }
+        $baseUri = self::generateBaseUri($request);
         return UriHelper::getRelativePath($baseUri, $request->getUri());
     }
 

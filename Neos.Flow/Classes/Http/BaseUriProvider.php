@@ -23,46 +23,16 @@ class BaseUriProvider
     protected $configuredBaseUri;
 
     /**
-     * A baseUri set during runtime.
-     *
-     * @var UriInterface|null
-     */
-    protected $runtimeBaseUri;
-
-    /**
      * @Flow\Inject
      * @var Bootstrap
      */
     protected $bootstrap;
-
-    /**
-     * Get a possible base URI set during runtime.
-     *
-     * @return UriInterface|null
-     */
-    public function getRuntimeBaseUri(): ?UriInterface
-    {
-        return $this->runtimeBaseUri;
-    }
-
-    /**
-     * Set a base URI during runtime.
-     * Th This is meant as extension point if you have your own way of figuring out the baseUri.
-     *
-     * @param UriInterface $runtimeBaseUri
-     * @return void
-     */
-    public function setRuntimeBaseUri(UriInterface $runtimeBaseUri): void
-    {
-        $this->runtimeBaseUri = $runtimeBaseUri;
-    }
-
     /**
      * Get the configured framework base URI.
      *
      * @return Uri|null
      */
-    public function getConfiguredBaseUri(): ?UriInterface
+    private function getConfiguredBaseUri(): ?UriInterface
     {
         if ($this->configuredBaseUri === null) {
             return null;
@@ -79,7 +49,7 @@ class BaseUriProvider
      *
      * @return UriInterface|null
      */
-    public function generateBaseUriFromHttpRequest(): ?UriInterface
+    private function generateBaseUriFromHttpRequest(): ?UriInterface
     {
         $activeRequestHandler = $this->bootstrap->getActiveRequestHandler();
         if (!$activeRequestHandler instanceof HttpRequestHandlerInterface) {
@@ -92,23 +62,17 @@ class BaseUriProvider
 
     /**
      * Gives the best possible base URI with the following priority:
-     * - runtime base URI
      * - configured base URI
      * - generated base URI from request
      *
      * To ensure a base URI can always be provided this will throw an
-     * exception if none of the three options yields a result.
+     * exception if none of the options yields a result.
      *
      * @return UriInterface
      * @throws Exception
      */
-    public function getBestPossibleBaseUri(): UriInterface
+    public function getConfiguredBaseUriOrFallbackToCurrentRequest(): UriInterface
     {
-        $baseUri = $this->getRuntimeBaseUri();
-        if ($baseUri instanceof UriInterface) {
-            return $baseUri;
-        }
-
         $baseUri = $this->getConfiguredBaseUri();
         if ($baseUri instanceof UriInterface) {
             return $baseUri;

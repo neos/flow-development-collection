@@ -52,7 +52,7 @@ class WebRedirect extends AbstractEntryPoint
         $uri = null;
 
         if (isset($this->options['uri'])) {
-            $uri = strpos($this->options['uri'], '://') !== false ? $this->options['uri'] : (string)$this->baseUriProvider->getBestPossibleBaseUri() . $this->options['uri'];
+            $uri = strpos($this->options['uri'], '://') !== false ? $this->options['uri'] : (string)$this->baseUriProvider->getConfiguredBaseUriOrFallbackToCurrentRequest() . $this->options['uri'];
         }
 
         if (isset($this->options['routeValues'])) {

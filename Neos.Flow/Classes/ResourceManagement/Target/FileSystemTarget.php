@@ -405,7 +405,7 @@ class FileSystemTarget implements TargetInterface
             return $this->baseUri;
         }
 
-        $httpBaseUri = (string)$this->baseUriProvider->getBestPossibleBaseUri();
+        $httpBaseUri = (string)$this->baseUriProvider->getConfiguredBaseUriOrFallbackToCurrentRequest();
         return $httpBaseUri . $this->baseUri;
     }
 
