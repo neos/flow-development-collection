@@ -25,15 +25,15 @@
       <trans-unit id="1324314378" xml:space="preserve" approved="yes">
 				<source>The given value is not a valid date</source>
 			<target state="translated">Podana wartość nie jest poprawną datą</target></trans-unit>
-      <trans-unit id="1325615630" xml:space="preserve" approved="yes">
+      <trans-unit id="1325615630" xml:space="preserve">
 				<source>The given date must be between {0} and {1}</source>
-			<target state="translated">Podana data musi być pomiędzy {0} i {1}</target></trans-unit>
-      <trans-unit id="1324315107" xml:space="preserve" approved="yes">
+			<target state="translated">Podana data musi być pomiędzy {0,datetime,datetime} a {1,datetime,datetime}</target></trans-unit>
+      <trans-unit id="1324315107" xml:space="preserve">
 				<source>The given date must be after {0}</source>
-			<target state="translated">Podana data musi być po {0}</target></trans-unit>
-      <trans-unit id="1324315115" xml:space="preserve" approved="yes">
+			<target state="translated">Podana data musi być po {0,datetime,datetime}</target></trans-unit>
+      <trans-unit id="1324315115" xml:space="preserve">
 				<source>The given date must be before {0}</source>
-			<target state="translated">Podana data musi być przed {0}</target></trans-unit>
+			<target state="translated">Podana data musi być przed {0,datetime,datetime}</target></trans-unit>
       <!-- DateTimeValidator -->
       <trans-unit id="1281454676" xml:space="preserve" approved="yes">
 				<source>The "locale" option can be only set to string identifier, or Locale object</source>
@@ -126,7 +126,7 @@
         </trans-unit>
         <trans-unit id="1238108068[2]">
           <source>This field must contain at least {0,number} characters</source>
-          <target state="needs-translation">This field must contain at least {0,number} characters</target>
+          <target state="translated">To pole musi zawierać co najmniej {0,number} znaków</target>
         </trans-unit>
         <trans-unit id="1238108068[3]" approved="yes">
           <source>This field must contain at least {0,number} characters</source>
@@ -144,7 +144,7 @@
         </trans-unit>
         <trans-unit id="1238108069[2]">
           <source>This text may not exceed {0,number} characters</source>
-          <target state="needs-translation">This text may not exceed {0,number} characters</target>
+          <target state="translated">Ten tekst nie może przekraczać {0,number} znaków</target>
         </trans-unit>
         <trans-unit id="1238108069[3]" approved="yes">
           <source>This text may not exceed {0,number} characters</source>
