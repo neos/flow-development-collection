@@ -236,52 +236,92 @@ on large collections::
 			'Y-m-d'
 		);
 
-.. admonition:: Property Mapping Configuration in the MVC stack
+Property Mapping Configuration in the MVC stack
+===============================================
 
-	The most common use-case where you will want to adjust the Property Mapping Configuration
-	is inside the MVC stack, where incoming arguments are converted to objects.
+The most common use-case where you will want to adjust the Property Mapping Configuration
+is inside the MVC stack, where incoming arguments are converted to objects.
 
-	If you use Fluid forms, normally no adjustments are needed. However, when programming
-	a web service or an ajax endpoint, you might need to set the ``PropertyMappingConfiguration``
-	manually. You can access them using the ``\Neos\Flow\Mvc\Controller\Argument``
-	object -- and this configuration takes place inside the corresponding ``initialize*Action``
-	of the controller, as in the following example:
+If you use Fluid forms, normally no adjustments are needed. However, when programming
+a web service or an ajax endpoint, you might need to set the ``PropertyMappingConfiguration``
+manually. You can access them using the ``\Neos\Flow\Mvc\Controller\Argument``
+object -- and this configuration takes place inside the corresponding ``initialize*Action``
+of the controller, as in the following example:
 
-	.. code-block:: php
+.. code-block:: php
 
-		protected function initializeUpdateAction() {
-			$commentConfiguration = $this->arguments['comment']->getPropertyMappingConfiguration();
-			$commentConfiguration->allowAllProperties();
-			$commentConfiguration
-				->setTypeConverterOption(
-				\Neos\Flow\Property\TypeConverter\PersistentObjectConverter::class,
-				\Neos\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED,
-				TRUE
-			);
-		}
+  protected function initializeUpdateAction() {
+    $commentConfiguration = $this->arguments['comment']->getPropertyMappingConfiguration();
+    $commentConfiguration->allowAllProperties();
+    $commentConfiguration
+      ->setTypeConverterOption(
+      \Neos\Flow\Property\TypeConverter\PersistentObjectConverter::class,
+      \Neos\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED,
+      TRUE
+    );
+  }
 
-		/**
-		 * @param \My\Package\Domain\Model\Comment $comment
-		 */
-		public function updateAction(\My\Package\Domain\Model\Comment $comment) {
-			// use $comment object here
-		}
+  /**
+   * @param \My\Package\Domain\Model\Comment $comment
+   */
+  public function updateAction(\My\Package\Domain\Model\Comment $comment) {
+    // use $comment object here
+  }
 
-	.. tip:: Maintain IDE's awareness of the ``Argument`` variable type
+.. tip:: Maintain IDE's awareness of the ``Argument`` variable type
 
-		Most IDEs will lose information about the variable's type when it comes to array accessing
-		like in the above example ``$this->arguments['comment']->…``. In order to keep track of
-		the variables' types, you can synonymously use
+  Most IDEs will lose information about the variable's type when it comes to array accessing
+  like in the above example ``$this->arguments['comment']->…``. In order to keep track of
+  the variables' types, you can synonymously use
 
-		.. code-block:: php
+  .. code-block:: php
 
-			protected function initializeUpdateAction() {
-				$commentConfiguration = $this->arguments->getArgument('comment')->getPropertyMappingConfiguration();
-				…
+    protected function initializeUpdateAction() {
+      $commentConfiguration = $this->arguments->getArgument('comment')->getPropertyMappingConfiguration();
+      …
 
-		Since the ``getArgument()`` method is explicitly annotated, common IDEs will recognize the type
-		and there is no break in the type hinting chain.
+  Since the ``getArgument()`` method is explicitly annotated, common IDEs will recognize the type
+  and there is no break in the type hinting chain.
 
+Mapping whole request body
+--------------------------
+
+Sometimes when building an API, you might also want to map the whole request body into a single object,
+instead of having to only map a single named sub-object. This is often necessary when you don't control the
+sending side, because you can't expect it to wrap the important request information like this in case of a JSON API:
+
+.. code-block:: json
+
+  {
+    "comment": {
+      "author": "john doe",
+      "text": "Hello World!"
+    }
+  }
+
+Instead you probably receive only the inner object consisting of "author" and "text". For those cases, you can tell
+Flow that it should map the whole request body into a single action argument with the ``@Flow\MapRequestBody("$comment")``
+annotation on the controller's action method.
+
+.. code-block:: php
+
+  /**
+   * @param \My\Package\Domain\Model\Comment $comment
+   * @Flow\MapRequestBody("$comment")
+   */
+  public function createAction(\My\Package\Domain\Model\Comment $comment) {
+    // use $comment object here
+  }
+
+Note though, that this will also have the consequence that the comment can no longer be submitted via GET parameters in
+this action, because the mapping process will directly access the parsed request body and would throw an exception if the
+body is empty.
+
+.. note::
+
+  Internally, the annotation will only set an attribute on the argument object for the given property name. Hence you can
+  achieve the same without an annotation, by calling ``$this->arguments['comment']->setMapRequestBody(true)`` inside the
+  ``initializeCreateAction()`` method.
 
 Security Considerations
 -----------------------
