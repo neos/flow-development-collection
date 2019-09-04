@@ -410,7 +410,6 @@ class AbstractControllerTest extends UnitTestCase
         }
 
         self::assertSame(404, $this->actionResponse->getStatusCode());
-        //self::assertSame('404 File Really Not Found', $this->actionResponse->getStatus());
         self::assertSame($message, $this->actionResponse->getContent());
     }
 
