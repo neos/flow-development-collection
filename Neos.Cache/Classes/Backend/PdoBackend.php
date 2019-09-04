@@ -510,7 +510,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
         try {
             $this->createCacheTables();
         } catch (Exception $exception) {
-            $result->addError(new Error($exception->getMessage(), $exception->getCode(), [], 'Failed'));
+            $result->addError(new Error($exception->getMessage(), (int)$exception->getCode(), [], 'Failed'));
         }
         return $result;
     }
@@ -527,7 +527,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
         try {
             $this->connect();
         } catch (Exception $exception) {
-            $result->addError(new Error($exception->getMessage(), $exception->getCode(), [], 'Connection failed'));
+            $result->addError(new Error($exception->getMessage(), (int)$exception->getCode(), [], 'Connection failed'));
             return $result;
         }
         $result->addNotice(new Notice($this->pdoDriver, null, [], 'Driver'));
