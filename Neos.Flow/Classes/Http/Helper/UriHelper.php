@@ -75,7 +75,8 @@ abstract class UriHelper
             return '';
         }
 
-        return str_replace($baseUriString, '', $uriString);
+        $baseUriPath = $baseUri->getPath();
+        return substr_replace($uri->getPath(), '', 0, strlen($baseUriPath));
     }
 
     /**
