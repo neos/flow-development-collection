@@ -27,6 +27,7 @@ class BaseUriProvider
      * @var Bootstrap
      */
     protected $bootstrap;
+
     /**
      * Get the configured framework base URI.
      *
