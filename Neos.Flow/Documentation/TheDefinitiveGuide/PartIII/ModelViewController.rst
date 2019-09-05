@@ -311,6 +311,12 @@ later sources replace earlier ones
 * body (typically from POST or PUT requests)
 * file uploads (derived from $_FILES)
 
+.. hint::
+
+	Sometimes you might need to map a whole request body into a single action argument.
+	In that case you can use an annotation ``@Flow\MapRequestBody("$argumentName")`` on
+	your action. Please refer to the :doc:`PropertyMapping` chapter for more details.
+
 Internal Arguments
 ~~~~~~~~~~~~~~~~~~
 
