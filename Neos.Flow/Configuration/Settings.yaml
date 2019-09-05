@@ -322,8 +322,7 @@ Neos:
       # by specifying corresponding regular expressions that don't match classes to exclude.
       #
       # Note: The previous setting "excludeClasses" has been deprecated with Flow 3.0
-      includeClasses:
-        'typo3fluid.fluid': ['.*']
+      includeClasses: []
 
     package:
 
