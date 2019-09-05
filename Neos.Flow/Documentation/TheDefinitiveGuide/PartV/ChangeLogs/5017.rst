@@ -195,8 +195,8 @@ David
 `BUGFIX: Omit sessionless tokens from session <https://github.com/neos/flow-development-collection/pull/1663>`_
 ---------------------------------------------------------------------------------------------------------------
 
-Without this fix, all security tokens â€“ including those which are
-implementations of SessionlessTokenInterface â€“ are serialized and
+Without this fix, all security tokens – including those which are
+implementations of SessionlessTokenInterface – are serialized and
 added to the current session. This is a problem for sessionless
 tokens, which need to be updated on every request on not just once
 per session.
