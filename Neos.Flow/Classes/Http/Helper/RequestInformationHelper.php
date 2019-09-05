@@ -11,7 +11,6 @@ namespace Neos\Flow\Http\Helper;
  * source code.
  */
 
-use Neos\Flow\Http\ServerRequestAttributes;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
