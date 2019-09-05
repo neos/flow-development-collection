@@ -69,13 +69,13 @@ abstract class UriHelper
      */
     public static function getRelativePath(UriInterface $baseUri, UriInterface $uri): string
     {
-        // FIXME: We should probably do a strpos === 0 instead to make sure the baseUri actually matches the start of the Uri.
-        $baseUriLength = strlen($baseUri->getPath());
-        if ($baseUriLength >= strlen($uri->getPath())) {
+        $baseUriString = (string)$baseUri;
+        $uriString = (string)$uri;
+        if (empty($baseUriString) || strpos($uriString, $baseUriString) !== 0) {
             return '';
         }
 
-        return substr($uri->getPath(), $baseUriLength);
+        return str_replace($baseUriString, '', $uriString);
     }
 
     /**

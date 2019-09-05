@@ -12,7 +12,6 @@ namespace Neos\Flow\ResourceManagement\Target;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Core\Bootstrap;
 use Neos\Error\Messages\Error;
 use Neos\Flow\Http\BaseUriProvider;
 use Neos\Flow\ResourceManagement\CollectionInterface;
@@ -62,15 +61,6 @@ class FileSystemTarget implements TargetInterface
     protected $baseUri = '';
 
     /**
-     * The configured Neos.Flow.http.baseUri to use as fallback if no absolute baseUri is configured
-     * and if it can't be determined from the current request (e.g. in CLI mode)
-     *
-     * @Flow\InjectConfiguration(package="Neos.Flow", path="http.baseUri")
-     * @var string
-     */
-    protected $httpBaseUri;
-
-    /**
      * The resolved absolute web URI for this target. If $baseUri was absolute this will be the same,
      * otherwise the request base uri will be prepended.
      *
@@ -97,12 +87,6 @@ class FileSystemTarget implements TargetInterface
      * @var ResourceRepository
      */
     protected $resourceRepository;
-
-    /**
-     * @Flow\Inject
-     * @var Bootstrap
-     */
-    protected $bootstrap;
 
     /**
      * @var LoggerInterface
