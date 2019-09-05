@@ -105,7 +105,10 @@ class RequestHandler implements HttpRequestHandlerInterface
         $this->exit->__invoke();
     }
 
-    public function getComponentContext()
+    /**
+     * @return ComponentContext
+     */
+    public function getComponentContext(): ComponentContext
     {
         return $this->componentContext;
     }

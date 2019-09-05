@@ -11,21 +11,17 @@ namespace Neos\Flow\Tests\Unit\ResourceManagement\Streams;
  * source code.
  */
 
-use Neos\Flow\Cli\CommandRequestHandler;
-use Neos\Flow\Core\Bootstrap;
-use Neos\Flow\Http\HttpRequestHandlerInterface;
-use Neos\Flow\Http\ServerRequestAttributes;
+use Neos\Flow\Http\BaseUriProvider;
 use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Package\PackageManager;
 use Neos\Flow\ResourceManagement\Collection;
 use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\Flow\ResourceManagement\Storage\PackageStorage;
-use Neos\Flow\ResourceManagement\Target\Exception;
 use Neos\Flow\ResourceManagement\Target\FileSystemTarget;
 use Neos\Flow\Tests\UnitTestCase;
 use org\bovigo\vfs\vfsStream;
-use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\UriInterface;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -39,34 +35,22 @@ class FileSystemTargetTest extends UnitTestCase
     protected $fileSystemTarget;
 
     /**
-     * @var Bootstrap|\PHPUnit\Framework\MockObject\MockObject
+     * @var BaseUriProvider|\PHPUnit\Framework\MockObject\MockObject
      */
-    protected $mockBootstrap;
-
-    /**
-     * @var HttpRequestHandlerInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $mockRequestHandler;
-
-    /**
-     * @var ServerRequestInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $mockHttpRequest;
+    protected $mockBaseUriProvider;
 
     protected function setUp(): void
     {
         $this->fileSystemTarget = new FileSystemTarget('test');
 
-        $this->mockBootstrap = $this->getMockBuilder(Bootstrap::class)->disableOriginalConstructor()->getMock();
+        $this->mockBaseUriProvider = $this->createMock(BaseUriProvider::class);
 
-        $this->mockRequestHandler = $this->createMock(HttpRequestHandlerInterface::class);
+        $this->inject($this->fileSystemTarget, 'baseUriProvider', $this->mockBaseUriProvider);
+    }
 
-        $this->mockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
-        $this->mockHttpRequest->expects(self::any())->method('getAttribute')->with(ServerRequestAttributes::BASE_URI)->will(self::returnValue(new Uri('http://detected/base/uri/')));
-        $this->mockRequestHandler->expects(self::any())->method('getHttpRequest')->will(self::returnValue($this->mockHttpRequest));
-
-        $this->mockBootstrap->expects(self::any())->method('getActiveRequestHandler')->will(self::returnValue($this->mockRequestHandler));
-        $this->inject($this->fileSystemTarget, 'bootstrap', $this->mockBootstrap);
+    protected function provideBaseUri(UriInterface $uri)
+    {
+        $this->mockBaseUriProvider->expects(self::any())->method('getConfiguredBaseUriOrFallbackToCurrentRequest')->willReturn($uri);
     }
 
     /**
@@ -100,6 +84,7 @@ class FileSystemTargetTest extends UnitTestCase
      */
     public function getPublicStaticResourceUriTests($baseUri, $relativePathAndFilename, $expectedResult)
     {
+        $this->provideBaseUri(new Uri('http://detected/base/uri/'));
         $this->inject($this->fileSystemTarget, 'baseUri', $baseUri);
         self::assertSame($expectedResult, $this->fileSystemTarget->getPublicStaticResourceUri($relativePathAndFilename));
     }
@@ -109,12 +94,7 @@ class FileSystemTargetTest extends UnitTestCase
      */
     public function getPublicStaticResourceUriFallsBackToConfiguredHttpBaseUri()
     {
-        $mockBootstrap = $this->getMockBuilder(Bootstrap::class)->disableOriginalConstructor()->getMock();
-        $mockCommandRequestHandler = $this->getMockBuilder(CommandRequestHandler::class)->disableOriginalConstructor()->getMock();
-        $mockBootstrap->expects(self::any())->method('getActiveRequestHandler')->will(self::returnValue($mockCommandRequestHandler));
-        $this->inject($this->fileSystemTarget, 'bootstrap', $mockBootstrap);
-        $this->inject($this->fileSystemTarget, 'httpBaseUri', 'http://configured/http/base/uri/');
-
+        $this->provideBaseUri(new Uri('http://configured/http/base/uri/'));
         self::assertStringStartsWith('http://configured/http/base/uri/', $this->fileSystemTarget->getPublicStaticResourceUri('some/path/SomeFilename.jpg'));
     }
 
@@ -123,11 +103,8 @@ class FileSystemTargetTest extends UnitTestCase
      */
     public function getPublicStaticResourceUriThrowsExceptionIfBaseUriCantBeResolved()
     {
-        $this->expectException(Exception::class);
-        $mockBootstrap = $this->getMockBuilder(Bootstrap::class)->disableOriginalConstructor()->getMock();
-        $mockCommandRequestHandler = $this->getMockBuilder(CommandRequestHandler::class)->disableOriginalConstructor()->getMock();
-        $mockBootstrap->expects(self::any())->method('getActiveRequestHandler')->will(self::returnValue($mockCommandRequestHandler));
-        $this->inject($this->fileSystemTarget, 'bootstrap', $mockBootstrap);
+        $this->expectException(\Neos\Flow\Http\Exception::class);
+        $this->mockBaseUriProvider->expects(self::any())->method('getConfiguredBaseUriOrFallbackToCurrentRequest')->willThrowException(new \Neos\Flow\Http\Exception('Test mock exception'));
 
         $this->fileSystemTarget->getPublicStaticResourceUri('some/path/SomeFilename.jpg');
     }
@@ -159,6 +136,7 @@ class FileSystemTargetTest extends UnitTestCase
      */
     public function getPublicPersistentResourceUriTests($baseUri, $relativePublicationPath, $filename, $sha1, $expectedResult)
     {
+        $this->provideBaseUri(new Uri('http://detected/base/uri/'));
         $this->inject($this->fileSystemTarget, 'baseUri', $baseUri);
         /** @var PersistentResource|\PHPUnit\Framework\MockObject\MockObject $mockResource */
         $mockResource = $this->getMockBuilder(PersistentResource::class)->disableOriginalConstructor()->getMock();
@@ -174,11 +152,7 @@ class FileSystemTargetTest extends UnitTestCase
      */
     public function getPublicPersistentResourceUriFallsBackToConfiguredHttpBaseUri()
     {
-        $mockBootstrap = $this->getMockBuilder(Bootstrap::class)->disableOriginalConstructor()->getMock();
-        $mockCommandRequestHandler = $this->getMockBuilder(CommandRequestHandler::class)->disableOriginalConstructor()->getMock();
-        $mockBootstrap->expects(self::any())->method('getActiveRequestHandler')->will(self::returnValue($mockCommandRequestHandler));
-        $this->inject($this->fileSystemTarget, 'bootstrap', $mockBootstrap);
-        $this->inject($this->fileSystemTarget, 'httpBaseUri', 'http://configured/http/base/uri/');
+        $this->provideBaseUri(new Uri('http://configured/http/base/uri/'));
 
         /** @var PersistentResource|\PHPUnit\Framework\MockObject\MockObject $mockResource */
         $mockResource = $this->getMockBuilder(PersistentResource::class)->disableOriginalConstructor()->getMock();
@@ -191,11 +165,8 @@ class FileSystemTargetTest extends UnitTestCase
      */
     public function getPublicPersistentResourceUriThrowsExceptionIfBaseUriCantBeResolved()
     {
-        $this->expectException(Exception::class);
-        $mockBootstrap = $this->getMockBuilder(Bootstrap::class)->disableOriginalConstructor()->getMock();
-        $mockCommandRequestHandler = $this->getMockBuilder(CommandRequestHandler::class)->disableOriginalConstructor()->getMock();
-        $mockBootstrap->expects(self::any())->method('getActiveRequestHandler')->will(self::returnValue($mockCommandRequestHandler));
-        $this->inject($this->fileSystemTarget, 'bootstrap', $mockBootstrap);
+        $this->expectException(\Neos\Flow\Http\Exception::class);
+        $this->mockBaseUriProvider->expects(self::any())->method('getConfiguredBaseUriOrFallbackToCurrentRequest')->willThrowException(new \Neos\Flow\Http\Exception('Test mock exception'));
 
         /** @var PersistentResource|\PHPUnit\Framework\MockObject\MockObject $mockResource */
         $mockResource = $this->getMockBuilder(PersistentResource::class)->disableOriginalConstructor()->getMock();
