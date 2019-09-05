@@ -12,7 +12,6 @@ namespace Neos\Flow\Tests\Unit\Mvc\Routing\Dto;
  */
 
 use GuzzleHttp\Psr7\Uri;
-use Neos\Flow\Http\ServerRequestAttributes;
 use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
 use Neos\Flow\Mvc\Routing\Dto\RouteContext;
 use Neos\Flow\Tests\UnitTestCase;

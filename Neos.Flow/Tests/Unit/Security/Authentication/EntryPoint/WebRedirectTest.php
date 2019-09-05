@@ -15,7 +15,6 @@ use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Psr7\ServerRequest;
 use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Http\BaseUriProvider;
-use Neos\Flow\Http\ServerRequestAttributes;
 use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Flow\Security\Authentication\EntryPoint\WebRedirect;
 use Neos\Flow\Security\Exception\MissingConfigurationException;
