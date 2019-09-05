@@ -12,7 +12,6 @@ namespace Neos\Flow\Tests\Unit\Mvc\Routing\Dto;
  */
 
 use GuzzleHttp\Psr7\Uri;
-use Neos\Flow\Http\ServerRequestAttributes;
 use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
 use Neos\Flow\Mvc\Routing\Dto\RouteContext;
 use Neos\Flow\Tests\UnitTestCase;
@@ -98,14 +97,16 @@ class RouteContextTest extends UnitTestCase
      */
     public function getCacheEntryIdentifierChangesWithNewRelativePath()
     {
-        $this->mockHttpRequest1->expects(self::any())->method('getAttribute')->with(ServerRequestAttributes::BASE_URI)->willReturn(new Uri('http://neos.io/'));
-        $this->mockHttpRequest2->expects(self::any())->method('getAttribute')->with(ServerRequestAttributes::BASE_URI)->willReturn(new Uri('http://neos.io/'));
+        $mockUri1 = new Uri('https://localhost/relative/path1');
+        $mockUri2 = new Uri('https://localhost/relative/path2');
 
-        $this->mockUri1->expects(self::any())->method('getPath')->willReturn('relative/path1');
-        $cacheIdentifier1 = (new RouteContext($this->mockHttpRequest1, RouteParameters::createEmpty()))->getCacheEntryIdentifier();
+        $mockHttpRequest1 = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
+        $mockHttpRequest1->expects(self::any())->method('getUri')->willReturn($mockUri1);
+        $mockHttpRequest2 = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
+        $mockHttpRequest2->expects(self::any())->method('getUri')->willReturn($mockUri2);
 
-        $this->mockUri2->expects(self::any())->method('getPath')->willReturn('relative/path2');
-        $cacheIdentifier2 = (new RouteContext($this->mockHttpRequest2, RouteParameters::createEmpty()))->getCacheEntryIdentifier();
+        $cacheIdentifier1 = (new RouteContext($mockHttpRequest1, RouteParameters::createEmpty()))->getCacheEntryIdentifier();
+        $cacheIdentifier2 = (new RouteContext($mockHttpRequest2, RouteParameters::createEmpty()))->getCacheEntryIdentifier();
 
         self::assertNotSame($cacheIdentifier1, $cacheIdentifier2);
     }
