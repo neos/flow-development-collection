@@ -1,0 +1,37 @@
+`4.3.19 (2019-09-05) <https://github.com/neos/flow-development-collection/releases/tag/4.3.19>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`Revert "TASK: Include TYPO3Fluid for reflection" <https://github.com/neos/flow-development-collection/pull/1760>`_
+-------------------------------------------------------------------------------------------------------------------
+
+This reverts commit `e5bb869d3d1262080bbe687095e7b4a58789d971 <https://github.com/neos/flow-development-collection/commit/e5bb869d3d1262080bbe687095e7b4a58789d971>`_.
+
+This is necessary, because the inclusion of Fluid in reflection for 4.3 introduced a regression, due to a wrong annotation in Fluid versions < 2.3.
+
+See https://github.com/TYPO3/Fluid/pull/260
+
+Fixes #1756
+
+NOTE: This revert should not be included in upmerges, since the issue does not exist in Flow 5.0+ as it requires Fluid 2.5 minimum
+
+* Packages: ``Flow``
+
+`TASK: Loosen typo3fluid/fluid dependency <https://github.com/neos/flow-development-collection/pull/1757>`_
+-----------------------------------------------------------------------------------------------------------
+
+Adjusts the dependency declared in `neos/fluid-adaptor` to complement https://github.com/neos/flow-development-collection/pull/1638 and thus fix https://github.com/neos/flow-development-collection/pull/1756
+
+* Packages: ``Flow`` ``FluidAdaptor``
+
+`BUGFIX: Don't redirect \`.well-known\` <https://github.com/neos/flow-development-collection/pull/1750>`_
+---------------------------------------------------------------------------------------------------------
+
+This is necessary in order to allow e.g. certbot to do it's job.
+
+* Packages: ``Flow``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/4.3.18...4.3.19>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
