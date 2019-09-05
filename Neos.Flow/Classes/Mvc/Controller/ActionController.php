@@ -264,11 +264,12 @@ class ActionController extends AbstractController
             if ($dataType === null) {
                 throw new InvalidArgumentTypeException('The argument type for parameter $' . $parameterName . ' of method ' . get_class($this) . '->' . $this->actionMethodName . '() could not be detected.', 1253175643);
             }
-            $defaultValue = (isset($parameterInfo['defaultValue']) ? $parameterInfo['defaultValue'] : null);
-            if ($parameterInfo['optional'] === true && $defaultValue === null) {
+            $defaultValue = ($parameterInfo['defaultValue'] ?? null);
+            if ($defaultValue === null && $parameterInfo['optional'] === true) {
                 $dataType = TypeHandling::stripNullableType($dataType);
             }
-            $this->arguments->addNewArgument($parameterName, $dataType, ($parameterInfo['optional'] === false), $defaultValue);
+            $mapRequestBody = isset($parameterInfo['mapRequestBody']) && $parameterInfo['mapRequestBody'] === true;
+            $this->arguments->addNewArgument($parameterName, $dataType, ($parameterInfo['optional'] === false), $defaultValue, $mapRequestBody);
         }
     }
 
@@ -290,6 +291,16 @@ class ActionController extends AbstractController
         foreach ($methodNames as $methodName) {
             if (strlen($methodName) > 6 && strpos($methodName, 'Action', strlen($methodName) - 6) !== false) {
                 $result[$methodName] = $reflectionService->getMethodParameters($className, $methodName);
+
+                /* @var $requestBodyAnnotation Flow\MapRequestBody */
+                $requestBodyAnnotation = $reflectionService->getMethodAnnotation($className, $methodName, Flow\MapRequestBody::class);
+                if ($requestBodyAnnotation !== null) {
+                    $requestBodyArgument = $requestBodyAnnotation->argumentName;
+                    if (!isset($result[$methodName][$requestBodyArgument])) {
+                        throw new \Neos\Flow\Mvc\Exception('Can not map request body to non existing argument $' . $requestBodyArgument . ' of ' . $className . '->' . $methodName . '().', 1559236782);
+                    }
+                    $result[$methodName][$requestBodyArgument]['mapRequestBody'] = true;
+                }
             }
         }
 
