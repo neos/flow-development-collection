@@ -1,6 +1,35 @@
 type: dictionary
 additionalProperties: false
 properties:
+  'flashMessages':
+    type: dictionary
+    additionalProperties: FALSE
+    required: TRUE
+    properties:
+      'containers':
+        type: dictionary
+        required: TRUE
+        additionalProperties:
+          type: dictionary
+          additionalProperties: FALSE
+          required: TRUE
+          properties:
+            'position': [string, number]
+            'storage': { type: string, required: true }
+            'storageOptions': { type: dictionary }
+            'requestPatterns':
+              type: dictionary
+              additionalProperties:
+                required: TRUE
+                type:
+                  -
+                    type: 'null'
+                  -
+                    type: 'dictionary'
+                    additionalProperties: FALSE
+                    properties:
+                      'pattern': { type: string, required: TRUE }
+                      'patternOptions': { type: dictionary }
   'routes':
     type: dictionary
     patternProperties: { '/.*/': { type: [boolean, dictionary] } }

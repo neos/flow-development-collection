@@ -1414,6 +1414,12 @@
       <code>warning</code>
     </UndefinedInterfaceMethod>
   </file>
+  <file src="Packages/Framework/Neos.Flow/Classes/Mvc/FlashMessage/FlashMessageService.php">
+    <TooManyArguments occurrences="2">
+      <code>get</code>
+      <code>get</code>
+    </TooManyArguments>
+  </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Mvc/RequestMatcher.php">
     <PossiblyNullPropertyAssignmentValue occurrences="2">
       <code>$actionRequest</code>
