@@ -240,7 +240,9 @@ final class UriConstraints
             if ($replacePrefixes === []) {
                 $host = $prefix . $host;
             } else {
-                $regex = '/^(' . implode('|', array_map('preg_quote', $replacePrefixes)) . ')/';
+                // If no replacement found, we need to prepend the prefix to accommodate UriConstraintsTest::applyToTests dataset #10
+                $replaceNoMatch = '|(?!' . preg_quote($prefix) . ')';
+                $regex = '/^(' . implode('|', array_map('preg_quote', $replacePrefixes)) . $replaceNoMatch . ')/';
                 $host = preg_replace($regex, $prefix, $host);
             }
             if ($host !== $originalHost) {
