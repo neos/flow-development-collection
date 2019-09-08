@@ -236,15 +236,13 @@ final class UriConstraints
             $originalHost = $host = !empty($uri->getHost()) ? $uri->getHost() : $templateUri->getHost();
             $prefix = $this->constraints[self::CONSTRAINT_HOST_PREFIX]['prefix'];
             $replacePrefixes = $this->constraints[self::CONSTRAINT_HOST_PREFIX]['replacePrefixes'];
-
-            if ($replacePrefixes === []) {
-                $host = $prefix . $host;
-            } else {
-                // If no replacement found, we need to prepend the prefix to accommodate UriConstraintsTest::applyToTests dataset #10
-                $replaceNoMatch = '|(?!' . preg_quote($prefix) . ')';
-                $regex = '/^(' . implode('|', array_map('preg_quote', $replacePrefixes)) . $replaceNoMatch . ')/';
-                $host = preg_replace($regex, $prefix, $host);
+            foreach ($replacePrefixes as $replacePrefix) {
+                if ($this->stringStartsWith($host, $replacePrefix)) {
+                    $host = substr($host, strlen($replacePrefix));
+                    break;
+                }
             }
+            $host = $prefix . $host;
             if ($host !== $originalHost) {
                 $forceAbsoluteUri = true;
                 $uri = $uri->withHost($host);
@@ -255,11 +253,16 @@ final class UriConstraints
             $suffix = $this->constraints[self::CONSTRAINT_HOST_SUFFIX]['suffix'];
             $replaceSuffixes = $this->constraints[self::CONSTRAINT_HOST_SUFFIX]['replaceSuffixes'];
 
+            // This is different from prefix handling, because we don't want a suffix added if no replacement match was found
             if ($replaceSuffixes === []) {
                 $host .= $suffix;
             } else {
-                $regex = '/(' . implode('|', array_map('preg_quote', $replaceSuffixes)) . ')$/';
-                $host = preg_replace($regex, $suffix, $host);
+                foreach ($replaceSuffixes as $replaceSuffix) {
+                    if ($this->stringEndsWith($host, $replaceSuffix)) {
+                        $host = substr($host, 0, -strlen($replaceSuffix)) . $suffix;
+                        break;
+                    }
+                }
             }
             if ($host !== $originalHost) {
                 $forceAbsoluteUri = true;
@@ -294,5 +297,29 @@ final class UriConstraints
         }
 
         return $uri;
+    }
+
+    /**
+     * Whether the given $string starts with the specified $prefix
+     *
+     * @param string $string
+     * @param string $prefix
+     * @return bool
+     */
+    private function stringStartsWith(string $string, string $prefix): bool
+    {
+        return substr($string, 0, strlen($prefix)) === $prefix;
+    }
+
+    /**
+     * Whether the given $string ends with the specified $suffix
+     *
+     * @param string $string
+     * @param string $suffix
+     * @return bool
+     */
+    private function stringEndsWith(string $string, string $suffix): bool
+    {
+        return substr($string, -strlen($suffix)) === $suffix;
     }
 }
