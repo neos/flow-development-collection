@@ -1,3 +1,0 @@
-Neos\Utility\PdoHelper:
-  autowiring: off
-  scope: prototype

@@ -19,7 +19,6 @@ use Neos\Error\Messages\Notice;
 use Neos\Error\Messages\Result;
 use Neos\Utility\Exception\FilesException;
 use Neos\Utility\Files;
-use Neos\Utility\PdoHelper;
 
 /**
  * A PDO database cache backend
@@ -386,8 +385,12 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
     protected function createCacheTables()
     {
         $this->connect();
+        $sqlPath = __DIR__ . '/../../Resources/Private/DDL_' . strtolower($this->pdoDriver) . '.sql';
+        if (!file_exists($sqlPath)) {
+            throw new Exception(sprintf('Could not find SQL for pdo driver "%s" (at "%s")', $this->pdoDriver, $sqlPath), 1568133488);
+        }
         try {
-            PdoHelper::importSql($this->databaseHandle, $this->pdoDriver, __DIR__ . '/../../Resources/Private/DDL.sql');
+            $this->databaseHandle->exec(file_get_contents($sqlPath));
         } catch (\PDOException $exception) {
             throw new Exception('Could not create cache tables with DSN "' . $this->dataSourceName . '". PDO error: ' . $exception->getMessage(), 1259576985);
         }
