@@ -51,10 +51,9 @@ abstract class AbstractValidator implements ValidatorInterface
     protected $options = [];
 
     /**
-     * @deprecated since Flow 4.3. Don't overwrite this and instead use pushResult/popResult
      * @var ErrorResult
      */
-    protected $result;
+    private $result;
 
     /**
      * @var array<ErrorResult>
@@ -133,6 +132,7 @@ abstract class AbstractValidator implements ValidatorInterface
      *
      * @param mixed $value The value that should be validated
      * @return ErrorResult
+     * @throws InvalidValidationOptionsException
      * @api
      */
     public function validate($value)
