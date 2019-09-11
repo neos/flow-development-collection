@@ -63,12 +63,6 @@ class StandaloneView extends AbstractTemplateView
     protected $environment;
 
     /**
-     * @var \Neos\Flow\Mvc\FlashMessageContainer
-     * @Flow\Inject
-     */
-    protected $flashMessageContainer;
-
-    /**
      * @var ActionRequest
      */
     protected $request;

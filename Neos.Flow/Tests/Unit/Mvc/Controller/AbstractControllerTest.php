@@ -18,10 +18,11 @@ use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Controller\AbstractController;
 use Neos\Flow\Mvc\Controller\Arguments;
+use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Mvc\Exception\ForwardException;
 use Neos\Flow\Mvc\Exception\RequiredArgumentMissingException;
 use Neos\Flow\Mvc\Exception\StopActionException;
-use Neos\Flow\Mvc\FlashMessageContainer;
+use Neos\Flow\Mvc\FlashMessage\FlashMessageContainer;
 use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Property\PropertyMapper;
@@ -83,7 +84,6 @@ class AbstractControllerTest extends UnitTestCase
         $request = ActionRequest::fromHttpRequest(new ServerRequest('GET', new Uri('http://localhost/foo')));
 
         $controller = $this->getAccessibleMock(AbstractController::class, ['processRequest']);
-        $this->inject($controller, 'flashMessageContainer', new FlashMessageContainer());
 
         self::assertFalse($request->isDispatched());
         $controller->_call('initializeController', $request, $this->actionResponse);
@@ -131,7 +131,10 @@ class AbstractControllerTest extends UnitTestCase
     {
         $flashMessageContainer = new FlashMessageContainer();
         $controller = $this->getAccessibleMock(AbstractController::class, ['processRequest']);
-        $this->inject($controller, 'flashMessageContainer', $flashMessageContainer);
+
+        $controllerContext = $this->getMockBuilder(ControllerContext::class)->disableOriginalConstructor()->getMock();
+        $controllerContext->method('getFlashMessageContainer')->willReturn($flashMessageContainer);
+        $this->inject($controller, 'controllerContext', $controllerContext);
 
         $controller->addFlashMessage($messageBody, $messageTitle, $severity, $messageArguments, $messageCode);
         self::assertEquals([$expectedMessage], $flashMessageContainer->getMessages());
@@ -145,7 +148,10 @@ class AbstractControllerTest extends UnitTestCase
         $this->expectException(\InvalidArgumentException::class);
         $flashMessageContainer = new FlashMessageContainer();
         $controller = $this->getAccessibleMock(AbstractController::class, ['processRequest']);
-        $this->inject($controller, 'flashMessageContainer', $flashMessageContainer);
+
+        $controllerContext = $this->getMockBuilder(ControllerContext::class)->disableOriginalConstructor()->getMock();
+        $controllerContext->method('getFlashMessageContainer')->willReturn($flashMessageContainer);
+        $this->inject($controller, 'controllerContext', $controllerContext);
 
         $controller->addFlashMessage(new \stdClass());
     }
@@ -286,7 +292,7 @@ class AbstractControllerTest extends UnitTestCase
         $mockUriBuilder->expects(self::once())->method('uriFor')->with('show', $arguments, 'Stuff', 'Super', 'Duper\Package')->willReturn('the uri');
 
         $controller = $this->getAccessibleMock(AbstractController::class, ['processRequest', 'redirectToUri']);
-        $this->inject($controller, 'flashMessageContainer', new FlashMessageContainer());
+        //$this->inject($controller, 'flashMessageContainer', new FlashMessageContainer());
         $controller->_call('initializeController', $this->mockActionRequest, $this->actionResponse);
         $this->inject($controller, 'uriBuilder', $mockUriBuilder);
 
