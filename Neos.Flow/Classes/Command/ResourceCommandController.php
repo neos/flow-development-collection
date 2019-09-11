@@ -237,9 +237,9 @@ class ResourceCommandController extends CommandController
                 $thumbnailRepository = $this->objectManager->get(ThumbnailRepository::class);
             }
 
-            foreach ($brokenResources as $resourceIdentifier) {
+            foreach ($brokenResources as $key => $resourceIdentifier) {
                 $resource = $this->resourceRepository->findByIdentifier($resourceIdentifier);
-                $brokenResources[] = $resource;
+                $brokenResources[$key] = $resource;
                 if ($mediaPackagePresent) {
                     $assets = $assetRepository->findByResource($resource);
                     if ($assets !== null) {
