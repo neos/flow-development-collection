@@ -125,7 +125,7 @@ final class UriConstraints
      * Create a new instance with the host suffix constraint added
      *
      * @param string $suffix The URI host suffix to force, for example ".com"
-     * @param string[] $replaceSuffixes a list of prefixes that should be replaced with the given prefix. if the list is empty or does not match the current host $prefix will be prepended as is
+     * @param string[] $replaceSuffixes a list of suffixes that should be replaced with the given suffix. if the list is empty or does not match, no replacement happens
      * @return UriConstraints
      */
     public function withHostSuffix(string $suffix, array $replaceSuffixes = []): self
