@@ -158,7 +158,7 @@ class Browser
         if ($content) {
             $request = $request->withBody($this->contentStreamFactory->createStream($content));
         }
-        $request = $request->withAttribute(ServerRequestAttributes::BASE_URI, RequestInformationHelper::generateBaseUri($request));
+
         if (!empty($arguments)) {
             $request = $request->withQueryParams($arguments);
         }
