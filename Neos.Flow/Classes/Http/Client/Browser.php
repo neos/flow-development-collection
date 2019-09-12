@@ -15,7 +15,6 @@ use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Headers;
 use Neos\Flow\Http\Helper\RequestInformationHelper;
-use Neos\Flow\Http\ServerRequestAttributes;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestFactoryInterface;
 use Psr\Http\Message\ServerRequestInterface;
