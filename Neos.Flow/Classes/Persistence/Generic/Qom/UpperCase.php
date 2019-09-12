@@ -22,6 +22,7 @@ namespace Neos\Flow\Persistence\Generic\Qom;
  * If operand evaluates to null, the UpperCase operand also evaluates to null.
  *
  * @api
+ * @deprecated since Flow 6.0
  */
 class UpperCase
 {
