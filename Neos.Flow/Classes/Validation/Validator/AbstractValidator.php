@@ -127,6 +127,18 @@ abstract class AbstractValidator implements ValidatorInterface
     }
 
     /**
+     * Get the current Result for this validation invocation. Use this inside your isValid() implementation
+     * to e.g. merge results together into the current one.
+     *
+     * @since Flow 6.0
+     * @return ErrorResult|null
+     */
+    protected function getResult()
+    {
+        return $this->result;
+    }
+
+    /**
      * Checks if the given value is valid according to the validator, and returns
      * the Error Messages object which occurred.
      *
