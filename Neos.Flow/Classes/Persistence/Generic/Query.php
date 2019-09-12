@@ -25,6 +25,7 @@ use Neos\Utility\TypeHandling;
  * $query->matching($query->equals('foo', 'bar'))->setLimit(10)->execute();
  *
  * @api
+ * @deprecated since Flow 6.0
  */
 class Query implements QueryInterface
 {

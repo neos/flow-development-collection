@@ -22,6 +22,7 @@ use Neos\Flow\Persistence\QueryInterface;
  *
  * @Flow\Scope("singleton")
  * @api
+ * @deprecated since Flow 6.0
  */
 class PersistenceManager extends AbstractPersistenceManager
 {

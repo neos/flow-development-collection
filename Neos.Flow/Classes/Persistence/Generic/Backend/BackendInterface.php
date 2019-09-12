@@ -17,6 +17,7 @@ use Neos\Flow\Persistence\QueryInterface;
  * A persistence backend interface
  *
  * @api
+ * @deprecated since Flow 6.0
  */
 interface BackendInterface
 {
