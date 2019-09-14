@@ -15,6 +15,7 @@ use GuzzleHttp\Psr7\ServerRequest;
 use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
+use Neos\Flow\Cli\Exception\StopCommandException;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Mvc\Exception\InvalidRoutePartValueException;
 use Neos\Flow\Mvc\Exception\StopActionException;
@@ -56,7 +57,7 @@ class RoutingCommandController extends CommandController
      *
      * @return void
      */
-    public function listCommand()
+    public function listCommand(): void
     {
         $this->outputLine('Currently registered routes:');
         /** @var Route $route */
@@ -74,7 +75,7 @@ class RoutingCommandController extends CommandController
      * @param integer $index The index of the route as given by routing:list
      * @return void
      */
-    public function showCommand(int $index)
+    public function showCommand(int $index): void
     {
         $routes = $this->router->getRoutes();
         if (isset($routes[$index - 1])) {
@@ -108,7 +109,7 @@ class RoutingCommandController extends CommandController
      * @param string $format Requested Format name default is 'html'
      * @return void
      */
-    public function getPathCommand(string $package, string $controller = 'Standard', string $action = 'index', string $format = 'html')
+    public function getPathCommand(string $package, string $controller = 'Standard', string $action = 'index', string $format = 'html'): void
     {
         $packageParts = explode('\\', $package, 2);
         $package = $packageParts[0];
@@ -170,9 +171,9 @@ class RoutingCommandController extends CommandController
      * @param string $method The request method (GET, POST, PUT, DELETE, ...) to simulate
      * @return void
      * @throws InvalidRoutePartValueException
-     * @throws StopActionException
+     * @throws StopCommandException
      */
-    public function routePathCommand(string $path, string $method = 'GET')
+    public function routePathCommand(string $path, string $method = 'GET'): void
     {
         $server = [
             'REQUEST_URI' => $path,
