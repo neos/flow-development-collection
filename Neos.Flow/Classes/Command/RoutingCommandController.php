@@ -194,13 +194,13 @@ class RoutingCommandController extends CommandController
                 $this->outputLine('  Pattern: ' . $route->getUriPattern());
 
                 $this->outputLine('<b>Result:</b>');
-                $this->outputLine('  Package: ' . (isset($routeValues['@package']) ? $routeValues['@package'] : '-'));
-                $this->outputLine('  Subpackage: ' . (isset($routeValues['@subpackage']) ? $routeValues['@subpackage'] : '-'));
-                $this->outputLine('  Controller: ' . (isset($routeValues['@controller']) ? $routeValues['@controller'] : '-'));
-                $this->outputLine('  Action: ' . (isset($routeValues['@action']) ? $routeValues['@action'] : '-'));
-                $this->outputLine('  Format: ' . (isset($routeValues['@format']) ? $routeValues['@format'] : '-'));
+                $this->outputLine('  Package: ' . ($routeValues['@package'] ?? '-'));
+                $this->outputLine('  Subpackage: ' . ($routeValues['@subpackage'] ?? '-'));
+                $this->outputLine('  Controller: ' . ($routeValues['@controller'] ?? '-'));
+                $this->outputLine('  Action: ' . ($routeValues['@action'] ?? '-'));
+                $this->outputLine('  Format: ' . ($routeValues['@format'] ?? '-'));
 
-                $controllerObjectName = $this->getControllerObjectName($routeValues['@package'], (isset($routeValues['@subpackage']) ? $routeValues['@subpackage'] : ''), $routeValues['@controller']);
+                $controllerObjectName = $this->getControllerObjectName($routeValues['@package'] ?? '', $routeValues['@subpackage'] ?? '', $routeValues['@controller'] ?? '');
                 if ($controllerObjectName === null) {
                     $this->outputLine('<b>Controller Error:</b>');
                     $this->outputLine('  !!! No Controller Object found !!!');

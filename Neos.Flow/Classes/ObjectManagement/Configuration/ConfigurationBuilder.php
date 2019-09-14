@@ -188,7 +188,7 @@ class ConfigurationBuilder
      */
     protected function parseConfigurationArray($objectName, array $rawConfigurationOptions, $configurationSourceHint = '', $existingObjectConfiguration = null)
     {
-        $className = (isset($rawConfigurationOptions['className']) ? $rawConfigurationOptions['className'] : $objectName);
+        $className = $rawConfigurationOptions['className'] ?? $objectName;
         $objectConfiguration = ($existingObjectConfiguration instanceof Configuration) ? $existingObjectConfiguration : new Configuration($objectName, $className);
         $objectConfiguration->setConfigurationSourceHint($configurationSourceHint);
 
