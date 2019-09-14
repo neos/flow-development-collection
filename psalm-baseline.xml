@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="3.4.12@86e5e50c1bb492045e70f2ebe1da3cad06e4e9b2">
+<files psalm-version="3.5.1@deb36e8b273d4b25601f1991482a69d412e3169f">
   <file src="Packages/Framework/Neos.Cache/Classes/Backend/AbstractBackend.php">
     <PossiblyInvalidArgument occurrences="1">
       <code>$options</code>
@@ -24,22 +24,6 @@
       <code>$this-&gt;cacheEntriesIterator</code>
     </UndefinedDocblockClass>
   </file>
-  <file src="Packages/Framework/Neos.Cache/Classes/Backend/FileBackend.php">
-    <InvalidScalarArgument occurrences="9">
-      <code>$this-&gt;internalGet($entryIdentifier, false)</code>
-      <code>$data</code>
-      <code>$data</code>
-      <code>$expiryTime</code>
-      <code>strlen($data)</code>
-      <code>$metaData</code>
-      <code>$metaData</code>
-      <code>$cacheData</code>
-      <code>$cacheData</code>
-    </InvalidScalarArgument>
-    <NullArgument occurrences="1">
-      <code>null</code>
-    </NullArgument>
-  </file>
   <file src="Packages/Framework/Neos.Cache/Classes/Backend/MemcachedBackend.php">
     <UndefinedClass occurrences="2">
       <code>\Memcached</code>
@@ -58,15 +42,6 @@
     </UndefinedDocblockClass>
   </file>
   <file src="Packages/Framework/Neos.Cache/Classes/Backend/PdoBackend.php">
-    <InvalidScalarArgument occurrences="7">
-      <code>$exception-&gt;getCode()</code>
-      <code>$exception-&gt;getCode()</code>
-      <code>$exception-&gt;getCode()</code>
-      <code>$exception-&gt;getCode()</code>
-      <code>$exception-&gt;getCode()</code>
-      <code>$exception-&gt;getCode()</code>
-      <code>$exception-&gt;getCode()</code>
-    </InvalidScalarArgument>
     <PossiblyNullArgument occurrences="1">
       <code>$fetchedColumn</code>
     </PossiblyNullArgument>
@@ -75,10 +50,6 @@
     </PossiblyNullPropertyAssignmentValue>
   </file>
   <file src="Packages/Framework/Neos.Cache/Classes/Backend/RedisBackend.php">
-    <InvalidScalarArgument occurrences="2">
-      <code>$value</code>
-      <code>$exception-&gt;getCode()</code>
-    </InvalidScalarArgument>
     <PossiblyNullPropertyAssignmentValue occurrences="1">
       <code>null</code>
     </PossiblyNullPropertyAssignmentValue>
@@ -101,12 +72,6 @@
       <code>$this-&gt;redis</code>
       <code>$this-&gt;redis</code>
     </UndefinedDocblockClass>
-  </file>
-  <file src="Packages/Framework/Neos.Cache/Classes/Backend/SimpleFileBackend.php">
-    <InvalidScalarArgument occurrences="2">
-      <code>$exception-&gt;getCode()</code>
-      <code>$exception-&gt;getCode()</code>
-    </InvalidScalarArgument>
   </file>
   <file src="Packages/Framework/Neos.Cache/Classes/Frontend/PhpFrontend.php">
     <ImplementedReturnTypeMismatch occurrences="1">
@@ -414,12 +379,6 @@
       <code>$parser-&gt;pos</code>
     </UndefinedPropertyFetch>
   </file>
-  <file src="Packages/Framework/Neos.Error.Messages/Classes/Message.php">
-    <PossiblyNullPropertyAssignmentValue occurrences="2">
-      <code>$code</code>
-      <code>$title</code>
-    </PossiblyNullPropertyAssignmentValue>
-  </file>
   <file src="Packages/Framework/Neos.Error.Messages/Classes/Result.php">
     <MissingDocblockType occurrences="1">
       <code>$subResult</code>
@@ -581,6 +540,11 @@
     <InvalidScalarArgument occurrences="1">
       <code>$subOperator</code>
     </InvalidScalarArgument>
+  </file>
+  <file src="Packages/Framework/Neos.Flow/Classes/Aop/Pointcut/PointcutMethodAnnotatedWithFilter.php">
+    <ArgumentTypeCoercion occurrences="1">
+      <code>$methodDeclaringClassName</code>
+    </ArgumentTypeCoercion>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Aop/Pointcut/PointcutMethodNameFilter.php">
     <PossiblyNullArgument occurrences="1">
@@ -745,10 +709,6 @@
     <TooManyArguments occurrences="1">
       <code>publishCollection</code>
     </TooManyArguments>
-    <UndefinedClass occurrences="2">
-      <code>AssetRepository</code>
-      <code>ThumbnailRepository</code>
-    </UndefinedClass>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Command/RoutingCommandController.php">
     <InvalidOperand occurrences="1">
@@ -1152,9 +1112,6 @@
       <code>getAttributeValue</code>
       <code>getAttributeValue</code>
     </PossiblyInvalidMethodCall>
-    <PossiblyUndefinedVariable occurrences="1">
-      <code>$subrulePassed</code>
-    </PossiblyUndefinedVariable>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/I18n/EelHelper/TranslationHelper.php">
     <PossiblyNullArgument occurrences="2">
@@ -1343,9 +1300,6 @@
     </PossiblyNullArgument>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Mvc/Controller/ActionController.php">
-    <PossiblyNullArgument occurrences="1">
-      <code>$targetNotFoundError-&gt;getCode()</code>
-    </PossiblyNullArgument>
     <PossiblyNullIterator occurrences="5">
       <code>$methodNames</code>
       <code>$methodNames</code>
@@ -1359,8 +1313,7 @@
     </PossiblyNullPropertyAssignmentValue>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Mvc/Controller/Argument.php">
-    <PossiblyNullPropertyAssignmentValue occurrences="5">
-      <code>null</code>
+    <PossiblyNullPropertyAssignmentValue occurrences="4">
       <code>null</code>
       <code>null</code>
       <code>null</code>
@@ -1394,6 +1347,9 @@
       <code>PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED</code>
       <code>PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED</code>
     </InvalidScalarArgument>
+    <TypeDoesNotContainType occurrences="1">
+      <code>is_array($currentPosition[$formFieldPart])</code>
+    </TypeDoesNotContainType>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Mvc/Controller/RestController.php">
     <InvalidScalarArgument occurrences="2">
@@ -1582,6 +1538,9 @@
     <InvalidScalarArgument occurrences="1">
       <code>$objectConfigurations[$implementationClassName]-&gt;getScope()</code>
     </InvalidScalarArgument>
+    <PossiblyNullArgument occurrences="1">
+      <code>$objectName</code>
+    </PossiblyNullArgument>
     <TypeDoesNotContainType occurrences="3">
       <code>$propertyValue</code>
       <code>$argumentValue</code>
@@ -1769,12 +1728,6 @@
     <ArgumentTypeCoercion occurrences="1">
       <code>$flowAnnotationDriver</code>
     </ArgumentTypeCoercion>
-  </file>
-  <file src="Packages/Framework/Neos.Flow/Classes/Persistence/Doctrine/Logging/SqlLogger.php">
-    <UndefinedDocblockClass occurrences="2">
-      <code>LoggerInterface</code>
-      <code>$this-&gt;logger</code>
-    </UndefinedDocblockClass>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Persistence/Doctrine/Mapping/ClassMetadata.php">
     <LessSpecificReturnStatement occurrences="1">
@@ -3311,9 +3264,6 @@
     <MissingDocblockType occurrences="1">
       <code>$singleFlashMessage</code>
     </MissingDocblockType>
-    <PossiblyNullArgument occurrences="1">
-      <code>$singleFlashMessage-&gt;getTitle()</code>
-    </PossiblyNullArgument>
   </file>
   <file src="Packages/Framework/Neos.FluidAdaptor/Classes/ViewHelpers/Form/AbstractFormFieldViewHelper.php">
     <MissingDocblockType occurrences="2">
@@ -3523,6 +3473,9 @@
       <code>strpos($targetPathAndFilename, 'Classes/')</code>
       <code>strrpos(substr($targetPathAndFilename, 0, strpos($targetPathAndFilename, 'Classes/') - 1), '/')</code>
     </PossiblyFalseOperand>
+    <TypeDoesNotContainType occurrences="1">
+      <code>is_array($autoloadPaths)</code>
+    </TypeDoesNotContainType>
   </file>
   <file src="Packages/Framework/Neos.Utility.Arrays/Classes/Arrays.php">
     <PossiblyNullArgument occurrences="1">
