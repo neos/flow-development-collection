@@ -709,6 +709,10 @@
     <TooManyArguments occurrences="1">
       <code>publishCollection</code>
     </TooManyArguments>
+    <UndefinedClass occurrences="2">
+      <code>AssetRepository</code>
+      <code>ThumbnailRepository</code>
+    </UndefinedClass>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Command/RoutingCommandController.php">
     <InvalidOperand occurrences="1">
