@@ -12,7 +12,6 @@ namespace Neos\Flow\Tests\Unit\Mvc\Routing;
  */
 
 use GuzzleHttp\Psr7\Uri;
-use Neos\Flow\Http\ServerRequestAttributes;
 use Neos\Flow\Mvc\Exception\InvalidRoutePartHandlerException;
 use Neos\Flow\Mvc\Exception\InvalidRoutePartValueException;
 use Neos\Flow\Mvc\Exception\InvalidRouteSetupException;
@@ -760,9 +759,6 @@ class RouteTest extends UnitTestCase
         $mockUri->method('withPath')->willReturn($mockUri);
         $mockHttpRequest->method('getUri')->willReturn($mockUri);
 
-        $mockBaseUri = new Uri('http://localhost/');
-        $mockHttpRequest->expects(self::any())->method('getAttribute')->with(ServerRequestAttributes::BASE_URI)->will(self::returnValue($mockBaseUri));
-
         $mockHttpRequest->expects(self::atLeastOnce())->method('getMethod')->willReturn('GET');
         self::assertFalse($this->route->matches(new RouteContext($mockHttpRequest, RouteParameters::createEmpty())), 'Route must not match GET requests if only POST or PUT requests are accepted.');
     }
@@ -786,7 +782,6 @@ class RouteTest extends UnitTestCase
         $mockHttpRequest->method('getUri')->willReturn($mockUri);
 
         $mockBaseUri = new Uri('http://localhost/');
-        $mockHttpRequest->expects(self::any())->method('getAttribute')->with(ServerRequestAttributes::BASE_URI)->will(self::returnValue($mockBaseUri));
 
         $mockHttpRequest->expects(self::atLeastOnce())->method('getMethod')->willReturn('PUT');
 
