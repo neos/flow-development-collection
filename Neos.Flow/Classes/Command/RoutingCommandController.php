@@ -15,9 +15,9 @@ use GuzzleHttp\Psr7\ServerRequest;
 use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
+use Neos\Flow\Cli\Exception\StopCommandException;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Mvc\Exception\InvalidRoutePartValueException;
-use Neos\Flow\Mvc\Exception\StopActionException;
 use Neos\Flow\Mvc\Routing\Dto\RouteContext;
 use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
 use Neos\Flow\Mvc\Routing\Route;
@@ -56,7 +56,7 @@ class RoutingCommandController extends CommandController
      *
      * @return void
      */
-    public function listCommand()
+    public function listCommand(): void
     {
         $this->outputLine('Currently registered routes:');
         /** @var Route $route */
@@ -74,7 +74,7 @@ class RoutingCommandController extends CommandController
      * @param integer $index The index of the route as given by routing:list
      * @return void
      */
-    public function showCommand(int $index)
+    public function showCommand(int $index): void
     {
         $routes = $this->router->getRoutes();
         if (isset($routes[$index - 1])) {
@@ -108,7 +108,7 @@ class RoutingCommandController extends CommandController
      * @param string $format Requested Format name default is 'html'
      * @return void
      */
-    public function getPathCommand(string $package, string $controller = 'Standard', string $action = 'index', string $format = 'html')
+    public function getPathCommand(string $package, string $controller = 'Standard', string $action = 'index', string $format = 'html'): void
     {
         $packageParts = explode('\\', $package, 2);
         $package = $packageParts[0];
@@ -170,9 +170,9 @@ class RoutingCommandController extends CommandController
      * @param string $method The request method (GET, POST, PUT, DELETE, ...) to simulate
      * @return void
      * @throws InvalidRoutePartValueException
-     * @throws StopActionException
+     * @throws StopCommandException
      */
-    public function routePathCommand(string $path, string $method = 'GET')
+    public function routePathCommand(string $path, string $method = 'GET'): void
     {
         $server = [
             'REQUEST_URI' => $path,
@@ -194,13 +194,13 @@ class RoutingCommandController extends CommandController
                 $this->outputLine('  Pattern: ' . $route->getUriPattern());
 
                 $this->outputLine('<b>Result:</b>');
-                $this->outputLine('  Package: ' . (isset($routeValues['@package']) ? $routeValues['@package'] : '-'));
-                $this->outputLine('  Subpackage: ' . (isset($routeValues['@subpackage']) ? $routeValues['@subpackage'] : '-'));
-                $this->outputLine('  Controller: ' . (isset($routeValues['@controller']) ? $routeValues['@controller'] : '-'));
-                $this->outputLine('  Action: ' . (isset($routeValues['@action']) ? $routeValues['@action'] : '-'));
-                $this->outputLine('  Format: ' . (isset($routeValues['@format']) ? $routeValues['@format'] : '-'));
+                $this->outputLine('  Package: ' . ($routeValues['@package'] ?? '-'));
+                $this->outputLine('  Subpackage: ' . ($routeValues['@subpackage'] ?? '-'));
+                $this->outputLine('  Controller: ' . ($routeValues['@controller'] ?? '-'));
+                $this->outputLine('  Action: ' . ($routeValues['@action'] ?? '-'));
+                $this->outputLine('  Format: ' . ($routeValues['@format'] ?? '-'));
 
-                $controllerObjectName = $this->getControllerObjectName($routeValues['@package'], (isset($routeValues['@subpackage']) ? $routeValues['@subpackage'] : ''), $routeValues['@controller']);
+                $controllerObjectName = $this->getControllerObjectName($routeValues['@package'] ?? '', $routeValues['@subpackage'] ?? '', $routeValues['@controller'] ?? '');
                 if ($controllerObjectName === null) {
                     $this->outputLine('<b>Controller Error:</b>');
                     $this->outputLine('  !!! No Controller Object found !!!');

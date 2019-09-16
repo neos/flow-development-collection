@@ -78,8 +78,7 @@ class RequestFilter
     public function filterRequest(ActionRequest $request): bool
     {
         if ($this->pattern->matchRequest($request)) {
-            $this->securityInterceptor->invoke();
-            return true;
+            return $this->securityInterceptor->invoke() !== false;
         }
         return false;
     }

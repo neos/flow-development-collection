@@ -17,6 +17,7 @@ namespace Neos\Flow\Persistence\Generic\Qom;
  * prior to its evaluation.
  *
  * @api
+ * @deprecated since Flow 6.0
  */
 class StaticOperand extends Operand
 {
