@@ -19,7 +19,6 @@
         "neos/error-messages": "~6.0.0",
         "neos/utility-arrays": "~6.0.0",
         "neos/utility-files": "~6.0.0",
-        "neos/utility-lock": "~6.0.0",
         "neos/utility-mediatypes": "~6.0.0",
         "neos/utility-objecthandling": "~6.0.0",
         "neos/utility-opcodecache": "~6.0.0",

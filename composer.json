@@ -15,7 +15,6 @@
         "ext-json": "^1.2",
         "ext-reflection": "*",
         "ext-xml": "*",
-        "neos/utility-lock": "~6.0.0",
         "psr/http-message": "^1.0",
         "psr/http-factory": "^1.0",
         "psr/container": "^1.0",
