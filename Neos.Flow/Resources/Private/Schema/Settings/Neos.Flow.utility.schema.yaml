@@ -1,7 +1,4 @@
 type: dictionary
 additionalProperties: false
 properties:
-  'lockStrategyClassName':
-    type: string
-    required: true
-    format: class-name
+
