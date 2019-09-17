@@ -3,7 +3,7 @@
 TYPO3 Fluid ViewHelper Reference
 ================================
 
-This reference was automatically generated from code on 2019-09-05
+This reference was automatically generated from code on 2019-09-17
 
 
 .. _`TYPO3 Fluid ViewHelper Reference: f:alias`:
@@ -859,9 +859,8 @@ XX and YY can be one of:
 - Object Accessor
 - Array
 - a ViewHelper
-Note: Strings at XX/YY are NOT allowed, however, for the time being,
-a string comparison can be achieved with comparing arrays (see example
-below).
+- string
+
 ::
 
   <f:if condition="{rank} > 100">
@@ -873,8 +872,8 @@ below).
   <f:if condition="{rank} == {k:bar()}">
     Checks if rank is equal to the result of the ViewHelper "k:bar"
   </f:if>
-  <f:if condition="{0: foo.bar} == {0: 'stringToCompare'}">
-    Will result true if {foo.bar}'s represented value equals 'stringToCompare'.
+  <f:if condition="{foo.bar} == 'stringToCompare'">
+    Will result in true if {foo.bar}'s represented value equals 'stringToCompare'.
   </f:if>
 
 :Implementation: TYPO3Fluid\\Fluid\\ViewHelpers\\IfViewHelper
