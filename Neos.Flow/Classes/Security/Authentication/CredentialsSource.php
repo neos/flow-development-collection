@@ -34,6 +34,15 @@ final class CredentialsSource
     }
 
     /**
+     * @param string $credentialsSource
+     * @return self
+     */
+    public static function fromString(string $credentialsSource): self
+    {
+        return new static($credentialsSource);
+    }
+
+    /**
      * @return string
      */
     public function __toString(): string

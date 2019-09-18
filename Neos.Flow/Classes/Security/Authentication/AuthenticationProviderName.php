@@ -34,6 +34,15 @@ final class AuthenticationProviderName
     }
 
     /**
+     * @param string $authenticationProviderName
+     * @return self
+     */
+    public static function fromString(string $authenticationProviderName): self
+    {
+        return new static($authenticationProviderName);
+    }
+
+    /**
      * @return string
      */
     public function __toString(): string
