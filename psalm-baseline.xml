@@ -50,10 +50,8 @@
     </PossiblyNullPropertyAssignmentValue>
   </file>
   <file src="Packages/Framework/Neos.Cache/Classes/Backend/RedisBackend.php">
-    <PossiblyNullPropertyAssignmentValue occurrences="1">
-      <code>null</code>
-    </PossiblyNullPropertyAssignmentValue>
-    <UndefinedClass occurrences="2">
+    <UndefinedClass occurrences="3">
+      <code>\Redis</code>
       <code>\Redis</code>
       <code>\Redis</code>
     </UndefinedClass>
@@ -713,7 +711,9 @@
     </TypeDoesNotContainNull>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Command/ResourceCommandController.php">
-    <PossiblyUndefinedVariable occurrences="2">
+    <PossiblyUndefinedVariable occurrences="4">
+      <code>$assetRepository</code>
+      <code>$thumbnailRepository</code>
       <code>$assetRepository</code>
       <code>$thumbnailRepository</code>
     </PossiblyUndefinedVariable>
