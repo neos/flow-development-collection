@@ -125,7 +125,7 @@ final class UriConstraints
      * Create a new instance with the host suffix constraint added
      *
      * @param string $suffix The URI host suffix to force, for example ".com"
-     * @param string[] $replaceSuffixes a list of prefixes that should be replaced with the given prefix. if the list is empty or does not match the current host $prefix will be prepended as is
+     * @param string[] $replaceSuffixes a list of suffixes that should be replaced with the given suffix. if the list is empty or does not match, no replacement happens
      * @return UriConstraints
      */
     public function withHostSuffix(string $suffix, array $replaceSuffixes = []): self
@@ -252,13 +252,18 @@ final class UriConstraints
             $originalHost = $host = !empty($uri->getHost()) ? $uri->getHost() : $templateUri->getHost();
             $suffix = $this->constraints[self::CONSTRAINT_HOST_SUFFIX]['suffix'];
             $replaceSuffixes = $this->constraints[self::CONSTRAINT_HOST_SUFFIX]['replaceSuffixes'];
-            foreach ($replaceSuffixes as $replaceSuffix) {
-                if ($this->stringEndsWith($host, $replaceSuffix)) {
-                    $host = substr($host, 0, -strlen($replaceSuffix));
-                    break;
+
+            // This is different from prefix handling, because we don't want a suffix added if no replacement match was found
+            if ($replaceSuffixes === []) {
+                $host .= $suffix;
+            } else {
+                foreach ($replaceSuffixes as $replaceSuffix) {
+                    if ($this->stringEndsWith($host, $replaceSuffix)) {
+                        $host = substr($host, 0, -strlen($replaceSuffix)) . $suffix;
+                        break;
+                    }
                 }
             }
-            $host = $host . $suffix;
             if ($host !== $originalHost) {
                 $forceAbsoluteUri = true;
                 $uri = $uri->withHost($host);
