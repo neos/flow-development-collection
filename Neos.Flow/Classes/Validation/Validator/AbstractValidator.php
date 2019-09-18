@@ -51,10 +51,9 @@ abstract class AbstractValidator implements ValidatorInterface
     protected $options = [];
 
     /**
-     * @deprecated since Flow 4.3. Don't overwrite this and instead use pushResult/popResult
      * @var ErrorResult
      */
-    protected $result;
+    private $result;
 
     /**
      * @var array<ErrorResult>
@@ -128,11 +127,24 @@ abstract class AbstractValidator implements ValidatorInterface
     }
 
     /**
+     * Get the current Result for this validation invocation. Use this inside your isValid() implementation
+     * to e.g. merge results together into the current one.
+     *
+     * @since Flow 6.0
+     * @return ErrorResult|null
+     */
+    protected function getResult()
+    {
+        return $this->result;
+    }
+
+    /**
      * Checks if the given value is valid according to the validator, and returns
      * the Error Messages object which occurred.
      *
      * @param mixed $value The value that should be validated
      * @return ErrorResult
+     * @throws InvalidValidationOptionsException
      * @api
      */
     public function validate($value)
