@@ -11,7 +11,7 @@ namespace Neos\Flow\Tests\Unit\Mvc\Controller;
  * source code.
  */
 
-use Neos\Flow\Property\PropertyMappingConfiguration;
+use Neos\Flow\Mvc\Controller\MvcPropertyMappingConfiguration;
 use Neos\Flow\Property\TypeConverter\PersistentObjectConverter;
 use Neos\Flow\Security\Cryptography\HashService;
 use Neos\Flow\Security\Exception\InvalidArgumentForHashGenerationException;
@@ -289,7 +289,7 @@ class MvcPropertyMappingConfigurationServiceTest extends UnitTestCase
         $mockHashService->expects(self::once())->method('validateAndStripHmac')->with('fooTrustedProperties')->will(self::returnValue(serialize($trustedProperties)));
 
         $arguments->addNewArgument('foo', 'something');
-        $this->inject($arguments->getArgument('foo'), 'propertyMappingConfiguration', new PropertyMappingConfiguration());
+        $this->inject($arguments->getArgument('foo'), 'propertyMappingConfiguration', new MvcPropertyMappingConfiguration());
 
         $requestHashService = new Mvc\Controller\MvcPropertyMappingConfigurationService();
         $this->inject($requestHashService, 'hashService', $mockHashService);

@@ -43,8 +43,6 @@ use Neos\Flow\ResourceManagement\Streams\StreamWrapperAdapter;
 use Neos\Flow\SignalSlot\Dispatcher;
 use Neos\Flow\Utility\Environment;
 use Neos\Utility\Files;
-use Neos\Utility\Lock\Lock;
-use Neos\Utility\Lock\LockManager;
 use Neos\Utility\OpcodeCacheHelper;
 use Neos\Flow\Exception as FlowException;
 
@@ -210,15 +208,6 @@ class Scripts
         if ($configurationManager->loadConfigurationCache() === false) {
             $configurationManager->refreshConfiguration();
         }
-
-        $settings = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.Flow');
-
-        $lockManager = new LockManager($settings['utility']['lockStrategyClassName'], ['lockDirectory' => Files::concatenatePaths([
-            $environment->getPathToTemporaryDirectory(),
-            'Lock'
-        ])]);
-        Lock::setLockManager($lockManager);
-        $packageManager->injectSettings($settings);
 
         $bootstrap->getSignalSlotDispatcher()->dispatch(ConfigurationManager::class, 'configurationManagerReady', [$configurationManager]);
         $bootstrap->setEarlyInstance(ConfigurationManager::class, $configurationManager);
@@ -777,7 +766,7 @@ class Scripts
             $subRequestEnvironmentVariables = array_merge($subRequestEnvironmentVariables, $settings['core']['subRequestEnvironmentVariables']);
         }
 
-        self::ensureCLISubrequestsUseCurrentlyRunningPhpBinary($settings['core']['phpBinaryPathAndFilename']);
+        static::ensureCLISubrequestsUseCurrentlyRunningPhpBinary($settings['core']['phpBinaryPathAndFilename']);
 
         $command = '';
         foreach ($subRequestEnvironmentVariables as $argumentKey => $argumentValue) {
@@ -803,7 +792,7 @@ class Scripts
             $command .= ' -c ' . escapeshellarg($useIniFile);
         }
 
-        self::ensureWebSubrequestsUseCurrentlyRunningPhpVersion($command);
+        static::ensureWebSubrequestsUseCurrentlyRunningPhpVersion($command);
 
         return $command;
     }

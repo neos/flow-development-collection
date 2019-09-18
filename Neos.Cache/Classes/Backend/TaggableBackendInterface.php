@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Cache\Backend;
 
 /*
@@ -32,7 +34,7 @@ interface TaggableBackendInterface extends BackendInterface
      * specified tag.
      *
      * @param string $tag The tag to search for
-     * @return array An array with identifiers of all matching entries. An empty array if no entries matched
+     * @return string[] An array with identifiers of all matching entries. An empty array if no entries matched
      * @api
      */
     public function findIdentifiersByTag(string $tag): array;

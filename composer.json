@@ -45,7 +45,6 @@
         "neos/kickstarter": "self.version",
         "neos/utility-arrays": "self.version",
         "neos/utility-files": "self.version",
-        "neos/utility-lock": "self.version",
         "neos/utility-mediatypes": "self.version",
         "neos/utility-objecthandling": "self.version",
         "neos/utility-opcodecache": "self.version",
@@ -100,9 +99,6 @@
                 "Neos.Utility.Pdo/Classes",
                 "Neos.Utility.Schema/Classes"
             ],
-            "Neos\\Utility\\Lock\\": [
-                "Neos.Utility.Lock/Classes"
-            ],
             "Neos\\Utility\\Unicode\\": [
                 "Neos.Utility.Unicode/Classes"
             ]
@@ -117,7 +113,9 @@
     "require-dev": {
         "mikey179/vfsstream": "~1.6",
         "phpunit/phpunit": "~8.1",
-        "vimeo/psalm": "^3.4"
+        "vimeo/psalm": "^3.4",
+        "doctrine/orm": "^2.6",
+        "doctrine/common": "^2.4"
     },
     "autoload-dev": {
         "psr-4": {
@@ -147,9 +145,6 @@
             ],
             "Neos\\Flow\\Utility\\Files\\Tests\\": [
                 "Neos.Utility.Files/Tests"
-            ],
-            "Neos\\Flow\\Utility\\Lock\\Tests\\": [
-                "Neos.Utility.Lock/Tests"
             ],
             "Neos\\Utility\\MediaTypes\\Tests\\": [
                 "Neos.Utility.MediaTypes/Tests"

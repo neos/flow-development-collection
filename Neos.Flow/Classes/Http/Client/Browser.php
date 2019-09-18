@@ -15,7 +15,6 @@ use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Headers;
 use Neos\Flow\Http\Helper\RequestInformationHelper;
-use Neos\Flow\Http\ServerRequestAttributes;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestFactoryInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -158,7 +157,7 @@ class Browser
         if ($content) {
             $request = $request->withBody($this->contentStreamFactory->createStream($content));
         }
-        $request = $request->withAttribute(ServerRequestAttributes::BASE_URI, RequestInformationHelper::generateBaseUri($request));
+
         if (!empty($arguments)) {
             $request = $request->withQueryParams($arguments);
         }
@@ -173,7 +172,7 @@ class Browser
             $location = urldecode($location);
             if (strpos($location, '/') === 0) {
                 // Location header is a host-absolute URL; so we need to prepend the hostname to create a full URL.
-                $location = $request->getAttribute(ServerRequestAttributes::BASE_URI) . ltrim($location, '/');
+                $location = (string)RequestInformationHelper::generateBaseUri($request) . ltrim($location, '/');
             }
 
             if (in_array($location, $this->redirectionStack, true) || count($this->redirectionStack) >= $this->maximumRedirections) {
@@ -262,7 +261,7 @@ class Browser
      */
     public function getCrawler()
     {
-        $crawler = new Crawler(null, (string)$this->lastRequest->getUri(), (string)$this->lastRequest->getAttribute(ServerRequestAttributes::BASE_URI));
+        $crawler = new Crawler(null, (string)$this->lastRequest->getUri(), (string)RequestInformationHelper::generateBaseUri($this->lastRequest));
         $this->lastResponse->getBody()->rewind();
         $crawler->addContent($this->lastResponse->getBody()->getContents(), $this->lastResponse->getHeaderLine('Content-Type'));
         $this->lastResponse->getBody()->rewind();

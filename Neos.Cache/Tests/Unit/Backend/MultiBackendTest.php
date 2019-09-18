@@ -71,8 +71,8 @@ class MultiBackendTest extends BaseTestCase
         $firstNullBackendMock = $mockBuilder->getMock();
         $secondNullBackendMock = $mockBuilder->getMock();
 
-        $firstNullBackendMock->expects(self::once())->method('set')->withAnyParameters()->willReturn(null);
-        $secondNullBackendMock->expects(self::once())->method('set')->withAnyParameters()->willReturn(null);
+        $firstNullBackendMock->expects(self::once())->method('set')->withAnyParameters();
+        $secondNullBackendMock->expects(self::once())->method('set')->withAnyParameters();
 
         $multiBackend = new MultiBackend($this->getEnvironmentConfiguration(), []);
         $this->inject($multiBackend, 'backends', [$firstNullBackendMock, $secondNullBackendMock]);

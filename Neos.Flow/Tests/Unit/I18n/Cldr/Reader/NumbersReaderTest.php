@@ -83,13 +83,13 @@ class NumbersReaderTest extends UnitTestCase
         $mockCache->expects(self::at(8))->method('set')->with('localizedSymbols');
 
         $reader = $this->getAccessibleMock(I18n\Cldr\Reader\NumbersReader::class, ['parseFormat']);
-        $reader->expects(self::once())->method('parseFormat')->with('mockFormatString')->will(self::returnValue('mockParsedFormat'));
+        $reader->expects(self::once())->method('parseFormat')->with('mockFormatString')->will(self::returnValue(['mockParsedFormat']));
         $reader->injectCldrRepository($mockRepository);
         $reader->injectCache($mockCache);
         $reader->initializeObject();
 
         $result = $reader->parseFormatFromCldr($this->sampleLocale, I18n\Cldr\Reader\NumbersReader::FORMAT_TYPE_DECIMAL);
-        self::assertEquals('mockParsedFormat', $result);
+        self::assertEquals(['mockParsedFormat'], $result);
 
         $reader->shutdownObject();
     }

@@ -111,23 +111,6 @@ abstract class UploadedFilesHelper
      *
      * @param array $structure The array to walk through
      * @param string $firstLevelFieldName
-     * @return array An array of paths (as strings) in the format "key1/key2/key3" ...
-     * @deprecated
-     */
-    protected static function calculateFieldPaths(array $structure, string $firstLevelFieldName = null): array
-    {
-        $fieldPaths = self::calculateFieldPathsAsArray($structure, $firstLevelFieldName);
-        array_walk($fieldPaths, function (&$fieldPath) {
-            $fieldPath = implode('/', $fieldPath);
-        });
-        return $fieldPaths;
-    }
-
-    /**
-     * Returns an array of all possible "field paths" for the given array.
-     *
-     * @param array $structure The array to walk through
-     * @param string $firstLevelFieldName
      * @return array An array of paths (as arrays) in the format ["key1", "key2", "key3"] ...
      */
     protected static function calculateFieldPathsAsArray(array $structure, string $firstLevelFieldName = null): array

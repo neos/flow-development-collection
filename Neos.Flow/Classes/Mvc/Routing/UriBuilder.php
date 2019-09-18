@@ -11,10 +11,9 @@ namespace Neos\Flow\Mvc\Routing;
  * source code.
  */
 
-use Doctrine\Tests\Models\Cache\Action;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Http\BaseUriProvider;
 use Neos\Flow\Http\Helper\RequestInformationHelper;
-use Neos\Flow\Http\ServerRequestAttributes;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Routing\Dto\ResolveContext;
 use Neos\Utility\Arrays;
@@ -37,6 +36,12 @@ class UriBuilder
      * @var \Neos\Flow\Utility\Environment
      */
     protected $environment;
+
+    /**
+     * @Flow\Inject
+     * @var BaseUriProvider
+     */
+    protected $baseUriProvider;
 
     /**
      * @var ActionRequest
@@ -341,6 +346,7 @@ class UriBuilder
      *
      * @param array $arguments optional URI arguments. Will be merged with $this->arguments with precedence to $arguments
      * @return string the (absolute or relative) URI as string
+     * @throws \Neos\Flow\Http\Exception
      * @api
      */
     public function build(array $arguments = [])
@@ -352,7 +358,7 @@ class UriBuilder
 
         $uriPathPrefix = $this->environment->isRewriteEnabled() ? '' : 'index.php/';
         $uriPathPrefix = RequestInformationHelper::getScriptRequestPath($httpRequest) . $uriPathPrefix;
-        $resolveContext = new ResolveContext($httpRequest->getAttribute(ServerRequestAttributes::BASE_URI), $arguments, $this->createAbsoluteUri, $uriPathPrefix);
+        $resolveContext = new ResolveContext($this->baseUriProvider->getConfiguredBaseUriOrFallbackToCurrentRequest(), $arguments, $this->createAbsoluteUri, $uriPathPrefix);
         $resolvedUri = $this->router->resolve($resolveContext);
         if ($this->section !== '') {
             $resolvedUri = $resolvedUri->withFragment($this->section);
