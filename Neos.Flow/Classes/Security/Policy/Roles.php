@@ -64,9 +64,9 @@ final class Roles implements \JsonSerializable, \IteratorAggregate, \Countable, 
     }
 
     /**
-     * @return \ArrayIterator<Role>
+     * @return \Traversable<Role>
      */
-    public function getIterator(): \ArrayIterator
+    public function getIterator(): \Traversable
     {
         return new \ArrayIterator(array_values($this->roles));
     }
