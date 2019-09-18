@@ -13,7 +13,6 @@ namespace Neos\Flow\Tests\Unit\Mvc\Routing;
 
 use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Configuration\ConfigurationManager;
-use Neos\Flow\Http\ServerRequestAttributes;
 use Neos\Flow\Mvc\Exception\InvalidRouteSetupException;
 use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
 use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
@@ -87,7 +86,6 @@ class RouterTest extends UnitTestCase
         $this->mockBaseUri->method('withQuery')->willReturn($this->mockBaseUri);
         $this->mockBaseUri->method('withFragment')->willReturn($this->mockBaseUri);
         $this->mockBaseUri->method('withPath')->willReturn($this->mockBaseUri);
-        $this->mockHttpRequest->method('getAttribute')->with(ServerRequestAttributes::BASE_URI)->willReturn($this->mockBaseUri);
 
         $mockUri = $this->getMockBuilder(UriInterface::class)->getMock();
         $mockUri->method('getPath')->willReturn('/');

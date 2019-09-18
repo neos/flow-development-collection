@@ -49,30 +49,6 @@
       <code>null</code>
     </PossiblyNullPropertyAssignmentValue>
   </file>
-  <file src="Packages/Framework/Neos.Cache/Classes/Backend/RedisBackend.php">
-    <PossiblyNullPropertyAssignmentValue occurrences="1">
-      <code>null</code>
-    </PossiblyNullPropertyAssignmentValue>
-    <UndefinedClass occurrences="2">
-      <code>\Redis</code>
-      <code>\Redis</code>
-    </UndefinedClass>
-    <UndefinedDocblockClass occurrences="13">
-      <code>\Redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-    </UndefinedDocblockClass>
-  </file>
   <file src="Packages/Framework/Neos.Cache/Classes/Frontend/PhpFrontend.php">
     <ImplementedReturnTypeMismatch occurrences="1">
       <code>string|bool</code>
@@ -709,10 +685,6 @@
     <TooManyArguments occurrences="1">
       <code>publishCollection</code>
     </TooManyArguments>
-    <UndefinedClass occurrences="2">
-      <code>AssetRepository</code>
-      <code>ThumbnailRepository</code>
-    </UndefinedClass>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Command/RoutingCommandController.php">
     <InvalidOperand occurrences="1">
@@ -836,13 +808,9 @@
     <InvalidScalarArgument occurrences="1">
       <code>rand()</code>
     </InvalidScalarArgument>
-    <PossiblyNullArgument occurrences="2">
-      <code>$settings</code>
+    <PossiblyNullArgument occurrences="1">
       <code>$configurationManager-&gt;getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_CACHES)</code>
     </PossiblyNullArgument>
-    <PossiblyNullArrayAccess occurrences="1">
-      <code>$settings['utility']</code>
-    </PossiblyNullArrayAccess>
     <UndefinedConstant occurrences="19">
       <code>FLOW_PATH_FLOW</code>
       <code>FLOW_PATH_FLOW</code>
@@ -3509,19 +3477,6 @@
     <TypeDoesNotContainType occurrences="1">
       <code>$flags === true</code>
     </TypeDoesNotContainType>
-  </file>
-  <file src="Packages/Framework/Neos.Utility.Lock/Classes/FlockLockStrategy.php">
-    <PossiblyNullPropertyAssignmentValue occurrences="1">
-      <code>null</code>
-    </PossiblyNullPropertyAssignmentValue>
-  </file>
-  <file src="Packages/Framework/Neos.Utility.Lock/Classes/LockManager.php">
-    <LessSpecificReturnStatement occurrences="1">
-      <code>new $lockStrategy($this-&gt;lockStrategyOptions)</code>
-    </LessSpecificReturnStatement>
-    <MoreSpecificReturnType occurrences="1">
-      <code>LockStrategyInterface</code>
-    </MoreSpecificReturnType>
   </file>
   <file src="Packages/Framework/Neos.Utility.MediaTypes/Classes/MediaTypes.php">
     <InvalidNullableReturnType occurrences="1">

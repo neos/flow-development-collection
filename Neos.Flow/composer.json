@@ -19,7 +19,6 @@
         "neos/error-messages": "*",
         "neos/utility-arrays": "*",
         "neos/utility-files": "*",
-        "neos/utility-lock": "*",
         "neos/utility-mediatypes": "*",
         "neos/utility-objecthandling": "*",
         "neos/utility-opcodecache": "*",
