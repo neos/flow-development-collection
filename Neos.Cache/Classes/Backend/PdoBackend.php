@@ -509,7 +509,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
         try {
             $this->connect();
         } catch (Exception $exception) {
-            $result->addError(new Error($exception->getMessage(), $exception->getCode(), [], 'Failed'));
+            $result->addError(new Error($exception->getMessage(), (int)$exception->getCode(), [], 'Failed'));
         }
         if ($this->pdoDriver === 'sqlite') {
             $result->addNotice(new Notice('SQLite database tables are created automatically and don\'t need to be set up'));
