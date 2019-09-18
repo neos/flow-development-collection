@@ -2538,6 +2538,9 @@
     <InvalidReturnType occurrences="1">
       <code>mixed</code>
     </InvalidReturnType>
+    <PossiblyNullReference occurrences="1">
+      <code>getAccountIdentifier</code>
+    </PossiblyNullReference>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Security/Authentication/AuthenticationProviderManager.php">
     <InvalidPropertyAssignmentValue occurrences="4">
