@@ -68,7 +68,7 @@ final class Roles implements \JsonSerializable, \IteratorAggregate, \Countable, 
      */
     public function getIterator(): \ArrayIterator
     {
-        return new \ArrayIterator($this->roles);
+        return new \ArrayIterator(array_values($this->roles));
     }
 
     public function jsonSerialize(): array
@@ -78,7 +78,7 @@ final class Roles implements \JsonSerializable, \IteratorAggregate, \Countable, 
 
     public function offsetSet($offset, $value)
     {
-        throw new BadMethodCallException('Roles class does not support setting elements via array access.');
+        throw new \BadMethodCallException('Roles class does not support setting elements via array access.');
     }
 
     public function offsetExists($offset)
@@ -88,7 +88,7 @@ final class Roles implements \JsonSerializable, \IteratorAggregate, \Countable, 
 
     public function offsetUnset($offset)
     {
-        throw new BadMethodCallException('Roles class does not support unsetting elements via array access.');
+        throw new \BadMethodCallException('Roles class does not support unsetting elements via array access.');
     }
 
     public function offsetGet($offset)
