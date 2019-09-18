@@ -2585,7 +2585,7 @@
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Security/Authentication/Token/AbstractToken.php">
     <InvalidNullableReturnType occurrences="1">
-      <code>Account</code>
+      <code>AccountInterface</code>
     </InvalidNullableReturnType>
     <NullableReturnStatement occurrences="1">
       <code>$this-&gt;isAuthenticated() ? $this-&gt;account: null</code>
