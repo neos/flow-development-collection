@@ -23,7 +23,7 @@ class SuperEntity extends AbstractSuperEntity
     /**
      * Just a normal string
      *
-     * @var string
+     * @var string|null
      */
     protected $someString;
 }
