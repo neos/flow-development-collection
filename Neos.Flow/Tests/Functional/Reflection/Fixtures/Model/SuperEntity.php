@@ -47,5 +47,4 @@ class SuperEntity extends AbstractSuperEntity
      * @var array<string>|null
      */
     protected $someNullableArrayOfStrings;
-
 }
