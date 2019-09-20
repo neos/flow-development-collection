@@ -396,13 +396,13 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
     /**
      * Sets the default lifetime for this cache backend
      *
-     * @param integer $lifetime Default lifetime of this cache backend in seconds. If NULL is specified, the default lifetime is used. 0 means unlimited lifetime.
+     * @param integer|string|null $lifetime Default lifetime of this cache backend in seconds. If NULL is specified, the default lifetime is used. 0 means unlimited lifetime.
      * @return void
      * @api
      */
-    public function setDefaultLifetime(int $lifetime): void
+    public function setDefaultLifetime($lifetime): void
     {
-        $this->defaultLifetime = $lifetime;
+        $this->defaultLifetime = $lifetime === null ? null : (int)$lifetime;
     }
 
     /**
@@ -419,25 +419,25 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
     /**
      * Sets the port of the Redis server.
      *
-     * Leave this empty if you want to connect to a socket
+     * Unused if you want to connect to a socket (i.e. hostname contains a /)
      *
-     * @param integer $port Port of the Redis server
+     * @param integer|string $port Port of the Redis server
      * @api
      */
-    public function setPort(int $port): void
+    public function setPort($port): void
     {
-        $this->port = $port;
+        $this->port = (int)$port;
     }
 
     /**
      * Sets the database that will be used for this backend
      *
-     * @param integer $database Database that will be used
+     * @param integer|string $database Database that will be used
      * @api
      */
-    public function setDatabase(int $database): void
+    public function setDatabase($database): void
     {
-        $this->database = $database;
+        $this->database = (int)$database;
     }
 
     /**
@@ -449,11 +449,11 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
     }
 
     /**
-     * @param integer $compressionLevel
+     * @param integer|string $compressionLevel
      */
-    public function setCompressionLevel(int $compressionLevel): void
+    public function setCompressionLevel($compressionLevel): void
     {
-        $this->compressionLevel = $compressionLevel;
+        $this->compressionLevel = (int)$compressionLevel;
     }
 
     /**
