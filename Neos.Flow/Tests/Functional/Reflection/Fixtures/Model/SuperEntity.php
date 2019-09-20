@@ -26,4 +26,11 @@ class SuperEntity extends AbstractSuperEntity
      * @var string|null
      */
     protected $someString;
+
+    /**
+     * Just an int that can be null
+     *
+     * @var null|int
+     */
+    protected $someNullableInt;
 }
