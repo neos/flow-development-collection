@@ -43,8 +43,8 @@ class ClassReflectionTest extends UnitTestCase implements Fixture\DummyInterface
         $class = new ClassReflection(__CLASS__);
         $properties = $class->getProperties();
 
-        $this->assertTrue(is_array($properties), 'The returned value is no array.');
-        $this->assertInstanceOf(PropertyReflection::class, array_pop($properties), 'The returned properties are not of type \Neos\Flow\Reflection\PropertyReflection.');
+        self::assertTrue(is_array($properties), 'The returned value is no array.');
+        self::assertInstanceOf(PropertyReflection::class, array_pop($properties), 'The returned properties are not of type \Neos\Flow\Reflection\PropertyReflection.');
     }
 
     /**
@@ -53,8 +53,8 @@ class ClassReflectionTest extends UnitTestCase implements Fixture\DummyInterface
     public function getPropertyReturnsFlowsPropertyReflection()
     {
         $class = new ClassReflection(__CLASS__);
-        $this->assertInstanceOf(PropertyReflection::class, $class->getProperty('someProperty'), 'The returned property is not of type \Neos\Flow\Reflection\PropertyReflection.');
-        $this->assertEquals('someProperty', $class->getProperty('someProperty')->getName(), 'The returned property seems not to be the right one.');
+        self::assertInstanceOf(PropertyReflection::class, $class->getProperty('someProperty'), 'The returned property is not of type \Neos\Flow\Reflection\PropertyReflection.');
+        self::assertEquals('someProperty', $class->getProperty('someProperty')->getName(), 'The returned property seems not to be the right one.');
     }
 
     /**
@@ -65,7 +65,7 @@ class ClassReflectionTest extends UnitTestCase implements Fixture\DummyInterface
         $class = new ClassReflection(__CLASS__);
         $methods = $class->getMethods();
         foreach ($methods as $method) {
-            $this->assertInstanceOf(MethodReflection::class, $method, 'The returned methods are not of type \Neos\Flow\Reflection\MethodReflection.');
+            self::assertInstanceOf(MethodReflection::class, $method, 'The returned methods are not of type \Neos\Flow\Reflection\MethodReflection.');
         }
     }
 
@@ -77,7 +77,7 @@ class ClassReflectionTest extends UnitTestCase implements Fixture\DummyInterface
         $class = new ClassReflection(__CLASS__);
         $methods = $class->getMethods();
         foreach (array_keys($methods) as $key) {
-            $this->assertInternalType('integer', $key, 'The index was not an integer.');
+            $this->assertIsInt($key, 'The index was not an integer.');
         }
     }
 
@@ -88,7 +88,7 @@ class ClassReflectionTest extends UnitTestCase implements Fixture\DummyInterface
     {
         $class = new ClassReflection(__CLASS__);
         $method = $class->getMethod('getMethodReturnsFlowsMethodReflection');
-        $this->assertInstanceOf(MethodReflection::class, $method, 'The returned method is not of type \Neos\Flow\Reflection\MethodReflection.');
+        self::assertInstanceOf(MethodReflection::class, $method, 'The returned method is not of type \Neos\Flow\Reflection\MethodReflection.');
     }
 
     /**
@@ -98,7 +98,7 @@ class ClassReflectionTest extends UnitTestCase implements Fixture\DummyInterface
     {
         $class = new ClassReflection(__CLASS__);
         $constructor = $class->getConstructor();
-        $this->assertInstanceOf(MethodReflection::class, $constructor, 'The returned method is not of type \Neos\Flow\Reflection\MethodReflection.');
+        self::assertInstanceOf(MethodReflection::class, $constructor, 'The returned method is not of type \Neos\Flow\Reflection\MethodReflection.');
     }
 
     /**
@@ -109,7 +109,7 @@ class ClassReflectionTest extends UnitTestCase implements Fixture\DummyInterface
         $class = new ClassReflection(__CLASS__);
         $interfaces = $class->getInterfaces();
         foreach ($interfaces as $interface) {
-            $this->assertInstanceOf(ClassReflection::class, $interface);
+            self::assertInstanceOf(ClassReflection::class, $interface);
         }
     }
 
@@ -120,6 +120,6 @@ class ClassReflectionTest extends UnitTestCase implements Fixture\DummyInterface
     {
         $class = new ClassReflection(__CLASS__);
         $parentClass = $class->getParentClass();
-        $this->assertInstanceOf(ClassReflection::class, $parentClass);
+        self::assertInstanceOf(ClassReflection::class, $parentClass);
     }
 }

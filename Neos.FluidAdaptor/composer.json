@@ -1,18 +1,22 @@
 {
-	"name": "neos/fluid-adaptor",
-	"type": "neos-framework",
-	"description": "Fluid Templating Framework Adaptor",
-	"license": ["MIT"],
-	"require": {
-		"neos/flow": "~4.3.0",
-		"neos/cache": "*",
-		"neos/utility-files": "*",
-		"neos/utility-objecthandling": "*",
-		"typo3fluid/fluid": ">=2.1.3,<2.5.0"
-	},
-	"autoload": {
-		"psr-4": {
-			"Neos\\FluidAdaptor\\": "Classes/"
-		}
-	}
+  "name": "neos/fluid-adaptor",
+  "type": "neos-framework",
+  "description": "Fluid Templating Framework Adaptor",
+  "license": [
+    "MIT"
+  ],
+  "require": {
+    "php": "^7.2",
+    "neos/flow": "~6.0.0",
+    "neos/cache": "*",
+    "neos/utility-files": "*",
+    "neos/utility-objecthandling": "*",
+    "typo3fluid/fluid": "^2.5",
+    "psr/log": "^1.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Neos\\FluidAdaptor\\": "Classes/"
+    }
+  }
 }

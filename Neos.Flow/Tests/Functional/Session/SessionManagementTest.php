@@ -11,7 +11,6 @@ namespace Neos\Flow\Tests\Functional\Session;
  * source code.
  */
 
-use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Mvc\Routing\Route;
 use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\Flow\Session;
@@ -21,7 +20,7 @@ class SessionManagementTest extends FunctionalTestCase
     /**
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -45,7 +44,7 @@ class SessionManagementTest extends FunctionalTestCase
     {
         $session1 = $this->objectManager->get(Session\SessionInterface::class);
         $session2 = $this->objectManager->get(Session\SessionInterface::class);
-        $this->assertSame($session1, $session2);
+        self::assertSame($session1, $session2);
     }
 
     /**
@@ -55,7 +54,7 @@ class SessionManagementTest extends FunctionalTestCase
     {
         $session1 = $this->objectManager->get(Session\Session::class);
         $session2 = $this->objectManager->get(Session\Session::class);
-        $this->assertNotSame($session1, $session2);
+        self::assertNotSame($session1, $session2);
     }
 
     /**
@@ -71,8 +70,8 @@ class SessionManagementTest extends FunctionalTestCase
         $otherInjectedSession = $this->objectManager->get(Session\SessionInterface::class);
 
         $retrievedSession = $sessionManager->getCurrentSession();
-        $this->assertSame($injectedSession, $retrievedSession);
-        $this->assertSame($otherInjectedSession, $retrievedSession);
+        self::assertSame($injectedSession, $retrievedSession);
+        self::assertSame($otherInjectedSession, $retrievedSession);
     }
 
     /**
@@ -83,13 +82,12 @@ class SessionManagementTest extends FunctionalTestCase
      * See bug #43590
      *
      * @test
+     * @doesNotPerformAssertions
      */
     public function aSessionCanBeStartedInAFunctionalTest()
     {
         $session = $this->objectManager->get(Session\SessionInterface::class);
         $session->start();
-        // dummy assertion to avoid PHPUnit warning
-        $this->assertTrue(true);
     }
 
     /**
@@ -102,9 +100,11 @@ class SessionManagementTest extends FunctionalTestCase
     public function aSessionUsedInAFunctionalTestVirtualBrowserSendsCookiesOnEachRequest()
     {
         $response = $this->browser->request('http://localhost/test/session');
-        $this->assertTrue($response->hasCookie('Flow_Testing_Session'), 'Available Cookies are: ' . implode(', ', array_keys($response->getCookies())));
+        self::assertTrue($response->hasHeader('Set-Cookie'), 'Available Cookies are: ' . implode(', ', array_keys($response->getHeader('Set-Cookie'))));
+        self::assertStringContainsString('Flow_Testing_Session', implode(',', $response->getHeader('Set-Cookie')));
 
         $response = $this->browser->request('http://localhost/test/session');
-        $this->assertTrue($response->hasCookie('Flow_Testing_Session'), 'Available Cookies are: ' . implode(', ', array_keys($response->getCookies())));
+        self::assertTrue($response->hasHeader('Set-Cookie'), 'Available Cookies are: ' . implode(', ', array_keys($response->getHeader('Set-Cookie'))));
+        self::assertStringContainsString('Flow_Testing_Session', implode(',', $response->getHeader('Set-Cookie')));
     }
 }

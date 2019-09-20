@@ -11,23 +11,32 @@ namespace Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Format;
  * source code.
  */
 
-use Neos\Flow\Tests\UnitTestCase;
-use Neos\FluidAdaptor\ViewHelpers\Format;
+use Neos\FluidAdaptor\Core\ViewHelper\Exception;
 use Neos\Flow\I18n;
+
+require_once(__DIR__ . '/../ViewHelperBaseTestcase.php');
+
+use Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase;
 
 /**
  * Test for date view helper \Neos\FluidAdaptor\ViewHelpers\Format\DateViewHelper
  */
-class DateViewHelperTest extends UnitTestCase
+class DateViewHelperTest extends ViewHelperBaseTestcase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->viewHelper = $this->getMockBuilder(\Neos\FluidAdaptor\ViewHelpers\Format\DateViewHelper::class)->setMethods(['renderChildren'])->getMock();
+    }
+
     /**
      * @test
      */
     public function viewHelperFormatsDateCorrectly()
     {
-        $viewHelper = new Format\DateViewHelper();
-        $actualResult = $viewHelper->render(new \DateTime('1980-12-13'));
-        $this->assertEquals('1980-12-13', $actualResult);
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['date' => new \DateTime('1980-12-13')]);
+        $actualResult = $this->viewHelper->render();
+        self::assertEquals('1980-12-13', $actualResult);
     }
 
     /**
@@ -35,9 +44,9 @@ class DateViewHelperTest extends UnitTestCase
      */
     public function viewHelperFormatsDateStringCorrectly()
     {
-        $viewHelper = new Format\DateViewHelper();
-        $actualResult = $viewHelper->render('1980-12-13');
-        $this->assertEquals('1980-12-13', $actualResult);
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['date' => '1980-12-13']);
+        $actualResult = $this->viewHelper->render();
+        self::assertEquals('1980-12-13', $actualResult);
     }
 
     /**
@@ -45,9 +54,9 @@ class DateViewHelperTest extends UnitTestCase
      */
     public function viewHelperRespectsCustomFormat()
     {
-        $viewHelper = new Format\DateViewHelper();
-        $actualResult = $viewHelper->render(new \DateTime('1980-02-01'), 'd.m.Y');
-        $this->assertEquals('01.02.1980', $actualResult);
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['date' => new \DateTime('1980-02-01'), 'format' => 'd.m.Y']);
+        $actualResult = $this->viewHelper->render();
+        self::assertEquals('01.02.1980', $actualResult);
     }
 
     /**
@@ -55,21 +64,20 @@ class DateViewHelperTest extends UnitTestCase
      */
     public function viewHelperReturnsEmptyStringIfNULLIsGiven()
     {
-        /** @var $viewHelper Format\DateViewHelper|\PHPUnit_Framework_MockObject_MockObject */
-        $viewHelper = $this->getMockBuilder(\Neos\FluidAdaptor\ViewHelpers\Format\DateViewHelper::class)->setMethods(array('renderChildren'))->getMock();
-        $viewHelper->expects($this->once())->method('renderChildren')->will($this->returnValue(null));
-        $actualResult = $viewHelper->render();
-        $this->assertEquals('', $actualResult);
+        $this->viewHelper->expects(self::once())->method('renderChildren')->will(self::returnValue(null));
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, []);
+        $actualResult = $this->viewHelper->render();
+        self::assertEquals('', $actualResult);
     }
 
     /**
      * @test
-     * @expectedException \Neos\FluidAdaptor\Core\ViewHelper\Exception
      */
     public function viewHelperThrowsExceptionIfDateStringCantBeParsed()
     {
-        $viewHelper = new Format\DateViewHelper();
-        $viewHelper->render('foo');
+        $this->expectException(Exception::class);
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['date' => 'foo']);
+        $actualResult = $this->viewHelper->render();
     }
 
     /**
@@ -77,11 +85,10 @@ class DateViewHelperTest extends UnitTestCase
      */
     public function viewHelperUsesChildNodesIfDateAttributeIsNotSpecified()
     {
-        /** @var $viewHelper Format\DateViewHelper|\PHPUnit_Framework_MockObject_MockObject */
-        $viewHelper = $this->getMockBuilder(\Neos\FluidAdaptor\ViewHelpers\Format\DateViewHelper::class)->setMethods(array('renderChildren'))->getMock();
-        $viewHelper->expects($this->once())->method('renderChildren')->will($this->returnValue(new \DateTime('1980-12-13')));
-        $actualResult = $viewHelper->render();
-        $this->assertEquals('1980-12-13', $actualResult);
+        $this->viewHelper->expects(self::once())->method('renderChildren')->will(self::returnValue(new \DateTime('1980-12-13')));
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, []);
+        $actualResult = $this->viewHelper->render();
+        self::assertEquals('1980-12-13', $actualResult);
     }
 
     /**
@@ -89,23 +96,20 @@ class DateViewHelperTest extends UnitTestCase
      */
     public function dateArgumentHasPriorityOverChildNodes()
     {
-        /** @var $viewHelper Format\DateViewHelper|\PHPUnit_Framework_MockObject_MockObject */
-        $viewHelper = $this->getMockBuilder(\Neos\FluidAdaptor\ViewHelpers\Format\DateViewHelper::class)->setMethods(array('renderChildren'))->getMock();
-        $viewHelper->expects($this->never())->method('renderChildren');
-        $actualResult = $viewHelper->render('1980-12-12');
-        $this->assertEquals('1980-12-12', $actualResult);
+        $this->viewHelper->expects(self::never())->method('renderChildren');
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['date' => '1980-12-12']);
+        $actualResult = $this->viewHelper->render();
+        self::assertEquals('1980-12-12', $actualResult);
     }
 
     /**
      * @test
-     * @expectedException \Neos\FluidAdaptor\Core\ViewHelper\Exception\InvalidVariableException
      */
     public function viewHelperThrowsExceptionIfInvalidLocaleIdentifierIsGiven()
     {
-        /** @var $viewHelper Format\DateViewHelper|\PHPUnit_Framework_MockObject_MockObject */
-        $viewHelper = $this->getMockBuilder(\Neos\FluidAdaptor\ViewHelpers\Format\DateViewHelper::class)->setMethods(array('renderChildren'))->getMock();
-        $viewHelper->setArguments(array('forceLocale' => '123-not-existing-locale'));
-        $viewHelper->render(new \DateTime());
+        $this->expectException(Exception\InvalidVariableException::class);
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['date' => new \DateTime(), 'forceLocale' => '123-not-existing-locale']);
+        $this->viewHelper->render();
     }
 
     /**
@@ -113,22 +117,20 @@ class DateViewHelperTest extends UnitTestCase
      */
     public function viewHelperCallsDateTimeFormatterWithCorrectlyBuiltConfigurationArguments()
     {
-        /** @var $viewHelper Format\DateViewHelper|\PHPUnit_Framework_MockObject_MockObject */
-        $viewHelper = $this->getMockBuilder(\Neos\FluidAdaptor\ViewHelpers\Format\DateViewHelper::class)->setMethods(array('renderChildren'))->getMock();
-
         $dateTime = new \DateTime();
         $locale = new I18n\Locale('de');
         $formatType = 'date';
 
-        $mockDatetimeFormatter = $this->getMockBuilder(\Neos\Flow\I18n\Formatter\DatetimeFormatter::class)->setMethods(array('format'))->getMock();
+        $mockDatetimeFormatter = $this->getMockBuilder(\Neos\Flow\I18n\Formatter\DatetimeFormatter::class)->setMethods(['format'])->getMock();
         $mockDatetimeFormatter
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('format')
-            ->with($dateTime, $locale, array(0 => $formatType, 1 => null));
-        $this->inject($viewHelper, 'datetimeFormatter', $mockDatetimeFormatter);
+            ->with($dateTime, $locale, [0 => $formatType, 1 => null]);
+        $this->inject($this->viewHelper, 'datetimeFormatter', $mockDatetimeFormatter);
 
-        $viewHelper->setArguments(array('forceLocale' => $locale));
-        $viewHelper->render($dateTime, null, $formatType);
+        $this->viewHelper = $this->prepareArguments($this->viewHelper,
+            ['date' => $dateTime, 'format' => null, 'localeFormatType' => $formatType, 'forceLocale' => $locale]);
+        $this->viewHelper->render();
     }
 
     /**
@@ -136,44 +138,38 @@ class DateViewHelperTest extends UnitTestCase
      */
     public function viewHelperFetchesCurrentLocaleViaI18nService()
     {
-        /** @var $viewHelper Format\DateViewHelper|\PHPUnit_Framework_MockObject_MockObject */
-        $viewHelper = $this->getMockBuilder(\Neos\FluidAdaptor\ViewHelpers\Format\DateViewHelper::class)->setMethods(array('renderChildren'))->getMock();
-
         $localizationConfiguration = new I18n\Configuration('de_DE');
 
-        $mockLocalizationService = $this->getMockBuilder(\Neos\Flow\I18n\Service::class)->setMethods(array('getConfiguration'))->getMock();
-        $mockLocalizationService->expects($this->once())->method('getConfiguration')->will($this->returnValue($localizationConfiguration));
-        $this->inject($viewHelper, 'localizationService', $mockLocalizationService);
+        $mockLocalizationService = $this->getMockBuilder(\Neos\Flow\I18n\Service::class)->setMethods(['getConfiguration'])->getMock();
+        $mockLocalizationService->expects(self::once())->method('getConfiguration')->will(self::returnValue($localizationConfiguration));
+        $this->inject($this->viewHelper, 'localizationService', $mockLocalizationService);
 
-        $mockDatetimeFormatter = $this->getMockBuilder(\Neos\Flow\I18n\Formatter\DatetimeFormatter::class)->setMethods(array('format'))->getMock();
-        $mockDatetimeFormatter->expects($this->once())->method('format');
-        $this->inject($viewHelper, 'datetimeFormatter', $mockDatetimeFormatter);
+        $mockDatetimeFormatter = $this->getMockBuilder(\Neos\Flow\I18n\Formatter\DatetimeFormatter::class)->setMethods(['format'])->getMock();
+        $mockDatetimeFormatter->expects(self::once())->method('format');
+        $this->inject($this->viewHelper, 'datetimeFormatter', $mockDatetimeFormatter);
 
-        $viewHelper->setArguments(array('forceLocale' => true));
-        $viewHelper->render(new \DateTime());
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['date' => new \DateTime(), 'forceLocale' => true]);
+        $this->viewHelper->render();
     }
 
     /**
      * @test
-     * @expectedException \Neos\FluidAdaptor\Core\ViewHelper\Exception
      */
     public function viewHelperConvertsI18nExceptionsIntoViewHelperExceptions()
     {
-        /** @var $viewHelper Format\DateViewHelper|\PHPUnit_Framework_MockObject_MockObject */
-        $viewHelper = $this->getMockBuilder(\Neos\FluidAdaptor\ViewHelpers\Format\DateViewHelper::class)->setMethods(array('renderChildren'))->getMock();
-
+        $this->expectException(Exception::class);
         $localizationConfiguration = new I18n\Configuration('de_DE');
 
-        $mockLocalizationService = $this->getMockBuilder(\Neos\Flow\I18n\Service::class)->setMethods(array('getConfiguration'))->getMock();
-        $mockLocalizationService->expects($this->once())->method('getConfiguration')->will($this->returnValue($localizationConfiguration));
-        $this->inject($viewHelper, 'localizationService', $mockLocalizationService);
+        $mockLocalizationService = $this->getMockBuilder(\Neos\Flow\I18n\Service::class)->setMethods(['getConfiguration'])->getMock();
+        $mockLocalizationService->expects(self::once())->method('getConfiguration')->will(self::returnValue($localizationConfiguration));
+        $this->inject($this->viewHelper, 'localizationService', $mockLocalizationService);
 
-        $mockDatetimeFormatter = $this->getMockBuilder(\Neos\Flow\I18n\Formatter\DatetimeFormatter::class)->setMethods(array('format'))->getMock();
-        $mockDatetimeFormatter->expects($this->once())->method('format')->will($this->throwException(new I18n\Exception()));
-        $this->inject($viewHelper, 'datetimeFormatter', $mockDatetimeFormatter);
+        $mockDatetimeFormatter = $this->getMockBuilder(\Neos\Flow\I18n\Formatter\DatetimeFormatter::class)->setMethods(['format'])->getMock();
+        $mockDatetimeFormatter->expects(self::once())->method('format')->will(self::throwException(new I18n\Exception()));
+        $this->inject($this->viewHelper, 'datetimeFormatter', $mockDatetimeFormatter);
 
-        $viewHelper->setArguments(array('forceLocale' => true));
-        $viewHelper->render(new \DateTime());
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['date' => new \DateTime(), 'forceLocale' => true]);
+        $this->viewHelper->render();
     }
 
     /**
@@ -181,21 +177,19 @@ class DateViewHelperTest extends UnitTestCase
      */
     public function viewHelperCallsDateTimeFormatterWithCustomFormat()
     {
-        /** @var $viewHelper Format\DateViewHelper|\PHPUnit_Framework_MockObject_MockObject */
-        $viewHelper = $this->getMockBuilder(\Neos\FluidAdaptor\ViewHelpers\Format\DateViewHelper::class)->setMethods(array('renderChildren'))->getMock();
-
         $dateTime = new \DateTime();
         $locale = new I18n\Locale('de');
         $cldrFormatString = 'MM';
 
-        $mockDatetimeFormatter = $this->getMockBuilder(\Neos\Flow\I18n\Formatter\DatetimeFormatter::class)->setMethods(array('formatDateTimeWithCustomPattern'))->getMock();
+        $mockDatetimeFormatter = $this->getMockBuilder(\Neos\Flow\I18n\Formatter\DatetimeFormatter::class)->setMethods(['formatDateTimeWithCustomPattern'])->getMock();
         $mockDatetimeFormatter
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('formatDateTimeWithCustomPattern')
             ->with($dateTime, $cldrFormatString, $locale);
-        $this->inject($viewHelper, 'datetimeFormatter', $mockDatetimeFormatter);
+        $this->inject($this->viewHelper, 'datetimeFormatter', $mockDatetimeFormatter);
 
-        $viewHelper->setArguments(array('forceLocale' => $locale));
-        $viewHelper->render($dateTime, null, null, null, $cldrFormatString);
+        $this->viewHelper = $this->prepareArguments($this->viewHelper,
+            ['date' => $dateTime, 'format' => null, 'localeFormatType' => null, 'localeFormatLength' => null, 'cldrFormat' => $cldrFormatString, 'forceLocale' => $locale]);
+        $this->viewHelper->render();
     }
 }

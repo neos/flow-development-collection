@@ -38,7 +38,7 @@ class BooleanValueValidator extends AbstractValidator
     protected function isValid($value)
     {
         if ($value !== $this->options['expectedValue']) {
-            $this->addError('The given value is expected to be %1$s.', 1361044943, [$this->options['expectedValue'] ? 'TRUE' : 'FALSE']);
+            $this->addError('The given value is expected to be %1$s.', 1361044943, [$this->options['expectedValue'] ? 'true' : 'false']);
         }
     }
 }

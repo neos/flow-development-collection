@@ -226,6 +226,17 @@ class BaseFunctionalityTestingAspect
     }
 
     /**
+     * @Flow\Around("method(Neos\Flow\Tests\Functional\Aop\Fixtures\TargetClass01->someFinalMethod())")
+     * @param \Neos\Flow\Aop\JoinPointInterface $joinPoint
+     * @return string
+     */
+    public function methodWithFinalModifierAdvice(\Neos\Flow\Aop\JoinPointInterface $joinPoint)
+    {
+        $originalValue = $joinPoint->getAdviceChain()->proceed($joinPoint);
+        return $originalValue . ' But, as said, nothing is final!';
+    }
+
+    /**
      * @Flow\Around("method(Neos\Flow\Tests\Functional\Aop\Fixtures\TargetClassWithPhp7Features->methodWithStaticScalarReturnTypeDeclaration())")
      * @param \Neos\Flow\Aop\JoinPointInterface $joinPoint
      * @return string

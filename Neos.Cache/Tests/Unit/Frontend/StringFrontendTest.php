@@ -15,6 +15,7 @@ include_once(__DIR__ . '/../../BaseTestCase.php');
 use Neos\Cache\Backend\AbstractBackend;
 use Neos\Cache\Backend\NullBackend;
 use Neos\Cache\Backend\TaggableBackendInterface;
+use Neos\Cache\Exception\InvalidDataException;
 use Neos\Cache\Exception\NotSupportedByBackendException;
 use Neos\Cache\Frontend\StringFrontend;
 use Neos\Cache\Tests\BaseTestCase;
@@ -26,16 +27,16 @@ use Neos\Cache\Tests\BaseTestCase;
 class StringFrontendTest extends BaseTestCase
 {
     /**
-     * @expectedException \InvalidArgumentException
      * @test
      */
     public function setChecksIfTheIdentifierIsValid()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $cache = $this->getMockBuilder(StringFrontend::class)
             ->setMethods(['isValidEntryIdentifier'])
             ->disableOriginalConstructor()
             ->getMock();
-        $cache->expects($this->once())->method('isValidEntryIdentifier')->with('foo')->will($this->returnValue(false));
+        $cache->expects(self::once())->method('isValidEntryIdentifier')->with('foo')->will(self::returnValue(false));
         $cache->set('foo', 'bar');
     }
 
@@ -46,7 +47,7 @@ class StringFrontendTest extends BaseTestCase
     {
         $theString = 'Just some value';
         $backend = $this->prepareDefaultBackend();
-        $backend->expects($this->once())->method('set')->with($this->equalTo('StringCacheTest'), $this->equalTo($theString));
+        $backend->expects(self::once())->method('set')->with(self::equalTo('StringCacheTest'), self::equalTo($theString));
 
         $cache = new StringFrontend('StringFrontend', $backend);
         $cache->set('StringCacheTest', $theString);
@@ -61,7 +62,7 @@ class StringFrontendTest extends BaseTestCase
         $theLifetime = 1234;
         $backend = $this->prepareDefaultBackend();
 
-        $backend->expects($this->once())->method('set')->with($this->equalTo('StringCacheTest'), $this->equalTo($theString), $this->equalTo([]), $this->equalTo($theLifetime));
+        $backend->expects(self::once())->method('set')->with(self::equalTo('StringCacheTest'), self::equalTo($theString), self::equalTo([]), self::equalTo($theLifetime));
 
         $cache = new StringFrontend('StringFrontend', $backend);
         $cache->set('StringCacheTest', $theString, [], $theLifetime);
@@ -69,10 +70,10 @@ class StringFrontendTest extends BaseTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Cache\Exception\InvalidDataException
      */
     public function setThrowsInvalidDataExceptionOnNonStringValues()
     {
+        $this->expectException(InvalidDataException::class);
         $backend = $this->prepareDefaultBackend();
 
         $cache = new StringFrontend('StringFrontend', $backend);
@@ -86,10 +87,10 @@ class StringFrontendTest extends BaseTestCase
     {
         $backend = $this->prepareDefaultBackend();
 
-        $backend->expects($this->once())->method('get')->will($this->returnValue('Just some value'));
+        $backend->expects(self::once())->method('get')->will(self::returnValue('Just some value'));
 
         $cache = new StringFrontend('StringFrontend', $backend);
-        $this->assertEquals('Just some value', $cache->get('StringCacheTest'), 'The returned value was not the expected string.');
+        self::assertEquals('Just some value', $cache->get('StringCacheTest'), 'The returned value was not the expected string.');
     }
 
     /**
@@ -98,10 +99,10 @@ class StringFrontendTest extends BaseTestCase
     public function hasReturnsResultFromBackend()
     {
         $backend = $this->prepareDefaultBackend();
-        $backend->expects($this->once())->method('has')->with($this->equalTo('StringCacheTest'))->will($this->returnValue(true));
+        $backend->expects(self::once())->method('has')->with(self::equalTo('StringCacheTest'))->will(self::returnValue(true));
 
         $cache = new StringFrontend('StringFrontend', $backend);
-        $this->assertTrue($cache->has('StringCacheTest'), 'has() did not return TRUE.');
+        self::assertTrue($cache->has('StringCacheTest'), 'has() did not return true.');
     }
 
     /**
@@ -112,20 +113,20 @@ class StringFrontendTest extends BaseTestCase
         $cacheIdentifier = 'someCacheIdentifier';
         $backend = $this->prepareDefaultBackend();
 
-        $backend->expects($this->once())->method('remove')->with($this->equalTo($cacheIdentifier))->will($this->returnValue(true));
+        $backend->expects(self::once())->method('remove')->with(self::equalTo($cacheIdentifier))->will(self::returnValue(true));
 
         $cache = new StringFrontend('StringFrontend', $backend);
-        $this->assertTrue($cache->remove($cacheIdentifier), 'remove() did not return TRUE');
+        self::assertTrue($cache->remove($cacheIdentifier), 'remove() did not return true');
     }
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
      */
     public function getByTagRejectsInvalidTags()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $backend = $this->createMock(TaggableBackendInterface::class);
-        $backend->expects($this->never())->method('findIdentifiersByTag');
+        $backend->expects(self::never())->method('findIdentifiersByTag');
 
         $cache = new StringFrontend('StringFrontend', $backend);
         $cache->getByTag('SomeInvalid\Tag');
@@ -133,10 +134,10 @@ class StringFrontendTest extends BaseTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Cache\Exception\NotSupportedByBackendException
      */
     public function getByTagThrowAnExceptionWithoutTaggableBackend()
     {
+        $this->expectException(NotSupportedByBackendException::class);
         $backend = $this->prepareDefaultBackend();
         $cache = new StringFrontend('VariableFrontend', $backend);
         $cache->getByTag('foo');
@@ -152,16 +153,16 @@ class StringFrontendTest extends BaseTestCase
         $entries = ['one' => 'one value', 'two' => 'two value'];
         $backend = $this->prepareTaggableBackend();
 
-        $backend->expects($this->once())->method('findIdentifiersByTag')->with($this->equalTo($tag))->will($this->returnValue($identifiers));
-        $backend->expects($this->exactly(2))->method('get')->will($this->onConsecutiveCalls('one value', 'two value'));
+        $backend->expects(self::once())->method('findIdentifiersByTag')->with(self::equalTo($tag))->will(self::returnValue($identifiers));
+        $backend->expects(self::exactly(2))->method('get')->will($this->onConsecutiveCalls('one value', 'two value'));
 
         $cache = new StringFrontend('StringFrontend', $backend);
-        $this->assertEquals($entries, $cache->getByTag($tag), 'Did not receive the expected entries');
+        self::assertEquals($entries, $cache->getByTag($tag), 'Did not receive the expected entries');
     }
 
     /**
      * @param array $methods
-     * @return AbstractBackend|\PHPUnit_Framework_MockObject_MockObject
+     * @return AbstractBackend|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function prepareDefaultBackend(array $methods = ['get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'])
     {
@@ -173,7 +174,7 @@ class StringFrontendTest extends BaseTestCase
 
     /**
      * @param array $methods
-     * @return AbstractBackend|\PHPUnit_Framework_MockObject_MockObject
+     * @return AbstractBackend|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function prepareTaggableBackend(array $methods = ['get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'])
     {

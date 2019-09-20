@@ -15,7 +15,6 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Core\LockManager;
 use Neos\Flow\Core\RequestHandlerInterface;
-use Neos\Flow\Mvc\Dispatcher;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Security\Context;
 
@@ -63,9 +62,9 @@ class CommandRequestHandler implements RequestHandlerInterface
     /**
      * This request handler can handle CLI requests.
      *
-     * @return boolean If the request is a CLI request, TRUE otherwise FALSE
+     * @return boolean If the request is a CLI request, true otherwise false
      */
-    public function canHandleRequest()
+    public function canHandleRequest(): bool
     {
         return (PHP_SAPI === 'cli');
     }
@@ -76,7 +75,7 @@ class CommandRequestHandler implements RequestHandlerInterface
      *
      * @return integer The priority of the request handler.
      */
-    public function getPriority()
+    public function getPriority(): int
     {
         return 100;
     }
@@ -125,24 +124,27 @@ class CommandRequestHandler implements RequestHandlerInterface
      * @param string $runlevel one of the Bootstrap::RUNLEVEL_* constants
      * @return void
      */
-    public function exitIfCompiletimeCommandWasNotCalledCorrectly($runlevel)
+    public function exitIfCompiletimeCommandWasNotCalledCorrectly(string $runlevel)
     {
         if ($runlevel === Bootstrap::RUNLEVEL_COMPILETIME) {
             return;
         }
+
         $command = $this->request->getCommand();
-        if ($this->bootstrap->isCompiletimeCommand($command->getCommandIdentifier())) {
-            $this->response->appendContent(sprintf(
+        if (!$this->bootstrap->isCompiletimeCommand($command->getCommandIdentifier())) {
+            return;
+        }
+
+        $this->response->appendContent(sprintf(
                 "<b>Unrecognized Command</b>\n\n" .
                 "Sorry, but the command \"%s\" must be specified by its full command\n" .
                 "identifier because it is a compile time command which cannot be resolved\n" .
                 "from an abbreviated command identifier.\n\n",
                 $command->getCommandIdentifier())
-            );
-            $this->response->send();
-            $this->shutdown($runlevel);
-            exit(1);
-        }
+        );
+        $this->response->send();
+        $this->shutdown($runlevel);
+        exit(1);
     }
 
     /**
@@ -153,7 +155,7 @@ class CommandRequestHandler implements RequestHandlerInterface
      * @param string $runlevel one of the Bootstrap::RUNLEVEL_* constants
      * @return void
      */
-    protected function boot($runlevel)
+    protected function boot(string $runlevel)
     {
         $sequence = ($runlevel === Bootstrap::RUNLEVEL_COMPILETIME) ? $this->bootstrap->buildCompiletimeSequence() : $this->bootstrap->buildRuntimeSequence();
         $sequence->invoke($this->bootstrap);
@@ -168,7 +170,7 @@ class CommandRequestHandler implements RequestHandlerInterface
      * @param string $runlevel one of the Bootstrap::RUNLEVEL_* constants
      * @return void
      */
-    protected function shutdown($runlevel)
+    protected function shutdown(string $runlevel)
     {
         $this->bootstrap->shutdown($runlevel);
         if ($runlevel === Bootstrap::RUNLEVEL_COMPILETIME) {

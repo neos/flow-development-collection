@@ -6,43 +6,46 @@
     "license": ["MIT"],
 
     "require": {
-        "php": "~7.0",
+        "php": "^7.2",
 
         "ext-zlib": "*",
         "ext-SPL": "*",
-        "ext-json": ">=1.2.0",
+        "ext-json": "^1.2",
         "ext-reflection": "*",
         "ext-xml": "*",
 
-        "neos/cache": "~4.3.0",
-        "neos/eel": "~4.3.0",
-        "neos/flow-log": "~4.3.0",
-        "neos/error-messages": "~4.3.0",
-        "neos/utility-arrays": "~4.3.0",
-        "neos/utility-files": "~4.3.0",
-        "neos/utility-lock": "~4.3.0",
-        "neos/utility-mediatypes": "~4.3.0",
-        "neos/utility-objecthandling": "~4.3.0",
-        "neos/utility-opcodecache": "~4.3.0",
-        "neos/utility-schema": "~4.3.0",
-        "neos/utility-unicode": "~4.3.0",
-        "neos/fluid-adaptor": "~4.3.0",
+        "neos/cache": "~6.0.0",
+        "neos/eel": "~6.0.0",
+        "neos/error-messages": "~6.0.0",
+        "neos/utility-arrays": "~6.0.0",
+        "neos/utility-files": "~6.0.0",
+        "neos/utility-mediatypes": "~6.0.0",
+        "neos/utility-objecthandling": "~6.0.0",
+        "neos/utility-opcodecache": "~6.0.0",
+        "neos/utility-schema": "~6.0.0",
+        "neos/utility-unicode": "~6.0.0",
+        "neos/fluid-adaptor": "~6.0.0",
+        "neos/flow-log": "~6.0.0",
+        "neos/http-factories": "~6.0.0",
 
-        "psr/http-message": "~1.0.0",
+        "psr/http-message": "^1.0",
+        "psr/http-factory": "^1.0",
+        "psr/container": "^1.0",
+        "psr/log": "^1.0",
 
-        "ramsey/uuid": "^3.0.0",
+        "ramsey/uuid": "^3.0",
 
-        "doctrine/orm": "~2.5.0",
-        "doctrine/migrations": "~1.3.0",
-        "doctrine/dbal": "~2.5.0",
-        "doctrine/common": ">=2.4,<2.8-dev",
+        "doctrine/orm": "^2.6",
+        "doctrine/migrations": "^1.8",
+        "doctrine/dbal": "^2.9",
+        "doctrine/common": "^2.4",
 
-        "symfony/yaml": "~2.8.0",
-        "symfony/dom-crawler": "~2.8.0",
-        "symfony/console": "~2.8",
+        "symfony/yaml": "^4.2",
+        "symfony/dom-crawler": "^4.2",
+        "symfony/console": "^4.2",
 
-        "neos/composer-plugin": "^2.0.0",
-        "neos/utility-pdo": "~4.3.0"
+        "neos/composer-plugin": "^2.0",
+        "neos/utility-pdo": "~6.0.0"
     },
     "replace": {
         "typo3/flow": "self.version"

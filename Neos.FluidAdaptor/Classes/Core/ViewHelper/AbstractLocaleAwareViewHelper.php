@@ -11,7 +11,6 @@ namespace Neos\FluidAdaptor\Core\ViewHelper;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\FluidAdaptor\Core\ViewHelper\Exception\InvalidVariableException;
 use Neos\Flow\I18n;
 

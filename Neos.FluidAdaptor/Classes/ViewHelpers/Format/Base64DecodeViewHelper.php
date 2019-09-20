@@ -14,7 +14,6 @@ namespace Neos\FluidAdaptor\ViewHelpers\Format;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use TYPO3Fluid\Fluid\Core\Compiler\TemplateCompiler;
 use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\ViewHelperNode;
-use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 
 /**
  * Applies base64_decode to the input
@@ -54,22 +53,35 @@ class Base64DecodeViewHelper extends AbstractViewHelper
     protected $escapeOutput = false;
 
     /**
+     * Initialize the arguments.
+     *
+     * @return void
+     * @api
+     */
+    public function initializeArguments()
+    {
+        $this->registerArgument('value', 'string', 'string to format', false, null);
+    }
+
+    /**
      * Converts all HTML entities to their applicable characters as needed using PHPs html_entity_decode() function.
      *
-     * @param string $value string to format
      * @return string the altered string
      * @api
      */
-    public function render($value = null)
+    public function render()
     {
+        $value = $this->arguments['value'];
         if ($value === null) {
             $value = $this->renderChildren();
         }
-        if (!is_string($value) && !(is_object($value) && method_exists($value, '__toString'))) {
+        if (is_object($value) && method_exists($value, '__toString')) {
+            $value = $value->__toString();
+        } elseif (!is_string($value)) {
             return $value;
         }
 
-        return base64_decode($value);
+        return base64_decode((string)$value);
     }
 
     /**

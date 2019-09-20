@@ -11,12 +11,14 @@ namespace Neos\Flow\Tests\Unit\Security\Authentication\Token;
  * source code.
  */
 
-use Neos\Flow\Http\Request;
-use Neos\Flow\Http\Uri;
+use GuzzleHttp\Psr7\ServerRequest;
+use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Security\Authentication\Token\UsernamePasswordHttpBasic;
 use Neos\Flow\Security\Authentication\TokenInterface;
 use Neos\Flow\Tests\UnitTestCase;
+use Neos\Http\Factories\ServerRequestFactory;
+use Neos\Http\Factories\UriFactory;
 
 /**
  * Testcase for username/password HTTP Basic Auth authentication token
@@ -32,7 +34,7 @@ class UsernamePasswordHttpBasicTest extends UnitTestCase
     /**
      * Sets up this test case
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->token = new UsernamePasswordHttpBasic();
     }
@@ -47,15 +49,15 @@ class UsernamePasswordHttpBasicTest extends UnitTestCase
             'PHP_AUTH_PW' => 'mysecretpassword, containing a : colon ;-)'
         ];
 
-        $httpRequest = Request::create(new Uri('http://foo.com'), 'GET', [], [], $serverEnvironment);
+        $httpRequest = (new ServerRequestFactory(new UriFactory()))->createServerRequest('GET', new Uri('http://foo.com'), $serverEnvironment);
         $mockActionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
-        $mockActionRequest->expects($this->atLeastOnce())->method('getHttpRequest')->will($this->returnValue($httpRequest));
+        $mockActionRequest->expects(self::atLeastOnce())->method('getHttpRequest')->will(self::returnValue($httpRequest));
 
         $this->token->updateCredentials($mockActionRequest);
 
         $expectedCredentials = ['username' => 'robert', 'password' => 'mysecretpassword, containing a : colon ;-)'];
-        $this->assertEquals($expectedCredentials, $this->token->getCredentials());
-        $this->assertSame(TokenInterface::AUTHENTICATION_NEEDED, $this->token->getAuthenticationStatus());
+        self::assertEquals($expectedCredentials, $this->token->getCredentials());
+        self::assertSame(TokenInterface::AUTHENTICATION_NEEDED, $this->token->getAuthenticationStatus());
     }
 
     /**
@@ -69,13 +71,13 @@ class UsernamePasswordHttpBasicTest extends UnitTestCase
             'REDIRECT_REMOTE_AUTHORIZATION' => 'Basic ' . base64_encode($expectedCredentials['username'] . ':' . $expectedCredentials['password'])
         ];
 
-        $httpRequest = Request::create(new Uri('http://foo.com'), 'GET', [], [], $serverEnvironment);
+        $httpRequest = (new ServerRequestFactory(new UriFactory()))->createServerRequest('GET', new Uri('http://foo.com'), $serverEnvironment);
         $mockActionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
-        $mockActionRequest->expects($this->atLeastOnce())->method('getHttpRequest')->will($this->returnValue($httpRequest));
+        $mockActionRequest->expects(self::atLeastOnce())->method('getHttpRequest')->will(self::returnValue($httpRequest));
         $this->token->updateCredentials($mockActionRequest);
 
-        $this->assertEquals($expectedCredentials, $this->token->getCredentials());
-        $this->assertSame(TokenInterface::AUTHENTICATION_NEEDED, $this->token->getAuthenticationStatus());
+        self::assertEquals($expectedCredentials, $this->token->getCredentials());
+        self::assertSame(TokenInterface::AUTHENTICATION_NEEDED, $this->token->getAuthenticationStatus());
     }
 
     /**
@@ -83,11 +85,11 @@ class UsernamePasswordHttpBasicTest extends UnitTestCase
      */
     public function updateCredentialsSetsTheCorrectAuthenticationStatusIfNoCredentialsArrived()
     {
-        $httpRequest = Request::create(new Uri('http://foo.com'));
+        $httpRequest = new ServerRequest('GET', new Uri('http://foo.com'));
         $mockActionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
-        $mockActionRequest->expects($this->atLeastOnce())->method('getHttpRequest')->will($this->returnValue($httpRequest));
+        $mockActionRequest->expects(self::atLeastOnce())->method('getHttpRequest')->will(self::returnValue($httpRequest));
         $this->token->updateCredentials($mockActionRequest);
 
-        $this->assertSame(TokenInterface::NO_CREDENTIALS_GIVEN, $this->token->getAuthenticationStatus());
+        self::assertSame(TokenInterface::NO_CREDENTIALS_GIVEN, $this->token->getAuthenticationStatus());
     }
 }

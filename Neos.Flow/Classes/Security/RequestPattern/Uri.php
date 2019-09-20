@@ -12,7 +12,6 @@ namespace Neos\Flow\Security\RequestPattern;
  */
 
 use Neos\Flow\Mvc\ActionRequest;
-use Neos\Flow\Mvc\RequestInterface;
 use Neos\Flow\Security\Exception\InvalidRequestPatternException;
 use Neos\Flow\Security\RequestPatternInterface;
 
@@ -37,33 +36,14 @@ class Uri implements RequestPatternInterface
     }
 
     /**
-     * Sets an URI pattern (preg_match() syntax)
+     * Matches an ActionRequest against its set URL pattern rules
      *
-     * Note: the pattern is a full-on regular expression pattern. The only
-     * thing that is touched by the code: forward slashes are escaped before
-     * the pattern is used.
-     *
-     * @param string $uriPattern The URI pattern
-     * @return void
-     * @deprecated since 3.3 this is not used - use options instead (@see __construct())
-     */
-    public function setPattern($uriPattern)
-    {
-        $this->options['uriPattern'] = $uriPattern;
-    }
-
-    /**
-     * Matches a \Neos\Flow\Mvc\RequestInterface against its set URL pattern rules
-     *
-     * @param RequestInterface $request The request that should be matched
-     * @return boolean TRUE if the pattern matched, FALSE otherwise
+     * @param ActionRequest $request The request that should be matched
+     * @return boolean true if the pattern matched, false otherwise
      * @throws InvalidRequestPatternException
      */
-    public function matchRequest(RequestInterface $request)
+    public function matchRequest(ActionRequest $request)
     {
-        if (!$request instanceof ActionRequest) {
-            return false;
-        }
         if (!isset($this->options['uriPattern'])) {
             throw new InvalidRequestPatternException('Missing option "uriPattern" in the Uri request pattern configuration', 1446224530);
         }

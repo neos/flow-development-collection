@@ -40,19 +40,30 @@ use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
  */
 class BytesViewHelper extends AbstractViewHelper
 {
+
+    /**
+     * Initialize the arguments.
+     *
+     * @return void
+     * @api
+     */
+    public function initializeArguments()
+    {
+        $this->registerArgument('value', 'integer', 'The incoming data to convert, or NULL if VH children should be used', false, null);
+        $this->registerArgument('decimals', 'integer', 'The number of digits after the decimal point', false, 0);
+        $this->registerArgument('decimalSeparator', 'string', 'The decimal point character', false, '.');
+        $this->registerArgument('thousandsSeparator', 'string', 'The character for grouping the thousand digits', false, ',');
+    }
+
     /**
      * Render the supplied byte count as a human readable string.
      *
-     * @param integer $value The incoming data to convert, or NULL if VH children should be used
-     * @param integer $decimals The number of digits after the decimal point
-     * @param string $decimalSeparator The decimal point character
-     * @param string $thousandsSeparator The character for grouping the thousand digits
      * @return string Formatted byte count
      * @api
      */
-    public function render($value = null, $decimals = 0, $decimalSeparator = '.', $thousandsSeparator = ',')
+    public function render()
     {
-        return self::renderStatic(array('value' => $value, 'decimals' => $decimals, 'decimalSeparator' => $decimalSeparator, 'thousandsSeparator' => $thousandsSeparator), $this->buildRenderChildrenClosure(), $this->renderingContext);
+        return self::renderStatic(['value' => $this->arguments['value'], 'decimals' => $this->arguments['decimals'], 'decimalSeparator' => $this->arguments['decimalSeparator'], 'thousandsSeparator' => $this->arguments['thousandsSeparator']], $this->buildRenderChildrenClosure(), $this->renderingContext);
     }
 
     /**

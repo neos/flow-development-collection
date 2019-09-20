@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Cache\Frontend;
 
 /*
@@ -35,7 +37,7 @@ class StringFrontend extends AbstractFrontend
      * @throws \Neos\Cache\Exception
      * @api
      */
-    public function set($entryIdentifier, $string, array $tags = [], $lifetime = null)
+    public function set(string $entryIdentifier, $string, array $tags = [], int $lifetime = null)
     {
         if (!$this->isValidEntryIdentifier($entryIdentifier)) {
             throw new \InvalidArgumentException('"' . $entryIdentifier . '" is not a valid cache entry identifier.', 1233057566);
@@ -60,7 +62,7 @@ class StringFrontend extends AbstractFrontend
      * @throws \InvalidArgumentException
      * @api
      */
-    public function get($entryIdentifier)
+    public function get(string $entryIdentifier)
     {
         if (!$this->isValidEntryIdentifier($entryIdentifier)) {
             throw new \InvalidArgumentException('"' . $entryIdentifier . '" is not a valid cache entry identifier.', 1233057752);
@@ -78,7 +80,7 @@ class StringFrontend extends AbstractFrontend
      * @throws \InvalidArgumentException
      * @api
      */
-    public function getByTag($tag): array
+    public function getByTag(string $tag): array
     {
         if (!$this->backend instanceof TaggableBackendInterface) {
             throw new NotSupportedByBackendException('The backend must implement TaggableBackendInterface. Please choose a different cache backend or adjust the code using this cache.', 1483487409);

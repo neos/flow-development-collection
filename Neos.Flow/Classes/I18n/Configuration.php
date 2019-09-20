@@ -101,7 +101,7 @@ class Configuration
      * the implicit fallback is not applied to the locales in the fallback rule.
      *
      * Here is an example:
-     *   array('strict' => FALSE, 'order' => array('dk', 'za'))
+     *   array('strict' => false, 'order' => array('dk', 'za'))
      *
      * @param array $fallbackRule
      */

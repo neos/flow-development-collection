@@ -60,7 +60,7 @@ class XliffTranslationProvider implements TranslationProviderInterface
      * @param string $pluralForm One of RULE constants of PluralsReader
      * @param string $sourceName A relative path to the filename with translations (labels' catalog)
      * @param string $packageKey Key of the package containing the source file
-     * @return mixed Translated label or FALSE on failure
+     * @return mixed Translated label or false on failure
      * @throws Exception\InvalidPluralFormException
      */
     public function getTranslationByOriginalLabel($originalLabel, I18n\Locale $locale, $pluralForm = null, $sourceName = 'Main', $packageKey = 'Neos.Flow')
@@ -68,7 +68,7 @@ class XliffTranslationProvider implements TranslationProviderInterface
         if ($pluralForm !== null) {
             $pluralFormsForProvidedLocale = $this->pluralsReader->getPluralForms($locale);
 
-            if (!is_array($pluralFormsForProvidedLocale) || !in_array($pluralForm, $pluralFormsForProvidedLocale)) {
+            if (!in_array($pluralForm, $pluralFormsForProvidedLocale)) {
                 throw new Exception\InvalidPluralFormException('There is no plural form "' . $pluralForm . '" in "' . (string)$locale . '" locale.', 1281033386);
             }
             // We need to convert plural form's string to index, as they are accessed using integers in XLIFF files
@@ -92,7 +92,7 @@ class XliffTranslationProvider implements TranslationProviderInterface
      * @param string $pluralForm One of RULE constants of PluralsReader
      * @param string $sourceName A relative path to the filename with translations (labels' catalog)
      * @param string $packageKey Key of the package containing the source file
-     * @return mixed Translated label or FALSE on failure
+     * @return mixed Translated label or false on failure
      * @throws Exception\InvalidPluralFormException
      */
     public function getTranslationById($labelId, I18n\Locale $locale, $pluralForm = null, $sourceName = 'Main', $packageKey = 'Neos.Flow')

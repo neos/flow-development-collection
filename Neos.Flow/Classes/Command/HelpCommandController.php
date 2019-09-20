@@ -18,8 +18,8 @@ use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Mvc\Exception\AmbiguousCommandIdentifierException;
 use Neos\Flow\Mvc\Exception\CommandException;
+use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Mvc\Exception\StopActionException;
-use Neos\Flow\Package\PackageManagerInterface;
 
 /**
  * A Command Controller which provides help for available commands
@@ -30,7 +30,7 @@ class HelpCommandController extends CommandController
 {
     /**
      * @Flow\Inject
-     * @var PackageManagerInterface
+     * @var PackageManager
      */
     protected $packageManager;
 
@@ -66,7 +66,7 @@ class HelpCommandController extends CommandController
         $context = $this->bootstrap->getContext();
         $applicationPackage = $this->packageManager->getPackage($this->applicationPackageKey);
         $this->outputLine('<b>%s %s ("%s" context)</b>', [$this->applicationName, $applicationPackage->getInstalledVersion() ?: 'dev', $context]);
-        $this->outputLine('<i>usage: %s <command identifier></i>', array($this->getFlowInvocationString()));
+        $this->outputLine('<i>usage: %s <command identifier></i>', [$this->getFlowInvocationString()]);
         $this->outputLine();
         $this->outputLine('See "%s help" for a list of all available commands.', [$this->getFlowInvocationString()]);
         $this->outputLine();
@@ -82,7 +82,7 @@ class HelpCommandController extends CommandController
      * @return void
      * @throws StopActionException
      */
-    public function helpCommand($commandIdentifier = null)
+    public function helpCommand(string $commandIdentifier = null)
     {
         $exceedingArguments = $this->request->getExceedingArguments();
         if (count($exceedingArguments) > 0 && $commandIdentifier === null) {

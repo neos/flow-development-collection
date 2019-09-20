@@ -23,18 +23,34 @@ Neos:
         exceptionalErrors: ['%E_USER_ERROR%', '%E_RECOVERABLE_ERROR%', '%E_WARNING%', '%E_NOTICE%', '%E_USER_WARNING%', '%E_USER_NOTICE%', '%E_STRICT%']
 
     log:
-      systemLogger:
-        backendOptions:
-          logFileURL: '%FLOW_PATH_DATA%Logs/System_Testing.log'
-          severityThreshold: '%LOG_DEBUG%'
-      securityLogger:
-        backendOptions:
-          logFileURL: '%FLOW_PATH_DATA%Logs/Security_Testing.log'
-          severityThreshold: '%LOG_DEBUG%'
-      sqlLogger:
-        backendOptions:
-          logFileURL: '%FLOW_PATH_DATA%Logs/Query_Testing.log'
-          severityThreshold: '%LOG_DEBUG%'
+      psr3:
+        'Neos\Flow\Log\PsrLoggerFactory':
+          systemLogger:
+            default:
+              options:
+                logFileURL: '%FLOW_PATH_DATA%Logs/System_Testing.log'
+                severityThreshold: '%LOG_DEBUG%'
+
+          securityLogger:
+            default:
+              options:
+                logFileURL: '%FLOW_PATH_DATA%Logs/Security_Testing.log'
+                severityThreshold: '%LOG_DEBUG%'
+
+          sqlLogger:
+            default:
+              options:
+                logFileURL: '%FLOW_PATH_DATA%Logs/Query_Testing.log'
+                severityThreshold: '%LOG_DEBUG%'
+
+          i18nLogger:
+            default:
+              options:
+                logFileURL: '%FLOW_PATH_DATA%Logs/I18n_Testing.log'
+                severityThreshold: '%LOG_DEBUG%'
+
+
+
 
     object:
       registerFunctionalTestClasses: true

@@ -13,12 +13,16 @@ namespace Neos\Flow\Mvc\Routing;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Configuration\ConfigurationManager;
-use Neos\Flow\Log\SystemLoggerInterface;
+use Neos\Flow\Http\Helper\RequestInformationHelper;
+use Neos\Flow\Http\Helper\UriHelper;
+use Neos\Flow\Log\Utility\LogEnvironment;
+use Neos\Flow\Mvc\Exception\InvalidRoutePartValueException;
 use Neos\Flow\Mvc\Exception\InvalidRouteSetupException;
 use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
 use Neos\Flow\Mvc\Routing\Dto\ResolveContext;
 use Neos\Flow\Mvc\Routing\Dto\RouteContext;
 use Psr\Http\Message\UriInterface;
+use Psr\Log\LoggerInterface;
 
 /**
  * The default web router
@@ -29,10 +33,9 @@ use Psr\Http\Message\UriInterface;
 class Router implements RouterInterface
 {
     /**
-     * @Flow\Inject
-     * @var SystemLoggerInterface
+     * @var LoggerInterface
      */
-    protected $systemLogger;
+    protected $logger;
 
     /**
      * @Flow\Inject
@@ -61,7 +64,7 @@ class Router implements RouterInterface
     protected $routes = [];
 
     /**
-     * TRUE if route object have been created, otherwise FALSE
+     * true if route object have been created, otherwise false
      *
      * @var boolean
      */
@@ -76,6 +79,17 @@ class Router implements RouterInterface
      * @var Route
      */
     protected $lastResolvedRoute;
+
+    /**
+     * Injects the (system) logger based on PSR-3.
+     *
+     * @param LoggerInterface $logger
+     * @return void
+     */
+    public function injectLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
 
     /**
      * Sets the routes configuration.
@@ -96,7 +110,9 @@ class Router implements RouterInterface
      *
      * @param RouteContext $routeContext The Route Context containing the current HTTP Request and, optional, Routing RouteParameters
      * @return array The results of the matching route or NULL if no route matched
+     * @throws InvalidRouteSetupException
      * @throws NoMatchingRouteException if no route matched the given $routeContext
+     * @throws InvalidRoutePartValueException
      */
     public function route(RouteContext $routeContext): array
     {
@@ -114,11 +130,12 @@ class Router implements RouterInterface
                 $this->lastMatchedRoute = $route;
                 $matchResults = $route->getMatchResults();
                 $this->routerCachingService->storeMatchResults($routeContext, $matchResults, $route->getMatchedTags());
-                $this->systemLogger->log(sprintf('Router route(): Route "%s" matched the request "%s (%s)".', $route->getName(), $httpRequest->getUri(), $httpRequest->getMethod()), LOG_DEBUG);
+                $this->logger->debug(sprintf('Router route(): Route "%s" matched the request "%s (%s)".', $route->getName(), $httpRequest->getUri(), $httpRequest->getMethod()));
                 return $matchResults;
             }
         }
-        $this->systemLogger->log(sprintf('Router route(): No route matched the route path "%s".', $httpRequest->getRelativePath()), LOG_NOTICE);
+        $routePath = UriHelper::getRelativePath(RequestInformationHelper::generateBaseUri($httpRequest), $httpRequest->getUri());
+        $this->logger->debug(sprintf('Router route(): No route matched the route path "%s".', $routePath));
         throw new NoMatchingRouteException('Could not match a route for the HTTP request.', 1510846308);
     }
 
@@ -186,7 +203,7 @@ class Router implements RouterInterface
                 return $resolvedUri;
             }
         }
-        $this->systemLogger->log('Router resolve(): Could not resolve a route for building an URI for the given resolve context.', LOG_WARNING, $resolveContext->getRouteValues());
+        $this->logger->warning('Router resolve(): Could not resolve a route for building an URI for the given resolve context.', LogEnvironment::fromMethodName(__METHOD__) + ['routeValues' => $resolveContext->getRouteValues()]);
         throw new NoMatchingRouteException('Could not resolve a route and its corresponding URI for the given parameters. This may be due to referring to a not existing package / controller / action while building a link or URI. Refer to log and check the backtrace for more details.', 1301610453);
     }
 

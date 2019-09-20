@@ -13,7 +13,7 @@ namespace Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Format;
 
 require_once(__DIR__ . '/../ViewHelperBaseTestcase.php');
 
-use Neos\Flow\Http\Uri;
+use GuzzleHttp\Psr7\Uri;
 use Neos\FluidAdaptor\ViewHelpers\Format\UrlencodeViewHelper;
 use Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase;
 
@@ -27,12 +27,11 @@ class UrlencodeViewHelperTest extends ViewHelperBaseTestcase
      */
     protected $viewHelper;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
-        $this->viewHelper = $this->getMockBuilder(UrlencodeViewHelper::class)->setMethods(array('renderChildren'))->getMock();
+        $this->viewHelper = $this->getMockBuilder(UrlencodeViewHelper::class)->setMethods(['renderChildren'])->getMock();
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
-        $this->viewHelper->initializeArguments();
     }
 
     /**
@@ -40,7 +39,7 @@ class UrlencodeViewHelperTest extends ViewHelperBaseTestcase
      */
     public function viewHelperDeactivatesEscapingInterceptor()
     {
-        $this->assertFalse($this->viewHelper->isEscapingInterceptorEnabled());
+        self::assertFalse($this->viewHelper->isEscapingInterceptorEnabled());
     }
 
     /**
@@ -48,9 +47,10 @@ class UrlencodeViewHelperTest extends ViewHelperBaseTestcase
      */
     public function renderUsesValueAsSourceIfSpecified()
     {
-        $this->viewHelper->expects($this->never())->method('renderChildren');
-        $actualResult = $this->viewHelper->render('Source');
-        $this->assertEquals('Source', $actualResult);
+        $this->viewHelper->expects(self::never())->method('renderChildren');
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['value' => 'Source']);
+        $actualResult = $this->viewHelper->render();
+        self::assertEquals('Source', $actualResult);
     }
 
     /**
@@ -58,9 +58,10 @@ class UrlencodeViewHelperTest extends ViewHelperBaseTestcase
      */
     public function renderUsesChildnodesAsSourceIfSpecified()
     {
-        $this->viewHelper->expects($this->atLeastOnce())->method('renderChildren')->will($this->returnValue('Source'));
+        $this->viewHelper->expects(self::atLeastOnce())->method('renderChildren')->will(self::returnValue('Source'));
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, []);
         $actualResult = $this->viewHelper->render();
-        $this->assertEquals('Source', $actualResult);
+        self::assertEquals('Source', $actualResult);
     }
 
     /**
@@ -69,8 +70,9 @@ class UrlencodeViewHelperTest extends ViewHelperBaseTestcase
     public function renderDoesNotModifyValueIfItDoesNotContainSpecialCharacters()
     {
         $source = 'StringWithoutSpecialCharacters';
-        $actualResult = $this->viewHelper->render($source);
-        $this->assertSame($source, $actualResult);
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['value' => $source]);
+        $actualResult = $this->viewHelper->render();
+        self::assertSame($source, $actualResult);
     }
 
     /**
@@ -80,18 +82,20 @@ class UrlencodeViewHelperTest extends ViewHelperBaseTestcase
     {
         $source = 'Foo @+%/ "';
         $expectedResult = 'Foo%20%40%2B%25%2F%20%22';
-        $actualResult = $this->viewHelper->render($source);
-        $this->assertEquals($expectedResult, $actualResult);
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['value' => $source]);
+        $actualResult = $this->viewHelper->render();
+        self::assertEquals($expectedResult, $actualResult);
     }
 
     /**
      * @test
-     * @expectedException \Neos\FluidAdaptor\Core\ViewHelper\Exception
      */
     public function renderThrowsExceptionIfItIsNoStringAndHasNoToStringMethod()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $source = new \stdClass();
-        $this->viewHelper->render($source);
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['value' => $source]);
+        $this->viewHelper->render();
     }
 
     /**
@@ -100,7 +104,8 @@ class UrlencodeViewHelperTest extends ViewHelperBaseTestcase
     public function renderRendersObjectWithToStringMethod()
     {
         $source = new Uri('http://typo3.com/foo&bar=1');
-        $actualResult = $this->viewHelper->render($source);
-        $this->assertEquals(urlencode('http://typo3.com/foo&bar=1'), $actualResult);
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['value' => $source]);
+        $actualResult = $this->viewHelper->render();
+        self::assertEquals(urlencode('http://typo3.com/foo&bar=1'), $actualResult);
     }
 }

@@ -26,7 +26,7 @@ class InflectorTest extends \Neos\Flow\Tests\UnitTestCase
     {
         $inflector = new \Neos\Kickstarter\Utility\Inflector();
         $humanized = $inflector->humanizeCamelCase('BlogAuthor');
-        $this->assertEquals('Blog author', $humanized);
+        self::assertEquals('Blog author', $humanized);
     }
 
     /**
@@ -35,7 +35,7 @@ class InflectorTest extends \Neos\Flow\Tests\UnitTestCase
     public function pluralizePluralizesWords()
     {
         $inflector = new \Neos\Kickstarter\Utility\Inflector();
-        $this->assertEquals('boxes', $inflector->pluralize('box'));
-        $this->assertEquals('foos', $inflector->pluralize('foo'));
+        self::assertEquals('boxes', $inflector->pluralize('box'));
+        self::assertEquals('foos', $inflector->pluralize('foo'));
     }
 }

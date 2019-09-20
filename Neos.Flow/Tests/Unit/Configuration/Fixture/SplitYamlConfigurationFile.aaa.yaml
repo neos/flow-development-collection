@@ -1,4 +1,4 @@
-configurationFileHasBeenLoaded: TRUE
+configurationFileHasBeenLoaded: true
 Neos:
   Flow:
     something: 'aaa'

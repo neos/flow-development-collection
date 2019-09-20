@@ -11,8 +11,8 @@ namespace Neos\FluidAdaptor\Core\Widget;
  * source code.
  */
 
-use Neos\Flow\Http\Response;
 use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Exception\ForwardException;
 use Neos\Flow\Mvc\Exception\InfiniteLoopException;
 use Neos\Flow\Mvc\Exception\StopActionException;
@@ -44,7 +44,7 @@ abstract class AbstractWidgetViewHelper extends AbstractViewHelper implements Ch
     protected $controller;
 
     /**
-     * If set to TRUE, it is an AJAX widget.
+     * If set to true, it is an AJAX widget.
      *
      * @var boolean
      * @api
@@ -52,10 +52,10 @@ abstract class AbstractWidgetViewHelper extends AbstractViewHelper implements Ch
     protected $ajaxWidget = false;
 
     /**
-     * If set to FALSE, this widget won't create a session (only relevant for AJAX widgets).
+     * If set to false, this widget won't create a session (only relevant for AJAX widgets).
      *
      * You then need to manually add the serialized configuration data to your links, by
-     * setting "includeWidgetContext" to TRUE in the widget link and URI ViewHelpers.
+     * setting "includeWidgetContext" to true in the widget link and URI ViewHelpers.
      *
      * @var boolean
      * @api
@@ -190,7 +190,7 @@ abstract class AbstractWidgetViewHelper extends AbstractViewHelper implements Ch
     /**
      * Initiate a sub request to $this->controller. Make sure to fill $this->controller
      * via Dependency Injection.
-     * @return Response the response of this request.
+     * @return string the response content of this request.
      * @throws Exception\InvalidControllerException
      * @throws Exception\MissingControllerException
      * @throws InfiniteLoopException
@@ -207,19 +207,20 @@ abstract class AbstractWidgetViewHelper extends AbstractViewHelper implements Ch
         }
 
         /** @var $subRequest ActionRequest */
-        $subRequest = $this->objectManager->get(ActionRequest::class, $this->controllerContext->getRequest());
-        /** @var $subResponse Response */
-        $subResponse = $this->objectManager->get(Response::class, $this->controllerContext->getResponse());
+        $subRequest = $this->controllerContext->getRequest()->createSubRequest();
 
         $this->passArgumentsToSubRequest($subRequest);
         $subRequest->setArgument('__widgetContext', $this->widgetContext);
         $subRequest->setArgumentNamespace('--' . $this->widgetContext->getWidgetIdentifier());
 
         $dispatchLoopCount = 0;
+        $subResponse = new ActionResponse();
         while (!$subRequest->isDispatched()) {
             if ($dispatchLoopCount++ > 99) {
                 throw new InfiniteLoopException('Could not ultimately dispatch the widget request after '  . $dispatchLoopCount . ' iterations.', 1380282310);
             }
+            $subResponse = new ActionResponse();
+
             $widgetControllerObjectName = $this->widgetContext->getControllerObjectName();
             if ($subRequest->getControllerObjectName() !== '' && $subRequest->getControllerObjectName() !== $widgetControllerObjectName) {
                 throw new Exception\InvalidControllerException(sprintf('You are not allowed to initiate requests to different controllers from a widget.' . chr(10) . 'widget controller: "%s", requested controller: "%s".', $widgetControllerObjectName, $subRequest->getControllerObjectName()), 1380284579);
@@ -232,16 +233,13 @@ abstract class AbstractWidgetViewHelper extends AbstractViewHelper implements Ch
                     $subRequest = $exception->getNextRequest();
                     continue;
                 }
-                /** @var $parentResponse Response */
-                $parentResponse = $this->controllerContext->getResponse();
-                $parentResponse
-                    ->setStatus($subResponse->getStatusCode())
-                    ->setContent($subResponse->getContent())
-                    ->setHeader('Location', $subResponse->getHeader('Location'));
+                $subResponse->mergeIntoParentResponse($this->controllerContext->getResponse());
                 throw $exception;
             }
+            $subResponse->mergeIntoParentResponse($this->controllerContext->getResponse());
         }
-        return $subResponse;
+
+        return $subResponse->getContent();
     }
 
     /**
@@ -263,7 +261,7 @@ abstract class AbstractWidgetViewHelper extends AbstractViewHelper implements Ch
             }
             $subRequest->setArguments($arguments[$widgetIdentifier]);
         }
-        if ($subRequest->getControllerActionName() === null) {
+        if ($subRequest->getControllerActionName() === '') {
             $subRequest->setControllerActionName($controllerActionName);
         }
     }

@@ -12,12 +12,12 @@ namespace Neos\Flow\ResourceManagement\Streams;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Http\Uri;
-use Neos\Flow\Package\PackageManagerInterface;
+use Psr\Http\Message\UriInterface;
+use Neos\Flow\Package\FlowPackageInterface;
+use Neos\Flow\Package\PackageManager;
 use Neos\Flow\ResourceManagement\Exception as ResourceException;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Utility\Files;
-use Neos\Utility\Unicode\Functions;
 
 /**
  * A stream wrapper for resources.
@@ -40,13 +40,13 @@ class ResourceStreamWrapper implements StreamWrapperInterface
     protected $handle;
 
     /**
-     * @var Uri
+     * @var UriInterface
      */
     protected $uri;
 
     /**
-     * @Flow\Inject(lazy = FALSE)
-     * @var PackageManagerInterface
+     * @Flow\Inject(lazy = false)
+     * @var PackageManager
      */
     protected $packageManager;
 
@@ -74,7 +74,7 @@ class ResourceStreamWrapper implements StreamWrapperInterface
      * Any resources which were locked, or allocated, during opening and use of
      * the directory stream should be released.
      *
-     * @return boolean Always TRUE
+     * @return boolean Always true
      */
     public function closeDirectory()
     {
@@ -89,7 +89,7 @@ class ResourceStreamWrapper implements StreamWrapperInterface
      *
      * @param string $path Specifies the URL that was passed to opendir().
      * @param int $options Whether or not to enforce safe_mode (0x04).
-     * @return boolean TRUE on success or FALSE on failure.
+     * @return boolean true on success or false on failure.
      */
     public function openDirectory($path, $options)
     {
@@ -110,7 +110,7 @@ class ResourceStreamWrapper implements StreamWrapperInterface
      *
      * This method is called in response to readdir().
      *
-     * @return string Should return string representing the next filename, or FALSE if there is no next file.
+     * @return string Should return string representing the next filename, or false if there is no next file.
      */
     public function readDirectory()
     {
@@ -126,7 +126,7 @@ class ResourceStreamWrapper implements StreamWrapperInterface
      * to dir_readdir() should return the first entry in the location returned
      * by dir_opendir().
      *
-     * @return boolean always TRUE
+     * @return boolean always true
      */
     public function rewindDirectory()
     {
@@ -179,7 +179,7 @@ class ResourceStreamWrapper implements StreamWrapperInterface
      *
      * @param string $source The URL to the current file.
      * @param string $target The URL which the path_from should be renamed to.
-     * @return boolean TRUE on success or FALSE on failure.
+     * @return boolean true on success or false on failure.
      */
     public function rename($source, $target)
     {
@@ -192,7 +192,7 @@ class ResourceStreamWrapper implements StreamWrapperInterface
      * This method is called in response to stream_select().
      *
      * @param integer $castType Can be STREAM_CAST_FOR_SELECT when stream_select() is calling stream_cast() or STREAM_CAST_AS_STREAM when stream_cast() is called for other uses.
-     * @return resource Should return the underlying stream resource used by the wrapper, or FALSE.
+     * @return resource Should return the underlying stream resource used by the wrapper, or false.
      */
     public function cast($castType)
     {
@@ -219,7 +219,7 @@ class ResourceStreamWrapper implements StreamWrapperInterface
      *
      * This method is called in response to feof().
      *
-     * @return boolean Should return TRUE if the read/write position is at the end of the stream and if no more data is available to be read, or FALSE otherwise.
+     * @return boolean Should return true if the read/write position is at the end of the stream and if no more data is available to be read, or false otherwise.
      */
     public function isAtEof()
     {
@@ -234,9 +234,9 @@ class ResourceStreamWrapper implements StreamWrapperInterface
      * If you have cached data in your stream but not yet stored it into the
      * underlying storage, you should do so now.
      *
-     * Note: If not implemented, FALSE is assumed as the return value.
+     * Note: If not implemented, false is assumed as the return value.
      *
-     * @return boolean Should return TRUE if the cached data was successfully stored (or if there was no data to store), or FALSE if the data could not be stored.
+     * @return boolean Should return true if the cached data was successfully stored (or if there was no data to store), or false if the data could not be stored.
      */
     public function flush()
     {
@@ -255,7 +255,7 @@ class ResourceStreamWrapper implements StreamWrapperInterface
      *  LOCK_NB if you don't want flock() to block while locking.
      *
      * @param integer $operation One of the LOCK_* constants
-     * @return boolean TRUE on success or FALSE on failure.
+     * @return boolean true on success or false on failure.
      */
     public function lock($operation)
     {
@@ -267,7 +267,7 @@ class ResourceStreamWrapper implements StreamWrapperInterface
      *
      * This method is called when closing the stream (LOCK_UN).
      *
-     * @return boolean TRUE on success or FALSE on failure.
+     * @return boolean true on success or false on failure.
      */
     public function unlock()
     {
@@ -292,7 +292,7 @@ class ResourceStreamWrapper implements StreamWrapperInterface
      * @param string $mode The mode used to open the file, as detailed for fopen().
      * @param integer $options Holds additional flags set by the streams API.
      * @param string &$openedPathAndFilename If the path is opened successfully, and STREAM_USE_PATH is set in options, opened_path should be set to the full path of the file/resource that was actually opened.
-     * @return boolean TRUE on success or FALSE on failure.
+     * @return boolean true on success or false on failure.
      */
     public function open($path, $mode, $options, &$openedPathAndFilename)
     {
@@ -327,7 +327,7 @@ class ResourceStreamWrapper implements StreamWrapperInterface
      * number of bytes that were successfully read).
      *
      * @param integer $count How many bytes of data from the current position should be returned.
-     * @return string If there are less than count bytes available, return as many as are available. If no more data is available, return either FALSE or an empty string.
+     * @return string If there are less than count bytes available, return as many as are available. If no more data is available, return either false or an empty string.
      */
     public function read($count)
     {
@@ -349,7 +349,7 @@ class ResourceStreamWrapper implements StreamWrapperInterface
      *
      * @param integer $offset The stream offset to seek to.
      * @param integer $whence
-     * @return boolean TRUE on success or FALSE on failure.
+     * @return boolean true on success or false on failure.
      */
     public function seek($offset, $whence = SEEK_SET)
     {
@@ -379,7 +379,7 @@ class ResourceStreamWrapper implements StreamWrapperInterface
      * @param integer $option
      * @param integer $argument1
      * @param integer $argument2
-     * @return boolean TRUE on success or FALSE on failure. If option is not implemented, FALSE should be returned.
+     * @return boolean true on success or false on failure. If option is not implemented, false should be returned.
      */
     public function setOption($option, $argument1, $argument2)
     {
@@ -427,7 +427,7 @@ class ResourceStreamWrapper implements StreamWrapperInterface
      * files.
      *
      * @param string $path The file URL which should be deleted.
-     * @return boolean TRUE on success or FALSE on failure.
+     * @return boolean true on success or false on failure.
      * @throws \BadMethodCallException
      */
     public function unlink($path)
@@ -484,31 +484,40 @@ class ResourceStreamWrapper implements StreamWrapperInterface
      *
      * @param string $requestedPath
      * @param boolean $checkForExistence Whether a (non-hash) path should be checked for existence before being returned
-     * @return mixed The full path and filename or FALSE if the file doesn't exist
+     * @return mixed The full path and filename or false if the file doesn't exist
      * @throws \InvalidArgumentException|ResourceException
      */
     protected function evaluateResourcePath($requestedPath, $checkForExistence = true)
     {
-        if (substr($requestedPath, 0, strlen(self::SCHEME)) !== self::SCHEME) {
+        $requestPathParts = explode('://', $requestedPath, 2);
+        if ($requestPathParts[0] !== self::SCHEME) {
             throw new \InvalidArgumentException('The ' . __CLASS__ . ' only supports the \'' . self::SCHEME . '\' scheme.', 1256052544);
         }
 
-        $uriParts = Functions::parse_url($requestedPath);
-        if (!is_array($uriParts) || !isset($uriParts['host'])) {
+        if (!isset($requestPathParts[1])) {
             return false;
         }
 
-        if (preg_match('/^[0-9a-f]{40}$/i', $uriParts['host']) === 1) {
-            $resource = $this->resourceManager->getResourceBySha1($uriParts['host']);
+        $resourceUriWithoutScheme = $requestPathParts[1];
+
+        if (strpos($resourceUriWithoutScheme, '/') === false && preg_match('/^[0-9a-f]{40}$/i', $resourceUriWithoutScheme) === 1) {
+            $resource = $this->resourceManager->getResourceBySha1($resourceUriWithoutScheme);
             return $this->resourceManager->getStreamByResource($resource);
         }
 
-        if (!$this->packageManager->isPackageAvailable($uriParts['host'])) {
-            throw new ResourceException(sprintf('Invalid resource URI "%s": Package "%s" is not available.', $requestedPath, $uriParts['host']), 1309269952);
+        list($packageName, $path) = explode('/', $resourceUriWithoutScheme, 2);
+
+        try {
+            $package = $this->packageManager->getPackage($packageName);
+        } catch (\Neos\Flow\Package\Exception\UnknownPackageException $packageException) {
+            throw new ResourceException(sprintf('Invalid resource URI "%s": Package "%s" is not available.', $requestedPath, $packageName), 1309269952, $packageException);
         }
 
-        $package = $this->packageManager->getPackage($uriParts['host']);
-        $resourceUri = Files::concatenatePaths([$package->getResourcesPath(), $uriParts['path']]);
+        if (!$package instanceof FlowPackageInterface) {
+            return false;
+        }
+
+        $resourceUri = Files::concatenatePaths([$package->getResourcesPath(), $path]);
 
         if ($checkForExistence === false || file_exists($resourceUri)) {
             return $resourceUri;

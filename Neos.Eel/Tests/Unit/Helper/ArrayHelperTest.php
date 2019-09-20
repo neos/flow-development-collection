@@ -44,7 +44,7 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
     {
         $helper = new ArrayHelper();
         $result = call_user_func_array([$helper, 'concat'], $arguments);
-        $this->assertEquals($expected, $result);
+        self::assertEquals($expected, $result);
     }
 
     public function joinExamples()
@@ -68,7 +68,7 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
         } else {
             $result = $helper->join($array);
         }
-        $this->assertEquals($expected, $result);
+        self::assertEquals($expected, $result);
     }
 
     public function sliceExamples()
@@ -95,7 +95,7 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
         } else {
             $result = $helper->slice($array, $begin);
         }
-        $this->assertEquals($expected, $result);
+        self::assertEquals($expected, $result);
     }
 
     public function reverseExamples()
@@ -116,7 +116,7 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
         $helper = new ArrayHelper();
         $result = $helper->reverse($array);
 
-        $this->assertEquals($expected, $result);
+        self::assertEquals($expected, $result);
     }
 
     public function keysExamples()
@@ -137,7 +137,7 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
         $helper = new ArrayHelper();
         $result = $helper->keys($array);
 
-        $this->assertEquals($expected, $result);
+        self::assertEquals($expected, $result);
     }
 
     public function lengthExamples()
@@ -157,7 +157,7 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
         $helper = new ArrayHelper();
         $result = $helper->length($array);
 
-        $this->assertEquals($expected, $result);
+        self::assertEquals($expected, $result);
     }
 
     public function indexOfExamples()
@@ -182,7 +182,7 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
             $result = $helper->indexOf($array, $searchElement);
         }
 
-        $this->assertEquals($expected, $result);
+        self::assertEquals($expected, $result);
     }
 
     public function isEmptyExamples()
@@ -202,7 +202,7 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
         $helper = new ArrayHelper();
         $result = $helper->isEmpty($array);
 
-        $this->assertEquals($expected, $result);
+        self::assertEquals($expected, $result);
     }
 
     public function firstExamples()
@@ -223,7 +223,7 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
         $helper = new ArrayHelper();
         $result = $helper->first($array);
 
-        $this->assertEquals($expected, $result);
+        self::assertEquals($expected, $result);
     }
 
     public function lastExamples()
@@ -244,7 +244,7 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
         $helper = new ArrayHelper();
         $result = $helper->last($array);
 
-        $this->assertEquals($expected, $result);
+        self::assertEquals($expected, $result);
     }
 
     public function randomExamples()
@@ -265,7 +265,7 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
         $helper = new ArrayHelper();
         $result = $helper->random($array);
 
-        $this->assertEquals($expected, in_array($result, $array));
+        self::assertEquals($expected, in_array($result, $array));
     }
 
     public function sortExamples()
@@ -286,7 +286,7 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
     {
         $helper = new ArrayHelper();
         $sortedArray = $helper->sort($array);
-        $this->assertEquals($expected, $sortedArray);
+        self::assertEquals($expected, $sortedArray);
     }
 
     public function shuffleExamples()
@@ -307,7 +307,7 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
     {
         $helper = new ArrayHelper();
         $shuffledArray = $helper->shuffle($array);
-        $this->assertEquals($array, $shuffledArray);
+        self::assertEquals($array, $shuffledArray);
     }
 
     public function popExamples()
@@ -328,7 +328,7 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
     {
         $helper = new ArrayHelper();
         $poppedArray = $helper->pop($array);
-        $this->assertEquals($expected, $poppedArray);
+        self::assertEquals($expected, $poppedArray);
     }
 
     public function pushExamples()
@@ -349,7 +349,7 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
     {
         $helper = new ArrayHelper();
         $pushedArray = $helper->push($array, $element1, $element2);
-        $this->assertEquals($expected, $pushedArray);
+        self::assertEquals($expected, $pushedArray);
     }
 
     public function shiftExamples()
@@ -370,7 +370,7 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
     {
         $helper = new ArrayHelper();
         $shiftedArray = $helper->shift($array);
-        $this->assertEquals($expected, $shiftedArray);
+        self::assertEquals($expected, $shiftedArray);
     }
 
     public function unshiftExamples()
@@ -391,7 +391,7 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
     {
         $helper = new ArrayHelper();
         $unshiftedArray = $helper->unshift($array, $element1, $element2);
-        $this->assertEquals($expected, $unshiftedArray);
+        self::assertEquals($expected, $unshiftedArray);
     }
 
     public function spliceExamples()
@@ -412,7 +412,7 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
     {
         $helper = new ArrayHelper();
         $splicedArray = $helper->splice($array, $offset, $length, $element1, $element2, $element3);
-        $this->assertEquals($expected, $splicedArray);
+        self::assertEquals($expected, $splicedArray);
     }
 
     /**
@@ -422,7 +422,7 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
     {
         $helper = new ArrayHelper();
         $splicedArray = $helper->splice([0, 1, 2, 3, 4, 5], 2, 2);
-        $this->assertEquals([0, 1, 4, 5], $splicedArray);
+        self::assertEquals([0, 1, 4, 5], $splicedArray);
     }
 
     public function flipExamples()
@@ -442,7 +442,7 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
         $helper = new ArrayHelper();
         $result = $helper->flip($array);
 
-        $this->assertEquals($expected, $result);
+        self::assertEquals($expected, $result);
     }
 
     public function rangeExamples()
@@ -471,6 +471,247 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
     {
         $helper = new ArrayHelper();
         $result = call_user_func_array([$helper, 'range'], $arguments);
-        $this->assertEquals($expected, $result);
+        self::assertEquals($expected, $result);
+    }
+
+
+    public function setExamples()
+    {
+        return [
+            'add key in empty array' => [
+                [[], 'foo', 'bar'],
+                ['foo' => 'bar']
+            ],
+            'add key to array' => [
+                [['bar' => 'baz'], 'foo', 'bar'],
+                ['bar' => 'baz', 'foo' => 'bar']
+            ],
+            'override value in array' => [
+                [['foo' => 'bar'], 'foo', 'baz'],
+                ['foo' => 'baz']
+            ]
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider setExamples
+     */
+    public function setWorks($arguments, $expected)
+    {
+        $helper = new ArrayHelper();
+        $result = call_user_func_array([$helper, 'set'], $arguments);
+        self::assertEquals($expected, $result);
+    }
+
+    public function mapExamples()
+    {
+        return [
+            'map squares' => [
+                [1, 2, 3, 4],
+                function ($x) {
+                    return $x * $x;
+                },
+                [1, 4, 9, 16],
+            ],
+            'preserve keys' => [
+                ['a' => 1, 'b' => 2],
+                function ($x) {
+                    return $x * 2;
+                },
+                ['a' => 2, 'b' => 4],
+            ],
+            'with keys' => [
+                [1, 2, 3, 4],
+                function ($x, $index) {
+                    return $x * $index;
+                },
+                [0, 2, 6, 12],
+            ],
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider mapExamples
+     */
+    public function mapWorks($array, $callback, $expected)
+    {
+        $helper = new ArrayHelper();
+        $result = $helper->map($array, $callback);
+        self::assertSame($expected, $result);
+    }
+
+    public function reduceExamples()
+    {
+        return [
+            'sum with initial value' => [
+                [1, 2, 3, 4],
+                function ($sum, $x) {
+                    return $sum + $x;
+                },
+                0,
+                10,
+            ],
+            'sum without initial value' => [
+                [1, 2, 3, 4],
+                function ($sum, $x) {
+                    return $sum + $x;
+                },
+                null,
+                10,
+            ],
+            'sum with empty array and initial value' => [
+                [],
+                function ($sum, $x) {
+                    return $sum + $x;
+                },
+                0,
+                0,
+            ],
+            'sum with empty array and without initial value' => [
+                [],
+                function ($sum, $x) {
+                    return $sum + $x;
+                },
+                null,
+                null,
+            ],
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider reduceExamples
+     */
+    public function reduceWorks($array, $callback, $initialValue, $expected)
+    {
+        $helper = new ArrayHelper();
+        $result = $helper->reduce($array, $callback, $initialValue);
+        self::assertSame($expected, $result);
+    }
+
+    public function filterExamples()
+    {
+        return [
+            'test by value' => [
+                range(0, 5),
+                function ($x) {
+                    return $x % 2 === 0;
+                },
+                [
+                    0 => 0,
+                    2 => 2,
+                    4 => 4,
+                ],
+            ],
+            'test element by index' => [
+                ['a', 'b', 'c', 'd'],
+                function ($x, $index) {
+                    return $index % 2 === 0;
+                },
+                [
+                    0 => 'a',
+                    2 => 'c',
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider filterExamples
+     */
+    public function filterWorks($array, $callback, $expected)
+    {
+        $helper = new ArrayHelper();
+        $result = $helper->filter($array, $callback);
+        self::assertSame($expected, $result);
+    }
+
+    public function someExamples()
+    {
+        $isLongWord = function ($x) {
+            return strlen($x) >= 8;
+        };
+        $isFiveApples = function ($x, $key) {
+            return $key === 'apple' && $x > 5;
+        };
+        return [
+            'test by value: success' => [
+                ['brown', 'elephant', 'dung'],
+                $isLongWord,
+                true,
+            ],
+            'test by value: fail' => [
+                ['foo', 'bar', 'baz'],
+                $isLongWord,
+                false,
+            ],
+            'test by key: success' => [
+                ['apple' => 7, 'pear' => 5, 'banana' => 3],
+                $isFiveApples,
+                true,
+            ],
+            'test by key: fail' => [
+                ['apple' => 3, 'pear' => 5, 'banana' => 7],
+                $isFiveApples,
+                false,
+            ],
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider someExamples
+     */
+    public function someWorks($array, $callback, $expected)
+    {
+        $helper = new ArrayHelper();
+        $result = $helper->some($array, $callback);
+        self::assertSame($expected, $result);
+    }
+
+    public function everyExamples()
+    {
+        $isMediumWord = function ($x) {
+            return strlen($x) >= 4;
+        };
+        $isValueEqualIndex = function ($x, $key) {
+            return $key === $x;
+        };
+        return [
+            'test by value: success' => [
+                ['brown', 'elephant', 'dung'],
+                $isMediumWord,
+                true,
+            ],
+            'test by value: fail' => [
+                ['foo', 'bar', 'baz'],
+                $isMediumWord,
+                false,
+            ],
+            'test by key: success' => [
+                [0, 1, 2, 3],
+                $isValueEqualIndex,
+                true,
+            ],
+            'test by key: fail' => [
+                [0 => 1, 1 => 2, 2 => 3],
+                $isValueEqualIndex,
+                false,
+            ],
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider everyExamples
+     */
+    public function everyWorks($array, $callback, $expected)
+    {
+        $helper = new ArrayHelper();
+        $result = $helper->every($array, $callback);
+        self::assertSame($expected, $result);
     }
 }

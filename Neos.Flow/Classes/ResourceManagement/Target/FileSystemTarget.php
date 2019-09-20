@@ -12,20 +12,20 @@ namespace Neos\Flow\ResourceManagement\Target;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Core\Bootstrap;
 use Neos\Error\Messages\Error;
-use Neos\Flow\Http\HttpRequestHandlerInterface;
-use Neos\Flow\Log\SystemLoggerInterface;
+use Neos\Flow\Http\BaseUriProvider;
 use Neos\Flow\ResourceManagement\CollectionInterface;
 use Neos\Flow\ResourceManagement\Publishing\MessageCollector;
 use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\Flow\ResourceManagement\ResourceMetaDataInterface;
 use Neos\Flow\ResourceManagement\ResourceRepository;
+use Neos\Flow\ResourceManagement\Storage\PackageStorage;
+use Neos\Flow\ResourceManagement\Storage\StorageInterface;
 use Neos\Flow\ResourceManagement\Storage\StorageObject;
 use Neos\Utility\Files;
 use Neos\Utility\Unicode\Functions as UnicodeFunctions;
-use Neos\Flow\Utility\Exception as UtilityException;
 use Neos\Flow\ResourceManagement\Target\Exception as TargetException;
+use Psr\Log\LoggerInterface;
 
 /**
  * A target which publishes resources to a specific directory in a file system.
@@ -61,15 +61,6 @@ class FileSystemTarget implements TargetInterface
     protected $baseUri = '';
 
     /**
-     * The configured Neos.Flow.http.baseUri to use as fallback if no absolute baseUri is configured
-     * and if it can't be determined from the current request (e.g. in CLI mode)
-     *
-     * @Flow\InjectConfiguration(package="Neos.Flow", path="http.baseUri")
-     * @var string
-     */
-    protected $httpBaseUri;
-
-    /**
      * The resolved absolute web URI for this target. If $baseUri was absolute this will be the same,
      * otherwise the request base uri will be prepended.
      *
@@ -98,22 +89,21 @@ class FileSystemTarget implements TargetInterface
     protected $resourceRepository;
 
     /**
-     * @Flow\Inject
-     * @var Bootstrap
+     * @var LoggerInterface
      */
-    protected $bootstrap;
-
-    /**
-     * @Flow\Inject
-     * @var SystemLoggerInterface
-     */
-    protected $systemLogger;
+    protected $logger;
 
     /**
      * @Flow\Inject
      * @var MessageCollector
      */
     protected $messageCollector;
+
+    /**
+     * @Flow\Inject
+     * @var BaseUriProvider
+     */
+    protected $baseUriProvider;
 
     /**
      * Constructor
@@ -125,6 +115,17 @@ class FileSystemTarget implements TargetInterface
     {
         $this->name = $name;
         $this->options = $options;
+    }
+
+    /**
+     * Injects the (system) logger based on PSR-3.
+     *
+     * @param LoggerInterface $logger
+     * @return void
+     */
+    public function injectLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
     }
 
     /**
@@ -164,6 +165,26 @@ class FileSystemTarget implements TargetInterface
     }
 
     /**
+     * Checks if the PackageStorage has been previously initialized with symlinks
+     * and clears them. Otherwise the original sources would be overwritten.
+     *
+     * @param StorageInterface $storage
+     * @return void
+     */
+    protected function checkAndRemovePackageSymlinks(StorageInterface $storage)
+    {
+        if (!$storage instanceof PackageStorage) {
+            return;
+        }
+        foreach ($storage->getPublicResourcePaths() as $packageKey => $path) {
+            $targetPathAndFilename = $this->path . $packageKey;
+            if (Files::is_link($targetPathAndFilename)) {
+                Files::unlink($targetPathAndFilename);
+            }
+        }
+    }
+
+    /**
      * Publishes the whole collection to this target
      *
      * @param CollectionInterface $collection The collection to publish
@@ -172,6 +193,8 @@ class FileSystemTarget implements TargetInterface
      */
     public function publishCollection(CollectionInterface $collection, callable $callback = null)
     {
+        $storage = $collection->getStorage();
+        $this->checkAndRemovePackageSymlinks($storage);
         foreach ($collection->getObjects($callback) as $object) {
             /** @var StorageObject $object */
             $sourceStream = $object->getStream();
@@ -281,9 +304,17 @@ class FileSystemTarget implements TargetInterface
         }
 
         $targetPathAndFilename = $this->path . $relativeTargetPathAndFilename;
+        $streamMetaData = stream_get_meta_data($sourceStream);
+        $sourcePathAndFilename = $streamMetaData['uri'] ?? null;
 
         if (@fstat($sourceStream) === false) {
             throw new TargetException(sprintf('Could not publish "%s" into resource publishing target "%s" because the source file is not accessible (file stat failed).', $sourceStream, $this->name), 1375258499);
+        }
+
+        // If you switch from FileSystemSymlinkTarget than we need to remove the symlink before trying to write the file
+        $targetPathAndFilenameInfo = new \SplFileInfo($targetPathAndFilename);
+        if ($targetPathAndFilenameInfo->isLink() && $targetPathAndFilenameInfo->getRealPath() === $sourcePathAndFilename) {
+            Files::unlink($targetPathAndFilename);
         }
 
         if (!file_exists(dirname($targetPathAndFilename))) {
@@ -305,7 +336,7 @@ class FileSystemTarget implements TargetInterface
             throw new TargetException(sprintf('Could not publish "%s" into resource publishing target "%s" because the source file could not be copied to the target location.', $sourceStream, $this->name), 1375258399, (isset($exception) ? $exception : null));
         }
 
-        $this->systemLogger->log(sprintf('FileSystemTarget: Published file. (target: %s, file: %s)', $this->name, $relativeTargetPathAndFilename), LOG_DEBUG);
+        $this->logger->debug(sprintf('FileSystemTarget: Published file. (target: %s, file: %s)', $this->name, $relativeTargetPathAndFilename));
     }
 
     /**
@@ -350,7 +381,7 @@ class FileSystemTarget implements TargetInterface
      * Detects and returns the website's absolute base URI
      *
      * @return string The resolved resource base URI, @see getResourcesBaseUri()
-     * @throws TargetException if the baseUri can't be resolved
+     * @throws \Neos\Flow\Http\Exception
      */
     protected function detectResourcesBaseUri()
     {
@@ -358,15 +389,8 @@ class FileSystemTarget implements TargetInterface
             return $this->baseUri;
         }
 
-        $requestHandler = $this->bootstrap->getActiveRequestHandler();
-        if ($requestHandler instanceof HttpRequestHandlerInterface) {
-            return $requestHandler->getHttpRequest()->getBaseUri() . $this->baseUri;
-        }
-
-        if ($this->httpBaseUri === null) {
-            throw new TargetException(sprintf('The base URI for resources could not be detected. Please specify the "Neos.Flow.http.baseUri" setting or use an absolute "baseUri" option for target "%s".', $this->name), 1438093977);
-        }
-        return $this->httpBaseUri . $this->baseUri;
+        $httpBaseUri = (string)$this->baseUriProvider->getConfiguredBaseUriOrFallbackToCurrentRequest();
+        return $httpBaseUri . $this->baseUri;
     }
 
     /**

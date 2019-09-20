@@ -61,7 +61,7 @@ class BCryptHashingStrategy implements PasswordHashingStrategyInterface
      * @param string $password The cleartext password
      * @param string $hashedPasswordAndSalt The derived key and salt in as returned by crypt() for verification
      * @param string $staticSalt Optional static salt that will be appended to the dynamic salt
-     * @return boolean TRUE if the given password matches the hashed password
+     * @return boolean true if the given password matches the hashed password
      */
     public function validatePassword($password, $hashedPasswordAndSalt, $staticSalt = null)
     {

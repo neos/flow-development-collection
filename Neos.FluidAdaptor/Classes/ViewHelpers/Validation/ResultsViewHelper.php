@@ -69,19 +69,31 @@ class ResultsViewHelper extends AbstractViewHelper
     protected $escapeOutput = false;
 
     /**
+     * Arguments initialization
+     *
+     * @return void
+     */
+    public function initializeArguments()
+    {
+        $this->registerArgument('for', 'string', 'The name of the error name (e.g. argument name or property name). This can also be a property path (like blog.title), and will then only display the validation errors of that property.', false, '');
+        $this->registerArgument('as', 'string', 'The name of the variable to store the current error', false, 'validationResults');
+    }
+
+    /**
      * Iterates through selected errors of the request.
      *
-     * @param string $for The name of the error name (e.g. argument name or property name). This can also be a property path (like blog.title), and will then only display the validation errors of that property.
-     * @param string $as The name of the variable to store the current error
      * @return string Rendered string
      * @api
      */
-    public function render($for = '', $as = 'validationResults')
+    public function render()
     {
+        $for = $this->arguments['for'];
+        $as = $this->arguments['as'];
+
         $request = $this->controllerContext->getRequest();
         /** @var $validationResults Result */
         $validationResults = $request->getInternalArgument('__submittedArgumentValidationResults');
-        if ($validationResults !== null && $for !== '') {
+        if ($validationResults instanceof Result && $for !== '') {
             $validationResults = $validationResults->forProperty($for);
         }
         $this->templateVariableContainer->add($as, $validationResults);

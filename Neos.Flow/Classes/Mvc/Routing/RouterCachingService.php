@@ -14,15 +14,16 @@ namespace Neos\Flow\Mvc\Routing;
 use Neos\Flow\Annotations as Flow;
 use Neos\Cache\CacheAwareInterface;
 use Neos\Cache\Frontend\VariableFrontend;
+use Neos\Flow\Http\Helper\RequestInformationHelper;
 use Neos\Flow\Mvc\Routing\Dto\ResolveContext;
 use Neos\Flow\Mvc\Routing\Dto\RouteContext;
 use Neos\Flow\Mvc\Routing\Dto\RouteTags;
 use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Utility\Arrays;
 use Neos\Flow\Validation\Validator\UuidValidator;
+use Psr\Log\LoggerInterface;
 
 /**
  * Caching of findMatchResults() and resolve() calls on the web Router.
@@ -50,10 +51,9 @@ class RouterCachingService
     protected $persistenceManager;
 
     /**
-     * @var SystemLoggerInterface
-     * @Flow\Inject
+     * @var LoggerInterface
      */
-    protected $systemLogger;
+    protected $logger;
 
     /**
      * @Flow\Inject
@@ -68,6 +68,14 @@ class RouterCachingService
     protected $routingSettings;
 
     /**
+     * @param LoggerInterface $logger
+     */
+    public function injectLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
+
+    /**
      * @return void
      */
     public function initializeObject()
@@ -80,16 +88,16 @@ class RouterCachingService
     }
 
     /**
-     * Checks the cache for the given RouteContext and returns the result or FALSE if no matching ache entry was found
+     * Checks the cache for the given RouteContext and returns the result or false if no matching ache entry was found
      *
      * @param RouteContext $routeContext
-     * @return array|boolean the cached route values or FALSE if no cache entry was found
+     * @return array|boolean the cached route values or false if no cache entry was found
      */
     public function getCachedMatchResults(RouteContext $routeContext)
     {
         $cachedResult = $this->routeCache->get($routeContext->getCacheEntryIdentifier());
         if ($cachedResult !== false) {
-            $this->systemLogger->log(sprintf('Router route(): A cached Route with the cache identifier "%s" matched the request "%s (%s)".', $routeContext->getCacheEntryIdentifier(), $routeContext->getHttpRequest()->getUri(), $routeContext->getHttpRequest()->getMethod()), LOG_DEBUG);
+            $this->logger->debug(sprintf('Router route(): A cached Route with the cache identifier "%s" matched the request "%s (%s)".', $routeContext->getCacheEntryIdentifier(), $routeContext->getHttpRequest()->getUri(), $routeContext->getHttpRequest()->getMethod()));
         }
 
         return $cachedResult;
@@ -108,7 +116,8 @@ class RouterCachingService
         if ($this->containsObject($matchResults)) {
             return;
         }
-        $tags = $this->generateRouteTags($routeContext->getHttpRequest()->getRelativePath(), $matchResults);
+
+        $tags = $this->generateRouteTags(RequestInformationHelper::getRelativeRequestPath($routeContext->getHttpRequest()), $matchResults);
         if ($matchedTags !== null) {
             $tags = array_unique(array_merge($matchedTags->getTags(), $tags));
         }
@@ -119,7 +128,7 @@ class RouterCachingService
      * Checks the cache for the given ResolveContext and returns the cached UriConstraints if a cache entry is found
      *
      * @param ResolveContext $resolveContext
-     * @return UriConstraints|boolean the cached URI or FALSE if no cache entry was found
+     * @return UriConstraints|boolean the cached URI or false if no cache entry was found
      */
     public function getCachedResolvedUriConstraints(ResolveContext $resolveContext)
     {
@@ -212,7 +221,7 @@ class RouterCachingService
      * Checks if the given subject contains an object
      *
      * @param mixed $subject
-     * @return boolean TRUE if $subject contains an object, otherwise FALSE
+     * @return boolean true if $subject contains an object, otherwise false
      */
     protected function containsObject($subject)
     {

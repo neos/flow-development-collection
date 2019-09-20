@@ -14,7 +14,6 @@ namespace Neos\Flow\Persistence\Generic\Backend;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\Persistence\Aspect\PersistenceMagicInterface;
 use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
 use Neos\Flow\Persistence\Exception\ObjectValidationFailedException;
@@ -29,11 +28,13 @@ use Neos\Flow\Utility\Algorithms;
 use Neos\Utility\TypeHandling;
 use Neos\Flow\Validation\ValidatorResolver;
 use Neos\Flow\Persistence\Exception as PersistenceException;
+use Psr\Log\LoggerInterface;
 
 /**
  * An abstract storage backend for the Flow persistence
  *
  * @api
+ * @deprecated since Flow 6.0
  */
 abstract class AbstractBackend implements BackendInterface
 {
@@ -70,9 +71,9 @@ abstract class AbstractBackend implements BackendInterface
     protected $validatorResolver;
 
     /**
-     * @var SystemLoggerInterface
+     * @var LoggerInterface
      */
-    protected $systemLogger;
+    protected $logger;
 
     /**
      * @var \SplObjectStorage
@@ -155,14 +156,14 @@ abstract class AbstractBackend implements BackendInterface
     }
 
     /**
-     * Injects the system logger
+     * Injects the (system) logger based on PSR-3.
      *
-     * @param SystemLoggerInterface $systemLogger
+     * @param LoggerInterface $logger
      * @return void
      */
-    public function injectSystemLogger(SystemLoggerInterface $systemLogger)
+    public function injectLogger(LoggerInterface $logger)
     {
-        $this->systemLogger = $systemLogger;
+        $this->logger = $logger;
     }
 
     /**
@@ -251,10 +252,10 @@ abstract class AbstractBackend implements BackendInterface
     }
 
     /**
-     * Returns TRUE, if an active connection to the persistence
+     * Returns true, if an active connection to the persistence
      * backend has been established, e.g. entities can be persisted.
      *
-     * @return boolean TRUE, if an connection has been established, FALSE if add object will not be persisted by the backend
+     * @return boolean true, if an connection has been established, false if add object will not be persisted by the backend
      * @api
      */
     public function isConnected()
@@ -414,7 +415,7 @@ abstract class AbstractBackend implements BackendInterface
      * @param string $identifier The object's identifier
      * @param object $object The object to work on
      * @param array $properties The properties to collect (as per class schema)
-     * @param boolean $dirty A dirty flag that is passed by reference and set to TRUE if a dirty property was found
+     * @param boolean $dirty A dirty flag that is passed by reference and set to true if a dirty property was found
      * @return array
      */
     protected function collectProperties($identifier, $object, array $properties, &$dirty)

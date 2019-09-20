@@ -32,7 +32,7 @@ class ModificationTimeStrategyTest extends \Neos\Flow\Tests\UnitTestCase
 
     /**
      */
-    public function setUp()
+    protected function setUp(): void
     {
         vfsStream::setup('testDirectory');
 
@@ -50,7 +50,7 @@ class ModificationTimeStrategyTest extends \Neos\Flow\Tests\UnitTestCase
         $fileUrl = vfsStream::url('testDirectory') . '/test.txt';
 
         $status = $this->strategy->getFileStatus($fileUrl);
-        $this->assertSame(\Neos\Flow\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface::STATUS_UNCHANGED, $status);
+        self::assertSame(\Neos\Flow\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface::STATUS_UNCHANGED, $status);
     }
 
     /**
@@ -65,7 +65,7 @@ class ModificationTimeStrategyTest extends \Neos\Flow\Tests\UnitTestCase
         clearstatcache();
         $status = $this->strategy->getFileStatus($fileUrl);
 
-        $this->assertSame(\Neos\Flow\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface::STATUS_UNCHANGED, $status);
+        self::assertSame(\Neos\Flow\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface::STATUS_UNCHANGED, $status);
     }
 
     /**
@@ -77,7 +77,7 @@ class ModificationTimeStrategyTest extends \Neos\Flow\Tests\UnitTestCase
         file_put_contents($fileUrl, 'test data');
 
         $status = $this->strategy->getFileStatus($fileUrl);
-        $this->assertSame(\Neos\Flow\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface::STATUS_CREATED, $status);
+        self::assertSame(\Neos\Flow\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface::STATUS_CREATED, $status);
     }
 
     /**
@@ -92,7 +92,7 @@ class ModificationTimeStrategyTest extends \Neos\Flow\Tests\UnitTestCase
         unlink($fileUrl);
         $status = $this->strategy->getFileStatus($fileUrl);
 
-        $this->assertSame(\Neos\Flow\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface::STATUS_DELETED, $status);
+        self::assertSame(\Neos\Flow\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface::STATUS_DELETED, $status);
     }
 
     /**
@@ -108,6 +108,6 @@ class ModificationTimeStrategyTest extends \Neos\Flow\Tests\UnitTestCase
         clearstatcache();
         $status = $this->strategy->getFileStatus($fileUrl);
 
-        $this->assertSame(\Neos\Flow\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface::STATUS_CHANGED, $status);
+        self::assertSame(\Neos\Flow\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface::STATUS_CHANGED, $status);
     }
 }

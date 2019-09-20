@@ -36,7 +36,7 @@ class ConfigurationCommandController extends CommandController
     protected $configurationManager;
 
     /**
-     * @Flow\Inject(lazy = FALSE)
+     * @Flow\Inject(lazy = false)
      * @var ConfigurationSchemaValidator
      */
     protected $configurationSchemaValidator;
@@ -57,7 +57,7 @@ class ConfigurationCommandController extends CommandController
      * ./flow configuration:show
      *
      * Display Flow persistence settings:
-     * ./flow configuration:show --path TYPO3.Flow.persistence
+     * ./flow configuration:show --path Neos.Flow.persistence
      *
      * Display Flow Object Cache configuration
      * ./flow configuration:show --type Caches --path Flow_Object_Classes
@@ -66,7 +66,7 @@ class ConfigurationCommandController extends CommandController
      * @param string $path path to subconfiguration separated by "." like "Neos.Flow"
      * @return void
      */
-    public function showCommand($type = 'Settings', $path = null)
+    public function showCommand(string $type = 'Settings', string $path = null)
     {
         $availableConfigurationTypes = $this->configurationManager->getAvailableConfigurationTypes();
         if (in_array($type, $availableConfigurationTypes)) {
@@ -124,10 +124,10 @@ class ConfigurationCommandController extends CommandController
      *
      * @param string $type Configuration type to validate
      * @param string $path path to the subconfiguration separated by "." like "Neos.Flow"
-     * @param boolean $verbose if TRUE, output more verbose information on the schema files which were used
+     * @param boolean $verbose if true, output more verbose information on the schema files which were used
      * @return void
      */
-    public function validateCommand($type = null, $path = null, $verbose = false)
+    public function validateCommand(string $type = null, string $path = null, bool $verbose = false)
     {
         if ($type === null) {
             $this->outputLine('Validating <b>all</b> configuration');
@@ -192,11 +192,11 @@ class ConfigurationCommandController extends CommandController
      * @param string $yaml YAML file to create a schema for
      * @return void
      */
-    public function generateSchemaCommand($type = null, $path = null, $yaml = null)
+    public function generateSchemaCommand(string $type = null, string $path = null, string $yaml = null)
     {
         $data = null;
         if ($yaml !== null && is_file($yaml) && is_readable($yaml)) {
-            $data = Yaml::parse($yaml);
+            $data = Yaml::parseFile($yaml);
         } elseif ($type !== null) {
             $data = $this->configurationManager->getConfiguration($type);
             if ($path !== null) {

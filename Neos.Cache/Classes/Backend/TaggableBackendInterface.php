@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Cache\Backend;
 
 /*
@@ -25,15 +27,15 @@ interface TaggableBackendInterface extends BackendInterface
      * @return integer The number of entries which have been affected by this flush or NULL if the number is unknown
      * @api
      */
-    public function flushByTag($tag);
+    public function flushByTag(string $tag): int;
 
     /**
      * Finds and returns all cache entry identifiers which are tagged by the
      * specified tag.
      *
      * @param string $tag The tag to search for
-     * @return array An array with identifiers of all matching entries. An empty array if no entries matched
+     * @return string[] An array with identifiers of all matching entries. An empty array if no entries matched
      * @api
      */
-    public function findIdentifiersByTag($tag);
+    public function findIdentifiersByTag(string $tag): array;
 }

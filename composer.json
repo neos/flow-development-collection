@@ -6,23 +6,29 @@
     ],
     "type": "neos-package-collection",
     "require": {
-        "php": "~7.0",
+        "php": "^7.2",
+        "psr/simple-cache": "^1.0",
+        "psr/cache": "~1.0",
+        "psr/log": "^1.0",
         "ext-zlib": "*",
         "ext-SPL": "*",
-        "ext-json": ">=1.2.0",
+        "ext-json": "^1.2",
         "ext-reflection": "*",
         "ext-xml": "*",
-        "psr/http-message": "~1.0.0",
-        "ramsey/uuid": "^3.0.0",
-        "doctrine/orm": "~2.5.0",
-        "doctrine/migrations": "~1.3.0",
-        "doctrine/dbal": "~2.5.0",
-        "doctrine/common": ">=2.4,<2.8-dev",
-        "symfony/yaml": "~2.8.0",
-        "symfony/dom-crawler": "~2.8.0",
-        "symfony/console": "~2.8",
-        "neos/composer-plugin": "^2.0.0",
-        "typo3fluid/fluid": ">=2.1.3,<2.5.0",
+        "psr/http-message": "^1.0",
+        "psr/http-factory": "^1.0",
+        "psr/container": "^1.0",
+        "ramsey/uuid": "^3.0",
+        "doctrine/orm": "^2.6",
+        "doctrine/migrations": "^1.8",
+        "doctrine/dbal": "^2.9",
+        "doctrine/common": "^2.4",
+        "symfony/yaml": "^4.2",
+        "symfony/dom-crawler": "^4.2",
+        "symfony/console": "^4.2",
+        "neos/composer-plugin": "^2.0",
+        "typo3fluid/fluid": "^2.5",
+        "guzzlehttp/psr7": "^1.4",
         "ext-mbstring": "*"
     },
     "replace": {
@@ -35,10 +41,10 @@
         "neos/flow-log": "self.version",
         "neos/flow": "self.version",
         "neos/fluid-adaptor": "self.version",
+        "neos/http-factories": "self.version",
         "neos/kickstarter": "self.version",
         "neos/utility-arrays": "self.version",
         "neos/utility-files": "self.version",
-        "neos/utility-lock": "self.version",
         "neos/utility-mediatypes": "self.version",
         "neos/utility-objecthandling": "self.version",
         "neos/utility-opcodecache": "self.version",
@@ -78,6 +84,9 @@
             "Neos\\FluidAdaptor\\": [
                 "Neos.FluidAdaptor/Classes/"
             ],
+            "Neos\\Http\\Factories\\": [
+                "Neos.Http.Factories/Classes"
+            ],
             "Neos\\Kickstarter\\": [
                 "Neos.Kickstarter/Classes"
             ],
@@ -89,9 +98,6 @@
                 "Neos.Utility.OpcodeCache/Classes",
                 "Neos.Utility.Pdo/Classes",
                 "Neos.Utility.Schema/Classes"
-            ],
-            "Neos\\Utility\\Lock\\": [
-                "Neos.Utility.Lock/Classes"
             ],
             "Neos\\Utility\\Unicode\\": [
                 "Neos.Utility.Unicode/Classes"
@@ -106,9 +112,10 @@
     },
     "require-dev": {
         "mikey179/vfsstream": "~1.6",
-        "phpunit/phpunit": "~6.0",
-        "doctrine/orm": "~2.5.0",
-        "doctrine/common": ">=2.4,<2.8-dev"
+        "phpunit/phpunit": "~8.1",
+        "vimeo/psalm": "^3.4",
+        "doctrine/orm": "^2.6",
+        "doctrine/common": "^2.4"
     },
     "autoload-dev": {
         "psr-4": {
@@ -127,6 +134,9 @@
             "Neos\\Flow\\Tests\\": [
                 "Neos.Flow/Tests"
             ],
+            "Neos\\Http\\Factories\\Tests\\": [
+                "Neos.Http.Factories/Tests"
+            ],
             "Neos\\Kickstarter\\Tests\\": [
                 "Neos.Kickstarter/Tests"
             ],
@@ -135,9 +145,6 @@
             ],
             "Neos\\Flow\\Utility\\Files\\Tests\\": [
                 "Neos.Utility.Files/Tests"
-            ],
-            "Neos\\Flow\\Utility\\Lock\\Tests\\": [
-                "Neos.Utility.Lock/Tests"
             ],
             "Neos\\Utility\\MediaTypes\\Tests\\": [
                 "Neos.Utility.MediaTypes/Tests"

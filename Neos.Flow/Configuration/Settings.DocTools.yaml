@@ -1,0 +1,82 @@
+Neos:
+  # DocTools is a tool used by Flow Developers to help with a variety of documentation tasks.
+  # These settings are only used in generating Documentation.
+  DocTools:
+    collections:
+      'Flow':
+        commandReferences:
+          - 'Flow:FlowCommands'
+        references:
+          - 'TYPO3Fluid:ViewHelpers'
+          - 'Flow:FluidAdaptorViewHelpers'
+          - 'Flow:FlowValidators'
+          - 'Flow:FlowSignals'
+          - 'Flow:FlowTypeConverters'
+          - 'Flow:FlowAnnotations'
+
+    commandReferences:
+      'Flow:FlowCommands':
+        title: 'Flow Command Reference'
+        packageKeys:
+          - 'Neos.Flow'
+          - 'Neos.Party'
+          - 'Neos.FluidAdaptor'
+          - 'Neos.Kickstart'
+          - 'Neos.Welcome'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Framework/Neos.Flow/Documentation/TheDefinitiveGuide/PartV/CommandReference.rst'
+
+    references:
+      'TYPO3Fluid:ViewHelpers':
+        title: 'TYPO3 Fluid ViewHelper Reference'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Framework/Neos.Flow/Documentation/TheDefinitiveGuide/PartV/TYPO3FluidViewHelperReference.rst'
+        affectedClasses:
+          parentClassName: TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper
+          classNamePattern: '/^TYPO3Fluid\\Fluid\\ViewHelpers\\.*$/i'
+        parser:
+          implementationClassName: Neos\DocTools\Domain\Service\FluidViewHelperClassParser
+          options:
+            namespaces:
+              f: TYPO3Fluid\Fluid\ViewHelpers
+      'Flow:FluidAdaptorViewHelpers':
+        title: 'FluidAdaptor ViewHelper Reference'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Framework/Neos.Flow/Documentation/TheDefinitiveGuide/PartV/FluidAdaptorViewHelperReference.rst'
+        affectedClasses:
+          parentClassName: 'Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper'
+          classNamePattern: '/^Neos\\FluidAdaptor\\ViewHelpers\\.*$/i'
+        parser:
+          implementationClassName: 'Neos\DocTools\Domain\Service\FluidViewHelperClassParser'
+          options:
+            namespaces:
+              f: 'Neos\FluidAdaptor\ViewHelpers'
+      'Flow:FlowValidators':
+        title: 'Flow Validator Reference'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Framework/Neos.Flow/Documentation/TheDefinitiveGuide/PartV/ValidatorReference.rst'
+        affectedClasses:
+          parentClassName: 'Neos\Flow\Validation\Validator\AbstractValidator'
+          classNamePattern: '/^Neos\\Flow\\Validation\\Validator\\.*$/i'
+        parser:
+          implementationClassName: 'Neos\DocTools\Domain\Service\FlowValidatorClassParser'
+      'Flow:FlowSignals':
+        title: 'Flow Signals Reference'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Framework/Neos.Flow/Documentation/TheDefinitiveGuide/PartV/SignalsReference.rst'
+        affectedClasses:
+          classesContainingMethodsAnnotatedWith: 'Neos\Flow\Annotations\Signal'
+          classNamePattern: '/^Neos\\Flow\\.*$/i'
+          includeAbstractClasses: true
+        parser:
+          implementationClassName: 'Neos\DocTools\Domain\Service\SignalsParser'
+      'Flow:FlowTypeConverters':
+        title: 'Flow TypeConverter Reference'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Framework/Neos.Flow/Documentation/TheDefinitiveGuide/PartV/TypeConverterReference.rst'
+        affectedClasses:
+          parentClassName: 'Neos\Flow\Property\TypeConverter\AbstractTypeConverter'
+          classNamePattern: '/^Neos\\Flow\\.*$/i'
+        parser:
+          implementationClassName: 'Neos\DocTools\Domain\Service\FlowTypeConverterClassParser'
+      'Flow:FlowAnnotations':
+        title: 'Flow Annotation Reference'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Framework/Neos.Flow/Documentation/TheDefinitiveGuide/PartV/AnnotationReference.rst'
+        affectedClasses:
+          classNamePattern: '/^Neos\\Flow\\Annotations\\.*$/i'
+        parser:
+          implementationClassName: 'Neos\DocTools\Domain\Service\FlowAnnotationClassParser'

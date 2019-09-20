@@ -58,7 +58,7 @@ class Command
      * @param string $controllerCommandName Command name, i.e. the method name of the command, without the "Command" suffix
      * @throws \InvalidArgumentException
      */
-    public function __construct($controllerClassName, $controllerCommandName)
+    public function __construct(string $controllerClassName, string $controllerCommandName)
     {
         $this->controllerClassName = $controllerClassName;
         $this->controllerCommandName = $controllerCommandName;
@@ -90,7 +90,7 @@ class Command
     /**
      * @return string
      */
-    public function getControllerClassName()
+    public function getControllerClassName(): string
     {
         return $this->controllerClassName;
     }
@@ -98,7 +98,7 @@ class Command
     /**
      * @return string
      */
-    public function getControllerCommandName()
+    public function getControllerCommandName(): string
     {
         return $this->controllerCommandName;
     }
@@ -108,7 +108,7 @@ class Command
      *
      * @return string The command identifier for this command, following the pattern packagekey:controllername:commandname
      */
-    public function getCommandIdentifier()
+    public function getCommandIdentifier(): string
     {
         return $this->commandIdentifier;
     }
@@ -118,7 +118,7 @@ class Command
      *
      * @return string A short description
      */
-    public function getShortDescription()
+    public function getShortDescription(): string
     {
         $commandMethodReflection = $this->getCommandMethodReflection();
         $lines = explode(chr(10), $commandMethodReflection->getDescription());
@@ -137,7 +137,7 @@ class Command
      *
      * @return string A longer description of this command
      */
-    public function getDescription()
+    public function getDescription(): string
     {
         $commandMethodReflection = $this->getCommandMethodReflection();
         $lines = explode(chr(10), $commandMethodReflection->getDescription());
@@ -157,11 +157,11 @@ class Command
     }
 
     /**
-     * Returns TRUE if this command expects required and/or optional arguments, otherwise FALSE
+     * Returns true if this command expects required and/or optional arguments, otherwise false
      *
      * @return boolean
      */
-    public function hasArguments()
+    public function hasArguments(): bool
     {
         return count($this->getCommandMethodReflection()->getParameters()) > 0;
     }
@@ -173,7 +173,7 @@ class Command
      *
      * @return array<CommandArgumentDefinition>
      */
-    public function getArgumentDefinitions()
+    public function getArgumentDefinitions(): array
     {
         if (!$this->hasArguments()) {
             return [];
@@ -202,7 +202,7 @@ class Command
      *
      * @return boolean
      */
-    public function isInternal()
+    public function isInternal(): bool
     {
         return $this->getCommandMethodReflection()->isTaggedWith('internal');
     }
@@ -214,7 +214,7 @@ class Command
      *
      * @return boolean
      */
-    public function isDeprecated()
+    public function isDeprecated(): bool
     {
         return $this->getCommandMethodReflection()->isTaggedWith('deprecated');
     }
@@ -226,7 +226,7 @@ class Command
      *
      * @return boolean
      */
-    public function isFlushingCaches()
+    public function isFlushingCaches(): bool
     {
         return $this->getCommandMethodReflection()->isTaggedWith('flushescaches');
     }
@@ -237,7 +237,7 @@ class Command
      *
      * @return array
      */
-    public function getRelatedCommandIdentifiers()
+    public function getRelatedCommandIdentifiers(): array
     {
         $commandMethodReflection = $this->getCommandMethodReflection();
         if (!$commandMethodReflection->isTaggedWith('see')) {
@@ -246,7 +246,7 @@ class Command
 
         $relatedCommandIdentifiers = [];
         foreach ($commandMethodReflection->getTagValues('see') as $tagValue) {
-            if (preg_match('/^[\w\d\.]+:[\w\d]+:[\w\d]+$/', $tagValue) === 1) {
+            if (preg_match('/^[\w\.]+:[\w]+:[\w]+$/', $tagValue) === 1) {
                 $relatedCommandIdentifiers[] = $tagValue;
             }
         }
@@ -256,7 +256,7 @@ class Command
     /**
      * @return MethodReflection
      */
-    protected function getCommandMethodReflection()
+    protected function getCommandMethodReflection(): MethodReflection
     {
         if ($this->commandMethodReflection === null) {
             $this->commandMethodReflection = new MethodReflection($this->controllerClassName, $this->controllerCommandName . 'Command');

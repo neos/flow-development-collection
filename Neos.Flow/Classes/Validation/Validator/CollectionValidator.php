@@ -12,7 +12,6 @@ namespace Neos\Flow\Validation\Validator;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Error\Messages\Result as ErrorResult;
 use Neos\Utility\TypeHandling;
 
 /**
@@ -27,7 +26,7 @@ class CollectionValidator extends GenericObjectValidator
      */
     protected $supportedOptions = [
         'elementValidator' => [null, 'The validator type to use for the collection elements', 'string'],
-        'elementValidatorOptions' => array([], 'The validator options to use for the collection elements', 'array'),
+        'elementValidatorOptions' => [[], 'The validator options to use for the collection elements', 'array'],
         'elementType' => [null, 'The type of the elements in the collection', 'string'],
         'validationGroups' => [null, 'The validation groups to link to', 'string'],
     ];
@@ -76,7 +75,7 @@ class CollectionValidator extends GenericObjectValidator
                 $collectionElementValidator->setValidatedInstancesContainer($this->validatedInstancesContainer);
             }
 
-            $this->result->forProperty($index)->merge($collectionElementValidator->validate($collectionElement));
+            $this->getResult()->forProperty($index)->merge($collectionElementValidator->validate($collectionElement));
         }
     }
 }

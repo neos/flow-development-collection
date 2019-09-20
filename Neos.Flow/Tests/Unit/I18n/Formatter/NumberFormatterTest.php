@@ -11,6 +11,8 @@ namespace Neos\Flow\Tests\Unit\I18n\Formatter;
  * source code.
  */
 
+use Neos\Flow\I18n\Cldr\Reader\CurrencyReader;
+use Neos\Flow\I18n\Cldr\Reader\NumbersReader;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Flow\I18n;
 
@@ -37,6 +39,16 @@ class NumberFormatterTest extends UnitTestCase
         'perMille' => '‰',
         'infinity' => '∞',
         'nan' => 'NaN',
+    ];
+
+    /**
+     * Currency fractions array used during formatting.
+     *
+     * @var array
+     */
+    protected $sampleCurrencyFractions = [
+        'JPY' => ['digits' => 0, 'rounding' => 0],
+        'DEFAULT' => ['digits' => 2, 'rounding' => 0],
     ];
 
     /**
@@ -67,7 +79,7 @@ class NumberFormatterTest extends UnitTestCase
     /**
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->sampleLocale = new I18n\Locale('en');
     }
@@ -80,14 +92,14 @@ class NumberFormatterTest extends UnitTestCase
         $sampleNumber = 123.456;
 
         $formatter = $this->getAccessibleMock(I18n\Formatter\NumberFormatter::class, ['formatDecimalNumber', 'formatPercentNumber']);
-        $formatter->expects($this->at(0))->method('formatDecimalNumber')->with($sampleNumber, $this->sampleLocale, I18n\Cldr\Reader\NumbersReader::FORMAT_LENGTH_DEFAULT)->will($this->returnValue('bar1'));
-        $formatter->expects($this->at(1))->method('formatPercentNumber')->with($sampleNumber, $this->sampleLocale, I18n\Cldr\Reader\NumbersReader::FORMAT_LENGTH_DEFAULT)->will($this->returnValue('bar2'));
+        $formatter->expects(self::at(0))->method('formatDecimalNumber')->with($sampleNumber, $this->sampleLocale, NumbersReader::FORMAT_LENGTH_DEFAULT)->will(self::returnValue('bar1'));
+        $formatter->expects(self::at(1))->method('formatPercentNumber')->with($sampleNumber, $this->sampleLocale, NumbersReader::FORMAT_LENGTH_DEFAULT)->will(self::returnValue('bar2'));
 
         $result = $formatter->format($sampleNumber, $this->sampleLocale);
-        $this->assertEquals('bar1', $result);
+        self::assertEquals('bar1', $result);
 
         $result = $formatter->format($sampleNumber, $this->sampleLocale, ['percent']);
-        $this->assertEquals('bar2', $result);
+        self::assertEquals('bar2', $result);
     }
 
     /**
@@ -116,7 +128,7 @@ class NumberFormatterTest extends UnitTestCase
     {
         $formatter = $this->getAccessibleMock(I18n\Formatter\NumberFormatter::class, ['dummy']);
         $result = $formatter->_call('doFormattingWithParsedFormat', $number, $parsedFormat, $this->sampleLocalizedSymbols);
-        $this->assertEquals($expectedResult, $result);
+        self::assertEquals($expectedResult, $result);
     }
 
     /**
@@ -151,15 +163,15 @@ class NumberFormatterTest extends UnitTestCase
      */
     public function formattingUsingCustomPatternWorks($number, $format, array $parsedFormat, $expectedResult)
     {
-        $mockNumbersReader = $this->createMock(I18n\Cldr\Reader\NumbersReader::class);
-        $mockNumbersReader->expects($this->once())->method('parseCustomFormat')->with($format)->will($this->returnValue($parsedFormat));
-        $mockNumbersReader->expects($this->once())->method('getLocalizedSymbolsForLocale')->with($this->sampleLocale)->will($this->returnValue($this->sampleLocalizedSymbols));
+        $mockNumbersReader = $this->createMock(NumbersReader::class);
+        $mockNumbersReader->expects(self::once())->method('parseCustomFormat')->with($format)->will(self::returnValue($parsedFormat));
+        $mockNumbersReader->expects(self::once())->method('getLocalizedSymbolsForLocale')->with($this->sampleLocale)->will(self::returnValue($this->sampleLocalizedSymbols));
 
         $formatter = new I18n\Formatter\NumberFormatter();
         $formatter->injectNumbersReader($mockNumbersReader);
 
         $result = $formatter->formatNumberWithCustomPattern($number, $format, $this->sampleLocale);
-        $this->assertEquals($expectedResult, $result);
+        self::assertEquals($expectedResult, $result);
     }
 
     /**
@@ -174,31 +186,41 @@ class NumberFormatterTest extends UnitTestCase
             [
                 9999.9,
                 array_merge($this->templateFormat, ['maxDecimalDigits' => 3, 'primaryGroupingSize' => 3, 'secondaryGroupingSize' => 3]),
-                '9 999,9', I18n\Cldr\Reader\NumbersReader::FORMAT_TYPE_DECIMAL
+                '9 999,9', NumbersReader::FORMAT_TYPE_DECIMAL
             ],
             [
                 0.85,
                 array_merge($this->templateFormat, ['multiplier' => 100, 'positiveSuffix' => '%', 'negativeSuffix' => '%']),
-                '85%', I18n\Cldr\Reader\NumbersReader::FORMAT_TYPE_PERCENT],
+                '85%', NumbersReader::FORMAT_TYPE_PERCENT],
             [
                 5.5,
-                array_merge($this->templateFormat, ['minDecimalDigits' => 2, 'maxDecimalDigits' => 2, 'primaryGroupingSize' => 3, 'secondaryGroupingSize' => 3, 'positiveSuffix' => ' ¤', 'negativeSuffix' => ' ¤']),
-                '5,50 zł', I18n\Cldr\Reader\NumbersReader::FORMAT_TYPE_CURRENCY, 'zł'
+                array_merge($this->templateFormat, ['minDecimalDigits' => 2, 'maxDecimalDigits' => 2, 'primaryGroupingSize' => 3, 'secondaryGroupingSize' => 3, 'positiveSuffix' => ' ¤', 'negativeSuffix' => ' ¤']),
+                '5,50 zł', NumbersReader::FORMAT_TYPE_CURRENCY, 'zł'
+            ],
+            [
+                100.00,
+                array_merge($this->templateFormat, ['minDecimalDigits' => 2, 'maxDecimalDigits' => 2, 'primaryGroupingSize' => 3, 'secondaryGroupingSize' => 3, 'positiveSuffix' => ' ¤', 'negativeSuffix' => ' ¤']),
+                '100 Yen', NumbersReader::FORMAT_TYPE_CURRENCY, 'Yen', 'JPY'
+            ],
+            [
+                100.567,
+                array_merge($this->templateFormat, ['minDecimalDigits' => 3, 'maxDecimalDigits' => 3, 'primaryGroupingSize' => 3, 'secondaryGroupingSize' => 3, 'positiveSuffix' => ' ¤', 'negativeSuffix' => ' ¤']),
+                '100,57 €', NumbersReader::FORMAT_TYPE_CURRENCY, '€'
             ],
             [
                 acos(8),
                 array_merge($this->templateFormat, ['minDecimalDigits' => 2, 'maxDecimalDigits' => 2, 'primaryGroupingSize' => 3, 'secondaryGroupingSize' => 3]),
-                'NaN', I18n\Cldr\Reader\NumbersReader::FORMAT_TYPE_DECIMAL
+                'NaN', NumbersReader::FORMAT_TYPE_DECIMAL
             ],
             [
                 log(0),
                 array_merge($this->templateFormat, ['minDecimalDigits' => 2, 'maxDecimalDigits' => 2, 'primaryGroupingSize' => 3, 'secondaryGroupingSize' => 3]),
-                '-∞', I18n\Cldr\Reader\NumbersReader::FORMAT_TYPE_PERCENT
+                '-∞', NumbersReader::FORMAT_TYPE_PERCENT
             ],
             [
                 -log(0),
                 array_merge($this->templateFormat, ['minDecimalDigits' => 2, 'maxDecimalDigits' => 2, 'primaryGroupingSize' => 3, 'secondaryGroupingSize' => 3]),
-                '∞', I18n\Cldr\Reader\NumbersReader::FORMAT_TYPE_CURRENCY
+                '∞', NumbersReader::FORMAT_TYPE_CURRENCY
             ],
         ];
     }
@@ -207,21 +229,25 @@ class NumberFormatterTest extends UnitTestCase
      * @test
      * @dataProvider sampleDataForSpecificFormattingMethods
      */
-    public function specificFormattingMethodsWork($number, array $parsedFormat, $expectedResult, $formatType, $currencySign = null)
+    public function specificFormattingMethodsWork($number, array $parsedFormat, $expectedResult, $formatType, $currencySign = null, $currencyCode = 'DEFAULT')
     {
-        $mockNumbersReader = $this->createMock(I18n\Cldr\Reader\NumbersReader::class);
-        $mockNumbersReader->expects($this->once())->method('parseFormatFromCldr')->with($this->sampleLocale, $formatType, 'default')->will($this->returnValue($parsedFormat));
-        $mockNumbersReader->expects($this->once())->method('getLocalizedSymbolsForLocale')->with($this->sampleLocale)->will($this->returnValue($this->sampleLocalizedSymbols));
+        $mockNumbersReader = $this->createMock(NumbersReader::class);
+        $mockNumbersReader->expects(self::once())->method('parseFormatFromCldr')->with($this->sampleLocale, $formatType, 'default')->will(self::returnValue($parsedFormat));
+        $mockNumbersReader->expects(self::once())->method('getLocalizedSymbolsForLocale')->with($this->sampleLocale)->will(self::returnValue($this->sampleLocalizedSymbols));
+
+        $mockCurrencyReader = $this->createMock(CurrencyReader::class);
+        $mockCurrencyReader->expects(self::any())->method('getFraction')->with($currencyCode)->will(self::returnValue($this->sampleCurrencyFractions[$currencyCode]));
 
         $formatter = new I18n\Formatter\NumberFormatter();
         $formatter->injectNumbersReader($mockNumbersReader);
+        $formatter->injectCurrencyReader($mockCurrencyReader);
 
         if ($formatType === 'currency') {
-            $result = $formatter->formatCurrencyNumber($number, $this->sampleLocale, $currencySign);
+            $result = $formatter->formatCurrencyNumber($number, $this->sampleLocale, $currencySign, NumbersReader::FORMAT_LENGTH_DEFAULT, $currencyCode);
         } else {
             $methodName = 'format' . ucfirst($formatType) . 'Number';
             $result = $formatter->$methodName($number, $this->sampleLocale);
         }
-        $this->assertEquals($expectedResult, $result);
+        self::assertEquals($expectedResult, $result);
     }
 }

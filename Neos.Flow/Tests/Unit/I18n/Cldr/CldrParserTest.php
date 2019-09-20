@@ -31,6 +31,6 @@ class CldrParserTest extends UnitTestCase
         $parser = new I18n\Cldr\CldrParser();
 
         $result = $parser->getParsedData($sampleFilenamePath);
-        $this->assertEquals($sampleParsedData, $result);
+        self::assertEquals($sampleParsedData, $result);
     }
 }

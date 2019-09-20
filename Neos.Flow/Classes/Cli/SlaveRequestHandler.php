@@ -15,8 +15,9 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Core\RequestHandlerInterface;
 use Neos\Flow\Exception as FlowException;
-use Neos\Flow\Log\SystemLoggerInterface;
-use Neos\Flow\Mvc\Dispatcher;
+use Neos\Flow\Log\PsrLoggerFactoryInterface;
+use Neos\Flow\Log\Utility\LogEnvironment;
+use Psr\Log\LoggerInterface;
 
 /**
  * A special request handler which handles "slave" command requests as used by
@@ -45,9 +46,9 @@ class SlaveRequestHandler implements RequestHandlerInterface
     /**
      * This request handler can handle CLI requests.
      *
-     * @return boolean If the request is a CLI request, TRUE otherwise FALSE
+     * @return boolean If the request is a CLI request, true otherwise false
      */
-    public function canHandleRequest()
+    public function canHandleRequest(): bool
     {
         return (PHP_SAPI === 'cli' && isset($_SERVER['argv'][1]) && $_SERVER['argv'][1] === '--start-slave');
     }
@@ -58,7 +59,7 @@ class SlaveRequestHandler implements RequestHandlerInterface
      *
      * @return integer The priority of the request handler.
      */
-    public function getPriority()
+    public function getPriority(): int
     {
         return 200;
     }
@@ -68,6 +69,7 @@ class SlaveRequestHandler implements RequestHandlerInterface
      * them in runtime mode.
      *
      * @return void
+     * @throws FlowException
      */
     public function handleRequest()
     {
@@ -75,16 +77,17 @@ class SlaveRequestHandler implements RequestHandlerInterface
         $sequence->invoke($this->bootstrap);
 
         $objectManager = $this->bootstrap->getObjectManager();
-        $systemLogger = $objectManager->get(SystemLoggerInterface::class);
+        /** @var LoggerInterface $logger */
+        $logger = $objectManager->get(PsrLoggerFactoryInterface::class)->get('systemLogger');
 
-        $systemLogger->log('Running sub process loop.', LOG_DEBUG);
+        $logger->debug('Running sub process loop.');
         echo "\nREADY\n";
 
         try {
             while (true) {
                 $commandLine = trim(fgets(STDIN));
                 $trimmedCommandLine = trim($commandLine);
-                $systemLogger->log(sprintf('Received command "%s".', $trimmedCommandLine), LOG_INFO);
+                $logger->info(sprintf('Received command "%s".', $trimmedCommandLine), LogEnvironment::fromMethodName(__METHOD__));
                 if ($commandLine === "QUIT\n") {
                     break;
                 }
@@ -102,7 +105,7 @@ class SlaveRequestHandler implements RequestHandlerInterface
                 echo "\nREADY\n";
             }
 
-            $systemLogger->log('Exiting sub process loop.', LOG_DEBUG);
+            $logger->debug('Exiting sub process loop.');
             $this->bootstrap->shutdown(Bootstrap::RUNLEVEL_RUNTIME);
             exit($response->getExitCode());
         } catch (\Exception $exception) {

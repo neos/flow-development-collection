@@ -62,7 +62,7 @@ class GenericObjectValidator extends AbstractValidator implements ObjectValidato
             $propertyValue = $this->getPropertyValue($object, $propertyName);
             $result = $this->checkProperty($propertyValue, $validators);
             if ($result !== null) {
-                $this->result->forProperty($propertyName)->merge($result);
+                $this->getResult()->forProperty($propertyName)->merge($result);
             }
         }
     }

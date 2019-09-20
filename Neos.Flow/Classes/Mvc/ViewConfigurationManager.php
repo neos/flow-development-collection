@@ -16,7 +16,6 @@ use Neos\Eel\Context;
 use Neos\Flow\Annotations as Flow;
 use Neos\Cache\Frontend\VariableFrontend;
 use Neos\Flow\Configuration\ConfigurationManager;
-use Neos\Utility\Arrays;
 
 /**
  * A View Configuration Manager
@@ -95,10 +94,10 @@ class ViewConfigurationManager
      * Create a complete cache identifier for the given
      * request that conforms to cache identifier syntax
      *
-     * @param RequestInterface $request
+     * @param ActionRequest $request
      * @return string
      */
-    protected function createCacheIdentifier($request)
+    protected function createCacheIdentifier(ActionRequest $request)
     {
         $cacheIdentifiersParts = [];
         do {

@@ -311,6 +311,12 @@ later sources replace earlier ones
 * body (typically from POST or PUT requests)
 * file uploads (derived from $_FILES)
 
+.. hint::
+
+	Sometimes you might need to map a whole request body into a single action argument.
+	In that case you can use an annotation ``@Flow\MapRequestBody("$argumentName")`` on
+	your action. Please refer to the :doc:`PropertyMapping` chapter for more details.
+
 Internal Arguments
 ~~~~~~~~~~~~~~~~~~
 
@@ -768,7 +774,7 @@ in a special object, the *mapping results*. These mapping results can be
 conveniently access through a Fluid view helper in order to display warnings and
 errors along the submitted form or on top of it::
 
-	<f:form.validationResults>
+	<f:validation.results>
 		<f:if condition="{validationResults.flattenedErrors}">
 			<ul class="errors">
 				<f:for each="{validationResults.flattenedErrors}" as="errors" key="propertyPath">
@@ -782,7 +788,7 @@ errors along the submitted form or on top of it::
 				</f:for>
 			</ul>
 		</f:if>
-	</f:form.validationResults>
+	</f:validation.results>
 
 Besides using the view helper to display the validation results, you can also
 completely replace the ``errorAction()`` method with your own custom method.
@@ -892,6 +898,29 @@ Creating a Flash Messages is a matter of a single line of code::
 The flash messages can be rendered inside the template using the ``<f:flashMessages />``
 ViewHelper. Please consult the ViewHelper for a full reference.
 
+Since Flash Messages need to possibly survive over requests until they get displayed, they need
+to be persisted somehow.
+Flash Messages can be stored in different ways, the Framework default is to store them in the session.
+The storage can be configured in Settings.yaml via the following options:
+
+	Neos:
+	  Flow:
+	    mvc:
+	      flashMessages:
+	        containers:
+	          'customFlashMessages':
+	            storage: 'Neos\Flow\Mvc\FlashMessage\Storage\FlashMessageCookieStorage'
+	            storageOptions:
+	              cookieName: 'Neos_Flow_FlashMessages_My_Custom'
+	            requestPatterns:
+	              'SomeControllers':
+	                pattern: 'ControllerObjectName'
+	                patternOptions:
+	                  'controllerObjectNamePattern': 'Some\Package\Controller\.*'
+
+With this you can specify to store the Flash Messages in an own cookie, and even separate them by
+request patterns. New storages can be created by implementing the ``FlashMessageStorageInterface`` and
+specifying the storage class in the settings.
 
 .. _IANA Media Type: http://www.iana.org/assignments/media-types/index.html
 

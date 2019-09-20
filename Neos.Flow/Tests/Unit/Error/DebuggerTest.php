@@ -20,20 +20,19 @@ use Neos\Flow\Tests\UnitTestCase;
  */
 class DebuggerTest extends UnitTestCase
 {
-    public function setUp()
+    protected function setUp(): void
     {
         Debugger::clearState();
     }
 
     /**
      * @test
+     * @doesNotPerformAssertions
      */
     public function renderingClosuresWorksWithoutThrowingException()
     {
         Debugger::renderDump(function () {
         }, 0);
-        // dummy assertion to avoid PHPUnit warning
-        $this->assertTrue(true);
     }
 
     /**
@@ -43,7 +42,7 @@ class DebuggerTest extends UnitTestCase
     {
         $object = new \stdClass();
         $object->__IS_PROXY__ = true;
-        $this->assertRegExp('/\sclass=\"debug\-proxy\"/', Debugger::renderDump($object, 0, false));
+        self::assertRegExp('/\sclass=\"debug\-proxy\"/', Debugger::renderDump($object, 0, false));
     }
 
     /**
@@ -52,7 +51,7 @@ class DebuggerTest extends UnitTestCase
     public function ignoredClassesRegexContainsFallback()
     {
         $ignoredClassesRegex = Debugger::getIgnoredClassesRegex();
-        $this->assertContains('Neos\\\\Flow\\\\Core\\\\.*', $ignoredClassesRegex);
+        self::assertStringContainsString('Neos\\\\Flow\\\\Core\\\\.*', $ignoredClassesRegex);
     }
 
     /**
@@ -61,6 +60,6 @@ class DebuggerTest extends UnitTestCase
     public function ignoredClassesAreNotRendered()
     {
         $object = new ApplicationContext('Development');
-        $this->assertEquals('Neos\Flow\Core\ApplicationContext object', Debugger::renderDump($object, 0, true));
+        self::assertEquals('Neos\Flow\Core\ApplicationContext object', Debugger::renderDump($object, 0, true));
     }
 }

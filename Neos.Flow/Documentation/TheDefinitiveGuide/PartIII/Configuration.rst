@@ -56,6 +56,7 @@ defined in their own dedicated file:
 ``Settings.yaml``
   Contains user-level settings, i.e. configuration options the users or administrators
   are meant to change. Settings are the highest level of system configuration.
+  Settings have `Split configuration sources`_ enabled.
 
 ``Routes.yaml``
   Contains routes configuration. This routing information is parsed and used by the MVC
@@ -128,7 +129,7 @@ Constants and Environment
 Sometimes it is necessary to use values in your configuration files which are defined as
 PHP constants or are environment variables. These values can be included by special markers
 which are replaced by the actual value during parse time. The format is ``%<CONSTANT_NAME>%``
-where ``<CONSTANT_NAME>`` is the name of a constant or ``%env:<ENVIRONMENT_VARIABLE>``.
+where ``<CONSTANT_NAME>`` is the name of a constant or ``%env:<ENVIRONMENT_VARIABLE>%``.
 Note that the constant or environment variable name must be all uppercase.
 
 Some examples:

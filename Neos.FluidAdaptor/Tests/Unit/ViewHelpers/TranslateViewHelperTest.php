@@ -13,8 +13,10 @@ namespace Neos\FluidAdaptor\Tests\Unit\ViewHelpers;
 
 use Neos\Flow\I18n\Locale;
 use Neos\Flow\I18n\Translator;
+use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\Controller\ControllerContext;
+use Neos\FluidAdaptor\Core\ViewHelper\Exception;
 use Neos\FluidAdaptor\ViewHelpers\TranslateViewHelper;
-use Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase;
 
 require_once(__DIR__ . '/ViewHelperBaseTestcase.php');
 
@@ -34,17 +36,17 @@ class TranslateViewHelperTest extends ViewHelperBaseTestcase
     protected $dummyLocale;
 
     /**
-     * @var Translator|\PHPUnit_Framework_MockObject_MockObject
+     * @var Translator|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $mockTranslator;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
-        $this->translateViewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\TranslateViewHelper::class, array('renderChildren'));
+        $this->translateViewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\TranslateViewHelper::class, ['renderChildren']);
 
-        $this->request->expects($this->any())->method('getControllerPackageKey')->will($this->returnValue('Neos.FluidAdaptor'));
+        $this->request->expects(self::any())->method('getControllerPackageKey')->will(self::returnValue('Neos.FluidAdaptor'));
 
         $this->dummyLocale = new Locale('de_DE');
 
@@ -59,12 +61,12 @@ class TranslateViewHelperTest extends ViewHelperBaseTestcase
      */
     public function viewHelperTranslatesByOriginalLabel()
     {
-        $this->mockTranslator->expects($this->once())->method('translateByOriginalLabel', 'Untranslated Label', 'Main', 'Neos.Flow', array(), null, $this->dummyLocale)->will($this->returnValue('Translated Label'));
+        $this->mockTranslator->expects(self::once())->method('translateByOriginalLabel', 'Untranslated Label', 'Main', 'Neos.Flow', [], null, $this->dummyLocale)->will(self::returnValue('Translated Label'));
 
-        $this->translateViewHelper->expects($this->once())->method('renderChildren')->will($this->returnValue('Untranslated Label'));
-
-        $result = $this->translateViewHelper->render(null, null, array(), 'Main', null, null, 'de_DE');
-        $this->assertEquals('Translated Label', $result);
+        $this->translateViewHelper->expects(self::once())->method('renderChildren')->will(self::returnValue('Untranslated Label'));
+        $this->translateViewHelper = $this->prepareArguments($this->translateViewHelper, ['id' => null, 'value' => null, 'arguments' => [], 'source' => 'Main', 'package' => null, 'quantity' => null, 'locale' => 'de_DE']);
+        $result = $this->translateViewHelper->render();
+        self::assertEquals('Translated Label', $result);
     }
 
     /**
@@ -72,10 +74,11 @@ class TranslateViewHelperTest extends ViewHelperBaseTestcase
      */
     public function viewHelperTranslatesById()
     {
-        $this->mockTranslator->expects($this->once())->method('translateById', 'some.label', 'Main', 'Neos.Flow', array(), null, $this->dummyLocale)->will($this->returnValue('Translated Label'));
+        $this->mockTranslator->expects(self::once())->method('translateById', 'some.label', 'Main', 'Neos.Flow', [], null, $this->dummyLocale)->will(self::returnValue('Translated Label'));
 
-        $result = $this->translateViewHelper->render('some.label', null, array(), 'Main', null, null, 'de_DE');
-        $this->assertEquals('Translated Label', $result);
+        $this->translateViewHelper = $this->prepareArguments($this->translateViewHelper, ['id' => 'some.label', 'value' => null, 'arguments' => [], 'source' => 'Main', 'package' => null, 'quantity' => null, 'locale' => 'de_DE']);
+        $result = $this->translateViewHelper->render();
+        self::assertEquals('Translated Label', $result);
     }
 
     /**
@@ -83,10 +86,11 @@ class TranslateViewHelperTest extends ViewHelperBaseTestcase
      */
     public function viewHelperUsesValueIfIdIsNotFound()
     {
-        $this->translateViewHelper->expects($this->never())->method('renderChildren');
+        $this->translateViewHelper->expects(self::never())->method('renderChildren');
 
-        $result = $this->translateViewHelper->render('some.label', 'Default from value', array(), 'Main', null, null, 'de_DE');
-        $this->assertEquals('Default from value', $result);
+        $this->translateViewHelper = $this->prepareArguments($this->translateViewHelper, ['id' => 'some.label', 'value' => 'Default from value', 'arguments' => [], 'source' => 'Main', 'package' => null, 'quantity' => null, 'locale' => 'de_DE']);
+        $result = $this->translateViewHelper->render();
+        self::assertEquals('Default from value', $result);
     }
 
     /**
@@ -94,10 +98,11 @@ class TranslateViewHelperTest extends ViewHelperBaseTestcase
      */
     public function viewHelperUsesRenderChildrenIfIdIsNotFound()
     {
-        $this->translateViewHelper->expects($this->once())->method('renderChildren')->will($this->returnValue('Default from renderChildren'));
+        $this->translateViewHelper->expects(self::once())->method('renderChildren')->will(self::returnValue('Default from renderChildren'));
 
-        $result = $this->translateViewHelper->render('some.label', null, array(), 'Main', null, null, 'de_DE');
-        $this->assertEquals('Default from renderChildren', $result);
+        $this->translateViewHelper = $this->prepareArguments($this->translateViewHelper, ['id' => 'some.label', 'value' => null, 'arguments' => [], 'source' => 'Main', 'package' => null, 'quantity' => null, 'locale' => 'de_DE']);
+        $result = $this->translateViewHelper->render();
+        self::assertEquals('Default from renderChildren', $result);
     }
 
     /**
@@ -105,40 +110,43 @@ class TranslateViewHelperTest extends ViewHelperBaseTestcase
      */
     public function viewHelperReturnsIdWhenRenderChildrenReturnsEmptyResultIfIdIsNotFound()
     {
-        $this->mockTranslator->expects($this->once())->method('translateById', 'some.label', 'Main', 'Neos.Flow', array(), null, $this->dummyLocale)->will($this->returnValue('some.label'));
+        $this->mockTranslator->expects(self::once())->method('translateById', 'some.label', 'Main', 'Neos.Flow', [], null, $this->dummyLocale)->will(self::returnValue('some.label'));
 
-        $this->translateViewHelper->expects($this->once())->method('renderChildren')->will($this->returnValue(null));
+        $this->translateViewHelper->expects(self::once())->method('renderChildren')->will(self::returnValue(null));
 
-        $result = $this->translateViewHelper->render('some.label', null, array(), 'Main', null, null, 'de_DE');
-        $this->assertEquals('some.label', $result);
+        $this->translateViewHelper = $this->prepareArguments($this->translateViewHelper, ['id' => 'some.label', 'value' => null, 'arguments' => [], 'source' => 'Main', 'package' => null, 'quantity' => null, 'locale' => 'de_DE']);
+        $result = $this->translateViewHelper->render();
+        self::assertEquals('some.label', $result);
     }
 
     /**
      * @test
-     * @expectedException \Neos\FluidAdaptor\Core\ViewHelper\Exception
      */
     public function renderThrowsExceptionIfGivenLocaleIdentifierIsInvalid()
     {
-        $this->translateViewHelper->render('some.label', null, array(), 'Main', null, null, 'INVALIDLOCALE');
+        $this->expectException(Exception::class);
+        $this->translateViewHelper = $this->prepareArguments($this->translateViewHelper, ['id' => 'some.label', 'value' => null, 'arguments' => [], 'source' => 'Main', 'package' => null, 'quantity' => null, 'locale' => 'INVALIDLOCALE']);
+        $this->translateViewHelper->render();
     }
 
     /**
      * @test
-     * @expectedException \Neos\FluidAdaptor\Core\ViewHelper\Exception
      */
     public function renderThrowsExceptionIfNoPackageCouldBeResolved()
     {
-        $mockRequest = $this->getMockBuilder(\Neos\Flow\Mvc\ActionRequest::class)->disableOriginalConstructor()->getMock();
-        $mockRequest->expects($this->any())->method('getControllerPackageKey')->will($this->returnValue(null));
+        $this->expectException(Exception::class);
+        $mockRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
+        $mockRequest->method('getControllerPackageKey')->willReturn('');
 
-        $mockControllerContext = $this->getMockBuilder(\Neos\Flow\Mvc\Controller\ControllerContext::class)->disableOriginalConstructor()->getMock();
-        $mockControllerContext->expects($this->any())->method('getRequest')->will($this->returnValue($mockRequest));
+        $mockControllerContext = $this->getMockBuilder(ControllerContext::class)->disableOriginalConstructor()->getMock();
+        $mockControllerContext->method('getRequest')->willReturn($mockRequest);
 
         $this->renderingContext->setControllerContext($mockControllerContext);
 
         $this->injectDependenciesIntoViewHelper($this->translateViewHelper);
 
-        $this->translateViewHelper->render('some.label');
+        $this->translateViewHelper = $this->prepareArguments($this->translateViewHelper, ['id' => 'some.label']);
+        $this->translateViewHelper->render();
     }
 
     /**
@@ -184,9 +192,11 @@ class TranslateViewHelperTest extends ViewHelperBaseTestcase
      */
     public function translationFallbackTests($id, $value, $translatedId, $translatedValue, $expectedResult)
     {
-        $this->mockTranslator->expects($this->any())->method('translateById', $id)->will($this->returnValue($translatedId));
-        $this->mockTranslator->expects($this->any())->method('translateByOriginalLabel', $value)->will($this->returnValue($translatedValue));
-        $actualResult = $this->translateViewHelper->render($id, $value);
-        $this->assertSame($expectedResult, $actualResult);
+        $this->mockTranslator->expects(self::any())->method('translateById', $id)->will(self::returnValue($translatedId));
+        $this->mockTranslator->expects(self::any())->method('translateByOriginalLabel', $value)->will(self::returnValue($translatedValue));
+
+        $this->translateViewHelper = $this->prepareArguments($this->translateViewHelper, ['id' => $id, 'value' => $value]);
+        $actualResult = $this->translateViewHelper->render();
+        self::assertSame($expectedResult, $actualResult);
     }
 }

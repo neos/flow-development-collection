@@ -1,25 +1,25 @@
 |Travis Build Status| |Code Climate| |StyleCI| |Latest Stable Version| |License| |Docs| |API| |Slack| |Forum| |Issues| |Translate| |Twitter|
 
-.. |Travis Build Status| image:: https://travis-ci.org/neos/flow-development-collection.svg?branch=4.0
+.. |Travis Build Status| image:: https://travis-ci.org/neos/flow-development-collection.svg?branch=6.0
    :target: https://travis-ci.org/neos/flow-development-collection
    :alt: Travis
 .. |Code Climate| image:: https://codeclimate.com/github/neos/flow-development-collection/badges/gpa.svg
    :target: https://codeclimate.com/github/neos/flow-development-collection
    :alt: Code Climate
-.. |StyleCI| image:: https://styleci.io/repos/40963991/shield?style=flat
+.. |StyleCI| image:: https://styleci.io/repos/40963991/shield?style=flat&branch=6.0
    :target: https://styleci.io/repos/40963991
    :alt: StyleCI
 .. |Latest Stable Version| image:: https://poser.pugx.org/neos/flow-development-collection/v/stable
    :target: https://packagist.org/packages/neos/flow-development-collection
    :alt: Latest Stable Version
 .. |License| image:: https://poser.pugx.org/neos/flow-development-collection/license
-   :target: https://raw.githubusercontent.com/neos/flow/4.0/LICENSE
+   :target: https://raw.githubusercontent.com/neos/flow/6.0/LICENSE
    :alt: License
 .. |Docs| image:: https://img.shields.io/badge/documentation-latest-blue.svg
    :target: https://flowframework.readthedocs.org/en/latest/
    :alt: Documentation
-.. |API| image:: https://img.shields.io/badge/API%20docs-4.0-blue.svg
-   :target: http://neos.github.io/flow/4.0/
+.. |API| image:: https://img.shields.io/badge/API%20docs-6.0-blue.svg
+   :target: http://neos.github.io/flow/6.0/
    :alt: API Docs
 .. |Slack| image:: http://slack.neos.io/badge.svg
    :target: http://slack.neos.io

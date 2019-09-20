@@ -25,10 +25,10 @@ class HiddenViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\For
      */
     protected $viewHelper;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
-        $this->viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\Form\HiddenViewHelper::class, array('setErrorClassAttribute', 'getName', 'getValueAttribute', 'registerFieldNameForFormTokenGeneration'));
+        $this->viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\Form\HiddenViewHelper::class, ['setErrorClassAttribute', 'getName', 'getValueAttribute', 'registerFieldNameForFormTokenGeneration']);
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
         $this->viewHelper->initializeArguments();
     }
@@ -38,15 +38,15 @@ class HiddenViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\For
      */
     public function renderCorrectlySetsTagNameAndDefaultAttributes()
     {
-        $mockTagBuilder = $this->getMockBuilder(TagBuilder::class)->setMethods(array('setTagName', 'addAttribute'))->getMock();
-        $mockTagBuilder->expects($this->any())->method('setTagName')->with('input');
-        $mockTagBuilder->expects($this->at(2))->method('addAttribute')->with('type', 'hidden');
-        $mockTagBuilder->expects($this->at(3))->method('addAttribute')->with('name', 'foo');
-        $this->viewHelper->expects($this->once())->method('registerFieldNameForFormTokenGeneration')->with('foo');
-        $mockTagBuilder->expects($this->at(4))->method('addAttribute')->with('value', 'bar');
+        $mockTagBuilder = $this->getMockBuilder(TagBuilder::class)->setMethods(['setTagName', 'addAttribute'])->getMock();
+        $mockTagBuilder->expects(self::any())->method('setTagName')->with('input');
+        $mockTagBuilder->expects(self::at(2))->method('addAttribute')->with('type', 'hidden');
+        $mockTagBuilder->expects(self::at(3))->method('addAttribute')->with('name', 'foo');
+        $this->viewHelper->expects(self::once())->method('registerFieldNameForFormTokenGeneration')->with('foo');
+        $mockTagBuilder->expects(self::at(4))->method('addAttribute')->with('value', 'bar');
 
-        $this->viewHelper->expects($this->once())->method('getName')->will($this->returnValue('foo'));
-        $this->viewHelper->expects($this->once())->method('getValueAttribute')->will($this->returnValue('bar'));
+        $this->viewHelper->expects(self::once())->method('getName')->will(self::returnValue('foo'));
+        $this->viewHelper->expects(self::once())->method('getValueAttribute')->will(self::returnValue('bar'));
         $this->viewHelper->injectTagBuilder($mockTagBuilder);
 
         $this->viewHelper->initialize();

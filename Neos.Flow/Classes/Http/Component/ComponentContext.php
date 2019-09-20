@@ -12,8 +12,8 @@ namespace Neos\Flow\Http\Component;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Http\Request;
-use Neos\Flow\Http\Response;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * The component context
@@ -31,14 +31,14 @@ class ComponentContext
     /**
      * The current HTTP request
      *
-     * @var Request
+     * @var ServerRequestInterface
      */
     protected $httpRequest;
 
     /**
      * The current HTTP response
      *
-     * @var Response
+     * @var ResponseInterface
      */
     protected $httpResponse;
 
@@ -51,17 +51,17 @@ class ComponentContext
     protected $parameters = [];
 
     /**
-     * @param Request $httpRequest
-     * @param Response $httpResponse
+     * @param ServerRequestInterface $httpRequest
+     * @param ResponseInterface $httpResponse
      */
-    public function __construct(Request $httpRequest, Response $httpResponse)
+    public function __construct(ServerRequestInterface $httpRequest, ResponseInterface $httpResponse)
     {
         $this->httpRequest = $httpRequest;
         $this->httpResponse = $httpResponse;
     }
 
     /**
-     * @return Request
+     * @return ServerRequestInterface
      * @api
      */
     public function getHttpRequest()
@@ -70,17 +70,17 @@ class ComponentContext
     }
 
     /**
-     * @param Request $httpRequest
+     * @param ServerRequestInterface $httpRequest
      * @return void
      * @api
      */
-    public function replaceHttpRequest(Request $httpRequest)
+    public function replaceHttpRequest(ServerRequestInterface $httpRequest)
     {
         $this->httpRequest = $httpRequest;
     }
 
     /**
-     * @return Response
+     * @return ResponseInterface
      * @api
      */
     public function getHttpResponse()
@@ -89,11 +89,11 @@ class ComponentContext
     }
 
     /**
-     * @param Response $httpResponse
+     * @param ResponseInterface $httpResponse
      * @return void
      * @api
      */
-    public function replaceHttpResponse(Response $httpResponse)
+    public function replaceHttpResponse(ResponseInterface $httpResponse)
     {
         $this->httpResponse = $httpResponse;
     }
@@ -107,6 +107,15 @@ class ComponentContext
     public function getParameter($componentClassName, $parameterName)
     {
         return isset($this->parameters[$componentClassName][$parameterName]) ? $this->parameters[$componentClassName][$parameterName] : null;
+    }
+
+    /**
+     * @param string $componentClassName
+     * @return array
+     */
+    public function getAllParametersFor($componentClassName): array
+    {
+        return $this->parameters[$componentClassName] ?? [];
     }
 
     /**

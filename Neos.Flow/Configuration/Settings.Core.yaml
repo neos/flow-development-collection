@@ -1,0 +1,38 @@
+#
+# Core configuration for the Flow Framework
+#
+
+Neos:
+  Flow:
+    core:
+      # Flow's application context
+      # This setting is automatically set by the configuration manager and can't be set manually.
+      context: ''
+
+      # Key of the "main" package of the application. This package's meta data is used for displaying the application
+      # version and possibly other metadata in the X-Flow-Powered HTTP header, ./flow command line help and where else needed.
+      applicationPackageKey: 'Neos.Flow'
+
+      # Human-readable name of the "main" package of the application. This name is displayed in the X-Flow-Powered
+      # HTTP header, in the ./flow command line help and where else needed.
+      applicationName: 'Flow'
+
+      # Path and filename of the PHP binary
+      # The constant PHP_BINDIR usually contains the path, but on Windows this doesn't work reliably
+      phpBinaryPathAndFilename: '%PHP_BINDIR%/php'
+
+      # optional list of variables (key: value) that will be set for all Flow CLI sub requests
+      subRequestEnvironmentVariables: []
+
+      # Set which php.ini file should be used for the CLI sub requests.
+      # If not set (that is value equals NULL) the php.ini file of the executing process (usually the web server's) is used.
+      # If set to a path and filename, the specified php.ini file is loaded.
+      # If set to boolean false, Flow does not try to specify any php.ini file to the sub process.
+      subRequestPhpIniPathAndFilename: NULL
+
+      # optional list of INI entries (entry: value) to set for all Flow CLI sub requests.
+      # This equals to the -d argument of the php CLI
+      # Example:
+      # subRequestIniEntries:
+      #   'date.timezone': 'UTC'
+      subRequestIniEntries: []

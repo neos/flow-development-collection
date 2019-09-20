@@ -12,15 +12,13 @@ namespace Neos\Flow\Security\Authentication;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Log\SecurityLoggerInterface;
 use Neos\Flow\Security\Authentication\Token\SessionlessTokenInterface;
 use Neos\Flow\Security\Context;
 use Neos\Flow\Security\Exception\NoTokensAuthenticatedException;
 use Neos\Flow\Security\Exception\AuthenticationRequiredException;
 use Neos\Flow\Security\Exception;
-use Neos\Flow\Security\RequestPatternInterface;
-use Neos\Flow\Security\RequestPatternResolver;
-use Neos\Flow\Session\SessionInterface;
+use Neos\Flow\Session\Exception\SessionNotStartedException;
+use Neos\Flow\Session\SessionManagerInterface;
 
 /**
  * The default authentication manager, which relies on Authentication Providers
@@ -31,61 +29,53 @@ use Neos\Flow\Session\SessionInterface;
 class AuthenticationProviderManager implements AuthenticationManagerInterface
 {
     /**
-     * @Flow\Inject
-     * @var SecurityLoggerInterface
-     */
-    protected $securityLogger;
-
-    /**
-     * @var SessionInterface
+     * @var SessionManagerInterface
      * @Flow\Inject
      */
-    protected $session;
+    protected $sessionManager;
 
     /**
-     * The provider resolver
-     *
-     * @var AuthenticationProviderResolver
+     * @var TokenAndProviderFactoryInterface
      */
-    protected $providerResolver;
+    protected $tokenAndProviderFactory;
 
     /**
      * The security context of the current request
      *
+     * @Flow\Inject
      * @var Context
      */
     protected $securityContext;
 
     /**
-     * The request pattern resolver
+     * Injected configuration for providers.
+     * Will be null'd again after building the object instances.
      *
-     * @var RequestPatternResolver
+     * @var array|null
      */
-    protected $requestPatternResolver;
+    protected $providerConfigurations;
 
     /**
-     * @var array
+     * @var bool
      */
-    protected $providers = [];
+    protected $isAuthenticated;
 
     /**
-     * @var array
+     * @var bool
      */
-    protected $tokens = [];
+    protected $isInitialized = false;
 
     /**
-     * @var boolean
+     * @var string
      */
-    protected $isAuthenticated = null;
+    protected $authenticationStrategy;
 
     /**
-     * @param AuthenticationProviderResolver $providerResolver The provider resolver
-     * @param RequestPatternResolver $requestPatternResolver The request pattern resolver
+     * @param TokenAndProviderFactoryInterface $tokenAndProviderFactory
      */
-    public function __construct(AuthenticationProviderResolver $providerResolver, RequestPatternResolver $requestPatternResolver)
+    public function __construct(TokenAndProviderFactoryInterface $tokenAndProviderFactory)
     {
-        $this->providerResolver = $providerResolver;
-        $this->requestPatternResolver = $requestPatternResolver;
+        $this->tokenAndProviderFactory = $tokenAndProviderFactory;
     }
 
     /**
@@ -93,25 +83,29 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
      *
      * @param array $settings The settings
      * @return void
+     * @throws Exception
      */
-    public function injectSettings(array $settings)
+    public function injectSettings(array $settings): void
     {
-        if (!isset($settings['security']['authentication']['providers']) || !is_array($settings['security']['authentication']['providers'])) {
-            return;
+        if (isset($settings['security']['authentication']['authenticationStrategy'])) {
+            $authenticationStrategyName = $settings['security']['authentication']['authenticationStrategy'];
+            switch ($authenticationStrategyName) {
+                case 'allTokens':
+                    $this->authenticationStrategy = Context::AUTHENTICATE_ALL_TOKENS;
+                    break;
+                case 'oneToken':
+                    $this->authenticationStrategy = Context::AUTHENTICATE_ONE_TOKEN;
+                    break;
+                case 'atLeastOneToken':
+                    $this->authenticationStrategy = Context::AUTHENTICATE_AT_LEAST_ONE_TOKEN;
+                    break;
+                case 'anyToken':
+                    $this->authenticationStrategy = Context::AUTHENTICATE_ANY_TOKEN;
+                    break;
+                default:
+                    throw new Exception('Invalid setting "' . $authenticationStrategyName . '" for security.authentication.authenticationStrategy', 1291043022);
+            }
         }
-
-        $this->buildProvidersAndTokensFromConfiguration($settings['security']['authentication']['providers']);
-    }
-
-    /**
-     * Sets the security context
-     *
-     * @param Context $securityContext The security context of the current request
-     * @return void
-     */
-    public function setSecurityContext(Context $securityContext)
-    {
-        $this->securityContext = $securityContext;
     }
 
     /**
@@ -119,30 +113,9 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
      *
      * @return Context $securityContext The security context of the current request
      */
-    public function getSecurityContext()
+    public function getSecurityContext(): Context
     {
         return $this->securityContext;
-    }
-
-    /**
-     * Returns clean tokens this manager is responsible for.
-     * Note: The order of the tokens in the array is important, as the tokens will be authenticated in the given order.
-     *
-     * @return array Array of TokenInterface this manager is responsible for
-     */
-    public function getTokens()
-    {
-        return $this->tokens;
-    }
-
-    /**
-     * Returns all configured authentication providers
-     *
-     * @return array Array of \Neos\Flow\Security\Authentication\AuthenticationProviderInterface
-     */
-    public function getProviders()
-    {
-        return $this->providers;
     }
 
     /**
@@ -156,8 +129,9 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
      * @return void
      * @throws Exception
      * @throws AuthenticationRequiredException
+     * @throws NoTokensAuthenticatedException
      */
-    public function authenticate()
+    public function authenticate(): void
     {
         $this->isAuthenticated = false;
         $anyTokenAuthenticated = false;
@@ -171,10 +145,12 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
             throw new NoTokensAuthenticatedException('The security context contained no tokens which could be authenticated.', 1258721059);
         }
 
+        $session = $this->sessionManager->getCurrentSession();
+
         /** @var $token TokenInterface */
         foreach ($tokens as $token) {
             /** @var $provider AuthenticationProviderInterface */
-            foreach ($this->providers as $provider) {
+            foreach ($this->tokenAndProviderFactory->getProviders() as $provider) {
                 if ($provider->canAuthenticate($token) && $token->getAuthenticationStatus() === TokenInterface::AUTHENTICATION_NEEDED) {
                     $provider->authenticate($token);
                     if ($token->isAuthenticated()) {
@@ -185,35 +161,35 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
             }
             if ($token->isAuthenticated()) {
                 if (!$token instanceof SessionlessTokenInterface) {
-                    if (!$this->session->isStarted()) {
-                        $this->session->start();
+                    if (!$session->isStarted()) {
+                        $session->start();
                     }
                     $account = $token->getAccount();
                     if ($account !== null) {
-                        $this->securityContext->withoutAuthorizationChecks(function () use ($account) {
-                            $this->session->addTag('Neos-Flow-Security-Account-' . md5($account->getAccountIdentifier()));
+                        $this->securityContext->withoutAuthorizationChecks(function () use ($account, $session) {
+                            $session->addTag($this->securityContext->getSessionTagForAccount($account));
                         });
                     }
                 }
-                if ($this->securityContext->getAuthenticationStrategy() === Context::AUTHENTICATE_ONE_TOKEN) {
+                if ($this->authenticationStrategy === Context::AUTHENTICATE_ONE_TOKEN) {
                     $this->isAuthenticated = true;
-                    $this->securityContext->refreshRoles();
+                    $this->emitSuccessfullyAuthenticated();
                     return;
                 }
                 $anyTokenAuthenticated = true;
             } else {
-                if ($this->securityContext->getAuthenticationStrategy() === Context::AUTHENTICATE_ALL_TOKENS) {
+                if ($this->authenticationStrategy === Context::AUTHENTICATE_ALL_TOKENS) {
                     throw new AuthenticationRequiredException('Could not authenticate all tokens, but authenticationStrategy was set to "all".', 1222203912);
                 }
             }
         }
 
-        if (!$anyTokenAuthenticated && $this->securityContext->getAuthenticationStrategy() !== Context::AUTHENTICATE_ANY_TOKEN) {
+        if (!$anyTokenAuthenticated && $this->authenticationStrategy !== Context::AUTHENTICATE_ANY_TOKEN) {
             throw new NoTokensAuthenticatedException('Could not authenticate any token. Might be missing or wrong credentials or no authentication provider matched.', 1222204027);
         }
 
         $this->isAuthenticated = $anyTokenAuthenticated;
-        $this->securityContext->refreshRoles();
+        $this->emitSuccessfullyAuthenticated();
     }
 
     /**
@@ -222,8 +198,9 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
      * Will call authenticate() if not done before.
      *
      * @return boolean
+     * @throws Exception
      */
-    public function isAuthenticated()
+    public function isAuthenticated(): bool
     {
         if ($this->isAuthenticated === null) {
             try {
@@ -238,22 +215,25 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
      * Logout all active authentication tokens
      *
      * @return void
+     * @throws Exception
+     * @throws SessionNotStartedException
      */
-    public function logout()
+    public function logout(): void
     {
         if ($this->isAuthenticated() !== true) {
             return;
         }
         $this->isAuthenticated = null;
+        $session = $this->sessionManager->getCurrentSession();
+
         /** @var $token TokenInterface */
         foreach ($this->securityContext->getAuthenticationTokens() as $token) {
             $token->setAuthenticationStatus(TokenInterface::NO_CREDENTIALS_GIVEN);
         }
         $this->emitLoggedOut();
-        if ($this->session->isStarted()) {
-            $this->session->destroy('Logout through AuthenticationProviderManager');
+        if ($session->isStarted()) {
+            $session->destroy('Logout through AuthenticationProviderManager');
         }
-        $this->securityContext->refreshTokens();
     }
 
     /**
@@ -263,7 +243,7 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
      * @return void
      * @Flow\Signal
      */
-    protected function emitAuthenticatedToken(TokenInterface $token)
+    protected function emitAuthenticatedToken(TokenInterface $token): void
     {
     }
 
@@ -274,114 +254,17 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
      * @return void
      * @Flow\Signal
      */
-    protected function emitLoggedOut()
+    protected function emitLoggedOut(): void
     {
     }
 
     /**
-     * Builds the provider and token objects based on the given configuration
+     * Signals that authentication commenced and at least one token was authenticated.
      *
-     * @param array $providerConfigurations The configured provider settings
      * @return void
-     * @throws Exception\InvalidAuthenticationProviderException
-     * @throws Exception\NoEntryPointFoundException
+     * @Flow\Signal
      */
-    protected function buildProvidersAndTokensFromConfiguration(array $providerConfigurations)
+    protected function emitSuccessfullyAuthenticated(): void
     {
-        foreach ($providerConfigurations as $providerName => $providerConfiguration) {
-            if (isset($providerConfiguration['providerClass'])) {
-                throw new Exception\InvalidAuthenticationProviderException('The configured authentication provider "' . $providerName . '" uses the deprecated option "providerClass". Check your settings and use the new option "provider" instead.', 1327672030);
-            }
-            if (isset($providerConfiguration['options'])) {
-                throw new Exception\InvalidAuthenticationProviderException('The configured authentication provider "' . $providerName . '" uses the deprecated option "options". Check your settings and use the new option "providerOptions" instead.', 1327672031);
-            }
-            if (!is_array($providerConfiguration) || !isset($providerConfiguration['provider'])) {
-                throw new Exception\InvalidAuthenticationProviderException('The configured authentication provider "' . $providerName . '" needs a "provider" option!', 1248209521);
-            }
-
-            $providerObjectName = $this->providerResolver->resolveProviderClass((string)$providerConfiguration['provider']);
-            if ($providerObjectName === null) {
-                throw new Exception\InvalidAuthenticationProviderException('The configured authentication provider "' . $providerConfiguration['provider'] . '" could not be found!', 1237330453);
-            }
-            $providerOptions = [];
-            if (isset($providerConfiguration['providerOptions']) && is_array($providerConfiguration['providerOptions'])) {
-                $providerOptions = $providerConfiguration['providerOptions'];
-            }
-
-            /** @var $providerInstance AuthenticationProviderInterface */
-            $providerInstance = new $providerObjectName($providerName, $providerOptions);
-            $this->providers[$providerName] = $providerInstance;
-
-            /** @var $tokenInstance TokenInterface */
-            $tokenInstance = null;
-            foreach ($providerInstance->getTokenClassNames() as $tokenClassName) {
-                if (isset($providerConfiguration['token']) && $providerConfiguration['token'] !== $tokenClassName) {
-                    continue;
-                }
-
-                $tokenInstance = new $tokenClassName();
-                $tokenInstance->setAuthenticationProviderName($providerName);
-                $this->tokens[] = $tokenInstance;
-                break;
-            }
-
-            if (isset($providerConfiguration['requestPatterns']) && is_array($providerConfiguration['requestPatterns'])) {
-                $requestPatterns = [];
-                foreach ($providerConfiguration['requestPatterns'] as $patternName => $patternConfiguration) {
-                    // skip request patterns that are set to NULL (i.e. `somePattern: ~` in a YAML file)
-                    if ($patternConfiguration === null) {
-                        continue;
-                    }
-
-                    // The following check is needed for backwards compatibility:
-                    // Previously the request pattern configuration was just a key/value where the value was passed to the setPattern() method
-                    if (is_string($patternConfiguration)) {
-                        $patternType = $patternName;
-                        $patternOptions = [];
-                    } else {
-                        $patternType = $patternConfiguration['pattern'];
-                        $patternOptions = isset($patternConfiguration['patternOptions']) ? $patternConfiguration['patternOptions'] : [];
-                    }
-                    $patternClassName = $this->requestPatternResolver->resolveRequestPatternClass($patternType);
-                    $requestPattern = new $patternClassName($patternOptions);
-                    if (!$requestPattern instanceof RequestPatternInterface) {
-                        throw new Exception\InvalidRequestPatternException(sprintf('Invalid request pattern configuration in setting "Neos:Flow:security:authentication:providers:%s": Class "%s" does not implement RequestPatternInterface', $providerName, $patternClassName), 1446222774);
-                    }
-
-                    // The following check needed for backwards compatibility:
-                    // Previously each pattern had only one option that was set via the setPattern() method. Now options are passed to the constructor.
-                    if (is_string($patternConfiguration) && is_callable([$requestPattern, 'setPattern'])) {
-                        $requestPattern->setPattern($patternConfiguration);
-                    }
-                    $requestPatterns[] = $requestPattern;
-                }
-                if ($tokenInstance !== null) {
-                    $tokenInstance->setRequestPatterns($requestPatterns);
-                }
-            }
-
-            if (isset($providerConfiguration['entryPoint'])) {
-                if (is_array($providerConfiguration['entryPoint'])) {
-                    $message = 'Invalid entry point configuration in setting "Neos:Flow:security:authentication:providers:' . $providerName . '. Check your settings and make sure to specify only one entry point for each provider.';
-                    throw new Exception\InvalidAuthenticationProviderException($message, 1327671458);
-                }
-                $entryPointName = $providerConfiguration['entryPoint'];
-                $entryPointClassName = $entryPointName;
-                if (!class_exists($entryPointClassName)) {
-                    $entryPointClassName = 'Neos\Flow\Security\Authentication\EntryPoint\\' . $entryPointClassName;
-                }
-                if (!class_exists($entryPointClassName)) {
-                    throw new Exception\NoEntryPointFoundException('An entry point with the name: "' . $entryPointName . '" could not be resolved. Make sure it is a valid class name, either fully qualified or relative to Neos\Flow\Security\Authentication\EntryPoint!', 1236767282);
-                }
-
-                /** @var $entryPoint EntryPointInterface */
-                $entryPoint = new $entryPointClassName();
-                if (isset($providerConfiguration['entryPointOptions'])) {
-                    $entryPoint->setOptions($providerConfiguration['entryPointOptions']);
-                }
-
-                $tokenInstance->setAuthenticationEntryPoint($entryPoint);
-            }
-        }
     }
 }

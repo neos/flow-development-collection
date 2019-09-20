@@ -11,7 +11,6 @@ namespace Neos\FluidAdaptor\Core\ViewHelper;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use TYPO3Fluid\Fluid\Core\ViewHelper\TagBuilder;
 
 /**
@@ -35,7 +34,7 @@ abstract class AbstractTagBasedViewHelper extends AbstractViewHelper
      *
      * @var array
      */
-    private static $tagAttributes = array();
+    private static $tagAttributes = [];
 
     /**
      * Tag builder instance
@@ -102,7 +101,11 @@ abstract class AbstractTagBasedViewHelper extends AbstractViewHelper
 
         if (isset(self::$tagAttributes[get_class($this)])) {
             foreach (self::$tagAttributes[get_class($this)] as $attributeName) {
-                if ($this->hasArgument($attributeName) && $this->arguments[$attributeName] !== '') {
+                if ($this->hasArgument($attributeName) && $this->arguments[$attributeName] !== '' && $this->arguments[$attributeName] !== false) {
+                    if ($this->arguments[$attributeName] === true) {
+                        $this->tag->addAttribute($attributeName, '');
+                        continue;
+                    }
                     $this->tag->addAttribute($attributeName, $this->arguments[$attributeName]);
                 }
             }
@@ -115,7 +118,7 @@ abstract class AbstractTagBasedViewHelper extends AbstractViewHelper
      * @param string $name Name of tag attribute
      * @param string $type Type of the tag attribute
      * @param string $description Description of tag attribute
-     * @param boolean $required set to TRUE if tag attribute is required. Defaults to FALSE.
+     * @param boolean $required set to true if tag attribute is required. Defaults to false.
      * @param mixed $defaultValue Optional, default value of attribute if one applies
      * @return void
      * @api
@@ -158,7 +161,7 @@ abstract class AbstractTagBasedViewHelper extends AbstractViewHelper
      */
     public function handleAdditionalArguments(array $arguments)
     {
-        $unassigned = array();
+        $unassigned = [];
         foreach ($arguments as $argumentName => $argumentValue) {
             if (strpos($argumentName, 'data-') === 0) {
                 $this->tag->addAttribute($argumentName, $argumentValue);

@@ -17,6 +17,7 @@ use Neos\Flow\Persistence\QueryInterface;
  * A persistence backend interface
  *
  * @api
+ * @deprecated since Flow 6.0
  */
 interface BackendInterface
 {
@@ -100,10 +101,10 @@ interface BackendInterface
     public function getObjectDataByIdentifier($identifier, $objectType = null);
 
     /**
-     * Returns TRUE, if an active connection to the persistence
+     * Returns true, if an active connection to the persistence
      * backend has been established, e.g. entities can be persisted.
      *
-     * @return boolean TRUE, if an connection has been established, FALSE if add object will not be persisted by the backend
+     * @return boolean true, if an connection has been established, false if add object will not be persisted by the backend
      * @api
      */
     public function isConnected();

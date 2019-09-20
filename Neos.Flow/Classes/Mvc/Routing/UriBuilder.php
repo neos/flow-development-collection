@@ -12,9 +12,9 @@ namespace Neos\Flow\Mvc\Routing;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Http\Request;
+use Neos\Flow\Http\BaseUriProvider;
+use Neos\Flow\Http\Helper\RequestInformationHelper;
 use Neos\Flow\Mvc\ActionRequest;
-use Neos\Flow\Mvc\RequestInterface;
 use Neos\Flow\Mvc\Routing\Dto\ResolveContext;
 use Neos\Utility\Arrays;
 
@@ -36,6 +36,12 @@ class UriBuilder
      * @var \Neos\Flow\Utility\Environment
      */
     protected $environment;
+
+    /**
+     * @Flow\Inject
+     * @var BaseUriProvider
+     */
+    protected $baseUriProvider;
 
     /**
      * @var ActionRequest
@@ -135,7 +141,7 @@ class UriBuilder
      */
     public function setSection($section)
     {
-        $this->section = $section;
+        $this->section = (string)$section;
         return $this;
     }
 
@@ -171,7 +177,7 @@ class UriBuilder
     }
 
     /**
-     * If set, the URI is prepended with the current base URI. Defaults to FALSE.
+     * If set, the URI is prepended with the current base URI. Defaults to false.
      *
      * @param boolean $createAbsoluteUri
      * @return UriBuilder the current UriBuilder to allow method chaining
@@ -193,7 +199,7 @@ class UriBuilder
     }
 
     /**
-     * If set, the current query parameters will be merged with $this->arguments. Defaults to FALSE.
+     * If set, the current query parameters will be merged with $this->arguments. Defaults to false.
      *
      * @param boolean $addQueryString
      * @return UriBuilder the current UriBuilder to allow method chaining
@@ -320,12 +326,12 @@ class UriBuilder
      * )
      *
      * @param array $arguments arguments
-     * @param RequestInterface $currentRequest
+     * @param ActionRequest $currentRequest
      * @return array arguments with namespace
      */
-    protected function addNamespaceToArguments(array $arguments, RequestInterface $currentRequest)
+    protected function addNamespaceToArguments(array $arguments, ActionRequest $currentRequest)
     {
-        while (!$currentRequest->isMainRequest()) {
+        while ($currentRequest instanceof ActionRequest && !$currentRequest->isMainRequest()) {
             $argumentNamespace = $currentRequest->getArgumentNamespace();
             if ($argumentNamespace !== '') {
                 $arguments = [$argumentNamespace => $arguments];
@@ -340,6 +346,7 @@ class UriBuilder
      *
      * @param array $arguments optional URI arguments. Will be merged with $this->arguments with precedence to $arguments
      * @return string the (absolute or relative) URI as string
+     * @throws \Neos\Flow\Http\Exception
      * @api
      */
     public function build(array $arguments = [])
@@ -350,8 +357,8 @@ class UriBuilder
         $httpRequest = $this->request->getHttpRequest();
 
         $uriPathPrefix = $this->environment->isRewriteEnabled() ? '' : 'index.php/';
-        $uriPathPrefix = $httpRequest->getScriptRequestPath() . $uriPathPrefix;
-        $resolveContext = new ResolveContext($httpRequest->getBaseUri(), $arguments, $this->createAbsoluteUri, $uriPathPrefix);
+        $uriPathPrefix = RequestInformationHelper::getScriptRequestPath($httpRequest) . $uriPathPrefix;
+        $resolveContext = new ResolveContext($this->baseUriProvider->getConfiguredBaseUriOrFallbackToCurrentRequest(), $arguments, $this->createAbsoluteUri, $uriPathPrefix);
         $resolvedUri = $this->router->resolve($resolveContext);
         if ($this->section !== '') {
             $resolvedUri = $resolvedUri->withFragment($this->section);
@@ -457,12 +464,14 @@ class UriBuilder
      * @param ActionRequest $request
      * @return string
      */
-    protected function getRequestNamespacePath($request)
+    protected function getRequestNamespacePath(ActionRequest $request): string
     {
-        if (!$request instanceof Request) {
-            $parentPath = $this->getRequestNamespacePath($request->getParentRequest());
-            return $parentPath . ($parentPath !== '' && $request->getArgumentNamespace() !== '' ? '.' : '') . $request->getArgumentNamespace();
+        $namespaceParts = [];
+        while ($request !== null && $request->isMainRequest() === false) {
+            $namespaceParts[] = $request->getArgumentNamespace();
+            $request = $request->getParentRequest();
         }
-        return '';
+
+        return implode('.', array_reverse($namespaceParts));
     }
 }

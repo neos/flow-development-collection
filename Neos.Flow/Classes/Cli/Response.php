@@ -15,7 +15,7 @@ namespace Neos\Flow\Cli;
  * A CLI specific response implementation
  *
  */
-class Response extends \Neos\Flow\Mvc\Response
+class Response
 {
     /**
      * Constants for output styles
@@ -42,6 +42,11 @@ class Response extends \Neos\Flow\Mvc\Response
     private $exitCode = 0;
 
     /**
+     * @var string
+     */
+    private $content = '';
+
+    /**
      * @var
      */
     private $colorSupport;
@@ -59,11 +64,8 @@ class Response extends \Neos\Flow\Mvc\Response
      * @throws \InvalidArgumentException
      * @api
      */
-    public function setExitCode($exitCode)
+    public function setExitCode(int $exitCode): void
     {
-        if (!is_integer($exitCode)) {
-            throw new \InvalidArgumentException(sprintf('Tried to set invalid exit code. The value must be integer, %s given.', gettype($exitCode)), 1312222064);
-        }
         $this->exitCode = $exitCode;
     }
 
@@ -73,18 +75,53 @@ class Response extends \Neos\Flow\Mvc\Response
      * @return integer
      * @api
      */
-    public function getExitCode()
+    public function getExitCode(): int
     {
         return $this->exitCode;
     }
 
     /**
+     * Overrides and sets the content of the response
+     *
+     * @param string $content The response content
+     * @return void
+     * @api
+     */
+    public function setContent(string $content): void
+    {
+        $this->content = $content;
+    }
+
+    /**
+     * Appends content to the already existing content.
+     *
+     * @param string $content More response content
+     * @return void
+     * @api
+     */
+    public function appendContent(string $content): void
+    {
+        $this->content .= $content;
+    }
+
+    /**
+     * Returns the response content without sending it.
+     *
+     * @return string The response content
+     * @api
+     */
+    public function getContent(): string
+    {
+        return $this->content;
+    }
+
+    /**
      * Sets color support / styled output to yes, no or auto detection
      *
-     * @param boolean $colorSupport TRUE, FALSE or NULL (= autodetection)
+     * @param boolean $colorSupport true, false or NULL (= autodetection)
      * @return void
      */
-    public function setColorSupport($colorSupport)
+    public function setColorSupport(bool $colorSupport): void
     {
         $this->colorSupport = $colorSupport;
     }
@@ -95,18 +132,17 @@ class Response extends \Neos\Flow\Mvc\Response
      * Regardless of this setting content will only be styled with output format
      * set to "styled".
      *
-     * @return boolean TRUE if the terminal support ANSI colors, otherwise FALSE
+     * @return boolean true if the terminal support ANSI colors, otherwise false
      */
-    public function hasColorSupport()
+    public function hasColorSupport(): bool
     {
         if ($this->colorSupport !== null) {
             return $this->colorSupport;
         }
         if (DIRECTORY_SEPARATOR !== '\\') {
             return function_exists('posix_isatty') && posix_isatty(STDOUT);
-        } else {
-            return getenv('ANSICON') !== false;
         }
+        return getenv('ANSICON') !== false;
     }
 
     /**
@@ -115,7 +151,7 @@ class Response extends \Neos\Flow\Mvc\Response
      * @param integer $outputFormat One of the OUTPUTFORMAT_* constants
      * @return void
      */
-    public function setOutputFormat($outputFormat)
+    public function setOutputFormat(int $outputFormat): void
     {
         $this->outputFormat = $outputFormat;
     }
@@ -125,7 +161,7 @@ class Response extends \Neos\Flow\Mvc\Response
      *
      * @return integer One of the OUTPUTFORMAT_* constants
      */
-    public function getOutputFormat()
+    public function getOutputFormat(): int
     {
         return $this->outputFormat;
     }
@@ -136,9 +172,9 @@ class Response extends \Neos\Flow\Mvc\Response
      * @return void
      * @api
      */
-    public function send()
+    public function send(): void
     {
-        if ($this->content === null) {
+        if ($this->content === '') {
             return;
         }
 

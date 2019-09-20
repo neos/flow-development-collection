@@ -11,11 +11,16 @@ namespace Neos\Flow\Http\Client;
  * source code.
  */
 
+use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Headers;
-use Neos\Flow\Http\Response;
-use Neos\Flow\Http\Uri;
-use Neos\Flow\Http\Request;
+use Neos\Flow\Http\Helper\RequestInformationHelper;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestFactoryInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\StreamFactoryInterface;
+use Psr\Http\Message\UploadedFileInterface;
+use Psr\Http\Message\UriInterface;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Form;
 
@@ -27,12 +32,12 @@ use Symfony\Component\DomCrawler\Form;
 class Browser
 {
     /**
-     * @var Request
+     * @var ServerRequestInterface
      */
     protected $lastRequest;
 
     /**
-     * @var Response
+     * @var ResponseInterface
      */
     protected $lastResponse;
 
@@ -68,6 +73,18 @@ class Browser
      * @var RequestEngineInterface
      */
     protected $requestEngine;
+
+    /**
+     * @Flow\Inject
+     * @var ServerRequestFactoryInterface
+     */
+    protected $serverRequestFactory;
+
+    /**
+     * @Flow\Inject
+     * @var StreamFactoryInterface
+     */
+    protected $contentStreamFactory;
 
     /**
      * Construct the Browser instance.
@@ -117,42 +134,55 @@ class Browser
      * If a Location header was given and the status code is of response type 3xx
      * (see http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html, 14.30 Location)
      *
-     * @param string|Uri $uri
+     * @param string|UriInterface $uri
      * @param string $method Request method, for example "GET"
      * @param array $arguments Arguments to send in the request body
-     * @param array $files
+     * @param UploadedFileInterface[] $files
      * @param array $server
      * @param string $content
-     * @return Response The HTTP response
+     * @return ResponseInterface The HTTP response
      * @throws \InvalidArgumentException
      * @throws InfiniteRedirectionException
      * @api
      */
-    public function request($uri, $method = 'GET', array $arguments = [], array $files = [], array $server = [], $content = null)
+    public function request($uri, $method = 'GET', array $arguments = [], array $files = [], array $server = [], $content = null): ResponseInterface
     {
         if (is_string($uri)) {
             $uri = new Uri($uri);
         }
-        if (!$uri instanceof Uri) {
+        if (!$uri instanceof UriInterface) {
             throw new \InvalidArgumentException('$uri must be a URI object or a valid string representation of a URI.', 1333443624);
         }
-
-        $request = Request::create($uri, $method, $arguments, $files, $server);
-
-        if ($content !== null) {
-            $request->setContent($content);
+        $request = $this->serverRequestFactory->createServerRequest($method, $uri, $server);
+        if ($content) {
+            $request = $request->withBody($this->contentStreamFactory->createStream($content));
         }
+
+        if (!empty($arguments)) {
+            $request = $request->withQueryParams($arguments);
+        }
+        if (!empty($files)) {
+            $request = $request->withUploadedFiles($files);
+        }
+
         $response = $this->sendRequest($request);
 
-        $location = $response->getHeader('Location');
-        if ($this->followRedirects && $location !== null && $response->getStatusCode() >= 300 && $response->getStatusCode() <= 399) {
-            if (in_array($location, $this->redirectionStack) || count($this->redirectionStack) >= $this->maximumRedirections) {
+        $location = $response->getHeaderLine('Location');
+        if ($this->followRedirects && !empty($location) && $response->getStatusCode() >= 300 && $response->getStatusCode() <= 399) {
+            $location = urldecode($location);
+            if (strpos($location, '/') === 0) {
+                // Location header is a host-absolute URL; so we need to prepend the hostname to create a full URL.
+                $location = (string)RequestInformationHelper::generateBaseUri($request) . ltrim($location, '/');
+            }
+
+            if (in_array($location, $this->redirectionStack, true) || count($this->redirectionStack) >= $this->maximumRedirections) {
                 throw new InfiniteRedirectionException('The Location "' . $location . '" to follow for a redirect will probably result into an infinite loop.', 1350391699);
             }
             $this->redirectionStack[] = $location;
             return $this->request($location);
         }
         $this->redirectionStack = [];
+
         return $response;
     }
 
@@ -170,14 +200,14 @@ class Browser
     /**
      * Sends a prepared request and returns the respective response.
      *
-     * @param Request $request
-     * @return Response
+     * @param ServerRequestInterface $request
+     * @return ResponseInterface
      * @api
      */
-    public function sendRequest(Request $request)
+    public function sendRequest(ServerRequestInterface $request)
     {
         foreach ($this->automaticRequestHeaders->getAll() as $name => $values) {
-            $request->setHeader($name, $values);
+            $request = $request->withAddedHeader($name, $values);
         }
 
         $this->lastRequest = $request;
@@ -188,7 +218,7 @@ class Browser
     /**
      * Returns the response received after the last request.
      *
-     * @return Response The HTTP response or NULL if there wasn't a response yet
+     * @return ResponseInterface The HTTP response or NULL if there wasn't a response yet
      * @api
      */
     public function getLastResponse()
@@ -199,7 +229,7 @@ class Browser
     /**
      * Returns the last request executed.
      *
-     * @return Request The HTTP request or NULL if there wasn't a request yet
+     * @return ServerRequestInterface The HTTP request or NULL if there wasn't a request yet
      * @api
      */
     public function getLastRequest()
@@ -231,8 +261,10 @@ class Browser
      */
     public function getCrawler()
     {
-        $crawler = new Crawler(null, $this->lastRequest->getBaseUri());
-        $crawler->addContent($this->lastResponse->getContent(), $this->lastResponse->getHeader('Content-Type'));
+        $crawler = new Crawler(null, (string)$this->lastRequest->getUri(), (string)RequestInformationHelper::generateBaseUri($this->lastRequest));
+        $this->lastResponse->getBody()->rewind();
+        $crawler->addContent($this->lastResponse->getBody()->getContents(), $this->lastResponse->getHeaderLine('Content-Type'));
+        $this->lastResponse->getBody()->rewind();
 
         return $crawler;
     }
@@ -254,7 +286,7 @@ class Browser
      * Submit a form
      *
      * @param \Symfony\Component\DomCrawler\Form $form
-     * @return Response
+     * @return ResponseInterface
      * @api
      */
     public function submit(Form $form)

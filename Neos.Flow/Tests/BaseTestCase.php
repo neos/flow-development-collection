@@ -25,7 +25,7 @@ abstract class BaseTestCase extends \PHPUnit\Framework\TestCase
     /**
      * @var array
      */
-    protected $backupGlobalsBlacklist = array('GLOBALS', 'bootstrap', '__PHPUNIT_BOOTSTRAP');
+    protected $backupGlobalsBlacklist = ['GLOBALS', 'bootstrap', '__PHPUNIT_BOOTSTRAP'];
 
     /**
      * Enable or disable the backup and restoration of static attributes.
@@ -48,10 +48,10 @@ abstract class BaseTestCase extends \PHPUnit\Framework\TestCase
      * @param boolean $cloneArguments
      * @param boolean $callOriginalMethods
      * @param object $proxyTarget
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      * @api
      */
-    protected function getAccessibleMock($originalClassName, $methods = array(), array $arguments = array(), $mockClassName = '', $callOriginalConstructor = true, $callOriginalClone = true, $callAutoload = true, $cloneArguments = false, $callOriginalMethods = false, $proxyTarget = null)
+    protected function getAccessibleMock($originalClassName, $methods = [], array $arguments = [], $mockClassName = '', $callOriginalConstructor = true, $callOriginalClone = true, $callAutoload = true, $cloneArguments = false, $callOriginalMethods = false, $proxyTarget = null)
     {
         $mockBuilder = $this->getMockBuilder($this->buildAccessibleProxy($originalClassName));
         $mockBuilder->setMethods($methods)->setConstructorArgs($arguments)->setMockClassName($mockClassName);
@@ -96,10 +96,10 @@ abstract class BaseTestCase extends \PHPUnit\Framework\TestCase
      * @param boolean $callAutoload
      * @param array $mockedMethods
      * @param boolean $cloneArguments
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      * @api
      */
-    protected function getAccessibleMockForAbstractClass($originalClassName, array $arguments = array(), $mockClassName = '', $callOriginalConstructor = true, $callOriginalClone = true, $callAutoload = true, $mockedMethods = [], $cloneArguments = false)
+    protected function getAccessibleMockForAbstractClass($originalClassName, array $arguments = [], $mockClassName = '', $callOriginalConstructor = true, $callOriginalClone = true, $callAutoload = true, $mockedMethods = [], $cloneArguments = false)
     {
         return $this->getMockForAbstractClass($this->buildAccessibleProxy($originalClassName), $arguments, $mockClassName, $callOriginalConstructor, $callOriginalClone, $callAutoload, $mockedMethods, $cloneArguments);
     }

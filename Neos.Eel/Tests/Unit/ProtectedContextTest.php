@@ -11,7 +11,9 @@ namespace Neos\Eel\Tests\Unit;
  * source code.
  */
 
+use Neos\Cache\Frontend\StringFrontend;
 use Neos\Eel\CompilingEvaluator;
+use Neos\Eel\NotAllowedException;
 use Neos\Eel\ProtectedContext;
 use Neos\Eel\Tests\Unit\Fixtures\TestObject;
 use Neos\Flow\Tests\UnitTestCase;
@@ -23,33 +25,33 @@ class ProtectedContextTest extends UnitTestCase
 {
     /**
      * @test
-     * @expectedException \Neos\Eel\NotAllowedException
      */
     public function methodCallToAnyValueIsNotAllowed()
     {
+        $this->expectException(NotAllowedException::class);
         $securedObject = new TestObject();
 
         $context = new ProtectedContext([
             'secure' => $securedObject
         ]);
 
-        $evaluator = new CompilingEvaluator();
+        $evaluator = $this->createEvaluator();
         $evaluator->evaluate('secure.callMe("Christopher")', $context);
     }
 
     /**
      * @test
-     * @expectedException \Neos\Eel\NotAllowedException
      */
     public function arrayAccessResultIsStillUntrusted()
     {
+        $this->expectException(NotAllowedException::class);
         $securedObject = new TestObject();
 
         $context = new ProtectedContext([
             'secure' => [$securedObject]
         ]);
 
-        $evaluator = new CompilingEvaluator();
+        $evaluator = $this->createEvaluator();
         $evaluator->evaluate('secure[0].callMe("Christopher")', $context);
     }
 
@@ -66,10 +68,10 @@ class ProtectedContextTest extends UnitTestCase
             'value' => $object
         ]);
 
-        $evaluator = new CompilingEvaluator();
+        $evaluator = $this->createEvaluator();
         $result = $evaluator->evaluate('value.foo', $context);
 
-        $this->assertEquals('Bar', $result);
+        self::assertEquals('Bar', $result);
     }
 
     /**
@@ -82,36 +84,36 @@ class ProtectedContextTest extends UnitTestCase
         ]);
         $context->whitelist('String.*');
 
-        $evaluator = new CompilingEvaluator();
+        $evaluator = $this->createEvaluator();
 
         $result = $evaluator->evaluate('String.substr("Hello World", 6, 5)', $context);
 
-        $this->assertEquals('World', $result);
+        self::assertEquals('World', $result);
     }
 
     /**
      * @test
-     * @expectedException \Neos\Eel\NotAllowedException
      */
     public function firstLevelFunctionsHaveToBeWhitelisted()
     {
+        $this->expectException(NotAllowedException::class);
         $context = new ProtectedContext([
             'ident' => function ($value) {
                 return $value;
             }
         ]);
 
-        $evaluator = new CompilingEvaluator();
+        $evaluator = $this->createEvaluator();
 
         $evaluator->evaluate('ident(42)', $context);
     }
 
     /**
      * @test
-     * @expectedException \Neos\Eel\NotAllowedException
      */
     public function resultOfFirstLevelMethodCallIsProtected()
     {
+        $this->expectException(NotAllowedException::class);
         $securedObject = new TestObject();
 
         $context = new ProtectedContext([
@@ -122,20 +124,20 @@ class ProtectedContextTest extends UnitTestCase
         ]);
         $context->whitelist(['ident']);
 
-        $evaluator = new CompilingEvaluator();
+        $evaluator = $this->createEvaluator();
 
         $result = $evaluator->evaluate('ident(value)', $context);
-        $this->assertEquals($securedObject, $result);
+        self::assertEquals($securedObject, $result);
 
         $evaluator->evaluate('ident(value).callMe("Foo")', $context);
     }
 
     /**
      * @test
-     * @expectedException \Neos\Eel\NotAllowedException
      */
     public function resultOfWhitelistedMethodCallIsProtected()
     {
+        $this->expectException(NotAllowedException::class);
         $securedObject = new TestObject();
 
         $context = new ProtectedContext([
@@ -148,10 +150,10 @@ class ProtectedContextTest extends UnitTestCase
         ]);
         $context->whitelist('Array');
 
-        $evaluator = new CompilingEvaluator();
+        $evaluator = $this->createEvaluator();
 
         $result = $evaluator->evaluate('Array.reverse(value)[0]', $context);
-        $this->assertEquals($securedObject, $result);
+        self::assertEquals($securedObject, $result);
 
         $evaluator->evaluate('Array.reverse(value)[0].callMe("Foo")', $context);
     }
@@ -174,10 +176,10 @@ class ProtectedContextTest extends UnitTestCase
         ]);
         $context->whitelist('q');
 
-        $evaluator = new CompilingEvaluator();
+        $evaluator = $this->createEvaluator();
 
         $result = $evaluator->evaluate('q(value).count()', $context);
-        $this->assertEquals(2, $result);
+        self::assertEquals(2, $result);
     }
 
     /**
@@ -193,10 +195,10 @@ class ProtectedContextTest extends UnitTestCase
             'value' => $securedObject
         ]);
 
-        $evaluator = new CompilingEvaluator();
+        $evaluator = $this->createEvaluator();
 
         $result = $evaluator->evaluate('value.callMe("Foo")', $context);
-        $this->assertEquals('Hello, Foo!', $result);
+        self::assertEquals('Hello, Foo!', $result);
     }
 
     /**
@@ -208,8 +210,21 @@ class ProtectedContextTest extends UnitTestCase
 
         ]);
 
-        $evaluator = new CompilingEvaluator();
+        $evaluator = $this->createEvaluator();
         $result = $evaluator->evaluate('unknown.someMethod()', $context);
-        $this->assertEquals(null, $result);
+        self::assertEquals(null, $result);
+    }
+
+    /**
+     * @return CompilingEvaluator
+     */
+    protected function createEvaluator()
+    {
+        $stringFrontendMock = $this->getMockBuilder(StringFrontend::class)->setMethods([])->disableOriginalConstructor()->getMock();
+        $stringFrontendMock->expects(self::any())->method('get')->willReturn(false);
+
+        $evaluator = new CompilingEvaluator();
+        $evaluator->injectExpressionCache($stringFrontendMock);
+        return $evaluator;
     }
 }

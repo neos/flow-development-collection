@@ -12,6 +12,8 @@ namespace Neos\FluidAdaptor\ViewHelpers\Form;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\I18n\Exception\IndexOutOfBoundsException;
+use Neos\Flow\I18n\Exception\InvalidFormatPlaceholderException;
 use Neos\Flow\I18n\Exception\InvalidLocaleIdentifierException;
 use Neos\Flow\I18n\Locale;
 use Neos\Flow\I18n\Translator;
@@ -146,7 +148,8 @@ class SelectViewHelper extends AbstractFormFieldViewHelper
         $this->registerUniversalTagAttributes();
         $this->registerTagAttribute('multiple', 'string', 'if set, multiple select field');
         $this->registerTagAttribute('size', 'string', 'Size of input field');
-        $this->registerTagAttribute('disabled', 'string', 'Specifies that the input element should be disabled when the page loads');
+        $this->registerTagAttribute('disabled', 'boolean', 'Specifies that the input element should be disabled when the page loads', false, false);
+        $this->registerTagAttribute('required', 'boolean', 'Specifies that the select element requires at least one selected option', false, false);
         $this->registerArgument('options', 'array', 'Associative array with internal IDs as key, and the values are displayed in the select box', true);
         $this->registerArgument('optionValueField', 'string', 'If specified, will call the appropriate getter on each object to determine the value.');
         $this->registerArgument('optionLabelField', 'string', 'If specified, will call the appropriate getter on each object to determine the label.');
@@ -213,7 +216,7 @@ class SelectViewHelper extends AbstractFormFieldViewHelper
 
             $output .= $this->renderOptionTag($value, $label) . chr(10);
         } elseif (empty($options)) {
-            $options = array('' => '');
+            $options = ['' => ''];
         }
         foreach ($options as $value => $label) {
             $output .= $this->renderOptionTag($value, $label) . chr(10);
@@ -230,9 +233,9 @@ class SelectViewHelper extends AbstractFormFieldViewHelper
     protected function getOptions()
     {
         if (!is_array($this->arguments['options']) && !($this->arguments['options'] instanceof \Traversable)) {
-            return array();
+            return [];
         }
-        $options = array();
+        $options = [];
         foreach ($this->arguments['options'] as $key => $value) {
             if (is_object($value)) {
                 if ($this->hasArgument('optionValueField')) {
@@ -284,7 +287,7 @@ class SelectViewHelper extends AbstractFormFieldViewHelper
      * Render the option tags.
      *
      * @param mixed $value Value to check for
-     * @return boolean TRUE if the value should be marked a s selected; FALSE otherwise
+     * @return boolean true if the value should be marked a s selected; false otherwise
      */
     protected function isSelected($value)
     {
@@ -313,7 +316,7 @@ class SelectViewHelper extends AbstractFormFieldViewHelper
         if (!is_array($value) && !($value instanceof \Traversable)) {
             return $this->getOptionValueScalar($value);
         }
-        $selectedValues = array();
+        $selectedValues = [];
         foreach ($value as $selectedValueElement) {
             $selectedValues[] = $this->getOptionValueScalar($selectedValueElement);
         }
@@ -367,7 +370,8 @@ class SelectViewHelper extends AbstractFormFieldViewHelper
      * @param string $label option tag label
      * @return string
      * @throws ViewHelper\Exception
-     * @throws FluidAdaptor\Exception
+     * @throws IndexOutOfBoundsException
+     * @throws InvalidFormatPlaceholderException
      */
     protected function getTranslatedLabel($value, $label)
     {
@@ -376,7 +380,7 @@ class SelectViewHelper extends AbstractFormFieldViewHelper
         $translateBy = isset($translationConfiguration['by']) ? $translationConfiguration['by'] : 'id';
         $sourceName = isset($translationConfiguration['source']) ? $translationConfiguration['source'] : 'Main';
         $request = $this->controllerContext->getRequest();
-        $packageKey = null;
+        $packageKey = 'Neos.Flow';
         if (isset($translationConfiguration['package'])) {
             $packageKey = $translationConfiguration['package'];
         } elseif ($request instanceof ActionRequest) {
@@ -397,10 +401,10 @@ class SelectViewHelper extends AbstractFormFieldViewHelper
         switch ($translateBy) {
             case 'label':
                 $label =  isset($translationConfiguration['using']) && $translationConfiguration['using'] === 'value' ? $value : $label;
-                return $this->translator->translateByOriginalLabel($label, array(), null, $localeObject, $sourceName, $packageKey);
+                return $this->translator->translateByOriginalLabel($label, [], null, $localeObject, $sourceName, $packageKey);
             case 'id':
                 $id =  $prefix . (isset($translationConfiguration['using']) && $translationConfiguration['using'] === 'label' ? $label : $value);
-                $translation = $this->translator->translateById($id, array(), null, $localeObject, $sourceName, $packageKey);
+                $translation = $this->translator->translateById($id, [], null, $localeObject, $sourceName, $packageKey);
                 return ($translation !== null) ? $translation : $label;
             default:
                 throw new ViewHelper\Exception('You can only request to translate by "label" or by "id", but asked for "' . $translateBy . '" in your SelectViewHelper tag.', 1340050647);

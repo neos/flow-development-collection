@@ -27,13 +27,12 @@ class PasswordViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\F
      */
     protected $viewHelper;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
-        $this->viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\Form\PasswordViewHelper::class, array('setErrorClassAttribute', 'registerFieldNameForFormTokenGeneration'));
+        $this->viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\Form\PasswordViewHelper::class, ['setErrorClassAttribute', 'registerFieldNameForFormTokenGeneration']);
         $this->arguments['name'] = '';
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
-        $this->viewHelper->initializeArguments();
     }
 
     /**
@@ -42,7 +41,7 @@ class PasswordViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\F
     public function renderCorrectlySetsTagName()
     {
         $mockTagBuilder = $this->createMock(TagBuilder::class);
-        $mockTagBuilder->expects($this->atLeastOnce())->method('setTagName')->with('input');
+        $mockTagBuilder->expects(self::atLeastOnce())->method('setTagName')->with('input');
         $this->viewHelper->injectTagBuilder($mockTagBuilder);
 
         $this->viewHelper->initialize();
@@ -54,18 +53,18 @@ class PasswordViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\F
      */
     public function renderCorrectlySetsTypeNameAndValueAttributes()
     {
-        $mockTagBuilder = $this->getMockBuilder(TagBuilder::class)->setMethods(array('setContent', 'render', 'addAttribute'))->getMock();
-        $mockTagBuilder->expects($this->at(0))->method('addAttribute')->with('type', 'password');
-        $mockTagBuilder->expects($this->at(1))->method('addAttribute')->with('name', 'NameOfTextbox');
-        $this->viewHelper->expects($this->once())->method('registerFieldNameForFormTokenGeneration')->with('NameOfTextbox');
-        $mockTagBuilder->expects($this->at(2))->method('addAttribute')->with('value', 'Current value');
-        $mockTagBuilder->expects($this->once())->method('render');
+        $mockTagBuilder = $this->getMockBuilder(TagBuilder::class)->setMethods(['setContent', 'render', 'addAttribute'])->getMock();
+        $mockTagBuilder->expects(self::at(0))->method('addAttribute')->with('type', 'password');
+        $mockTagBuilder->expects(self::at(1))->method('addAttribute')->with('name', 'NameOfTextbox');
+        $this->viewHelper->expects(self::once())->method('registerFieldNameForFormTokenGeneration')->with('NameOfTextbox');
+        $mockTagBuilder->expects(self::at(2))->method('addAttribute')->with('value', 'Current value');
+        $mockTagBuilder->expects(self::once())->method('render');
         $this->viewHelper->injectTagBuilder($mockTagBuilder);
 
-        $arguments = array(
+        $arguments = [
             'name' => 'NameOfTextbox',
             'value' => 'Current value'
-        );
+        ];
         $this->viewHelper->setArguments($arguments);
 
         $this->viewHelper->setViewHelperNode(new \Neos\FluidAdaptor\ViewHelpers\Fixtures\EmptySyntaxTreeNode());
@@ -78,24 +77,24 @@ class PasswordViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\F
      */
     public function renderCorrectlySetsRequiredAttribute()
     {
-        $mockTagBuilder = $this->getMockBuilder(TagBuilder::class)->setMethods(array('addAttribute', 'setContent', 'render'))->disableOriginalConstructor()->getMock();
-        $mockTagBuilder->expects($this->at(0))->method('addAttribute')->with('type', 'password');
-        $mockTagBuilder->expects($this->at(1))->method('addAttribute')->with('name', 'NameOfTextbox');
-        $this->viewHelper->expects($this->once())->method('registerFieldNameForFormTokenGeneration')->with('NameOfTextbox');
-        $mockTagBuilder->expects($this->at(2))->method('addAttribute')->with('value', 'Current value');
-        $mockTagBuilder->expects($this->at(3))->method('addAttribute')->with('required', 'required');
-        $mockTagBuilder->expects($this->once())->method('render');
+        $mockTagBuilder = $this->getMockBuilder(TagBuilder::class)->setMethods(['addAttribute', 'setContent', 'render'])->disableOriginalConstructor()->getMock();
+        $mockTagBuilder->expects(self::at(0))->method('addAttribute')->with('type', 'password');
+        $mockTagBuilder->expects(self::at(1))->method('addAttribute')->with('name', 'NameOfTextbox');
+        $this->viewHelper->expects(self::once())->method('registerFieldNameForFormTokenGeneration')->with('NameOfTextbox');
+        $mockTagBuilder->expects(self::at(2))->method('addAttribute')->with('value', 'Current value');
+        $mockTagBuilder->expects(self::once())->method('render');
         $this->viewHelper->injectTagBuilder($mockTagBuilder);
 
-        $arguments = array(
+        $arguments = [
             'name' => 'NameOfTextbox',
             'value' => 'Current value'
-        );
-        $this->viewHelper->setArguments($arguments);
+        ];
 
         $this->viewHelper->setViewHelperNode(new \Neos\FluidAdaptor\ViewHelpers\Fixtures\EmptySyntaxTreeNode());
-        $this->viewHelper->initialize();
-        $this->viewHelper->render(true);
+
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, $arguments);
+
+        $this->viewHelper->render();
     }
 
     /**
@@ -103,7 +102,7 @@ class PasswordViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\F
      */
     public function renderCallsSetErrorClassAttribute()
     {
-        $this->viewHelper->expects($this->once())->method('setErrorClassAttribute');
+        $this->viewHelper->expects(self::once())->method('setErrorClassAttribute');
         $this->viewHelper->render();
     }
 }

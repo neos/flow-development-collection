@@ -43,15 +43,36 @@ properties:
            -
              type: 'string'
            -
+             # in case an env var is used but not set this will be false
+             type: 'boolean'
+           -
              type: dictionary
              additionalProperties:
                type: string
       'headers':
-        type: dictionary
         required: true
-        additionalProperties: false
-        properties:
-          'clientIp': { type: string, required: true }
-          'host': { type: string, required: true }
-          'port': { type: string, required: true }
-          'proto': { type: string, required: true }
+        type:
+          -
+            type: 'string'
+          -
+            type: dictionary
+            additionalProperties: false
+            properties:
+              'clientIp': { type: string, required: true }
+              'host': { type: string, required: true }
+              'port': { type: string, required: true }
+              'proto': { type: string, required: true }
+  'serverRequestDefaults':
+    type: dictionary
+    required: true
+    additionalProperties: false
+    properties:
+      'userAgent':
+        required: true
+        type: string
+      'scriptPath':
+        required: true
+        type: string
+      'protocolVersion':
+        required: true
+        type: string

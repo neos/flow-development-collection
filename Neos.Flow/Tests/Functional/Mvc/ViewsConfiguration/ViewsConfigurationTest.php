@@ -10,8 +10,8 @@ namespace Neos\Flow\Tests\Functional\Mvc\ViewsConfiguration;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use Neos\Flow\Package\PackageManagerInterface;
 
+use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Tests\FunctionalTestCase;
 
 /**
@@ -32,7 +32,7 @@ class ViewsConfigurationTest extends FunctionalTestCase
     /**
      * Additional setup: Routes
      */
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -69,9 +69,9 @@ class ViewsConfigurationTest extends FunctionalTestCase
     public function templatePathAndFilenameIsChanged()
     {
         $response = $this->browser->request('http://localhost/test/mvc/viewsconfigurationa/first');
-        $this->assertEquals('Changed on Package Level', $response->getContent());
+        self::assertEquals('Changed on Package Level', $response->getBody()->getContents());
         $response = $this->browser->request('http://localhost/test/mvc/viewsconfigurationb/first');
-        $this->assertEquals('Changed on Controller Level', $response->getContent());
+        self::assertEquals('Changed on Controller Level', $response->getBody()->getContents());
     }
 
     /**
@@ -82,7 +82,7 @@ class ViewsConfigurationTest extends FunctionalTestCase
     public function viewObjectNameChanged()
     {
         $response = $this->browser->request('http://localhost/test/mvc/viewsconfigurationc/index');
-        $this->assertEquals(Fixtures\TemplateView::class, $response->getContent());
+        self::assertEquals(Fixtures\TemplateView::class, $response->getBody()->getContents());
     }
 
     /**
@@ -90,11 +90,11 @@ class ViewsConfigurationTest extends FunctionalTestCase
      */
     public function changeTemplatePathAndFilenameForWidget()
     {
-        if ($this->objectManager->get(PackageManagerInterface::class)->isPackageActive('Neos.FluidAdaptor') === false) {
+        if ($this->objectManager->get(PackageManager::class)->isPackageAvailable('Neos.FluidAdaptor') === false) {
             $this->markTestSkipped('No Fluid adaptor installed');
         }
 
         $response = $this->browser->request('http://localhost/test/mvc/viewsconfigurationa/widget');
-        $this->assertEquals('Changed on Package Level', trim($response->getContent()));
+        self::assertEquals('Changed on Package Level', trim($response->getBody()->getContents()));
     }
 }

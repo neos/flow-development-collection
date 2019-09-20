@@ -11,6 +11,7 @@ namespace Neos\FluidAdaptor\ViewHelpers\Uri;
  * source code.
  */
 
+use Neos\Flow\Mvc\ActionRequest;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use Neos\FluidAdaptor\Core\ViewHelper;
 
@@ -39,37 +40,53 @@ use Neos\FluidAdaptor\Core\ViewHelper;
  */
 class ActionViewHelper extends AbstractViewHelper
 {
+
+    /**
+     * Initialize arguments
+     *
+     * @return void
+     * @api
+     */
+    public function initializeArguments()
+    {
+        $this->registerArgument('action', 'string', 'Target action', true);
+        $this->registerArgument('arguments', 'array', 'Arguments', false, []);
+        $this->registerArgument('controller', 'string', 'Target controller. If NULL current controllerName is used', false, null);
+        $this->registerArgument('package', 'string', 'Target package. if NULL current package is used', false, null);
+        $this->registerArgument('subpackage', 'string', 'Target subpackage. if NULL current subpackage is used', false, null);
+        $this->registerArgument('section', 'string', 'The anchor to be added to the URI', false, '');
+        $this->registerArgument('format', 'string', 'The requested format, e.g. ".html"', false, '');
+        $this->registerArgument('additionalParams', 'array', 'additional query parameters that won\'t be prefixed like $arguments (overrule $arguments)', false, []);
+        $this->registerArgument('absolute', 'boolean', 'By default this ViewHelper renders links with absolute URIs. If this is false, a relative URI is created instead', false, false);
+        $this->registerArgument('addQueryString', 'boolean', 'If set, the current query parameters will be kept in the URI', false, false);
+        $this->registerArgument('argumentsToBeExcludedFromQueryString', 'array', 'arguments to be removed from the URI. Only active if $addQueryString = true', false, []);
+        $this->registerArgument('useParentRequest', 'boolean', 'If set, the parent Request will be used instead of the current one. Note: using this argument can be a sign of undesired tight coupling, use with care', false, false);
+        $this->registerArgument('useMainRequest', 'boolean', 'If set, the main Request will be used instead of the current one. Note: using this argument can be a sign of undesired tight coupling, use with care', false, false);
+    }
+
     /**
      * Render the Uri.
      *
-     * @param string $action Target action
-     * @param array $arguments Arguments
-     * @param string $controller Target controller. If NULL current controllerName is used
-     * @param string $package Target package. if NULL current package is used
-     * @param string $subpackage Target subpackage. if NULL current subpackage is used
-     * @param string $section The anchor to be added to the URI
-     * @param string $format The requested format, e.g. ".html"
-     * @param array $additionalParams additional query parameters that won't be prefixed like $arguments (overrule $arguments)
-     * @param boolean $absolute If set, an absolute URI is rendered
-     * @param boolean $addQueryString If set, the current query parameters will be kept in the URI
-     * @param array $argumentsToBeExcludedFromQueryString arguments to be removed from the URI. Only active if $addQueryString = TRUE
-     * @param boolean $useParentRequest If set, the parent Request will be used instead of the current one. Note: using this argument can be a sign of undesired tight coupling, use with care
-     * @param boolean $useMainRequest If set, the main Request will be used instead of the current one. Note: using this argument can be a sign of undesired tight coupling, use with care
      * @return string The rendered link
      * @throws ViewHelper\Exception
      * @api
      */
-    public function render($action, array $arguments = array(), $controller = null, $package = null, $subpackage = null, $section = '', $format = '', array $additionalParams = array(), $absolute = false, $addQueryString = false, array $argumentsToBeExcludedFromQueryString = array(), $useParentRequest = false, $useMainRequest = false)
+    public function render()
     {
         $uriBuilder = $this->controllerContext->getUriBuilder();
-        if ($useParentRequest === true) {
+        if ($this->arguments['useParentRequest'] === true) {
             $request = $this->controllerContext->getRequest();
             if ($request->isMainRequest()) {
                 throw new ViewHelper\Exception('You can\'t use the parent Request, you are already in the MainRequest.', 1360590758);
             }
+            $parentRequest = $request->getParentRequest();
+            if (!$parentRequest instanceof ActionRequest) {
+                throw new ViewHelper\Exception('The parent requests was unexpectedly empty, probably the current request is broken.', 1565948254);
+            }
+
             $uriBuilder = clone $uriBuilder;
-            $uriBuilder->setRequest($request->getParentRequest());
-        } elseif ($useMainRequest === true) {
+            $uriBuilder->setRequest($parentRequest);
+        } elseif ($this->arguments['useMainRequest'] === true) {
             $request = $this->controllerContext->getRequest();
             if (!$request->isMainRequest()) {
                 $uriBuilder = clone $uriBuilder;
@@ -79,14 +96,14 @@ class ActionViewHelper extends AbstractViewHelper
 
         $uriBuilder
             ->reset()
-            ->setSection($section)
-            ->setCreateAbsoluteUri($absolute)
-            ->setArguments($additionalParams)
-            ->setAddQueryString($addQueryString)
-            ->setArgumentsToBeExcludedFromQueryString($argumentsToBeExcludedFromQueryString)
-            ->setFormat($format);
+            ->setSection($this->arguments['section'])
+            ->setCreateAbsoluteUri($this->arguments['absolute'])
+            ->setArguments($this->arguments['additionalParams'])
+            ->setAddQueryString($this->arguments['addQueryString'])
+            ->setArgumentsToBeExcludedFromQueryString($this->arguments['argumentsToBeExcludedFromQueryString'])
+            ->setFormat($this->arguments['format']);
         try {
-            $uri = $uriBuilder->uriFor($action, $arguments, $controller, $package, $subpackage);
+            $uri = $uriBuilder->uriFor($this->arguments['action'], $this->arguments['arguments'], $this->arguments['controller'], $this->arguments['package'], $this->arguments['subpackage']);
         } catch (\Exception $exception) {
             throw new ViewHelper\Exception($exception->getMessage(), $exception->getCode(), $exception);
         }

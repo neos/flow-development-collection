@@ -22,6 +22,7 @@ use Neos\Flow\Persistence\QueryInterface;
  *
  * @Flow\Scope("singleton")
  * @api
+ * @deprecated since Flow 6.0
  */
 class PersistenceManager extends AbstractPersistenceManager
 {
@@ -217,7 +218,7 @@ class PersistenceManager extends AbstractPersistenceManager
      * Checks if the given object has ever been persisted.
      *
      * @param object $object The object to check
-     * @return boolean TRUE if the object is new, FALSE if the object exists in the persistence session
+     * @return boolean true if the object is new, false if the object exists in the persistence session
      * @api
      */
     public function isNewObject($object)
@@ -271,11 +272,11 @@ class PersistenceManager extends AbstractPersistenceManager
 
     /**
      * Returns the object data for the (internal) identifier, if it is known to
-     * the backend. Otherwise FALSE is returned.
+     * the backend. Otherwise false is returned.
      *
      * @param string $identifier
      * @param string $objectType
-     * @return object The object data for the identifier if it is known, or FALSE
+     * @return object The object data for the identifier if it is known, or false
      */
     public function getObjectDataByIdentifier($identifier, $objectType = null)
     {
@@ -342,10 +343,10 @@ class PersistenceManager extends AbstractPersistenceManager
     }
 
     /**
-     * Returns TRUE, if an active connection to the persistence
+     * Returns true, if an active connection to the persistence
      * backend has been established, e.g. entities can be persisted.
      *
-     * @return boolean TRUE, if an connection has been established, FALSE if add object will not be persisted by the backend
+     * @return boolean true, if an connection has been established, false if add object will not be persisted by the backend
      * @api
      */
     public function isConnected()

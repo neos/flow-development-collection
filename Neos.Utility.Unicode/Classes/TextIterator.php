@@ -336,7 +336,7 @@ class TextIterator implements \Iterator
      * Helper function to do the splitting by character
      *
      */
-    private function parseSubjectByCharacter()
+    private function parseSubjectByCharacter(): void
     {
         $i = 0;
         foreach (preg_split('//u', $this->subject) as $currentCharacter) {

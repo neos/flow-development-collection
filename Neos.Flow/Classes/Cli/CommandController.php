@@ -14,15 +14,11 @@ namespace Neos\Flow\Cli;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Command\HelpCommandController;
 use Neos\Flow\Mvc\Controller\Argument;
-use Neos\Flow\Mvc\Controller\ControllerInterface;
 use Neos\Flow\Mvc\Controller\Arguments;
 use Neos\Flow\Mvc\Exception\CommandException;
 use Neos\Flow\Mvc\Exception\InvalidArgumentTypeException;
 use Neos\Flow\Mvc\Exception\NoSuchCommandException;
-use Neos\Flow\Mvc\Exception\StopActionException;
-use Neos\Flow\Mvc\Exception\UnsupportedRequestTypeException;
-use Neos\Flow\Mvc\RequestInterface;
-use Neos\Flow\Mvc\ResponseInterface;
+use Neos\Flow\Cli\Exception\StopCommandException;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 
 /**
@@ -30,7 +26,7 @@ use Neos\Flow\ObjectManagement\ObjectManagerInterface;
  *
  * @Flow\Scope("singleton")
  */
-class CommandController implements ControllerInterface
+class CommandController implements CommandControllerInterface
 {
     /**
      * @var Request
@@ -106,18 +102,15 @@ class CommandController implements ControllerInterface
     /**
      * Processes a command line request.
      *
-     * @param RequestInterface $request The request object
-     * @param ResponseInterface $response The response, modified by this handler
+     * @param Request $request The request object
+     * @param Response $response The response, modified by this handler
      * @return void
-     * @throws UnsupportedRequestTypeException if the controller doesn't support the current request type
+     * @throws InvalidArgumentTypeException
+     * @throws NoSuchCommandException
      * @api
      */
-    public function processRequest(RequestInterface $request, ResponseInterface $response)
+    public function processRequest(Request $request, Response $response): void
     {
-        if (!$request instanceof Request) {
-            throw new UnsupportedRequestTypeException(sprintf('%s only supports command line requests – requests of type "%s" given.', get_class($this), get_class($request)), 1300787096);
-        }
-
         $this->request = $request;
         $this->request->setDispatched(true);
         $this->response = $response;
@@ -136,7 +129,7 @@ class CommandController implements ControllerInterface
      * @return string Method name of the current command
      * @throws NoSuchCommandException
      */
-    protected function resolveCommandMethodName()
+    protected function resolveCommandMethodName(): string
     {
         $commandMethodName = $this->request->getControllerCommandName() . 'Command';
         if (!is_callable([$this, $commandMethodName])) {
@@ -214,9 +207,9 @@ class CommandController implements ControllerInterface
      * @param string $controllerObjectName
      * @param array $arguments
      * @return void
-     * @throws StopActionException
+     * @throws StopCommandException
      */
-    protected function forward($commandName, $controllerObjectName = null, array $arguments = [])
+    protected function forward(string $commandName, string $controllerObjectName = null, array $arguments = [])
     {
         $this->request->setDispatched(false);
         $this->request->setControllerCommandName($commandName);
@@ -226,7 +219,7 @@ class CommandController implements ControllerInterface
         $this->request->setArguments($arguments);
 
         $this->arguments->removeAll();
-        throw new StopActionException();
+        throw new StopCommandException(sprintf('Forwarded to "%s".', $commandName));
     }
 
     /**
@@ -275,7 +268,7 @@ class CommandController implements ControllerInterface
      *
      * @return string
      */
-    public function getFlowInvocationString()
+    public function getFlowInvocationString(): string
     {
         if (DIRECTORY_SEPARATOR === '/' || (isset($_SERVER['MSYSTEM']) && $_SERVER['MSYSTEM'] === 'MINGW32')) {
             return './flow';
@@ -295,7 +288,7 @@ class CommandController implements ControllerInterface
      * @return void
      * @api
      */
-    protected function output($text, array $arguments = [])
+    protected function output(string $text, array $arguments = [])
     {
         $this->output->output($text, $arguments);
     }
@@ -310,7 +303,7 @@ class CommandController implements ControllerInterface
      * @see outputLines()
      * @api
      */
-    protected function outputLine($text = '', array $arguments = [])
+    protected function outputLine(string $text = '', array $arguments = [])
     {
         $this->output->outputLine($text, $arguments);
     }
@@ -326,7 +319,7 @@ class CommandController implements ControllerInterface
      * @see outputLine()
      * @api
      */
-    protected function outputFormatted($text = '', array $arguments = [], $leftPadding = 0)
+    protected function outputFormatted(string $text = '', array $arguments = [], int $leftPadding = 0)
     {
         $this->output->outputFormatted($text, $arguments, $leftPadding);
     }
@@ -338,13 +331,13 @@ class CommandController implements ControllerInterface
      * shutdown (such as the persistence framework), you must use quit() instead of exit().
      *
      * @param integer $exitCode Exit code to return on exit (see http://www.php.net/exit)
-     * @throws StopActionException
+     * @throws StopCommandException
      * @return void
      */
-    protected function quit($exitCode = 0)
+    protected function quit(int $exitCode = 0)
     {
         $this->response->setExitCode($exitCode);
-        throw new StopActionException;
+        throw new StopCommandException(sprintf('Quitting with exit code %s', $exitCode));
     }
 
     /**
@@ -354,7 +347,7 @@ class CommandController implements ControllerInterface
      * @param integer $exitCode Exit code to return on exit
      * @return void
      */
-    protected function sendAndExit($exitCode = 0)
+    protected function sendAndExit(int $exitCode = 0)
     {
         $this->response->send();
         exit($exitCode);

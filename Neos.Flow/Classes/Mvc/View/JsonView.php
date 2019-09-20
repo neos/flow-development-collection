@@ -117,7 +117,7 @@ class JsonView extends AbstractView
      *			'_descend' => array(
      *				'customer' => array(    // consider 'customer' being a persisted entity
      *					'_only' => array('firstName'),
-     * 					'_exposeObjectIdentifier' => TRUE,
+     * 					'_exposeObjectIdentifier' => true,
      * 					'_exposedObjectIdentifierKey' => 'guid'
      *				)
      *			)
@@ -125,7 +125,7 @@ class JsonView extends AbstractView
      * )
      *
      * Note for entity objects you are able to expose the object's identifier
-     * also, just add an "_exposeObjectIdentifier" directive set to TRUE and
+     * also, just add an "_exposeObjectIdentifier" directive set to true and
      * an additional property '__identity' will appear keeping the persistence
      * identifier. Renaming that property name instead of '__identity' is also
      * possible with the directive "_exposedObjectIdentifierKey".
@@ -198,7 +198,7 @@ class JsonView extends AbstractView
      */
     public function render()
     {
-        $this->controllerContext->getResponse()->setHeader('Content-Type', 'application/json');
+        $this->controllerContext->getResponse()->setContentType('application/json');
         $propertiesToRender = $this->renderArray();
         $options = $this->getOption('jsonEncodingOptions');
         return json_encode($propertiesToRender, $options);

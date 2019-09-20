@@ -13,9 +13,9 @@ namespace Neos\Flow\Session\Aspect;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Aop\JoinPointInterface;
-use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use Neos\Flow\Session\SessionInterface;
+use Neos\Flow\Session\SessionManagerInterface;
+use Psr\Log\LoggerInterface;
 
 /**
  * Adds the aspect of lazy loading to objects with scope session.
@@ -34,20 +34,30 @@ class LazyLoadingAspect
 
     /**
      * @Flow\Inject
-     * @var SessionInterface
+     * @var SessionManagerInterface
      */
-    protected $session;
+    protected $sessionManager;
 
     /**
-     * @Flow\Inject
-     * @var SystemLoggerInterface
+     * @var LoggerInterface
      */
-    protected $systemLogger;
+    protected $logger;
 
     /**
      * @var array
      */
     protected $sessionOriginalInstances = [];
+
+    /**
+     * Injects the (system) logger based on PSR-3.
+     *
+     * @param LoggerInterface $logger
+     * @return void
+     */
+    public function injectLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
 
     /**
      * Registers an object of scope session.
@@ -74,15 +84,17 @@ class LazyLoadingAspect
      */
     public function initializeSession(JoinPointInterface $joinPoint)
     {
-        if ($this->session->isStarted() === true) {
+        $session = $this->sessionManager->getCurrentSession();
+
+        if ($session->isStarted() === true) {
             return;
         }
 
         $objectName = $this->objectManager->getObjectNameByClassName(get_class($joinPoint->getProxy()));
         $methodName = $joinPoint->getMethodName();
 
-        $this->systemLogger->log(sprintf('Session initialization triggered by %s->%s.', $objectName, $methodName), LOG_DEBUG);
-        $this->session->start();
+        $this->logger->debug(sprintf('Session initialization triggered by %s->%s.', $objectName, $methodName));
+        $session->start();
     }
 
     /**

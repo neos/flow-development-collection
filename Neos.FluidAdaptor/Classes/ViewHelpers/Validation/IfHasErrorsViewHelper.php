@@ -12,7 +12,6 @@ namespace Neos\FluidAdaptor\ViewHelpers\Validation;
  */
 
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Error\Messages\Result;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\FluidAdaptor\Core\Rendering\FlowAwareRenderingContextInterface;
@@ -46,6 +45,7 @@ class IfHasErrorsViewHelper extends AbstractConditionViewHelper
 
     /**
      * @return void
+     * @throws \Neos\FluidAdaptor\Core\ViewHelper\Exception
      */
     public function initializeArguments()
     {
@@ -78,10 +78,10 @@ class IfHasErrorsViewHelper extends AbstractConditionViewHelper
      */
     protected static function evaluateCondition($arguments = null, RenderingContextInterface $renderingContext)
     {
-
-        /** @var $request ActionRequest */
+        /** @var ActionRequest $request */
+        /** @var FlowAwareRenderingContextInterface $renderingContext */
         $request = $renderingContext->getControllerContext()->getRequest();
-        /** @var $validationResults Result */
+        /** @var Result $validationResults */
         $validationResults = $request->getInternalArgument('__submittedArgumentValidationResults');
 
         if ($validationResults === null) {

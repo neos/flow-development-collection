@@ -17,7 +17,8 @@ use Neos\Error\Messages\Message;
 use Neos\Error\Messages\Notice;
 use Neos\Error\Messages\Warning;
 use Neos\Flow\Exception;
-use Neos\Flow\Log\SystemLoggerInterface;
+use Psr\Log\LoggerInterface;
+use Psr\Log\LogLevel;
 
 /**
  * Message Collector
@@ -26,16 +27,33 @@ use Neos\Flow\Log\SystemLoggerInterface;
  */
 class MessageCollector
 {
+    const LOGLEVEL_MAPPING = [
+        Error::SEVERITY_ERROR => LogLevel::ERROR,
+        Error::SEVERITY_NOTICE => LogLevel::NOTICE,
+        Error::SEVERITY_OK => LogLevel::INFO,
+        Error::SEVERITY_WARNING => LogLevel::WARNING
+    ];
+
     /**
      * @var \SplObjectStorage
      */
     protected $messages;
 
     /**
-     * @Flow\Inject
-     * @var SystemLoggerInterface
+     * @var LoggerInterface
      */
-    protected $systemLogger;
+    protected $logger;
+
+    /**
+     * Injects the (system) logger based on PSR-3.
+     *
+     * @param LoggerInterface $logger
+     * @return void
+     */
+    public function injectLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
 
     /**
      * Message Collector Constructor
@@ -48,12 +66,12 @@ class MessageCollector
     /**
      * @param string $message The message to log
      * @param string $severity An integer value, one of the Error::SEVERITY_* constants
-     * @param integer $code A unique error code
+     * @param integer|null $code A unique error code
      * @return void
      * @throws Exception
      * @api
      */
-    public function append($message, $severity = Error::SEVERITY_ERROR, $code = null)
+    public function append(string $message, string $severity = Error::SEVERITY_ERROR, ?int $code = null): void
     {
         switch ($severity) {
             case Error::SEVERITY_ERROR:
@@ -78,7 +96,7 @@ class MessageCollector
      * @return boolean
      * @api
      */
-    public function hasMessages()
+    public function hasMessages(): bool
     {
         return $this->messages->count() > 0;
     }
@@ -88,12 +106,13 @@ class MessageCollector
      * @return void
      * @api
      */
-    public function flush(callable $callback = null)
+    public function flush(callable $callback = null): void
     {
         foreach ($this->messages as $message) {
             /** @var Message $message */
             $this->messages->detach($message);
-            $this->systemLogger->log('ResourcePublishingMessage: ' . $message->getMessage(), $message->getSeverity());
+            $severity = self::LOGLEVEL_MAPPING[$message->getSeverity()];
+            $this->logger->log($severity, 'ResourcePublishingMessage: ' . $message->getMessage());
             if ($callback !== null) {
                 $callback($message);
             }

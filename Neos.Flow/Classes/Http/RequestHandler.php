@@ -11,19 +11,19 @@ namespace Neos\Flow\Http;
  * source code.
  */
 
+use GuzzleHttp\Psr7\ServerRequest;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\Bootstrap;
-use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Http\Component\ComponentChain;
 use Neos\Flow\Http\Component\ComponentContext;
-use Neos\Flow\Package\Package;
-use Neos\Flow\Package\PackageManagerInterface;
+use Neos\Flow\Http\Helper\ResponseInformationHelper;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * A request handler which can handle HTTP requests.
  *
  * @Flow\Scope("singleton")
- * @Flow\Proxy(false)
  */
 class RequestHandler implements HttpRequestHandlerInterface
 {
@@ -41,13 +41,6 @@ class RequestHandler implements HttpRequestHandlerInterface
      * @var Component\ComponentContext
      */
     protected $componentContext;
-
-    /**
-     * The "http" settings
-     *
-     * @var array
-     */
-    protected $settings;
 
     /**
      * Make exit() a closure so it can be manipulated during tests
@@ -70,7 +63,7 @@ class RequestHandler implements HttpRequestHandlerInterface
     /**
      * This request handler can handle any web request.
      *
-     * @return boolean If the request is a web request, TRUE otherwise FALSE
+     * @return boolean If the request is a web request, true otherwise false
      * @api
      */
     public function canHandleRequest()
@@ -98,30 +91,32 @@ class RequestHandler implements HttpRequestHandlerInterface
     public function handleRequest()
     {
         // Create the request very early so the ResourceManagement has a chance to grab it:
-        $request = Request::createFromEnvironment();
-        $response = new Response();
+        $request = ServerRequest::fromGlobals();
+        $response = new \GuzzleHttp\Psr7\Response();
         $this->componentContext = new ComponentContext($request, $response);
 
         $this->boot();
         $this->resolveDependencies();
-        $this->addPoweredByHeader($response);
-        if (isset($this->settings['http']['baseUri'])) {
-            $request->setBaseUri(new Uri($this->settings['http']['baseUri']));
-        }
 
         $this->baseComponentChain->handle($this->componentContext);
-        $response = $this->baseComponentChain->getResponse();
 
-        $response->send();
-
+        $this->sendResponse();
         $this->bootstrap->shutdown(Bootstrap::RUNLEVEL_RUNTIME);
         $this->exit->__invoke();
     }
 
     /**
+     * @return ComponentContext
+     */
+    public function getComponentContext(): ComponentContext
+    {
+        return $this->componentContext;
+    }
+
+    /**
      * Returns the currently handled HTTP request
      *
-     * @return Request
+     * @return ServerRequestInterface
      * @api
      */
     public function getHttpRequest()
@@ -132,7 +127,7 @@ class RequestHandler implements HttpRequestHandlerInterface
     /**
      * Returns the HTTP response corresponding to the currently handled request
      *
-     * @return Response
+     * @return ResponseInterface
      * @api
      */
     public function getHttpResponse()
@@ -162,74 +157,21 @@ class RequestHandler implements HttpRequestHandlerInterface
     {
         $objectManager = $this->bootstrap->getObjectManager();
         $this->baseComponentChain = $objectManager->get(ComponentChain::class);
-
-        $configurationManager = $objectManager->get(ConfigurationManager::class);
-        $this->settings = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.Flow');
     }
 
     /**
-     * Adds an HTTP header to the Response which indicates that the application is powered by Flow.
      *
-     * @param Response $response
-     * @return void
      */
-    protected function addPoweredByHeader(Response $response)
+    protected function sendResponse()
     {
-        if ($this->settings['http']['applicationToken'] === 'Off') {
-            return;
+        $response = $this->componentContext->getHttpResponse();
+        ob_implicit_flush(1);
+        foreach (ResponseInformationHelper::prepareHeaders($response) as $prepareHeader) {
+            header($prepareHeader);
         }
-
-        $applicationIsFlow = ($this->settings['core']['applicationPackageKey'] === 'Neos.Flow');
-        if ($this->settings['http']['applicationToken'] === 'ApplicationName') {
-            if ($applicationIsFlow) {
-                $response->getHeaders()->set('X-Flow-Powered', 'Flow');
-            } else {
-                $response->getHeaders()->set('X-Flow-Powered', 'Flow ' . $this->settings['core']['applicationName']);
-            }
-            return;
+        echo $response->getBody()->getContents();
+        while (ob_get_level() > 0) {
+            ob_end_flush();
         }
-
-        /** @var Package $applicationPackage */
-        /** @var Package $flowPackage */
-        $flowPackage = $this->bootstrap->getEarlyInstance(PackageManagerInterface::class)->getPackage('Neos.Flow');
-        $applicationPackage = $this->bootstrap->getEarlyInstance(PackageManagerInterface::class)->getPackage($this->settings['core']['applicationPackageKey']);
-
-        if ($this->settings['http']['applicationToken'] === 'MajorVersion') {
-            $flowVersion = $this->renderMajorVersion($flowPackage->getInstalledVersion());
-            $applicationVersion = $this->renderMajorVersion($applicationPackage->getInstalledVersion());
-        } else {
-            $flowVersion = $this->renderMinorVersion($flowPackage->getInstalledVersion());
-            $applicationVersion = $this->renderMinorVersion($applicationPackage->getInstalledVersion());
-        }
-
-        if ($applicationIsFlow) {
-            $response->getHeaders()->set('X-Flow-Powered', 'Flow/' . ($flowVersion ?: 'dev'));
-        } else {
-            $response->getHeaders()->set('X-Flow-Powered', 'Flow/' . ($flowVersion ?: 'dev') . ' ' . $this->settings['core']['applicationName'] . '/' . ($applicationVersion ?: 'dev'));
-        }
-    }
-
-    /**
-     * Renders a major version out of a full version string
-     *
-     * @param string $version For example "2.3.7"
-     * @return string For example "2"
-     */
-    protected function renderMajorVersion($version)
-    {
-        preg_match('/^(\d+)/', $version, $versionMatches);
-        return isset($versionMatches[1]) ? $versionMatches[1] : '';
-    }
-
-    /**
-     * Renders a minor version out of a full version string
-     *
-     * @param string $version For example "2.3.7"
-     * @return string For example "2.3"
-     */
-    protected function renderMinorVersion($version)
-    {
-        preg_match('/^(\d+\.\d+)/', $version, $versionMatches);
-        return isset($versionMatches[1]) ? $versionMatches[1] : '';
     }
 }

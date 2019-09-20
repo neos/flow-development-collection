@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Cache\Frontend;
 
 /*
@@ -45,7 +47,7 @@ class PhpFrontend extends StringFrontend
      * @throws \InvalidArgumentException
      * @api
      */
-    public function get($entryIdentifier)
+    public function get(string $entryIdentifier)
     {
         if (!$this->isValidEntryIdentifier($entryIdentifier)) {
             throw new \InvalidArgumentException('"' . $entryIdentifier . '" is not a valid cache entry identifier.', 1233057752);
@@ -68,7 +70,7 @@ class PhpFrontend extends StringFrontend
      * @return string
      * @throws \InvalidArgumentException
      */
-    public function getWrapped(string $entryIdentifier): string
+    public function getWrapped(string $entryIdentifier)
     {
         if (!$this->isValidEntryIdentifier($entryIdentifier)) {
             throw new \InvalidArgumentException('"' . $entryIdentifier . '" is not a valid cache entry identifier.', 1233057752);
@@ -90,7 +92,7 @@ class PhpFrontend extends StringFrontend
      * @throws \Neos\Cache\Exception
      * @api
      */
-    public function set($entryIdentifier, $sourceCode, array $tags = [], $lifetime = null)
+    public function set(string $entryIdentifier, $sourceCode, array $tags = [], int $lifetime = null)
     {
         if (!$this->isValidEntryIdentifier($entryIdentifier)) {
             throw new \InvalidArgumentException('"' . $entryIdentifier . '" is not a valid cache entry identifier.', 1264023823);

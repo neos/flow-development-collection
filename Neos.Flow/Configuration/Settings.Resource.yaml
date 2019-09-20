@@ -1,0 +1,82 @@
+#
+# Resource configuration for the Flow Framework
+#
+
+Neos:
+  Flow:
+    resource:
+      # A list of filename extensions that must not be uploaded through the resource
+      # management.
+      uploadExtensionBlacklist: &uploadExtensionBlacklist
+        'aspx': true
+        'cgi': true
+        'php3': true
+        'php4': true
+        'php5': true
+        'phtml': true
+        'php': true
+        'pl': true
+        'py': true
+        'pyc': true
+        'pyo': true
+        'rb': true
+
+      # Definition of resource storages provided by the Flow core.
+      # Storages are used for storing and retrieving resources.
+      storages:
+
+        #
+        defaultPersistentResourcesStorage:
+          storage: 'Neos\Flow\ResourceManagement\Storage\WritableFileSystemStorage'
+          storageOptions:
+            path: '%FLOW_PATH_DATA%Persistent/Resources/'
+
+        #
+        defaultStaticResourcesStorage:
+          storage: 'Neos\Flow\ResourceManagement\Storage\PackageStorage'
+
+      # Definition of the default resource collections.
+      # Collections are used to bundle / group static or persistent resources
+      # for common processing and publication.
+      collections:
+
+        # Collection which contains all static resources
+        static:
+          storage: 'defaultStaticResourcesStorage'
+          target: 'localWebDirectoryStaticResourcesTarget'
+          pathPatterns:
+            - '*/Resources/Public/'
+            - '*/Resources/Public/*'
+
+        # Collection which contains all persistent resources
+        persistent:
+          storage: 'defaultPersistentResourcesStorage'
+          target: 'localWebDirectoryPersistentResourcesTarget'
+
+      # Definition of the basic resource publication targets.
+      targets:
+
+        # Target for publishing static resources to the local web directory
+        localWebDirectoryStaticResourcesTarget:
+          target: 'Neos\Flow\ResourceManagement\Target\FileSystemSymlinkTarget'
+          targetOptions:
+            path: '%FLOW_PATH_WEB%_Resources/Static/Packages/'
+            baseUri: '_Resources/Static/Packages/'
+            extensionBlacklist: *uploadExtensionBlacklist
+
+            # If the symlinks should be relative instead of absolute
+            #relativeSymlinks: false
+
+        # Target for publishing persistent resources to the local web directory
+        localWebDirectoryPersistentResourcesTarget:
+          target: 'Neos\Flow\ResourceManagement\Target\FileSystemSymlinkTarget'
+          targetOptions:
+            path: '%FLOW_PATH_WEB%_Resources/Persistent/'
+            baseUri: '_Resources/Persistent/'
+            extensionBlacklist: *uploadExtensionBlacklist
+
+            # If the generated URI path segment containing the sha1 should be divided into multiple segments (recommended if you expect many resources):
+            subdivideHashPathSegment: true
+
+            # If the symlinks should be relative instead of absolute
+            relativeSymlinks: true

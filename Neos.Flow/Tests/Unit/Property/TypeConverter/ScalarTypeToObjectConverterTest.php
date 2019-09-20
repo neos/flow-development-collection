@@ -35,12 +35,12 @@ class ScalarTypeToObjectConverterTest extends UnitTestCase
      */
     protected $reflectionMock;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
         $this->reflectionMock = $this->createMock(ReflectionService::class);
-        $this->reflectionMock->expects($this->any())
+        $this->reflectionMock->expects(self::any())
             ->method('isClassAnnotatedWith')
             ->willReturn(false);
     }
@@ -52,7 +52,7 @@ class ScalarTypeToObjectConverterTest extends UnitTestCase
     {
         $converter = new ScalarTypeToObjectConverter();
         $valueObject = $converter->convertFrom('Hello World!', ClassWithStringConstructor::class);
-        $this->assertEquals('Hello World!', $valueObject->value);
+        self::assertEquals('Hello World!', $valueObject->value);
     }
 
     /**
@@ -62,7 +62,7 @@ class ScalarTypeToObjectConverterTest extends UnitTestCase
     {
         $converter = new ScalarTypeToObjectConverter();
         $valueObject = $converter->convertFrom(42, ClassWithIntegerConstructor::class);
-        $this->assertSame(42, $valueObject->value);
+        self::assertSame(42, $valueObject->value);
     }
 
     /**
@@ -72,7 +72,7 @@ class ScalarTypeToObjectConverterTest extends UnitTestCase
     {
         $converter = new ScalarTypeToObjectConverter();
         $valueObject = $converter->convertFrom(true, ClassWithBoolConstructor::class);
-        $this->assertSame(true, $valueObject->value);
+        self::assertSame(true, $valueObject->value);
     }
 
     /**
@@ -82,14 +82,14 @@ class ScalarTypeToObjectConverterTest extends UnitTestCase
     {
         $converter = new ScalarTypeToObjectConverter();
 
-        $this->reflectionMock->expects($this->once())
+        $this->reflectionMock->expects(self::once())
             ->method('getMethodParameters')
             ->willReturn([[
                 'type' => 'bool'
             ]]);
         $this->inject($converter, 'reflectionService', $this->reflectionMock);
         $canConvert = $converter->canConvertFrom(true, ClassWithBoolConstructor::class);
-        $this->assertTrue($canConvert);
+        self::assertTrue($canConvert);
     }
 
     /**
@@ -99,13 +99,13 @@ class ScalarTypeToObjectConverterTest extends UnitTestCase
     {
         $converter = new ScalarTypeToObjectConverter();
 
-        $this->reflectionMock->expects($this->once())
+        $this->reflectionMock->expects(self::once())
             ->method('getMethodParameters')
             ->willReturn([[
                 'type' => 'int'
             ]]);
         $this->inject($converter, 'reflectionService', $this->reflectionMock);
         $canConvert = $converter->canConvertFrom(42, ClassWithIntegerConstructor::class);
-        $this->assertTrue($canConvert);
+        self::assertTrue($canConvert);
     }
 }

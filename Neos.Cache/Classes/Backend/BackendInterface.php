@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Cache\Backend;
 
 /*
@@ -27,7 +29,7 @@ interface BackendInterface
      * @return void
      * @api
      */
-    public function setCache(FrontendInterface $cache);
+    public function setCache(FrontendInterface $cache): void;
 
     /**
      * Returns the internally used, prefixed entry identifier for the given public
@@ -41,7 +43,7 @@ interface BackendInterface
      * @param string $entryIdentifier
      * @return string
      */
-    public function getPrefixedIdentifier($entryIdentifier);
+    public function getPrefixedIdentifier(string $entryIdentifier): string;
 
     /**
      * Saves data in the cache.
@@ -53,28 +55,27 @@ interface BackendInterface
      * @return void
      * @throws \Neos\Cache\Exception if no cache frontend has been set.
      * @throws \InvalidArgumentException if the identifier is not valid
-     * @throws \Neos\Cache\Exception\InvalidDataException if $data is not a string
      * @api
      */
-    public function set($entryIdentifier, $data, array $tags = [], $lifetime = null);
+    public function set(string $entryIdentifier, string $data, array $tags = [], int $lifetime = null): void;
 
     /**
      * Loads data from the cache.
      *
      * @param string $entryIdentifier An identifier which describes the cache entry to load
-     * @return mixed The cache entry's content as a string or FALSE if the cache entry could not be loaded
+     * @return mixed The cache entry's content as a string or false if the cache entry could not be loaded
      * @api
      */
-    public function get($entryIdentifier);
+    public function get(string $entryIdentifier);
 
     /**
      * Checks if a cache entry with the specified identifier exists.
      *
      * @param string $entryIdentifier An identifier specifying the cache entry
-     * @return boolean TRUE if such an entry exists, FALSE if not
+     * @return boolean true if such an entry exists, false if not
      * @api
      */
-    public function has($entryIdentifier);
+    public function has(string $entryIdentifier): bool;
 
     /**
      * Removes all cache entries matching the specified identifier.
@@ -82,10 +83,10 @@ interface BackendInterface
      * old entries for the identifier still exist, they are removed as well.
      *
      * @param string $entryIdentifier Specifies the cache entry to remove
-     * @return boolean TRUE if (at least) an entry could be removed or FALSE if no entry was found
+     * @return boolean true if (at least) an entry could be removed or false if no entry was found
      * @api
      */
-    public function remove($entryIdentifier);
+    public function remove(string $entryIdentifier): bool;
 
     /**
      * Removes all cache entries of this cache.
@@ -93,7 +94,7 @@ interface BackendInterface
      * @return void
      * @api
      */
-    public function flush();
+    public function flush(): void;
 
     /**
      * Does garbage collection
@@ -101,5 +102,5 @@ interface BackendInterface
      * @return void
      * @api
      */
-    public function collectGarbage();
+    public function collectGarbage(): void;
 }

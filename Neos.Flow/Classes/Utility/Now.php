@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Flow\Utility;
 
 /*
@@ -23,8 +25,7 @@ use Neos\Flow\Annotations as Flow;
  *
  * @Flow\Scope("singleton")
  * @api
- * TODO: Change to \DateTimeImmutable for next major version after 3.0
  */
-class Now extends \DateTime
+class Now extends \DateTimeImmutable
 {
 }

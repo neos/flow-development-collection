@@ -75,15 +75,6 @@ final class ResolveContext
 
     /**
      * @return UriInterface
-     * @deprecated This getter has been renamed. @see getBaseUri()
-     */
-    public function getRequestUri(): UriInterface
-    {
-        return $this->getBaseUri();
-    }
-
-    /**
-     * @return UriInterface
      */
     public function getBaseUri(): UriInterface
     {

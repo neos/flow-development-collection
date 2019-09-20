@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Cache\Backend;
 
 /*
@@ -14,7 +16,6 @@ namespace Neos\Cache\Backend;
 use Neos\Cache\Backend\AbstractBackend as IndependentAbstractBackend;
 use Neos\Cache\EnvironmentConfiguration;
 use Neos\Cache\Exception;
-use Neos\Cache\Exception\InvalidDataException;
 use Neos\Cache\Frontend\FrontendInterface;
 
 /**
@@ -156,7 +157,7 @@ class MemcachedBackend extends IndependentAbstractBackend implements TaggableBac
      * @param FrontendInterface $cache
      * @return void
      */
-    public function setCache(FrontendInterface $cache)
+    public function setCache(FrontendInterface $cache): void
     {
         parent::setCache($cache);
 
@@ -177,7 +178,7 @@ class MemcachedBackend extends IndependentAbstractBackend implements TaggableBac
      * @return string The prefixed identifier, for example "Flow694a5c7a43a4_NumberOfPostedArticles"
      * @api
      */
-    public function getPrefixedIdentifier($entryIdentifier): string
+    public function getPrefixedIdentifier(string $entryIdentifier): string
     {
         return $this->identifierPrefix . $entryIdentifier;
     }
@@ -192,19 +193,15 @@ class MemcachedBackend extends IndependentAbstractBackend implements TaggableBac
      * @return void
      * @throws Exception if no cache frontend has been set.
      * @throws \InvalidArgumentException if the identifier is not valid or the final memcached key is longer than 250 characters
-     * @throws InvalidDataException if $data is not a string
      * @api
      */
-    public function set($entryIdentifier, $data, array $tags = [], $lifetime = null)
+    public function set(string $entryIdentifier, string $data, array $tags = [], int $lifetime = null): void
     {
         if (strlen($this->identifierPrefix . $entryIdentifier) > 250) {
             throw new \InvalidArgumentException('Could not set value. Key more than 250 characters (' . $this->identifierPrefix . $entryIdentifier . ').', 1232969508);
         }
         if (!$this->cache instanceof FrontendInterface) {
             throw new Exception('No cache frontend has been set yet via setCache().', 1207149215);
-        }
-        if (!is_string($data)) {
-            throw new InvalidDataException('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1207149231);
         }
 
         $tags[] = '%MEMCACHEBE%' . $this->cacheIdentifier;
@@ -259,10 +256,10 @@ class MemcachedBackend extends IndependentAbstractBackend implements TaggableBac
      * Loads data from the cache.
      *
      * @param string $entryIdentifier An identifier which describes the cache entry to load
-     * @return mixed The cache entry's content as a string or FALSE if the cache entry could not be loaded
+     * @return mixed The cache entry's content as a string or false if the cache entry could not be loaded
      * @api
      */
-    public function get($entryIdentifier)
+    public function get(string $entryIdentifier)
     {
         $value = $this->memcache->get($this->identifierPrefix . $entryIdentifier);
         if (substr($value, 0, 13) === 'Flow*chunked:') {
@@ -279,10 +276,10 @@ class MemcachedBackend extends IndependentAbstractBackend implements TaggableBac
      * Checks if a cache entry with the specified identifier exists.
      *
      * @param string $entryIdentifier An identifier specifying the cache entry
-     * @return boolean TRUE if such an entry exists, FALSE if not
+     * @return boolean true if such an entry exists, false if not
      * @api
      */
-    public function has($entryIdentifier): bool
+    public function has(string $entryIdentifier): bool
     {
         return $this->memcache->get($this->identifierPrefix . $entryIdentifier) !== false;
     }
@@ -293,10 +290,10 @@ class MemcachedBackend extends IndependentAbstractBackend implements TaggableBac
      * old entries for the identifier still exist, they are removed as well.
      *
      * @param string $entryIdentifier Specifies the cache entry to remove
-     * @return boolean TRUE if (at least) an entry could be removed or FALSE if no entry was found
+     * @return boolean true if (at least) an entry could be removed or false if no entry was found
      * @api
      */
-    public function remove($entryIdentifier): bool
+    public function remove(string $entryIdentifier): bool
     {
         $this->removeIdentifierFromAllTags($entryIdentifier);
         return $this->memcache->delete($this->identifierPrefix . $entryIdentifier);
@@ -307,10 +304,10 @@ class MemcachedBackend extends IndependentAbstractBackend implements TaggableBac
      * specified tag.
      *
      * @param string $tag The tag to search for
-     * @return array An array with identifiers of all matching entries. An empty array if no entries matched
+     * @return string[] An array with identifiers of all matching entries. An empty array if no entries matched
      * @api
      */
-    public function findIdentifiersByTag($tag): array
+    public function findIdentifiersByTag(string $tag): array
     {
         $identifiers = $this->memcache->get($this->identifierPrefix . 'tag_' . $tag);
         if ($identifiers !== false) {
@@ -339,7 +336,7 @@ class MemcachedBackend extends IndependentAbstractBackend implements TaggableBac
      * @throws Exception
      * @api
      */
-    public function flush()
+    public function flush(): void
     {
         if (!$this->cache instanceof FrontendInterface) {
             throw new Exception('Yet no cache frontend has been set via setCache().', 1204111376);
@@ -355,7 +352,7 @@ class MemcachedBackend extends IndependentAbstractBackend implements TaggableBac
      * @return integer The number of entries which have been affected by this flush
      * @api
      */
-    public function flushByTag($tag): int
+    public function flushByTag(string $tag): int
     {
         $identifiers = $this->findIdentifiersByTag($tag);
         foreach ($identifiers as $identifier) {
@@ -426,7 +423,7 @@ class MemcachedBackend extends IndependentAbstractBackend implements TaggableBac
      * @return void
      * @api
      */
-    public function collectGarbage()
+    public function collectGarbage(): void
     {
     }
 }

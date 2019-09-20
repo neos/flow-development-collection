@@ -20,6 +20,7 @@ use Neos\Flow\Persistence\QueryResultInterface;
  * A lazy result list that is returned by Query::execute()
  *
  * @api
+ * @deprecated since Flow 6.0
  */
 class QueryResult implements QueryResultInterface
 {

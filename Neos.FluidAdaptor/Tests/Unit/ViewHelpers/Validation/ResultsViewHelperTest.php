@@ -11,24 +11,27 @@ namespace Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Validation;
  * source code.
  */
 
+use Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase;
+use Neos\FluidAdaptor\ViewHelpers\Validation\ResultsViewHelper;
+
 require_once(__DIR__ . '/../ViewHelperBaseTestcase.php');
 
 /**
  * Test for the Validation Results view helper
  *
  */
-class ResultsViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase
+class ResultsViewHelperTest extends ViewHelperBaseTestcase
 {
     /**
-     * @var \Neos\FluidAdaptor\ViewHelpers\Validation\ResultsViewHelper
+     * @var ResultsViewHelper
      */
     protected $viewHelper;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
-        $this->viewHelper = $this->getMockBuilder(\Neos\FluidAdaptor\ViewHelpers\Validation\ResultsViewHelper::class)
-            ->setMethods(array('renderChildren'))
+        $this->viewHelper = $this->getMockBuilder(ResultsViewHelper::class)
+            ->setMethods(['renderChildren'])
             ->getMock();
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
     }
@@ -38,10 +41,11 @@ class ResultsViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Vi
      */
     public function renderOutputsChildNodesByDefault()
     {
-        $this->request->expects($this->atLeastOnce())->method('getInternalArgument')->with('__submittedArgumentValidationResults')->will($this->returnValue(null));
-        $this->viewHelper->expects($this->once())->method('renderChildren')->will($this->returnValue('child nodes'));
+        $this->request->expects(self::atLeastOnce())->method('getInternalArgument')->with('__submittedArgumentValidationResults')->will(self::returnValue(null));
+        $this->viewHelper->expects(self::once())->method('renderChildren')->will(self::returnValue('child nodes'));
 
-        $this->assertSame('child nodes', $this->viewHelper->render());
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, []);
+        self::assertSame('child nodes', $this->viewHelper->render());
     }
 
     /**
@@ -50,11 +54,12 @@ class ResultsViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Vi
     public function renderAddsValidationResultsToTemplateVariableContainer()
     {
         $mockValidationResults = $this->getMockBuilder(\Neos\Error\Messages\Result::class)->getMock();
-        $this->request->expects($this->atLeastOnce())->method('getInternalArgument')->with('__submittedArgumentValidationResults')->will($this->returnValue($mockValidationResults));
-        $this->templateVariableContainer->expects($this->at(0))->method('add')->with('validationResults', $mockValidationResults);
-        $this->viewHelper->expects($this->once())->method('renderChildren');
-        $this->templateVariableContainer->expects($this->at(1))->method('remove')->with('validationResults');
+        $this->request->expects(self::atLeastOnce())->method('getInternalArgument')->with('__submittedArgumentValidationResults')->will(self::returnValue($mockValidationResults));
+        $this->templateVariableContainer->expects(self::at(0))->method('add')->with('validationResults', $mockValidationResults);
+        $this->viewHelper->expects(self::once())->method('renderChildren');
+        $this->templateVariableContainer->expects(self::at(1))->method('remove')->with('validationResults');
 
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, []);
         $this->viewHelper->render();
     }
 
@@ -64,12 +69,13 @@ class ResultsViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Vi
     public function renderAddsValidationResultsToTemplateVariableContainerWithCustomVariableNameIfSpecified()
     {
         $mockValidationResults = $this->getMockBuilder(\Neos\Error\Messages\Result::class)->getMock();
-        $this->request->expects($this->atLeastOnce())->method('getInternalArgument')->with('__submittedArgumentValidationResults')->will($this->returnValue($mockValidationResults));
-        $this->templateVariableContainer->expects($this->at(0))->method('add')->with('customName', $mockValidationResults);
-        $this->viewHelper->expects($this->once())->method('renderChildren');
-        $this->templateVariableContainer->expects($this->at(1))->method('remove')->with('customName');
+        $this->request->expects(self::atLeastOnce())->method('getInternalArgument')->with('__submittedArgumentValidationResults')->will(self::returnValue($mockValidationResults));
+        $this->templateVariableContainer->expects(self::at(0))->method('add')->with('customName', $mockValidationResults);
+        $this->viewHelper->expects(self::once())->method('renderChildren');
+        $this->templateVariableContainer->expects(self::at(1))->method('remove')->with('customName');
 
-        $this->viewHelper->render('', 'customName');
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['for' => '', 'as' => 'customName']);
+        $this->viewHelper->render();
     }
 
     /**
@@ -79,12 +85,13 @@ class ResultsViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Vi
     {
         $mockPropertyValidationResults = $this->getMockBuilder(\Neos\Error\Messages\Result::class)->getMock();
         $mockValidationResults = $this->getMockBuilder(\Neos\Error\Messages\Result::class)->getMock();
-        $mockValidationResults->expects($this->once())->method('forProperty')->with('somePropertyName')->will($this->returnValue($mockPropertyValidationResults));
-        $this->request->expects($this->atLeastOnce())->method('getInternalArgument')->with('__submittedArgumentValidationResults')->will($this->returnValue($mockValidationResults));
-        $this->templateVariableContainer->expects($this->at(0))->method('add')->with('validationResults', $mockPropertyValidationResults);
-        $this->viewHelper->expects($this->once())->method('renderChildren');
-        $this->templateVariableContainer->expects($this->at(1))->method('remove')->with('validationResults');
+        $mockValidationResults->expects(self::once())->method('forProperty')->with('somePropertyName')->will(self::returnValue($mockPropertyValidationResults));
+        $this->request->expects(self::atLeastOnce())->method('getInternalArgument')->with('__submittedArgumentValidationResults')->will(self::returnValue($mockValidationResults));
+        $this->templateVariableContainer->expects(self::at(0))->method('add')->with('validationResults', $mockPropertyValidationResults);
+        $this->viewHelper->expects(self::once())->method('renderChildren');
+        $this->templateVariableContainer->expects(self::at(1))->method('remove')->with('validationResults');
 
-        $this->viewHelper->render('somePropertyName');
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['for' => 'somePropertyName']);
+        $this->viewHelper->render();
     }
 }

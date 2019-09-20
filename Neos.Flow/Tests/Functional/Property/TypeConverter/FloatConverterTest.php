@@ -11,6 +11,7 @@ namespace Neos\Flow\Tests\Functional\Property\TypeConverter;
  * source code.
  */
 
+use Neos\Flow\I18n\Exception\InvalidLocaleIdentifierException;
 use Neos\Flow\I18n\Locale;
 use Neos\Flow\Property\PropertyMappingConfiguration;
 use Neos\Flow\Property\TypeConverter\FloatConverter;
@@ -28,7 +29,7 @@ class FloatConverterTest extends FunctionalTestCase
      */
     protected $converter;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->converter = $this->objectManager->get(\Neos\Flow\Property\TypeConverter\FloatConverter::class);
@@ -64,7 +65,7 @@ class FloatConverterTest extends FunctionalTestCase
         $configuration->setTypeConverterOption(FloatConverter::class, 'locale', $locale);
 
         $actualResult = $this->converter->convertFrom($source, 'float', [], $configuration);
-        $this->assertEquals($expectedResult, $actualResult);
+        self::assertEquals($expectedResult, $actualResult);
     }
 
     /**
@@ -76,17 +77,17 @@ class FloatConverterTest extends FunctionalTestCase
         $configuration->setTypeConverterOption(FloatConverter::class, 'locale', 'de');
 
         $actualResult = $this->converter->convertFrom('12,777777', 'float', [], $configuration);
-        $this->assertInstanceOf(FlowError::class, $actualResult);
+        self::assertInstanceOf(FlowError::class, $actualResult);
 
-        $this->assertInstanceOf(FlowError::class, $this->converter->convertFrom('84,00', 'float'));
+        self::assertInstanceOf(FlowError::class, $this->converter->convertFrom('84,00', 'float'));
     }
 
     /**
      * @test
-     * @expectedException \Neos\Flow\I18n\Exception\InvalidLocaleIdentifierException
      */
     public function convertFromThrowsExceptionIfLocaleIsInvalid()
     {
+        $this->expectException(InvalidLocaleIdentifierException::class);
         $configuration = new PropertyMappingConfiguration();
         $configuration->setTypeConverterOption(FloatConverter::class, 'locale', 'some-non-existent-locale-identifier');
 
@@ -98,7 +99,7 @@ class FloatConverterTest extends FunctionalTestCase
      */
     public function convertFromDoesntUseLocaleParserIfNoConfigurationGiven()
     {
-        $this->assertEquals(84, $this->converter->convertFrom('84.000', 'float'));
-        $this->assertEquals(84.42, $this->converter->convertFrom('84.42', 'float'));
+        self::assertEquals(84, $this->converter->convertFrom('84.000', 'float'));
+        self::assertEquals(84.42, $this->converter->convertFrom('84.42', 'float'));
     }
 }

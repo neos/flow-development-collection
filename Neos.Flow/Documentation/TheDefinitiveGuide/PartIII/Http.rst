@@ -30,17 +30,21 @@ The basic walk through a Flow-based web application is as follows:
   request handler
 * by default, the :abbr:`HTTP Request Handler (\\Neos\\Flow\\Http\\RequestHandler)` takes over and runs a boot sequence
   which initializes all important parts of Flow
-* the HTTP Request Handler builds an HTTP Request and Response object. The
+* the HTTP Request Handler builds an PSR-7 HTTP Request and Response object. The
   :abbr:`Request object (\\Neos\\Flow\\Http\\Request)` contains all important properties of the real HTTP request.
   The :abbr:`Response object (\\Neos\\Flow\\Http\\Response)` in turn is empty and will be filled with information by a
   controller at a later point
+  Both are stored in the so-called :abbr:`ComponentContext (\\Neos\\Flow\\Http\\Component\\ComponentContext)`, which you need to use to access and/or replace any of the two.
 * the HTTP Request Handler initializes the
   :abbr:`HTTP Component Chain (\\Neos\\Flow\\Http\\Component\\ComponentChain)`, a set of independent units that have
   access to the current HTTP request and response and can share information amongst each other.
-  The chain is fully configurable, but by default it consists of the following steps:
+  The `chain`_ is fully configurable, but by default it consists of the following steps:
+* the ``trusted proxies`` component verifies headers that override request information, like the host, port or client IP address to
+  come from a server (reverse proxy) who's IP address is safe-listed in the settings.
+* the ``session cookie`` component, which restores the session from a cookie and later sets the session cookie in the response.
 * the ``routing`` component invokes the :abbr:`Router (\\Neos\\Flow\\Mvc\\Routing\\Router)` to determine which
   controller and action is responsible for processing the request. This information (controller name, action name,
-  arguments) is stored in the :abbr:`ComponentContext (\\Neos\\Flow\\Http\\Component\\ComponentContext)`
+  arguments) is stored in the ``ComponentContext``
 * the ``dispatching`` component tries to invoke the corresponding controller action via the
   :abbr:`Dispatcher (Neos\\Flow\\Mvc\\Dispatcher)`
 * the controller, usually an :abbr:`Action Controller (\\Neos\\Flow\\Mvc\\Controller\\ActionController)`, processes the
@@ -151,7 +155,8 @@ that defines the ``handle()`` method::
 				return;
 			}
 			$httpResponse = $componentContext->getHttpResponse();
-			$httpResponse->setContent('bar');
+      $modifiedResponse = $httpResponse->withContent('bar');
+			$componentContext->replaceHttpResponse($modifiedResponse);
 		}
 	}
 
@@ -220,6 +225,9 @@ using these instead of the low-level constructor method.
 	wrong protocol, host or client IP address.
 	If you need access to the **current** HTTP ``Request`` or ``Response``, instead inject the ``Bootstrap`` and
 	get the ``HttpRequest`` and ``HttpResponse`` through the ``getActiveRequestHandler()``.
+  Note though that those two objects are immutable, so if you need to change them, you need to in turn tell the current
+  ``ComponentContext`` that they need to be replaced through the ``->replaceHttpRequest(..)`` and ``->replaceHttpResponse(..)``
+  methods respectively. You can get the current ``ComponentContext`` from the active ``RequestHandler``.
 
 create()
 ~~~~~~~~
@@ -286,11 +294,15 @@ Media Types
 ~~~~~~~~~~~
 
 The best way to determine the media types mentioned in the ``Accept`` header of a request is to call the
-``getAcceptedMediaTypes()`` method. There is also a method implementing content negotiation in a convenient way: just
-pass a list of supported formats to ``getNegotiatedMediaType()`` and in return you'll get the media type best fitting
-according to the preferences of the client::
+``\Neos\Flow\Http\Helper\MediaTypeHelper::determineAcceptedMediaTypes()`` method.
+There is also a method implementing content negotiation in a convenient way: just pass a list of supported
+formats to ``\Neos\Flow\Http\Helper\MediaTypeHelper::negotiateMediaType()`` and in return you'll get the
+media type best fitting according to the preferences of the client::
 
-	$preferredType = $request->getNegotiatedMediaType(array('application/json', 'text/html'));
+	$preferredType = \Neos\Flow\Http\Helper\MediaTypeHelper::negotiateMediaType(
+		\Neos\Flow\Http\Helper\MediaTypeHelper::determineAcceptedMediaTypes($request),
+		array('application/json', 'text/html') // These are the accepted media types
+	);
 
 Request Methods
 ~~~~~~~~~~~~~~~
@@ -332,23 +344,34 @@ and which headers specifically are accepted for overriding those request informa
 	          proto: 'X-Forwarded-Proto'
 
 This would mean that only the ``X-Forwarded-*`` headers are accepted and only as long as those come from one of the
-IP ranges ``216.246.40.0-255`` or ``216.246.100.0-255``.
-By default, all proxies are trusted (``trustedProxies.proxies`` set to ``'*'``) and only the ``X-Forwarded-*`` headers
-are accepted. Also, for backwards compatibility the following headers are trusted for providing the client IP address:
+IP ranges ``216.246.40.0-255`` or ``216.246.100.0-255``. If you are using the standardized `Forwarded Header`_, you
+can also simply set ``trustedProxies.headers`` to ``'Forwarded'``, which is the same as setting all four properties to
+this value.
+By default, no proxies are trusted (unless the environment variable ``FLOW_HTTP_TRUSTED_PROXIES`` is set) and only the
+direct request informations will be used.
+If you specify trusted proxy addresses, by default only the ``X-Forwarded-*`` headers are accepted.
 
-	Client-Ip, X-Forwarded-For, X-Forwarded, X-Cluster-Client-Ip, Forwarded-For, Forwarded
+.. note::
 
-Those headers will be checked from left to right and the first set header will be used for determining the client address.
+	On some container environments like ddev, the container acts as a proxy to provide port mapping and hence needs
+	to be allowed in this setting. Otherwise the URLs generated will likely not work and end up with something along
+	the lines of 'https://flow.ddev.local:80'. Therefore you probably need to set ``Neos.Flow.http.trustedProxies.proxies``
+	setting to '*' in your Development environment ``Settings.yaml``.
 
-If you know that your installation will not run behind a proxy server, you should change settings to this::
+You can also specify the list of IP addresses or address ranges in comma separated format, which is useful for using in the
+environment variable ``FLOW_HTTP_TRUSTED_PROXIES``::
 
 	Neos:
 	  Flow:
 	    http:
 	      trustedProxies:
-	        proxies: []
+	        proxies: '216.246.40.0/24,216.246.100.0/24'
 
-With this, no headers will be trusted and only the direct request informations will be used.
+Also, for backwards compatibility the following headers are trusted for providing the client IP address:
+
+	Client-Ip, X-Forwarded-For, X-Forwarded, X-Cluster-Client-Ip, Forwarded-For, Forwarded
+
+Those headers will be checked from left to right and the first set header will be used for determining the client address.
 
 Response
 --------
@@ -392,7 +415,7 @@ Cookies
 -------
 
 The HTTP foundation provides a very convenient way to deal with cookies. Instead of calling the PHP cookie functions
-(like ``setcookie()``), we recommend using the respective methods available in the ``Request`` and ``Response`` classes.
+(like ``setcookie()``), we recommend using the respective methods available in the ``ResponseInterface`` and ``ActionResponse`` classes.
 
 Like requests and responses, a cookie also is represented by a PHP class. Instead of working on arrays with values,
 instances of the ``Cookie`` class are used.
@@ -409,9 +432,9 @@ will send the cookie through the ``Cookie`` header. These headers are parsed aut
 
 	public function myAction() {
 		$httpRequest = $this->request->getHttpRequest();
-		if ($httpRequest->hasCookie('myCounter')) {
-			$cookie = $httpRequest->getCookie('myCounter');
-			$this->view->assign('counter', $cookie->getValue());
+		$cookieParams = $httpRequest->getCookieParams();
+		if (isset($cookieParams['myCounter']) {
+			$this->view->assign('counter', (int)$cookieParams['myCounter']);
 		}
 	}
 
@@ -419,24 +442,17 @@ The cookie value can be updated and re-assigned to the response::
 
 	public function myAction() {
 		$httpRequest = $this->request->getHttpRequest();
-		if ($httpRequest->hasCookie('myCounter')) {
-			$cookie = $httpRequest->getCookie('myCounter');
-		} else {
-			$cookie = new Cookie('myCounter', 1);
-		}
-		$this->view->assign('counter', $cookie->getValue());
+		$counter = $httpRequest->getCookieParams()['myCounter'] ?? 0;
+		$this->view->assign('counter', $counter);
 
-		$cookie->setValue((integer)$cookie->getValue() + 1);
+		$cookie = new Cookie('myCounter', $counter + 1);
 		$this->response->setCookie($cookie);
 	}
 
-Finally, a cookie can be deleted by calling the ``expire()`` method::
+Finally, a cookie can be deleted by calling the ``deleteCookie()`` method::
 
 	public function myAction() {
-		$httpRequest = $this->request->getHttpRequest();
-		$cookie = $httpRequest->getCookie('myCounter');
-		$cookie->expire();
-		$this->response->setCookie($cookie);
+		$this->response->deleteCookie('myCounter');
 	}
 
 Uri
@@ -563,3 +579,5 @@ other application parts which are accessible via HTTP. This browser has the ``In
 .. _REST: http://en.wikipedia.org/wiki/Representational_state_transfer
 .. _Coordinated Universal Time: http://en.wikipedia.org/wiki/Coordinated_Universal_Time
 .. _Greenwich Mean Time: http://en.wikipedia.org/wiki/Greenwich_Mean_Time
+.. _Forwarded Header: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Forwarded
+.. _chain: https://github.com/neos/flow-development-collection/blob/5.3/Neos.Flow/Configuration/Settings.Http.yaml#L31-L57

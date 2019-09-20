@@ -119,16 +119,18 @@ class Arguments extends \ArrayObject
      *
      * @param string $name Name of the argument
      * @param string $dataType Name of one of the built-in data types
-     * @param boolean $isRequired TRUE if this argument should be marked as required
-     * @param mixed $defaultValue Default value of the argument. Only makes sense if $isRequired==FALSE
+     * @param boolean $isRequired true if this argument should be marked as required
+     * @param mixed $defaultValue Default value of the argument. Only makes sense if $isRequired==false
+     * @param bool $mapRequestBody If the request body should be mapped into this argument
      * @return Argument The new argument
      * @api
      */
-    public function addNewArgument($name, $dataType = 'string', $isRequired = true, $defaultValue = null)
+    public function addNewArgument($name, $dataType = 'string', $isRequired = true, $defaultValue = null, $mapRequestBody = false)
     {
         $argument = new Argument($name, $dataType);
         $argument->setRequired($isRequired);
         $argument->setDefaultValue($defaultValue);
+        $argument->setMapRequestBody($mapRequestBody);
 
         $this->addArgument($argument);
         return $argument;
@@ -167,7 +169,7 @@ class Arguments extends \ArrayObject
      * Checks if an argument with the specified name exists
      *
      * @param string $argumentName Name of the argument to check for
-     * @return boolean TRUE if such an argument exists, otherwise FALSE
+     * @return boolean true if such an argument exists, otherwise false
      * @see offsetExists()
      * @api
      */
@@ -254,6 +256,7 @@ class Arguments extends \ArrayObject
     {
         $results = new Result();
 
+        /* @var $argument Argument */
         foreach ($this as $argument) {
             $argumentValidationResults = $argument->getValidationResults();
             if ($argumentValidationResults === null) {

@@ -48,7 +48,7 @@ class LocaleCollection
      * Adds a locale to the collection.
      *
      * @param Locale $locale The Locale to be inserted
-     * @return boolean FALSE when same locale was already inserted before
+     * @return boolean false when same locale was already inserted before
      */
     public function addLocale(Locale $locale)
     {

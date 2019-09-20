@@ -14,15 +14,16 @@ namespace Neos\Flow\Mvc\Controller;
 use Neos\Error\Messages\Result;
 use Neos\Flow\Annotations as Flow;
 use Neos\Error\Messages as Error;
-use Neos\Flow\Log\SystemLoggerInterface;
+use Neos\Flow\Http\Component\ReplaceHttpResponseComponent;
+use Neos\Flow\Log\Utility\LogEnvironment;
+use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Exception\ForwardException;
 use Neos\Flow\Mvc\Exception\InvalidActionVisibilityException;
 use Neos\Flow\Mvc\Exception\InvalidArgumentTypeException;
 use Neos\Flow\Mvc\Exception\NoSuchActionException;
 use Neos\Flow\Mvc\Exception\UnsupportedRequestTypeException;
 use Neos\Flow\Mvc\Exception\ViewNotFoundException;
-use Neos\Flow\Mvc\RequestInterface;
-use Neos\Flow\Mvc\ResponseInterface;
 use Neos\Flow\Mvc\View\ViewInterface;
 use Neos\Flow\Mvc\ViewConfigurationManager;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
@@ -30,6 +31,9 @@ use Neos\Flow\Property\Exception\TargetNotFoundException;
 use Neos\Flow\Property\TypeConverter\Error\TargetNotFoundError;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Utility\TypeHandling;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\StreamInterface;
+use Psr\Log\LoggerInterface;
 
 /**
  * An HTTP based multi-action controller.
@@ -142,10 +146,9 @@ class ActionController extends AbstractController
     protected $settings;
 
     /**
-     * @var SystemLoggerInterface
-     * @Flow\Inject
+     * @var LoggerInterface
      */
-    protected $systemLogger;
+    protected $logger;
 
     /**
      * @param array $settings
@@ -157,15 +160,31 @@ class ActionController extends AbstractController
     }
 
     /**
+     * Injects the (system) logger based on PSR-3.
+     *
+     * @param LoggerInterface $logger
+     * @return void
+     */
+    public function injectLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
+
+    /**
      * Handles a request. The result output is returned by altering the given response.
      *
-     * @param RequestInterface $request The request object
-     * @param ResponseInterface $response The response, modified by this handler
+     * @param ActionRequest $request The request object
+     * @param ActionResponse $response The response, modified by this handler
      * @return void
+     * @throws InvalidActionVisibilityException
+     * @throws InvalidArgumentTypeException
+     * @throws NoSuchActionException
      * @throws UnsupportedRequestTypeException
+     * @throws ViewNotFoundException
+     * @throws \Neos\Flow\Mvc\Exception\RequiredArgumentMissingException
      * @api
      */
-    public function processRequest(RequestInterface $request, ResponseInterface $response)
+    public function processRequest(ActionRequest $request, ActionResponse $response)
     {
         $this->initializeController($request, $response);
 
@@ -245,11 +264,12 @@ class ActionController extends AbstractController
             if ($dataType === null) {
                 throw new InvalidArgumentTypeException('The argument type for parameter $' . $parameterName . ' of method ' . get_class($this) . '->' . $this->actionMethodName . '() could not be detected.', 1253175643);
             }
-            $defaultValue = (isset($parameterInfo['defaultValue']) ? $parameterInfo['defaultValue'] : null);
-            if ($parameterInfo['optional'] === true && $defaultValue === null) {
+            $defaultValue = ($parameterInfo['defaultValue'] ?? null);
+            if ($defaultValue === null && $parameterInfo['optional'] === true) {
                 $dataType = TypeHandling::stripNullableType($dataType);
             }
-            $this->arguments->addNewArgument($parameterName, $dataType, ($parameterInfo['optional'] === false), $defaultValue);
+            $mapRequestBody = isset($parameterInfo['mapRequestBody']) && $parameterInfo['mapRequestBody'] === true;
+            $this->arguments->addNewArgument($parameterName, $dataType, ($parameterInfo['optional'] === false), $defaultValue, $mapRequestBody);
         }
     }
 
@@ -271,6 +291,16 @@ class ActionController extends AbstractController
         foreach ($methodNames as $methodName) {
             if (strlen($methodName) > 6 && strpos($methodName, 'Action', strlen($methodName) - 6) !== false) {
                 $result[$methodName] = $reflectionService->getMethodParameters($className, $methodName);
+
+                /* @var $requestBodyAnnotation Flow\MapRequestBody */
+                $requestBodyAnnotation = $reflectionService->getMethodAnnotation($className, $methodName, Flow\MapRequestBody::class);
+                if ($requestBodyAnnotation !== null) {
+                    $requestBodyArgument = $requestBodyAnnotation->argumentName;
+                    if (!isset($result[$methodName][$requestBodyArgument])) {
+                        throw new \Neos\Flow\Mvc\Exception('Can not map request body to non existing argument $' . $requestBodyArgument . ' of ' . $className . '->' . $methodName . '().', 1559236782);
+                    }
+                    $result[$methodName][$requestBodyArgument]['mapRequestBody'] = true;
+                }
             }
         }
 
@@ -426,6 +456,9 @@ class ActionController extends AbstractController
      * response object. If the action doesn't return anything and a valid
      * view exists, the view is rendered automatically.
      *
+     * TODO: In next major this will no longer append content and the response will probably be unique per call.
+     *
+     *
      * @return void
      */
     protected function callActionMethod()
@@ -470,11 +503,11 @@ class ActionController extends AbstractController
         }
 
         if ($actionResult === null && $this->view instanceof ViewInterface) {
-            $this->response->appendContent($this->view->render());
+            $this->renderView();
         } elseif (is_string($actionResult) && strlen($actionResult) > 0) {
-            $this->response->appendContent($actionResult);
+            $this->response->setContent($actionResult);
         } elseif (is_object($actionResult) && method_exists($actionResult, '__toString')) {
-            $this->response->appendContent((string)$actionResult);
+            $this->response->setContent((string)$actionResult);
         }
     }
 
@@ -568,7 +601,7 @@ class ActionController extends AbstractController
     /**
      * Determines the fully qualified view object name.
      *
-     * @return mixed The fully qualified view object name or FALSE if no matching view could be found.
+     * @return mixed The fully qualified view object name or false if no matching view could be found.
      * @api
      */
     protected function resolveViewObjectName()
@@ -586,10 +619,10 @@ class ActionController extends AbstractController
         $possibleViewObjectName = str_replace('@action', $this->request->getControllerActionName(), $possibleViewObjectName);
 
         $viewObjectName = $this->objectManager->getCaseSensitiveObjectName(strtolower(str_replace('@format', $format, $possibleViewObjectName)));
-        if ($viewObjectName === false) {
+        if ($viewObjectName === null) {
             $viewObjectName = $this->objectManager->getCaseSensitiveObjectName(strtolower(str_replace('@format', '', $possibleViewObjectName)));
         }
-        if ($viewObjectName === false && isset($this->viewFormatToObjectNameMap[$format])) {
+        if ($viewObjectName === null && isset($this->viewFormatToObjectNameMap[$format])) {
             $viewObjectName = $this->viewFormatToObjectNameMap[$format];
         }
         return $viewObjectName;
@@ -657,7 +690,7 @@ class ActionController extends AbstractController
     {
         $errorFlashMessage = $this->getErrorFlashMessage();
         if ($errorFlashMessage !== false) {
-            $this->flashMessageContainer->addMessage($errorFlashMessage);
+            $this->controllerContext->getFlashMessageContainer()->addMessage($errorFlashMessage);
         }
     }
 
@@ -702,7 +735,7 @@ class ActionController extends AbstractController
                 $logMessage .= 'Error for ' . $propertyPath . ':  ' . $error->render() . PHP_EOL;
             }
         }
-        $this->systemLogger->log($logMessage, LOG_ERR);
+        $this->logger->error($logMessage, LogEnvironment::fromMethodName(__METHOD__));
 
         return $outputMessage;
     }
@@ -712,11 +745,39 @@ class ActionController extends AbstractController
      * display no flash message at all on errors. Override this to customize
      * the flash message in your action controller.
      *
-     * @return \Neos\Error\Messages\Message The flash message or FALSE if no flash message should be set
+     * @return \Neos\Error\Messages\Message The flash message or false if no flash message should be set
      * @api
      */
     protected function getErrorFlashMessage()
     {
         return new Error\Error('An error occurred while trying to call %1$s->%2$s()', null, [get_class($this), $this->actionMethodName]);
+    }
+
+    /**
+     * Renders the view and applies the result to the response object.
+     */
+    protected function renderView()
+    {
+        $result = $this->view->render();
+
+        if (is_string($result)) {
+            $this->response->setContent($result);
+        }
+
+        if ($result instanceof ActionResponse) {
+            $result->mergeIntoParentResponse($this->response);
+        }
+
+        if ($result instanceof ResponseInterface) {
+            $this->response->setComponentParameter(ReplaceHttpResponseComponent::class, ReplaceHttpResponseComponent::PARAMETER_RESPONSE, $result);
+        }
+
+        if (is_object($result) && is_callable([$result, '__toString'])) {
+            $this->response->setContent((string)$result);
+        }
+
+        if ($result instanceof StreamInterface) {
+            $this->response->setContent($result);
+        }
     }
 }

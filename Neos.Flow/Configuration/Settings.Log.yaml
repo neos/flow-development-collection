@@ -1,0 +1,59 @@
+#
+# Log configuration for the Flow Framework
+#
+
+Neos:
+  Flow:
+    log:
+      psr3:
+        loggerFactory: Neos\Flow\Log\PsrLoggerFactory
+
+        'Neos\Flow\Log\PsrLoggerFactory':
+          # Settings for Flow's default loggers
+          systemLogger:
+            default:
+              class: Neos\Flow\Log\Backend\FileBackend
+              options:
+                 logFileURL: '%FLOW_PATH_DATA%Logs/System.log'
+                 createParentDirectories: true
+                 severityThreshold: '%LOG_INFO%'
+                 maximumLogFileSize: 10485760
+                 logFilesToKeep: 1
+                 logMessageOrigin: false
+
+          securityLogger:
+            default:
+              class: Neos\Flow\Log\Backend\FileBackend
+              options:
+                 logFileURL: '%FLOW_PATH_DATA%Logs/Security.log'
+                 createParentDirectories: true
+                 severityThreshold: '%LOG_INFO%'
+                 maximumLogFileSize: 10485760
+                 logFilesToKeep: 1
+                 logIpAddress: true
+
+          sqlLogger:
+            default:
+              class: Neos\Flow\Log\Backend\FileBackend
+              options:
+                logFileURL: '%FLOW_PATH_DATA%Logs/Query.log'
+                createParentDirectories: true
+                severityThreshold: '%LOG_INFO%'
+                maximumLogFileSize: 10485760
+                logFilesToKeep: 1
+
+          i18nLogger:
+            default:
+              class: Neos\Flow\Log\Backend\FileBackend
+              options:
+                logFileURL: '%FLOW_PATH_DATA%Logs/I18n.log'
+                createParentDirectories: true
+                severityThreshold: '%LOG_INFO%'
+                maximumLogFileSize: 1048576
+                logFilesToKeep: 1
+
+          throwables:
+            storageClass: Neos\Flow\Log\ThrowableStorage\FileStorage
+            optionsByImplementation:
+              'Neos\Flow\Log\ThrowableStorage\FileStorage':
+                storagePath: '%FLOW_PATH_DATA%Logs/Exceptions'

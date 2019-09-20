@@ -29,7 +29,7 @@ privilegeTargets:
       matcher: 'isType("Neos\Flow\Tests\Functional\Security\Fixtures\RestrictableEntity")'
 
     'Neos.Flow:Tests.Functional.Security.Fixtures.RestrictableEntity.HiddenEntities':
-      matcher: 'isType("Neos\Flow\Tests\Functional\Security\Fixtures\RestrictableEntity") && TRUE == property("hidden")'
+      matcher: 'isType("Neos\Flow\Tests\Functional\Security\Fixtures\RestrictableEntity") && true == property("hidden")'
 
     'Neos.Flow:Tests.Functional.Security.Fixtures.RestrictableEntity.DeletedEntries':
       matcher: 'isType("Neos\Flow\Tests\Functional\Security\Fixtures\RestrictableEntity") && property("deletedOn") != NULL'
@@ -49,6 +49,12 @@ privilegeTargets:
     'Neos.Flow:inOperatorWithObjectsTestResource':
       matcher: 'isType("Neos\Flow\Tests\Functional\Security\Fixtures\TestEntityC") && property("relatedEntityD").in("context.testContext.securityFixturesEntityDCollection")'
 
+    'Neos.Flow:containsOperatorWithOneToMany':
+      matcher: 'isType("Neos\Flow\Tests\Functional\Security\Fixtures\TestEntityC") && property("oneToManyToRelatedEntityD").contains("context.testContext.securityFixturesEntityD")'
+
+    'Neos.Flow:containsOperatorWithManyToMany':
+      matcher: 'isType("Neos\Flow\Tests\Functional\Security\Fixtures\TestEntityC") && property("manyToManyToRelatedEntityD").contains("context.testContext.securityFixturesEntityD")'
+
 
 roles:
 
@@ -64,6 +70,14 @@ roles:
 
       -
         privilegeTarget: 'Neos.Flow:Tests.Functional.Security.Fixtures.RestrictableEntity.AllEntities'
+        permission: GRANT
+
+      -
+        privilegeTarget: 'Neos.Flow:containsOperatorWithOneToMany'
+        permission: GRANT
+
+      -
+        privilegeTarget: 'Neos.Flow:containsOperatorWithManyToMany'
         permission: GRANT
 
   'Neos.Flow:Administrator':

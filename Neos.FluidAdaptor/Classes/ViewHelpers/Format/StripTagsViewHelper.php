@@ -13,7 +13,6 @@ namespace Neos\FluidAdaptor\ViewHelpers\Format;
 
 use TYPO3Fluid\Fluid\Core\Compiler\TemplateCompiler;
 use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\ViewHelperNode;
-use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 
 /**
@@ -47,23 +46,36 @@ class StripTagsViewHelper extends AbstractViewHelper
     protected $escapeChildren = false;
 
     /**
+     * Initialize the arguments.
+     *
+     * @return void
+     * @api
+     */
+    public function initializeArguments()
+    {
+        $this->registerArgument('value', 'string', 'string to format', false, null);
+    }
+
+    /**
      * Escapes special characters with their escaped counterparts as needed using PHPs strip_tags() function.
      *
-     * @param string $value string to format
      * @return mixed
      * @see http://www.php.net/manual/function.strip-tags.php
      * @api
      */
-    public function render($value = null)
+    public function render()
     {
+        $value = $this->arguments['value'];
+
         if ($value === null) {
             $value = $this->renderChildren();
         }
-        if (is_string($value) || (is_object($value) && method_exists($value, '__toString'))) {
-            return strip_tags($value);
+        if (is_object($value) && method_exists($value, '__toString')) {
+            $value = $value->__toString();
+        } elseif (!is_string($value)) {
+            return $value;
         }
-
-        return $value;
+        return strip_tags($value);
     }
 
     /**

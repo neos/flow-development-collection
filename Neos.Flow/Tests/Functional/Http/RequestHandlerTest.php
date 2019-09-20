@@ -13,6 +13,7 @@ namespace Neos\Flow\Tests\Functional\Http;
 
 use Neos\Flow\Http\RequestHandler;
 use Neos\Flow\Tests\FunctionalTestCase;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Functional tests for the HTTP Request Handler
@@ -47,10 +48,13 @@ class RequestHandlerTest extends FunctionalTestCase
             'REQUEST_URI' => '/neos/flow/test/http/foo',
             'SCRIPT_NAME' => '/index.php',
             'PHP_SELF' => '/index.php',
+            'REQUEST_TIME' => $_SERVER['REQUEST_TIME'] ?? null,
+            'REQUEST_TIME_FLOAT' => $_SERVER['REQUEST_TIME_FLOAT'] ?? null,
         ];
 
+        /** @var MockObject|RequestHandler $requestHandler */
         $requestHandler = $this->getAccessibleMock(RequestHandler::class, ['boot'], [self::$bootstrap]);
-        $requestHandler->exit = function () {
+        $requestHandler->exit = static function () {
         };
         $requestHandler->handleRequest();
 

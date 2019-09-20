@@ -25,12 +25,11 @@ class Nl2brViewHelperTest extends ViewHelperBaseTestcase
      */
     protected $viewHelper;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
-        $this->viewHelper = $this->getMockBuilder(\Neos\FluidAdaptor\ViewHelpers\Format\Nl2brViewHelper::class)->setMethods(array('renderChildren'))->getMock();
+        $this->viewHelper = $this->getMockBuilder(\Neos\FluidAdaptor\ViewHelpers\Format\Nl2brViewHelper::class)->setMethods(['renderChildren'])->getMock();
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
-        $this->viewHelper->initializeArguments();
     }
 
     /**
@@ -38,9 +37,10 @@ class Nl2brViewHelperTest extends ViewHelperBaseTestcase
      */
     public function viewHelperDoesNotModifyTextWithoutLineBreaks()
     {
-        $this->viewHelper->expects($this->once())->method('renderChildren')->will($this->returnValue('<p class="bodytext">Some Text without line breaks</p>'));
+        $this->viewHelper->expects(self::once())->method('renderChildren')->will(self::returnValue('<p class="bodytext">Some Text without line breaks</p>'));
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, []);
         $actualResult = $this->viewHelper->render();
-        $this->assertEquals('<p class="bodytext">Some Text without line breaks</p>', $actualResult);
+        self::assertEquals('<p class="bodytext">Some Text without line breaks</p>', $actualResult);
     }
 
     /**
@@ -48,9 +48,10 @@ class Nl2brViewHelperTest extends ViewHelperBaseTestcase
      */
     public function viewHelperConvertsLineBreaksToBRTags()
     {
-        $this->viewHelper->expects($this->once())->method('renderChildren')->will($this->returnValue('Line 1' . chr(10) . 'Line 2'));
+        $this->viewHelper->expects(self::once())->method('renderChildren')->will(self::returnValue('Line 1' . chr(10) . 'Line 2'));
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, []);
         $actualResult = $this->viewHelper->render();
-        $this->assertEquals('Line 1<br />' . chr(10) . 'Line 2', $actualResult);
+        self::assertEquals('Line 1<br />' . chr(10) . 'Line 2', $actualResult);
     }
 
     /**
@@ -58,8 +59,9 @@ class Nl2brViewHelperTest extends ViewHelperBaseTestcase
      */
     public function viewHelperConvertsWindowsLineBreaksToBRTags()
     {
-        $this->viewHelper->expects($this->once())->method('renderChildren')->will($this->returnValue('Line 1' . chr(13) . chr(10) . 'Line 2'));
+        $this->viewHelper->expects(self::once())->method('renderChildren')->will(self::returnValue('Line 1' . chr(13) . chr(10) . 'Line 2'));
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, []);
         $actualResult = $this->viewHelper->render();
-        $this->assertEquals('Line 1<br />' . chr(13) . chr(10) . 'Line 2', $actualResult);
+        self::assertEquals('Line 1<br />' . chr(13) . chr(10) . 'Line 2', $actualResult);
     }
 }

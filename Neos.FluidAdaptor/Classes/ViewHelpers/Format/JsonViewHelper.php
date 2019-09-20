@@ -14,7 +14,6 @@ namespace Neos\FluidAdaptor\ViewHelpers\Format;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use TYPO3Fluid\Fluid\Core\Compiler\TemplateCompiler;
 use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\ViewHelperNode;
-use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 
 /**
  * Wrapper for PHPs json_encode function.
@@ -53,25 +52,37 @@ class JsonViewHelper extends AbstractViewHelper
     protected $escapeChildren = false;
 
     /**
+     * Initialize the arguments.
+     *
+     * @return void
+     * @api
+     */
+    public function initializeArguments()
+    {
+        $this->registerArgument('value', 'mixed', 'The incoming data to convert, or NULL if VH children should be used', false, null);
+        $this->registerArgument('forceObject', 'boolean', 'Outputs an JSON object rather than an array', false, false);
+    }
+
+    /**
      * Outputs content with its JSON representation. To prevent issues in HTML context, occurrences
      * of greater-than or less-than characters are converted to their hexadecimal representations.
      *
-     * If $forceObject is TRUE a JSON object is outputted even if the value is a non-associative array
+     * If $forceObject is true a JSON object is outputted even if the value is a non-associative array
      * Example: array('foo', 'bar') as input will not be ["foo","bar"] but {"0":"foo","1":"bar"}
      *
-     * @param mixed $value The incoming data to convert, or NULL if VH children should be used
-     * @param boolean $forceObject Outputs an JSON object rather than an array
      * @return string the JSON-encoded string.
      * @see http://www.php.net/manual/en/function.json-encode.php
      * @api
      */
-    public function render($value = null, $forceObject = false)
+    public function render()
     {
+        $value = $this->arguments['value'];
+
         if ($value === null) {
             $value = $this->renderChildren();
         }
         $options = JSON_HEX_TAG;
-        if ($forceObject !== false) {
+        if ($this->arguments['forceObject'] !== false) {
             $options = $options | JSON_FORCE_OBJECT;
         }
 

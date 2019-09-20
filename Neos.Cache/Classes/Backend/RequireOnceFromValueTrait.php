@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Cache\Backend;
 
 /*
@@ -28,7 +30,7 @@ trait RequireOnceFromValueTrait
      * @return mixed Potential return value from the include operation
      * @api
      */
-    public function requireOnce($entryIdentifier)
+    public function requireOnce(string $entryIdentifier)
     {
         $value = trim($this->get($entryIdentifier));
         if ($value === '') {
