@@ -23,9 +23,16 @@ class SuperEntity extends AbstractSuperEntity
     /**
      * Just a normal string
      *
-     * @var string|null
+     * @var string
      */
     protected $someString;
+
+    /**
+     * Just a string that can be null
+     *
+     * @var string|null
+     */
+    protected $someNullableString;
 
     /**
      * Just an int that can be null
@@ -33,4 +40,12 @@ class SuperEntity extends AbstractSuperEntity
      * @var null|int
      */
     protected $someNullableInt;
+
+    /**
+     * Just an array of strings that can be null
+     *
+     * @var array<string>|null
+     */
+    protected $someNullableArrayOfStrings;
+
 }
