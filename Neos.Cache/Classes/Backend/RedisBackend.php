@@ -394,18 +394,6 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
     }
 
     /**
-     * Sets the default lifetime for this cache backend
-     *
-     * @param integer|string|null $lifetime Default lifetime of this cache backend in seconds. If NULL is specified, the default lifetime is used. 0 means unlimited lifetime.
-     * @return void
-     * @api
-     */
-    public function setDefaultLifetime($lifetime): void
-    {
-        $this->defaultLifetime = $lifetime === null ? null : (int)$lifetime;
-    }
-
-    /**
      * Sets the hostname or the socket of the Redis server
      *
      * @param string $hostname Hostname of the Redis server
