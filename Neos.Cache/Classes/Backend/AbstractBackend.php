@@ -137,17 +137,17 @@ abstract class AbstractBackend implements BackendInterface
     /**
      * Sets the default lifetime for this cache backend
      *
-     * @param integer|string|null $defaultLifetime Default lifetime of this cache backend in seconds. If null is specified, the default lifetime is used. 0 means unlimited lifetime.
+     * @param integer|string $defaultLifetime Default lifetime of this cache backend in seconds. 0 means unlimited lifetime.
      * @return void
      * @throws \InvalidArgumentException
      * @api
      */
     public function setDefaultLifetime($defaultLifetime): void
     {
-        if ($defaultLifetime !== null && !is_numeric($defaultLifetime) && (int)$defaultLifetime < 0) {
-            throw new \InvalidArgumentException('The default lifetime must be given as null or as a positive integer', 1233072774);
+        if ((int)$defaultLifetime < 0) {
+            throw new \InvalidArgumentException('The default lifetime must be given as a positive integer', 1233072774);
         }
-        $this->defaultLifetime = $defaultLifetime === null ? null : (int)$defaultLifetime;
+        $this->defaultLifetime = (int)$defaultLifetime;
     }
 
     /**
