@@ -19,19 +19,19 @@ commands that may be available, use::
 
   ./flow help
 
-The following reference was automatically generated from code on 2016-07-28
+The following reference was automatically generated from code on 2019-09-23
 
 
-.. _`Flow Command Reference: Neos.FLOW`:
+.. _`Flow Command Reference: NEOS.FLOW`:
 
-Package *Neos.FLOW*
---------------------
+Package *NEOS.FLOW*
+-------------------
 
 
-.. _`Flow Command Reference: Neos.FLOW neos.flow:cache:flush`:
+.. _`Flow Command Reference: NEOS.FLOW neos.flow:cache:flush`:
 
 ``neos.flow:cache:flush``
-**************************
+*************************
 
 **Flush all caches**
 
@@ -67,10 +67,10 @@ Related commands
 
 
 
-.. _`Flow Command Reference: Neos.FLOW neos.flow:cache:flushone`:
+.. _`Flow Command Reference: NEOS.FLOW neos.flow:cache:flushone`:
 
 ``neos.flow:cache:flushone``
-*****************************
+****************************
 
 **Flushes a particular cache by its identifier**
 
@@ -102,10 +102,10 @@ Related commands
 
 
 
-.. _`Flow Command Reference: Neos.FLOW neos.flow:cache:warmup`:
+.. _`Flow Command Reference: NEOS.FLOW neos.flow:cache:warmup`:
 
 ``neos.flow:cache:warmup``
-***************************
+**************************
 
 **Warm up caches**
 
@@ -127,10 +127,10 @@ Related commands
 
 
 
-.. _`Flow Command Reference: Neos.FLOW neos.flow:configuration:generateschema`:
+.. _`Flow Command Reference: NEOS.FLOW neos.flow:configuration:generateschema`:
 
 ``neos.flow:configuration:generateschema``
-*******************************************
+******************************************
 
 **Generate a schema for the given configuration or YAML file.**
 
@@ -154,10 +154,10 @@ Options
 
 
 
-.. _`Flow Command Reference: Neos.FLOW neos.flow:configuration:listtypes`:
+.. _`Flow Command Reference: NEOS.FLOW neos.flow:configuration:listtypes`:
 
 ``neos.flow:configuration:listtypes``
-**************************************
+*************************************
 
 **List registered configuration types**
 
@@ -169,17 +169,24 @@ Options
 
 
 
-.. _`Flow Command Reference: Neos.FLOW neos.flow:configuration:show`:
+.. _`Flow Command Reference: NEOS.FLOW neos.flow:configuration:show`:
 
 ``neos.flow:configuration:show``
-*********************************
+********************************
 
 **Show the active configuration settings**
 
 The command shows the configuration of the current context as it is used by Flow itself.
 You can specify the configuration type and path if you want to show parts of the configuration.
 
-./flow configuration:show --type Settings --path Neos.Flow.persistence
+Display all settings:
+./flow configuration:show
+
+Display Flow persistence settings:
+./flow configuration:show --path Neos.Flow.persistence
+
+Display Flow Object Cache configuration
+./flow configuration:show --type Caches --path Flow_Object_Classes
 
 
 
@@ -187,7 +194,7 @@ Options
 ^^^^^^^
 
 ``--type``
-  Configuration type to show
+  Configuration type to show, defaults to Settings
 ``--path``
   path to subconfiguration separated by "." like "Neos.Flow
 
@@ -195,10 +202,10 @@ Options
 
 
 
-.. _`Flow Command Reference: Neos.FLOW neos.flow:configuration:validate`:
+.. _`Flow Command Reference: NEOS.FLOW neos.flow:configuration:validate`:
 
 ``neos.flow:configuration:validate``
-*************************************
+************************************
 
 **Validate the given configuration**
 
@@ -221,21 +228,21 @@ Options
 ``--path``
   path to the subconfiguration separated by "." like "Neos.Flow
 ``--verbose``
-  if TRUE, output more verbose information on the schema files which were used
+  if true, output more verbose information on the schema files which were used
 
 
 
 
 
-.. _`Flow Command Reference: Neos.FLOW neos.flow:core:migrate`:
+.. _`Flow Command Reference: NEOS.FLOW neos.flow:core:migrate`:
 
 ``neos.flow:core:migrate``
-***************************
+**************************
 
 **Migrate source files as needed**
 
-This will apply pending code migrations defined in packages to all
-packages that do not yet have those migration applied.
+This will apply pending code migrations defined in packages to the
+specified package.
 
 For every migration that has been run, it will create a commit in
 the package. This allows for easy inspection, rollback and use of
@@ -244,6 +251,12 @@ If the affected package contains local changes or is not part of
 a git repository, the migration will be skipped. With the --force
 flag this behavior can be changed, but changes will only be committed
 if the working copy was clean before applying the migration.
+
+Arguments
+^^^^^^^^^
+
+``--package``
+  The key of the package to migrate
 
 
 
@@ -254,8 +267,6 @@ Options
   Show the migration status, do not run migrations
 ``--packages-path``
   If set, use the given path as base when looking for packages
-``--package-key``
-  If set, migrate only the given package
 ``--version``
   If set, execute only the migration with the given version (e.g. "20150119114100")
 ``--verbose``
@@ -273,10 +284,10 @@ Related commands
 
 
 
-.. _`Flow Command Reference: Neos.FLOW neos.flow:core:setfilepermissions`:
+.. _`Flow Command Reference: NEOS.FLOW neos.flow:core:setfilepermissions`:
 
 ``neos.flow:core:setfilepermissions``
-**************************************
+*************************************
 
 **Adjust file permissions for CLI and web server access**
 
@@ -299,10 +310,10 @@ Arguments
 
 
 
-.. _`Flow Command Reference: Neos.FLOW neos.flow:core:shell`:
+.. _`Flow Command Reference: NEOS.FLOW neos.flow:core:shell`:
 
 ``neos.flow:core:shell``
-*************************
+************************
 
 **Run the interactive Shell**
 
@@ -316,10 +327,10 @@ additionally supports autocompletion and a user-based command history.
 
 
 
-.. _`Flow Command Reference: Neos.FLOW neos.flow:database:setcharset`:
+.. _`Flow Command Reference: NEOS.FLOW neos.flow:database:setcharset`:
 
 ``neos.flow:database:setcharset``
-**********************************
+*********************************
 
 **Convert the database schema to use the given character set and collation (defaults to utf8mb4 and utf8mb4_unicode_ci).**
 
@@ -335,20 +346,19 @@ For background information on this, see:
 
 - http://stackoverflow.com/questions/766809/
 - http://dev.mysql.com/doc/refman/5.5/en/alter-table.html
-
-The main purpose of this is to fix setups that were created with Flow 2.3.x or earlier and whose
-database server did not have a default collation of utf8mb4_unicode_ci. In those cases, the tables will
-have a collation that does not match the default collation of later Flow versions, potentially leading
-to problems when creating foreign key constraints (among others, potentially).
-
-If you have special needs regarding the charset and collation, you *can* override the defaults with
-different ones. One thing this might be useful for is when switching to the utf8mb4mb4 character set, see:
-
+- https://medium.com/@adamhooper/in-mysql-never-use-utf8-use-utf8mb4-11761243e434
 - https://mathiasbynens.be/notes/mysql-utf8mb4
 - https://florian.ec/articles/mysql-doctrine-utf8/
 
+The main purpose of this is to fix setups that were created with Flow before version 5.0. In those cases,
+the tables will have a collation that does not match the default collation of later Flow versions, potentially
+leading to problems when creating foreign key constraints (among others, potentially).
+
+If you have special needs regarding the charset and collation, you *can* override the defaults with
+different ones.
+
 Note: This command **is not a general purpose conversion tool**. It will specifically not fix cases
-of actual utf8mb4 stored in latin1 columns. For this a conversion to BLOB followed by a conversion to the
+of actual utf8 stored in latin1 columns. For this a conversion to BLOB followed by a conversion to the
 proper type, charset and collation is needed instead.
 
 
@@ -369,10 +379,10 @@ Options
 
 
 
-.. _`Flow Command Reference: Neos.FLOW neos.flow:doctrine:create`:
+.. _`Flow Command Reference: NEOS.FLOW neos.flow:doctrine:create`:
 
 ``neos.flow:doctrine:create``
-******************************
+*****************************
 
 **Create the database schema**
 
@@ -401,10 +411,10 @@ Related commands
 
 
 
-.. _`Flow Command Reference: Neos.FLOW neos.flow:doctrine:dql`:
+.. _`Flow Command Reference: NEOS.FLOW neos.flow:doctrine:dql`:
 
 ``neos.flow:doctrine:dql``
-***************************
+**************************
 
 **Run arbitrary DQL and display results**
 
@@ -430,10 +440,10 @@ Options
 
 
 
-.. _`Flow Command Reference: Neos.FLOW neos.flow:doctrine:entitystatus`:
+.. _`Flow Command Reference: NEOS.FLOW neos.flow:doctrine:entitystatus`:
 
 ``neos.flow:doctrine:entitystatus``
-************************************
+***********************************
 
 **Show the current status of entities and mappings**
 
@@ -462,10 +472,10 @@ Related commands
 
 
 
-.. _`Flow Command Reference: Neos.FLOW neos.flow:doctrine:migrate`:
+.. _`Flow Command Reference: NEOS.FLOW neos.flow:doctrine:migrate`:
 
 ``neos.flow:doctrine:migrate``
-*******************************
+******************************
 
 **Migrate the database schema**
 
@@ -502,10 +512,10 @@ Related commands
 
 
 
-.. _`Flow Command Reference: Neos.FLOW neos.flow:doctrine:migrationexecute`:
+.. _`Flow Command Reference: NEOS.FLOW neos.flow:doctrine:migrationexecute`:
 
 ``neos.flow:doctrine:migrationexecute``
-****************************************
+***************************************
 
 **Execute a single migration**
 
@@ -545,15 +555,16 @@ Related commands
 
 
 
-.. _`Flow Command Reference: Neos.FLOW neos.flow:doctrine:migrationgenerate`:
+.. _`Flow Command Reference: NEOS.FLOW neos.flow:doctrine:migrationgenerate`:
 
 ``neos.flow:doctrine:migrationgenerate``
-*****************************************
+****************************************
 
 **Generate a new migration**
 
-If $diffAgainstCurrent is TRUE (the default), it generates a migration file
+If $diffAgainstCurrent is true (the default), it generates a migration file
 with the diff between current DB structure and the found mapping metadata.
+
 Otherwise an empty migration skeleton is generated.
 
 Only includes tables/sequences matching the $filterExpression regexp when
@@ -576,6 +587,8 @@ Options
   Whether to base the migration on the current schema structure
 ``--filter-expression``
   Only include tables/sequences matching the filter expression regexp
+``--force``
+  Generate migrations even if there are migrations left to execute
 
 
 
@@ -593,10 +606,10 @@ Related commands
 
 
 
-.. _`Flow Command Reference: Neos.FLOW neos.flow:doctrine:migrationstatus`:
+.. _`Flow Command Reference: NEOS.FLOW neos.flow:doctrine:migrationstatus`:
 
 ``neos.flow:doctrine:migrationstatus``
-***************************************
+**************************************
 
 **Show the current migration status**
 
@@ -629,10 +642,10 @@ Related commands
 
 
 
-.. _`Flow Command Reference: Neos.FLOW neos.flow:doctrine:migrationversion`:
+.. _`Flow Command Reference: NEOS.FLOW neos.flow:doctrine:migrationversion`:
 
 ``neos.flow:doctrine:migrationversion``
-****************************************
+***************************************
 
 **Mark/unmark migrations as migrated**
 
@@ -671,10 +684,10 @@ Related commands
 
 
 
-.. _`Flow Command Reference: Neos.FLOW neos.flow:doctrine:update`:
+.. _`Flow Command Reference: NEOS.FLOW neos.flow:doctrine:update`:
 
 ``neos.flow:doctrine:update``
-******************************
+*****************************
 
 **Update the database schema**
 
@@ -704,10 +717,10 @@ Related commands
 
 
 
-.. _`Flow Command Reference: Neos.FLOW neos.flow:doctrine:validate`:
+.. _`Flow Command Reference: NEOS.FLOW neos.flow:doctrine:validate`:
 
 ``neos.flow:doctrine:validate``
-********************************
+*******************************
 
 **Validate the class/table mappings**
 
@@ -730,10 +743,10 @@ Related commands
 
 
 
-.. _`Flow Command Reference: Neos.FLOW neos.flow:help:help`:
+.. _`Flow Command Reference: NEOS.FLOW neos.flow:help:help`:
 
 ``neos.flow:help:help``
-************************
+***********************
 
 **Display help for a command**
 
@@ -752,37 +765,10 @@ Options
 
 
 
-.. _`Flow Command Reference: Neos.FLOW neos.flow:package:activate`:
-
-``neos.flow:package:activate``
-*******************************
-
-**Activate an available package**
-
-This command activates an existing, but currently inactive package.
-
-Arguments
-^^^^^^^^^
-
-``--package-key``
-  The package key of the package to create
-
-
-
-
-
-Related commands
-^^^^^^^^^^^^^^^^
-
-``neos.flow:package:deactivate``
-  Deactivate a package
-
-
-
-.. _`Flow Command Reference: Neos.FLOW neos.flow:package:create`:
+.. _`Flow Command Reference: NEOS.FLOW neos.flow:package:create`:
 
 ``neos.flow:package:create``
-*****************************
+****************************
 
 **Create a new package**
 
@@ -808,63 +794,15 @@ Options
 Related commands
 ^^^^^^^^^^^^^^^^
 
-``typo3.kickstart:kickstart:package``
+``neos.kickstarter:kickstart:package``
   Kickstart a new package
 
 
 
-.. _`Flow Command Reference: Neos.FLOW neos.flow:package:deactivate`:
-
-``neos.flow:package:deactivate``
-*********************************
-
-**Deactivate a package**
-
-This command deactivates a currently active package.
-
-Arguments
-^^^^^^^^^
-
-``--package-key``
-  The package key of the package to create
-
-
-
-
-
-Related commands
-^^^^^^^^^^^^^^^^
-
-``neos.flow:package:activate``
-  Activate an available package
-
-
-
-.. _`Flow Command Reference: Neos.FLOW neos.flow:package:delete`:
-
-``neos.flow:package:delete``
-*****************************
-
-**Delete an existing package**
-
-This command deletes an existing package identified by the package key.
-
-Arguments
-^^^^^^^^^
-
-``--package-key``
-  The package key of the package to create
-
-
-
-
-
-
-
-.. _`Flow Command Reference: Neos.FLOW neos.flow:package:freeze`:
+.. _`Flow Command Reference: NEOS.FLOW neos.flow:package:freeze`:
 
 ``neos.flow:package:freeze``
-*****************************
+****************************
 
 **Freeze a package**
 
@@ -901,15 +839,15 @@ Related commands
 
 
 
-.. _`Flow Command Reference: Neos.FLOW neos.flow:package:list`:
+.. _`Flow Command Reference: NEOS.FLOW neos.flow:package:list`:
 
 ``neos.flow:package:list``
-***************************
+**************************
 
 **List available packages**
 
 Lists all locally available packages. Displays the package key, version and
-package title and its state – active or inactive.
+package title.
 
 
 
@@ -925,16 +863,16 @@ Related commands
 ^^^^^^^^^^^^^^^^
 
 ``neos.flow:package:activate``
-  Activate an available package
+  *Command not available*
 ``neos.flow:package:deactivate``
-  Deactivate a package
+  *Command not available*
 
 
 
-.. _`Flow Command Reference: Neos.FLOW neos.flow:package:refreeze`:
+.. _`Flow Command Reference: NEOS.FLOW neos.flow:package:refreeze`:
 
 ``neos.flow:package:refreeze``
-*******************************
+******************************
 
 **Refreeze a package**
 
@@ -966,10 +904,10 @@ Related commands
 
 
 
-.. _`Flow Command Reference: Neos.FLOW neos.flow:package:rescan`:
+.. _`Flow Command Reference: NEOS.FLOW neos.flow:package:rescan`:
 
 ``neos.flow:package:rescan``
-*****************************
+****************************
 
 **Rescan package availability and recreates the PackageStates configuration.**
 
@@ -981,10 +919,10 @@ Related commands
 
 
 
-.. _`Flow Command Reference: Neos.FLOW neos.flow:package:unfreeze`:
+.. _`Flow Command Reference: NEOS.FLOW neos.flow:package:unfreeze`:
 
 ``neos.flow:package:unfreeze``
-*******************************
+******************************
 
 **Unfreeze a package**
 
@@ -1015,16 +953,16 @@ Related commands
 
 
 
-.. _`Flow Command Reference: Neos.FLOW neos.flow:resource:clean`:
+.. _`Flow Command Reference: NEOS.FLOW neos.flow:resource:clean`:
 
 ``neos.flow:resource:clean``
-*****************************
+****************************
 
 **Clean up resource registry**
 
 This command checks the resource registry (that is the database tables) for orphaned resource objects which don't
 seem to have any corresponding data anymore (for example: the file in Data/Persistent/Resources has been deleted
-without removing the related Resource object).
+without removing the related PersistentResource object).
 
 If the Neos.Media package is active, this command will also detect any assets referring to broken resources
 and will remove the respective Asset object from the database when the broken resource is removed.
@@ -1037,10 +975,10 @@ This command will ask you interactively what to do before deleting anything.
 
 
 
-.. _`Flow Command Reference: Neos.FLOW neos.flow:resource:copy`:
+.. _`Flow Command Reference: NEOS.FLOW neos.flow:resource:copy`:
 
 ``neos.flow:resource:copy``
-****************************
+***************************
 
 **Copy resources**
 
@@ -1048,7 +986,7 @@ This command copies all resources from one collection to another storage identif
 The target storage must be empty and must not be identical to the current storage of the collection.
 
 This command merely copies the binary data from one storage to another, it does not change the related
-Resource objects in the database in any way. Since the Resource objects in the database refer to a
+PersistentResource objects in the database in any way. Since the PersistentResource objects in the database refer to a
 collection name, you can use this command for migrating from one storage to another my configuring
 the new storage with the name of the old storage collection after the resources have been copied.
 
@@ -1072,10 +1010,10 @@ Options
 
 
 
-.. _`Flow Command Reference: Neos.FLOW neos.flow:resource:publish`:
+.. _`Flow Command Reference: NEOS.FLOW neos.flow:resource:publish`:
 
 ``neos.flow:resource:publish``
-*******************************
+******************************
 
 **Publish resources**
 
@@ -1094,10 +1032,10 @@ Options
 
 
 
-.. _`Flow Command Reference: Neos.FLOW neos.flow:routing:getpath`:
+.. _`Flow Command Reference: NEOS.FLOW neos.flow:routing:getpath`:
 
 ``neos.flow:routing:getpath``
-******************************
+*****************************
 
 **Generate a route path**
 
@@ -1128,10 +1066,10 @@ Options
 
 
 
-.. _`Flow Command Reference: Neos.FLOW neos.flow:routing:list`:
+.. _`Flow Command Reference: NEOS.FLOW neos.flow:routing:list`:
 
 ``neos.flow:routing:list``
-***************************
+**************************
 
 **List the known routes**
 
@@ -1143,10 +1081,10 @@ This command displays a list of all currently registered routes.
 
 
 
-.. _`Flow Command Reference: Neos.FLOW neos.flow:routing:routepath`:
+.. _`Flow Command Reference: NEOS.FLOW neos.flow:routing:routepath`:
 
 ``neos.flow:routing:routepath``
-********************************
+*******************************
 
 **Route the given route path**
 
@@ -1171,10 +1109,10 @@ Options
 
 
 
-.. _`Flow Command Reference: Neos.FLOW neos.flow:routing:show`:
+.. _`Flow Command Reference: NEOS.FLOW neos.flow:routing:show`:
 
 ``neos.flow:routing:show``
-***************************
+**************************
 
 **Show information for a route**
 
@@ -1192,10 +1130,64 @@ Arguments
 
 
 
-.. _`Flow Command Reference: Neos.FLOW neos.flow:security:generatekeypair`:
+.. _`Flow Command Reference: NEOS.FLOW neos.flow:schema:validate`:
+
+``neos.flow:schema:validate``
+*****************************
+
+**Validate the given configurationfile againt a schema file**
+
+
+
+
+
+Options
+^^^^^^^
+
+``--configuration-file``
+  path to the validated configuration file
+``--schema-file``
+  path to the schema file
+``--verbose``
+  if true, output more verbose information on the schema files which were used
+
+
+
+
+
+.. _`Flow Command Reference: NEOS.FLOW neos.flow:schema:validateschema`:
+
+``neos.flow:schema:validateschema``
+***********************************
+
+**Validate the given configurationfile againt a schema file**
+
+
+
+Arguments
+^^^^^^^^^
+
+``--configuration-file``
+  path to the validated configuration file
+
+
+
+Options
+^^^^^^^
+
+``--schema-file``
+  path to the schema file
+``--verbose``
+  if true, output more verbose information on the schema files which were used
+
+
+
+
+
+.. _`Flow Command Reference: NEOS.FLOW neos.flow:security:generatekeypair`:
 
 ``neos.flow:security:generatekeypair``
-***************************************
+**************************************
 
 **Generate a public/private key pair and add it to the RSAWalletService**
 
@@ -1219,10 +1211,10 @@ Related commands
 
 
 
-.. _`Flow Command Reference: Neos.FLOW neos.flow:security:importprivatekey`:
+.. _`Flow Command Reference: NEOS.FLOW neos.flow:security:importprivatekey`:
 
 ``neos.flow:security:importprivatekey``
-****************************************
+***************************************
 
 **Import a private key**
 
@@ -1264,10 +1256,10 @@ Related commands
 
 
 
-.. _`Flow Command Reference: Neos.FLOW neos.flow:security:importpublickey`:
+.. _`Flow Command Reference: NEOS.FLOW neos.flow:security:importpublickey`:
 
 ``neos.flow:security:importpublickey``
-***************************************
+**************************************
 
 **Import a public key**
 
@@ -1286,10 +1278,10 @@ Related commands
 
 
 
-.. _`Flow Command Reference: Neos.FLOW neos.flow:security:showeffectivepolicy`:
+.. _`Flow Command Reference: NEOS.FLOW neos.flow:security:showeffectivepolicy`:
 
 ``neos.flow:security:showeffectivepolicy``
-*******************************************
+******************************************
 
 **Shows a list of all defined privilege targets and the effective permissions**
 
@@ -1313,10 +1305,10 @@ Options
 
 
 
-.. _`Flow Command Reference: Neos.FLOW neos.flow:security:showmethodsforprivilegetarget`:
+.. _`Flow Command Reference: NEOS.FLOW neos.flow:security:showmethodsforprivilegetarget`:
 
 ``neos.flow:security:showmethodsforprivilegetarget``
-*****************************************************
+****************************************************
 
 **Shows the methods represented by the given security privilege target**
 
@@ -1336,10 +1328,10 @@ Arguments
 
 
 
-.. _`Flow Command Reference: Neos.FLOW neos.flow:security:showunprotectedactions`:
+.. _`Flow Command Reference: NEOS.FLOW neos.flow:security:showunprotectedactions`:
 
 ``neos.flow:security:showunprotectedactions``
-**********************************************
+*********************************************
 
 **Lists all public controller actions not covered by the active security policy**
 
@@ -1351,10 +1343,10 @@ Arguments
 
 
 
-.. _`Flow Command Reference: Neos.FLOW neos.flow:server:run`:
+.. _`Flow Command Reference: NEOS.FLOW neos.flow:server:run`:
 
 ``neos.flow:server:run``
-*************************
+************************
 
 **Run a standalone development server**
 
@@ -1378,10 +1370,10 @@ Options
 
 
 
-.. _`Flow Command Reference: Neos.FLOW neos.flow:typeconverter:list`:
+.. _`Flow Command Reference: NEOS.FLOW neos.flow:typeconverter:list`:
 
 ``neos.flow:typeconverter:list``
-*********************************
+********************************
 
 **Lists all currently active and registered type converters**
 
@@ -1390,20 +1382,28 @@ source type first and target type second.
 
 
 
+Options
+^^^^^^^
+
+``--source``
+  Filter by source
+``--target``
+  Filter by target type
 
 
 
 
-.. _`Flow Command Reference: Neos.FLUID`:
 
-Package *Neos.FLUID*
----------------------
+.. _`Flow Command Reference: NEOS.FLUIDADAPTOR`:
+
+Package *NEOS.FLUIDADAPTOR*
+---------------------------
 
 
-.. _`Flow Command Reference: Neos.FLUID typo3.fluid:documentation:generatexsd`:
+.. _`Flow Command Reference: NEOS.FLUIDADAPTOR neos.fluidadaptor:documentation:generatexsd`:
 
-``typo3.fluid:documentation:generatexsd``
-*****************************************
+``neos.fluidadaptor:documentation:generatexsd``
+***********************************************
 
 **Generate Fluid ViewHelper XSD Schema**
 
@@ -1411,7 +1411,7 @@ Generates Schema documentation (XSD) for your ViewHelpers, preparing the
 file to be placed online and used by any XSD-aware editor.
 After creating the XSD file, reference it in your IDE and import the namespace
 in your Fluid template by adding the xmlns:* attribute(s):
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://typo3.org/ns/Neos/Fluid/ViewHelpers" ...>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://typo3.org/ns/TYPO3/Fluid/ViewHelpers" ...>
 
 Arguments
 ^^^^^^^^^
@@ -1430,230 +1430,6 @@ Options
   File path and name of the generated XSD schema. If not specified the schema will be output to standard output.
 
 
-
-
-
-.. _`Flow Command Reference: Neos.KICKSTART`:
-
-Package *Neos.KICKSTART*
--------------------------
-
-
-.. _`Flow Command Reference: Neos.KICKSTART typo3.kickstart:kickstart:actioncontroller`:
-
-``typo3.kickstart:kickstart:actioncontroller``
-**********************************************
-
-**Kickstart a new action controller**
-
-Generates an Action Controller with the given name in the specified package.
-In its default mode it will create just the controller containing a sample
-indexAction.
-
-By specifying the --generate-actions flag, this command will also create a
-set of actions. If no model or repository exists which matches the
-controller name (for example "CoffeeRepository" for "CoffeeController"),
-an error will be shown.
-
-Likewise the command exits with an error if the specified package does not
-exist. By using the --generate-related flag, a missing package, model or
-repository can be created alongside, avoiding such an error.
-
-By specifying the --generate-templates flag, this command will also create
-matching Fluid templates for the actions created. This option can only be
-used in combination with --generate-actions.
-
-The default behavior is to not overwrite any existing code. This can be
-overridden by specifying the --force flag.
-
-Arguments
-^^^^^^^^^
-
-``--package-key``
-  The package key of the package for the new controller with an optional subpackage, (e.g. "MyCompany.MyPackage/Admin").
-``--controller-name``
-  The name for the new controller. This may also be a comma separated list of controller names.
-
-
-
-Options
-^^^^^^^
-
-``--generate-actions``
-  Also generate index, show, new, create, edit, update and delete actions.
-``--generate-templates``
-  Also generate the templates for each action.
-``--generate-related``
-  Also create the mentioned package, related model and repository if neccessary.
-``--force``
-  Overwrite any existing controller or template code. Regardless of this flag, the package, model and repository will never be overwritten.
-
-
-
-Related commands
-^^^^^^^^^^^^^^^^
-
-``typo3.kickstart:kickstart:commandcontroller``
-  Kickstart a new command controller
-
-
-
-.. _`Flow Command Reference: Neos.KICKSTART typo3.kickstart:kickstart:commandcontroller`:
-
-``typo3.kickstart:kickstart:commandcontroller``
-***********************************************
-
-**Kickstart a new command controller**
-
-Creates a new command controller with the given name in the specified
-package. The generated controller class already contains an example command.
-
-Arguments
-^^^^^^^^^
-
-``--package-key``
-  The package key of the package for the new controller
-``--controller-name``
-  The name for the new controller. This may also be a comma separated list of controller names.
-
-
-
-Options
-^^^^^^^
-
-``--force``
-  Overwrite any existing controller.
-
-
-
-Related commands
-^^^^^^^^^^^^^^^^
-
-``typo3.kickstart:kickstart:actioncontroller``
-  Kickstart a new action controller
-
-
-
-.. _`Flow Command Reference: Neos.KICKSTART typo3.kickstart:kickstart:documentation`:
-
-``typo3.kickstart:kickstart:documentation``
-*******************************************
-
-**Kickstart documentation**
-
-Generates a documentation skeleton for the given package.
-
-Arguments
-^^^^^^^^^
-
-``--package-key``
-  The package key of the package for the documentation
-
-
-
-
-
-
-
-.. _`Flow Command Reference: Neos.KICKSTART typo3.kickstart:kickstart:model`:
-
-``typo3.kickstart:kickstart:model``
-***********************************
-
-**Kickstart a new domain model**
-
-This command generates a new domain model class. The fields are specified as
-a variable list of arguments with field name and type separated by a colon
-(for example "title:string" "size:int" "type:MyType").
-
-Arguments
-^^^^^^^^^
-
-``--package-key``
-  The package key of the package for the domain model
-``--model-name``
-  The name of the new domain model class
-
-
-
-Options
-^^^^^^^
-
-``--force``
-  Overwrite any existing model.
-
-
-
-Related commands
-^^^^^^^^^^^^^^^^
-
-``typo3.kickstart:kickstart:repository``
-  Kickstart a new domain repository
-
-
-
-.. _`Flow Command Reference: Neos.KICKSTART typo3.kickstart:kickstart:package`:
-
-``typo3.kickstart:kickstart:package``
-*************************************
-
-**Kickstart a new package**
-
-Creates a new package and creates a standard Action Controller and a sample
-template for its Index Action.
-
-For creating a new package without sample code use the package:create command.
-
-Arguments
-^^^^^^^^^
-
-``--package-key``
-  The package key, for example "MyCompany.MyPackageName
-
-
-
-
-
-Related commands
-^^^^^^^^^^^^^^^^
-
-``neos.flow:package:create``
-  Create a new package
-
-
-
-.. _`Flow Command Reference: Neos.KICKSTART typo3.kickstart:kickstart:repository`:
-
-``typo3.kickstart:kickstart:repository``
-****************************************
-
-**Kickstart a new domain repository**
-
-This command generates a new domain repository class for the given model name.
-
-Arguments
-^^^^^^^^^
-
-``--package-key``
-  The package key
-``--model-name``
-  The name of the domain model class
-
-
-
-Options
-^^^^^^^
-
-``--force``
-  Overwrite any existing repository.
-
-
-
-Related commands
-^^^^^^^^^^^^^^^^
-
-``typo3.kickstart:kickstart:model``
-  Kickstart a new domain model
 
 
 
