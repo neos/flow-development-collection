@@ -47,4 +47,11 @@ class SuperEntity extends AbstractSuperEntity
      * @var array<string>|null
      */
     protected $someNullableArrayOfStrings;
+
+    /**
+     * A nullable property with a fully qualified class name
+     *
+     * @var \DateTimeInterface|null
+     */
+    protected $aNullableDateTime;
 }
