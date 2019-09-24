@@ -50,6 +50,7 @@ use Neos\Error\Messages\Result;
  * a separate list with all entries is populated
  *
  * @api
+ * @psalm-suppress UndefinedDocblockClass
  */
 class RedisBackend extends IndependentAbstractBackend implements TaggableBackendInterface, IterableBackendInterface, FreezableBackendInterface, PhpCapableBackendInterface, WithStatusInterface
 {
@@ -59,7 +60,6 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
 
     /**
      * @var \Redis
-     * @psalm-suppress UndefinedDocblockClass
      */
     protected $redis;
 
