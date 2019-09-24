@@ -49,6 +49,28 @@
       <code>null</code>
     </PossiblyNullPropertyAssignmentValue>
   </file>
+  <file src="Packages/Framework/Neos.Cache/Classes/Backend/RedisBackend.php">
+    <UndefinedClass occurrences="3">
+      <code>\Redis</code>
+      <code>\Redis</code>
+      <code>\Redis</code>
+    </UndefinedClass>
+    <UndefinedDocblockClass occurrences="13">
+      <code>\Redis</code>
+      <code>$this-&gt;redis</code>
+      <code>$this-&gt;redis</code>
+      <code>$this-&gt;redis</code>
+      <code>$this-&gt;redis</code>
+      <code>$this-&gt;redis</code>
+      <code>$this-&gt;redis</code>
+      <code>$this-&gt;redis</code>
+      <code>$this-&gt;redis</code>
+      <code>$this-&gt;redis</code>
+      <code>$this-&gt;redis</code>
+      <code>$this-&gt;redis</code>
+      <code>$this-&gt;redis</code>
+    </UndefinedDocblockClass>
+  </file>
   <file src="Packages/Framework/Neos.Cache/Classes/Frontend/PhpFrontend.php">
     <ImplementedReturnTypeMismatch occurrences="1">
       <code>string|bool</code>

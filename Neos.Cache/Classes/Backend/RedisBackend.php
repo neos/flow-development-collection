@@ -50,7 +50,6 @@ use Neos\Error\Messages\Result;
  * a separate list with all entries is populated
  *
  * @api
- * @psalm-suppress UndefinedDocblockClass
  */
 class RedisBackend extends IndependentAbstractBackend implements TaggableBackendInterface, IterableBackendInterface, FreezableBackendInterface, PhpCapableBackendInterface, WithStatusInterface
 {
@@ -104,7 +103,6 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
      * @param EnvironmentConfiguration $environmentConfiguration
      * @param array $options Configuration options - depends on the actual backend
      * @throws CacheException
-     * @psalm-suppress UndefinedClass
      */
     public function __construct(EnvironmentConfiguration $environmentConfiguration, array $options)
     {
