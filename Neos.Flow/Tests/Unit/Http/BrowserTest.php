@@ -15,10 +15,8 @@ use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Http\Client;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Http\Factories\ServerRequestFactory;
-use Neos\Http\Factories\UriFactory;
+use Neos\Http\Factories\RequestFactory;
 use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Test case for the Http Cookie class
@@ -37,7 +35,7 @@ class BrowserTest extends UnitTestCase
     {
         parent::setUp();
         $this->browser = new Client\Browser();
-        $this->inject($this->browser, 'serverRequestFactory', new ServerRequestFactory(new UriFactory()));
+        $this->inject($this->browser, 'requestFactory', new RequestFactory());
     }
 
     /**
@@ -110,14 +108,14 @@ class BrowserTest extends UnitTestCase
         $requestEngine
             ->expects(self::at(0))
             ->method('sendRequest')
-            ->with($this->callback(function (ServerRequestInterface $request) use ($initialUri) {
+            ->with($this->callback(function (RequestInterface $request) use ($initialUri) {
                 return (string)$request->getUri() === (string)$initialUri;
             }))
             ->willReturn($firstResponse);
         $requestEngine
             ->expects(self::at(1))
             ->method('sendRequest')
-            ->with($this->callback(function (ServerRequestInterface $request) use ($redirectUri) {
+            ->with($this->callback(function (RequestInterface $request) use ($redirectUri) {
                 return (string)$request->getUri() === (string)$redirectUri;
             }))
             ->willReturn($secondResponse);
