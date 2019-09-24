@@ -51,8 +51,10 @@ abstract class RequestInformationHelper
      */
     public static function getScriptRequestPath(ServerRequestInterface $request): string
     {
-        $requestPath = dirname(self::getScriptRequestPathAndFilename($request));
-        return rtrim($requestPath, '/') . '/';
+        // This is not a simple `dirname()` because on Windows it will end up with backslashes in the URL
+        $requestPathSegments = explode('/', self::getScriptRequestPathAndFilename($request));
+        array_pop($requestPathSegments);
+        return implode('/', $requestPathSegments) . '/';
     }
 
     /**
