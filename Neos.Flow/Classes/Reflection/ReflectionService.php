@@ -28,7 +28,6 @@ use Neos\Flow\Reflection\Exception\InvalidPropertyTypeException;
 use Neos\Flow\Reflection\Exception\InvalidValueObjectException;
 use Neos\Utility\Arrays;
 use Neos\Flow\Utility\Environment;
-use Neos\Utility\Exception\InvalidTypeException;
 use Neos\Utility\Files;
 use Neos\Utility\TypeHandling;
 use Psr\Log\LoggerInterface;
@@ -1625,12 +1624,7 @@ class ReflectionService
         }
 
         $declaredType = strtok(trim(current($varTagValues), " \n\t"), " \n\t");
-        try {
-            TypeHandling::parseType($declaredType);
-        } catch (InvalidTypeException $exception) {
-            throw new \InvalidArgumentException(sprintf($exception->getMessage(), 'class "' . $className . '" for property "' . $propertyName . '"'), 1315564475);
-        }
-
+        
         if ($this->isPropertyAnnotatedWith($className, $propertyName, ORM\Id::class)) {
             $skipArtificialIdentity = true;
         }
