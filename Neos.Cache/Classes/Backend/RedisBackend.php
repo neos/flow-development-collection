@@ -59,6 +59,7 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
 
     /**
      * @var \Redis
+     * @psalm-suppress UndefinedDocblockClass
      */
     protected $redis;
 
@@ -103,6 +104,7 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
      * @param EnvironmentConfiguration $environmentConfiguration
      * @param array $options Configuration options - depends on the actual backend
      * @throws CacheException
+     * @psalm-suppress UndefinedClass
      */
     public function __construct(EnvironmentConfiguration $environmentConfiguration, array $options)
     {
