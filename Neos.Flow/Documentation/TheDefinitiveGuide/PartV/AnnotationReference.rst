@@ -3,7 +3,7 @@
 Flow Annotation Reference
 =========================
 
-This reference was automatically generated from code on 2019-09-02
+This reference was automatically generated from code on 2019-09-24
 
 
 .. _`Flow Annotation Reference: After`:
@@ -356,6 +356,29 @@ layer of Flow. For Doctrine based persistence this is ignored.
 
 :Applicable to: Class, Property
 
+
+
+
+
+.. _`Flow Annotation Reference: MapRequestBody`:
+
+MapRequestBody
+--------------
+
+Used to map the request body to a single action argument.
+
+Normally, Flow will map the request body into the arguments as an associative array. With this it is possible to
+map the full body into a single argument without wrapping the request body.
+
+:Applicable to: Method
+
+
+
+
+Arguments
+*********
+
+* ``argumentName`` (string): Name of the argument to map the request body into. (Can be given as anonymous argument.)
 
 
 
