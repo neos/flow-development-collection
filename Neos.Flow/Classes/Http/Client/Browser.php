@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Flow\Http\Client;
 
 /*
@@ -13,11 +15,12 @@ namespace Neos\Flow\Http\Client;
 
 use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Http\Exception as HttpException;
 use Neos\Flow\Http\Headers;
 use Neos\Flow\Http\Helper\RequestInformationHelper;
+use Psr\Http\Message\RequestFactoryInterface;
+use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestFactoryInterface;
-use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamFactoryInterface;
 use Psr\Http\Message\UploadedFileInterface;
 use Psr\Http\Message\UriInterface;
@@ -32,7 +35,7 @@ use Symfony\Component\DomCrawler\Form;
 class Browser
 {
     /**
-     * @var ServerRequestInterface
+     * @var RequestInterface
      */
     protected $lastRequest;
 
@@ -76,9 +79,9 @@ class Browser
 
     /**
      * @Flow\Inject
-     * @var ServerRequestFactoryInterface
+     * @var RequestFactoryInterface
      */
-    protected $serverRequestFactory;
+    protected $requestFactory;
 
     /**
      * @Flow\Inject
@@ -100,7 +103,7 @@ class Browser
      * @param RequestEngineInterface $requestEngine
      * @return void
      */
-    public function setRequestEngine(RequestEngineInterface $requestEngine)
+    public function setRequestEngine(RequestEngineInterface $requestEngine): void
     {
         $this->requestEngine = $requestEngine;
     }
@@ -113,9 +116,9 @@ class Browser
      * @return void
      * @see Message::setHeader()
      */
-    public function addAutomaticRequestHeader($name, $values)
+    public function addAutomaticRequestHeader($name, $values): void
     {
-        $this->automaticRequestHeaders->set($name, $values, true);
+        $this->automaticRequestHeaders->set($name, $values);
     }
 
     /**
@@ -124,7 +127,7 @@ class Browser
      * @param string $name Name of the header, for example "Location", "Content-Description" etc.
      * @return void
      */
-    public function removeAutomaticRequestHeader($name)
+    public function removeAutomaticRequestHeader($name): void
     {
         $this->automaticRequestHeaders->remove($name);
     }
@@ -138,14 +141,14 @@ class Browser
      * @param string $method Request method, for example "GET"
      * @param array $arguments Arguments to send in the request body
      * @param UploadedFileInterface[] $files
-     * @param array $server
      * @param string $content
      * @return ResponseInterface The HTTP response
      * @throws \InvalidArgumentException
      * @throws InfiniteRedirectionException
+     * @throws HttpException
      * @api
      */
-    public function request($uri, $method = 'GET', array $arguments = [], array $files = [], array $server = [], $content = null): ResponseInterface
+    public function request($uri, $method = 'GET', array $arguments = [], array $files = [], $content = null): ResponseInterface
     {
         if (is_string($uri)) {
             $uri = new Uri($uri);
@@ -153,7 +156,7 @@ class Browser
         if (!$uri instanceof UriInterface) {
             throw new \InvalidArgumentException('$uri must be a URI object or a valid string representation of a URI.', 1333443624);
         }
-        $request = $this->serverRequestFactory->createServerRequest($method, $uri, $server);
+        $request = $this->requestFactory->createRequest($method, $uri);
         if ($content) {
             $request = $request->withBody($this->contentStreamFactory->createStream($content));
         }
@@ -192,7 +195,7 @@ class Browser
      * @param boolean $flag
      * @return void
      */
-    public function setFollowRedirects($flag)
+    public function setFollowRedirects($flag): void
     {
         $this->followRedirects = (boolean)$flag;
     }
@@ -200,11 +203,12 @@ class Browser
     /**
      * Sends a prepared request and returns the respective response.
      *
-     * @param ServerRequestInterface $request
+     * @param RequestInterface $request
      * @return ResponseInterface
+     * @throws HttpException
      * @api
      */
-    public function sendRequest(ServerRequestInterface $request)
+    public function sendRequest(RequestInterface $request): ResponseInterface
     {
         foreach ($this->automaticRequestHeaders->getAll() as $name => $values) {
             $request = $request->withAddedHeader($name, $values);
@@ -221,7 +225,7 @@ class Browser
      * @return ResponseInterface The HTTP response or NULL if there wasn't a response yet
      * @api
      */
-    public function getLastResponse()
+    public function getLastResponse(): ResponseInterface
     {
         return $this->lastResponse;
     }
@@ -229,10 +233,10 @@ class Browser
     /**
      * Returns the last request executed.
      *
-     * @return ServerRequestInterface The HTTP request or NULL if there wasn't a request yet
+     * @return RequestInterface The HTTP request or NULL if there wasn't a request yet
      * @api
      */
-    public function getLastRequest()
+    public function getLastRequest(): RequestInterface
     {
         return $this->lastRequest;
     }
@@ -243,7 +247,7 @@ class Browser
      * @return RequestEngineInterface
      * @api
      */
-    public function getRequestEngine()
+    public function getRequestEngine(): RequestEngineInterface
     {
         return $this->requestEngine;
     }
@@ -259,7 +263,7 @@ class Browser
      * @return \Symfony\Component\DomCrawler\Crawler
      * @api
      */
-    public function getCrawler()
+    public function getCrawler(): Crawler
     {
         $crawler = new Crawler(null, (string)$this->lastRequest->getUri(), (string)RequestInformationHelper::generateBaseUri($this->lastRequest));
         $this->lastResponse->getBody()->rewind();
@@ -277,7 +281,7 @@ class Browser
      * @return \Symfony\Component\DomCrawler\Form
      * @api
      */
-    public function getForm($xpath = '//form')
+    public function getForm($xpath = '//form'): Form
     {
         return $this->getCrawler()->filterXPath($xpath)->form();
     }
@@ -287,9 +291,10 @@ class Browser
      *
      * @param \Symfony\Component\DomCrawler\Form $form
      * @return ResponseInterface
+     * @throws InfiniteRedirectionException
      * @api
      */
-    public function submit(Form $form)
+    public function submit(Form $form): ResponseInterface
     {
         return $this->request($form->getUri(), $form->getMethod(), $form->getPhpValues(), $form->getPhpFiles());
     }

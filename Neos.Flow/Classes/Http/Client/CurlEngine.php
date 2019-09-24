@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Flow\Http\Client;
 
 /*
@@ -11,11 +13,10 @@ namespace Neos\Flow\Http\Client;
  * source code.
  */
 
-use function GuzzleHttp\Psr7\parse_response;
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http;
+use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
+use function GuzzleHttp\Psr7\parse_response;
 
 /**
  * A Request Engine which uses cURL in order to send requests to external
@@ -41,7 +42,7 @@ class CurlEngine implements RequestEngineInterface
      * @param integer $optionName One of the CURLOPT_* constants
      * @param mixed $value The value to set
      */
-    public function setOption($optionName, $value)
+    public function setOption(int $optionName, $value): void
     {
         $this->options[$optionName] = $value;
     }
@@ -49,13 +50,13 @@ class CurlEngine implements RequestEngineInterface
     /**
      * Sends the given HTTP request
      *
-     * @param ServerRequestInterface $request
+     * @param RequestInterface $request
      * @return ResponseInterface The response or false
-     * @api
      * @throws Http\Exception
      * @throws CurlEngineException
+     * @api
      */
-    public function sendRequest(ServerRequestInterface $request): ResponseInterface
+    public function sendRequest(RequestInterface $request): ResponseInterface
     {
         if (!extension_loaded('curl')) {
             throw new Http\Exception('CurlEngine requires the PHP CURL extension to be installed and loaded.', 1346319808);

@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Flow\Http\Client;
 
 /*
@@ -12,8 +14,8 @@ namespace Neos\Flow\Http\Client;
  */
 
 use Neos\Flow\Http;
+use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Interface for a Request Engine which can be used by a HTTP Client implementation
@@ -22,11 +24,11 @@ use Psr\Http\Message\ServerRequestInterface;
 interface RequestEngineInterface
 {
     /**
-     * Sends the given HTTP request
+     * Sends the given request
      *
-     * @param ServerRequestInterface $request
+     * @param RequestInterface $request
      * @return ResponseInterface
      * @throws Http\Exception
      */
-    public function sendRequest(ServerRequestInterface $request): ResponseInterface;
+    public function sendRequest(RequestInterface $request): ResponseInterface;
 }
