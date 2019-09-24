@@ -1460,7 +1460,7 @@ class ReflectionService
 
         // skip simple types and types with fully qualified namespaces
         if ($type === 'mixed' || $type[0] === '\\' || TypeHandling::isSimpleType($type)) {
-            return TypeHandling::normalizeType($type) . ($isNullable ? '|null' : '');
+            return TypeHandling::normalizeType($typeWithoutNull) . ($isNullable ? '|null' : '');
         }
 
         // we try to find the class relative to the current namespace...

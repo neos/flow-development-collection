@@ -410,7 +410,8 @@ abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
             'REQUEST_URI' => '',
             'SCRIPT_NAME' => '/index.php',
             'PHP_SELF' => '/index.php',
-            'REQUEST_TIME' => 1326472534,
+            'REQUEST_TIME' => $_SERVER['REQUEST_TIME'] ?? null,
+            'REQUEST_TIME_FLOAT' => $_SERVER['REQUEST_TIME_FLOAT'] ?? null,
         ];
     }
 
