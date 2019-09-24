@@ -49,28 +49,6 @@
       <code>null</code>
     </PossiblyNullPropertyAssignmentValue>
   </file>
-  <file src="Packages/Framework/Neos.Cache/Classes/Backend/RedisBackend.php">
-    <UndefinedClass occurrences="3">
-      <code>\Redis</code>
-      <code>\Redis</code>
-      <code>\Redis</code>
-    </UndefinedClass>
-    <UndefinedDocblockClass occurrences="13">
-      <code>\Redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-    </UndefinedDocblockClass>
-  </file>
   <file src="Packages/Framework/Neos.Cache/Classes/Frontend/PhpFrontend.php">
     <ImplementedReturnTypeMismatch occurrences="1">
       <code>string|bool</code>
@@ -390,21 +368,7 @@
       <code>$additionalData</code>
     </MoreSpecificImplementedParamType>
   </file>
-  <file src="Packages/Framework/Neos.Flow.Log/Classes/Backend/ConsoleBackend.php">
-    <DuplicateArrayKey occurrences="4">
-      <code>LOG_ALERT =&gt; 'ALERT    '</code>
-      <code>LOG_CRIT =&gt; 'CRITICAL '</code>
-      <code>LOG_INFO =&gt; 'INFO     '</code>
-      <code>LOG_DEBUG =&gt; 'DEBUG    '</code>
-    </DuplicateArrayKey>
-  </file>
   <file src="Packages/Framework/Neos.Flow.Log/Classes/Backend/FileBackend.php">
-    <DuplicateArrayKey occurrences="4">
-      <code>LOG_ALERT =&gt; 'ALERT    '</code>
-      <code>LOG_CRIT =&gt; 'CRITICAL '</code>
-      <code>LOG_INFO =&gt; 'INFO     '</code>
-      <code>LOG_DEBUG =&gt; 'DEBUG    '</code>
-    </DuplicateArrayKey>
     <PossiblyNullOperand occurrences="2">
       <code>$className</code>
       <code>$methodName</code>
@@ -1852,8 +1816,7 @@
     </PropertyTypeCoercion>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Persistence/Doctrine/Repository.php">
-    <ArgumentTypeCoercion occurrences="2">
-      <code>$entityManager</code>
+    <ArgumentTypeCoercion occurrences="1">
       <code>$classMetadata</code>
     </ArgumentTypeCoercion>
     <ImplementedReturnTypeMismatch occurrences="1">
