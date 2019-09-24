@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Functional\Http\Client;
 
 /*
@@ -47,7 +49,7 @@ class BrowserTest extends FunctionalTestCase
      *
      * @test
      */
-    public function redirectsAreFollowed()
+    public function redirectsAreFollowed(): void
     {
         $response = $this->browser->request('http://localhost/test/http/redirecting');
         self::assertEquals('arrived.', $response->getBody()->getContents());
@@ -58,7 +60,7 @@ class BrowserTest extends FunctionalTestCase
      *
      * @test
      */
-    public function redirectsAreNotFollowedIfSwitchedOff()
+    public function redirectsAreNotFollowedIfSwitchedOff(): void
     {
         $this->browser->setFollowRedirects(false);
         $response = $this->browser->request('http://localhost/test/http/redirecting');
