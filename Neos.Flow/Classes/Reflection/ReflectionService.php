@@ -28,7 +28,6 @@ use Neos\Flow\Reflection\Exception\InvalidPropertyTypeException;
 use Neos\Flow\Reflection\Exception\InvalidValueObjectException;
 use Neos\Utility\Arrays;
 use Neos\Flow\Utility\Environment;
-use Neos\Utility\Exception\InvalidTypeException;
 use Neos\Utility\Files;
 use Neos\Utility\TypeHandling;
 use Psr\Log\LoggerInterface;
