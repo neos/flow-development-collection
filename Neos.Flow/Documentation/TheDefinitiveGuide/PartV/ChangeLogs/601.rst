@@ -1,0 +1,42 @@
+`6.0.1 (2019-09-24) <https://github.com/neos/flow-development-collection/releases/tag/6.0.1>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`TASK: Relax option type strictness in AbstractBackend and RedisBackend <https://github.com/neos/flow-development-collection/pull/1782>`_
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Cache``
+
+`TASK: Use "Flow/FLOW_VERSION_BRANCH" as default user agent <https://github.com/neos/flow-development-collection/pull/1790>`_
+-----------------------------------------------------------------------------------------------------------------------------
+
+Fixes #1783
+
+* Packages: ``Factories``
+
+`BUGFIX: Handle nullable property annotations correctly <https://github.com/neos/flow-development-collection/pull/1780>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+This fixes a regression introduced with #1640, which caused properties on entities annotated as nullable (`|null`) to throw an exception during reflection time in Flow.
+
+Since #1640 we more strictly parse type annotations. Before, something like `string|null` was parsed as just `string` (and even `stringnull` would have worked, which was obviously wrong). With the bugfix , a `|null` was no longer parsed, because a whitespace or line ending was expected at the end of the type annotation `(?:\\s|$)`.
+
+This change fixes this, by explicitly allowing `null|` and `|null` in the parser regex - all other type unions are still not allowed because we can not resolve that to some useful type information.
+
+Resolves #1779
+
+* Packages: ``Flow``
+
+`BUGFIX: Undo \`dirname\` simplification in getScriptRequestPath <https://github.com/neos/flow-development-collection/pull/1787>`_
+----------------------------------------------------------------------------------------------------------------------------------
+
+This was broken in the PSR7 move, by replacing the explode/array_pop/implode logic with a simple dirname. On Windows, you in most cases end up with a single `\` which in turn results in generating URLs like `/\\/`. This change simply changes the code back to the pre-PSR state, which worked fine.
+
+Resolves #1785
+
+* Packages: ``Flow``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/6.0.0...6.0.1>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
