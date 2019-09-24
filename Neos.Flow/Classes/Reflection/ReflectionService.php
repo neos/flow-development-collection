@@ -1625,12 +1625,7 @@ class ReflectionService
         }
 
         $declaredType = strtok(trim(current($varTagValues), " \n\t"), " \n\t");
-        try {
-            TypeHandling::parseType($declaredType);
-        } catch (InvalidTypeException $exception) {
-            throw new \InvalidArgumentException(sprintf($exception->getMessage(), 'class "' . $className . '" for property "' . $propertyName . '"'), 1315564475);
-        }
-
+        
         if ($this->isPropertyAnnotatedWith($className, $propertyName, ORM\Id::class)) {
             $skipArtificialIdentity = true;
         }
