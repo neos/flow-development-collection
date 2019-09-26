@@ -63,7 +63,7 @@ interface ViewInterface
     /**
      * Renders the view
      *
-     * @return string|ActionResponse|ResponseInterface|StreamInterface|object The rendered result; object is only handled of __toString() exists!
+     * @return string|ActionResponse|ResponseInterface|StreamInterface|object The rendered result; object is only handled if __toString() exists!
      * @api
      */
     public function render();
