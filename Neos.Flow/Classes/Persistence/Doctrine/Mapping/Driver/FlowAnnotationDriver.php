@@ -956,7 +956,7 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
             foreach ($entityListenersAnnotation->value as $item) {
                 $listenerClassName = $metadata->fullyQualifiedClassName($item);
 
-                if (!class_exists($listenerClassName)) {
+                if ($listenerClassName === null || !class_exists($listenerClassName)) {
                     throw ORM\MappingException::entityListenerClassNotFound($listenerClassName, $class->getName());
                 }
 
