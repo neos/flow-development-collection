@@ -84,7 +84,7 @@ class UriBuilderTest extends FunctionalTestCase
     public function whenLinkingToSameHostTheUrlIsAsExpectedNotContainingDoubleSlashes()
     {
         $response = $this->browser->request('http://my-host/test/mvc/uribuilder/differentHost/bla');
-        self::assertEquals('test/mvc/uribuilder/target/my-path', $response->getBody()->getContents());
+        self::assertEquals('/test/mvc/uribuilder/target/my-path', $response->getBody()->getContents());
         self::assertEquals(200, $response->getStatusCode());
     }
 

@@ -312,8 +312,14 @@ final class UriConstraints
             $uri = $uri->withQuery($this->constraints[self::CONSTRAINT_QUERY_STRING]);
         }
 
+        // In case the base URL contains a path segment, prepend this to the URL (to generate proper host-absolute URLs)
         if ($baseUri->getPath() !== '' && $baseUri->getPath() !== '/') {
-            $uri = $uri->withPath('/' . trim($baseUri->getPath(), '/') . '/' . ltrim($uri->getPath(), '/'));
+            $uri = $uri->withPath(trim($baseUri->getPath(), '/') . '/' . ltrim($uri->getPath(), '/'));
+        }
+
+        // Ensure the URL always starts with "/" if non-empty.
+        if (strlen($uri->getPath()) > 0 && $uri->getPath(){0} !== '/') {
+            $uri = $uri->withPath('/' . $uri->getPath());
         }
 
         if ($forceAbsoluteUri) {
