@@ -191,8 +191,23 @@ requested. An action method name must be camelCased and always end with the suff
 "Action". In the Action Request and other parts of the routing system, it is
 referred to simply by its *action name*, in this case ``index``.
 
-If an action returns a string or an object which can be cast to a string, it will
-be set as the content of the response automatically.
+If an action returns a string or an object which can be cast to a string, a PHP resource stream
+like an opened file or a PSR7 stream, it will be set as the content of the response automatically::
+
+		/**
+		 * Stream a file content to the browser
+		 *
+		 * @return resource
+		 */
+		public function exportAction() {
+      $this->response->setContentType('text/csv');
+			return fopen('/path/fo/file', 'r');
+		}
+
+.. note::
+
+   This also works for large files, in which case the file content will be streamed to the browser.
+
 
 Defining Arguments
 ~~~~~~~~~~~~~~~~~~
