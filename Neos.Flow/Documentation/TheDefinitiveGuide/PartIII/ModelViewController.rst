@@ -916,7 +916,7 @@ ViewHelper. Please consult the ViewHelper for a full reference.
 Since Flash Messages need to possibly survive over requests until they get displayed, they need
 to be persisted somehow.
 Flash Messages can be stored in different ways, the Framework default is to store them in the session.
-The storage can be configured in Settings.yaml via the following options:
+The storage can be configured in Settings.yaml via the following options::
 
 	Neos:
 	  Flow:
