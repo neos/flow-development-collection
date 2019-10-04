@@ -434,7 +434,7 @@ class RoutingTest extends FunctionalTestCase
         $baseUri = new Uri('http://localhost/baz');
         $actualResult = $this->router->resolve(new ResolveContext($baseUri, $routeValues, false));
 
-        $this->assertSame('neos/flow/test/http/foo', (string)$actualResult);
+        $this->assertSame('/baz/neos/flow/test/http/foo', (string)$actualResult);
     }
 
     /**
@@ -452,7 +452,7 @@ class RoutingTest extends FunctionalTestCase
         $baseUri = new Uri('http://localhost/baz');
         $actualResult = $this->router->resolve(new ResolveContext($baseUri, $routeValues, false, 'index.php/'));
 
-        $this->assertSame('index.php/neos/flow/test/http/foo', (string)$actualResult);
+        $this->assertSame('/baz/index.php/neos/flow/test/http/foo', (string)$actualResult);
     }
 
     /**
