@@ -303,7 +303,10 @@ final class UriConstraints
             $uri = $uri->withPath($this->constraints[self::CONSTRAINT_PATH]);
         }
         if (isset($this->constraints[self::CONSTRAINT_PATH_PREFIX])) {
-            $uri = $uri->withPath($this->constraints[self::CONSTRAINT_PATH_PREFIX] . $uri->getPath());
+            // we need to trim the leading "/" from $uri->getPath() (as it is always absolute); so
+            // that the Path Prefix can build strings like <prepended><url>, or
+            // <prepended>/<url>
+            $uri = $uri->withPath($this->constraints[self::CONSTRAINT_PATH_PREFIX] . ltrim($uri->getPath(), '/'));
         }
         if (isset($this->constraints[self::CONSTRAINT_PATH_SUFFIX])) {
             $uri = $uri->withPath($uri->getPath() . $this->constraints[self::CONSTRAINT_PATH_SUFFIX]);

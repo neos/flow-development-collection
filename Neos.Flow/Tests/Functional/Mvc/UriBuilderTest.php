@@ -11,6 +11,7 @@ namespace Neos\Flow\Tests\Functional\Mvc;
  * source code.
  */
 
+use Neos\Flow\Tests\Functional\Mvc\Fixtures\RoutePartHandler\UriBuilderSetDomainAndPathPrefixRoutePartHandler;
 use Neos\Flow\Tests\Functional\Mvc\Fixtures\RoutePartHandler\UriBuilderSetDomainRoutePartHandler;
 use Neos\Flow\Tests\FunctionalTestCase;
 use Psr\Http\Message\ServerRequestFactoryInterface;
@@ -36,6 +37,11 @@ class UriBuilderTest extends FunctionalTestCase
     {
         parent::setUp();
 
+        $this->serverRequestFactory = $this->objectManager->get(ServerRequestFactoryInterface::class);
+    }
+
+    private function registerSingleRoute($routePartHandler): void
+    {
         $route = $this->registerRoute('testa', 'test/mvc/uribuilder/{@action}/{someRoutePart}', [
             '@package' => 'Neos.Flow',
             '@subpackage' => 'Tests\Functional\Mvc\Fixtures',
@@ -45,11 +51,9 @@ class UriBuilderTest extends FunctionalTestCase
         ]);
         $route->setRoutePartsConfiguration([
             'someRoutePart' => [
-                'handler' => UriBuilderSetDomainRoutePartHandler::class
+                'handler' => $routePartHandler
             ]
         ]);
-
-        $this->serverRequestFactory = $this->objectManager->get(ServerRequestFactoryInterface::class);
     }
 
     /**
@@ -59,6 +63,7 @@ class UriBuilderTest extends FunctionalTestCase
      */
     public function whenLinkingToDifferentHostTheUrlIsAsExpectedNotContainingDoubleSlashes()
     {
+        $this->registerSingleRoute(UriBuilderSetDomainRoutePartHandler::class);
         $response = $this->browser->request('http://localhost/test/mvc/uribuilder/differentHost/bla');
         self::assertEquals('http://my-host/test/mvc/uribuilder/target/my-path', $response->getBody()->getContents());
         self::assertEquals(200, $response->getStatusCode());
@@ -71,6 +76,7 @@ class UriBuilderTest extends FunctionalTestCase
      */
     public function whenLinkingToDifferentHostTheUrlIsAsExpectedNotContainingDoubleSlashes_forceAbsoluteUris()
     {
+        $this->registerSingleRoute(UriBuilderSetDomainRoutePartHandler::class);
         $response = $this->browser->request('http://localhost/test/mvc/uribuilder/differentHostWithCreateAbsoluteUri/bla');
         self::assertEquals('http://my-host/test/mvc/uribuilder/target/my-path', $response->getBody()->getContents());
         self::assertEquals(200, $response->getStatusCode());
@@ -83,6 +89,7 @@ class UriBuilderTest extends FunctionalTestCase
      */
     public function whenLinkingToSameHostTheUrlIsAsExpectedNotContainingDoubleSlashes()
     {
+        $this->registerSingleRoute(UriBuilderSetDomainRoutePartHandler::class);
         $response = $this->browser->request('http://my-host/test/mvc/uribuilder/differentHost/bla');
         self::assertEquals('/test/mvc/uribuilder/target/my-path', $response->getBody()->getContents());
         self::assertEquals(200, $response->getStatusCode());
@@ -95,8 +102,61 @@ class UriBuilderTest extends FunctionalTestCase
      */
     public function whenLinkingToSameHostTheUrlIsAsExpectedNotContainingDoubleSlashes_forceAbsoluteUrls()
     {
+        $this->registerSingleRoute(UriBuilderSetDomainRoutePartHandler::class);
         $response = $this->browser->request('http://my-host/test/mvc/uribuilder/differentHostWithCreateAbsoluteUri/bla');
         self::assertEquals('http://my-host/test/mvc/uribuilder/target/my-path', $response->getBody()->getContents());
+        self::assertEquals(200, $response->getStatusCode());
+    }
+
+    /**
+     * Testcase for https://github.com/neos/flow-development-collection/issues/1803
+     *
+     * @test
+     */
+    public function urlPrefix_whenLinkingToDifferentHostTheUrlIsAsExpectedNotContainingDoubleSlashes()
+    {
+        $this->registerSingleRoute(UriBuilderSetDomainAndPathPrefixRoutePartHandler::class);
+        $response = $this->browser->request('http://localhost/test/mvc/uribuilder/differentHost/bla');
+        self::assertEquals('http://my-host/my-path/test/mvc/uribuilder/target/my-path', $response->getBody()->getContents());
+        self::assertEquals(200, $response->getStatusCode());
+    }
+
+    /**
+     * Testcase for https://github.com/neos/flow-development-collection/issues/1803
+     *
+     * @test
+     */
+    public function urlPrefix_whenLinkingToDifferentHostTheUrlIsAsExpectedNotContainingDoubleSlashes_forceAbsoluteUris()
+    {
+        $this->registerSingleRoute(UriBuilderSetDomainAndPathPrefixRoutePartHandler::class);
+        $response = $this->browser->request('http://localhost/test/mvc/uribuilder/differentHostWithCreateAbsoluteUri/bla');
+        self::assertEquals('http://my-host/my-path/test/mvc/uribuilder/target/my-path', $response->getBody()->getContents());
+        self::assertEquals(200, $response->getStatusCode());
+    }
+
+    /**
+     * Testcase for https://github.com/neos/flow-development-collection/issues/1803
+     *
+     * @test
+     */
+    public function urlPrefix_whenLinkingToSameHostTheUrlIsAsExpectedNotContainingDoubleSlashes()
+    {
+        $this->registerSingleRoute(UriBuilderSetDomainAndPathPrefixRoutePartHandler::class);
+        $response = $this->browser->request('http://my-host/test/mvc/uribuilder/differentHost/bla');
+        self::assertEquals('/my-path/test/mvc/uribuilder/target/my-path', $response->getBody()->getContents());
+        self::assertEquals(200, $response->getStatusCode());
+    }
+
+    /**
+     * Testcase for https://github.com/neos/flow-development-collection/issues/1803
+     *
+     * @test
+     */
+    public function urlPrefix_whenLinkingToSameHostTheUrlIsAsExpectedNotContainingDoubleSlashes_forceAbsoluteUrls()
+    {
+        $this->registerSingleRoute(UriBuilderSetDomainAndPathPrefixRoutePartHandler::class);
+        $response = $this->browser->request('http://my-host/test/mvc/uribuilder/differentHostWithCreateAbsoluteUri/bla');
+        self::assertEquals('http://my-host/my-path/test/mvc/uribuilder/target/my-path', $response->getBody()->getContents());
         self::assertEquals(200, $response->getStatusCode());
     }
 }
