@@ -160,7 +160,7 @@ class RequestHandler implements HttpRequestHandlerInterface
     }
 
     /**
-     *
+     * Send the HttpResponse of the component context to the browser and flush all output buffers.
      */
     protected function sendResponse()
     {
@@ -169,9 +169,18 @@ class RequestHandler implements HttpRequestHandlerInterface
         foreach (ResponseInformationHelper::prepareHeaders($response) as $prepareHeader) {
             header($prepareHeader);
         }
-        echo $response->getBody()->getContents();
+        // Flush and stop all output buffers before sending the whole body in one go, as output buffering has no use any more
+        // and just makes sending large files impossible without running out of memory
         while (ob_get_level() > 0) {
             ob_end_flush();
+        }
+
+        $body = $response->getBody()->detach() ?: $response->getBody()->getContents();
+        if (is_resource($body)) {
+            fpassthru($body);
+            fclose($body);
+        } else {
+            echo $body;
         }
     }
 }
