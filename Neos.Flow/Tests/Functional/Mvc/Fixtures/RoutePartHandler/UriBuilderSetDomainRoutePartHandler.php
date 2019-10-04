@@ -27,11 +27,9 @@ class UriBuilderSetDomainRoutePartHandler extends DynamicRoutePart
 {
     protected function resolveValue($foo)
     {
-
         $uriConstraints = UriConstraints::create();
         $uriConstraints = $uriConstraints->withHost('my-host');
 
         return new ResolveResult('my-path', $uriConstraints);
     }
-
 }
