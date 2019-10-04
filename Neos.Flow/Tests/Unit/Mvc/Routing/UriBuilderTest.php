@@ -782,7 +782,7 @@ class UriBuilderTest extends UnitTestCase
     {
         $this->mockHttpRequest->expects(self::atLeastOnce())->method('getServerParams')->willReturn(['SCRIPT_NAME' => '/document-root/index.php']);
         $this->mockRouter->expects(self::once())->method('resolve')->willReturnCallback(function (ResolveContext $resolveContext) {
-            self::assertSame('/document-root/', $resolveContext->getUriPathPrefix());
+            self::assertSame('document-root/', $resolveContext->getUriPathPrefix());
             return $this->getMockBuilder(UriInterface::class)->getMock();
         });
 
@@ -800,7 +800,7 @@ class UriBuilderTest extends UnitTestCase
         $this->inject($this->uriBuilder, 'environment', $mockEnvironment);
 
         $this->mockRouter->expects(self::once())->method('resolve')->willReturnCallback(function (ResolveContext $resolveContext) {
-            self::assertSame('/index.php/', $resolveContext->getUriPathPrefix());
+            self::assertSame('index.php/', $resolveContext->getUriPathPrefix());
             return $this->getMockBuilder(UriInterface::class)->getMock();
         });
 
