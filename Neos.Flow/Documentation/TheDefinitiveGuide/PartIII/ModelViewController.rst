@@ -194,15 +194,15 @@ referred to simply by its *action name*, in this case ``index``.
 If an action returns a string or an object which can be cast to a string, a PHP resource stream
 like an opened file or a PSR7 stream, it will be set as the content of the response automatically::
 
-		/**
-		 * Stream a file content to the browser
-		 *
-		 * @return resource
-		 */
-		public function exportAction() {
-      $this->response->setContentType('text/csv');
-			return fopen('/path/fo/file', 'r');
-		}
+	/**
+	 * Stream a file content to the browser
+	 *
+	 * @return resource
+	 */
+	public function exportAction() {
+		$this->response->setContentType('text/csv');
+		return fopen('/path/fo/file', 'r');
+	}
 
 .. note::
 
