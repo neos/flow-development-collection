@@ -207,7 +207,7 @@ class RouterTest extends UnitTestCase
         $router->_set('routes', $mockRoutes);
 
         $resolvedUri = $router->resolve(new ResolveContext($this->mockBaseUri, $routeValues, false));
-        self::assertSame('route2', $resolvedUri->getPath());
+        self::assertSame('/route2', $resolvedUri->getPath());
     }
 
     /**
@@ -288,7 +288,7 @@ class RouterTest extends UnitTestCase
         $router->_set('routerCachingService', $mockRouterCachingService);
 
         $router->expects(self::never())->method('createRoutesFromConfiguration');
-        self::assertSame('cached/path', (string)$router->resolve($resolveContext));
+        self::assertSame('/cached/path', (string)$router->resolve($resolveContext));
     }
 
     /**
@@ -314,7 +314,7 @@ class RouterTest extends UnitTestCase
         $router->_set('routes', [$mockRoute1, $mockRoute2]);
 
         $this->mockRouterCachingService->expects(self::once())->method('storeResolvedUriConstraints')->with($resolveContext, $mockResolvedUriConstraints);
-        self::assertSame('resolved/path', (string)$router->resolve($resolveContext));
+        self::assertSame('/resolved/path', (string)$router->resolve($resolveContext));
     }
 
     /**
