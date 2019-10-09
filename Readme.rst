@@ -49,21 +49,21 @@ If you want to use the Flow framework, please have a look at the documentation: 
 Contributing
 ============
 
-If you want to contribute to Flow framework and want to set up a development environment, then follow these steps:
+If you want to contribute to Flow Framework and want to set up a development environment, then follow these steps:
 
 ``composer create-project neos/flow-development-distribution flow-development dev-master --keep-vcs``
 
-Note the **-distribution** package you create a poject from, instead of just checking out this repository.
+Note the **-distribution** package you create a project from, instead of just checking out this repository.
 
-The code for the framework is then found inside ``Packages/Framework``, which is itself the git repository for this flow-development-collection (due to the ``--keep-vcs`` option above), that you need to apply changes to and create pull requests for.
-To commit changes to the framework switch into the Framework directory (``cd Packages/Framework``) and do all git related work (``git add .``, ``git commit``, etc) inside there.
+The code of the framework can then be found inside ``Packages/Framework``, which itself is the flow-development-collection Git repository (due to the ``--keep-vcs`` option above). You commit changes and create pull requests from this repository.
+To commit changes to the framework switch into the Framework directory (``cd Packages/Framework``) and do all Git-related work (``git add .``, ``git commit``, etc) there.
 
-In the root of the development-distribution you created:
+In the root directory of the development distribution, you can do the following things:
 
 To run tests, run ``./bin/phpunit -c ./Build/BuildEssentials/PhpUnit/UnitTests.xml`` for unit or ``./bin/phpunit -c ./Build/BuildEssentials/PhpUnit/FunctionalTests.xml`` for functional/integration tests. If you are on 6.0 or later, you can
 also run ``./bin/psalm --config=Packages/Framework/psalm.xml`` to run static analysis tools.
 
-To switch the branch you work on:
+To switch the branch you intend to work on:
 ``git checkout 4.3 && composer update``
 
 .. note:: We use an upmerging strategy, so create all bugfixes to lowest maintained branch that contains the issue (typically the second last LTS release, which is 4.3 currently), or master for new features.
