@@ -62,15 +62,15 @@ final class ResolveContext
         $this->routeValues = $routeValues;
         $this->forceAbsoluteUri = $forceAbsoluteUri;
         $this->uriPathPrefix = $uriPathPrefix;
-    }
 
-    /**
-     * @return UriInterface
-     * @deprecated This getter has been renamed. @see getBaseUri()
-     */
-    public function getRequestUri(): UriInterface
-    {
-        return $this->getBaseUri();
+        // Only add base uri path for absolute uri, in case of relative uri the uri has to be relative to the given base uri
+        if ($forceAbsoluteUri) {
+            $this->uriPathPrefix = '/' . ltrim($this->uriPathPrefix, '/');
+
+            if ($baseUri->getPath() !== '') {
+                $this->uriPathPrefix = rtrim($baseUri->getPath(), '/') . $this->uriPathPrefix;
+            }
+        }
     }
 
     /**

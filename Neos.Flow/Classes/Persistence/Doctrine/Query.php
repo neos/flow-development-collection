@@ -264,7 +264,7 @@ class Query implements QueryInterface
             $this->logger->error($message, LogEnvironment::fromMethodName(__METHOD__));
             return 0;
         } catch (\PDOException $pdoException) {
-            throw new Exception\DatabaseConnectionException($pdoException->getMessage(), $pdoException->getCode());
+            throw new Exception\DatabaseConnectionException($pdoException->getMessage(), (int)$pdoException->getCode());
         }
     }
 
@@ -663,7 +663,9 @@ class Query implements QueryInterface
     {
         $aliases = $this->queryBuilder->getRootAliases();
         $previousJoinAlias = $aliases[0];
-        if (strpos($propertyPath, '.') === false) {
+        if (strpos($propertyPath, '.') === false
+            || $this->entityManager->getClassMetadata($this->entityClassName)->hasField($propertyPath)
+        ) {
             return $previousJoinAlias . '.' . $propertyPath;
         }
 

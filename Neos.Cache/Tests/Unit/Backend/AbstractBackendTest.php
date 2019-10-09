@@ -37,14 +37,14 @@ class AbstractBackendTest extends BaseTestCase
         $className = 'ConcreteBackend_' . md5(uniqid(mt_rand(), true));
         eval('
             class ' . $className . ' extends \Neos\Cache\Backend\AbstractBackend {
-                public function set(string $entryIdentifier, string $data, array $tags = [], int $lifetime = NULL) {}
+                public function set(string $entryIdentifier, string $data, array $tags = [], int $lifetime = NULL): void {}
                 public function get(string $entryIdentifier): string {}
                 public function has(string $entryIdentifier): bool {}
                 public function remove(string $entryIdentifier): bool {}
-                public function flush() {}
+                public function flush(): void {}
                 public function flushByTag(string $tag): int {}
                 public function findIdentifiersByTag(string $tag): array {}
-                public function collectGarbage() {}
+                public function collectGarbage(): void {}
                 public function setSomeOption($value) {
                     $this->someOption = $value;
                 }
@@ -63,6 +63,6 @@ class AbstractBackendTest extends BaseTestCase
     {
         $className = get_class($this->backend);
         $backend = new $className(new EnvironmentConfiguration('Ultraman Neos Testing', '/some/path', PHP_MAXPATHLEN), ['someOption' => 'someValue']);
-        $this->assertSame('someValue', $backend->getSomeOption());
+        self::assertSame('someValue', $backend->getSomeOption());
     }
 }

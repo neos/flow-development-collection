@@ -25,8 +25,8 @@
 	# of the website root.
 	RewriteBase /
 
-	# Stop rewrite processing no matter if a package resource, robots.txt etc. exists or not
-	RewriteRule ^(_Resources/Packages/|robots\.txt|favicon\.ico) - [L]
+	# Stop rewrite processing no matter if a package resource, .well-known, robots.txt etc. exists or not
+	RewriteRule ^(_Resources/Packages/|\.well-known/|robots\.txt|favicon\.ico) - [L]
 
 	# Stop rewrite process if the path points to a static file anyway
 	RewriteCond %{REQUEST_FILENAME} -f [OR]

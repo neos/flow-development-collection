@@ -28,7 +28,7 @@ class RequestPatternResolverTest extends UnitTestCase
     {
         $this->expectException(NoRequestPatternFoundException::class);
         $mockObjectManager = $this->getMockBuilder(ObjectManager::class)->disableOriginalConstructor()->getMock();
-        $mockObjectManager->expects($this->any())->method('getClassNameByObjectName')->will($this->returnValue(false));
+        $mockObjectManager->expects(self::any())->method('getClassNameByObjectName')->will(self::returnValue(false));
 
         $requestPatternResolver = new RequestPatternResolver($mockObjectManager);
 
@@ -53,12 +53,12 @@ class RequestPatternResolverTest extends UnitTestCase
         };
 
         $mockObjectManager = $this->getMockBuilder(ObjectManager::class)->disableOriginalConstructor()->getMock();
-        $mockObjectManager->expects($this->any())->method('getClassNameByObjectName')->will($this->returnCallback($getCaseSensitiveObjectNameCallback));
+        $mockObjectManager->expects(self::any())->method('getClassNameByObjectName')->will(self::returnCallBack($getCaseSensitiveObjectNameCallback));
 
         $requestPatternResolver = new RequestPatternResolver($mockObjectManager);
         $requestPatternClass = $requestPatternResolver->resolveRequestPatternClass('ValidShortName');
 
-        $this->assertEquals($longNameForTest, $requestPatternClass, 'The wrong classname has been resolved');
+        self::assertEquals($longNameForTest, $requestPatternClass, 'The wrong classname has been resolved');
     }
 
     /**
@@ -67,11 +67,11 @@ class RequestPatternResolverTest extends UnitTestCase
     public function resolveRequestPatternReturnsTheCorrectRequestPatternForACompleteClassName()
     {
         $mockObjectManager = $this->getMockBuilder(ObjectManager::class)->disableOriginalConstructor()->getMock();
-        $mockObjectManager->expects($this->any())->method('getClassNameByObjectName')->with('ExistingRequestPatternClass')->will($this->returnValue('ExistingRequestPatternClass'));
+        $mockObjectManager->expects(self::any())->method('getClassNameByObjectName')->with('ExistingRequestPatternClass')->will(self::returnValue('ExistingRequestPatternClass'));
 
         $requestPatternResolver = new RequestPatternResolver($mockObjectManager);
         $requestPatternClass = $requestPatternResolver->resolveRequestPatternClass('ExistingRequestPatternClass');
 
-        $this->assertEquals('ExistingRequestPatternClass', $requestPatternClass, 'The wrong classname has been resolved');
+        self::assertEquals('ExistingRequestPatternClass', $requestPatternClass, 'The wrong classname has been resolved');
     }
 }

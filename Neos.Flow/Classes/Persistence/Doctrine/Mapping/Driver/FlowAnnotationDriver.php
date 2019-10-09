@@ -729,6 +729,7 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
 
                 if (!isset($mapping['type'])) {
                     switch ($propertyMetaData['type']) {
+                        case 'DateTimeInterface': // fall through b/c fix for #1640
                         case 'DateTime':
                             $mapping['type'] = 'datetime';
                             break;
@@ -955,7 +956,7 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
             foreach ($entityListenersAnnotation->value as $item) {
                 $listenerClassName = $metadata->fullyQualifiedClassName($item);
 
-                if (!class_exists($listenerClassName)) {
+                if ($listenerClassName === null || !class_exists($listenerClassName)) {
                     throw ORM\MappingException::entityListenerClassNotFound($listenerClassName, $class->getName());
                 }
 

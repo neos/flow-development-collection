@@ -90,7 +90,9 @@ class HtmlentitiesViewHelper extends AbstractViewHelper
         if ($value === null) {
             $value = $renderChildrenClosure();
         }
-        if (!is_string($value) && !(is_object($value) && method_exists($value, '__toString'))) {
+        if (is_object($value) && method_exists($value, '__toString')) {
+            $value = $value->__toString();
+        } elseif (!is_string($value)) {
             return $value;
         }
         $flags = $arguments['keepQuotes'] ? ENT_NOQUOTES : ENT_COMPAT;

@@ -13,9 +13,10 @@ namespace Neos\Flow\Log;
 
 /**
  * Marker interface for the system logger.
- * Convenience interface replacing the SystemLoggerInterface
+ * Convenience interface, you should instead use the factory to get the "systemLogger"
+ * or simply inject Psr\Log\LoggerInterface
  *
- * @see SystemLoggerInterface
+ * @deprecated since Flow 6.0
  */
 interface PsrSystemLoggerInterface extends \Psr\Log\LoggerInterface
 {

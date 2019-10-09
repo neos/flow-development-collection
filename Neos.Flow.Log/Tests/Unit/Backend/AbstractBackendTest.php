@@ -32,9 +32,9 @@ class AbstractBackendTest extends UnitTestCase
         $this->backendClassName = 'ConcreteBackend_' . md5(uniqid(mt_rand(), true));
         eval('
 			class ' . $this->backendClassName . ' extends \Neos\Flow\Log\Backend\AbstractBackend {
-				public function open() {}
-				public function append($message, $severity = 1, $additionalData = NULL, $packageKey = NULL, $className = NULL, $methodName = NULL) {}
-				public function close() {}
+				public function open(): void {}
+				public function append(string $message, int $severity = 1, $additionalData = NULL, string $packageKey = NULL, string $className = NULL, string $methodName = NULL): void {}
+				public function close(): void {}
 				public function setSomeOption($value) {
 					$this->someOption = $value;
 				}
@@ -52,6 +52,6 @@ class AbstractBackendTest extends UnitTestCase
     {
         $className = $this->backendClassName;
         $backend = new $className(['someOption' => 'someValue']);
-        $this->assertSame('someValue', $backend->getSomeOption());
+        self::assertSame('someValue', $backend->getSomeOption());
     }
 }

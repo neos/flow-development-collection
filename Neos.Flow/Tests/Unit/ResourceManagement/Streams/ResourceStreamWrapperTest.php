@@ -32,12 +32,12 @@ class ResourceStreamWrapperTest extends UnitTestCase
     protected $resourceStreamWrapper;
 
     /**
-     * @var PackageManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var PackageManager|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $mockPackageManager;
 
     /**
-     * @var ResourceManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var ResourceManager|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $mockResourceManager;
 
@@ -74,12 +74,12 @@ class ResourceStreamWrapperTest extends UnitTestCase
         $tempFile = tmpfile();
 
         $mockResource = $this->getMockBuilder(PersistentResource::class)->disableOriginalConstructor()->getMock();
-        $this->mockResourceManager->expects($this->once())->method('getResourceBySha1')->with($sha1Hash)->will($this->returnValue($mockResource));
-        $this->mockResourceManager->expects($this->once())->method('getStreamByResource')->with($mockResource)->will($this->returnValue($tempFile));
+        $this->mockResourceManager->expects(self::once())->method('getResourceBySha1')->with($sha1Hash)->will(self::returnValue($mockResource));
+        $this->mockResourceManager->expects(self::once())->method('getStreamByResource')->with($mockResource)->will(self::returnValue($tempFile));
 
         $openedPathAndFilename = '';
-        $this->assertTrue($this->resourceStreamWrapper->open('resource://' . $sha1Hash, 'r', 0, $openedPathAndFilename));
-        $this->assertSame($tempFile, ObjectAccess::getProperty($this->resourceStreamWrapper, 'handle', true));
+        self::assertTrue($this->resourceStreamWrapper->open('resource://' . $sha1Hash, 'r', 0, $openedPathAndFilename));
+        self::assertSame($tempFile, ObjectAccess::getProperty($this->resourceStreamWrapper, 'handle', true));
     }
 
     /**
@@ -92,12 +92,12 @@ class ResourceStreamWrapperTest extends UnitTestCase
         $tempFile = tmpfile();
 
         $mockResource = $this->getMockBuilder(PersistentResource::class)->disableOriginalConstructor()->getMock();
-        $this->mockResourceManager->expects($this->once())->method('getResourceBySha1')->with($sha1Hash)->will($this->returnValue($mockResource));
-        $this->mockResourceManager->expects($this->once())->method('getStreamByResource')->with($mockResource)->will($this->returnValue($tempFile));
+        $this->mockResourceManager->expects(self::once())->method('getResourceBySha1')->with($sha1Hash)->will(self::returnValue($mockResource));
+        $this->mockResourceManager->expects(self::once())->method('getStreamByResource')->with($mockResource)->will(self::returnValue($tempFile));
 
         $openedPathAndFilename = '';
-        $this->assertTrue($this->resourceStreamWrapper->open('resource://' . $sha1Hash, 'r', 0, $openedPathAndFilename));
-        $this->assertSame($tempFile, ObjectAccess::getProperty($this->resourceStreamWrapper, 'handle', true));
+        self::assertTrue($this->resourceStreamWrapper->open('resource://' . $sha1Hash, 'r', 0, $openedPathAndFilename));
+        self::assertSame($tempFile, ObjectAccess::getProperty($this->resourceStreamWrapper, 'handle', true));
     }
 
     /**
@@ -123,12 +123,12 @@ class ResourceStreamWrapperTest extends UnitTestCase
         file_put_contents('vfs://Foo/Some/Path', 'fixture');
 
         $mockPackage = $this->createMock(FlowPackageInterface::class);
-        $mockPackage->expects($this->any())->method('getResourcesPath')->will($this->returnValue('vfs://Foo'));
-        $this->mockPackageManager->expects($this->once())->method('getPackage')->with($packageKey)->will($this->returnValue($mockPackage));
+        $mockPackage->expects(self::any())->method('getResourcesPath')->will(self::returnValue('vfs://Foo'));
+        $this->mockPackageManager->expects(self::once())->method('getPackage')->with($packageKey)->will(self::returnValue($mockPackage));
 
         $openedPathAndFilename = '';
-        $this->assertTrue($this->resourceStreamWrapper->open('resource://' . $packageKey . '/Some/Path', 'r', 0, $openedPathAndFilename));
-        $this->assertSame($openedPathAndFilename, 'vfs://Foo/Some/Path');
+        self::assertTrue($this->resourceStreamWrapper->open('resource://' . $packageKey . '/Some/Path', 'r', 0, $openedPathAndFilename));
+        self::assertSame($openedPathAndFilename, 'vfs://Foo/Some/Path');
     }
 
     /**
@@ -139,13 +139,13 @@ class ResourceStreamWrapperTest extends UnitTestCase
         $packageKey = 'Some.PackageKey.Containing.40.Characters';
         mkdir('vfs://Foo/Some/');
         file_put_contents('vfs://Foo/Some/Path', 'fixture');
-        
+
         $mockPackage = $this->createMock(FlowPackageInterface::class);
-        $mockPackage->expects($this->any())->method('getResourcesPath')->will($this->returnValue('vfs://Foo'));
-        $this->mockPackageManager->expects($this->once())->method('getPackage')->with($packageKey)->will($this->returnValue($mockPackage));
+        $mockPackage->expects(self::any())->method('getResourcesPath')->will(self::returnValue('vfs://Foo'));
+        $this->mockPackageManager->expects(self::once())->method('getPackage')->with($packageKey)->will(self::returnValue($mockPackage));
 
         $openedPathAndFilename = '';
-        $this->assertTrue($this->resourceStreamWrapper->open('resource://' . $packageKey . '/Some/Path', 'r', 0, $openedPathAndFilename));
-        $this->assertSame($openedPathAndFilename, 'vfs://Foo/Some/Path');
+        self::assertTrue($this->resourceStreamWrapper->open('resource://' . $packageKey . '/Some/Path', 'r', 0, $openedPathAndFilename));
+        self::assertSame($openedPathAndFilename, 'vfs://Foo/Some/Path');
     }
 }

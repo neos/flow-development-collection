@@ -119,26 +119,41 @@ class Translator
      * @param string $sourceName Name of file with translations, base path is $packageKey/Resources/Private/Locale/Translations/
      * @param string $packageKey Key of the package containing the source file
      * @return string Translated $originalLabel or $originalLabel itself on failure
+     * @throws Exception\IndexOutOfBoundsException
+     * @throws Exception\InvalidFormatPlaceholderException
      * @api
      */
-    public function translateByOriginalLabel($originalLabel, array $arguments = [], $quantity = null, Locale $locale = null, $sourceName = 'Main', $packageKey = 'Neos.Flow')
+    public function translateByOriginalLabel($originalLabel, array $arguments = [], $quantity = null, Locale $locale = null, string $sourceName = 'Main', string $packageKey = 'Neos.Flow')
     {
         if ($locale === null) {
             $locale = $this->localizationService->getConfiguration()->getCurrentLocale();
         }
-        $pluralForm = $this->getPluralForm($quantity, $locale);
 
-        $translatedMessage = $this->translationProvider->getTranslationByOriginalLabel($originalLabel, $locale, $pluralForm, $sourceName, $packageKey);
+        foreach ($this->localizationService->getLocaleChain($locale) as $localeInChain) {
+            $translatedMessage = $this->translationProvider->getTranslationByOriginalLabel(
+                $originalLabel,
+                $localeInChain,
+                $this->getPluralForm($quantity, $localeInChain),
+                $sourceName,
+                $packageKey
+            );
 
-        if ($translatedMessage === false) {
-            $translatedMessage = $originalLabel;
+            if ($translatedMessage !== false) {
+                return $arguments === []
+                    ? $translatedMessage
+                    : $this->formatResolver->resolvePlaceholders(
+                        $translatedMessage,
+                        $arguments,
+                        $localeInChain
+                    )
+                ;
+            }
         }
 
-        if (!empty($arguments)) {
-            $translatedMessage = $this->formatResolver->resolvePlaceholders($translatedMessage, $arguments, $locale);
-        }
-
-        return $translatedMessage;
+        return $arguments === []
+            ? $originalLabel
+            : $this->formatResolver->resolvePlaceholders($originalLabel, $arguments, $locale)
+        ;
     }
 
     /**
@@ -161,6 +176,8 @@ class Translator
      * @param string $sourceName Name of file with translations, base path is $packageKey/Resources/Private/Locale/Translations/
      * @param string $packageKey Key of the package containing the source file
      * @return string Translated message or NULL on failure
+     * @throws Exception\IndexOutOfBoundsException
+     * @throws Exception\InvalidFormatPlaceholderException
      * @api
      * @see Translator::translateByOriginalLabel()
      */
@@ -169,17 +186,29 @@ class Translator
         if ($locale === null) {
             $locale = $this->localizationService->getConfiguration()->getCurrentLocale();
         }
-        $pluralForm = $this->getPluralForm($quantity, $locale);
 
-        $translatedMessage = $this->translationProvider->getTranslationById($labelId, $locale, $pluralForm, $sourceName, $packageKey);
-        if ($translatedMessage === false) {
-            return null;
+        foreach ($this->localizationService->getLocaleChain($locale) as $localeInChain) {
+            $translatedMessage = $this->translationProvider->getTranslationById(
+                $labelId,
+                $localeInChain,
+                $this->getPluralForm($quantity, $localeInChain),
+                $sourceName,
+                $packageKey
+            );
+
+            if ($translatedMessage !== false) {
+                return $arguments === []
+                    ? $translatedMessage
+                    : $this->formatResolver->resolvePlaceholders(
+                        $translatedMessage,
+                        $arguments,
+                        $localeInChain
+                    )
+                ;
+            }
         }
 
-        if (!empty($arguments)) {
-            return $this->formatResolver->resolvePlaceholders($translatedMessage, $arguments, $locale);
-        }
-        return $translatedMessage;
+        return null;
     }
 
     /**

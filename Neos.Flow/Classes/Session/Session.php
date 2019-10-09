@@ -297,9 +297,10 @@ class Session implements CookieEnabledInterface
      * Starts the session, if it has not been already started
      *
      * @return void
-     * @api
+     * @throws \Exception
      * @deprecated This method is not deprecated, but be aware that from next major a cookie will no longer be auto generated.
      * @see CookieEnabledInterface
+     * @api
      */
     public function start()
     {
@@ -633,6 +634,9 @@ class Session implements CookieEnabledInterface
             $lastActivitySecondsAgo = $this->now - $sessionInfo['lastActivityTimestamp'];
             if ($lastActivitySecondsAgo > $this->inactivityTimeout) {
                 if ($sessionInfo['storageIdentifier'] === null) {
+                    if (!is_array($sessionInfo)) {
+                        $sessionInfo = ['sessionMetaData' => $sessionInfo];
+                    }
                     $this->logger->warning('SESSION INFO INVALID: ' . $sessionIdentifier, $sessionInfo + LogEnvironment::fromMethodName(__METHOD__));
                 } else {
                     $this->storageCache->flushByTag($sessionInfo['storageIdentifier']);

@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Cache\Backend;
 
 /*
@@ -60,7 +62,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
      * @return void
      * @throws \RuntimeException
      */
-    public function freeze()
+    public function freeze(): void
     {
         if ($this->frozen === true) {
             throw new \RuntimeException(sprintf('The cache "%s" is already frozen.', $this->cacheIdentifier), 1323353176);
@@ -80,7 +82,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
             $this->cacheEntryIdentifiers[$entryIdentifier] = true;
 
             $cacheEntryPathAndFilename = $this->cacheDirectory . $entryIdentifier . $this->cacheEntryFileExtension;
-            $this->writeCacheFile($cacheEntryPathAndFilename, $this->internalGet($entryIdentifier, false));
+            $this->writeCacheFile($cacheEntryPathAndFilename, (string)$this->internalGet($entryIdentifier, false));
         }
 
         $cachePathAndFileName = $this->cacheDirectory . 'FrozenCache.data';
@@ -115,7 +117,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
      * @return void
      * @throws Exception
      */
-    public function setCache(FrontendInterface $cache)
+    public function setCache(FrontendInterface $cache): void
     {
         parent::setCache($cache);
 
@@ -124,9 +126,9 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
             $cachePathAndFileName = $this->cacheDirectory . 'FrozenCache.data';
             $data = $this->readCacheFile($cachePathAndFileName);
             if ($this->useIgBinary === true) {
-                $this->cacheEntryIdentifiers = igbinary_unserialize($data);
+                $this->cacheEntryIdentifiers = igbinary_unserialize((string)$data);
             } else {
-                $this->cacheEntryIdentifiers = unserialize($data);
+                $this->cacheEntryIdentifiers = unserialize((string)$data);
             }
         }
     }
@@ -144,7 +146,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
      * @throws \InvalidArgumentException
      * @api
      */
-    public function set(string $entryIdentifier, string $data, array $tags = [], int $lifetime = null)
+    public function set(string $entryIdentifier, string $data, array $tags = [], int $lifetime = null): void
     {
         if ($entryIdentifier !== basename($entryIdentifier)) {
             throw new \InvalidArgumentException('The specified entry identifier must not contain a path segment.', 1282073032);
@@ -159,7 +161,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
         $cacheEntryPathAndFilename = $this->cacheDirectory . $entryIdentifier . $this->cacheEntryFileExtension;
         $lifetime = $lifetime === null ? $this->defaultLifetime : $lifetime;
         $expiryTime = ($lifetime === 0) ? 0 : (time() + $lifetime);
-        $metaData = implode(' ', $tags) . str_pad($expiryTime, self::EXPIRYTIME_LENGTH) . str_pad(strlen($data), self::DATASIZE_DIGITS);
+        $metaData = implode(' ', $tags) . str_pad((string)$expiryTime, self::EXPIRYTIME_LENGTH) . str_pad((string)strlen($data), self::DATASIZE_DIGITS);
 
         $result = $this->writeCacheFile($cacheEntryPathAndFilename, $data . $metaData);
         if ($result !== false) {
@@ -229,7 +231,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
      * specified tag.
      *
      * @param string $searchedTag The tag to search for
-     * @return array An array with identifiers of all matching entries. An empty array if no entries matched
+     * @return string[] An array with identifiers of all matching entries. An empty array if no entries matched
      * @api
      */
     public function findIdentifiersByTag(string $searchedTag): array
@@ -246,11 +248,11 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
             $fileSize = filesize($cacheEntryPathAndFilename);
             $index = (integer)$this->readCacheFile($cacheEntryPathAndFilename, $fileSize - self::DATASIZE_DIGITS, self::DATASIZE_DIGITS);
             $metaData = $this->readCacheFile($cacheEntryPathAndFilename, $index, $fileSize - $index - self::DATASIZE_DIGITS);
-            $expiryTime = (integer)substr($metaData, -self::EXPIRYTIME_LENGTH, self::EXPIRYTIME_LENGTH);
+            $expiryTime = (integer)substr((string)$metaData, -self::EXPIRYTIME_LENGTH, self::EXPIRYTIME_LENGTH);
             if ($expiryTime !== 0 && $expiryTime < $now) {
                 continue;
             }
-            if (!in_array($searchedTag, explode(' ', substr($metaData, 0, -self::EXPIRYTIME_LENGTH)))) {
+            if (!in_array($searchedTag, explode(' ', substr((string)$metaData, 0, -self::EXPIRYTIME_LENGTH)))) {
                 continue;
             }
 
@@ -267,10 +269,10 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
      * Removes all cache entries of this cache and sets the frozen flag to false.
      *
      * @return void
-     * @api
      * @throws \Neos\Utility\Exception\FilesException
+     * @api
      */
-    public function flush()
+    public function flush(): void
     {
         Files::emptyDirectoryRecursively($this->cacheDirectory);
         if ($this->frozen === true) {
@@ -318,7 +320,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
         if ($acquireLock) {
             $expiryTime = (integer)$this->readCacheFile($cacheEntryPathAndFilename, $expiryTimeOffset, self::EXPIRYTIME_LENGTH);
         } else {
-            $expiryTime = (integer)file_get_contents($cacheEntryPathAndFilename, null, null, $expiryTimeOffset, self::EXPIRYTIME_LENGTH);
+            $expiryTime = (integer)file_get_contents($cacheEntryPathAndFilename, false, null, $expiryTimeOffset, self::EXPIRYTIME_LENGTH);
         }
 
         return ($expiryTime !== 0 && $expiryTime < time());
@@ -330,7 +332,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
      * @return void
      * @api
      */
-    public function collectGarbage()
+    public function collectGarbage(): void
     {
         if ($this->frozen === true) {
             return;
@@ -369,8 +371,8 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
      * Loads PHP code from the cache and require_onces it right away.
      *
      * @param string $entryIdentifier An identifier which describes the cache entry to load
-     * @throws \InvalidArgumentException
      * @return mixed Potential return value from the include operation
+     * @throws \InvalidArgumentException
      * @api
      */
     public function requireOnce(string $entryIdentifier)
@@ -421,15 +423,15 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
             return false;
         }
 
-        $cacheData = null;
+        $cacheData = '';
         if ($acquireLock) {
             $cacheData = $this->readCacheFile($pathAndFilename);
         } else {
             $cacheData = file_get_contents($pathAndFilename);
         }
 
-        $dataSize = (integer)substr($cacheData, -(self::DATASIZE_DIGITS));
+        $dataSize = (integer)substr((string)$cacheData, -(self::DATASIZE_DIGITS));
 
-        return substr($cacheData, 0, $dataSize);
+        return substr((string)$cacheData, 0, $dataSize);
     }
 }

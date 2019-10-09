@@ -28,7 +28,7 @@ class AuthenticationProviderResolverTest extends UnitTestCase
     {
         $this->expectException(NoAuthenticationProviderFoundException::class);
         $mockObjectManager = $this->getMockBuilder(ObjectManager::class)->disableOriginalConstructor()->getMock();
-        $mockObjectManager->expects($this->any())->method('getClassNameByObjectName')->will($this->returnValue(false));
+        $mockObjectManager->expects(self::any())->method('getClassNameByObjectName')->will(self::returnValue(false));
 
         $providerResolver = new AuthenticationProviderResolver($mockObjectManager);
 
@@ -53,12 +53,12 @@ class AuthenticationProviderResolverTest extends UnitTestCase
         };
 
         $mockObjectManager = $this->getMockBuilder(ObjectManager::class)->disableOriginalConstructor()->getMock();
-        $mockObjectManager->expects($this->any())->method('getClassNameByObjectName')->will($this->returnCallback($getCaseSensitiveObjectNameCallback));
+        $mockObjectManager->expects(self::any())->method('getClassNameByObjectName')->will(self::returnCallBack($getCaseSensitiveObjectNameCallback));
 
         $providerResolver = new AuthenticationProviderResolver($mockObjectManager);
         $providerClass = $providerResolver->resolveProviderClass('ValidShortName');
 
-        $this->assertEquals($longClassNameForTest, $providerClass, 'The wrong classname has been resolved');
+        self::assertEquals($longClassNameForTest, $providerClass, 'The wrong classname has been resolved');
     }
 
     /**
@@ -67,11 +67,11 @@ class AuthenticationProviderResolverTest extends UnitTestCase
     public function resolveProviderReturnsTheCorrectProviderForACompleteClassName()
     {
         $mockObjectManager = $this->getMockBuilder(ObjectManager::class)->disableOriginalConstructor()->getMock();
-        $mockObjectManager->expects($this->any())->method('getClassNameByObjectName')->with('existingProviderClass')->will($this->returnValue('existingProviderClass'));
+        $mockObjectManager->expects(self::any())->method('getClassNameByObjectName')->with('existingProviderClass')->will(self::returnValue('existingProviderClass'));
 
         $providerResolver = new AuthenticationProviderResolver($mockObjectManager);
         $providerClass = $providerResolver->resolveProviderClass('existingProviderClass');
 
-        $this->assertEquals('existingProviderClass', $providerClass, 'The wrong classname has been resolved');
+        self::assertEquals('existingProviderClass', $providerClass, 'The wrong classname has been resolved');
     }
 }

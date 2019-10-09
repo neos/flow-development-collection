@@ -52,10 +52,10 @@ class CldrRepositoryTest extends UnitTestCase
         file_put_contents('vfs://Foo/Bar.xml', '');
 
         $result = $this->repository->getModel('Bar');
-        $this->assertContains('vfs://Foo/Bar.xml', ObjectAccess::getProperty($result, 'sourcePaths', true));
+        self::assertContains('vfs://Foo/Bar.xml', ObjectAccess::getProperty($result, 'sourcePaths', true));
 
         $result = $this->repository->getModel('NoSuchFile');
-        $this->assertEquals(false, $result);
+        self::assertEquals(false, $result);
     }
 
     /**
@@ -67,10 +67,10 @@ class CldrRepositoryTest extends UnitTestCase
         file_put_contents('vfs://Foo/Directory/en.xml', '');
 
         $result = $this->repository->getModelForLocale($this->dummyLocale, 'Directory');
-        $this->assertContains('vfs://Foo/Directory/root.xml', ObjectAccess::getProperty($result, 'sourcePaths', true));
-        $this->assertContains('vfs://Foo/Directory/en.xml', ObjectAccess::getProperty($result, 'sourcePaths', true));
+        self::assertContains('vfs://Foo/Directory/root.xml', ObjectAccess::getProperty($result, 'sourcePaths', true));
+        self::assertContains('vfs://Foo/Directory/en.xml', ObjectAccess::getProperty($result, 'sourcePaths', true));
 
         $result = $this->repository->getModelForLocale($this->dummyLocale, 'NoSuchDirectory');
-        $this->assertEquals(null, $result);
+        self::assertEquals(null, $result);
     }
 }

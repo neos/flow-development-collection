@@ -26,14 +26,14 @@
 				<source>The given value is not a valid date</source>
 			<target xml:lang="la-LA">crwdns6344:0crwdne6344:0</target></trans-unit>
       <trans-unit id="1325615630" xml:space="preserve">
-				<source>The given date must be between {0} and {1}</source>
-			<target xml:lang="la-LA">crwdns6345:0{0}crwdnd6345:0{1}crwdne6345:0</target></trans-unit>
+				<source>The given date must be between {0,datetime,datetime} and {1,datetime,datetime}</source>
+			<target xml:lang="la-LA">crwdns6345:0{0,datetime,datetime}crwdnd6345:0{1,datetime,datetime}crwdne6345:0</target></trans-unit>
       <trans-unit id="1324315107" xml:space="preserve">
-				<source>The given date must be after {0}</source>
-			<target xml:lang="la-LA">crwdns6346:0{0}crwdne6346:0</target></trans-unit>
+				<source>The given date must be after {0,datetime,datetime}</source>
+			<target xml:lang="la-LA">crwdns6346:0{0,datetime,datetime}crwdne6346:0</target></trans-unit>
       <trans-unit id="1324315115" xml:space="preserve">
-				<source>The given date must be before {0}</source>
-			<target xml:lang="la-LA">crwdns6347:0{0}crwdne6347:0</target></trans-unit>
+				<source>The given date must be before {0,datetime,datetime}</source>
+			<target xml:lang="la-LA">crwdns6347:0{0,datetime,datetime}crwdne6347:0</target></trans-unit>
       <!-- DateTimeValidator -->
       <trans-unit id="1281454676" xml:space="preserve">
 				<source>The "locale" option can be only set to string identifier, or Locale object</source>

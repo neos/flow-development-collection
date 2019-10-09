@@ -37,7 +37,7 @@ class AddOperationTest extends \Neos\Flow\Tests\UnitTestCase
         $operation = new AddOperation();
         $operation->evaluate($flowQuery, $arguments);
 
-        $this->assertSame([$object1, $object2], $flowQuery->getContext());
+        self::assertSame([$object1, $object2], $flowQuery->getContext());
     }
 
     /**
@@ -58,7 +58,7 @@ class AddOperationTest extends \Neos\Flow\Tests\UnitTestCase
         $operation = new AddOperation();
         $operation->evaluate($flowQuery, $arguments);
 
-        $this->assertSame([$object1, $object2], $flowQuery->getContext());
+        self::assertSame([$object1, $object2], $flowQuery->getContext());
     }
 
     /**
@@ -79,6 +79,6 @@ class AddOperationTest extends \Neos\Flow\Tests\UnitTestCase
         $operation = new AddOperation();
         $operation->evaluate($flowQuery, $arguments);
 
-        $this->assertSame([$object1, $object2], $flowQuery->getContext());
+        self::assertSame([$object1, $object2], $flowQuery->getContext());
     }
 }

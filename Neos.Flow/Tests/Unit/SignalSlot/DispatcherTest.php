@@ -35,7 +35,7 @@ class DispatcherTest extends UnitTestCase
         $expectedSlots = [
             ['class' => get_class($mockSlot), 'method' => 'someSlotMethod', 'object' => null, 'passSignalInformation' => false]
         ];
-        $this->assertSame($expectedSlots, $dispatcher->getSlots(get_class($mockSignal), 'someSignal'));
+        self::assertSame($expectedSlots, $dispatcher->getSlots(get_class($mockSignal), 'someSignal'));
     }
 
     /**
@@ -52,7 +52,7 @@ class DispatcherTest extends UnitTestCase
         $expectedSlots = [
             ['class' => null, 'method' => 'someSlotMethod', 'object' => $mockSlot, 'passSignalInformation' => false]
         ];
-        $this->assertSame($expectedSlots, $dispatcher->getSlots(get_class($mockSignal), 'someSignal'));
+        self::assertSame($expectedSlots, $dispatcher->getSlots(get_class($mockSignal), 'someSignal'));
     }
 
     /**
@@ -70,7 +70,7 @@ class DispatcherTest extends UnitTestCase
         $expectedSlots = [
             ['class' => null, 'method' => '__invoke', 'object' => $mockSlot, 'passSignalInformation' => false]
         ];
-        $this->assertSame($expectedSlots, $dispatcher->getSlots(get_class($mockSignal), 'someSignal'));
+        self::assertSame($expectedSlots, $dispatcher->getSlots(get_class($mockSignal), 'someSignal'));
     }
 
     /**
@@ -90,7 +90,7 @@ class DispatcherTest extends UnitTestCase
         $dispatcher->injectObjectManager($mockObjectManager);
 
         $dispatcher->dispatch('Foo', 'bar', ['foo' => 'bar', 'baz' => 'quux']);
-        $this->assertSame(['bar', 'quux'], $arguments);
+        self::assertSame(['bar', 'quux'], $arguments);
     }
 
     /**
@@ -99,14 +99,14 @@ class DispatcherTest extends UnitTestCase
     public function dispatchPassesTheSignalArgumentsToTheStaticSlotMethod()
     {
         $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
-        $mockObjectManager->expects($this->any())->method('getClassNameByObjectName')->with(DispatcherTest::class)->will($this->returnValue(DispatcherTest::class));
+        $mockObjectManager->expects(self::any())->method('getClassNameByObjectName')->with(DispatcherTest::class)->will(self::returnValue(DispatcherTest::class));
 
         $dispatcher = new Dispatcher();
         $dispatcher->connect('Foo', 'bar', get_class($this), '::staticSlot', false);
         $dispatcher->injectObjectManager($mockObjectManager);
 
         $dispatcher->dispatch('Foo', 'bar', ['foo' => 'bar', 'baz' => 'quux']);
-        $this->assertSame(['bar', 'quux'], self::$arguments);
+        self::assertSame(['bar', 'quux'], self::$arguments);
     }
 
     /**
@@ -118,7 +118,7 @@ class DispatcherTest extends UnitTestCase
         $dispatcher->connect('Foo', 'bar', get_class($this), '::staticSlot', false);
 
         $dispatcher->dispatch('Foo', 'bar', ['no' => 'object', 'manager' => 'exists']);
-        $this->assertSame(['object', 'exists'], self::$arguments);
+        self::assertSame(['object', 'exists'], self::$arguments);
     }
 
     /**
@@ -147,15 +147,15 @@ class DispatcherTest extends UnitTestCase
         $mockSlot = new $slotClassName();
 
         $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
-        $mockObjectManager->expects($this->once())->method('isRegistered')->with($slotClassName)->will($this->returnValue(true));
-        $mockObjectManager->expects($this->once())->method('get')->with($slotClassName)->will($this->returnValue($mockSlot));
+        $mockObjectManager->expects(self::once())->method('isRegistered')->with($slotClassName)->will(self::returnValue(true));
+        $mockObjectManager->expects(self::once())->method('get')->with($slotClassName)->will(self::returnValue($mockSlot));
 
         $dispatcher = new Dispatcher();
         $dispatcher->injectObjectManager($mockObjectManager);
         $dispatcher->connect('Foo', 'bar', $slotClassName, 'slot', false);
 
         $dispatcher->dispatch('Foo', 'bar', ['foo' => 'bar', 'baz' => 'quux']);
-        $this->assertSame($mockSlot->arguments, ['bar', 'quux']);
+        self::assertSame($mockSlot->arguments, ['bar', 'quux']);
     }
 
     /**
@@ -165,7 +165,7 @@ class DispatcherTest extends UnitTestCase
     {
         $this->expectException(InvalidSlotException::class);
         $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
-        $mockObjectManager->expects($this->once())->method('isRegistered')->with('NonExistingClassName')->will($this->returnValue(false));
+        $mockObjectManager->expects(self::once())->method('isRegistered')->with('NonExistingClassName')->will(self::returnValue(false));
 
         $dispatcher = new Dispatcher();
         $dispatcher->injectObjectManager($mockObjectManager);
@@ -184,15 +184,15 @@ class DispatcherTest extends UnitTestCase
         $mockSlot = new $slotClassName();
 
         $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
-        $mockObjectManager->expects($this->once())->method('isRegistered')->with($slotClassName)->will($this->returnValue(true));
-        $mockObjectManager->expects($this->once())->method('get')->with($slotClassName)->will($this->returnValue($mockSlot));
+        $mockObjectManager->expects(self::once())->method('isRegistered')->with($slotClassName)->will(self::returnValue(true));
+        $mockObjectManager->expects(self::once())->method('get')->with($slotClassName)->will(self::returnValue($mockSlot));
 
         $dispatcher = new Dispatcher();
         $dispatcher->injectObjectManager($mockObjectManager);
         $dispatcher->connect('Foo', 'bar', $slotClassName, 'unknownMethodName', true);
 
         $dispatcher->dispatch('Foo', 'bar', ['foo' => 'bar', 'baz' => 'quux']);
-        $this->assertSame($mockSlot->arguments, ['bar', 'quux']);
+        self::assertSame($mockSlot->arguments, ['bar', 'quux']);
     }
 
     /**
@@ -212,7 +212,7 @@ class DispatcherTest extends UnitTestCase
         $dispatcher->injectObjectManager($mockObjectManager);
 
         $dispatcher->dispatch('SignalClassName', 'methodName', ['foo' => 'bar', 'baz' => 'quux']);
-        $this->assertSame(['bar', 'quux', 'SignalClassName::methodName'], $arguments);
+        self::assertSame(['bar', 'quux', 'SignalClassName::methodName'], $arguments);
     }
 
     /**

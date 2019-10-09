@@ -25,14 +25,14 @@ use Neos\FluidAdaptor\ViewHelpers\Fixtures\UserWithToString;
 class StripTagsViewHelperTest extends ViewHelperBaseTestcase
 {
     /**
-     * @var \Neos\FluidAdaptor\ViewHelpers\Format\StripTagsViewHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var \Neos\FluidAdaptor\ViewHelpers\Format\StripTagsViewHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $viewHelper;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->viewHelper = $this->getMockBuilder(\Neos\FluidAdaptor\ViewHelpers\Format\StripTagsViewHelper::class)->setMethods(['buildRenderChildrenClosure', 'renderChildren', 'registerRenderMethodArguments'])->getMock();
+        $this->viewHelper = $this->getMockBuilder(\Neos\FluidAdaptor\ViewHelpers\Format\StripTagsViewHelper::class)->setMethods(['buildRenderChildrenClosure', 'renderChildren'])->getMock();
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
     }
 
@@ -41,7 +41,7 @@ class StripTagsViewHelperTest extends ViewHelperBaseTestcase
      */
     public function viewHelperDeactivatesEscapingInterceptor()
     {
-        $this->assertFalse($this->viewHelper->isEscapingInterceptorEnabled());
+        self::assertFalse($this->viewHelper->isEscapingInterceptorEnabled());
     }
 
     /**
@@ -55,7 +55,7 @@ class StripTagsViewHelperTest extends ViewHelperBaseTestcase
         });
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['value' => $string]);
         $actualResult = $this->viewHelper->render();
-        $this->assertEquals($string, $actualResult);
+        self::assertEquals($string, $actualResult);
     }
 
     /**
@@ -64,10 +64,10 @@ class StripTagsViewHelperTest extends ViewHelperBaseTestcase
     public function renderUsesChildnodesAsSourceIfSpecified()
     {
         $string = 'Some string';
-        $this->viewHelper->expects($this->once())->method('renderChildren')->willReturn($string);
+        $this->viewHelper->expects(self::once())->method('renderChildren')->willReturn($string);
         $this->viewHelper = $this->prepareArguments($this->viewHelper, []);
         $actualResult = $this->viewHelper->render();
-        $this->assertEquals($string, $actualResult);
+        self::assertEquals($string, $actualResult);
     }
 
     /**
@@ -95,7 +95,7 @@ class StripTagsViewHelperTest extends ViewHelperBaseTestcase
         });
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['value' => $source]);
         $actualResult = $this->viewHelper->render();
-        $this->assertSame($expectedResult, $actualResult);
+        self::assertSame($expectedResult, $actualResult);
     }
 
     /**
@@ -109,7 +109,7 @@ class StripTagsViewHelperTest extends ViewHelperBaseTestcase
         });
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['value' => $source]);
         $actualResult = $this->viewHelper->render();
-        $this->assertSame($source, $actualResult);
+        self::assertSame($source, $actualResult);
     }
 
     /**
@@ -124,7 +124,7 @@ class StripTagsViewHelperTest extends ViewHelperBaseTestcase
         });
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['value' => $user]);
         $actualResult = $this->viewHelper->render();
-        $this->assertSame($expectedResult, $actualResult);
+        self::assertSame($expectedResult, $actualResult);
     }
 
     /**

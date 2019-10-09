@@ -12,9 +12,8 @@ namespace Neos\Flow\ResourceManagement\Target;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Core\Bootstrap;
 use Neos\Error\Messages\Error;
-use Neos\Flow\Http\HttpRequestHandlerInterface;
+use Neos\Flow\Http\BaseUriProvider;
 use Neos\Flow\ResourceManagement\CollectionInterface;
 use Neos\Flow\ResourceManagement\Publishing\MessageCollector;
 use Neos\Flow\ResourceManagement\PersistentResource;
@@ -62,15 +61,6 @@ class FileSystemTarget implements TargetInterface
     protected $baseUri = '';
 
     /**
-     * The configured Neos.Flow.http.baseUri to use as fallback if no absolute baseUri is configured
-     * and if it can't be determined from the current request (e.g. in CLI mode)
-     *
-     * @Flow\InjectConfiguration(package="Neos.Flow", path="http.baseUri")
-     * @var string
-     */
-    protected $httpBaseUri;
-
-    /**
      * The resolved absolute web URI for this target. If $baseUri was absolute this will be the same,
      * otherwise the request base uri will be prepended.
      *
@@ -99,12 +89,6 @@ class FileSystemTarget implements TargetInterface
     protected $resourceRepository;
 
     /**
-     * @Flow\Inject
-     * @var Bootstrap
-     */
-    protected $bootstrap;
-
-    /**
      * @var LoggerInterface
      */
     protected $logger;
@@ -114,6 +98,12 @@ class FileSystemTarget implements TargetInterface
      * @var MessageCollector
      */
     protected $messageCollector;
+
+    /**
+     * @Flow\Inject
+     * @var BaseUriProvider
+     */
+    protected $baseUriProvider;
 
     /**
      * Constructor
@@ -391,7 +381,7 @@ class FileSystemTarget implements TargetInterface
      * Detects and returns the website's absolute base URI
      *
      * @return string The resolved resource base URI, @see getResourcesBaseUri()
-     * @throws TargetException if the baseUri can't be resolved
+     * @throws \Neos\Flow\Http\Exception
      */
     protected function detectResourcesBaseUri()
     {
@@ -399,15 +389,8 @@ class FileSystemTarget implements TargetInterface
             return $this->baseUri;
         }
 
-        $requestHandler = $this->bootstrap->getActiveRequestHandler();
-        if ($requestHandler instanceof HttpRequestHandlerInterface) {
-            return $requestHandler->getHttpRequest()->getBaseUri() . $this->baseUri;
-        }
-
-        if ($this->httpBaseUri === null) {
-            throw new TargetException(sprintf('The base URI for resources could not be detected. Please specify the "Neos.Flow.http.baseUri" setting or use an absolute "baseUri" option for target "%s".', $this->name), 1438093977);
-        }
-        return $this->httpBaseUri . $this->baseUri;
+        $httpBaseUri = (string)$this->baseUriProvider->getConfiguredBaseUriOrFallbackToCurrentRequest();
+        return $httpBaseUri . $this->baseUri;
     }
 
     /**

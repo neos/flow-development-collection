@@ -10,14 +10,65 @@ namespace Neos\Flow\Http\Helper;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use Neos\Http\Factories\FlowUploadedFile;
 use Neos\Utility\Arrays;
+use Psr\Http\Message\UploadedFileInterface;
 
 /**
  * Helper to re-organize uploaded file data for requests.
  */
 abstract class UploadedFilesHelper
 {
+    /**
+     * @param UploadedFileInterface[] $uploadedFiles
+     * @param array $arguments
+     * @param array $currentPath internal argument for recursion
+     * @return array The nested array of paths and uploaded files
+     */
+    public static function upcastUploadedFiles(array $uploadedFiles, array $arguments, array $currentPath = []): array
+    {
+        $upcastedUploads = [];
+
+        foreach ($uploadedFiles as $key => $value) {
+            $currentPath[] = $key;
+            if ($value instanceof UploadedFileInterface) {
+                $originallySubmittedResourcePath = array_merge($currentPath, ['originallySubmittedResource']);
+                $collectionNamePath = array_merge($currentPath, ['__collectionName']);
+                $upcastedUploads[$key] = self::upcastUploadedFile(
+                    $value,
+                    Arrays::getValueByPath($arguments, $originallySubmittedResourcePath),
+                    Arrays::getValueByPath($arguments, $collectionNamePath)
+                );
+            }
+
+            if (is_array($value)) {
+                $upcastedUploads[$key] = self::upcastUploadedFiles($value, $arguments, $currentPath);
+            }
+        }
+
+        return $upcastedUploads;
+    }
+
+    /**
+     * @param UploadedFileInterface $uploadedFile
+     * @param string|array $originallySubmittedResource
+     * @param string $collectionName
+     * @return FlowUploadedFile
+     */
+    protected static function upcastUploadedFile(UploadedFileInterface $uploadedFile, $originallySubmittedResource = null, string $collectionName = null): FlowUploadedFile
+    {
+        $flowUploadedFile = new FlowUploadedFile($uploadedFile->getStream(), ($uploadedFile->getSize() ?: 0), $uploadedFile->getError(), $uploadedFile->getClientFilename(), $uploadedFile->getClientMediaType());
+        if ($originallySubmittedResource) {
+            $flowUploadedFile->setOriginallySubmittedResource($originallySubmittedResource);
+        }
+
+        if ($collectionName) {
+            $flowUploadedFile->setCollectionName($collectionName);
+        }
+
+        return $flowUploadedFile;
+    }
+
     /**
      * Transforms the convoluted _FILES superglobal into a manageable form.
      *
@@ -53,23 +104,6 @@ abstract class UploadedFilesHelper
         }
 
         return $untangledFiles;
-    }
-
-    /**
-     * Returns an array of all possible "field paths" for the given array.
-     *
-     * @param array $structure The array to walk through
-     * @param string $firstLevelFieldName
-     * @return array An array of paths (as strings) in the format "key1/key2/key3" ...
-     * @deprecated
-     */
-    protected static function calculateFieldPaths(array $structure, string $firstLevelFieldName = null): array
-    {
-        $fieldPaths = self::calculateFieldPathsAsArray($structure, $firstLevelFieldName);
-        array_walk($fieldPaths, function (&$fieldPath) {
-            $fieldPath = implode('/', $fieldPath);
-        });
-        return $fieldPaths;
     }
 
     /**

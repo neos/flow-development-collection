@@ -45,7 +45,7 @@ class ContextTest extends \Neos\Flow\Tests\UnitTestCase
     {
         $context = new Context($value);
         $unwrappedValue = $context->unwrap();
-        $this->assertSame($expectedUnwrappedValue, $unwrappedValue);
+        self::assertSame($expectedUnwrappedValue, $unwrappedValue);
     }
 
     /**
@@ -75,7 +75,7 @@ class ContextTest extends \Neos\Flow\Tests\UnitTestCase
     {
         $context = new Context($value);
         $unwrappedValue = $context->unwrap();
-        $this->assertSame($expectedUnwrappedValue, $unwrappedValue);
+        self::assertSame($expectedUnwrappedValue, $unwrappedValue);
     }
 
     /**
@@ -106,7 +106,7 @@ class ContextTest extends \Neos\Flow\Tests\UnitTestCase
     {
         $context = new Context($value);
         $getValue = $context->get($path);
-        $this->assertSame($getValue, $expectedGetValue);
+        self::assertSame($getValue, $expectedGetValue);
     }
 
     /**
@@ -143,6 +143,6 @@ class ContextTest extends \Neos\Flow\Tests\UnitTestCase
     {
         $context = new Context($value);
         $getValue = $context->get($path);
-        $this->assertSame($getValue, $expectedGetValue);
+        self::assertSame($getValue, $expectedGetValue);
     }
 }

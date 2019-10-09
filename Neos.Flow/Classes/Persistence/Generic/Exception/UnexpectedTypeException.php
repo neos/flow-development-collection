@@ -15,6 +15,7 @@ namespace Neos\Flow\Persistence\Generic\Exception;
  * A "Flow Persistence Unexpected Type" Exception
  *
  * @api
+ * @deprecated since Flow 6.0
  */
 class UnexpectedTypeException extends \Neos\Flow\Persistence\Exception
 {

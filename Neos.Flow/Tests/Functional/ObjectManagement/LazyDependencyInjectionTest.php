@@ -28,15 +28,15 @@ class LazyDependencyInjectionTest extends FunctionalTestCase
         $this->objectManager->forgetInstance(Fixtures\SingletonClassA::class);
 
         $object = $this->objectManager->get(Fixtures\ClassWithLazyDependencies::class);
-        $this->assertInstanceOf(DependencyProxy::class, $object->lazyA);
+        self::assertInstanceOf(DependencyProxy::class, $object->lazyA);
 
         $actualObjectB = $object->lazyA->getObjectB();
         $this->assertNotInstanceOf(DependencyProxy::class, $object->lazyA);
 
         $objectA = $this->objectManager->get(Fixtures\SingletonClassA::class);
         $expectedObjectB = $this->objectManager->get(Fixtures\SingletonClassB::class);
-        $this->assertSame($objectA, $object->lazyA);
-        $this->assertSame($expectedObjectB, $actualObjectB);
+        self::assertSame($objectA, $object->lazyA);
+        self::assertSame($expectedObjectB, $actualObjectB);
     }
 
     /**
@@ -45,7 +45,7 @@ class LazyDependencyInjectionTest extends FunctionalTestCase
     public function dependencyIsInjectedDirectlyIfLazyIsTurnedOff()
     {
         $object = $this->objectManager->get(Fixtures\ClassWithLazyDependencies::class);
-        $this->assertInstanceOf(Fixtures\SingletonClassC::class, $object->eagerC);
+        self::assertInstanceOf(Fixtures\SingletonClassC::class, $object->eagerC);
     }
 
     /**
@@ -59,13 +59,13 @@ class LazyDependencyInjectionTest extends FunctionalTestCase
         $object1 = $this->objectManager->get(Fixtures\ClassWithLazyDependencies::class);
         $object2 = $this->objectManager->get(Fixtures\AnotherClassWithLazyDependencies::class);
 
-        $this->assertInstanceOf(DependencyProxy::class, $object1->lazyA);
-        $this->assertInstanceOf(DependencyProxy::class, $object2->lazyA);
+        self::assertInstanceOf(DependencyProxy::class, $object1->lazyA);
+        self::assertInstanceOf(DependencyProxy::class, $object2->lazyA);
 
         $object2->lazyA->getObjectB();
 
         $objectA = $this->objectManager->get(Fixtures\SingletonClassA::class);
-        $this->assertSame($objectA, $object1->lazyA);
-        $this->assertSame($objectA, $object2->lazyA);
+        self::assertSame($objectA, $object1->lazyA);
+        self::assertSame($objectA, $object2->lazyA);
     }
 }

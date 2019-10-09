@@ -111,12 +111,12 @@ class YamlSource
         }
 
         if ($allowSplitSource === true) {
-            $wrongSplitSourcePathsAndFileNames = glob($pathAndFilename . '.*.yml') ?? [];
+            $wrongSplitSourcePathsAndFileNames = glob($pathAndFilename . '.*.yml') ?: [];
             $wrongPathsAndFileNames = array_merge($wrongPathsAndFileNames, $wrongSplitSourcePathsAndFileNames);
         }
 
         if ($wrongPathsAndFileNames !== []) {
-            throw new \Neos\Flow\Configuration\Exception(sprintf('The files "%s" exist with "yml" extension, but that is not supported by Flow. Please use "yaml" as file extension for configuration files.', implode(', ', $wrongPathsAndFileNames)), 1516893322579);
+            throw new \Neos\Flow\Configuration\Exception(sprintf('The files "%s" exist with "yml" extension, but that is not supported by Flow. Please use "yaml" as file extension for configuration files.', implode(', ', $wrongPathsAndFileNames)), 1516893322);
         }
     }
 

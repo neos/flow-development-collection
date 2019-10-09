@@ -27,7 +27,7 @@ class StringValidatorTest extends AbstractValidatorTestcase
      */
     public function validateReturnsNoErrorIfTheGivenValueIsNull()
     {
-        $this->assertFalse($this->validator->validate(null)->hasErrors());
+        self::assertFalse($this->validator->validate(null)->hasErrors());
     }
 
     /**
@@ -35,7 +35,7 @@ class StringValidatorTest extends AbstractValidatorTestcase
      */
     public function validateReturnsNoErrorIfTheGivenValueIsAnEmptyString()
     {
-        $this->assertFalse($this->validator->validate('')->hasErrors());
+        self::assertFalse($this->validator->validate('')->hasErrors());
     }
 
     /**
@@ -43,7 +43,7 @@ class StringValidatorTest extends AbstractValidatorTestcase
      */
     public function stringValidatorShouldValidateString()
     {
-        $this->assertFalse($this->validator->validate('Hello World')->hasErrors());
+        self::assertFalse($this->validator->validate('Hello World')->hasErrors());
     }
 
     /**
@@ -51,7 +51,7 @@ class StringValidatorTest extends AbstractValidatorTestcase
      */
     public function stringValidatorShouldReturnErrorIfNumberIsGiven()
     {
-        $this->assertTrue($this->validator->validate(42)->hasErrors());
+        self::assertTrue($this->validator->validate(42)->hasErrors());
     }
 
     /**
@@ -69,6 +69,6 @@ class StringValidatorTest extends AbstractValidatorTestcase
 			}
 		');
         $object = new $className();
-        $this->assertTrue($this->validator->validate($object)->hasErrors());
+        self::assertTrue($this->validator->validate($object)->hasErrors());
     }
 }
