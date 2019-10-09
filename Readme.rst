@@ -56,6 +56,7 @@ If you want to contribute to Flow framework and want to set up a development env
 Note the **-distribution** package you create a poject from, instead of just checking out this repository.
 
 The code for the framework is then found inside ``Packages/Framework``, which is itself the git repository for this flow-development-collection (due to the ``--keep-vcs`` option above), that you need to apply changes to and create pull requests for.
+To commit changes to the framework switch into the Framework directory (``cd Packages/Framework``) and do all git related work (``git add .``, ``git commit``, etc) inside there.
 
 In the root of the development-distribution you created:
 
