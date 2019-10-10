@@ -13,7 +13,6 @@ namespace Neos\Flow\Tests\Unit\Mvc\Routing;
 
 use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Configuration\ConfigurationManager;
-use Neos\Flow\Http\ServerRequestAttributes;
 use Neos\Flow\Mvc\Exception\InvalidRouteSetupException;
 use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
 use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
@@ -87,7 +86,6 @@ class RouterTest extends UnitTestCase
         $this->mockBaseUri->method('withQuery')->willReturn($this->mockBaseUri);
         $this->mockBaseUri->method('withFragment')->willReturn($this->mockBaseUri);
         $this->mockBaseUri->method('withPath')->willReturn($this->mockBaseUri);
-        $this->mockHttpRequest->method('getAttribute')->with(ServerRequestAttributes::BASE_URI)->willReturn($this->mockBaseUri);
 
         $mockUri = $this->getMockBuilder(UriInterface::class)->getMock();
         $mockUri->method('getPath')->willReturn('/');
@@ -209,7 +207,7 @@ class RouterTest extends UnitTestCase
         $router->_set('routes', $mockRoutes);
 
         $resolvedUri = $router->resolve(new ResolveContext($this->mockBaseUri, $routeValues, false));
-        self::assertSame('route2', $resolvedUri->getPath());
+        self::assertSame('/route2', $resolvedUri->getPath());
     }
 
     /**
@@ -290,7 +288,7 @@ class RouterTest extends UnitTestCase
         $router->_set('routerCachingService', $mockRouterCachingService);
 
         $router->expects(self::never())->method('createRoutesFromConfiguration');
-        self::assertSame('cached/path', (string)$router->resolve($resolveContext));
+        self::assertSame('/cached/path', (string)$router->resolve($resolveContext));
     }
 
     /**
@@ -316,7 +314,7 @@ class RouterTest extends UnitTestCase
         $router->_set('routes', [$mockRoute1, $mockRoute2]);
 
         $this->mockRouterCachingService->expects(self::once())->method('storeResolvedUriConstraints')->with($resolveContext, $mockResolvedUriConstraints);
-        self::assertSame('resolved/path', (string)$router->resolve($resolveContext));
+        self::assertSame('/resolved/path', (string)$router->resolve($resolveContext));
     }
 
     /**

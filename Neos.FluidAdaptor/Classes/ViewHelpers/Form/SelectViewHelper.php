@@ -12,6 +12,8 @@ namespace Neos\FluidAdaptor\ViewHelpers\Form;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\I18n\Exception\IndexOutOfBoundsException;
+use Neos\Flow\I18n\Exception\InvalidFormatPlaceholderException;
 use Neos\Flow\I18n\Exception\InvalidLocaleIdentifierException;
 use Neos\Flow\I18n\Locale;
 use Neos\Flow\I18n\Translator;
@@ -368,7 +370,8 @@ class SelectViewHelper extends AbstractFormFieldViewHelper
      * @param string $label option tag label
      * @return string
      * @throws ViewHelper\Exception
-     * @throws FluidAdaptor\Exception
+     * @throws IndexOutOfBoundsException
+     * @throws InvalidFormatPlaceholderException
      */
     protected function getTranslatedLabel($value, $label)
     {
@@ -377,7 +380,7 @@ class SelectViewHelper extends AbstractFormFieldViewHelper
         $translateBy = isset($translationConfiguration['by']) ? $translationConfiguration['by'] : 'id';
         $sourceName = isset($translationConfiguration['source']) ? $translationConfiguration['source'] : 'Main';
         $request = $this->controllerContext->getRequest();
-        $packageKey = null;
+        $packageKey = 'Neos.Flow';
         if (isset($translationConfiguration['package'])) {
             $packageKey = $translationConfiguration['package'];
         } elseif ($request instanceof ActionRequest) {

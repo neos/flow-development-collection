@@ -38,9 +38,9 @@ class PointcutMethodNameFilter implements PointcutFilterInterface
     protected $methodNameFilterExpression;
 
     /**
-     * @var string The method visibility
+     * @var string|null The method visibility
      */
-    protected $methodVisibility = null;
+    protected $methodVisibility;
 
     /**
      * @var LoggerInterface
@@ -56,14 +56,14 @@ class PointcutMethodNameFilter implements PointcutFilterInterface
      * Constructor - initializes the filter with the name filter pattern
      *
      * @param string $methodNameFilterExpression A regular expression which filters method names
-     * @param string $methodVisibility The method visibility modifier (public, protected or private). Specifiy NULL if you don't care.
+     * @param string $methodVisibility The method visibility modifier (public, protected or private). Specify NULL if you don't care.
      * @param array $methodArgumentConstraints array of method constraints
      * @throws InvalidPointcutExpressionException
      */
     public function __construct(string $methodNameFilterExpression, string $methodVisibility = null, array $methodArgumentConstraints = [])
     {
         $this->methodNameFilterExpression = $methodNameFilterExpression;
-        if (preg_match(self::PATTERN_MATCHVISIBILITYMODIFIER, $methodVisibility) !== 1) {
+        if ($methodVisibility !== null && preg_match(self::PATTERN_MATCHVISIBILITYMODIFIER, $methodVisibility) !== 1) {
             throw new InvalidPointcutExpressionException('Invalid method visibility modifier "' . $methodVisibility . '".', 1172494794);
         }
         $this->methodVisibility = $methodVisibility;
@@ -177,7 +177,7 @@ class PointcutMethodNameFilter implements PointcutFilterInterface
      *
      * @return string
      */
-    public function getMethodVisibility(): string
+    public function getMethodVisibility(): ?string
     {
         return $this->methodVisibility;
     }

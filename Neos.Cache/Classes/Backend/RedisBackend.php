@@ -68,9 +68,9 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
     protected $entryCursor = 0;
 
     /**
-     * @var boolean
+     * @var boolean|null
      */
-    protected $frozen = null;
+    protected $frozen;
 
     /**
      * @var string
@@ -107,7 +107,7 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
     public function __construct(EnvironmentConfiguration $environmentConfiguration, array $options)
     {
         parent::__construct($environmentConfiguration, $options);
-        if ($this->redis === null) {
+        if (!$this->redis instanceof \Redis) {
             $this->redis = $this->getRedisClient();
         }
     }
@@ -175,8 +175,7 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
     public function has(string $entryIdentifier): bool
     {
         // exists returned true or false in phpredis versions < 4.0.0, now it returns the number of keys
-        $existsResult = $this->redis->exists($this->buildKey('entry:' . $entryIdentifier));
-        return $existsResult === true || $existsResult > 0;
+        return (bool)$this->redis->exists($this->buildKey('entry:' . $entryIdentifier));
     }
 
     /**
@@ -205,6 +204,7 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
             }
             $this->redis->del($this->buildKey('tags:' . $entryIdentifier));
             $this->redis->lRem($this->buildKey('entries'), $entryIdentifier, 0);
+            /** @var array|bool $result */
             $result = $this->redis->exec();
         } while ($result === false);
 
@@ -372,7 +372,8 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
             foreach ($entries as $entryIdentifier) {
                 $this->redis->persist($this->buildKey('entry:' . $entryIdentifier));
             }
-            $this->redis->set($this->buildKey('frozen'), 1);
+            $this->redis->set($this->buildKey('frozen'), '1');
+            /** @var array|bool $result */
             $result = $this->redis->exec();
         } while ($result === false);
         $this->frozen = true;
@@ -386,22 +387,10 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
     public function isFrozen(): bool
     {
         if (null === $this->frozen) {
-            $this->frozen = $this->redis->exists($this->buildKey('frozen'));
+            $this->frozen = (bool)$this->redis->exists($this->buildKey('frozen'));
         }
 
         return $this->frozen;
-    }
-
-    /**
-     * Sets the default lifetime for this cache backend
-     *
-     * @param integer $lifetime Default lifetime of this cache backend in seconds. If NULL is specified, the default lifetime is used. 0 means unlimited lifetime.
-     * @return void
-     * @api
-     */
-    public function setDefaultLifetime(int $lifetime): void
-    {
-        $this->defaultLifetime = $lifetime;
     }
 
     /**
@@ -418,25 +407,25 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
     /**
      * Sets the port of the Redis server.
      *
-     * Leave this empty if you want to connect to a socket
+     * Unused if you want to connect to a socket (i.e. hostname contains a /)
      *
-     * @param integer $port Port of the Redis server
+     * @param integer|string $port Port of the Redis server
      * @api
      */
-    public function setPort(int $port): void
+    public function setPort($port): void
     {
-        $this->port = $port;
+        $this->port = (int)$port;
     }
 
     /**
      * Sets the database that will be used for this backend
      *
-     * @param integer $database Database that will be used
+     * @param integer|string $database Database that will be used
      * @api
      */
-    public function setDatabase(int $database): void
+    public function setDatabase($database): void
     {
-        $this->database = $database;
+        $this->database = (int)$database;
     }
 
     /**
@@ -448,11 +437,11 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
     }
 
     /**
-     * @param integer $compressionLevel
+     * @param integer|string $compressionLevel
      */
-    public function setCompressionLevel(int $compressionLevel): void
+    public function setCompressionLevel($compressionLevel): void
     {
-        $this->compressionLevel = $compressionLevel;
+        $this->compressionLevel = (int)$compressionLevel;
     }
 
     /**
@@ -461,7 +450,9 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
      */
     public function setRedis(\Redis $redis = null): void
     {
-        $this->redis = $redis;
+        if ($redis !== null) {
+            $this->redis = $redis;
+        }
     }
 
     /**
@@ -499,15 +490,16 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
      */
     private function getRedisClient(): \Redis
     {
-        if (strpos($this->hostname, '/') !== false) {
-            $this->port = null;
-        }
         $redis = new \Redis();
 
         try {
             $connected = false;
-            // keep the above! the line below leave the variable undefined if an error occurs.
-            $connected = $redis->connect($this->hostname, $this->port);
+            // keep the assignment above! the connect calls below leaves the variable undefined, if an error occurs.
+            if (strpos($this->hostname, '/') !== false) {
+                $connected = $redis->connect($this->hostname);
+            } else {
+                $connected = $redis->connect($this->hostname, $this->port);
+            }
         } finally {
             if ($connected === false) {
                 throw new CacheException('Could not connect to Redis.', 1391972021);
