@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\FluidAdaptor\Core\Parser\TemplateProcessor;
 
 /*
@@ -71,7 +73,7 @@ class NamespaceDetectionTemplateProcessor extends FluidNamespaceDetectionTemplat
      * @param string $templateSource
      * @return mixed
      */
-    public function protectCDataSectionsFromParser($templateSource)
+    public function protectCDataSectionsFromParser(string $templateSource)
     {
         $parts = preg_split('/(\<\!\[CDATA\[|\]\]\>)/', $templateSource, -1, PREG_SPLIT_DELIM_CAPTURE);
         $balance = 0;
@@ -122,7 +124,7 @@ class NamespaceDetectionTemplateProcessor extends FluidNamespaceDetectionTemplat
      * @param string $templateSource
      * @return void
      */
-    public function throwExceptionsForUnhandledNamespaces($templateSource)
+    public function throwExceptionsForUnhandledNamespaces(string $templateSource): void
     {
         $viewHelperResolver = $this->renderingContext->getViewHelperResolver();
         $splitTemplate = preg_split(static::$EXTENDED_SPLIT_PATTERN_TEMPLATE_DYNAMICTAGS, $templateSource, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);

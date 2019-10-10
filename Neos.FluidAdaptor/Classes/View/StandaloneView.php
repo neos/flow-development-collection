@@ -45,18 +45,6 @@ class StandaloneView extends AbstractTemplateView
     protected $templatePathAndFilename = null;
 
     /**
-     * absolute root path of the folder that contains Fluid layouts
-     * @var string
-     */
-    protected $layoutRootPath = null;
-
-    /**
-     * absolute root path of the folder that contains Fluid partials
-     * @var string
-     */
-    protected $partialRootPath = null;
-
-    /**
      * @var \Neos\Flow\Utility\Environment
      * @Flow\Inject
      */
