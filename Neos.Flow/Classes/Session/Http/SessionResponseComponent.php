@@ -38,7 +38,7 @@ class SessionResponseComponent implements ComponentInterface
             return;
         }
 
-        $response = $response->withHeader('Set-Cookie', (string)$currentSession->getSessionCookie());
+        $response = $response->withAddedHeader('Set-Cookie', (string)$currentSession->getSessionCookie());
         $componentContext->replaceHttpResponse($response);
     }
 }
