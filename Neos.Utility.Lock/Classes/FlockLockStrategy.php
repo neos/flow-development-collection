@@ -63,17 +63,18 @@ class FlockLockStrategy implements LockStrategyInterface
 
     /**
      * @param string $subject
-     * @param boolean $exclusiveLock TRUE to, acquire an exclusive (write) lock, FALSE for a shared (read) lock.
+     * @param boolean $exclusiveLock true to, acquire an exclusive (write) lock, false for a shared (read) lock.
+     * @param boolean $nonblocking true to, acquire the lock in nonblocking mode, false for a blocking lock lock.
      * @return void
      * @throws LockNotAcquiredException
      */
-    public function acquire($subject, $exclusiveLock)
+    public function acquire(string $subject, bool $exclusiveLock, bool $nonblocking = false)
     {
         $this->lockFileName = Utility\Files::concatenatePaths([$this->temporaryDirectory, md5($subject)]);
         $aquiredLock = false;
         $i = 0;
         while ($aquiredLock === false) {
-            $aquiredLock = $this->tryToAcquireLock($exclusiveLock);
+            $aquiredLock = $this->tryToAcquireLock($exclusiveLock, $nonblocking);
             $i++;
             if ($i > 10000) {
                 throw new LockNotAcquiredException(sprintf('After 10000 attempts a lock could not be aquired for subject "%s".', $subject), 1449829188);
@@ -98,22 +99,23 @@ class FlockLockStrategy implements LockStrategyInterface
      * Tries to open a lock file and apply the lock to it.
      *
      * @param boolean $exclusiveLock
+     * @param boolean $nonblocking
      * @return boolean Was a lock aquired?
      * @throws LockNotAcquiredException
      */
-    protected function tryToAcquireLock(bool $exclusiveLock): bool
+    protected function tryToAcquireLock(bool $exclusiveLock, bool $nonblocking): bool
     {
         $this->filePointer = @fopen($this->lockFileName, 'w');
         if ($this->filePointer === false) {
             throw new LockNotAcquiredException(sprintf('Lock file "%s" could not be opened', $this->lockFileName), 1386520596);
         }
 
-        $this->applyFlock($exclusiveLock);
+        $this->applyFlock($exclusiveLock, $nonblocking);
 
         $fstat = fstat($this->filePointer);
         $stat = @stat($this->lockFileName);
         // Make sure that the file did not get unlinked between the fopen and the actual flock
-        // This will always be TRUE on windows, because 'ino' stat will always be 0, but unlink is not possible on opened files anyway
+        // This will always be true on windows, because 'ino' stat will always be 0, but unlink is not possible on opened files anyway
         if ($stat !== false && $stat['ino'] === $fstat['ino']) {
             return true;
         }
@@ -130,11 +132,15 @@ class FlockLockStrategy implements LockStrategyInterface
      * apply flock to the opened lock file.
      *
      * @param boolean $exclusiveLock
+     * @param boolean $nonblocking
      * @throws LockNotAcquiredException
      */
-    protected function applyFlock(bool $exclusiveLock)
+    protected function applyFlock(bool $exclusiveLock, bool $nonblocking)
     {
         $lockOption = $exclusiveLock === true ? LOCK_EX : LOCK_SH;
+        if($nonblocking){
+            $lockOption |= LOCK_NB;
+        }
 
         if (flock($this->filePointer, $lockOption) !== true) {
             throw new LockNotAcquiredException(sprintf('Could not lock file "%s"', $this->lockFileName), 1386520597);
@@ -144,7 +150,7 @@ class FlockLockStrategy implements LockStrategyInterface
     /**
      * Releases the lock
      *
-     * @return boolean TRUE on success, FALSE otherwise
+     * @return boolean true on success, false otherwise
      */
     public function release(): bool
     {

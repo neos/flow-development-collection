@@ -45,15 +45,16 @@ class Lock
 
     /**
      * @param string $subject
-     * @param boolean $exclusiveLock TRUE to, acquire an exclusive (write) lock, FALSE for a shared (read) lock. An exclusive lock ist the default.
+     * @param boolean $exclusiveLock true to, acquire an exclusive (write) lock, false for a shared (read) lock. An exclusive lock ist the default.
+     * @param boolean $nonblocking true to, acquire the lock in nonblocking mode, false for a blocking lock. A blocking lock is the default.
      */
-    public function __construct(string $subject, bool $exclusiveLock = true)
+    public function __construct(string $subject, bool $exclusiveLock = true, bool $nonblocking = false)
     {
         if (self::$lockManager === null) {
             return;
         }
         $this->lockStrategy = self::$lockManager->getLockStrategyInstance();
-        $this->lockStrategy->acquire($subject, $exclusiveLock);
+        $this->lockStrategy->acquire($subject, $exclusiveLock, $nonblocking);
     }
 
     /**
@@ -78,7 +79,7 @@ class Lock
 
     /**
      * Releases the lock
-     * @return boolean TRUE on success, FALSE otherwise
+     * @return boolean true on success, false otherwise
      */
     public function release(): bool
     {
