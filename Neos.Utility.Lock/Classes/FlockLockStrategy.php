@@ -138,7 +138,7 @@ class FlockLockStrategy implements LockStrategyInterface
     protected function applyFlock(bool $exclusiveLock, bool $nonblocking)
     {
         $lockOption = $exclusiveLock === true ? LOCK_EX : LOCK_SH;
-        if ($nonblocking){
+        if ($nonblocking) {
             $lockOption |= LOCK_NB;
         }
 
