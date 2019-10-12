@@ -27,7 +27,7 @@ Neos:
         containers:
           'default':
             position: 'end'
-            storage: 'Neos\Flow\Mvc\FlashMessage\Storage\FlashMessageCookieStorage'
+            storage: 'Neos\Flow\Mvc\FlashMessage\Storage\FlashMessageSessionStorage'
 
           # Custom FlashMessage containers can be added here:
           # Example:
