@@ -1,0 +1,28 @@
+`5.0.20 (2019-10-14) <https://github.com/neos/flow-development-collection/releases/tag/5.0.20>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`TASK: Clarify explanation of ignoredTables setting <https://github.com/neos/flow-development-collection/pull/1813>`_
+---------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Flow``
+
+`BUGFIX: Check for AbstractLazyCollection in CollectionValidator <https://github.com/neos/flow-development-collection/pull/1798>`_
+----------------------------------------------------------------------------------------------------------------------------------
+
+Use more generic `AbstractLazyCollection` instead of `PersistentCollection` in `isValid()` of `CollectionValidator` to prevent lazy collection of classes extending `AbstractLazyCollection` to get loaded.
+
+In our case we are extending the `AbstractLazyCollection` to add some additional functionality when handling lazy collections. Due to the final Implementation of `PersistentCollection` we are not able to extend this class.
+
+During the `isValid()` check, all data in the collection is loaded from the database and we run into an out of memory error, because our collection is an instance of `AbstractLazyCollection` and not `PersistentCollection`.
+
+I added an additional unit test `collectionValidatorIsValidEarlyReturnsOnUnitializedDoctrineAbstractLazyCollections` to the PR.
+
+See #1796 (now targeting 4.3)
+
+* Packages: ``Flow``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/5.0.19...5.0.20>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
