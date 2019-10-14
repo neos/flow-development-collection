@@ -378,11 +378,11 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
                     $discriminatorMap = [];
                     $subclassNames = $this->reflectionService->getAllSubClassNamesForClass($className);
                     if (!$this->reflectionService->isClassAbstract($className)) {
-                        $mappedClassName = strtolower(str_replace('Domain_Model_', '', str_replace('\\', '_', $className)));
+                        $mappedClassName = self::inferDiscriminatorTypeFromClassName($className);
                         $discriminatorMap[$mappedClassName] = $className;
                     }
                     foreach ($subclassNames as $subclassName) {
-                        $mappedSubclassName = strtolower(str_replace('Domain_Model_', '', str_replace('\\', '_', $subclassName)));
+                        $mappedSubclassName = self::inferDiscriminatorTypeFromClassName($subclassName);
                         $discriminatorMap[$mappedSubclassName] = $subclassName;
                     }
                 }
@@ -447,6 +447,17 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
     public function inferTableNameFromClassName($className, $lengthLimit = null)
     {
         return $this->truncateIdentifier(strtolower(str_replace('\\', '_', $className)), $lengthLimit, $className);
+    }
+
+    /**
+     * Given a class name returns a value to be used as a discriminator type value.
+     *
+     * @param string $className
+     * @return string
+     */
+    static public function inferDiscriminatorTypeFromClassName($className)
+    {
+        return strtolower(str_replace('Domain_Model_', '', str_replace('\\', '_', $className)));
     }
 
     /**
