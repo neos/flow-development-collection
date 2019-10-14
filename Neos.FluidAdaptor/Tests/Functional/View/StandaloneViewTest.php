@@ -38,7 +38,7 @@ class StandaloneViewTest extends FunctionalTestCase
      */
     public function runBare(): void
     {
-        $this->standaloneViewNonce = uniqid();
+        $this->standaloneViewNonce = uniqid('', true);
         parent::runBare();
         $numberOfAssertions = $this->getNumAssertions();
         parent::runBare();
@@ -48,7 +48,7 @@ class StandaloneViewTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function inlineTemplateIsEvaluatedCorrectly()
+    public function inlineTemplateIsEvaluatedCorrectly(): void
     {
         $httpRequest = $this->objectManager->get(ServerRequestFactoryInterface::class)->createServerRequest('GET', 'http://localhost');
         $actionRequest = ActionRequest::fromHttpRequest($httpRequest);
@@ -65,7 +65,7 @@ class StandaloneViewTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function renderSectionIsEvaluatedCorrectly()
+    public function renderSectionIsEvaluatedCorrectly(): void
     {
         $httpRequest = $this->objectManager->get(ServerRequestFactoryInterface::class)->createServerRequest('GET', 'http://localhost');
         $actionRequest = ActionRequest::fromHttpRequest($httpRequest);
@@ -82,7 +82,7 @@ class StandaloneViewTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function renderThrowsExceptionIfNeitherTemplateSourceNorTemplatePathAndFilenameAreSpecified()
+    public function renderThrowsExceptionIfNeitherTemplateSourceNorTemplatePathAndFilenameAreSpecified(): void
     {
         $this->expectException(InvalidTemplateResourceException::class);
         $httpRequest = $this->objectManager->get(ServerRequestFactoryInterface::class)->createServerRequest('GET', 'http://localhost');
@@ -95,7 +95,7 @@ class StandaloneViewTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function renderThrowsExceptionSpecifiedTemplatePathAndFilenameDoesNotExist()
+    public function renderThrowsExceptionSpecifiedTemplatePathAndFilenameDoesNotExist(): void
     {
         $this->expectException(InvalidTemplateResourceException::class);
         $httpRequest = $this->objectManager->get(ServerRequestFactoryInterface::class)->createServerRequest('GET', 'http://localhost');
@@ -109,7 +109,7 @@ class StandaloneViewTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function renderThrowsExceptionIfWrongEnctypeIsSetForFormUpload()
+    public function renderThrowsExceptionIfWrongEnctypeIsSetForFormUpload(): void
     {
         $this->expectException(WrongEnctypeException::class);
         $httpRequest = $this->objectManager->get(ServerRequestFactoryInterface::class)->createServerRequest('GET', 'http://localhost');
@@ -123,7 +123,7 @@ class StandaloneViewTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function renderThrowsExceptionIfSpecifiedTemplatePathAndFilenamePointsToADirectory()
+    public function renderThrowsExceptionIfSpecifiedTemplatePathAndFilenamePointsToADirectory(): void
     {
         $this->expectException(InvalidTemplateResourceException::class);
         $httpRequest = $this->objectManager->get(ServerRequestFactoryInterface::class)->createServerRequest('GET', 'http://localhost');
@@ -137,7 +137,7 @@ class StandaloneViewTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function templatePathAndFilenameIsLoaded()
+    public function templatePathAndFilenameIsLoaded(): void
     {
         $httpRequest = $this->objectManager->get(ServerRequestFactoryInterface::class)->createServerRequest('GET', 'http://localhost');
         $actionRequest = ActionRequest::fromHttpRequest($httpRequest);
@@ -155,7 +155,7 @@ class StandaloneViewTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function variablesAreEscapedByDefault()
+    public function variablesAreEscapedByDefault(): void
     {
         $standaloneView = new StandaloneView(null, $this->standaloneViewNonce);
         $standaloneView->assign('name', 'Sebastian <script>alert("dangerous");</script>');
@@ -169,7 +169,7 @@ class StandaloneViewTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function variablesAreNotEscapedIfEscapingIsDisabled()
+    public function variablesAreNotEscapedIfEscapingIsDisabled(): void
     {
         $standaloneView = new StandaloneView(null, $this->standaloneViewNonce);
         $standaloneView->assign('name', 'Sebastian <script>alert("dangerous");</script>');
@@ -183,7 +183,7 @@ class StandaloneViewTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function partialWithDefaultLocationIsUsedIfNoPartialPathIsSetExplicitly()
+    public function partialWithDefaultLocationIsUsedIfNoPartialPathIsSetExplicitly(): void
     {
         $httpRequest = $this->objectManager->get(ServerRequestFactoryInterface::class)->createServerRequest('GET', 'http://localhost');
         $actionRequest = ActionRequest::fromHttpRequest($httpRequest);
@@ -200,7 +200,7 @@ class StandaloneViewTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function explicitPartialPathIsUsed()
+    public function explicitPartialPathIsUsed(): void
     {
         $httpRequest = $this->objectManager->get(ServerRequestFactoryInterface::class)->createServerRequest('GET', 'http://localhost');
         $actionRequest = ActionRequest::fromHttpRequest($httpRequest);
@@ -218,7 +218,7 @@ class StandaloneViewTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function layoutWithDefaultLocationIsUsedIfNoLayoutPathIsSetExplicitly()
+    public function layoutWithDefaultLocationIsUsedIfNoLayoutPathIsSetExplicitly(): void
     {
         $httpRequest = $this->objectManager->get(ServerRequestFactoryInterface::class)->createServerRequest('GET', 'http://localhost');
         $actionRequest = ActionRequest::fromHttpRequest($httpRequest);
@@ -235,7 +235,7 @@ class StandaloneViewTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function explicitLayoutPathIsUsed()
+    public function explicitLayoutPathIsUsed(): void
     {
         $httpRequest = $this->objectManager->get(ServerRequestFactoryInterface::class)->createServerRequest('GET', 'http://localhost');
         $actionRequest = ActionRequest::fromHttpRequest($httpRequest);
@@ -252,7 +252,7 @@ class StandaloneViewTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function viewThrowsExceptionWhenUnknownViewHelperIsCalled()
+    public function viewThrowsExceptionWhenUnknownViewHelperIsCalled(): void
     {
         $this->expectException(UnknownNamespaceException::class);
         $httpRequest = $this->objectManager->get(ServerRequestFactoryInterface::class)->createServerRequest('GET', 'http://localhost');
@@ -268,7 +268,7 @@ class StandaloneViewTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function xmlNamespacesCanBeIgnored()
+    public function xmlNamespacesCanBeIgnored(): void
     {
         $httpRequest = $this->objectManager->get(ServerRequestFactoryInterface::class)->createServerRequest('GET', 'http://localhost');
         $actionRequest = ActionRequest::fromHttpRequest($httpRequest);
@@ -290,7 +290,7 @@ class StandaloneViewTest extends FunctionalTestCase
      *
      * @test
      */
-    public function interceptorsWorkInPartialRenderedInStandaloneSection()
+    public function interceptorsWorkInPartialRenderedInStandaloneSection(): void
     {
         $httpRequest = $this->objectManager->get(ServerRequestFactoryInterface::class)->createServerRequest('GET', 'http://localhost');
         $actionRequest = ActionRequest::fromHttpRequest($httpRequest);
@@ -320,7 +320,7 @@ class StandaloneViewTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function settingAndGettingFormatWorksAsExpected()
+    public function settingAndGettingFormatWorksAsExpected(): void
     {
         $formatToBeSet = 'xml';
         $standaloneView = new StandaloneView();
@@ -333,7 +333,7 @@ class StandaloneViewTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function settingAndGettingTemplatePathAndFilenameWorksAsExpected()
+    public function settingAndGettingTemplatePathAndFilenameWorksAsExpected(): void
     {
         $templatePathAndFilename = __DIR__ . '/Fixtures/NestedRenderingConfiguration/TemplateWithSection.txt';
         $standaloneView = new StandaloneView();
@@ -345,7 +345,7 @@ class StandaloneViewTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function formViewHelpersOutsideOfFormWork()
+    public function formViewHelpersOutsideOfFormWork(): void
     {
         $httpRequest = $this->objectManager->get(ServerRequestFactoryInterface::class)->createServerRequest('GET', 'http://localhost');
         $actionRequest = ActionRequest::fromHttpRequest($httpRequest);
