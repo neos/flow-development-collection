@@ -291,6 +291,9 @@ class UriBuilder
         if (empty($actionName)) {
             throw new Exception\MissingActionNameException('The URI Builder could not build a URI linking to an action controller because no action name was specified. Please check the stack trace to see which code or template was requesting the link and check the arguments passed to the URI Builder.', 1354629891);
         }
+        if (empty($controllerName)) {
+            $controllerName = $this->request->getControllerName();
+        }
         if (empty($packageKey) && empty($subPackageKey)) {
             $subPackageKey = $this->request->getControllerSubpackageKey();
         }
@@ -299,7 +302,7 @@ class UriBuilder
         }
 
         $controllerArguments['@action'] = strtolower($actionName);
-        $controllerArguments['@controller'] = strtolower(empty($controllerName) ? $this->request->getControllerName() : $controllerName);
+        $controllerArguments['@controller'] = strtolower($controllerName);
         $controllerArguments['@package'] = strtolower($packageKey);
         if ($subPackageKey !== null) {
             $controllerArguments['@subpackage'] = strtolower($subPackageKey);
