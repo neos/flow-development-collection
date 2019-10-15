@@ -455,7 +455,7 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
      * @param string $className
      * @return string
      */
-    static public function inferDiscriminatorTypeFromClassName($className)
+    public static function inferDiscriminatorTypeFromClassName($className)
     {
         return strtolower(str_replace('Domain_Model_', '', str_replace('\\', '_', $className)));
     }
