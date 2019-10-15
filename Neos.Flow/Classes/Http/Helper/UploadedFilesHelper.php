@@ -57,7 +57,7 @@ abstract class UploadedFilesHelper
      */
     protected static function upcastUploadedFile(UploadedFileInterface $uploadedFile, $originallySubmittedResource = null, string $collectionName = null): FlowUploadedFile
     {
-        $flowUploadedFile = new FlowUploadedFile($uploadedFile->getStream(), ($uploadedFile->getSize() ?: 0), $uploadedFile->getError(), $uploadedFile->getClientFilename(), $uploadedFile->getClientMediaType());
+        $flowUploadedFile = new FlowUploadedFile($uploadedFile->getError() === UPLOAD_ERR_OK ? $uploadedFile->getStream() : null, ($uploadedFile->getSize() ?: 0), $uploadedFile->getError(), $uploadedFile->getClientFilename(), $uploadedFile->getClientMediaType());
         if ($originallySubmittedResource) {
             $flowUploadedFile->setOriginallySubmittedResource($originallySubmittedResource);
         }
