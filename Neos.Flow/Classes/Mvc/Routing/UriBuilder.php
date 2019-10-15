@@ -286,7 +286,7 @@ class UriBuilder
      * @see build()
      * @throws Exception\MissingActionNameException if $actionName parameter is empty
      */
-    public function uriFor(string $actionName, array $controllerArguments = [], string $controllerName = null, string $packageKey = null, string $subPackageKey = null)
+    public function uriFor(?string $actionName, array $controllerArguments = [], ?string $controllerName = null, ?string $packageKey = null, ?string $subPackageKey = null)
     {
         if (empty($actionName)) {
             throw new Exception\MissingActionNameException('The URI Builder could not build a URI linking to an action controller because no action name was specified. Please check the stack trace to see which code or template was requesting the link and check the arguments passed to the URI Builder.', 1354629891);
