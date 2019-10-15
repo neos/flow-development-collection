@@ -403,7 +403,7 @@ class ActionRequest implements RequestInterface
      */
     public function setControllerSubpackageKey(?string $subpackageKey): void
     {
-        $this->controllerSubpackageKey = $subpackageKey ?? null;
+        $this->controllerSubpackageKey = (empty($subpackageKey) ? null : $subpackageKey);
     }
 
     /**
