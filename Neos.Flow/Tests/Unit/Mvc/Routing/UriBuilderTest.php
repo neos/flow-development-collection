@@ -149,7 +149,7 @@ class UriBuilderTest extends UnitTestCase
     public function uriForThrowsExceptionIfActionNameIsNotSpecified()
     {
         $this->expectException(Mvc\Routing\Exception\MissingActionNameException::class);
-        $this->uriBuilder->uriFor(null, [], 'SomeController', 'SomePackage');
+        $this->uriBuilder->uriFor('', [], 'SomeController', 'SomePackage');
     }
 
     /**
@@ -221,7 +221,7 @@ class UriBuilderTest extends UnitTestCase
 
         $expectedArguments = ['@action' => 'show', '@controller' => 'somecontroller', '@package' => 'somepackage', '@subpackage' => ''];
 
-        $this->uriBuilder->uriFor('show', null, 'SomeController', 'SomePackage', '');
+        $this->uriBuilder->uriFor('show', [], 'SomeController', 'SomePackage', '');
         self::assertEquals($expectedArguments, $this->uriBuilder->getLastArguments());
     }
 
