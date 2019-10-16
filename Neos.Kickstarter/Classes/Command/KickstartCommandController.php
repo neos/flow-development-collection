@@ -18,6 +18,7 @@ use Neos\Utility\Arrays;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 use Neos\Kickstarter\Utility\Validation;
+use Neos\Utility\Files;
 
 /**
  * Command controller for the Kickstart generator
@@ -47,10 +48,11 @@ class KickstartCommandController extends CommandController
      *
      * @param string $packageKey The package key, for example "MyCompany.MyPackageName"
      * @param string $packageType Optional package type, e.g. "neos-plugin"
+     * @param string $packageDirectory Optional package directory
      * @return string
      * @see neos.flow:package:create
      */
-    public function packageCommand($packageKey, $packageType = PackageInterface::DEFAULT_COMPOSER_TYPE)
+    public function packageCommand($packageKey, $packageType = PackageInterface::DEFAULT_COMPOSER_TYPE, string $packageDirectory = null)
     {
         $this->validatePackageKey($packageKey);
 
@@ -64,7 +66,16 @@ class KickstartCommandController extends CommandController
             $this->quit(1);
         }
 
-        $this->packageManager->createPackage($packageKey, ['type' => $packageType]);
+        $packagesPath = null;
+        if ($packageDirectory !== null) {
+            $packagesPath = Files::concatenatePaths([
+                FLOW_PATH_ROOT,
+                $packageDirectory,
+                $this->packageManager->getPackagesPathByType($packageType, false),
+            ]);
+        }
+
+        $this->packageManager->createPackage($packageKey, ['type' => $packageType], $packagesPath);
         $this->actionControllerCommand($packageKey, 'Standard');
         $this->documentationCommand($packageKey);
     }

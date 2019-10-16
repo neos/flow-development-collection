@@ -22,6 +22,8 @@ use Neos\Utility\Files;
  */
 class ComposerUtility
 {
+    public const FLOW_PACKAGE_TYPE_PREFIXES = ['typo3-flow-', 'neos-'];
+
     /**
      * Runtime cache for composer.json data
      *
@@ -116,7 +118,7 @@ class ComposerUtility
      */
     public static function isFlowPackageType(string $packageType): bool
     {
-        foreach (['typo3-flow-', 'neos-'] as $allowedPackageTypePrefix) {
+        foreach (self::FLOW_PACKAGE_TYPE_PREFIXES as $allowedPackageTypePrefix) {
             if (strpos($packageType, $allowedPackageTypePrefix) === 0) {
                 return true;
             }

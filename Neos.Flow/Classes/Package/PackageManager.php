@@ -190,6 +190,31 @@ class PackageManager
     }
 
     /**
+     * Returns the packages path for the given package type
+     *
+     * @param string $packageType The package type, e.g. "neos-package"
+     * @param bool $absolutePath
+     * @return string
+     */
+    public function getPackagesPathByType(string $packageType, bool $absolutePath = true): string
+    {
+        if (!ComposerUtility::isFlowPackageType($packageType)) {
+            throw new \InvalidArgumentException(sprintf(
+                '"%s" is not a valid Flow package type, a valid package type must be prefixed with ["%s"].',
+                $packageType,
+                implode('", "', ComposerUtility::FLOW_PACKAGE_TYPE_PREFIXES)
+            ), 1571216293);
+        }
+
+        $packagesPath = $this->settings['packagesPathByType'][$packageType] ?? 'Application';
+        if ($absolutePath === false) {
+            return $packagesPath;
+        }
+
+        return Files::getUnixStylePath(Files::concatenatePaths([$this->packagesBasePath, $packagesPath]));
+    }
+
+    /**
      * Returns a PackageInterface object for the specified package.
      *
      * @param string $packageKey
@@ -354,7 +379,7 @@ class PackageManager
             $composerManifestRepositories = ComposerUtility::getComposerManifest(FLOW_PATH_ROOT, 'repositories');
             if (is_array($composerManifestRepositories)) {
                 foreach ($composerManifestRepositories as $repository) {
-                    if (is_array($repository) && $repository['type'] === 'path' && isset($repository['type'], $repository['url'])
+                    if (is_array($repository) && isset($repository['type'], $repository['url']) && $repository['type'] === 'path'
                         && strpos($repository['url'], './') === 0 && substr($repository['url'], -2) === '/*'
                     ) {
                         $packagesPath = Files::getUnixStylePath(Files::concatenatePaths([FLOW_PATH_ROOT, substr($repository['url'], 0, -2)]));
@@ -365,16 +390,14 @@ class PackageManager
             }
         }
 
-        if ($packagesPath === null) {
-            $packagesPath = 'Application';
-            if (is_array($this->settings['packagesPathByType']) && isset($this->settings['packagesPathByType'][$manifest['type']])) {
-                $packagesPath = $this->settings['packagesPathByType'][$manifest['type']];
-            }
-
-            $packagesPath = Files::getUnixStylePath(Files::concatenatePaths([$this->packagesBasePath, $packagesPath]));
-        }
-
-        $packagePath = Files::concatenatePaths([$packagesPath, $packageKey]) . '/';
+        $packagePath = Files::getUnixStylePath(
+            Files::concatenatePaths(
+                [
+                    $packagesPath ?? $this->getPackagesPathByType($manifest['type']),
+                    $packageKey,
+                ]
+            ).'/'
+        );
         Files::createDirectoryRecursively($packagePath);
 
         foreach (
@@ -392,6 +415,20 @@ class PackageManager
 
         if ($runComposerRequireForTheCreatedPackage) {
             exec('composer require ' . $manifest['name'] . ' @dev');
+        }
+
+        if ($runComposerRequireForTheCreatedPackage === false && strpos($packagePath, $this->packagesBasePath) !== 0) {
+            symlink(
+                $packagePath,
+                Files::getUnixStylePath(
+                    Files::concatenatePaths(
+                        [
+                            $this->getPackagesPathByType($manifest['type']),
+                            $packageKey,
+                        ]
+                    )
+                )
+            );
         }
 
         $refreshedPackageStatesConfiguration = $this->rescanPackages();
