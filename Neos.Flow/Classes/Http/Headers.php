@@ -567,7 +567,7 @@ class Headers implements \Iterator
      */
     public function current()
     {
-        return $this->getRaw($this>key());
+        return $this->getRaw($this->key());
     }
 
     /**
