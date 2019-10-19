@@ -142,25 +142,29 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
             $data = bin2hex($data);
         }
 
-        $this->databaseHandle->beginTransaction();
+        try {
+            $this->databaseHandle->beginTransaction();
 
-        $statementHandle = $this->databaseHandle->prepare('INSERT INTO "cache" ("identifier", "context", "cache", "created", "lifetime", "content") VALUES (?, ?, ?, ?, ?, ?)');
-        $result = $statementHandle->execute([$entryIdentifier, $this->context(), $this->cacheIdentifier, time(), $lifetime, $data]);
-        if ($result === false) {
-            $this->databaseHandle->rollBack();
-            throw new Exception('The cache entry "' . $entryIdentifier . '" could not be written.', 1259530791);
-        }
-
-        $statementHandle = $this->databaseHandle->prepare('INSERT INTO "tags" ("identifier", "context", "cache", "tag") VALUES (?, ?, ?, ?)');
-        foreach ($tags as $tag) {
-            $result = $statementHandle->execute([$entryIdentifier, $this->context(), $this->cacheIdentifier, $tag]);
+            $statementHandle = $this->databaseHandle->prepare('INSERT INTO "cache" ("identifier", "context", "cache", "created", "lifetime", "content") VALUES (?, ?, ?, ?, ?, ?)');
+            $result = $statementHandle->execute([$entryIdentifier, $this->context(), $this->cacheIdentifier, time(), $lifetime, $data]);
             if ($result === false) {
-                $this->databaseHandle->rollBack();
-                throw new Exception('The tag "' . $tag . ' for cache entry "' . $entryIdentifier . '" could not be written.', 1259530751);
+                throw new Exception('The cache entry "' . $entryIdentifier . '" could not be written.', 1259530791);
             }
-        }
 
-        $this->databaseHandle->commit();
+            $statementHandle = $this->databaseHandle->prepare('INSERT INTO "tags" ("identifier", "context", "cache", "tag") VALUES (?, ?, ?, ?)');
+            foreach ($tags as $tag) {
+                $result = $statementHandle->execute([$entryIdentifier, $this->context(), $this->cacheIdentifier, $tag]);
+                if ($result === false) {
+                    throw new Exception('The tag "' . $tag . ' for cache entry "' . $entryIdentifier . '" could not be written.', 1259530751);
+                }
+            }
+
+            $this->databaseHandle->commit();
+        } catch (\Exception $exception) {
+            $this->databaseHandle->rollBack();
+
+            throw $exception;
+        }
     }
 
     /**
