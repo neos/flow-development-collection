@@ -142,9 +142,8 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
             $data = bin2hex($data);
         }
 
+        $this->databaseHandle->beginTransaction();
         try {
-            $this->databaseHandle->beginTransaction();
-
             $statementHandle = $this->databaseHandle->prepare('INSERT INTO "cache" ("identifier", "context", "cache", "created", "lifetime", "content") VALUES (?, ?, ?, ?, ?, ?)');
             $result = $statementHandle->execute([$entryIdentifier, $this->context(), $this->cacheIdentifier, time(), $lifetime, $data]);
             if ($result === false) {
@@ -226,9 +225,8 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
     {
         $this->connect();
 
+        $this->databaseHandle->beginTransaction();
         try {
-            $this->databaseHandle->beginTransaction();
-
             $statementHandle = $this->databaseHandle->prepare('DELETE FROM "tags" WHERE "identifier"=? AND "context"=? AND "cache"=?');
             $statementHandle->execute([$entryIdentifier, $this->context(), $this->cacheIdentifier]);
 
@@ -257,9 +255,8 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
     {
         $this->connect();
 
+        $this->databaseHandle->beginTransaction();
         try {
-            $this->databaseHandle->beginTransaction();
-
             $statementHandle = $this->databaseHandle->prepare('DELETE FROM "tags" WHERE "context"=? AND "cache"=?');
             $statementHandle->execute([$this->context(), $this->cacheIdentifier]);
 
@@ -287,9 +284,8 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
     {
         $this->connect();
 
+        $this->databaseHandle->beginTransaction();
         try {
-            $this->databaseHandle->beginTransaction();
-
             $statementHandle = $this->databaseHandle->prepare('DELETE FROM "cache" WHERE "context"=? AND "cache"=? AND "identifier" IN (SELECT "identifier" FROM "tags" WHERE "context"=? AND "cache"=? AND "tag"=?)');
             $statementHandle->execute([$this->context(), $this->cacheIdentifier, $this->context(), $this->cacheIdentifier, $tag]);
 
@@ -339,9 +335,8 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
     {
         $this->connect();
 
+        $this->databaseHandle->beginTransaction();
         try {
-            $this->databaseHandle->beginTransaction();
-
             $statementHandle = $this->databaseHandle->prepare('DELETE FROM "tags" WHERE "context"=? AND "cache"=? AND "identifier" IN (SELECT "identifier" FROM "cache" WHERE "context"=? AND "cache"=? AND "lifetime" > 0 AND "created" + "lifetime" < ' . time() . ')');
             $statementHandle->execute([$this->context(), $this->cacheIdentifier, $this->context(), $this->cacheIdentifier]);
 
