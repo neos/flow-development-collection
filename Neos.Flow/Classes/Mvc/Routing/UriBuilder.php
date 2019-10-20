@@ -285,29 +285,30 @@ class UriBuilder
      * @api
      * @see build()
      * @throws Exception\MissingActionNameException if $actionName parameter is empty
+     * @throws \Neos\Flow\Http\Exception
      */
-    public function uriFor($actionName, $controllerArguments = [], $controllerName = null, $packageKey = null, $subPackageKey = null)
+    public function uriFor(string $actionName, array $controllerArguments = [], string $controllerName = null, string $packageKey = null, string $subPackageKey = null)
     {
-        if ($actionName === null || $actionName === '') {
+        if (empty($actionName)) {
             throw new Exception\MissingActionNameException('The URI Builder could not build a URI linking to an action controller because no action name was specified. Please check the stack trace to see which code or template was requesting the link and check the arguments passed to the URI Builder.', 1354629891);
         }
-        $controllerArguments['@action'] = strtolower($actionName);
-        if ($controllerName !== null) {
-            $controllerArguments['@controller'] = strtolower($controllerName);
-        } else {
-            $controllerArguments['@controller'] = strtolower($this->request->getControllerName());
+        if (empty($controllerName)) {
+            $controllerName = $this->request->getControllerName();
         }
-        if ($packageKey === null && $subPackageKey === null) {
+        if (empty($packageKey) && empty($subPackageKey)) {
             $subPackageKey = $this->request->getControllerSubpackageKey();
         }
-        if ($packageKey === null) {
+        if (empty($packageKey)) {
             $packageKey = $this->request->getControllerPackageKey();
         }
+
+        $controllerArguments['@action'] = strtolower($actionName);
+        $controllerArguments['@controller'] = strtolower($controllerName);
         $controllerArguments['@package'] = strtolower($packageKey);
         if ($subPackageKey !== null) {
             $controllerArguments['@subpackage'] = strtolower($subPackageKey);
         }
-        if ($this->format !== null && $this->format !== '') {
+        if (!empty($this->format)) {
             $controllerArguments['@format'] = $this->format;
         }
 
