@@ -142,18 +142,27 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
             $data = bin2hex($data);
         }
 
-        $statementHandle = $this->databaseHandle->prepare('INSERT INTO "cache" ("identifier", "context", "cache", "created", "lifetime", "content") VALUES (?, ?, ?, ?, ?, ?)');
-        $result = $statementHandle->execute([$entryIdentifier, $this->context(), $this->cacheIdentifier, time(), $lifetime, $data]);
-        if ($result === false) {
-            throw new Exception('The cache entry "' . $entryIdentifier . '" could not be written.', 1259530791);
-        }
-
-        $statementHandle = $this->databaseHandle->prepare('INSERT INTO "tags" ("identifier", "context", "cache", "tag") VALUES (?, ?, ?, ?)');
-        foreach ($tags as $tag) {
-            $result = $statementHandle->execute([$entryIdentifier, $this->context(), $this->cacheIdentifier, $tag]);
+        $this->databaseHandle->beginTransaction();
+        try {
+            $statementHandle = $this->databaseHandle->prepare('INSERT INTO "cache" ("identifier", "context", "cache", "created", "lifetime", "content") VALUES (?, ?, ?, ?, ?, ?)');
+            $result = $statementHandle->execute([$entryIdentifier, $this->context(), $this->cacheIdentifier, time(), $lifetime, $data]);
             if ($result === false) {
-                throw new Exception('The tag "' . $tag . ' for cache entry "' . $entryIdentifier . '" could not be written.', 1259530751);
+                throw new Exception('The cache entry "' . $entryIdentifier . '" could not be written.', 1259530791);
             }
+
+            $statementHandle = $this->databaseHandle->prepare('INSERT INTO "tags" ("identifier", "context", "cache", "tag") VALUES (?, ?, ?, ?)');
+            foreach ($tags as $tag) {
+                $result = $statementHandle->execute([$entryIdentifier, $this->context(), $this->cacheIdentifier, $tag]);
+                if ($result === false) {
+                    throw new Exception('The tag "' . $tag . ' for cache entry "' . $entryIdentifier . '" could not be written.', 1259530751);
+                }
+            }
+
+            $this->databaseHandle->commit();
+        } catch (\Exception $exception) {
+            $this->databaseHandle->rollBack();
+
+            throw $exception;
         }
     }
 
@@ -216,13 +225,22 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
     {
         $this->connect();
 
-        $statementHandle = $this->databaseHandle->prepare('DELETE FROM "tags" WHERE "identifier"=? AND "context"=? AND "cache"=?');
-        $statementHandle->execute([$entryIdentifier, $this->context(), $this->cacheIdentifier]);
+        $this->databaseHandle->beginTransaction();
+        try {
+            $statementHandle = $this->databaseHandle->prepare('DELETE FROM "tags" WHERE "identifier"=? AND "context"=? AND "cache"=?');
+            $statementHandle->execute([$entryIdentifier, $this->context(), $this->cacheIdentifier]);
 
-        $statementHandle = $this->databaseHandle->prepare('DELETE FROM "cache" WHERE "identifier"=? AND "context"=? AND "cache"=?');
-        $statementHandle->execute([$entryIdentifier, $this->context(), $this->cacheIdentifier]);
+            $statementHandle = $this->databaseHandle->prepare('DELETE FROM "cache" WHERE "identifier"=? AND "context"=? AND "cache"=?');
+            $statementHandle->execute([$entryIdentifier, $this->context(), $this->cacheIdentifier]);
 
-        return ($statementHandle->rowCount() > 0);
+            $this->databaseHandle->commit();
+
+            return ($statementHandle->rowCount() > 0);
+        } catch (\Exception $exception) {
+            $this->databaseHandle->rollBack();
+
+            throw $exception;
+        }
     }
 
     /**
@@ -237,11 +255,20 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
     {
         $this->connect();
 
-        $statementHandle = $this->databaseHandle->prepare('DELETE FROM "tags" WHERE "context"=? AND "cache"=?');
-        $statementHandle->execute([$this->context(), $this->cacheIdentifier]);
+        $this->databaseHandle->beginTransaction();
+        try {
+            $statementHandle = $this->databaseHandle->prepare('DELETE FROM "tags" WHERE "context"=? AND "cache"=?');
+            $statementHandle->execute([$this->context(), $this->cacheIdentifier]);
 
-        $statementHandle = $this->databaseHandle->prepare('DELETE FROM "cache" WHERE "context"=? AND "cache"=?');
-        $statementHandle->execute([$this->context(), $this->cacheIdentifier]);
+            $statementHandle = $this->databaseHandle->prepare('DELETE FROM "cache" WHERE "context"=? AND "cache"=?');
+            $statementHandle->execute([$this->context(), $this->cacheIdentifier]);
+
+            $this->databaseHandle->commit();
+        } catch (\Exception $exception) {
+            $this->databaseHandle->rollBack();
+
+            throw $exception;
+        }
     }
 
     /**
@@ -257,13 +284,22 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
     {
         $this->connect();
 
-        $statementHandle = $this->databaseHandle->prepare('DELETE FROM "cache" WHERE "context"=? AND "cache"=? AND "identifier" IN (SELECT "identifier" FROM "tags" WHERE "context"=? AND "cache"=? AND "tag"=?)');
-        $statementHandle->execute([$this->context(), $this->cacheIdentifier, $this->context(), $this->cacheIdentifier, $tag]);
+        $this->databaseHandle->beginTransaction();
+        try {
+            $statementHandle = $this->databaseHandle->prepare('DELETE FROM "cache" WHERE "context"=? AND "cache"=? AND "identifier" IN (SELECT "identifier" FROM "tags" WHERE "context"=? AND "cache"=? AND "tag"=?)');
+            $statementHandle->execute([$this->context(), $this->cacheIdentifier, $this->context(), $this->cacheIdentifier, $tag]);
 
-        $flushed = $statementHandle->rowCount();
+            $flushed = $statementHandle->rowCount();
 
-        $statementHandle = $this->databaseHandle->prepare('DELETE FROM "tags" WHERE "context"=? AND "cache"=? AND "tag"=?');
-        $statementHandle->execute([$this->context(), $this->cacheIdentifier, $tag]);
+            $statementHandle = $this->databaseHandle->prepare('DELETE FROM "tags" WHERE "context"=? AND "cache"=? AND "tag"=?');
+            $statementHandle->execute([$this->context(), $this->cacheIdentifier, $tag]);
+
+            $this->databaseHandle->commit();
+        } catch (\Exception $exception) {
+            $this->databaseHandle->rollBack();
+
+            throw $exception;
+        }
 
         return $flushed;
     }
@@ -299,11 +335,20 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
     {
         $this->connect();
 
-        $statementHandle = $this->databaseHandle->prepare('DELETE FROM "tags" WHERE "context"=? AND "cache"=? AND "identifier" IN (SELECT "identifier" FROM "cache" WHERE "context"=? AND "cache"=? AND "lifetime" > 0 AND "created" + "lifetime" < ' . time() . ')');
-        $statementHandle->execute([$this->context(), $this->cacheIdentifier, $this->context(), $this->cacheIdentifier]);
+        $this->databaseHandle->beginTransaction();
+        try {
+            $statementHandle = $this->databaseHandle->prepare('DELETE FROM "tags" WHERE "context"=? AND "cache"=? AND "identifier" IN (SELECT "identifier" FROM "cache" WHERE "context"=? AND "cache"=? AND "lifetime" > 0 AND "created" + "lifetime" < ' . time() . ')');
+            $statementHandle->execute([$this->context(), $this->cacheIdentifier, $this->context(), $this->cacheIdentifier]);
 
-        $statementHandle = $this->databaseHandle->prepare('DELETE FROM "cache" WHERE "context"=? AND "cache"=? AND "lifetime" > 0 AND "created" + "lifetime" < ' . time());
-        $statementHandle->execute([$this->context(), $this->cacheIdentifier]);
+            $statementHandle = $this->databaseHandle->prepare('DELETE FROM "cache" WHERE "context"=? AND "cache"=? AND "lifetime" > 0 AND "created" + "lifetime" < ' . time());
+            $statementHandle->execute([$this->context(), $this->cacheIdentifier]);
+
+            $this->databaseHandle->commit();
+        } catch (\Exception $exception) {
+            $this->databaseHandle->rollBack();
+
+            throw $exception;
+        }
     }
 
     /**
