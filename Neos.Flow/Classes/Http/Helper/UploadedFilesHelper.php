@@ -13,6 +13,7 @@ namespace Neos\Flow\Http\Helper;
 use Neos\Http\Factories\FlowUploadedFile;
 use Neos\Utility\Arrays;
 use Psr\Http\Message\UploadedFileInterface;
+use function GuzzleHttp\Psr7\stream_for;
 
 /**
  * Helper to re-organize uploaded file data for requests.
