@@ -393,6 +393,11 @@ When implementing your own validators (see below), you need to pass the containe
 against it. See ``AbstractCompositeValidator`` and ``isValidatedAlready`` in the ``GenericObjectValidator``
 for examples of how to do this.
 
+Another optimization option of the ``GenericObjectValidator`` is the ``skipUnInitializedProxies`` flag. When
+set to true, it allows to skip validation of uninitialized proxy instances, to avoid recursions down into
+unchanged hierarchies. This can avoid loading of data for validation and is safe, if you can rely on your data
+not being changed and thus making an entity state invalid "from the outside."
+
 Writing Validators
 ==================
 
