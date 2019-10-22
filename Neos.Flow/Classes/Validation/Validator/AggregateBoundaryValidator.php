@@ -39,7 +39,7 @@ class AggregateBoundaryValidator extends GenericObjectValidator
          * This greatly improves validation performance for domain models with lots of small aggregate
          * relations. Therefore proper Aggregate Design becomes a performance optimization.
          */
-        if ($value instanceof \Doctrine\ORM\Proxy\Proxy && !$value->__isInitialized()) {
+        if ($this->isUninitializedProxy($value)) {
             return;
         }
         parent::isValid($value);
