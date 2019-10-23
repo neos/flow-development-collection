@@ -181,7 +181,7 @@ class ObjectManager implements ObjectManagerInterface
      * Returns a fresh or existing instance of the object specified by $objectName.
      *
      * @param string $objectName The name of the object to return an instance of
-     * @param ...mixed $arguments Any number of arguments that should be passed to the constructor of the object
+     * @param mixed ...$constructorArguments Any number of arguments that should be passed to the constructor of the object
      * @return object The object instance
      * @throws Exception\CannotBuildObjectException
      * @throws Exception\UnknownObjectException if an object with the given name does not exist
@@ -189,9 +189,9 @@ class ObjectManager implements ObjectManagerInterface
      * @throws InvalidConfigurationTypeException
      * @api
      */
-    public function get($objectName)
+    public function get($objectName, ...$constructorArguments)
     {
-        if (isset($this->objects[$objectName]) && $this->objects[$objectName]['s'] !== ObjectConfiguration::SCOPE_PROTOTYPE && func_num_args() > 1) {
+        if (!empty($constructorArguments) && isset($this->objects[$objectName]) && $this->objects[$objectName]['s'] !== ObjectConfiguration::SCOPE_PROTOTYPE) {
             throw new \InvalidArgumentException('You cannot provide constructor arguments for singleton objects via get(). If you need to pass arguments to the constructor, define them in the Objects.yaml configuration.', 1298049934);
         }
 
@@ -215,7 +215,7 @@ class ObjectManager implements ObjectManagerInterface
         }
 
         if (!isset($this->objects[$objectName]) || $this->objects[$objectName]['s'] === ObjectConfiguration::SCOPE_PROTOTYPE) {
-            return $this->instantiateClass($className, array_slice(func_get_args(), 1));
+            return $this->instantiateClass($className, $constructorArguments);
         }
 
         $this->objects[$objectName]['i'] = $this->instantiateClass($className, []);
