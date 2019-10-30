@@ -14,6 +14,7 @@ namespace Neos\Flow\ResourceManagement;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ResourceManagement\Storage\PackageStorage;
 use Neos\Flow\ResourceManagement\Storage\StorageInterface;
+use Neos\Flow\ResourceManagement\Storage\StorageObject;
 use Neos\Flow\ResourceManagement\Storage\WritableStorageInterface;
 use Neos\Flow\ResourceManagement\Target\TargetInterface;
 use Neos\Flow\ResourceManagement\Exception as ResourceException;
@@ -152,7 +153,7 @@ class Collection implements CollectionInterface
      * Returns all internal data objects of the storage attached to this collection.
      *
      * @param callable $callback Function called after each object
-     * @return \Generator<Storage\Object>
+     * @return \Generator<StorageObject>
      */
     public function getObjects(callable $callback = null)
     {
