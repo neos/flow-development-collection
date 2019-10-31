@@ -54,6 +54,6 @@ class JsonArrayTypeTest extends UnitTestCase
     public function passSimpleArrayAndConvertToJson()
     {
         $json = $this->jsonArrayTypeMock->convertToDatabaseValue(['simplestring',1,['nestedArray']], $this->abstractPlatformMock);
-        self::assertEquals("{\n    \"0\": \"simplestring\",\n    \"1\": 1,\n    \"2\": {\n        \"0\": \"nestedArray\"\n    }\n}", $json);
+        self::assertEquals('{"0":"simplestring","1":1,"2":{"0":"nestedArray"}}', $json);
     }
 }

@@ -131,7 +131,7 @@ class JsonArrayType extends DoctrineJsonArrayType
         $this->initializeDependencies();
         $this->encodeObjectReferences($array);
 
-        return json_encode($array, JSON_PRETTY_PRINT | JSON_FORCE_OBJECT | JSON_UNESCAPED_UNICODE);
+        return json_encode($array, JSON_FORCE_OBJECT | JSON_UNESCAPED_UNICODE);
     }
 
     /**
