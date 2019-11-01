@@ -504,10 +504,8 @@ class ActionController extends AbstractController
 
         if ($actionResult === null && $this->view instanceof ViewInterface) {
             $this->renderView();
-        } elseif (is_string($actionResult) && strlen($actionResult) > 0) {
+        } else {
             $this->response->setContent($actionResult);
-        } elseif (is_object($actionResult) && method_exists($actionResult, '__toString')) {
-            $this->response->setContent((string)$actionResult);
         }
     }
 
