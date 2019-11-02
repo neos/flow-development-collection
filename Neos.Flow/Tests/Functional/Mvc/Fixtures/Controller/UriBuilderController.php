@@ -50,6 +50,35 @@ class UriBuilderController extends ActionController
     /**
      * @return string
      */
+    public function linkingToRootAction()
+    {
+        return $this->uriBuilder
+            ->reset()
+            ->uriFor('root', [
+            ], 'UriBuilder', 'Neos.Flow', 'Tests\Functional\Mvc\Fixtures');
+    }
+
+    /**
+     * @return string
+     */
+    public function linkingToRootWithCreateAbsoluteUriAction()
+    {
+        return $this->uriBuilder
+            ->reset()
+            ->setCreateAbsoluteUri(true)
+            ->uriFor('root', [], 'UriBuilder', 'Neos.Flow', 'Tests\Functional\Mvc\Fixtures');
+    }
+
+    /**
+     * @return string
+     */
+    public function rootAction()
+    {
+    }
+
+    /**
+     * @return string
+     */
     public function targetAction()
     {
     }
