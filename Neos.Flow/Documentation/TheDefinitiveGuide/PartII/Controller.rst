@@ -13,13 +13,13 @@ Setup Controller
 ================
 
 The ``SetupCommandController`` will be in charge of creating a ``Blog`` object, setting a title
-and description and storing it in the ``BlogRepository``::
+and description and storing it in the ``BlogRepository``:
 
 .. code-block:: none
 
 	./flow kickstart:commandcontroller Acme.Blog Blog
 
-The kickstarter created a very basic command controller containing only one command, the ``exampleCommand``::
+The kickstarter created a very basic command controller containing only one command, the ``exampleCommand``:
 
 *Classes/Acme/Blog/Command/BlogCommandController.php*:
 
@@ -60,7 +60,7 @@ The kickstarter created a very basic command controller containing only one comm
 
 	}
 
-Let's replace the example with a ``setupCommand`` that can be used to create the first blog from the command line::
+Let's replace the example with a ``setupCommand`` that can be used to create the first blog from the command line:
 
 
 *Classes/Acme/Blog/Command/BlogCommandController.php*:
