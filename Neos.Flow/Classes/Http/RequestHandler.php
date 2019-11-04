@@ -167,7 +167,7 @@ class RequestHandler implements HttpRequestHandlerInterface
         $response = $this->componentContext->getHttpResponse();
         ob_implicit_flush(1);
         foreach (ResponseInformationHelper::prepareHeaders($response) as $prepareHeader) {
-            header($prepareHeader);
+            header($prepareHeader, false);
         }
         // Flush and stop all output buffers before sending the whole body in one go, as output buffering has no use any more
         // and just makes sending large files impossible without running out of memory
