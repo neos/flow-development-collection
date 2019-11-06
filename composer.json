@@ -26,6 +26,7 @@
         "symfony/dom-crawler": "^4.2",
         "symfony/console": "^4.2",
         "neos/composer-plugin": "^2.0",
+        "composer/composer": "^1.9",
         "typo3fluid/fluid": "^2.5",
         "ext-mbstring": "*"
     },
@@ -111,7 +112,6 @@
     "require-dev": {
         "mikey179/vfsstream": "~1.6",
         "phpunit/phpunit": "~7.1",
-        "neos/flow": "*",
         "doctrine/orm": "~2.6.0",
         "doctrine/common": ">=2.4,<2.8-dev"
     },
