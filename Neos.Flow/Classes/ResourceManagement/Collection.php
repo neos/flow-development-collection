@@ -157,22 +157,15 @@ class Collection implements CollectionInterface
      */
     public function getObjects(callable $callback = null)
     {
-        $objects = [];
         if ($this->storage instanceof PackageStorage && $this->pathPatterns !== []) {
-            $objects = new \AppendIterator();
             foreach ($this->pathPatterns as $pathPattern) {
-                $objects->append($this->storage->getObjectsByPathPattern($pathPattern, $callback));
+                foreach ($this->storage->getObjectsByPathPattern($pathPattern, $callback) as $storageObject) {
+                    yield $storageObject;
+                }
             }
         } else {
-            $objects = $this->storage->getObjectsByCollection($this, $callback);
+            return $this->storage->getObjectsByCollection($this, $callback);
         }
-
-        // TODO: Implement filter manipulation here:
-        // foreach ($objects as $object) {
-        // 	$object->setStream(function() { return fopen('/tmp/test.txt', 'rb');});
-        // }
-
-        return $objects;
     }
 
     /**

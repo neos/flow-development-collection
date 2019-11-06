@@ -121,7 +121,13 @@ abstract class ResponseInformationHelper
 
         $preparedHeaders[] = $statusHeader;
         foreach ($response->getHeaders() as $name => $values) {
-            $preparedHeaders[] = $name . ': ' . implode(', ', $values);
+            if (strtolower($name) === 'set-cookie') {
+                foreach ($values as $value) {
+                    $preparedHeaders[] = $name . ': ' . $value;
+                }
+            } else {
+                $preparedHeaders[] = $name . ': ' . implode(', ', $values);
+            }
         }
 
         return $preparedHeaders;

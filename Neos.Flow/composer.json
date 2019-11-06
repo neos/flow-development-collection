@@ -45,7 +45,9 @@
         "symfony/console": "^4.2",
 
         "neos/composer-plugin": "^2.0",
-        "neos/utility-pdo": "*"
+        "neos/utility-pdo": "*",
+
+        "composer/composer": "^1.9"
     },
     "replace": {
         "typo3/flow": "self.version"
