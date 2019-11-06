@@ -22,6 +22,8 @@ use Neos\Utility\Exception\FilesException;
 use Neos\Utility\Files;
 use Neos\Utility\OpcodeCacheHelper;
 use Neos\Flow\Package\Exception as PackageException;
+use Composer\Console\Application as ComposerApplication;
+use Symfony\Component\Console\Input\ArrayInput;
 
 /**
  * The default Flow Package Manager
@@ -391,7 +393,19 @@ class PackageManager
         $manifest = ComposerUtility::writeComposerManifest($packagePath, $packageKey, $manifest);
 
         if ($runComposerRequireForTheCreatedPackage) {
-            exec('composer require ' . $manifest['name'] . ' @dev');
+            $composerRequireArguments = new ArrayInput([
+                'command' => 'require',
+                'packages' => [$manifest['name'] . ' @dev'],
+                '--working-dir' => FLOW_PATH_ROOT
+            ]);
+
+            $composerApplication = new ComposerApplication();
+            $composerApplication->setAutoExit(false);
+            $composerErrorCode = $composerApplication->run($composerRequireArguments);
+
+            if ($composerErrorCode !== 0) {
+                throw new Exception("The installation was not successful. Composer returned the error code: $composerErrorCode", 1572187932);
+            }
         }
 
         $refreshedPackageStatesConfiguration = $this->rescanPackages();
