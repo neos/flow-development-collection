@@ -1,0 +1,87 @@
+`6.0.4 (2019-11-06) <https://github.com/neos/flow-development-collection/releases/tag/6.0.4>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`TASK: Use yield instead of AppendIterator in getObjects <https://github.com/neos/flow-development-collection/pull/1842>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+The method docblock stated that it returns a `Generator`, while in reality for a `PackageStorage` with patterns, it would fall back to an `AppendIterator`.
+This change instead makes use of `yield` to return the `StorageObjects` in a memory-efficient manner.
+
+* Packages: ``Flow``
+
+`BUGFIX: Always run composer from Flow root path <https://github.com/neos/flow-development-collection/pull/1837>`_
+------------------------------------------------------------------------------------------------------------------
+
+This bugfix ensures, that the `composer require` command always gets executed in the Flow root path (by calling composer require with the --working-direcory flag set to `FLOW_PATH_ROOT `.)
+
+It also introduces the `composer/composer` package to the codebase to replace the `exec` command.
+
+Fixes #1832
+Fixes #1778
+
+* Packages: ``Flow``
+
+`Revert "BUGFIX: Respect Neos.Flow.http.baseUri path in UriBuilder" <https://github.com/neos/flow-development-collection/pull/1841>`_
+-------------------------------------------------------------------------------------------------------------------------------------
+
+Reverts neos/flow-development-collection#1682
+
+* Packages: ``Flow``
+
+`BUGFIX: Set-Cookie headers mustn't be imploded <https://github.com/neos/flow-development-collection/pull/1840>`_
+-----------------------------------------------------------------------------------------------------------------
+
+PSR-7 `getHeaderLine()` defaults to concatenating header values with a comma. This doesn't work for the `Set-Cookie` header, so it must be treated uniquely.
+
+Now having multiple headers of the same name, `header()` must be used without replacement of duplicate headers (which is default).
+
+See:
+https://www.php-fig.org/psr/psr-7/#headers-with-multiple-values
+https://tools.ietf.org/html/rfc7230#section-3.2.2
+https://github.com/guzzle/psr7/issues/298
+
+/cc @kitsunet @albe 
+
+* Packages: ``Flow``
+
+`BUGFIX: Remove unnecessary colons <https://github.com/neos/flow-development-collection/pull/1838>`_
+----------------------------------------------------------------------------------------------------
+
+Removes unnecessary colons that broke the markup.
+
+* Packages: ``Flow``
+
+`BUGFIX: Handle file streams in response better <https://github.com/neos/flow-development-collection/pull/1802>`_
+-----------------------------------------------------------------------------------------------------------------
+
+This allows sending large files to the browser without running into memory issues, by using `fpassthrough` with disabled output buffering.
+
+Related to #1800
+
+* Packages: ``Flow``
+
+`BUGFIX: Allow to return PSR7 streams and PHP resources/file handles from action <https://github.com/neos/flow-development-collection/pull/1801>`_
+--------------------------------------------------------------------------------------------------------------------------------------------------
+
+This allows to return PSR7 streams, PHP resources or anything else that guzzle stream_for can deal with from the action.
+https://github.com/guzzle/psr7/blob/master/README.md#function-stream_for
+
+With that it is possible to just do this in an action:
+```php
+return fopen('/path/to/file', 'r');
+```
+
+Resolves #1800 
+
+* Packages: ``Flow``
+
+`BUGFIX: Fix @return annotation on getObjects() <https://github.com/neos/flow-development-collection/pull/1830>`_
+-----------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Flow``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/6.0.3...6.0.4>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
