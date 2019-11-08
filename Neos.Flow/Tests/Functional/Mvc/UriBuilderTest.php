@@ -56,6 +56,17 @@ class UriBuilderTest extends FunctionalTestCase
         ]);
     }
 
+    private function registerAbsoluteRoute(): void
+    {
+        $this->registerRoute('absolute', '', [
+            '@package' => 'Neos.Flow',
+            '@subpackage' => 'Tests\Functional\Mvc\Fixtures',
+            '@controller' => 'UriBuilder',
+            '@action' => 'root',
+            '@format' => 'html'
+        ]);
+    }
+
     /**
      * Testcase for https://github.com/neos/flow-development-collection/issues/1803
      *
@@ -105,6 +116,42 @@ class UriBuilderTest extends FunctionalTestCase
         $this->registerSingleRoute(UriBuilderSetDomainRoutePartHandler::class);
         $response = $this->browser->request('http://my-host/test/mvc/uribuilder/differentHostWithCreateAbsoluteUri/bla');
         self::assertEquals('http://my-host/test/mvc/uribuilder/target/my-path', $response->getBody()->getContents());
+        self::assertEquals(200, $response->getStatusCode());
+    }
+
+    /**
+     * Testcase for https://github.com/neos/flow-development-collection/pull/1839 and
+     * https://github.com/neos/neos-development-collection/issues/2759
+     *
+     * @test
+     */
+    public function whenLinkingToRootOfSameHostTheUrlContainsASingleSlash()
+    {
+        // NOTE: the route part handler here does not really match; as we link to the the route
+        // registered in "registerAbsoluteRoute()".
+        $this->registerSingleRoute(UriBuilderSetDomainRoutePartHandler::class);
+        // NOTE: the registered route is PREPENDED to the existing list; so we need to register the absolute route LAST as it should match FIRST.
+        $this->registerAbsoluteRoute();
+        $response = $this->browser->request('http://my-host/test/mvc/uribuilder/linkingToRoot/bla');
+        self::assertEquals('/', $response->getBody()->getContents());
+        self::assertEquals(200, $response->getStatusCode());
+    }
+
+    /**
+     * Testcase for https://github.com/neos/flow-development-collection/pull/1839 and
+     * https://github.com/neos/neos-development-collection/issues/2759
+     *
+     * @test
+     */
+    public function whenLinkingToRootOfSameHostTheUrlContainsASingleSlash_forceAbsoluteUrls()
+    {
+        // NOTE: the route part handler here does not really match; as we link to the the route
+        // registered in "registerAbsoluteRoute()".
+        $this->registerSingleRoute(UriBuilderSetDomainRoutePartHandler::class);
+        // NOTE: the registered route is PREPENDED to the existing list; so we need to register the absolute route LAST as it should match FIRST.
+        $this->registerAbsoluteRoute();
+        $response = $this->browser->request('http://my-host/test/mvc/uribuilder/linkingToRootWithCreateAbsoluteUri/bla');
+        self::assertEquals('http://my-host/', $response->getBody()->getContents());
         self::assertEquals(200, $response->getStatusCode());
     }
 
