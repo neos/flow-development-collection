@@ -1,0 +1,33 @@
+`6.0.5 (2019-11-08) <https://github.com/neos/flow-development-collection/releases/tag/6.0.5>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: fix linking to root domains (empty path), by generating a "/" URL <https://github.com/neos/flow-development-collection/pull/1845>`_
+--------------------------------------------------------------------------------------------------------------------------------------------
+
+
+Also includes a functional test case, which is way more expressive than the Unit Test Case.
+
+Resolves: https://github.com/neos/neos-development-collection/issues/2759
+Related: https://github.com/neos/flow-development-collection/pull/1804
+
+* Packages: ``Flow``
+
+`BUGFIX: fix resource publishing <https://github.com/neos/flow-development-collection/pull/1844>`_
+--------------------------------------------------------------------------------------------------
+
+This fixes a regression introduced in #1842:
+
+In this change, a "yield" and a "return" call were introduced in the
+same method; so that the early return was not properly executed
+because PHP somehow thought this is a fully-suspendable function,
+although only one part of the "if"-statement was suspendable.
+
+Related: #1842
+
+* Packages: ``Flow``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/6.0.4...6.0.5>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
