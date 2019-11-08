@@ -164,8 +164,11 @@ class Collection implements CollectionInterface
                 }
             }
         } else {
-            return $this->storage->getObjectsByCollection($this, $callback);
+            yield from $this->storage->getObjectsByCollection($this, $callback);
         }
+
+        // NOTE: NEVER mix "return" and "yield" in the same function; this
+        // leads to totally unpredictable effects.
     }
 
     /**
