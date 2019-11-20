@@ -38,9 +38,12 @@ final class ActionResponse
     /**
      * The HTTP status code
      *
-     * @var integer
+     * Note the getter has a default value,
+     * but internally this can be null to signify a status code was never set explicitly.
+     *
+     * @var integer|null
      */
-    protected $statusCode = 200;
+    protected $statusCode;
 
     /**
      * @var string
@@ -185,7 +188,7 @@ final class ActionResponse
      */
     public function getStatusCode(): int
     {
-        return $this->statusCode;
+        return $this->statusCode ?? 200;
     }
 
     /**
@@ -205,6 +208,7 @@ final class ActionResponse
         if ($this->hasContent()) {
             $actionResponse->setContent($this->content);
         }
+
         if ($this->contentType !== null) {
             $actionResponse->setContentType($this->contentType);
         }
@@ -236,8 +240,9 @@ final class ActionResponse
     public function mergeIntoComponentContext(ComponentContext $componentContext): ComponentContext
     {
         $httpResponse = $componentContext->getHttpResponse();
-        $httpResponse = $httpResponse
-            ->withStatus($this->statusCode);
+        if ($this->statusCode !== null) {
+            $httpResponse = $httpResponse->withStatus($this->statusCode);
+        }
 
         if ($this->hasContent()) {
             $httpResponse = $httpResponse->withBody($this->content);
@@ -280,9 +285,8 @@ final class ActionResponse
      */
     public function applyToHttpResponse(ResponseInterface $httpResponse): ResponseInterface
     {
-        if ($this->statusCode !== 200) {
-            $httpResponse = $httpResponse
-                ->withStatus($this->statusCode);
+        if ($this->statusCode !== null) {
+            $httpResponse = $httpResponse->withStatus($this->statusCode);
         }
 
         if ($this->hasContent()) {
