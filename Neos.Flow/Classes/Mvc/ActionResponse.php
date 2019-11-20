@@ -289,7 +289,7 @@ final class ActionResponse
             $httpResponse = $httpResponse->withBody($this->content);
         }
 
-        if ($this->contentType) {
+        if ($this->contentType !== null) {
             $httpResponse = $httpResponse->withHeader('Content-Type', $this->contentType);
         }
 
