@@ -767,7 +767,8 @@ class ActionController extends AbstractController
         }
 
         if ($result instanceof ResponseInterface) {
-            $this->response->setComponentParameter(ReplaceHttpResponseComponent::class, ReplaceHttpResponseComponent::PARAMETER_RESPONSE, $result);
+            $finalResponse = $this->response->applyToHttpResponse($result);
+            $this->response->setComponentParameter(ReplaceHttpResponseComponent::class, ReplaceHttpResponseComponent::PARAMETER_RESPONSE, $finalResponse);
         }
 
         if (is_object($result) && is_callable([$result, '__toString'])) {
