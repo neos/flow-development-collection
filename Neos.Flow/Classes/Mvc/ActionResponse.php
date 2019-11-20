@@ -293,7 +293,7 @@ final class ActionResponse
             $httpResponse = $httpResponse->withHeader('Content-Type', $this->contentType);
         }
 
-        if ($this->redirectUri) {
+        if ($this->redirectUri !== null) {
             $httpResponse = $httpResponse->withHeader('Location', (string)$this->redirectUri);
         }
 
