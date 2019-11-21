@@ -14,7 +14,10 @@ namespace Neos\Flow\Composer;
 use Composer\DependencyResolver\Operation\InstallOperation;
 use Composer\DependencyResolver\Operation\UpdateOperation;
 use Composer\Script\Event;
+use Composer\Console\Application;
 use Composer\Installer\PackageEvent;
+use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Output\ConsoleOutput;
 use Neos\Flow\Package\PackageManager;
 use Neos\Utility\Files;
 
@@ -104,6 +107,71 @@ class InstallerScripts
         // TODO: Deprecated from Flow 3.1 remove three versions after.
         if (!$evaluatedInstallerResources && isset($packageExtraConfig['typo3/flow']['manage-resources']) && $packageExtraConfig['typo3/flow']['manage-resources'] === true) {
             static::copyDistributionFiles($installPath . 'Resources/Private/Installer/');
+        }
+    }
+
+    /**
+     * Actions after creating a new project
+     *
+     * @param Event $event
+     */
+    public static function postCreateProjectCmd(Event $event)
+    {
+        $io = $event->getIO();
+
+        if (!$io->isInteractive()) {
+            return;
+        }
+
+        $rootPackage = $event->getComposer()->getPackage();
+        $io->write([
+            '',
+            'Welcome to ' . $rootPackage->getName(),
+        ]);
+
+        $rootPackageExtraConfig = $rootPackage->getExtra();
+
+        if (!isset($rootPackageExtraConfig['neos']['post-create-project-tasks'])
+            || !is_array($rootPackageExtraConfig['neos']['post-create-project-tasks'])
+        ) {
+            return;
+        }
+
+        $postCreateProjectTasks = array_values($rootPackageExtraConfig['neos']['post-create-project-tasks']);
+
+        $choices = array_map(
+            function ($option) {
+                return $option['description'];
+            },
+            $postCreateProjectTasks
+        );
+
+        $io->write('');
+        $selection = $io->select('How would you like your '. $rootPackage->getName() . ' configured?', $choices, 1);
+
+        $chosenTask = $postCreateProjectTasks[(int)$selection];
+        switch ($chosenTask['type'] ?? '') {
+            case 'composer':
+                $output = new ConsoleOutput();
+                $composerApplication = new Application();
+                $success = $composerApplication->doRun(new ArrayInput($chosenTask['options']), $output);
+                if ($success === 0) {
+                    $io->write('The selected packages were successfully required.');
+                } else {
+                    throw new Exception\InvalidConfigurationException('The requested packages ' . implode(',', $chosenTask['packages']) . 'could not be required successfully', 1574363694);
+                }
+                break;
+            case 'nothing':
+                $io->write('No package will be installed.');
+                break;
+            default:
+                throw new Exception\UnexpectedOperationException('Task of type ' . $chosenTask['type'] . ' is unsupported', 1574363576);
+                break;
+        }
+
+        if (isset($chosenTask['hints'])) {
+            $io->write('');
+            $io->write($chosenTask['hints']);
         }
     }
 
