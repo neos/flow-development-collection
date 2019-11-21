@@ -139,7 +139,9 @@ class InstallerScripts
 
         $postCreateProjectTasks = array_values($rootPackageExtraConfig['neos']['post-create-project-tasks']);
 
-        $choices = array_map(function($option){ return $option['description']; }, $postCreateProjectTasks);
+        $choices = array_map(function ($option) {
+            return $option['description'];
+        }, $postCreateProjectTasks);
 
         $io->write('');
         $selection = $io->select('How would you like your '. $rootPackage->getName() . ' configured?', $choices, 1);
