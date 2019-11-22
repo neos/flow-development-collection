@@ -389,6 +389,12 @@ class ConsoleOutput
     {
         if ($this->progressBar === null) {
             $this->progressBar = new ProgressBar($this->output);
+            if (is_callable([$this->progressBar, 'minSecondsBetweenRedraws'])) {
+                $this->progressBar->minSecondsBetweenRedraws(0);
+            }
+            if (is_callable([$this->progressBar, 'maxSecondsBetweenRedraws'])) {
+                $this->progressBar->maxSecondsBetweenRedraws(0);
+            }
         }
         return $this->progressBar;
     }
