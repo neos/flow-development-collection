@@ -26,7 +26,8 @@ class StringLengthValidator extends AbstractValidator
      */
     protected $supportedOptions = [
         'minimum' => [0, 'Minimum length for a valid string', 'integer'],
-        'maximum' => [PHP_INT_MAX, 'Maximum length for a valid string', 'integer']
+        'maximum' => [PHP_INT_MAX, 'Maximum length for a valid string', 'integer'],
+        'ignoreHtml' => [false, 'If true, HTML tags will be stripped before counting the characters', 'boolean'],
     ];
 
     /**
@@ -56,6 +57,9 @@ class StringLengthValidator extends AbstractValidator
             return;
         }
 
+        if (isset($this->options['ignoreHtml']) && $this->options['ignoreHtml'] === true) {
+            $value = strip_tags($value);
+        }
         $stringLength = Unicode\Functions::strlen($value);
         $isValid = true;
         if ($stringLength < $this->options['minimum']) {
