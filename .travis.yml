@@ -48,7 +48,7 @@ before_install:
   - export NEOS_TARGET_REPOSITORY=neos/flow-development-collection
   - export NEOS_TARGET_VERSION=master
   - if [ "$DB" = "pgsql" ]; then sudo mount -o remount,size=25% /var/ramfs ; fi
-  - phpenv config-rm xdebug.ini
+  - phpenv config-rm xdebug.ini || echo "xdebug not available"
   - env
   - sudo add-apt-repository ppa:git-core/ppa -y
   - sudo apt-get update
