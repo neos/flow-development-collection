@@ -10,7 +10,7 @@
 
         "ext-zlib": "*",
         "ext-SPL": "*",
-        "ext-json": "^1.2",
+        "ext-json": "*",
         "ext-reflection": "*",
         "ext-xml": "*",
 
