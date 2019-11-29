@@ -31,19 +31,20 @@ abstract class UploadedFilesHelper
         $upcastedUploads = [];
 
         foreach ($uploadedFiles as $key => $value) {
-            $currentPath[] = $key;
             if ($value instanceof UploadedFileInterface) {
-                $originallySubmittedResourcePath = array_merge($currentPath, ['originallySubmittedResource']);
-                $collectionNamePath = array_merge($currentPath, ['__collectionName']);
+                $originallySubmittedResourcePath = array_merge($currentPath, [$key, 'originallySubmittedResource']);
+                $collectionNamePath = array_merge($currentPath, [$key, '__collectionName']);
                 $upcastedUploads[$key] = self::upcastUploadedFile(
                     $value,
                     Arrays::getValueByPath($arguments, $originallySubmittedResourcePath),
                     Arrays::getValueByPath($arguments, $collectionNamePath)
                 );
-            }
-
-            if (is_array($value)) {
-                $upcastedUploads[$key] = self::upcastUploadedFiles($value, $arguments, $currentPath);
+            } elseif (is_array($value)) {
+                $upcastedUploads[$key] = self::upcastUploadedFiles(
+                    $value,
+                    $arguments,
+                    array_merge($currentPath, [$key])
+                );
             }
         }
 
