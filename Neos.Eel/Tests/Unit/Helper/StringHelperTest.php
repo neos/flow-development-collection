@@ -23,8 +23,8 @@ class StringHelperTest extends UnitTestCase
     public function urlizeExamples()
     {
         return [
-            'mixed case with spaces' = ['Hello World' ,'hello-world'],
-            'umlauts, underscores and spaces' = ['Ä_ÖÜ äöü', 'ae-oeue-aeoeue']
+            'mixed case with spaces' => ['Hello World' ,'hello-world'],
+            'umlauts, underscores and spaces' => ['Ä_ÖÜ äöü', 'ae-oeue-aeoeue']
         ];
     }
 
