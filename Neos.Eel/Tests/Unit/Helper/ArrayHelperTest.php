@@ -318,23 +318,9 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
                 ['bar', 12, 'two', 'bar', 13, 12, false, 0, null],
                 [0 => 'bar', 1 => 12, 2 => 'two', 4 => 13, 6 => false, 7 => 0]
             ],
-            'numeric indices with filter' => [
-                ['bar', 12, 'two', 'bar', 13, 12, false, 0, null],
-                [0 => 'bar', 1 => 12, 2 => 'two', 4 => 13],
-                function ($x) {
-                    return $x ? true : false;
-                }
-            ],
             'string keys' => [
                 ['foo' => 'bar', 'baz' => 'foo', 'foo' => 'bar2', 'bar' => false, 'foonull' => null],
                 ['foo' => 'bar2', 'baz' => 'foo', 'bar' => false]
-            ],
-            'string keys with filter' => [
-                ['foo' => 'bar', 'baz' => 'foo', 'foo' => 'bar2', 'bar' => false, 'foonull' => null],
-                ['foo' => 'bar2', 'baz' => 'foo'],
-                function ($x) {
-                    return $x ? true : false;
-                }
             ],
             'mixed keys' => [
                 ['bar', '24' => 'bar', 'i' => 181.84, 'foo' => 'abc', 'foo2' => 'abc', 76],
