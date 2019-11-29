@@ -313,10 +313,10 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
     public function uniqueExamples()
     {
         return [
-            'numeric indices' => [['bar', 12, 'two', 'bar', 13, 12, false, 0, null], ['bar', 12, 'two', 13, false, 0]],
-            'numeric indices with filter' => [['bar', 12, 'two', 'bar', 13, 12, false, 0, null], ['bar', 12, 'two', 13], true],
+            'numeric indices' => [['bar', 12, 'two', 'bar', 13, 12, false, 0, null], [0 => 'bar', 1 => '12', 2 => 'two', 4 => 12, 6 => false, 7 => 0]],
+            'numeric indices with filter' => [['bar', 12, 'two', 'bar', 13, 12, false, 0, null], [0 => 'bar', 1 => '12', 2 => 'two', 4 => 13], true],
             'string keys' => [['foo' => 'bar', 'baz' => 'foo', 'foo' => 'bar2', 'bar' => false, 'foonull' => null], ['foo' => 'bar2', 'baz' => 'foo'], true],
-            'mixed keys' => [['bar', '24' => 'bar', 'i' => 181.84, 'foo' => 'abc', 'foo2' => 'abc', 76], ['bar', 'i' => 181.84, 'foo' => 'abc', 76]],
+            'mixed keys' => [['bar', '24' => 'bar', 'i' => 181.84, 'foo' => 'abc', 'foo2' => 'abc', 76], [0 => 'bar', 'i' => 181.84, 'foo' => 'abc', 25 => 76]],
         ];
     }
 
