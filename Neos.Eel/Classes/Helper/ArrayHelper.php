@@ -239,6 +239,22 @@ class ArrayHelper implements ProtectedContextAwareInterface
     }
 
     /**
+     * Removes duplicate values from an array
+     *
+     * @param array $array The input array
+     * @param bool $filter Option if the array should be filtered, defaults to `false`
+     *
+     * @return array The filtered array.
+     */
+    public function unique(array $array, bool $filter = false): array
+    {
+        if ($filter) {
+            $array = array_filter($array);
+        }
+        return array_unique($array);
+    }
+
+    /**
      * Removes the last element from an array
      *
      * Note: This differs from the JavaScript behavior of Array.pop which will return the popped element.

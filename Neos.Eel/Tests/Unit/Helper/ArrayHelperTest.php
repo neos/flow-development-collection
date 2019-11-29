@@ -310,6 +310,27 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
         self::assertEquals($array, $shuffledArray);
     }
 
+    public function uniqueExamples()
+    {
+        return [
+            'numeric indices' => [['bar', 12, 'two', 'bar', 13, 12, false, 0, null], ['bar', 12, 'two', 13, false, 0]],
+            'numeric indices with filter' => [['bar', 12, 'two', 'bar', 13, 12, false, 0, null], ['bar', 12, 'two', 13], true],
+            'string keys' => [['foo' => 'bar', 'baz' => 'foo', 'foo' => 'bar2', 'bar' => false, 'foonull' => null], ['foo' => 'bar2', 'baz' => 'foo'], true],
+            'mixed keys' => [['bar', '24' => 'bar', 'i' => 181.84, 'foo' => 'abc', 'foo2' => 'abc', 76], ['bar', 'i' => 181.84, 'foo' => 'abc', 76]],
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider uniqueExamples
+     */
+    public function uniqueWorks($array, $expected, $filter = false)
+    {
+        $helper = new ArrayHelper();
+        $uniqueddArray = $helper->unique($array, $filter);
+        self::assertEquals($expected, $uniqueddArray);
+    }
+
     public function popExamples()
     {
         return [
