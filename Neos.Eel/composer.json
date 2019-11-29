@@ -8,7 +8,8 @@
         "neos/flow": "*",
         "neos/cache": "*",
         "neos/utility-unicode": "*",
-        "neos/utility-objecthandling": "*"
+        "neos/utility-objecthandling": "*",
+        "behat/transliterator": "^1.2"
     },
     "autoload": {
         "psr-4": {

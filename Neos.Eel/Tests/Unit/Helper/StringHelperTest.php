@@ -20,6 +20,25 @@ use Neos\Flow\Tests\UnitTestCase;
  */
 class StringHelperTest extends UnitTestCase
 {
+    public function urlizeExamples()
+    {
+        return [
+            'mixed case with spaces' = ['Hello World' ,'hello-world'],
+            'umlauts, underscores and spaces' = ['Ä_ÖÜ äöü', 'ae-oeue-aeoeue']
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider urlizeExamples
+     */
+    public function urlizeWorks($string, $expected)
+    {
+        $helper = new StringHelper();
+        $result = $helper->urlize($string);
+        self::assertSame($expected, $result);
+    }
+
     public function substrExamples()
     {
         return [

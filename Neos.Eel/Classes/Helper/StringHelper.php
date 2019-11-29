@@ -16,6 +16,7 @@ use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Utility\Unicode\Functions as UnicodeFunctions;
 use Neos\Utility\Unicode\TextIterator;
+use Behat\Transliterator\Transliterator;
 
 /**
  * String helpers for Eel contexts
@@ -24,6 +25,22 @@ use Neos\Utility\Unicode\TextIterator;
  */
 class StringHelper implements ProtectedContextAwareInterface
 {
+    /**
+     * Generates a slug of the given string
+     *
+     * Examples::
+     *
+     *     String.urlize('Hello World') == 'hello-world'
+     *     String.urlize('Ä_ÖÜ äöü') == 'ae-oeue-aeoeue'
+     *
+     * @param string $string The string
+     * @return string The converted string
+     */
+    public function urlize($string)
+    {
+        return Transliterator::urlize($string);
+    }
+
     /**
      * Return the characters in a string from start up to the given length
      *
