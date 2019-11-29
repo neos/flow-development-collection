@@ -184,7 +184,7 @@ class StringHelper implements ProtectedContextAwareInterface
         if ($index === false) {
             return -1;
         }
-        return (integer)$index;;
+        return (integer)$index;
     }
 
     /**
