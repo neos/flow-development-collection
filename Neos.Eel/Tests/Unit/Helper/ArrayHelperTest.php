@@ -332,10 +332,10 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
      * @test
      * @dataProvider uniqueExamples
      */
-    public function uniqueWorks($array, $expected, $filter = null)
+    public function uniqueWorks($array, $expected)
     {
         $helper = new ArrayHelper();
-        $uniqueddArray = $helper->unique($array, $filter);
+        $uniqueddArray = $helper->unique($array);
         self::assertEquals($expected, $uniqueddArray);
     }
 
