@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Eel\Tests\Unit;
 
 /*
@@ -225,7 +226,7 @@ class StringHelperTest extends UnitTestCase
     public function pregMatchAllExamples()
     {
         return [
-            'matches' => ['<hr id="icon-one" /><hr id="icon-two" />', '/id="icon-(.+?)"/', [['id="icon-one"', 'id="icon-two"'],['one','two']]]
+            'matches' => ['<hr id="icon-one" /><hr id="icon-two" />', '/id="icon-(.+?)"/', [['id="icon-one"', 'id="icon-two"'], ['one', 'two']]]
         ];
     }
 
@@ -243,10 +244,11 @@ class StringHelperTest extends UnitTestCase
     public function pregReplaceExamples()
     {
         return [
-            'replace non-alphanumeric characters' => ['Some.String with sp:cial characters', '/[[:^alnum:]]/', '-', 'Some-String-with-sp-cial-characters'],
-            'no match' => ['canal', '/x/', 'y', 'canal'],
-            'unicode replacement' => ['Öaßaü', '/aßa/', 'g', 'Ögü'],
-            'references' => ['2016-08-31', '/([0-9]+)-([0-9]+)-([0-9]+)/', '$3.$2.$1', '31.08.2016']
+            'replace non-alphanumeric characters' => ['Some.String with sp:cial characters', '/[[:^alnum:]]/', '-', null, 'Some-String-with-sp-cial-characters'],
+            'replace non-alphanumeric characters width limit' => ['Some.String with sp:cial characters', '/[[:^alnum:]]/', '-', 1, 'Some-String with sp:cial characters'],
+            'no match' => ['canal', '/x/', 'y', null, 'canal'],
+            'unicode replacement' => ['Öaßaü', '/aßa/', 'g', null, 'Ögü'],
+            'references' => ['2016-08-31', '/([0-9]+)-([0-9]+)-([0-9]+)/', '$3.$2.$1', null, '31.08.2016']
         ];
     }
 
@@ -254,10 +256,10 @@ class StringHelperTest extends UnitTestCase
      * @test
      * @dataProvider pregReplaceExamples
      */
-    public function pregReplaceWorks($string, $pattern, $replace, $expected)
+    public function pregReplaceWorks($string, $pattern, $replace, $limit, $expected)
     {
         $helper = new StringHelper();
-        $result = $helper->pregReplace($string, $pattern, $replace);
+        $result = $helper->pregReplace($string, $pattern, $replace, $limit);
         self::assertSame($expected, $result);
     }
 
@@ -652,10 +654,10 @@ class StringHelperTest extends UnitTestCase
             'null' => [null, 0],
             'empty' => ['', 0],
             'non-empty' =>
-                [
-                    'Hello	  	fri3nd,	you\'re
+            [
+                'Hello	  	fri3nd,	you\'re
                     looking          good 	 tod@y!', 6
-                ],
+            ],
             'UTF-8' => ['Cäche Flüsh', 2]
         ];
     }
