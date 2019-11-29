@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Eel\Helper;
 
 /*
@@ -242,14 +243,13 @@ class ArrayHelper implements ProtectedContextAwareInterface
      * Removes duplicate values from an array
      *
      * @param array $array The input array
-     * @param bool $filter Option if the array should be filtered, defaults to `false`
-     *
+     * @param callable $filterCallback filter callback for testing if an element should be included in the result, current value and key will be passed as arguments
      * @return array The filtered array.
      */
-    public function unique(array $array, bool $filter = false): array
+    public function unique(array $array, callable $filterCallback = null): array
     {
-        if ($filter) {
-            $array = array_filter($array);
+        if ($filterCallback) {
+            $array = array_filter($array, $filterCallback, ARRAY_FILTER_USE_BOTH);
         }
         return array_unique($array);
     }

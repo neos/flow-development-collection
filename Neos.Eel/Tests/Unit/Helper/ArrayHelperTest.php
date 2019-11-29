@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Eel\Tests\Unit;
 
 /*
@@ -313,10 +314,32 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
     public function uniqueExamples()
     {
         return [
-            'numeric indices' => [['bar', 12, 'two', 'bar', 13, 12, false, 0, null], [0 => 'bar', 1 => '12', 2 => 'two', 4 => 12, 6 => false, 7 => 0]],
-            'numeric indices with filter' => [['bar', 12, 'two', 'bar', 13, 12, false, 0, null], [0 => 'bar', 1 => '12', 2 => 'two', 4 => 13], true],
-            'string keys' => [['foo' => 'bar', 'baz' => 'foo', 'foo' => 'bar2', 'bar' => false, 'foonull' => null], ['foo' => 'bar2', 'baz' => 'foo'], true],
-            'mixed keys' => [['bar', '24' => 'bar', 'i' => 181.84, 'foo' => 'abc', 'foo2' => 'abc', 76], [0 => 'bar', 'i' => 181.84, 'foo' => 'abc', 25 => 76]],
+            'numeric indices' => [
+                ['bar', 12, 'two', 'bar', 13, 12, false, 0, null],
+                [0 => 'bar', 1 => 12, 2 => 'two', 4 => 13, 6 => false, 7 => 0]
+            ],
+            'numeric indices with filter' => [
+                ['bar', 12, 'two', 'bar', 13, 12, false, 0, null],
+                [0 => 'bar', 1 => 12, 2 => 'two', 4 => 13],
+                function ($x) {
+                    return $x ? true : false;
+                }
+            ],
+            'string keys' => [
+                ['foo' => 'bar', 'baz' => 'foo', 'foo' => 'bar2', 'bar' => false, 'foonull' => null],
+                ['foo' => 'bar2', 'baz' => 'foo', 'bar' => false]
+            ],
+            'string keys with filter' => [
+                ['foo' => 'bar', 'baz' => 'foo', 'foo' => 'bar2', 'bar' => false, 'foonull' => null],
+                ['foo' => 'bar2', 'baz' => 'foo'],
+                function ($x) {
+                    return $x ? true : false;
+                }
+            ],
+            'mixed keys' => [
+                ['bar', '24' => 'bar', 'i' => 181.84, 'foo' => 'abc', 'foo2' => 'abc', 76],
+                [0 => 'bar', 'i' => 181.84, 'foo' => 'abc', 25 => 76]
+            ],
         ];
     }
 
@@ -324,7 +347,7 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
      * @test
      * @dataProvider uniqueExamples
      */
-    public function uniqueWorks($array, $expected, $filter = false)
+    public function uniqueWorks($array, $expected, $filter = null)
     {
         $helper = new ArrayHelper();
         $uniqueddArray = $helper->unique($array, $filter);
