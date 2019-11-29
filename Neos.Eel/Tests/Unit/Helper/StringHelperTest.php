@@ -1,5 +1,4 @@
 <?php
-
 namespace Neos\Eel\Tests\Unit;
 
 /*
@@ -226,7 +225,7 @@ class StringHelperTest extends UnitTestCase
     public function pregMatchAllExamples()
     {
         return [
-            'matches' => ['<hr id="icon-one" /><hr id="icon-two" />', '/id="icon-(.+?)"/', [['id="icon-one"', 'id="icon-two"'], ['one', 'two']]]
+            'matches' => ['<hr id="icon-one" /><hr id="icon-two" />', '/id="icon-(.+?)"/', [['id="icon-one"', 'id="icon-two"'],['one','two']]]
         ];
     }
 
@@ -654,10 +653,10 @@ class StringHelperTest extends UnitTestCase
             'null' => [null, 0],
             'empty' => ['', 0],
             'non-empty' =>
-            [
-                'Hello	  	fri3nd,	you\'re
+                [
+                    'Hello	  	fri3nd,	you\'re
                     looking          good 	 tod@y!', 6
-            ],
+                ],
             'UTF-8' => ['Cäche Flüsh', 2]
         ];
     }

@@ -1,5 +1,4 @@
 <?php
-
 namespace Neos\Eel\Helper;
 
 /*
@@ -43,7 +42,7 @@ class StringHelper implements ProtectedContextAwareInterface
      */
     public function substr($string, $start, $length = null)
     {
-        $string = (string) $string;
+        $string = (string)$string;
 
         if ($length === null) {
             $length = mb_strlen($string, 'UTF-8');
@@ -69,7 +68,7 @@ class StringHelper implements ProtectedContextAwareInterface
      */
     public function substring($string, $start, $end = null)
     {
-        $string = (string) $string;
+        $string = (string)$string;
 
         if ($end === null) {
             $end = mb_strlen($string, 'UTF-8');
@@ -101,7 +100,7 @@ class StringHelper implements ProtectedContextAwareInterface
         if ($index < 0) {
             return '';
         }
-        return mb_substr((string) $string, $index, 1, 'UTF-8');
+        return mb_substr((string)$string, $index, 1, 'UTF-8');
     }
 
     /**
@@ -118,7 +117,7 @@ class StringHelper implements ProtectedContextAwareInterface
      */
     public function endsWith($string, $search, $position = null)
     {
-        $string = (string) $string;
+        $string = (string)$string;
 
         $position = $position !== null ? $position : mb_strlen($string, 'UTF-8');
         $position = $position - mb_strlen($search, 'UTF-8');
@@ -140,7 +139,7 @@ class StringHelper implements ProtectedContextAwareInterface
      */
     public function chr($value)
     {
-        return chr((int) $value);
+        return chr((int)$value);
     }
 
     /**
@@ -158,7 +157,7 @@ class StringHelper implements ProtectedContextAwareInterface
      */
     public function ord($string)
     {
-        return ord((string) $string);
+        return ord((string)$string);
     }
 
     /**
@@ -175,7 +174,7 @@ class StringHelper implements ProtectedContextAwareInterface
      */
     public function indexOf($string, $search, $fromIndex = null)
     {
-        $string = (string) $string;
+        $string = (string)$string;
 
         $fromIndex = max(0, $fromIndex);
         if ($search === '') {
@@ -185,7 +184,7 @@ class StringHelper implements ProtectedContextAwareInterface
         if ($index === false) {
             return -1;
         }
-        return (int) $index;
+        return (integer)$index;;
     }
 
     /**
@@ -202,7 +201,7 @@ class StringHelper implements ProtectedContextAwareInterface
      */
     public function lastIndexOf($string, $search, $toIndex = null)
     {
-        $string = (string) $string;
+        $string = (string)$string;
 
         $length = mb_strlen($string, 'UTF-8');
         if ($toIndex === null) {
@@ -217,7 +216,7 @@ class StringHelper implements ProtectedContextAwareInterface
         if ($index === false) {
             return -1;
         }
-        return (int) $index;
+        return (integer)$index;
     }
 
     /**
@@ -235,7 +234,7 @@ class StringHelper implements ProtectedContextAwareInterface
      */
     public function pregMatch($string, $pattern)
     {
-        $number = preg_match($pattern, (string) $string, $matches);
+        $number = preg_match($pattern, (string)$string, $matches);
         if ($number === false) {
             throw new EvaluationException('Error evaluating regular expression ' . $pattern . ': ' . preg_last_error(), 1372793595);
         }
@@ -260,7 +259,7 @@ class StringHelper implements ProtectedContextAwareInterface
      */
     public function pregMatchAll($string, $pattern)
     {
-        $number = preg_match_all($pattern, (string) $string, $matches);
+        $number = preg_match_all($pattern, (string)$string, $matches);
         if ($number === false) {
             throw new EvaluationException('Error evaluating regular expression ' . $pattern . ': ' . preg_last_error(), 1372793595);
         }
@@ -287,7 +286,7 @@ class StringHelper implements ProtectedContextAwareInterface
      */
     public function pregReplace($string, $pattern, $replace, $limit = -1)
     {
-        return preg_replace($pattern, $replace, (string) $string, $limit);
+        return preg_replace($pattern, $replace, (string)$string, $limit);
     }
 
     /**
@@ -305,7 +304,7 @@ class StringHelper implements ProtectedContextAwareInterface
      */
     public function pregSplit($string, $pattern, $limit = null)
     {
-        return preg_split($pattern, (string) $string, $limit);
+        return preg_split($pattern, (string)$string, $limit);
     }
 
     /**
@@ -324,7 +323,7 @@ class StringHelper implements ProtectedContextAwareInterface
      */
     public function replace($string, $search, $replace)
     {
-        return str_replace($search, $replace, (string) $string);
+        return str_replace($search, $replace, (string)$string);
     }
 
     /**
@@ -344,7 +343,7 @@ class StringHelper implements ProtectedContextAwareInterface
      */
     public function split($string, $separator = null, $limit = null)
     {
-        $string = (string) $string;
+        $string = (string)$string;
 
         if ($separator === null) {
             return [$string];
@@ -381,7 +380,7 @@ class StringHelper implements ProtectedContextAwareInterface
     public function startsWith($string, $search, $position = null)
     {
         $position = $position !== null ? $position : 0;
-        return mb_strpos((string) $string, $search, null, 'UTF-8') === $position;
+        return mb_strpos((string)$string, $search, null, 'UTF-8') === $position;
     }
 
     /**
@@ -392,7 +391,7 @@ class StringHelper implements ProtectedContextAwareInterface
      */
     public function toLowerCase($string)
     {
-        return mb_strtolower((string) $string, 'UTF-8');
+        return mb_strtolower((string)$string, 'UTF-8');
     }
 
     /**
@@ -403,7 +402,7 @@ class StringHelper implements ProtectedContextAwareInterface
      */
     public function toUpperCase($string)
     {
-        return mb_strtoupper((string) $string, 'UTF-8');
+        return mb_strtoupper((string)$string, 'UTF-8');
     }
 
     /**
@@ -418,7 +417,7 @@ class StringHelper implements ProtectedContextAwareInterface
      */
     public function firstLetterToUpperCase($string)
     {
-        return UnicodeFunctions::ucfirst((string) $string);
+        return UnicodeFunctions::ucfirst((string)$string);
     }
 
     /**
@@ -433,7 +432,7 @@ class StringHelper implements ProtectedContextAwareInterface
      */
     public function firstLetterToLowerCase($string)
     {
-        return UnicodeFunctions::lcfirst((string) $string);
+        return UnicodeFunctions::lcfirst((string)$string);
     }
 
     /**
@@ -451,7 +450,7 @@ class StringHelper implements ProtectedContextAwareInterface
      */
     public function stripTags($string, $allowableTags = null)
     {
-        return strip_tags((string) $string, $allowableTags);
+        return strip_tags((string)$string, $allowableTags);
     }
 
     /**
@@ -468,7 +467,7 @@ class StringHelper implements ProtectedContextAwareInterface
      */
     public function nl2br($string)
     {
-        return nl2br((string) $string);
+        return nl2br((string)$string);
     }
 
     /**
@@ -484,7 +483,7 @@ class StringHelper implements ProtectedContextAwareInterface
      */
     public function isBlank($string)
     {
-        return trim((string) $string) === '';
+        return trim((string)$string) === '';
     }
 
     /**
@@ -496,7 +495,7 @@ class StringHelper implements ProtectedContextAwareInterface
      */
     public function trim($string, $charlist = null)
     {
-        $string = (string) $string;
+        $string = (string)$string;
 
         if ($charlist === null) {
             return trim($string);
@@ -513,7 +512,7 @@ class StringHelper implements ProtectedContextAwareInterface
      */
     public function toString($value)
     {
-        return (string) $value;
+        return (string)$value;
     }
 
     /**
@@ -524,7 +523,7 @@ class StringHelper implements ProtectedContextAwareInterface
      */
     public function toInteger($string)
     {
-        return (int) $string;
+        return (integer)$string;
     }
 
     /**
@@ -535,7 +534,7 @@ class StringHelper implements ProtectedContextAwareInterface
      */
     public function toFloat($string)
     {
-        return (float) $string;
+        return (float)$string;
     }
 
     /**
@@ -548,7 +547,7 @@ class StringHelper implements ProtectedContextAwareInterface
      */
     public function toBoolean($string)
     {
-        return strtolower((string) $string) === 'true' || (int) $string === 1;
+        return strtolower((string)$string) === 'true' || (integer)$string === 1;
     }
 
     /**
@@ -559,7 +558,7 @@ class StringHelper implements ProtectedContextAwareInterface
      */
     public function rawUrlEncode($string)
     {
-        return rawurlencode((string) $string);
+        return rawurlencode((string)$string);
     }
 
     /**
@@ -570,7 +569,7 @@ class StringHelper implements ProtectedContextAwareInterface
      */
     public function rawUrlDecode($string)
     {
-        return rawurldecode((string) $string);
+        return rawurldecode((string)$string);
     }
 
     /**
@@ -582,7 +581,7 @@ class StringHelper implements ProtectedContextAwareInterface
      */
     public function htmlSpecialChars($string, $preserveEntities = false)
     {
-        return htmlspecialchars((string) $string, ENT_NOQUOTES | ENT_HTML401, ini_get("default_charset"), !$preserveEntities);
+        return htmlspecialchars((string)$string, ENT_NOQUOTES | ENT_HTML401, ini_get("default_charset"), !$preserveEntities);
     }
 
     /**
@@ -595,7 +594,7 @@ class StringHelper implements ProtectedContextAwareInterface
      */
     public function crop($string, $maximumCharacters, $suffix = '')
     {
-        $string = (string) $string;
+        $string = (string)$string;
 
         if (UnicodeFunctions::strlen($string) > $maximumCharacters) {
             $string = UnicodeFunctions::substr($string, 0, $maximumCharacters);
@@ -616,7 +615,7 @@ class StringHelper implements ProtectedContextAwareInterface
      */
     public function cropAtWord($string, $maximumCharacters, $suffix = '')
     {
-        $string = (string) $string;
+        $string = (string)$string;
 
         if (UnicodeFunctions::strlen($string) > $maximumCharacters) {
             $iterator = new TextIterator($string, TextIterator::WORD);
@@ -638,7 +637,7 @@ class StringHelper implements ProtectedContextAwareInterface
      */
     public function cropAtSentence($string, $maximumCharacters, $suffix = '')
     {
-        $string = (string) $string;
+        $string = (string)$string;
 
         if (UnicodeFunctions::strlen($string) > $maximumCharacters) {
             $iterator = new TextIterator($string, TextIterator::SENTENCE);
@@ -661,7 +660,7 @@ class StringHelper implements ProtectedContextAwareInterface
      */
     public function md5($string)
     {
-        return md5((string) $string);
+        return md5((string)$string);
     }
 
     /**
@@ -676,7 +675,7 @@ class StringHelper implements ProtectedContextAwareInterface
      */
     public function sha1($string)
     {
-        return sha1((string) $string);
+        return sha1((string)$string);
     }
 
     /**
@@ -687,7 +686,7 @@ class StringHelper implements ProtectedContextAwareInterface
      */
     public function length($string)
     {
-        return UnicodeFunctions::strlen((string) $string);
+        return UnicodeFunctions::strlen((string)$string);
     }
 
     /**
@@ -700,7 +699,7 @@ class StringHelper implements ProtectedContextAwareInterface
      */
     public function wordCount($unicodeString)
     {
-        $unicodeString = (string) $unicodeString;
+        $unicodeString = (string)$unicodeString;
 
         $unicodeString = preg_replace('/[[:punct:][:digit:]]/', '', $unicodeString);
 
@@ -716,7 +715,7 @@ class StringHelper implements ProtectedContextAwareInterface
      */
     public function base64encode($string)
     {
-        return base64_encode((string) $string);
+        return base64_encode((string)$string);
     }
 
     /**
@@ -729,7 +728,7 @@ class StringHelper implements ProtectedContextAwareInterface
      */
     public function base64decode($string, bool $strict = false)
     {
-        return base64_decode((string) $string, $strict);
+        return base64_decode((string)$string, $strict);
     }
 
     /**
