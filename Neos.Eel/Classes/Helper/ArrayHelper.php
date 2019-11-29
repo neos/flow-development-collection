@@ -210,6 +210,18 @@ class ArrayHelper implements ProtectedContextAwareInterface
     }
 
     /**
+     * Sort an array by key
+     *
+     * @param array $array The array to sort
+     * @return array The sorted array
+     */
+    public function ksort(array $array): array
+    {
+        \ksort($array, SORT_NATURAL | SORT_FLAG_CASE);
+        return $array;
+    }
+
+    /**
      * Shuffle an array
      *
      * Randomizes entries an array with the option to preserve the existing keys.

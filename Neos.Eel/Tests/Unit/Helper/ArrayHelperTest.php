@@ -289,6 +289,26 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
         self::assertEquals($expected, $sortedArray);
     }
 
+    public function ksortExamples()
+    {
+        return [
+            'no keys' => [['z', '7d', 'i', '7', 'm', 8, 3, 'q'], ['z', '7d', 'i', '7', 'm', 8, 3, 'q']],
+            'string keys' => [['foo' => 'bar', 'baz' => 'foo', 'bar' => 'baz'], ['bar' => 'baz', 'baz' => 'foo', 'foo' => 'bar']],
+            'mixed keys' => [['bar', '24' => 'foo', 'i' => 181.84, 'foo' => 'abc', '84216', 76, 'k' => 53], ['0' => 'bar', '24' => 'foo', '25' => '84216', '26' => 76, 'foo' => 'abc', 'i' => 181.84, 'k' => 53]],
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider ksortExamples
+     */
+    public function ksortWorks($array, $expected)
+    {
+        $helper = new ArrayHelper();
+        $sortedArray = $helper->ksort($array);
+        self::assertEquals($expected, $sortedArray);
+    }
+
     public function shuffleExamples()
     {
         return [
