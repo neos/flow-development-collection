@@ -286,6 +286,9 @@ class StringHelper implements ProtectedContextAwareInterface
      */
     public function pregReplace($string, $pattern, $replace, $limit = -1)
     {
+        if ($limit === null) {
+            $limit = -1;
+        }
         return preg_replace($pattern, $replace, (string)$string, $limit);
     }
 
