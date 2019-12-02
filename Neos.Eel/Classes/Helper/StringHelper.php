@@ -16,7 +16,6 @@ use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Utility\Unicode\Functions as UnicodeFunctions;
 use Neos\Utility\Unicode\TextIterator;
-use Behat\Transliterator\Transliterator;
 
 /**
  * String helpers for Eel contexts
