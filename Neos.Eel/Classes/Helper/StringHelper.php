@@ -31,14 +31,35 @@ class StringHelper implements ProtectedContextAwareInterface
      * Examples::
      *
      *     String.urlize('Hello World') == 'hello-world'
-     *     String.urlize('Ä_ÖÜ äöü') == 'ae-oeue-aeoeue'
+     *     String.urlize('Ä_ÖÜßäöüÅåAÆæØEuro:€éñåøå!_И люяюлб PHP! есть. ﬁ  ') == 'ae-oeuessaeoeueaaaaaaeaeoeuroeenaaoaa-i-luaulb-php-est-fi'
      *
-     * @param string $string The string
+     * @param string $string The string to be transformed.
      * @return string The converted string
      */
-    public function urlize($string)
+
+    public function urlize(string $string): string
     {
-        return Transliterator::urlize($string);
+        $specialChars = [
+            // Euro Sign
+            chr(226) . chr(130) . chr(172) => 'E',
+            // GBP (Pound) Sign
+            chr(194) . chr(163) => '',
+            '$' => 'S',
+            'Ä' => 'Ae',
+            'ä' => 'ae',
+            'Ü' => 'Ue',
+            'ü' => 'ue',
+            'Ö' => 'Oe',
+            'ö' => 'oe',
+            // Norwegian characters
+            'Å' => 'Aa',
+            'å' => 'aa'
+        ];
+        $string = strtr($string, $specialChars);
+        $string = str_replace('_', ' ', $string);
+        $string = transliterator_transliterate('Any-Latin; Latin-ASCII; [\u0100-\u7fff] remove; [:Punctuation:] Remove; Lower()', $string);
+        $string = preg_replace('/[-\s]+/', '-', $string);
+        return trim($string, '-');
     }
 
     /**
