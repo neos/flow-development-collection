@@ -8,7 +8,7 @@
         "neos/flow": "*",
         "neos/cache": "*",
         "neos/utility-unicode": "*",
-        "neos/utility-objecthandling": "*",
+        "neos/utility-objecthandling": "*"
     },
     "autoload": {
         "psr-4": {
