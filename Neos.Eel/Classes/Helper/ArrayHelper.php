@@ -42,7 +42,7 @@ class ArrayHelper implements ProtectedContextAwareInterface
         foreach ($arguments as &$argument) {
             if ($argument instanceof \Traversable) {
                 $argument = iterator_to_array($argument);
-            } else if (!is_array($argument)) {
+            } elseif (!is_array($argument)) {
                 $argument = [$argument];
             }
         }

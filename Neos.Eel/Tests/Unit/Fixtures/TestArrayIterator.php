@@ -54,5 +54,4 @@ class TestArrayIterator implements \Iterator
     {
         reset($this->array);
     }
-
 }
