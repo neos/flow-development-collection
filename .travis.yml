@@ -10,24 +10,40 @@ matrix:
       addons:
         mariadb: '10.2'
     - php: 7.1
-      env: DB=pgsql
-      sudo: required
-      addons:
-        postgresql: "9.4"
-    - php: 7.1
       env: DB=mysql BEHAT=true
       addons:
         mariadb: '10.2'
-    - php: 7.1
-      env: DB=pgsql BEHAT=true
-      sudo: required
-      addons:
-        postgresql: "9.4"
     - php: 7.2
       env: DB=mysql
       addons:
         mariadb: '10.2'
     - php: 7.2
+      env: DB=mysql BEHAT=true
+      addons:
+        mariadb: '10.2'
+    - php: 7.3
+      env: DB=mysql
+      addons:
+        mariadb: '10.2'
+    - php: 7.3
+      env: DB=mysql BEHAT=true
+      addons:
+        mariadb: '10.2'
+    - php: 7.4snapshot
+      env: DB=pgsql
+      sudo: required
+      addons:
+        postgresql: "9.4"
+    - php: 7.4snapshot
+      env: DB=pgsql BEHAT=true
+      sudo: required
+      addons:
+        postgresql: "9.4"
+    - php: 7.4snapshot
+      env: DB=mysql
+      addons:
+        mariadb: '10.2'
+    - php: 7.4snapshot
       env: DB=mysql BEHAT=true
       addons:
         mariadb: '10.2'
@@ -38,7 +54,7 @@ before_install:
   - export NEOS_TARGET_REPOSITORY=neos/flow-development-collection
   - export NEOS_TARGET_VERSION=5.3
   - if [ "$DB" = "pgsql" ]; then sudo mount -o remount,size=25% /var/ramfs ; fi
-  - phpenv config-rm xdebug.ini
+  - phpenv config-rm xdebug.ini || echo "xdebug not available"
   - env
   - sudo add-apt-repository ppa:git-core/ppa -y
   - sudo apt-get update

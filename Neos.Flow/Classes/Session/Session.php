@@ -630,14 +630,17 @@ class Session implements CookieEnabledInterface
             if ($sessionIdentifier === '_garbage-collection-running') {
                 continue;
             }
+            if (!is_array($sessionInfo)) {
+                $sessionInfo = [
+                    'sessionMetaData' => $sessionInfo,
+                    'lastActivityTimestamp' => 0,
+                    'storageIdentifier' => null
+                ];
+                $this->logger->warning('SESSION INFO INVALID: ' . $sessionIdentifier, $sessionInfo + LogEnvironment::fromMethodName(__METHOD__));
+            }
             $lastActivitySecondsAgo = $this->now - $sessionInfo['lastActivityTimestamp'];
             if ($lastActivitySecondsAgo > $this->inactivityTimeout) {
-                if ($sessionInfo['storageIdentifier'] === null) {
-                    if (!is_array($sessionInfo)) {
-                        $sessionInfo = ['sessionMetaData' => $sessionInfo];
-                    }
-                    $this->logger->warning('SESSION INFO INVALID: ' . $sessionIdentifier, $sessionInfo + LogEnvironment::fromMethodName(__METHOD__));
-                } else {
+                if ($sessionInfo['storageIdentifier'] !== null) {
                     $this->storageCache->flushByTag($sessionInfo['storageIdentifier']);
                     $sessionRemovalCount++;
                 }

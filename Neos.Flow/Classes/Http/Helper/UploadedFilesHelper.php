@@ -40,10 +40,10 @@ abstract class UploadedFilesHelper
 
         foreach ($fieldPaths as $fieldPath) {
             if (count($fieldPath) === 1) {
-                $fileInformation = $convolutedFiles[$fieldPath{0}];
+                $fileInformation = $convolutedFiles[$fieldPath[0]];
             } else {
                 $fileInformation = [];
-                foreach ($convolutedFiles[$fieldPath{0}] as $key => $subStructure) {
+                foreach ($convolutedFiles[$fieldPath[0]] as $key => $subStructure) {
                     $fileInformation[$key] = Arrays::getValueByPath($subStructure, array_slice($fieldPath, 1));
                 }
             }
