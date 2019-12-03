@@ -118,7 +118,6 @@ class StringHelperTest extends UnitTestCase
         return [
             ['value' => 65, 'expected' => 'A'],
             ['value' => 256, 'expected' => chr(256)],
-            ['value' => 'not a number', 'expected' => chr('not a number')],
             ['value' => 0, 'expected' => chr(0)],
         ];
     }

@@ -408,7 +408,7 @@ class PointcutExpressionParser
                 $openParentheses--;
             }
             if ($openParentheses > 0) {
-                $substring .= $string{$i};
+                $substring .= $string[$i];
             }
             if ($string[$i] === '(') {
                 $openParentheses++;
