@@ -13,12 +13,9 @@ namespace Neos\Flow\Cache;
 
 use Neos\Cache\Backend\BackendInterface;
 use Neos\Cache\Backend\SimpleFileBackend;
-use Neos\Cache\CacheFactoryInterface;
 use Neos\Cache\EnvironmentConfiguration;
 use Neos\Cache\Frontend\FrontendInterface;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Cache\Backend\AbstractBackend as FlowAbstractBackend;
-use Neos\Flow\Cache\Backend\FlowSpecificBackendInterface;
 use Neos\Cache\Exception\InvalidBackendException;
 use Neos\Flow\Core\ApplicationContext;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
@@ -32,7 +29,7 @@ use Neos\Flow\Utility\Environment;
  * @Flow\Scope("singleton")
  * @api
  */
-class CacheFactory extends \Neos\Cache\CacheFactory implements CacheFactoryInterface
+class CacheFactory extends \Neos\Cache\CacheFactory
 {
     /**
      * The current Flow context ("Production", "Development" etc.)
@@ -133,7 +130,7 @@ class CacheFactory extends \Neos\Cache\CacheFactory implements CacheFactoryInter
      * @param array $backendOptions
      * @param EnvironmentConfiguration $environmentConfiguration
      * @param boolean $persistent
-     * @return FlowAbstractBackend|BackendInterface
+     * @return BackendInterface
      * @throws InvalidBackendException
      */
     protected function instantiateBackend(string $backendObjectName, array $backendOptions, EnvironmentConfiguration $environmentConfiguration, bool $persistent = false): BackendInterface
@@ -147,37 +144,6 @@ class CacheFactory extends \Neos\Cache\CacheFactory implements CacheFactoryInter
             $backendOptions['baseDirectory'] = FLOW_PATH_DATA . 'Persistent/';
         }
 
-        if (is_a($backendObjectName, FlowSpecificBackendInterface::class, true)) {
-            return $this->instantiateFlowSpecificBackend($backendObjectName, $backendOptions);
-        }
-
         return parent::instantiateBackend($backendObjectName, $backendOptions, $environmentConfiguration);
-    }
-
-    /**
-     * @param string $backendObjectName
-     * @param array $backendOptions
-     * @return FlowAbstractBackend
-     * @throws InvalidBackendException
-     */
-    protected function instantiateFlowSpecificBackend(string $backendObjectName, array $backendOptions)
-    {
-        $backend = new $backendObjectName($this->context, $backendOptions);
-
-        if (!$backend instanceof BackendInterface) {
-            throw new InvalidBackendException('"' . $backendObjectName . '" is not a valid cache backend object.', 1216304301);
-        }
-
-        /** @var FlowAbstractBackend $backend */
-        $backend->injectEnvironment($this->environment);
-
-        if (is_callable([$backend, 'injectCacheManager'])) {
-            $backend->injectCacheManager($this->cacheManager);
-        }
-        if (is_callable([$backend, 'initializeObject'])) {
-            $backend->initializeObject(ObjectManagerInterface::INITIALIZATIONCAUSE_CREATED);
-        }
-
-        return $backend;
     }
 }
