@@ -410,7 +410,7 @@ class RouteTest extends UnitTestCase
         $this->routeMatchesPath('SomePackage');
         $matchResults = $this->route->getMatchResults();
 
-        self::assertEquals($defaults['@controller'], $matchResults{'@controller'});
+        self::assertEquals($defaults['@controller'], $matchResults['@controller']);
         self::assertEquals($defaults['@action'], $matchResults['@action']);
     }
 
