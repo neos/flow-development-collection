@@ -18,6 +18,7 @@ use Doctrine\DBAL\Migrations\MigrationException;
 use Doctrine\DBAL\Migrations\OutputWriter;
 use Doctrine\DBAL\Migrations\Version;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
+use Doctrine\DBAL\Schema\AbstractAsset;
 use Doctrine\DBAL\Schema\Identifier;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\ORM\EntityManagerInterface;
@@ -29,10 +30,10 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Package\PackageInterface;
 use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Reflection\DocCommentParser;
-use Neos\Utility\Exception\FilesException;
-use Neos\Utility\ObjectAccess;
 use Neos\Flow\Utility\Exception;
+use Neos\Utility\Exception\FilesException;
 use Neos\Utility\Files;
+use Neos\Utility\ObjectAccess;
 
 /**
  * Service class for tasks related to Doctrine
@@ -41,7 +42,7 @@ use Neos\Utility\Files;
  */
 class Service
 {
-    const DOCTRINE_MIGRATIONSTABLENAME = 'flow_doctrine_migrationstatus';
+    public const DOCTRINE_MIGRATIONSTABLENAME = 'flow_doctrine_migrationstatus';
 
     /**
      * @var array
@@ -72,7 +73,7 @@ class Service
      *
      * @return array
      */
-    public function validateMapping()
+    public function validateMapping(): ?array
     {
         try {
             $validator = new SchemaValidator($this->entityManager);
@@ -87,10 +88,10 @@ class Service
      * exist, this will throw an exception.
      *
      * @param string $outputPathAndFilename A file to write SQL to, instead of executing it
-     * @return string
+     * @return void
      * @throws ToolsException
      */
-    public function createSchema($outputPathAndFilename = null)
+    public function createSchema(string $outputPathAndFilename = null): void
     {
         $schemaTool = new SchemaTool($this->entityManager);
         $allMetaData = $this->entityManager->getMetadataFactory()->getAllMetadata();
@@ -108,9 +109,9 @@ class Service
      *
      * @param boolean $safeMode
      * @param string $outputPathAndFilename A file to write SQL to, instead of executing it
-     * @return string
+     * @return void
      */
-    public function updateSchema($safeMode = true, $outputPathAndFilename = null)
+    public function updateSchema(bool $safeMode = true, string $outputPathAndFilename = null): void
     {
         $schemaTool = new SchemaTool($this->entityManager);
         $allMetaData = $this->entityManager->getMetadataFactory()->getAllMetadata();
@@ -127,8 +128,9 @@ class Service
      *
      * @return void
      * @throws FilesException
+     * @throws Exception
      */
-    public function compileProxies()
+    public function compileProxies(): void
     {
         Files::emptyDirectoryRecursively(Files::concatenatePaths([$this->environment->getPathToTemporaryDirectory(), 'Doctrine/Proxies']));
         /** @var \Doctrine\ORM\Proxy\ProxyFactory $proxyFactory */
@@ -143,7 +145,7 @@ class Service
      * @return array
      * @throws \Doctrine\ORM\ORMException
      */
-    public function getEntityStatus()
+    public function getEntityStatus(): array
     {
         $info = [];
         $entityClassNames = $this->entityManager->getConfiguration()->getMetadataDriverImpl()->getAllClassNames();
@@ -167,7 +169,7 @@ class Service
      * @param integer $maxResult
      * @return mixed
      */
-    public function runDql($dql, $hydrationMode = \Doctrine\ORM\Query::HYDRATE_OBJECT, $firstResult = null, $maxResult = null)
+    public function runDql(string $dql, int $hydrationMode = \Doctrine\ORM\Query::HYDRATE_OBJECT, int $firstResult = null, int $maxResult = null)
     {
         /** @var \Doctrine\ORM\Query $query */
         $query = $this->entityManager->createQuery($dql);
@@ -187,7 +189,7 @@ class Service
      * @return Configuration
      * @throws DBALException
      */
-    protected function getMigrationConfiguration()
+    protected function getMigrationConfiguration(): Configuration
     {
         $this->output = [];
         $that = $this;
@@ -233,7 +235,7 @@ class Service
      * @return array
      * @throws DBALException
      */
-    public function getMigrationStatus()
+    public function getMigrationStatus(): array
     {
         $configuration = $this->getMigrationConfiguration();
 
@@ -273,7 +275,7 @@ class Service
      * @throws \ReflectionException
      * @throws DBALException
      */
-    public function getFormattedMigrationStatus($showMigrations = false, $showDescriptions = false)
+    public function getFormattedMigrationStatus(bool $showMigrations = false, bool $showDescriptions = false): string
     {
         $statusInformation = $this->getMigrationStatus();
         $output = PHP_EOL . '<info>==</info> Configuration' . PHP_EOL;
@@ -338,7 +340,7 @@ class Service
      * @return string
      * @throws \ReflectionException
      */
-    protected function getPackageKeyFromMigrationVersion(Version $version)
+    protected function getPackageKeyFromMigrationVersion(Version $version): string
     {
         $sortedAvailablePackages = $this->packageManager->getAvailablePackages();
         usort($sortedAvailablePackages, function (PackageInterface $packageOne, PackageInterface $packageTwo) {
@@ -366,7 +368,7 @@ class Service
      * @param Configuration $configuration
      * @return string
      */
-    protected function getFormattedVersionAlias($alias, Configuration $configuration)
+    protected function getFormattedVersionAlias(string $alias, Configuration $configuration): string
     {
         $version = $configuration->resolveVersionAlias($alias);
 
@@ -396,15 +398,15 @@ class Service
      * @return string
      * @throws \ReflectionException
      */
-    protected function getMigrationDescription(Version $version, DocCommentParser $parser)
+    protected function getMigrationDescription(Version $version, DocCommentParser $parser): string
     {
         if ($version->getMigration()->getDescription()) {
             return $version->getMigration()->getDescription();
-        } else {
-            $reflectedClass = new \ReflectionClass($version->getMigration());
-            $parser->parseDocComment($reflectedClass->getDocComment());
-            return str_replace([chr(10), chr(13)], ' ', $parser->getDescription());
         }
+
+        $reflectedClass = new \ReflectionClass($version->getMigration());
+        $parser->parseDocComment($reflectedClass->getDocComment());
+        return str_replace([chr(10), chr(13)], ' ', $parser->getDescription());
     }
 
     /**
@@ -420,7 +422,7 @@ class Service
      * @throws MigrationException
      * @throws DBALException
      */
-    public function executeMigrations($version = null, $outputPathAndFilename = null, $dryRun = false, $quiet = false)
+    public function executeMigrations(string $version = null, string $outputPathAndFilename = null, bool $dryRun = false, bool $quiet = false): string
     {
         $configuration = $this->getMigrationConfiguration();
         $migration = new Migration($configuration);
@@ -440,9 +442,9 @@ class Service
                 }
             }
             return $output;
-        } else {
-            return implode(PHP_EOL, $this->output);
         }
+
+        return implode(PHP_EOL, $this->output);
     }
 
     /**
@@ -457,7 +459,7 @@ class Service
      * @throws MigrationException
      * @throws DBALException
      */
-    public function executeMigration($version, $direction = 'up', $outputPathAndFilename = null, $dryRun = false)
+    public function executeMigration(string $version, string $direction = 'up', string $outputPathAndFilename = null, bool $dryRun = false): string
     {
         $version = $this->getMigrationConfiguration()->getVersion($version);
 
@@ -482,7 +484,7 @@ class Service
      * @throws \LogicException
      * @throws DBALException
      */
-    public function markAsMigrated($version, $markAsMigrated)
+    public function markAsMigrated(string $version, bool $markAsMigrated): void
     {
         $configuration = $this->getMigrationConfiguration();
 
@@ -533,7 +535,7 @@ class Service
      * @throws \Doctrine\ORM\ORMException
      * @throws FilesException
      */
-    public function generateMigration($diffAgainstCurrent = true, $filterExpression = null)
+    public function generateMigration(bool $diffAgainstCurrent = true, string $filterExpression = null): array
     {
         $configuration = $this->getMigrationConfiguration();
         $up = null;
@@ -544,7 +546,12 @@ class Service
             $connection = $this->entityManager->getConnection();
 
             if ($filterExpression) {
-                $connection->getConfiguration()->setFilterSchemaAssetsExpression($filterExpression);
+                $connection->getConfiguration()->setSchemaAssetsFilter(static function ($assetName) use ($filterExpression) {
+                    if ($assetName instanceof AbstractAsset) {
+                        $assetName = $assetName->getName();
+                    }
+                    return preg_match($filterExpression, $assetName);
+                });
             }
 
             $metadata = $this->entityManager->getMetadataFactory()->getAllMetadata();
@@ -608,7 +615,6 @@ class Service
      * @param string $down
      * @return string
      * @throws \RuntimeException
-     * @throws FilesException
      */
     protected function writeMigrationClassToFile(Configuration $configuration, ?string $up, ?string $down): string
     {
@@ -620,7 +626,7 @@ class Service
         $path = Files::concatenatePaths([$configuration->getMigrationsDirectory(), $className . '.php']);
         try {
             Files::createDirectoryRecursively(dirname($path));
-        } catch (Exception $exception) {
+        } catch (FilesException $exception) {
             throw new \RuntimeException(sprintf('Migration target directory "%s" does not exist.', dirname($path)), 1303298536, $exception);
         }
 
@@ -630,7 +636,6 @@ namespace $namespace;
 
 use Doctrine\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
-use Doctrine\DBAL\Migrations\AbortMigrationException;
 
 /**
  * Auto-generated Migration: Please modify to your needs! This block will be used as the migration description if getDescription() is not used.
@@ -641,7 +646,7 @@ class $className extends AbstractMigration
     /**
      * @return string
      */
-    public function getDescription(): string
+    public function getDescription()
     {
         return '';
     }
@@ -649,9 +654,8 @@ class $className extends AbstractMigration
     /**
      * @param Schema \$schema
      * @return void
-     * @throws AbortMigrationException
      */
-    public function up(Schema \$schema): void
+    public function up(Schema \$schema)
     {
         // this up() migration is autogenerated, please modify it to your needs$up
     }
@@ -659,9 +663,8 @@ class $className extends AbstractMigration
     /**
      * @param Schema \$schema
      * @return void
-     * @throws AbortMigrationException
      */
-    public function down(Schema \$schema): void
+    public function down(Schema \$schema)
     {
         // this down() migration is autogenerated, please modify it to your needs$down
     }
@@ -696,7 +699,7 @@ EOT;
             array_unshift(
                 $code,
                 sprintf(
-                    '$this->abortIf($this->connection->getDatabasePlatform()->getName() !== %s, %s);',
+                    '$this->abortIf($this->connection->getDatabasePlatform()->getName() != %s, %s);',
                     var_export($currentPlatform, true),
                     var_export(sprintf('Migration can only be executed safely on "%s".', $currentPlatform), true)
                 ),
@@ -713,7 +716,7 @@ EOT;
      * @return string
      * @throws DBALException
      */
-    public function getDatabasePlatformName()
+    public function getDatabasePlatformName(): string
     {
         return ucfirst($this->entityManager->getConnection()->getDatabasePlatform()->getName());
     }
@@ -754,34 +757,34 @@ EOT;
      * @param string $replace
      * @return array
      */
-    public static function getForeignKeyHandlingSql(Schema $schema, AbstractPlatform $platform, $tableNames, $search, $replace)
+    public static function getForeignKeyHandlingSql(Schema $schema, AbstractPlatform $platform, array $tableNames, string $search, string $replace): array
     {
         $foreignKeyHandlingSql = ['drop' => [], 'add' => []];
         $tables = $schema->getTables();
         foreach ($tables as $table) {
             $foreignKeys = $table->getForeignKeys();
             foreach ($foreignKeys as $foreignKey) {
-                if (!in_array($table->getName(), $tableNames) && !in_array($foreignKey->getForeignTableName(), $tableNames)) {
+                if (!in_array($table->getName(), $tableNames, true) && !in_array($foreignKey->getForeignTableName(), $tableNames, true)) {
                     continue;
                 }
 
                 $localColumns = $foreignKey->getLocalColumns();
                 $foreignColumns = $foreignKey->getForeignColumns();
                 if (in_array($search, $foreignColumns) || in_array($search, $localColumns)) {
-                    if (in_array($foreignKey->getLocalTableName(), $tableNames)) {
+                    if (in_array($foreignKey->getLocalTableName(), $tableNames, true)) {
                         array_walk(
                             $localColumns,
-                            function (&$value) use ($search, $replace) {
+                            static function (&$value) use ($search, $replace) {
                                 if ($value === $search) {
                                     $value = $replace;
                                 }
                             }
                         );
                     }
-                    if (in_array($foreignKey->getForeignTableName(), $tableNames)) {
+                    if (in_array($foreignKey->getForeignTableName(), $tableNames, true)) {
                         array_walk(
                             $foreignColumns,
-                            function (&$value) use ($search, $replace) {
+                            static function (&$value) use ($search, $replace) {
                                 if ($value === $search) {
                                     $value = $replace;
                                 }
@@ -789,7 +792,7 @@ EOT;
                         );
                     }
 
-                    $identifierConstructorCallback = function ($columnName) {
+                    $identifierConstructorCallback = static function ($columnName) {
                         return new Identifier($columnName);
                     };
                     $localColumns = array_map($identifierConstructorCallback, $localColumns);

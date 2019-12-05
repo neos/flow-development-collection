@@ -86,7 +86,7 @@ class Query implements QueryInterface
      * @param string $type
      * @param ReflectionService $reflectionService
      */
-    public function __construct($type, ReflectionService $reflectionService)
+    public function __construct(string $type, ReflectionService $reflectionService)
     {
         $this->type = $type;
         $this->classSchema = $reflectionService->getClassSchema($type);
@@ -284,7 +284,7 @@ class Query implements QueryInterface
      *
      * @return Qom\Constraint the constraint, or null if none
      * @api
-    */
+     */
     public function getConstraint()
     {
         return $this->constraint;
@@ -467,7 +467,7 @@ class Query implements QueryInterface
      * It matches if the multivalued property contains no values or is NULL.
      *
      * @param string $propertyName The name of the multivalued property to check
-     * @return boolean
+     * @return Qom\Comparison
      * @throws InvalidQueryException if used on a single-valued property
      * @api
      */

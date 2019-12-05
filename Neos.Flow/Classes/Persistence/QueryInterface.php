@@ -27,75 +27,86 @@ interface QueryInterface
 {
     /**
      * The '=' comparison operator.
+     *
      * @api
-    */
-    const OPERATOR_EQUAL_TO = 1;
+     */
+    public const OPERATOR_EQUAL_TO = 1;
 
     /**
      * The '!=' comparison operator.
+     *
      * @api
-    */
-    const OPERATOR_NOT_EQUAL_TO = 2;
+     */
+    public const OPERATOR_NOT_EQUAL_TO = 2;
 
     /**
      * The '<' comparison operator.
+     *
      * @api
-    */
-    const OPERATOR_LESS_THAN = 3;
+     */
+    public const OPERATOR_LESS_THAN = 3;
 
     /**
      * The '<=' comparison operator.
+     *
      * @api
-    */
-    const OPERATOR_LESS_THAN_OR_EQUAL_TO = 4;
+     */
+    public const OPERATOR_LESS_THAN_OR_EQUAL_TO = 4;
 
     /**
      * The '>' comparison operator.
+     *
      * @api
-    */
-    const OPERATOR_GREATER_THAN = 5;
+     */
+    public const OPERATOR_GREATER_THAN = 5;
 
     /**
      * The '>=' comparison operator.
+     *
      * @api
-    */
-    const OPERATOR_GREATER_THAN_OR_EQUAL_TO = 6;
+     */
+    public const OPERATOR_GREATER_THAN_OR_EQUAL_TO = 6;
 
     /**
      * The 'like' comparison operator.
+     *
      * @api
-    */
-    const OPERATOR_LIKE = 7;
+     */
+    public const OPERATOR_LIKE = 7;
 
     /**
      * The 'contains' comparison operator for collections.
+     *
      * @api
-    */
-    const OPERATOR_CONTAINS = 8;
+     */
+    public const OPERATOR_CONTAINS = 8;
 
     /**
      * The 'in' comparison operator.
+     *
      * @api
-    */
-    const OPERATOR_IN = 9;
+     */
+    public const OPERATOR_IN = 9;
 
     /**
      * The 'is NULL' comparison operator.
+     *
      * @api
-    */
-    const OPERATOR_IS_NULL = 10;
+     */
+    public const OPERATOR_IS_NULL = 10;
 
     /**
      * The 'is empty' comparison operator for collections.
+     *
      * @api
-    */
-    const OPERATOR_IS_EMPTY = 11;
+     */
+    public const OPERATOR_IS_EMPTY = 11;
 
     /**
      * Constants representing the direction when ordering result sets.
      */
-    const ORDER_ASCENDING = 'ASC';
-    const ORDER_DESCENDING = 'DESC';
+    public const ORDER_ASCENDING = 'ASC';
+    public const ORDER_DESCENDING = 'DESC';
 
     /**
      * Returns the type this query cares for.
@@ -215,7 +226,7 @@ interface QueryInterface
      *
      * @return mixed the constraint, or null if none
      * @api
-    */
+     */
     public function getConstraint();
 
     /**
@@ -298,7 +309,7 @@ interface QueryInterface
      * It matches if the multivalued property contains no values or is NULL.
      *
      * @param string $propertyName The name of the multivalued property to compare against
-     * @return boolean
+     * @return object
      * @throws Exception\InvalidQueryException if used on a single-valued property
      * @api
      */
