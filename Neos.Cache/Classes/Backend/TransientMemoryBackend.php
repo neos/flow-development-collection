@@ -114,7 +114,12 @@ class TransientMemoryBackend extends IndependentAbstractBackend implements Tagga
     public function findIdentifiersByTag(string $tag): array
     {
         if (isset($this->tagsAndEntries[$tag])) {
-            return array_keys($this->tagsAndEntries[$tag]);
+            return array_map(
+                static function ($value) {
+                    return (string)$value;
+                },
+                array_keys($this->tagsAndEntries[$tag])
+            );
         }
         return [];
     }

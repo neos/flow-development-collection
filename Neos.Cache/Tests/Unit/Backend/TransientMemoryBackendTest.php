@@ -16,6 +16,8 @@ include_once(__DIR__ . '/../../BaseTestCase.php');
 use Neos\Cache\Backend\TransientMemoryBackend;
 use Neos\Cache\EnvironmentConfiguration;
 use Neos\Cache\Exception;
+use Neos\Cache\Frontend\StringFrontend;
+use Neos\Cache\Frontend\VariableFrontend;
 use Neos\Cache\Tests\BaseTestCase;
 use Neos\Cache\Frontend\FrontendInterface;
 
@@ -28,7 +30,7 @@ class TransientMemoryBackendTest extends BaseTestCase
     /**
      * @test
      */
-    public function setThrowsExceptionIfNoFrontEndHasBeenSet()
+    public function setThrowsExceptionIfNoFrontEndHasBeenSet(): void
     {
         $this->expectException(Exception::class);
         $backend = new TransientMemoryBackend($this->getEnvironmentConfiguration());
@@ -41,7 +43,7 @@ class TransientMemoryBackendTest extends BaseTestCase
     /**
      * @test
      */
-    public function itIsPossibleToSetAndCheckExistenceInCache()
+    public function itIsPossibleToSetAndCheckExistenceInCache(): void
     {
         $cache = $this->createMock(FrontendInterface::class);
         $backend = new TransientMemoryBackend($this->getEnvironmentConfiguration());
@@ -57,7 +59,7 @@ class TransientMemoryBackendTest extends BaseTestCase
     /**
      * @test
      */
-    public function itIsPossibleToSetAndGetEntry()
+    public function itIsPossibleToSetAndGetEntry(): void
     {
         $cache = $this->createMock(FrontendInterface::class);
         $backend = new TransientMemoryBackend($this->getEnvironmentConfiguration());
@@ -73,7 +75,7 @@ class TransientMemoryBackendTest extends BaseTestCase
     /**
      * @test
      */
-    public function itIsPossibleToRemoveEntryFromCache()
+    public function itIsPossibleToRemoveEntryFromCache(): void
     {
         $cache = $this->createMock(FrontendInterface::class);
         $backend = new TransientMemoryBackend($this->getEnvironmentConfiguration());
@@ -90,7 +92,7 @@ class TransientMemoryBackendTest extends BaseTestCase
     /**
      * @test
      */
-    public function itIsPossibleToOverwriteAnEntryInTheCache()
+    public function itIsPossibleToOverwriteAnEntryInTheCache(): void
     {
         $cache = $this->createMock(FrontendInterface::class);
         $backend = new TransientMemoryBackend($this->getEnvironmentConfiguration());
@@ -108,7 +110,7 @@ class TransientMemoryBackendTest extends BaseTestCase
     /**
      * @test
      */
-    public function findIdentifiersByTagFindsCacheEntriesWithSpecifiedTag()
+    public function findIdentifiersByTagFindsCacheEntriesWithSpecifiedTag(): void
     {
         $cache = $this->createMock(FrontendInterface::class);
         $backend = new TransientMemoryBackend($this->getEnvironmentConfiguration());
@@ -127,8 +129,45 @@ class TransientMemoryBackendTest extends BaseTestCase
 
     /**
      * @test
+     * @throws Exception\NotSupportedByBackendException
+     * @throws Exception
      */
-    public function hasReturnsFalseIfTheEntryDoesntExist()
+    public function usingNumbersAsCacheIdentifiersWorksWhenUsingFindByTag(): void
+    {
+        $backend = new TransientMemoryBackend($this->getEnvironmentConfiguration());
+        $cache = new StringFrontend('test', $backend);
+        $backend->setCache($cache);
+
+        $data = 'Some data';
+        $entryIdentifier = '12345';
+        $backend->set($entryIdentifier, $data, ['UnitTestTag%tag1']);
+
+        $retrieved = $cache->getByTag('UnitTestTag%tag1');
+        self::assertEquals($data, current($retrieved));
+    }
+
+    /**
+     * @test
+     * @throws Exception
+     */
+    public function usingNumbersAsCacheIdentifiersWorksWhenUsingFlushTag(): void
+    {
+        $backend = new TransientMemoryBackend($this->getEnvironmentConfiguration());
+        $cache = new StringFrontend('test', $backend);
+        $backend->setCache($cache);
+
+        $data = 'Some data';
+        $entryIdentifier = '12345';
+        $backend->set($entryIdentifier, $data, ['UnitTestTag%tag1']);
+
+        $cache->flushByTag('UnitTestTag%tag1');
+        self::assertFalse($backend->has('12345'));
+    }
+
+    /**
+     * @test
+     */
+    public function hasReturnsFalseIfTheEntryDoesntExist(): void
     {
         $cache = $this->createMock(FrontendInterface::class);
         $backend = new TransientMemoryBackend($this->getEnvironmentConfiguration());
@@ -142,7 +181,7 @@ class TransientMemoryBackendTest extends BaseTestCase
     /**
      * @test
      */
-    public function removeReturnsFalseIfTheEntryDoesntExist()
+    public function removeReturnsFalseIfTheEntryDoesntExist(): void
     {
         $cache = $this->createMock(FrontendInterface::class);
         $backend = new TransientMemoryBackend($this->getEnvironmentConfiguration());
@@ -156,7 +195,7 @@ class TransientMemoryBackendTest extends BaseTestCase
     /**
      * @test
      */
-    public function flushByTagRemovesCacheEntriesWithSpecifiedTag()
+    public function flushByTagRemovesCacheEntriesWithSpecifiedTag(): void
     {
         $cache = $this->createMock(FrontendInterface::class);
         $backend = new TransientMemoryBackend($this->getEnvironmentConfiguration());
@@ -177,7 +216,7 @@ class TransientMemoryBackendTest extends BaseTestCase
     /**
      * @test
      */
-    public function flushRemovesAllCacheEntries()
+    public function flushRemovesAllCacheEntries(): void
     {
         $cache = $this->createMock(FrontendInterface::class);
         $backend = new TransientMemoryBackend($this->getEnvironmentConfiguration());
