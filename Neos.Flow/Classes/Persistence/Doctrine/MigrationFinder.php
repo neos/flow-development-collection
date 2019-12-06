@@ -1,0 +1,58 @@
+<?php
+declare(strict_types=1);
+
+namespace Neos\Flow\Persistence\Doctrine;
+
+use Doctrine\Migrations\Finder\Finder;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Package\PackageInterface;
+use Neos\Flow\Package\PackageManager;
+use Neos\Utility\Files;
+
+/**
+ * The GlobFinder class finds migrations in a directory using the PHP glob() function.
+ */
+final class MigrationFinder extends Finder
+{
+
+    /**
+     * @Flow\Inject
+     * @var PackageManager
+     */
+    protected $packageManager;
+
+    /**
+     * @var string
+     */
+    protected $databasePlatformName;
+
+    public function __construct(string $databasePlatformName)
+    {
+        $this->databasePlatformName = $databasePlatformName;
+    }
+
+    /**
+     * @param string $directory
+     * @param string|null $namespace
+     * @return string[]
+     */
+    public function findMigrations(string $directory, ?string $namespace = null): array
+    {
+        $files = [];
+
+        /** @var PackageInterface $package */
+        foreach ($this->packageManager->getAvailablePackages() as $package) {
+            $path = Files::concatenatePaths([
+                $package->getPackagePath(),
+                'Migrations',
+                $this->databasePlatformName
+            ]);
+            if (is_dir($path)) {
+                echo $path . PHP_EOL;
+                $files += glob($path . '/Version*.php');
+            }
+        }
+
+        return $this->loadMigrations($files, $namespace);
+    }
+}

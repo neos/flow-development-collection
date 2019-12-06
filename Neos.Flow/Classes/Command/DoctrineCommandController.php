@@ -13,7 +13,7 @@ namespace Neos\Flow\Command;
 
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use Doctrine\Common\Util\Debug;
-use Doctrine\DBAL\Migrations\MigrationException;
+use Doctrine\Migrations\Exception\MigrationException;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Error\Debugger;

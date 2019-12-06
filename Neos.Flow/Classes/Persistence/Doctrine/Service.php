@@ -12,14 +12,16 @@ namespace Neos\Flow\Persistence\Doctrine;
  */
 
 use Doctrine\DBAL\DBALException;
-use Doctrine\DBAL\Migrations\Configuration\Configuration;
-use Doctrine\DBAL\Migrations\Migration;
-use Doctrine\DBAL\Migrations\MigrationException;
-use Doctrine\DBAL\Migrations\OutputWriter;
-use Doctrine\DBAL\Migrations\Version;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Schema\Identifier;
 use Doctrine\DBAL\Schema\Schema;
+use Doctrine\Migrations\Configuration\Configuration;
+use Doctrine\Migrations\DependencyFactory;
+use Doctrine\Migrations\Exception\MigrationException;
+use Doctrine\Migrations\Exception\NoMigrationsToExecute;
+use Doctrine\Migrations\Exception\UnknownMigrationVersion;
+use Doctrine\Migrations\OutputWriter;
+use Doctrine\Migrations\Version\Version;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\MappingException;
 use Doctrine\ORM\Tools\SchemaTool;
@@ -208,21 +210,10 @@ class Service
         $configuration->setMigrationsNamespace('Neos\Flow\Persistence\Doctrine\Migrations');
         $configuration->setMigrationsDirectory(Files::concatenatePaths([FLOW_PATH_DATA, 'DoctrineMigrations']));
         $configuration->setMigrationsTableName(self::DOCTRINE_MIGRATIONSTABLENAME);
+        $configuration->setAllOrNothing(true);
+        $configuration->setMigrationsFinder(new MigrationFinder($this->getDatabasePlatformName()));
 
         $configuration->createMigrationTable();
-
-        $databasePlatformName = $this->getDatabasePlatformName();
-        /** @var PackageInterface $package */
-        foreach ($this->packageManager->getAvailablePackages() as $package) {
-            $path = Files::concatenatePaths([
-                $package->getPackagePath(),
-                'Migrations',
-                $databasePlatformName
-            ]);
-            if (is_dir($path)) {
-                $configuration->registerMigrationsFromDirectory($path);
-            }
-        }
 
         return $configuration;
     }
@@ -423,12 +414,14 @@ class Service
     public function executeMigrations($version = null, $outputPathAndFilename = null, $dryRun = false, $quiet = false)
     {
         $configuration = $this->getMigrationConfiguration();
-        $migration = new Migration($configuration);
+        $configuration->setIsDryRun($dryRun);
 
+        $dependencyFactory = new DependencyFactory($configuration);
+        $migrator = $dependencyFactory->getMigrator();
         if ($outputPathAndFilename !== null) {
-            $migration->writeSqlFile($outputPathAndFilename, $version);
+            $migrator->writeSqlFile($outputPathAndFilename, $version);
         } else {
-            $migration->migrate($version, $dryRun);
+            $migrator->migrate($version);
         }
 
         if ($quiet === true) {
@@ -457,14 +450,16 @@ class Service
      * @throws MigrationException
      * @throws DBALException
      */
-    public function executeMigration($version, $direction = 'up', $outputPathAndFilename = null, $dryRun = false)
+    public function executeMigration($version, $direction = 'up', $outputPathAndFilename = null, bool $dryRun = false): string
     {
-        $version = $this->getMigrationConfiguration()->getVersion($version);
+        $configuration = $this->getMigrationConfiguration();
+        $configuration->setIsDryRun($dryRun);
+        $versionInstance = $configuration->getVersion($version);
 
         if ($outputPathAndFilename !== null) {
-            $version->writeSqlFile($outputPathAndFilename, $direction);
+            $versionInstance->writeSqlFile($outputPathAndFilename, $direction);
         } else {
-            $version->execute($direction, $dryRun);
+            $versionInstance->execute($direction);
         }
         return strip_tags(implode(PHP_EOL, $this->output));
     }
@@ -480,37 +475,36 @@ class Service
      * @return void
      * @throws MigrationException
      * @throws \LogicException
-     * @throws DBALException
      */
-    public function markAsMigrated($version, $markAsMigrated)
+    public function markAsMigrated($version, $markAsMigrated): void
     {
         $configuration = $this->getMigrationConfiguration();
 
         if ($version === 'all') {
-            foreach ($configuration->getMigrations() as $version) {
-                if ($markAsMigrated === true && $configuration->hasVersionMigrated($version) === false) {
-                    $version->markMigrated();
-                } elseif ($markAsMigrated === false && $configuration->hasVersionMigrated($version) === true) {
-                    $version->markNotMigrated();
+            foreach ($configuration->getMigrations() as $versionInstance) {
+                if ($markAsMigrated === true && $configuration->hasVersionMigrated($versionInstance) === false) {
+                    $versionInstance->markMigrated();
+                } elseif ($markAsMigrated === false && $configuration->hasVersionMigrated($versionInstance) === true) {
+                    $versionInstance->markNotMigrated();
                 }
             }
         } else {
             if ($configuration->hasVersion($version) === false) {
-                throw MigrationException::unknownMigrationVersion($version);
+                throw UnknownMigrationVersion::new($version);
             }
 
-            $version = $configuration->getVersion($version);
+            $versionInstance = $configuration->getVersion($version);
 
             if ($markAsMigrated === true) {
-                if ($configuration->hasVersionMigrated($version) === true) {
-                    throw new MigrationException(sprintf('The version "%s" is already marked as executed.', $version));
+                if ($configuration->hasVersionMigrated($versionInstance) === true) {
+                    throw NoMigrationsToExecute::new();
                 }
-                $version->markMigrated();
+                $versionInstance->markMigrated();
             } else {
-                if ($configuration->hasVersionMigrated($version) === false) {
-                    throw new MigrationException(sprintf('The version "%s" is already marked as not executed.', $version));
+                if ($configuration->hasVersionMigrated($versionInstance) === false) {
+                    throw NoMigrationsToExecute::new();
                 }
-                $version->markNotMigrated();
+                $versionInstance->markNotMigrated();
             }
         }
     }
@@ -544,7 +538,14 @@ class Service
             $connection = $this->entityManager->getConnection();
 
             if ($filterExpression) {
-                $connection->getConfiguration()->setFilterSchemaAssetsExpression($filterExpression);
+                $connection->getConfiguration()->setSchemaAssetsFilter(
+                    static function (string $assetName) use ($filterExpression) {
+                        if ($assetName instanceof AbstractAsset) {
+                            $assetName = $assetName->getName();
+                        }
+
+                        return preg_match($filterExpression, $assetName);
+                    });
             }
 
             $metadata = $this->entityManager->getMetadataFactory()->getAllMetadata();
@@ -628,16 +629,15 @@ class Service
 <?php
 namespace $namespace;
 
-use Doctrine\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
-use Doctrine\DBAL\Migrations\AbortMigrationException;
+use Doctrine\Migrations\AbstractMigration;
+use Doctrine\Migrations\Exception\AbortMigration;
 
 /**
  * Auto-generated Migration: Please modify to your needs! This block will be used as the migration description if getDescription() is not used.
  */
 class $className extends AbstractMigration
 {
-
     /**
      * @return string
      */
