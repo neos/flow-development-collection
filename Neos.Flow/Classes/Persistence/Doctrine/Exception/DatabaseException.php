@@ -11,11 +11,13 @@ namespace Neos\Flow\Persistence\Doctrine\Exception;
  * source code.
  */
 
+use Neos\Flow\Persistence\Exception as PersistenceException;
+
 /**
  * An generic database exception
  *
  * @api
  */
-class DatabaseException extends \Neos\Flow\Persistence\Exception
+class DatabaseException extends PersistenceException
 {
 }

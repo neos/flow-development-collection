@@ -15,9 +15,11 @@ use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Internal\Hydration\IterableResult;
+use Doctrine\ORM\QueryBuilder;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
+use Neos\Flow\Persistence\QueryResultInterface;
 use Neos\Flow\Persistence\RepositoryInterface;
 
 /**
@@ -119,7 +121,7 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
     /**
      * Finds all entities in the repository.
      *
-     * @return \Neos\Flow\Persistence\QueryResultInterface The query result
+     * @return QueryResultInterface The query result
      * @api
      */
     public function findAll()
@@ -134,7 +136,7 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
      */
     public function findAllIterator()
     {
-        /** @var \Doctrine\ORM\QueryBuilder $queryBuilder */
+        /** @var QueryBuilder $queryBuilder */
         $queryBuilder = $this->entityManager->createQueryBuilder();
         return $queryBuilder
             ->select('entity')
@@ -200,8 +202,7 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
      */
     public function createDqlQuery($dqlString)
     {
-        $dqlQuery = $this->entityManager->createQuery($dqlString);
-        return $dqlQuery;
+        return $this->entityManager->createQuery($dqlString);
     }
 
     /**
@@ -284,10 +285,14 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
         if (isset($method[10]) && strpos($method, 'findOneBy') === 0) {
             $propertyName = lcfirst(substr($method, 9));
             return $query->matching($query->equals($propertyName, $arguments[0], $caseSensitive))->execute($cacheResult)->getFirst();
-        } elseif (isset($method[8]) && strpos($method, 'countBy') === 0) {
+        }
+
+        if (isset($method[8]) && strpos($method, 'countBy') === 0) {
             $propertyName = lcfirst(substr($method, 7));
             return $query->matching($query->equals($propertyName, $arguments[0], $caseSensitive))->count();
-        } elseif (isset($method[7]) && strpos($method, 'findBy') === 0) {
+        }
+
+        if (isset($method[7]) && strpos($method, 'findBy') === 0) {
             $propertyName = lcfirst(substr($method, 6));
             return $query->matching($query->equals($propertyName, $arguments[0], $caseSensitive))->execute($cacheResult);
         }
