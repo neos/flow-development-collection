@@ -17,7 +17,6 @@ use Neos\Cache\Backend\TransientMemoryBackend;
 use Neos\Cache\EnvironmentConfiguration;
 use Neos\Cache\Exception;
 use Neos\Cache\Frontend\StringFrontend;
-use Neos\Cache\Frontend\VariableFrontend;
 use Neos\Cache\Tests\BaseTestCase;
 use Neos\Cache\Frontend\FrontendInterface;
 
