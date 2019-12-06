@@ -92,7 +92,7 @@ class StringFrontend extends AbstractFrontend
         $entries = [];
         $identifiers = $this->backend->findIdentifiersByTag($tag);
         foreach ($identifiers as $identifier) {
-            $entries[$identifier] = $this->backend->get((string)$identifier);
+            $entries[$identifier] = $this->backend->get($identifier);
         }
         return $entries;
     }

@@ -115,7 +115,7 @@ class VariableFrontend extends AbstractFrontend
         $entries = [];
         $identifiers = $this->backend->findIdentifiersByTag($tag);
         foreach ($identifiers as $identifier) {
-            $rawResult = $this->backend->get((string)$identifier);
+            $rawResult = $this->backend->get($identifier);
             if ($rawResult !== false) {
                 $entries[$identifier] = ($this->useIgBinary === true) ? igbinary_unserialize($rawResult) : unserialize($rawResult);
             }
