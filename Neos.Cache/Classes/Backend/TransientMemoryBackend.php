@@ -147,7 +147,7 @@ class TransientMemoryBackend extends IndependentAbstractBackend implements Tagga
     {
         $identifiers = $this->findIdentifiersByTag($tag);
         foreach ($identifiers as $identifier) {
-            $this->remove((string)$identifier);
+            $this->remove($identifier);
         }
         return count($identifiers);
     }
