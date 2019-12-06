@@ -8,7 +8,7 @@ CREATE TABLE "cache" (
   "lifetime" INTEGER UNSIGNED DEFAULT '0' NOT NULL,
   "content" MEDIUMTEXT,
   PRIMARY KEY ("identifier", "cache", "context")
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE "tags" (
   "pk" INT NOT NULL AUTO_INCREMENT,
@@ -17,7 +17,7 @@ CREATE TABLE "tags" (
   "context" VARCHAR(150) NOT NULL,
   "tag" VARCHAR(250) NOT NULL,
   PRIMARY KEY ("pk")
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 CREATE INDEX "identifier" ON tags ("identifier", "cache", "context");
 CREATE INDEX "tag" ON "tags" ("tag");
 
