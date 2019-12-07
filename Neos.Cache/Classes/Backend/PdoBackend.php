@@ -248,10 +248,10 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
 
         $this->databaseHandle->beginTransaction();
         try {
-            $rowsWhereDeleted = $this->removeWithoutTransaction($entryIdentifier);
+            $rowsWereDeleted = $this->removeWithoutTransaction($entryIdentifier);
             $this->databaseHandle->commit();
 
-            return $rowsWhereDeleted;
+            return $rowsWereDeleted;
         } catch (\Exception $exception) {
             $this->databaseHandle->rollBack();
 
