@@ -156,8 +156,6 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
             throw new Exception('No cache frontend has been set yet via setCache().', 1259515600);
         }
 
-        $this->remove($entryIdentifier);
-
         $lifetime = ($lifetime === null) ? $this->defaultLifetime : $lifetime;
 
         // Convert binary data into hexadecimal representation,
@@ -168,6 +166,8 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
 
         $this->databaseHandle->beginTransaction();
         try {
+            $this->removeWithoutTransaction($entryIdentifier);
+
             $statementHandle = $this->databaseHandle->prepare('INSERT INTO "cache" ("identifier", "context", "cache", "created", "lifetime", "content") VALUES (?, ?, ?, ?, ?, ?)');
             $result = $statementHandle->execute([$entryIdentifier, $this->context(), $this->cacheIdentifier, time(), $lifetime, $data]);
             if ($result === false) {
@@ -238,7 +238,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
      * old entries for the identifier still exist, they are removed as well.
      *
      * @param string $entryIdentifier Specifies the cache entry to remove
-     * @return boolean true if (at least) an entry could be removed or false if no entry was found
+     * @return boolean true if (at least) one entry could be removed or false if no entry was found
      * @throws Exception
      * @api
      */
@@ -248,20 +248,37 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
 
         $this->databaseHandle->beginTransaction();
         try {
-            $statementHandle = $this->databaseHandle->prepare('DELETE FROM "tags" WHERE "identifier"=? AND "context"=? AND "cache"=?');
-            $statementHandle->execute([$entryIdentifier, $this->context(), $this->cacheIdentifier]);
-
-            $statementHandle = $this->databaseHandle->prepare('DELETE FROM "cache" WHERE "identifier"=? AND "context"=? AND "cache"=?');
-            $statementHandle->execute([$entryIdentifier, $this->context(), $this->cacheIdentifier]);
-
+            $rowsWereDeleted = $this->removeWithoutTransaction($entryIdentifier);
             $this->databaseHandle->commit();
 
-            return ($statementHandle->rowCount() > 0);
+            return $rowsWereDeleted;
         } catch (\Exception $exception) {
             $this->databaseHandle->rollBack();
 
             throw $exception;
         }
+    }
+
+    /**
+     * Removes all cache entries matching the specified identifier.
+     * Usually this only affects one entry but if - for what reason ever -
+     * old entries for the identifier still exist, they are removed as well.
+     *
+     * Note: this does not wrap the removal statements into a transaction, as
+     * such the method must only be used when a transaction is active!
+     *
+     * @param string $entryIdentifier Specifies the cache entry to remove
+     * @return boolean true if (at least) an entry could be removed or false if no entry was found
+     */
+    private function removeWithoutTransaction(string $entryIdentifier)
+    {
+        $statementHandle = $this->databaseHandle->prepare('DELETE FROM "tags" WHERE "identifier"=? AND "context"=? AND "cache"=?');
+        $statementHandle->execute([$entryIdentifier, $this->context(), $this->cacheIdentifier]);
+
+        $statementHandle = $this->databaseHandle->prepare('DELETE FROM "cache" WHERE "identifier"=? AND "context"=? AND "cache"=?');
+        $statementHandle->execute([$entryIdentifier, $this->context(), $this->cacheIdentifier]);
+
+        return ($statementHandle->rowCount() > 0);
     }
 
     /**
