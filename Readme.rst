@@ -1,5 +1,14 @@
-|Travis Build Status| |Code Climate| |StyleCI| |Latest Stable Version| |License| |Docs| |API| |Slack| |Forum| |Issues| |Translate| |Twitter|
+|Travis Build Status| |Code Climate| |StyleCI| |Latest Stable Version| |Commits since last release| |License| |Docs| |API| |Slack| |Forum| |Issues| |Percentage of issues still open| |Average time to resolve an issue| |Translate| |Twitter|
 
+.. |Average time to resolve an issue| image:: http://isitmaintained.com/badge/resolution/neos/flow-development-collection.svg
+   :target: https://github.com/neos/flow-development-collection/issues
+   :alt: issue resolution
+.. |Percentage of issues still open| image:: http://isitmaintained.com/badge/open/neos/flow-development-collection.svg
+   :target: https://github.com/neos/flow-development-collection/issues
+   :alt: open issues
+.. |Commits since last release| image:: https://img.shields.io/github/commits-since/neos/flow-development-collection/latest.svg
+   :target: https://github.com/neos/flow-development-collection/releases/latest)
+   :alt: commits since latest release
 .. |Travis Build Status| image:: https://travis-ci.org/neos/flow-development-collection.svg?branch=master
    :target: https://travis-ci.org/neos/flow-development-collection
    :alt: Travis
