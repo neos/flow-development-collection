@@ -1,0 +1,18 @@
+`5.1.17 (2019-12-13) <https://github.com/neos/flow-development-collection/releases/tag/5.1.17>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`TASK: Remove code dealing with removed class/interface <https://github.com/neos/flow-development-collection/pull/1873>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+The `FlowSpecificBackendInterface` as well as `Neos\\Flow\\Cache\\Backend`
+are gone with Flow 5.0, so this code is never executed.
+
+The `implements CacheFactoryInterface` is redundant, thus removed.
+
+* Packages: ``Flow``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/5.1.16...5.1.17>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
