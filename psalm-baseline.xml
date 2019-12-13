@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="3.7.1@8e6aa8a07d148dcedf58cccf32ce4b602b422035">
+<files psalm-version="3.7.2@d9cae720c1af31db9ba27c2bc1fcf9b0dd092fb0">
   <file src="Packages/Framework/Neos.Cache/Classes/Backend/AbstractBackend.php">
     <PossiblyInvalidArgument occurrences="1">
       <code>$options</code>
@@ -1728,9 +1728,6 @@
     <PossiblyUndefinedArrayOffset occurrences="1">
       <code>$primaryTable['name']</code>
     </PossiblyUndefinedArrayOffset>
-    <UndefinedClass occurrences="1">
-      <code>ORM\TableGenerator</code>
-    </UndefinedClass>
     <UndefinedInterfaceMethod occurrences="15">
       <code>setCustomRepositoryClass</code>
       <code>setCustomRepositoryClass</code>
@@ -1750,6 +1747,9 @@
     </UndefinedInterfaceMethod>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Persistence/Doctrine/PersistenceManager.php">
+    <ArgumentTypeCoercion occurrences="1">
+      <code>$this-&gt;entityManager-&gt;getMetadataFactory()-&gt;getAllMetadata()</code>
+    </ArgumentTypeCoercion>
     <NullableReturnStatement occurrences="2">
       <code>$this-&gt;entityManager-&gt;getReference($objectType, $identifier)</code>
       <code>$this-&gt;entityManager-&gt;find($objectType, $identifier)</code>
@@ -1804,6 +1804,9 @@
     </NullableReturnStatement>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Persistence/Doctrine/Service.php">
+    <ArgumentTypeCoercion occurrences="1">
+      <code>$this-&gt;entityManager-&gt;getMetadataFactory()-&gt;getAllMetadata()</code>
+    </ArgumentTypeCoercion>
     <ImplicitToStringCast occurrences="3">
       <code>$executedUnavailableMigration</code>
       <code>$version</code>
