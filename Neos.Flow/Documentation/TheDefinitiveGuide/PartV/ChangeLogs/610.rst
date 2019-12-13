@@ -1,0 +1,117 @@
+`6.1.0 (2019-12-13) <https://github.com/neos/flow-development-collection/releases/tag/6.1.0>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`TASK: Fix some psalm complaints <https://github.com/neos/flow-development-collection/pull/1884>`_
+--------------------------------------------------------------------------------------------------
+
+The TableGenerator was never supported anyways, and the Doctrine
+fixes are rather cosmetic. But less deprecation = better code.
+
+* Packages: ``Flow``
+
+`FEATURE: Add optional limit parameter to String.pregReplace <https://github.com/neos/flow-development-collection/pull/1860>`_
+------------------------------------------------------------------------------------------------------------------------------
+
+Resolves: #1863
+
+* Packages: ``Eel`` ``Flow``
+
+`FEATURE: Allow split sources for all configurations <https://github.com/neos/flow-development-collection/pull/1825>`_
+----------------------------------------------------------------------------------------------------------------------
+
+This change sets `$allowSplitSource` to `true` for all configuration types.
+
+In addition it changes the default value for that flag to true in the method
+`registerConfigurationType()`.
+
+Resolves #603 
+
+* Packages: ``Eel`` ``Flow``
+
+`FEATURE: Add array ksort eel helper <https://github.com/neos/flow-development-collection/pull/1858>`_
+------------------------------------------------------------------------------------------------------
+
+Resolves: #1864
+
+* Packages: ``Eel``
+
+`FEATURE: Add unique array eel helper <https://github.com/neos/flow-development-collection/pull/1859>`_
+-------------------------------------------------------------------------------------------------------
+
+* Packages: ``Eel`` ``Flow``
+
+`FEATURE: Allow StringLengthValidator to ignore HTML tags <https://github.com/neos/flow-development-collection/pull/1849>`_
+---------------------------------------------------------------------------------------------------------------------------
+
+Adds an option `ignoreHtml` to the `StringLengthValidator`
+
+Usage:
+
+    $validator = new StringLengthValidator(['maximum' => 14, 'ignoreHtml' => true]);
+    $validator->validate('Some <b>bold</b> text')->hasErrors(); // false
+
+Resolves: neos/neos-ui#2579
+
+* Packages: ``Flow``
+
+`BUGFIX: fix linking to root domains (empty path), by generating a "/" URL <https://github.com/neos/flow-development-collection/pull/1839>`_
+--------------------------------------------------------------------------------------------------------------------------------------------
+
+Note that some URLs might now end with a slash that did not have a slash
+before. If your code relies on that, you might need to adjust it!
+
+Resolves: https://github.com/neos/neos-development-collection/issues/2759
+Related: https://github.com/neos/flow-development-collection/pull/1804
+
+* Packages: ``Flow``
+
+`TASK: Use isUninitializedProxy() (adjust to #1611) <https://github.com/neos/flow-development-collection/pull/1828>`_
+---------------------------------------------------------------------------------------------------------------------
+
+Just some small code cleanup
+
+* Packages: ``Flow``
+
+`FEATURE: Allow to skip validation of uninitialized proxies <https://github.com/neos/flow-development-collection/pull/1611>`_
+-----------------------------------------------------------------------------------------------------------------------------
+
+The new option `skipUnInitializedProxies` allows to skip validation
+of uninitialized proxy instances, to avoid recursions down into
+unchanged hierarchies.
+
+* Packages: ``Flow``
+
+`TASK: Mention the basic development setup steps in the readme <https://github.com/neos/flow-development-collection/pull/1812>`_
+--------------------------------------------------------------------------------------------------------------------------------
+
+This should help people onboard for contribution, as it is not obvious that one has to install the development-distribution and the information for that is not that easy to find and then very elaborate. This is the perfect place to have it in a TL;DR style
+
+`TASK: Remove unneeded code section <https://github.com/neos/flow-development-collection/pull/1788>`_
+-----------------------------------------------------------------------------------------------------
+
+The call to `TypeHandling::parse` is already done inside `ClassSchema::addProperty` and throws a very similar exception.
+As a side effect, this should have a very small performance improvement for class schema building/compile time.
+
+`Apply fixes from StyleCI <https://github.com/neos/flow-development-collection/pull/1789>`_
+-------------------------------------------------------------------------------------------
+
+This pull request applies code style fixes from an analysis carried out by [StyleCI](https://github.styleci.io).
+
+---
+
+For more information, click [here](https://github.styleci.io/analyses/86Wn1W).
+
+* Packages: ``Flow``
+
+`TASK: Convert main.workflow to Actions V2 yml files <https://github.com/neos/flow-development-collection/pull/1765>`_
+----------------------------------------------------------------------------------------------------------------------
+
+As per https://help.github.com/en/articles/migrating-github-actions-from-hcl-syntax-to-yaml-syntax
+
+* Packages: ``github``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/6.0.6...6.1.0>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
