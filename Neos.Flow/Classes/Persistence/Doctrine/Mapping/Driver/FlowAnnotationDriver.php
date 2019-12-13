@@ -13,8 +13,8 @@ namespace Neos\Flow\Persistence\Doctrine\Mapping\Driver;
 
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\IndexedReader;
-use Doctrine\Common\Persistence\Mapping\ClassMetadata;
-use Doctrine\Common\Persistence\Mapping\Driver\MappingDriver as DoctrineMappingDriverInterface;
+use Doctrine\Persistence\Mapping\ClassMetadata;
+use Doctrine\Persistence\Mapping\Driver\MappingDriver as DoctrineMappingDriverInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Events;
 use Doctrine\ORM\Mapping\Builder\EntityListenerBuilder;
@@ -796,8 +796,6 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
                         'allocationSize' => $seqGeneratorAnnotation->allocationSize,
                         'initialValue' => $seqGeneratorAnnotation->initialValue
                     ]);
-                } elseif ($this->reader->getPropertyAnnotation($property, ORM\TableGenerator::class) !== null) {
-                    throw ORM\MappingException::tableIdGeneratorNotImplemented($className);
                 } elseif ($customGeneratorAnnotation = $this->reader->getPropertyAnnotation($property, ORM\CustomIdGenerator::class)) {
                     $metadata->setCustomGeneratorDefinition([
                         'class' => $customGeneratorAnnotation->class
