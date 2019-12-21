@@ -177,7 +177,7 @@ class ReflectionService
     /**
      * @var array
      */
-    protected $settings;
+    protected $settings = [];
 
     /**
      * Array of annotation classnames and the names of classes which are annotated with them
@@ -1406,7 +1406,7 @@ class ReflectionService
         $paramAnnotations = $method->isTaggedWith('param') ? $method->getTagValues('param') : [];
 
         $this->classReflectionData[$className][self::DATA_CLASS_METHODS][$methodName][self::DATA_METHOD_PARAMETERS][$parameter->getName()] = $this->convertParameterReflectionToArray($parameter, $method);
-        if ($this->settings['logIncorrectDocCommentHints'] !== true) {
+        if (!isset($this->settings['logIncorrectDocCommentHints']) || $this->settings['logIncorrectDocCommentHints'] !== true) {
             return;
         }
 
