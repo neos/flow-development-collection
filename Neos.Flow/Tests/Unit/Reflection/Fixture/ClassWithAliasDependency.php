@@ -16,5 +16,7 @@ namespace Neos\Flow\Tests\Unit\Reflection\Fixture;
  */
 class ClassWithAliasDependency
 {
-    public function injectDependency(AliasedClass $class) {}
+    public function injectDependency(AliasedClass $class)
+    {
+    }
 }
