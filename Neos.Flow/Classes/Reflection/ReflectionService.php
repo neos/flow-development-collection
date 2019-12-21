@@ -1806,14 +1806,6 @@ class ReflectionService
         $parameterType = null;
         if ($parameter->getType() !== null) {
             $parameterType = $parameter->getType() instanceof \ReflectionNamedType ? $parameter->getType()->getName() : (string)$parameter->getType();
-        } else {
-            $paramAnnotations = $method->isTaggedWith('param') ? $method->getTagValues('param') : [];
-            if (isset($paramAnnotations[$parameter->getPosition()])) {
-                $explodedParameters = explode(' ', $paramAnnotations[$parameter->getPosition()]);
-                if (count($explodedParameters) >= 2) {
-                    $parameterType = $this->expandType($method->getDeclaringClass(), $explodedParameters[0]);
-                }
-            }
         }
         if ($parameter->getClass() !== null) {
             // We use parameter type here to make class_alias usage work and return the hinted class name instead of the alias
@@ -1821,6 +1813,13 @@ class ReflectionService
         }
         if ($parameter->isOptional() && $parameter->isDefaultValueAvailable()) {
             $parameterInformation[self::DATA_PARAMETER_DEFAULT_VALUE] = $parameter->getDefaultValue();
+        }
+        $paramAnnotations = $method->isTaggedWith('param') ? $method->getTagValues('param') : [];
+        if (isset($paramAnnotations[$parameter->getPosition()])) {
+            $explodedParameters = explode(' ', $paramAnnotations[$parameter->getPosition()]);
+            if (count($explodedParameters) >= 2) {
+                $parameterType = $this->expandType($method->getDeclaringClass(), $explodedParameters[0]);
+            }
         }
         if (!$parameter->isArray()) {
             $builtinType = $parameter->getBuiltinType();
