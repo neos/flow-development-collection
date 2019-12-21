@@ -1766,11 +1766,11 @@ class ReflectionService
                 'position' => $parameterData[self::DATA_PARAMETER_POSITION],
                 'optional' => isset($parameterData[self::DATA_PARAMETER_OPTIONAL]),
                 'type' => $parameterData[self::DATA_PARAMETER_TYPE],
-                'class' => isset($parameterData[self::DATA_PARAMETER_CLASS]) ? $parameterData[self::DATA_PARAMETER_CLASS] : null,
+                'class' => $parameterData[self::DATA_PARAMETER_CLASS] ?? null,
                 'array' => isset($parameterData[self::DATA_PARAMETER_ARRAY]),
                 'byReference' => isset($parameterData[self::DATA_PARAMETER_BY_REFERENCE]),
                 'allowsNull' => isset($parameterData[self::DATA_PARAMETER_ALLOWS_NULL]),
-                'defaultValue' => isset($parameterData[self::DATA_PARAMETER_DEFAULT_VALUE]) ? $parameterData[self::DATA_PARAMETER_DEFAULT_VALUE] : null,
+                'defaultValue' => $parameterData[self::DATA_PARAMETER_DEFAULT_VALUE] ?? null,
                 'scalarDeclaration' => isset($parameterData[self::DATA_PARAMETER_SCALAR_DECLARATION])
             ];
         }
@@ -1785,7 +1785,7 @@ class ReflectionService
      * @param MethodReflection $method The parameter's method
      * @return array Parameter information array
      */
-    protected function convertParameterReflectionToArray(ParameterReflection $parameter, MethodReflection $method = null)
+    protected function convertParameterReflectionToArray(ParameterReflection $parameter, MethodReflection $method)
     {
         $parameterInformation = [
             self::DATA_PARAMETER_POSITION => $parameter->getPosition()
@@ -1803,32 +1803,34 @@ class ReflectionService
             $parameterInformation[self::DATA_PARAMETER_ALLOWS_NULL] = true;
         }
 
-        $parameterClass = $parameter->getClass();
-        if ($parameterClass !== null) {
-            $parameterInformation[self::DATA_PARAMETER_CLASS] = $parameterClass->getName();
-        }
-        if ($parameter->isOptional() && $parameter->isDefaultValueAvailable()) {
-            $parameterInformation[self::DATA_PARAMETER_DEFAULT_VALUE] = $parameter->getDefaultValue();
-        }
-        if ($method !== null) {
+        $parameterType = null;
+        if ($parameter->getType() !== null) {
+            $parameterType = $parameter->getType() instanceof \ReflectionNamedType ? $parameter->getType()->getName() : (string)$parameter->getType();
+        } else {
             $paramAnnotations = $method->isTaggedWith('param') ? $method->getTagValues('param') : [];
             if (isset($paramAnnotations[$parameter->getPosition()])) {
                 $explodedParameters = explode(' ', $paramAnnotations[$parameter->getPosition()]);
                 if (count($explodedParameters) >= 2) {
                     $parameterType = $this->expandType($method->getDeclaringClass(), $explodedParameters[0]);
-                    $parameterInformation[self::DATA_PARAMETER_TYPE] = $this->cleanClassName($parameterType);
-                }
-            }
-            if (!$parameter->isArray()) {
-                $builtinType = $parameter->getBuiltinType();
-                if ($builtinType !== null) {
-                    $parameterInformation[self::DATA_PARAMETER_TYPE] = $builtinType;
-                    $parameterInformation[self::DATA_PARAMETER_SCALAR_DECLARATION] = true;
                 }
             }
         }
-        if (!isset($parameterInformation[self::DATA_PARAMETER_TYPE]) && $parameterClass !== null) {
-            $parameterInformation[self::DATA_PARAMETER_TYPE] = $this->cleanClassName($parameterClass->getName());
+        if ($parameter->getClass() !== null) {
+            // We use parameter type here to make class_alias usage work and return the hinted class name instead of the alias
+            $parameterInformation[self::DATA_PARAMETER_CLASS] = $parameterType;
+        }
+        if ($parameter->isOptional() && $parameter->isDefaultValueAvailable()) {
+            $parameterInformation[self::DATA_PARAMETER_DEFAULT_VALUE] = $parameter->getDefaultValue();
+        }
+        if (!$parameter->isArray()) {
+            $builtinType = $parameter->getBuiltinType();
+            if ($builtinType !== null) {
+                $parameterInformation[self::DATA_PARAMETER_TYPE] = $builtinType;
+                $parameterInformation[self::DATA_PARAMETER_SCALAR_DECLARATION] = true;
+            }
+        }
+        if (!isset($parameterInformation[self::DATA_PARAMETER_TYPE]) && $parameterType !== null) {
+            $parameterInformation[self::DATA_PARAMETER_TYPE] = $this->cleanClassName($parameterType);
         } elseif (!isset($parameterInformation[self::DATA_PARAMETER_TYPE])) {
             $parameterInformation[self::DATA_PARAMETER_TYPE] = $parameter->isArray() ? 'array' : 'mixed';
         }
