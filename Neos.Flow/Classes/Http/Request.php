@@ -289,7 +289,7 @@ class Request extends BaseRequest implements ServerRequestInterface
             $baseUri = new Uri($baseUri);
         }
 
-        $this->attributes[self::ATTRIBUTE_BASE_URI] = $baseUri;
+        $this->attributes[self::ATTRIBUTE_BASE_URI] = $baseUri->withQuery('')->withFragment('');
     }
 
     /**
