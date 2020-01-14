@@ -1,0 +1,18 @@
+`6.1.1 (2020-01-14) <https://github.com/neos/flow-development-collection/releases/tag/6.1.1>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Remove fragment/query in setBaseUri() <https://github.com/neos/flow-development-collection/pull/1894>`_
+----------------------------------------------------------------------------------------------------------------
+
+When `setBaseUri()` is used with an URI that has query parameters
+or a fragment, this leads to broken link generation. Usually a non-issue,
+since `detectBaseUri()` is used most often, and that removes those
+already.
+
+* Packages: ``Flow``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/6.1.0...6.1.1>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
