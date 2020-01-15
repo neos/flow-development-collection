@@ -1,0 +1,20 @@
+`6.0.8 (2020-01-15) <https://github.com/neos/flow-development-collection/releases/tag/6.0.8>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Fix string offset access syntax with curly braces <https://github.com/neos/flow-development-collection/pull/1896>`_
+----------------------------------------------------------------------------------------------------------------------------
+
+Related to https://github.com/neos/flow-development-collection/issues/1866
+
+* Packages: ``Flow``
+
+`TASK: Make psalm happier… <https://github.com/neos/flow-development-collection/pull/1895>`_
+----------------------------------------------------------------------------------------------
+
+* Packages: ``Flow``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/6.0.7...6.0.8>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
