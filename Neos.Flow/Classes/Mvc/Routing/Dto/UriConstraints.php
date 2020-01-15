@@ -323,7 +323,7 @@ final class UriConstraints
         // Ensure the URL always starts with "/", no matter if it is empty of non-empty.
         // HINT: We need to enforce at least a "/" URL,a s otherwise e.g. linking to the root node of a Neos
         // site would not work.
-        if (strlen($uri->getPath()) === 0 || $uri->getPath(){0} !== '/') {
+        if ($uri->getPath() === '' || $uri->getPath()[0] !== '/') {
             $uri = $uri->withPath('/' . $uri->getPath());
         }
 
