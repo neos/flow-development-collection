@@ -518,6 +518,12 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
      */
     public function rewind()
     {
+        try {
+            $this->connect();
+        } catch (Exception $e) {
+            return;
+        }
+
         if ($this->cacheEntriesIterator !== null) {
             $this->cacheEntriesIterator->rewind();
             return;
