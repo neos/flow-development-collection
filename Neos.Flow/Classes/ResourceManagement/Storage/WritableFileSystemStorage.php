@@ -63,9 +63,7 @@ class WritableFileSystemStorage extends FileSystemStorage implements WritableSto
                 throw new StorageException(sprintf('Could import the content stream to temporary file "%s".', $temporaryTargetPathAndFilename), 1380880079);
             }
         } else {
-            try {
-                copy($source, $temporaryTargetPathAndFilename);
-            } catch (\Exception $exception) {
+            if (copy($source, $temporaryTargetPathAndFilename) === false) {
                 throw new StorageException(sprintf('Could not copy the file from "%s" to temporary file "%s".', $source, $temporaryTargetPathAndFilename), 1375198876);
             }
         }
