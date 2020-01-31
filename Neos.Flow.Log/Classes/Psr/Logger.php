@@ -66,13 +66,15 @@ class Logger implements LoggerInterface
      */
     public function log($level, $message, array $context = [])
     {
-        $backendLogLevel = self::LOGLEVEL_MAPPING[$level];
+        if (is_string($level) === true) {
+            $level = self::LOGLEVEL_MAPPING[$level];
+        }
 
         list($packageKey, $className, $methodName) = $this->extractLegacyDataFromContext($context);
         $additionalData = $this->removeLegacyDataFromContext($context);
 
         foreach ($this->backends as $backend) {
-            $backend->append($message, $backendLogLevel, $additionalData, $packageKey, $className, $methodName);
+            $backend->append($message, $level, $additionalData, $packageKey, $className, $methodName);
         }
     }
 
