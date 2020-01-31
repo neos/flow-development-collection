@@ -191,7 +191,6 @@ class ActionController extends AbstractController
         $this->actionMethodName = $this->resolveActionMethodName();
 
         $this->initializeActionMethodArguments();
-        $this->initializeActionMethodValidators();
 
         $this->initializeAction();
         $actionInitializationMethodName = 'initialize' . ucfirst($this->actionMethodName);
@@ -201,6 +200,7 @@ class ActionController extends AbstractController
         $this->mvcPropertyMappingConfigurationService->initializePropertyMappingConfigurationFromRequest($this->request, $this->arguments);
 
         $this->mapRequestArgumentsToControllerArguments();
+        $this->initializeActionMethodValidators();
 
         if ($this->view === null) {
             $this->view = $this->resolveView();
@@ -362,6 +362,7 @@ class ActionController extends AbstractController
             $ignoredArguments = [];
         }
 
+        /* @var $argument Argument */
         foreach ($this->arguments as $argument) {
             $argumentName = $argument->getName();
             if (isset($ignoredArguments[$argumentName]) && !$ignoredArguments[$argumentName]['evaluate']) {

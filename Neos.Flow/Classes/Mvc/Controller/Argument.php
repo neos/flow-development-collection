@@ -14,6 +14,7 @@ namespace Neos\Flow\Mvc\Controller;
 use Neos\Flow\Annotations as Flow;
 use Neos\Error\Messages\Result;
 use Neos\Flow\Property\PropertyMapper;
+use Neos\Flow\Property\TypeConverter\ObjectConverter;
 use Neos\Utility\TypeHandling;
 use Neos\Flow\Validation\Validator\ValidatorInterface;
 
@@ -180,6 +181,10 @@ class Argument
     public function setValidator(ValidatorInterface $validator): Argument
     {
         $this->validator = $validator;
+        if ($validator !== null) {
+            $validationMessages = $validator->validate($this->value);
+            $this->validationResults->merge($validationMessages);
+        }
         return $this;
     }
 
@@ -212,12 +217,15 @@ class Argument
             $this->value = $rawValue;
             return $this;
         }
+        $configuration = $this->getPropertyMappingConfiguration();
+        $configuredType = $configuration->getConfigurationValue(ObjectConverter::class, ObjectConverter::CONFIGURATION_TARGET_TYPE);
+        if ($configuredType !== null) {
+            $this->dataType = $configuredType;
+        } elseif (isset($rawValue['__type']) && $configuration->getConfigurationValue(ObjectConverter::class, ObjectConverter::CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED) === true) {
+            $this->dataType = $rawValue['__type'];
+        }
         $this->value = $this->propertyMapper->convert($rawValue, $this->dataType, $this->getPropertyMappingConfiguration());
         $this->validationResults = $this->propertyMapper->getMessages();
-        if ($this->validator !== null) {
-            $validationMessages = $this->validator->validate($this->value);
-            $this->validationResults->merge($validationMessages);
-        }
 
         return $this;
     }
