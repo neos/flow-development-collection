@@ -250,11 +250,9 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
             if ($expiryTime !== 0 && $expiryTime < $now) {
                 continue;
             }
-           $extractedTags = substr($metaData, 0, -self::EXPIRYTIME_LENGTH);
-           if ($extractedTags === false) {
-               continue;
-           }
-            if (!in_array($searchedTag, explode(' ', $extractedTags))) {
+
+            $extractedTags = substr($metaData, 0, -self::EXPIRYTIME_LENGTH);
+            if ($extractedTags === false || !in_array($searchedTag, explode(' ', $extractedTags))) {
                 continue;
             }
 
