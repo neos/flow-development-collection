@@ -426,22 +426,12 @@ to clean up hard disk space or memory.
 
 .. note::
 
-  There is currently very little production experience with this  backend, especially
-  not with a capable database like Oracle. We appreciate any feedback for real life use
-  cases of this cache.
+  The definition for the cache tables can be found in the directory
+  ``Neos.Cache/Resources/Private/``.
 
-.. note::
-
-  When *not using SQLite*, you have to create the needed caching tables manually.
-  The table definition (as used automatically for SQLite) can be found in the
-  file ``Neos.Flow/Resources/Private/Cache/SQL/DDL.sql``. It works unchanged for
-  MySQL, for other RDBMS you might need to adjust the DDL manually.
-
-.. note::
-
-  When *not using SQLite* the maximum length of each cache entry is restricted.
-  The default in ``Neos.Flow/Resources/Private/Cache/SQL/DDL.sql``
-  is ``MEDIUMTEXT`` (16mb on MySQL), which should be sufficient in most cases.
+  The maximum size of each cache entry is limited to what a ``MEDIUMTEXT`` type
+  can hold. When using MySQL/MariaDB that is 16MiB, other databases may have
+  a different limit.
 
 .. warning::
 
@@ -457,24 +447,21 @@ Options
 
 :title:`Pdo cache backend options`
 
-+----------------+----------------------------------------+-----------+--------+---------+
-| Option         | Description                            | Mandatory | Type   | Default |
-+================+========================================+===========+========+=========+
-| dataSourceName | Data source name for connecting to the | Yes       | string |         |
-|                | database.                              |           |        |         |
-|                |                                        |           |        |         |
-|                | :title:`Examples:`                     |           |        |         |
-|                |                                        |           |        |         |
-|                | * mysql:host=localhost;dbname=test     |           |        |         |
-|                | * sqlite:/path/to/sqlite.db            |           |        |         |
-|                | * sqlite::memory:                      |           |        |         |
-+----------------+----------------------------------------+-----------+--------+---------+
-| username       | Username to use for the database       | No        |        |         |
-|                | connection                             |           |        |         |
-+----------------+----------------------------------------+-----------+--------+---------+
-| password       | Password to use for the database       | No        |        |         |
-|                | connection                             |           |        |         |
-+----------------+----------------------------------------+-----------+--------+---------+
++----------------+----------------------------------------------------+-----------+--------+---------+
+| Option         | Description                                        | Mandatory | Type   | Default |
++================+====================================================+===========+========+=========+
+| dataSourceName | Data source name for connecting to the database.   | Yes       | string |         |
+|                |                                                    |           |        |         |
+|                | :title:`Examples:`                                 |           |        |         |
+|                |                                                    |           |        |         |
+|                | * mysql:host=localhost;dbname=test;charset=utf8mb4 |           |        |         |
+|                | * sqlite:/path/to/sqlite.db                        |           |        |         |
+|                | * sqlite::memory:                                  |           |        |         |
++----------------+----------------------------------------------------+-----------+--------+---------+
+| username       | Username to use for the database connection        | No        |        |         |
++----------------+----------------------------------------------------+-----------+--------+---------+
+| password       | Password to use for the database connection.       | No        |        |         |
++----------------+----------------------------------------------------+-----------+--------+---------+
 
 Neos\\Cache\\Backend\\RedisBackend
 ----------------------------------

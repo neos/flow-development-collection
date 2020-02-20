@@ -267,8 +267,9 @@ class DatesReader
         self::validateFormatType($formatType);
         self::validateFormatLength($formatLength);
 
-        if (isset($this->parsedFormatsIndices[(string)$locale][$formatType][$formatLength])) {
-            return $this->parsedFormats[$this->parsedFormatsIndices[(string)$locale][$formatType][$formatLength]];
+        $parsedFormatIndex = $this->parsedFormatsIndices[(string)$locale][$formatType][$formatLength] ?? '';
+        if (isset($this->parsedFormats[$parsedFormatIndex])) {
+            return $this->parsedFormats[$parsedFormatIndex];
         }
 
         $model = $this->cldrRepository->getModelForLocale($locale);

@@ -21,7 +21,7 @@ use Neos\Flow\Http\Component\ComponentInterface;
 class DispatchComponent implements ComponentInterface
 {
     /**
-     * @Flow\Inject(lazy=false)
+     * @Flow\Inject
      * @var Dispatcher
      */
     protected $dispatcher;
