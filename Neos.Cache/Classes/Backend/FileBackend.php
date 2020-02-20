@@ -246,6 +246,9 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
             $fileSize = filesize($cacheEntryPathAndFilename);
             $index = (integer)$this->readCacheFile($cacheEntryPathAndFilename, $fileSize - self::DATASIZE_DIGITS, self::DATASIZE_DIGITS);
             $metaData = $this->readCacheFile($cacheEntryPathAndFilename, $index, $fileSize - $index - self::DATASIZE_DIGITS);
+            if ($metaData === false) {
+                continue;
+            }
             $expiryTime = (integer)substr($metaData, -self::EXPIRYTIME_LENGTH, self::EXPIRYTIME_LENGTH);
             if ($expiryTime !== 0 && $expiryTime < $now) {
                 continue;
