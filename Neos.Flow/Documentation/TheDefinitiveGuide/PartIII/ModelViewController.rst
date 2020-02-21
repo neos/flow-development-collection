@@ -311,6 +311,14 @@ later sources replace earlier ones
 * body (typically from POST or PUT requests)
 * file uploads (derived from $_FILES)
 
+.. note::
+
+  If you submit a request body that will be parsed into a PHP array, e.g. a JSON
+  array or object, and it contains numeric keys, Flow will not automatically map
+  this into controller arguments, as numbers are no valid PHP variable names.
+  You can access the full request body then via `$this->request->getHttpRequest()->getParsedBody()`
+  inside your controller.
+
 Internal Arguments
 ~~~~~~~~~~~~~~~~~~
 
