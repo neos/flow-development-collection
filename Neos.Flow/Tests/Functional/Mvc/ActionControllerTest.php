@@ -126,6 +126,21 @@ class ActionControllerTest extends FunctionalTestCase
     }
 
     /**
+     * @test
+     */
+    public function arrayRequestBodyIsNotMappedByDefault()
+    {
+        $body = json_encode(['foo']);
+        $request = Request::create(new Uri('http://localhost/test/mvc/actioncontrollertesta/postArrayBody?getArgument=getValue'), 'POST');
+        $request->setContent($body);
+        $request->setHeader('Content-Type', 'application/json');
+        $request->setHeader('Content-Length', count_chars($body));
+
+        $response = $this->browser->sendRequest($request);
+        $this->assertEquals('postArrayBodyAction-getValue-'.$body, $response->getContent());
+    }
+
+    /**
      * RFC 2616 / 10.4.5 (404 Not Found)
      *
      * @test

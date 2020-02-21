@@ -184,6 +184,40 @@ abstract class Arrays
     }
 
     /**
+     * Iterate the array and check if any of the array values hold the predicate.
+     *
+     * @param array $array
+     * @param callable $predicate callable( mixed $value )
+     * @return bool True if any of the array values hold the predicate, false if none do
+     */
+    public static function array_any(array $array, callable $predicate)
+    {
+        foreach ($array as $key => $value) {
+            if ($predicate($value)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Iterate the array and check if all of the array values hold the predicate.
+     *
+     * @param array $array
+     * @param callable $predicate callable( mixed $value )
+     * @return bool True if all of the array values hold the predicate, false if any don't
+     */
+    public static function array_all(array $array, callable $predicate)
+    {
+        foreach ($array as $value) {
+            if (!$predicate($value)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
      * Returns the value of a nested array by following the specifed path.
      *
      * @param array &$array The array to traverse as a reference

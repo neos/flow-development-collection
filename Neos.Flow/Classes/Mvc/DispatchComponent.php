@@ -99,7 +99,9 @@ class DispatchComponent implements ComponentInterface
 
         $parsedBody = $this->parseRequestBody($httpRequest);
         if ($parsedBody !== []) {
-            $arguments = Arrays::arrayMergeRecursiveOverrule($arguments, $parsedBody);
+            if (Arrays::array_all(array_keys($parsedBody), 'is_string')) {
+                $arguments = Arrays::arrayMergeRecursiveOverrule($arguments, $parsedBody);
+            }
             $httpRequest = $httpRequest->withParsedBody($parsedBody);
         }
 

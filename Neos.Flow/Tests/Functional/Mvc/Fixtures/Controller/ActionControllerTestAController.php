@@ -76,6 +76,15 @@ class ActionControllerTestAController extends ActionController
     }
 
     /**
+     * @param string $getArgument
+     * @return string
+     */
+    public function postArrayBodyAction($getArgument)
+    {
+        return 'postArrayBodyAction-' . $getArgument . '-' . json_encode($this->request->getHttpRequest()->getParsedBody());
+    }
+
+    /**
      * @Flow\Validate("brokenArgument1", type="StringLength", options={"maximum": 3})
      * @Flow\Validate("brokenArgument2", type="StringLength", options={"minimum": 100})
      * @Flow\IgnoreValidation("brokenArgument1")
