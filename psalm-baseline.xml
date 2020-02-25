@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="3.8.2@90d6b73fd8062432030ef39b7b6694b3902daa31">
+<files psalm-version="3.8.5@e6ec5fa22a7b9e61670a24d07b3119aff80dcd89">
   <file src="Packages/Framework/Neos.Cache/Classes/Backend/AbstractBackend.php">
     <PossiblyInvalidArgument occurrences="1">
       <code>$options</code>
@@ -42,9 +42,9 @@
     </UndefinedDocblockClass>
   </file>
   <file src="Packages/Framework/Neos.Cache/Classes/Backend/PdoBackend.php">
-    <PossiblyNullArgument occurrences="1">
+    <PossiblyInvalidArgument occurrences="1">
       <code>$fetchedColumn</code>
-    </PossiblyNullArgument>
+    </PossiblyInvalidArgument>
     <PossiblyNullPropertyAssignmentValue occurrences="1">
       <code>null</code>
     </PossiblyNullPropertyAssignmentValue>
@@ -391,6 +391,9 @@
     </MoreSpecificImplementedParamType>
   </file>
   <file src="Packages/Framework/Neos.Flow.Log/Classes/Backend/FileBackend.php">
+    <InvalidPropertyAssignmentValue occurrences="1">
+      <code>$this-&gt;fileHandle</code>
+    </InvalidPropertyAssignmentValue>
     <PossiblyNullOperand occurrences="2">
       <code>$className</code>
       <code>$methodName</code>
@@ -829,6 +832,10 @@
     </TooManyArguments>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Core/LockManager.php">
+    <InvalidPropertyAssignmentValue occurrences="2">
+      <code>$this-&gt;lockResource</code>
+      <code>$this-&gt;lockResource</code>
+    </InvalidPropertyAssignmentValue>
     <UndefinedConstant occurrences="4">
       <code>FLOW_PATH_ROOT</code>
       <code>FLOW_PATH_ROOT</code>
@@ -993,9 +1000,6 @@
     </UndefinedConstant>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/I18n/Cldr/CldrModel.php">
-    <LoopInvalidation occurrences="1">
-      <code>$data</code>
-    </LoopInvalidation>
     <PossiblyFalseOperand occurrences="1">
       <code>strpos($nodeString, '"]', $positionOfAttributeValue)</code>
     </PossiblyFalseOperand>
@@ -2102,8 +2106,10 @@
     <InvalidNullableReturnType occurrences="1">
       <code>MethodReflection</code>
     </InvalidNullableReturnType>
-    <LessSpecificImplementedReturnType occurrences="1">
+    <LessSpecificImplementedReturnType occurrences="3">
       <code>array&lt;ClassReflection&gt;</code>
+      <code>array&lt;MethodReflection&gt;</code>
+      <code>array&lt;PropertyReflection&gt;</code>
     </LessSpecificImplementedReturnType>
     <MethodSignatureMismatch occurrences="1">
       <code>public function newInstanceWithoutConstructor()</code>
@@ -2359,6 +2365,9 @@
     <InvalidFalsableReturnType occurrences="1">
       <code>resource</code>
     </InvalidFalsableReturnType>
+    <InvalidPropertyAssignmentValue occurrences="1">
+      <code>$this-&gt;handle</code>
+    </InvalidPropertyAssignmentValue>
     <InvalidScalarArgument occurrences="1">
       <code>$options&amp;STREAM_MKDIR_RECURSIVE</code>
     </InvalidScalarArgument>
@@ -2996,9 +3005,6 @@
     <PossiblyFalseOperand occurrences="1">
       <code>strrpos($packagePath, '/')</code>
     </PossiblyFalseOperand>
-    <PossiblyNullArgument occurrences="1">
-      <code>$eventData</code>
-    </PossiblyNullArgument>
     <PossiblyNullPropertyAssignmentValue occurrences="3">
       <code>null</code>
       <code>null</code>
@@ -3018,11 +3024,6 @@
       <code>getenv('FLOW_ROOTPATH')</code>
       <code>getenv('FLOW_ROOTPATH')</code>
     </PossiblyFalseArgument>
-  </file>
-  <file src="Packages/Framework/Neos.Flow/Scripts/migrate.php">
-    <LoopInvalidation occurrences="1">
-      <code>$status</code>
-    </LoopInvalidation>
   </file>
   <file src="Packages/Framework/Neos.FluidAdaptor/Classes/Core/Cache/CacheAdaptor.php">
     <ImplementedReturnTypeMismatch occurrences="1">
@@ -3050,11 +3051,6 @@
     <UndefinedInterfaceMethod occurrences="1">
       <code>setViewHelperNode</code>
     </UndefinedInterfaceMethod>
-  </file>
-  <file src="Packages/Framework/Neos.FluidAdaptor/Classes/Core/Parser/TemplateProcessor/NamespaceDetectionTemplateProcessor.php">
-    <ParadoxicalCondition occurrences="1">
-      <code>$balance === 0 &amp;&amp; $content !== ''</code>
-    </ParadoxicalCondition>
   </file>
   <file src="Packages/Framework/Neos.FluidAdaptor/Classes/Core/ViewHelper/AbstractConditionViewHelper.php">
     <LessSpecificImplementedReturnType occurrences="1">
@@ -3238,6 +3234,9 @@
     <NullArrayAccess occurrences="1">
       <code>$arguments['privilegeTarget']</code>
     </NullArrayAccess>
+    <TypeDoesNotContainType occurrences="1">
+      <code>$arguments['parameters'] ?? []</code>
+    </TypeDoesNotContainType>
     <UndefinedInterfaceMethod occurrences="1">
       <code>getObjectManager</code>
     </UndefinedInterfaceMethod>
