@@ -56,13 +56,10 @@ class ParameterReflection extends \ReflectionParameter
      */
     public function getBuiltinType()
     {
-        if (!is_callable([$this, 'getType'])) {
-            return null;
-        }
         $type = $this->getType();
         if ($type === null || !$type->isBuiltin()) {
             return null;
         }
-        return (string)$type;
+        return $type instanceof \ReflectionNamedType ? $type->getName() : (string)$type;
     }
 }
