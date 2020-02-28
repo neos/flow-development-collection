@@ -2151,6 +2151,7 @@ class ReflectionService
     protected function saveProductionData()
     {
         $this->reflectionDataRuntimeCache->flush();
+        $this->classSchemataRuntimeCache->flush();
 
         $classNames = [];
         foreach ($this->classReflectionData as $className => $reflectionData) {
