@@ -310,7 +310,7 @@ class ValidatorResolver
                     continue;
                 }
 
-                if ($classSchema->isPropertyTransient($classPropertyName)) {
+                if ($classSchema !== null && $classSchema->isPropertyTransient($classPropertyName)) {
                     // Prevent transient properties to be validated for persistence
                     $propertyValidationGroups = array_diff($validationGroups, ['Persistence', 'Default']);
                 } else {
