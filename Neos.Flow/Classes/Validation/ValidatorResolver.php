@@ -324,7 +324,7 @@ class ValidatorResolver
                 foreach ($validateAnnotations as $validateAnnotation) {
                     if ($validateAnnotation->type === 'Collection') {
                         $needsCollectionValidator = false;
-                        $validateAnnotation->options = array_merge(['elementType' => $parsedType['elementType'], 'validationGroups' => $validationGroups], $validateAnnotation->options);
+                        $validateAnnotation->options = array_merge(['elementType' => $parsedType['elementType'], 'validationGroups' => $propertyValidationGroups], $validateAnnotation->options);
                     }
                     if (count(array_intersect($validateAnnotation->validationGroups, $propertyValidationGroups)) === 0) {
                         if ($validateAnnotation->type === 'GenericObject') {
