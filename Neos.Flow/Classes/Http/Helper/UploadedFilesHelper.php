@@ -26,7 +26,7 @@ abstract class UploadedFilesHelper
      * @param UploadedFileInterface[]|mixed[][] $uploadedFiles A (deep) array of UploadedFile or an untangled $_FILES array
      * @param array $arguments
      * @param array $currentPath internal argument for recursion
-     * @return UploadedFileInterface[] The nested array of paths and uploaded files
+     * @return FlowUploadedFile[] The nested array of paths and uploaded files
      */
     public static function upcastUploadedFiles(array $uploadedFiles, array $arguments, array $currentPath = []): array
     {
