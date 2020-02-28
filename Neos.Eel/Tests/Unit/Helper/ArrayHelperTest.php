@@ -12,6 +12,7 @@ namespace Neos\Eel\Tests\Unit;
  */
 
 use Neos\Eel\Helper\ArrayHelper;
+use Neos\Eel\Tests\Unit\Fixtures\TestArrayIterator;
 
 /**
  * Tests for ArrayHelper
@@ -32,6 +33,10 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
             'mixed arguments' => [
                 [['a', 'b', 'c'], 1, [2, 3]],
                 ['a', 'b', 'c', 1, 2, 3]
+            ],
+            'traversable' => [
+                [TestArrayIterator::fromArray([1, 2, 3]), [4, 5, 6]],
+                [1, 2, 3, 4, 5, 6]
             ]
         ];
     }
@@ -53,6 +58,7 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
             'words with default separator' => [['a', 'b', 'c'], null, 'a,b,c'],
             'words with custom separator' => [['a', 'b', 'c'], ', ', 'a, b, c'],
             'empty array' => [[], ', ', ''],
+            'traversable' => [TestArrayIterator::fromArray(['a', 'b', 'c']), ', ', 'a, b, c'],
         ];
     }
 
@@ -80,6 +86,7 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
             'positive begin with negative end' => [['a', 'b', 'c', 'd', 'e'], 1, -2, ['b', 'c']],
             'zero begin with negative end' => [['a', 'b', 'c', 'd', 'e'], 0, -1, ['a', 'b', 'c', 'd']],
             'empty array' => [[], 1, -2, []],
+            'traversable' => [TestArrayIterator::fromArray(['a', 'b', 'c']), 2, null, ['c']],
         ];
     }
 
@@ -104,6 +111,7 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
             'empty array' => [[], []],
             'numeric indices' => [['a', 'b', 'c'], ['c', 'b', 'a']],
             'string keys' => [['foo' => 'bar', 'bar' => 'baz'], ['bar' => 'baz', 'foo' => 'bar']],
+            'traversable' => [TestArrayIterator::fromArray(['a' => 1, 'b' => 2, 'c' => 3]), ['c' => 3, 'b' => 2, 'a' => 1]],
         ];
     }
 
@@ -125,6 +133,7 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
             'empty array' => [[], []],
             'numeric indices' => [['a', 'b', 'c'], [0, 1, 2]],
             'string keys' => [['foo' => 'bar', 'bar' => 'baz'], ['foo', 'bar']],
+            'traversable' => [TestArrayIterator::fromArray(['foo' => 'bar', 'bar' => 'baz']), ['foo', 'bar']],
         ];
     }
 
@@ -144,7 +153,8 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
     {
         return [
             'empty array' => [[], 0],
-            'array with values' => [['a', 'b', 'c'], 3]
+            'array with values' => [['a', 'b', 'c'], 3],
+            'traversable' => [TestArrayIterator::fromArray(['a', 'b', 'c']), 3],
         ];
     }
 
@@ -165,7 +175,8 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
         return [
             'empty array' => [[], 42, null, -1],
             'array with values' => [['a', 'b', 'c', 'b'], 'b', null, 1],
-            'with offset' => [['a', 'b', 'c', 'b'], 'b', 2, 3]
+            'with offset' => [['a', 'b', 'c', 'b'], 'b', 2, 3],
+            'traversable' => [TestArrayIterator::fromArray(['a', 'b', 'c', 'b']), 'b', null, 1],
         ];
     }
 
@@ -189,7 +200,8 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
     {
         return [
             'empty array' => [[], true],
-            'array with values' => [['a', 'b', 'c'], false]
+            'array with values' => [['a', 'b', 'c'], false],
+            'traversable' => [TestArrayIterator::fromArray(['a', 'b', 'c']), false],
         ];
     }
 
@@ -211,6 +223,8 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
             'empty array' => [[], false],
             'numeric indices' => [['a', 'b', 'c'], 'a'],
             'string keys' => [['foo' => 'bar', 'bar' => 'baz'], 'bar'],
+            'traversable' => [TestArrayIterator::fromArray(['foo' => 'bar', 'bar' => 'baz']), 'bar'],
+            'empty traversable' => [TestArrayIterator::fromArray([]), false],
         ];
     }
 
@@ -232,6 +246,8 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
             'empty array' => [[], false],
             'numeric indices' => [['a', 'b', 'c'], 'c'],
             'string keys' => [['foo' => 'bar', 'bar' => 'baz'], 'baz'],
+            'traversable' => [TestArrayIterator::fromArray(['foo' => 'bar', 'bar' => 'baz']), 'baz'],
+            'empty traversable' => [TestArrayIterator::fromArray([]), false],
         ];
     }
 
@@ -253,6 +269,7 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
             'empty array' => [[], false],
             'numeric indices' => [['a', 'b', 'c'], true],
             'string keys' => [['foo' => 'bar', 'bar' => 'baz'], true],
+            'traversable' => [TestArrayIterator::fromArray(['foo' => 'bar', 'bar' => 'baz']), true],
         ];
     }
 
@@ -265,6 +282,10 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
         $helper = new ArrayHelper();
         $result = $helper->random($array);
 
+        if ($array instanceof \Traversable) {
+            $array = iterator_to_array($array);
+        }
+
         self::assertEquals($expected, in_array($result, $array));
     }
 
@@ -275,6 +296,7 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
             'numeric indices' => [['z', '7d', 'i', '7', 'm', 8, 3, 'q'], [3, '7', '7d', 8, 'i', 'm', 'q', 'z']],
             'string keys' => [['foo' => 'bar', 'baz' => 'foo', 'bar' => 'baz'], ['foo' => 'bar', 'bar' => 'baz', 'baz' => 'foo']],
             'mixed keys' => [['bar', '24' => 'foo', 'i' => 181.84, 'foo' => 'abc', '84216', 76, 'k' => 53], ['k' => 53, 76, '84216', 'bar', 'foo', 'i' => 181.84, 'foo' => 'abc']],
+            'traversable' => [TestArrayIterator::fromArray([4, 2, 3, 1]), [1, 2, 3, 4]],
         ];
     }
 
@@ -295,6 +317,7 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
             'no keys' => [['z', '7d', 'i', '7', 'm', 8, 3, 'q'], ['z', '7d', 'i', '7', 'm', 8, 3, 'q']],
             'string keys' => [['foo' => 'bar', 'baz' => 'foo', 'bar' => 'baz'], ['bar' => 'baz', 'baz' => 'foo', 'foo' => 'bar']],
             'mixed keys' => [['bar', '24' => 'foo', 'i' => 181.84, 'foo' => 'abc', '84216', 76, 'k' => 53], ['0' => 'bar', '24' => 'foo', '25' => '84216', '26' => 76, 'foo' => 'abc', 'i' => 181.84, 'k' => 53]],
+            'traversable' => [TestArrayIterator::fromArray(['foo' => 'bar', 'baz' => 'foo', 'bar' => 'baz']), ['bar' => 'baz', 'baz' => 'foo', 'foo' => 'bar']],
         ];
     }
 
@@ -316,6 +339,7 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
             'numeric indices' => [['z', '7d', 'i', '7', 'm', 8, 3, 'q']],
             'string keys' => [['foo' => 'bar', 'baz' => 'foo', 'bar' => 'baz']],
             'mixed keys' => [['bar', '24' => 'foo', 'i' => 181.84, 'foo' => 'abc', '84216', 76, 'k' => 53]],
+            'traversable' => [TestArrayIterator::fromArray([1, 2, 3, 4])],
         ];
     }
 
@@ -327,6 +351,11 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
     {
         $helper = new ArrayHelper();
         $shuffledArray = $helper->shuffle($array);
+
+        if ($array instanceof \Traversable) {
+            $array = iterator_to_array($array);
+        }
+
         self::assertEquals($array, $shuffledArray);
     }
 
@@ -344,6 +373,10 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
             'mixed keys' => [
                 ['bar', '24' => 'bar', 'i' => 181.84, 'foo' => 'abc', 'foo2' => 'abc', 76],
                 [0 => 'bar', 'i' => 181.84, 'foo' => 'abc', 25 => 76]
+            ],
+            'traversable' => [
+                TestArrayIterator::fromArray(['a', 'a', 'b']),
+                [0 => 'a', 2 => 'b']
             ],
         ];
     }
@@ -366,6 +399,7 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
             'numeric indices' => [['z', '7d', 'i', '7'], ['z', '7d', 'i']],
             'string keys' => [['foo' => 'bar', 'baz' => 'foo', 'bar' => 'baz'], ['foo' => 'bar', 'baz' => 'foo']],
             'mixed keys' => [['bar', '24' => 'foo', 'i' => 181.84, 'foo' => 'abc', '84216', 76, 'k' => 53], ['bar', '24' => 'foo', 'i' => 181.84, 'foo' => 'abc', '84216', 76]],
+            'traversable' => [TestArrayIterator::fromArray(['z', '7d', 'i', '7']), ['z', '7d', 'i']],
         ];
     }
 
@@ -387,6 +421,7 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
             'numeric indices' => [['z', '7d', 'i', '7'], 42, 'foo', ['z', '7d', 'i', '7', 42, 'foo']],
             'string keys' => [['foo' => 'bar', 'baz' => 'foo', 'bar' => 'baz'], 42, 'foo', ['foo' => 'bar', 'baz' => 'foo', 'bar' => 'baz', 42, 'foo']],
             'mixed keys' => [['bar', '24' => 'foo', 'i' => 181.84, 'foo' => 'abc', '84216', 76, 'k' => 53], 42, 'foo', ['bar', '24' => 'foo', 'i' => 181.84, 'foo' => 'abc', '84216', 76, 'k' => 53, 42, 'foo']],
+            'traversable' => [TestArrayIterator::fromArray(['a']), 'b', 'c', ['a', 'b', 'c']],
         ];
     }
 
@@ -408,6 +443,7 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
             'numeric indices' => [['z', '7d', 'i', '7'], ['7d', 'i', '7']],
             'string keys' => [['foo' => 'bar', 'baz' => 'foo', 'bar' => 'baz'], ['baz' => 'foo', 'bar' => 'baz']],
             'mixed keys' => [['bar', '24' => 'foo', 'i' => 181.84, 'foo' => 'abc', '84216', 76, 'k' => 53], ['foo', 'i' => 181.84, 'foo' => 'abc', '84216', 76, 'k' => 53]],
+            'traversable' => [TestArrayIterator::fromArray(['z', '7d', 'i', '7']), ['7d', 'i', '7']],
         ];
     }
 
@@ -429,6 +465,7 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
             'numeric indices' => [['z', '7d', 'i', '7'], 'abc', 42, [42, 'abc', 'z', '7d', 'i', '7']],
             'string keys' => [['foo' => 'bar', 'baz' => 'foo', 'bar' => 'baz'], 'abc', 42, [42, 'abc', 'foo' => 'bar', 'baz' => 'foo', 'bar' => 'baz']],
             'mixed keys' => [['bar', '24' => 'foo', 'i' => 181.84, 'foo' => 'abc', '84216', 76, 'k' => 53], 'abc', 42, [42, 'abc', 'bar', 'foo', 'i' => 181.84, 'foo' => 'abc', '84216', 76, 'k' => 53]],
+            'traversable' => [TestArrayIterator::fromArray(['z', '7d', 'i', '7']), 'a', 42, [42, 'a', 'z', '7d', 'i', '7']],
         ];
     }
 
@@ -450,6 +487,7 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
             'numeric indices' => [['z', '7d', 'i', '7'], ['z', '7d', 42, 'abc', 'Neos'], 2, 2, 42, 'abc', 'Neos'],
             'string keys' => [['foo' => 'bar', 'baz' => 'foo', 'bar' => 'baz'], ['foo' => 'bar', 'baz' => 'foo', 42, 'abc', 'Neos'], 2, 2, 42, 'abc', 'Neos'],
             'mixed keys' => [['bar', '24' => 'foo', 'i' => 181.84, 'foo' => 'abc', '84216', 76, 'k' => 53], ['bar', 'foo', 42, 'abc', 'Neos', '84216', 76, 'k' => 53], 2, 2, 42, 'abc', 'Neos'],
+            'traversable' => [TestArrayIterator::fromArray(['z', '7d', 'i', '7']), ['z', '7d', 42, 'abc', 'Neos'], 2, 2, 42, 'abc', 'Neos'],
         ];
     }
 
@@ -478,7 +516,8 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
     {
         return [
             'array with values' => [['a', 'b', 'c'], ['a' => 0, 'b' => 1, 'c' => 2]],
-            'array with key and values' => [['foo' => 'bar', 24 => 42, 'i' => 181, 42 => 'Neos'], ['bar' => 'foo', 42 => 24, 181 => 'i', 'Neos' => 42]]
+            'array with key and values' => [['foo' => 'bar', 24 => 42, 'i' => 181, 42 => 'Neos'], ['bar' => 'foo', 42 => 24, 181 => 'i', 'Neos' => 42]],
+            'traversable' => [TestArrayIterator::fromArray(['a', 'b', 'c']), ['a' => 0, 'b' => 1, 'c' => 2]],
         ];
     }
 
@@ -538,7 +577,11 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
             'override value in array' => [
                 [['foo' => 'bar'], 'foo', 'baz'],
                 ['foo' => 'baz']
-            ]
+            ],
+            'traversable' => [
+                [TestArrayIterator::fromArray(['bar' => 'baz']), 'foo', 'bar'],
+                ['bar' => 'baz', 'foo' => 'bar']
+            ],
         ];
     }
 
@@ -576,6 +619,13 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
                     return $x * $index;
                 },
                 [0, 2, 6, 12],
+            ],
+            'traversable' => [
+                TestArrayIterator::fromArray([1, 2, 3, 4]),
+                function ($x) {
+                    return $x * $x;
+                },
+                [1, 4, 9, 16],
             ],
         ];
     }
@@ -626,6 +676,22 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
                 null,
                 null,
             ],
+            'traversable' => [
+                TestArrayIterator::fromArray([1, 2, 3, 4]),
+                function ($sum, $x) {
+                    return $sum + $x;
+                },
+                0,
+                10,
+            ],
+            'traversable without initial value' => [
+                TestArrayIterator::fromArray([1, 2, 3, 4]),
+                function ($sum, $x) {
+                    return $sum + $x;
+                },
+                null,
+                10,
+            ],
         ];
     }
 
@@ -662,6 +728,17 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
                 [
                     0 => 'a',
                     2 => 'c',
+                ],
+            ],
+            'traversable' => [
+                TestArrayIterator::fromArray([0, 1, 2, 3, 4, 5]),
+                function ($x) {
+                    return $x % 2 === 0;
+                },
+                [
+                    0 => 0,
+                    2 => 2,
+                    4 => 4,
                 ],
             ],
         ];
@@ -707,6 +784,11 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
                 $isFiveApples,
                 false,
             ],
+            'traversable' => [
+                TestArrayIterator::fromArray(['brown', 'elephant', 'dung']),
+                $isLongWord,
+                true,
+            ],
         ];
     }
 
@@ -747,6 +829,11 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
             ],
             'test by key: fail' => [
                 [0 => 1, 1 => 2, 2 => 3],
+                $isValueEqualIndex,
+                false,
+            ],
+            'traversable' => [
+                TestArrayIterator::fromArray([0 => 1, 1 => 2, 2 => 3]),
                 $isValueEqualIndex,
                 false,
             ],
