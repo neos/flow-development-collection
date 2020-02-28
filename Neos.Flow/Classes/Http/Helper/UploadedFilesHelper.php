@@ -21,16 +21,26 @@ use function GuzzleHttp\Psr7\stream_for;
 abstract class UploadedFilesHelper
 {
     /**
-     * @param UploadedFileInterface[] $uploadedFiles
+     * @param UploadedFileInterface[]|mixed[][] $uploadedFiles A (deep) array of UploadedFile or an untangled $_FILES array
      * @param array $arguments
      * @param array $currentPath internal argument for recursion
-     * @return array The nested array of paths and uploaded files
+     * @return UploadedFileInterface[] The nested array of paths and uploaded files
      */
     public static function upcastUploadedFiles(array $uploadedFiles, array $arguments, array $currentPath = []): array
     {
         $upcastedUploads = [];
 
         foreach ($uploadedFiles as $key => $value) {
+            $currentPath[] = $key;
+            if (isset($value['tmp_name'], $value['size'], $value['error'])) {
+                $value = new UploadedFile(
+                    $value['tmp_name'],
+                    (int) $value['size'],
+                    (int) $value['error'],
+                    $value['name'],
+                    $value['type']
+                );
+            }
             if ($value instanceof UploadedFileInterface) {
                 $originallySubmittedResourcePath = array_merge($currentPath, [$key, 'originallySubmittedResource']);
                 $collectionNamePath = array_merge($currentPath, [$key, '__collectionName']);
