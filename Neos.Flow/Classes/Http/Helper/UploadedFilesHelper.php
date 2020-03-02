@@ -40,7 +40,7 @@ abstract class UploadedFilesHelper
                     $value['name'],
                     $value['type']
                 );
-            } else if ($value instanceof UploadedFileInterface) {
+            } elseif ($value instanceof UploadedFileInterface) {
                 $originallySubmittedResourcePath = array_merge($currentPath, [$key, 'originallySubmittedResource']);
                 $collectionNamePath = array_merge($currentPath, [$key, '__collectionName']);
                 $upcastedUploads[$key] = self::upcastUploadedFile(
