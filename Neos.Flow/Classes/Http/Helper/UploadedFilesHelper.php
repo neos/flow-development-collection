@@ -32,7 +32,7 @@ abstract class UploadedFilesHelper
 
         foreach ($uploadedFiles as $key => $value) {
             $currentPath[] = $key;
-            if (isset($value['tmp_name'], $value['size'], $value['error'])) {
+            if (is_array($value) && isset($value['tmp_name'], $value['size'], $value['error'])) {
                 $value = new UploadedFile(
                     $value['tmp_name'],
                     (int) $value['size'],
@@ -40,8 +40,7 @@ abstract class UploadedFilesHelper
                     $value['name'],
                     $value['type']
                 );
-            }
-            if ($value instanceof UploadedFileInterface) {
+            } else if ($value instanceof UploadedFileInterface) {
                 $originallySubmittedResourcePath = array_merge($currentPath, [$key, 'originallySubmittedResource']);
                 $collectionNamePath = array_merge($currentPath, [$key, '__collectionName']);
                 $upcastedUploads[$key] = self::upcastUploadedFile(
