@@ -108,12 +108,29 @@ class Environment
     }
 
     /**
+     * Compose path name for the temporary directory respecting supplied context.
+     *
+     * For nested contexts, the folders are prefixed with "SubContext" to
+     * avoid ambiguity, and look like: Data/Temporary/Production/SubContextLive
+     *
+     * @param string $temporaryDirectoryBase Full path to the base for the temporary directory
+     * @param ApplicationContext $context
+     * @return string The full path to the temporary directory, with trailing slash
+     */
+    public static function composeTemporaryDirectoryName($temporaryDirectoryBase, ApplicationContext $context)
+    {
+        $temporaryDirectoryBase = Files::getUnixStylePath($temporaryDirectoryBase);
+        if (substr($temporaryDirectoryBase, -1, 1) !== '/') {
+            $temporaryDirectoryBase .= '/';
+        }
+        return $temporaryDirectoryBase . str_replace('/', '/SubContext', (string)$context) . '/';
+    }
+
+    /**
      * Creates Flow's temporary directory - or at least asserts that it exists and is
      * writable.
      *
-     * For each Flow Application Context, we create an extra temporary folder,
-     * and for nested contexts, the folders are prefixed with "SubContext" to
-     * avoid ambiguity, and look like: Data/Temporary/Production/SubContextLive
+     * For each Flow Application Context, we create an extra temporary folder.
      *
      * @param string $temporaryDirectoryBase Full path to the base for the temporary directory
      * @return string The full path to the temporary directory
@@ -121,11 +138,7 @@ class Environment
      */
     protected function createTemporaryDirectory($temporaryDirectoryBase)
     {
-        $temporaryDirectoryBase = Files::getUnixStylePath($temporaryDirectoryBase);
-        if (substr($temporaryDirectoryBase, -1, 1) !== '/') {
-            $temporaryDirectoryBase .= '/';
-        }
-        $temporaryDirectory = $temporaryDirectoryBase . str_replace('/', '/SubContext', (string)$this->context) . '/';
+        $temporaryDirectory = self::composeTemporaryDirectoryName($temporaryDirectoryBase, $this->context);
 
         if (!is_dir($temporaryDirectory) && !is_link($temporaryDirectory)) {
             try {
