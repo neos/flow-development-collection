@@ -19,6 +19,7 @@ use Neos\Cache\Frontend\FrontendInterface;
 use Neos\Cache\Frontend\StringFrontend;
 use Neos\Cache\Frontend\VariableFrontend;
 use Neos\Flow\Core\ApplicationContext;
+use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\ObjectManagement\Proxy\ProxyInterface;
 use Neos\Flow\Package;
 use Neos\Flow\Package\PackageManager;
@@ -1182,7 +1183,7 @@ class ReflectionService
         $this->buildClassSchemata($classNamesToBuildSchemaFor);
 
         if ($count > 0) {
-            $this->log(sprintf('Reflected %s emerged classes.', $count), LogLevel::INFO);
+            $this->log(sprintf('Reflected %s emerged classes.', $count), LogLevel::INFO, LogEnvironment::fromMethodName(__METHOD__));
         }
     }
 
@@ -1624,7 +1625,7 @@ class ReflectionService
         }
 
         $declaredType = strtok(trim(current($varTagValues), " \n\t"), " \n\t");
-        
+
         if ($this->isPropertyAnnotatedWith($className, $propertyName, ORM\Id::class)) {
             $skipArtificialIdentity = true;
         }
@@ -2219,7 +2220,7 @@ class ReflectionService
      * @param array $additionalData An array containing more information about the event to be logged
      * @return void
      */
-    protected function log($message, $severity = LogLevel::INFO, $additionalData = [])
+    protected function log(string $message, string $severity = LogLevel::INFO, array $additionalData = []): void
     {
         if (is_object($this->logger)) {
             $this->logger->log($severity, $message, $additionalData);
