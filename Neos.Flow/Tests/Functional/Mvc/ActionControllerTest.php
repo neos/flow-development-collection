@@ -461,7 +461,7 @@ class ActionControllerTest extends FunctionalTestCase
         ];
         $body = json_encode($arguments, JSON_PRETTY_PRINT);
         $this->browser->addAutomaticRequestHeader('Content-Type', 'application/json');
-        $response = $this->browser->request('http://localhost/test/mvc/actioncontrollertestb/mappedrequestbody', 'POST', [], [], [], $body);
+        $response = $this->browser->request('http://localhost/test/mvc/actioncontrollertestb/mappedrequestbody', 'POST', [], [], $body);
 
         $expectedResult = 'Foo-foo@bar.org';
         self::assertEquals($expectedResult, $response->getBody()->getContents());
@@ -478,7 +478,7 @@ class ActionControllerTest extends FunctionalTestCase
         ];
         $body = json_encode($arguments, JSON_PRETTY_PRINT);
         $this->browser->addAutomaticRequestHeader('Content-Type', 'application/json');
-        $response = $this->browser->request('http://localhost/test/mvc/actioncontrollertestb/mappedrequestbodywithoutannotation', 'POST', [], [], [], $body);
+        $response = $this->browser->request('http://localhost/test/mvc/actioncontrollertestb/mappedrequestbodywithoutannotation', 'POST', [], [], $body);
 
         $expectedResult = 'Foo-foo@bar.org';
         self::assertEquals($expectedResult, $response->getBody()->getContents());

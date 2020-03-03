@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Flow\Http\Client;
 
 /*
@@ -16,9 +18,9 @@ use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Error\Debugger;
 use Neos\Flow\Exception as FlowException;
+use Neos\Flow\Http;
 use Neos\Flow\Http\Component\ComponentChain;
 use Neos\Flow\Http\Component\ComponentContext;
-use Neos\Flow\Http;
 use Neos\Flow\Mvc\Dispatcher;
 use Neos\Flow\Mvc\Routing\RouterInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
@@ -26,9 +28,10 @@ use Neos\Flow\Security\Context;
 use Neos\Flow\Session\SessionInterface;
 use Neos\Flow\Tests\FunctionalTestRequestHandler;
 use Neos\Flow\Validation\ValidatorResolver;
+use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\ServerRequestFactoryInterface;
 use Psr\Http\Message\StreamFactoryInterface;
 
 /**
@@ -83,6 +86,12 @@ class InternalRequestEngine implements RequestEngineInterface
 
     /**
      * @Flow\Inject
+     * @var ServerRequestFactoryInterface
+     */
+    protected $serverRequestFactory;
+
+    /**
+     * @Flow\Inject
      * @var ResponseFactoryInterface
      */
     protected $responseFactory;
@@ -96,13 +105,13 @@ class InternalRequestEngine implements RequestEngineInterface
     /**
      * Sends the given HTTP request
      *
-     * @param ServerRequestInterface $httpRequest
+     * @param RequestInterface $request
      * @return ResponseInterface
      * @throws FlowException
      * @throws Http\Exception
      * @api
      */
-    public function sendRequest(ServerRequestInterface $httpRequest): ResponseInterface
+    public function sendRequest(RequestInterface $request): ResponseInterface
     {
         $requestHandler = $this->bootstrap->getActiveRequestHandler();
         if (!$requestHandler instanceof FunctionalTestRequestHandler) {
@@ -112,6 +121,7 @@ class InternalRequestEngine implements RequestEngineInterface
         $this->securityContext->clearContext();
         $this->validatorResolver->reset();
 
+        $httpRequest = $this->serverRequestFactory->createServerRequest($request->getMethod(), $request->getUri());
         $response = $this->responseFactory->createResponse();
         $componentContext = new ComponentContext($httpRequest, $response);
         $requestHandler->setComponentContext($componentContext);
