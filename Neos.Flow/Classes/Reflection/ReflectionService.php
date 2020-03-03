@@ -1803,9 +1803,9 @@ class ReflectionService
             $parameterInformation[self::DATA_PARAMETER_ALLOWS_NULL] = true;
         }
 
-        $parameterType = null;
-        if ($parameter->getType() !== null) {
-            $parameterType = $parameter->getType() instanceof \ReflectionNamedType ? $parameter->getType()->getName() : (string)$parameter->getType();
+        $parameterType = $parameter->getType();
+        if ($parameterType !== null) {
+            $parameterType = ($parameterType instanceof \ReflectionNamedType) ? $parameterType->getName() : $parameterType->__toString();
         }
         if ($parameter->getClass() !== null) {
             // We use parameter type here to make class_alias usage work and return the hinted class name instead of the alias
