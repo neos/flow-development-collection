@@ -15,6 +15,7 @@ use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Headers;
 use Neos\Flow\Http\Helper\RequestInformationHelper;
+use Neos\Flow\Http\Helper\UploadedFilesHelper;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestFactoryInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -137,7 +138,7 @@ class Browser
      * @param string|UriInterface $uri
      * @param string $method Request method, for example "GET"
      * @param array $arguments Arguments to send in the request body
-     * @param UploadedFileInterface[] $files
+     * @param UploadedFileInterface[]|mixed[][] $files A (deep) array of UploadedFile or an untangled $_FILES array
      * @param array $server
      * @param string $content
      * @return ResponseInterface The HTTP response
@@ -162,6 +163,7 @@ class Browser
             $request = $request->withQueryParams($arguments);
         }
         if (!empty($files)) {
+            $files = UploadedFilesHelper::upcastUploadedFiles($files, $arguments);
             $request = $request->withUploadedFiles($files);
         }
 

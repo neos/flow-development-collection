@@ -13,6 +13,7 @@ namespace Neos\Flow\Core;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Cache\Frontend\PhpFrontend;
+use Neos\Flow\Utility\Environment;
 
 /**
  * Class loader for Flow proxy classes.
@@ -111,7 +112,9 @@ class ProxyClassLoader
             return;
         }
 
-        $proxyClasses = @include(FLOW_PATH_TEMPORARY_BASE . '/' . (string)$context . '/AvailableProxyClasses.php');
+        $temporaryDirectoryPath = Environment::composeTemporaryDirectoryName(FLOW_PATH_TEMPORARY_BASE, $context);
+
+        $proxyClasses = @include($temporaryDirectoryPath . 'AvailableProxyClasses.php');
         if ($proxyClasses !== false) {
             $this->availableProxyClasses = $proxyClasses;
         }

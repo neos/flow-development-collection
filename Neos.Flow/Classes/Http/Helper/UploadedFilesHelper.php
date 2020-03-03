@@ -10,6 +10,7 @@ namespace Neos\Flow\Http\Helper;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use Neos\Flow\Http\UploadedFile;
 use Neos\Http\Factories\FlowUploadedFile;
 use Neos\Utility\Arrays;
 use Psr\Http\Message\UploadedFileInterface;
@@ -21,7 +22,7 @@ use function GuzzleHttp\Psr7\stream_for;
 abstract class UploadedFilesHelper
 {
     /**
-     * @param UploadedFileInterface[] $uploadedFiles
+     * @param UploadedFileInterface[]|mixed[][] $uploadedFiles A (deep) array of UploadedFile or an untangled $_FILES array
      * @param array $arguments
      * @param array $currentPath internal argument for recursion
      * @return array The nested array of paths and uploaded files
@@ -31,19 +32,29 @@ abstract class UploadedFilesHelper
         $upcastedUploads = [];
 
         foreach ($uploadedFiles as $key => $value) {
-            $currentPath[] = $key;
+            if (is_array($value) && isset($value['tmp_name'], $value['size'], $value['error'])) {
+                $value = new UploadedFile(
+                    $value['tmp_name'],
+                    (int) $value['size'],
+                    (int) $value['error'],
+                    $value['name'],
+                    $value['type']
+                );
+            }
             if ($value instanceof UploadedFileInterface) {
-                $originallySubmittedResourcePath = array_merge($currentPath, ['originallySubmittedResource']);
-                $collectionNamePath = array_merge($currentPath, ['__collectionName']);
+                $originallySubmittedResourcePath = array_merge($currentPath, [$key, 'originallySubmittedResource']);
+                $collectionNamePath = array_merge($currentPath, [$key, '__collectionName']);
                 $upcastedUploads[$key] = self::upcastUploadedFile(
                     $value,
                     Arrays::getValueByPath($arguments, $originallySubmittedResourcePath),
                     Arrays::getValueByPath($arguments, $collectionNamePath)
                 );
-            }
-
-            if (is_array($value)) {
-                $upcastedUploads[$key] = self::upcastUploadedFiles($value, $arguments, $currentPath);
+            } elseif (is_array($value)) {
+                $upcastedUploads[$key] = self::upcastUploadedFiles(
+                    $value,
+                    $arguments,
+                    array_merge($currentPath, [$key])
+                );
             }
         }
 
