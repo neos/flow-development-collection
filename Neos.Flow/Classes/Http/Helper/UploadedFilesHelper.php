@@ -10,6 +10,7 @@ namespace Neos\Flow\Http\Helper;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use Neos\Flow\Http\UploadedFile;
 use Neos\Http\Factories\FlowUploadedFile;
 use Neos\Utility\Arrays;
 use Psr\Http\Message\UploadedFileInterface;
