@@ -27,13 +27,13 @@
 			<target state="translated">Det angivna värdet är inte ett giltigt datum</target></trans-unit>
       <trans-unit id="1325615630" xml:space="preserve">
 				<source>The given date must be between {0,datetime,datetime} and {1,datetime,datetime}</source>
-			<target state="needs-translation">The given date must be between {0,datetime,datetime} and {1,datetime,datetime}</target></trans-unit>
+			<target state="translated">Det angivna datumet måste vara mellan {0,datetime,datetime}</target></trans-unit>
       <trans-unit id="1324315107" xml:space="preserve">
 				<source>The given date must be after {0,datetime,datetime}</source>
-			<target state="needs-translation">The given date must be after {0,datetime,datetime}</target></trans-unit>
+			<target state="translated">Det angivna datumet måste vara efter {0,datetime,datetime}</target></trans-unit>
       <trans-unit id="1324315115" xml:space="preserve">
 				<source>The given date must be before {0,datetime,datetime}</source>
-			<target state="needs-translation">The given date must be before {0,datetime,datetime}</target></trans-unit>
+			<target state="translated">Det angivna datumet måste vara före {0,datetime,datetime}</target></trans-unit>
       <!-- DateTimeValidator -->
       <trans-unit id="1281454676" xml:space="preserve">
 				<source>The "locale" option can be only set to string identifier, or Locale object</source>
@@ -118,7 +118,7 @@
       <group id="1238108068" restype="x-gettext-plurals">
         <trans-unit id="1238108068[0]">
           <source>This field must contain at least {0,number} character</source>
-          <target state="needs-translation">This field must contain at least {0,number} character</target>
+          <target state="translated">Detta fält måste innehålla minst {0,number} tecken</target>
         </trans-unit>
         <trans-unit id="1238108068[1]">
           <source>This field must contain at least {0,number} characters</source>
@@ -128,7 +128,7 @@
       <group id="1238108069" restype="x-gettext-plurals">
         <trans-unit id="1238108069[0]">
           <source>This text may not exceed {0,number} character</source>
-          <target state="needs-translation">This text may not exceed {0,number} character</target>
+          <target state="translated">Denna text får ej överstiga {0,number} tecken</target>
         </trans-unit>
         <trans-unit id="1238108069[1]">
           <source>This text may not exceed {0,number} characters</source>
