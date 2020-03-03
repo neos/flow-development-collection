@@ -113,25 +113,38 @@ class Environment
     }
 
     /**
-     * Creates Flow's temporary directory - or at least asserts that it exists and is
-     * writable.
+     * Compose path name for the temporary directory respecting supplied context.
      *
-     * For each Flow Application Context, we create an extra temporary folder,
-     * and for nested contexts, the folders are prefixed with "SubContext" to
+     * For nested contexts, the folders are prefixed with "SubContext" to
      * avoid ambiguity, and look like: Data/Temporary/Production/SubContextLive
      *
      * @param string $temporaryDirectoryBase Full path to the base for the temporary directory
-     * @return string The full path to the temporary directory
-     * @throws UtilityException if the temporary directory could not be created or is not writable
+     * @param ApplicationContext $context
+     * @return string The full path to the temporary directory, with trailing slash
      * @throws FilesException
      */
-    protected function createTemporaryDirectory(string $temporaryDirectoryBase): string
+    public static function composeTemporaryDirectoryName(string $temporaryDirectoryBase, ApplicationContext $context): string
     {
         $temporaryDirectoryBase = Files::getUnixStylePath($temporaryDirectoryBase);
         if (substr($temporaryDirectoryBase, -1, 1) !== '/') {
             $temporaryDirectoryBase .= '/';
         }
-        $temporaryDirectory = $temporaryDirectoryBase . str_replace('/', '/SubContext', (string)$this->context) . '/';
+        return $temporaryDirectoryBase . str_replace('/', '/SubContext', (string)$context) . '/';
+    }
+
+    /**
+     * Creates Flow's temporary directory - or at least asserts that it exists and is
+     * writable.
+     *
+     * For each Flow Application Context, we create an extra temporary folder.
+     *
+     * @param string $temporaryDirectoryBase Full path to the base for the temporary directory
+     * @return string The full path to the temporary directory
+     * @throws UtilityException if the temporary directory could not be created or is not writable
+     */
+    protected function createTemporaryDirectory(string $temporaryDirectoryBase): string
+    {
+        $temporaryDirectory = self::composeTemporaryDirectoryName($temporaryDirectoryBase, $this->context);
 
         if (!is_dir($temporaryDirectory) && !is_link($temporaryDirectory)) {
             try {
