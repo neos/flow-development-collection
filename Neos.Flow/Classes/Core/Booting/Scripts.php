@@ -45,6 +45,8 @@ use Neos\Flow\Utility\Environment;
 use Neos\Utility\Files;
 use Neos\Utility\OpcodeCacheHelper;
 use Neos\Flow\Exception as FlowException;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * Initialization scripts for modules of the Flow package
@@ -265,11 +267,14 @@ class Scripts
         /** @var ThrowableStorageInterface $throwableStorage */
         $throwableStorage = $storageClassName::createWithOptions($storageOptions);
 
-        $throwableStorage->setBacktraceRenderer(function ($backtrace) {
+        $throwableStorage->setBacktraceRenderer(static function ($backtrace) {
             return Debugger::getBacktraceCode($backtrace, false, true);
         });
 
-        $throwableStorage->setRequestInformationRenderer(function () {
+        $throwableStorage->setRequestInformationRenderer(static function () {
+            // The following lines duplicate FileStorage::__construct(), which is intended to provide a renderer
+            // to alternative implementations of ThrowableStorageInterface
+
             $output = '';
             if (!(Bootstrap::$staticObjectManager instanceof ObjectManagerInterface)) {
                 return $output;
@@ -282,11 +287,11 @@ class Scripts
                 return $output;
             }
 
-            $request = $requestHandler->getHttpRequest();
-            $response = $requestHandler->getHttpResponse();
+            $request = $requestHandler->getComponentContext()->getHttpRequest();
+            $response = $requestHandler->getComponentContext()->getHttpResponse();
             // TODO: Sensible error output
-            $output .= PHP_EOL . 'HTTP REQUEST:' . PHP_EOL . ($request ? '[request was empty]' : RequestInformationHelper::renderRequestHeaders($request)) . PHP_EOL;
-            $output .= PHP_EOL . 'HTTP RESPONSE:' . PHP_EOL . ($response ? '[response was empty]' : $response->getStatusCode()) . PHP_EOL;
+            $output .= PHP_EOL . 'HTTP REQUEST:' . PHP_EOL . ($request instanceof RequestInterface ? RequestInformationHelper::renderRequestHeaders($request) : '[request was empty]') . PHP_EOL;
+            $output .= PHP_EOL . 'HTTP RESPONSE:' . PHP_EOL . ($response instanceof ResponseInterface ? $response->getStatusCode() : '[response was empty]') . PHP_EOL;
             $output .= PHP_EOL . 'PHP PROCESS:' . PHP_EOL . 'Inode: ' . getmyinode() . PHP_EOL . 'PID: ' . getmypid() . PHP_EOL . 'UID: ' . getmyuid() . PHP_EOL . 'GID: ' . getmygid() . PHP_EOL . 'User: ' . get_current_user() . PHP_EOL;
 
             return $output;
