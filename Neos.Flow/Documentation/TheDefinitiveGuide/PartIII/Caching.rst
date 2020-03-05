@@ -355,20 +355,25 @@ Options
 
 :title:`Simple file cache backend options`
 
-+-----------------+----------------------------------------+-----------+--------+---------+
-| Option          | Description                            | Mandatory | Type   | Default |
-+=================+========================================+===========+========+=========+
-| cacheDirectory  | Full path leading to a custom cache    | No        | string |         |
-|                 | directory.                             |           |        |         |
-|                 |                                        |           |        |         |
-|                 | :title:`Example:`                      |           |        |         |
-|                 |                                        |           |        |         |
-|                 | * /tmp/my-cache-directory/             |           |        |         |
-+-----------------+----------------------------------------+-----------+--------+---------+
-| defaultLifeTime | Cache entry lifetime is **not          | No        |        |         |
-|                 | supported** in this backend. Entries   |           |        |         |
-|                 | never expire!                          |           |        |         |
-+-----------------+----------------------------------------+-----------+--------+---------+
++-------------------------+----------------------------------------+-----------+--------+---------+
+| Option                  | Description                            | Mandatory | Type   | Default |
++=========================+========================================+===========+========+=========+
+| cacheDirectory          | Full path leading to a custom cache    | No        | string |         |
+|                         | directory.                             |           |        |         |
+|                         |                                        |           |        |         |
+|                         | :title:`Example:`                      |           |        |         |
+|                         |                                        |           |        |         |
+|                         | * /tmp/my-cache-directory/             |           |        |         |
++-------------------------+----------------------------------------+-----------+--------+---------+
+| defaultLifeTime         | Cache entry lifetime is **not          | No        |        |         |
+|                         | supported** in this backend. Entries   |           |        |         |
+|                         | never expire!                          |           |        |         |
++-------------------------+----------------------------------------+-----------+--------+---------+
+| maxLockWaitMicroseconds | Maximum time to wait for getting a     | No        | int    | 1000    |
+|                         | file lock for read/write operations in |           |        |         |
+|                         | microseconds. This should be increased |           |        |         |
+|                         | for lower latency storages.            |           |        |         |
++-------------------------+----------------------------------------+-----------+--------+---------+
 
 Neos\\Cache\\Backend\\FileBackend
 ---------------------------------
@@ -406,16 +411,21 @@ Options
 
 :title:`File cache backend options`
 
-+----------------+----------------------------------------+-----------+--------+---------+
-| Option         | Description                            | Mandatory | Type   | Default |
-+================+========================================+===========+========+=========+
-| cacheDirectory | Full path leading to a custom cache    | No        | string |         |
-|                | directory.                             |           |        |         |
-|                |                                        |           |        |         |
-|                | :title:`Example:`                      |           |        |         |
-|                |                                        |           |        |         |
-|                | * /tmp/my-cache-directory/             |           |        |         |
-+----------------+----------------------------------------+-----------+--------+---------+
++-------------------------+----------------------------------------+-----------+--------+---------+
+| Option                  | Description                            | Mandatory | Type   | Default |
++=========================+========================================+===========+========+=========+
+| cacheDirectory          | Full path leading to a custom cache    | No        | string |         |
+|                         | directory.                             |           |        |         |
+|                         |                                        |           |        |         |
+|                         | :title:`Example:`                      |           |        |         |
+|                         |                                        |           |        |         |
+|                         | * /tmp/my-cache-directory/             |           |        |         |
++-------------------------+----------------------------------------+-----------+--------+---------+
+| maxLockWaitMicroseconds | Maximum time to wait for getting a     | No        | int    | 1000    |
+|                         | file lock for read/write operations in |           |        |         |
+|                         | microseconds. This should be increased |           |        |         |
+|                         | for lower latency storages.            |           |        |         |
++-------------------------+----------------------------------------+-----------+--------+---------+
 
 Neos\\Cache\\Backend\\PdoBackend
 --------------------------------
