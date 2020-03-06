@@ -62,6 +62,17 @@ class FileHelper implements ProtectedContextAwareInterface
     }
 
     /**
+     * File exists
+     *
+     * @param string $filepath
+     * @return bool
+     */
+    public function exists(string $filepath)
+    {
+        return file_exists($filepath);
+    }
+    
+    /**
      * @param string $methodName
      * @return bool
      */
