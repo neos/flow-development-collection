@@ -51,7 +51,7 @@ interface CollectionInterface
      *
      * Note that this collection must have a writable storage in order to import resources.
      *
-     * @param string | resource $source The URI (or local path and filename) or the PHP resource stream to import the resource from
+     * @param string|resource $source The URI (or local path and filename) or the PHP resource stream to import the resource from
      * @return PersistentResource A resource object representing the imported resource
      * @throws ResourceException
      */
