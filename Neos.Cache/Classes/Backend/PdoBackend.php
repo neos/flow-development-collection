@@ -210,7 +210,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
 
         // Convert hexadecimal data into binary string,
         // because it is not allowed to store null bytes in PostgreSQL.
-        if ($fetchedColumn !== false && $this->pdoDriver === 'pgsql') {
+        if ($this->pdoDriver === 'pgsql' && is_string($fetchedColumn)) {
             $fetchedColumn = hex2bin($fetchedColumn);
         }
 
