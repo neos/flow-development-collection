@@ -261,6 +261,40 @@ class ResourceManager
     }
 
     /**
+     * Import a deferred resource into it's destination collection and persist it.
+     *
+     * @param PersistentResource $resource
+     * @throws Exception
+     * @throws \Neos\Flow\Persistence\Exception\IllegalObjectTypeException
+     */
+    public function persistResource(PersistentResource $resource): void
+    {
+        if ($resource->getSource() === null) {
+            return;
+        }
+        $this->initialize();
+        $collectionName = $resource->getCollectionName();
+        if (!isset($this->collections[$collectionName])) {
+            throw new Exception(sprintf('Tried to import an uploaded file into the resource collection "%s" but no such collection exists. Please check your settings and HTML forms.', $collectionName), 1375197544);
+        }
+
+        /* @var CollectionInterface $collection */
+        $collection = $this->collections[$collectionName];
+        try {
+            // Optimally the collection would just accept a PersistentResource and update it, but this would mean an API change
+            $importedResource = $collection->importResource($resource->detachSource());
+            $resource->setSha1($importedResource->getSha1());
+            $resource->setMd5($importedResource->getMd5());
+            $resource->setFileSize($importedResource->getFileSize());
+        } catch (Exception $exception) {
+            throw new Exception(sprintf('Importing an uploaded file into the resource collection "%s" failed.', $collectionName), 1375197680, $exception);
+        }
+
+        $this->resourceRepository->add($resource);
+        $this->logger->debug(sprintf('Successfully imported the uploaded file "%s" into the resource collection "%s" (storage: "%s", a %s. SHA1: %s)', $resource->getFilename(), $collectionName, $this->collections[$collectionName]->getStorage()->getName(), get_class($this->collections[$collectionName]->getStorage()), $resource->getSha1()));
+    }
+
+    /**
      * Returns the resource object identified by the given SHA1 hash over the content, or NULL if no such PersistentResource
      * object is known yet.
      *
