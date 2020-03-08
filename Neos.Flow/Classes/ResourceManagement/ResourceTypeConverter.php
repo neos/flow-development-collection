@@ -207,7 +207,14 @@ class ResourceTypeConverter extends AbstractTypeConverter
         }
 
         try {
-            $resource = $this->resourceManager->importUploadedResource($source, $this->getCollectionName($source, $configuration));
+            $resource = new PersistentResource($source);
+            $resource->setCollectionName($this->getCollectionName($source, $configuration));
+            if (!empty($source['name'])) {
+                $resource->setFilename($source['name']);
+            }
+            if (!empty($source['size'])) {
+                $resource->setFileSize($source['size']);
+            }
             $this->convertedResources[$source['tmp_name']] = $resource;
             return $resource;
         } catch (\Exception $exception) {
@@ -252,10 +259,18 @@ class ResourceTypeConverter extends AbstractTypeConverter
         if ($resource === null) {
             $collectionName = isset($source['collectionName']) ? $source['collectionName'] : $this->getCollectionName($source, $configuration);
             if (isset($source['data'])) {
-                $resource = $this->resourceManager->importResourceFromContent(base64_decode($source['data']), $source['filename'], $collectionName, $givenResourceIdentity);
+                $tempFile = tmpfile();
+                fwrite($tempFile, base64_decode($source['data']));
+                fseek($tempFile, 0);
+                $resource = new PersistentResource($tempFile);
+                $resource->setCollectionName($collectionName);
+                $resource->setFilename($source['filename']);
+                //$resource = $this->resourceManager->importResourceFromContent(base64_decode($source['data']), $source['filename'], $collectionName, $givenResourceIdentity);
             } elseif ($hash !== null) {
+                $resource = new PersistentResource($configuration->getConfigurationValue(ResourceTypeConverter::class, self::CONFIGURATION_RESOURCE_LOAD_PATH) . '/' . $hash);
+                $resource->setCollectionName($collectionName);
                 /** @var PersistentResource $resource */
-                $resource = $this->resourceManager->importResource($configuration->getConfigurationValue(ResourceTypeConverter::class, self::CONFIGURATION_RESOURCE_LOAD_PATH) . '/' . $hash, $collectionName, $givenResourceIdentity);
+                //$resource = $this->resourceManager->importResource($configuration->getConfigurationValue(ResourceTypeConverter::class, self::CONFIGURATION_RESOURCE_LOAD_PATH) . '/' . $hash, $collectionName, $givenResourceIdentity);
                 if (is_array($source) && isset($source['filename'])) {
                     $resource->setFilename($source['filename']);
                 }
@@ -304,7 +319,9 @@ class ResourceTypeConverter extends AbstractTypeConverter
         }
 
         try {
-            $resource = $this->resourceManager->importResource($source->getStream()->detach(), $this->getCollectionName($source, $configuration));
+            $resource = new PersistentResource($source->getStream()->detach());
+            $resource->setCollectionName($this->getCollectionName($source, $configuration));
+            $resource->setFileSize($source->getSize());
             $resource->setFilename($source->getClientFilename());
             $this->convertedResources[spl_object_hash($source)] = $resource;
             return $resource;
