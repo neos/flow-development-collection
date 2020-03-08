@@ -267,7 +267,7 @@ class ResourceTypeConverter extends AbstractTypeConverter
                 $resource = new PersistentResource($tempFile);
                 $resource->setCollectionName($collectionName);
                 $resource->setFilename($source['filename']);
-                //$resource = $this->resourceManager->importResourceFromContent(base64_decode($source['data']), $source['filename'], $collectionName, $givenResourceIdentity);
+            //$resource = $this->resourceManager->importResourceFromContent(base64_decode($source['data']), $source['filename'], $collectionName, $givenResourceIdentity);
             } elseif ($hash !== null) {
                 $resource = new PersistentResource($configuration->getConfigurationValue(ResourceTypeConverter::class, self::CONFIGURATION_RESOURCE_LOAD_PATH) . '/' . $hash);
                 $resource->setCollectionName($collectionName);
