@@ -266,7 +266,6 @@ class ResourceTypeConverter extends AbstractTypeConverter
                 fwrite($tempFile, base64_decode($source['data']));
                 fseek($tempFile, 0);
                 $resource = new PersistentResource($tempFile);
-
             } elseif ($hash !== null) {
                 $resource = new PersistentResource($configuration->getConfigurationValue(ResourceTypeConverter::class, self::CONFIGURATION_RESOURCE_LOAD_PATH) . '/' . $hash);
             }
