@@ -159,7 +159,7 @@ class PersistentResource implements ResourceMetaDataInterface, CacheAwareInterfa
      *
      * Note: The caller is responsible to close the returned resource by calling fclose($stream)
      *
-     * @return resource | boolean A stream which points to the data of this resource for read-access or false if the stream could not be obtained
+     * @return resource|boolean A stream which points to the data of this resource for read-access or false if the stream could not be obtained
      * @api
      */
     public function getStream()
@@ -322,6 +322,14 @@ class PersistentResource implements ResourceMetaDataInterface, CacheAwareInterfa
      */
     public function getFileSize()
     {
+        if (!$this->fileSize && $this->source !== null) {
+            if (is_string($this->source)) {
+                $this->fileSize = filesize($this->source) ?: 0;
+            } elseif (is_resource($this->source)) {
+                $stat = fstat($this->source);
+                $this->fileSize = $stat['size'] ?? 0;
+            }
+        }
         return $this->fileSize;
     }
 
@@ -333,6 +341,16 @@ class PersistentResource implements ResourceMetaDataInterface, CacheAwareInterfa
      */
     public function getSha1()
     {
+        if (!$this->sha1 && $this->source !== null) {
+            if (is_string($this->source)) {
+                $this->sha1 = sha1_file($this->source);
+            } elseif (is_resource($this->source)) {
+                $pos = ftell($this->source);
+                rewind($this->source);
+                $this->sha1 = sha1(fread($this->source, $this->fileSize));
+                fseek($this->source, $pos);
+            }
+        }
         return $this->sha1;
     }
 
@@ -360,6 +378,16 @@ class PersistentResource implements ResourceMetaDataInterface, CacheAwareInterfa
      */
     public function getMd5()
     {
+        if (!$this->md5 && $this->source !== null) {
+            if (is_string($this->source)) {
+                $this->md5 = md5_file($this->source);
+            } elseif (is_resource($this->source)) {
+                $pos = ftell($this->source);
+                rewind($this->source);
+                $this->md5 = md5(fread($this->source, $this->fileSize));
+                fseek($this->source, $pos);
+            }
+        }
         return $this->md5;
     }
 
