@@ -136,7 +136,7 @@ class FileSystemStorage implements StorageInterface
     public function getObjects(callable $callback = null)
     {
         foreach ($this->resourceManager->getCollectionsByStorage($this) as $collection) {
-            yield $this->getObjectsByCollection($collection, $callback);
+            yield from $this->getObjectsByCollection($collection, $callback);
         }
     }
 
