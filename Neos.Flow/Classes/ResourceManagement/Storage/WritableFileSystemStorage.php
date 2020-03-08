@@ -45,7 +45,7 @@ class WritableFileSystemStorage extends FileSystemStorage implements WritableSto
      *
      * On a successful import this method returns a PersistentResource object representing the newly imported persistent resource.
      *
-     * @param string | resource $source The URI (or local path and filename) or the PHP resource stream to import the resource from
+     * @param string|resource $source The URI (or local path and filename) or the PHP resource stream to import the resource from
      * @param string $collectionName Name of the collection the new PersistentResource belongs to
      * @throws StorageException
      * @return PersistentResource A resource object representing the imported resource
