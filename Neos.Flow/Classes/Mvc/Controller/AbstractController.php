@@ -12,6 +12,8 @@ namespace Neos\Flow\Mvc\Controller;
  */
 
 use GuzzleHttp\Psr7\Uri;
+use Neos\Flow\ResourceManagement\PersistentResource;
+use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Flow\Http\Helper\MediaTypeHelper;
 use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Exception\ForwardException;
@@ -88,6 +90,12 @@ abstract class AbstractController implements ControllerInterface
      * @var PersistenceManagerInterface
      */
     protected $persistenceManager;
+
+    /**
+     * @Flow\Inject
+     * @var ResourceManager
+     */
+    protected $resourceManager;
 
     /**
      * A list of IANA media types which are supported by this controller
@@ -378,6 +386,13 @@ abstract class AbstractController implements ControllerInterface
             $argumentName = $argument->getName();
             if ($this->request->hasArgument($argumentName)) {
                 $argument->setValue($this->request->getArgument($argumentName));
+
+                // Needed because we have an "auto-persistence" for mapped Resources since ages, but it was done in the
+                // TypeConverter previously, where validation could no longer prevent importing a resource into the system
+                $value = $argument->getValue();
+                if ($value instanceof PersistentResource && !$argument->getValidationResults()->hasErrors()) {
+                    $this->resourceManager->persistResource($value);
+                }
             } elseif ($argument->isRequired()) {
                 throw new RequiredArgumentMissingException('Required argument "' . $argumentName  . '" is not set.', 1298012500);
             }

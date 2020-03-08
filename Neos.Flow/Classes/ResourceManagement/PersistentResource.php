@@ -37,6 +37,14 @@ class PersistentResource implements ResourceMetaDataInterface, CacheAwareInterfa
     protected $collectionName = ResourceManager::DEFAULT_PERSISTENT_COLLECTION_NAME;
 
     /**
+     * The source for the resource when being newly created for deferred persistence
+     *
+     * @var string|resource|null
+     * @Flow\Transient
+     */
+    protected $source;
+
+    /**
      * Filename which is used when the data of this resource is downloaded as a file or acting as a label
      *
      * @var string
@@ -126,6 +134,14 @@ class PersistentResource implements ResourceMetaDataInterface, CacheAwareInterfa
     protected $temporaryLocalCopyPathAndFilename;
 
     /**
+     * @param string|resource|null $source
+     */
+    public function __construct($source = null)
+    {
+        $this->source = $source;
+    }
+
+    /**
      * Protects this PersistentResource if it has been persisted already.
      *
      * @param integer $initializationCause
@@ -149,6 +165,27 @@ class PersistentResource implements ResourceMetaDataInterface, CacheAwareInterfa
     public function getStream()
     {
         return $this->resourceManager->getStreamByResource($this);
+    }
+
+    /**
+     * @return resource|string|null
+     */
+    public function getSource()
+    {
+        return $this->source;
+    }
+
+    /**
+     * Detach the source from this resource and return it.
+     * Used for deferred persistence.
+     *
+     * @return resource|string|null
+     */
+    public function detachSource()
+    {
+        $source = $this->source;
+        $this->source = null;
+        return $source;
     }
 
     /**
