@@ -24,21 +24,42 @@ Neos:
       # request (default).
       baseUri: NULL
 
-      # Defines the workflow of one request from bootstrap to the HTTP response
-      #
-      # By default this workflow is devided in three sub-chains "preprocess", "process" and "postprocess" but the chain can be restructured as needed
-      #
-      chain:
-
+      # Defines the PSR-15 middlewares that a request goes through in a flow of "preprocess", "process" and "postprocess"
+      middlewares:
         'preprocess':
           position: 'before process'
           chain:
             'trustedProxies':
               position: 'start'
-              component: 'Neos\Flow\Http\Component\TrustedProxiesComponent'
+              middleware: 'Neos\Flow\Http\Component\TrustedProxiesComponent'
             'getSessionCookieFromRequest':
               position: 'after trustedProxies'
-              component: 'Neos\Flow\Session\Http\SessionRequestComponent'
+              middleware: 'Neos\Flow\Session\Http\SessionRequestComponent'
+        'process':
+          chain:
+            'dispatch':
+              position: 'end'
+              middleware: 'Neos\Flow\Http\Middleware\ComponentChainMiddleware'
+        'postprocess':
+          # Yes, this is correct. Middlewares work like an onion and the innermost is the one generating the response (mvc dispatcher)
+          position: 'before process'
+          chain: []
+
+      # Defines the workflow of one request from bootstrap to the HTTP response
+      #
+      # By default this workflow is divided in three sub-chains "preprocess", "process" and "postprocess" but the chain can be restructured as needed
+      #
+      chain:
+
+        'preprocess':
+          position: 'before process'
+          chain: []
+          #  'trustedProxies':
+          #    position: 'start'
+          #    component: 'Neos\Flow\Http\Component\TrustedProxiesComponent'
+          #  'getSessionCookieFromRequest':
+          #    position: 'after trustedProxies'
+          #    component: 'Neos\Flow\Session\Http\SessionRequestComponent'
         'process':
           chain:
             'routing':

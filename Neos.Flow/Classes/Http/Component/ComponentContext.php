@@ -25,6 +25,7 @@ use Psr\Http\Message\ResponseInterface;
  *
  * @api
  * @Flow\Proxy(false)
+ * @Flow\Scope("singleton")
  */
 class ComponentContext
 {
@@ -54,7 +55,7 @@ class ComponentContext
      * @param ServerRequestInterface $httpRequest
      * @param ResponseInterface $httpResponse
      */
-    public function __construct(ServerRequestInterface $httpRequest, ResponseInterface $httpResponse)
+    public function __construct(ServerRequestInterface $httpRequest = null, ResponseInterface $httpResponse = null)
     {
         $this->httpRequest = $httpRequest;
         $this->httpResponse = $httpResponse;

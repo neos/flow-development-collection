@@ -43,7 +43,7 @@ class ComponentChainFactory
 
         $chainComponents = [];
         foreach ($sortedChainConfiguration as $componentName => $configuration) {
-            $componentOptions = isset($configuration['componentOptions']) ? $configuration['componentOptions'] : [];
+            $componentOptions = $configuration['componentOptions'] ?? [];
             if (isset($configuration['chain'])) {
                 $component = $this->create($configuration['chain']);
             } else {

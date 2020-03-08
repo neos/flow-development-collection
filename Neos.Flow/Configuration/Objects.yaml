@@ -257,6 +257,12 @@ Neos\Flow\Http\Component\ComponentChain:
     1:
       setting: Neos.Flow.http.chain
 
+Neos\Flow\Http\Middleware\MiddlewaresChain:
+  factoryObjectName: Neos\Flow\Http\Middleware\MiddlewaresChainFactory
+  arguments:
+    1:
+      setting: Neos.Flow.http.middlewares
+
 Neos\Flow\Http\ContentStream:
   properties:
     logger:
