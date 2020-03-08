@@ -266,18 +266,18 @@ class ResourceTypeConverter extends AbstractTypeConverter
                 fwrite($tempFile, base64_decode($source['data']));
                 fseek($tempFile, 0);
                 $resource = new PersistentResource($tempFile);
-                $resource->setCollectionName($collectionName);
-                $resource->setFilename($source['filename']);
-                if ($givenResourceIdentity !== null) {
-                    ObjectAccess::setProperty($resource, 'Persistence_Object_Identifier', $givenResourceIdentity, true);
-                }
+
             } elseif ($hash !== null) {
                 $resource = new PersistentResource($configuration->getConfigurationValue(ResourceTypeConverter::class, self::CONFIGURATION_RESOURCE_LOAD_PATH) . '/' . $hash);
-                $resource->setCollectionName($collectionName);
-                if (is_array($source) && isset($source['filename'])) {
-                    $resource->setFilename($source['filename']);
-                }
             }
+            $resource->setCollectionName($collectionName);
+            if (is_array($source) && isset($source['filename'])) {
+                $resource->setFilename($source['filename']);
+            }
+            if ($givenResourceIdentity !== null) {
+                ObjectAccess::setProperty($resource, 'Persistence_Object_Identifier', $givenResourceIdentity, true);
+            }
+
             if ($hash !== null && $resource->getSha1() !== $hash) {
                 throw new Exception\InvalidResourceDataException('The source SHA1 did not match the SHA1 of the imported resource.', 1482248149);
             }
