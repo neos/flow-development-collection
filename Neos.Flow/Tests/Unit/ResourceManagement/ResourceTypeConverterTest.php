@@ -12,7 +12,6 @@ namespace Neos\Flow\Tests\Unit\ResourceManagement;
  */
 
 use Neos\Flow\Persistence\PersistenceManagerInterface;
-use Neos\Flow\ResourceManagement\Exception;
 use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Flow\ResourceManagement\ResourceTypeConverter;
