@@ -325,7 +325,7 @@ class CompileTimeObjectManager extends ObjectManager
                 ];
 
                 $objects[$objectName]['fa'] = [];
-                $factoryMethodArguments = $objectConfiguration->getArguments();
+                $factoryMethodArguments = $objectConfiguration->getFactoryArguments();
                 if (count($factoryMethodArguments) > 0) {
                     foreach ($factoryMethodArguments as $index => $argument) {
                         $objects[$objectName]['fa'][$index] = [
