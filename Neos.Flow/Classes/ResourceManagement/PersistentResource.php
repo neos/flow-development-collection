@@ -39,7 +39,7 @@ class PersistentResource implements ResourceMetaDataInterface, CacheAwareInterfa
     /**
      * The source for the resource when being newly created for deferred persistence
      *
-     * @var string|resource|null
+     * @var string|array|resource|null
      * @Flow\Transient
      */
     protected $source;
@@ -136,7 +136,7 @@ class PersistentResource implements ResourceMetaDataInterface, CacheAwareInterfa
     /**
      * The source is required for deferred persistence (after validation) in the framework and should otherwise not be set.
      *
-     * @param string|resource|null $source
+     * @param string|array|resource|null $source
      */
     public function __construct($source = null)
     {
@@ -170,7 +170,7 @@ class PersistentResource implements ResourceMetaDataInterface, CacheAwareInterfa
     }
 
     /**
-     * @return resource|string|null
+     * @return resource|array|string|null
      */
     public function getSource()
     {
@@ -181,7 +181,7 @@ class PersistentResource implements ResourceMetaDataInterface, CacheAwareInterfa
      * Detach the source from this resource and return it.
      * Used for deferred persistence.
      *
-     * @return resource|string|null
+     * @return resource|array|string|null
      */
     public function detachSource()
     {
@@ -327,6 +327,8 @@ class PersistentResource implements ResourceMetaDataInterface, CacheAwareInterfa
         if (!$this->fileSize && $this->source !== null) {
             if (is_string($this->source)) {
                 $this->fileSize = filesize($this->source) ?: 0;
+            } elseif (is_array($this->source)) {
+                $this->fileSize = $this->source['size'] ?? 0;
             } elseif (is_resource($this->source)) {
                 $stat = fstat($this->source);
                 $this->fileSize = $stat['size'] ?? 0;
@@ -346,6 +348,8 @@ class PersistentResource implements ResourceMetaDataInterface, CacheAwareInterfa
         if (!$this->sha1 && $this->source !== null) {
             if (is_string($this->source)) {
                 $this->sha1 = sha1_file($this->source);
+            } elseif (is_array($this->source) && isset($this->source['tmp_name'])) {
+                $this->sha1 = sha1_file($this->source['tmp_name']);
             } elseif (is_resource($this->source)) {
                 $pos = ftell($this->source);
                 rewind($this->source);
@@ -383,6 +387,8 @@ class PersistentResource implements ResourceMetaDataInterface, CacheAwareInterfa
         if (!$this->md5 && $this->source !== null) {
             if (is_string($this->source)) {
                 $this->md5 = md5_file($this->source);
+            } elseif (is_array($this->source) && isset($this->source['tmp_name'])) {
+                $this->md5 = md5_file($this->source['tmp_name']);
             } elseif (is_resource($this->source)) {
                 $pos = ftell($this->source);
                 rewind($this->source);
