@@ -134,6 +134,8 @@ class PersistentResource implements ResourceMetaDataInterface, CacheAwareInterfa
     protected $temporaryLocalCopyPathAndFilename;
 
     /**
+     * The source is required for deferred persistence (after validation) in the framework and should otherwise not be set.
+     *
      * @param string|resource|null $source
      */
     public function __construct($source = null)

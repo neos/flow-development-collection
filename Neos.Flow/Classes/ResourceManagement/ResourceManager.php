@@ -262,6 +262,7 @@ class ResourceManager
 
     /**
      * Import a deferred resource into it's destination collection and persist it.
+     * This will do nothing, if the resource is not deferred (has no source attached).
      *
      * @param PersistentResource $resource
      * @throws Exception
@@ -291,7 +292,7 @@ class ResourceManager
         }
 
         $this->resourceRepository->add($resource);
-        $this->logger->debug(sprintf('Successfully imported the uploaded file "%s" into the resource collection "%s" (storage: "%s", a %s. SHA1: %s)', $resource->getFilename(), $collectionName, $this->collections[$collectionName]->getStorage()->getName(), get_class($this->collections[$collectionName]->getStorage()), $resource->getSha1()));
+        $this->logger->debug(sprintf('Successfully imported the uploaded file "%s" into the resource collection "%s" (storage: "%s", a %s. SHA1: %s)', $resource->getFilename(), $collectionName, $collection->getStorage()->getName(), get_class($collection->getStorage()), $resource->getSha1()));
     }
 
     /**
