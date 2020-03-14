@@ -606,7 +606,8 @@ class ActionController extends AbstractController
      * @param ViewInterface $view
      * @Flow\Signal
      */
-    protected function emitViewResolved(ViewInterface $view) {}
+    protected function emitViewResolved(ViewInterface $view) {
+    }
 
     /**
      * Determines the fully qualified view object name.
