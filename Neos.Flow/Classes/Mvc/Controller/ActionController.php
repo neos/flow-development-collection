@@ -593,8 +593,20 @@ class ActionController extends AbstractController
         $viewOptions = isset($viewsConfiguration['options']) ? $viewsConfiguration['options'] : [];
         $view = $viewObjectName::createWithOptions($viewOptions);
 
+        $this->emitViewResolved($view);
+
         return $view;
     }
+
+    /**
+     * Emit that the view is resolved. The passed ViewInterface reference,
+     * gives the possibility to add variables to the view,
+     * before passing it on to further rendering
+     *
+     * @param ViewInterface $view
+     * @Flow\Signal
+     */
+    protected function emitViewResolved(ViewInterface $view) {}
 
     /**
      * Determines the fully qualified view object name.
