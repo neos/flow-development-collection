@@ -59,7 +59,7 @@ final class Roles implements \JsonSerializable, \IteratorAggregate, \Countable
         return count($this->roles);
     }
 
-    public function has(string $role): bool
+    public function has(Role $role): bool
     {
         return array_key_exists((string)$role, $this->roles);
     }

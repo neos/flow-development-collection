@@ -244,7 +244,7 @@ class Account implements AccountInterface
      */
     public function hasRole(Role $role): bool
     {
-        return $this->getRoles()->has((string) $role);
+        return $this->getRoles()->has($role);
     }
 
     /**
