@@ -72,7 +72,6 @@ class FileBasedSimpleKeyProviderTest extends UnitTestCase
 
         $this->mockPolicyService = $this->getMockBuilder(PolicyService::class)->disableOriginalConstructor()->getMock();
         $this->mockPolicyService->expects(self::any())->method('getRole')->with('Neos.Flow:TestRoleIdentifier')->will(self::returnValue($this->mockRole));
-        $this->mockPolicyService->expects(self::any())->method('hasRole')->with('Neos.Flow:TestRoleIdentifier')->will(self::returnValue(true));
 
         $this->mockHashService = $this->getMockBuilder(HashService::class)->disableOriginalConstructor()->getMock();
 
