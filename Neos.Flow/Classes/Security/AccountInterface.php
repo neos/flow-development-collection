@@ -47,4 +47,9 @@ interface AccountInterface {
      */
     public function hasRole(Role $role): bool;
 
+    /**
+     * @return bool
+     */
+    public function isActive(): bool;
+
 }

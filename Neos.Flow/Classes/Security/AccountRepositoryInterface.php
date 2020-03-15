@@ -17,4 +17,6 @@ interface AccountRepositoryInterface {
 
     public function findByAccountIdentifierAndAuthenticationProviderName(string $accountIdentifier, string $authenticationProviderName): AccountInterface;
 
+    public function findActiveByAccountIdentifierAndAuthenticationProviderName(string $accountIdentifier, string $authenticationProviderName): AccountInterface;
+
 }
