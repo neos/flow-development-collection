@@ -22,7 +22,7 @@ use Neos\Flow\Security\Context as SecurityContext;
  *
  * @Flow\Scope("singleton")
  */
-class AccountRepository extends Repository
+class AccountRepository extends Repository implements AccountRepositoryInterface
 {
     /**
      * @var string
@@ -64,7 +64,7 @@ class AccountRepository extends Repository
      * @param string $authenticationProviderName The authentication provider name
      * @return Account
      */
-    public function findByAccountIdentifierAndAuthenticationProviderName($accountIdentifier, $authenticationProviderName)
+    public function findByAccountIdentifierAndAuthenticationProviderName(string $accountIdentifier, string $authenticationProviderName): AccountInterface
     {
         $query = $this->createQuery();
         return $query->matching(
