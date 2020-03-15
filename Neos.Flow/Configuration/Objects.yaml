@@ -554,6 +554,9 @@ Neos\Flow\Security\Authentication\Provider\TestingProvider:
     1:
       value: 'TestingProvider'
 
+Neos\Flow\Security\AccountRepositoryInterface:
+  className: Neos\Flow\Security\AccountRepository
+
 #                                                                          #
 # Session                                                                  #
 #                                                                          #
