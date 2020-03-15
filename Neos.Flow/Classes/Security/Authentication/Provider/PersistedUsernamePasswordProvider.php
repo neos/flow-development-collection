@@ -104,7 +104,7 @@ class PersistedUsernamePasswordProvider extends AbstractProvider
             return;
         }
 
-        if ($this->hashService->validatePassword($credentials['password'], $account->getCredentialsSource())) {
+        if ($this->hashService->validatePassword($credentials['password'], (string) $account->getCredentialsSource())) {
             $account->authenticationAttempted(TokenInterface::AUTHENTICATION_SUCCESSFUL);
             $authenticationToken->setAuthenticationStatus(TokenInterface::AUTHENTICATION_SUCCESSFUL);
             $authenticationToken->setAccount($account);

@@ -19,6 +19,7 @@ use Neos\Flow\Security\Cryptography\HashService;
 use Neos\Flow\Security\Exception\UnsupportedAuthenticationTokenException;
 use Neos\Flow\Security\Policy\PolicyService;
 use Neos\Flow\Security\Policy\Role;
+use Neos\Flow\Security\Policy\Roles;
 use Neos\Flow\Tests\UnitTestCase;
 
 /**
@@ -69,6 +70,7 @@ class FileBasedSimpleKeyProviderTest extends UnitTestCase
 
         $this->mockPolicyService = $this->getMockBuilder(PolicyService::class)->disableOriginalConstructor()->getMock();
         $this->mockPolicyService->expects(self::any())->method('getRole')->with('Neos.Flow:TestRoleIdentifier')->will(self::returnValue($this->mockRole));
+        $this->mockPolicyService->expects(self::any())->method('hasRole')->with('Neos.Flow:TestRoleIdentifier')->will(self::returnValue($this->mockRole));
 
         $this->mockHashService = $this->getMockBuilder(HashService::class)->disableOriginalConstructor()->getMock();
 
@@ -115,8 +117,9 @@ class FileBasedSimpleKeyProviderTest extends UnitTestCase
 
         $authenticationProvider->authenticate($this->mockToken);
 
-        $authenticatedRoles = $this->mockToken->getAccount()->getRoles();
-        self::assertTrue(in_array('Neos.Flow:TestRoleIdentifier', array_keys($authenticatedRoles)));
+        $account = $this->mockToken->getAccount();
+
+        self::assertTrue($this->mockToken->getAccount()->hasRole(new Role('Neos.Flow:TestRoleIdentifier')));
     }
 
     /**

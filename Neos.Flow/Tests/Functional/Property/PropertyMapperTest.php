@@ -421,8 +421,9 @@ class PropertyMapperTest extends FunctionalTestCase
         $account = $this->propertyMapper->convert($source, Account::class, $configuration);
 
         self::assertInstanceOf(Account::class, $account);
-        self::assertEquals(2, count($account->getRoles()));
-        self::assertEquals($expectedRoleIdentifiers, array_keys($account->getRoles()));
+        self::assertCount(2, $account->getRoles());
+        self::assertTrue($account->getRoles()->has(new Role($expectedRoleIdentifiers[0])));
+        self::assertTrue($account->getRoles()->has(new Role($expectedRoleIdentifiers[1])));
     }
 
     /**

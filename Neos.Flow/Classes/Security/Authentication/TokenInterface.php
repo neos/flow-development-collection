@@ -11,7 +11,7 @@ namespace Neos\Flow\Security\Authentication;
  * source code.
  */
 use Neos\Flow\Mvc\ActionRequest;
-use Neos\Flow\Security\Account;
+use Neos\Flow\Security\AccountInterface;
 
 /**
  * Contract for an authentication token.
@@ -138,17 +138,17 @@ interface TokenInterface
     /**
      * Returns the account if one is authenticated, NULL otherwise.
      *
-     * @return Account An account object
+     * @return AccountInterface An account object
      */
     public function getAccount();
 
     /**
      * Set the (authenticated) account
      *
-     * @param Account $account An account object
+     * @param AccountInterface $account An account object
      * @return void
      */
-    public function setAccount(Account $account = null);
+    public function setAccount(AccountInterface $account = null);
 
     /**
      * Returns a string representation of the token for logging purposes.
