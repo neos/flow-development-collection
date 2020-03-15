@@ -126,10 +126,7 @@ class AccountTest extends UnitTestCase
     {
         $this->account->setRoles([$this->administratorRole]);
 
-        self::assertTrue($this->account->getRoles()->has($this->administratorRole));
         self::assertTrue($this->account->hasRole($this->administratorRole));
-
-        self::assertFalse($this->account->getRoles()->has($this->customerRole));
         self::assertFalse($this->account->hasRole($this->customerRole));
     }
 
