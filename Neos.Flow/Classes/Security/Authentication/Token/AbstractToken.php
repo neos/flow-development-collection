@@ -42,7 +42,7 @@ abstract class AbstractToken implements TokenInterface
     protected $credentials = [];
 
     /**
-     * @var Account
+     * @var AccountInterface
      */
     protected $account;
 
