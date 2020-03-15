@@ -64,7 +64,7 @@ class AccountRepository extends Repository implements AccountRepositoryInterface
      * @param string $authenticationProviderName The authentication provider name
      * @return Account
      */
-    public function findByAccountIdentifierAndAuthenticationProviderName(string $accountIdentifier, string $authenticationProviderName): AccountInterface
+    public function findByAccountIdentifierAndAuthenticationProviderName(string $accountIdentifier, string $authenticationProviderName): ?AccountInterface
     {
         $query = $this->createQuery();
         return $query->matching(
@@ -82,7 +82,7 @@ class AccountRepository extends Repository implements AccountRepositoryInterface
      * @param string $authenticationProviderName The authentication provider name
      * @return Account
      */
-    public function findActiveByAccountIdentifierAndAuthenticationProviderName($accountIdentifier, $authenticationProviderName): AccountInterface
+    public function findActiveByAccountIdentifierAndAuthenticationProviderName($accountIdentifier, $authenticationProviderName): ?AccountInterface
     {
         $query = $this->createQuery();
         return $query->matching(
