@@ -18,6 +18,7 @@ use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Flow\Property\TypeConverter\ObjectConverter;
 use Neos\Flow\Property\TypeConverter\PersistentObjectConverter;
 use Neos\Flow\Security\Account;
+use Neos\Flow\Security\Policy\Role;
 use Neos\Flow\Tests\FunctionalTestCase;
 
 /**
