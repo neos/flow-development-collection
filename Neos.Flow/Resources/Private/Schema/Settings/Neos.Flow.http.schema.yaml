@@ -32,6 +32,31 @@ properties:
                   'componentOptions': { type: dictionary }
                   'chain':
                     type: dictionary
+  'middlewares':
+    type: dictionary
+    required: true
+    additionalProperties:
+      -
+        type: 'null'
+      -
+        type: dictionary
+        additionalProperties: false
+        properties:
+          'position': [string, number]
+          'middleware': { type: string, format: class-name }
+          'chain':
+            -
+              type: 'null'
+            -
+              type: dictionary
+              additionalProperties:
+                type: dictionary
+                additionalProperties: false
+                properties:
+                  'position': [string, number]
+                  'middleware': { type: string, format: class-name }
+                  'chain':
+                    type: dictionary
   'trustedProxies':
     type: dictionary
     required: true
