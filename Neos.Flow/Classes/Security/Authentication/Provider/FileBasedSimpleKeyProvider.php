@@ -114,6 +114,8 @@ class FileBasedSimpleKeyProvider extends AbstractProvider
 
         $authenticationToken->setAuthenticationStatus(TokenInterface::AUTHENTICATION_SUCCESSFUL);
         $account = new Account();
+        $account->setAccountIdentifier($this->options['keyName']);
+        $account->setAuthenticationProviderName($this->name);
         $roles = array_map([$this->policyService, 'getRole'], $this->options['authenticateRoles']);
         $account->setRoles($roles);
         $authenticationToken->setAccount($account);
