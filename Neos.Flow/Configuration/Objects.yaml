@@ -557,6 +557,8 @@ Neos\Flow\Security\Authentication\Provider\TestingProvider:
 Neos\Flow\Security\AccountRepositoryInterface:
   className: Neos\Flow\Security\AccountRepository
 
+Neos\Flow\Security\AccountInterface:
+  className: Neos\Flow\Security\Account
 #                                                                          #
 # Session                                                                  #
 #                                                                          #
