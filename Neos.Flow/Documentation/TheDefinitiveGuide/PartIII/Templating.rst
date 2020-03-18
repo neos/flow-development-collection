@@ -430,7 +430,7 @@ This is possible with the Signal/Slot dispatcher from your ``Package.php`` file:
 
             $dispatcher = $bootstrap->getSignalSlotDispatcher();
 
-            $dispatcher->connect(ActionController::class, 'viewResolved', function (ViewInterface $view) {
+            $dispatcher->connect(ActionController::class, 'viewResolved', static function (ViewInterface $view) {
                 $view->assign('settingPassedFromSignal', 'sun is shining');
             });
 
