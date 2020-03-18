@@ -38,24 +38,24 @@ class AuthenticationTokenResolver
     }
 
     /**
-     * Resolves the class name of an authentication token. If a valid provider class name is given, it is just returned.
+     * Resolves the class name of an authentication token. If a valid token class name is given, it is just returned.
      *
      * @param string $tokenName The (short) name of the token
      * @return string The object name of the authentication token
      * @throws NoAuthenticationTokenFoundException
      */
-    public function resolveTokenClass($providerName)
+    public function resolveTokenClass(string $tokenName): string
     {
-        $className = $this->objectManager->getClassNameByObjectName($providerName);
+        $className = $this->objectManager->getClassNameByObjectName($tokenName);
         if ($className !== false) {
             return $className;
         }
 
-        $className = $this->objectManager->getClassNameByObjectName('Neos\Flow\Security\Authentication\Token\\' . $providerName);
+        $className = $this->objectManager->getClassNameByObjectName('Neos\Flow\Security\Authentication\Token\\' . $tokenName);
         if ($className !== false) {
             return $className;
         }
 
-        throw new NoAuthenticationTokenFoundException('An authentication provider with the name "' . $providerName . '" could not be resolved.', 1217154134);
+        throw new NoAuthenticationTokenFoundException('An authentication token with the name "' . $tokenName . '" could not be resolved.', 1217154134);
     }
 }
