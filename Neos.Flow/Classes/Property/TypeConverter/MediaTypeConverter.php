@@ -13,7 +13,6 @@ namespace Neos\Flow\Property\TypeConverter;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
-use Neos\Flow\Validation\Error;
 use Neos\Utility\Arrays;
 use Neos\Utility\MediaTypes;
 
