@@ -470,7 +470,7 @@ class ActionRequest implements RequestInterface
     public function setArgument($argumentName, $value)
     {
         $argumentName = (string)$argumentName;
-        if (empty($argumentName)) {
+        if ($argumentName === '') {
             throw new Exception\InvalidArgumentNameException('Invalid argument name (must be a non-empty string).', 1210858767);
         }
 

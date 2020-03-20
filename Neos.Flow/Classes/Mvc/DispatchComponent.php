@@ -98,11 +98,12 @@ class DispatchComponent implements ComponentInterface
         $arguments = $httpRequest->getArguments();
 
         $parsedBody = $this->parseRequestBody($httpRequest);
-        if ($parsedBody !== []) {
-            $arguments = Arrays::arrayMergeRecursiveOverrule($arguments, $parsedBody);
+        if ($parsedBody !== null) {
             $httpRequest = $httpRequest->withParsedBody($parsedBody);
         }
-
+        if (is_array($parsedBody) && $parsedBody !== []) {
+            $arguments = Arrays::arrayMergeRecursiveOverrule($arguments, $parsedBody);
+        }
 
         $routingMatchResults = $componentContext->getParameter(Routing\RoutingComponent::class, 'matchResults');
         if ($routingMatchResults !== null) {
@@ -125,19 +126,20 @@ class DispatchComponent implements ComponentInterface
      * Parses the request body according to the media type.
      *
      * @param HttpRequest $httpRequest
-     * @return array
+     * @return null|array|string|integer
      */
     protected function parseRequestBody(HttpRequest $httpRequest)
     {
         $requestBody = $httpRequest->getContent();
         if ($requestBody === null || $requestBody === '') {
-            return [];
+            return $requestBody;
         }
 
         $mediaTypeConverter = $this->objectManager->get(MediaTypeConverterInterface::class);
         $propertyMappingConfiguration = new PropertyMappingConfiguration();
         $propertyMappingConfiguration->setTypeConverter($mediaTypeConverter);
         $propertyMappingConfiguration->setTypeConverterOption(MediaTypeConverterInterface::class, MediaTypeConverterInterface::CONFIGURATION_MEDIA_TYPE, $httpRequest->getHeader('Content-Type'));
+        // FIXME: The MediaTypeConverter returns an empty array for "error cases", which might be unintended
         $arguments = $this->propertyMapper->convert($requestBody, 'array', $propertyMappingConfiguration);
 
         return $arguments;
