@@ -133,14 +133,16 @@ class AccountTest extends UnitTestCase
     /**
      * @test
      */
-    public function getRolesReturnsRolesInstance() {
+    public function getRolesReturnsRolesInstance()
+    {
         self::assertTrue($this->account->getRoles() instanceof Roles);
     }
 
     /**
      * @test
      */
-    public function usingGetRolesForRoleCheckReturnsSameResultAsHasRole() {
+    public function usingGetRolesForRoleCheckReturnsSameResultAsHasRole()
+    {
         $this->account->setRoles([$this->administratorRole]);
 
         self::assertTrue($this->account->getRoles()->has(new Role('Neos.Flow:Administrator')));

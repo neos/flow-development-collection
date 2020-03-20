@@ -28,7 +28,8 @@ final class AuthenticationProviderName
     /**
      * @param string $authenticationProviderName
      */
-    private function __construct(string $authenticationProviderName)  {
+    private function __construct(string $authenticationProviderName)
+    {
         $this->authenticationProviderName = $authenticationProviderName;
     }
 

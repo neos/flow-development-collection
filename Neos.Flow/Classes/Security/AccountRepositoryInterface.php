@@ -13,7 +13,8 @@ declare(strict_types=1);
 
 namespace Neos\Flow\Security;
 
-interface AccountRepositoryInterface {
+interface AccountRepositoryInterface
+{
 
     public function findByAccountIdentifierAndAuthenticationProviderName(string $accountIdentifier, string $authenticationProviderName): ?AccountInterface;
 

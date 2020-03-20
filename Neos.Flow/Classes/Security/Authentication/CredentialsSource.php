@@ -28,7 +28,8 @@ final class CredentialsSource
     /**
      * @param string $credentialsSource
      */
-    private function __construct(string $credentialsSource) {
+    private function __construct(string $credentialsSource)
+    {
         $this->credentialsSource = $credentialsSource;
     }
 

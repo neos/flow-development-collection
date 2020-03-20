@@ -18,7 +18,8 @@ use Neos\Flow\Security\Authentication\CredentialsSource;
 use Neos\Flow\Security\Policy\Role;
 use Neos\Flow\Security\Policy\Roles;
 
-interface AccountInterface {
+interface AccountInterface
+{
 
 
     /**
