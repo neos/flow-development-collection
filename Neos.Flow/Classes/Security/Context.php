@@ -460,7 +460,7 @@ class Context
      * from the tokens.
      * (@see getAuthenticationTokens())
      *
-     * @return AccountInterface The authenticated account
+     * @return AccountInterface|null The authenticated account
      */
     public function getAccount()
     {
@@ -483,7 +483,7 @@ class Context
      * authentication provider name.
      *
      * @param string $authenticationProviderName Authentication provider name of the account to find
-     * @return AccountInterface The authenticated account
+     * @return AccountInterface|null The authenticated account
      */
     public function getAccountByAuthenticationProviderName($authenticationProviderName)
     {
