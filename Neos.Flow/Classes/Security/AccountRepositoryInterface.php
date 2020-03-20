@@ -17,9 +17,7 @@ use Neos\Flow\Persistence\RepositoryInterface;
 
 interface AccountRepositoryInterface extends RepositoryInterface
 {
-
     public function findByAccountIdentifierAndAuthenticationProviderName(string $accountIdentifier, string $authenticationProviderName): ?AccountInterface;
 
     public function findActiveByAccountIdentifierAndAuthenticationProviderName(string $accountIdentifier, string $authenticationProviderName): ?AccountInterface;
-
 }

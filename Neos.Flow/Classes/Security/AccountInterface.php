@@ -20,8 +20,6 @@ use Neos\Flow\Security\Policy\Roles;
 
 interface AccountInterface
 {
-
-
     /**
      * @return AccountIdentifier
      */
@@ -52,5 +50,4 @@ interface AccountInterface
      * @return bool
      */
     public function isActive(): bool;
-
 }
