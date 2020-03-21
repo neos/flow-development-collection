@@ -124,22 +124,19 @@ class Package extends BasePackage
             if ($session->isStarted() && !$token instanceof SessionlessTokenInterface) {
                 $session->renewId();
             }
-            if ($token instanceof PersistedUsernamePasswordProvider) {
-                if ($token->getAccount() instanceof Account) {
-                    $token->getAccount()->authenticationAttempted(TokenInterface::AUTHENTICATION_SUCCESSFUL);
-                    $bootstrap->getObjectManager()->get(Persistence\PersistenceManagerInterface::class)->update($token->getAccount());
-                    $bootstrap->getObjectManager()->get(Persistence\PersistenceManagerInterface::class)->whitelistObject($token->getAccount());
-                }
+
+            if ($token->getAccount() instanceof Account) {
+                $token->getAccount()->authenticationAttempted(TokenInterface::AUTHENTICATION_SUCCESSFUL);
+                $bootstrap->getObjectManager()->get(Persistence\PersistenceManagerInterface::class)->update($token->getAccount());
+                $bootstrap->getObjectManager()->get(Persistence\PersistenceManagerInterface::class)->whitelistObject($token->getAccount());
             }
         });
 
         $dispatcher->connect(Security\Authentication\AuthenticationProviderManager::class, 'failedAuthenticatingToken', function (TokenInterface $token) use ($bootstrap) {
-            if ($token instanceof PersistedUsernamePasswordProvider) {
-                if ($token->getAccount() instanceof Account) {
-                    $token->getAccount()->authenticationAttempted(TokenInterface::WRONG_CREDENTIALS);
-                    $bootstrap->getObjectManager()->get(Persistence\PersistenceManagerInterface::class)->update($token->getAccount());
-                    $bootstrap->getObjectManager()->get(Persistence\PersistenceManagerInterface::class)->whitelistObject($token->getAccount());
-                }
+            if ($token->getAccount() instanceof Account) {
+                $token->getAccount()->authenticationAttempted(TokenInterface::WRONG_CREDENTIALS);
+                $bootstrap->getObjectManager()->get(Persistence\PersistenceManagerInterface::class)->update($token->getAccount());
+                $bootstrap->getObjectManager()->get(Persistence\PersistenceManagerInterface::class)->whitelistObject($token->getAccount());
             }
         });
 
