@@ -45,15 +45,35 @@ class UsernamePassword extends AbstractToken
             return;
         }
 
-        $arguments = $actionRequest->getInternalArguments();
+        $credentials = $this->extractCredentialsFromRequest($actionRequest);
+
+        if (!empty($credentials['username']) && !empty($credentials['password'])) {
+            $this->credentials['username'] = $credentials['username'];
+            $this->credentials['password'] = $credentials['password'];
+            $this->setAuthenticationStatus(self::AUTHENTICATION_NEEDED);
+        }
+    }
+
+    /**
+     * Extract credentials from the request and pass it on to the token
+     *
+     * This method, makes it convenient for your own implementation to
+     * override the parameters, either based on field name or any other
+     * request arguments or requirements you might have
+     *
+     * @param ActionRequest $request
+     * @return array
+     */
+    protected function extractCredentialsFromRequest(ActionRequest $request)
+    {
+        $arguments = $request->getInternalArguments();
         $username = ObjectAccess::getPropertyPath($arguments, '__authentication.Neos.Flow.Security.Authentication.Token.UsernamePassword.username');
         $password = ObjectAccess::getPropertyPath($arguments, '__authentication.Neos.Flow.Security.Authentication.Token.UsernamePassword.password');
 
-        if (!empty($username) && !empty($password)) {
-            $this->credentials['username'] = $username;
-            $this->credentials['password'] = $password;
-            $this->setAuthenticationStatus(self::AUTHENTICATION_NEEDED);
-        }
+        return [
+            'username' => $username,
+            'password' => $password
+        ];
     }
 
     /**
