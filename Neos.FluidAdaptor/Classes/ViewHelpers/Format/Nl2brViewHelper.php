@@ -26,14 +26,14 @@ use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
  * <f:format.nl2br>{text_with_linebreaks}</f:format.nl2br>
  * </code>
  * <output>
- * newline characters in a string get's prefixed with <br /> to create linebreak
+ * newline characters in a string get prefixed with <br /> to create linebreak
  * </output>
  *
  * <code title="Inline notation">
  * {text_with_linebreaks -> f:format.nl2br()}
  * </code>
  * <output>
- * newline characters in a string get's prefixed with <br /> to create linebreak
+ * newline characters in a string get prefixed with <br /> to create linebreak
  * </output>
  *
  * @api
