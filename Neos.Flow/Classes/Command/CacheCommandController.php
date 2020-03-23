@@ -431,21 +431,23 @@ class CacheCommandController extends CommandController
      * @return void
      * @throws NoSuchCacheException
      */
-    public function garbageCollectionCommand(string $cacheIdentifier = null) {
+    public function collectGarbageCommand(string $cacheIdentifier = null): void
+    {
         if ($cacheIdentifier !== null) {
             $cache = $this->cacheManager->getCache($cacheIdentifier);
             $cache->collectGarbage();
 
-            $this->outputLine('Garbage Collection for cache "%s" completed', [$cacheIdentifier]);
+            $this->outputLine('<success>Garbage Collection for cache "%s" completed</success>', [$cacheIdentifier]);
         } else {
             $cacheConfigurations = $this->cacheManager->getCacheConfigurations();
             unset($cacheConfigurations['Default']);
             ksort($cacheConfigurations);
 
             foreach ($cacheConfigurations as $identifier => $configuration) {
+                $this->outputLine('Garbage Collection for cache "%s"', [$identifier]);
                 $cache = $this->cacheManager->getCache($identifier);
                 $cache->collectGarbage();
-                $this->outputLine('Garbage Collection for cache "%s" completed', [$identifier]);
+                $this->outputLine('<success>Completed</success>', [$identifier]);
             }
         }
 
