@@ -427,7 +427,7 @@ class CacheCommandController extends CommandController
      * can differ and might not remove any data, depending on possibilities of
      * the backend.
      *
-     * @param bool $quiet If set, this command only outputs errors & warnings
+     * @param string $cacheIdentifier If set, this command only applies to the given cache
      * @return void
      * @throws NoSuchCacheException
      */
