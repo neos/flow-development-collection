@@ -419,6 +419,40 @@ class CacheCommandController extends CommandController
     }
 
     /**
+     * Cache Garbage Collection
+     *
+     * Runs the Garbage Collection (collectGarbage) method on all registered caches.
+     *
+     * Though the method is defined in the BackendInterface, the implementation
+     * can differ and might not remove any data, depending on possibilities of
+     * the backend.
+     *
+     * @param bool $quiet If set, this command only outputs errors & warnings
+     * @return void
+     * @throws NoSuchCacheException
+     */
+    public function garbageCollectionCommand(string $cacheIdentifier = null) {
+        if ($cacheIdentifier !== null) {
+            $cache = $this->cacheManager->getCache($cacheIdentifier);
+            $cache->collectGarbage();
+
+            $this->outputLine('Garbage Collection for cache "%s" completed', [$cacheIdentifier]);
+        } else {
+            $cacheConfigurations = $this->cacheManager->getCacheConfigurations();
+            $defaultConfiguration = $cacheConfigurations['Default'];
+            unset($cacheConfigurations['Default']);
+            ksort($cacheConfigurations);
+
+            foreach ($cacheConfigurations as $identifier => $configuration) {
+                $cache = $this->cacheManager->getCache($identifier);
+                $cache->collectGarbage();
+                $this->outputLine('Garbage Collection for cache "%s" completed', [$identifier]);
+            }
+        }
+
+    }
+
+    /**
      * Call system function
      *
      * @Flow\Internal
