@@ -439,7 +439,6 @@ class CacheCommandController extends CommandController
             $this->outputLine('Garbage Collection for cache "%s" completed', [$cacheIdentifier]);
         } else {
             $cacheConfigurations = $this->cacheManager->getCacheConfigurations();
-            $defaultConfiguration = $cacheConfigurations['Default'];
             unset($cacheConfigurations['Default']);
             ksort($cacheConfigurations);
 
