@@ -450,7 +450,6 @@ class CacheCommandController extends CommandController
                 $this->outputLine('<success>Completed</success>', [$identifier]);
             }
         }
-
     }
 
     /**
