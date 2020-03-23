@@ -447,7 +447,7 @@ class CacheCommandController extends CommandController
                 $this->outputLine('Garbage Collection for cache "%s"', [$identifier]);
                 $cache = $this->cacheManager->getCache($identifier);
                 $cache->collectGarbage();
-                $this->outputLine('<success>Completed</success>', [$identifier]);
+                $this->outputLine('<success>Completed</success>');
             }
         }
     }
