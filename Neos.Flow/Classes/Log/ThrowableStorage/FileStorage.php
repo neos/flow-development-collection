@@ -59,6 +59,9 @@ class FileStorage implements ThrowableStorageInterface
         $this->storagePath = $storagePath;
 
         $this->requestInformationRenderer = static function () {
+            // The following lines duplicate Scripts::initializeExceptionStorage(), which is a fallback to handle
+            // exceptions that may occure before Scripts::initializeExceptionStorage() has finished.
+
             $output = '';
             if (!(Bootstrap::$staticObjectManager instanceof ObjectManagerInterface)) {
                 return $output;
@@ -81,7 +84,7 @@ class FileStorage implements ThrowableStorageInterface
             return $output;
         };
 
-        $this->backtraceRenderer = static function ($backtrace) {
+        $this->backtraceRenderer = function ($backtrace) {
             return Debugger::getBacktraceCode($backtrace, false, true);
         };
     }
