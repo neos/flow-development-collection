@@ -49,6 +49,11 @@ class TokenAndProviderFactory implements TokenAndProviderFactoryInterface
     protected $providerResolver;
 
     /**
+     * @var AuthenticationTokenResolver
+     */
+    protected $tokenResolver;
+
+    /**
      * @var RequestPatternResolver
      */
     protected $requestPatternResolver;
@@ -56,11 +61,13 @@ class TokenAndProviderFactory implements TokenAndProviderFactoryInterface
     /**
      * @param AuthenticationProviderResolver $providerResolver The provider resolver
      * @param RequestPatternResolver $requestPatternResolver The request pattern resolver
+     * @param AuthenticationTokenResolver $tokenResolver The token resolver
      */
-    public function __construct(AuthenticationProviderResolver $providerResolver, RequestPatternResolver $requestPatternResolver)
+    public function __construct(AuthenticationProviderResolver $providerResolver, RequestPatternResolver $requestPatternResolver, AuthenticationTokenResolver $tokenResolver)
     {
         $this->providerResolver = $providerResolver;
         $this->requestPatternResolver = $requestPatternResolver;
+        $this->tokenResolver = $tokenResolver;
     }
 
     /**
@@ -152,8 +159,12 @@ class TokenAndProviderFactory implements TokenAndProviderFactoryInterface
             /** @var $tokenInstance TokenInterface */
             $tokenInstance = null;
             foreach ($providerInstance->getTokenClassNames() as $tokenClassName) {
-                if (isset($providerConfiguration['token']) && $providerConfiguration['token'] !== $tokenClassName) {
-                    continue;
+                if (isset($providerConfiguration['token'])) {
+                    $tokenObjectName = $this->tokenResolver->resolveTokenClass((string)$providerConfiguration['token']);
+
+                    if ($tokenObjectName !== $tokenClassName) {
+                        continue;
+                    }
                 }
 
                 $tokenInstance = new $tokenClassName();
