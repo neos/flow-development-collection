@@ -206,11 +206,12 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
 
         $statementHandle = $this->databaseHandle->prepare('SELECT "content" FROM "' . $this->cacheTableName . '" WHERE "identifier"=? AND "context"=? AND "cache"=?' . $this->getNotExpiredStatement());
         $statementHandle->execute([$entryIdentifier, $this->context(), $this->cacheIdentifier]);
+        /** @var false|string|null $fetchedColumn */
         $fetchedColumn = $statementHandle->fetchColumn();
 
         // Convert hexadecimal data into binary string,
         // because it is not allowed to store null bytes in PostgreSQL.
-        if ($fetchedColumn !== false && $this->pdoDriver === 'pgsql') {
+        if (!empty($fetchedColumn) && $this->pdoDriver === 'pgsql') {
             $fetchedColumn = hex2bin($fetchedColumn);
         }
 
