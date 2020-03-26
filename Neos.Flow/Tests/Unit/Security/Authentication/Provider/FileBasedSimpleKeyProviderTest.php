@@ -19,7 +19,6 @@ use Neos\Flow\Security\Cryptography\HashService;
 use Neos\Flow\Security\Exception\UnsupportedAuthenticationTokenException;
 use Neos\Flow\Security\Policy\PolicyService;
 use Neos\Flow\Security\Policy\Role;
-use Neos\Flow\Security\Policy\Roles;
 use Neos\Flow\Tests\UnitTestCase;
 
 /**
