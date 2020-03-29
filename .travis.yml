@@ -92,6 +92,7 @@ after_failure: |
     export COMMIT_HASH=$(git rev-parse --short HEAD)
     bin/psalm --config=Packages/Framework/psalm.xml --set-baseline=Packages/Framework/psalm-baseline.xml
     cd "Packages/Framework"
+    git add psalm-baseline.xml
     git -c user.name='travis' -c user.email='travis@noreply.github.com' commit -m "TASK: Update psalm-baseline"
     # Make sure to make the output quiet, or else the API token will leak!
     git push -f -q https://${GH_TOKEN}@github.com/neos/flow-development-collection travis:${COMMIT_HASH} &>/dev/null
