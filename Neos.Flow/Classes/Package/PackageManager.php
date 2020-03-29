@@ -356,8 +356,9 @@ class PackageManager
             $composerManifestRepositories = ComposerUtility::getComposerManifest(FLOW_PATH_ROOT, 'repositories');
             if (is_array($composerManifestRepositories)) {
                 foreach ($composerManifestRepositories as $repository) {
-                    if (is_array($repository) && $repository['type'] === 'path' && isset($repository['type'], $repository['url'])
-                        && strpos($repository['url'], './') === 0 && substr($repository['url'], -2) === '/*'
+                    if (is_array($repository) &&
+                        isset($repository['type']) && $repository['type'] === 'path' &&
+                        isset($repository['url']) && substr($repository['url'], 0, 2) === './' && substr($repository['url'], -2) === '/*'
                     ) {
                         $packagesPath = Files::getUnixStylePath(Files::concatenatePaths([FLOW_PATH_ROOT, substr($repository['url'], 0, -2)]));
                         $runComposerRequireForTheCreatedPackage = true;
