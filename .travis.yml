@@ -87,6 +87,15 @@ script:
   - if [ "$STATIC_ANALYSIS" != "true" ] && [ "$BEHAT" != "true" ]; then bin/phpunit --colors --stop-on-failure -c Build/BuildEssentials/PhpUnit/FunctionalTests.xml --testsuite "Framework tests"; fi
   - if [ "$BEHAT" = "true" ]; then FLOW_CONTEXT=Testing/Behat ./flow doctrine:create; fi
   - if [ "$BEHAT" = "true" ]; then bin/behat --stop-on-failure -f progress -c Packages/Framework/Neos.Flow/Tests/Behavior/behat.yml.dist; fi
+after_failure: |
+  if [ "$STATIC_ANALYSIS" = "true" ] && [ -n "$GH_TOKEN" ]; then
+    export COMMIT_HASH=$(git rev-parse --short HEAD)
+    bin/psalm --config=Packages/Framework/psalm.xml --set-baseline=Packages/Framework/psalm-baseline.xml
+    cd "Packages/Framework"
+    git -c user.name='travis' -c user.email='travis@noreply.github.com' commit -m "TASK: Update psalm-baseline"
+    # Make sure to make the output quiet, or else the API token will leak!
+    git push -f -q https://$GH_TOKEN@github.com/neos/flow-development-collection travis:${COMMIT_HASH} &>/dev/null
+  fi
 notifications:
   email: false
   slack:
