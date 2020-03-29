@@ -92,7 +92,8 @@ class ObjectValidationAndDeDuplicationListener
         $knownValueObjects = [];
         foreach ($entityInsertions as $entity) {
             $className = TypeHandling::getTypeForValue($entity);
-            if ($this->reflectionService->getClassSchema($className)->getModelType() === ClassSchema::MODELTYPE_VALUEOBJECT) {
+            $classSchema = $this->reflectionService->getClassSchema($className);
+            if ($classSchema !== null && $classSchema->getModelType() === ClassSchema::MODELTYPE_VALUEOBJECT) {
                 $identifier = $this->persistenceManager->getIdentifierByObject($entity);
 
                 if (isset($knownValueObjects[$className][$identifier]) || $unitOfWork->getEntityPersister($className)->exists($entity)) {
