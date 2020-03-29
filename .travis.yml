@@ -94,7 +94,7 @@ after_failure: |
     cd "Packages/Framework"
     git -c user.name='travis' -c user.email='travis@noreply.github.com' commit -m "TASK: Update psalm-baseline"
     # Make sure to make the output quiet, or else the API token will leak!
-    git push -f -q https://$GH_TOKEN@github.com/neos/flow-development-collection travis:${COMMIT_HASH} &>/dev/null
+    git push -f -q https://${GH_TOKEN}@github.com/neos/flow-development-collection travis:${COMMIT_HASH} &>/dev/null
   fi
 notifications:
   email: false
