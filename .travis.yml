@@ -91,11 +91,10 @@ after_failure: |
   if [ "$STATIC_ANALYSIS" = "true" ] && [ -n "$GH_TOKEN" ]; then
     bin/psalm --config=Packages/Framework/psalm.xml --set-baseline=Packages/Framework/psalm-baseline.xml
     cd "Packages/Framework"
-    export COMMIT_HASH=$(git rev-parse --short HEAD)
     git add psalm-baseline.xml
     git -c user.name='travis' -c user.email='travis@noreply.github.com' commit -m "TASK: Update psalm-baseline"
-    # Make sure to make the output quiet, or else the API token will leak!
-    git push -f -q https://neos-project:${GH_TOKEN}@github.com/neos/flow-development-collection ${NEOS_TARGET_VERSION}:${COMMIT_HASH} &>/dev/null
+    git remote set-url --push origin https://neos-project:${GH_TOKEN}@github.com/neos/flow-development-collection
+    git push -f origin HEAD:travis-${NEOS_TARGET_VERSION}
   fi
 notifications:
   email: false
