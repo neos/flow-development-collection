@@ -42,7 +42,7 @@ class LocaleTypeConverter extends AbstractTypeConverter
      * Convert the given $source (a locale identifier string) to $targetType (Locale)
      *
      * @param string $source the locale string
-     * @param Locale $targetType
+     * @param string $targetType
      * @param array $convertedChildProperties
      * @param PropertyMappingConfigurationInterface $configuration
      * @return Locale
