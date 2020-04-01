@@ -1125,9 +1125,8 @@
     <InvalidPropertyAssignmentValue occurrences="1">
       <code>['string']</code>
     </InvalidPropertyAssignmentValue>
-    <MoreSpecificImplementedParamType occurrences="2">
+    <MoreSpecificImplementedParamType occurrences="1">
       <code>$source</code>
-      <code>$targetType</code>
     </MoreSpecificImplementedParamType>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/I18n/Parser/DatetimeParser.php">
@@ -3355,9 +3354,6 @@
       <code>$chunks</code>
       <code>$chunks</code>
     </PossiblyUndefinedVariable>
-    <TypeDoesNotContainType occurrences="1">
-      <code>$overrideFirst($key, $firstArrayInner[$key], $value)</code>
-    </TypeDoesNotContainType>
   </file>
   <file src="Packages/Framework/Neos.Utility.Files/Classes/Files.php">
     <InvalidOperand occurrences="1">
@@ -3417,20 +3413,9 @@
     <InvalidFalsableReturnType occurrences="1">
       <code>integer</code>
     </InvalidFalsableReturnType>
-    <InvalidScalarArgument occurrences="2">
+    <InvalidScalarArgument occurrences="1">
       <code>$enc</code>
-      <code>$currentComponent</code>
     </InvalidScalarArgument>
-    <PossiblyUndefinedArrayOffset occurrences="8">
-      <code>$components['scheme']</code>
-      <code>$components['host']</code>
-      <code>$components['port']</code>
-      <code>$components['user']</code>
-      <code>$components['pass']</code>
-      <code>$components['path']</code>
-      <code>$components['query']</code>
-      <code>$components['fragment']</code>
-    </PossiblyUndefinedArrayOffset>
   </file>
   <file src="Packages/Framework/Neos.Utility.Unicode/Classes/TextIterator.php">
     <InvalidReturnStatement occurrences="3">
