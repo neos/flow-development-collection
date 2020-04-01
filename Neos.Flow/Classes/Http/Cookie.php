@@ -96,11 +96,11 @@ class Cookie
      * sameSite=strict
      *   Cookie will only be sent in a first-party context, cookie is ignored on the initial request to your site.
      *   This is a good setting when you have cookies relating to functionality, such as changing a password
-     * sameSite=strict
+     * sameSite=lax
      *   Cookie will only be sent in a top-level navigations.
      *   This is a good setting when you need the cookie on the initial request, such as session login via cookie
      * sameSite=none
-     *   Cookie will sent in a third-party context.
+     *   Cookie will be sent in a third-party context.
      *   This is a good setting when you need the cookie in cors ajax request, such as providing an api with session login via cookie
      *
      * @var string
