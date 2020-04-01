@@ -125,7 +125,7 @@ class ProxyClassBuilder
 
         foreach ($this->objectConfigurations as $objectName => $objectConfiguration) {
             $className = $objectConfiguration->getClassName();
-            if ($className === '' || $this->compiler->hasCacheEntryForClass($className) === true) {
+            if ($className === '' || $className === null || $this->compiler->hasCacheEntryForClass($className) === true) {
                 continue;
             }
 

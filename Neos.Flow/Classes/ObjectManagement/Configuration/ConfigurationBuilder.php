@@ -19,6 +19,7 @@ use Neos\Flow\ObjectManagement\Exception as ObjectException;
 use Neos\Flow\ObjectManagement\Exception\InvalidObjectConfigurationException;
 use Neos\Flow\ObjectManagement\Exception\UnknownClassException;
 use Neos\Flow\ObjectManagement\Exception\UnresolvedDependenciesException;
+use Neos\Flow\ObjectManagement\ObjectManager;
 use Neos\Flow\Reflection\ReflectionService;
 use Psr\Log\LoggerInterface;
 
@@ -118,14 +119,32 @@ class ConfigurationBuilder
                 if (isset($rawObjectConfiguration['className'])) {
                     $rawObjectConfiguration = $this->enhanceRawConfigurationWithAnnotationOptions($rawObjectConfiguration['className'], $rawObjectConfiguration);
                 }
-                $newObjectConfiguration = $this->parseConfigurationArray($objectName, $rawObjectConfiguration, 'configuration of package ' . $packageKey . ', definition for object "' . $objectName . '"', $existingObjectConfiguration);
+                if (strpos($objectName, ':') !== false) {
+                    if (!isset($rawObjectConfiguration['factoryObjectName'])) {
+                        $rawObjectConfiguration['factoryObjectName'] = ObjectManager::class;
+                        $rawObjectConfiguration['factoryMethodName'] = 'get';
+                        if (empty($rawObjectConfiguration['className'])) {
+                            throw new InvalidObjectConfigurationException(sprintf('Missing className for virtual object configuration "%s". Please check your Objects.yaml.', $objectName), 1585758850);
+                        }
+                        $newArguments = [1 => ['value' => $rawObjectConfiguration['className']]];
+                        if (isset($rawObjectConfiguration['arguments'])) {
+                            foreach ($rawObjectConfiguration['arguments'] as $index => $value) {
+                                $newArguments[$index + 1] = $value;
+                            }
+                        }
+                        $rawObjectConfiguration['arguments'] = $newArguments;
+                    }
+                    $newObjectConfiguration = $this->parseConfigurationArray($objectName, $rawObjectConfiguration, 'configuration of package ' . $packageKey . ', definition for object "' . $objectName . '"', $existingObjectConfiguration);
+                } else {
+                    $newObjectConfiguration = $this->parseConfigurationArray($objectName, $rawObjectConfiguration, 'configuration of package ' . $packageKey . ', definition for object "' . $objectName . '"', $existingObjectConfiguration);
 
-                if (!isset($objectConfigurations[$objectName]) && !interface_exists($objectName, true) && !class_exists($objectName, false)) {
-                    throw new InvalidObjectConfigurationException('Tried to configure unknown object "' . $objectName . '" in package "' . $packageKey . '". Please check your Objects.yaml.', 1184926175);
-                }
+                    if (!isset($objectConfigurations[$objectName]) && !interface_exists($objectName, true) && !class_exists($objectName, false)) {
+                        throw new InvalidObjectConfigurationException('Tried to configure unknown object "' . $objectName . '" in package "' . $packageKey . '". Please check your Objects.yaml.', 1184926175);
+                    }
 
-                if ($objectName !== $newObjectConfiguration->getClassName() && !interface_exists($objectName, true)) {
-                    throw new InvalidObjectConfigurationException('Tried to set a differing class name for class "' . $objectName . '" in the object configuration of package "' . $packageKey . '". Setting "className" is only allowed for interfaces, please check your Objects.yaml."', 1295954589);
+                    if ($objectName !== $newObjectConfiguration->getClassName() && !interface_exists($objectName, true)) {
+                        throw new InvalidObjectConfigurationException('Tried to set a differing class name for class "' . $objectName . '" in the object configuration of package "' . $packageKey . '". Setting "className" is only allowed for interfaces, please check your Objects.yaml."', 1295954589);
+                    }
                 }
 
                 if (empty($newObjectConfiguration->getClassName()) && empty($newObjectConfiguration->getFactoryObjectName())) {
@@ -153,6 +172,7 @@ class ConfigurationBuilder
 
         $this->autowireArguments($objectConfigurations);
         $this->autowireProperties($objectConfigurations);
+        $this->wireObjectArguments($objectConfigurations);
 
         return $objectConfigurations;
     }
@@ -351,6 +371,51 @@ class ConfigurationBuilder
             $argument = new ConfigurationArgument($argumentName, $objectNameOrConfiguration, ConfigurationArgument::ARGUMENT_TYPES_OBJECT);
         }
         return $argument;
+    }
+
+    /**
+     * Creates a "virtual object configuration" for object arguments, turning:
+     *
+     * 'Some\Class\Name':
+     *   arguments:
+     *     1:
+     *       object:
+     *         factoryObjectName: 'Some\Factory\Class'
+     *
+     * into:
+     *
+     * 'Some\Class\Name':
+     *   arguments:
+     *     1:
+     *       object: 'Some\Class\Name::argument:1'
+     *
+     * 'Some\Class\Name::argument:1':
+     *   factoryObjectName: 'Some\Factory\Class'
+     *
+     *
+     * @param array &$objectConfigurations
+     * @return void
+     * @throws InvalidObjectConfigurationException
+     */
+    protected function wireObjectArguments(array &$objectConfigurations)
+    {
+        /** @var Configuration $objectConfiguration */
+        foreach ($objectConfigurations as $objectConfiguration) {
+            /** @var ConfigurationArgument $argument */
+            foreach ($objectConfiguration->getArguments() as $index => &$argument) {
+                if ($argument === null || $argument->getType() !== ConfigurationArgument::ARGUMENT_TYPES_OBJECT) {
+                    continue;
+                }
+                $argumentValue = $argument->getValue();
+                if (!$argumentValue instanceof Configuration) {
+                    continue;
+                }
+                $argumentObjectName = $objectConfiguration->getObjectName() . ':argument:' . $index;
+                $argumentValue->setObjectName($argumentObjectName);
+                $objectConfigurations[$argumentObjectName] = $argument->getValue();
+                $argument->set($argument->getIndex(), $argumentObjectName, $argument->getType());
+            }
+        }
     }
 
     /**
