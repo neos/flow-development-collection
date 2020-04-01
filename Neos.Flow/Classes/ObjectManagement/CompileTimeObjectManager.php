@@ -308,6 +308,7 @@ class CompileTimeObjectManager extends ObjectManager
     protected function buildObjectsArray()
     {
         $objects = [];
+        /* @var $objectConfiguration Configuration */
         foreach ($this->objectConfigurations as $objectConfiguration) {
             $objectName = $objectConfiguration->getObjectName();
             $objects[$objectName] = [
@@ -318,7 +319,7 @@ class CompileTimeObjectManager extends ObjectManager
             if ($objectConfiguration->getClassName() !== $objectName) {
                 $objects[$objectName]['c'] = $objectConfiguration->getClassName();
             }
-            if ($objectConfiguration->getFactoryObjectName() !== '') {
+            if ($objectConfiguration->isCreatedByFactory()) {
                 $objects[$objectName]['f'] = [
                     $objectConfiguration->getFactoryObjectName(),
                     $objectConfiguration->getFactoryMethodName()

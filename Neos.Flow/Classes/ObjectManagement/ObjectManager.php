@@ -497,7 +497,7 @@ class ObjectManager implements ObjectManagerInterface
     protected function buildObjectByFactory($objectName)
     {
         $configurationManager = $this->get(ConfigurationManager::class);
-        $factory = $this->get($this->objects[$objectName]['f'][0]);
+        $factory = $this->objects[$objectName]['f'][0] ? $this->get($this->objects[$objectName]['f'][0]) : null;
         $factoryMethodName = $this->objects[$objectName]['f'][1];
 
         $factoryMethodArguments = [];
@@ -515,11 +515,11 @@ class ObjectManager implements ObjectManagerInterface
             }
         }
 
-        if (count($factoryMethodArguments) === 0) {
-            return $factory->$factoryMethodName();
+        if ($factory !== null) {
+            return $factory->$factoryMethodName(...$factoryMethodArguments);
         }
 
-        return call_user_func_array([$factory, $factoryMethodName], $factoryMethodArguments);
+        return $factoryMethodName(...$factoryMethodArguments);
     }
 
     /**
@@ -538,7 +538,7 @@ class ObjectManager implements ObjectManagerInterface
         }
 
         try {
-            $object = ObjectAccess::instantiateClass($className, $arguments);
+            $object = new $className(...$arguments);
             unset($this->classesBeingInstantiated[$className]);
             return $object;
         } catch (\Exception $exception) {

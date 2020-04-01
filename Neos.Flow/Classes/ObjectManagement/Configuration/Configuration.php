@@ -229,13 +229,13 @@ class Configuration
     }
 
     /**
-     * Returns true if factoryObjectName and factoryMethodName are defined.
+     * Returns true if factoryObjectName or factoryMethodName are defined.
      *
      * @return boolean
      */
     public function isCreatedByFactory()
     {
-        return ($this->factoryObjectName !== '' && $this->factoryMethodName !== '');
+        return ($this->factoryObjectName !== '' || $this->factoryMethodName !== '');
     }
 
     /**
