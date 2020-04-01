@@ -14,7 +14,6 @@ namespace Neos\Flow\Tests\Unit\Security;
 use Neos\Flow\Exception;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use Neos\Flow\Security\AccountIdentifier;
 use Neos\Flow\Security\Authentication\AuthenticationManagerInterface;
 use Neos\Flow\Security\Account;
 use Neos\Flow\Security\Authentication\Token\SessionlessTokenInterface;
@@ -1150,9 +1149,9 @@ class ContextTest extends UnitTestCase
     public function getSessionTagForAccountCreatesUniqueTagsPerAccount()
     {
         $account1 = $this->createMock(Account::class);
-        $account1->expects(self::any())->method('getAccountIdentifier')->willReturn(AccountIdentifier::fromString('Account1'));
+        $account1->expects(self::any())->method('getAccountIdentifier')->willReturn('Account1');
         $account2 = $this->createMock(Account::class);
-        $account2->expects(self::any())->method('getAccountIdentifier')->willReturn(AccountIdentifier::fromString('Account2'));
+        $account2->expects(self::any())->method('getAccountIdentifier')->willReturn('Account2');
 
         self::assertNotSame($this->securityContext->getSessionTagForAccount($account1), $this->securityContext->getSessionTagForAccount($account2));
     }
@@ -1163,7 +1162,7 @@ class ContextTest extends UnitTestCase
     public function destroySessionsForAccountWillDestroySessionsByAccountTag()
     {
         $account = $this->createMock(Account::class);
-        $account->expects(self::any())->method('getAccountIdentifier')->willReturn(AccountIdentifier::fromString('Account'));
+        $account->expects(self::any())->method('getAccountIdentifier')->willReturn('Account');
         $accountTag = $this->securityContext->getSessionTagForAccount($account);
 
         $mockSessionManager = $this->createMock(SessionManagerInterface::class);
