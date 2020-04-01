@@ -14,13 +14,10 @@ namespace Neos\Flow\Security;
 use Doctrine\ORM\Mapping as ORM;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use Neos\Flow\Security\Authentication\AuthenticationProviderName;
-use Neos\Flow\Security\Authentication\CredentialsSource;
 use Neos\Flow\Security\Authentication\TokenInterface;
 use Neos\Flow\Security\Exception\InvalidAuthenticationStatusException;
 use Neos\Flow\Security\Policy\PolicyService;
 use Neos\Flow\Security\Policy\Role;
-use Neos\Flow\Security\Policy\Roles;
 use Neos\Flow\Utility\Now;
 
 /**
@@ -29,7 +26,7 @@ use Neos\Flow\Utility\Now;
  * @Flow\Entity
  * @api
  */
-class Account implements AccountInterface
+class Account
 {
     /**
      * @var string
@@ -137,12 +134,12 @@ class Account implements AccountInterface
     /**
      * Returns the account identifier
      *
-     * @return AccountIdentifier The account identifier
+     * @return string The account identifier
      * @api
      */
-    public function getAccountIdentifier(): AccountIdentifier
+    public function getAccountIdentifier()
     {
-        return AccountIdentifier::fromString($this->accountIdentifier);
+        return $this->accountIdentifier;
     }
 
     /**
@@ -160,12 +157,12 @@ class Account implements AccountInterface
     /**
      * Returns the authentication provider name this account corresponds to
      *
-     * @return AuthenticationProviderName The authentication provider name
+     * @return string The authentication provider name
      * @api
      */
-    public function getAuthenticationProviderName(): AuthenticationProviderName
+    public function getAuthenticationProviderName()
     {
-        return AuthenticationProviderName::fromString($this->authenticationProviderName);
+        return $this->authenticationProviderName;
     }
 
     /**
@@ -183,12 +180,12 @@ class Account implements AccountInterface
     /**
      * Returns the credentials source
      *
-     * @return CredentialsSource The credentials source
+     * @return mixed The credentials source
      * @api
      */
-    public function getCredentialsSource(): CredentialsSource
+    public function getCredentialsSource()
     {
-        return CredentialsSource::fromString($this->credentialsSource);
+        return $this->credentialsSource;
     }
 
     /**
@@ -206,13 +203,13 @@ class Account implements AccountInterface
     /**
      * Returns the roles this account has assigned
      *
-     * @return Roles The assigned roles, indexed by role identifier
+     * @return array<Role> The assigned roles, indexed by role identifier
      * @api
      */
-    public function getRoles(): Roles
+    public function getRoles()
     {
         $this->initializeRoles();
-        return Roles::fromArray($this->roles);
+        return $this->roles;
     }
 
     /**
@@ -242,9 +239,10 @@ class Account implements AccountInterface
      * @return boolean
      * @api
      */
-    public function hasRole(Role $role): bool
+    public function hasRole(Role $role)
     {
-        return $this->getRoles()->has((string) $role);
+        $this->initializeRoles();
+        return array_key_exists($role->getIdentifier(), $this->roles);
     }
 
     /**
@@ -260,6 +258,7 @@ class Account implements AccountInterface
         if ($role->isAbstract()) {
             throw new \InvalidArgumentException(sprintf('Abstract roles can\'t be assigned to accounts directly, but the role "%s" is marked abstract', $role->getIdentifier()), 1399900657);
         }
+        $this->initializeRoles();
         if (!$this->hasRole($role)) {
             $roleIdentifier = $role->getIdentifier();
             $this->roleIdentifiers[] = $roleIdentifier;
