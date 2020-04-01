@@ -53,10 +53,10 @@ class Configuration
     protected $factoryObjectName = '';
 
     /**
-     * Name of the factory method. Only used if $factoryObjectName is set.
+     * Name of the factory method.
      * @var string
      */
-    protected $factoryMethodName = 'create';
+    protected $factoryMethodName = '';
 
     /**
      * @var string
@@ -191,6 +191,9 @@ class Configuration
     public function setFactoryObjectName($objectName)
     {
         $this->factoryObjectName = $objectName;
+        if ($this->factoryMethodName === '') {
+            $this->factoryMethodName = 'create';
+        }
     }
 
     /**
