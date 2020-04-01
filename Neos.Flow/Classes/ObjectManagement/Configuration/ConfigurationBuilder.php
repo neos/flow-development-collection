@@ -387,7 +387,7 @@ class ConfigurationBuilder
      * 'Some\Class\Name':
      *   arguments:
      *     1:
-     *       object: 'Some\Class\Name::argument:1'
+     *       object: 'Some\Class\Name:argument:1'
      *
      * 'Some\Class\Name::argument:1':
      *   factoryObjectName: 'Some\Factory\Class'
