@@ -213,21 +213,21 @@ abstract class Functions
             case -1:
                 return $components;
             case PHP_URL_SCHEME:
-                return $components['scheme'];
+                return $components['scheme'] ?? null;
             case PHP_URL_HOST:
-                return $components['host'];
+                return $components['host'] ?? null;
             case PHP_URL_PORT:
-                return $components['port'];
+                return $components['port'] ?? null;
             case PHP_URL_USER:
-                return $components['user'];
+                return $components['user'] ?? null;
             case PHP_URL_PASS:
-                return $components['pass'];
+                return $components['pass'] ?? null;
             case PHP_URL_PATH:
-                return $components['path'];
+                return $components['path'] ?? null;
             case PHP_URL_QUERY:
-                return $components['query'];
+                return $components['query'] ?? null;
             case PHP_URL_FRAGMENT:
-                return $components['fragment'];
+                return $components['fragment'] ?? null;
             default:
                 throw new \InvalidArgumentException('Invalid component requested for URL parsing.', 1406280743);
         }
