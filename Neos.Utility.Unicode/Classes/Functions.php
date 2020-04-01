@@ -196,7 +196,7 @@ abstract class Functions
         }
 
         foreach ($components as &$currentComponent) {
-            $currentComponent = urldecode($currentComponent);
+            $currentComponent = urldecode((string)$currentComponent);
         }
 
         // the host and port must be used as is, to allow IPv6 syntax, e.g.: [3b00:f59:1008::212:183:20]:8080
