@@ -12,7 +12,6 @@ namespace Neos\Flow\Security\Authentication\Provider;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Security\Account;
 use Neos\Flow\Security\AccountIdentifier;
 use Neos\Flow\Security\Authentication\AuthenticationProviderName;
 use Neos\Flow\Security\Authentication\Token\PasswordToken;
