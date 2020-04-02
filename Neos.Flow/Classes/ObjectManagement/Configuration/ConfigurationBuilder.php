@@ -395,14 +395,13 @@ class ConfigurationBuilder
      *
      * @param array &$objectConfigurations
      * @return void
-     * @throws InvalidObjectConfigurationException
      */
     protected function wireObjectArguments(array &$objectConfigurations)
     {
         /** @var Configuration $objectConfiguration */
         foreach ($objectConfigurations as $objectConfiguration) {
             /** @var ConfigurationArgument $argument */
-            foreach ($objectConfiguration->getArguments() as $index => &$argument) {
+            foreach ($objectConfiguration->getArguments() as $index => $argument) {
                 if ($argument === null || $argument->getType() !== ConfigurationArgument::ARGUMENT_TYPES_OBJECT) {
                     continue;
                 }
