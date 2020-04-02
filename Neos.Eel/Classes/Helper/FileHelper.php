@@ -62,7 +62,7 @@ class FileHelper implements ProtectedContextAwareInterface
     }
 
     /**
-     * File exists
+     * Check if the given file path exists
      *
      * @param string $filepath
      * @return bool
