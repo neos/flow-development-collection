@@ -43,7 +43,7 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
     public function concatWorks($arguments, $expected)
     {
         $helper = new ArrayHelper();
-        $result = call_user_func_array([$helper, 'concat'], $arguments);
+        $result = $helper->concat(...$arguments);
         $this->assertEquals($expected, $result);
     }
 
@@ -470,7 +470,7 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
     public function rangeWorks($arguments, $expected)
     {
         $helper = new ArrayHelper();
-        $result = call_user_func_array([$helper, 'range'], $arguments);
+        $result = $helper->range(...$arguments);
         $this->assertEquals($expected, $result);
     }
 
@@ -500,7 +500,7 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
     public function setWorks($arguments, $expected)
     {
         $helper = new ArrayHelper();
-        $result = call_user_func_array([$helper, 'set'], $arguments);
+        $result = $helper->set(...$arguments);
         $this->assertEquals($expected, $result);
     }
 
