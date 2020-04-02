@@ -118,7 +118,7 @@ class LazyLoadingAspect
         if ($this->sessionOriginalInstances[$objectName] === $proxy) {
             return $joinPoint->getAdviceChain()->proceed($joinPoint);
         } else {
-            return call_user_func_array([$this->sessionOriginalInstances[$objectName], $methodName], $joinPoint->getMethodArguments());
+            return $this->sessionOriginalInstances[$objectName]->$methodName(...$joinPoint->getMethodArguments());
         }
     }
 }

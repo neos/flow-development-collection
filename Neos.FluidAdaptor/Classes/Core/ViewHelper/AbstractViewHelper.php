@@ -119,7 +119,7 @@ abstract class AbstractViewHelper extends FluidAbstractViewHelper
         }
 
         try {
-            return call_user_func_array([$this, 'render'], $renderMethodParameters);
+            return $this->render(...$renderMethodParameters);
         } catch (Exception $exception) {
             if (!$this->objectManager->getContext()->isProduction()) {
                 throw $exception;

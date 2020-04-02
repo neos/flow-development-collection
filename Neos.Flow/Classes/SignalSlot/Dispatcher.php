@@ -133,10 +133,11 @@ class Dispatcher
             if ($slotInformation['passSignalInformation'] === true) {
                 $finalSignalArguments[] = $signalClassName . '::' . $signalName;
             }
-            if (!method_exists($object, $slotInformation['method'])) {
-                throw new Exception\InvalidSlotException('The slot method ' . get_class($object) . '->' . $slotInformation['method'] . '() does not exist.', 1245673368);
+            $methodName = $slotInformation['method'];
+            if (!method_exists($object, $methodName)) {
+                throw new Exception\InvalidSlotException('The slot method ' . get_class($object) . '->' . $methodName . '() does not exist.', 1245673368);
             }
-            call_user_func_array([$object, $slotInformation['method']], $finalSignalArguments);
+            $object->$methodName(...$finalSignalArguments);
         }
     }
 
