@@ -21,7 +21,6 @@ use Neos\Flow\Core\ApplicationContext;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ObjectManagement\DependencyInjection\DependencyProxy;
 use Neos\Flow\Security\Context;
-use Neos\Utility\ObjectAccess;
 
 /**
  * Object Manager
@@ -496,15 +495,14 @@ class ObjectManager implements ObjectManagerInterface
      */
     protected function buildObjectByFactory($objectName)
     {
-        $configurationManager = $this->get(ConfigurationManager::class);
-        $factory = $this->get($this->objects[$objectName]['f'][0]);
+        $factory = $this->objects[$objectName]['f'][0] ? $this->get($this->objects[$objectName]['f'][0]) : null;
         $factoryMethodName = $this->objects[$objectName]['f'][1];
 
         $factoryMethodArguments = [];
         foreach ($this->objects[$objectName]['fa'] as $index => $argumentInformation) {
             switch ($argumentInformation['t']) {
                 case ObjectConfigurationArgument::ARGUMENT_TYPES_SETTING:
-                    $factoryMethodArguments[$index] = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, $argumentInformation['v']);
+                    $factoryMethodArguments[$index] = $this->get(ConfigurationManager::class)->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, $argumentInformation['v']);
                 break;
                 case ObjectConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE:
                     $factoryMethodArguments[$index] = $argumentInformation['v'];
@@ -515,11 +513,11 @@ class ObjectManager implements ObjectManagerInterface
             }
         }
 
-        if (count($factoryMethodArguments) === 0) {
-            return $factory->$factoryMethodName();
+        if ($factory !== null) {
+            return $factory->$factoryMethodName(...$factoryMethodArguments);
         }
 
-        return call_user_func_array([$factory, $factoryMethodName], $factoryMethodArguments);
+        return $factoryMethodName(...$factoryMethodArguments);
     }
 
     /**
@@ -538,7 +536,7 @@ class ObjectManager implements ObjectManagerInterface
         }
 
         try {
-            $object = ObjectAccess::instantiateClass($className, $arguments);
+            $object = new $className(...$arguments);
             unset($this->classesBeingInstantiated[$className]);
             return $object;
         } catch (\Exception $exception) {
