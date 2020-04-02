@@ -24,7 +24,7 @@ use Neos\Flow\Security\Policy\Roles;
 use Neos\Flow\Utility\Now;
 
 /**
- * An account model
+ * The default implementation of the AccountInterface that is used for database-persisted accounts
  *
  * @Flow\Entity
  * @api
@@ -345,6 +345,7 @@ class Account implements AccountInterface
      * @param integer $authenticationStatus One of WRONG_CREDENTIALS, AUTHENTICATION_SUCCESSFUL
      * @return void
      * @throws InvalidAuthenticationStatusException
+     * @deprecated with Flow 6.2. Probably will be removed with 7.0 in favor of a more flexible implementation
      */
     public function authenticationAttempted($authenticationStatus)
     {

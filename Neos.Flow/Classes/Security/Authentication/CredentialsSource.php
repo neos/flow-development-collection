@@ -33,7 +33,6 @@ final class CredentialsSource
         $this->credentialsSource = $credentialsSource;
     }
 
-
     /**
      * @param string $credentialsSource
      * @return self
@@ -41,6 +40,16 @@ final class CredentialsSource
     public static function fromString(string $credentialsSource): self
     {
         return new static($credentialsSource);
+    }
+
+    /**
+     * Creates a empty Credential Source
+     *
+     * @return self
+     */
+    public static function empty(): self
+    {
+        return self::fromString('');
     }
 
     /**
