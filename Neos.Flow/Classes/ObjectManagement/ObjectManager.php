@@ -495,7 +495,6 @@ class ObjectManager implements ObjectManagerInterface
      */
     protected function buildObjectByFactory($objectName)
     {
-        $configurationManager = $this->get(ConfigurationManager::class);
         $factory = $this->objects[$objectName]['f'][0] ? $this->get($this->objects[$objectName]['f'][0]) : null;
         $factoryMethodName = $this->objects[$objectName]['f'][1];
 
@@ -503,7 +502,7 @@ class ObjectManager implements ObjectManagerInterface
         foreach ($this->objects[$objectName]['fa'] as $index => $argumentInformation) {
             switch ($argumentInformation['t']) {
                 case ObjectConfigurationArgument::ARGUMENT_TYPES_SETTING:
-                    $factoryMethodArguments[$index] = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, $argumentInformation['v']);
+                    $factoryMethodArguments[$index] = $this->get(ConfigurationManager::class)->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, $argumentInformation['v']);
                 break;
                 case ObjectConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE:
                     $factoryMethodArguments[$index] = $argumentInformation['v'];
