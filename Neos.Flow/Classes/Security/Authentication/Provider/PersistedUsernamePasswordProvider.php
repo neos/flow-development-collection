@@ -32,7 +32,7 @@ use Neos\Flow\Security\Exception\UnsupportedAuthenticationTokenException;
  * Neos\Flow\Security\Authentication\Token\UsernamePassword tokens.
  * The accounts are stored in the Content Repository.
  */
-final class PersistedUsernamePasswordProvider extends AbstractProvider
+class PersistedUsernamePasswordProvider extends AbstractProvider
 {
     /**
      * @Flow\Inject
