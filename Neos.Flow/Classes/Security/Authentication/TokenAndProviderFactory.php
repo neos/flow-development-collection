@@ -167,7 +167,7 @@ class TokenAndProviderFactory implements TokenAndProviderFactoryInterface
                     }
                 }
 
-                $tokenInstance = new $tokenClassName();
+                $tokenInstance = new $tokenClassName($providerConfiguration['tokenOptions'] ?? []);
                 $tokenInstance->setAuthenticationProviderName($providerName);
                 $this->tokens[] = $tokenInstance;
                 break;
