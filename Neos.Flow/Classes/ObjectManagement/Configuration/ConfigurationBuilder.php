@@ -411,6 +411,9 @@ class ConfigurationBuilder
                 }
                 $argumentObjectName = $objectConfiguration->getObjectName() . ':argument:' . $index;
                 $argumentValue->setObjectName($argumentObjectName);
+                if ($argumentValue->getClassName() === null) {
+                    $argumentValue->setClassName('');
+                }
                 $objectConfigurations[$argumentObjectName] = $argument->getValue();
                 $argument->set($argument->getIndex(), $argumentObjectName, $argument->getType());
             }
