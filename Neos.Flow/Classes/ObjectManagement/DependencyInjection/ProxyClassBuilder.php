@@ -442,13 +442,6 @@ class ProxyClassBuilder
     public function buildPropertyInjectionCodeByString(Configuration $objectConfiguration, ConfigurationProperty $propertyConfiguration, $propertyName, $propertyObjectName)
     {
         $className = $objectConfiguration->getClassName();
-
-        if (strpos($propertyObjectName, '.') !== false) {
-            $settingPath = explode('.', $propertyObjectName);
-            $settings = Arrays::getValueByPath($this->configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS), array_shift($settingPath));
-            $propertyObjectName = Arrays::getValueByPath($settings, $settingPath);
-        }
-
         if (!isset($this->objectConfigurations[$propertyObjectName])) {
             $configurationSource = $objectConfiguration->getConfigurationSourceHint();
             if (!isset($propertyObjectName[0])) {
