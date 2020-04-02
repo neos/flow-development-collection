@@ -19,7 +19,6 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ObjectManagement\DependencyInjection\DependencyProxy;
 use Neos\Flow\Security\Context;
 use Neos\Utility\Arrays;
-use Neos\Utility\ObjectAccess;
 
 /**
  * Object Manager
