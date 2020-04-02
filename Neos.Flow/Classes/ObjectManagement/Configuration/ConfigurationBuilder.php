@@ -415,7 +415,7 @@ class ConfigurationBuilder
                     $argumentValue->setClassName('');
                 }
                 $objectConfigurations[$argumentObjectName] = $argument->getValue();
-                $argument->set($argument->getIndex(), $argumentObjectName, $argument->getType());
+                $argument->set((int)$argument->getIndex(), $argumentObjectName, $argument->getType());
             }
         }
     }
