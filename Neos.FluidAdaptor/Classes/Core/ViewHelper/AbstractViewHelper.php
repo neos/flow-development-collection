@@ -114,7 +114,7 @@ abstract class AbstractViewHelper extends FluidAbstractViewHelper
         $renderMethodParameters = [];
         foreach ($this->argumentDefinitions as $argumentName => $argumentDefinition) {
             if ($argumentDefinition instanceof ArgumentDefinition && $argumentDefinition->isMethodParameter()) {
-                $renderMethodParameters[$argumentName] = $this->arguments[$argumentName];
+                $renderMethodParameters[] = $this->arguments[$argumentName];
             }
         }
 
