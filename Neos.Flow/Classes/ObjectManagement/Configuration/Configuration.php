@@ -192,6 +192,8 @@ class Configuration
     {
         $this->factoryObjectName = $objectName;
         if ($this->factoryMethodName === '') {
+            // Needed for b/c because all configured factory objects should default to 'create' method, but not having
+            // a factory object should not lead to a global static 'create' factory method
             $this->factoryMethodName = 'create';
         }
     }
