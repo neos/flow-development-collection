@@ -106,6 +106,11 @@ class Session implements CookieEnabledInterface
     protected $sessionCookieHttpOnly = true;
 
     /**
+     * @var string
+     */
+    protected $sessionCookieSameSite;
+
+    /**
      * @var Cookie
      */
     protected $sessionCookie;
@@ -232,6 +237,7 @@ class Session implements CookieEnabledInterface
         $this->sessionCookiePath = $settings['session']['cookie']['path'];
         $this->sessionCookieSecure = (boolean)$settings['session']['cookie']['secure'];
         $this->sessionCookieHttpOnly = (boolean)$settings['session']['cookie']['httponly'];
+        $this->sessionCookieSameSite = $settings['session']['cookie']['samesite'];
         $this->garbageCollectionProbability = $settings['session']['garbageCollection']['probability'];
         $this->garbageCollectionMaximumPerRun = $settings['session']['garbageCollection']['maximumPerRun'];
         $this->inactivityTimeout = (integer)$settings['session']['inactivityTimeout'];
@@ -306,7 +312,7 @@ class Session implements CookieEnabledInterface
         if ($this->started === false) {
             $this->sessionIdentifier = Algorithms::generateRandomString(32);
             $this->storageIdentifier = Algorithms::generateUUID();
-            $this->sessionCookie = new Cookie($this->sessionCookieName, $this->sessionIdentifier, 0, $this->sessionCookieLifetime, $this->sessionCookieDomain, $this->sessionCookiePath, $this->sessionCookieSecure, $this->sessionCookieHttpOnly);
+            $this->sessionCookie = new Cookie($this->sessionCookieName, $this->sessionIdentifier, 0, $this->sessionCookieLifetime, $this->sessionCookieDomain, $this->sessionCookiePath, $this->sessionCookieSecure, $this->sessionCookieHttpOnly, $this->sessionCookieSameSite);
             $this->lastActivityTimestamp = $this->now;
             $this->started = true;
 

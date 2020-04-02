@@ -74,7 +74,8 @@ class SessionTest extends UnitTestCase
                 'path' => '/',
                 'secure' => false,
                 'httponly' => true,
-                'domain' => null
+                'domain' => null,
+                'samesite' => null
             ]
         ]
     ];
