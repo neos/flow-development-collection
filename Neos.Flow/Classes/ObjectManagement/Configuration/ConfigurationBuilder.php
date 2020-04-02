@@ -119,32 +119,30 @@ class ConfigurationBuilder
                 if (isset($rawObjectConfiguration['className'])) {
                     $rawObjectConfiguration = $this->enhanceRawConfigurationWithAnnotationOptions($rawObjectConfiguration['className'], $rawObjectConfiguration);
                 }
-                if (strpos($objectName, ':') !== false) {
-                    if (!isset($rawObjectConfiguration['factoryObjectName'])) {
-                        $rawObjectConfiguration['factoryObjectName'] = ObjectManager::class;
-                        $rawObjectConfiguration['factoryMethodName'] = 'get';
-                        if (empty($rawObjectConfiguration['className'])) {
-                            throw new InvalidObjectConfigurationException(sprintf('Missing className for virtual object configuration "%s". Please check your Objects.yaml.', $objectName), 1585758850);
+                // Virtual objects are determined by a colon ":" in the name (e.g. "Some.Package:Some.Virtual.Object")
+                $isVirtualObject = strpos($objectName, ':') !== false;
+                if ($isVirtualObject && empty($rawObjectConfiguration['className'])) {
+                    throw new InvalidObjectConfigurationException(sprintf('Missing className for virtual object configuration "%s" of package %s. Please check your Objects.yaml.', $objectName, $packageKey), 1585758850);
+                }
+                if ($isVirtualObject && !isset($rawObjectConfiguration['factoryObjectName'])) {
+                    $rawObjectConfiguration['factoryObjectName'] = ObjectManager::class;
+                    $rawObjectConfiguration['factoryMethodName'] = 'get';
+                    $newArguments = [1 => ['value' => $rawObjectConfiguration['className']]];
+                    if (isset($rawObjectConfiguration['arguments'])) {
+                        foreach ($rawObjectConfiguration['arguments'] as $index => $value) {
+                            $newArguments[$index + 1] = $value;
                         }
-                        $newArguments = [1 => ['value' => $rawObjectConfiguration['className']]];
-                        if (isset($rawObjectConfiguration['arguments'])) {
-                            foreach ($rawObjectConfiguration['arguments'] as $index => $value) {
-                                $newArguments[$index + 1] = $value;
-                            }
-                        }
-                        $rawObjectConfiguration['arguments'] = $newArguments;
                     }
-                    $newObjectConfiguration = $this->parseConfigurationArray($objectName, $rawObjectConfiguration, 'configuration of package ' . $packageKey . ', definition for object "' . $objectName . '"', $existingObjectConfiguration);
-                } else {
-                    $newObjectConfiguration = $this->parseConfigurationArray($objectName, $rawObjectConfiguration, 'configuration of package ' . $packageKey . ', definition for object "' . $objectName . '"', $existingObjectConfiguration);
+                    $rawObjectConfiguration['arguments'] = $newArguments;
+                }
+                $newObjectConfiguration = $this->parseConfigurationArray($objectName, $rawObjectConfiguration, 'configuration of package ' . $packageKey . ', definition for object "' . $objectName . '"', $existingObjectConfiguration);
 
-                    if (!isset($objectConfigurations[$objectName]) && !interface_exists($objectName, true) && !class_exists($objectName, false)) {
-                        throw new InvalidObjectConfigurationException('Tried to configure unknown object "' . $objectName . '" in package "' . $packageKey . '". Please check your Objects.yaml.', 1184926175);
-                    }
+                if (!$isVirtualObject && !isset($objectConfigurations[$objectName]) && !interface_exists($objectName, true) && !class_exists($objectName, false)) {
+                    throw new InvalidObjectConfigurationException('Tried to configure unknown object "' . $objectName . '" in package "' . $packageKey . '". Please check your Objects.yaml.', 1184926175);
+                }
 
-                    if ($objectName !== $newObjectConfiguration->getClassName() && !interface_exists($objectName, true)) {
-                        throw new InvalidObjectConfigurationException('Tried to set a differing class name for class "' . $objectName . '" in the object configuration of package "' . $packageKey . '". Setting "className" is only allowed for interfaces, please check your Objects.yaml."', 1295954589);
-                    }
+                if (!$isVirtualObject && $objectName !== $newObjectConfiguration->getClassName() && !interface_exists($objectName, true)) {
+                    throw new InvalidObjectConfigurationException('Tried to set a differing class name for class "' . $objectName . '" in the object configuration of package "' . $packageKey . '". Setting "className" is only allowed for interfaces, please check your Objects.yaml."', 1295954589);
                 }
 
                 if (empty($newObjectConfiguration->getClassName()) && empty($newObjectConfiguration->getFactoryObjectName())) {
@@ -377,20 +375,22 @@ class ConfigurationBuilder
      * Creates a "virtual object configuration" for object arguments, turning:
      *
      * 'Some\Class\Name':
+     *   factoryObjectName: 'Some\Factory\Class'
      *   arguments:
      *     1:
      *       object:
-     *         factoryObjectName: 'Some\Factory\Class'
+     *         factoryObjectName: 'Some\Other\Factory\Class'
      *
      * into:
      *
      * 'Some\Class\Name':
+     *   factoryObjectName: 'Some\Factory\Class'
      *   arguments:
      *     1:
      *       object: 'Some\Class\Name:argument:1'
      *
      * 'Some\Class\Name:argument:1':
-     *   factoryObjectName: 'Some\Factory\Class'
+     *   factoryObjectName: 'Some\Other\Factory\Class'
      *
      *
      * @param array &$objectConfigurations
