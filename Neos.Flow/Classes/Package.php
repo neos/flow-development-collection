@@ -19,9 +19,12 @@ use Neos\Flow\Package\PackageManager;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Flow\ResourceManagement\ResourceRepository;
 use Neos\Flow\Security\Account;
+use Neos\Flow\Security\AccountRepository;
+use Neos\Flow\Security\Authentication\AuthenticationProviderInterface;
 use Neos\Flow\Security\Authentication\AuthenticationProviderManager;
 use Neos\Flow\Security\Authentication\Provider\PersistedUsernamePasswordProvider;
 use Neos\Flow\Security\Authentication\Token\SessionlessTokenInterface;
+use Neos\Flow\Security\Authentication\Token\UsernamePassword;
 use Neos\Flow\Security\Authentication\TokenInterface;
 use Neos\Flow\Security\Context;
 
@@ -132,11 +135,21 @@ class Package extends BasePackage
             }
         });
 
-        $dispatcher->connect(Security\Authentication\AuthenticationProviderManager::class, 'failedAuthenticatingToken', function (TokenInterface $token) use ($bootstrap) {
-            if ($token->getAccount() instanceof Account) {
-                $token->getAccount()->authenticationAttempted(TokenInterface::WRONG_CREDENTIALS);
-                $bootstrap->getObjectManager()->get(Persistence\PersistenceManagerInterface::class)->update($token->getAccount());
-                $bootstrap->getObjectManager()->get(Persistence\PersistenceManagerInterface::class)->whitelistObject($token->getAccount());
+        $dispatcher->connect(Security\Authentication\AuthenticationProviderManager::class, 'failedAuthenticatingToken', function (TokenInterface $token, AuthenticationProviderInterface $provider) use ($bootstrap) {
+            if (!$token instanceof UsernamePassword || !$provider instanceof PersistedUsernamePasswordProvider) {
+                return;
+            }
+            $username = $token->getCredentials()['username'] ?? null;
+            if ($username === null) {
+                return;
+            }
+            /** @var AccountRepository $accountRepository */
+            $accountRepository = $bootstrap->getObjectManager()->get(AccountRepository::class);
+            $account = $accountRepository->findByAccountIdentifierAndAuthenticationProviderName($username, $provider->getName());
+            if ($account !== null) {
+                $account->authenticationAttempted(TokenInterface::WRONG_CREDENTIALS);
+                $accountRepository->update($account);
+                $bootstrap->getObjectManager()->get(Persistence\PersistenceManagerInterface::class)->whitelistObject($account);
             }
         });
 

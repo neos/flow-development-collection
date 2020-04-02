@@ -154,9 +154,9 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
                 if ($provider->canAuthenticate($token) && $token->getAuthenticationStatus() === TokenInterface::AUTHENTICATION_NEEDED) {
                     $provider->authenticate($token);
                     if ($token->isAuthenticated()) {
-                        $this->emitAuthenticatedToken($token);
+                        $this->emitAuthenticatedToken($token, $provider);
                     } else {
-                        $this->emitFailedAuthenticatingToken($token);
+                        $this->emitFailedAuthenticatingToken($token, $provider);
                     }
                     break;
                 }
@@ -242,10 +242,11 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
      * Signals that the specified token has been successfully authenticated.
      *
      * @param TokenInterface $token The token which has been authenticated
+     * @param AuthenticationProviderInterface $provider The provider that was involved authenticating the token
      * @return void
      * @Flow\Signal
      */
-    protected function emitAuthenticatedToken(TokenInterface $token): void
+    protected function emitAuthenticatedToken(TokenInterface $token, AuthenticationProviderInterface $provider): void
     {
     }
 
@@ -253,10 +254,11 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
      * Signals that the specified token has been unsuccessfully authenticated.
      *
      * @param TokenInterface $token The token which failed authenticating
+     * @param AuthenticationProviderInterface $provider The provider that was involved authenticating the token
      * @return void
      * @Flow\Signal
      */
-    protected function emitFailedAuthenticatingToken(TokenInterface $token): void
+    protected function emitFailedAuthenticatingToken(TokenInterface $token, AuthenticationProviderInterface $provider): void
     {
     }
 
