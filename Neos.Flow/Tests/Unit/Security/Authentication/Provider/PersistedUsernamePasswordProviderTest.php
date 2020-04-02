@@ -11,6 +11,7 @@ namespace Neos\Flow\Tests\Unit\Security\Authentication\Provider;
  * source code.
  */
 
+use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Security;
 use Neos\Flow\Tests\UnitTestCase;
@@ -31,14 +32,14 @@ class PersistedUsernamePasswordProviderTest extends UnitTestCase
     protected $mockAccount;
 
     /**
+     * @var ObjectManagerInterface
+     */
+    protected $mockObjectManager;
+
+    /**
      * @var Security\AccountRepository
      */
     protected $mockAccountRepository;
-
-    /**
-     * @var PersistenceManagerInterface
-     */
-    protected $mockPersistenceManager;
 
     /**
      * @var Security\Authentication\Token\UsernamePassword
@@ -61,7 +62,8 @@ class PersistedUsernamePasswordProviderTest extends UnitTestCase
         $this->mockHashService = $this->createMock(Security\Cryptography\HashService::class);
         $this->mockAccount = $this->getMockBuilder(Security\Account::class)->disableOriginalConstructor()->getMock();
         $this->mockAccountRepository = $this->getMockBuilder(Security\AccountRepository::class)->disableOriginalConstructor()->getMock();
-        $this->mockPersistenceManager = $this->createMock(PersistenceManagerInterface::class);
+        $this->mockObjectManager = $this->createMock(ObjectManagerInterface::class);
+        $this->mockObjectManager->expects(self::any())->method('get')->with(Security\AccountRepository::class)->willReturn($this->mockAccountRepository);
         $this->mockToken = $this->getMockBuilder(Security\Authentication\Token\UsernamePassword::class)->disableOriginalConstructor()->getMock();
 
         $this->mockSecurityContext = $this->createMock(Security\Context::class);
@@ -71,10 +73,10 @@ class PersistedUsernamePasswordProviderTest extends UnitTestCase
 
         $this->persistedUsernamePasswordProvider = $this->getAccessibleMock(Security\Authentication\Provider\PersistedUsernamePasswordProvider::class, ['dummy'], [], '', false);
         $this->persistedUsernamePasswordProvider->_set('name', 'myProvider');
-        $this->persistedUsernamePasswordProvider->_set('options', []);
+        $this->persistedUsernamePasswordProvider->_set('options', ['accountRepositoryClassName' => Security\AccountRepository::class]);
         $this->persistedUsernamePasswordProvider->_set('hashService', $this->mockHashService);
+        $this->persistedUsernamePasswordProvider->_set('objectManager', $this->mockObjectManager);
         $this->persistedUsernamePasswordProvider->_set('accountRepository', $this->mockAccountRepository);
-        $this->persistedUsernamePasswordProvider->_set('persistenceManager', $this->mockPersistenceManager);
         $this->persistedUsernamePasswordProvider->_set('securityContext', $this->mockSecurityContext);
     }
 
