@@ -145,7 +145,7 @@ class ConfigurationBuilder
                     throw new InvalidObjectConfigurationException('Tried to set a differing class name for class "' . $objectName . '" in the object configuration of package "' . $packageKey . '". Setting "className" is only allowed for interfaces, please check your Objects.yaml."', 1295954589);
                 }
 
-                if (empty($newObjectConfiguration->getClassName()) && empty($newObjectConfiguration->getFactoryObjectName())) {
+                if (empty($newObjectConfiguration->getClassName()) && !$newObjectConfiguration->isCreatedByFactory()) {
                     $count = count($this->reflectionService->getAllImplementationClassNamesForInterface($objectName));
                     $hint = ($count ? 'It seems like there is no class which implements that interface, maybe the object configuration is obsolete?' : sprintf('There are %s classes implementing that interface, therefore you must specify a specific class in your object configuration.', $count));
                     throw new InvalidObjectConfigurationException('The object configuration for "' . $objectName . '" in the object configuration of package "' . $packageKey . '" lacks a "className" entry. ' . $hint, 1422566751);
@@ -323,7 +323,7 @@ class ConfigurationBuilder
                 $objectName = $objectNameOrConfiguration['name'];
                 unset($objectNameOrConfiguration['name']);
             } else {
-                if (isset($objectNameOrConfiguration['factoryObjectName'])) {
+                if (isset($objectNameOrConfiguration['factoryObjectName']) || isset($objectNameOrConfiguration['factoryMethodName'])) {
                     $objectName = null;
                 } else {
                     $annotations = $this->reflectionService->getPropertyTagValues($parentObjectConfiguration->getClassName(), $propertyName, 'var');
@@ -357,10 +357,10 @@ class ConfigurationBuilder
                 $objectName = $objectNameOrConfiguration['name'];
                 unset($objectNameOrConfiguration['name']);
             } else {
-                if (isset($objectNameOrConfiguration['factoryObjectName'])) {
+                if (isset($objectNameOrConfiguration['factoryObjectName']) || isset($objectNameOrConfiguration['factoryMethodName'])) {
                     $objectName = null;
                 } else {
-                    throw new InvalidObjectConfigurationException('Object configuration for argument "' . $argumentName . '" contains neither object name nor factory object name in ' . $configurationSourceHint, 1417431742);
+                    throw new InvalidObjectConfigurationException('Object configuration for argument "' . $argumentName . '" contains neither object name nor factory object or method name in ' . $configurationSourceHint, 1417431742);
                 }
             }
             $objectConfiguration = $this->parseConfigurationArray($objectName, $objectNameOrConfiguration, $configurationSourceHint . ', argument "' . $argumentName . '"');

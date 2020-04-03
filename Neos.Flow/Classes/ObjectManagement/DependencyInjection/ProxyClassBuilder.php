@@ -656,7 +656,7 @@ class ProxyClassBuilder
     protected function buildCustomFactoryCall($customFactoryObjectName, $customFactoryMethodName, array $arguments)
     {
         $parametersCode = $this->buildMethodParametersCode($arguments);
-        return '\Neos\Flow\Core\Bootstrap::$staticObjectManager->get(\'' . $customFactoryObjectName . '\')->' . $customFactoryMethodName . '(' . $parametersCode . ')';
+        return ($customFactoryObjectName ? '\Neos\Flow\Core\Bootstrap::$staticObjectManager->get(\'' . $customFactoryObjectName . '\')->' : '') . $customFactoryMethodName . '(' . $parametersCode . ')';
     }
 
     /**

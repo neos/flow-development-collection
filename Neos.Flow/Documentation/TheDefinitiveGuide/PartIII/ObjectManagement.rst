@@ -1233,6 +1233,19 @@ passed through to the custom factory method:
 	    1:
 	      value: 'systemLogger'
 
+*Example: YAML configuration for a static custom factory method*
+
+.. code-block:: yaml
+
+	Acme\Foo\Object:
+	  scope: prototype
+	  factoryMethodName: Acme\Foo\ObjectFactory::fromValue
+	  arguments:
+	    1:
+	      settings: 'Acme.Foo.Object.ConfigurableValue'
+
+Note that if you only specify the `factoryMethodName`, it needs to be the fully qualified name.
+
 *Example: PHP code using the custom factory* ::
 
 	$myCache = $objectManager->get(\Neos\Flow\Log\PsrSystemLoggerInterface::class);
