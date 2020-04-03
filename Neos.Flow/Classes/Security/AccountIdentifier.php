@@ -18,29 +18,59 @@ use Neos\Flow\Annotations as Flow;
 /**
  * @Flow\Proxy(false)
  */
-final class AccountIdentifier
+final class AccountIdentifier implements \JsonSerializable
 {
 
     /**
      * @var string
      */
-    private $identifier;
+    private $value;
 
     /**
-     * @param string $identifier
+     * @var self[]
      */
-    private function __construct(string $identifier)
+    private static $instances = [];
+
+    /**
+     * @param string $value
+     */
+    private function __construct(string $value)
     {
-        $this->identifier = $identifier;
+        $this->value = $value;
     }
 
     /**
-     * @param string $identifier
+     * @param string $value
      * @return self
      */
-    public static function fromString(string $identifier): self
+    private static function constant(string $value): self
     {
-        return new static($identifier);
+        return self::$instances[$value] ?? self::$instances[$value] = new self($value);
+    }
+
+    /**
+     * @param string $value
+     * @return self
+     */
+    public static function fromString(string $value): self
+    {
+        return self::constant($value);
+    }
+
+    /**
+     * @return string
+     */
+    public function toString(): string
+    {
+        return $this->value;
+    }
+
+    /**
+     * @return string
+     */
+    public function jsonSerialize(): string
+    {
+        return $this->value;
     }
 
     /**
@@ -48,6 +78,6 @@ final class AccountIdentifier
      */
     public function __toString(): string
     {
-        return $this->identifier;
+        return $this->value;
     }
 }

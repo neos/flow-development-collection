@@ -18,28 +18,42 @@ use Neos\Flow\Annotations as Flow;
 /**
  * @Flow\Proxy(false)
  */
-final class CredentialsSource
+final class CredentialsSource implements \JsonSerializable
 {
     /**
      * @var string
      */
-    private $credentialsSource;
+    private $value;
 
     /**
-     * @param string $credentialsSource
+     * @var self[]
      */
-    private function __construct(string $credentialsSource)
+    private static $instances = [];
+
+    /**
+     * @param string $value
+     */
+    private function __construct(string $value)
     {
-        $this->credentialsSource = $credentialsSource;
+        $this->value = $value;
     }
 
     /**
-     * @param string $credentialsSource
+     * @param string $value
      * @return self
      */
-    public static function fromString(string $credentialsSource): self
+    private static function constant(string $value): self
     {
-        return new static($credentialsSource);
+        return self::$instances[$value] ?? self::$instances[$value] = new self($value);
+    }
+
+    /**
+     * @param string $value
+     * @return self
+     */
+    public static function fromString(string $value): self
+    {
+        return self::constant($value);
     }
 
     /**
@@ -55,8 +69,24 @@ final class CredentialsSource
     /**
      * @return string
      */
+    public function toString(): string
+    {
+        return $this->value;
+    }
+
+    /**
+     * @return string
+     */
+    public function jsonSerialize(): string
+    {
+        return $this->value;
+    }
+
+    /**
+     * @return string
+     */
     public function __toString(): string
     {
-        return $this->credentialsSource;
+        return $this->value;
     }
 }

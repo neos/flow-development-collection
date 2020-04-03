@@ -18,28 +18,58 @@ use Neos\Flow\Annotations as Flow;
 /**
  * @Flow\Proxy(false)
  */
-final class AuthenticationProviderName
+final class AuthenticationProviderName implements \JsonSerializable
 {
     /**
      * @var string
      */
-    private $authenticationProviderName;
+    private $value;
 
     /**
-     * @param string $authenticationProviderName
+     * @var self[]
      */
-    private function __construct(string $authenticationProviderName)
+    private static $instances = [];
+
+    /**
+     * @param string $value
+     */
+    private function __construct(string $value)
     {
-        $this->authenticationProviderName = $authenticationProviderName;
+        $this->value = $value;
     }
 
     /**
-     * @param string $authenticationProviderName
+     * @param string $value
      * @return self
      */
-    public static function fromString(string $authenticationProviderName): self
+    private static function constant(string $value): self
     {
-        return new static($authenticationProviderName);
+        return self::$instances[$value] ?? self::$instances[$value] = new self($value);
+    }
+
+    /**
+     * @param string $value
+     * @return self
+     */
+    public static function fromString(string $value): self
+    {
+        return self::constant($value);
+    }
+
+    /**
+     * @return string
+     */
+    public function toString(): string
+    {
+        return $this->value;
+    }
+
+    /**
+     * @return string
+     */
+    public function jsonSerialize(): string
+    {
+        return $this->value;
     }
 
     /**
@@ -47,6 +77,6 @@ final class AuthenticationProviderName
      */
     public function __toString(): string
     {
-        return $this->authenticationProviderName;
+        return $this->value;
     }
 }
