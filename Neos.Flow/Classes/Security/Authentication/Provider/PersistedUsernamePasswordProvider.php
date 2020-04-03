@@ -12,10 +12,7 @@ namespace Neos\Flow\Security\Authentication\Provider;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Configuration\Exception\InvalidConfigurationTypeException;
-use Neos\Flow\ObjectManagement\Exception\CannotBuildObjectException;
-use Neos\Flow\ObjectManagement\Exception\UnknownObjectException;
-use Neos\Flow\ObjectManagement\ObjectManager;
+use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Security\AccountInterface;
 use Neos\Flow\Security\AccountRepository;
 use Neos\Flow\Security\AccountRepositoryInterface;
@@ -36,7 +33,7 @@ class PersistedUsernamePasswordProvider extends AbstractProvider
 {
     /**
      * @Flow\Inject
-     * @var ObjectManager
+     * @var ObjectManagerInterface
      */
     protected $objectManager;
 
@@ -119,7 +116,6 @@ class PersistedUsernamePasswordProvider extends AbstractProvider
     /**
      * @return AccountRepositoryInterface
      * @throws SecurityException
-     * @throws InvalidConfigurationTypeException | CannotBuildObjectException | UnknownObjectException
      */
     private function getAccountRepository(): AccountRepositoryInterface
     {
