@@ -11,10 +11,8 @@ namespace Neos\Flow\Security\Authentication\Token;
  * source code.
  */
 
-use Neos\Flow\Mvc\ActionRequest;
-
 /**
- * Marker interface for authentication tokens which don't need a session.
+ * Marker interface for authentication tokens which hold a username and password
  */
 interface UsernamePasswordInterface
 {
