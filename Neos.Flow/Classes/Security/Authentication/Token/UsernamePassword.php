@@ -19,7 +19,7 @@ use Neos\Utility\ObjectAccess;
 /**
  * An authentication token used for simple username and password authentication.
  */
-class UsernamePassword extends AbstractToken implements UsernamePasswordInterface
+class UsernamePassword extends AbstractToken implements UsernamePasswordTokenInterface
 {
     private const DEFAULT_USERNAME_POST_FIELD = '__authentication.Neos.Flow.Security.Authentication.Token.UsernamePassword.username';
     private const DEFAULT_PASSWORD_POST_FIELD = '__authentication.Neos.Flow.Security.Authentication.Token.UsernamePassword.password';
@@ -67,10 +67,11 @@ class UsernamePassword extends AbstractToken implements UsernamePasswordInterfac
         if ($httpRequest->getMethod() !== 'POST') {
             return;
         }
-
-        $username = $this->getUsername();
-        $password = $this->getPassword();
-
+        $allArguments = array_merge($actionRequest->getArguments(), $actionRequest->getInternalArguments());
+        $usernameFieldName = $this->options['usernamePostField'] ?? self::DEFAULT_USERNAME_POST_FIELD;
+        $passwordFieldName = $this->options['passwordPostField'] ?? self::DEFAULT_PASSWORD_POST_FIELD;
+        $username = ObjectAccess::getPropertyPath($allArguments, $usernameFieldName);
+        $password = ObjectAccess::getPropertyPath($allArguments, $passwordFieldName);
         if (!empty($username) && !empty($password)) {
             $this->credentials['username'] = $username;
             $this->credentials['password'] = $password;
@@ -78,16 +79,20 @@ class UsernamePassword extends AbstractToken implements UsernamePasswordInterfac
         }
     }
 
+    /**
+     * @return string The username this token extracted from the request, or an empty string
+     */
     public function getUsername(): string
     {
-        $arguments = array_merge($this->actionRequest->getArguments(), $this->actionRequest->getInternalArguments());
-        return ObjectAccess::getPropertyPath($arguments, $this->options['usernamePostField'] ?? self::DEFAULT_USERNAME_POST_FIELD);
+        return $this->credentials['username'] ?? '';
     }
 
+    /**
+     * @return string The password this token extracted from the request, or an empty string
+     */
     public function getPassword(): string
     {
-        $arguments = array_merge($this->actionRequest->getArguments(), $this->actionRequest->getInternalArguments());
-        return ObjectAccess::getPropertyPath($arguments, $this->options['passwordPostField'] ?? self::DEFAULT_PASSWORD_POST_FIELD);
+        return $this->credentials['password'] ?? '';
     }
 
     /**

@@ -11,12 +11,20 @@ namespace Neos\Flow\Security\Authentication\Token;
  * source code.
  */
 
+use Neos\Flow\Security\Authentication\TokenInterface;
+
 /**
- * Marker interface for authentication tokens which hold a username and password
+ * Interface for authentication tokens which hold a username and password
  */
-interface UsernamePasswordInterface
+interface UsernamePasswordTokenInterface extends TokenInterface
 {
+    /**
+     * @return string The username this token represents
+     */
     public function getUsername(): string;
 
+    /**
+     * @return string The password this token represents
+     */
     public function getPassword(): string;
 }

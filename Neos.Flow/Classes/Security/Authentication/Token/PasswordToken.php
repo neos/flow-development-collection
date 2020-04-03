@@ -18,7 +18,7 @@ use Neos\Utility\ObjectAccess;
 /**
  * An authentication token used for simple password authentication.
  */
-class PasswordToken extends AbstractToken
+class PasswordToken extends AbstractToken implements PasswordTokenInterface
 {
     /**
      * The password credentials
@@ -56,6 +56,14 @@ class PasswordToken extends AbstractToken
             $this->credentials['password'] = $password;
             $this->setAuthenticationStatus(self::AUTHENTICATION_NEEDED);
         }
+    }
+
+    /**
+     * @return string the password this token represents, or an empty string
+     */
+    public function getPassword(): string
+    {
+        return $this->credentials['password'] ?? '';
     }
 
     /**
