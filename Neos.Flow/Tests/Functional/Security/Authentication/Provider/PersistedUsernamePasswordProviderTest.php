@@ -21,6 +21,7 @@ use Neos\Flow\Security;
 class PersistedUsernamePasswordProviderTest extends FunctionalTestCase
 {
     protected $testableSecurityEnabled = true;
+    protected static $testablePersistenceEnabled = true;
 
     /**
      * @var PersistedUsernamePasswordProvider
@@ -65,7 +66,8 @@ class PersistedUsernamePasswordProviderTest extends FunctionalTestCase
         $this->authenticationToken->_set('credentials', ['username' => 'username', 'password' => 'password']);
 
         $this->persistedUsernamePasswordProvider->authenticate($this->authenticationToken);
-
+        $this->persistenceManager->whitelistObject($this->authenticationToken->getAccount());
+        $this->persistenceManager->persistAll();
         self::assertTrue($this->authenticationToken->isAuthenticated());
 
         $account = $this->accountRepository->findActiveByAccountIdentifierAndAuthenticationProviderName('username', 'myTestProvider');

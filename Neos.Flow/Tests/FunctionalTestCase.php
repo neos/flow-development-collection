@@ -15,6 +15,7 @@ use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Component\ComponentContext;
+use Neos\Flow\Security\AccountRepository;
 use Neos\Http\Factories\ResponseFactory;
 use Neos\Http\Factories\ServerRequestFactory;
 use Neos\Http\Factories\UriFactory;
@@ -36,6 +37,11 @@ use Neos\Utility\Files;
  */
 abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
 {
+    /**
+     * @var AccountRepository
+     */
+    protected $accountRepository;
+
     /**
      * A functional instance of the Object Manager, for use in concrete test cases.
      *
@@ -186,6 +192,8 @@ abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
             $this->privilegeManager = $this->objectManager->get(\Neos\Flow\Security\Authorization\TestingPrivilegeManager::class);
             $this->privilegeManager->setOverrideDecision(null);
 
+            $this->accountRepository = $this->objectManager->get(AccountRepository::class);
+
             $this->policyService = $this->objectManager->get(\Neos\Flow\Security\Policy\PolicyService::class);
 
             $this->authenticationManager = $this->objectManager->get(\Neos\Flow\Security\Authentication\AuthenticationProviderManager::class);
@@ -306,6 +314,7 @@ abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
             $roles[] = $this->policyService->getRole($roleName);
         }
         $account->setRoles($roles);
+        $this->accountRepository->add($account);
         $this->authenticateAccount($account);
 
         return $account;
