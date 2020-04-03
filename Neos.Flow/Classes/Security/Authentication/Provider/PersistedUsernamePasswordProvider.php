@@ -16,6 +16,7 @@ use Neos\Flow\Security\Account;
 use Neos\Flow\Security\AccountRepository;
 use Neos\Flow\Security\Authentication\Token\UsernamePassword;
 use Neos\Flow\Security\Authentication\Token\UsernamePasswordHttpBasic;
+use Neos\Flow\Security\Authentication\Token\UsernamePasswordInterface;
 use Neos\Flow\Security\Authentication\TokenInterface;
 use Neos\Flow\Security\Context;
 use Neos\Flow\Security\Cryptography\HashService;
@@ -74,8 +75,8 @@ class PersistedUsernamePasswordProvider extends AbstractProvider
      */
     public function authenticate(TokenInterface $authenticationToken)
     {
-        if (!($authenticationToken instanceof UsernamePassword)) {
-            throw new UnsupportedAuthenticationTokenException('This provider cannot authenticate the given token.', 1217339840);
+        if (!($authenticationToken instanceof UsernamePasswordInterface)) {
+            throw new UnsupportedAuthenticationTokenException(sprintf('This provider cannot authenticate the given token. The token must implement %s', UsernamePasswordInterface::class), 1217339840);
         }
 
         /** @var $account Account */
