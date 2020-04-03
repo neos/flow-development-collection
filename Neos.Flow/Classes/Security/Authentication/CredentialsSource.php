@@ -89,4 +89,28 @@ final class CredentialsSource implements \JsonSerializable
     {
         return $this->value;
     }
+
+    /**
+     * Cloning of constant value objects is not supported
+     */
+    public function __clone()
+    {
+        throw new \RuntimeException('The ' . __CLASS__ . ' class is not allowed to be cloned', 1585910952);
+    }
+
+    /**
+     * Serialization of constant value objects is not supported
+     */
+    public function __sleep()
+    {
+        throw new \RuntimeException('The ' . __CLASS__ . ' class is not allowed to be serialized', 1585910954);
+    }
+
+    /**
+     * Deserialization of constant value objects is not supported
+     */
+    private function __wakeup()
+    {
+        throw new \RuntimeException('The ' . __CLASS__ . ' class is not allowed to be de-serialized', 1585910956);
+    }
 }
