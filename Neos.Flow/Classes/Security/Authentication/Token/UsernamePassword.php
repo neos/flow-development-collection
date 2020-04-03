@@ -32,6 +32,12 @@ class UsernamePassword extends AbstractToken implements UsernamePasswordInterfac
     protected $credentials = ['username' => '', 'password' => ''];
 
     /**
+     * The current ActionRequest
+     * @var ActionRequest
+     */
+    protected $actionRequest;
+
+    /**
      * Updates the username and password credentials from the POST vars, if the POST parameters
      * are available. Sets the authentication status to REAUTHENTICATION_NEEDED, if credentials have been sent.
      *
@@ -62,27 +68,27 @@ class UsernamePassword extends AbstractToken implements UsernamePasswordInterfac
             return;
         }
 
-        $credentials = $this->extractCredentialsFromRequest($actionRequest);
+        $username = $this->getUsername();
+        $password = $this->getPassword();
 
-        if (!empty($credentials['username']) && !empty($credentials['password'])) {
-            $this->credentials['username'] = $credentials['username'];
-            $this->credentials['password'] = $credentials['password'];
+        if (!empty($username) && !empty($password)) {
+            $this->credentials['username'] = $username;
+            $this->credentials['password'] = $password;
             $this->setAuthenticationStatus(self::AUTHENTICATION_NEEDED);
         }
     }
 
-    public function extractCredentialsFromRequest(ActionRequest $request): array
+    public function getUsername(): string
     {
-        $arguments = array_merge($request->getArguments(), $request->getInternalArguments());
-        $username = ObjectAccess::getPropertyPath($arguments, $this->options['usernamePostField'] ?? self::DEFAULT_USERNAME_POST_FIELD);
-        $password = ObjectAccess::getPropertyPath($arguments, $this->options['passwordPostField'] ?? self::DEFAULT_PASSWORD_POST_FIELD);
-
-        return [
-            'username' => $username,
-            'password' => $password
-        ];
+        $arguments = array_merge($this->actionRequest->getArguments(), $this->actionRequest->getInternalArguments());
+        return ObjectAccess::getPropertyPath($arguments, $this->options['usernamePostField'] ?? self::DEFAULT_USERNAME_POST_FIELD);
     }
 
+    public function getPassword(): string
+    {
+        $arguments = array_merge($this->actionRequest->getArguments(), $this->actionRequest->getInternalArguments());
+        return ObjectAccess::getPropertyPath($arguments, $this->options['passwordPostField'] ?? self::DEFAULT_PASSWORD_POST_FIELD);
+    }
 
     /**
      * Returns a string representation of the token for logging purposes.

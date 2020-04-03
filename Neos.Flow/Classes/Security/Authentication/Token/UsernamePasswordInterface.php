@@ -18,5 +18,7 @@ use Neos\Flow\Mvc\ActionRequest;
  */
 interface UsernamePasswordInterface
 {
-    public function extractCredentialsFromRequest(ActionRequest $request): array;
+    public function getUsername(): string;
+
+    public function getPassword(): string;
 }
