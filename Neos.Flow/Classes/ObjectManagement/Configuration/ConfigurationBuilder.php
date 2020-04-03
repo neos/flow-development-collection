@@ -124,7 +124,7 @@ class ConfigurationBuilder
                 if ($isVirtualObject && empty($rawObjectConfiguration['className'])) {
                     throw new InvalidObjectConfigurationException(sprintf('Missing className for virtual object configuration "%s" of package %s. Please check your Objects.yaml.', $objectName, $packageKey), 1585758850);
                 }
-                if ($isVirtualObject && !isset($rawObjectConfiguration['factoryObjectName'])) {
+                if ($isVirtualObject && !isset($rawObjectConfiguration['factoryObjectName']) && !isset($rawObjectConfiguration['factoryMethodNameName'])) {
                     $rawObjectConfiguration['factoryObjectName'] = ObjectManager::class;
                     $rawObjectConfiguration['factoryMethodName'] = 'get';
                     $newArguments = [1 => ['value' => $rawObjectConfiguration['className']]];
