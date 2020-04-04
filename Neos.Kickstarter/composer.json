@@ -5,7 +5,7 @@
     "license": "MIT",
     "require": {
         "php": "^7.2",
-        "neos/flow": "~6.1.0",
+        "neos/flow": "~6.2.0",
         "neos/fluid-adaptor": "*",
         "neos/utility-arrays": "*"
     },
