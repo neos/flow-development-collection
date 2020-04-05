@@ -135,39 +135,6 @@ class ResponseInformationHelperTest extends UnitTestCase
         $request = ServerRequest::fromGlobals();
         $response = new Response(304, [], '12345');
         $compliantResponse = ResponseInformationHelper::makeStandardsCompliant($response, $request);
-        self::assertFalse($compliantResponse->hasHeader('Content-Length'));
         self::assertEmpty((string)$compliantResponse->getBody());
-    }
-
-    public function makeStandardCompliantRemovesNotAllowedHeadersFrom304ResponseDataProvider()
-    {
-        return [
-            ['Cache-Control' , 'max-age=60' , true],
-            ['Content-Location', '/example', true],
-            ['Date', 'Wed, 21 Oct 2015 07:28:00 GMT', true],
-            ['ETag', '"33a64df551425fcc55e4d42a148795d9f25f89d4"', true],
-            ['Expires', 'Wed, 21 Oct 2015 07:28:00 GMT', true],
-            ['Vary', 'Accept-Encoding,Cookie', true],
-            ['Content-Length', 5, false],
-            ['X-Foo', 'bar', false]
-        ];
-    }
-
-    /**
-     * @test
-     * @dataProvider makeStandardCompliantRemovesNotAllowedHeadersFrom304ResponseDataProvider
-     */
-    public function makeStandardCompliantRemovesNotAllowedHeadersFrom304Response($headerName, $headerValue, $keepHeader)
-    {
-        $request = ServerRequest::fromGlobals();
-        $response = new Response(304);
-        $response = $response->withHeader($headerName, $headerValue);
-        $compliantResponse = ResponseInformationHelper::makeStandardsCompliant($response, $request);
-        if ($keepHeader) {
-            self::assertTrue($compliantResponse->hasHeader($headerName));
-            self::assertSame($response->getHeader($headerName), $compliantResponse->getHeader($headerName));
-        } else {
-            self::assertFalse($compliantResponse->hasHeader('Content-Length'));
-        }
     }
 }

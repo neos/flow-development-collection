@@ -156,7 +156,9 @@ abstract class ResponseInformationHelper
             $eTagHeader = $response->getHeader('ETag')[0];
             foreach ($ifNoneMatchHeaders as $ifNoneMatchHeader) {
                 if (ltrim($ifNoneMatchHeader, 'W/') == ltrim($eTagHeader, 'W/')) {
-                    $response = $response->withStatus(304);
+                    $response = $response
+                        ->withStatus(304)
+                        ->withBody(stream_for(''));
                     break;
                 }
             }
@@ -167,7 +169,9 @@ abstract class ResponseInformationHelper
             $lastModified = $response->getHeader('Last-Modified')[0];
             $lastModifiedDate = \DateTime::createFromFormat(DATE_RFC2822, $lastModified);
             if ($lastModifiedDate <= $ifModifiedSinceDate) {
-                $response = $response->withStatus(304);
+                $response = $response
+                    ->withStatus(304)
+                    ->withBody(stream_for(''));
             }
         } elseif ($request->hasHeader('If-Unmodified-Since') && $response->hasHeader('Last-Modified')
             && (($statusCode >= 200 && $statusCode <= 299) || $statusCode === 412)) {
@@ -204,21 +208,6 @@ abstract class ResponseInformationHelper
 
         if ($response->hasHeader('Transfer-Encoding')) {
             $response = $response->withoutHeader('Content-Length');
-        }
-
-        #
-        # Create a 304 response with an empty body and copy only the required headers
-        # from the original response as is required by RFC 7232 section 4.1
-        #
-        if ($response->getStatusCode() == 304) {
-            $keepHeaders = ['Cache-Control', 'Content-Location', 'Date', 'ETag', 'Expires', 'Vary'];
-            $notModifiedResponse = new Response(304);
-            foreach ($keepHeaders as $headerName) {
-                if ($response->hasHeader($headerName)) {
-                    $notModifiedResponse = $notModifiedResponse->withHeader($headerName, $response->getHeader($headerName));
-                }
-            }
-            $response = $notModifiedResponse;
         }
 
         return $response;
