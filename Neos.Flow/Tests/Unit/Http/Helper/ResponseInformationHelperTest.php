@@ -90,7 +90,10 @@ class ResponseInformationHelperTest extends UnitTestCase
             // when etag matches a 304 result is creatd
             ['GET', ['If-None-Match' => '"12345"'], 200, ['ETag' => '"12345"'], 304],
             ['HEAD', ['If-None-Match' => '"12345"'], 200, ['ETag' => '"12345"'], 304],
-            // etags comparison ignodes weakness indicator
+            // multiple if-none-match headers
+            ['HEAD', ['If-None-Match' => ['"abcd"', '"12345"', '"5678"']], 200, ['ETag' => '"12345"'], 304],
+            ['HEAD', ['If-None-Match' => ['"abcd"', '"56789"', '"defg"']], 200, ['ETag' => '"12345"'], 200],
+            // etags comparison ignores weakness indicator
             ['GET', ['If-None-Match' => 'W/"12345"'], 200, ['ETag' => '"12345"'], 304],
             ['GET', ['If-None-Match' => '"12345"'], 200, ['ETag' => 'W/"12345"'], 304],
             ['GET', ['If-None-Match' => 'W/"12345"'], 200, ['ETag' => 'W/"12345"'], 304],
