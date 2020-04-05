@@ -150,7 +150,17 @@ abstract class ResponseInformationHelper
     public static function makeStandardsCompliant(ResponseInterface $response, RequestInterface $request): ResponseInterface
     {
         $statusCode = $response->getStatusCode();
-        if ($request->hasHeader('If-Modified-Since') && $response->hasHeader('Last-Modified') && $statusCode === 200) {
+        if ($request->hasHeader('If-None-Match') && in_array($request->getMethod(), ['HEAD', 'GET'])
+            && $response->hasHeader('ETag') && $statusCode === 200 ) {
+            $ifNoneMatchHeaders = $request->getHeader('If-None-Match');
+            $eTagHeader = $response->getHeader('ETag')[0];
+            foreach ($ifNoneMatchHeaders as $ifNoneMatchHeader) {
+                if (ltrim($ifNoneMatchHeader, 'W/') == ltrim($eTagHeader, 'W/')) {
+                    $response = $response->withStatus(304);
+                    break;
+                }
+            }
+        } else if ($request->hasHeader('If-Modified-Since') && $response->hasHeader('Last-Modified') && $statusCode === 200) {
             $ifModifiedSince = $request->getHeader('If-Modified-Since')[0];
             $ifModifiedSinceDate = \DateTime::createFromFormat(DATE_RFC2822, $ifModifiedSince);
             $lastModified = $response->getHeader('Last-Modified')[0];

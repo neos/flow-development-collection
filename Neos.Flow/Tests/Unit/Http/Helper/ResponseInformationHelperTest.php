@@ -41,6 +41,48 @@ class ResponseInformationHelperTest extends UnitTestCase
         self::assertSame($response->getHeaders(), $compliantResponse->getHeaders());
     }
 
+    public function makeStandardCompliantEnsures304BasedOnEtagDataProvider()
+    {
+        return [
+            ['GET', [], 200, [], 200],
+            ['HEAD', [], 200, [], 200],
+            // when etag matches a 304 result is creatd
+            ['GET', ['If-None-Match' => '"12345"'], 200, ['ETag' => '"12345"'], 304],
+            ['HEAD', ['If-None-Match' => '"12345"'], 200, ['ETag' => '"12345"'], 304],
+            // etags comparison ignodes weakness indicator
+            ['GET', ['If-None-Match' => 'W/"12345"'], 200, ['ETag' => '"12345"'], 304],
+            ['GET', ['If-None-Match' => '"12345"'], 200, ['ETag' => 'W/"12345"'], 304],
+            ['GET', ['If-None-Match' => 'W/"12345"'], 200, ['ETag' => 'W/"12345"'], 304],
+            ['HEAD', ['If-None-Match' => 'W/"12345"'], 200, ['ETag' => '"12345"'], 304],
+            ['HEAD', ['If-None-Match' => '"12345"'], 200, ['ETag' => 'W/"12345"'], 304],
+            ['HEAD', ['If-None-Match' => 'W/"12345"'], 200, ['ETag' => 'W/"12345"'], 304],
+            // other http methods are ignored
+            ['PUT', ['If-None-Match' => '"12345"'], 200, ['ETag' => '"12345"'], 200],
+            ['POST', ['If-None-Match' => '"12345"'], 200, ['ETag' => '"12345"'], 200],
+            ['DELETE', ['If-None-Match' => '"12345"'], 200, ['ETag' => '"12345"'], 200],
+            // non 200 status responses are ignred
+            ['GET', ['If-None-Match' => '"12345"'], 203, ['ETag' => '"12345"'], 203],
+            ['HEAD', ['If-None-Match' => '"12345"'], 203, ['ETag' => '"12345"'], 203]
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider makeStandardCompliantEnsures304BasedOnEtagDataProvider
+     */
+    public function makeStandardCompliantEnsures304BasedOnEtag($requestMethod, $requestHeaders, $responseStatus, $responseHeaders, $expoectedStatus)
+    {
+        $request = ServerRequest::fromGlobals()->withMethod($requestMethod);
+        if ($requestHeaders) {
+            foreach ($requestHeaders as $headeName => $headerValue) {
+                $request = $request->withHeader($headeName, $headerValue);
+            }
+        }
+        $response = new Response($responseStatus, $responseHeaders, '12345');
+        $compliantResponse = ResponseInformationHelper::makeStandardsCompliant($response, $request);
+        self::assertSame($expoectedStatus, $compliantResponse->getStatusCode());
+    }
+
     /**
      * @test
      */
