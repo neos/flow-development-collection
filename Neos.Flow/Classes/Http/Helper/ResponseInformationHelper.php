@@ -11,6 +11,7 @@ namespace Neos\Flow\Http\Helper;
  * source code.
  */
 
+use GuzzleHttp\Psr7\Response;
 use function GuzzleHttp\Psr7\parse_response;
 use function GuzzleHttp\Psr7\stream_for;
 use Psr\Http\Message\RequestInterface;
@@ -192,6 +193,21 @@ abstract class ResponseInformationHelper
 
         if ($response->hasHeader('Transfer-Encoding')) {
             $response = $response->withoutHeader('Content-Length');
+        }
+
+        #
+        # Create a 304 response with an empty body and copy only the required headers
+        # from the original response as is required by RFC 7232 section 4.1
+        #
+        if ($response->getStatusCode() == 304) {
+            $keepHeaders = ['Cache-Control', 'Content-Location', 'Date', 'ETag', 'Expires', 'Vary'];
+            $notModifiedResponse = new Response(304);
+            foreach ($keepHeaders as $headerName) {
+                if ($response->hasHeader($headerName)) {
+                    $notModifiedResponse = $notModifiedResponse->withHeader($headerName, $response->getHeader($headerName));
+                }
+            }
+            $response = $notModifiedResponse;
         }
 
         return $response;
