@@ -194,7 +194,7 @@ abstract class Arrays
     public static function getValueByPath(array &$array, $path)
     {
         if (is_string($path)) {
-            if (strpos($path, '\\.') === -1) {
+            if (strpos($path, '\\.') === false) {
                 $path = explode('.', $path);
             } else {
                 $pattern = '#(?<!\\\\)((?:\\\\\\\\)*)\\.#';
