@@ -157,15 +157,6 @@ abstract class ResponseInformationHelper
             if ($lastModifiedDate <= $ifModifiedSinceDate) {
                 $response = $response->withStatus(304);
             }
-        } elseif ($request->hasHeader('If-Unmodified-Since') && $response->hasHeader('Last-Modified')
-            && (($statusCode >= 200 && $statusCode <= 299) || $statusCode === 412)) {
-            $unmodifiedSince = $request->getHeader('If-Unmodified-Since')[0];
-            $unmodifiedSinceDate = \DateTime::createFromFormat(DATE_RFC2822, $unmodifiedSince);
-            $lastModified = $response->getHeader('Last-Modified')[0];
-            $lastModifiedDate = \DateTime::createFromFormat(DATE_RFC2822, $lastModified);
-            if ($lastModifiedDate > $unmodifiedSinceDate) {
-                $response = $response->withStatus(412);
-            }
         }
 
         if (in_array($response->getStatusCode(), [100, 101, 204, 304])) {
