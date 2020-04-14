@@ -27,7 +27,7 @@
 			<target state="final">Noteiktā vērtība nav derīgs datums</target></trans-unit>
       <trans-unit id="1325615630" xml:space="preserve">
 				<source>The given date must be between {0} and {1}</source>
-			<target state="translated">Norādītajam datumam jābūt no {0,datetime,datetime} līdz {1,datetime,datetime}</target><alt-trans><target>Norādītajam datumam jābūt no {0, dattetime, datteime} līdz {1, datetime, datetime}</target></alt-trans></trans-unit>
+			<target state="translated">Norādītajam datumam jābūt no {0,datetime,datetime} līdz {1,datetime,datetime}</target></trans-unit>
       <trans-unit id="1324315107" xml:space="preserve">
 				<source>The given date must be after {0}</source>
 			<target state="translated">The given date must be after {0,datetime,datetime}</target></trans-unit>
@@ -68,7 +68,7 @@
 			<target state="final">Tiek gaidīts vesels skaitlis</target></trans-unit>
       <trans-unit id="1332933658" xml:space="preserve" approved="yes">
 				<source>"{0}" is no integer.</source>
-			<target state="final">"{0}" nav vesels skaitlis.</target><alt-trans><target>"{0}" ir nav vesels skaitlis.</target></alt-trans></trans-unit>
+			<target state="final">"{0}" nav vesels skaitlis.</target></trans-unit>
       <!-- LabelValidator -->
       <trans-unit id="1272298003" xml:space="preserve" approved="yes">
 				<source>Only letters, numbers, spaces and certain punctuation marks are expected</source>
@@ -150,7 +150,7 @@
       <!-- TextValidator -->
       <trans-unit id="1221565786" xml:space="preserve" approved="yes">
 				<source>Valid text without any XML tags is expected</source>
-			<target state="final">Tiek gaidīts teksts bez jebkādiem XML tagiem</target><alt-trans><target>Tiek gaidīts derīgs teksts, bez jebkādiem XML tagiem</target></alt-trans></trans-unit>
+			<target state="final">Tiek gaidīts teksts bez jebkādiem XML tagiem</target></trans-unit>
       <!-- UuidValidator -->
       <trans-unit id="1221565853" xml:space="preserve" approved="yes">
 				<source>The given subject is not a valid UUID</source>
@@ -189,13 +189,13 @@
 			<target state="final">Attēla augstums {0,number} ir mazāks par pieļaujamo minimālo augstumu {1,number}</target></trans-unit>
       <trans-unit id="1319801929" xml:space="preserve" approved="yes">
 				<source>The actual image height of {0,number} is higher than the allowed maximum height of {1,number}</source>
-			<target state="final">Attēla augstums {0,number} ir lielāks par pieļaujamo minimālo augstumu {1,number}</target><alt-trans><target>Attēla augstums {0,number} ir mazāks par pieļaujamo minimālo augstumu {1,number}</target></alt-trans></trans-unit>
+			<target state="final">Attēla augstums {0,number} ir lielāks par pieļaujamo minimālo augstumu {1,number}</target></trans-unit>
       <trans-unit id="1319813336" xml:space="preserve" approved="yes">
 				<source>The given image size of {0,number} x {1,number} is too low for the required minimum resolution of {2,number}</source>
 			<target state="final">Attēla izmērs {0,number} x {1,number} ir ar pārāk zemu nepieciešamo minimālo izšķirtspēju {2,number}</target></trans-unit>
       <trans-unit id="1319813355" xml:space="preserve" approved="yes">
 				<source>The given image size of {0,number} x {1,number} is too high for the required maximum resolution of {2,number}</source>
-			<target state="final">Attēla izmērs {0,number} x {1,number} ir ar pārāk lielu atļauto maksimālo izšķirtspēju {2,number}</target><alt-trans><target>Attēla izmērs {0,number} x {1,number} ir ar pārāk lielu nepieciešamo maksimālo izšķirtspēju {2,number}</target></alt-trans></trans-unit>
+			<target state="final">Attēla izmērs {0,number} x {1,number} ir ar pārāk lielu atļauto maksimālo izšķirtspēju {2,number}</target></trans-unit>
       <!-- ImageOrientationValidator -->
       <trans-unit id="1328028604" xml:space="preserve" approved="yes">
 				<source>The given value is not a Image instance</source>

@@ -7,7 +7,7 @@
 			<target state="translated">předchozí</target></trans-unit>
       <trans-unit id="widget.paginate.next" xml:space="preserve">
 				<source>next</source>
-			<target state="translated">další</target><alt-trans><target>Další</target></alt-trans></trans-unit>
+			<target state="translated">další</target></trans-unit>
     </body>
   </file>
 </xliff>

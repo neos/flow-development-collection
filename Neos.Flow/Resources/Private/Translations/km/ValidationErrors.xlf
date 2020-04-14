@@ -27,7 +27,7 @@
 			<target state="final">តម្លៃដែលផ្ដល់អោយ គឺមិនត្រឹមត្រូវតាមកាលបរិឆ្ឆេទនោះទេ</target></trans-unit>
       <trans-unit id="1325615630" xml:space="preserve" approved="yes">
 				<source>The given date must be between {0} and {1}</source>
-			<target state="final">កាលបរិច្ឆេទដែលផ្ដល់អោយ ត្រូវតែនៅចន្លោះពី {០} ហើយនឹង {១}</target><alt-trans><target>កាលបិឆ្ឆេទដែលផ្ដល់អោយ ត្រូវតែនៅចន្លោះពី {០} ហើយនឹង {១}</target></alt-trans></trans-unit>
+			<target state="final">កាលបរិច្ឆេទដែលផ្ដល់អោយ ត្រូវតែនៅចន្លោះពី {០} ហើយនឹង {១}</target></trans-unit>
       <trans-unit id="1324315107" xml:space="preserve" approved="yes">
 				<source>The given date must be after {0}</source>
 			<target state="final">កាលបរិច្ឆេទត្រូវនៅក្រោយ {0}</target></trans-unit>
@@ -40,7 +40,7 @@
 			<target state="final">ជម្រើស​ "locale"  អាចត្រូវបានកំណត់តែមួយគត់សំរាប់កំណត់អត្ដសញ្ញាណ​ string រឺក៏ Locale object</target></trans-unit>
       <trans-unit id="1281454830" xml:space="preserve" approved="yes">
 				<source>A valid time is expected</source>
-			<target state="final">រំពឹងពេលដែលត្រឹមត្រូវ</target><alt-trans><target>រំពឹងកាលបរិច្ឆេទដែលបានកំណត់</target></alt-trans></trans-unit>
+			<target state="final">រំពឹងពេលដែលត្រឹមត្រូវ</target></trans-unit>
       <trans-unit id="1281454831" xml:space="preserve" approved="yes">
 				<source>A valid date and time is expected</source>
 			<target state="final">កាលបរិច្ឆេទនិងពេលវេលាមួយដែលត្រឹមត្រូវរំពឹងថានឹងមានសុពលភាព</target></trans-unit>
@@ -173,7 +173,7 @@
 			<target state="final">រយៈកម្ពស់របស់រូបភាពជាក់ស្តែងគឺ {0,number} ដែលទាបជាងប្រវែងទាបបំផុតដែលបាន​កំណត់ត្រូវជា {1,number}</target></trans-unit>
       <trans-unit id="1319801929" xml:space="preserve" approved="yes">
 				<source>The actual image height of {0,number} is higher than the allowed maximum height of {1,number}</source>
-			<target state="final">រយៈកម្ពស់របស់រូបភាពជាក់ស្តែងគឺ {0,number} ដែលលើសជាងប្រវែងខ្ពស់បំផុតដែលបានកំណត់ ត្រូវជា {1,number}</target><alt-trans><target>ប្រវែងកម្ពស់រូបភាពជាក់ស្តែង {0,number} គឹលើសជាងប្រវែងខ្ពស់បំផុតដែលបានកំណត់ {1,number}</target></alt-trans></trans-unit>
+			<target state="final">រយៈកម្ពស់របស់រូបភាពជាក់ស្តែងគឺ {0,number} ដែលលើសជាងប្រវែងខ្ពស់បំផុតដែលបានកំណត់ ត្រូវជា {1,number}</target></trans-unit>
       <trans-unit id="1319813336" xml:space="preserve" approved="yes">
 				<source>The given image size of {0,number} x {1,number} is too low for the required minimum resolution of {2,number}</source>
 			<target state="final">ទំហំរូបភាពដែលបានផ្តល់ឱ្យនៃ {0,ចំនួន } X {1, ចំនួន} ទាបពេកសម្រាប់ការដោះស្រាយអប្បបរមានៃ {2, លេខ}ជាដាច់ខាត</target></trans-unit>

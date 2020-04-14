@@ -5,7 +5,7 @@
       <!-- AlphanumericValidator -->
       <trans-unit id="1221551320" xml:space="preserve" approved="yes">
 				<source>Only regular characters (a to z, umlauts, ...) and numbers are allowed.</source>
-			<target state="final">Seuls les caractères a à z et les nombres sont autorisés</target><alt-trans><target>Seuls les caractères de A à Z et les nombres sont autorisés.</target></alt-trans></trans-unit>
+			<target state="final">Seuls les caractères a à z et les nombres sont autorisés</target></trans-unit>
       <!-- BooleanValueValidator -->
       <trans-unit id="1361044943" xml:space="preserve" approved="yes">
 				<source>The given value is expected to be {0}.</source>
@@ -27,7 +27,7 @@
 			<target state="final">Ce n'est pas une date valide</target></trans-unit>
       <trans-unit id="1325615630" xml:space="preserve">
 				<source>The given date must be between {0} and {1}</source>
-			<target state="translated">La date indiquée doit se trouver entre {0,datetime,datetime} et {1,datetime,datetime}</target><alt-trans><target>La date indiqué doit se trouver entre {0,datetime,datetime} et {1,datetime,datetime}</target></alt-trans></trans-unit>
+			<target state="translated">La date indiquée doit se trouver entre {0,datetime,datetime} et {1,datetime,datetime}</target></trans-unit>
       <trans-unit id="1324315107" xml:space="preserve">
 				<source>The given date must be after {0}</source>
 			<target state="translated">La date indiquée doit se trouver après {0,datetime,datetime}</target></trans-unit>
@@ -37,10 +37,10 @@
       <!-- DateTimeValidator -->
       <trans-unit id="1281454676" xml:space="preserve" approved="yes">
 				<source>The "locale" option can be only set to string identifier, or Locale object</source>
-			<target state="final">L'option "locale" peut être uniquement un identifiant de chaîne, ou un objet Locale</target><alt-trans><target>L'option "locale" peut être uniquement un identifiant de chaîne ou un objet Locale</target></alt-trans></trans-unit>
+			<target state="final">L'option "locale" peut être uniquement un identifiant de chaîne, ou un objet Locale</target></trans-unit>
       <trans-unit id="1281454830" xml:space="preserve" approved="yes">
 				<source>A valid time is expected</source>
-			<target state="final">Un heure valide est attendue</target><alt-trans><target>Une heure valide est attendue</target></alt-trans></trans-unit>
+			<target state="final">Un heure valide est attendue</target></trans-unit>
       <trans-unit id="1281454831" xml:space="preserve" approved="yes">
 				<source>A valid date and time is expected</source>
 			<target state="final">Une date et heure valide est attendue</target></trans-unit>
@@ -50,7 +50,7 @@
       <!-- EmailAddressValidator -->
       <trans-unit id="1221559976" xml:space="preserve" approved="yes">
 				<source>Please specify a valid email address</source>
-			<target state="final">S'il vous plaît, indiquer une adresse email valide</target><alt-trans><target>S'il vous plaît, indiquer une adresse e-mail valide</target></alt-trans><alt-trans><target>Veuillez entrer une adresse e-mail valide</target></alt-trans></trans-unit>
+			<target state="final">S'il vous plaît, indiquer une adresse email valide</target></trans-unit>
       <!-- FloatValidator -->
       <trans-unit id="1221560288" xml:space="preserve" approved="yes">
 				<source>A valid float number is expected</source>
@@ -72,7 +72,7 @@
       <!-- LabelValidator -->
       <trans-unit id="1272298003" xml:space="preserve" approved="yes">
 				<source>Only letters, numbers, spaces and certain punctuation marks are expected</source>
-			<target state="final">Seuls les lettres, les nombres, les espaces et certaines ponctuations sont attentus</target><alt-trans><target>Seuls les lettres, les nombres, les espaces et certaines ponctuations sont attendus</target></alt-trans></trans-unit>
+			<target state="final">Seuls les lettres, les nombres, les espaces et certaines ponctuations sont attentus</target></trans-unit>
       <!-- LocaleIdentifierValidator -->
       <trans-unit id="1327090892" xml:space="preserve" approved="yes">
 				<source>Value is no valid I18n locale identifier</source>
@@ -90,11 +90,11 @@
 			<target state="final">Un nombre valide est attendu</target></trans-unit>
       <trans-unit id="1221561046" xml:space="preserve" approved="yes">
 				<source>Please enter a valid number between {0,number} and {1,number}</source>
-			<target state="final">S'il vous plaît entrer un nombre valide compris entre {0, number} et {1, number}</target><alt-trans><target>Veuillez entrer un numéro valide entre {0,number} et {1,number}</target></alt-trans></trans-unit>
+			<target state="final">S'il vous plaît entrer un nombre valide compris entre {0, number} et {1, number}</target></trans-unit>
       <!-- NumberValidator -->
       <trans-unit id="1281286579" xml:space="preserve" approved="yes">
 				<source>The "locale" option can be only set to string identifier, or Locale object</source>
-			<target state="final">L'option "locale" peut être uniquement un identifiant de chaîne, ou un objet Locale</target><alt-trans><target>L'option "locale" peut être uniquement un identifiant de chaîne ou un objet Locale</target></alt-trans></trans-unit>
+			<target state="final">L'option "locale" peut être uniquement un identifiant de chaîne, ou un objet Locale</target></trans-unit>
       <trans-unit id="1281452093" xml:space="preserve" approved="yes">
 				<source>A valid percent number is expected</source>
 			<target state="final">Un pourcentage valide est attendu</target></trans-unit>

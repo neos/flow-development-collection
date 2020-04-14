@@ -13,7 +13,7 @@
       <!-- CollectionValidator -->
       <trans-unit id="1317204797" xml:space="preserve" approved="yes">
 				<source>The given subject is not a collection</source>
-			<target state="final">Podany element nie jest kolekcją</target><alt-trans><target>Podany element nie jest zbiorem</target></alt-trans></trans-unit>
+			<target state="final">Podany element nie jest kolekcją</target></trans-unit>
       <!-- CountValidator -->
       <trans-unit id="1253718666" xml:space="preserve" approved="yes">
 				<source>The given subject is not countable</source>
@@ -80,10 +80,10 @@
       <!-- NotEmptyValidator -->
       <trans-unit id="1221560910" xml:space="preserve" approved="yes">
 				<source>This property is required</source>
-			<target state="final">To pole jest wymagane</target><alt-trans><target>Ta właściwość jest wymagana</target></alt-trans></trans-unit>
+			<target state="final">To pole jest wymagane</target></trans-unit>
       <trans-unit id="1221560718" xml:space="preserve" approved="yes">
 				<source>This property is required</source>
-			<target state="final">To pole jest wymagane</target><alt-trans><target>Ta właściwość jest wymagana</target></alt-trans></trans-unit>
+			<target state="final">To pole jest wymagane</target></trans-unit>
       <!-- NumberRangeValidator -->
       <trans-unit id="1221563685" xml:space="preserve" approved="yes">
 				<source>A valid number is expected</source>

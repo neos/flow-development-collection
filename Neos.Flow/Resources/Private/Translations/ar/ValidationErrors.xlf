@@ -118,7 +118,7 @@
       <group id="1238108068" restype="x-gettext-plurals">
         <trans-unit id="1238108068[0]">
           <source>This field must contain at least {0,number} characters</source>
-          <target state="translated">يجب أن يحتوي هذا الحقل على الأقل {0,number} من الأحرف</target>
+          <target state="needs-translation">This field must contain at least {0,number} characters</target>
         </trans-unit>
         <trans-unit id="1238108068[1]">
           <source>This field must contain at least {0,number} character</source>
@@ -144,7 +144,7 @@
       <group id="1238108069" restype="x-gettext-plurals">
         <trans-unit id="1238108069[0]">
           <source>This text may not exceed {0,number} characters</source>
-          <target state="translated">لا يجوز أن يتجاوز هذا النص {0,number} من الأحرف</target>
+          <target state="needs-translation">This text may not exceed {0,number} characters</target>
         </trans-unit>
         <trans-unit id="1238108069[1]">
           <source>This text may not exceed {0,number} character</source>

@@ -13,7 +13,7 @@
       <!-- CollectionValidator -->
       <trans-unit id="1317204797" xml:space="preserve" approved="yes">
 				<source>The given subject is not a collection</source>
-			<target state="final">Annettu kohde ei ole kokoelma</target><alt-trans><target>Annettu aihe ei ole kokoelma</target></alt-trans></trans-unit>
+			<target state="final">Annettu kohde ei ole kokoelma</target></trans-unit>
       <!-- CountValidator -->
       <trans-unit id="1253718666" xml:space="preserve" approved="yes">
 				<source>The given subject is not countable</source>
@@ -178,13 +178,13 @@
 			<target state="final">Kuvan todellinen leveys {0,number} on suurempi kuin sallittu enimmäisleveys {1,number}</target></trans-unit>
       <trans-unit id="1319801925" xml:space="preserve" approved="yes">
 				<source>The actual image height of {0,number} is lower than the allowed minimum height of {1,number}</source>
-			<target state="final">Kuvan korkeus {0,number} on pienempi kuin sallittu vähimmäiskorkeus {1,number}</target><alt-trans><target>Kuvan todellinen korkeus {0,number} on pienempi kuin sallittu vähimmäiskorkeus {1,number}</target></alt-trans></trans-unit>
+			<target state="final">Kuvan korkeus {0,number} on pienempi kuin sallittu vähimmäiskorkeus {1,number}</target></trans-unit>
       <trans-unit id="1319801929" xml:space="preserve" approved="yes">
 				<source>The actual image height of {0,number} is higher than the allowed maximum height of {1,number}</source>
 			<target state="final">Kuvan korkeus {0,number} on suurempi kuin sallittu enimmäiskorkeus {1,number}</target></trans-unit>
       <trans-unit id="1319813336" xml:space="preserve" approved="yes">
 				<source>The given image size of {0,number} x {1,number} is too low for the required minimum resolution of {2,number}</source>
-			<target state="final">Kuvan koko {0,number} x {1,number} on liian pieni sallitulle vähimmäisresoluutiolle {2,number}</target><alt-trans><target>Kuvan koko {0,number} x {1,number} on liian pieni vaaditulle resoluutiolle {2,number}</target></alt-trans></trans-unit>
+			<target state="final">Kuvan koko {0,number} x {1,number} on liian pieni sallitulle vähimmäisresoluutiolle {2,number}</target></trans-unit>
       <trans-unit id="1319813355" xml:space="preserve" approved="yes">
 				<source>The given image size of {0,number} x {1,number} is too high for the required maximum resolution of {2,number}</source>
 			<target state="final">Kuvan koko {0,number} x {1,number} on liian suuri sallitulle enimmäisresoluutiolle {2,number}</target></trans-unit>
