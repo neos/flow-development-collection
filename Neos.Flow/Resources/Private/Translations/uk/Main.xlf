@@ -13,10 +13,10 @@
 			<target state="translated">Пароль</target></trans-unit>
       <trans-unit id="authentication.new-password" xml:space="preserve">
 				<source>New password</source>
-			<target state="translated">Новий пароль</target><alt-trans><target>Новий Пароль</target></alt-trans></trans-unit>
+			<target state="translated">Новий пароль</target></trans-unit>
       <trans-unit id="authentication.login" xml:space="preserve">
 				<source>Login</source>
-			<target state="translated">Ввійти</target><alt-trans><target>Логін</target></alt-trans><alt-trans><target>Вхід</target></alt-trans></trans-unit>
+			<target state="translated">Ввійти</target></trans-unit>
       <trans-unit id="authentication.logout" xml:space="preserve">
 				<source>Logout</source>
 			<target state="translated">вийти</target></trans-unit>
@@ -25,7 +25,7 @@
 			<target state="translated">Оновлення</target></trans-unit>
       <trans-unit id="submit" xml:space="preserve">
 				<source>Submit</source>
-			<target state="translated">Надіслати</target><alt-trans><target>отправить</target></alt-trans></trans-unit>
+			<target state="translated">Надіслати</target></trans-unit>
     </body>
   </file>
 </xliff>

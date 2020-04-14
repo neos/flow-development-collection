@@ -16,7 +16,7 @@
 			<target state="translated">Parola nouă</target></trans-unit>
       <trans-unit id="authentication.login" xml:space="preserve">
 				<source>Login</source>
-			<target state="translated">Logare</target><alt-trans><target>Login</target></alt-trans></trans-unit>
+			<target state="translated">Logare</target></trans-unit>
       <trans-unit id="authentication.logout" xml:space="preserve">
 				<source>Logout</source>
 			<target state="translated">Delogare</target></trans-unit>
