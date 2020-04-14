@@ -54,10 +54,10 @@
       <!-- FloatValidator -->
       <trans-unit id="1221560288" xml:space="preserve">
 				<source>A valid float number is expected</source>
-			<target state="translated">È previsto un numero virtuale valido</target><alt-trans><target>È previsto un numero float valido</target></alt-trans></trans-unit>
+			<target state="translated">È previsto un numero virtuale valido</target></trans-unit>
       <trans-unit id="1332934124" xml:space="preserve">
 				<source>"{0}" cannot be converted to a float value</source>
-			<target state="translated">"{0}" non può essere convertito in un valore virtuale</target><alt-trans><target>"{0}" non può essere convertito in un valore float</target></alt-trans></trans-unit>
+			<target state="translated">"{0}" non può essere convertito in un valore virtuale</target></trans-unit>
       <!-- GenericObjectValidator -->
       <trans-unit id="1241099149" xml:space="preserve">
 				<source>Object expected, {0} given</source>

@@ -16,7 +16,7 @@
 			<target state="final">Nieuw wachtwoord</target></trans-unit>
       <trans-unit id="authentication.login" xml:space="preserve" approved="yes">
 				<source>Login</source>
-			<target state="final">Login</target><alt-trans><target>Log in</target></alt-trans></trans-unit>
+			<target state="final">Login</target></trans-unit>
       <trans-unit id="authentication.logout" xml:space="preserve" approved="yes">
 				<source>Logout</source>
 			<target state="final">Log uit</target></trans-unit>

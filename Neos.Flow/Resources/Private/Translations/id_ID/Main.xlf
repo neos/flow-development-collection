@@ -22,10 +22,10 @@
 			<target state="translated">Keluar</target></trans-unit>
       <trans-unit id="update" xml:space="preserve">
 				<source>Update</source>
-			<target state="translated">Pembaruan</target><alt-trans><target>Update</target></alt-trans></trans-unit>
+			<target state="translated">Pembaruan</target></trans-unit>
       <trans-unit id="submit" xml:space="preserve">
 				<source>Submit</source>
-			<target state="translated">Kirim</target><alt-trans><target>Masukkan</target></alt-trans></trans-unit>
+			<target state="translated">Kirim</target></trans-unit>
     </body>
   </file>
 </xliff>
