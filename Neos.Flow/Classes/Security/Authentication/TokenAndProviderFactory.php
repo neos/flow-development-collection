@@ -172,7 +172,7 @@ class TokenAndProviderFactory implements TokenAndProviderFactoryInterface
                 /** @noinspection PhpMethodParametersCountMismatchInspection */
                 $tokenInstance = $this->objectManager->get($tokenClassName, $providerConfiguration['tokenOptions'] ?? []);
                 if (!$tokenInstance instanceof TokenInterface) {
-                    throw new Exception\InvalidAuthenticationProviderException('TODO', 1585921152);
+                    throw new Exception\InvalidAuthenticationProviderException(sprintf('The specified token is not an instance of %s but a %s. Please adjust the "token" configuration of the "%s" authentication provider', TokenInterface::class, is_object($tokenInstance) ? get_class($tokenInstance) : gettype($tokenInstance), $providerName), 1585921152);
                 }
                 $tokenInstance->setAuthenticationProviderName($providerName);
                 $this->tokens[] = $tokenInstance;
