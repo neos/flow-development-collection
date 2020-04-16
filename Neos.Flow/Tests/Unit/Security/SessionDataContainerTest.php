@@ -12,7 +12,6 @@ namespace Neos\Flow\Tests\Unit\Security;
  */
 
 use Neos\Flow\Mvc\ActionRequest;
-use Neos\Flow\Security\Authentication\Token\SessionlessTokenInterface;
 use Neos\Flow\Security\Authentication\Token\TestingToken;
 use Neos\Flow\Security\Authentication\TokenInterface;
 use Neos\Flow\Security\SessionDataContainer;
