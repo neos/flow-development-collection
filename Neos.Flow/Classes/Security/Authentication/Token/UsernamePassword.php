@@ -32,12 +32,6 @@ class UsernamePassword extends AbstractToken implements UsernamePasswordTokenInt
     protected $credentials = ['username' => '', 'password' => ''];
 
     /**
-     * The current ActionRequest
-     * @var ActionRequest
-     */
-    protected $actionRequest;
-
-    /**
      * Updates the username and password credentials from the POST vars, if the POST parameters
      * are available. Sets the authentication status to REAUTHENTICATION_NEEDED, if credentials have been sent.
      *
