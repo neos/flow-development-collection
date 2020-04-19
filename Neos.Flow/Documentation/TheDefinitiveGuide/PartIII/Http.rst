@@ -31,8 +31,8 @@ The basic walk through a Flow-based web application is as follows:
 * by default, the :abbr:`HTTP Request Handler (\\Neos\\Flow\\Http\\RequestHandler)` takes over and runs a boot sequence
   which initializes all important parts of Flow
 * the HTTP Request Handler builds an PSR-7 HTTP Request and Response object. The
-  :abbr:`Request object (\\Psr\\Http\\Request)` contains all important properties of the real HTTP request.
-  The :abbr:`Response object (\\Neos\\Flow\\Http\\Response)` in turn is empty and will be filled with information by a
+  :abbr:`Request object (\\Psr\\Http\\Message\\ServerRequestInterface)` contains all important properties of the real HTTP request.
+  The :abbr:`Response object (\\Psr\Http\\Message\\ResponseInterface)` in turn is empty and will be filled with information by a
   controller at a later point
   Both are stored in the so-called :abbr:`ComponentContext (\\Neos\\Flow\\Http\\Component\\ComponentContext)`, which you need to use to access and/or replace any of the two.
 * the HTTP Request Handler initializes the
