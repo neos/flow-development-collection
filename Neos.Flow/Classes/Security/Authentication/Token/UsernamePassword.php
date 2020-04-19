@@ -13,13 +13,17 @@ namespace Neos\Flow\Security\Authentication\Token;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Security\Exception\InvalidAuthenticationStatusException;
 use Neos\Utility\ObjectAccess;
 
 /**
  * An authentication token used for simple username and password authentication.
  */
-class UsernamePassword extends AbstractToken
+class UsernamePassword extends AbstractToken implements UsernamePasswordTokenInterface
 {
+    private const DEFAULT_USERNAME_POST_FIELD = '__authentication.Neos.Flow.Security.Authentication.Token.UsernamePassword.username';
+    private const DEFAULT_PASSWORD_POST_FIELD = '__authentication.Neos.Flow.Security.Authentication.Token.UsernamePassword.password';
+
     /**
      * The username/password credentials
      * @var array
@@ -34,9 +38,22 @@ class UsernamePassword extends AbstractToken
      * Note: You need to send the username and password in these two POST parameters:
      *       __authentication[Neos][Flow][Security][Authentication][Token][UsernamePassword][username]
      *   and __authentication[Neos][Flow][Security][Authentication][Token][UsernamePassword][password]
+     *   or specify the "usernamePostField" and "passwordPostField" options in the provider configuration:
+     *
+     * Neos:
+     *   Flow:
+     *     security:
+     *       authentication:
+     *         providers:
+     *           DefaultProvider:
+     *             provider: PersistedUsernamePasswordProvider
+     *             tokenOptions:
+     *               usernamePostField: 'some.argument'
+     *               passwordPostField: 'some.other.argument'
      *
      * @param ActionRequest $actionRequest The current action request
      * @return void
+     * @throws InvalidAuthenticationStatusException
      */
     public function updateCredentials(ActionRequest $actionRequest)
     {
@@ -44,16 +61,32 @@ class UsernamePassword extends AbstractToken
         if ($httpRequest->getMethod() !== 'POST') {
             return;
         }
-
-        $arguments = $actionRequest->getInternalArguments();
-        $username = ObjectAccess::getPropertyPath($arguments, '__authentication.Neos.Flow.Security.Authentication.Token.UsernamePassword.username');
-        $password = ObjectAccess::getPropertyPath($arguments, '__authentication.Neos.Flow.Security.Authentication.Token.UsernamePassword.password');
-
+        $allArguments = array_merge($actionRequest->getArguments(), $actionRequest->getInternalArguments());
+        $usernameFieldName = $this->options['usernamePostField'] ?? self::DEFAULT_USERNAME_POST_FIELD;
+        $passwordFieldName = $this->options['passwordPostField'] ?? self::DEFAULT_PASSWORD_POST_FIELD;
+        $username = ObjectAccess::getPropertyPath($allArguments, $usernameFieldName);
+        $password = ObjectAccess::getPropertyPath($allArguments, $passwordFieldName);
         if (!empty($username) && !empty($password)) {
             $this->credentials['username'] = $username;
             $this->credentials['password'] = $password;
             $this->setAuthenticationStatus(self::AUTHENTICATION_NEEDED);
         }
+    }
+
+    /**
+     * @return string The username this token extracted from the request, or an empty string
+     */
+    public function getUsername(): string
+    {
+        return $this->credentials['username'] ?? '';
+    }
+
+    /**
+     * @return string The password this token extracted from the request, or an empty string
+     */
+    public function getPassword(): string
+    {
+        return $this->credentials['password'] ?? '';
     }
 
     /**

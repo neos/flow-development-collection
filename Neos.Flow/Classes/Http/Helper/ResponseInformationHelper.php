@@ -11,6 +11,7 @@ namespace Neos\Flow\Http\Helper;
  * source code.
  */
 
+use GuzzleHttp\Psr7\Response;
 use function GuzzleHttp\Psr7\parse_response;
 use function GuzzleHttp\Psr7\stream_for;
 use Psr\Http\Message\RequestInterface;
@@ -149,13 +150,28 @@ abstract class ResponseInformationHelper
     public static function makeStandardsCompliant(ResponseInterface $response, RequestInterface $request): ResponseInterface
     {
         $statusCode = $response->getStatusCode();
-        if ($request->hasHeader('If-Modified-Since') && $response->hasHeader('Last-Modified') && $statusCode === 200) {
+        if ($request->hasHeader('If-None-Match') && in_array($request->getMethod(), ['HEAD', 'GET'])
+            && $response->hasHeader('ETag') && $statusCode === 200) {
+            $ifNoneMatchHeaders = $request->getHeader('If-None-Match');
+            $eTagHeader = $response->getHeader('ETag')[0];
+            foreach ($ifNoneMatchHeaders as $ifNoneMatchHeader) {
+                if (ltrim($ifNoneMatchHeader, 'W/') == ltrim($eTagHeader, 'W/')) {
+                    $response = $response
+                        ->withStatus(304)
+                        ->withBody(stream_for(''));
+                    break;
+                }
+            }
+        } elseif ($request->hasHeader('If-Modified-Since') && in_array($request->getMethod(), ['HEAD', 'GET'])
+            && $response->hasHeader('Last-Modified') && $statusCode === 200) {
             $ifModifiedSince = $request->getHeader('If-Modified-Since')[0];
             $ifModifiedSinceDate = \DateTime::createFromFormat(DATE_RFC2822, $ifModifiedSince);
             $lastModified = $response->getHeader('Last-Modified')[0];
             $lastModifiedDate = \DateTime::createFromFormat(DATE_RFC2822, $lastModified);
             if ($lastModifiedDate <= $ifModifiedSinceDate) {
-                $response = $response->withStatus(304);
+                $response = $response
+                    ->withStatus(304)
+                    ->withBody(stream_for(''));
             }
         } elseif ($request->hasHeader('If-Unmodified-Since') && $response->hasHeader('Last-Modified')
             && (($statusCode >= 200 && $statusCode <= 299) || $statusCode === 412)) {

@@ -13,6 +13,7 @@ namespace Neos\Flow\Tests\Unit\Security\Authentication\Provider;
 
 use Neos\Flow\Security\Authentication\Provider\FileBasedSimpleKeyProvider;
 use Neos\Flow\Security\Authentication\Token\PasswordToken;
+use Neos\Flow\Security\Authentication\Token\PasswordTokenInterface;
 use Neos\Flow\Security\Authentication\TokenInterface;
 use Neos\Flow\Security\Cryptography\FileBasedSimpleKeyService;
 use Neos\Flow\Security\Cryptography\HashService;
@@ -89,7 +90,7 @@ class FileBasedSimpleKeyProviderTest extends UnitTestCase
      */
     public function authenticatingAPasswordTokenChecksIfTheGivenClearTextPasswordMatchesThePersistedHashedPassword()
     {
-        $this->mockToken->expects(self::once())->method('getCredentials')->will(self::returnValue(['password' => $this->testKeyClearText]));
+        $this->mockToken->expects(self::atLeastOnce())->method('getPassword')->will(self::returnValue($this->testKeyClearText));
         $this->mockToken->expects(self::once())->method('setAuthenticationStatus')->with(TokenInterface::AUTHENTICATION_SUCCESSFUL);
 
         $authenticationProvider = FileBasedSimpleKeyProvider::create('myProvider', ['keyName' => 'testKey', 'authenticateRoles' => ['Neos.Flow:TestRoleIdentifier']]);
@@ -105,8 +106,8 @@ class FileBasedSimpleKeyProviderTest extends UnitTestCase
      */
     public function authenticationAddsAnAccountHoldingTheConfiguredRoles()
     {
-        $this->mockToken = $this->getMockBuilder(PasswordToken::class)->disableOriginalConstructor()->setMethods(['getCredentials'])->getMock();
-        $this->mockToken->expects(self::once())->method('getCredentials')->will(self::returnValue(['password' => $this->testKeyClearText]));
+        $this->mockToken = $this->getMockBuilder(PasswordToken::class)->disableOriginalConstructor()->setMethods(['getPassword'])->getMock();
+        $this->mockToken->expects(self::atLeastOnce())->method('getPassword')->will(self::returnValue($this->testKeyClearText));
 
         $authenticationProvider = FileBasedSimpleKeyProvider::create('myProvider', ['keyName' => 'testKey', 'authenticateRoles' => ['Neos.Flow:TestRoleIdentifier']]);
         $this->inject($authenticationProvider, 'policyService', $this->mockPolicyService);
@@ -124,7 +125,7 @@ class FileBasedSimpleKeyProviderTest extends UnitTestCase
      */
     public function authenticationFailsWithWrongCredentialsInAPasswordToken()
     {
-        $this->mockToken->expects(self::once())->method('getCredentials')->will(self::returnValue(['password' => 'wrong password']));
+        $this->mockToken->expects(self::atLeastOnce())->method('getPassword')->will(self::returnValue('wrong password'));
         $this->mockToken->expects(self::once())->method('setAuthenticationStatus')->with(TokenInterface::WRONG_CREDENTIALS);
 
         $authenticationProvider = FileBasedSimpleKeyProvider::create('myProvider', ['keyName' => 'testKey', 'authenticateRoles' => ['Neos.Flow:TestRoleIdentifier']]);
@@ -140,7 +141,7 @@ class FileBasedSimpleKeyProviderTest extends UnitTestCase
      */
     public function authenticationIsSkippedIfNoCredentialsInAPasswordToken()
     {
-        $this->mockToken->expects(self::once())->method('getCredentials')->will(self::returnValue([]));
+        $this->mockToken->expects(self::atLeastOnce())->method('getPassword')->will(self::returnValue(''));
         $this->mockToken->expects(self::once())->method('setAuthenticationStatus')->with(TokenInterface::NO_CREDENTIALS_GIVEN);
 
         $authenticationProvider = FileBasedSimpleKeyProvider::create('myProvider', ['keyName' => 'testKey', 'authenticateRoles' => ['Neos.Flow:TestRoleIdentifier']]);
@@ -157,7 +158,7 @@ class FileBasedSimpleKeyProviderTest extends UnitTestCase
     public function getTokenClassNameReturnsCorrectClassNames()
     {
         $authenticationProvider = FileBasedSimpleKeyProvider::create('myProvider', []);
-        self::assertSame($authenticationProvider->getTokenClassNames(), [PasswordToken::class]);
+        self::assertSame($authenticationProvider->getTokenClassNames(), [PasswordTokenInterface::class]);
     }
 
     /**
