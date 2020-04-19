@@ -13,25 +13,22 @@ namespace Neos\Flow\Security\Authentication\Token;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Security\Exception\InvalidAuthenticationStatusException;
 use Neos\Utility\ObjectAccess;
 
 /**
  * An authentication token used for simple password authentication.
  */
-class PasswordToken extends AbstractToken
+class PasswordToken extends AbstractToken implements PasswordTokenInterface
 {
+    private const DEFAULT_PASSWORD_POST_FIELD = '__authentication.Neos.Flow.Security.Authentication.Token.PasswordToken.password';
+
     /**
      * The password credentials
      * @var array
      * @Flow\Transient
      */
     protected $credentials = ['password' => ''];
-
-    /**
-     * @var \Neos\Flow\Utility\Environment
-     * @Flow\Inject
-     */
-    protected $environment;
 
     /**
      * Updates the password credential from the POST vars, if the POST parameters
@@ -42,20 +39,28 @@ class PasswordToken extends AbstractToken
      *
      * @param ActionRequest $actionRequest The current action request
      * @return void
+     * @throws InvalidAuthenticationStatusException
      */
     public function updateCredentials(ActionRequest $actionRequest)
     {
         if ($actionRequest->getHttpRequest()->getMethod() !== 'POST') {
             return;
         }
-
-        $postArguments = $actionRequest->getInternalArguments();
-        $password = ObjectAccess::getPropertyPath($postArguments, '__authentication.Neos.Flow.Security.Authentication.Token.PasswordToken.password');
-
+        $allArguments = array_merge($actionRequest->getArguments(), $actionRequest->getInternalArguments());
+        $passwordFieldName = $this->options['passwordPostField'] ?? self::DEFAULT_PASSWORD_POST_FIELD;
+        $password = ObjectAccess::getPropertyPath($allArguments, $passwordFieldName);
         if (!empty($password)) {
             $this->credentials['password'] = $password;
             $this->setAuthenticationStatus(self::AUTHENTICATION_NEEDED);
         }
+    }
+
+    /**
+     * @return string the password this token represents, or an empty string
+     */
+    public function getPassword(): string
+    {
+        return $this->credentials['password'] ?? '';
     }
 
     /**

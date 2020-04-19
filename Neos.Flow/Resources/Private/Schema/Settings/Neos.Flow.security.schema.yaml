@@ -49,6 +49,7 @@ properties:
             'entryPoint': { type: string }
             'entryPointOptions': { type: dictionary }
             'token': { type: string, format: class-name }
+            'tokenOptions': { type: dictionary }
       'authenticationStrategy':
         type: string
         required: true
