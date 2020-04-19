@@ -24,26 +24,11 @@ Neos:
       # request (default).
       baseUri: NULL
 
-      # Defines the PSR-15 middlewares that a request goes through in a flow of "preprocess", "process" and "postprocess"
+      # Defines the PSR-15 middlewares that a request goes through in a flow
       middlewares:
-        'preprocess':
-          position: 'before process'
-          chain:
-            'trustedProxies':
-              position: 'start'
-              middleware: 'Neos\Flow\Http\Component\TrustedProxiesComponent'
-            'getSessionCookieFromRequest':
-              position: 'after trustedProxies'
-              middleware: 'Neos\Flow\Session\Http\SessionRequestComponent'
-        'process':
-          chain:
-            'dispatch':
-              position: 'end'
-              middleware: 'Neos\Flow\Http\Middleware\ComponentChainMiddleware'
-        'postprocess':
-          # Yes, this is correct. Middlewares work like an onion and the innermost is the one generating the response (mvc dispatcher)
-          position: 'before process'
-          chain: []
+        'dispatch':
+          position: 'end'
+          middleware: 'Neos\Flow\Http\Middleware\ComponentChainMiddleware'
 
       # Defines the workflow of one request from bootstrap to the HTTP response
       #
@@ -53,13 +38,13 @@ Neos:
 
         'preprocess':
           position: 'before process'
-          chain: []
-          #  'trustedProxies':
-          #    position: 'start'
-          #    component: 'Neos\Flow\Http\Component\TrustedProxiesComponent'
-          #  'getSessionCookieFromRequest':
-          #    position: 'after trustedProxies'
-          #    component: 'Neos\Flow\Session\Http\SessionRequestComponent'
+          chain:
+            'trustedProxies':
+              position: 'start'
+              component: 'Neos\Flow\Http\Component\TrustedProxiesComponent'
+            'getSessionCookieFromRequest':
+              position: 'after trustedProxies'
+              component: 'Neos\Flow\Session\Http\SessionRequestComponent'
         'process':
           chain:
             'routing':
