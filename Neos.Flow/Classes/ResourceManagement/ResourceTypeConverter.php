@@ -210,7 +210,7 @@ class ResourceTypeConverter extends AbstractTypeConverter
         }
 
         try {
-            $resource = new PersistentResource($source);
+            $resource = PersistentResource::createDeferred($source);
             $resource->setCollectionName($this->getCollectionName($source, $configuration));
             if (!empty($source['name'])) {
                 $resource->setFilename($source['name']);
@@ -265,9 +265,9 @@ class ResourceTypeConverter extends AbstractTypeConverter
                 $tempFile = tmpfile();
                 fwrite($tempFile, base64_decode($source['data']));
                 fseek($tempFile, 0);
-                $resource = new PersistentResource($tempFile);
+                $resource = PersistentResource::createDeferred($tempFile);
             } elseif ($hash !== null) {
-                $resource = new PersistentResource($configuration->getConfigurationValue(ResourceTypeConverter::class, self::CONFIGURATION_RESOURCE_LOAD_PATH) . '/' . $hash);
+                $resource = PersistentResource::createDeferred($configuration->getConfigurationValue(ResourceTypeConverter::class, self::CONFIGURATION_RESOURCE_LOAD_PATH) . '/' . $hash);
             }
             $resource->setCollectionName($collectionName);
             if (is_array($source) && isset($source['filename'])) {
@@ -323,7 +323,7 @@ class ResourceTypeConverter extends AbstractTypeConverter
         }
 
         try {
-            $resource = new PersistentResource($source->getStream()->detach());
+            $resource = PersistentResource::createDeferred($source->getStream()->detach());
             $resource->setCollectionName($this->getCollectionName($source, $configuration));
             $resource->setFileSize($source->getSize());
             $resource->setFilename($source->getClientFilename());

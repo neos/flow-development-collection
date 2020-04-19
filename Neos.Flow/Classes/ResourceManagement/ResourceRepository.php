@@ -74,6 +74,9 @@ class ResourceRepository extends Repository
      */
     public function add($object)
     {
+        if ($object instanceof PersistentResource && $object->isDeferred()) {
+            throw new IllegalObjectTypeException('You are trying to persist a deferred resource. Please use the ResourceManager instead.', 1587299343);
+        }
         $this->persistenceManager->allowObject($object);
         if ($this->removedResources->contains($object)) {
             $this->removedResources->detach($object);

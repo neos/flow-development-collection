@@ -270,7 +270,7 @@ class ResourceManager
      */
     public function persistResource(PersistentResource $resource): void
     {
-        if ($resource->getSource() === null) {
+        if (!$resource->isDeferred()) {
             return;
         }
         $this->initialize();

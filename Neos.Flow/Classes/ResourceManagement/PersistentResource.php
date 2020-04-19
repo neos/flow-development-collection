@@ -134,13 +134,16 @@ class PersistentResource implements ResourceMetaDataInterface, CacheAwareInterfa
     protected $temporaryLocalCopyPathAndFilename;
 
     /**
-     * The source is required for deferred persistence (after validation) in the framework and should otherwise not be set.
+     * Create a resource for deferred persistence (after validation) in the framework.
+     * This is only required internally in the framework and should not be manually used.
      *
-     * @param string|array|resource|null $source
+     * @param string|array|resource $source
      */
-    public function __construct($source = null)
+    public static function createDeferred($source)
     {
-        $this->source = $source;
+        $resource = new self();
+        $resource->source = $source;
+        return $resource;
     }
 
     /**
@@ -170,11 +173,11 @@ class PersistentResource implements ResourceMetaDataInterface, CacheAwareInterfa
     }
 
     /**
-     * @return resource|array|string|null
+     * @return bool True if this resource is deferred and has a source attached that needs to be imported first.
      */
-    public function getSource()
+    public function isDeferred(): bool
     {
-        return $this->source;
+        return $this->source !== null;
     }
 
     /**
