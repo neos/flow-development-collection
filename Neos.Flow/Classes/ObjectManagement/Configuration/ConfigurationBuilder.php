@@ -243,7 +243,7 @@ class ConfigurationBuilder
                             } else {
                                 throw new InvalidObjectConfigurationException('Invalid configuration syntax. Expecting "value", "object" or "setting" as value for argument "' . $argumentName . '", instead found "' . (is_array($argumentValue) ? implode(', ', array_keys($argumentValue)) : $argumentValue) . '" (source: ' . $objectConfiguration->getConfigurationSourceHint() . ')', 1230563250);
                             }
-                            if (isset($rawConfigurationOptions['factoryObjectName'])) {
+                            if (isset($rawConfigurationOptions['factoryObjectName']) || isset($rawConfigurationOptions['factoryMethodName'])) {
                                 $objectConfiguration->setFactoryArgument($argument);
                             } else {
                                 $objectConfiguration->setArgument($argument);
