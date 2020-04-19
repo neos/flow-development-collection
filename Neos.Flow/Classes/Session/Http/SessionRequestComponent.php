@@ -80,7 +80,8 @@ class SessionRequestComponent implements ComponentInterface
             $this->sessionSettings['cookie']['domain'],
             $this->sessionSettings['cookie']['path'],
             $this->sessionSettings['cookie']['secure'],
-            $this->sessionSettings['cookie']['httponly']
+            $this->sessionSettings['cookie']['httponly'],
+            $this->sessionSettings['cookie']['samesite']
         );
     }
 }
