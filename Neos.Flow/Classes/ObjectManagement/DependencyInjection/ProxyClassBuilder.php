@@ -278,7 +278,7 @@ class ProxyClassBuilder
                             $argumentValueObjectName = $argumentValue->getObjectName();
                             $argumentValueClassName = $argumentValue->getClassName();
                             if ($argumentValueClassName === null) {
-                                $preparedArgument = $this->buildCustomFactoryCall($argumentValue->getFactoryObjectName(), $argumentValue->getFactoryMethodName(), $argumentValue->getArguments());
+                                $preparedArgument = $this->buildCustomFactoryCall($argumentValue->getFactoryObjectName(), $argumentValue->getFactoryMethodName(), $argumentValue->getFactoryArguments());
                                 $assignments[$argumentPosition] = $assignmentPrologue . $preparedArgument;
                             } else {
                                 if ($this->objectConfigurations[$argumentValueObjectName]->getScope() === Configuration::SCOPE_PROTOTYPE) {
@@ -408,7 +408,7 @@ class ProxyClassBuilder
         $propertyObjectName = $propertyConfiguration->getObjectName();
         $propertyClassName = $propertyConfiguration->getClassName();
         if ($propertyClassName === null) {
-            $preparedSetterArgument = $this->buildCustomFactoryCall($propertyConfiguration->getFactoryObjectName(), $propertyConfiguration->getFactoryMethodName(), $propertyConfiguration->getArguments());
+            $preparedSetterArgument = $this->buildCustomFactoryCall($propertyConfiguration->getFactoryObjectName(), $propertyConfiguration->getFactoryMethodName(), $propertyConfiguration->getFactoryArguments());
         } else {
             if (!is_string($propertyClassName) || !isset($this->objectConfigurations[$propertyClassName])) {
                 $configurationSource = $objectConfiguration->getConfigurationSourceHint();

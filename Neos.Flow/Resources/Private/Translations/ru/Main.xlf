@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="authentication.required" xml:space="preserve" approved="yes">
 				<source>Authentication required</source>
-			<target state="final">Требуется проверка подлинности</target><alt-trans><target>Требуется авторизация</target></alt-trans></trans-unit>
+			<target state="final">Требуется проверка подлинности</target></trans-unit>
       <trans-unit id="authentication.username" xml:space="preserve" approved="yes">
 				<source>Username</source>
 			<target state="final">Имя пользователя</target></trans-unit>
@@ -19,7 +19,7 @@
 			<target state="final">Вход в систему</target></trans-unit>
       <trans-unit id="authentication.logout" xml:space="preserve" approved="yes">
 				<source>Logout</source>
-			<target state="final">Выйти из системы</target><alt-trans><target>Выйти из профиля</target></alt-trans></trans-unit>
+			<target state="final">Выйти из системы</target></trans-unit>
       <trans-unit id="update" xml:space="preserve" approved="yes">
 				<source>Update</source>
 			<target state="final">Обновить</target></trans-unit>
