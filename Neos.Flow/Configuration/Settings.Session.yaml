@@ -54,3 +54,7 @@ Neos:
         # all subdomains. Dot notation is not supported.
         #domain: domain.com
         domain: NULL
+
+        # The cookie samesite.
+        # possible values: 'none', 'strict', 'lax' and null
+        samesite: NULL

@@ -59,6 +59,12 @@ class Configuration
     protected $factoryMethodName = 'create';
 
     /**
+     * Arguments of the factory method
+     * @var array
+     */
+    protected $factoryArguments = [];
+
+    /**
      * @var string
      */
     protected $scope = self::SCOPE_PROTOTYPE;
@@ -380,7 +386,7 @@ class Configuration
             $this->arguments = [];
         } else {
             foreach ($arguments as $argument) {
-                if ($argument !== null && $argument instanceof ConfigurationArgument) {
+                if ($argument instanceof ConfigurationArgument) {
                     $this->setArgument($argument);
                 } else {
                     throw new InvalidConfigurationException(sprintf('Only ConfigurationArgument instances are allowed, "%s" given', is_object($argument) ? get_class($argument) : gettype($argument)), 1449217803);
@@ -416,7 +422,39 @@ class Configuration
         $argumentsCount = $lastArgument->getIndex();
         $sortedArguments = [];
         for ($index = 1; $index <= $argumentsCount; $index++) {
-            $sortedArguments[$index] = isset($this->arguments[$index]) ? $this->arguments[$index] : null;
+            $sortedArguments[$index] = $this->arguments[$index] ?? null;
+        }
+        return $sortedArguments;
+    }
+
+    /**
+     * Setter function for a single factory method argument
+     *
+     * @param ConfigurationArgument $argument The argument
+     * @return void
+     */
+    public function setFactoryArgument(ConfigurationArgument $argument)
+    {
+        $this->factoryArguments[$argument->getIndex()] = $argument;
+    }
+
+    /**
+     * Returns a sorted array of factory method arguments indexed by position (starting with "1")
+     *
+     * @return array<ConfigurationArgument> A sorted array of ConfigurationArgument objects with the argument position as index
+     */
+    public function getFactoryArguments()
+    {
+        if (count($this->factoryArguments) < 1) {
+            return [];
+        }
+
+        asort($this->factoryArguments);
+        $lastArgument = end($this->factoryArguments);
+        $argumentsCount = $lastArgument->getIndex();
+        $sortedArguments = [];
+        for ($index = 1; $index <= $argumentsCount; $index++) {
+            $sortedArguments[$index] = $this->factoryArguments[$index] ?? null;
         }
         return $sortedArguments;
     }
