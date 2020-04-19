@@ -65,7 +65,6 @@ install:
   - composer update --no-progress --no-interaction
   - php Build/BuildEssentials/TravisCi/ComposerManifestUpdater.php .
   - composer update --no-progress --no-interaction
-  - if [ "$STATIC_ANALYSIS" = "true" ]; then composer require --dev vimeo/psalm; fi
 before_script:
   - echo 'date.timezone = "Africa/Tunis"' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
   - echo 'opcache.fast_shutdown = 0' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
