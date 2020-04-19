@@ -54,7 +54,7 @@ trait AdvicesTrait
         }
         $methodName = $joinPoint->getMethodName();
         if (isset($this->Flow_Aop_Proxy_methodIsInAdviceMode[$methodName])) {
-            return call_user_func_array(['self', $joinPoint->getMethodName()], $joinPoint->getMethodArguments());
+            return self::$methodName(...$joinPoint->getMethodArguments());
         }
     }
 }
