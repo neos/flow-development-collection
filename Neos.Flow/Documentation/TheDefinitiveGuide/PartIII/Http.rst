@@ -36,6 +36,9 @@ The basic walk through a Flow-based web application is as follows:
   controller at a later point
   Both are stored in the so-called :abbr:`ComponentContext (\\Neos\\Flow\\Http\\Component\\ComponentContext)`, which you need to use to access and/or replace any of the two.
 * the HTTP Request Handler initializes the
+  :abbr:`HTTP Middlewares chain (\\Neos\\Flow\\Http\\Middleware\\MiddlewaresChain)`, which is a PSR-15 RequestHandler
+  implementation wrapping a configurable list of PSR-15 Middlewares.
+  Currently this list only consists of a middleware that invokes the
   :abbr:`HTTP Component Chain (\\Neos\\Flow\\Http\\Component\\ComponentChain)`, a set of independent units that have
   access to the current HTTP request and response and can share information amongst each other.
   The `chain`_ is fully configurable, but by default it consists of the following steps:
@@ -63,7 +66,7 @@ essence, this is the path a request is taking.
 
 	Simplified application flow
 
-The Response is modified within the HTTP Component Chain, visualized by the highlighted "loop" block above. The
+The Response is modified within the HTTP Middlewares/Component Chain, visualized by the highlighted "loop" block above. The
 component chain is configurable. If no components were registered every request would result in a blank HTTP Response.
 The component chain is a component too, so chains can be nested. By default the base component chain is divided into
 three sub chains "preprocess", "process" and "postprocess".
@@ -82,7 +85,7 @@ Request Handler
 ---------------
 
 The request handler is responsible for taking a request and responding in a manner the client understands. The default
-HTTP Request Handler invokes the ``Bootstrap runtime sequence`` and initializes the ``HTTP Component chain``. Other
+HTTP Request Handler invokes the ``Bootstrap runtime sequence`` and initializes the ``HTTP Middlewares chain``. Other
 request handlers may choose a completely different way to handle requests.
 Although Flow also supports other types of requests (most notably, from the command line interface), this chapter
 only deals with HTTP requests.
@@ -118,8 +121,70 @@ the ``Package`` class of the package containing the request handler::
 
 	}
 
+Middlewares Chain
+-----------------
+
+Instead of registering a new RequestHandler the application workflow can also be altered by a custom ``PSR-15 Middleware``.
+A HTTP middleware must implement the :abbr:`Middleware interface (\\Psr\\Http\\Server\\MiddlewareInterface)`
+that defines the ``process($request, $next)`` method::
+
+	use Neos\Flow\Http\Component\ComponentInterface;
+
+	/**
+	 * A sample HTTP component that intercepts the default handling and returns "bar" if the request contains an argument "foo"
+	 */
+	class SomeMiddleware implements MiddlewareInterface {
+
+		/**
+		 * @var array
+		 */
+		protected $options;
+
+		/**
+		 * @param array $options
+		 */
+		public function __construct(array $options = array()) {
+			$this->options = $options;
+		}
+
+		/**
+		 * @param ComponentContext $componentContext
+		 * @return void
+		 */
+    public function process(ServerRequestInterface $httpRequest, RequestHandlerInterface $next): ResponseInterface;
+			if (!$httpRequest->hasArgument('foo')) {
+			  // You may also return a new HttpResponse here and thereby short-cut the further handling
+				return $next->handle($httpRequest);
+			}
+			$httpResponse = $next->handle($httpRequest);
+      return $httpResponse->withContent('bar');
+		}
+	}
+
+To activate a middle, it must be configured in the ``Settings.yaml``::
+
+	Neos:
+	  Flow:
+	    http:
+	      middlewares:
+          'custom':
+            position: 'before dispatch'
+            middleware: 'Some\Package\Http\SomeHttpComponent'
+
+With the ``position`` directive the order of a middleware within the chain can be defined. In this case the new component
+will be handled before the dispatch middleware that is configured in the Neos.Flow package. Note though, that any middleware
+will always be able to act on the request, so *before* any following middleware and also on the response, hence *after*
+the following middleware. A middleware chain basically works like a onion ring, where each middleware is a single layer
+of the onion around the inner core of the application. Each request passes inside through the layer and a response passes
+outside through the layer.
+
 Component Chain
 ---------------
+
+..note::
+
+  The Component Chain is considered deprecated as of Flow 6.2 and will be removed in a later version. All components will
+  be replaced by PSR-15 middlewares and an easy upgrade-path will be provided.
 
 Instead of registering a new RequestHandler the application workflow can also be altered by a custom ``HTTP Component``.
 A HTTP component must implement the :abbr:`Component interface (\\Neos\\Flow\\Http\\Component\\ComponentInterface)`
