@@ -206,12 +206,12 @@ Request
 -------
 
 In the PSR-7 specification, a distinction is made between two different types of requests - incoming (``ServerRequest``)
-and outgoing (``Request``). Whenever you want to make an outgoing request, you can easily use for example Guzzle's
-``Request`` class constructor with the respective arguments for method, uri, etc. and then pass that to e.g. a PSR-18
+and outgoing (``Request``). Whenever you want to make an outgoing request, you can easily use the Guzzle
+``Request`` class constructor for example with the respective arguments for method, uri, etc. and then pass that to e.g. a PSR-18
 Http Client implementation.
 On the other side the incoming request is something you should never try to create an instance of yourself, as it is
-provided by the framework. In theory, you could also call inject the ``ServerRequestFactory::createServerRequest`` or
-Guzzle's ``ServerRequest::fromGlobals()`` convenience method, but this does not have any relation to the current request
+provided by the framework. In theory, you could also call the ``ServerRequestFactory::createServerRequest`` or
+the Guzzle ``ServerRequest::fromGlobals()`` convenience method, but this does not have any relation to the current request
 object handled by the framework. It will not have any of the processing from components applied and might therefore lead
 to unexpected results, like the trusted proxy headers ``X-Forwarded-*`` not being applied and the ``ServerRequest`` providing
 wrong protocol, host or client IP address.
@@ -251,8 +251,8 @@ Arguments
 The ``ActionRequest`` features a few methods for retrieving and setting arguments. These arguments are the result of merging any
 GET, POST and PUT arguments and even the information about uploaded files. Note that these arguments have already been processed
 by the validation and property mapping layerns and thus are suitable for being used in controller actions. If you, however, need to
-access the raw data, you can access these via the ``HttpRequest`` ``getCookieParams()``, ``getQueryParams()``, ``getUploadedFiles()``
-and ``getParsedBody()`` methods respectively.
+access the raw data, you can access these via the ``getCookieParams()``, ``getQueryParams()``, ``getUploadedFiles()`` and ``getParsedBody()``
+methods of the ``HttpRequest``  respectively.
 
 Arguments provided by POST or PUT requests are usually encoded in one or the other way. Flow detects the encoding
 through the ``Content-Type`` header and decodes the arguments and their values automatically into the parsed body.
