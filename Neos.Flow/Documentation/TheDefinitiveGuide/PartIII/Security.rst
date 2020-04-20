@@ -179,14 +179,178 @@ from the ``getAuthenticationStatus()`` method of any token.
   This indicates, that the token received credentials, but has not been authenticated yet.
 
 Now you might ask yourself, how a token receives its credentials. The simple answer
-is: It's up to the token, to fetch them from somewhere. The ``UsernamePassword``
-token for example checks for a username and password in the two POST parameters:
-``__authentication[Neos][Flow][Security][Authentication][Token][UsernamePassword][username]`` and
-``__authentication[Neos][Flow][Security][Authentication][Token][UsernamePassword][password]`` (see
-:ref:`Using the authentication controller`). The framework only makes sure that
-``updateCredentials()`` is called on every token, then the token has to set possibly
-available credentials itself, e.g. from available headers or parameters or anything else
-you can provide credentials with.
+is: It's up to the token, to fetch them from somewhere.
+The ``UsernamePassword`` token for example checks for a username and password in POST parameters:
+By default those parameters are ``__authentication[Neos][Flow][Security][Authentication][Token][UsernamePassword][username]``
+and ``__authentication[Neos][Flow][Security][Authentication][Token][UsernamePassword][password]``. This can be
+changed via ``tokenOptions``:
+
+.. code-block:: yaml
+
+  Neos:
+    Flow:
+      security:
+        authentication:
+          providers:
+            'SomeAuthenticationProvider':
+              provider: 'PersistedUsernamePasswordProvider'
+              tokenOptions:
+                usernamePostField: 'auth.username'
+                passwordPostField: 'auth.password'
+
+With that, the ``auth[username]`` & ``auth[password]`` parameters would be evaluated instead – The login template has
+to be adjusted accordingly of course (see :ref:`Using the authentication controller`).
+
+The framework only makes sure that ``updateCredentials()`` is called on every token, then the token has to set possibly
+available credentials itself, e.g. from available headers or parameters or anything else you can provide credentials with.
+
+Flow ships with the following authentication tokens:
+
+#. ``UsernamePassword``: Extracts username & password from a POST parameter.
+   Options: ``usernamePostField`` and ``passwordPostField``
+#. ``UsernamePasswordHttpBasic``: Extracts username & password from the the ``Authorization``
+   header (Basic auth). This token is sessionless (see below)
+#. ``PasswordToken``: Extracts password from a POST parameter.
+   Options: ``passwordPostField``
+
+But it's really easy to create additional tokens:
+
+Custom authentication tokens
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Any class that implements the ``TokenInterface`` can be used as an authentication token.
+The following example implements a token that extracts the ``Bearer`` from an ``Authentication`` header:
+
+*Example: BearerToken.php* ::
+
+  <?php
+  namespace Acme\YourPackage;
+
+  use Neos\Flow\Annotations as Flow;
+  use Neos\Flow\Mvc\ActionRequest;
+  use Neos\Flow\Security\Authentication\Token\AbstractToken;
+  use Neos\Flow\Security\Authentication\Token\SessionlessTokenInterface;
+
+  final class BearerToken extends AbstractToken implements SessionlessTokenInterface
+  {
+      public function updateCredentials(ActionRequest $actionRequest)
+      {
+          $authorizationHeader = $actionRequest->getHttpRequest()->getHeaderLine('Authorization');
+          if (strncmp($authorizationHeader, 'Bearer ', 7) !== 0) {
+              $this->credentials['bearer'] = null;
+              $this->authenticationStatus = self::NO_CREDENTIALS_GIVEN;
+              return;
+          }
+
+          $this->credentials['bearer'] = substr($authorizationHeader, 7);
+          $this->authenticationStatus = self::AUTHENTICATION_NEEDED;
+      }
+  }
+
+In order to make use of this token, the fully qualified class name has to be specified in the ``token`` configuration
+of the corresponding provider:
+
+.. code-block:: yaml
+
+  Neos:
+    Flow:
+      security:
+        authentication:
+          providers:
+            'SomeAuthenticationProvider':
+              provider: # ...
+              token: 'Acme\YourPackage\BearerToken'
+
+.. tip::
+
+  Since the Bearer authentication header is expected to be sent with every request, this
+  token also implements the ``SessionlessTokenInterface`` (see next section).
+
+For the above token a custom Provider is needed, since the built-in providers won't know how
+to deal with the ``Bearer`` token. If a custom token represents username and/or password credentials,
+they can implement the ``UsernamePasswordTokenInterface`` or ``PasswordTokenInterface``. That way
+they can be used with the existing ``PersistedUsernamePasswordProvider`` or ``FileBasedSimpleKeyProvider``.
+
+The following example implements a custom token that extracts username and token from a HTTP header
+that can be specified via options:
+
+*Example: UsernamePasswordFromHeaderToken.php* ::
+
+  <?php
+  namespace Acme\YourPackage;
+
+  use Neos\Flow\Mvc\ActionRequest;
+  use Neos\Flow\Security\Authentication\Token\AbstractToken;
+  use Neos\Flow\Security\Authentication\Token\UsernamePasswordTokenInterface;
+
+  final class UsernamePasswordFromHeaderToken extends AbstractToken implements UsernamePasswordTokenInterface
+  {
+      /**
+       * @var string
+       */
+      private $usernameHeaderName;
+
+      /**
+       * @var string
+       */
+      private $passwordHeaderName;
+
+      public function __construct(array $options)
+      {
+          $this->usernameHeaderName = $options['usernameHeaderName'] ?? 'X-Username';
+          $this->passwordHeaderName = $options['passwordHeaderName'] ?? 'X-Password';
+      }
+
+      public function updateCredentials(ActionRequest $actionRequest)
+      {
+          $username = $actionRequest->getHttpRequest()->getHeaderLine($this->usernameHeaderName);
+          $password = $actionRequest->getHttpRequest()->getHeaderLine($this->passwordHeaderName);
+          if (empty($username) || empty($password)) {
+              $this->credentials = ['username' => null, 'password' => null];
+              $this->authenticationStatus = self::NO_CREDENTIALS_GIVEN;
+              return;
+          }
+
+          $this->credentials = ['username' => $username, 'password' => $password];
+          $this->authenticationStatus = self::AUTHENTICATION_NEEDED;
+      }
+
+      public function getUsername(): string
+      {
+          return $this->credentials['username'] ?? '';
+      }
+
+      public function getPassword(): string
+      {
+          return $this->credentials['password'] ?? '';
+      }
+  }
+
+
+This would read username & password from ``X-Username`` and ``X-Password`` headers by default, but allow
+the header names to be specified via ``tokenOptions``.
+
+
+.. code-block:: yaml
+
+  Neos:
+    Flow:
+      security:
+        authentication:
+          providers:
+            DefaultProvider:
+              provider: PersistedUsernamePasswordProvider
+              token: 'Acme\YourPackage\UsernamePasswordFromHeaderToken'
+              tokenOptions:
+                usernameHeaderName: 'Some-Header'
+                passwordHeaderName: 'Some-Other-Header'
+
+The ``tokenOptions`` will be passed to the constructor of the token.
+
+.. note::
+
+  This serves merely as a simple example of the extension mechanism.
+  It's probably not a good idea to specify credentials via arbitrary HTTP headers!
 
 Sessionless authentication tokens
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

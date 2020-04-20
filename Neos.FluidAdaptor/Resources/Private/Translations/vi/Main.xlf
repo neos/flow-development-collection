@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="widget.paginate.previous" xml:space="preserve">
 				<source>previous</source>
-			<target state="translated">trước </target><alt-trans><target>trước</target></alt-trans></trans-unit>
+			<target state="translated">trước </target></trans-unit>
       <trans-unit id="widget.paginate.next" xml:space="preserve">
 				<source>next</source>
 			<target state="translated">sau</target></trans-unit>

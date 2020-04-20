@@ -16,7 +16,7 @@
 			<target state="translated">Нова лозинка</target></trans-unit>
       <trans-unit id="authentication.login" xml:space="preserve">
 				<source>Login</source>
-			<target state="translated">Пријави се</target><alt-trans><target>Пријава</target></alt-trans></trans-unit>
+			<target state="translated">Пријави се</target></trans-unit>
       <trans-unit id="authentication.logout" xml:space="preserve">
 				<source>Logout</source>
 			<target state="translated">Одјави се</target></trans-unit>

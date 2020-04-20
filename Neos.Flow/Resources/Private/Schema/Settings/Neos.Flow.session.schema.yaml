@@ -20,3 +20,4 @@ properties:
       'secure': { type: boolean }
       'httponly': { type: boolean }
       'domain': { type: [ string, 'null' ] }
+      'samesite': { type: [ string, 'null' ] }

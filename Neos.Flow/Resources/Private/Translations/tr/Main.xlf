@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="authentication.required" xml:space="preserve">
 				<source>Authentication required</source>
-			<target state="translated">Kimlik doğrulaması gerekiyor</target><alt-trans><target>Kimlik doğrulaması gerekli</target></alt-trans></trans-unit>
+			<target state="translated">Kimlik doğrulaması gerekiyor</target></trans-unit>
       <trans-unit id="authentication.username" xml:space="preserve">
 				<source>Username</source>
 			<target state="translated">Kullanıcı adı</target></trans-unit>
@@ -13,7 +13,7 @@
 			<target state="translated">Şifre</target></trans-unit>
       <trans-unit id="authentication.new-password" xml:space="preserve">
 				<source>New password</source>
-			<target state="translated">Yeni şifreniz</target><alt-trans><target>Yeni şifre</target></alt-trans></trans-unit>
+			<target state="translated">Yeni şifreniz</target></trans-unit>
       <trans-unit id="authentication.login" xml:space="preserve">
 				<source>Login</source>
 			<target state="translated">Giriş Yap</target></trans-unit>

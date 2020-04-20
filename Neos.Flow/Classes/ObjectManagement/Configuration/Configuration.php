@@ -53,10 +53,16 @@ class Configuration
     protected $factoryObjectName = '';
 
     /**
-     * Name of the factory method. Only used if $factoryObjectName is set.
+     * Name of the factory method.
      * @var string
      */
-    protected $factoryMethodName = 'create';
+    protected $factoryMethodName = '';
+
+    /**
+     * Arguments of the factory method
+     * @var array
+     */
+    protected $factoryArguments = [];
 
     /**
      * @var string
@@ -191,6 +197,11 @@ class Configuration
     public function setFactoryObjectName($objectName)
     {
         $this->factoryObjectName = $objectName;
+        if ($this->factoryMethodName === '') {
+            // Needed for b/c because all configured factory objects should default to 'create' method, but not having
+            // a factory object should not lead to a global static 'create' factory method
+            $this->factoryMethodName = 'create';
+        }
     }
 
     /**
@@ -229,13 +240,13 @@ class Configuration
     }
 
     /**
-     * Returns true if factoryObjectName and factoryMethodName are defined.
+     * Returns true if factoryObjectName or factoryMethodName are defined.
      *
      * @return boolean
      */
     public function isCreatedByFactory()
     {
-        return ($this->factoryObjectName !== '' && $this->factoryMethodName !== '');
+        return ($this->factoryObjectName !== '' || $this->factoryMethodName !== '');
     }
 
     /**
@@ -380,7 +391,7 @@ class Configuration
             $this->arguments = [];
         } else {
             foreach ($arguments as $argument) {
-                if ($argument !== null && $argument instanceof ConfigurationArgument) {
+                if ($argument instanceof ConfigurationArgument) {
                     $this->setArgument($argument);
                 } else {
                     throw new InvalidConfigurationException(sprintf('Only ConfigurationArgument instances are allowed, "%s" given', is_object($argument) ? get_class($argument) : gettype($argument)), 1449217803);
@@ -416,7 +427,39 @@ class Configuration
         $argumentsCount = $lastArgument->getIndex();
         $sortedArguments = [];
         for ($index = 1; $index <= $argumentsCount; $index++) {
-            $sortedArguments[$index] = isset($this->arguments[$index]) ? $this->arguments[$index] : null;
+            $sortedArguments[$index] = $this->arguments[$index] ?? null;
+        }
+        return $sortedArguments;
+    }
+
+    /**
+     * Setter function for a single factory method argument
+     *
+     * @param ConfigurationArgument $argument The argument
+     * @return void
+     */
+    public function setFactoryArgument(ConfigurationArgument $argument)
+    {
+        $this->factoryArguments[$argument->getIndex()] = $argument;
+    }
+
+    /**
+     * Returns a sorted array of factory method arguments indexed by position (starting with "1")
+     *
+     * @return array<ConfigurationArgument> A sorted array of ConfigurationArgument objects with the argument position as index
+     */
+    public function getFactoryArguments()
+    {
+        if (count($this->factoryArguments) < 1) {
+            return [];
+        }
+
+        asort($this->factoryArguments);
+        $lastArgument = end($this->factoryArguments);
+        $argumentsCount = $lastArgument->getIndex();
+        $sortedArguments = [];
+        for ($index = 1; $index <= $argumentsCount; $index++) {
+            $sortedArguments[$index] = $this->factoryArguments[$index] ?? null;
         }
         return $sortedArguments;
     }
