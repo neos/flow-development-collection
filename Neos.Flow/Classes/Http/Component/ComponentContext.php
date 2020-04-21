@@ -26,6 +26,8 @@ use Psr\Http\Message\ResponseInterface;
  * @api
  * @Flow\Proxy(false)
  * @Flow\Scope("singleton")
+ *
+ * @deprecated Will be removed without replacement with next major
  */
 class ComponentContext
 {
