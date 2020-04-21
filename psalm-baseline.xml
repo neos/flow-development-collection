@@ -1501,8 +1501,7 @@
       <code>$argumentNumber</code>
       <code>$argumentNumber</code>
     </InvalidOperand>
-    <InvalidPassByReference occurrences="3">
-      <code>$this-&gt;configurationManager-&gt;getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS)</code>
+    <InvalidPassByReference occurrences="2">
       <code>$this-&gt;configurationManager-&gt;getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS)</code>
       <code>$this-&gt;configurationManager-&gt;getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS)</code>
     </InvalidPassByReference>
@@ -1767,6 +1766,9 @@
       <code>$pdoException-&gt;getCode()</code>
       <code>$pdoException-&gt;getCode()</code>
     </InvalidScalarArgument>
+    <NullArgument occurrences="1">
+      <code>null</code>
+    </NullArgument>
     <PropertyTypeCoercion occurrences="1">
       <code>$entityManager</code>
     </PropertyTypeCoercion>
@@ -2493,6 +2495,9 @@
     </ImplementedReturnTypeMismatch>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Security/Authentication/TokenAndProviderFactory.php">
+    <ArgumentTypeCoercion occurrences="1">
+      <code>$entryPoint</code>
+    </ArgumentTypeCoercion>
     <MissingDocblockType occurrences="3">
       <code>$providerInstance</code>
       <code>$tokenInstance</code>
@@ -2501,9 +2506,9 @@
     <PossiblyNullReference occurrences="1">
       <code>setAuthenticationEntryPoint</code>
     </PossiblyNullReference>
-    <PropertyTypeCoercion occurrences="1">
-      <code>$this-&gt;tokens</code>
-    </PropertyTypeCoercion>
+    <TooManyArguments occurrences="1">
+      <code>get</code>
+    </TooManyArguments>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Security/Authorization/AfterInvocationProcessorManager.php">
     <InvalidReturnType occurrences="2">
