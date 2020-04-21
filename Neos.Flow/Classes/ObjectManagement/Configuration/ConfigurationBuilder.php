@@ -170,7 +170,7 @@ class ConfigurationBuilder
 
         $this->autowireArguments($objectConfigurations);
         $this->autowireProperties($objectConfigurations);
-        $this->wireObjectArguments($objectConfigurations);
+        $this->wireFactoryyArguments($objectConfigurations);
 
         return $objectConfigurations;
     }
@@ -376,7 +376,7 @@ class ConfigurationBuilder
     }
 
     /**
-     * Creates a "virtual object configuration" for object arguments, turning:
+     * Creates a "virtual object configuration" for factory arguments, turning:
      *
      * 'Some\Class\Name':
      *   factoryObjectName: 'Some\Factory\Class'
@@ -400,12 +400,12 @@ class ConfigurationBuilder
      * @param array &$objectConfigurations
      * @return void
      */
-    protected function wireObjectArguments(array &$objectConfigurations)
+    protected function wireFactoryArguments(array &$objectConfigurations)
     {
         /** @var Configuration $objectConfiguration */
         foreach ($objectConfigurations as $objectConfiguration) {
             /** @var ConfigurationArgument $argument */
-            foreach ($objectConfiguration->getArguments() as $index => $argument) {
+            foreach ($objectConfiguration->getFactoryArguments() as $index => $argument) {
                 if ($argument === null || $argument->getType() !== ConfigurationArgument::ARGUMENT_TYPES_OBJECT) {
                     continue;
                 }
