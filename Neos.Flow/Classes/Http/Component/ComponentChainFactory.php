@@ -19,6 +19,8 @@ use Neos\Utility\PositionalArraySorter;
  * Creates a new ComponentChain according to the specified settings
  *
  * @Flow\Scope("singleton")
+ *
+ * @deprecated Will be removed with next major and is superseeded by MiddlewaresChainFactory
  */
 class ComponentChainFactory
 {
