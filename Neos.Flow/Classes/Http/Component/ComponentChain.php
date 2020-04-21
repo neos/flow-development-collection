@@ -18,6 +18,8 @@ use Psr\Http\Message\ResponseInterface;
  *
  * The chain is a HTTP component itself and handles all the configured components until one
  * component sets the "cancelled" flag.
+ *
+ * @deprecated Will be removed in the next major and is superseeded by the MiddlewaresChain
  */
 class ComponentChain implements ComponentInterface
 {
