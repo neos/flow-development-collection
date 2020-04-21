@@ -170,7 +170,7 @@ class ConfigurationBuilder
 
         $this->autowireArguments($objectConfigurations);
         $this->autowireProperties($objectConfigurations);
-        $this->wireFactoryyArguments($objectConfigurations);
+        $this->wireFactoryArguments($objectConfigurations);
 
         return $objectConfigurations;
     }
