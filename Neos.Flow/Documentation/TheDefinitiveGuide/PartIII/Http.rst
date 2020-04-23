@@ -215,8 +215,13 @@ the Guzzle ``ServerRequest::fromGlobals()`` convenience method, but this does no
 object handled by the framework. It will not have any of the processing from components applied and might therefore lead
 to unexpected results, like the trusted proxy headers ``X-Forwarded-*`` not being applied and the ``ServerRequest`` providing
 wrong protocol, host or client IP address.
-If you need access to the **current** HTTP ``Request``, either create a Http Component or only access it inside the
-controller through the ``ActionRequest`` for inspecting.
+If you need access to the **current** HTTP ``Request``, either create a :ref:`Http Component<Component Chain>` or only access it inside the
+controller through the ``ActionRequest`` for inspecting::
+
+	public function myAction() {
+		$requestBody = $this->request->getHttpRequest()->getParsedBody();
+		...
+	}
 
 Creating an ActionRequest
 ~~~~~~~~~~~~~~~~~~~~~~~~~
