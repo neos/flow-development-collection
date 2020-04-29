@@ -78,21 +78,153 @@ it, things might get out of hands in the future.
 What has changed
 ================
 
-Flow 6.2 comes with some breaking changes and removes several deprecated
-functionalities, be sure to read the following changes and adjust
-your code respectively. For a full list of changes please refer
-to the changelog.
+FEATURE: Configurable UsernamePassword fields and UsernamePasswordTokeninterface
+================================================================================
+Allows to configure the argument names for username and password to make interoperability with other services easier.
+The new options can be set for a specific provider with the following configuration:
 
-In general type hints were added to a lot of Flow core methods,
-if you get type errors check how you use those methods and report
-a bug in case the type hint seems wrong or the call happens in the
-core and seems unrelated to your code.
+.. code-block: yaml
+  Neos:
+    Flow:
+      security:
+        authentication:
+          providers:
+            DefaultProvider:
+              provider: PersistedUsernamePasswordProvider
+                tokenOptions:
+                  usernamePostField: 'some.argument'
+                  passwordPostField: 'some.other.argument'
 
-Also the YAML parser component we use is stricter now, so any
-parsing errors you get are actually broken YAML that was just ignored
-beforehand with unclear outcome.
+FEATURE: Array Debugger tolerates iterables
+===========================================
+This change lets the debug-array-renderer use the pseudo type iterable (Array or Traversable) instead of array. That way all foreachachble objects are rendered as an array.
+This replaces the previous exceptions for ArrayObjects and DoctrineCollections and will also enable to properly debug other Traversable objects aswell.
 
-Additionally render method arguments in ViewHelpers are deprecated and should be
-replaced with `registerArgument` calls as was done with all integrated VieHelpers for this release.
+FEATURE: Improve 304 response handling
+=======================================
+For responses that match the following conditions an 304 status is returned:
+- The request method is GET or HEAD.
+- The response status is 200 status.
+- The response has has ETag header that matches one of the If-None-Match headers of the request.
 
-<!-- INSERT FEATURE CHANGELOG HERE -->
+!!! The generation of the Etag header is not part of this change and is the job of the application.
+
+Other changes:
+- 304 responses now have an empty body
+- Only GET and HEAD Requests will receive 304 status based on ETag and Last-Modified headers
+
+FEATURE: Virtual Object Configuration
+=====================================
+The Flow Object Management has been built with the idea of virtual "object names".
+But so far it was not possible to have an object configuration with a name that is not equal to the class name.
+With this feature it is possible to create configurations for "virtual objects" within the `Objects.yaml`:
+
+
+.. code-block: yaml
+  # the colon ":" makes this a virtual object
+  'Some.Package:SystemLogger':
+    className: Psr\\Log\\LoggerInterface
+    scope: singleton
+    factoryObjectName: Neos\\Flow\\Log\\PsrLoggerFactoryInterface
+    factoryMethodName: get
+    arguments:
+      1:
+        value: systemLogger
+
+  'Some.Package:SecurityLogger':
+    className: Psr\\Log\\LoggerInterface
+    scope: singleton
+    factoryObjectName: Neos\\Flow\\Log\\PsrLoggerFactoryInterface
+    factoryMethodName: get
+    arguments:
+      1:
+        value: securityLogger
+
+
+..and to inject them:
+
+.. code-block: php
+  /**
+  * @Flow\\Inject(name="Some.Package:SystemLogger")
+  * @var LoggerInterface
+  */
+  protected $systemLogger;
+
+  /**
+  * @Flow\\Inject(name="Some.Package:SecurityLogger")
+  * @var LoggerInterface
+  */
+  protected $securityLogger;
+
+Or configure them in factories:
+
+.. code-block: yaml
+Some:
+  Package:
+    someLoggerClassName: 'Some.Package:SystemLogger'
+
+
+FEATURE: Add EEL Helper File.exists(filename)
+==============================================
+The EEL helper determines if a file exists. This is eg helpful, if file like templates are generated,
+and should only be rendered, if the template file exists, for example for generated favicon templates like this:
+
+.. code-block: fusion
+  prototype(Neos.Neos:Page) {
+  head.favicons = Neos.Fusion:Template {
+              resource = ${'resource://' + site.context.currentSite.siteResourcesPackageKey + '/Private/Templates/Page/Favicon.html'}
+              templatePath = ${this.resource}
+              @if.fileExists = ${File.exists(this.resource)}
+          }
+
+FEATURE: Allow configuring static factory methods in Objects.yaml
+=================================================================
+This change allows to configure static factory methods in `Objects.yaml` by only specifying a `factoryMethodName` and leaving out `factoryObjectName`.
+
+Example:
+
+.. code-block: yaml
+  Acme\\My\\Class:
+    factoryMethodName: Acme\\My\\Class::fromStatic
+    arguments:
+      1:
+        setting: Acme.My.Class.ConfigurableValue
+
+Before this would have required to create a non-static factory method inside a dedicated factory class (to avoid cyclic instanciation).
+
+FEATURE: Run garbage collection of configured caches
+====================================================
+In order to run garbage collection the following command
+has been introduced
+
+`./flow cache:collectgarbage`
+
+which will iterator over all configured caches and
+run the corresponding `collectGarbage` method.
+
+You can also run garbage collection on a single cache
+by definined the cache identifier
+
+`./flow cache:collectgarbage --cache-identifier Flow_Monitor`
+
+
+FEATURE: Resolve authentication token by simple name
+====================================================
+The documentation has long been showing that you can define
+a security token by it's simple name, if in the Neos.Flow
+package.
+
+This has not been really true, since there was no resolving
+from the simple string, similar to how providers has been
+resolved.
+
+This change brings the same resolving functionality as the
+provider.
+
+
+FEATURE: Emit a signal when view is resolved
+============================================
+In order for a package to interact with the rendering views available variables
+a signal is being emitted upon resolving of the view.
+
+The variables will be available in the view in the MVC context only
