@@ -170,7 +170,7 @@ class ConfigurationBuilder
 
         $this->autowireArguments($objectConfigurations);
         $this->autowireProperties($objectConfigurations);
-        $this->wireObjectArguments($objectConfigurations);
+        $this->wireFactoryArguments($objectConfigurations);
 
         return $objectConfigurations;
     }
@@ -243,7 +243,7 @@ class ConfigurationBuilder
                             } else {
                                 throw new InvalidObjectConfigurationException('Invalid configuration syntax. Expecting "value", "object" or "setting" as value for argument "' . $argumentName . '", instead found "' . (is_array($argumentValue) ? implode(', ', array_keys($argumentValue)) : $argumentValue) . '" (source: ' . $objectConfiguration->getConfigurationSourceHint() . ')', 1230563250);
                             }
-                            if (isset($rawConfigurationOptions['factoryObjectName'])) {
+                            if (isset($rawConfigurationOptions['factoryObjectName']) || isset($rawConfigurationOptions['factoryMethodName'])) {
                                 $objectConfiguration->setFactoryArgument($argument);
                             } else {
                                 $objectConfiguration->setArgument($argument);
@@ -376,7 +376,7 @@ class ConfigurationBuilder
     }
 
     /**
-     * Creates a "virtual object configuration" for object arguments, turning:
+     * Creates a "virtual object configuration" for factory arguments, turning:
      *
      * 'Some\Class\Name':
      *   factoryObjectName: 'Some\Factory\Class'
@@ -400,12 +400,12 @@ class ConfigurationBuilder
      * @param array &$objectConfigurations
      * @return void
      */
-    protected function wireObjectArguments(array &$objectConfigurations)
+    protected function wireFactoryArguments(array &$objectConfigurations)
     {
         /** @var Configuration $objectConfiguration */
         foreach ($objectConfigurations as $objectConfiguration) {
             /** @var ConfigurationArgument $argument */
-            foreach ($objectConfiguration->getArguments() as $index => $argument) {
+            foreach ($objectConfiguration->getFactoryArguments() as $index => $argument) {
                 if ($argument === null || $argument->getType() !== ConfigurationArgument::ARGUMENT_TYPES_OBJECT) {
                     continue;
                 }
