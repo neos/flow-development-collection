@@ -1,0 +1,577 @@
+`6.2.0 (2020-05-04) <https://github.com/neos/flow-development-collection/releases/tag/6.2.0>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`TASK: Include new features in release notes <https://github.com/neos/flow-development-collection/pull/1995>`_
+--------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Flow``
+
+`TASK: Bring HTTP docs up to date with actual implementation <https://github.com/neos/flow-development-collection/pull/1986>`_
+------------------------------------------------------------------------------------------------------------------------------
+
+Start of fixing/improving the HTTP docs to match actual implementation as of Flow 6.0 / PSR-7
+
+* Packages: ``Flow``
+
+`TASK: Trigger GitHub rebase action only on /rebase <https://github.com/neos/flow-development-collection/pull/1992>`_
+---------------------------------------------------------------------------------------------------------------------
+
+Idea is that a `/rebase` comment rebases the current PR on top of the destination branch, so that we are sure that latest state is included. Current implementation tries the rebase on every comment (see results in https://github.com/neos/flow-development-collection/actions).
+
+In 6.1/6.2 the action was already converted to "v2" style (see https://github.com/neos/flow-development-collection/pull/1765).
+
+So in 5.3 first cherry-picked the conversion from 
+After that changed the workflow definition so it looks exactly like the documented:
+https://github.com/cirrus-actions/rebase
+
+* Packages: ``github``
+
+`BUGFIX: Make sure to use only a consistent NumbersReaderCache <https://github.com/neos/flow-development-collection/pull/1991>`_
+--------------------------------------------------------------------------------------------------------------------------------
+
+It might happen that there is a discrepancy between parsedFormatsIndices and parsedFormats cache. We need to make sure we are accessing the consistent information instead of relying that both are there, to avoid a PHP exception.
+
+Same fix was already applied to DatesReader, see https://github.com/neos/flow-development-collection/pull/1899.
+
+Resolves #564
+
+* Packages: ``Flow``
+
+`BUGFIX: Adapt virtual objects change to factory arguments bugfix <https://github.com/neos/flow-development-collection/pull/1989>`_
+-----------------------------------------------------------------------------------------------------------------------------------
+
+The original code only attempted to fix newly introduced factory arguments, but since #1967 those factory arguments are separated from object arguments. Hence this "fix" didn't work any more.
+
+* Packages: ``Flow``
+
+`TASK: Update psalm baseline <https://github.com/neos/flow-development-collection/pull/1990>`_
+----------------------------------------------------------------------------------------------
+
+`BUGFIX: Use argument for factory if static factory method is configured <https://github.com/neos/flow-development-collection/pull/1985>`_
+------------------------------------------------------------------------------------------------------------------------------------------
+
+Follow-up to #1967 together with #1969
+
+* Packages: ``Flow``
+
+`TASK: Don't install latest psalm in travis runs every time <https://github.com/neos/flow-development-collection/pull/1984>`_
+-----------------------------------------------------------------------------------------------------------------------------
+
+This should make the psalm runs more consistent by pinning the psalm version to a minor. If we want to update to a newer version to cover new checks, we now need to manually update the dependency version and fix new errors by changing our codebase or the psalm-baseline.
+
+* Packages: ``Flow`` ``FluidAdaptor``
+
+`BUGFIX: Objects configured with factory don't receive factory arguments <https://github.com/neos/flow-development-collection/pull/1967>`_
+------------------------------------------------------------------------------------------------------------------------------------------
+
+Until now a class configured to be constructed by a factory with arguments would end up giving those arguments to both the factory and the class constructor. This can lead to errors when the class constructor expects different arguments.
+This change fixes that by separating the arguments for the factory from the class constructor arguments. The `arguments` setting in `Objects.yaml` will refer to the factory method arguments when `factoryObjectName` is given, otherwise to the class constructor arguments.
+
+Fixes #1933
+
+* Packages: ``Flow``
+
+`FEATURE: Configurable UsernamePassword fields and UsernamePasswordTokeninterface <https://github.com/neos/flow-development-collection/pull/1975>`_
+---------------------------------------------------------------------------------------------------------------------------------------------------
+
+Resolves: #1944
+
+`FEATURE: Array Debugger tolerates iterables <https://github.com/neos/flow-development-collection/pull/1980>`_
+--------------------------------------------------------------------------------------------------------------
+
+This change lets the debug-array-renderer use the pseudo type iterable (Array or Traversable) instead of array. That way all foreachachble objects are rendered as an array. 
+
+This replaces the previous exceptions for ArrayObjects and DoctrineCollections and will also enable to properly debug other Traversable objects aswell.
+
+* Packages: ``Flow``
+
+`[TASK] Include Exception class in ExceptionHandler with full path <https://github.com/neos/flow-development-collection/pull/1>`_
+---------------------------------------------------------------------------------------------------------------------------------
+
+The ExceptionHandler includes the Flow Exception class directly by using
+the relative path. This might not work out if at some point we decide to
+combine autoloaded classes as this class is autoloaded and the relative
+path will be wrong then. Using the FLOW_PATH_FLOW constant we can easily
+construct a full path to the file.
+
+* Packages: ``Flow``
+
+`FEATURE: Improve 304 response handling <https://github.com/neos/flow-development-collection/pull/1978>`_
+---------------------------------------------------------------------------------------------------------
+
+For responses that match the following conditions an 304 status is returned:
+- The request method is GET or HEAD.
+- The response status is 200 status.
+- The response has has ETag header that matches one of the If-None-Match headers of the request.
+
+!!! The generation of the Etag header is not part of this change and is the job of the application.
+
+Other changes: 
+- 304 responses now have an empty body
+- Only GET and HEAD Requests will receive 304 status based on ETag and Last-Modified headers
+
+* Packages: ``Flow``
+
+`FEATURE: Virtual Object Configuration <https://github.com/neos/flow-development-collection/pull/1964>`_
+--------------------------------------------------------------------------------------------------------
+
+The Flow Object Management has been built with the idea of virtual "object names".
+But so far it was not possible to have an object configuration with a name that is not equal to the class name.
+With this feature it's possible to create configurations for "virtual objects":
+```
+# the colon ":" makes this a virtual object
+'Some.Package:SystemLogger':
+  className: Psr\\Log\\LoggerInterface
+  scope: singleton
+  factoryObjectName: Neos\\Flow\\Log\\PsrLoggerFactoryInterface
+  factoryMethodName: get
+  arguments:
+    1:
+      value: systemLogger
+
+'Some.Package:SecurityLogger':
+  className: Psr\\Log\\LoggerInterface
+  scope: singleton
+  factoryObjectName: Neos\\Flow\\Log\\PsrLoggerFactoryInterface
+  factoryMethodName: get
+  arguments:
+    1:
+      value: securityLogger
+```
+
+..and to inject them:
+
+```php
+/**
+ * @Flow\\Inject(name="Some.Package:SystemLogger")
+ * @var LoggerInterface
+ */
+protected $systemLogger;
+
+/**
+ * @Flow\\Inject(name="Some.Package:SecurityLogger")
+ * @var LoggerInterface
+ */
+protected $securityLogger;
+```
+
+Or configure them in factories:
+
+```yaml
+Some:
+  Package:
+    someLoggerClassName: 'Some.Package:SystemLogger'
+```
+
+Resolves: #671
+
+* Packages: ``Flow``
+
+`FEATURE: Add EEL Helper File.exists(filename) <https://github.com/neos/flow-development-collection/pull/1927>`_
+----------------------------------------------------------------------------------------------------------------
+
+The EEL helper determines if a file exists. This is eg helpful, if file like templates are generated, and should only be rendered, if the template file exists, for example for generated favicon templates like this:
+
+```
+prototype(Neos.Neos:Page) {
+head.favicons = Neos.Fusion:Template {
+            resource = ${'resource://' + site.context.currentSite.siteResourcesPackageKey + '/Private/Templates/Page/Favicon.html'}
+            templatePath = ${this.resource}
+            @if.fileExists = ${File.exists(this.resource)}
+        }
+```
+
+* Packages: ``Eel``
+
+`FEATURE: Allow configuring static factory methods in Objects.yaml <https://github.com/neos/flow-development-collection/pull/1969>`_
+------------------------------------------------------------------------------------------------------------------------------------
+
+This change allows to configure static factory methods in `Objects.yaml` by only specifying a `factoryMethodName` and leaving out `factoryObjectName`.
+
+Example:
+```
+Acme\\My\\Class:
+  factoryMethodName: Acme\\My\\Class::fromStatic
+  arguments:
+    1:
+      setting: Acme.My.Class.ConfigurableValue
+```
+
+Before this would have required to create a non-static factory method inside a dedicated factory class (to avoid cyclic instanciation).
+
+* Packages: ``Flow``
+
+`BUGFIX: Add samesite cookie configuration <https://github.com/neos/flow-development-collection/pull/1948>`_
+------------------------------------------------------------------------------------------------------------
+
+**What I did**
+Adds new cookie setting allow to configure SameSite to 'strict', 'lax' and 'none'.
+Be careful with SameSite=none as there is a webkit bug (https://bugs.webkit.org/show_bug.cgi?id=198181) inadvertently treated this as SameSite=strict
+This change does not effect the current behavior. When you don't set the configuration `samesite` in `settings.yaml` the cookie attribute is ignored.
+
+* Packages: ``Flow``
+
+`TASK: Psalm baseline update <https://github.com/neos/flow-development-collection/pull/1966>`_
+----------------------------------------------------------------------------------------------
+
+* Packages: ``Flow``
+
+`FEATURE: Run garbage collection of configured caches <https://github.com/neos/flow-development-collection/pull/1947>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+In order to run garbage collection the following command
+has been introduced
+
+`./flow cache:collectgarbage`
+
+which will iterator over all configured caches and
+run the corresponding `collectGarbage` method.
+
+You can also run garbage collection on a single cache
+by definined the cache identifier
+
+`./flow cache:collectgarbage --cache-identifier Flow_Monitor`
+
+Resolves #863
+
+* Packages: ``Flow``
+
+`Revert "[FEATURE] Introduce AccountInterface" <https://github.com/neos/flow-development-collection/pull/1965>`_
+----------------------------------------------------------------------------------------------------------------
+
+This reverts commit `6460cb665d5475cadafc7cef8b1ab424a4def4a6 <https://github.com/neos/flow-development-collection/commit/6460cb665d5475cadafc7cef8b1ab424a4def4a6>`_ which was accidentially merged into master and is part of #1939.
+
+* Packages: ``Eel`` ``Flow`` ``FluidAdaptor``
+
+`Task: Update documentation on packages and activating/deactivating <https://github.com/neos/flow-development-collection/pull/1946>`_
+-------------------------------------------------------------------------------------------------------------------------------------
+
+Resolves: #1494
+
+* Packages: ``Flow``
+
+`TASK: Use correct description for nl2br ViewHelper <https://github.com/neos/flow-development-collection/pull/1943>`_
+---------------------------------------------------------------------------------------------------------------------
+
+Use correct description of the nl2br functionality from php.net/nl2br
+
+Resolves #1831 
+
+* Packages: ``FluidAdaptor``
+
+`Update ramsey/uuid requirement from ^3.0 to ^4.0 <https://github.com/neos/flow-development-collection/pull/1949>`_
+-------------------------------------------------------------------------------------------------------------------
+
+Updates the requirements on [ramsey/uuid](https://github.com/ramsey/uuid) to permit the latest version.
+<details>
+<summary>Release notes</summary>
+<p><em>Sourced from <a href="https://github.com/ramsey/uuid/releases">ramsey/uuid's releases</a>.</em></p>
+<blockquote>
+<h2>4.0.0</h2>
+<p>Read the <a href="https://uuid.ramsey.dev/en/latest/upgrading/3-to-4.html">upgrade guide</a> for details on how these changes may impact your code and what you can do to ease the upgrade process.</p>
+<hr />
+<h3>Added</h3>
+<ul>
+<li>Add support for version 6 UUIDs, as defined by <a href="http://gh.peabody.io/uuidv6/">http://gh.peabody.io/uuidv6/</a>,
+including the static method <code>Uuid::uuid6()</code>, which returns a
+<code>Nonstandard\\UuidV6</code> instance.</li>
+<li>Add ability to generate version 2 (DCE Security) UUIDs, including the static
+method <code>Uuid::uuid2()</code>, which returns an <code>Rfc4122\\UuidV2</code> instance.</li>
+<li>Add classes to represent each version of RFC 4122 UUID. When generating new
+UUIDs or creating UUIDs from existing strings, bytes, or integers, if the UUID
+is an RFC 4122 variant, one of these instances will be returned:
+<ul>
+<li><code>Rfc4122\\UuidV1</code></li>
+<li><code>Rfc4122\\UuidV2</code></li>
+<li><code>Rfc4122\\UuidV3</code></li>
+<li><code>Rfc4122\\UuidV4</code></li>
+<li><code>Rfc4122\\UuidV5</code></li>
+<li><code>Rfc4122\\NilUuid</code></li>
+</ul>
+</li>
+<li>Add classes to represent version 6 UUIDs, GUIDs, and nonstandard
+(non-RFC 4122 variant) UUIDs:
+<ul>
+<li><code>Nonstandard\\UuidV6</code></li>
+<li><code>Guid\\Guid</code></li>
+<li><code>Nonstandard\\Uuid</code></li>
+</ul>
+</li>
+<li>Add <code>Uuid::fromDateTime()</code> to create version 1 UUIDs from instances of
+<code>\\DateTimeInterface</code>.</li>
+<li>The <code>\\DateTimeInterface</code> instance returned by <code>UuidInterface::getDateTime()</code>
+(and now <code>Rfc4122\\UuidV1::getDateTime()</code>) now includes microseconds, as
+specified by the version 1 UUID.</li>
+<li>Add <code>Validator\\ValidatorInterface</code> and <code>Validator\\GenericValidator</code> to allow
+flexibility in validating UUIDs/GUIDs.
+<ul>
+<li>The default validator continues to validate UUID strings using the same
+relaxed validation pattern found in the 3.x series of ramsey/uuid.</li>
+<li>Introduce <code>Rfc4122\\Validator</code> that may be used for strict validation of
+RFC 4122 UUID strings.</li>
+<li>Add ability to change the default validator used by <code>Uuid</code> through
+<code>FeatureSet::setValidator()</code>.</li>
+<li>Add <code>getValidator()</code> and <code>setValidator()</code> to <code>UuidFactory</code>.</li>
+</ul>
+</li>
+<li>Add <code>Provider\\Node\\StaticNodeProvider</code> to assist in setting a custom static
+node value with the multicast bit set for version 1 UUIDs.</li>
+<li>Add the following new exceptions:
+<ul>
+<li><code>Exception\\BuilderNotFoundException</code> -
+Thrown to indicate that no suitable UUID builder could be found.</li>
+<li><code>Exception\\DateTimeException</code> -
+Thrown to indicate that the PHP DateTime extension encountered an
+exception/error.</li>
+<li><code>Exception\\DceSecurityException</code> -
+Thrown to indicate an exception occurred while dealing with DCE Security</li>
+</ul>
+</li>
+</ul>
+</tr></table> ... (truncated)
+</blockquote>
+</details>
+<details>
+<summary>Changelog</summary>
+<p><em>Sourced from <a href="https://github.com/ramsey/uuid/blob/master/CHANGELOG.md">ramsey/uuid's changelog</a>.</em></p>
+<blockquote>
+<h2>[4.0.0] - 2020-03-22</h2>
+<h3>Added</h3>
+<ul>
+<li>Add support for version 6 UUIDs, as defined by <a href="http://gh.peabody.io/uuidv6/">http://gh.peabody.io/uuidv6/</a>,
+including the static method <code>Uuid::uuid6()</code>, which returns a
+<code>Nonstandard\\UuidV6</code> instance.</li>
+<li>Add ability to generate version 2 (DCE Security) UUIDs, including the static
+method <code>Uuid::uuid2()</code>, which returns an <code>Rfc4122\\UuidV2</code> instance.</li>
+<li>Add classes to represent each version of RFC 4122 UUID. When generating new
+UUIDs or creating UUIDs from existing strings, bytes, or integers, if the UUID
+is an RFC 4122 variant, one of these instances will be returned:
+<ul>
+<li><code>Rfc4122\\UuidV1</code></li>
+<li><code>Rfc4122\\UuidV2</code></li>
+<li><code>Rfc4122\\UuidV3</code></li>
+<li><code>Rfc4122\\UuidV4</code></li>
+<li><code>Rfc4122\\UuidV5</code></li>
+<li><code>Rfc4122\\NilUuid</code></li>
+</ul>
+</li>
+<li>Add classes to represent version 6 UUIDs, GUIDs, and nonstandard
+(non-RFC 4122 variant) UUIDs:
+<ul>
+<li><code>Nonstandard\\UuidV6</code></li>
+<li><code>Guid\\Guid</code></li>
+<li><code>Nonstandard\\Uuid</code></li>
+</ul>
+</li>
+<li>Add <code>Uuid::fromDateTime()</code> to create version 1 UUIDs from instances of
+<code>\\DateTimeInterface</code>.</li>
+<li>The <code>\\DateTimeInterface</code> instance returned by <code>UuidInterface::getDateTime()</code>
+(and now <code>Rfc4122\\UuidV1::getDateTime()</code>) now includes microseconds, as
+specified by the version 1 UUID.</li>
+<li>Add <code>Validator\\ValidatorInterface</code> and <code>Validator\\GenericValidator</code> to allow
+flexibility in validating UUIDs/GUIDs.
+<ul>
+<li>The default validator continues to validate UUID strings using the same
+relaxed validation pattern found in the 3.x series of ramsey/uuid.</li>
+<li>Introduce <code>Rfc4122\\Validator</code> that may be used for strict validation of
+RFC 4122 UUID strings.</li>
+<li>Add ability to change the default validator used by <code>Uuid</code> through
+<code>FeatureSet::setValidator()</code>.</li>
+<li>Add <code>getValidator()</code> and <code>setValidator()</code> to <code>UuidFactory</code>.</li>
+</ul>
+</li>
+<li>Add <code>Provider\\Node\\StaticNodeProvider</code> to assist in setting a custom static
+node value with the multicast bit set for version 1 UUIDs.</li>
+<li>Add the following new exceptions:
+<ul>
+<li><code>Exception\\BuilderNotFoundException</code> -
+Thrown to indicate that no suitable UUID builder could be found.</li>
+<li><code>Exception\\DateTimeException</code> -
+Thrown to indicate that the PHP DateTime extension encountered an
+exception/error.</li>
+<li><code>Exception\\DceSecurityException</code> -
+Thrown to indicate an exception occurred while dealing with DCE Security
+(version 2) UUIDs.</li>
+<li><code>Exception\\InvalidArgumentException</code> -
+Thrown to indicate that the argument received is not valid. This extends the</li>
+</ul>
+</li>
+</ul>
+</tr></table> ... (truncated)
+</blockquote>
+</details>
+<details>
+<summary>Commits</summary>
+<ul>
+<li><a href="https://github.com/ramsey/uuid/commit/`2c9644b1d0c2bc58732413252bcbb6dce2eb0e0e <https://github.com/neos/flow-development-collection/commit/2c9644b1d0c2bc58732413252bcbb6dce2eb0e0e>`_"><code>2c9644b</code></a> Release 4.0.0</li>
+<li><a href="https://github.com/ramsey/uuid/commit/`19a3ccb39c47d3a524a54cbf889ba81f33bd2003 <https://github.com/neos/flow-development-collection/commit/19a3ccb39c47d3a524a54cbf889ba81f33bd2003>`_"><code>19a3ccb</code></a> Prepare for 4.0.0 release</li>
+<li><a href="https://github.com/ramsey/uuid/commit/`5808507468040c64eecbdb8f98373806ccd49f71 <https://github.com/neos/flow-development-collection/commit/5808507468040c64eecbdb8f98373806ccd49f71>`_"><code>5808507</code></a> Add a REPL script for testing</li>
+<li><a href="https://github.com/ramsey/uuid/commit/`fcfcd3fb6029e9f0e81c793b0439650263fb57f7 <https://github.com/neos/flow-development-collection/commit/fcfcd3fb6029e9f0e81c793b0439650263fb57f7>`_"><code>fcfcd3f</code></a> Fix failing tests on Windows</li>
+<li><a href="https://github.com/ramsey/uuid/commit/`744c05798a3eca26c4990d328b3f290b3519efbe <https://github.com/neos/flow-development-collection/commit/744c05798a3eca26c4990d328b3f290b3519efbe>`_"><code>744c057</code></a> [ci skip] Add Uuid method return types that have changed (slightly)</li>
+<li><a href="https://github.com/ramsey/uuid/commit/`706bac009f0a6a48de3a869517345a10508e4f49 <https://github.com/neos/flow-development-collection/commit/706bac009f0a6a48de3a869517345a10508e4f49>`_"><code>706bac0</code></a> Fix PHPStan errors</li>
+<li><a href="https://github.com/ramsey/uuid/commit/`fd5669daefa72e91cf8088d84d42ee948ee620cc <https://github.com/neos/flow-development-collection/commit/fd5669daefa72e91cf8088d84d42ee948ee620cc>`_"><code>fd5669d</code></a> Attempt to run the full build on PHP 8</li>
+<li><a href="https://github.com/ramsey/uuid/commit/`fc9d5e39e2a808ec9673cd5c107fda14352b1487 <https://github.com/neos/flow-development-collection/commit/fc9d5e39e2a808ec9673cd5c107fda14352b1487>`_"><code>fc9d5e3</code></a> Merge pull request <a href="https://github-redirect.dependabot.com/ramsey/uuid/issues/299">#299</a> from andysnell/proofread-v4-docs</li>
+<li><a href="https://github.com/ramsey/uuid/commit/`7b068c6beaf08092941ca67a1c403ce30c60f08c <https://github.com/neos/flow-development-collection/commit/7b068c6beaf08092941ca67a1c403ce30c60f08c>`_"><code>7b068c6</code></a> Fix Minor Typos in Docs</li>
+<li><a href="https://github.com/ramsey/uuid/commit/`7e83bf502d288ea1650500dd25a969cd8a998e41 <https://github.com/neos/flow-development-collection/commit/7e83bf502d288ea1650500dd25a969cd8a998e41>`_"><code>7e83bf5</code></a> [ci skip] Remove ko-fi link from FUNDING.yml</li>
+<li>Additional commits viewable in <a href="https://github.com/ramsey/uuid/compare/3.0.0...4.0.0">compare view</a></li>
+</ul>
+</details>
+<br />
+
+Dependabot will resolve any conflicts with this PR as long as you don't alter it yourself. You can also trigger a rebase manually by commenting `@dependabot rebase`.
+
+[//]: # (dependabot-automerge-start)
+[//]: # (dependabot-automerge-end)
+
+---
+
+<details>
+<summary>Dependabot commands and options</summary>
+<br />
+
+You can trigger Dependabot actions by commenting on this PR:
+- `@dependabot rebase` will rebase this PR
+- `@dependabot recreate` will recreate this PR, overwriting any edits that have been made to it
+- `@dependabot merge` will merge this PR after your CI passes on it
+- `@dependabot squash and merge` will squash and merge this PR after your CI passes on it
+- `@dependabot cancel merge` will cancel a previously requested merge and block automerging
+- `@dependabot reopen` will reopen this PR if it is closed
+- `@dependabot close` will close this PR and stop Dependabot recreating it. You can achieve the same result by closing it manually
+- `@dependabot ignore this major version` will close this PR and stop Dependabot creating any more for this major version (unless you reopen the PR or upgrade to it yourself)
+- `@dependabot ignore this minor version` will close this PR and stop Dependabot creating any more for this minor version (unless you reopen the PR or upgrade to it yourself)
+- `@dependabot ignore this dependency` will close this PR and stop Dependabot creating any more for this dependency (unless you reopen the PR or upgrade to it yourself)
+- `@dependabot use these labels` will set the current labels as the default for future PRs for this repo and language
+- `@dependabot use these reviewers` will set the current reviewers as the default for future PRs for this repo and language
+- `@dependabot use these assignees` will set the current assignees as the default for future PRs for this repo and language
+- `@dependabot use this milestone` will set the current milestone as the default for future PRs for this repo and language
+- `@dependabot badge me` will comment on this PR with code to add a "Dependabot enabled" badge to your readme
+
+Additionally, you can set the following in your Dependabot [dashboard](https://app.dependabot.com):
+- Update frequency (including time of day and day of week)
+- Pull request limits (per update run and/or open at any time)
+- Automerge options (never/patch/minor, and dev/runtime dependencies)
+- Out-of-range updates (receive only lockfile updates, if desired)
+- Security updates (receive only security updates, if desired)
+
+</details>
+
+* Packages: ``Flow``
+
+`TASK: Fix variable naming in AuthenticationTokenResolver <https://github.com/neos/flow-development-collection/pull/1940>`_
+---------------------------------------------------------------------------------------------------------------------------
+
+Some small follow-up fixes to https://github.com/neos/flow-development-collection/pull/1936
+
+* Packages: ``Flow``
+
+`FEATURE: Resolve authentication token by simple name <https://github.com/neos/flow-development-collection/pull/1936>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+The documentation has long been showing that you can define
+a security token by it's simple name, if in the Neos.Flow
+package.
+
+This has not been really true, since there was no resolving
+from the simple string, similar to how providers has been
+resolved.
+
+This change brings the same resolving functionality as the
+provider
+
+Resolves #947
+
+**How I did it**
+
+Added a new Resolver class, with exact same functionality as the AuthenticationProviderResolver class
+
+**How to verify it**
+
+Use the documentation example of a token and provider example
+
+https://flowframework.readthedocs.io/en/6.0/TheDefinitiveGuide/PartIII/Security.html#reuse-of-tokens-and-providers
+
+* Packages: ``Flow``
+
+`FEATURE: Emit a signal when view is resolved <https://github.com/neos/flow-development-collection/pull/1935>`_
+---------------------------------------------------------------------------------------------------------------
+
+In order for a package to interact with the rendering views available variables
+a signal is being emitted upon resolving of the view.
+
+The variables will be available in the view in the MVC context only
+
+Resolves #1902
+
+**What I did**
+
+I added a Signal/Slot once the view has been resolved
+
+**How to verify it**
+
+Test functionality with the following package
+
+https://github.com/sorenmalling/SorenMalling.EmitViewResolved
+
+* Packages: ``Flow``
+
+`TASK: Add LogEnvironment info to reflection service <https://github.com/neos/flow-development-collection/pull/1921>`_
+----------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Flow``
+
+`Revert "BUGFIX: Browser correctly builds uploaded files from form" <https://github.com/neos/flow-development-collection/pull/1923>`_
+-------------------------------------------------------------------------------------------------------------------------------------
+
+Reverts neos/flow-development-collection#1917
+
+This should have landed in 6.0, see #1922
+
+* Packages: ``Flow``
+
+`BUGFIX: Browser correctly builds uploaded files from form <https://github.com/neos/flow-development-collection/pull/1917>`_
+----------------------------------------------------------------------------------------------------------------------------
+
+Fixes #1916
+
+`Apply fixes from StyleCI <https://github.com/neos/flow-development-collection/pull/1919>`_
+-------------------------------------------------------------------------------------------
+
+This pull request applies code style fixes from an analysis carried out by [StyleCI](https://github.styleci.io).
+
+---
+
+For more information, click [here](https://github.styleci.io/analyses/PxBkVY).
+
+* Packages: ``Flow``
+
+`FEATURE: Accept iterables in Eel ArrayHelper <https://github.com/neos/flow-development-collection/pull/1871>`_
+---------------------------------------------------------------------------------------------------------------
+
+All Eel ArrayHelper methods now accept `iterable` which allow to pass
+`array` or instances of `Traversable`.
+
+Resolves #1870
+
+**How to verify it**
+
+Run unit tests.
+
+`TASK: Add some more statistics badges <https://github.com/neos/flow-development-collection/pull/1883>`_
+--------------------------------------------------------------------------------------------------------
+
+Adds badges on commits sine release, % open issues and resolution
+time to Readme.rst.
+
+`TASK: Switch to variadic function in object manager <https://github.com/neos/flow-development-collection/pull/1829>`_
+----------------------------------------------------------------------------------------------------------------------
+
+This uses variadic arguments instead of `func_get_args`
+in the object manager.
+
+* Packages: ``Flow``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/6.1.5...6.2.0>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
