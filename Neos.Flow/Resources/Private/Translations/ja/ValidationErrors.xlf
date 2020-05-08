@@ -26,14 +26,14 @@
 				<source>The given value is not a valid date</source>
 			<target state="translated">指定された値は有効な日付ではありません</target></trans-unit>
       <trans-unit id="1325615630" xml:space="preserve">
-				<source>The given date must be between {0,datetime,datetime} and {1,datetime,datetime}</source>
-			<target state="needs-translation">The given date must be between {0,datetime,datetime} and {1,datetime,datetime}</target></trans-unit>
+				<source>The given date must be between {0} and {1}</source>
+			<target state="translated">指定された日付は{0} から{1} の間でなければなりません</target></trans-unit>
       <trans-unit id="1324315107" xml:space="preserve">
-				<source>The given date must be after {0,datetime,datetime}</source>
-			<target state="needs-translation">The given date must be after {0,datetime,datetime}</target></trans-unit>
+				<source>The given date must be after {0}</source>
+			<target state="translated">指定された日付は{0} の後にする必要があります</target></trans-unit>
       <trans-unit id="1324315115" xml:space="preserve">
-				<source>The given date must be before {0,datetime,datetime}</source>
-			<target state="needs-translation">The given date must be before {0,datetime,datetime}</target></trans-unit>
+				<source>The given date must be before {0}</source>
+			<target state="translated">指定された日付は{0} より前でなければなりません</target></trans-unit>
       <!-- DateTimeValidator -->
       <trans-unit id="1281454676" xml:space="preserve">
 				<source>The "locale" option can be only set to string identifier, or Locale object</source>
