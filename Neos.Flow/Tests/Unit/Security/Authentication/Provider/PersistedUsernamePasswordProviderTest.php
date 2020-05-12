@@ -107,7 +107,7 @@ class PersistedUsernamePasswordProviderTest extends UnitTestCase
     /**
      * @test
      */
-    public function authenticatingAnUsernamePasswordTokenRespectsTheConfiguredLookupProviderName()
+    public function authenticatingAndUsernamePasswordTokenRespectsTheConfiguredLookupProviderName()
     {
         $this->mockHashService->expects(self::once())->method('validatePassword')->with('password', '8bf0abbb93000e2e47f0e0a80721e834,80f117a78cff75f3f73793fd02aa9086')->will(self::returnValue(true));
 
