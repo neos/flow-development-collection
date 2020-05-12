@@ -107,7 +107,7 @@ class PersistedUsernamePasswordProviderTest extends UnitTestCase
     /**
      * @test
      */
-    public function authenticatingAnUsernamePasswordTokenRespectsTheConfiguredLookupName()
+    public function authenticatingAnUsernamePasswordTokenRespectsTheConfiguredLookupProviderName()
     {
         $this->mockHashService->expects(self::once())->method('validatePassword')->with('password', '8bf0abbb93000e2e47f0e0a80721e834,80f117a78cff75f3f73793fd02aa9086')->will(self::returnValue(true));
 
@@ -120,7 +120,7 @@ class PersistedUsernamePasswordProviderTest extends UnitTestCase
 
         $this->mockToken->expects(self::once())->method('setAccount')->with($this->mockAccount);
 
-        $persistedUsernamePasswordProvider = PersistedUsernamePasswordProvider::create('providerName', ['lookupName' => 'customLookupName']);
+        $persistedUsernamePasswordProvider = PersistedUsernamePasswordProvider::create('providerName', ['lookupProviderName' => 'customLookupName']);
         $this->inject($persistedUsernamePasswordProvider, 'hashService', $this->mockHashService);
         $this->inject($persistedUsernamePasswordProvider, 'accountRepository', $this->mockAccountRepository);
         $this->inject($persistedUsernamePasswordProvider, 'persistenceManager', $this->mockPersistenceManager);

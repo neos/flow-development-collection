@@ -91,7 +91,7 @@ class PersistedUsernamePasswordProvider extends AbstractProvider
             return;
         }
 
-        $providerName = $this->options['lookupName'] ?? $this->name;
+        $providerName = $this->options['lookupProviderName'] ?? $this->name;
         $this->securityContext->withoutAuthorizationChecks(function () use ($username, &$account, $providerName) {
             $account = $this->accountRepository->findActiveByAccountIdentifierAndAuthenticationProviderName($username, $providerName);
         });
