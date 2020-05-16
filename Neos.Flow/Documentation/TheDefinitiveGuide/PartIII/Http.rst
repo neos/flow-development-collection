@@ -156,10 +156,10 @@ that defines the ``process($request, $next)`` method::
 
 To activate a middleware, it must be configured in the ``Settings.yaml``::
 
-	Neos:
-	  Flow:
-	    http:
-	      middlewares:
+  Neos:
+    Flow:
+      http:
+        middlewares:
           'custom':
             position: 'before mvc-dispatch'
             middleware: 'Some\Package\Http\SomeHttpMiddleware'
