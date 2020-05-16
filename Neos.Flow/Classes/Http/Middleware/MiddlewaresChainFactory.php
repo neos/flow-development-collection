@@ -62,19 +62,15 @@ class MiddlewaresChainFactory
 
         $middlewaresChain = [];
         foreach ($sortedChainConfiguration as $middlewareName => $configuration) {
-            if (isset($configuration['chain'])) {
-                $middleware = $this->create($configuration['chain'], $middlewareName);
-            } else {
-                if (!isset($configuration['middleware'])) {
-                    throw new Exception(sprintf('Middleware chain could not be created because no middleware class name is configured for middleware "%s"', $middlewareName), 1401718283);
-                }
-                $middleware = $this->objectManager->get($configuration['middleware']);
-                if (!$middleware instanceof MiddlewareInterface) {
-                    throw new Exception(sprintf('Middleware chain could not be created because the class "%s" does not implement the MiddlewareInterface in middleware "%s"', $configuration['middleware'], $middlewareName), 1401718283);
-                }
-                if (method_exists($middleware, 'setComponentContext')) {
-                    $middleware->setComponentContext($this->componentContext);
-                }
+            if (!isset($configuration['middleware'])) {
+                throw new Exception(sprintf('Middleware chain could not be created because no middleware class name is configured for middleware "%s"', $middlewareName), 1401718283);
+            }
+            $middleware = $this->objectManager->get($configuration['middleware']);
+            if (!$middleware instanceof MiddlewareInterface) {
+                throw new Exception(sprintf('Middleware chain could not be created because the class "%s" does not implement the MiddlewareInterface in middleware "%s"', $configuration['middleware'], $middlewareName), 1401718283);
+            }
+            if (method_exists($middleware, 'setComponentContext')) {
+                $middleware->setComponentContext($this->componentContext);
             }
             $middlewaresChain[] = $middleware;
         }
