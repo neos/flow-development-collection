@@ -37,11 +37,11 @@ The basic walk through a Flow-based web application is as follows:
   Both are stored in the so-called :abbr:`ComponentContext (\\Neos\\Flow\\Http\\Component\\ComponentContext)`, which you need to use to access and/or replace any of the two.
 * the HTTP Request Handler initializes the
   :abbr:`HTTP Middlewares chain (\\Neos\\Flow\\Http\\Middleware\\MiddlewaresChain)`, which is a PSR-15 RequestHandler
-  implementation wrapping a configurable list of PSR-15 Middlewares.
-  Currently this list only consists of a middleware that invokes the
-  :abbr:`HTTP Component Chain (\\Neos\\Flow\\Http\\Component\\ComponentChain)`, a set of independent units that have
+  implementation wrapping a configurable list of `PSR-15 Middlewares`_.
+  Currently this `Middlewares chain`_ only consists of a middleware that invokes the deprecated
+  :abbr:`HTTP Component chain (\\Neos\\Flow\\Http\\Component\\ComponentChain)`, a set of independent units that have
   access to the current HTTP request and response and can share information amongst each other.
-  The `chain`_ is fully configurable, but by default it consists of the following steps:
+  The `Component chain`_ is fully configurable, but by default it consists of the following steps:
 * the ``trusted proxies`` component verifies headers that override request information, like the host, port or client IP address to
   come from a server (reverse proxy) who's IP address is safe-listed in the settings.
 * the ``session cookie`` component, which restores the session from a cookie and later sets the session cookie in the response.
@@ -128,48 +128,41 @@ Instead of registering a new RequestHandler the application workflow can also be
 A HTTP middleware must implement the :abbr:`Middleware interface (\\Psr\\Http\\Server\\MiddlewareInterface)`
 that defines the ``process($request, $next)`` method::
 
-	use Neos\Flow\Http\Component\ComponentInterface;
+  use Psr\Http\Message\ResponseInterface;
+  use Psr\Http\Message\ServerRequestInterface;
+  use Psr\Http\Server\MiddlewareInterface;
+  use Psr\Http\Server\RequestHandlerInterface;
 
-	/**
-	 * A sample HTTP component that intercepts the default handling and returns "bar" if the request contains an argument "foo"
-	 */
-	class SomeMiddleware implements MiddlewareInterface {
+  /**
+   * A sample HTTP middleware that intercepts the default handling and returns "bar" if the request contains an argument "foo"
+   */
+  class SomeMiddleware implements MiddlewareInterface {
 
-		/**
-		 * @var array
-		 */
-		protected $options;
-
-		/**
-		 * @param array $options
-		 */
-		public function __construct(array $options = array()) {
-			$this->options = $options;
-		}
-
-		/**
-		 * @param ComponentContext $componentContext
-		 * @return void
-		 */
+    /**
+     * @param ServerRequestInterface $httpRequest
+     * @param RequestHandlerInterface $next
+     * @return ResponseInterface
+     */
     public function process(ServerRequestInterface $httpRequest, RequestHandlerInterface $next): ResponseInterface;
-			if (!$httpRequest->hasArgument('foo')) {
-			  // You may also return a new HttpResponse here and thereby short-cut the further handling
-				return $next->handle($httpRequest);
-			}
-			$httpResponse = $next->handle($httpRequest);
+      if (!$httpRequest->hasArgument('foo')) {
+        // You may also return a new HttpResponse here and thereby short-cut the further handling
+        return $next->handle($httpRequest);
+      }
+      $httpResponse = $next->handle($httpRequest);
       return $httpResponse->withContent('bar');
-		}
-	}
+    }
 
-To activate a middle, it must be configured in the ``Settings.yaml``::
+  }
+
+To activate a middleware, it must be configured in the ``Settings.yaml``::
 
 	Neos:
 	  Flow:
 	    http:
 	      middlewares:
           'custom':
-            position: 'before dispatch'
-            middleware: 'Some\Package\Http\SomeHttpComponent'
+            position: 'before mvc-dispatch'
+            middleware: 'Some\Package\Http\SomeHttpMiddleware'
 
 With the ``position`` directive the order of a middleware within the chain can be defined. In this case the new component
 will be handled before the dispatch middleware that is configured in the Neos.Flow package. Note though, that any middleware
@@ -183,8 +176,8 @@ Component Chain
 
 ..note::
 
-  The Component Chain is considered deprecated as of Flow 6.2 and will be removed in a later version. All components will
-  be replaced by PSR-15 middlewares and an easy upgrade-path will be provided.
+  The Component Chain is considered deprecated as of Flow 6.3 and will be removed in a later version. All components will
+  be replaced by `PSR-15 Middlewares`_ and an easy upgrade-path will be provided.
 
 Instead of registering a new RequestHandler the application workflow can also be altered by a custom ``HTTP Component``.
 A HTTP component must implement the :abbr:`Component interface (\\Neos\\Flow\\Http\\Component\\ComponentInterface)`
@@ -625,4 +618,6 @@ other application parts which are accessible via HTTP. This browser has the ``In
 .. _Coordinated Universal Time: http://en.wikipedia.org/wiki/Coordinated_Universal_Time
 .. _Greenwich Mean Time: http://en.wikipedia.org/wiki/Greenwich_Mean_Time
 .. _Forwarded Header: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Forwarded
-.. _chain: https://github.com/neos/flow-development-collection/blob/5.3/Neos.Flow/Configuration/Settings.Http.yaml#L31-L57
+.. _Middlewares chain: https://github.com/neos/flow-development-collection/blob/6.3/Neos.Flow/Configuration/Settings.Http.yaml#L28-L31
+.. _Component chain: https://github.com/neos/flow-development-collection/blob/5.3/Neos.Flow/Configuration/Settings.Http.yaml#L31-L57
+.. _PSR-15 Middlewares: https://www.php-fig.org/psr/psr-15/#22-psrhttpservermiddlewareinterface
