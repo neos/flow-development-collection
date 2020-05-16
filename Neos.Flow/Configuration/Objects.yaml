@@ -251,6 +251,14 @@ Psr\Http\Message\UploadedFileFactoryInterface:
 Psr\Http\Message\UriFactoryInterface:
   className: Neos\Http\Factories\UriFactory
 
+Neos\Flow\Http\Component\ComponentContext:
+  arguments:
+    1:
+      object:
+        factoryMethodName: GuzzleHttp\Psr7\ServerRequest::fromGlobals
+    2:
+      object: GuzzleHttp\Psr7\Response
+
 Neos\Flow\Http\Component\ComponentChain:
   factoryObjectName: Neos\Flow\Http\Component\ComponentChainFactory
   arguments:

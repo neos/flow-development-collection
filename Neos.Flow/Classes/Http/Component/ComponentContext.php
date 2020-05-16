@@ -57,7 +57,7 @@ class ComponentContext
      * @param ServerRequestInterface $httpRequest
      * @param ResponseInterface $httpResponse
      */
-    public function __construct(ServerRequestInterface $httpRequest = null, ResponseInterface $httpResponse = null)
+    public function __construct(ServerRequestInterface $httpRequest, ResponseInterface $httpResponse)
     {
         $this->httpRequest = $httpRequest;
         $this->httpResponse = $httpResponse;
@@ -109,7 +109,7 @@ class ComponentContext
      */
     public function getParameter($componentClassName, $parameterName)
     {
-        return isset($this->parameters[$componentClassName][$parameterName]) ? $this->parameters[$componentClassName][$parameterName] : null;
+        return $this->parameters[$componentClassName][$parameterName] ?? null;
     }
 
     /**
