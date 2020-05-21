@@ -44,6 +44,8 @@ final class UriConstraints
     const CONSTRAINT_PATH_SUFFIX = 'pathSuffix';
     const CONSTRAINT_QUERY_STRING = 'queryString';
 
+    const HTTP_DEFAULT_HOST = 'localhost';
+
     /**
      * @var array
      */
@@ -331,7 +333,7 @@ final class UriConstraints
             if (empty($uri->getScheme())) {
                 $uri = $uri->withScheme($baseUri->getScheme());
             }
-            if (empty($uri->getHost()) || $uri->getHost() === Uri::HTTP_DEFAULT_HOST) {
+            if (empty($uri->getHost()) || $uri->getHost() === self::HTTP_DEFAULT_HOST) {
                 $uri = $uri->withHost($baseUri->getHost());
             }
             if (empty($uri->getPort()) && !isset($this->constraints[self::CONSTRAINT_PORT])) {
