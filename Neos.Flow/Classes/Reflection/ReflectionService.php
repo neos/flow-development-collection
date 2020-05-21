@@ -435,14 +435,14 @@ class ReflectionService
         if (count($classNamesFound) === 1) {
             return $classNamesFound[0];
         }
-        if (count($classNamesFound) !== 2 || !isset($this->classReflectionData[ProxyInterface::class][self::DATA_INTERFACE_IMPLEMENTATIONS])) {
+        if (count($classNamesFound) !== 2 || !isset($this->classReflectionData[$interfaceName][self::DATA_INTERFACE_IMPLEMENTATIONS])) {
             return false;
         }
 
-        if (isset($this->classReflectionData[ProxyInterface::class][self::DATA_INTERFACE_IMPLEMENTATIONS][$classNamesFound[0]])) {
+        if (isset($this->classReflectionData[$interfaceName][self::DATA_INTERFACE_IMPLEMENTATIONS][$classNamesFound[0]])) {
             return $classNamesFound[0];
         }
-        if (isset($this->classReflectionData[ProxyInterface::class][self::DATA_INTERFACE_IMPLEMENTATIONS][$classNamesFound[1]])) {
+        if (isset($this->classReflectionData[$interfaceName][self::DATA_INTERFACE_IMPLEMENTATIONS][$classNamesFound[1]])) {
             return $classNamesFound[1];
         }
 
